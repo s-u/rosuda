@@ -11,7 +11,15 @@ import java.awt.event.ActionListener;
 
 /** class that simplified menu building from lists */
 public class EzMenu {
+    public static boolean staticInitDone=false;
+    public static boolean hasSVG=false;
+    
     public static MenuBar getEzMenu(Frame f, ActionListener al, String[] menuDef) {
+        if (!staticInitDone) {
+            try { Class c=Class.forName("PoGraSSSVG"); hasSVG=true; }
+            catch (Throwable ee) {};
+            staticInitDone=true;
+        };
         WinTracker wt=WinTracker.current;
         WTentry we=wt.getEntry(f);
         MenuBar mb=f.getMenuBar();
@@ -29,6 +37,7 @@ public class EzMenu {
                 m.add(mi=new MenuItem("Save as PostScript ...",new MenuShortcut('P'))).setActionCommand("exportPS"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as PDF ...",new MenuShortcut('P',true))).setActionCommand("exportPDF"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as SVG ...")).setActionCommand("exportSVG"); mi.addActionListener(al);
+                if (!hasSVG) mi.setEnabled(false);
                 m.addSeparator();
                 m.add(mi=new MenuItem("Save selected as ...")).setActionCommand("exportCases"); mi.addActionListener(al);
                 m.addSeparator();
