@@ -1,12 +1,15 @@
 IGLOBAL_SRC:=$(wildcard rosuda/util/*.java)
-IBASE_SRC:=$(shell cat ibase.sources)
+# PoGraSS must be generated manually, because SVG is optional
+POGRASS_SRC:=rosuda/pograss/PoGraSS.java rosuda/pograss/PoGraSSPS.java rosuda/pograss/PoGraSSPDF.java rosuda/pograss/PoGraSSmeta.java rosuda/pograss/PoGraSSgraphics.java
+IBASE_SRC:= $(IGLOBAL_SRC) $(wildcard rosuda/ibase/*.java) $(wildcard rosuda/ibase/plots/*.java) $(wildcard rosuda/ibase/toolkit/*.java) $(POGRASS_SRC) rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java
 KLIMT_SRC:=$(wildcard rosuda/klimt/*.java) $(wildcard rosuda/klimt/plots/*.java)
 PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
+RGUI_SRC:=$(wildcard rosuda/RGui/*.java) $(wildcard rosuda/RGui/toolkit/*.java)
 
-TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar
+TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar RGui.jar
 
 JAVAC=javac $(JFLAGS)
 
@@ -18,6 +21,9 @@ define can-with-jar
 	jar fc $@ org
 	rm -rf org	
 endef
+
+RGui.jar: $(IBASE_SRC) $(RGUI_SRC)
+	$(can-with-jar)
 
 ibase.jar: $(IBASE_SRC)
 	$(can-with-jar)
