@@ -14,7 +14,7 @@ import java.util.prefs.Preferences;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class JGRPrefs {
@@ -84,6 +84,12 @@ public class JGRPrefs {
 
     /** UseHelpAgent*/
     public static boolean useHelpAgent = true;
+    
+    /** UseHelpAgent in editor*/
+    public static boolean useHelpAgentEditor = true;
+    
+    /** UseHelpAgent in console*/
+    public static boolean useHelpAgentConsole = true;
 
     /** UseEmacsKeyBindings*/
     public static boolean useEmacsKeyBindings = false;
@@ -169,6 +175,8 @@ public class JGRPrefs {
         FontSize = prefs.getInt("FontSize",FontSize);
         maxHelpTabs = prefs.getInt("MaxHelpTabs",maxHelpTabs);
         useHelpAgent = prefs.getBoolean("UseHelpAgent", true);
+        useHelpAgentConsole = prefs.getBoolean("UseHelpAgentConsole", useHelpAgentConsole);
+        useHelpAgentEditor =  prefs.getBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
     }
@@ -186,6 +194,8 @@ public class JGRPrefs {
         prefs.putInt("FontSize", FontSize);               // int
         prefs.putInt("MaxHelpTabs",maxHelpTabs);
         prefs.putBoolean("UseHelpAgent", useHelpAgent);
+        prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);
+        prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();

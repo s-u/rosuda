@@ -11,10 +11,10 @@ import org.rosuda.ibase.*;
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2004 
+ * 	RoSuDa 2003 - 2004 
  */
 
-public class PrefsDialog extends JDialog implements ActionListener{
+public class PrefsDialog extends JDialog implements ActionListener, ItemListener {
 
     private Dimension screenSize = Common.getScreenRes();
 
@@ -29,6 +29,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
 
     private JSpinner helptabs = new JSpinner();
     private JCheckBox useHelpAgent = new JCheckBox("Use Help Agent",JGRPrefs.useHelpAgent);
+    private JCheckBox useHelpAgentConsole = new JCheckBox("in Console",JGRPrefs.useHelpAgentConsole);
+    private JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",JGRPrefs.useHelpAgentEditor);
     private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings",JGRPrefs.useEmacsKeyBindings);
 
     private JButton cancel = new JButton("Cancel");
@@ -75,6 +77,17 @@ public class PrefsDialog extends JDialog implements ActionListener{
         JPanel helpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         helpPanel.add(new JLabel("#Help Pages: "));
         helpPanel.add(helptabs);
+        
+        useHelpAgentConsole.setEnabled(useHelpAgent.isSelected());
+        useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
+        
+        JPanel consoleAgentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        consoleAgentPanel.add(new JLabel("  "));
+        consoleAgentPanel.add(useHelpAgentConsole);
+        
+        JPanel editorAgentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        editorAgentPanel.add(new JLabel("  "));
+        editorAgentPanel.add(useHelpAgentEditor);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
@@ -87,8 +100,12 @@ public class PrefsDialog extends JDialog implements ActionListener{
         gbc.gridy = 2;
         prefs.add(useHelpAgent,gbc);
         gbc.gridy = 3;
-        prefs.add(useEmacsKeyBindings,gbc);
+        prefs.add(consoleAgentPanel,gbc);
         gbc.gridy = 4;
+        prefs.add(editorAgentPanel,gbc);
+        gbc.gridy = 5;
+        prefs.add(useEmacsKeyBindings,gbc);
+        gbc.gridy = 6;
         prefs.add(new JLabel("* Emacs Keybindings are only advisable for Mac OS X!"),gbc);
         
 
@@ -103,6 +120,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
         cancel.setToolTipText("Cancel");
         apply.setToolTipText("Apply changes to current session");
         save.setToolTipText("Save changes for future sessions and quit");
+        
+        useHelpAgent.addItemListener(this);
         
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttons.add(cancel);
@@ -134,6 +153,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
         JGRPrefs.FontSize = new Integer(size.getSelectedItem().toString()).intValue();
         JGRPrefs.maxHelpTabs = ((Integer)helptabs.getValue()).intValue();
         JGRPrefs.useHelpAgent = useHelpAgent.isSelected();
+        JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
+        JGRPrefs.useHelpAgentEditor = useHelpAgentEditor.isSelected();
         JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
         JGRPrefs.apply();
     }
@@ -150,5 +171,17 @@ public class PrefsDialog extends JDialog implements ActionListener{
             JGRPrefs.writePrefs(false);
             this.dispose();
         }
+    }
+    
+    /**
+     * itemStateChanged: handle item events: enable/ disable useHelpAgentConsole/Editor
+     */
+    public void itemStateChanged(ItemEvent e) {
+    	useHelpAgentConsole.setEnabled(useHelpAgent.isSelected());
+    	useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
+    	if (!useHelpAgent.isSelected()) {
+    		useHelpAgentEditor.setSelected(false);
+    		useHelpAgentConsole.setSelected(false);
+    	}
     }
 }
