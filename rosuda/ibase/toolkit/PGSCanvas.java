@@ -145,15 +145,19 @@ public class PGSCanvas extends LayerCanvas implements Commander {
         };
         if (cmd=="exportSVG") {
             boolean svgExtensionPresent=false;
+            PoGraSS p=null;
             try {
                 Class c=Class.forName("PoGraSSSVG");
+                p=(PoGraSS)c.newInstance();
                 svgExtensionPresent=true;
             } catch (Throwable ee) {
+                System.out.println("Cannot load SVG classes: "+ee.getMessage());
+                ee.printStackTrace();
             };
             if (svgExtensionPresent) {
                 PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as SVG to ...","output.svg");
                 if (outs!=null) {
-                    PoGraSSSVG p=new PoGraSSSVG(outs);
+                    p.setOutPrintStream(outs);
                     p.setTitle(desc);
                     paintPoGraSS(p);
                     p=null;
