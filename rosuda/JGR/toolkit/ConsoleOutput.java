@@ -43,16 +43,25 @@ public class ConsoleOutput extends JTextPane {
     /**
      * Copy only the commands out of the pane.
      */
-    public void copyCommands() {
-        java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getCommands().toString());
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+    public void copyCommands() {		
+		int a,b;
+		try {
+			a = this.getLineOfOffset(this.getSelectionStart());
+			b = this.getLineOfOffset(this.getSelectionEnd());
+			if (a >= b || a == -1 || b == -1) return;
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getCommands(a,b).toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+		} catch (Exception e) { return;}
     }
+	
+	private StringBuffer getCommands() {
+		return getCommands(0,this.getLineCount());
+	}
 
-    private StringBuffer getCommands() {
-        int l = this.getLineCount();
+    private StringBuffer getCommands(int a, int b) {
         StringBuffer bf = new StringBuffer();
         String line = null;
-        for (int i = 0; i < l; i++) {
+        for (int i = a; i < b; i++) {
             try {
                 if(isCorrectLine(i) && isCommandLine(i))
                     bf.append(trimFront(getLine(i).replaceFirst(">","")));
@@ -73,15 +82,24 @@ public class ConsoleOutput extends JTextPane {
     /**
      * Copy the whole content of the pane.
      */
-    public void copyOutput() {
-        java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getOutput().toString());
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+    public void copyOutput() {		
+		int a,b;
+		try {
+			a = this.getLineOfOffset(this.getSelectionStart());
+			b = this.getLineOfOffset(this.getSelectionEnd());
+			if (a >= b || a == -1 || b == -1) return;
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getOutput(a,b).toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+		} catch (Exception e) { return;}
     }
+	
+	private StringBuffer getOutput() {
+		return getOutput(0,this.getLineCount());
+	}
 
-    private StringBuffer getOutput() {
-        int l = this.getLineCount();
+    private StringBuffer getOutput(int a, int b) {
         StringBuffer bf = new StringBuffer();
-        for (int i = 0; i < l; i++) {
+        for (int i = a; i < b; i++) {
             try {
                 if(isCorrectLine(i))
                     bf.append(getLine(i));
@@ -102,14 +120,23 @@ public class ConsoleOutput extends JTextPane {
      * Copy only the results from the pane.
      */
     public void copyResults() {
-        java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getResult().toString());
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+		int a,b;
+		try {
+			a = this.getLineOfOffset(this.getSelectionStart());
+			b = this.getLineOfOffset(this.getSelectionEnd());
+			if (a >= b || a == -1 || b == -1) return;
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getResult(a,b).toString());
+			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
+		} catch (Exception e) { return;}
     }
+	
+	private StringBuffer getResult() {
+		return getResult(0,this.getLineCount());
+	}
 
-    private StringBuffer getResult() {
-        int l = this.getLineCount();
+    private StringBuffer getResult(int a, int b) {
         StringBuffer bf = new StringBuffer();
-        for (int i = 0; i < l; i++) {
+        for (int i = a; i < b; i++) {
             try {
                 if(isCorrectLine(i)){
                     if (isResultLine(i))
