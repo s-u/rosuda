@@ -31,6 +31,9 @@ public class SNode extends Node implements Cloneable
     /** pruning flag. if set to <code>true</code> then all <i>children</i> has been pruned. beware, that does mean that the node has to check prune flag of its parent to see if it's been pruned also. */
     boolean pruned;
 
+    /** root-only: name of the tree */
+    public String name=null;
+    
     /** deviance in this node based on the sample */
     public double sampleDev;
     /** deviance gain based on the sample */

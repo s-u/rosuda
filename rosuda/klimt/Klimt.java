@@ -141,6 +141,7 @@ public class InTr
                                 t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
                                 if (t!=null && tvs!=null) {
                                     TFrame ff=null;
+                                    t.name=fs[fi].getName();
                                     if (createFrames) {
                                         t.frame=ff=new TFrame(fs[fi].getName());
                                         TreeCanvas tc=InTr.newTreeDisplay(t,ff);
@@ -182,6 +183,7 @@ public class InTr
                 fsz=fil.length();
             } catch(Exception e) {};
             t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
+            if (t!=null) t.name=fnam;
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
