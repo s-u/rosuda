@@ -15,6 +15,7 @@ import java.io.PrintStream;
     0.96: (CVS 1.7) support for separate fill/pen colors and regular commands (rect, oval,...)
                     backwards compatibility is provided by the {@link #jointColors} flag.
        b            added setColor(Color) for compatibility with Graphics
+    0.97: (1.12)    added nextObject(...) - allows creation of structures in the plot
 
     @version $Id$
 */
@@ -194,4 +195,7 @@ public class PoGraSS
     public void setPenColor(String nam, float alpha) {}
     public void setPenColor(float r, float g, float b, float a) {}
     
+    // new since 0.97
+    public void nextObject() { nextObject(null); };
+    public void nextObject(String name) {};   
 }
