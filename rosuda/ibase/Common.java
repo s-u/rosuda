@@ -94,6 +94,9 @@ public class Common
 
     /** Notify-Message constant: BREAK event - this one is usually not processed in Java but sent to the calling system. Usually this event is used to stop an external event loop, such as an iPlots event loop. */
     public static final int NM_BREAK            =0x700;
+
+    public static final int NM_ExtEvent         =0x800;
+    public static final int NM_ActionEvent      =0x801;
     
     /** mask to apply in order to get the top-level event */
     public static final int NM_MASK             =0xf00;
