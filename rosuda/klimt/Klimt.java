@@ -17,7 +17,9 @@ import java.util.*;
 // InTr
 //---------------------------------------------------------------------------
 
-/** Main Interactive Trees class. */
+/** Main Interactive Trees class. For historical reasons the main class of the KLIMT application
+    is not Klimt (which is still provided as a wrapper) but this InTr (which stands for Interactive Trees, the
+    original project name until it was renamed to Klimt) */
 public class InTr
 {
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
@@ -60,7 +62,7 @@ public class InTr
 
     /** creates a new variables display
 	@param vs the underlying dataset
-	@param x,y,w,h initial geomery. Note: VadCanvas itself modifies the hegiht if it is too small
+	@param x,y,w,h initial geomery. Note: VarFrame itself modifies the height if necessary
 	@return the newly created variables canvas */
     public static VarFrame newVarDisplay(SVarSet vs,int x, int y, int w, int h) {
 	VarFrame VarF=new VarFrame(vs,x,y,w,h);
@@ -76,7 +78,7 @@ public class InTr
 
     /** creates a pruned copy of a tree
 	@param t root of the source tree
-	@return copy of the tree wihtout pruned nodes */
+	@return copy of the tree without pruned nodes */
     public static SNode makePrunedCopy(SNode t) 
     {
 	SNode n=new SNode();
@@ -95,7 +97,7 @@ public class InTr
 
     /** loads a dataset and a tree from a file.
 	@param f frame to be used for FileDialog if necessary
-	@param fn filename of teh source. If <code>null</code> FileDialog is used to let the user select the file
+        @param fn filename of the source. If <code>null</code> {@link FileDialog} is used to let the user select the file
 	@param tvs {@link SVarSet} object to be used for storage of the dataset.
 	@return root node of the tree or <code>null</code> if no tree was present. This methods returns <code>null</code> even if the dataset was loaded correcly and no tree was present. Total failure to process the file can be determined only by using clean dataset and check for size of the dataset after the call. */	
     public static SNode openTreeFile(Frame f,String fn,SVarSet tvs)
