@@ -7,9 +7,9 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96r";
+    public static String Version="0.96s";
     /** application release */
-    public static String Release="CC16";
+    public static String Release="D103";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
         parameter equivalent: --debug / --nodebug */
@@ -268,4 +268,65 @@ public class Common
         if (Common.screenRes==null) Common.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
         return Common.screenRes;
     };
+
+    // HCL color scheme routines (ported from Ross Ihaka's R code)
+    /** display gamma setting (used by color conversion functions such as {@link #getHCLcolor} */
+    public static double displayGamma=2.2;
+
+    /** adjusts RGB value according to the specified display gamma setting (see {@link #displayGamma}) */
+    public static double gammaAdjust(double u) {
+        return (u > 0.00304)?1.055 * Math.pow(u,(1 / displayGamma)) - 0.055: 12.92 * u;
+    }
+
+    /** transforms color defined in HCL space into RGB color
+        @param hue - hue (in degrees, between 0.0 and 360.0). basic colors are at angles 0, 120, 240
+        @param chroma - colorfullness of the color - unlike the saturation, chroma is an absolute value (default=35)
+        @param luminance - brightness of the color relative to while (white=100; default=85)
+        @return color object in RGB representation suitable for use in graphics */
+    public static Color getHCLcolor(double hue, double chroma, double luminance) {
+        //function(hue, chroma = 35, luminance = 85, correct = FALSE, gamma = 2.2)
+        //  Assume a D65 whitepoint with luminance 100.
+        //  Ultimately, this should be a parameter.
+        //  These are the CIE XYZ values.
+
+        double XN =  95.047;
+        double YN = 100.000;
+        double ZN = 108.883;
+
+        //  uN and vN are the corresponding LUV chromaticities
+
+        double tmp = XN + YN + ZN;
+        double xN = XN / tmp;
+        double yN = YN / tmp;
+        double uN = 2 * xN /(6 * yN - xN + 1.5);
+        double vN = 4.5 * yN / (6 * yN - xN + 1.5);
+
+        //  Convert from polar coordinates to u and v.
+        //  Hue is take to be in degrees and needs to be converted.
+
+        double U = chroma * Math.cos(.01745329251994329576 * hue);
+        double V = chroma * Math.sin(.01745329251994329576 * hue);
+
+        // Convert from L*u*v* to CIE-XYZ
+
+        double Y = YN * ((luminance > 7.999592)?Math.pow((luminance + 16)/116,3):luminance/903.3);
+        double u = U / (13 * luminance) + uN;
+        double v = V / (13 * luminance) + vN;
+        double X = 9.0 * Y * u / (4 * v);
+        double Z = - X / 3 - 5 * Y + 3 * Y / v;
+
+        //  Map to ``gamma dependent'' RGB
+
+        int r=(int)(255.0 * gammaAdjust(( 3.240479 * X - 1.537150 * Y - 0.498535 * Z) / YN));
+        int g=(int)(255.0 * gammaAdjust((-0.969256 * X + 1.875992 * Y + 0.041556 * Z) / YN));
+        int b=(int)(255.0 * gammaAdjust(( 0.055648 * X - 0.204043 * Y + 1.057311 * Z) / YN));
+
+        if (r<0) r=0; if (r>255) r=255;
+        if (g<0) g=0; if (g>255) g=255;
+        if (b<0) b=0; if (b>255) b=255;
+        return new Color(r,g,b);
+    }
+
+    public static Color getHCLcolor(double hue) { return getHCLcolor(hue,35.0,85.0); }
+    public static Color getHCLcolor(double hue, double chroma) { return getHCLcolor(hue,chroma,85.0); }
 };
