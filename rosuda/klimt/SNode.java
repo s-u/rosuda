@@ -196,6 +196,20 @@ public class SNode extends Node implements Cloneable
         sampleDevGain=isLeaf()?0:sampleDev-chdev;
     }
 
+    /** returns the ID of this node in a binary tree (root=1) or -1 if the tree is not a binary tree */
+    public int getBinaryID() {
+        if (par==null) return 1;
+        SNode p=(SNode) par;
+        if (p.ch==null) return -1;
+        int pcs=p.ch.size();
+        if (pcs>2 || pcs<1) return -1;
+        // this is just for the paranoid: we make sure that the parent has a reference to us (it should)
+        if ((pcs==1 && p.ch.elementAt(0)!=this) ||
+            (pcs==2 && p.ch.elementAt(0)!=this && p.ch.elementAt(1)!=this)) return -1;
+        int pid=p.getBinaryID();
+        return (p.ch.elementAt(0)==this)?(2*pid):(2*pid+1);
+    }
+    
     /** pass data from node ct down to this node according to the conditions in this node */
     public void passDownData(SNode ct) {
         SVar V=splitVar;
