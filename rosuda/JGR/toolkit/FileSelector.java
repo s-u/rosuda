@@ -52,6 +52,7 @@ public class FileSelector extends JFrame {
             if (directory != null) swingChooser = new JFileChooser(directory);
             else swingChooser = new JFileChooser();
             swingChooser.setDialogTitle(title);
+            swingChooser.setFileHidingEnabled(false);
         }
     }
     
