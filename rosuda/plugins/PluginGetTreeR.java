@@ -19,7 +19,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     String Rver="?";
     String Rbin=null;
     String Rcall=null;
+    /** library to use for tree generation */
     String lib="rpart";
+    /** host to use for Rserv connections */
     String RservHost="127.0.0.1";
     
     boolean useAll=true;
@@ -38,16 +40,21 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     public static String lastRcall=null;
 
     String lastDump=null;
-    
-    PluginGetTreeR() {
-        name="Generate tree via R 1.0";
+
+    /** create a new instance of the plugin */
+    public PluginGetTreeR() {
+        name="Generate tree via R 1.1";
         author="Simon Urbanek <simon.urbanek@math.uni-augsburg.de>";
-        desc="Grows classification or regression trees using R";
+        desc="Grows classification or regression trees using R or Rserv";
         type=PT_GenTree;
         pm=PluginManager.getManager();
         Rbin=pm.getParS("AllPlugins","latestRbinary");
         Rcall=pm.getParS("PluginGetTreeR","Rcall");
     }
+
+    /** set a plugin parameter
+        @param par parameter name
+        @param val parameter value */
     public void setParameter(String par, Object val) {
         if (par=="dataset") vs=(SVarSet)val;
         if (par=="selectedOnly") useAll=!((Boolean)val).booleanValue();
@@ -59,6 +66,10 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         if (par=="holdConnection") holdConnection=((Boolean)val).booleanValue();
         if (par=="RservHost") RservHost=(String)val;
     }
+
+    /** get a plugin parameter
+        @param par parameter name
+        @return parameter value or <code>null</code> if not availiable */
     public Object getParameter(String par) {
         if (par=="root" || par=="tree") return root;
         if (par=="Rversion") return Rver;
@@ -76,15 +87,12 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
 
     BufferedReader in;
-    
-    public boolean initPlugin() {
-        if (initializedSuccessfully) { /* cached initialization if another instance found R already */
-            Rbin=lastRbin; Rver=lastRver; Rcall=lastRcall;
-            return true;
-        }
 
+    /** initialize plugin insteance
+        @return <code>true</code> if the initialization was successful */
+    public boolean initPlugin() {
         if (useRserv) {
-            rc=new Rconnection();
+            rc=new Rconnection(RservHost);
             if (rc.isOk() && rc.isConnected()) {
                 REXP rx=rc.eval("paste(version$major,version$minor,sep='.')");
                 if (rc.isOk()) {
@@ -95,6 +103,11 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 }
             }
             rc=null; useRserv=false;
+        }
+
+        if (initializedSuccessfully) { /* cached initialization if another instance found R already */
+            Rbin=lastRbin; Rver=lastRver; Rcall=lastRcall;
+            return true;
         }
         
         try {
@@ -166,29 +179,18 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         return false;
     }
 
-    /*
-    boolean killRead=false;
-    
-    public void run() {
-        System.out.println("read thread started\n");
-        try {
-            while(!killRead) {
-                String s=in.readLine();
-                System.out.println("R: "+s);
-            }
-        } catch(Exception e) {
-            System.out.println("run: "+e.getMessage()); e.printStackTrace();
-        }
-        System.out.println("read thread finished\n");
-    }
-    */
-    
+    /** check consistency of the parameters; for this plugin all we need is
+        the dataset. */
     public boolean checkParameters() {
         return vs!=null;
     }
 
     Dialog d;
 
+    /** pop up dialog asking for variables to be used, response, library and parameters
+        @param f parent frame
+        @return <code>false</code> if the selection was invalid or user pressed cancel.
+                Check the boolean "cancel" variable to see if the cause was error or cancel */
     public boolean pluginDlg(Frame f) {
         Button b=null, b2=null; cancel=false;
         d=new Dialog(f,"Generate Tree Plug-in",true);
@@ -306,12 +308,17 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         d.dispose();
         return true;
     }
-    
+
+    /** activated if a button was pressed. It determines whether "cancer" was pressed or OK" */
     public void actionPerformed(ActionEvent e) {
         cancel=!e.getActionCommand().equals("OK");
         d.setVisible(false);
     };
-    
+
+   /** executes plugin - generates a tree. If {@link #useRserv} is <code>true</code> then an Rserv connection
+       is established (if not existing already due to {@link #holdConnection}). If Rserv id not availiable,
+       fall back to native R
+       @return <code>true</code> if everything went fine, <code>false</code> otherwise. */
     public boolean execPlugin() {
         lastDump=null;
         System.out.println("execPlugin");
@@ -402,6 +409,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         return false;
     }
 
+    /** just a tiny test code */
     public static void main(String[] args) {
         SVarSet vs=new SVarSet();
         try {
