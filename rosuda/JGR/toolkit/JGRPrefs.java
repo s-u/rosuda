@@ -20,7 +20,7 @@ import org.rosuda.JGR.*;
 import java.util.prefs.Preferences;
 
 public class JGRPrefs {
-
+	public static final int prefsVersion = 0x0100; // version 1.0
 
     public static final int DEBUG = 0;
     public static boolean isMac = false;
@@ -161,6 +161,7 @@ public class JGRPrefs {
         Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
 		
 		try { prefs.clear(); } catch (Exception x) {}
+		prefs.putInt("PrefsVersion", prefsVersion);
         prefs.put("FontName", FontName);        // String
         prefs.putInt("FontSize", FontSize);               // int
         prefs.putInt("MaxHelpTabs",maxHelpTabs);
