@@ -8,6 +8,12 @@ import java.io.PrintStream;
 */
 class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
+    public static final int LT_DIRECT = 0;
+    public static final int LT_RECT   = 1;
+
+    /** line type */
+    int type=LT_DIRECT;
+    
     /** variables; 0=x, 1,2,3...=Y */
     SVar v[];
     /** associated marker */
@@ -88,6 +94,10 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	*/
     };
 
+    public void setLineType(int nt) {
+        type=nt; setUpdateRoot(0); repaint();
+    }
+    
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
         repaint();
@@ -171,8 +181,15 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	g.setColor("line");
 	for (int j=1;j<v.length;j++) {
 	    for (int i=1;i<v[0].size();i++)
-		g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
-			   A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+                if (type==LT_DIRECT) {
+                    g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
+                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+                } else {
+                    g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
+                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)));
+                    g.drawLine(A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)),
+                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+                };
 	};
 	
         g.nextLayer();
