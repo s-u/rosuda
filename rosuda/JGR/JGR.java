@@ -417,8 +417,9 @@ public class JGR {
 			Object[] arguments = args2.toArray();
 			if (arguments.length > 0) {
 				rargs = new String[arguments.length+1];
-				for (int i = 0; i < rargs.length; i++)
+				for (int i = 0; i < rargs.length-1; i++)
 					rargs[i] = arguments[i].toString();
+				rargs[rargs.length-1] = "--save";
 			}
 		}
 		
