@@ -67,6 +67,7 @@ public class TFrame extends Frame
         } else {
             setLocation(lastPlaceX,lastPlaceY);
             lastPlaceX+=getWidth()+10;
+            Common.getScreenRes();
             if (lastPlaceX+100>Common.screenRes.width) {
                 lastPlaceY+=getHeight()+20;
                 lastPlaceX=0;
