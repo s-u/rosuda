@@ -7,7 +7,7 @@
 //
 //  $Id$
 
-package org.rosuda.klimt;
+package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
 import java.awt.event.*;
