@@ -171,7 +171,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                 };
             } ;
 
-        g.nextLayer();
+        //g.nextLayer();
                        
         if (drag) {
             g.nextLayer();
@@ -239,11 +239,31 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	int setTo=0;
 	if (e.isControlDown()) setTo=1;
 	if (!e.isShiftDown()) m.selectNone();
-	
-	drag=false; 
-	int i=0;
+
+        int pts=v[0].size();
+        if (pts>v[1].size()) pts=v[1].size();
+        for (int yp=0;yp<v2l;yp++)
+            for (int xp=0;xp<v1l;xp++) {
+                int lx=A[0].getCatLow(xp);
+                int ly=TH-A[1].getCatLow(yp);
+                int dx=A[0].getCatUp(xp)-lx;
+                int dy=TH-A[1].getCatUp(yp)-ly;
+                if (dx<0) { lx+=dx; dx=-dx; };
+                if (dy<0) { ly+=dy; dy=-dy; };
+                if (x1<lx+dx&&x2>lx&&y1<ly+dy&&y2>ly) {
+                    for (int i=0;i<pts;i++) {
+                        int xc=v[0].getCatIndex(i);
+                        int yc=v[1].getCatIndex(i);
+                        if (xc==xp && yc==yp)
+                            m.set(i,m.at(i)?setTo:1);
+                    };
+                };
+            };
+
+        drag=false;
+        int i=0;
 	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-        setUpdateRoot(1);
+        setUpdateRoot(0);
 	repaint();	
     };
     public void mouseEntered(MouseEvent e) {};
@@ -254,7 +274,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	    int x=e.getX(), y=e.getY();
 	    if (x!=x2 || y!=y2) {
 		x2=x; y2=y;
-                setUpdateRoot(2);
+                setUpdateRoot(1);
 		repaint();
 	    };
 	};
