@@ -21,7 +21,7 @@ public class EzMenu {
             staticInitDone=true;
         };
         WinTracker wt=WinTracker.current;
-        WTentry we=wt.getEntry(f);
+        WTentry we=(wt==null)?null:wt.getEntry(f);
         MenuBar mb=f.getMenuBar();
         if (mb==null) mb=new MenuBar();
         Menu m=null;
