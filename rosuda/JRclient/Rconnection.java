@@ -169,11 +169,13 @@ public class Rconnection {
             if (rsrvVersion>100) { /* since 0101 eval responds correctly by using DT_SEXP type/len header which is 4 bytes long */
                 rxo=4;
                 /* we should check parameter type (should be DT_SEXP) and fail if it's not */
-                if (pc[0]!=Rtalk.DT_SEXP) {
+                if (pc[0]!=Rtalk.DT_SEXP && pc[0]!=(Rtalk.DT_SEXP|Rtalk.DT_LARGE)) {
                     lastError="Error while processing eval output: SEXP (type "+Rtalk.DT_SEXP+") expected but found result type "+pc[0]+".";
                     throw new RSrvException(this,lastError);
                 }
-                /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may be not in the future. */
+                if (pc[0]==(Rtalk.DT_SEXP|Rtalk.DT_LARGE))
+                    rxo=8; // large data need skip of 8 bytes
+                /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may not be in the future. */
             }
             REXP rx=null;
             if (pc.length>rxo) {
@@ -230,13 +232,13 @@ public class Rconnection {
         byte[] symn=sym.getBytes();
         int sl=symn.length+1;
         if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the symbol length is divisible by 4
-	byte[] rq=new byte[sl+4+rl+4];
+        byte[] rq=new byte[sl+rl+((rl>0xfffff0)?12:8)];
         int ic;
         for(ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
         while(ic<sl) { rq[ic+4]=0; ic++; }; // pad with 0
 	Rtalk.setHdr(Rtalk.DT_STRING,sl,rq,0);
 	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,sl+4);
-	r.getBinaryRepresentation(rq,sl+8);
+        r.getBinaryRepresentation(rq,sl+((rl>0xfffff0)?12:8));
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
 	if (rp!=null && rp.isOk()) return;
         lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
