@@ -1,25 +1,31 @@
 package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
-
 /** 
  * Simple text pager that displays a specified file.
  * 
- * @author Simon Urbanek
+ * @author Simon Urbanek and Markus Helbig
  * 
- * RoSuDA 2003 - 2005
+ * RoSuDa 2003 - 2005
  * 
  */
-public class TextPager extends iFrame {
-    JTextArea t;
+public class TextPager extends iFrame implements ActionListener {
+    JTextArea t = new JTextArea();;
+    
+    TextFinder textFinder = new TextFinder(t);
     
     public TextPager(String file, String header, String title, boolean deleteFile) {
 		super(title, clsHelp);
-		t = new JTextArea();
+		
+		String myMenu[] = {
+	            "+", "Edit", "@CCopy", "copy","-", "@FFind", "search","@GFind next","searchnext","~Window","0"};
+	    iMenu.getMenu(this, this, myMenu);
+	    
 		getContentPane().add(new JScrollPane(t));
 		t.setEditable(false);
 		t.setFont(new Font("Monospaced", Font.PLAIN, 10));
@@ -44,6 +50,16 @@ public class TextPager extends iFrame {
 		setVisible(true);
 	}
     
+    /**
+     * actionPeformed: handle action events: menu;
+     */
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand();
+		if (cmd=="copy") t.copy();
+		else if (cmd == "search") textFinder.showFind(false);
+        else if (cmd == "searchnext") textFinder.showFind(true);
+		
+	}    
     /**
 	 * Launch textpager.
 	 * 
