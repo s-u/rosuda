@@ -42,6 +42,11 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	JProgressBar p = null;
 	JLabel l = null;
 	
+	/**
+	 * Install JGR from the web CRAN or Rosuda whatever you want
+	 * @param pkgs packages which should be installed: "JGR,"JavaGD",...
+	 * @param url contriburl
+	 */
 	public JGRinstaller(String pkgs, String url) {
 		this.packages = pkgs;
 		this.contriburl = url;
@@ -97,6 +102,9 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		sync.triggerNotification("q('no')");
 	}
 	
+	/**
+	 * Print help message for JGRinstaller commandline tool.
+	 */
 	public static void printHelp() {
 		System.out.println("JGR Installer " + VERSION);
 		System.out.println("\nOptions:");
@@ -148,6 +156,8 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		}
 	}
 
+	//---------------R Loopbacks
+	
 	public String rReadConsole(Rengine re, String prompt, int addToHistory) {
 		if (DEBUG > 0)
 			System.out.print(prompt);
@@ -156,7 +166,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 			System.out.println(s);
 		return s==null?"\n":s.trim()+"\n";
 	}
-
+	
 	public void rShowMessage(Rengine re, String message) {
 	}
 
@@ -186,10 +196,8 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	    public synchronized String waitForNotification() {
 	        while (!notificationArrived) {
 	            try {
-	                //wait();
 	                wait(100);
-					if (JGR.R!=null)
-						JGR.R.rniIdle();
+					if (JGR.R!=null) JGR.R.rniIdle();
 	            } catch (InterruptedException e) {
 	            }
 	        }
