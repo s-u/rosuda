@@ -5,7 +5,7 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
-package org.rosuda.InGlyphs;
+package org.rosuda.ibase.toolkit;
 
 import java.io.*;
 import java.awt.*;
@@ -13,29 +13,17 @@ import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
 
+/** This is just an example of what individaul implementations may want to do in order to make the handlers work. Clearly we cannot implement {@link #handleOpenFile} - that's up to the individual application. */
 public class PlatformMac extends org.rosuda.util.PlatformMac {
     public PlatformMac() {
         super();
     }
 
     public void handleAbout() {
-        SplashScreen.runMainAsAbout("InGlyphs");
+        SplashScreen.runMainAsAbout(Common.appName);
     }
 
     public void handleOpenFile(File fileName) {
-        SVarSet tvs=new SVarSet();
-        Frame df=new Frame();
-        GlyphsCanvas.openDataFile(df,tvs,fileName.getAbsolutePath());
-        if (tvs.count()<1) {
-            new MsgDialog(df,"Load Error","I'm sorry, but I was unable to load the file you selected.");
-            df=null;
-        } else {
-            df=null;
-            Dimension sres=Platform.screenRes;
-            if (SplashScreen.main!=null)
-                SplashScreen.main.setVisible(false);
-            GlyphsFrame gf = new GlyphsFrame(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-        }
     }
 
     public void handlePrefs() {
