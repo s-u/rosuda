@@ -165,11 +165,12 @@ public class SNode extends Node implements Cloneable
         } else {
             double pv=predValD;
             double ds=0.0;
+            int vsz=rv.size();
             for (Enumeration e=data.elements(); e.hasMoreElements();) {
                 Integer I=(Integer)e.nextElement();
                 if (I!=null) {
                     int i=I.intValue();
-                    if (rv.at(i)!=null)
+                    if (i<vsz && rv.at(i)!=null)
                         ds+=(rv.atD(i)-pv)*(rv.atD(i)-pv);
                 }
             }
