@@ -5,7 +5,7 @@ import java.awt.event.*;
 import java.lang.reflect.Method;
 
 public class JavaGD implements WindowListener {
-    Frame f;
+    public Frame f;
     public GDCanvas c;
     public boolean active=false;
     public int devNr=0;
