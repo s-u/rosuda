@@ -141,6 +141,18 @@ public class Framework implements Dependent, ActionListener {
         f=null;
         return res;
     }
+
+    public static String msgDlg(String caption, String msg, String[] buttons) {
+        String res;
+        Frame f=new Frame("dummy");
+        MsgDialog md=new MsgDialog(f,caption,msg,buttons);
+        res=md.lastResult;
+        md.dispose();
+        md=null;
+        f.dispose();
+        f=null;
+        return res;
+    }
     
     /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
         the same name within a dataset.
