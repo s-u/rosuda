@@ -35,17 +35,21 @@ public abstract class LayerCanvas extends Canvas
         this(1);
     }
 
-    /** set update root layer. note that after resize full repaint of all layers is done but updateRoot is not changed 
+    /** set update root layer, i.e. the first layer that has to be updated via {@link #paintLayer}.
+        Note that after resize full repaint of all layers is done but updateRoot is not changed.
+        It is safe (and sensible) to set the update root higher than the last layer; this will cause full repaint only
+        on resize. such behavior is useful when the underlying paint doesn't change except for resizes.
+        common practice is to the update root to # of layers at the end of the paintLayer function and use
+        setUpdateRoot in the remaining program only where content of the painted are has to be explicitely changed.
+        also note that changing update root during the update itself has no effect on the current update.
         @param ur root layer, i.e. the layer to start repaining from */
     public void setUpdateRoot(int ur) {
         prevUpdateRoot=updateRoot; updateRoot=ur;
-        if (Common.DEBUG>0) System.out.println("LayerCanvas: setUpdateRoot("+ur+")");
     }
 
     /** restore update root to previous setting. usual procedure is to used following sequence: setUpdateRoot; repaint; restoreUpdateRoot; */
     public void restoreUpdateRoot() {
         updateRoot=prevUpdateRoot; prevUpdateRoot=0; // two subsequent calls to restore will cause updateRoot to be set to 0
-        if (Common.DEBUG>0) System.out.println("LayerCanvas: restoreUpdateRoot to "+updateRoot);
     }
     
     /**
