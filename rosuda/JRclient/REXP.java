@@ -109,6 +109,7 @@ public class REXP extends Object {
         boolean isLong=((buf[o]&64)!=0);
 	int xt=(int)(buf[o]&63);
         if (isLong) o+=4;
+        o+=4;
 	int eox=o+xl;
 	
 	x.Xt=xt; x.attr=null;
