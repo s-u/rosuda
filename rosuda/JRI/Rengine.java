@@ -10,10 +10,14 @@ public class Rengine extends Thread {
             e.printStackTrace();
             System.exit(1);
         }
-        if (rniGetVersion()<0x0101) {
+        if (getVersion()<0x0100) {
             System.err.println("JRI library version doesn't match! Please update your JRI dynamic library.");
             System.exit(2);
         }
+    }
+
+    public static int getVersion() {
+        return 0x0100; // we should call rniGetVersion or something, but in a safe way ...
     }
     
     static Rengine mainEngine=null;
@@ -79,9 +83,9 @@ public class Rengine extends Thread {
     public synchronized native long rniPutList(long[] cont);
     public synchronized native long[] rniGetList(long exp);
 
-    public static native void rniSetEnv(String key, String val);
-    public static native String rniGetEnv(String key);
-    public static native long rniGetVersion();
+    //public static native void rniSetEnv(String key, String val);
+    //public static native String rniGetEnv(String key);
+    //public static native long rniGetVersion();
     
     public native int rniStop(int flag);
     
