@@ -119,11 +119,29 @@ public class Framework implements Dependent, ActionListener {
         most plots take the ID of a variable as parameter and NOT the {@link SVar} object itself.
         */
     public int addVar(SVar v) {
-        if (cvs.getMarker()==null)
-            cvs.setMarker(new SMarker(v.size()));
+        if (cvs.getMarker()==null) {
+            SMarker m;
+            cvs.setMarker(m=new SMarker(v.size()));
+            m.addDepend(this);
+        }
+        SMarker m=cvs.getMarker();
+        if (v.size()>m.size()) m.resize(v.size());
 	return cvs.add(v);
     }
 
+    int mmDlg(String name, int d) {
+        int res=0;
+        Frame f=new Frame("dummy");
+        MsgDialog md=new MsgDialog(f,"Data length mismatch","Variable \""+name+"\" consists of "+d+" cases, but your current iSet has "+cvs.at(0).size()+" cases. Do you want to create a new iSet?",MsgDialog.yesNoCancel);
+        if (md.lastResult=="Cancel") res=-2;
+        if (md.lastResult=="Yes") res=-3;
+        md.dispose();
+        md=null;
+        f.dispose();
+        f=null;
+        return res;
+    }
+    
     /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
         the same name within a dataset.
         @param name variable name
@@ -131,8 +149,17 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */
     public int newVar(String name, double[] d) {
+        if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+            int i=mmDlg(name,d.length);
+            if (i<0) return i;
+        }
 	SVar v=new SVar(name);
-	int i=0; while(i<d.length) v.add(new Double(d[i++]));
+        int i=0; while(i<d.length) {
+            if (d[i]==Double.NaN)
+                v.add(null);
+            else
+                v.add(new Double(d[i++]));
+        }
 	return addVar(v);
     };
 
@@ -143,7 +170,11 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */   
     public int newVar(String name, int[] d) {
-	SVar v=new SVar(name);
+        if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+            int i=mmDlg(name,d.length);
+            if (i<0) return i;
+        }
+        SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(new Integer(d[i++]));
 	return addVar(v);
     };
@@ -155,7 +186,11 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */    
     public int newVar(String name, String[] d) {
-	SVar v=new SVar(name);
+        if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+            int i=mmDlg(name,d.length);
+            if (i<0) return i;
+        }
+        SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(d[i++]);
 	return addVar(v);
     };
@@ -391,6 +426,12 @@ public class Framework implements Dependent, ActionListener {
 	Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_ActionEvent,e.getActionCommand()));
     }
 
+    public void setDebugLevel(int df) {
+        if (Common.DEBUG>0) System.out.println("Setting DEBUG level to "+df);
+        Common.DEBUG=df;
+        if (Common.DEBUG>0) System.out.println("DEBUG level set to "+Common.DEBUG);
+    }
+    
     //=============================== EVENT LOOP STUFF =========================================
 
     private boolean notificationArrived=false;
