@@ -37,7 +37,7 @@ FocusListener, RMainLoopCallbacks {
     private ToolBar toolBar;
 
     private String wspace = null;
-    public static String directory = System.getProperty("user.home");
+    
 
     private int currentHistPosition = 0;
 
@@ -59,7 +59,7 @@ FocusListener, RMainLoopCallbacks {
         String[] Menu = {
             "+", "File","Load Datafile", "loaddata","-","@NNew Document","new","@OOpen Document","open","!OSource File...","source","@SSave","save","-", "@DSet Working Directory", "setwd","~File.Quit", 
             "~EditC",
-            "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
+            "+", "Tools", "Editor", "editor", "@BObject Browser", "objectmgr",
             "DataTable", "table", "-", "Increase Font Size", "fontBigger",
             "Decrease Font Size", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
@@ -231,9 +231,9 @@ FocusListener, RMainLoopCallbacks {
 
     public void loadWorkSpace() {
         FileSelector fopen = new FileSelector(this, "Open Workspace",
-                                              FileSelector.OPEN, directory);
+                                              FileSelector.OPEN, JGR.directory);
         if (fopen.getFile() != null) {
-            wspace = (directory = fopen.getDirectory()) + fopen.getFile();
+            wspace = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
             execute("load(\""+wspace.replace('\\','/')+"\")");
         }
     }
@@ -259,9 +259,9 @@ FocusListener, RMainLoopCallbacks {
 
     public boolean saveWorkSpaceAs() {
         FileSelector fsave = new FileSelector(this, "Save Workspace as...",
-                                              FileSelector.SAVE, directory);
+                                              FileSelector.SAVE, JGR.directory);
         if (fsave.getFile() != null) {
-            String file = (directory = fsave.getDirectory()) + fsave.getFile();
+            String file = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
             saveWorkSpace(file);
             JGR.writeHistory();
             return true;
@@ -318,7 +318,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
 	public String rChooseFile(Rengine re, int newFile) {
-		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,directory);
+		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,JGR.directory);
 		//fd.show();
 		String res=null;
 		if (fd.getDirectory()!=null) res=fd.getDirectory();
@@ -370,7 +370,7 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "exportOutput") output.startExport();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
-        else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, directory);
+        else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, JGR.directory);
         else if (cmd == "open") new Editor().open();
         else if (cmd == "openwsp") loadWorkSpace();
         else if (cmd == "new") new Editor();
@@ -412,6 +412,7 @@ FocusListener, RMainLoopCallbacks {
             int r = chooser.showOpenDialog(this);
             if (r == JFileChooser.CANCEL_OPTION) return;
             if (chooser.getSelectedFile()!=null)
+                JGR.directory = chooser.getSelectedFile().toString();
                 execute("setwd(\""+chooser.getSelectedFile().toString()+"\")");
         }
     }
@@ -422,14 +423,6 @@ FocusListener, RMainLoopCallbacks {
     public void keyPressed(KeyEvent ke) {
         if (ke.getSource().equals(output))
             input.requestFocus();
-        if (JGRPrefs.useEmacsKeyBindings) {
-            if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
-                input.setCaretPosition(input.getText().length());
-            }
-            if (ke.getKeyCode() == KeyEvent.VK_A && ke.isControlDown()) {
-                input.setCaretPosition(0);
-            }
-        }
         if (ke.getKeyCode() == KeyEvent.VK_UP) {
             if (input.mComplete != null && input.mComplete.isVisible()) {
                 input.mComplete.selectPrevios();
