@@ -61,7 +61,7 @@ public class Common
     /** number of warnings so far */
     static int warningsCount=0;
     /** max. # of warnings, any further will be dropped (0=no limit)  */
-    static int maxWarnings=64;
+    static int maxWarnings=250;
     /** screen resolution as obtained from the toolkit.  */
     public static Dimension screenRes=null;
     /** common background color. TFrame uses this as default */
