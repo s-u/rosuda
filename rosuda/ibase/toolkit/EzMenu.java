@@ -51,7 +51,7 @@ public class EzMenu {
                 i++; isNext=true;
                 m.add(mi=new MenuItem("Save as PGS ...")).setActionCommand("exportPGS"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as PostScript ...")).setActionCommand("exportPS"); mi.addActionListener(al);
-                m.add(mi=new MenuItem("Save as PDF ...",new MenuShortcut('P',true))).setActionCommand("exportPDF"); mi.addActionListener(al);
+                m.add(mi=new MenuItem("Save as PDF ...")).setActionCommand("exportPDF"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as SVG ...")).setActionCommand("exportSVG"); mi.addActionListener(al);
                 if (!hasSVG) mi.setEnabled(false);
                 m.add(mi=new MenuItem("Save as PNG ...")).setActionCommand("exportBitmapDlg"); mi.addActionListener(al);
@@ -63,7 +63,7 @@ public class EzMenu {
                 m.add(mi=new MenuItem("Save selected as ...")).setActionCommand("exportCases"); mi.addActionListener(al);
                 m.addSeparator();
                 m.add(mi=new MenuItem("Print ...",new MenuShortcut('P'))).setActionCommand("javaPrint"); mi.addActionListener(al);
-                m.add(mi=new MenuItem("Page Setup ...")).setActionCommand("pageSetup"); mi.addActionListener(al);
+                m.add(mi=new MenuItem("Page Setup ...",new MenuShortcut('P',true))).setActionCommand("pageSetup"); mi.addActionListener(al);
                 m.addSeparator();
                 if (Common.supportsBREAK) {
                     m.add(mi=new MenuItem("Break",new MenuShortcut('B',true))).setActionCommand("BREAK"); mi.addActionListener(al);
