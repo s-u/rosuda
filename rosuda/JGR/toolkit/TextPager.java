@@ -6,6 +6,7 @@ import java.io.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.JGR.toolkit.*;
 
 /** Simple text pager that displays a specified file.
     @version $Id$
@@ -18,6 +19,7 @@ public class TextPager extends iFrame {
 	t=new TextArea();
 	getContentPane().add(t);
         t.setEditable(false); t.setFont(new Font("Monospaced",Font.PLAIN,10));
+        FontTracker.current.add(t);
 	t.setBackground(Color.white);
 	setSize(300,400);
         try {
