@@ -320,9 +320,6 @@ int initR(int argc, char **argv) {
     return 0;
 }
 
-#define SEXP2L(s) ((long)(s))
-#define L2SEXP(s) ((SEXP)((int)(s)))
-
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
   (JNIEnv *env, jobject this, jobjectArray a)
 {
@@ -405,6 +402,20 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
       return SEXP2L(es);
 }
 
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniAssign
+(JNIEnv *env, jobject this, jstring symName, jlong valL, jlong rhoL)
+{
+    SEXP sym, val, rho;
+    
+    sym = jri_installString(env, symName);
+    if (!sym || sym==R_NilValue) return;
+
+    rho=(rhoL==0)?R_GlobalEnv:L2SEXP(rhoL);
+    val=(valL==0)?R_NilValue:L2SEXP(valL);
+   
+    defineVar(sym, val, rho);
+}
+
 JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetString
   (JNIEnv *env, jobject this, jlong exp)
 {
@@ -428,6 +439,12 @@ JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetDoubleArray
   (JNIEnv *env, jobject this, jlong exp)
 {
       return jri_putDoubleArray(env, L2SEXP(exp));
+}
+
+JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetVector
+(JNIEnv *env, jobject this, jlong exp)
+{
+    return jri_putSEXPLArray(env, L2SEXP(exp));
 }
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniExpType
@@ -472,19 +489,35 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutDoubleArray
     return SEXP2L(jri_getDoubleArray(env, a));
 }
 
-JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniAttr
-(JNIEnv *env, jobject this, jlong exp)
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutVector
+(JNIEnv *env, jobject this, jlongArray a)
 {
-    SEXP a = ATTRIB(L2SEXP(exp));
-    return (a==R_NilValue)?0:SEXP2L(a);
+    return SEXP2L(jri_getSEXPLArray(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetAttr
+(JNIEnv *env, jobject this, jlong exp, jstring name)
+{
+    SEXP an = jri_installString(env, name);
+    if (!an || an==R_NilValue || exp==0 || L2SEXP(exp)==R_NilValue) return 0;
+    {
+        SEXP a = getAttrib(L2SEXP(exp), an);
+        return (a==R_NilValue)?0:SEXP2L(a);
+    }
 }
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
-(JNIEnv *env, jobject this, jlong exp)
+(JNIEnv *env, jobject this, jlong exp, jstring aName, jlong attr)
 {
+    SEXP an = jri_installString(env, aName);
+    if (!an || an==R_NilValue || exp==0 || L2SEXP(exp)==R_NilValue) return;
+
+    setAttrib(L2SEXP(exp), an, (attr==0)?R_NilValue:L2SEXP(attr));
+    
     // this is not official API, but whoever uses this should know what he's doing
     // it's ok for directly constructing attr lists, and that's what it should be used for
-    ((SEXPREC*)(L2SEXP(exp)))->attrib = (exp==0)?R_NilValue:L2SEXP(exp);
+    //SET_ATTRIB(L2SEXP(exp), (attr==0)?R_NilValue:L2SEXP(attr));
+    
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCons
