@@ -79,14 +79,7 @@ public class JGR {
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
-        try {
-        	RPackageManager.defaultPackages = RTalk.getDefaultPackages();
-        	for (int i = 0; i < RPackageManager.defaultPackages.length; i++)
-        		System.out.println(RPackageManager.defaultPackages[i]);
-        }
-        catch (Exception e) {
-        	e.printStackTrace();
-        }
+        RPackageManager.defaultPackages = RTalk.getDefaultPackages();
         iPreferences.refreshKeyWords();
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();

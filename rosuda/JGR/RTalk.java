@@ -212,7 +212,10 @@ public class RTalk {
                     //else if (isClass(sx,"aov")) RObjectManager.models.add(createModel(sx,RObject.ANOVA));
                     else if (isClass(sx,"list")) JGR.OTHERS.add(createList(sx));
                     else if (isClass(sx,"matrix")) JGR.OTHERS.add(createMatrix(sx));
-                    else JGR.OTHERS.add(createOther(sx));
+                    else {
+                    	RObject other = createOther(sx);
+                    	if (other != null) JGR.OTHERS.add(other);
+                    }
                 }
             }
         }
@@ -315,13 +318,12 @@ public class RTalk {
 
     /* create other r-obj as java-obj*/
     public static RObject createOther(String sx) {
-        REXP y = JGR.R.eval("class("+sx+")");
+    	if (sx==null || sx.trim().length() == 0) return null;
+        REXP y = JGR.R.eval("suppressWarnings(try(class("+sx+"),silent=TRUE))");
         String[] res;
         if (y!=null && (res = y.asStringArray())!=null) {
-            if (res[0].equals("factor")) return createFactor(null,sx);
-            else {
-                return new other(sx,res[0],null);
-            }
+        	if (res[0].equals("factor")) return createFactor(null,sx);
+            else return new other(sx,res[0],null);
         }
         return null;
     }
@@ -432,7 +434,8 @@ public class RTalk {
     }
 
     public static SVarSet getVarSet(dataframe d) {
-        SVarSet vset = new SVarSet();
+        if (d == null) return null;
+    	SVarSet vset = new SVarSet();
         vset.setName(d.getName());
 
         for (int i = 0; i < d.vars.size(); i++) {
@@ -535,13 +538,13 @@ public class RTalk {
     }
 
     public static boolean isClass(String v, String t) {
-        REXP z = JGR.R.eval("try(class("+v+"),silent=TRUE)");
+        REXP z = JGR.R.eval("suppressWarnings(try(class("+v+"),silent=TRUE))");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
     }
 
     public static boolean isMode(String v, String t) {
-        REXP z = JGR.R.eval("try(mode("+v+"),silent=TRUE)");
+        REXP z = JGR.R.eval("suppressWarnings(try(mode("+v+"),silent=TRUE))");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
     }

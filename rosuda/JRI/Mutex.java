@@ -2,7 +2,7 @@ package org.rosuda.JRI;
 
 /** This class implements a (not so) simple mutex. The initial state of the mutex is unlocked. */
 public class Mutex {
-    public static boolean verbose=true;
+    public static boolean verbose=false;
 
     /** defines the current mutex state */
     private boolean locked=false;

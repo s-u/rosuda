@@ -215,7 +215,7 @@ public class RObjectManager extends iFrame implements ActionListener {
             table = new DefaultMutableTreeNode("tables");
             for (int i = 0; i < objmgr.data.size(); i++) {
                 RObject obj = (RObject) objmgr.data.elementAt(i);
-                if (obj.getType()==RObject.DATAFRAME) {
+                if (obj != null && obj.getType()==RObject.DATAFRAME) {
                     dataframe f = (dataframe) obj;
                     v = new DefaultMutableTreeNode(f);
                     for (int z = 0; z < f.vars.size(); z++) {
@@ -223,7 +223,7 @@ public class RObjectManager extends iFrame implements ActionListener {
                     }
                     df.add(v);
                 }
-                else if (obj.getType()==RObject.TABLE) {
+                else if (obj != null && obj.getType()==RObject.TABLE) {
                     table t = (table) obj;
                     v = new DefaultMutableTreeNode(t);
                     for (int z = 0; z < t.vars.size(); z++) {
@@ -252,7 +252,7 @@ public class RObjectManager extends iFrame implements ActionListener {
         public OthersTreeModel(RObjectManager objmgr) {
             for (int i = 0; i < objmgr.others.size(); i++) {
                 RObject obj = (RObject) objmgr.others.elementAt(i);
-                if (obj.getType()==RObject.LIST) {
+                if (obj != null && obj.getType()==RObject.LIST) {
                     list l = (list) obj;
                     v = new DefaultMutableTreeNode(l);
                     for (int z = 0; z < l.vars.size(); z++) {
