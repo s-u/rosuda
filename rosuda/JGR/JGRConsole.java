@@ -269,6 +269,14 @@ FocusListener, RMainLoopCallbacks {
         else return false;
     }
 
+	public int getFontWidth() {
+		int width = output.getFontMetrics(output.getFont()).charWidth('M');
+        width = output.getWidth() / width;
+		return (int) (width) - (JGRPrefs.isMac?0:1);
+    }
+		
+	//======================================================= R callbacks ===
+
     public void   rWriteConsole(Rengine re, String text) {
         console.append(text);
         if (console.length() > 100) {
@@ -334,13 +342,8 @@ FocusListener, RMainLoopCallbacks {
         }
 	}
 	
+	//======================================================= other events ===
 	
-    public int getFontWidth() {
-		int width = output.getFontMetrics(output.getFont()).charWidth('M');
-        width = output.getWidth() / width;
-		return (int) (width) - (JGRPrefs.isMac?0:1);
-    }
-
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
