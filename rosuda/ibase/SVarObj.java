@@ -216,7 +216,8 @@ public class SVarObj extends SVar
 
     /* added 28.12.03 MH */
     /** insets an empty case to var*/
-    public boolean addCase(int index) {
+    public boolean insert(Object o, int index) {
+        if (o != null) ; //replace (o,index);
         if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
         missingCount++;
         cont.insertElementAt(null,index);
@@ -226,18 +227,23 @@ public class SVarObj extends SVar
 
     /* added 28.12.03 MH */
     /** remove a case, if it's an NA do missingcount--, what i do not is updating cats*/
-    public boolean removeCase(Object o, int index) {
+    public boolean remove(Object o, int index) {
       if (o == null && missingCount > -1) missingCount--;
       cont.removeElementAt(index);
       return true;
     }
 
+    /** replaces an element at specified position - use with care!. this doesn't work for categorical variables.
+        in that case you need to dropCat(), make modifications and categorize().
+        also numerical variables only "grow" their min/max - i.e. if min/max was the removed
+        element, then min/max is not adapted to shrink the range
+        */
 
     /* added 31.12.03 MH */
     /** replace a case, we try to treat categoricaly as well as continious, but it doesn't work in a right way at the moment
      * categories are not updated as they should only with new created vars, and we have to find new max and min, because the way
-     * i try it now, it only works sometimes*/
-    public boolean replaceCase(int i, Object o) {
+     * i try it now, it only works sometimes, if it works in an acceptable way we can overwrite replace*/
+    public boolean replace(int i, Object o) {
       if (i < 0 || i >= size()) return false;
       Object oo = at(i);
       if (oo == o) return true;
@@ -246,22 +252,21 @@ public class SVarObj extends SVar
       if (o == null)
         missingCount++;
       if (cat) {
-          int a = cont.indexOf(oo);
-          int b = cats.indexOf(oo);
-          int z = cats.indexOf(o);
-          if (z == -1 && o != null) {
-            cats.add(o);
-            ccnts.addElement(new Integer(1));
-          }
-          else if (o != null) {
-            ccnts.setElementAt(new Integer( ( (Integer) ccnts.elementAt(z)).
-                                           intValue() + 1), z);
-          }
-          if (b != -1 && cont.indexOf(oo,a+1) == -1) cats.remove(oo);
-          else if ( b != -1) ccnts.setElementAt(new Integer( ( (Integer) ccnts.elementAt(b)).
-                                           intValue() - 1), b);
+          this.categorize(true);
       }
-      if (isnum && o != null) {
+      if (isnum && o!=null) {
+        try {
+          double val=((Number)o).doubleValue();
+          if (val>max) max=val;
+          if (val<min) min=val;
+        } catch(Exception E) {
+          // what do we do when the cast doesn't work ? we return false indicating so
+          E.printStackTrace();
+          return false;
+        }
+      }
+
+      /*if (isnum && o != null) {
         try {
           if(!o.toString().trim().matches("[0-9]*\\.{0,1}[0-9]*")) return false;
           double val = (new Double(o.toString())).doubleValue();
@@ -274,16 +279,16 @@ public class SVarObj extends SVar
             int z = cont.indexOf(oo);
             try {
               if (val == max && cont.indexOf(oo, z + 1) == -1) {
-                /*Object[] cont_2 = cont.toArray();
+                Object[] cont_2 = cont.toArray();
                 Arrays.sort(cont.toArray(cont_2));
                 max = (double) ((Number)cont_2[size()-2]).doubleValue();
-                cont_2 = null;*/
+                cont_2 = null;
               }
               if (val == min && cont.indexOf(oo, z + 1) == -1) {
-                /*Object[] cont_2 = cont.toArray();
+                Object[] cont_2 = cont.toArray();
                 Arrays.sort(cont.toArray(cont_2));
                 System.out.println(cont_2[1]);
-                cont_2 = null;*/
+                cont_2 = null;
               }
             }
             catch (Exception e) {
@@ -295,43 +300,11 @@ public class SVarObj extends SVar
         catch (Exception E) {
           return false;
         }
-      }
+      }*/
       cont.setElementAt(o, i); // we don't modify the element unless we're through all checks etc.
       NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
       return true;
     }
-
-
-
-    /** replaces an element at specified position - use with care!. this doesn't work for categorical variables.
-        in that case you need to dropCat(), make modifications and categorize().
-        also numerical variables only "grow" their min/max - i.e. if min/max was the removed
-        element, then min/max is not adapted to shrink the range
-        */
-    public boolean replace(int i, Object o) {
-        if (i<0 || i>=size() || isCat()) return false;
-        Object oo=at(i);
-        if (oo==o) return true;
-        if (oo==null) {
-            missingCount--;
-        }
-        if (o==null)
-            missingCount++;
-        if (isnum && o!=null) {
-            try {
-                double val=((Number)o).doubleValue();
-                if (val>max) max=val;
-                if (val<min) min=val;
-            } catch(Exception E) {
-                // what do we do when the cast doesn't work ? we return false indicating so
-                return false;
-            }
-        }
-               cont.setElementAt(o,i); // we don't modify the element unless we're through all checks etc.
-        NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
-        return true;
-    }
-
 
     public Object at(int i) { return cont.elementAt(i); };
 
