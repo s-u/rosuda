@@ -370,6 +370,12 @@ used in conjunction with {@link #getSensibleTickDistance}
         return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
+    /** returns category sequence - useful basically for plots that want to sequentially plot categories
+        @return array of indices of categories. do not modify that array */
+    public int[] getCatSequence() {
+        return cseq;
+    }
+
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
 	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+(gBegin+gLen)+"],v["+vBegin+":"+vLen+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
