@@ -25,7 +25,11 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         open=true;
         if (jfr!=null) gdClose();
 
-        jfr=new iFrame("JavaGD", iFrame.clsJavaGD);        
+        jfr=new iFrame("JavaGD", iFrame.clsJavaGD) {
+        	public void dispose() {
+                if (c!=null) executeDevOff();
+        	}
+        };        
         jfr.addWindowListener(this);
 
         String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
