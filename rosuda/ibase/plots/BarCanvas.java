@@ -167,6 +167,22 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     public Dimension getMinimumSize() { return new Dimension(sideSpace*2+30,topSpace+botSpace+30); };
 
+    public void sortBars(boolean bySelected) {
+        int ix[]=null;
+        if (weight==null)
+            ix=Tools.sortIntegersIndex(bySelected?marked:count);
+        else
+            ix=Tools.sortDoublesIndex(bySelected?c_marked:cumulated);
+        int i=0;
+        while (i<bars-1) {
+            ax.moveCat(ix[i],i);
+            i++;
+        }
+        updateBars();
+        setUpdateRoot(0);
+        repaint();
+    }
+    
     /** actual paint method */
     public void paintPoGraSS(PoGraSS g) {
 	Rectangle r=getBounds();
@@ -432,6 +448,8 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     public void keyTyped(KeyEvent e) 
     {
+        if (e.getKeyChar()=='o') sortBars(false);
+        if (e.getKeyChar()=='O') sortBars(true);
 	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='s') run(this,"spine");
 	//if (e.getKeyChar()=='l') run(this,"labels");
