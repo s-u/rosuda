@@ -16,9 +16,15 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
 
     String treeOpt=null;
     String formula;
-    String dsfile="treeGenData.rds";
     String Rver="?";
-    String Rbin="R";
+    String Rbin=null;
+
+    PluginManager pm=null;
+    
+    /* values for cahced initialization - just one plugin needs to detect R */
+    public static boolean initializedSuccessfully=false;
+    public static String lastRbin=null;
+    public static String lastRver=null;
 
     String lastDump=null;
     
@@ -27,6 +33,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         author="Simon Urbanek <simon.urbanek@math.uni-augsburg.de>";
         desc="Grows classification or regression trees using R";
         type=PT_GenTree;
+        pm=PluginManager.getManager();
+        Rbin=pm.getParS("AllPlugins","latestRbinary");
     }
     public void setParameter(String par, Object val) {
         if (par=="dataset") vs=(SVarSet)val;
@@ -42,6 +50,11 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     BufferedReader in;
     
     public boolean initPlugin() {
+        if (initializedSuccessfully) { /* cached initialization if another instance found R already */
+            Rbin=lastRbin; Rver=lastRver;
+            return true;
+        }
+        
         try {
             File fr=new File("PluginInit.r"); if (fr.exists()) fr.delete();
             File fo=new File("PluginInit.out"); if (fo.exists()) fo.delete();
@@ -51,27 +64,38 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             p.close();
 
             Process pc=null;
-            try {
-                Rbin="R";
-                pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
-            } catch (Exception e1) {
+            if (Rbin!=null) {
                 try {
-                    Rbin="/usr/bin/R";
                     pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
-                } catch (Exception e2) {
+                } catch (Exception e0) {};
+            };
+            if (pc==null) {
+                try {
+                    Rbin="R";
+                    pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                } catch (Exception e1) {
                     try {
-                        Rbin="/usr/local/bin/R";
+                        Rbin="/usr/bin/R";
                         pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
-                    } catch (Exception e3) {
+                        pm.setParS("AllPlugins","latestRbinary",Rbin);
+                    } catch (Exception e2) {
                         try {
-                            Rbin="/sw/bin/R";
+                            Rbin="/usr/local/bin/R";
                             pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
-                        } catch (Exception e4) {
-                            err="Cannot find R executable!"; return false;
+                            pm.setParS("AllPlugins","latestRbinary",Rbin);
+                        } catch (Exception e3) {
+                            try {
+                                Rbin="/sw/bin/R";
+                                pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                                pm.setParS("AllPlugins","latestRbinary",Rbin);
+                            } catch (Exception e4) {
+                                err="Cannot find R executable!"; return false;
+                            }
                         }
                     }
-                }                
+                }
             }
+            
             if (pc!=null) pc.waitFor();
             if (fr.exists()) fr.delete();
             if (!fo.exists()) {
@@ -87,6 +111,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 br.close();
                 fo.delete();
                 System.out.println("Found R "+Rver);
+                initializedSuccessfully=true;
+                lastRbin=Rbin;
+                lastRver=Rver;
                 return true;
             }
         } catch(Exception e) {
@@ -117,12 +144,21 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
 
     Dialog d;
-    
+
+    class SpacingPanel extends Panel {
+        public Dimension getMinimumSize() { return new Dimension(15,15); }
+        public Dimension getMaximumSize() { return new Dimension(15,15); }
+        public Dimension getPreferredSize() { return new Dimension(15,15); }
+    }
+
     public boolean pluginDlg(Frame f) {
         Button b=null;
         d=new Dialog(f,"Generate Tree Plug-in",true);
         d.setLayout(new BorderLayout());
-        d.add(b=new Button("OK"),BorderLayout.SOUTH);
+        d.add(new SpacingPanel(),BorderLayout.WEST);
+        d.add(new SpacingPanel(),BorderLayout.EAST);
+        Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+        bp.add(b=new Button("OK")); d.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
         List l=new List((vs.count()>10)?10:vs.count(),true);
         int j=0;
@@ -137,7 +173,10 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         Panel p=new Panel();
         p.setLayout(new BorderLayout());
         d.add(p);
-        d.add(new Label("Using R "+Rver+" in "+Rbin),BorderLayout.NORTH);
+        Panel lp=new Panel();
+        lp.setLayout(new FlowLayout());
+        lp.add(new Label("     Using R "+Rver+" in "+Rbin+"     "));
+        d.add(lp,BorderLayout.NORTH);
         p.add(c);
         p.add(l,BorderLayout.NORTH);
         TextField t=new TextField("");
@@ -227,7 +266,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 return false;
             } else {
                 BufferedReader br=new BufferedReader(new FileReader("PluginInit.out"));
-                root=RTree.Load(br,vs,0,"[1] TREE","[1] END");
+                root=RTree.Load(br,vs,0,"[1] TREE","[1] END",true);
                 if (root!=null) {
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
