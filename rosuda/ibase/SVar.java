@@ -98,9 +98,23 @@ public abstract class SVar extends Notifier
       this.selected=false;
     }
 
-    /* added 28.12.03 MH */
-    /* we want to be able to make an empty SVar with nulls, because we need something for the table */
-    public abstract void setAllEmpty(int size);
+    /** we want to be able to make an empty SVar with the specified size and <code>null</code> content (added 28.12.03 MH).
+        remove abstract and define a fallback using replace/add/remove in case the subclass doesn't provide its optimized version (SU 19.1.04) */
+    public void setAllEmpty(int size) {
+        int i=0;
+        int inits=size();
+        if (inits>size) {
+            while (inits>size) {
+                remove(--inits);
+            }
+        }
+        while (i<inits) {
+            replace(i++, null);
+        }
+        while (i<size) {
+            add(null); i++;
+        }
+    }
 
     /** sets type of an internal variable. internal variables are variables that were not contained
         in the original dataset. derived variables are also internal if they were derived in klimt and not loaded
@@ -199,10 +213,7 @@ public abstract class SVar extends Notifier
 
 
     /** removes a case from the variable at specified index. the exact behavior is implementation-dependent.*/
-    public abstract boolean remove(Object o, int index);
-    public boolean remove(double d, int index) { return remove(new Double(d), index); }
-    public boolean remove(int i, int index) { return remove(new Integer(i), index); }
-
+    public abstract boolean remove(int index);
 
     /** replaces an element at specified position
         @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
