@@ -332,7 +332,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                         if (link != null) link.setText(" ");
                     }
                     else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        goTo(e.getURL(),true);
+                        goTo(e.getURL());
                     }
                 }
             });
@@ -358,6 +358,16 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             //System.out.println("test"+url);
             try {
                 helpPane.setPage(url);
+				                    try {
+                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
+                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+						else {
+							int i = url.toString().indexOf("html");
+							title = url.toString().substring(0,i-1);
+							title = title.substring(title.lastIndexOf(File.separator)+1);
+							if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+						}
+                    } catch (Exception ex2) {}
                 
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -388,23 +398,13 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             currentURLIndex++;
             updatePage();
         }
-
-        public void goTo(URL url) {
-            goTo(url,false);
-        }
         
-        public void goTo(URL url,boolean href) {
+        public void goTo(URL url) {
             if (url != null) {
                 currentURLIndex++;
                 history.setSize(currentURLIndex);
                 history.add(url);
                 updatePage();
-                if (href) {
-                    try {
-                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
-                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
-                    } catch (Exception ex2) {}
-                }
             }
         }
 
