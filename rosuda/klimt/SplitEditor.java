@@ -13,8 +13,9 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
     TextField st=null;
     Choice vc;
     ScatterCanvas sc;
+    LineCanvas lc;
     Label l1;
-    Panel cp,sp;
+    Panel cp,sp,pp;
     PlotLine li;
     double spVal;
     
@@ -31,7 +32,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             add(new SpacingPanel(),BorderLayout.EAST);
             Panel bp=new Panel(); bp.setLayout(new FlowLayout());
             Button b;
-            bp.add(b=new Button("Preview")); b.addActionListener(this);
+            //bp.add(b=new Button("Preview")); b.addActionListener(this);
             bp.add(b=new Button("OK")); b.addActionListener(this);
             bp.add(b=new Button("Cancel")); b.addActionListener(this);
             add(bp,BorderLayout.SOUTH);
@@ -61,7 +62,70 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                 m.addDepend(sc);
                 sc.setFilter(n.data);
                 sc.setSize(400,100);
-                cp.add(sc);
+                pp=new Panel(); pp.setLayout(new GridLayout(2,1));
+                cp.add(pp); pp.add(sc);
+
+                /** build deviance plot
+                    known bugs:
+                    - uses entire data instead of in-node data
+                    - is not updated on var change
+                    todo?
+                    - plot also left/right deviance? */
+                
+                SVar sdv=new SVar("SplitDev",false);
+                SVar rxv=new SVar("RankedXV",false);
+                int []rks=cv.getRanked();
+                int q=0;
+                int []cls=new int[root.response.getNumCats()];
+                int []tcls=new int[root.response.getNumCats()];
+                if (Common.DEBUG>0)
+                    System.out.println("ranked: "+rks.length+", classes="+tcls.length);
+                while(q<tcls.length) {
+                    tcls[q]=root.response.getSizeCatAt(q);
+                    if (Common.DEBUG>0)
+                        System.out.println(" class "+q+", count="+tcls[q]);
+                    q++;
+                };
+                q=0;
+                double D=Tools.nlogn(rks.length);
+                int lct=0, eq=0;
+                double lv;
+                while(q<rks.length) {                    
+                    lv=cv.atD(rks[q]);
+                    eq=0;
+                    while (q<rks.length && lv==cv.atD(rks[q])) {
+                        int ci=root.response.getCatIndex(rks[q]);
+                        if (ci>-1) cls[ci]++;
+                        rxv.add(cv.at(rks[q]));
+                        q++; eq++; lct++;
+                    };
+                    if (Common.DEBUG>0)
+                        System.out.println("q="+q+", lv="+lv+", eq="+eq+", lct="+lct);
+                    
+                    double d=D-Tools.nlogn(lct)-Tools.nlogn(rks.length-lct);
+                    int cl=0;
+                    while(cl<cls.length) {
+                        d+=-Tools.nlogn(tcls[cl])+Tools.nlogn(cls[cl])+Tools.nlogn(tcls[cl]-cls[cl]);
+                        cl++;
+                    }
+                    while(eq>0) {
+                        sdv.add(new Double(d));
+                        eq--;
+                    };
+                };
+                if (Common.DEBUG>0) {
+                    System.out.println("Consistency check:");
+                    System.out.println("sdv length="+sdv.size()+", rxv length="+rxv.size());
+                    q=0; while(q<tcls.length) {
+                        System.out.println(" class "+q+", tcls="+tcls[q]+", cls="+cls[q]);
+                        q++;
+                    };
+                }
+                SVar[] svl=new SVar[1]; svl[0]=sdv;
+                lc=new LineCanvas(this,rxv,svl,m);
+                //lc=new ScatterCanvas(this,rxv,sdv,m);
+                lc.setLineType(LineCanvas.LT_RECT);
+                pp.add(lc);
                 PlotManager pm=sc.getPlotManager();
                 if (pm!=null) {
                     li=new PlotLine(pm);
@@ -176,13 +240,14 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         SMarker ml=new SMarker(cv.size());
                         SMarker mr=new SMarker(cv.size());
                         int i=0;
+                        Vector leftd=new Vector(), rightd=new Vector();
                         while(i<cv.size()) {
                             Object o=cv.at(i);
-                            if (o!=null) {
+                            if (o!=null && n.data.contains(new Integer(i))) {
                                 try {
                                     double v=((Number)o).doubleValue();
-                                    if (v<=spVal) ml.set(i,1);
-                                    if (v>spVal) mr.set(i,1);
+                                    if (v<=spVal) { ml.set(i,1); leftd.addElement(new Integer(i)); };
+                                    if (v>spVal) { mr.set(i,1); rightd.addElement(new Integer(i)); };
                                 } catch(Exception ex) {};
                             }
                             i++;
@@ -228,7 +293,9 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         leftb.splitIndex=rightb.splitIndex=vs.indexOf(cv.getName());
                         leftb.Cond=cv.getName()+" < "+spVal;
                         rightb.Cond=cv.getName()+" > "+spVal;
-                        
+                        //leftb.data=leftd; rightb.data=rightd;
+                        leftb.splitComp=-1; rightb.splitComp=1;
+                        RTree.passDownData(ntcp,leftb); RTree.passDownData(ntcp,rightb);
                         //---
                         SVar vvv;
                         vvv=RTree.getClassifierVar(nt,nt.response);
@@ -246,6 +313,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         TreeCanvas tc=InTr.newTreeDisplay(nt,f);
                         tc.repaint(); tc.redesignNodes();
                         RTree.getManager().addTree(nt);
+
+                        WinTracker.current.rm(this);
+                        sc=null; li=null; removeAll();
+                        dispose();                        
                     }
                 };
             };
