@@ -4,18 +4,18 @@
 //
 
 import java.awt.*;
+import java.awt.print.*;
 import java.awt.event.*;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.Enumeration;
 import javax.swing.*;
-//import javax.swing.event.*;
 
 public
 abstract class DragBox
 
 extends JPanel
-implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener
+implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener, Printable
 
 {
 
@@ -45,7 +45,9 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
   public boolean printing;                               // flag to avoid double buffering while printing ...
 
-  public PrintJob pj;
+  public PrinterJob pj;
+
+  public int printFactor = 4;														// Increase in resolution for printing
 
   public Dimension printerPage;                               // must be accessible in different paints ...
 
@@ -144,7 +146,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   protected double hurx, urx;
   protected double hury, ury;
 
-  protected double aspectRatio;
+  protected double aspectRatio = -1;
 
   protected Vector zooms = new Vector(10,0);
 
@@ -169,8 +171,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     return aspectRatio;
   }
 
-  public void print() {
-  }
+//  public void print() {
+//  }
 
   public void reScale(double llx, double lly, double urx, double ury) {
 
@@ -413,7 +415,7 @@ System.out.println("Mouse pres: ... "+e.getModifiers());
             case 1:
             case 2:
               //	            if((System.getProperty("os.name")).equals("Mac OS") && (mouse != CHANGE) ) {
-              //		        dragEnd(e);
+             		        dragEnd(e);
               //		    }
               mouse = AVAILABLE;
               break;
@@ -456,8 +458,8 @@ System.out.println(" dragEnd! ");
       sr = new Rectangle(lx, ly, lw, lh);
 
       int modifiers = e.getModifiers();
-System.out.println("modifiers callback = "+e.getModifiers());
-System.out.println("mouse "+mouse);
+//System.out.println("modifiers callback = "+e.getModifiers());
+//System.out.println("mouse "+mouse);
 
       if( modifiers == BUTTON1_UP ||
           modifiers == BUTTON1_UP + META_DOWN - 16 && SYSTEM == MAC ||
@@ -521,7 +523,43 @@ System.out.println("mouse "+mouse);
 
     public abstract void dataChanged(int id);
 
-    public abstract void paint(Graphics g);
+    public abstract void paint(Graphics2D g);
+
+    public void paint(Graphics g) {
+      paint((Graphics2D)g);
+    }
+    
+    public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
+
+      if (pageIndex > 0) {
+        return(NO_SUCH_PAGE);
+      } else {
+//        printFactor = 5;
+        System.out.println(" P R I N T I N G at: "+pageFormat.getImageableWidth()+" by "+pageFormat.getImageableHeight());
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.translate(pageFormat.getImageableX() + pageFormat.getImageableWidth()*0.05,
+                      pageFormat.getImageableY() + pageFormat.getImageableHeight()*0.05);
+        g2d.scale(1.0/printFactor, 1.0/printFactor);
+        // Turn off double buffering
+        Dimension save = this.getViewportSize();
+        int setWidth  = (int)(pageFormat.getImageableWidth()*0.9)*printFactor;
+        int setHeight = (int)(pageFormat.getImageableHeight()*0.9)*printFactor;
+        if( aspectRatio == -1 )
+          if(   pageFormat.getImageableWidth() / pageFormat.getImageableHeight()
+              < save.width / save.height )
+            setHeight = (int)((double)(setWidth *  ((double)save.height / (double)save.width)));
+          else
+            setWidth  = (int)((double)(setHeight * ((double)save.width / (double)save.height)));
+        super.setSize(setWidth, setHeight);
+        g2d.setFont(new Font("SansSerif",0,11*printFactor));
+        printing = true;
+        this.paint(g2d);
+        printing = false;
+        this.setSize(save);
+        // Turn double buffering back on
+        return(PAGE_EXISTS);
+      }
+    }
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -544,21 +582,21 @@ System.out.println("mouse "+mouse);
         g.drawString(S.step+"", r.x+r.width/2-3, r.y+r.height/2+5);
 
       if( S == activeS )
-        g.setColor( Color.black );
+        g.setColor( new Color(0, 0, 0, 150));
       else
-        g.setColor( Color.gray );
+        g.setColor( new Color(255, 255, 255, 90));
 
 //      g.drawRect(r.x, r.y, r.width, r.height);
 //      g.drawRect(r.x-1, r.y-1, r.width+2, r.height+2);
 
-      g.fillRect(r.x-3, r.y-3, 4, 4);
-      g.fillRect(r.x+r.width/2-2, r.y-3, 4, 4);
-      g.fillRect(r.x+r.width, r.y-3, 4, 4);
+      g.fillRect(r.x-4, r.y-4, 4, 4);
+      g.fillRect(r.x+r.width/2-2, r.y-4, 4, 4);
+      g.fillRect(r.x+r.width, r.y-4, 4, 4);
 
-      g.fillRect(r.x-3, r.y+r.height/2-2, 4, 4);
+      g.fillRect(r.x-4, r.y+r.height/2-2, 4, 4);
       g.fillRect(r.x+r.width, r.y+r.height/2-2, 4, 4);
 
-      g.fillRect(r.x-3, r.y+r.height, 4, 4);
+      g.fillRect(r.x-4, r.y+r.height, 4, 4);
       g.fillRect(r.x+r.width/2-2, r.y+r.height, 4, 4);
       g.fillRect(r.x+r.width, r.y+r.height, 4, 4);
     }
@@ -622,17 +660,22 @@ System.out.println("Mouse Action before check: "+mouse);
       else
         mouse = ZOOMING;
 
-//System.out.println("Mouse Action: "+mouse);
+System.out.println("Mouse Action to check: "+mouse);
 
       switch (mouse) {
 
         case DRAGGING:
         case ZOOMING:
-          xcorner[0] = x;
-          ycorner[0] = y + sb.getValue();
-          xcorner[2] = xcorner[0];
-          ycorner[2] = ycorner[0];
-          System.out.println("Mouse Action: DRAGGING");
+          if( e.isPopupTrigger() || (e.getModifiers() ==  BUTTON3_DOWN && SYSTEM == WIN) && !e.isShiftDown() ) {
+            System.out.println(" pop up in nowhere !!");
+            mouse = AVAILABLE;
+          } else {
+            xcorner[0] = x;
+            ycorner[0] = y + sb.getValue();
+            xcorner[2] = xcorner[0];
+            ycorner[2] = ycorner[0];
+            System.out.println("Mouse Action: DRAGGING");
+          }
           break;
         case MOVING:
           if( modifiers == BUTTON1_DOWN ) {
@@ -830,11 +873,26 @@ System.out.println("Mouse Action before check: "+mouse);
 
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_P)   &&
-          (e.isControlDown()) ) {
+          (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        
+        pj = PrinterJob.getPrinterJob();
+        PageFormat pageFormat = pj.defaultPage();
+        Dimension size = this.getSize();
+        if( size.width > size.height ) 
+          pageFormat.setOrientation(pageFormat.LANDSCAPE);
+        else 
+          pageFormat.setOrientation(pageFormat.PORTRAIT);
 
-        printing = true;
-        PrintUtilities.printComponent(this);
-        printing = false;
+        pageFormat = pj.pageDialog(pageFormat);
+        if( pageFormat != null ) {
+          //        pageFormat = pj.validatePage(pageFormat);
+          pj.setPrintable(this, pageFormat);
+
+          if (pj.printDialog()) {
+            try { pj.print(); }
+            catch (PrinterException ex) { System.out.println(ex); }
+          }
+        }
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_A)   &&
