@@ -1,10 +1,11 @@
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
 /** query popup 
     @version $Id$
 */
-class QueryPopup
+class QueryPopup implements MouseListener
 {    
     class QPCanvas extends LayerCanvas {
 	String[] content;
@@ -145,7 +146,9 @@ class QueryPopup
 	win=new Window(own);
 	win.add(cvs=new QPCanvas(win,vs,ct,w,cid));
 	cvs.setSize(100,50);
-	win.setBackground(Common.popupColor);	
+	win.setBackground(Common.popupColor);
+	win.addMouseListener(this);
+	cvs.addMouseListener(this);
 	win.pack();
     }
 
@@ -190,5 +193,14 @@ class QueryPopup
             x=Common.screenRes.width-d.width-5;
 	win.setLocation(x,y);
     }
+
+    public void mouseClicked(MouseEvent e) {
+	hide();
+    }
+
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 }
 
