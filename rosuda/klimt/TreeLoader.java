@@ -146,14 +146,14 @@ remark: this method can be used to load trees and data separately, but data must
                             if (s.indexOf("\t")>-1) { // we got tabs in the data, ergo TSV
                                 dataSep="\t";
                             } else { // no tabs, ergo SSV, but possible RDS, check that
-                                if ((s.charAt(0)==' ')||(s.charAt(0)=='"')) {
+                                if (s.charAt(0)==' ') { // we used to condition on " too, but that's too dangerous if quoted TSV is used
                                     // RDS ergo add index as first var
                                     rdsType=true; SVar idx=new SVarObj("index",false);
                                     idx.setInternalType(SVar.IVT_Index);
                                     idx.getNotifier().beginBatch();
                                     vset.add(idx);
-                                };
-                            };
+                                }
+                            }
                             StringTokenizer st=new StringTokenizer(s,dataSep);
                             while (st.hasMoreTokens()) {
                                 boolean forceCat=false;
