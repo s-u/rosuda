@@ -59,7 +59,7 @@ public class SplashScreen extends JWindow implements Runnable {
                          175, 85);
             g.setFont(new Font("Dialog", Font.ITALIC, 13));
             g.drawString("" + iPreferences.AUTHOR1,
-                         160, 119);
+                         163, 119);
             g.drawString("" + iPreferences.AUTHOR2,
                          160, 135);
             g.setFont(new Font("Dialog", 0, 12));
