@@ -14,6 +14,9 @@ public class SVarSet {
     /** dataset name */
     String name;
 
+    int globalMisclassVarID=-1;
+    int classifierCounter=1;
+
     /** default constructor of empty dataset */
     SVarSet() { vars=new Vector(); name="<unknown>"; };
     

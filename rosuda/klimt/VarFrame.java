@@ -15,8 +15,8 @@ public class VarFrame extends TFrame {
 	super(vs.getName()+" (Variables)");
         setBackground(new Color(255,255,192));
 	int rh=h;
-	if (rh>vs.count()*17+6+115)
-	    rh=vs.count()*17+6+115;
+	if (rh>vs.count()*17+6+115+40)
+	    rh=vs.count()*17+6+115+40;
 	setLayout(new BorderLayout());
 	int minus=0;
 	if (rh==h) {
@@ -73,6 +73,13 @@ public class VarFrame extends TFrame {
 	    sb=s;
 	    minDim=new Dimension(140,100);
 	};
+
+        public void rebuildVars() {
+            vars=vs.count();
+            selMask=new boolean[vars];
+            repaint();
+        };
+        
 	public void adjustmentValueChanged(AdjustmentEvent e) {
 	    offset=e.getValue();
 	    repaint();
@@ -170,7 +177,7 @@ public class VarFrame extends TFrame {
 	public void mouseExited(MouseEvent e) {};
     };
 
-    class VarCmdCanvas extends DBCanvas implements MouseListener
+    class VarCmdCanvas extends DBCanvas implements MouseListener, Dependent
     {
 	/** associated window */
         VarFrame win;
@@ -180,6 +187,7 @@ public class VarFrame extends TFrame {
 	int vars;
 	VarCanvas vc;
 	Dimension minDim;
+        SMarker sm;
 
 	/** constructs a new variable canvas for associated tree canvas
 	    @param w window in which this canvsa is displayed
@@ -190,10 +198,15 @@ public class VarFrame extends TFrame {
 	    win=w; vs=dataset;
 	    vars=vs.count();
 	    addMouseListener(this);
-	    vc=w.vc;
-	    minDim=new Dimension(140,115);
+            vc=w.vc; sm=vs.getMarker();
+            if (sm!=null) sm.addDepend(this);
+	    minDim=new Dimension(140,115);            
 	};
 
+        public void Notifying(Object o, Vector path) {
+            repaint();
+        };
+        
 	public Dimension getMinimumSize() { return minDim; };
 
 	/** implementation of the {@link DBCanvas#paintBuffer} method
@@ -216,7 +229,11 @@ public class VarFrame extends TFrame {
 	    Color C_frame=new Color(128,128,128);
 
             g.setColor(Color.black);
-            g.drawString("Total "+vs.at(0).size()+" cases",10,16);
+            sm = vs.getMarker();
+            if (sm!=null)
+                g.drawString("Selected "+sm.marked()+" of "+vs.at(0).size()+" cases",10,16);
+            else
+                g.drawString("Total "+vs.at(0).size()+" cases",10,16);
             
 	    i=1;
 	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot"};
@@ -274,6 +291,10 @@ public class VarFrame extends TFrame {
 		    TreeCanvas tc=InTr.newTreeDisplay(t,f);
 		    tc.repaint(); tc.redesignNodes();		
 		    //InTr.newVarDisplay(tvs);
+                    if (vc.vars!=vs.count()) {
+                        vars=vs.count();
+                        vc.rebuildVars();
+                    };
 		};    
 	    };
 	    if (cmd==2) {

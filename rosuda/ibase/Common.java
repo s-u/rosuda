@@ -7,7 +7,7 @@ import java.awt.event.*;
 public class Common
 {
     /** Debug flag. When set to >0 verbose debug messages are generated. */
-    public static int DEBUG=0;
+    public static int DEBUG=1;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -16,9 +16,9 @@ public class Common
     public static WindowListener defaultWindowListener=null;
 
     /** application version */
-    public static String Version="0.95g";
+    public static String Version="0.95h";
     /** application release */
-    public static String Release="C225";
+    public static String Release="C228";
     /** application type. so far 0=stand-alone (default, 1=applet - set by Wrapper) */
     public static int AppType=0;
 

@@ -24,7 +24,8 @@ public class SNode extends Node implements Cloneable
     public String Name;
     /** values (percentage of each class) */
     public Vector V;
-
+    /** classification or regression variable */
+    public SVar response=null;
     /** pruning flag. if set to <code>true</code> then all <i>children</i> has been pruned. beware, that does mean that the node has to check prune flag of its parent to see if it's been pruned also. */
     boolean pruned;
 
