@@ -38,7 +38,7 @@ public class RecentList {
                     int k=i;
                     while (k>0) {
                         list[k]=list[k-1];
-                        k++;
+                        k--;
                     }
                     list[0]=h;
                     serial++;
