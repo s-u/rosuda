@@ -66,7 +66,6 @@ public class AxisCatSequence implements Dependent {
             left[i]=(int)running;
             running+=dtl*(cs/all);
             right[i]=(int)running;
-            System.out.println("** i="+i+", left="+left[i]+", right="+right[i]);
             running+=(double)gap;
             i++;
         }
