@@ -190,7 +190,6 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
             };
         }
 
-        int csq[]=A[0].getCatSequence();
         g.setColor("line");
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
