@@ -19,6 +19,8 @@ public class Framework implements Dependent {
         Common.supportsBREAK=true;
         Common.useAquaBg=true;
         Common.initStatic();
+        if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
+        Common.breakDispatcher.addDepend(this);
 	cvs=new SVarSet();
 	cvs.setName("default");
 	dataset=new Vector();
