@@ -275,8 +275,12 @@ public class RObjectManager extends iFrame implements ActionListener {
             try {
                 obj = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
             } catch (Exception ex) {}
-
-            Transferable t = new StringSelection(obj==null?"dragFailure":(((RObject) obj.getParent()).getType()==RObject.DATAFRAME?(((RObject)obj.getParent()).getName()+"$"+obj.getName()):obj.getName()));
+            String drag = null;
+            if (obj.getParent()!=null) {
+                drag = ((RObject) obj.getParent()).getType()==RObject.DATAFRAME?((RObject) obj.getParent()).getName()+"$"+obj.getName():obj.getName();
+            }
+            else drag = obj.getName();
+            Transferable t = new StringSelection(obj==null?"dragFailure":drag);
             dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
         }
         public void dragEnter(DragSourceDragEvent evt) {
