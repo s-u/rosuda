@@ -36,9 +36,9 @@ public class KapMeCanvas extends BaseCanvas
             }
         }
 
-        kmX=new double[times+2];
-        kmY=new double[times+2];
-        kmC=new double[times+2];
+        kmX=new double[times+1];
+        kmY=new double[times+1];
+        kmC=new double[times+1];
 
         int kmp=1;
         kmX[0]=0; kmY[0]=1; kmC[0]=1;
@@ -84,12 +84,13 @@ public class KapMeCanvas extends BaseCanvas
 
         vTime=time; vEvent=event;
         ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this); ay.setValueRange(0,1);
-        ax=new Axis(vTime,Axis.O_X,Axis.T_Num); ax.addDepend(this);
+        ax=new Axis(vTime,Axis.O_X,Axis.T_Num); ax.addDepend(this); ax.setValueRange(0,ax.vBegin+ax.vLen);
 
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide counts","counts","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        mLeft=mRight=mTop=mBottom=10;
-
+        mRight=mTop=10;
+        mBottom=25;
+        mLeft=35;
         pp=null;
     }
 
@@ -109,7 +110,7 @@ public class KapMeCanvas extends BaseCanvas
             if (y2==y) {
                 g.drawLine(x,y,x2,y2);
             } else {
-                g.drawLine(x,y,x,y2); g.drawLine(x,y2,x2,y2);
+                g.drawLine(x,y,x2,y); g.drawLine(x2,y,x2,y2);
             }
             x=x2; y=y2;
             i++;
@@ -142,6 +143,47 @@ public class KapMeCanvas extends BaseCanvas
     public void paintBack(PoGraSS g) {
         if (kmX==null) return;
 
+        g.setColor("black");
+        g.drawLine(mLeft,mTop,mLeft,H-mBottom);
+        g.drawLine(mLeft,H-mBottom,W-mRight,H-mBottom);
+
+        /* draw ticks and labels for X axis */
+        {
+            double f=ax.getSensibleTickDistance(50,26);
+            double fi=ax.getSensibleTickStart(f);
+            if (Global.DEBUG>1)
+                System.out.println("KM.ax:"+ax.toString()+", distance="+f+", start="+fi);
+            try {
+                while (fi<ax.vBegin+ax.vLen) {
+                    int t=ax.getValuePos(fi);
+                    g.drawLine(t,H-mBottom,t,H-mBottom+5);
+                    if (showLabels)
+                        g.drawString(ax.getDisplayableValue(fi),t,H-mBottom+20,0.5,0);
+                    fi+=f;
+                }
+            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            }
+        }
+
+        /* draw ticks and labels for Y axis */
+        {
+            double f=ay.getSensibleTickDistance(30,18);
+            double fi=ay.getSensibleTickStart(f);
+            if (Global.DEBUG>1)
+                System.out.println("KM.ay:"+ay.toString()+", distance="+f+", start="+fi);
+            try {
+                while (fi<ay.vBegin+ay.vLen) {
+                    int t=ay.getValuePos(fi);
+                    g.drawLine(mLeft-5,t,mLeft,t);
+                    if(showLabels)
+                        g.drawString(ay.getDisplayableValue(fi),mLeft-8,t,1,0.3);
+                    fi+=f;
+                }
+            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            }
+        }
+        
+        
         if (filter==null) { // no filter=everything is cached
             g.setColor("counts");
             paintCounts(g,1.0);
