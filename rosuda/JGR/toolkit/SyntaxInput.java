@@ -26,7 +26,7 @@ import org.rosuda.JGR.RController;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class SyntaxInput extends SyntaxArea implements KeyListener {
-
+	
     private boolean disableEnter = false;
     private Vector commands = new Vector();
     private String fun = null;
@@ -36,7 +36,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     private JToolTip Tip = new JToolTip();
     public  CodeCompleteMultiple mComplete;
     private Point p;
-
+	
     public SyntaxInput(boolean disableEnter){
         this.disableEnter = disableEnter;
         this.addKeyListener(this);
@@ -52,7 +52,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         this.setDocument(new SyntaxInputDocument());
         mComplete = new CodeCompleteMultiple(this);
     }
-
+	
     private String getLastCommand() {
         String word = null;
         String text = this.getText();
@@ -79,7 +79,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         end = end==-1?l:end;
         return (offset!=end)?text.substring(offset,end).trim():null;
     }
-
+	
     private String getLastPart() {
         String word = null;
         String text = this.getText();
@@ -98,7 +98,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         offset = offset==-1?0:++offset;
         return (offset!=end)?text.substring(offset,end).trim():null;
     }
-
+	
     public void showCmdCompletions(String[] result) {
         if (cmdHelp != null) cmdHelp.hide();
         p = getCaret().getMagicCaretPosition();
@@ -108,10 +108,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         cmdHelp = PopupFactory.getSharedInstance().getPopup(this,mComplete,p.x,p.y+15);
         cmdHelp.show();
     }
-
+	
     public void keyTyped(KeyEvent ke) {
     }
-
+	
     public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
             if (cmdHelp != null) cmdHelp.hide();
@@ -119,7 +119,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             if (funHelpTip != null) funHelpTip.hide();
         }
     }
-
+	
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
             String text = null;
@@ -157,7 +157,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                     if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
                         showCmdCompletions(result);
                     if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
-
+					
                 }
                 else {
                     if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun) ) {
@@ -231,7 +231,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             if (funHelpTip != null) funHelpTip.hide();
         }
     }
-
+	
     private void showFunHelp(String fun) {
         funHelp = RController.getFunHelpTip(fun);
         if (fun != null && funHelp != null) {
@@ -250,13 +250,13 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             commands.add(p);
         }
     }
-
+	
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,int condition, boolean pressed) {
         if (disableEnter && e.getKeyCode() == KeyEvent.VK_ENTER) return true;
-
+		
         InputMap map = getInputMap(condition);
         ActionMap am = getActionMap();
-
+		
         if(map != null && am != null && isEnabled()) {
             Object binding = map.get(ks);
             Action action = (binding == null) ? null : am.get(binding);
@@ -266,7 +266,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         }
         return false;
     }
-
+	
     class SyntaxInputDocument extends SyntaxDocument {
         public void remove(int offset, int length) throws BadLocationException {
             if (JGRPrefs.useHelpAgent && getText(offset,length).equals("(")) {
@@ -321,7 +321,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 });
                 funHelpTip = PopupFactory.getSharedInstance().getPopup(getParent(),Tip,p.x,p.y+20);
                 funHelpTip.show();
-
+				
             }
             else if (funHelpTip != null) {
                 funHelpTip.hide();
@@ -329,23 +329,25 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             }
             }*/
             super.remove(offset,length);
-            fun = getLastCommand();
-			if (fun != null)
-				SwingUtilities.invokeLater(new Runnable() {
-					public void run() {
-						showFunHelp(fun);
-					}
-				});
-			
-			if (funHelpTip != null) funHelpTip.hide();
+            if (JGRPrefs.useHelpAgent) {
+				fun = getLastCommand();
+				if (fun != null)
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							showFunHelp(fun);
+						}
+					});
+				
+				if (funHelpTip != null) funHelpTip.hide();
+			}
         }
     }
-
+	
     public class CodeCompleteMultiple extends Panel {
-
+		
         public java.awt.List cmds = new java.awt.List();
         private SyntaxInput parent = null;
-
+		
         public CodeCompleteMultiple(SyntaxInput tcomp) {
             parent = tcomp;
             this.setLayout(new GridLayout(1,1));
@@ -366,32 +368,32 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             this.setSize(cmds.getWidth()+10,cmds.getHeight());
             this.setVisible(false);
         }
-
+		
         public void refresh(String[] commands) {
             cmds.removeAll();
             for (int i = 0; i < commands.length; i++)
                 cmds.add(commands[i]);
             cmds.select(0);
         }
-
+		
         public void completeCommand() {
             parent.insertAt(parent.getCaretPosition(),cmds.getSelectedItem().replaceFirst(fun,""));
             this.setVisible(false);
             if (cmdHelp != null) cmdHelp.hide();
         }
-
+		
         public void selectPrevios() {
             int i = cmds.getSelectedIndex();
             if (--i >= 0)
                 cmds.select(i);
         }
-
+		
         public void selectNext() {
             int i = cmds.getSelectedIndex();
             if (++i < cmds.getItemCount())
                 cmds.select(i);
         }
-
+		
         public void setVisible(boolean b) {
             if (!b && cmdHelp != null) cmdHelp.hide();
             super.setVisible(b);

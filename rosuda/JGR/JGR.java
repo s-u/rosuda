@@ -23,7 +23,7 @@ public class JGR {
 
     /* Copyright information and other stuff */
 
-    public static final String VERSION = "DP5";
+    public static final String VERSION = "1.0";
     public static final String TITLE = "JGR";
     public static final String SUBTITLE = "Java Gui for R";
     public static final String DEVELTIME = "2003 - 2004";
@@ -89,8 +89,6 @@ public class JGR {
             System.exit(1);
         }
         JGRPackageManager.defaultPackages = RController.getDefaultPackages();
-        refresh("all");
-        MAINRCONSOLE.setWorking(false);
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Win")) splash.stop();
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
@@ -152,8 +150,8 @@ public class JGR {
         * set R_LIBS (in java app)
      *
      */
-    public static void setRLibs() {
-        RLIBS = RController.getRLibs();
+    public static void setRLibs(String[] libs) {
+        RLIBS = libs;
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
@@ -163,9 +161,8 @@ public class JGR {
         * set keywords for highlighting
      *
      */
-    public static void setKeyWords() {
-        String[] words = RController.getKeyWords();
-        KEYWORDS.clear();
+    public static void setKeyWords(String[] words) {
+		KEYWORDS.clear();
         Object dummy = new Object();
         for (int i = 0; i < words.length; i++) {
             KEYWORDS.put(words[i],dummy);
@@ -176,9 +173,8 @@ public class JGR {
         * set objects for hightlighting
      *
      */
-    public static void setObjects() {
-        String[] objects = RController.getObjects();
-       	OBJECTS.clear();
+    public static void setObjects(String[] objects) {
+        OBJECTS.clear();
        	KEYWORDS_OBJECTS.clear();
         Object dummy = new Object();
         for (int i = 0; i < objects.length; i++) {
@@ -187,21 +183,6 @@ public class JGR {
         }
     }
 
-    /**
-        * refresh keywords, paths ....
-     * @param what
-     */
-    public static void refresh(String what) {
-        if (what.equals("all")) {
-            setRLibs();
-            setKeyWords();
-            setObjects();
-        }
-        else if (what.equals(("runtime"))) {
-            setKeyWords();
-            setObjects();
-        }
-    }
 
     public static void readHistory() {
         File hist = null;
@@ -259,7 +240,14 @@ public class JGR {
             while(true) {
                 try {
                     Thread.sleep(60000);
-                    // wait for idleEval JGR.R.eval(".refresh(\"runtime\")");
+                    REXP x = R.idleEval(".refreshKeyWords()");
+					String[] r = null;
+					if (x != null && (r=x.asStringArray()) != null) 
+						setKeyWords(r);
+					x = R.idleEval(".refreshObjects()");
+					r = null;
+					if (x != null && (r=x.asStringArray()) != null) 
+						setObjects(r);
                 }
                 catch (Exception e){
                     new ErrorMsg(e);
