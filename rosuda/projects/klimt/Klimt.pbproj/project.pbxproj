@@ -154,7 +154,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Klimt</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Klimt v0.98-pre3</string>
+	<string>Klimt v0.98-pre4</string>
 	<key>CFBundleIconFile</key>
 	<string>Klimt.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -166,11 +166,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.98-pre3</string>
+	<string>0.98-pre4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.98-pre3</string>
+	<string>0.98-pre4</string>
 	<key>Java</key>
 	<dict>
 		<key>ClassPath</key>
@@ -310,14 +310,6 @@
 				1C8656C3055935FB00A8030F,
 				1C98B804056C1F9000796AE6,
 				1C98B805056C1F9000796AE6,
-				1C5ECE4B056D4FE700582247,
-				1C5ECE4C056D4FE700582247,
-				1C5ECE4D056D4FE700582247,
-				1C5ECE4E056D4FE700582247,
-				1C5ECE4F056D4FE700582247,
-				1C5ECE50056D4FE700582247,
-				1C5ECE51056D4FE700582247,
-				1C5ECE52056D4FE700582247,
 				1CD07DE1057D961400E3263B,
 				1CD07DE5057E55D000E3263B,
 				1CD07DE7057E58B200E3263B,
@@ -516,117 +508,6 @@
 		};
 		1C4BC7D7052F03BB00A8030F = {
 			fileRef = 1C4BC7D6052F03BB00A8030F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE42056D4FE700582247 = {
-			children = (
-				1C5ECE43056D4FE700582247,
-				1C5ECE44056D4FE700582247,
-				1C5ECE45056D4FE700582247,
-				1C5ECE46056D4FE700582247,
-				1C5ECE47056D4FE700582247,
-				1C5ECE48056D4FE700582247,
-				1C5ECE49056D4FE700582247,
-				1C5ECE4A056D4FE700582247,
-			);
-			isa = PBXGroup;
-			path = iWidgets;
-			refType = 4;
-		};
-		1C5ECE43056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = ControlPanel.java;
-			refType = 4;
-		};
-		1C5ECE44056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = iButtonListener.java;
-			refType = 4;
-		};
-		1C5ECE45056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = InfoMessage.java;
-			refType = 4;
-		};
-		1C5ECE46056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = InfoPanel.java;
-			refType = 4;
-		};
-		1C5ECE47056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = iRadioButtonListener.java;
-			refType = 4;
-		};
-		1C5ECE48056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = iTextBoxListener.java;
-			refType = 4;
-		};
-		1C5ECE49056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = iTickBoxListener.java;
-			refType = 4;
-		};
-		1C5ECE4A056D4FE700582247 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = iWCommon.java;
-			refType = 4;
-		};
-		1C5ECE4B056D4FE700582247 = {
-			fileRef = 1C5ECE43056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE4C056D4FE700582247 = {
-			fileRef = 1C5ECE44056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE4D056D4FE700582247 = {
-			fileRef = 1C5ECE45056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE4E056D4FE700582247 = {
-			fileRef = 1C5ECE46056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE4F056D4FE700582247 = {
-			fileRef = 1C5ECE47056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE50056D4FE700582247 = {
-			fileRef = 1C5ECE48056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE51056D4FE700582247 = {
-			fileRef = 1C5ECE49056D4FE700582247;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1C5ECE52056D4FE700582247 = {
-			fileRef = 1C5ECE4A056D4FE700582247;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1689,7 +1570,6 @@
 				F8EE911F04D6A73700FA4796,
 				1CE96E6504D7D99D00A8030F,
 				1C4A15D104D93C2000A8030F,
-				1C5ECE42056D4FE700582247,
 			);
 			isa = PBXGroup;
 			path = rosuda;
