@@ -1,7 +1,6 @@
 package org.rosuda.JRI;
 
 import java.lang.*;
-import java.io.*;
 
 public class Rengine extends Thread {
     static {

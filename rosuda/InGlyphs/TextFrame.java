@@ -8,12 +8,19 @@
 
 package org.rosuda.InGlyphs;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.util.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.*;
-import java.awt.event.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.TFrame;
+import org.rosuda.ibase.toolkit.WinTracker;
 
 /** Simple help frame that displays list of available shortcuts and their descriptions.
 @version $Id$

@@ -23,7 +23,9 @@ import org.rosuda.util.*;
 public class RPackageManager extends iFrame implements ActionListener {
 
     public Object[][] Packages = null;
-    public String[] columnNames = {"loaded","Package","Description"};
+    public String[] columnNames = {"loaded","default","Package","Description"};
+    public static Object[] defaultPackages;
+    public static HashMap neededPackages = new HashMap();
     private JScrollPane scrollArea = new JScrollPane();
     private JButton close = new JButton("Close");
     private JButton refresh = new JButton("Refresh");
@@ -83,12 +85,19 @@ public class RPackageManager extends iFrame implements ActionListener {
         this.getRootPane().setDefaultButton(close);
         this.setMinimumSize(new Dimension(300,350));
         this.setLocation(200,10);
-        this.setSize(400,450);
+        this.setSize(420,450);
         } catch (Exception e) { e.printStackTrace();}//this.show(); //do it manually when you really want to see it
+    }
+    
+    public void exit() {
+    	dispose();
+    	setDefaultPackages();
+    	iPreferences.writePrefs();
     }
 
     public void refresh() {
         this.cursorWait();
+        setDefaultPackages();
         Packages = RTalk.refreshPackages();
         sorter = new TableSorter(pkgModel = new PTableModel(this));
         pkgTable.setModel(sorter);
@@ -102,15 +111,23 @@ public class RPackageManager extends iFrame implements ActionListener {
         else JGR.MAINRCONSOLE.execute("detach(\"package:"+pkg+"\")");
         this.cursorDefault();
     }
+    
+    public void setDefaultPackages() {
+        ArrayList packages = new ArrayList();
+        for (int i = 0; i < pkgModel.getRowCount(); i++) {
+        	if (pkgModel.getValueAt(i,1).toString().equals("true")) 
+        		packages.add(pkgModel.getValueAt(i,2));
+        }
+        defaultPackages = packages.toArray();
+    }    
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        if (cmd=="exit") dispose();
+        if (cmd=="exit") exit();
         else if (cmd=="refresh") refresh();
 
     }
-
-
+   
     class PTableModel extends DefaultTableModel {
 
         public int cols, rows;
@@ -121,7 +138,7 @@ public class RPackageManager extends iFrame implements ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
-            return Packages[row][col];
+        	return Packages[row][col];
         }
 
         public int getColumnCount() {
@@ -133,7 +150,11 @@ public class RPackageManager extends iFrame implements ActionListener {
         }
 
         public void setValueAt(Object value, int row, int col) {
-            setPKGStatus(getValueAt(row,1).toString(),value.toString());
+            if (col==0) setPKGStatus(getValueAt(row,2).toString(),value.toString());
+            if (col==1) {
+            	String val = getValueAt(row,2).toString();
+            	if (neededPackages.containsKey(val)) value = new Boolean(true);
+            }
             Packages[row][col] = value;
         }
 
@@ -142,11 +163,11 @@ public class RPackageManager extends iFrame implements ActionListener {
         }
 
         public boolean isCellEditable(int row, int col) {
-            return col > 0 ? false : true;
+            return col > 1 ? false : true;
         }
 
- 	public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
+        public Class getColumnClass(int c) {
+        	return getValueAt(0, c).getClass();
         }
 
     }
@@ -157,12 +178,12 @@ public class RPackageManager extends iFrame implements ActionListener {
         }
 
         public void addColumn(TableColumn col) {
-            if (col.getModelIndex() == 0) {
+            if (col.getModelIndex() == 0 || col.getModelIndex() == 1) {
                 col.setMinWidth(50);
                 col.setPreferredWidth(50);
                 col.setMaxWidth(50);
             }
-            else if (col.getModelIndex() == 1) {
+            else if (col.getModelIndex() == 2) {
                 col.setMinWidth(100);
                 col.setMaxWidth(100);
             }

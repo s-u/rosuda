@@ -452,15 +452,20 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
+        	//System.out.println("Size "+JGR.RHISTORY.size());
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
-                if (input.getText().trim().length() > 0) JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
-                System.out.println(JGR.RHISTORY.get(currentHistPosition-1).toString());
+                if (input.getText().trim().length() > 0) {
+                	if (!input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition))) JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
+                }
+                //System.out.println(JGR.RHISTORY.get(currentHistPosition-1).toString());
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
                 input.setCaretPosition(input.getText().length());
                 wasHistEvent = true;
+                //System.out.println("Pos "+currentHistPosition);
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+        	//System.out.println("Size "+JGR.RHISTORY.size());
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (currentHistPosition < JGR.RHISTORY.size() - 1) {
                     input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
@@ -469,6 +474,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
                     input.setText("");
                     currentHistPosition++;
+                    //System.out.println("Pos "+currentHistPosition);
                 }
                 wasHistEvent = true;
             }

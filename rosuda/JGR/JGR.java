@@ -9,19 +9,16 @@ package org.rosuda.JGR;
 //
 
 
-import java.awt.*;
-import java.awt.event.*;
+
+
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
 
 import org.rosuda.JRI.*;
-import org.rosuda.JGR.rhelp.*;
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.util.*;
 
 public class JGR {
 
@@ -48,6 +45,18 @@ public class JGR {
 
     public JGR() {
         SVar.int_NA=-2147483648;
+        
+        Object dummy = new Object();
+        RPackageManager.neededPackages.put("base",dummy);
+        RPackageManager.neededPackages.put("graphics",dummy);
+        RPackageManager.neededPackages.put("utils",dummy);
+        RPackageManager.neededPackages.put("methods",dummy);
+        RPackageManager.neededPackages.put("stats",dummy);
+        
+        RPackageManager.neededPackages.put("JGR",dummy);
+        RPackageManager.neededPackages.put("rJava",dummy);
+        RPackageManager.neededPackages.put("JavaGD",dummy);
+        
         org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
         iPreferences.initialize();
         splash = new org.rosuda.JGR.toolkit.SplashScreen();
@@ -69,6 +78,14 @@ public class JGR {
         RLIBS = RTalk.getRLIBS();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
+        }
+        try {
+        	RPackageManager.defaultPackages = RTalk.getDefaultPackages();
+        	for (int i = 0; i < RPackageManager.defaultPackages.length; i++)
+        		System.out.println(RPackageManager.defaultPackages[i]);
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
         }
         iPreferences.refreshKeyWords();
         MAINRCONSOLE.setWorking(false);

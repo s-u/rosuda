@@ -1,9 +1,9 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.toolkit.PGSCanvas;
 
 class IDlgCL implements ActionListener {
 	PGSCanvas c;

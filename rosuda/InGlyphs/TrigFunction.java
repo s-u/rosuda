@@ -1,7 +1,6 @@
 package org.rosuda.InGlyphs;
 
-import java.util.*;
-import drasys.or.nonlinear.*;
+import java.util.ArrayList;
 
 
 public class TrigFunction extends EquationSolution implements FunctionI  {

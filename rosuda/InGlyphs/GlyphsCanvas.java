@@ -1,16 +1,48 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FileDialog;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Scrollbar;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.Enumeration;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.ibase.plots.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.*;
-import org.rosuda.plugins.*;
+import org.rosuda.ibase.Commander;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.DBCanvas;
+import org.rosuda.ibase.Loader;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.SVarSet;
+import org.rosuda.ibase.plots.BarCanvas;
+import org.rosuda.ibase.plots.BoxCanvas;
+import org.rosuda.ibase.plots.FCCCanvas;
+import org.rosuda.ibase.plots.FluctCanvas;
+import org.rosuda.ibase.plots.HistCanvas;
+import org.rosuda.ibase.plots.MapCanvas;
+import org.rosuda.ibase.plots.PCPCanvas;
+import org.rosuda.ibase.plots.ScatterCanvas;
+import org.rosuda.ibase.toolkit.SplashScreen;
+import org.rosuda.ibase.toolkit.TFrame;
+import org.rosuda.ibase.toolkit.WinTracker;
+import org.rosuda.util.Global;
+import org.rosuda.util.MsgDialog;
+import org.rosuda.util.Tools;
 
 /**
  * @author Administrator

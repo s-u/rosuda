@@ -35,6 +35,12 @@ public class RTalk {
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
     }
+    
+    public static String[] getDefaultPackages() {
+    	REXP x = JGR.R.eval("getOption(\"defaultPackages\")");
+    	if (x != null && x.asStringArray()!=null) return x.asStringArray();
+        return new String[] {};
+    }
 
     //code completion
     public static String completeCode(String part) {
@@ -226,14 +232,18 @@ public class RTalk {
                 for (int i = 0; i < res.length; i++) loadedP.put(res[i],dummy);
             }
             res = x.asStringArray();
-            pkg = new Object[res.length][3];
+            pkg = new Object[res.length][4];
             for (int i = 0; i < res.length; i++) {
-                pkg[i][1]=new String(res[i]);
+                pkg[i][2]=new String(res[i]);
                 try {
-                    pkg[i][2]=JGR.R.eval("packageDescription(\""+res[i]+"\",fields=\"Title\")").asString();
+                    pkg[i][3]=JGR.R.eval("packageDescription(\""+res[i]+"\",fields=\"Title\")").asString();
                 } catch (Exception e) { pkg[i][1] = "";}
                 pkg[i][0]= loadedP.containsKey(res[i])?(new Boolean(true)):(new Boolean(false));
-
+                pkg[i][1]= new Boolean(false);
+                for (int d = 0; d < RPackageManager.defaultPackages.length; d++) {
+                	
+                	if (res[i].equals(RPackageManager.defaultPackages[d]) || RPackageManager.neededPackages.containsKey(res[i])) pkg[i][1] = new Boolean(true);
+                }
             }
         }
         return pkg;

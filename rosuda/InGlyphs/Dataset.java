@@ -1,7 +1,11 @@
 package org.rosuda.InGlyphs;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.EOFException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class Dataset {
 

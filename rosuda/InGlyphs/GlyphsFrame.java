@@ -1,10 +1,13 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Scrollbar;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.SVarSet;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TFrame;
 
 /**
  * Variables window - central place for operations on a dataset

@@ -1,11 +1,17 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.util.ArrayList;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.toolkit.BaseCanvas;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.PPrimPolygon;
+import org.rosuda.ibase.toolkit.PPrimRectangle;
+import org.rosuda.ibase.toolkit.PlotPrimitive;
+import org.rosuda.pograss.PoGraSS;
 
 public class ChartCanvas extends BaseCanvas {
 

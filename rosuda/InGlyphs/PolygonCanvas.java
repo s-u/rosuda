@@ -5,15 +5,23 @@
  **/
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Polygon;
+import java.awt.event.MouseEvent;
+import java.io.PrintStream;
+import java.util.Enumeration;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.toolkit.BaseCanvas;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.PPrimPolygon;
+import org.rosuda.ibase.toolkit.PlotPrimitive;
+import org.rosuda.ibase.toolkit.WinTracker;
+import org.rosuda.pograss.PoGraSS;
+import org.rosuda.util.Tools;
 
 /**
  * implementation of polygons

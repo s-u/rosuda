@@ -1,13 +1,24 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.MenuItem;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.Vector;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.DBCanvas;
+import org.rosuda.ibase.Dependent;
+import org.rosuda.ibase.NotifyMsg;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.SVarSet;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.WinTracker;
+import org.rosuda.util.Global;
 
 /**
  * VarCmdCanvas is the canvas of commands for variables

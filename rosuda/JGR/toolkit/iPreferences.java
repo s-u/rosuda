@@ -178,6 +178,13 @@ public class iPreferences {
         prefs.putInt("FontSize", FontSize);               // int
         prefs.putInt("MaxHelpTabs",MAXHELPTABS);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
+        String packages = "";
+        if (RPackageManager.defaultPackages.length > 0) {
+        packages = RPackageManager.defaultPackages[0].toString();
+        for (int i = 1; i < RPackageManager.defaultPackages.length; i++)
+        	packages += ", "+RPackageManager.defaultPackages[i];
+        }
+        prefs.put("DefaultPackages", packages);
         try {
             prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
         } catch (IOException e) {

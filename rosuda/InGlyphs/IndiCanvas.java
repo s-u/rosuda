@@ -1,12 +1,23 @@
 package org.rosuda.InGlyphs;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.MenuItem;
+import java.awt.Scrollbar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+import org.rosuda.ibase.Common;
+import org.rosuda.ibase.DBCanvas;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.util.Global;
 
 /**
  * @author Administrator
