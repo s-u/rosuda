@@ -239,6 +239,8 @@ public class dataSet {
     if( alpha[i] && Var.isCategorical )
       return;
     else {
+      for( int l=0; l<Var.grpSize.length; l++ )
+        Var.grpSize[l] = 0;
       Var.forceCategorical = true;
       Var.isCategorical = true;
       for( int j=0; j<this.n; j++ )
