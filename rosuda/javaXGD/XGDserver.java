@@ -1,3 +1,5 @@
+package org.rosuda.javaXGD;
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
