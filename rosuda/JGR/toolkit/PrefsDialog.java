@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import org.rosuda.JGR.JGR;
 import org.rosuda.ibase.*;
 
 /**
@@ -37,6 +38,8 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
     private JCheckBox useHelpAgentConsole = new JCheckBox("in Console",JGRPrefs.useHelpAgentConsole);
     private JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",JGRPrefs.useHelpAgentEditor);
     private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings",JGRPrefs.useEmacsKeyBindings);
+    
+    private JTextField workinDirectory = new JTextField(JGRPrefs.WorkingDirectory);
 
     private JButton cancel = new JButton("Cancel");
     private JButton apply = new JButton("Apply");
@@ -49,7 +52,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
     /** Create PrefsDialog.
      *  @param f parent JFrame */
     public PrefsDialog(JFrame f) {
-        super(f,"Preferences",true);
+        super(f,"Preferences",false);
 
         helptabs.setMinimumSize(new Dimension(40,24));
         helptabs.setPreferredSize(new Dimension(40,24));
@@ -69,6 +72,10 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         size.setPreferredSize(new Dimension(50,22));
         size.setMaximumSize(new Dimension(50,22));
         size.setEditable(true);
+        
+        workinDirectory.setMinimumSize(new Dimension(300,22));
+        workinDirectory.setPreferredSize(new Dimension(300,22));
+        workinDirectory.setMaximumSize(new Dimension(300,22));
         
         JPanel prefs = new JPanel();
         prefs.setLayout(new GridBagLayout());
@@ -112,6 +119,24 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         prefs.add(useEmacsKeyBindings,gbc);
         gbc.gridy = 6;
         prefs.add(new JLabel("* Emacs Keybindings are only advisable for Mac OS X!"),gbc);
+        gbc.gridy = 7;
+        prefs.add(new JLabel(" "),gbc);
+        gbc.gridy = 8;
+        prefs.add(new JLabel("Default working directory:"),gbc);
+        gbc.gridy = 9;
+        
+        JButton choose = new JButton("...");
+        choose.setMinimumSize(new Dimension(40,22));
+        choose.setPreferredSize(new Dimension(40,22));
+        choose.setMaximumSize(new Dimension(40,22));
+        choose.setActionCommand("chooseWD");
+        choose.addActionListener(this);
+        
+        
+        JPanel wd = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        wd.add(workinDirectory);
+        wd.add(choose);
+        prefs.add(wd,gbc);
         
 
         cancel.setActionCommand("cancel");
@@ -140,8 +165,8 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         
         this.getRootPane().setDefaultButton(save);
         this.setResizable(false);
-        this.setSize(new Dimension(400, 350));
-        this.setLocation((screenSize.width-400)/2,(screenSize.height-350)/2);
+        this.setSize(new Dimension(420, 400));
+        this.setLocation((screenSize.width-this.getSize().width)/2,(screenSize.height-this.getSize().height)/2);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 dispose();
@@ -161,6 +186,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
         JGRPrefs.useHelpAgentEditor = useHelpAgentEditor.isSelected();
         JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
+        JGRPrefs.WorkingDirectory = workinDirectory.getText().trim().length()==0?System.getProperty("user.home"):workinDirectory.getText().trim();
         JGRPrefs.apply();
     }
 
@@ -171,6 +197,16 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         String cmd = e.getActionCommand();
         if (cmd=="apply") applyChanges();
         else if (cmd=="cancel") dispose();
+        else if (cmd=="chooseWD") {
+        	JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setDialogTitle("Choose Working Directory");
+            chooser.setApproveButtonText("Choose");
+            int r = chooser.showOpenDialog(this);
+            if (r == JFileChooser.CANCEL_OPTION) return;
+            if (chooser.getSelectedFile()!=null)
+                workinDirectory.setText(chooser.getSelectedFile().toString());
+        }
         else if (cmd=="save") {
             applyChanges();
             JGRPrefs.writePrefs(false);
