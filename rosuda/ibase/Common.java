@@ -114,6 +114,7 @@ public class Common
         Main reason is the different handling of mouse events: Macs have only one mouse button
         and other buttons are emulated. Also META key is guaranteed to be present and will be used. */
     static boolean isMac=false;
+    static boolean isWin=false;
 
     /** static platform initialization. Should be performed as soon as possible upon startup.
         Code relying on platform dependent code should call this method to make sure the
@@ -126,12 +127,23 @@ public class Common
             try {
                 Class c=Class.forName("PlatformMac");
                 c.newInstance();
+                return;
             } catch (Exception e) {
                 if (DEBUG>0) System.out.println("Common.initStatic[Mac platform] failed to create platform-dependent class PlatformMac: "+e.getMessage());
             }
         } else {
-            new Platform();
+            if (System.getProperty("os.name").indexOf("Windows")>-1) {
+                isWin=true;
+                try {
+                    Class c=Class.forName("PlatformWin");
+                    c.newInstance();
+                    return;
+                } catch (Exception e) {
+                    if (DEBUG>0) System.out.println("Common.initStatic[Windows platform] failed to create platform-dependent class PlatformWin: "+e.getMessage());
+                }
+            };
         };
+        new Platform();
     }
 
     /** returns <code>true</code> if ran on an Apple Macintosh computer */
