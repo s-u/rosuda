@@ -174,16 +174,20 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */
     public int newVar(String name, double[] d) {
+        if (d==null) return -1;
+        if (Global.DEBUG>0)
+            System.out.println("newVar: double["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
 	SVar v=new SVar(name);
         int i=0; while(i<d.length) {
-            if (d[i]==Double.NaN)
+            if (Double.isNaN(d[i]))
                 v.add(null);
             else
-                v.add(new Double(d[i++]));
+                v.add(new Double(d[i]));
+            i++;
         }
 	return addVar(v);
     };
@@ -195,12 +199,21 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */   
     public int newVar(String name, int[] d) {
+        if (d==null) return -1;
+        if (Global.DEBUG>0)
+            System.out.println("newVar: int["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
         SVar v=new SVar(name);
-	int i=0; while(i<d.length) v.add(new Integer(d[i++]));
+        int i=0; while(i<d.length) {
+            if (d[i]==-2147483648)
+                v.add(null);
+            else
+                v.add(new Integer(d[i]));
+            i++;
+        }
 	return addVar(v);
     };
 
@@ -211,12 +224,15 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */    
     public int newVar(String name, String[] d) {
+        if (d==null) return -1;
+        if (Global.DEBUG>0)
+            System.out.println("newVar: String[]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
         SVar v=new SVar(name);
-	int i=0; while(i<d.length) v.add(d[i++]);
+        int i=0; while(i<d.length) v.add(d[i++]);
 	return addVar(v);
     }
 
@@ -227,6 +243,10 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */
     public int newVar(String name, int[] ix, String[] d) {
+        if (ix==null) return -1;
+        if (d==null) return newVar(name,ix);
+        if (Global.DEBUG>0)
+            System.out.println("newVar: int["+ix.length+"] + levels["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=ix.length) {
             int i=mmDlg(name,ix.length);
             if (i<0) return i;
@@ -238,8 +258,6 @@ public class Framework implements Dependent, ActionListener {
         }
         return addVar(v);
     }
-
-    
 
     public static String[] toStringArray(Object[] o) {
         String[] s=new String[o.length];
