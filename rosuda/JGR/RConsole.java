@@ -46,6 +46,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
 
+    private RExecuter exec = new RExecuter();
+
     private final InsertRemoveUndoManager undoMgr = new InsertRemoveUndoManager(this);
 
     private String wspace = null;
@@ -145,16 +147,12 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         String[] cmdArray = cmd.split("\n");
 
+        String c = null;
         for (int i = 0; i < cmdArray.length; i++) {
-            _execute(cmdArray[i]);
+            c = cmdArray[i];
+            try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n",iPreferences.CMD); } catch (Exception e) {}
+            if (!isHelpCMD(c)) exec._execute(c);
         }
-    }
-
-    public synchronized void _execute(String cmd) {
-        JGR.READY = false;
-        try { outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD); } catch (Exception e) {}
-        if (!isHelpCMD(cmd)) JGR.rSync.triggerNotification(cmd);
-        while (!JGR.READY) try { wait(10); } catch(Exception e) {}
     }
 
     public boolean isHelpCMD(String cmd) {
@@ -578,6 +576,16 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void mouseExited(MouseEvent e) {
+    }
+
+    class RExecuter {
+        public RExecuter() {}
+
+        public synchronized void _execute(String cmd) {
+            JGR.READY = false;
+            JGR.rSync.triggerNotification(cmd);
+            while (!JGR.READY) try { wait(10); } catch(Exception e) {}
+        }
     }
 
     class CmdInput extends SyntaxArea {
