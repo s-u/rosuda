@@ -98,11 +98,15 @@ public class EzMenu {
                 if (rac=="WTMclose") rac="WTMclose"+we.id;
                 mi=getItem(f,rac);
                 if (mi==null) {
-                    if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
-                    m.add(mi=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(rac);
-                    } else
-                        m.add(mi=new MenuItem(menuDef[i])).setActionCommand(rac);
-                    mi.addActionListener(al);
+                    if (menuDef[i].charAt(0)=='#') {
+                        m.add(mi=new Menu(menuDef[i].substring(1)));
+                    } else {
+                        if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
+                            m.add(mi=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(rac);
+                        } else
+                            m.add(mi=new MenuItem(menuDef[i])).setActionCommand(rac);
+                        mi.addActionListener(al);
+                    }
                     if (menuDef[i+1]=="WTMclose") mi.addActionListener(wt);
                     lastSep=false;
                 };
@@ -140,6 +144,26 @@ public class EzMenu {
             while(j<ic) {
                 MenuItem mi=m.getItem(j);
                 if (mi.getActionCommand()==nam)
+                    return mi;
+                j++;
+            };
+            i++;
+        };
+        return null;
+    };
+
+    public static MenuItem getItemByLabel(Frame f,String nam) {
+        MenuBar mb=f.getMenuBar();
+        if (mb==null) return null;
+        int mc=mb.getMenuCount();
+        int i=0;
+        while(i<mc) {
+            Menu m=mb.getMenu(i);
+            int ic=m.getItemCount();
+            int j=0;
+            while(j<ic) {
+                MenuItem mi=m.getItem(j);
+                if (mi.getLabel().compareTo(nam)==0)
                     return mi;
                 j++;
             };
