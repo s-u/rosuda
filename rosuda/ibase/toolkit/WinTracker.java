@@ -19,7 +19,7 @@ public class WinTracker implements ActionListener, FocusListener
 
     void newWindowMenu(WTentry we) {
 	we.menu=new Menu("Window");
-	MenuItem mi=new MenuItem("Close"); mi.setActionCommand("WTMclose"+we.id);
+	MenuItem mi=new MenuItem("Close window",new MenuShortcut(KeyEvent.VK_W,false)); mi.setActionCommand("WTMclose"+we.id);
 	we.menu.add(mi); we.menu.addSeparator();
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we2=(WTentry)e.nextElement();
@@ -182,7 +182,10 @@ public class WinTracker implements ActionListener, FocusListener
 	    if (menuDef[i]=="-") { m.addSeparator(); i++; };
 	    String rac=menuDef[i+1];
 	    if (rac=="WTMclose") rac="WTMclose"+we.id;
-	    m.add(mi=new MenuItem(menuDef[i])).setActionCommand(rac);
+            if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
+                m.add(mi=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(rac);
+            } else
+                m.add(mi=new MenuItem(menuDef[i])).setActionCommand(rac);
 	    mi.addActionListener(al);
 	    if (menuDef[i+1]=="WTMclose") mi.addActionListener(this);
 	    i+=2;

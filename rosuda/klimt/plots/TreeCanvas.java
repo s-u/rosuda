@@ -151,9 +151,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
 	
 	//--- this is a bit tricky - not really clean enough --
-	String[] menuDef={"+","File","Open dataset ...","openData","Open tree ...","openTree","-","Clone tree","new","-","Save as PGS ...",
+	String[] menuDef={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-","Clone tree","new","-","Save as PGS ...",
                           "exportPGS","Export forest data ...","exportForest","Display forest","displayForest","Print","print","-","Quit","quit",
-                          "+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv",
+                          "+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
@@ -177,8 +177,11 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		mb.add(m=new Menu(menuDef[i])); i++;
 	    };
 	    if (menuDef[i]=="-") { m.addSeparator(); i++; };
-	    m.add(mi=mis[miss]=new MenuItem(menuDef[i])).setActionCommand(menuDef[i+1]);
-	    mi.addActionListener(this);
+            if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
+                m.add(mi=mis[miss]=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(menuDef[i+1]);
+            } else
+                m.add(mi=mis[miss]=new MenuItem(menuDef[i])).setActionCommand(menuDef[i+1]);
+            mi.addActionListener(this);
 	    i+=2; miss++;
 	};
 	if (m!=null) mb.setHelpMenu(m);
