@@ -209,9 +209,9 @@ public class SVar extends Vector
     public double getMax() { return max; };
 
     public Object at(int i) { return elementAt(i); };
-    public int atI(int i) { return (isnum)?((Number)elementAt(i)).intValue():0; };
-    public double atF(int i) { return (isnum)?((Number)elementAt(i)).doubleValue():0; };
-    public double atD(int i) { return (isnum)?((Number)elementAt(i)).doubleValue():0; };
+    public int atI(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).intValue():0; };
+    public double atF(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
+    public double atD(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
     public String atS(int i) { return elementAt(i).toString(); };
     public boolean isMissingAt(int i) { return elementAt(i)==null; };
 
