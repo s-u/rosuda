@@ -440,7 +440,9 @@ public class Klimt
 		carg++;
 	    };
             if (Global.informLoader)
-                System.out.println("InfoForLoader:Done.");		
+                System.out.println("InfoForLoader:Done.");
+            if (silentTreeLoad)
+                System.out.println("Trees loaded.");
 	} catch (Exception E) {
 	    System.out.println("Something went wrong.");
 	    System.out.println("LM: "+E.getLocalizedMessage());
