@@ -296,6 +296,49 @@ public abstract class SVar extends Notifier
 
     public abstract int[] getRanked(SMarker m, int markspec);
 
+    public static int[] filterRanksByID(int r[], int ids[]) {
+        if (r==null || ids==null || ids.length<1) return r;
+        int x=r.length;
+        int map[]=new int[x];
+        int ct=ids.length;
+        int i=0; // pass 1 : construct a map from ids
+        while(i<ct) {
+            if (ids[i]>=0 && ids[i]<x) map[ids[i]]=1;
+            i++;
+        }
+        int[] mr=new int[ct];
+        i=0;
+        int mri=0; // pass 2: copy the relevant ranks
+        while(i<x) {
+            if (map[r[i]]==1)
+                mr[mri++]=r[i];
+            i++;
+        }
+        map=null;
+        return mr;
+    }
+
+    public static int[] filterRanksByMap(int r[], int map[], int mapEntry) {
+        if (r==null || map==null || map.length<1) return r;
+        int x=r.length;
+        int ct=0;
+        int i=0; // pass 1 : count the selected cases
+        while(i<x) {
+            if (r[i]>=0 && r[i]<map.length && map[r[i]]==mapEntry)
+                ct++;
+            i++;
+        }
+        int[] mr=new int[ct];
+        i=0;
+        int mri=0; // pass 2: copy the relevant ranks
+        while(i<x) {
+            if (r[i]>=0 && r[i]<map.length && map[r[i]]==mapEntry)
+                mr[mri++]=r[i];
+            i++;
+        }
+        return mr;
+    }
+
     public String toString() {
         return "SVar(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
     }
