@@ -616,7 +616,7 @@ public class VarFrame extends TFrame {
                 }
             }
             if (cmd=="growTree") { // grow tree
-                ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
+                ProgressDlg pd=new ProgressDlg("Running tree generation plugin ...");
                 pd.setText("Initializing plugin, loading R ...");
                 pd.show();
                 Plugin gt=PluginManager.loadPlugin("PluginGetTreeR");
@@ -660,7 +660,7 @@ public class VarFrame extends TFrame {
             }
 
             if (cmd=="deriveVar") { // derive variable
-                ProgressDlg pd=new ProgressDlg(null,"Running var generation plugin ...");
+                ProgressDlg pd=new ProgressDlg("Running var generation plugin ...");
                 pd.setText("Initializing plugin, loading R ...");
                 pd.show();
                 Plugin gt=PluginManager.loadPlugin("PluginDeriveVar");

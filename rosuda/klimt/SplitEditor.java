@@ -379,7 +379,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         
                         /* build the two other chunks here */
                         boolean single=cb.getState();
-                        ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
+                        ProgressDlg pd=new ProgressDlg("Running tree generation plugin ...");
                         pd.setText(single?"Performing split...":"Initializing plugin, loading R ...");
                         pd.show();
                         Plugin gt=null;

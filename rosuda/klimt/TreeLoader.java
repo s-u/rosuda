@@ -73,7 +73,7 @@ remark: this method can be used to load trees and data separately, but data must
         int msid=-1;
 
         if (clen>10000 || (vset!=null && vset.count()>0 && vset.at(0)!=null && vset.at(0).size()>2000)) {
-            pd=new ProgressDlg(null,"Loading..."); pd.setText("Initializing...");
+            pd=new ProgressDlg("Loading..."); pd.setText("Initializing...");
             pd.show();
         };
         if (clen>100000) pbg=1;
