@@ -50,7 +50,7 @@ public class PDFconstructor {
 	return oid++;
     };
 
-    /** constructs a string that can be passed to {@link addObject} that represents a (non-compressed) PDF stream.
+    /** constructs a string that can be passed to {@link #addObject} that represents a (non-compressed) PDF stream.
         @param s string which will be encapsulated as the contants of the stream (such as graphics commands etc.) Trailing newline is added implicitely.
         @return valid PDF object of the type stream */
     public static String asStream(String s) {

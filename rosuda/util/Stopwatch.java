@@ -19,7 +19,7 @@ public class Stopwatch {
     public long stop() { ts_stop=System.currentTimeMillis(); return ts_elapsed=ts_stop-ts_start; };
 
     /** sets the start time to current time
-        @return the start time in ms (see {@link System.currentTimeMillis}) */
+        @return the start time in ms (see {@link System.currentTimeMillis()}) */
     public long start() { return ts_start=System.currentTimeMillis(); };
 
     /** returns elapsed time between last start and stop (even if new start was issued already) or

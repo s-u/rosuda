@@ -217,7 +217,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public void redesignNodes() { redesignNodes(true); };
     
     /** redesign nodes based on the current canvas geometry
-	(result in a call to {@link #redesignNodes(Dimension)}) */
+	(result in a call to {@link #redesignNodes(Dimension, boolean)}) */
     public void redesignNodes(boolean updatePlacement)
     {
 	Dimension os=getSize();

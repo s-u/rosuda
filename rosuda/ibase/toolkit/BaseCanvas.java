@@ -119,12 +119,12 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 
     /** if set to <code>true</code> outline of plot primitives is painted (applies to default paint handler. subclasses of BaseCanvas don't have to respect this flag if may display more complex primitives) */
     boolean paintOutline=true;
-    /** same functionality as {@link @paintOutline} but applies to selected objects only */
+    /** same functionality as {@link #paintOutline} but applies to selected objects only */
     boolean selectedPaintOutline=true;
     /** if set to <code>true</code> plot primitives are filled. */
     boolean fillInside=true;
 
-    /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link updateObjetcts} and setting everything up. */
+    /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link #updateObjects} and setting everything up. */
     boolean updateGeometry=false;
 
     /** basic constructor. Every subclass must call this constructor
@@ -160,7 +160,8 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     };
 
     /** rebuilds plot primitives - subclasses should override this method. It is not defined as abstract only for convenience, but minimal subclass simply overrides this method. */
-    public void updateObjects() {};
+    public void updateObjects() {
+    };
 
     public Dimension getMinimumSize() { return new Dimension(mLeft+mRight+20,mTop+mBottom+20); };
 

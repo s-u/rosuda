@@ -3,7 +3,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
-/** implementation of maps (uses {@link BaseCancas})
+/** implementation of maps (uses {@link BaseCanvas})
     @version $Id$
 */
 class MapCanvas extends BaseCanvas
