@@ -38,6 +38,10 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     double cumulated[];
     double c_marked[];
 
+    Object[] cols; // colors 0=regular sel, 1... sec marks
+    boolean hasSec; // has sec marks
+    
+
     int ow=0,oh=0;
 
     int bars=20;
@@ -101,10 +105,13 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
             if (v.hasMissing()) bars++;
 
             Bars=new Rectangle[bars];
-        }        
+        }
+	cols=new Object[cats+1]; hasSec=false;
 	int j=0;
 	while (j<cats) {
 	    cat_nam[j]=cts[j].toString();
+	    if (m!=null)
+		cols[j]=new int[m.maxMark+1];
 	    j++;
         };
         cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
@@ -115,6 +122,12 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    while (j<v.size()) {
 		int i=v.getCatIndex(j);
 		if (i==-1) i=cats;
+		if (m!=null) {
+		    int[] cl=(int[])cols[i];
+		    int k=m.get(j);
+		    if (k==-1) cl[0]++;
+		    else if (k!=0 && k<cl.length) { cl[k]++; hasSec=true; }
+		}
 		count[i]++;
 		if ((m!=null)&&(m.at(j))) marked[i]++;
 		if (count[i]>countMax) countMax=count[i];
@@ -184,14 +197,36 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    g.fillRect(cl,h-ch,cu-cl,ch-lh);
 	    Bars[i]=new Rectangle(cl,h-ch,cu-cl,ch-lh);
 	    
-	    if ((weight==null && marked[i]>0)||(weight!=null && c_marked[i]>0)) {
-		int mh=0;
-		if (isSpine)
-		    mh=lh+((weight==null)?(ch-lh)*marked[i]/count[i]:(int)(((double)(ch-lh))*c_marked[i]/cumulated[i]));
-		else
-		    mh=(weight==null)?ay.getCasePos(marked[i]):ay.getValuePos(c_marked[i]);
-		g.setColor("sel");
-		g.fillRect(cl,h-mh,cu-cl,mh-lh);
+	    if ((weight==null && (marked[i]>0 || hasSec))||(weight!=null && c_marked[i]>0)) {
+		if (weight==null && hasSec) {
+		    int agg=0, lyp=0;
+		    int j=0;
+		    int[] col=(int[])cols[i];
+		    lyp=ay.getCasePos(0);
+		    while (j<col.length) {
+			if (col[j]>0) {
+			    agg+=col[j];
+			    int ly=ay.getCasePos(agg);
+			    if (ly!=lyp) {
+				if (j==0)
+				    g.setColor("sel");
+				else
+				    g.setColor(ColorBridge.main.getColor(j));
+				g.fillRect(cl,h-ly,cu-cl,ly-lyp);
+				lyp=ly;
+			    }
+			}
+			j++;
+		    }
+		} else {
+		    int mh=0;
+		    if (isSpine)
+			mh=lh+((weight==null)?(ch-lh)*marked[i]/count[i]:(int)(((double)(ch-lh))*c_marked[i]/cumulated[i]));
+		    else
+			mh=(weight==null)?ay.getCasePos(marked[i]):ay.getValuePos(c_marked[i]);
+		    g.setColor("sel");
+		    g.fillRect(cl,h-mh,cu-cl,mh-lh);
+		}
 	    };
 	    
 	    g.setColor("outline");
@@ -345,6 +380,14 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
+
+	if (e.getKeyChar()>='0' && e.getKeyChar()<='9') {
+	    m.setSelected(e.getKeyChar()-'0');
+	    m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
+	    setUpdateRoot(0);
+	    repaint();
+	}
+	    
     };
 
     public void keyPressed(KeyEvent e) {
