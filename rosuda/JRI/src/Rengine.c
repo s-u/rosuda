@@ -281,16 +281,14 @@ int Re_ShowFiles(int nfile, 		/* number of files */
     return 1;
 }
 
-int initR() {
-    char *args[3]={"Rengine","--no-save",0};
-
+int initR(int argc, char **argv) {
     //getenv("R_HOME","/Library/Frameworks/R.framework/Resources",1);
     if (!getenv("R_HOME")) {
         fprintf(stderr, "R_HOME is not set. Please set all required environment variables before running this program.\n");
         return -1;
     }
     
-    int stat=Rf_initialize_R(2,args);
+    int stat=Rf_initialize_R(argc, argv);
     if (stat<0) {
         printf("Failed to initialize embedded R! (stat=%d)\n",stat);
         return -1;
@@ -333,13 +331,15 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
   (JNIEnv *env, jobject this)
 {
       int initRes;
+      char *args[]={"Rengine",0};
+      
       printf("rniSetupR\n");
 
       engineObj=(*env)->NewGlobalRef(env, this);
       engineClass=(*env)->NewGlobalRef(env, (*env)->GetObjectClass(env, engineObj));
       eenv=env;
       
-      initRes=initR();
+      initRes=initR(1, args);
 
       return initRes;
 }
