@@ -753,7 +753,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	};
 	
-	showInfo=gotSel&&ev.isAltDown();	
+	showInfo=gotSel&&(ev.isPopupTrigger() || ev.isAltDown() || (ev.getModifiers()&MouseEvent.BUTTON2_MASK)>0);	
 	showDetailed=ev.isShiftDown();
 	selectNode(selNode);
     };

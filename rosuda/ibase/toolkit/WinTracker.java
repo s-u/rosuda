@@ -40,7 +40,7 @@ public class WinTracker implements ActionListener, FocusListener
 		    System.out.println("-- updating menu; we2="+we2.toString());
 		if (we2!=null && we2.menu!=null) {
 		    we2.menu.add(we.newMenuItem());
-		    System.out.println("-- menu updated");
+		    if (Common.DEBUG>0) System.out.println("-- menu updated");
 		};
 	    };
 	};
