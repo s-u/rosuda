@@ -146,6 +146,11 @@ public class SMarker extends Notifier implements Commander {
         };
     }
 
+    /** returns master dataset associated with this marker. Please note that a marker doesn't have to be associated with any SVarSet */
+    public SVarSet getMasterSet() {
+        return masterSet;
+    }
+    
     public Object run(Object o, String cmd) {
         if (cmd=="selAll") {
             selectAll(); NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
@@ -157,5 +162,5 @@ public class SMarker extends Notifier implements Commander {
             selectInverse(); NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
         }
         return null;
-    };    
-};
+    }
+}
