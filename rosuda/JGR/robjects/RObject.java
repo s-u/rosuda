@@ -37,13 +37,13 @@ public abstract class RObject {
         ClassName = c;
     }
 
-    
+
     public RObject(String name, int type, RObject parent) {
         this.name = name;
         this.type = type;
         this.parent = parent;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -51,29 +51,33 @@ public abstract class RObject {
     public String getName() {
         return name;
     }
-    
+
     public void setClassName(String c) {
         this.ClassName = c;
     }
-    
+
     public String getClassName() {
         return ClassName;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public void setParent(RObject p) {
         this.parent = p;
     }
-    
+
     public RObject getParent() {
         return parent;
     }
-    
+
     public abstract String getToolTip();
-    
+
+    public String getSummary() {
+        return RTalk.getSummary(this);
+    }
+
     public String toString() {
         return name +"\t ("+ClassName+")";
     }

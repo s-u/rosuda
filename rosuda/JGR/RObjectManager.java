@@ -13,6 +13,7 @@ import java.awt.datatransfer.*;
 import java.awt.dnd.*;
 import java.awt.event.*;
 import java.util.*;
+import java.text.*;
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.tree.*;
@@ -74,6 +75,7 @@ public class RObjectManager extends iFrame implements ActionListener {
 
 
         othersTree = new ToolTipTree(new OthersTreeModel(this).getModel());
+        othersTree.addMouseListener(new TreeMouseListener());
         othersTree.setRootVisible(true);
         FontTracker.current.add(othersTree);
         tabArea.add("Other",new JScrollPane(othersTree));
@@ -109,7 +111,7 @@ public class RObjectManager extends iFrame implements ActionListener {
     public void addListeners(final JTree t) {
         t.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE || e.getKeyCode() == KeyEvent.VK_DELETE) {
                     try {
                         DefaultMutableTreeNode n = (DefaultMutableTreeNode) t.getSelectionPath().getLastPathComponent();
                         RObject o= (RObject) n.getUserObject();
@@ -167,7 +169,17 @@ public class RObjectManager extends iFrame implements ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
+            try {
+                if(Class.forName("java.lang.Number").isAssignableFrom((((Object[] )content[row])[col]).getClass())) {
+                    DecimalFormat df = new DecimalFormat("#0.00");
+                    return df.format(((Object[]) content[row])[col]).replace(',','.');
+                };
+            } catch (Exception e) {}
             return ((Object[]) content[row])[col];
+        }
+
+        public Class getClass(int col) {
+            return ((Object) content[col]).getClass();
         }
     }
 
@@ -266,7 +278,8 @@ public class RObjectManager extends iFrame implements ActionListener {
             try {
                 obj = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
             } catch (Exception ex) {}
-            return  obj==null?null:obj.getToolTip();
+            /*if ((e.isMetaDown() || e.isControlDown())) return obj==null?null:obj.getSummary();
+            else*/ return  obj==null?null:obj.getToolTip();
         }
 
         public void dragGestureRecognized(DragGestureEvent evt) {
@@ -276,10 +289,10 @@ public class RObjectManager extends iFrame implements ActionListener {
                 obj = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
             } catch (Exception ex) {}
             String drag = null;
-            if (obj.getParent()!=null) {
+            if (obj != null && obj.getParent()!=null) {
                 drag = ((RObject) obj.getParent()).getType()==RObject.DATAFRAME?((RObject) obj.getParent()).getName()+"$"+obj.getName():obj.getName();
             }
-            else drag = obj.getName();
+            else if (obj != null) drag = obj.getName();
             Transferable t = new StringSelection(obj==null?"dragFailure":drag);
             dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
         }
@@ -313,7 +326,7 @@ public class RObjectManager extends iFrame implements ActionListener {
             if (e.getClickCount()==2) {
                 Point p = e.getPoint();
                 try {
-                    dataframe d= (dataframe) ((DefaultMutableTreeNode)dataTree.getSelectionPath().getLastPathComponent()).getUserObject();
+                    dataframe d= (dataframe) ((DefaultMutableTreeNode)((JTree)e.getSource()).getSelectionPath().getLastPathComponent()).getUserObject();
                     cursorWait();
                     new DataTable(RTalk.getVarSet(d));
                     cursorDefault();

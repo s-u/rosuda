@@ -40,7 +40,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     private JSplitPane back = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     private JScrollPane scrollAreaTop = new JScrollPane();
     private JScrollPane scrollAreaBottom = new JScrollPane();
-    public SyntaxArea output = new SyntaxArea(false);
+    public ResultOutput output = new ResultOutput();
     public CmdInput input = new CmdInput();
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
@@ -86,7 +86,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         input.setToolTipText("R Input");
 
         input.addKeyListener(this);
-        input.setWordWrap(false);
+        //input.setWordWrap(false);
         //output.setWordWrap(false);
 
         //output.setText("\n");
@@ -200,6 +200,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             if (help!=null && help.trim().length() > 0) RHelp.last.search(help.trim(),e);
             setWorking(false);
         }
+        output.append("> ",Preferences.CMD);
     }
 
 
@@ -297,7 +298,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void   rWriteConsole(Rengine re, String text) {
         console.append(text);
-        if (console.length() > JGR.STRINGBUFFERSIZE) {
+        if (console.length() > 100) {
             output.append(console.toString(),Preferences.RESULT);
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
@@ -313,7 +314,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             output.append(console.toString(),Preferences.RESULT);
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
-            System.out.println(output.getLineCount());
             setWorking(false);
         }
         else {
@@ -538,6 +538,23 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             String s = getCurrentWord();
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
             else return "R Input";
+        }
+    }
+
+    class ResultOutput extends JTextPane {
+        public ResultOutput() {
+            if (FontTracker.current == null) FontTracker.current = new FontTracker();
+            FontTracker.current.add(this);
+        }
+
+        public void append(String str, AttributeSet a) {
+            Document doc = getDocument();
+                if (doc != null) {
+                    try {
+                        doc.insertString(doc.getLength(), str, a);
+                    } catch (BadLocationException e) {
+                    }
+                }
         }
     }
 }

@@ -364,18 +364,37 @@ public class RTalk {
             for (int i = 0; i < res.length; i++) {
                 if (!res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s)+ "<br>";
             }
-            tip = tip.substring(0,tip.length()-4); //cut last <br>
+            if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
             tip += "</html>";
         }
         else return null;
         return tip.startsWith("<html>Error")?null:tip;
     }
 
+
+    public static String getSummary(RObject o) {
+        String tip = null;
+        String res[] = null;
+        REXP x;
+        try { x = JGR.R.eval("deparse(summary("+(o.getParent()==null?o.getName():((o.getParent()).getName()+"$"+o.getName()))+"))"); } catch (Exception e) { return null;}
+        if (x!=null && (res = x.asStringArray()) != null) {
+            tip = "<html>"; //<font size="+Preferences.FontSize/2+">"
+            for (int i = 0; i < res.length; i++) {
+                if (!res[i].trim().equals("NULL")) tip += res[i]+"<br>";
+            }
+            if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
+            tip += "</html>";
+        }
+        else return null;
+        return tip.startsWith("<html>Error")?null:tip;
+    }
+
+
     /* get levels for a factor */
-    public static String getFactorLevels(String f) {
+    public static String getFactorLevels(factor f) {
         String levels = null;
         String res[];
-        REXP x = JGR.R.eval("levels("+f+")");
+        REXP x = JGR.R.eval("levels("+(f.getParent()==null?f.getName():((f.getParent()).getName()+"$"+f.getName()))+")");
         if (x != null && (res = x.asStringArray()) != null) {
             levels = "<html>";
             int l = -1;

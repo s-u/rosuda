@@ -26,7 +26,7 @@ public class Preferences {
     public static String TITLE = "JGR";
     public static String SUBTITLE = "Java Gui for R";
     public static String DEVELTIME = "2003 - 2004";
-    public static String INSTITUTION = "RoSuDA, Univ. Augsburg";
+    public static String INSTITUTION = "RoSuDa, Univ. Augsburg";
     public static String AUTHORS = "Markus Helbig, Simon Urbanek";
     public static String LOGO = "logo.jpg";
     public static String SPLASH = "splash.jpg";

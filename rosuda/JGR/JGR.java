@@ -158,6 +158,7 @@ public class JGR {
             JGR JGR1 = new JGR();
         }
         catch (Exception e) {
+            e.printStackTrace();
             new iError(e);
         }
     }
