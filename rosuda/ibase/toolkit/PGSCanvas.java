@@ -104,6 +104,13 @@ public class PGSCanvas extends LayerCanvas implements Commander {
 	    nextLayer(p);
     }
 
+    public void forcedFlush() {
+        Rectangle r=getBounds();
+        setUpdateRoot(0);
+        setSize(r.width-1,r.height-1);
+        setSize(r.width,r.height);
+    }
+    
     /** default handing of commands "exportPGS" and "exportPS". Any descendant should
 	call <code>super.run(o,cmd)</code> to retain this functionality */
     public Object run(Object o, String cmd) {
