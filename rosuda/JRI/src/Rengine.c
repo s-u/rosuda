@@ -1,6 +1,7 @@
 #include "jri.h"
 #include "Rengine.h"
 #include <R_ext/Parse.h>
+#include <R_ext/eventloop.h>
 
 int initR() {
     char *args[3]={"Rengine","--vanilla",0};
@@ -94,4 +95,10 @@ JNIEXPORT jint JNICALL Java_Rengine_rniExpType
   (JNIEnv *env, jobject this, jlong exp)
 {
     return (exp<0)?0:TYPEOF(L2SEXP(exp));
+}
+
+JNIEXPORT void JNICALL Java_Rengine_rniIdle
+  (JNIEnv *env, jobject this)
+{
+    R_runHandlers(R_InputHandlers, R_checkActivity(0, 1));
 }
