@@ -554,6 +554,8 @@ FocusListener, RMainLoopCallbacks {
 							else
 								JGR.RHISTORY.add(input.getText().trim());
                         }
+                        else if (System.getProperty("user.name").indexOf("markus") > -1)
+							JGR.RHISTORY.add(input.getText().trim());
                     }
                     input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
                     input.setCaretPosition(input.getText().length());
