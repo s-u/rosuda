@@ -181,6 +181,7 @@ public class VarFrame extends TFrame {
                 if (v.getContentsType()==SVar.CT_String) st="S";
                 if (v.getContentsType()==SVar.CT_Number) st="N";
                 if (v.getContentsType()==SVar.CT_Map) st="Map";
+                if (v.getContentsType()==SVar.CT_Tree) st="Tree";
 		g.drawString(st+(v.isCat()?"C":"")+(v.hasMissing()?"*":""),10,17+i*17-offset);
 		g.setFont(f2); g.setColor(C_varNam);	
 		g.drawString(v.getName(),35,17+i*17-offset);
