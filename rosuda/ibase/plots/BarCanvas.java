@@ -237,7 +237,7 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		    while (j<col.length) {
 			if (col[j]>0) {
 			    agg+=col[j];
-			    int ly=ay.getCasePos(agg);
+			    int ly=ay.getCasePos(isSpine?(agg*ay.datacount/count[i]):agg);
 			    if (ly!=lyp) {
 				if (j==0)
 				    g.setColor("sel");
