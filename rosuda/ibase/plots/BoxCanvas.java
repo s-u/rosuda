@@ -66,7 +66,7 @@ class OrdStats { // get ordinal statistics to be used in boxplot
 /** BoxCanvas - implementation of the boxplots
     @version $Id$
 */
-class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander
+class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
 {
     /** associated numerical variable */
     SVar v;
@@ -163,6 +163,8 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 		i++;
 	    };
 	    updateBoxes();
+            String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
+            EzMenu.getEzMenu(f,this,myMenu);
 	};
     };
 
@@ -258,22 +260,39 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.defineColor("black",0,0,0);
 	g.defineColor("selfill",0,255,0);
 	g.defineColor("sel",0,128,0);
-	if (vertical)
+        if (vertical) {
 	    a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
-	else
+            /* draw ticks and labels for Y axis */
+            {
+                int X=30;
+                double f=a.getSensibleTickDistance(30,18);
+                double fi=a.getSensibleTickStart(f);
+                //if (Common.DEBUG>0)
+                //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
+                while (fi<a.vBegin+a.vLen) {
+                    int t=a.getValuePos(fi);
+                    g.drawLine(X-5,t,X,t);
+                    //if(showLabels)
+                        g.drawString(a.getDisplayableValue(fi),X-25,t+5);
+                    fi+=f;
+                };
+                g.drawLine(X,a.gBegin,X,a.gLen);
+            }            
+        } else {
 	    a.setGeometry(Axis.O_X,40,r.width-50);
+        }
 	if (!vsCat) {
-	    drawBox(g,OSdata,10,20,"white","black");
+	    drawBox(g,OSdata,40,20,"white","black");
 	    if (areMarked)
-		drawBox(g,OSsel,18,10,"selfill","sel");
+		drawBox(g,OSsel,48,10,"selfill","sel");
 	} else {
 	    int i=0;
 	    while(i<cs) {		
-		drawBox(g,oss[i],10+40*i,20,"white","black");
+		drawBox(g,oss[i],40+40*i,20,"white","black");
 		if (areMarked && rs[cs+1+i]>0)
-                    drawBox(g,oss[cs+1+i],18+40*i,10,"selfill","sel");
+                    drawBox(g,oss[cs+1+i],48+40*i,10,"selfill","sel");
 
-                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),12+40*i,r.height-10);
+                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,r.height-10,PoGraSS.TA_Center);
                 i++;
 	    };
 	};
@@ -365,4 +384,9 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	};
 	return null;
     };
-};
+
+    public void actionPerformed(ActionEvent e) {
+        if (e==null) return;
+        run(e.getSource(),e.getActionCommand());
+    }    
+}
