@@ -60,15 +60,15 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
         globalNotifier.delDepend(this);
     }
     
-    class IDlgCL implements ActionListener {
+    public class IDlgCL implements ActionListener {
         PGSCanvas c;
-        IDlgCL(PGSCanvas cc) { c=cc; };
+        public IDlgCL(PGSCanvas cc) { c=cc; };
 
         /** activated if a button was pressed. It determines whether "cancel" was pressed or OK" */
         public void actionPerformed(ActionEvent e) {
             c.cancel=!e.getActionCommand().equals("OK");
             c.intDlg.setVisible(false);
-        };
+        }
     }
 
     /** returns the global notifier common to all PGScanvas descendants. It is mainly used by routines which change some user settings and need to notify all plots regardless of content. */
