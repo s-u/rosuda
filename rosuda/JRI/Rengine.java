@@ -76,6 +76,8 @@ public class Rengine extends Thread {
     public synchronized native long rniPutList(long[] cont);
     public synchronized native long[] rniGetList(long exp);
         
+    public native int rniStop(int flag);
+    
     public synchronized native void rniAssign(String name, long exp, long rho);
     
     public synchronized native int rniExpType(long exp);
