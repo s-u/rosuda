@@ -42,7 +42,53 @@ public class Tools {
     public static double nlogn(int n) {
         return (n<=0)?0.0:((double)n)*Math.log((double)n);
     }
-    
+
+    public static int[] sortDoublesIndex(double[] da) {
+        int ct=da.length;
+        int r[] = new int[ct];
+
+        int i=0;
+        while (i<ct) { r[i]=i; i++; }
+        i=0;
+        while (i<ct-1) {
+            double d=da[r[i]];
+            int j=ct-1;
+            while (j>i) {
+                double d2=da[r[j]];
+                if (d2>d) {
+                    int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                    d=d2;
+                }
+                j--;
+            }
+            i++;
+        }
+        return r;
+    }
+
+    public static int[] sortIntegersIndex(int[] da) {
+        int ct=da.length;
+        int r[] = new int[ct];
+
+        int i=0;
+        while (i<ct) { r[i]=i; i++; }
+        i=0;
+        while (i<ct-1) {
+            int d=da[r[i]];
+            int j=ct-1;
+            while (j>i) {
+                int d2=da[r[j]];
+                if (d2>d) {
+                    int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                    d=d2;
+                }
+                j--;
+            }
+            i++;
+        }
+        return r;
+    }
+
     public static String getDisplayableValue(double val) { return getDisplayableValue(val,val); };
     
     public static String getDisplayableValue(double val, double range) {
