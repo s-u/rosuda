@@ -86,7 +86,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
             if (recentOpen==null)
-                recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+                recentOpen=new RecentList("JGR","RecentOpenFiles",8);
             String[] shortNames=recentOpen.getShortEntries();
             String[] longNames =recentOpen.getAllEntries();
             int i=0;
@@ -271,20 +271,22 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                 //}
             /*};
             t.start();*/
-        }
+        } catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this,"Could not find selected File.","File not found!",JOptionPane.OK_OPTION);
+		}
         catch (Exception e) {
             new ErrorMsg(e);
-            setWorking(false);
         }
         finally {
             editArea.setCaretPosition(0);
+            setWorking(false);
         }
         recentOpen.addEntry(fileName);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
             rm.removeAll();
             if (recentOpen==null)
-                recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+                recentOpen=new RecentList("JGR","RecentOpenFiles",8);
             String[] shortNames=recentOpen.getShortEntries();
             String[] longNames =recentOpen.getAllEntries();
             int i=0;
