@@ -42,6 +42,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	@param var associated variable
 	@param mark associated marker */
     public BarCanvas(Frame f, SVar var, SMarker mark) {
+        super(2); // 2 layers; 0=bars, 1=drag
 	v=var; m=mark; setFrame(f); setTitle("Barchart ("+v.getName()+")");
 	ax=new Axis(v,Axis.O_X,Axis.T_EqCat);
 	ax.addDepend(this);
@@ -66,6 +67,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     /** notification handler - rebuilds bars and repaints */
     public void Notifying(Object o, Vector path) {
 	updateBars();
+        setUpdateRoot(0);
 	repaint();
     };
 
@@ -160,13 +162,18 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	};
 
 	if(dragMode) {
-	    g.setColor("drag");
-	    g.drawRect(dragX-dragW/2,basey-dragH,dragW,dragH);	
+            g.nextLayer();
 	    int myX=ax.getCatCenter(ax.getCatByPos(dragX));
-	    g.drawLine(myX,5,myX,basey);
+	    g.setColor(192,192,192);
+	    g.fillRect(dragX-dragW/2,basey-dragH,dragW,dragH);	
+	    g.setColor("outline");
+	    g.drawRect(dragX-dragW/2,basey-dragH,dragW,dragH);	
+	    g.setColor("drag");
+	    g.fillRect(myX-dragW/2,basey,dragW,4);
 	};
 
 	g.end();
+        setUpdateRoot(2);
     };
     
     public void mouseClicked(MouseEvent ev) 
@@ -209,9 +216,11 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (dragMode) {
 	    dragMode=false;
 	    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            setUpdateRoot(1);
 	    if (dragNew!=dragBar) {
 		ax.moveCat(dragBar,ax.getCatSeqIndex(dragNew));
 		updateBars();
+                setUpdateRoot(0);
 	    };
 	    repaint();
 	};
@@ -223,6 +232,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    dragX=e.getX(); dragY=e.getY();
 	    dragNew=ax.getCatByPos(dragX);
 	    //System.out.println("dragX="+dragX+" dragY="+dragY+" dragNew="+dragNew);
+            setUpdateRoot(1);
 	    repaint();
 	};
     };
@@ -251,6 +261,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	};
 	if (cmd=="labels") {
 	    //    showLabels=!showLabels;
+            setUpdateRoot(0);
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
