@@ -55,46 +55,46 @@ public class Common
     public static boolean noIntVar=false;
 
     /** Notify-Message constant: SMarker state changed */
-    public static final int NM_MarkerChange     =0x100;
+    public static final int NM_MarkerChange       =0x001000;
     /** Notify-Message constant: SMarker state changed (secondary marks) */
-    public static final int NM_SecMarkerChange  =0x102;
+    public static final int NM_SecMarkerChange    =0x001002;
     
     /** Notify-Message constant: Axis changed */
-    public static final int NM_AxisChange       =0x200;
+    public static final int NM_AxisChange         =0x002000;
     /** Notify-Message constant: geometry part of an Axis changed */
-    public static final int NM_AxisGeometryChange=0x201;
+    public static final int NM_AxisGeometryChange =0x002001;
     /** Notify-Message constant: value/data part of an Axis changed */
-    public static final int NM_AxisDataChange   =0x0202;
+    public static final int NM_AxisDataChange     =0x002002;
     
     /** Notify-Message constant: SVar changed */
-    public static final int NM_VarChange        =0x300;
+    public static final int NM_VarChange          =0x003000;
     /** Notify-Message constant: SVar changed: content of a variable changed */
-    public static final int NM_VarContentChange =0x301;
+    public static final int NM_VarContentChange   =0x003001;
     /** Notify-Message constant: SVar changed: type (cat/num) changed */
-    public static final int NM_VarTypeChange    =0x302;
+    public static final int NM_VarTypeChange      =0x003002;
     /** Notify-Message constant: SVar changed: sequence of categories changed */
-    public static final int NM_VarSeqChange     =0x303;
+    public static final int NM_VarSeqChange       =0x003003;
 
     /** Notify-Message constant: SVarSet changed (e.g. # of vars...) */
-    public static final int NM_VarSetChange     =0x400;
+    public static final int NM_VarSetChange       =0x004000;
     /** Notify-Message constant: current node changed */
-    public static final int NM_NodeChange       =0x500;
+    public static final int NM_NodeChange         =0x005000;
 
     /** Notify-Message constant: category sequence changed (fired by SCatSeqence)
         note that SCatSequence passes change events to SVar only if it is told to. This allows other classes to maintain private category sequences independent of the variable's main sequence. This event is sent to the private dependents. */
-    public static final int NM_CatSeqChange     =0x600;
+    public static final int NM_CatSeqChange       =0x006000;
 
     /** Notify-Message constant: preferences have changed */
-    public static final int NM_PrefsChanged     =0xff0;
+    public static final int NM_PrefsChanged       =0x007000;
     
     /** Notify-Message constant: BREAK event - this one is usually not processed in Java but sent to the calling system. Usually this event is used to stop an external event loop, such as an iPlots event loop. */
-    public static final int NM_BREAK            =0x700;
+    public static final int NM_BREAK              =0x700000;
 
-    public static final int NM_ExtEvent         =0x800;
-    public static final int NM_ActionEvent      =0x801;
+    public static final int NM_ExtEvent           =0x800000;
+    public static final int NM_ActionEvent        =0x800001;
     
     /** mask to apply in order to get the top-level event */
-    public static final int NM_MASK             =0xf00;
+    public static final int NM_MASK               =0xfff000;
 
     /** this flag is set to <code>true</code> by an external application if the underlying system supports the BREAK event */
     public static boolean supportsBREAK = false;
@@ -132,21 +132,21 @@ public class Common
     public static void initValuesFromConfigFile(PluginManager pm) {
         if (Global.DEBUG>0)
             System.out.println("Common.initValuesFromConfigFile: loading values");
-        String s=pm.getParS("Common","color.background");
+        String s=GlobalConfig.getS("Common.color.background");
         if (Global.DEBUG>0)
             System.out.println("Common.color.background="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
             int c=Tools.parseHexInt(s.substring(1));
             backgroundColor=new Color((c>>16)&255,(c>>8)&255,c&255);            
         }
-        s=pm.getParS("Common","color.select");
+        s=GlobalConfig.getS("Common.color.select");
         if (Global.DEBUG>0)
             System.out.println("Common.color.select="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
             int c=Tools.parseHexInt(s.substring(1));
             selectColor=new Color((c>>16)&255,(c>>8)&255,c&255);
         }
-        s=pm.getParS("Common","color.objects");
+        s=GlobalConfig.getS("Common.color.objects");
         if (Global.DEBUG>0)
             System.out.println("Common.color.objects="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
