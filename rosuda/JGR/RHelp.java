@@ -80,7 +80,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         if (System.getProperty("os.name").startsWith("Windows")) {
             /*JGR.R.eval("try(make.packages.html(.libPaths()));try(make.search.html(.libPaths()));try(fixup.libraries.URLs(.libPaths()))");
             index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
-            RHELPLOCATION = JGR.RHOME;
+            RHELPLOCATION = RTalk.getRHome();
             index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {

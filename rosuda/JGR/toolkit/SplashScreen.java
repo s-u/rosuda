@@ -49,14 +49,19 @@ public class SplashScreen extends JWindow implements Runnable {
             if (splash != null)
                 g.drawImage(splash, 0, 0, splash.getWidth(this),splash.getHeight(this),this);
             g.setFont(new Font("Dialog", Font.BOLD, 26));
-            g.drawString(iPreferences.TITLE, 160,
-                         80);
+            g.drawString(iPreferences.TITLE, 170,
+                         40);
             g.setFont(new Font("Dialog", Font.BOLD, 16));
-            g.drawString(iPreferences.SUBTITLE, 140,
-                         110);
-            g.setFont(new Font("Dialog", 0, 14));
+            g.drawString(iPreferences.SUBTITLE, 150,
+                         70);
+            g.setFont(new Font("Dialog", 0, 13));
             g.drawString("Version: " + iPreferences.VERSION,
-                         150, 130);
+                         164, 90);
+            g.setFont(new Font("Dialog", 0, 13));
+            g.drawString("" + iPreferences.AUTHOR1,
+                         160, 114);
+            g.drawString("" + iPreferences.AUTHOR2,
+                         160, 130);
             g.setFont(new Font("Dialog", 0, 12));
             g.drawString(iPreferences.WEBSITE,150, splashSize.height - 35);
             g.setFont(new Font("Dialog", 0, 12));
