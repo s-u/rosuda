@@ -72,7 +72,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	repaint();
     };
 
-    public void Notifying(Object o, Vector path) {
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	repaint();
     };
 
@@ -209,7 +209,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 			    int j=((Integer)e2.nextElement()).intValue();
 			    m.set(j,m.at(j)?setTo:1);
 			};
-			m.NotifyAll();
+			m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 		    };
 		};		
 	    };
@@ -240,7 +240,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	    if (sel.contains(Pts[i])) m.set(i,m.at(i)?setTo:1);
 	    i++;
 	    };*/
-	m.NotifyAll();
+	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 	repaint();	
     };
     public void mouseEntered(MouseEvent e) {};

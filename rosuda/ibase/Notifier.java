@@ -24,31 +24,31 @@ public class Notifier {
 
     /** notifies all {@link Dependent} classes in the notify list of a change, except for the specified class. 
 	@param c class to be excluded from the current notification (used to prevent loops if a notification method wants to notify all others). If set to <code>NULL</code>, all classes in the list will be notified. */
-    public void NotifyAll(Dependent c) { NotifyAll(c,null); };
-    public void NotifyAll(Vector path) { NotifyAll(null,path); };
+    public void NotifyAll(NotifyMsg msg, Dependent c) { NotifyAll(msg,c,null); };
+    public void NotifyAll(NotifyMsg msg, Vector path) { NotifyAll(msg,null,path); };
 
     /** initiates cascaded notification process. use this method instead of NotifyAll if you want to make sure that also inderect dependents will recieve the notification */
-    public void startCascadedNotifyAll() {
+    public void startCascadedNotifyAll(NotifyMsg msg) {
 	Vector path=new Vector();
 	path.addElement(this);
-	NotifyAll(null,path);
+	NotifyAll(msg,null,path);
     };
 
     /** general NotifyAll */    
-    public void NotifyAll(Dependent c, Vector path) {
+    public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
 	if (ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
 		if (path!=null) {
 		    path.addElement(this);
-		    o.Notifying(this,path);
+		    o.Notifying(msg,this,path);
 		    path.removeElement(this);
-		} else o.Notifying(this,null);
+		} else o.Notifying(msg,this,null);
 	    };
 	};
     };    
     
     /** notifies all {@link Dependent} classes in the notify list of a change. (Results in calling {@link #NotifyAll} with <code>NULL</code> parameter */
-    public void NotifyAll() { NotifyAll(null,null); };    
+    public void NotifyAll(NotifyMsg msg) { NotifyAll(msg,null,null); };    
 };

@@ -214,7 +214,7 @@ public class VarFrame extends TFrame {
 	    minDim=new Dimension(140,132);            
 	};
 
-        public void Notifying(Object o, Vector path) {
+        public void Notifying(NotifyMsg msg, Object o, Vector path) {
             repaint();
         };
         

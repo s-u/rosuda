@@ -84,7 +84,7 @@ public class Axis extends Notifier
     public void setGeometry(int orientation, int begin, int len) {
 	if(orientation!=or||begin!=gBegin||len!=gLen) { // lazy notification
 	    gBegin=begin; gLen=len; or=orientation;
-	    NotifyAll();
+	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
 	};
     };
 
@@ -95,7 +95,7 @@ public class Axis extends Notifier
 	if (vBegin!=begin||vLen!=len) { // lazy notification
 	    vBegin=begin; vLen=len;
             vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
-	    NotifyAll();
+	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
 	};
     };
 
@@ -107,7 +107,7 @@ public class Axis extends Notifier
 	    datacount=dc;
 	    vBegin=0; vLen=dc; // this is necessary if get SensibleTick.. functions are used
             vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
-	    NotifyAll();
+	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
 	};
     };
 
@@ -143,7 +143,7 @@ public class Axis extends Notifier
 		} else cseq=null;
 	    };
 	};
-	NotifyAll();
+	NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
     };
 
     /** get graphical position of case with index i (for categorial vars returns

@@ -69,8 +69,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	repaint();
     };
 
-    public void Notifying(Object o, Vector path) {
-        setUpdateRoot(0);
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
         repaint();
     };
 
@@ -265,7 +265,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 		m.set(i,m.at(i)?setTo:1);
 	    i++;
 	};
-	m.NotifyAll();
+	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
         setUpdateRoot(1);
 	repaint();	
     };

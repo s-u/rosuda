@@ -124,7 +124,7 @@ public class SMarker extends Notifier {
 
     /* --- the experimental currentNode code --- */
     public void setNode(SNode n) {
-	currentNode=n; NotifyAll();
+	currentNode=n; NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
     };
     public SNode getNode() { return currentNode; };
 

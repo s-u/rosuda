@@ -32,6 +32,11 @@ public class Common
     public static Dimension screenRes=null;
     /** common background color. TFrame uses this as default */
     public static Color backgroundColor=new Color(255,255,192);
+
+    public static final int NM_MarkerChange   =0x101;
+    public static final int NM_AxisChange     =0x102;
+    public static final int NM_VariableChange =0x103;
+    public static final int NM_VarSetChange   =0x104;
     
     /** add an application warning/error */
     public static void addWarning(String war) {

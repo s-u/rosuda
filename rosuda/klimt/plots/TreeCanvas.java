@@ -227,7 +227,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     };
 
     /** notify handler (simply repaints the tree) ignores the parameter */
-    public void Notifying(Object o, Vector path) { repaint(); };
+    public void Notifying(NotifyMsg msg, Object o, Vector path) { repaint(); };
     
     /** move node coordinates relative based on the x/y difference
 	@param dx difference in x direction
@@ -540,7 +540,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (cmd=="prune")
 	    if ((selectedNode!=null)&& !selectedNode.isLeaf()) {
 		selectedNode.setPrune(true);
-		selectedNode.getSource().getMarker().NotifyAll();
+		selectedNode.getSource().getMarker().NotifyAll(new NotifyMsg(selectedNode.getSource().getMarker(),Common.NM_MarkerChange));
 	    };
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="new") {
@@ -739,7 +739,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 				int j=((Integer)e2.nextElement()).intValue();
 				m.set(j,m.at(j)?setTo:1);
 			    };
-			    m.NotifyAll();
+			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 			};
 		    };
 		    

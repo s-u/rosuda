@@ -65,7 +65,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     };
 
     /** notification handler - rebuilds bars and repaints */
-    public void Notifying(Object o, Vector path) {
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	updateBars();
         setUpdateRoot(0);
 	repaint();
@@ -196,7 +196,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    };
 	    i++;
 	};
-	if (effect) m.NotifyAll();
+	if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
     };
 
     public void mousePressed(MouseEvent ev) {

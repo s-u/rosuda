@@ -73,7 +73,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	}
     };
 
-    public void Notifying(Object o, Vector path) {
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	setNode(m.getNode());
 	repaint();
     };

@@ -168,7 +168,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
-    public void Notifying(Object o, Vector path) {
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	updateBoxes();
 	repaint();
     };
