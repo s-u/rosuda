@@ -10,8 +10,15 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JColorChooser;
 
-public class PreferencesFrame extends Frame implements WindowListener, MouseListener, ActionListener {
+public class PreferencesFrame extends Frame implements WindowListener, MouseListener, ActionListener, ItemListener {
     PrefCanvas pc;
+    Choice cs;
+    String[] schemes = {
+        "KLIMT classic","#ffffc0","#ffffff","#80ff80",
+        "Terra di Siena","#dfb860","#c0c0c0","#b46087",
+        "Xtra red","#ffffe0","#c0c0c0","#ff0000",
+        null
+    };
     
     public PreferencesFrame() {
         super("Preferences");
@@ -19,12 +26,31 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
         add(pc=new PrefCanvas());
         pc.addMouseListener(this);
         Panel p=new Panel();
+        Panel pp=new Panel();
+        pp.setLayout(new BorderLayout());
+        Panel ppp=new Panel();
+        pp.add(p,BorderLayout.SOUTH);
+        pp.add(ppp);
+        ppp.setLayout(new FlowLayout());
+        ppp.add(new Label("Color scheme:"));
+        ppp.add(cs=new Choice());
+        cs.add("Custom ...");
+        int i=0;
+        while (schemes[i]!=null) {
+            cs.add(schemes[i]);
+            if (schemes[i+1].compareTo(Tools.color2hrgb(pc.c[0]))==0 &&
+                schemes[i+2].compareTo(Tools.color2hrgb(pc.c[1]))==0 &&
+                schemes[i+3].compareTo(Tools.color2hrgb(pc.c[2]))==0)
+                cs.select(schemes[i]);
+            i+=4;
+        }
+        cs.addItemListener(this);
         p.setLayout(new FlowLayout());
         Button b=null;
         p.add(b=new Button("Save")); b.addActionListener(this);
         p.add(b=new Button("Apply")); b.addActionListener(this);
         p.add(b=new Button("Close")); b.addActionListener(this);
-        add(p,BorderLayout.SOUTH);
+        add(pp,BorderLayout.SOUTH);
         pack();
         addWindowListener(this);
     }
@@ -32,7 +58,7 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     class PrefCanvas extends Canvas {
         Color c[];
         PrefCanvas() {
-            setSize(300,200);
+            setSize(250,130);
             c=new Color[3];
             c[0]=Common.backgroundColor;
             c[1]=Common.objectsColor;
@@ -69,14 +95,24 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     public void windowActivated(WindowEvent e) {}
     public void windowDeactivated(WindowEvent e) {}
 
-    public void handlePrefs() {
-        Color sc=JColorChooser.showDialog(Common.mainFrame,"Choose selection color",Common.selectColor);
-        if (sc!=null) {
-            Common.selectColor=sc;
-            PGSCanvas.getGlobalNotifier().NotifyAll(new NotifyMsg(this,Common.NM_PrefsChanged));
+    public void itemStateChanged(ItemEvent e) {
+        String s=cs.getSelectedItem();
+        int i=0;
+        while (schemes[i]!=null) {
+            if (schemes[i]==s) {
+                Color cl=Tools.hrgb2color(schemes[++i]);
+                if (cl!=null) pc.c[0]=cl;
+                cl=Tools.hrgb2color(schemes[++i]);
+                if (cl!=null) pc.c[1]=cl;
+                cl=Tools.hrgb2color(schemes[++i]);
+                if (cl!=null) pc.c[2]=cl;
+                pc.repaint();
+                return;
+            }
+            i+=4;
         }
     }
-
+        
     public void mouseClicked(MouseEvent ev) {
         int x=ev.getX(), y=ev.getY();
         if (x>170 && x<200 && y>20 && y<100) {
@@ -84,6 +120,7 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
             Color cl=null;
             cl=JColorChooser.showDialog(Common.mainFrame,"Choose color",pc.c[a]);
             if (cl!=null) {
+                cs.select("Custom ...");
                 pc.c[a]=cl;
                 pc.repaint();
             }
@@ -112,6 +149,11 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
             PGSCanvas.getGlobalNotifier().NotifyAll(new NotifyMsg(this,Common.NM_PrefsChanged));            
         }
         if (cmd=="Save") {
+            PluginManager pm=PluginManager.getManager();
+            pm.setParS("Common","color.background",Tools.color2hrgb(Common.backgroundColor));
+            pm.setParS("Common","color.objects",Tools.color2hrgb(Common.objectsColor));
+            pm.setParS("Common","color.select",Tools.color2hrgb(Common.selectColor));
+            pm.saveSettings();
             setVisible(false);
             pc=null;
             dispose();
