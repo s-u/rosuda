@@ -45,6 +45,8 @@ public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseList
     public int ptDiam=3;
     public int stackOff=3;
 
+	protected float ptAlpha = 1f;
+	
     public int fieldBg=0; // 0=none, 1=objects, 2=white
     
     /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
@@ -229,6 +231,7 @@ public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseList
         nextLayer(g);
         
         int lastSM=0;
+		if (ptAlpha<1f) g.setGlobalAlpha(ptAlpha);
 	g.setColor("point");
         if (filter==null) {
             for (int i=0;i<pts;i++)
@@ -247,7 +250,7 @@ public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseList
         }
 
             
-            
+            g.resetGlobalAlpha();
         nextLayer(g);
         
         if (m.marked()>0) {
@@ -441,6 +444,8 @@ public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseList
         if (e.getKeyChar()=='J') run(this,"stackjitter");
 	if (e.getKeyChar()=='t') run(this,"trigraph");
         if (e.getKeyChar()=='s') run(this,"shading");
+		if (e.getKeyChar()=='.') run(this,"alphaUp");
+		if (e.getKeyChar()==',') run(this,"alphaDown");
     };
     public void keyPressed(KeyEvent e) {
         if (Global.DEBUG>0)
@@ -553,6 +558,14 @@ public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseList
             shading=!shading; updatePoints(); setUpdateRoot(0); repaint();
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
+        if (cmd=="alphaDown") {
+            ptAlpha-=(ptAlpha>0.2)?0.10:0.02; if (ptAlpha<0f) ptAlpha=0.05f;
+            setUpdateRoot(0); repaint();
+        }
+        if (cmd=="alphaUp") {
+            ptAlpha+=(ptAlpha>0.2)?0.10:0.02; if (ptAlpha>1f) ptAlpha=1f;
+            setUpdateRoot(0); repaint();
+        }
         
         if (cmd=="exportCases") {
 	    try {
