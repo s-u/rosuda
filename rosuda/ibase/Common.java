@@ -58,7 +58,8 @@ public class Common
     public static Color popupColor=new Color(245,255,255);
     /** common background color when aqua-style background is used */
     public static Color aquaBgColor=new Color(230,230,240);
-
+    /** if <code>true</code> no internal variables are created */
+    public static boolean noIntVar=false;
     /** SMarker state changed */
     public static final int NM_MarkerChange     =0x100;
     /** Axis changed */

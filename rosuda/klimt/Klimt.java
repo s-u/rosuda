@@ -268,6 +268,8 @@ public class InTr
                     Common.informLoader=true;
                     System.out.println("InfoForLoader:Initializing...");
                 }
+                if (argv[carg].compareTo("--no-add")==0)
+                    Common.noIntVar=true;
                 if (argv[carg].compareTo("--with-aqua")==0)
                     Common.useAquaBg=true;
 /*                if (argv[carg].compareTo("--start-Rserv")==0)
