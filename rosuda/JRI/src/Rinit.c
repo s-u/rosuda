@@ -15,6 +15,18 @@ extern FILE*    R_Consolefile;   /* Console output file */
 extern FILE*    R_Outputfile;   /* Output file */
 extern char*    R_TempDir;   /* Name of per-session dir */
 
+typedef enum {
+    SA_NORESTORE,/* = 0 */
+    SA_RESTORE,
+    SA_DEFAULT,/* was === SA_RESTORE */
+    SA_NOSAVE,
+    SA_SAVE,
+    SA_SAVEASK,
+    SA_SUICIDE
+} SA_TYPE;
+
+extern SA_TYPE SaveAction;
+
 /* from src/unix/devUI.h */
 
 extern void (*ptr_R_Suicide)(char *);
@@ -49,6 +61,7 @@ int initR(int argc, char **argv) {
     R_Outputfile = NULL;
     R_Consolefile = NULL;
     R_Interactive = 1;
+    SaveAction = SA_SAVEASK;
 
     /* ptr_R_Suicide = Re_Suicide; */
     /* ptr_R_CleanUp = Re_CleanUp; */
@@ -207,7 +220,7 @@ int initR(int argc, char **argv)
     Rp->R_Quiet = FALSE;
     Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
-    Rp->SaveAction = SA_DEFAULT;
+    Rp->SaveAction = SA_SAVEASK;
     Rp->CommandLineArgs = argv;
     Rp->NumCommandLineArgs = argc;
 
