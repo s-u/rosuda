@@ -237,26 +237,56 @@ public class InTr
     public static void main(String[] argv)
     {
         boolean silentTreeLoad=false;
+        int firstNonOption=-1;
         try {
 	    int argc=argv.length;
 	    int carg=0;
-	    
-	    if ((argc>0)&&(argv[0].compareTo("--debug")==0)) {
-		Common.DEBUG=1; carg++;
-		System.out.println("KLIMT v"+Common.Version+" (Release 0x"+Common.Release+")");
+
+            while (carg<argv.length) {
+                if (argv[carg].compareTo("--debug")==0)
+                    Common.DEBUG=1;
+                if (argv[carg].compareTo("--profile")==0)
+                    Common.PROFILE=1;
+                if (argv[carg].compareTo("--nodebug")==0)
+                    Common.DEBUG=0;
+                if (argv[carg].compareTo("--with-loader")==0) {
+                    Common.informLoader=true;
+                    System.out.println("InfoForLoader:Initializing...");
+                }
+                if (argv[carg].compareTo("--with-aqua")==0)
+                    Common.useAquaBg=true;
+                if (argv[carg].compareTo("--without-aqua")==0)
+                    Common.useAquaBg=false;
+                if (firstNonOption==-1 && argv[carg].length()>0 && argv[carg].charAt(0)!='-')
+                    firstNonOption=carg;
+                carg++;
 	    };
+            if (Common.DEBUG>0)
+                System.out.println("KLIMT v"+Common.Version+" (Release 0x"+Common.Release+")  "+
+                                   ((Common.PROFILE>0)?"PROF ":"")+
+                                   (Common.informLoader?"LOADER ":"")+
+                                   (Common.useAquaBg?"AQUA ":"")+
+                                   (silentTreeLoad?"SILENT ":""));
 	    
  	    TFrame f=new TFrame("KLIMT "+Common.Version);
 	    Common.mainFrame=f;
 	    
 	    SVarSet tvs=new SVarSet();
-            String fname=(argc>carg)?argv[carg]:null;
+            String fname=(firstNonOption>-1)?argv[firstNonOption]:null;
             if (fname==null || fname.length()<1 || fname.charAt(0)=='-') fname=null;
+
+            if (Common.informLoader) {
+                if (fname==null) System.out.println("InfoForLoader:Select file to load");
+                else System.out.println("InfoForLoader:Loading data...");
+            }
+                                   
 	    SNode t=openTreeFile(f,fname,tvs);
 	    if (t==null && tvs.count()<1) {
                 new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected"+((fname!=null)?" ("+fname+")":"")+".");
 		System.exit(1);
 	    };
+            if (Common.informLoader)
+                System.out.println("InfoForLoader:Setting up windows...");
 
 	    if (Common.DEBUG>0) {
 		for(Enumeration e=tvs.elements();e.hasMoreElements();) {
@@ -277,17 +307,10 @@ public class InTr
 	    VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
 	    Common.mainFrame=vf;		
 	    
-	    carg++;
+	    carg=firstNonOption+1;
 	    while (carg<argv.length) {
                 if (argv[carg].compareTo("--silent")==0)
-                    silentTreeLoad=true;
-                if (argv[carg].compareTo("--debug")==0)
-                    Common.DEBUG=1;
-                if (argv[carg].compareTo("--profile")==0)
-                    Common.DEBUG=2;
-                if (argv[carg].compareTo("--nodebug")==0)
-                    Common.DEBUG=0;
-                
+                    silentTreeLoad=true;                
                 if (argv[carg].length()<2 || argv[carg].substring(0,2).compareTo("--")!=0) {
                     SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
                     if (ttt!=null && !silentTreeLoad) {
@@ -297,8 +320,9 @@ public class InTr
                     };
                 };
 		carg++;
-	    };  
-		
+	    };
+            if (Common.informLoader)
+                System.out.println("InfoForLoader:Done.");		
 	} catch (Exception E) {
 	    System.out.println("Something went wrong.");
 	    System.out.println("LM: "+E.getLocalizedMessage());
