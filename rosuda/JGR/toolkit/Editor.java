@@ -145,7 +145,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 		editArea.mComplete.setVisible(false);
         if (file != null) this.fileName = file;
         if (this.fileName != null) loadFile();
-        this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
+        this.setTitle(fileName == null ? "" : fileName);
         editArea.requestFocus();
     }
 	
@@ -171,7 +171,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 			if (cc > i) {
 				for (int z = 1; z< i && st.hasMoreTokens(); z++)
 					st.nextToken();
-				title = st.nextToken();
+				if (st.hasMoreTokens()) title = st.nextToken();
 				next = false;
 			}
 			else {
@@ -214,11 +214,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, directory);
-        if (fopen.getFile() != null) {
-            if (!modified) editArea.setText("");
+        if (fopen.getFile() != null) 
             newFile = (directory = fopen.getDirectory()) + fopen.getFile();
-        }
-        if (!modified && newFile != null && newFile.trim().length() > 0) { fileName = newFile; loadFile();}
+        if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
         else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
 	
@@ -226,9 +224,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         setWorking(true);
         editArea.setText("");
         try {
-            final BufferedReader reader = new BufferedReader(new FileReader(fileName));
-            Thread t = new Thread() {
-                public void run() {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            /*Thread t = new Thread() {
+                public void run() {*/
                     try {
                         StringBuffer text = new StringBuffer();
                         while (reader.ready()) {
@@ -243,15 +241,20 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                         editArea.append(text.toString());
                         text.delete(0,text.length());
                     } catch (Exception e) {
+                        new ErrorMsg(e);
                         setWorking(false);
                     }
                     setWorking(false);
-                }
-            };
-            t.start();
+                //}
+            /*};
+            t.start();*/
         }
         catch (Exception e) {
+            new ErrorMsg(e);
             setWorking(false);
+        }
+        finally {
+            editArea.setCaretPosition(0);
         }
         recentOpen.addEntry(fileName);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
@@ -298,7 +301,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         } else {
             setWorking(true);
             new FileSave(this);
-            this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
+            this.setTitle(fileName == null ? "Editor" : fileName);
             setModified(modified = false);
             return true;
         }
@@ -452,7 +455,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     }
 	
     class FileSave extends Thread {
-		
         private String fileName;
         private BufferedWriter writer;
         private Editor editor;
