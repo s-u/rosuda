@@ -12,7 +12,7 @@ public class VarFrame extends TFrame {
     VarCmdCanvas vcc;
     Scrollbar sb=null;
 
-    public static final int cmdHeight=132;
+    public static final int cmdHeight=148;
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)");
@@ -224,9 +224,15 @@ public class VarFrame extends TFrame {
 	    @param g graphic context to paint on */
 	public void paintBuffer(Graphics g) {
 	    int totsel=0;
+            int selCat=0;
+            int selNum=0;
 	    int i=0;
 	    while (i<vc.getVars()) {
-		if (vc.selMask[i]) totsel++;
+                if (vc.selMask[i]) {
+                    totsel++;
+                    if (vs.at(i).isCat()) selCat++;
+                    else if(vs.at(i).isNum()) selNum++;
+                };
 		i++;
 	    };
 	    Dimension cd=getSize();
@@ -247,7 +253,7 @@ public class VarFrame extends TFrame {
                 g.drawString("Total "+vs.at(0).size()+" cases",10,16);
             
 	    i=1;
-	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Export..."};
+	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Fluct.Diag.","Export..."};
 	    int j=0;
 	    while (j<menu.length) {
 		boolean boxValid=false;
@@ -266,10 +272,11 @@ public class VarFrame extends TFrame {
 		    };
 		    if (!crap && bJ<2 && bK>0) boxValid=true;
 		};
-                if ((j<2)||
-                    ((j==2)&&(totsel>0))||boxValid||
-                    ((j==3)&&(totsel==2))||
-                    ((j==5)&&(totsel>0))) {
+                if ( j<2 ||
+                    (j==2 && totsel>0)||boxValid||
+                    (j==3 && totsel==2)||
+                    (j==5 && ((totsel==2 && selCat==2)||(totsel==3 && selCat==2 && selNum==1)))||
+                    (j==6 && totsel>0)) {
                     g.setColor(C_bg);
                     g.fillRect(5,5+i*17,130,15);
 		};
@@ -307,7 +314,7 @@ public class VarFrame extends TFrame {
                     vc.repaint();
 		};    
 	    };
-            if (cmd==5) { // Export ...
+            if (cmd==6) { // Export ...
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
                     if (p!=null) {
@@ -434,7 +441,26 @@ public class VarFrame extends TFrame {
 		    };
 		};
 	    };
-		
+            if (cmd==5) { // fluctuation diagram
+                int vnr[]=new int[2];
+                SVar weight=null;
+                int i,j=0,tsel=0;
+                for(i=0;i<vc.getVars();i++) if (vc.selMask[i]) {
+                    if(vs.at(i).isCat() && j<2) { vnr[j]=i; j++; tsel++; };
+                    if(!vs.at(i).isCat() && vs.at(i).isNum() && weight==null) weight=vs.at(i);
+                }
+                if (tsel==2) {
+                    TFrame f=new TFrame(((weight==null)?"":"W")+"FD ("+
+                                        vs.at(vnr[1]).getName()+" vs "+
+                                        vs.at(vnr[0]).getName()+")"+((weight==null)?"":"*"+weight.getName()));
+                    f.addWindowListener(Common.defaultWindowListener);
+                    FluctCanvas sc=new FluctCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
+                    if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+                    sc.setSize(new Dimension(400,300));
+                    f.add(sc); f.pack(); f.show();
+                };
+            };
+            
 	};
 	public void mousePressed(MouseEvent ev) {};
 	public void mouseReleased(MouseEvent e) {};
