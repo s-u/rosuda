@@ -190,7 +190,6 @@ FocusListener, RMainLoopCallbacks {
     }
     
     private boolean isSupported(String cmd) {
-    	System.out.println(cmd);
     	if (cmd.indexOf("fix(") >= 0 || cmd.indexOf("edit(") >= 0 || cmd.indexOf("edit.data.frame(") >= 0) {
     		try { outputDoc.insertString(outputDoc.getLength(),cmd+"\n",JGRPrefs.CMD); } catch (Exception e) {}
     		try { outputDoc.insertString(outputDoc.getLength(),"Editing is not supported yet!",JGRPrefs.RESULT); } catch (Exception e) {}
