@@ -30,10 +30,7 @@ package org.rosuda.JGR.rhelp;
 ============================================================================*/
 
 
-import java.applet.*;
 import java.awt.*;
-import java.net.*;
-import java.io.*;
 
 public class Tracer extends Frame
 {

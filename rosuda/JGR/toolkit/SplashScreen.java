@@ -9,14 +9,12 @@ package org.rosuda.JGR.toolkit;
 //
 
 import java.awt.*;
-import java.awt.event.*;
 import java.net.*;
-import java.util.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
-import org.rosuda.util.*;
 
+import org.rosuda.JGR.util.*;
 
 public class SplashScreen extends JWindow implements Runnable {
 
@@ -31,11 +29,10 @@ public class SplashScreen extends JWindow implements Runnable {
 
     public SplashScreen() {
         try {
-            splash = loadSplash(iPreferences.SPLASH);
+            splash = loadSplash(JGRPrefs.SPLASH);
         }
         catch (Exception e) {
-            if (iPreferences.DEBUG>0) System.out.println("Missing Splashlogo: "+e.getMessage());
-            new iError(e);
+            if (JGRPrefs.DEBUG>0) System.out.println("Missing Splashlogo: "+e.getMessage());
         }
         this.setSize(splashSize);
         this.setLocation((screenSize.width-300)/2,(screenSize.height-200)/2);
@@ -49,32 +46,32 @@ public class SplashScreen extends JWindow implements Runnable {
             if (splash != null)
                 g.drawImage(splash, 0, 0, splash.getWidth(this),splash.getHeight(this),this);
             g.setFont(new Font("Dialog", Font.BOLD, 26));
-            g.drawString(iPreferences.TITLE, 170,
+            g.drawString(JGRPrefs.TITLE, 170,
                          40);
             g.setFont(new Font("Dialog", Font.BOLD, 16));
-            g.drawString(iPreferences.SUBTITLE, 150,
+            g.drawString(JGRPrefs.SUBTITLE, 150,
                          70);
             g.setFont(new Font("Dialog", 0, 11));
-            g.drawString("Version: " + iPreferences.VERSION,
+            g.drawString("Version: " + JGRPrefs.VERSION,
                          175, 85);
             g.setFont(new Font("Dialog", Font.ITALIC, 13));
-            g.drawString("" + iPreferences.AUTHOR1,
+            g.drawString("" + JGRPrefs.AUTHOR1,
                          163, 119);
-            g.drawString("" + iPreferences.AUTHOR2,
+            g.drawString("" + JGRPrefs.AUTHOR2,
                          160, 135);
             g.setFont(new Font("Dialog", 0, 12));
             g.setColor(Color.blue);
-            g.drawString(iPreferences.WEBSITE,150, splashSize.height - 35);
+            g.drawString(JGRPrefs.WEBSITE,150, splashSize.height - 35);
             g.setColor(Color.black);
             g.setFont(new Font("Dialog", 0, 12));
-            g.drawString("(c) " + iPreferences.DEVELTIME+ ", " +iPreferences.INSTITUTION, 10,
+            g.drawString("(c) " + JGRPrefs.DEVELTIME+ ", " +JGRPrefs.INSTITUTION, 10,
                          splashSize.height - 10);
             g.drawRect(0, 0, splashSize.width - 1, splashSize.height - 1);
         }
         catch (Exception e) {
             g.setFont(new Font("Dialog", 0, 12));
             g.drawString("SplashScreen (something has gone wrong)",10,10);
-            new iError(e);
+            new ErrorMsg(e);
         }
     }
 
@@ -87,7 +84,7 @@ public class SplashScreen extends JWindow implements Runnable {
             mt.waitForAll();
         }
         catch (Exception e) {
-            new iError(e);
+            new ErrorMsg(e);
         }
         return img;
     }
@@ -106,7 +103,7 @@ public class SplashScreen extends JWindow implements Runnable {
             try {
             }
             catch (Exception e) {
-                new iError(e);
+                new ErrorMsg(e);
             }
         }
     }

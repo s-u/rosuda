@@ -7,9 +7,6 @@ package org.rosuda.JGR.robjects;
 //  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
 //
 
-import java.util.*;
-
-import org.rosuda.JGR.*;
 
 public class matrix extends RObject{
 

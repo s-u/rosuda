@@ -23,15 +23,13 @@ package org.rosuda.JGR.rhelp;
  modified for the JGR Gui by Markus Helbig March 2004
  ============================================================================*/
 
-import java.applet.*;
-import java.awt.*;
 import java.net.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
 import org.rosuda.JGR.*;
-import org.rosuda.JGR.toolkit.*;
+import org.rosuda.JGR.util.*;
 
 public class SearchEngine {
 
@@ -41,7 +39,7 @@ public class SearchEngine {
     private String iSearchTerm;
     private URL IndexFile;
 
-    private RHelp help = null;
+    private JGRHelp help = null;
 
     /* Static Data */
 
@@ -54,7 +52,7 @@ public class SearchEngine {
 
     public SearchEngine() {
         try {
-            File tempfile = new File(RHelp.RHELPLOCATION + "/doc/html/search/");
+            File tempfile = new File(JGRHelp.RHELPLOCATION + "/doc/html/search/");
             if (tempfile.exists()) {
               IndexFile = tempfile.toURL();
               readIndexFile(cIndexFile);
@@ -66,7 +64,7 @@ public class SearchEngine {
         }
     }
 
-    public void setRHelp(RHelp help) {
+    public void setRHelp(JGRHelp help) {
         this.help = help;
     }
 
@@ -138,7 +136,7 @@ public class SearchEngine {
                                 if (f.exists()) break;
                             }
                         }
-                        else f = new File(RHelp.RHELPLOCATION+File.separator+"/library"+File.separator+entry.getURL());
+                        else f = new File(JGRHelp.RHELPLOCATION+File.separator+"/library"+File.separator+entry.getURL());
                         return f.toURL();
                     }
                     File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
@@ -148,7 +146,7 @@ public class SearchEngine {
                             if (f.exists()) break;
                         }
                     }
-                    else f = new File(RHelp.RHELPLOCATION+File.separator+"library"+File.separator+entry.getURL());
+                    else f = new File(JGRHelp.RHELPLOCATION+File.separator+"library"+File.separator+entry.getURL());
                     result +=
                         "<dt><a href=\""  + f.toURL() +
                         "\">" +
@@ -164,7 +162,7 @@ public class SearchEngine {
             writer.close();
             helpRes = out.toURL();
         } catch (Exception e) {
-            new iError(e);
+            new ErrorMsg(e);
         }
         if (help != null) {
             help.link.setText(" ");

@@ -16,11 +16,10 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.text.*;
-import javax.swing.undo.*;
 
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 import org.rosuda.JGR.*;
+import org.rosuda.JGR.util.*;
 
 public class DataTable extends iFrame implements ActionListener, MouseListener,
     KeyListener, TableColumnModelListener {
@@ -71,9 +70,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         super("DataTable Editor", 153);
         if (vs == null) {
             vs = new SVarSet();
-            vs.setName("Data");
-            //vs.add(new SVarObj("Var0",false,false));
-            //vs.insertCaseAt(0);
+            vs.setName("NewDataTable");
             save.setText("Save");
             save.setToolTipText("Save");
             save.setActionCommand("saveData");
@@ -106,14 +103,14 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
         dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         columnModel = new DataTableColumnModel(this);
-        dataTable.setFont(iPreferences.DefaultFont);
+        dataTable.setFont(JGRPrefs.DefaultFont);
         dataTable.setColumnModel(columnModel);
         sorter = new TableSorter(tabModel = new DataTableModel(this));
         dataTable.setModel(sorter);
         sorter.setTableHeader(tableHeader);
         dataTable.setToolTipText(vs.getName());
         dataTable.setShowGrid(true);
-        dataTable.setRowHeight((int) (iPreferences.FontSize*1.5));
+        dataTable.setRowHeight((int) (JGRPrefs.FontSize*1.5));
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(true);
         dataTable.setCellSelectionEnabled(true);
@@ -121,11 +118,10 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         dataTable.addKeyListener(this);
         tableHeader.addMouseListener(this);
 
-        //((JTextComponent) cell.getComponent()).setDocument(new DataTableCellDocument());
         cell.getComponent().addMouseListener(this);
         cell.getComponent().addKeyListener(this);
 
-        //try { scrollArea.setWheelScrollingEnabled(true); } catch (Exception e) {}
+        scrollArea.setWheelScrollingEnabled(true);
         scrollArea.getViewport().add(dataTable);
 
         this.getContentPane().setLayout(layout);
@@ -144,13 +140,6 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             }
 
             public void windowDeactivated(java.awt.event.WindowEvent evt) {
-            /*try {
-                dataTable.setRowSelectionInterval(0, 0);
-                dataTable.setColumnSelectionInterval(0, tabModel.cols - 1);
-                             }
-                             catch (Exception ex) {
-                new iError(ex);
-                             }*/
             }
         });
         this.addKeyListener(this);
@@ -236,7 +225,9 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         refresh();
     }
 
-
+    /*
+     * Exit DataTable and save or update to R
+     */
     public void exit() {
         if (modified) {
             int i;
@@ -339,7 +330,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 refresh();
                 dataTable.setModel(sorter);
             } catch (Exception e) {
-                new iError(e);
+                new ErrorMsg(e);
             }
             this.cursorDefault();
         }
@@ -356,14 +347,10 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     private void refresh() {
         int direction = sorter.getSortingStatus();
         int col = sorter.getSortedColumn();
-        //System.out.println("Sorted Column "+col+" direction"+direction);
         sorter = new TableSorter(tabModel = new DataTableModel(this));
         dataTable.setModel(sorter);
         sorter.setTableHeader(tableHeader);
         sorter.setSortingStatus(col,direction);
-        /*direction = sorter.getSortingStatus();
-        col = sorter.getSortedColumn();
-        System.out.println("Sorted Column "+col+" direction"+direction);*/
     }
 
     /** rename columnheader
@@ -432,7 +419,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 }
                 out.flush();
             } catch (Exception e) {
-                new iError(e);
+                new ErrorMsg(e);
             } finally {
                 this.cursorDefault();
             }
@@ -451,7 +438,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     public boolean updateToR() {
-        return RTalk.putToR(vs);
+        return RController.putToR(vs);
     }
 
     /** PopupMenu
@@ -596,7 +583,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             else if (cmd == "prefs") new PrefsDialog(this);
 
         } catch (Exception ex) {
-            new iError(ex);
+            new ErrorMsg(ex);
         }
     }
 
@@ -631,11 +618,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
         else if (ke.getKeyCode() == KeyEvent.VK_ENTER && dataTable.getSelectedRow() == tabModel.rows-1 && dataTable.getSelectedColumn() == tabModel.cols-1 ) {
             if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
-            //we have to set the value manually because of some bugs in the jdk, perhaps it's no bug but bad implementation
-
             addRow();
             tabModel.fireTableStructureChanged();
-            //if (Preferences.isMac) gotoCell(tabModel.rows-1,tabModel.cols-1);
         }
         else if (ke.getKeyCode() == KeyEvent.VK_TAB  && dataTable.getSelectedRow() == 0 && dataTable.getSelectedColumn() == tabModel.cols-1 && !ke.isShiftDown()) {
             if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
@@ -671,7 +655,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 dataTable.setColumnSelectionInterval(0, tabModel.cols - 1);
             }
         } catch (Exception ex) {
-            new iError(ex);
+            new ErrorMsg(ex);
         }
     }
 
@@ -696,7 +680,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 popUpMenu(e);
             }
         } catch (Exception ex) {
-            new iError(ex);
+            new ErrorMsg(ex);
         }
 
     }
@@ -713,7 +697,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public void addColumn(TableColumn col) {
-            cell.getComponent().setFont(iPreferences.DefaultFont);
+            cell.getComponent().setFont(JGRPrefs.DefaultFont);
             FontTracker.current.add((JTextComponent) cell.getComponent());
             col.setCellEditor(cell);
             col.setCellRenderer(new DefaultTableCellRenderer());
@@ -789,7 +773,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                     else tab.vs.at(col - 1).replace(row, value);
                 }
             } catch (Exception e) {
-                new iError(e);
+                new ErrorMsg(e);
             }
         }
 
@@ -844,7 +828,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                     str = "";
                     Toolkit.getDefaultToolkit().beep();
                 }
-            } catch (Exception e) {new iError(e);}
+            } catch (Exception e) {new ErrorMsg(e);}
             super.insertString(offset, str, a);
         }
 

@@ -75,7 +75,7 @@ public abstract class RObject {
     public abstract String getToolTip();
 
     public String getSummary() {
-        return RTalk.getSummary(this);
+        return RController.getSummary(this);
     }
 
     public String toString() {

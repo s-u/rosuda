@@ -9,19 +9,16 @@ package org.rosuda.JGR.toolkit;
 //
 
 import java.awt.*;
-import java.awt.font.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.*;
-import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.text.*;
 
 import org.rosuda.JGR.*;
 
 import java.util.prefs.Preferences;
 
-public class iPreferences {
+public class JGRPrefs {
 
 
     public static final String VERSION = "DP4";
@@ -91,20 +88,17 @@ public class iPreferences {
 
     public static int MAXHELPTABS = 10;
 
-    public static Hashtable KEYWORDS = null;
-    public static Hashtable KEYWORDSOBJECTS = null;
-
+    
     public static boolean useEmacsKeyBindings = false;
 
     public static void apply() {
-        iPreferences.refresh();
+        JGRPrefs.refresh();
         FontTracker.current.applyFont();
     }
 
     public static void initialize() {
         //later we will read the prefs file
         readPrefs();
-        refreshKeyWords();
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
         StyleConstants.setFontSize(DEFAULTFONT,FontSize);
@@ -123,7 +117,6 @@ public class iPreferences {
     }
 
     public static void refresh() {
-        refreshKeyWords();
         System.out.println(FontName);
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
@@ -140,15 +133,6 @@ public class iPreferences {
         StyleConstants.setForeground(OBJECT, OBJECTColor);
         StyleConstants.setItalic(OBJECT, true);
         StyleConstants.setForeground(QUOTE, QUOTEColor);
-    }
-
-    public static void refreshKeyWords() {
-        if (KEYWORDS==null) KEYWORDS = new Hashtable();
-        if (KEYWORDSOBJECTS==null) KEYWORDSOBJECTS = new Hashtable();
-        if (JGR.R != null) {
-            KEYWORDS.clear();
-            RTalk.getKeyWords();
-        }
     }
 
     public static void readPrefs() {
@@ -180,10 +164,10 @@ public class iPreferences {
         prefs.putInt("MaxHelpTabs",MAXHELPTABS);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         String packages = "";
-        if (RPackageManager.defaultPackages.length > 0) {
-        packages = RPackageManager.defaultPackages[0].toString();
-        for (int i = 1; i < RPackageManager.defaultPackages.length; i++)
-        	packages += ", "+RPackageManager.defaultPackages[i];
+        if (JGRPackageManager.defaultPackages.length > 0) {
+        packages = JGRPackageManager.defaultPackages[0].toString();
+        for (int i = 1; i < JGRPackageManager.defaultPackages.length; i++)
+        	packages += ", "+JGRPackageManager.defaultPackages[i];
         }
         prefs.put("DefaultPackages", packages);
         try {

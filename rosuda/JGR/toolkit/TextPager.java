@@ -1,12 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.JGR.toolkit.*;
 
 /** Simple text pager that displays a specified file.
     @version $Id$

@@ -35,8 +35,6 @@ package org.rosuda.JGR.rhelp;
 /* -------------------------------- Imports --------------------------------- */
 
 import java.util.*;
-import java.applet.*;
-import java.awt.*;
 import java.net.*;
 import java.io.*;
 
@@ -365,6 +363,9 @@ public class IndexStream extends Object
   HISTORY:
 
   $Log$
+  Revision 1.2  2004/07/31 21:31:14  helbigm
+  renamed some files and added a lot of new ones
+
   Revision 1.1  2004/04/24 21:41:48  helbigm
   *** empty log message ***
 

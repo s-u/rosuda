@@ -14,10 +14,8 @@ import java.io.*;
 import java.util.*;
 import java.net.*;
 import javax.swing.*;
-import javax.swing.border.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
-import javax.swing.text.html.*;
 
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.JGR.rhelp.*;
@@ -25,10 +23,10 @@ import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
 
-public class RHelp extends iFrame implements ActionListener, KeyListener,
+public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     MouseListener {
 
-    public static RHelp current = null;
+    public static JGRHelp current = null;
     private static WTentry MyEntry = null;
 
     private String keyWord = null;
@@ -60,11 +58,11 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     private static String index;
     public static String RHELPLOCATION;
 
-    public RHelp() {
+    public JGRHelp() {
         this(null);
     }
 
-    public RHelp(String location) {
+    public JGRHelp(String location) {
         super("Help", iFrame.clsHelp);
         MyEntry = this.getMYEntry();
         while(!JGR.STARTED);
@@ -76,7 +74,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         iMenu.getMenu(this, this, Menu);
 
         if (System.getProperty("os.name").startsWith("Windows")) {
-            RHELPLOCATION = RTalk.getRHome();
+            RHELPLOCATION = RController.getRHome();
             index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {
@@ -200,7 +198,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     public void goTo(String keyword, String file) {
-            if (tabArea.getTabCount()==iPreferences.MAXHELPTABS) tabArea.remove(iPreferences.MAXHELPTABS-1);
+            if (tabArea.getTabCount()==JGRPrefs.MAXHELPTABS) tabArea.remove(JGRPrefs.MAXHELPTABS-1);
             tabArea.add(new HelpArea(this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
@@ -224,7 +222,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
     public void search(String keyword) {
         if (keyword != null && !keyword.equals("")) {
-            if (tabArea.getTabCount()==iPreferences.MAXHELPTABS) tabArea.remove(iPreferences.MAXHELPTABS-1);
+            if (tabArea.getTabCount()==JGRPrefs.MAXHELPTABS) tabArea.remove(JGRPrefs.MAXHELPTABS-1);
             tabArea.add(new HelpArea(this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
@@ -304,17 +302,19 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         public JEditorPane helpPane = new JEditorPane();
 
 
-        private RHelp rhelp;
+        private JGRHelp rhelp;
         private String keyword;
 
         private Vector history = new Vector();
         private int currentURLIndex = -1;
 
-        public HelpArea(RHelp rhelp, String keyword) {
+        public HelpArea(JGRHelp rhelp, String keyword) {
             this.rhelp = rhelp;
             this.keyword = keyword;
+            
             FontTracker.current.add(helpPane);
             this.getViewport().add(helpPane);
+            this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
             helpPane.setEditable(false);
             helpPane.setContentType("text/html");
             helpPane.addKeyListener(rhelp);

@@ -15,7 +15,7 @@ import org.rosuda.JRI.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.toolkit.*;
 
-public class RTalk {
+public class RController {
 
     public static Object dummy = new Object();
 
@@ -43,57 +43,16 @@ public class RTalk {
     }
 
     //code completion
-    public static String completeCode(String part) {
-        int s = part.length()-1;
-        if (part.trim().length() == 0) return "";
-        char c = part.charAt(s);
-        while (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||((c>='0')&&(c<='9'))||c=='.'||c=='_') {
-            s--;
-            if (s==-1) break;
-            c = part.charAt(s);
-            }
-        s++;
-        part = part.substring(s);
-        REXP x = JGR.R.eval("length(search())");
-        int pos = 1, maxpos = 1;
-        if (x == null && x.asIntArray() != null) return null;
-        if ((maxpos = x.asIntArray()[0])==0) return null;
-        String common = null;
-        int firstmatch = -1, matches = 0, exactmatches = 0;
-        while (pos <= maxpos) {
-            REXP y = JGR.R.eval("ls(pos="+pos+", all.names=TRUE, pattern=\"^"+part+".*\")");
-            if (y==null) return null;
-            String[] result = y.asStringArray();
-            for (int i = 0; i < result.length; i++) {
-                String sx = result[i];
-                //System.out.println(sx);
-                if (sx.startsWith(part)) {
-                    if (sx.equals(part)) exactmatches++;
-                    if (matches==0) {
-                        firstmatch = i;
-                        common = sx;
-                    }
-                    else {
-                        common = commonWithPrefix(common,sx);
-                    }
-                    matches++;
-                }
-            }
-            pos++;
-        }
-        if (common != null) {
-            //System.out.println(exactmatches+" "+matches);
-            if (exactmatches > 0 && matches > 0) return common.replaceFirst(part,"");
-            else {
-                REXP z = JGR.R.eval("try(class("+common+"),silent=TRUE)");
-                if (z != null && z.asString() != null && z.asString().equals("function")) return common.replaceFirst(part,"")+"(";
-                else return common.replaceFirst(part,"");
-            }
-        }
-    return null;
+    public static String[] completeCommand(String partOfCmd) {
+    	int s = partOfCmd.length()-1;
+        if (partOfCmd.trim().length() == 0) return null;
+        REXP cmds = JGR.R.eval(".completeCommand(\""+partOfCmd+"\")");
+        String[] c = null;
+        if (cmds != null && (c=cmds.asStringArray()) != null) return c;
+        return c;
     }
 
-    //filecompletion
+    //filecompletion i'm not really using R here, but why not put this function too in the RController
     public static String completeFile(String part) {
         part = part.replaceFirst("~",System.getProperty("user.home"));
         int tl = part.length();
@@ -152,22 +111,18 @@ public class RTalk {
     }
 
     /* get current available keywords*/
-    public static void getKeyWords() {
-        REXP x = JGR.R.eval("length(search())");
-        int pos = 2, maxpos = 2;
-        if (x == null && x.asIntArray() != null) return;
-        if ((maxpos = x.asIntArray()[0])==0) return;
-        REXP y = JGR.R.eval("ls()");
-        if (y==null) return;
-        String[] result = y.asStringArray();
-        for (int i = 0; i < result.length; i++) iPreferences.KEYWORDSOBJECTS.put(result[i],dummy);
-        while (pos <= maxpos) {
-            REXP z = JGR.R.eval("ls(pos="+pos+", all.names=TRUE, pattern=\"^\\\\w+\")");
-            if (z==null) return;
-            result = z.asStringArray();
-            for (int i = 0; i < result.length; i++) iPreferences.KEYWORDS.put(result[i],dummy);
-            pos++;
-        }
+    public static String[] getKeyWords() {
+        REXP x = JGR.R.eval(".refreshKeyWords()");
+        String[] r = null;
+        if (x != null && (r=x.asStringArray()) != null) return r;
+        return r;
+    }
+    
+    public static String[] getObjects() {
+        REXP x = JGR.R.eval(".refreshObjects()");
+        String[] r = null;
+        if (x != null && (r=x.asStringArray()) != null) return r;
+        return r;
     }
 
 
@@ -207,8 +162,8 @@ public class RTalk {
                     if (!sx.equals("last.warning")) {
                     if (isClass(sx,"data.frame")) JGR.DATA.add(createDataFrame(sx));
                     else if (isClass(sx,"table")) JGR.DATA.add(createTable(sx));
-                    else if (isClass(sx,"lm")) RObjectManager.models.add(createModel(sx,RObject.LM));
-                    else if (isClass(sx,"glm")) RObjectManager.models.add(createModel(sx,RObject.GLM));
+                    else if (isClass(sx,"lm")) JGRObjectManager.models.add(createModel(sx,RObject.LM));
+                    else if (isClass(sx,"glm")) JGRObjectManager.models.add(createModel(sx,RObject.GLM));
                     //else if (isClass(sx,"aov")) RObjectManager.models.add(createModel(sx,RObject.ANOVA));
                     else if (isClass(sx,"list")) JGR.OTHERS.add(createList(sx));
                     else if (isClass(sx,"matrix")) JGR.OTHERS.add(createMatrix(sx));
@@ -243,9 +198,9 @@ public class RTalk {
                 } catch (Exception e) { pkg[i][1] = "";}
                 pkg[i][0]= loadedP.containsKey(res[i])?(new Boolean(true)):(new Boolean(false));
                 pkg[i][1]= new Boolean(false);
-                for (int d = 0; d < RPackageManager.defaultPackages.length; d++) {
+                for (int d = 0; d < JGRPackageManager.defaultPackages.length; d++) {
                 	
-                	if (res[i].equals(RPackageManager.defaultPackages[d]) || RPackageManager.neededPackages.containsKey(res[i])) pkg[i][1] = new Boolean(true);
+                	if (res[i].equals(JGRPackageManager.defaultPackages[d]) || JGRPackageManager.neededPackages.containsKey(res[i])) pkg[i][1] = new Boolean(true);
                 }
             }
         }
@@ -372,14 +327,14 @@ public class RTalk {
     }
 
     /* get short usage of function*/
-    public static String getArgs(String s) {
+    public static String getFunHelp(String s) {
         if (s==null) return null;
         String tip = null;
         String res[] = null;
         REXP x;
         try { x = JGR.R.eval("try(deparse(args("+s+")),silent=T)"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null) {
-            tip = "<html><pre>"; //<font size="+Preferences.FontSize/2+">"
+            tip = "<html><pre>"; 
             int l = -1;
             for (int i = 0; i < (l=res.length); i++) {
                 System.out.println(res[i]);
@@ -389,12 +344,12 @@ public class RTalk {
             tip += "</pre></html>";
         }
         else return null;
-        return tip.startsWith("<html><pre>Error")?null:tip;
+        return (tip.indexOf("Error")>0)?null:tip;
     }
 
 
     public static String getSummary(RObject o) {
-        if (isClass(o.getName(),"function")) return getArgs(o.getName());
+        if (isClass(o.getName(),"function")) return getFunHelp(o.getName());
         String tip = null;
         String res[] = null;
         REXP x;

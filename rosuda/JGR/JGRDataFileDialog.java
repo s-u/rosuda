@@ -11,23 +11,18 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
 
-import org.rosuda.JGR.toolkit.*;
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 
 
-public class RDataFileDialog extends JDialog implements ActionListener, ItemListener, PropertyChangeListener {
+public class JGRDataFileDialog extends JDialog implements ActionListener, ItemListener, PropertyChangeListener {
 
     private JFileChooser fileChooser = new JFileChooser();
     private JTextField dataName = new JTextField();
     private JTextField otherSeps = new JTextField();
     private JCheckBox header = new JCheckBox("",true);
-    private JCheckBox attach = new JCheckBox("",true);
+    private JCheckBox attach = new JCheckBox("",false);
 
     private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|",""});
     private String[] seps = new String[] {"","\\t",",",";","|"};
@@ -39,7 +34,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
     private Dimension screenSize = Common.getScreenRes();
 
-    public RDataFileDialog(Frame f,String directory) {
+    public JGRDataFileDialog(Frame f,String directory) {
         super(f,"Load DataFile",true);
 
         dataName.setMinimumSize(new Dimension(200,20));
@@ -64,7 +59,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         this.getContentPane().add(options,  new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, /*iPreferences.isMac?*/5/*:105*/, 1, 5), 0, 0));
-        options.add(new JLabel("Name :"),  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+        options.add(new JLabel("Assign to:"),  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
         options.add(dataName,  new GridBagConstraints(1, 0, 4, 1, 0.0, 0.0
@@ -116,7 +111,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
     public void loadFile() {
         if (fileChooser.getSelectedFile() != null) {
-            RConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
+            JGRConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = fileChooser.getSelectedFile().toString();
 
             String useSep;

@@ -10,11 +10,9 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 
 public class AboutDialog extends SplashScreen implements MouseListener {
 
@@ -32,13 +30,6 @@ public class AboutDialog extends SplashScreen implements MouseListener {
         this.addMouseListener(this);
         this.setVisible(true);
     }
-
-    /*public void paint(Graphics g) {
-        System.out.println(this.getSize());
-        super.paint(g);
-        g.setFont(new Font("Dialog", 0, 12));
-        g.drawString("Authors: " + Preferences.AUTHORS,40, 155);
-    }*/
 
     public void mouseClicked(MouseEvent e) {
         this.dispose();

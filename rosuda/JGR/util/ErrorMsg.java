@@ -1,4 +1,4 @@
-package org.rosuda.JGR.toolkit;
+package org.rosuda.JGR.util;
 
 //
 //  iError.java
@@ -11,9 +11,9 @@ package org.rosuda.JGR.toolkit;
 import java.io.*;
 import java.util.*;
 
-public class iError {
+public class ErrorMsg {
 
-    public iError(Exception e) {
+    public ErrorMsg(Exception e) {
         String curDir = System.getProperty("user.dir");
         String filename = curDir + "/JGRError.log";
         String[] months = {

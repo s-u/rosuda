@@ -23,7 +23,7 @@ import org.rosuda.util.*;
 public class PlatformMac extends org.rosuda.util.PlatformMac {
     public PlatformMac() {
         super();
-        iPreferences.isMac = true;
+        JGRPrefs.isMac = true;
     }
 
     public void handleQuit() {

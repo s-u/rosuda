@@ -8,57 +8,56 @@
 
 package org.rosuda.JGR.toolkit;
 
-import org.rosuda.JRI.Rengine;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 /** Implementation of JavaGD which uses iFrame instead of Frame */
 public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
-    iFrame ifr;
+    iFrame jfr;
 
     public void     gdOpen(double w, double h) {
-      if (ifr!=null) gdClose();
+      if (jfr!=null) gdClose();
 
-        ifr=new iFrame("JavaGD", iFrame.clsJavaGD) {
+        jfr=new iFrame("JavaGD", iFrame.clsJavaGD) {
             public void dispose() {
                 if (c!=null) executeDevOff();
                 super.dispose();
             }
         };
-        ifr.addWindowListener(this);
+        jfr.addWindowListener(this);
 
         String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
-        iMenu.getMenu(ifr, this, Menu);
+        iMenu.getMenu(jfr, this, Menu);
 
-        ifr.setDefaultCloseOperation(ifr.DISPOSE_ON_CLOSE);
+        jfr.setDefaultCloseOperation(jfr.DISPOSE_ON_CLOSE);
         c=new org.rosuda.javaGD.GDCanvas(w, h);
-        ifr.getContentPane().add(c);
-        ifr.pack();
-        ifr.setVisible(true);
+        jfr.getContentPane().add(c);
+        jfr.pack();
+        jfr.setVisible(true);
     }
 
     public void     gdNewPage(int devNr) {
         super.gdNewPage(devNr);
-        ifr.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
+        jfr.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
     }
 
     public void     gdActivate() {
         super.gdActivate();
-        ifr.toFront();
-        ifr.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):"")+" *active*");
+        jfr.toFront();
+        jfr.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):"")+" *active*");
     }
 
     public void     gdDeactivate() {
         super.gdDeactivate();
-        ifr.setTitle("JavaGD ("+(devNr+1)+")");
+        jfr.setTitle("JavaGD ("+(devNr+1)+")");
     }
     
     public void     gdClose() {
-        if (ifr!=null) {
+        if (jfr!=null) {
             c=null;
-            ifr.getContentPane().removeAll();
-            ifr.dispose();
-            ifr=null;
+            jfr.getContentPane().removeAll();
+            jfr.dispose();
+            jfr=null;
         }
     }
 

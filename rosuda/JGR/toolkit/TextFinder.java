@@ -12,13 +12,9 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.border.*;
-import javax.swing.event.*;
 import javax.swing.text.*;
 
-import org.rosuda.JGR.toolkit.*;
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 
 public class TextFinder extends JDialog implements ActionListener, KeyListener {
 
@@ -31,7 +27,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
     private JButton searchButton = new JButton("Find");
     private JButton cancelButton = new JButton("Cancel");
 
-    Highlighter.HighlightPainter highLighter = new FoundHighlighter(iPreferences.HighLightColor);
+    Highlighter.HighlightPainter highLighter = new FoundHighlighter(JGRPrefs.HighLightColor);
 
     private static String keyWord = null;
     private static int position = -1;
@@ -56,7 +52,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         this.getRootPane().setDefaultButton(searchButton);
 
         FontTracker.current.add(keyWordField);
-        keyWordField.setFont(iPreferences.DefaultFont);
+        keyWordField.setFont(JGRPrefs.DefaultFont);
         keyWordField.setPreferredSize(new Dimension(300,25));
 
         this.getContentPane().setLayout(layout);

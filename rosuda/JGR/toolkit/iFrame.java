@@ -14,7 +14,6 @@ import javax.swing.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
-import org.rosuda.util.*;
 
 
 public class iFrame extends JFrame {

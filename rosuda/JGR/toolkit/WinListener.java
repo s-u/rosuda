@@ -8,12 +8,7 @@ package org.rosuda.JGR.toolkit;
 //  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
 //
 
-import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-
-import org.rosuda.ibase.*;
-
 
 public class WinListener extends org.rosuda.ibase.toolkit.WinListener {
     public WinListener() {}

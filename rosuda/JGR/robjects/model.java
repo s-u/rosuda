@@ -10,7 +10,6 @@ package org.rosuda.JGR.robjects;
 
 import java.text.*;
 import java.util.*;
-import org.rosuda.JGR.toolkit.*;
 
 public class model extends RObject {
 

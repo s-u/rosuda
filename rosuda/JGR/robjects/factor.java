@@ -43,7 +43,7 @@ public class factor extends RObject {
     }
 
     public String getToolTip() {
-        return RTalk.getFactorLevels(this); //(parent==null?"":(parent.getName()+"$"))+getName());
+        return RController.getFactorLevels(this); //(parent==null?"":(parent.getName()+"$"))+getName());
     }
 
     public String toString() {

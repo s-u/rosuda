@@ -11,7 +11,6 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.text.*;
 
 public class FontTracker {
 
@@ -31,7 +30,7 @@ public class FontTracker {
       * @param comp component to add */
     public void add(Component comp) {
         //System.out.println(comp);
-        comp.setFont(iPreferences.DefaultFont);
+        comp.setFont(JGRPrefs.DefaultFont);
         components.add(comp);
     }
 
@@ -41,15 +40,15 @@ public class FontTracker {
 
     public void setFontBigger() {
         Enumeration e = components.elements();
-        iPreferences.FontSize +=2;
-        iPreferences.refresh();
+        JGRPrefs.FontSize +=2;
+        JGRPrefs.refresh();
         applyFont();
     }
 
     public void setFontSmaller() {
         Enumeration e = components.elements();
-        iPreferences.FontSize -=2;
-        iPreferences.refresh();
+        JGRPrefs.FontSize -=2;
+        JGRPrefs.refresh();
         applyFont();
     }
 
@@ -57,14 +56,14 @@ public class FontTracker {
         Enumeration e = components.elements();
         while (e.hasMoreElements()) {
             Component comp = (Component) e.nextElement();
-            comp.setFont(iPreferences.DefaultFont);
+            comp.setFont(JGRPrefs.DefaultFont);
             
             try {
                 //System.out.println(comp.getClass().getName());
                 if (comp.getClass().getName().equals("javax.swing.JTable") ||
                     comp.getClass().getName().equals(
                     "org.rosuda.JGR.RObjectManager$1")) {
-                    ( (JTable) comp).setRowHeight( (int) (iPreferences.FontSize *
+                    ( (JTable) comp).setRowHeight( (int) (JGRPrefs.FontSize *
                         1.5));
                 }
             } catch (Exception ex) {}

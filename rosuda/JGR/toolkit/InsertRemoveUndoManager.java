@@ -9,12 +9,10 @@ package org.rosuda.JGR.toolkit;
 //
 
 import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.undo.*;
 
-import org.rosuda.JGR.toolkit.*;
 
 public  class InsertRemoveUndoManager extends UndoManager {
 

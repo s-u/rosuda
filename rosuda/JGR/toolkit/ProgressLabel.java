@@ -9,17 +9,7 @@ package org.rosuda.JGR.toolkit;
 //
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 import javax.swing.*;
-
-
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.JGR.*;
-
-
-
 
 public class ProgressLabel extends JLabel implements Runnable {
 

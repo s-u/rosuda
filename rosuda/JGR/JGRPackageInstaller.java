@@ -14,7 +14,7 @@ import javax.swing.*;
 
 import org.rosuda.JGR.toolkit.*;
 
-public class RPackageInstaller extends iFrame implements ActionListener {
+public class JGRPackageInstaller extends iFrame implements ActionListener {
 
     private String[] packages = null;
     private JList pkgList;
@@ -22,7 +22,7 @@ public class RPackageInstaller extends iFrame implements ActionListener {
     private JButton install = new JButton("Install");
     private JButton close = new JButton("Close");
 
-    public RPackageInstaller(String[] pkgs) {
+    public JGRPackageInstaller(String[] pkgs) {
         super("Package Installer",157);
 
         packages = pkgs;

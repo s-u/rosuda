@@ -12,7 +12,6 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.text.*;
 
 
 import org.rosuda.ibase.*;

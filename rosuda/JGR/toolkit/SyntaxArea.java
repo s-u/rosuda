@@ -11,19 +11,18 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
-import java.awt.event.*;
-import java.util.*;
-import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.*;
 import javax.swing.text.*;
 
+import org.rosuda.JGR.util.*;
+
 
 public class SyntaxArea extends JTextPane implements CaretListener, DropTargetListener {
 
-    private HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(iPreferences.ERRORColor);
-    private HighlightPainter ParanthesisHighlight = new HighlightPainter(iPreferences.BRACKETHighLight);
+    private HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(JGRPrefs.ERRORColor);
+    private HighlightPainter ParanthesisHighlight = new HighlightPainter(JGRPrefs.BRACKETHighLight);
 
     private boolean wrap=true;
 
@@ -31,38 +30,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @param highlight should we do coloring and highlighting brackets */
     public SyntaxArea() {
         this.setContentType("text/rtf");
-        //System.out.println(this.getDocument());
-        //System.out.println(this.getEditorKit());
-        this.setDocument(new RSyntaxDocument());
-        if (FontTracker.current == null) FontTracker.current = new FontTracker();
+        this.setDocument(new SyntaxDocument());
+        if (FontTracker.current == null) 
+        	FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
-        //System.out.println(this.getContentType());
-        //setTabStops();
         this.addCaretListener(this);
     }
-
-    public void setTabStops() {
-        java.util.List list = new ArrayList();
-
-        // Create a left-aligned tab stop at 100 pixels from the left margin
-          // Create a right-aligned tab stop at 200 pixels from the left margin
-        int pos = 200;
-        int align = TabStop.ALIGN_RIGHT;
-        int leader = TabStop.LEAD_NONE;
-        TabStop tstop = new TabStop(pos, align, leader);
-        list.add(tstop);
-
-        // Create a tab set from the tab stops
-        TabStop[] tstops = (TabStop[]) list.toArray(new TabStop[0]);
-        TabSet tabs = new TabSet(tstops);
-
-        // Add the tab set to the logical style;
-        // the logical style is inherited by all paragraphs
-        Style style = this.getLogicalStyle();
-        StyleConstants.setTabSet(style, tabs);
-        this.setLogicalStyle(style);
-    }
-
 
     public void append(String str) {
         append(str,null);
@@ -150,7 +123,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             Element map = getDocument().getDefaultRootElement();
             Element lineElem = map.getElement(line);
             int endOffset = lineElem.getEndOffset();
-            // hide the implicit break at the end of the document
             return ((line == lineCount - 1) ? (endOffset - 1) : endOffset);
         }
     }
@@ -237,7 +209,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     public void setFont(Font f) {
         super.setFont(f);
         try {
-            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),iPreferences.DEFAULTFONT, false);
+            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),JGRPrefs.DEFAULTFONT, false);
         } catch (Exception e) {}
     }
 
@@ -385,40 +357,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    public String getCurrentWord() {
-        String word = null;
-        String text = this.getText();
-        int pos = this.getCaretPosition();
-        if (pos < 0) return null;
-        int offset = pos-1, end = pos; pos--;
-        if (text==null) return null;
-        int l = text.length();
-        while (offset > -1 && pos > -1) {
-            char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
-            else break;
-            pos--;
-        }
-        offset = offset==-1?0:++offset;
-        pos = end;
-        while (end < l && pos < l) {
-            char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') end++;
-            else break;
-            pos++;
-        }
-        end = end==-1?l:end;
-        return (offset!=end)?text.substring(offset,end).trim():null;
-    }
-
-    public String getLastPart() {
-        String word = "";
-        int pos = this.getCaretPosition();
-        String text = null;
-        try { text = this.getText(0,pos); } catch (Exception e) {return null;}
-        return text;
-    }
-
     public void highlight(JTextComponent textComp, String pattern, int pos,
                           HighlightPainter hipainter) {
         try {
@@ -444,32 +382,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     }
 
 
-    public int getTabSize() {
-        int size = 8;
-        Document doc = getDocument();
-        if (doc != null) {
-            Integer i = (Integer) doc.getProperty(PlainDocument.tabSizeAttribute);
-            if (i != null) {
-                size = i.intValue();
-            }
-        }
-        return size;
-    }
-
-    public void setTabSize(int size) {
-        Document doc = getDocument();
-        if (doc != null) {
-            int old = getTabSize();
-            doc.putProperty(PlainDocument.tabSizeAttribute, new Integer(size));
-            firePropertyChange("tabSize", old, size);
-        }
-    }
-
     public void caretUpdate(final CaretEvent e) {
         final SyntaxArea sa = this;
         removeHighlights();
-        /*Thread t = new Thread() {
-            public void run() {*/
         try {
             if (e.getDot()==0) return;
             if (getText(e.getDot()-1,1).matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) /*t.start();*/ {
@@ -485,7 +400,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
                     }
                 }
                 catch (Exception ex1) {
-                    new iError(ex1);
+                    new ErrorMsg(ex1);
                     addCaretListener(sa);
                     return;
                 }
@@ -495,13 +410,10 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
                     else if (c.matches("[)]|[\\]]|[}]"))
                         highlightParanthesisBackward(c, pos);
                 }
-                catch (Exception ex2) { new iError(ex2);}
+                catch (Exception ex2) { new ErrorMsg(ex2);}
                 addCaretListener(sa);
-
-                //}
-                //};
             }
-        } catch (Exception ex3) { new iError(ex3);}
+        } catch (Exception ex3) { new ErrorMsg(ex3);}
     }
 
     public void dragEnter(DropTargetDragEvent evt) {
@@ -524,13 +436,10 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         try {
             Transferable t = evt.getTransferable();
 
-            //System.out.println(t);
-
             if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 evt.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 String s = (String) t.getTransferData(DataFlavor.stringFlavor);
                 evt.getDropTargetContext().dropComplete(true);
-                //System.out.println(s);
             }
             else {
                 evt.rejectDrop();
@@ -540,20 +449,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             evt.rejectDrop();
         }
     }
-
-    /*public boolean handleEvent(Event e) {
-        System.out.println("hanlde" +e);
-        return true;
-    }
-
-    public void processEvent(Event e) {
-        System.out.println("process" +e);
-    }
-
-    public void processInputMethodEvent(InputMethodEvent e) {
-        System.out.println("processI "+e);
-    }*/
-
 
     class HighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {
         public HighlightPainter(Color color) {

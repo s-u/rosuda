@@ -15,16 +15,18 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
+import org.rosuda.ibase.*;
 
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.toolkit.*;
-import org.rosuda.ibase.*;
+import org.rosuda.JGR.util.*;
+
 
 public class JGR {
 
 
     public static Vector RHISTORY = null;
-    public static RConsole MAINRCONSOLE = null;
+    public static JGRConsole MAINRCONSOLE = null;
     public static String RHOME = "";
     public static String[] RLIBS;
     public static Rengine R = null;
@@ -35,6 +37,10 @@ public class JGR {
     public static Vector DATA = new Vector();
     public static Vector MODELS = new Vector();
     public static Vector OTHERS = new Vector();
+
+    public static Vector OBJECTS = new Vector();
+    public static HashMap KEYWORDS = new HashMap();
+    public static HashMap KEYWORDS_OBJECTS = new HashMap();
 
     public static int SLEEPTIME = 50;
     public static int STRINGBUFFERSIZE = 80;
@@ -47,22 +53,22 @@ public class JGR {
         SVar.int_NA=-2147483648;
         
         Object dummy = new Object();
-        RPackageManager.neededPackages.put("base",dummy);
-        RPackageManager.neededPackages.put("graphics",dummy);
-        RPackageManager.neededPackages.put("utils",dummy);
-        RPackageManager.neededPackages.put("methods",dummy);
-        RPackageManager.neededPackages.put("stats",dummy);
+        JGRPackageManager.neededPackages.put("base",dummy);
+        JGRPackageManager.neededPackages.put("graphics",dummy);
+        JGRPackageManager.neededPackages.put("utils",dummy);
+        JGRPackageManager.neededPackages.put("methods",dummy);
+        JGRPackageManager.neededPackages.put("stats",dummy);
         
-        RPackageManager.neededPackages.put("JGR",dummy);
-        RPackageManager.neededPackages.put("rJava",dummy);
-        RPackageManager.neededPackages.put("JavaGD",dummy);
+        JGRPackageManager.neededPackages.put("JGR",dummy);
+        JGRPackageManager.neededPackages.put("rJava",dummy);
+        JGRPackageManager.neededPackages.put("JavaGD",dummy);
         
         org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
-        iPreferences.initialize();
+        JGRPrefs.initialize();
         splash = new org.rosuda.JGR.toolkit.SplashScreen();
         splash.start();
         readHistory();
-        MAINRCONSOLE = new RConsole();
+        MAINRCONSOLE = new JGRConsole();
         splash.toFront();
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
         MAINRCONSOLE.progress.start("Starting R");
@@ -74,19 +80,19 @@ public class JGR {
             System.out.println("Cannot load R");
             System.exit(1);
         }
-        RHOME = RTalk.getRHome();
-        RLIBS = RTalk.getRLIBS();
-        for (int i = 0; i< RLIBS.length; i++) {
+        //RHOME = RController.getRHome();
+        //RLIBS = RController.getRLIBS();
+        /*for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
-        }
-        RPackageManager.defaultPackages = RTalk.getDefaultPackages();
-        iPreferences.refreshKeyWords();
+        }*/
+        JGRPackageManager.defaultPackages = RController.getDefaultPackages();
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Window")) splash.stop();
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
         rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
+        System.out.println(RHOME);
     }
 
     public static String exit() {
@@ -109,12 +115,12 @@ public class JGR {
         if (file.trim().equals("null")) file = null;
         if (keyword.trim().equals("null")) keyword = null;
         if (location.trim().equals("null")) location = null;
-        if (RHelp.current == null) new RHelp(location);
+        if (JGRHelp.current == null) new JGRHelp(location);
         else {
-            RHelp.current.show();
-            RHelp.current.refresh();
+            JGRHelp.current.show();
+            JGRHelp.current.refresh();
         }
-        if (keyword!=null && file !=null) RHelp.current.goTo(keyword, file);
+        if (keyword!=null && file !=null) JGRHelp.current.goTo(keyword, file);
     }
 
     public static void addMenu(String name) {
@@ -133,25 +139,44 @@ public class JGR {
     
 
     public static void fix(String data, String type) {
-        System.out.println(type);
-        if (type.equals("data.frame")) new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));
-        else if (type.equals("matrix")) new DataTable(RTalk.getVarSet(RTalk.createMatrix(data)));
+        if (type.equals("data.frame")) new DataTable(RController.getVarSet(RController.createDataFrame(data)));
+        else if (type.equals("matrix")) new DataTable(RController.getVarSet(RController.createMatrix(data)));
     }
 
     public static void setRHome(String rhome) {
         RHOME = rhome;
     }
 
-    public static void setRLibs(String[] libs) {
-        RLIBS = libs;
+    public static void setRLibs() {
+    	RLIBS = RController.getRLIBS();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
     }
 
-    public static void setKeyWords(String[] words) {
+    public static void setKeyWords() {
+    	String[] words = RController.getKeyWords();
+      	KEYWORDS.clear();
         Object dummy = new Object();
-        for (int i = 0; i < words.length; i++) iPreferences.KEYWORDS.put(words[i],dummy);
+        for (int i = 0; i < words.length; i++) {
+        	KEYWORDS.put(words[i],dummy);
+        }
+    }
+
+    public static void setObjects() {
+    	String[] objects = RController.getObjects();
+       	OBJECTS.clear();
+       	KEYWORDS_OBJECTS.clear();
+        Object dummy = new Object();
+        for (int i = 0; i < objects.length; i++) {
+        	KEYWORDS_OBJECTS.put(objects[i],dummy);
+        	OBJECTS.add(objects[i]);
+        }
+    }
+    
+    public static void refreshAll(String blabla) {
+        setKeyWords();
+        setObjects();
     }
 
     public static void readHistory() {
@@ -167,7 +192,7 @@ public class JGR {
             }
         }
         catch (Exception e) {
-            new iError(e);
+            new ErrorMsg(e);
         }
     }
 
@@ -183,7 +208,7 @@ public class JGR {
             writer.close();
         }
         catch (Exception e) {
-            new iError(e);
+            new ErrorMsg(e);
         }
 
 
@@ -194,7 +219,7 @@ public class JGR {
             new JGR();
         }
         catch (Exception e) {
-            new iError(e);
+            new ErrorMsg(e);
         }
     }
 }

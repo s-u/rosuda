@@ -8,7 +8,6 @@ package org.rosuda.JGR.robjects;
 //  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
 //
 
-import org.rosuda.JGR.*;
 
 public class other extends RObject {
 

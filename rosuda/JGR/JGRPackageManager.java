@@ -12,15 +12,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.*;
 
-import org.rosuda.JGR.rhelp.*;
 import org.rosuda.JGR.toolkit.*;
-import org.rosuda.ibase.*;
-import org.rosuda.util.*;
+import org.rosuda.JGR.util.*;
 
-public class RPackageManager extends iFrame implements ActionListener {
+public class JGRPackageManager extends iFrame implements ActionListener {
 
     public Object[][] Packages = null;
     public String[] columnNames = {"loaded","default","Package","Description"};
@@ -33,7 +30,7 @@ public class RPackageManager extends iFrame implements ActionListener {
     private PTableModel pkgModel;
     private JTable pkgTable = new JTable();
 
-    public RPackageManager() {
+    public JGRPackageManager() {
         super("Package Manager",157);
         try {
         String[] Menu = {
@@ -49,7 +46,7 @@ public class RPackageManager extends iFrame implements ActionListener {
 
         while(!JGR.STARTED);
 
-        Packages = RTalk.refreshPackages();
+        Packages = RController.refreshPackages();
 
         sorter = new TableSorter(pkgModel = new PTableModel(this));
         scrollArea.setBackground(this.getBackground());
@@ -92,13 +89,13 @@ public class RPackageManager extends iFrame implements ActionListener {
     public void exit() {
     	dispose();
     	setDefaultPackages();
-    	iPreferences.writePrefs();
+    	JGRPrefs.writePrefs();
     }
 
     public void refresh() {
         this.cursorWait();
         setDefaultPackages();
-        Packages = RTalk.refreshPackages();
+        Packages = RController.refreshPackages();
         sorter = new TableSorter(pkgModel = new PTableModel(this));
         pkgTable.setModel(sorter);
         sorter.setTableHeader(pkgTable.getTableHeader());
@@ -132,7 +129,7 @@ public class RPackageManager extends iFrame implements ActionListener {
 
         public int cols, rows;
 
-        public PTableModel(RPackageManager pm) {
+        public PTableModel(JGRPackageManager pm) {
             cols = pm.columnNames.length;
             rows = pm.Packages.length;
         }

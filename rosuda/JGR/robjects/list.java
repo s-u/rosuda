@@ -9,8 +9,6 @@ package org.rosuda.JGR.robjects;
 
 import java.util.*;
 
-import org.rosuda.JGR.*;
-
 public class list extends RObject{
 
     public Vector vars;
