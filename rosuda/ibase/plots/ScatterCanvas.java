@@ -191,14 +191,17 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             double fi=A[0].getSensibleTickStart(f);
             if (Global.DEBUG>0)
                 System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
-            while (fi<A[0].vBegin+A[0].vLen) {
-                int t=A[0].getValuePos(fi);
-                g.drawLine(t,Y+H,t,Y+H+5);
-                if (showLabels)
-                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)(fi+0.5)).toString()):v[0].getCatAt((int)(fi+0.5)).toString()):
-                                 A[0].getDisplayableValue(fi),t,Y+H+20,0.5,0);
-                fi+=f;
-            };
+            try {
+                while (fi<A[0].vBegin+A[0].vLen) {
+                    int t=A[0].getValuePos(fi);
+                    g.drawLine(t,Y+H,t,Y+H+5);
+                    if (showLabels)
+                        g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)(fi+0.5)).toString()):v[0].getCatAt((int)(fi+0.5)).toString()):
+                                     A[0].getDisplayableValue(fi),t,Y+H+20,0.5,0);
+                    fi+=f;
+                }
+            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            }
         }
 
 	/* draw ticks and labels for Y axis */
@@ -207,13 +210,16 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             double fi=A[1].getSensibleTickStart(f);
             if (Global.DEBUG>0)
                 System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
-            while (fi<A[1].vBegin+A[1].vLen) {
-                int t=A[1].getValuePos(fi);
-                g.drawLine(X-5,t,X,t);
-                if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)(fi+0.5)).toString()):A[1].getDisplayableValue(fi),X-8,t,1,0.3);
-                fi+=f;
-            };
+            try {
+                while (fi<A[1].vBegin+A[1].vLen) {
+                    int t=A[1].getValuePos(fi);
+                    g.drawLine(X-5,t,X,t);
+                    if(showLabels)
+                        g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)(fi+0.5)).toString()):A[1].getDisplayableValue(fi),X-8,t,1,0.3);
+                    fi+=f;
+                }
+            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            }
         }
 
         nextLayer(g);
