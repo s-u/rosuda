@@ -92,7 +92,7 @@ public class Rtalk {
     /** sends a request with no attached parameters
 	@param cmd command
 	@return returned packet or <code>null</code> if something went wrong */
-    Rpacket request(int cmd) {
+    public Rpacket request(int cmd) {
         byte[] d = new byte[0];
         return request(cmd,d);
     }
@@ -101,7 +101,7 @@ public class Rtalk {
 	@param cmd command
 	@param cont contents - parameters
 	@return returned packet or <code>null</code> if something went wrong */
-    Rpacket request(int cmd, byte[] cont) {
+    public Rpacket request(int cmd, byte[] cont) {
 	byte[] hdr=new byte[16];
 	setInt(cmd,hdr,0);
 	setInt((cont==null)?0:cont.length,hdr,4);
@@ -131,7 +131,7 @@ public class Rtalk {
 	@param cmd command
 	@param par parameter - length and DT_STRING will be prepended
 	@return returned packet or <code>null</code> if something went wrong */
-    Rpacket request(int cmd, String par) {
+    public Rpacket request(int cmd, String par) {
 	try {
             par=par+"\n";
 	    byte[] b=par.getBytes("UTF-8");

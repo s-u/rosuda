@@ -26,7 +26,7 @@ public class REXP extends Object {
     int Xt;
     /** attribute xpression or <code>null</code> if none */
     REXP attr;
-    /** content of the xpression - its object type is dependent on {@link #Xt) */
+    /** content of the xpression - its object type is dependent on {@link #Xt} */
     Object cont;
 
     /** construct a new, empty (NULL) expression w/o attribute */

@@ -1,4 +1,6 @@
-/** small class encapsulating packets from/to Rserv */
+/** small class encapsulating packets from/to Rserv
+    @version $Id$
+*/
 public class Rpacket {
     int cmd;
     byte[] cont;
@@ -12,18 +14,18 @@ public class Rpacket {
     
     /** get command
         @return command */
-    int getCmd() { return cmd; }
+    public int getCmd() { return cmd; }
     /** check last response for RESP_OK
 	@return <code>true</code> if last response was OK */
-    boolean isOk() { return ((cmd&15)==1); };
+    public boolean isOk() { return ((cmd&15)==1); };
     /** check last response for RESP_ERR
 	@return <code>true</code> if last response was ERROR */
-    boolean isError() { return ((cmd&15)==2); };
+    public boolean isError() { return ((cmd&15)==2); };
     /** get status code of last response
 	@return status code returned on last response */
-    int getStat() { return ((cmd>>24)&127); };
+    public int getStat() { return ((cmd>>24)&127); };
 
     /** get content
 	@return inner package content */
-    byte[] getCont() { return cont; }
+    public byte[] getCont() { return cont; }
 }

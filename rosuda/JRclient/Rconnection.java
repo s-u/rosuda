@@ -112,7 +112,7 @@ public class Rconnection {
     /** evaluates the given command and retrieves the result
 	@param cmd command/expression string
 	@return R-xpression or <code>null</code> if an error occured */
-    REXP eval(String cmd) {
+    public REXP eval(String cmd) {
 	succeeded=false;
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
@@ -135,7 +135,7 @@ public class Rconnection {
 
     /** shutdown remote Rserv. Note that some Rserves cannot be shut down from
 	client side (forked version). */
-    boolean shutdown() {
+    public boolean shutdown() {
 	succeeded=false;
 	if (!connected || rt==null) {
 	    lastError="Error: not connected"; return succeeded=false;
@@ -152,7 +152,7 @@ public class Rconnection {
 	@param user username
 	@param pwd password
 	@return returns <code>true</code> on success */
-    boolean login(String user, String pwd) {
+    public boolean login(String user, String pwd) {
 	succeeded=false;
 	if (!authReq) return succeeded=true;
 	if (authType==AT_crypt) {
