@@ -32,6 +32,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
     SVar[] vg;  // 64*32 matrix of vars (l*32+i)
     int ls;     // # of levels
     int seq=0;
+    int redIndex=0;
     SVar[] vars;
 
     public TreeFlowCanvas(TFrame f, SNode[] trees) {
@@ -275,9 +276,9 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
-            if (red && t==roots.length-1) g.setColor(1f,0f,0f,1f);
+            if (red && t==redIndex) g.setColor(1f,0f,0f,1f);
             if (n!=null) drawNode(g,n,w/2,0,0);
-            if (red && t==roots.length-1) g.setColor(0f,0f,0f,alpha);
+            if (red && t==redIndex) g.setColor(0f,0f,0f,alpha);
             t++;
         }
         
@@ -351,7 +352,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         if (e.getKeyChar()=='7') sw=7;
         if (e.getKeyChar()=='8') sw=8;
         if (e.getKeyChar()=='9') sw=9;
-
+        if (e.getKeyChar()=='.') { redIndex++; if (redIndex>roots.length-1) redIndex=0; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()==',') { redIndex--; if (redIndex<0) redIndex=roots.length-1; setUpdateRoot(0); repaint(); }
         if (sw>0) {
             sw++;
             int i=1;
