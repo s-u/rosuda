@@ -19,7 +19,10 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     String Rver="?";
     String Rbin=null;
     String Rcall=null;
+    String lib="tree";
 
+    boolean useAll=true;
+    
     PluginManager pm=null;
     
     /* values for cahced initialization - just one plugin needs to detect R */
@@ -31,7 +34,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     String lastDump=null;
     
     PluginGetTreeR() {
-        name="Generate tree via R";
+        name="Generate tree via R 1.0";
         author="Simon Urbanek <simon.urbanek@math.uni-augsburg.de>";
         desc="Grows classification or regression trees using R";
         type=PT_GenTree;
@@ -41,12 +44,20 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
     public void setParameter(String par, Object val) {
         if (par=="dataset") vs=(SVarSet)val;
+        if (par=="selectedOnly") useAll=!((Boolean)val).booleanValue();
+        if (par=="treeLibrary") lib=(String)val;
+        if (par=="formula") formula=(String)val;
+        if (par=="treeOptions") treeOpt=(String)val;
     }
     public Object getParameter(String par) {
         if (par=="root" || par=="tree") return root;
         if (par=="Rversion") return Rver;
         if (par=="Rbin") return Rbin;
         if (par=="lastdump") return lastDump;
+        if (par=="treeLibrary") return lib;
+        if (par=="selectedOnly") return new Boolean(!useAll);
+        if (par=="formula") return formula;
+        if (par=="treeOptions") return treeOpt;
         return null;
     }
 
@@ -183,10 +194,26 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         lp.setLayout(new FlowLayout());
         lp.add(new Label("     Using R "+Rver+" in "+Rbin+"     "));
         d.add(lp,BorderLayout.NORTH);
-        p.add(c);
         p.add(l,BorderLayout.NORTH);
-        TextField t=new TextField("");
-        p.add(t,BorderLayout.SOUTH);
+        
+        Panel bPanel=new Panel();
+        TextField t=new TextField("",30);
+        GridBagLayout gbl=new GridBagLayout();
+        bPanel.setLayout(gbl);
+        GridBagConstraints gcw = new GridBagConstraints();
+        GridBagConstraints gce = new GridBagConstraints();
+        gcw.gridx=0; gcw.anchor=GridBagConstraints.EAST;
+        gce.gridx=1; gce.anchor=GridBagConstraints.WEST;
+        gbl.setConstraints(bPanel.add(new Label("Response: ")),gcw);
+        gbl.setConstraints(bPanel.add(c),gce);
+        gbl.setConstraints(bPanel.add(new Label("Library:" )),gcw);
+        Choice chLibrary=new Choice();
+        chLibrary.add("tree");
+        chLibrary.add("rpart");
+        gbl.setConstraints(bPanel.add(chLibrary),gce);
+        gbl.setConstraints(bPanel.add(new Label("Parameters: ")),gcw);
+        gbl.setConstraints(bPanel.add(t),gce);
+        p.add(bPanel,BorderLayout.SOUTH);
         d.pack();
         b.addActionListener(this);b2.addActionListener(this);
         d.setVisible(true);
@@ -260,14 +287,14 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             File fr=new File("PluginInit.r"); if (fr.exists()) fr.delete();
             File fo=new File("PluginInit.out"); if (fo.exists()) fo.delete();
             PrintStream dp=new PrintStream(new FileOutputStream("PluginInit.rds"));
-            vs.Export(dp,true,pred);
+            vs.Export(dp,useAll,pred);
             dp.close();
             System.out.println("dataExported");
 
             if (treeOpt==null) treeOpt="";
             if (treeOpt.length()>0) treeOpt=","+treeOpt;
             PrintStream p=new PrintStream(new FileOutputStream("PluginInit.r"));
-            p.println("invisible(options(echo = FALSE))\nlibrary(tree)\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nprint(\"TREE\",quote=FALSE)\nt<-tree("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
+            p.println("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nprint(\"TREE\",quote=FALSE)\nt<-"+lib+"("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
             System.out.println("execPlugin: starting R");
             Process pc=Runtime.getRuntime().exec(Rcall);
