@@ -27,6 +27,7 @@ public class Histogram extends DragBox implements ActionListener {
   private int k;
   public String displayMode = "Histogram";
   public boolean densityMode = false;
+  public boolean CDPlot = false;
   private dataSet data;
   private double[] add;
   private double totalSum = 0;
@@ -186,6 +187,7 @@ public class Histogram extends DragBox implements ActionListener {
       }
       tick = outside;
 
+      // x-axis
       bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( 0 ) + outside, 
                    (int)userToWorldX( xMax ), (int)userToWorldY( 0 ) + outside );  
       // x-ticks  
@@ -203,8 +205,36 @@ public class Histogram extends DragBox implements ActionListener {
                     (int)userToWorldX( xMax ) - fm.stringWidth(Stat.roundToString(xMax, round)), 
                     (int)userToWorldY( 0 ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
 
+      if( CDPlot ) {
+        // y-axis
+        bg.drawLine( (int)userToWorldX( xMin ) - outside, (int)userToWorldY( 0 ), 
+                     (int)userToWorldX( xMin ) - outside, (int)userToWorldY( yMax ) );  
+        // y-ticks  
+        bg.drawLine( (int)userToWorldX( xMin ) - outside - tick, (int)userToWorldY( 0 ), 
+                     (int)userToWorldX( xMin ) - outside, (int)userToWorldY( 0 ) );  
+
+        bg.drawLine( (int)userToWorldX( xMin ) - outside - tick, (int)userToWorldY( yMax ), 
+                     (int)userToWorldX( xMin ) - outside, (int)userToWorldY( yMax ) );  
+
+        bg.drawString("0.0", 
+                      (int)userToWorldX( xMin ) - outside - tick- fm.stringWidth("0.0"), 
+                      (int)userToWorldY( 0 ) );
+
+        bg.drawString("1.0", 
+                      (int)userToWorldX( xMin ) - outside - tick- fm.stringWidth("1.0"), 
+                      (int)userToWorldY( yMax ) + fm.getMaxAscent() );
+        // Grid Lines
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.5)));
+        bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax/2 ) , 
+                     (int)userToWorldX( xMax ), (int)userToWorldY( yMax/2 ) );
+        bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax ) , 
+                     (int)userToWorldX( xMax ), (int)userToWorldY( yMax ) );
+      }
+      
       if( densityMode )
         bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.3)));
+      if( CDPlot )
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.1)));
 
       boolean stillEmpty = true;               // Flag to avoid heading empty bins
       for( int i = 0;i < levels[0]; i++) {
@@ -235,7 +265,7 @@ public class Histogram extends DragBox implements ActionListener {
           double[] dx = (double[]) l.at("x").getContent();
           double[] dy = (double[]) l.at("y").getContent();
 
-          if( displayMode.equals("Histogram") )
+          if( displayMode.equals("Histogram") && !CDPlot )
             for( int f=0; f<dx.length-1; f++ ) {
               bg.drawLine( (int)userToWorldX( dx[f] ),   (int)userToWorldY( dy[f] ),
                            (int)userToWorldX( dx[f+1] ), (int)userToWorldY( dy[f+1] ));
@@ -265,17 +295,26 @@ public class Histogram extends DragBox implements ActionListener {
             double sumY = 0;
             double fac = (double)nSel/(double)data.n;
             if( displayMode.equals("Histogram") )
-              for( int f=0; f<dx.length-1; f++ )
-                bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( dsy[f]*fac ),
-                             (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( dsy[f+1]*fac ));
+              if( !CDPlot )
+                for( int f=0; f<dx.length-1; f++ )
+                  bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( dsy[f]*fac ),
+                               (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( dsy[f+1]*fac ));
+              else
+                for( int f=0; f<dx.length-1; f++ )
+                  bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ),
+                               (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( yMax * dsy[f+1]*fac/dy[f+1] ));
             else
               for( int f=0; f<dx.length-1; f++ ) {
                 bg.drawLine( (int)userToWorldX( xMin + sumY/totalY * (xMax-xMin) )        ,   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ),
                              (int)userToWorldX( xMin + (sumY+dy[f])/totalY * (xMax-xMin) ), (int)userToWorldY( yMax * dsy[f+1]*fac/dy[f+1] ));
                 sumY += dy[f];
               }
+            if( CDPlot ) {
+              bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.5)));
+              bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax*nSel/data.n ) , 
+                           (int)userToWorldX( xMax ), (int)userToWorldY( yMax*nSel/data.n ) );
+            }                  
           }
-
 
           c.close();
         } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
@@ -316,8 +355,10 @@ public class Histogram extends DragBox implements ActionListener {
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                   &&   e.getKeyCode() == KeyEvent.VK_T )                                                																								|| (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                   &&   e.getKeyCode() == KeyEvent.VK_D ))) {
+                                                    &&   e.getKeyCode() == KeyEvent.VK_R )                                                	                                                    																								|| (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                    &&   e.getKeyCode() == KeyEvent.VK_E )
+                                                || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                    &&   e.getKeyCode() == KeyEvent.VK_D ))) {
         if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
           if( bWidth > 0 ) {
             tablep.updateBins(bStart, bWidth -= bWidth*0.1);
@@ -343,19 +384,29 @@ public class Histogram extends DragBox implements ActionListener {
             && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
           home();
         }
-        if( e.getKeyCode() == KeyEvent.VK_T && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+        if( e.getKeyCode() == KeyEvent.VK_R && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
           if( displayMode.equals("Histogram") )
             displayMode = "Spinogramm";
           else
             displayMode = "Histogram";
         }
         if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1 ) {
+          if( densityMode )
+            CDPlot = false;
           densityMode = !densityMode;
+        }        
+        if( e.getKeyCode() == KeyEvent.VK_E && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1) {
+          CDPlot = !CDPlot;
+          densityMode = true;
         }        
         create(border, border, this.width-border, this.height-border, "");
         for( int i=0; i<Selections.size(); i++) {
           Selection S = (Selection)Selections.elementAt(i);
           maintainSelection(S);
+        }
+        if( !((MFrame)frame).hasR() ) {
+          densityMode = false;
+          CDPlot = false;
         }
         paint(this.getGraphics());
       }
@@ -369,6 +420,22 @@ public class Histogram extends DragBox implements ActionListener {
 
       super.processMouseMotionEvent(e);  // Pass other event types on.
     }	
+
+    public String getToolTipText(MouseEvent e) {
+
+      if( e.isControlDown() ) {
+
+        for( int i = 0;i < rects.size(); i++) {
+          MyRect r = (MyRect)rects.elementAt(i);
+          if ( r.contains( e.getX(), e.getY() )) {
+            return Util.info2Html(r.getLabel());
+          }
+        }
+        // end FOR
+        return null;
+      } else
+        return null;
+    }
 
     public void processMouseEvent(MouseEvent e) {
 
@@ -394,12 +461,24 @@ public class Histogram extends DragBox implements ActionListener {
             JPopupMenu mode = new JPopupMenu();
             if( displayMode.equals("Histogram") ) {
               JMenuItem Spineplot = new JMenuItem("Spinogram");
-              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
               mode.add(Spineplot);
 
               Spineplot.setActionCommand("Spinogram");
               Spineplot.addActionListener(this);
+              
+              JCheckBoxMenuItem CDPlotM = new JCheckBoxMenuItem("CDPlot");
+              CDPlotM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
+              if( CDPlot )
+                CDPlotM.setSelected(true);
+              else
+                CDPlotM.setSelected(false);
+              mode.add(CDPlotM);
+
+              CDPlotM.setActionCommand("CDPlot");
+              CDPlotM.addActionListener(this);
               
               JCheckBoxMenuItem Density = new JCheckBoxMenuItem("Density");
               Density.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -408,6 +487,11 @@ public class Histogram extends DragBox implements ActionListener {
               else
                 Density.setSelected(false);
               mode.add(Density);
+
+              if( !((MFrame)frame).hasR() ) {
+                CDPlotM.setEnabled(false);
+                Density.setEnabled(false);
+              }
 
               Density.setActionCommand("Density");
               Density.addActionListener(this);
@@ -562,8 +646,18 @@ public class Histogram extends DragBox implements ActionListener {
       } else if( command.equals("home") ) {
         home();
       } else if( command.equals("Density") ) {
-        densityMode = !densityMode;
-        Update();
+        if( ((MFrame)frame).hasR() ) {
+          densityMode = !densityMode;
+          Update();
+        } else
+          return;          
+      } else if( command.equals("CDPlot") ) {
+        if( ((MFrame)frame).hasR() ) {
+          CDPlot = !CDPlot;
+          densityMode = true;
+          Update();
+        } else
+          return;          
       } else
         super.actionPerformed(e);
     }
