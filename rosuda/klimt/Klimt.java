@@ -192,9 +192,10 @@ public class InTr
 		    tvs.setName(lastTreeFileName=fd.getFile());
 		else
 		    return null;
-	    } else tvs.setName(fnam);
-	    
-	    BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
+            } else tvs.setName(fnam);
+            if (Common.informLoader)
+                System.out.println("InfoForLoader:Loading data...");
+            BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
             Common.flushWarnings();
             long fsz=0;
             String fnn=fnam;
