@@ -339,6 +339,9 @@
 				1CCDD36F0695E2B500AFAC85,
 				1C18A2EE06BD8A020095E434,
 				1C5F914306C7D86600A23BBC,
+				1C42D10406D39C9F00B9B7D6,
+				1C42D10A06D39CF900B9B7D6,
+				1C42D10E06D39D3900B9B7D6,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -491,6 +494,48 @@
 		};
 		1C37F18A04D8681400A8030F = {
 			fileRef = 1C37F18904D8681400A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C42D10306D39C9F00B9B7D6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = MosaicCanvas.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1C42D10406D39C9F00B9B7D6 = {
+			fileRef = 1C42D10306D39C9F00B9B7D6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C42D10906D39CF900B9B7D6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = FrequencyTable.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1C42D10A06D39CF900B9B7D6 = {
+			fileRef = 1C42D10906D39CF900B9B7D6;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C42D10D06D39D3900B9B7D6 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PPrimMosaic.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		1C42D10E06D39D3900B9B7D6 = {
+			fileRef = 1C42D10D06D39D3900B9B7D6;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1857,6 +1902,7 @@
 				1C993595058F776F0040221D,
 				1CA4330804D814C200A8030F,
 				1CA4330904D814C200A8030F,
+				1C42D10306D39C9F00B9B7D6,
 				1CA4330A04D814C200A8030F,
 				1CA4330C04D814C200A8030F,
 			);
@@ -1896,6 +1942,7 @@
 				F8EE910404D6A73600FA4796,
 				1CE96E6304D6E13D00A8030F,
 				F8EE910504D6A73600FA4796,
+				1C42D10906D39CF900B9B7D6,
 				1CE96E5104D6D86100A8030F,
 				1CA4332304D820AA00A8030F,
 				1CE96E5204D6D86100A8030F,
@@ -1907,6 +1954,7 @@
 				1CA4331D04D819B900A8030F,
 				1C8656BA055935AE00A8030F,
 				1C166470058E084200A30C14,
+				1C42D10D06D39D3900B9B7D6,
 				1C8656BB055935AE00A8030F,
 				1C8656BC055935AE00A8030F,
 				1C8656BD055935AE00A8030F,
