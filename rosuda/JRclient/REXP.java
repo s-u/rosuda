@@ -491,7 +491,7 @@ public class REXP extends Object {
     /** get content of the REXP as {@link RBool} (if it is one)
         @return {@link RBool} content or <code>null</code> if the REXP is no logical value */
     public RBool asBool() {
-        return (Xt==XT_LIST)?(RBool)cont:null;
+        return (Xt==XT_BOOL)?(RBool)cont:null;
     }
 
     /** get content of the REXP as an array of doubles. Array of integers, single double and single integer are automatically converted into such an array if necessary.
