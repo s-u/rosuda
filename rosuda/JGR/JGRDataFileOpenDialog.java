@@ -39,8 +39,6 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	private String[] quotes = new String[] {"","\\\"","\\'"};
 
 	
-	private Dimension screenSize = Common.getScreenRes();
-
 	/**
 	 * Create a new DataFileOpenDialog
 	 * @param f parent frame
@@ -107,6 +105,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			filename.add(att);
 			filename.add(buttons);
 		}
+		this.setPreferredSize(new Dimension(650,450));
 		this.showOpenDialog(f);
 	}
 	
