@@ -119,7 +119,12 @@ public class InTr
 	    
 	    BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
             Common.flushWarnings();
-	    t=RTree.Load(r,tvs);
+            long fsz=0;
+            try {
+                File fil=new File(fnam);
+                fsz=fil.length();
+            } catch(Exception e) {};
+            t=RTree.Load(r,tvs,fsz);
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));

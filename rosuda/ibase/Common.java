@@ -6,8 +6,8 @@ import java.awt.event.*;
 */
 public class Common
 {
-    /** Debug flag. When set to >0 verbose debug messages are generated. */
-    public static int DEBUG=1;
+    /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
+    public static int DEBUG=2;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
