@@ -195,11 +195,11 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 					i = -1;
 					while ((i = line2.trim().indexOf(sep,i+1)) > -1) z2++;
 				}
-				if (z1+1==z2) header.setSelected(true);
+				if (z1+1==z2 || (z1==z2 && line1.matches("^[a-zA-Z\"].*"))) header.setSelected(true);
 				else header.setSelected(false);
 			}
 			
-		} catch (Exception e) {}
+		} catch (Exception e) { e.printStackTrace();}
 	}
 
 	/**
