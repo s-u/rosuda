@@ -307,7 +307,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
      * keyTyped: handle key event.
      */
     public void keyTyped(KeyEvent ke) {
-    	if (System.getProperty("os.name").indexOf("Win")>-1)
+    	if (System.getProperty("os.name").indexOf("Mac")==-1)
     		this.getRootPane().setDefaultButton(search);
     }
 
@@ -315,7 +315,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
      * keyPressed: handle key event.
      */
     public void keyPressed(KeyEvent ke) {
-    	if (ke.getKeyCode() == KeyEvent.VK_ENTER && ke.isControlDown() && System.getProperty("os.name").indexOf("Win")>-1) {
+    	if (ke.getKeyCode() == KeyEvent.VK_ENTER && ke.isControlDown() && System.getProperty("os.name").indexOf("Mac")==-1) {
     		try {
     			if (((JTextComponent) ke.getComponent()).getSelectedText().trim().length() > 0) {
     				this.getRootPane().setDefaultButton(null);
