@@ -33,11 +33,13 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     /** alternate display (horizontal) */
     boolean xdisp=false;
     
+    boolean showLabels=true;
+    
     /** query popup handler */
     QueryPopup qi;
     
     /** margins */
-    int leftm=10, rightm=10, topm=10, botm=20;
+    int leftm=30, rightm=10, topm=10, botm=20;
     int dragMode; // 0=none, 1=binw, 2=anchor
     int dragX,dragY;
     
@@ -55,9 +57,10 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	MenuBar mb=null;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Toggle mode","rotate","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
+        ay=new Axis(null, Axis.O_Y, Axis.T_EqSize);
         updateBoxes();
         qi=new QueryPopup(f,(mark==null)?null:mark.getMasterSet(),"MC-plot");
-    };
+    }
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         if (msg.getMessageID()==Common.NM_MarkerChange) updateBoxes();
@@ -101,6 +104,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 System.out.println("i="+i+", xv="+xv+", count="+count[i]+", mark="+mark[i]);
             i++;
         }
+        ay.setValueRange(xv);
     }
     
     public void paintPoGraSS(PoGraSS g) {
@@ -109,6 +113,8 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         int rdx=w-leftm-rightm;
         int rdy=h-botm-topm;
 
+        if (ay.gBegin!=h-botm || ay.gLen!=-rdy)
+            ay.setGeometry(Axis.O_Y,h-botm,-rdy);
         g.setBounds(w,h);
         g.begin();
     	g.defineColor("fill",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
@@ -122,6 +128,24 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             g.drawLine(leftm,h-botm,leftm,topm);
             g.drawLine(leftm,h-botm,w-rightm,h-botm);
 
+            /* draw ticks and labels for Y axis */
+            {
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
+                if (Global.DEBUG>1)
+                    System.out.println("MCP.AY:"+ay.toString()+", distance="+f+", start="+fi);
+                try {
+                    while (fi<ay.vBegin+ay.vLen) {
+                        int t=ay.getValuePos(fi);
+                        g.drawLine(leftm-5,t,leftm,t);
+                        if(showLabels)
+                            g.drawString(ay.getDisplayableValue(fi),leftm-8,t,1,0.3);
+                        fi+=f;
+                    }
+                } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+                }
+            }
+            
             if (count!=null) { // misclass-only-view
                 Vector v=tm.getTreeEntries();
                 int bs=count.length;
@@ -231,6 +255,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                                     m.set(j,m.at(j)?setTo:true);
                                 j++;
                             };
+                            effect=true;
                         }; break;
                     };
                 };
