@@ -5,10 +5,16 @@
 //  Created by Simon Urbanek on Fri May 09 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
 
 /** PlotText implements an array of text labels, specified by x,y,ax,ay and the text itself.
 @version $Id$
 */
+
+package org.rosuda.ibase.toolkit;
+
+import org.rosuda.pograss.*;
+
 public class PlotText extends PlotObject {
     double x[], y[], ax[], ay[];
     String txt[];

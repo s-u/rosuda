@@ -1,6 +1,18 @@
+//
+//  Framework.java - "glue" between R and iplots
+//  (C)2003 Simon Urbanek
+//
+//  $Id$
+
+package org.rosuda.iplots;
+
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.plots.*;
+import org.rosuda.util.*;
 
 /** basic framework interface for bulding interactive
     statistical programs */
@@ -16,11 +28,11 @@ public class Framework implements Dependent, ActionListener {
         need for multiple frameworks usually.
         */
     public Framework() {
-        Common.AppType=Common.AT_Framework;
+        Global.AppType=Common.AT_Framework;
         Common.supportsBREAK=true;
-        Common.useAquaBg=true; // use aqua look
+        Global.useAquaBg=true; // use aqua look
 	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
-        Common.initStatic();
+        Platform.initPlatform();
         if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
         Common.breakDispatcher.addDepend(this);
 	cvs=new SVarSet();
@@ -276,9 +288,7 @@ public class Framework implements Dependent, ActionListener {
         TFrame f=new TFrame("Scatterplot ("+
 			    vs.at(v2).getName()+" vs "+
 			    vs.at(v1).getName()+")",TFrame.clsScatter);	
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	f.addWindowListener(Common.defaultWindowListener);
+	f.addWindowListener(Common.getDefaultWindowListener());
 	ScatterCanvas sc=new ScatterCanvas(f,vs.at(v1),vs.at(v2),vs.getMarker());
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
 	sc.setSize(new Dimension(400,300));
@@ -298,7 +308,7 @@ public class Framework implements Dependent, ActionListener {
                             "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
                             "Barchart ("+theCat.getName()+")"
                             ,TFrame.clsBar);
-        f.addWindowListener(Common.defaultWindowListener);
+        f.addWindowListener(Common.getDefaultWindowListener());
         BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         bc.setSize(new Dimension(400,300));
@@ -314,9 +324,7 @@ public class Framework implements Dependent, ActionListener {
 	if (v.length==0) return null;
         updateMarker(vs,v[0]);
 	TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	f.addWindowListener(Common.defaultWindowListener);
+	f.addWindowListener(Common.getDefaultWindowListener());
 	SVar[] vl=new SVar[v.length];
 	int i=0;
 	while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
@@ -334,9 +342,7 @@ public class Framework implements Dependent, ActionListener {
     public HistCanvasNew newHistogram(SVarSet vs, int i) {
         updateMarker(vs,i);
 	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	f.addWindowListener(Common.defaultWindowListener);
+	f.addWindowListener(Common.getDefaultWindowListener());
 	HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker());
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
 	hc.setSize(new Dimension(400,300));
@@ -351,7 +357,7 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,i);
         TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
                             TFrame.clsBox);
-        f.addWindowListener(Common.defaultWindowListener);
+        f.addWindowListener(Common.getDefaultWindowListener());
         BoxCanvas sc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(80,300));
@@ -359,15 +365,16 @@ public class Framework implements Dependent, ActionListener {
         f.initPlacement();
         return sc;
     };
-    
+
+    // no VarFRame since that's Klimt-specific
     /** display a new variables frame
-        @return variable frame object */
+        @return variable frame object
     public VarFrame newVarFrame() { return newVarFrame(cvs); };
     public VarFrame newVarFrame(SVarSet v) {
 	VarFrame vf=new VarFrame(v,10,10,150,400);
 	return vf;
     };
-
+    */
     public double[] getDoubleContent(int vid) {
         SVar v=cvs.at(vid);
         if (v==null) return null;
@@ -439,9 +446,9 @@ public class Framework implements Dependent, ActionListener {
     }
 
     public void setDebugLevel(int df) {
-        if (Common.DEBUG>0) System.out.println("Setting DEBUG level to "+df);
-        Common.DEBUG=df;
-        if (Common.DEBUG>0) System.out.println("DEBUG level set to "+Common.DEBUG);
+        if (Global.DEBUG>0) System.out.println("Setting DEBUG level to "+df);
+        Global.DEBUG=df;
+        if (Global.DEBUG>0) System.out.println("DEBUG level set to "+Global.DEBUG);
     }
     
     //=============================== EVENT LOOP STUFF =========================================

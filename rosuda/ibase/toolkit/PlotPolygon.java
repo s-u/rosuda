@@ -5,6 +5,13 @@
 //  Created by Simon Urbanek on Sun Mar 23 2003.
 //  Copyright (c) 2003 Simon Urbanek. All rights reserved.
 //
+//  $Id$
+
+package org.rosuda.ibase.toolkit;
+
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /**
 Polygon object to be used in plots
  
@@ -27,7 +34,7 @@ public class PlotPolygon extends PlotObject {
         @param yy Y coordinates of the points
         */
     public void set(double[] xx, double[] yy) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("["+toString()+"] set(x[],y[]): "+xx+"/"+yy);
         x=xx; y=yy; recalc();
     }
