@@ -58,6 +58,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     /** current directory for the FileDialog */
     private static String directory = System.getProperty("user.home");
 
+    private boolean modified = false;
+
 
     /** create a Table without a SVarSet*/
     public DataTable() {
@@ -236,14 +238,17 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
 
     public void exit() {
-        int i;
-        if (save.getText()=="Save") i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-        else i = JOptionPane.showConfirmDialog(this,"Send back to R?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-        if (i==1) dispose();
-        else {
-            if (i == 0 && save.getText()=="Update" && updateToR()) dispose();
-            else if (i == 0 && saveData()) dispose();
+        if (modified) {
+            int i;
+            if (save.getText()=="Save") i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+            else i = JOptionPane.showConfirmDialog(this,"Send back to R?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+            if (i==1) dispose();
+            else {
+                if (i == 0 && save.getText()=="Update" && updateToR()) dispose();
+                else if (i == 0 && saveData()) dispose();
+            }	
         }
+        else dispose();
     }
 
     /** find a specified object in the table
@@ -640,6 +645,9 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     public void mousePressed(MouseEvent e) {
+        System.out.println(dataTable.getSelectedColumn());
+        modified = dataTable.getSelectedColumn()>0?true:false;
+        System.out.println(modified);
         try {
             selectedColumn = currentCol(e);
             if (e.isPopupTrigger()) {

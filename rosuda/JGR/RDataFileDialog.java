@@ -62,7 +62,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             new Insets(1, 5, 1, 5), 0, 0));
         this.getContentPane().add(options,  new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, iPreferences.isMac?5:105, 1, 5), 0, 0));
+            new Insets(1, /*iPreferences.isMac?*/5/*:105*/, 1, 5), 0, 0));
         options.add(new JLabel("Name :"),  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
