@@ -19,7 +19,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     int leftm=40, rightm=10, topm=10, botm=20;
     int dragMode; // 0=none, 1=binw, 2=anchor
-    int dragX;
+    int dragX,dragY;
     
     int lastw, lasth;
 
@@ -35,7 +35,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
         updateBoxes();
     };
@@ -126,42 +126,51 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	int x=ev.getX(), y=ev.getY();
 	int i=0, setTo=0;
 	boolean effect=false;
-
-        /*
-	if (ev.isControlDown()) setTo=1;
-	while (i<bars) {
-	    if (Bars[i].contains(x,y)) {
-		effect=true;
-		if (!ev.isShiftDown()) m.selectNone();
-		int j=0;
-		for (Enumeration e=v.elements(); e.hasMoreElements();) {
-		    Object o=e.nextElement();
-		    if (o!=null) {
-			double f=((Number)o).doubleValue();
-			int box=(int)((f-ax.vBegin)/binw);
-			if (box==i)
-			    m.set(j,m.at(j)?setTo:1);
-		    };
-		    j++;
-		};
-	    };
-	    i++;
-	};
-        */
-	if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-    };
-
+        Dimension Dsize=getSize();
+        int w=Dsize.width, h=Dsize.height;
+        int rdx=w-leftm-rightm;
+        int rdy=h-botm-topm;
+        Vector v=tm.getTrees();
+        if (v==null) return;
+        
+        if (ev.isControlDown()) setTo=1;
+        if (count!=null) {
+            int bs=count.length;
+            double ddx=((double)(rdx-bs*3))/((double)bs);
+            double yf=((double)rdy)/((double)xv);
+            if (!ev.isShiftDown()) m.selectNone();
+            i=0;
+            SVar r=null;
+            while(i<bs) {
+                int x1=leftm+(int)(ddx*i)+i*3;
+                int ht=(int)(yf*count[i]);
+                if (ht<10) ht=10;
+                if (x>=x1&&x<x+(int)ddx&&y<=h-botm&&y>=h-botm-ht) {
+                    effect=true;
+                    SNode n=(SNode)v.elementAt(i);
+                    if (r==null) r=n.response;
+                    SVar c=n.prediction;
+                    if (c!=null) {
+                        int j=0;
+                        while (j<c.size()) {
+                            if (c.at(j).toString().compareTo(r.at(j).toString())!=0)
+                                m.set(j,m.at(j)?setTo:1);
+                            j++;
+                        };
+                    }; break;
+                };
+                i++;
+            };
+        };
+        if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+    }
+    
     public void mousePressed(MouseEvent ev) {
-	int x=ev.getX(), y=ev.getY();
-        /*
-	if (y>lasth-botm) {
-	    if (x>leftm-3 && x<leftm+3) dragMode=2;
-	    int bwp=ax.getValuePos(ax.vBegin+binw);
-	    if (x>bwp-3 && x<bwp+3) dragMode=1;
-	    dragX=x;
-	};
-        */
-    };
+        int x=ev.getX(), y=ev.getY();
+        dragMode=1;
+        dragX=x; dragY=y;
+    }
+
     public void mouseReleased(MouseEvent e) {
         dragMode=0; repaint();
     };
@@ -203,6 +212,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
+        if (m!=null) m.run(o,cmd);
         if (cmd=="print") run(o,"exportPS");
         if (cmd=="exportCases") {
 /*
