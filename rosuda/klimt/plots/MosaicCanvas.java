@@ -82,6 +82,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     public void paintNode(PoGraSS g, SNode n, int x1, int y1, int x2, int y2, boolean vertical) {
 	int myCases=n.data.size();
 	int im=0;
+        float[] scc=Common.selectColor.getRGBComponents(null);
 
 	if(myCases==0) {
 	    g.setColor("missing");
@@ -116,11 +117,11 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 
             if(dMark>0) {
                 if (shading)
-                    g.setColor(level/2,level,level/2);
+                    g.setColor((int)(scc[0]*((float)level)),(int)(scc[1]*((float)level)),(int)(scc[2]*((float)level)));
                 else
                     g.setColor("marked");
                 g.fillRect(x1,y1+(y2-y1)*(myCases-dMark)/myCases,x2-x1,y2-y1-(y2-y1)*(myCases-dMark)/myCases);
-	    };
+            };
 	    g.setColor("splitRects");
 	    g.drawRect(x1,y1,x2-x1,y2-y1);
 	    return;
@@ -172,13 +173,14 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	g.defineColor("black",0,0,0);
 	g.defineColor("outline",0,0,0);
 	g.defineColor("point",0,0,128);
-	g.defineColor("marked",128,255,128);
 	g.defineColor("red",255,0,0);
 	g.defineColor("missing",255,0,0);
 	g.defineColor("lines",96,96,255);	
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
 	g.defineColor("splitRects",128,128,255);
+        g.defineColor("fill",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
 
 	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH) {
