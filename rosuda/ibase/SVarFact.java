@@ -201,7 +201,7 @@ public class SVarFact extends SVar
     }
 
     public Object at(int i) {
-        return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>cats.length)?null:cats[cont[i]-1];
+    	return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>cats.length)?null:cats[cont[i]];
     }
 
     public int atI(int i) {
