@@ -361,6 +361,7 @@ public class RTalk {
 
     /* get short usage of function*/
     public static String getArgs(String s) {
+        if (s==null) return null;
         String tip = null;
         String res[] = null;
         REXP x;
