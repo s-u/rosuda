@@ -22,6 +22,8 @@ public class Common
     public static String Version="0.97";
     /** ibase release */
     public static String Release="D729";
+    /** application identifier (the first thing to do in main is to modify this) */
+    public static String appName="default";
 
     public static boolean useSwing=true;
     /** determines whether R-serve should be started if it's not running yet */
@@ -259,9 +261,10 @@ public class Common
 	    i++;
 	};
 	char lc=s.charAt(s.length()-1);
+        System.out.println("GetTriGraph(\""+s+"\"), caps="+caps+", num="+nums);
 	if (nums>0) {
 	    if (caps+nums<5 && caps>0)
-		return cp.append(nm).toString();
+		return (cp.append(nm)).toString();
 	    if (nums<4 && caps>0)
 		return cp.toString().substring(0,4-nums)+nm.toString();
 	    if (nums>1 && nums<4 && caps==0 && s.charAt(0)>'9')
