@@ -50,9 +50,10 @@ public class QueryPopup implements MouseListener
             String s=t;
             if (vs!=null && cid!=null && cid.length>0) {
                 int i=0;
-                s+="\n \n";
+                s+="\n";
                 while (i<vs.count()) {
                     if (vs.at(i)!=null && vs.at(i).isSelected()) {
+                    	s += "\n";
                         if (vs.at(i).isNum()) {
                             int j=0;
                             double sum=0.0, ct=0.0, sd=0.0;
