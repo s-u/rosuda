@@ -90,8 +90,23 @@ public class PlotObject {
         @param cl clipping flag */
     public void setClip(boolean cl) { clip=cl; }
 
+    /** get drawing color
+        @return drawing color of the object */
+    public PlotColor gerDrawColor() { return cold; }
+
+    /** get fill color
+        @return fill color of the object */
+    public PlotColor gerFillColor() { return colf; }
+    
     /** causes the entire plot object system to be updated. by default is simply calls the {@link PlotManager.update()} method. */
     public void update() {
         pm.update();
+    }
+
+    /** toString is rather useful for debugging purposes */
+    public String toString() {
+        return "PlotObject(co="+coordX+":"+coordY+
+        ",dc="+((cold==null)?"none":cold.toString())+
+        ",fc="+((colf==null)?"none":colf.toString())+")";
     }
 }
