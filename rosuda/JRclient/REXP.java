@@ -50,6 +50,9 @@ public class REXP extends Object {
     /** content of the xpression - its object type is dependent of {@link #Xt} */
     Object cont;
 
+    /** cached binary length; valid only if positive */
+    long cachedBinaryLength=-1;
+    
     /** construct a new, empty (NULL) expression w/o attribute */
     public REXP() { Xt=0; attr=null; cont=null; }
 
@@ -78,6 +81,12 @@ public class REXP extends Object {
         @param val array of integers to store in the REXP */
     public REXP(int[] val) {
         this(XT_ARRAY_INT,val);
+    }
+    
+    /** construct a new xpression of type XT_ARRAY_INT and content val
+      @param val array of integers to store in the REXP */
+    public REXP(String[] val) {
+      this(XT_ARRAY_STR,val);
     }
     
     /** get attribute of the REXP. In R every object can have attached attribute xpression. Some more complex structures such as classes are built that way.
@@ -171,7 +180,9 @@ public class REXP extends Object {
             while(o<eox && i<as) {
                 d[i]=new RBool(buf[o]);
                 i++; o++;
-            };
+            }
+	    // skip the padding
+	    while ((i&3)!=0) { i++; o++; };
             x.cont=d;
             return o;
         };
@@ -314,7 +325,7 @@ public class REXP extends Object {
     }
 
     /** Calculates the length of the binary representation of the REXP including all headers. This is the amount of memory necessary to store the REXP via {@link #getBinaryRepresentation}.
-        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_STR are supported! All other types will return 4 which is the size of the header.
+        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_[ARRAY_]STR are supported! All other types will return 4 which is the size of the header.
         @return length of the REXP including headers (4 or 8 bytes)*/
     public int getBinaryLength() {
 	int l=0;
@@ -324,13 +335,38 @@ public class REXP extends Object {
 	case XT_STR: l=(cont==null)?1:((String)cont).length()+1; break;
 	case XT_ARRAY_INT: l=(cont==null)?0:((int[])cont).length*4; break;
 	case XT_ARRAY_DOUBLE: l=(cont==null)?0:((double[])cont).length*8; break;
-	}
+	case XT_ARRAY_STR:
+	  if (cachedBinaryLength<0) { // if there's no cache, we have to count..
+	    if (cont==null) cachedBinaryLength=4; else {
+	      String sa[]=(String[])cont;
+	      int i=0, io=0;
+	      while (i<sa.length) {
+		if (sa[i]!=null) {
+		  try {
+		    byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+		    io+=b.length;
+		    b=null;
+		  } catch (java.io.UnsupportedEncodingException uex) {
+		    // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+		  }
+		}
+		io++;
+		i++;
+	      }
+	      while ((io&3)!=0) io++;
+	      cachedBinaryLength=io+4;
+	      if (cachedBinaryLength>0xfffff0)
+		cachedBinaryLength+=4;
+	    }
+	  }
+	  return (int)cachedBinaryLength;
+	} // switch
         if (l>0xfffff0) l+=4; // large data need 4 more bytes
 	return l+4;
     }
 
     /** Stores the REXP in its binary (ready-to-send) representation including header into a buffer and returns the index of the byte behind the REXP.
-        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_STR are supported! All other types will be stored as SEXP of the length 0 without any contents.
+        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_[ARRAY_]STR are supported! All other types will be stored as SEXP of the length 0 without any contents.
         @param buf buffer to store the REXP binary into
         @param off offset of the first byte where to store the REXP
         @return the offset of the first byte behind the stored REXP */
@@ -360,6 +396,27 @@ public class REXP extends Object {
 		}
 	    }
 	    break;
+	case XT_ARRAY_STR:
+	  if (cont!=null) {
+	    String sa[]=(String[])cont;
+	    int i=0, io=off;
+	    while (i<sa.length) {
+	      if (sa[i]!=null) {
+		try {
+		  byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+		  System.arraycopy(b,0,buf,io,b.length);
+		  io+=b.length;
+		  b=null;
+		} catch (java.io.UnsupportedEncodingException uex) {
+		  // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+		}
+	      }
+	      buf[io++]=0;
+	      i++;
+	    }
+	    i=io-off;
+	    while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
+	  }
 	}
 	return off+myl;
     }
