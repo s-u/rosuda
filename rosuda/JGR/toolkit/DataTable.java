@@ -97,8 +97,7 @@ KeyListener {
             "!SSave as", "saveDataAs", "Export to R","export","~File.Basic.End",
             "~Edit",
             "+", "Tools", "Add Column", "addCol","Remove Column","rmCol", "Add Row", "addRow", "Remove Row","rmRow","-",
-            "@FFind", "find", "@GFind Next", "findnext", "-",
-            "Goto Case", "gotoCase",
+			"-", "Goto Case", "gotoCase",
             "~Window",
             "~Help", "R Help", "rhelp", "~About", "0"};
         iMenu.getMenu(this, this, myMenu);
@@ -618,8 +617,8 @@ KeyListener {
             else if (cmd == "delete") deleteContent(dataTable.getSelectedColumns(),dataTable.getSelectedRows());
             else if (cmd == "exit") exit();
             else if (cmd == "export") export(false);
-            else if (cmd == "find") find( -1, -1);
-            else if (cmd == "findnext") find(searchIndex[0], searchIndex[1]);
+            else if (cmd == "search") find( -1, -1);
+            else if (cmd == "searchnext") find(searchIndex[0], searchIndex[1]);
             else if (cmd == "gotoCase") gotoCase( -1);
             else if (cmd == "loadData") loadData();
             else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()");
@@ -643,7 +642,7 @@ KeyListener {
      * keyTyped: handle key event.
      */
     public void keyTyped(KeyEvent ke) {
-    }
+	}
 
     /**
      * keyPressed: handle key event: delete (DEL), and search_again (F3).
@@ -658,6 +657,19 @@ KeyListener {
         else if (ke.getKeyCode() == KeyEvent.VK_F3) {
             find(searchIndex[0], searchIndex[1]);
         }
+		else if (ke.getKeyCode() == KeyEvent.VK_ENTER && dataTable.getSelectedRow() == tabModel.rows-1 && dataTable.getSelectedColumn() == tabModel.cols-1 ) {
+            System.out.println("add row");
+			if (editable && dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
+            addRow();
+            tabModel.fireTableStructureChanged();
+        }
+        else if (editable && ke.getKeyCode() == KeyEvent.VK_TAB  && dataTable.getSelectedRow() == 0 && dataTable.getSelectedColumn() == tabModel.cols-1 && !ke.isShiftDown()) {
+            System.out.println("add col");
+			if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
+            selectedColumn = -1;
+            addColumn();
+            tabModel.fireTableStructureChanged();
+        }		
     }
 
     /**
