@@ -4,6 +4,9 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 import java.awt.*;
+import javax.swing.*;
+
+import org.rosuda.ibase.toolkit.*;
 
 class XGDobject {
     public void paint(XGDcanvas c, Graphics g) {};
@@ -266,7 +269,7 @@ public class XGDserver extends Thread {
         public Socket s;
         boolean isBE;
         XGDcanvas c;
-        Frame f;
+        JFrame f;
 
         int getInt(byte[] b, int o) {
             return  (isBE)?
@@ -386,9 +389,11 @@ public class XGDserver extends Thread {
                             f=null;
                             if (c!=null) c=null;
                         }
-                        f=new Frame();
+                        f=new JFrame();
+                        WinTracker.current.add(new WTentry(f,"Graphics Device",128));
+                        f.setTitle("Graphics Device");
                         c=new XGDcanvas((int)w, (int)h);
-                        f.add(c);
+                        f.getContentPane().add(c);
                         f.pack();
                         f.setVisible(true);
                     }
