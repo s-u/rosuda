@@ -363,7 +363,9 @@ void jri_checkExceptions(JNIEnv *env, int describe)
 {
     jthrowable t=(*env)->ExceptionOccurred(env);
     if (t) {
+#ifndef JRI_DEBUG
         if (describe)
+#endif
             (*env)->ExceptionDescribe(env);
         (*env)->ExceptionClear(env);
     }
