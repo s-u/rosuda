@@ -8,6 +8,7 @@ public class TFrame extends Frame
 {
     WTentry WTmyself;
     TFrame(String tit) {
+        setBackground(Common.backgroundColor);
 	setTitle(tit);
 	// add myself to WinTracker
 	if (WinTracker.current==null) WinTracker.current=new WinTracker();

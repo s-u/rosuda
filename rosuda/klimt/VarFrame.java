@@ -55,10 +55,17 @@ public class VarFrame extends TFrame {
 		if (cd.width<140 || cd.height<minh) {
 		    setSize((cd.width<140)?140:cd.width,(cd.height<minh)?minh:cd.height);
 		    win.pack();
+                    cd=getSize();
 		}; 
 		minh=vars*17+6;
-		if (sb!=null)
-		    sb.setMaximum(minh-cd.height+17);
+                if (sb!=null) {
+                    if (minh-cd.height+17<=0) {
+                        sb.setValue(offset=0); vc.repaint();
+                        sb.setMaximum(0);
+                    } else {
+                        sb.setMaximum(minh-cd.height+17);
+                    };
+                };
 		lastSize=cd;
 	    };
 
@@ -172,6 +179,9 @@ public class VarFrame extends TFrame {
 	    Color C_sel=new Color(128,255,128);
 	    Color C_frame=new Color(128,128,128);
 
+            g.setColor(Color.black);
+            g.drawString("Total "+vs.at(0).size()+" cases",10,16);
+            
 	    i=1;
 	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot"};
 	    int j=0;
@@ -312,6 +322,7 @@ public class VarFrame extends TFrame {
 
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName());
+        setBackground(new Color(255,255,192));
 	int rh=h;
 	if (rh>vs.count()*17+6+115)
 	    rh=vs.count()*17+6+115;
@@ -322,6 +333,7 @@ public class VarFrame extends TFrame {
 	    pack();
 	    Dimension sbd=sb.getSize();
 	    minus=sb.getWidth();
+            sb.setBlockIncrement(17*4);
 	};
 	add(vc=new VarCanvas(this,vs,sb));
 	if (rh!=h)

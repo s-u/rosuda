@@ -28,6 +28,8 @@ public class Common
     static int warningsCount=0;
     /** max. # of warnings, any further will be dropped (0=no limit)  */
     static int maxWarnings=20; 
+
+    public static Color backgroundColor=new Color(255,255,192);
     
     /** add an application warning/error */
     public static void addWarning(String war) {
