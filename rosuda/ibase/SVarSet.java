@@ -11,14 +11,14 @@ import org.rosuda.util.*;
 */
 public class SVarSet {
     /** vector of {@link SVar} objects - the variables */
-    Vector vars;
+    protected Vector vars;
     /** marker associated with this dataset */
-    SMarker mark;
+    protected SMarker mark;
     /** dataset name */
-    String name;
-        
-    int globalMisclassVarID=-1;
-    int classifierCounter=1;
+    protected String name;
+
+    public int globalMisclassVarID=-1;
+    public int classifierCounter=1;
 
     /** default constructor of empty dataset */
     public SVarSet() { vars=new Vector(); name="<unknown>"; };
