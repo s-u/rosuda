@@ -115,7 +115,7 @@ public class SVar extends Vector
     /** sort categories by specifeid method
         @param method sort method, see SM_xxx constants */
     public void sortCategories(int method) {
-        if (!isCat()) return;
+        if (!isCat() || cats.size()<2) return;
         Vector ocats=cats; Vector occnts=ccnts;
         cats=new Vector(); ccnts=new Vector();
         boolean found=true;
