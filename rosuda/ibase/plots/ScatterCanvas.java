@@ -67,6 +67,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	v[0]=v1; v[1]=v2; m=mark;
         ax=A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
         ay=A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
+        if (!v1.isCat()) ax.setValueRange(v1.getMin()-(v1.getMax()-v1.getMin())/20,(v1.getMax()-v1.getMin())*1.1);
+        if (!v2.isCat()) ay.setValueRange(v2.getMin()-(v2.getMax()-v2.getMin())/20,(v2.getMax()-v2.getMin())*1.1);
 	setBackground(Common.backgroundColor);
 	drag=false;
 	updatePoints();
@@ -216,7 +218,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                                 A[0].getDisplayableValue(fi),t-5,Y+H+20);
+                                 A[0].getDisplayableValue(fi),t,Y+H+20,0.5,0);
                 fi+=f;
             };
         }
@@ -231,7 +233,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 int t=A[1].getValuePos(fi);
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
+                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-8,t,1,0.3);
                 fi+=f;
             };
         }
