@@ -182,16 +182,9 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
-	SVar v=new SVar(name);
-        int i=0; while(i<d.length) {
-            if (Double.isNaN(d[i]))
-                v.add(null);
-            else
-                v.add(new Double(d[i]));
-            i++;
-        }
+	SVar v=new SVarFixDouble(name,d);
 	return addVar(v);
-    };
+    }
 
     /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
         the same name within a dataset.
@@ -207,7 +200,7 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
-        SVar v=new SVar(name);
+        SVar v=new SVarObj(name);
         int i=0; while(i<d.length) {
             if (d[i]==SVar.int_NA)
                 v.add(null);
@@ -232,7 +225,7 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
-        SVar v=new SVar(name);
+        SVar v=new SVarObj(name);
         int i=0; while(i<d.length) v.add(d[i++]);
 	return addVar(v);
     }
@@ -252,7 +245,7 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,ix.length);
             if (i<0) return i;
         }
-        SVar v=new SVar(name);
+        SVar v=new SVarObj(name);
         int i=0; while(i<ix.length) {
             int id=ix[i++];
             v.add((id<1 || id>d.length)?null:d[id-1]);
@@ -274,9 +267,9 @@ public class Framework implements Dependent, ActionListener {
     public int replaceVar(int vi, double[] d) {
 	SVar v=cvs.at(vi);
 	if (v==null) return -1;
-	v.notify.beginBatch();
+	v.getNotifier().beginBatch();
 	int i=0; while(i<d.length) { v.replace(i,new Double(d[i])); i++; };
-	v.notify.endBatch();
+	v.getNotifier().endBatch();
 	return vi;
     };
 
@@ -288,9 +281,9 @@ public class Framework implements Dependent, ActionListener {
     public int replaceVar(int vi, int[] d) {
 	SVar v=cvs.at(vi);
 	if (v==null) return -1;
-	v.notify.beginBatch();
+	v.getNotifier().beginBatch();
 	int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; };
-	v.notify.endBatch();
+	v.getNotifier().endBatch();
 	return vi;
     };
 
