@@ -57,6 +57,9 @@ class TextConsole implements RMainLoopCallbacks
     public void   rFlushConsole (Rengine re) {
 	}
 	
+    public void   rLoadHistory  (Rengine re, String filename) {
+	}			
+
     public void   rSaveHistory  (Rengine re, String filename) {
 	}			
 }
