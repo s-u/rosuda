@@ -87,7 +87,6 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
     }
 
     public void handlePrefs() {
-        PreferencesFrame pf=new PreferencesFrame();
-        pf.show();
+        PreferencesFrame.showPrefsDialog();
     }
 }
