@@ -309,6 +309,28 @@ FocusListener, RMainLoopCallbacks {
         JOptionPane.showMessageDialog(this,message,"R Message",JOptionPane.INFORMATION_MESSAGE);
     }
 
+	public String rChooseFile   (Rengine re, int newFile) {
+		// FIXME! implement!
+		return null;
+	}
+	
+    public void   rFlushConsole (Rengine re) {
+	}
+	
+    public void   rSaveHistory  (Rengine re, String filename) {
+        try {
+            File hist = new File(filename);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
+            Enumeration e = JGR.RHISTORY.elements(); int i = 0;
+            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"\n");
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+            new ErrorMsg(e);
+        }
+	}
+	
+	
     public int getFontWidth() {
 		int width = output.getFontMetrics(output.getFont()).charWidth('M');
         width = output.getWidth() / width;
