@@ -54,6 +54,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     boolean querying=false;
     int qx,qy;
+
+    boolean zoomRetainsAspect=false;
     
     /** create a new scatterplot
 	@param f associated frame (or <code>null</code> if none)
@@ -70,13 +72,14 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (!v1.isCat()) ax.setValueRange(v1.getMin()-(v1.getMax()-v1.getMin())/20,(v1.getMax()-v1.getMin())*1.1);
         if (!v2.isCat()) ay.setValueRange(v2.getMin()-(v2.getMax()-v2.getMin())/20,(v2.getMax()-v2.getMin())*1.1);
 	setBackground(Common.backgroundColor);
+        zoomSequence=new Vector();
 	drag=false;
 	updatePoints();
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
@@ -153,6 +156,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
     };
 
+    // clipping warnings
+    boolean hasLeft, hasTop, hasRight, hasBot;
+    
     public void paintPoGraSS(PoGraSS g) {
 	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
@@ -173,6 +179,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	g.defineColor("splitRects",128,128,255);
         float[] scc=Common.selectColor.getRGBComponents(null);
         g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
+        g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
 
 	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
@@ -256,8 +263,10 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             for (int i=0;i<filter.length;i++)
                 if (Pts[filter[i]]!=null)
                     g.fillOval(Pts[filter[i]].x-ptDiam/2,Pts[filter[i]].y-ptDiam/2,ptDiam,ptDiam);
-        };
+        }
 
+            
+            
         nextLayer(g);
         
         if (m.marked()>0) {
@@ -283,7 +292,10 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             */ int dx1=x1, dx2=x2, dy1=y1, dy2=y2;
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
 	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
-	    g.setColor("aSelBg");
+            if (zoomDrag)
+                g.setColor("aDragBg");
+            else
+                g.setColor("aSelBg");
 	    g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	    g.setColor("black");
 	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
@@ -313,6 +325,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	A[1].setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
 	Y=TH-innerB-innerH;
 
+        hasLeft=hasRight=hasTop=hasBot=false;
+        
 	pts=v[0].size();
 	if (v[1].size()<pts) pts=v[1].size();
 	
@@ -327,9 +341,16 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
                 jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));                
             }
-	    if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat()))
-		Pts[i]=new Point(jx+A[0].getCasePos(i),jy+A[1].getCasePos(i));
-            else { // place missings on the other side of the axes
+            if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat())) {
+                int x=jx+A[0].getCasePos(i),y=jy+A[1].getCasePos(i);
+                Pts[i]=null;
+                if (x<innerL) hasLeft=true;
+                else if (y<10) hasTop=true;
+                else if (x>w-10) hasRight=true;
+                else if (y>h-innerB) hasBot=true;
+                else
+                    Pts[i]=new Point(x,y);
+            } else { // place missings on the other side of the axes
                 int x,y;
                 if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+A[0].getCasePos(i);
                 if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+A[1].getCasePos(i);
@@ -340,36 +361,52 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public void mouseClicked(MouseEvent ev) 
     {
-	int x=ev.getX(), y=ev.getY();
-	x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
-    };
+        int x=ev.getX(), y=ev.getY();
+        if (Common.isZoomTrigger(ev)) {
+            performZoomOut(x,y);
+            return;
+        }
+        //x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
+    }
 
+    boolean zoomDrag;
+    
     public void mousePressed(MouseEvent ev) 
     {	
 	x1=ev.getX(); y1=ev.getY();
 	drag=true;
-    };
+        zoomDrag=Common.isZoomTrigger(ev);        
+    }
+    
     public void mouseReleased(MouseEvent e)
     {
 	int X1=x1, Y1=y1, X2=x2, Y2=y2;
 	if (x1>x2) { X2=x1; X1=x2; };
 	if (y1>y2) { Y2=y1; Y1=y2; };
-	Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
 
-	boolean setTo=false;
-	if (e.isControlDown()) setTo=true;
-	if (!e.isShiftDown()) m.selectNone();
-	
-	drag=false; 
-	int i=0;
-	while (i<pts) {
-	    if (Pts[i]!=null && sel.contains(Pts[i]))
-		m.set(i,m.at(i)?setTo:true);
-	    i++;
-	};
-	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-        setUpdateRoot(2);
-	repaint();	
+        if (zoomDrag) {
+            drag=false;
+            if (X2-X1<2 || X2-X1<2) return;
+            performZoomIn(X1,Y1,X2,Y2);
+            repaint();
+        } else {
+            Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
+
+            boolean setTo=false;
+            if (e.isControlDown()) setTo=true;
+            if (!e.isShiftDown()) m.selectNone();
+
+            drag=false;
+            int i=0;
+            while (i<pts) {
+                if (Pts[i]!=null && sel.contains(Pts[i]))
+                    m.set(i,m.at(i)?setTo:true);
+                i++;
+            };
+            m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+            setUpdateRoot(2);
+            repaint();
+        }
     };
     public void mouseEntered(MouseEvent e) {};
     public void mouseExited(MouseEvent e) {};
@@ -441,6 +478,20 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             setUpdateRoot(0);
             repaint();
 	};
+        if (cmd=="equiscale") {
+            double sfx,sfy, usfx,usfy;
+            sfx=((double)ax.gLen)/ax.vLen; usfx=(sfx<0)?-sfx:sfx;
+            sfy=((double)ay.gLen)/ay.vLen; usfy=(sfy<0)?-sfy:sfy;
+            if (usfx<usfy) {
+                ay.setValueRange(ay.vBegin,ay.vLen*(usfy/usfx));
+            } else {
+                ax.setValueRange(ax.vBegin,ax.vLen*(usfx/usfy));
+            }
+            updatePoints();
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (cmd=="resetZoom") { resetZoom(); repaint(); }
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(2); repaint(); };
@@ -475,7 +526,119 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     public void actionPerformed(ActionEvent e) {
 	if (e==null) return;
 	run(e.getSource(),e.getActionCommand());
-    };
+    }
+
+// "borrowed" from BaseCanvas until we have BaseCanvas-based scatter plot
+
+    class ZoomDescriptorComponent {
+        double vBegin, vLen;
+        int gBegin, gLen, dc;
+        boolean dummy;
+
+        ZoomDescriptorComponent() {
+            dummy=true;
+        }
+
+        ZoomDescriptorComponent(Axis a) {
+            vBegin=a.vBegin; vLen=a.vLen; gBegin=a.gBegin; gLen=a.gLen;
+            dc=a.datacount;
+            dummy=false;
+        }
+    }
+
+    /** if set to <code>true</code> all notifications are rejected. Any subclass is free to use it, BaseCanvas modifies this flag in default zoom processing methods to prevent partial updates when ax and ay are updated sequentially. Any method changing this flag should always restore the state of the flag after it finishes! Also use with care in multi-threaded applications to prevent deadlocks. */
+    boolean ignoreNotifications=false;
+
+    /** this vector can be used to track the sequence of zooms. Zoom out should return to the state before last zoom in (if sensible in the context of the given plot). Any implementation of {@link #performZoomIn} and {@link #performZoomOut} is free to use this vector in any way which suits the implementation.<p>The current default implementation uses pairs of {@link ZoomDescriptorComponent} objects to store status of {@link #ax} and {@link #ay} axes. The vector is automatically initilized to an empty vector by the base constructor. */
+    Vector zoomSequence;
+
+    public void performZoomIn(int x1, int y1, int x2, int y2) {
+        if (Common.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
+        boolean ins=ignoreNotifications;
+        ignoreNotifications=true;
+        double ax1=1.0, ax2=1.0, ay1=1.0, ay2=1.0;
+        double xExtent=1.0, yExtent=1.0, xCenter=1.0, yCenter=1.0;
+        if (ax!=null) {
+            ax1=ax.getValueForPos(x1); ax2=ax.getValueForPos(x2);
+            if ((ax2-ax1)*ax.vLen<0.0) { // fix signum - must be same as vLen
+                double ah=ax2; ax2=ax1; ax1=ah;
+            }
+            xExtent=(x1==x2)?ax.vLen/2.0:ax2-ax1;
+            xCenter=(ax1+ax2)/2.0;
+        }
+        if (ay!=null) {
+            ay1=ay.getValueForPos(y1); ay2=ay.getValueForPos(y2);
+            if ((ay2-ay1)*ay.vLen<0.0) { // fix signum - must be same as vLen
+                double ah=ay2; ay2=ay1; ay1=ah;
+            }
+            yExtent=(y1==y2)?ay.vLen/2.0:ay2-ay1;
+            yCenter=(ay1+ay2)/2;
+        }
+        if (ax!=null && ay!=null && zoomRetainsAspect) {
+            double ratioPre=ax.vLen/ay.vLen;
+            if (ratioPre<0.0) ratioPre=-ratioPre;
+            double ratioPost=xExtent/yExtent;
+            if (ratioPost<0.0) ratioPost=-ratioPost;
+            if (ratioPost>ratioPre) // x1/y1 < x2/y2 => inflate y
+                yExtent*=ratioPost/ratioPre;
+            else // otherwise inflate x
+                xExtent*=ratioPost/ratioPre;
+        }
+        if (ax!=null) {
+            zoomSequence.addElement(new ZoomDescriptorComponent(ax));
+            ax.setValueRange(xCenter-xExtent/2.0,xExtent);
+        } else zoomSequence.addElement(new ZoomDescriptorComponent());
+        ignoreNotifications=ins;
+        if (ay!=null) {
+            zoomSequence.addElement(new ZoomDescriptorComponent(ay));
+            ay.setValueRange(yCenter-yExtent/2.0,yExtent);
+        } else zoomSequence.addElement(new ZoomDescriptorComponent());
+        updatePoints();
+        setUpdateRoot(0);
+        repaint();
+    }
+
+    public void performZoomOut(int x, int y) {
+        if (Common.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
+        int tail=zoomSequence.size()-1;
+        if (tail<1) return;
+        ZoomDescriptorComponent zx,zy;
+        zx=(ZoomDescriptorComponent)zoomSequence.elementAt(tail-1);
+        zy=(ZoomDescriptorComponent)zoomSequence.elementAt(tail);
+        boolean ins=ignoreNotifications;
+        ignoreNotifications=true;
+        if (ax!=null && !zx.dummy)
+            ax.setValueRange(zx.vBegin,zx.vLen);
+        ignoreNotifications=ins;
+        if (ay!=null && !zy.dummy)
+            ay.setValueRange(zy.vBegin,zy.vLen);
+        zoomSequence.removeElement(zy);
+        zoomSequence.removeElement(zx);
+        updatePoints();
+        setUpdateRoot(0);
+        repaint();
+    }
+
+    public void resetZoom() {
+        if (Common.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
+        if (zoomSequence.size()>1) {
+            ZoomDescriptorComponent zx,zy;
+            zx=(ZoomDescriptorComponent)zoomSequence.elementAt(0);
+            zy=(ZoomDescriptorComponent)zoomSequence.elementAt(1);
+            boolean ins=ignoreNotifications;
+            ignoreNotifications=true; // prevent processing of AxisChanged notification for ax
+            if (ax!=null && !zx.dummy)
+                ax.setValueRange(zx.vBegin,zx.vLen);
+            ignoreNotifications=ins;
+            if (ay!=null && !zy.dummy)
+                ay.setValueRange(zy.vBegin,zy.vLen);
+            updatePoints();
+            setUpdateRoot(0);
+            repaint();
+        }
+        zoomSequence.removeAllElements();
+    }
+    
 };
 
 /* Changes Glasgow:
