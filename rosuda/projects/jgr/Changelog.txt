@@ -1,3 +1,7 @@
+2005-02-12
+- set tab-separated as default
+- added: Run menuitems
+
 2005-02-04
 - fixed: use always prompt from R (if user specified his own)
 - fixed: save user specified (loaded) workspace when leaving JGR
@@ -18,4 +22,4 @@ JGR 1.1
 - Drag and Drop
 - Helppage titles
 - Save Data from Object Browser
-- added "datasets" to default packages
+- Added "datasets" to default packages
