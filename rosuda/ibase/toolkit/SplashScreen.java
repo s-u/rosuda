@@ -104,8 +104,12 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         p.add(l);
         
         String myMenu[]={"+","File","@OOpen dataset ...","openData","-",
+            "Preferences ...","prefs","-",
             "@QQuit","exit",
             "~Window","0"};
+        String macMenu[]={"+","File","@OOpen dataset ...","openData","0"};
+        if (Common.isMac)
+            myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
         pack();
     }
