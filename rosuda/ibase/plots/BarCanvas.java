@@ -126,6 +126,8 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    j++;
         };
         cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
+        if (m!=null)
+            cols[j]=new int[m.getMaxMark()+1];
 	if (weight==null) {
 	    count=new int[bars];
 	    marked=new int[bars];
