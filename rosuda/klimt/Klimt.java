@@ -31,8 +31,8 @@ import org.rosuda.plugins.*;
 /** Main Klimt Trees class. Besides the main method it also contains methods for data root and tree handling. */
 public class Klimt
 {
-    public static String Version = "0.98-pre8";
-    public static String Release = "E920";
+    public static String Version = "0.98-XtreeM";
+    public static String Release = "F114";
     
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
@@ -331,7 +331,7 @@ public class Klimt
         argv=Global.parseArguments(argv);
 
         org.rosuda.util.Platform.initPlatform("org.rosuda.klimt.");
-
+		
         try {
 	    int argc=argv.length;
 	    int carg=0;

@@ -16,7 +16,7 @@ import java.awt.FileDialog;
 
 public class KlimtSplash extends SplashScreen {
     public KlimtSplash() {
-        super("Klimt v"+Common.Version+" (release "+Common.Release+")");
+        super("Klimt v"+Common.Version+" (rel."+Common.Release+")");
     }
 
     /* we need to re-define this since we're KlimtSplash */

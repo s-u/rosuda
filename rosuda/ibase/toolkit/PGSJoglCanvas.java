@@ -12,6 +12,8 @@ import java.io.PrintStream;
 import java.io.File;
 import javax.imageio.*;
 
+import net.java.games.jogl.*;
+
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
 import org.rosuda.util.*;
@@ -21,12 +23,14 @@ exporting the content to PGS metafile or PostScript format. Any implementing
 class must use PoGraSS methods instead of Graphics.
 @version $Id$
 */
-public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Printable {
+public class PGSJoglCanvas extends GLCanvas implements Commander, Dependent, Printable, GLEventListener {
     /** frame that owns this canvas. can be null if none does. it is mainly used
 	to identify current frame in calls to dialogs */
-    protected Frame myFrame=null;
+	protected Frame myFrame=null;
     /** description of this canvas. */
     protected String desc="untitled PGS canvas";
+
+	public int layers=0;
 	
     static Notifier globalNotifier=null;
     
@@ -46,19 +50,26 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     
     public PageFormat pageFormat;
     
-    public PGSCanvas(int layers, Axis x, Axis y) {
-        this(layers);
+    public PGSJoglCanvas(int layers, Axis x, Axis y) {
+		super(net.java.games.jogl.impl.GLContextFactory.getFactory().chooseGraphicsConfiguration(new GLCapabilities(), new DefaultGLCapabilitiesChooser(), GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()),
+			  new GLCapabilities(),
+			  new DefaultGLCapabilitiesChooser(),
+			  null);
 		ax=x; ay=y;
-    }
-	
-    public PGSCanvas(int layers) {
-		super(layers);
-		pm=new PlotManager(this);
+		this.layers=layers;
+		//pm=new PlotManager(this);
+		pm=null;
         if (globalNotifier==null) globalNotifier=new Notifier();
         globalNotifier.addDepend(this);
+		//setSize(640,480);
+        addGLEventListener(this);
     }
 	
-    public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
+    public PGSJoglCanvas(int layers) {
+		this(layers, null, null);
+    }
+	
+    public PGSJoglCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
         this(1);
     }
 	
@@ -67,8 +78,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     }
     
     public class IDlgCL implements ActionListener {
-        PGSCanvas c;
-        public IDlgCL(PGSCanvas cc) { c=cc; };
+        PGSJoglCanvas c;
+        public IDlgCL(PGSJoglCanvas cc) { c=cc; };
 		
         /** activated if a button was pressed. It determines whether "cancel" was pressed or OK" */
         public void actionPerformed(ActionEvent e) {
@@ -95,6 +106,85 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
 		endPaint(p);
         inProgress=false;
     }
+
+	int viewportWidth;
+    int viewportHeight;
+	
+	public void init (GLDrawable drawable) {
+        System.out.println ("init()");
+        GL gl = drawable.getGL(); 
+		
+		gl.glEnable (GL.GL_LINE_SMOOTH);
+		gl.glHint (GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
+		
+		gl.glEnable ( GL.GL_BLEND );
+		gl.glBlendFunc ( GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA );		
+		
+		gl.glClearColor( 1.0f, 1.0f, 1.0f, 1.0f ); 
+        gl.glColor3f( 0.0f, 0.0f, 0.0f ); 
+    }
+    
+    /** Called to indicate the drawing surface has been moved and/or resized
+		*/
+    public void reshape (GLDrawable drawable,
+                         int x,
+                         int y,
+                         int width,
+                         int height) {
+        GL gl = drawable.getGL(); 
+        GLU glu = drawable.getGLU(); 
+		//System.out.println("reshape (gl="+gl+", w="+width+", h="+height+")");
+		
+        // save size for viewport reset
+        viewportWidth = width;
+        viewportHeight = height;
+		
+		float[] rgba=getBackground().getRGBComponents(null);
+		gl.glClearColor( rgba[0], rgba[1], rgba[2], rgba[3] ); 
+
+        gl.glMatrixMode( GL.GL_PROJECTION );  
+        gl.glLoadIdentity(); 
+        glu.gluOrtho2D (0, width, 0, height);
+        gl.glViewport( 0, 0, viewportWidth, viewportHeight ); 
+		float mmx[] = { 1f, 0f, 0f, 0f, 0f, -1f, 0f, 0f, 0f, 0f, 1f, 0f, 0f, 0f, 0f, 1f };
+		gl.glTranslatef(0f, (float)(height), 0f);
+		gl.glMultMatrixf(mmx);
+    }
+    
+    /** Called by drawable to initiate drawing 
+		*/
+    public void display (GLDrawable drawable) {
+        GL gl = drawable.getGL();
+        GLU glu = drawable.getGLU();
+		//System.out.println("display (gl="+gl+")");
+		
+        // is there a pending world window change?
+        //if (worldWindowChanged)
+        //    resetWorldWindow(gl, glu);
+		
+        gl.glMatrixMode (GL.GL_MODELVIEW);
+        gl.glLoadIdentity(); 
+        gl.glClear (GL.GL_COLOR_BUFFER_BIT);
+		
+        gl.glColor3f( 0.0f, 0.0f, 0.0f );
+		
+		PoGraSSjogl p=new PoGraSSjogl(gl, glu, this);
+		//PoGraSSgraphics p=new PoGraSSgraphics(new render.jogl.JoglGraphics(gl, glu));
+		p.setTitle(desc);
+		beginPaint(p);
+		paintPoGraSS(p);
+		endPaint(p);
+		p=null;
+    }
+	
+    /** Called by drawable to indicate mode or device has changed
+		*/
+    public void displayChanged (GLDrawable drawable,
+                                boolean modeChanged,
+                                boolean deviceChanged) {
+        System.out.println ("displayChanged()");
+    }
+	
 	
     public int print(Graphics g, PageFormat pf, int pi) {
         if (pi >= 1) {
@@ -152,6 +242,10 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
 		while (paintLayerCounter<layers)
 			nextLayer(p);
     }
+
+	// for compatibility with LayerCanvas
+	public void setUpdateRoot(int ur) {
+	}
 	
     public void forcedFlush() {
         Rectangle r=getBounds();

@@ -105,11 +105,13 @@
 				1601BCDFFEEE210811DB9C8B,
 				1601BCE2FEEE210811DB9C8B,
 				6A88643101E695080CC91562,
+				68AC25160798942900715278,
 			);
 			buildSettings = {
 				JAVA_ARCHIVE_COMPRESSION = YES;
 				JAVA_COMPILER = /usr/bin/javac;
-				JAVA_COMPILER_TARGET_VM_VERSION = 1.3;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
 				JAVA_MANIFEST_FILE = Klimt.mft;
 				JAVA_ONLY = YES;
 				JAVA_SOURCE_SUBDIR = .;
@@ -168,7 +170,11 @@
 	<key>Java</key>
 	<dict>
 		<key>ClassPath</key>
-		<string>$JAVAROOT/Klimt.jar</string>
+		<array>
+			<string>$JAVAROOT/Klimt.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.4+</string>
 		<key>MainClass</key>
 		<string>org.rosuda.klimt.Klimt</string>
 		<key>Properties</key>
@@ -326,6 +332,8 @@
 				1C42D10A06D39CF900B9B7D6,
 				1C42D10E06D39D3900B9B7D6,
 				F80E96F806D4E6B7000F58C0,
+				68AC23940798656000715278,
+				68AC23CD07986B8600715278,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -356,6 +364,7 @@
 		1601BCE2FEEE210811DB9C8B = {
 			buildActionMask = 2147483647;
 			files = (
+				68AC23A40798669B00715278,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1755,6 +1764,83 @@
 //1C2
 //1C3
 //1C4
+//680
+//681
+//682
+//683
+//684
+		68AC23930798656000715278 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PGSJoglCanvas.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		68AC23940798656000715278 = {
+			fileRef = 68AC23930798656000715278;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		68AC23A20798669B00715278 = {
+			isa = PBXFileReference;
+			lastKnownFileType = archive.jar;
+			path = jogl.jar;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		68AC23A40798669B00715278 = {
+			fileRef = 68AC23A20798669B00715278;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Merge,
+				);
+			};
+		};
+		68AC23CC07986B8600715278 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PoGraSSjogl.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		68AC23CD07986B8600715278 = {
+			fileRef = 68AC23CC07986B8600715278;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		68AC2512079893D900715278 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			path = libjogl.jnilib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		68AC25160798942900715278 = {
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 15;
+			files = (
+				68AC25170798944400715278,
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		68AC25170798944400715278 = {
+			fileRef = 68AC2512079893D900715278;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//680
+//681
+//682
+//683
+//684
 //6A0
 //6A1
 //6A2
@@ -1771,6 +1857,8 @@
 		};
 		6A9C778D023ECD530CC91562 = {
 			children = (
+				68AC2512079893D900715278,
+				68AC23A20798669B00715278,
 				10F9BF62FEEDA25E11DB9C8B,
 				1C37F18704D85FE600A8030F,
 				1CC795E1055965C100A8030F,
@@ -1951,6 +2039,7 @@
 				1CE96E5104D6D86100A8030F,
 				1CA4332304D820AA00A8030F,
 				1CE96E5204D6D86100A8030F,
+				68AC23930798656000715278,
 				1CE96E5B04D6DA8000A8030F,
 				1CA4332F04D840DD00A8030F,
 				1CE96E5704D6D95900A8030F,
@@ -2124,6 +2213,7 @@
 			children = (
 				F8EE911204D6A73700FA4796,
 				F8EE911304D6A73700FA4796,
+				68AC23CC07986B8600715278,
 				F8EE911404D6A73700FA4796,
 				F8EE911504D6A73700FA4796,
 				F8EE911604D6A73700FA4796,

@@ -13,7 +13,7 @@ import org.rosuda.util.*;
 
     @version $Id$
 */
-public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener
+public class BaseCanvas extends PGSJoglCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener
 {
     /** query popup window */
     protected QueryPopup qi;

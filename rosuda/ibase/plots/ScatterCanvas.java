@@ -13,7 +13,7 @@ import org.rosuda.util.*;
 /** implementation of scatterplots
     @version $Id$
 */
-public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+public class ScatterCanvas extends PGSJoglCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     /** array of two variables (X and Y) */
     protected SVar v[];
