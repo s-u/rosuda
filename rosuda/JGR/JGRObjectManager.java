@@ -117,7 +117,7 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         dBrowser.refresh(JGR.DATA);
         fBrowser.refresh(JGR.FUNCTIONS);
     }
-
+    
     public void mouseClicked(MouseEvent e) {
         if (summary != null) summary.hide();
     }

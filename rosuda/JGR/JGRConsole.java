@@ -33,7 +33,6 @@ FocusListener, RMainLoopCallbacks {
     private Document outputDoc = output.getDocument();
 
     private TextFinder textFinder = new TextFinder(output);
-    //private String keyWord = null;
 
     private ToolBar toolBar;
 
@@ -372,7 +371,7 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "exportOutput") output.startExport();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
-        else if (cmd == "loaddata") new JGRDataFileDialog(this, directory);
+        else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, directory);
         else if (cmd == "open") loadWorkSpace();
         else if (cmd == "new") newWorkSpace();
         else if (cmd == "objectmgr") execute("object.browser()");
