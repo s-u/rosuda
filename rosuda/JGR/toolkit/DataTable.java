@@ -354,9 +354,16 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     private void refresh() {
+        int direction = sorter.getSortingStatus();
+        int col = sorter.getSortedColumn();
+        //System.out.println("Sorted Column "+col+" direction"+direction);
         sorter = new TableSorter(tabModel = new DataTableModel(this));
         dataTable.setModel(sorter);
         sorter.setTableHeader(tableHeader);
+        sorter.setSortingStatus(col,direction);
+        /*direction = sorter.getSortingStatus();
+        col = sorter.getSortedColumn();
+        System.out.println("Sorted Column "+col+" direction"+direction);*/
     }
 
     /** rename columnheader
@@ -391,7 +398,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     private void removeRows() {
         int[] selectedRows = currentRows();
         for (int i = selectedRows.length; i > 0; i--) {
-            vs.removeCaseAt(selectedRows[i - 1]);
+            vs.removeCaseAt(sorter.modelIndex(selectedRows[i - 1]));
         }
         refresh();
     }
@@ -645,9 +652,9 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     public void mousePressed(MouseEvent e) {
-        System.out.println(dataTable.getSelectedColumn());
+        //System.out.println(dataTable.getSelectedColumn());
         modified = dataTable.getSelectedColumn()>0?true:false;
-        System.out.println(modified);
+        //System.out.println(modified);
         try {
             selectedColumn = currentCol(e);
             if (e.isPopupTrigger()) {
@@ -685,7 +692,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 }
             }
             else if (e.isPopupTrigger()) {
-                System.out.println("popup");
+                //System.out.println("popup");
                 popUpMenu(e);
             }
         } catch (Exception ex) {
@@ -799,7 +806,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public Class getColumnClass(int c) {
-            System.out.println(getValueAt(0, c).getClass());
+            //System.out.println(getValueAt(0, c).getClass());
             return getValueAt(0, c).getClass();
         }
 

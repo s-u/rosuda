@@ -71,6 +71,8 @@ public class TableSorter extends AbstractTableModel {
     public static final int NOT_SORTED = 0;
     public static final int ASCENDING = 1;
 
+    private int SORTEDCOLUMN = -1;
+
     private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
 
     public static final Comparator COMPARABLE_COMAPRATOR = new Comparator() {
@@ -174,11 +176,19 @@ public class TableSorter extends AbstractTableModel {
         return EMPTY_DIRECTIVE;
     }
 
+    public int getSortedColumn() {
+        return SORTEDCOLUMN;
+    }
+
     public int getSortingStatus(int column) {
         return getDirective(column).direction;
     }
 
-    private void sortingStatusChanged() {
+    public int getSortingStatus() {
+        return SORTEDCOLUMN==-1?-1:getSortingStatus(SORTEDCOLUMN);
+    }
+
+    public void sortingStatusChanged() {
         clearSortingState();
         fireTableDataChanged();
         tableHeader.repaint();
@@ -191,6 +201,7 @@ public class TableSorter extends AbstractTableModel {
         }
         if (status != NOT_SORTED) {
             sortingColumns.add(new Directive(column, status));
+            SORTEDCOLUMN = column;
         }
         sortingStatusChanged();
     }
@@ -390,6 +401,7 @@ public class TableSorter extends AbstractTableModel {
             int column = columnModel.getColumn(viewColumn).getModelIndex();
             if (column != -1) {
                 int status = getSortingStatus(column);
+                SORTEDCOLUMN = column;
                 if (!e.isControlDown()) {
                     cancelSorting();
                 }
