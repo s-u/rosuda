@@ -61,6 +61,7 @@ public class RController {
      * @return possible completions
      */
     public static String[] completeCommand(String partOfCmd) {
+		if (!JGR.STARTED) return null;
         int s = partOfCmd.length()-1;
         if (partOfCmd.trim().length() == 0) return null;
         REXP cmds = JGR.R.eval(".completeCommand(\""+partOfCmd+"\")");

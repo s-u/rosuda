@@ -165,8 +165,9 @@ public class JGRPrefs {
         }
         if (JGR.RLIBS != null && JGR.RLIBS.length > 0) {
             String libpaths = JGR.RLIBS[0].toString();
-            for (int i = 1; i < JGR.RLIBS.length; i++)
-                libpaths +=  isMac?":":";"+JGR.RLIBS[i];
+            for (int i = 1; i < JGR.RLIBS.length; i++) 
+				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];
+			System.out.println(libpaths);
             prefs.put("InitialRLibraryPath", libpaths);
         }
         try {

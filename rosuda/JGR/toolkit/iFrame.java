@@ -14,7 +14,6 @@ import javax.swing.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
-import org.rosuda.JGR.util.*;
 
 
 public class iFrame extends JFrame {
@@ -93,7 +92,7 @@ public class iFrame extends JFrame {
             }
         });
         /* wenn er des oefteren haengen bleibt die naechste Zeile rausnehmen */
-        progress = new ProgressLabel(24);
+        //progress = new ProgressLabel(24);
     }
 
     public iFrame() {
@@ -143,14 +142,14 @@ public class iFrame extends JFrame {
     }
 
     public synchronized void setWorking(final boolean work) {
-        try { if (progress != null && work) progress.start(); } catch (Exception e) {new ErrorMsg(e);}
-    	SwingUtilities.invokeLater(new Runnable() {
+    	if (work && progress !=null) progress.start();
+        SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (work) {
                     cursorWait();
                 } else {
                     cursorDefault();
-                    try { if (progress != null) progress.stop(); } catch (Exception e) {new ErrorMsg(e);}
+                    if (progress != null) progress.stop();
                 }
             }
         });

@@ -118,7 +118,7 @@ FocusListener, RMainLoopCallbacks {
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));
         this.setVisible(true);
-        progress.setVisible(false);
+        //progress.setVisible(false);
     }
 
 

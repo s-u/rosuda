@@ -13,6 +13,7 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -25,7 +26,7 @@ import org.rosuda.JGR.*;
 import org.rosuda.JGR.util.*;
 
 public class Editor extends iFrame implements ActionListener, KeyListener {
-
+	
     private IconButton newButton;
     private IconButton openButton;
     private IconButton saveButton;
@@ -36,31 +37,31 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private IconButton pasteButton;
     private IconButton findButton;
     private IconButton helpButton;
-
+	
     private GridBagLayout layout = new GridBagLayout();
     private CaretListenerLabel caretStatus = new CaretListenerLabel();
     private JLabel modifiedStatus = new JLabel();
     private SyntaxInput editArea = new SyntaxInput(true);
     private Document editDoc = editArea.getDocument();
-
+	
     private ToolBar toolBar;
-
+	
     private String fileName = null;
     private static String directory = System.getProperty("user.home");
     private String keyWord = null;
-
+	
     private boolean modified = false;
-
+	
     private TextFinder textFinder = new TextFinder(editArea);
-
-
+	
+	
     public static RecentList recentOpen;
     public JMenu recentMenu;
-
+	
     public Editor() {
         this(null);
     }
-
+	
     public Editor(String file) {
         super("Editor", iFrame.clsEditor);
         String[] Menu = {
@@ -94,38 +95,44 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             rm.add(ca);
             if (i==0) ca.setEnabled(false);
         }
-
+		
         toolBar = new ToolBar(this,false, progress);
-
+		
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
         editArea.setWordWrap(false);
-
+		
         editDoc.addUndoableEditListener(toolBar.undoMgr);
-
+		
         caretStatus.setMinimumSize(new Dimension(100, 15));
         caretStatus.setPreferredSize(new Dimension(100, 15));
         caretStatus.setMaximumSize(new Dimension(100, 15));
-
+		
         modifiedStatus.setMinimumSize(new Dimension(80, 15));
         modifiedStatus.setPreferredSize(new Dimension(80, 15));
         modifiedStatus.setMaximumSize(new Dimension(80, 15));
-
+		
         JPanel status = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         status.add(modifiedStatus);
         status.add(caretStatus);
-
+		
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(toolBar,BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(editArea);
         sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         this.getContentPane().add(sp,BorderLayout.CENTER);
         this.getContentPane().add(status,BorderLayout.SOUTH);
-
-
+		
+		
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exit();
+            }
+        });
+		this.addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                super.componentResized(evt);
+				setTitle(fileName);
             }
         });
         this.setMinimumSize(new Dimension(600,600));
@@ -134,27 +141,56 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                                    Common.screenRes.height - 50 : 700));
         this.setLocation(this.getLocation().x+100, 10);
         this.setVisible(true);
-        progress.setVisible(false);
+        //progress.setVisible(false);
         if (file != null) this.fileName = file;
         if (this.fileName != null) loadFile();
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
     }
-
-
+	
+	
     public void setTitle(String title) {
-        int i = title.lastIndexOf(File.separator);
-        if (i!=-1) {
-            int z = title.indexOf(File.separator);
-            if (z!=-1) {
-                int x = title.substring(z+1,i).indexOf(File.separator);
-                if (x!= -1 && x!=z) title = title.substring(0,z+x+2)+"..."+title.substring(i);
-            }
-        }
-        super.setTitle(title);
+		int length,cc=1;
+		try {
+			length = this.getFontMetrics(this.getFont()).stringWidth(title);
+		} catch (Exception e) {
+			super.setTitle(title==null?"Editor":title);
+			return;
+		}
+		System.out.println(length+" "+this.getWidth());
+		while (length > this.getWidth()-100) {
+			title = cutTitle(title,cc);
+			length = this.getFontMetrics(this.getFont()).stringWidth(title);
+			cc++;
+		}
+		super.setTitle(title);
     }
-
-
+	
+	private String cutTitle(String title,int cut) {
+		StringTokenizer st = new StringTokenizer(title,File.separator);
+		int i = st.countTokens();
+		System.out.println("tokens "+i+" cut "+cut);
+		if (!JGRPrefs.isMac) title = st.nextElement()+""+File.separator;
+		else title = File.separator;
+		if (cut > i) {
+			for (int z = 1; z< i && st.hasMoreTokens(); z++)
+				st.nextToken();
+			title = st.nextToken();
+		}
+		else {
+			for (int z = 1; z <= i && st.hasMoreTokens(); z++) {
+				if (z < i/2 - cut/2 || z > i/2 + cut /2 )
+					title += st.nextToken()+""+(st.hasMoreTokens()?File.separator:"");
+				else {
+					title += "..."+File.separator;
+					st.nextToken();
+				}
+			}
+		}
+		return title;
+	}
+	
+	
     public boolean exit() {
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
@@ -173,7 +209,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             return true;
         }
     }
-
+	
     public void open() {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
@@ -185,7 +221,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         if (!modified && newFile != null && newFile.trim().length() > 0) { fileName = newFile; loadFile();}
         else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
-
+	
     public void loadFile() {
         setWorking(true);
         editArea.setText("");
@@ -240,22 +276,22 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             rm.add(ca);
             if (i==0) ca.setEnabled(false);
         }
-        this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
+        this.setTitle(fileName==null?"Editor":fileName);
         editArea.requestFocus();
     }
-
+	
     public void setText(StringBuffer sb) {
         cursorWait();
         editArea.setText(sb.toString());
         cursorDefault();
     }
-
-
+	
+	
     public void print() {
         DocumentRenderer docrender = new DocumentRenderer();
         docrender.print(editArea);
     }
-
+	
     public boolean saveFile() {
         if (fileName == null || fileName.equals("")) {
             return saveFileAs();
@@ -267,7 +303,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             return true;
         }
     }
-
+	
     public boolean saveFileAs() {
         FileSelector fsave = new FileSelector(this, "Save as...",
                                               FileSelector.SAVE, directory);
@@ -277,7 +313,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
         return false;
     }
-
+	
     public void setModified(boolean mod) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
@@ -285,12 +321,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             }
         });
     }
-
+	
     public void startNew() {
         new Editor();
     }
-
-
+	
+	
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
@@ -348,12 +384,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                     toolBar.undoMgr.undo();
             } catch (CannotUndoException ex) {}
         }
-
+		
     }
-
+	
     public void keyTyped(KeyEvent ke) {
     }
-
+	
     public void keyPressed(KeyEvent ke) {
         setModified(modified = true);
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -376,18 +412,18 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             }
         }
     }
-
+	
     public void keyReleased(KeyEvent ke) {
     }
-
+	
     protected class CaretListenerLabel extends JLabel implements CaretListener {
         public CaretListenerLabel() {
         }
-
+		
         public void caretUpdate(CaretEvent e) {
             displayInfo(e);
         }
-
+		
         protected void displayInfo(final CaretEvent e) {
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -409,13 +445,13 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             });
         }
     }
-
+	
     class FileSave extends Thread {
-
+		
         private String fileName;
         private BufferedWriter writer;
         private Editor editor;
-
+		
         public FileSave(Editor editor) {
             this.fileName = editor.fileName;
             this.editor = editor;
@@ -426,7 +462,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             }
             this.start();
         }
-
+		
         public void run() {
             try {
                 writer.write(editArea.getText());
