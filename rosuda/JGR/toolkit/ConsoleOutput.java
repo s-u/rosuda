@@ -73,8 +73,8 @@ public class ConsoleOutput extends JTextPane {
             try {
                 if(isCorrectLine(i) && isCommandLine(i)) {
 					String l = trimFront(getLine(i).replaceFirst(prompt,""));
-					if (i < b && isCorrectLine(i+1) && !l.startsWith("#")) bf.append(l);
-					else if (i==b && !l.startsWith("#")) bf.append(l);
+					if (i < this.getLineCount() && isCorrectLine(i+1) && !l.startsWith("#")) bf.append(l);
+					else if (i==this.getLineCount() && !l.startsWith("#")) bf.append(l);
 				}
             }
             catch (Exception e){
