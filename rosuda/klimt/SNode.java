@@ -22,6 +22,8 @@ public class SNode extends Node implements Cloneable
     public double devGain;
     /** name of tha class assigned to this node */
     public String Name;
+    /** predicted value (for regr. trees) */
+    public double predValD;
     /** values (percentage of each class) */
     public Vector V;
     /** classification or regression variable */

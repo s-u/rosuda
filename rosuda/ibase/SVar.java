@@ -52,11 +52,12 @@ public class SVar extends Vector
 
     /** derived is not internal (and hence isInternal will return false) */
     public static final int IVT_Derived    =-1;
-    public static final int IVT_Normal     =0;
+    public static final int IVT_Normal     = 0;
     public static final int IVT_Prediction = 1;
     public static final int IVT_Misclass   = 2;
     public static final int IVT_LeafID     = 3;
     public static final int IVT_Index      = 4; // row index
+    public static final int IVT_Resid      = 8; // residuals
     public static final int IVT_RCC        = 9;
     
     /** construct new variable and add first element
