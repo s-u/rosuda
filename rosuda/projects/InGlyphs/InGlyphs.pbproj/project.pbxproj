@@ -266,6 +266,8 @@
 				1C017E7C0557DE7C00A809C8,
 				1C017E7D0557DE7C00A809C8,
 				1C017E7E0557DE7C00A809C8,
+				F8B2AA450557EE6B00A809B4,
+				F8B2AA470557F01400A809B4,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,7 +275,6 @@
 		1601BCDEFEEE210811DB9C8B = {
 			buildActionMask = 2147483647;
 			files = (
-				6A9C778F023ECDCC0CC91562,
 			);
 			isa = PBXJavaArchiveBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -309,8 +310,8 @@
 			);
 			isa = PBXGroup;
 			name = org;
-			path = /Network/Servers/phaeton/NetUsers/dibeneda/Desktop/org;
-			refType = 0;
+			path = ../../..;
+			refType = 2;
 		};
 		1C017D4F0557DE7800A809C8 = {
 			children = (
@@ -514,6 +515,7 @@
 				1C017D780557DE7900A809C8,
 				1C017D790557DE7900A809C8,
 				1C017D7A0557DE7900A809C8,
+				F8B2AA460557F01400A809B4,
 				1C017D7B0557DE7900A809C8,
 				1C017D7C0557DE7900A809C8,
 				1C017D7D0557DE7900A809C8,
@@ -696,6 +698,7 @@
 				1C017D940557DE7A00A809C8,
 				1C017D950557DE7A00A809C8,
 				1C017D960557DE7A00A809C8,
+				F8B2AA440557EE6B00A809B4,
 			);
 			isa = PBXGroup;
 			path = InGlyphs;
@@ -1517,23 +1520,45 @@
 		};
 		6A9C778D023ECD530CC91562 = {
 			children = (
-				6A9C778E023ECDCC0CC91562,
 				1C017E7F0557DFE200A809C8,
 			);
 			isa = PBXGroup;
 			name = Resources;
 			refType = 4;
 		};
-		6A9C778E023ECDCC0CC91562 = {
+//6A0
+//6A1
+//6A2
+//6A3
+//6A4
+//F80
+//F81
+//F82
+//F83
+//F84
+		F8B2AA440557EE6B00A809B4 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
-			path = InGlyphsstrings.properties;
-			refType = 4;
+			name = PlatformMac.java;
+			path = /Network/Servers/phaeton/NetUsers/urbaneks/develop/org/rosuda/ibase/toolkit/PlatformMac.java;
+			refType = 0;
 		};
-		6A9C778F023ECDCC0CC91562 = {
-			fileRef = 6A9C778E023ECDCC0CC91562;
+		F8B2AA450557EE6B00A809B4 = {
+			fileRef = F8B2AA440557EE6B00A809B4;
 			isa = PBXBuildFile;
 			settings = {
-				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		F8B2AA460557F01400A809B4 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PrefsColorFrame.java;
+			refType = 4;
+		};
+		F8B2AA470557F01400A809B4 = {
+			fileRef = F8B2AA460557F01400A809B4;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 	};
