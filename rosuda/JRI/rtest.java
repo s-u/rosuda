@@ -1,3 +1,5 @@
+package org.rosuda.JRI;
+
 import java.io.*;
 
 import java.awt.*;
