@@ -1,7 +1,8 @@
 import java.io.*;
 import org.rosuda.JRclient.*;
 
-/** sample class demonstrating the use of the Java interface to Rserv
+/** sample class demonstrating the use of the Java interface to Rserv.<br>
+    it is basically a primitive R console/object inspector
     @version $Id$
 */
 public class jt {
@@ -48,6 +49,7 @@ public class jt {
 	    System.out.println("Rserve exception: "+rse.getMessage());
 	} catch(Exception e) {
 	    System.out.println("Something went wrong, but it's not the Rserve: "+e.getMessage());
+	    e.printStackTrace();
 	}
     }
 }
