@@ -59,15 +59,23 @@ public class PoGraSSgraphics extends PoGraSS
     {
 	if (cs<128) {
 	    cn[cs]=new String(nam); c[cs]=new Color(R,G,B); cs++;
-	}; 
-    };
+	}
+    }
     public void defineColor(String nam, float r, float g, float b, float a) {
         if (cs<128) {
-            cn[cs]=new String(nam); c[cs]=new Color(r,g,b,a); cs++;
+            cn[cs]=new String(nam);
+            if (a<0f) a=0f;
+            if (a>0.99f)
+                c[cs]=new Color(r,g,b);
+            else
+                c[cs]=new Color(r,g,b,a);
+            cs++;
         }
     }
     public void setColor(String nam, float alpha) {
         if (paintLayer==-1 || paintLayer==curLayer) {
+            if (alpha>0.99f) { setColor(nam); return; } // if alpha is high, fall back to regular setColor for efficiency
+            if (alpha<0f) alpha=0f;
             float[] rgba=getColor(nam).getRGBComponents(null);
             g.setColor(curPenC=new Color(rgba[0],rgba[1],rgba[2],alpha));
         }
