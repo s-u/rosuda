@@ -76,7 +76,7 @@ public class SVar extends Vector
     };
     
     /** define the variable explicitely as categorial
-	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. <b>(rebuild is NOT implemented yet!! ToDO!)</b> */
+	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
 	if (cat && !rebuild) return;
 	cats=new Vector(); ccnts=new Vector();
