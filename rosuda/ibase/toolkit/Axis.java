@@ -163,6 +163,7 @@ public class Axis extends Notifier
     public int getValuePos(double val) {
 	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
 	if (type==0) return gBegin+(int)(((double)gLen)*(val-vBegin)/vLen);
+	if (type==2||type==1) return getCatCenter((int)val); // we assume that the supplied value is category index
 	return -1;
     };
 
@@ -351,7 +352,9 @@ public class Axis extends Notifier
 	@return first visible tick mark
     */
     public double getSensibleTickStart(double tickDist) {
-	return tickDist*((double)((int)(vBegin/tickDist)+1));
+	double ft=tickDist*((double)((int)(vBegin/tickDist)));
+	if (ft<vBegin) ft+=tickDist;
+	return ft;
     };
 
     /** returns string representation of the supplied value, taking into account
@@ -369,6 +372,6 @@ public class Axis extends Notifier
 
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
-	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+(gBegin+gLen)+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
+	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+(gBegin+gLen)+"],v["+vBegin+":"+vLen+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
     };
 };

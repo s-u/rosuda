@@ -161,11 +161,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	{
 	    double f=A[0].getSensibleTickDistance(50,26);
 	    double fi=A[0].getSensibleTickStart(f);
+	    //if (Common.DEBUG>0)
+	    //System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
 	    while (fi<A[0].vBegin+A[0].vLen) {
 		int t=A[0].getValuePos(fi);
 		g.drawLine(t,Y+H,t,Y+H+5);
 		if (showLabels)
-		    g.drawString(A[0].getDisplayableValue(fi),t-5,Y+H+20);
+		    g.drawString(v[0].isCat()?v[0].getCatAt((int)fi).toString():A[0].getDisplayableValue(fi),t-5,Y+H+20);
 		fi+=f;
 	    };
 	}
@@ -173,11 +175,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	{
 	    double f=A[1].getSensibleTickDistance(50,18);
 	    double fi=A[1].getSensibleTickStart(f);
+	    //if (Common.DEBUG>0)
+	    //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
 	    while (fi<A[1].vBegin+A[1].vLen) {
 		int t=TH-A[1].getValuePos(fi);
 		g.drawLine(X-5,t,X,t);
 		if(showLabels)
-		    g.drawString(A[1].getDisplayableValue(fi),X-25,t+5);
+		    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
 		fi+=f;
 	    };
 	}
@@ -287,6 +291,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
+	if (cmd=="exit") WinTracker.current.Exit();
 	if (cmd=="selRed") { selRed=!selRed; repaint(); };
 
         if (cmd=="exportCases") {
