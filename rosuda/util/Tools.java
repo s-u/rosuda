@@ -25,7 +25,6 @@ public class Tools {
 	if (fd.getFile()!=null) fnam+=fd.getFile();
 	else return null;
 	  
-	PrintStream ps=null;
 	try {
 	    PrintStream outs=new PrintStream(new FileOutputStream(fnam));
 	    return outs;

@@ -47,7 +47,7 @@ public class PGSCanvas extends DBCanvas implements Commander {
 	    PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as PoGraSS to ...","output.pgs");
 	    if (outs!=null) {
 		outs.print(p.getMeta());
-		outs.close();
+		outs.close(); outs=null;
                 //(new MsgDialog(null,"PGS Export","Current plot has been exported to output.pgs.")).show();
             };
         };
@@ -57,6 +57,8 @@ public class PGSCanvas extends DBCanvas implements Commander {
 		PoGraSSPS p=new PoGraSSPS("output.ps");
 		p.setTitle(desc);
 		paintPoGraSS(p);
+		outs.close();
+		outs=null;
 	    };
 	}; 
 	return null;
