@@ -392,6 +392,20 @@ public class RController {
     }
 
 
+    public static void newFunction(RObject o) {
+        REXP x = JGR.R.eval("suppressWarnings(try(capture.output("+o.getRName()+"),silent=TRUE))");
+        String[] res;
+        if (x != null && (res = x.asStringArray()) != null) {
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < res.length; i++) {
+                if (i==0) sb.append(o.getRName()+" <- "+res[i]+"\n");
+                else sb.append(res[i]+"\n");
+            }
+            if (sb.length() > 0) new Editor().setText(sb);
+        }
+    }
+
+
     /** create a new dataset with the specified RObject.
         * @param o RObject which we want to have in a SVarSet
         * @return new dataset

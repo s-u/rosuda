@@ -329,6 +329,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             }
             }*/
             super.remove(offset,length);
+            if (getLength() == 0) {
+                if (funHelpTip != null) funHelpTip.hide();
+            }            
         }
     }
 

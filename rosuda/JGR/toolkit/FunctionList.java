@@ -20,6 +20,7 @@ public class FunctionList extends JList implements MouseListener {
 
     public FunctionList(JGRObjectManager obm, Collection functions) {
         super(new Vector(functions));
+        this.objmgr = obm;
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.addMouseListener(this);
     }
@@ -36,9 +37,8 @@ public class FunctionList extends JList implements MouseListener {
             }
             catch (Exception ex) {
             }
-            if (o != null) {
-                org.rosuda.ibase.SVarSet vs = RController.newSet(o);
-            }
+            if (o != null)
+                RController.newFunction(o);
         }
     }
 

@@ -53,7 +53,7 @@ public class RObject {
     }
 
     public boolean isAtomar() {
-        if (type.indexOf("function") >= 0 || type.indexOf("integer") >= 0 || type.indexOf("numeric") >= 0 || type.indexOf("character") >= 0 || type.indexOf("logical") >= 0 || type.indexOf("factor") >= 0)
+        if (type.indexOf("function") >= 0 || type.indexOf("integer") >= 0 || type.indexOf("numeric") >= 0 || type.indexOf("character") >= 0 || type.indexOf("logical") >= 0 || type.indexOf("factor") >= 0 || type.indexOf("environment") >= 0)
             return true;
         return false;
     }
