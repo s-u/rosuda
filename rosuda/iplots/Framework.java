@@ -245,11 +245,9 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,ix.length);
             if (i<0) return i;
         }
-        SVar v=new SVarObj(name);
-        int i=0; while(i<ix.length) {
-            int id=ix[i++];
-            v.add((id<1 || id>d.length)?null:d[id-1]);
-        }
+        int j=0;
+        while (j<ix.length) { ix[j++]--; }; // reduce index by 1 since R is 1-based
+        SVar v=new SVarFixFact(name, ix, d);
         return addVar(v);
     }
 
