@@ -21,6 +21,12 @@ extern int UserBreak;
 #include <signal.h>
 #endif
 
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetVersion
+(JNIEnv *env, jclass this)
+{
+    return (jlong) JRI_VERSION;
+}
+
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
   (JNIEnv *env, jobject this, jobjectArray a)
 {
@@ -314,6 +320,36 @@ JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetList
         }
     }
     
+}
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetEnv
+(JNIEnv *env, jclass this, jstring key, jstring val) {
+    const char *cKey, *cVal;
+    if (!key || !val) return;
+    cKey=(*env)->GetStringUTFChars(env, key, 0);
+    cVal=(*env)->GetStringUTFChars(env, val, 0);
+    if (!cKey || !cVal) {
+        jri_error("rniSetEnv: can't retrieve key/value content");
+        return;
+    }
+    setenv(cKey, cVal, 1);
+    (*env)->ReleaseStringUTFChars(env, key, cKey);
+    (*env)->ReleaseStringUTFChars(env, val, cVal);
+}
+
+JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetEnv
+(JNIEnv *env, jclass this, jstring key) {
+    const char *cKey, *cVal;
+    if (!key) return;
+    cKey=(*env)->GetStringUTFChars(env, key, 0);
+    if (!cKey) {
+        jri_error("rniSetEnv: can't retrieve key/value content");
+        return;
+    }
+    cVal=getenv(cKey);
+    (*env)->ReleaseStringUTFChars(env, key, cKey);
+    if (!cVal) return 0;
+    return (*env)->NewStringUTF(env, cVal);
 }
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
