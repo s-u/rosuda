@@ -25,15 +25,21 @@ public class KlimtSplash extends SplashScreen {
     
     public Object run(Object o, String cmd) {
         super.run(o,cmd); // let SplashScreen handle the defaults
+        String openFn=null;
         
         if (cmd=="prefs") {
             Platform.getPlatform().handlePrefs();
         }
 
+        if (cmd.startsWith("recent:")) {
+            openFn=cmd.substring(7);
+            cmd="openData";
+        }
+        
         if (cmd=="openData") {
             SVarSet tvs=new SVarSet();
             DataRoot dr=Klimt.addData(tvs);
-            SNode t=Klimt.openTreeFile(this,null,dr);
+            SNode t=Klimt.openTreeFile(this,openFn,dr);
             if (t==null && tvs.count()<1) {
             } else {
                 if (t!=null) {
@@ -44,6 +50,7 @@ public class KlimtSplash extends SplashScreen {
                 setVisible(false);
             }
         }
+
         return null;
     }
     

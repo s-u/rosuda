@@ -305,7 +305,9 @@ public class Klimt
 	    t=null;
 	};
         if (t!=null && tr!=null) tr.registerTree(t,fnam);
-	return t;
+        if (SplashScreen.recentOpen!=null) SplashScreen.recentOpen.addEntry((new File(fnam)).getAbsolutePath());
+
+        return t;
     };
 
     /**
@@ -322,6 +324,7 @@ public class Klimt
     {
         boolean silentTreeLoad=false;
         int firstNonOption=-1;
+        Common.appName="Klimt";
         argv=Global.parseArguments(argv);
 
         Platform.initPlatform();
