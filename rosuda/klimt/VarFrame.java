@@ -26,6 +26,8 @@ public class VarFrame extends TFrame {
 
     public static final int cmdHeight=182;
     
+    Menu recentMenu;
+    
     public VarFrame(DataRoot dr, int x, int y, int w, int h) {
 	super(dr.getDataSet().getName()+" (Variables)",TFrame.clsVars);
         SVarSet vs=dr.getDataSet();
@@ -57,18 +59,41 @@ public class VarFrame extends TFrame {
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
-            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","Open models ...","openModel","Save selected ...","export","-",
-                "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
-                "Export forest ...","exportForest","@FDisplay forest","displayForest","~File.Quit",
+            String myMenu[]={"+","File","@OOpen Dataset ...","openData","!OOpen Tree ...","openTree","Open Models ...","openModel","#Open Recent","","Save Selected ...","export","-",
+                "New Derived Variable ...","deriveVar","Show Data Table","datatab","-","New Tree Root","newRoot","Grow Tree ...","growTree","-",
+                "Export Forest ...","exportForest","@FDisplay Forest","displayForest","~File.Quit",
+                "+","Edit","@ASelect All","selAll","@DClear","selNone","-",
+                "Select Residuals","selRes","Select Predictions","selPred","Select Node Variables","selNode",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
-                "Fluctuation diagram","fluct","-","Speckle plot","speckle",
-                "Parallel coord. plot","PCP","Hammock plot","hammock","Misclass. plot","xMCP",
-                "Series plot","lineplot","Series plot with index","lineplot2","Kaplan-Meier plot","kmplot","-","Map","map",
-                "-","TFP (exp!)","tfplot",
-                //"+","Tools","Grow tree ...","growTree",
+                "Fluctuation Diagram","fluct","-","Speckle Plot","speckle",
+                "Parallel coord. plot","PCP","Hammock Plot","hammock","Misclassification Plot","xMCP",
+                "Series Plot","lineplot","Series Plot with Index","lineplot2","Kaplan-Meier Plot","kmplot","-","Map","map",
+                "-","Trace Plot","tfplot",
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
+            Menu rm=recentMenu=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
+            if (rm!=null) {
+                if (SplashScreen.recentOpen==null)
+                    SplashScreen.recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+                String[] shortNames=SplashScreen.recentOpen.getShortEntries();
+                String[] longNames =SplashScreen.recentOpen.getAllEntries();
+                int i=0;
+                while (i<shortNames.length) {
+                    MenuItem mi=new MenuItem(shortNames[i]);
+                    mi.setActionCommand("recent:"+longNames[i]);
+                    mi.addActionListener(vc);
+                    rm.add(mi);
+                    i++;
+                }
+                if (i>0) rm.addSeparator();
+                MenuItem ca=new MenuItem("Clear list");
+                ca.setActionCommand("recent-clear");
+                ca.addActionListener(vc);
+                rm.add(ca);
+                if (i==0) ca.setEnabled(false);
+            }
+            
             MenuItem mi=EzMenu.getItem(this,"datatab");
             EzMenu.getItem(this,"export").setEnabled(false);
             if (!PluginManager.pluginExists("PluginTable")) mi.setEnabled(false);
@@ -280,6 +305,7 @@ public class VarFrame extends TFrame {
 
 	    win.getVarCmdCanvas().repaint();
 	};
+        
 	public void mousePressed(MouseEvent ev) {};
 	public void mouseReleased(MouseEvent e) {};
 	public void mouseEntered(MouseEvent e) {};
@@ -287,6 +313,7 @@ public class VarFrame extends TFrame {
         
         public Object run(Object o, String cmd) {
             if (cmd=="exit") WinTracker.current.Exit();
+            if (cmd.startsWith("recent")) return KlimtSplash.main.run(o, cmd);
             if (cmd=="exportForest") {
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(win,"Export forest data to ...","forest.txt");
@@ -300,21 +327,30 @@ public class VarFrame extends TFrame {
                 Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                 Common.screenRes=sres;
                 VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
-            };
-            /*
-            if (cmd=="openTree") {
-                //SVarSet tvs=new SVarSet();
-                SVarSet tvs=vs;
-                SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
-                if (t!=null) {
-                    TFrame f=new TFrame(tvs.getName()+" - tree");
-                    TreeCanvas tc=InTr.newTreeDisplay(t,f);
-                    tc.repaint(); tc.redesignNodes();
-                    //InTr.newVarDisplay(tvs);
-                };
-            }; */
+            }
+            if (cmd=="selNone" || cmd=="selAll" || cmd=="selPred" || cmd=="selRes" || cmd=="selNode") {
+                int target=-998;
+                if (cmd=="selPred") target=SVar.IVT_Prediction;
+                if (cmd=="selNode") target=SVar.IVT_LeafID;
+                if (cmd=="selRes") target=SVar.IVT_Resid;
+                if (cmd=="selAll") target=-997;
+                int i=0, l=selMask.length;
+                while (i<l) {
+                    selMask[i]=false;
+                    int vit=-999;
+                    if (vs.at(i)!=null) vit=vs.at(i).getInternalType();
+                    if (target==-997 || vit==target || (cmd=="selRes" && vit==SVar.IVT_RCC)) selMask[i]=true;
+                    if (vs.at(i)!=null) vs.at(i).setSelected(selMask[i]); 
+                    i++;
+                }
+                vc.getVars();
+                vc.repaint();
+                repaint();
+            }
             if (cmd=="openData") {
-                return KlimtSplash.main.run(o, cmd);
+                KlimtSplash.main.run(o, cmd);
+                vc.getVars();
+                vc.repaint();
             }
             if (cmd=="map") {
                 int i=0;
