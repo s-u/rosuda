@@ -30,6 +30,10 @@ public class MFrame extends JFrame implements WindowListener {
     close();
   }
 
+  public boolean getAlphaHi() {
+    return J.alphaHi;
+  }
+
   public void close() {
     J.windows.remove(m);
     if( J.windows.getItemCount() < 3 )
