@@ -209,7 +209,7 @@ class GDCircle extends GDObject {
             if (c.col!=null) g.setColor(c.col);
         }
         if (c.col!=null)
-            g.drawOval((int)(x-r),(int)(y-r),(int)(r+r),(int)(r+r));
+            g.drawOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+0.5),(int)(r+r+0.5));
     }
 }
 
