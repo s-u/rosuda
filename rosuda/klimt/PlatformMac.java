@@ -42,8 +42,9 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
 
     public void handleOpenFile(File fileName) {
         SVarSet tvs=new SVarSet();
+        DataRoot dr=Klimt.addData(tvs);
         Frame df=new Frame();
-        SNode t=Klimt.openTreeFile(df,tvs,fileName.getAbsolutePath());
+        SNode t=Klimt.openTreeFile(df,fileName.getAbsolutePath(),dr);
         if (t==null && tvs.count()<1) {
             new MsgDialog(df,"Load Error","I'm sorry, but I was unable to load the file you selected.");
             df=null;
