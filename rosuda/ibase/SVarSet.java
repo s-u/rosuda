@@ -76,10 +76,15 @@ public class SVarSet {
     /* added 28.12.04 MH */
 
     public void insert(int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
-      SVar v = new SVarObj("Var"+index,isnum,cat);
+        insert("Var"+index, index, size, isnum, cat);
+    };
+    
+    public void insert(String name, int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
+      SVar v = new SVarObj(name,isnum,cat);
       v.setAllEmpty(size);
       vars.insertElementAt(v,index);
     };
+
 
    /** move a variable's to a new index
        @param from from index
