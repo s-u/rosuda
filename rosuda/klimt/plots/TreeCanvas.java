@@ -71,6 +71,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** zoom factor used to determine logical zoom behavior */
     public double zoomFactor=1;
 
+    /** P.Dirschedl proposed lines */
+    public boolean PD_lines = false;
+    /** P.Dirschedl proposed GoCart */
+    public boolean PD_goCart= false;
+    /** P.Dirschedl proposed PlaceOverExpectation */
+    public boolean PD_POE= false;
+
     /** temporary variable for zoom mode when <space> is used */
     int lastToolModeBeforeMove=0;
 
@@ -97,6 +104,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     MenuItem[] mis;
     int miss;
 
+    int leftA, iwidth;
+
     /** marker associated with the dataset of the tree (cached) */
     SMarker m;
 
@@ -121,7 +130,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	root=troot; 
 	w=700;
 	int leaves=root.getNumNodes(true);
-	buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root);	
+	iwidth=630; leftA=35;
+	buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root,400);	
 	setBackground(new Color(255,255,160));
 
 	updateCachedValues();
@@ -224,7 +234,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	int h=(rot90)?geom.width:geom.height;
 	h=h*9/10;
 	int leaves=root.getNumNodes(true);
-	buildLeaf(w/2,(rot90)?70:30,(leaves>0)?w/leaves:1,h/(root.getHeight()+1),w,root.getHeight(),root);
+	iwidth=w;
+	leftA=w/18;
+	buildLeaf(w/2,(rot90)?70:30,(leaves>0)?w/leaves:1,h/(root.getHeight()+1),w,root.getHeight(),root,h);
 	zoomFactor=1; // reset zoom factor
 	repaint();	
     };
@@ -259,7 +271,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param myWidth with of this node
 	@param totalHeight total height of the final tree
 	@param t the node to be painted */
-    public void buildLeaf(int parx, int pary, int splitUnit, int yShift, int myWidth, int totalHeight, SNode t)
+    public void buildLeaf(int parx, int pary, int splitUnit, int yShift, int myWidth, int totalHeight, SNode t, int maxH)
     {	
 	int x=parx, y=pary;
 	boolean underflowWarning=false;
@@ -278,6 +290,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		underflowWarning=true; nodeWidth=5;
 	    };
 	};
+	if (PD_POE) {
+	    double perc=((Float)t.V.elementAt(0)).doubleValue();
+	    x=leftA+(int)(((double)iwidth)*perc);
+	}
 	t.x=x-(nodeWidth/2); t.y=y+5;
 	t.x2=t.x+nodeWidth; t.y2=t.y+20;
 
@@ -295,12 +311,14 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		int tx=myLeft+chWidth/2;
 		myLeft+=chWidth;
 		int ty=y+yShift;
+		if (PD_goCart)
+		    ty=maxH-(int)(Math.sqrt(((double)((SNode)(t.at(i))).Cases)/((double)rootCases))*((double)maxH));
 		
 		if ((finalAlign)&&(t.at(i).isLeaf()))
-		    ty=ty+(totalHeight-t.at(i).getLevel())*yShift;
+		    ty=y+yShift+(totalHeight-t.at(i).getLevel())*yShift;
 
 		buildLeaf(tx,ty,splitUnit,yShift,chWidth,totalHeight,
-			  (SNode)t.at(i));
+			  (SNode)t.at(i),maxH);
 		i++;
 	    };
 	};
@@ -381,6 +399,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	// draw lines and other nodes
 	if (!t.isPruned()) { /* paint only if not prunned */
 	    int a=t.count();
+	    double cumx=(double)x;
 	    if (a>0) {
 		int i=0;
 		while (i<a) {
@@ -388,7 +407,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		    
 		    /* connecting lines */
 		    g.setColor("lines");		
-		    if (connMode) {
+		    if (connMode) { /* rectangular lines */
 			if (!rot90) {
 			    g.drawLine((x+x2)/2,y+10,(cn.x+cn.x2)/2,y+10);
 			    g.drawLine((cn.x+cn.x2)/2,y+10,(cn.x+cn.x2)/2,cn.y+10);
@@ -396,8 +415,17 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			    g.drawLine((x+x2)/2,y+10,(x+x2)/2,cn.y+10);
 			    g.drawLine((x+x2)/2,cn.y+10,(cn.x+cn.x2)/2,cn.y+10);
 			};
-		    } else
-			g.drawLine((x+x2)/2,y+10,(cn.x+cn.x2)/2,cn.y+10);
+		    } else /* direct lines */ {
+			if (PD_lines) {			    
+			    double dlw=(double)(x2-x);
+			    dlw*=((double)cn.Cases)/((double)t.Cases);
+			    int lw=(int)dlw;
+			    g.drawLine((int)cumx,y2,cn.x,cn.y);
+			    cumx+=dlw;
+			    g.drawLine((int)cumx,y2,cn.x2,cn.y);
+			} else
+			    g.drawLine((x+x2)/2,y+10,(cn.x+cn.x2)/2,cn.y+10);
+		    }
 		    /* paint the leaf */
 		    paintLeaf(g,(SNode)t.at(i));
 		    i++;
@@ -884,6 +912,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='+') run(this,"zoomDevIn");
 	if (e.getKeyChar()=='-') run(this,"zoomDevOut");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
+
+	if (e.getKeyChar()=='1') { PD_goCart=!PD_goCart; redesignNodes(); }
+	if (e.getKeyChar()=='2') { PD_lines=!PD_lines; redesignNodes(); }
+	if (e.getKeyChar()=='3') { PD_POE=!PD_POE; redesignNodes(); }
     };
     public void keyPressed(KeyEvent e) {
         if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
