@@ -198,7 +198,7 @@ public class XGDserver extends Thread {
                         GDFont xf=new GDFont(getDouble(par,0), getDouble(par,8), getDouble(par,16), getInt(par,24), new String(par,32,par.length-33));
                         c.add(xf);
                         // we need to set Canvas' internal font to this new font for further metrics calculations
-                        c.f=xf.font;
+                        c.gs.f=xf.font;
                     }
 
                     if (cmd == 0x16 && c!=null) {
@@ -231,7 +231,7 @@ public class XGDserver extends Thread {
                         if (c!=null) {
                             Graphics g=c.getGraphics();
                             if (g!=null) {
-                                FontMetrics fm=g.getFontMetrics(c.f);
+                                FontMetrics fm=g.getFontMetrics(c.gs.f);
                                 if (fm!=null) width=(double)fm.stringWidth(s);
                             }
                         }
@@ -251,7 +251,7 @@ public class XGDserver extends Thread {
                         if (c!=null) {
                             Graphics g=c.getGraphics();
                             if (g!=null) {
-                                FontMetrics fm=g.getFontMetrics(c.f);
+                                FontMetrics fm=g.getFontMetrics(c.gs.f);
                                 if (fm!=null) {
                                     ascent=(double) fm.getAscent();
                                     descent=(double) fm.getDescent();
