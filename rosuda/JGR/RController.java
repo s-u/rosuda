@@ -15,7 +15,7 @@ import org.rosuda.JGR.toolkit.Editor;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class RController {
@@ -43,6 +43,16 @@ public class RController {
         REXP x = JGR.R.eval(".libPaths()");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
+    }
+    
+    /**
+     * Get R prompt
+     * @return prompt
+     */
+    public static String getRPrompt() {
+    	REXP x = JGR.R.eval("try(as.character(options('prompt')),silent=TRUE)");
+        if (x != null && x.asStringArray()!=null) return x.asStringArray()==null?"> ":x.asStringArray()[0];
+        return "> ";
     }
 
     /**
