@@ -122,7 +122,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     TFrame myMosaicFrame=null;
     /** frame of deviance plot associated with the tree */
     TFrame myDevFrame=null;
-    
+
     /** construct a new display instance based on the specified tree
 	@param troot root of the tree
 	@param cont parent frame */
@@ -157,7 +157,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                           "Export forest data ...","exportForest","Display forest","displayForest","-","~File.Graph",
                           "~Edit",
 			  "+","Node","Prune","prune","Edit split","editSplit",
-			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
+			  /* "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom", */
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
                           "Show MCP","showMCP","Show deviance plot","devplot","-",
 			  "Hide labels","labels",
@@ -376,6 +376,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	p.defineColor("selText",255,0,0);
 	p.defineColor("shadow",160,160,160);
 	p.defineColor("zoomOut",0,0,128);
+        p.defineColor("selnode",0,0,192);
 
 	if (zoomDrag) {
 	    p.setColor("white");
@@ -398,109 +399,109 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param t node to paint */
     public void paintLeaf(PoGraSS g,SNode t)
     {
-	if (t.isPruned()&&(t.par!=null)&&((SNode)t.par).isPruned()) return;
+        if (t.isPruned()&&(t.par!=null)&&((SNode)t.par).isPruned()) return;
         int w=t.width, h=t.height;
-	int x=t.cx-w/2, y=t.cy-h/2, x2=x+w, y2=y+h;
-	int dTotal=0, dMark=0;
-	
-	if (zoomFactor>0.3) {
-	    // shadow
+        int x=t.cx-w/2, y=t.cy-h/2, x2=x+w, y2=y+h;
+        int dTotal=0, dMark=0;
+
+        if (zoomFactor>0.3) {
+            // shadow
             /* disable all shadows; this is no beauty contest
-	    if (!nodeMode) {
-		g.setColor("shadow");
-		g.fillRoundRect(x+5,y+5,x2-x,y2-y,15,15);
-	    };
-	    */
-	    // get # of marked cases (dMark) and total # of cases (dTotal) in that node
-	    if (t.data!=null) dTotal=t.data.size();
-	    if (t.getSource()!=null) {
-		SMarker m=t.getSource().getMarker();
-		if ((m!=null)&&(t.data!=null))
-		    for (Enumeration e=t.data.elements(); e.hasMoreElements();) {
-			int ix=((Integer)e.nextElement()).intValue();
-			if (m.at(ix)) dMark++;
-		    };
-	    };
-	    
-	    // eqi-mode + marked => rectangular shadow
+            if (!nodeMode) {
+                g.setColor("shadow");
+                g.fillRoundRect(x+5,y+5,x2-x,y2-y,15,15);
+            };
+            */
+            // get # of marked cases (dMark) and total # of cases (dTotal) in that node
+            if (t.data!=null) dTotal=t.data.size();
+            if (t.getSource()!=null) {
+                SMarker m=t.getSource().getMarker();
+                if ((m!=null)&&(t.data!=null))
+                    for (Enumeration e=t.data.elements(); e.hasMoreElements();) {
+                        int ix=((Integer)e.nextElement()).intValue();
+                        if (m.at(ix)) dMark++;
+                    };
+            };
+
+            // eqi-mode + marked => rectangular shadow
             /*
-	    if ((dMark>0)&&(!nodeMode)) {
-		g.setColor("shadow");
-		g.fillRect(x+5,y2-10+5,x2-x,10);
-	    };
+             if ((dMark>0)&&(!nodeMode)) {
+                 g.setColor("shadow");
+                 g.fillRect(x+5,y2-10+5,x2-x,10);
+             };
              */
-	};
+        };
 
-	// draw lines and other nodes
-	if (!t.isPruned()) { /* paint only if not prunned */
-	    int a=t.count();
-	    double cumx=(double)x;
-	    if (a>0) {
-		int i=0;
-		while (i<a) {
-		    SNode cn=(SNode)t.at(i);
-		    
-		    /* connecting lines */
-		    g.setColor("lines");		
-		    if (connMode) { /* rectangular lines */
-			if (!rot90) {
-			    g.drawLine(t.cx,t.cy,cn.cx,t.cy);
-			    g.drawLine(cn.cx,t.cy,cn.cx,cn.cy);
-			} else {
-			    g.drawLine(t.cx,t.cy,t.cx,cn.cy);
-			    g.drawLine(t.cx,cn.cy,cn.cx,cn.cy);
-			};
-		    } else /* direct lines */ {
-			if (PD_lines) {
-			    int[] px=new int[4];
-			    int[] py=new int[4];
-			    double dlw=(double)(x2-x);
-			    dlw*=((double)cn.Cases)/((double)t.Cases);
-			    int lw=(int)dlw;
-			    px[0]=(int)cumx; py[0]=y2; px[1]=cn.cx-cn.width/2; py[1]=cn.cy-cn.height/2;
-			    px[2]=px[1]+cn.width; py[2]=py[1];
-			    //g.drawLine((int)cumx,y2,cn.x,cn.y);
-			    cumx+=dlw;
-			    px[3]=(int)cumx; py[3]=y2;
-			    g.fillPolygon(px,py,4);
-			    //g.drawLine((int)cumx,y2,cn.x2,cn.y);
-			} else
-			    g.drawLine(t.cx,t.cy,cn.cx,cn.cy);
-		    }
-		    /* paint the leaf */
-		    paintLeaf(g,(SNode)t.at(i));
-		    i++;
-		};
-	    };
-	};    
+        // draw lines and other nodes
+        if (!t.isPruned()) { /* paint only if not prunned */
+            int a=t.count();
+            double cumx=(double)x;
+            if (a>0) {
+                int i=0;
+                while (i<a) {
+                    SNode cn=(SNode)t.at(i);
 
-	if (zoomFactor>0.3) {
-	    // paint base rect
-	    String bgc="white";
-	    if (t.sel==1) bgc="selected";
-	    if (t.sel==3) bgc="leaf";
-	    if (t.sel==2) bgc="path";
-	    g.setColor(bgc);
-	    if (nodeMode) {
+                    /* connecting lines */
+                    g.setColor("lines");
+                    if (connMode) { /* rectangular lines */
+                        if (!rot90) {
+                            g.drawLine(t.cx,t.cy,cn.cx,t.cy);
+                            g.drawLine(cn.cx,t.cy,cn.cx,cn.cy);
+                        } else {
+                            g.drawLine(t.cx,t.cy,t.cx,cn.cy);
+                            g.drawLine(t.cx,cn.cy,cn.cx,cn.cy);
+                        };
+                    } else { /* direct lines */
+                        if (PD_lines) {
+                            int[] px=new int[4];
+                            int[] py=new int[4];
+                            double dlw=(double)(x2-x);
+                            dlw*=((double)cn.Cases)/((double)t.Cases);
+                            int lw=(int)dlw;
+                            px[0]=(int)cumx; py[0]=y2; px[1]=cn.cx-cn.width/2; py[1]=cn.cy-cn.height/2;
+                            px[2]=px[1]+cn.width; py[2]=py[1];
+                            //g.drawLine((int)cumx,y2,cn.x,cn.y);
+                            cumx+=dlw;
+                            px[3]=(int)cumx; py[3]=y2;
+                            g.fillPolygon(px,py,4);
+                            //g.drawLine((int)cumx,y2,cn.x2,cn.y);
+                        } else
+                            g.drawLine(t.cx,t.cy,cn.cx,cn.cy);
+                    }
+                    /* paint the leaf */
+                    paintLeaf(g,(SNode)t.at(i));
+                    i++;
+                }
+            }
+        }
+
+        if (zoomFactor>0.3) {
+            // paint base rect
+            String bgc="white";
+            // if (t.sel==1) bgc="selected";
+            // if (t.sel==3) bgc="leaf";
+            // if (t.sel==2) bgc="path";
+            g.setColor(bgc);
+            if (nodeMode) {
                 g.fillRect(x,y,x2-x,y2-y);
                 g.setColor((t.underflowWarning)?"red":"black"); g.drawRect(x,y,x2-x,y2-y);
                 if (t.overflowWarning) {
                     g.setColor("red"); g.drawLine(x,y-2,x2,y-2);
                 };
                 /*
-                if (t.underflowWarning) {
-                    g.setColor("red"); g.drawLine(x,y2+2,x2,y2+2);
-                }; */
+                 if (t.underflowWarning) {
+                     g.setColor("red"); g.drawLine(x,y2+2,x2,y2+2);
+                 }; */
             } else {
                 if (t.isLeaf() || t.isPruned()) {
                     g.fillRect(x,y,x2-x,y2-y); g.setColor("black"); g.drawRect(x,y,x2-x,y2-y);
                 } else {
                     g.fillRoundRect(x,y,x2-x,y2-y,15,15); g.setColor("black"); g.drawRoundRect(x,y,x2-x,y2-y,15,15);
                 };
-	    };
-	    
-	    // if hilighted draw it
-	    if (dMark>0) {
+            };
+
+            // if hilighted draw it
+            if (dMark>0) {
 	    // base is always white regardles of type
 		g.setColor("white"); g.fillRect(x,y2-10,x2-x,10);
 		//g.setColor("black"); g.drawRect(x,y2-10,x2-x,10);
@@ -522,8 +523,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             }
         };
 
-	/* deviance display */
-	if (showDevGain) {
+        /* deviance display */
+        if (showDevGain) {
 	    g.setColor("red");
 	    if (t.devGain>0) {	    
 		int arcSize=(int)(Math.sqrt(devGainScale*t.devGain/maxDevGain)*20);
@@ -555,21 +556,68 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 };
             }
         };
-	
-	/* draw labels (class and condition) */
-	if (selectedNode!=null && t.Name.compareTo(selectedNode.Name)==0)
-	    g.setColor("selText"); else g.setColor("black");
 
-	if (zoomFactor>0.3)
-	    g.drawString(t.Name,x+5,y+15);
-	else if (zoomFactor>0.2)
+        /* draw labels (class and condition) */
+        if (selectedNode!=null && t.Name.compareTo(selectedNode.Name)==0) g.setColor("selText"); else g.setColor("black");
+
+        if (zoomFactor>0.3)
+            {
+            if (showLabels && !t.isLeaf() && !t.isPruned())
+                g.drawString(t.Name,t.cx+t.width/2+5,y+15);
+            }
+        else if (zoomFactor>0.2)
 	    g.drawString(Common.getTriGraph(t.Name),x+5,y+15);
 
-	g.setColor("black");
+        g.setColor("black");
 
-	if (showLabels && zoomFactor>0.3)
-	    g.drawString(t.Cond,x+5,y-5);
-
+        //if (showLabels && zoomFactor>0.3)
+        //g.drawString(t.Cond,x+5,y-5);
+        t.labelR=null;
+        if (zoomFactor>0.3) {
+            if (!t.isRoot() && t.Cond!=null && showLabels) {
+                SNode pn=(SNode)t.getParent();
+                int cx=(pn.cx+t.cx)/2;
+                int cy=(pn.cy+t.cy)/2;
+                if (connMode) {
+                    if (!rot90) cx=t.cx; else cy=t.cy;
+                }
+                String c=t.Cond;
+                int i=c.indexOf('>');
+                if (i>=0) c=c.substring(i);
+                else {
+                    i=c.indexOf('<');
+                    if (i>=0) c=c.substring(i);
+                    else {
+                        i=c.indexOf('='); if (i<0) i=c.indexOf(':');
+                        if (i>=0) c=c.substring(i);
+                    }
+                }
+                g.drawString(c,cx,cy,PoGraSS.TA_Center);
+            }
+            if (t.isLeaf() || t.isPruned()) { // show prediction only
+                String pv=t.Name;
+                if (root.prediction!=null && root.prediction.isNum())
+                    pv=Tools.getDisplayableValue(t.predValD,root.prediction.getMax()-root.prediction.getMin());
+                int tw=g.getWidthEstimate(pv);
+                int th=g.getHeightEstimate(pv);
+                g.setColor((t.sel==1)?"selnode":"white");
+                t.labelR=new Rectangle(t.cx-tw/2-3,t.cy+12,tw+6,th);
+                g.fillRect(t.cx-tw/2-3,t.cy+12,tw+6,th);
+                g.setColor((t.sel==1)?"white":(selectedNode==null||!selectedNode.Name.equals(t.Name))?"black":"red");
+                g.drawString(pv,t.cx,t.cy+9+th,PoGraSS.TA_Center);                
+            } else { // ok, fetch children and the split values
+                SNode c1=(SNode)t.at(0);
+                if (c1!=null && c1.splitVar!=null) {
+                    int tw=g.getWidthEstimate(c1.splitVar.getName());
+                    int th=g.getHeightEstimate(c1.splitVar.getName());
+                    g.setColor((t.sel==1)?"selnode":"white");
+                    t.labelR=new Rectangle(t.cx-tw/2-3,t.cy-12-th,tw+6,th);
+                    g.fillRect(t.cx-tw/2-3,t.cy-12-th,tw+6,th);
+                    g.setColor((t.sel==1)?"white":"black");
+                    g.drawString(c1.splitVar.getName(),t.cx,t.cy-15,PoGraSS.TA_Center);
+                }
+            }
+        }
 	/* "pruned" symbol */
 	if (t.isPruned()) {
 	    g.setColor("white");
@@ -585,18 +633,27 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    g.fillOval(t.cx-2,t.cy-2,4,4);
 	};
     };
-    
+
+    public void queryNode(SNode n, boolean detailed) {
+        if (n==null) {
+            if (w_info.isShowing()) w_info.dispose();
+            return;
+        };
+
+        InfoCV.setNode(n,detailed);
+        if (!w_info.isShowing()) {
+            w_info.pack();
+            w_info.show();
+        };
+        /** TODO: somethimes localtion "jumps" around (async event handling stuff...) - fixme */
+        w_info.setLocation(n.cx+n.width/2+outside.getLocation().x+getLocation().x,
+                           n.cy+n.height/2+getLocation().y+outside.getLocation().y);
+    };
+
     /** set currently selected node */
     public void selectNode(SNode n) {
 	if (m!=null) m.setNode(n);
 	if (n==selectedNode) {
-	    if (InfoCV.det!=showDetailed && showInfo) {
-		InfoCV.setNode(selectedNode,showDetailed);
-		if (!w_info.isShowing()) {
-		    w_info.pack();
-		    w_info.show();
-		};
-	    };
 	    return;
 	};
         if (n==null && selectedNode!=null) {
@@ -613,7 +670,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
 	if (showPathWindow && !w_listinfo.isShowing()) { w_listinfo.pack(); w_listinfo.show(); };
 	if (!showPathWindow && w_listinfo.isShowing()) w_listinfo.dispose();
-       
+
+        /*
 	if (n==null || !showInfo) {
 	    if (w_info.isShowing()) w_info.dispose();
 	    return;
@@ -624,6 +682,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    w_info.pack();
 	    w_info.show();
 	};
+         */
     };
 
     /** commander interface implementation for all user commands */
@@ -809,13 +868,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public void setToolMode(int mode) {
 	toolMode=mode;
 	if (toolMode==Tool_Move)
-	    setCursor(new Cursor(Cursor.MOVE_CURSOR));
+	    setCursor(Common.cur_move);
 	if (toolMode==Tool_Select)
-	    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	    setCursor(Common.cur_arrow);
 	if (toolMode==Tool_Zoom)
-	    setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));    
+	    setCursor(Common.cur_zoom);    
 	if (toolMode==Tool_Node)
-	    setCursor(new Cursor(Cursor.HAND_CURSOR));	
+	    setCursor(Common.cur_hand);	
     };
 
     /* mouse listeners */
@@ -846,6 +905,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     {
 	int x=ev.getX(), y=ev.getY();
 	boolean gotSel=false;
+        boolean nodeSel=false;
+        boolean deSelNode=true;
+        boolean killQuery=true;
+        
         SNode selNode=null;
 
 	if (toolMode==Tool_Zoom) {	    
@@ -879,23 +942,34 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		SNode n=(SNode)e.nextElement();
 		
 		// check for "plus" sign click
-		if (n.isPruned()&&(n.cx-n.width/2-10<=x)&&(n.cx-n.width/2>x)&&(n.cy+n.height<y)&&(n.cy+n.height+10>=y)) {
-		    if (((n.par!=null)&& !(((SNode)(n.par)).isPruned()))||
-			(n.par==null))
-			{ n.setPrune(false); repaint(); };
-		};
-		
+		if (n.isPruned()&&(n.cx-n.width/2-10<=x)&&(n.cx-n.width/2>x)&&(n.cy+n.height/2<y)&&(n.cy+n.height/2+10>=y)) {
+                    if (((n.par!=null)&& !(((SNode)(n.par)).isPruned()))||
+                        (n.par==null))
+                    {
+                        n.setPrune(false); repaint(); deSelNode=false; };
+                };
+
+                if (n.labelR!=null && n.labelR.contains(x,y) && !n.isPruned()) {
+                    if(Common.isQueryTrigger(ev)) {
+                        queryNode(n,Common.isExtQuery(ev));
+                        killQuery=false;
+                    } else
+                    if(toolMode==Tool_Select && Common.isSelectTrigger(ev)) {
+                        selNode=n; n.sel=1;
+                        gotSel=nodeSel=true; deSelNode=false;
+                    }
+                }
 		// check for click inside a node-box
 		if ((!gotSel)&&(n.cx-n.width/2<=x)&&(n.cx+n.width/2>=x)&&(n.cy-n.height/2<=y)&&(n.cy+n.height/2>=y)) {
-		    gotSel=true;
-		    n.sel=1;
-		    selNode=n;
+                    gotSel=true; deSelNode=false;
+                    //n.sel=1;
+		    //selNode=n;
 		    
-		    if (toolMode==Tool_Select && !ev.isAltDown() && (ev.getModifiers()&MouseEvent.BUTTON1_MASK)>0) {// no alt=select in node
+		    if (toolMode==Tool_Select && Common.isSelectTrigger(ev)) {// no alt=select in node
 			SMarker m=n.getSource().getMarker();
 			int setTo=0;
-			if (ev.isControlDown()) setTo=1;
-			if (!ev.isShiftDown() && !ev.isControlDown()) m.selectNone();
+			if (Common.getSelectMode(ev)==2) setTo=1;
+			if (Common.getSelectMode(ev)==0) m.selectNone();
 			
 			if ((m!=null)&&(n.data!=null)) {
 			    for (Enumeration e2=n.data.elements(); e2.hasMoreElements();) {
@@ -905,26 +979,28 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));                            
 			};
 		    };
-		    
-		    w_info.setLocation(n.cx+n.width/2+outside.getLocation().x+getLocation().x,
-				       n.cy+n.height/2+getLocation().y+outside.getLocation().y);
-		} else n.sel=0;
+
+                    if (Common.isQueryTrigger(ev)) {
+                        queryNode(n,Common.isExtQuery(ev));
+                        killQuery=false;
+                    }
+                };
+                if (gotSel) break;
 	    };
 	};
 
-	if(gotSel) {
+	if(nodeSel || deSelNode) {
 	    for (Enumeration e=nod.elements(); e.hasMoreElements();) {
 		SNode n=(SNode)e.nextElement();
-		if ((n!=selNode)&&(n.Name.compareTo(selNode.Name)==0)) {
-		    n.sel=(n.isLeaf())?2:3;
-		};
-	    };
-	};
-	
-	showInfo=gotSel&&(ev.isPopupTrigger() || ev.isAltDown() ||
-                          (ev.getModifiers()&(MouseEvent.BUTTON2_MASK|MouseEvent.BUTTON3_MASK))>0);	
-	showDetailed=ev.isShiftDown() /* || (ev.getModifiers()&MouseEvent.BUTTON2_MASK)>0 */;
-	selectNode(selNode);
+                if (n!=selNode) n.sel=0;
+                    /*
+                     if ((n!=selNode)&&(n.Name.compareTo(selNode.Name)==0)) {
+                         n.sel=(n.isLeaf())?2:3; }*/
+            };
+        };
+        
+	if(nodeSel || deSelNode) selectNode(selNode);
+        if (killQuery) queryNode(null,false);
     };
 
     public void mousePressed(MouseEvent ev) 
@@ -937,8 +1013,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (toolMode==Tool_Select) {
 	    for (Enumeration e=nod.elements(); e.hasMoreElements();) {
 		SNode n=(SNode)e.nextElement();
-		if ((n.cx-n.width/2<=x)&&(n.cx+n.width/2>=x)&&(n.cy-n.height/2<=y)&&(n.cy+n.height/2>=y)) {
-		    dragm=1; ldx=x; ldy=y; dragn=n;
+		if (((n.cx-n.width/2<=x)&&(n.cx+n.width/2>=x)&&(n.cy-n.height/2<=y)&&(n.cy+n.height/2>=y))||(n.labelR!=null && n.labelR.contains(x,y))) {
+                    dragm=1; ldx=x; ldy=y; dragn=n;
 		    break;
 		};
 	    };
@@ -1005,23 +1081,29 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
 	//System.out.println("keyPressed, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
 	if (e.getKeyChar()==' ') {
-	    /*
-	    if (e.isControlDown()) {
-	    if (e.isShiftDown())
-		    setToolMode(Tool_Zoom);
-		else
-		    setToolMode(Tool_Zoom);
-		    } else */
-	    if (toolMode!=Tool_Move) {
-		lastToolModeBeforeMove=toolMode;
-		setToolMode(Tool_Move);
-	    };
+            if (e.isControlDown()) {
+                if (toolMode!=Tool_Zoom) {
+                    lastToolModeBeforeMove=toolMode;
+                    setToolMode(Tool_Zoom);
+                };
+            } else {
+                if (toolMode!=Tool_Move) {
+                    lastToolModeBeforeMove=toolMode;
+                    setToolMode(Tool_Move);
+                };
+            }
 	};
+        if (e.getKeyCode()==KeyEvent.VK_META) {
+            if (toolMode!=Tool_Zoom) {
+                lastToolModeBeforeMove=toolMode;
+                setToolMode(Tool_Zoom);
+            };
+        };
     };
     public void keyReleased(KeyEvent e) {
         if (Common.DEBUG>0) System.out.println("keyReleased: "+e.toString());
 	//System.out.println("keyReleased, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
-	if (e.getKeyChar()==' ')
+	if (e.getKeyChar()==' ' || e.getKeyCode()==KeyEvent.VK_META)
 	    setToolMode(lastToolModeBeforeMove);
     };
 };
