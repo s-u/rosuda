@@ -7,12 +7,14 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96e";
+    public static String Version="0.96f";
     /** application release */
-    public static String Release="C716";
+    public static String Release="C723";
 
-    /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
-    public static int DEBUG=1;
+    /** Debug flag. When set to >0 verbose debug messages are generated. */
+    public static int DEBUG=0;
+    /** profiler flag. When set to >0 profile information (timings) are generated */
+    public static int PROFILE=1;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
