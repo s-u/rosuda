@@ -51,36 +51,44 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	@param mark associated marker */
     public LineCanvas(Frame f, SVar xv, SVar[] yvs, SMarker mark) {
         super(3); // 3 layers; 0=base+points, 1=selected, 2=drag
-	setFrame(f); setTitle("Lineplot");
+	setFrame(f);
 	v=new SVar[yvs.length+1];
 	A=new Axis[2];
-	m=mark;
+        m=mark; if (m!=null) m.addDepend(this);
 	int i=0;
+        String vnlist=null;
 	while(i<yvs.length) {
+            //System.out.println(yvs[i].getName()+": min="+yvs[i].getMin()+", max="+yvs[i].getMax());
 	    if (i==0) {
 		totMin=yvs[i].getMin(); totMax=yvs[i].getMax();
 	    } else {
 		if (yvs[i].getMin()<totMin) totMin=yvs[i].getMin();
 		if (yvs[i].getMax()>totMax) totMax=yvs[i].getMax();
 	    };
+            if (vnlist==null) vnlist=yvs[i].getName(); else vnlist+=","+yvs[i].getName();
 	    v[i+1]=yvs[i]; i++;
 	};
-	A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
-	A[1].setValueRange(totMin,totMax);
+        //System.out.println("Total: min="+totMin+", max="+totMax);
+	A[1]=new Axis(null,Axis.O_Y,Axis.T_Num);
+	A[1].setValueRange(totMin,totMax-totMin);
+         A[1].addDepend(this);
 	if (xv==null) {
 	    xv=new SVar("index.LC");
 	    i=1; while(i<=v[1].size()) { xv.add(new Integer(i)); i++; };
-	};
+            setTitle("Series plot of "+vnlist);
+        } else setTitle("Series plot of "+xv.getName()+" vs "+vnlist);
+        f.setTitle(getTitle());
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
-	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle back-lines","backlines","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
-	MIlabels=EzMenu.getItem(f,"labels");	
+	MIlabels=EzMenu.getItem(f,"labels");
+        MenuItem mi=EzMenu.getItem(f,"rotate");
+        if (mi!=null) mi.setEnabled(false);
     };
 
     public Axis getXAxis() { return A[0]; }
@@ -105,7 +113,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     }
     
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
-        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
+        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?0:0);
         repaint();
     };
 
@@ -192,9 +200,23 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             if (j==5) g.setColor(0,128,128);
             if (j==6) g.setColor(128,128,0);
             if (j==7) g.setColor(0,0,0);
+            boolean lmc=false;
             for (int i=1;i<v[0].size() && i<v[j].size();i++) {
                 int x1=A[0].getCasePos(i-1), x2=A[0].getCasePos(i);
                 if ((drawBackline || x2>=x1) && v[j].at(i)!=null && v[j].at(i-1)!=null) {
+                    if (m.at(i)!=lmc) { lmc=!lmc;
+                        if (lmc)
+                            g.setColor("marked");
+                        else {
+                            if (j==1) g.setColor("line");
+                            if (j==2) g.setColor(255,0,0);
+                            if (j==3) g.setColor(0,0,255);
+                            if (j==4) g.setColor(128,0,128);
+                            if (j==5) g.setColor(0,128,128);
+                            if (j==6) g.setColor(128,128,0);
+                            if (j>6) g.setColor(0,0,0);
+                        }
+                    }
                     if (type==LT_DIRECT) {
                         g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
                                    A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
