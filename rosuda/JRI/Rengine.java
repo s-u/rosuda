@@ -12,20 +12,27 @@ public class Rengine extends Thread {
     }
 
     boolean died, alive, runLoop, loopRunning;
+    String[] args;
     
-    public Rengine(boolean runMainLoop) {
+    public Rengine(String[] args, boolean runMainLoop) {
         super();
         died=false;
         alive=false;
         runLoop=runMainLoop;
         loopRunning=false;
+        this.args=args;
         start();
         while (!alive && !died) yield();
     }
 
-    public native int rniSetupR();
+    public native int rniSetupR(String[] args);
+    
     synchronized int setupR() {
-        int r=rniSetupR();
+        return setupR(null);
+    }
+    
+    synchronized int setupR(String[] args) {
+        int r=rniSetupR(args);
         if (r==0) {
             alive=true; died=false;
         } else {
@@ -131,7 +138,7 @@ public class Rengine extends Thread {
     
     public void run() {
         System.out.println("Starting R...");
-        if (setupR()==0) {
+        if (setupR(args)==0) {
             while (alive) {
                 try {
                     if (runLoop) {                        
