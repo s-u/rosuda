@@ -201,6 +201,7 @@ public class JGR {
 					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
 							+ ")");
 		MAINRCONSOLE.input.requestFocus();
+		checkForMissingPkg();
 		new Refresher().run();
 	}
 
@@ -387,8 +388,15 @@ public class JGR {
 	}
 	
 	private void checkForMissingPkg() {
-		System.out.println("Previously installed: "+JGRPrefs.previousPackages);
-		System.out.println("Installed: "+RController.getCurrentPackages());
+		System.out.println("Checking packages");
+		String previous = JGRPrefs.previousPackages;
+		StringTokenizer st = new StringTokenizer(RController.getCurrentPackages(),",");
+		while (st.hasMoreTokens()) {
+			previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
+		}
+		if (previous.length() > 0) previous = previous.substring(0,previous.length()-1); //skip last ,
+		st = new StringTokenizer(previous,",");
+		new JGRPackageManager(previous);
 	}
 
 	/**
