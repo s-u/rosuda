@@ -24,6 +24,15 @@ public class Framework {
 	dataset.addElement(cvs);
     }
 
+    public String getNewTmpVar(String t) {
+        int i=cvs.indexOf(t);
+        if (i==-1) return t;
+        tvctr++;
+        i=cvs.indexOf(t+"."+tvctr);
+        if (i==-1) return t+"."+tvctr;
+        return "temp."+tvctr;
+    }
+    
     public String getNewTmpVar() {
         tvctr++;
         return "temp."+tvctr;
