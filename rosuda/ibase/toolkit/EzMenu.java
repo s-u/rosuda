@@ -41,6 +41,8 @@ public class EzMenu {
                 m.add(mi=new MenuItem("Select all",new MenuShortcut('A'))).setActionCommand("selAll"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Clear selection",new MenuShortcut('D'))).setActionCommand("selNone"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Invert selection",new MenuShortcut('I'))).setActionCommand("selInv"); mi.addActionListener(al);
+                m.addSeparator();
+                m.add(mi=new MenuItem("Set size",new MenuShortcut(','))).setActionCommand("sizeDlg"); mi.addActionListener(al);                
             };
             if (menuDef[i]=="~Window") {
                 i++; isNext=true;
