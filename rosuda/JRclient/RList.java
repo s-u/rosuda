@@ -15,29 +15,32 @@ import java.util.*;
     @version $Id$
 */
 public class RList extends Object {
-    /** xpressions containing head and body. this approach is a bit simplified, since it
-	does not respect the chaining of list chunks - only the first 2 are stored.
-	This might change with later versions of Rserv */
-    public REXP head, body;
+    /** xpressions containing head and body. 
+	The terminology is a bit misleading - head corresponds to CAR, body to CDR and finally tag is TAG. */
+    public REXP head, body, tag;
     /** usual assumption is that both head and body are xpressions containing vectors.
 	In such case the actual content objects (Vectors) are cached for key/value access. */
     Vector h,b;
 
     /** constructs an empty list */
-    public RList() { head=body=null; }
+    public RList() { head=body=tag=null; }
     
     /** constructs an initialized list
 	@param h head xpression
 	@param b body xpression */
-    public RList(REXP h, REXP b) { head=h; body=b; }
+    public RList(REXP h, REXP b) { head=h; body=b; tag=null; }
     
-    /** get head xpression
+    /** get head xpression (CAR)
 	@return head xpression */
     public REXP getHead() { return head; }
     
-    /** get body xpression
+    /** get body xpression (CDR)
 	@return body xpression */
     public REXP getBody() { return body; }
+
+    /** get tag xpression
+	@return tag xpression */
+    public REXP getTag() { return tag; }
 
     /** internal function that updates cached vectors
         @return <code>true</code> if both expressions are vectors and of the same length */
