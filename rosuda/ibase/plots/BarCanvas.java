@@ -17,6 +17,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     SMarker m;
     /** axes */
     Axis ax,ay;
+
+    QueryPopup qi;
     
     Rectangle[] Bars;
     int[] cat_seq;
@@ -76,6 +78,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIspine=mb.getMenu(1).getItem(0);
 	if (weight!=null) MIspine.setEnabled(false);
+
+	qi=new QueryPopup(f,"BarCanvas",-1);
     };
     
     public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
@@ -212,23 +216,34 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     {
 	int x=ev.getX(), y=ev.getY();
 	int i=0, bars=cats, setTo=0;
-	boolean effect=false;
+	boolean effect=false, hideQI=true;
 	if (ev.isControlDown()) setTo=1;
+	//System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
+	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
 	while (i<bars) {
 	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
-		effect=true;
-		if (!ev.isShiftDown()) m.selectNone();
-		int j=0, pts=v.size();
-		while (j<pts) {
-		    if (v.getCatIndex(j)==i) 
-			m.set(j,m.at(j)?setTo:1);			
-		    j++;
+		if (ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0) {
+		    if (Common.DEBUG>0)
+			System.out.println("BarCanvas: Requesting QueryPopup to show up");
+		    qi.setContent("here be dragons\nthis is bar# "+i);
+		    qi.setLocation(x,y);
+		    qi.show(); hideQI=false;
+		} else {
+		    effect=true;
+		    if (!ev.isShiftDown()) m.selectNone();
+		    int j=0, pts=v.size();
+		    while (j<pts) {
+			if (v.getCatIndex(j)==i) 
+			    m.set(j,m.at(j)?setTo:1);			
+			j++;
+		    };
+		    break; // one can be inside one bar only
 		};
-		break; // one can be inside one bar only
 	    };
 	    i++;
 	};
 	if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+	if (hideQI) qi.hide();
     };
 
     public void mousePressed(MouseEvent ev) {
