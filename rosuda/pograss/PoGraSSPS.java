@@ -103,15 +103,15 @@ public class PoGraSSPS extends PoGraSS
     };
     public void moveTo(int x, int y) {
 	if (!inPath) { outPS("np "); lastLT=false;}; inPath=true;
-	if (!lastLT || ox+x!=lastX || oy+y!=lastY)
+	if (!lastLT || ox+x!=lastX || oy-y!=lastY)
 	    outPS((ox+x)+" "+(oy-y)+" m ");
-	lastLT=true; lastX=ox+x; lastY=ox+y;
+	lastLT=true; lastX=ox+x; lastY=oy-y;
     };
     public void lineTo(int x, int y) {
 	if (!inPath) { outPS("np "); lastLT=false;}; inPath=true;
-	if (!lastLT || ox+x!=lastX || oy+y!=lastY)
+	if (!lastLT || ox+x!=lastX || oy-y!=lastY)
 	    outPS((ox+x)+" "+(oy-y)+" l ");
-	lastLT=true; lastX=ox+x; lastY=ox+y;
+	lastLT=true; lastX=ox+x; lastY=oy-y;
     };
     public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {
 	if (pts<2) return;
@@ -203,6 +203,11 @@ public class PoGraSSPS extends PoGraSS
 
     public void nextLayer() {
         outPS("%% nextLayer\n");
+    }
+
+    public void nextObject(String name) {
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
+        outPS("%%nextObject: "+name+"\n");
     }
     
     public void begin() {
