@@ -131,7 +131,7 @@ public class JGR {
         JGRPackageManager.neededPackages.put("utils", dummy);
         JGRPackageManager.neededPackages.put("methods", dummy);
         JGRPackageManager.neededPackages.put("stats", dummy);
-		JGRPackageManager.neededPackages.put("datasets", dummy);
+        JGRPackageManager.neededPackages.put("datasets", dummy);
 
         JGRPackageManager.neededPackages.put("JGR", dummy);
         JGRPackageManager.neededPackages.put("rJava", dummy);
@@ -378,8 +378,10 @@ public class JGR {
             hist = new File(System.getProperty("user.home") + File.separator
                     + ".Rhistory");
             BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
-            Enumeration e = JGR.RHISTORY.elements(); int i = 0;
-            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"#\n");
+            Enumeration e = JGR.RHISTORY.elements();
+            int i = 0;
+            while (e.hasMoreElements())
+                writer.write(e.nextElement().toString() + "#\n");
             writer.flush();
             writer.close();
         } catch (Exception e) {

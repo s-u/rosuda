@@ -38,6 +38,11 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	
 	private Dimension screenSize = Common.getScreenRes();
 
+	/**
+	 * Create a new DataFileOpenDialog
+	 * @param f parent frame
+	 * @param directory current directory
+	 */
 	public JGRDataFileOpenDialog(Frame f,String directory) {
 		
 		dataName.setMinimumSize(new Dimension(180,22));
@@ -103,6 +108,10 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		this.setSize(this.getSize().width, this.getSize().height+60);
 	}
 	
+	/**
+	 * Open selected datafile, with specified options, read.table(...)
+	 *
+	 */
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
 			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
@@ -120,12 +129,21 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		}
 	}
 
+	/**
+	 * handle action events
+	 * @param e event
+	 */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd == "ApproveSelection") loadFile();
 		//else if (cmd == "CancelSelection") dispose();
 	}
 
+	/**
+	 * handle itemStateChanged event
+	 * used for user specified separator and quotes
+	 * @param e event
+	 */
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getItemSelectable();
 		boolean edit = false;
@@ -139,21 +157,11 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		}
 	}
 
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mousePressed(MouseEvent e) {
-	}
-
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent e) {
-	}
-
+	/**
+	 * handle propertyChange
+	 * used for setting the name where the file should be assigned to
+	 * @param e event
+	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		File file = this.getSelectedFile();
 		if(file!=null && !file.isDirectory()) {

@@ -3,7 +3,7 @@ package org.rosuda.JGR.util;
 /**
  *  ErrorMSG
  * 
- * 	print error stacktrace to JGRError.log in the running directory
+ * 	print error stacktrace to JGRError.log in the property "user.dir"
  * 
  *	@author Markus Helbig
  *  
@@ -15,6 +15,10 @@ import java.util.*;
 
 public class ErrorMsg {
 
+    /**
+     * Create new ErrorMsg which will be appended to JGRError.log file.
+     * @param e Exception to add
+     */
     public ErrorMsg(Exception e) {
         String curDir = System.getProperty("user.dir");
         String filename = curDir + "/JGRError.log";

@@ -376,15 +376,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             finally { 
 			if (href ) {
 					try {
-						System.out.println(url);
 						String title = url.toString().substring(url.toString().lastIndexOf("/")+1);
 						title = title.substring(0,title.lastIndexOf('.'));
 						int index = tabArea.getSelectedIndex();
-						
-						System.out.println("index "+index);
-						System.out.println(title);
-						
-						
 						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("file")) tabArea.setTitleAt(index,title);
 						else {
 							int i = url.toString().indexOf("html");
