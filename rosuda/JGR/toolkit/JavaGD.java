@@ -31,25 +31,25 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
 
         jfr.setDefaultCloseOperation(jfr.DISPOSE_ON_CLOSE);
         c=new org.rosuda.javaGD.GDCanvas(w, h);
-        jfr.getContentPane().add(c);
+        jfr.getContentPane().add((org.rosuda.javaGD.GDCanvas)c);
         jfr.pack();
         jfr.setVisible(true);
     }
 
     public void     gdNewPage(int devNr) {
         super.gdNewPage(devNr);
-        jfr.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
+        jfr.setTitle("JavaGD ("+(getDeviceNumber()+1)+")"+(active?" *active*":""));
     }
 
     public void     gdActivate() {
         super.gdActivate();
         jfr.toFront();
-        jfr.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):"")+" *active*");
+        jfr.setTitle("JavaGD "+((getDeviceNumber()>0)?("("+(getDeviceNumber()+1)+")"):"")+" *active*");
     }
 
     public void     gdDeactivate() {
         super.gdDeactivate();
-        jfr.setTitle("JavaGD ("+(devNr+1)+")");
+        jfr.setTitle("JavaGD ("+(getDeviceNumber()+1)+")");
     }
     
     public void     gdClose() {
@@ -65,6 +65,6 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd.equals("copyImg"))
-            org.rosuda.util.ImageSelection.copyComponent(c,false,true);
+            org.rosuda.util.ImageSelection.copyComponent((java.awt.Component)c,false,true);
     }
 }
