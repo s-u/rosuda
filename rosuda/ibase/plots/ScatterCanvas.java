@@ -72,6 +72,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
+    public Axis getXAxis() { return A[0]; }
+    public Axis getYAxis() { return A[1]; }
+    
     public void setFilter(int[] f) {
         filter=f;
         setUpdateRoot(0);

@@ -80,7 +80,8 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	MIlabels=mb.getMenu(2).getItem(1);	
     };
 
-    public Axis getXAxis() { return A[0]; };
+    public Axis getXAxis() { return A[0]; }
+    public Axis getYAxis() { return A[1]; }
     
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
