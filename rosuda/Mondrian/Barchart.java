@@ -466,7 +466,8 @@ public class Barchart extends DragBox implements ActionListener {
           SelectionEvent se = new SelectionEvent(this);
           evtq.postEvent(se);
         }
-      }
+      } else
+        super.processKeyEvent(e);  // Pass other event types on.
     }
 
     public void actionPerformed(ActionEvent e) {
