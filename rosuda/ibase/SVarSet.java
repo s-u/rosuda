@@ -74,7 +74,7 @@ public class SVarSet {
             @param cat categorical
     /* added 28.12.04 MH */
 
-    public void add(int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
+    public void insert(int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
       SVar v = new SVarObj("Var"+index,isnum,cat);
       v.setAllEmpty(size);
       vars.insertElementAt(v,index);
@@ -92,21 +92,21 @@ public class SVarSet {
     /* added 28.12.03 MH */
     /** add an empty case to the set
      *         @param index index*/
-    public boolean addCase(int index) {
+    public boolean insertCaseAt(int index) {
       Enumeration e = vars.elements();
       while(e.hasMoreElements()) {
-        if (!((SVar) e.nextElement()).addCase(index)) return false;
+        if (!((SVar) e.nextElement()).insert(null,index)) return false;
       }
       return true;
     }
     /* added 28.12.03 MH */
-    /** remove a case of the set
+    /** delete a case of the set
      *         @param index index*/
-    public boolean removeCase(int index) {
+    public boolean removeCaseAt(int index) {
       Enumeration e = vars.elements();
       while(e.hasMoreElements()) {
         SVar v = ((SVar) e.nextElement());
-        if (!v.removeCase(v.at(index),index))
+        if (!v.remove(v.at(index),index))
           return false;
       }
       return true;
