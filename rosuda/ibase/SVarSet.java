@@ -46,6 +46,17 @@ public class SVarSet {
 	@return dataset name */
     public String getName() { return name; };
 
+    public int length() {
+        int len=0;
+        int i=0, l=vars.size();
+        while (i<l) {
+            int vl=((SVar)vars.elementAt(i)).size();
+            if (vl>len) len=vl;
+            i++;
+        }
+        return len;
+    }
+    
     /** add a new varaible to the dataset 
 	@param v variable
 	@return index of the newly create variable or <0 if an error occured (-1 on null-problems, -2 if that variable-name already exists) */
