@@ -195,6 +195,29 @@ public class iMenu {
                 m.add(mi);
                 m.addSeparator();
                 if (menuDef[i-1].equals("~Editor")) {
+                	mi=new JMenuItem("Comment Code");
+                	mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('K',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                    mi.setActionCommand("commentcode");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    mi=new JMenuItem("Uncomment Code");
+                	mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('K',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1, false));
+                    mi.setActionCommand("uncommentcode");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    
+                	mi=new JMenuItem("Shift Right");
+                	mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('R',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1, false));
+                    mi.setActionCommand("shiftright");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    mi=new JMenuItem("Shift Left");
+                	mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('L',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1, false));
+                    mi.setActionCommand("shiftleft");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    
+                    m.addSeparator();
                 	mi=new JMenuItem("Run selection");
                     mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('R', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                     mi.setActionCommand("runselection");

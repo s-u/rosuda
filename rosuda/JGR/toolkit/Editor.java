@@ -377,6 +377,21 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
         else if (cmd == "cut") editArea.cut();
+        else if (cmd == "commentcode") {
+        	if (editArea.getSelectedText().trim().length() > 0)
+				try {
+					editArea.commentSelection(true);
+				} catch (BadLocationException e1) {
+				}
+        }
+        else if (cmd == "uncommentcode") {
+        	if (editArea.getSelectedText().trim().length() > 0)
+				try {
+					editArea.commentSelection(false);
+				} catch (BadLocationException e1) {
+				}
+        }
+
         else if (cmd == "copy") editArea.copy();
         else if (cmd == "delete") {
             try {
@@ -388,6 +403,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
+        else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
         else if (cmd == "new") startNew();
         else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()",false);
         else if (cmd == "open") open();
@@ -431,13 +447,22 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s,true);
         	} catch (Exception ex) {}
         }
-        else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
         else if (cmd == "save") saveFile();
         else if (cmd == "saveas") saveFileAs();
         else if (cmd == "search") textFinder.showFind(false);
         else if (cmd == "searchnext") textFinder.showFind(true);
         else if (cmd == "selAll") editArea.selectAll();
-        else if (cmd == "undo") {
+        else if (cmd == "shiftleft")
+			try {
+				editArea.shiftSelection(-1);
+			} catch (BadLocationException e1) {
+			}
+		else if (cmd == "shiftright")
+			try {
+				editArea.shiftSelection(1);
+			} catch (BadLocationException e2) {
+			}
+		else if (cmd == "undo") {
             try {
                 if (toolBar.undoMgr.canUndo())
                     toolBar.undoMgr.undo();
