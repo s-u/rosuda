@@ -36,7 +36,7 @@ public class Notifier {
 
     /** general NotifyAll */    
     public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
-	if (ton==null || ton.isEmpty()) return;
+	if (batchMode || ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
@@ -50,5 +50,26 @@ public class Notifier {
     };    
     
     /** notifies all {@link Dependent} classes in the notify list of a change. (Results in calling {@link #NotifyAll} with <code>NULL</code> parameter */
-    public void NotifyAll(NotifyMsg msg) { NotifyAll(msg,null,null); };    
+    public void NotifyAll(NotifyMsg msg) { NotifyAll(msg,null,null); };
+
+    /*--- since v1.3: support for batch mode ---*/
+    
+    /** batch mode flag */
+    boolean batchMode=false;
+    /** last message issued in batch mode */
+    NotifyMsg batchLastMsg=null;
+
+    /** initiates batch mode - in this mode no notifications are made until endBatch() has been called. */
+    public void beginBatch() {
+        batchMode=true;
+        batchLastMsg=null;
+    }
+
+    /** ends batch mode. if any notification reqests has been made since beginBatch() then the last one
+        will be passed to dependents. otherwise just batch flag is cleared and no notification is sent. */
+    public void endBatch() {
+        batchMode=false;
+        if (batchLastMsg!=null)
+            NotifyAll(batchLastMsg);
+    }
 };
