@@ -30,7 +30,7 @@ class GDCanvas extends Canvas {
     }
 
     public void initRefresh() {
-        System.out.println("resize requested");
+        //System.out.println("resize requested");
         try { // for now we use no cache - just pure reflection API for: Rengine.getMainEngine().eval("...")
             Class c=Class.forName("org.rosuda.JRI.Rengine");
             if (c==null)
@@ -52,9 +52,9 @@ class GDCanvas extends Canvas {
         }
     }
     
-    public void add(GDObject o) { l.add(o); }
-    public void reset() { l.removeAllElements(); }
-    public void paint(Graphics g) {
+    public synchronized void add(GDObject o) { l.add(o); }
+    public synchronized void reset() { l.removeAllElements(); }
+    public synchronized void paint(Graphics g) {
         Dimension d=getSize();
         if (!d.equals(lastSize)) {
             initRefresh();
@@ -73,7 +73,6 @@ class GDCanvas extends Canvas {
 class GDLine extends GDObject {
     double x1,y1,x2,y2;
     public GDLine(double x1, double y1, double x2, double y2) {
-        System.out.println(">> LINE("+x1+","+y1+","+x2+","+y2+")");
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
     }
 
@@ -89,7 +88,6 @@ class GDRect extends GDObject {
         double tmp;
         if (x1>x2) { tmp=x1; x1=x2; x2=tmp; }
         if (y1>y2) { tmp=y1; y1=y2; y2=tmp; }
-        System.out.println(">> RECT("+x1+","+y1+","+x2+","+y2+")");
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
     }
 
@@ -107,7 +105,6 @@ class GDRect extends GDObject {
 class GDCircle extends GDObject {
     double x,y,r;
     public GDCircle(double x, double y, double r) {
-        System.out.println(">> CIRCLE("+x+","+y+","+r+")");
         this.x=x; this.y=y; this.r=r;
     }
 
@@ -126,7 +123,6 @@ class GDText extends GDObject {
     double x,y,r,h;
     String txt;
     public GDText(double x, double y, double r, double h, String txt) {
-        System.out.println(">> TEXT("+x+","+y+","+r+","+h+",\""+txt+"\")");
         this.x=x; this.y=y; this.r=r; this.h=h; this.txt=txt;
     }
 
@@ -145,7 +141,7 @@ class GDText extends GDObject {
             if (r!=0d) {
                 Graphics2D g2d=(Graphics2D) g;
                 g2d.translate(x,y);
-                double rr=r/180d*Math.PI;
+                double rr=-r/180d*Math.PI;
                 g2d.rotate(rr);
                 if (hc!=0d)
                     g2d.translate(-hc,0d);
@@ -169,7 +165,7 @@ class GDFont extends GDObject {
     Font font;
     
     public GDFont(double cex, double ps, double lineheight, int face, String family) {
-        System.out.println(">> FONT("+cex+","+ps+","+lineheight+","+face+",\""+family+"\")");
+        //System.out.println(">> FONT("+cex+","+ps+","+lineheight+","+face+",\""+family+"\")");
         this.cex=cex; this.ps=ps; this.lineheight=lineheight; this.face=face; this.family=family;
         int jFT=Font.PLAIN;
         if (face==2) jFT=Font.BOLD;
@@ -191,7 +187,6 @@ class GDPolygon extends GDObject {
     boolean isPolyline;
     public GDPolygon(int n, double[] x, double[] y, boolean isPolyline) {
         this.x=x; this.y=y; this.n=n; this.isPolyline=isPolyline;
-        System.out.println(">> POLYGON("+n+" points, type="+(isPolyline?"PolyLine":"Polygon")+")");
         int i=0;
         xi=new int[n]; yi=new int[n];
         while (i<n) {
@@ -221,14 +216,14 @@ class GDColor extends GDObject {
     Color gc;
     public GDColor(int col) {
         this.col=col;
-        System.out.println(">> COLOR: "+Integer.toString(col,16));
+        //System.out.println(">> COLOR: "+Integer.toString(col,16));
         if (col==-1) gc=null;
         else
             gc=new Color(((float)(col&255))/255f,
                          ((float)((col>>8)&255))/255f,
                          ((float)((col>>16)&255))/255f,
                          1f-((float)((col>>24)&255))/255f);
-        System.out.println("          "+gc);
+        //System.out.println("          "+gc);
     }
 
     public void paint(GDCanvas c, Graphics g) {
@@ -242,7 +237,7 @@ class GDFill extends GDObject {
     Color gc;
     public GDFill(int col) {
         this.col=col;
-        System.out.println(">> FILL COLOR: "+Integer.toString(col,16));
+        //System.out.println(">> FILL COLOR: "+Integer.toString(col,16));
         if (col==-1)
             gc=null;
         else
@@ -250,7 +245,7 @@ class GDFill extends GDObject {
                          ((float)((col>>8)&255))/255f,
                          ((float)((col>>16)&255))/255f,
                          1f-((float)((col>>24)&255))/255f);
-        System.out.println("          "+gc);
+        //System.out.println("          "+gc);
     }
     
     public void paint(GDCanvas c, Graphics g) {
@@ -265,7 +260,7 @@ class GDLinePar extends GDObject {
 
     public GDLinePar(double lwd, int lty) {
         this.lwd=lwd; this.lty=lty;
-        System.out.println(">> LINE TYPE: width="+lwd+", type="+Integer.toString(lty,16));
+        //System.out.println(">> LINE TYPE: width="+lwd+", type="+Integer.toString(lty,16));
         bs=null;
         if (lty==0)
             bs=new BasicStroke((float)lwd);
