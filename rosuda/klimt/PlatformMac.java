@@ -64,6 +64,6 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
     }
 
     public void handlePrefs() {
-        PreferencesFrame.showPrefsDialog();
+        PrefsColorFrame.showPrefsDialog();
     }    
 }
