@@ -293,19 +293,19 @@ public class InTr
             if (uRs!=null && uRs.length()>0 && (uRs.charAt(0)=='y' || uRs.charAt(0)=='1')) {
                 Common.startRserv=true;
                 uRs=pm.getParS("Rserv","launch");
-                if (uRs==null) uRs="R CMD Rserv";
-                if (Common.DEBUG>0)
-                    System.out.println("Start of Rserv requested");
-                Rconnection rc=new Rconnection();
-                if (!rc.isOk()) {
+                if (uRs==null) uRs="R CMD Rserve";
+                Plugin srp=PluginManager.loadPlugin("PluginDtartRserve");
+                if (srp==null) {
                     if (Common.DEBUG>0)
-                        System.out.println("Rserv is not running, trying to start it ("+uRs+")");
-                    try {
-                        Runtime.getRuntime().exec(uRs);
-                    } catch(Exception rte) {
+                        System.out.println("** Cannot find PluginStartRserve.");
+                } else {
+                    if (Common.DEBUG>0)
+                        System.out.println("Start of Rserv requested");
+                    srp.initPlugin();
+                    srp.setParameter("startCmd",uRs);
+                    if (!srp.execPlugin())
                         if (Common.DEBUG>0)
-                            System.out.println("Can't start Rserv: "+rte.getMessage());
-                    };
+                            System.out.println("Start of Rserve failed.");
                 }
             }
  	    TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
