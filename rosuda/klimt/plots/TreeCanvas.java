@@ -650,7 +650,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             try {
                 PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
                 if (p!=null) {
-                    p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.gain\tsample.gain\tsample.size");
+                    p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.dev\tsample.gain\tsample.size\tdepth");
                     SVarSet.TreeEntry te;
                     if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
                     for (Enumeration e=root.getSource().trees.elements(); e.hasMoreElements();) {
@@ -665,7 +665,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                                 if (!np.isLeaf()) {
                                     SNode n=(SNode)np.at(0);
                                     if (n!=null) {
-                                        p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size());
+                                        p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
                                     };
                                 }
                             }
