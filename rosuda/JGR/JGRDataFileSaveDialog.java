@@ -43,6 +43,12 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
         if (directory != null && new File(directory).exists()) this.setCurrentDirectory(new File(directory));
         this.data = data;
         this.addActionListener(this);
+		
+		sepsBox.setMinimumSize(new Dimension(90,22));
+		sepsBox.setPreferredSize(new Dimension(90,22));
+		sepsBox.setMaximumSize(new Dimension(90,22));
+		
+		sepsBox.addItemListener(this);
         
         JPanel command = new JPanel(new GridBagLayout());
 		command.add(append, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
