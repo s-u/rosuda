@@ -54,6 +54,7 @@ public class HelpFrame extends TFrame implements ActionListener {
 	add(t);
         t.setEditable(false); t.setFont(new Font("Monospaced",Font.PLAIN,10));
 	t.setBackground(Color.white);
+	t.setSize(400,300);
 	Panel p=new Panel();	
 	add(p,BorderLayout.SOUTH);
 	p.setLayout(new FlowLayout());
@@ -61,6 +62,7 @@ public class HelpFrame extends TFrame implements ActionListener {
 	p.add(b);
 	b.addActionListener(this);	
 	addWindowListener(Common.defaultWindowListener);
+	pack();
     };
 
     public void actionPerformed(ActionEvent e) {	
