@@ -91,6 +91,7 @@ public class iPreferences {
     public static Hashtable KEYWORDS = null;
     public static Hashtable KEYWORDSOBJECTS = null;
 
+    public static boolean useEmacsKeyBindings = false;
 
     public static void apply() {
         iPreferences.refresh();
@@ -159,6 +160,8 @@ public class iPreferences {
         FontName = prefs.get("FontName","Dialog");
         FontSize = prefs.getInt("FontSize",12);
         MAXHELPTABS = prefs.getInt("MaxHelpTabs",10);
+        // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
+        useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
     }
 
     public static void writePrefs() {
@@ -167,6 +170,7 @@ public class iPreferences {
         prefs.put("FontName", FontName);        // String
         prefs.putInt("FontSize", FontSize);               // int
         prefs.putInt("MaxHelpTabs",MAXHELPTABS);
+        prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         try {
             prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
         } catch (IOException e) {
