@@ -224,7 +224,22 @@ public class Mosaic extends DragBox implements ActionListener {
       }
     }
 
+      public String getToolTipText(MouseEvent e) {
 
+        if( e.isControlDown() ) {
+
+          for( int i = 0;i < rects.size(); i++) {
+            MyRect r = (MyRect)rects.elementAt(i);
+            if ( r.contains( e.getX(), e.getY() )) {
+              return Util.info2Html(r.getLabel());
+            }
+          }
+          // end FOR
+          return null;
+        } else
+          return null;
+      }
+      
     public void processMouseEvent(MouseEvent e) {
 
       if( e.isPopupTrigger() )
