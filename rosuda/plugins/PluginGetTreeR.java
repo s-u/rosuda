@@ -402,7 +402,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             if (treeOpt==null) treeOpt="";
             if (treeOpt.length()>0) treeOpt=","+treeOpt;
             PrintStream p=new PrintStream(new FileOutputStream(fprefix+"PluginInit.r"));
-            p.print("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\n");
+            p.print("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\",quote=\"\")\n");
             { int k=0; while (k<pred.length) { if (vs.at(pred[k]).isCat()) p.print("d$"+vs.at(pred[k]).getName()+"<-factor(d$"+vs.at(pred[k]).getName()+")\n"); k++; }  };
             p.print("print(\"TREE\",quote=FALSE)\nt<-"+lib+"("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
