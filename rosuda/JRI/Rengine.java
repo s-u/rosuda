@@ -1,4 +1,7 @@
+package org.rosuda.JRI;
+
 import java.lang.*;
+import java.io.*;
 
 public class Rengine extends Thread {
     static {
@@ -33,9 +36,43 @@ public class Rengine extends Thread {
     public synchronized native int[] rniGetIntArray(long exp);
     public synchronized native int[] rniGetDoubleArray(long exp);
     public synchronized native int rniExpType(long exp);
-
+    public native void rniRunMainLoop();
+    
     public synchronized native void rniIdle();
 
+    //============ R callback methods =========
+
+
+    public void jriWriteConsole(String text)
+    {
+        System.out.println("R> "+text);
+    }
+
+    public void jriBusy(int which)
+    {
+        System.out.println("R_is_busy? "+which);
+    }
+
+    public String jriReadConsole(String prompt, int addToHistory)
+    {
+        System.out.print(prompt);
+        try {
+            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+            return br.readLine();
+        } catch (Exception e) {
+        }
+        return "q('no')\n";
+    }
+
+    public void jriShowMessage(String message)
+    {
+        System.out.println("R message: "+message);
+    }
+    
+    
+    //============ "official" API =============
+
+    
     public synchronized RXP eval(String s) {
         long pr=rniParse(s, 1);
         if (pr>0) {
@@ -63,7 +100,7 @@ public class Rengine extends Thread {
             while (alive) {
                 try {
                     sleep(100);
-		    rniIdle();
+                    rniIdle();
                 } catch (InterruptedException ie) {
                     interrupted();
                 }
