@@ -1,5 +1,6 @@
 import java.util.Vector;
 import java.util.Enumeration;
+import java.awt.Rectangle;
 
 /**
    Statistical {@link Node} class. It's used for storing statistical information in tree nodes.
@@ -71,6 +72,9 @@ public class SNode extends Node implements Cloneable
 
     /** associated frame */
     TFrame frame;
+
+    /** label rectangle */
+    Rectangle labelR;
     
     /** user definable temporary variable */
     int tmp;
