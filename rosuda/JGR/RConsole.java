@@ -439,6 +439,14 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyPressed(KeyEvent ke) {
+        if (iPreferences.useEmacsKeyBindings) {
+            if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
+                input.setCaretPosition(input.getText().length());
+            }
+            if (ke.getKeyCode() == KeyEvent.VK_A && ke.isControlDown()) {
+                input.setCaretPosition(0);
+            }
+        }
         //System.out.println(input.getCaretPosition()==input.getText().length());
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
             /*int line = -1;
