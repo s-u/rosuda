@@ -1,3 +1,5 @@
+package org.rosuda.JRI;
+
 public class RXP
 {
     public final int XT_STR         = 1;
