@@ -56,7 +56,7 @@ public class RecentList {
         if (e==null || e.length()<1) return;
         int i=0;
         while (i<active) {
-            if (list[i].compareTo(e)==0) {
+            if (list[i].equals(e)) {
                 if (i>0) {
                     String h=list[i];
                     int k=i;
@@ -114,8 +114,10 @@ public class RecentList {
         if (s!=null) {
             StringTokenizer st=new StringTokenizer(s, "\t");
             active=0;
-            while (st.hasMoreTokens())
-                addEntry(st.nextToken());
+            while (active<maxEntries && st.hasMoreTokens()) {
+                list[active]=st.nextToken();
+                active++;
+            }
         }
         autoSave=save;
         serial++;
