@@ -20,7 +20,7 @@ import org.rosuda.JGR.util.*;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class JGRConsole extends iFrame implements ActionListener, KeyListener,
@@ -31,7 +31,7 @@ FocusListener, RMainLoopCallbacks {
     /** Console output text panel */
     public ConsoleOutput output = new ConsoleOutput();
     /** Console command input area*/
-    public SyntaxInput input = new SyntaxInput(true);
+    public SyntaxInput input = new SyntaxInput("console",true);
     
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();

@@ -21,7 +21,7 @@ import org.rosuda.JGR.util.*;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class Editor extends iFrame implements ActionListener, KeyListener {
@@ -40,7 +40,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private GridBagLayout layout = new GridBagLayout();
     private CaretListenerLabel caretStatus = new CaretListenerLabel();
     private JLabel modifiedStatus = new JLabel();
-    private SyntaxInput editArea = new SyntaxInput(true);
+    private SyntaxInput editArea = new SyntaxInput("editor",true);
     private Document editDoc = editArea.getDocument();
 	
     private ToolBar toolBar;
