@@ -39,6 +39,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     boolean useRserv=true;
     boolean holdConnection=false;
 
+    String filePrefix="";
+    
     Rconnection rc=null;
     
     PluginManager pm=null;
@@ -63,6 +65,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         pm=PluginManager.getManager();
         Rbin=pm.getParS("AllPlugins","latestRbinary");
         Rcall=pm.getParS("PluginGetTreeR","Rcall");
+        if (System.getProperty("os.name").equals("Mac OS X"))
+            filePrefix="/tmp/"; // just a hack, but well...
     }
 
     /** set a plugin parameter
@@ -149,15 +153,15 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         }
         
         try {
-            File fr=new File("PluginInit.r"); if (fr.exists()) fr.delete();
-            File fo=new File("PluginInit.out"); if (fo.exists()) fo.delete();
-            PrintStream p=new PrintStream(new FileOutputStream("PluginInit.r"));
+            File fr=new File(filePrefix+"PluginInit.r"); if (fr.exists()) fr.delete();
+            File fo=new File(filePrefix+"PluginInit.out"); if (fo.exists()) fo.delete();
+            PrintStream p=new PrintStream(new FileOutputStream(filePrefix+"PluginInit.r"));
             p.println("print(\"PLUGIN_INIT\",quote=FALSE)");
             //p.println("invisible(options(echo = FALSE))\nlibrary(tree)\ndata(iris)\nprint(\"TREE\",quote=FALSE)\nt<-tree(Species~.,iris)\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
 
             Process pc=null;
-            String postBin=" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out";
+            String postBin=" --slave --no-save --no-restore CMD BATCH "+filePrefix+"PluginInit.r "+filePrefix+"PluginInit.out";
             if (Rbin!=null || Rcall!=null) {
                 if (Rcall==null) Rcall=Rbin+postBin; 
                 try {
@@ -175,16 +179,22 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                         pm.setParS("AllPlugins","latestRbinary",Rbin);
                     } catch (Exception e2) {
                         try {
-                            Rbin="/usr/local/bin/R"; Rcall=Rbin+postBin;
+                            Rbin="/Library/Frameworks/R.framework/Resources/bin/R"; Rcall=Rbin+postBin;
                             pc=Runtime.getRuntime().exec(Rcall);
                             pm.setParS("AllPlugins","latestRbinary",Rbin);
                         } catch (Exception e3) {
                             try {
-                                Rbin="/sw/bin/R"; Rcall=Rbin+postBin;
+                                Rbin="/usr/local/bin/R"; Rcall=Rbin+postBin;
                                 pc=Runtime.getRuntime().exec(Rcall);
                                 pm.setParS("AllPlugins","latestRbinary",Rbin);
                             } catch (Exception e4) {
-                                err="Cannot find R executable!"; return false;
+                                try {
+                                    Rbin="/sw/bin/R"; Rcall=Rbin+postBin;
+                                    pc=Runtime.getRuntime().exec(Rcall);
+                                    pm.setParS("AllPlugins","latestRbinary",Rbin);
+                                } catch (Exception e5) {
+                                    err="Cannot find R executable!"; return false;
+                                }
                             }
                         }
                     }
@@ -197,7 +207,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 err="Unable to use R! Make sure R is installed and in your PATH.";
                 return false;
             } else {
-                BufferedReader br=new BufferedReader(new FileReader("PluginInit.out"));
+                BufferedReader br=new BufferedReader(new FileReader(filePrefix+"PluginInit.out"));
                 while(br.ready()) {
                     String s=br.readLine();
                     if (s.length()>7 && s.substring(0,7).equals("Version"))
@@ -206,6 +216,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 br.close();
                 fo.delete();
                 System.out.println("Found R "+Rver);
+                int iISBN=Rver.indexOf(", ISBN");
+                if (iISBN>-1) Rver=Rver.substring(0,iISBN);
                 initializedSuccessfully=true;
                 lastRbin=Rbin;
                 lastRver=Rver; lastRcall=Rcall;
@@ -379,7 +391,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             return false;
         }
         try {
-            String fprefix="";
+            String fprefix=filePrefix;
             if (useRserv) {
                 if (rc==null) {
                     try {
@@ -416,7 +428,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             if (treeOpt==null) treeOpt="";
             if (treeOpt.length()>0) treeOpt=","+treeOpt;
             PrintStream p=new PrintStream(new FileOutputStream(fprefix+"PluginInit.r"));
-            p.print("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\",quote=\"\")\n");
+            p.print("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\""+fprefix+"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\",quote=\"\")\n");
             { int k=0; while (k<pred.length) { if (vs.at(pred[k]).isCat()) p.print("d$"+vs.at(pred[k]).getName()+"<-factor(d$"+vs.at(pred[k]).getName()+")\n"); k++; }  };
             p.print("print(\"TREE\",quote=FALSE)\nt<-"+lib+"("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
@@ -428,9 +440,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 System.out.println("execPlugin: R finished");
             } else {
                 System.out.println("sink.begin");
-                rc.voidEval("sink(\"PluginInit.out\")");
+                rc.voidEval("sink(\""+fprefix+"PluginInit.out\")");
                 System.out.println("source");
-                rc.voidEval("source(\"PluginInit.r\")");
+                rc.voidEval("source(\""+fprefix+"PluginInit.r\")");
                 System.out.println("sink.end");
                 rc.voidEval("sink()");
                 if (!holdConnection) rc=null;
