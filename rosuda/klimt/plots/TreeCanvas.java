@@ -90,6 +90,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** # of cases in the root node */
     int rootCases;
 
+    int hUnitMpl=1;
+    
     /** virtual base width for root node. real width will be censored, but this one is used for proportional scaling */
     double baseWidth=80.0d;
 
@@ -225,6 +227,17 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    updateCachedValuesForNode((SNode)e.nextElement());	
     };
 
+    void moveNodeMpl(SNode t, double mpx, double mpy) {
+        t.cx=(int)(((double)t.cx)*mpx);
+        t.cy=(int)(((double)t.cy)*mpy);
+        int a=t.count();
+        int i=0;
+        while (i<a) {
+            moveNodeMpl((SNode)t.at(i),mpx,mpy);
+            i++;
+        };
+    };
+    
     public void redesignNodes() { redesignNodes(true); };
     
     /** redesign nodes based on the current canvas geometry
@@ -248,9 +261,11 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	int leaves=root.getNumNodes(true);
 	iwidth=w;
 	leftA=w/18;
-        int xUnit=(leaves>0)?w/leaves:1;
-        if (xUnit<20) xUnit=20;
-	buildLeaf(w/2,(rot90)?70:30,xUnit,h/(root.getHeight()+1),w,root.getHeight(),root,h,updatePlacement);
+        int wUnit=(leaves>0)?w/leaves:1;
+        if (wUnit<20) wUnit=20;
+        int hUnit=h/(root.getHeight()+1);
+        hUnit*=hUnitMpl;
+	buildLeaf(w/2,(rot90)?70:30,wUnit,hUnit,w,root.getHeight(),root,h,updatePlacement);
 	zoomFactor=1; // reset zoom factor
 	repaint();	
     };
@@ -591,7 +606,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
 	if (zoomFactor<=0.3) {
 	    g.setColor("zoomOut");
-	    g.fillOval(t.cx-3,t.cy-3,6,6);
+	    g.fillOval(t.cx-2,t.cy-2,4,4);
 	};
     };
     
@@ -1060,6 +1075,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='2') { PD_lines=!PD_lines; redesignNodes(false); }
 	if (e.getKeyChar()=='3') { PD_POE=!PD_POE; redesignNodes(true); }
         if (e.getKeyChar()=='L') { PD_POE_log=!PD_POE_log; redesignNodes(true); }
+        if (e.getKeyChar()=='y') { moveNodeMpl(root,1.0d,2.0d); repaint(); };
+        if (e.getKeyChar()=='Y') { moveNodeMpl(root,1.0d,0.5d); repaint(); };
+        if (e.getKeyChar()=='w') { moveNodeMpl(root,2.0d,1.0d); repaint(); };
+        if (e.getKeyChar()=='W') { moveNodeMpl(root,0.5d,1.0d); repaint(); };
     };
     public void keyPressed(KeyEvent e) {
         if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
