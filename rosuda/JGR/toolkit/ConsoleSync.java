@@ -28,7 +28,8 @@ public class ConsoleSync {
             try {
                 //wait();
                 wait(100);
-                JGR.R.rniIdle();
+				if (JGR.R!=null)
+					JGR.R.rniIdle();
             } catch (InterruptedException e) {
             }
         }
