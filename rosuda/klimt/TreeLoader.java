@@ -450,27 +450,37 @@ remark: this method can be used to load trees and data separately, but data must
                                 if (Global.DEBUG>0)
                                     System.out.println((clv==null)?"Dependent variable not found in dataset!":"Dependent varaibe found in dataset.");
                                 if (clv!=null) {
+                                    if (Global.DEBUG>0) System.out.println("Recalculating deviances");
                                     root.calculateSampleDeviances(); // update deviances based on the sample dataset
                                     if (registerIt && !Common.noIntVar) { // in some cases we don't want the additional vars to be built
+                                        if (Global.DEBUG>0) System.out.println("Registration required, starting pre-reg tasks.");
+                                        if (clv.isCat() && vset.globalMisclassVarID==-1) { // add at least dummy misclass variable
+                                            SVar vmc=new SVarObj("Misclass");
+                                            vset.globalMisclassVarID=vset.add(vmc);
+                                        }
+                                        
                                         SVar vvv;
                                         vvv=Klimt.getPredictionVar(root,clv);
+                                        if (Global.DEBUG>0) System.out.println("Constructed prediction variable: "+vvv+" for response "+clv);
+                                        vset.add(vvv);
+                                        root.getRootInfo().prediction=vvv;
                                         if (vvv!=null && clv.isCat()) { // first we add misclass
                                             //vvv.name="tree-clsf-"+vset.classifierCounter;
                                             vset.classifierCounter++;
-                                            if (vset.globalMisclassVarID!=-1)
+                                            if (Global.DEBUG>0) System.out.println("Create/update misclassification variable (global ID="+vset.globalMisclassVarID+", so far "+vset.classifierCounter+" classifiers loaded)");
+                                            if (vset.at(vset.globalMisclassVarID).size()>0)
                                                 Klimt.manageMisclassVar(root,vset.at(vset.globalMisclassVarID));
                                             else {
                                                 SVar vmc=Klimt.manageMisclassVar(root,null);
-                                                vset.globalMisclassVarID=vset.add(vmc);
+                                                vset.replace(vset.globalMisclassVarID,vmc);
                                             }
                                         }
-                                        vset.add(vvv);
-                                        root.getRootInfo().prediction=vvv;
+                                        if (Global.DEBUG>0) System.out.println("Registering tree in the registry.");
                                         dr.getTreeRegistry().registerTree(root,root.getRootInfo().name);
                                     }
-                                };
-                            };
-                        };
+                                }
+                            }
+                        }
                         if ((gotData)||(vset==null)) {
                             sw.profile();
                             if (pd!=null) pd.dispose();
