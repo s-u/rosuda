@@ -32,7 +32,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     int countMax=0;
     int count[];
     int marked[];
-
+    
     // for weighted barcharts
     double c_max;
     double cumulated[];
@@ -96,6 +96,13 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	countMax=0; c_max=0;
 	Object[] cts=v.getCategories();
 	cat_nam=new String[cts.length+1];
+        if (bars!=v.getNumCats()) {
+            cats=v.getNumCats();
+            bars=cats;
+            if (v.hasMissing()) bars++;
+
+            Bars=new Rectangle[bars];
+        }        
 	int j=0;
 	while (j<cats) {
 	    cat_nam[j]=cts[j].toString();
