@@ -83,15 +83,15 @@ public class InTr
 	@param t root of the source tree
 	@return copy of the tree without pruned nodes */
     public static SNode makePrunedCopy(SNode t) {
-        return makePrunedCopy(t,false,null,true,null);
+        return makePrunedCopy(t,false,null,true,null,null);
     }
     
-    public static SNode makePrunedCopy(SNode t, boolean deepCopy, SNode cutpoint, boolean imTheRoot, Vector cps) 
+    public static SNode makePrunedCopy(SNode t, boolean deepCopy, SNode cutpoint, boolean imTheRoot, Vector cps, String newName) 
     {
 	SNode n=new SNode();
         if (imTheRoot) {
             SNode root=(SNode)t.getRoot();
-            n.name=root.name+"*";
+            n.name=(newName==null)?"Pr_"+root.name:newName;
             n.prediction=root.prediction;
             n.response=root.response;
         }
@@ -116,7 +116,7 @@ public class InTr
                      (cutpoint==null && !t.isPruned()) ||
                      (cutpoint!=null && t!=cutpoint)))
 	    for (Enumeration e=t.children(); e.hasMoreElements();) {
-                SNode nc=makePrunedCopy((SNode)e.nextElement(),deepCopy,cutpoint,false,cps);
+                SNode nc=makePrunedCopy((SNode)e.nextElement(),deepCopy,cutpoint,false,cps,null);
 		n.add(nc);		
 	    };
         return n;
