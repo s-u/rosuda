@@ -201,9 +201,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
         d.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
-        int j=0,lct=0; boolean frv=false;
+        int j=0,lniv=0,lct=0; boolean frv=false;
         while(j<vs.count()) {
-            if (!vs.at(j).isInternal()) lct++; // consider non-internal variables only
+            if (!vs.at(j).isInternal()) { lniv=j; lct++; } // consider non-internal variables only
             j++;
         };
         List l=new List((lct>10)?10:lct,true);
@@ -223,7 +223,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             l.select(j); j++;
         }
         if (!frv)
-            c.select(vs.at(lct-1).getName());
+            c.select(vs.at(lniv).getName());
         Panel p=new Panel();
         p.setLayout(new BorderLayout());
         d.add(p);
