@@ -7,9 +7,9 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96k";
+    public static String Version="0.96o";
     /** application release */
-    public static String Release="CA10";
+    public static String Release="CC01";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
         parameter equivalent: --debug / --nodebug */
@@ -32,16 +32,19 @@ public class Common
     /** if <code>true</code> then special messages for a loader are printed
         parameter equivalent: --with-loader */
     public static boolean informLoader=false;
-    /** */
+    /** determines whether R-serve should be started if it's not running yet */
     public static boolean startRserv=false;
-    
 
+    /** AppType contstant: stand-alone application */    
     public static final int AT_standalone = 0x0000;
+    /** AppType contstant: applet (set by applet wrapper) */    
     public static final int AT_applet     = 0x0001;
+    /** AppType contstant: Klimt called by Omegahat SJava interface */    
     public static final int AT_KOH        = 0x0020;
+    /** AppType contstant: launched by interactive framework interface */    
     public static final int AT_Framework  = 0x0030;
     
-    /** application type. so far 0=stand-alone, other types are set by wrappers */
+    /** application type. so far 0=stand-alone, other types are set by wrappers. See AT_xxx */
     public static int AppType=AT_standalone;   
     
     /** buffer containing all warnings/errors */
@@ -49,7 +52,7 @@ public class Common
     /** number of warnings so far */
     static int warningsCount=0;
     /** max. # of warnings, any further will be dropped (0=no limit)  */
-    static int maxWarnings=20;
+    static int maxWarnings=64;
     /** screen resolution as obtained from the toolkit.  */
     public static Dimension screenRes=null;
     /** common background color. TFrame uses this as default */
@@ -58,33 +61,122 @@ public class Common
     public static Color popupColor=new Color(245,255,255);
     /** common background color when aqua-style background is used */
     public static Color aquaBgColor=new Color(230,230,240);
+    /** common selection color (so far only BaseCanvas-based plots use this) */
+    //public static Color selectColor=new Color(255,0,0);
+    public static Color selectColor=new Color(128,255,128);
     /** if <code>true</code> no internal variables are created */
     public static boolean noIntVar=false;
-    /** SMarker state changed */
+
+
+    /** Notify-Message constant: SMarker state changed */
     public static final int NM_MarkerChange     =0x100;
-    /** Axis changed */
+
+    /** Notify-Message constant: Axis changed */
     public static final int NM_AxisChange       =0x200;
-    /** SVar changed */
+    /** Notify-Message constant: geometry part of an Axis changed */
+    public static final int NM_AxisGeometryChange=0x201;
+    /** Notify-Message constant: value/data part of an Axis changed */
+    public static final int NM_AxisDataChange   =0x0202;
+    
+    /** Notify-Message constant: SVar changed */
     public static final int NM_VarChange        =0x300;
-    /** SVar changed: content of a variable changed */
+    /** Notify-Message constant: SVar changed: content of a variable changed */
     public static final int NM_VarContentChange =0x301;
-    /** SVar changed: type (cat/num) changed */
+    /** Notify-Message constant: SVar changed: type (cat/num) changed */
     public static final int NM_VarTypeChange    =0x302;
-    /** SVarSet changed (e.g. # of vars...) */
+
+    /** Notify-Message constant: SVarSet changed (e.g. # of vars...) */
     public static final int NM_VarSetChange     =0x400;
-    /** current node changed */
+    /** Notify-Message constant: current node changed */
     public static final int NM_NodeChange       =0x500;
 
-    /** mask to apply in order to become top-level event */
+    /** mask to apply in order to get the top-level event */
     public static final int NM_MASK             =0xf00;
 
-    /** returns true if the supplied event corresponds to popup query trigger. */
-    public static boolean isQueryTrigger(MouseEvent ev) {
-        /* this one prevents the use of <ctrl><shift>-select on Mac, so we drop the other button
-           return ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0; */
-        return ev.isAltDown() /*|| ev.isPopupTrigger()*/;
+    /** Cursor: arrow (all Common.cur_xxx variables are set by Platform class upon init) */
+    public static Cursor cur_arrow;
+    /** Cursor: query (usually arrow with a question mark) */
+    public static Cursor cur_query;
+    /** Cursor: tick hint/cue (usually arrow with a separator resize symbol) */
+    public static Cursor cur_tick;
+    /** Cursor: hand (either pointing or dragging - not specified yet - for general use) */
+    public static Cursor cur_hand;
+    /** Cursor: zoom (usually magnifying glass; should NOT contain + or -) */
+    public static Cursor cur_zoom;
+    /** Cursor: move (usually 4 arrows but may as well be other symbol, e.g. dragging hand) */
+    public static Cursor cur_move;
+    /** Cursor: aim or cross-hair (used for targeting exact point(s)) */ 
+    public static Cursor cur_aim;
+
+    static boolean initializedStatic=false;
+    
+    /** is set to <code>true</code> if this app is run on an Apple Macintosh computer.
+        Main reason is the different handling of mouse events: Macs have only one mouse button
+        and other buttons are emulated. Also META key is guaranteed to be present and will be used. */
+    static boolean isMac=false;
+
+    /** static platform initialization. Should be performed as soon as possible upon startup.
+        Code relying on platform dependent code should call this method to make sure the
+        platform dependent code is initialized (initialization is done only once even if this method is called multiple times) */
+    static void initStatic() {
+        if (initializedStatic) return; // prevent loops
+        initializedStatic=true;
+        if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
+            isMac=true;
+            try {
+                Class c=Class.forName("PlatformMac");
+                c.newInstance();
+            } catch (Exception e) {
+                if (DEBUG>0) System.out.println("Common.initStatic[Mac platform] failed to create platform-dependent class PlatformMac: "+e.getMessage());
+            }
+        } else {
+            new Platform();
+        };
+    }
+
+    /** returns <code>true</code> if ran on an Apple Macintosh computer */
+    public static boolean isMac() {
+        if (!initializedStatic) initStatic();
+        return isMac;
+    }
+
+    /** given mouse event this method determines whether pop-up sequence was triggered */ 
+    public static boolean isPopupTrigger(MouseEvent ev) {
+        if (!initializedStatic) initStatic();
+        return isMac?(ev.isControlDown() && !ev.isShiftDown() && !ev.isAltDown() && !ev.isMetaDown()):ev.isPopupTrigger();
+    }
+
+    /** given mouse event this method determines whether zoom sequence was triggered (mouse button 3 or META on a Mac) */ 
+    public static boolean isZoomTrigger(MouseEvent ev) {
+        // no need to check for Mac since button3 is emulated by Meta
+        return (ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK;
     }
     
+    /** returns true if the supplied event corresponds to popup query trigger. */
+    public static boolean isQueryTrigger(MouseEvent ev) {
+        // Query = <ALT> + BUTTON1; since mac emulates B2 we don't impose this on a Mac
+        if (!initializedStatic) initStatic();
+        return (ev.isAltDown() && !ev.isControlDown() && (isMac || ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK)));
+    }
+
+    public static boolean isExtQuery(MouseEvent ev) {
+        return (ev.isShiftDown());
+    }
+
+    /** "select" trigger is left mouse button(1) - none of Alt, Meta or other mouse keys may be pressed.
+        the only optional ones are Shift (XOR) and Shift+Ctrl (OR) (see {@link #getSelectMode})
+        @return <code>true</code> if supplied event triggers selection trigger */
+    public static boolean isSelectTrigger(MouseEvent ev) {
+        if (!initializedStatic) initStatic();
+        return isMac?(!ev.isMetaDown() && ((!ev.isControlDown() && !ev.isAltDown()) || (ev.isShiftDown() && ev.isAltDown() && ev.isControlDown()))):(!ev.isAltDown() && !ev.isMetaDown() && (!ev.isControlDown() || ev.isShiftDown()) && ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)!=MouseEvent.BUTTON3_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)!=MouseEvent.BUTTON2_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK));
+    }
+
+    /** get selection mode according to the modifiers. Make sure {@link #isSelectTrigger} returns <code>true</code> otherwise the result of this function is invalid.
+        @return 0=replace, 1=XOR, 2=union */
+    public static int getSelectMode(MouseEvent ev) {
+        return ev.isShiftDown()?(ev.isControlDown()?2:1):0;
+    }
+
     /** add an application warning/error */
     public static void addWarning(String war) {
         if (maxWarnings>0 && warningsCount==maxWarnings) {
