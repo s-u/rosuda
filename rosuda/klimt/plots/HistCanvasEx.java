@@ -16,7 +16,7 @@ import org.rosuda.pograss.*;
 import org.rosuda.klimt.*;
 
 /** extended histogram which plots currently selected split if any */
-public class HistCanvasEx extends HistCanvasNew {
+public class HistCanvasEx extends HistCanvas {
     NodeMarker nm;
     
     public HistCanvasEx(Frame f, SVar v, SMarker mark, NodeMarker nm) {
