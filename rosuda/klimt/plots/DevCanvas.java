@@ -39,8 +39,8 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	addMouseListener(this);
 	//addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
-	ax=new Axis(null,Axis.O_X,Axis.T_EqSize);
-	ay=new Axis(null,Axis.O_Y,Axis.T_Num);
+        ax=new Axis(null,Axis.O_X,Axis.T_EqSize); ax.addDepend(this);
+        ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
 	setNode(fin);
         MenuBar mb=null;
         String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Show gain","cumulate","Show lines","lines","0"};

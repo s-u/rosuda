@@ -100,7 +100,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     public BoxCanvas(Frame f, SVar var, SMarker mark) {
 	v=var; m=mark; setFrame(f);
 	setTitle("Boxplot ("+v.getName()+")");
-	a=new Axis(v,Axis.O_Y,Axis.T_Num);
+        a=new Axis(v,Axis.O_Y,Axis.T_Num); a.addDepend(this);
 	setBackground(new Color(255,255,192));
 	addMouseListener(this);
 	addMouseMotionListener(this);
@@ -124,7 +124,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     public BoxCanvas(Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
 	v=var; m=mark; cv=cvar; setFrame(f);
 	setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
-	a=new Axis(v,Axis.O_Y,Axis.T_Num);
+        a=new Axis(v,Axis.O_Y,Axis.T_Num); a.addDepend(this);
 	setBackground(new Color(255,255,192));
 	addMouseListener(this);
 	addMouseMotionListener(this);

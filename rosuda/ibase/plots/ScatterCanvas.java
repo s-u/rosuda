@@ -41,8 +41,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	setFrame(f); setTitle("Scatterplot ("+v1.getName()+" : "+v2.getName()+")");
 	v=new SVar[2]; A=new Axis[2];
 	v[0]=v1; v[1]=v2; m=mark;
-	A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num);
-	A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num);
+        A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
+        A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
 	setBackground(new Color(255,255,192));
 	drag=false;
 	updatePoints();
