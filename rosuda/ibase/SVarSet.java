@@ -17,8 +17,12 @@ public class SVarSet {
     /** dataset name */
     protected String name;
 
+    // at some point we should introduce some more general concept for this, possibly using variable types
     public int globalMisclassVarID=-1;
+    public int globalResudialStat1ID=-1;
+    public int globalResudialStat2ID=-1;
     public int classifierCounter=1;
+    public int regressionCounter=0;
 
     /** default constructor of empty dataset */
     public SVarSet() { vars=new Vector(); name="<unknown>"; };
