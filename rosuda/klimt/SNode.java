@@ -150,6 +150,18 @@ public class SNode extends Node implements Cloneable
                 i++;
             }
             sampleDev=-d;
+        } else {
+            double pv=predValD;
+            double ds=0.0;
+            for (Enumeration e=data.elements(); e.hasMoreElements();) {
+                Integer I=(Integer)e.nextElement();
+                if (I!=null) {
+                    int i=I.intValue();
+                    if (rv.at(i)!=null)
+                        ds+=(rv.atD(i)-pv)*(rv.atD(i)-pv);
+                }
+            }
+            sampleDev=ds;
         }
         double chdev=0;
         if ((ch!=null)&&(ch.size()>0))
