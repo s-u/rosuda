@@ -1,0 +1,120 @@
+import java.util.*;
+//import SMarker;
+
+/** implements set of variables (aka dataset, used as data source)
+    which consists basically of a set of variables (of class {@link SVar}) and
+    a marker (of class {@link SMarker}).
+    @version $Id$
+*/
+public class SVarSet {
+    /** vector of {@link SVar} objects - the variables */
+    Vector vars;
+    /** marker associated with this dataset */
+    SMarker mark;
+
+    /** default constructor of empty dataset */
+    SVarSet() { vars=new Vector(); };
+    
+    /** sets the marker for this dataset
+	@param m marker */
+    public void setMarker(SMarker m) { mark=m; };
+    /** returns the marker of this dataset
+	@return marker */
+    public SMarker getMarker() { return mark; };
+    
+    /** add a new varaible to the dataset 
+	@param v variable
+	@return index of the newly create variable or <0 if an error occured (-1 on null-problems, -2 if that variable-name already exists) */
+    public int add(SVar v) {  // return position or -1 on error or -2 if name exists
+	if (v==null) return -1;
+	String nn=v.getName(); if (nn==null) return -1;
+	
+	if (!vars.isEmpty()) {
+	    for (Enumeration e=vars.elements(); e.hasMoreElements();) {
+		SVar n=(SVar)e.nextElement();
+		if (n.getName().compareTo(nn)==0) return -2;
+	    };
+	};
+	
+	vars.addElement(v);
+	return vars.indexOf(v);
+    };
+
+    /** returns the index of a variable specified by its name
+	@param nam variable name
+	@return index of the variable (or -1 if not found) */
+    public int indexOf(String nam) {
+	int i=0;
+	while (i<vars.size()) {
+	    SVar n=(SVar)vars.elementAt(i);
+	    if (n.getName().compareTo(nam)==0) return i;
+	    i++;
+	};
+	return -1;
+    };
+
+    /** returns variable object specified by name
+ 	@param nam variable name
+	@return variable object or <code>null</code> if not found. */
+    public SVar byName(String nam) {
+	if (vars.isEmpty()) return null;
+	for (Enumeration e=vars.elements(); e.hasMoreElements();) {
+	    SVar n=(SVar)e.nextElement();
+	    if (n.getName().compareTo(nam)==0) return n;
+	};
+	return null;
+    };
+
+    /** returns variable object at specified index
+	@param i index
+	@return variable object or <code>null</code> if index out of range */
+    public SVar at(int i) {
+	return ((i<0)||(i>vars.size()))?null:(SVar)vars.elementAt(i);
+    };
+
+    /** returns data value of a variable specified by name and row index
+	@param nam variable name
+	@param row row index
+	@return data object (or <code>null</code> if out of range) */
+    public Object data(String nam, int row) {
+	SVar v=byName(nam);
+	return (v==null)?null:v.elementAt(row);
+    };
+    
+    /** returns data value of a variable specified by variable index and row index
+	@param col variable index
+	@param row row index
+	@return data object (or <code>null</code> if out of range) */
+    public Object data(int col, int row) {
+	SVar v=at(col);
+	return (v==null)?null:v.elementAt(row);
+    };
+    
+    /** returns enumeration of all variable objects in this dataset
+	@return object enumeration (of type {@link SVar}) */
+    public Enumeration elements() { return vars.elements(); };    
+    
+    /** returns number of variables in this dataset
+	@return # of variables */
+    public int count() { return vars.size(); };
+
+    public static void Debug(SVarSet sv) {
+	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
+	for (Enumeration e=sv.elements(); e.hasMoreElements();) {
+	    SVar v2=(SVar)e.nextElement();
+	    System.out.println("Variable: "+v2.getName()+" ("+(v2.isNum()?"numeric":"string")+
+			       ","+(v2.isCat()?"categorized":"free")+") with "+
+			       v2.size()+" cases");
+	    if (v2.isCat()) {
+		Object[] c=v2.getCategories();
+		System.out.print("  Categories: ");
+		int i=0;
+		while (i<c.length) {
+		    System.out.print("{"+c[i].toString()+"} ");
+		    i++;
+		};
+		System.out.println();
+	    };
+	};       
+    };
+};
