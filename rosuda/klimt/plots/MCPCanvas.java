@@ -13,16 +13,21 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     /** associated marker */
     SMarker m;
 
+    /** # of misclassified cases for each tree */
     int count[];
+    /** # of selected misclassified cases for each tree */
     int mark[];
+    /** maximum of misclassified cases per tree */
     int xv;
 
+    /** query popup handler */
+    QueryPopup qi;
+    
+    /** margins */
     int leftm=40, rightm=10, topm=10, botm=20;
     int dragMode; // 0=none, 1=binw, 2=anchor
     int dragX,dragY;
     
-    int lastw, lasth;
-
     /** creates a new MCP canvas
 	@param f frame owning this canvas or <code>null</code> if none
 	@param var source variable
@@ -38,6 +43,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
         updateBoxes();
+        qi=new QueryPopup(f,"MC-plot",-1);
     };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
@@ -69,7 +75,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                     if (c.at(j).toString().compareTo(r.at(j).toString())!=0) {
                         count[i]++;
                         if (m.at(j)) mark[i]++;
-                    }
+                    };
                     j++;
                 }
             }
@@ -123,6 +129,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     
     public void mouseClicked(MouseEvent ev) 
     {
+	Point cl=getFrame().getLocation();
 	int x=ev.getX(), y=ev.getY();
 	int i=0, setTo=0;
 	boolean effect=false;
@@ -132,7 +139,8 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         int rdy=h-botm-topm;
         Vector v=tm.getTrees();
         if (v==null) return;
-        
+
+        boolean hideQI=true;
         if (ev.isControlDown()) setTo=1;
         if (count!=null) {
             int bs=count.length;
@@ -146,23 +154,39 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 int ht=(int)(yf*count[i]);
                 if (ht<10) ht=10;
                 if (x>=x1&&x<x1+(int)ddx&&y<=h-botm&&y>=h-botm-ht) {
-                    effect=true;
-                    SNode n=(SNode)v.elementAt(i);
-                    if (r==null) r=n.response;
-                    SVar c=n.prediction;
-                    if (c!=null) {
-                        int j=0;
-                        while (j<c.size()) {
-                            if (c.at(j).toString().compareTo(r.at(j).toString())!=0)
-                                m.set(j,m.at(j)?setTo:1);
-                            j++;
-                        };
-                    }; break;
+                    if (Common.isQueryTrigger(ev)) {
+                        String qs="Tree "+i+"\nMiscl. "+count[i]+" ("+mark[i]+" sel.)";
+                        if (ev.isShiftDown()) {
+                            qs="Tree "+i+"\nMisclassified:\n   "+count[i]+" of "+m.size()+" ("+
+                            Tools.getDisplayableValue(100.0*((double)count[i])/((double)m.size()),2)+
+                            "%)\nSelected:\n  "+mark[i]+" ("+
+                            Tools.getDisplayableValue(100.0*((double)mark[i])/((double)count[i]),2)+
+                            "% of miscl., " +
+                            Tools.getDisplayableValue(100.0*((double)mark[i])/((double)m.size()),2)+"% of total)";
+                        }
+                        qi.setContent(qs);
+                        qi.setLocation(cl.x+x,cl.y+y);
+                        qi.show(); hideQI=false;                    
+                    } else {
+                        effect=true;
+                        SNode n=(SNode)v.elementAt(i);
+                        if (r==null) r=n.response;
+                        SVar c=n.prediction;
+                        if (c!=null) {
+                            int j=0;
+                            while (j<c.size()) {
+                                if (c.at(j).toString().compareTo(r.at(j).toString())!=0)
+                                    m.set(j,m.at(j)?setTo:1);
+                                j++;
+                            };
+                        }; break;
+                    };
                 };
                 i++;
             };
         };
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+        if (hideQI) qi.hide();
     }
     
     public void mousePressed(MouseEvent ev) {
