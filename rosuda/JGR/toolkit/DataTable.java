@@ -26,8 +26,7 @@ import org.rosuda.JGR.util.*;
  * 	RoSuDa 2003 - 2005
  */
 
-public class DataTable extends iFrame implements ActionListener, MouseListener,
-KeyListener {
+public class DataTable extends iFrame implements ActionListener, MouseListener, KeyListener {
 
     private GridBagLayout layout = new GridBagLayout();
     private JScrollPane scrollArea = new JScrollPane();
@@ -65,6 +64,11 @@ KeyListener {
     private String type = "data.frame";
 
     private boolean editable = true;
+	
+	
+	private boolean rownames = false;
+	
+	private DataTable dt = null;
 
     /** Create a Table with an empty SVarSet.*/
     public DataTable() {
@@ -79,6 +83,7 @@ KeyListener {
      */
     public DataTable(SVarSet vs, String type, boolean editable) {
         super("DataTable Editor", 153);
+		dt = this;
         if (vs == null) {
             vs = new SVarSet();
             vs.setName("NewDataTable");
@@ -153,6 +158,7 @@ KeyListener {
             }
         });
         this.addKeyListener(this);
+		this.addMouseListener(this);
         this.setLocation(this.getLocation().x, 10);
         int h = dataTable.getRowHeight();
         int rc = dataTable.getRowCount();
@@ -249,7 +255,6 @@ KeyListener {
             int i;
             if (save.getText()=="Save") {
                 i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-                System.out.println(i);
                 if (i==1) super.dispose();
                 else if (i==0 && saveData()) super.dispose();
             }
@@ -360,7 +365,7 @@ KeyListener {
     /** move the vars in the SVarSet
         * @param from old column index
         * @param to new column index */
-    private void moveColumns(int from, int to) {
+    private void moveColumnsSVar(int from, int to) {
         vs.move(from - 1, to - 1);
         refresh();
     }
@@ -663,13 +668,11 @@ KeyListener {
             find(searchIndex[0], searchIndex[1]);
         }
 		else if (ke.getKeyCode() == KeyEvent.VK_ENTER && dataTable.getSelectedRow() == tabModel.rows-1 && dataTable.getSelectedColumn() == tabModel.cols-1 ) {
-            System.out.println("add row");
 			if (editable && dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
             addRow();
             tabModel.fireTableStructureChanged();
         }
         else if (editable && ke.getKeyCode() == KeyEvent.VK_TAB  && dataTable.getSelectedRow() == 0 && dataTable.getSelectedColumn() == tabModel.cols-1 && !ke.isShiftDown()) {
-            System.out.println("add col");
 			if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
             selectedColumn = -1;
             addColumn();
@@ -732,12 +735,10 @@ KeyListener {
                 }
                 else {
                     selectedColumn = currentCol(e);
-                    int from = dataTable.getColumn(dataTable.getColumnName(
-                                                                           selectedColumn)).getModelIndex();
+                    int from = dataTable.getColumn(dataTable.getColumnName(selectedColumn)).getModelIndex();
                     int to = selectedColumn;
-                    if (from != to) {
-                        moveColumns(from, to);
-                    }
+					//System.out.println(from+" -> "+to);
+					if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1))) && from != to) moveColumnsSVar(from,to);
                 }
             }
             else if (e.isPopupTrigger()) {
@@ -760,9 +761,9 @@ KeyListener {
      */
     public void mouseExited(MouseEvent e) {
     }
-
+	
     class DataTableColumnModel extends DefaultTableColumnModel {
-
+		
         public DataTableColumnModel(DataTable tab) {
         }
 
@@ -774,6 +775,13 @@ KeyListener {
             if (col.getModelIndex() == 0) {
                 col.setMaxWidth(40);
             }
+			if (col.getHeaderValue().equals("row.names")) {
+				rownames = true;
+				dataTable.getColumnModel().getColumn(0).setMaxWidth(0);
+				dataTable.getColumnModel().getColumn(0).setMinWidth(0);
+				dataTable.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+				dataTable.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
+			}
             col.setMinWidth(50);
             super.addColumn(col);
         }
@@ -781,6 +789,12 @@ KeyListener {
         public TableColumn getColumn(int index) {
             return super.getColumn(index < 0 ? 0 : index);
         }
+		
+		public void moveColumn(int columnIndex, int newIndex) {
+			if ((columnIndex < 0) || (columnIndex >= getColumnCount()) ||  (newIndex < 0) || (newIndex >= getColumnCount())) return;
+			super.moveColumn(columnIndex,newIndex);
+			if (columnIndex == 0 || newIndex == 0 || (rownames && (columnIndex == 1 || newIndex == 1))) super.moveColumn(newIndex,columnIndex);
+		}
     }
 
     class DataTableModel extends AbstractTableModel {
@@ -860,7 +874,6 @@ KeyListener {
         }
 
         public Class getColumnClass(int c) {
-            //System.out.println(getValueAt(0, c).getClass());
             return getValueAt(0, c).getClass();
         }
 
@@ -1168,4 +1181,6 @@ KeyListener {
             ls.removeElement(x);
         }
     }
+
+
 }
