@@ -19,7 +19,7 @@ public class PluginManager {
     String configFile="plugins.cfg";
     /** vector of parameter names (of the form "plugin.parameter") */
     Vector par;
-    /** vector of values 8/
+    /** vector of values */
     Vector val;
     /** vector of persistence states. see pst_level */
     Vector pst;
