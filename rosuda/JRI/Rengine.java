@@ -5,7 +5,12 @@ import java.io.*;
 
 public class Rengine extends Thread {
     static {
-	System.loadLibrary("jri");
+        try {
+            System.loadLibrary("jri");
+        } catch (Exception e) {
+            System.out.println("jri not found");
+            System.exit(1);
+        }
     }
 
     boolean died, alive, runLoop, loopRunning;

@@ -21,16 +21,12 @@ import org.rosuda.util.*;
 public class SVarFixFact extends SVar
 {
     int[] cont;
-    int[] temp;
     String[] cats;
-    String[] tempcats;
     int[] ccnts;
 
     int[] ranks=null;
 
     boolean lastIsMissing=false;
-
-    static int maxID = 0;
 
     public boolean muteNotify=false;
 
@@ -38,15 +34,7 @@ public class SVarFixFact extends SVar
     public boolean isLastMissing() {
         return lastIsMissing;
     }
-
-    public SVarFixFact(String name, int len) {
-        super(name,true);
-        isnum = false;
-        cont = new int[len];
-        for (int i = 0; i < cont.length; i++) cont[i] = SVar.int_NA;
-        cats = new String[len];
-    }
-
+    
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
@@ -62,14 +50,12 @@ public class SVarFixFact extends SVar
         ccnts=new int[cnames.length+1];
         int i=0;
         while (i<ids.length) {
-            if (ids[i]>=0 && ids[i]<cats.length) {
+            if (ids[i]>=0 && ids[i]<cats.length)
                 ccnts[ids[i]]++;
-                maxID = maxID < ids[i]?ids[i]:maxID;
-            }
             else {
                 cont[i]=-1; missingCount++;
             }
-            i++;
+            i++;                
         }
     }
 
@@ -95,7 +81,7 @@ public class SVarFixFact extends SVar
         ccnts=newcnts;
         lastIsMissing=true;
     }
-
+    
     public void setAllEmpty(int size) {
         cont=new int[size];
         for (int i = 0; i < size; i++)
@@ -132,59 +118,22 @@ public class SVarFixFact extends SVar
         return false;
     }
 
+    public boolean insert(Object o, int index) {
+        return false;
+    }
+
     public boolean remove(int index) {
-            int length = size();
-            temp = new int[--length];
-            tempcats = new String[temp.length];
-            try {
-                for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
-                    if (i == index) z++;
-                    temp[i] = cont[z];
-                    tempcats[i] = cats[z];
-                }
-                cont = temp;
-                cats = tempcats;
-                return true;
-            }
-            catch (Exception e) {
-                return false;
-            }
-        }
-
-
-        public boolean insert(Object o, int index) {
-            int length = size();
-            temp = new int[++length];
-            tempcats = new String[++length];
-            try {
-                for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
-                    if (i == index) z--;
-                    else { temp[i] = cont[z]; tempcats[i] = cats[z]; }
-                }
-                cont = temp;
-                cats = tempcats;
-                cont[index] = o==null?getCatIndex(missingCat):(getCatIndex(o)==-1?maxID++:getCatIndex(o));
-                cats[index] = o==null?missingCat:o.toString();
-                return true;
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-
+        return false;
+    }
 
     public boolean replace(int i, Object o) {
-        cats[i] = o.toString();
-        cont[i] = getCatIndex(o)==-1?maxID++:getCatIndex(o);
         return false;
     }
 
     public Object at(int i) {
         return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>=cats.length)?null:cats[cont[i]];
     }
-
+    
     public int atI(int i) {
         return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>=cats.length)?-1:cont[i];
     }

@@ -21,17 +21,15 @@ public class SVarFixDouble extends SVar
 
     /** insertion point for add */
     int insertPos=0;
-
+    
     /** vector of categories if cat. var. */
-    Vector  cats;
+    Vector  cats; 
     /** vector if counts per category */
     Vector  ccnts;
 
     int[] ranks=null;
-
-    static double[] temp;
-
-    /** construct new variable
+    
+    /** construct new variable 
 	@param Name variable name
 	@param len length of the fixed variable
         */
@@ -43,14 +41,12 @@ public class SVarFixDouble extends SVar
         contentsType=CT_Number;
         isnum=true;
         cont=new double[len];
-        for (int i = 0; i < cont.length; i++) cont[i] = Double.NaN;
-        insertPos = len;
     }
 
     public SVarFixDouble(String Name, double[] d) {
         this(Name, d, true);
     }
-
+    
     public SVarFixDouble(String Name, double[] d, boolean copyContents)
     {
         super(Name, false);
@@ -95,9 +91,9 @@ public class SVarFixDouble extends SVar
         contentsType=CT_Number;
         isnum=true;
     }
-
+    
     public int size() { return cont.length; }
-
+    
     /** define the variable explicitely as categorical
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
@@ -170,14 +166,14 @@ public class SVarFixDouble extends SVar
             if (found=gotmin) {
                 cats.addElement(ocats.elementAt(p)); ccnts.addElement(occnts.elementAt(p));
                 ocats.setElementAt(null,p);
-            }
+            }            
         }
         if (Global.DEBUG>0) {
             sw.profile("sorted");
         }
     }
 
-    /** define the variable explicitely as non-categorial (drop category list) */
+    /** define the variable explicitely as non-categorial (drop category list) */ 
     public void dropCat() {
 	cats=null; ccnts=null; cat=false;
         NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
@@ -190,7 +186,7 @@ public class SVarFixDouble extends SVar
             if (cats==null) categorize(); else cat=true;
         }
     }
-
+    
     /** adds a new case to the variable (NEVER use addElement! see package header) Also beware, categorial varaibles are classified by object not by value!
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
      *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
@@ -209,7 +205,7 @@ public class SVarFixDouble extends SVar
     }
 
     public boolean add(int i) { return add((i==int_NA)?double_NA:((double)i)); }
-
+    
     public boolean add(double d) {
         if (insertPos>=cont.length) return false;
 	if (cat) {
@@ -238,7 +234,6 @@ public class SVarFixDouble extends SVar
         element, then min/max is not adapted to shrink the range
         */
     public boolean replace(int i, Object o) {
-        try {replace(i,Double.parseDouble(o.toString())); return true;} catch (Exception e) {}
         return false;
     }
 
@@ -250,13 +245,11 @@ public class SVarFixDouble extends SVar
         return true;
     }
 
-    public Object at(int i) {
-        return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Double(cont[i]);
-    };
+    public Object at(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Double(cont[i]); };
     public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
     public int atI(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?int_NA:((int)(cont[i]+0.5)); }
     public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Double.toString(cont[i]); }
-
+    
     /** returns the ID of the category of the object
         @param object
         @return category ID
@@ -275,7 +268,7 @@ public class SVarFixDouble extends SVar
             return -1;
         }
     }
-
+    
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public Object getCatAt(int i) {
         if (cats==null) return null;
@@ -308,53 +301,19 @@ public class SVarFixDouble extends SVar
 	if (cats==null) return 0;
 	return cats.size();
     }
-
+   
     /** returns new, fixed array of categories */
-    public Object[] getCategories() {
+    public Object[] getCategories() { 
 	if (cats==null) return null;
-
+	
 	Object c[] = new Object[cats.size()];
 	cats.copyInto(c);
-	return c;
+	return c; 
     }
 
     /** we don't support replace [[FIXME: replace needs to re-alloc the vector or something like that ... ]] */
-    public boolean remove(int index) {
-        int length = size();
-        temp = new double[--length];
-        try {
-            for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
-                if (i == index) z++;
-                temp[i] = cont[z];
-            }
-            cont = temp;
-            insertPos = cont.length;
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
-    }
-
-
-    public boolean insert(Object o, int index) {
-        int length = size();
-        temp = new double[++length];
-        try {
-            for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
-                if (i == index) z--;
-                else temp[i] = cont[z];
-            }
-            cont = temp;
-            cont[index] = o==null?double_NA:Double.parseDouble(o.toString());
-            insertPos = cont.length;
-            return true;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+    public boolean remove(int index) { return false; }
+    public boolean insert(Object o, int index) { return false; }
 
     /** returns list of indexes ordered by rank, for non-cat, num vars only. missing
         values are omitted.
@@ -444,7 +403,7 @@ cases: variable is not numerical or is categorical, no cases matching
         // return the resulting list
         return r;
     }
-
+    
     public String toString() {
         return "SVarFixDouble(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+"/"+cont.length+",miss="+missingCount+")";
     }

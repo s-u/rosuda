@@ -30,7 +30,7 @@ public class SVarFact extends SVar
 
     boolean lastIsMissing=false;
 
-    static int maxID = 0;
+    //static int maxID = 0;
 
     public boolean muteNotify=false;
 
@@ -62,9 +62,9 @@ public class SVarFact extends SVar
         ccnts=new int[cnames.length+1];
         int i=0;
         while (i<ids.length) {
-            if (ids[i]>=0 && ids[i]<cats.length) {
+            if (ids[i]>=0 && ids[i]<=cats.length) {
                 ccnts[ids[i]]++;
-                maxID = maxID < ids[i]?ids[i]:maxID;
+                //maxID = maxID < ids[i]?ids[i]:maxID;
             }
             else {
                 cont[i]=-1; missingCount++;
@@ -135,15 +135,12 @@ public class SVarFact extends SVar
     public boolean remove(int index) {
             int length = size();
             temp = new int[--length];
-            tempcats = new String[temp.length];
             try {
                 for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
                     if (i == index) z++;
                     temp[i] = cont[z];
-                    tempcats[i] = cats[z];
                 }
                 cont = temp;
-                cats = tempcats;
                 return true;
             }
             catch (Exception e) {
@@ -155,16 +152,24 @@ public class SVarFact extends SVar
         public boolean insert(Object o, int index) {
             int length = size();
             temp = new int[++length];
-            tempcats = new String[++length];
             try {
                 for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
                     if (i == index) z--;
                     else { temp[i] = cont[z]; tempcats[i] = cats[z]; }
                 }
                 cont = temp;
-                cats = tempcats;
-                cont[index] = o==null?getCatIndex(missingCat):(getCatIndex(o)==-1?maxID++:getCatIndex(o));
-                cats[index] = o==null?missingCat:o.toString();
+                if (o==null) cont[index] = getCatIndex(missingCat);
+                else {
+                    int catI = getCatIndex(o.toString());
+                    if (catI==-1) {
+                            tempcats = new String[cats.length+1];
+                            for (int z = 0; z < cats.length; z++) tempcats[z] = cats[z];
+                            tempcats[tempcats.length-1] = o.toString();
+                            cats = tempcats;
+                            catI = getCatIndex(o.toString());
+                    }
+                    cont[index] = getCatIndex(o.toString());
+                }
                 return true;
             }
             catch (Exception e) {
@@ -176,17 +181,25 @@ public class SVarFact extends SVar
 
 
     public boolean replace(int i, Object o) {
-        cats[i] = o.toString();
-        cont[i] = getCatIndex(o)==-1?maxID++:getCatIndex(o);
+        int catI =  getCatIndex(o.toString());
+        System.out.println(o+" "+catI);
+        if (catI==-1) {
+            tempcats = new String[cats.length+1];
+            for (int z = 0; z < cats.length; z++) tempcats[z] = cats[z];
+            tempcats[tempcats.length-1] = o.toString();
+            cats = tempcats;
+            catI = getCatIndex(o.toString());
+        }
+        cont[i] = catI;
         return false;
     }
 
     public Object at(int i) {
-        return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>=cats.length)?null:cats[cont[i]];
+        return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>cats.length)?null:cats[cont[i]-1];
     }
 
     public int atI(int i) {
-        return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>=cats.length)?-1:cont[i];
+        return (i<0 || i>=cont.length || cont[i]<0 || cont[i]>cats.length)?-1:cont[i];
     }
 
     public int getCatIndex(Object o) {
@@ -194,7 +207,7 @@ public class SVarFact extends SVar
         int i=0;
         while (i<cats.length) {
             if (cats[i].equals(o))
-                return i;
+                return ++i;
             i++;
         }
         return -1;
