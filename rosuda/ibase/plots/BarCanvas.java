@@ -87,7 +87,7 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	Bars=new Rectangle[bars];
 	updateBars();
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Spineplot","spine","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","-","Set color by category","autoColor","Clear all colors","clearColor","+","View","Spineplot","spine","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIspine=EzMenu.getItem(f,"spine");
 	if (weight!=null) MIspine.setEnabled(false);
@@ -446,6 +446,8 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     public void mouseEntered(MouseEvent e) {};
     public void mouseExited(MouseEvent e) {};
 
+    double hclCh=35.0, hclLum=85.0;
+    
     public void keyTyped(KeyEvent e) 
     {
         if (e.getKeyChar()=='o') sortBars(false);
@@ -464,7 +466,11 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    repaint();
 	}
 	    
-    };
+        if (e.getKeyChar()==',') { hclCh+=5.0; ColorBridge.getMain().setHCLParameters(hclCh, hclLum); setUpdateRoot(0); repaint(); };
+        if (e.getKeyChar()=='.') { hclCh-=5.0; ColorBridge.getMain().setHCLParameters(hclCh, hclLum); setUpdateRoot(0); repaint(); };
+        if (e.getKeyChar()=='<') { hclLum+=1.0; ColorBridge.getMain().setHCLParameters(hclCh, hclLum); setUpdateRoot(0); repaint(); };
+        if (e.getKeyChar()=='>') { hclLum-=1.0; ColorBridge.getMain().setHCLParameters(hclCh, hclLum); setUpdateRoot(0); repaint(); };
+    }
 
     public void keyPressed(KeyEvent e) {
         int kc=e.getKeyCode();
@@ -493,6 +499,31 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             setUpdateRoot(0);
 	    repaint();
 	};
+        if (cmd=="autoColor") {
+            if (!v.isCat()) return null;
+            int i=0;
+            int cs=v.getNumCats();
+            if (cs==0) return null;
+            while (i<v.size()) {
+                int c=v.getCatIndex(i);
+                if (c>=0)
+                    m.setSec(i,64+(c*64/cs));
+                i++;
+            }                
+            m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (cmd=="clearColor") {
+            int i=0;
+            while (i<v.size()) {
+                m.setSec(i,0);
+                i++;
+            }
+            m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
+            setUpdateRoot(0);
+            repaint();
+        }
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="spine") {
 	    if (isSpine) {
