@@ -28,7 +28,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         packages = pkgs;
 
         String[] Menu = {
-            "+", "File", "~File.Basic.End",
+            /*"+", "File", "~File.Basic.End",*/
             "~Window","0"};
         iMenu.getMenu(this, this, Menu);
 

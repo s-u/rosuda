@@ -41,16 +41,16 @@ public class iMenu {
             if (menuDef[i]=="0") break;
             if (menuDef[i]=="~File.Basic.End") {
                 i++; isNext=true;
-                m.addSeparator();
-                if (Common.isMac()) {
+                /*if (Common.isMac()) {
                     mi=new JMenuItem("Close window");
                     mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                     //mi.setActionCommand("WTMclose"+we.id);
                     mi.setActionCommand("exit");
                     mi.addActionListener(al);
                     m.add(mi);
-                }
+                }*/
                 if (!Common.isMac()) {
+                    m.addSeparator();
                     mi=new JMenuItem("Quit");
                     mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('Q',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                     mi.setActionCommand("exit");

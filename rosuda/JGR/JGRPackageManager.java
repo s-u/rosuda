@@ -34,7 +34,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         super("Package Manager",157);
         try {
         String[] Menu = {
-            "+", "File", "~File.Basic.End",
+            /*"+", "File", "~File.Basic.End",*/
             "~Window","0"};
             //"~Help", "R Help", "rhelp",/* "JJGR FAQ", "jrfaq",*/ "~About", "0"};
         iMenu.getMenu(this, this, Menu);
