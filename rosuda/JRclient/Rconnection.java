@@ -30,6 +30,9 @@ public class Rconnection {
     /** authorization type: unix crypt */
     public static final int AT_crypt = 1;
 
+    /** version of the server (as reported in IDstring just after Rsrv) */
+    protected int rsrvVersion;
+    
     /** make a new local connection on default port (6311) */
     public Rconnection() {
 	this("127.0.0.1",6311);
@@ -71,7 +74,14 @@ public class Rconnection {
 		lastError="Handshake failed: Rsrv signature expected, but received \""+ids+"\" instead.";
 		s.close(); is=null; os=null; s=null;
 	    };
-	    if (ids.substring(8,12).compareTo("QAP1")!=0) {
+            try {
+                rsrvVersion=Integer.parseInt(ids.substring(4,8));
+            } catch (Exception px) {}
+            if (rsrvVersion>101) {
+                lastError="Handshake failed: The server uses more recent protocol than this client.";
+                s.close(); is=null; os=null; s=null;
+            }
+            if (ids.substring(8,12).compareTo("QAP1")!=0) {
 		lastError="Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.";
 		s.close(); is=null; os=null; s=null;
 	    };
@@ -102,6 +112,10 @@ public class Rconnection {
     public void finalize() {
         close();
         is=null; is=null;
+    }
+
+    public int getServerVersion() {
+        return rsrvVersion;
     }
     
     /** closes current connection */
@@ -139,17 +153,27 @@ public class Rconnection {
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_eval,cmd+"\n");
 	if (rp!=null && rp.isOk()) {
+            int rxo=0;
 	    byte[] pc=rp.getCont();
-	    REXP rx=null;
-	    if (pc.length>0) {
-		rx=new REXP();
-		REXP.parseREXP(rx,pc,0);
-	    };
-	    succeeded=true;
-	    return rx;
+            if (rsrvVersion>100) { /* since 0101 eval responds correctly by using DT_SEXP type/len header which is 4 bytes long */
+                rxo=4;
+                /* we should check parameter type (should be DT_SEXP) and fail if it's not */
+                if (pc[0]!=Rtalk.DT_SEXP) {
+                    lastError="Error while processing eval output: SEXP (type "+Rtalk.DT_SEXP+") expected but found result type "+pc[0]+".";
+                    return null;
+                }
+                /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may be not in the future. */
+            }
+            REXP rx=null;
+            if (pc.length>rxo) {
+                rx=new REXP();
+                REXP.parseREXP(rx,pc,rxo);
+            };
+            succeeded=true;
+            return rx;
 	};
-	lastError="Request return code: "+rp.getStat();
-	return null;
+        lastError="Request return code: "+rp.getStat();
+        return null;
     }
 
     /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
