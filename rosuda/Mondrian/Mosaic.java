@@ -171,7 +171,10 @@ public class Mosaic extends DragBox implements ActionListener {
       frame.setTitle(titletext);
 
       if( displayMode.equals("Fluctuation") || displayMode.equals("Multiple Barcharts") ) {
-        bg.setColor(new Color(1.0F, 1.0F, 1.0F, 0.2F));
+        if( !printing )
+          bg.setColor(new Color(1.0F, 1.0F, 1.0F, 0.2F));
+        else
+          bg.setColor(new Color(0.95F, 0.95F, 0.95F, 1.0F));
         for( int i = 0;i < rects.size(); i++) {
           MyRect r = (MyRect)rects.elementAt(i);
           bg.fillRect(r.x, r.y-r.height+r.h, r.width, r.height);
