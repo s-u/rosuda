@@ -67,6 +67,27 @@ public class PoGraSSmeta extends PoGraSS
     public void drawString(String txt, int x, int y) {
 	ct.append("p.drawString(\n\""+txt+"\",\n"+x+",\n"+y+");\n");
     };
+    public void drawString(String txt, int x, int y, int a) {
+	ct.append("p.drawString(\n\""+txt+"\",\n"+x+",\n"+y+",\n"+a+");\n");
+    };
+    public void drawString(String txt, int x, int y, double ax, double ay) {
+	ct.append("p.drawString(\n\""+txt+"\",\n"+x+",\n"+y+",\n"+ax+",\n"+ay+");\n");
+    };
+    public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
+	ct.append("p.drawString(\n\""+txt+"\",\n"+x+",\n"+y+",\n"+ax+",\n"+ay+",\n"+rot+");\n");
+    };
+    public void setFontFace(int face) {
+	ct.append("p.setFontFace(\n"+face+");\n");
+    };
+    public void setOptionalFace(String name) {
+	ct.append("p.setOptionalFace(\n\""+name+"\");\n");
+    };
+    public void setFontSize(int pt) {
+	ct.append("p.setFontSize(\n"+pt+");\n");
+    };
+    public void setFontStyle(int attr) {
+	ct.append("p.setFontStyle(\n"+attr+");\n");
+    };
 
     public void nextLayer() { ct.append("p.nextLayer(\n);\n"); };
 
@@ -81,6 +102,7 @@ public class PoGraSSmeta extends PoGraSS
     {
 	String[] par = new String[16];
 	int[] pari = new int[16];
+	double[] pard = new double[16];
 	int pars=0;
 	
 	StringTokenizer st = new StringTokenizer(s,"\n");
@@ -101,6 +123,9 @@ public class PoGraSSmeta extends PoGraSS
 			    try {
 				pari[pars]=Integer.valueOf(par[pars]).intValue();
 			    } catch(Exception ee) { pari[pars]=0; };
+			    try {
+				pard[pars]=Double.valueOf(par[pars]).doubleValue();
+			    } catch(Exception ee) { pard[pars]=0; };
 			};		    
 			pars++;
 		    };
@@ -156,8 +181,28 @@ public class PoGraSSmeta extends PoGraSS
 		p.setLineWidth(pari[0]);
 	    if(cmd.compareTo("setFillStyle")==0)
 		p.setFillStyle(pari[0]);
-	    if(cmd.compareTo("drawString")==0)
-		p.drawString(par[0],pari[1],pari[2]);
+	    if(cmd.compareTo("drawString")==0) {
+		if (pars==3)
+		    p.drawString(par[0],pari[1],pari[2]);
+		if (pars==4)
+		    p.drawString(par[0],pari[1],pari[2],pari[3]);
+		if (pars==5)
+		    p.drawString(par[0],pari[1],pari[2],pard[3],pard[4]);
+		if (pars==6)
+		    p.drawString(par[0],pari[1],pari[2],pard[3],pard[4],pard[5]);
+	    };
+	    if(cmd.compareTo("setFontFace")==0) {
+		if (pars==1)
+		    p.setFontFace(pari[0]);
+		else
+		    p.setFontFace(pari[0],par[1]);
+	    };
+	    if(cmd.compareTo("setOptionalFace")==0)
+		p.setOptionalFace(par[0]);
+	    if(cmd.compareTo("setFontSize")==0)
+		p.setFontSize(pari[0]);	    
+	    if(cmd.compareTo("setFontStyle")==0)
+		p.setFontStyle(pari[0]);	    
 	    if(cmd.compareTo("begin")==0)
 		p.begin();
 	    if(cmd.compareTo("nextLayer")==0)
@@ -171,4 +216,4 @@ public class PoGraSSmeta extends PoGraSS
     public String getMeta() {
 	return ct.toString();
     };
-};
+}

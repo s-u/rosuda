@@ -25,6 +25,9 @@ class PoGraSSPS extends PoGraSS
     String title;
     String xver=null;
 
+    String lastBaseFont;
+    String italAppendix="Italic", romAppendix="";
+
     public PoGraSSPS(String fnn)
     {
 	lineWidth=1; fillSt=0; inPath=false; outs=null; fn=fnn;
@@ -145,7 +148,20 @@ class PoGraSSPS extends PoGraSS
     };
     public void drawString(String txt, int x, int y) {
 	if (inPath) outPS(" cp s\n"); inPath=false;	
-	outPS((ox+x)+" "+(oy-y)+" m ("+txt+") show\n");
+	outPS("("+txt+") "+(ox+x)+" "+(oy-y)+" sw\n");
+    };
+    public void drawString(String txt, int x, int y, int att) {
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	String cmd="sw";
+	if ((att&TA_MASK_Or)==TA_Right) cmd="swr";
+	if ((att&TA_MASK_Or)==TA_Center) cmd="swc";
+	outPS("("+txt+") "+(ox+x)+" "+(oy-y)+" "+cmd+"\n");
+    };
+
+    // currently ignores rot
+    public void drawString(String txt, int x, int y, double ax, double ay) {
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	outPS(""+(x+ox)+" "+(oy-y)+" "+ax+" "+ay+" ("+txt+") xsw\n");
     };
 
     public void nextLayer() {
@@ -163,7 +179,12 @@ class PoGraSSPS extends PoGraSS
 	if (title!=null) outPS("%%Title: "+title+"\n");
         outPS("%% Created by PoGraSSPS v"+versionString+((xver==null)?"":(", based on input of PoGraSS v"+xver))+"\n");
         outPS("/fp { 4 { pop } repeat } def\n/cp {closepath} def /s {stroke} def /m {moveto} def /l {lineto} def /np {newpath} def\n");
+	outPS("/fe { -1 roll } def\n/xs { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop 4 fe mul exch 4 fe mul 5 fe add exch 4 fe add m show } def\n"); // x y ax ay txt <xs> (no rotation)
+	outPS("/sw { m show } def /swr { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop 3 fe add exch sw } def /swc { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop 0.5 mpl 3 fe add exch sw } def \n"); // shortcuts for l/r/c text outs: txt x y sw[rc]
 	outPS("/Helvetica findfont 10 scalefont setfont\n");
+	lastFontSize=10; lastFontAttr=0; lastFont=FF_SansSerif;
+	lastBaseFont=lastFace="Helvetica";
+	italAppendix="Oblique"; romAppendix="";
     };
     
     public void end() {
@@ -176,4 +197,36 @@ class PoGraSSPS extends PoGraSS
 	    outs=null;
 	};
     };
-};
+    
+    public void setFontFace(int face) {
+	lastBaseFont="Helvetica"; romAppendix=""; italAppendix="Oblique";
+	if (face==FF_Serif) { lastBaseFont="Time"; romAppendix="-Roman"; italAppendix="Italic"; };
+	if (face==FF_Mono) { lastBaseFont="Courier"; };
+	lastFont=face;
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	internal_setFontStyle(lastFontAttr);
+	outPS("/"+lastFace+" findfont "+lastFontSize+" scalefont setfont\n");	
+    };
+    public void setOptionalFace(String name) {
+	/* warning: keep in mind that setting style after setOptionalFace restores
+	   the default font assigned by setFontFace, since in PS style of the font
+	   is given by its name */
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	lastFace=name;
+	outPS("/"+lastFace+" findfont "+lastFontSize+" scalefont setfont\n");
+    };
+    public void setFontSize(int pt) {
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	outPS("/"+lastFace+" findfont "+lastFontSize+" scalefont setfont\n");
+    };
+    void internal_setFontStyle(int attr) {
+	lastFace=lastBaseFont+romAppendix; lastFontAttr=attr;
+	if ((attr&FA_MASK_Type)==FA_Bold) lastFace=lastBaseFont+"-Bold";
+	if ((attr&FA_MASK_Type)==FA_Ital) lastFace=lastBaseFont+"-"+italAppendix;
+    };
+    public void setFontStyle(int attr) {
+	if (inPath) outPS(" cp s\n"); inPath=false;
+	internal_setFontStyle(attr);
+	outPS("/"+lastFace+" findfont "+lastFontSize+" scalefont setfont\n");
+    };
+}

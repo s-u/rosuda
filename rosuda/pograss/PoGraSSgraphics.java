@@ -29,6 +29,8 @@ class PoGraSSgraphics extends PoGraSS
 	g=G;
 	c=new Color[128]; cn=new String[128]; cs=0; fillSt=0; lineWidth=1;
         curFillC=Color.white; curPenC=Color.black; paintLayer=layer;
+	lastFace="SansSerif"; lastFontSize=10; lastFontAttr=Font.PLAIN;
+	lastFont=PoGraSS.FF_SansSerif;
     };
 
     /** construct an instance of {@link PoGraSS} associated with a {@link Graphics}, paint all layers
@@ -72,11 +74,55 @@ class PoGraSSgraphics extends PoGraSS
     public void drawOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) g.drawOval(x,y,rx,ry); };
     public void fillOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) g.fillOval(x,y,rx,ry); };
     public void drawString(String txt, int x, int y) { if (paintLayer==-1 || paintLayer==curLayer) g.drawString(txt,x,y); };
+    public void drawString(String txt, int x, int y, int a) {
+	if (paintLayer==-1 || paintLayer==curLayer) {
+	    if ((a&PoGraSS.TA_MASK_Or)==PoGraSS.TA_Right || (a&PoGraSS.TA_MASK_Or)==PoGraSS.TA_Center) {
+		FontMetrics fm=g.getFontMetrics();
+		int sw=fm.stringWidth(txt);
+		if ((a&PoGraSS.TA_MASK_Or)==PoGraSS.TA_Center)
+		    sw/=2;
+		g.drawString(txt,x-sw,y);
+	    } else
+		g.drawString(txt,x,y);
+	};
+    };
+    public void drawString(String txt, int x, int y, double ax, double ay) {
+	if (paintLayer==-1 || paintLayer==curLayer) {
+	    FontMetrics fm=g.getFontMetrics();
+	    int dx=fm.stringWidth(txt);
+	    int dy=fm.getHeight();
+	    dx=(int)(((double)dx)*ax);
+	    dy=(int)(((double)dy)*ay);
+	    g.drawString(txt,x-dx,y+dy);
+	};
+    }
+
+    public void setFontFace(int face) {
+	lastFace="SansSerif";
+	if (face==PoGraSS.FF_Serif) lastFace="Serif";
+	if (face==PoGraSS.FF_Mono) lastFace="Monospaced";
+	lastFont=face;
+	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+    };
+    public void setOptionalFace(String name) {
+	lastFace=name;
+	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+    };
+    public void setFontSize(int pt) {
+	lastFontSize=pt;
+	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+    }
+    public void setFontStyle(int attr) {
+	lastFontAttr=Font.PLAIN;
+	if ((attr&PoGraSS.FA_Ital)>0) lastFontAttr|=Font.ITALIC;
+	if ((attr&PoGraSS.FA_Bold)>0) lastFontAttr|=Font.BOLD;
+	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+    }
 
     public void nextLayer() {
         curLayer++;
     }
 
-    public void begin() { curLayer=0; };
-    public void end() {};
-};
+    public void begin() { curLayer=0; }
+    public void end() {}
+}
