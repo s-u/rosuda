@@ -27,6 +27,11 @@ public class SVar extends Vector
     public static final int CT_Number = 1;
     public static final int CT_Map    = 8;
     public static final int CT_Tree   = 9;
+
+    /** this value is returned by {@link #atI(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
+    public static int int_NA = 0;
+    /** this value is returned by {@link #atD(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
+    public static double double_NA = Double.NaN;
     
     /** variable name */
     String  name;
@@ -365,9 +370,9 @@ public class SVar extends Vector
     public double getMax() { return max; };
 
     public Object at(int i) { return elementAt(i); };
-    public int atI(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).intValue():0; };
+    public int atI(int i) { return (isnum)?(elementAt(i)==null)?int_NA:((Number)elementAt(i)).intValue():int_NA; };
     public double atF(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
-    public double atD(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
+    public double atD(int i) { return (isnum)?(elementAt(i)==null)?double_NA:((Number)elementAt(i)).doubleValue():double_NA; };
     public String atS(int i) { return (elementAt(i)==null)?null:elementAt(i).toString(); };
     public boolean isMissingAt(int i) { return elementAt(i)==null; };
 
