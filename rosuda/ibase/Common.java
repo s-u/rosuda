@@ -163,15 +163,14 @@ public class Common
 
     /** given mouse event this method determines whether zoom sequence was triggered (mouse button 3 or META on a Mac) */ 
     public static boolean isZoomTrigger(MouseEvent ev) {
-        // no need to check for Mac since button3 is emulated by Meta
-        return (ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK;
+        return isMac?(ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK:(ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK;
     }
     
     /** returns true if the supplied event corresponds to popup query trigger. */
     public static boolean isQueryTrigger(MouseEvent ev) {
         // Query = <ALT> + BUTTON1; since mac emulates B2 we don't impose this on a Mac
         if (!initializedStatic) initStatic();
-        return (ev.isAltDown() && !ev.isControlDown() && (isMac || ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK)));
+        return isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
     }
 
     public static boolean isExtQuery(MouseEvent ev) {
