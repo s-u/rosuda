@@ -175,7 +175,10 @@ int initR(int argc, char **argv)
     
     sprintf(Rversion, "%s.%s", R_MAJOR, R_MINOR);
     if(strcmp(getDLLVersion(), Rversion) != 0) {
-	fprintf(stderr, "Error: R.DLL version does not match (DLL: %s, expecting: %s)\n", getDLLVersion(), Rversion);
+        char msg[512];
+	sprintf(msg, "Error: R.DLL version does not match (DLL: %s, expecting: %s)\n", getDLLVersion(), Rversion);
+	fprintf(stderr, msg);
+	MessageBox(0, msg, "Version mismatch", MB_OK|MB_ICONERROR);
 	return -1;
     }
     
@@ -186,6 +189,7 @@ int initR(int argc, char **argv)
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
 	    RegQueryValueEx(k,"InstallPath",0,&t,RHome,&s)!=ERROR_SUCCESS) {
 	    fprintf(stderr, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n");
+	    MessageBox(0, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n", "Can't find R home", MB_OK|MB_ICONERROR);
 	    return -2;
 	};
 	sprintf(rhb,"R_HOME=%s",RHome);
