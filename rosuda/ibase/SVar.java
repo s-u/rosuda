@@ -68,6 +68,9 @@ public abstract class SVar extends Notifier
     /** if <code>false</code> then ranks are not cached */
     public boolean cacheRanks=true;
 
+    /** this attribute can be used by external code to store temporary information (tags) - it may not used by SVar or its subclasses. This attribute should not be used in environments that use SVar across multiple threads. */ 
+    public int tag=0;
+    
     /** permutation of categories */
     protected SCatSequence seq=null;
 
