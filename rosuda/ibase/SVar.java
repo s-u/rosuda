@@ -21,6 +21,7 @@ public class SVar extends Vector
     public static final int CT_String = 0;
     public static final int CT_Number = 1;
     public static final int CT_Map    = 8;
+    public static final int CT_Tree   = 9;
     
     /** variable name */
     String  name;
