@@ -53,6 +53,9 @@ public class SNode extends Node implements Cloneable
     /** value of the split condition as string */
     double splitValF;
 
+    /** associated frame */
+    TFrame frame;
+    
     /** user definable temporary variable */
     int tmp;
 

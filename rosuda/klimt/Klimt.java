@@ -12,6 +12,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+/*SWING*/
+import javax.swing.*;
+/*ENDSWING*/
 
 //---------------------------------------------------------------------------
 // InTr
@@ -96,8 +99,10 @@ public class InTr
     };
 
     public static SNode openTreeFile(Frame f,String fn,SVarSet tvs) {
-        return openTreeFile(f,fn,tvs,false);
+        return openTreeFile(f,fn,tvs,false,true);
     }
+
+    public static String lastUsedDir=null;
     
     /** loads a dataset and a tree from a file.
 	@param f frame to be used for FileDialog if necessary
@@ -105,17 +110,64 @@ public class InTr
 	@param tvs {@link SVarSet} object to be used for storage of the dataset.
         @param readOnlyDataset if set to <code>true</code> then tvs is not modified except for classifier
 	@return root node of the tree or <code>null</code> if no tree was present. This methods returns <code>null</code> even if the dataset was loaded correcly and no tree was present. Total failure to process the file can be determined only by using clean dataset and check for size of the dataset after the call. */	
-    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs,boolean readOnlyDataset)
+    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs,boolean readOnlyDataset,boolean createFrames)
     {
 	SNode t=null;	
 	String fnam=fn;
 	try {
 	    lastTreeFileName=fnam;
 	    if (fnam==null) {
-		FileDialog fd=new FileDialog(f,"Select data and tree file");
+/*SWING*/
+                if (Common.useSwing && tvs!=null && tvs.count()>0) {
+                    JFileChooser chooser=null;
+                    if (lastUsedDir!=null)
+                        chooser=new JFileChooser(new File(lastUsedDir));
+                    else
+                        chooser = new JFileChooser();
+                    chooser.setDialogTitle((tvs==null||tvs.count()==0)?"Select dataset file":"Select tree file(s)");
+                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    chooser.setMultiSelectionEnabled(true);
+                    int returnVal = chooser.showOpenDialog(f);
+                    if(returnVal == JFileChooser.APPROVE_OPTION) {
+                        File fs[]=chooser.getSelectedFiles();
+                        if (fs!=null && fs.length>0) {
+                            int fi=0;
+                            while (fi<fs.length) {
+                                BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fs[fi])));
+                                long fsz=0;
+                                try {
+                                    fsz=fs[fi].length();
+                                } catch(Exception e) {};
+                                t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
+                                if (t!=null && tvs!=null) {
+                                    TFrame ff=null;
+                                    if (createFrames) {
+                                        t.frame=ff=new TFrame(fs[fi].getName());
+                                        TreeCanvas tc=InTr.newTreeDisplay(t,ff);
+                                        tc.repaint(); tc.redesignNodes();                                        
+                                    }
+                                    tvs.registerTree(t,fs[fi].getName());
+                                };
+                                fi++;
+                            }
+                        }
+                    }
+                    String wars=Common.getWarnings();
+                    if (wars!=null) {
+                        HelpFrame hf=new HelpFrame();
+                        hf.t.setText("Following warnings were produced during dataset import:\n\n"+wars);
+                        hf.setTitle("Load warnings");
+                        //hf.setModal(true);
+                        hf.show();
+                    };
+                    return t;
+                };
+/*ENDSWING*/
+                FileDialog fd=new FileDialog(f,"Select data and tree file");
 		fd.setModal(true);
 		fd.show();
 		fnam=fd.getDirectory()+fd.getFile();
+                lastUsedDir=fd.getDirectory();
 		if (fd.getFile()!=null)
 		    tvs.setName(lastTreeFileName=fd.getFile());
 		else
@@ -250,4 +302,5 @@ public class InTr
 	    t.devGain=myDev;
 	};
     };
-};
+    };
+    

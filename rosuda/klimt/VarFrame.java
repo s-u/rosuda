@@ -172,7 +172,7 @@ public class VarFrame extends TFrame {
 		    if (svar>=0) selMask[svar]=!selMask[svar];
 		    repaint();
 		} else {
-		    for(int i=0;i<vs.count();i++) selMask[i]=false;
+		    for(int i=0;i<selMask.length;i++) selMask[i]=false;
 		    if (svar>=0) selMask[svar]=true;
 		    repaint();
 		};
@@ -306,12 +306,8 @@ public class VarFrame extends TFrame {
 		System.exit(0);
 	    };
 	    if (cmd==1) { // Open tree
-		SNode t=InTr.openTreeFile(Common.mainFrame,null,vs,true);
+		SNode t=InTr.openTreeFile(Common.mainFrame,null,vs,true,true);
 		if (t!=null) {
-		    TFrame f=new TFrame(InTr.lastTreeFileName);
-		    TreeCanvas tc=InTr.newTreeDisplay(t,f);
-		    tc.repaint(); tc.redesignNodes();		
-		    //InTr.newVarDisplay(tvs);
                     vc.getVars();
                     vc.repaint();
 		};    

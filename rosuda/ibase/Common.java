@@ -15,6 +15,9 @@ public class Common
      *  (like closing windows etc.). Any window is free to use it. */
     public static WindowListener defaultWindowListener=null;
 
+    /** use Swing classes */
+    public static boolean useSwing=true;
+    
     /** application version */
     public static String Version="0.96b";
     /** application release */
@@ -55,7 +58,7 @@ public class Common
     public static boolean isQueryTrigger(MouseEvent ev) {
         /* this one prevents the use of <ctrl><shift>-select on Mac, so we drop the other button
            return ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0; */
-        return ev.isAltDown() || ev.isPopupTrigger();
+        return ev.isAltDown() /*|| ev.isPopupTrigger()*/;
     }
     
     /** add an application warning/error */
