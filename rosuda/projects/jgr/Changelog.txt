@@ -1,0 +1,13 @@
+2005-01-22
+- fixed: no helpagent in comments
+- added: commandline options (not for windows)
+- added: useHelpAgent in editor and/or console preferences
+
+JGR 1.1
+- Set Working Directory
+- Save Console Output
+- Find in Console
+- Drag and Drop
+- Helppage titles
+- Save Data from Object Browser
+- added "datasets" to default packages
