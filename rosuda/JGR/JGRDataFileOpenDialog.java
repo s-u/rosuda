@@ -30,8 +30,8 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
     private JCheckBox header = new JCheckBox("Header",true);
     private JCheckBox attach = new JCheckBox("Attach",false);
 	
-	private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"Default","\\t",",",";","|","Others..."});
-    private String[] seps = new String[] {" ","\\t",",",";","|"};
+	private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"\\t","\\w",",",";","|","Others..."});
+    private String[] seps = new String[] {"\\t","",",",";","|"};
 	
     private JComboBoxExt quoteBox = new JComboBoxExt(new String[] {"Default","\\\"","\\'","Others..."});
 	private String[] quotes = new String[] {""};
@@ -125,7 +125,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			else useQuote = quotes[quoteBox.getSelectedIndex()];
 			
 			String cmd = dataName.getText().trim().replaceAll("\\s","")+ "<- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
-			JGR.MAINRCONSOLE.execute(cmd);
+			JGR.MAINRCONSOLE.execute(cmd,true);
 		}
 	}
 

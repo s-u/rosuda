@@ -26,13 +26,13 @@ import org.rosuda.JGR.toolkit.*;
 public class JGRDataFileSaveDialog extends JFileChooser implements ActionListener, ItemListener {
 
     private JCheckBox append = new JCheckBox("append",false);
-    private JCheckBox quote = new JCheckBox("quote",true);
+    private JCheckBox quote = new JCheckBox("quote",false);
 	
 	private JButton ok = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
 	
-    private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"Default","\\t",",",";","|","Others..."});
-    private String[] seps = new String[] {" ","\\t",",",";","|"};
+    private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"\\t","blank",",",";","|","Others..."});
+    private String[] seps = new String[] {"\\t"," ",",",";","|"};
     
     private String data;
 	
@@ -97,7 +97,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 			else useSep = seps[sepsBox.getSelectedIndex()];
 			
 			String cmd = "write.table("+data+",\""+file.replace('\\','/')+"\",append="+(append.isSelected()?"T":"F")+",quote="+(quote.isSelected()?"T":"F")+",sep=\""+useSep+"\")";
-			JGR.MAINRCONSOLE.execute(cmd);
+			JGR.MAINRCONSOLE.execute(cmd,true);
 		}
 	}
 
