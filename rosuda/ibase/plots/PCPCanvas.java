@@ -90,16 +90,18 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!isResidPlot) EzMenu.getItem(f,"toggle0.5").setEnabled(false);
-    };
+        EzMenu.getItem(getFrame(),"XrangeDlg").setEnabled(false);
+    }
 
     public void setCommonScale(boolean cs) {
 	if (cs==commonScale) return;
 	commonScale=cs;
         EzMenu.getItem(getFrame(),"common").setLabel(cs?"Individual scales":"Common scale");
+        EzMenu.getItem(getFrame(),"YrangeDlg").setEnabled(cs);
 	if (cs) {
 	    A[1].setValueRange(totMin,totMax-totMin);
 	    //TODO: notify!
@@ -379,6 +381,39 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         if (cmd=="togglePts") { drawPoints=!drawPoints; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleDrop") { dropColor=!dropColor; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
+        if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
+            int rt=(cmd=="YrangeDlg")?1:0;
+            Dialog d=intDlg=new Dialog(myFrame,(rt==1)?"Y range":"X range",true);
+            IDlgCL ic=new IDlgCL(this);
+            d.setBackground(Color.white);
+            d.setLayout(new BorderLayout());
+            d.add(new SpacingPanel(),BorderLayout.WEST);
+            d.add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+            d.add(bp,BorderLayout.SOUTH);
+            d.add(new Label(" "),BorderLayout.NORTH);
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            d.add(cp);
+            cp.add(new Label("start: "));
+            TextField tw=new TextField(""+A[rt].vBegin,6);
+            TextField th=new TextField(""+(A[rt].vBegin+A[rt].vLen),6);
+            cp.add(tw);
+            cp.add(new Label(", end: "));
+            cp.add(th);
+            d.pack();
+            b.addActionListener(ic);b2.addActionListener(ic);
+            d.setVisible(true);
+            if (!cancel) {
+                double w=Tools.parseDouble(tw.getText());
+                double h=Tools.parseDouble(th.getText());
+                A[rt].setValueRange(w,h-w);
+                setUpdateRoot(0);
+                repaint();
+            }
+            d.dispose();
+        }
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
