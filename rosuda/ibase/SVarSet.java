@@ -80,6 +80,17 @@ public class SVarSet {
       vars.insertElementAt(v,index);
     };
 
+   /** move a variable's to a new index
+       @param from from index
+       @param to to index
+   /* added 24.02.04 MH */
+   public void move(int from, int to) {
+       SVar v1 = (SVar) vars.elementAt(from);
+       vars.remove(from);
+       vars.add(to,v1);
+   }
+
+
     /** removes a variable of the dataset at specified index
         @param index index
         @return boolean false if remove fails els true
@@ -99,7 +110,7 @@ public class SVarSet {
       }
       return true;
     }
-    
+
     /* added 28.12.03 MH */
     /** delete a case of the set
      *         @param index index*/
@@ -174,18 +185,18 @@ public class SVarSet {
         @param r_off r_off search from this case(y) on
         @return coord coord */
     public int[] whereis(Object o, int c_off, int r_off) {
-      int[] index = {-1,-1};
-      for (int i = r_off; i < at(0).size(); i++) {
-        for (int z = c_off!=0?c_off:0; z < vars.size(); z++) {
-          if (at(z).at(i) != null && at(z).at(i).toString().toLowerCase().indexOf(o.toString().toLowerCase()) != -1) {
-            index[0] = z;
-            index[1] = i;
-            return index;
-          }
+        int[] index = {-1,-1};
+        for (int i = r_off; i < at(0).size(); i++) {
+            for (int z = c_off!=0?c_off:0; z < vars.size(); z++) {
+                if (at(z).at(i) != null && at(z).at(i).toString().toLowerCase().indexOf(o.toString().toLowerCase()) != -1) {
+                    index[0] = z;
+                    index[1] = i;
+                    return index;
+                }
+            }
+            c_off = 0;
         }
-        c_off = 0;
-      }
-      return index;
+        return index;
     }
 
     /** returns enumeration of all variable objects in this dataset
