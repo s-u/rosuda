@@ -213,6 +213,18 @@ public class Klimt
             System.out.println("Klimt.openTreeFile("+f+","+fn+","+dr+","+readOnlyDataset+","+createFrames+")");
         SVarSet tvs=dr.getDataSet();
         TreeRegistry tr=dr.getTreeRegistry();
+		if (fn.substring(fn.length()-4).equals(".flf")) {
+			try {
+				LoaderFLF l = new LoaderFLF();
+				l.load(new File(fn), tvs);
+				if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
+					tvs.setMarker(new SMarker(tvs.at(0).size()));
+				return null;
+			} catch (Exception flfe) {
+			}
+			return null;
+		}
+		
         SNode t=null;	
 	String fnam=fn;
 	try {
