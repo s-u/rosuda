@@ -16,6 +16,7 @@ import java.io.PrintStream;
                     backwards compatibility is provided by the {@link #jointColors} flag.
        b            added setColor(Color) for compatibility with Graphics
     0.97: (1.12)    added nextObject(...) - allows creation of structures in the plot
+           1.13     switched font size from int to double; added font defaults
 
     @version $Id$
 */
@@ -23,9 +24,9 @@ public class PoGraSS
 {
     int boundsWidth, boundsHeight, boundsX, boundsY;
     int fillStyle, lineWidth;
-    int lastFont;
-    int lastFontSize;
-    int lastFontAttr;
+    int lastFont=1;
+    double lastFontSize=10.0;
+    int lastFontAttr=0;
     String lastFace;
     
     /** if set to <code>true</code> the pen and brush colors are not distinguished,
@@ -159,7 +160,7 @@ public class PoGraSS
     public void setOptionalFace(String name) {};
     /** just a shortcut for a sequence of setFontFace(face); setOptionalFace(name); */
     public void setFontFace(int face, String name) { setFontFace(face); setOptionalFace(name); }
-    public void setFontSize(int pt) {}
+    public void setFontSize(double pt) { lastFontSize=pt; }
     public void setFontStyle(int attr) {}
 
     // 0.97-beta experimental methods - they are NOT in the standard yet
