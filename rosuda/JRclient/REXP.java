@@ -64,6 +64,18 @@ public class REXP extends Object {
 	Xt=t; cont=o; attr=at;
     }
 
+    /** construct a new xpression of type XT_ARRAY_DOUBLE and content val
+        @param val array of doubles to store in the REXP */
+    public REXP(double[] val) {
+        this(XT_ARRAY_DOUBLE,val);
+    }
+
+    /** construct a new xpression of type XT_ARRAY_INT and content val
+        @param val array of integers to store in the REXP */
+    public REXP(int[] val) {
+        this(XT_ARRAY_INT,val);
+    }
+    
     /** get attribute of the REXP. In R every object can have attached attribute xpression. Some more complex structures such as classes are built that way.
         @return attribute xpression or <code>null</code> if there is none associated */
     public REXP getAttribute() {
