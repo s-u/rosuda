@@ -51,7 +51,8 @@ public class JGR {
         MAINRCONSOLE.progress.start("Starting R");
         MAINRCONSOLE.setWorking(true);
         splash.stop();
-        R=new Rengine(null,true,MAINRCONSOLE); //JGR.MAINRCONSOLE);
+        String[] args={"--save"};
+        R=new Rengine(args,true,MAINRCONSOLE); //JGR.MAINRCONSOLE);
         System.out.println("Rengine created, waiting for R");
         if (!R.waitForR()) {
             System.out.println("Cannot load R");
