@@ -82,6 +82,17 @@ public class PGSCanvas extends LayerCanvas implements Commander {
 		outs=null;
 	    };
 	};
+        if (cmd=="exportPDF") {
+            PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as PDF to ...","output.pdf");
+            if (outs!=null) {
+                PoGraSSPDF p=new PoGraSSPDF(outs);
+                p.setTitle(desc);
+                paintPoGraSS(p);
+                p=null;
+                outs.close();
+                outs=null;
+            };
+        };
         if (cmd=="exportSVG") {
             boolean svgExtensionPresent=false;
             try {
