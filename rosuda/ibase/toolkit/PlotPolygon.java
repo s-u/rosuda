@@ -27,6 +27,8 @@ public class PlotPolygon extends PlotObject {
         @param yy Y coordinates of the points
         */
     public void set(double[] xx, double[] yy) {
+        if (Common.DEBUG>0)
+            System.out.println("["+toString()+"] set(x[],y[]): "+xx+"/"+yy);
         x=xx; y=yy; recalc();
     }
 
@@ -66,8 +68,8 @@ public class PlotPolygon extends PlotObject {
     public double[] getY() { return y; }
 
     public String toString() {
-	return "PlotPolygon(co="+coordX+":"+coordY+
+	return "PlotPolygon(coord="+coordX+":"+coordY+
 	",dc="+((cold==null)?"none":cold.toString())+
-        ",fc="+((colf==null)?"none":colf.toString())+",points="+((dx==null)?"none":(""+dx.length))+")";
+        ",fc="+((colf==null)?"none":colf.toString())+",points="+((dx==null)?"none":(""+dx.length))+",visible="+visible+")";
     }
 }

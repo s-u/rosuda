@@ -58,7 +58,11 @@ public class PlotObject {
     public boolean isVisible() { return visible; }
     /** set visibility. if set to <code>false</code> the object won't be painted
         */
-    public void setVisible(boolean vis) { visible=vis; }
+    public void setVisible(boolean vis) {
+        if (Common.DEBUG>0)
+            System.out.println("Setting visibility to \""+vis+"\", was "+visible+" ["+toString()+"]");
+        visible=vis;
+    }
     /** set a common coordinate system for both axes (see CS_xxx constants for details)
         @param ct coordinate system specification - one of the CS_xxx constants */
     public void setCoordinates(int ct) { coordX=coordY=ct; };
@@ -109,6 +113,8 @@ public class PlotObject {
 
     /** causes the entire plot object system to be updated (redraws only the layer of this object and above). by default is simply calls the {@link PlotManager.update()} method with the layer of the object. */
     public void update() {
+        if (Common.DEBUG>0)
+            System.out.println("["+toString()+"] initiated update at layer "+layer);
         pm.update(layer);
     }
 
