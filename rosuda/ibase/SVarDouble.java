@@ -17,7 +17,7 @@ import org.rosuda.util.*;
 public class SVarDouble extends SVar
 {
     /** the actual content */
-    double[] cont;
+    public double[] cont;
 
     /** insertion point for add */
     int insertPos=0;

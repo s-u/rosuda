@@ -20,9 +20,9 @@ import org.rosuda.util.*;
  */
 public class SVarFact extends SVar
 {
-    int[] cont;
+    public int[] cont;
     int[] temp;
-    String[] cats;
+    public String[] cats;
     String[] tempcats;
     int[] ccnts;
 
