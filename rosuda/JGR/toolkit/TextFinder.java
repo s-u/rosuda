@@ -106,11 +106,11 @@ public class TextFinder extends JDialog implements ActionListener {
     private void find() {
         if (searchArea == null) return;
         searchArea.requestFocus();
-        if (keyWord != null && !keyWord.equals(keyWordField.getText().trim())) {
+        if (keyWord != null && !keyWord.equals(keyWordField.getText().toLowerCase().trim())) {
             position = -1;
             found = false;
         }
-        keyWord = keyWordField.getText().trim().toLowerCase();
+        keyWord = keyWordField.getText().toLowerCase().trim();
         if (!keyWord.equals("")) {
             position = searchArea.getText().toLowerCase().indexOf(keyWord, position + 1);
             if (position == -1) {
