@@ -3,7 +3,7 @@
 
 # please uncomment the platform you use
 
-#include Makefile.win
+include Makefile.win
 #include Makefile.linux
 #include Makefile.osx
 
@@ -22,8 +22,9 @@ JAVAH=$(JAVAB)h
 
 RINC=-I$(RHOME)/src/include -I$(RHOME)/include
 RLD=-L$(RHOME)/bin -lR
+CFLAGS+=-Iinclude -Isrc/include
 
-TARGETS=libjri$(JNISO) rtest.class run
+TARGETS=$(JNIPREFIX)jri$(JNISO) rtest.class run
 
 all: $(TARGETS)
 
@@ -51,8 +52,8 @@ src/jri$(JNISO): src/Rengine.o src/jri.o src/Rcallbacks.o src/Rinit.o src/global
 libjvm.dll.a: jvm.def
 	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
 
-libjri$(JNISO): src/jri$(JNISO)
-	ln -sf $^ $@
+$(JNIPREFIX)jri$(JNISO): src/jri$(JNISO)
+	cp $^ $@
 
 org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: Rengine.java REXP.java Mutex.java RMainLoopCallbacks.java
 	$(JAVAC) -d . $^
