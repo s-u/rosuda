@@ -70,7 +70,6 @@ public class Rengine extends Thread {
             try {
                 RGui.MAINRCONSOLE.output.append(text,Preferences.RESULT);
                 RGui.MAINRCONSOLE.output.setCaretPosition(RGui.MAINRCONSOLE.output.getText().length());
-                RGui.MAINRCONSOLE.setWorking(false);
             } catch (Exception e) { e.printStackTrace();}
         }
         else System.out.println("R> "+text);
@@ -83,6 +82,7 @@ public class Rengine extends Thread {
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
+        RGui.READY = true;
         if (RGui.MAINRCONSOLE != null) {
             return RGui.RCSync.waitForNotification()+"\n";
         }
