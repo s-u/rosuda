@@ -227,7 +227,7 @@ public class HistCanvas extends BaseCanvas
         if (pp!=null && pp[i]!=null && pp[i].ref!=null) {
             int mark=(int)(((double) pp[i].ref.length)*pp[i].getMarkedProportion(m,-1)+0.5);
             double la=ax.vBegin+binw*i;
-            return "Interval: ["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\nCounts: "+mark+" of "+pp[i].ref.length+" selected";
+            return "["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\n"+mark+" of "+pp[i].ref.length+" selected";
         };
         return "N/A";
     }
