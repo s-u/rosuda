@@ -106,6 +106,9 @@ public class Framework {
 
     /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
         the new content cannot exceed the original size of the variable, no cases are added.
+        @param vi ID of the variable
+        @param d new content
+        @return variable ID (same as vi) */
     public int replaceVar(int vi, double[] d) {
 	SVar v=cvs.at(vi);
 	if (v==null) return -1;
@@ -115,6 +118,11 @@ public class Framework {
 	return vi;
     };
 
+    /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
+        the new content cannot exceed the original size of the variable, no cases are added.
+        @param vi ID of the variable
+        @param d new content
+        @return variable ID (same as vi) */
     public int replaceVar(int vi, int[] d) {
 	SVar v=cvs.at(vi);
 	if (v==null) return -1;
@@ -124,14 +132,26 @@ public class Framework {
 	return vi;
     };
 
+    /** updates any plots associated with the current dataset by sending NM_VarContentChange message */
     public void update() {
 	SMarker m=cvs.getMarker();
 	if (m!=null) m.NotifyAll(new NotifyMsg(m,Common.NM_VarContentChange));
     };
 
+    /** get variable object associated with an ID in current dataset
+        @param i variable ID
+        @return variable object or <code>null</code> if ID is invalid */
     public SVar getVar(int i) { return cvs.at(i); };
+
+    /** get first variable object associated with a name in current dataset
+        @param i variable name
+        @return variable object or <code>null</code> if var of that name doesn't exist */
     public SVar getVar(String name) { return cvs.byName(name); };
 
+    /** display a new scatterplot of two variables from current dataset
+        @param v1 X-axis variable
+        @param v2 Y-axis variable
+        @return scatterplot canvas object */
     public ScatterCanvas newScatterplot(int v1, int v2) { return newScatterplot(cvs,v1,v2); }
     public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
 	if (vs.getMarker()==null)
@@ -170,6 +190,9 @@ public class Framework {
 	return sc;
     };
 
+    /** display a new histogram of a variables from current dataset
+        @param v variable ID
+        @return histogram canvas object */
     public HistCanvas newHistogram(int v) { return newHistogram(cvs,v); };
     public HistCanvas newHistogram(SVarSet vs, int i) {
 	if (vs.getMarker()==null)
@@ -184,7 +207,9 @@ public class Framework {
 	f.add(hc); f.pack(); f.show();
 	return hc;
     };
-    
+
+    /** display a new variables frame
+        @return variable frame object */
     public VarFrame newVarFrame() { return newVarFrame(cvs); };
     public VarFrame newVarFrame(SVarSet v) {
 	VarFrame vf=new VarFrame(v,10,10,150,400);
