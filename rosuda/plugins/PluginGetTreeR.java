@@ -22,6 +22,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     String lib="tree";
 
     boolean useAll=true;
+    boolean registerPar=true;
     
     PluginManager pm=null;
     
@@ -48,6 +49,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         if (par=="treeLibrary") lib=(String)val;
         if (par=="formula") formula=(String)val;
         if (par=="treeOptions") treeOpt=(String)val;
+        if (par=="registerTree") registerPar=((Boolean)val).booleanValue();
     }
     public Object getParameter(String par) {
         if (par=="root" || par=="tree") return root;
@@ -58,6 +60,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         if (par=="selectedOnly") return new Boolean(!useAll);
         if (par=="formula") return formula;
         if (par=="treeOptions") return treeOpt;
+        if (par=="registerTree") return new Boolean(registerPar);
         return null;
     }
 
@@ -311,7 +314,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 return false;
             } else {
                 BufferedReader br=new BufferedReader(new FileReader("PluginInit.out"));
-                root=RTree.Load(br,"GrownTree",vs,0,"[1] TREE","[1] END",true);
+                root=RTree.Load(br,"GrownTree",vs,0,"[1] TREE","[1] END",true,registerPar);
                 if (root!=null) {
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());

@@ -157,7 +157,7 @@ public class InTr
                                 try {
                                     fsz=fs[fi].length();
                                 } catch(Exception e) {};
-                                t=RTree.Load(r,fs[fi].getName(),tvs,fsz,null,null,readOnlyDataset);
+                                t=RTree.Load(r,fs[fi].getName(),tvs,fsz,null,null,readOnlyDataset,true);
                                 if (t!=null && tvs!=null) {
                                     TFrame ff=null;
                                     t.name=fs[fi].getName();
@@ -203,7 +203,7 @@ public class InTr
                 fnn=fil.getName();
                 fsz=fil.length();
             } catch(Exception e) {};
-            t=RTree.Load(r,fnn,tvs,fsz,null,null,readOnlyDataset);
+            t=RTree.Load(r,fnn,tvs,fsz,null,null,readOnlyDataset,true);
             if (t!=null) t.name=fnn;
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
