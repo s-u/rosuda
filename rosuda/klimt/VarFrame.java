@@ -57,13 +57,13 @@ public class VarFrame extends TFrame {
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
-            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-",
+            String myMenu[]={"+","File","@OOpen dataset ...","openData","@?Open tree ...","openTree","-",
                 "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
                 "Export forest ...","exportForest","Display Forest","displayForest","~File.Quit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
-                "Parallel coord. plot","PCP","Hammock plot","hammock",
+                "Parallel coord. plot","PCP","Hammock plot","hammock","Misclass. plot","xMCP",
                 "Series plot","lineplot","Series plot with index","lineplot2","Kaplan-Meier plot","kmplot","-","Map","map",
                 "-","TFP (exp!)","tfplot",
                 //"+","Tools","Grow tree ...","growTree",
@@ -663,6 +663,34 @@ public class VarFrame extends TFrame {
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
+                    f.initPlacement();
+                }
+            }
+            if (cmd=="xMCP") { // eXperimental MCP
+                int i,j=0,tsel=0;
+                TreeRegistry tr = new TreeRegistry();
+                for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isCat()) tsel++;
+                if (tsel>1) {
+                    SVar[] vl=new SVar[tsel];
+                    for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isCat()) {
+                        vl[j]=vs.at(i); j++;
+                    };
+                    i=0;
+                    while (i<tsel-1) {
+                        SNode n = new SNode();
+                        RootInfo ri = n.getRootInfo();
+                        ri.name = vl[i].getName();
+                        ri.prediction = vl[i];
+                        ri.response = vl[tsel-1];
+                        tr.registerTree(n, ri.name);
+                        i++;
+                    };
+                    
+                    TFrame f=new TFrame("Misclassification plot",TFrame.clsMCP);
+                    MCPCanvas dc=new MCPCanvas(f,tr,vs.getMarker());
+                    f.add(dc); f.addWindowListener(Common.getDefaultWindowListener());
+                    dc.setBounds(0,0,400,300);
+                    f.pack(); f.setVisible(true);
                     f.initPlacement();
                 }
             }
