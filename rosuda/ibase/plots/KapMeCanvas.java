@@ -19,6 +19,8 @@ public class KapMeCanvas extends BaseCanvas
 
     double[] kmX, kmY, kmC;
 
+    int filter[]=null;
+    
     public boolean showCounts=true;
     
     public int calcKM(int[] ranks) {
@@ -119,6 +121,8 @@ public class KapMeCanvas extends BaseCanvas
         g.defineColor("invMark",scc[0],scc[1],scc[2],0.3f);
         g.defineColor("counts",0f,0f,0f,0.2f);
         g.defineColor("countsMark",scc[0],scc[1],scc[2],0.2f);
+        g.defineColor("countsShadow",0f,0f,0f,0.1f);
+        g.defineColor("backShadow",0f,0f,0.5f,0.3f);
     }
 
     public void paintCounts(PoGraSS g, double weight) {
@@ -138,17 +142,58 @@ public class KapMeCanvas extends BaseCanvas
     public void paintBack(PoGraSS g) {
         if (kmX==null) return;
 
-        g.setColor("counts");
-        paintCounts(g,1.0);
-        g.setColor("back");
-        paintKM(g);
+        if (filter==null) { // no filter=everything is cached
+            g.setColor("counts");
+            paintCounts(g,1.0);
+            g.setColor("back");
+            paintKM(g);
+        } else { // with filter we have to re-build KM
+            g.setColor("countsShadow");
+            paintCounts(g,1.0);
+            g.setColor("backShadow");
+            paintKM(g);
+
+            int[] map = new int[vTime.size()];
+            int i=0;
+            while (i<filter.length) { map[filter[i++]]=-2; }
+            int[] fullRanks = vTime.getRanked();
+            int[] tRanks = SVar.filterRanksByMap(fullRanks, map, -2);
+
+            double[] sX=kmX;
+            double[] sY=kmY;
+            double[] sC=kmC;
+            if (tRanks==null || tRanks.length<2) return;
+            calcKM(tRanks);
+            g.setColor("counts");
+            paintCounts(g,((double)tRanks.length/((double)vTime.size())));
+            g.setColor("back");
+            paintKM(g);
+            kmX=sX;
+            kmY=sY;
+            kmC=sC;
+        }
     }
 
+    public void setFilter(int[] filter) {
+        this.filter=filter;
+        setUpdateRoot(0);
+        repaint();
+    }
+    
     public void paintSelected(PoGraSS g) {
         double[] sX=kmX;
         double[] sY=kmY;
         double[] sC=kmC;
-        int[] tRanks = vTime.getRanked(m,-1);
+        int[] fullRanks = vTime.getRanked();
+        int[] map = m.getMaskCopy(SMarker.MASK_PRIMARY);
+        int delta = 0;
+        if (filter!=null) {
+            int i=0;
+            while (i<filter.length) { map[filter[i++]]+=2; }
+            delta=2;
+        }
+            
+        int[] tRanks = SVar.filterRanksByMap(fullRanks, map, -1+delta);
         if (tRanks==null || tRanks.length<2) return;
         calcKM(tRanks);
         g.setColor("countsMark");
@@ -159,7 +204,7 @@ public class KapMeCanvas extends BaseCanvas
         kmY=sY;
         kmC=sC;
 
-        tRanks = vTime.getRanked(m,0);
+        tRanks = SVar.filterRanksByMap(fullRanks, map, delta);
         if (tRanks==null || tRanks.length<2) return;
         calcKM(tRanks);
         g.setColor("invMark");
