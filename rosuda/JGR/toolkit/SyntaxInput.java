@@ -221,7 +221,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 funHelpTip = null;
             }
         }
-        if (ke.getKeyCode() != KeyEvent.VK_ESCAPE && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
+        if (ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
