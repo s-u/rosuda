@@ -103,7 +103,14 @@ public class Rengine extends Thread {
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
-        return (callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
+        Rsync.unlock();
+        String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
+        if (!Rsync.safeLock()) {
+            String es="\n>>JRI Warning: jriReadConsole detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
+            jriWriteConsole(es);
+            System.err.print(es);
+        }
+        return s;
     }
 
     public void jriShowMessage(String message)
@@ -116,13 +123,24 @@ public class Rengine extends Thread {
 
     
     public synchronized REXP eval(String s) {
-        long pr=rniParse(s, 1);
-        if (pr>0) {
-            long er=rniEval(pr, 0);
-            if (er>0) {
-                REXP x=new REXP(this, er);
-                return x;
+        boolean obtainedLock=Rsync.safeLock();
+        try {
+            if (!obtainedLock) {
+                String es="\n>>JRI Warning: eval(\""+s+"\") detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
+                jriWriteConsole(es);
+                System.err.print(es);
             }
+            long pr=rniParse(s, 1);
+            if (pr>0) {
+                long er=rniEval(pr, 0);
+                if (er>0) {
+                    REXP x=new REXP(this, er);
+                    Rsync.unlock();
+                    return x;
+                }
+            }
+        } finally {
+            Rsync.unlock();
         }
         return null;
     }
