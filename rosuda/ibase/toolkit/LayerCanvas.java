@@ -93,9 +93,11 @@ public abstract class LayerCanvas extends Canvas
         // clear the image
         if (firstPaintLayer==0) { // total repaint, i.e. clear the layer 0 also
             offgc = offscreen[0].getGraphics();
-            offgc.setColor(getBackground());
+            Color bg=getBackground();
+            offgc.setColor(bg==null?Color.white:bg);
             offgc.fillRect(0, 0, d.width, d.height);
-            offgc.setColor(getForeground());
+            Color fg=getForeground();
+            offgc.setColor(fg==null?Color.black:fg);
             if (Common.DEBUG>1) sw.profile("LayerCanvas.update.clearLayer0");
         }
 
