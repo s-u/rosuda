@@ -2,6 +2,7 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
 import java.io.*;
+import javax.swing.*;
 
 import org.rosuda.ibase.*;
 
@@ -9,12 +10,12 @@ import org.rosuda.ibase.*;
     @version $Id$
 */
 public class TextPager extends iFrame {
-    TextArea t;
+    JTextArea t;
     
     public TextPager(String file, String header, String title, boolean deleteFile) {
 	super(title,clsHelp);
-	t=new TextArea();
-	getContentPane().add(t);
+	t=new JTextArea();
+	getContentPane().add(new JScrollPane(t));
         t.setEditable(false); t.setFont(new Font("Monospaced",Font.PLAIN,10));
         FontTracker.current.add(t);
 	t.setBackground(Color.white);
