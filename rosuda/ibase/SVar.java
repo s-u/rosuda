@@ -206,7 +206,9 @@ public abstract class SVar extends Notifier
 
     /** replaces an element at specified position
         @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
-    public abstract boolean replace(int i, Object o);
+    public abstract boolean replace(Object o, int index);
+    public boolean replace(double d, int index) { return replace(new Double(d), index); }
+    public boolean replace(int i, int index) { return replace(new Integer(i), index); }
 
     public double getMin() { return min; }
     public double getMax() { return max; }
