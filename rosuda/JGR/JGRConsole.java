@@ -99,7 +99,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 super.componentResized(evt);
-                if (JGR.R != null) JGR.R.eval("options(width="+getFontWidth()+")");
+                if (JGR.R != null && JGR.STARTED) JGR.R.eval("options(width="+getFontWidth()+")");
                 consolePanel.setDividerLocation( ( (int) ( (double) getHeight() * 0.65)));
             }
         });

@@ -36,7 +36,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
         iMenu.getMenu(jfr, this, Menu);
 
-        jfr.setDefaultCloseOperation(jfr.DISPOSE_ON_CLOSE);
+        jfr.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
         System.out.println("gdOpen:creating JGDPanel");
         c=new org.rosuda.javaGD.JGDPanel(w, h);
         System.out.println("gdOpen:creating JGDPanel done");

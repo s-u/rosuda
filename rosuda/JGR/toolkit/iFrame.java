@@ -69,7 +69,7 @@ public class iFrame extends JFrame {
         }
         this.setTitle(title);
         this.getContentPane().setBackground(UIManager.getColor("Label.background"));
-        this.addWindowListener(new WinListener());
+        this.addWindowListener(new org.rosuda.JGR.toolkit.WinListener());
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         if (WinTracker.current == null) WinTracker.current = new WinTracker();
         MYEntry = new WTentrySwing(WinTracker.current, this, title, wclass);

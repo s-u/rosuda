@@ -85,7 +85,6 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
         this.vs = vs;
 
-
         String myMenu[] = {
             "+", "File", "@OOpen", "loadData", "@SSave", "saveData",
             "!SSave as", "saveDataAs", "Export to R","export","~File.Basic.End",
@@ -140,10 +139,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                exit(); //we have to ask the user something about what to do with the current file
-            }
-
-            public void windowDeactivated(java.awt.event.WindowEvent evt) {
+            	exit();
             }
         });
         this.addKeyListener(this);
@@ -164,6 +160,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     /** add a column (we allow numerical variables or strings), we add this column after the selected one, if none is selected we  add at the end*/
     private void addColumn() {
+    	modified = true;
         String[] val = new NewColumnDialog(this).showInputDialog();
         String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor"};
         if (val != null) {
@@ -179,6 +176,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     /** add a row, we add rows after the selected one, if none is selected we  add at the bottom*/
     private void addRow() {
+    	modified = true;
         int selectedRow = currentRow();
         vs.insertCaseAt(selectedRow + 1);
         refresh();
@@ -237,14 +235,19 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             int i;
             if (save.getText()=="Save") {
             	i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            	if (i==1) dispose();
-            	else if (i==0 && saveData()) dispose();
+            	System.out.println(i);
+            	if (i==1) super.dispose();
+            	else if (i==0 && saveData()) super.dispose();
             }
-            else export(true);
+            else {
+            	export(true);
+            }
         }
-        else dispose();
+        else {
+        	super.dispose();
+        }
     }
-
+    
     /** find a specified object in the table
      * @param x x-coordinate we begin to search from this index
      * @param y y-coordinate we begin to search from this index*/
@@ -395,12 +398,14 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     
     private void export(boolean quit) {
     	String objname = (String) JOptionPane.showInputDialog(this,"Object Name","Export to R?",JOptionPane.INFORMATION_MESSAGE,null,null,vs.getName());
-    	if (objname==null && quit) dispose();
-    	else {
+    	if (objname!=null && quit) super.dispose();
+    	else if (objname != null && objname.trim().length() > 0){
     		vs.setName(objname);
     		boolean b = RController.export(vs);
     		if (quit) {
-    			if (b) dispose();
+    			if (b) {
+    				super.dispose();
+    			}
     			else if (JOptionPane.showConfirmDialog(this,"Export to R is not supported\nExit Anyway?","Export Error",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE)==0) dispose();
     		}
     		else if (!b) {
@@ -420,19 +425,19 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 out = new BufferedWriter(new FileWriter(fileName));
                 int cols = vs.count();
                 for (int k = 0; k < cols - 1; k++) {
-                    out.write(vs.at(k).getName() + "\t");
+                    out.write("\""+vs.at(k).getName() + "\"\t");
                 }
-                out.write(vs.at(cols - 1).getName() + "\n");
+                out.write("\""+vs.at(cols - 1).getName() + "\"\n");
                 out.flush();
                 for (int i = 0; i < vs.length(); i++) {
                     for (int z = 0; z < cols - 1; z++) {
                         s = vs.at(z).at(i) == null ? " " :
                             vs.at(z).at(i).toString();
-                        out.write(s + "\t");
+                        out.write("\""+s + "\"\t");
                     }
                     s = vs.at(cols - 1).at(i) == null ? " " :
                         vs.at(cols - 1).at(i).toString();
-                    out.write(s + "\n");
+                    out.write("\""+s + "\"\n");
                     out.flush();
                     out.close();
                 }
