@@ -51,6 +51,7 @@ public class JGR {
     public static Vector DATA = new Vector();
     public static Vector MODELS = new Vector();
     public static Vector OTHERS = new Vector();
+    public static Vector FUNCTIONS = new Vector();
 
     public static Vector OBJECTS = new Vector();
     public static HashMap KEYWORDS = new HashMap();
@@ -95,7 +96,6 @@ public class JGR {
             System.exit(1);
         }
         JGRPackageManager.defaultPackages = RController.getDefaultPackages();
-        setRLibs();
         MAINRCONSOLE.setWorking(false);
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Win")) splash.stop();
@@ -119,19 +119,6 @@ public class JGR {
         else return "c\n";
     }
 
-
-    public static void help(String keyword, String file, String location) {
-        if (file.trim().equals("null")) file = null;
-        if (keyword.trim().equals("null")) keyword = null;
-        if (location.trim().equals("null")) location = null;
-        if (JGRHelp.current == null) new JGRHelp(location);
-        else {
-            JGRHelp.current.show();
-            JGRHelp.current.refresh();
-        }
-        if (keyword!=null && file !=null) JGRHelp.current.goTo(keyword, file);
-    }
-
     public static void addMenu(String name) {
         iMenu.addMenu(MAINRCONSOLE,name);
     }
@@ -148,8 +135,8 @@ public class JGR {
     
 
     public static void fix(String data, String type) {
-        if (type.equals("data.frame")) new DataTable(RController.getVarSet(RController.createDataFrame(data)));
-        else if (type.equals("matrix")) new DataTable(RController.getVarSet(RController.createMatrix(data)));
+        //if (type.equals("data.frame")) new DataTable(RController.getVarSet(RController.createDataFrame(data)));
+        //else if (type.equals("matrix")) new DataTable(RController.getVarSet(RController.createMatrix(data)));
     }
 
     public static void setRHome(String rhome) {
@@ -157,7 +144,7 @@ public class JGR {
     }
 
     public static void setRLibs() {
-    	RLIBS = RController.getRLIBS();
+    	RLIBS = RController.getRLibs();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
@@ -184,6 +171,7 @@ public class JGR {
     }
     
     public static void refreshAll(String blabla) {
+    	setRLibs();
         setKeyWords();
         setObjects();
     }
@@ -196,7 +184,11 @@ public class JGR {
 
                  BufferedReader reader = new BufferedReader(new FileReader(hist));
                  RHISTORY = new Vector();
-                 while (reader.ready()) RHISTORY.add(reader.readLine());
+                 String cmd = "";
+                 while (reader.ready()) {
+                 	cmd += reader.readLine();
+                 	if (cmd.endsWith("#")) RHISTORY.add(cmd);
+                 }
                  reader.close();
             }
         }
@@ -212,7 +204,7 @@ public class JGR {
                                   File.separator + ".Rhistory");
             BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
             Enumeration e = RHISTORY.elements(); int i = 0;
-            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"\n");
+            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"#\n");
             writer.flush();
             writer.close();
         }

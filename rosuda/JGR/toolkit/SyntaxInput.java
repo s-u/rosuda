@@ -76,6 +76,25 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         return (offset!=end)?text.substring(offset,end).trim():null;
 	}
 	
+	private String getLastPart() {
+		String word = null;
+        String text = this.getText();
+        int pos = this.getCaretPosition();
+        if (pos > 0 && text.length() > 0 && text.charAt(pos-1)=='(') pos--;
+        if (pos < 0) return null;
+        int offset = pos-1, end = pos; pos--;
+        if (text==null) return null;
+        int l = text.length();
+        while (offset > -1 && pos > -1) {
+            char c = text.charAt(pos);
+            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
+            else break;
+            pos--;
+        }
+        offset = offset==-1?0:++offset;
+        return (offset!=end)?text.substring(offset,end).trim():null;
+	}
+	
 	public void showCmdCompletions(String[] result) {
 		if (cmdHelp != null) cmdHelp.hide();
 	 	p = getCaret().getMagicCaretPosition();
@@ -119,7 +138,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 			}
 	 			tp++;
 	 		}
-	 		fun = getLastCommand();
+	 		fun = getLastPart();
 	 		if (fun != null) {
 	 			String[] result = new String[1];
 	 			if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun.substring(fun.lastIndexOf("\"",pos-1)+1));
@@ -141,7 +160,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 			}
 	 		}	
 	 	}
-	 	else if (JGRPrefs.useHelpAgent && ke.getKeyChar() == '(' || ke.getKeyCode() == KeyEvent.VK_F1) {
+	 	else if ((JGRPrefs.useHelpAgent && ke.getKeyChar() == '(') || ke.getKeyCode() == KeyEvent.VK_F1) {
 	 		if (p != null && p.equals(getCaret().getMagicCaretPosition())) {}
 	 		else {
                             if (funHelpTip != null) funHelpTip.hide();
@@ -178,7 +197,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 	else if (mComplete != null && mComplete.isVisible()) {
 			int k = ke.getKeyCode();
 	 		if (k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
-	 			fun = getLastCommand();
+	 			fun = getLastPart();
 	 			if (fun != null) {
 	 				String[] result = new String[1];
 	 				result = RController.completeCommand(fun);
@@ -308,11 +327,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		
 		public CodeCompleteMultiple(SyntaxInput tcomp) {
 			parent = tcomp;
-			cmds.setSize(new Dimension(180,100));
-			this.setSize(cmds.getWidth()+10,cmds.getHeight());
 			this.setLayout(new GridLayout(1,1));
 			this.add(cmds);
-			//this.setVisible(true);
 			cmds.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					if (e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -325,6 +341,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 						completeCommand();
 				}
 			});
+			cmds.setSize(new Dimension(180,100));
+			this.setSize(cmds.getWidth()+10,cmds.getHeight());
 			this.setVisible(false);
 		}
 		

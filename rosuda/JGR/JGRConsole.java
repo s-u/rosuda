@@ -55,8 +55,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         
         //Initialize JGRConsoleMenu
         String[] Menu = {
-            "+", "File","Load Datafile", "loaddata","-","@NNew Workspace", "newwspace", "@OLoad Workspace",
-            "loadwspace",
+            "+", "File","Load Datafile", "loaddata","-","@NNew Workspace", "new", "@OLoad Workspace",
+            "open",
             "@SSave Workspace", "save", "!SSave Workspace as",
             "saveas","~File.Quit",
             "~Edit",

@@ -29,7 +29,7 @@ public class RController {
         return "";
     }
 
-    public static String[] getRLIBS() {
+    public static String[] getRLibs() {
         REXP x = JGR.R.eval(".Library");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
@@ -128,22 +128,7 @@ public class RController {
     /* get current available function names for help*/
     public static List getFunctionNames() {
         List fkt = new ArrayList();
-        fkt.add("");
-        REXP x = JGR.R.eval("length(search())");
-        int pos = 2, maxpos = 2;
-        if (x == null && x.asIntArray() != null) return fkt;
-        if ((maxpos = x.asIntArray()[0])==0) return fkt;
-        while (pos <= maxpos) {
-            REXP y = JGR.R.eval("ls(pos="+pos+", all.names=TRUE, pattern=\"^\\\\w+\")");
-            if (y==null) return fkt;
-            String[] result = y.asStringArray();
-            for (int i = 0; i < result.length; i++) {
-                String sy = result[i];
-                REXP z = JGR.R.eval("try(class("+sy+"),silent=TRUE)");
-                if (z != null && z.asString() != null && z.asString().equals("function")) fkt.add(sy);
-            }
-            pos++;
-        }
+        REXP x = JGR.R.eval("");
         Collections.sort(fkt);
         return fkt;
     }
@@ -153,12 +138,44 @@ public class RController {
         JGR.DATA.clear();
         JGR.OTHERS.clear();
         JGR.MODELS.clear();
+        JGR.FUNCTIONS.clear();
         String models[];
         REXP x = JGR.R.eval(".getModels()");
         if (x != null && (models = x.asStringArray()) != null) {
         	for (int i = 0; i < models.length; i++)
-        		JGR.MODELS.add(createModel(models[i],models[++i]));
+        		JGR.MODELS.add(createRModel(models[i],models[++i]));
         }
+    	x = JGR.R.eval(".getDataObjects()");
+    	String[] data;
+    	if (x != null && (data = x.asStringArray()) != null) {
+    		int a = 1;
+			for (int i = 0; i < data.length; i++) {
+				boolean b = data[i].equals("null");
+				String name = b?a+"":data[i];
+				JGR.DATA.add(createRObject(name,data[++i],null,(!b)));
+    			a++;
+    		}
+    	}
+    	x = JGR.R.eval(".getOtherObjects()");
+    	String[] other;
+    	if (x != null && (other = x.asStringArray()) != null) {
+    		int a = 1;
+			for (int i = 0; i < other.length; i++) {
+				boolean b = other[i].equals("null");
+				String name = b?a+"":other[i];
+				JGR.OTHERS.add(createRObject(name,other[++i],null,(!b)));
+    			a++;
+    		}
+    	} 
+    	x = JGR.R.eval(".getFunctionsInWS()");
+    	String[] functions;
+    	if (x != null && (functions = x.asStringArray()) != null) {
+    		int a = 1;
+			for (int i = 0; i < functions.length; i++) {
+				JGR.FUNCTIONS.add(createRObject(functions[i],"function",null,true));
+    			a++;
+    		}
+    	}     	
     }
 
 
@@ -192,7 +209,7 @@ public class RController {
     }
 
     /* create r-dataframe as java-object*/
-    public static dataframe createDataFrame(String sx) {
+    /*public static dataframe createDataFrame(String sx) {
         dataframe d = new dataframe(sx);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
@@ -215,20 +232,20 @@ public class RController {
             }
         }
         return d;
-    }
+    }*/
 
     /* create r-factor as java-object*/
-    public static factor createFactor(String sx, String sz) {
+    /*public static factor createFactor(String sx, String sz) {
         factor f = new factor(sz);
         REXP x;
         if (sx != null) x = JGR.R.eval("length(levels("+sx+"$"+sz+"))");
         else  x = JGR.R.eval("length(levels("+sz+"))");
         if (x!=null && x.asIntArray() != null) f.setLevels(x.asIntArray()[0]);
         return f;
-    }
+    }*/
 
     /*create r-list as java object*/
-    public static list createList(String sx) {
+    /*public static list createList(String sx) {
         list l = new list(sx,null);
         REXP y = JGR.R.eval("length("+sx+")");
         if (y!=null && y.asIntArray()!=null) l.setLength(y.asIntArray()[0]);
@@ -243,20 +260,20 @@ public class RController {
             }
         }
         return l;
-    }
+    }*/
 
     /* create r-matrix as java-object*/
-    public static matrix createMatrix(String sx) {
+    /*public static matrix createMatrix(String sx) {
         matrix m = new matrix(sx,null);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
             m.setDim(y.asIntArray()[0],y.asIntArray()[1]);
         }
         return m;
-    }
+    }*/
 
     /* create other r-obj as java-obj*/
-    public static RObject createOther(String sx) {
+    /*public static RObject createOther(String sx) {
     	if (sx==null || sx.trim().length() == 0) return null;
         REXP y = JGR.R.eval("suppressWarnings(try(class("+sx+"),silent=TRUE))");
         String[] res;
@@ -265,10 +282,10 @@ public class RController {
             else return new other(sx,res[0],null);
         }
         return null;
-    }
+    }*/
 
     /* create r-table as java-object*/
-    public static table createTable(String sx) {
+    /*public static table createTable(String sx) {
         table t = new table(sx);
         REXP y = JGR.R.eval("names(dimnames("+sx+"))");
         String[] res1;
@@ -284,10 +301,67 @@ public class RController {
             }
         }
         return t;
+    }*/
+    
+    
+    public static Vector createContent(RObject o, Collection c) {
+    	Vector cont = new Vector();
+    	String p = "";
+    	if (o.getParent() != null && o.getParent().getType().equals("table"))
+    		p = ","+o.getParent().getRName();
+    	REXP x = JGR.R.eval("suppressWarnings(try(.getContent("+(o.getRName())+p+"),silent=TRUE))");
+    	String[] res;
+    	if (x != null && (res = x.asStringArray()) != null && !res[0].startsWith("Error")) {
+    		int a = 1;
+    		for (int i = 0; i < res.length; i++) {
+    			boolean b = res[i].equals("null");
+				String name = b?a+"":res[i];
+				RObject ro = createRObject(name,res[++i],o,(!b));
+    			if (c != null) c.add(ro);
+    			if (ro != null) cont.add(ro);
+    			a++;
+    		}
+    	}
+    	return cont;
+    }
+    
+    public static RObject createRObject(String sx, String type, RObject parent, boolean b)
+    {
+    	RObject ro = new RObject(sx,type, parent, b);
+        REXP y;
+        if (type.equals("data.frame")) {
+        	y = JGR.R.eval("dim("+(ro.getRName())+")");
+        	if (y!=null && y.asIntArray()!=null) {
+                ro.setInfo("dim("+y.asIntArray()[0]+":"+y.asIntArray()[1]+")");
+            }
+        }
+        else if (type.equals("matrix")) {
+        	y = JGR.R.eval("dim("+(ro.getRName())+")");
+        	if (y!=null && y.asIntArray()!=null) {
+                ro.setInfo("dim("+y.asIntArray()[0]+":"+y.asIntArray()[1]+")");
+            }
+        }
+        else if (type.equals("factor")) {
+        	y = JGR.R.eval("length(levels("+(ro.getRName())+"))");
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("levels: "+y.asIntArray()[0]);
+        }
+        else if (type.equals("list")) {
+        	y = JGR.R.eval("length("+(ro.getRName())+")");
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("levels: "+y.asIntArray()[0]);
+        }
+        else if (type.equals("table")) {
+        	y = JGR.R.eval("length(dim("+(ro.getRName())+"))");
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("dim: "+y.asIntArray()[0]);
+        }
+        else if (parent != null && parent.getType().equals("table")) {
+        	y = JGR.R.eval("length(dimnames("+parent.getRName()+")[[\""+ro.getName()+"\"]])");
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("levels: "+y.asIntArray()[0]);
+        }
+        return ro;
     }
 
     /* create a r-model as java-object */
-    public static RModel createModel(String sx, String type) {
+    public static RModel createRModel(String sx, String type) {
     	RModel m = new RModel(sx,type);
         REXP y = JGR.R.eval("summary("+sx+")[[\"r.squared\"]]");
         double[] res;
@@ -304,9 +378,14 @@ public class RController {
         if (y != null && (res2 = y.asStringArray()) != null) m.setFamily(res2[0]);
         y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]])))"); //as.character((cm$call))
         if (y != null && (res2 = y.asStringArray()) != null) {
-            m.setCall(res2[0]);
-            int i = -1;
-            if ((i = res2[0].indexOf("data")) > 0) m.setData(res2[0].substring(i+6).replace(')',' ').trim());
+            String call = "";
+        	for (int i = 0; i < res2.length; i++) {
+            	int z = -1;
+            	if ((z = res2[0].indexOf("data")) > 0) m.setData(res2[i].substring(z+6).replace(')',' ').trim());
+            	call += res2[i];
+            }
+            m.setCall(call);
+        	
         }
         return m;
     }
@@ -322,7 +401,6 @@ public class RController {
         	tip = "<html><pre>"; 
             int l = -1;
             for (int i = 0; i < (l=res.length); i++) {
-                System.out.println(res[i]);
                 if ((l-2)==i && !res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s);
                 else if (!res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s)+ "<br>";
             }
@@ -335,21 +413,19 @@ public class RController {
 
 
     public static String getSummary(RObject o) {
-        if (isClass(o.getName(),"function")) return getFunHelp(o.getName());
-        String tip = null;
+    	if (o.getType().equals("function")) return getFunHelp(o.getRName());
+        String tip = "";
         String res[] = null;
         REXP x;
-        try { x = JGR.R.eval("suppressWarnings(try(capture.output(summary("+(o.getParent()==null?o.getName():((o.getParent()).getName()+"$"+o.getName()))+"))))"); } catch (Exception e) { return null;}
-        if (x!=null && (res = x.asStringArray()) != null) {
-            tip = "<html><pre>"; //<font size="+Preferences.FontSize/2+">"
+        try { x = JGR.R.eval("suppressWarnings(try(capture.output(summary("+(o.getRName())+")),silent=TRUE))"); } catch (Exception e) { return null;}
+        if (x!=null && (res = x.asStringArray()) != null && !res[0].startsWith("Error")) {
+            //tip = "<html><pre>";
             int l = -1;
-            for (int i = 0; i < (l = res.length); i++) {
-                if (i==10 && l > i) { tip += "..."; break; }
-                else if ((--l)==i && !res[i].trim().equals("NULL")) tip += res[i];
-                else if (!res[i].trim().equals("NULL")) tip += res[i]+"<br>";
+            for (int i = ((l = res.length) > 10?10:l)-1; i >= 0; i--) {
+            	if (i < l-1) tip = res[i] +"<br>"+ tip;
+            	else tip = res[i];
             }
-            //if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
-            tip += "</pre></html>";
+            tip = "<html><pre>"+tip+(l > 10?"...":"")+"</pre></html>";
         }
         else return null;
         return tip.startsWith("<html><pre>Error")?null:tip;
@@ -357,7 +433,7 @@ public class RController {
 
 
     /* get levels for a factor */
-    public static String getFactorLevels(factor f) {
+    /*public static String getFactorLevels(factor f) {
         String levels = null;
         String res[];
         REXP x = JGR.R.eval("levels("+(f.getParent()==null?f.getName():((f.getParent()).getName()+"$"+f.getName()))+")");
@@ -372,9 +448,9 @@ public class RController {
             levels += "<html>";
         }
         return levels;
-    }
+    }*/
 
-    public static SVarSet getVarSet(dataframe d) {
+    /*public static SVarSet getVarSet(dataframe d) {
         if (d == null) return null;
     	SVarSet vset = new SVarSet();
         vset.setName(d.getName());
@@ -384,9 +460,9 @@ public class RController {
         }
 
         return vset;
-    }
+    }*/
 
-    public static SVarSet getVarSet(matrix m) {
+    /*public static SVarSet getVarSet(matrix m) {
         SVarSet vset = new SVarSet();
         String name = m.getName();
         JGR.R.eval("jgr_temp"+name+" <- as.data.frame("+name+")");
@@ -398,7 +474,7 @@ public class RController {
         }
         JGR.R.eval("rm("+d.getName()+")");
         return vset;
-    }
+    }*/
 
 
     public static SVar getVar(String p, String c) {
