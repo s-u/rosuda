@@ -50,7 +50,7 @@ public class RSyntaxDocument extends RStyledDocument {
         boolean whitespace = false;
         try { whitespace = getText(offset-1,1).matches("[\\s|#]"); } catch (Exception e) {}
         if (!whitespace && offset != 0) str = str.replaceAll("\t","");
-        if (str.matches("_")) str = "<-";
+        //if (str.matches("_")) str = "<-";
         super.insertString(offset, str, a);
         final int len = str.length();
         SwingUtilities.invokeLater(new Runnable() {public void run() { try { processChangedLines(offset, len);} catch (Exception e) {new iError(e);}}});
@@ -252,7 +252,7 @@ public class RSyntaxDocument extends RStyledDocument {
     protected boolean isNumber(String token) {
         return token.matches("[[0-9]+.[0-9]+]*[0-9]+");
     }
-    
+
     protected boolean isObject(String token) {
         Object o = objects.get(token);
         return o == null ? false : true;
