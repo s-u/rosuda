@@ -142,6 +142,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.setLocation(this.getLocation().x+100, 10);
         this.setVisible(true);
         //progress.setVisible(false);
+		editArea.mComplete.setVisible(false);
         if (file != null) this.fileName = file;
         if (this.fileName != null) loadFile();
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));

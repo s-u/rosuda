@@ -253,7 +253,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,int condition, boolean pressed) {
         if (disableEnter && e.getKeyCode() == KeyEvent.VK_ENTER) return true;
-		
+		if (mComplete.isVisible() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) return true;
         InputMap map = getInputMap(condition);
         ActionMap am = getActionMap();
 		
@@ -293,41 +293,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             else if (getText(offset,length).equals("(")) {
                 if (funHelpTip != null) funHelpTip.hide();
             }
-            /*if (getText(offset,length).equals(")")) {
-            if (commands.size() > 2) {
-                commands.removeElementAt(commands.size()-1);
-                commands.removeElementAt(commands.size()-1);
-                Point p = (Point) commands.lastElement();
-                if (funHelpTip != null) funHelpTip.hide();
-                Tip = new JToolTip();
-                Tip.setTipText(commands.elementAt(commands.size()-2).toString());
-                Tip.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        if (funHelpTip != null) funHelpTip.hide();
-                    }
-                });
-                funHelpTip = PopupFactory.getSharedInstance().getPopup(getParent(),Tip,p.x,p.y+20);
-                funHelpTip.show();
-            }
-            else if (commands.size() == 2) {
-                Point p = (Point) commands.lastElement();
-                if (funHelpTip != null) funHelpTip.hide();
-                Tip = new JToolTip();
-                Tip.setTipText(commands.elementAt(commands.size()-2).toString());
-                Tip.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        if (funHelpTip != null) funHelpTip.hide();
-                    }
-                });
-                funHelpTip = PopupFactory.getSharedInstance().getPopup(getParent(),Tip,p.x,p.y+20);
-                funHelpTip.show();
-				
-            }
-            else if (funHelpTip != null) {
-                funHelpTip.hide();
-                commands.clear();
-            }
-            }*/
             super.remove(offset,length);
             if (JGRPrefs.useHelpAgent) {
 				fun = getLastCommand();

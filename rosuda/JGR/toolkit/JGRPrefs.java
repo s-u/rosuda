@@ -26,7 +26,7 @@ public class JGRPrefs {
     public static boolean isMac = false;
 
     /** DefaultFontName */
-    public static String FontName = "Dialog";
+    public static String FontName = "Monospaced";
     /** DefaultFontStyle */
     public static int FontStyle = Font.PLAIN;
     /** DefaultFontSize */
@@ -141,9 +141,9 @@ public class JGRPrefs {
         }
 
         Preferences prefs = Preferences.userNodeForPackage(String.class);
-        FontName = prefs.get("FontName","Dialog");
-        FontSize = prefs.getInt("FontSize",12);
-        maxHelpTabs = prefs.getInt("MaxHelpTabs",10);
+        FontName = prefs.get("FontName",FontName);
+        FontSize = prefs.getInt("FontSize",FontSize);
+        maxHelpTabs = prefs.getInt("MaxHelpTabs",maxHelpTabs);
         useHelpAgent = prefs.getBoolean("UseHelpAgent", true);
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
