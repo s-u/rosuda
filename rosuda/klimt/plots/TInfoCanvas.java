@@ -70,10 +70,10 @@ class TInfoCanvas extends DBCanvas
 	g.setColor(Color.black);
 	int yp=det?118:37, cln=1;
 	for (Enumeration e=cn.V.elements(); e.hasMoreElements();) {
-	    float perc=((Float)e.nextElement()).floatValue();
-	    int cas=(int)(perc*(float)cn.Cases+0.5);
+	    double perc=((Float)e.nextElement()).doubleValue();
+	    int cas=(int)(perc*(double)cn.Cases+0.5);
 	    int pint=(int)(perc*10000.0);
-	    g.drawString("class "+cln+": "+((float)pint)/100+"% ["+(cas)+"]",15,yp);
+	    g.drawString("class "+cln+": "+((double)pint)/100+"% ["+(cas)+"]",15,yp);
 	    cln++; yp+=15;
 	};
     };

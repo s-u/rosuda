@@ -32,7 +32,9 @@ public class Axis extends Notifier
     /** graphical inter-categorial space */
     int gInterSpc=0;
     /** value begin and length */
-    float vBegin, vLen;
+    double vBegin, vLen;
+    /** log(vLen) cached */
+    double vLenLog10;
     /** count for discrete axes */
     int datacount;
     /** vector of ticks */
@@ -89,9 +91,10 @@ public class Axis extends Notifier
     /** for numerical variables - set range of the variable's values.
 	@param begin begin/anchor of axis in data domain
 	@param len length of the axis (can be negative if necessary) */
-    public void setValueRange(float begin, float len) {
+    public void setValueRange(double begin, double len) {
 	if (vBegin!=begin||vLen!=len) { // lazy notification
 	    vBegin=begin; vLen=len;
+            vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
 	    NotifyAll();
 	};
     };
@@ -103,6 +106,7 @@ public class Axis extends Notifier
 	if (dc!=datacount) { // lazy notification
 	    datacount=dc;
 	    vBegin=0; vLen=dc; // this is necessary if get SensibleTick.. functions are used
+            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
 	    NotifyAll();
 	};
     };
@@ -116,11 +120,17 @@ public class Axis extends Notifier
 	if (v.isNum() && type==0) {
 	    vBegin=v.getMin();
 	    vLen=v.getMax()-vBegin;
+            vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
 	} else {
 	    datacount=v.size();
+	    vBegin=0; vLen=datacount; // this is necessary for getSensibleTick.. functions etc.
+            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
 	};
-	if (v.isCat() && type==1)
+        if (v.isCat() && type==1) {
 	    datacount=v.getNumCats();
+	    vBegin=0; vLen=datacount; // this is necessary for getSensibleTick.. functions etc.
+            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
+        };
 	if (type==2||type==1) {
 	    if (cseq==null || resetCseq) {
 		if (v.getNumCats()>0) {
@@ -140,8 +150,8 @@ public class Axis extends Notifier
 	@param i index of the case
 	@returns graphical position of the case */
     public int getCasePos(int i) {	
-	if (type==3) return gBegin+(int)(((float)gLen)/((float)datacount)*((float)i));
-	if (type==0) return gBegin+(int)(((float)gLen)*(v.atF(i)-vBegin)/vLen);
+	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*((double)i));
+	if (type==0) return gBegin+(int)(((double)gLen)*(v.atF(i)-vBegin)/vLen);
 	if (type==2||type==1) return getCatCenter(v.getCatIndex(i));
 	return -1;
     };
@@ -149,9 +159,9 @@ public class Axis extends Notifier
     /** get graphical position of value <code>val</code> (for type=0 and 3 only)
 	@param val value
 	@return graphical position of the value */
-    public int getValuePos(float val) {
-	if (type==3) return gBegin+(int)(((float)gLen)/((float)datacount)*(val));
-	if (type==0) return gBegin+(int)(((float)gLen)*(val-vBegin)/vLen);
+    public int getValuePos(double val) {
+	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
+	if (type==0) return gBegin+(int)(((double)gLen)*(val-vBegin)/vLen);
 	return -1;
     };
 
@@ -160,9 +170,9 @@ public class Axis extends Notifier
 	@param pos position on the screen
 	@returns value corresponding to the supplied position
     */
-    public float getValueForPos(int pos) {
-	if (type==3) return ((float)(pos-gBegin))*((float)datacount)/((float)gLen);
-	if (type==0) return vBegin+((float)(pos-gBegin))*vLen/((float)gLen);
+    public double getValueForPos(int pos) {
+	if (type==3) return ((double)(pos-gBegin))*((double)datacount)/((double)gLen);
+	if (type==0) return vBegin+((double)(pos-gBegin))*vLen/((double)gLen);
 	return -1;
     };
 
@@ -318,17 +328,40 @@ public class Axis extends Notifier
 	values by simply dividing by 2,4 or 5 - or alternatively multipl.
 	by 2, 2.5 or 5
 	@param medDist mean required distance
+        @param mindist minimal required distance (if set to 0 only powers of 10 will be used)
 	@return proposed tick distance */
-    public float getSensibleTickDistance(int medDist) {
-	return (float)Math.pow(10.0,Math.round(Math.log(vLen*((float)medDist)/((float)gLen))/Math.log(10.0)));
+    public double getSensibleTickDistance(int medDist, int minDist) {
+	double preld=(double)Math.pow(10.0,Math.round(Math.log(vLen*((double)medDist)/((double)gLen))/Math.log(10.0)));
+        if (minDist<1) return preld;
+        // preld (preliminary distance) is the value as returned by previous versions of getSensibleTickDistance
+        // some heuristic is used further to try to satisfy the minDist condition, although it's merely a guideline
+        // if medDist is too small then values returned can still be bigger than minDist
+        int grs=(int)(preld/vLen*((double)gLen));
+        if (grs<minDist/3) return preld*5;
+        if (grs<minDist) return preld*2;
+        return preld;
     };
+
     /** returns first visible tick given a tick distance. it is mostly
 	used in conjunction with {@link getSensibleTickDistance}
 	@param tickDist tick distance
 	@return first visible tick mark
     */
-    public float getSensibleTickStart(float tickDist) {
-	return tickDist*((float)((int)(vBegin/tickDist)+1));
+    public double getSensibleTickStart(double tickDist) {
+	return tickDist*((double)((int)(vBegin/tickDist)+1));
+    };
+
+    /** returns string representation of the supplied value, taking into account
+        the range (vLen) to determine how many digits to display behind the fp
+        @param val value to display
+        @return string representation of the value
+    */
+    public String getDisplayableValue(double val) {
+        int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
+        if (dac==0) return ""+((int)val);
+        double post=val-((double)((int)(val)));
+        while(dac>0) { post*=10; dac--; };
+        return ""+((int)val)+"."+Math.round(post);
     };
 
     /** somewhat simple toString implementation, basically for debugging purposes */

@@ -58,7 +58,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public boolean showLabels=true;
 
     /** deviance gain scale */
-    public float devGainScale=1;
+    public double devGainScale=1;
 
     /** state of the path winodw */
     public boolean showPathWindow=false;
@@ -67,15 +67,15 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public int toolMode=0;
     
     /** zoom factor used to determine logical zoom behavior */
-    public float zoomFactor=1;
+    public double zoomFactor=1;
 
     /** temporary variable for zoom mode when <space> is used */
     int lastToolModeBeforeMove=0;
 
     /** max. dev gain */
-    float maxDevGain;
+    double maxDevGain;
     /** max leaf deviance */
-    float maxLeafDev;
+    double maxLeafDev;
     
     /** # of cases in the root node */
     int rootCases;
@@ -414,12 +414,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		//g.setColor("black"); g.drawRect(x,y2-10,x2-x,10);
 		g.setColor("hilite");
 		if (nodeMode) {
-		    g.fillRect(x,y,(int)(((float)dMark)/((float)dTotal)*((float)(x2-x))),y2-y);
+		    g.fillRect(x,y,(int)(((double)dMark)/((double)dTotal)*((double)(x2-x))),y2-y);
 		    g.setColor("black");
-		    g.drawRect(x,y,(int)(((float)dMark)/((float)dTotal)*((float)(x2-x))),y2-y);
+		    g.drawRect(x,y,(int)(((double)dMark)/((double)dTotal)*((double)(x2-x))),y2-y);
 		    g.drawRect(x,y,x2-x,y2-y);
 		} else {
-		    g.fillRect(x,y2-10,(int)(((float)dMark)/((float)dTotal)*((float)(x2-x))),10);
+		    g.fillRect(x,y2-10,(int)(((double)dMark)/((double)dTotal)*((double)(x2-x))),10);
 		    g.setColor("black");
 		    g.moveTo(x,y2-10); g.lineTo(x,y2); g.lineTo(x2,y2); g.lineTo(x2,y2-10); g.moveTo(x,y2-10);
 		};

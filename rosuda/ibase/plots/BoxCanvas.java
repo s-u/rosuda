@@ -6,7 +6,7 @@ import java.io.*;
 /** OrdStats - ordinal statistics of a variable, used internally by {@link BoxCanvas}
     to get necessary information to plot bopxplots */
 class OrdStats { // get ordinal statistics to be used in boxplot
-    float med, uh, lh, uh15, lh15, uh3, lh3;
+    double med, uh, lh, uh15, lh15, uh3, lh3;
     int[] lastR;
     int lastTop;
     /** indexes of points just above/below the 1.5 hinge
@@ -16,7 +16,7 @@ class OrdStats { // get ordinal statistics to be used in boxplot
 
     OrdStats() { med=uh=lh=uh3=lh3=0; };
 
-    float medFrom(SVar v,int[] r,int min,int max) {
+    double medFrom(SVar v,int[] r,int min,int max) {
 	return (((max-min)&1)==0)
 	    ?v.atF(r[min+(max-min)/2])
 	    :((v.atF(r[min+(max-min)/2])+v.atF(r[min+(max-min)/2+1]))/2);
@@ -35,24 +35,24 @@ class OrdStats { // get ordinal statistics to be used in boxplot
 	    lh=medFrom(v,r,0,n/2-1);
 	else
 	    lh=medFrom(v,r,0,n/2);
-	lh15=lh-(float)1.5*(uh-lh);
+	lh15=lh-(double)1.5*(uh-lh);
 	lh3=lh-3*(uh-lh);
-	float x=lh;
+	double x=lh;
 	int i=n/4; // find lh15 as extreme between lh and lh15
 	while (i>=0) {
-	    float d=v.atF(r[i]);
+	    double d=v.atF(r[i]);
 	    if (d<lh15) break;
 	    if (d<x) x=d;
 	    i--;
 	};
 	lowEdge=i;
 	lh15=x;
-	uh15=uh+(float)1.5*(uh-lh);
+	uh15=uh+(double)1.5*(uh-lh);
 	uh3=uh+3*(uh-lh);
 	x=uh;
 	i=n*3/4-1; if (i<0) i=0; // find uh15
 	while (i<n) {
-	    float d=v.atF(r[i]);
+	    double d=v.atF(r[i]);
 	    if (d>uh15) break;
 	    if (d>x) x=d;
 	    i++;
@@ -223,7 +223,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 		   x+w/2,r.height-a.getValuePos(os.lh15));
 	int i=os.lowEdge;
 	while(i>=0) {
-	    float val=v.atF(os.lastR[i]);
+	    double val=v.atF(os.lastR[i]);
 	    if (val<os.lh3)
 		g.drawOval(x+w/2-2,r.height-a.getValuePos(val)-2,3,3);
 	    else
@@ -232,7 +232,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	};
 	i=os.highEdge;
 	while(i<os.lastTop) {
-	    float val=v.atF(os.lastR[i]);
+	    double val=v.atF(os.lastR[i]);
 	    if (val>os.uh3)
 		g.drawOval(x+w/2-2,r.height-a.getValuePos(val)-2,3,3);
 	    else

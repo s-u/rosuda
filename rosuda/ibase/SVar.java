@@ -32,9 +32,9 @@ public class SVar extends Vector
     boolean hasNull;
 
     /** minimal value (if numeric variable) */
-    float min;
+    double min;
     /** maximal value (if numeric variable) */
-    float max;
+    double max;
 
     public static final String missingCat = "NA";
 
@@ -102,7 +102,7 @@ public class SVar extends Vector
 		    isnum=true;	       
 	    } catch (Exception E) {};
 	    if (isnum)
-		min=max=((Number)o).floatValue();	    
+		min=max=((Number)o).doubleValue();	    
 	};
 	if (cat) {	    
 	    Object oo=o;
@@ -117,7 +117,7 @@ public class SVar extends Vector
 	};
 	if (isnum) {
 	    try {
-		float val=((Number)o).floatValue();
+		double val=((Number)o).doubleValue();
 		if (val>max) max=val;
 		if (val<min) min=val;
 	    } catch(Exception E) {
@@ -131,12 +131,12 @@ public class SVar extends Vector
     //---- uncomment for JDK 1.2 or higher if necessary - won't work with 1.1 ------
     // public void addElement(Object o) { add(o); };
 
-    public float getMin() { return min; };
-    public float getMax() { return max; };
+    public double getMin() { return min; };
+    public double getMax() { return max; };
 
     public Object at(int i) { return elementAt(i); };
     public int atI(int i) { return (isnum)?((Number)elementAt(i)).intValue():0; };
-    public float atF(int i) { return (isnum)?((Number)elementAt(i)).floatValue():0; };
+    public double atF(int i) { return (isnum)?((Number)elementAt(i)).doubleValue():0; };
     public double atD(int i) { return (isnum)?((Number)elementAt(i)).doubleValue():0; };
     public String atS(int i) { return elementAt(i).toString(); };
     public boolean isMissingAt(int i) { return elementAt(i)==null; };

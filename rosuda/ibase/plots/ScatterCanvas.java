@@ -153,25 +153,25 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	g.drawLine(X,Y+H,X+W,Y+H);
 
 	{
-	    float f=A[0].getSensibleTickDistance(50);
-	    float fi=A[0].getSensibleTickStart(f);
+	    double f=A[0].getSensibleTickDistance(50,26);
+	    double fi=A[0].getSensibleTickStart(f);
 	    while (fi<A[0].vBegin+A[0].vLen) {
 		int t=A[0].getValuePos(fi);
 		g.drawLine(t,Y+H,t,Y+H+5);
 		if (showLabels)
-		    g.drawString(""+fi,t-5,Y+H+20);
+		    g.drawString(A[0].getDisplayableValue(fi),t-5,Y+H+20);
 		fi+=f;
 	    };
 	}
 
 	{
-	    float f=A[1].getSensibleTickDistance(50);
-	    float fi=A[1].getSensibleTickStart(f);
+	    double f=A[1].getSensibleTickDistance(50,18);
+	    double fi=A[1].getSensibleTickStart(f);
 	    while (fi<A[1].vBegin+A[1].vLen) {
 		int t=TH-A[1].getValuePos(fi);
 		g.drawLine(X-5,t,X,t);
 		if(showLabels)
-		    g.drawString(""+fi,X-25,t+5);
+		    g.drawString(A[1].getDisplayableValue(fi),X-25,t+5);
 		fi+=f;
 	    };
 	}

@@ -17,9 +17,9 @@ public class SNode extends Node implements Cloneable
     /** # of cases */
     public int Cases;
     /** deviation (or Gini-index) of this node */
-    public float F1;
+    public double F1;
     /** deviation gain by this split */
-    public float devGain;
+    public double devGain;
     /** name of tha class assigned to this node */
     public String Name;
     /** values (percentage of each class) */
@@ -43,7 +43,7 @@ public class SNode extends Node implements Cloneable
     /** value of the split condition as string */
     String splitVal;
     /** value of the split condition as string */
-    float splitValF;
+    double splitValF;
 
     /** user definable temporary variable */
     int tmp;

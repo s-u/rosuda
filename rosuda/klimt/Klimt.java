@@ -202,7 +202,7 @@ public class InTr
 	@param t root of the subtree */
     static void adjustDevGain(SNode t) {
 	if (t==null) return;
-	float myDev=t.F1;
+	double myDev=t.F1;
 	if (t.isLeaf()) {
 	    t.devGain=0;
 	} else {
