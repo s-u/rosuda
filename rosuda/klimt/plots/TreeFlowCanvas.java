@@ -22,10 +22,13 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
     SNode roots[];
     int lastw,lasth;
     float alpha=0.1f;
-
+    boolean eq=false, red=false;
+    
     int[] levl; // # of vars per level (max 64)
     SVar[] vg;  // 64*32 matrix of vars (l*32+i)
     int ls;     // # of levels
+    int seq=0;
+    SVar[] vars;
 
     public TreeFlowCanvas(TFrame f, SNode[] trees) {
         super(2);
@@ -39,27 +42,40 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
-            System.out.println("Tree#"+t);
+            if (Global.DEBUG>0) System.out.println("Tree#"+t);
             if (n!=null) recDown(n,0);
             t++;
         }
         ls++;
-        System.out.println("Total "+ls+" levels.");
+        if (Global.DEBUG>0) System.out.println("Total "+ls+" levels.");
         int i=0;
+        seq=1;
         while (i<ls) {
-            System.out.print("l="+i+": ");
+            if (Global.DEBUG>0) System.out.print("l="+i+": ");
             int j=0;
             while (j<levl[i]) {
-                System.out.print("["+vg[j+i*32]+"] ");
+                if (Global.DEBUG>0) System.out.print("["+vg[j+i*32]+"] ");
+                if (vg[j+i*32].tag==0) vg[j+i*32].tag=seq++;
                 j++;
             }
-            System.out.println();
+            if (Global.DEBUG>0) System.out.println();
+            i++;
+        }
+        vars=new SVar[seq];
+        int sq=1;
+        i=0;
+        while (i<ls) {
+            int j=0;
+            while (j<levl[i]) {
+                if (vg[j+i*32].tag>0) vars[vg[j+i*32].tag]=vg[j+i*32];
+                j++;
+            }
             i++;
         }
     }
 
     public void recDown(SNode n, int l) {
-        System.out.println("recDown("+n+","+l+")");
+        if (Global.DEBUG>0) System.out.println("recDown("+n+","+l+")");
         int chs=n.count(), ct=0;
         if (chs>0) {
             SNode ln=(SNode)n.at(0);
@@ -70,7 +86,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
                 if (vg[j+l*32]==sv) { found=true; break; }
                 j++;
             }
-            System.out.println("found="+found);
+            if (Global.DEBUG>0) System.out.println("found="+found);
             if (!found) {
                 vg[levl[l]+l*32]=sv;
                 levl[l]++;
@@ -109,12 +125,17 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
             int j=0;
             int x=spc;
             while (j<levl[i]) {
+                if (eq) {
+                    vw=w/seq;
+                    spc=vw/seq;
+                    x=(vw+spc)*(vg[i*32+j].tag-1)+spc;
+                }
                 g.drawLine(x,y,x+vw,y);
                 g.drawString(vg[i*32+j].getName(),x,y+15);
                 x+=vw+spc;
                 j++;
             }
-            System.out.println();
+            if (Global.DEBUG>0) System.out.println();
             i++;
             y+=yspc;
         }
@@ -123,7 +144,9 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
+            if (red && t==roots.length-1) g.setColor(1f,0f,0f,1f);
             if (n!=null) drawNode(g,n,w/2,0,0);
+            if (red && t==roots.length-1) g.setColor(0f,0f,0f,alpha);
             t++;
         }
         
@@ -144,6 +167,11 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
                 int vw=w/(levl[l]+1);
                 int spc=(w-(vw*levl[l]))/(levl[l]+1);
                 x=spc+(vw+spc)*i;
+                if (eq) {
+                    vw=w/seq;
+                    spc=vw/seq;
+                    x=(vw+spc)*(sv.tag-1)+spc;
+                }
                 if (sv.isNum()) {
                     double sl=cn.splitValF;
                     double vr=sv.getMax()-sv.getMin();
@@ -173,6 +201,34 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
 
     public void keyTyped(KeyEvent e)
     {
+        if (e.getKeyChar()=='0') { eq=!eq; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()=='R') { red=!red; setUpdateRoot(0); repaint(); }
+        int sw=-1;
+        if (e.getKeyChar()=='1') sw=1;
+        if (e.getKeyChar()=='2') sw=2;
+        if (e.getKeyChar()=='3') sw=3;
+        if (e.getKeyChar()=='4') sw=4;
+        if (e.getKeyChar()=='5') sw=5;
+        if (e.getKeyChar()=='6') sw=6;
+        if (e.getKeyChar()=='7') sw=7;
+        if (e.getKeyChar()=='8') sw=8;
+        if (e.getKeyChar()=='9') sw=9;
+
+        if (sw>0) {
+            sw++;
+            int i=1;
+            SVar a=vars[sw];
+            a.tag=1;
+            i=sw;
+            while (i>1) {
+                vars[i]=vars[i-1];
+                vars[i].tag=i;
+                i--;                
+            }
+            vars[1]=a;
+            setUpdateRoot(0);
+            repaint();
+        }
 //        if (e.getKeyChar()=='P') run(this,"print");
     }
 
