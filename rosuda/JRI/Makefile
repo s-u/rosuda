@@ -66,7 +66,7 @@ run:
 	echo "export R_HOME=$(RHOME)" >> run
 	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
 	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client" >> run
-	echo "$(JAVAB) rtest" >> run
+	echo "$(JAVAB) rtest \$$*" >> run
 	chmod a+x run
 
 clean:
