@@ -79,6 +79,7 @@ public class SMarker extends Notifier implements Commander {
 
     /** sets secondary mark of all selected cases */
     public void setSelected(int mark) {
+	if (mark>maxMark) maxMark=mark;
         mark<<=1;
         for(Enumeration e=list.elements(); e.hasMoreElements();) {
             Integer i=(Integer)e.nextElement();
