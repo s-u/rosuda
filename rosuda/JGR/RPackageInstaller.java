@@ -9,6 +9,7 @@ package org.rosuda.JGR;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import javax.swing.*;
 
 import org.rosuda.JGR.toolkit.*;
@@ -58,6 +59,18 @@ public class RPackageInstaller extends iFrame implements ActionListener {
     }
 
     public void installPkg() {
+        try {
+            String file = JGR.RLIBS[0]+"/JGR.test";
+            if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('/','\\');
+            File f = new File(file);
+            f.createNewFile();
+            f.delete();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,"JGR was unable to write to the library directory.\nPlease change your library path or get sufficient rights.","Permisson denied",JOptionPane.OK_OPTION);
+            return;
+        }
         Object[] instPkgs = pkgList.getSelectedValues();
         String cmd = "c(";
         if (instPkgs.length > 0) {
