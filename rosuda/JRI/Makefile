@@ -11,22 +11,24 @@ JNILD=-dynamiclib -framework JavaVM
 CPICF=-fno-common
 
 #--- the following might work on Linux (if you fix the -L...)
-#JAVAHOME=/usr/lib/java
-#JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
-#JNISO=.so
-#JNILD=-L/$(JAVAHOME)/jre/client/i386
-#CPICF=-fPIC
+JAVAHOME=/usr/lib/java
+JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
+JNISO=.so
+JNILD=-shared -L$(JAVAHOME)/jre/lib/i386/client -ljvm
+CPICF=-fPIC
 
 #--- comment out the following for non-debug version
 CFLAGS+=-g
 
 #--- uncomment the one that fits your R installation
-RHOME=/Library/Frameworks/R.framework/Resources
-#RHOME=/usr/local/lib/R
+#RHOME=/Library/Frameworks/R.framework/Resources
+RHOME=/usr/lib/R
 
 #--- if javac is not in the PATH you may want to change the following one
-JAVAC=javac $(JFLAGS)
-
+#JAVAB=java
+JAVAB=$(JAVAHOME)/bin/java
+JAVAC=$(JAVAB)c $(JFLAGS)
+JAVAH=$(JAVAB)h
 
 #--------------------------------------------------------------------------
 # you shouldn't need to touch anything below this line
@@ -34,12 +36,12 @@ JAVAC=javac $(JFLAGS)
 RINC=-I$(RHOME)/include
 RLD=-L$(RHOME)/bin -lR
 
-TARGETS=libjri$(JNISO) rtest.class
+TARGETS=libjri$(JNISO) rtest.class run
 
 all: $(TARGETS)
 
 src/Rengine.h: Rengine.class
-	javah -d src Rengine
+	$(JAVAH) -d src Rengine
 
 src/Rengine.o: src/Rengine.c src/Rengine.h
 	$(CC) -c -o $@ src/Rengine.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
@@ -58,6 +60,14 @@ Rengine.class RXP.class: Rengine.java RXP.java
 
 rtest.class: rtest.java Rengine.class RXP.class
 	$(JAVAC) rtest.java
+
+run: libjri$(JNISO) rtest.class
+	echo "#!/bin/sh" > run
+	echo "export R_HOME=$(RHOME)" >> run
+	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
+	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client" >> run
+	echo "$(JAVAB) rtest" >> run
+	chmod a+x run
 
 clean:
 	rm -rf $(TARGETS) src/*.o src/*~ src/Rengine.h src/*$(JNISO) *.class *~
