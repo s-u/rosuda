@@ -1,5 +1,10 @@
+import org.rosuda.JRI.Rengine;
+import org.rosuda.JRI.RXP;
+
 public class rtest {
     public static void main(String[] args) {
+        System.out.println("Press <Enter> to continue (time to attach the debugger is necessary)");
+        try { System.in.read(); } catch(Exception e) {};
         System.out.println("Creating Rengine");
 	Rengine re=new Rengine();
         System.out.println("Rengine created, waiting for R");
@@ -7,8 +12,6 @@ public class rtest {
             System.out.println("Cannot load R");
             return;
         }
-        System.out.println("R is ready, press <Enter> to continue (time to attach the debugger is necessary)");
-        try { System.in.read(); } catch(Exception e) {};
 
         {
             System.out.println("Parsing");
@@ -65,11 +68,18 @@ public class rtest {
                 System.out.println("");
             }
         }
+
+	java.awt.Frame f=new java.awt.Frame("hello");
+	f.setVisible(true);
+
 	re.eval("X11()");
 	re.eval("plot(rnorm(1000))");
-
+	re.eval("x<-rnorm(100000)");
+	re.eval("y<-rnorm(100000)");
+	re.eval("for(i in 1:10) lm(y~x,subset=sample(100000,10000))");
         System.out.println("R is ready, press <Enter> to continue (time to attach the debugger is necessary)");
         try { System.in.read(); } catch(Exception e2) {};
+	f.dispose();
 
         re.end();
         System.out.println("end");
