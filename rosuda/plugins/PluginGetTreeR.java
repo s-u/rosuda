@@ -131,17 +131,16 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         @return <code>true</code> if the initialization was successful */
     public boolean initPlugin() {
         if (useRserv) {
-            rc=new Rconnection(RservHost);
-            if (rc.isOk() && rc.isConnected()) {
+            try {
+                rc=new Rconnection(RservHost);
                 REXP rx=rc.eval("paste(version$major,version$minor,sep='.')");
-                if (rc.isOk()) {
-                    lastRver=Rver=rx.asString();
-                    initializedSuccessfully=true;
-                    if (!holdConnection) rc=null;
-                    return true;
-                }
+                lastRver=Rver=rx.asString();
+                initializedSuccessfully=true;
+                if (!holdConnection) rc=null;
+                return true;
+            } catch (RSrvException rse) {
+                rc=null; useRserv=false;
             }
-            rc=null; useRserv=false;
         }
 
         if (initializedSuccessfully) { /* cached initialization if another instance found R already */
@@ -383,17 +382,24 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             String fprefix="";
             if (useRserv) {
                 if (rc==null) {
-                    rc=new Rconnection(RservHost);
-                    if (!rc.isOk() || !rc.isConnected()) {
-                        err="Rserv server does not respond ("+rc.getLastError()+") and native R is not configured. Start Rserv or re-initialize plugin for native R access.";
+                    try {
+                        rc=new Rconnection(RservHost);
+                    } catch (RSrvException rse1) {
+                        err="Rserv server does not respond ("+rse1.getMessage()+") and native R is not configured. Start Rserv or re-initialize plugin for native R access.";
                         rc=null;
                         return false;
                     }
-                    REXP rx=rc.eval("getwd()");
+                    REXP rx=null;
+                    String xe="?";
+                    try {
+                        rx=rc.eval("getwd()");
+                    } catch (RSrvException rse2) {
+                        xe=rse2.getMessage();
+                    };
                     if (rx!=null && rx.asString()!=null) {
                         fprefix=rx.asString()+File.separator;
                     } else {
-                        err="Cannot get current working directory ("+rc.getLastError()+")";
+                        err="Cannot get current working directory ("+xe+")";
                         rc=null;
                     }
                 }

@@ -31,8 +31,9 @@ public class PluginStartRserve extends Plugin {
     }
         
     public boolean execPlugin() {
-        Rconnection rc=new Rconnection();
-        if (!rc.isOk()) {
+        try {
+            Rconnection rc=new Rconnection();
+        } catch (RSrvException rse) {
             if (Global.DEBUG>0)
                 System.out.println("Rserve is not running, trying to start it ("+uRs+")");
             try {
