@@ -33,7 +33,7 @@ public abstract class SVar extends Notifier
     /** sort method numerical (all objects are cast to Number, non-castable are assigned -0.01,
         basically to appear just before zero) */
     public static final int SM_num  = 1;
-    
+
     /** this value is returned by {@link #atI(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
     public static int int_NA = 0;
     /** this value is returned by {@link #atD(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
@@ -42,7 +42,7 @@ public abstract class SVar extends Notifier
     public static final String missingCat = "NA";
 
     protected double min, max;
-    
+
     /** variable name */
     protected String  name;
     /** type of variable, <code>true</code> if categorial variable */
@@ -52,13 +52,13 @@ public abstract class SVar extends Notifier
 
     /** if set to <code>true</code> then the type of the variable is not yet known and can be guessed */
     protected boolean guessing=true;
-    
+
     /** type of the contents */
     protected int contentsType;
 
     /** flag denoting selection in a SVarSet */
     public boolean selected;
-    
+
     /** # of missing cases in the variable */
     protected int missingCount=0;
 
@@ -83,7 +83,25 @@ public abstract class SVar extends Notifier
         contentsType=iscat?CT_String:CT_Number;
         selected=false;
     }
-    
+    /** construct new variable. iscat=<code>true</code> defaults to non-numerical, CT_String, whereas iscat=<code>false</code> defaults to numerical, CT_Number
+        @param Name variable name
+        @param iscat <code>true</code> if numeric variable
+        @param iscat <code>true</code> if categorial variable
+        */
+
+    public SVar(String Name, boolean isnum, boolean iscat)
+    {
+      this.name=Name;
+      this.cat=iscat;
+      this.isnum=isnum;
+      this.contentsType=isnum?CT_Number:CT_String;
+      this.selected=false;
+    }
+
+    /* added 28.12.03 MH */
+    /* we want to be able to make an empty SVar with nulls, because we need something for the table */
+    public abstract void setAllEmpty(int size);
+
     /** sets type of an internal variable. internal variables are variables that were not contained
         in the original dataset. derived variables are also internal if they were derived in klimt and not loaded
         with the dataset. */
@@ -95,12 +113,12 @@ public abstract class SVar extends Notifier
     public SCatSequence mainSeq() {
         if (seq==null)
             seq=new SCatSequence(this,this,true);
-        return seq;        
+        return seq;
     }
-    
+
     /** returns the internal type of the variable */
     public int getInternalType() { return internalType; }
-    
+
     /** returns true if the variable is internal, i.e. generated on-the fly. note that derived variables are
         NOT internal. use (getInterrnalType()==SVar.IVT_Normal) to check for original, non-derived variables. */
     public boolean isInternal() { return (internalType>0); }
@@ -110,7 +128,7 @@ public abstract class SVar extends Notifier
 
     /** sets the selected flag to the specified state */
     public void setSelected(boolean setit) { selected=setit; }
-    
+
     /** define the variable explicitely as categorical
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public abstract void categorize(boolean rebuild);
@@ -122,7 +140,7 @@ public abstract class SVar extends Notifier
     public Notifier getNotifier() {
         return this;
     }
-    
+
     /** retrieves contents type of the variable
         @return contents type (see CT_xxx constants)
         */
@@ -142,7 +160,7 @@ public abstract class SVar extends Notifier
         contentsType=ct;
         return true;
     }
-    
+
     /** sort caregotires, using default method which is numerical for num. variables, lexicogr. otherwise */
     public void sortCategories() {
         sortCategories(isNum()?SM_num:SM_lexi);
@@ -151,7 +169,7 @@ public abstract class SVar extends Notifier
     /** sort categories by specifeid method
         @param method sort method, see SM_xxx constants */
     public abstract void sortCategories(int method);
-    
+
     /** define the variable explicitely as non-categorial (drop category list) */
     public abstract void dropCat();
 
@@ -165,25 +183,37 @@ public abstract class SVar extends Notifier
 
     /** returns the size (number of cases) of the variable */
     public abstract int size();
-    
+
     /** adds a new case to the variable. the exact behavior is implementation-dependent.
         @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
     public abstract boolean add(Object o);
     public boolean add(double d) { return add(new Double(d)); }
-    public boolean add(int d) { return add(new Integer(d)); }    
+    public boolean add(int d) { return add(new Integer(d)); }
+
+    /* added 28.12.03 MH */
+    /** adds a new case to the variable at specified index. the exact behavior is implementation-dependent.
+        @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
+    public abstract boolean addCase(int index);
+
+    /** removes a case from the variable at specified index. the exact behavior is implementation-dependent.*/
+    public abstract boolean removeCase(Object o, int index);
+
+    public abstract boolean replaceCase(int i, Object o);
+
+
 
     /** replaces an element at specified position
         @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
     public abstract boolean replace(int i, Object o);
-    
+
     public double getMin() { return min; }
     public double getMax() { return max; }
 
     public abstract Object at(int i);
-    
+
     /** for compatibility with old code that used Vector class */
     public Object elementAt(int i) { return at(i); }
-    
+
     public int atI(int i) { return (isnum)?(at(i)==null)?int_NA:((Number)at(i)).intValue():int_NA; }
     public double atF(int i) { return (isnum)?(at(i)==null)?0:((Number)at(i)).doubleValue():0; }
     public double atD(int i) { return (isnum)?(at(i)==null)?double_NA:((Number)at(i)).doubleValue():double_NA; }
@@ -195,7 +225,7 @@ public abstract class SVar extends Notifier
     public int getMissingCount() {
         return missingCount;
     }
-    
+
     /** returns the ID of the category
         @param category (usually string)
         @return category ID
@@ -210,7 +240,7 @@ public abstract class SVar extends Notifier
             return -1;
         }
     }
-    
+
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public abstract Object getCatAt(int i);
 
@@ -228,17 +258,17 @@ public abstract class SVar extends Notifier
     public boolean isCat() { return cat; }
 
     public boolean isEmpty() { return size()==0; }
-    
+
     /** warning! use with care! Nameshould not be changed after hte variable was registered with
         SVarSet. The behavior for doing so is undefined. */
     public void setName(String nn) { name=nn; }
-    
+
     /** returns the number of categories for this variable or 0 if the variable is not categorial */
     public abstract int getNumCats();
 
     /** returns true if there are missing values */
     public boolean hasMissing() { return missingCount>0; }
-    
+
     /** returns new, fixed array of categories */
     public abstract Object[] getCategories();
 

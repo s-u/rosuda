@@ -22,7 +22,7 @@ public class SVarSet {
 
     /** default constructor of empty dataset */
     public SVarSet() { vars=new Vector(); name="<unknown>"; };
-    
+
     /** sets the marker for this dataset
 	@param m marker */
     public void setMarker(SMarker m) { mark=m; m.masterSet=this; };
@@ -48,24 +48,71 @@ public class SVarSet {
         }
         return len;
     }
-    
-    /** add a new varaible to the dataset 
+
+    /** add a new variable to the dataset
 	@param v variable
 	@return index of the newly create variable or <0 if an error occured (-1 on null-problems, -2 if that variable-name already exists) */
     public int add(SVar v) {  // return position or -1 on error or -2 if name exists
 	if (v==null) return -1;
 	String nn=v.getName(); if (nn==null) return -1;
-	
+
 	if (!vars.isEmpty()) {
 	    for (Enumeration e=vars.elements(); e.hasMoreElements();) {
 		SVar n=(SVar)e.nextElement();
 		if (n.getName().compareTo(nn)==0) return -2;
 	    };
 	};
-	
+
 	vars.addElement(v);
 	return vars.indexOf(v);
     };
+
+    /** add a new empty variable to the dataset
+            @param index index
+            @param size size of SVar
+            @param isnum numbers
+            @param cat categorical
+    /* added 28.12.04 MH */
+
+    public void add(int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
+      SVar v = new SVarObj("Var"+index,isnum,cat);
+      v.setAllEmpty(size);
+      vars.insertElementAt(v,index);
+    };
+
+    /** removes a variable of the dataset at specified index
+        @param index index
+        @return boolean false if remove fails els true
+
+    /* added 28.12.03 MH */
+    public void remove(int index) {  // return position or -1 on error or -2 if name exists
+      vars.removeElementAt(index);
+    };
+
+    /* added 28.12.03 MH */
+    /** add an empty case to the set
+     *         @param index index*/
+    public boolean addCase(int index) {
+      Enumeration e = vars.elements();
+      while(e.hasMoreElements()) {
+        if (!((SVar) e.nextElement()).addCase(index)) return false;
+      }
+      return true;
+    }
+    /* added 28.12.03 MH */
+    /** remove a case of the set
+     *         @param index index*/
+    public boolean removeCase(int index) {
+      Enumeration e = vars.elements();
+      while(e.hasMoreElements()) {
+        SVar v = ((SVar) e.nextElement());
+        if (!v.removeCase(v.at(index),index))
+          return false;
+      }
+      return true;
+    }
+
+
 
     /** returns the index of a variable specified by its name
 	@param nam variable name
@@ -103,7 +150,7 @@ public class SVarSet {
     public void replace(int i, SVar v) {
         if (i>=0 && i<vars.size()) vars.setElementAt(v, i);
     }
-    
+
     /** returns data value of a variable specified by name and row index
 	@param nam variable name
 	@param row row index
@@ -112,7 +159,7 @@ public class SVarSet {
 	SVar v=byName(nam);
 	return (v==null)?null:v.elementAt(row);
     };
-    
+
     /** returns data value of a variable specified by variable index and row index
 	@param col variable index
 	@param row row index
@@ -121,11 +168,11 @@ public class SVarSet {
 	SVar v=at(col);
 	return (v==null)?null:v.elementAt(row);
     };
-    
+
     /** returns enumeration of all variable objects in this dataset
 	@return object enumeration (of type {@link SVar}) */
-    public Enumeration elements() { return vars.elements(); };    
-    
+    public Enumeration elements() { return vars.elements(); };
+
     /** returns number of variables in this dataset
 	@return # of variables */
     public int count() { return vars.size(); };

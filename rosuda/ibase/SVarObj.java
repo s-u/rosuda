@@ -23,17 +23,17 @@ public class SVarObj extends SVar
     /** vector of the actual content */
     Vector  cont;
     /** vector of categories if cat. var. */
-    Vector  cats; 
-    /** vector if counts per category */
+    Vector  cats;
+    /** vector of counts per category */
     Vector  ccnts;
 
     int[] ranks=null;
-    
+
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
 	@param first first element to be added - see {@link #add} for details. If <code>null</code> is passed then no element is added. The usage of this constructor is discouraged/deprecated because first entry cannot contain a missing value thus leading to a loss of generality. */
-    public SVarObj(String Name, boolean iscat) 
+    public SVarObj(String Name, boolean iscat)
     {
         super(Name, iscat);
         // the defaults are different for SVarObj - due to guessing we must start with string assumption
@@ -44,10 +44,31 @@ public class SVarObj extends SVar
 	    cats=new Vector(); ccnts=new Vector();
 	}
     }
-    
+
+    /* added 02.01.04 MH */
+    public SVarObj(String Name, boolean isnum, boolean iscat)
+    {
+      super(Name, isnum, iscat);
+      guessing = false;
+      cont=new Vector();
+      if (iscat) {
+        cats=new Vector(); ccnts=new Vector();
+      }
+    }
+
+
     /** construct new variable (equals to <code>SVar(Name,false,null)</code>)
  	@param Name variable name */
     public SVarObj(String Name) { this(Name,false); };
+
+    /* added 28.12.03 MH */
+    public void setAllEmpty(int size) {
+      for (int i = 0; i < size; i++) {
+        missingCount++;
+        cont.add(null);
+      }
+    }
+
 
     /** sets the {@link #guessNum} flag. It must me set before the first add(..) call because the guess is made
         based on the first added object (hence makes no sense if {@link #SVar(String,boolean,Object)} was used). */
@@ -56,7 +77,7 @@ public class SVarObj extends SVar
     }
 
     public int size() { return cont.size(); }
-    
+
     /** define the variable explicitely as categorical
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
@@ -129,14 +150,14 @@ public class SVarObj extends SVar
             if (found=gotmin) {
                 cats.addElement(ocats.elementAt(p)); ccnts.addElement(occnts.elementAt(p));
                 ocats.setElementAt(null,p);
-            }            
+            }
         }
         if (Global.DEBUG>0) {
             sw.profile("sorted");
         };
     };
 
-    /** define the variable explicitely as non-categorial (drop category list) */ 
+    /** define the variable explicitely as non-categorial (drop category list) */
     public void dropCat() {
 	cats=null; ccnts=null; cat=false;
         NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
@@ -149,7 +170,7 @@ public class SVarObj extends SVar
             if (cats==null) categorize(); else cat=true;
         }
     }
-    
+
     /** adds a new case to the variable (NEVER use addElement! see package header) Also beware, categorial varaibles are classified by object not by value!
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
      *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
@@ -164,9 +185,9 @@ public class SVarObj extends SVar
                 }
 	    } catch (Exception E) {};
 	    if (isnum)
-                min=max=((Number)o).doubleValue();	    
+                min=max=((Number)o).doubleValue();
 	}
-	if (cat) {	    
+	if (cat) {
 	    Object oo=o;
 	    if (o==null) oo=missingCat;
 	    int i=cats.indexOf(oo);
@@ -192,6 +213,96 @@ public class SVarObj extends SVar
 	return true;
     }
 
+
+    /* added 28.12.03 MH */
+    /** insets an empty case to var*/
+    public boolean addCase(int index) {
+        if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
+        missingCount++;
+        cont.insertElementAt(null,index);
+        NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
+        return true;
+    }
+
+    /* added 28.12.03 MH */
+    /** remove a case, if it's an NA do missingcount--, what i do not is updating cats*/
+    public boolean removeCase(Object o, int index) {
+      if (o == null && missingCount > -1) missingCount--;
+      cont.removeElementAt(index);
+      return true;
+    }
+
+
+    /* added 31.12.03 MH */
+    /** replace a case, we try to treat categoricaly as well as continious, but it doesn't work in a right way at the moment
+     * categories are not updated as they should only with new created vars, and we have to find new max and min, because the way
+     * i try it now, it only works sometimes*/
+    public boolean replaceCase(int i, Object o) {
+      if (i < 0 || i >= size()) return false;
+      Object oo = at(i);
+      if (oo == o) return true;
+      if (oo == null)
+        missingCount--;
+      if (o == null)
+        missingCount++;
+      if (cat) {
+          int a = cont.indexOf(oo);
+          int b = cats.indexOf(oo);
+          int z = cats.indexOf(o);
+          if (z == -1 && o != null) {
+            cats.add(o);
+            ccnts.addElement(new Integer(1));
+          }
+          else if (o != null) {
+            ccnts.setElementAt(new Integer( ( (Integer) ccnts.elementAt(z)).
+                                           intValue() + 1), z);
+          }
+          if (b != -1 && cont.indexOf(oo,a+1) == -1) cats.remove(oo);
+          else if ( b != -1) ccnts.setElementAt(new Integer( ( (Integer) ccnts.elementAt(b)).
+                                           intValue() - 1), b);
+      }
+      if (isnum && o != null) {
+        try {
+          if(!o.toString().trim().matches("[0-9]*\\.{0,1}[0-9]*")) return false;
+          double val = (new Double(o.toString())).doubleValue();
+          if (val > max)
+            max = val;
+          if (val < min)
+            min = val;
+          if (oo != null) {
+            val = (new Double(oo.toString())).doubleValue();
+            int z = cont.indexOf(oo);
+            try {
+              if (val == max && cont.indexOf(oo, z + 1) == -1) {
+                /*Object[] cont_2 = cont.toArray();
+                Arrays.sort(cont.toArray(cont_2));
+                max = (double) ((Number)cont_2[size()-2]).doubleValue();
+                cont_2 = null;*/
+              }
+              if (val == min && cont.indexOf(oo, z + 1) == -1) {
+                /*Object[] cont_2 = cont.toArray();
+                Arrays.sort(cont.toArray(cont_2));
+                System.out.println(cont_2[1]);
+                cont_2 = null;*/
+              }
+            }
+            catch (Exception e) {
+
+            }
+
+          }
+        }
+        catch (Exception E) {
+          return false;
+        }
+      }
+      cont.setElementAt(o, i); // we don't modify the element unless we're through all checks etc.
+      NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
+      return true;
+    }
+
+
+
     /** replaces an element at specified position - use with care!. this doesn't work for categorical variables.
         in that case you need to dropCat(), make modifications and categorize().
         also numerical variables only "grow" their min/max - i.e. if min/max was the removed
@@ -216,13 +327,14 @@ public class SVarObj extends SVar
                 return false;
             }
         }
-       	cont.setElementAt(o,i); // we don't modify the element unless we're through all checks etc.
+               cont.setElementAt(o,i); // we don't modify the element unless we're through all checks etc.
         NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
         return true;
     }
-   
+
+
     public Object at(int i) { return cont.elementAt(i); };
-    
+
     /** returns the ID of the category of the object
         @param object
         @return category ID
@@ -241,7 +353,7 @@ public class SVarObj extends SVar
             return -1;
         }
     }
-    
+
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public Object getCatAt(int i) {
         if (cats==null) return null;
@@ -274,14 +386,14 @@ public class SVarObj extends SVar
 	if (cats==null) return 0;
 	return cats.size();
     }
-   
+
     /** returns new, fixed array of categories */
-    public Object[] getCategories() { 
+    public Object[] getCategories() {
 	if (cats==null) return null;
-	
+
 	Object c[] = new Object[cats.size()];
 	cats.copyInto(c);
-	return c; 
+	return c;
     }
 
     /** returns list of indexes ordered by rank, for non-cat, num vars only. missing
@@ -399,7 +511,7 @@ cases: variable is not numerical or is categorical, no cases matching
         // return the resulting list
         return r;
     }
-    
+
     public String toString() {
         return "SVarObj(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
     }
