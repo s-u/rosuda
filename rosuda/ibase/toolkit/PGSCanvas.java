@@ -14,12 +14,18 @@ public class PGSCanvas extends DBCanvas implements Commander {
     /** description of this canvas. */
     String desc="untitled PGS canvas";
 
+    /** inProgress flag to avoid recursions in paint methods */
+    boolean inProgress=false;
+
     /** paintBuffer simply calls {@link #paintPoGraSS} on the supplied {@link Graphics}.
         Any further classes should override {@link #paintPoGraSS} instead of
         {@link #paintBuffer}  */
     public void paintBuffer(Graphics g) {
+        if (inProgress) return; /* avoid recursions */
+        inProgress=true;
 	PoGraSSgraphics p=new PoGraSSgraphics(g);
-	paintPoGraSS(p);	
+	paintPoGraSS(p);
+        inProgress=false;
     };
 
     /** set the corresponding frame that contains this canvas. It is used mainly
