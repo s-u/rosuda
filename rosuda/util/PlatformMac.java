@@ -27,7 +27,6 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
         } catch(Exception e) {
             if (Global.DEBUG>0)
                 System.out.println("PlatformMac.getResourceFile(\""+rname+"\"): "+e.getMessage());
-                e.printStackTrace();
         }
         if (f==null) { // fall back to default resource loading if this ain't a MacOS X bundle
             String s=super.getResourceFile(rname);
@@ -35,7 +34,7 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
         }
         return (f==null)?null:f.getAbsolutePath();        
     }
-
+    
     String getPlatformName() { return "Apple Macintosh"; }
 
     // MRJ specific handlers
