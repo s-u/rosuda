@@ -26,7 +26,14 @@ public class SVarFixFact extends SVar
 
     int[] ranks=null;
 
+    boolean lastIsMissing=false;
+
     public boolean muteNotify=false;
+
+    /** return <code>true</code> if missings have their own category (the last one) */
+    public boolean isLastMissing() {
+        return lastIsMissing;
+    }
     
     /** construct new variable and add first element
 	@param Name variable name
@@ -52,6 +59,29 @@ public class SVarFixFact extends SVar
         }
     }
 
+    public void createMissingsCat() {
+        if (!cat || cont==null || cont.length<1 || missingCount==0 || isLastMissing()) return;
+        int j=0;
+        int cvtdMissings=0;
+        while (j<cont.length) {
+            if (cont[j]==-1) {
+                cont[j]=cats.length;
+                cvtdMissings++;
+            }
+            j++;
+        }
+        String[] newcat=new String[cats.length+1];
+        System.arraycopy(cats,0,newcat,0,cats.length);
+        newcat[cats.length]=missingCat;
+        int[] newcnts=new int[cats.length+1];
+        System.arraycopy(ccnts,0,newcnts,0,ccnts.length);
+        newcnts[cats.length]=cvtdMissings;
+        missingCount=cvtdMissings;
+        cats=newcat;
+        ccnts=newcnts;
+        lastIsMissing=true;
+    }
+    
     public void setAllEmpty(int size) {
         cont=new int[size];
         for (int i = 0; i < size; i++)
