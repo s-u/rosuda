@@ -13,9 +13,9 @@ import java.awt.event.MouseEvent;
 public class Common
 {
     /** application version */
-    public static String Version="0.96w";
+    public static String Version="0.97RC1";
     /** application release */
-    public static String Release="D605";
+    public static String Release="D612";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
         parameter equivalent: --debug / --nodebug */
