@@ -125,6 +125,7 @@ public class Common
         if (initializedStatic) return; // prevent loops
         initializedStatic=true;
         ColorBridge.main=new ColorBridge();
+	if (Common.screenRes==null) Common.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
         if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
             isMac=true;
             try {
