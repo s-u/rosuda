@@ -1,0 +1,8 @@
+#--- the following settings are OK for Macs (Darwin/OS X)
+RHOME=/Library/Frameworks/R.framework/Resources
+JAVAINC=-I/System/Library/Frameworks/JavaVM.framework/Headers
+JNISO=.jnilib
+JNILD=-dynamiclib -framework JavaVM
+CPICF=-fno-common
+JAVAB=java
+
