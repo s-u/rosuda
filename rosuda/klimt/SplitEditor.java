@@ -136,6 +136,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             boolean isOpt=false;
             double lv=0, devL=0, devR=D;
             q=0;
+            double XdevL=devL, XdevR=devR; // experimental
             while(q<rks.length) {
                 lv=cv.atD(rks[q]);
                 if (isOpt)
@@ -148,8 +149,16 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         if (ci>-1) cls[ci]++;
                     } else {
                         if (rsp.at(rks[q])!=null) {
-                            deltay+=rsp.atD(rks[q]);
-                            deltay2+=rsp.atD(rks[q])*rsp.atD(rks[q]);
+                            double v=rsp.atD(rks[q]);
+                            double osumL=sumL, osumR=sumR;
+                            sumL+=v; sumR-=v;
+                            double pvL=sumL/((double)(lct+1));
+                            double pvR=(trct-lct<2)?0:sumR/((double)(trct-lct-1));
+                            // mnL=\bar y_t, pvL=\bar y_t+1
+                            // update formula for deviances
+                            XdevL+=((double)lct)*(pvL*pvL-mnL*mnL)+pvL*pvL-2*osumL*(pvL-mnL)-2*pvL*v+v*v;
+                            XdevR+=((double)(trct-lct-1))*pvR*pvR-((double)(trct-lct))*mnR*mnR-2*pvR*sumR+2*mnR*osumR-v*v;
+                            mnL=pvL; mnR=pvR;
                         }
                     };
                     rxv.add(cv.at(rks[q]));
@@ -169,21 +178,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         cl++;
                     }
                 } else {
-                    double ctL=(double)lct, ctR=(double)(trct-lct);
-                    double pvL=sumL/ctL, delL=mnL-pvL;
-                    double pvR=sumR/ctR, delR=mnR-pvR;
-                    /*
-                    devL+=2*delL*(sumL-deltay)+((double)(lct-eq))*(pvL*pvL-mnL*mnL)+((double)eq)*pvL*pvL+deltay2-2*pvL*deltay;
-                    devR-=2*delR*(sumR-deltay)+((double)(trct-lct+eq))*(pvR*pvR-mnR*mnR)+((double)eq)*pvR*pvR+deltay2-2*pvR*deltay;
-                    d-=devL+devR;
-                    mnL=pvL; mnR=pvR; */
-                    devL=0; devR=0;
-                    for(int iX=0;iX<rks.length;iX++) {
-                        if (iX<q) devL+=(rsp.atD(rks[iX])-pvL)*(rsp.atD(rks[iX])-pvL);
-                        else devR+=(rsp.atD(rks[iX])-pvR)*(rsp.atD(rks[iX])-pvR);
-                    }
-//                    System.out.println("sums=["+sumL+":"+sumR+"], pv=["+pvL+":"+pvR+"], ct=["+lct+":"+(trct-lct)+"], dev=["+devL+":"+devR+":"+D+"]");
-                    d-=devL+devR;
+                    d-=XdevL+XdevR;
                 }
                 isOpt=(d>maxD);
                 if (isOpt) { maxD=d; maxDP=lv; optSP=lv; };
