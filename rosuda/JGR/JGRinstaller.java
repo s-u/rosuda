@@ -32,14 +32,17 @@ import org.rosuda.JRI.*;
 public class JGRinstaller implements RMainLoopCallbacks {
 	
 	static String VERSION = "0.1";
-	static int DEBUG = 0;
+	static int DEBUG = 1;
 	
 	Rengine R = null;
 	
 	JGRinstSync sync = new JGRinstSync();
 	
 	String packages = "";
-	String contriburl; // = "http://rosuda.org/R";
+	
+	//Just for development use ... 
+	String contriburl = "http://rosuda.org/R/nightly";
+	// sonst String contriburl = null;
 	JProgressBar p = null;
 	JLabel l = null;
 	
@@ -50,7 +53,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	 */
 	public JGRinstaller(String pkgs, String url) {
 		this.packages = pkgs;
-		this.contriburl = url;
+		if (url != null) this.contriburl = url;
 		
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			JFrame f = new JFrame("Installing JGR");
@@ -62,7 +65,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 			l = new JLabel("Starting JGR installer");
 			f.getContentPane().add(l,BorderLayout.NORTH);
 			f.getContentPane().add(p,BorderLayout.SOUTH);
-			f.setSize(new Dimension(400,40));
+			f.setSize(new Dimension(400,(System.getProperty("os.name").startsWith("Mac")?70:40)));
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 			f.setLocation((screenSize.width-f.getSize().width)/2,(screenSize.height-f.getSize().height)/2);
 			f.setResizable(false);
@@ -104,9 +107,9 @@ public class JGRinstaller implements RMainLoopCallbacks {
 			System.exit(1);
 		}
 		if (l != null) l.setText("Installing R packages: "+packages);
-		if (System.getProperty("os.name").startsWith("Mac") && contriburl != null)
-			sync.triggerNotification("install.packages(c("+packages+"),contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
-		else 
+		//if (System.getProperty("os.name").startsWith("Mac") && contriburl != null)
+		//	sync.triggerNotification("install.packages(c("+packages+"),contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
+		//else 
 			sync.triggerNotification("install.packages(c("+packages+")"+(contriburl==null?"":",contriburl=\""+contriburl+"\"")+")");
 		sync.triggerNotification("y");
 		sync.triggerNotification("q('no')");
