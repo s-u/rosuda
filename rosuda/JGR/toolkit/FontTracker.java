@@ -27,12 +27,16 @@ public class FontTracker {
         components = new Vector();
     }
 
-    /** add a JComponent
+    /** add a Component
       * @param comp component to add */
-    public void add(JComponent comp) {
+    public void add(Component comp) {
         //System.out.println(comp);
         comp.setFont(iPreferences.DefaultFont);
         components.add(comp);
+    }
+
+    public void add(JComponent comp) {
+        add((Component) comp);
     }
 
     public void setFontBigger() {
@@ -52,7 +56,7 @@ public class FontTracker {
     public void applyFont() {
         Enumeration e = components.elements();
         while (e.hasMoreElements()) {
-            JComponent comp = (JComponent) e.nextElement();
+            Component comp = (Component) e.nextElement();
             comp.setFont(iPreferences.DefaultFont);
             try {
                 //System.out.println(comp.getClass().getName());
