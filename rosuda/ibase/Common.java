@@ -7,12 +7,12 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96h";
+    public static String Version="0.96k";
     /** application release */
-    public static String Release="C731";
+    public static String Release="CA10";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
-        parameter equivalend: --debug / --nodebug */
+        parameter equivalent: --debug / --nodebug */
     public static int DEBUG=0;
     /** profiler flag. When set to >0 profile information (timings) are generated; >1 then memory info is added
         parameter equivalent: --profile */
@@ -107,7 +107,7 @@ public class Common
     public static void flushWarnings() { warnings=null; warningsCount=0; };
     
     /** returns a short form of the string given in s. it is more complex but
-	tries to get a half-way sensible combination of letter from the word.
+	tries to get a half-way sensible combination of letters from the word.
 	first approach is to use capitals and numbers only. If that doesnt work
 	then first letter+first consonant+last letter is used.
     @param s string to be abbreviated 

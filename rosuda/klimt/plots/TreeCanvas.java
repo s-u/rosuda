@@ -158,7 +158,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	
 	//--- this is a bit tricky - not really clean enough --
 	String[] menuDef={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-","Clone tree","new","-","Save as PGS ...",
-                          "exportPGS","Export forest data ...","exportForest","Display forest","displayForest","Save as EPS ...","print","-","Quit","quit",
+                          "exportPGS","Save as SVG ...","exportSVG","Export forest data ...","exportForest","Display forest","displayForest","Save as EPS ...","print","-","Quit","quit",
                           "+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv",
 			  "+","Node","Prune","prune","Edit split","editSplit",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
