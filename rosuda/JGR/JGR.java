@@ -74,6 +74,7 @@ public class JGR {
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Window")) splash.stop();
+        MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
         rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
     }
 

@@ -118,7 +118,6 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         if (fileChooser.getSelectedFile() != null) {
             RConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = fileChooser.getSelectedFile().toString();
-            if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('\\','/');
 
             String useSep;
             if (sepsBox.getSelectedIndex() >= seps.length) useSep = sepsBox.getSelectedItem().toString();
@@ -127,7 +126,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
             else useQuote = quotes[quoteBox.getSelectedIndex()];
 
-            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim()+")":"")+"";
+            String cmd = dataName.getText().trim()+" <- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim()+")":"")+"";
             JGR.MAINRCONSOLE.execute(cmd);
         }
         dispose();

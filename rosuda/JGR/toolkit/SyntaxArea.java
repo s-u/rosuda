@@ -248,7 +248,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public synchronized void highlightParanthesisForward(String par, int pos) throws BadLocationException {
+    public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
         //System.out.println(par);
         int open = pos;
         int cend = this.getText().length();
@@ -321,7 +321,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public synchronized void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
+    public  void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
 
         int end = pos;
 

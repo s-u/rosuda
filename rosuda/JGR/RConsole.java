@@ -243,7 +243,12 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
 
     public void clearconsole() {
-        try { output.getDocument().remove(end,output.getText().length()-end); } catch (Exception e) { new iError(e); }
+        try {
+            System.out.println(output.getLineOfOffset(end));
+            int o = output.getLineEndOffset(output.getLineOfOffset(end)-1)+2;
+            System.out.println(o);
+            output.removeAllFrom(o);
+        } catch (Exception e) { new iError(e);/*e.printStackTrace();*/ }
     }
 
 
@@ -655,6 +660,60 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     }
                 }
         }
+
+
+        public int getLineCount() {
+            Element map = getDocument().getDefaultRootElement();
+            return map.getElementCount();
+        }
+        
+
+        public int getLineStartOffset(int line) throws BadLocationException {
+            int lineCount = getLineCount();
+            if (line < 0) {
+                throw new BadLocationException("Negative line", -1);
+            } else if (line >= lineCount) {
+                throw new BadLocationException("No such line", getDocument().getLength()+1);
+            } else {
+                Element map = getDocument().getDefaultRootElement();
+                Element lineElem = map.getElement(line);
+                return lineElem.getStartOffset();
+            }
+        }
+
+        public int getLineEndOffset(int line) throws BadLocationException {
+            int lineCount = getLineCount();
+            if (line < 0) {
+                throw new BadLocationException("Negative line", -1);
+            } else if (line >= lineCount) {
+                throw new BadLocationException("No such line", getDocument().getLength()+1);
+            } else {
+                Element map = getDocument().getDefaultRootElement();
+                Element lineElem = map.getElement(line);
+                int endOffset = lineElem.getEndOffset();
+                // hide the implicit break at the end of the document
+                return ((line == lineCount - 1) ? (endOffset - 1) : endOffset);
+            }
+        }
+
+
+        public int getLineOfOffset(int offset) throws BadLocationException {
+            Document doc = getDocument();
+            if (offset < 0) {
+                throw new BadLocationException("Can't translate offset to line", -1);
+            } else if (offset > doc.getLength()) {
+                throw new BadLocationException("Can't translate offset to line",
+                                               doc.getLength() + 1);
+            } else {
+                Element map = getDocument().getDefaultRootElement();
+                return map.getElementIndex(offset);
+            }
+        }
+
+        public void removeAllFrom(int index) throws BadLocationException {
+            this.getDocument().remove(index,this.getDocument().getLength()-index);
+        }
+        
 
         public void setFont(Font f) {
             super.setFont(f);
