@@ -12,9 +12,12 @@ class XGDcanvas extends Canvas {
 
     Color fill;
     Color col;
+
+    Font f;
     
     public XGDcanvas(int w, int h) {
         l=new Vector();
+        f=new Font(null,0,12);
         setSize(w,h);
     }
 
@@ -22,6 +25,7 @@ class XGDcanvas extends Canvas {
     public void reset() { l.removeAllElements(); }
     public void paint(Graphics g) {
         int i=0, j=l.size();
+        g.setFont(f);
         while (i<j) {
             XGDobject o=(XGDobject) l.elementAt(i++);
             o.paint(this, g);
@@ -37,14 +41,17 @@ class XGDline extends XGDobject {
     }
 
     public void paint(XGDcanvas c, Graphics g) {
-        //if (c.col!=null)
-        g.drawLine((int)x1,(int)y1,(int)x2,(int)y2);
+        if (c.col!=null)
+            g.drawLine((int)x1,(int)y1,(int)x2,(int)y2);
     }
 }
 
 class XGDrect extends XGDobject {
     double x1,y1,x2,y2;
     public XGDrect(double x1, double y1, double x2, double y2) {
+        double tmp;
+        if (x1>x2) { tmp=x1; x1=x2; x2=tmp; }
+        if (y1>y2) { tmp=y1; y1=y2; y2=tmp; }
         System.out.println(">> RECT("+x1+","+y1+","+x2+","+y2+")");
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
     }
@@ -55,8 +62,8 @@ class XGDrect extends XGDobject {
             g.fillRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
             if (c.col!=null) g.setColor(c.col);
         }
-        //if (c.col!=null)
-        g.drawRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
+        if (c.col!=null)
+            g.drawRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
     }
 }
 
@@ -73,8 +80,8 @@ class XGDcircle extends XGDobject {
             g.fillOval((int)(x-r),(int)(y-r),(int)(r+r),(int)(r+r));
             if (c.col!=null) g.setColor(c.col);
         }
-        //if (c.col!=null)
-        g.drawOval((int)(x-r),(int)(y-r),(int)(r+r),(int)(r+r));
+        if (c.col!=null)
+            g.drawOval((int)(x-r),(int)(y-r),(int)(r+r),(int)(r+r));
     }
 }
 
@@ -87,8 +94,106 @@ class XGDtext extends XGDobject {
     }
 
     public void paint(XGDcanvas c, Graphics g) {
-        //if (c.col!=null)
-        g.drawString(txt,(int)x,(int)y);
+        if (c.col!=null) {
+            double rx=x, ry=y;
+            double hc=0d;
+            if (h!=0d) {
+                FontMetrics fm=g.getFontMetrics();
+                int w=fm.stringWidth(txt);
+                hc=((double)w)*h;
+                rx=x-(((double)w)*h);
+            }
+            int ix=(int)(rx+0.5), iy=(int)(ry+0.5);
+                       
+            if (r!=0d) {
+                Graphics2D g2d=(Graphics2D) g;
+                g2d.translate(x,y);
+                double rr=r/180d*Math.PI;
+                g2d.rotate(rr);
+                if (hc!=0d)
+                    g2d.translate(-hc,0d);
+                g2d.drawString(txt,0,0);
+                if (hc!=0d)
+                    g2d.translate(hc,0d);
+                g2d.rotate(-rr);
+                g2d.translate(-x,-y);
+            } else
+                g.drawString(txt,ix,iy);
+        }
+    }
+}
+
+class XGDpolygon extends XGDobject {
+    int n;
+    double x[],y[];
+    int xi[], yi[];
+    boolean isPolyline;
+    public XGDpolygon(int n, double[] x, double[] y, boolean isPolyline) {
+        this.x=x; this.y=y; this.n=n; this.isPolyline=isPolyline;
+        System.out.println(">> POLYGON("+n+" points, type="+(isPolyline?"PolyLine":"Polygon")+")");
+        int i=0;
+        xi=new int[n]; yi=new int[n];
+        while (i<n) {
+            xi[i]=(int)(x[i]+0.5);
+            yi[i]=(int)(y[i]+0.5);
+            i++;
+        }
+    }
+
+    public void paint(XGDcanvas c, Graphics g) {
+        if (c.fill!=null && !isPolyline) {
+            g.setColor(c.fill);
+            g.fillPolygon(xi, yi, n);
+            if (c.col!=null) g.setColor(c.col);
+        }
+        if (c.col!=null) {
+            if (isPolyline)
+                g.drawPolyline(xi, yi, n);
+            else
+                g.drawPolygon(xi, yi, n);
+        }
+    }
+}
+
+class XGDcolor extends XGDobject {
+    int col;
+    Color gc;
+    public XGDcolor(int col) {
+        this.col=col;
+        System.out.println(">> COLOR: "+Integer.toString(col,16));
+        if (col==-1) gc=null;
+        else
+            gc=new Color(((float)(col&255))/255f,
+                         ((float)((col>>8)&255))/255f,
+                         ((float)((col>>16)&255))/255f,
+                         1f-((float)((col>>24)&255))/255f);
+        System.out.println("          "+gc);
+    }
+
+    public void paint(XGDcanvas c, Graphics g) {
+        c.col=gc;
+        if (gc!=null) g.setColor(gc);
+    }
+}
+
+class XGDfill extends XGDobject {
+    int col;
+    Color gc;
+    public XGDfill(int col) {
+        this.col=col;
+        System.out.println(">> FILL COLOR: "+Integer.toString(col,16));
+        if (col==-1)
+            gc=null;
+        else
+            gc=new Color(((float)(col&255))/255f,
+                         ((float)((col>>8)&255))/255f,
+                         ((float)((col>>16)&255))/255f,
+                         1f-((float)((col>>24)&255))/255f);
+        System.out.println("          "+gc);
+    }
+    
+    public void paint(XGDcanvas c, Graphics g) {
+        c.fill=gc;
     }
 }
 
@@ -256,31 +361,74 @@ public class XGDserver extends Thread {
                         c.reset();
                     }
 
+                    if ((cmd == 13 || cmd == 14) && c!=null) {
+                        int pn=getInt(par,0);
+                        int i=0;
+                        double x[], y[];
+                        x=new double[pn];
+                        y=new double[pn];
+                        while (i<pn) {
+                            x[i]=getDouble(par, 4 + i*8);
+                            y[i]=getDouble(par, 4 + i*8 + pn*8);
+                            i++;
+                        }
+                        c.add(new XGDpolygon(pn, x, y, cmd==14));
+                    }
+                    
                     if (cmd == 18 && c!=null) {
                         c.add(new XGDtext(getDouble(par,0), getDouble(par,8), getDouble(par,16), getDouble(par,24), new String(par,32,par.length-33)));
                     }
-                    
+
+                    if (cmd == 0x13 && c!=null) {
+                        c.add(new XGDcolor(getInt(par,0)));
+                    }
+
+                    if (cmd == 0x14 && c!=null) {
+                        c.add(new XGDfill(getInt(par,0)));
+                    }
+
                     if (cmd == 0x51) { // StrWidth
-                        System.out.println("--- get-par");
                         String s=new String(par, 0, par.length-1);
                         System.out.println("Request: get string width of \""+s+"\"");
                         byte[] b= new byte[12];
                         setInt((0x51 | 0x80) | 0x800,b,0);
-                        setDouble((double)(8*s.length()),b,4);
+                        double width=(double)(8*s.length()); // rough estimate
+                        if (c!=null) {
+                            Graphics g=c.getGraphics();
+                            if (g!=null) {
+                                FontMetrics fm=g.getFontMetrics(c.f);
+                                if (fm!=null) width=(double)fm.stringWidth(s);
+                            }
+                        }
+                        System.out.println(">> WIDTH: "+width);
+                        setDouble(width,b,4);
                         //dump("Sending: ",b);
                         sos.write(b);
                         sos.flush();
                     }
 
                     if (cmd == 0x4a) { // MetricInfo
-                        System.out.println("--- get-par");
                         int ch=getInt(par, 0);
                         System.out.println("Request: metric info for char "+ch);
                         byte[] b= new byte[4 + 3*8];
+
+                        double ascent=0.0, descent=0.0, width=8.0;
+                        if (c!=null) {
+                            Graphics g=c.getGraphics();
+                            if (g!=null) {
+                                FontMetrics fm=g.getFontMetrics(c.f);
+                                if (fm!=null) {
+                                    ascent=(double) fm.getAscent();
+                                    descent=(double) fm.getDescent();
+                                    width=(double) fm.charWidth((ch==0)?77:ch);
+                                }
+                            }
+                        }
+                        System.out.println(">> MI: ascent="+ascent+", descent="+descent+", width="+width);
                         setInt((0x4a | 0x80) | ((3*8)<<8),b,0);
-                        setDouble(8d,b,4);
-                        setDouble(8d,b,12);
-                        setDouble(8d,b,20);
+                        setDouble(ascent,b,4);
+                        setDouble(descent,b,12);
+                        setDouble(width,b,20);
                         //dump("Sending: ",b);
                         sos.write(b);
                         sos.flush();
