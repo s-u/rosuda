@@ -14,8 +14,8 @@ all: $(JAR)
 #org/rosuda/javaGD/%.class: %.java
 #	$(JAVAC) -d . $^
 
-$(JAR):
-	$(JAVAC) -d . *.java
+$(JAR): $(SRC)
+	$(JAVAC) -d . $^
 	jar fc $@ org
 
 clean:
