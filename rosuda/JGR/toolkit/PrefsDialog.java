@@ -77,7 +77,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
         fontPanel.add(size);
         
         JPanel helpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        helpPanel.add(new JLabel("Help Pages: "));
+        helpPanel.add(new JLabel("#Help Pages: "));
         helpPanel.add(helptabs);
 
         GridBagConstraints gbc = new GridBagConstraints();
