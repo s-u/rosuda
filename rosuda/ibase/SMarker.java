@@ -33,6 +33,17 @@ public class SMarker extends Notifier implements Commander {
 	//curIV=null; curOp=0;
     };
 
+    /** This methods allows to resize the marker. To ensure consistency the marker is never downsized. */
+    public void resize(int newsize) {
+        if (newsize<msize) return; // we can't allow downsizing
+        list.removeAllElements();
+        mask=new int[newsize];
+        list=new Vector();
+        msize=newsize;
+        masterSet=null;
+        maxMark=1; // it is never below 1 since 0 and 1 are used for primary mask        
+    }
+    
     /** returns size of the marker array */
     public int size() { return msize; };
 
