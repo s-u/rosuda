@@ -30,7 +30,8 @@ public class AxisCatSequence implements Dependent {
     }
 
     void updateCats() {
-        System.out.println("AxisCatSequence.updateCats()");
+        if (Common.DEBUG>0)
+            System.out.println("AxisCatSequence.updateCats() [cats="+cats+"]");
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return;
 
         SVar v=a.getVariable();
