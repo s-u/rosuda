@@ -537,8 +537,11 @@ FocusListener, RMainLoopCallbacks {
             else if (currentHistPosition > 0){
                 if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                     if (input.getText().trim().length() > 0) {
-                        if (currentHistPosition==JGR.RHISTORY.size() && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
-                            JGR.RHISTORY.add(input.getText().trim());
+                        if (currentHistPosition==JGR.RHISTORY.size()-1 && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
+							if (System.getProperty("user.name").indexOf("markus") > -1)
+								JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
+							else
+								JGR.RHISTORY.add(input.getText().trim());
                         }
                     }
                     input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
