@@ -37,17 +37,17 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
     public JGRDataFileDialog(Frame f,String directory) {
         super(f,"Load DataFile",true);
 
-        dataName.setMinimumSize(new Dimension(200,20));
-        dataName.setPreferredSize(new Dimension(200,20));
-        dataName.setMaximumSize(new Dimension(200,20));
+        dataName.setMinimumSize(new Dimension(160,20));
+        dataName.setPreferredSize(new Dimension(160,20));
+        dataName.setMaximumSize(new Dimension(160,20));
 
-        quoteBox.setMinimumSize(new Dimension(60,20));
-        quoteBox.setPreferredSize(new Dimension(60,20));
-        quoteBox.setMaximumSize(new Dimension(60,20));
+        quoteBox.setMinimumSize(new Dimension(90,20));
+        quoteBox.setPreferredSize(new Dimension(90,20));
+        quoteBox.setMaximumSize(new Dimension(90,20));
 
-        sepsBox.setMinimumSize(new Dimension(60,20));
-        sepsBox.setPreferredSize(new Dimension(60,20));
-        sepsBox.setMaximumSize(new Dimension(60,20));
+        sepsBox.setMinimumSize(new Dimension(90,20));
+        sepsBox.setPreferredSize(new Dimension(90,20));
+        sepsBox.setMaximumSize(new Dimension(90,20));
 
         
         quoteBox.addItemListener(this);
@@ -90,7 +90,8 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
                 dispose();
             }
         });
-		this.pack();
+        this.pack();
+        this.setSize(new Dimension(600,450));
         this.setVisible(true);
     }
 

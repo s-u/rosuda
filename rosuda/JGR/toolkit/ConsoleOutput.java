@@ -249,6 +249,7 @@ public class ConsoleOutput extends JTextPane {
 			this.getContentPane().add(fileChooser,BorderLayout.CENTER);
 			this.getContentPane().add(options,BorderLayout.SOUTH);
 			this.pack();
+                        this.setSize(new Dimension(500,450));
 			this.setVisible(true);
     	}
     	

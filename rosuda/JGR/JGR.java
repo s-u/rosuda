@@ -26,7 +26,7 @@ public class JGR {
 	
 	/* Copyright information and other stuff */
 	
-	public static final String VERSION = "DP5 (inofficial)";
+	public static final String VERSION = "DP5";
     public static final String TITLE = "JGR";
     public static final String SUBTITLE = "Java Gui for R";
     public static final String DEVELTIME = "2003 - 2004";
