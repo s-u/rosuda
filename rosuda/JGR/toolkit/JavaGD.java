@@ -15,6 +15,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
+import java.awt.FileDialog;
+
 import org.rosuda.javaGD.GDInterface;
 
 /** Implementation of JavaGD which uses iFrame instead of Frame */
@@ -70,15 +72,46 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         }
     }
 
+	String getFileDlg(boolean newFile) {
+		FileDialog fd = new FileDialog(jfr, (!newFile)?"Select a file":"Select a new file", (!newFile)?FileDialog.LOAD:FileDialog.SAVE);
+		fd.show();
+		String res=null;
+		if (fd.getDirectory()!=null) res=fd.getDirectory();
+		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
+		return res;
+	}
+	
+	String escapeStr(String s) {
+		int i=0;
+		StringBuffer r=new StringBuffer(s.length()+16);
+		while (i<s.length()) {
+			char c=s.charAt(i);
+			if (c=='"' || c=='\\') r.append("\\");
+			r.append(c);
+			i++;
+		}
+		return r.toString();
+	}
+	
     // we'll use this once the menu is available ...
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd.equals("copyImg"))
             org.rosuda.util.ImageSelection.copyComponent((java.awt.Component)c,false,true);
-		if (cmd.equals("savePDF"))
-			org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=pdf, source="+(getDeviceNumber()+1)+", onefile=TRUE, paper=\"special\")");
-		if (cmd.equals("saveEPS"))
-			org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=postscript, "+(getDeviceNumber()+1)+", onefile=TRUE, paper=\"special\")");
+		if (cmd.equals("savePDF")) {
+			String fn = getFileDlg(true);
+			if (fn!=null) {
+				fn=escapeStr(fn);
+				org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=pdf, source="+(getDeviceNumber()+1)+", file=\""+fn+"\",onefile=TRUE, paper=\"special\")");
+			}
+		}
+		if (cmd.equals("saveEPS")) {
+			String fn = getFileDlg(true);
+			if (fn!=null) {
+				fn=escapeStr(fn);
+				org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=postscript, "+(getDeviceNumber()+1)+", file=\""+fn+"\",onefile=TRUE, paper=\"special\")");
+			}
+		}
     }
 
     public void windowClosing(WindowEvent e) {
