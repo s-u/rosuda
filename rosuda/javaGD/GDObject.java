@@ -12,8 +12,8 @@ package org.rosuda.javaGD;
 import java.awt.*;
 
 /** GDObject is an arbitrary object that can be painted */
-class GDObject {
-    public void paint(Component c, GDState gs, Graphics g) {};
+abstract class GDObject {
+    public abstract void paint(Component c, GDState gs, Graphics g);
 }
 
 /** object storing the current graphics state */
@@ -29,7 +29,7 @@ class GDLine extends GDObject {
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
     }
 
-    public void paint(GDCanvas c, GDState gs, Graphics g) {
+    public void paint(Component c, GDState gs, Graphics g) {
         if (gs.col!=null)
             g.drawLine((int)(x1+0.5),(int)(y1+0.5),(int)(x2+0.5),(int)(y2+0.5));
     }
@@ -42,16 +42,22 @@ class GDRect extends GDObject {
         if (x1>x2) { tmp=x1; x1=x2; x2=tmp; }
         if (y1>y2) { tmp=y1; y1=y2; y2=tmp; }
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
+        //System.out.println(">> RECT "+x1+":"+y1+" "+x2+":"+y2);
     }
 
-    public void paint(GDCanvas c, GDState gs, Graphics g) {
+    public void paint(Component c, GDState gs, Graphics g) {
+        //System.out.println(" paint> rect: "+x1+":"+y1+" "+x2+":"+y2);
+        int x=(int)(x1+0.5);
+        int y=(int)(y1+0.5);
+        int w=(int)(x2+0.5)-x;
+        int h=(int)(y2+0.5)-y;
         if (gs.fill!=null) {
             g.setColor(gs.fill);
-            g.fillRect((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+0.5),(int)(y2-y1+0.5));
+            g.fillRect(x,y,w+1,h+1);
             if (gs.col!=null) g.setColor(gs.col);
         }
         if (gs.col!=null)
-            g.drawRect((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+0.5),(int)(y2-y1+0.5));
+            g.drawRect(x,y,w,h);
     }
 }
 
@@ -64,7 +70,7 @@ class GDClip extends GDObject {
         this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
     }
 
-    public void paint(GDCanvas c, GDState gs, Graphics g) {
+    public void paint(Component c, GDState gs, Graphics g) {
         g.setClip((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+1.7),(int)(y2-y1+1.7));
     }
 }
@@ -197,6 +203,7 @@ class GDColor extends GDObject {
 
     public void paint(Component c, GDState gs, Graphics g) {
         gs.col=gc;
+        System.out.println(" paint > color> (col="+col+") "+gc);
         if (gc!=null) g.setColor(gc);
     }
 }
