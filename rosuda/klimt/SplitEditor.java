@@ -17,6 +17,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
     LineCanvas lc;
     Label l1;
     Panel cp,sp,pp;
+    Checkbox cb;
     PlotLine li,lrl, rrl;
     double spVal;
     
@@ -29,26 +30,38 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
         root=(SNode)n.getRoot();
         ln=(SNode)n.at(0); if (ln!=null) cv=ln.splitVar;
         addWindowListener(Common.defaultWindowListener);
-        if (n!=null && !n.isLeaf()) {
+        if (n!=null) {
             setLayout(new BorderLayout());
             add(new SpacingPanel(),BorderLayout.WEST);
             add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bbp=new Panel();
+            bbp.setLayout(new BorderLayout());
             Panel bp=new Panel(); bp.setLayout(new FlowLayout());
             Button b;
             //bp.add(b=new Button("Preview")); b.addActionListener(this);
             bp.add(b=new Button("OK")); b.addActionListener(this);
             bp.add(b=new Button("Cancel")); b.addActionListener(this);
-            add(bp,BorderLayout.SOUTH);
+            bbp.add(bp);
+            Panel cbp=new Panel(); cbp.setLayout(new FlowLayout());
+            cbp.add(cb=new Checkbox("single split only"));
+            bbp.add(cbp,BorderLayout.NORTH);
+            add(bbp,BorderLayout.SOUTH);
             Panel vp=new Panel(); vp.setLayout(new FlowLayout());
             vp.add(new Label("Variable: "));
             vc=new Choice(); vc.addItemListener(this);
             int j=0;
+            String first=null;
             while(j<vs.count()) {
-                if (!vs.at(j).isInternal())
+                if (!vs.at(j).isInternal()) {
                     vc.add(vs.at(j).getName());
+                    if (first==null) first=vs.at(j).getName();
+                }
                 j++;
             }
-            vc.select(cv.getName());
+            if (cv!=null)
+                vc.select(cv.getName());
+            else
+                cv=vs.byName(first);
             vp.add(vc);
             pp=new Panel(); pp.setLayout(new GridLayout(2,1));
             add(vp,BorderLayout.NORTH);
@@ -69,12 +82,14 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
         if (lc!=null) { pp.remove(lc); lc=null; };
         if (st!=null) { sp.remove(st); st=null; };
         if (l1!=null) { sp.remove(l1); l1=null; };
+        if (cv==null) return;
         if (cv.isCat()) { /** split variable is categorical */
         } else { /** split variabel is numerical */
             Stopwatch sw=new Stopwatch();
             sp.setLayout(new FlowLayout());
             sp.add(l1=new Label("split at "));
-            spVal=ln.splitValF;
+            if (ln!=null)
+                spVal=ln.splitValF;
             sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
 	    splitText=st.getText();
             st.addActionListener(this);
@@ -325,36 +340,40 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
 			nt.formula=root.formula;
                         
                         /* build the two other chunks here */
+                        boolean single=cb.getState();
                         ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
-                        pd.setText("Initializing plugin, loading R ...");
+                        pd.setText(single?"Performing split...":"Initializing plugin, loading R ...");
                         pd.show();
-                        Plugin gt=PluginManager.loadPlugin("PluginGetTreeR");
-                        if (gt==null || !gt.initPlugin()) {
-                            pd.dispose();
-                            new MsgDialog(this,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Tree generation plugin not found":gt.getLastError()));
-                            return;
-                        }
-                        gt.setParameter("dataset",vs);
-			if (root.formula!=null)
-			    gt.setParameter("formula",root.formula);
-                        gt.checkParameters();
-                        pd.setVisible(false);
-                        if (!gt.pluginDlg(this)) {
-                            pd.dispose();
-                            if (gt.cancel) {
-                                gt.donePlugin();
+                        Plugin gt=null;
+                        if (!single) {
+                            gt=PluginManager.loadPlugin("PluginGetTreeR");
+                            if (gt==null || !gt.initPlugin()) {
+                                pd.dispose();
+                                new MsgDialog(this,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Tree generation plugin not found":gt.getLastError()));
                                 return;
-                            };
-                            new MsgDialog(this,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
-                            return;
+                            }
+                            gt.setParameter("dataset",vs);
+                            if (root.formula!=null)
+                                gt.setParameter("formula",root.formula);
+                            gt.checkParameters();
+                            pd.setVisible(false);
+                            if (!gt.pluginDlg(this)) {
+                                pd.dispose();
+                                if (gt.cancel) {
+                                    gt.donePlugin();
+                                    return;
+                                };
+                                new MsgDialog(this,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
+                                return;
+                            }
+                            pd.setProgress(40);
+                            pd.setVisible(true);
+                            /* we cannot use holdConnection yet, since the method used by the plugin assumes
+                                that each time entire dataset must be loaded
+                                gt.setParameter("holdConnection",Boolean.TRUE); */
+                            gt.setParameter("selectedOnly",Boolean.TRUE);
+                            gt.setParameter("registerTree",Boolean.FALSE);
                         }
-                        pd.setProgress(40);
-                        pd.setVisible(true);
-                        /* we cannot use holdConnection yet, since the method used by the plugin assumes
-                            that each time entire dataset must be loaded
-                        gt.setParameter("holdConnection",Boolean.TRUE); */
-                        gt.setParameter("selectedOnly",Boolean.TRUE);
-                        gt.setParameter("registerTree",Boolean.FALSE);
                         SMarker bak=vs.getMarker();
                         SMarker ml=new SMarker(cv.size());
                         SMarker mr=new SMarker(cv.size());
@@ -374,34 +393,53 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         if (Common.DEBUG>0)
                             System.out.println("Markers: ml="+ml.marked()+", mr="+mr.marked());
                         vs.setMarker(ml);
-                        if (!gt.execPlugin()) {
-                            vs.setMarker(bak);
-                            pd.dispose();
-                            HelpFrame hf=new HelpFrame();
-                            hf.t.setText("Left-branch generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
-                            hf.setTitle("Plugin execution failed");
-                            //hf.setModal(true);
-                            hf.show();
-                            return;
+                        SNode leftb=null, rightb=null;
+                        if (!single) {
+                            if (!gt.execPlugin()) {
+                                vs.setMarker(bak);
+                                pd.dispose();
+                                HelpFrame hf=new HelpFrame();
+                                hf.t.setText("Left-branch generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
+                                hf.setTitle("Plugin execution failed");
+                                //hf.setModal(true);
+                                hf.show();
+                                return;
+                            }
+                            pd.setProgress(70);
+                            leftb=(SNode)gt.getParameter("root");
+                        } else {
+                            leftb=new SNode();
                         }
-                        pd.setProgress(70);
                         vs.setMarker(mr);
-                        SNode leftb=(SNode)gt.getParameter("root");
-                        if (!gt.execPlugin()) {
-                            vs.setMarker(bak);
-                            pd.dispose();
-                            HelpFrame hf=new HelpFrame();
-                            hf.t.setText("Right-branch generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
-                            hf.setTitle("Plugin execution failed");
-                            //hf.setModal(true);
-                            hf.show();
-                            return;
+
+                        if (!single) {
+                            if (!gt.execPlugin()) {
+                                vs.setMarker(bak);
+                                pd.dispose();
+                                HelpFrame hf=new HelpFrame();
+                                hf.t.setText("Right-branch generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
+                                hf.setTitle("Plugin execution failed");
+                                //hf.setModal(true);
+                                hf.show();
+                                return;
+                            }
+                            rightb=(SNode)gt.getParameter("root");
+                        } else {
+                            rightb=new SNode();
                         }
-                        SNode rightb=(SNode)gt.getParameter("root");
                         vs.setMarker(bak);
 
                         pd.setProgress(100);
-                        gt.donePlugin();
+                        if (!single)
+                            gt.donePlugin();
+                        else {
+                            leftb.data=leftd; rightb.data=rightd;
+                            leftb.Cases=leftb.data.size();
+                            rightb.Cases=rightb.data.size();
+                            leftb.Name="left"; rightb.Name="right";
+                            leftb.vset=rightb.vset=vs;
+                        }
+                            
                         pd.dispose();
 
                         SNode ntcp=(SNode)cp.elementAt(0);
@@ -412,9 +450,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         leftb.splitIndex=rightb.splitIndex=vs.indexOf(cv.getName());
                         leftb.Cond=cv.getName()+" < "+spVal;
                         rightb.Cond=cv.getName()+" > "+spVal;
-                        //leftb.data=leftd; rightb.data=rightd;
                         leftb.splitComp=-1; rightb.splitComp=1;
-                        RTree.passDownData(ntcp,leftb); RTree.passDownData(ntcp,rightb);
+                        if (!single) {
+                            RTree.passDownData(ntcp,leftb); RTree.passDownData(ntcp,rightb);
+                        }
                         //---
                         SVar vvv;
                         vvv=RTree.getPredictionVar(nt,nt.response);
@@ -429,7 +468,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                                     vs.globalMisclassVarID=vs.add(vmc);
                                 }
                             }
-                        };
+                        }
                         TFrame f=new TFrame(nt.name,TFrame.clsTree);
                         TreeCanvas tc=InTr.newTreeDisplay(nt,f);
                         tc.repaint(); tc.redesignNodes();

@@ -12,11 +12,14 @@ public class VarFrame extends TFrame {
     VarCmdCanvas vcc;
     Scrollbar sb=null;
 
+    static int newRootId=1;
+
     public static final int cmdHeight=182;
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)",TFrame.clsVars);
         setBackground(Common.backgroundColor);
+        if (h>550) h=550; // temporary fix until we know how to get really available space sub. menus etc.
 	int rh=h;
 	if (rh>vs.count()*17+6+cmdHeight+40)
 	    rh=vs.count()*17+6+cmdHeight+40;
@@ -45,7 +48,7 @@ public class VarFrame extends TFrame {
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
             String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-",
-                "New derived variable ...","deriveVar","Grow tree ...","growTree","-",
+                "New derived variable ...","deriveVar","New tree root","newRoot","Grow tree ...","growTree","-",
                 "Export forest ...","exportForest","Display Forest","displayForest","-",
                 "@QQuit","exit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
@@ -265,7 +268,7 @@ public class VarFrame extends TFrame {
 	public void mouseReleased(MouseEvent e) {};
 	public void mouseEntered(MouseEvent e) {};
 	public void mouseExited(MouseEvent e) {};
-
+        
         public Object run(Object o, String cmd) {
             if (cmd=="exit") WinTracker.current.Exit();
             if (cmd=="exportForest") {
@@ -278,7 +281,7 @@ public class VarFrame extends TFrame {
                 SVarSet fs=vs.getForestVarSet();
                 Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                 Common.screenRes=sres;
-                VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+                VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
             };
             /*
             if (cmd=="openTree") {
@@ -304,7 +307,7 @@ public class VarFrame extends TFrame {
                     Common.screenRes=sres;
                     if (t!=null)
                         InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                    VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+                    VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
                 }
             }
             if (cmd=="map") {
@@ -331,6 +334,32 @@ public class VarFrame extends TFrame {
                     vc.repaint();
                 };
             };
+            if (cmd=="newRoot") { // create new tree root
+                if (vc.vs!=null && vc.vs.count()>0 && vc.vs.at(0)!=null) {
+                    int j=0; SVar resp=null;
+                    while(j<vs.count()) {
+                        if(vc.selMask[j]) { resp=vc.vs.at(j); break; }
+                        j++;
+                    }
+                    String tn="new.tree."+(VarFrame.newRootId++);
+                    SNode t=new SNode();
+                    t.data=new Vector();
+                    int i=0;
+                    int cn=vc.vs.at(0).size();
+                    while (i<cn) {
+                        t.data.add(new Integer(i++));
+                    }
+                    t.vset=vc.vs;
+                    t.Cases=cn;
+                    t.Name="root";
+                    t.response=resp;
+                    t.frame=new TFrame(tn,TFrame.clsTree);
+                    t.calculateSampleDeviances();
+                    TreeCanvas tc=InTr.newTreeDisplay(t,t.frame);
+                    tc.repaint(); tc.redesignNodes();
+                    vc.vs.registerTree(t,tn);
+                }
+            }
             if (cmd=="export") { // Export ...
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
