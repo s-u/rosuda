@@ -453,12 +453,20 @@ public class REXP extends Object {
     /** get content of the REXP as int (if it is one)
         @return int content or 0 if the REXP is no integer */
     public int asInt() {
+        if (Xt==XT_ARRAY_INT) {
+            int i[]=(int[])cont;
+            if (i!=null && i.length>0) return i[0];
+        }
         return (Xt==XT_INT)?((Integer)cont).intValue():0;
     }
 
     /** get content of the REXP as double (if it is one)
         @return double content or 0.0 if the REXP is no double */
     public double asDouble() {
+        if (Xt==XT_ARRAY_DOUBLE) {
+            double d[]=(double[])cont;
+            if (d!=null && d.length>0) return d[0];
+        }
         return (Xt==XT_DOUBLE)?((Double)cont).doubleValue():0.0;
     }
 
