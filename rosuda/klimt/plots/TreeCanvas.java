@@ -144,6 +144,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	setFrame(cont); setTitle("Tree");
         dr=Klimt.getRootForTreeRegistry(troot.getRootInfo().home);
         nm=dr.getNodeMarker();
+        nm.addDepend(this);
 	nod=new Vector(); outside=cont;
 	root=troot; 
 	w=700;
@@ -263,7 +264,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     };
 
     /** notify handler (simply repaints the tree) ignores the parameter */
-    public void Notifying(NotifyMsg msg, Object o, Vector path) { repaint(); };
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        repaint();
+    }
     
     /** move node coordinates relative based on the x/y difference
 	@param dx difference in x direction
