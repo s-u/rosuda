@@ -43,7 +43,8 @@ public class JGDPanel extends JPanel implements GDContainer {
 
     public void setDeviceNumber(int dn) { devNr=dn; }
     public int getDeviceNumber() { return devNr; }
-
+    public void closeDisplay() {}
+    
     public synchronized void cleanup() {
         reset();
         l=null;
@@ -71,6 +72,12 @@ public class JGDPanel extends JPanel implements GDContainer {
             System.out.println(">> can't find Rengine, automatic resizing disabled. [x:"+e.getMessage()+"]");
         }
     }
+
+    public void syncDisplay(boolean finish) {
+        repaint();
+    }
+    
+    public synchronized Vector getGDOList() { return l; }
 
     public synchronized void add(GDObject o) {
         l.add(o);
