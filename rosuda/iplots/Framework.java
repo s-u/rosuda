@@ -31,6 +31,7 @@ public class Framework implements Dependent, ActionListener {
         Global.AppType=Common.AT_Framework;
         Common.supportsBREAK=true;
         Common.appName="iplots";
+        SVar.int_NA=-2147483648;
         Global.useAquaBg=true; // use aqua look
 	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         Platform.initPlatform();
@@ -208,7 +209,7 @@ public class Framework implements Dependent, ActionListener {
         }
         SVar v=new SVar(name);
         int i=0; while(i<d.length) {
-            if (d[i]==-2147483648)
+            if (d[i]==SVar.int_NA)
                 v.add(null);
             else
                 v.add(new Integer(d[i]));
