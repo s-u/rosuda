@@ -169,4 +169,9 @@ public class Platform {
     }
 
     String getPlatformName() { return "Generic"; }
+
+    // Applications should override those
+    public void handleAbout() {}
+    public void handleOpenFile(File fileName) {}
+    public void handlePrefs() {}    
 }
