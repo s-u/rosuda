@@ -50,15 +50,30 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 		sepsBox.setMaximumSize(new Dimension(90,22));
 		
 		sepsBox.addItemListener(this);
-        
-        JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        command.add(append);
-		command.add(quote);
-		command.add(new JLabel("seps="));
-		command.add(sepsBox);
+
+		if (System.getProperty("os.name").startsWith("Window")) {
+			JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
+			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			command.add(append);
+			command.add(quote);
+			command.add(new JLabel("seps="));
+			command.add(sepsBox);
 		
-		JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
-		filename.add(command,filename.getComponentCount()-1);
+			fileview.add(command);
+			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
+			pp.add(new JPanel());
+		}
+		else {
+			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			command.add(append);
+			command.add(quote);
+			command.add(new JLabel("seps="));
+			command.add(sepsBox);
+		
+		
+			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+			filename.add(command,filename.getComponentCount()-1);
+		}
 
 		this.showSaveDialog(f);
     }

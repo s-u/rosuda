@@ -264,14 +264,30 @@ public class ConsoleOutput extends JTextPane {
             bg.add(resultOutput);
 
             this.addActionListener(this);
-            JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
-            JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
-            options.add(new JLabel("Options: ")); 
-            options.add(wholeOutput);
-            options.add(cmdsOutput); 
-            options.add(resultOutput); 
             
-            filename.add(options,filename.getComponentCount()-1);
+    		if (System.getProperty("os.name").startsWith("Window")) {
+    			JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
+    			
+    			JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            	options.add(new JLabel("Options: ")); 
+            	options.add(wholeOutput);
+            	options.add(cmdsOutput); 
+            	options.add(resultOutput); 
+            
+    			fileview.add(options);
+    			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
+    			pp.add(new JPanel());
+    		}
+    		else {
+    			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+            	JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            	options.add(new JLabel("Options: ")); 
+            	options.add(wholeOutput);
+            	options.add(cmdsOutput); 
+            	options.add(resultOutput); 
+            
+            	filename.add(options,filename.getComponentCount()-1);
+    		}
 			
             this.showSaveDialog(co);
         }

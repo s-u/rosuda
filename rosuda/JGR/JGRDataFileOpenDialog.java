@@ -82,35 +82,27 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		options.add(command2);
 		options.add(att); 
 		
-		JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
-		JPanel buttons = (JPanel) filename.getComponent(filename.getComponentCount()-1);
-		this.setControlButtonsAreShown(false);
-		filename.add(command);
-		filename.add(command2);
-		filename.add(att);
-		filename.add(buttons);
+		if (System.getProperty("os.name").startsWith("Window")) {
+			JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
+			fileview.add(command);
+			fileview.add(command2);
+			fileview.add(att);
+			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
+			pp.add(new JPanel());
+		}
+		else {
+			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+			JPanel buttons = (JPanel) filename.getComponent(filename.getComponentCount()-1);
+			this.setControlButtonsAreShown(false);
+			filename.add(command);
+			filename.add(command2);
+			filename.add(att);
+			filename.add(buttons);
+		}
 		this.showOpenDialog(f);
 		this.setSize(this.getSize().width, this.getSize().height+60);
-		searchFileViewComponent();
 	}
 	
-	private int searchFileViewComponent() {
-	    for (int i = 0; i < this.getComponentCount(); i++) {
-	        Component c = this.getComponent(i);
-	        System.out.println("i "+c.getClass().getName());
-	        for (int ii = 0; ii < this.getComponentCount(); ii++) {
-		        Component cc = this.getComponent(i);
-		        System.out.println("ii "+cc.getClass().getName());
-		        for (int iii = 0; iii < this.getComponentCount(); iii++) {
-			        Component ccc = this.getComponent(i);
-			        System.out.println("iii "+ccc.getClass().getName());
-			        
-			    }
-		    }
-	    }
-	    return -1;
-	}
-
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
 			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
