@@ -46,7 +46,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
     private JTable pkgTable = new JTable();
 	
 	public JGRPackageManager(String missingpkgs) {
-		super("Install Packages",iFrame.clsPackageUtil);
+		super("Deleted Packages after last session:",iFrame.clsPackageUtil);
 		remindPackages = missingpkgs;
 		System.out.println("missing packages: "+remindPackages);
 		StringTokenizer st = new StringTokenizer(remindPackages,",");
@@ -119,8 +119,8 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getRootPane().setDefaultButton(instnow);
+		this.setLocation((JGR.MAINRCONSOLE.getSize().width-350)/2,(JGR.MAINRCONSOLE.getSize().height-250)/2);		
 		this.setSize(350,250);
-        this.setLocation((JGR.MAINRCONSOLE.getSize().width-this.getWidth())/2,(JGR.MAINRCONSOLE.getSize().height-this.getHeight())/2);
         this.setResizable(false);
 		this.setVisible(true);
 	}
