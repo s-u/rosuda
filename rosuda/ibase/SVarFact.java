@@ -181,9 +181,7 @@ public class SVarFact extends SVar
 
 
     public boolean replace(int i, Object o) {
-        System.out.println(o.toString());
         int catI =  getCatIndex(o.toString());
-        System.out.println(o+" "+catI);
         if (catI==-1) {
             tempcats = new String[cats.length+1];
             for (int z = 0; z < cats.length; z++) tempcats[z] = cats[z];
@@ -213,7 +211,7 @@ public class SVarFact extends SVar
         int i=0;
         while (i<cats.length) {
             if (cats[i].equals(o))
-                return ++i;
+                return i;
             i++;
         }
         return -1;
