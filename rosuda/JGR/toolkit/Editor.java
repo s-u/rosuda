@@ -97,7 +97,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 
         toolBar = new ToolBar(this,false, progress);
 
-
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
         editArea.setWordWrap(false);
@@ -135,11 +134,11 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                                    Common.screenRes.height - 50 : 700));
         this.setLocation(this.getLocation().x+100, 10);
         this.setVisible(true);
+        progress.setVisible(false);
         if (file != null) this.fileName = file;
         if (this.fileName != null) loadFile();
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
-        progress.setVisible(false);
     }
 
 
@@ -176,14 +175,15 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     }
 
     public void open() {
+        String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, directory);
         if (fopen.getFile() != null) {
             if (!modified) editArea.setText("");
-            fileName = (directory = fopen.getDirectory()) + fopen.getFile();
+            newFile = (directory = fopen.getDirectory()) + fopen.getFile();
         }
-        if (!modified) loadFile();
-        else if (fileName != null && fileName.trim().length() > 0) new Editor(fileName);
+        if (!modified && newFile != null && newFile.trim().length() > 0) { fileName = newFile; loadFile();}
+        else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
 
     public void loadFile() {

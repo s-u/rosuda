@@ -89,11 +89,11 @@ public class JGR {
             System.exit(1);
         }
         JGRPackageManager.defaultPackages = RController.getDefaultPackages();
+        refresh("all");
         MAINRCONSOLE.setWorking(false);
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Win")) splash.stop();
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
-        rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
         MAINRCONSOLE.input.requestFocus();
         new Refresher().run();
     }
