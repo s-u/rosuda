@@ -282,7 +282,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             System.out.println("SplitEditor.actionPerformed(\""+cmd+"\") ["+e.toString()+"]\n source="+e.getSource().toString());
         if (e.getSource()==st) {
             double v=0; boolean ok=false;
-            try { v=Double.parseDouble(cmd); ok=true; } catch(Exception ex) {};
+            v=Tools.parseDouble(cmd);
             if (ok) {
                 setSplitValue(v);
             }

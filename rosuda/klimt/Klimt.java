@@ -96,9 +96,14 @@ public class InTr
             n.response=root.response;
         }
 	n.Cases=t.Cases; n.Cond=t.Cond;
-        if (deepCopy)
+        if (deepCopy) {
+            /*BEGINNEW*/
             n.data=new Vector(t.data);
-        else
+            /*ELSEOLD*
+            n.data=new Vector();
+            int i=0; while(i<t.data.size()) { n.data.addElement(t.data.elementAt(i)); i++; };
+            *ENDNEW*/
+        } else
             n.data=t.data;
         n.F1=t.F1; n.Name=t.Name; n.sel=0; n.id=t.id;
         n.sampleDev=t.sampleDev; n.sampleDevGain=t.sampleDevGain;

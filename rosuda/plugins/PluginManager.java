@@ -66,7 +66,13 @@ public class PluginManager {
     /** each parameter name consists of the plugin name and the parameter name, separated by a dot.
         there is no particular order in which the parameters are returned (actually it is order of creation/loading) */
     public String[] getAllParameters() {
+        /*BEGINNEW*/
         return (String[]) par.toArray();
+        /*ELSEOLD*
+        String[] s=new String[par.size()];
+        int i=0; while(i<par.size()) { s[i]=(String)par.elementAt(i); i++; };
+        return s;
+        *ENDNEW*/
     };
 
     /** set String-valued parameter
