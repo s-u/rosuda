@@ -30,9 +30,9 @@ Mondrian.jar:
 JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC)
 	rm -rf org
 	$(JAVAC) -d . $^
-	cp rosuda/projects/jrgui/splash.jpg .
-	cp -r rosuda/projects/jrgui/icons .
-	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg icons org
+	cp rosuda/projects/jgr/splash.jpg .
+	cp -r rosuda/projects/jgr/icons .
+	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org
 	rm -rf org splash.jpg icons
 
 ibase.jar: $(IBASE_SRC)
