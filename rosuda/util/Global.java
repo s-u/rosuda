@@ -5,6 +5,8 @@
 //  Created by Simon Urbanek on Wed Jul 30 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
+
 package org.rosuda.util;
 
 import java.util.*;
@@ -16,6 +18,7 @@ public class Global {
     public static int DEBUG=0;
     /** global profiling level */
     public static int PROFILE=0;
+    
     /** global warning flag */
     public static boolean printWarnings=false;
     /** global loader verbosity flag */
