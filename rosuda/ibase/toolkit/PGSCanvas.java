@@ -4,9 +4,13 @@ import java.util.Vector;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.*;
+import java.awt.image.*;
+import java.awt.print.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.PrintStream;
+import java.io.File;
+import javax.imageio.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
@@ -17,7 +21,7 @@ import org.rosuda.util.*;
     class must use PoGraSS methods instead of Graphics.
     @version $Id$
 */
-public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
+public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Printable {
     /** frame that owns this canvas. can be null if none does. it is mainly used
 	to identify current frame in calls to dialogs */
     protected Frame myFrame=null;
@@ -39,6 +43,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 
     protected boolean cancel;
     protected Dialog intDlg;
+    
+    public PageFormat pageFormat;
     
     public PGSCanvas(int layers, Axis x, Axis y) {
         this(layers);
@@ -88,8 +94,21 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 	paintPoGraSS(p);
 	endPaint(p);
         inProgress=false;
-    };
+    }
 
+    public int print(Graphics g, PageFormat pf, int pi) {
+        if (pi >= 1) {
+            return Printable.NO_SUCH_PAGE;
+        }
+        Graphics2D g2=(Graphics2D) g;
+        // move the origin such that it's inside the printable area
+        g2.translate(pf.getImageableX(), pf.getImageableY());
+        // TODO: support for something like "fit to page" ... (just use scale(...))
+        // we must use paintLayer, becasue paint does all the buffering and rasterizing
+        paintLayer(g, -1);
+        return Printable.PAGE_EXISTS;
+    }
+    
     /** set the corresponding frame that contains this canvas. It is used mainly
 	for dialog boxes to raise the correct frame before entering modal state.
 	If no frame is set, default common frame is used by the dialogs. */
@@ -221,6 +240,82 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
             };
             d.dispose();
         };
+        if (cmd=="javaPrint") {
+            PrinterJob printJob = PrinterJob.getPrinterJob();
+            if (pageFormat==null) pageFormat=printJob.defaultPage();
+            printJob.setPrintable(this, pageFormat);
+            if (printJob.printDialog()) {
+                try {
+                    printJob.print();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }       
+        }
+        if (cmd=="pageSetup") {
+            PrinterJob printJob = PrinterJob.getPrinterJob();
+            if (pageFormat==null) pageFormat=printJob.defaultPage();
+            pageFormat=printJob.pageDialog(pageFormat);
+        }
+        if (cmd=="exportBitmapDlg") {
+            Dialog d=intDlg=new Dialog(myFrame,"Export as bitmap with size",true);
+            IDlgCL ic=new IDlgCL(this);
+            d.setBackground(Color.white);
+            d.setLayout(new BorderLayout());
+            d.add(new SpacingPanel(),BorderLayout.WEST);
+            d.add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+            d.add(bp,BorderLayout.SOUTH);
+            d.add(new Label(" "),BorderLayout.NORTH);
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            d.add(cp);
+            cp.add(new Label("width: "));
+            int ow=getSize().width;
+            int oh=getSize().height;
+            TextField tw=new TextField(""+ow,6);
+            TextField th=new TextField(""+oh,6);
+            TextField tfs=new TextField("10",6);
+            cp.add(tw);
+            cp.add(new Label(", height: "));
+            cp.add(th);
+            cp.add(new Label(", font size: "));
+            cp.add(tfs);
+            d.pack();
+            b.addActionListener(ic);b2.addActionListener(ic);
+            d.setVisible(true);
+            if (!cancel) {
+                int w=Tools.parseInt(tw.getText());
+                int h=Tools.parseInt(th.getText());
+                double fs=Tools.parseDouble(tfs.getText());
+                if(w<10) w=getSize().width;
+                if(h<10) w=getSize().height;
+                
+                setSize(w,h);
+                BufferedImage img=new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D g=img.createGraphics();
+                PoGraSSgraphics p=new PoGraSSgraphics(g);
+		p.setTitle(desc);
+                beginPaint(p);
+                p.setFontSize(fs);
+                paintPoGraSS(p);
+		endPaint(p);
+                setSize(ow,oh);
+
+                FileDialog fd=new FileDialog(myFrame,desc,FileDialog.SAVE);
+                fd.setModal(true);
+                fd.show();
+                String fnam="";
+                
+                if (fd.getDirectory()!=null) fnam+=fd.getDirectory();
+                if (fd.getFile()!=null) fnam+=fd.getFile();
+                
+                if (!PngEncoder.savePNG(new File(fnam),new PngEncoder(img, true, PngEncoder.FILTER_NONE,7)))
+                    System.err.println("PGSCanvas.run.exportBitmapDlg: Unable to write PNG file \""+fnam+"\"");
+            }
+            d.dispose();
+        }
         if (cmd=="exportSVG") {
             boolean svgExtensionPresent=false;
             PoGraSS p=null;
