@@ -81,8 +81,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	MenuBar mb=null;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-	MIlabels=EzMenu.getItem(f,"labels");	
-    };
+        MIlabels=EzMenu.getItem(f,"labels");
+        if (!v1.isCat() && !v2.isCat())
+            EzMenu.getItem(f,"jitter").setEnabled(false);
+        if (Common.AppType==Common.AT_Framework)
+            EzMenu.getItem(f,"shading").setEnabled(false);
+    }
 
     public SVar getData(int id) { return (id<0||id>1)?null:v[id]; }
     
