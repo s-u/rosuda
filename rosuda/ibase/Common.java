@@ -108,6 +108,9 @@ public class Common
     /** Notify-Message constant: category sequence changed (fired by SCatSeqence)
         note that SCatSequence passes change events to SVar only if it is told to. This allows other classes to maintain private category sequences independent of the variable's main sequence. This event is sent to the private dependents. */
     public static final int NM_CatSeqChange     =0x600;
+
+    /** Notify-Message constant: preferences have changed */
+    public static final int NM_PrefsChanged     =0xff0;
     
     /** Notify-Message constant: BREAK event - this one is usually not processed in Java but sent to the calling system. Usually this event is used to stop an external event loop, such as an iPlots event loop. */
     public static final int NM_BREAK            =0x700;
@@ -252,6 +255,22 @@ public class Common
         return ev.isShiftDown()?(ev.isControlDown()?2:1):0;
     }
 
+    public static void printEvent(MouseEvent ev) {
+        if (Common.DEBUG>0) {
+            String mods="";
+            if (ev.isShiftDown()) mods+=" SHIFT";
+            if (ev.isAltDown()) mods+=" ALT";
+            if (ev.isControlDown()) mods+=" CTRL";
+            if (ev.isMetaDown()) mods+=" META";
+            if (ev.isAltGraphDown()) mods+=" ALT.GR";
+            if ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK) mods+=" M1";
+            if ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK) mods+=" M2";
+            if ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK) mods+=" M3";
+            if (ev.isPopupTrigger()) mods+=" POPUP";
+            System.out.println("Event:"+ev+mods);
+        }
+    }
+    
     /** add an application warning/error */
     public static void addWarning(String war) {
         if (maxWarnings>0 && warningsCount==maxWarnings) {
