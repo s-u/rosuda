@@ -7,8 +7,8 @@ import java.util.*;
 public class PoGraSSmeta extends PoGraSS
 {
     StringBuffer ct;
-    
-    public PoGraSSmeta() { ct=new StringBuffer(); };
+
+    public PoGraSSmeta() { ct=new StringBuffer("p.passVersionInfo(\n"+version+",\n\""+versionString+"\"\n);\n"); };
 
     public void addComment(String c) {
 	ct.append("p.addComment(\n\""+c+"\");\n");
@@ -118,6 +118,8 @@ public class PoGraSSmeta extends PoGraSS
 	    } while(pars<16);
 
 	    // process commands
+            if(cmd.compareTo("passVersionInfo")==0)
+                p.passVersionInfo(pari[0],par[1]);
 	    if(cmd.compareTo("addComment")==0)
 		p.addComment(par[0]);
 	    if(cmd.compareTo("setTitle")==0)

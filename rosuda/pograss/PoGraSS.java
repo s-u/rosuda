@@ -2,15 +2,20 @@ import java.awt.Rectangle;
 
 /** Portable Graphics SubSystem - first draft of the abstract interface definition.
     May change (or be extended) in the future.
-    1.1: addComment, setTitle
-    1.2: support for layers (nextLayer)
+    0.90: initial release
+    0.91: (CVS 1.1) addComment, setTitle
+    0.92: (CVS 1.2) support for layers (nextLayer)
+    0.93: (CVS 1.3) support for version information (in the API; versionString, version and passVersionInfo)
     @version $Id$
 */
 public class PoGraSS
 {
     int boundsWidth, boundsHeight, boundsX, boundsY;
     int fillStyle, lineWidth;
-    
+
+    public String versionString="0.93";
+    public int    version=0x0093;
+        
     public PoGraSS() { boundsX=0; boundsY=0; };
 
     public void setBounds(int x, int y, int w, int h) {
@@ -21,6 +26,8 @@ public class PoGraSS
 	return new Rectangle(boundsX,boundsY,boundsWidth,boundsHeight); 
     };
 
+    public void passVersionInfo(int ver, String verString) {}; // should not be called directly by programs, is meant for external interfaces, such as parser to allow unterlying PoGraSS implementations to do version check and refuse unsupported versions
+    
     public void addComment(String c) {};
     public void setTitle(String t) {};
     public void defineColor(String nam, int R, int G, int B) {};
