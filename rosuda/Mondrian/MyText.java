@@ -7,6 +7,7 @@ public class MyText {
   String s;
   public int x;
   public int y;
+  int align=0;
   double angle=0;
   int extend=10000;
 
@@ -15,6 +16,14 @@ public class MyText {
     this.s = s;
     this.x = x;
     this.y = y;
+  }
+
+  public MyText(String s, int x, int y, int align) {
+
+    this.s = s;
+    this.x = x;
+    this.y = y;
+    this.align = align;
   }
 
   public MyText(String s, int x, int y, double angle, int extend) {
@@ -27,7 +36,7 @@ public class MyText {
   }
 
   public void draw(Graphics g) {
-    g.drawString(s, x, y);
+    this.draw(g, align);
   }
 
   public void moveYTo(int y) {
@@ -41,7 +50,33 @@ public class MyText {
   public void moveTo(int x, int y) {
     this.x = x;
     this.y = y;
-  }    
+  }
+
+  public void setAlign(int align) {
+    this.align = align;
+  }
+
+  public boolean contains(int px, int py, Graphics2D g2d) {
+    
+    FontMetrics FM;
+    FM = g2d.getFontMetrics();
+
+    switch(align) {
+      case 0:
+        if( px >= x && px <= x+FM.stringWidth(s) &&
+        py >= y-12 && py <= y )
+          return true;
+      case 1:
+        if( px >= x-FM.stringWidth(s) && px <= x &&
+            py >= y-12 && py <= y )
+          return true;
+      case 2:
+        if( px >= x-FM.stringWidth(s)/2 && px <= x+FM.stringWidth(s)/2 &&
+            py >= y-12 && py <= y )
+          return true;
+    }
+    return false;
+  }
 
   public void draw(Graphics2D g2d) {
 
@@ -58,26 +93,26 @@ public class MyText {
       s = shorty.trim()+addOn;
     }
     // Draw string rotated clockwise angle degrees
-    AffineTransform at = new AffineTransform();
-    at.setToRotation(angle);
-    g2d.setTransform(at);
-    g2d.drawString(s, x - FM.stringWidth(s)/2, y);
-    at.setToRotation(0);
-    g2d.setTransform(at);
+    if( angle != 0 ) {
+      g2d.rotate(angle);
+      g2d.drawString(s, x - FM.stringWidth(s)/2, y);
+      g2d.rotate(-angle);
+    } else
+      g2d.drawString(s, x - FM.stringWidth(s)/2, y);      
   }
 
   public void draw(Graphics g, int align) {
 
     FontMetrics FM;
       switch(align) {
-        case 0:
+        case 0:   																			// Left 
           g.drawString(s, x, y);
           break;
-        case 1:
+        case 1:   																			// Right 
           FM = g.getFontMetrics();
           g.drawString(s, x - FM.stringWidth(s), y);
           break;
-        case 2:
+        case 2:   																			// Center 
           FM = g.getFontMetrics();
           g.drawString(s, x - FM.stringWidth(s)/2, y);
     }
