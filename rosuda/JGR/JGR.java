@@ -6,6 +6,7 @@ import java.util.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
+import org.rosuda.util.Global;
 
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.toolkit.*;
@@ -22,7 +23,7 @@ import org.rosuda.JGR.util.*;
  * the <a href="http://www.rosuda.org/R/JavaGD">JavaGD- Device </a> all written
  * by Simon Urbanek. <br>
  * <br>
- * <a href="http://www.rosuda.org">RoSuDA </a> 2003 - 2005
+ * <a href="http://www.rosuda.org">RoSuDa </a> 2003 - 2005
  * 
  * @author Markus Helbig
  */
@@ -114,6 +115,9 @@ public class JGR {
 
 	/** Splashscreen */
 	public static org.rosuda.JGR.toolkit.SplashScreen splash;
+	
+	/** arguments for Rengine*/
+	private static String[] rargs = {"--save"};
 
 	/**
 	 * Starting the JGR Application (javaside)
@@ -176,8 +180,7 @@ public class JGR {
 							"Version Mismatch", JOptionPane.ERROR_MESSAGE);
 			System.exit(2);
 		}
-		String[] args = { "--save" };
-		R = new Rengine(args, true, MAINRCONSOLE);
+		R = new Rengine(rargs, true, MAINRCONSOLE);
 		if (org.rosuda.util.Global.DEBUG > 0)
 			System.out.println("Rengine created, waiting for R");
 		if (!R.waitForR()) {
@@ -381,13 +384,43 @@ public class JGR {
 	 * <ol>
 	 * <li>--debug: enable debug information</li>
 	 * </ol>
+	 * or any other option supported by R.
 	 */
 	public static void main(String[] args) {
-		if (args.length > 0 && args[0].equals("--debug")) {
-			org.rosuda.util.Global.DEBUG = 1;
-			org.rosuda.JRI.Rengine.DEBUG = 1;
-			System.out.println("JGR version " + VERSION);
+		if (args.length > 0) {
+			Vector args2 = new Vector();
+			for (int i = 0; i < args.length; i++) {
+				if (args[i].equals("--debug")) {
+					org.rosuda.util.Global.DEBUG = 1;
+					org.rosuda.JRI.Rengine.DEBUG = 1;
+					System.out.println("JGR version " + VERSION);
+				}
+				else args2.add(args[i]);
+				if (args[i].equals("--version")) {
+					System.out.println("JGR version " + VERSION);
+					System.exit(0);
+				}
+				if (args[i].equals("--help") || args[i].equals("-h")) {
+					System.out.println("JGR version " + VERSION);
+					System.out.println("\nOptions:");
+					System.out.println("\n\t-h, --help\t Print short helpmessage and exit");
+					System.out.println("\t--version\t Print version end exit");
+					System.out.println("\t--debug\t Print more information about JGR's process");
+					System.out.println("\nMost other R options are supported too");
+					System.exit(0);
+				}
+			}
+			Object[] arguments = args2.toArray();
+			if (arguments.length > 0) {
+				rargs = new String[arguments.length];
+				for (int i = 0; i < rargs.length; i++)
+					rargs[i] = arguments[i].toString();
+			}
+			if (Global.DEBUG > 0)
+				for (int i = 0; i < rargs.length; i++)
+					System.out.println(rargs[i]);
 		}
+
 		try {
 			new JGR();
 		} catch (Exception e) {
