@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.io.*;
 
 /** Variables window - central place for operations on a dataset
     @version $Id$
@@ -11,16 +12,18 @@ public class VarFrame extends TFrame {
     VarCmdCanvas vcc;
     Scrollbar sb=null;
 
+    public static final int cmdHeight=132;
+    
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)");
         setBackground(new Color(255,255,192));
 	int rh=h;
-	if (rh>vs.count()*17+6+115+40)
-	    rh=vs.count()*17+6+115+40;
+	if (rh>vs.count()*17+6+cmdHeight+40)
+	    rh=vs.count()*17+6+cmdHeight+40;
 	setLayout(new BorderLayout());
 	int minus=0;
 	if (rh==h) {
-	    add(sb=new Scrollbar(Scrollbar.VERTICAL,0,17,0,vs.count()*17+23+115-h),"East");
+	    add(sb=new Scrollbar(Scrollbar.VERTICAL,0,17,0,vs.count()*17+23+cmdHeight-h),"East");
 	    pack();
 	    Dimension sbd=sb.getSize();
 	    minus=sbd.width;
@@ -28,7 +31,7 @@ public class VarFrame extends TFrame {
 	};
 	add(vc=new VarCanvas(this,vs,sb));
 	if (rh!=h)
-	    vc.minDim=new Dimension(w,rh-115);
+	    vc.minDim=new Dimension(w,rh-cmdHeight);
 	else
 	    sb.addAdjustmentListener(vc);
 	
@@ -37,12 +40,13 @@ public class VarFrame extends TFrame {
 	    Common.defaultWindowListener=new DefWinL();
 	addWindowListener(Common.defaultWindowListener);
 	setBounds(x-minus,y,w,rh);
-	vc.setBounds(x-minus,y,w,rh-115);
-	vcc.setBounds(x-minus,y+rh-115,w,115);
+	vc.setBounds(x-minus,y,w,rh-cmdHeight);
+	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
 	pack(); 
 	setVisible(true);
     };
 
+    /** VarCanvas is canvas for the variables list */
     class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener
     {
 	/** associated window */
@@ -60,7 +64,7 @@ public class VarFrame extends TFrame {
 
 	int offset=0;
 
-	/** constructs a new variable canvas for associated tree canvas
+	/** constructs a new variable canvas (list of variables) for associated tree canvas
 	    @param w window in which this canvsa is displayed
 	    @param p associated tree canvas
 	*/
@@ -186,6 +190,7 @@ public class VarFrame extends TFrame {
 	public void mouseExited(MouseEvent e) {};
     };
 
+    /** VarCmdCanvas is the canvas of commands for variables */
     class VarCmdCanvas extends DBCanvas implements MouseListener, Dependent
     {
 	/** associated window */
@@ -196,8 +201,8 @@ public class VarFrame extends TFrame {
 	Dimension minDim;
         SMarker sm;
 
-	/** constructs a new variable canvas for associated tree canvas
-	    @param w window in which this canvsa is displayed
+	/** constructs a new variable commands canvas for associated tree canvas
+	    @param w window in which this canvas is displayed
 	    @param p associated tree canvas
 	*/
 	VarCmdCanvas(VarFrame w, SVarSet dataset) {
@@ -206,7 +211,7 @@ public class VarFrame extends TFrame {
 	    addMouseListener(this);
             vc=w.vc; sm=vs.getMarker();
             if (sm!=null) sm.addDepend(this);
-	    minDim=new Dimension(140,115);            
+	    minDim=new Dimension(140,132);            
 	};
 
         public void Notifying(Object o, Vector path) {
@@ -242,7 +247,7 @@ public class VarFrame extends TFrame {
                 g.drawString("Total "+vs.at(0).size()+" cases",10,16);
             
 	    i=1;
-	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot"};
+	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Export..."};
 	    int j=0;
 	    while (j<menu.length) {
 		boolean boxValid=false;
@@ -261,11 +266,12 @@ public class VarFrame extends TFrame {
 		    };
 		    if (!crap && bJ<2 && bK>0) boxValid=true;
 		};
-		if ((j<2)||
-		    ((j==2)&&(totsel>0))||boxValid||
-		    ((j==3)&&(totsel==2))) {
-		    g.setColor(C_bg);
-		    g.fillRect(5,5+i*17,130,15);
+                if ((j<2)||
+                    ((j==2)&&(totsel>0))||boxValid||
+                    ((j==3)&&(totsel==2))||
+                    ((j==5)&&(totsel>0))) {
+                    g.setColor(C_bg);
+                    g.fillRect(5,5+i*17,130,15);
 		};
 		g.setColor(C_frame);
 		g.drawRect(5,5+i*17,130,15);
@@ -301,6 +307,42 @@ public class VarFrame extends TFrame {
                     vc.repaint();
 		};    
 	    };
+            if (cmd==5) {
+                try {
+                    PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
+                    if (p!=null) {
+                        int j=0,tcnt=0,fvar=0;
+                        j=0;
+                        while(j<vs.count()) {
+                            if(vc.selMask[j]) {
+                                p.print(((tcnt==0)?"":"\t")+vs.at(j).getName());
+                                if (tcnt==0) fvar=j;
+                                tcnt++;
+                            }
+                            j++;
+                        }
+                        p.println("");
+                        int i=0;
+                        SMarker m=vs.getMarker();
+                        boolean exportAll=(m==null || m.marked()==0);
+                        while (i<vs.at(fvar).size()) {
+                            if (exportAll || m.at(i)) {
+                                j=fvar;
+                                while(j<vs.count()) {
+                                    if (vc.selMask[j]) {
+                                        Object oo=vs.at(j).at(i);
+                                        p.print(((j==fvar)?"":"\t")+((oo==null)?"NA":oo.toString()));
+                                    };
+                                    j++;
+                                };
+                                p.println("");
+                            }
+                            i++;
+                        };
+                        p.close();
+                    };
+                } catch (Exception eee) {};                
+            }
 	    if (cmd==2) {
 		int i=0;
 		for(i=0;i<vc.getVars();i++)
