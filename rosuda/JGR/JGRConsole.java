@@ -413,6 +413,7 @@ FocusListener, RMainLoopCallbacks {
             JFileChooser chooser = new JFileChooser();
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             chooser.setDialogTitle("Choose Working Directory");
+            chooser.setApproveButtonText("Choose");
             int r = chooser.showOpenDialog(this);
             if (r == JFileChooser.CANCEL_OPTION) return;
             if (chooser.getSelectedFile()!=null)

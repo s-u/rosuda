@@ -91,7 +91,8 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 
     public void cut() {
         this.removeCaretListener(this);
-        super.cut();
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents((Transferable) new StringSelection(this.getSelectedText()),null);
+        this.replaceSelection("");
         this.addCaretListener(this);
     }
 
