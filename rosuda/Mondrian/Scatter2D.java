@@ -409,6 +409,25 @@ public class Scatter2D extends DragBox {
                 locfit.setSelected(true);
                 locfit.setEnabled(false);
               }
+
+              smoothers.addSeparator();
+
+              JCheckBoxMenuItem rougher = new JCheckBoxMenuItem("rougher");
+              rougher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              smoothers.add(rougher);
+              rougher.setActionCommand("rougher");
+              rougher.addActionListener(this);
+
+              JCheckBoxMenuItem smoother = new JCheckBoxMenuItem("smoother");
+              smoother.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              smoothers.add(smoother);
+              smoother.setActionCommand("smoother");
+              smoother.addActionListener(this);
+              if( smoothF.equals("none") || smoothF.equals("ls-line") ) {
+                smoother.setEnabled(false);
+                rougher.setEnabled(false);
+              }
+              
               if( !((MFrame)frame).hasR() ) {
                 loess.setEnabled(false);
                 splines.setEnabled(false);
@@ -521,6 +540,20 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       Graphics g = this.getGraphics();
       paint(g);
       g.dispose();
+    }
+    else if( command.equals("rougher") || command.equals("smoother") ) {
+      if( command.equals("smoother") ) {
+        if( smoother > 1 ) {
+          smoother -= 1;
+          smoothChanged = true;
+        }
+      } else if( command.equals("rougher") ) {
+        if( smoother < 30 ) {
+          smoother += 1;
+          smoothChanged = true;
+        }
+      }
+      paint(this.getGraphics());
     }
     else
       super.actionPerformed(e);
@@ -1004,12 +1037,20 @@ System.out.println(" ........................ by var "+command.substring(5,comma
                 selX[k]   = xVal[i];
                 selY[k++] = yVal[i];
               }
-                c.assign("x",selX);
+            c.assign("x",selX);
             c.assign("y",selY);
 
-            double xSelMin = data.getSelQuantile(Vars[0], 0.0);
-            double xSelMax = data.getSelQuantile(Vars[0], 1.0);
-
+            double xSelMin = Double.MAX_VALUE;
+            double xSelMax = Double.MIN_VALUE;
+            
+            if( !data.categorical(Vars[0]) ) {
+              xSelMin = data.getSelQuantile(Vars[0], 0.0);
+              xSelMax = data.getSelQuantile(Vars[0], 1.0);
+            } else {
+              xSelMin = data.getSelMin(Vars[0]);
+              xSelMax = data.getSelMax(Vars[0]);
+            }
+                
             double[] xForFit = new double[200+1];
             double step = (xSelMax-xSelMin)/200;
             for( int f=0; f<200+1; f++ )
