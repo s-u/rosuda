@@ -22,6 +22,7 @@ public class HistCanvasEx extends HistCanvasNew {
     public HistCanvasEx(Frame f, SVar v, SMarker mark, NodeMarker nm) {
         super(f,v,mark);
         this.nm=nm;
+        nm.addDepend(this);
     }
     
     public void paintPost(PoGraSS g) {

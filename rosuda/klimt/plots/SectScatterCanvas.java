@@ -25,6 +25,7 @@ public class SectScatterCanvas extends ScatterCanvas {
     public SectScatterCanvas(Frame f, SVar v1, SVar v2, SMarker mark, NodeMarker nm) {
         super(f,v1,v2,mark);
         this.nm=nm;
+        nm.addDepend(this);
     }
 
     /** paints partitioning for a single node (and descends recursively) */
