@@ -9,14 +9,24 @@ public class Framework {
     Vector dataset;
     SVarSet cvs;
 
+    /** initialize framework, create and select a dataset which id called "default".
+        one framework supports multiple datasets, plots etc. so there should be no
+        need for multiple frameworks usually.
+        */
     public Framework() {
+        Common.AppType=Common.AT_Framework;
 	cvs=new SVarSet();
-	cvs.setName("new");
+	cvs.setName("default");
 	dataset=new Vector();
 	dataset.addElement(cvs);
     }
 
+    /** get current dataset */
     public SVarSet getCurrentSet() { return cvs; };
+    
+    /** select dataset by name. the initial dataset created during framework initialization is called "default".
+        @param name name of the dataset
+        @return selected dataset or <code>null</code> if no such dataset was found */
     public SVarSet selectSet(String name) {
 	int i=0;
 	while (i<dataset.size()) {
@@ -28,38 +38,74 @@ public class Framework {
 	};
 	return null;
     };
+
+    /** select dataset based on its ID (initial dataset has ID 0)/
+        @param i the ID
+        @return selected dataset or <code>null</code> if ID out of range */
     public SVarSet selectSet(int i) {
 	return (i<0||i>=dataset.size())?null:(SVarSet)dataset.elementAt(i);
     };
+
+    /** create and select a new dataset with the specified name. please note that it is possible to create
+        multiple datasets of the same name but then only the first of these will be retrieved by name, others
+        have to be selected by ID
+        @param name name of the new dataset
+        @return new dataset */
     public SVarSet newSet(String name) {
 	cvs=new SVarSet();
 	cvs.setName(name);
 	dataset.addElement(cvs);
 	return cvs;
     };
-    
+
+    /** add a variable to the current dataset. Note that many plots assume that all variables of a dataset
+        have the same size.
+        @param v the variable
+        @return index of the variable within the dataset. In order to prevent usage of variables across datasets,
+        most plots take the ID of a variable as parameter and NOT the {@link SVar} object itself.
+        */
     public int addVar(SVar v) {
 	return cvs.add(v);
     }
 
+    /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
+        the same name within a dataset.
+        @param name variable name
+        @param d array of doubles
+        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+        */
     public int newVar(String name, double[] d) {
 	SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(new Double(d[i++]));
 	return addVar(v);
     };
 
+    /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
+        the same name within a dataset.
+        @param name variable name
+        @param d array of integers
+        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+        */   
     public int newVar(String name, int[] d) {
 	SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(new Integer(d[i++]));
 	return addVar(v);
     };
 
+    /** construct a new categorical variable from supplied array of strings. Unlike datasets variables cannot have
+        the same name within a dataset.
+        @param name variable name
+        @param d array of strings
+        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+        */    
     public int newVar(String name, String[] d) {
 	SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(d[i++]);
 	return addVar(v);
     };
 
+    /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
+        the new content cannot exceed the original size of the variable, no cases are added.
     public int replaceVar(int vi, double[] d) {
 	SVar v=cvs.at(vi);
 	if (v==null) return -1;

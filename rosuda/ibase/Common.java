@@ -6,6 +6,11 @@ import java.awt.event.*;
 */
 public class Common
 {
+    /** application version */
+    public static String Version="0.96c";
+    /** application release */
+    public static String Release="C617";
+
     /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
     public static int DEBUG=0;
     /** Frame of the main window. Used by close-window-handler
@@ -17,14 +22,15 @@ public class Common
 
     /** use Swing classes */
     public static boolean useSwing=true;
-    
-    /** application version */
-    public static String Version="0.96b";
-    /** application release */
-    public static String Release="C604";
-    /** application type. so far 0=stand-alone (default, 1=applet - set by Wrapper) */
-    public static int AppType=0;
 
+    public static final int AT_standalone = 0x0000;
+    public static final int AT_applet     = 0x0001;
+    public static final int AT_KOH        = 0x0020;
+    public static final int AT_Framework  = 0x0030;
+    
+    /** application type. so far 0=stand-alone, other types are set by wrappers */
+    public static int AppType=AT_standalone;   
+    
     /** buffer containing all warnings/errors */
     static StringBuffer warnings=null;
     /** number of warnings so far */
