@@ -41,11 +41,23 @@ public class SVar extends Vector
 
     /** # of missing cases in the variable */
     int missingCount=0;
+
+    /** if >0 then this is an internal variable */
+    int internalType=0;
     
     public static final String missingCat = "NA";
 
     /** notifier for changes */
     public Notifier notify;
+
+    /** derived is not internal (and hence isInternal will return false) */
+    public static final int IVT_Derived    =-1;
+    public static final int IVT_Normal     =0;
+    public static final int IVT_Prediction = 1;
+    public static final int IVT_Misclass   = 2;
+    public static final int IVT_LeafID     = 3;
+    public static final int IVT_Index      = 4; // row index
+    public static final int IVT_RCC        = 9;
     
     /** construct new variable and add first element
 	@param Name variable name
@@ -78,8 +90,21 @@ public class SVar extends Vector
     public void tryToGuessNum(boolean doit) {
         guessNum=doit;
     };
+
+    /** sets type of an internal variable. internal variables are variables that were not contained
+        in the original dataset. derived variables are also internal if they were derived in klimt and not loaded
+        with the dataset. */
+    public void setInternalType(int it) {
+        internalType=it;
+    }
+
+    /** returns the internal type of the variable */
+    public int getInternalType() { return internalType; }
+    /** returns true if the variable is internal, i.e. generated on-the fly. note that derived variables are
+        NOT internal. use (getInterrnalType()==SVar.IVT_Normal) to check for original, non-derived variables. */
+    public boolean isInternal() { return (internalType>0); }
     
-    /** define the variable explicitely as categorial
+    /** define the variable explicitely as categorical
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
 	if (cat && !rebuild) return;
