@@ -307,7 +307,7 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
                 BufferedReader br=new BufferedReader(new FileReader(fprefix+"PluginInit.ods"));
                 lastID++;
                 SVarSet newvs=new SVarSet();
-                int vls=Loader.LoadTSV(br,newvs);
+                int vls=Loader.LoadTSV(br,newvs,true);
                 if (vls>0 && newvs.count()>0 && (vs.count()<1 || newvs.at(0).size()==vs.at(0).size())) {
                     if (fr.exists()) fr.delete();
                     if (fd.exists()) fd.delete();

@@ -481,7 +481,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         SVarSet vs=new SVarSet();
         try {
             BufferedReader br=new BufferedReader(new FileReader("iris.tsv"));
-            Loader.LoadTSV(br,vs);
+            Loader.LoadTSV(br,vs,true);
         } catch(Exception e) {
             System.out.println("cannot load test dataset (iris.tsv), "+e.getMessage()); e.printStackTrace();
         }
