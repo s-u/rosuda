@@ -199,6 +199,7 @@ public class Framework {
             vs.setMarker(new SMarker(vs.at(v).size()));
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
+	if (!theCat.isCat()) theCat.categorize();
         TFrame f=new TFrame(
                             (theNum!=null)?
                             "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
