@@ -493,14 +493,57 @@ public class Klimt
         return mcv;
     }
 
+    public static boolean manageResidualStats(SNode t, int regCount, SVar rs1, SVar rs2) {
+        SVar c=t.getRootInfo().prediction;
+        SVar r=t.getRootInfo().response;
+        if (c==null || r==null) return false;
+        if (rs1==null || rs2==null) return false; // we should remove this later - when we have different support for each
+
+        if (rs1!=null)
+            rs1.getNotifier().beginBatch();
+        if (rs2!=null)
+            rs2.getNotifier().beginBatch();
+
+        if (rs1.isCat()) rs1.dropCat();
+        if (rs2.isCat()) rs2.dropCat();
+        if (rs1.size()==0) rs1.setInternalType(SVar.IVT_ResidStat1);
+        if (rs2.size()==0) rs2.setInternalType(SVar.IVT_ResidStat2);
+        int j=0;
+        while (j<c.size()) {
+            double predv=c.atD(j);
+            double truev=r.atD(j);
+            if (Double.isNaN(predv) || Double.isNaN(truev)) {
+                if (rs1.size()<=j) rs1.add(null);
+                if (rs2.size()<=j) rs2.add(null);
+            } else {
+                double res=truev-predv;
+                if (rs1.size()<=j)
+                    rs1.add(new Double(res));
+                else {
+                    if (regCount==0) rs1.replace(j, new Double(res)); else {
+                        if (rs1.at(j)!=null)
+                            rs1.replace(j, new Double(rs1.atD(j)*(((double)regCount)/((double)(regCount+1)))+res/((double)(regCount+1))));
+                    }
+                }
+            }
+            j++;
+        }
+        if (rs2!=null) rs2.getNotifier().endBatch();
+        if (rs1!=null) rs1.getNotifier().endBatch();
+        
+        return true;
+    }
+    
     static int help11=0;
 
-    public static SVar getPredictionVar(SNode t, SVar cv) {
+    public static SVar getPredictionVar(SNode t, SVar cv, SVarSet resolver) {
         help11++;
         SVar v=null;
-        v=new SVarObj("R_"+t.getRootInfo().name+"_"+help11,false); v.setInternalType(cv.isCat()?SVar.IVT_RCC:SVar.IVT_Resid);
+        boolean addSuffix=!(resolver!=null && resolver.byName("R_"+t.getRootInfo().name)==null);
+        String suffix=addSuffix?("_"+help11):"";
+        v=new SVarObj("R_"+t.getRootInfo().name+suffix,false); v.setInternalType(cv.isCat()?SVar.IVT_RCC:SVar.IVT_Resid);
         t.getSource().add(v);
-        SVar nv=new SVarObj("N_"+t.getRootInfo().name+"_"+help11,true); nv.setInternalType(SVar.IVT_LeafID);
+        SVar nv=new SVarObj("N_"+t.getRootInfo().name+suffix,true); nv.setInternalType(SVar.IVT_LeafID);
         t.getSource().add(nv);
         return getPredictionVar(t,cv,v,nv);
     }
@@ -579,7 +622,7 @@ public class Klimt
                 }
             }
         }
-        SVar clv=new SVarObj((isCat?"C_":"P_")+t.getRootInfo().name+"_"+help11,isCat); clv.setInternalType(SVar.IVT_Prediction);
+        SVar clv=new SVarObj((isCat?"C_":"P_")+t.getRootInfo().name,isCat); clv.setInternalType(SVar.IVT_Prediction);
         clv.getNotifier().beginBatch();
         i=0; while(i<maxid) {
             if (isCat)
