@@ -30,7 +30,7 @@ public abstract class DBCanvas extends Canvas
 	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
             // draw the old image - after resize the background is cleared automatically
             // so in order to reduce flickering draw the old image until the new one is generated
-            g.drawImage(offscreen, 0, 0, this);
+            if (offscreen!=null) g.drawImage(offscreen, 0, 0, this);
 	    // create the offscreen buffer and associated Graphics
 	    curimg = createImage(d.width, d.height);
 	    offgc = curimg.getGraphics();
