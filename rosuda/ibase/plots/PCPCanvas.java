@@ -34,6 +34,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     boolean drawPoints=false;
     boolean drawAxes=false;
+    boolean dropColor=false;
     
     /** array of axes */
     Axis A[];
@@ -83,7 +84,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Common scale on/off","common","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","-","Common scale on/off","common","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
@@ -137,6 +138,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	g.defineColor("point",0,0,128);	
 	g.defineColor("red",255,0,0);
 	g.defineColor("line",128,128,192); // color of line plot
+	g.defineColor("lineZ",192,192,255); // color of the line when dropped
 	g.defineColor("lines",96,96,255);	
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
@@ -215,15 +217,22 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         }
         
         g.setColor("line");
+        boolean isZ=false;
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
-                    g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
-                               A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
+                    if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
+                    }
                     if (drawPoints) {
                         int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
                         g.fillOval(x-1,y-1,3,3);
                     }
+                    if ((dropColor && (v[j].at(i)==null))!=isZ) {
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
+                    }
+                    g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
+                               A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
                 }                    
 	}
 	
@@ -341,6 +350,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
         if (cmd=="togglePts") { drawPoints=!drawPoints; setUpdateRoot(0); repaint(); }
+        if (cmd=="toggleDrop") { dropColor=!dropColor; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
         if (cmd=="exportCases") {
 	    try {
