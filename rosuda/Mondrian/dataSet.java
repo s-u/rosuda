@@ -190,14 +190,14 @@ public class dataSet {
       try{
         double x;
         String token;
-//        progBar.setIndeterminate(true);
+//progBar.setIndeterminate(true);  //
         progBar.setValue(0);
         for( int i=0; i<this.n; i++ ) {
-//          if( i % (int)(Math.max(n/50, 1)) == 0 ) {
-            progBar.setValue(i/n);
+          if( (i % (int)(Math.max(n/20, 1)) == 0 ) && (n > 1000) ) {
+            progBar.setValue(i);
             progBar.repaint();
 //System.out.println("Reading Line: "+i);
-//          }
+          }
           line = br.readLine();
           StringTokenizer dataLine = new StringTokenizer(line, "\t");
           for( int j=0; j<this.k; j++ ) {
@@ -258,12 +258,13 @@ public class dataSet {
     }
   }
   
-  public Table discretize(String name, int dvar, double start, double width) {
+  public Table discretize(String name, int dvar, double start, double width, int weight) {
 
       int     tablelength = (int)((this.getMax(dvar) - start) / width) + 1;
       int[]          vars = new int[1];
                   vars[0] = dvar;
       double[]    bdtable = new double[tablelength];	// !
+      int[]      tableDim = new int[tablelength];	// !
       String[][]   lnames = new String[1][tablelength];	// !
       double[]   datacopy = this.getRawNumbers(dvar);
       int[]     varlevels = new int[1];			// !
@@ -312,15 +313,27 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
             System.out.println("DB Exception: get histo breakdown ... "+ex);
           }
       } else {
+        if( weight == -1 )
           for( int i=0; i<this.n; i++ ) {
-              bdtable[(int)((datacopy[i]-start)/width)]++; 
+            int index = (int)((datacopy[i]-start)/width);
+            bdtable[index]++;
+            tableDim[index]++;
+          } else {
+          double[] weights;
+          weights = getRawNumbers(weight);
+
+          for( int i=0; i<this.n; i++ ) {
+            int index = (int)((datacopy[i]-start)/width);
+            bdtable[index] += weights[i];
+            tableDim[index]++;
           }
+        }
       }
 
       for( int i=0; i<tablelength; i++ ) {
           if( !isDB ) {
               lnames[0][i] = "["+Stat.roundToString(start + i*width, round)+", "+Stat.roundToString(start + (i+1)*width, round)+")";
-              Ids[i] = new int[(int)bdtable[i]];
+              Ids[i] = new int[(int)tableDim[i]];
           } else
               Ids[i] = new int[1];
           pointers[i] = 0;
@@ -337,7 +350,7 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
           for( int i=0; i<tablelength; i++ )
               Ids[i][0] = i;
 
-      Table tmpTable = new Table(name, bdtable, 1, varlevels, varnames, lnames, vars, Ids, this, -1);
+      Table tmpTable = new Table(name, bdtable, 1, varlevels, varnames, lnames, vars, Ids, this, weight);
       tmpTable.initialQuery = initialQuery;
       return (tmpTable);
   }
