@@ -34,6 +34,10 @@ public class MFrame extends JFrame implements WindowListener {
     return J.alphaHi;
   }
 
+  public boolean hasR() {
+    return J.hasR;
+  }
+
   public void close() {
     J.windows.remove(m);
     if( J.windows.getItemCount() < 3 )
