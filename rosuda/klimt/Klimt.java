@@ -341,7 +341,7 @@ public class Klimt
             while (carg<argv.length) {
                 if (argv[carg].compareTo("--version")==0) {
                     System.out.println("KLIMT v"+Common.Version+" (Release "+Common.Release+")");
-                    System.out.println("(C)Copyright 2001-3 Simon Urbanek (http://www.klimt-project.com)");
+                    System.out.println("(C)Copyright 2001-4 Simon Urbanek (http://www.klimt-project.com)");
                     System.out.println("OS: "+System.getProperty("os.name")+" (version "+System.getProperty("os.version")+")");
                     return;
                 };
@@ -525,6 +525,7 @@ public class Klimt
         if (isCat) cat=cv.getCategories();
         SNode root=(SNode)t.getRoot();
         int lid=1;
+        boolean binomial=isCat && (cat.length==2);
 
         t.getAllNodes(ns); // important - nodes are in prefix order, i.e. classification in this order is
                            // correct as no node has higher-order node in its path to root
@@ -568,8 +569,10 @@ public class Klimt
                             if (cid>=0 && cid<maxid) {
                                 cl[cid]=j;
                                 int ci=cv.getCatIndex(cid);
-                                if (ci>-1 && ci<right.length)
+                                if (ci>-1 && ci<right.length) {
                                     cf[cid]=((double)right[ci])/((double)n.data.length);
+                                    if (binomial) cf[cid]=(1.0d-cf[cid])*((ci==1)?1.0:-1.0);
+                                }
                             }
                         }
                     }
