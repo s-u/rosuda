@@ -39,6 +39,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     public static String lastRver=null;
     public static String lastRcall=null;
 
+    /* last ID suffix */
+    public static int lastTreeID=0;
+
     String lastDump=null;
 
     /** create a new instance of the plugin */
@@ -385,7 +388,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 return false;
             } else {
                 BufferedReader br=new BufferedReader(new FileReader(fprefix+"PluginInit.out"));
-                root=RTree.Load(br,"GrownTree",vs,0,"[1] TREE","[1] END",true,registerPar);
+                lastTreeID++;
+                root=RTree.Load(br,"GrownTree_"+lastTreeID,vs,0,"[1] TREE","[1] END",true,registerPar);
                 if (root!=null) {
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
