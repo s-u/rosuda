@@ -7,6 +7,8 @@
 //
 //  $Id$
 
+package org.rosuda.ibase;
+
 /** MapSegmentEntry encapsulates individual polygons in a map segment. They are specified by the coordinates of the points along the path. Each map segment may consist of multiple segment entries. */
 public class MapSegmentEntry {
     /** coordinates of the polygon points */
@@ -51,7 +53,7 @@ public class MapSegmentEntry {
         int i=0;
         minX=maxX=minY=maxY=0;
         while(i<xp.length) {
-            if (i==0) { minX=maxX=xpt[0]; minY=maxY=ypt[0]; };
+            if (i==0) { minX=maxX=xp[0]; minY=maxY=yp[0]; };
             if (xp[i]<minX) minX=xp[i];
             if (xp[i]>maxX) maxX=xp[i];
             if (yp[i]<minY) minY=yp[i];
