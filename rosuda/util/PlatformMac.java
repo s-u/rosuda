@@ -13,7 +13,7 @@ import java.io.*;
 import java.awt.*;
 
 /** This is an implementation of the {@link Platform} class specific to Apple Macintosh systems. The fact that this class is loaded on Apple computers only allows us to use all of the Apple-specific MRJ classes without the risk of encountering missing classes. */ 
-public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHandler, MRJOpenDocumentHandler {
+public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHandler, MRJOpenDocumentHandler, MRJQuitHandler {
 
     public PlatformMac() {
         super();
@@ -27,6 +27,7 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
         } catch(Exception e) {
             if (Global.DEBUG>0)
                 System.out.println("PlatformMac.getResourceFile(\""+rname+"\"): "+e.getMessage());
+                e.printStackTrace();
         }
         if (f==null) { // fall back to default resource loading if this ain't a MacOS X bundle
             String s=super.getResourceFile(rname);
@@ -43,5 +44,6 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
         MRJApplicationUtils.registerAboutHandler(this);
         MRJApplicationUtils.registerOpenDocumentHandler(this);
         MRJApplicationUtils.registerPrefsHandler(this);
-    }
+        MRJApplicationUtils.registerQuitHandler(this);
+    }  
 }
