@@ -182,7 +182,7 @@ public class Axis extends Notifier
 	@param gv graphical value
 	@return clipped graphical value */
     public int clip(int gv) {
-	return (gv<gBegin)?gBegin:((gv>gBegin+gLen)?gBegin+gLen:gv);    
+	return (gLen<0)?((gv>gBegin)?gBegin:((gv<gBegin+gLen)?gBegin+gLen:gv)):((gv<gBegin)?gBegin:((gv>gBegin+gLen)?gBegin+gLen:gv));
     };
     
     /** get lower geometry for category of index i (type 1,2 only)
@@ -234,7 +234,6 @@ public class Axis extends Notifier
 	@return category ID or -1 on failure (e.g. if not of type 1 or 2) */
     public int getCatByPos(int pos) {
 	if (type!=1&&type!=2) return -1;
-	if (pos<gBegin) return 0;
 	if (cseq==null&&type==1) {
 	    int rc=(pos-gBegin)/gLen;
 	    if (rc<0) rc=0;
@@ -259,7 +258,9 @@ public class Axis extends Notifier
 		l=v.getSizeCatAt((cseq==null)?i:invcs[i]);
 	    agg+=l;
 	    aggp2=gBegin+gLen*agg/tot;
-	    if (pos>=aggp&&pos<aggp2) return (cseq==null)?i:invcs[i];
+	    //System.out.println("i="+i+", pos="+pos+" ["+aggp+"-"+aggp2+"]");
+	    if ((pos>=aggp&&pos<aggp2) ||
+		(pos>aggp2&&pos<=aggp)) return (cseq==null)?i:invcs[i];
 	    i++;
 	};
 	return maxi; // assuming pos is out of range, ergo return maxi
