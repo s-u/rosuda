@@ -56,7 +56,7 @@ class PoGraSSgraphics extends PoGraSS
 	    cn[cs]=new String(nam); c[cs]=new Color(R,G,B); cs++;
 	}; 
     };
-    public void setColor(int R, int B, int G) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=new Color(R,G,B)); };
+    public void setColor(int R, int G, int B) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=new Color(R,G,B)); };
     public void setColor(String nam) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=getColor(nam)); };
     public void drawLine(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawLine(x1,y1,x2,y2); };
     public void moveTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer)  { cx=x; cy=y; } };

@@ -25,7 +25,7 @@ public class PoGraSSmeta extends PoGraSS
     public void defineColor(String nam, int R, int G, int B) {
 	ct.append("p.defineColor(\n\""+nam+"\",\n"+R+",\n"+G+",\n"+B+");\n");
     };
-    public void setColor(int R, int B, int G) {
+    public void setColor(int R, int G, int B) {
 	ct.append("p.setColor(\n"+R+",\n"+G+",\n"+B+");\n");
     };
     public void setColor(String nam) {

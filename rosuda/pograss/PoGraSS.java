@@ -31,7 +31,7 @@ public class PoGraSS
     public void addComment(String c) {};
     public void setTitle(String t) {};
     public void defineColor(String nam, int R, int G, int B) {};
-    public void setColor(int R, int B, int G) {};
+    public void setColor(int R, int G, int B) {};
     public void setColor(String nam) {};
     public void drawLine(int x1, int y1, int x2, int y2) {};
     public void moveTo(int x, int y) {};

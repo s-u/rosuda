@@ -64,7 +64,7 @@ class PoGraSSPS extends PoGraSS
 	else
 	    outPS("/color_"+nam+"  { "+(R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor } def\n");
     };
-    public void setColor(int R, int B, int G) {
+    public void setColor(int R, int G, int B) {
 	if (inPath) outPS(" cp s\n"); inPath=false;
 	
 	outPS(curPen=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor "));	
