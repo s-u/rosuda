@@ -234,7 +234,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
                 if (Pts[i]!=null) {
                     int mm=m.getSec(i);
                     if (mm!=lastSM) {
-                        if (mm==0) g.setColor("point"); else g.setColor(ColorBridge.main.getColor(mm));
+                        if (mm==0) g.setColor("point"); else g.setColor(ColorBridge.getMain().getColor(mm));
                         lastSM=mm;
                     }
                     g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
