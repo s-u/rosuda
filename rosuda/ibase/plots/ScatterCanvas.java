@@ -241,7 +241,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
                 jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));                
             }
-	    if (!v[0].isMissingAt(i) && !v[1].isMissingAt(i))
+	    if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat()))
 		Pts[i]=new Point(jx+A[0].getCasePos(i),jy+TH-A[1].getCasePos(i));
             else
 		Pts[i]=null;
