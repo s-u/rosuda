@@ -1,5 +1,5 @@
 import org.rosuda.JRI.Rengine;
-import org.rosuda.JRI.RXP;
+import org.rosuda.JRI.REXP;
 
 public class rtest {
     public static void main(String[] args) {
@@ -26,27 +26,27 @@ public class rtest {
             long e=re.rniParse("data(iris)", 1);
             System.out.println("Result = "+e+", running eval");
             long r=re.rniEval(e, 0);
-            System.out.println("Result = "+r+", building RXP");
-            RXP x=new RXP(re, r);
-            System.out.println("RXP result = "+x);
+            System.out.println("Result = "+r+", building REXP");
+            REXP x=new REXP(re, r);
+            System.out.println("REXP result = "+x);
         }
         {
             System.out.println("Parsing");
             long e=re.rniParse("iris", 1);
             System.out.println("Result = "+e+", running eval");
             long r=re.rniEval(e, 0);
-            System.out.println("Result = "+r+", building RXP");
-            RXP x=new RXP(re, r);
-            System.out.println("RXP result = "+x);
+            System.out.println("Result = "+r+", building REXP");
+            REXP x=new REXP(re, r);
+            System.out.println("REXP result = "+x);
         }
         {
             System.out.println("Parsing");
             long e=re.rniParse("names(iris)", 1);
             System.out.println("Result = "+e+", running eval");
             long r=re.rniEval(e, 0);
-            System.out.println("Result = "+r+", building RXP");
-            RXP x=new RXP(re, r);
-            System.out.println("RXP result = "+x);
+            System.out.println("Result = "+r+", building REXP");
+            REXP x=new REXP(re, r);
+            System.out.println("REXP result = "+x);
             String s[]=x.asStringArray();
             if (s!=null) {
                 int i=0; while (i<s.length) { System.out.println("["+i+"] \""+s[i]+"\""); i++; }
@@ -57,9 +57,9 @@ public class rtest {
             long e=re.rniParse("rnorm(10)", 1);
             System.out.println("Result = "+e+", running eval");
             long r=re.rniEval(e, 0);
-            System.out.println("Result = "+r+", building RXP");
-            RXP x=new RXP(re, r);
-            System.out.println("RXP result = "+x);
+            System.out.println("Result = "+r+", building REXP");
+            REXP x=new REXP(re, r);
+            System.out.println("REXP result = "+x);
             double d[]=x.asDoubleArray();
             if (d!=null) {
                 int i=0; while (i<d.length) { System.out.print(((i==0)?"":", ")+d[i]); i++; }
@@ -68,8 +68,8 @@ public class rtest {
             System.out.println("");
         }
         {
-            RXP x=re.eval("1:10");
-            System.out.println("RXP result = "+x);
+            REXP x=re.eval("1:10");
+            System.out.println("REXP result = "+x);
             int d[]=x.asIntArray();
             if (d!=null) {
                 int i=0; while (i<d.length) { System.out.print(((i==0)?"":", ")+d[i]); i++; }

@@ -55,10 +55,10 @@ src/jri$(JNISO): src/Rengine.o src/jri.o
 libjri$(JNISO): src/jri$(JNISO)
 	ln -sf $^ $@
 
-org/rosuda/JRI/Rengine.class org/rosuda/JRI/RXP.class: Rengine.java RXP.java
+org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class: Rengine.java REXP.java
 	$(JAVAC) -d . $^
 
-rtest.class: rtest.java org/rosuda/JRI/Rengine.class org/rosuda/JRI/RXP.class
+rtest.class: rtest.java org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class
 	$(JAVAC) rtest.java
 
 run:
