@@ -167,7 +167,8 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 		    if (centered) {
 			lx+=(dx-rdx)/2;
 			ly+=(dy-rdy)/2;
-		    }
+		    } else
+                        ly+=(dy-rdy);
 		    g.fillRect(lx,ly,rdx,rdy);
                     if (mdy>0) {
                         g.setColor("marked");
