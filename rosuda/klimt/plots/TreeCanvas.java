@@ -107,6 +107,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     MosaicCanvas myMosaic=null;
     /** frame of the treemap associated with the tree */
     TFrame myMosaicFrame=null;
+    /** frame of deviance plot associated with the tree */
+    TFrame myDevFrame=null;
     
     /** construct a new display instance based on the specified tree
 	@param troot root of the tree
@@ -605,6 +607,18 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    myMosaic.setBounds(0,0,400,300);
 	    myMosaicFrame.pack(); myMosaicFrame.show();		
 	};
+	if (cmd=="devplot") {
+	    if (myDevFrame!=null) {
+		myDevFrame.dispose();
+		WinTracker.current.rm(myDevFrame);
+		myDevFrame=null;
+	    };
+	    myDevFrame=new TFrame(InTr.lastTreeFileName+" (deviance plot)");
+	    DevCanvas dc=new DevCanvas(myDevFrame,root);
+	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.defaultWindowListener);
+	    dc.setBounds(0,0,400,300);
+	    myDevFrame.pack(); myDevFrame.setVisible(true);
+	};
 	return null;
     };  
 
@@ -793,6 +807,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='N') run(this,"new");
 	if (e.getKeyChar()=='o') run(this,"open");
 	if (e.getKeyChar()=='d') run(this,"deviance");
+	if (e.getKeyChar()=='D') run(this,"devplot");
 	if (e.getKeyChar()=='c') run(this,"connect");
 	if (e.getKeyChar()=='f') run(this,"final");
 	if (e.getKeyChar()=='q') run(this,"quit");

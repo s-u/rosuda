@@ -47,7 +47,7 @@ public class Axis extends Notifier
     int []cseq=null;
     
     /** create a new Axis with variable srcv, default orientation (horizontal) and default type guessing and default range
-	@param srcv source variable */
+	@param srcv source variable (cannot be <code>null</code>! for pure numerical axes use {@Axis(SVar,int,int)} constructor!) */
     public Axis(SVar srcv) {
 	v=srcv; ticks=null; or=0; gInterSpc=0;
 	type=3; // some default type guessing
@@ -57,7 +57,7 @@ public class Axis extends Notifier
      };
 
     /** create new Axis with variable srvc, specified orientation and type and default range 
-     @param srcv source variable
+     @param srcv source variable (can be <code>null</code> if axis type is T_Num or T_EqSize resulting in virtual axis)
      @param orientation orientation
      @param axisType axis type */
     public Axis(SVar srcv, int orientation, int axisType) {
@@ -117,6 +117,7 @@ public class Axis extends Notifier
     /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used.)
 	@param reseCseq If <code>true</code> for categorial types this also resets categories sequence to default (ordered by cat ID) */    
     public void setDefaultRange(boolean resetCseq) {
+	if (v==null) { vBegin=0; vLen=1; return; } // we allow var=null for pure numerical axes, [0:1] is default
 	if (v.isNum() && type==0) {
 	    vBegin=v.getMin();
 	    vLen=v.getMax()-vBegin;
