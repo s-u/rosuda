@@ -444,7 +444,8 @@ public class VarFrame extends TFrame {
                     f.addWindowListener(Common.getDefaultWindowListener());
                     BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-                    bc.setSize(new Dimension(100+40*theCat.getNumCats(),200));
+                    int iw=100+40*theCat.getNumCats(); if (iw>800) iw=800;
+                    bc.setSize(new Dimension(iw,200));
                     f.add(bc); f.pack(); f.show();
                     f.initPlacement();
                 } else {
@@ -458,6 +459,7 @@ public class VarFrame extends TFrame {
                             if (vs.at(i).isCat()) {
                                 BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker()); cvs=bc;
                                 xdim=100+40*vs.at(i).getNumCats(); ydim=200;
+                                if (xdim>800) xdim=800;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                             } else {
                                 HistCanvasEx hc=new HistCanvasEx(f,vs.at(i),vs.getMarker(),dr.getNodeMarker()); cvs=hc;
