@@ -126,7 +126,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     		int ls = this.getLineStartOffset(a);
     		ls = this.getSelectionStart() > ls?this.getSelectionStart():ls;
 			int le = this.getLineEndOffset(a);
-			if (comment && !this.getText(ls,le-ls).trim().startsWith("#")) this.insertAt(ls,"#");
+			if (comment && !this.getText(ls,le-ls).trim().startsWith("#") && !this.getText(ls-1,1).equals("#")) this.insertAt(ls,"#");
     		if (!comment) {
     			ls = this.getLineStartOffset(a);
     			int i = this.getText(ls,le-ls).indexOf("#");
