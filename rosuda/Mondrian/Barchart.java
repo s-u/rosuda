@@ -304,12 +304,14 @@ public class Barchart extends DragBox implements ActionListener {
             JPopupMenu mode = new JPopupMenu();
             if( displayMode.equals("Barchart") ) {
               JMenuItem Spineplot = new JMenuItem("Spineplot");
+              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
               mode.add(Spineplot);
               Spineplot.setActionCommand("Spineplot");
               Spineplot.addActionListener(this);
             }
             else {
               JMenuItem Barchart  = new JMenuItem("Barchart");
+              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
               mode.add(Barchart);
               Barchart.setActionCommand("Barchart");
               Barchart.addActionListener(this);
@@ -466,8 +468,18 @@ public class Barchart extends DragBox implements ActionListener {
           SelectionEvent se = new SelectionEvent(this);
           evtq.postEvent(se);
         }
-      } else
-        super.processKeyEvent(e);  // Pass other event types on.
+      } else if( e.getKeyCode() == KeyEvent.VK_T && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+        if( displayMode.equals("Barchart") )
+          displayMode = "Spineplot";
+        else
+          displayMode = "Barchart";
+        rects.removeAllElements();
+        realHeight = create(border, border, width-border, height-border, "");
+        Graphics g = this.getGraphics();
+        paint(g);
+        g.dispose();
+      }
+      super.processKeyEvent(e);  // Pass other event types on.
     }
 
     public void actionPerformed(ActionEvent e) {
