@@ -113,6 +113,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             SVar sdv=new SVar("SplitDev",false);
             SVar rxv=new SVar("RankedXV",false);
             int []fullrks=cv.getRanked();
+            sw.profile("innerPlots: cv.getRanked");
             int []rks=new int[n.data.size()];
             int rki=0;
             double D=0;
@@ -120,6 +121,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             boolean isCat=rsp.isCat();
             double sumL=0, sumR=0; // regr: sum of y[i] left/right
             int trct=0;
+            /*
             for (int ix=0;ix<fullrks.length;ix++)
                 if (n.data.contains(new Integer(fullrks[ix]))) {
                     rks[rki++]=fullrks[ix];
@@ -127,6 +129,29 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         sumR+=rsp.atD(fullrks[ix]); trct++;
                     }
                 };
+             */
+
+            {
+                int k=0, l=n.data.size();
+                while (k<l) {
+                    Integer ii=(Integer) n.data.elementAt(k);
+                    if (ii!=null) {
+                        int iii=ii.intValue();
+                        fullrks[iii]=-1-fullrks[iii];
+                    }
+                    k++;
+                }
+                sw.profile("innerPlots: re-map ranks");
+                for (int ix=0;ix<fullrks.length;ix++)
+                    if (fullrks[ix]<0) {
+                        rks[rki++]=1+fullrks[ix];
+                        if (!isCat && rsp.at(fullrks[ix])!=null) {
+                            sumR+=rsp.atD(1+fullrks[ix]); trct++;
+                        }
+                    };
+            }
+
+            sw.profile("innerPlots: calc tree ranks");
             double mnL=0.0, mnR=0.0; // regr: mean left/right
             if (!isCat) {
                 mnR=sumR/((double)trct);
