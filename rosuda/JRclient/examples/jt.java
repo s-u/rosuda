@@ -23,6 +23,12 @@ public class jt {
 		// if the user types: #symbol value 
 		// then symbol<-value is performed
 		// if no value is specified then an array of integers is assigned
+		if (s.equals("shutdown")) {
+		    System.out.println("Sending shutdown request");
+		    c.shutdown();
+		    System.out.println("Shutdown successful. Quitting console.");
+		    return;
+		} else		
 		if (s.length()>1 && s.charAt(0)=='#') {
 		    s=s.substring(1);
 		    int i=s.indexOf(' ');
