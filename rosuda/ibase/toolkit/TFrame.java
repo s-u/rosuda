@@ -40,8 +40,7 @@ public class TFrame extends Frame
 	setTitle(tit);
 	// add myself to WinTracker
 	if (WinTracker.current==null) WinTracker.current=new WinTracker();
-	WTmyself=new WTentry(this,tit,wclass);
-	WinTracker.current.add(WTmyself);
+	WTmyself=new WTentryAWT(WinTracker.current,this,tit,wclass);
         if (Common.cur_arrow!=null) setCursor(Common.cur_arrow);
     };
 
