@@ -70,6 +70,9 @@
 				F510801203B3247801FA48CB,
 				10F9BF62FEEDA25E11DB9C8B,
 				F52CCF8B0237C0F701FA478D,
+				D097A9DA06F9B94100684C11,
+				D097A9DC06F9BAF900684C11,
+				D097A9DD06F9BAF900684C11,
 				01F12F4FFEC8CEF111DB9C8B,
 			);
 			isa = PBXGroup;
@@ -214,7 +217,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.98</string>
+	<string>0.99c</string>
 	<key>Java</key>
 	<dict>
 		<key>ClassPath</key>
@@ -229,11 +232,13 @@
 			<key>apple.awt.antialiasing</key>
 			<string>true</string>
 			<key>apple.laf.useScreenMenuBar</key>
-			<string>true</string>
+			<string>false</string>
 			<key>com.apple.macos.useScreenMenuBar</key>
 			<string>true</string>
 			<key>com.apple.mrj.application.apple.menu.about.name</key>
 			<string>Mondrian</string>
+			<key>com.apple.mrj.application.growbox.intrudes</key>
+			<string>true</string>
 		</dict>
 		<key>VMOptions</key>
 		<string>-Xmx512m</string>
@@ -272,7 +277,6 @@
 				F539379901F5CC7401FA4797,
 				F539379A01F5CC7401FA4797,
 				F539379B01F5CC7401FA4797,
-				F539379C01F5CC7401FA4797,
 				F539379D01F5CC7401FA4797,
 				F539379F01F5CC7401FA4797,
 				F53937A001F5CC7401FA4797,
@@ -284,7 +288,6 @@
 				F5FCD7B5023CC352015B9A6A,
 				F54802D5026ED61501FA478D,
 				F5FBD733027EE38A01FA478D,
-				F518DE9102928EC501A67908,
 				F5A4C09003BE533601FEB7DC,
 				D08C744204B997AB00FA48CA,
 				D07E9E1F057F1DA800C2084A,
@@ -305,6 +308,9 @@
 			files = (
 				F52CCF8C0237C0F701FA478D,
 				F510801303B3247801FA48CB,
+				D097A9DB06F9B94100684C11,
+				D097A9DE06F9BAF900684C11,
+				D097A9DF06F9BAF900684C11,
 			);
 			isa = PBXJavaArchiveBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +370,42 @@
 			settings = {
 			};
 		};
+		D097A9DA06F9B94100684C11 = {
+			isa = PBXFileReference;
+			path = alpha.gif;
+			refType = 4;
+		};
+		D097A9DB06F9B94100684C11 = {
+			fileRef = D097A9DA06F9B94100684C11;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		D097A9DC06F9BAF900684C11 = {
+			isa = PBXFileReference;
+			path = cat.gif;
+			refType = 4;
+		};
+		D097A9DD06F9BAF900684C11 = {
+			isa = PBXFileReference;
+			path = num.gif;
+			refType = 4;
+		};
+		D097A9DE06F9BAF900684C11 = {
+			fileRef = D097A9DC06F9BAF900684C11;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		D097A9DF06F9BAF900684C11 = {
+			fileRef = D097A9DD06F9BAF900684C11;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
 //D00
 //D01
 //D02
@@ -392,12 +434,6 @@
 			isa = PBXFileReference;
 			path = PrintUtilities.java;
 			refType = 4;
-		};
-		F518DE9102928EC501A67908 = {
-			fileRef = F518DE9002928EC501A67908;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F52CCF8B0237C0F701FA478D = {
 			isa = PBXFileReference;
@@ -647,12 +683,6 @@
 		};
 		F539379B01F5CC7401FA4797 = {
 			fileRef = F539378201F5CC7401FA4797;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F539379C01F5CC7401FA4797 = {
-			fileRef = F539378301F5CC7401FA4797;
 			isa = PBXBuildFile;
 			settings = {
 			};
