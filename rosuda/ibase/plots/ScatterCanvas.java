@@ -19,6 +19,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     boolean selRed=false;
 
+    /** use trigraph for X axis in case X is categorical */
+    boolean useX3=false; 
+    
     /** array of two axes (X and Y) */
     Axis A[];
 
@@ -164,7 +167,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 int t=A[0].getValuePos(fi);
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
-                    g.drawString(v[0].isCat()?v[0].getCatAt((int)fi).toString():A[0].getDisplayableValue(fi),t-5,Y+H+20);
+                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
+                                 A[0].getDisplayableValue(fi),t-5,Y+H+20);
                 fi+=f;
             };
         }
@@ -305,6 +309,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='j') run(this,"jitter");
+	if (e.getKeyChar()=='t') run(this,"trigraph");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -326,7 +331,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (cmd=="jitter") {
             jitter=!jitter; updatePoints(); setUpdateRoot(0); repaint();
         }
-
+        if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
+        
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");

@@ -89,13 +89,17 @@ public class Common
 		return cp.toString().substring(0,4-nums)+nm.toString();
 	    if (nums>1 && nums<4 && caps==0 && s.charAt(0)>'9')
 		return s.charAt(0)+nm.toString();
+            if (nums==1 && s.charAt(0)>'9' && s.charAt(s.length()-1)>'9')
+                return s.charAt(0)+nm.toString()+s.charAt(s.length()-1);
+            if (nums==1 && s.charAt(0)>'9')
+                lc=nm.toString().charAt(0);
 	};
 	if (caps==3||caps==4) return cp.toString();
 	if (caps==2&&(lc<'A'||lc>'Z'))
 	    return cp.append(lc).toString();
 	i=1;
 	char mid=' ';
-	String ignore="aeiouyAEIOUY \t\n\röäüÖÄÜ";
+	String ignore="aeiouAEIOU ._\t\n\röäüÖÄÜ";
 	while (i<s.length()-1) {
 	    char c=s.charAt(i);
 	    if (ignore.indexOf(c)==-1) {
@@ -104,7 +108,7 @@ public class Common
 	    i++;
 	};
 	if (mid==' ') mid=s.charAt(1);
-	return ""+s.charAt(0)+mid+s.charAt(s.length()-1);
+	return ""+s.charAt(0)+mid+lc;
     };
 
     /** returns screen resolution. the value is cached after first successful retrival
