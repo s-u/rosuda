@@ -395,6 +395,7 @@ public class XGDserver extends Thread {
                         c=new XGDcanvas((int)w, (int)h);
                         f.getContentPane().add(c);
                         f.pack();
+                        f.setSize(400,300);
                         f.setVisible(true);
                     }
 
