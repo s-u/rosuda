@@ -63,7 +63,8 @@ public class VarFrame extends TFrame {
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
-                "Parallel coord. plot","PCP","Series plot","lineplot","Series plot with index","lineplot2","-","Map","map",
+                "Parallel coord. plot","PCP","Hammock plot","hammock",
+                "Series plot","lineplot","Series plot with index","lineplot2","-","Map","map",
                 "-","TFP (exp!)","tfplot",
                 //"+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
@@ -617,6 +618,23 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
                     f.addWindowListener(Common.getDefaultWindowListener());
                     PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
+                    if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+                    sc.setSize(new Dimension(400,300));
+                    f.add(sc); f.pack(); f.show();
+                    f.initPlacement();
+                }
+            }
+            if (cmd=="hammock") { // Hammock plot
+                int i,j=0,tsel=0;
+                for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isCat()) tsel++;
+                if (tsel>0) {
+                    SVar[] vl=new SVar[tsel];
+                    for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isCat()) {
+                        vl[j]=vs.at(i); j++;
+                    };
+                    TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
+                    f.addWindowListener(Common.getDefaultWindowListener());
+                    HamCanvas sc=new HamCanvas(f,vl,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();

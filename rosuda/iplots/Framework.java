@@ -34,7 +34,7 @@ public class Framework implements Dependent, ActionListener {
         SVar.int_NA=-2147483648;
         Global.useAquaBg=true; // use aqua look
 	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
-        Platform.initPlatform();
+        org.rosuda.util.Platform.initPlatform("org.rosuda.iplots.");
         if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
         Common.breakDispatcher.addDepend(this);
 	cvs=new SVarSet();
@@ -368,6 +368,22 @@ public class Framework implements Dependent, ActionListener {
 	f.add(sc); f.pack(); f.show();
 	return sc;
     };
+
+    public HamCanvas newHammock(int[] v) { return newHammock(cvs,v); }
+    public HamCanvas newHammock(SVarSet vs, int[] v) {
+        if (v.length==0) return null;
+        updateMarker(vs,v[0]);
+        TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
+        f.addWindowListener(Common.getDefaultWindowListener());
+        SVar[] vl=new SVar[v.length];
+        int i=0;
+        while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
+        HamCanvas sc=new HamCanvas(f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+        sc.setSize(new Dimension(400,300));
+        f.add(sc); f.pack(); f.show();
+        return sc;
+    }
 
     /** display a new histogram of a variables from current dataset
         @param v variable ID
