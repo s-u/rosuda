@@ -33,6 +33,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     /** diameter of a point */
     public int ptDiam=3;
+
+    public int fieldBg=0; // 0=none, 1=objects, 2=white
     
     /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
 	compatibility with older implementations */
@@ -81,7 +83,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
@@ -173,8 +175,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (selRed)
 	    g.defineColor("marked",255,0,0);
 	else
-	    g.defineColor("marked",128,255,128);
-	g.defineColor("black",0,0,0);
+	    g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        g.defineColor("black",0,0,0);
 	g.defineColor("outline",0,0,0);
 	g.defineColor("point",0,0,128);	
 	g.defineColor("red",255,0,0);
@@ -198,9 +201,11 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    return;
 	};
 
-	g.setColor("white");
-	g.fillRect(X,Y,W,H);
-
+        if (fieldBg!=0) {
+            g.setColor((fieldBg==1)?"white":"objects");
+            g.fillRect(X,Y,W,H);
+        }
+        
 	SNode cn=(m!=null)?m.getNode():null;
         paint_cn=cn;
 
@@ -441,6 +446,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
+        if (e.getKeyChar()=='g') run(this,"nextBg");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='j') run(this,"jitter");
@@ -497,6 +503,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             setUpdateRoot(0);
             repaint();
         }
+        if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
         if (cmd=="resetZoom") { resetZoom(); repaint(); }
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
