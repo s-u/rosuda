@@ -10,6 +10,7 @@ import java.util.Properties;     // To store printing preferences in.
 import java.lang.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
+import org.rosuda.JRclient.*;
 
 public class Histogram extends DragBox implements ActionListener {
   private Vector rects = new Vector(256,0);            	// Store the tiles.
@@ -25,6 +26,7 @@ public class Histogram extends DragBox implements ActionListener {
   private Graphics2D bg;
   private int k;
   public String displayMode = "Histogram";
+  public boolean densityMode = false;
   private dataSet data;
   private int dvar;
   private int round;					// percision for labels ...
@@ -196,6 +198,8 @@ public class Histogram extends DragBox implements ActionListener {
                     (int)userToWorldX( xMax ) - fm.stringWidth(Stat.roundToString(xMax, round)), 
                     (int)userToWorldY( 0 ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
 
+      if( densityMode )
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.3)));
 
       boolean stillEmpty = true;               // Flag to avoid heading empty bins
       for( int i = 0;i < levels[0]; i++) {
@@ -214,6 +218,63 @@ public class Histogram extends DragBox implements ActionListener {
         }
       }
 
+      if( densityMode ) {
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+
+        try {
+          Rconnection c = new Rconnection();
+          double[] xVal = data.getRawNumbers(tablep.initialVars[0]);
+          c.assign("x", xVal);
+
+          RList l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+          double[] dx = (double[]) l.at("x").getContent();
+          double[] dy = (double[]) l.at("y").getContent();
+
+          if( displayMode.equals("Histogram") )
+            for( int f=0; f<dx.length-1; f++ ) {
+              bg.drawLine( (int)userToWorldX( dx[f] ),   (int)userToWorldY( dy[f] ),
+                           (int)userToWorldX( dx[f+1] ), (int)userToWorldY( dy[f+1] ));
+            }
+              
+          int nSel = data.countSelection();
+          if( nSel > 1 ) {
+            double[] selX = new double[nSel];
+            double[] selection = data.getSelection();
+            int k=0;
+            for( int i=0; i<data.n; i++ )
+              if( selection[i] > 0 ) 
+                selX[k++]   = xVal[i];
+            c.assign("x",selX);
+
+            l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+            double[] dsx = (double[]) l.at("x").getContent();
+            double[] dsy = (double[]) l.at("y").getContent();
+
+            bg.setColor(getHiliteColor());
+
+            double totalY = 0;
+            if( !displayMode.equals("Histogram") )
+              for( int f=0; f<dy.length-1; f++ )
+                totalY += dy[f];
+
+            double sumY = 0;
+            double fac = (double)nSel/(double)data.n;
+            if( displayMode.equals("Histogram") )
+              for( int f=0; f<dx.length-1; f++ )
+                bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( dsy[f]*fac ),
+                             (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( dsy[f+1]*fac ));
+            else
+              for( int f=0; f<dx.length-1; f++ ) {
+                bg.drawLine( (int)userToWorldX( xMin + sumY/totalY * (xMax-xMin) )        ,   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ),
+                             (int)userToWorldX( xMin + (sumY+dy[f])/totalY * (xMax-xMin) ), (int)userToWorldY( yMax * dsy[f+1]*fac/dy[f+1] ));
+                sumY += dy[f];
+              }
+          }
+
+
+          c.close();
+        } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+      }
       if( !printing ) {
         drawSelections(bg);
         g.drawImage(bi, 0, 0, null);
@@ -247,9 +308,10 @@ public class Histogram extends DragBox implements ActionListener {
                                                 ||  e.getKeyCode() == KeyEvent.VK_LEFT
                                                 ||  e.getKeyCode() == KeyEvent.VK_RIGHT
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                 && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
+                                                    && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                 &&   e.getKeyCode() == KeyEvent.VK_T ))) {
+                                                   &&   e.getKeyCode() == KeyEvent.VK_T )                                                																								|| (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                   &&   e.getKeyCode() == KeyEvent.VK_D ))) {
         if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
           if( bWidth > 0 ) {
             tablep.updateBins(bStart, bWidth -= bWidth*0.1);
@@ -281,7 +343,9 @@ public class Histogram extends DragBox implements ActionListener {
           else
             displayMode = "Histogram";
         }
-        
+        if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+          densityMode = !densityMode;
+        }        
         create(border, border, this.width-border, this.height-border, "");
         for( int i=0; i<Selections.size(); i++) {
           Selection S = (Selection)Selections.elementAt(i);
@@ -331,6 +395,17 @@ public class Histogram extends DragBox implements ActionListener {
               Spineplot.setActionCommand("Spinogram");
               Spineplot.addActionListener(this);
               
+              JCheckBoxMenuItem Density = new JCheckBoxMenuItem("Density");
+              Density.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              if( densityMode )
+                Density.setSelected(true);
+              else
+                Density.setSelected(false);
+              mode.add(Density);
+
+              Density.setActionCommand("Density");
+              Density.addActionListener(this);
+
               final Axis axisW = new Axis(xMin, xMax);
 
               JMenu menuWidth = new JMenu("Width");
@@ -478,6 +553,9 @@ public class Histogram extends DragBox implements ActionListener {
         Update();
       } else if( command.equals("home") ) {
         home();
+      } else if( command.equals("Density") ) {
+        densityMode = !densityMode;
+        Update();
       } else
         super.actionPerformed(e);
     }
@@ -534,9 +612,10 @@ public class Histogram extends DragBox implements ActionListener {
                                        tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
         }
       }
-      else {				// Spinogramm
-        int lastX = (int)userToWorldX(bStart);
-        int fullRange = (int)userToWorldX(xMax) - (int)userToWorldX(bStart);
+      else {				// Spinogram
+        int lastX = (int)userToWorldX(xMin);    //(int)userToWorldX(bStart);
+//        int fullRange = (int)userToWorldX((Math.floor(xMax/bWidth)+1)*bWidth ) - (int)userToWorldX(bStart);
+        int fullRange = (int)userToWorldX(xMax) - (int)userToWorldX(xMin);
         for(int i=0; i<k; i++ ) {
           int currX = lastX + (int)Math.round(tablep.table[i]/n * fullRange); 
           rects.addElement(new MyRect( true, 'y', "Observed",
