@@ -99,17 +99,17 @@ class QueryPopup
     }
     
     public void show() {
-	System.out.println("QueryPopup.show");
+	if (Common.DEBUG>0) System.out.println("QueryPopup.show");
 	if (!win.isVisible()) {	 
-	    System.out.println("rendering win visible");
+	    if (Common.DEBUG>0) System.out.println("rendering win visible");
 	    win.pack(); win.setVisible(true);
 	};
     }
 
     public void hide() {
-	System.out.println("QueryPopup.hide");
+	if (Common.DEBUG>0) System.out.println("QueryPopup.hide");
 	if (win.isVisible()) {
-	    System.out.println("hiding win");
+	    if (Common.DEBUG>0) System.out.println("hiding win");
 	    win.dispose();
 	};
     }
