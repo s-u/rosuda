@@ -57,6 +57,8 @@ public class Tools {
         mplr/=10.0;
         double post=(val-((double)front))*mplr;
         if (post<0) post=-post;
+        // while rounding post may reach mplr (e.g. 4.9 +0.1 = 4.10 -> 5.0) so take care of that
+        if (post>=((int)mplr)) { post-=(int)mplr; if (front>=0) front++; else front--; };
         return ""+front+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
