@@ -311,6 +311,9 @@ public class SVarFixDouble extends SVar
 	return c; 
     }
 
+    /** we don't support replace [[FIXME: replace needs to re-alloc the vector or something like that ... ]] */
+    public boolean remove(Object o, int index) { return false; }
+
     /** returns list of indexes ordered by rank, for non-cat, num vars only. missing
         values are omitted.
         @param v variable (should be obtained by at(..))
