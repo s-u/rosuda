@@ -357,6 +357,14 @@ public class VarFrame extends TFrame {
                         if(vc.selMask[j]) { resp=vc.vs.at(j); break; }
                         j++;
                     }
+                    if (resp==null) {
+                        Frame f=new Frame("dummy");
+                        MsgDialog md=new MsgDialog(f, "Missing Response",
+                                                   "You didn't select any response variable. Please select a variable in the variable window.");
+                        md.dispose();
+                        f.dispose();
+                        return null;
+                    }
                     String tn="new.tree."+(VarFrame.newRootId++);
                     SNode t=new SNode();
                     t.data=new Vector();
@@ -371,11 +379,11 @@ public class VarFrame extends TFrame {
                     RootInfo ri=t.getRootInfo();
                     ri.response=resp;
                     ri.name=tn;
+                    dr.getTreeRegistry().registerTree(t,tn);
                     ri.frame=new TFrame(tn,TFrame.clsTree);
                     t.calculateSampleDeviances();
                     TreeCanvas tc=Klimt.newTreeDisplay(t,ri.frame);
                     tc.repaint(); tc.redesignNodes();
-                    dr.getTreeRegistry().registerTree(t,tn);
                 }
             }
             if (cmd=="export") { // Export ...
