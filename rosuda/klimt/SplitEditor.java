@@ -46,136 +46,146 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             }
             vc.select(cv.getName());
             vp.add(vc);
+            pp=new Panel(); pp.setLayout(new GridLayout(2,1));
             add(vp,BorderLayout.NORTH);
             sp=new Panel(); // split panel
             cp=new Panel(); // canvas panel
             cp.setLayout(new BorderLayout());
             cp.add(sp,BorderLayout.NORTH);
-            if (cv.isCat()) {
-            } else {
-                sp.setLayout(new FlowLayout());
-                sp.add(l1=new Label("split at "));
-                spVal=ln.splitValF;
-                sp.add(st=new TextField((ln==null)?"0":ln.splitVal,10));
-                st.addActionListener(this);
-                sc=new ScatterCanvas(this,cv,root.response,m);
-                m.addDepend(sc);
-                sc.setFilter(n.data);
-                sc.setSize(400,100);
-                pp=new Panel(); pp.setLayout(new GridLayout(2,1));
-                cp.add(pp); pp.add(sc);
-
-                /** build deviance plot
-                    known bugs:
-                    - uses entire data instead of in-node data
-                    - is not updated on var change
-                    todo?
-                    - plot also left/right deviance? */
-                
-                SVar sdv=new SVar("SplitDev",false);
-                SVar rxv=new SVar("RankedXV",false);
-                int []rks=cv.getRanked();
-                int q=0;
-                int []cls=new int[root.response.getNumCats()];
-                int []tcls=new int[root.response.getNumCats()];
-                if (Common.DEBUG>0)
-                    System.out.println("ranked: "+rks.length+", classes="+tcls.length);
-                while(q<tcls.length) {
-                    tcls[q]=root.response.getSizeCatAt(q);
-                    if (Common.DEBUG>0)
-                        System.out.println(" class "+q+", count="+tcls[q]);
-                    q++;
-                };
-                q=0;
-                double D=Tools.nlogn(rks.length);
-                int lct=0, eq=0;
-                double lv;
-                while(q<rks.length) {                    
-                    lv=cv.atD(rks[q]);
-                    eq=0;
-                    while (q<rks.length && lv==cv.atD(rks[q])) {
-                        int ci=root.response.getCatIndex(rks[q]);
-                        if (ci>-1) cls[ci]++;
-                        rxv.add(cv.at(rks[q]));
-                        q++; eq++; lct++;
-                    };
-                    if (Common.DEBUG>0)
-                        System.out.println("q="+q+", lv="+lv+", eq="+eq+", lct="+lct);
-                    
-                    double d=D-Tools.nlogn(lct)-Tools.nlogn(rks.length-lct);
-                    int cl=0;
-                    while(cl<cls.length) {
-                        d+=-Tools.nlogn(tcls[cl])+Tools.nlogn(cls[cl])+Tools.nlogn(tcls[cl]-cls[cl]);
-                        cl++;
-                    }
-                    while(eq>0) {
-                        sdv.add(new Double(d));
-                        eq--;
-                    };
-                };
-                if (Common.DEBUG>0) {
-                    System.out.println("Consistency check:");
-                    System.out.println("sdv length="+sdv.size()+", rxv length="+rxv.size());
-                    q=0; while(q<tcls.length) {
-                        System.out.println(" class "+q+", tcls="+tcls[q]+", cls="+cls[q]);
-                        q++;
-                    };
-                }
-                SVar[] svl=new SVar[1]; svl[0]=sdv;
-                lc=new LineCanvas(this,rxv,svl,m);
-                //lc=new ScatterCanvas(this,rxv,sdv,m);
-                lc.setLineType(LineCanvas.LT_RECT);
-                pp.add(lc);
-                PlotManager pm=sc.getPlotManager();
-                if (pm!=null) {
-                    li=new PlotLine(pm);
-                    li.setCoordinates(1,2);
-                    li.setColor(new PlotColor(255,0,0));
-                    li.set(ln.splitValF,-1,ln.splitValF,1);
-                    li.setVisible(true);
-                }                
-            };
             add(cp);
+            constructInnerPlots();
             pack();
         };
     }
 
+    void constructInnerPlots() {
+        Dimension scd=null;
+        if (sc!=null) scd=sc.getSize(); else scd=new Dimension(400,100);
+        if (sc!=null) { pp.remove(sc); sc=null; };
+        if (lc!=null) { pp.remove(lc); lc=null; };
+        if (st!=null) { sp.remove(st); st=null; };
+        if (l1!=null) { sp.remove(l1); l1=null; };
+        if (cv.isCat()) {
+        } else {
+            sp.setLayout(new FlowLayout());
+            sp.add(l1=new Label("split at "));
+            spVal=ln.splitValF;
+            sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
+            st.addActionListener(this);
+            sc=new ScatterCanvas(this,cv,root.response,m);
+            m.addDepend(sc);
+            sc.setFilter(n.data);
+            sc.setSize(scd); sc.bgTopOnly=true;
+            cp.add(pp); pp.add(sc);
+
+            double maxD=0, maxDP=0, optSP=0;
+            
+            /** build deviance plot
+                known bugs:
+                - uses entire data instead of in-node data
+                - is not updated on var change
+                todo?
+                - plot also left/right deviance? */
+
+            SVar sdv=new SVar("SplitDev",false);
+            SVar rxv=new SVar("RankedXV",false);
+            int []fullrks=cv.getRanked();
+            int []rks=new int[n.data.size()];
+            int rki=0;
+            for (int ix=0;ix<fullrks.length;ix++)
+                if (n.data.contains(new Integer(fullrks[ix])))
+                    rks[rki++]=fullrks[ix];
+            if (Common.DEBUG>0)
+                System.out.println("input consistency check: rks.len="+rks.length+", rki="+rki);
+            int q=0;
+            int []cls=new int[root.response.getNumCats()];
+            int []tcls=new int[root.response.getNumCats()];
+            if (Common.DEBUG>0)
+                System.out.println("ranked: "+rks.length+", classes="+tcls.length);
+            q=0; while(q<tcls.length) tcls[q++]=0;
+            q=0;
+            while(q<rks.length) {
+                int ci=root.response.getCatIndex(rks[q]);
+                if (ci>-1) tcls[ci]++;
+                q++;
+            };
+
+/*
+            while(q<tcls.length) {
+                tcls[q]=root.response.getSizeCatAt(q);
+                if (Common.DEBUG>0)
+                    System.out.println(" class "+q+", count="+tcls[q]);
+                q++;
+            }; */
+            q=0;
+            double D=Tools.nlogn(rks.length);
+            int lct=0, eq=0;
+            boolean isOpt=false;
+            double lv=0;
+            while(q<rks.length) {
+                lv=cv.atD(rks[q]);
+                if (isOpt)
+                    optSP=(lv+maxDP)/2;
+                eq=0;
+                while (q<rks.length && lv==cv.atD(rks[q])) {
+                    int ci=root.response.getCatIndex(rks[q]);
+                    if (ci>-1) cls[ci]++;
+                    rxv.add(cv.at(rks[q]));
+                    q++; eq++; lct++;
+                };
+                if (Common.DEBUG>0)
+                    System.out.println("q="+q+", lv="+lv+", eq="+eq+", lct="+lct);
+
+                double d=D-Tools.nlogn(lct)-Tools.nlogn(rks.length-lct);
+                int cl=0;
+                while(cl<cls.length) {
+                    d+=-Tools.nlogn(tcls[cl])+Tools.nlogn(cls[cl])+Tools.nlogn(tcls[cl]-cls[cl]);
+                    cl++;
+                }
+                isOpt=(d>maxD);
+                if (isOpt) { maxD=d; maxDP=lv; optSP=lv; };
+                while(eq>0) {
+                    sdv.add(new Double(d));                    
+                    eq--;
+                };
+            };
+            if (Common.DEBUG>0) {
+                System.out.println("Consistency check:");
+                System.out.println("sdv length="+sdv.size()+", rxv length="+rxv.size());
+                q=0; while(q<tcls.length) {
+                    System.out.println(" class "+q+", tcls="+tcls[q]+", cls="+cls[q]);
+                    q++;
+                };
+                System.out.println("max.Dev="+maxD+", at "+maxDP+", ergo opt.split="+optSP);
+            }
+            spVal=optSP;
+            st.setText(Tools.getDisplayableValue(spVal));
+            SVar[] svl=new SVar[1]; svl[0]=sdv;
+            lc=new LineCanvas(this,rxv,svl,m);
+            //pp.add(new ScatterCanvas(this,rxv,sdv,m));
+            lc.setLineType(LineCanvas.LT_RECT);
+            pp.add(lc);
+            lc.getXAxis().setValueRange(cv.getMin(),cv.getMax()-cv.getMin());
+            PlotManager pm=sc.getPlotManager();
+            if (pm!=null) {
+                li=new PlotLine(pm);
+                li.setCoordinates(1,2);
+                li.setColor(new PlotColor(255,0,0));
+                li.set(spVal,-1,spVal,1);
+                li.setVisible(true);
+            }
+        }
+    }
+    
     public void itemStateChanged(ItemEvent e) {
         if (e.getStateChange()==ItemEvent.SELECTED) {
             String sv=vc.getSelectedItem();
             SVar v=vs.byName(sv);
             if (v!=null && v!=cv) {
-                Dimension scd=null;
-                if (sc!=null) scd=sc.getSize();
                 cv=v;
-                if (sc!=null) { cp.remove(sc); sc=null; };
-                if (st!=null) { sp.remove(st); st=null; };
-                if (l1!=null) { sp.remove(l1); l1=null; };
-                if (cv.isCat()) {
-                } else {
-                    setMenuBar(null);
-                    sp.setLayout(new FlowLayout());
-                    sp.add(l1=new Label("split at "));
-                    sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
-                    st.addActionListener(this);
-                    sc=new ScatterCanvas(this,cv,root.response,m);
-                    sc.bgTopOnly=true;
-                    m.addDepend(sc);
-                    sc.setFilter(n.data);
-                    if (scd!=null) sc.setSize(scd);
-                    else sc.setSize(400,100);
-                    cp.add(sc);
-                    PlotManager pm=sc.getPlotManager();
-                    if (pm!=null) {
-                        li=new PlotLine(pm);
-                        li.setCoordinates(1,2);
-                        li.setColor(new PlotColor(255,0,0));
-                        li.set(spVal,-1,spVal,1);
-                        li.setVisible(true);
-                    }
-                    pack();
-                    repaint();
-                }
+                setMenuBar(null);
+                constructInnerPlots();
+                pack(); repaint();
             };
         };
     };
@@ -236,6 +246,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         pd.setProgress(40);
                         pd.setVisible(true);
                         gt.setParameter("selectedOnly",Boolean.TRUE);
+                        gt.setParameter("registerTree",Boolean.FALSE);
                         SMarker bak=vs.getMarker();
                         SMarker ml=new SMarker(cv.size());
                         SMarker mr=new SMarker(cv.size());
