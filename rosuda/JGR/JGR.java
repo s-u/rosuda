@@ -120,6 +120,22 @@ public class JGR {
         else if (type.equals("matrix")) new DataTable(RTalk.getVarSet(RTalk.createMatrix(data)));
     }
 
+    public static void setRHhome(String rhome) {
+        RHOME = rhome;
+    }
+
+    public static void setRLibs(String[] libs) {
+        RLIBS = libs;
+        for (int i = 0; i< RLIBS.length; i++) {
+            if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
+        }
+    }
+
+    public static void setKeyWords(String[] words) {
+        Object dummy = new Object();
+        for (int i = 0; i < words.length; i++) iPreferences.KEYWORDS.put(words[i],dummy);
+    }
+
 
 
     public static void readHistory() {
