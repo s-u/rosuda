@@ -24,7 +24,7 @@ RINC=-I$(RHOME)/src/include -I$(RHOME)/include
 RLD=-L$(RHOME)/bin -L$(RHOME)/lib -lR
 CFLAGS+=-Iinclude -Isrc/include
 
-TARGETS=$(JNIPREFIX)jri$(JNISO) rtest.class run $(PLATFORMT)
+TARGETS=$(JNIPREFIX)jri$(JNISO) run $(PLATFORMT)
 
 all: $(TARGETS)
 
@@ -58,17 +58,15 @@ $(JNIPREFIX)jri$(JNISO): src/jri$(JNISO)
 org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: Rengine.java REXP.java Mutex.java RMainLoopCallbacks.java
 	$(JAVAC) -d . $^
 
-rtest.class: rtest.java org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class
-	$(JAVAC) rtest.java
-
 run:
-	echo "#!/bin/sh" > run
-	echo "export R_HOME=$(RHOME)" >> run
+	echo "#!/bin/bash" > run
+	echo "RHOME=$(RHOME)" >> run
+	cat .run >> run
 	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
-	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(RHOME)/lib:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client:$(JAVAHOME)/jre/bin/classic" >> run
-	echo "$(JAVAB) rtest \$$*" >> run
+	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(RHOME)/lib:$(JAVAHOME)/jre/lib/$(PLATFORM):$(JAVAHOME)/jre/lib/$(PLATFORM):$(JAVAHOME)/jre/bin/classic" >> run
+	echo "$(JAVAB) -jar JGRinst.jar \$$*" >> run
 	-chmod a+x run
-	
+
 clean:
 	rm -rf $(TARGETS) org src/*.o src/*~ src/org_rosuda_JRI_Rengine.h src/*$(JNISO) *.class *~
 

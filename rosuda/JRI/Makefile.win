@@ -4,6 +4,7 @@
 
 JAVAHOME=N:/jdk1.4.2
 RHOME=F:/Programme/R/rw1091
+PLATFORM=i386/client
 
 # normally you don't need to change the anything below
 

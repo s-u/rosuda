@@ -2,11 +2,12 @@
 # You should adapt the first two lines to match your setup
 
 RHOME=/usr/local/lib/R
-JAVAHOME=/usr/lib/java
+JAVAHOME=/usr/local/java
+PLATFORM=amd64/server
 
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
 JNISO=.so
-JNILD=-shared -L$(JAVAHOME)/jre/lib/i386/client -ljvm
+JNILD=-shared -L$(JAVAHOME)/jre/lib/$(PLATFORM) -ljvm
 CPICF=-fPIC
 JAVAB=$(JAVAHOME)/bin/java
 JNIPREFIX=lib
