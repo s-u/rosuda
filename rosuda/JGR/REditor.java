@@ -20,6 +20,7 @@ import javax.swing.undo.*;
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
 
 public class REditor extends iFrame implements ActionListener, FocusListener,
     KeyListener, MouseListener, Runnable {
@@ -59,7 +60,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         String[] Menu = {
             "+", "File", "@NNew", "new", "@OOpen", "open",
             "@SSave", "save", "!SSave as", "saveas",
-            /*"-", "Print", "print",*/"~File.Basic.End",
+            "-", "Print", "print","~File.Basic.End",
             "~Edit",
             "+", "Tools", "Increase Font", "fontBigger", "Decrease Font",
             "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
@@ -122,7 +123,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.addKeyListener(this);
         editArea.setToolTipText(fileName == null ? "Editor" : fileName);
         editArea.setWordWrap(false);
-
+        //editArea.setContentType("text/html");
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         this.setMinimumSize(new Dimension(600,600));
         //this.setSize(new Dimension(600,800));
@@ -254,6 +255,12 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.requestFocus();
     }
 
+
+    public void print() {
+        DocumentRenderer docrender = new DocumentRenderer();
+        docrender.print(editArea);
+    }
+
     public boolean saveFile() {
         if (fileName == null || fileName.equals("")) {
             return saveFileAs();
@@ -314,6 +321,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         else if (cmd == "open") loadFile();
         else if (cmd == "paste") editArea.paste();
         else if (cmd == "prefs") new PrefsDialog(this);
+        else if (cmd == "print") print();
         else if (cmd == "redo") {
             try {
                 if (undoMgr.canRedo()) {
