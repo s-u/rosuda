@@ -17,6 +17,7 @@ public interface GDContainer {
     public GDState getGState();
     public Graphics getGraphics(); // implementation is free to return null
     public void repaint();
+    public void repaint(long tm);
     public void setDeviceNumber(int dn);
     public int getDeviceNumber();
     public Dimension getSize();
