@@ -48,6 +48,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     int x1, y1, x2, y2;
     boolean drag;
 
+    float alpha=1.0f;
+    
     MenuItem MIlabels=null;
 
     int X,Y,W,H, TW,TH;
@@ -229,20 +231,20 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             g.drawLine(X,TH-A[1].getValuePos(-0.5),X+W,TH-A[1].getValuePos(-0.5));
         }
         
-        g.setColor("line");
+        g.setColor("line",alpha);
         boolean isZ=false;
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
                     if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
-                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line",alpha);
                     }
                     if (drawPoints) {
                         int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
                         g.fillOval(x-1,y-1,3,3);
                     }
                     if ((dropColor && (v[j].at(i)==null))!=isZ) {
-                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line",alpha);
                     }
                     g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
                                A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
@@ -343,9 +345,20 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (e.getKeyChar()=='c') run(this,"common");
 	if (e.getKeyChar()=='n') run(this,"toggleNA");
 	if (e.getKeyChar()=='S') run(this,"scaleDlg");
-    };
-    public void keyPressed(KeyEvent e) {};
-    public void keyReleased(KeyEvent e) {};
+    }
+    
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+            alpha+=0.10; if (alpha>1f) alpha=1f;
+            setUpdateRoot(0); repaint();
+        }
+        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            alpha-=0.10; if (alpha<0f) alpha=0f;
+            setUpdateRoot(0); repaint();
+        }
+    }
+    
+    public void keyReleased(KeyEvent e) {}
 
     public Object run(Object o, String cmd) {
 	if (cmd=="print") { drawHidden=false; run(o,"exportPS"); drawHidden=true; return this; }
