@@ -3,9 +3,6 @@ package org.rosuda.JRI;
 import java.lang.*;
 import java.io.*;
 
-import org.rosuda.RGui.*;
-import org.rosuda.RGui.toolkit.*;
-
 public class Rengine extends Thread {
     static {
 	System.loadLibrary("jri");
@@ -13,16 +10,19 @@ public class Rengine extends Thread {
 
     boolean died, alive, runLoop, loopRunning;
     String[] args;
+    Mutex Rsync;
+    RMainLoopCallbacks callback;
     
-    public Rengine(String[] args, boolean runMainLoop) {
+    public Rengine(String[] args, boolean runMainLoop, RMainLoopCallbacks initialCallbacks) {
         super();
+        Rsync=new Mutex();
         died=false;
         alive=false;
         runLoop=runMainLoop;
         loopRunning=false;
         this.args=args;
+        callback=initialCallbacks;
         start();
-        while (!alive && !died) yield();
     }
 
     public native int rniSetupR(String[] args);
@@ -68,47 +68,32 @@ public class Rengine extends Thread {
     
     public synchronized native void rniIdle();
 
+    public void addMainLoopCallbacks(RMainLoopCallbacks c)
+    {
+        // we don't really "add", we just replace ... (so far)
+        callback = c;
+    }
+    
     //============ R callback methods =========
-
 
     public void jriWriteConsole(String text)
     {
-        if (RGui.MAINRCONSOLE != null) {
-            try {
-                RGui.MAINRCONSOLE.output.append(text,Preferences.RESULT);
-                RGui.MAINRCONSOLE.output.setCaretPosition(RGui.MAINRCONSOLE.output.getText().length());
-            } catch (Exception e) { e.printStackTrace();}
-        }
-        else System.out.println("R> "+text);
+        if (callback!=null) callback.rWriteConsole(this, text);
     }
 
     public void jriBusy(int which)
     {
-        System.out.println("R_is_busy? "+which);
+        if (callback!=null) callback.rBusy(this, which);
     }
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
-        RGui.READY = true;
-        if (RGui.MAINRCONSOLE != null) {
-            return RGui.RCSync.waitForNotification()+"\n";
-        }
-        else {
-            System.out.print(prompt);
-            try {
-                BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-                String s=br.readLine();
-                return (s==null||s.length()==0)?s:s+"\n";
-            } catch (Exception e) {
-                System.out.println("jriReadConsole exception: "+e.getMessage());
-            }
-        }
-        return "q('no')\n";
+        return (callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
     }
 
     public void jriShowMessage(String message)
     {
-        System.out.println("R message: "+message);
+        if (callback!=null) callback.rShowMessage(this, message);
     }
     
     
