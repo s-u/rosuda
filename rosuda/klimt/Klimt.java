@@ -5,7 +5,7 @@
  * Created: Tue May  1 16:25:54 2001
  *
  * @author <a href="mailto:su@b-q-c.com">Simon Urbanek</a>
- * @version 0.94a $Id$
+ * @version $Id$
  */
 
 package org.rosuda.klimt;
@@ -231,24 +231,8 @@ public class Klimt
                         if (fs!=null && fs.length>0) {
                             int fi=0;
                             while (fi<fs.length) {
-                                BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fs[fi])));
-                                long fsz=0;
-                                try {
-                                    fsz=fs[fi].length();
-                                } catch(Exception e) {};
-                                t=TreeLoader.Load(r,fs[fi].getName(),dr);
-                                if (t!=null && tvs!=null) {
-                                    TFrame ff=null;
-                                    t.getRootInfo().name=fs[fi].getName();
-                                    if (createFrames) {
-                                        t.getRootInfo().frame=ff=new TFrame(fs[fi].getName(),TFrame.clsTree);
-                                        TreeCanvas tc=Klimt.newTreeDisplay(t,ff);
-                                        tc.repaint(); tc.redesignNodes();                                        
-                                    }
-                                    tr.registerTree(t,fs[fi].getName());
-                                };
+                                t=loadTreeFile(fs[fi], dr, createFrames);
                                 fi++;
-                                r.close();
                             }
                         }
                     }
@@ -259,9 +243,9 @@ public class Klimt
                         hf.setTitle("Load warnings");
                         //hf.setModal(true);
                         hf.show();
-                    };
+                    }
                     return t;
-                };
+                }
 /*ENDSWING*/
                 FileDialog fd=new FileDialog(f,"Select data file");
 		fd.setModal(true);
@@ -275,17 +259,9 @@ public class Klimt
             } else tvs.setName(fnam);
             if (Global.informLoader)
                 System.out.println("InfoForLoader:Loading data...");
-            BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
             Common.flushWarnings();
-            long fsz=0;
-            String fnn=fnam;
-            try {
-                File fil=new File(fnam);
-                fnn=fil.getName();
-                fsz=fil.length();
-            } catch(Exception e) {};
-            t=TreeLoader.Load(r,fnn,dr);
-            if (t!=null) t.getRootInfo().name=fnn;
+            File fil=new File(fnam);
+            t=loadTreeFile(fil,dr,createFrames);
 	    if (Global.DEBUG>0) tvs.printSummary();
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
@@ -296,17 +272,46 @@ public class Klimt
                 hf.setTitle("Load warnings");
                 //hf.setModal(true);
                 hf.show();
-            };            
+            }
 	} catch (Exception E) {
 	    E.printStackTrace();
 	    t=null;
-	};
-        if (t!=null && tr!=null) tr.registerTree(t,fnam);
-        if (SplashScreen.recentOpen!=null) SplashScreen.recentOpen.addEntry((new File(fnam)).getAbsolutePath());
+	}
 
         return t;
-    };
+    }
 
+    public static SNode loadTreeFile(File f, DataRoot dr, boolean createFrames) {
+        SVarSet tvs=dr.getDataSet();
+        TreeRegistry tr=dr.getTreeRegistry();
+        SNode t=null;	
+        if (f!=null) {
+            try {
+                BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+                long fsz=0;
+                try {
+                    fsz=f.length();
+                } catch(Exception e) {};
+                t=TreeLoader.Load(r,f.getName(),dr);
+                if (t!=null && tvs!=null) {
+                    TFrame ff=null;
+                    t.getRootInfo().name=f.getName();
+                    if (createFrames) {
+                        t.getRootInfo().frame=ff=new TFrame(f.getName(),TFrame.clsTree);
+                        TreeCanvas tc=Klimt.newTreeDisplay(t,ff);
+                        tc.repaint(); tc.redesignNodes();                                        
+                    }
+                    tr.registerTree(t,f.getName());
+                }
+                r.close();
+            } catch (Exception e) {
+                if (Global.DEBUG>0) System.out.println("loadTreeFile("+f+") failed: "+e.getMessage());
+            }
+        }
+        return t;
+    }
+    
+    
     /**
      * Main InTrees method, entry for KLIMT as stand-alone application.
      *
