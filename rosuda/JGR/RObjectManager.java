@@ -134,6 +134,7 @@ public class RObjectManager extends iFrame implements ActionListener {
             }
         });
         this.setMinimumSize(new Dimension(300,350));
+        this.setLocation(200,10);
         this.setSize(400,500);
         //this.show(); do it manually when you really want to see it
     }

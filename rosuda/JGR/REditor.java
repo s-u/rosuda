@@ -130,7 +130,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));
-        this.setLocation(this.getLocation().x, 10);
+        this.setLocation(this.getLocation().x+100, 10);
         this.show();
         if (fileName != null) {
             new FileLoad(this);
