@@ -183,7 +183,7 @@ public class InTr
                     return t;
                 };
 /*ENDSWING*/
-                FileDialog fd=new FileDialog(f,"Select data and tree file");
+                FileDialog fd=new FileDialog(f,"Select data file");
 		fd.setModal(true);
 		fd.show();
 		fnam=fd.getDirectory()+fd.getFile();
@@ -244,6 +244,14 @@ public class InTr
 	    int carg=0;
 
             while (carg<argv.length) {
+                if (argv[carg].compareTo("--version")==0) {
+                    System.out.println("KLIMT v"+Common.Version+" (Release "+Common.Release+")");
+                    System.out.println("(C)Copyright 2001-2 University of Augsburg, Author: Simon Urbanek");
+                    System.out.println("OS: "+System.getProperty("os.name")+" (version "+System.getProperty("os.version")+")");
+                    PluginManager pm=PluginManager.getManager();
+                    System.out.println("User config file: "+pm.configFile);
+                    return;
+                };
                 if (argv[carg].compareTo("--debug")==0)
                     Common.DEBUG=1;
                 if (argv[carg].compareTo("--profile")==0)
@@ -256,6 +264,8 @@ public class InTr
                 }
                 if (argv[carg].compareTo("--with-aqua")==0)
                     Common.useAquaBg=true;
+/*                if (argv[carg].compareTo("--start-Rserv")==0)
+                    Common.startRserv=true; */
                 if (argv[carg].compareTo("--without-aqua")==0)
                     Common.useAquaBg=false;
                 if (firstNonOption==-1 && argv[carg].length()>0 && argv[carg].charAt(0)!='-')
@@ -268,7 +278,27 @@ public class InTr
                                    (Common.informLoader?"LOADER ":"")+
                                    (Common.useAquaBg?"AQUA ":"")+
                                    (silentTreeLoad?"SILENT ":""));
-	    
+
+            PluginManager pm=PluginManager.getManager();
+            String uRs=pm.getParS("Klimt","startRserv");
+            if (uRs!=null && uRs.length()>0 && (uRs.charAt(0)=='y' || uRs.charAt(0)=='1')) {
+                Common.startRserv=true;
+                uRs=pm.getParS("Rserv","launch");
+                if (uRs==null) uRs="R CMD Rserv";
+                if (Common.DEBUG>0)
+                    System.out.println("Start of Rserv requested");
+                Rconnection rc=new Rconnection();
+                if (!rc.isOk()) {
+                    if (Common.DEBUG>0)
+                        System.out.println("Rserv is not running, trying to start it ("+uRs+")");
+                    try {
+                        Runtime.getRuntime().exec(uRs);
+                    } catch(Exception rte) {
+                        if (Common.DEBUG>0)
+                            System.out.println("Can't start Rserv: "+rte.getMessage());
+                    };
+                }
+            }
  	    TFrame f=new TFrame("KLIMT "+Common.Version);
 	    Common.mainFrame=f;
 	    
