@@ -51,6 +51,10 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
     private boolean modified = false;
 
+
+    public static RecentList recentOpen;
+    public JMenu recentMenu;
+
     public REditor() {
         this(null);
     }
@@ -58,15 +62,37 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     public REditor(String fileName) {
         super("Editor", iFrame.clsEditor);
         String[] Menu = {
-            "+", "File", "@NNew", "new", "@OOpen", "open",
+            "+", "File", "@NNew", "new", "@OOpen", "open","#Open Recent","",
             "@SSave", "save", "!SSave as", "saveas",
             "-", "@PPrint", "print","~File.Basic.End",
             "~Edit",
-            "+", "Tools", "Increase Font", "fontBigger", "Decrease Font",
+            "+", "Tools", "Increase", "fontBigger", "Decrease Font",
             "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
             "~Window",
             "~Help", "R Help", "rhelp", /*"JJGR FAQ", "jrfaq",*/ "~About", "0"};
         iMenu.getMenu(this, this, Menu);
+        JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
+        if (rm!=null) {
+            if (recentOpen==null)
+                recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+            String[] shortNames=recentOpen.getShortEntries();
+            String[] longNames =recentOpen.getAllEntries();
+            int i=0;
+            while (i<shortNames.length) {
+                JMenuItem mi=new JMenuItem(shortNames[i]);
+                mi.setActionCommand("recent:"+longNames[i]);
+                mi.addActionListener(this);
+                rm.add(mi);
+                i++;
+            }
+            if (i>0) rm.addSeparator();
+            JMenuItem ca=new JMenuItem("Clear list");
+            ca.setActionCommand("recent-clear");
+            ca.addActionListener(this);
+            rm.add(ca);
+            if (i==0) ca.setEnabled(false);
+        }
+        
 
         editDoc.addUndoableEditListener(undoMgr);
 
@@ -207,51 +233,55 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         else dispose();
     }
 
-    public void loadFile() {
+    public void open() {
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, directory);
         /*FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File file, String name) {
-                return name.endsWith(".R") || name.endsWith(".r");
-            }
-                 };
-                 fopen.setFilenameFilter(filter)*/
+        public boolean accept(File file, String name) {
+            return name.endsWith(".R") || name.endsWith(".r");
+        }
+        };
+        fopen.setFilenameFilter(filter)*/
         if (fopen.getFile() != null) {
             editArea.setText("");
             fileName = (directory = fopen.getDirectory()) + fopen.getFile();
-            progress.start("Loading");
-            setWorking(true);
-            try {
-                final BufferedReader reader = new BufferedReader(new FileReader(fileName));
-
-                Thread t = new Thread() {
-                    public void run() {
-                        try {
-                            StringBuffer text = new StringBuffer();
-                            while (reader.ready()) {
-                                text.append(reader.readLine()+"\n");
-                                if (text.length() > 32000) {
-                                    editArea.append(text.toString());
-                                    text.delete(0,text.length());
-                                    try { Thread.sleep(2);} catch (Exception e) {}
-                                }
-                            }
-                            reader.close();
-                            editArea.append(text.toString());
-                            text.delete(0,text.length());
-                        } catch (Exception e) {}
-                        editArea.setToolTipText(fileName);
-                        setWorking(false);
-                    }
-                };
-                t.start();
-            }
-            catch (Exception e) {
-            }
-
-            //new FileLoad(this);
-            this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         }
+        loadFile();
+    }
+
+    public void loadFile() {
+        progress.start("Loading");
+        setWorking(true);
+        editArea.setText("");
+        try {
+            final BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            Thread t = new Thread() {
+                public void run() {
+                    try {
+                        StringBuffer text = new StringBuffer();
+                        while (reader.ready()) {
+                            text.append(reader.readLine()+"\n");
+                            if (text.length() > 32000) {
+                                editArea.append(text.toString());
+                                text.delete(0,text.length());
+                                try { Thread.sleep(2);} catch (Exception e) {}
+                            }
+                        }
+                        reader.close();
+                        editArea.append(text.toString());
+                        text.delete(0,text.length());
+                    } catch (Exception e) {}
+                    editArea.setToolTipText(fileName);
+                    setWorking(false);
+                }
+            };
+            t.start();
+        }
+        catch (Exception e) {
+        }
+        recentOpen.addEntry(fileName);
+        //System.out.println("Pattern"+fileName.replaceAll("(/[^/]*/)(.*)(/[^/]*/[^/]*)","(1)(3)"));
+        this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
     }
 
@@ -300,6 +330,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
+        //System.out.println("cmd "+cmd);
         if (cmd == "about") new AboutDialog(this);
         else if (cmd == "cut") editArea.cut();
         else if (cmd == "copy") editArea.copy();
@@ -318,10 +349,27 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "new") startNew();
         else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()");
-        else if (cmd == "open") loadFile();
+        else if (cmd == "open") open();
+        else if (cmd.startsWith("recent:")) {
+            fileName = cmd.replaceFirst("recent:","");
+            //System.out.print(fileName);
+            loadFile();
+        }
         else if (cmd == "paste") editArea.paste();
         else if (cmd == "prefs") new PrefsDialog(this);
         else if (cmd == "print") print();
+        else if (cmd == "recent-clear") {
+            if (recentOpen!=null && recentMenu!=null) {
+                recentMenu.removeAll();
+                recentMenu.addSeparator();
+                JMenuItem ca=new JMenuItem("Clear list");
+                ca.setActionCommand("recent-clear");
+                ca.addActionListener(this);
+                ca.setEnabled(false);
+                recentMenu.add(ca);
+                recentOpen.reset();
+            }
+        }
         else if (cmd == "redo") {
             try {
                 if (undoMgr.canRedo()) {
