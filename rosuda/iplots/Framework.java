@@ -33,14 +33,14 @@ public class Framework implements Dependent, ActionListener {
         Common.appName="iplots";
         SVar.int_NA=-2147483648;
         Global.useAquaBg=true; // use aqua look
-	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
+        Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         org.rosuda.util.Platform.initPlatform("org.rosuda.iplots.");
         if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
         Common.breakDispatcher.addDepend(this);
-	cvs=new SVarSet();
-	cvs.setName("default");
-	dataset=new Vector();
-	dataset.addElement(cvs);
+        cvs=new SVarSet();
+        cvs.setName("default");
+        dataset=new Vector();
+        dataset.addElement(cvs);
     }
     
     public String getNewTmpVar(String t) {
@@ -399,6 +399,29 @@ public class Framework implements Dependent, ActionListener {
     }
     
     
+    public MosaicCanvas newMosaic(int[] v) { return newMosaic(cvs,v); }
+    public MosaicCanvas newMosaic(SVarSet vs, int[] v) {
+        if (v.length==0) return null;
+        updateMarker(vs,v[0]);
+        String title = "(";
+        for (int i = 0; i < v.length-1; i++)
+        	title += vs.at(i).getName()+", ";
+        title += vs.at(v.length-1).getName()+")";
+        TFrame f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
+        f.addWindowListener(Common.getDefaultWindowListener());
+        SVar[] vl=new SVar[v.length];
+        int i=0;
+        while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
+        MosaicCanvas mc=new MosaicCanvas(f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(mc);
+        mc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(mc.getWidth(),mc.getHeight()));
+        f.add(mc); f.pack(); f.show();
+        f.initPlacement();
+        return mc;
+    }    
+    
+    
     public PCPCanvas newPCP(int[] v) { return newPCP(cvs,v); }
     public PCPCanvas newPCP(SVarSet vs, int[] v) {
     	if (v.length==0) return null;
@@ -446,7 +469,7 @@ public class Framework implements Dependent, ActionListener {
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
-        bc.setSize(new Dimension(80,200));
+        bc.setSize(new Dimension(xdim,200));
         f.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
         f.add(bc); f.pack(); f.show();
         f.initPlacement();
