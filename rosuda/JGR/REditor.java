@@ -284,10 +284,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     }
 
     public void startNew() {
-        //perhaps ask if the use want to save the current file
-        this.setTitle("Editor ");
-        editArea.setText("");
-        editArea.requestFocus();
+        new REditor();
     }
 
     public void run() {
@@ -539,9 +536,8 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
                 writer.write(editArea.getText());
                 writer.flush();
                 writer.close();
-
             } catch (Exception e) {
-                new iError(e);
+                JOptionPane.showMessageDialog(editor,"Permisson denied","File Errror",JOptionPane.OK_OPTION);
             } finally {
                 editor.setWorking(false);
             }
