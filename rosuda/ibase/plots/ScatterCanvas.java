@@ -43,6 +43,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 
     /** diameter of a point */
     public int ptDiam=3;
+    public int stackOff=3;
 
     public int fieldBg=0; // 0=none, 1=objects, 2=white
     
@@ -334,13 +335,13 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
                     if (stackjitter && jitter && v[0].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
-                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) x+=ptDiam;
+                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) x+=stackOff;
                             j++;
                         }
                     } else if (stackjitter && jitter && v[1].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
-                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) y-=ptDiam;
+                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) y-=stackOff;
                             j++;
                         }
                     }
@@ -454,6 +455,12 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         }
         if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>2) {
             ptDiam-=2; setUpdateRoot(0); repaint();
+        }
+        if (stackjitter && e.getKeyCode()==KeyEvent.VK_RIGHT) {
+            stackOff++; setUpdateRoot(0); updatePoints(); repaint();
+        }
+        if (stackjitter && e.getKeyCode()==KeyEvent.VK_LEFT && stackOff>1) {
+            stackOff--; setUpdateRoot(0); updatePoints(); repaint();
         }
     };
     public void keyReleased(KeyEvent e) {
