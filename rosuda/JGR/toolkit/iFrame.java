@@ -59,8 +59,7 @@ public class iFrame extends JFrame {
         this.addWindowListener(new WinListener());
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         if (WinTracker.current == null) WinTracker.current = new WinTracker();
-        MYEntry = new WTentry(this, title, wclass);
-        WinTracker.current.add(MYEntry);
+        MYEntry = new WTentrySwing(WinTracker.current, this, title, wclass);
         initPlacement();
     }
 
