@@ -92,6 +92,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
         prefs.add(useHelpAgent,gbc);
         gbc.gridy = 3;
         prefs.add(useEmacsKeyBindings,gbc);
+        gbc.gridy = 4;
+        prefs.add(new JLabel("* Emacs Keybindings are only advisable for Mac OS X!"),gbc);
         
 
         cancel.setActionCommand("cancel");
