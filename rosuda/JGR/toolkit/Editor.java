@@ -47,7 +47,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private ToolBar toolBar;
 	
     private String fileName = null;
-    private static String directory = System.getProperty("user.home");
+    
     private String keyWord = null;
 	
     private boolean modified = false;
@@ -215,9 +215,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     public void open() {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
-                                              FileSelector.OPEN, directory);
+                                              FileSelector.OPEN, JGR.directory);
         if (fopen.getFile() != null) 
-            newFile = (directory = fopen.getDirectory()) + fopen.getFile();
+            newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
         if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
         else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
@@ -311,9 +311,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 	
     public boolean saveFileAs() {
         FileSelector fsave = new FileSelector(this, "Save as...",
-                                              FileSelector.SAVE, directory);
+                                              FileSelector.SAVE, JGR.directory);
         if (fsave.getFile() != null) {
-            fileName = (directory = fsave.getDirectory()) + fsave.getFile();
+            fileName = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
             return saveFile();
         }
         return false;
