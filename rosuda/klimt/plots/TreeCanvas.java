@@ -248,7 +248,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	int leaves=root.getNumNodes(true);
 	iwidth=w;
 	leftA=w/18;
-	buildLeaf(w/2,(rot90)?70:30,(leaves>0)?w/leaves:1,h/(root.getHeight()+1),w,root.getHeight(),root,h,updatePlacement);
+        int xUnit=(leaves>0)?w/leaves:1;
+        if (xUnit<20) xUnit=20;
+	buildLeaf(w/2,(rot90)?70:30,xUnit,h/(root.getHeight()+1),w,root.getHeight(),root,h,updatePlacement);
 	zoomFactor=1; // reset zoom factor
 	repaint();	
     };
