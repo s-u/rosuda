@@ -562,7 +562,7 @@ public class VarFrame extends TFrame {
                                         vs.at(vnr[1]).getName()+" vs "+
                                         vs.at(vnr[0]).getName()+")",TFrame.clsScatter);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    SectScatterCanvas sc=new SectScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),dr.getNodeMarker());
+                    SectScatterCanvas sc=new SectScatterCanvas(win.dr,f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),dr.getNodeMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
