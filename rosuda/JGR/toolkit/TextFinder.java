@@ -60,8 +60,6 @@ public class TextFinder extends JDialog implements ActionListener {
         cancelButton.setPreferredSize(d);
         cancelButton.setMinimumSize(d);
 
-        this.getRootPane().setDefaultButton(searchButton);
-
         FontTracker.current.add(keyWordField);
         keyWordField.setFont(JGRPrefs.DefaultFont);
         keyWordField.setMaximumSize(new Dimension(300,25));
@@ -80,6 +78,8 @@ public class TextFinder extends JDialog implements ActionListener {
         
         this.getContentPane().add(top,BorderLayout.CENTER);
         this.getContentPane().add(bottom,BorderLayout.SOUTH);
+        
+        this.getRootPane().setDefaultButton(searchButton);
         
         this.setSize(new Dimension(320, 95));
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -126,6 +126,8 @@ public class TextFinder extends JDialog implements ActionListener {
             }
 
         }
+        this.toFront();
+        this.requestFocus();
     }
 
 
