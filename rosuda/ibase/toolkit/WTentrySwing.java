@@ -15,16 +15,16 @@ import javax.swing.*;
 public class WTentrySwing extends WTentry {
     /** the "Window" menu */
     JMenu winMenu;
-    
+
     public WTentrySwing(WinTracker wt, Window win, String nam, int wndclass) {
         super(wt, win, nam, wndclass);
     }
-     
+
     protected void chkWinMenu() {
         if (winMenu==null)
             winMenu=new JMenu(windowMenuName);
     }
-    
+
     public Object getWindowMenu() {
         chkWinMenu();
         return winMenu;
@@ -34,7 +34,7 @@ public class WTentrySwing extends WTentry {
         chkWinMenu();
         winMenu.addSeparator();
     }
-    
+
     public void addMenuItem(String name, String action) {
         chkWinMenu();
         JMenuItem mi;
@@ -47,27 +47,27 @@ public class WTentrySwing extends WTentry {
         mi.addActionListener(wt);
         winMenu.add(mi);
     }
-    
+
     public void rmMenuItemByAction(String action) {
         chkWinMenu();
         JMenuItem mi=(JMenuItem) getMenuItemByAction(action);
         if (mi!=null)
             winMenu.remove(mi);
     }
-    
+
     public Object getMenuItemByAction(String action) {
         chkWinMenu();
         int i=0;
         int ms=winMenu.getItemCount();
         while (i<ms) {
             JMenuItem mi=winMenu.getItem(i);
-            if (mi.getActionCommand().equals(action))
+            if (mi != null && mi.getActionCommand().equals(action))
                 return mi;
             i++;
         }
         return null;
     }
-    
+
     public void setNameByAction(String action, String name) {
         chkWinMenu();
         JMenuItem mi=(JMenuItem) getMenuItemByAction(action);
@@ -80,5 +80,5 @@ public class WTentrySwing extends WTentry {
                 // I know of no way to delete shortcuts in Swing ... really stupid ..
             }
         }
-    }    
+    }
 }
