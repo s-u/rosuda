@@ -75,7 +75,14 @@ public class RecentList {
             }
             list[0]=e;
         } else {
-            list[active]=e;
+            if (active>0) {
+                int j=active;
+                while (j>0) {
+                    list[j]=list[j-1];
+                    j--;
+                }
+            }
+            list[0]=e;
             active++;
         }
         serial++;
