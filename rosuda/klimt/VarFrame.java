@@ -55,6 +55,7 @@ public class VarFrame extends TFrame {
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
                 "Parallel coord. plot","PCP","Series plot","lineplot","Series plot with index","lineplot2","-","Map","map",
+                "-","TFP (exp!)","tfplot",
                 //"+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
@@ -468,6 +469,13 @@ public class VarFrame extends TFrame {
                     lc.setSize(400,300);
                     f.add(lc); f.pack(); f.show();
                 }
+            }
+            if (cmd=="tfplot") {
+                TFrame f=new TFrame("Tree Flow Plot",TFrame.clsUser);
+                f.addWindowListener(Common.defaultWindowListener);
+                TreeFlowCanvas lc=new TreeFlowCanvas(f,vs.getTrees());
+                lc.setSize(400,300);
+                f.add(lc); f.pack(); f.show();
             }
             if (cmd=="lineplot2") {
                 int i=0;
