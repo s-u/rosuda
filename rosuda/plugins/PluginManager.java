@@ -179,4 +179,37 @@ public class PluginManager {
         }
         return false;
     }
+
+    /** Tries to load a plugin specified by the supplied class.
+        @param className class name of the plugin
+        @return loaded plugin or <code>null</code> if the plugin couldn't be loaded
+        */
+    public static Plugin loadPlugin(String className) {
+        Plugin p=null;
+        try {
+            Class c=Class.forName(className);
+            p=(Plugin)c.newInstance();
+        } catch(Exception e) {
+            if (Common.DEBUG>0) {
+                System.out.println("PluginManager.loadPlugin(\""+className+"\"): unable to load plugin, "+e.getMessage());
+                //e.printStackTrace();
+            }
+        }
+        return p;
+    }
+
+    /** Verifies whether the class identified by the class name exists and is a child of {@link Plugin}.
+        @param className class name of the plugin
+        @return <code>true</code> if the specified class exists and is assignable to {@link Plugin}
+    */
+    public static boolean pluginExists(String className) {
+        try {
+            Class c=Class.forName(className);
+            Plugin p=new Plugin();
+            if (p.getClass().isAssignableFrom(c)) return true;
+        } catch(Exception e) {
+            System.out.println("PluginManager.pluginExists(\""+className+"\"): failed to find plugin's class, "+e.getMessage());
+        }
+        return false;
+    }
 }
