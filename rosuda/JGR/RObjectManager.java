@@ -81,7 +81,7 @@ public class RObjectManager extends iFrame implements ActionListener {
         modelTable.setModel(sorter);
         modelTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
         FontTracker.current.add(modelTable);
-        modelTable.setRowHeight((int) (iPreferences.FontSize*1.2));
+        modelTable.setRowHeight((int) (iPreferences.FontSize*1.3));
         modelTable.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(modelTable.getTableHeader());
         tabArea.add("Models",new JScrollPane(modelTable));

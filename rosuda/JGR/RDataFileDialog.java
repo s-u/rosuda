@@ -90,7 +90,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
         this.setSize(new Dimension(450, 500));
         this.setLocation((screenSize.width-450)/2,(screenSize.height-500)/2);
-        if (iPreferences.isMac) this.setResizable(false);
+        //if (iPreferences.isMac) this.setResizable(false);
         /*this.addComponentListener( new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fileChooser.setSize((int) (getWidth()-10),(int) (getHeight()-150));

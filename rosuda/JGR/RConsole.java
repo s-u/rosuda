@@ -549,6 +549,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         public ResultOutput() {
             if (FontTracker.current == null) FontTracker.current = new FontTracker();
             FontTracker.current.add(this);
+            setDocument(new RStyledDocument());
         }
 
         public void append(String str, AttributeSet a) {
@@ -559,6 +560,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     } catch (BadLocationException e) {
                     }
                 }
+        }
+
+        public void setFont(Font f) {
+            super.setFont(f);
+            try {
+                ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),iPreferences.SIZE, false);
+            } catch (Exception e) {}
         }
     }
 }

@@ -212,6 +212,14 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     }
 
 
+    public void setFont(Font f) {
+        super.setFont(f);
+        try {
+            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),iPreferences.SIZE, false);
+        } catch (Exception e) {}
+    }
+
+
     /** highlight the corresponding brackets (forward)
      * @param par String which bracket
      * @param pos int current position
@@ -364,7 +372,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         int l = text.length();
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.') offset--;
+            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
             else break;
             pos--;
         }
@@ -372,7 +380,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         pos = end;
         while (end < l && pos < l) {
             char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.') end++;
+            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') end++;
             else break;
             pos++;
         }
