@@ -41,7 +41,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         this.addCaretListener(this);
         this.setTransferHandler(new TextTransferHandler());
         this.setDragEnabled(true);
-	this.setFocusTraversalKeysEnabled(false);
     }
 
     /**
