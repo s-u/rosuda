@@ -347,7 +347,7 @@ public class RController {
         }
         else if (type.equals("list")) {
         	y = JGR.R.eval("length("+(ro.getRName())+")");
-        	if (y!=null && y.asIntArray() != null) ro.setInfo("levels: "+y.asIntArray()[0]);
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("length: "+y.asIntArray()[0]);
         }
         else if (type.equals("table")) {
         	y = JGR.R.eval("length(dim("+(ro.getRName())+"))");
@@ -355,7 +355,7 @@ public class RController {
         }
         else if (parent != null && parent.getType().equals("table")) {
         	y = JGR.R.eval("length(dimnames("+parent.getRName()+")[[\""+ro.getName()+"\"]])");
-        	if (y!=null && y.asIntArray() != null) ro.setInfo("levels: "+y.asIntArray()[0]);
+        	if (y!=null && y.asIntArray() != null) ro.setInfo("cats: "+y.asIntArray()[0]);
         }
         return ro;
     }
@@ -423,7 +423,7 @@ public class RController {
             int l = -1;
             for (int i = ((l = res.length) > 10?10:l)-1; i >= 0; i--) {
             	if (i < l-1) tip = res[i] +"<br>"+ tip;
-            	else tip = res[i];
+            	else tip = res[i]+"       ";
             }
             tip = "<html><pre>"+tip+(l > 10?"...":"")+"</pre></html>";
         }
