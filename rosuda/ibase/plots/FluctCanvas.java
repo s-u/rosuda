@@ -247,7 +247,36 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     public void mouseClicked(MouseEvent ev) 
     {
 	int x=ev.getX(), y=ev.getY();
-	x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);	
+        //x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
+        int setTo=0;
+        
+        if (ev.isControlDown()) setTo=1;
+        if (!ev.isShiftDown()) m.selectNone();
+
+        int pts=v[0].size();
+        if (pts>v[1].size()) pts=v[1].size();
+        for (int yp=0;yp<v2l;yp++)
+            for (int xp=0;xp<v1l;xp++) {
+                int lx=A[0].getCatLow(xp);
+                int ly=A[1].getCatLow(yp);
+                int dx=A[0].getCatUp(xp)-lx;
+                int dy=A[1].getCatUp(yp)-ly;
+                if (dx<0) { lx+=dx; dx=-dx; };
+                if (dy<0) { ly+=dy; dy=-dy; };
+                if (x<lx+dx&&x>lx&&y<ly+dy&&y>ly) {
+                    for (int i=0;i<pts;i++) {
+                        int xc=v[0].getCatIndex(i);
+                        int yc=v[1].getCatIndex(i);
+                        if (xc==xp && yc==yp)
+                            m.set(i,m.at(i)?setTo:1);
+                    };
+                };
+            };
+
+        drag=false;
+        m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+        setUpdateRoot(0);
+        repaint();        
     }
 
     public void mousePressed(MouseEvent ev) 
@@ -279,9 +308,10 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	} else
 	    drag=true;
     }
-    
+
     public void mouseReleased(MouseEvent e)
     {
+        if (e.getX()==x1 && e.getY()==y1) return; // if the current is same as entry then get out, since CLICK should handle this
 	if (mvX || mvY) {
 	    mvX=false; mvY=false;
 	    setUpdateRoot(0);
