@@ -8,14 +8,16 @@ package org.rosuda.JGR.toolkit;
 //
 
 import org.rosuda.JGR.*;
+import java.util.Vector;
 
 public class ConsoleSync {
-
+    Vector msgs;
+    
     public ConsoleSync() {
+        msgs=new Vector();
     }
 
     private boolean notificationArrived=false;
-    private String lastNotificationMessage; // only synchronized methods are allowed to use this
 
     /** this internal method waits until {@link #triggerNotification} is called by another thread. It is implemented by using {@link wait()} and checking {@link notificationArrived}. */
     public synchronized String waitForNotification() {
@@ -27,11 +29,13 @@ public class ConsoleSync {
             } catch (InterruptedException e) {
             }
         }
-        notificationArrived=false;
-        String s=lastNotificationMessage;
-        //System.out.println("rSync "+s);
-        lastNotificationMessage=null; // reset lastNM
-        //System.out.println("msg cleared");
+        String s=null;
+        if (msgs.size()>0) {
+            s=(String)msgs.elementAt(0);
+            msgs.removeElementAt(0);
+        }
+        if (msgs.size()==0)
+            notificationArrived=false;
         return s;
     }
 
@@ -39,8 +43,7 @@ public class ConsoleSync {
     public synchronized void triggerNotification(String msg) {
         //System.out.println("lastmsg "+lastNotificationMessage);
         notificationArrived=true;
-        lastNotificationMessage=msg;
-        //System.out.println("msg set");
+        msgs.addElement(msg);
         notifyAll();
     }
 }
