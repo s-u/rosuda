@@ -90,7 +90,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!isResidPlot) EzMenu.getItem(f,"toggle0.5").setEnabled(false);
@@ -213,7 +213,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 int t=TH-A[1].getValuePos(fi);
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
+                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-8,t+5, PoGraSS.TA_Right);
                 fi+=f;
             };
         }
@@ -350,14 +350,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     }
     
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
-            alpha+=0.10; if (alpha>1f) alpha=1f;
-            setUpdateRoot(0); repaint();
-        }
-        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-            alpha-=0.10; if (alpha<0f) alpha=0f;
-            setUpdateRoot(0); repaint();
-        }
+        if (e.getKeyCode()==KeyEvent.VK_RIGHT) run(this, "alphaUp");
+        if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, "alphaDown");
     }
     
     public void keyReleased(KeyEvent e) {}
@@ -372,6 +366,14 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             setUpdateRoot(0);
             repaint();
 	};
+        if (cmd=="alphaDown") {
+            alpha-=(alpha>0.2)?0.10:0.05; if (alpha<0f) alpha=0.05f;
+            setUpdateRoot(0); repaint();
+        }
+        if (cmd=="alphaUp") {
+            alpha+=(alpha>0.2)?0.10:0.05; if (alpha>1f) alpha=1f;
+            setUpdateRoot(0); repaint();
+        }
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
 	if (cmd=="common") { setCommonScale(!commonScale); }
