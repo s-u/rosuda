@@ -97,8 +97,13 @@ public class SVarSet {
 	@return variable object or <code>null</code> if index out of range */
     public SVar at(int i) {
         return ((i<0)||(i>=vars.size()))?null:(SVar)vars.elementAt(i);
-    };
+    }
 
+    /** repaces a variable at the specified index. Use with extreme care! Should be used only in the loading stage before the variable is ever used, in order to provide optimized version of the same variable once the type is known. */
+    public void replace(int i, SVar v) {
+        if (i>=0 && i<vars.size()) vars.setElementAt(v, i);
+    }
+    
     /** returns data value of a variable specified by name and row index
 	@param nam variable name
 	@param row row index
@@ -181,7 +186,7 @@ public class SVarSet {
         return false;
     }
 
-    public void test() {
+    public void printSummary() {
         System.out.println("DEBUG for SVarSet ["+toString()+"]");
         for (Enumeration e=elements(); e.hasMoreElements();) {
             SVar v2=(SVar)e.nextElement();
@@ -204,24 +209,4 @@ public class SVarSet {
             }
         }
     }
-    
-    public static void Debug(SVarSet sv) {
-	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
-	for (Enumeration e=sv.elements(); e.hasMoreElements();) {
-	    SVar v2=(SVar)e.nextElement();
-	    System.out.println("Variable: "+v2.getName()+" ("+(v2.isNum()?"numeric":"string")+
-			       ","+(v2.isCat()?"categorized":"free")+") with "+
-			       v2.size()+" cases");
-	    if (v2.isCat()) {
-		Object[] c=v2.getCategories();
-		System.out.print("  Categories: ");
-		int i=0;
-		while (i<c.length) {
-		    System.out.print("{"+c[i].toString()+"} ");
-		    i++;
-		};
-		System.out.println();
-	    };
-	};       
-    };
-};
+}
