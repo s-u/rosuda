@@ -123,14 +123,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     /**
-     * keyPressed: handle key event: ESC hide tooltips, take care about emacs-keybindings.
+     * keyPressed: handle key event: take care about emacs-keybindings.
      */
     public void keyPressed(KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (cmdHelp != null) cmdHelp.hide();
-            mComplete.setVisible(false);
-            if (funHelpTip != null) funHelpTip.hide();
-        }
         if (JGRPrefs.useEmacsKeyBindings) {
             if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
                 this.setCaretPosition(this.getText().length());
@@ -142,7 +137,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     /**
-     * keyReleased: handle key event: TAB show completions and/ or complete.
+     * keyReleased: handle key event: ESC hide tooltips, TAB show completions and/ or complete.
      */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
@@ -226,12 +221,17 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 funHelpTip = null;
             }
         }
-        if (JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
+        if (ke.getKeyCode() != KeyEvent.VK_ESCAPE && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
             }
             showFunHelp(getLastCommand());
+        }
+		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if (cmdHelp != null) cmdHelp.hide();
+            mComplete.setVisible(false);
+            if (funHelpTip != null) funHelpTip.hide();
         }
     }
     
@@ -271,6 +271,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		if (mComplete.isVisible() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) return true;
         InputMap map = getInputMap(condition);
         ActionMap am = getActionMap();
+		if (e.getKeyCode() == KeyEvent.VK_ENTER && funHelpTip != null) {
+			funHelpTip.hide();
+			funHelpTip = null;
+		}
 		
         if(map != null && am != null && isEnabled()) {
             Object binding = map.get(ks);
