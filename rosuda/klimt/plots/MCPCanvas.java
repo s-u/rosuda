@@ -145,7 +145,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 int x1=leftm+(int)(ddx*i)+i*3;
                 int ht=(int)(yf*count[i]);
                 if (ht<10) ht=10;
-                if (x>=x1&&x<x+(int)ddx&&y<=h-botm&&y>=h-botm-ht) {
+                if (x>=x1&&x<x1+(int)ddx&&y<=h-botm&&y>=h-botm-ht) {
                     effect=true;
                     SNode n=(SNode)v.elementAt(i);
                     if (r==null) r=n.response;
