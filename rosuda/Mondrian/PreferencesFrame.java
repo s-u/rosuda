@@ -1,6 +1,6 @@
 //
 //  PreferencesFrame.java
-//  Klimt
+//  Mandarin
 //
 //  Created by Simon Urbanek on Wed Jun 11 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
@@ -16,9 +16,10 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
   Join frame;
   Choice cs;
   static String[] schemes = {
-    "RoSuDa classic","#ffff99","#c0c0c0","#00ff00",
-    "Terra di Siena","#dfb860","#c0c0c0","#b46087",
-    "Xtra red","#ffff99","#c0c0c0","#ff0000",
+    "RoSuDa classic","#ffff99","#c0c0c0","#000000","#00ff00",  
+    "Terra di Siena","#dfb860","#c0c0c0", "#000000","#b46087", 
+    "Xtra red","#ffff99","#c0c0c0","#000000","#ff0000", 
+    "DataDesk","#000000","#000000","#ffffff","#ffffff", 
     null
   };
 
@@ -52,9 +53,10 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
       cs.add(schemes[i]);
       if (schemes[i+1].compareTo(Util.color2hrgb(pc.c[0]))==0 &&
           schemes[i+2].compareTo(Util.color2hrgb(pc.c[1]))==0 &&
-          schemes[i+3].compareTo(Util.color2hrgb(pc.c[2]))==0)
+          schemes[i+3].compareTo(Util.color2hrgb(pc.c[2]))==0 &&
+          schemes[i+4].compareTo(Util.color2hrgb(pc.c[3]))==0)
         cs.select(schemes[i]);
-      i+=4;
+      i+=5;
     }
     cs.addItemListener(this);
     p.setLayout(new FlowLayout());
@@ -71,11 +73,12 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
   class PrefCanvas extends Canvas {
     Color c[];
     PrefCanvas() {
-      setSize(250,130);
-      c=new Color[3];
+      setSize(250,160);
+      c=new Color[4];
       c[0]=MFrame.backgroundColor;
       c[1]=Color.lightGray;
-      c[2]=DragBox.hiliteColor;
+      c[2]=Color.black;
+      c[3]=DragBox.hiliteColor;
     }
 
     public void paint(Graphics g) {
@@ -83,18 +86,22 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
       g.drawString("background color:",30,35);
       g.setColor(Color.gray);
       g.drawString("objects color:",30,65);
+      g.drawString("text/lines color:",30,95);
       g.setColor(Color.black);
-      g.drawString("highlighting color:",30,95);
+      g.drawString("highlighting color:",30,125);
       g.setColor(c[0]);
       g.fillRect(170,20,30,20);
       g.setColor(c[1]);
       g.fillRect(170,50,30,20);
       g.setColor(c[2]);
       g.fillRect(170,80,30,20);
+      g.setColor(c[3]);
+      g.fillRect(170,110,30,20);
       g.setColor(Color.black);
       g.drawRect(170,20,30,20);
       g.drawRect(170,50,30,20);
       g.drawRect(170,80,30,20);
+      g.drawRect(170,110,30,20);
     }
   }
 
@@ -119,18 +126,21 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
         if (cl!=null) pc.c[1]=cl;
         cl=Util.hrgb2color(schemes[++i]);
         if (cl!=null) pc.c[2]=cl;
+        cl=Util.hrgb2color(schemes[++i]);
+        if (cl!=null) pc.c[3]=cl;
         pc.repaint();
         return;
       }
-      i+=4;
+      i+=5;
     }
   }
 
   static void setScheme(int dragan) {
-    int i=dragan*4;
+    int i=dragan*5;
     Color cl=Util.hrgb2color(schemes[++i]);
     if (cl!=null)
       MFrame.backgroundColor=cl;
+    cl=Util.hrgb2color(schemes[++i]);
     cl=Util.hrgb2color(schemes[++i]);
     //    if (cl!=null)
     //      pc.c[1]=cl;
@@ -142,9 +152,9 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
   
   public void mouseClicked(MouseEvent ev) {
     int x=ev.getX(), y=ev.getY();
-    if (x>170 && x<200 && y>20 && y<100) {
+    if (x>170 && x<200 && y>20 && y<130) {
       int a=(y-15)/30;
-      if( a == 1 )
+      if( a == 1 || a== 2 )                 // Disabled fields
         return;
       Color cl=null;
       cl=JColorChooser.showDialog(this,"Choose color",pc.c[a]);
@@ -172,7 +182,7 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     if (cmd=="Apply" || cmd=="Save") {
       MFrame.backgroundColor=pc.c[0];
       //            Common.objectsColor=pc.c[1];
-      DragBox.hiliteColor=pc.c[2];
+      DragBox.hiliteColor=pc.c[3];
       frame.updateSelection();
     }
     /*        if (cmd=="Save") {
