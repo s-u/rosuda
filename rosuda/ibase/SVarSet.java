@@ -215,6 +215,17 @@ public class SVarSet {
         return false;
     }
 
+    public SNode[] getTrees() {
+        SNode[] ts=new SNode[trees.size()];
+        int i=0;
+        SVarSet.TreeEntry te;
+        for (Enumeration e=trees.elements(); e.hasMoreElements();) {
+            te=(SVarSet.TreeEntry)e.nextElement();
+            ts[i++]=te.root;
+        }
+        return ts;
+    }
+    
     public SVarSet getForestVarSet() {
         SVarSet fs=new SVarSet(); fs.setName("Forest");
         SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
@@ -243,14 +254,15 @@ public class SVarSet {
                     if (!np.isLeaf()) {
                         SNode n=(SNode)np.at(0);
                         if (n!=null) {
-                            //p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
+                            if (Common.DEBUG>0)
+                                System.out.println(te.name+", var="+n.splitVar.getName()+", cond="+n.Cond+", svF="+n.splitValF+", F1="+np.F1+", dg="+np.devGain+", cases="+n.Cases+", sd="+np.sampleDev+", sdg="+np.sampleDevGain+", ds="+np.data.size()+", lev="+np.getLevel());
                             v_tree.add(te.name); v_var.add(n.splitVar.getName());
                             v_root.add(te.root);
                             v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
                             v_tcases.add(new Integer(np.Cases));
                             v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
                             v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
-                            v_vspl.add(new Double(np.splitValF));
+                            v_vspl.add(new Double(n.splitValF));
                         };
                     }
                 }
