@@ -44,7 +44,7 @@ define can-with-jar
 endef
 
 Mondrian.jar:
-	make -C rosuda/Mondrian Mondrian.jar
+	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
 JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC) $(JAVAGD_SRC)
@@ -88,9 +88,16 @@ iwidgets.jar: iplots.jar $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
 
+docs: doc
+
+doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC)
+	rm -rf JavaDoc
+	mkdir JavaDoc
+	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
+
 clean:
 	rm -rf $(TARGETS) org JavaDoc *~ rtest.class TextConsole.class
-	make -C rosuda/Mondrian clean
+	$(MAKE) -C rosuda/Mondrian clean
 
-.PHONY: clean all
+.PHONY: clean all doc docs
 
