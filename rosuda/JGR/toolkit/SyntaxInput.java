@@ -141,10 +141,20 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     public void keyPressed(KeyEvent ke) {
         if (JGRPrefs.useEmacsKeyBindings) {
             if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
-                this.setCaretPosition(this.getText().length());
+				try {
+					int line = this.getLineOfOffset(this.getCaretPosition());
+					int lend = this.getLineEndOffset(line);
+					this.setCaretPosition(lend-1);
+				}
+				catch (Exception e) { this.setCaretPosition(this.getText().length()); }
             }
             if (ke.getKeyCode() == KeyEvent.VK_A && ke.isControlDown()) {
-                this.setCaretPosition(0);
+				try {
+					int line = this.getLineOfOffset(this.getCaretPosition());
+					int loffset = this.getLineStartOffset(line);
+					this.setCaretPosition(loffset);
+				}
+				catch (Exception e) { this.setCaretPosition(0); }
             }
         }
     }
