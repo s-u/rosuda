@@ -94,23 +94,26 @@ public abstract class LayerCanvas extends Canvas
         if (firstPaintLayer==0) { // total repaint, i.e. clear the layer 0 also
             offgc = offscreen[0].getGraphics();
 
-            if (Common.useAquaBg) {
-                offgc.setColor(Color.white);
-                offgc.fillRect(0, 0, d.width, d.height);
+            if (offgc!=null) { /* insane sanity checks, because sometimes it happens that
+                                  the graphics subsystem returns null */
+                 if (Common.useAquaBg) {
+                    offgc.setColor(Color.white);
+                    offgc.fillRect(0, 0, d.width, d.height);
 
-                int y=0;
-                offgc.setColor(Common.aquaBgColor);
-                while (y<d.height-2) {
-                    offgc.fillRect(0,y,d.width,2); y+=4;
+                    int y=0;
+                    offgc.setColor(Common.aquaBgColor);
+                    while (y<d.height-2) {
+                        offgc.fillRect(0,y,d.width,2); y+=4;
+                    }
+                } else {
+                    Color bg=getBackground();
+                    offgc.setColor(bg==null?Color.white:bg);
+                    offgc.fillRect(0, 0, d.width, d.height);
                 }
-            } else {
-                Color bg=getBackground();
-                offgc.setColor(bg==null?Color.white:bg);
-                offgc.fillRect(0, 0, d.width, d.height);
-            }                
-            
-            Color fg=getForeground();
-            offgc.setColor(fg==null?Color.black:fg);
+
+                Color fg=getForeground();
+                if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
+            }
             if (Common.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
         }
 
