@@ -1,6 +1,17 @@
+// $Id$
+
+package org.rosuda.klimt;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.plots.*;
+import org.rosuda.util.*;
+import org.rosuda.plugins.*;
+import org.rosuda.klimt.plots.*;
 
 /** SplitEditor */
 
@@ -29,7 +40,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
         m=vs.getMarker();
         root=(SNode)n.getRoot();
         ln=(SNode)n.at(0); if (ln!=null) cv=ln.splitVar;
-        addWindowListener(Common.defaultWindowListener);
+        addWindowListener(Common.getDefaultWindowListener());
         if (n!=null) {
             setLayout(new BorderLayout());
             add(new SpacingPanel(),BorderLayout.WEST);
@@ -93,7 +104,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
 	    splitText=st.getText();
             st.addActionListener(this);
-            sc=new ScatterCanvas(this,cv,root.response,m);
+            sc=new ScatterCanvas(this,cv,root.getRootInfo().response,m);
             m.addDepend(sc);
 	    //sc.removeMouseListener(sc);
 	    sc.addMouseListener(this);
@@ -117,7 +128,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             int []rks=new int[n.data.size()];
             int rki=0;
             double D=0;
-            SVar rsp=root.response;
+            SVar rsp=root.getRootInfo().response;
             boolean isCat=rsp.isCat();
             double sumL=0, sumR=0; // regr: sum of y[i] left/right
             int trct=0;
@@ -160,20 +171,21 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         D+=(rsp.atD(rks[ix])-mnR)*(rsp.atD(rks[ix])-mnR);
             }
             sw.profile("innerPlots.init");
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("input consistency check: rks.len="+rks.length+", rki="+rki);
             int q=0;
             int []cls=null;
             int []tcls=null;
             if (isCat) {
-                cls=new int[root.response.getNumCats()];
-                tcls=new int[root.response.getNumCats()];
-                if (Common.DEBUG>0)
+                SVar response=root.getRootInfo().response;
+                cls=new int[response.getNumCats()];
+                tcls=new int[response.getNumCats()];
+                if (Global.DEBUG>0)
                     System.out.println("ranked: "+rks.length+", classes="+tcls.length);
                 q=0; while(q<tcls.length) tcls[q++]=0;
                 q=0;
                 while(q<rks.length) {
-                    int ci=root.response.getCatIndex(rks[q]);
+                    int ci=response.getCatIndex(rks[q]);
                     if (ci>-1) tcls[ci]++;
                     q++;
                 };
@@ -213,7 +225,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                 };
                 sumL+=deltay;
                 sumR-=deltay;
-                if (Common.DEBUG>0)
+                if (Global.DEBUG>0)
                     System.out.println("q="+q+", lv="+lv+", eq="+eq+", lct="+lct);
 
                 double d=D;
@@ -235,7 +247,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                 };
             };
             sw.profile("innerPlots.calculate deviance");
-            if (Common.DEBUG>0) {
+            if (Global.DEBUG>0) {
                 System.out.println("Consistency check:");
                 System.out.println("sdv length="+sdv.size()+", rxv length="+rxv.size());
                 if (isCat) {
@@ -297,7 +309,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
 
     void setSplitValue(double v) {
         spVal=v;
-        if (!root.response.isCat()) {
+        SVar response=root.getRootInfo().response;
+        if (!response.isCat()) {
             double sumL=0, sumR=0;
             int ctl=0, ctr=0;
             int i=0,j;
@@ -305,7 +318,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                 Integer iN=(Integer)n.data.elementAt(i);
                 if (iN!=null) {
                     j=iN.intValue();
-                    double pv=root.response.atD(j);
+                    double pv=response.atD(j);
                     if (cv.atD(j)<=v) { sumL+=pv; ctl++; }
                     else { sumR+=pv; ctr++; }
                 }
@@ -338,7 +351,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
         String cmd=e.getActionCommand();
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("SplitEditor.actionPerformed(\""+cmd+"\") ["+e.toString()+"]\n source="+e.getSource().toString());
         if (e.getSource()==st) {
             double v=0;
@@ -361,8 +374,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                     } else {
                         Vector cp=new Vector();
                         editSuffix++;
-                        SNode nt=InTr.makePrunedCopy(root,true,n,true,cp,"Ed_"+root.name+"_"+editSuffix);
-			nt.formula=root.formula;
+                        SNode nt=Klimt.makePrunedCopy(root,true,n,true,cp,"Ed_"+root.getRootInfo().name+"_"+editSuffix);
+			nt.getRootInfo().formula=root.getRootInfo().formula;
                         
                         /* build the two other chunks here */
                         boolean single=cb.getState();
@@ -378,8 +391,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                                 return;
                             }
                             gt.setParameter("dataset",vs);
-                            if (root.formula!=null)
-                                gt.setParameter("formula",root.formula);
+                            if (root.getRootInfo().formula!=null)
+                                gt.setParameter("formula",root.getRootInfo().formula);
                             gt.checkParameters();
                             pd.setVisible(false);
                             if (!gt.pluginDlg(this)) {
@@ -415,7 +428,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                             }
                             i++;
                         }
-                        if (Common.DEBUG>0)
+                        if (Global.DEBUG>0)
                             System.out.println("Markers: ml="+ml.marked()+", mr="+mr.marked());
                         vs.setMarker(ml);
                         SNode leftb=null, rightb=null;
@@ -477,34 +490,34 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         rightb.Cond=cv.getName()+" > "+spVal;
                         leftb.splitComp=-1; rightb.splitComp=1;
                         if (!single) {
-                            RTree.passDownData(ntcp,leftb); RTree.passDownData(ntcp,rightb);
+                            leftb.passDownData(ntcp); rightb.passDownData(ntcp);
                         }
                         //---
                         SVar vvv;
-                        vvv=RTree.getPredictionVar(nt,nt.response);
+                        vvv=Klimt.getPredictionVar(nt,nt.getRootInfo().response);
                         if (vvv!=null) {
                             vs.add(vvv);
-                            nt.prediction=vvv;
+                            nt.getRootInfo().prediction=vvv;
                             if (vvv.isCat()) {
                                 if (vs.globalMisclassVarID!=-1)
-                                    RTree.manageMisclassVar(root,vs.at(vs.globalMisclassVarID));
+                                    Klimt.manageMisclassVar(root,vs.at(vs.globalMisclassVarID));
                                 else {
-                                    SVar vmc=RTree.manageMisclassVar(nt,null);
+                                    SVar vmc=Klimt.manageMisclassVar(nt,null);
                                     vs.globalMisclassVarID=vs.add(vmc);
                                 }
                             }
                         }
-                        TFrame f=new TFrame(nt.name,TFrame.clsTree);
-                        TreeCanvas tc=InTr.newTreeDisplay(nt,f);
+                        TFrame f=new TFrame(nt.getRootInfo().name,TFrame.clsTree);
+                        TreeCanvas tc=Klimt.newTreeDisplay(nt,f);
                         tc.repaint(); tc.redesignNodes();
-                        RTree.getManager().addTree(nt);
+                        root.getRootInfo().home.registerTree(nt,nt.getRootInfo().name);
 
                         WinTracker.current.rm(this);
                         sc=null; li=null; removeAll();
                         dispose();                        
                     }
-                };
-            };
+                }
+            }
         }        
-    };
+    }
 }
