@@ -63,13 +63,13 @@ public class SCatSequence extends Notifier {
 
     /** returns the category ID at position pos */
     public int catAtPos(int id) {
-        if (id<0 || id>=cats) return Global.runtimeWarning("SCatSequence on "+v.getName()+": catAtPos("+id+") out of range ("+cats+" cats)");
+        if (id<0 || id>=cats) return Global.runtimeWarning("SCatSequence on "+((v==null)?"<null>":v.getName())+": catAtPos("+id+") out of range ("+cats+" cats)");
         return (seqToCat==null)?id:seqToCat[id];
     }
 
     /** returns the position of the category id */
     public int posOfCat(int id) {
-        if (id<0 || id>=cats) return Global.runtimeWarning("SCatSequence on "+v.getName()+": posOfCat("+id+") out of range ("+cats+" cats)");
+        if (id<0 || id>=cats) return Global.runtimeWarning("SCatSequence on "+((v==null)?"<null>":v.getName())+": posOfCat("+id+") out of range ("+cats+" cats)");
         return (catToSeq==null)?id:catToSeq[id];
     }
 
@@ -100,7 +100,7 @@ public class SCatSequence extends Notifier {
     
     public boolean swapCatsAtPositions(int p1, int p2) {
         if (p1<0 || p2<0 || p1>=cats || p2>=cats) return
-            Global.runtimeWarning("SCatSequence on "+v.getName()+": swapCatsAtPositions("+p1+","+p2+") out of range ("+cats+" cats)")!=-1;
+            Global.runtimeWarning("SCatSequence on "+((v==null)?"<null>":v.getName())+": swapCatsAtPositions("+p1+","+p2+") out of range ("+cats+" cats)")!=-1;
         if (seqToCat==null) createFields();
         int c1=seqToCat[p1];
         int c2=seqToCat[p2];
@@ -115,7 +115,7 @@ public class SCatSequence extends Notifier {
 
     public boolean swapCats(int c1, int c2) {
         if (c1<0 || c2<0 || c1>=cats || c2>=cats) return
-            Global.runtimeWarning("SCatSequence on "+v.getName()+": swapCats("+c1+","+c2+") out of range ("+cats+" cats)")!=-1;
+            Global.runtimeWarning("SCatSequence on "+((v==null)?"<null>":v.getName())+": swapCats("+c1+","+c2+") out of range ("+cats+" cats)")!=-1;
         if (seqToCat==null) createFields();
         int p1=catToSeq[c1];
         int p2=catToSeq[c2];
@@ -131,7 +131,7 @@ public class SCatSequence extends Notifier {
     public boolean moveCatAtPosTo(int p1, int p2) {
         if (p1==p2) return true;
         if (p1<0 || p2<0 || p1>=cats || p2>=cats) return
-            Global.runtimeWarning("SCatSequence on "+v.getName()+": moveCatAtPosTo("+p1+","+p2+") out of range ("+cats+" cats)")!=-1;
+            Global.runtimeWarning("SCatSequence on "+((v==null)?"<null>":v.getName())+": moveCatAtPosTo("+p1+","+p2+") out of range ("+cats+" cats)")!=-1;
         if (seqToCat==null) createFields();
         int c1=seqToCat[p1];
         if (p1<p2) { // move to back
@@ -163,6 +163,6 @@ public class SCatSequence extends Notifier {
     }
 
     public String toString() {
-        return "SCatSequence(var=\""+v.name+"\",cats="+cats+((seqToCat==null)?",straight":",mapped")+")";
+        return "SCatSequence(var=\""+((v==null)?"<null>":v.name)+ "\",cats="+cats+((seqToCat==null)?",straight":",mapped")+")";
     }
 }
