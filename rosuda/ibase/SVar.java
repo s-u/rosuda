@@ -11,7 +11,7 @@ import java.util.*;
  *       JDK 1.1 so it cannot be overriden. When using 1.2 API or higher you may uncomment
  *       the override for security purpose, but in that case it won't compile on 1.1.
  *
- * The "is number" property is set accoding to the first added element - thus you should NOT mix
+ * The "is number" property is set accoding to the first added (non-null) element - thus you should NOT mix
  * numeric and non-numeric objects. It is safe to insert numbers in non-numeric value, but NOT
  * vice-versa as for numeric variables the detection of min/max casts any object to Number.</pre>
  * @version $Id$
