@@ -62,6 +62,7 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     public void paintLayer(Graphics g, int layer) {
         if (inProgress) return; /* avoid recursions */
         inProgress=true;
+        paintLayerCounter=0;
 	PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
 	paintPoGraSS(p);
 	endPaint(p);
