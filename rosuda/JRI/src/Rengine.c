@@ -31,26 +31,53 @@ extern int  (*ptr_R_ChooseFile)(int, char *, int);
 extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
 extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
 
+// this method is used rather for debugging purposes - it finds the correct JNIEnv for the current thread. we still have some threading issues to solve, becuase eenv!=env should never happen (uncontrolled), because concurrency issues arise
+JNIEnv *checkEnvironment()
+{
+    JNIEnv *env;
+    JavaVM *jvm;
+    jsize l;
+    
+    jint res= JNI_GetCreatedJavaVMs(&jvm, 1, &l);
+    if (res!=0) {
+        fprintf(stderr, "JNI_GetCreatedJavaVMs failed! (%d)\n",res); return;
+    }
+    if (l<1) {
+        fprintf(stderr, "JNI_GetCreatedJavaVMs said there's no JVM running!\n"); return;
+    }
+    res = (*jvm)->AttachCurrentThread(jvm, &env, 0);
+    if (res!=0) {
+        fprintf(stderr, "AttachCurrentThread failed! (%d)\n",res); return;
+    }
+    if (eenv!=env)
+        fprintf(stderr, "Warning! eenv=%x, but env=%x - different environments encountered!\n", eenv, env);
+    else
+        printf("Environment ok (%x)\n", eenv);
+    return env;
+}
+
 int Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory)
 {
-    if (eenv && engineObj) {
+    JNIEnv *lenv=checkEnvironment();
+    if (lenv && engineObj) {
         jstring r;
-        jstring s=(*eenv)->NewStringUTF(eenv, prompt);
-        jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriReadConsole", "(Ljava/lang/String;I)Ljava/lang/String;");
+        jstring s=(*lenv)->NewStringUTF(eenv, prompt);
+        jmethodID mid=(*lenv)->GetMethodID(eenv, engineClass, "jriReadConsole", "(Ljava/lang/String;I)Ljava/lang/String;");
         printf("jriReadconsole mid=%x\n", mid);
         if (!mid) return -1;
-        r=(jstring) (*eenv)->CallObjectMethod(eenv, engineObj, mid, s, addtohistory);
-        (*eenv)->DeleteLocalRef(eenv, s);
+        r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, s, addtohistory);
+        (*lenv)->DeleteLocalRef(lenv, s);
         if (r) {
-            const char *c=(*eenv)->GetStringUTFChars(eenv, s, 0);
+            const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
             if (!c) return -1;
             {
                 int l=strlen(c);
                 strncpy(buf, c, (l>len-1)?len-1:l);
+                buf[(l>len-1)?len-1:l]=0;
                 printf("Re_ReadConsole succeeded: \"%s\"\n",buf);
             }
-            (*eenv)->ReleaseStringUTFChars(eenv, s, c);
-            (*eenv)->DeleteLocalRef(eenv, r);
+            (*lenv)->ReleaseStringUTFChars(lenv, r, c);
+            (*lenv)->DeleteLocalRef(lenv, r);
             return 1;
         }
     }
@@ -64,14 +91,19 @@ void Re_Busy(int which)
     if (mid) (*eenv)->CallVoidMethod(eenv, engineObj, mid, which);
 }
 
+SEXP do_flushconsole(SEXP call, SEXP op, SEXP args, SEXP env) {
+    return R_NilValue;
+}
+
 void Re_WriteConsole(char *buf, int len)
 {
-    jstring s=(*eenv)->NewStringUTF(eenv, buf);
-    jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
+    JNIEnv *lenv=checkEnvironment();
+    jstring s=(*lenv)->NewStringUTF(lenv, buf);
+    jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
     printf("jriWriteconsole mid=%x\n", mid);
     if (mid)
-        (*eenv)->CallVoidMethod(eenv, engineObj, mid, s);
-    (*eenv)->DeleteLocalRef(eenv, s);
+        (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+    (*lenv)->DeleteLocalRef(lenv, s);
 }
 
 /* Indicate that input is coming from the console */
@@ -381,6 +413,7 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniIdle
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRunMainLoop
   (JNIEnv *env, jobject this)
 {
+      run_Rmainloop();
       /* this doesn't work yet!! we need nuch more from main/main.c :(
       SETJMP(R_Toplevel.cjmpbuf);
       R_GlobalContext = R_ToplevelContext = &R_Toplevel;
