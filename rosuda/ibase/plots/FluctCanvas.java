@@ -23,6 +23,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     SVar weight;
     
     boolean showLabels=true;
+    protected QueryPopup qi;
 
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=true;
@@ -70,7 +71,8 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	MenuBar mb=null;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@LHide labels","labels","Toggle alignment","center","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
-	MIlabels=EzMenu.getItem(f,"labels");	
+	MIlabels=EzMenu.getItem(f,"labels");
+        qi=new QueryPopup(f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
     }
 
     public FluctCanvas(Frame f, SVar v1, SVar v2, SMarker mark) { this(f,v1,v2,mark,null); }
@@ -130,11 +132,13 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
             while (fi<A[0].vBegin+A[0].vLen) {
+                if (v[0].isCat()) fi+=0.2;
                 int t=A[0].getValuePos(fi);
+                if (v[0].isCat()) fi-=0.2;
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                                 A[0].getDisplayableValue(fi),t-5,Y+H+20);
+                                 A[0].getDisplayableValue(fi),t-5,Y+H+20,PoGraSS.TA_Center);
                 fi+=f;
             };
         }
@@ -145,7 +149,9 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             while (fi<A[1].vBegin+A[1].vLen) {
+                if (v[1].isCat()) fi+=0.2;
                 int t=A[1].getValuePos(fi);
+                if (v[1].isCat()) fi-=0.2;
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
                     g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
@@ -181,8 +187,8 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                     };
                     g.setColor((mct>0)?"red":"black");
                     g.drawRect(lx,ly,rdx,rdy);
-                };
-            } ;
+                }
+            }
 
 	paintDragLayer(g);
 
@@ -221,6 +227,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     }
 
     public void updatePoints() {
+        qi.hide(); // this may invalidate any query
 	Dimension Dsize=getSize();
 	int w=Dsize.width, h=Dsize.height;
 	TW=w; TH=h;
@@ -247,7 +254,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                 if (m.at(i))
                     Marked[xc+yc*v1l]+=wv;
             }
-        };
+        }
     }
 
     public void mouseClicked(MouseEvent ev) 
@@ -255,12 +262,46 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	int x=ev.getX(), y=ev.getY();
         //x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
         boolean setTo=false;
+        qi.hide();
+        
+        int pts=v[0].size();
+        if (pts>v[1].size()) pts=v[1].size();
+        String xname="n/a", yname="n/a";
+        if (Common.isQueryTrigger(ev)) {
+            int q_all=0, q_mark=0;
+            for (int yp=0;yp<v2l;yp++)
+                for (int xp=0;xp<v1l;xp++) {
+                    int lx=A[0].getCatLow(xp);
+                    int ly=A[1].getCatLow(yp);
+                    int dx=A[0].getCatUp(xp)-lx;
+                    int dy=A[1].getCatUp(yp)-ly;
+                    if (dx<0) { lx+=dx; dx=-dx; };
+                    if (dy<0) { ly+=dy; dy=-dy; };
+                    if (x<lx+dx&&x>lx&&y<ly+dy&&y>ly) {
+                        xname=(String)v[0].getCatAt(xp);
+                        yname=(String)v[1].getCatAt(yp);
+                        for (int i=0;i<pts;i++) {
+                            int xc=v[0].getCatIndex(i);
+                            int yc=v[1].getCatIndex(i);
+                            if (xc==xp && yc==yp) {
+                                if (m.at(i)) q_mark++;
+                                q_all++;
+                            }
+                        }
+                    }
+                }
+            
+            Point cl=getFrame().getLocation();
+            Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+            qi.setContent(v[0].getName()+": "+xname+"\n"+v[1].getName()+": "+yname+"\n"+q_mark+" of "+q_all+" selected");
+            qi.setLocation(cl.x+x,cl.y+y);
+            qi.show(); 
+            return;
+        }
         
         if (ev.isControlDown()) setTo=true;
         if (!ev.isShiftDown()) m.selectNone();
-
-        int pts=v[0].size();
-        if (pts>v[1].size()) pts=v[1].size();
+        
         for (int yp=0;yp<v2l;yp++)
             for (int xp=0;xp<v1l;xp++) {
                 int lx=A[0].getCatLow(xp);
@@ -288,7 +329,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     public void mousePressed(MouseEvent ev) 
     {	
 	int x=x1=ev.getX(); int y=y1=ev.getY();
-	
+        qi.hide();
 	if (x<X || y>Y+H) { /* border */
 	    if (x<X) {
 		for (int yp=0;yp<v2l;yp++) {
@@ -328,7 +369,11 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	    if (x1>x2) { X2=x1; X1=x2; };
 	    if (y1>y2) { Y2=y1; Y1=y2; };
 	    Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
-	    
+
+            drag=false;
+
+            if (Common.isQueryTrigger(e)) return;
+            
 	    boolean setTo=false;
 	    if (e.isControlDown()) setTo=true;
 	    if (!e.isShiftDown()) m.selectNone();
@@ -353,8 +398,6 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 		    };
 		};
 	    
-	    drag=false;
-	    int i=0;
 	    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 	    setUpdateRoot(0);
 	    repaint();	
