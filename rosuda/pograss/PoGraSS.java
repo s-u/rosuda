@@ -8,6 +8,8 @@ import java.awt.Rectangle;
     0.93: (CVS 1.3) support for version information (in the API; versionString, version and passVersionInfo)
     0.94: (CVS 1.5) support for extended drawString and font handling
     0.95: (CVS 1.6) support for polygons
+    0.96: (CVS 1.7) support for separate fill/pen colors and regular commands (rect, oval,...)
+                    backwards compatibility is provided by the {@link #jointColors} flag. 
     @version $Id$
 */
 public class PoGraSS
@@ -18,7 +20,16 @@ public class PoGraSS
     int lastFontSize;
     int lastFontAttr;
     String lastFace;
-
+    
+    /** if set to <code>true</code> the pen and brush colors are not distinguished,
+        i.e. setColor and setFillColor always set both colors to the same value.
+        Such use is deprecated, but it is necessary for programs ported from Graphics.
+        Programs using joint color are NOT allowed to use the regular commands which
+        rely on both colors, such as rect, oval etc. Current default is <code>true</code>
+        to simplify transition from old code, but in next release it will change.
+    */
+    boolean jointColors=true;
+    
     public static final int TA_Left    = 0;
     public static final int TA_Right   = 1;
     public static final int TA_Center  = 2;
@@ -36,8 +47,8 @@ public class PoGraSS
     public static final int FF_Serif     = 2; // usually Times
     public static final int FF_Mono      = 3; // usually Courier or system font
 
-    public String versionString="0.95";
-    public int    version=0x0095;
+    public String versionString="0.96";
+    public int    version=0x0096;
         
     public PoGraSS() { boundsX=0; boundsY=0; };
 
@@ -49,6 +60,12 @@ public class PoGraSS
 	return new Rectangle(boundsX,boundsY,boundsWidth,boundsHeight); 
     };
 
+    /** sets the {@link #jointColors} flag. Should be use after begin but before the first graphical command.
+        The behavior is undefined if used elsewhere. */
+    public void useJointColors(boolean jc) {
+        jointColors=jc;
+    };
+    
     public void passVersionInfo(int ver, String verString) {}; // should not be called directly by programs, is meant for external interfaces, such as parser to allow unterlying PoGraSS implementations to do version check and refuse unsupported versions
     
     public void addComment(String c) {};
@@ -59,15 +76,19 @@ public class PoGraSS
     public void drawLine(int x1, int y1, int x2, int y2) {};
     public void moveTo(int x, int y) {};
     public void lineTo(int x, int y) {};
+    public void rect(int x1, int y1, int x2, int y2) {}; // since 0.96
     public void drawRect(int x1, int y1, int x2, int y2) {};
     public void fillRect(int x1, int y1, int x2, int y2) {};
+    public void roundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
+    public void polygon(int[] x, int[] y, int pts, boolean close) {}; // since 0.96
     public void drawPolygon(int[] x, int[] y, int pts) { drawPolygon(x,y,pts,true); };
     public void drawPolyline(int[] x, int[] y, int pts) { drawPolygon(x,y,pts,false); };
     public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {};
     public void fillPolygon(int[] x, int[] y, int pts) {};
     public void drawOval(int x, int y, int rx, int ry) {};
+    public void oval(int x, int y, int rx, int ry) {}; // since 0.96
     public void fillOval(int x, int y, int rx, int ry) {};
     public void setLineWidth(int w) { lineWidth=w; };
     public void setFillStyle(int s) { fillStyle=s; };
