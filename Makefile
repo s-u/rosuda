@@ -19,6 +19,7 @@ IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
 JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) 
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
+JGR_INSTALLER_SRC:=$(wildcard rosuda/JGR/JGRinstaller.java)
 CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
 
 ifneq ($(shell uname),Darwin)
@@ -30,7 +31,7 @@ IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
 JGR_SRC:=$(filter-out %PlatformMac.java,$(JGR_SRC))
 endif
 
-TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar Mondrian.jar
+TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar
 
 JAVAC=javac $(JFLAGS)
 
@@ -54,6 +55,12 @@ JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org rosuda/JGR/LICENSE
 	rm -rf org splash.jpg icons
+
+JGRinst.jar: $(JRI_SRC) $(JGR_INSTALLER_SRC)
+	rm -rf org
+	$(JAVAC) -d . $^
+	jar fcm $@ rosuda/projects/jgr/JGRinst.mft org rosuda/JGR/LICENSE
+	rm -rf org
 
 jgr-docs: $(JGR_SRC) 
 	rm -rf JavaDoc
