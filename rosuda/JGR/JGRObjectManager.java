@@ -13,11 +13,9 @@ package org.rosuda.JGR;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 
 import javax.swing.*;
 
-import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.toolkit.*;
 
 public class JGRObjectManager extends iFrame implements ActionListener, MouseListener {
