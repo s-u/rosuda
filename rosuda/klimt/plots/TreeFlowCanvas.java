@@ -18,9 +18,10 @@ import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 import org.rosuda.klimt.*;
 
-public class TreeFlowCanvas extends PGSCanvas implements Dependent {
+public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener {
     SNode roots[];
     int lastw,lasth;
+    float alpha=0.1f;
 
     int[] levl; // # of vars per level (max 64)
     SVar[] vg;  // 64*32 matrix of vars (l*32+i)
@@ -31,6 +32,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent {
         setFrame(f);
         roots=trees;
 
+        addKeyListener(this); f.addKeyListener(this);
         levl=new int[64];
         vg=new SVar[64*32];
 
@@ -117,6 +119,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent {
             y+=yspc;
         }
 
+        g.setColor(0f,0f,0f,alpha);
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
@@ -158,4 +161,23 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent {
             drawNode(g,(SNode)n.at(ch++),x,y,l+1);
         }
     }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            alpha/=2f; setUpdateRoot(0); repaint();
+        }
+        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+            alpha*=2f; if (alpha>1f) alpha=1f; setUpdateRoot(0); repaint();
+        }
+    }
+
+    public void keyTyped(KeyEvent e)
+    {
+//        if (e.getKeyChar()=='P') run(this,"print");
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+
+    
 }
