@@ -301,6 +301,7 @@
 				1C4A15D304D93C2000A8030F,
 				1C4A15D604D93F5E00A8030F,
 				1C4A15D704D93F5E00A8030F,
+				1C8CDCB604F2AF8600A8030F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,6 +457,18 @@
 		};
 		1C4A15D704D93F5E00A8030F = {
 			fileRef = 1C4A15D504D93F5E00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C8CDCB504F2AF8600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RSrvException.java;
+			refType = 4;
+		};
+		1C8CDCB604F2AF8600A8030F = {
+			fileRef = 1C8CDCB504F2AF8600A8030F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -831,6 +844,7 @@
 				1CE96E6C04D7D99D00A8030F,
 				1CE96E6D04D7D99D00A8030F,
 				1CE96E6E04D7D99D00A8030F,
+				1C8CDCB504F2AF8600A8030F,
 			);
 			isa = PBXGroup;
 			path = JRclient;
