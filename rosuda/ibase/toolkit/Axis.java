@@ -101,8 +101,14 @@ public class Axis extends Notifier
             return true;
 	};
         return false;
-    };
+    }
 
+    /** same as {@link #setValueRange(double, double)}, but takes an array of two doubles as returned by {@link #getValueRange} */
+    public boolean setValueRange(double[] range) {
+        if (range==null || range.length!=2) return false;
+        return setValueRange(range[0],range[1]);
+    }
+    
     /** for discrete axis types - set the data count
 	@param dc data count, if <1 then set to 1
         @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */        
@@ -382,6 +388,15 @@ used in conjunction with {@link #getSensibleTickDistance}
         @return array of indices of categories. do not modify that array */
     public int[] getCatSequence() {
         return cseq;
+    }
+
+    /** returns value range as an array of two doubles specifying top and bottom end. to ensure reproducibility the orientation is preserved, therefore it is not guaranteed that the second value is greater that the first one.
+    */
+    public double[] getValueRange() {
+        double rg[]=new double[2];
+        rg[0]=vBegin;
+        rg[1]=vBegin+vLen;
+        return rg;
     }
 
     /** somewhat simple toString implementation, basically for debugging purposes */
