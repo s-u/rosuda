@@ -83,9 +83,11 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                     };
                     j++;
                 }
-            }
+            } else {
+		System.out.println("Warning: n.prediction=null! n="+n+", "+((n==n.getRoot())?"is its root":"is not root"));
+	    }
             if (count[i]>xv) xv=count[i];
-            if (c.size()-count[i]+xv>xr) xr=c.size()-count[i]+xv;
+            if (c!=null && c.size()-count[i]+xv>xr) xr=c.size()-count[i]+xv;
             if (Common.DEBUG>0)
                 System.out.println("i="+i+", xv="+xv+", count="+count[i]+", mark="+mark[i]);
             i++;
