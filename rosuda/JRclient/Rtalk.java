@@ -25,6 +25,7 @@ public class Rtalk {
     public static final int CMD_closeFile=0x012;
     public static final int CMD_readFile=0x013;
     public static final int CMD_writeFile=0x014;
+    public static final int CMD_removeFile=0x015;
 
     InputStream is;
     OutputStream os;
@@ -133,13 +134,23 @@ public class Rtalk {
 	@return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, String par) {
 	try {
-            par=par+"\n";
 	    byte[] b=par.getBytes("UTF-8");
 	    byte[] rq=new byte[par.length()+5];
 	    for(int i=0;i<b.length;i++)
 		rq[i+4]=b[i];
 	    rq[b.length+4]=0;
 	    setHdr(DT_STRING,b.length+1,rq,0);
+	    return request(cmd,rq);
+	} catch (Exception e) {
+	};
+	return null;
+    }
+
+    public Rpacket request(int cmd, int par) {
+	try {
+	    byte[] rq=new byte[8];
+	    setInt(par,rq,4);
+	    setHdr(DT_INT,4,rq,0);
 	    return request(cmd,rq);
 	} catch (Exception e) {
 	};

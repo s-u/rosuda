@@ -116,7 +116,7 @@ public class Rconnection {
 	    lastError="Error: not connected!";
 	    return false;
 	}
-	Rpacket rp=rt.request(Rtalk.CMD_voidEval,cmd);
+	Rpacket rp=rt.request(Rtalk.CMD_voidEval,cmd+"\n");
 	if (rp!=null && rp.isOk())
 	    return succeeded=true;
 	lastError="Request return code: "+rp.getStat();
@@ -132,7 +132,7 @@ public class Rconnection {
 	    lastError="Error: not connected!";
 	    return null;
 	}
-	Rpacket rp=rt.request(Rtalk.CMD_eval,cmd);
+	Rpacket rp=rt.request(Rtalk.CMD_eval,cmd+"\n");
 	if (rp!=null && rp.isOk()) {
 	    byte[] pc=rp.getCont();
 	    REXP rx=null;
@@ -146,6 +146,22 @@ public class Rconnection {
 	lastError="Request return code: "+rp.getStat();
 	return null;
     }
+
+    public RFileInputStream openFile(String fn) throws IOException {
+	return new RFileInputStream(rt,fn);
+    };
+
+    public boolean removeFile(String fn) {
+	succeeded=false;
+	if (!connected || rt==null) {
+	    lastError="Error: not connected"; return succeeded=false;
+	}	    
+	Rpacket rp=rt.request(Rtalk.CMD_removeFile,fn);
+	if (rp!=null && rp.isOk())
+	    return succeeded=true;
+	lastError="Request return code: "+rp.getStat();
+	return false;
+    };
 
     /** shutdown remote Rserv. Note that some Rserves cannot be shut down from
 	client side (forked version). */
