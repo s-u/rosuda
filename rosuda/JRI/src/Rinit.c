@@ -72,18 +72,21 @@ int initR(int argc, char **argv) {
     ptr_R_FlushConsole = Re_FlushConsole;
     ptr_R_ClearerrConsole = Re_ClearerrConsole;
     ptr_R_Busy = Re_Busy;
-    /*
-    ptr_R_ShowFiles = Re_ShowFiles;
+    /* ptr_R_ShowFiles = Re_ShowFiles; */
     ptr_R_ChooseFile = Re_ChooseFile;
-    ptr_R_loadhistory = Re_loadhistory;
+	/* ptr_R_loadhistory = Re_loadhistory; */
     ptr_R_savehistory = Re_savehistory;
-     */
-    printf("Setting up R event loop\n");
-    
+
+#ifdef JGR_DEBUG
+	printf("Setting up R event loop\n");
+#endif
+	
     setup_Rmainloop();
 
+#ifdef JGR_DEBUG
     printf("R initialized.\n");
-    
+#endif
+
     return 0;
 }
 
