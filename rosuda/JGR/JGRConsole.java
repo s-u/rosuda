@@ -417,12 +417,22 @@ FocusListener, RMainLoopCallbacks {
 
     /**
      * Load history from a file (R callback).
-     * !! not implemented yet !!
      * @param re used Rengine
      * @param filename history file
      */
 	public void   rLoadHistory  (Rengine re, String filename) {
-		//FIXME! load history from a file ...
+		File hist = null;
+		try {
+			if ((hist = new File(filename)).exists()) {
+				BufferedReader reader = new BufferedReader(new FileReader(hist));
+				if (JGR.RHISTORY == null) JGR.RHISTORY = new Vector();
+				while (reader.ready())
+					JGR.RHISTORY.add(reader.readLine()+"\n");
+				reader.close();
+			}
+		} catch (Exception e) {
+			new ErrorMsg(e);
+		}
 	}
 	
 	/**
@@ -432,6 +442,7 @@ FocusListener, RMainLoopCallbacks {
 	 */
     public void   rSaveHistory  (Rengine re, String filename) {
         try {
+			System.out.println("Save History");
             File hist = new File(filename);
             BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
             Enumeration e = JGR.RHISTORY.elements(); int i = 0;

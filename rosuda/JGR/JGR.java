@@ -343,7 +343,7 @@ public class JGR {
 		File hist = null;
 		try {
 			if ((hist = new File(System.getProperty("user.home")
-					+ File.separator + ".Rhistory")).exists()) {
+					+ File.separator + ".JGRhistory")).exists()) {
 
 				BufferedReader reader = new BufferedReader(new FileReader(hist));
 				RHISTORY = new Vector();
@@ -369,15 +369,16 @@ public class JGR {
 		File hist = null;
 		try {
 			hist = new File(System.getProperty("user.home") + File.separator
-					+ ".Rhistory");
+					+ ".JGRhistory");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
 			Enumeration e = JGR.RHISTORY.elements();
-			int i = 0;
-			while (e.hasMoreElements())
-				writer.write(e.nextElement().toString() + "#\n");
-			writer.flush();
+			while (e.hasMoreElements()) {
+				writer.write(e.nextElement().toString()+"#\n");
+				writer.flush();
+			}
 			writer.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			new ErrorMsg(e);
 		}
 	}
