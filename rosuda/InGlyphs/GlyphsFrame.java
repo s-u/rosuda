@@ -1,4 +1,10 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
 
 /**
  * Variables window - central place for operations on a dataset
@@ -41,10 +47,7 @@ public class GlyphsFrame extends TFrame {
 		
 		add(vcc=new GlyphsCmdCanvas(this,vs),"South");
 
-		if (Common.defaultWindowListener==null) {
-			Common.defaultWindowListener=new DefWinL();
-		}
-		addWindowListener(Common.defaultWindowListener);
+		addWindowListener(Common.getDefaultWindowListener());
 		setBounds(x-minus,y,w,rh);
 		vc.setBounds(x-minus,y,w,rh-cmdHeight);
 		vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);

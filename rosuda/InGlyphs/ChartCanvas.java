@@ -1,14 +1,20 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
 
 public class ChartCanvas extends BaseCanvas {
 
     static int nRows;
     static int nCols;
 
-    TFrame frame;
+    GFrame frame;
 
-    ChartCanvas(TFrame f, SMarker m) {
+    ChartCanvas(GFrame f, SMarker m) {
     	
 		super(f,m);
 		frame = f;
@@ -175,17 +181,18 @@ public class ChartCanvas extends BaseCanvas {
 			
 			//Color color = Common.getHCLcolor(100);
 
-			pp[row * nCols + col] = new PlotPrimitive();
-			pp[row * nCols + col].pg = new Polygon();
+                        PPrimPolygon pr = new PPrimPolygon();
+			pp[row * nCols + col] = pr;
+			pr.pg = new Polygon();
 
-			pp[row * nCols + col].col=Common.getHCLcolor(col*360/angles.size());
+			pr.col=Common.getHCLcolor(col*360/angles.size());
 
-			pp[row * nCols + col].pg.addPoint(Float.valueOf(String.valueOf(glyphCenterX)).intValue(),Float.valueOf(String.valueOf(glyphCenterY)).intValue());
-			pp[row * nCols + col].pg.addPoint(Float.valueOf(String.valueOf(x1)).intValue(),Float.valueOf(String.valueOf(y1)).intValue());
-			pp[row * nCols + col].pg.addPoint(Float.valueOf(String.valueOf(x2)).intValue(),Float.valueOf(String.valueOf(y2)).intValue());
+			pr.pg.addPoint(Float.valueOf(String.valueOf(glyphCenterX)).intValue(),Float.valueOf(String.valueOf(glyphCenterY)).intValue());
+			pr.pg.addPoint(Float.valueOf(String.valueOf(x1)).intValue(),Float.valueOf(String.valueOf(y1)).intValue());
+			pr.pg.addPoint(Float.valueOf(String.valueOf(x2)).intValue(),Float.valueOf(String.valueOf(y2)).intValue());
 
-			pp[row * nCols + col].ref=new int[1];
-			pp[row * nCols + col].ref[0]=col;
+			pr.ref=new int[1];
+			pr.ref[0]=col;
 
 		}
 	}
@@ -200,13 +207,13 @@ public class ChartCanvas extends BaseCanvas {
 			
 		for (int col=2; col<record.size(); col++) {
 
-			h = b * Integer.valueOf((String)record.get(col)).intValue()/5;
-			
-			pp[row * nCols + col] = new PlotPrimitive();
-			pp[row * nCols + col].r = new Rectangle(x+b*(col-2),cY-h,b,h);
+                    h = b * Integer.valueOf((String)record.get(col)).intValue()/5;
 
-			pp[row * nCols + col].ref=new int[1];
-			pp[row * nCols + col].ref[0]=col;		
+                    PPrimRectangle pr = new PPrimRectangle();
+                    pp[row * nCols + col] = pr;
+                    pr.r = new Rectangle(x+b*(col-2),cY-h,b,h);
+                    pr.ref=new int[1];
+                    pr.ref[0]=col;		
 
 		}
 	}
@@ -217,12 +224,12 @@ public class ChartCanvas extends BaseCanvas {
 		int cY = Float.valueOf(String.valueOf(glyphCenterY)).intValue();
 					
 		for (int col=2; col<record.size(); col++) {
+                    PPrimRectangle pr = new PPrimRectangle();
+                    pp[row * nCols + col] = pr;
+                    pr.r = new Rectangle(cX,cY,2,2);
 
-		   	pp[row * nCols + col] = new PlotPrimitive();
-			pp[row * nCols + col].r = new Rectangle(cX,cY,2,2);
-
-			pp[row * nCols + col].ref=new int[1];
-			pp[row * nCols + col].ref[0]=col;		
+                    pr.ref=new int[1];
+                    pr.ref[0]=col;		
 
 		}
 	}

@@ -1,6 +1,13 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 /**
  * VarCmdCanvas is the canvas of commands for variables
@@ -106,7 +113,7 @@ class GlyphsCmdCanvas extends DBCanvas implements MouseListener, Dependent {
 		
 		Dimension cd = getSize();
 
-		if (Common.useAquaBg) {
+		if (Global.useAquaBg) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, cd.width, cd.height);
 			int y=0;

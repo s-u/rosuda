@@ -1,3 +1,5 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.*;

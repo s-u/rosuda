@@ -1,5 +1,13 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.awt.event.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /**
  * @author Administrator
  **/
@@ -53,7 +61,7 @@ class IndiCanvas extends DBCanvas implements MouseListener, AdjustmentListener, 
 	}
 
 	public void rebuildVars() {
-		if (Common.DEBUG>0) {
+		if (Global.DEBUG>0) {
 			System.out.println("VarFrame.VarCanvas:rebuilding variable ("+cat.getName()+"/"+cats+")");
 		}
 		selMask=new boolean[cats+4];
@@ -78,7 +86,7 @@ class IndiCanvas extends DBCanvas implements MouseListener, AdjustmentListener, 
 
 		int totsel=0;
 		Dimension cd=getSize();
-		if (Common.useAquaBg) {
+		if (Global.useAquaBg) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, cd.width, cd.height);
 			int y=0;

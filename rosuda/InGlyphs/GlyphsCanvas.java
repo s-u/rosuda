@@ -1,7 +1,16 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.plots.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+import org.rosuda.plugins.*;
 
 /**
  * @author Administrator
@@ -56,7 +65,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 	}
 
 	public void rebuildVars() {
-		if (Common.DEBUG>0) {
+		if (Global.DEBUG>0) {
 			System.out.println("VarFrame.VarCanvas:rebuilding variables ("+c_vars+"/"+vs.count()+")");
 		}
 		c_vars=vs.count();
@@ -82,7 +91,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 		
 		int totsel=0;
 		Dimension cd=getSize();
-		if (Common.useAquaBg) {
+		if (Global.useAquaBg) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, cd.width, cd.height);
 			int y=0;
@@ -253,41 +262,70 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 	public void mouseExited(MouseEvent e) {
 	}
 
+        public static void openDataFile(Frame f,SVarSet tvs, String fn)
+        {
+            String fnam=fn;
+            try {
+                if (fnam==null) {
+                    FileDialog fd=new FileDialog(f,"Select data file");
+                    fd.setModal(true);
+                    fd.show();
+                    fnam=fd.getDirectory()+fd.getFile();
+                    //lastUsedDir=fd.getDirectory();
+                    if (fd.getFile()!=null)
+                        tvs.setName(fd.getFile());
+                    else
+                        return;
+                } else tvs.setName(fnam);
+                if (Global.informLoader)
+                    System.out.println("InfoForLoader:Loading data...");
+                BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
+                Common.flushWarnings();
+                long fsz=0;
+                String fnn=fnam;
+                try {
+                    File fil=new File(fnam);
+                    fnn=fil.getName();
+                    fsz=fil.length();
+                } catch(Exception e) {};
+                Loader.LoadData(r,tvs,fsz);
+                if (Global.DEBUG>0) SVarSet.Debug(tvs);
+                if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
+                    tvs.setMarker(new SMarker(tvs.at(0).size()));
+                String wars=Common.getWarnings();
+                if (wars!=null) {
+                    TextFrame hf=new TextFrame();
+                    hf.t.setText("Following warnings were produced during dataset import:\n\n"+wars);
+                    hf.setTitle("Load warnings");
+                    //hf.setModal(true);
+                    hf.show();
+                };
+            } catch (Exception E) {
+                E.printStackTrace();
+            };
+            if (SplashScreen.recentOpen!=null) SplashScreen.recentOpen.addEntry((new File(fnam)).getAbsolutePath());
+
+            return;
+        };
+        
 	public Object run(Object o, String cmd) {
 		
 		if (cmd=="exit") {
 			WinTracker.current.Exit();
 		}
-		if (cmd=="exportForest") {
-			try {
-				PrintStream p=Tools.getNewOutputStreamDlg(win,"Export forest data to ...","forest.txt");
-				vs.exportForest(p);
-			}
-			catch(Exception e) {
-			}
-		}
-		if (cmd=="displayForest") {
-			SVarSet fs=vs.getForestVarSet();
-			Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
-			Common.screenRes=sres;
-			GlyphsFrame vf=InTr.newGlyphsDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-		}
 		
 		if (cmd=="openData") {
 			TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
 			SVarSet tvs = new SVarSet();
-			SNode t=InTr.openTreeFile(f,null,tvs);
-			if (t==null && tvs.count()<1) {
+			openDataFile(f,tvs,null);
+			if (tvs.count()<1) {
 				new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
 			}
 			else {
 				f.setTitle(tvs.getName());
 				Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
 				Common.screenRes=sres;
-				if (t!=null) {
-					InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-				}
-				GlyphsFrame vf=InTr.newGlyphsDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+				GlyphsFrame vf=new GlyphsFrame(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
 			}
 		}
 		if (cmd=="map") {
@@ -302,7 +340,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 			}
 			if (map!=null) {
 				TFrame f=new TFrame("Map ("+map.getName()+")",TFrame.clsMap);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
 				if (vs.getMarker()!=null) {
 					vs.getMarker().addDepend(bc);
@@ -311,13 +349,6 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 				f.add(bc);
 				f.pack();
 				f.show();
-			}
-		}
-		if (cmd=="openTree") {
-			SNode t=InTr.openTreeFile(Common.mainFrame,null,vs,true,true);
-			if (t!=null) {
-				this.getVars();
-				this.repaint();
 			}
 		}
 		if (cmd=="export") {
@@ -358,7 +389,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 				}
 			}
 			catch (Exception eee) {
-				if (Common.DEBUG>0) {
+				if (Global.DEBUG>0) {
 					System.out.println("* VarFrame.Export...: something went wrong during the export: "+eee.getMessage()); eee.printStackTrace();
 				}
 			}
@@ -376,7 +407,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 			}
 			if (selC==1) {
 				
-				win.indf = InTr.newIndiDisplay(vs,0,0,140,600);
+				win.indf = new IndiFrame(vs,0,0,140,600);
 
 				win.indf.vc.cat = theCat;
 				win.indf.vc.repaint();
@@ -401,7 +432,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 			}
 			if (selV>0) {
 				TFrame f=new TFrame("Polygons ("+theVarName+")",TFrame.clsBar);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				PolygonCanvas pc = new PolygonCanvas(f,theVars,vs.getMarker(),"individuals","rectangle");
 				if (vs.getMarker()!=null) {
 					vs.getMarker().addDepend(pc);
@@ -434,7 +465,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 			}
 			if (selC==1 && selN==1) {
 				TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsBar);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				BarCanvas bc = new BarCanvas(f,theCat,vs.getMarker(),theNum);
 				if (vs.getMarker()!=null) {
 					vs.getMarker().addDepend(bc);
@@ -447,7 +478,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 			}
 			if (selC==1 && selN==0) {
 				TFrame f=new TFrame("w.Barchart ("+theCat.getName()+")",TFrame.clsBar);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				BarCanvas bc = new BarCanvas(f,theCat,vs.getMarker());
 				if (vs.getMarker()!=null) {
 					vs.getMarker().addDepend(bc);
@@ -485,7 +516,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 							(vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")",
 							vs.at(i).isCat()?TFrame.clsBar:TFrame.clsHist
 						);
-						f.addWindowListener(Common.defaultWindowListener);
+						f.addWindowListener(Common.getDefaultWindowListener());
 						Canvas cvs=null;
 						if (vs.at(i).isCat()) {
 							BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker());
@@ -495,7 +526,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 							}
 						}
 						else {
-							HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker());
+							HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker());
 							cvs=hc;
 							if (vs.getMarker()!=null) {
 								vs.getMarker().addDepend(hc);
@@ -526,7 +557,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 					"Scatterplot (" + vs.at(vnr[1]).getName()+" vs "+
 					vs.at(vnr[0]).getName()+")",TFrame.clsScatter
 				);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				ScatterCanvas sc=new ScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker());
 				if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
 				sc.setSize(new Dimension(400,300));
@@ -551,7 +582,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 				while(bJ<this.getVars()) {
 					if (this.selMask[bJ]) {
 						TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")",TFrame.clsBox);
-						f.addWindowListener(Common.defaultWindowListener);
+						f.addWindowListener(Common.getDefaultWindowListener());
 						BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),vs.getMarker());
 						if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
 						sc.setSize(new Dimension(80,300));
@@ -567,7 +598,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 				while(bJ<this.getVars()) {
 					if (this.selMask[bJ] && bJ!=bI) {
 						TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")",TFrame.clsBox);
-						f.addWindowListener(Common.defaultWindowListener);
+						f.addWindowListener(Common.getDefaultWindowListener());
 						BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),catVar,vs.getMarker());
 						if (vs.getMarker()!=null) {
 							vs.getMarker().addDepend(sc);
@@ -604,7 +635,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 					((weight==null)?"":"W")+ "FD ("+	vs.at(vnr[1]).getName()+" vs "+	vs.at(vnr[0]).getName()+")"+ ((weight==null)?"":"*"+weight.getName()),
 					TFrame.clsFD
 				);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				FluctCanvas sc;
 				if (cmd=="speckle" && weight!=null && weight.isCat()) {
 					sc=new FCCCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
@@ -637,7 +668,7 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 					}
 				}
 				TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
-				f.addWindowListener(Common.defaultWindowListener);
+				f.addWindowListener(Common.getDefaultWindowListener());
 				PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
 				if (vs.getMarker()!=null) {
 					vs.getMarker().addDepend(sc);
@@ -648,85 +679,6 @@ class GlyphsCanvas extends DBCanvas implements MouseListener, AdjustmentListener
 				f.show();
 				f.initPlacement();
 			}
-		}
-		if (cmd=="growTree") {
-			ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
-			pd.setText("Initializing plugin, loading R ...");
-			pd.show();
-			Plugin gt=PluginManager.loadPlugin("PluginGetTreeR");
-			if (gt==null || !gt.initPlugin()) {
-				pd.dispose();
-				new MsgDialog(win,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Tree generation plugin not found":gt.getLastError()));
-				return null;
-			}
-			gt.setParameter("dataset",vs);
-			gt.checkParameters();
-			pd.setVisible(false);
-			if (!gt.pluginDlg(win)) {
-				pd.dispose();
-				if (gt.cancel) {
-					gt.donePlugin();
-					return null;
-				}
-				new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
-				return null;
-			}
-			pd.setProgress(40);
-			pd.setVisible(true);
-			if (!gt.execPlugin()) {
-				pd.dispose();
-				HelpFrame hf=new HelpFrame();
-				hf.t.setText("Tree generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
-				hf.setTitle("Plugin execution failed");
-				hf.show();
-				return null;
-			}
-			pd.setProgress(100);
-			SNode nr=(SNode)gt.getParameter("root");
-			gt.donePlugin();
-			if (nr!=null) {
-				genCount++;
-				TFrame fff=new TFrame("Generated_"+genCount,TFrame.clsTree);
-				TreeCanvas tc=InTr.newTreeDisplay(nr,fff);
-			}
-			pd.dispose();
-		}
-
-		if (cmd=="deriveVar") { // derive variable
-			ProgressDlg pd=new ProgressDlg(null,"Running var generation plugin ...");
-			pd.setText("Initializing plugin, loading R ...");
-			pd.show();
-			Plugin gt=PluginManager.loadPlugin("PluginDeriveVar");
-			if (gt==null || !gt.initPlugin()) {
-				pd.dispose();
-				new MsgDialog(win,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Tree generation plugin not found":gt.getLastError()));
-				return null;
-			}
-			gt.setParameter("dataset",vs);
-			gt.checkParameters();
-			pd.setVisible(false);
-			if (!gt.pluginDlg(win)) {
-				pd.dispose();
-				if (gt.cancel) {
-					gt.donePlugin();
-					return null;
-				}
-				new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
-				return null;
-			}
-			pd.setProgress(40);
-			pd.setVisible(true);
-			if (!gt.execPlugin()) {
-				pd.dispose();
-				HelpFrame hf=new HelpFrame();
-				hf.t.setText("Variable generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
-				hf.setTitle("Plugin execution failed");
-				hf.show();
-				return null;
-			}
-			pd.setProgress(100);
-			gt.donePlugin();
-			pd.dispose();
 		}
 
 		return null;

@@ -1,5 +1,12 @@
+package org.rosuda.InGlyphs;
+
 import java.awt.*;
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 class QPCanvas extends LayerCanvas {
 

@@ -1,12 +1,18 @@
+package org.rosuda.InGlyphs;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+import org.rosuda.plugins.*;
 
 public class PonigoliAppWindow extends JFrame implements ActionListener {
 	
-	public static JFrame frame;
+    public static JFrame frame;
     static String filename = null;
     static Dataset dataSet = null;
     static String scale = "same scale";
@@ -89,20 +95,19 @@ public class PonigoliAppWindow extends JFrame implements ActionListener {
 						
 						// Set file path and name				
 						dataSet = new Dataset(filePath.getText());
-						Common.initStatic();
 						
 						// 100 cases
 						SMarker m = new SMarker(100);
 
 						// create a frame
-						TFrame polygonFrame = new TFrame("test plot",TFrame.clsUser);
+                                                GFrame polygonFrame = new GFrame("test plot",TFrame.clsUser);
 
 						polygonFrame.dataSet = dataSet;
 						polygonFrame.chartType = chartType;
 						polygonFrame.scale = scale;
 
 						Common.mainFrame = polygonFrame;
-						polygonFrame.addWindowListener(Common.defaultWindowListener);
+						polygonFrame.addWindowListener(Common.getDefaultWindowListener());
 						ChartCanvas cCanvas = new ChartCanvas(polygonFrame,m);
 						m.addDepend(cCanvas);
 						cCanvas.setSize(new Dimension(400,300));
@@ -143,8 +148,17 @@ public class PonigoliAppWindow extends JFrame implements ActionListener {
 		setTitle("Ponigoli");
 		setVisible(true);
 	}
-	public static void main(String[] args) {
-		frame = new PonigoliAppWindow();
+    
+	public static void main(String[] argv) {
+            argv=Global.parseArguments(argv);
+
+            Platform.initPlatform("org.rosuda.klimt.");
+            PluginManager pm=PluginManager.getManager();
+            Common.initValuesFromConfigFile(pm);
+            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
+
+            Common.mainFrame = frame = new PonigoliAppWindow();
 	}
 	public void actionPerformed(ActionEvent e) {
 		JMenuItem source = (JMenuItem)(e.getSource());

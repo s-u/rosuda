@@ -3,11 +3,17 @@
  * InGlyphs
  * Created by Daniela Di Benedetto.
  **/
+package org.rosuda.InGlyphs;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 /**
  * implementation of polygons
@@ -118,7 +124,7 @@ public class PolygonCanvas extends BaseCanvas {
 					if (i==-1) {
 						i=cats;
 					}
-					if (weights[pol].isnum) {
+					if (weights[pol].isNum()) {
 						double wval=weights[pol].atD(tri);
 						if (wval<0) {
 							wval=-wval;
@@ -201,7 +207,7 @@ public class PolygonCanvas extends BaseCanvas {
 				int varCat = 0;
 				for (int var=0; var<weights.length; var++) {
 					if (var!=catPos) {
-						if (weights[var].isnum) {
+						if (weights[var].isNum()) {
 							double wval=weights[var].atD(pol);
 							if (wval<0) {
 								wval=-wval;
@@ -391,14 +397,6 @@ public class PolygonCanvas extends BaseCanvas {
 		}
 	}
 
-	public void paintPost(PoGraSS g) {
-		SNode cn=(m!=null)?m.getNode():null;
-		if (cn!=null && cn.splitVar==cat) {
-			g.setColor("red");
-			g.drawLine(ax.getValuePos(cn.splitValF),mTop,ax.getValuePos(cn.splitValF),H-mBottom);
-		}
-	}
-
 	public void mousePressed(MouseEvent ev) {
 		int x=ev.getX(), y=ev.getY();
 		if (y>H-mBottom) {
@@ -461,8 +459,8 @@ public class PolygonCanvas extends BaseCanvas {
 	}
 
 	public String queryObject(int i) {
-		if (pp!=null && pp[i]!=null && pp[i].ref!=null) {
-			int mark=(int)(((double) pp[i].ref.length)*pp[i].getMarkedProportion(m,-1)+0.5);
+		if (pp!=null && pp[i]!=null && pp[i].cases()>0) {
+			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
 		}
 		return "Not Available";
 	}
@@ -542,13 +540,14 @@ public class PolygonCanvas extends BaseCanvas {
 	}
 
 	public void drawPolygon(double[] a, int pol, double glyphCenterX, double glyphCenterY, double r, boolean centerPolygon) {
-
+                PPrimPolygon centerPol=null;
 		int nElems;
 		if (centerPolygon) {
-			nElems = a.length+1;
-			pp[pol * nElems + nElems-1] = new PlotPrimitive();
-			pp[pol * nElems + nElems-1].pg = new Polygon();
-			pp[pol * nElems + nElems-1].col=Color.red;
+                    centerPol = new PPrimPolygon();
+                    nElems = a.length+1;
+                    pp[pol * nElems + nElems-1] = centerPol;
+                    centerPol.pg = new Polygon();
+                    centerPol.col=Color.red;
 		}
 		else {
 			nElems = a.length;
@@ -567,34 +566,35 @@ public class PolygonCanvas extends BaseCanvas {
 			angle1 = angle2;
 			angle2 += a[tri];
 
-			pp[pol * nElems + tri] = new PlotPrimitive();
-			pp[pol * nElems + tri].pg = new Polygon();
-			pp[pol * nElems + tri].col=Common.getHCLcolor(tri*360/a.length);
+                        PPrimPolygon pr = new PPrimPolygon();
+                        pp[pol * nElems + tri] = pr;
+			pr.pg = new Polygon();
+			pr.col=Common.getHCLcolor(tri*360/a.length);
 
 			x1 = glyphCenterX + r * Math.cos(angle1);
 			y1 = glyphCenterY + r * Math.sin(angle1);
 			x2 = glyphCenterX + r * Math.cos(angle2);
 			y2 = glyphCenterY + r * Math.sin(angle2);
-			pp[pol * nElems + tri].pg.addPoint(Float.valueOf(String.valueOf(x1)).intValue(),Float.valueOf(String.valueOf(y1)).intValue());
-			pp[pol * nElems + tri].pg.addPoint(Float.valueOf(String.valueOf(x2)).intValue(),Float.valueOf(String.valueOf(y2)).intValue());
+			pr.pg.addPoint(Float.valueOf(String.valueOf(x1)).intValue(),Float.valueOf(String.valueOf(y1)).intValue());
+			pr.pg.addPoint(Float.valueOf(String.valueOf(x2)).intValue(),Float.valueOf(String.valueOf(y2)).intValue());
 
 			if (centerPolygon) {
 				x3 = glyphCenterX + cpr * Math.cos(angle2);
 				y3 = glyphCenterY + cpr * Math.sin(angle2);
 				x4 = glyphCenterX + cpr * Math.cos(angle1);
 				y4 = glyphCenterY + cpr * Math.sin(angle1);
-				pp[pol * nElems + tri].pg.addPoint(Float.valueOf(String.valueOf(x3)).intValue(),Float.valueOf(String.valueOf(y3)).intValue());
-				pp[pol * nElems + tri].pg.addPoint(Float.valueOf(String.valueOf(x4)).intValue(),Float.valueOf(String.valueOf(y4)).intValue());
-				pp[pol * nElems + nElems-1].pg.addPoint(Float.valueOf(String.valueOf(x3)).intValue(),Float.valueOf(String.valueOf(y3)).intValue());
+				pr.pg.addPoint(Float.valueOf(String.valueOf(x3)).intValue(),Float.valueOf(String.valueOf(y3)).intValue());
+				pr.pg.addPoint(Float.valueOf(String.valueOf(x4)).intValue(),Float.valueOf(String.valueOf(y4)).intValue());
+				centerPol.pg.addPoint(Float.valueOf(String.valueOf(x3)).intValue(),Float.valueOf(String.valueOf(y3)).intValue());
 			}
 			else {
-				pp[pol * nElems + tri].pg.addPoint(Float.valueOf(String.valueOf(glyphCenterX)).intValue(),Float.valueOf(String.valueOf(glyphCenterY)).intValue());
+				pr.pg.addPoint(Float.valueOf(String.valueOf(glyphCenterX)).intValue(),Float.valueOf(String.valueOf(glyphCenterY)).intValue());
 			}
 
-			pp[pol * nElems + tri].refType="variable";
-			pp[pol * nElems + tri].ref=new int[2];
-			pp[pol * nElems + tri].ref[0]=pol;
-			pp[pol * nElems + tri].ref[1]=tri;
+			//pr.refType="variable";
+			pr.ref=new int[2];
+			pr.ref[0]=pol;
+			pr.ref[1]=tri;
 			/*System.out.print("pp: ");
 			System.out.print(pol * nElems + tri);
 			System.out.print("ref0: ");
@@ -602,10 +602,10 @@ public class PolygonCanvas extends BaseCanvas {
 			System.out.println();*/
 		}
 		if (centerPolygon) {
-			pp[pol * nElems + nElems-1].refType="individual";
-			pp[pol * nElems + nElems-1].ref=new int[2];
-			pp[pol * nElems + nElems-1].ref[0]=pol;
-			pp[pol * nElems + nElems-1].ref[1]=nElems-1 ;
+			//centerPol.refType="individual";
+			centerPol.ref=new int[2];
+			centerPol.ref[0]=pol;
+			centerPol.ref[1]=nElems-1 ;
 		}
 	}
 }
