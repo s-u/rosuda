@@ -128,7 +128,11 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
             else
                 exit();
         }
-        
+
+        if (cmd=="prefs") {
+	    PreferencesFrame.showPrefsDialog();
+	}
+
         if (cmd=="openData") {
             SVarSet tvs=new SVarSet();
             SNode t=InTr.openTreeFile(this,null,tvs);
