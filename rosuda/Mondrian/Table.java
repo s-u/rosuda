@@ -118,7 +118,7 @@ public class Table implements Cloneable {
       this.exp = tmpTable.exp;
       this.lastQuery = tmpTable.lastQuery;
       this.initialQuery = tmpTable.initialQuery;
-System.out.println(" ******** Bins updated ********* "+xStart+" "+xEnd+" "+yStart+" "+yEnd);
+//System.out.println(" ******** Bins updated ********* "+xStart+" "+xEnd+" "+yStart+" "+yEnd);
       tmpTable = null;
   }
 
