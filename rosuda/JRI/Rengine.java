@@ -19,7 +19,9 @@ public class Rengine extends Thread {
     public static int getVersion() {
         return 0x0100; // we should call rniGetVersion or something, but in a safe way ...
     }
-    
+
+    public static int DEBUG=0;
+	
     static Rengine mainEngine=null;
     
     public static Rengine getMainEngine() { return mainEngine; }
@@ -116,7 +118,8 @@ public class Rengine extends Thread {
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
-        System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
+		if (DEBUG>0)
+			System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
         Rsync.unlock();
         String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
         if (!Rsync.safeLock()) {
@@ -124,7 +127,8 @@ public class Rengine extends Thread {
             jriWriteConsole(es);
             System.err.print(es);
         }
-        System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
+		if (DEBUG>0)
+			System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
         return s;
     }
 
@@ -159,7 +163,8 @@ public class Rengine extends Thread {
 
     
     public synchronized REXP eval(String s) {
-        //System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
+		if (DEBUG>0)
+			System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
         boolean obtainedLock=Rsync.safeLock();
         try {
             /* --- so far, we ignore this, because it can happen when a callback needs an eval which is ok ...
@@ -175,14 +180,14 @@ public class Rengine extends Thread {
                 if (er>0) {
                     REXP x=new REXP(this, er);
                     Rsync.unlock();
-                    //System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
+                    if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
                     return x;
                 }
             }
         } finally {
             if (obtainedLock) Rsync.unlock();
         }
-        //System.out.println("Rengine.eval("+s+"): END (ERR)"+Thread.currentThread());
+        if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (ERR)"+Thread.currentThread());
         return null;
     }
     
@@ -220,16 +225,19 @@ public class Rengine extends Thread {
     }
     
     public void run() {
-        System.out.println("Starting R...");
+		if (DEBUG>0)
+			System.out.println("Starting R...");
         if (setupR(args)==0) {
             while (alive) {
                 try {
                     if (runLoop) {                        
-                        System.out.println("***> launching main loop:");
+						if (DEBUG>0)
+							System.out.println("***> launching main loop:");
                         loopRunning=true;
                         rniRunMainLoop();
                         loopRunning=false;
-                        System.out.println("***> main loop finished:");
+						if (DEBUG>0)
+							System.out.println("***> main loop finished:");
                         System.exit(0);
                     }
                     sleep(100);
@@ -239,9 +247,10 @@ public class Rengine extends Thread {
                 }
             }
             died=true;
-            System.out.println("Terminating R thread.");
+			if (DEBUG>0)
+				System.out.println("Terminating R thread.");
         } else {
-            System.out.println("Unable to start R");
+			System.err.println("Unable to start R");
         }
     }
 }
