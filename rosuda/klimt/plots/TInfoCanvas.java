@@ -24,8 +24,12 @@ class TInfoCanvas extends DBCanvas
     public void setNode(SNode n, boolean detailed)
     {
 	det=detailed; cn=n;
-	setSize(det?220:150,det?150:80);
-        getParent().setSize(det?220:150,det?150:80);
+        int h=det?160:80;
+	setSize(det?220:150,h);
+        getParent().setSize(det?220:150,h);
+        Point p=getParent().getLocation();
+        if (p.y+h+10>Common.getScreenRes().height)
+            getParent().setLocation(p.x,Common.screenRes.height-h-5);
 	getParent().repaint();
 	repaint();
     };
@@ -44,8 +48,8 @@ class TInfoCanvas extends DBCanvas
 	    g.drawString("Name: "+cn.Name,15,20);
 	    g.drawString("Cases: "+cn.Cases,15,34);
 	    g.drawString("Split: "+cn.Cond,15,48);
-	    g.drawString("Dev: "+cn.F1,15,62);
-	    g.drawString("Dev Gain: "+cn.devGain,15,76);
+	    g.drawString("Dev: "+Tools.getDisplayableValue(cn.F1),15,62);
+	    g.drawString("Dev Gain: "+Tools.getDisplayableValue(cn.devGain),15,76);
 	    if (cn.getSource()!=null) {
 		SVarSet src=cn.getSource();
 		SMarker m=cn.getSource().getMarker();

@@ -728,11 +728,11 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		    n.sel=1;
 		    selNode=n;
 		    
-		    if (toolMode==Tool_Select && !ev.isAltDown()) {// no alt=select in node
+		    if (toolMode==Tool_Select && !ev.isAltDown() && (ev.getModifiers()&MouseEvent.BUTTON1_MASK)>0) {// no alt=select in node
 			SMarker m=n.getSource().getMarker();
 			int setTo=0;
 			if (ev.isControlDown()) setTo=1;
-			if (!ev.isShiftDown() && !ev.isControldown()) m.selectNone();
+			if (!ev.isShiftDown() && !ev.isControlDown()) m.selectNone();
 			
 			if ((m!=null)&&(n.data!=null)) {
 			    for (Enumeration e2=n.data.elements(); e2.hasMoreElements();) {
@@ -758,8 +758,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	};
 	
-	showInfo=gotSel&&(ev.isPopupTrigger() || ev.isAltDown() || (ev.getModifiers()&MouseEvent.BUTTON2_MASK)>0);	
-	showDetailed=ev.isShiftDown();
+	showInfo=gotSel&&(ev.isPopupTrigger() || ev.isAltDown() ||
+                          (ev.getModifiers()&(MouseEvent.BUTTON2_MASK|MouseEvent.BUTTON3_MASK))>0);	
+	showDetailed=ev.isShiftDown() /* || (ev.getModifiers()&MouseEvent.BUTTON2_MASK)>0 */;
 	selectNode(selNode);
     };
 

@@ -27,8 +27,10 @@ public class Common
     /** number of warnings so far */
     static int warningsCount=0;
     /** max. # of warnings, any further will be dropped (0=no limit)  */
-    static int maxWarnings=20; 
-
+    static int maxWarnings=20;
+    /** screen resolution as obtained from the toolkit.  */
+    public static Dimension screenRes=null;
+    /** common background color. TFrame uses this as default */
     public static Color backgroundColor=new Color(255,255,192);
     
     /** add an application warning/error */
@@ -98,5 +100,12 @@ public class Common
 	};
 	if (mid==' ') mid=s.charAt(1);
 	return ""+s.charAt(0)+mid+s.charAt(s.length()-1);
+    };
+
+    /** returns screen resolution. the value is cached after first successful retrival
+        @returns screen resolution */
+    public static Dimension getScreenRes() {
+        if (Common.screenRes==null) Common.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
+        return Common.screenRes;
     };
 };

@@ -18,6 +18,7 @@ public class HelpFrame extends TFrame implements ActionListener {
 		 "<n>        - Node select\n\nOther commands:\n"+
 		 "<c>        - toggle type of Connecting lines\n"+
 		 "<d>        - toggle Deviance display\n"+
+                 "<shift><d> - show deviance plot\n"+
 		 "<f>        - toggle Final node alignment\n"+
 		 "<h>        - Help\n"+
 		 "<l>        - toggle Labels\n"+
@@ -30,10 +31,28 @@ public class HelpFrame extends TFrame implements ActionListener {
 		 "<r>        - Re-arrange nodes\n"+
 		 "<shift><r> - Rotate\n"+
 		 "<s>        - toggle node Size (fixed/porportional)\n"+
-		 "<+>/<->    - change deviance zoom\n");
+                 "<shift><x> - export to PoGraSS meta file\n"+
+		 "<+>/<->    - change deviance zoom\n\n"+
+           "In most plots:\n"+
+           "<shift><p> - save as EPS\n"+
+           "<shift><x> - export as PoGraSS meta file\n"+
+           "<shift><c> - export selected cases\n\n"+
+           "Treemap:\n"+
+           "<a>        - toggle between treemap and spineplot of leaves\n"+
+           "<shift><r> - rotate\n\n"+
+           "Deviance plot:\n"+
+           "<c>        - switch between cumulative(=absolute deviance) and gain display\n"+
+           "<l>        - switch between bars and lines\n\n"+
+           "Scatterplot:\n"+
+           "<e>        - toggle enhanced highlighting\n"+
+           "<l>        - toggle labels\n"+
+           "<shift><r> - rotate, i.e. swap axes\n\n"+
+           "Barchart:\n"+
+           "<s>        - switch between spineplot and barchart mode\n"
+           );
 		 
 	add(t);
-	t.setEditable(false);
+        t.setEditable(false); t.setFont(new Font("Monospaced",Font.PLAIN,10));
 	t.setBackground(Color.white);
 	Panel p=new Panel();	
 	add(p,BorderLayout.SOUTH);

@@ -48,7 +48,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	updatePoints();
 	addMouseListener(this);
 	addMouseMotionListener(this);
-	addKeyListener(this);
+	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
 	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
@@ -269,12 +269,11 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='r') run(this,"rotate");
+	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
-	// ugly temporary fix
 	if (e.getKeyChar()=='e') run(this,"selRed");
     };
     public void keyPressed(KeyEvent e) {};

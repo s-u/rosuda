@@ -31,5 +31,24 @@ public class Tools {
 	} catch(Exception e) {
 	};
 	return null;	
-    };    
+    };
+
+    public static String getDisplayableValue(double val) { return getDisplayableValue(val,val); };
+    
+    public static String getDisplayableValue(double val, double range) {
+        double vLenLog10=(range>0)?Math.log(range)/Math.log(10):0;
+        int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
+        if (dac==0) return ""+((int)val);
+        double post=val-((double)((int)(val)));
+        while(dac>0) { post*=10; dac--; };
+        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
+    };
+
+    public static String getDisplayableValue(double val, int dac) {
+        if (dac==0) return ""+((int)val);
+        double post=val-((double)((int)(val)));
+        while(dac>0) { post*=10; dac--; };
+        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
+    };
+
 };

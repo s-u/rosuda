@@ -182,6 +182,7 @@ public class InTr
 	    f.setTitle("KLIMT "+Common.Version+", "+tvs.getName()+" - tree");
 
 	    Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
 	    if (t!=null)
 		newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
 	    VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
