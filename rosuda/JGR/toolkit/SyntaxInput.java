@@ -39,9 +39,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         this.addKeyListener(this);
         this.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
-                if (funHelpTip != null) funHelpTip.hide();
+                if (funHelpTip != null) { funHelpTip.hide(); p = null; }
                 if (mComplete != null && mComplete.isVisible()) {
-                    if (cmdHelp != null) cmdHelp.hide();
+                    if (cmdHelp != null) { cmdHelp.hide(); p = null; }
                     mComplete.setVisible(false);
                 }
             }
@@ -52,7 +52,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     private String getLastCommand() {
-		if (funHelpTip != null) funHelpTip.hide();
+		if (funHelpTip != null) { funHelpTip.hide(); p = null; }
         String word = null;
         String text = this.getText();
         int pos = this.getCaretPosition();
@@ -118,14 +118,21 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     public void showCmdCompletions(String[] result) {
         try {
 			this.requestFocus(true);
-            if (cmdHelp != null) cmdHelp.hide();
+            if (cmdHelp != null) { cmdHelp.hide(); }
+			this.setCaretPosition(this.getCaretPosition());
         	p = getCaret().getMagicCaretPosition();
+			System.out.println("use :"+p);
+			if (p == null) {
+				this.setCaretPosition(this.getCaretPosition());
+				p = getCaret().getMagicCaretPosition();
+			}
         	SwingUtilities.convertPointToScreen(p,this);
+			System.out.println("converted :"+p);
         	mComplete.refresh(result);
         	mComplete.setVisible(true);
         	cmdHelp = PopupFactory.getSharedInstance().getPopup(this,mComplete,p.x,p.y+15);
         	cmdHelp.show();
-        } catch (Exception e) {}
+        } catch (Exception e) { e.printStackTrace();}
     }
 	
     /**
@@ -163,13 +170,18 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
+			//this.requestFocus(true);
+			//p = getCaret().getMagicCaretPosition();
+			//SwingUtilities.convertPointToScreen(p,this);
 			if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
+				p = null;
             }
             String text = null;
             int pos = getCaretPosition();
             if (pos==0) return;
+			this.setCaretPosition(pos);
             try {
                 int i = getLineStartOffset(getLineOfOffset(pos));
                 text = getText(i,pos-i);
@@ -198,15 +210,17 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun);
 				else result = RController.completeCommand(fun);
                 if (result != null && result.length > 1) {
-                    if (funHelpTip != null) funHelpTip.hide();
+                    if (funHelpTip != null) { funHelpTip.hide(); p = null; }
+					System.out.println("current p: "+getCaret().getMagicCaretPosition());
+					System.out.println("old p: "+p);
                     if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
                         showCmdCompletions(result);
                     //if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
                 }
                 else {
-                    if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun) ) {
+                    if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun)) {
                         insertAt(pos,result[0].replaceFirst(fun,""));
-                        if (cmdHelp != null) cmdHelp.hide();
+                        if (cmdHelp != null) { cmdHelp.hide(); p = null; }
                         if (mComplete != null) mComplete.setVisible(false);
                     }
                     else Toolkit.getDefaultToolkit().beep();
@@ -224,42 +238,45 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                         if (funHelpTip != null) {
                             funHelpTip.hide();
                             funHelpTip = null;
+							p = null;
                         }
                         showCmdCompletions(result);
                     }
                     else {
-                        if (cmdHelp != null) cmdHelp.hide();
+                        if (cmdHelp != null) { cmdHelp.hide(); p = null; }
                         mComplete.setVisible(false);
                     }
                 }
                 else {
-                    if (cmdHelp != null) cmdHelp.hide();
+                    if (cmdHelp != null) { cmdHelp.hide(); p = null; }
                     mComplete.setVisible(false);
                 }
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (cmdHelp != null) cmdHelp.hide();
+            if (cmdHelp != null) { cmdHelp.hide(); p = null; }
             mComplete.setVisible(false);
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
+				p = null;
             }
         }
         if (ke.getKeyCode() != KeyEvent.VK_TAB && ke.getKeyCode() != KeyEvent.VK_UP && ke.getKeyCode() != KeyEvent.VK_DOWN && ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isShiftDown() && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
+				p = null;
             }
             showFunHelp(getLastCommand());
         }
 		if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            if (cmdHelp != null) cmdHelp.hide();
+            if (cmdHelp != null) { cmdHelp.hide(); p = null; }
             mComplete.setVisible(false);
-            if (funHelpTip != null) funHelpTip.hide();
+            if (funHelpTip != null) { funHelpTip.hide(); p = null; }
         }
 		if (mComplete.isVisible() || ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN || ke.getKeyCode() == KeyEvent.VK_TAB) {
-			if (funHelpTip != null) funHelpTip.hide();
+			if (funHelpTip != null) { funHelpTip.hide(); p = null; }
 		}
     }
     
@@ -281,6 +298,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                         if (funHelpTip != null) {
                             funHelpTip.hide();
                             funHelpTip = null;
+							p = null;
                         }
                     }
                 });
@@ -365,7 +383,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         public void completeCommand() {
             parent.insertAt(parent.getCaretPosition(),cmds.getSelectedItem().replaceFirst(fun,""));
             this.setVisible(false);
-            if (cmdHelp != null) cmdHelp.hide();
+            if (cmdHelp != null) { cmdHelp.hide(); p = null; }
         }
 		
         /**
@@ -390,7 +408,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
          * Show CodeCompletionMultiple.
          */
         public void setVisible(boolean b) {
-            if (!b && cmdHelp != null) cmdHelp.hide();
+            if (!b && cmdHelp != null) { cmdHelp.hide(); p = null; }
             super.setVisible(b);
         }
     }
