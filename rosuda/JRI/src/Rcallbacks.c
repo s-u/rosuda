@@ -239,20 +239,40 @@ void Re_read_history(char *buf)
 
 void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+	jmethodID mid;
+	jstring s;
+    JNIEnv *lenv=checkEnvironment();
+	
+    jri_checkExceptions(lenv, 1);
+    mid=(*lenv)->GetMethodID(lenv, engineClass, "jriLoadHistory", "(Ljava/lang/String;)V");
+    jri_checkExceptions(lenv, 0);
+#ifdef JRI_DEBUG
+	printf("jriLoadHistory mid=%x\n", mid);
+#endif
+	if (!mid) {
+#ifdef JRI_DEBUG
+		printf("can't find jriLoadHistory method\n");
+#endif
+		return;
+	}
 
-    SEXP sfile;
-    char file[PATH_MAX], *p;
+	{
+		SEXP sfile;
+		char file[PATH_MAX], *p;
 
-    /*
-    checkArity(op, args);
-    sfile = CAR(args);
-    if (!isString(sfile) || LENGTH(sfile) < 1)
-        errorcall(call, "invalid file argument");
-    p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
-    if(strlen(p) > PATH_MAX - 1)
-        errorcall(call, "file argument is too long");
-    strcpy(file, p);
-     */
+		checkArity(op, args);
+		sfile = CAR(args);
+		if (!isString(sfile) || LENGTH(sfile) < 1)
+			errorcall(call, "invalid file argument");
+		p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
+		if(strlen(p) > PATH_MAX - 1)
+			errorcall(call, "file argument is too long");
+		s=(*lenv)->NewStringUTF(lenv, p);
+	}
+	(*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+    jri_checkExceptions(lenv, 1);
+	if (s)
+		(*lenv)->DeleteLocalRef(lenv, s);
 }
 
 void Re_savehistory(SEXP call, SEXP op, SEXP args, SEXP env)
