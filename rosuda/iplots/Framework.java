@@ -253,6 +253,23 @@ public class Framework {
 	return hc;
     };
 
+    public BoxCanvas newBoxplot(int i) { return newBoxplot(cvs,i,-1); }
+    public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,i,ic); }
+    public BoxCanvas newBoxplot(SVarSet vs, int i, int ic) {
+        SVar catVar=(ic<0)?null:vs.at(ic);
+        if (vs.getMarker()==null)
+            vs.setMarker(new SMarker(vs.at(i).size()));
+        TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
+                            TFrame.clsBox);
+        f.addWindowListener(Common.defaultWindowListener);
+        BoxCanvas sc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+        sc.setSize(new Dimension(80,300));
+        f.add(sc); f.pack(); f.show();
+        f.initPlacement();
+        return sc;
+    };
+    
     /** display a new variables frame
         @return variable frame object */
     public VarFrame newVarFrame() { return newVarFrame(cvs); };
