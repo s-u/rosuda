@@ -192,12 +192,12 @@ class GDColor extends GDObject {
     public GDColor(int col) {
         this.col=col;
         //System.out.println(">> COLOR: "+Integer.toString(col,16));
-        if (col==-1 || col==0x80000000) gc=null;
+        if ((col&0xff000000)==0) gc=null; // opacity=0 -> no color -> don't paint
         else
             gc=new Color(((float)(col&255))/255f,
                          ((float)((col>>8)&255))/255f,
                          ((float)((col>>16)&255))/255f,
-                         1f-((float)((col>>24)&255))/255f);
+                         ((float)((col>>24)&255))/255f);
         //System.out.println("          "+gc);
     }
 
@@ -214,13 +214,12 @@ class GDFill extends GDObject {
     public GDFill(int col) {
         this.col=col;
         //System.out.println(">> FILL COLOR: "+Integer.toString(col,16));
-        if (col==-1 || col==0x80000000)
-            gc=null;
+        if ((col&0xff000000)==0) gc=null; // opacity=0 -> no color -> don't paint
         else
             gc=new Color(((float)(col&255))/255f,
                          ((float)((col>>8)&255))/255f,
                          ((float)((col>>16)&255))/255f,
-                         1f-((float)((col>>24)&255))/255f);
+                         ((float)((col>>24)&255))/255f);
         //System.out.println("          "+gc);
     }
 
