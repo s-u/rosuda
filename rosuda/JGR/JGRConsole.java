@@ -57,7 +57,7 @@ FocusListener, RMainLoopCallbacks {
 
         //Initialize JGRConsoleMenu
         String[] Menu = {
-            "+", "File","Load Datafile", "loaddata","-","@NNew Document","new","@OOpen Document","open","!OSource File...","source","-", "@DSet Working Directory", "setwd","~File.Quit", 
+            "+", "File","Load Datafile", "loaddata","-","@NNew Document","new","@OOpen Document","open","!OSource File...","source","@SSave","save","-", "@DSet Working Directory", "setwd","~File.Quit", 
             "~EditC",
             "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
             "DataTable", "table", "-", "Increase Font Size", "fontBigger",
@@ -385,8 +385,9 @@ FocusListener, RMainLoopCallbacks {
                     toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
         } else if (cmd == "help")  execute("help.start()");
-        else if (cmd == "table") new DataTable(null,null);
-        else if (cmd == "savewsp" || cmd == "save") saveWorkSpace(wspace);
+        else if (cmd == "table") new DataTable(null,null,true);
+        else if (cmd == "save") output.startExport();
+        else if (cmd == "savewsp") saveWorkSpace(wspace);
         else if (cmd == "saveaswsp") saveWorkSpaceAs();
         else if (cmd == "search") textFinder.showFind(false);
         else if (cmd == "searchnext") textFinder.showFind(true);
