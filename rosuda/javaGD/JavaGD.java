@@ -57,29 +57,6 @@ public class JavaGD extends GDInterface implements WindowListener {
         if (f!=null) f.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
     }
 
-    public void executeDevOff() {
-        if (c==null || c.getDeviceNumber()<0) return;
-        try { // for now we use no cache - just pure reflection API for: Rengine.getMainEngine().eval("...")
-            Class cl=Class.forName("org.rosuda.JRI.Rengine");
-            if (cl==null)
-                System.out.println(">> can't find Rengine, close function disabled. [c=null]");
-            else {
-                Method m=cl.getMethod("getMainEngine",null);
-                Object o=m.invoke(null,null);
-                if (o!=null) {
-                    Class[] par=new Class[1];
-                    par[0]=Class.forName("java.lang.String");
-                    m=cl.getMethod("eval",par);
-                    Object[] pars=new Object[1];
-                    pars[0]="try({ dev.set("+(c.getDeviceNumber()+1)+"); dev.off()},silent=TRUE)";
-                    m.invoke(o, pars);
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(">> can't find Rengine, close function disabled. [x:"+e.getMessage()+"]");
-        }
-    }
-
     /*-- WindowListener interface methods */
     
     public void windowClosing(WindowEvent e) {
