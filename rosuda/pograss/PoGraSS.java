@@ -199,4 +199,7 @@ public class PoGraSS
     // new since 0.97
     public void nextObject() { nextObject(null); };
     public void nextObject(String name) {};   
+    
+    public void setGlobalAlpha(float alpha) {};
+    public void resetGlobalAlpha() {};   
 }

@@ -177,4 +177,11 @@ public class PoGraSSgraphics extends PoGraSS
         return r.height;
     }
 
+    public void setGlobalAlpha(float alpha) {
+        ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+    }
+    
+    public void resetGlobalAlpha() {
+        ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
 }
