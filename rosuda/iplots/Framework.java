@@ -217,7 +217,28 @@ public class Framework implements Dependent, ActionListener {
         SVar v=new SVar(name);
 	int i=0; while(i<d.length) v.add(d[i++]);
 	return addVar(v);
-    };
+    }
+
+    /** construct a new factor variable from supplied array of integers (cases) and strings (levels). Unlike datasets variables cannot have the same name within a dataset.
+        @param name variable name
+        @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
+        @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
+        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+        */
+    public int newVar(String name, int[] ix, String[] d) {
+        if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+            int i=mmDlg(name,d.length);
+            if (i<0) return i;
+        }
+        SVar v=new SVar(name);
+        int i=0; while(i<ix.length) {
+            int id=ix[i++];
+            v.add((id<1 || id>d.length)?null:d[id-1]);
+        }
+        return addVar(v);
+    }
+
+    
 
     public static String[] toStringArray(Object[] o) {
         String[] s=new String[o.length];
