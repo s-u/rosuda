@@ -74,8 +74,24 @@ public class RController {
      * Get R_DEFAULT_PACKAGES.
      * @return default packages
      */
+    public static String getCurrentPackages() {
+        REXP x = JGR.R.eval(".allpkg <- (.packages(all=T));.p <- NULL;for (i in 1:length(.allpkg)) .p <- paste(.p,as.character(.allpkg[i]),sep=\",\");substring(.p,2)");
+        if (x != null && x.asStringArray()!=null) {
+			String p = "";
+			for (int i = 0; i < x.asStringArray().length-1; i++)
+				p += x.asStringArray()[i]+",";
+			return p+=x.asStringArray()[x.asStringArray().length-1];
+        }
+		return null;
+    }
+	
+	
+	/**
+	 * Get current installed packages
+     * @return installed packages
+     */
     public static String[] getDefaultPackages() {
-        REXP x = JGR.R.eval("getOption(\"defaultPackages\")");
+        REXP x = JGR.R.eval("");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return new String[] {};
     }

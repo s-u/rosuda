@@ -98,6 +98,9 @@ public class JGRPrefs {
 
     /** UseEmacsKeyBindings*/
     public static boolean useEmacsKeyBindings = false;
+	
+	/** Packages which were installed when JGR was running the last time*/
+	public static String previousPackages = null;
     
     ///** Initial working directory */
     //public static String WorkingDirectory = System.getProperty("user.home");
@@ -187,7 +190,7 @@ public class JGRPrefs {
         useHelpAgentEditor =  prefs.getBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
-        //WorkingDirectory = prefs.get("InitialWorkingDirectory",WorkingDirectory);
+        previousPackages = prefs.get("PreviousPackages",null);
     }
 
      /**
@@ -206,7 +209,7 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);
         prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
-        //prefs.put("InitialWorkingDirectory", WorkingDirectory);
+		prefs.put("PreviousPackages",RController.getCurrentPackages());
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
             for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)
@@ -219,6 +222,16 @@ public class JGRPrefs {
 				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];
             prefs.put("InitialRLibraryPath", libpaths);
         }
+        try {
+            prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
+        } catch (IOException e) {
+        } catch (BackingStoreException e) {
+        }
+    }
+	
+	public static void writeCurrentPackages() {
+        Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
+		prefs.put("PreviousPackages",RController.getCurrentPackages());
         try {
             prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
         } catch (IOException e) {

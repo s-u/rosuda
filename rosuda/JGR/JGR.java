@@ -216,10 +216,13 @@ public class JGR {
 				JOptionPane.QUESTION_MESSAGE);
 
 		if (exit == 0) {
+			JGRPrefs.writeCurrentPackages();
 			writeHistory();
 			return "y\n";
-		} else if (exit == 1)
+		} else if (exit == 1) {
+			JGRPrefs.writeCurrentPackages();
 			return "n\n";
+		}
 		else
 			return "c\n";
 	}
@@ -381,6 +384,11 @@ public class JGR {
 			e.printStackTrace();
 			new ErrorMsg(e);
 		}
+	}
+	
+	private void checkForMissingPkg() {
+		System.out.println("Previously installed: "+JGRPrefs.previousPackages);
+		System.out.println("Installed: "+RController.getCurrentPackages());
 	}
 
 	/**
