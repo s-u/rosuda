@@ -23,6 +23,7 @@ public class Rengine extends Thread {
         this.args=args;
         callback=initialCallbacks;
         start();
+        while (!alive && !died) yield();
     }
 
     public native int rniSetupR(String[] args);
@@ -48,14 +49,16 @@ public class Rengine extends Thread {
     public synchronized native String[] rniGetStringArray(long exp);
     public synchronized native int[] rniGetIntArray(long exp);
     public synchronized native double[] rniGetDoubleArray(long exp);
+    public synchronized native long[] rniGetVector(long exp);
 
     public synchronized native long rniPutString(String s);
     public synchronized native long rniPutStringArray(String[] a);
     public synchronized native long rniPutIntArray(int [] a);
-    public synchronized native long rniPutDoubleArray(double[] exp);
+    public synchronized native long rniPutDoubleArray(double[] a);
+    public synchronized native long rniPutVector(long[] exps);
     
-    public synchronized native long rniAttr(long exp);
-    public synchronized native void rniSetAttr(long exp);
+    public synchronized native long rniGetAttr(long exp, String name);
+    public synchronized native void rniSetAttr(long exp, String name, long attr);
 
     public synchronized native long rniCons(long head, long tail);
     public synchronized native long rniCAR(long exp);
@@ -63,6 +66,8 @@ public class Rengine extends Thread {
     public synchronized native long rniPutList(long[] cont);
     public synchronized native long[] rniGetList(long exp);
         
+    public synchronized native void rniAssign(String name, long exp, long rho);
+    
     public synchronized native int rniExpType(long exp);
     public native void rniRunMainLoop();
     
