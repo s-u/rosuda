@@ -165,7 +165,7 @@ public class Rconnection {
         byte[] ctn=ct.getBytes();
         byte[] rq=new byte[symn.length+5+ctn.length+5];
         for(int ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
-        for(int ic=0;ic<ctn.length;ic++) rq[symn.length+9]=ctn[ic];
+        for(int ic=0;ic<ctn.length;ic++) rq[ic+symn.length+9]=ctn[ic];
 	Rtalk.setHdr(Rtalk.DT_STRING,symn.length+1,rq,0);
 	Rtalk.setHdr(Rtalk.DT_STRING,ctn.length+1,rq,symn.length+5);
 	rq[symn.length+4]=0; rq[rq.length-1]=0;
