@@ -223,7 +223,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	int x=ev.getX(), y=ev.getY();
 	Point cl=getFrame().getLocation();
 	Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
-	int i=0, bars=cats, setTo=0;
+        int i=0, bars=cats;
+        boolean setTo=false;
 
         if (Common.DEBUG>0) {
             String mods="";
@@ -250,7 +251,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
         if (actionQuery || actionSelect) {
             int selMode=Common.getSelectMode(ev);
-            if (selMode>1) setTo=1;
+            if (selMode>1) setTo=true;
             while (i<bars) {
                 if (Bars[i]!=null && Bars[i].contains(x,y)) {
                     if (actionQuery) {
@@ -277,7 +278,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
                         int j=0, pts=v.size();
                         while (j<pts) {
                             if (v.getCatIndex(j)==i)
-                                m.set(j,m.at(j)?setTo:1);
+                                m.set(j,m.at(j)?setTo:true);
                             j++;
                         };
                         break; // one can be inside one bar only

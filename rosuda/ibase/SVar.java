@@ -428,7 +428,7 @@ public class SVar extends Vector
 	while(i<x) {
 	    Object o=v.at(i);
 	    if (o!=null) {
-		if (markspec==-1 || m==null || m.getMark(i)==markspec) {
+		if (m==null || m.get(i)==markspec) {
 		    ct++;
 		};
 	    };
@@ -442,7 +442,7 @@ public class SVar extends Vector
 	while(i<x) {
 	    Object o=v.at(i);
 	    if (o!=null) {
-		if (markspec==-1 || m==null || m.getMark(i)==markspec) {
+                if (m==null || m.get(i)==markspec) {
 		    r[ct]=i;
 		    ct++;
 		};
