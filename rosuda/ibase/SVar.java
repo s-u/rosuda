@@ -60,6 +60,10 @@ public class SVar extends Vector
     /** notifier for changes */
     public Notifier notify;
 
+    public boolean cacheRanks=true;
+
+    int[] ranks=null;
+    
     SCatSequence seq=null;
 
     /** derived is not internal (and hence isInternal will return false) */
@@ -276,6 +280,7 @@ public class SVar extends Vector
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
      *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
     public boolean add(Object o) {
+        if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
         if (o==null) {
             missingCount++;
             hasNull=true;
@@ -449,52 +454,114 @@ public class SVar extends Vector
 	cases: variable is not numerical or is categorical, no cases matching
 	specification are present */
     public static int[] getRanked(SVar v, SMarker m, int markspec) {
+        Stopwatch sw=new Stopwatch();
 	if (v==null || v.isCat() || !v.isNum() || v.size()==0) return null;
-	int ct=0;
-	int x=v.size();
-	int i=0; // pass 1 : find relevant cases
-	while(i<x) {
-	    Object o=v.at(i);
-	    if (o!=null) {
-		if (m==null || m.get(i)==markspec) {
-		    ct++;
-		};
-	    };
-	    i++;
-	};
-	if (ct==0) return null;
-	
-	int r[] = new int[ct];
-	ct=0;
-	i=0; // pass 2: store relevant IDs
-	while(i<x) {
-	    Object o=v.at(i);
-	    if (o!=null) {
-                if (m==null || m.get(i)==markspec) {
-		    r[ct]=i;
-		    ct++;
-		};
-	    };
-	    i++;
-	};
-	
-	// pass 3: sort by value
-	i=0;
-	while (i<ct-1) {
-	    double d=v.atD(r[i]);
-	    int j=ct-1;
-	    while (j>i) {
-		double d2=v.atD(r[j]);
-		if (d2<d) {
-		    int xx=r[i]; r[i]=r[j]; r[j]=xx;
-		    d=d2;
-		};
-		j--;
-	    };
-	    i++;
-	};
-	// return the resulting list
-	return r;
+
+        if (m==null && v.cacheRanks && v.ranks!=null) return v.ranks; // we can cache only ranks w/o a marker
+
+        int[] r=null;
+        if (v.size()<1000) {
+            int ct=0;
+            int x=v.size();
+            int i=0; // pass 1 : find relevant cases
+            while(i<x) {
+                Object o=v.at(i);
+                if (o!=null) {
+                    if (m==null || m.get(i)==markspec) {
+                        ct++;
+                    };
+                };
+                i++;
+            };
+            if (ct==0) return null;
+            sw.profile("getRanked: pass 1: find relevant cases");
+            r = new int[ct];
+            ct=0;
+            i=0; // pass 2: store relevant IDs
+            while(i<x) {
+                Object o=v.at(i);
+                if (o!=null) {
+                    if (m==null || m.get(i)==markspec) {
+                        r[ct]=i;
+                        ct++;
+                    };
+                };
+                i++;
+            };
+            sw.profile("getRanked: pass 2: store relevant values");
+
+            // pass 3: sort by value
+            i=0;
+            while (i<ct-1) {
+                double d=v.atD(r[i]);
+                int j=ct-1;
+                while (j>i) {
+                    double d2=v.atD(r[j]);
+                    if (d2<d) {
+                        int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                        d=d2;
+                    };
+                    j--;
+                };
+                i++;
+            };
+            sw.profile("getRanked: pass 3: sort");
+
+        } else {
+            int ct=0;
+            int x=v.size();
+            int i=0; // pass 1 : find relevant cases
+            while(i<x) {
+                Object o=v.at(i);
+                if (o!=null) {
+                    if (m==null || m.get(i)==markspec) {
+                        ct++;
+                    };
+                };
+                i++;
+            };
+            if (ct==0) return null;
+            sw.profile("getRanked: pass 1: find relevant cases");
+            r = new int[ct];
+            double[] da = new double[ct];
+            sw.profile("getRanked: alloc double array for "+ct+" cases");
+            ct=0;
+            i=0; // pass 2: store relevant IDs
+            while(i<x) {
+                Object o=v.at(i);
+                if (o!=null) {
+                    if (m==null || m.get(i)==markspec) {
+                        r[ct]=i; da[ct]=v.atD(i);
+                        ct++;
+                    };
+                };
+                i++;
+            };
+            sw.profile("getRanked: pass 2: store relevant values");
+
+            // pass 3: sort by value
+            i=0;
+            while (i<ct-1) {
+                double d=da[r[i]];
+                int j=ct-1;
+                while (j>i) {
+                    double d2=da[r[j]];
+                    if (d2<d) {
+                        int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                        d=d2;
+                    };
+                    j--;
+                };
+                i++;
+            };
+            sw.profile("getRanked: pass 3: sort");
+            da=null;
+        }
+
+        if (m==null && v.cacheRanks)
+            v.ranks=r;
+        // return the resulting list
+        return r;
     };
 
     public String toString() {
