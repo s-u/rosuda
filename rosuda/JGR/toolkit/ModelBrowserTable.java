@@ -331,16 +331,19 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
     	}
 
 		/**
+		 * keyTyped: handle key event.
 		 */
 		public void keyTyped(KeyEvent e) {
 		}
 
 		/**
+		 * keyPressed: handle key event.
 		 */
 		public void keyPressed(KeyEvent e) {
 		}
 
 		/**
+		 * keyReleased: handle key event: filter models.
 		 */
 		public void keyReleased(KeyEvent e) {
 			filterModels();
