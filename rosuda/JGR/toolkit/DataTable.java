@@ -733,17 +733,17 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
                 if (i != 0 && rn != "row.names" && e.isPopupTrigger()) {
                     popUpMenu(e);
                 }
-                else {
+                /*else {
                     selectedColumn = currentCol(e);
-                    int from = dataTable.getColumn(dataTable.getColumnName(selectedColumn)).getModelIndex();
-                    int to = selectedColumn;
-					//System.out.println(from+" -> "+to);
-					if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1))) && from != to) moveColumnsSVar(from,to);
-                }
+                }*/
             }
             else if (e.isPopupTrigger()) {
                 popUpMenu(e);
             }
+            int from = dataTable.getColumn(dataTable.getColumnName(selectedColumn)).getModelIndex();
+            int to = selectedColumn;
+			//System.out.println(from+" -> "+to);
+			if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1))) && from != to) moveColumnsSVar(from,to);
         } catch (Exception ex) {
             new ErrorMsg(ex);
         }
