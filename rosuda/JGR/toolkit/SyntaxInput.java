@@ -7,6 +7,7 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 
 import org.rosuda.JGR.RController;
 
@@ -21,7 +22,6 @@ import org.rosuda.JGR.RController;
 public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
     private boolean disableEnter = false;
-    //private Vector commands = new Vector();
     private String fun = null;
     private String funHelp = null;
     private Popup funHelpTip = null;
@@ -112,6 +112,50 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         }
         offset = offset==-1?0:++offset;
         return (offset!=end)?text.substring(offset,end).trim():null;
+    }
+    
+    /**
+     * Comment/ Uncomment selected Code
+     * @param comment remove comment string or add
+     * @throws BadLocationException
+     */
+    public void commentSelection(boolean comment) throws BadLocationException {
+    	int a = this.getLineOfOffset(this.getSelectionStart());
+    	int b = this.getLineOfOffset(this.getSelectionEnd());
+    	while ( a <= b) {
+    		int ls = this.getLineStartOffset(a);
+    		ls = this.getSelectionStart() > ls?this.getSelectionStart():ls;
+			int le = this.getLineEndOffset(a);
+			if (comment && !this.getText(ls,le-ls).trim().startsWith("#")) this.insertAt(ls,"#");
+    		if (!comment) {
+    			ls = this.getLineStartOffset(a);
+    			int i = this.getText(ls,le-ls).indexOf("#");
+    			if (i >= 0) this.getDocument().remove(ls+i,1);
+    		}
+    		a++;
+    	}
+	}
+    
+    /**
+     * Indent/ Reindent selected lines
+     * @param direction -1 for left and 1 for right indentation
+     * @throws BadLocationException
+     */
+    public void shiftSelection(int direction) throws BadLocationException {
+    	int a = this.getLineOfOffset(this.getSelectionStart());
+    	int b = this.getLineOfOffset(this.getSelectionEnd());
+    	while ( a <= b) {
+    		int ls = this.getLineStartOffset(a);
+    		int le = this.getLineEndOffset(a);
+    		if (direction == -1 && this.getText(ls,le-ls).startsWith("\t")) {
+    			this.getDocument().remove(ls,1);
+    		}
+    		else if (direction == 1) {
+    			this.insertAt(ls,"\t");
+    		}
+    		a++;
+    	}
+    	
     }
 	
     /**
