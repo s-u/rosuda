@@ -28,6 +28,8 @@ public class PlotText extends PlotObject {
         x=X; y=Y; txt=text;
     }
     public void set(double X[], double Y[]) { x=X; y=Y; }
+    public void set(double X[], double Y) { x=X; y=new double[1]; y[0]=Y; }
+    public void set(double X, double Y[]) { x=new double[1]; x[0]=X; y=Y; }
     public void set(String text[]) { txt=text; }
 
     public double []getX() { return x; }
@@ -35,6 +37,11 @@ public class PlotText extends PlotObject {
     public double []getAX() { return ax; }
     public double []getAY() { return ay; }
     public String []getText() { return txt; }
+
+    public void setAX(double[] aX) { ax=aX; }
+    public void setAX(double aX) { ax=new double[1]; ax[0]=aX; }
+    public void setAY(double[] aY) { ay=aY; }
+    public void setAY(double aY) { ay=new double[1]; ay[0]=aY; }
     
     // fall-back versions for scalar arguments
     public void set(double X, double Y, double aX, double aY, String text) {
@@ -51,6 +58,8 @@ public class PlotText extends PlotObject {
     public void draw(PoGraSS g) {
         if (txt==null || x==null || y==null) return;
         if (cold!=null) cold.use(g);
+        if (ax!=null && ax.length>0 && (ay==null || ay.length==0)) { ay=new double[1]; ay[0]=0; }
+        if (ay!=null && ay.length>0 && (ax==null || ax.length==0)) { ax=new double[1]; ax[0]=0; }
         int i=0;
         int l=txt.length; if (x.length>l) l=x.length; if (y.length>l) l=y.length;
         int xc=0, yc=0, tc=0, axc=0, ayc=0; // we need separate counters to circulate in non-full arrays
@@ -70,6 +79,8 @@ public class PlotText extends PlotObject {
     }
 
     public String toString() {
+        if (txt==null) return "PlotText(<no text>)";
+        if (x==null || y==null) return "PlotText(<coordinates incomplete>)";
         int l=txt.length; if (x.length>l) l=x.length; if (y.length>l) l=y.length;
         return "PlotText(labels="+l+",coord="+coordX+"/"+coordY+",visible="+isVisible()+")";
     }
