@@ -43,6 +43,7 @@ public class EzMenu {
                 mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                 mi.setActionCommand("WTMclose"+we.id);
                 mi.addActionListener(wt);
+                m.add(mi);
                 if (!Common.isMac()) {
                     mi=new JMenuItem("Quit");
                     mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('Q',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
