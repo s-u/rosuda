@@ -32,11 +32,12 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.border.*;
 import org.rosuda.JRclient.*;
+import com.apple.mrj.*;
 
 /**
 */
 
-class Join extends JFrame implements SelectionListener, DataListener {
+class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler {
   
   /** Remember # of open windows so we can quit when last one is closed */
   protected static int num_windows = 0;
@@ -56,7 +57,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, cs, vm;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah;
   private ModelNavigator Mn;
@@ -64,15 +65,19 @@ class Join extends JFrame implements SelectionListener, DataListener {
   private int thisDataSet  = -1;
   private int graphicsPerf;
   static String user;
+  private boolean mondrianRunning = false;
+  private String justFile = "";
   
-  public Join(Vector dataSets, boolean load, boolean loadDB) {
+  public Join(Vector dataSets, boolean load, boolean loadDB, File loadFile) {
 
+    MRJApplicationUtils.registerOpenDocumentHandler ( this );
+    
     try
-  {
-    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName() );
-  }
+    {
+      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName() );
+    }
     catch (Exception e) { }
-
+    
     System.out.println("Starting RServe ... "+Srs.checkLocalRserve());
 
     user = System.getProperty("user.name");
@@ -145,6 +150,8 @@ class Join extends JFrame implements SelectionListener, DataListener {
     bw.setEnabled(false);
     plot.add(hi = new JMenuItem("Histogram"));
     hi.setEnabled(false);
+    plot.add(hiw = new JMenuItem("Weighted Histogram"));
+    hiw.setEnabled(false);
     plot.add(pc = new JMenuItem("Parallel Coordinates"));
     pc.setEnabled(false);
     plot.add(pb = new JMenuItem("Parallel Boxplots"));
@@ -241,6 +248,11 @@ class Join extends JFrame implements SelectionListener, DataListener {
         histogram();
       }
     });
+    hiw.addActionListener(new ActionListener() {     // Open a weighted histogram window
+      public void actionPerformed(ActionEvent e) {
+        weightedHistogram();
+      }
+    });
     pc.addActionListener(new ActionListener() {     // Open a parallel coordinate plot window
       public void actionPerformed(ActionEvent e) {
         pc("Poly");
@@ -264,12 +276,12 @@ class Join extends JFrame implements SelectionListener, DataListener {
       }); 
     o.addActionListener(new ActionListener() {     // Load a dataset
       public void actionPerformed(ActionEvent e) {
-        loadDataSet(false);
+        loadDataSet(false, null);
       }
     });
     od.addActionListener(new ActionListener() {     // Load a database
       public void actionPerformed(ActionEvent e) {
-        loadDataSet(true);
+        loadDataSet(true, null);
       }
     });
     m.addActionListener(new ActionListener() {     // Open a new window to draw an interactive maps
@@ -326,22 +338,28 @@ class Join extends JFrame implements SelectionListener, DataListener {
     this.setSize(295,315);
     this.show();
 
-    graphicsPerf = setGraphicsPerformance();
+    if( dataSets.isEmpty() )
+      graphicsPerf = setGraphicsPerformance();
+    else if (((dataSet)dataSets.firstElement()).graphicsPerf != 0)
+      graphicsPerf = ((dataSet)dataSets.firstElement()).graphicsPerf;
+    else
+      graphicsPerf = 25000;
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0d", 250, 280);
+    g.drawString("RC1.0e", 250, 280);
 
+    mondrianRunning = true;
+    
     if( load )
       if( loadDB )
-        loadDataSet(true);  
+        loadDataSet(true, null);  
       else
-        loadDataSet(false);
+        loadDataSet(false, loadFile); 
   }
 
   void showIt() {
-//    paint(this.getGraphics());
-    progPanel.repaint();
+    paintAll(this.getGraphics());
   }
 
   byte[] readGif(String name) {
@@ -578,13 +596,13 @@ class Join extends JFrame implements SelectionListener, DataListener {
         Plots.removeElementAt(i);
   }
   
-  public void loadDataSet(boolean isDB) {
+  public void loadDataSet(boolean isDB, File file) {
     if( thisDataSet == -1 ) {
       if( isDB ) {
         loadDataBase();
       } 
-      else {	
-        if( loadAsciiFile("") ) {
+      else {
+        if( loadAsciiFile(file) ) {
           setVarList();
           this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
           c.setEnabled(true);
@@ -598,7 +616,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
       }
     }
     else {
-      new Join( dataSets, true , isDB);
+      new Join( dataSets, true , isDB, file);
     }
     if( thisDataSet != -1 )
       ((dataSet)dataSets.elementAt(thisDataSet)).graphicsPerf = graphicsPerf;	
@@ -856,13 +874,13 @@ class Join extends JFrame implements SelectionListener, DataListener {
     }
   }
 
-  boolean loadAsciiFile(String filename) {
+  boolean loadAsciiFile(File file) {
 
     boolean[] alpha;
     dataSet data;
-    String justFile = "";
+    String filename = "";
 
-    if( filename.equals("") ) {
+    if( file == null ) {
       FileDialog f = new FileDialog(this, "Load Data", FileDialog.LOAD);
       //      JFileChooser f = new JFileChooser(this, "Load Data", FileDialog.LOAD);
       if((System.getProperty("os.name")).equals("Irix") )
@@ -873,9 +891,11 @@ class Join extends JFrame implements SelectionListener, DataListener {
       if (f.getFile() != null ) { 
         justFile = f.getFile();
         filename = f.getDirectory() + justFile;
-      }
-      else
+      } else
         filename = "";
+    } else {
+      filename = file.getAbsolutePath();
+      justFile = file.getName();
     }
 
     if( !filename.equals("") ) {
@@ -886,13 +906,11 @@ class Join extends JFrame implements SelectionListener, DataListener {
         BufferedReader br = new BufferedReader( new FileReader(filename) );
         data = new dataSet( justFile );
         dataSets.addElement(data);
+        progText.setText("Peaking ...");
         alpha = data.sniff(br);
         progBar.setMaximum(data.n);
-        //	System.out.println("# Lines: "+data.n);
         br = new BufferedReader( new FileReader(filename) );
         progText.setText("Loading ...");
-//        progBar.setIndeterminate(true);
-        progPanel.repaint();
         data.read(br, alpha, progBar);
 
         br.mark(1000000);
@@ -972,9 +990,16 @@ class Join extends JFrame implements SelectionListener, DataListener {
     } else
       return false;
   }
-  
+
+  public void handleOpenFile( File inFile )
+  {
+    while( !mondrianRunning ) {}   // Wait until Mondrian initialized
+
+    loadDataSet( false, inFile );
+  }
+
   public int[] getWeightVariable(int[] vars, dataSet data) {
-    
+
     if( numCategorical == (varNames.getSelectedIndices()).length - 1 ) {
       int[] returner = new int[varNames.getSelectedIndices().length];
       System.arraycopy(varNames.getSelectedIndices(),0,returner,0,returner.length);
@@ -992,9 +1017,8 @@ class Join extends JFrame implements SelectionListener, DataListener {
         System.out.println("ind old = "+varNames.getSelectedIndices()[i]+" ind new = "+returner[i]);
       }
       return returner ;
-    }
-    else {
-      final Dialog countDialog = new Dialog(this, "Choose Weight Variable", true);
+    } else {
+      final Dialog countDialog = new Dialog(this, " Choose Weight Variable", true);
       Choice getCount = new Choice();
       for( int j=0; j<vars.length; j++ ) {
         if( data.getName(vars[j]).length()>1 && data.getName(vars[j]).substring(0,1).equals("/") )
@@ -1003,7 +1027,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
           getCount.addItem(data.getName(vars[j]));
       }
       for( int j=0; j<getCount.getItemCount(); j++ )
-        if( getCount.getItem(j).toLowerCase().equals("count")    || 
+        if( getCount.getItem(j).toLowerCase().equals("count")    ||
             getCount.getItem(j).toLowerCase().equals("counts")   ||
             getCount.getItem(j).toLowerCase().equals("n")        ||
             getCount.getItem(j).toLowerCase().equals("weight")   ||
@@ -1017,37 +1041,37 @@ class Join extends JFrame implements SelectionListener, DataListener {
       Panel p2 = new Panel();
       p2.add(OK);
       countDialog.add(p2, "South");
-      OK.addActionListener(new ActionListener() {     // 
+      OK.addActionListener(new ActionListener() {     //
         public void actionPerformed(ActionEvent e) {
           countDialog.dispose();
         }
       });
       countDialog.pack();
-      countDialog.setSize(230,160);
+      if( countDialog.getWidth() < 240 )
+        countDialog.setSize(240, countDialog.getHeight());
       countDialog.setResizable(false);
+      countDialog.setModal(true);
       countDialog.setBounds(this.getBounds().x+this.getBounds().width/2-countDialog.getBounds().width/2,
                             this.getBounds().y+this.getBounds().height/2-countDialog.getBounds().height/2,
                             countDialog.getBounds().width,
                             countDialog.getBounds().height);
       countDialog.show();
-      
+
       String[] selecteds = new String[(varNames.getSelectedValues()).length];
       for( int i=0; i < (varNames.getSelectedValues()).length; i++)
         selecteds[i] = (String)(varNames.getSelectedValues())[i];
       int[] selected = varNames.getSelectedIndices();
-      int[] passed = new int[selected.length];
-      int l=0, j=0;
-      while( j<selected.length )
-        if( !selecteds[j].equals(getCount.getSelectedItem()) ) {
-          passed[l] = selected[j];
-          l++;
-          j++;
-        }
-          else {
-            passed[passed.length-1] = selected[l];
-            j++;
-          }
-          return passed;
+      int[] returner = new int[selected.length];
+      for( int i=0; i<selected.length; i++) {
+        if( (selecteds[i].trim()).equals(getCount.getSelectedItem()) ) {
+          returner[selected.length-1] = selected[i];
+          for( int j=i; j<selected.length-1; j++ )
+            returner[j] = selected[j+1];
+          i = selected.length;
+        } else
+          returner[i] = selected[i];
+      }
+      return returner;
     }
   }
   
@@ -1076,9 +1100,9 @@ class Join extends JFrame implements SelectionListener, DataListener {
           int k = varNames.getSelectedIndices()[i];
           double start = tempData.getMin(k);
           double width = (tempData.getMax(k) - tempData.getMin(k)) / 8.9;
-          Table discrete = tempData.discretize(tempData.setName, k, start, width);
+          Table discrete = tempData.discretize(tempData.setName, k, start, width, -1);
 
-          Histogram scat = new Histogram(scatterMf, 200, 200, discrete, start, width);
+          Histogram scat = new Histogram(scatterMf, 200, 200, discrete, start, width, -1);
           scat.addSelectionListener(this);
           Plots.addElement(scat);
         }
@@ -1259,12 +1283,35 @@ class Join extends JFrame implements SelectionListener, DataListener {
       lastY += bars.getHeight();
     }
   }
-  
+
+
+  public void weightedHistogram() {
+
+    dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
+
+    int[] vars = getWeightVariable(varNames.getSelectedIndices(), tempData);
+    if( vars.length > 1 ) {
+      int[] passed = new int[vars.length-1];
+      System.arraycopy(vars,0,passed,0,vars.length-1);
+      int weight = vars[vars.length-1];
+
+      System.out.println(passed[0]+", "+weight);
+      
+      histoCore(tempData, passed, weight);
+    } else
+      histoCore(tempData, vars, vars[0]);
+  }
+
+
   public void histogram() {
     
     dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
-    
     int[] indices = varNames.getSelectedIndices();
+
+    histoCore(tempData, indices, -1);
+  }
+
+  public void histoCore(dataSet tempData, int[] indices, int weight) {
     int lastX = 310, oldX = 0;
     int row=0;
     int menuOffset=0, xOff=0;
@@ -1276,10 +1323,10 @@ class Join extends JFrame implements SelectionListener, DataListener {
       dummy = indices[i];
       double start = tempData.getMin(dummy);
       double width = (tempData.getMax(dummy) - tempData.getMin(dummy)) / 8.9;
-      Table discrete = tempData.discretize(tempData.setName, dummy, start, width);
+      Table discrete = tempData.discretize(tempData.setName, dummy, start, width, weight);
       
       hists.setSize(310, 250);
-      final Histogram plotw = new Histogram(hists, 250, 310, discrete, start, width);
+      final Histogram plotw = new Histogram(hists, 250, 310, discrete, start, width, weight);
       
       plotw.addSelectionListener(this);
       Plots.addElement(plotw);
@@ -1372,6 +1419,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
         bw.setEnabled(false);
         nw.setEnabled(false);
         hi.setEnabled(false);
+        hiw.setEnabled(false);
         pc.setEnabled(false);
         pb.setEnabled(false);
         //              sc.setEnabled(false);
@@ -1385,6 +1433,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
         else {
           b.setEnabled(false);
           hi.setEnabled(true);
+          hiw.setEnabled(true);
         }
         n.setEnabled(false);
         bw.setEnabled(false);
@@ -1409,10 +1458,15 @@ class Join extends JFrame implements SelectionListener, DataListener {
           bw.setEnabled(false);
           nw.setEnabled(false);
         }
-        hi.setEnabled(true);
+        if( numCategorical == 0 ) {
+          hi.setEnabled(true);
+          hiw.setEnabled(true);
+        } else {
+          hi.setEnabled(false);
+          hiw.setEnabled(false);
+        }
         pc.setEnabled(true);
         pb.setEnabled(true);
-        //              sc.setEnabled(true);
         sc2.setEnabled(true);
         break;
       default:
@@ -1430,11 +1484,17 @@ class Join extends JFrame implements SelectionListener, DataListener {
           bw.setEnabled(false);
           nw.setEnabled(false);
         }
-        hi.setEnabled(true);
+        if( numCategorical == 0 ) {
+          hi.setEnabled(true);
+          hiw.setEnabled(true);
+        } else {
+          hi.setEnabled(false);
+          hiw.setEnabled(false);
+        }
         pc.setEnabled(true);      
         pb.setEnabled(true);
-        //        sc.setEnabled(false);
         sc2.setEnabled(false);
+        //        sc.setEnabled(false);
     }
   }
 
