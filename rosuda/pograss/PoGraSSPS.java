@@ -86,7 +86,13 @@ public class PoGraSSPS extends PoGraSS
     public void setColor(String nam) {
 	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	outPS(curPen=("color_"+nam+" "));
-    };
+    }
+    public void setColor(String nam, float alpha) {
+        if (alpha>0.99) { setColor(nam); return; }
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
+        outPS("%% Warning: alpha="+alpha+" requested, unsupported by PS. Using alpha=1\n");
+	outPS(curPen=("color_"+nam+" "));
+    }
     public void setFillColor(int R, int G, int B) {
 	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
