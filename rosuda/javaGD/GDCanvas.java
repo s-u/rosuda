@@ -8,7 +8,7 @@ class GDObject {
     public void paint(GDCanvas c, Graphics g) {};
 }
 
-class GDCanvas extends Canvas {
+public class GDCanvas extends Canvas {
     Vector l;
 
     Color fill;
