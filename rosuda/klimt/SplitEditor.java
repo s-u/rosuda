@@ -4,13 +4,14 @@ import java.util.*;
 
 /** SplitEditor */
 
-public class SplitEditor extends TFrame implements ActionListener, ItemListener {
+public class SplitEditor extends TFrame implements ActionListener, ItemListener, MouseListener {
     SNode n,ln;
     SMarker m;
     SVarSet vs;
     SVar cv;
     SNode root;
     TextField st=null;
+    String splitText; // contains the text in 'st' - it is used to check if used actually changed the content without pressing enter
     Choice vc;
     ScatterCanvas sc;
     LineCanvas lc;
@@ -75,9 +76,12 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             sp.add(l1=new Label("split at "));
             spVal=ln.splitValF;
             sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
+	    splitText=st.getText();
             st.addActionListener(this);
             sc=new ScatterCanvas(this,cv,root.response,m);
             m.addDepend(sc);
+	    //sc.removeMouseListener(sc);
+	    sc.addMouseListener(this);
             sc.setFilter(n.data);
             sc.setSize(scd); sc.bgTopOnly=true;
             cp.add(pp); pp.add(sc);
@@ -204,6 +208,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             }
             spVal=optSP;
             st.setText(Tools.getDisplayableValue(spVal));
+	    splitText=st.getText();
             SVar[] svl=new SVar[1]; svl[0]=sdv;
             lc=new LineCanvas(this,rxv,svl,m);
             //pp.add(new ScatterCanvas(this,rxv,sdv,m));
@@ -277,17 +282,28 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
         sc.repaint();        
     }
 
+    public void mouseClicked(MouseEvent ev) {
+	double nsv=sc.getXAxis().getValueForPos(ev.getX());	
+	setSplitValue(nsv);
+	st.setText(Tools.getDisplayableValue(spVal));
+    }
+
+    public void mousePressed(MouseEvent ev) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseDragged(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
         String cmd=e.getActionCommand();
         if (Common.DEBUG>0)
             System.out.println("SplitEditor.actionPerformed(\""+cmd+"\") ["+e.toString()+"]\n source="+e.getSource().toString());
         if (e.getSource()==st) {
-            double v=0; boolean ok=false;
+            double v=0;
             v=Tools.parseDouble(cmd);
-            if (ok) {
-                setSplitValue(v);
-            }
+	    splitText=cmd;
+	    setSplitValue(v);
         } else {
             if (cmd=="Cancel") {
                 WinTracker.current.rm(this);
@@ -295,7 +311,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                 dispose();
             }
             if (cmd=="OK") {
-                if (!cv.isCat() && cv.isNum()) {
+		if (splitText!=null && st!=null && splitText.compareTo(st.getText())!=0)
+		    setSplitValue(Tools.parseDouble(st.getText())); // set split even if user didnt press enter
+		
+		if (!cv.isCat() && cv.isNum()) {
                     if (spVal<cv.getMin()||spVal>=cv.getMax()) {
                         new MsgDialog(this,"Invalid split value","The specified split value would result in a single son. No action will be performed.");
                     } else {
