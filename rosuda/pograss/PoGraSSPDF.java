@@ -12,13 +12,19 @@ import java.io.*;
  * @version $Id$
  */
 
-class PoGraSSPS extends PoGraSS
+class PoGraSSPDF extends PoGraSS
 {
     String fn;
     PrintStream outs;
     PDFconstructor p;
     StringBuffer cont;
-
+    /** list of defined color definitions */
+    String[] c;
+    /** list of defined color names */
+    String[] cn;
+    /** # of defined colors (currently max. 128 supported) */
+    int cs;
+    
     int lineWidth, fillSt, ox, oy;
     boolean inPath;
     /* color handling is quite spimlified here as we can define colors and use them directly in PS */
@@ -33,22 +39,34 @@ class PoGraSSPS extends PoGraSS
     boolean lastLT=false; // true if lineTo was last command used
     int lastX, lastY; // coordinates of lst lineTo; used for optimizing output
 
-    public PoGraSSPS(String fnn)
+    public PoGraSSPDF(String fnn)
     {
 	lineWidth=1; fillSt=0; inPath=false; outs=null; fn=fnn;
-	curFill="0 gray "; curPen="1 gray "; title=null;
-	ox=0; oy=1000;
+	curFill="0 g "; curPen="1 g "; title=null;
+	ox=0; oy=1000; c=new String[128]; cn=new String[128]; cs=0;
 	cont=new StringBuffer();
     };
 
-    public PoGraSSPS(PrintStream ps)
+    public PoGraSSPDF(PrintStream ps)
     {
 	lineWidth=1; fillSt=0; inPath=false; outs=ps; fn=null;
-	curFill="0 gray "; curPen="1 gray "; title=null;
-	ox=0; oy=1000;
+	curFill="0 g "; curPen="1 g "; title=null;
+	ox=0; oy=1000; c=new String[128]; cn=new String[128]; cs=0;
 	cont=new StringBuffer();
     };
 
+    String getColor(String nam) {
+        int i=0; while(i<cs) { if (cn[i].compareTo(nam)==0) return c[i]; i++; };
+        return "0.0 0.0 0.0";
+    };
+
+    public void defineColor(String nam, String cmd)
+    {
+        if (cs<128) {
+            cn[cs]=new String(nam); c[cs]=new String(cmd); cs++;
+        };
+    };
+    
     public void passVersionInfo(int ver, String verS) {
         xver=verS;
     }
@@ -71,35 +89,45 @@ class PoGraSSPS extends PoGraSS
     };
 
     public void defineColor(String nam, int R, int G, int B) {
-	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
-	    //outPS("/color_"+nam+"  { "+(R/255.0)+" setgray } def\n");
-	    ;
-	else
-	    //outPS("/color_"+nam+"  { "+(R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor } def\n");
-	    ;
+        defineColor(nam,""+(R/255.0)+" "+(G/255.0)+" "+(B/255.0));
     };
+
     public void setColor(int R, int G, int B) {
-	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
-	outPS(curPen=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" RG "));	
+        if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
+        outPS(curPen=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" RG "));
+        if (jointColors) outPS(((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" rg "));	
     };
+
     public void setColor(String nam) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
-	//outPS(curPen=("color_"+nam+" "));
+        outPS(curPen=getColor(nam)+" RG ");
+        if (jointColors) outPS(getColor(nam)+" rg ");
     };
+    
     public void setFillColor(int R, int G, int B) {
-	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
+        if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
 	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
 	    outPS(curFill=((R/255.0)+" g "));		
 	else
-	    outPS(curFill=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" rg "));	
+	    outPS(curFill=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" rg "));
+        if (jointColors) {
+            if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
+                outPS(((R/255.0)+" G "));
+            else
+                outPS(((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" RG "));
+        };
     };
+
     public void setFillColor(String nam) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
-	//outPS(curFill=("color_"+nam+" "));
+        outPS(curFill=getColor(nam)+" rg ");
+        if (jointColors) outPS(getColor(nam)+" RG ");
     };
+
     public void drawLine(int x1, int y1, int x2, int y2) {
 	moveTo(x1,y1); lineTo(x2,y2);
     };
+
     public void moveTo(int x, int y) {
 	if (!inPath) { lastLT=false;}; inPath=true;
 	if (!lastLT || ox+x!=lastX || oy+y!=lastY)
@@ -165,8 +193,8 @@ class PoGraSSPS extends PoGraSS
     public void drawOval(int x, int y, int rx, int ry) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
 	rx/=2; ry/=2;
-	outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
-	      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp s\n");
+        //outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
+	//      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp s\n");
     };
     public void fillOval(int x, int y, int rx, int ry) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
@@ -176,7 +204,8 @@ class PoGraSSPS extends PoGraSS
     };
     public void setLineWidth(int w) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
-	lineWidth=w; 	
+	lineWidth=w;
+        outPS(" "+w+" w ");
     };
     public void setFillStyle(int s) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;
@@ -184,7 +213,7 @@ class PoGraSSPS extends PoGraSS
     };
     public void drawString(String txt, int x, int y) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;	
-	outPS("BT "+(ox+x)+" "+(oy+y)+" Td ("+txt+") Tj ET\n");
+	outPS("BT /F1 "+lastFontSize+" Tf "+(ox+x)+" "+(oy-y)+" Td ("+txt+") Tj ET\n");
     };
     public void drawString(String txt, int x, int y, int att) {
 	if (inPath) outPS(" S\n"); inPath=false; lastLT=false;       
@@ -254,6 +283,7 @@ class PoGraSSPS extends PoGraSS
     };
     public void setFontSize(int pt) {
 	if (inPath) outPS(" cp s\n"); inPath=false;
+        lastFontSize=pt;
 	//outPS("/"+lastFace+" findfont "+lastFontSize+" scalefont setfont\n");
     };
     void internal_setFontStyle(int attr) {
