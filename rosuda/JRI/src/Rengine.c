@@ -10,6 +10,7 @@
 #include "globals.h"
 
 #ifdef Win32
+#include <windows.h>
 #ifdef _MSC_VER
 __declspec(dllimport) int UserBreak;
 #else
@@ -332,7 +333,11 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetEnv
         jri_error("rniSetEnv: can't retrieve key/value content");
         return;
     }
+#ifdef Win32
+    SetEnvironmentVariable(cKey, cVal);
+#else
     setenv(cKey, cVal, 1);
+#endif
     (*env)->ReleaseStringUTFChars(env, key, cKey);
     (*env)->ReleaseStringUTFChars(env, val, cVal);
 }
