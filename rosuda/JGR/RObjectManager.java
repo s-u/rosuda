@@ -127,7 +127,8 @@ public class RObjectManager extends iFrame implements ActionListener {
                 ToolTipManager.sharedInstance().setDismissDelay(4000);
             }
         });
-        this.setSize(600,500);
+        this.setMinimumSize(new Dimension(300,350));
+        this.setSize(400,500);
         //this.show(); do it manually when you really want to see it
     }
 

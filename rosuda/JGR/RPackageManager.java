@@ -81,6 +81,7 @@ public class RPackageManager extends iFrame implements ActionListener {
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getRootPane().setDefaultButton(close);
+        this.setMinimumSize(new Dimension(300,350));
         this.setSize(400,450);
         } catch (Exception e) { e.printStackTrace();}//this.show(); //do it manually when you really want to see it
     }

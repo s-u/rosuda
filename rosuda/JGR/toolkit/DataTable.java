@@ -153,10 +153,16 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         });
         this.addKeyListener(this);
         this.setLocation(this.getLocation().x, 10);
-        this.setSize(new Dimension(Common.screenRes.width < 900 ?
-                                   Common.screenRes.width - 50 : 800,
-                                   Common.screenRes.height < 800 ?
-                                   Common.screenRes.height - 50 : 700));
+        int h = dataTable.getRowHeight();
+        int rc = dataTable.getRowCount();
+        int cc = dataTable.getColumnCount();
+        int width = cc * 75;
+        int height = (int) (rc * h * 1.3);
+        Dimension d = new Dimension((width < 400 && cc < 2)?400:width, (height < 400 && rc < 11)?300:height);
+        this.setSize(new Dimension(d.width > Common.screenRes.width?
+                                   Common.screenRes.width - 50 : d.width,
+                                   d.height > Common.screenRes.height ?
+                                   Common.screenRes.height - 50 : d.height));
 
         this.show();
     }

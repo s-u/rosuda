@@ -48,6 +48,7 @@ public class iFrame extends JFrame {
 
     public static final int clsUser     = 8192;
 
+    private Dimension minimumSize;
 
     public WTentrySwing MYEntry;
 
@@ -61,6 +62,21 @@ public class iFrame extends JFrame {
         if (WinTracker.current == null) WinTracker.current = new WinTracker();
         MYEntry = new WTentrySwing(WinTracker.current, this, title, wclass);
         initPlacement();
+        this.addComponentListener(new ComponentListener() {
+            public void componentResized(ComponentEvent e) {
+                int h = getHeight(),w= getWidth();
+                boolean resize = false;
+                if (minimumSize != null && getHeight() < minimumSize.height) { resize=true; h = minimumSize.height;}
+                if (minimumSize != null && getWidth() < minimumSize.width) { resize=true; w = minimumSize.width;}
+                if (resize) setSize(w,h);
+            }
+            public void componentMoved(ComponentEvent e) {
+            }
+            public void componentShown(ComponentEvent e) {
+            }
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
 
     public iFrame() {
@@ -71,9 +87,13 @@ public class iFrame extends JFrame {
         return MYEntry;
     }
 
-
     public void finalize() {
         WinTracker.current.rm(MYEntry);
+    }
+
+
+    public void setMinimumSize(Dimension d) {
+        minimumSize = d;
     }
 
     public void show() {

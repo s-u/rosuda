@@ -176,6 +176,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
                 exit();
             }
         });
+        this.setMinimumSize(new Dimension(570,600));
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));

@@ -61,7 +61,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public RConsole(File workSpace) {
         super("Console", iFrame.clsMain);
-        JGR.MAINRCONSOLE = this;
         String[] Menu = {
             "+", "File", "@NNew Workspace", "newwspace", "@OLoad Workspace",
             "loadwspace",
@@ -118,7 +117,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                                   new GridBagConstraints(0, 1, 11, 1, 1.0, 1.0
             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(2, 5, 5, 5), 0, 0));
-
+        this.setMinimumSize(new Dimension(555,650));
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));

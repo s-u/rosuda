@@ -43,15 +43,17 @@ public class JGR {
 
     private static JGRListener jgrlistener  = null;
 
+    public static SplashScreen splash;
+
     public JGR() {
         SVar.int_NA=-2147483648;
         Platform.initPlatform("org.rosuda.JGR.toolkit.");
         iPreferences.initialize();
-        SplashScreen splash = new SplashScreen();
+        splash = new SplashScreen();
         splash.start();
         readHistory();
-        new RConsole();
-        splash.toFront();
+        MAINRCONSOLE = new RConsole();
+        if (System.getProperty("os.name").startsWith("Window")) splash.stop();
         MAINRCONSOLE.progress.start("Starting R");
         MAINRCONSOLE.setWorking(true);
         String[] args={"--save"};
@@ -70,7 +72,7 @@ public class JGR {
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
-        splash.stop();
+        if (!System.getProperty("os.name").startsWith("Window")) splash.stop();
         RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
     }
 
