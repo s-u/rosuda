@@ -69,6 +69,7 @@ public class RObjectManager extends iFrame implements ActionListener {
         modelTable.setShowGrid(true);
         modelTable.setModel(sorter);
         FontTracker.current.add(modelTable);
+        modelTable.setRowHeight((int) (Preferences.FontSize*1.2));
         modelTable.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(modelTable.getTableHeader());
         tabArea.add("Models",new JScrollPane(modelTable));
@@ -148,7 +149,7 @@ public class RObjectManager extends iFrame implements ActionListener {
     class ModelTable extends AbstractTableModel {
 
 
-        private String[] colnames = {"Name","Type","family","df","r.squared","aic","deviance"};
+        private String[] colnames = {"Name","Data","Type","family","df","r.squared","aic","deviance"};
         private Object[] content;
 
         public ModelTable() {
@@ -279,7 +280,7 @@ public class RObjectManager extends iFrame implements ActionListener {
                 obj = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
             } catch (Exception ex) {}
             /*if ((e.isMetaDown() || e.isControlDown())) return obj==null?null:obj.getSummary();
-            else*/ return  obj==null?null:obj.getToolTip();
+            else*/ return  obj==null?null:obj.getSummary();
         }
 
         public void dragGestureRecognized(DragGestureEvent evt) {

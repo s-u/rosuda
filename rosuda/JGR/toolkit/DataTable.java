@@ -111,7 +111,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         sorter.setTableHeader(tableHeader);
         dataTable.setToolTipText(vs.getName());
         dataTable.setShowGrid(true);
-        dataTable.setRowHeight((int) (Preferences.FontSize*1.5));
+        dataTable.setRowHeight((int) (Preferences.FontSize*1.2));
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(true);
         dataTable.setCellSelectionEnabled(true);

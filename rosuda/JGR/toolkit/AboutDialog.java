@@ -16,7 +16,7 @@ import javax.swing.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 
-public class AboutDialog extends JDialog {
+public class AboutDialog extends SplashScreen implements MouseListener {
 
 
 
@@ -24,15 +24,48 @@ public class AboutDialog extends JDialog {
     private Dimension screenSize = Common.getScreenRes();
     private Image splash;
 
-    /** create new AboutDialog */
     public AboutDialog() {
+        this(null);
+    }
+    
+    public AboutDialog(JFrame f) {
+        this.addMouseListener(this);
+        this.setSize(this.getWidth(),this.getHeight()+20);
+    }
+
+    public void paint(Graphics g) {
+        System.out.println(this.getSize());
+        super.paint(g);
+        g.setFont(new Font("Dialog", 0, 12));
+        g.drawString("Authors: " + Preferences.AUTHORS,40, 155);
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        this.dispose();
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+    
+
+    /** create new AboutDialog */
+    /*public AboutDialog() {
         this(null);
     }
 
     /** create new AboutDialog
      * @param f Parent JFrame */
-    public AboutDialog(JFrame f) {
-        super(f,"About JGR",true);
+    /*public AboutDialog(JFrame f) {
+        super(f,"About JGR",false);
         try {
             splash = loadSplash(Preferences.SPLASH);
         }
@@ -66,8 +99,7 @@ public class AboutDialog extends JDialog {
             g.drawString("Version: " + Preferences.VERSION,
                          150, 130);
             g.setFont(new Font("Dialog", 0, 12));
-            g.drawString("Authors: " + Preferences.AUTHORS,
-                         40, 175);
+            //g.drawString("Authors: " + Preferences.AUTHORS,40, 175);
             g.setFont(new Font("Dialog", 0, 12));
             g.drawString("(c) " + Preferences.DEVELTIME +", "+ Preferences.INSTITUTION
                          , 10,
@@ -92,6 +124,5 @@ public class AboutDialog extends JDialog {
         catch (Exception e) {
             new iError(e);
         }
-        return img;
-    }
+    } */
 }

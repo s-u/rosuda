@@ -49,7 +49,12 @@ public class FontTracker {
             }
             catch (Exception ex) {}
             try {
-                if (comp.getClass().getName().equals("javax.swing.JTable")) ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.1));
+                System.out.println(comp.getClass().getName());
+                System.out.println("table rows");
+                if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
+                    System.out.println("table");
+                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                }
             } catch (Exception ex) {}
         }
     }
@@ -70,7 +75,10 @@ public class FontTracker {
             }
             catch (Exception ex) {}
             try {
-                if (comp.getClass().getName().equals("javax.swing.JTable")) ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.1));
+                System.out.println(comp.getClass().getName());
+                if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
+                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                }
             } catch (Exception ex) {}
         }
     }
@@ -89,7 +97,10 @@ public class FontTracker {
             }
             catch (Exception ex) {}
             try {
-                if (comp.getClass().getName().equals("javax.swing.JTable")) ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.1));
+                System.out.println(comp.getClass().getName());
+                if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
+                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                }
             } catch (Exception ex) {}
         }
     }

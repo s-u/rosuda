@@ -21,7 +21,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
 
     private Dimension screenSize = Common.getScreenRes();
 
-    private String[] Sizes = {"2","4","6","8","9","10","11","12","14","16","18","20","22","24","30","36","48","72" };
+    private String[] Sizes = {"2","4","6","8","9","10","11","12","14","16","18","20","22","24"}; //,"30","36","48","72" };
     private String[] Fonts;
 
     private JTabbedPane tabpane = new JTabbedPane();

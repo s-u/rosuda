@@ -67,13 +67,16 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         pipe.addItemListener(this);
         other.addItemListener(this);
 
-        dataName.setMinimumSize(new Dimension(200,25));
-        dataName.setMaximumSize(new Dimension(400,25));
+        dataName.setMinimumSize(new Dimension(200,20));
+        dataName.setPreferredSize(new Dimension(200,20));
+        dataName.setMaximumSize(new Dimension(400,20));
         otherSeps.setEditable(false);
-        otherSeps.setMinimumSize(new Dimension(100,50));
-        otherSeps.setMaximumSize(new Dimension(200,50));
-        quote.setMinimumSize(new Dimension(50,25));
-        quote.setMaximumSize(new Dimension(50,25));
+        otherSeps.setMinimumSize(new Dimension(100,20));
+        otherSeps.setPreferredSize(new Dimension(100,20));
+        otherSeps.setMaximumSize(new Dimension(200,20));
+        quote.setMinimumSize(new Dimension(50,20));
+        quote.setPreferredSize(new Dimension(50,20));
+        quote.setMaximumSize(new Dimension(50,20));
 
         fileChooser.addActionListener(this);
         fileChooser.addPropertyChangeListener(this);
@@ -209,7 +212,12 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
     public void propertyChange(PropertyChangeEvent e) {
         File file = fileChooser.getSelectedFile();
-        if(file!=null && !file.isDirectory()) dataName.setText(file.getName().replaceAll("\\..*", ""));
+        if(file!=null && !file.isDirectory()) {
+            String name = file.getName().replaceAll("\\..*", "");
+            //System.out.println(name.matches("[^\\w]"));
+            //name = name.replaceAll("[\\w]",".");
+            dataName.setText(name);
+        }
         else dataName.setText(null);
     }
 

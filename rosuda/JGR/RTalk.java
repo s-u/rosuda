@@ -350,7 +350,10 @@ public class RTalk {
         y = JGR.R.eval("summary("+sx+")$family$family");
         if (y != null && (res2 = y.asStringArray()) != null) m.setFamily(res2[0]);
         y = JGR.R.eval("as.character(("+sx+"$call))"); //as.character((cm$call))
-        if (y != null && (res2 = y.asStringArray()) != null) m.setCall(res2[1]+(res2.length==3?(", data = "+res2[2]):""));
+        if (y != null && (res2 = y.asStringArray()) != null) {
+            m.setCall(res2[1]+(res2.length==3?(", data = "+res2[2]):""));
+            if (res2.length==3) m.setData(res2[2]);
+        }
         return m;
     }
 
@@ -377,17 +380,20 @@ public class RTalk {
         String tip = null;
         String res[] = null;
         REXP x;
-        try { x = JGR.R.eval("deparse(summary("+(o.getParent()==null?o.getName():((o.getParent()).getName()+"$"+o.getName()))+"))"); } catch (Exception e) { return null;}
+        try { x = JGR.R.eval("capture.output(summary("+(o.getParent()==null?o.getName():((o.getParent()).getName()+"$"+o.getName()))+"))"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null) {
-            tip = "<html>"; //<font size="+Preferences.FontSize/2+">"
-            for (int i = 0; i < res.length; i++) {
-                if (!res[i].trim().equals("NULL")) tip += res[i]+"<br>";
+            tip = "<html><pre>"; //<font size="+Preferences.FontSize/2+">"
+            int l = -1;
+            for (int i = 0; i < (l = res.length); i++) {
+                if (i==10 && l > i) { tip += "..."; break; }
+                else if (i==--l && !res[i].trim().equals("NULL")) tip += res[i];
+                else if (!res[i].trim().equals("NULL")) tip += res[i]+"<br>";
             }
-            if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
-            tip += "</html>";
+            //if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
+            tip += "</pre></html>";
         }
         else return null;
-        return tip.startsWith("<html>Error")?null:tip;
+        return tip.startsWith("<html><pre>Error")?null:tip;
     }
 
 

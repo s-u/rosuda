@@ -22,17 +22,18 @@ import org.rosuda.JGR.*;
 public class Preferences {
 
 
-    public static String VERSION = "DP1";
-    public static String TITLE = "JGR";
-    public static String SUBTITLE = "Java Gui for R";
-    public static String DEVELTIME = "2003 - 2004";
-    public static String INSTITUTION = "RoSuDa, Univ. Augsburg";
-    public static String AUTHORS = "Markus Helbig, Simon Urbanek";
-    public static String LOGO = "logo.jpg";
-    public static String SPLASH = "splash.jpg";
+    public static final String VERSION = "DP1";
+    public static final String TITLE = "JGR";
+    public static final String SUBTITLE = "Java Gui for R";
+    public static final String DEVELTIME = "2003 - 2004";
+    public static final String INSTITUTION = "RoSuDa, Univ. Augsburg";
+    public static final String AUTHORS = "Markus Helbig, Simon Urbanek";
+    public static final String WEBSITE = "http://www.rosuda.org";
+    public static final String LOGO = "logo.jpg";
+    public static final String SPLASH = "splash.jpg";
 
-    public static int DEBUG = 0;
-    public static boolean isMac = false;
+    public static final int DEBUG = 0;
+    //public static boolean isMac = false;
 
     /** DefaultFontName */
     public static String FontName = "Dialog";

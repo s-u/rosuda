@@ -21,6 +21,8 @@ public class model extends RObject {
 
     private String temp;
 
+    private String data;
+
     public model() {
         this(null,-1);
     }
@@ -68,16 +70,25 @@ public class model extends RObject {
         this.family = f;
     }
 
+    public void setData(String d) {
+        this.data = d;
+    }
+
+    public String getData() {
+        return data;
+    }
+
     public Object[] getInfo() {
         DecimalFormat dformat = new DecimalFormat("#0.00");
-        Object[] o = new Object[7];
+        Object[] o = new Object[8];
         o[0] = getName();
-        o[1] = this.getTypeName();
-        o[2] = family;
-        o[3] = df;
-        o[4] = rsquared;
-        o[5] = aic;
-        o[6] = deviance;
+        o[1] = getData();
+        o[2] = this.getTypeName();
+        o[3] = family;
+        o[4] = df;
+        o[5] = rsquared;
+        o[6] = aic;
+        o[7] = deviance;
         //o[6] = fstatistics;
         return o;
     }
