@@ -101,17 +101,17 @@ public class TreeRegistry {
 
     public SVarSet getForestVarSet() {
         SVarSet fs=new SVarSet(); fs.setName("Forest");
-        SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
-        SVar v_node=new SVar("NodeID"); fs.add(v_node);
-        SVar v_var=new SVar("Variable",true); fs.add(v_var);
-        SVar v_vspl=new SVar("Split.num.value"); fs.add(v_vspl);
-        SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
-        SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
-        SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
-        SVar v_td=new SVar("t.deviance"); fs.add(v_td);
-        SVar v_sdg=new SVar("s.dev.Gain"); fs.add(v_sdg);
-        SVar v_tdg=new SVar("t.dev.Gain"); fs.add(v_tdg);
-        SVar v_root=new SVar("Root"); v_root.setContentsType(SVar.CT_Tree); fs.add(v_root);
+        SVar v_tree=new SVarObj("Tree",true); fs.add(v_tree);
+        SVar v_node=new SVarObj("NodeID"); fs.add(v_node);
+        SVar v_var=new SVarObj("Variable",true); fs.add(v_var);
+        SVar v_vspl=new SVarObj("Split.num.value"); fs.add(v_vspl);
+        SVar v_scases=new SVarObj("s.cases"); fs.add(v_scases);
+        SVar v_tcases=new SVarObj("t.cases"); fs.add(v_tcases);
+        SVar v_sd=new SVarObj("s.deviance"); fs.add(v_sd);
+        SVar v_td=new SVarObj("t.deviance"); fs.add(v_td);
+        SVar v_sdg=new SVarObj("s.dev.Gain"); fs.add(v_sdg);
+        SVar v_tdg=new SVarObj("t.dev.Gain"); fs.add(v_tdg);
+        SVar v_root=new SVarObj("Root"); v_root.setContentsType(SVar.CT_Tree); fs.add(v_root);
 
         TreeEntry te;
         if (Global.DEBUG>0) System.out.println("Forest export; total "+trees.size()+" trees associated.");

@@ -33,7 +33,7 @@ import org.rosuda.plugins.*;
     original project name until it was renamed to Klimt) */
 public class Klimt
 {
-    public static String Version = "0.98";
+    public static String Version = "0.98-pre1";
     public static String Release = "DB14";
     
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
@@ -461,9 +461,9 @@ public class Klimt
         if (c==null || r==null) return null;
 
         if (mcv!=null)
-            mcv.notify.beginBatch();
+            mcv.getNotifier().beginBatch();
         if (mcv==null) {
-            int j=0; mcv=new SVar("Misclass"); mcv.setInternalType(SVar.IVT_Misclass);
+            int j=0; mcv=new SVarObj("Misclass"); mcv.setInternalType(SVar.IVT_Misclass);
             mcv.getNotifier().beginBatch();
             while (j<c.size()) {
                 if (c.at(j)!=null && r.at(j)!=null && c.at(j).toString().compareTo(r.at(j).toString())!=0)
@@ -485,7 +485,7 @@ public class Klimt
             };
             if (wasCat) mcv.categorize(true);
         }
-        if (mcv!=null) mcv.notify.endBatch();
+        if (mcv!=null) mcv.getNotifier().endBatch();
         return mcv;
     }
 
@@ -494,9 +494,9 @@ public class Klimt
     public static SVar getPredictionVar(SNode t, SVar cv) {
         help11++;
         SVar v=null;
-        v=new SVar("R_"+t.getRootInfo().name+"_"+help11,false); v.setInternalType(cv.isCat()?SVar.IVT_RCC:SVar.IVT_Resid);
+        v=new SVarObj("R_"+t.getRootInfo().name+"_"+help11,false); v.setInternalType(cv.isCat()?SVar.IVT_RCC:SVar.IVT_Resid);
         t.getSource().add(v);
-        SVar nv=new SVar("N_"+t.getRootInfo().name+"_"+help11,true); nv.setInternalType(SVar.IVT_LeafID);
+        SVar nv=new SVarObj("N_"+t.getRootInfo().name+"_"+help11,true); nv.setInternalType(SVar.IVT_LeafID);
         t.getSource().add(nv);
         return getPredictionVar(t,cv,v,nv);
     }
@@ -570,7 +570,7 @@ public class Klimt
                 }
             }
         }
-        SVar clv=new SVar((isCat?"C_":"P_")+t.getRootInfo().name+"_"+help11,isCat); clv.setInternalType(SVar.IVT_Prediction);
+        SVar clv=new SVarObj((isCat?"C_":"P_")+t.getRootInfo().name+"_"+help11,isCat); clv.setInternalType(SVar.IVT_Prediction);
         clv.getNotifier().beginBatch();
         i=0; while(i<maxid) {
             if (isCat)

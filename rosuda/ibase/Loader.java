@@ -88,7 +88,7 @@ public class Loader {
                         } else { // no tabs, ergo SSV, but possible RDS, check that
                             if ((s.charAt(0)==' ')||(s.charAt(0)=='"')) {
                                 // RDS ergo add index as first var
-                                rdsType=true; SVar idx=new SVar("index",false);
+                                rdsType=true; SVar idx=new SVarObj("index",false);
                                 idx.setInternalType(SVar.IVT_Index);
                                 idx.getNotifier().beginBatch();
                                 vset.add(idx);
@@ -130,13 +130,13 @@ public class Loader {
                                 Common.addWarning("RTree.Load: Variable name \""+on+"\" contains invalid characters and will be replaced by \""+nam+"\".");
                             }
                             SVar nv=null;
-                            if (vset.add(nv=new SVar(nam))<0) {
+                            if (vset.add(nv=new SVarObj(nam))<0) {
                                 Common.addWarning("RTree.Load: Variable \""+nam+"\" occurs more than once in the header. Renaming to \""+nam+"."+vset.count()+"\".");
                                 Common.addWarning("            Please note that this variable won't be used in classifiers. You have to fix the problem in your dataset.");
-                                if (vset.add(nv=new SVar(nam+"."+vset.count()))<0) {
+                                if (vset.add(nv=new SVarObj(nam+"."+vset.count()))<0) {
                                     Common.addWarning("RTree.Load: Failed to create the substitute variable.");
                                     Common.addWarning("            Trying to use \"unknown.var."+vset.count()+"\" instead.");
-                                    if (vset.add(nv=new SVar("unknown.var."+vset.count()))<0) {
+                                    if (vset.add(nv=new SVarObj("unknown.var."+vset.count()))<0) {
                                         Common.addWarning("RTree.Load: Failed to create even that variable. Somehting's terribly wrong. Expect more errors to follow.");
                                     }
                                 }
@@ -202,7 +202,7 @@ public class Loader {
                                         if (!p2.equals(curPolyVar)) { // new poly line?
                                                                       // finish what's undone
                                             if (curPolySV!=null && mses!=null) {
-                                                SVar psv=new SVar(curPolySV.getName()+".Map");
+                                                SVar psv=new SVarObj(curPolySV.getName()+".Map");
                                                 psv.getNotifier().beginBatch();
                                                 psv.setContentsType(SVar.CT_Map);
                                                 int j=0;
@@ -266,7 +266,7 @@ public class Loader {
                         if (!isPoly) {
                             // ok, we're outside the data table so it seems
                             if (curPolySV!=null && mses!=null) {
-                                SVar psv=new SVar(curPolySV.getName()+".Map");
+                                SVar psv=new SVarObj(curPolySV.getName()+".Map");
                                 psv.getNotifier().beginBatch();
                                 int j=0;
                                 while (j<mses.length) {
@@ -384,7 +384,7 @@ public class Loader {
                 msid=-1;
             }
 
-            SVar psv=new SVar(curPolySV.getName()+".Map");
+            SVar psv=new SVarObj(curPolySV.getName()+".Map");
             psv.setContentsType(SVar.CT_Map);
             int j=0;
             while (j<mses.length) {
@@ -456,7 +456,7 @@ public class Loader {
             StringTokenizer st=new StringTokenizer(s,"\t");
             while (st.hasMoreTokens()) {
                 String t=st.nextToken();
-                SVar v=new SVar(t);
+                SVar v=new SVarObj(t);
                 vset.add(v);
             }
             int j=0;

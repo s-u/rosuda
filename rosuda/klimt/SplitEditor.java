@@ -121,8 +121,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                 todo?
                 - plot also left/right deviance? */
 
-            SVar sdv=new SVar("SplitDev",false);
-            SVar rxv=new SVar("RankedXV",false);
+            SVar sdv=new SVarObj("SplitDev",false);
+            SVar rxv=new SVarObj("RankedXV",false);
             int []fullrks=cv.getRanked();
             sw.profile("innerPlots: cv.getRanked");
             int []rks=new int[n.data.size()];
