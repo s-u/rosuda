@@ -1,8 +1,13 @@
+// KLIMT
+// (C)Copyright 2002-4 Simon Urbanek
+//
+// $Id$
+
 package org.rosuda.plugins;
 
 import java.awt.Frame;
 
-/* framework for pligins for KLIMT */
+/* framework for plugins for KLIMT */
 
 public class Plugin {
     public static final int PT_GenTree = 0x8010;
@@ -22,7 +27,14 @@ public class Plugin {
     public String getLastError() { return err; }
 
     public void setParameter(String par, Object val) {}
-    public Object getParameter(String par) { return null; }
+    public Object getParameter(String par) {
+        if (par!=null ) {
+            if (par.equals("name")) return name;
+            if (par.equals("author")) return author;
+            if (par.equals("desc")) return desc;
+        }
+        return null;
+    }
 
     public boolean initPlugin() { return true; }
     public boolean donePlugin() { return true; }
