@@ -8,6 +8,7 @@ package org.rosuda.JGR;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -31,12 +32,23 @@ public class JGRPackageManager extends iFrame implements ActionListener {
     public static Object[] defaultPackages;
     /** Packages which must be loaded for stable and secure working with JGR*/
     public static HashMap neededPackages = new HashMap();
+	public static String remindPackages = null;
     private JScrollPane scrollArea = new JScrollPane();
     private JButton close = new JButton("Close");
     private JButton refresh = new JButton("Refresh");
     private TableSorter sorter;
     private PTableModel pkgModel;
     private JTable pkgTable = new JTable();
+	private ArrayList missings;
+	
+	public JGRPackageManager(String missingpkgs) {
+		remindPackages = missingpkgs;
+		System.out.println("missing packages: "+remindPackages);
+		this.missings = new ArrayList();
+		StringTokenizer st = new StringTokenizer(remindPackages,",");
+		while (st.hasMoreTokens()) 
+			missings.add(st.nextToken());
+	}
 
     public JGRPackageManager() {
         super("Package Manager",iFrame.clsPackageUtil);
