@@ -23,6 +23,7 @@ public class PoGraSSgraphics extends PoGraSS
 
     Color curFillC;
     Color curPenC;
+    Font currentFont;
 
     /** construct an instance of {@link PoGraSS} associated with a {@link Graphics}.
 	@param G associated Graphics
@@ -31,9 +32,9 @@ public class PoGraSSgraphics extends PoGraSS
 	g=G;
 	c=new Color[128]; cn=new String[128]; cs=0; fillSt=0; lineWidth=1;
         curFillC=Color.white; curPenC=Color.black; localLayerCache=paintLayer=layer;
-	lastFace="SansSerif"; lastFontSize=10; lastFontAttr=Font.PLAIN;
-	lastFont=PoGraSS.FF_SansSerif;
-    };
+        setFontStyle(lastFontAttr); // implicitly sets the font
+        G.setColor(curPenC);
+    }
 
     /** construct an instance of {@link PoGraSS} associated with a {@link Graphics}, paint all layers
         @param G associated Graphics */	
@@ -132,28 +133,31 @@ public class PoGraSSgraphics extends PoGraSS
 	if (face==PoGraSS.FF_Serif) lastFace="Serif";
 	if (face==PoGraSS.FF_Mono) lastFace="Monospaced";
 	lastFont=face;
-	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     };
     public void setOptionalFace(String name) {
 	lastFace=name;
-	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     };
     public void setFontSize(int pt) {
-	lastFontSize=pt;
-	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+        lastFontSize=pt;
+	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     }
     public void setFontStyle(int attr) {
 	lastFontAttr=Font.PLAIN;
 	if ((attr&PoGraSS.FA_Ital)>0) lastFontAttr|=Font.ITALIC;
 	if ((attr&PoGraSS.FA_Bold)>0) lastFontAttr|=Font.BOLD;
-	g.setFont(new Font(lastFace,lastFontSize,lastFontAttr));
+	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     }
 
     public void nextLayer() {
         curLayer++;
     }
 
-    public void begin() { curLayer=0; }
+    public void begin() {
+        
+        curLayer=0;
+    }
     public void end() {}
 
     public int getWidthEstimate(String s) {
