@@ -49,11 +49,16 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 
     /** menu item of the "alternate" */
     MenuItem MIalt;
+
+    NodeMarker nm;
+    
     /** constructs a treemap based on the passed tree
 	@param f associated frame or <code>null</code> if none
 	@param tree root of the associated tree */
-    MosaicCanvas(Frame f, SNode tree) {
+    MosaicCanvas(Frame f, SNode tree, NodeMarker nm) {
 	setFrame(f); setTitle("Treemap");
+        this.nm=nm;
+        nm.addDepend(this);
 	nodes=new Vector();
 	root=tree; firstVertical=true; alternate=true;
 	if (root!=null) {
@@ -105,7 +110,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
             SNode gene=n;
             boolean selIt=false;
             if (m!=null) {
-                SNode sn=m.getNode();
+                SNode sn=nm.getNode();
                 while (gene!=null) { if (gene==sn) { selIt=true; break; }; gene=(SNode)gene.getParent(); };
             };
             int level=255-n.getLevel()*16;

@@ -20,8 +20,6 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     SNode root;
     /** current final node */
     SNode fin;
-    /** associated marker */
-    SMarker m;
 
     Axis ax,ay;
     boolean cumulate=true, lines=false;
@@ -35,15 +33,16 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     int lastw, lasth;
 
     MenuItem MIcum, MIlines;
+    NodeMarker nm;
     
     /** creates a new deviance canvas
 	@param f frame owning this canvas or <code>null</code> if none
 	@param t source tree root variable
     */
-    public DevCanvas(Frame f,SNode t) {
-	root=t; m=t.getSource().getMarker(); setFrame(f); setTitle("Deviance plot");
-	m.addDepend(this);
-	setBackground(Common.backgroundColor);
+    public DevCanvas(Frame f, SNode t, NodeMarker nm) {
+	root=t; setFrame(f); setTitle("Deviance plot");
+        nm.addDepend(this);
+        setBackground(Common.backgroundColor);
 	addMouseListener(this);
 	//addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
@@ -83,7 +82,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
-	setNode(m.getNode());
+	setNode(nm.getNode());
 	repaint();
     };
 
