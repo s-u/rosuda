@@ -99,6 +99,7 @@ public class SVarSet {
       }
       return true;
     }
+    
     /* added 28.12.03 MH */
     /** delete a case of the set
      *         @param index index*/
@@ -106,13 +107,11 @@ public class SVarSet {
       Enumeration e = vars.elements();
       while(e.hasMoreElements()) {
         SVar v = ((SVar) e.nextElement());
-        if (!v.remove(v.at(index),index))
+        if (!v.remove(index))
           return false;
       }
       return true;
     }
-
-
 
     /** returns the index of a variable specified by its name
 	@param nam variable name
