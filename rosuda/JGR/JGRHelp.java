@@ -307,16 +307,24 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
      * keyPressed: handle key event.
      */
     public void keyPressed(KeyEvent ke) {
+    	try {
+    		if (((JTextComponent) ke.getComponent()).getSelectedText().trim().length() > 0) {
+    			this.getRootPane().setDefaultButton(null);
+    		}
+    	} catch (Exception e) {}
+        
     }
 
     /**
      * keyReleased: handle key event: transfer selected commands to console.
      */
     public void keyReleased(KeyEvent ke) {
-        if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
+    	if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
             String cmd = ( (JTextComponent) ke.getComponent()).getSelectedText().trim();
-            JGR.MAINRCONSOLE.execute(cmd,true);
+            if (cmd.length() > 0) JGR.MAINRCONSOLE.execute(cmd,true);
         }
+    	if (this.getRootPane().getDefaultButton() == null)
+    		this.getRootPane().setDefaultButton(search);
     }
 
     /**
