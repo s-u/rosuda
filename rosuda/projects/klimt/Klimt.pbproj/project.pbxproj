@@ -248,7 +248,6 @@
 				1CE96E5C04D6DA8000A8030F,
 				1CE96E5E04D6DBC800A8030F,
 				1CE96E6004D6DCFA00A8030F,
-				1CE96E6204D6DE5A00A8030F,
 				1CE96E6404D6E13D00A8030F,
 				1CE96E6F04D7D99D00A8030F,
 				1CE96E7004D7D99D00A8030F,
@@ -326,6 +325,14 @@
 				1C166471058E084200A30C14,
 				1C993596058F776F0040221D,
 				F8D5EAB405C527D300071680,
+				1C9A86D00661736700FA73AE,
+				1C9A86D10661736700FA73AE,
+				1C9A86D40661738000FA73AE,
+				1C9A86D50661738000FA73AE,
+				1C9A86DA066173CC00FA73AE,
+				1C9A86DB066173CC00FA73AE,
+				1C9A86DC066173CC00FA73AE,
+				1C9A86DD066173CC00FA73AE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -732,6 +739,102 @@
 			settings = {
 			};
 		};
+		1C9A86CE0661736700FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WTentryAWT.java;
+			refType = 4;
+		};
+		1C9A86CF0661736700FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WTentrySwing.java;
+			refType = 4;
+		};
+		1C9A86D00661736700FA73AE = {
+			fileRef = 1C9A86CE0661736700FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86D10661736700FA73AE = {
+			fileRef = 1C9A86CF0661736700FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86D20661738000FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RespDialog.java;
+			refType = 4;
+		};
+		1C9A86D30661738000FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SpacingPanel.java;
+			refType = 4;
+		};
+		1C9A86D40661738000FA73AE = {
+			fileRef = 1C9A86D20661738000FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86D50661738000FA73AE = {
+			fileRef = 1C9A86D30661738000FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86D6066173CC00FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SVarDouble.java;
+			refType = 4;
+		};
+		1C9A86D7066173CC00FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SVarFact.java;
+			refType = 4;
+		};
+		1C9A86D8066173CC00FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SVarFixInt.java;
+			refType = 4;
+		};
+		1C9A86D9066173CC00FA73AE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SVarInt.java;
+			refType = 4;
+		};
+		1C9A86DA066173CC00FA73AE = {
+			fileRef = 1C9A86D6066173CC00FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86DB066173CC00FA73AE = {
+			fileRef = 1C9A86D7066173CC00FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86DC066173CC00FA73AE = {
+			fileRef = 1C9A86D8066173CC00FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C9A86DD066173CC00FA73AE = {
+			fileRef = 1C9A86D9066173CC00FA73AE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		1CA4330304D814C200A8030F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1113,18 +1216,6 @@
 		};
 		1CE96E6004D6DCFA00A8030F = {
 			fileRef = 1CE96E5F04D6DCFA00A8030F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		1CE96E6104D6DE5A00A8030F = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			path = SpacingPanel.java;
-			refType = 4;
-		};
-		1CE96E6204D6DE5A00A8030F = {
-			fileRef = 1CE96E6104D6DE5A00A8030F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1605,8 +1696,12 @@
 				F8EE90FE04D6A73600FA4796,
 				F8EE90FF04D6A73600FA4796,
 				F8EE910004D6A73600FA4796,
+				1C9A86D6066173CC00FA73AE,
+				1C9A86D7066173CC00FA73AE,
+				1C9A86D9066173CC00FA73AE,
 				1C98B802056C1F9000796AE6,
 				F8D5EAB305C527D300071680,
+				1C9A86D8066173CC00FA73AE,
 				1C98B803056C1F9000796AE6,
 				F8EE90FD04D6A73600FA4796,
 				F8EE910104D6A73600FA4796,
@@ -1687,11 +1782,12 @@
 				1C1881420584189F004683DA,
 				1C4A15D504D93F5E00A8030F,
 				1CE96E5504D6D8F500A8030F,
-				1CE96E6104D6DE5A00A8030F,
 				1CE96E7804D7E7BA00A8030F,
 				F8EE910604D6A73600FA4796,
 				F8EE910704D6A73600FA4796,
 				F8EE910804D6A73600FA4796,
+				1C9A86CE0661736700FA73AE,
+				1C9A86CF0661736700FA73AE,
 				1CE96FF004D808CA00A8030F,
 			);
 			isa = PBXGroup;
@@ -1871,6 +1967,8 @@
 				F8EE912504D6A73700FA4796,
 				1CE96FF204D80BD100A8030F,
 				1C4BC7D6052F03BB00A8030F,
+				1C9A86D20661738000FA73AE,
+				1C9A86D30661738000FA73AE,
 				1CE96E5F04D6DCFA00A8030F,
 				F8EE912604D6A73700FA4796,
 			);
