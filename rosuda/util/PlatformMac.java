@@ -44,9 +44,4 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
         MRJApplicationUtils.registerOpenDocumentHandler(this);
         MRJApplicationUtils.registerPrefsHandler(this);
     }
-
-    // Applications should override those
-    public void handleAbout() {}
-    public void handleOpenFile(File fileName) {}
-    public void handlePrefs() {}
 }
