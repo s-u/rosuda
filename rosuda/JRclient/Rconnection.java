@@ -94,6 +94,18 @@ public class Rconnection {
 	};
     }
 
+    public void finalize() {
+        close();
+        is=null; is=null;
+    }
+    
+    /** closes current connection */
+    public void close() {
+        try {
+            if (s!=null) s.close();
+        } catch(Exception e) { };
+    }
+    
     /** evaluates the given command, but does not fetch the result (useful for assignment
 	operations)
 	@param cmd command/expression string
