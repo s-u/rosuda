@@ -32,7 +32,7 @@ public class PluginManager {
     /** initialization of PluginManager. the config files are loaded in following order:
         1) global config file (/etc/plugins.cfg) on unix platforms
         2) plugins.cfg in current working directory
-        3) $HOME/.plugins.cfg if the plugins.cfg in cwd doesn't exist
+        3) $HOME/.plugins.cfg (before 0.96w was: if the plugins.cfg in cwd doesn't exist)
         if neither 2) nor 3) exists then 3) is created and used
 
         instances of PluginManager should NOT be created manually. Use {@link #getManager()} instead. */
@@ -44,12 +44,11 @@ public class PluginManager {
         if (File.separatorChar=='/')
             loadSettings("/etc/plugins.cfg");
         pst_level=new Integer(1);
-        if (!loadSettings()) {
-            String uh=System.getProperty("user.home");
-            if (uh==null && System.getProperty("os.name").indexOf("indows")>0) uh="C:\\";
-            configFile=uh+File.separator+".plugins.cfg";
-            loadSettings();
-        }
+        loadSettings();
+        String uh=System.getProperty("user.home");
+        if (uh==null && System.getProperty("os.name").indexOf("indows")>0) uh="C:\\";
+        configFile=uh+File.separator+".plugins.cfg";
+        loadSettings();
         setParS("PluginManager","userConfigFile",configFile);
     }
 
