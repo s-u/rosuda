@@ -45,6 +45,7 @@ public class ProgressLabel extends JLabel implements Runnable {
         else this.whatToDo = str;
         this.setVisible(true);
         thread.start();
+        //run();
     }
 
     public void run() {
@@ -52,11 +53,11 @@ public class ProgressLabel extends JLabel implements Runnable {
         try {
             while (true) {
                 this.setText(whatToDo+" .");
-                thread.sleep(500);
+                Thread.sleep(500);
                 this.setText(whatToDo+" . .");
-                thread.sleep(500);
+                Thread.sleep(500);
                 this.setText(whatToDo+" . . .");
-                thread.sleep(500);
+                Thread.sleep(500);
             }
         } catch (Exception e) {
 

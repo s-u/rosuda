@@ -50,7 +50,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
         fileChooser.addActionListener(this);
         fileChooser.addPropertyChangeListener(this);
-        fileChooser.setPreferredSize(new Dimension(380,300));
+        //fileChooser.setPreferredSize(new Dimension(380,300));
         if (directory != null && new File(directory).exists()) fileChooser.setCurrentDirectory(new File(directory));
 
         this.getContentPane().setLayout(new GridBagLayout());
@@ -62,13 +62,13 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             new Insets(1, 5, 1, 5), 0, 0));
         this.getContentPane().add(options,  new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
+            new Insets(1, iPreferences.isMac?5:105, 1, 5), 0, 0));
         options.add(new JLabel("Name :"),  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
         options.add(dataName,  new GridBagConstraints(1, 0, 4, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 50), 0, 0));
+            new Insets(1, 7, 1, 50), 0, 0));
         options.add(new JLabel("Header :"),  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
@@ -80,7 +80,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             new Insets(1, 5, 1, 5), 0, 0));
         options.add(sepsBox,  new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
+            new Insets(1, 7, 1, 5), 0, 0));
         options.add(new JLabel("Quote :"),  new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
@@ -88,8 +88,11 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
 
-        this.setSize(new Dimension(450, 500));
-        this.setLocation((screenSize.width-450)/2,(screenSize.height-500)/2);
+
+
+
+        this.setSize(new Dimension(500, 450));
+        this.setLocation((screenSize.width-500)/2,(screenSize.height-450)/2);
         //if (iPreferences.isMac) this.setResizable(false);
         /*this.addComponentListener( new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {

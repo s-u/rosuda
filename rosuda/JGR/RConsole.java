@@ -103,6 +103,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 back.setDividerLocation( ( (int) ( (double) getHeight() * 0.65)));
                 super.componentResized(evt);
+                if (JGR.R != null) JGR.R.eval("options(width="+(output.getWidth() / iToolkit.schnitt(output.getFontMetrics(output.getFont()).getWidths()))+")");
             }
         });
         this.addKeyListener(this);
@@ -113,9 +114,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         });
 
         this.getContentPane().setLayout(layout);
-        initIconBar();
+        this.getContentPane().add(initIconBar(),
+                                  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(5, 5, 2, 5), 0, 0));
+
         this.getContentPane().add(back,
-                                  new GridBagConstraints(0, 1, 11, 1, 1.0, 1.0
+                                  new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0
             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(2, 5, 5, 5), 0, 0));
         this.setMinimumSize(new Dimension(555,650));
@@ -126,19 +131,19 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.show();
     }
 
-    public void execute(final String cmd) {
+    public synchronized void execute(final String cmd) {
         try {
             JGR.RHISTORY.add(cmd);
             currentHistPosition = JGR.RHISTORY.size();
             outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD);
             if (!isHelpCMD(cmd)) {
-                Thread t = new Thread() {
-                    public void run() {
+                /*Thread t = new Thread() {
+                    public void run() {*/
                         JGR.READY = false;
                         JGR.RCSync.triggerNotification(cmd);
-                    }
+                    /*}
                 };
-                t.start();
+                t.start();*/
             }
         }
         catch (Exception e) {}
@@ -155,7 +160,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
 
 
-    public void help(String help) {
+    public synchronized void help(String help) {
         boolean exact = false;
         if (help != null) {
             help = help.replaceAll("[\"|(|)]", "");
@@ -170,7 +175,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         final boolean e = exact;
-        if (RHelp.last == null) {
+        if (RHelp.current == null) {
             final String h;
             if (help!=null) h = help.trim();
             else h = null;
@@ -180,7 +185,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     setWorking(true);
                     try {
                         new RHelp();
-                        if (h!=null) RHelp.last.search(h,e);
+                        if (h!=null) RHelp.current.search(h,e);
                     } catch (Exception e1) {
                     }
                     setWorking(false);
@@ -189,10 +194,22 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             t.start();
         }
         else {
-            setWorking(true);
-            RHelp.last.show();
-            if (help!=null && help.trim().length() > 0) RHelp.last.search(help.trim(),e);
-            setWorking(false);
+            if (help!=null && help.trim().length() > 0) {
+                final String h = help.trim();
+                Thread t = new Thread() {
+                    public void run() {
+                        progress.start("Working");
+                        setWorking(true);
+                        RHelp.current.show();
+                        try {
+                            RHelp.current.search(h,e);
+                        } catch (Exception e1) {
+                        }
+                        setWorking(false);
+                    }
+                };
+                t.start();
+            }
         }
         output.append("> ",iPreferences.CMD);
     }
@@ -238,61 +255,64 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else return false;
     }
 
-    public void initIconBar() {
-        this.getContentPane().add(newButton = new IconButton("/icons/new.png",
+    public JPanel initIconBar() {
+        JPanel buttons = new JPanel(new GridBagLayout());
+        buttons.add(newButton = new IconButton("/icons/new.png",
             "New", this, "newwspace"),
                                   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(openButton = new IconButton("/icons/open.png",
+            new Insets(0, 0, 0, 5), 0, 0));
+        buttons.add(openButton = new IconButton("/icons/open.png",
             "Open", this, "loadwspace"),
                                   new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(saveButton = new IconButton("/icons/save.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(saveButton = new IconButton("/icons/save.png",
             "Save", this, "savewspace"),
                                   new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(undoButton = undoMgr.undoButton,
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(undoButton = undoMgr.undoButton,
                                   new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
-        this.getContentPane().add(redoButton = undoMgr.redoButton,
+            new Insets(0, 20, 0, 5), 0, 0));
+        buttons.add(redoButton = undoMgr.redoButton,
                                   new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(cutButton = new IconButton("/icons/cut.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(cutButton = new IconButton("/icons/cut.png",
             "Cut", this, "cut"),
                                   new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(copyButton = new IconButton("/icons/copy.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(copyButton = new IconButton("/icons/copy.png",
             "Copy", this, "copy"),
                                   new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(pasteButton = new IconButton(
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(pasteButton = new IconButton(
             "/icons/paste.png", "Paste", this, "paste"),
                                   new GridBagConstraints(7, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(stopButton = new IconButton(
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(stopButton = new IconButton(
             "/icons/stop.png", "Stop", this, "stop"),
                                   new GridBagConstraints(8, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
+            new Insets(0, 20, 0, 5), 0, 0));
+
         stopButton.setEnabled(false);
-        this.getContentPane().add(helpButton = new IconButton("/icons/help.png",
+
+        buttons.add(helpButton = new IconButton("/icons/help.png",
             "R Help", this, "rhelp"),
                                   new GridBagConstraints(9, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
-        this.getContentPane().add(progress,
+            new Insets(0, 20, 0, 5), 0, 0));
+        buttons.add(progress,
                                   new GridBagConstraints(10, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 50, 2, 5), 0, 0));
-
+            new Insets(0, 50, 0, 5), 0, 0));
+        return buttons;
     }
 
 
@@ -554,6 +574,26 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
             return null;
         }
+
+        protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
+                                                int condition, boolean pressed) {
+
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) return true;
+
+                InputMap map = getInputMap();
+                ActionMap am = getActionMap();
+
+                if(map != null && am != null && isEnabled()) {
+                    Object binding = map.get(ks);
+                    Action action = (binding == null) ? null : am.get(binding);
+                    if (action != null) {
+                        return SwingUtilities.notifyAction(action, ks, e, this,
+                                                           e.getModifiers());
+                    }
+                }
+                return false;
+        }
+
     }
 
     class ResultOutput extends JTextPane {

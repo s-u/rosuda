@@ -83,19 +83,35 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
 
         this.getContentPane().setLayout(layout);
-        initIconBar();
+        this.getContentPane().add(initIconBar(),
+                                  new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(5, 5, 2, 5), 0, 0));
         this.getContentPane().add(scrollArea,
-                                  new GridBagConstraints(0, 1, 12, 1, 1.0, 1.0
+                                  new GridBagConstraints(0, 1, 2, 1, 1.0, 1.0
             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(modifiedStatus,
-                                  new GridBagConstraints(9, 2, 1, 1, 0.0, 0.0
+
+
+        JPanel status = new JPanel(new GridBagLayout());
+        status.setMinimumSize(new Dimension(600,20));
+        status.setSize(new Dimension(600,20));
+        status.add(modifiedStatus,
+                                  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 5, 5, 5), 0, 0));
-        this.getContentPane().add(caretStatus,
-                                  new GridBagConstraints(10, 2, 2, 1, 0.0, 0.0
+            new Insets(0, 0, 0, 0), 0, 0));
+        status.add(caretStatus,
+                                  new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 5, 5, 5), 0, 0));
+            new Insets(0, 0, 0, 0), 0, 0));
+
+
+        this.getContentPane().add(status,
+                                  new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+            new Insets(0, 0, 0, 5), 0, 0));
+
+
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exit(); //we have to ask the user something about what to do with the current file
@@ -121,59 +137,61 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.requestFocus();
     }
 
-    public void initIconBar() {
-        this.getContentPane().add(newButton = new IconButton("/icons/new.png",
+    public JPanel initIconBar() {
+        JPanel buttons = new JPanel(new GridBagLayout());
+        buttons.add(newButton = new IconButton("/icons/new.png",
             "New", this, "new"),
                                   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(openButton = new IconButton("/icons/open.png",
+            new Insets(0, 0, 0, 5), 0, 0));
+        buttons.add(openButton = new IconButton("/icons/open.png",
             "Open", this, "open"),
                                   new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(saveButton = new IconButton("/icons/save.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(saveButton = new IconButton("/icons/save.png",
             "Save", this, "save"),
                                   new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(undoButton = undoMgr.undoButton,
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(undoButton = undoMgr.undoButton,
                                   new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
-        this.getContentPane().add(redoButton = undoMgr.redoButton,
+            new Insets(0, 20, 0, 5), 0, 0));
+        buttons.add(redoButton = undoMgr.redoButton,
                                   new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(cutButton = new IconButton("/icons/cut.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(cutButton = new IconButton("/icons/cut.png",
             "Cut", this, "cut"),
                                   new GridBagConstraints(5, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(copyButton = new IconButton("/icons/copy.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(copyButton = new IconButton("/icons/copy.png",
             "Copy", this, "copy"),
                                   new GridBagConstraints(6, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(pasteButton = new IconButton(
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(pasteButton = new IconButton(
             "/icons/paste.png", "Paste", this, "paste"),
                                   new GridBagConstraints(7, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(findButton = new IconButton("/icons/find.png",
+            new Insets(0, 5, 0, 5), 0, 0));
+        buttons.add(findButton = new IconButton("/icons/find.png",
             "Find", this, "find"),
                                   new GridBagConstraints(8, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
-        this.getContentPane().add(helpButton = new IconButton("/icons/help.png",
+            new Insets(0, 20, 0, 5), 0, 0));
+        buttons.add(helpButton = new IconButton("/icons/help.png",
             "R Help", this, "rhelp"),
                                   new GridBagConstraints(9, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 20, 2, 5), 0, 0));
-        this.getContentPane().add(progress,
+            new Insets(0, 20, 0, 5), 0, 0));
+        buttons.add(progress,
                                   new GridBagConstraints(10, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 50, 2, 5), 0, 0));
+            new Insets(0, 50, 0, 5), 0, 0));
+        return buttons;
     }
 
     public void exit() {

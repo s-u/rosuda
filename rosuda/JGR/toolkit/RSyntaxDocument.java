@@ -87,6 +87,7 @@ public class RSyntaxDocument extends RStyledDocument {
          * Override to apply syntax highlighting after the document has been updated
      */
     public void remove(final int offset, int length) throws BadLocationException {
+        if (offset==-1) return;
         super.remove(offset, length);
         /*Thread t = new Thread() {
             public void run() {

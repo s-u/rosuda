@@ -27,7 +27,7 @@ import org.rosuda.ibase.toolkit.*;
 public class RHelp extends iFrame implements ActionListener, KeyListener,
     MouseListener {
 
-    public static RHelp last = null;
+    public static RHelp current = null;
     private static WTentry MyEntry = null;
 
     private String keyWord = null;
@@ -183,7 +183,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         this.setLocation(Common.screenRes.width - this.getSize().width - 50, 10);
         super.show();
         inputKeyWord.requestFocus();
-        last = this;
+        current = this;
     }
 
     public void refresh() {
@@ -214,6 +214,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     private void exit() {
+        current = null;
         finalize();
         dispose();
     }

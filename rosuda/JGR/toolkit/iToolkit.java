@@ -63,4 +63,10 @@ public class iToolkit {
          }
          return null;
        }
+
+       public static int schnitt(int[] widths) {
+           int sum = 0,l;
+           for (int i = 0; i < (l= widths.length); i++) sum += widths[i];
+           return 1 + (int) sum / l;
+       }
 }

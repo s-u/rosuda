@@ -67,6 +67,7 @@ public class iFrame extends JFrame {
         } catch (IllegalAccessException e) {
         }
         this.setTitle(title);
+        this.getContentPane().setBackground(UIManager.getColor("Label.background"));
         this.addWindowListener(new WinListener());
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         if (WinTracker.current == null) WinTracker.current = new WinTracker();
@@ -159,7 +160,7 @@ public class iFrame extends JFrame {
         t.start();
     }*/
 
-    public void setWorking(final boolean work) {
+    public synchronized void setWorking(final boolean work) {
            SwingUtilities.invokeLater(new Runnable() {
                public void run() {
                    if (work) {
