@@ -1,5 +1,8 @@
 import java.awt.Frame;
 import java.awt.Graphics;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.io.PrintStream;
 
 /** PGScanvas - extends {@link LayerCanvas} by adding generic functionality for
@@ -20,6 +23,9 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     /** inProgress flag to avoid recursions in paint methods */
     boolean inProgress=false;
 
+    boolean cancel;
+    Dialog intDlg;
+    
     public PGSCanvas(int layers) {
         super(layers);
     }
@@ -27,7 +33,18 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
         super(1);
     }
-    
+
+    class IDlgCL implements ActionListener {
+        PGSCanvas c;
+        IDlgCL(PGSCanvas cc) { c=cc; };
+
+        /** activated if a button was pressed. It determines whether "cancel" was pressed or OK" */
+        public void actionPerformed(ActionEvent e) {
+            c.cancel=!e.getActionCommand().equals("OK");
+            c.intDlg.setVisible(false);
+        };
+    }
+
     /** paintBuffer simply calls {@link #paintPoGraSS} on the supplied {@link Graphics}.
         Any further classes should override {@link #paintPoGraSS} instead of
         {@link #paintLayer}  */
@@ -93,6 +110,39 @@ public class PGSCanvas extends LayerCanvas implements Commander {
                 outs=null;
             };
         };
+        if (cmd=="sizeDlg") {
+            Dialog d=intDlg=new Dialog(myFrame,"Set plot size",true);
+            IDlgCL ic=new IDlgCL(this);
+            d.setBackground(Color.white);
+            d.setLayout(new BorderLayout());
+            d.add(new SpacingPanel(),BorderLayout.WEST);
+            d.add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+            d.add(bp,BorderLayout.SOUTH);
+            d.add(new Label(" "),BorderLayout.NORTH);
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            d.add(cp);
+            cp.add(new Label("width: "));
+            TextField tw=new TextField(""+getSize().width,6);
+            TextField th=new TextField(""+getSize().height,6);
+            cp.add(tw);
+            cp.add(new Label(", height: "));
+            cp.add(th);
+            d.pack();
+            b.addActionListener(ic);b2.addActionListener(ic);
+            d.setVisible(true);
+            if (!cancel) {
+                int w=Tools.parseInt(tw.getText());
+                int h=Tools.parseInt(th.getText());
+                if(w<10) w=getSize().width;
+                if(h<10) w=getSize().height;
+                setSize(w,h);
+                if (myFrame!=null) myFrame.pack();
+            };
+            d.dispose();
+        };
         if (cmd=="exportSVG") {
             boolean svgExtensionPresent=false;
             try {
@@ -116,4 +166,4 @@ public class PGSCanvas extends LayerCanvas implements Commander {
         };
         return null;
     };
-};
+}
