@@ -85,20 +85,25 @@ public class HistCanvasNew extends BaseCanvas
             };
             i=0;
             ay.setValueRange(countMax);
-            int ly=ay.getValuePos(0);
+	    int bly=ay.getValuePos(0);
             while(i<es) {
                 int b=id2bar[i];
                 if (b>0) {
                     b--;
                     if (pp[b].ref==null) {
                         pp[b].ref=new int[count[b]];
+			int ly=bly;
                         int x1=ax.getValuePos(ax.vBegin+b*binw);
                         int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
                         int vy=ay.getValuePos(count[b]);
-                        if (orientation==0 || orientation==2)
+                        if (orientation==0)
                             pp[b].r=new Rectangle(x1,vy,x2-x1,ly-vy);
-                        else
-                            pp[b].r=new Rectangle(vy,x1,ly-vy,x2-x1);
+			else if (orientation==2)
+                            pp[b].r=new Rectangle(x2,ly,x1-x2,vy-ly);
+                        else if (orientation==1)
+                            pp[b].r=new Rectangle(ly,x1,vy-ly,x2-x1);
+			else
+                            pp[b].r=new Rectangle(vy,x2,ly-vy,x1-x2);
                     }
                     count[b]--;
                     pp[b].ref[count[b]]=i;
@@ -110,8 +115,15 @@ public class HistCanvasNew extends BaseCanvas
 
     public void paintBack(PoGraSS g) {        
         g.setColor("black");
-        g.drawLine(mLeft,H-mBottom,mLeft,mTop);
-        g.drawLine(mLeft,H-mBottom,W-mRight,H-mBottom);
+	if (orientation!=3)
+	    g.drawLine(mLeft,H-mBottom,mLeft,mTop);
+	else
+	    g.drawLine(W-mRight,H-mBottom,W-mRight,mTop);
+
+	if (orientation!=2)
+	    g.drawLine(mLeft,H-mBottom,W-mRight,H-mBottom);
+	else
+	    g.drawLine(mLeft,mTop,W-mRight,mTop);
 
         tickMark1=ax.getValuePos(ax.vBegin);
         tickMark2=ax.getValuePos(ax.vBegin+binw);
