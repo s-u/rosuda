@@ -71,6 +71,35 @@ public class WinTracker implements ActionListener, FocusListener
 	    System.out.println(">>new window: \""+we.name+"\" ("+we.w.toString()+")");
     };
 
+    public boolean contains(int wclass) {
+        Enumeration e = wins.elements();
+        while(e.hasMoreElements()) {
+            WTentry we = ((WTentry) e.nextElement());
+            if (we.wclass==wclass && we.w!=null) {
+                we.w.requestFocus();
+                we.w.toFront();
+                try {
+                    Frame f = ( (Frame) we.w);
+                    f.setState(Frame.NORMAL);
+                }
+                catch(Exception ex) {}
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void disableAll() {
+        Enumeration e = wins.elements();
+        while(e.hasMoreElements()) ((WTentry) e.nextElement()).w.setFocusableWindowState(false);
+    }
+
+    public void enableAll() {
+        Enumeration e = wins.elements();
+        while(e.hasMoreElements()) ((WTentry) e.nextElement()).w.setFocusableWindowState(true);
+    }
+
+
     public void rm(WTentry we) {
 	if (we==null) return;
 	wins.removeElement(we);
@@ -174,8 +203,15 @@ public class WinTracker implements ActionListener, FocusListener
 	    if (we!=null && cmd.compareTo("WTMwindow"+we.id)==0) {
 		if (Global.DEBUG>0)
 		    System.out.println(">>activate: \""+we.name+"\" ("+we.w.toString()+")");
-                if (we.w!=null) we.w.requestFocus();
-                if (we.w!=null) we.w.toFront();
+                if (we.w!=null) {
+                    we.w.requestFocus();
+                    we.w.toFront();
+                    try {
+                        Frame f = ( (Frame) we.w);
+                        f.setState(Frame.NORMAL);
+                    }
+                    catch(Exception ex) {}
+                }
 	    }
 	}
     };
