@@ -158,7 +158,12 @@ class PoGraSSPS extends PoGraSS
     
     public void end() {
 	if (inPath) outPS(" closepath stroke\n"); inPath=false;
-	if (outs!=null) outs.close();
-	outs=null;
+    };
+
+    public void closePSoutput() {
+	if (outs!=null) {
+	    outs.close();
+	    outs=null;
+	};
     };
 };

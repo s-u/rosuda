@@ -54,9 +54,10 @@ public class PGSCanvas extends DBCanvas implements Commander {
 	if (cmd=="exportPS") {
 	    PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as PostScript to ...","output.ps");
 	    if (outs!=null) {
-		PoGraSSPS p=new PoGraSSPS("output.ps");
+		PoGraSSPS p=new PoGraSSPS(outs);
 		p.setTitle(desc);
 		paintPoGraSS(p);
+		p=null;
 		outs.close();
 		outs=null;
 	    };
