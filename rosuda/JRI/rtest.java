@@ -3,10 +3,10 @@ import org.rosuda.JRI.REXP;
 
 public class rtest {
     public static void main(String[] args) {
-        System.out.println("Press <Enter> to continue (time to attach the debugger is necessary)");
+        System.out.println("Press <Enter> to continue (time to attach the debugger if necessary)");
         try { System.in.read(); } catch(Exception e) {};
-        System.out.println("Creating Rengine");
-	Rengine re=new Rengine(true);
+        System.out.println("Creating Rengine (with arguments)");
+	Rengine re=new Rengine(args, true);
         System.out.println("Rengine created, waiting for R");
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
