@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 public class JavaGD implements WindowListener {
     Frame f;
     public GDCanvas c;
+    public boolean active=false;
+    public int devNr=0;
     
     public JavaGD() {
         super();
@@ -53,7 +55,11 @@ public class JavaGD implements WindowListener {
     }
     
     public void     gdActivate() {
-        if (f!=null) f.requestFocus();
+        active=true;
+        if (f!=null) {
+            f.requestFocus();
+            f.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):"")+" *active*");
+        }
     }
 
     public void     gdCircle(double x, double y, double r) {
@@ -76,6 +82,8 @@ public class JavaGD implements WindowListener {
     }
     
     public void     gdDeactivate() {
+        active=false;
+        if (f!=null) f.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):""));
     }
     
     public void     gdHold() {
@@ -120,6 +128,8 @@ public class JavaGD implements WindowListener {
     }
 
     public void     gdNewPage(int devNr) { // new API: provides the device Nr.
+        this.devNr=devNr;
+        if (f!=null) f.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
         if (c!=null) {
             c.reset();
             c.devNr=devNr;
