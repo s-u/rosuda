@@ -22,7 +22,7 @@ public class SCatSequence extends Notifier {
 
     public SCatSequence(SVar var, Object theOwner, boolean notifyVariable) {
         v=var; owner=theOwner;
-        cats=v.getNumCats();
+        cats=(v!=null)?v.getNumCats():0;
         notifyVar=notifyVariable;
     }
 
@@ -39,6 +39,7 @@ public class SCatSequence extends Notifier {
     }
     
     void updateCats() {
+        if (v==null) return;
         int cc=v.getNumCats();
         if (cc==cats) return;
         if (cc==0 || seqToCat==null || catToSeq==null) {
