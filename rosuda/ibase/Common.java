@@ -228,6 +228,12 @@ public class Common
         return isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
     }
 
+    /** returns true if the supplied event corresponds to object-move trigger */
+    public static boolean isMoveTrigger(MouseEvent ev) {
+        return (isWin?(ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown()):
+                ((isMac || !ev.isAltDown()) && ev.isControlDown() && !ev.isShiftDown()));
+    }
+    
     public static boolean isExtQuery(MouseEvent ev) {
         return (ev.isShiftDown());
     }
