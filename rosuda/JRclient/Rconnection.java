@@ -147,6 +147,45 @@ public class Rconnection {
 	return null;
     }
 
+    public boolean assign(String sym, String ct) {
+	succeeded=false;
+	if (!connected || rt==null) {
+	    lastError="Error: not connected!";
+	    return false;
+	}
+	byte[] rq=new byte[sym.length()+5+ct.length()+5];
+        sym.getBytes(0,sym.length(),rq,4);
+	ct.getBytes(0,ct.length(),rq,9+sym.length());
+	Rtalk.setHdr(Rtalk.DT_STRING,sym.length()+1,rq,0);
+	Rtalk.setHdr(Rtalk.DT_STRING,ct.length()+1,rq,sym.length()+5);
+	rq[sym.length()+4]=0; rq[rq.length-1]=0;
+	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
+	if (rp!=null && rp.isOk())
+	    return succeeded=true;
+	lastError="Request return code: "+rp.getStat();
+	return false;
+    }
+
+    public boolean assign(String sym, REXP r) {
+	succeeded=false;
+	if (!connected || rt==null) {
+	    lastError="Error: not connected!";
+	    return false;
+	}
+	int rl=r.getBinaryLength();
+	byte[] rq=new byte[sym.length()+5+rl+4];
+        sym.getBytes(0,sym.length(),rq,4);
+	Rtalk.setHdr(Rtalk.DT_STRING,sym.length()+1,rq,0);
+	rq[sym.length()+4]=0;
+	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,sym.length()+5);
+	r.getBinaryRepresentation(rq,sym.length()+9);
+	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
+	if (rp!=null && rp.isOk())
+	    return succeeded=true;
+	lastError="Request return code: "+rp.getStat();
+	return false;
+    }
+
     public RFileInputStream openFile(String fn) throws IOException {
 	return new RFileInputStream(rt,fn);
     };
