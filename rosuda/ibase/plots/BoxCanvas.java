@@ -177,7 +177,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     public void updateBoxes() {
 	if (!valid) return;
-	int md[]=SVar.getRanked(v,m,1);
+	int md[]=SVar.getRanked(v,m,-1);
 	areMarked=(md!=null);
 	if (vsCat) {
 	    if (areMarked) {
