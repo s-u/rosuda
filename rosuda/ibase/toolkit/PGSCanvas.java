@@ -110,13 +110,16 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     public void forcedFlush() {
         Rectangle r=getBounds();
         setUpdateRoot(0);
-        setSize(r.width-1,r.height-1);
+        //setSize(r.width-1,r.height-1);
         setSize(r.width,r.height);
     }
     
     /** default handing of commands "exportPGS" and "exportPS". Any descendant should
 	call <code>super.run(o,cmd)</code> to retain this functionality */
     public Object run(Object o, String cmd) {
+        if (cmd=="BREAK" && Common.breakDispatcher!=null) {
+            Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_BREAK));
+        }
         if (cmd=="exportPGS") {
             PoGraSSmeta p=new PoGraSSmeta();
             paintPoGraSS(p);
