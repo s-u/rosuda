@@ -60,4 +60,12 @@ public class Tools {
         return ""+front+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
+    public static double parseDouble(String s) {
+        double d=0;
+        try {
+            Double dd=Double.valueOf(s);
+            d=dd.doubleValue();
+        } catch(Exception dce) {};
+        return d;
+    }
 };
