@@ -400,6 +400,70 @@ public class REXP extends Object {
         return (Xt==XT_LIST)?(RBool)cont:null;
     }
 
+    /** get content of the REXP as an array of doubles. Array of integers, single double and single integer are automatically converted into such an array if necessary.
+        @return double[] content or <code>null</code> if the REXP is not a array of doubles or integers */
+    public double[] asDoubleArray() {
+        if (Xt==XT_ARRAY_DOUBLE) return (double[])cont;
+        if (Xt==XT_DOUBLE) {
+            double[] d=new double[1]; d[0]=asDouble(); return d;
+        }
+        if (Xt==XT_INT) {
+            double[] d=new double[1]; d[0]=((Integer)cont).doubleValue(); return d;
+        }
+        if (Xt==XT_ARRAY_INT) {
+            int[] i=asIntArray();
+            if (i==null) return null;
+            double[] d=new double[i.length];
+            int j=0;
+            while (j<i.length) {
+                d[j]=(double)i[j]; j++;
+            }
+            return d;
+        }
+        return null;
+    }
+
+    /** get content of the REXP as an array of integers. Unlike {@link #asDoubleArray} <u>NO</u> automatic conversion is done if the content is not an array of the correct type, because there is no canonical representation of doubles as integers. A single integer is returned as an array of the length 1.
+        @return double[] content or <code>null</code> if the REXP is not a array of  integers */
+    public int[] asIntArray() {
+        if (Xt==XT_ARRAY_INT) return (int[])cont;
+        if (Xt==XT_INT) {
+            int[] i=new int[1]; i[0]=asInt(); return i;
+        }
+        return null;
+    }
+
+    /** returns the contentof the REXP as a matrix of doubles (2D-array: m[rows][cols]). This is the same form as used by popular math packages for Java, such as JAMA. This means that following leads to desired results:<br>
+        <code>Matrix m=new Matrix(c.eval("matrix(c(1,2,3,4,5,6),2,3)").asDoubleMatrix());</code>
+        @return 2D array of doubles in the form double[rows][cols] or <code>null</code> if the contents is no 2-dimensional matrix of doubles */
+    public double[][] asDoubleMatrix() {
+        if (Xt!=XT_ARRAY_DOUBLE || attr==null || attr.Xt!=XT_LIST) return null;
+        REXP dim=attr.asList().getHead();
+        if (dim==null || dim.Xt!=XT_ARRAY_INT) return null; // we need dimension attr
+        int[] ds=dim.asIntArray();
+        if (ds==null || ds.length!=2) return null; // matrix must be 2-dimensional
+        int m=ds[0], n=ds[1];
+        double[][] r=new double[m][n];
+        double[] ct=asDoubleArray();
+        if (ct==null) return null;
+        // R stores matrices as matrix(c(1,2,3,4),2,2) = col1:(1,2), col2:(3,4)
+        // we need to copy everything, since we create 2d array from 1d array
+        int i=0,k=0;
+        while (i<n) {
+            int j=0;
+            while (j<m) {
+                r[j++][i]=ct[k++];
+            }
+            i++;
+        }
+        return r;
+    }
+
+    /** this is just an alias for {@link #asDoubleMatrix()}. */
+    public double[][] asMatrix() {
+        return asDoubleMatrix();
+    }
+    
     /** displayable contents of the expression. The expression is traversed recursively if aggregation types are used (Vector, List, etc.)
         @return String descriptive representation of the xpression */
     public String toString() {
