@@ -137,8 +137,20 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.show();
     }
 
+
+    public void exit() {
+        dispose();
+    }
+
     public void dispose() {
-      execute("q()");
+        Enumeration e = WinTracker.current.elements();
+        while (e.hasMoreElements()) {
+            WTentry we = (WTentry) e.nextElement();
+            if (we.wclass == iFrame.clsEditor) {
+                if (!((REditor) we.w).exit()) return;
+            }
+        }
+        execute("q()");
     }
 
     public void execute(String cmd) {

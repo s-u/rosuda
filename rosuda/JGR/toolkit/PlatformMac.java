@@ -27,7 +27,7 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
     }
 
     public void handleQuit() {
-        JGR.MAINRCONSOLE.execute("q()\n");
+        JGR.MAINRCONSOLE.exit();
     }
 
 

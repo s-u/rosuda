@@ -80,14 +80,6 @@ public class JGR {
     }
 
     public static String exit() {
-        Enumeration e = WinTracker.current.elements();
-        while (e.hasMoreElements()) {
-            WTentry we = (WTentry) e.nextElement();
-            if (we.wclass == iFrame.clsEditor) {
-                if (!((REditor) we.w).exit()) return null;
-            }
-        }
-
         int exit = JOptionPane.showConfirmDialog(null, "Save workspace?",
                                                  "Close JGR",
                                                  JOptionPane.

@@ -59,7 +59,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         this(null);
     }
 
-    public REditor(String fileName) {
+    public REditor(String file) {
         super("Editor", iFrame.clsEditor);
         String[] Menu = {
             "+", "File", "@NNew", "new", "@OOpen", "open","#Open Recent","",
@@ -154,9 +154,8 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
                                    Common.screenRes.height - 50 : 700));
         this.setLocation(this.getLocation().x+100, 10);
         this.show();
-        if (fileName != null) {
-            new FileLoad(this);
-        }
+        if (file != null) this.fileName = file;
+        if (this.fileName != null) loadFile();
         editArea.requestFocus();
     }
 
@@ -237,20 +236,21 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     }
 
     public void open() {
-        if (modified) {
+        /*if (modified) {
             int i = JOptionPane.showConfirmDialog(this, "Save File?", "Exit",
                                                   JOptionPane.
                                                   YES_NO_CANCEL_OPTION,
                                                   JOptionPane.QUESTION_MESSAGE);
             if (i == 0 && !saveFile()) return;
-        }
+        }*/
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, directory);
         if (fopen.getFile() != null) {
-            editArea.setText("");
+            if (!modified) editArea.setText("");
             fileName = (directory = fopen.getDirectory()) + fopen.getFile();
         }
-        loadFile();
+        if (!modified) loadFile();
+        else new REditor(fileName);
     }
 
     public void loadFile() {
@@ -323,6 +323,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
             progress.start("Saveing");
             setWorking(true);
             new FileSave(this);
+            this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
             setModified(modified = false);
             return true;
         }

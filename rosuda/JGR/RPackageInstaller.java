@@ -30,7 +30,6 @@ public class RPackageInstaller extends iFrame implements ActionListener {
         String[] Menu = {
             "+", "File", "~File.Basic.End",
             "~Window","0"};
-        //"~Help", "R Help", "rhelp",/* "JJGR FAQ", "jrfaq",*/ "~About", "0"};
         iMenu.getMenu(this, this, Menu);
 
         close.setActionCommand("close");

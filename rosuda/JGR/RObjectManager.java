@@ -304,7 +304,7 @@ public class RObjectManager extends iFrame implements ActionListener {
                 drag = ((RObject) obj.getParent()).getType()==RObject.DATAFRAME?((RObject) obj.getParent()).getName()+"$"+obj.getName():obj.getName();
             }
             else if (obj != null) drag = obj.getName();
-            Transferable t = new StringSelection(obj==null?"dragFailure":drag);
+            Transferable t = new StringSelection(obj==null?"":drag);
             dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
         }
         public void dragEnter(DragSourceDragEvent evt) {
