@@ -44,7 +44,7 @@ public class SVarFact extends SVar
         isnum = false;
         cont = new int[len];
         for (int i = 0; i < cont.length; i++) cont[i] = SVar.int_NA;
-        cats = new String[len];
+        cats = new String[0];
     }
 
     /** construct new variable and add first element
@@ -181,13 +181,19 @@ public class SVarFact extends SVar
 
 
     public boolean replace(int i, Object o) {
+        System.out.println(o.toString());
         int catI =  getCatIndex(o.toString());
         System.out.println(o+" "+catI);
         if (catI==-1) {
             tempcats = new String[cats.length+1];
             for (int z = 0; z < cats.length; z++) tempcats[z] = cats[z];
-            tempcats[tempcats.length-1] = o.toString();
+            try {
+              tempcats[tempcats.length - 1] = o.toString();
+            }
+            catch (Exception e) {e.printStackTrace();}
+            System.out.println(tempcats[tempcats.length-1]);
             cats = tempcats;
+            System.out.println(o.toString());
             catI = getCatIndex(o.toString());
         }
         cont[i] = catI;
