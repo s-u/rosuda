@@ -10,9 +10,6 @@ import java.net.*;
 public class Rconnection {
     /** last error string */
     String lastError=null;
-    /** is set to <code>true</code> if last operation was successful,
-	<code>false</code>otherwise. */
-    boolean succeeded=false;
     Socket s;
     boolean connected=false;
     InputStream is;
@@ -34,14 +31,14 @@ public class Rconnection {
     protected int rsrvVersion;
     
     /** make a new local connection on default port (6311) */
-    public Rconnection() {
+    public Rconnection() throws RSrvException {
 	this("127.0.0.1",6311);
     }
 
     /** make a new connection to specified host on default port (6311)
 	@param host host name/IP
     */
-    public Rconnection(String host) {
+    public Rconnection(String host) throws RSrvException {
 	this(host,6311);
     }
 
@@ -50,70 +47,85 @@ public class Rconnection {
 	@param host host name/IP
 	@param port TCP port
     */
-    public Rconnection(String host, int port) {
-	succeeded=false;
-	try {
-	    if (connected) s.close();
-	    s=null;
-	} catch (Exception e) {};
-	connected=false;
-	try {
-	    s=new Socket(host,port);
-	    is=s.getInputStream();
-	    os=s.getOutputStream();
-	    rt=new Rtalk(is,os);
-	    byte[] IDs=new byte[32];
-	    int n=is.read(IDs);
-	    if (n!=32) {
-		lastError="Handshake failed: expected 32 bytes header, got "+n;
-		s.close(); is=null; os=null; s=null;
-		return;
-	    };
-	    String ids=new String(IDs);
-	    if (ids.substring(0,4).compareTo("Rsrv")!=0) {
-		lastError="Handshake failed: Rsrv signature expected, but received \""+ids+"\" instead.";
-		s.close(); is=null; os=null; s=null;
-	    };
+    public Rconnection(String host, int port) throws RSrvException {
+        try {
+            if (connected) s.close();
+            s=null;
+        } catch (Exception e) {
+            throw new RSrvException(this,"Cannot connect: "+e.getMessage());
+        }
+        connected=false;
+        try {
+            s=new Socket(host,port);
+        } catch (Exception sce) {
+            throw new RSrvException(this,"Cannot connect: "+sce.getMessage());
+        }
+        try {
+            is=s.getInputStream();
+            os=s.getOutputStream();
+        } catch (Exception gse) {
+            throw new RSrvException(this,"Cannot get io stream: "+gse.getMessage());
+        }
+        rt=new Rtalk(is,os);
+        byte[] IDs=new byte[32];
+        int n=-1;
+        try {
+            n=is.read(IDs);
+        } catch (Exception sre) {
+            throw new RSrvException(this,"Error while receiving data: "+sre.getMessage());
+        }
+        try {
+            if (n!=32) {
+                lastError="Handshake failed: expected 32 bytes header, got "+n;
+                throw new RSrvException(this,lastError);
+            }
+            String ids=new String(IDs);
+            if (ids.substring(0,4).compareTo("Rsrv")!=0) {
+                lastError="Handshake failed: Rsrv signature expected, but received \""+ids+"\" instead.";
+                throw new RSrvException(this,lastError);
+            }
             try {
                 rsrvVersion=Integer.parseInt(ids.substring(4,8));
             } catch (Exception px) {}
             if (rsrvVersion>101) {
                 lastError="Handshake failed: The server uses more recent protocol than this client.";
-                s.close(); is=null; os=null; s=null;
+                throw new RSrvException(this,lastError);
             }
             if (ids.substring(8,12).compareTo("QAP1")!=0) {
-		lastError="Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.";
-		s.close(); is=null; os=null; s=null;
-	    };
-	    for (int i=12;i<32;i+=4) {
-		String attr=ids.substring(i,i+4);
-		if (attr.compareTo("ARpt")==0) {
-		    if (!authReq) { // this method is only fallback when no other was specified
-			authReq=true;
-			authType=AT_plain;
-		    }
-		};
-		if (attr.compareTo("ARuc")==0) {
-		    authReq=true;
-		    authType=AT_crypt;
-		};
-		if (attr.charAt(0)=='K') {
-		    Key=attr.substring(1,3);
-		};
-	    };
-	    connected=true;
-	    succeeded=true;
-	    lastError="OK";
-	} catch (Exception e2) {
-	    lastError="Exception: "+e2.getMessage();
-	};
+                lastError="Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.";
+                throw new RSrvException(this,lastError);
+            }
+            for (int i=12;i<32;i+=4) {
+                String attr=ids.substring(i,i+4);
+                if (attr.compareTo("ARpt")==0) {
+                    if (!authReq) { // this method is only fallback when no other was specified
+                        authReq=true;
+                        authType=AT_plain;
+                    }
+                }
+                if (attr.compareTo("ARuc")==0) {
+                    authReq=true;
+                    authType=AT_crypt;
+                }
+                if (attr.charAt(0)=='K') {
+                    Key=attr.substring(1,3);
+                }
+            }
+            connected=true;
+            lastError="OK";
+        } catch (RSrvException innerX) {
+            try { s.close(); } catch (Exception ex01) {}; is=null; os=null; s=null;
+            throw innerX;
+        }
     }
-
+    
     public void finalize() {
         close();
         is=null; is=null;
     }
 
+    /** get server version as reported during the handshake.
+        @return server version as integer (Rsrv0100 will return 100) */
     public int getServerVersion() {
         return rsrvVersion;
     }
@@ -122,6 +134,7 @@ public class Rconnection {
     public void close() {
         try {
             if (s!=null) s.close();
+            connected=false;
         } catch(Exception e) { };
     }
     
@@ -129,27 +142,24 @@ public class Rconnection {
 	operations)
 	@param cmd command/expression string
 	@return <code>true</code> if successful */
-    public boolean voidEval(String cmd) {
-	succeeded=false;
+    public void voidEval(String cmd) throws RSrvException {
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
-	    return false;
+            throw new RSrvException(this,lastError);
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_voidEval,cmd+"\n");
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+        if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
-	return false;	
+        throw new RSrvException(this,lastError,rp.getStat());
     }
 
     /** evaluates the given command and retrieves the result
 	@param cmd command/expression string
 	@return R-xpression or <code>null</code> if an error occured */
-    public REXP eval(String cmd) {
-	succeeded=false;
+    public REXP eval(String cmd) throws RSrvException {
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
-	    return null;
+            throw new RSrvException(this,lastError);
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_eval,cmd+"\n");
 	if (rp!=null && rp.isOk()) {
@@ -160,7 +170,7 @@ public class Rconnection {
                 /* we should check parameter type (should be DT_SEXP) and fail if it's not */
                 if (pc[0]!=Rtalk.DT_SEXP) {
                     lastError="Error while processing eval output: SEXP (type "+Rtalk.DT_SEXP+") expected but found result type "+pc[0]+".";
-                    return null;
+                    throw new RSrvException(this,lastError);
                 }
                 /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may be not in the future. */
             }
@@ -168,12 +178,11 @@ public class Rconnection {
             if (pc.length>rxo) {
                 rx=new REXP();
                 REXP.parseREXP(rx,pc,rxo);
-            };
-            succeeded=true;
+            }
             return rx;
-	};
+	}
         lastError="Request return code: "+rp.getStat();
-        return null;
+        throw new RSrvException(this,lastError,rp.getStat());
     }
 
     /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
@@ -181,11 +190,10 @@ public class Rconnection {
         @param ct contents
         @return <code>true</code> on success, otherwise <code>false</code>
         */
-    public boolean assign(String sym, String ct) {
-	succeeded=false;
+    public void assign(String sym, String ct) throws RSrvException {
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
-	    return false;
+            throw new RSrvException(this,lastError);
 	}
         byte[] symn=sym.getBytes();
         byte[] ctn=ct.getBytes();
@@ -196,10 +204,9 @@ public class Rconnection {
 	Rtalk.setHdr(Rtalk.DT_STRING,ctn.length+1,rq,symn.length+5);
 	rq[symn.length+4]=0; rq[rq.length-1]=0;
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+        if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
-	return false;
+        throw new RSrvException(this,lastError,rp.getStat());
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
@@ -207,11 +214,10 @@ public class Rconnection {
         @param ct contents. currently only basic types (int, double, int[], double[]) are supported.
         @return <code>true</code> on success, otherwise <code>false</code>
         */
-    public boolean assign(String sym, REXP r) {
-	succeeded=false;
+    public void assign(String sym, REXP r) throws RSrvException {
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
-	    return false;
+            throw new RSrvException(this,lastError);
 	}
 	int rl=r.getBinaryLength();
         byte[] symn=sym.getBytes();
@@ -222,22 +228,21 @@ public class Rconnection {
 	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,symn.length+5);
 	r.getBinaryRepresentation(rq,symn.length+9);
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+	if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
-	return false;
+        throw new RSrvException(this,lastError,rp.getStat());
     }
 
     /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
         equals to calling {@link #assign(String, REXP)} */        
-    public boolean assign(String sym, double[] val) {
-        return assign(sym,new REXP(val));
+    public void assign(String sym, double[] val) throws RSrvException {
+        assign(sym,new REXP(val));
     }
 
     /** assign values of an array of integers to a symbol in R (creating as vector of numbers).<br>
         equals to calling {@link #assign(String, REXP)} */        
-    public boolean assign(String sym, int[] val) {
-        return assign(sym,new REXP(val));
+    public void assign(String sym, int[] val) throws RSrvException {
+        assign(sym,new REXP(val));
     }
 
     /** open a file on the Rserve for reading
@@ -245,35 +250,33 @@ public class Rconnection {
         @return input stream to be used for reading. Note that the stream is read-once only, there is no support for seek or rewind. */
     public RFileInputStream openFile(String fn) throws IOException {
 	return new RFileInputStream(rt,fn);
-    };
+    }
 
     /** remove a file on the Rserve
         @param fn file name. should not contain any path delimiters, since Rserve may restrict the access to local working directory.
         @return <code>true</code> on success, <code>false</code> otherwise */
-    public boolean removeFile(String fn) {
-	succeeded=false;
+    public void removeFile(String fn) throws RSrvException {
 	if (!connected || rt==null) {
-	    lastError="Error: not connected"; return succeeded=false;
+	    lastError="Error: not connected";
+            throw new RSrvException(this,lastError);
 	}	    
 	Rpacket rp=rt.request(Rtalk.CMD_removeFile,fn);
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+	if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
-	return false;
-    };
+        throw new RSrvException(this,lastError);
+    }
 
     /** shutdown remote Rserv. Note that some Rserves cannot be shut down from
 	client side (forked version). */
-    public boolean shutdown() {
-	succeeded=false;
+    public void shutdown() throws RSrvException {
 	if (!connected || rt==null) {
-	    lastError="Error: not connected"; return succeeded=false;
+	    lastError="Error: not connected";
+            throw new RSrvException(this,lastError);
 	}	    
 	Rpacket rp=rt.request(Rtalk.CMD_shutdown);
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+	if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
-	return false;    
+        throw new RSrvException(this,lastError);
     }
 
     /** login using supplied user/pwd. Note that login must be the first
@@ -281,32 +284,25 @@ public class Rconnection {
 	@param user username
 	@param pwd password
 	@return returns <code>true</code> on success */
-    public boolean login(String user, String pwd) {
-	succeeded=false;
-	if (!authReq) return succeeded=true;
+    public void login(String user, String pwd) throws RSrvException {
+	if (!authReq) return;
 	if (authType==AT_crypt) {
 	    if (Key==null) Key="rs";
 	    Rpacket rp=rt.request(Rtalk.CMD_login,user+"\n"+jcrypt.crypt(Key,pwd));
-	    if (rp!=null && rp.isOk())
-		return succeeded=true;
+	    if (rp!=null && rp.isOk()) return;
 	    lastError="Request return code: "+rp.getStat();
 	    try { s.close(); } catch(Exception e) {};
 	    is=null; os=null; s=null; connected=false;
-	    return false;    
+            throw new RSrvException(this,lastError);
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_login,user+"\n"+pwd);
-	if (rp!=null && rp.isOk())
-	    return succeeded=true;
+	if (rp!=null && rp.isOk()) return;
 	lastError="Request return code: "+rp.getStat();
 	try {s.close();} catch (Exception e) {};
 	is=null; os=null; s=null; connected=false;
-	return false;    
+        throw new RSrvException(this,lastError);
     }
 
-    /** check success of the last operation
-	@return <code>true</code> if last function was successful */
-    public boolean isOk() { return succeeded; }
-    
     /** check connection state. Note that currently this state is not checked on-the-spot,
 	that is if connection went down by an outside event this is not reflected by
 	the flag
