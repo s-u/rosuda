@@ -87,6 +87,7 @@ public abstract class LayerCanvas extends Canvas
                 offscreen[i] = createImage(d.width, d.height);
             offsd=d;
             firstPaintLayer=0; // after resize we need to repaint them all
+            setUpdateRoot(0);
             if (Common.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
         };
 	
