@@ -26,6 +26,7 @@ public class TFrame extends Frame
     public static final int clsLine     = 140;
     public static final int clsMap      = 141;
     public static final int clsFD       = 142;
+    public static final int clsTable    = 143;
 
     public static final int clsUser     = 8192;
     
