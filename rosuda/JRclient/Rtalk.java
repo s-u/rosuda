@@ -77,12 +77,14 @@ public class Rtalk {
 	buf[o]=(byte)((v&0xff000000)>>24);
     }
 
-    /** writes cmd/resp/type byte + 3 bytes len into a byte buffer at specified offset
+    /** writes cmd/resp/type byte + 3/7 bytes len into a byte buffer at specified offset.
 	@param ty type/cmd/resp byte
 	@param len length
 	@param buf buffer
-	@param o offset */
-    public static void setHdr(int ty, int len, byte[] buf, int o) {
+	@param o offset
+        @return offset in buf just after the header. Please note that since Rserve 0.3 the header can be either 4 or 8 bytes long, depending on the len parameter.
+        */
+    public static int setHdr(int ty, int len, byte[] buf, int o) {
         buf[o]=(byte)((ty&255)|((len>0xfffff0)?DT_LARGE:0)); o++;
 	buf[o]=(byte)(len&255); o++;
 	buf[o]=(byte)((len&0xff00)>>8); o++;
@@ -93,8 +95,18 @@ public class Rtalk {
             buf[o]=0; o++;
             buf[o]=0; o++;
         }
+        return o;
     }
 
+    /** creates a new header according to the type and length of the parameter
+        @param ty type/cmd/resp byte
+        @param len length */        
+    public static byte[] newHdr(int ty, int len) {
+        byte[] hdr=new byte[(len>0xfffff0)?8:4];
+        setHdr(ty,len,hdr,0);
+        return hdr;
+    }
+    
     /** converts bit-wise stored int in Intel-endian form into Java int
 	@param buf buffer containg the representation
 	@param o offset where to start (4 bytes will be used)
@@ -142,18 +154,39 @@ public class Rtalk {
     }
 
     /** sends a request with attached parameters
-	@param cmd command
+        @param cmd command
         @param cont contents - parameters
-	@return returned packet or <code>null</code> if something went wrong */
+        @return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, byte[] cont) {
+        return request(cmd,null,cont,0,(cont==null)?0:cont.length);
+    }
+
+    /** sends a request with attached prefix and  parameters. Both prefix and cont can be <code>null</code>. Effectively <code>request(a,b,null)</code> and <code>request(a,null,b)</code> are equivalent.
+	@param cmd command
+        @param prefix - this content is sent *before* cont. It is provided to save memory copy operations where a small header precedes a large data chunk (usually prefix conatins the parameter header and cont contains the actual data).
+        @param cont contents
+        @param offset offset in cont where to start sending (if <0 then 0 is assumed, if >cont.length then no cont is sent)
+        @param len number of bytes in cont to send (it is clipped to the length of cont if necessary)
+	@return returned packet or <code>null</code> if something went wrong */
+    public Rpacket request(int cmd, byte[] prefix, byte[] cont, int offset, int len) {
+        if (cont!=null) {
+            if (offset>=cont.length) cont=null;
+            if (len>cont.length-offset) len=cont.length-offset;
+        }
+        if (offset<0) offset=0;
+        if (len<0) len=0;
+        int contlen=(cont==null)?0:len;
+        if (prefix!=null && prefix.length>0) contlen+=prefix.length;
 	byte[] hdr=new byte[16];
 	setInt(cmd,hdr,0);
-	setInt((cont==null)?0:cont.length,hdr,4);
+	setInt(contlen,hdr,4);
 	for(int i=8;i<16;i++) hdr[i]=0;
 	try {
 	    os.write(hdr);
+            if (prefix!=null && prefix.length>0)
+                os.write(prefix);
 	    if (cont!=null && cont.length>0)
-		os.write(cont);
+		os.write(cont,offset,len);
 
 	    byte[] ih=new byte[16];
 	    if (is.read(ih)!=16)
