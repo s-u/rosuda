@@ -150,7 +150,7 @@ public class iMenu {
                 mi.setActionCommand("copy");
                 mi.addActionListener(al);
                 m.add(mi);
-                if (menuDef[i-1].equals("~EditCPS")) {
+                if (menuDef[i-1].equals("~EditC")) {
                     JMenu m2 = new JMenu("Copy Special");
                     JMenuItem mi21 = new JMenuItem("Copy Output");
                     mi21.setActionCommand("copyoutput");
@@ -181,11 +181,24 @@ public class iMenu {
                 mi.addActionListener(al);
                 m.add(mi);
                 m.addSeparator();
-                mi=new JMenuItem("Clear Console");
-                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('L', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-                mi.setActionCommand("clearconsole");
+                mi=new JMenuItem("Find");
+                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                mi.setActionCommand("search");
                 mi.addActionListener(al);
                 m.add(mi);
+                mi=new JMenuItem("Find Next");
+                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('G', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                mi.setActionCommand("searchnext");
+                mi.addActionListener(al);
+                m.add(mi);
+                if (menuDef[i-1].equals("~EditC")) {
+                    m.addSeparator();
+                    mi=new JMenuItem("Clear Console");
+                    mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('L', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                    mi.setActionCommand("clearconsole");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                }
                 if (!Common.isMac()) {
                     m.addSeparator();
                     mi=new JMenuItem("Preferences...");
