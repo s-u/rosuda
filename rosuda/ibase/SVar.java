@@ -39,6 +39,9 @@ public class SVar extends Vector
     /** maximal value (if numeric variable) */
     double max;
 
+    /** # of missing cases in the variable */
+    int missingCount=0;
+    
     public static final String missingCat = "NA";
 
     /** construct new variable and add first element
@@ -103,8 +106,11 @@ public class SVar extends Vector
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
      *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
     public boolean add(Object o) {
-	if (o==null) hasNull=true;
-	if (size()<1 && guessNum) {
+        if (o==null) {
+            missingCount++;
+            hasNull=true;
+        }
+	if (o!=null && size()==missingCount && guessNum) { // o not missing and all just missing so far and guess
 	    try {	      
 		if (Class.forName("java.lang.Number").isAssignableFrom(o.getClass())==true)
 		    isnum=true;	       
@@ -123,7 +129,7 @@ public class SVar extends Vector
 		ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
 	    };
 	};
-	if (isnum) {
+	if (isnum && o!=null) {
 	    try {
 		double val=((Number)o).doubleValue();
 		if (val>max) max=val;
