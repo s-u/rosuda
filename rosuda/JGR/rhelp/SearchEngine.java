@@ -130,9 +130,11 @@ public class SearchEngine {
                     if (exactMatch && entry.getEntry().equals(iSearchTerm)) {
                         if (help!=null) help.link.setText(" ");
                         File f = new File(JGR.RLIBS[0]+File.separator+entry.getURL());
+                        System.out.println(f);
                         if (!f.exists()) {
                             for (int i = 1; i < JGR.RLIBS.length; i++) {
                                 f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
+                                System.out.println(f);
                                 if (f.exists()) break;
                             }
                         }

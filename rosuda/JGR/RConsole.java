@@ -166,6 +166,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             if (help.startsWith("help.search")) {
                 help = help.replaceFirst("help.search", "");
             }
+            else if (help.startsWith("help.start")) help=null;  
             else {
                 help = help.replaceFirst("help", "");
                 help = help.replaceFirst("\\?", "");
