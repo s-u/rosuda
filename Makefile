@@ -25,11 +25,9 @@ endef
 RGui.jar: $(IBASE_SRC) $(RGUI_SRC)
 	rm -rf org
 	$(JAVAC) -d . $^
-	cp rosuda/RGui/splash.jpg org/rosuda/RGui
-	cp -r rosuda/RGui/icons org/rosuda/RGui
-	echo "Main-class: org.rosuda.RGui.RGui" > RGui.mft
-	jar fcm $@ RGui.mft org
-	rm -rf org RGui.mft
+	cp rosuda/projects/jrgui/splash.jpg .
+	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg org
+	rm -rf org splash.jpg
 
 ibase.jar: $(IBASE_SRC)
 	$(can-with-jar)
