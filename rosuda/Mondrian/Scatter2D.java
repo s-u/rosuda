@@ -82,12 +82,14 @@ public class Scatter2D extends DragBox {
     Rectangle sr = S.r;
     int mode = S.mode;
 
-    if( sr.width == 1 || sr.height == 1 || S.status == Selection.KILLED) {
-        // This is a oneClick selection -> we expand the rectangle
-        sr.x -= 2;
-        sr.y -= 2;
-        sr.width = 3;
-        sr.height = 3;
+    if( sr.width < 4 && sr.height < 5 && S.status == Selection.KILLED) {
+      // This is a oneClick selection -> we expand the rectangle
+      if( modeString.equals("points") ) {
+        sr.x -= radius/2+1;
+        sr.y -= radius/2+1;
+        sr.width = radius;
+        sr.height = radius;
+      }
     }
 
     S.o = new floatRect(worldToUserX(S.r.x),
@@ -390,10 +392,9 @@ public class Scatter2D extends DragBox {
 
           if( (e.getModifiers() == CTRL_DOWN) ) {
 
-	      frame.setCursor(Frame.CROSSHAIR_CURSOR);
+            frame.setCursor(Frame.CROSSHAIR_CURSOR);
               
               info = true;
-//ttbg.setColor(getBackground());
               ttbg.setColor(MFrame.backgroundColor);
 
               // Draw x-Label for CRTL_DOWN event
@@ -433,15 +434,16 @@ public class Scatter2D extends DragBox {
                   egetY = (int)userToWorldY(getLly());
               
               double ratioY = (worldToUserY(egetY) - getLly())/(getUry()-getLly());
-              int  labelHeight = fm.getMaxAscent(); //+ fm.getMaxDescent();
+              minWidth = fm.stringWidth(Stat.roundToString(getLly(), roundY));
+              maxWidth = fm.stringWidth(Stat.roundToString(getUry(), roundY));
 
               ttbg.setColor(MFrame.backgroundColor);
-              if( egetY < userToWorldY(getUry()) + labelHeight + 4 )
+              if( egetY < userToWorldY(getUry()) + minWidth + 4 )
                   ttbg.fillRect( 0, (int)userToWorldY(getUry()),
-                                 (int)userToWorldX( getLlx() ) - outside - tick, labelHeight + 4 );
-              if( egetY > userToWorldY(getLly()) - labelHeight - 4 )
-                  ttbg.fillRect( 0, (int)userToWorldY(getLly()) -labelHeight - 4,
-                                 (int)userToWorldX( getLlx() ) - outside - tick, labelHeight + 4 );
+                                 (int)userToWorldX( getLlx() ) - outside - tick, minWidth + 4 );
+              if( egetY > userToWorldY(getLly()) - maxWidth - 4 )
+                  ttbg.fillRect( 0, (int)userToWorldY(getLly()) -maxWidth - 4,
+                                 (int)userToWorldX( getLlx() ) - outside - tick, maxWidth + 4 );
 
               // Fadenkreuz
               ttbg.setColor(Color.lightGray);
@@ -453,9 +455,11 @@ public class Scatter2D extends DragBox {
               ttbg.setColor(Color.black);
               ttbg.drawLine( (int)userToWorldX( getLlx() ) - outside, egetY,
                              (int)userToWorldX( getLlx() ) - outside - tick, egetY );  
-              ttbg.drawString(Stat.roundToString(worldToUserY(egetY), roundY),
-                              (int)userToWorldX( getLlx() ) - outside - tick - fm.stringWidth(Stat.roundToString(worldToUserY(egetY), roundY)),
-                              (int)(egetY + labelHeight/2 +labelHeight * (ratioY -0.5)));
+              ttbg.rotate(-Math.PI/2);
+              ttbg.drawString(Stat.roundToString(worldToUserY(egetY), roundY), 
+                            (int)(-egetY - ratioY * fm.stringWidth(Stat.roundToString(worldToUserY(egetY), roundY))),
+                            (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick +1);          
+              ttbg.rotate(Math.PI/2);
               g.drawImage(ttbi, 0, 0, Color.black, null);
               ttbg.dispose();
           }
@@ -484,7 +488,7 @@ public class Scatter2D extends DragBox {
                   return;
           }
           if( e.getKeyCode() == KeyEvent.VK_UP ) {
-              if( radius < 15 ) {
+              if( radius < width/2 ) {
                   radius+=2;
                   scaleChanged = true;
               }	
@@ -508,12 +512,13 @@ public class Scatter2D extends DragBox {
       super.processKeyEvent(e);  // Pass other event types on.
   }
   
-  public void paint(Graphics g1d) {
-
-
-    Graphics2D g = (Graphics2D)g1d;
+  public void paint(Graphics2D g) {
 
     frame.setCursor(Frame.DEFAULT_CURSOR);
+
+    int pF = 1;
+    if( printing )
+      pF = printFactor;      
 
     if( displayMode.equals("Fixed") )
       setAspect(1);
@@ -522,10 +527,8 @@ public class Scatter2D extends DragBox {
 
     Dimension size = this.getSize();
 
-    size = this.getSize();
-
     if( oldWidth != size.width || oldHeight != size.height || scaleChanged || frame.getBackground() != MFrame.backgroundColor) {
-      frame.setBackground(MFrame.backgroundColor);
+//      frame.setBackground(MFrame.backgroundColor);
       this.width = size.width;
       this.height = size.height;
 
@@ -537,7 +540,7 @@ public class Scatter2D extends DragBox {
       }
       updateScale();
       int num=0;
-      for( int i=0; i<data.n; i++ )
+      for( int i=0; i<data.n; i++ )           // Check how many points we need to render !
         if( xVal[i]>=getLlx() && xVal[i]<getUrx() && yVal[i]>=getLly() && yVal[i]<getUry() )
           num++;
       if( !force )
@@ -546,7 +549,7 @@ public class Scatter2D extends DragBox {
         } else
           modeString="points";
 
-      size = this.getSize();
+//      size = this.getSize();
       for( int i=0; i<Selections.size(); i++) {
         Selection S = (Selection)Selections.elementAt(i);
         S.r.x      = (int)userToWorldX( ((floatRect)S.o).x1 );
@@ -562,21 +565,27 @@ public class Scatter2D extends DragBox {
 
     long start = new Date().getTime();
     
-    if( bg == null || alphaChanged ) {
-      bi = createImage(size.width, size.height);	
-      fi = createImage(size.width, size.height);	
-      tbi = createImage(size.width, size.height);	
-      ttbi = createImage(size.width, size.height);	
-      fg = (Graphics2D)fi.getGraphics();
-      bg = (Graphics2D)bi.getGraphics();
-      tbg = (Graphics2D)tbi.getGraphics();
-    
+    if( bg == null || alphaChanged || printing ) {
+
+      if( printing ) {
+        System.out.println("Setting Graphics for Printing");
+        bg = g;
+        tbg = g;
+      }
+      else {
+        bi = createImage(size.width, size.height);	
+        fi = createImage(size.width, size.height);	
+        tbi = createImage(size.width, size.height);	
+        ttbi = createImage(size.width, size.height);	
+        fg = (Graphics2D)fi.getGraphics();
+        bg = (Graphics2D)bi.getGraphics();
+        tbg = (Graphics2D)tbi.getGraphics();
+      }
       FontMetrics fm = bg.getFontMetrics();      
 
-      xShift = Math.max(fm.stringWidth(""+yMin), fm.stringWidth(""+yMax));
-      border = Math.max(xShift / 2, 30);
-      xShift = Math.max(xShift - border + 0, 0);
-      yShift = -xShift / 2;
+      border = 30*pF;
+      xShift = 0;
+      yShift = 0;
 
       if( !alphaChanged )
         create();
@@ -589,28 +598,28 @@ public class Scatter2D extends DragBox {
 //        p.setProperty("com.apple.macosx.AntiAliasedGraphicsOn", "false");
 //        System.setProperties(p);
         
+        fg.setColor(Color.gray);
         fg.fillRect(0,0,size.width, size.height);
         fg.setColor(Color.white);
       }
       Graphics2D pg;
       Image ti;
       if( modeString.equals("points") ) {
-        if( invert ) {
+        if( invert )
           pg = fg;
-          pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/100)));
-        } else {
+        else
           pg = bg;
-          pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/100)));
-        }
+        pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/100)));
+        
         for( int i=0; i<data.n; i++) 
           if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
-            pg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius, radius);
+            bg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
 
         if( invert ) {
           media.addImage(bi,0);
           try {
             media.waitForID(0);
-            ti = Util.makeColorTransparent(fi, new Color(0).black);
+            ti = Util.makeColorTransparent(fi, new Color(0).gray);
             bg.drawImage(ti, 0, 0, Color.black, null);
           }
           catch(InterruptedException e) {}
@@ -619,7 +628,7 @@ public class Scatter2D extends DragBox {
       } else {
         for( int i=0; i<rects.size(); i++ ) {
           MyRect r = (MyRect)rects.elementAt(i);
-          bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+//          bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
           if( invert ) {
             bg.setColor(Color.black);
             bg.fillRect(r.x, r.y, r.w, r.h);
@@ -645,43 +654,45 @@ public class Scatter2D extends DragBox {
       }
 
       // x axis
-      bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside, 
-                   (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside );  
+      bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside*pF, 
+                   (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside*pF );  
       // x-ticks  
-      bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside, 
-                   (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside + tick );  
+      bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside*pF, 
+                   (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside*pF + tick*pF );  
         
-      bg.drawLine( (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside, 
-                   (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside + tick );  
+      bg.drawLine( (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside*pF, 
+                   (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside*pF + tick*pF );  
 
       bg.drawString(Stat.roundToString(getLlx(), roundX), 
                     (int)userToWorldX( getLlx() ), 
-                    (int)userToWorldY( getLly() ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
+                    (int)userToWorldY( getLly() ) + outside*pF + tick*pF + fm.getMaxAscent() + fm.getMaxDescent() );
       
       bg.drawString(Stat.roundToString(getUrx(), roundX), 
                     (int)userToWorldX( getUrx() ) - fm.stringWidth(Stat.roundToString(getUrx(), roundX)), 
-                    (int)userToWorldY( getLly() ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
+                    (int)userToWorldY( getLly() ) + outside*pF + tick*pF + fm.getMaxAscent() + fm.getMaxDescent() );
       
       // y-axis  
-      bg.drawLine( (int)userToWorldX( getLlx() ) - outside, (int)userToWorldY( getLly() ), 
-                   (int)userToWorldX( getLlx() ) - outside, (int)userToWorldY( getUry() ) );  
+      bg.drawLine( (int)userToWorldX( getLlx() ) - outside*pF, (int)userToWorldY( getLly() ), 
+                   (int)userToWorldX( getLlx() ) - outside*pF, (int)userToWorldY( getUry() ) );  
       // y-ticks  
-      bg.drawLine( (int)userToWorldX( getLlx() ) - outside,        (int)userToWorldY( getLly() ), 
-                   (int)userToWorldX( getLlx() ) - outside - tick, (int)userToWorldY( getLly() ) );  
+      bg.drawLine( (int)userToWorldX( getLlx() ) - outside*pF,        (int)userToWorldY( getLly() ), 
+                   (int)userToWorldX( getLlx() ) - outside*pF - tick*pF, (int)userToWorldY( getLly() ) );  
 
-      bg.drawLine( (int)userToWorldX( getLlx() ) - outside,        (int)userToWorldY( getUry() ), 
-                   (int)userToWorldX( getLlx() ) - outside - tick, (int)userToWorldY( getUry() ) );  
+      bg.drawLine( (int)userToWorldX( getLlx() ) - outside*pF,        (int)userToWorldY( getUry() ), 
+                   (int)userToWorldX( getLlx() ) - outside*pF - tick*pF, (int)userToWorldY( getUry() ) );  
         
+      bg.rotate(-Math.PI/2);
       bg.drawString(Stat.roundToString(getLly(), roundY), 
-                    (int)userToWorldX( getLlx() ) - outside - tick - fm.stringWidth(Stat.roundToString(getLly(), roundY)), 
-                    (int)userToWorldY( getLly() )  );
-      
+                    -(int)userToWorldY( getLly() ), 
+                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF);
       bg.drawString(Stat.roundToString(getUry(), roundY), 
-                    (int)userToWorldX( getLlx() ) - outside - tick - fm.stringWidth(Stat.roundToString(getUry(), roundY)),
-                    (int)userToWorldY( getUry() ) + fm.getMaxAscent() - 1);          
+                    -(int)userToWorldY( getUry() ) - fm.stringWidth(Stat.roundToString(getUry(), roundY) ),
+                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF);          
+      bg.rotate(Math.PI/2);
     } // end, new background graphics	
 
-    tbg.drawImage(bi, 0, 0, Color.black, null);
+    if( !printing )
+      tbg.drawImage(bi, 0, 0, Color.black, null);
 
     tbg.setColor(DragBox.hiliteColor);
     
@@ -719,10 +730,10 @@ public class Scatter2D extends DragBox {
         if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
           if( selection[i] > 0 ) {
             tbg.setColor(MFrame.backgroundColor);
-            tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius, radius);
+            tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
             tbg.setColor(DragBox.hiliteColor);
             tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
-            tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius, radius);
+            tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
           }
       }
     } else {
@@ -740,14 +751,14 @@ public class Scatter2D extends DragBox {
             
     tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
     tbg.setColor(Color.black);
-    g.drawImage(tbi, 0, 0, Color.black, null);
-
-    g.setColor(Color.black);
-    g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-    bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-
-    drawSelections(g);
-
+    if( !printing ) {
+      tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));      
+      drawSelections(tbg);
+      g.setColor(Color.black);
+      g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+      g.drawImage(tbi, 0, 0, Color.black, null);
+    }
+        
     long stop = new Date().getTime();
     //System.out.println("Time for points: "+(stop-start)+"ms");
   }
@@ -801,12 +812,12 @@ public class Scatter2D extends DragBox {
           yVal = data.getRawNumbers(Vars[1]);
 
           frame.setTitle("Scatterplot(x: "+data.getName(Vars[0])+" y: "+data.getName(Vars[1])+")");
-          
-          binning = data.discretize2D("Dummy", Vars[0], getLlx(), getUrx()+0.01*(getUrx()-getLlx()), (15-radius)*15,
-                                               Vars[1], getLly(), getUry()+0.01*(getUry()-getLly()), (15-radius)*15);
+          //(15-radius)*15
+          binning = data.discretize2D("Dummy", Vars[0], getLlx(), getUrx()+0.01*(getUrx()-getLlx()), width/radius,
+                                               Vars[1], getLly(), getUry()+0.01*(getUry()-getLly()), width/radius);
       } else {
-          binning.update2DBins(getLlx(), getUrx()+0.01*(getUrx()-getLlx()), (int)(15-radius)*15,
-                               getLly(), getUry()+0.01*(getUry()-getLly()), (int)(15-radius)*15);
+        binning.update2DBins(getLlx(), getUrx()+0.01*(getUrx()-getLlx()), (int)(width/radius),
+                             getLly(), getUry()+0.01*(getUry()-getLly()), (int)(width/radius));
       }
       
     //System.out.println(getLlx()+ " - " +getUrx()+ " - " + getLly()+ " - " +getUry());
@@ -816,13 +827,13 @@ public class Scatter2D extends DragBox {
     int X = (int)userToWorldX(getLlx());
     int nextX, Y;
     for( int i=0; i<binning.levels[0]; i++) {
-        nextX = (int)userToWorldX(getLlx()+(i+1)*(getUrx()-getLlx())/((15-radius)*15));
+        nextX = (int)userToWorldX(getLlx()+(i+1)*(getUrx()-getLlx())/(width/radius));
         int lastY = (int)userToWorldY(getLly());
         for( int j=0; j<binning.levels[1]; j++) {
             int index = i*(binning.levels[1])+j;
             Vector tileIds = new Vector(1,0);
             tileIds.addElement(new Integer(index));
-            Y = (int)userToWorldY(getLly()+(j+1)*(getUry()-getLly())/((15-radius)*15));
+            Y = (int)userToWorldY(getLly()+(j+1)*(getUry()-getLly())/(width/radius));
             if( binning.table[index] > 0 )
                 rects.addElement(new MyRect( true, 'f', "Observed", X, Y, nextX - X, lastY - Y, binning.table[index],
                                              binning.table[index], 1.0, 0.0, binning.names[0]+": "+binning.lnames[0][i]+"\n"+binning.names[1]+": "+binning.lnames[1][j]+'\n', tileIds));
@@ -830,7 +841,7 @@ public class Scatter2D extends DragBox {
         }
         X = nextX;
     }
-    System.out.println(" Llx: "+getLlx()+" Lly: "+getLly());
-    System.out.println(" Num Bins: "+(binning.levels[0]*binning.levels[1])+" Num Tiles: "+rects.size());
+//    System.out.println(" Llx: "+getLlx()+" Lly: "+getLly());
+//    System.out.println(" Num Bins: "+(binning.levels[0]*binning.levels[1])+" Num Tiles: "+rects.size());
   }
 }
