@@ -63,14 +63,15 @@ KeyListener, TableColumnModelListener {
 
     private String type = "data.frame";
 
+    private boolean editable = true;
 
     /** create a Table without a SVarSet*/
     public DataTable() {
-        this(null,null);
+        this(null,null,true);
     }
 
     /** create Table with specified SVarSet*/
-    public DataTable(SVarSet vs, String type) {
+    public DataTable(SVarSet vs, String type, boolean editable) {
         super("DataTable Editor", 153);
         if (vs == null) {
             vs = new SVarSet();
@@ -87,6 +88,8 @@ KeyListener, TableColumnModelListener {
             if (type != null) this.type = type;
         }
         this.vs = vs;
+        this.editable = editable;
+        save.setEnabled(editable);
 
         String myMenu[] = {
             "+", "File", "@OOpen", "loadData", "@SSave", "saveData",
@@ -234,7 +237,7 @@ KeyListener, TableColumnModelListener {
      * Exit DataTable and save or update to R
      */
     public void exit() {
-        if (modified) {
+        if (modified && editable) {
             int i;
             if (save.getText()=="Save") {
                 i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
@@ -381,6 +384,7 @@ KeyListener, TableColumnModelListener {
         if (selectedColumns.length == 0) {
             selectedColumns = new int[1];
             selectedColumns[0] = selectedColumn;
+            if (dataTable.getColumnName(selectedColumn).equals("row.names")) return;
         }
         for (int i = 0; i < selectedColumns.length; i++) {
             if (selectedColumns[i] > 0) {
@@ -668,16 +672,19 @@ KeyListener, TableColumnModelListener {
         //System.out.println(modified);
         try {
             selectedColumn = currentCol(e);
-            if (e.isPopupTrigger()) {
-                popUpMenu(e);
-            } else if (e.getSource().equals(tableHeader)) {
-                if (e.isPopupTrigger()) {
+            if (e.getSource().equals(tableHeader)) {
+                String rn = dataTable.getColumnName(dataTable.columnAtPoint(e.getPoint()));
+                int i  = dataTable.columnAtPoint(e.getPoint());
+                if (i != 0 && rn != "row.names" && e.isPopupTrigger()) {
                     popUpMenu(e);
                 }
                 else {
-                    if (e.getClickCount() == 2 && selectedColumn > 0)
+                    if (e.getClickCount() == 2 && selectedColumn > 0 && !dataTable.getColumnName(selectedColumn).equals("row.names"))
                         renameColumn(selectedColumn);
                 }
+            }
+            else if (e.isPopupTrigger()) {
+                    popUpMenu(e);
             } else if (selectedColumn == 0) {
                 dataTable.setColumnSelectionInterval(0, tabModel.cols - 1);
             }
@@ -685,11 +692,13 @@ KeyListener, TableColumnModelListener {
             new ErrorMsg(ex);
         }
     }
-
+   
     public void mouseReleased(MouseEvent e) {
         try {
             if (e.getSource().equals(tableHeader)) {
-                if (e.isPopupTrigger()) {
+                String rn = dataTable.getColumnName(dataTable.columnAtPoint(e.getPoint()));
+                int i  = dataTable.columnAtPoint(e.getPoint());
+                if (i != 0 && rn != "row.names" && e.isPopupTrigger()) {
                     popUpMenu(e);
                 }
                 else {
@@ -703,7 +712,6 @@ KeyListener, TableColumnModelListener {
                 }
             }
             else if (e.isPopupTrigger()) {
-                //System.out.println("popup");
                 popUpMenu(e);
             }
         } catch (Exception ex) {
@@ -822,7 +830,7 @@ KeyListener, TableColumnModelListener {
         }
 
         public boolean isCellEditable(int row, int col) {
-            return col == 0 ? false : true;
+            return col == 0 ? false : editable;
         }
     }
 
