@@ -23,6 +23,7 @@ class PoGraSSPS extends PoGraSS
 
     String curFill, curPen;
     String title;
+    String xver=null;
 
     public PoGraSSPS(String fnn)
     {
@@ -38,6 +39,10 @@ class PoGraSSPS extends PoGraSS
 	ox=0; oy=1000;
     };
 
+    public void passVersionInfo(int ver, String verS) {
+        xver=verS;
+    }
+    
     public void setBounds(int w, int h) {
 	boundsWidth=w; boundsHeight=h; ox=0; oy=boundsHeight;
     };
@@ -60,87 +65,87 @@ class PoGraSSPS extends PoGraSS
 	    outPS("/color_"+nam+"  { "+(R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor } def\n");
     };
     public void setColor(int R, int B, int G) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	
 	outPS(curPen=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor "));	
     };
     public void setColor(String nam) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	outPS(curPen=("color_"+nam+" "));
     };
     public void setFillColor(int R, int G, int B) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
 	    outPS(curFill=((R/255.0)+" setgray "));		
 	else
 	    outPS(curFill=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor "));	
     };
     public void setFillColor(String nam) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	outPS(curFill=("color_"+nam+" "));
     };
     public void drawLine(int x1, int y1, int x2, int y2) {
 	moveTo(x1,y1); lineTo(x2,y2);
     };
     public void moveTo(int x, int y) {
-	if (!inPath) outPS("newpath "); inPath=true;
-	outPS((ox+x)+" "+(oy-y)+" moveto ");
+	if (!inPath) outPS("np "); inPath=true;
+	outPS((ox+x)+" "+(oy-y)+" m ");
     };
     public void lineTo(int x, int y) {
-	if (!inPath) outPS("newpath "); inPath=true;
-	outPS((ox+x)+" "+(oy-y)+" lineto ");
+	if (!inPath) outPS("np "); inPath=true;
+	outPS((ox+x)+" "+(oy-y)+" l ");
     };
     public void drawRect(int x1, int y1, int x2, int y2) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	moveTo(x1,y1); lineTo(x1+x2,y1); lineTo(x1+x2,y1+y2); lineTo(x1,y1+y2); lineTo(x1,y1);
-	outPS("closepath stroke\n"); inPath=false;
+	outPS("cp s\n"); inPath=false;
     };
     public void fillRect(int x1, int y1, int x2, int y2) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	moveTo(x1,y1); lineTo(x1+x2,y1); lineTo(x1+x2,y1+y2); lineTo(x1,y1+y2); lineTo(x1,y1);
-	outPS("closepath fill\n"); inPath=false;
+	outPS("cp fill\n"); inPath=false;
     };
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	dx/=2; dy/=2;
-	outPS("newpath "+(ox+x1+x2-dx)+" "+(oy-y1)+
-	      " moveto "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
+	outPS("np "+(ox+x1+x2-dx)+" "+(oy-y1)+
+	      " m "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
 	outPS((ox+x1+x2)+" "+(oy-y1-y2)+" "+(ox+x1+dx)+" "+(oy-y1-y2)+" "+dx+" arcto fp ");
 	outPS((ox+x1)+" "+(oy-y1-y2)+" "+(ox+x1)+" "+(oy-y1-dy)+" "+dx+" arcto fp ");
-	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp closepath stroke\n");
+	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp cp s\n");
     };
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	dx/=2; dy/=2;
-	outPS("newpath "+(ox+x1+x2-dx)+" "+(oy-y1)+
-	      " moveto "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
+	outPS("np "+(ox+x1+x2-dx)+" "+(oy-y1)+
+	      " m "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
 	outPS((ox+x1+x2)+" "+(oy-y1-y2)+" "+(ox+x1+dx)+" "+(oy-y1-y2)+" "+dx+" arcto fp ");
 	outPS((ox+x1)+" "+(oy-y1-y2)+" "+(ox+x1)+" "+(oy-y1-dy)+" "+dx+" arcto fp ");
-	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp closepath fill\n");
+	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp cp fill\n");
     };
     public void drawOval(int x, int y, int rx, int ry) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	rx/=2; ry/=2;
-	outPS("newpath "+(ox+x+rx)+" "+(oy-y-ry)+
-	      " moveto "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc closepath stroke\n");
+	outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
+	      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp s\n");
     };
     public void fillOval(int x, int y, int rx, int ry) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	rx/=2; ry/=2;
-	outPS("newpath "+(ox+x+rx)+" "+(oy-y-ry)+
-	      " moveto "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc closepath fill\n");
+	outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
+	      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp fill\n");
     };
     public void setLineWidth(int w) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	lineWidth=w; 	
     };
     public void setFillStyle(int s) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
 	fillSt=s; 
     };
     public void drawString(String txt, int x, int y) {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;	
-	outPS((ox+x)+" "+(oy-y)+" moveto ("+txt+") show\n");
+	if (inPath) outPS(" cp s\n"); inPath=false;	
+	outPS((ox+x)+" "+(oy-y)+" m ("+txt+") show\n");
     };
 
     public void nextLayer() {
@@ -156,12 +161,13 @@ class PoGraSSPS extends PoGraSS
 	outPS("%!PS-Adobe-2.0 EPSF-1.2\n");
 	outPS("%%BoundingBox: 0 0 "+boundsWidth+" "+boundsHeight+"\n");
 	if (title!=null) outPS("%%Title: "+title+"\n");
-	outPS("/fp { 4 { pop } repeat } def\n");
+        outPS("%% Created by PoGraSSPS v"+versionString+((xver==null)?"":(", based on input of PoGraSS v"+xver))+"\n");
+        outPS("/fp { 4 { pop } repeat } def\n/cp {closepath} def /s {stroke} def /m {moveto} def /l {lineto} def /np {newpath} def\n");
 	outPS("/Helvetica findfont 10 scalefont setfont\n");
     };
     
     public void end() {
-	if (inPath) outPS(" closepath stroke\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false;
     };
 
     public void closePSoutput() {
