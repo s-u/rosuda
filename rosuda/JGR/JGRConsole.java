@@ -85,6 +85,7 @@ FocusListener, RMainLoopCallbacks {
         output.setEditable(false);
         output.addFocusListener(this);
         output.addKeyListener(this);
+		output.setCaret(new SelectionPreservingCaret());
 
         JScrollPane sp1 = new JScrollPane(output);
         sp1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -421,7 +422,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     public void keyPressed(KeyEvent ke) {
-        if (ke.getSource().equals(output))
+        if (ke.getSource().equals(output) && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown())
             input.requestFocus();
         if (ke.getKeyCode() == KeyEvent.VK_UP) {
             if (input.mComplete != null && input.mComplete.isVisible()) {
