@@ -136,12 +136,19 @@ public class JGRPrefs {
         }
 
         try {
-            if (is!=null) Preferences.importPreferences(is);
+            if (is!=null) {
+				Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
+				try { prefs.clear(); } catch (Exception x) {}
+				prefs=null;
+				Preferences.importPreferences(is);
+			}
         } catch (InvalidPreferencesFormatException e) {
         } catch (IOException e) {
         }
-
-        Preferences prefs = Preferences.userNodeForPackage(String.class);
+		
+		if(is==null) return;
+		
+        Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
         FontName = prefs.get("FontName",FontName);
         FontSize = prefs.getInt("FontSize",FontSize);
         maxHelpTabs = prefs.getInt("MaxHelpTabs",maxHelpTabs);
@@ -151,8 +158,9 @@ public class JGRPrefs {
     }
 
     public static void writePrefs(boolean writeLibs) {
-        Preferences prefs = Preferences.userNodeForPackage(String.class);
-
+        Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
+		
+		try { prefs.clear(); } catch (Exception x) {}
         prefs.put("FontName", FontName);        // String
         prefs.putInt("FontSize", FontSize);               // int
         prefs.putInt("MaxHelpTabs",maxHelpTabs);
@@ -164,7 +172,7 @@ public class JGRPrefs {
                 packages += ", "+JGRPackageManager.defaultPackages[i];
             prefs.put("DefaultPackages", packages);
         }
-        if (writeLibs && JGR.RLIBS != null && JGR.RLIBS.length > 0) {
+        if (writeLibs && JGR.RLIBS != null && JGR.RLIBS.length > 1) {
             String libpaths = JGR.RLIBS[0].toString();
             for (int i = 1; i < JGR.RLIBS.length-1; i++) 
 				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];
