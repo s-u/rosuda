@@ -319,13 +319,13 @@ public class MyPoly extends Polygon implements Cloneable {
       StringTokenizer head = new StringTokenizer(line, "\t");
 
       try{
-        this.Id = Integer.valueOf(head.nextToken()).intValue();
+        this.Id = Integer.valueOf(head.nextToken().trim()).intValue();
         this.name = head.nextToken();
         // if the name is just a dummy (as in MANET), drop it !
         if( this.name.substring(0,2).equals("/P") ) {
           this.name = "";
         }
-        this.npoints = Integer.valueOf(head.nextToken()).intValue();
+        this.npoints = Integer.valueOf(head.nextToken().trim()).intValue();
 
         for( int i=0; i<npoints; i++ ) {
           line = br.readLine();
