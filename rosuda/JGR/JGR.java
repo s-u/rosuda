@@ -99,7 +99,7 @@ public class JGR {
         }
 		
 		if (!Rengine.versionCheck()) {
-			JOptionPane.showMessageDialog(null, "Java/R Interface (JRI) library doesn't match this JGR version. Please update JGR and JRI to the latest version.", "Version Mismatch", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Java/R Interface (JRI) library doesn't match this JGR version.\nPlease update JGR and JRI to the latest version.", "Version Mismatch", JOptionPane.ERROR_MESSAGE);
 			System.exit(2);
 		}
         String[] args={"--save"};
