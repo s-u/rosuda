@@ -38,7 +38,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 
         jfr.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
         System.out.println("gdOpen:creating JGDPanel");
-        c=new org.rosuda.javaGD.JGDPanel(w, h);
+        c=new org.rosuda.javaGD.JGDBufferedPanel(w, h);
         System.out.println("gdOpen:creating JGDPanel done");
         jfr.getContentPane().add((org.rosuda.javaGD.JGDPanel)c);
         jfr.setSize((int)w,(int)h);
@@ -65,6 +65,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
     }
     
     public void     gdClose() {
+        super.gdClose();
         if (jfr!=null) {
             c=null;
             jfr.getContentPane().removeAll();
