@@ -31,16 +31,20 @@ public class Axis extends Notifier
     SVar v;
     /** orientation (see <code>O_..</code> constants) currently: 0=horiz., 1=vert., 2=custom */
     int or;
+
+    // those really shouldn't be public, but they get abused quite a lot, so they'll stay public until the code is cleaned out
+    
     /** graphical start and length */
-    int gBegin, gLen;
+    public int gBegin, gLen;
+    /** value begin and length */
+    public double vBegin, vLen;
+    /** count for discrete axes */
+    public int datacount;
+    
     /** graphical inter-categorial space */
     int gInterSpc=0;
-    /** value begin and length */
-    double vBegin, vLen;
     /** log(vLen) cached */
     double vLenLog10;
-    /** count for discrete axes */
-    int datacount;
     /** vector of ticks */
     Vector ticks;
     /** type (see <code>T_..</code> constants) currently: 0=numerical,
