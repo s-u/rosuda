@@ -93,10 +93,22 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 	}
 
 	public void mousePressed(MouseEvent e) {
+            if (objmgr.summary != null)	objmgr.summary.hide();
+            if (e.isPopupTrigger()) {
+                objmgr.cursorWait();
+                JToolTip call  = new JToolTip();
+                RModel m = (RModel) models.elementAt(this.rowAtPoint(e.getPoint()));
+                if (m == null || m.getCall().trim().length() == 0) return;
+                call.setTipText(m.getCall());
+                Point p = e.getPoint();
+                SwingUtilities.convertPointToScreen(p,this);
+                objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
+                objmgr.summary.show();
+                objmgr.cursorDefault();
+            }
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (objmgr.summary != null)	objmgr.summary.hide();
 		if (e.isPopupTrigger()) {
 			objmgr.cursorWait();
 			JToolTip call  = new JToolTip();
