@@ -183,7 +183,7 @@ int Re_ChooseFile(int new, char *buf, int len)
 			jstring r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, new);
 			jri_checkExceptions(lenv, 1);
 			if (r) {
-				int slen=-1;
+				int slen=0;
 				const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
 				if (c) {
 					slen=strlen(c);
@@ -197,7 +197,7 @@ int Re_ChooseFile(int new, char *buf, int len)
 				(*lenv)->DeleteLocalRef(lenv, r);
 				jri_checkExceptions(lenv, 0);
 				return slen;
-			}
+			} else return 0;
 		}
     }
 	
