@@ -343,7 +343,7 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "loaddata") new JGRDataFileDialog(this, directory);
         else if (cmd == "open") loadWorkSpace();
         else if (cmd == "new") newWorkSpace();
-        else if (cmd == "objectmgr") execute("object.manager()");
+        else if (cmd == "objectmgr") execute("object.browser()");
         else if (cmd == "packagemgr") execute("package.manager()");
         else if (cmd == "paste") input.paste();
         else if (cmd == "prefs") new PrefsDialog(this);

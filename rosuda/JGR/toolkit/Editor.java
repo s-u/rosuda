@@ -152,7 +152,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     public void setTitle(String title) {
 		int length,cc=1;
 		if (System.getProperty("os.name").startsWith("Win")) {
-			super.setTitle(title);
+			super.setTitle(title==null?"Editor":title);
 			return;
 		}
 		try {

@@ -145,6 +145,10 @@ public class JGR {
     public static void setRHome(String rhome) {
         RHOME = rhome;
     }
+	
+	public static void setRLibs(String lib) {
+		setRLibs(new String[] {lib});
+	}
 
     /**
         * set R_LIBS (in java app)
@@ -156,6 +160,10 @@ public class JGR {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
     }
+	
+	public static void setKeyWords(String word) {
+		setKeyWords(new String[] {word});
+	}
 
     /**
         * set keywords for highlighting
@@ -168,6 +176,11 @@ public class JGR {
             KEYWORDS.put(words[i],dummy);
         }
     }
+	
+	
+	public static void setObjects(String obj) {
+		setObjects(new String[] {obj});
+	}
 
     /**
         * set objects for hightlighting
@@ -240,11 +253,11 @@ public class JGR {
             while(true) {
                 try {
                     Thread.sleep(60000);
-                    REXP x = R.idleEval(".refreshKeyWords()");
+                    REXP x = R.idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
 					if (x != null && (r=x.asStringArray()) != null) 
 						setKeyWords(r);
-					x = R.idleEval(".refreshObjects()");
+					x = R.idleEval("try(.refreshObjects(),silent=TRUE)");
 					r = null;
 					if (x != null && (r=x.asStringArray()) != null) 
 						setObjects(r);
