@@ -36,8 +36,8 @@ public class RFileInputStream extends InputStream {
     /** reads one byte from the file. This function should be avoided, since
 	{@link RFileInputStream} provides no buffering. This means that each
 	call to this function leads to a complete packet exchange between
-	the server and the client. Use {@link read(byte[],int,int)} instead
-	whenever possible. In fact this function calls <code>read(b,0,1)</code>.
+	the server and the client. Use {@link #read(byte[],int,int)} instead
+	whenever possible. In fact this function calls <code>#read(b,0,1)</code>.
 	@return -1 on any failure, or the acquired byte (0..255) on success */
     public int read() throws IOException {
 	byte[] b=new byte[1];
