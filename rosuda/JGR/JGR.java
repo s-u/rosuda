@@ -192,7 +192,6 @@ public class JGR {
 			System.exit(1);
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
-		R.eval("setwd(\""+JGRPrefs.WorkingDirectory+"\")");
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
@@ -417,14 +416,15 @@ public class JGR {
 			}
 			Object[] arguments = args2.toArray();
 			if (arguments.length > 0) {
-				rargs = new String[arguments.length];
+				rargs = new String[arguments.length+1];
 				for (int i = 0; i < rargs.length; i++)
 					rargs[i] = arguments[i].toString();
 			}
-			if (Global.DEBUG > 0)
-				for (int i = 0; i < rargs.length; i++)
-					System.out.println(rargs[i]);
 		}
+		
+		if (Global.DEBUG > 0)
+			for (int i = 0; i < rargs.length; i++)
+				System.out.println(rargs[i]);
 
 		try {
 			new JGR();

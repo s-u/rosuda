@@ -99,8 +99,8 @@ public class JGRPrefs {
     /** UseEmacsKeyBindings*/
     public static boolean useEmacsKeyBindings = false;
     
-    /** Initial working directory */
-    public static String WorkingDirectory = System.getProperty("user.home");
+    ///** Initial working directory */
+    //public static String WorkingDirectory = System.getProperty("user.home");
 
 
     /**
@@ -187,7 +187,7 @@ public class JGRPrefs {
         useHelpAgentEditor =  prefs.getBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
-        WorkingDirectory = prefs.get("InitialWorkingDirectory",WorkingDirectory);
+        //WorkingDirectory = prefs.get("InitialWorkingDirectory",WorkingDirectory);
     }
 
      /**
@@ -206,7 +206,7 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);
         prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
-        prefs.put("InitialWorkingDirectory", WorkingDirectory);
+        //prefs.put("InitialWorkingDirectory", WorkingDirectory);
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
             for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)
