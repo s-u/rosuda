@@ -1,15 +1,16 @@
 2005-03-16
 - added: row.names checkbox in save datafile dialog
-- fixed: size of datafile dialogs 
+- fixed: size of datafile dialogs
 - fixed: refresh helpfiles when installing new packages
 
 2005-03-07
 - added: filtering for the model browser
-- guessing for the right separators, quotes and header when 
+- guessing for the right separators, quotes and header when
   selecting a file in the load datafile dialog
 - deleting objects with object browser
-- added: filter commands which invoked an error when saving or 
+- added: filter commands which invoked an error when saving or
   copying them
+- added: menu items for commenting/ shifting selected code
 
 2005-02-12
 - set tab-separated as default
@@ -18,7 +19,7 @@
 2005-02-04
 - fixed: use always prompt from R (if user specified his own)
 - fixed: save user specified (loaded) workspace when leaving JGR
-- added: warn when using not supported functions 
+- added: warn when using not supported functions
   (such as edit or fix)
 
 2005-01-23
