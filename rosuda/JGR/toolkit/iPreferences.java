@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.font.*;
 import java.io.*;
 import java.util.*;
+import java.util.prefs.*;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.text.*;
@@ -19,7 +20,7 @@ import javax.swing.text.*;
 import org.rosuda.JGR.*;
 
 
-public class Preferences {
+public class iPreferences {
 
 
     public static final String VERSION = "DP1";
@@ -91,7 +92,7 @@ public class Preferences {
 
 
     public static void apply() {
-        Preferences.refresh();
+        iPreferences.refresh();
         FontTracker.current.applyFont();
     }
 
@@ -141,38 +142,34 @@ public class Preferences {
     }
 
     public static void readPrefs() {
-        File prefs;
+        InputStream is = null;
         try {
-            if ((prefs=new File(System.getProperty("user.home")+File.separator+".JGRprefsrc")).exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(prefs));
-                String line;
-                while((line=reader.readLine())!=null) {
-                    if (line.startsWith("FontName")) FontName = line.substring(line.indexOf("=")+1);
-                    else if (line.startsWith("FontSize")) FontSize = new Integer(line.substring(line.indexOf("=")+1)).intValue();
-                    else if (line.startsWith("MAXHELPTABS")) MAXHELPTABS = new Integer(line.substring(line.indexOf("=")+1)).intValue();
-                }
-                reader.close();
-            }
+            is = new BufferedInputStream(new FileInputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
+        } catch (FileNotFoundException e) {
         }
-        catch (Exception e) {
-            new iError(e);
+
+        try {
+            Preferences.importPreferences(is);
+        } catch (InvalidPreferencesFormatException e) {
+        } catch (IOException e) {
         }
+
+        Preferences prefs = Preferences.userNodeForPackage(String.class);
+        FontName = prefs.get("FontName","Dialog");
+        FontSize = prefs.getInt("FontSize",12);
+        MAXHELPTABS = prefs.getInt("MaxHelpTabs",10);
     }
 
     public static void writePrefs() {
-        File prefs;
+        Preferences prefs = Preferences.userNodeForPackage(String.class);
+
+        prefs.put("FontName", FontName);        // String
+        prefs.putInt("FontSize", FontSize);               // int
+        prefs.putInt("MaxHelpTabs",MAXHELPTABS);
         try {
-             prefs = new File(System.getProperty("user.home")+File.separator+".JGRprefsrc");
-             BufferedWriter writer = new BufferedWriter(new FileWriter(prefs));
-             writer.write("FontName="+FontName+"\n");
-             writer.write("FontSize="+FontSize+"\n");
-             writer.write("MAXHELPTABS="+MAXHELPTABS+"\n");
-             writer.flush();
-             writer.close();
-        }
-        catch (Exception e) {
-            new iError(e);
+            prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
+        } catch (IOException e) {
+        } catch (BackingStoreException e) {
         }
     }
-
 }

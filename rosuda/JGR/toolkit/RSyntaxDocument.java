@@ -24,16 +24,21 @@ public class RSyntaxDocument extends RStyledDocument {
     private DefaultStyledDocument doc;
     private Element rootElement;
     private boolean multiLineComment;
-    private Hashtable keywords = Preferences.KEYWORDS;
-    private Hashtable objects = Preferences.KEYWORDSOBJECTS;
+    private Hashtable keywords = iPreferences.KEYWORDS;
+    private Hashtable objects = iPreferences.KEYWORDSOBJECTS;
 
     private static int startLine = 0;
+
+    private static MutableAttributeSet BOLD = new SimpleAttributeSet();
 
 
     /** we're doing a lot here, but it is enough to know that we are coloring the text*/
     public RSyntaxDocument() {
         doc = this;
         rootElement = doc.getDefaultRootElement();
+
+        StyleConstants.setBold(BOLD, true);
+
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
     }
 
@@ -48,21 +53,37 @@ public class RSyntaxDocument extends RStyledDocument {
         BadLocationException {
         //if (str.equals("{")) str = addMatchingBrace(offset);
         boolean whitespace = false;
-        try { whitespace = getText(offset-1,1).matches("[\\s|#]"); } catch (Exception e) {}
-        if (!whitespace && offset != 0) str = str.replaceAll("\t","");
-        //if (str.matches("_")) str = "<-";
-        if (str.matches("\t")) {
-            str = "";
-            for (int i = 1; i < Preferences.TABSIZE+1; i++) str+= " ";
+        if (str.equals("\t")) {
+            try {
+                whitespace = getText(offset - 1, 1).matches("[\\s|#]");
+            }
+            catch (Exception e) {}
+            if (!whitespace && offset != 0)
+                str = str.replaceAll("\t", "");
         }
+        else if (str.equals("\n")) {
+            int line = rootElement.getElementIndex(offset);
+                int off = rootElement.getElement(line).getStartOffset();
+                int i = off;
+                try {
+                    while (getText(i++,1).matches("[\\s]"));
+                } catch (Exception ex) {}
+                try {
+                    str ="\n"+ getText(off,i-off-1).replaceAll("\n","");
+                    //System.out.println("|"+str+"|");
+                }
+                catch (Exception ex2) {}
+        }
+        else if (str.matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) a = BOLD;
         super.insertString(offset, str, a);
         final int len = str.length();
-        SwingUtilities.invokeLater(new Runnable() {public void run() { try { processChangedLines(offset, len);} catch (Exception e) {new iError(e);}}});
-    }
-
-    public void insertWithoutHighlight(final int offset, final String str, AttributeSet a) throws
-        BadLocationException {
-        super.insertString(offset, str, a);
+        Thread t = new Thread() {
+            public void run() {
+                try { processChangedLines(offset, len);} catch (Exception e) {new iError(e);}
+                this.stop();
+            }
+        };
+        t.start();
     }
 
 
@@ -71,7 +92,13 @@ public class RSyntaxDocument extends RStyledDocument {
      */
     public void remove(final int offset, int length) throws BadLocationException {
         super.remove(offset, length);
-        SwingUtilities.invokeLater(new Runnable() {public void run() { try { processChangedLines(offset, 0);} catch (Exception e) {new iError(e);}}});
+        Thread t = new Thread() {
+            public void run() {
+                try { processChangedLines(offset, 0);} catch (Exception e) {new iError(e);}
+                this.stop();
+            }
+        };
+        t.start();
     }
 
     /*
@@ -105,12 +132,12 @@ public class RSyntaxDocument extends RStyledDocument {
             endOffset = contentLength - 1;
 
         // set normal attributes for the line
-        doc.setCharacterAttributes(startOffset, lineLength, Preferences.NORMAL, true);
+        doc.setCharacterAttributes(startOffset, lineLength, iPreferences.NORMAL, true);
         // check for single line comment
         int index = content.indexOf(getSingleLineDelimiter(), startOffset);
         if ( (index > -1) && (index < endOffset)) {
             doc.setCharacterAttributes(index, endOffset - index + 1,
-                                       Preferences.COMMENT, false);
+                                       iPreferences.COMMENT, false);
             endOffset = index - 1;
         }
         // check for tokens*/
@@ -158,7 +185,7 @@ public class RSyntaxDocument extends RStyledDocument {
         else
             endOfQuote = index;
         doc.setCharacterAttributes(startOffset, endOfQuote - startOffset + 1,
-                                   Preferences.QUOTE, false);
+                                   iPreferences.QUOTE, false);
         return endOfQuote + 1;
     }
 
@@ -172,13 +199,13 @@ public class RSyntaxDocument extends RStyledDocument {
         String token = content.substring(startOffset, endOfToken);
         if (isKeyword(token))
             doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-                                       Preferences.KEYWORD, false);
+                                       iPreferences.KEYWORD, false);
         else if (isObject(token))
             doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-                                       Preferences.OBJECT, false);
+                                       iPreferences.OBJECT, false);
         else if (isNumber(token))
             doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-                                       Preferences.NUMBER, false);
+                                       iPreferences.NUMBER, false);
         return endOfToken + 1;
     }
 

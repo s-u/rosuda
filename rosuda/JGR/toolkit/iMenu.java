@@ -170,35 +170,10 @@ public class iMenu {
                     m.add(mi);
                 }
             };
-            /*if (menuDef[i]=="~Edit") {
-                i++; isNext=true;
-                mb.add(m=new JMenu("Edit"));
-                mi=new JMenuItem("Select all");
-                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('A', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-                mi.setActionCommand("selAll");
-                mi.addActionListener(al);
-                m.add(mi);
-                mi=new JMenuItem("Clear selection");
-                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('D', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-                mi.setActionCommand("selNone");
-                mi.addActionListener(al);
-                m.add(mi);
-                mi=new JMenuItem("Invert selection");
-                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('I', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-                mi.setActionCommand("selInv");
-                mi.addActionListener(al);
-                m.add(mi);
-                m.addSeparator();
-                mi=new JMenuItem("Set size");
-                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke(',', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
-                mi.setActionCommand("sizeDlg");
-                mi.addActionListener(al);
-                m.add(mi);
-            };*/
             if (menuDef[i]=="~Window") {
                 i++; isNext=true;
                 if (we!=null && we.getWindowMenu()!=null)
-                    mb.add((JMenu)we.getWindowMenu()); // add window menu
+                    mb.add((JMenu) we.getWindowMenu()); // add window menu
             };
             if (menuDef[i]=="~Help") {
                 i++; isNext=true;

@@ -22,79 +22,62 @@ import javax.swing.text.*;
 
 public class SyntaxArea extends JTextPane implements CaretListener, DropTargetListener {
 
-    private HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(Preferences.ERRORColor);
-    private HighlightPainter ParanthesisHighlight = new HighlightPainter(Preferences.BRACKETHighLight);
-
-    private boolean syntaxHighlightOn = true;
-
+    private HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(iPreferences.ERRORColor);
+    private HighlightPainter ParanthesisHighlight = new HighlightPainter(iPreferences.BRACKETHighLight);
 
     private boolean wrap=true;
 
-    public SyntaxArea() {
-        this(true);
-    }
-
     /** SyntaxArea, with highlighting matching brackets
      * @param highlight should we do coloring and highlighting brackets */
-    public SyntaxArea(boolean highlight) {
-        this.syntaxHighlightOn = highlight;
-        if (syntaxHighlightOn) this.setDocument(new RSyntaxDocument());
-        else this.setDocument(new RStyledDocument());
-        //this.setDocument(new PlainDocument());
-        this.setContentType("text/plain");
-        if (FontTracker.current == null)
-            FontTracker.current = new FontTracker();
+    public SyntaxArea() {
+        this.setDocument(new RSyntaxDocument());
+        if (FontTracker.current == null) FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
-
-
-        
+        //setTabStops();
         this.addCaretListener(this);
-        //new DropTarget(this,this);
     }
+
+    public void setTabStops() {
+        java.util.List list = new ArrayList();
+
+        // Create a left-aligned tab stop at 100 pixels from the left margin
+          // Create a right-aligned tab stop at 200 pixels from the left margin
+        int pos = 200;
+        int align = TabStop.ALIGN_RIGHT;
+        int leader = TabStop.LEAD_NONE;
+        TabStop tstop = new TabStop(pos, align, leader);
+        list.add(tstop);
+
+        // Create a tab set from the tab stops
+        TabStop[] tstops = (TabStop[]) list.toArray(new TabStop[0]);
+        TabSet tabs = new TabSet(tstops);
+
+        // Add the tab set to the logical style;
+        // the logical style is inherited by all paragraphs
+        Style style = this.getLogicalStyle();
+        StyleConstants.setTabSet(style, tabs);
+        this.setLogicalStyle(style);
+    }
+
 
     public void append(String str) {
         append(str,null);
     }
 
     public void append(String str, AttributeSet attr) {
-        try {RSyntaxDocument doc = (RSyntaxDocument) getDocument();
-            if (doc != null) {
-                try {
-                    doc.insertString(doc.getLength(),str,attr);
-                } catch (BadLocationException e) {
-                }
-            }
-        }
-        catch (ClassCastException ex) {
-            Document doc = getDocument();
-            if (doc != null) {
-                try {
-                    doc.insertString(doc.getLength(), str, attr);
-                } catch (BadLocationException e) {
-                }
-            }
+        try {
+            Document doc = this.getDocument();
+            doc.insertString(doc.getLength(), str, attr);
+        } catch (BadLocationException e) {
         }
     }
 
 
     public void insertAt(int offset, String str) {
-        new JTextArea();
-        try {RSyntaxDocument doc = (RSyntaxDocument) getDocument();
-            if (doc != null) {
-                try {
-                    doc.insertString(offset,str,null);
-                } catch (BadLocationException e) {
-                }
-            }
-        }
-        catch (ClassCastException ex) {
-            Document doc = getDocument();
-            if (doc != null) {
-                try {
-                    doc.insertString(offset, str, null);
-                } catch (BadLocationException e) {
-                }
-            }
+        try {
+            Document doc = this.getDocument();
+            doc.insertString(offset, str, null);
+        } catch (BadLocationException e) {
         }
     }
 
@@ -115,31 +98,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         super.paste();
         this.addCaretListener(this);
     }
-
-
-    /*public void setTextWhileLoading(String str) {
-        try { RSyntaxDocument doc = (RSyntaxDocument) getDocument();
-            if (doc != null) {
-                try {
-                    doc.insertPage(str);
-                } catch (BadLocationException e) {
-                }
-            }
-        }
-        catch (ClassCastException ex) {
-            try { RStyledDocument doc = (RStyledDocument) getDocument();
-                if (doc != null) {
-                    try {
-                        doc.insertString(doc.getLength(), str, null);
-                    } catch (BadLocationException e) {
-                    }
-                }
-            }
-            catch (ClassCastException ex2) {
-                super.setText(str);
-            }
-        }
-    }*/
 
 
     public int getLineCount() {
@@ -225,12 +183,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 
 
 
-    public void setSyntaxHighlightEnabled(boolean on) {
-        this.syntaxHighlightOn = on;
-        if (syntaxHighlightOn) this.setDocument(new RSyntaxDocument());
-        else this.setDocument(new RStyledDocument());
-    }
-
     public boolean isEscaped(int pos) {
         boolean escaped = false;
         try {
@@ -266,8 +218,14 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public int highlightParanthesisForward(String par, int pos) {
-        String end = "";
+    public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
+        //System.out.println(par);
+        int open = pos;
+        int cend = this.getText().length();
+        //try { System.out.println(pos+" "+getText(pos-1,1)); } catch(Exception e) {}
+
+        String end = null;
+
         if (par.equals("{")) {
             end = "}";
         }
@@ -277,53 +235,54 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         if (par.equals("[")) {
             end = "]";
         }
-        int index = pos;
-        int indexend = -1;
-        int len = this.getText().length();
-        try {
-            while (index <= len) {
-                String s = this.getText(index, 1);
-                if (s.equals("\"")) {
-                    index = endQuote(index);
-                    if (index == -1) {
+
+        if (end==null) return;
+
+        String cchar = null;
+
+        int pcount = 1;
+
+        int line = this.getLineOfOffset(open);
+        int lstart = this.getLineStartOffset(line);
+        int lend = this.getLineEndOffset(line);
+
+
+        while(++pos <= cend) {
+            cchar = this.getText(pos - 1, 1);
+            if (cchar.matches("\"") && !isEscaped(pos)) {
+                boolean found = true;
+                int i = pos;
+                while(++i <= lend) {
+                    found = false;
+                    String schar = this.getText(i - 1, 1);
+                    //System.out.print(schar);
+                    if (schar.equals("\"") && !isEscaped(i)) {
+                        pos = i;
+                        found = true;
                         break;
                     }
                 }
-                else if (!isEscaped(index + 1)) {
-                    if (s.equals("{") || s.equals("[") || s.equals("(")) {
-                        index = highlightParanthesisForward(s, index + 1);
-                        if (index == -1) {
-                            break;
-                        }
+                if (!found) return;
+            }
+            else if (cchar.matches("[(]|[\\[]|[{]") && !isEscaped(pos)) pcount++;
+            else if (cchar.matches("[)]|[\\]]|[}]") && !isEscaped(pos)) {
+                pcount--;
+                if (pcount == 0) {
+                    if (cchar.equals(end)) {
+                        highlight(this, par, open, ParanthesisHighlight);
+                        highlight(this, end, pos,
+                                  ParanthesisHighlight);
                     }
-                    else if (s.equals("}") || s.equals("]") || s.equals(")")) {
-                        indexend = index;
-                        if (pos == this.getCaretPosition()) {
-                            if (s.equals(end)) {
-                                highlight(this, par, pos, ParanthesisHighlight);
-                                highlight(this, end, indexend + 1,
-                                          ParanthesisHighlight);
-                            }
-                            else {
-                                highlight(this, par, pos,
-                                          ParanthesisHighlightMissing);
-                                highlight(this, end, indexend + 1,
-                                          ParanthesisHighlightMissing);
-                            }
-                        }
-                        break;
+                    else {
+                        highlight(this, par, open,
+                                  ParanthesisHighlightMissing);
+                        highlight(this, end, pos,
+                                  ParanthesisHighlightMissing);
                     }
+                    return;
                 }
-                else {
-                    index++;
-                }
-                index++;
             }
         }
-        catch (Exception e) {
-            new iError(e);
-        }
-        return indexend;
     }
 
     /** highlight the corresponding brackets (backward)
@@ -332,8 +291,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public int highlightParanthesisBackward(String par, int pos) {
-        String open = "";
+    public void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
+
+        int end = pos;
+
+        String open = null;
+
         if (par.equals("}")) {
             open = "{";
         }
@@ -343,96 +306,53 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         if (par.equals("]")) {
             open = "[";
         }
-        int index = pos - 2;
-        int indexopen = -1;
-        try {
-            while (index >= 0) {
-                String s = this.getText(index, 1);
-                if (s.equals("\"")) {
-                    index = openQuote(index);
-                    if (index == -1) {
+
+        if (open==null) return;
+
+        String cchar = null;
+
+        int pcount = 1;
+
+        int line = this.getLineOfOffset(end);
+        int lstart = this.getLineStartOffset(line);
+        int lend = this.getLineEndOffset(line);
+
+
+        while(--pos > 0) {
+            cchar = this.getText(pos - 1, 1);
+            if (cchar.matches("\"") && !isEscaped(pos)) {
+                boolean found = true;
+                int i = pos;
+                while(--i > lstart) {
+                    found = false;
+                    String schar = this.getText(i - 1, 1);
+                    if (schar.equals("\"") && !isEscaped(i)) {
+                        pos = i;
+                        found = true;
                         break;
                     }
                 }
-                else if (!isEscaped(index) || index == 0) {
-                    if (s.equals("}") || s.equals("]") || s.equals(")")) {
-                        index = highlightParanthesisBackward(s, index + 1);
-                        if (index == -1) {
-                            break;
-                        }
+                if (!found) return;
+            }
+            else if (cchar.matches("[)]|[\\]]|[}]") && !isEscaped(pos)) pcount++;
+            else if (cchar.matches("[(]|[\\[]|[{]") && !isEscaped(pos)) {
+                pcount--;
+                if (pcount == 0) {
+                    if (cchar.equals(open)) {
+                        highlight(this, par, end, ParanthesisHighlight);
+                        highlight(this, open, pos,
+                                  ParanthesisHighlight);
                     }
-                    if (s.equals("{") || s.equals("[") || s.equals("(")) {
-                        indexopen = index;
-                        if (pos == this.getCaretPosition()) {
-                            if (s.equals(open)) {
-                                highlight(this, par, pos, ParanthesisHighlight);
-                                highlight(this, open, indexopen + 1,
-                                          ParanthesisHighlight);
-                            }
-                            else {
-                                highlight(this, par, pos,
-                                          ParanthesisHighlightMissing);
-                                highlight(this, open, indexopen + 1,
-                                          ParanthesisHighlightMissing);
-                            }
-                        }
-                        break;
+                    else {
+                        highlight(this, par, end,
+                                  ParanthesisHighlightMissing);
+                        highlight(this, open, pos,
+                                  ParanthesisHighlightMissing);
                     }
+                    return;
                 }
-                else {
-                    index--;
-                }
-                index--;
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        return indexopen;
-    }
-
-    public int openQuote(int index) {
-        index--;
-        int open = -1;
-        int i = -1;
-        int linebegin = this.getText().lastIndexOf("\n", index + 1);
-        linebegin = linebegin == -1 ? 0 : linebegin;
-        try {
-            while ( (i = this.getText().lastIndexOf("\"", index)) != -1 &&
-                   i > linebegin) {
-                if (!isEscaped(i + 1)) {
-                    open = i;
-                    break;
-                }
-                index = i;
-            }
-        }
-        catch (Exception e) {
-            new iError(e);
-        }
-        return open;
-    }
-
-    public int endQuote(int index) {
-        index++;
-        int end = -1;
-        int i = -1;
-        int lineend = this.getText().indexOf("\n", index);
-        lineend = lineend == -1 ? this.getText().length() : lineend;
-        try {
-            while ( (i = this.getText().indexOf("\"", index)) != -1 &&
-                   i <= lineend) {
-                if (!isEscaped(i + 1)) {
-                    end = i;
-                    break;
-                }
-                index = i + 1;
-            }
-        }
-        catch (Exception e) {
-            new iError(e);
-        }
-        return end;
     }
 
     public String getCurrentWord() {
@@ -481,8 +401,8 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    public void removeHighlights(JTextComponent textComp) {
-        Highlighter hilite = textComp.getHighlighter();
+    public void removeHighlights() {
+        Highlighter hilite = this.getHighlighter();
         Highlighter.Highlight[] hilites = hilite.getHighlights();
 
         for (int i = 0; i < hilites.length; i++) {
@@ -492,31 +412,39 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    public void caretUpdate(CaretEvent e) {
-        if (syntaxHighlightOn) {
-            try {
-            removeHighlights(this);
-            final Document doc = getDocument();
-            final int pos = this.getCaretPosition();
-            final String currentStr = this.getText(pos - 1, 1);
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-                        try {
-                        int length = doc.getLength();
-                        if (!isEscaped(pos)) {
-                            if (lastChar(pos, "{") || lastChar(pos, "(") || lastChar(pos, "[")) {
-                                    highlightParanthesisForward(currentStr,pos);
-                            }
-                            if (lastChar(pos, "}") || lastChar(pos, ")") || lastChar(pos, "]")) {
-                                highlightParanthesisBackward(currentStr,pos);
-                            }
-                        }
-                        }
-                        catch (Exception ex1) { ex1.printStackTrace();}
+    public void caretUpdate(final CaretEvent e) {
+        final SyntaxArea sa = this;
+        removeHighlights();
+        Thread t = new Thread() {
+            public void run() {
+                removeCaretListener(sa);
+                String c; int pos;
+                try {
+                    pos = e.getDot();
+                    c = getText(pos-1,1);
+                    if (sa.isEscaped(pos)) {
+                        addCaretListener(sa);
+                        return;
+                    }
                 }
-            });
-            } catch (Exception ex) {}
-        }
+                catch (Exception ex1) {
+                    new iError(ex1);
+                    addCaretListener(sa);
+                    return;
+                }
+                try {
+                    if (c.matches("[(]|[\\[]|[{]"))
+                        highlightParanthesisForward(c, pos);
+                    else if (c.matches("[)]|[\\]]|[}]"))
+                        highlightParanthesisBackward(c, pos);
+                }
+                catch (Exception e) { new iError(e);}
+                addCaretListener(sa);
+                this.stop();
+            }
+        };
+        if (e.getDot()==0) return;
+        try { if (getText(e.getDot()-1,1).matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) t.start(); } catch (Exception ex) { new iError(ex);}
     }
 
     public void dragEnter(DropTargetDragEvent evt) {

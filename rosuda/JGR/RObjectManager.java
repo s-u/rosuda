@@ -30,7 +30,7 @@ public class RObjectManager extends iFrame implements ActionListener {
     private JTabbedPane tabArea = new JTabbedPane();
     private ToolTipTree dataTree;
     private ToolTipTree othersTree;
-    private MTable modelTable = new MTable();
+    private JTable modelTable;
     private TableSorter sorter;
 
     private JButton close = new JButton("Close");
@@ -65,11 +65,23 @@ public class RObjectManager extends iFrame implements ActionListener {
         FontTracker.current.add(dataTree);
         tabArea.add("Data",new JScrollPane(dataTree));
 
+
+        modelTable = new JTable() {
+            public String getToolTipText(MouseEvent e) {
+                Point p = e.getPoint();
+                int rowIndex = rowAtPoint(p);
+                int colIndex = columnAtPoint(p);
+                if (colIndex == 0) return ((model) models.elementAt(rowIndex)).getToolTip();
+                return null;
+            }
+        };
+        modelTable.setColumnModel(new ModelTableColumnModel());
         sorter = new TableSorter(new ModelTable());
         modelTable.setShowGrid(true);
         modelTable.setModel(sorter);
+        modelTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
         FontTracker.current.add(modelTable);
-        modelTable.setRowHeight((int) (Preferences.FontSize*1.2));
+        modelTable.setRowHeight((int) (iPreferences.FontSize*1.2));
         modelTable.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(modelTable.getTableHeader());
         tabArea.add("Models",new JScrollPane(modelTable));
@@ -103,6 +115,16 @@ public class RObjectManager extends iFrame implements ActionListener {
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 dispose(); //we have to ask the user something about what to do with the current file
+            }
+        });
+        this.addFocusListener(new FocusAdapter() {
+            public void focusGained(FocusEvent e) {
+                ToolTipManager.sharedInstance().setInitialDelay(1);
+                ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+            }
+            public void focusLost(FocusEvent e) {
+                ToolTipManager.sharedInstance().setInitialDelay(750);
+                ToolTipManager.sharedInstance().setDismissDelay(4000);
             }
         });
         this.setSize(600,500);
@@ -150,12 +172,6 @@ public class RObjectManager extends iFrame implements ActionListener {
 
 
         private String[] colnames = {"Name","Data","Type","family","df","r.squared","aic","deviance"};
-        private Vector content;
-
-        public ModelTable() {
-            content= new Vector(models.size());
-            for (int i = 0; i < content.size(); i++) content.add(((model) models.elementAt(i)).getInfo());
-        }
 
         public int getColumnCount() {
             return colnames.length;
@@ -170,18 +186,14 @@ public class RObjectManager extends iFrame implements ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
-            /*try {
-                if(Class.forName("java.lang.Number").isAssignableFrom((((Object[] )content[row])[col]).getClass())) {
-                    DecimalFormat df = new DecimalFormat("#0.00");
-                    return df.format(((Object[]) content[row])[col]).replace(',','.');
-                };
-            } catch (Exception e) {}*/
             return ((Vector) ((model) models.elementAt(row)).getInfo()).elementAt(col); //null; //((Object[]) content[row])[col];
         }
 
         public Class getColumnClass(int col) {
-            System.out.println(((Vector) ((model) models.elementAt(0)).getInfo()).elementAt(col).getClass());
-            return ((Vector) ((model) models.elementAt(0)).getInfo()).elementAt(col).getClass();
+            int i = 0;
+            while (((Vector) ((model) models.elementAt(i)).getInfo()).elementAt(col) == null) i++;
+            if (i > getRowCount()) return null;
+            return ((Vector) ((model) models.elementAt(i)).getInfo()).elementAt(col).getClass();
         }
     }
 
@@ -249,17 +261,6 @@ public class RObjectManager extends iFrame implements ActionListener {
             return treeModel;
         }
 
-    }
-
-    class MTable extends JTable {
-
-        public String getToolTipText(MouseEvent e) {
-            Point p = e.getPoint();
-            int rowIndex = rowAtPoint(p);
-            int colIndex = columnAtPoint(p);
-            if (colIndex == 0) return ((model) models.elementAt(rowIndex)).getToolTip();
-            return null;
-        }
     }
 
     class ToolTipTree extends JTree implements DragGestureListener, DragSourceListener {
@@ -333,7 +334,12 @@ public class RObjectManager extends iFrame implements ActionListener {
                     new DataTable(RTalk.getVarSet(d));
                     cursorDefault();
 
-                } catch (Exception ex) {}
+                } catch (ClassCastException ex) {
+                    matrix m = (matrix) ((DefaultMutableTreeNode)((JTree)e.getSource()).getSelectionPath().getLastPathComponent()).getUserObject();
+                    cursorWait();
+                    new DataTable(RTalk.getVarSet(m));
+                    cursorDefault();
+                }
             }
         }
 
@@ -350,5 +356,58 @@ public class RObjectManager extends iFrame implements ActionListener {
         }
 
     }
+
+    class ModelTableColumnModel extends DefaultTableColumnModel {
+
+            public ModelTableColumnModel() {
+            }
+
+            public void addColumn(TableColumn col) {
+                col.setCellRenderer(new DefaultTableCellRenderer());
+                if (col.getModelIndex() == 0) {
+                    col.setPreferredWidth(100);
+                }
+                else if (col.getModelIndex() == 1) {
+                    col.setPreferredWidth(80);
+                }
+                else if (col.getModelIndex() == 2) {
+                    col.setPreferredWidth(50);
+                }
+                else if (col.getModelIndex() == 4) {
+                    col.setPreferredWidth(40);
+                }
+                super.addColumn(col);
+            }
+
+            public TableColumn getColumn(int index) {
+                return super.getColumn(index < 0 ? 0 : index);
+            }
+        }
+
+
+    public class ModelTableCellRenderer extends JLabel implements TableCellRenderer {
+
+            public Component getTableCellRendererComponent(JTable table, Object value,
+                    boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
+
+                if (isSelected) {
+                }
+
+                if (hasFocus) {
+                }
+
+                setText(value.toString());
+
+                //setToolTipText((String)value);
+
+                return this;
+            }
+
+            public void validate() {}
+            public void revalidate() {}
+            protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
+            public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+    }
+
 
 }

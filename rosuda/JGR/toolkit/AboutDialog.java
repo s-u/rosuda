@@ -27,18 +27,18 @@ public class AboutDialog extends SplashScreen implements MouseListener {
     public AboutDialog() {
         this(null);
     }
-    
+
     public AboutDialog(JFrame f) {
         this.addMouseListener(this);
-        this.setSize(this.getWidth(),this.getHeight()+20);
+        this.setVisible(true);
     }
 
-    public void paint(Graphics g) {
+    /*public void paint(Graphics g) {
         System.out.println(this.getSize());
         super.paint(g);
         g.setFont(new Font("Dialog", 0, 12));
         g.drawString("Authors: " + Preferences.AUTHORS,40, 155);
-    }
+    }*/
 
     public void mouseClicked(MouseEvent e) {
         this.dispose();
@@ -55,7 +55,7 @@ public class AboutDialog extends SplashScreen implements MouseListener {
 
     public void mouseExited(MouseEvent e) {
     }
-    
+
 
     /** create new AboutDialog */
     /*public AboutDialog() {

@@ -58,20 +58,20 @@ public class model extends RObject {
     }
 
     public void setRsquared(double r) {
-        
-        this.rsquared = new Double(dformat.format(r));
+
+        this.rsquared = new Double(dformat.format(r).replace(',','.'));
     }
     public void setDeviance(double d) {
-        this.deviance = new Double(dformat.format(d));
+        this.deviance = new Double(dformat.format(d).replace(',','.'));
     }
     public void setDf(int df) {
         this.df = new Integer(df);
     }
     public void setAic(double a) {
-        this.aic = new Double(dformat.format(a));
+        this.aic = new Double(dformat.format(a).replace(',','.'));
     }
     public void setFstat(double f) {
-        this.fstatistics = new Double(dformat.format(f));
+        this.fstatistics = new Double(dformat.format(f).replace(',','.'));
     }
 
     public void setFamily(String f) {

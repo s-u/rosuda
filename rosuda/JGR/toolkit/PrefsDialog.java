@@ -65,7 +65,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
         helptabs.setMinimumSize(new Dimension(40,20));
         helptabs.setPreferredSize(new Dimension(40,20));
         helptabs.setMaximumSize(new Dimension(40,20));
-        helptabs.setText(Preferences.MAXHELPTABS+"");
+        helptabs.setText(iPreferences.MAXHELPTABS+"");
         helptabs.setToolTipText("Maximum amount of opened tabs");
 
         this.getRootPane().setDefaultButton(save);
@@ -73,8 +73,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
         Fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         font.setModel(mf = new DefaultComboBoxModel(Fonts));
         size.setModel(ms = new DefaultComboBoxModel(Sizes));
-        for (int i = 0; i < Fonts.length; i++) if (Fonts[i].equals(Preferences.FontName)) { mf.setSelectedItem(Fonts[i]); break;}
-        for (int i = 0; i < Sizes.length; i++) if (Sizes[i].equals(Preferences.FontSize+"")) { ms.setSelectedItem(Sizes[i]); break;}
+        for (int i = 0; i < Fonts.length; i++) if (Fonts[i].equals(iPreferences.FontName)) { mf.setSelectedItem(Fonts[i]); break;}
+        for (int i = 0; i < Sizes.length; i++) if (Sizes[i].equals(iPreferences.FontSize+"")) { ms.setSelectedItem(Sizes[i]); break;}
 
         font.setMinimumSize(new Dimension(200,25));
         font.setPreferredSize(new Dimension(200,25));
@@ -141,10 +141,10 @@ public class PrefsDialog extends JDialog implements ActionListener{
     }
 
     public void applyChanges() {
-        Preferences.FontName = font.getSelectedItem().toString();
-        Preferences.FontSize = new Integer(size.getSelectedItem().toString()).intValue();
-        Preferences.MAXHELPTABS = new Integer(helptabs.getText()).intValue();
-        Preferences.apply();
+        iPreferences.FontName = font.getSelectedItem().toString();
+        iPreferences.FontSize = new Integer(size.getSelectedItem().toString()).intValue();
+        iPreferences.MAXHELPTABS = new Integer(helptabs.getText()).intValue();
+        iPreferences.apply();
     }
 
 
@@ -154,7 +154,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
         else if (cmd=="cancel") dispose();
         else if (cmd=="save") {
             applyChanges();
-            Preferences.writePrefs();
+            iPreferences.writePrefs();
             RProfile.save();
             this.dispose();
         }

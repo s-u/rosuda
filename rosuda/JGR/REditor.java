@@ -69,8 +69,9 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
         editDoc.addUndoableEditListener(undoMgr);
 
-
+        //Ruler ruler = new Ruler(editArea);
         scrollArea.getViewport().add(editArea);
+        //scrollArea.setColumnHeaderView(ruler);
 
         caretStatus.setMinimumSize(new Dimension(100, 15));
         caretStatus.setPreferredSize(new Dimension(100, 15));
@@ -107,9 +108,10 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.setWordWrap(true);
 
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
-        this.setSize(new Dimension(600,
+        this.setSize(new Dimension(600,800));
+        /*this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
-                                   Common.screenRes.height - 50 : 700));
+                                   Common.screenRes.height - 50 : 700));*/
         this.setLocation(this.getLocation().x, 10);
         this.show();
         if (fileName != null) {
@@ -117,29 +119,6 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         }
         editArea.requestFocus();
     }
-
-    /*public void help() {
-        if (RHelp.last == null) {
-            Thread t = new Thread() {
-                public void run() {
-                    progress.start("Working");
-                    setWorking(true);
-                    try {
-                        new RHelp();
-                    }
-                    catch (Exception e1) {
-                    }
-                    setWorking(false);
-                }
-            };
-            t.start();
-        }
-        else {
-          RHelp.last.show();
-          setWorking(false);
-        }
-    }*/
-
 
     public void initIconBar() {
         this.getContentPane().add(newButton = new IconButton("/icons/new.png",
@@ -455,40 +434,13 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         }
 
         public void run() {
-            //final long start = System.currentTimeMillis();
             try {
-                /*SwingUtilities.invokeLater(new Runnable() {
-                    public void run() {
-                        try {
-                            BufferedReader reader = new BufferedReader(new
-                                FileReader(fileName));
-                            StringBuffer text = new StringBuffer();
-                            while (reader.ready()) {
-                                text.append(reader.readLine() + "\n");
-                            }
-                            editArea.setTextWhileLoading(text.toString());
-                            //System.out.println(System.currentTimeMillis() - start);
-                            final RSyntaxDocument doc = (RSyntaxDocument) editArea.getDocument();
-                            try {
-                                doc.processChangedLines(0,doc.getLength());
-                            } catch (Exception e) {
-                                new iError(e);
-                            }
-                        //System.out.println(System.currentTimeMillis() - start);
-                        } catch (Exception e) {
-                            new iError(e);
-                        }
-                        finally {
-                            editor.setWorking(false);
-                            editArea.select(0,0);
-                        }
-                    }
-                });*/
                 Thread t = new Thread() {
                     public void run() {
                         try {
+                            editArea.removeCaretListener(editArea);
                             BufferedReader reader = new BufferedReader(new
-                                FileReader(fileName));
+                            FileReader(fileName));
                             StringBuffer text = new StringBuffer();
                             while (reader.ready()) {
                                 text.append(reader.readLine() + "\n");
@@ -498,10 +450,12 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
                                 }
                             }
                             editArea.append(text.toString());
-                            text.delete(0,text.length());                        } catch (Exception e) {
+                            text.delete(0,text.length());
+                        } catch (Exception e) {
                             new iError(e);
                         }
                         finally {
+                            editArea.addCaretListener(editArea);
                             editor.setWorking(false);
                             editArea.select(0,0);
                         }

@@ -218,7 +218,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     public void goTo(String keyword, String file) {
-            if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);
+            if (tabArea.getTabCount()==iPreferences.MAXHELPTABS) tabArea.remove(iPreferences.MAXHELPTABS-1);
             tabArea.add(new HelpArea(this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
@@ -243,7 +243,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
     public void search(String keyword) {
         if (keyword != null && !keyword.equals("")) {
-            if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);
+            if (tabArea.getTabCount()==iPreferences.MAXHELPTABS) tabArea.remove(iPreferences.MAXHELPTABS-1);
             tabArea.add(new HelpArea(this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));

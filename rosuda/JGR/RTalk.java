@@ -41,7 +41,7 @@ public class RTalk {
         int s = part.length()-1;
         if (part.trim().length() == 0) return "";
         char c = part.charAt(s);
-        while (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||((c>='0')&&(c<='9'))||c=='.') {
+        while (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||((c>='0')&&(c<='9'))||c=='.'||c=='_') {
             s--;
             if (s==-1) break;
             c = part.charAt(s);
@@ -153,12 +153,12 @@ public class RTalk {
         REXP y = JGR.R.eval("ls()");
         if (y==null) return;
         String[] result = y.asStringArray();
-        for (int i = 0; i < result.length; i++) Preferences.KEYWORDSOBJECTS.put(result[i],dummy);
+        for (int i = 0; i < result.length; i++) iPreferences.KEYWORDSOBJECTS.put(result[i],dummy);
         while (pos <= maxpos) {
             REXP z = JGR.R.eval("ls(pos="+pos+", all.names=TRUE, pattern=\"^\\\\w+\")");
             if (z==null) return;
             result = z.asStringArray();
-            for (int i = 0; i < result.length; i++) Preferences.KEYWORDS.put(result[i],dummy);
+            for (int i = 0; i < result.length; i++) iPreferences.KEYWORDS.put(result[i],dummy);
             pos++;
         }
     }
@@ -365,15 +365,16 @@ public class RTalk {
         REXP x;
         try { x = JGR.R.eval("try(deparse(args("+s+")),silent=T)"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null) {
-            tip = "<html>"; //<font size="+Preferences.FontSize/2+">"
-            for (int i = 0; i < res.length; i++) {
-                if (!res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s)+ "<br>";
+            tip = "<html><pre>"; //<font size="+Preferences.FontSize/2+">"
+            int l = -1;
+            for (int i = 0; i < (l=res.length); i++) {
+                if (i==--l && !res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s);
+                else if (!res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s)+ "<br>";
             }
-            if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
-            tip += "</html>";
+            tip += "</pre></html>";
         }
         else return null;
-        return tip.startsWith("<html>Error")?null:tip;
+        return tip.startsWith("<html><pre>Error")?null:tip;
     }
 
 
@@ -426,6 +427,21 @@ public class RTalk {
 
         return vset;
     }
+
+    public static SVarSet getVarSet(matrix m) {
+        SVarSet vset = new SVarSet();
+        String name = m.getName();
+        JGR.R.eval("jgr_temp"+name+" <- as.data.frame("+name+")");
+        dataframe d = createDataFrame("jgr_temp"+name);
+        vset.setName(d.getName());
+
+        for (int i = 0; i < d.vars.size(); i++) {
+            vset.add(getVar(d.getName(),((RObject) d.vars.elementAt(i)).getName()));
+        }
+        JGR.R.eval("rm("+d.getName()+")");
+        return vset;
+    }
+
 
     public static SVar getVar(String p, String c) {
         REXP x = JGR.R.eval((p==null)?"":(p+"$")+c);
@@ -492,6 +508,11 @@ public class RTalk {
             JGR.R.rniSetAttr(xp1,"class",c);
 
             JGR.R.rniAssign(vs.getName(),xp1,0);
+            if (vs.getName().startsWith("jgr_temp")) {
+                String name = vs.getName();
+                JGR.R.eval(name.replaceFirst("jgr_temp","")+" <- as.matrix("+vs.getName()+")");
+                JGR.R.eval("rm("+name+")");
+            }
             return true;
         }
         catch (Exception e) {

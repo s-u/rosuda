@@ -30,22 +30,22 @@ public class FontTracker {
     /** add a JComponent
       * @param comp component to add */
     public void add(JComponent comp) {
-        comp.setFont(Preferences.DefaultFont);
+        comp.setFont(iPreferences.DefaultFont);
         components.add(comp);
     }
 
     public void setFontBigger() {
         Enumeration e = components.elements();
-        Preferences.FontSize +=2;
-        Preferences.refresh();
+        iPreferences.FontSize +=2;
+        iPreferences.refresh();
         while (e.hasMoreElements()) {
             JComponent comp = (JComponent) e.nextElement();
-            comp.setFont(Preferences.DefaultFont);
+            comp.setFont(iPreferences.DefaultFont);
             try {
                 SyntaxArea area = (SyntaxArea) comp;
                 StyledDocument doc = (StyledDocument) area.getDocument();
                 doc.setCharacterAttributes(0, area.getText().length(),
-                                           Preferences.SIZE, false);
+                                           iPreferences.SIZE, false);
             }
             catch (Exception ex) {}
             try {
@@ -53,7 +53,7 @@ public class FontTracker {
                 System.out.println("table rows");
                 if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
                     System.out.println("table");
-                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                    ((JTable) comp).setRowHeight((int) (iPreferences.FontSize *1.2));
                 }
             } catch (Exception ex) {}
         }
@@ -61,23 +61,23 @@ public class FontTracker {
 
     public void setFontSmaller() {
         Enumeration e = components.elements();
-        Preferences.FontSize -=2;
-        Preferences.refresh();
+        iPreferences.FontSize -=2;
+        iPreferences.refresh();
         while (e.hasMoreElements()) {
             JComponent comp = (JComponent) e.nextElement();
-            comp.setFont(Preferences.DefaultFont);
-            comp.setFont(Preferences.DefaultFont);
+            comp.setFont(iPreferences.DefaultFont);
+            comp.setFont(iPreferences.DefaultFont);
             try {
                 SyntaxArea area = (SyntaxArea) comp;
                 StyledDocument doc = (StyledDocument) area.getDocument();
                 doc.setCharacterAttributes(0, area.getText().length(),
-                                           Preferences.SIZE, false);
+                                           iPreferences.SIZE, false);
             }
             catch (Exception ex) {}
             try {
                 System.out.println(comp.getClass().getName());
                 if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
-                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                    ((JTable) comp).setRowHeight((int) (iPreferences.FontSize *1.2));
                 }
             } catch (Exception ex) {}
         }
@@ -87,19 +87,19 @@ public class FontTracker {
         Enumeration e = components.elements();
         while (e.hasMoreElements()) {
             JComponent comp = (JComponent) e.nextElement();
-            comp.setFont(Preferences.DefaultFont);
-            comp.setFont(Preferences.DefaultFont);
+            comp.setFont(iPreferences.DefaultFont);
+            comp.setFont(iPreferences.DefaultFont);
             try {
                 SyntaxArea area = (SyntaxArea) comp;
                 StyledDocument doc = (StyledDocument) area.getDocument();
                 doc.setCharacterAttributes(0, area.getText().length(),
-                                           Preferences.SIZE, false);
+                                           iPreferences.SIZE, false);
             }
             catch (Exception ex) {}
             try {
                 System.out.println(comp.getClass().getName());
                 if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$MTable")) {
-                    ((JTable) comp).setRowHeight((int) (Preferences.FontSize *1.2));
+                    ((JTable) comp).setRowHeight((int) (iPreferences.FontSize *1.2));
                 }
             } catch (Exception ex) {}
         }

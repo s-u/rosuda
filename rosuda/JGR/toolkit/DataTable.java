@@ -80,7 +80,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             save.setText("Update");
             save.setToolTipText("Update");
             save.setActionCommand("updateToR");
-            this.setTitle("DataTable - "+vs.getName());
+            this.setTitle("DataTable - "+vs.getName().replaceFirst("jgr_temp",""));
         }
         this.vs = vs;
 
@@ -104,14 +104,14 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
         dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         columnModel = new DataTableColumnModel(this);
-        dataTable.setFont(Preferences.DefaultFont);
+        dataTable.setFont(iPreferences.DefaultFont);
         dataTable.setColumnModel(columnModel);
         sorter = new TableSorter(tabModel = new DataTableModel(this));
         dataTable.setModel(sorter);
         sorter.setTableHeader(tableHeader);
         dataTable.setToolTipText(vs.getName());
         dataTable.setShowGrid(true);
-        dataTable.setRowHeight((int) (Preferences.FontSize*1.2));
+        dataTable.setRowHeight((int) (iPreferences.FontSize*1.2));
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(true);
         dataTable.setCellSelectionEnabled(true);
@@ -310,11 +310,6 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         JScrollBar hscroll = scrollArea.getHorizontalScrollBar();
         hscroll.setValue(col * 75 - hscroll.getVisibleAmount() + 30 < 0 ? 0 :
                          col * 75 - hscroll.getVisibleAmount() + 75 + 10);
-    }
-
-    public void help() {
-        if (RHelp.last == null) start("RHelp");
-        else RHelp.last.show();
     }
 
     public void loadData() {
@@ -569,7 +564,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             else if (cmd == "findnext") find(searchIndex[0], searchIndex[1]);
             else if (cmd == "gotoCase") gotoCase( -1);
             else if (cmd == "loadData") loadData();
-            else if (cmd == "rhelp") help();
+            else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()");
             else if (cmd == "paste") ((JTextComponent) cell.getComponent()).paste();
             else if (cmd == "renameCol" && selectedColumn > 0) {
                 renameColumn(selectedColumn);
@@ -697,7 +692,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public void addColumn(TableColumn col) {
-            cell.getComponent().setFont(Preferences.DefaultFont);
+            cell.getComponent().setFont(iPreferences.DefaultFont);
             FontTracker.current.add((JTextComponent) cell.getComponent());
             col.setCellEditor(cell);
             col.setCellRenderer(new DefaultTableCellRenderer());
@@ -790,6 +785,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public Class getColumnClass(int c) {
+            System.out.println(getValueAt(0, c).getClass());
             return getValueAt(0, c).getClass();
         }
 

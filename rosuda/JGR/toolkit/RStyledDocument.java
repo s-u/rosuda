@@ -20,10 +20,11 @@ public class RStyledDocument extends DefaultStyledDocument implements StyledDocu
     public void insertString(int offset, String str, AttributeSet a) throws
         BadLocationException {
         if (a == null)
-            a = Preferences.SIZE;
+            a = iPreferences.SIZE;
         else
             StyleConstants.setFontSize( (MutableAttributeSet) a,
-                                       Preferences.FontSize);
+                                       iPreferences.FontSize);
+           //System.out.println(a);
         super.insertString(offset, str, a);
     }
 }

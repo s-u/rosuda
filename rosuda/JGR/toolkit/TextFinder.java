@@ -31,7 +31,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
     private JButton searchButton = new JButton("Find");
     private JButton cancelButton = new JButton("Cancel");
 
-    Highlighter.HighlightPainter highLighter = new FoundHighlighter(Preferences.HighLightColor);
+    Highlighter.HighlightPainter highLighter = new FoundHighlighter(iPreferences.HighLightColor);
 
     private static String keyWord = null;
     private static int position = -1;
@@ -52,11 +52,11 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         searchButton.addActionListener(this);
         cancelButton.setActionCommand("cancel");
         cancelButton.addActionListener(this);
-        
+
         this.getRootPane().setDefaultButton(searchButton);
 
         FontTracker.current.add(keyWordField);
-        keyWordField.setFont(Preferences.DefaultFont);
+        keyWordField.setFont(iPreferences.DefaultFont);
         keyWordField.setPreferredSize(new Dimension(300,25));
 
         this.getContentPane().setLayout(layout);

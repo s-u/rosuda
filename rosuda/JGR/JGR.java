@@ -46,8 +46,9 @@ public class JGR {
     public JGR() {
         SVar.int_NA=-2147483648;
         Platform.initPlatform("org.rosuda.JGR.toolkit.");
-        Preferences.initialize();
+        iPreferences.initialize();
         SplashScreen splash = new SplashScreen();
+        splash.start();
         readHistory();
         new RConsole();
         MAINRCONSOLE.progress.start("Starting R");
@@ -60,13 +61,12 @@ public class JGR {
             System.out.println("Cannot load R");
             System.exit(1);
         }
-        //R.eval("library(JGR)");
         RHOME = RTalk.getRHome();
         RLIBS = RTalk.getRLIBS();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
-        Preferences.refreshKeyWords();
+        iPreferences.refreshKeyWords();
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
@@ -112,8 +112,10 @@ public class JGR {
         iMenu.addMenuItem(MAINRCONSOLE,menu,name,cmd,jgrlistener);
     }
 
-    public static void fix(String data) {
-        new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));
+    public static void fix(String data, String type) {
+        System.out.println(type);
+        if (type.equals("data.frame")) new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));
+        else if (type.equals("matrix")) new DataTable(RTalk.getVarSet(RTalk.createMatrix(data)));
     }
 
 

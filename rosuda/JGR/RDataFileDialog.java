@@ -23,29 +23,17 @@ import org.rosuda.ibase.toolkit.*;
 
 public class RDataFileDialog extends JDialog implements ActionListener, ItemListener, PropertyChangeListener {
 
-    private GridBagLayout layout = new GridBagLayout();
-    private GridBagLayout layout2 = new GridBagLayout();
     private JFileChooser fileChooser = new JFileChooser();
-    private JPanel sepPanel = new JPanel();
     private JTextField dataName = new JTextField();
     private JTextField otherSeps = new JTextField();
-    private JTextField quote = new JTextField();
-    private ButtonGroup sepButtons = new ButtonGroup();
     private JCheckBox header = new JCheckBox("",true);
-    private JRadioButton def = new JRadioButton("Default",true);
-    private JRadioButton tab = new JRadioButton("Tab");
-    private JRadioButton comma = new JRadioButton(",");
-    private JRadioButton semicol = new JRadioButton(";");
-    private JRadioButton pipe = new JRadioButton("|");
-    private JRadioButton other = new JRadioButton("Others");
-    /*private JCheckBox def = new JCheckBox("Default",true);
-    private JCheckBox tab = new JCheckBox("Tab");
-    private JCheckBox comma = new JCheckBox(",");
-    private JCheckBox semicol = new JCheckBox(";");
-    private JCheckBox pipe = new JCheckBox("|");
-    private JCheckBox other = new JCheckBox("Others");*/
 
-    private String seps = "";
+    private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|",""});
+    private String[] seps = new String[] {"","\\t",",",";","|"};
+
+    private JComboBox quoteBox = new JComboBox(new String[] {"Default",""});
+    private String[] quotes = new String[] {""};
+
     private boolean useHeader = true;
 
     private Dimension screenSize = Common.getScreenRes();
@@ -53,94 +41,56 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
     public RDataFileDialog(Frame f,String directory) {
         super(f,"Load DataFile",true);
 
-        sepButtons.add(def);
-        sepButtons.add(tab);
-        sepButtons.add(comma);
-        sepButtons.add(semicol);
-        sepButtons.add(pipe);
-        sepButtons.add(other);
-        header.addItemListener(this);
-        def.addItemListener(this);
-        tab.addItemListener(this);
-        comma.addItemListener(this);
-        semicol.addItemListener(this);
-        pipe.addItemListener(this);
-        other.addItemListener(this);
-
         dataName.setMinimumSize(new Dimension(200,20));
         dataName.setPreferredSize(new Dimension(200,20));
         dataName.setMaximumSize(new Dimension(400,20));
-        otherSeps.setEditable(false);
-        otherSeps.setMinimumSize(new Dimension(100,20));
-        otherSeps.setPreferredSize(new Dimension(100,20));
-        otherSeps.setMaximumSize(new Dimension(200,20));
-        quote.setMinimumSize(new Dimension(50,20));
-        quote.setPreferredSize(new Dimension(50,20));
-        quote.setMaximumSize(new Dimension(50,20));
+
+        quoteBox.addItemListener(this);
+        sepsBox.addItemListener(this);
 
         fileChooser.addActionListener(this);
         fileChooser.addPropertyChangeListener(this);
         fileChooser.setPreferredSize(new Dimension(380,300));
         if (directory != null && new File(directory).exists()) fileChooser.setCurrentDirectory(new File(directory));
 
-        this.getContentPane().setLayout(layout);
+        this.getContentPane().setLayout(new GridBagLayout());
 
-        sepPanel.setLayout(layout2);
+        JPanel options = new JPanel(new GridBagLayout());
 
-        sepPanel.add(def,  new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(tab,  new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(comma,  new GridBagConstraints(0, 3, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(other,  new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(semicol,  new GridBagConstraints(1,2, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(pipe,  new GridBagConstraints(1, 3, 1, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 5), 0, 0));
-        sepPanel.add(otherSeps,  new GridBagConstraints(1, 4, 2, 1, 1.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-            new Insets(1, 5, 1, 50), 0, 0));
-
-
-        this.getContentPane().add(fileChooser,  new GridBagConstraints(0, 0, 3, 1, 1.0, 5.0
+        this.getContentPane().add(fileChooser,  new GridBagConstraints(0, 0, 6, 1, 1.0, 6.0
             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(new JLabel("Name :"),  new GridBagConstraints(0, 1, 1, 1, 0.0, 1.0
+        this.getContentPane().add(options,  new GridBagConstraints(0, 1, 3, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(dataName,  new GridBagConstraints(1, 1, 2, 1, 1.0, 1.0
+        options.add(new JLabel("Name :"),  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(1, 5, 1, 5), 0, 0));
+        options.add(dataName,  new GridBagConstraints(1, 0, 4, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 50), 0, 0));
-        this.getContentPane().add(new JLabel("Header :"),  new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0
+        options.add(new JLabel("Header :"),  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(header,  new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 50), 0, 0));
-        this.getContentPane().add(new JLabel("Quote :"),  new GridBagConstraints(0, 3, 1, 1, 0.0, 1.0
+        options.add(header,  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(quote,  new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0
+        options.add(new JLabel("Separator :"),  new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 5, 1, 50), 0, 0));
-        this.getContentPane().add(new JLabel("Separators :"),  new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0
-            , GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(sepPanel,  new GridBagConstraints(1, 4, 2, 1, 0.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.BOTH,
+        options.add(sepsBox,  new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(1, 5, 1, 5), 0, 0));
+        options.add(new JLabel("Quote :"),  new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(1, 5, 1, 5), 0, 0));
+        options.add(quoteBox,  new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
 
         this.setSize(new Dimension(450, 500));
         this.setLocation((screenSize.width-450)/2,(screenSize.height-500)/2);
-        if (Preferences.isMac) this.setResizable(false);
+        if (iPreferences.isMac) this.setResizable(false);
         /*this.addComponentListener( new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 fileChooser.setSize((int) (getWidth()-10),(int) (getHeight()-150));
@@ -159,7 +109,15 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             RConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = fileChooser.getSelectedFile().toString();
             if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('\\','/');
-            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(useHeader?"T":"F")+",sep=\""+seps.trim()+"\", quote=\""+(quote.getText().length()==0?"\\\"'":quote.getText().trim())+"\")";
+
+            String useSep;
+            if (sepsBox.getSelectedIndex() >= seps.length) useSep = sepsBox.getSelectedItem().toString();
+            else useSep = seps[sepsBox.getSelectedIndex()];
+            String useQuote;
+            if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
+            else useQuote = quotes[quoteBox.getSelectedIndex()];
+
+            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(useHeader?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")";
             JGR.MAINRCONSOLE.execute(cmd);
         }
         dispose();
@@ -174,24 +132,30 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
 
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getItemSelectable();
-
-        if (source == other) otherSeps.setEditable(!otherSeps.isEditable());
-        else if (source == header) useHeader = !useHeader;
-        else if (source == tab ) {
-            if (seps.indexOf("\\t") == -1) seps += "\\t";
-            else seps = seps.replaceAll("\\\\t","");
+        boolean edit = false;
+        if (source == quoteBox) {
+            edit = quoteBox.getSelectedIndex() == quoteBox.getItemCount()-1?true:false;
+            quoteBox.setEditable(edit);
         }
-        else if (source == comma ) {
-            if (seps.indexOf(",") == -1) seps += ",";
-            else seps = seps.replaceAll(",","");
-        }
-        else if (source == semicol ) {
-            if (seps.indexOf(";") == -1) seps += ";";
-            else seps = seps.replaceAll(";","");
-        }
-        else if (source == pipe ) {
-            if (seps.indexOf("|") == -1) seps += "|";
-            else seps = seps.replaceAll("\\|","");
+        else if (source == sepsBox) {
+            edit = sepsBox.getSelectedIndex() == sepsBox.getItemCount()-1?true:false;
+            /*if (edit) {
+                try {
+                    System.out.println(((JTextField) sepsBox.getEditor().getEditorComponent()).getText());
+                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setText("");
+                    System.out.println(((JTextField) sepsBox.getEditor().getEditorComponent()).getText());
+                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setSelectionStart(0);
+                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setSelectionEnd(((JTextField) sepsBox.getEditor().getEditorComponent()).getText().length());
+                }
+                catch (Exception ex) { ex.printStackTrace();}
+            }
+            else if (!edit){
+                try {
+                    //((JTextField) sepsBox.getEditor().getEditorComponent()).setText("Other ...");
+                } catch (Exception ex1) {}
+            }*/
+            sepsBox.setEditable(edit);
+            //sepsBox.contentsChanged(new ListDataEvent(sepsBox,ListDataEvent.CONTENTS_CHANGED,sepsBox.getItemCount(),sepsBox.getItemCount()));
         }
     }
 
@@ -214,11 +178,9 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         File file = fileChooser.getSelectedFile();
         if(file!=null && !file.isDirectory()) {
             String name = file.getName().replaceAll("\\..*", "");
-            //System.out.println(name.matches("[^\\w]"));
-            //name = name.replaceAll("[\\w]",".");
+            name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
             dataName.setText(name);
         }
         else dataName.setText(null);
     }
-
 }

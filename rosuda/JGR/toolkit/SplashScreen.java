@@ -31,17 +31,17 @@ public class SplashScreen extends JWindow implements Runnable {
 
     public SplashScreen() {
         try {
-            splash = loadSplash(Preferences.SPLASH);
+            splash = loadSplash(iPreferences.SPLASH);
         }
         catch (Exception e) {
-            if (Preferences.DEBUG>0) System.out.println("Missing Splashlogo: "+e.getMessage());
+            if (iPreferences.DEBUG>0) System.out.println("Missing Splashlogo: "+e.getMessage());
             new iError(e);
         }
         this.setSize(splashSize);
         this.setLocation((screenSize.width-300)/2,(screenSize.height-200)/2);
         this.setBackground(Color.white);
         thread = new Thread(this);
-        start();
+        //this.start();
     }
 
     public void paint(Graphics g) {
@@ -49,18 +49,18 @@ public class SplashScreen extends JWindow implements Runnable {
             if (splash != null)
                 g.drawImage(splash, 0, 0, splash.getWidth(this),splash.getHeight(this),this);
             g.setFont(new Font("Dialog", Font.BOLD, 26));
-            g.drawString(Preferences.TITLE, 160,
+            g.drawString(iPreferences.TITLE, 160,
                          80);
             g.setFont(new Font("Dialog", Font.BOLD, 16));
-            g.drawString(Preferences.SUBTITLE, 140,
+            g.drawString(iPreferences.SUBTITLE, 140,
                          110);
             g.setFont(new Font("Dialog", 0, 14));
-            g.drawString("Version: " + Preferences.VERSION,
+            g.drawString("Version: " + iPreferences.VERSION,
                          150, 130);
             g.setFont(new Font("Dialog", 0, 12));
-            g.drawString(Preferences.WEBSITE,150, splashSize.height - 35);
+            g.drawString(iPreferences.WEBSITE,150, splashSize.height - 35);
             g.setFont(new Font("Dialog", 0, 12));
-            g.drawString("(c) " + Preferences.DEVELTIME+ ", " +Preferences.INSTITUTION, 10,
+            g.drawString("(c) " + iPreferences.DEVELTIME+ ", " +iPreferences.INSTITUTION, 10,
                          splashSize.height - 10);
             g.drawRect(0, 0, splashSize.width - 1, splashSize.height - 1);
         }

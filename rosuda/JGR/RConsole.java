@@ -34,6 +34,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     private IconButton cutButton;
     private IconButton copyButton;
     private IconButton pasteButton;
+    private IconButton stopButton;
     private IconButton helpButton;
 
     private GridBagLayout layout = new GridBagLayout();
@@ -82,17 +83,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         }
         currentHistPosition = JGR.RHISTORY.size();
 
-        output.setToolTipText("R Output");
-        input.setToolTipText("R Input");
-
         input.addKeyListener(this);
-        //input.setWordWrap(false);
-        //output.setWordWrap(false);
-
-        //output.setText("\n");
+        input.setWordWrap(false);
 
         output.addKeyListener(this);
-
 
         inputDoc.addUndoableEditListener(undoMgr);
 
@@ -136,7 +130,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         try {
             JGR.RHISTORY.add(cmd);
             currentHistPosition = JGR.RHISTORY.size();
-            outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",Preferences.CMD);
+            outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD);
             if (!isHelpCMD(cmd)) {
                 Thread t = new Thread() {
                     public void run() {
@@ -200,7 +194,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             if (help!=null && help.trim().length() > 0) RHelp.last.search(help.trim(),e);
             setWorking(false);
         }
-        output.append("> ",Preferences.CMD);
+        output.append("> ",iPreferences.CMD);
     }
 
 
@@ -283,13 +277,19 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                                   new GridBagConstraints(7, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(helpButton = new IconButton("/icons/help.png",
-            "R Help", this, "rhelp"),
+        this.getContentPane().add(stopButton = new IconButton(
+            "/icons/stop.png", "Stop", this, "stop"),
                                   new GridBagConstraints(8, 0, 1, 1, 0.0, 0.0,
             GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(2, 20, 2, 5), 0, 0));
+        stopButton.setEnabled(false);
+        this.getContentPane().add(helpButton = new IconButton("/icons/help.png",
+            "R Help", this, "rhelp"),
+                                  new GridBagConstraints(9, 0, 1, 1, 0.0, 0.0,
+            GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(2, 20, 2, 5), 0, 0));
         this.getContentPane().add(progress,
-                                  new GridBagConstraints(9, 0, 1, 1, 0.0, 0.0
+                                  new GridBagConstraints(10, 0, 1, 1, 0.0, 0.0
             , GridBagConstraints.EAST, GridBagConstraints.NONE,
             new Insets(2, 50, 2, 5), 0, 0));
 
@@ -299,7 +299,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void   rWriteConsole(Rengine re, String text) {
         console.append(text);
         if (console.length() > 100) {
-            output.append(console.toString(),Preferences.RESULT);
+            output.append(console.toString(),iPreferences.RESULT);
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
             try { Thread.sleep(5); } catch (Exception e) {}
@@ -311,12 +311,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void   rBusy(Rengine re, int which) {
         if (which==0) {
-            output.append(console.toString(),Preferences.RESULT);
+            output.append(console.toString(),iPreferences.RESULT);
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
             setWorking(false);
         }
         else {
+            stopButton.setEnabled(true);
             progress.start("Working");
             setWorking(true);
             JGR.READY = false;
@@ -326,9 +327,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
         JGR.READY = true;
         setWorking(false);
+        stopButton.setEnabled(false);
         if (prompt.indexOf("Save workspace") > -1) return JGR.exit();
         else {
-            output.append(prompt,Preferences.CMD);
+            output.append(prompt,iPreferences.CMD);
             output.setCaretPosition(outputDoc.getLength());
             String s = JGR.RCSync.waitForNotification();
             return (s==null||s.length()==0)?"\n":s+"\n";
@@ -376,6 +378,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "table") new DataTable(null);
         else if (cmd == "savewspace") saveWorkSpace(wspace);
         else if (cmd == "savewspaceas") saveWorkSpaceAs();
+        else if (cmd == "stop") ; //stop R
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {
                 input.selectAll();
@@ -431,7 +434,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 }
             }
         }
-        
+
     }
 
     public void keyReleased(KeyEvent ke) {
@@ -538,7 +541,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         public String getToolTipText(MouseEvent e) {
             String s = getCurrentWord();
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
-            else return "R Input";
+            return null;
         }
     }
 
