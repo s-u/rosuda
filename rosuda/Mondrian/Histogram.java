@@ -28,10 +28,14 @@ public class Histogram extends DragBox implements ActionListener {
   public String displayMode = "Histogram";
   public boolean densityMode = false;
   private dataSet data;
+  private double[] add;
+  private double totalSum = 0;
+  private int weight;
   private int dvar;
   private int round;					// percision for labels ...
+  private boolean coordsSet = false;
 
-  public Histogram(JFrame frame, int width, int height, Table tablep, double bStart, double bWidth) {
+  public Histogram(JFrame frame, int width, int height, Table tablep, double bStart, double bWidth, int weight) {
     super(frame);
     this.tablep = tablep;
     this.name = tablep.name;
@@ -42,6 +46,7 @@ public class Histogram extends DragBox implements ActionListener {
     this.bWidth= bWidth;
     this.width = width;
     this.height = height;
+    this.weight = weight;
 
     frame.getContentPane().add(this);
 
@@ -57,10 +62,10 @@ public class Histogram extends DragBox implements ActionListener {
     frame.setFont(SF);
 
     String titletext;
-    if( tablep.count == -1 )
+    if( weight == -1 )
       titletext = "Histogram("+names[0]+")";
     else    
-      titletext = "Histogram("+names[0]+"|"+tablep.data.getName(tablep.count)+")";
+      titletext = "Histogram("+names[0]+"|"+data.getName(weight)+")";
 
     frame.setTitle(titletext);
 
@@ -75,7 +80,7 @@ public class Histogram extends DragBox implements ActionListener {
     if( rects.size() == 0 ) {
       setCoordinates(xMin-range*0.05, yMin, xMax+range*0.05, yMax, -1);
 //      System.out.println("Vor:  xMin: "+(xMin-range*0.05)+" yMin: "+ yMin +" xMax: "+(xMax+range*0.05)+" yMax: "+ yMax +" "+ -1);
-      home();
+      coordsSet = false;
 //      System.out.println("Nach: xMin: "+this.getLlx()+" yMin: "+ yMin +" xMax: "+this.getUrx()+" yMax: "+ yMax +" "+ -1);
 //      setCoordinates(this.getLlx(), yMin, this.getUrx(), yMax, -1);
     }
@@ -208,12 +213,12 @@ public class Histogram extends DragBox implements ActionListener {
         for( int j=0; j<r.tileIds.size(); j++ ) {
           int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
           sumh += tablep.getSelected(id)*tablep.table[id];
-          sum  += tablep.table[id];
+          sum  += add[id];
         }
         if( sum > 0 )
           stillEmpty = false;
         if( !stillEmpty ) {
-          r.setHilite( sumh/sum );
+          r.setHilite( sumh/add[i] );
           r.draw(bg);
         }
       }
@@ -293,12 +298,13 @@ public class Histogram extends DragBox implements ActionListener {
     public void home() {
       yMax = 0;
       for( int i=0; i<k; i++ ) {
-        yMax = Math.max(tablep.table[i]/tablep.data.n/bWidth, yMax);
+        yMax = Math.max(add[i]/totalSum/bWidth, yMax);
 //        System.out.println("yMax   "+yMax);
       }
       yMax *= 1.1;
 
       setCoordinates(this.getLlx(), yMin, this.getUrx(), yMax, -1);
+      coordsSet = true;
     }
 
     public void processKeyEvent(KeyEvent e) {
@@ -343,7 +349,7 @@ public class Histogram extends DragBox implements ActionListener {
           else
             displayMode = "Histogram";
         }
-        if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+        if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1 ) {
           densityMode = !densityMode;
         }        
         create(border, border, this.width-border, this.height-border, "");
@@ -405,6 +411,8 @@ public class Histogram extends DragBox implements ActionListener {
 
               Density.setActionCommand("Density");
               Density.addActionListener(this);
+              if( weight > -1 )
+                Density.setEnabled(false);
 
               final Axis axisW = new Axis(xMin, xMax);
 
@@ -572,7 +580,7 @@ public class Histogram extends DragBox implements ActionListener {
     public void create(int x1, int y1, int x2, int y2, String info) {
 
       //setCoordinates(this.getLlx(), yMin, this.getUrx(), yMax, -1);
-
+      
       rects.removeAllElements();
       labels.removeAllElements();
 
@@ -582,13 +590,15 @@ public class Histogram extends DragBox implements ActionListener {
       this.lnames = tablep.lnames;
 
       this.k = levels[0];
-      double sum = 0;
+      totalSum = 0;
       double max = 0;
       Vector[] tileIds = new Vector[k];
+      add = new double[k];
 
       for(int i=0; i<k; i++ ) {
-        sum += tablep.table[i];
-        max = Math.max( max, tablep.table[i] );
+        add[i] = tablep.table[i];
+        totalSum += add[i];
+        max = Math.max( max, add[i] );
         tileIds[i] = new Vector(1,0);
         tileIds[i].addElement(new Integer(i));
       }
@@ -598,18 +608,17 @@ public class Histogram extends DragBox implements ActionListener {
       int fh = FM.getHeight();
       g.dispose();
 
-      int n = tablep.data.n;
-
-      //    System.out.println("n   "+n);
+      if( !coordsSet )
+        home();
 
       if( displayMode == "Histogram" ) {
         for(int i=0; i<k; i++ ) {
           rects.addElement(new MyRect( true, 'y', "Observed",
                                        (int)userToWorldX(bStart + i*bWidth),
-                                       (int)userToWorldY(tablep.table[i]/n/bWidth),
+                                       (int)userToWorldY(add[i]/totalSum/bWidth),
                                        (int)userToWorldX(bStart + (i+1)*bWidth)-(int)userToWorldX(bStart + i*bWidth),
-                                       (int)userToWorldY(0)-(int)userToWorldY(tablep.table[i]/n/bWidth),
-                                       tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
+                                       (int)userToWorldY(0)-(int)userToWorldY(add[i]/totalSum/bWidth),
+                                       add[i], add[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
         }
       }
       else {				// Spinogram
@@ -617,7 +626,7 @@ public class Histogram extends DragBox implements ActionListener {
 //        int fullRange = (int)userToWorldX((Math.floor(xMax/bWidth)+1)*bWidth ) - (int)userToWorldX(bStart);
         int fullRange = (int)userToWorldX(xMax) - (int)userToWorldX(xMin);
         for(int i=0; i<k; i++ ) {
-          int currX = lastX + (int)Math.round(tablep.table[i]/n * fullRange); 
+          int currX = lastX + (int)Math.round(tablep.table[i]/totalSum * fullRange); 
           rects.addElement(new MyRect( true, 'y', "Observed",
                                        lastX,
                                        (int)userToWorldY(yMax),
