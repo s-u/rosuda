@@ -70,7 +70,6 @@ public class RSyntaxDocument extends RStyledDocument {
                 }
                 catch (Exception ex2) {}
         }
-        else if (str.matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) a = BOLD;
         super.insertString(offset, str, a);
         final int len = str.length();
         /*Thread t = new Thread() {

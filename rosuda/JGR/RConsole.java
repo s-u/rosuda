@@ -24,7 +24,7 @@ import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 
 public class RConsole extends iFrame implements ActionListener, KeyListener,
-    FocusListener, RMainLoopCallbacks, MouseListener, Runnable {
+    FocusListener, RMainLoopCallbacks, MouseListener {
 
     private IconButton newButton;
     private IconButton openButton;
@@ -45,8 +45,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public CmdInput input = new CmdInput();
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
-
-    private RExecuter exec = new RExecuter();
 
     private final InsertRemoveUndoManager undoMgr = new InsertRemoveUndoManager(this);
 
@@ -144,15 +142,29 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void execute(String cmd) {
          if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
+        try { outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD); } catch (Exception e) {}
+        if (!isHelpCMD(cmd)) JGR.rSync.triggerNotification(cmd);
 
+
+        /*
+        put command line by line nut it doesn't work but we need this because of R
         String[] cmdArray = cmd.split("\n");
 
         String c = null;
         for (int i = 0; i < cmdArray.length; i++) {
             c = cmdArray[i];
             try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n",iPreferences.CMD); } catch (Exception e) {}
-            if (!isHelpCMD(c)) exec._execute(c);
-        }
+            if (!isHelpCMD(c)) _execute(c);
+        }*/
+    }
+
+    private synchronized void _execute(String cmd) {
+        //JGR.READY = false;
+        System.out.println(cmd);
+        JGR.rSync.triggerNotification(cmd);
+        /*while (!JGR.READY); was ich hier möchte ist dass er erst den die nächste zeile übergibt wenn R wieder in readConsole ist, allerdings wenn
+        wenn man _execute synchronized macht funktioniert das auch allerdings gibt es dann keinen consolenoutput sondern erst wenn er komplett durch ist gibt er aus,
+        der vorteil von zeilenweisem übergeben ist, dass bei langen funktionen kein syntax error mehr kommt, der sonst auftauchen würde*/
     }
 
     public boolean isHelpCMD(String cmd) {
@@ -336,22 +348,24 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
         }
-        try { Thread.sleep(5);} catch (Exception e) {}
+        //try { Thread.sleep(5);} catch (Exception e) {}
     }
 
     public void   rBusy(Rengine re, int which) {
         if (which==0) {
-            output.append(console.toString(),iPreferences.RESULT);
-            console.delete(0,console.length());
+            if (console != null) {
+                output.append(console.toString(), iPreferences.RESULT);
+                console.delete(0, console.length());
+            }
             output.setCaretPosition(outputDoc.getLength());
             setWorking(false);
             JGR.READY = true;
         }
         else {
+            JGR.READY = false;
             stopButton.setEnabled(true);
             progress.start("Working");
             setWorking(true);
-            JGR.READY = false;
         }
     }
 
@@ -364,15 +378,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             output.append(prompt,iPreferences.CMD);
             output.setCaretPosition(outputDoc.getLength());
             String s = JGR.rSync.waitForNotification();
+            System.out.println("read console "+s);
             return (s==null||s.length()==0)?"\n":s+"\n";
         }
     }
 
     public void   rShowMessage(Rengine re, String message) {
         JOptionPane.showMessageDialog(this,message,"R Message",JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void run() {
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -437,14 +449,18 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
             catch (Exception e) {}*/
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
-                if (currentHistPosition == JGR.RHISTORY.size() &&
-                    input.getText().trim().length() > 0) {
-                    JGR.RHISTORY.add(input.getText().trim());
+                //System.out.println(currentHistPosition+" "+JGR.RHISTORY.size());
+                if (/*currentHistPosition == JGR.RHISTORY.size() && */input.getText().trim().length() > 0) {
+                    JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
+                    //JGR.RHISTORY.setElementAt(input.getText().trim(),currentHistPosition);
+                    //JGR.RHISTORY.add(input.getText().trim());
+                    //System.out.println(input.getText().trim());
                     //we set the cursor to last hist and save the current writing in the history
                 }
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
                 //System.out.println(input.getText().length());
                 input.setCaretPosition(input.getText().length());
+                //currentHistPosition++;
                 wasHistEvent = true;
                 //System.out.println(input.getCaretPosition());
             }
@@ -460,9 +476,9 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     //we set the cursor to the next hist
                     input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
                     input.setCaretPosition(input.getText().length());
+
                 }
-                else if (JGR.RHISTORY.size() > 0 &&
-                         currentHistPosition < JGR.RHISTORY.size()) {
+                else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
                     //we empty the input field
                     input.setText("");
                     currentHistPosition++;
@@ -577,16 +593,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void mouseExited(MouseEvent e) {
-    }
-
-    class RExecuter {
-        public RExecuter() {}
-
-        public /*synchronized*/ void _execute(String cmd) {
-            JGR.READY = false;
-            JGR.rSync.triggerNotification(cmd);
-            //try { wait(10); } catch(Exception e) {}
-        }
     }
 
     class CmdInput extends SyntaxArea {
