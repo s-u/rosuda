@@ -160,7 +160,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                     g.setColor("white");
                     int rdx=(int)(((double)dx)*Math.sqrt(ct/maxCount));
                     int rdy=(int)(((double)dy)*Math.sqrt(ct/maxCount));
-                    int mdy=(int)(((double)dy)*Math.sqrt(mct/maxCount));
+                    int mdy=(int)(((double)rdy)*mct/ct);
                     g.fillRect(lx,ly,rdx,rdy);
                     if (mdy>0) {
                         g.setColor("marked");
