@@ -80,7 +80,8 @@ public class EzMenu {
             };
             if (menuDef[i]=="~Window") {
                 i++; isNext=true;
-                //if (we!=null && we.menu!=null) mb.add(we.menu); // add window menu
+                if (we!=null && we.getWindowMenu()!=null)
+                    mb.add((Menu)we.getWindowMenu()); // add window menu
             };
             if (menuDef[i]=="~Help") {
                 i++; isNext=true;
