@@ -438,13 +438,13 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd == "runall") {
         	try {
         		String s = editArea.getText();
-        		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s,true);
+        		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s.trim(),true);
         	} catch (Exception ex) {}
         }
         else if (cmd == "runselection") {
         	try {
         		String s = editArea.getSelectedText().trim();
-        		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s,true);
+        		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s.trim(),true);
         	} catch (Exception ex) {}
         }
         else if (cmd == "save") saveFile();
