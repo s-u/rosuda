@@ -296,8 +296,29 @@ public class Framework {
         return d;
     };
 
+    public double[] getDoubleContent(SVar v) {
+        if (v==null) return null;
+        double[] d=new double[v.size()];
+        int i=0;
+        while(i<v.size()) { d[i]=v.atD(i); i++; };
+        return d;
+    }
+
+    public String[] getStringContent(SVar v) {
+        if (v==null) return null;
+        String[] d=new String[v.size()];
+        int i=0;
+        while(i<v.size()) { d[i]=v.atS(i); i++; };
+        return d;
+    }
+
     public int varIsNum(int vid) {
         SVar v=cvs.at(vid);
+        if (v==null) return -1;
+        return (v.isNum())?1:0;
+    }
+
+    public int varIsNum(SVar v) {
         if (v==null) return -1;
         return (v.isNum())?1:0;
     }
