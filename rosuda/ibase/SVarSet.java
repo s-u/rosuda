@@ -183,6 +183,80 @@ public class SVarSet {
         };
         return false;
     }
+
+    public boolean exportForest(PrintStream p) {
+        try {
+            if (p!=null) {
+                p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.dev\tsample.gain\tsample.size\tdepth");
+                SVarSet.TreeEntry te;
+                if (Common.DEBUG>0) System.out.println("Forest export; total "+trees.size()+" trees associated.");
+                for (Enumeration e=trees.elements(); e.hasMoreElements();) {
+                    te=(SVarSet.TreeEntry)e.nextElement();
+                    if (Common.DEBUG>0) System.out.println("exporting tree \""+te.name+"\"...");
+                    if (te.root!=null) {
+                        Vector v=new Vector();
+                        te.root.getAllNodes(v);
+                        if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
+                        for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
+                            SNode np=(SNode)e2.nextElement();
+                            if (!np.isLeaf()) {
+                                SNode n=(SNode)np.at(0);
+                                if (n!=null) {
+                                    p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
+                                };
+                            }
+                        }
+                    }
+                }
+                p.close();
+                return true;
+            };
+        } catch (Exception eee) {};
+        return false;
+    }
+
+    public SVarSet getForestVarSet() {
+        SVarSet fs=new SVarSet(); fs.setName("Forest");
+        SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
+        SVar v_node=new SVar("NodeID"); fs.add(v_node);
+        SVar v_var=new SVar("Variable",true); fs.add(v_var);
+        SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
+        SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
+        SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
+        SVar v_td=new SVar("t.deviance"); fs.add(v_td);
+        SVar v_sdg=new SVar("s.dev.Gain"); fs.add(v_sdg);
+        SVar v_tdg=new SVar("t.dev.Gain"); fs.add(v_tdg);
+
+        SVarSet.TreeEntry te;
+        if (Common.DEBUG>0) System.out.println("Forest export; total "+trees.size()+" trees associated.");
+        for (Enumeration e=trees.elements(); e.hasMoreElements();) {
+            te=(SVarSet.TreeEntry)e.nextElement();
+            if (Common.DEBUG>0) System.out.println("including tree \""+te.name+"\"...");
+            if (te.root!=null) {
+                Vector v=new Vector();
+                te.root.getAllNodes(v);
+                if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
+                for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
+                    SNode np=(SNode)e2.nextElement();
+                    if (!np.isLeaf()) {
+                        SNode n=(SNode)np.at(0);
+                        if (n!=null) {
+                            //p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
+                            v_tree.add(te.name); v_var.add(n.splitVar.getName());
+                            v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
+                            v_tcases.add(new Integer(np.Cases));
+                            v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
+                            v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
+                        };
+                    }
+                }
+            }
+        }
+        SMarker m=new SMarker(v_var.size());
+        fs.setMarker(m);
+        return fs;
+    }
+    
     public static void Debug(SVarSet sv) {
 	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
 	for (Enumeration e=sv.elements(); e.hasMoreElements();) {
