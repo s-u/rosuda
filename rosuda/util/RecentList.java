@@ -105,7 +105,7 @@ public class RecentList {
         int i=0;
         while (i<active) {
             String s=list[i];
-            int l=s.lastIndexOf(File.pathSeparatorChar);
+            int l=s.lastIndexOf(File.separatorChar);
             if (l>0) s=s.substring(l+1);
             se[i]=s;
             i++;
@@ -124,6 +124,7 @@ public class RecentList {
             }
             if (hasDupes)
                 se[i]=list[i];
+            i++;
         }
         return se;
     }
