@@ -37,6 +37,7 @@ public class GDCanvas extends Canvas implements GDContainer {
 
     public void setDeviceNumber(int dn) { devNr=dn; }
     public int getDeviceNumber() { return devNr; }
+    public void closeDisplay() {}
     
     public synchronized void cleanup() {
         r.active=false;
@@ -44,6 +45,10 @@ public class GDCanvas extends Canvas implements GDContainer {
         reset();
         r=null;
         l=null;
+    }
+
+    public void syncDisplay(boolean finish) {
+        repaint();
     }
     
     public void initRefresh() {
@@ -78,6 +83,8 @@ public class GDCanvas extends Canvas implements GDContainer {
         l.removeAllElements();
         listChanged=true;
     }
+
+    public synchronized Vector getGDOList() { return l; }
 
     long lastUpdate;
     long lastUpdateFinished;
