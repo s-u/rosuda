@@ -344,11 +344,14 @@ cases: variable is not numerical or is categorical, no cases matching
             int ct=size();
             r = new int[ct];
             double[] da = cont;
-
+            
             sw.profile("getRanked: pass 1: store relevant values");
 
             // pass 3: sort by value
             int i=0;
+            while (i<ct) { r[i]=i; i++; };
+            i=0;
+            
             while (i<ct-1) {
                 double d=da[r[i]];
                 int j=ct-1;
