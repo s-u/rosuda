@@ -789,7 +789,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 				int j=((Integer)e2.nextElement()).intValue();
 				m.set(j,m.at(j)?setTo:1);
 			    };
-			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));                            
 			};
 		    };
 		    

@@ -7,7 +7,7 @@ import java.awt.event.*;
 public class Common
 {
     /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
-    public static int DEBUG=0;
+    public static int DEBUG=1;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -37,6 +37,7 @@ public class Common
     public static final int NM_AxisChange     =0x102;
     public static final int NM_VariableChange =0x103;
     public static final int NM_VarSetChange   =0x104;
+    public static final int NM_NodeChange     =0x105;
     
     /** add an application warning/error */
     public static void addWarning(String war) {

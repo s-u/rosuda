@@ -144,6 +144,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	SNode cn=(m!=null)?m.getNode():null;
 
 	if (cn!=null) {
+            if (Common.DEBUG>0) System.out.println("ScatterCanvas: current node present, constructing partitions"); 
 	    ((SNode)cn.getRoot()).setAllTmp(0);
 	    SNode t=cn;
 	    t.tmp=2;
