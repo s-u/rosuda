@@ -151,7 +151,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
 	
 	//--- this is a bit tricky - not really clean enough --
-	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...",
+	String[] menuDef={"+","File","Open dataset ...","openData","Open tree ...","openTree","-","Clone tree","new","-","Save as PGS ...",
                           "exportPGS","Export forest data ...","exportForest","Display forest","displayForest","Print","print","-","Quit","quit",
                           "+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv",
 			  "+","Node","Prune","prune",
@@ -609,7 +609,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    //Common.mainFrame.add(f);
 	    tc.repaint(); tc.redesignNodes();
 	};
-	if (cmd=="open") {
+	if (cmd=="openTree") {
 	    //SVarSet tvs=new SVarSet();
 	    SVarSet tvs=root.getSource();
 	    SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
@@ -620,6 +620,21 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		//InTr.newVarDisplay(tvs);
 	    };
 	};
+        if (cmd=="openData") {
+            TFrame f=new TFrame("KLIMT "+Common.Version);
+            SVarSet tvs=new SVarSet();
+            SNode t=InTr.openTreeFile(f,null,tvs);
+            if (t==null && tvs.count()<1) {
+                new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
+            } else {
+                f.setTitle(tvs.getName());
+                Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+                Common.screenRes=sres;
+                if (t!=null)
+                    InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);                
+            }
+        }
 	if (cmd=="deviance") {
 	    showDevGain=!showDevGain;
 	    repaint();
