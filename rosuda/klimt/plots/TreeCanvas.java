@@ -743,8 +743,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (cmd=="displayForest") {
             SVarSet fs=new SVarSet(); fs.setName("Forest");
             SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
-            SVar v_var=new SVar("Variable",true); fs.add(v_var);
             SVar v_node=new SVar("NodeID"); fs.add(v_node);
+            SVar v_var=new SVar("Variable",true); fs.add(v_var);
             SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
             SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
             SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
