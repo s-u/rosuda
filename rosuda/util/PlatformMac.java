@@ -9,13 +9,15 @@
 import com.apple.mrj.*;
 import java.io.*;
 import java.awt.*;
+import javax.swing.JColorChooser;
 
 /** This is an implementation of the {@link Platform} class specific to Apple Macintosh systems. The fact that this class is loaded on Apple computers only allows us to use all of the Apple-specific MRJ classes without the risk of encountering missing classes.<p>Currently following "goodies" are present:<ul><li>Support for resources placed in MacOS X bundles</li><li>loading of custom MacOS X cursors.</li></ul>and ToDo:<ul><li>Register Apple-specific handlers such as "Preferences" or "About"</li><li>Apple-specific clipboard handling</li></ul> */ 
-public class PlatformMac extends Platform {
+public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHandler, MRJOpenDocumentHandler {
     public PlatformMac() {
         super();
         if (Common.DEBUG>0)
             System.out.println("Welcome to the KLIMT for Mac! We got some goodies for ya ;)");
+        registerHandlers();
         String fn;
         try {
             Toolkit tk=Toolkit.getDefaultToolkit();
@@ -51,4 +53,41 @@ public class PlatformMac extends Platform {
     }
 
     String getPlatformName() { return "Apple Macintosh"; }
+
+    // MRJ specific handlers
+
+    public void registerHandlers() {
+        MRJApplicationUtils.registerAboutHandler(this);
+        MRJApplicationUtils.registerOpenDocumentHandler(this);
+        MRJApplicationUtils.registerPrefsHandler(this);
+    }
+    
+    public void handleAbout() {
+        
+    }
+
+    public void handleOpenFile(File fileName) {
+        TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
+        SVarSet tvs=new SVarSet();
+        SNode t=InTr.openTreeFile(f,fileName.getAbsolutePath(),tvs);
+        if (t==null && tvs.count()<1) {
+            f=null;
+            new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
+        } else {
+            f.setTitle(tvs.getName());
+            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
+            if (t!=null)
+                InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+            VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+        }
+    }
+
+    public void handlePrefs() {
+        Color sc=JColorChooser.showDialog(Common.mainFrame,"Choose selection color",Common.selectColor);
+        if (sc!=null) {
+            Common.selectColor=sc;
+            
+        }
+    }
 }
