@@ -224,7 +224,7 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 				if (j==0)
 				    g.setColor("sel");
 				else
-				    g.setColor(ColorBridge.main.getColor(j));
+				    g.setColor(ColorBridge.getMain().getColor(j));
 				g.fillRect(cl,h-ly,cu-cl,ly-lyp);
 				lyp=ly;
 			    }
