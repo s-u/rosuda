@@ -145,6 +145,7 @@ public class SVar extends Vector
     };
 
     //---- uncomment for JDK 1.2 or higher if necessary - won't work with 1.1 ------
+    // since add can return false on failure addElement should NOT be activated even in 1.2 and above
     // public void addElement(Object o) { add(o); };
 
     public double getMin() { return min; };
@@ -156,11 +157,20 @@ public class SVar extends Vector
     public double atD(int i) { return (isnum)?((Number)elementAt(i)).doubleValue():0; };
     public String atS(int i) { return elementAt(i).toString(); };
     public boolean isMissingAt(int i) { return elementAt(i)==null; };
+
+    /** returs the # of missing values in this variable */
+    public int getMissingCount() {
+        return missingCount;
+    }
     
-    /** returns the ID of the category of the object */
+    /** returns the ID of the category of the object
+        @param object
+        @return category ID
+     */
     public int getCatIndex(Object o) {
 	if (!cat) return -1;
-	return cats.indexOf(o);
+        Object oo=o; if(o==null) oo=missingCat;
+	return cats.indexOf(oo);
     };
 
     /** returns ID of the category of i-th case in the variable */
