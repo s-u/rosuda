@@ -1,12 +1,5 @@
 package org.rosuda.JGR;
 
-/**
- *  JGRPackageManager - manage packages for current session as well as default packages
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2005
- */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -16,6 +9,14 @@ import javax.swing.table.*;
 
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.JGR.util.*;
+
+/**
+ *  JGRPackageManager - manage packages for current session as well as default packages
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class JGRPackageManager extends iFrame implements ActionListener {
 

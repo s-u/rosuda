@@ -1,5 +1,8 @@
 package org.rosuda.JGR.util;
 
+import java.io.*;
+import java.util.*;
+
 /**
  *  ErrorMSG
  * 
@@ -9,9 +12,6 @@ package org.rosuda.JGR.util;
  *  
  * 	RoSuDA 2003 - 2004 
  */
-
-import java.io.*;
-import java.util.*;
 
 public class ErrorMsg {
 

@@ -1,14 +1,5 @@
 package org.rosuda.JGR;
 
-
-/**
- *  JGRDataFileOpenDialog - implementation of a file-dialog which allows loading datasets into R by choosing several options.
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2005
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
@@ -19,6 +10,13 @@ import org.rosuda.ibase.*;
 
 import org.rosuda.JGR.toolkit.*;
 
+/**
+ *  JGRDataFileOpenDialog - implementation of a file-dialog which allows loading datasets into R by choosing several options.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class JGRDataFileOpenDialog extends JFileChooser implements ActionListener, ItemListener, PropertyChangeListener {
 	

@@ -1,13 +1,5 @@
 package org.rosuda.JGR;
 
-/**
-*   JGRConsole Console Frame, the main window of JGR.
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2005
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -22,6 +14,14 @@ import org.rosuda.ibase.toolkit.*;
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.JGR.util.*;
+
+/**
+ *   JGRConsole Console Frame, the main window of JGR.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 FocusListener, RMainLoopCallbacks {

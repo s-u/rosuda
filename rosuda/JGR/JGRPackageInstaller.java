@@ -1,5 +1,12 @@
 package org.rosuda.JGR;
 
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.*;
+
+import org.rosuda.JGR.toolkit.*;
+
 /**
  *  JGRPackageInstaller - implementation of a simple package installer widget.
  *
@@ -7,13 +14,6 @@ package org.rosuda.JGR;
  *
  * 	RoSuDA 2003 - 2005
  */
-
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
-
-import org.rosuda.JGR.toolkit.*;
 
 public class JGRPackageInstaller extends iFrame implements ActionListener {
 

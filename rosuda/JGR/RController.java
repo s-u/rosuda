@@ -1,13 +1,5 @@
 package org.rosuda.JGR;
 
-/**
- *  RController - implementations of an interface between JGR and Rengine, providing all needed functions for working with R.
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2005
- */
-
 import java.io.*;
 import java.util.*;
 
@@ -16,6 +8,15 @@ import org.rosuda.util.Global;
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.toolkit.Editor;
+
+
+/**
+ *  RController - implementations of an interface between JGR and Rengine, providing all needed functions for working with R.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class RController {
 

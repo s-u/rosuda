@@ -1,12 +1,5 @@
 package org.rosuda.JGR;
 
-/**
- *  JGRHelp - an implemenation of a simple htmlbrowser combined with r-help search engine.
- * 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2005
- */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -22,6 +15,14 @@ import org.rosuda.JGR.rhelp.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
+
+/**
+ *  JGRHelp - an implemenation of a simple htmlbrowser combined with r-help search engine.
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     MouseListener {
@@ -89,8 +90,8 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {
-            RHELPLOCATION = JGR.R.eval("tempdir()").asString();
-            index = "file://"+RHELPLOCATION.replace('\\','/')+"/.R/doc/html/packages.html";
+            RHELPLOCATION = JGR.R.eval("tempdir()").asString()+"/.R";
+            index = "file://"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
 
         searchRHelp = new SearchEngine();

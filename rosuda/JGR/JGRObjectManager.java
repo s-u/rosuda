@@ -1,5 +1,11 @@
 package org.rosuda.JGR;
 
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+import org.rosuda.JGR.toolkit.*;
+
 /**
  *  JGRObjectManager (should better be named ObjectBrowser) - implemenation of a browser showing the R-workspace: Datasets, and other objects as a tree, models in a table for sorting and comparing them, functions as a list.
  *
@@ -7,13 +13,6 @@ package org.rosuda.JGR;
  *
  * 	RoSuDA 2003 - 2005
  */
-
-
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-import org.rosuda.JGR.toolkit.*;
 
 public class JGRObjectManager extends iFrame implements ActionListener, MouseListener {
 
