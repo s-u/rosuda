@@ -362,7 +362,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             if (treeOpt==null) treeOpt="";
             if (treeOpt.length()>0) treeOpt=","+treeOpt;
             PrintStream p=new PrintStream(new FileOutputStream(fprefix+"PluginInit.r"));
-            p.println("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nprint(\"TREE\",quote=FALSE)\nt<-"+lib+"("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
+            p.print("invisible(options(echo = FALSE))\nlibrary("+lib+")\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\n");
+            { int k=0; while (k<pred.length) { if (vs.at(pred[k]).isCat()) p.print("d$"+vs.at(pred[k]).getName()+"<-factor(d$"+vs.at(pred[k]).getName()+")\n"); k++; }  };
+            p.print("print(\"TREE\",quote=FALSE)\nt<-"+lib+"("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
             if (!useRserv) {
                 System.out.println("execPlugin: starting R");
@@ -380,9 +382,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 if (!holdConnection) rc=null;
                 System.out.println("Rserv.done");
             }
-            if (fr.exists()) fr.delete();
-            if (fd.exists()) fd.delete();
             if (!fo.exists()) {
+                if (fr.exists()) fr.delete();
+                if (fd.exists()) fd.delete();
                 err="Unable to use R! Make sure R is installed and in your PATH.";
                 System.out.println("execPlugin: ERR: "+err);
                 return false;
@@ -391,6 +393,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 lastTreeID++;
                 root=RTree.Load(br,"GrownTree_"+lastTreeID,vs,0,"[1] TREE","[1] END",true,registerPar);
                 if (root!=null) {
+                    if (fr.exists()) fr.delete();
+                    if (fd.exists()) fd.delete();
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
                     return true;
