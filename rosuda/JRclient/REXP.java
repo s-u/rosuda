@@ -230,7 +230,7 @@ public class REXP extends Object {
 	    int i=o;
 	    while (buf[i]!=0 && i<eox) i++;
 	    try {
-		x.cont=new String(buf,o,i-o,"UTF-8");
+		x.cont=new String(buf,o,i-o,Rconnection.transferCharset);
 	    } catch(Exception e) {
 		System.out.println("unable to convert string\n");
 		x.cont=null;

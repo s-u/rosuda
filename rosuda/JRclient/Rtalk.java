@@ -147,7 +147,7 @@ public class Rtalk {
 	@return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, String par) {
 	try {
-	    byte[] b=par.getBytes("UTF-8");
+	    byte[] b=par.getBytes(Rconnection.transferCharset);
 	    byte[] rq=new byte[par.length()+5];
 	    for(int i=0;i<b.length;i++)
 		rq[i+4]=b[i];
