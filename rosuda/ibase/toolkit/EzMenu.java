@@ -31,6 +31,12 @@ public class EzMenu {
             MenuItem mi;
             boolean isNext=false;
             if (menuDef[i]=="0") break;
+            if (menuDef[i]=="~File.Basic.End") {
+                i++; isNext=true;
+                m.add(mi=new MenuItem("Close window",new MenuShortcut('W'))).setActionCommand("WTMclose"+we.id); mi.addActionListener(wt);
+                if (!Common.isMac)
+                    m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
+            }
             if (menuDef[i]=="~File.Graph") {
                 i++; isNext=true;
                 m.add(mi=new MenuItem("Save as PGS ...")).setActionCommand("exportPGS"); mi.addActionListener(al);
