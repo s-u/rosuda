@@ -68,4 +68,13 @@ public class Tools {
         } catch(Exception dce) {};
         return d;
     }
+
+    public static int parseInt(String s) {
+        int i=0;
+        try {
+            Integer dd=Integer.valueOf(s);
+            i=dd.intValue();
+        } catch(Exception dce) {};
+        return i;
+    }
 };
