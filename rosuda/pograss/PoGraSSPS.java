@@ -190,7 +190,7 @@ class PoGraSSPS extends PoGraSS
     // currently ignores rot
     public void drawString(String txt, int x, int y, double ax, double ay) {
 	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
-	outPS(""+(x+ox)+" "+(oy-y)+" "+ax+" "+ay+" ("+txt+") xsw\n");
+	outPS(""+(x+ox)+" "+(oy-y)+" "+ax+" "+ay+" ("+txt+") swx\n");
     };
 
     public void nextLayer() {
@@ -209,7 +209,8 @@ class PoGraSSPS extends PoGraSS
         outPS("%% Created by PoGraSSPS v"+versionString+((xver==null)?"":(", based on input of PoGraSS v"+xver))+"\n");
         outPS("/fp { 4 { pop } repeat } def\n/cp {closepath} def /s {stroke} def /m {moveto} def /l {lineto} def /np {newpath} def\n");
 	outPS("/fe { -1 roll } def\n/xs { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop 4 fe mul exch 4 fe mul 5 fe add exch 4 fe add m show } def\n"); // x y ax ay txt <xs> (no rotation)
-	outPS("/sw { m show } def /swr { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop 3 fe add exch sw } def /swc { dup np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop 0.5 mpl 3 fe add exch sw } def \n"); // shortcuts for l/r/c text outs: txt x y sw[rc]
+	outPS("/sw { m show } def /swr { 2 index np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop -1 mul 3 fe add exch sw } def /swc { 2 index np 0 0 m false charpath pathbbox 4 -2 roll pop pop pop -0.5 mul 3 fe add exch sw } def \n"); // shortcuts for l/r/c text outs: txt x y sw[rc]
+	outPS("/swx { 5 2 roll 2 index np 0 0 m false charpath pathbbox 4 -2 roll pop pop 6 fe mul 3 fe exch sub 3 1 roll 5 fe mul sub exch sw }\n");
 	outPS("/Helvetica findfont 10 scalefont setfont\n");
 	lastFontSize=10; lastFontAttr=0; lastFont=FF_SansSerif;
 	lastBaseFont=lastFace="Helvetica";
