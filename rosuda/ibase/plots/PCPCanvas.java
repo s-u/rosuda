@@ -58,7 +58,7 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    v[i+1]=yvs[i]; i++;
 	};
 	A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
-	A[1].setValueRange(totMin,totMax);
+	A[1].setValueRange(totMin,totMax-totMin);
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	setBackground(Common.backgroundColor);
 	drag=false;
