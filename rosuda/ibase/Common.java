@@ -14,7 +14,7 @@ public class Common
     /** Debug flag. When set to >0 verbose debug messages are generated. */
     public static int DEBUG=0;
     /** profiler flag. When set to >0 profile information (timings) are generated */
-    public static int PROFILE=1;
+    public static int PROFILE=2;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -24,6 +24,8 @@ public class Common
 
     /** use Swing classes */
     public static boolean useSwing=true;
+    /** use Aqua-style background */
+    public static boolean useAquaBg=true;
 
     public static final int AT_standalone = 0x0000;
     public static final int AT_applet     = 0x0001;
@@ -45,6 +47,8 @@ public class Common
     public static Color backgroundColor=new Color(255,255,192);
     /** common query popup background color */
     public static Color popupColor=new Color(245,255,255);
+    /** common background color when aqua-style background is used */
+    public static Color aquaBgColor=new Color(230,230,240);
 
     /** SMarker state changed */
     public static final int NM_MarkerChange     =0x100;

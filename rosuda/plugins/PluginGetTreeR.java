@@ -194,6 +194,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     public boolean pluginDlg(Frame f) {
         Button b=null, b2=null; cancel=false;
         d=new Dialog(f,"Generate Tree Plug-in",true);
+        d.setBackground(Color.white);
         d.setLayout(new BorderLayout());
         d.add(new SpacingPanel(),BorderLayout.WEST);
         d.add(new SpacingPanel(),BorderLayout.EAST);

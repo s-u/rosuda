@@ -102,6 +102,17 @@ public class VarFrame extends TFrame {
 	public void paintBuffer(Graphics g) {
 	    int totsel=0;	    
 	    Dimension cd=getSize();
+
+            if (Common.useAquaBg) {
+                g.setColor(Color.white);
+                g.fillRect(0, 0, cd.width, cd.height);
+                int y=0;
+                g.setColor(Common.aquaBgColor);
+                while (y<cd.height-2) {
+                    g.fillRect(0,y,cd.width,2); y+=4;
+                }
+            }
+            
             if (c_vars!=vs.count()) // make sure the # of vars didint grow
                 rebuildVars();
 
@@ -239,6 +250,16 @@ public class VarFrame extends TFrame {
 	    };
 	    Dimension cd=getSize();
 
+            if (Common.useAquaBg) {
+                g.setColor(Color.white);
+                g.fillRect(0, 0, cd.width, cd.height);
+                int y=0;
+                g.setColor(Common.aquaBgColor);
+                while (y<cd.height-2) {
+                    g.fillRect(0,y,cd.width,2); y+=4;
+                }
+            }
+            
 	    Font fo=getFont();
 	    Font f2=new Font(fo.getName(),Font.BOLD,fo.getSize());
 	    Color C_varNam=new Color(0,0,128);

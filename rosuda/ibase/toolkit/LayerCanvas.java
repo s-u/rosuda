@@ -87,18 +87,31 @@ public abstract class LayerCanvas extends Canvas
                 offscreen[i] = createImage(d.width, d.height);
             offsd=d;
             firstPaintLayer=0; // after resize we need to repaint them all
-            if (Common.DEBUG>1) sw.profile("LayerCanvas.update.recreateOffscreen");
+            if (Common.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
         };
 	
         // clear the image
         if (firstPaintLayer==0) { // total repaint, i.e. clear the layer 0 also
             offgc = offscreen[0].getGraphics();
-            Color bg=getBackground();
-            offgc.setColor(bg==null?Color.white:bg);
-            offgc.fillRect(0, 0, d.width, d.height);
+
+            if (Common.useAquaBg) {
+                offgc.setColor(Color.white);
+                offgc.fillRect(0, 0, d.width, d.height);
+
+                int y=0;
+                offgc.setColor(Common.aquaBgColor);
+                while (y<d.height-2) {
+                    offgc.fillRect(0,y,d.width,2); y+=4;
+                }
+            } else {
+                Color bg=getBackground();
+                offgc.setColor(bg==null?Color.white:bg);
+                offgc.fillRect(0, 0, d.width, d.height);
+            }                
+            
             Color fg=getForeground();
             offgc.setColor(fg==null?Color.black:fg);
-            if (Common.DEBUG>1) sw.profile("LayerCanvas.update.clearLayer0");
+            if (Common.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
         }
 
         int l=firstPaintLayer;
@@ -108,12 +121,12 @@ public abstract class LayerCanvas extends Canvas
             paintLayer(offgc,l);
             l++;
         }
-        if (Common.DEBUG>1) sw.profile("LayerCanvas.update.constructLayers");
+        if (Common.PROFILE>0) sw.profile("LayerCanvas.update.constructLayers");
 
         // do normal redraw
         // transfer offscreen to window, last layer should have the correct image
         g.drawImage(offscreen[l-1], 0, 0, this);
-        if (Common.DEBUG>1) sw.profile("LayerCanvas.update.paintLayers");
+        if (Common.PROFILE>0) sw.profile("LayerCanvas.update.paintLayers");
     };
 
     /** normally we would not use paint at all, but sometimes paint is called

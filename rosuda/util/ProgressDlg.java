@@ -15,6 +15,17 @@ public class ProgressDlg extends Frame {
     };
 
     public void paint(Graphics g) {
+        if (Common.useAquaBg) {
+            Dimension d = getSize();
+            g.setColor(Color.white);
+            g.fillRect(0, 0, d.width, d.height);
+
+            int y=0;
+            g.setColor(Common.aquaBgColor);
+            while (y<d.height-2) {
+                g.fillRect(0,y,d.width,2); y+=4;
+            }
+        }
         g.setColor(Color.black);
         g.drawString(ptxt,20,40);
         g.drawRect(20,50,160,18);
