@@ -120,7 +120,7 @@ public class JGR {
         else if (type.equals("matrix")) new DataTable(RTalk.getVarSet(RTalk.createMatrix(data)));
     }
 
-    public static void setRHhome(String rhome) {
+    public static void setRHome(String rhome) {
         RHOME = rhome;
     }
 
@@ -136,6 +136,9 @@ public class JGR {
         for (int i = 0; i < words.length; i++) iPreferences.KEYWORDS.put(words[i],dummy);
     }
 
+    public static void installPackages(String[] pkgs) {
+        //for(int i = 0; i < pkgs.length; i++) System.out.println(pkgs[i]);
+    }
 
 
     public static void readHistory() {
