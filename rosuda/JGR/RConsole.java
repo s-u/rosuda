@@ -154,7 +154,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void execute(String cmd) {
         if (!JGR.STARTED) return;
-        if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
+        if (cmd.trim().length() > 0 && !JGR.RHISTORY.lastElement().equals(cmd.trim())) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
 
         String[] cmdArray = cmd.split("\n");
