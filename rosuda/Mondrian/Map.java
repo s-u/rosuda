@@ -19,7 +19,7 @@ public class Map extends DragBox {
   private double scalex, scaley;
   private dataSet data;
   private boolean drawBorder = true;
-  private JComboBox Varlist;
+  private JComboBox Varlist, Collist;
   private JList allVarList;
   private int displayVar = -1;
   private boolean inverted = false;
@@ -29,6 +29,7 @@ public class Map extends DragBox {
   private Image bi, tbi;
   private Graphics bg;
   private int queryId = -1;
+  private String scheme = "gray";
 
   private Vector NPAPolys = new Vector(256,256);
   private Vector finalPolys = new Vector(256,256);
@@ -84,6 +85,19 @@ public class Map extends DragBox {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
 
+    Collist = new JComboBox();
+    Collist.addItem("gray");
+    Collist.addItem("red");
+    Collist.addItem("green");
+    Collist.addItem("blue");
+    Collist.addItem("blue to red");
+    Collist.addItem("yellow to green");
+    Collist.setSize(200, (Varlist.getSize()).height);
+    p.add("West", Collist);
+    Collist.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) { updateMap(); }
+    });
+
     JCheckBox cbBorder = new JCheckBox("Outline", true);
     cbBorder.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { drawBorder = !drawBorder; updateMap(); }
@@ -100,22 +114,16 @@ public class Map extends DragBox {
     cbRank.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { rank = !rank; updateMap(); }
     });
-    p.add("West", cbRank);
+    p.add("East", cbRank);
 
     if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+      Collist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
     }
-    
-    /*    ToolTipManager.sharedInstance().registerComponent(this);
-    ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
-    ToolTipManager.sharedInstance().setInitialDelay(0);
-    ToolTipManager.sharedInstance().setDismissDelay(100000);
-    ToolTipManager.sharedInstance().setReshowDelay(0);
-    this.setToolTipText("");*/
 
     match = new int[polys.size()];
     boolean[] recMatch = new boolean[data.n];
@@ -185,6 +193,7 @@ public class Map extends DragBox {
 
   public void updateMap() {
     displayVar = Varlist.getSelectedIndex()-1;
+    scheme = (String)Collist.getSelectedItem();
     scaleChanged = true;
     paint(this.getGraphics());
   }
@@ -198,8 +207,8 @@ public class Map extends DragBox {
   public void processKeyEvent(KeyEvent e) {
 
     if (e.getID() == KeyEvent.KEY_RELEASED && e.isControlDown()) {
-      //      this.setToolTipText("");
-      //      ToolTipManager.sharedInstance().setEnabled(false);
+      this.setToolTipText("");
+      ToolTipManager.sharedInstance().setEnabled(false);
     }
     if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_F) {
       Graphics g = this.getGraphics();
@@ -277,20 +286,22 @@ public class Map extends DragBox {
         super.processMouseEvent(e);  // Pass other event types on.
   }
 
-    public void processMouseMotionEvent(MouseEvent e) {
+
+    public String getToolTipText(MouseEvent e) {
+
       if( e.isControlDown() ) {
-        //      ToolTipManager.sharedInstance().setEnabled(true);
+
         for( int i = 0;i < smallPolys.size(); i++) {
           MyPoly p = (MyPoly)smallPolys.elementAt(i);
           if ( p.contains( e.getX(), e.getY()+sb.getValue() ) ) {
             if( e.isShiftDown() && (allVarList.getSelectedIndices()).length != 0  ) {
               int[] selectedIds = allVarList.getSelectedIndices();
-              String infoTxt = "<TR align='right'><font size=-1 face='verdana, helvetica'>";
+              String infoTxt = "<TR'><TD align=right><font size=-1 face='verdana, helvetica'>";
               String para="";
-              String sep =": <TD> <font size=-1 face='verdana, helvetica'>";
+              String sep =": <TD  align='left'> <font size=-1 face='verdana, helvetica'>";
               for( int sel=0; sel<selectedIds.length; sel++ ) {
                 if( sel > 0 )
-                  para = " <TR align='right' height=5> <font size=-1 face='verdana, helvetica'> ";
+                  para = " <TR height=5><TD align=right><font size=-1 face='verdana, helvetica'>";
                 if( data.categorical(selectedIds[sel]) ) {
                   if( data.alpha(selectedIds[sel]) )
                     infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
@@ -302,20 +313,25 @@ public class Map extends DragBox {
                   infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
                     +(data.getRawNumbers(selectedIds[sel]))[match[i]];
               }
-              /*          if( !p.getLabel().equals("") )
-                this.setToolTipText("<HTML><TABLE border='0' cellpadding='0' cellspacing='0'><TR align='center' colspan=2><font size=-1 face='verdana, helvetica'> "+p.getLabel()+" "+infoTxt+" </TABLE></html>");
+              // Tooltip Stuff
+              if( !p.getLabel().equals("") )
+                return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'><TR align='center' colspan=2><font size=-1 face='verdana, helvetica'> "+p.getLabel()+" "+infoTxt+" </TABLE></html>";
               else
-                this.setToolTipText("<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>");
-              */          } /* else {
-            this.setToolTipText("<html><font face='verdana, helvetica'> "+p.getLabel()+" </html>");
-              }
-            ToolTipManager.sharedInstance().setEnabled(true); */
-          }
-        }
-      } /* else {
-      this.setToolTipText("");
-      ToolTipManager.sharedInstance().setEnabled(false);
-      } */
+                return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>";
+            } else {
+              return "<html><font face='verdana, helvetica'> "+p.getLabel()+" </html>";
+            }
+          }      // end IF contains
+        }        // end FOR
+        return null;
+      } else
+        return null;
+    }
+
+
+    
+    public void processMouseMotionEvent(MouseEvent e) {
+
       super.processMouseMotionEvent(e);  // Pass other event types on.
     }
 
@@ -385,7 +401,7 @@ public class Map extends DragBox {
 
     public void create() {
 
-      System.out.println("size is: "+this.getSize());
+     // System.out.println("size is: "+this.getSize());
       
       if( bg != null ) {
         bg.dispose();
@@ -426,16 +442,27 @@ public class Map extends DragBox {
         else {
           float intensity;
           if( !rank || data.categorical(displayVar) )
-            if( !inverted )
+            if( inverted )
               intensity = (float)(1-(shade[match[i]]-min)/(max-min));
             else
               intensity = (float)(1-(shade[match[i]]-max)/(min-max));
           else
-            if( !inverted )
+            if( inverted )
               intensity = (float)(1-(shadeI[match[i]]-min)/(max-min));
             else
               intensity = (float)(1-(shadeI[match[i]]-max)/(min-max));
-            p.setColor(new Color(intensity, intensity, intensity));
+          if( scheme.equals("gray") )
+            p.setColor(new Color(1-intensity, 1-intensity, 1-intensity));                // gray
+          else if( scheme.equals("blue to red") )
+            p.setColor(new Color(intensity, 0, 1-intensity));											// blue to red
+          else if( scheme.equals("yellow to green") )
+            p.setColor(new Color(1-intensity, 1, 0));															 // yellow to green
+          else if( scheme.equals("red") )
+            p.setColor(new Color((float)(1-Math.pow(intensity,4)/2), 1-intensity, (float)(Math.pow(1-intensity,3)/1.5+0.15) ));  // red
+          else if( scheme.equals("blue") )
+            p.setColor(new Color((float)(Math.pow(1-intensity,3)/1.5+0.15), 1-intensity, (float)(1-Math.pow(intensity,4)/2) ));  // blue
+          else if( scheme.equals("green") )
+            p.setColor(new Color( 1-intensity, (float)(1-Math.pow(intensity,4)/2), (float)(Math.pow(1-intensity,3)/1.5+0.15)));  // green
         }
         smallPolys.addElement(p);
         for( int j=0; j<data.k; j++ )
