@@ -53,7 +53,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 		    m.addDepend(this);
 	    };
 	};
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	drag=false;	
 	addMouseListener(this);
 	addMouseMotionListener(this);

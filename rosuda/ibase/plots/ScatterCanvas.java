@@ -58,7 +58,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
         A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
 	pm=new PlotManager(this,A[0],A[1],30,10,10,30);
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	drag=false;
 	updatePoints();
 	addMouseListener(this);

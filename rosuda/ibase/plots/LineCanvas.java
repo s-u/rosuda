@@ -69,7 +69,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	    i=1; while(i<=v[1].size()) { xv.add(new Integer(i)); i++; };
 	};
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
 	addMouseMotionListener(this);

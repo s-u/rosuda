@@ -63,7 +63,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	else
 	    ay=new Axis(weight,Axis.O_Y,Axis.T_Num);
 	ay.addDepend(this);
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	addMouseListener(this);
 	addMouseMotionListener(this);
         addKeyListener(this); f.addKeyListener(this);

@@ -16,7 +16,7 @@ public class VarFrame extends TFrame {
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)");
-        setBackground(new Color(255,255,192));
+        setBackground(Common.backgroundColor);
 	int rh=h;
 	if (rh>vs.count()*17+6+cmdHeight+40)
 	    rh=vs.count()*17+6+cmdHeight+40;
@@ -69,7 +69,7 @@ public class VarFrame extends TFrame {
 	    @param p associated tree canvas
 	*/
 	VarCanvas(VarFrame w, SVarSet dataset,Scrollbar s) {
-	    setBackground(new Color(255,255,192));
+	    setBackground(Common.backgroundColor);
 	    win=w; vs=dataset;
 	    c_vars=vs.count();
 	    selMask=new boolean[c_vars+4];
@@ -208,7 +208,7 @@ public class VarFrame extends TFrame {
 	    @param p associated tree canvas
 	*/
 	VarCmdCanvas(VarFrame w, SVarSet dataset) {
-	    setBackground(new Color(255,255,192));
+	    setBackground(Common.backgroundColor);
 	    win=w; vs=dataset;
 	    addMouseListener(this);
             vc=w.vc; sm=vs.getMarker();

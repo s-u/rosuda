@@ -40,7 +40,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     */
     public MCPCanvas(Frame f,RTree tman, SMarker mark) {
         tm=tman; m=mark; setFrame(f); setTitle("MCP"); m.addDepend(this);
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);

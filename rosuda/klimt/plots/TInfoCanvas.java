@@ -13,7 +13,7 @@ class TInfoCanvas extends DBCanvas
 
     TInfoCanvas()
     {
-	setBackground(new Color(255,255,128));
+	setBackground(Common.popupColor);
 	det=true;
     };
 

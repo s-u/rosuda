@@ -90,7 +90,7 @@ class QueryPopup
 	win=new Window(own);
 	win.add(cvs=new QPCanvas(win,ct,w));
 	cvs.setSize(100,50);
-	win.setBackground(new Color(255,255,220));	
+	win.setBackground(Common.popupColor);	
 	win.pack();
     }
 

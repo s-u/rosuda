@@ -51,7 +51,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	v[0]=v1; v[1]=v2; m=mark;
         A[0]=new Axis(v1,Axis.O_X,Axis.T_EqCat); A[0].addDepend(this);
         A[1]=new Axis(v2,Axis.O_Y,Axis.T_EqCat); A[1].addDepend(this);
-	setBackground(new Color(255,255,192));
+	setBackground(Common.backgroundColor);
 	drag=false;
 	updatePoints();
 	addMouseListener(this);

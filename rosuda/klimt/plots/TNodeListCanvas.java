@@ -11,7 +11,7 @@ class TNodeListCanvas extends DBCanvas
 
     TNodeListCanvas()
     {
-	setBackground(new Color(255,255,128));
+	setBackground(Common.backgroundColor);
 	setSize(250,200);
 	cn=null;
     };

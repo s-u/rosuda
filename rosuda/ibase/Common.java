@@ -7,12 +7,12 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96c";
+    public static String Version="0.96e";
     /** application release */
-    public static String Release="C617";
+    public static String Release="C716";
 
     /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
-    public static int DEBUG=0;
+    public static int DEBUG=1;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -41,6 +41,8 @@ public class Common
     public static Dimension screenRes=null;
     /** common background color. TFrame uses this as default */
     public static Color backgroundColor=new Color(255,255,192);
+    /** common query popup background color */
+    public static Color popupColor=new Color(245,255,255);
 
     /** SMarker state changed */
     public static final int NM_MarkerChange     =0x100;
