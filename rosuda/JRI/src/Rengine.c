@@ -1,4 +1,8 @@
 #include <stdio.h>
+
+// we need this for rniSetAttr - it's unclean and may be removed in the future
+#define USE_RINTERNALS
+
 #include "jri.h"
 #include "org_rosuda_JRI_Rengine.h"
 #include <R_ext/Parse.h>
@@ -32,18 +36,22 @@ extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
 extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
 
 // this method is used rather for debugging purposes - it finds the correct JNIEnv for the current thread. we still have some threading issues to solve, becuase eenv!=env should never happen (uncontrolled), because concurrency issues arise
+static JavaVM *jvm=0;
+
 JNIEnv *checkEnvironment()
 {
     JNIEnv *env;
-    JavaVM *jvm;
     jsize l;
+    jint res;
     
-    jint res= JNI_GetCreatedJavaVMs(&jvm, 1, &l);
-    if (res!=0) {
-        fprintf(stderr, "JNI_GetCreatedJavaVMs failed! (%d)\n",res); return;
-    }
-    if (l<1) {
-        fprintf(stderr, "JNI_GetCreatedJavaVMs said there's no JVM running!\n"); return;
+    if (!jvm) { // we're hoping that the JVM pointer won't change :P we fetch it just once
+        res= JNI_GetCreatedJavaVMs(&jvm, 1, &l);
+        if (res!=0) {
+            fprintf(stderr, "JNI_GetCreatedJavaVMs failed! (%d)\n",res); return;
+        }
+        if (l<1) {
+            fprintf(stderr, "JNI_GetCreatedJavaVMs said there's no JVM running!\n"); return;
+        }
     }
     res = (*jvm)->AttachCurrentThread(jvm, &env, 0);
     if (res!=0) {
@@ -51,8 +59,6 @@ JNIEnv *checkEnvironment()
     }
     if (eenv!=env)
         fprintf(stderr, "Warning! eenv=%x, but env=%x - different environments encountered!\n", eenv, env);
-    else
-        printf("Environment ok (%x)\n", eenv);
     return env;
 }
 
@@ -100,7 +106,8 @@ void Re_WriteConsole(char *buf, int len)
     JNIEnv *lenv=checkEnvironment();
     jstring s=(*lenv)->NewStringUTF(lenv, buf);
     jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
-    printf("jriWriteconsole mid=%x\n", mid);
+    if (!mid)
+        printf("jriWriteconsole mid=%x\n", mid);
     if (mid)
         (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
     (*lenv)->DeleteLocalRef(lenv, s);
@@ -414,9 +421,136 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRunMainLoop
   (JNIEnv *env, jobject this)
 {
       run_Rmainloop();
-      /* this doesn't work yet!! we need nuch more from main/main.c :(
-      SETJMP(R_Toplevel.cjmpbuf);
-      R_GlobalContext = R_ToplevelContext = &R_Toplevel;
-      R_ReplConsole(R_GlobalEnv, 0, 0);
-      */
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutString
+(JNIEnv *env, jobject this, jstring s)
+{
+    return SEXP2L(jri_getString(env, s));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutStringArray
+(JNIEnv *env, jobject this, jobjectArray a)
+{
+    return SEXP2L(jri_getStringArray(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutIntArray
+(JNIEnv *env, jobject this, jintArray a)
+{
+    return SEXP2L(jri_getIntArray(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutDoubleArray
+(JNIEnv *env, jobject this, jdoubleArray a)
+{
+    return SEXP2L(jri_getDoubleArray(env, a));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniAttr
+(JNIEnv *env, jobject this, jlong exp)
+{
+    SEXP a = ATTRIB(L2SEXP(exp));
+    return (a==R_NilValue)?0:SEXP2L(a);
+}
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
+(JNIEnv *env, jobject this, jlong exp)
+{
+    // this is not official API, but whoever uses this should know what he's doing
+    // it's ok for directly constructing attr lists, and that's what it should be used for
+    ((SEXPREC*)(L2SEXP(exp)))->attrib = (exp==0)?R_NilValue:L2SEXP(exp);
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCons
+(JNIEnv *env, jobject this, jlong head, jlong tail)
+{
+    return SEXP2L(CONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail)));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCAR
+(JNIEnv *env, jobject this, jlong exp)
+{
+    if (exp) {
+        SEXP r = CAR(L2SEXP(exp));
+        return (r==R_NilValue)?0:SEXP2L(r);
+    }
+    return 0;
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCDR
+(JNIEnv *env, jobject this, jlong exp)
+{
+    if (exp) {
+        SEXP r = CDR(L2SEXP(exp));
+        return (r==R_NilValue)?0:SEXP2L(r);
+    }
+    return 0;
+}
+
+// creates a list from SEXPs provided in long[]
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutList
+(JNIEnv *env, jobject this, jlongArray o)
+{
+    SEXP t=R_NilValue;
+    int l,i=0;
+    jlong *ap;
+    
+    if (!o) return 0;
+    l=(int)(*env)->GetArrayLength(env, o);
+    if (l<1) return SEXP2L(CONS(R_NilValue, R_NilValue));
+    ap=(jlong*)(*env)->GetLongArrayElements(env, o, 0);
+    if (!ap) return 0;
+    
+    while(i<l) {
+        t=CONS((ap[i]==0)?R_NilValue:L2SEXP(ap[i]), t);
+        i++;
+    }
+    (*env)->ReleaseLongArrayElements(env, o, ap, 0);    
+    
+    return SEXP2L(t);
+}
+
+// retrieves a list (shallow copy) and returns the SEXPs in long[]
+JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetList
+(JNIEnv *env, jobject this, jlong exp)
+{
+    SEXP e=L2SEXP(exp);
+    
+    if (exp==0 || e==R_NilValue) return 0;
+
+    {
+        unsigned len=0;
+        SEXP t=e;
+        
+        while (t!=R_NilValue) { t=CDR(t); len++; };
+        
+        {
+            jlongArray da=(*env)->NewLongArray(env,len);
+            jlong *dae;
+        
+            if (!da) return 0;
+        
+            if (len>0) {
+                int i=0;
+                dae=(*env)->GetLongArrayElements(env, da, 0);
+                if (!dae) {
+                    (*env)->DeleteLocalRef(env,da);
+                    jri_error("rniGetList: newLongArray.GetLongArrayElements failed");
+                    return 0;
+                }
+
+                t=e;
+                while (t!=R_NilValue && i<len) {
+                    dae[i]=(CAR(t)==R_NilValue)?0:SEXP2L(CAR(t));
+                    i++; t=CDR(t);
+                }
+                
+                (*env)->ReleaseLongArrayElements(env, da, dae, 0);
+            }
+            
+            return da;
+        }
+    }
+    
 }
