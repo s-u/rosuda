@@ -51,7 +51,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
     }
     
     public SplashScreen() {
-        super("Klimt "+Common.Version);
+        super("About");
 
         Image splash=null;
         main=this;
@@ -104,14 +104,16 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         add(p);
         p=new Panel();
         add(p, BorderLayout.SOUTH);
-        Label l=new Label("Klimt v"+Common.Version+" (release "+Common.Release+")");
+        Label l=null;
+        if (Common.AppType!=Common.AT_Framework)
+            l=new Label("Klimt v"+Common.Version+" (release "+Common.Release+")");
+        else
+            l=new Label("iPlots framework v"+Common.Version+" (release "+Common.Release+")");
         l.setFont(new Font("SansSerif",Font.BOLD,14));
         p.add(l);
         
         String myMenu[]={"+","File","@OOpen dataset ...","openData","-",
-            "Preferences ...","prefs","-",
-            "@QQuit","exit",
-            "~Window","0"};
+            "Preferences ...","prefs","-","@QQuit","exit", "~Window","0"};
         String macMenu[]={"+","File","@OOpen dataset ...","openData","0"};
         if (Common.isMac)
             myMenu=macMenu;
@@ -159,6 +161,11 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         aboutMode=true;
         setVisible(true);
     }
+
+    public static void runMainAsAbout() {
+        if (main==null) main=new SplashScreen();
+        main.runAsAbout();
+    }
     
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
@@ -167,7 +174,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 
     public void windowOpened(WindowEvent e) {}
     public void windowClosing(WindowEvent e) {
-        if (aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) {
+        if ((aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) || Common.AppType!=Common.AT_standalone) {
             aboutMode=false;
             setVisible(false); return;
         }
