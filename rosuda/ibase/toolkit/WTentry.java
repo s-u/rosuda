@@ -11,45 +11,48 @@ import javax.swing.*;
 /** a {@link WinTracker} entry
     @version $Id$
 */
-public class WTentry extends Object
+abstract public class WTentry extends Object
 {
     public static int lid=1;
-
+    public static String windowMenuName="Window";
+    
     public Window w;
     public String name;
     public int id=0;
-    public JMenuItem mi=null;
-    public JMenu menu=null;
     public int wclass=0;
 
-    public WTentry(Window win) {
-	w=win; id=lid; lid++;
-	mi=newMenuItem();
-    }
-
-    public WTentry(Window win,String nam,int wndclass) {
+    WinTracker wt;
+    
+    public WTentry(WinTracker wt, Window win, String nam, int wndclass) {
+        this.wt=wt;
         name=nam;
 	w=win; id=lid; lid++;
         wclass=wndclass;
-	mi=newMenuItem();
-    };
+        wt.newWindowMenu(this);
+        wt.add(this);
+    }
 
+    public abstract Object getWindowMenu();
+    public abstract void addMenuSeparator();
+    public abstract void addMenuItem(String name, String action);
+    public abstract void rmMenuItemByAction(String action);
+    public abstract Object getMenuItemByAction(String action);
+    public abstract void setNameByAction(String action, String name);
 
-    public JMenuItem newMenuItem() {
-	JMenuItem mi=new JMenuItem(((name==null)?"Window":name)+" ["+id+"]");
-	mi.setActionCommand("WTMwindow"+id);
-	return mi;
-    };
-
-    public JMenuItem newMenuItem(WinTracker wt) {
-        JMenuItem mi=new JMenuItem(((name==null)?"Window":name)+" ["+id+"]");
-        mi.setActionCommand("WTMwindow"+id);
-        mi.addActionListener(wt);
-        return mi;
-    };
-
+    /** adds the entry for this object into a menu of another window specified by its entry.
+        @param we the target window entry; if <code>null</code> then uses itself */
+    public String addWindowMenuEntry(WTentry we) { // generic way to do this
+        if (we==null) we=this;
+        we.addMenuItem(((name==null)?"Window":name)+" ["+id+"]", "WTMwindow"+id);
+	return "WTMwindow"+id;
+    }
+    
+    public void rmWindowMenuEntry(WTentry we) {
+        if (we==null) we=this;
+        we.rmMenuItemByAction("WTMwindow"+id);
+    }
 
     public String toString() {
 	return "WTentry(id="+id+", class="+wclass+", name="+name+", win="+((w==null)?"<null>":w.toString())+")";
-    };
-};
+    }
+}
