@@ -27,7 +27,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 
     private JCheckBox append = new JCheckBox("append",false);
     private JCheckBox quote = new JCheckBox("quote",false);
-    private JCheckBox rownames = new JCheckBox("rownames",false);
+    private JCheckBox rownames = new JCheckBox("row.names",false);
 	
 	private JButton ok = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
