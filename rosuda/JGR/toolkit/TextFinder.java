@@ -12,7 +12,7 @@ import org.rosuda.ibase.*;
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2005 
+ * 	RoSuDa 2003 - 2005 
  */
 
 public class TextFinder extends JDialog implements ActionListener {
@@ -25,6 +25,7 @@ public class TextFinder extends JDialog implements ActionListener {
     private JTextComponent searchArea = null;
     private JButton searchButton = new JButton("Find");
     private JButton cancelButton = new JButton("Cancel");
+    private JLabel status = new JLabel("                       ");
 
     Highlighter.HighlightPainter highLighter = new FoundHighlighter(JGRPrefs.HighLightColor);
 
@@ -43,32 +44,40 @@ public class TextFinder extends JDialog implements ActionListener {
 
         this.searchArea = searchArea;
 
+        Dimension d = new Dimension(80,25);
         searchButton.setActionCommand("search");
         searchButton.addActionListener(this);
+        searchButton.setMaximumSize(d);
+        searchButton.setMinimumSize(d);
+        searchButton.setPreferredSize(d);
         cancelButton.setActionCommand("cancel");
         cancelButton.addActionListener(this);
+        cancelButton.setMaximumSize(d);
+        cancelButton.setPreferredSize(d);
+        cancelButton.setMinimumSize(d);
 
         this.getRootPane().setDefaultButton(searchButton);
 
         FontTracker.current.add(keyWordField);
         keyWordField.setFont(JGRPrefs.DefaultFont);
+        keyWordField.setMaximumSize(new Dimension(300,25));
+        keyWordField.setMinimumSize(new Dimension(300,25));
         keyWordField.setPreferredSize(new Dimension(300,25));
+        
+        JPanel top = new JPanel();
+        top.add(keyWordField);
 
-        this.getContentPane().setLayout(layout);
-        this.getContentPane().add(keyWordField,
-                                  new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(searchButton,
-                                  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 180, 2, 5), 0, 0));
-        this.getContentPane().add(cancelButton,
-                                  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
-
-        this.setSize(new Dimension(400, 100));
+        JPanel bottom = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        bottom.add(status);
+        bottom.add(searchButton);
+        bottom.add(cancelButton);
+        
+        this.getContentPane().setLayout(new BorderLayout());
+        
+        this.getContentPane().add(top,BorderLayout.CENTER);
+        this.getContentPane().add(bottom,BorderLayout.SOUTH);
+        
+        this.setSize(new Dimension(320, 95));
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exit();
@@ -101,16 +110,12 @@ public class TextFinder extends JDialog implements ActionListener {
         if (!keyWord.equals("")) {
             position = searchArea.getText().toLowerCase().indexOf(keyWord, position + 1);
             if (position == -1) {
-                if (!found) JOptionPane.showMessageDialog(this, "Not found!",
-                                              "Search failure",
-                                              JOptionPane.WARNING_MESSAGE);
-                else JOptionPane.showMessageDialog(this, "No more results!",
-                                              "Search failure",
-                                               JOptionPane.WARNING_MESSAGE);
-
+                if (!found) status.setText("No found!              ");
+                else  status.setText("No more results!       ");
                 found = false;
             }
             else {
+            	status.setText("                       ");
                 highlight(searchArea,position, position + keyWord.length());
                 searchArea.select(position,position);
                 found = true;
