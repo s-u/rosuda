@@ -81,6 +81,27 @@ public class JGR {
         MAINRCONSOLE.setWorking(true);
         splash.toFront();
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
+		
+		// let's preemptively load JRI - if we do it here, we can show an error message
+		try {
+            System.loadLibrary("jri");
+        } catch (UnsatisfiedLinkError e) {
+			String errStr="all environment variables (PATH, LD_LIBRARY_PATH, etc.) are setup properly (see supplied script)";
+			String libName="libjri.so";
+			if (System.getProperty("os.name").startsWith("Window"))
+			{ errStr="you start JGR by double-clicking the JGR.exe program"; libName="jri.dll"; }
+			if (System.getProperty("os.name").startsWith("Mac"))
+			{ errStr="you start JGR by double-clicking the JGR application"; libName="libjri.dylib"; }
+			JOptionPane.showMessageDialog(null, "Cannot find Java/R Interface (JRI) library ("+libName+").\nPlease make sure "+errStr+".", "Cannot find JRI library", JOptionPane.ERROR_MESSAGE);
+			System.err.println("Cannot find JRI native library!\n");
+            e.printStackTrace();
+            System.exit(1);
+        }
+		
+		if (!Rengine.versionCheck()) {
+			JOptionPane.showMessageDialog(null, "Java/R Interface (JRI) library doesn't match this JGR version. Please update JGR and JRI to the latest version.", "Version Mismatch", JOptionPane.ERROR_MESSAGE);
+			System.exit(2);
+		}
         String[] args={"--save"};
         R=new Rengine(args,true,MAINRCONSOLE);
         if (org.rosuda.util.Global.DEBUG>0)
