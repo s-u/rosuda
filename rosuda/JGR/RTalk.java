@@ -20,24 +20,24 @@ public class RTalk {
     public static Object dummy = new Object();
 
 
-    public synchronized static void runCmd(String cmd) {
+    public static void runCmd(String cmd) {
         JGR.R.eval(cmd);
     }
 
-    public synchronized static String getRHome() {
+    public static String getRHome() {
         REXP x = JGR.R.eval("R.home()");
         if (x != null && x.asStringArray()!=null) return x.asStringArray()[0];
         return "";
     }
 
-    public synchronized static String[] getRLIBS() {
+    public static String[] getRLIBS() {
         REXP x = JGR.R.eval(".Library");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
     }
 
     //code completion
-    public synchronized static String completeCode(String part) {
+    public static String completeCode(String part) {
         int s = part.length()-1;
         if (part.trim().length() == 0) return "";
         char c = part.charAt(s);
@@ -87,7 +87,7 @@ public class RTalk {
     }
 
     //filecompletion
-    public synchronized static String completeFile(String part) {
+    public static String completeFile(String part) {
         part = part.replaceFirst("~",System.getProperty("user.home"));
         int tl = part.length();
         int ls = tl - 1, fb = 0;
@@ -145,7 +145,7 @@ public class RTalk {
     }
 
     /* get current available keywords*/
-    public synchronized static void getKeyWords() {
+    public static void getKeyWords() {
         REXP x = JGR.R.eval("length(search())");
         int pos = 2, maxpos = 2;
         if (x == null && x.asIntArray() != null) return;
@@ -165,7 +165,7 @@ public class RTalk {
 
 
     /* get current available function names for help*/
-    public synchronized static List getFunctionNames() {
+    public static List getFunctionNames() {
         List fkt = new ArrayList();
         fkt.add("");
         REXP x = JGR.R.eval("length(search())");
@@ -188,7 +188,7 @@ public class RTalk {
     }
 
     /* refresh r-objects which ar in the pos=0 environment*/
-    public synchronized static void refreshObjects() {
+    public static void refreshObjects() {
         JGR.DATA.clear();
         JGR.OTHERS.clear();
         JGR.MODELS.clear();
@@ -214,7 +214,7 @@ public class RTalk {
 
 
     /* refresh packages (loaded and availables)*/
-    public synchronized static Object[][] refreshPackages() {
+    public static Object[][] refreshPackages() {
         Object[][] pkg = null;
         Hashtable loadedP = new Hashtable();
         REXP x = JGR.R.eval("sort(.packages(all.available=T))");
@@ -239,7 +239,7 @@ public class RTalk {
     }
 
     /* create r-dataframe as java-object*/
-    public synchronized static dataframe createDataFrame(String sx) {
+    public static dataframe createDataFrame(String sx) {
         dataframe d = new dataframe(sx);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
@@ -265,7 +265,7 @@ public class RTalk {
     }
 
     /* create r-factor as java-object*/
-    public synchronized static factor createFactor(String sx, String sz) {
+    public static factor createFactor(String sx, String sz) {
         factor f = new factor(sz);
         REXP x;
         if (sx != null) x = JGR.R.eval("length(levels("+sx+"$"+sz+"))");
@@ -275,7 +275,7 @@ public class RTalk {
     }
 
     /*create r-list as java object*/
-    public synchronized static list createList(String sx) {
+    public static list createList(String sx) {
         list l = new list(sx,null);
         REXP y = JGR.R.eval("length("+sx+")");
         if (y!=null && y.asIntArray()!=null) l.setLength(y.asIntArray()[0]);
@@ -293,7 +293,7 @@ public class RTalk {
     }
 
     /* create r-matrix as java-object*/
-    public synchronized static matrix createMatrix(String sx) {
+    public static matrix createMatrix(String sx) {
         matrix m = new matrix(sx,null);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
@@ -303,7 +303,7 @@ public class RTalk {
     }
 
     /* create other r-obj as java-obj*/
-    public synchronized static RObject createOther(String sx) {
+    public static RObject createOther(String sx) {
         REXP y = JGR.R.eval("class("+sx+")");
         String[] res;
         if (y!=null && (res = y.asStringArray())!=null) {
@@ -316,7 +316,7 @@ public class RTalk {
     }
 
     /* create r-table as java-object*/
-    public synchronized static table createTable(String sx) {
+    public static table createTable(String sx) {
         table t = new table(sx);
         REXP y = JGR.R.eval("names(dimnames("+sx+"))");
         String[] res1;
@@ -335,7 +335,7 @@ public class RTalk {
     }
 
     /* create a r-model as java-object */
-    public synchronized static model createModel(String sx, int type) {
+    public static model createModel(String sx, int type) {
         model m = new model(sx,type);
         REXP y = JGR.R.eval("summary("+sx+")$r.squared");
         double[] res;
@@ -359,7 +359,7 @@ public class RTalk {
     }
 
     /* get short usage of function*/
-    public synchronized static String getArgs(String s) {
+    public static String getArgs(String s) {
         String tip = null;
         String res[] = null;
         REXP x;
@@ -368,7 +368,8 @@ public class RTalk {
             tip = "<html><pre>"; //<font size="+Preferences.FontSize/2+">"
             int l = -1;
             for (int i = 0; i < (l=res.length); i++) {
-                if (i==--l && !res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s);
+                System.out.println(res[i]);
+                if ((l-2)==i && !res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s);
                 else if (!res[i].trim().equals("NULL")) tip += res[i].replaceFirst("function",s)+ "<br>";
             }
             tip += "</pre></html>";
@@ -378,7 +379,7 @@ public class RTalk {
     }
 
 
-    public synchronized static String getSummary(RObject o) {
+    public static String getSummary(RObject o) {
         if (isClass(o.getName(),"function")) return getArgs(o.getName());
         String tip = null;
         String res[] = null;
@@ -389,7 +390,7 @@ public class RTalk {
             int l = -1;
             for (int i = 0; i < (l = res.length); i++) {
                 if (i==10 && l > i) { tip += "..."; break; }
-                else if (i==--l && !res[i].trim().equals("NULL")) tip += res[i];
+                else if ((--l)==i && !res[i].trim().equals("NULL")) tip += res[i];
                 else if (!res[i].trim().equals("NULL")) tip += res[i]+"<br>";
             }
             //if (res.length > 0) tip = tip.substring(0,tip.length()-4); //cut last <br>
@@ -401,7 +402,7 @@ public class RTalk {
 
 
     /* get levels for a factor */
-    public synchronized static String getFactorLevels(factor f) {
+    public static String getFactorLevels(factor f) {
         String levels = null;
         String res[];
         REXP x = JGR.R.eval("levels("+(f.getParent()==null?f.getName():((f.getParent()).getName()+"$"+f.getName()))+")");
@@ -418,7 +419,7 @@ public class RTalk {
         return levels;
     }
 
-    public synchronized static SVarSet getVarSet(dataframe d) {
+    public static SVarSet getVarSet(dataframe d) {
         SVarSet vset = new SVarSet();
         vset.setName(d.getName());
 
@@ -429,7 +430,7 @@ public class RTalk {
         return vset;
     }
 
-    public synchronized static SVarSet getVarSet(matrix m) {
+    public static SVarSet getVarSet(matrix m) {
         SVarSet vset = new SVarSet();
         String name = m.getName();
         JGR.R.eval("jgr_temp"+name+" <- as.data.frame("+name+")");
@@ -444,7 +445,7 @@ public class RTalk {
     }
 
 
-    public synchronized static SVar getVar(String p, String c) {
+    public static SVar getVar(String p, String c) {
         REXP x = JGR.R.eval((p==null)?"":(p+"$")+c);
         if (x==null) return null;
         int[] res = x.asIntArray();
@@ -471,7 +472,7 @@ public class RTalk {
         return null;
     }
 
-    public synchronized static boolean putToR(SVarSet vs) {
+    public static boolean putToR(SVarSet vs) {
         try {
             long contlist[] = new long[vs.count()];
             String[] names = new String[vs.count()];
@@ -521,13 +522,13 @@ public class RTalk {
         }
     }
 
-    public synchronized static boolean isClass(String v, String t) {
+    public static boolean isClass(String v, String t) {
         REXP z = JGR.R.eval("try(class("+v+"),silent=TRUE)");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
     }
 
-    public synchronized static boolean isMode(String v, String t) {
+    public static boolean isMode(String v, String t) {
         REXP z = JGR.R.eval("try(mode("+v+"),silent=TRUE)");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
@@ -535,7 +536,7 @@ public class RTalk {
 
 
 
-    public synchronized static String commonWithPrefix(String str1, String str2) {
+    public static String commonWithPrefix(String str1, String str2) {
         int min = Math.min(str1.length(),str2.length());
         String result = "";
         String s = "";

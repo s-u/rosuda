@@ -86,6 +86,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         input.addKeyListener(this);
         input.setWordWrap(false);
+        input.setToolTipText("");
 
         output.addKeyListener(this);
 
@@ -577,6 +578,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         public String getToolTipText(MouseEvent e) {
             String s = getCurrentWord();
+            System.out.println("Tip "+RTalk.getArgs(s));
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
             return null;
         }
