@@ -1,5 +1,6 @@
 #include <R.h>
 #include <Rinternals.h>
+#include <Rversion.h>
 #include "Rinit.h"
 #include "Rcallbacks.h"
 
@@ -177,9 +178,11 @@ int initR(int argc, char **argv)
     LONG h;
     DWORD t,s=MAX_PATH;
     HKEY k;
-    
+    int cvl;
+
     sprintf(Rversion, "%s.%s", R_MAJOR, R_MINOR);
-    if(strcmp(getDLLVersion(), Rversion) != 0) {
+    cvl=strlen(R_MAJOR)+2;
+    if(strncmp(getDLLVersion(), Rversion, cvl) != 0) {
         char msg[512];
 	sprintf(msg, "Error: R.DLL version does not match (DLL: %s, expecting: %s)\n", getDLLVersion(), Rversion);
 	fprintf(stderr, msg);
@@ -230,8 +233,12 @@ int initR(int argc, char **argv)
     Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
     Rp->SaveAction = SA_SAVEASK;
+#if R_VERSION < 0x200
     Rp->CommandLineArgs = argv;
     Rp->NumCommandLineArgs = argc;
+#else
+    R_set_command_line_arguments(argc, argv);
+#endif
 
     /* Rp->nsize = 300000;
     Rp->vsize = 6e6; */
