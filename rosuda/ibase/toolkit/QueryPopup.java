@@ -51,8 +51,10 @@ public class QueryPopup implements MouseListener
             if (vs!=null && cid!=null && cid.length>0) {
                 int i=0;
                 s+="\n";
+                boolean isFirst=true;
                 while (i<vs.count()) {
                     if (vs.at(i)!=null && vs.at(i).isSelected()) {
+                        if (isFirst) { isFirst=false; s+=" "; }
                     	s += "\n";
                         if (vs.at(i).isNum()) {
                             int j=0;
