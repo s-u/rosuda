@@ -48,7 +48,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     /** Current link located with the mouse cursor*/
     public JLabel link = new JLabel(" ");
 
-    private JPanel options = new JPanel();
+    private JPanel options = new JPanel(new FlowLayout(FlowLayout.CENTER));
     private JCheckBox exactMatch = new JCheckBox("Exact Match",true);
     private JCheckBox searchDesc = new JCheckBox("Help Page Titles", true);
     private JCheckBox searchKeyWords = new JCheckBox("Keywords", false);
@@ -107,43 +107,35 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         this.getRootPane().setDefaultButton(search);
 
         FontTracker.current.add(inputKeyWord);
-        inputKeyWord.setMinimumSize(new Dimension(330, 25));
-        inputKeyWord.setPreferredSize(new Dimension(330, 25));
+        inputKeyWord.setMinimumSize(new Dimension(150, 25));
+        inputKeyWord.setPreferredSize(new Dimension(300, 25));
+		inputKeyWord.setMaximumSize(new Dimension(350, 25));
         inputKeyWord.setEditable(true);
 
         options.add(exactMatch);
         options.add(searchDesc);
         options.add(searchKeyWords);
         options.add(searchAliases);
+		
+		JPanel top1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		top1.add(inputKeyWord);
+		top1.add(search);
+		top1.add(new Spacer(30));
+		top1.add(back = new IconButton("/icons/back.png", "Back", this,"back"));
+		top1.add(home = new IconButton("/icons/home.png", "Home", this,"home"));
+		top1.add(forward = new IconButton("/icons/forward.png", "Forward", this,"forward"));
 
-        topPanel.setLayout(new GridBagLayout());
-        topPanel.add(inputKeyWord, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(5, 0, 1, 5), 0, 0));
-        topPanel.add(search, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(5, 1, 1, 5), 0, 0));
-        topPanel.add(options, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(1, 0, 1, 5), 0, 0));
-        topPanel.add(back = new IconButton("/icons/back.png", "Back", this,
-                                           "back"),
-                     new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-                                            GridBagConstraints.WEST,
-                                            GridBagConstraints.NONE,
-                                            new Insets(5, 15, 2, 5), 0, 0));
-        topPanel.add(home = new IconButton("/icons/home.png", "Home", this,
-                                           "home"),
-                     new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
-                                            GridBagConstraints.WEST,
-                                            GridBagConstraints.NONE,
-                                            new Insets(5, 5, 2, 5), 0, 0));
-        topPanel.add(forward = new IconButton("/icons/forward.png", "Forward", this,
-                                              "forward"),
-                     new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
-                                            GridBagConstraints.WEST,
-                                            GridBagConstraints.NONE,
-                                            new Insets(5, 5, 2, 5), 0, 0));
+		topPanel.setLayout(new GridBagLayout());
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(2,2,2,2);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+		topPanel.add(top1,gbc);
+		gbc.gridy = 1;
+		topPanel.add(options,gbc);
+		
 
         back.setEnabled(false);
         forward.setEnabled(false);
@@ -534,6 +526,14 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
         public Rectangle getBounds() {
             return new Rectangle(x, y, width, height);
+        }
+    }
+	
+	class Spacer extends JPanel {
+        public Spacer(int width) {
+            this.setMinimumSize(new Dimension(width,0));
+            this.setMaximumSize(new Dimension(width,0));
+            this.setPreferredSize(new Dimension(width,0));
         }
     }
 }
