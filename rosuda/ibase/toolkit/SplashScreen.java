@@ -137,6 +137,13 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
     void exit() {
         System.exit(0);
     }
+
+    boolean aboutMode=false;
+
+    public void runAsAbout() {
+        aboutMode=true;
+        setVisible(true);
+    }
     
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
@@ -145,6 +152,10 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 
     public void windowOpened(WindowEvent e) {}
     public void windowClosing(WindowEvent e) {
+        if (aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) {
+            aboutMode=false;
+            setVisible(false); return;
+        }
         exit();
     }
     public void windowClosed(WindowEvent e) {
