@@ -41,12 +41,14 @@ public class Tools {
         if (dac==0) return ""+((int)val);
         double post=val-((double)((int)(val)));
         while(dac>0) { post*=10; dac--; };
+        if (post<0) post=-post;
         return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
     public static String getDisplayableValue(double val, int dac) {
         if (dac==0) return ""+((int)val);
         double post=val-((double)((int)(val)));
+        if (post<0) post=-post;
         while(dac>0) { post*=10; dac--; };
         return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
     };
