@@ -89,6 +89,10 @@ public class iMenu {
                 mi.addActionListener(al);
                 m.add(mi);
                 if (!hasSVG) mi.setEnabled(false);
+                mi=new JMenuItem("Save as PNG ...");
+                mi.setActionCommand("exportBitmapDlg");
+                mi.addActionListener(al);
+                m.add(mi);
                 if (!Common.isMac()) {
                     m.addSeparator();
                     mi=new JMenuItem("Preferences ...");

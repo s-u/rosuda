@@ -143,10 +143,10 @@ public class iFrame extends JFrame {
     }
 
     public synchronized void setWorking(final boolean work) {
+        try { if (progress != null && work) progress.start(); } catch (Exception e) {new ErrorMsg(e);}
     	SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (work) {
-                	try { if (progress != null && work) progress.start(); } catch (Exception e) {new ErrorMsg(e);}
                     cursorWait();
                 } else {
                     cursorDefault();
