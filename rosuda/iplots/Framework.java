@@ -215,4 +215,8 @@ public class Framework {
 	VarFrame vf=new VarFrame(v,10,10,150,400);
 	return vf;
     };
+
+    public void updateMarker() {
+        if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+    }
 }
