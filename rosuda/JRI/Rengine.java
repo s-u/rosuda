@@ -125,11 +125,13 @@ public class Rengine extends Thread {
     public synchronized REXP eval(String s) {
         boolean obtainedLock=Rsync.safeLock();
         try {
+            /* --- so far, we ignore this, because it can happen when a callback needs an eval which is ok ...
             if (!obtainedLock) {
                 String es="\n>>JRI Warning: eval(\""+s+"\") detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
                 jriWriteConsole(es);
                 System.err.print(es);
             }
+             */
             long pr=rniParse(s, 1);
             if (pr>0) {
                 long er=rniEval(pr, 0);
@@ -140,7 +142,7 @@ public class Rengine extends Thread {
                 }
             }
         } finally {
-            Rsync.unlock();
+            if (obtainedLock) Rsync.unlock();
         }
         return null;
     }
