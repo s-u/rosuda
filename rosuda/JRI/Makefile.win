@@ -9,7 +9,8 @@ RHOME=N:/rw1090
 
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/win32
 JNISO=.dll
-JNILD=-shared -L. -ljvm -L$(RHOME)/src/gncwin32
-CFLAGS+=-DWin32
+JNILD=-shared -L. -ljvm -L$(RHOME)/src/gncwin32 -Wl,--kill-at
+CFLAGS+=-DWin32 -D_JNI_IMPLEMENTATION_
 JAVAB=$(JAVAHOME)/bin/java
 JRIDEPS=libjvm.dll.a
+JNIPREFIX=

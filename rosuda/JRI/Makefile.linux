@@ -9,3 +9,4 @@ JNISO=.so
 JNILD=-shared -L$(JAVAHOME)/jre/lib/i386/client -ljvm
 CPICF=-fPIC
 JAVAB=$(JAVAHOME)/bin/java
+JNIPREFIX=lib

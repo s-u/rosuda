@@ -5,4 +5,4 @@ JNISO=.jnilib
 JNILD=-dynamiclib -framework JavaVM
 CPICF=-fno-common
 JAVAB=java
-
+JNIPREFIX=lib
