@@ -107,7 +107,8 @@ public abstract class LayerCanvas extends Canvas
                         offgc.fillRect(0,y,d.width,2); y+=4;
                     }
                 } else {
-                    Color bg=getBackground();
+                    Color bg=Common.backgroundColor;
+                    //Color bg=getBackground();
                     offgc.setColor(bg==null?Color.white:bg);
                     offgc.fillRect(0, 0, d.width, d.height);
                 }
