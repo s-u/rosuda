@@ -265,12 +265,18 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     }
     ///////////////////////////////////////////////////////////////////////////
 
-    public
-      DragBox(JFrame frame) {
+    public DragBox(JFrame frame) {
 
         this.frame = frame;
 
-        addMouseListener(this);
+      ToolTipManager.sharedInstance().registerComponent(this);
+      ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+      ToolTipManager.sharedInstance().setInitialDelay(0);
+      ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+      ToolTipManager.sharedInstance().setReshowDelay(0);
+      this.setToolTipText("<HTML>hold CTRL to query objects<br>hold SHIRT+CTRL for extended query</HTML>");      
+
+      addMouseListener(this);
         addMouseMotionListener(this);
 
         evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
