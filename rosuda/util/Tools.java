@@ -71,7 +71,7 @@ public class Tools {
         long implr=10;
         while(dac>0) { mplr*=10.0; implr*=10; dac--; };
         long front=(long)(Math.round(val*mplr)/mplr);
-        mplr/=10.0;
+        mplr/=10.0; implr/=10;
         double post=(val-((double)front))*mplr;
         if (post<0) post=-post;
         long ipost=(long)Math.round(post);
