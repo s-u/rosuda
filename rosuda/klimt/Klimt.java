@@ -287,6 +287,7 @@ public class InTr
                                    (Common.useAquaBg?"AQUA ":"")+
                                    (silentTreeLoad?"SILENT ":""));
 
+            if (!Common.initializedStatic) Common.initStatic();
             PluginManager pm=PluginManager.getManager();
             String uRs=pm.getParS("Klimt","startRserv");
             if (uRs!=null && uRs.length()>0 && (uRs.charAt(0)=='y' || uRs.charAt(0)=='1')) {
