@@ -85,7 +85,7 @@ public abstract class SVar extends Notifier
     }
     /** construct new variable. iscat=<code>true</code> defaults to non-numerical, CT_String, whereas iscat=<code>false</code> defaults to numerical, CT_Number
         @param Name variable name
-        @param iscat <code>true</code> if numeric variable
+        @param isnum <code>true</code> if numeric variable
         @param iscat <code>true</code> if categorial variable
         */
 
@@ -191,15 +191,17 @@ public abstract class SVar extends Notifier
     public boolean add(int d) { return add(new Integer(d)); }
 
     /* added 28.12.03 MH */
-    /** adds a new case to the variable at specified index. the exact behavior is implementation-dependent.
+    /** inserts a new case to the variable at specified index. the exact behavior is implementation-dependent.
         @returns <code>false</code> if some error occured (overflow, wrong type, ...) */
-    public abstract boolean addCase(int index);
+    public abstract boolean insert(Object o, int index);
+    public boolean insert(double d, int index) { return insert(new Double(d), index); }
+    public boolean insert(int d, int index) { return insert(new Integer(d), index); }
+
 
     /** removes a case from the variable at specified index. the exact behavior is implementation-dependent.*/
-    public abstract boolean removeCase(Object o, int index);
-
-    public abstract boolean replaceCase(int i, Object o);
-
+    public abstract boolean remove(Object o, int index);
+    public boolean remove(double d, int index) { return remove(new Double(d), index); }
+    public boolean remove(int i, int index) { return remove(new Integer(i), index); }
 
 
     /** replaces an element at specified position
