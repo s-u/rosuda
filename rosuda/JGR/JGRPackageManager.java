@@ -69,15 +69,20 @@ public class JGRPackageManager extends iFrame implements ActionListener {
             buttons.add(refresh);
             buttons.add(close);
 
-            this.getContentPane().setLayout(new GridBagLayout());
-
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.WEST;
-            gbc.insets = new Insets(2,2,2,2);
-            gbc.gridx = 0;
-            gbc.gridy = 0;
+			this.getContentPane().setLayout(new GridBagLayout());
+			
+			GridBagConstraints gbc = new GridBagConstraints();
+			gbc.anchor = GridBagConstraints.WEST;
+			gbc.weightx = 1.0;
+			gbc.weighty = 1.0;
+			gbc.fill = GridBagConstraints.BOTH;
+			gbc.insets = new Insets(2,2,2,2);
+			gbc.gridx = 0;
+			gbc.gridy = 0;  
             this.getContentPane().add(scrollArea,gbc);
-            gbc.gridy = 1;
+			gbc.gridy = 1;
+			gbc.weightx = 0.0;
+			gbc.weighty = 0.0;			
             this.getContentPane().add(buttons,gbc);
 
             this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

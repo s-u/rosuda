@@ -48,9 +48,9 @@ public class PrefsDialog extends JDialog implements ActionListener{
     public PrefsDialog(JFrame f) {
         super(f,"Preferences",true);
 
-        helptabs.setMinimumSize(new Dimension(40,22));
-        helptabs.setPreferredSize(new Dimension(40,22));
-        helptabs.setMaximumSize(new Dimension(40,22));
+        helptabs.setMinimumSize(new Dimension(40,24));
+        helptabs.setPreferredSize(new Dimension(40,24));
+        helptabs.setMaximumSize(new Dimension(40,24));
         helptabs.setValue(new Integer(JGRPrefs.maxHelpTabs));
                 
         fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -69,9 +69,6 @@ public class PrefsDialog extends JDialog implements ActionListener{
         
         JPanel prefs = new JPanel();
         prefs.setLayout(new GridBagLayout());
-        
-        JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        title.add(new JLabel("Preferences"));
 		
         JPanel fontPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         fontPanel.add(new JLabel("Font: "));
@@ -85,17 +82,15 @@ public class PrefsDialog extends JDialog implements ActionListener{
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(2,2,2,2);
+        gbc.insets = new Insets(5,2,2,2);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        //prefs.add(title,gbc);
-        gbc.gridy = 1;
         prefs.add(fontPanel,gbc);
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         prefs.add(helpPanel,gbc);
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         prefs.add(useHelpAgent,gbc);
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         prefs.add(useEmacsKeyBindings,gbc);
         
 

@@ -57,7 +57,7 @@ FocusListener, RMainLoopCallbacks {
 
         //Initialize JGRConsoleMenu
         String[] Menu = {
-            "+", "File","Load Datafile", "loaddata","Export Output","exportOutput","-","@NNew Workspace", "new", "@OLoad Workspace",
+            "+", "File","Load Datafile", "loaddata"/*,"Export Output","exportOutput"*/,"-","@NNew Workspace", "new", "@OLoad Workspace",
             "open",
             "@SSave Workspace", "save", "!SSave Workspace as",
             "saveas","~File.Quit",

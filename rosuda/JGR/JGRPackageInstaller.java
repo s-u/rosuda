@@ -1,7 +1,7 @@
 package org.rosuda.JGR;
 
 /**
-*  JGRPackageInstaller
+ *  JGRPackageInstaller
  *
  *  install packages if user has enough permissions
  *
@@ -52,11 +52,16 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(2,2,2,2);
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(2,2,2,2);
         gbc.gridx = 0;
         gbc.gridy = 0;        
         this.getContentPane().add(new JScrollPane(pkgList = new JList(packages)),gbc);
         gbc.gridy = 1;
+		gbc.weightx = 0.0;
+		gbc.weighty = 0.0;
         this.getContentPane().add(buttons, gbc);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

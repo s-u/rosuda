@@ -12,6 +12,7 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.*;
 import java.io.*;
 
 import javax.swing.*;
@@ -243,7 +244,7 @@ public class ConsoleOutput extends JTextPane {
         } catch (Exception e) {}
     }
 
-    class ExportOutput extends JDialog implements ActionListener{
+    class ExportOutput extends JDialog implements ActionListener, PropertyChangeListener {
 
         private ConsoleOutput out;
 
@@ -251,15 +252,29 @@ public class ConsoleOutput extends JTextPane {
         private JRadioButton wholeOutput = new JRadioButton("Complete Output",true);
         private JRadioButton cmdsOutput = new JRadioButton("Commands",false);
         private JRadioButton resultOutput = new JRadioButton("Results",false);
+		
+		private JButton ok = new JButton("Load");
+		private JButton cancel = new JButton("Cancel");
 
         public ExportOutput(ConsoleOutput co) {
             super(JGR.MAINRCONSOLE,"Export Output");
 
             this.out = co;
             this.getContentPane().setLayout(new BorderLayout());
+			
+			ok.addActionListener(this);
+			ok.setActionCommand("ApproveSelection");
+			
+			cancel.addActionListener(this);
+			cancel.setActionCommand("CancelSelection");
+			
+			JPanel ctrlbuttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+			ctrlbuttons.add(ok);
+			ok.setEnabled(false);
+			ctrlbuttons.add(cancel);
 
             JPanel options = new JPanel(new GridBagLayout());
-            options.add(new JLabel("Options"),new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
+            options.add(new JLabel("Options:"),new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
                                                                      , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                                      new Insets(1, 5, 1, 5), 0, 0));
             options.add(wholeOutput, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
@@ -271,8 +286,8 @@ public class ConsoleOutput extends JTextPane {
             options.add(resultOutput, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
                                                              , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                              new Insets(1, 5, 1, 5), 0, 0));
-            options.add(new JPanel(), new GridBagConstraints(3, 0, 1, 4, 1.0, 1.0
-                                                             , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+            options.add(ctrlbuttons, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0
+                                                             , GridBagConstraints.EAST, GridBagConstraints.BOTH,
                                                              new Insets(1, 5, 1, 5), 0, 0));
 
             ButtonGroup bg = new ButtonGroup();
@@ -282,6 +297,7 @@ public class ConsoleOutput extends JTextPane {
 
             fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
             fileChooser.addActionListener(this);
+			fileChooser.setControlButtonsAreShown(false);
             this.getContentPane().add(fileChooser,BorderLayout.CENTER);
             this.getContentPane().add(options,BorderLayout.SOUTH);
             this.pack();
@@ -304,5 +320,13 @@ public class ConsoleOutput extends JTextPane {
             if (cmd == "ApproveSelection") export(fileChooser.getSelectedFile());
             dispose();
         }
+		
+		public void propertyChange(PropertyChangeEvent e) {
+			File file = fileChooser.getSelectedFile();
+			if(file!=null && !file.isDirectory()) 
+				ok.setEnabled(true);
+			else 
+				ok.setEnabled(false);
+		}
     }
 }

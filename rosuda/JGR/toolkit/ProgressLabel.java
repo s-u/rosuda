@@ -51,7 +51,7 @@ public class ProgressLabel extends Canvas implements Runnable {
             if (i >= angle*6 && i <= angle*6+90)
                 g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),200));
             else 
-                g.setColor(new Color(0,0,0,(int) (360-i+100) / 10));
+                g.setColor(new Color(0,0,0,(int) (360-i+100-angle) / 10));
             g.fillArc(x - length, x - length, 2*length, 2*length,-i,gap);
         }
         g.setColor(this.getBackground());
@@ -67,7 +67,7 @@ public class ProgressLabel extends Canvas implements Runnable {
 
     public void stop() {
         this.setVisible(false);
-        try { if (thread != null) thread.stop(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
+        try { if (thread != null) thread.interrupt(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
         thread = null;
         if (next) { next = false; this.start(); }
     }

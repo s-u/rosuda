@@ -138,7 +138,7 @@ KeyListener, TableColumnModelListener {
         this.getContentPane().add(save,
                                   new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
                                                          GridBagConstraints.EAST, GridBagConstraints.NONE,
-                                                         new Insets(2, 5, 5, 5), 0, 0));
+                                                         new Insets(2, 5, 5, 10), 0, 0));
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -401,7 +401,13 @@ KeyListener, TableColumnModelListener {
 
     private void export(boolean quit) {
         JTextField name = new JTextField(vs.getName());
-        int op = JOptionPane.showOptionDialog(this,name,"Export to R?",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,null,vs.getName());
+		name.setMinimumSize(new Dimension(150,20));
+        name.setPreferredSize(new Dimension(150,20));
+        name.setMaximumSize(new Dimension(150,20));
+		JPanel ex = new JPanel(new BorderLayout());
+		ex.add(new JLabel("Export as: "),BorderLayout.CENTER);
+		ex.add(name,BorderLayout.SOUTH);
+        int op = JOptionPane.showOptionDialog(this,ex,"Export to R?",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,null,vs.getName());
         String objname = name.getText();
         if (op==2) return;
         if (op==1 && objname!=null && quit) super.dispose();
@@ -418,6 +424,7 @@ KeyListener, TableColumnModelListener {
                 JOptionPane.showMessageDialog(this,"Export to R is not supported","Export Error",JOptionPane.ERROR_MESSAGE);
             }
         }
+		modified = false;
     }
 
     /**save file*/
@@ -452,6 +459,7 @@ KeyListener, TableColumnModelListener {
                 new ErrorMsg(e);
             } finally {
                 this.cursorDefault();
+				modified = false;
             }
             return true;
         }
@@ -641,17 +649,6 @@ KeyListener, TableColumnModelListener {
         }
         else if (ke.getKeyCode() == KeyEvent.VK_F3) {
             find(searchIndex[0], searchIndex[1]);
-        }
-        else if (ke.getKeyCode() == KeyEvent.VK_ENTER && dataTable.getSelectedRow() == tabModel.rows-1 && dataTable.getSelectedColumn() == tabModel.cols-1 ) {
-            if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
-            addRow();
-            tabModel.fireTableStructureChanged();
-        }
-        else if (ke.getKeyCode() == KeyEvent.VK_TAB  && dataTable.getSelectedRow() == 0 && dataTable.getSelectedColumn() == tabModel.cols-1 && !ke.isShiftDown()) {
-            if (dataTable.isEditing()) tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(),dataTable.getSelectedRow(),dataTable.getSelectedColumn());
-            selectedColumn = -1;
-            addColumn();
-            tabModel.fireTableStructureChanged();
         }
     }
 

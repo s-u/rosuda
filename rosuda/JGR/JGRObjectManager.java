@@ -1,7 +1,7 @@
 package org.rosuda.JGR;
 
 /**
-*  JGRObjectManager
+ *  JGRObjectManager
  *
  * 	browse workspace
  *
@@ -77,9 +77,23 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
 
         browsers.addMouseListener(this);
 
-        this.getContentPane().setLayout(new BorderLayout());
-        this.getContentPane().add(browsers,BorderLayout.CENTER);
-        this.getContentPane().add(buttonPanel,BorderLayout.SOUTH);
+		this.getContentPane().setLayout(new GridBagLayout());
+		
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.anchor = GridBagConstraints.WEST;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(1,1,1,1);
+		gbc.gridx = 0;
+		gbc.gridy = 0;  
+        this.getContentPane().add(browsers,gbc);
+		gbc.gridy = 1;
+		gbc.weightx = 0.0;
+		gbc.weighty = 0.0;
+		gbc.insets = new Insets(1,1,1,10);
+        this.getContentPane().add(buttonPanel,gbc);
+		
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowDeactivated(WindowEvent evt) {
                 if (summary != null) summary.hide();

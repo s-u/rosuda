@@ -27,6 +27,9 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
     private JTextField otherSeps = new JTextField();
     private JCheckBox header = new JCheckBox("Header",true);
     private JCheckBox attach = new JCheckBox("Attach",false);
+	
+	private JButton ok = new JButton("Load");
+	private JButton cancel = new JButton("Cancel");
 
     private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|","Others..."});
     private String[] seps = new String[] {"","\\t",",",";","|"};
@@ -41,24 +44,30 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
     public JGRDataFileDialog(Frame f,String directory) {
         super(f,"Load DataFile",true);
 
-        dataName.setMinimumSize(new Dimension(160,20));
-        dataName.setPreferredSize(new Dimension(160,20));
-        dataName.setMaximumSize(new Dimension(160,20));
+        dataName.setMinimumSize(new Dimension(180,22));
+        dataName.setPreferredSize(new Dimension(180,22));
+        dataName.setMaximumSize(new Dimension(180,22));
 
-        quoteBox.setMinimumSize(new Dimension(90,20));
-        quoteBox.setPreferredSize(new Dimension(90,20));
-        quoteBox.setMaximumSize(new Dimension(90,20));
+        quoteBox.setMinimumSize(new Dimension(90,22));
+        quoteBox.setPreferredSize(new Dimension(90,22));
+        quoteBox.setMaximumSize(new Dimension(90,22));
 
-        sepsBox.setMinimumSize(new Dimension(90,20));
-        sepsBox.setPreferredSize(new Dimension(90,20));
-        sepsBox.setMaximumSize(new Dimension(90,20));
+        sepsBox.setMinimumSize(new Dimension(90,22));
+        sepsBox.setPreferredSize(new Dimension(90,22));
+        sepsBox.setMaximumSize(new Dimension(90,22));
 
+		ok.addActionListener(this);
+		ok.setActionCommand("ApproveSelection");
+		
+		cancel.addActionListener(this);
+		cancel.setActionCommand("CancelSelection");
 
         quoteBox.addItemListener(this);
         sepsBox.addItemListener(this);
 
         fileChooser.addActionListener(this);
         fileChooser.addPropertyChangeListener(this);
+		fileChooser.setControlButtonsAreShown(false);
         if (directory != null && new File(directory).exists()) fileChooser.setCurrentDirectory(new File(directory));
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -66,24 +75,38 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         JPanel options = new JPanel(new GridBagLayout());
 
         JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        command.add(dataName);
-        command.add(new JLabel(" <- (...,"));
-        command.add(header);
-        command.add(new JLabel(", sep="));
-        command.add(sepsBox);
-        command.add(new JLabel(", quote="));
-        command.add(quoteBox);
-        command.add(new JLabel(")"));
+		command.add(new JLabel(" read.table(...) -> "));
+		command.add(dataName);
+       
+		JPanel command2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        command2.add(header);
+        command2.add(new JLabel(", sep="));
+        command2.add(sepsBox);
+        command2.add(new JLabel(", quote="));
+        command2.add(quoteBox);
+		
+		JPanel att = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		att.add(attach);
+		
+		JPanel ctrlbuttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+		ctrlbuttons.add(cancel);
+		ok.setEnabled(false);
+		ctrlbuttons.add(ok);
 
         options.add(command,  new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
                                                  , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                  new Insets(1, 5, 1, 5), 0, 0));
-        options.add(attach,  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
+		options.add(command2,  new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
+													 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+													 new Insets(1, 5, 1, 5), 0, 0));
+        options.add(att,  new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
                                                 new Insets(1, 5, 1, 5), 0, 0));
-        options.add(new JPanel(), new GridBagConstraints(3, 0, 1, 2, 1.0, 1.0
-                                                     , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                                                     new Insets(1, 5, 1, 5), 0, 0));
+        options.add(ctrlbuttons, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0
+                                                     , GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                                     new Insets(1, 5, 1, 10), 0, 0));
+		
+
 
 
         this.getContentPane().add(fileChooser,BorderLayout.CENTER);
@@ -95,7 +118,7 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
             }
         });
         this.pack();
-        this.setSize(new Dimension(600,450));
+        this.setSize(new Dimension(480,450));
         this.setVisible(true);
     }
 
@@ -160,7 +183,11 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
             String name = file.getName().replaceAll("\\..*", "");
             name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
             dataName.setText(name);
+			ok.setEnabled(true);
         }
-        else dataName.setText(null);
+        else {
+			ok.setEnabled(false);
+			dataName.setText(null);
+		}
     }
 }
