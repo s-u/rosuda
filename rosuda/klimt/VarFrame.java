@@ -716,6 +716,13 @@ public class VarFrame extends TFrame {
                     dc.setBounds(0,0,400,300);
                     f.pack(); f.setVisible(true);
                     f.initPlacement();
+                } else {
+                    TFrame mcpf=new TFrame("Misclassification plot",TFrame.clsMCP);
+                    MCPCanvas dc=new MCPCanvas(mcpf,dr.getTreeRegistry(),vs.getMarker());
+                    mcpf.add(dc); mcpf.addWindowListener(Common.getDefaultWindowListener());
+                    dc.setBounds(0,0,400,300);
+                    mcpf.pack(); mcpf.setVisible(true);
+                    mcpf.initPlacement();
                 }
             }
             if (cmd=="openModel") {
@@ -732,7 +739,7 @@ public class VarFrame extends TFrame {
                     
                 String fnam=fd.getDirectory()+fd.getFile();
                 gt.setParameter("image",fnam);
-                gt.setParameter("dataset",vs);
+                gt.setParameter("dataroot",dr);
                 gt.checkParameters();
                 if (!gt.pluginDlg(win)) {
                     if (gt.cancel) {
