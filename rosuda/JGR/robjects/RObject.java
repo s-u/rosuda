@@ -8,42 +8,28 @@ package org.rosuda.JGR.robjects;
 //  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
 //
 
-import org.rosuda.JGR.*;
+public class RObject {
 
-public abstract class RObject {
+    private String name = null;
+    private String type = null;
+    
+    private RObject parent = null;
 
-    public static int UNKNOWN = 0;
-    public static int NUMERIC = 1;
-    public static int FACTOR  = 2;
-    public static int DATAFRAME = 3;
-    public static int TABLE = 4;
-    public static int TABLEVAR = 5;
-    public static int LM = 6;
-    public static int GLM = 7;
-    public static int ANOVA = 8;
-    public static int MATRIX = 9;
-    public static int LIST = 10;
-    public static int OTHER = 50;
+    private String info = null;
+    
+    private boolean realName = false;
 
-
-    private String name;
-    private String ClassName;
-    private int type = 0;
-    public RObject parent;
-
-
-    public RObject(String name, String c, RObject parent) {
-        this(name,OTHER,parent);
-        ClassName = c;
-    }
-
-
-    public RObject(String name, int type, RObject parent) {
+    public RObject(String name, String type, RObject parent, boolean b) {
         this.name = name;
         this.type = type;
         this.parent = parent;
+        this.realName = b;
     }
 
+    public RObject(String name, String type, boolean b) {
+    	this(name,type,null, b);
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -52,33 +38,33 @@ public abstract class RObject {
         return name;
     }
 
-    public void setClassName(String c) {
-        this.ClassName = c;
-    }
-
-    public String getClassName() {
-        return ClassName;
-    }
-
-    public int getType() {
+    public String getType() {
         return type;
     }
 
     public void setParent(RObject p) {
         this.parent = p;
     }
-
+    
     public RObject getParent() {
-        return parent;
+    	return parent;
     }
 
-    public abstract String getToolTip();
+    public String getRName() {
+    	//System.out.println("Rname "+getName()+" "+realName);
+    	return parent==null?getName():(parent.getType().equals("table")?"dimnames("+parent.getRName()+")":parent.getRName())+"[["+(realName?"\"":"")+getName()+(realName?"\"":"")+"]]";
+    }
+    
+    public void setInfo(String s){
+    	this.info = s;
+    }
 
-    public String getSummary() {
-        return RController.getSummary(this);
+    public String getInfo() {
+    	return info;
     }
 
     public String toString() {
-        return name +"\t ("+ClassName+")";
+    	return name+"\t ("+type+") "+(info!=null?info:"");
     }
 }
+

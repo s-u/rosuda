@@ -14,14 +14,12 @@ import java.util.*;
 public class RModel {
 
     private Double rsquared, deviance, aic, fstatistics;
-    //private double rsquared, deviance, aic, fstatistics;
-    //private int df;
+    
     private Integer df;
+    
     private String family;
 
     private String call;
-
-    private String temp;
 
     private String data;
 
@@ -56,7 +54,7 @@ public class RModel {
     }
     
     public String getToolTip() {
-    	return call;
+    	return "<html><pre>"+call+"</pre></html>";
     }
 
     public void setRsquared(double r) {
