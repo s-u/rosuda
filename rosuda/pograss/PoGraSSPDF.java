@@ -1,6 +1,6 @@
 import java.io.*;
 
-/** Portable Graphics SubSystem - PostScript implementation
+/** Portable Graphics SubSystem - PDF implementation, based on PS implementation
  *
  * Bugs: in this PS implementation xxxOval, xxxRoundRectangle etc. require dx=dy because
  *       in PostScript arc resp. arcto is used where both of them require only one radius argument
