@@ -8,7 +8,7 @@ public class ProgressDlg extends Frame {
     int progress=0;
     String ptxt="Processing...";
     
-    public ProgressDlg(Frame f, String tt) {
+    public ProgressDlg(String tt) {
         super(tt);
         Dimension sr=Toolkit.getDefaultToolkit().getScreenSize();
         setSize(200,100); setLocation(sr.width/2-100,sr.height/2-50);
@@ -47,4 +47,19 @@ public class ProgressDlg extends Frame {
         ptxt=t;
         repaint();
     };
+
+    public void begin(String txt) {
+        setText(txt);
+        begin();
+    }
+    public void begin() {
+        progress=0;
+        setVisible(true);
+    }
+
+    public void end() {
+        progress=100;
+        setVisible(false);
+        dispose();
+    }
 }
