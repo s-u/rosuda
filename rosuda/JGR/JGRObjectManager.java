@@ -72,9 +72,14 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         browsers.add("Data Objects",d);
 
         mBrowser = new ModelBrowserTable(this,JGR.MODELS);
+        JPanel mb = new JPanel(new BorderLayout());
         JScrollPane m = new JScrollPane(mBrowser);
+        JScrollPane mf = new JScrollPane(mBrowser.filter);
+        mf.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mb.add(m,BorderLayout.CENTER);
+        mb.add(mf,BorderLayout.NORTH);
         m.addMouseListener(this);
-        browsers.add("Models",m);
+        browsers.add("Models",mb);
 
         oBrowser = new ObjectBrowserTree(this,JGR.OTHERS,"other");
         JScrollPane o = new JScrollPane(oBrowser);
