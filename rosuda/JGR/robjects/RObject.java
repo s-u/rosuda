@@ -51,8 +51,11 @@ public class RObject {
     }
 
     public String getRName() {
-    	//System.out.println("Rname "+getName()+" "+realName);
-    	return parent==null?getName():(parent.getType().equals("table")?"dimnames("+parent.getRName()+")":parent.getRName())+"[["+(realName?"\"":"")+getName()+(realName?"\"":"")+"]]";
+    	if (parent != null && parent.getType().equals("matrix"))
+    		return parent.getName()+"[,"+(realName?"\"":"")+getName()+(realName?"\"":"")+"]";
+    	if (parent != null && parent.getType().equals("table"))
+    		return "dimnames("+parent.getRName()+")[["+(realName?"\"":"")+getName()+(realName?"\"":"")+"]]";
+    	return parent==null?getName():parent.getRName()+"[["+(realName?"\"":"")+getName()+(realName?"\"":"")+"]]";
     }
     
     public void setInfo(String s){

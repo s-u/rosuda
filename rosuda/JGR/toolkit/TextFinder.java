@@ -22,24 +22,24 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
 
     private Dimension screenSize = Common.screenRes;
 
-    private static JTextField keyWordField = new JTextField();
+    private JTextField keyWordField = new JTextField();
     private JTextComponent searchArea = null;
     private JButton searchButton = new JButton("Find");
     private JButton cancelButton = new JButton("Cancel");
 
     Highlighter.HighlightPainter highLighter = new FoundHighlighter(JGRPrefs.HighLightColor);
 
-    private static String keyWord = null;
-    private static int position = -1;
-    private static boolean found = false;
+    private String keyWord = null;
+    private int position = -1;
+    private boolean found = false;
 
-    private static TextFinder last = null;
+    private TextFinder last = null;
 
 
     /** find a specified text in a JTextComponent
      * @param searchArea where should we search your input
      * @param keyWord and what is much more important what do you want to search*/
-    public TextFinder(JTextComponent searchArea, String keyWord) {
+    public TextFinder(JTextComponent searchArea) {
         this.setTitle("Find");
 
         this.searchArea = searchArea;
@@ -79,12 +79,12 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         keyWordField.addKeyListener(this);
     }
 
-    public void exit() {
+    private void exit() {
         removeHighlights(searchArea);
         setVisible(false);
     }
 
-    public void find() {
+    private void find() {
         searchArea.requestFocus();
         if (keyWord != null && !keyWord.equals(keyWordField.getText().trim())) {
             position = -1;
@@ -113,7 +113,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
     }
 
 
-    public void highlight(JTextComponent textComp, int off, int end) {
+    private void highlight(JTextComponent textComp, int off, int end) {
         removeHighlights(textComp);
         try {
             Highlighter hilite = textComp.getHighlighter();
@@ -122,7 +122,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         }
     }
 
-    public void removeHighlights(JTextComponent textComp) {
+    private void removeHighlights(JTextComponent textComp) {
         Highlighter hilite = textComp.getHighlighter();
         Highlighter.Highlight[] hilites = hilite.getHighlights();
 
@@ -133,11 +133,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         }
     }
 
-    public static TextFinder showFind(JTextComponent searchArea) {
-        return showFind(searchArea,0);
-    }
-
-    public void showFinder() {
+    private void showFinder() {
         keyWordField.requestFocus();
         this.setLocation((screenSize.width - 400 )/ 2, (screenSize.height - 100) / 2);
         super.setVisible(true);
@@ -145,29 +141,24 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
     }
 
 
-    public static TextFinder showFind(JTextComponent searchArea,int next) {
-        if (last == null) {
-            last = new TextFinder(searchArea,null);
-            last.showFinder();
-        }
-        else if (next==0) {
+    public TextFinder showFind(boolean next) {
+        if (!next) {
             keyWordField.setText(null);
             keyWord = null;
             position = -1;
             found = false;
-            last.showFinder();
+            showFinder();
         }
         else {
             keyWordField.setText(keyWord);
-            last.showFinder();
-            last.find();
+            showFinder();
+            find();
         }
         return last;
     }
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        System.out.println(cmd);
         if (cmd=="cancel") this.exit();
         else if (cmd=="search") this.find();
     }
@@ -177,7 +168,6 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
     }
 
     public void keyPressed(KeyEvent ke) {
-        //if (ke.getKeyCode() == KeyEvent.VK_ENTER) last.find();
     }
 
     public void keyReleased(KeyEvent ke) {

@@ -47,6 +47,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private String keyWord = null;
 
     private boolean modified = false;
+    
+    private TextFinder textFinder = new TextFinder(editArea);
 
 
     public static RecentList recentOpen;
@@ -64,7 +66,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             "-", "@PPrint", "print","~File.Basic.End",
             "~Edit",
             "+", "Tools", "Increase Fontsize", "fontBigger", "Decrease Fontsize",
-            "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
+            "fontSmaller", "-", "@FFind", "search", "@GFind Next", "searchnext",
             "~Window",
             "~Help", "R Help", "rhelp", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
@@ -222,6 +224,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
     }
+    
+    public void setText(StringBuffer sb) {
+    	cursorWait();
+    	editArea.setText(sb.toString());
+    	cursorDefault();
+    }
 
 
     public void print() {
@@ -276,8 +284,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                 editDoc.remove( (i = editArea.getSelectionStart()),editArea.getSelectionEnd() - i);
             } catch (BadLocationException ex) {}
         } else if (cmd == "exit") exit();
-        else if (cmd == "find") TextFinder.showFind(editArea);
-        else if (cmd == "findnext") TextFinder.showFind(editArea, 1);
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
@@ -315,6 +321,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         } else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()");
         else if (cmd == "save") saveFile();
         else if (cmd == "saveas") saveFileAs();
+        else if (cmd == "search") textFinder.showFind(false);
+        else if (cmd == "searchnext") textFinder.showFind(true);
         else if (cmd == "selAll") editArea.selectAll();
         else if (cmd == "undo") {
             try {

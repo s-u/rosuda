@@ -29,7 +29,6 @@ public class FontTracker {
     /** add a Component
       * @param comp component to add */
     public void add(Component comp) {
-        //System.out.println(comp);
         comp.setFont(JGRPrefs.DefaultFont);
         components.add(comp);
     }
@@ -54,19 +53,27 @@ public class FontTracker {
 
     public void applyFont() {
         Enumeration e = components.elements();
-        while (e.hasMoreElements()) {
+        Font f = JGRPrefs.DefaultFont;
+    	while (e.hasMoreElements()) {
             Component comp = (Component) e.nextElement();
-            comp.setFont(JGRPrefs.DefaultFont);
-            
             try {
-                //System.out.println(comp.getClass().getName());
-                if (comp.getClass().getName().equals("javax.swing.JTable") ||
-                    comp.getClass().getName().equals(
-                    "org.rosuda.JGR.RObjectManager$1")) {
-                    ( (JTable) comp).setRowHeight( (int) (JGRPrefs.FontSize *
-                        1.5));
+            	Class sc = comp.getClass().getSuperclass();
+            	while (!sc.getName().startsWith("java"))
+            		sc = sc.getSuperclass();
+                if (sc.getName().equals("javax.swing.JTable")){
+                	if (f.getSize() > JGRPrefs.MINFONTSIZE)
+                		f = new Font(f.getName(),f.getStyle(),JGRPrefs.MINFONTSIZE);
+                	((javax.swing.JTable) comp).setRowHeight((int)(f.getSize()*1.6));
                 }
-            } catch (Exception ex) {}
+                else if (sc.getName().equals("javax.swing.JTextComponent") || sc.getName().equals("javax.swing.JTextPane")) {
+                }
+                else {
+                	if (f.getSize() > 18) 
+                		f = new Font(f.getName(),f.getStyle(),JGRPrefs.MINFONTSIZE);
+                }
+                comp.setFont(f);
+            } catch (Exception ex) {
+			}
         }
     }
 

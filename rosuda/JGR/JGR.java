@@ -41,8 +41,8 @@ public class JGR {
 
     public static Vector RHISTORY = null;
     public static JGRConsole MAINRCONSOLE = null;
-    public static String RHOME = "";
-    public static String[] RLIBS;
+    public static String RHOME = null;
+    public static String[] RLIBS = null;
     public static Rengine R = null;
     public static ConsoleSync rSync = new ConsoleSync();
 
@@ -132,13 +132,7 @@ public class JGR {
     public static void addMenuSeparator(String menu) {
         iMenu.addMenuSeparator(MAINRCONSOLE,menu);
     }
-    
-
-    public static void fix(String data, String type) {
-        //if (type.equals("data.frame")) new DataTable(RController.getVarSet(RController.createDataFrame(data)));
-        //else if (type.equals("matrix")) new DataTable(RController.getVarSet(RController.createMatrix(data)));
-    }
-
+        
     public static void setRHome(String rhome) {
         RHOME = rhome;
     }
@@ -184,10 +178,13 @@ public class JGR {
 
                  BufferedReader reader = new BufferedReader(new FileReader(hist));
                  RHISTORY = new Vector();
-                 String cmd = "";
+                 String cmd = null;
                  while (reader.ready()) {
-                 	cmd += reader.readLine();
-                 	if (cmd.endsWith("#")) RHISTORY.add(cmd);
+                 	cmd = (cmd==null?"":cmd+"\n")+reader.readLine();
+                 	if (cmd.endsWith("#")) {
+                 		RHISTORY.add(cmd.substring(0,cmd.length()-1));
+                 		cmd = null;
+                 	}
                  }
                  reader.close();
             }

@@ -66,6 +66,15 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             return null;
         }   
     }
+    
+    public String getText(int offs, int len) {
+        try {
+            Document doc = this.getDocument();
+            return doc.getText(offs,len);
+        } catch (BadLocationException e) {
+            return null;
+        }   
+    }      
 
     public void setText(String str) {
         try {
@@ -203,16 +212,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         if (pos == 0) {
             return false;
         }
-        try {
-            if (this.getText(pos - 1, 1).equals(cont)) {
-                return true;
-            }
-            else {
-                return false;
-            }
+        if (this.getText(pos - 1, 1) != null && this.getText(pos - 1, 1).equals(cont)) {
+        	return true;
         }
-        catch (BadLocationException e) {}
-        return false;
+        else {
+        	return false;
+        }
     }
 
 

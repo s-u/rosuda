@@ -29,6 +29,8 @@ public class JGRPrefs {
     public static int FontStyle = Font.PLAIN;
     /** DefaultFontSize */
     public static int  FontSize = 12;
+    
+    public static final int MINFONTSIZE = 18;
     /** DefaultFont */
     public static Font DefaultFont;
     /** DefaultHighLightColor */

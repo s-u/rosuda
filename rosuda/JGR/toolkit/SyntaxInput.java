@@ -151,6 +151,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     
 		 		}
 	 			else {
+	 				System.out.println(fun+" "+result);
 	 				if (result != null && result.length > 0 && !result[0].equals(fun) ) {
 	 					insertAt(pos,result[0].replaceFirst(fun,""));
 	 					if (cmdHelp != null) cmdHelp.hide();

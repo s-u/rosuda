@@ -11,17 +11,14 @@ import java.io.*;
 import java.util.*;
 
 import org.rosuda.ibase.*;
+import org.rosuda.util.Global;
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.robjects.*;
+import org.rosuda.JGR.toolkit.Editor;
 
 public class RController {
 
     public static Object dummy = new Object();
-
-
-    public static void runCmd(String cmd) {
-        JGR.R.eval(cmd);
-    }
 
     public static String getRHome() {
         REXP x = JGR.R.eval("R.home()");
@@ -150,7 +147,7 @@ public class RController {
     	if (x != null && (data = x.asStringArray()) != null) {
     		int a = 1;
 			for (int i = 0; i < data.length; i++) {
-				boolean b = data[i].equals("null");
+				boolean b = (data[i].equals("null")||data[i].trim().length()==0);
 				String name = b?a+"":data[i];
 				JGR.DATA.add(createRObject(name,data[++i],null,(!b)));
     			a++;
@@ -161,7 +158,7 @@ public class RController {
     	if (x != null && (other = x.asStringArray()) != null) {
     		int a = 1;
 			for (int i = 0; i < other.length; i++) {
-				boolean b = other[i].equals("null");
+				boolean b = (other[i].equals("null")||other[i].trim().length()==0);
 				String name = b?a+"":other[i];
 				JGR.OTHERS.add(createRObject(name,other[++i],null,(!b)));
     			a++;
@@ -207,102 +204,6 @@ public class RController {
         }
         return pkg;
     }
-
-    /* create r-dataframe as java-object*/
-    /*public static dataframe createDataFrame(String sx) {
-        dataframe d = new dataframe(sx);
-        REXP y = JGR.R.eval("dim("+sx+")");
-        if (y!=null && y.asIntArray()!=null) {
-            d.setDim(y.asIntArray()[0],y.asIntArray()[1]);
-        }
-        REXP z = JGR.R.eval("names("+sx+")");
-        String[] res;
-        if (y != null && (res = z.asStringArray()) != null) {
-            for (int i = 0; i < res.length; i++) {
-                String sz = res[i];
-                if (isMode(sx+"$"+sz,"numeric")) {
-                    if (isClass(sx+"$"+sz,"factor")) {
-                        factor f = createFactor(sx,sz);
-                        f.setParent(d);
-                        d.add(f);
-                    }
-                    else d.add(new numeric(sz,d));
-                }
-                else d.add(new unknown(sz,d));
-            }
-        }
-        return d;
-    }*/
-
-    /* create r-factor as java-object*/
-    /*public static factor createFactor(String sx, String sz) {
-        factor f = new factor(sz);
-        REXP x;
-        if (sx != null) x = JGR.R.eval("length(levels("+sx+"$"+sz+"))");
-        else  x = JGR.R.eval("length(levels("+sz+"))");
-        if (x!=null && x.asIntArray() != null) f.setLevels(x.asIntArray()[0]);
-        return f;
-    }*/
-
-    /*create r-list as java object*/
-    /*public static list createList(String sx) {
-        list l = new list(sx,null);
-        REXP y = JGR.R.eval("length("+sx+")");
-        if (y!=null && y.asIntArray()!=null) l.setLength(y.asIntArray()[0]);
-        REXP z = JGR.R.eval("names("+sx+")");
-        String[] res;
-        if (y != null && (res = z.asStringArray()) != null) {
-            for (int i = 0; i < res.length; i++) {
-                String sz = res[i];
-                REXP v = JGR.R.eval("class("+sx+"$\""+sz+"\")");
-                if (v != null && v.asStringArray() != null) l.vars.add(new other(sz,v.asStringArray()[0],l));
-                else l.vars.add(new other(sz,"",l));
-            }
-        }
-        return l;
-    }*/
-
-    /* create r-matrix as java-object*/
-    /*public static matrix createMatrix(String sx) {
-        matrix m = new matrix(sx,null);
-        REXP y = JGR.R.eval("dim("+sx+")");
-        if (y!=null && y.asIntArray()!=null) {
-            m.setDim(y.asIntArray()[0],y.asIntArray()[1]);
-        }
-        return m;
-    }*/
-
-    /* create other r-obj as java-obj*/
-    /*public static RObject createOther(String sx) {
-    	if (sx==null || sx.trim().length() == 0) return null;
-        REXP y = JGR.R.eval("suppressWarnings(try(class("+sx+"),silent=TRUE))");
-        String[] res;
-        if (y!=null && (res = y.asStringArray())!=null) {
-        	if (res[0].equals("factor")) return createFactor(null,sx);
-            else return new other(sx,res[0],null);
-        }
-        return null;
-    }*/
-
-    /* create r-table as java-object*/
-    /*public static table createTable(String sx) {
-        table t = new table(sx);
-        REXP y = JGR.R.eval("names(dimnames("+sx+"))");
-        String[] res1;
-        if (y != null && (res1 = y.asStringArray()) != null) {
-            for (int i = 0; i < res1.length; i++) {
-                String sy = res1[i];
-                tableVar tv = new tableVar(sy,t);
-                REXP v = JGR.R.eval("length(dimnames("+sx+")$"+sy+")");
-                if (v!=null && v.asIntArray() != null) {
-                    tv.setLevels(v.asIntArray()[0]);
-                    t.add(tv);
-                }
-            }
-        }
-        return t;
-    }*/
-    
     
     public static Vector createContent(RObject o, Collection c) {
     	Vector cont = new Vector();
@@ -314,7 +215,7 @@ public class RController {
     	if (x != null && (res = x.asStringArray()) != null && !res[0].startsWith("Error")) {
     		int a = 1;
     		for (int i = 0; i < res.length; i++) {
-    			boolean b = res[i].equals("null");
+    			boolean b = (res[i].equals("null")||res[i].trim().length()==0);
 				String name = b?a+"":res[i];
 				RObject ro = createRObject(name,res[++i],o,(!b));
     			if (c != null) c.add(ro);
@@ -430,79 +331,168 @@ public class RController {
         else return null;
         return tip.startsWith("<html><pre>Error")?null:tip;
     }
-
-
-    /* get levels for a factor */
-    /*public static String getFactorLevels(factor f) {
-        String levels = null;
-        String res[];
-        REXP x = JGR.R.eval("levels("+(f.getParent()==null?f.getName():((f.getParent()).getName()+"$"+f.getName()))+")");
-        if (x != null && (res = x.asStringArray()) != null) {
-            levels = "<html>";
-            int l = -1;
-            for (int i = 0; i < (l=res.length); i++) {
-                if (i==10 && l > i) { levels += "..."; break; }
-                else if (i==--l) levels+= res[i];
-                else levels += res[i]+"<br>";
-            }
-            levels += "<html>";
-        }
-        return levels;
-    }*/
-
-    /*public static SVarSet getVarSet(dataframe d) {
-        if (d == null) return null;
-    	SVarSet vset = new SVarSet();
-        vset.setName(d.getName());
-
-        for (int i = 0; i < d.vars.size(); i++) {
-            vset.add(getVar(d.getName(),((RObject) d.vars.elementAt(i)).getName()));
-        }
-
-        return vset;
-    }*/
-
-    /*public static SVarSet getVarSet(matrix m) {
-        SVarSet vset = new SVarSet();
-        String name = m.getName();
-        JGR.R.eval("jgr_temp"+name+" <- as.data.frame("+name+")");
-        dataframe d = createDataFrame("jgr_temp"+name);
-        vset.setName(d.getName());
-
-        for (int i = 0; i < d.vars.size(); i++) {
-            vset.add(getVar(d.getName(),((RObject) d.vars.elementAt(i)).getName()));
-        }
-        JGR.R.eval("rm("+d.getName()+")");
-        return vset;
-    }*/
-
-
-    public static SVar getVar(String p, String c) {
-        REXP x = JGR.R.eval((p==null)?"":(p+"$")+c);
-        if (x==null) return null;
-        int[] res = x.asIntArray();
-        if (res != null && isClass((p==null)?"":(p+"$")+c,"factor")) {
-
-            for (int i = 0; i < res.length; i++) System.out.print(res[i]+" ");
-            REXP y = JGR.R.eval("levels("+((p==null)?"":(p+"$")+c)+")");
-            String[] s;
-            if (y != null && (s = y.asStringArray()) != null) {
-                //for (int i = 0; i < s.length; i++) System.out.print(s[i]);
-                return new SVarFact(c,res,s);            }
-        }
-        else if (res != null) {
-            SVar v = new SVarInt(c,res);
-            for (int i = 0; i < res.length; i++) v.add(res[i]);
-            return v;
-        }
-        else {
-            double[]  res1 = x.asDoubleArray();
-            if (res1 != null) {
-                return new SVarDouble(c,res1);
-            }
-        }
-        return null;
+    
+    /** create and select a new dataset with the specified name. please note that it is possible to create
+    multiple datasets of the same name but then only the first of these will be retrieved by name, others
+    have to be selected by ID
+    @param name name of the new dataset
+    @return new dataset */
+    public static SVarSet newSet(String name) {
+    	SVarSet cvs=new SVarSet();
+    	if (name==null) {
+    		name="data."+Math.random();
+    	}
+    	cvs.setName(name);
+    	
+    	return cvs;
     }
+
+    /** create and select a new dataset with the specified name. please note that it is possible to create
+    multiple datasets of the same name but then only the first of these will be retrieved by name, others
+    have to be selected by ID
+    @param o RObject which we want to have in a SVarSet
+    @return new dataset */
+    public static SVarSet newSet(RObject o) {
+    	SVarSet cvs=new SVarSet();
+    	cvs.setName(o.getRName()); //.replaceAll("\\\"","\""));
+    	System.out.println(cvs.getName());
+    	if (o.getType().equals("function")) {
+    		//thats not really the best way to do this but the easiest
+    		REXP x = JGR.R.eval("suppressWarnings(try(capture.output("+o.getRName()+"),silent=TRUE))");
+    		System.out.println(x);
+    		String[] res;
+    		if (x != null && (res = x.asStringArray()) != null) {
+    			StringBuffer sb = new StringBuffer();
+    			for (int i = 0; i < res.length; i++) {
+    				if (i==0) sb.append(o.getRName()+" <- "+res[i]+"\n");
+    				else sb.append(res[i]+"\n");
+    			}
+    			if (sb.length() > 0) new Editor().setText(sb);
+    		}
+    		return null;
+    	}
+    	else {
+    		Iterator i = createContent(o,null).iterator();
+    		if (!i.hasNext()) {
+    			cvs.add(createSVar(cvs,o));
+    		}
+    		while (i.hasNext()) {
+    			RObject o2 = (RObject) i.next();
+    			cvs.add(createSVar(cvs,o2));
+    		}
+    	}
+    	return cvs;
+    }
+    
+    private static SVar createSVar(SVarSet cvs, RObject o) {
+		REXP x = JGR.R.eval("suppressWarnings(try("+o.getRName()+",silent=TRUE))");
+		if (x !=null && x.asStringArray() != null && x.asStringArray().length > 0 && x.asStringArray()[0].startsWith("Error"))
+			return null;
+		SVar v = null;    	
+		if (o.getType().equals("factor")) {
+			REXP y = JGR.R.eval("suppressWarnings(try(levels("+o.getRName()+"),silent=TRUE))");
+			if (y != null && x != null && y.asStringArray() != null && x.asIntArray() != null) {
+				v = newVar(cvs,o.getName(),x.asIntArray(),y.asStringArray());
+			}
+		}
+		else if (o.getType().equals("character")) {
+			if (x != null && x.asStringArray() != null) {
+				v = newVar(cvs,o.getName(),x.asStringArray());
+			}
+		}
+		else if (x != null && x.asIntArray() != null) {
+			v = newVar(cvs,o.getName(),x.asIntArray());
+		}
+		else if (x!= null && x.asDoubleArray() != null) {
+			v = newVar(cvs,o.getName(),x.asDoubleArray());
+		}
+		return v;
+    }
+    
+    /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
+    the same name within a dataset.
+    @param name variable name
+    @param d array of doubles
+    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    */
+    public static SVar newVar(SVarSet cvs, String name, double[] d) {
+    	if (d==null) return null;
+    	if (Global.DEBUG>0)
+    		System.out.println("newVar: double["+d.length+"]");
+    	if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+    		double[] n = new double[cvs.at(0).size()];
+    		for (int i = 0; i < d.length && i < n.length; i++)
+    			n[i] = d[i];
+    		d = n;
+    	}
+    	SVar v=new SVarDouble(name,d);
+    	return v;
+    }
+
+    /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
+    the same name within a dataset.
+    @param name variable name
+    @param d array of integers
+    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    */   
+    public static SVar newVar(SVarSet cvs, String name, int[] d) {
+    	if (d==null) return null;
+    	if (Global.DEBUG>0)
+    		System.out.println("newVar: int["+d.length+"]");
+    	if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+    		int[] n = new int[cvs.at(0).size()];
+    		for (int i = 0; i < d.length && i < n.length; i++)
+    			n[i] = d[i];
+    		d = n;
+    	}
+    	SVar v=new SVarInt(name,d);
+    	return v;
+    };
+
+    /** construct a new categorical variable from supplied array of strings. Unlike datasets variables cannot have
+    the same name within a dataset.
+    @param name variable name
+    @param d array of strings
+    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    */    
+    public static SVar newVar(SVarSet cvs, String name, String[] d) {
+    	if (d==null) return null;
+    	if (Global.DEBUG>0)
+    		System.out.println("newVar: String[]");
+    	if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+    		String[] n = new String[cvs.at(0).size()];
+    		for (int i = 0; i < d.length && i < n.length; i++)
+    			n[i] = d[i];
+    		d = n;
+    	}
+    	SVar v=new SVarObj(name);
+    	int i=0; while(i<d.length) v.add(d[i++]);
+    	return v;
+    }
+    
+  
+    /** construct a new factor variable from supplied array of integers (cases) and strings (levels). Unlike datasets variables cannot have the same name within a dataset.
+    @param name variable name
+    @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
+    @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
+    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    */
+    public static SVar newVar(SVarSet cvs, String name, int[] ix, String[] d) {
+    	if (ix==null) return null;
+    	if (d==null) return newVar(cvs, name,ix);
+    	if (Global.DEBUG>0)
+    		System.out.println("newVar: int["+ix.length+"] + levels["+d.length+"]");
+    	if (cvs.count()>0 && cvs.at(0).size()!=ix.length) {
+    		int[] n = new int[cvs.at(0).size()];
+    		for (int i = 0; i < d.length && i < n.length; i++)
+    			n[i] = ix[i];
+    		ix = n;
+    	}
+    	int j=0;
+    	while (j<ix.length) { ix[j++]--; }; // reduce index by 1 since R is 1-based
+    	SVar v=new SVarFact(name, ix, d);
+    	return v;
+    }    
 
     public static boolean putToR(SVarSet vs) {
         try {
@@ -553,19 +543,217 @@ public class RController {
             return false;
         }
     }
-
-    public static boolean isClass(String v, String t) {
-        REXP z = JGR.R.eval("suppressWarnings(try(class("+v+"),silent=TRUE))");
-        if (z != null && z.asString() != null) return z.asString().equals(t);
-        return false;
+    
+    public static boolean export(SVarSet vs) {
+    	REXP x = JGR.R.eval("suppressWarnings(try(class("+vs.getName()+"),silent=TRUE))");
+    	String type = null;
+    	if (x != null && x.asString() != null && !x.asString().startsWith("Error"))
+    		type = x.asString();
+    	boolean success = false;
+    	System.out.println(type);
+    	if (type == null || type.equals("data.frame"))
+    		success = exportDataFrame(vs);
+    	else if (type != null && type.equals("matrix"))
+    		success = false; // doesn't work yet exportMatrix(vs);
+    	else if (type != null && type.equals("list"))
+    		success = exportList(vs);
+    	else if (type != null && type.equals("numeric"))
+    		success = exportNumeric(vs);
+    	else if (type != null && type.equals("integer"))
+    		success = exportInteger(vs);
+    	else if (type != null && type.equals("character"))
+    		success = exportCharacter(vs);
+    	System.out.println(success);
+    	return success;
     }
-
-    public static boolean isMode(String v, String t) {
-        REXP z = JGR.R.eval("suppressWarnings(try(mode("+v+"),silent=TRUE))");
-        if (z != null && z.asString() != null) return z.asString().equals(t);
-        return false;
+    
+    private static boolean exportNumeric(SVarSet vs) {
+    	try {
+    		if (vs.count() > 1) return false;
+            long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
+            System.out.println(vs.getName());
+            JGR.R.rniAssign(vs.getName(),v,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
     }
+    
+    private static boolean exportInteger(SVarSet vs) {
+    	try {
+    		if (vs.count() > 1) return false;
+            long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(0)).cont);
+            JGR.R.rniAssign(vs.getName(),v,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
+    }
+    
+    private static boolean exportCharacter(SVarSet vs) {
+    	try {
+    		if (vs.count() > 1) return false;
+    		String[] cont = new String[((SVarObj) vs.at(0)).size()];
+    		for (int i = 0; i < ((SVarObj) vs.at(0)).size(); i++)
+    			cont[i] = ((SVarObj) vs.at(0)).at(i).toString();
+            long v = JGR.R.rniPutStringArray(cont);
+            JGR.R.rniAssign(vs.getName(),v,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
+    }
+   
+    private static boolean exportDataFrame(SVarSet vs) {
+    	try {
+            long contlist[] = new long[vs.count()];
+            String[] names = new String[vs.count()];
+            for (int i = 0; i< vs.count(); i++) {
+                names[i] = vs.at(i).getName();
+                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
+                	for (int z = 0; z < ((SVarFact) vs.at(i)).cont.length; z++)
+                		((SVarFact) vs.at(i)).cont[z] = ((SVarFact) vs.at(i)).cont[z]+1; 
+                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
+                    long c = JGR.R.rniPutString("factor");
+                    JGR.R.rniSetAttr(v,"class",c);
+                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
 
+                    JGR.R.rniSetAttr(v,"levels",levels);
+                    contlist[i] = v;
+                }
+            }
+
+            long xp1 = JGR.R.rniPutVector(contlist);
+            long xp2 = JGR.R.rniPutStringArray(names);
+            JGR.R.rniSetAttr(xp1,"names",xp2);
+
+            String[] rownames = new String[vs.length()];
+            for (int i = 1; i <= rownames.length; i++) rownames[i-1] = i+"";
+            long xp3 = JGR.R.rniPutStringArray(rownames);
+            JGR.R.rniSetAttr(xp1,"row.names",xp3);
+
+            long c = JGR.R.rniPutString("data.frame");
+            JGR.R.rniSetAttr(xp1,"class",c);
+
+            JGR.R.rniAssign(vs.getName(),xp1,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
+    }
+    
+    
+    private static boolean exportMatrix(SVarSet vs) {
+    	try {
+            long contlist[] = new long[vs.count()];
+            String[] names = new String[vs.count()];
+            for (int i = 0; i< vs.count(); i++) {
+                names[i] = vs.at(i).getName();
+                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
+                	for (int z = 0; z < ((SVarFact) vs.at(i)).cont.length; z++)
+                		((SVarFact) vs.at(i)).cont[z] = ((SVarFact) vs.at(i)).cont[z]+1; 
+                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
+                    long c = JGR.R.rniPutString("factor");
+                    JGR.R.rniSetAttr(v,"class",c);
+                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
+
+                    JGR.R.rniSetAttr(v,"levels",levels);
+                    contlist[i] = v;
+                }
+            }
+
+            long xp1 = JGR.R.rniPutVector(contlist);
+            long xp2 = JGR.R.rniPutStringArray(names);
+            JGR.R.rniSetAttr(xp1,"col.names",xp2);
+            
+            String[] rownames = new String[vs.length()];
+            for (int i = 1; i <= rownames.length; i++) rownames[i-1] = i+"";
+            long xp3 = JGR.R.rniPutStringArray(rownames);
+            JGR.R.rniSetAttr(xp1,"row.names",xp3);
+
+            long c = JGR.R.rniPutString("matrix");
+            JGR.R.rniSetAttr(xp1,"class",c);
+
+            JGR.R.rniAssign(vs.getName(),xp1,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
+    }    
+    
+    private static boolean exportList(SVarSet vs) {
+    	try {
+            long contlist[] = new long[vs.count()];
+            String[] names = new String[vs.count()];
+            for (int i = 0; i< vs.count(); i++) {
+                names[i] = vs.at(i).getName();
+                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
+                    contlist[i] = v;
+                }
+                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
+                	for (int z = 0; z < ((SVarFact) vs.at(i)).cont.length; z++)
+                		((SVarFact) vs.at(i)).cont[z] = ((SVarFact) vs.at(i)).cont[z]+1; 
+                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
+                    long c = JGR.R.rniPutString("factor");
+                    JGR.R.rniSetAttr(v,"class",c);
+                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
+
+                    JGR.R.rniSetAttr(v,"levels",levels);
+                    contlist[i] = v;
+                }
+            }
+
+            long xp1 = JGR.R.rniPutVector(contlist);
+            long xp2 = JGR.R.rniPutStringArray(names);
+            JGR.R.rniSetAttr(xp1,"names",xp2);
+
+            /*String[] rownames = new String[vs.length()];
+            for (int i = 1; i <= rownames.length; i++) rownames[i-1] = i+"";
+            long xp3 = JGR.R.rniPutStringArray(rownames);
+            JGR.R.rniSetAttr(xp1,"row.names",xp3);*/
+
+            /*long c = JGR.R.rniPutString("list");
+            JGR.R.rniSetAttr(xp1,"class",c);*/
+
+            JGR.R.rniAssign(vs.getName(),xp1,0);
+            return true;
+        }
+        catch (Exception e) {
+        	e.printStackTrace();
+            return false;
+        }
+    }    
 
 
     public static String commonWithPrefix(String str1, String str2) {

@@ -29,4 +29,8 @@ public class JGRStyledDocument extends DefaultStyledDocument implements StyledDo
            //System.out.println(a);
         super.insertString(offset, str, a);
     }
+    
+    public String getText(int offs, int len) throws BadLocationException {
+    	return super.getText(offs,len);
+    }
 }

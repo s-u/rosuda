@@ -32,6 +32,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
     
+    private TextFinder textFinder = new TextFinder(output);
+    
     private ToolBar toolBar;
    
     private String wspace = null;
@@ -55,7 +57,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         
         //Initialize JGRConsoleMenu
         String[] Menu = {
-            "+", "File","Load Datafile", "loaddata","-","@NNew Workspace", "new", "@OLoad Workspace",
+            "+", "File","Load Datafile", "loaddata","Export Output","exportOutput","-","@NNew Workspace", "new", "@OLoad Workspace",
             "open",
             "@SSave Workspace", "save", "!SSave Workspace as",
             "saveas","~File.Quit",
@@ -311,9 +313,14 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public int getFontWidth() {
-        int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
-        width = output.getWidth() / width;
-        return (int) (width*1.6);
+    	int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
+    	width = output.getWidth() / width;
+    	if (JGRPrefs.isMac) {
+        	return (int) (width*1.6);
+        }
+        else {
+        	return (int) (width*2.5);
+        }
     }
     
     public void actionPerformed(ActionEvent e) {
@@ -331,6 +338,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             } catch (BadLocationException ex) {}
         } else if (cmd == "editor") new Editor();
         else if (cmd == "exit") dispose();
+        else if (cmd == "exportOutput") output.startExort();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "loaddata") new JGRDataFileDialog(this, directory);
@@ -349,6 +357,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "table") new DataTable(null);
         else if (cmd == "save") saveWorkSpace(wspace);
         else if (cmd == "saveas") saveWorkSpaceAs();
+        else if (cmd == "search") textFinder.showFind(false);
         else if (cmd == "stop") JGR.R.rniStop(1);
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {

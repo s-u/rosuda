@@ -78,7 +78,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         else {
             save.setText("Update");
             save.setToolTipText("Update");
-            save.setActionCommand("updateToR");
+            save.setActionCommand("export");
             this.setTitle("DataTable - "+vs.getName().replaceFirst("jgr_temp",""));
         }
         this.vs = vs;
@@ -86,7 +86,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
         String myMenu[] = {
             "+", "File", "@OOpen", "loadData", "@SSave", "saveData",
-            "!SSave as", "saveDataAs", "~File.Basic.End",
+            "!SSave as", "saveDataAs", "Export to R","export","~File.Basic.End",
             "~Edit",
             "+", "Tools", "Add Column", "addCol","Remove Column","rmCol", "Add Row", "addRow", "Remove Row","rmRow","-",
             "@FFind", "find", "@GFind Next", "findnext", "-",
@@ -97,6 +97,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         iMenu.getItem(this, "undo").setEnabled(false);
         iMenu.getItem(this, "redo").setEnabled(false);
 
+        if (FontTracker.current == null)
+        	FontTracker.current = new FontTracker();
         FontTracker.current.add(dataTable);
 
         save.addActionListener(this);
@@ -110,7 +112,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         sorter.setTableHeader(tableHeader);
         dataTable.setToolTipText(vs.getName());
         dataTable.setShowGrid(true);
-        dataTable.setRowHeight((int) (JGRPrefs.FontSize*1.5));
+        dataTable.setRowHeight((int) (JGRPrefs.FontSize*1.6));
         dataTable.setColumnSelectionAllowed(true);
         dataTable.setRowSelectionAllowed(true);
         dataTable.setCellSelectionEnabled(true);
@@ -147,15 +149,15 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         int h = dataTable.getRowHeight();
         int rc = dataTable.getRowCount();
         int cc = dataTable.getColumnCount();
-        int width = cc * 77;
-        int height = (int) (rc * h * 1.5);
+        int width = cc * 80;
+        int height = (int) (rc * h * 1.6);
         Dimension d = new Dimension((width < 400 && cc < 2)?400:width, (height < 400 && rc < 11)?300:height);
         this.setSize(new Dimension(d.width > Common.screenRes.width?
                                    Common.screenRes.width - 50 : d.width,
                                    d.height > Common.screenRes.height ?
                                    Common.screenRes.height - 50 : d.height));
-
-        this.show();
+        this.setLocation(this.getLocation().x+100, 10);
+        this.setVisible(true);
     }
 
     /** add a column (we allow numerical variables or strings), we add this column after the selected one, if none is selected we  add at the end*/
@@ -231,13 +233,13 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     public void exit() {
         if (modified) {
             int i;
-            if (save.getText()=="Save") i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            else i = JOptionPane.showConfirmDialog(this,"Send back to R?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            if (i==1) dispose();
-            else {
-                if (i == 0 && save.getText()=="Update" && updateToR()) dispose();
-                else if (i == 0 && saveData()) dispose();
-            }	
+            if (save.getText()=="Save") {
+            	i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+            	System.out.println(i);
+            	if (i==1) dispose();
+            	else if (i==0 && saveData()) dispose();
+            }
+            else export(true);
         }
         else dispose();
     }
@@ -314,7 +316,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                          col * 75 - hscroll.getVisibleAmount() + 75 + 10);
     }
 
-    public void loadData() {
+    private void loadData() {
         FileSelector fopen = new FileSelector(this,"Open...",FileSelector.OPEN,directory);
         if (fopen.getFile() != null) {
             this.cursorWait();
@@ -389,9 +391,25 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
         refresh();
     }
+    
+    private void export(boolean quit) {
+    	String objname = (String) JOptionPane.showInputDialog(this,"Object Name","Export to R?",JOptionPane.INFORMATION_MESSAGE,null,null,vs.getName());
+    	if (objname==null && quit) dispose();
+    	else {
+    		vs.setName(objname);
+    		boolean b = RController.export(vs);
+    		if (quit) {
+    			if (b) dispose();
+    			else if (JOptionPane.showConfirmDialog(this,"Export to R is not supported\nExit Anyway?","Export Error",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE)==0) dispose();
+    		}
+    		else if (!b) {
+    			JOptionPane.showMessageDialog(this,"Export to R is not supported","Export Error",JOptionPane.ERROR_MESSAGE);
+    		}
+    	}
+    }
 
     /**save file*/
-    public boolean saveData() {
+    private boolean saveData() {
         if (fileName == null || fileName.equals("")) return saveDataAs();
         else {
             this.cursorWait();
@@ -428,17 +446,13 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** save file as with a new filename*/
-    public boolean saveDataAs() {
+    private boolean saveDataAs() {
         FileSelector fsave = new FileSelector(this,"Save as...",FileSelector.SAVE,directory);
         if (fsave.getFile() != null) {
             fileName = (directory = fsave.getDirectory()) + fsave.getFile();
             return saveData();
         }
         return false;
-    }
-
-    public boolean updateToR() {
-        return RController.putToR(vs);
     }
 
     /** PopupMenu
@@ -565,6 +579,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             else if (cmd == "copy") ((JTextComponent) cell.getComponent()).copy();
             else if (cmd == "delete") deleteContent(dataTable.getSelectedColumns(),dataTable.getSelectedRows());
             else if (cmd == "exit") exit();
+            else if (cmd == "export") export(false);
             else if (cmd == "find") find( -1, -1);
             else if (cmd == "findnext") find(searchIndex[0], searchIndex[1]);
             else if (cmd == "gotoCase") gotoCase( -1);
@@ -579,7 +594,6 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             else if (cmd == "saveData") saveData();
             else if (cmd == "saveDataAs") saveDataAs();
             else if (cmd == "selAll") dataTable.selectAll();
-            else if (cmd == "updateToR") updateToR();
             else if (cmd == "prefs") new PrefsDialog(this);
 
         } catch (Exception ex) {

@@ -51,7 +51,7 @@ public class ToolBar extends JPanel {
 		this.cutButton = new IconButton("/icons/cut.png","Cut",al,"cut");
 		this.copyButton = new IconButton("/icons/copy.png","Copy",al,"copy");
 		this.pasteButton = new IconButton("/icons/paste.png","Paste",al,"paste");
-		this.findButton = new IconButton("/icons/find.png","Find",al,"search");
+		this.findButton = new IconButton("/icons/find.png","Search",al,"search");
 		if (useStopButton) this.stopButton = new IconButton("/icons/stop.png","Stop",al,"stop");
 		this.helpButton = new IconButton("/icons/help.png","Help",al,"help");
 		

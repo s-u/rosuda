@@ -39,6 +39,11 @@ public class ObjectBrowserTree extends JTree implements MouseListener, DragGestu
 	public ObjectBrowserTree(JGRObjectManager parent, Collection c, String name) {
 		this.data = c;
 		this.objmgr = parent;
+		
+		if (FontTracker.current == null)
+        	FontTracker.current = new FontTracker();
+        FontTracker.current.add(this);
+
 		root = new DefaultMutableTreeNode(name);
 		objModel = new DataTreeModel(root);
 		this.setModel(objModel);
@@ -96,7 +101,19 @@ public class ObjectBrowserTree extends JTree implements MouseListener, DragGestu
     }	
 	
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount()==2);
+		if (e.getClickCount()==2) {
+			Point p = e.getPoint();
+			RObject o = null;
+			try {
+				o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
+			}
+			catch (Exception ex) {
+			}
+			if (o != null) {
+				org.rosuda.ibase.SVarSet vs = RController.newSet(o);
+				if (vs != null && vs.count() != 0) new DataTable(vs);
+			}
+		}
 	}	
 	
 	public void mouseEntered(MouseEvent e) {
