@@ -41,7 +41,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             vc=new Choice(); vc.addItemListener(this);
             int j=0;
             while(j<vs.count()) {
-                vc.add(vs.at(j).getName());
+                if (!vs.at(j).isInternal())
+                    vc.add(vs.at(j).getName());
                 j++;
             }
             vc.select(cv.getName());
