@@ -12,7 +12,6 @@ package org.rosuda.JGR.toolkit;
 
 
 import java.awt.*;
-import javax.swing.*;
 
 
 public class ProgressLabel extends Canvas implements Runnable {
@@ -61,22 +60,22 @@ public class ProgressLabel extends Canvas implements Runnable {
     }
 
     public void start() {
-        if (this.isVisible()) next = true;
+    	if (this.isVisible()) next = true;
         this.setVisible(true);
         thread = new Thread(this);
-        thread.start();
+        if (thread != null) thread.start();
     }
 
     public void stop() {
-        this.setVisible(false);
-        try { thread.stop(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
+    	this.setVisible(false);
+        try { if (thread != null) thread.stop(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
         thread = null;
         if (next) { next = false; this.start(); }
     }
 
     public void run() {
         try {
-            while (this.isVisible()) {
+            while (isVisible()) {
                 Thread.sleep(sleep);
                 angle = (angle+10) % 60;
                 repaint();
