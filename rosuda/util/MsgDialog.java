@@ -21,8 +21,9 @@ public class MsgDialog extends Dialog implements ActionListener
 	Button b;
 	p.add(b=new Button("OK"));
 	add(p,"South");
-	add(new Label(" "),"West"); 
-	add(new Label(" "),"East"); 
+	add(new SpacingPanel(),"West"); 
+	add(new SpacingPanel(),"East");
+        add(new SpacingPanel(50,10),"North");
 	b.addActionListener(this);
 	pack();
 	setResizable(false);
