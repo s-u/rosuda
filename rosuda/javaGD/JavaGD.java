@@ -1,10 +1,12 @@
 package org.rosuda.javaGD;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.lang.reflect.Method;
 
-public class JavaGD {
+public class JavaGD implements WindowListener {
     Frame f;
-    GDCanvas c;
+    public GDCanvas c;
     
     public JavaGD() {
         super();
@@ -12,7 +14,7 @@ public class JavaGD {
     
     /*---- external API: those methods are called via JNI from the GD C code
     
-    public void     gdOpen(double w, double h);
+    public void     gdOpen(int devNr, double w, double h);
     public void     gdActivate();
     public void     gdCircle(double x, double y, double r);
     public void     gdClip(double x0, double x1, double y0, double y1);
@@ -23,7 +25,7 @@ public class JavaGD {
     public void     gdLine(double x1, double y1, double x2, double y2);
     public double[] gdMetricInfo(int ch);
     public void     gdMode(int mode);
-    public void     gdNewPage();
+    public void     gdNewPage(int deviceNumber);
     public void     gdPolygon(int n, double[] x, double[] y);
     public void     gdPolyline(int n, double[] x, double[] y);
     public void     gdRect(double x0, double y0, double x1, double y1);
@@ -41,8 +43,9 @@ public class JavaGD {
     
     public void     gdOpen(double w, double h) {
         if (f!=null) gdClose();
-            
+
         f=new Frame("JavaGD");
+        f.addWindowListener(this);
         c=new GDCanvas(w, h);
         f.add(c);
         f.pack();
@@ -113,7 +116,14 @@ public class JavaGD {
     public void     gdNewPage() {
         if (c!=null) c.reset();
     }
-    
+
+    public void     gdNewPage(int devNr) { // new API: provides the device Nr.
+        if (c!=null) {
+            c.reset();
+            c.devNr=devNr;
+        }
+    }
+
     public void     gdPolygon(int n, double[] x, double[] y) {
         if (c==null) return;
         c.add(new GDPolygon(n, x, y, true));
@@ -181,5 +191,40 @@ public class JavaGD {
         if (c==null) return;
         c.add(new GDFont(cex, ps, lineheight, fontface, fontfamily));
     }
+
+    public void executeDevOff() {
+        if (c==null || c.devNr<0) return;
+        try { // for now we use no cache - just pure reflection API for: Rengine.getMainEngine().eval("...")
+            Class cl=Class.forName("org.rosuda.JRI.Rengine");
+            if (cl==null)
+                System.out.println(">> can't find Rengine, close function disabled. [c=null]");
+            else {
+                Method m=cl.getMethod("getMainEngine",null);
+                Object o=m.invoke(null,null);
+                if (o!=null) {
+                    Class[] par=new Class[1];
+                    par[0]=Class.forName("java.lang.String");
+                    m=cl.getMethod("eval",par);
+                    Object[] pars=new Object[1];
+                    pars[0]="try({ dev.set("+(c.devNr+1)+"); dev.off()},silent=TRUE)";
+                    m.invoke(o, pars);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(">> can't find Rengine, close function disabled. [x:"+e.getMessage()+"]");
+        }
+    }
+
+    /*-- WindowListener interface methods */
+    
+    public void windowClosing(WindowEvent e) {
+        if (c!=null) executeDevOff();
+    }
+    public void windowClosed(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowActivated(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
     
 }
