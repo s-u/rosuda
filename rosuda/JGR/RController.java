@@ -439,6 +439,12 @@ public class RController {
             return null;
         }
         else {
+            REXP x = JGR.R.eval("suppressWarnings(try(attributes("+o.getRName()+")[[\"row.names\"]],silent=TRUE))");
+            String[] res;
+            if (x != null && (res = x.asStringArray()) != null && !res[0].startsWith("Error")) { 
+                SVar v = newVar(cvs,"row.names",x.asStringArray());
+                cvs.add(v);
+            }
             Iterator i = createContent(o,null).iterator();
             if (!i.hasNext()) {
                 cvs.add(createSVar(cvs,o));
@@ -600,13 +606,17 @@ public class RController {
 
     private static boolean setName(String name) {
         try {
-            JGR.R.eval(name+"<- jgrtemp; rm(jgrtemp)");
+            JGR.R.eval(name+"<- jgrtemp");
+            JGR.R.eval("rm(jgrtemp)");
             return true;
         }
         catch (Exception e) {
+            new org.rosuda.JGR.util.ErrorMsg(e);
             return false;
         }
     }
+    
+    
 
     /**
      * export r-numeric
@@ -700,38 +710,54 @@ public class RController {
      */
     private static boolean exportDataFrame(SVarSet vs) {
         try {
+            boolean rnames = false;
+            String[] rownames = new String[vs.length()];
+            
+            SVar rn = null;
+            int rnn = 0;
+            
+            for (int i = 0; i< vs.count(); i++) {
+                if (vs.at(i).getName().equals("row.names")) { 
+                    for (int a = 0; a < rownames.length; a++) rownames[a] = ((SVarObj) vs.at(i)).at(a).toString();
+                    rnames = true;
+                    rnn = i;
+                    rn = vs.at(i);
+                    vs.remove(i);
+                }
+            }
+                       
             long contlist[] = new long[vs.count()];
             String[] names = new String[vs.count()];
             for (int i = 0; i< vs.count(); i++) {
-                names[i] = vs.at(i).getName();
-                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
-                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
-                    contlist[i] = v;
-                }
-                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
-                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
-                    contlist[i] = v;
-                }
-                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
-                    int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
-                    for (int z = 0; z < ids.length; z++)
-                        ids[z] = ((SVarFact) vs.at(i)).cont[z]+1;
-                    long v = JGR.R.rniPutIntArray(ids);
-                    long c = JGR.R.rniPutString("factor");
-                    JGR.R.rniSetAttr(v,"class",c);
-                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
-
-                    JGR.R.rniSetAttr(v,"levels",levels);
-                    contlist[i] = v;
-                }
+	                names[i] = vs.at(i).getName();
+	                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+	                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+	                    contlist[i] = v;
+	                }
+	                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+	                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
+	                    contlist[i] = v;
+	                }
+	                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
+	                    int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
+	                    for (int z = 0; z < ids.length; z++)
+	                        ids[z] = ((SVarFact) vs.at(i)).cont[z]+1;
+	                    long v = JGR.R.rniPutIntArray(ids);
+	                    long c = JGR.R.rniPutString("factor");
+	                    JGR.R.rniSetAttr(v,"class",c);
+	                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
+	
+	                    JGR.R.rniSetAttr(v,"levels",levels);
+	                    contlist[i] = v;
+	                }
             }
-
+            
             long xp1 = JGR.R.rniPutVector(contlist);
             long xp2 = JGR.R.rniPutStringArray(names);
             JGR.R.rniSetAttr(xp1,"names",xp2);
 
-            String[] rownames = new String[vs.length()];
-            for (int i = 1; i <= rownames.length; i++) rownames[i-1] = i+"";
+            
+            if (!rnames) for (int i = 1; i <= rownames.length; i++) rownames[i-1] = i+"";
             long xp3 = JGR.R.rniPutStringArray(rownames);
             JGR.R.rniSetAttr(xp1,"row.names",xp3);
 
@@ -739,6 +765,8 @@ public class RController {
             JGR.R.rniSetAttr(xp1,"class",c);
 
             JGR.R.rniAssign("jgrtemp",xp1,0);
+            
+            if (rnames) vs.insert(rnn,rn);
             return setName(vs.getName());
         }
         catch (Exception e) {
