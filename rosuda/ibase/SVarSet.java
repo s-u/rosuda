@@ -54,7 +54,8 @@ public class SVarSet {
 	@return index of the newly create variable or <0 if an error occured (-1 on null-problems, -2 if that variable-name already exists) */
     public int add(SVar v) {  // return position or -1 on error or -2 if name exists
 	if (v==null) return -1;
-	String nn=v.getName(); if (nn==null) return -1;
+	String nn=v.getName();
+        if (nn==null) return -1;
 
 	if (!vars.isEmpty()) {
 	    for (Enumeration e=vars.elements(); e.hasMoreElements();) {
