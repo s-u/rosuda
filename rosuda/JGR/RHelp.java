@@ -37,8 +37,8 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     private JTabbedPane tabArea = new JTabbedPane();
     private HelpArea helpArea;
 
-    //private JTextField inputKeyWord = new JTextField();
-    private JComboBoxExt inputKeyWord;
+    private JTextField inputKeyWord = new JTextField();
+    //private JComboBoxExt inputKeyWord;
     private JButton search = new JButton("Search");
     public JLabel link = new JLabel(" ");
 
@@ -62,20 +62,11 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
     private static java.util.List fkts = null;
 
-
     public RHelp() {
-        this(null,null);
+        this(null);
     }
-
-    public RHelp(String keyWord) {
-        this(keyWord,null);
-    }
-
-    public RHelp(URL url) {
-        this(null,url);
-    }
-
-    protected RHelp(String keyWord, URL url) {
+    
+    public RHelp(String location) {
         super("Help", iFrame.clsHelp);
         MyEntry = this.getMYEntry();
         while(!JGR.STARTED);
@@ -87,18 +78,23 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         iMenu.getMenu(this, this, Menu);
 
         if (System.getProperty("os.name").startsWith("Windows")) {
-            JGR.R.eval("try(make.packages.html(.libPaths()));try(make.search.html(.libPaths()));try(fixup.libraries.URLs(.libPaths()))");
-            index = "file:"+JGR.RHOME+"/doc/html/packages.html";
+            /*JGR.R.eval("try(make.packages.html(.libPaths()));try(make.search.html(.libPaths()));try(fixup.libraries.URLs(.libPaths()))");
+            index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = JGR.RHOME;
         }
         else {
             /*JGR.MAINRCONSOLE.execute(".Script(\"sh\", \"help-links.sh\", paste(tempdir(),paste(.libPaths(), collapse = \" \")));make.packages.html()");
             while (!JGR.READY);
             try {Thread.sleep(20);} catch (Exception e) {}
-            index = JGR.R.eval("paste(paste(\"file://\", tempdir(), \"/.R\", sep = \"\"), \"/doc/html/packages.html\", sep = \"\")").asString();*/
-            index = "file:"+JGR.RHOME+"/doc/html/packages.html";
-            RHELPLOCATION = JGR.RHOME; //JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
+            index = JGR.R.eval("paste(paste(\"file://\", tempdir(), \"/.R\", sep = \"\"), \"/doc/html/packages.html\", sep = \"\")").asString();
+            index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
+            RHELPLOCATION = JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
         }
+        
+        //if (location != null) RHELPLOCATION = location;
+        //else RHELPLOCATION = JGR.RHOME;
+        
+        index = "file://"+RHELPLOCATION+"/doc/html/packages.html";
         
         searchRHelp = new SearchEngine();
         searchRHelp.setRHelp(this);
@@ -106,11 +102,10 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         search.setActionCommand("search");
         search.addActionListener(this);
 
-        // don't uncomment this, you wouldn't be happy after doing this
-        //this.getRootPane().setDefaultButton(search);
+        this.getRootPane().setDefaultButton(search);
 
-        if (fkts == null) fkts = RTalk.getFunctionNames();
-        inputKeyWord = new JComboBoxExt(new DefaultComboBoxModel(fkts.toArray()));
+        //if (fkts == null) fkts = RTalk.getFunctionNames();
+        //inputKeyWord = new JComboBoxExt(new DefaultComboBoxModel(fkts.toArray()));
         FontTracker.current.add(inputKeyWord);
         inputKeyWord.setMinimumSize(new Dimension(330, 25));
         inputKeyWord.setPreferredSize(new Dimension(330, 25));
@@ -153,16 +148,10 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         back.setEnabled(false);
         forward.setEnabled(false);
 
-        if (url!=null) {
-
-        }
-        else {
-            this.keyWord = keyWord;
-            helpArea = new HelpArea(this, keyWord);
-        }
-
         link.setPreferredSize(new Dimension(200, 20));
 
+
+        helpArea = new HelpArea(this,null);
         tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
         tabArea.addMouseListener(this);
 
@@ -193,6 +182,20 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         inputKeyWord.requestFocus();
         last = this;
     }
+    
+    public void refresh() {
+        /*if (location != null) RHELPLOCATION = location;
+        else RHELPLOCATION = JGR.RHOME;
+        
+        index = RHELPLOCATION+"/doc/html/packages.html";
+        
+        searchRHelp = new SearchEngine();
+        searchRHelp.setRHelp(this);  
+        
+        //if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);*/
+        helpArea = new HelpArea(this,null);
+        //tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
+    }
 
 
     private void back() {
@@ -211,9 +214,18 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         finalize();
         dispose();
     }
+    
+    public void goTo(String keyword, String file) {
+            if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);
+            tabArea.add(new HelpArea(this, keyword), 0);
+            tabArea.setSelectedIndex(0);
+            tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
+            tabArea.setTitleAt(0,keyword);
+    }
 
     private void search() {
-        String keyword = ((String) inputKeyWord.getSelectedItem()).trim();
+        String keyword = inputKeyWord.getText().trim();
+        //String keyword = ((String) inputKeyWord.getSelectedItem()).trim();
         search(keyword);
     }
 
@@ -236,12 +248,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             tabArea.setTitleAt(0,keyword);
         }
     }
-
-    public void showHelp() {
-        WinTracker.current.add(MyEntry);
-        super.show();
-    }
-
+    
     public void popUpMenu(MouseEvent e) {
         JPopupMenu close = new JPopupMenu();
         JMenuItem closeItem = new JMenuItem("Close");
@@ -409,9 +416,12 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
         public void search() {
             if (keyword != null && !keyword.equals(""))
-            if (rhelp.searchRHelp != null) goTo(rhelp.searchRHelp.search(keyword,rhelp.exactMatch.isSelected(),rhelp.searchDesc.isSelected(),rhelp.searchKeyWords.isSelected(),rhelp.searchAliases.isSelected()));
+                if (rhelp.searchRHelp != null) goTo(rhelp.searchRHelp.search(keyword,rhelp.exactMatch.isSelected(),rhelp.searchDesc.isSelected(),rhelp.searchKeyWords.isSelected(),rhelp.searchAliases.isSelected()));
         }
     }
+    
+    
+    
     public class JComboBoxExt extends JComboBox
     implements JComboBox.KeySelectionManager {
 

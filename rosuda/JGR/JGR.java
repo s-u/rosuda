@@ -63,6 +63,7 @@ public class JGR {
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
+        MAINRCONSOLE.execute("library(JGR)");
     }
 
     public static String exit() {
@@ -81,6 +82,24 @@ public class JGR {
         else if (exit == 1) return "n\n"; //System.exit(0);
         else return "c\n";
     }
+    
+    
+    public static void help(String keyword, String file, String location) {
+        if (file.trim().equals("null")) file = null;
+        if (keyword.trim().equals("null")) keyword = null;
+        if (location.trim().equals("null")) location = null;
+        if (RHelp.last == null) new RHelp(location);
+        else {
+            RHelp.last.show();
+            RHelp.last.refresh();
+        }
+        if (keyword!=null && file !=null) RHelp.last.goTo(keyword, file);
+    }
+    
+    public static void fix(String data) {
+        new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));
+    }
+    
 
     public static void readHistory() {
         File hist = null;

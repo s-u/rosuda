@@ -104,7 +104,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.addFocusListener(this);
         editArea.addKeyListener(this);
         editArea.setToolTipText(fileName == null ? "Editor" : fileName);
-        editArea.setWordWrap(false);
+        editArea.setWordWrap(true);
 
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         this.setSize(new Dimension(600,
@@ -118,7 +118,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.requestFocus();
     }
 
-    public void help() {
+    /*public void help() {
         if (RHelp.last == null) {
             Thread t = new Thread() {
                 public void run() {
@@ -138,7 +138,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
           RHelp.last.show();
           setWorking(false);
         }
-    }
+    }*/
 
 
     public void initIconBar() {
@@ -309,7 +309,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "new") startNew();
-        else if (cmd == "objectmgr") new RObjectManager();
+        else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()");
         else if (cmd == "open") loadFile();
         else if (cmd == "paste") editArea.paste();
         else if (cmd == "prefs") new PrefsDialog(this);
@@ -319,7 +319,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
                     undoMgr.redo();
                 }
             } catch (CannotUndoException ex) {}
-        } else if (cmd == "rhelp") { start("RHelp"); } //help(); }
+        } else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()");
         else if (cmd == "save") saveFile();
         else if (cmd == "saveas") saveFileAs();
         else if (cmd == "selAll") editArea.selectAll();

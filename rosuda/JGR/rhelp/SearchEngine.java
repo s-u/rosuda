@@ -129,25 +129,24 @@ public class SearchEngine {
 
                     if (exactMatch && entry.getEntry().equals(iSearchTerm)) {
                         if (help!=null) help.link.setText(" ");
-                        /*File f = new File(JGR.RLIBS[0]+File.separator+entry.getURL());
+                        File f = new File(JGR.RLIBS[0]+File.separator+entry.getURL());
                         if (!f.exists()) {
                             for (int i = 1; i < JGR.RLIBS.length; i++) {
                                 f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
-                                if (f.exists()) return f.toURL();
+                                if (f.exists()) break;
                             }
                         }
-                        else */ 
-                        File f = new File(RHelp.RHELPLOCATION+File.separator+"/library"+File.separator+entry.getURL());
+                        else f = new File(RHelp.RHELPLOCATION+File.separator+"/library"+File.separator+entry.getURL());
                         return f.toURL();
                     }
-                    //File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
-                    /*if (!f.exists()) {
+                    File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
+                    if (!f.exists()) {
                         for (int i = 1; i < JGR.RLIBS.length; i++) {
                             f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
                             if (f.exists()) break;
                         }
-                    }*/
-                    File f = new File(RHelp.RHELPLOCATION+File.separator+"library"+File.separator+entry.getURL());
+                    }
+                    else f = new File(RHelp.RHELPLOCATION+File.separator+"library"+File.separator+entry.getURL());
                     result +=
                         "<dt><a href=\""  + f.toURL() +
                         "\">" +

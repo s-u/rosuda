@@ -496,8 +496,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             final Document doc = getDocument();
             final int pos = this.getCaretPosition();
             final String currentStr = this.getText(pos - 1, 1);
-            SwingUtilities.invokeLater(new Runnable() {
+            /*SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
+                        try {
                         int length = doc.getLength();
                         if (!isEscaped(pos)) {
                             if (lastChar(pos, "{") || lastChar(pos, "(") || lastChar(pos, "[")) {
@@ -507,8 +508,10 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
                                 highlightParanthesisBackward(currentStr,pos);
                             }
                         }
+                        }
+                        catch (Exception ex1) { ex1.printStackTrace();}
                 }
-            });
+            });*/
             } catch (Exception ex) {}
         }
     }

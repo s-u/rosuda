@@ -135,18 +135,17 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             JGR.RHISTORY.add(cmd);
             currentHistPosition = JGR.RHISTORY.size();
             outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",Preferences.CMD);
-            if (cmd.equals("package.manager()")) start("RPackageManager");
-            else if (cmd.equals("object.manager()")) start("RObjectManager");
-            else if (!isHelpCMD(cmd)) {
-                        Thread t = new Thread() {
-                            public void run() {
-                                JGR.READY = false;
-                                JGR.RCSync.triggerNotification(cmd);
-                            }
-                        };
-                        t.start();
+            if (!isHelpCMD(cmd)) {
+                Thread t = new Thread() {
+                    public void run() {
+                        JGR.READY = false;
+                        JGR.RCSync.triggerNotification(cmd);
+                    }
+                };
+                t.start();
             }
-        } catch (Exception e) {}
+        }
+        catch (Exception e) {}
         finally {  }
     }
 
@@ -224,7 +223,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void saveWorkSpace(final String file) {
-        execute("save.image(\""+(file == null ? "" : file)+"\")");
+        if (file==null) execute("save.image()");
+        else execute("save.image(\""+(file == null ? "" : file)+"\")");
         JGR.writeHistory();
     }
 
@@ -322,6 +322,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
         JGR.READY = true;
+        setWorking(false);
         if (prompt.indexOf("Save workspace") > -1) return JGR.exit();
         else {
             output.append(prompt,Preferences.CMD);
@@ -368,7 +369,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     undoMgr.redo();
                 }
             } catch (CannotUndoException ex) {}
-        } else if (cmd == "rhelp")  help(null);
+        } else if (cmd == "rhelp")  execute("help.start()");
         else if (cmd == "table") new DataTable(null);
         else if (cmd == "savewspace") saveWorkSpace(wspace);
         else if (cmd == "savewspaceas") saveWorkSpaceAs();

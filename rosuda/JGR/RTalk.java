@@ -17,7 +17,7 @@ import org.rosuda.JGR.toolkit.*;
 
 public class RTalk {
 
-    private static Object dummy = new Object();
+    public static Object dummy = new Object();
 
 
     public static void runCmd(String cmd) {
@@ -235,7 +235,7 @@ public class RTalk {
     }
 
     /* create r-dataframe as java-object*/
-    private static dataframe createDataFrame(String sx) {
+    public static dataframe createDataFrame(String sx) {
         dataframe d = new dataframe(sx);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
@@ -289,7 +289,7 @@ public class RTalk {
     }
 
     /* create r-matrix as java-object*/
-    private static matrix createMatrix(String sx) {
+    public static matrix createMatrix(String sx) {
         matrix m = new matrix(sx,null);
         REXP y = JGR.R.eval("dim("+sx+")");
         if (y!=null && y.asIntArray()!=null) {
@@ -299,7 +299,7 @@ public class RTalk {
     }
 
     /* create other r-obj as java-obj*/
-    private static RObject createOther(String sx) {
+    public static RObject createOther(String sx) {
         REXP y = JGR.R.eval("class("+sx+")");
         String[] res;
         if (y!=null && (res = y.asStringArray())!=null) {
@@ -312,7 +312,7 @@ public class RTalk {
     }
 
     /* create r-table as java-object*/
-    private static table createTable(String sx) {
+    public static table createTable(String sx) {
         table t = new table(sx);
         REXP y = JGR.R.eval("names(dimnames("+sx+"))");
         String[] res1;
@@ -331,7 +331,7 @@ public class RTalk {
     }
 
     /* create a r-model as java-object */
-    private static model createModel(String sx, int type) {
+    public static model createModel(String sx, int type) {
         model m = new model(sx,type);
         REXP y = JGR.R.eval("summary("+sx+")$r.squared");
         double[] res;
@@ -470,13 +470,13 @@ public class RTalk {
         }
     }
 
-    private static boolean isClass(String v, String t) {
+    public static boolean isClass(String v, String t) {
         REXP z = JGR.R.eval("try(class("+v+"),silent=TRUE)");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
     }
 
-    private static boolean isMode(String v, String t) {
+    public static boolean isMode(String v, String t) {
         REXP z = JGR.R.eval("try(mode("+v+"),silent=TRUE)");
         if (z != null && z.asString() != null) return z.asString().equals(t);
         return false;
