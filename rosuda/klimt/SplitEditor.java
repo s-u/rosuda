@@ -65,8 +65,9 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
         if (lc!=null) { pp.remove(lc); lc=null; };
         if (st!=null) { sp.remove(st); st=null; };
         if (l1!=null) { sp.remove(l1); l1=null; };
-        if (cv.isCat()) {
-        } else {
+        if (cv.isCat()) { /** split variable is categorical */
+        } else { /** split variabel is numerical */
+            Stopwatch sw=new Stopwatch();
             sp.setLayout(new FlowLayout());
             sp.add(l1=new Label("split at "));
             spVal=ln.splitValF;
@@ -77,7 +78,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             sc.setFilter(n.data);
             sc.setSize(scd); sc.bgTopOnly=true;
             cp.add(pp); pp.add(sc);
-
+            sw.profile("innerPlots.build graphics");
             double maxD=0, maxDP=0, optSP=0;
             
             /** build deviance plot
@@ -92,55 +93,97 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             int []fullrks=cv.getRanked();
             int []rks=new int[n.data.size()];
             int rki=0;
+            double D=0;
+            SVar rsp=root.response;
+            boolean isCat=rsp.isCat();
+            double sumL=0, sumR=0; // regr: sum of y[i] left/right
+            int trct=0;
             for (int ix=0;ix<fullrks.length;ix++)
-                if (n.data.contains(new Integer(fullrks[ix])))
+                if (n.data.contains(new Integer(fullrks[ix]))) {
                     rks[rki++]=fullrks[ix];
+                    if (!isCat && rsp.at(fullrks[ix])!=null) {
+                        sumR+=rsp.atD(fullrks[ix]); trct++;
+                    }
+                };
+            double mnL=0.0, mnR=0.0; // regr: mean left/right
+            if (!isCat) {
+                mnR=sumR/((double)trct);
+                for(int ix=0;ix<rks.length;ix++)
+                    if(rsp.at(rks[ix])!=null)
+                        D+=(rsp.atD(rks[ix])-mnR)*(rsp.atD(rks[ix])-mnR);
+            }
+            sw.profile("innerPlots.init");
             if (Common.DEBUG>0)
                 System.out.println("input consistency check: rks.len="+rks.length+", rki="+rki);
             int q=0;
-            int []cls=new int[root.response.getNumCats()];
-            int []tcls=new int[root.response.getNumCats()];
-            if (Common.DEBUG>0)
-                System.out.println("ranked: "+rks.length+", classes="+tcls.length);
-            q=0; while(q<tcls.length) tcls[q++]=0;
-            q=0;
-            while(q<rks.length) {
-                int ci=root.response.getCatIndex(rks[q]);
-                if (ci>-1) tcls[ci]++;
-                q++;
-            };
-
-/*
-            while(q<tcls.length) {
-                tcls[q]=root.response.getSizeCatAt(q);
+            int []cls=null;
+            int []tcls=null;
+            if (isCat) {
+                cls=new int[root.response.getNumCats()];
+                tcls=new int[root.response.getNumCats()];
                 if (Common.DEBUG>0)
-                    System.out.println(" class "+q+", count="+tcls[q]);
-                q++;
-            }; */
-            q=0;
-            double D=Tools.nlogn(rks.length);
+                    System.out.println("ranked: "+rks.length+", classes="+tcls.length);
+                q=0; while(q<tcls.length) tcls[q++]=0;
+                q=0;
+                while(q<rks.length) {
+                    int ci=root.response.getCatIndex(rks[q]);
+                    if (ci>-1) tcls[ci]++;
+                    q++;
+                };
+                D=Tools.nlogn(rks.length);
+            }
             int lct=0, eq=0;
             boolean isOpt=false;
-            double lv=0;
+            double lv=0, devL=0, devR=D;
+            q=0;
             while(q<rks.length) {
                 lv=cv.atD(rks[q]);
                 if (isOpt)
                     optSP=(lv+maxDP)/2;
                 eq=0;
+                double deltay=0, deltay2=0;
                 while (q<rks.length && lv==cv.atD(rks[q])) {
-                    int ci=root.response.getCatIndex(rks[q]);
-                    if (ci>-1) cls[ci]++;
+                    if (isCat) {
+                        int ci=rsp.getCatIndex(rks[q]);
+                        if (ci>-1) cls[ci]++;
+                    } else {
+                        if (rsp.at(rks[q])!=null) {
+                            deltay+=rsp.atD(rks[q]);
+                            deltay2+=rsp.atD(rks[q])*rsp.atD(rks[q]);
+                        }
+                    };
                     rxv.add(cv.at(rks[q]));
                     q++; eq++; lct++;
                 };
+                sumL+=deltay;
+                sumR-=deltay;
                 if (Common.DEBUG>0)
                     System.out.println("q="+q+", lv="+lv+", eq="+eq+", lct="+lct);
 
-                double d=D-Tools.nlogn(lct)-Tools.nlogn(rks.length-lct);
-                int cl=0;
-                while(cl<cls.length) {
-                    d+=-Tools.nlogn(tcls[cl])+Tools.nlogn(cls[cl])+Tools.nlogn(tcls[cl]-cls[cl]);
-                    cl++;
+                double d=D;
+                if (isCat) {
+                    d-=Tools.nlogn(lct)+Tools.nlogn(rks.length-lct);
+                    int cl=0;
+                    while(cl<cls.length) {
+                        d+=-Tools.nlogn(tcls[cl])+Tools.nlogn(cls[cl])+Tools.nlogn(tcls[cl]-cls[cl]);
+                        cl++;
+                    }
+                } else {
+                    double ctL=(double)lct, ctR=(double)(trct-lct);
+                    double pvL=sumL/ctL, delL=mnL-pvL;
+                    double pvR=sumR/ctR, delR=mnR-pvR;
+                    /*
+                    devL+=2*delL*(sumL-deltay)+((double)(lct-eq))*(pvL*pvL-mnL*mnL)+((double)eq)*pvL*pvL+deltay2-2*pvL*deltay;
+                    devR-=2*delR*(sumR-deltay)+((double)(trct-lct+eq))*(pvR*pvR-mnR*mnR)+((double)eq)*pvR*pvR+deltay2-2*pvR*deltay;
+                    d-=devL+devR;
+                    mnL=pvL; mnR=pvR; */
+                    devL=0; devR=0;
+                    for(int iX=0;iX<rks.length;iX++) {
+                        if (iX<q) devL+=(rsp.atD(rks[iX])-pvL)*(rsp.atD(rks[iX])-pvL);
+                        else devR+=(rsp.atD(rks[iX])-pvR)*(rsp.atD(rks[iX])-pvR);
+                    }
+//                    System.out.println("sums=["+sumL+":"+sumR+"], pv=["+pvL+":"+pvR+"], ct=["+lct+":"+(trct-lct)+"], dev=["+devL+":"+devR+":"+D+"]");
+                    d-=devL+devR;
                 }
                 isOpt=(d>maxD);
                 if (isOpt) { maxD=d; maxDP=lv; optSP=lv; };
@@ -149,13 +192,16 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                     eq--;
                 };
             };
+            sw.profile("innerPlots.calculate deviance");
             if (Common.DEBUG>0) {
                 System.out.println("Consistency check:");
                 System.out.println("sdv length="+sdv.size()+", rxv length="+rxv.size());
-                q=0; while(q<tcls.length) {
-                    System.out.println(" class "+q+", tcls="+tcls[q]+", cls="+cls[q]);
-                    q++;
-                };
+                if (isCat) {
+                    q=0; while(q<tcls.length) {
+                        System.out.println(" class "+q+", tcls="+tcls[q]+", cls="+cls[q]);
+                        q++;
+                    };
+                }
                 System.out.println("max.Dev="+maxD+", at "+maxDP+", ergo opt.split="+optSP);
             }
             spVal=optSP;
@@ -174,6 +220,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                 li.set(spVal,-1,spVal,1);
                 li.setVisible(true);
             }
+            sw.profile("fixup , draw line");
         }
     }
     
@@ -245,6 +292,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         }
                         pd.setProgress(40);
                         pd.setVisible(true);
+                        gt.setParameter("holdConnection",Boolean.TRUE);
                         gt.setParameter("selectedOnly",Boolean.TRUE);
                         gt.setParameter("registerTree",Boolean.FALSE);
                         SMarker bak=vs.getMarker();
@@ -309,15 +357,17 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         RTree.passDownData(ntcp,leftb); RTree.passDownData(ntcp,rightb);
                         //---
                         SVar vvv;
-                        vvv=RTree.getClassifierVar(nt,nt.response);
+                        vvv=RTree.getPredictionVar(nt,nt.response);
                         if (vvv!=null) {
                             vs.add(vvv);
                             nt.prediction=vvv;
-                            if (vs.globalMisclassVarID!=-1)
-                                RTree.manageMisclassVar(root,vs.at(vs.globalMisclassVarID));
-                            else {
-                                SVar vmc=RTree.manageMisclassVar(nt,null);
-                                vs.globalMisclassVarID=vs.add(vmc);
+                            if (vvv.isCat()) {
+                                if (vs.globalMisclassVarID!=-1)
+                                    RTree.manageMisclassVar(root,vs.at(vs.globalMisclassVarID));
+                                else {
+                                    SVar vmc=RTree.manageMisclassVar(nt,null);
+                                    vs.globalMisclassVarID=vs.add(vmc);
+                                }
                             }
                         };
                         TFrame f=new TFrame(nt.name);
