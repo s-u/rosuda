@@ -154,7 +154,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Klimt</string>
 	<key>CFBundleGetInfoString</key>
-	<string>Klimt v.0.98</string>
+	<string>Klimt v0.98-pre3</string>
 	<key>CFBundleIconFile</key>
 	<string>Klimt.icns</string>
 	<key>CFBundleIdentifier</key>
@@ -166,11 +166,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.98</string>
+	<string>0.98-pre3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.98</string>
+	<string>0.98-pre3</string>
 	<key>Java</key>
 	<dict>
 		<key>ClassPath</key>
@@ -333,6 +333,7 @@
 				1C9A86DB066173CC00FA73AE,
 				1C9A86DC066173CC00FA73AE,
 				1C9A86DD066173CC00FA73AE,
+				1CCDD36F0695E2B500AFAC85,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1052,6 +1053,18 @@
 				JAVA_ARCHIVE_SUBDIR = "";
 			};
 		};
+		1CCDD36E0695E2B500AFAC85 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KapMeNodeCanvas.java;
+			refType = 4;
+		};
+		1CCDD36F0695E2B500AFAC85 = {
+			fileRef = 1CCDD36E0695E2B500AFAC85;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		1CD07DE0057D961400E3263B = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1453,6 +1466,7 @@
 				1CE96E8D04D8010600A8030F,
 				1CE96E8E04D8010600A8030F,
 				1CE96E8F04D8010600A8030F,
+				1CCDD36E0695E2B500AFAC85,
 			);
 			isa = PBXGroup;
 			path = plots;
