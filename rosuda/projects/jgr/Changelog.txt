@@ -1,3 +1,8 @@
+2005-02-04
+- fixed: use always prompt from R (if user specified his own)
+- fixed: save user specified (loaded) workspace when leaving JGR
+- added: warn when using not supported functions (such as edit or fix)
+
 2005-01-23
 - fixed: whitespaces in prompt
 
