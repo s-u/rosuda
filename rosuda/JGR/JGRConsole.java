@@ -33,6 +33,7 @@ FocusListener, RMainLoopCallbacks {
     private Document outputDoc = output.getDocument();
 
     private TextFinder textFinder = new TextFinder(output);
+    //private String keyWord = null;
 
     private ToolBar toolBar;
 
@@ -61,9 +62,9 @@ FocusListener, RMainLoopCallbacks {
             "open",
             "@SSave Workspace", "save", "!SSave Workspace as",
             "saveas","~File.Quit",
-            "~EditCPS",
+            "~EditC",
             "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
-            "DataTable", "table", "-", "Increase Font Size", "fontBigger",
+            "DataTable", "table", "-", "@DSet Working Directory", "setwd", "-", "Increase Font Size", "fontBigger",
             "Decrease Font Size", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
             "~Window",
@@ -176,8 +177,10 @@ FocusListener, RMainLoopCallbacks {
             }
             else if (help.startsWith("help.start")) help=null;
             else {
-                help = help.replaceFirst("help", "");
-                help = help.replaceFirst("\\?", "");
+                if (help.trim().startsWith("?")) 
+                    help = help.replaceFirst("\\?", "");
+                else 
+                    help = help.replaceFirst("help", "");
                 exact = true;
             }
         }
@@ -386,6 +389,7 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "save") saveWorkSpace(wspace);
         else if (cmd == "saveas") saveWorkSpaceAs();
         else if (cmd == "search") textFinder.showFind(false);
+        else if (cmd == "searchnext") textFinder.showFind(true);
         else if (cmd == "stop") JGR.R.rniStop(1);
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {
@@ -399,12 +403,23 @@ FocusListener, RMainLoopCallbacks {
                     toolBar.undoMgr.undo();
             } catch (Exception ex) {}
         }
+        else if (cmd == "setwd") {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setDialogTitle("Choose Working Directory");
+            int r = chooser.showOpenDialog(this);
+            if (r == JFileChooser.CANCEL_OPTION) return;
+            if (chooser.getSelectedFile()!=null)
+                execute("setwd(\""+chooser.getSelectedFile().toString()+"\")");
+        }
     }
 
     public void keyTyped(KeyEvent ke) {
     }
 
     public void keyPressed(KeyEvent ke) {
+        if (ke.getSource().equals(output))
+            input.requestFocus();
         if (JGRPrefs.useEmacsKeyBindings) {
             if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
                 input.setCaretPosition(input.getText().length());
