@@ -171,7 +171,7 @@ FocusListener, RMainLoopCallbacks {
             if (!isHelpCMD(c))
                 JGR.rSync.triggerNotification(c);
             else
-                try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n> ",JGRPrefs.CMD); } catch (Exception e) {}
+                try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n>",JGRPrefs.CMD); } catch (Exception e) {}
         }
     }
 
@@ -355,7 +355,7 @@ FocusListener, RMainLoopCallbacks {
             output.append(prompt,JGRPrefs.CMD);
             output.setCaretPosition(outputDoc.getLength());
             String s = JGR.rSync.waitForNotification();
-            try { outputDoc.insertString(outputDoc.getLength()," "+s+"\n",JGRPrefs.CMD); } catch (Exception e) {}
+            try { outputDoc.insertString(outputDoc.getLength(),s+"\n",JGRPrefs.CMD); } catch (Exception e) {}
             return (s==null||s.length()==0)?"\n":s+"\n";
         }
     }
