@@ -62,7 +62,7 @@ public class SVarFact extends SVar
         ccnts=new int[cnames.length+1];
         int i=0;
         while (i<ids.length) {
-            if (ids[i]>=0 && ids[i]<=cats.length) {
+            if (ids[i]>=0 && ids[i]<cats.length) {
                 ccnts[ids[i]]++;
                 //maxID = maxID < ids[i]?ids[i]:maxID;
             }
