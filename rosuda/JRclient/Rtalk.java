@@ -4,9 +4,13 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-/** this class encapsulated the QAP1 protocol used by Rserv.
+/** This class encapsulates the QAP1 protocol used by Rserv.
     it is independent of the underying protocol(s), therefore Rtalk
     can be used over any transport layer
+    <p>
+    The current implementation supports long (0.3+/0102) data format only
+    up to 32-bit and only for incoming packets.
+    <p>
     @version $Id$
 */
 public class Rtalk {
@@ -67,7 +71,7 @@ public class Rtalk {
 	buf[o]=(byte)((len&0xff0000)>>16); o++;
     }
 
-    /** converts bit-wise store int in Intel-endian form into Java int
+    /** converts bit-wise stored int in Intel-endian form into Java int
 	@param buf buffer containg the representation
 	@param o offset where to start (4 bytes will be used)
 	@return the int value. no bounds checking is done so you need to
@@ -76,13 +80,17 @@ public class Rtalk {
 	return ((buf[o]&255)|((buf[o+1]&255)<<8)|((buf[o+2]&255)<<16)|((buf[o+3]&255)<<24));
     }
 
-    /** converts bit-wise store length from a header, it corresponds to
-	calling getInt(buf,o+1) except that only 3 bytes are read
+    /** converts bit-wise stored length from a header. "long" format is supported up to 32-bit
 	@param buf buffer
 	@param o offset of the header (length is at o+1)
 	@return length */
     public static int getLen(byte[] buf, int o) {
-	return ((buf[o+1]&255)|((buf[o+2]&255)<<8)|((buf[o+3]&255)<<16));
+
+        return
+        ((buf[o]&64)>0)? // "long" format; still - we support 32-bit only
+        ((buf[o+1]&255)|((buf[o+2]&255)<<8)|((buf[o+3]&255)<<16)|((buf[o+4]&255)<<24))
+        :
+        ((buf[o+1]&255)|((buf[o+2]&255)<<8)|((buf[o+3]&255)<<16));
     }
 
     /** converts bit-wise Intel-endian format into long

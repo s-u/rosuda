@@ -87,7 +87,8 @@ public class Rconnection {
             try {
                 rsrvVersion=Integer.parseInt(ids.substring(4,8));
             } catch (Exception px) {}
-            if (rsrvVersion>101) {
+            // we support (knowingly) up to 102 - including long data support
+            if (rsrvVersion>102) {
                 lastError="Handshake failed: The server uses more recent protocol than this client.";
                 throw new RSrvException(this,lastError);
             }

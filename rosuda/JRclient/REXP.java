@@ -33,8 +33,10 @@ public class REXP extends Object {
     public static final int XT_ARRAY_DOUBLE=33;
     /** xpression type: String[] (currently not used, Vector is used instead) */
     public static final int XT_ARRAY_STR=34;
+    /** internal use only! this constant should never appear in a REXP */
+    public static final int XT_ARRAY_BOOL_UA=35;
     /** xpression type: RBool[] */
-    public static final int XT_ARRAY_BOOL=35;
+    public static final int XT_ARRAY_BOOL=36;
     /** xpression type: unknown; no assumptions can be made about the content */
     public static final int XT_UNKNOWN=48;
 
@@ -104,9 +106,10 @@ public class REXP extends Object {
     public static int parseREXP(REXP x, byte[] buf, int o) {
 	int xl=Rtalk.getLen(buf,o);
 	boolean hasAtt=((buf[o]&128)!=0);
-	int xt=(int)(buf[o]&127);
-	int eox=o+4+xl;
-	o+=4;
+        boolean isLong=((buf[o]&64)!=0);
+	int xt=(int)(buf[o]&63);
+        if (isLong) o+=4;
+	int eox=o+xl;
 	
 	x.Xt=xt; x.attr=null;
 	if (hasAtt) o=parseREXP(x.attr=new REXP(),buf,o);
@@ -146,8 +149,9 @@ public class REXP extends Object {
 	    };
 	    return o;
 	};
-	if (xt==XT_ARRAY_BOOL) {
+	if (xt==XT_ARRAY_BOOL_UA) {
 	    int as=(eox-o), i=0;
+            x.Xt=XT_ARRAY_BOOL; // XT_ARRAY_BOOL_UA is only old transport type for XT_ARRAY_BOOL
 	    RBool[] d=new RBool[as];
 	    while(o<eox) {
 		d[i]=new RBool(buf[o]);
@@ -156,7 +160,19 @@ public class REXP extends Object {
 	    x.cont=d;
 	    return o;
 	};
-	if (xt==XT_INT) {
+        if (xt==XT_ARRAY_BOOL) {
+            int as=Rtalk.getInt(buf,o);
+            o+=4;
+            int i=0;
+            RBool[] d=new RBool[as];
+            while(o<eox && i<as) {
+                d[i]=new RBool(buf[o]);
+                i++; o++;
+            };
+            x.cont=d;
+            return o;
+        };
+        if (xt==XT_INT) {
 	    x.cont=new Integer(Rtalk.getInt(buf,o));
 	    o+=4;
 	    if (o!=eox) {
