@@ -26,6 +26,8 @@ public class Rtalk {
     public static final int CMD_readFile=0x013;
     public static final int CMD_writeFile=0x014;
     public static final int CMD_removeFile=0x015;
+    public static final int CMD_setSEXP=0x020;
+    public static final int CMD_assignSEXP=0x021;
 
     InputStream is;
     OutputStream os;
@@ -88,6 +90,11 @@ public class Rtalk {
 	long hi=((long)getInt(buf,o+4))&0xffffffffL;
 	hi<<=32; hi|=low;
 	return hi;
+    }
+
+    public static void setLong(long l, byte[] buf, int o) {
+	setInt((int)(l&0xffffffffL),buf,o);
+	setInt((int)(l>>32),buf,o+4);
     }
 
     /** sends a request with no attached parameters
