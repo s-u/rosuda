@@ -57,9 +57,9 @@ public class VarFrame extends TFrame {
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
-            String myMenu[]={"+","File","@OOpen dataset ...","openData","@?Open tree ...","openTree","-",
+            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","Save selected ...","export","-",
                 "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
-                "Export forest ...","exportForest","Display Forest","displayForest","~File.Quit",
+                "Export forest ...","exportForest","@FDisplay forest","displayForest","~File.Quit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
@@ -70,6 +70,7 @@ public class VarFrame extends TFrame {
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
             MenuItem mi=EzMenu.getItem(this,"datatab");
+            EzMenu.getItem(this,"export").setEnabled(false);
             if (!PluginManager.pluginExists("PluginTable")) mi.setEnabled(false);
         //};
 	setVisible(true);
@@ -388,8 +389,9 @@ public class VarFrame extends TFrame {
                 }
             }
             if (cmd=="export") { // Export ...
+                System.out.println("export...");
                 try {
-                    PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
+                    PrintStream p=Tools.getNewOutputStreamDlg(win,"Export selected variables to ...","selected.txt");
                     if (p!=null) {
                         int j=0,tcnt=0,fvar=0;
                         j=0;
@@ -882,6 +884,8 @@ public class VarFrame extends TFrame {
             if(mi!=null) mi.setEnabled(selCat==1 && selNum==1);
             mi=EzMenu.getItem(win,"hammock");
             if(mi!=null) mi.setEnabled(selCat>1);
+            mi=EzMenu.getItem(win,"export");
+            if(mi!=null) mi.setEnabled(selCat+selNum>0);
             
 	    Dimension cd=getSize();
 
