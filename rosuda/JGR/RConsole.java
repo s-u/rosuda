@@ -57,6 +57,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     private boolean wasHistEvent = false;
 
+    public int end = 0;
+
     public RConsole() {
         this(null);
     }
@@ -69,7 +71,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             "@SSave Workspace", "savewspace", "!SSave Workspace as",
             "savewspaceas",
             "-", "Load Datafile", "loaddata", "~File.Quit",
-            "~Edit",
+            "~Edit","-","@LClear Console","clearconsole",
             "+", "Tools", "@EEditor", "editor", "@BObject Manager", "objectmgr",
             "DataTable", "table", "-", "Increase Font", "fontBigger",
             "Decrease Font", "fontSmaller",
@@ -240,14 +242,17 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
 
+    public void clearconsole() {
+        try { output.getDocument().remove(end,output.getText().length()-end); } catch (Exception e) { new iError(e); }
+    }
+
+
     public void loadWorkSpace() {
         FileSelector fopen = new FileSelector(this, "Open Workspace",
                                               FileSelector.OPEN, directory);
         if (fopen.getFile() != null) {
             wspace = (directory = fopen.getDirectory()) + fopen.getFile();
-            if (System.getProperty("os.name").startsWith("Windows")) wspace = wspace.replace('\\','/');
-                System.out.println(wspace);
-            execute("load(\""+wspace+"\")");
+            execute("load(\""+wspace.replace('\\','/')+"\")");
         }
     }
 
@@ -266,7 +271,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void saveWorkSpace(final String file) {
         if (file==null) execute("save.image()");
-        else execute("save.image(\""+(file == null ? "" : file)+"\")");
+        else execute("save.image(\""+(file == null ? "" : file.replace('\\','/'))+"\")");
         JGR.writeHistory();
     }
 
@@ -397,7 +402,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "copy") {
             input.copy();
             output.copy();
-        } else if (cmd == "delete") {
+        } else if (cmd == "clearconsole") clearconsole();
+        else if (cmd == "delete") {
             try {
                 int i = 0;
                 inputDoc.remove( (i = input.getSelectionStart()),
