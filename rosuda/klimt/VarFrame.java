@@ -42,12 +42,16 @@ public class VarFrame extends TFrame {
 	setBounds(x-minus,y,w,rh);
 	vc.setBounds(x-minus,y,w,rh-cmdHeight);
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
-	pack(); 
+	pack();
+        //if (System.getProperty("").indexOf("")>-1) {
+            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-","Export forest ...","exportForest","Display forest","displayForest","-","@QQuit","exit","~Window","0"};
+            EzMenu.getEzMenu(this,vc,myMenu);
+        //};
 	setVisible(true);
     };
 
     /** VarCanvas is canvas for the variables list */
-    class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener
+    class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener, Commander, ActionListener
     {
 	/** associated window */
 	VarFrame win;
@@ -199,6 +203,73 @@ public class VarFrame extends TFrame {
 	public void mouseReleased(MouseEvent e) {};
 	public void mouseEntered(MouseEvent e) {};
 	public void mouseExited(MouseEvent e) {};
+
+        public Object run(Object o, String cmd) {
+            if (cmd=="exit") WinTracker.current.Exit();
+            if (cmd=="exportForest") {
+                try {
+                    PrintStream p=Tools.getNewOutputStreamDlg(win,"Export forest data to ...","forest.txt");
+                    vs.exportForest(p);
+                } catch(Exception ee) {};
+            };
+            if (cmd=="displayForest") {
+                SVarSet fs=vs.getForestVarSet();
+                Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+                Common.screenRes=sres;
+                VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+            };
+            if (cmd=="openTree") {
+                //SVarSet tvs=new SVarSet();
+                SVarSet tvs=vs;
+                SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
+                if (t!=null) {
+                    TFrame f=new TFrame(tvs.getName()+" - tree");
+                    TreeCanvas tc=InTr.newTreeDisplay(t,f);
+                    tc.repaint(); tc.redesignNodes();
+                    //InTr.newVarDisplay(tvs);
+                };
+            };
+            if (cmd=="openData") {
+                TFrame f=new TFrame("KLIMT "+Common.Version);
+                SVarSet tvs=new SVarSet();
+                SNode t=InTr.openTreeFile(f,null,tvs);
+                if (t==null && tvs.count()<1) {
+                    new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
+                } else {
+                    f.setTitle(tvs.getName());
+                    Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+                    Common.screenRes=sres;
+                    if (t!=null)
+                        InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                    VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+                }
+            }
+            if (cmd=="exportCases") {
+                /*
+                try {
+                    PrintStream p=Tools.getNewOutputStreamDlg(win,"Export selected cases to ...","selected.txt");
+                    if (p!=null) {
+                        p.println(v[0].getName()+"\t"+v[1].getName());
+                        int i=0;
+                        for (Enumeration e=v[0].elements(); e.hasMoreElements();) {
+                            Object oo=e.nextElement();
+                            if (m.at(i))
+                                p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
+                            i++;
+                        };
+                        p.close();
+                    };
+                } catch (Exception eee) {};
+                 */
+            };
+
+            return null;
+        };
+
+        public void actionPerformed(ActionEvent e) {
+            if (e==null) return;
+            run(e.getSource(),e.getActionCommand());
+        };
     };
 
     /** VarCmdCanvas is the canvas of commands for variables */
