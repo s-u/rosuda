@@ -192,7 +192,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         {
             double f=A[0].getSensibleTickDistance(50,26);
             double fi=A[0].getSensibleTickStart(f);
-            if (Global.DEBUG>0)
+            if (Global.DEBUG>1)
                 System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
             try {
                 while (fi<A[0].vBegin+A[0].vLen) {
@@ -211,7 +211,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         {
             double f=A[1].getSensibleTickDistance(30,18);
             double fi=A[1].getSensibleTickStart(f);
-            if (Global.DEBUG>0)
+            if (Global.DEBUG>1)
                 System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             try {
                 while (fi<A[1].vBegin+A[1].vLen) {
@@ -376,13 +376,15 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
     
     public void mouseReleased(MouseEvent e)
     {
-	int X1=x1, Y1=y1, X2=x2, Y2=y2;
+	int X1=x1, Y1=y1, X2=e.getX(), Y2=e.getY();
 	if (x1>x2) { X2=x1; X1=x2; };
 	if (y1>y2) { Y2=y1; Y1=y2; };
 
+        if (Global.DEBUG>0)
+            System.out.println("ScatterCanvas.MouseReleased["+e+", zoomDrag="+zoomDrag+"]");
         if (zoomDrag) {
             drag=false;
-            if (X2-X1<2 || X2-X1<2) return;
+            if (X2-X1<4 || Y2-Y1<4) return;
             performZoomIn(X1,Y1,X2,Y2);
             repaint();
         } else {
@@ -554,6 +556,10 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             dc=a.datacount;
             dummy=false;
         }
+
+        public String toString() {
+            return "ZoomDescriptorComponent["+(dummy?"dummy":("v=("+vBegin+":"+vLen+"),g=("+gBegin+":"+gLen+"),dc="+dc))+"]";
+        }
     }
 
     /** if set to <code>true</code> all notifications are rejected. Any subclass is free to use it, BaseCanvas modifies this flag in default zoom processing methods to prevent partial updates when ax and ay are updated sequentially. Any method changing this flag should always restore the state of the flag after it finishes! Also use with care in multi-threaded applications to prevent deadlocks. */
@@ -615,6 +621,8 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         ZoomDescriptorComponent zx,zy;
         zx=(ZoomDescriptorComponent)zoomSequence.elementAt(tail-1);
         zy=(ZoomDescriptorComponent)zoomSequence.elementAt(tail);
+        zoomSequence.removeElement(zy);
+        zoomSequence.removeElement(zx);
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         if (ax!=null && !zx.dummy)
@@ -622,8 +630,6 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         ignoreNotifications=ins;
         if (ay!=null && !zy.dummy)
             ay.setValueRange(zy.vBegin,zy.vLen);
-        zoomSequence.removeElement(zy);
-        zoomSequence.removeElement(zx);
         updatePoints();
         setUpdateRoot(0);
         repaint();
