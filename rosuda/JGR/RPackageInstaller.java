@@ -1,0 +1,77 @@
+package org.rosuda.JGR;
+//
+//  RPackageInstaller.java
+//  JRGui
+//
+//  Created by Markus Helbig on Mon Jun 07 2004.
+//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
+//
+
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+import org.rosuda.JGR.toolkit.*;
+
+public class RPackageInstaller extends iFrame implements ActionListener {
+
+    private String[] packages = null;
+    private JList pkgList;
+
+    private JButton install = new JButton("Install");
+    private JButton close = new JButton("Close");
+
+    public RPackageInstaller(String[] pkgs) {
+        super("Package Installer",157);
+
+        packages = pkgs;
+
+        String[] Menu = {
+            "+", "File", "~File.Basic.End",
+            "~Window","0"};
+        //"~Help", "R Help", "rhelp",/* "JJGR FAQ", "jrfaq",*/ "~About", "0"};
+        iMenu.getMenu(this, this, Menu);
+
+        close.setActionCommand("close");
+        close.addActionListener(this);
+        install.setActionCommand("install");
+        install.addActionListener(this);
+
+
+        JPanel buttons = new JPanel();
+        buttons.add(install);
+        buttons.add(close);
+        
+        this.getContentPane().setLayout(new GridBagLayout());
+        this.getContentPane().add(new JScrollPane(pkgList = new JList(packages)),
+            new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 1, 5), 0, 0));
+        this.getContentPane().add(buttons, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 5, 5), 0, 0));
+
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.getRootPane().setDefaultButton(close);
+        this.setMinimumSize(new Dimension(150,250));
+        this.setLocation(200,10);
+        this.setSize(200,400);
+        
+
+
+    }
+
+    public void installPkg() {
+        Object[] instPkgs = pkgList.getSelectedValues();
+        String cmd = "c(";
+        if (instPkgs.length > 0) {
+            for (int i = 0; i < instPkgs.length-1; i++) cmd += "\""+instPkgs[i]+"\",";
+            cmd += "\""+instPkgs[instPkgs.length-1]+"\")";
+            JGR.MAINRCONSOLE.execute("install.packages("+cmd+")");
+        }
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        System.out.println(cmd);
+        if (cmd=="close" || cmd=="exit") dispose();
+        else if (cmd=="install") installPkg();
+    }
+
+}
