@@ -2,12 +2,12 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.io.PrintStream;
 
-/** PGScanvas - extends {@link DBCanvas} by adding generic functionality for
+/** PGScanvas - extends {@link LayerCanvas} by adding generic functionality for
     exporting the content to PGS metafile or PostScript format. Any implementing
     class must use PoGraSS methods instead of Graphics.
     @version $Id$
 */
-public class PGSCanvas extends DBCanvas implements Commander {
+public class PGSCanvas extends LayerCanvas implements Commander {
     /** frame that owns this canvas. can be null if none does. it is mainly used
 	to identify current frame in calls to dialogs */
     Frame myFrame=null;
@@ -17,13 +17,21 @@ public class PGSCanvas extends DBCanvas implements Commander {
     /** inProgress flag to avoid recursions in paint methods */
     boolean inProgress=false;
 
+    public PGSCanvas(int layers) {
+        super(layers);
+    }
+
+    public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
+        super(1);
+    }
+    
     /** paintBuffer simply calls {@link #paintPoGraSS} on the supplied {@link Graphics}.
         Any further classes should override {@link #paintPoGraSS} instead of
-        {@link #paintBuffer}  */
-    public void paintBuffer(Graphics g) {
+        {@link #paintLayer}  */
+    public void paintLayer(Graphics g, int layer) {
         if (inProgress) return; /* avoid recursions */
         inProgress=true;
-	PoGraSSgraphics p=new PoGraSSgraphics(g);
+	PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
 	paintPoGraSS(p);
         inProgress=false;
     };

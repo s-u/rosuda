@@ -68,6 +68,8 @@ public class PoGraSSmeta extends PoGraSS
 	ct.append("p.drawString(\n\""+txt+"\",\n"+x+",\n"+y+");\n");
     };
 
+    public void nextLayer() { ct.append("p.nextLayer(\n);\n"); };
+
     public void begin() { ct.append("p.begin(\n);\n"); };
     public void end() { ct.append("p.end(\n);\n"); };
 
@@ -156,6 +158,8 @@ public class PoGraSSmeta extends PoGraSS
 		p.drawString(par[0],pari[1],pari[2]);
 	    if(cmd.compareTo("begin")==0)
 		p.begin();
+	    if(cmd.compareTo("nextLayer")==0)
+		p.nextLayer();
 	    if(cmd.compareTo("end")==0)
 		p.end();
 	};

@@ -2,6 +2,8 @@ import java.awt.Rectangle;
 
 /** Portable Graphics SubSystem - first draft of the abstract interface definition.
     May change (or be extended) in the future.
+    1.1: addComment, setTitle
+    1.2: support for layers (nextLayer)
     @version $Id$
 */
 public class PoGraSS
@@ -37,6 +39,8 @@ public class PoGraSS
     public void setFillStyle(int s) { fillStyle=s; };
     public void drawString(String txt, int x, int y) {};
 
+    public void nextLayer() {};
+    
     public void begin() {};
     public void end() {};
 };

@@ -143,6 +143,10 @@ class PoGraSSPS extends PoGraSS
 	outPS((ox+x)+" "+(oy-y)+" moveto ("+txt+") show\n");
     };
 
+    public void nextLayer() {
+        outPS("%% nextLayer\n");
+    }
+    
     public void begin() {
 	if (fn!=null) {
 	    try {

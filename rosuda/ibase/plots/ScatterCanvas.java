@@ -38,6 +38,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	@param v2 variable 2
 	@param mark associated marker */
     public ScatterCanvas(Frame f, SVar v1, SVar v2, SMarker mark) {
+        super(2);
 	setFrame(f); setTitle("Scatterplot ("+v1.getName()+" : "+v2.getName()+")");
 	v=new SVar[2]; A=new Axis[2];
 	v[0]=v1; v[1]=v2; m=mark;
@@ -64,11 +65,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    ((Frame) getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
 	} catch (Exception ee) {};
 	updatePoints();
+        setUpdateRoot(0);
 	repaint();
     };
 
     public void Notifying(Object o, Vector path) {
-	repaint();
+        setUpdateRoot(0);
+        repaint();
     };
 
     /** paints partitioning for a single node (and descends recursively) */	
@@ -186,6 +189,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    };
 	}
 	if (drag) {
+            g.nextLayer();
 	    int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
 		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
@@ -195,6 +199,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
 
 	g.end();
+        setUpdateRoot(2); // by default no repaint is necessary unless resize occurs
     };
 
     public void updatePoints() {
@@ -251,6 +256,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    i++;
 	};
 	m.NotifyAll();
+        setUpdateRoot(0);
 	repaint();	
     };
     public void mouseEntered(MouseEvent e) {};
@@ -261,6 +267,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    int x=e.getX(), y=e.getY();
 	    if (x!=x2 || y!=y2) {
 		x2=x; y2=y;
+                setUpdateRoot(1);
 		repaint();
 	    };
 	};
@@ -287,11 +294,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (cmd=="labels") {
 	    showLabels=!showLabels;
 	    MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
-	    repaint();
+            setUpdateRoot(0);
+            repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
-	if (cmd=="selRed") { selRed=!selRed; repaint(); };
+        if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(0); repaint(); };
 
         if (cmd=="exportCases") {
 	    try {

@@ -17,17 +17,25 @@ class PoGraSSgraphics extends PoGraSS
     int fillSt;
     int lineWidth;
     int cx,cy;
+    int curLayer=0, paintLayer=0;
 
     Color curFillC;
     Color curPenC;
 
     /** construct an instance of {@link PoGraSS} associated with a {@link Graphics}.
-	@param g associated Graphics */
-    public PoGraSSgraphics(Graphics G) { 
+	@param G associated Graphics
+        @param layer layer to paint or -1 if all */
+    public PoGraSSgraphics(Graphics G, int layer) { 
 	g=G;
 	c=new Color[128]; cn=new String[128]; cs=0; fillSt=0; lineWidth=1;
-	curFillC=Color.white; curPenC=Color.black;
+        curFillC=Color.white; curPenC=Color.black; paintLayer=layer;
     };
+
+    /** construct an instance of {@link PoGraSS} associated with a {@link Graphics}, paint all layers
+        @param G associated Graphics */	
+    public PoGraSSgraphics(Graphics G) {
+        this(G,-1);
+    }
     
     Color getColor(String nam) {
 	int i=0; while(i<cs) { if (cn[i].compareTo(nam)==0) return c[i]; i++; };
@@ -48,23 +56,27 @@ class PoGraSSgraphics extends PoGraSS
 	    cn[cs]=new String(nam); c[cs]=new Color(R,G,B); cs++;
 	}; 
     };
-    public void setColor(int R, int B, int G) { g.setColor(curPenC=new Color(R,G,B)); };
-    public void setColor(String nam) { g.setColor(curPenC=getColor(nam)); };
-    public void drawLine(int x1, int y1, int x2, int y2) { g.drawLine(x1,y1,x2,y2); };
-    public void moveTo(int x, int y) { cx=x; cy=y; };
-    public void lineTo(int x, int y) { g.drawLine(cx,cy,x,y); cx=x; cy=y; };
-    public void drawRect(int x1, int y1, int x2, int y2) { g.drawRect(x1,y1,x2,y2); };
-    public void fillRect(int x1, int y1, int x2, int y2) { g.fillRect(x1,y1,x2,y2); };
+    public void setColor(int R, int B, int G) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=new Color(R,G,B)); };
+    public void setColor(String nam) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=getColor(nam)); };
+    public void drawLine(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawLine(x1,y1,x2,y2); };
+    public void moveTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer)  { cx=x; cy=y; } };
+    public void lineTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer) { g.drawLine(cx,cy,x,y); cx=x; cy=y; } };
+    public void drawRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawRect(x1,y1,x2,y2); };
+    public void fillRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.fillRect(x1,y1,x2,y2); };
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	g.drawRoundRect(x1,y1,x2,y2,dx,dy);
+	if (paintLayer==-1 || paintLayer==curLayer) g.drawRoundRect(x1,y1,x2,y2,dx,dy);
     };
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	g.fillRoundRect(x1,y1,x2,y2,dx,dy);
+	if (paintLayer==-1 || paintLayer==curLayer) g.fillRoundRect(x1,y1,x2,y2,dx,dy);
     };
-    public void drawOval(int x, int y, int rx, int ry) { g.drawOval(x,y,rx,ry); };
-    public void fillOval(int x, int y, int rx, int ry) { g.fillOval(x,y,rx,ry); };
-    public void drawString(String txt, int x, int y) { g.drawString(txt,x,y); };
+    public void drawOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) g.drawOval(x,y,rx,ry); };
+    public void fillOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) g.fillOval(x,y,rx,ry); };
+    public void drawString(String txt, int x, int y) { if (paintLayer==-1 || paintLayer==curLayer) g.drawString(txt,x,y); };
 
-    public void begin() {};
+    public void nextLayer() {
+        curLayer++;
+    }
+
+    public void begin() { curLayer=0; };
     public void end() {};
 };

@@ -36,4 +36,7 @@ public class Stopwatch {
 
     /** print profiling information, i.e. do a restart and print the last elapsed time if not in quiet mode */
     public void profile() { restart(); if (Common.DEBUG>1) System.out.println("time elapsed "+ts_elapsed+" ms"); };
+
+    /** print profiling information, i.e. do a restart and print the last elapsed time if not in quiet mode */
+    public void profile(String s) { restart(); if (Common.DEBUG>1) System.out.println(s+" "+ts_elapsed+" ms"); };
 };
