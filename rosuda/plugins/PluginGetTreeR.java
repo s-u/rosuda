@@ -40,7 +40,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     boolean registerPar=true;
     boolean useRserv=true;
     boolean holdConnection=false;
-
+    boolean useBootstrap=false;
+    int     numBootstrap=10;
+    
     String filePrefix="";
     
     Rconnection rc=null;
@@ -60,7 +62,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
 
     /** create a new instance of the plugin */
     public PluginGetTreeR() {
-        name="Generate tree via R 1.1";
+        name="Generate tree via R 1.2";
         author="Simon Urbanek <simon.urbanek@math.uni-augsburg.de>";
         desc="Grows classification or regression trees using R or Rserv";
         type=PT_GenTree;
@@ -75,10 +77,11 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         @param par parameter name
         @param val parameter value */
     public void setParameter(String par, Object val) {
-        if (par=="dataset") vs=(SVarSet)val;
-        if (par=="selectedOnly") useAll=!((Boolean)val).booleanValue();
-        if (par=="treeLibrary") lib=(String)val;
-        if (par=="formula") { // parse the formula
+        if (par.equals("dataset")) vs=(SVarSet)val;
+        if (par.equals("selectedOnly")) useAll=!((Boolean)val).booleanValue();
+        if (par.equals("useBootstrap")) useBootstrap=!((Boolean)val).booleanValue();
+        if (par.equals("treeLibrary")) lib=(String)val;
+        if (par.equals("formula")) { // parse the formula
 	    String f=(String)val;
 	    //System.out.println("Formula: "+f);
 	    if (f==null || vs==null || f.indexOf("~")<1) return;	    
@@ -105,29 +108,29 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
 	    formula=f;
 	}
 
-        if (par=="treeOptions") treeOpt=(String)val;
-        if (par=="registerTree") registerPar=((Boolean)val).booleanValue();
-        if (par=="useRserv") useRserv=((Boolean)val).booleanValue();    
-        if (par=="holdConnection") holdConnection=((Boolean)val).booleanValue();
-        if (par=="RservHost") RservHost=(String)val;
+        if (par.equals("treeOptions")) treeOpt=(String)val;
+        if (par.equals("registerTree")) registerPar=((Boolean)val).booleanValue();
+        if (par.equals("useRserv")) useRserv=((Boolean)val).booleanValue();    
+        if (par.equals("holdConnection")) holdConnection=((Boolean)val).booleanValue();
+        if (par.equals("RservHost")) RservHost=(String)val;
     }
 
     /** get a plugin parameter
         @param par parameter name
         @return parameter value or <code>null</code> if not availiable */
     public Object getParameter(String par) {
-        if (par=="root" || par=="tree") return root;
-        if (par=="Rversion") return Rver;
-        if (par=="Rbin") return Rbin;
-        if (par=="lastdump") return lastDump;
-        if (par=="treeLibrary") return lib;
-        if (par=="selectedOnly") return new Boolean(!useAll);
-        if (par=="formula") return formula;
-        if (par=="treeOptions") return treeOpt;
-        if (par=="registerTree") return new Boolean(registerPar);
-        if (par=="useRserv") return new Boolean(useRserv);
-        if (par=="holdConnection") return new Boolean(holdConnection);
-        if (par=="RservHost") return RservHost;
+        if (par.equals("root") || par.equals("tree")) return root;
+        if (par.equals("Rversion")) return Rver;
+        if (par.equals("Rbin")) return Rbin;
+        if (par.equals("lastdump")) return lastDump;
+        if (par.equals("treeLibrary")) return lib;
+        if (par.equals("selectedOnly")) return new Boolean(!useAll);
+        if (par.equals("formula")) return formula;
+        if (par.equals("treeOptions")) return treeOpt;
+        if (par.equals("registerTree")) return new Boolean(registerPar);
+        if (par.equals("useRserv")) return new Boolean(useRserv);
+        if (par.equals("holdConnection")) return new Boolean(holdConnection);
+        if (par.equals("RservHost")) return RservHost;
         return null;
     }
 
@@ -220,6 +223,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 System.out.println("Found R "+Rver);
                 int iISBN=Rver.indexOf(", ISBN");
                 if (iISBN>-1) Rver=Rver.substring(0,iISBN);
+                iISBN=Rver.indexOf("Under");
+                if (iISBN>-1) Rver=Rver.substring(0,iISBN);
                 initializedSuccessfully=true;
                 lastRbin=Rbin;
                 lastRver=Rver; lastRcall=Rcall;
@@ -238,6 +243,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
 
     Dialog d;
+    JCheckBox cbBoot;
+    JLabel lBoot,lBoot2;
+    JTextField tfBoot;
 
     /** pop up dialog asking for variables to be used, response, library and parameters
         @param f parent frame
@@ -327,6 +335,17 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         gbl.setConstraints(bPanel.add(chLibrary),gce);
         gbl.setConstraints(bPanel.add(new JLabel("Parameters: ")),gcw);
         gbl.setConstraints(bPanel.add(t),gce);
+        JPanel bsp=new JPanel(new FlowLayout());
+        bsp.add(cbBoot=new JCheckBox("bootstrap", useBootstrap));
+        cbBoot.setActionCommand("bootstrap");
+        cbBoot.addActionListener(this);
+        bsp.add(lBoot=new JLabel(", generate "));
+        bsp.add(tfBoot=new JTextField(""+numBootstrap,5));
+        bsp.add(lBoot2=new JLabel(" trees"));
+        lBoot.setEnabled(useBootstrap);
+        lBoot2.setEnabled(useBootstrap);
+        tfBoot.setEnabled(useBootstrap);
+        gbl.setConstraints(bPanel.add(bsp),gce);
         p.add(bPanel,BorderLayout.SOUTH);
         d.pack();
         b.addActionListener(this);b2.addActionListener(this);
@@ -381,15 +400,31 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         treeOpt=t.getText();
         if (Global.DEBUG>0)
             System.out.println("tree options: \""+treeOpt+"\"");
+        useBootstrap=cbBoot.isSelected();
+        try {
+            numBootstrap=Integer.parseInt(tfBoot.getText());
+        } catch (Exception e) {};
+        if (Global.DEBUG>0)
+            System.out.println("useBootstrap: "+useBootstrap+", numBootstrap: "+numBootstrap);
+        //cbBoot=null; lBoot=null; lBoot2=null; tfBoot=null;
         d.dispose();
         return true;
     }
 
     /** activated if a button was pressed. It determines whether "cancer" was pressed or OK" */
     public void actionPerformed(ActionEvent e) {
-        cancel=!e.getActionCommand().equals("OK");
-        d.setVisible(false);
-    };
+        String ac=e.getActionCommand();
+        if (ac.equals("OK") || ac.equals("Cancel")) {
+            cancel=!ac.equals("OK");
+            d.setVisible(false);
+        }
+        if (ac.equals("bootstrap")) {
+            boolean es=cbBoot.isSelected();
+            lBoot.setEnabled(es);
+            lBoot2.setEnabled(es);
+            tfBoot.setEnabled(es);
+        }
+    }
 
    /** executes plugin - generates a tree. If {@link #useRserv} is <code>true</code> then an Rserv connection
        is established (if not existing already due to {@link #holdConnection}). If Rserv id not availiable,
