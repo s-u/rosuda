@@ -91,7 +91,7 @@ public class JGR {
 			if (System.getProperty("os.name").startsWith("Window"))
 			{ errStr="you start JGR by double-clicking the JGR.exe program"; libName="jri.dll"; }
 			if (System.getProperty("os.name").startsWith("Mac"))
-			{ errStr="you start JGR by double-clicking the JGR application"; libName="libjri.dylib"; }
+			{ errStr="you start JGR by double-clicking the JGR application"; libName="libjri.jnilib"; }
 			JOptionPane.showMessageDialog(null, "Cannot find Java/R Interface (JRI) library ("+libName+").\nPlease make sure "+errStr+".", "Cannot find JRI library", JOptionPane.ERROR_MESSAGE);
 			System.err.println("Cannot find JRI native library!\n");
             e.printStackTrace();
