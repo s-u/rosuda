@@ -37,6 +37,9 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
 
     private TextFinder last = null;
 
+    public TextFinder() {
+        this(null);
+    }
 
     /** find a specified text in a JTextComponent
      * @param searchArea where should we search your input*/
@@ -84,8 +87,13 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         removeHighlights(searchArea);
         setVisible(false);
     }
+    
+    public void setSearchArea(JTextComponent comp) {
+        this.searchArea = comp;
+    }
 
     private void find() {
+        if (searchArea == null) return;
         searchArea.requestFocus();
         if (keyWord != null && !keyWord.equals(keyWordField.getText().trim())) {
             position = -1;
