@@ -15,6 +15,7 @@ public class TFrame extends Frame
 	if (WinTracker.current==null) WinTracker.current=new WinTracker();
 	WTmyself=new WTentry(this,tit);
 	WinTracker.current.add(WTmyself);
+        if (Common.cur_arrow!=null) setCursor(Common.cur_arrow);
     };
 
     public TFrame(String tit) { this(tit,true); }
