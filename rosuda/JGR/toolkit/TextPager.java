@@ -17,9 +17,10 @@ public class TextPager extends iFrame {
 	t=new JTextArea();
 	getContentPane().add(new JScrollPane(t));
         t.setEditable(false); t.setFont(new Font("Monospaced",Font.PLAIN,10));
+        t.setDragEnabled(true);
         FontTracker.current.add(t);
 	t.setBackground(Color.white);
-	setSize(300,400);
+	setSize(400,600);
         try {
             BufferedReader r=new BufferedReader(new FileReader(file));
             while (r.ready()) { t.append(r.readLine()); t.append("\n"); }
