@@ -325,7 +325,7 @@ KeyListener, TableColumnModelListener {
     }
 
     private void loadData() {
-        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.OPEN,JGR.directory);
+        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.LOAD,JGR.directory);
         fopen.setVisible(true);
         if (fopen.getFile() != null) {
             this.cursorWait();

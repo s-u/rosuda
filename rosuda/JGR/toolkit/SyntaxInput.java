@@ -65,7 +65,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
             //System.out.println(c);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
+            if ((c>='0' && c <='9')||((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
             else break;
             pos--;
         }

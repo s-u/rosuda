@@ -215,7 +215,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     public void open() {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
-                                              FileSelector.OPEN, JGR.directory);
+                                              FileSelector.LOAD, JGR.directory);
         fopen.setVisible(true);
         if (fopen.getFile() != null) 
             newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
