@@ -18,7 +18,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     boolean showLabels=true;
 
     /** use trigraph for X axis in case X is categorical */
-    boolean useX3=false; 
+    boolean useX3=true;
     /** array of two axes (X and Y) */
     Axis A[];
 
@@ -92,15 +92,13 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	g.setBounds(r.width,r.height);
 	g.begin();
 	g.defineColor("white",255,255,255);
-        g.defineColor("marked",128,255,128);
-	g.defineColor("black",0,0,0);
+        g.defineColor("black",0,0,0);
 	g.defineColor("outline",0,0,0);
 	g.defineColor("red",255,0,0);
-	g.defineColor("lines",96,96,255);	
-	g.defineColor("selText",255,0,0);
-	g.defineColor("selBg",255,255,192);
-	g.defineColor("splitRects",128,128,255);
-
+        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        float[] scc=Common.selectColor.getRGBComponents(null); g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
+        
 	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
 	    updatePoints();
@@ -160,7 +158,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                     int dy=A[1].getCatUp(yp)-ly;
                     if (dx<0) { lx+=dx; dx=-dx; };
                     if (dy<0) { ly+=dy; dy=-dy; };
-                    g.setColor("white");
+                    g.setColor("objects");
                     int rdx=(int)(((double)dx)*Math.sqrt(ct/maxCount));
                     int rdy=(int)(((double)dy)*Math.sqrt(ct/maxCount));
                     int mdy=(int)(((double)rdy)*mct/ct);
@@ -193,6 +191,8 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 		    dx2=A[0].clip(x2),dy2=A[1].clip(y2);
 		if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
 		if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
+                g.setColor("aSelBg");
+                g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
 		g.setColor("black");
 		g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	    };
