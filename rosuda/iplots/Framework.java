@@ -327,6 +327,7 @@ public class Framework implements Dependent, ActionListener {
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
 	sc.setSize(new Dimension(400,300));
 	f.add(sc); f.pack(); f.show();
+        f.initPlacement();
 	return sc;
     };
 
@@ -345,7 +346,9 @@ public class Framework implements Dependent, ActionListener {
         f.addWindowListener(Common.getDefaultWindowListener());
         BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-        bc.setSize(new Dimension(400,300));
+        int xdim=100+40*theCat.getNumCats();
+        if (xdim>800) xdim=800;
+        bc.setSize(new Dimension(xdim,200));
         f.add(bc); f.pack(); f.show();
         f.initPlacement();
         return bc;
@@ -366,6 +369,7 @@ public class Framework implements Dependent, ActionListener {
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
 	sc.setSize(new Dimension(400,300));
 	f.add(sc); f.pack(); f.show();
+        f.initPlacement();
 	return sc;
     };
 
@@ -382,6 +386,7 @@ public class Framework implements Dependent, ActionListener {
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(400,300));
         f.add(sc); f.pack(); f.show();
+        f.initPlacement();
         return sc;
     }
 
@@ -397,6 +402,7 @@ public class Framework implements Dependent, ActionListener {
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
 	hc.setSize(new Dimension(400,300));
 	f.add(hc); f.pack(); f.show();
+        f.initPlacement();
 	return hc;
     };
 
@@ -410,7 +416,9 @@ public class Framework implements Dependent, ActionListener {
         f.addWindowListener(Common.getDefaultWindowListener());
         BoxCanvas sc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-        sc.setSize(new Dimension(80,300));
+        int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
+        if (xdim>800) xdim=800;
+        sc.setSize(new Dimension(80,200));
         f.add(sc); f.pack(); f.show();
         f.initPlacement();
         return sc;
@@ -537,4 +545,9 @@ public class Framework implements Dependent, ActionListener {
         NotifyMsg m=waitForNotification();
         return (m==null || m.getMessageID()==Common.NM_BREAK)?null:m;
     }
+
+    public String d2s(double d) {
+        return Double.toString(d);
+    }
+        
 }
