@@ -1,5 +1,10 @@
 package org.rosuda.JGR.toolkit;
 
+//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+//Copyright (C) 2003 - 2005 Markus Helbig
+//--- for licensing information see LICENSE file in the original JGR distribution ---
+
+
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
@@ -17,7 +22,7 @@ import org.rosuda.JGR.util.*;
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2004 
+ * 	RoSuDa 2003 - 2004 
  */
 
 public class ModelBrowserTable extends JTable implements MouseListener, DragGestureListener, DragSourceListener { 

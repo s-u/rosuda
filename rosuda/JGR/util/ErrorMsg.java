@@ -1,5 +1,10 @@
 package org.rosuda.JGR.util;
 
+//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+//Copyright (C) 2003 - 2005 Markus Helbig
+//--- for licensing information see LICENSE file in the original JGR distribution ---
+
+
 import java.io.*;
 import java.util.*;
 
@@ -10,7 +15,7 @@ import java.util.*;
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2004 
+ * 	RoSuDa 2003 - 2004 
  */
 
 public class ErrorMsg {

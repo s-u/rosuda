@@ -1,5 +1,10 @@
 package org.rosuda.JGR;
 
+//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+//Copyright (C) 2003 - 2005 Markus Helbig
+//--- for licensing information see LICENSE file in the original JGR distribution ---
+
+
 import java.io.*;
 import java.util.*;
 

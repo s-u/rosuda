@@ -1,5 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
+//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+//Copyright (C) 2003 - 2005 Markus Helbig
+//--- for licensing information see LICENSE file in the original JGR distribution ---
+
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -22,7 +26,7 @@ import javax.swing.text.JTextComponent;
  * 
  * TextTransferHandler - copied out of the Java sources, because i need it as accessible class.
  * 
- * RoSuDA 2003 - 2005
+ * RoSuDa 2003 - 2005
  *
  */
 

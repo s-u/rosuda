@@ -1,5 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
+//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+//Copyright (C) 2003 - 2005 Markus Helbig
+//--- for licensing information see LICENSE file in the original JGR distribution ---
+
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -11,7 +15,7 @@ import javax.swing.JPanel;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class ToolBar extends JPanel {
