@@ -201,6 +201,8 @@ public class VarFrame extends TFrame {
 	Dimension minDim;
         SMarker sm;
 
+        int genCount=0;
+        
 	/** constructs a new variable commands canvas for associated tree canvas
 	    @param w window in which this canvas is displayed
 	    @param p associated tree canvas
@@ -253,7 +255,7 @@ public class VarFrame extends TFrame {
                 g.drawString("Total "+vs.at(0).size()+" cases",10,16);
             
 	    i=1;
-	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Fluct.Diag.","Export..."};
+	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Fluct.Diag.","Grow tree...","Export..."};
 	    int j=0;
 	    while (j<menu.length) {
 		boolean boxValid=false;
@@ -272,11 +274,11 @@ public class VarFrame extends TFrame {
 		    };
 		    if (!crap && bJ<2 && bK>0) boxValid=true;
 		};
-                if ( j<2 ||
+                if ( j<2 || j==6 ||
                     (j==2 && totsel>0)||boxValid||
                     (j==3 && totsel==2)||
                     (j==5 && ((totsel==2 && selCat==2)||(totsel==3 && selCat==2 && selNum==1)))||
-                    (j==6 && totsel>0)) {
+                    (j==7 && totsel>0)) {
                     g.setColor(C_bg);
                     g.fillRect(5,5+i*17,130,15);
 		};
@@ -314,7 +316,7 @@ public class VarFrame extends TFrame {
                     vc.repaint();
 		};    
 	    };
-            if (cmd==6) { // Export ...
+            if (cmd==7) { // Export ...
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
                     if (p!=null) {
@@ -460,7 +462,45 @@ public class VarFrame extends TFrame {
                     f.add(sc); f.pack(); f.show();
                 };
             };
-            
+            if (cmd==6) { // grow tree
+                ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
+                pd.setText("Initializing plugin, loading R ...");
+                pd.show();
+                PluginGetTreeR gt=new PluginGetTreeR();
+                if (!gt.initPlugin()) {
+                    pd.dispose();
+                    new MsgDialog(win,"Plugin init failed","Cannot initialize plugin.\n"+gt.getLastError());
+                    return;
+                }
+                gt.setParameter("dataset",vs);
+                gt.checkParameters();
+                pd.setVisible(false);
+                if (!gt.pluginDlg(win)) {
+                    pd.dispose();
+                    new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
+                    return;
+                }
+                pd.setProgress(40);
+                pd.setVisible(true);
+                if (!gt.execPlugin()) {
+                    pd.dispose();
+                    HelpFrame hf=new HelpFrame();
+                    hf.t.setText("Tree generation failed.\n"+gt.getLastError()+"\n\nDump of R output (if any):\n"+gt.getParameter("lastdump"));
+                    hf.setTitle("Plugin execution failed");
+                    //hf.setModal(true);
+                    hf.show();
+                    return;
+                }
+                pd.setProgress(100);
+                SNode nr=(SNode)gt.getParameter("root");
+                gt.donePlugin();
+                if (nr!=null) {
+                    genCount++;
+                    TFrame fff=new TFrame("Generated_"+genCount);
+                    TreeCanvas tc=InTr.newTreeDisplay(nr,fff);
+                }
+                pd.dispose();
+            }
 	};
 	public void mousePressed(MouseEvent ev) {};
 	public void mouseReleased(MouseEvent e) {};

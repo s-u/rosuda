@@ -1,5 +1,5 @@
 import java.util.*;
-//import SMarker;
+import java.io.*;
 
 /** implements set of variables (aka dataset, used as data source)
     which consists basically of a set of variables (of class {@link SVar}) and
@@ -127,7 +127,62 @@ public class SVarSet {
         if (trees==null) trees=new Vector();
         trees.add(new TreeEntry(t,n));
     }
-    
+
+    public boolean Export(PrintStream p, boolean all) { return Export(p,all,null); }
+    public boolean Export(PrintStream p) { return Export(p,true,null); }
+    public boolean Export(PrintStream p, boolean all, int vars[]) {
+        boolean exportAll=all || mark==null || mark.marked()==0;
+        try {
+            if (p!=null) {
+                int j=0,tcnt=0,fvar=0;
+                j=0;
+                if (vars==null || vars.length<1) {
+                    while(j<count()) {
+                        p.print(((tcnt==0)?"":"\t")+at(j).getName());
+                        if (tcnt==0) fvar=j;
+                        tcnt++;
+                        j++;
+                    }
+                } else {
+                    while(j<vars.length) {
+                        p.print(((tcnt==0)?"":"\t")+at(vars[j]).getName());
+                        if (tcnt==0) fvar=vars[j];
+                        tcnt++;
+                        j++;
+                    }
+                }
+                p.println("");
+                int i=0;
+                while (i<at(fvar).size()) {
+                    if (exportAll || mark.at(i)) {
+                        j=fvar;
+                        j=0;
+                        if (vars==null || vars.length<1) {
+                            while(j<count()) {
+                                Object oo=at(j).at(i);
+                                p.print(((j==0)?"":"\t")+((oo==null)?"NA":oo.toString()));
+                                j++;
+                            }
+                        } else {
+                            while(j<vars.length) {
+                                Object oo=at(vars[j]).at(i);
+                                p.print(((j==0)?"":"\t")+((oo==null)?"NA":oo.toString()));
+                                j++;
+                            }
+                        }
+                        p.println("");
+                    }
+                    i++;
+                };
+            };
+            return true;
+        } catch (Exception eee) {
+            if (Common.DEBUG>0) {
+                System.out.println("* SVarSet.Export...: something went wrong during the export: "+eee.getMessage()); eee.printStackTrace();
+            };
+        };
+        return false;
+    }
     public static void Debug(SVarSet sv) {
 	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
 	for (Enumeration e=sv.elements(); e.hasMoreElements();) {
