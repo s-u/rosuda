@@ -8,6 +8,7 @@ import java.awt.event.*;
 public class Framework {
     Vector dataset;
     SVarSet cvs;
+    int tvctr;
 
     /** initialize framework, create and select a dataset which id called "default".
         one framework supports multiple datasets, plots etc. so there should be no
@@ -15,12 +16,19 @@ public class Framework {
         */
     public Framework() {
         Common.AppType=Common.AT_Framework;
+        Common.useAquaBg=true;
+        Common.initStatic();
 	cvs=new SVarSet();
 	cvs.setName("default");
 	dataset=new Vector();
 	dataset.addElement(cvs);
     }
 
+    public String getNewTmpVar() {
+        tvctr++;
+        return "temp."+tvctr;
+    }
+    
     /** get current dataset */
     public SVarSet getCurrentSet() { return cvs; };
     
@@ -175,6 +183,27 @@ public class Framework {
 	return sc;
     };
 
+    public BarCanvas newBarchart(int v) { return newBarchart(cvs,v,-1); }
+    public BarCanvas newBarchart(int v, int wgt) { return newBarchart(cvs,v,wgt); }
+    public BarCanvas newBarchart(SVarSet vs, int v, int wgt) {
+        if (vs.getMarker()==null)
+            vs.setMarker(new SMarker(vs.at(v).size()));
+        SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
+        if (theCat==null) return null;
+        TFrame f=new TFrame(
+                            (theNum!=null)?
+                            "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
+                            "Barchart ("+theCat.getName()+")"
+                            ,TFrame.clsBar);
+        f.addWindowListener(Common.defaultWindowListener);
+        BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
+        bc.setSize(new Dimension(400,300));
+        f.add(bc); f.pack(); f.show();
+        f.initPlacement();
+        return bc;
+    }
+    
     public LineCanvas newLineplot(int[] v) { return newLineplot(cvs,-1,v); }
     public LineCanvas newLineplot(int rv, int[] v) { return newLineplot(cvs,rv,v); }
     public LineCanvas newLineplot(int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(cvs,rv,vv); }
@@ -244,6 +273,17 @@ public class Framework {
         SVar v=cvs.at(vid);
         if (v==null) return -1;
         return (v.isNum())?1:0;
+    }
+
+    public void setSecMark(int[] ml) {
+        if (cvs==null) return;
+        int i=0;
+        SMarker m=cvs.getMarker();
+        while(i<ml.length && i<m.size()) {
+            m.setSec(i,ml[i]);
+            i++;
+        }
+        m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
     }
     
     public void updateMarker() {
