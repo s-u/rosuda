@@ -104,6 +104,12 @@ public class Framework {
 	return addVar(v);
     };
 
+    public static String[] toStringArray(Object[] o) {
+        String[] s=new String[o.length];
+        int i=0; while(i<o.length) { if (o[i]!=null) s[i]=o[i].toString(); i++; }
+        return s;
+    }
+
     /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
         the new content cannot exceed the original size of the variable, no cases are added.
         @param vi ID of the variable
@@ -216,7 +222,35 @@ public class Framework {
 	return vf;
     };
 
+    public double[] getDoubleContent(int vid) {
+        SVar v=cvs.at(vid);
+        if (v==null) return null;
+        double[] d=new double[v.size()];
+        int i=0;
+        while(i<v.size()) { d[i]=v.atD(i); i++; };
+        return d;
+    };
+
+    public String[] getStringContent(int vid) {
+        SVar v=cvs.at(vid);
+        if (v==null) return null;
+        String[] d=new String[v.size()];
+        int i=0;
+        while(i<v.size()) { d[i]=v.atS(i); i++; };
+        return d;
+    };
+
+    public int varIsNum(int vid) {
+        SVar v=cvs.at(vid);
+        if (v==null) return -1;
+        return (v.isNum())?1:0;
+    }
+    
     public void updateMarker() {
         if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+    }
+
+    public void updateVars() {
+        if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_VarChange));
     }
 }
