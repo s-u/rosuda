@@ -123,6 +123,56 @@ public class PC extends DragBox implements ActionListener {
     this.requestFocus();
   }
 
+
+  public String getToolTipText(MouseEvent e) {
+    if( e.isControlDown() ) {
+      int minXDist = Integer.MAX_VALUE;
+      int minYDist = Integer.MAX_VALUE;
+      int popXId = 0;
+      int popYId = 0;
+      Polygon p = poly[0];
+      for( int j=0; j<k; j++ ) {
+        if( Math.abs(p.xpoints[j]-e.getX()) < minXDist ) {
+          popXId = j;
+          minXDist =  Math.abs(p.xpoints[j]-e.getX());
+        }
+      }
+      for( int i=0; i<data.n; i++ ) {
+        p = poly[i];
+        if( Math.abs(p.ypoints[popXId]-e.getY()) < minYDist ) {
+          popYId = i;
+          minYDist =  Math.abs(p.ypoints[popXId]-e.getY());
+        }
+      }
+      if( minXDist < slotWidth/4 ) {
+        String x="";
+        if(  data.phoneNumber(vars[permA[popXId]]) ) {
+          x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number: "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
+        }
+        else if( data.categorical(vars[permA[popXId]]) )
+          if( paintMode.equals("Poly") ) {
+            x = " " + data.getName(vars[permA[popXId]]);
+            x = " Level: "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
+          }
+            else
+              for( int i = 0;i < rects.size(); i++) {
+                MyRect r = (MyRect)rects.elementAt(i);
+                if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+                  return Util.info2Html(r.getLabel());
+                }
+              }
+                else {
+                  x = data.getName(vars[permA[popXId]]);
+                  x = " Value: "+dataCopy[permA[popXId]][popYId];
+                }
+          return Util.info2Html(x);
+        }
+      return null;
+    } else
+      return null;
+  }
+  
+
   public void processMouseEvent(MouseEvent e) {
 
     if (e.getID() == MouseEvent.MOUSE_PRESSED && !paintMode.equals("XbyY")) {
@@ -334,7 +384,7 @@ public class PC extends DragBox implements ActionListener {
               alpha001.setState(true);
             else if( alpha >= 0.0049 )
               alpha0005.setState(true);
-              
+
             alphaM.add(alpha1);
             alphaM.add(alpha05);
             alphaM.add(alpha01);
@@ -369,8 +419,13 @@ public class PC extends DragBox implements ActionListener {
               bothM.setState(true);
 
             plotM.add(polyM);
-            plotM.add(boxM);
+            plotM.add(boxM);	
             plotM.add(bothM);
+            if( zoomToSel ) {
+              boxM.setEnabled(false);
+              bothM.setEnabled(false);
+            }
+              
             polyM.setActionCommand("Poly");
             boxM.setActionCommand("Box");
             bothM.setActionCommand("Both");
@@ -379,7 +434,7 @@ public class PC extends DragBox implements ActionListener {
             bothM.addActionListener(this);
 
             scaleType.add(plotM);
-            
+
             JCheckBoxMenuItem hotSelM = new JCheckBoxMenuItem("HotSelector", hotSelection);
             hotSelM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             hotSelM.setActionCommand("Hot");
@@ -387,15 +442,25 @@ public class PC extends DragBox implements ActionListener {
 
             scaleType.add(hotSelM);
 
-            JCheckBoxMenuItem zoomM = new JCheckBoxMenuItem("Zeiser", zoomToSel);
+            JMenuItem zoomM = new JMenuItem("Crop Selection");
             zoomM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             zoomM.setActionCommand("Zeiser");
             zoomM.addActionListener(this);
 
             scaleType.add(zoomM);
+            if( !paintMode.equals("Poly") ) {
+              zoomM.setEnabled(false);
+            }
+            
+            JMenuItem homeM = new JMenuItem("Home View");
+            homeM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            homeM.setActionCommand("Home");
+            homeM.addActionListener(this);
+
+            scaleType.add(homeM);
 
             scaleType.add(new JMenuItem("Dismiss"));
-            
+
             if( k > 1 && !paintMode.equals("XbyY") ) {
               scaleType.show(e.getComponent(), e.getX(), e.getY());
             }
@@ -518,7 +583,7 @@ public class PC extends DragBox implements ActionListener {
       else                                     // if not pressed or released
         super.processMouseEvent(e);
   }
-
+    
     public void processMouseMotionEvent(MouseEvent e) {
       if( moving ) {
         Graphics g = this.getGraphics();
@@ -670,10 +735,14 @@ public class PC extends DragBox implements ActionListener {
         for( int j=0; j<k; j++ )
           permA[j] = tPerm[j];
         this.dataChanged(0);
-      } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R ) {
+      } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R
+                  && paintMode.equals("Poly") ) {
         actionPerformed(new ActionEvent(this, 325145, "Zeiser"));
       } else if ( e.getModifiers() == (Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_H ) {
         actionPerformed(new ActionEvent(this, 325141, "Hot"));
+      } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_NUMPAD0
+                  || e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_0) {
+        actionPerformed(new ActionEvent(this, 325143, "Home"));
       }      
       else
         super.processKeyEvent(e);
@@ -692,6 +761,8 @@ System.out.println("Command: "+command);
       }
       else if( command.equals("Box") || command.equals("Poly") || command.equals("Both") ) {
         paintMode = command;
+        if( !command.equals("Poly") )
+          zoomToSel = false;
         create(width, height);
         update(this.getGraphics());
       }
@@ -755,26 +826,32 @@ System.out.println("Command: "+command);
           onlyHi[i] = true;
         this.dataChanged(0);
       } else if ( command.equals("Zeiser") ) {
-        if( !zoomToSel ) {
-          bg = null;
-          double[] selection = data.getSelection();
-          for(int i=0; i<data.n; i++)
-            if( selection[i] > 0 )
-              onlyHi[i] = true;
-            else
-              onlyHi[i] = false;
-          hotSelection = true;									// we need to set an initial hotSelector to rescale (is switched off in first paint)
-        } else
-          for( int i=0; i<data.n; i++ )
-            onlyHi[i] = true;
+        bg = null;
+        double[] selection = data.getSelection();
+        for(int i=0; i<data.n; i++)
+          data.setSelection(i, 1, Selection.MODE_XOR);
+        for(int i=0; i<data.n; i++)
+          if( selection[i] > 0 )
+            onlyHi[i] = onlyHi[i] && true;
+          else
+            onlyHi[i] = onlyHi[i] && false;
+        for(int i=0; i<data.n; i++)
+          data.setSelection(i, onlyHi[i]?1:0, Selection.MODE_STANDARD);
+        hotSelection = true;									// we need to set an initial hotSelector to rescale (is switched off in first paint)
+        zoomToSel = true;
+        this.dataChanged(0);
+      } else if ( command.equals("Home") ) {
+        for( int i=0; i<data.n; i++ )
+          onlyHi[i] = true;
 
-        zoomToSel = !zoomToSel;
+        zoomToSel = false;
+        hotSelection = false;
         this.dataChanged(0);
       }
       else
         super.actionPerformed(e);
     }
-
+    
     public void paint(Graphics2D g2d) {
 
       Graphics2D g = (Graphics2D)g2d;
@@ -792,10 +869,13 @@ System.out.println("Command: "+command);
 
         this.width = size.width;
         this.height = size.height;
-        if( hotSelection && !zoomToSel )
+        if( hotSelection && !zoomToSel ) 
           getData();
-        if( zoomToSel )
+        if( zoomToSel && hotSelection ) {
           hotSelection = false;
+          for(int i=0; i<data.n; i++)
+            data.setSelection(i, 1, Selection.MODE_XOR);
+        }
         create( width, height );
         oldWidth = size.width;
         oldHeight = size.height;
