@@ -105,7 +105,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         int l = text.length();
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_'||c=='\\'||c=='/' || c=='~') offset--;
+            if (((c>='0')&&(c<='9')) || ((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_'||c=='\\'||c=='/'||c=='~') offset--;
             else break;
             pos--;
         }
