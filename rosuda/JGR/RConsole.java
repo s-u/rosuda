@@ -134,7 +134,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.show();
     }
 
-    public synchronized void execute(final String cmd) {
+    public void execute(final String cmd) {
         try {
             JGR.RHISTORY.add(cmd);
             currentHistPosition = JGR.RHISTORY.size();
@@ -144,8 +144,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     public void run() {*/
                         JGR.READY = false;
                         JGR.RCSync.triggerNotification(cmd);
-                    /*}
-                };
+                   /* }
+                //};
                 t.start();*/
             }
         }
@@ -163,8 +163,9 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
 
 
-    public synchronized void help(String help) {
+    public void help(String help) {
         boolean exact = false;
+        System.out.println(help);
         if (help != null) {
             help = help.replaceAll("[\"|(|)]", "");
             if (help.startsWith("help.search")) {
@@ -182,18 +183,22 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             final String h;
             if (help!=null) h = help.trim();
             else h = null;
+        System.out.println("thread create");
             Thread t = new Thread() {
                 public void run() {
                     progress.start("Working");
                     setWorking(true);
                     try {
+                        System.out.println("Help");
                         new RHelp();
                         if (h!=null) RHelp.current.search(h,e);
                     } catch (Exception e1) {
+                        e1.printStackTrace();
                     }
                     setWorking(false);
                 }
             };
+            System.out.println("thread started");
             t.start();
         }
         else {
@@ -207,6 +212,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                         try {
                             RHelp.current.search(h,e);
                         } catch (Exception e1) {
+                            e1.printStackTrace();
                         }
                         setWorking(false);
                     }
