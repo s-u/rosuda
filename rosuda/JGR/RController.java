@@ -543,7 +543,7 @@ public class RController {
     }
 
     /**
-        * export an SVarSet to R
+     * export an SVarSet to R
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -567,6 +567,8 @@ public class RController {
             success = exportInteger(vs);
         else if (type != null && type.equals("character"))
             success = exportCharacter(vs);
+        else if (type != null && type.equals("factor"))
+            success = exportFactor(vs);
         return success;
     }
 
@@ -582,7 +584,7 @@ public class RController {
     }
 
     /**
-        * export r-numeric
+     * export r-numeric
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -601,7 +603,7 @@ public class RController {
     }
 
     /**
-        * export r-integer
+     * export r-integer
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -618,8 +620,35 @@ public class RController {
         }
     }
 
+
     /**
-        * export r-character
+     * export r-factor
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
+    private static boolean exportFactor(SVarSet vs) {
+        try {
+            if (vs.count() > 1) return false;
+            int[] ids = new int[((SVarFact) vs.at(0)).cont.length];
+            for (int z = 0; z < ids.length; z++)
+                ids[z] = ((SVarFact) vs.at(0)).cont[z]+1;
+            long v = JGR.R.rniPutIntArray(ids);
+            long c = JGR.R.rniPutString("factor");
+            JGR.R.rniSetAttr(v,"class",c);
+            long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(0)).cats);
+            JGR.R.rniSetAttr(v,"levels",levels);
+            JGR.R.rniAssign("jgrtemp",v,0);
+            return setName(vs.getName());
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+
+    /**
+     * export r-character
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -640,7 +669,7 @@ public class RController {
     }
 
     /**
-        * export r-data.frame
+     * export r-data.frame
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -659,9 +688,10 @@ public class RController {
                     contlist[i] = v;
                 }
                 else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
-                    for (int z = 0; z < ((SVarFact) vs.at(i)).cont.length; z++)
-                        ((SVarFact) vs.at(i)).cont[z] = ((SVarFact) vs.at(i)).cont[z]+1;
-                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
+                    int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
+                    for (int z = 0; z < ids.length; z++)
+                        ids[z] = ((SVarFact) vs.at(i)).cont[z]+1;
+                    long v = JGR.R.rniPutIntArray(ids);
                     long c = JGR.R.rniPutString("factor");
                     JGR.R.rniSetAttr(v,"class",c);
                     long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
@@ -693,7 +723,7 @@ public class RController {
     }
 
     /**
-        * export r-matrix
+     * export r-matrix
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -755,7 +785,7 @@ public class RController {
     }
 
     /**
-        * export r-list
+     * export r-list
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -774,9 +804,10 @@ public class RController {
                     contlist[i] = v;
                 }
                 else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
-                    for (int z = 0; z < ((SVarFact) vs.at(i)).cont.length; z++)
-                        ((SVarFact) vs.at(i)).cont[z] = ((SVarFact) vs.at(i)).cont[z]+1;
-                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
+                    int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
+                    for (int z = 0; z < ids.length; z++)
+                        ids[z] = ((SVarFact) vs.at(i)).cont[z]+1;
+                    long v = JGR.R.rniPutIntArray(ids);
                     long c = JGR.R.rniPutString("factor");
                     JGR.R.rniSetAttr(v,"class",c);
                     long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
@@ -800,7 +831,7 @@ public class RController {
     }
 
     /**
-        * compare to string and retrun the common prefix
+     * compare to string and retrun the common prefix
      * @param str1 String 1
      * @param str2 String 2
      * @return common prefix
