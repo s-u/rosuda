@@ -188,11 +188,12 @@ public class Mosaic extends DragBox implements ActionListener {
           sum  += tablep.table[id];
         }
         r.setHilite( sumh/sum );
-        r.draw(bg);
+        if( !((displayMode.equals("Fluctuation") || displayMode.equals("Multiple Barcharts")) && sum == 0) )
+          r.draw(bg);
 
         bg.setColor(Color.black);
       }
-      if( displayMode.equals("Same Bin Size") || displayMode.equals("Multiple Barcharts") || displayMode.equals("Fluctuation") )
+      if( displayMode.equals("Same Bin Size") || displayMode.equals("Multiple Barcharts") || displayMode.equals("Fluctuation") || printing )
         for( int i = 0;i < Labels.size(); i++) {
           MyText t = (MyText)Labels.elementAt(i);
           t.draw(bg);
@@ -554,7 +555,7 @@ public class Mosaic extends DragBox implements ActionListener {
           if( !printing )
             thisGap = (maxLevel - j) * 3;
           else
-            thisGap = (maxLevel - j) * 3 * 5;
+            thisGap = (maxLevel - j) * 3 * printFactor;
           if( Dirs[j] == 'x' ) {
             subX += thisGap * (levels[j]-1) * mulX;
             mulX *= levels[j];
@@ -629,7 +630,7 @@ public class Mosaic extends DragBox implements ActionListener {
         // Create labels for the first 2 dimensions 
         int pF = 1;
         if( printing )
-          pF = 5;
+          pF = printFactor;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
           for(int j=0; j<Math.min(2, maxLevel); j++)
             for( int i=0; i<levels[j]; i++) {
