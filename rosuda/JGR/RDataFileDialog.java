@@ -126,7 +126,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
             else useQuote = quotes[quoteBox.getSelectedIndex()];
 
-            String cmd = dataName.getText().trim()+" <- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim()+")":"")+"";
+            String cmd = dataName.getText().trim().replaceAll("\\s","")+ "<- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
             JGR.MAINRCONSOLE.execute(cmd);
         }
         dispose();

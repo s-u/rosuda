@@ -67,15 +67,14 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public RConsole(File workSpace) {
         super("Console", iFrame.clsMain);
         String[] Menu = {
-            "+", "File", "@NNew Workspace", "newwspace", "@OLoad Workspace",
+            "+", "File","Load Datafile", "loaddata","-","@NNew Workspace", "newwspace", "@OLoad Workspace",
             "loadwspace",
             "@SSave Workspace", "savewspace", "!SSave Workspace as",
-            "savewspaceas",
-            "-", "Load Datafile", "loaddata", "~File.Quit",
+            "savewspaceas","~File.Quit",
             "~Edit",
-            "+", "Tools", "@EEditor", "editor", "@BObject Manager", "objectmgr",
-            "DataTable", "table", "-", "Increase Font", "fontBigger",
-            "Decrease Font", "fontSmaller",
+            "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
+            "DataTable", "table", "-", "Increase Fontsize", "fontBigger",
+            "Decrease Fontsize", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
             "~Window",
             "~Help", "R Help", "rhelp", "~About", "0"};

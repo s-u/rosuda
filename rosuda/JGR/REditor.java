@@ -66,7 +66,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
             "@SSave", "save", "!SSave as", "saveas",
             "-", "@PPrint", "print","~File.Basic.End",
             "~Edit",
-            "+", "Tools", "Increase", "fontBigger", "Decrease Font",
+            "+", "Tools", "Increase Fontsize", "fontBigger", "Decrease Fontsize",
             "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
             "~Window",
             "~Help", "R Help", "rhelp", "~About", "0"};
