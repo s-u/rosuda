@@ -16,7 +16,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
     LineCanvas lc;
     Label l1;
     Panel cp,sp,pp;
-    PlotLine li;
+    PlotLine li,lrl, rrl;
     double spVal;
     
     public SplitEditor(SNode nd) {
@@ -207,6 +207,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             lc.setLineType(LineCanvas.LT_RECT);
             pp.add(lc);
             lc.getXAxis().setValueRange(cv.getMin(),cv.getMax()-cv.getMin());
+            lc.getYAxis().setValueRange(0,(maxD>n.sampleDevGain)?maxD:n.sampleDevGain);
             PlotManager pm=sc.getPlotManager();
             if (pm!=null) {
                 li=new PlotLine(pm);
@@ -214,6 +215,19 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                 li.setColor(new PlotColor(255,0,0));
                 li.set(spVal,-1,spVal,1);
                 li.setVisible(true);
+                if (!isCat) {
+                    lrl=new PlotLine(pm);
+                    lrl.setCoordinates(1,1);
+                    lrl.setColor(new PlotColor(255,0,128));
+                    lrl.set(cv.getMin(),0,spVal,0);
+                    lrl.setVisible(true);
+                    rrl=new PlotLine(pm);
+                    rrl.setCoordinates(1,1);
+                    rrl.setColor(new PlotColor(255,0,128));
+                    rrl.set(spVal,0,cv.getMax(),0);
+                    rrl.setVisible(true);
+                    setSplitValue(spVal);
+                }
             }
             sw.profile("fixup , draw line");
         }
@@ -231,7 +245,35 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             };
         };
     };
-    
+
+    void setSplitValue(double v) {
+        spVal=v;
+        if (!root.response.isCat()) {
+            double sumL=0, sumR=0;
+            int ctl=0, ctr=0;
+            int i=0,j;
+            while(i<n.data.size()) {
+                Integer iN=(Integer)n.data.elementAt(i);
+                if (iN!=null) {
+                    j=iN.intValue();
+                    double pv=root.response.atD(j);
+                    if (cv.atD(j)<=v) { sumL+=pv; ctl++; }
+                    else { sumR+=pv; ctr++; }
+                }
+                i++;
+            }
+            double pvL=(ctl>0)?sumL/((double)ctl):0;
+            double pvR=(ctr>0)?sumR/((double)ctr):0;
+            //System.out.println("ctL="+ctl+", ctR="+ctr+", pvL="+Tools.getDisplayableValue(pvL)+", pvR="+Tools.getDisplayableValue(pvR));
+            lrl.set(cv.getMin(),pvL,spVal,pvL);
+            rrl.set(spVal,pvR,cv.getMax(),pvR);
+        }
+        if (li!=null) {
+            li.set(spVal,-1,spVal,1);
+        }
+        sc.repaint();        
+    }
+
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
         String cmd=e.getActionCommand();
@@ -241,11 +283,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
             double v=0; boolean ok=false;
             try { v=Double.parseDouble(cmd); ok=true; } catch(Exception ex) {};
             if (ok) {
-                spVal=v;
-                if (li!=null) {
-                    li.set(spVal,-1,spVal,1);
-                    sc.repaint();
-                }
+                setSplitValue(v);
             }
         } else {
             if (cmd=="Cancel") {
@@ -287,7 +325,9 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         }
                         pd.setProgress(40);
                         pd.setVisible(true);
-                        gt.setParameter("holdConnection",Boolean.TRUE);
+                        /* we cannot use holdConnection yet, since the method used by the plugin assumes
+                            that each time entire dataset must be loaded
+                        gt.setParameter("holdConnection",Boolean.TRUE); */
                         gt.setParameter("selectedOnly",Boolean.TRUE);
                         gt.setParameter("registerTree",Boolean.FALSE);
                         SMarker bak=vs.getMarker();
