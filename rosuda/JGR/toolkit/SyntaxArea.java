@@ -237,7 +237,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     public void setFont(Font f) {
         super.setFont(f);
         try {
-            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),iPreferences.SIZE, false);
+            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),iPreferences.DEFAULTFONT, false);
         } catch (Exception e) {}
     }
 

@@ -113,7 +113,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
             new Insets(2, 5, 5, 5), 0, 0));
 
         tabpane.addTab("Look & Feel",lookandfeel);
-        tabpane.addTab("RProfile",new JScrollPane(RProfile));
+        //tabpane.addTab("RProfile",new JScrollPane(RProfile));
 
         this.getContentPane().add(tabpane,new GridBagConstraints(0, 0, 1, 1, 1.0, 1.0
             , GridBagConstraints.WEST, GridBagConstraints.BOTH,

@@ -55,6 +55,8 @@ public class iPreferences {
     public static Color ERRORColor = Color.red;
     /** DefaultBracketHighLightColor */
     public static Color BRACKETHighLight = new Color(200, 255, 255);
+    /** DefaultFontSet */
+    public static MutableAttributeSet DEFAULTFONT = new SimpleAttributeSet();
     /** DefaultSizeSet */
     public static MutableAttributeSet SIZE = new SimpleAttributeSet();
     /** DefaultCMDSet */
@@ -104,6 +106,8 @@ public class iPreferences {
         refreshKeyWords();
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
+        StyleConstants.setFontSize(DEFAULTFONT,FontSize);
+        StyleConstants.setFontFamily(DEFAULTFONT,FontName);
         StyleConstants.setForeground(CMD,CMDColor);
         StyleConstants.setForeground(RESULT,RESULTColor);
         StyleConstants.setForeground(NORMAL, Color.black);
@@ -119,8 +123,11 @@ public class iPreferences {
 
     public static void refresh() {
         refreshKeyWords();
+        System.out.println(FontName);
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
+        StyleConstants.setFontSize(DEFAULTFONT,FontSize);
+        StyleConstants.setFontFamily(DEFAULTFONT,FontName);
         StyleConstants.setForeground(CMD,CMDColor);
         StyleConstants.setForeground(RESULT,RESULTColor);
         StyleConstants.setForeground(NORMAL, Color.black);

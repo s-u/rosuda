@@ -58,6 +58,7 @@ public class FontTracker {
         while (e.hasMoreElements()) {
             Component comp = (Component) e.nextElement();
             comp.setFont(iPreferences.DefaultFont);
+            
             try {
                 //System.out.println(comp.getClass().getName());
                 if (comp.getClass().getName().equals("javax.swing.JTable") ||
