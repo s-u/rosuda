@@ -186,7 +186,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             else h = null;
             Thread t = new Thread() {
                 public void run() {
-                    progress.start("Working");
+                    progress.start();
                     setWorking(true);
                     try {
                         new JGRHelp();
@@ -204,7 +204,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
                 final String h = help.trim();
                 Thread t = new Thread() {
                     public void run() {
-                        progress.start("Working");
+                        progress.start();
                         setWorking(true);
                         JGRHelp.current.show();
                         try {
@@ -289,7 +289,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         }
         else {
             toolBar.stopButton.setEnabled(true);
-            progress.start("Working");
+            progress.start();
             setWorking(true);
         }
     }

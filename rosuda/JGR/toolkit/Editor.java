@@ -173,7 +173,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     }
 
     public void loadFile() {
-        progress.start("Loading");
+        progress.start();
         setWorking(true);
         editArea.setText("");
         try {
@@ -244,7 +244,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         if (fileName == null || fileName.equals("")) {
             return saveFileAs();
         } else {
-            progress.start("Saveing");
+            progress.start();
             setWorking(true);
             new FileSave(this);
             this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));

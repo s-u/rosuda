@@ -53,7 +53,7 @@ public class iFrame extends JFrame {
 
     public WTentrySwing MYEntry;
 
-    public ProgressLabel progress = new ProgressLabel();
+    public ProgressLabel progress = new ProgressLabel(24);
 
 
     public iFrame(String title, int wclass) {

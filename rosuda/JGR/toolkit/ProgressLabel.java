@@ -1,4 +1,4 @@
-package org.rosuda.JGR.toolkit.*;
+package org.rosuda.JGR.toolkit;
 
 /**
  *  ProgressLabel
@@ -19,7 +19,7 @@ public class ProgressLabel extends Canvas implements Runnable {
 	private Thread thread;
 	private boolean next = false;
 	private int angle = 0;
-	private int x,length,a;
+	private int x,length,a, gap = 16;
 	private Image img = null;
 	private Graphics g2 = null;
 	private Color col = Color.darkGray;
@@ -28,7 +28,7 @@ public class ProgressLabel extends Canvas implements Runnable {
 		this.setSize(g,g);
 		this.x = g / 2;
 		this.length = x - (x/10); 
-		a = (length*3)/4;
+		a = (length*3)/5;
 	}
 	
 	public void update(Graphics g) {
@@ -47,8 +47,8 @@ public class ProgressLabel extends Canvas implements Runnable {
 	private void drawProgress(Graphics g, int pos) {
 		g.setColor(this.getBackground());
 		int z = 360;
-		for (int i = 0; i <=z; i += 20) {
-			g.fillArc(x - length, x - length, 2*length, 2*length,i+pos,10);
+		for (int i = 0; i <=z; i += 2*gap) {
+			g.fillArc(x - length, x - length, 2*length, 2*length,i+pos,gap);
 		}
 		g.fillArc(x-a,x-a,2*a,2*a,0,360);
 	}
@@ -76,8 +76,8 @@ public class ProgressLabel extends Canvas implements Runnable {
 	public void run() {
 		try {
 			while (true) {
-				Thread.sleep(50);
-				angle += 5;
+				Thread.sleep(100);
+				angle += 10;
 				repaint();
 			}
 		}

@@ -80,7 +80,7 @@ public class JGR {
         MAINRCONSOLE = new JGRConsole();
         splash.toFront();
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
-        MAINRCONSOLE.progress.start("Starting R");
+        MAINRCONSOLE.progress.start();
         MAINRCONSOLE.setWorking(true);
         String[] args={"--save"};
         R=new Rengine(args,true,MAINRCONSOLE);
