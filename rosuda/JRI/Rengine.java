@@ -4,6 +4,7 @@ import java.lang.*;
 import java.io.*;
 
 import org.rosuda.RGui.*;
+import org.rosuda.RGui.toolkit.*;
 
 public class Rengine extends Thread {
     static {
@@ -54,7 +55,7 @@ public class Rengine extends Thread {
 
     public void jriWriteConsole(String text)
     {
-        if (console != null) console.output.append(text);
+        if (console != null) console.output.append(text,Preferences.RESULT);
         else System.out.println("R> "+text);
     }
 
