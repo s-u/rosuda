@@ -21,7 +21,7 @@ import java.util.prefs.Preferences;
 public class JGRPrefs {
 
 
-    public static final String VERSION = "DP4";
+    public static final String VERSION = "DP5";
     public static final String TITLE = "JGR";
     public static final String SUBTITLE = "Java Gui for R";
     public static final String DEVELTIME = "2003 - 2004";
