@@ -7,19 +7,21 @@ public class Rengine extends Thread {
         try {
             System.loadLibrary("jri");
         } catch (UnsatisfiedLinkError e) {
+			System.err.println("Cannot find JRI native library!\n");
             e.printStackTrace();
             System.exit(1);
         }
-        if (getVersion()<0x0100) {
-            System.err.println("JRI library version doesn't match! Please update your JRI dynamic library.");
-            System.exit(2);
-        }
     }
 
-    public static int getVersion() {
-        return 0x0100; // we should call rniGetVersion or something, but in a safe way ...
+	/**	version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match	*/
+    public static long getVersion() {
+        return 0x0102;
     }
 
+	public static boolean versionCheck() {
+		return (getVersion()==rniGetVersion());
+	}
+	
     public static int DEBUG=0;
 	
     static Rengine mainEngine=null;
@@ -87,7 +89,8 @@ public class Rengine extends Thread {
 
     //public static native void rniSetEnv(String key, String val);
     //public static native String rniGetEnv(String key);
-    //public static native long rniGetVersion();
+	
+    public static native long rniGetVersion();
     
     public native int rniStop(int flag);
     
