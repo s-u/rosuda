@@ -1,4 +1,5 @@
 import java.awt.Rectangle;
+import java.io.PrintStream;
 
 /** Portable Graphics SubSystem - first draft of the abstract interface definition.
     May change (or be extended) in the future.
@@ -49,8 +50,26 @@ public class PoGraSS
 
     public String versionString="0.96";
     public int    version=0x0096;
-        
+
+    /** this variable is used only by PoGraSS implementations which support layer caching.
+        the program using such PoGraSS can check this value to perform some speed optimizations
+        and skip steps that are not necessary for the specified layer. If this value is -1 then
+        no caching is used and all layers are to be fully painted (which is the default)
+        [since 0.97beta]
+    */
+    public int    localLayerCache=-1;
+
+    /** if set to <code>true</code> then calling any PoGraSS method should have no effect.
+        it is used to make certain parts of PoGraSS code conditional - e.g. layers or alpha-support
+        [since 0.97beta]
+    */
+    boolean nullEffect=false;
+
+    PrintStream ps; // can be used by PoGraSS instances with file output
+    
     public PoGraSS() { boundsX=0; boundsY=0; };
+
+    public void setOutPrintStream(PrintStream pstr) { ps=pstr; };
 
     public void setBounds(int x, int y, int w, int h) {
 	boundsX=x; boundsY=y; boundsWidth=w; boundsHeight=h; 
@@ -60,7 +79,7 @@ public class PoGraSS
 	return new Rectangle(boundsX,boundsY,boundsWidth,boundsHeight); 
     };
 
-    /** sets the {@link #jointColors} flag. Should be use after begin but before the first graphical command.
+    /** sets the {@link #jointColors} flag. Should be used after begin but before the first graphical command.
         The behavior is undefined if used elsewhere. */
     public void useJointColors(boolean jc) {
         jointColors=jc;
@@ -135,4 +154,38 @@ public class PoGraSS
     public void setFontFace(int face, String name) { setFontFace(face); setOptionalFace(name); }
     public void setFontSize(int pt) {}
     public void setFontStyle(int attr) {}
+
+    // 0.97-beta experimental methods - they are NOT in the standard yet
+    // these commands are NOT translated into meta. They are also ESTIMATES only, this is
+    // why they cannot be used for exact centering etc. Main purpose is to implement roughly
+    // boxed text - a feature which should come in final 0.97 or 0.98 once we get rid of
+    // single-color
+    public int getWidthEstimate(String s) { return (s==null)?0:s.length()*8; }
+    public int getHeightEstimate(String s) { return 12; };
+    // also beta: support for alpha channel
+    // beware: alpha-channels are not supported by all PoGraSS implementations
+    // (that's why it wasn't included in the first PoGraSS draft) - e.g. PoseScript
+    // doesn't support transparency (except for PS 3.0+)
+    public void defineColor(String nam, float r, float g, float b, float a) {}
+    public void setColor(String nam, float alpha) {}
+    public void setColor(float r, float g, float b, float a) {}
+    // this construct should help to produce independent graphics code
+    // any app that uses alpha only for specific tasks should enclose such code
+    // by those control block commands and supply alternative methods without alpha
+
+    public boolean internalSupportsAlpha() { return false; }
+
+    public void beginAlphaBlock() { nullEffect=!internalSupportsAlpha(); }
+    public void fallbackAlpha() { nullEffect=!internalSupportsAlpha(); }
+    public void endAlphaBlock() { nullEffect=false; }
+    // and finally separate colors
+    public void setBrushColor(String nam) {}
+    public void setBrushColor(float r, float g, float b) {}
+    public void setBrushColor(String nam, float alpha) {}
+    public void setBrushColor(float r, float g, float b, float a) {}
+    public void setPenColor(String nam) {}
+    public void setPenColor(float r, float g, float b) {}
+    public void setPenColor(String nam, float alpha) {}
+    public void setPenColor(float r, float g, float b, float a) {}
+    
 }

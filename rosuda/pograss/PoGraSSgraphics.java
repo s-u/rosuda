@@ -28,7 +28,7 @@ class PoGraSSgraphics extends PoGraSS
     public PoGraSSgraphics(Graphics G, int layer) { 
 	g=G;
 	c=new Color[128]; cn=new String[128]; cs=0; fillSt=0; lineWidth=1;
-        curFillC=Color.white; curPenC=Color.black; paintLayer=layer;
+        curFillC=Color.white; curPenC=Color.black; localLayerCache=paintLayer=layer;
 	lastFace="SansSerif"; lastFontSize=10; lastFontAttr=Font.PLAIN;
 	lastFont=PoGraSS.FF_SansSerif;
     };
@@ -58,6 +58,20 @@ class PoGraSSgraphics extends PoGraSS
 	    cn[cs]=new String(nam); c[cs]=new Color(R,G,B); cs++;
 	}; 
     };
+    public void defineColor(String nam, float r, float g, float b, float a) {
+        if (cs<128) {
+            cn[cs]=new String(nam); c[cs]=new Color(r,g,b,a); cs++;
+        }
+    }
+    public void setColor(String nam, float alpha) {
+        if (paintLayer==-1 || paintLayer==curLayer) {
+            float[] rgba=getColor(nam).getRGBComponents(null);
+            g.setColor(curPenC=new Color(rgba[0],rgba[1],rgba[2],alpha));
+        }
+    }
+    public void setColor(float r, float gr, float b, float a) {
+        if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=new Color(r,gr,b,a));
+    }
     public void setColor(int R, int G, int B) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=new Color(R,G,B)); };
     public void setColor(String nam) { if (paintLayer==-1 || paintLayer==curLayer) g.setColor(curPenC=getColor(nam)); };
     public void drawLine(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawLine(x1,y1,x2,y2); };
@@ -139,4 +153,14 @@ class PoGraSSgraphics extends PoGraSS
 
     public void begin() { curLayer=0; }
     public void end() {}
+
+    public int getWidthEstimate(String s) {
+        Rectangle r=g.getFontMetrics().getStringBounds(s,g).getBounds();
+        return r.width;
+    }
+    public int getHeightEstimate(String s) {
+        Rectangle r=g.getFontMetrics().getStringBounds(s,g).getBounds();
+        return r.height;
+    }
+
 }
