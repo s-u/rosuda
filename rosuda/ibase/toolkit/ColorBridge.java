@@ -10,11 +10,12 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.Color;
 
+/** ColorBridge maps integers, doubles or strings to colors */
 public class ColorBridge {
     Color basicCol[];
     String name[];
 
-    public static ColorBridge main;
+    protected static ColorBridge main;
     
     public ColorBridge() {
         basicCol=new Color[9]; name=new String[9];
@@ -25,17 +26,28 @@ public class ColorBridge {
         basicCol[4]=new Color(0,0,255);     name[4]="blue";
         basicCol[5]=new Color(0,255,255);
         basicCol[6]=new Color(255,0,255);
-        basicCol[7]=new Color(255,255,0);
+        basicCol[7]=new Color(255,255,0);   name[7]="yellow";
         basicCol[8]=new Color(190,190,190);
     }
 
+    public static ColorBridge getMain() {
+        if (main==null) main=new ColorBridge();
+        return main;
+    }
+    
     public Color getColor(int id) {
         return basicCol[(id==0)?0:(((id-1)&7)+1)];
     }
 
+    public Color getColor(double d) {
+        if (d<0) d=0;
+        if (d>1) d=1;
+        return new Color((int)(d*255.0+0.5),(int)(d*255.0+0.5),(int)(d*255.0+0.5));
+    }
+    
     public Color getColor(String s) {
         int i=0;
-        while (i<9) { if (name[i]!=null && s.compareTo(name[i])==0) return basicCol[i]; i++; };
+        while (i<9) { if (name[i]!=null && s.equals(name[i])) return basicCol[i]; i++; };
         return basicCol[1];
     }
 }
