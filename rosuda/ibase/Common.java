@@ -261,10 +261,9 @@ public class Common
 	    i++;
 	};
 	char lc=s.charAt(s.length()-1);
-        System.out.println("GetTriGraph(\""+s+"\"), caps="+caps+", num="+nums);
 	if (nums>0) {
-	    if (caps+nums<5 && caps>0)
-		return (cp.append(nm)).toString();
+	    if (caps+nums<5 && caps>0) // this is clumsy, but since 1.4.1 append fails
+		return cp.toString()+nm.toString();
 	    if (nums<4 && caps>0)
 		return cp.toString().substring(0,4-nums)+nm.toString();
 	    if (nums>1 && nums<4 && caps==0 && s.charAt(0)>'9')
