@@ -136,6 +136,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
     DataRoot dr;
     NodeMarker nm;
+
+    double minYval, maxYval;
     
     /** construct a new display instance based on the specified tree
 	@param troot root of the tree
@@ -153,6 +155,19 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root,400,true);	
 	setBackground(Common.backgroundColor);
 
+        Vector alln=new Vector();
+        root.getAllNodes(alln);
+        int i=0;
+        while (i<alln.size()) {
+            SNode n=(SNode) alln.elementAt(i++);
+            if (n!=null) {
+                if (i==0) { minYval=maxYval=n.predValD; } else {
+                    if (n.predValD>maxYval) maxYval=n.predValD;
+                    if (n.predValD<minYval) minYval=n.predValD;
+                }
+            }
+        }
+        
 	updateCachedValues();
 
 	w_info=new Window(cont);
@@ -344,6 +359,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                             perc=(t.predValD-response.getMin())/(response.getMax()-response.getMin());
                     } catch (Exception swc) {};
                 }
+                x=leftA+(int)(((double)iwidth)*perc);
+            } else if (minYval!=maxYval) { // for trees with no response, but some continuous prediction
+                double perc=(t.predValD-minYval)/(maxYval-minYval);
                 x=leftA+(int)(((double)iwidth)*perc);
             }
 	}
