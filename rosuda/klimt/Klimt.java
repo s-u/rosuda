@@ -34,7 +34,7 @@ import org.rosuda.plugins.*;
 public class Klimt
 {
     public static String Version = "0.98";
-    public static String Release = "D730";
+    public static String Release = "DB14";
     
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
@@ -325,6 +325,9 @@ public class Klimt
         boolean silentTreeLoad=false;
         int firstNonOption=-1;
         Common.appName="Klimt";
+        Common.Version=Klimt.Version;
+        if (Klimt.Release.compareTo(Common.Release)>0)
+            Common.Release=Klimt.Release;
         argv=Global.parseArguments(argv);
 
         Platform.initPlatform("org.rosuda.klimt.");
