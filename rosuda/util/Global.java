@@ -92,4 +92,12 @@ public class Global {
         while (i<rem.size()) { filtered[i]=(String) rem.elementAt(i); i++; };
         return filtered;
     }
+
+    public static void setDebugLevel(int level) {
+        DEBUG=level;
+    }
+
+    public static void setProfilingLevel(int level) {
+        PROFILE=level;
+    }
 }
