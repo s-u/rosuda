@@ -72,7 +72,7 @@ public class MyRect extends Rectangle implements ActionListener {
     //System.out.println(residual);
     if( obs > 0 ) {
       if( dir != 'f' ) {
-        if( info.indexOf("¥") == -1 )
+        if( info.indexOf("¥") == -1 && !(info.substring(0, 2)).equals("NA") )
           g.setColor(Color.lightGray);
         else
           g.setColor(Color.white);
