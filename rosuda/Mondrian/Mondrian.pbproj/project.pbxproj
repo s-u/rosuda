@@ -62,6 +62,7 @@
 				F5FBD732027EE38A01FA478D,
 				F539378601F5CC7401FA4797,
 				F539378701F5CC7401FA4797,
+				D0C7E78A076EDB9F00B94ACD,
 				F539378801F5CC7401FA4797,
 				F539378901F5CC7401FA4797,
 				F539378A01F5CC7401FA4797,
@@ -73,6 +74,7 @@
 				D097A9DA06F9B94100684C11,
 				D097A9DC06F9BAF900684C11,
 				D097A9DD06F9BAF900684C11,
+				D09EB79D07706F23001F7DFC,
 				01F12F4FFEC8CEF111DB9C8B,
 			);
 			isa = PBXGroup;
@@ -176,7 +178,8 @@
 				1601BCE2FEEE210811DB9C8B,
 			);
 			buildSettings = {
-				JAVA_CLASS_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "";
+				JAVA_CLASS_SEARCH_PATHS = .;
 				JAVA_COMPILER = /usr/bin/javac;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
 				JAVA_MANIFEST_FILE = Mondrian.mft;
@@ -241,7 +244,7 @@
 			<string>true</string>
 		</dict>
 		<key>VMOptions</key>
-		<string>-Xmx512m</string>
+		<string>-Xmx384m</string>
 	</dict>
 	<key>NSJavaNeeded</key>
 	<string>YES</string>
@@ -291,6 +294,7 @@
 				F5A4C09003BE533601FEB7DC,
 				D08C744204B997AB00FA48CA,
 				D07E9E1F057F1DA800C2084A,
+				D0C7E78B076EDB9F00B94ACD,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -311,6 +315,17 @@
 				D097A9DB06F9B94100684C11,
 				D097A9DE06F9BAF900684C11,
 				D097A9DF06F9BAF900684C11,
+				D09EB7AB07706F23001F7DFC,
+				D09EB7AC07706F23001F7DFC,
+				D09EB7AD07706F23001F7DFC,
+				D09EB7AE07706F23001F7DFC,
+				D09EB7AF07706F23001F7DFC,
+				D09EB7B007706F23001F7DFC,
+				D09EB7B107706F23001F7DFC,
+				D09EB7B207706F23001F7DFC,
+				D09EB7B307706F23001F7DFC,
+				D09EB7B407706F23001F7DFC,
+				D09EB7B507706F23001F7DFC,
 			);
 			isa = PBXJavaArchiveBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +419,184 @@
 			isa = PBXBuildFile;
 			settings = {
 				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		D09EB79D07706F23001F7DFC = {
+			children = (
+				D09EB79E07706F23001F7DFC,
+			);
+			isa = PBXGroup;
+			path = org;
+			refType = 4;
+		};
+		D09EB79E07706F23001F7DFC = {
+			children = (
+				D09EB79F07706F23001F7DFC,
+			);
+			isa = PBXGroup;
+			path = rosuda;
+			refType = 4;
+		};
+		D09EB79F07706F23001F7DFC = {
+			children = (
+				D09EB7A007706F23001F7DFC,
+				D09EB7A107706F23001F7DFC,
+				D09EB7A207706F23001F7DFC,
+				D09EB7A307706F23001F7DFC,
+				D09EB7A407706F23001F7DFC,
+				D09EB7A507706F23001F7DFC,
+				D09EB7A607706F23001F7DFC,
+				D09EB7A707706F23001F7DFC,
+				D09EB7A807706F23001F7DFC,
+				D09EB7A907706F23001F7DFC,
+				D09EB7AA07706F23001F7DFC,
+			);
+			isa = PBXGroup;
+			path = JRclient;
+			refType = 4;
+		};
+		D09EB7A007706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = jcrypt.class;
+			refType = 4;
+		};
+		D09EB7A107706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RBool.class;
+			refType = 4;
+		};
+		D09EB7A207706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = Rconnection.class;
+			refType = 4;
+		};
+		D09EB7A307706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = REXP.class;
+			refType = 4;
+		};
+		D09EB7A407706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RFactor.class;
+			refType = 4;
+		};
+		D09EB7A507706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RFileInputStream.class;
+			refType = 4;
+		};
+		D09EB7A607706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RFileOutputStream.class;
+			refType = 4;
+		};
+		D09EB7A707706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RList.class;
+			refType = 4;
+		};
+		D09EB7A807706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = Rpacket.class;
+			refType = 4;
+		};
+		D09EB7A907706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = RSrvException.class;
+			refType = 4;
+		};
+		D09EB7AA07706F23001F7DFC = {
+			isa = PBXFileReference;
+			path = Rtalk.class;
+			refType = 4;
+		};
+		D09EB7AB07706F23001F7DFC = {
+			fileRef = D09EB7A007706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7AC07706F23001F7DFC = {
+			fileRef = D09EB7A107706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7AD07706F23001F7DFC = {
+			fileRef = D09EB7A207706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7AE07706F23001F7DFC = {
+			fileRef = D09EB7A307706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7AF07706F23001F7DFC = {
+			fileRef = D09EB7A407706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B007706F23001F7DFC = {
+			fileRef = D09EB7A507706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B107706F23001F7DFC = {
+			fileRef = D09EB7A607706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B207706F23001F7DFC = {
+			fileRef = D09EB7A707706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B307706F23001F7DFC = {
+			fileRef = D09EB7A807706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B407706F23001F7DFC = {
+			fileRef = D09EB7A907706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D09EB7B507706F23001F7DFC = {
+			fileRef = D09EB7AA07706F23001F7DFC;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = org/rosuda/JRclient;
+			};
+		};
+		D0C7E78A076EDB9F00B94ACD = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Srs.java;
+			refType = 4;
+		};
+		D0C7E78B076EDB9F00B94ACD = {
+			fileRef = D0C7E78A076EDB9F00B94ACD;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 //D00
