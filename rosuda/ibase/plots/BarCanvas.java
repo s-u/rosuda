@@ -446,7 +446,7 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     public void mouseEntered(MouseEvent e) {};
     public void mouseExited(MouseEvent e) {};
 
-    double hclCh=35.0, hclLum=85.0;
+    double hclCh=55.0, hclLum=75.0;
     
     public void keyTyped(KeyEvent e) 
     {

@@ -29,7 +29,7 @@ public class ColorBridge {
         basicCol[6]=new Color(255,0,255);
         basicCol[7]=new Color(255,255,0);   name[7]="yellow";
         basicCol[8]=new Color(190,190,190);
-        setHCLParameters(35.0, 85.0);
+        setHCLParameters(55.0, 75.0);
     }
 
     public void setHCLParameters(double chroma, double luminance) {
