@@ -529,7 +529,6 @@ FocusListener, RMainLoopCallbacks {
         }
 		else if (cmd == "update") {
 			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")",false);
-			JGR.rSync.triggerNotification("y");
 		}
     }
 
