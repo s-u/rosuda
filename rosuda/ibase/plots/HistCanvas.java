@@ -51,6 +51,7 @@ public class HistCanvasNew extends BaseCanvas
     public SVar getData(int id) { return (id==0)?v:null; }
     
     public void updateObjects() {
+        Stopwatch sw=new Stopwatch();
         boolean recalcBars=true;
         // we should set recalcBar to false if anchor/binw didn't change 
         bars=((int)((v.getMax()-anchor)/binw))+1;
@@ -64,6 +65,7 @@ public class HistCanvasNew extends BaseCanvas
         if (recalcBars) {
             int i=0;
             while(i<bars) { pp[i]=new PlotPrimitive(); i++; };
+            sw.profile("HistCanvasNew.updateObject reset primitives");
             
             int countMax=0;
             int count[]=new int[bars];
@@ -83,6 +85,7 @@ public class HistCanvasNew extends BaseCanvas
                 };
                 i++;
             };
+            sw.profile("HistCanvasNew.updateObject calculate counts");
             i=0;
             ay.setValueRange(countMax);
 	    int bly=ay.getValuePos(0);
@@ -110,6 +113,7 @@ public class HistCanvasNew extends BaseCanvas
                 }
                 i++;
             }
+            sw.profile("HistCanvasNew.updateObject create primitives");
         }
     }
 

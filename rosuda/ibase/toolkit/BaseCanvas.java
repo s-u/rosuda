@@ -46,6 +46,7 @@ class PlotPrimitive {
     
     /** calculates the proportion of cases with the given mark in relation to total population of cases represented by this PlotPrimitive. The value ranges between 0.0 (no cases with such mark) to 1.0 (all cases with that mark) */
     public double getMarkedProportion(SMarker m, int mark) {
+        Stopwatch sw=new Stopwatch();
         if (ref!=null) {
             int j=0, pts=ref.length;
             if (pts==0) return 0d;
@@ -54,6 +55,7 @@ class PlotPrimitive {
                 if (m.get(ref[j])==mark) sc++;
                 j++;
             }
+            sw.profile("PlotPrimitive.getMarkedProportion");
             return ((double)sc)/((double)pts);
         }
         return 0d;
@@ -285,6 +287,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     
     public void paintObjects(PoGraSS g) {
         //System.out.println("BaseCanvas.paintObjects, (cache="+g.localLayerCache+") pp="+pp);
+        Stopwatch sw=new Stopwatch();
         
         if (pp!=null) {
             int i=0;
@@ -326,9 +329,12 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                 i++;
             }
         }
+        sw.profile("BaseCanvas.paintObjects");
     }
 
     public void paintSelected(PoGraSS g) {
+        Stopwatch sw=new Stopwatch();
+        
         //System.out.println("BaseCanvas.paintSelected, pp="+pp);
         if (pp!=null) {
             int i=0;
@@ -381,6 +387,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                 i++;
             }
         }
+        sw.profile("BaseCanvas.paintSelected");
     }
 
     public void paintPost(PoGraSS g) { }
