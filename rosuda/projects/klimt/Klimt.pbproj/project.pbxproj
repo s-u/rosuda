@@ -326,6 +326,7 @@
 				1C9A86DC066173CC00FA73AE,
 				1C9A86DD066173CC00FA73AE,
 				1CCDD36F0695E2B500AFAC85,
+				1C18A2EE06BD8A020095E434,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,6 +391,18 @@
 		};
 		1C188143058418A0004683DA = {
 			fileRef = 1C1881420584189F004683DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C18A2EC06BD686B0095E434 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = PluginModelLoader.java;
+			refType = 4;
+		};
+		1C18A2EE06BD8A020095E434 = {
+			fileRef = 1C18A2EC06BD686B0095E434;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1759,6 +1772,7 @@
 				F8EE910E04D6A73700FA4796,
 				F8EE910F04D6A73700FA4796,
 				F8EE911004D6A73700FA4796,
+				1C18A2EC06BD686B0095E434,
 			);
 			isa = PBXGroup;
 			path = plugins;
