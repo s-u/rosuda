@@ -126,7 +126,11 @@ public class Rtalk {
 	    int rl =getInt(ih,4);
 	    if (rl>0) {
 		byte[] ct=new byte[rl];
-		int n=is.read(ct);
+                int n=0;
+                while (n<rl) {
+                    int rd=is.read(ct,n,rl-n);
+                    n+=rd;
+                }
 		return new Rpacket(rep,ct);
 	    }
 	    return new Rpacket(rep,null);
