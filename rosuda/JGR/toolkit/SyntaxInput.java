@@ -124,7 +124,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             }
             if (ke.getKeyCode() == KeyEvent.VK_A && ke.isControlDown()) {
                 this.setCaretPosition(0);
-                this.select(0,0); //should be safer
             }
         }
     }
