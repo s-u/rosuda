@@ -51,13 +51,12 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
         } else {
             df=null;
             Dimension sres=org.rosuda.util.Platform.screenRes;
-            /*
+            Common.screenRes=sres;
             if (t!=null) {
-                TFrame f=new TFrame(tvs.getName()+" tree",TFrame.clsTree);
-                InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                TFrame f=new TFrame(tvs.getName(),TFrame.clsTree);
+                Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
             }
-            VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-             */
+            VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
             if (SplashScreen.main!=null)
                 SplashScreen.main.setVisible(false);
         }
