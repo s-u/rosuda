@@ -26,7 +26,7 @@ class SMarkerOperation {
    {@link Notifier} class to allow notification upon changes of state.
    @version $Id$
  */
-public class SMarker extends Notifier {
+public class SMarker extends Notifier implements Commander {
     /** Fixed array of markings. */
     int mask[];
     /** Size(length) of the fixed array of markings. */
@@ -122,6 +122,30 @@ public class SMarker extends Notifier {
 	};
     };	
 
+    public Object run(Object o, String cmd) {
+        if (cmd=="selAll") {
+            selectAll(1); NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+        };
+        if (cmd=="selNone") {
+            selectNone(); NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+        }
+        if (cmd=="selInv") {
+            int i=0;
+            while(i<msize) {
+                if (mask[i]==0) {
+                    list.addElement(new Integer(i));
+                    mask[i]=1;
+                } else {
+                    list.removeElement(new Integer(i));
+                    mask[i]=0;
+                }
+                i++;
+            };
+            NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+        }
+        return null;
+    };
+    
     /* --- the experimental currentNode code --- */
     public void setNode(SNode n) {
 	currentNode=n; NotifyAll(new NotifyMsg(this,Common.NM_NodeChange));
