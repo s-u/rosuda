@@ -41,6 +41,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     */
     public DevCanvas(Frame f, SNode t, NodeMarker nm) {
 	root=t; setFrame(f); setTitle("Deviance plot");
+        this.nm=nm;
         nm.addDepend(this);
         setBackground(Common.backgroundColor);
 	addMouseListener(this);
