@@ -40,4 +40,12 @@ public class PlotManager {
     public void update() {
 	update(0);
     }
+
+    public PlotObject get(int id) {
+	return (PlotObject) obj.elementAt(id);
+    }
+
+    public int count() {
+	return obj.size();
+    }
 }
