@@ -33,6 +33,9 @@ import org.rosuda.plugins.*;
     original project name until it was renamed to Klimt) */
 public class Klimt
 {
+    public static String Version = "0.98";
+    public static String Release = "D730";
+    
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
 
@@ -87,11 +90,17 @@ public class Klimt
         @param vs data set to add
         @return data root corresponding to the data set (created if necessary) */
     public static DataRoot addData(SVarSet vs) {
+        if (Global.DEBUG>0)
+            System.out.println("Klimt.addData("+vs+")");
         DataRoot xdr=getRootForData(vs);
-        if (xdr==null) getData().addElement(xdr=new DataRoot(vs));
+        if (xdr==null) {
+            xdr=new DataRoot(vs);
+            addData(xdr);
+        }
+        if (Global.DEBUG>0)
+            System.out.println("Klimt.addData: fetched DataRoot "+xdr);        
         return xdr;
     }
-
     
     /** creates a new tree display
 	@param t root node
@@ -201,6 +210,8 @@ public class Klimt
 	@return root node of the tree or <code>null</code> if no tree was present. This methods returns <code>null</code> even if the dataset was loaded correcly and no tree was present. Total failure to process the file can be determined only by using clean dataset and check for size of the dataset after the call. */	
     public static SNode openTreeFile(Frame f,String fn, DataRoot dr,boolean readOnlyDataset,boolean createFrames)
     {
+        if (Global.DEBUG>0)
+            System.out.println("Klimt.openTreeFile("+f+","+fn+","+dr+","+readOnlyDataset+","+createFrames+")");
         SVarSet tvs=dr.getDataSet();
         TreeRegistry tr=dr.getTreeRegistry();
         SNode t=null;	
@@ -229,7 +240,7 @@ public class Klimt
                                 try {
                                     fsz=fs[fi].length();
                                 } catch(Exception e) {};
-                                t=TreeLoader.LoadTree(r,tvs,fs[fi].getName());
+                                t=TreeLoader.Load(r,fs[fi].getName(),dr);
                                 if (t!=null && tvs!=null) {
                                     TFrame ff=null;
                                     t.getRootInfo().name=fs[fi].getName();
@@ -276,7 +287,7 @@ public class Klimt
                 fnn=fil.getName();
                 fsz=fil.length();
             } catch(Exception e) {};
-            t=TreeLoader.LoadTree(r,tvs,fnn);
+            t=TreeLoader.Load(r,fnn,dr);
             if (t!=null) t.getRootInfo().name=fnn;
 	    if (Global.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
