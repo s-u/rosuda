@@ -19,6 +19,7 @@ import javax.swing.text.*;
 
 import org.rosuda.JGR.*;
 
+import java.util.prefs.Preferences;
 
 public class iPreferences {
 
