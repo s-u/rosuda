@@ -13,6 +13,8 @@ public class GDCanvas extends Canvas {
 
     boolean listChanged;
     
+    public static boolean forceAntiAliasing=true;
+    
     Color fill;
     Color col;
 
@@ -132,8 +134,10 @@ public class GDCanvas extends Canvas {
             return;
         }
 
-        Graphics2D g2=(Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        if (forceAntiAliasing) {
+            Graphics2D g2=(Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
                
         int i=0, j=l.size();
         g.setFont(f);

@@ -26,7 +26,8 @@ public class Global {
     /** use Aqua-style background
         parameter equivalent: --with-aqua */
     public static boolean useAquaBg=false;
-    
+    /** if set to <code>true</code> all graphic routines should set the anti-aliasing hint */ 
+    public static boolean forceAntiAliasing=true;
     /** AppType contstant: stand-alone application */
     public static final int AT_standalone = 0x0000;
     /** AppType contstant: applet (set by applet wrapper) */
