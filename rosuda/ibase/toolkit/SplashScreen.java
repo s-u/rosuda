@@ -94,7 +94,39 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
                 }
             } catch (Exception e) {
-                System.out.println("Can't find splash image (neither via Platform.getResourceFile, nor in the jar file).");
+                if (Common.AppType==Common.AT_Framework) { // try harder if we're iplots
+                    try {
+                        String jar=System.getProperty("java.class.path");
+                        if (jar!=null) {
+                            // this is the clue - we know our own name
+                            int i=jar.indexOf("iplots.jar");
+                            if (i>=0) {
+                                int j=jar.indexOf(File.pathSeparatorChar,i);
+                                int k=jar.substring(0,i).lastIndexOf(File.pathSeparatorChar);
+                                String s=null;
+                                if (k<0) k=-1; // just for safety although not needed
+                                if (j>=0)
+                                    s=jar.substring(k+1,j);
+                                else
+                                    s=jar.substring(k+1);
+                                ZipFile MJF = new ZipFile(s);
+                                if (MJF!=null) {
+                                    ZipEntry LE = MJF.getEntry("splash.jpg");
+                                    InputStream inputLogo = MJF.getInputStream(LE);
+                                    arrayLogo = new byte[(int)LE.getSize()];
+                                    for( i=0; i<arrayLogo.length; i++ ) {
+                                        arrayLogo[i] = (byte)inputLogo.read();
+                                    }
+                                    if (Common.DEBUG>0)
+                                        System.out.println("Logo OK (iplots), "+arrayLogo.length+" bytes.");
+                                    splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
+                                }
+                            }
+                        }
+                    } catch (Exception exx) { // iplots must be silent
+                    }
+                } else
+                    System.out.println("Can't find splash image (neither via Platform.getResourceFile, nor in the jar file).");
             }
         }
 
