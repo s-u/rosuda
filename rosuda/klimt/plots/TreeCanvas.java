@@ -134,11 +134,16 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** frame of deviance plot associated with the tree */
     TFrame myDevFrame=null;
 
+    DataRoot dr;
+    NodeMarker nm;
+    
     /** construct a new display instance based on the specified tree
 	@param troot root of the tree
 	@param cont parent frame */
     public TreeCanvas(SNode troot, Frame cont) {		
 	setFrame(cont); setTitle("Tree");
+        dr=Klimt.getRootForTreeRegistry(troot.getRootInfo().home);
+        nm=dr.getNodeMarker();
 	nod=new Vector(); outside=cont;
 	root=troot; 
 	w=700;
@@ -669,7 +674,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
     /** set currently selected node */
     public void selectNode(SNode n) {
-	if (m!=null) m.setNode(n);
+	if (nm!=null) nm.setNode(n);
 	if (n==selectedNode) {
 	    return;
 	};
@@ -744,7 +749,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (cmd=="openTree") {
 	    //SVarSet tvs=new SVarSet();
 	    SVarSet tvs=root.getSource();
-	    SNode t=Klimt.openTreeFile(Common.mainFrame,null,tvs);
+            DataRoot dr=Klimt.getRootForData(tvs);
+	    SNode t=Klimt.openTreeFile(Common.mainFrame,null,dr);
 	    if (t!=null) {
 		TFrame f=new TFrame(tvs.getName()+" - tree",TFrame.clsTree);
 		TreeCanvas tc=Klimt.newTreeDisplay(t,f);
@@ -755,7 +761,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (cmd=="openData") {
             TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
             SVarSet tvs=new SVarSet();
-            SNode t=Klimt.openTreeFile(f,null,tvs);
+            DataRoot dr=Klimt.addData(tvs);
+            SNode t=Klimt.openTreeFile(f,null,dr);
             if (t==null && tvs.count()<1) {
                 new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
             } else {
@@ -764,7 +771,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 Common.screenRes=sres;
                 if (t!=null)
                     Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                VarFrame vf=Klimt.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
+                VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
             }
         }
 	if (cmd=="deviance") {
@@ -828,7 +835,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		myMosaicFrame=null;
 	    }; */
 	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)",TFrame.clsTreeMap);
-	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root));
+	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root,nm));
 	    myMosaicFrame.addWindowListener(Common.getDefaultWindowListener());
 	    myMosaic.setBounds(0,0,400,300);
 	    myMosaicFrame.pack(); myMosaicFrame.show();		
@@ -842,7 +849,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		myDevFrame=null;
 	    }; */
 	    myDevFrame=new TFrame(Klimt.lastTreeFileName+" (deviance plot)",TFrame.clsDevPlot);
-	    DevCanvas dc=new DevCanvas(myDevFrame,root);
+	    DevCanvas dc=new DevCanvas(myDevFrame,root,nm);
 	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.getDefaultWindowListener());
 	    dc.setBounds(0,0,400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
@@ -850,24 +857,26 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (cmd=="exportForest") {
             try {
                 PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
-                root.getSource().exportForest(p);
+                root.getRootInfo().home.exportForest(p);
             } catch(Exception ee) {};
         };
         if (cmd=="displayForest") {
-            SVarSet fs=root.getSource().getForestVarSet();
+            SVarSet fs=root.getRootInfo().home.getForestVarSet();
+            DataRoot dr=Klimt.addData(fs);
+            dr.setDataType(DataRoot.DT_Forest);
             Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
             Common.screenRes=sres;
-            VarFrame vf=Klimt.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
+            VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
         };            
         if (cmd=="showMCP") {
             TFrame mcpf=new TFrame("MC-plot",TFrame.clsMCP);
-            MCPCanvas dc=new MCPCanvas(mcpf,RTree.getManager(),m);
+            MCPCanvas dc=new MCPCanvas(mcpf,root.getRootInfo().home,m);
             mcpf.add(dc); mcpf.addWindowListener(Common.getDefaultWindowListener());
             dc.setBounds(0,0,400,300);
             mcpf.pack(); mcpf.setVisible(true);
         };
         if (cmd=="editSplit") {
-            SNode cn=root.getSource().getMarker().currentNode;
+            SNode cn=nm.getNode();
             if (cn!=null) {
                 SplitEditor se=new SplitEditor(cn);
                 se.show();
