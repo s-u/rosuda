@@ -28,7 +28,7 @@ import org.rosuda.JGR.RController;
 public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
     private boolean disableEnter = false;
-    private Vector commands = new Vector();
+    //private Vector commands = new Vector();
     private String fun = null;
     private String funHelp = null;
     private Popup funHelpTip = null;
@@ -57,26 +57,24 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         String word = null;
         String text = this.getText();
         int pos = this.getCaretPosition();
-        if (pos > 0 && text.length() > 0 && text.charAt(pos-1)=='(') pos--;
+        int lastb = this.getText(0,pos+1).lastIndexOf('(');
+        int lasteb = this.getText(0,pos).lastIndexOf(')');
+        if (lasteb > lastb) return null;
+        if (lastb < 0) lastb = text.indexOf('(',pos);
+        if (lastb < 0) return null;
         if (pos < 0) return null;
-        int offset = pos-1, end = pos; pos--;
+        
+        int offset = lastb--, end = lastb; pos=lastb;
         if (text==null) return null;
-        int l = text.length();
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
+            System.out.println(c);
             if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
             else break;
             pos--;
         }
-        offset = offset==-1?0:++offset;
-        pos = end;
-        while (end < l && pos < l) {
-            char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') end++;
-            else break;
-            pos++;
-        }
-        end = end==-1?l:end;
+        offset = offset==-1?0:offset;
+        end = ++lastb;
         return (offset!=end)?text.substring(offset,end).trim():null;
     }
 	
@@ -119,6 +117,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             if (cmdHelp != null) cmdHelp.hide();
             mComplete.setVisible(false);
             if (funHelpTip != null) funHelpTip.hide();
+        }
+        if (JGRPrefs.useEmacsKeyBindings) {
+            if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
+                this.setCaretPosition(this.getText().length());
+            }
+            if (ke.getKeyCode() == KeyEvent.VK_A && ke.isControlDown()) {
+                this.setCaretPosition(0);
+                this.select(0,0); //should be safer
+            }
         }
     }
 	
@@ -171,40 +178,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 }
             }
         }
-        else if ((JGRPrefs.useHelpAgent && ke.getKeyChar() == '(') || ke.getKeyCode() == KeyEvent.VK_F1) {
-            if (p != null && p.equals(getCaret().getMagicCaretPosition())) {}
-            else {
-                if (funHelpTip != null) funHelpTip.hide();
-                fun = getLastCommand();
-                if (fun != null)
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            showFunHelp(fun);
-                        }
-                    });
-            }
-        }
-        else if (JGRPrefs.useHelpAgent && ke.getKeyChar() == ')') {
-            if (commands.size() > 2) {
-                commands.removeElementAt(commands.size()-1);
-                commands.removeElementAt(commands.size()-1);
-                Point p2 = (Point) commands.lastElement();
-                if (funHelpTip != null) funHelpTip.hide();
-                Tip = new JToolTip();
-                Tip.setTipText(commands.elementAt(commands.size()-2).toString());
-                Tip.addMouseListener(new MouseAdapter() {
-                    public void mouseClicked(MouseEvent e) {
-                        if (funHelpTip != null) funHelpTip.hide();
-                    }
-                });
-                funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p2.x,p2.y+20);
-                funHelpTip.show();
-            }
-            else if (funHelpTip != null) {
-                funHelpTip.hide();
-                commands.clear();
-            }
-        }
         else if (mComplete != null && mComplete.isVisible()) {
             int k = ke.getKeyCode();
             if (k != KeyEvent.VK_ESCAPE && k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
@@ -213,7 +186,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                     String[] result = new String[1];
                     result = RController.completeCommand(fun);
                     if (result != null && result.length > 0){
-                        if (funHelpTip != null) funHelpTip.hide();
+                        if (funHelpTip != null) {
+                            funHelpTip.hide();
+                            funHelpTip = null;
+                        }
                         showCmdCompletions(result);
                     }
                     else {
@@ -230,7 +206,17 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         else if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
             if (cmdHelp != null) cmdHelp.hide();
             mComplete.setVisible(false);
-            if (funHelpTip != null) funHelpTip.hide();
+            if (funHelpTip != null) {
+                funHelpTip.hide();
+                funHelpTip = null;
+            }
+        }
+        if (JGRPrefs.useHelpAgent && !ke.isShiftDown()) {
+            if (funHelpTip != null) {
+                funHelpTip.hide();
+                funHelpTip = null;
+            }
+            showFunHelp(getLastCommand());
         }
     }
 	
@@ -242,15 +228,18 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 Tip.setTipText(funHelp);
                 Tip.addMouseListener(new MouseAdapter() {
                     public void mouseClicked(MouseEvent e) {
-                        if (funHelpTip != null) funHelpTip.hide();
+                        if (funHelpTip != null) {
+                            funHelpTip.hide();
+                            funHelpTip = null;
+                        }
                     }
                 });
                 p = getCaret().getMagicCaretPosition();
                 SwingUtilities.convertPointToScreen(p,this);
                 funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p.x,p.y+20);
                 funHelpTip.show();
-                commands.add(funHelp);
-                commands.add(p);
+                //commands.add(funHelp);
+                //commands.add(p);
             }
         } catch (Exception e) {}
     }
@@ -272,43 +261,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     class SyntaxInputDocument extends SyntaxDocument {
-        public void remove(int offset, int length) throws BadLocationException {
-            if (JGRPrefs.useHelpAgent && getText(offset,length).equals("(")) {
-                if (commands.size() > 2) {
-                    commands.removeElementAt(commands.size()-1);
-                    commands.removeElementAt(commands.size()-1);
-                    Point p = (Point) commands.lastElement();
-                    if (funHelpTip != null) funHelpTip.hide();
-                    Tip = new JToolTip();
-                    Tip.setTipText(commands.elementAt(commands.size()-2).toString());
-                    Tip.addMouseListener(new MouseAdapter() {
-                        public void mouseClicked(MouseEvent e) {
-                            if (funHelpTip != null) funHelpTip.hide();
-                        }
-                    });
-                    funHelpTip = PopupFactory.getSharedInstance().getPopup(getParent(),Tip,p.x,p.y+20);
-                    funHelpTip.show();
-                }
-                else if (funHelpTip != null) {
-                    funHelpTip.hide();
-                    commands.clear();
-                }
-            }
-            else if (getText(offset,length).equals("(")) {
-                if (funHelpTip != null) funHelpTip.hide();
-            }
-            super.remove(offset,length);
-            if (JGRPrefs.useHelpAgent || funHelpTip != null) {
-				fun = getLastCommand();
-				if (fun != null)
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							showFunHelp(fun);
-						}
-					});
-				if (funHelpTip != null) funHelpTip.hide();
-			}
-        }
     }
 	
     public class CodeCompleteMultiple extends Panel {
