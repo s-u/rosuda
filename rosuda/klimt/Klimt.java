@@ -138,7 +138,7 @@ public class InTr
                                 try {
                                     fsz=fs[fi].length();
                                 } catch(Exception e) {};
-                                t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
+                                t=RTree.Load(r,fs[fi].getName(),tvs,fsz,null,null,readOnlyDataset);
                                 if (t!=null && tvs!=null) {
                                     TFrame ff=null;
                                     t.name=fs[fi].getName();
@@ -178,12 +178,14 @@ public class InTr
 	    BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
             Common.flushWarnings();
             long fsz=0;
+            String fnn=fnam;
             try {
                 File fil=new File(fnam);
+                fnn=fil.getName();
                 fsz=fil.length();
             } catch(Exception e) {};
-            t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
-            if (t!=null) t.name=fnam;
+            t=RTree.Load(r,fnn,tvs,fsz,null,null,readOnlyDataset);
+            if (t!=null) t.name=fnn;
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));

@@ -204,10 +204,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param node to be updated (calls itself recursively for children if any)*/
     void updateCachedValuesForNode(SNode t) {
 	if (t==null) return;
+	if (t.sampleDevGain>maxDevGain)
+	    maxDevGain=t.sampleDevGain;
 	if (t.devGain>maxDevGain)
 	    maxDevGain=t.devGain;
 	if (t.isLeaf()) {
 	    if (t.F1>maxLeafDev) maxLeafDev=t.F1;
+	    if (t.sampleDev>maxLeafDev) maxLeafDev=t.sampleDev;
 	    return;
 	};
 	

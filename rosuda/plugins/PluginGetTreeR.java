@@ -283,7 +283,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 return false;
             } else {
                 BufferedReader br=new BufferedReader(new FileReader("PluginInit.out"));
-                root=RTree.Load(br,vs,0,"[1] TREE","[1] END",true);
+                root=RTree.Load(br,"GrownTree",vs,0,"[1] TREE","[1] END",true);
                 if (root!=null) {
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
@@ -312,7 +312,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         SVarSet vs=new SVarSet();
         try {
             BufferedReader br=new BufferedReader(new FileReader("iris.rds"));
-            RTree.Load(br,vs);
+            RTree.Load(br,"iris",vs);
         } catch(Exception e) {
             System.out.println("cannot load test dataset (iris.rds), "+e.getMessage()); e.printStackTrace();
         }
