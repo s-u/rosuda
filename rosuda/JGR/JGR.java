@@ -61,12 +61,12 @@ public class JGR {
             System.exit(1);
         }
         //R.eval("library(JGR)");
-        Preferences.refreshKeyWords();
         RHOME = RTalk.getRHome();
         RLIBS = RTalk.getRLIBS();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
+        Preferences.refreshKeyWords();
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;

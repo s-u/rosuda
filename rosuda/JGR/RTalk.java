@@ -87,16 +87,18 @@ public class RTalk {
 
     //filecompletion
     public static String completeFile(String part) {
+        part = part.replaceFirst("~",System.getProperty("user.home"));
         int tl = part.length();
         int ls = tl - 1, fb = 0;
-        if (tl == 0)
-            ls = 0;
+        if (tl == 0) ls = 0;
         String dir = null;
         boolean working = false;
         String fn = null;
         if (System.getProperty("os.name").startsWith("Windows")) part = part.replaceAll(":/","://");
-        while (ls > 0 && part.charAt(ls) != '/')
+        while (ls > 0 && part.charAt(ls) != '/') {
+            System.out.println(part.charAt(ls));
             ls--;
+        }
         if (ls == 0 && (tl == 0 || part.charAt(ls) != '/'))
             working = true;
         dir = working ? "." : ( (ls == 0) ? "/" : (part.substring(0, ls)));
@@ -106,7 +108,6 @@ public class RTalk {
         fn = (fb < tl) ? part.substring(fb) : "";
         File directory = null;
         String[] cont = null;
-        System.out.println(dir);
         if ( (directory = new File(dir)).exists())
             cont = directory.list();
         if (cont == null)
