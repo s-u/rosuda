@@ -235,21 +235,27 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             g.drawLine(X,TH-A[1].getValuePos(-0.5),X+W,TH-A[1].getValuePos(-0.5));
         }
         
-        g.setColor("line",alpha);
+        g.setGlobalAlpha(alpha);
+        g.setColor("line");
         boolean isZ=false;
         int pd=(nodeSize>>1);
 	for (int j=2;j<v.length;j++)
 	    for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
                     if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
-                        isZ=!isZ; g.setColor(isZ?"lineZ":"line",alpha);
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
+                    }
+                    int mm=m.getSec(i);
+                    if (mm>0) {
+                        Color c=ColorBridge.getMain().getColor(mm);
+                        if (c!=null) g.setColor(c);
                     }
                     if (drawPoints) {
                         int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
                         g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
                     }
                     if ((dropColor && (v[j].at(i)==null))!=isZ) {
-                        isZ=!isZ; g.setColor(isZ?"lineZ":"line",alpha);
+                        isZ=!isZ; g.setColor(isZ?"lineZ":"line");
                     }
                     g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
                                A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
@@ -261,7 +267,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                     int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
                     g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
                 }
-	
+        g.resetGlobalAlpha();
         g.nextLayer();
         
         if (m.marked()>0) {
