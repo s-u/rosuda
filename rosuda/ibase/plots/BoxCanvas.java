@@ -115,6 +115,8 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    OSdata.update(v,dr);
 	    updateBoxes();
 	};
+        String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
+        EzMenu.getEzMenu(f,this,myMenu);
     };
 
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
