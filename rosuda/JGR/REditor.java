@@ -98,11 +98,11 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         status.setSize(new Dimension(600,20));
         status.add(modifiedStatus,
                                   new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-            , GridBagConstraints.EAST, GridBagConstraints.NONE,
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(0, 0, 0, 0), 0, 0));
         status.add(caretStatus,
                                   new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0
-            , GridBagConstraints.EAST, GridBagConstraints.NONE,
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(0, 0, 0, 0), 0, 0));
 
 
@@ -125,8 +125,8 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         this.setMinimumSize(new Dimension(600,600));
-        this.setSize(new Dimension(600,800));
-        /*this.setSize(new Dimension(600,
+        //this.setSize(new Dimension(600,800));
+        this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));*/
         this.setLocation(this.getLocation().x, 10);
