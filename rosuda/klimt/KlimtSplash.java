@@ -10,7 +10,7 @@ package org.rosuda.klimt;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
-
+import org.rosuda.util.*;
 
 public class KlimtSplash extends SplashScreen {
     public KlimtSplash() {
@@ -27,7 +27,7 @@ public class KlimtSplash extends SplashScreen {
         super.run(o,cmd); // let SplashScreen handle the defaults
         
         if (cmd=="prefs") {
-            PreferencesFrame.showPrefsDialog();
+            Platform.getPlatform().handlePrefs();
         }
 
         if (cmd=="openData") {
