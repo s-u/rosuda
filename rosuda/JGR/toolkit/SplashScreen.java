@@ -47,7 +47,7 @@ public class SplashScreen extends JWindow implements Runnable {
             if (splash != null)
                 g.drawImage(splash, 0, 0, splash.getWidth(this),splash.getHeight(this),this);
             g.setFont(new Font("Dialog", Font.BOLD, 26));
-            g.drawString(JGR.TITLE, 170,
+            g.drawString(JGR.TITLE, 175,
                          40);
             g.setFont(new Font("Dialog", Font.BOLD, 16));
             g.drawString(JGR.SUBTITLE, 150,
