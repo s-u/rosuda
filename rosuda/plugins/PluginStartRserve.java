@@ -35,7 +35,7 @@ public class PluginStartRserve extends Plugin {
                 if (Common.DEBUG>0)
                     System.out.println("Can't start Rserve: "+rte.getMessage());
                 return false;
-            };
+            }
         }
         return true;
     }
