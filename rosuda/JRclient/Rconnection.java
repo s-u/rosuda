@@ -288,6 +288,21 @@ public class Rconnection {
         throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
+    /** Sets send buffer size of the Rserve (in bytes) for the current connection. All responses send by Rserve are stored in the send buffer before transmitting. This means that any objects you want to get from the Rserve need to fit into that buffer. By default the size of the send buffer is 2MB. If you need to receive larger objects from Rserve, you will need to use this function to enlarge the buffer. In order to save memory, you can also reduce the buffer size once it's not used anymore. Currently the buffer size is only limited by the memory available and/or 1GB (whichever is smaller). Current Rserve implementations won't go below buffer sizes of 32kb though. If the specified buffer size results in 'out of memory' on the server, the corresponding error is sent and the connection is terminated.<br>
+        <i>Note:</i> This command may go away in future versions of Rserve which will use dynamic send buffer allocation.
+        @param sbs send buffer size (in bytes) min=32k, max=1GB
+     */
+    public void setSendBufferSize(long sbs) throws RSrvException {
+        if (!connected || rt==null) {
+            lastError="Error: not connected";
+            throw new RSrvException(this,lastError);
+        }
+        Rpacket rp=rt.request(Rtalk.CMD_setBufferSize,(int)sbs);
+        if (rp!=null && rp.isOk()) return;
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);        
+    }
+
     /** login using supplied user/pwd. Note that login must be the first
 	command if used
 	@param user username

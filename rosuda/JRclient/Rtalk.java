@@ -30,6 +30,8 @@ public class Rtalk {
     public static final int CMD_removeFile=0x015;
     public static final int CMD_setSEXP=0x020;
     public static final int CMD_assignSEXP=0x021;
+    
+    public static final int CMD_setBufferSize=0x081;
 
     InputStream is;
     OutputStream os;
