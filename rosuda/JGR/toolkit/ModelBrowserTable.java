@@ -264,6 +264,7 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
     	ModelBrowserTable table;
     	
     	public FilterPanel(ModelBrowserTable table) {
+    		family.setNextFocusableComponent(name);
     		FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
     		fl.setVgap(0);
     		fl.setHgap(0);
