@@ -8,26 +8,26 @@ import java.util.*;
 // - class (other that just using java tools)
 
 /** a {@link WinTracker} entry
-    @version $Id$ 
+    @version $Id$
 */
-class WTentry extends Object
+public class WTentry extends Object
 {
     public static int lid=1;
 
     public Window w;
     public String name;
-    int id=0;
-    MenuItem mi=null;
-    Menu menu=null;
-    int wclass=0;
+    public int id=0;
+    public MenuItem mi=null;
+    public Menu menu=null;
+    public int wclass=0;
 
-    WTentry(Window win) {
+    public WTentry(Window win) {
 	w=win; id=lid; lid++;
 	mi=newMenuItem();
     }
 
-    WTentry(Window win,String nam,int wndclass) {
-        name=nam; 
+    public WTentry(Window win,String nam,int wndclass) {
+        name=nam;
 	w=win; id=lid; lid++;
         wclass=wndclass;
 	mi=newMenuItem();
