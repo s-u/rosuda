@@ -27,6 +27,8 @@ public abstract class SVar extends Notifier
     public static final int IVT_Index      = 4; // row index
     public static final int IVT_Resid      = 8; // residuals
     public static final int IVT_RCC        = 9;
+    public static final int IVT_ResidStat1 = 10; // residual statistics 1 - currently the mean
+    public static final int IVT_ResidStat2 = 11;
 
     /** sort method lexicograph. */
     public static final int SM_lexi = 0;
