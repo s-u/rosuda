@@ -252,6 +252,7 @@ public class Klimt
                                     tr.registerTree(t,fs[fi].getName());
                                 };
                                 fi++;
+                                r.close();
                             }
                         }
                     }
