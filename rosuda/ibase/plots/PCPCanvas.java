@@ -35,6 +35,9 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     boolean drawPoints=false;
     boolean drawAxes=false;
     boolean dropColor=false;
+
+    boolean isResidPlot=false; // we should move this out - that's a specific PCP ...
+    boolean showResidLines=false;
     
     /** array of axes */
     Axis A[];
@@ -78,20 +81,23 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	ax=A[0];
 	ay=A[1];
+        if (v[1].getInternalType()==SVar.IVT_Resid) isResidPlot=true;
 	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","-","Common scale on/off","common","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
-	MIlabels=EzMenu.getItem(f,"labels");	
+        MIlabels=EzMenu.getItem(f,"labels");
+        if (!isResidPlot) EzMenu.getItem(f,"toggle0.5").setEnabled(false);
     };
 
     public void setCommonScale(boolean cs) {
 	if (cs==commonScale) return;
 	commonScale=cs;
+        EzMenu.getItem(getFrame(),"common").setLabel(cs?"Individual scales":"Common scale");
 	if (cs) {
 	    A[1].setValueRange(totMin,totMax-totMin);
 	    //TODO: notify!
@@ -139,6 +145,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	g.defineColor("red",255,0,0);
 	g.defineColor("line",128,128,192); // color of line plot
 	g.defineColor("lineZ",192,192,255); // color of the line when dropped
+        g.defineColor("Rlines",96,128,96); // color of the resudual thresholds
 	g.defineColor("lines",96,96,255);	
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
@@ -214,6 +221,12 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 int t=A[0].getCatCenter(xx++);
                 g.drawLine(t,Y,t,Y+H);
             }
+        }
+
+        if (showResidLines) {
+            g.setColor("Rlines");
+            g.drawLine(X,TH-A[1].getValuePos(0.5),X+W,TH-A[1].getValuePos(0.5));
+            g.drawLine(X,TH-A[1].getValuePos(-0.5),X+W,TH-A[1].getValuePos(-0.5));
         }
         
         g.setColor("line");
@@ -349,6 +362,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
+        if (cmd=="toggle0.5") { showResidLines=!showResidLines; setUpdateRoot(0); repaint(); }
         if (cmd=="togglePts") { drawPoints=!drawPoints; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleDrop") { dropColor=!dropColor; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
