@@ -185,9 +185,8 @@ public class InTr
 	    if (t!=null)
 		newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
 	    VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-	    if (t==null)
-		Common.mainFrame=vf;		
-
+	    Common.mainFrame=vf;		
+	    
 	    carg++;
 	    while (carg<argv.length) {
 		SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
