@@ -6,7 +6,7 @@ import java.io.*;
 /** implementation of deviation plots
     @version $Id$
 */
-public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, KeyListener, Commander
+public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, KeyListener, ActionListener, Commander
 {
     /** associated tree root */
     SNode root;
@@ -16,7 +16,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     SMarker m;
 
     Axis ax,ay;
-    boolean cumulate=false;
+    boolean cumulate=true, lines=false;
     double[] dev;
     double[] dgain;
     int devs=0;
@@ -25,6 +25,8 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 
     int leftm=40, rightm=10, topm=10, botm=20;
     int lastw, lasth;
+
+    MenuItem MIcum, MIlines;
     
     /** creates a new deviance canvas
 	@param f frame owning this canvas or <code>null</code> if none
@@ -40,6 +42,10 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	ax=new Axis(null,Axis.O_X,Axis.T_EqSize);
 	ay=new Axis(null,Axis.O_Y,Axis.T_Num);
 	setNode(fin);
+        MenuBar mb=null;
+        String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Show gain","cumulate","Show lines","lines","0"};
+        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+        MIcum=mb.getMenu(1).getItem(0); MIlines=mb.getMenu(1).getItem(1);
     };
 
     public void setNode(SNode n) {
@@ -53,11 +59,11 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	    };
 	    dev=new double[devs];
 	    dgain=new double[devs];
-	    int i=1;
+	    int i=devs-1;
 	    c=n;
-	    min=max=dev[0]=c.F1;
+            min=max=dev[i]=c.F1; dgain[i]=c.isLeaf()?c.F1:c.devGain; i--;
 	    while (c.getParent()!=null) {
-		c=(SNode)c.getParent(); dev[i]=c.F1; dgain[i]=c.devGain; i++;
+                c=(SNode)c.getParent(); dev[i]=c.F1; dgain[i]=c.devGain; i--;
 		if (c.F1>max) max=c.F1;
 		if (c.F1<min) min=c.F1;
 	    };
@@ -87,34 +93,44 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
         g.defineColor("fill",255,255,255);
         g.defineColor("outline",0,0,0);
         g.defineColor("red",255,0,0);
-
+        g.defineColor("labels",0,0,64);
+        
 	g.setColor("outline");
 	g.drawLine(leftm,h-botm,leftm,topm); 
 	g.drawLine(leftm,h-botm,w-rightm,h-botm);
 
 	int i=0;
+        int lsy=0;
+        if (lines) g.setColor("red");
+        
 	while(i<devs) {
             int x1=ax.getValuePos(i);
             int x2=ax.getValuePos(i+1);
 
             int ly=ay.getValuePos(0);
-            int vy=ay.getValuePos(cumulate?dev[i]:((i<devs-1)?dgain[i]:dev[i]));
-
-	    g.setColor("fill");
-            g.fillRect(x1,vy,x2-x1,ly-vy);
-	    g.setColor("outline");
-	    g.drawRect(x1,vy,x2-x1,ly-vy);
+            int vy=ay.getValuePos(cumulate?dev[i]:dgain[i]);
+            
+            if (lines) {
+                int dy=x2-x1; x1-=dy/2; x2-=dy/2;
+                if (i==0 && devs==1)
+                    g.drawLine(x1,vy,x2,vy);
+                else {
+                    if (i>0)
+                        g.drawLine(x1,lsy,x2,vy);
+                };
+                lsy=vy;                    
+            } else {
+                g.setColor("fill");
+                g.fillRect(x1,vy,x2-x1,ly-vy);
+                g.setColor("outline");
+                g.drawRect(x1,vy,x2-x1,ly-vy);
+            };
 	    i++;
 	};
 
+        g.setColor("labels");
 	{
-	    //ay.vBegin=0; ay.vLen=ay.datacount;
 	    double f=ay.getSensibleTickDistance(50,18);
-/*	    int dispers=ay.getValuePos(f)-ay.gBegin;
-	    if (dispers<0) dispers=-dispers;
-	    if (dispers<8) f*=5;
-	    else
-		if (dispers<16) f*=2; */
 	    double fi=ay.getSensibleTickStart(f);
 	    while (fi<ay.vBegin+ay.vLen) {
 		int t=ay.getValuePos(fi);
@@ -153,6 +169,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     {
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='P') run(this,"print");
+	if (e.getKeyChar()=='l') run(this,"lines");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='c') run(this,"cumulate");
     };
@@ -162,10 +179,23 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
         if (cmd=="print") run(o,"exportPS");
+        if (cmd=="lines") {
+            lines=!lines;
+            MIlines.setLabel(lines?"Show bars":"Show lines");
+            repaint();
+        };
 	if (cmd=="cumulate") {
 	    cumulate=!cumulate;
+            MIcum.setLabel(cumulate?"Show gain":"Show deviance");
 	    repaint();
 	};
 	return null;
     };
+
+    /** action listener methods reroutes all request to the commander interface */
+    public void actionPerformed(ActionEvent e) {
+        if (e==null) return;
+        run(e.getSource(),e.getActionCommand());
+    };
+    
 };

@@ -139,10 +139,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
 	
 	//--- this is a bit tricky - not really clean enough --
-	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...","exportPGS","Print","print","-","Quit","quit",
+	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...",
+                          "exportPGS","Print","print","-","Quit","quit",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
-			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic","-",
+			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
+                          "Show deviance plot","devplot","-",
 			  "Hide labels","labels",
 			  "Show deviance","deviance","Show path window","pathwin","-",
 			  "Use fixed size","size",
@@ -598,11 +600,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    repaint();
 	};
 	if (cmd=="showMosaic") {
+            /* since 0.95g: allow more windows at once, the use of myMosaicFrame is deprecated 
 	    if (myMosaicFrame!=null) {
 		myMosaicFrame.dispose();
 		WinTracker.current.rm(myMosaicFrame);
 		myMosaicFrame=null;
-	    };
+	    }; */
 	    myMosaicFrame=new TFrame(InTr.lastTreeFileName+" (treemap)");
 	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root));
 	    myMosaicFrame.addWindowListener(Common.defaultWindowListener);
@@ -610,11 +613,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    myMosaicFrame.pack(); myMosaicFrame.show();		
 	};
 	if (cmd=="devplot") {
-	    if (myDevFrame!=null) {
+            /* since 0.95g: allow more windows at once, the use of myDevFrame is deprecated
+
+            if (myDevFrame!=null) {
 		myDevFrame.dispose();
 		WinTracker.current.rm(myDevFrame);
 		myDevFrame=null;
-	    };
+	    }; */
 	    myDevFrame=new TFrame(InTr.lastTreeFileName+" (deviance plot)");
 	    DevCanvas dc=new DevCanvas(myDevFrame,root);
 	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.defaultWindowListener);
