@@ -327,7 +327,7 @@ public class Klimt
         Common.appName="Klimt";
         argv=Global.parseArguments(argv);
 
-        Platform.initPlatform();
+        Platform.initPlatform("org.rosuda.klimt.");
 
         try {
 	    int argc=argv.length;
