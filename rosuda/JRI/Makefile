@@ -21,7 +21,7 @@ JAVAH=$(JAVAB)h
 # you shouldn't need to touch anything below this line
 
 RINC=-I$(RHOME)/src/include -I$(RHOME)/include
-RLD=-L$(RHOME)/bin -lR
+RLD=-L$(RHOME)/bin -L$(RHOME)/lib -lR
 CFLAGS+=-Iinclude -Isrc/include
 
 TARGETS=$(JNIPREFIX)jri$(JNISO) rtest.class run $(PLATFORMT)
@@ -65,7 +65,7 @@ run:
 	echo "#!/bin/sh" > run
 	echo "export R_HOME=$(RHOME)" >> run
 	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
-	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client" >> run
+	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(RHOME)/lib:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client:$(JAVAHOME)/jre/bin/classic" >> run
 	echo "$(JAVAB) rtest \$$*" >> run
 	-chmod a+x run
 	
