@@ -32,6 +32,7 @@ public class ToolBar extends JPanel {
 	public IconButton findButton;
 	public IconButton stopButton;
 	public IconButton helpButton;
+        public ProgressLabel progress;
 	
 	public InsertRemoveUndoManager undoMgr;
 	
@@ -54,6 +55,7 @@ public class ToolBar extends JPanel {
 		this.findButton = new IconButton("/icons/find.png","Search",al,"search");
 		if (useStopButton) this.stopButton = new IconButton("/icons/stop.png","Stop",al,"stop");
 		this.helpButton = new IconButton("/icons/help.png","Help",al,"help");
+                this.progress = new ProgressLabel();
 		
 
 		
@@ -73,7 +75,9 @@ public class ToolBar extends JPanel {
 		if (useStopButton) this.add(stopButton);
 		this.add(new Spacer(10));
 		this.add(helpButton);
-	}
+                this.add(new Spacer(20));
+                this.add(progress);
+        }
 	
 	class Spacer extends JPanel {
 		public Spacer(int width) {

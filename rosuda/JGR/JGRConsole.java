@@ -35,6 +35,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
     private TextFinder textFinder = new TextFinder(output);
     
     private ToolBar toolBar;
+    public ProgressLabel progress;
    
     private String wspace = null;
     public static String directory = System.getProperty("user.home");
@@ -77,7 +78,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         currentHistPosition = JGR.RHISTORY.size();
 
         //Add default toolbar with stop button to interrupt R
-        toolBar = new ToolBar(this,true);        
+        toolBar = new ToolBar(this,true);
+        progress = toolBar.progress;
 
         input.addKeyListener(this);
         input.setWordWrap(false);

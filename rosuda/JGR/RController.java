@@ -494,56 +494,7 @@ public class RController {
     	return v;
     }    
 
-    public static boolean putToR(SVarSet vs) {
-        try {
-            long contlist[] = new long[vs.count()];
-            String[] names = new String[vs.count()];
-            for (int i = 0; i< vs.count(); i++) {
-                names[i] = vs.at(i).getName();
-                if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
-                    long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
-                    contlist[i] = v;
-                                   }
-                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
-                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
-                    contlist[i] = v;
-                                   }
-                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
-                    long v = JGR.R.rniPutIntArray(((SVarFact) vs.at(i)).cont);
-                    long c = JGR.R.rniPutString("factor");
-                    JGR.R.rniSetAttr(v,"class",c);
-                    long levels = JGR.R.rniPutStringArray(((SVarFact) vs.at(i)).cats);
-
-                    JGR.R.rniSetAttr(v,"levels",levels);
-                    contlist[i] = v;
-                }
-            }
-
-            long xp1 = JGR.R.rniPutVector(contlist);
-            long xp2 = JGR.R.rniPutStringArray(names);
-            JGR.R.rniSetAttr(xp1,"names",xp2);
-
-            String[] rownames = new String[vs.length()];
-            for (int i = 0; i < rownames.length; i++) rownames[i] = i+"";
-            long xp3 = JGR.R.rniPutStringArray(rownames);
-            JGR.R.rniSetAttr(xp1,"row.names",xp3);
-
-            long c = JGR.R.rniPutString("data.frame");
-            JGR.R.rniSetAttr(xp1,"class",c);
-
-            JGR.R.rniAssign(vs.getName(),xp1,0);
-            if (vs.getName().startsWith("jgr_temp")) {
-                String name = vs.getName();
-                JGR.R.eval(name.replaceFirst("jgr_temp","")+" <- as.matrix("+vs.getName()+")");
-                JGR.R.eval("rm("+name+")");
-            }
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
-    }
-    
+        
     public static boolean export(SVarSet vs) {
     	REXP x = JGR.R.eval("suppressWarnings(try(class("+vs.getName()+"),silent=TRUE))");
     	String type = null;
@@ -554,7 +505,7 @@ public class RController {
     	if (type == null || type.equals("data.frame"))
     		success = exportDataFrame(vs);
     	else if (type != null && type.equals("matrix"))
-    		success = false; // doesn't work yet exportMatrix(vs);
+    		success = exportMatrix(vs);
     	else if (type != null && type.equals("list"))
     		success = exportList(vs);
     	else if (type != null && type.equals("numeric"))
