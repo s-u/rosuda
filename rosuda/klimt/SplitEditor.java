@@ -19,6 +19,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
     PlotLine li,lrl, rrl;
     double spVal;
     
+    public static int editSuffix=0;
+    
     public SplitEditor(SNode nd) {
         super("Split Editor");
         n=nd; vs=n.getSource();
@@ -298,9 +300,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener 
                         new MsgDialog(this,"Invalid split value","The specified split value would result in a single son. No action will be performed.");
                     } else {
                         Vector cp=new Vector();
-                        SNode nt=InTr.makePrunedCopy(root,true,n,true,cp);
-                        nt.name=nt.name+"*";
-                        
+                        editSuffix++;
+                        SNode nt=InTr.makePrunedCopy(root,true,n,true,cp,"Ed_"+root.name+"_"+editSuffix);
                         
                         /* build the two other chunks here */
                         ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
