@@ -19,6 +19,7 @@ public class PlotPolygon extends PlotObject {
     /** create a new polygon object and add it to the specified {@link PlotManager} */
     public PlotPolygon(PlotManager pm) {
         super(pm);
+        setDrawColor(new PlotColor("black"));
     }
 
     /** set polygon points. note that the polygon is not closed automatically when drawing outline, but filled are is always closed (if fill color is not <code>null</code>)
