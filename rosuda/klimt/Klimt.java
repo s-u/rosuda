@@ -252,7 +252,7 @@ public class InTr
             while (carg<argv.length) {
                 if (argv[carg].compareTo("--version")==0) {
                     System.out.println("KLIMT v"+Common.Version+" (Release "+Common.Release+")");
-                    System.out.println("(C)Copyright 2001-2 University of Augsburg, Author: Simon Urbanek");
+                    System.out.println("(C)Copyright 2001-3 Simon Urbanek (http://www.klimt-project.com)");
                     System.out.println("OS: "+System.getProperty("os.name")+" (version "+System.getProperty("os.version")+")");
                     PluginManager pm=PluginManager.getManager();
                     System.out.println("User config file: "+pm.configFile);
