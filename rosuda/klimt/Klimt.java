@@ -260,6 +260,9 @@ public class InTr
                 };
                 if (argv[carg].compareTo("--debug")==0)
                     Common.DEBUG=1;
+                if (argv[carg].compareTo("--warn")==0 ||
+                    argv[carg].compareTo("--warning")==0)
+                    Common.printWarnings=true;
                 if (argv[carg].compareTo("--profile")==0)
                     Common.PROFILE=1;
                 if (argv[carg].compareTo("--nodebug")==0)
@@ -289,6 +292,7 @@ public class InTr
 
             if (!Common.initializedStatic) Common.initStatic();
             PluginManager pm=PluginManager.getManager();
+            Common.initValuesFromConfigFile(pm);
             String uRs=pm.getParS("Klimt","startRserv");
             if (uRs!=null && uRs.length()>0 && (uRs.charAt(0)=='y' || uRs.charAt(0)=='1')) {
                 Common.startRserv=true;
