@@ -1,4 +1,8 @@
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
 
 /**
  * Extends the {@link Canvas} class by adding multi-buffering support based on layers.
@@ -27,7 +31,7 @@ public abstract class LayerCanvas extends Canvas
         offscreen=new Image[layers];
         for(int i=0;i<layers;i++) offscreen[i]=null;
         updateRoot=0;
-        if (Common.DEBUG>0) System.out.println("LayerCanvas: layers="+layers);
+        if (Global.DEBUG>0) System.out.println("LayerCanvas: layers="+layers);
     }
 
     /** creates 1 layer as default */
@@ -64,7 +68,7 @@ public abstract class LayerCanvas extends Canvas
 	Image curimg=null;
         int firstPaintLayer=updateRoot;
 
-        if (Common.DEBUG>0) System.out.println("LayerCanvas: update, layers="+layers+", root="+updateRoot);        
+        if (Global.DEBUG>0) System.out.println("LayerCanvas: update, layers="+layers+", root="+updateRoot);        
         
 	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
 	if (d.width<1 || d.height<1) return;
@@ -78,7 +82,7 @@ public abstract class LayerCanvas extends Canvas
         Stopwatch sw=new Stopwatch();
         // we will re-create the off-screen object only if the canvas was resized
 	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
-            if (Common.DEBUG>0) System.out.println("LayerCanvas: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
+            if (Global.DEBUG>0) System.out.println("LayerCanvas: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
             // draw the old image - after resize the background is cleared automatically
             // so in order to reduce flickering draw the old image until the new one is generated
             if (offscreen[layers-1]!=null) g.drawImage(offscreen[layers-1], 0, 0, this);
@@ -88,7 +92,7 @@ public abstract class LayerCanvas extends Canvas
             offsd=d;
             firstPaintLayer=0; // after resize we need to repaint them all
             setUpdateRoot(0);
-            if (Common.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
+            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
         };
 	
         // clear the image
@@ -97,7 +101,7 @@ public abstract class LayerCanvas extends Canvas
 
             if (offgc!=null) { /* insane sanity checks, because sometimes it happens that
                                   the graphics subsystem returns null */
-                 if (Common.useAquaBg) {
+                 if (Global.useAquaBg) {
                     offgc.setColor(Color.white);
                     offgc.fillRect(0, 0, d.width, d.height);
 
@@ -116,7 +120,7 @@ public abstract class LayerCanvas extends Canvas
                 Color fg=getForeground();
                 if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
             }
-            if (Common.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
+            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
         }
 
         int l=firstPaintLayer;
@@ -126,12 +130,12 @@ public abstract class LayerCanvas extends Canvas
             paintLayer(offgc,l);
             l++;
         }
-        if (Common.PROFILE>0) sw.profile("LayerCanvas.update.constructLayers");
+        if (Global.PROFILE>0) sw.profile("LayerCanvas.update.constructLayers");
 
         // do normal redraw
         // transfer offscreen to window, last layer should have the correct image
         g.drawImage(offscreen[l-1], 0, 0, this);
-        if (Common.PROFILE>0) sw.profile("LayerCanvas.update.paintLayers");
+        if (Global.PROFILE>0) sw.profile("LayerCanvas.update.paintLayers");
     };
 
     /** normally we would not use paint at all, but sometimes paint is called

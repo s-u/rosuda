@@ -2,6 +2,7 @@ package org.rosuda.ibase;
 
 import java.util.*;
 import java.io.*;
+import org.rosuda.util.*;
 
 /** implements set of variables (aka dataset, used as data source)
     which consists basically of a set of variables (of class {@link SVar}) and
@@ -15,23 +16,12 @@ public class SVarSet {
     SMarker mark;
     /** dataset name */
     String name;
-
-    public class TreeEntry {
-        public SNode root;
-        public String name;
-        public TreeEntry(SNode t, String n) {
-            root=t; name=n;
-        }
-    }
-    
-    /** list of associated trees */
-    Vector trees=null;
-    
+        
     int globalMisclassVarID=-1;
     int classifierCounter=1;
 
     /** default constructor of empty dataset */
-    SVarSet() { vars=new Vector(); name="<unknown>"; };
+    public SVarSet() { vars=new Vector(); name="<unknown>"; };
     
     /** sets the marker for this dataset
 	@param m marker */
@@ -135,12 +125,6 @@ public class SVarSet {
 	@return # of variables */
     public int count() { return vars.size(); };
 
-    /** register a tree with the dataset */
-    public void registerTree(SNode t, String n) {
-        if (trees==null) trees=new Vector();
-        trees.addElement(new TreeEntry(t,n));
-    }
-
     public boolean Export(PrintStream p, boolean all) { return Export(p,all,null); }
     public boolean Export(PrintStream p) { return Export(p,true,null); }
     public boolean Export(PrintStream p, boolean all, int vars[]) {
@@ -190,102 +174,13 @@ public class SVarSet {
             };
             return true;
         } catch (Exception eee) {
-            if (Common.DEBUG>0) {
+            if (Global.DEBUG>0) {
                 System.out.println("* SVarSet.Export...: something went wrong during the export: "+eee.getMessage()); eee.printStackTrace();
             };
         };
         return false;
     }
 
-    public boolean exportForest(PrintStream p) {
-        try {
-            if (p!=null) {
-                p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.dev\tsample.gain\tsample.size\tdepth");
-                SVarSet.TreeEntry te;
-                if (Common.DEBUG>0) System.out.println("Forest export; total "+trees.size()+" trees associated.");
-                for (Enumeration e=trees.elements(); e.hasMoreElements();) {
-                    te=(SVarSet.TreeEntry)e.nextElement();
-                    if (Common.DEBUG>0) System.out.println("exporting tree \""+te.name+"\"...");
-                    if (te.root!=null) {
-                        Vector v=new Vector();
-                        te.root.getAllNodes(v);
-                        if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
-                        for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
-                            SNode np=(SNode)e2.nextElement();
-                            if (!np.isLeaf()) {
-                                SNode n=(SNode)np.at(0);
-                                if (n!=null) {
-                                    p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
-                                };
-                            }
-                        }
-                    }
-                }
-                p.close();
-                return true;
-            };
-        } catch (Exception eee) {};
-        return false;
-    }
-
-    public SNode[] getTrees() {
-        SNode[] ts=new SNode[trees.size()];
-        int i=0;
-        SVarSet.TreeEntry te;
-        for (Enumeration e=trees.elements(); e.hasMoreElements();) {
-            te=(SVarSet.TreeEntry)e.nextElement();
-            ts[i++]=te.root;
-        }
-        return ts;
-    }
-    
-    public SVarSet getForestVarSet() {
-        SVarSet fs=new SVarSet(); fs.setName("Forest");
-        SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
-        SVar v_node=new SVar("NodeID"); fs.add(v_node);
-        SVar v_var=new SVar("Variable",true); fs.add(v_var);
-        SVar v_vspl=new SVar("Split.num.value"); fs.add(v_vspl);
-        SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
-        SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
-        SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
-        SVar v_td=new SVar("t.deviance"); fs.add(v_td);
-        SVar v_sdg=new SVar("s.dev.Gain"); fs.add(v_sdg);
-        SVar v_tdg=new SVar("t.dev.Gain"); fs.add(v_tdg);
-        SVar v_root=new SVar("Root"); v_root.setContentsType(SVar.CT_Tree); fs.add(v_root);
-
-        SVarSet.TreeEntry te;
-        if (Common.DEBUG>0) System.out.println("Forest export; total "+trees.size()+" trees associated.");
-        for (Enumeration e=trees.elements(); e.hasMoreElements();) {
-            te=(SVarSet.TreeEntry)e.nextElement();
-            if (Common.DEBUG>0) System.out.println("including tree \""+te.name+"\"...");
-            if (te.root!=null) {
-                Vector v=new Vector();
-                te.root.getAllNodes(v);
-                if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
-                for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
-                    SNode np=(SNode)e2.nextElement();
-                    if (!np.isLeaf()) {
-                        SNode n=(SNode)np.at(0);
-                        if (n!=null) {
-                            if (Common.DEBUG>0)
-                                System.out.println(te.name+", var="+n.splitVar.getName()+", cond="+n.Cond+", svF="+n.splitValF+", F1="+np.F1+", dg="+np.devGain+", cases="+n.Cases+", sd="+np.sampleDev+", sdg="+np.sampleDevGain+", ds="+np.data.size()+", lev="+np.getLevel());
-                            v_tree.add(te.name); v_var.add(n.splitVar.getName());
-                            v_root.add(te.root);
-                            v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
-                            v_tcases.add(new Integer(np.Cases));
-                            v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
-                            v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
-                            v_vspl.add(new Double(n.splitValF));
-                        };
-                    }
-                }
-            }
-        }
-        SMarker m=new SMarker(v_var.size());
-        fs.setMarker(m);
-        return fs;
-    }
-    
     public static void Debug(SVarSet sv) {
 	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
 	for (Enumeration e=sv.elements(); e.hasMoreElements();) {

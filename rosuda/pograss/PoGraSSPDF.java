@@ -2,6 +2,8 @@ package org.rosuda.pograss;
 
 import java.io.*;
 
+import org.rosuda.util.*;
+
 /** Portable Graphics SubSystem - PDF implementation, based on PS implementation
  *
  * Bugs: in this PS implementation xxxOval, xxxRoundRectangle etc. require dx=dy because
@@ -14,7 +16,7 @@ import java.io.*;
  * @version $Id$
  */
 
-class PoGraSSPDF extends PoGraSS
+public class PoGraSSPDF extends PoGraSS
 {
     String fn;
     PrintStream outs;

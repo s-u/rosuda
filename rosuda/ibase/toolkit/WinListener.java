@@ -1,13 +1,17 @@
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
 import java.awt.event.*;
+import org.rosuda.ibase.*;
 
 /** Default window listener.
  *  Handles default tasks, like close-window event,
  *  un-registers window from WinTracker etc.
  *  @version $Id$ */
-public class DefWinL implements WindowListener
+public class WinListener implements WindowListener
 {
-    DefWinL() {};
+    public WinListener() {}
+    
     public void windowClosing(WindowEvent e)
     {	
 	Window w=e.getWindow();
@@ -22,8 +26,9 @@ public class DefWinL implements WindowListener
 	    if (WinTracker.current!=null)
 		WinTracker.current.disposeAll();
 	    System.exit(0);
-	};
-    };
+	}
+    }
+    
     public void windowClosed(WindowEvent e) {
 	Window w=e.getWindow();
 	WinTracker.current.rm(w);
@@ -31,11 +36,12 @@ public class DefWinL implements WindowListener
 	    if (WinTracker.current!=null)
 		WinTracker.current.disposeAll();
 	    System.exit(0);
-	};
-    };
-    public void windowOpened(WindowEvent e) {};
-    public void windowIconified(WindowEvent e) {};
-    public void windowDeiconified(WindowEvent e) {};
-    public void windowActivated(WindowEvent e) {};
-    public void windowDeactivated(WindowEvent e) {};
-};
+	}
+    }
+    
+    public void windowOpened(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowActivated(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
+}

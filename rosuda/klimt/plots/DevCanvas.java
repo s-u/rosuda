@@ -1,7 +1,15 @@
+package org.rosuda.klimt.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
 
 /** implementation of deviation plots
     @version $Id$
@@ -85,8 +93,8 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	Dimension Dsize=getSize();
 	int w=Dsize.width, h=Dsize.height;
         if (w!=lastw || h!=lasth) {
-            ax.setGeometry(ax.or,leftm,w-leftm-rightm);
-            ay.setGeometry(ay.or,h-botm,topm+botm-h);
+            ax.setGeometry(ax.getOrientation(),leftm,w-leftm-rightm);
+            ay.setGeometry(ay.getOrientation(),h-botm,topm+botm-h);
         };
 
         g.setBounds(w,h);

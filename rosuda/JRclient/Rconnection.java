@@ -1,3 +1,5 @@
+package org.rosuda.JRclient;
+
 import java.util.*;
 import java.io.*;
 import java.net.*;

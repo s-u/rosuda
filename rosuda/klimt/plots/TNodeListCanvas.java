@@ -1,5 +1,12 @@
+package org.rosuda.klimt.plots;
+
 import java.awt.*;
 import java.util.Enumeration;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
 
 /** TNodeListCanvas - lists path info of a node (i.e. list of nodes leading to the current one)
     @version $Id$

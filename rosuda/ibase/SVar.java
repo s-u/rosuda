@@ -1,6 +1,9 @@
 package org.rosuda.ibase;
 
 import java.util.*;
+
+import org.rosuda.util.*;
+
 //import SMarker;
 
 /**
@@ -215,7 +218,7 @@ public class SVar extends Vector
     public void sortCategories(int method) {
         if (!isCat() || cats.size()<2) return;
         Stopwatch sw=null;
-        if (Common.DEBUG>0) {
+        if (Global.DEBUG>0) {
             sw=new Stopwatch();
             System.out.println("Sorting variable \""+name+"\"");
         };
@@ -259,7 +262,7 @@ public class SVar extends Vector
                 ocats.setElementAt(null,p);
             }            
         }
-        if (Common.DEBUG>0) {
+        if (Global.DEBUG>0) {
             sw.profile("sorted");
         };
     };

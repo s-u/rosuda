@@ -1,3 +1,5 @@
+package org.rosuda.util;
+
 import java.lang.*;
 
 /** very simple profile class to measure time differences and do some basic profiling
@@ -36,9 +38,9 @@ public class Stopwatch {
     public long restart() { stop(); ts_start=ts_stop; return ts_elapsed; };
 
     /** print profiling information, i.e. do a restart and print the last elapsed time if not in quiet mode */
-    public void profile() { restart(); if (Common.PROFILE>0) System.out.println("time elapsed "+ts_elapsed+" ms"); };
+    public void profile() { restart(); if (Global.PROFILE>0) System.out.println("time elapsed "+ts_elapsed+" ms"); };
 
     /** print profiling information, i.e. do a restart and print the last elapsed time if not in quiet mode */
-    public void profile(String s) { restart(); if (Common.PROFILE>0) System.out.println(s+" "+ts_elapsed+" ms"
-                                                                                        +((Common.PROFILE>1)?" [mem free "+Runtime.getRuntime().freeMemory()+"]":"")                                                                                        ); };
+    public void profile(String s) { restart(); if (Global.PROFILE>0) System.out.println(s+" "+ts_elapsed+" ms"
+                                                                                        +((Global.PROFILE>1)?" [mem free "+Runtime.getRuntime().freeMemory()+"]":"")                                                                                        ); };
 };

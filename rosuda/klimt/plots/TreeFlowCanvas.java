@@ -6,9 +6,17 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.klimt.plots;
+
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
 
 public class TreeFlowCanvas extends PGSCanvas implements Dependent {
     SNode roots[];

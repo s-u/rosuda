@@ -1,5 +1,5 @@
 /**
- * InTr.java
+ * Klimt.java
  * Klimt - Interactive Trees 
  *
  * Created: Tue May  1 16:25:54 2001
@@ -7,6 +7,8 @@
  * @author <a href="mailto:su@b-q-c.com">Simon Urbanek</a>
  * @version 0.94a $Id$
  */
+
+package org.rosuda.klimt;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -16,14 +18,20 @@ import java.util.*;
 import javax.swing.*;
 /*ENDSWING*/
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.plots.*;
+import org.rosuda.plugins.*;
+
 //---------------------------------------------------------------------------
-// InTr
+// Klimt
 //---------------------------------------------------------------------------
 
-/** Main Interactive Trees class. For historical reasons the main class of the KLIMT application
+/** Main Klimt Trees class. For historical reasons the main class of the KLIMT application
     is not Klimt (which is still provided as a wrapper) but this InTr (which stands for Interactive Trees, the
     original project name until it was renamed to Klimt) */
-public class InTr
+public class Klimt
 {
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
@@ -43,9 +51,7 @@ public class InTr
 	
 	TreeCanvas tc=new TreeCanvas(t,f);
 	f.add(tc);
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	f.addWindowListener(Common.defaultWindowListener);
+	f.addWindowListener(Common.getDefaultWindowListener());
 	tc.setBounds(x,y,w,h);
 	f.setBounds(x,y,w,h);
 	f.pack();
@@ -90,11 +96,12 @@ public class InTr
     {
 	SNode n=new SNode();
         if (imTheRoot) {
-            SNode root=(SNode)t.getRoot();
-            n.name=(newName==null)?"Pr_"+root.name:newName;
-            n.prediction=root.prediction;
-            n.response=root.response;
-	    n.formula=root.formula;
+            RootInfo myRI=getRootInfo();
+            RootInfo root=t.getRootInfo();
+            myRI.name=(newName==null)?"Pr_"+root.name:newName;
+            myRI.prediction=root.prediction;
+            myRI.response=root.response;
+	    myRI.formula=root.formula;
         }
 	n.Cases=t.Cases; n.Cond=t.Cond;
         if (deepCopy) {
@@ -169,7 +176,7 @@ public class InTr
                                     t.name=fs[fi].getName();
                                     if (createFrames) {
                                         t.frame=ff=new TFrame(fs[fi].getName(),TFrame.clsTree);
-                                        TreeCanvas tc=InTr.newTreeDisplay(t,ff);
+                                        TreeCanvas tc=Klimt.newTreeDisplay(t,ff);
                                         tc.repaint(); tc.redesignNodes();                                        
                                     }
                                     tvs.registerTree(t,fs[fi].getName());
@@ -199,7 +206,7 @@ public class InTr
 		else
 		    return null;
             } else tvs.setName(fnam);
-            if (Common.informLoader)
+            if (Global.informLoader)
                 System.out.println("InfoForLoader:Loading data...");
             BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
             Common.flushWarnings();
@@ -212,7 +219,7 @@ public class InTr
             } catch(Exception e) {};
             t=RTree.Load(r,fnn,tvs,fsz,null,null,readOnlyDataset,true);
             if (t!=null) t.name=fnn;
-	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
+	    if (Global.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
             String wars=Common.getWarnings();
@@ -245,6 +252,10 @@ public class InTr
     {
         boolean silentTreeLoad=false;
         int firstNonOption=-1;
+        argv=Global.parseArguments(argv);
+
+        Platform.initPlatform();
+
         try {
 	    int argc=argv.length;
 	    int carg=0;
@@ -254,43 +265,23 @@ public class InTr
                     System.out.println("KLIMT v"+Common.Version+" (Release "+Common.Release+")");
                     System.out.println("(C)Copyright 2001-3 Simon Urbanek (http://www.klimt-project.com)");
                     System.out.println("OS: "+System.getProperty("os.name")+" (version "+System.getProperty("os.version")+")");
-                    PluginManager pm=PluginManager.getManager();
-                    System.out.println("User config file: "+pm.configFile);
                     return;
                 };
-                if (argv[carg].compareTo("--debug")==0)
-                    Common.DEBUG=1;
-                if (argv[carg].compareTo("--warn")==0 ||
-                    argv[carg].compareTo("--warning")==0)
-                    Common.printWarnings=true;
-                if (argv[carg].compareTo("--profile")==0)
-                    Common.PROFILE=1;
-                if (argv[carg].compareTo("--nodebug")==0)
-                    Common.DEBUG=0;
-                if (argv[carg].compareTo("--with-loader")==0) {
-                    Common.informLoader=true;
-                    System.out.println("InfoForLoader:Initializing...");
-                }
                 if (argv[carg].compareTo("--no-add")==0)
                     Common.noIntVar=true;
-                if (argv[carg].compareTo("--with-aqua")==0)
-                    Common.useAquaBg=true;
 /*                if (argv[carg].compareTo("--start-Rserv")==0)
                     Common.startRserv=true; */
-                if (argv[carg].compareTo("--without-aqua")==0)
-                    Common.useAquaBg=false;
                 if (firstNonOption==-1 && argv[carg].length()>0 && argv[carg].charAt(0)!='-')
                     firstNonOption=carg;
                 carg++;
 	    };
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("KLIMT v"+Common.Version+" (Release 0x"+Common.Release+")  "+
-                                   ((Common.PROFILE>0)?"PROF ":"")+
-                                   (Common.informLoader?"LOADER ":"")+
-                                   (Common.useAquaBg?"AQUA ":"")+
+                                   ((Global.PROFILE>0)?"PROF ":"")+
+                                   (Global.informLoader?"LOADER ":"")+
+                                   (Global.useAquaBg?"AQUA ":"")+
                                    (silentTreeLoad?"SILENT ":""));
-
-            if (!Common.initializedStatic) Common.initStatic();
+            
             PluginManager pm=PluginManager.getManager();
             Common.initValuesFromConfigFile(pm);
             String uRs=pm.getParS("Klimt","startRserv");
@@ -300,15 +291,15 @@ public class InTr
                 if (uRs==null) uRs="R CMD Rserve";
                 Plugin srp=PluginManager.loadPlugin("PluginDtartRserve");
                 if (srp==null) {
-                    if (Common.DEBUG>0)
+                    if (Global.DEBUG>0)
                         System.out.println("** Cannot find PluginStartRserve.");
                 } else {
-                    if (Common.DEBUG>0)
+                    if (Global.DEBUG>0)
                         System.out.println("Start of Rserv requested");
                     srp.initPlugin();
                     srp.setParameter("startCmd",uRs);
                     if (!srp.execPlugin())
-                        if (Common.DEBUG>0)
+                        if (Global.DEBUG>0)
                             System.out.println("Start of Rserve failed.");
                 }
             }
@@ -320,7 +311,7 @@ public class InTr
             String fname=(firstNonOption>-1)?argv[firstNonOption]:null;
             if (fname==null || fname.length()<1 || fname.charAt(0)=='-') fname=null;
 
-            if (Common.informLoader) {
+            if (Global.informLoader) {
                 if (fname==null) System.out.println("InfoForLoader:Select file to load");
                 else System.out.println("InfoForLoader:Loading data...");
             }
@@ -335,10 +326,10 @@ public class InTr
                     System.exit(1);
                 }
 
-                if (Common.informLoader)
+                if (Global.informLoader)
                     System.out.println("InfoForLoader:Setting up windows...");
 
-                if (Common.DEBUG>0) {
+                if (Global.DEBUG>0) {
                     for(Enumeration e=tvs.elements();e.hasMoreElements();) {
                         SVar vv=(SVar)e.nextElement();
                         System.out.println("==> "+vv.getName()+", CAT="+vv.isCat()+", NUM="+vv.isNum());
@@ -356,31 +347,31 @@ public class InTr
                 Common.mainFrame=vf;
             }
 
-            SplashScreen ss=new SplashScreen();
+            KlimtSplash ss=new KlimtSplash();
             
 	    carg=firstNonOption+1;
 	    while (carg<argv.length) {
                 if (argv[carg].compareTo("--silent")==0)
                     silentTreeLoad=true;                
                 if (argv[carg].length()<2 || argv[carg].substring(0,2).compareTo("--")!=0) {
-                    SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
+                    SNode ttt=Klimt.openTreeFile(Common.mainFrame,argv[carg],tvs);
                     if (ttt!=null && !silentTreeLoad) {
-                        TFrame fff=new TFrame(InTr.lastTreeFileName,TFrame.clsTree);
-                        TreeCanvas tc=InTr.newTreeDisplay(ttt,fff);
+                        TFrame fff=new TFrame(Klimt.lastTreeFileName,TFrame.clsTree);
+                        TreeCanvas tc=Klimt.newTreeDisplay(ttt,fff);
                         tc.repaint(); tc.redesignNodes();
                     };
                 };
 		carg++;
 	    };
-            if (Common.informLoader)
+            if (Global.informLoader)
                 System.out.println("InfoForLoader:Done.");		
 	} catch (Exception E) {
 	    System.out.println("Something went wrong.");
 	    System.out.println("LM: "+E.getLocalizedMessage());
 	    System.out.println("MSG: "+E.getMessage());
 	    E.printStackTrace();
-	};
-    };
+        }
+    }
 
     /** adjusts cached deviance gain for an entire subtree
 	@param t root of the subtree */
@@ -395,10 +386,10 @@ public class InTr
 		if (c!=null) {
 		    myDev-=c.F1;
 		    adjustDevGain(c);
-		};
-	    };
+		}
+            }
 	    t.devGain=myDev;
-	};
-    };
-    };
-    
+        }
+    }
+}
+

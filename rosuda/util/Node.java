@@ -9,14 +9,14 @@ import java.util.*;
 public class Node
 {
     /** List of all child nodes (all of object type {@link Node}) */
-    Vector ch;
+    protected Vector ch;
     /** Parent node */
-    Node  par;
+    protected Node  par;
     
     /** Depth (level) of this node. Root has a depth of 0 (cached value) */
-    int level;
+    protected int level;
     /** Height of the tree downwards (i.e. assuming this node is the root). A single node has the height of 0 */
-    int height;
+    protected int height;
 
     /** constructs an empty, lonely node */
     public Node() {} ;

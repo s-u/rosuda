@@ -6,11 +6,16 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
 import java.util.zip.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
 
 public class SplashScreen extends Frame implements ActionListener, WindowListener, Commander {
     public static SplashScreen main;
@@ -50,7 +55,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         }
     }
     
-    public SplashScreen() {
+    public SplashScreen(String txt) {
         super("About");
 
         Image splash=null;
@@ -64,7 +69,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 	    String fn=Platform.getPlatform().getResourceFile("splash.jpg");
 	    if (new File(fn).exists()) {
 		splash=Toolkit.getDefaultToolkit().getImage(fn);
-		if (Common.DEBUG>0 && splash!=null)
+		if (Global.DEBUG>0 && splash!=null)
 		    System.out.println("Good, obtained logo via Platform.getResourceFile");
 	    }
         } catch (Exception ex) {}
@@ -78,7 +83,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     int i=jar.lastIndexOf(File.pathSeparatorChar);
                     if (i>-1)
                         jar=jar.substring(i+1);
-                    if (Common.DEBUG>0)
+                    if (Global.DEBUG>0)
                         System.out.println("my own jar file: "+jar);
                     MJF = new ZipFile(jar);
                 }
@@ -89,12 +94,12 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     for( int i=0; i<arrayLogo.length; i++ ) {
                         arrayLogo[i] = (byte)inputLogo.read();
                     }
-                    if (Common.DEBUG>0)
+                    if (Global.DEBUG>0)
                         System.out.println("Logo OK, "+arrayLogo.length+" bytes.");
                     splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
                 }
             } catch (Exception e) {
-                if (Common.AppType==Common.AT_Framework) { // try harder if we're iplots
+                if (Global.AppType==Common.AT_Framework) { // try harder if we're iplots
                     try {
                         String jar=System.getProperty("java.class.path");
                         if (jar!=null) {
@@ -117,7 +122,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                                     for( i=0; i<arrayLogo.length; i++ ) {
                                         arrayLogo[i] = (byte)inputLogo.read();
                                     }
-                                    if (Common.DEBUG>0)
+                                    if (Global.DEBUG>0)
                                         System.out.println("Logo OK (iplots), "+arrayLogo.length+" bytes.");
                                     splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
                                 }
@@ -137,17 +142,17 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         p=new Panel();
         add(p, BorderLayout.SOUTH);
         Label l=null;
-        if (Common.AppType!=Common.AT_Framework)
-            l=new Label("Klimt v"+Common.Version+" (release "+Common.Release+")");
-        else
-            l=new Label("iPlots framework v"+Common.Version+" (release "+Common.Release+")");
+        l=new Label(txt);
+        /*
+         l=new Label("iPlots framework v"+Common.Version+" (release "+Common.Release+")");
+         */
         l.setFont(new Font("SansSerif",Font.BOLD,14));
         p.add(l);
         
         String myMenu[]={"+","File","@OOpen dataset ...","openData","-",
             "Preferences ...","prefs","-","@QQuit","exit", "~Window","0"};
         String macMenu[]={"+","File","@OOpen dataset ...","openData","0"};
-        if (Common.isMac)
+        if (Platform.isMac)
             myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
         pack();
@@ -161,24 +166,6 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                 WinTracker.current.Exit();
             else
                 exit();
-        }
-
-        if (cmd=="prefs") {
-	    PreferencesFrame.showPrefsDialog();
-	}
-
-        if (cmd=="openData") {
-            SVarSet tvs=new SVarSet();
-            SNode t=InTr.openTreeFile(this,null,tvs);
-            if (t==null && tvs.count()<1) {
-            } else {
-                if (t!=null) {
-                    TFrame f=new TFrame("Tree "+tvs.getName(),TFrame.clsTree);
-                    InTr.newTreeDisplay(t,f,0,0,Common.screenRes.width-160,(Common.screenRes.height>600)?600:Common.screenRes.height-20);
-                }
-                VarFrame vf=InTr.newVarDisplay(tvs,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height-30);
-                setVisible(false);
-            }
         }
         return null;
     }
@@ -194,8 +181,8 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         setVisible(true);
     }
 
-    public static void runMainAsAbout() {
-        if (main==null) main=new SplashScreen();
+    public static void runMainAsAbout(String txt) {
+        if (main==null) main=new SplashScreen(txt);
         main.runAsAbout();
     }
     
@@ -206,7 +193,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 
     public void windowOpened(WindowEvent e) {}
     public void windowClosing(WindowEvent e) {
-        if ((aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) || Common.AppType!=Common.AT_standalone) {
+        if ((aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) || Global.AppType!=Global.AT_standalone) {
             aboutMode=false;
             setVisible(false); return;
         }

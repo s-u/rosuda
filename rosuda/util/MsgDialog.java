@@ -12,6 +12,17 @@ public class MsgDialog extends Dialog implements ActionListener
     public static final String[] okCancel = {"OK","Cancel"};
     public static final String[] yesNoCancel = {"Yes","No","Cancel"};
     public static final String[] yesNo = {"Yes","No"};
+
+    // this is taken from org.rosuda.ibase.toolkit but we want to be independent
+    public class SpacingPanel extends Panel {
+        int spacex, spacey;
+        SpacingPanel() { spacex=spacey=15; };
+        SpacingPanel(int sz) { spacex=spacey=sz; };
+        SpacingPanel(int x, int y) { spacex=x; spacey=y; };
+        public Dimension getMinimumSize() { return new Dimension(spacex,spacey); }
+        public Dimension getMaximumSize() { return new Dimension(spacex,spacey); }
+        public Dimension getPreferredSize() { return new Dimension(spacex,spacey); }
+    }
     
     /** Creates and displays the dialog box
 	@param par parent frame (or <code>null</code> if none)

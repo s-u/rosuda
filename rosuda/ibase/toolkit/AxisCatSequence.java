@@ -10,6 +10,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.util.Vector;
 import org.rosuda.ibase.*;
+import org.rosuda.util.*;
 
 /* Special SCatSequence which caches the graphical representations as well */
 public class AxisCatSequence implements Dependent {
@@ -33,7 +34,7 @@ public class AxisCatSequence implements Dependent {
     }
 
     void updateCats() {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("AxisCatSequence.updateCats() [cats="+cats+"]");
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return;
 

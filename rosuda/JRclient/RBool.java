@@ -1,3 +1,4 @@
+package org.rosuda.JRclient;
 
 /** Implementation of tri-state logical data type in R.
     The three states are TRUE, FALSE and NA. To obtain truly boolean

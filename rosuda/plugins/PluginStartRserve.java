@@ -1,9 +1,16 @@
+package org.rosuda.plugins;
+
 //  PluginStartRserve.java
 //  Klimt
 //
 //  Created by Simon Urbanek on Fri Apr 11 2003.
 //  Copyright (c) 2003 Simon Urbanek. All rights reserved.
 //
+
+import org.rosuda.ibase.*;
+import org.rosuda.JRclient.*;
+import org.rosuda.util.*;
+import org.rosuda.util.*;
 
 /** This plugin encapsulates simple communication with Rserve and starts Rserve is the communication fails. this plugin requires JRclient. */
 public class PluginStartRserve extends Plugin {
@@ -26,13 +33,13 @@ public class PluginStartRserve extends Plugin {
     public boolean execPlugin() {
         Rconnection rc=new Rconnection();
         if (!rc.isOk()) {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("Rserve is not running, trying to start it ("+uRs+")");
             try {
                 Runtime.getRuntime().exec(uRs);
                 return true;
             } catch(Exception rte) {
-                if (Common.DEBUG>0)
+                if (Global.DEBUG>0)
                     System.out.println("Can't start Rserve: "+rte.getMessage());
                 return false;
             }

@@ -1,3 +1,9 @@
+package org.rosuda.ibase.toolkit;
+
+import org.rosuda.pograss.*;
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
+
 /** Plot objects are basic building blocks to add graphical objects to iPlots.
 This class provides an basis on which all other plot objects must be based.
 <p>
@@ -59,7 +65,7 @@ public class PlotObject {
     /** set visibility. if set to <code>false</code> the object won't be painted
         */
     public void setVisible(boolean vis) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Setting visibility to \""+vis+"\", was "+visible+" ["+toString()+"]");
         visible=vis;
     }
@@ -113,7 +119,7 @@ public class PlotObject {
 
     /** causes the entire plot object system to be updated (redraws only the layer of this object and above). by default is simply calls the {@link PlotManager.update()} method with the layer of the object. */
     public void update() {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("["+toString()+"] initiated update at layer "+layer);
         pm.update(layer);
     }

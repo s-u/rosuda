@@ -1,3 +1,5 @@
+package org.rosuda.JRclient;
+
 import java.util.*;
 
 /** representation of a factor variable. In R there is no actual xpression

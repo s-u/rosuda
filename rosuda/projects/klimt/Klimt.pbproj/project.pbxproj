@@ -218,6 +218,47 @@
 				F8EE914B04D6A8E600FA4796,
 				F8EE914D04D6A94500FA4796,
 				F8EE914F04D6A9A700FA4796,
+				1CE96E4C04D6D6B300A8030F,
+				1CE96E4E04D6D71D00A8030F,
+				1CE96E5004D6D75200A8030F,
+				1CE96E5304D6D86100A8030F,
+				1CE96E5404D6D86100A8030F,
+				1CE96E5604D6D8F500A8030F,
+				1CE96E5904D6D95900A8030F,
+				1CE96E5A04D6D95900A8030F,
+				1CE96E5C04D6DA8000A8030F,
+				1CE96E5E04D6DBC800A8030F,
+				1CE96E6004D6DCFA00A8030F,
+				1CE96E6204D6DE5A00A8030F,
+				1CE96E6404D6E13D00A8030F,
+				1CE96E6F04D7D99D00A8030F,
+				1CE96E7004D7D99D00A8030F,
+				1CE96E7104D7D99D00A8030F,
+				1CE96E7204D7D99D00A8030F,
+				1CE96E7304D7D99D00A8030F,
+				1CE96E7404D7D99D00A8030F,
+				1CE96E7504D7D99D00A8030F,
+				1CE96E7604D7D99D00A8030F,
+				1CE96E7704D7D99D00A8030F,
+				1CE96E7904D7E7BA00A8030F,
+				1CE96E7B04D7E9D300A8030F,
+				1CE96E7E04D7ED0900A8030F,
+				1CE96E8004D7EE4B00A8030F,
+				1CE96E8204D7F47400A8030F,
+				1CE96E8404D7F74100A8030F,
+				1CE96E8804D8003800A8030F,
+				1CE96E9004D8010600A8030F,
+				1CE96E9104D8010600A8030F,
+				1CE96E9204D8010600A8030F,
+				1CE96E9304D8010600A8030F,
+				1CE96E9404D8010600A8030F,
+				1CE96E9504D8010600A8030F,
+				1CE96E9704D8024000A8030F,
+				1CE96E9904D8026C00A8030F,
+				1CE96E9B04D8036F00A8030F,
+				1CE96FF104D808CA00A8030F,
+				1CE96FF304D80BD100A8030F,
+				1CE96FF504D80DC700A8030F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,6 +296,540 @@
 //162
 //163
 //164
+//1C0
+//1C1
+//1C2
+//1C3
+//1C4
+		1CE96E4B04D6D6B300A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = TreeEntry.java;
+			path = ../../klimt/TreeEntry.java;
+			refType = 2;
+		};
+		1CE96E4C04D6D6B300A8030F = {
+			fileRef = 1CE96E4B04D6D6B300A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E4D04D6D71D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = SNode.java;
+			path = ../../klimt/SNode.java;
+			refType = 2;
+		};
+		1CE96E4E04D6D71D00A8030F = {
+			fileRef = 1CE96E4D04D6D71D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E4F04D6D75200A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			name = TreeRegistry.java;
+			path = ../../klimt/TreeRegistry.java;
+			refType = 2;
+		};
+		1CE96E5004D6D75200A8030F = {
+			fileRef = 1CE96E4F04D6D75200A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5104D6D86100A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = LayerCanvas.java;
+			refType = 4;
+		};
+		1CE96E5204D6D86100A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PGSCanvas.java;
+			refType = 4;
+		};
+		1CE96E5304D6D86100A8030F = {
+			fileRef = 1CE96E5104D6D86100A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5404D6D86100A8030F = {
+			fileRef = 1CE96E5204D6D86100A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5504D6D8F500A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = QueryPopup.java;
+			refType = 4;
+		};
+		1CE96E5604D6D8F500A8030F = {
+			fileRef = 1CE96E5504D6D8F500A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5704D6D95900A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlotManager.java;
+			refType = 4;
+		};
+		1CE96E5804D6D95900A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlotObject.java;
+			refType = 4;
+		};
+		1CE96E5904D6D95900A8030F = {
+			fileRef = 1CE96E5704D6D95900A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5A04D6D95900A8030F = {
+			fileRef = 1CE96E5804D6D95900A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5B04D6DA8000A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlotColor.java;
+			refType = 4;
+		};
+		1CE96E5C04D6DA8000A8030F = {
+			fileRef = 1CE96E5B04D6DA8000A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5D04D6DBC800A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Common.java;
+			refType = 4;
+		};
+		1CE96E5E04D6DBC800A8030F = {
+			fileRef = 1CE96E5D04D6DBC800A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E5F04D6DCFA00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Stopwatch.java;
+			refType = 4;
+		};
+		1CE96E6004D6DCFA00A8030F = {
+			fileRef = 1CE96E5F04D6DCFA00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E6104D6DE5A00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SpacingPanel.java;
+			refType = 4;
+		};
+		1CE96E6204D6DE5A00A8030F = {
+			fileRef = 1CE96E6104D6DE5A00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E6304D6E13D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ColorBridge.java;
+			refType = 4;
+		};
+		1CE96E6404D6E13D00A8030F = {
+			fileRef = 1CE96E6304D6E13D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E6504D7D99D00A8030F = {
+			children = (
+				1CE96E6604D7D99D00A8030F,
+				1CE96E6704D7D99D00A8030F,
+				1CE96E6804D7D99D00A8030F,
+				1CE96E6904D7D99D00A8030F,
+				1CE96E6A04D7D99D00A8030F,
+				1CE96E6B04D7D99D00A8030F,
+				1CE96E6C04D7D99D00A8030F,
+				1CE96E6D04D7D99D00A8030F,
+				1CE96E6E04D7D99D00A8030F,
+			);
+			isa = PBXGroup;
+			path = JRclient;
+			refType = 4;
+		};
+		1CE96E6604D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = jcrypt.java;
+			refType = 4;
+		};
+		1CE96E6704D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RBool.java;
+			refType = 4;
+		};
+		1CE96E6804D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Rconnection.java;
+			refType = 4;
+		};
+		1CE96E6904D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = REXP.java;
+			refType = 4;
+		};
+		1CE96E6A04D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RFactor.java;
+			refType = 4;
+		};
+		1CE96E6B04D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RFileInputStream.java;
+			refType = 4;
+		};
+		1CE96E6C04D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = RList.java;
+			refType = 4;
+		};
+		1CE96E6D04D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Rpacket.java;
+			refType = 4;
+		};
+		1CE96E6E04D7D99D00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Rtalk.java;
+			refType = 4;
+		};
+		1CE96E6F04D7D99D00A8030F = {
+			fileRef = 1CE96E6604D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7004D7D99D00A8030F = {
+			fileRef = 1CE96E6704D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7104D7D99D00A8030F = {
+			fileRef = 1CE96E6804D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7204D7D99D00A8030F = {
+			fileRef = 1CE96E6904D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7304D7D99D00A8030F = {
+			fileRef = 1CE96E6A04D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7404D7D99D00A8030F = {
+			fileRef = 1CE96E6B04D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7504D7D99D00A8030F = {
+			fileRef = 1CE96E6C04D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7604D7D99D00A8030F = {
+			fileRef = 1CE96E6D04D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7704D7D99D00A8030F = {
+			fileRef = 1CE96E6E04D7D99D00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7804D7E7BA00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SplashScreen.java;
+			refType = 4;
+		};
+		1CE96E7904D7E7BA00A8030F = {
+			fileRef = 1CE96E7804D7E7BA00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7A04D7E9D300A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = KlimtSplash.java;
+			refType = 4;
+		};
+		1CE96E7B04D7E9D300A8030F = {
+			fileRef = 1CE96E7A04D7E9D300A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7D04D7ED0900A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = Loader.java;
+			refType = 4;
+		};
+		1CE96E7E04D7ED0900A8030F = {
+			fileRef = 1CE96E7D04D7ED0900A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E7F04D7EE4B00A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = TreeLoader.java;
+			refType = 4;
+		};
+		1CE96E8004D7EE4B00A8030F = {
+			fileRef = 1CE96E7F04D7EE4B00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E8104D7F47400A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = PlatformMac.java;
+			refType = 4;
+		};
+		1CE96E8204D7F47400A8030F = {
+			fileRef = 1CE96E8104D7F47400A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E8304D7F74100A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = Global.java;
+			refType = 4;
+		};
+		1CE96E8404D7F74100A8030F = {
+			fileRef = 1CE96E8304D7F74100A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E8704D8003800A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Klimt.java;
+			refType = 4;
+		};
+		1CE96E8804D8003800A8030F = {
+			fileRef = 1CE96E8704D8003800A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E8904D8010600A8030F = {
+			children = (
+				1CE96E8A04D8010600A8030F,
+				1CE96E8B04D8010600A8030F,
+				1CE96E8C04D8010600A8030F,
+				1CE96E8D04D8010600A8030F,
+				1CE96E8E04D8010600A8030F,
+				1CE96E8F04D8010600A8030F,
+			);
+			isa = PBXGroup;
+			path = plots;
+			refType = 4;
+		};
+		1CE96E8A04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DevCanvas.java;
+			refType = 4;
+		};
+		1CE96E8B04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MosaicCanvas.java;
+			refType = 4;
+		};
+		1CE96E8C04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TInfoCanvas.java;
+			refType = 4;
+		};
+		1CE96E8D04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TNodeListCanvas.java;
+			refType = 4;
+		};
+		1CE96E8E04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TreeCanvas.java;
+			refType = 4;
+		};
+		1CE96E8F04D8010600A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = TreeFlowCanvas.java;
+			refType = 4;
+		};
+		1CE96E9004D8010600A8030F = {
+			fileRef = 1CE96E8A04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9104D8010600A8030F = {
+			fileRef = 1CE96E8B04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9204D8010600A8030F = {
+			fileRef = 1CE96E8C04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9304D8010600A8030F = {
+			fileRef = 1CE96E8D04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9404D8010600A8030F = {
+			fileRef = 1CE96E8E04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9504D8010600A8030F = {
+			fileRef = 1CE96E8F04D8010600A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9604D8024000A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DBCanvas.java;
+			refType = 4;
+		};
+		1CE96E9704D8024000A8030F = {
+			fileRef = 1CE96E9604D8024000A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9804D8026C00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = VarFrame.java;
+			refType = 4;
+		};
+		1CE96E9904D8026C00A8030F = {
+			fileRef = 1CE96E9804D8026C00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96E9A04D8036F00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = HelpFrame.java;
+			refType = 4;
+		};
+		1CE96E9B04D8036F00A8030F = {
+			fileRef = 1CE96E9A04D8036F00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96FF004D808CA00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WinListener.java;
+			refType = 4;
+		};
+		1CE96FF104D808CA00A8030F = {
+			fileRef = 1CE96FF004D808CA00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96FF204D80BD100A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ProgressDlg.java;
+			refType = 4;
+		};
+		1CE96FF304D80BD100A8030F = {
+			fileRef = 1CE96FF204D80BD100A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1CE96FF404D80DC700A8030F = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = RootInfo.java;
+			refType = 4;
+		};
+		1CE96FF504D80DC700A8030F = {
+			fileRef = 1CE96FF404D80DC700A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//1C0
+//1C1
+//1C2
+//1C3
+//1C4
 //6A0
 //6A1
 //6A2
@@ -306,6 +881,7 @@
 				F8EE910A04D6A73600FA4796,
 				F8EE911104D6A73700FA4796,
 				F8EE911F04D6A73700FA4796,
+				1CE96E6504D7D99D00A8030F,
 			);
 			isa = PBXGroup;
 			path = rosuda;
@@ -314,7 +890,10 @@
 		F8EE90FA04D6A73600FA4796 = {
 			children = (
 				F8EE914C04D6A94500FA4796,
+				1CE96E5D04D6DBC800A8030F,
+				1CE96E9604D8024000A8030F,
 				F8EE90FB04D6A73600FA4796,
+				1CE96E7D04D7ED0900A8030F,
 				F8EE90FC04D6A73600FA4796,
 				F8EE914A04D6A8E600FA4796,
 				F8EE914E04D6A9A700FA4796,
@@ -370,10 +949,20 @@
 				F8EE910204D6A73600FA4796,
 				F8EE910304D6A73600FA4796,
 				F8EE910404D6A73600FA4796,
+				1CE96E6304D6E13D00A8030F,
 				F8EE910504D6A73600FA4796,
+				1CE96E5104D6D86100A8030F,
+				1CE96E5204D6D86100A8030F,
+				1CE96E5B04D6DA8000A8030F,
+				1CE96E5704D6D95900A8030F,
+				1CE96E5804D6D95900A8030F,
+				1CE96E5504D6D8F500A8030F,
+				1CE96E6104D6DE5A00A8030F,
+				1CE96E7804D7E7BA00A8030F,
 				F8EE910604D6A73600FA4796,
 				F8EE910704D6A73600FA4796,
 				F8EE910804D6A73600FA4796,
+				1CE96FF004D808CA00A8030F,
 			);
 			isa = PBXGroup;
 			path = toolkit;
@@ -423,6 +1012,17 @@
 		};
 		F8EE910904D6A73600FA4796 = {
 			children = (
+				1CE96E9A04D8036F00A8030F,
+				1CE96E8704D8003800A8030F,
+				1CE96E7A04D7E9D300A8030F,
+				1CE96E4D04D6D71D00A8030F,
+				1CE96E4B04D6D6B300A8030F,
+				1CE96E4F04D6D75200A8030F,
+				1CE96E7F04D7EE4B00A8030F,
+				1CE96E8104D7F47400A8030F,
+				1CE96FF404D80DC700A8030F,
+				1CE96E9804D8026C00A8030F,
+				1CE96E8904D8010600A8030F,
 			);
 			isa = PBXGroup;
 			path = klimt;
@@ -528,12 +1128,15 @@
 		};
 		F8EE911F04D6A73700FA4796 = {
 			children = (
+				1CE96E8304D7F74100A8030F,
 				F8EE912004D6A73700FA4796,
 				F8EE912104D6A73700FA4796,
 				F8EE912204D6A73700FA4796,
 				F8EE912304D6A73700FA4796,
 				F8EE912404D6A73700FA4796,
 				F8EE912504D6A73700FA4796,
+				1CE96FF204D80BD100A8030F,
+				1CE96E5F04D6DCFA00A8030F,
 				F8EE912604D6A73700FA4796,
 			);
 			isa = PBXGroup;
@@ -792,8 +1395,8 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = SCatSequence.java;
-			path = /Work/develop/org/rosuda/ibase/SCatSequence.java;
-			refType = 0;
+			path = ../../ibase/SCatSequence.java;
+			refType = 2;
 		};
 		F8EE914F04D6A9A700FA4796 = {
 			fileRef = F8EE914E04D6A9A700FA4796;

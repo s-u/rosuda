@@ -16,13 +16,10 @@ import java.awt.*;
 public class PlatformWin extends Platform {
     PlatformWin() {
         super();
+        /*
         try {
             String fn;
             Toolkit tk=Toolkit.getDefaultToolkit();
-            //fn=getResourceFile("crs-arrow-1chtxa.raw");
-            //if (fn!=null) Common.cur_arrow=tk.createCustomCursor(RawImage.loadGrayAlphaImage(16,16,fn),new Point(1,1),"Arrow");
-            //            fn=getResourceFile("arrow-test4.raw");
-            //            if (fn!=null) Common.cur_arrow=tk.createCustomCursor(RawImage.loadRGBaImage(16,16,fn),new Point(1,1),"Arrow");
             fn=getResourceFile("cursor-16-8b-help.gif");
             if (fn!=null) Common.cur_query=tk.createCustomCursor(tk.getImage(fn),new Point(1,1),"Query");
             fn=getResourceFile("cursor-16-8b-tick.gif");
@@ -30,8 +27,9 @@ public class PlatformWin extends Platform {
             fn=getResourceFile("cursor-16-ra8-zoom.raw");
             if (fn!=null) Common.cur_zoom=tk.createCustomCursor(RawImage.loadPureAlphaImage(16,16,fn),new Point(5,5),"Zoom");
         } catch (Exception e) {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("PlatformWin(): "+e.getMessage());
         }
+         */
     }
 }

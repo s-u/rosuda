@@ -10,6 +10,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
 import java.awt.event.ActionListener;
+import org.rosuda.ibase.*;
 
 /** class that simplified menu building from lists */
 public class EzMenu {
@@ -36,7 +37,7 @@ public class EzMenu {
             if (menuDef[i]=="~File.Basic.End") {
                 i++; isNext=true;
                 m.add(mi=new MenuItem("Close window",new MenuShortcut('W'))).setActionCommand("WTMclose"+we.id); mi.addActionListener(wt);
-                if (!Common.isMac)
+                if (!Common.isMac())
                     m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
             }
             if (menuDef[i]=="~File.Graph") {
@@ -46,7 +47,7 @@ public class EzMenu {
                 m.add(mi=new MenuItem("Save as PDF ...",new MenuShortcut('P',true))).setActionCommand("exportPDF"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as SVG ...")).setActionCommand("exportSVG"); mi.addActionListener(al);
                 if (!hasSVG) mi.setEnabled(false);
-                if (!Common.isMac) {
+                if (!Common.isMac()) {
                     m.addSeparator();
                     m.add(mi=new MenuItem("Preferences ...")).setActionCommand("prefs"); mi.addActionListener(al);
                 }
@@ -58,7 +59,7 @@ public class EzMenu {
                     m.addSeparator();
                 }
                 m.add(mi=new MenuItem("Close window",new MenuShortcut('W'))).setActionCommand("WTMclose"+we.id); mi.addActionListener(wt);
-                if (!Common.isMac)
+                if (!Common.isMac())
                     m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
             };
             if (menuDef[i]=="~Edit") {

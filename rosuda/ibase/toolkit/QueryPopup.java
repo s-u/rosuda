@@ -1,11 +1,16 @@
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
+
 /** query popup 
     @version $Id$
 */
-class QueryPopup implements MouseListener
+public class QueryPopup implements MouseListener
 {    
     class QPCanvas extends LayerCanvas {
 	String[] content;
@@ -170,17 +175,17 @@ class QueryPopup implements MouseListener
     }
     
     public void show() {
-	if (Common.DEBUG>0) System.out.println("QueryPopup.show");
+	if (Global.DEBUG>0) System.out.println("QueryPopup.show");
 	if (!win.isVisible()) {	 
-	    if (Common.DEBUG>0) System.out.println("rendering win visible");
+	    if (Global.DEBUG>0) System.out.println("rendering win visible");
 	    win.pack(); win.setVisible(true);
 	};
     }
 
     public void hide() {
-	if (Common.DEBUG>0) System.out.println("QueryPopup.hide");
+	if (Global.DEBUG>0) System.out.println("QueryPopup.hide");
 	if (win.isVisible()) {
-	    if (Common.DEBUG>0) System.out.println("hiding win");
+	    if (Global.DEBUG>0) System.out.println("hiding win");
 	    win.dispose();
 	};
     }

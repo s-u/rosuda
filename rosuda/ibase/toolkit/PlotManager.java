@@ -1,4 +1,9 @@
+package org.rosuda.ibase.toolkit;
+
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.pograss.*;
 
 /** Plot manager is a container of all plot objects to be painted on the associated PoGraSS canvas.
 */

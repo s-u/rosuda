@@ -2,6 +2,9 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
 
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
+
 /** enhanced {@link Frame} that uses {@link WinTracker} to keep track of
     open frames.
     @version $Id$
@@ -48,7 +51,7 @@ public class TFrame extends Frame
     public TFrame() { this("<unnamed>",true,0); }
 
     public void finalize() {
-	if (Common.DEBUG>0)
+	if (Global.DEBUG>0)
 	    System.out.println("Frame \""+getTitle()+"\" removed.");
 	WinTracker.current.rm(WTmyself);
     };

@@ -5,6 +5,10 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
+import org.rosuda.ibase.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** PlotPrimitive provides a generic interfrace to objects on the screen and their linkage to cases. This basic implementation supports rectangles, points and polygons (always just one per instance). A subclass of {@link BaseCanvas} is free to use its own implementation (for example optimized for speed). Default methods of {@link BaseCanvas} use an array of PlotPrimitives to display graphical objects and map them into cases of the underlying dataset. The mapping can be 1:1 (see scatterplot), 1:n (see histograms), m:1 (see maps) or m:n (see faceplots). Please note that PlotPrimitives are geometric objects, that is specified in geometry coorditates (for reasons of speed).<p>Note: current implementation checks the contents in the sequence: rectangle, point, polygon. First non-null object is taken. Marking is based on the {@link #ref} array which contains case IDs for each case corresponding to the PlotPrimitive. In x:1 case the array is simply of the length 1. Currently there is no specific constructor, meaning that every newly allocated PlotPrimitive is empty. */
 class PlotPrimitive {
     Rectangle r;
@@ -197,7 +201,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         if (ignoreNotifications) {
-            if (Common.DEBUG>0) System.out.println("Warning, BaseCanvas received notification ("+msg+"), with ignoreNotifications set. Ignoring event.");
+            if (Global.DEBUG>0) System.out.println("Warning, BaseCanvas received notification ("+msg+"), with ignoreNotifications set. Ignoring event.");
             return;
         };
         if((msg.getMessageID()&Common.NM_MASK)==Common.NM_VarChange ||
@@ -219,7 +223,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
 	Rectangle r=getBounds();
 	int w=r.width, h=r.height;
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("BaseCanvas.paint: real bounds ["+w+":"+h+"], existing ["+W+":"+H+"], orientation="+orientation+" mTop="+mTop+",mBottom="+mBottom);
         if (ay!=null && (H!=h || updateGeometry))
             switch (orientation) {
@@ -240,7 +244,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             updateObjects();
         }
         updateGeometry=false;
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("BarCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
 	int basey=h-mBottom;
 	g.setBounds(w,h);
@@ -402,7 +406,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
 	boolean setTo=false;
 
-        if (Common.DEBUG>0) {
+        if (Global.DEBUG>0) {
             String mods="";
             if (ev.isShiftDown()) mods+=" SHIFT";
             if (ev.isAltDown()) mods+=" ALT";
@@ -425,8 +429,8 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
         boolean actionSelect=Common.isSelectTrigger(ev);
         boolean actionQuery=Common.isQueryTrigger(ev);
         boolean actionExtQuery=Common.isExtQuery(ev);
-        if (Common.DEBUG>0)
-            System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac);
+        if (Global.DEBUG>0)
+            System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac());
         
         //System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
@@ -500,7 +504,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     }
 
     public void performZoomIn(int x1, int y1, int x2, int y2) {
-        if (Common.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         double ax1=1.0, ax2=1.0, ay1=1.0, ay2=1.0;
@@ -546,7 +550,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     }
 
     public void performZoomOut(int x, int y) {
-        if (Common.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
         int tail=zoomSequence.size()-1;
         if (tail<1) return;
         ZoomDescriptorComponent zx,zy;
@@ -567,7 +571,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     }
 
     public void resetZoom() {
-        if (Common.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
         if (zoomSequence.size()>1) {
             ZoomDescriptorComponent zx,zy;
             zx=(ZoomDescriptorComponent)zoomSequence.elementAt(0);
@@ -588,7 +592,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     
     public void mousePressed(MouseEvent ev)
     {
-        if (Common.DEBUG>0) System.out.println("Event:"+ev);
+        if (Global.DEBUG>0) System.out.println("Event:"+ev);
 
         baseDragX1=ev.getX(); baseDragY1=ev.getY();
         qi.hide();
@@ -600,7 +604,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 
     public void mouseReleased(MouseEvent e)
     {
-        if (Common.DEBUG>0) System.out.println("Event:"+e);
+        if (Global.DEBUG>0) System.out.println("Event:"+e);
 
         int X1=baseDragX1, Y1=baseDragY1, X2=baseDragX2, Y2=baseDragY2;
         if (!baseDrag || (X1==e.getX() && Y1==e.getY())) { // if p1=p2 then this is a click so let "mouse clicked" handle it. we also bail out if no dragging is performed

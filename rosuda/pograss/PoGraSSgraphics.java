@@ -5,7 +5,7 @@ import java.awt.*;
 /** Portable Graphics SubSystem - Graphics implementation
     @version $Id$
 */
-class PoGraSSgraphics extends PoGraSS
+public class PoGraSSgraphics extends PoGraSS
 {
     /** associated graphics context */
     Graphics g;

@@ -1,3 +1,4 @@
+package org.rosuda.util;
 
 import java.awt.*;
 
@@ -15,13 +16,13 @@ public class ProgressDlg extends Frame {
     };
 
     public void paint(Graphics g) {
-        if (Common.useAquaBg) {
+        if (Global.useAquaBg) {
             Dimension d = getSize();
             g.setColor(Color.white);
             g.fillRect(0, 0, d.width, d.height);
 
             int y=0;
-            g.setColor(Common.aquaBgColor);
+            g.setColor(new Color(230,230,240));
             while (y<d.height-2) {
                 g.fillRect(0,y,d.width,2); y+=4;
             }

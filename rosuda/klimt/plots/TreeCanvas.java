@@ -1,7 +1,15 @@
+package org.rosuda.klimt.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
 
 //---------------------------------------------------------------------------
 // TreeCanvas
@@ -313,18 +321,19 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         };
 
         if (PD_POE) {
-            if (root.response!=null) {
+            SVar response=root.getRootInfo().response;
+            if (response!=null) {
                 double perc=0.5;
-                if (root.response.isCat()) {
+                if (response.isCat()) {
                     perc=((Float)t.V.elementAt(0)).doubleValue();
                 } else {
                     try {
-                        if (PD_POE_log && root.response.getMin()>=0) {
-                            double logMin=(root.response.getMin()>0)?Math.log(root.response.getMin()):0;
-                            double logMax=(root.response.getMax()>0)?Math.log(root.response.getMax()):0;
+                        if (PD_POE_log && response.getMin()>=0) {
+                            double logMin=(response.getMin()>0)?Math.log(response.getMin()):0;
+                            double logMax=(response.getMax()>0)?Math.log(response.getMax()):0;
                             perc=(((t.predValD>0)?Math.log(t.predValD):0)-logMin)/(logMax-logMin);
                         } else
-                            perc=(t.predValD-root.response.getMin())/(root.response.getMax()-root.response.getMin());
+                            perc=(t.predValD-response.getMin())/(response.getMax()-response.getMin());
                     } catch (Exception swc) {};
                 }
                 x=leftA+(int)(((double)iwidth)*perc);
@@ -403,7 +412,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param t node to paint */
     public void paintLeaf(PoGraSS g,SNode t)
     {
-        if (t.isPruned()&&(t.par!=null)&&((SNode)t.par).isPruned()) return;
+        if (t.isPruned()&&(t.getParent()!=null)&&((SNode)t.getParent()).isPruned()) return;
         int w=t.width, h=t.height;
         int x=t.cx-w/2, y=t.cy-h/2, x2=x+w, y2=y+h;
         int dTotal=0, dMark=0;
@@ -600,9 +609,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 g.drawString(c,cx,cy,PoGraSS.TA_Center);
             }
             if (t.isLeaf() || t.isPruned()) { // show prediction only
+                SVar prediction=root.getRootInfo().prediction;
                 String pv=t.Name;
-                if (root.prediction!=null && root.prediction.isNum())
-                    pv=Tools.getDisplayableValue(t.predValD,root.prediction.getMax()-root.prediction.getMin());
+                if (prediction!=null && prediction.isNum())
+                    pv=Tools.getDisplayableValue(t.predValD,prediction.getMax()-prediction.getMin());
                 int tw=g.getWidthEstimate(pv);
                 int th=g.getHeightEstimate(pv);
                 g.setColor((t.sel==1)?"selnode":"obj");
@@ -726,18 +736,18 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="new") {
  	    TFrame f=new TFrame("Pruned copy of \""+root.getSource().getName()+"\"",TFrame.clsTree);
-	    SNode t=InTr.makePrunedCopy(root);
-	    TreeCanvas tc=InTr.newTreeDisplay(t,f);
+	    SNode t=Klimt.makePrunedCopy(root);
+	    TreeCanvas tc=Klimt.newTreeDisplay(t,f);
 	    //Common.mainFrame.add(f);
 	    tc.repaint(); tc.redesignNodes();
 	};
 	if (cmd=="openTree") {
 	    //SVarSet tvs=new SVarSet();
 	    SVarSet tvs=root.getSource();
-	    SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
+	    SNode t=Klimt.openTreeFile(Common.mainFrame,null,tvs);
 	    if (t!=null) {
 		TFrame f=new TFrame(tvs.getName()+" - tree",TFrame.clsTree);
-		TreeCanvas tc=InTr.newTreeDisplay(t,f);
+		TreeCanvas tc=Klimt.newTreeDisplay(t,f);
 		tc.repaint(); tc.redesignNodes();		
 		//InTr.newVarDisplay(tvs);
 	    };
@@ -745,7 +755,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (cmd=="openData") {
             TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
             SVarSet tvs=new SVarSet();
-            SNode t=InTr.openTreeFile(f,null,tvs);
+            SNode t=Klimt.openTreeFile(f,null,tvs);
             if (t==null && tvs.count()<1) {
                 new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
             } else {
@@ -753,8 +763,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                 Common.screenRes=sres;
                 if (t!=null)
-                    InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
+                    Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                VarFrame vf=Klimt.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
             }
         }
 	if (cmd=="deviance") {
@@ -819,7 +829,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    }; */
 	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)",TFrame.clsTreeMap);
 	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root));
-	    myMosaicFrame.addWindowListener(Common.defaultWindowListener);
+	    myMosaicFrame.addWindowListener(Common.getDefaultWindowListener());
 	    myMosaic.setBounds(0,0,400,300);
 	    myMosaicFrame.pack(); myMosaicFrame.show();		
 	};
@@ -831,9 +841,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		WinTracker.current.rm(myDevFrame);
 		myDevFrame=null;
 	    }; */
-	    myDevFrame=new TFrame(InTr.lastTreeFileName+" (deviance plot)",TFrame.clsDevPlot);
+	    myDevFrame=new TFrame(Klimt.lastTreeFileName+" (deviance plot)",TFrame.clsDevPlot);
 	    DevCanvas dc=new DevCanvas(myDevFrame,root);
-	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.defaultWindowListener);
+	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.getDefaultWindowListener());
 	    dc.setBounds(0,0,400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
         };
@@ -847,12 +857,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             SVarSet fs=root.getSource().getForestVarSet();
             Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
             Common.screenRes=sres;
-            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
+            VarFrame vf=Klimt.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
         };            
         if (cmd=="showMCP") {
             TFrame mcpf=new TFrame("MC-plot",TFrame.clsMCP);
             MCPCanvas dc=new MCPCanvas(mcpf,RTree.getManager(),m);
-            mcpf.add(dc); mcpf.addWindowListener(Common.defaultWindowListener);
+            mcpf.add(dc); mcpf.addWindowListener(Common.getDefaultWindowListener());
             dc.setBounds(0,0,400,300);
             mcpf.pack(); mcpf.setVisible(true);
         };
@@ -955,8 +965,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		
 		// check for "plus" sign click
 		if (n.isPruned()&&(n.cx-n.width/2-10<=x)&&(n.cx-n.width/2>x)&&(n.cy+n.height/2<y)&&(n.cy+n.height/2+10>=y)) {
-                    if (((n.par!=null)&& !(((SNode)(n.par)).isPruned()))||
-                        (n.par==null))
+                    if (((n.getParent()!=null)&& !(((SNode)(n.getParent())).isPruned()))||
+                        (n.getParent()==null))
                     {
                         n.setPrune(false); repaint(); deSelNode=false; };
                 };
@@ -1051,7 +1061,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /* key handling */
     public void keyTyped(KeyEvent e) 
     {
-        if (Common.DEBUG>0) System.out.println("keyTyped: "+e.toString());
+        if (Global.DEBUG>0) System.out.println("keyTyped: "+e.toString());
 	if (e.getKeyChar()=='e') run(this,"toolSelect");
 	if (e.getKeyChar()=='z') run(this,"toolZoom");
 	if (e.getKeyChar()=='v') run(this,"toolMove");
@@ -1092,7 +1102,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (e.getKeyChar()=='W') { moveNodeMpl(root,0.5d,1.0d); repaint(); };
     };
     public void keyPressed(KeyEvent e) {
-        if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
+        if (Global.DEBUG>0) System.out.println("keyPressed: "+e.toString());
 	//System.out.println("keyPressed, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
 	if (e.getKeyChar()==' ') {
             if (e.isControlDown()) {
@@ -1115,7 +1125,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         };
     };
     public void keyReleased(KeyEvent e) {
-        if (Common.DEBUG>0) System.out.println("keyReleased: "+e.toString());
+        if (Global.DEBUG>0) System.out.println("keyReleased: "+e.toString());
 	//System.out.println("keyReleased, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
 	if (e.getKeyChar()==' ' || e.getKeyCode()==KeyEvent.VK_META)
 	    setToolMode(lastToolModeBeforeMove);

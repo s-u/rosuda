@@ -14,7 +14,7 @@ import java.io.*;
  * @version $Id$
  */
 
-class PoGraSSPS extends PoGraSS
+public class PoGraSSPS extends PoGraSS
 {
     String fn;
     PrintStream outs;

@@ -1,6 +1,14 @@
+package org.rosuda.klimt.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
 
 /** Node with geometry, internally used by {@link MosaicCanvas} */
 class SNodeGeometry {

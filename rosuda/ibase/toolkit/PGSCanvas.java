@@ -1,3 +1,5 @@
+package org.rosuda.ibase.toolkit;
+
 import java.util.Vector;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -5,6 +7,10 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.PrintStream;
+
+import org.rosuda.ibase.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 /** PGScanvas - extends {@link LayerCanvas} by adding generic functionality for
     exporting the content to PGS metafile or PostScript format. Any implementing

@@ -1,3 +1,5 @@
+package org.rosuda.JRclient;
+
 /** small class encapsulating packets from/to Rserv
     @version $Id$
 */

@@ -1,3 +1,10 @@
+package org.rosuda.klimt;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.plots.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -39,9 +46,7 @@ public class VarFrame extends TFrame {
 	    sb.addAdjustmentListener(vc);
 	
 	add(vcc=new VarCmdCanvas(this,vs),"South");
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	addWindowListener(Common.defaultWindowListener);
+	addWindowListener(Common.getDefaultWindowListener());
 	setBounds(x-minus,y,w,rh);
 	vc.setBounds(x-minus,y,w,rh-cmdHeight);
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
@@ -108,7 +113,7 @@ public class VarFrame extends TFrame {
         };
         
         public void rebuildVars() {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("VarFrame.VarCanvas:rebuilding variables ("+c_vars+"/"+vs.count()+")");
             c_vars=vs.count();
             selMask=new boolean[c_vars+4]; lastSize=null; // force rebuild of scrollbar etc.
@@ -127,7 +132,7 @@ public class VarFrame extends TFrame {
 	    int totsel=0;	    
 	    Dimension cd=getSize();
 
-            if (Common.useAquaBg) {
+            if (Global.useAquaBg) {
                 g.setColor(Color.white);
                 g.fillRect(0, 0, cd.width, cd.height);
                 int y=0;
@@ -285,7 +290,7 @@ public class VarFrame extends TFrame {
                 SVarSet fs=vs.getForestVarSet();
                 Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                 Common.screenRes=sres;
-                VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
+                VarFrame vf=Klimt.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
             };
             /*
             if (cmd=="openTree") {
@@ -302,7 +307,7 @@ public class VarFrame extends TFrame {
             if (cmd=="openData") {
                 TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
                 SVarSet tvs=new SVarSet();
-                SNode t=InTr.openTreeFile(f,null,tvs);
+                SNode t=Klimt.openTreeFile(f,null,tvs);
                 if (t==null && tvs.count()<1) {
                     new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
                 } else {
@@ -310,8 +315,8 @@ public class VarFrame extends TFrame {
                     Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                     Common.screenRes=sres;
                     if (t!=null)
-                        InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                    VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
+                        Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                    VarFrame vf=Klimt.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
                 }
             }
             if (cmd=="map") {
@@ -324,7 +329,7 @@ public class VarFrame extends TFrame {
                 };
                 if (map!=null) { // ok, go for weighter barchart instead
                     TFrame f=new TFrame("Map ("+map.getName()+")",TFrame.clsMap);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                     bc.setSize(new Dimension(400,300));
@@ -332,7 +337,7 @@ public class VarFrame extends TFrame {
                 }
             }
             if (cmd=="openTree") { // Open tree
-                SNode t=InTr.openTreeFile(Common.mainFrame,null,vs,true,true);
+                SNode t=Klimt.openTreeFile(Common.mainFrame,null,vs,true,true);
                 if (t!=null) {
                     vc.getVars();
                     vc.repaint();
@@ -356,10 +361,12 @@ public class VarFrame extends TFrame {
                     t.vset=vc.vs;
                     t.Cases=cn;
                     t.Name="root";
-                    t.response=resp;
-                    t.frame=new TFrame(tn,TFrame.clsTree);
+                    RootInfo ri=t.getRootInfo();
+                    ri.response=resp;
+                    ri.name=tn;
+                    ri.frame=new TFrame(tn,TFrame.clsTree);
                     t.calculateSampleDeviances();
-                    TreeCanvas tc=InTr.newTreeDisplay(t,t.frame);
+                    TreeCanvas tc=Klimt.newTreeDisplay(t,ri.frame);
                     tc.repaint(); tc.redesignNodes();
                     vc.vs.registerTree(t,tn);
                 }
@@ -399,7 +406,7 @@ public class VarFrame extends TFrame {
                         p.close();
                     };
                 } catch (Exception eee) {
-                    if (Common.DEBUG>0) {
+                    if (Global.DEBUG>0) {
                         System.out.println("* VarFrame.Export...: something went wrong during the export: "+eee.getMessage()); eee.printStackTrace();
                     };
                 };
@@ -418,7 +425,7 @@ public class VarFrame extends TFrame {
                 };
                 if (selC==1 && selN==1) { // ok, go for weighter barchart instead
                     TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsBar);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                     bc.setSize(new Dimension(100+40*theCat.getNumCats(),200));
@@ -429,7 +436,7 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[i]) {
                             TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")",
                                                 vs.at(i).isCat()?TFrame.clsBar:TFrame.clsHist);
-                            f.addWindowListener(Common.defaultWindowListener);
+                            f.addWindowListener(Common.getDefaultWindowListener());
                             Canvas cvs=null;
                             int xdim=400, ydim=300;
                             if (vs.at(i).isCat()) {
@@ -464,7 +471,7 @@ public class VarFrame extends TFrame {
                         i++;
                     };
                     TFrame f=new TFrame("Line plot",TFrame.clsLine);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     LineCanvas lc=new LineCanvas(f,null,vars,vs.getMarker());
                     lc.setSize(400,300);
                     f.add(lc); f.pack(); f.show();
@@ -472,7 +479,7 @@ public class VarFrame extends TFrame {
             }
             if (cmd=="tfplot") {
                 TFrame f=new TFrame("Tree Flow Plot",TFrame.clsUser);
-                f.addWindowListener(Common.defaultWindowListener);
+                f.addWindowListener(Common.getDefaultWindowListener());
                 TreeFlowCanvas lc=new TreeFlowCanvas(f,vs.getTrees());
                 lc.setSize(400,300);
                 f.add(lc); f.pack(); f.show();
@@ -498,7 +505,7 @@ public class VarFrame extends TFrame {
                         i++;
                     };
                     TFrame f=new TFrame("Line plot",TFrame.clsLine);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     LineCanvas lc=new LineCanvas(f,idx,vars,vs.getMarker());
                     lc.setSize(400,300);
                     f.add(lc); f.pack(); f.show();
@@ -513,7 +520,7 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame("Scatterplot ("+
                                         vs.at(vnr[1]).getName()+" vs "+
                                         vs.at(vnr[0]).getName()+")",TFrame.clsScatter);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     ScatterCanvas sc=new ScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
@@ -534,7 +541,7 @@ public class VarFrame extends TFrame {
                     while(bJ<vc.getVars()) {
                         if (vc.selMask[bJ]) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")",TFrame.clsBox);
-                            f.addWindowListener(Common.defaultWindowListener);
+                            f.addWindowListener(Common.getDefaultWindowListener());
                             BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.setSize(new Dimension(80,300));
@@ -548,7 +555,7 @@ public class VarFrame extends TFrame {
                     while(bJ<vc.getVars()) {
                         if (vc.selMask[bJ] && bJ!=bI) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")",TFrame.clsBox);
-                            f.addWindowListener(Common.defaultWindowListener);
+                            f.addWindowListener(Common.getDefaultWindowListener());
                             BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),catVar,vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.setSize(new Dimension(40+catVar.getNumCats()*40,300));
@@ -572,7 +579,7 @@ public class VarFrame extends TFrame {
                         TFrame f=new TFrame(((weight==null)?"":"W")+"FD ("+
                                             vs.at(vnr[1]).getName()+" vs "+
                                             vs.at(vnr[0]).getName()+")"+((weight==null)?"":"*"+weight.getName()),TFrame.clsFD);
-                        f.addWindowListener(Common.defaultWindowListener);
+                        f.addWindowListener(Common.getDefaultWindowListener());
                         FluctCanvas sc;
                         if (cmd=="speckle" && weight!=null && weight.isCat())
                             sc=new FCCCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
@@ -593,7 +600,7 @@ public class VarFrame extends TFrame {
                         vl[j]=vs.at(i); j++;
                     };
                     TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
-                    f.addWindowListener(Common.defaultWindowListener);
+                    f.addWindowListener(Common.getDefaultWindowListener());
                     PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
@@ -640,7 +647,7 @@ public class VarFrame extends TFrame {
                 if (nr!=null) {
                     genCount++;
                     TFrame fff=new TFrame("Generated_"+genCount,TFrame.clsTree);
-                    TreeCanvas tc=InTr.newTreeDisplay(nr,fff);
+                    TreeCanvas tc=Klimt.newTreeDisplay(nr,fff);
                 }
                 pd.dispose();
             }
@@ -788,7 +795,7 @@ public class VarFrame extends TFrame {
             
 	    Dimension cd=getSize();
 
-            if (Common.useAquaBg) {
+            if (Global.useAquaBg) {
                 g.setColor(Color.white);
                 g.fillRect(0, 0, cd.width, cd.height);
                 int y=0;

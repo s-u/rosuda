@@ -1,3 +1,5 @@
+package org.rosuda.JRclient;
+
 import java.io.*;
 
 /** <b>RFileInputStream</b> is an {@link InputStream} to transfer files

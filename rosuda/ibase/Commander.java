@@ -3,7 +3,7 @@ package org.rosuda.ibase;
 /** Commander interface to pass action commands between objects
     @version $Id$
  */
-interface Commander
+public interface Commander
 {
     /** run command cmd issued by another object
 	@param o origin of the command

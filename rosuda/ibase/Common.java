@@ -1,3 +1,5 @@
+package org.rosuda.ibase;
+
 import java.util.Date;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -7,54 +9,28 @@ import java.awt.Dimension;
 import java.awt.event.WindowListener;
 import java.awt.event.MouseEvent;
 
-/** Common constants and gereral static methods for the entire application
+import org.rosuda.util.*;
+// we should weed this out sometime ...
+import org.rosuda.plugins.PluginManager;
+
+/** Common constants and gereral static methods for the entire application and ibase toolkit
     @version $Id$
 */
 public class Common
 {
-    /** application version */
+    /** ibase version */
     public static String Version="0.97";
-    /** application release */
-    public static String Release="D616";
+    /** ibase release */
+    public static String Release="D729";
 
-    /** Debug flag. When set to >0 verbose debug messages are generated.
-        parameter equivalent: --debug / --nodebug */
-    public static int DEBUG=0;
-    /** profiler flag. When set to >0 profile information (timings) are generated; >1 then memory info is added
-        parameter equivalent: --profile */
-    public static int PROFILE=0;
-    /** warnings flag. If the to <code>true</code> runtime warnings are printed.
-        parameter equivalent: --warn */
-    public static boolean printWarnings=false;
-    /** Frame of the main window. Used by close-window-handler
-     *  in {@link DefWinL} for exiting application if this window is closed. */
-    public static Frame mainFrame=null;
-    /** Default window listener used for handling global tasks 
-     *  (like closing windows etc.). Any window is free to use it. */
-    public static WindowListener defaultWindowListener=null;
-
-    /** use Swing classes */
     public static boolean useSwing=true;
-    /** use Aqua-style background
-        parameter equivalent: --with-aqua */
-    public static boolean useAquaBg=false;
-    /** if <code>true</code> then special messages for a loader are printed
-        parameter equivalent: --with-loader */
-    public static boolean informLoader=false;
     /** determines whether R-serve should be started if it's not running yet */
     public static boolean startRserv=false;
 
-    /** AppType contstant: stand-alone application */    
-    public static final int AT_standalone = 0x0000;
-    /** AppType contstant: applet (set by applet wrapper) */    
-    public static final int AT_applet     = 0x0001;
-    /** AppType contstant: Klimt called by Omegahat SJava interface */    
+    /** AppType contstant: Klimt called by Omegahat SJava interface */
     public static final int AT_KOH        = 0x0020;
-    /** AppType contstant: launched by interactive framework interface */    
+    /** AppType contstant: launched by interactive framework interface */
     public static final int AT_Framework  = 0x0030;
-    
-    /** application type. so far 0=stand-alone, other types are set by wrappers. See AT_xxx */
-    public static int AppType=AT_standalone;   
     
     /** buffer containing all warnings/errors */
     static StringBuffer warnings=null;
@@ -77,7 +53,6 @@ public class Common
     public static Color objectsColor=new Color(255,255,255);
     /** if <code>true</code> no internal variables are created */
     public static boolean noIntVar=false;
-
 
     /** Notify-Message constant: SMarker state changed */
     public static final int NM_MarkerChange     =0x100;
@@ -141,65 +116,38 @@ public class Common
     /** Cursor: aim or cross-hair (used for targeting exact point(s)) */ 
     public static Cursor cur_aim;
 
-    static boolean initializedStatic=false;
+    /** main frame */
+    public static Frame mainFrame;
     
-    /** is set to <code>true</code> if this app is run on an Apple Macintosh computer.
-        Main reason is the different handling of mouse events: Macs have only one mouse button
-        and other buttons are emulated. Also META key is guaranteed to be present and will be used. */
-    static boolean isMac=false;
-    static boolean isWin=false;
+    /** Default window listener used for handling global tasks
+        *  (like closing windows etc.). Any window is free to use it. */
+    static WindowListener defWinListener=null;
 
-    /** static platform initialization. Should be performed as soon as possible upon startup.
-        Code relying on platform dependent code should call this method to make sure the
-        platform dependent code is initialized (initialization is done only once even if this method is called multiple times) */
-    static void initStatic() {
-        if (initializedStatic) return; // prevent loops
-        initializedStatic=true;
-        ColorBridge.main=new ColorBridge();
-	if (Common.screenRes==null) Common.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
-        if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
-            isMac=true;
-            try {
-                Class c=Class.forName("PlatformMac");
-                c.newInstance();
-                return;
-            } catch (Exception e) {
-                if (DEBUG>0) System.out.println("Common.initStatic[Mac platform] failed to create platform-dependent class PlatformMac: "+e.getMessage());
-            }
-        } else {
-            if (System.getProperty("os.name").indexOf("Windows")>-1) {
-                isWin=true;
-                try {
-                    Class c=Class.forName("PlatformWin");
-                    c.newInstance();
-                    return;
-                } catch (Exception e) {
-                    if (DEBUG>0) System.out.println("Common.initStatic[Windows platform] failed to create platform-dependent class PlatformWin: "+e.getMessage());
-                }
-            };
-        };
-        new Platform();
+    public static WindowListener getDefaultWindowListener() {
+        if (defWinListener==null)
+            defWinListener=new org.rosuda.ibase.toolkit.WinListener();
+        return defWinListener;
     }
-
+    
     public static void initValuesFromConfigFile(PluginManager pm) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Common.initValuesFromConfigFile: loading values");
         String s=pm.getParS("Common","color.background");
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Common.color.background="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
             int c=Tools.parseHexInt(s.substring(1));
             backgroundColor=new Color((c>>16)&255,(c>>8)&255,c&255);            
         }
         s=pm.getParS("Common","color.select");
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Common.color.select="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
             int c=Tools.parseHexInt(s.substring(1));
             selectColor=new Color((c>>16)&255,(c>>8)&255,c&255);
         }
         s=pm.getParS("Common","color.objects");
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Common.color.objects="+s);
         if (s!=null && s.length()>0 && s.charAt(0)=='#') {
             int c=Tools.parseHexInt(s.substring(1));
@@ -209,32 +157,29 @@ public class Common
 
     /** returns <code>true</code> if ran on an Apple Macintosh computer */
     public static boolean isMac() {
-        if (!initializedStatic) initStatic();
-        return isMac;
+        return Platform.isMac;
     }
 
     /** given mouse event this method determines whether pop-up sequence was triggered */ 
     public static boolean isPopupTrigger(MouseEvent ev) {
-        if (!initializedStatic) initStatic();
-        return isMac?(ev.isControlDown() && !ev.isShiftDown() && !ev.isAltDown() && !ev.isMetaDown()):ev.isPopupTrigger();
+        return Platform.isMac?(ev.isControlDown() && !ev.isShiftDown() && !ev.isAltDown() && !ev.isMetaDown()):ev.isPopupTrigger();
     }
 
     /** given mouse event this method determines whether zoom sequence was triggered (mouse button 3 or META on a Mac) */ 
     public static boolean isZoomTrigger(MouseEvent ev) {
-        return isMac?(ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK:(ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK;
+        return Platform.isMac?(ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK:(ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK;
     }
     
     /** returns true if the supplied event corresponds to popup query trigger. */
     public static boolean isQueryTrigger(MouseEvent ev) {
         // Query = <ALT> + BUTTON1; since mac emulates B2 we don't impose this on a Mac
-        if (!initializedStatic) initStatic();
-        return isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
+        return Platform.isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
     }
 
     /** returns true if the supplied event corresponds to object-move trigger */
     public static boolean isMoveTrigger(MouseEvent ev) {
-        return (isWin?(ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown()):
-                ((isMac || !ev.isAltDown()) && ev.isControlDown() && !ev.isShiftDown()));
+        return (Platform.isWin?(ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown()):
+                ((Platform.isMac || !ev.isAltDown()) && ev.isControlDown() && !ev.isShiftDown()));
     }
     
     public static boolean isExtQuery(MouseEvent ev) {
@@ -245,8 +190,7 @@ public class Common
         the only optional ones are Shift (XOR) and Shift+Ctrl (OR) (see {@link #getSelectMode})
         @return <code>true</code> if supplied event triggers selection trigger */
     public static boolean isSelectTrigger(MouseEvent ev) {
-        if (!initializedStatic) initStatic();
-        return isMac?(!ev.isMetaDown() && ((!ev.isControlDown() && !ev.isAltDown()) || (ev.isShiftDown() && ev.isAltDown() && ev.isControlDown()))):(!ev.isAltDown() && !ev.isMetaDown() && (!ev.isControlDown() || ev.isShiftDown()) && ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)!=MouseEvent.BUTTON3_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)!=MouseEvent.BUTTON2_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK));
+        return Platform.isMac?(!ev.isMetaDown() && ((!ev.isControlDown() && !ev.isAltDown()) || (ev.isShiftDown() && ev.isAltDown() && ev.isControlDown()))):(!ev.isAltDown() && !ev.isMetaDown() && (!ev.isControlDown() || ev.isShiftDown()) && ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)!=MouseEvent.BUTTON3_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)!=MouseEvent.BUTTON2_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK));
     }
 
     /** get selection mode according to the modifiers. Make sure {@link #isSelectTrigger} returns <code>true</code> otherwise the result of this function is invalid.
@@ -256,7 +200,7 @@ public class Common
     }
 
     public static void printEvent(MouseEvent ev) {
-        if (Common.DEBUG>0) {
+        if (Global.DEBUG>0) {
             String mods="";
             if (ev.isShiftDown()) mods+=" SHIFT";
             if (ev.isAltDown()) mods+=" ALT";
@@ -351,12 +295,6 @@ public class Common
         return Common.screenRes;
     };
 
-    public static int runtimeWarning(String w) {
-        if (Common.DEBUG>0 || Common.printWarnings)
-            System.out.println("*RTW "+(new Date()).toString()+": "+w);
-        return -1;
-    }
-    
     // HCL color scheme routines (ported from Ross Ihaka's R code)
     /** display gamma setting (used by color conversion functions such as {@link #getHCLcolor} */
     public static double displayGamma=2.2;

@@ -1,6 +1,12 @@
+package org.rosuda.klimt;
+
 import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.Rectangle;
+
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
+import org.rosuda.ibase.toolkit.*;
 
 /**
    Statistical {@link Node} class. It's used for storing statistical information in tree nodes.
@@ -9,10 +15,12 @@ import java.awt.Rectangle;
 public class SNode extends Node implements Cloneable
 {
     /** list of indices of the data used in this node */
-    Vector data;
+    public Vector data;
     /** Data source of this node */
     SVarSet vset;
-
+    /** root information. this should be <code>null</code> for non-root nodes. use {@link #getRootInfo()} to obrain root information from any node */
+    RootInfo rootInfo;
+    
     /** splitting condition as string */
     public String Cond;
     /** # of cases */
@@ -27,18 +35,11 @@ public class SNode extends Node implements Cloneable
     public double predValD;
     /** values (percentage of each class) */
     public Vector V;
-    /** classification or regression variable */
-    public SVar response=null;
-    /** classifier or predicted response */
-    public SVar prediction=null;
     /** pruning flag. if set to <code>true</code> then all <i>children</i> has been pruned. beware, that does mean that the node has to check prune flag of its parent to see if it's been pruned also. */
     boolean pruned;
     
     /** id of the node */
     public int id;
-
-    /** root-only: name of the tree */
-    public String name=null;
     
     /** deviance in this node based on the sample */
     public double sampleDev;
@@ -49,9 +50,9 @@ public class SNode extends Node implements Cloneable
     public int cx,cy,width,height;
 
     /** underflow warning - if <code>true</code> then the node is displayed bigger than it should be */
-    boolean underflowWarning=false;
+    public boolean underflowWarning=false;
     /** overflow warning - if <code>true</code> then the node is bigger than its display representation */
-    boolean overflowWarning=false;
+    public boolean overflowWarning=false;
      
     /** selector (0=not sel, 1=selected node, 2=leaf of sel. category, 3=non-leaf of selected category */
     public int sel=0;
@@ -59,25 +60,19 @@ public class SNode extends Node implements Cloneable
     /** index of the split variable */
     public int splitIndex;
     /** object of the splitting variable */
-    SVar splitVar;
+    public SVar splitVar;
     /** split compare type (-1/0/1) */
     public int splitComp;
     /** value of the split condition as string */
-    String splitVal;
+    public String splitVal;
     /** value of the split condition as string */
-    double splitValF;
-
-    /** formula used to grow the tree */
-    String formula;
-
-    /** associated frame */
-    TFrame frame;
+    public double splitValF;
 
     /** label rectangle */
-    Rectangle labelR;
+    public Rectangle labelR;
     
     /** user definable temporary variable */
-    int tmp;
+    public int tmp;
 
     /** default constructor */
     public SNode() { this(null); };
@@ -94,8 +89,24 @@ public class SNode extends Node implements Cloneable
 	//if ((ch!=null)&&(ch.size()>0))
 	//    for (Enumeration e=ch.elements(); e.hasMoreElements();)
 	//	((STree)e.nextElement()).setSource(src);
-    };
+    }
 
+    /** returns root information associated with this tree
+        @return root information */
+    public RootInfo getRootInfo() {
+        SNode n=(SNode) getRoot();
+        if (n.rootInfo==null) n.rootInfo=new RootInfo();
+        return n.rootInfo;
+    }
+
+    public void setFormula(String form) {
+        getRootInfo().formula=form;
+    }
+
+    public String getFormula() {
+        return getRootInfo().formula;
+    }
+    
     /** returns data source
 	@return data source */
     public SVarSet getSource() { return vset; };
@@ -137,7 +148,7 @@ public class SNode extends Node implements Cloneable
         double d=0;
         double nt=data.size();
         int rnt=0;
-        SVar rv=((SNode)getRoot()).response;
+        SVar rv=getRootInfo().response;
         if (rv==null) return;
         if (rv.isCat()) {
             int cs=rv.getNumCats();

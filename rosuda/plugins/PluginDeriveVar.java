@@ -1,8 +1,15 @@
+package org.rosuda.plugins;
+
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.JRclient.*;
+import org.rosuda.util.*;
 
 /* generate tree plugin */
 
@@ -215,7 +222,7 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
         System.out.println("back for good ... ");
         Rcommand=tac.getText();
         varName=tfv.getText();
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Rcommand: \""+Rcommand+"\", varName: \""+varName+"\"");
         d.dispose();
         return true;
@@ -297,8 +304,8 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
                 BufferedReader br=new BufferedReader(new FileReader(fprefix+"PluginInit.ods"));
                 lastID++;
                 SVarSet newvs=new SVarSet();
-                RTree.Load(br,"dummy",newvs,0,null,null,false,false);
-                if (newvs.count()>0 && (vs.count()<1 || newvs.at(0).size()==vs.at(0).size())) {
+                int vls=Loader.LoadTSV(br,newvs);
+                if (vls>0 && newvs.count()>0 && (vs.count()<1 || newvs.at(0).size()==vs.at(0).size())) {
                     if (fr.exists()) fr.delete();
                     if (fd.exists()) fd.delete();
                     fo.delete();

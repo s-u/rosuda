@@ -1,3 +1,8 @@
+package org.rosuda.klimt;
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -61,7 +66,7 @@ public class HelpFrame extends TFrame implements ActionListener {
 	Button b=new Button("Close");
 	p.add(b);
 	b.addActionListener(this);	
-	addWindowListener(Common.defaultWindowListener);
+	addWindowListener(Common.getDefaultWindowListener());
 	pack();
     };
 

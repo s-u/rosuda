@@ -9,7 +9,7 @@ import java.io.*;
 public class Tools {
     /** displays a dialog box to save a file and returns the
 	corresponding printstream for the newly created file
-	@par par parent frame for the dialog (if <code>null</code> then Common.mainFrame will be used)
+	@par par parent frame for the dialog (may NOT be <code>null</code>)
 	@par title dialog title
 	@par deffn default file name
 	@return <code>null</code> if create failed or user canceled operation, the PrintStream otherwise.
@@ -17,7 +17,7 @@ public class Tools {
     public static PrintStream getNewOutputStreamDlg(Frame par,
 						    String title,
 						    String deffn) {
-	FileDialog fd=new FileDialog((par==null)?Common.mainFrame:par,title,FileDialog.SAVE);
+	FileDialog fd=new FileDialog(par,title,FileDialog.SAVE);
 	if (deffn!=null) fd.setFile(deffn);
 	fd.setModal(true);
 	fd.show();

@@ -1,3 +1,7 @@
+package org.rosuda.ibase.toolkit;
+
+import org.rosuda.pograss.*;
+
 public class PlotColor {
     int r,g,b,a;
     String nam;

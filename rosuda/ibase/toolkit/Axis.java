@@ -2,6 +2,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.util.Vector;
 import org.rosuda.ibase.*;
+import org.rosuda.util.*;
 
 /** Axis - implements transformation of cases, values or categories to orthogonal graphical
     coordinates and vice versa. Supported axis types are: numerical, equidistant (i.e. nominal/ordinal by index), categorical-equidistant, categorical-proportional by population.
@@ -79,6 +80,12 @@ public class Axis extends Notifier
         setDefaultRange();
     };
 
+    /** return axis orientation
+        @return axis orientation */
+    public int getOrientation() {
+        return or;
+    }
+    
     /** change axis type (implicitely calls {@link #setDefaultRange} but preserves
 	cat sequence if switching between "compatible" types, i.e. 1 and 2) */
     public void setType(int nt) {
@@ -98,7 +105,7 @@ public class Axis extends Notifier
     public void setGeometry(int orientation, int begin, int len) {
 	if(orientation!=or||begin!=gBegin||len!=gLen) { // lazy notification
 	    gBegin=begin; gLen=len; or=orientation;
-            //if (Common.DEBUG>0) System.out.println("Axis.setGeometry("+orientation+","+begin+","+len+") preformed. ["+this+"] notifying all");
+            //if (Global.DEBUG>0) System.out.println("Axis.setGeometry("+orientation+","+begin+","+len+") preformed. ["+this+"] notifying all");
 	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
 	};
     };
@@ -290,7 +297,7 @@ in conjunction with {@link #moveCat} as npos parameter when destination
         // some heuristic is used further to try to satisfy the minDist condition, although it's merely a guideline
         // if medDist is too small then values returned can still be bigger than minDist
         int grs=(int)(preld/lvLen*lgLen);
-        if (Common.DEBUG>0) System.out.println("Axis.getSensibleTickDistance("+medDist+","+minDist+"): grs="+grs+", preld="+preld);
+        if (Global.DEBUG>0) System.out.println("Axis.getSensibleTickDistance("+medDist+","+minDist+"): grs="+grs+", preld="+preld);
         while (grs>2*medDist) { grs/=2; preld/=2; };
         if (grs<minDist/3) return preld*5;
         if (grs<minDist) return preld*2;

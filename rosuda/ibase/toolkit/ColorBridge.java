@@ -6,6 +6,8 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.ibase.toolkit;
+
 import java.awt.Color;
 
 public class ColorBridge {

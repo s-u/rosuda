@@ -1,8 +1,16 @@
+package org.rosuda.plugins;
+
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.StringTokenizer;
 import java.util.Vector;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.klimt.*;
+import org.rosuda.JRclient.*;
+import org.rosuda.util.*;
 
 /* generate tree plugin */
 
@@ -344,10 +352,10 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             j++;
         }
         formula=sb.toString();
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("formula: "+formula);
         treeOpt=t.getText();
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("tree options: \""+treeOpt+"\"");
         d.dispose();
         return true;
@@ -431,13 +439,15 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             } else {
                 BufferedReader br=new BufferedReader(new FileReader(fprefix+"PluginInit.out"));
                 lastTreeID++;
-                root=RTree.Load(br,"GrownTree_"+lastTreeID,vs,0,"[1] TREE","[1] END",true,registerPar);
+                root=TreeLoader.LoadTree(br,vs,"GrownTree_"+lastTreeID
+                                         /*,vs,0,"[1] TREE","[1] END",true,registerPar */
+                                         );
                 if (root!=null) {
                     if (fr.exists()) fr.delete();
                     if (fd.exists()) fd.delete();
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
-		    root.formula=formula; // set formula manually since RTree may have loaded partial formula only
+		    root.setFormula(formula); // set formula manually since RTree may have loaded partial formula only
                     return true;
                 }
                 err="Commands executed, but no tree was found.";
@@ -463,10 +473,10 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     public static void main(String[] args) {
         SVarSet vs=new SVarSet();
         try {
-            BufferedReader br=new BufferedReader(new FileReader("iris.rds"));
-            RTree.Load(br,"iris",vs);
+            BufferedReader br=new BufferedReader(new FileReader("iris.tsv"));
+            Loader.LoadTSV(br,vs);
         } catch(Exception e) {
-            System.out.println("cannot load test dataset (iris.rds), "+e.getMessage()); e.printStackTrace();
+            System.out.println("cannot load test dataset (iris.tsv), "+e.getMessage()); e.printStackTrace();
         }
         PluginGetTreeR gt=new PluginGetTreeR();
         gt.initPlugin();

@@ -12,20 +12,81 @@ import java.io.*;
 import java.awt.*;
 import java.lang.reflect.*;
 
+/** Generic platform class. It provides interface to platform-dependent functionality. */ 
 public class Platform {
-    static Platform p;
+    static Platform p=null;
 
-    public static Platform getPlatform() { return p; }
+    public static boolean isMac=false;
+    public static boolean isWin=false;
     
+    public static Dimension screenRes;
+    
+    public static Platform getPlatform() { return p; }
+
+    /** the constructor should never be called directly. Platform classes are created by the {@link #initPlatform} methods. */
     public Platform() {
-        p=this;
-        if (!Common.initializedStatic) Common.initStatic();
-        Common.cur_arrow=Common.cur_query=Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-        Common.cur_zoom=Common.cur_tick=Common.cur_aim=Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-        Common.cur_move=Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
-        Common.cur_hand=Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
     }
 
+    /** initialize platforms with the defeault implementation (in org.rosuda.util)
+        @return newly initailized platform object */
+    public static Platform initPlatform() { return initPlatform("org.rosuda.util."); }
+
+    /** initialize platforms using the specified class prefix. If the desired class is not found using the class prefix, fall-back to org.rosuda.util classes is attempted.
+        @param classPrefix prefix (including the trailing dot) for the platform classes
+        @return newly initailized platform object */
+    public static Platform initPlatform(String classPrefix) {
+        if (p!=null) return p; // prevent loops
+        if (Platform.screenRes==null) Platform.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
+        if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
+            isMac=true;
+            try {
+                Class c=Class.forName(classPrefix+"PlatformMac");
+                p=(Platform) c.newInstance();
+                return p;
+            } catch (Exception e) {
+                if (Global.DEBUG>0) System.out.println("Platform.init[Mac platform] failed to create platform-dependent class "+classPrefix+"PlatformMac: "+e.getMessage());
+            }
+            try {
+                Class c=Class.forName("org.rosuda.util.PlatformMac");
+                p=(Platform) c.newInstance();
+                return p;
+            } catch (Exception e) {
+                if (Global.DEBUG>0) System.out.println("Platform.init[Mac platform] failed to create platform-dependent class org.rosuda.util.PlatformMac: "+e.getMessage());
+            }
+        } else {
+            if (System.getProperty("os.name").indexOf("Windows")>-1) {
+                isWin=true;
+                try {
+                    Class c=Class.forName(classPrefix+"PlatformWin");
+                    p=(Platform) c.newInstance();
+                    return p;
+                } catch (Exception e) {
+                    if (Global.DEBUG>0) System.out.println("Platform.init[Windows platform] failed to create platform-dependent class "+classPrefix+"PlatformWin: "+e.getMessage());
+                }
+                try {
+                    Class c=Class.forName("org.rosuda.util.PlatformWin");
+                    p=(Platform) c.newInstance();
+                    return p;
+                } catch (Exception e) {
+                    if (Global.DEBUG>0) System.out.println("Platform.init[Windows platform] failed to create platform-dependent class org.rosuda.util.PlatformWin: "+e.getMessage());
+                }
+            }
+        }
+        if (classPrefix!="") {
+            try {
+                Class c=Class.forName(classPrefix+"Platform");
+                p=(Platform) c.newInstance();
+                return p;
+            } catch (Exception e) {
+                if (Global.DEBUG>0) System.out.println("Platform.init[generic platform] failed to create platform-dependent class "+classPrefix+"Platform: "+e.getMessage());
+            }
+            if (Global.DEBUG>0) System.out.println("Platform.init: fallback to org.rosuda.util.Platform");
+        }
+        p=new Platform();
+        return p;
+    }
+    
+    
     /** every platform should provide at least this method for each resource.
     */
     public InputStream getResourceInput(String rname) {
@@ -42,7 +103,7 @@ public class Platform {
             int i=jar.lastIndexOf(File.pathSeparatorChar);
             if (i>-1)
                 jar=jar.substring(i+1);
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("JAR: "+jar);
             File f=new File(jar);
             if (!f.exists()) return null;
@@ -85,7 +146,7 @@ public class Platform {
                 m.invoke(f,null);
             }
         } catch(Throwable e) {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("forceResourceFile(\""+rname+"\"): "+e.getMessage());
         };
         if (f==null)
@@ -101,7 +162,7 @@ public class Platform {
             fos.close();
             return f.getAbsolutePath();
         } catch (Throwable t2) {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("forceResourceFile(\""+rname+"\"): [onCopy] "+t2.getMessage());
         }
         return null;

@@ -2,6 +2,7 @@ package org.rosuda.ibase;
 
 import java.util.Vector;
 import java.util.Enumeration;
+import org.rosuda.util.*;
 
 /** Notifier - framework to for recursive cycle-free notification messages to dependent classes
     @version $Id$
@@ -16,7 +17,7 @@ public class Notifier {
     public void addDepend(Dependent c) {
 	if (ton==null) ton=new Vector();
 	if (!ton.contains(c)) ton.addElement(c);
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Notifier("+toString()+"): add ["+c.toString()+"]");
     };
 
@@ -24,7 +25,7 @@ public class Notifier {
 	@param c class to be removed */
     public void delDepend(Dependent c) {
 	if (ton!=null) ton.removeElement(c);
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Notifier("+toString()+"): remove ["+c.toString()+"]");
     };
 
@@ -35,7 +36,7 @@ public class Notifier {
 
     /** initiates cascaded notification process. use this method instead of NotifyAll if you want to make sure that also inderect dependents will recieve the notification */
     public void startCascadedNotifyAll(NotifyMsg msg) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Notifier("+toString()+"): startCascadedNotifyAll("+msg+")");
 	Vector path=new Vector();
 	path.addElement(this);
@@ -44,13 +45,13 @@ public class Notifier {
 
     /** general NotifyAll */    
     public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
-        if (Common.DEBUG>1)
+        if (Global.DEBUG>1)
             System.out.println("Notifier("+toString()+"): send to all message "+msg);
 	if (batchMode>0 || ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
-                if (Common.DEBUG>0)
+                if (Global.DEBUG>0)
                     System.out.println("Notifier("+toString()+"): send "+msg+" to ["+o.toString()+"]");
 		if (path!=null) {
 		    path.addElement(this);
@@ -75,14 +76,14 @@ public class Notifier {
         batch mode begin/end calls may be nested, but only after last endBatch notification is made.  */
     public void beginBatch() {
         batchMode++;
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Notifier("+toString()+"): begin batch #"+batchMode);
     }
 
     /** ends batch mode. if any notification reqests has been made since beginBatch() then the last one
         will be passed to dependents. otherwise just batch flag is cleared and no notification is sent. */
     public void endBatch() {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Notifier("+toString()+"): end batch #"+batchMode);
         if (batchMode>0) batchMode--;
         if (batchMode==0 && batchLastMsg!=null) {

@@ -1,5 +1,10 @@
+package org.rosuda.plugins;
+
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.util.*;
 
 /** PluginManager - basic class for plugin detection and management of configurations
     $Id$
@@ -100,7 +105,7 @@ public class PluginManager {
 
     /** save settings to the current config file */
     public boolean saveSettings() {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Save to config file \""+configFile+"\" ...");
         try {
             PrintStream p=new PrintStream(new FileOutputStream(configFile));
@@ -111,7 +116,7 @@ public class PluginManager {
                     p.println("<setting name="+par.elementAt(i)+">");
                     p.println(val.elementAt(i));
                     p.println("</setting>");
-                    if (Common.DEBUG>0)
+                    if (Global.DEBUG>0)
                         System.out.println("saveSettings.save: "+par.elementAt(i)+" -> "+val.elementAt(i));
                 };
                 i++;
@@ -120,7 +125,7 @@ public class PluginManager {
             p.close();
             return true;
         } catch(Exception e) {
-            if (Common.DEBUG>0) {
+            if (Global.DEBUG>0) {
                 System.out.println("PluginManager.saveSettings ERR: "+e.getMessage());
                 e.printStackTrace();
             }
@@ -137,7 +142,7 @@ public class PluginManager {
         @return <code>true</code> on success, <code>false</code> otherwise */
     public boolean loadSettings(String fName) {
         if (fName==null) fName=configFile;
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("Processing config file \""+fName+"\" ...");
         try {
             BufferedReader b=new BufferedReader(new FileReader(fName));
@@ -148,7 +153,7 @@ public class PluginManager {
                 String s=b.readLine();
                 int cf=s.indexOf("</setting>");
                 int of=s.indexOf("<setting name=");
-                if (Common.DEBUG>0)
+                if (Global.DEBUG>0)
                     System.out.println("LoadSetting: cf="+cf+", of="+of+", isVal="+isVal+", curPar="+curPar+", ln="+s);
                 // we process generated file only, so we assume each flag has its own line
                 if (isVal) {
@@ -171,7 +176,7 @@ public class PluginManager {
             b.close();
             return true;
         } catch (Exception e) {
-            if (Common.DEBUG>0) {
+            if (Global.DEBUG>0) {
                 System.out.println("PluginManager.loadSettings(\""+fName+"\") ERR: "+e.getMessage());
                 e.printStackTrace();
             }
@@ -189,7 +194,7 @@ public class PluginManager {
             Class c=Class.forName(className);
             p=(Plugin)c.newInstance();
         } catch(Exception e) {
-            if (Common.DEBUG>0) {
+            if (Global.DEBUG>0) {
                 System.out.println("PluginManager.loadPlugin(\""+className+"\"): unable to load plugin, "+e.getMessage());
                 //e.printStackTrace();
             }

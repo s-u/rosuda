@@ -1,5 +1,13 @@
+package org.rosuda.klimt.plots;
+
 import java.awt.*;
 import java.util.Enumeration;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
+import org.rosuda.klimt.*;
+
 //import SNode;
 //import DBCanvas;
 

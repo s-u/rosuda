@@ -6,12 +6,17 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.plugins;
+
 import javax.swing.*;
 import javax.swing.table.*;
 import javax.swing.event.*;
 import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
 
 public class PluginTable extends Plugin implements Commander,ActionListener {
     SVarSet vs;
