@@ -3,6 +3,8 @@ package org.rosuda.JRI;
 import java.lang.*;
 import java.io.*;
 
+import org.rosuda.RGui.*;
+
 public class Rengine extends Thread {
     static {
 	System.loadLibrary("jri");
@@ -10,8 +12,15 @@ public class Rengine extends Thread {
 
     boolean died, alive;
     
+    RConsole console;
+    
     public Rengine() {
+        this(null);
+    }
+    
+    public Rengine(RConsole console) {
         super();
+        this.console = console;
         died=false;
         alive=false;
         start();
@@ -45,7 +54,8 @@ public class Rengine extends Thread {
 
     public void jriWriteConsole(String text)
     {
-        System.out.println("R> "+text);
+        if (console != null) console.output.append(text);
+        else System.out.println("R> "+text);
     }
 
     public void jriBusy(int which)
