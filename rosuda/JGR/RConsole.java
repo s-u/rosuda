@@ -113,7 +113,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.addKeyListener(this);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                execute("q()\n");
+                dispose();
             }
         });
 
@@ -135,23 +135,26 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.show();
     }
 
-    public void execute(final String cmd) {
-        try {
-            if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
-            currentHistPosition = JGR.RHISTORY.size();
-            outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD);
-            if (!isHelpCMD(cmd)) {
-                /*Thread t = new Thread() {
-                    public void run() {*/
-                        JGR.READY = false;
-                        JGR.RCSync.triggerNotification(cmd);
-                   /* }
-                //};
-                t.start();*/
-            }
+    public void dispose() {
+      execute("q()");
+    }
+
+    public void execute(String cmd) {
+         if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
+        currentHistPosition = JGR.RHISTORY.size();
+
+        String[] cmdArray = cmd.split("\n");
+
+        for (int i = 0; i < cmdArray.length; i++) {
+            _execute(cmdArray[i]);
         }
-        catch (Exception e) {}
-        finally {  }
+    }
+
+    public synchronized void _execute(String cmd) {
+        JGR.READY = false;
+        try { outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD); } catch (Exception e) {}
+        if (!isHelpCMD(cmd)) JGR.rSync.triggerNotification(cmd);
+        while (!JGR.READY) try { wait(10); } catch(Exception e) {}
     }
 
     public boolean isHelpCMD(String cmd) {
@@ -334,11 +337,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             output.append(console.toString(),iPreferences.RESULT);
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
-            try { Thread.sleep(5); } catch (Exception e) {}
         }
-        //output.append(text,Preferences.RESULT);
-        //try { wait(100); } catch (Exception e) {}
-        //output.setCaretPosition(outputDoc.getLength());
     }
 
     public void   rBusy(Rengine re, int which) {
@@ -347,6 +346,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
             setWorking(false);
+            JGR.READY = true;
         }
         else {
             stopButton.setEnabled(true);
@@ -364,7 +364,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else {
             output.append(prompt,iPreferences.CMD);
             output.setCaretPosition(outputDoc.getLength());
-            String s = JGR.RCSync.waitForNotification();
+            String s = JGR.rSync.waitForNotification();
             return (s==null||s.length()==0)?"\n":s+"\n";
         }
     }
@@ -390,7 +390,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                                 input.getSelectionEnd() - i);
             } catch (BadLocationException ex) {}
         } else if (cmd == "editor") new REditor();
-        else if (cmd == "exit") execute("q()\n");
+        else if (cmd == "exit") dispose();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "loaddata") new RDataFileDialog(this, directory);

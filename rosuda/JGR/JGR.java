@@ -30,7 +30,7 @@ public class JGR {
     public static String RHOME = "";
     public static String[] RLIBS;
     public static Rengine R = null;
-    public static ConsoleSync RCSync = new ConsoleSync();
+    public static ConsoleSync rSync = new ConsoleSync();
     public static boolean STARTED = false;
     public static boolean READY = false;
 
@@ -74,7 +74,7 @@ public class JGR {
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Window")) splash.stop();
-        RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
+        rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
     }
 
     public static String exit() {
