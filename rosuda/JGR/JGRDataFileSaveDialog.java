@@ -27,6 +27,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 
     private JCheckBox append = new JCheckBox("append",false);
     private JCheckBox quote = new JCheckBox("quote",false);
+    private JCheckBox rownames = new JCheckBox("rownames",false);
 	
 	private JButton ok = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
@@ -60,26 +61,34 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 			JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
 			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			command.add(append);
-			command.add(quote);
 			command.add(new JLabel("seps="));
 			command.add(sepsBox);
-		
+			command.add(rownames);
+			command.add(quote);
+			
 			fileview.add(command);
 			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
 			pp.add(new JPanel());
 		}
 		else {
-			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			command.add(append);
-			command.add(quote);
-			command.add(new JLabel("seps="));
-			command.add(sepsBox);
-		
+			JPanel command = new JPanel(new GridLayout(2,1));
+			JPanel command1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			JPanel command2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			command2.add(rownames);
+			command2.add(quote);
+			command1.add(append);
+			command1.add(new JLabel("seps="));
+			command1.add(sepsBox);
+			
+			command.add(command1);
+			command.add(command2);
+				
 		
 			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
 			filename.add(command,filename.getComponentCount()-1);
 		}
-
+		
+		this.setPreferredSize(new Dimension(650,450));
 		this.showSaveDialog(f);
     }
     
@@ -96,7 +105,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 			if (sepsBox.getSelectedIndex() >= seps.length) useSep = sepsBox.getSelectedItem().toString();
 			else useSep = seps[sepsBox.getSelectedIndex()];
 			
-			String cmd = "write.table("+data+",\""+file.replace('\\','/')+"\",append="+(append.isSelected()?"T":"F")+",quote="+(quote.isSelected()?"T":"F")+",sep=\""+useSep+"\")";
+			String cmd = "write.table("+data+",\""+file.replace('\\','/')+"\",append="+(append.isSelected()?"T":"F")+",quote="+(quote.isSelected()?"T":"F")+",sep=\""+useSep+"\""+",row.names="+(rownames.isSelected()?"T":"F")+")";
 			JGR.MAINRCONSOLE.execute(cmd,true);
 		}
 	}
