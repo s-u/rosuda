@@ -89,6 +89,9 @@ public class TreeRegistry {
     }
     
     public SNode[] getRoots() {
+        if (trees==null || trees.size()<1) {
+            SNode[] ets=new SNode[0]; return ets;
+        }
         SNode[] ts=new SNode[trees.size()];
         int i=0;
         TreeEntry te;
