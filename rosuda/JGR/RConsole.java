@@ -398,33 +398,38 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyPressed(KeyEvent ke) {
-        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) input.paste();
+        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
+            input.paste();
+            input.requestFocus();
+            input.setCaretPosition(input.getText().length());
+        }
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
-            int line = -1;
+            /*int line = -1;
             try {
                 line = input.getLineOfOffset(input.getCaretPosition());
             }
-            catch (Exception e) {}
-            if (line == 0) {
+            catch (Exception e) {}*/
+            if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (currentHistPosition == JGR.RHISTORY.size() &&
                     input.getText().trim().length() > 0) {
                     JGR.RHISTORY.add(input.getText().trim());
                     //we set the cursor to last hist and save the current writing in the history
                 }
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
+                input.setCaretPosition(input.getText().length());
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-            int line = -1;
+            /*int line = -1;
             try {
                 line = input.getLineOfOffset(input.getCaretPosition());
             }
-            catch (Exception e) {}
-            if (line == input.getLineCount() - 1) {
+            catch (Exception e) {}*/
+            if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (currentHistPosition < JGR.RHISTORY.size() - 1) {
                     //we set the cursor to the next hist
-                    input.setText(JGR.RHISTORY.get(++currentHistPosition).
-                                  toString());
+                    input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
+                    input.setCaretPosition(input.getText().length());
                 }
                 else if (JGR.RHISTORY.size() > 0 &&
                          currentHistPosition < JGR.RHISTORY.size()) {

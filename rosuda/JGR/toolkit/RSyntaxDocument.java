@@ -42,10 +42,6 @@ public class RSyntaxDocument extends RStyledDocument {
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
     }
 
-    public void insertPage(final String str) throws BadLocationException {
-        super.insertString(0,str,null);
-    }
-
     /*
          * Override to apply syntax highlighting after the document has been updated
      */
@@ -77,13 +73,13 @@ public class RSyntaxDocument extends RStyledDocument {
         else if (str.matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) a = BOLD;
         super.insertString(offset, str, a);
         final int len = str.length();
-        Thread t = new Thread() {
+        /*Thread t = new Thread() {
             public void run() {
-                try { processChangedLines(offset, len);} catch (Exception e) {new iError(e);}
-                this.stop();
+                try {*/ processChangedLines(offset, len);//} catch (Exception e) {new iError(e);}
+                /*this.stop();
             }
         };
-        t.start();
+        t.start();*/
     }
 
 
@@ -92,20 +88,20 @@ public class RSyntaxDocument extends RStyledDocument {
      */
     public void remove(final int offset, int length) throws BadLocationException {
         super.remove(offset, length);
-        Thread t = new Thread() {
+        /*Thread t = new Thread() {
             public void run() {
-                try { processChangedLines(offset, 0);} catch (Exception e) {new iError(e);}
-                this.stop();
+                try {*/ processChangedLines(offset, 0); //} catch (Exception e) {new iError(e);}
+                /*this.stop();
             }
         };
-        t.start();
+        t.start();*/
     }
 
     /*
      * Determine how many lines have been changed,
      * then apply highlighting to each line
      */
-    public void processChangedLines(int offset, int length) throws
+    public synchronized void processChangedLines(int offset, int length) throws
         BadLocationException {
         String content = doc.getText(0, doc.getLength());
         // The lines affected by the latest document update
@@ -121,7 +117,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Parse the line to determine the appropriate highlighting
      */
-    private void applyHighlighting(String content, int line) throws
+    private synchronized void applyHighlighting(String content, int line) throws
         BadLocationException {
         int startOffset = rootElement.getElement(line).getStartOffset();
         int endOffset = rootElement.getElement(line).getEndOffset() - 1;
@@ -147,7 +143,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Parse the line for tokens to highlight
      */
-    private void checkForTokens(String content, int startOffset, int endOffset) {
+    private synchronized void checkForTokens(String content, int startOffset, int endOffset) {
         while (startOffset <= endOffset) {
             // skip the delimiters to find the start of a new token
             while (isDelimiter(content.substring(startOffset, startOffset + 1))) {
@@ -167,7 +163,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      *
      */
-    private int getQuoteToken(String content, int startOffset, int endOffset) {
+    private synchronized int getQuoteToken(String content, int startOffset, int endOffset) {
         String quoteDelimiter = content.substring(startOffset, startOffset + 1);
         String escapeString = getEscapeString(quoteDelimiter);
         int index;
@@ -189,7 +185,7 @@ public class RSyntaxDocument extends RStyledDocument {
         return endOfQuote + 1;
     }
 
-    private int getOtherToken(String content, int startOffset, int endOffset) {
+    private synchronized int getOtherToken(String content, int startOffset, int endOffset) {
         int endOfToken = startOffset + 1;
         while (endOfToken <= endOffset) {
             if (isDelimiter(content.substring(endOfToken, endOfToken + 1)))
@@ -212,7 +208,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Assume the needle will the found at the start/end of the line
      */
-    private int indexOf(String content, String needle, int offset) {
+    private synchronized int indexOf(String content, String needle, int offset) {
         int index;
         while ( (index = content.indexOf(needle, offset)) != -1) {
             String text = getLine(content, index).trim();
@@ -227,7 +223,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Assume the needle will the found at the start/end of the line
      */
-    private int lastIndexOf(String content, String needle, int offset) {
+    private synchronized int lastIndexOf(String content, String needle, int offset) {
         int index;
         while ( (index = content.lastIndexOf(needle, offset)) != -1) {
             String text = getLine(content, index).trim();
@@ -250,7 +246,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Override for other languages
      */
-    protected boolean isDelimiter(String character) {
+    protected synchronized boolean isDelimiter(String character) {
         String operands = ",;:{}()[]+-/%<=>!&|^~*$";
         if (Character.isWhitespace(character.charAt(0)) ||
             operands.indexOf(character) != -1)
@@ -262,7 +258,7 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Override for other languages
      */
-    protected boolean isQuoteDelimiter(String character) {
+    protected synchronized boolean isQuoteDelimiter(String character) {
         String quoteDelimiters = "\"'";
         if (quoteDelimiters.indexOf(character) < 0)
             return false;
@@ -273,18 +269,18 @@ public class RSyntaxDocument extends RStyledDocument {
     /*
      * Override for other languages
      */
-    protected boolean isKeyword(String token) {
+    protected synchronized boolean isKeyword(String token) {
         Object o = keywords.get(token);
         return o == null ? false : true;
     }
     /*
      * Override for other languages
      */
-    protected boolean isNumber(String token) {
+    protected synchronized boolean isNumber(String token) {
         return token.matches("[[0-9]+.[0-9]+]*[0-9]+");
     }
 
-    protected boolean isObject(String token) {
+    protected synchronized boolean isObject(String token) {
         Object o = objects.get(token);
         return o == null ? false : true;
     }
@@ -293,21 +289,21 @@ public class RSyntaxDocument extends RStyledDocument {
      * Override for other languages
      */
 
-    protected String getSingleLineDelimiter() {
+    protected synchronized String getSingleLineDelimiter() {
         return "#";
     }
 
     /*
      * Override for other languages
      */
-    protected String getEscapeString(String quoteDelimiter) {
+    protected synchronized String getEscapeString(String quoteDelimiter) {
         return "\\" + quoteDelimiter;
     }
 
     /*
      *
      */
-    protected String addMatchingBrace(int offset) throws BadLocationException {
+    protected synchronized String addMatchingBrace(int offset) throws BadLocationException {
         StringBuffer whiteSpace = new StringBuffer();
         int line = rootElement.getElementIndex(offset);
         int i = rootElement.getElement(line).getStartOffset();

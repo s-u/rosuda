@@ -226,7 +226,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
+    public synchronized void highlightParanthesisForward(String par, int pos) throws BadLocationException {
         //System.out.println(par);
         int open = pos;
         int cend = this.getText().length();
@@ -299,7 +299,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * @return index int where the matching bracket is
      */
 
-    public void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
+    public synchronized void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
 
         int end = pos;
 
@@ -445,8 +445,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     public void caretUpdate(final CaretEvent e) {
         final SyntaxArea sa = this;
         removeHighlights();
-        Thread t = new Thread() {
-            public void run() {
+        /*Thread t = new Thread() {
+            public void run() {*/
+        try {
+            if (e.getDot()==0) return;
+            if (getText(e.getDot()-1,1).matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) /*t.start();*/ {
+
                 removeCaretListener(sa);
                 String c; int pos;
                 try {
@@ -468,13 +472,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
                     else if (c.matches("[)]|[\\]]|[}]"))
                         highlightParanthesisBackward(c, pos);
                 }
-                catch (Exception e) { new iError(e);}
+                catch (Exception ex2) { new iError(ex2);}
                 addCaretListener(sa);
-                this.stop();
+
+                //}
+                //};
             }
-        };
-        if (e.getDot()==0) return;
-        try { if (getText(e.getDot()-1,1).matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) t.start(); } catch (Exception ex) { new iError(ex);}
+        } catch (Exception ex3) { new iError(ex3);}
     }
 
     public void dragEnter(DropTargetDragEvent evt) {
