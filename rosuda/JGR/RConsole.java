@@ -543,6 +543,12 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     class CmdInput extends SyntaxArea {
 
+        public CmdInput() {
+            KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+            Keymap map = JTextComponent.getKeymap(JTextComponent.DEFAULT_KEYMAP);
+            map.removeKeyStrokeBinding(enter);
+        }
+
         public String getToolTipText(MouseEvent e) {
             String s = getCurrentWord();
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
