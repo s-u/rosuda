@@ -101,6 +101,15 @@ public class Map extends DragBox {
       public void itemStateChanged(ItemEvent e) { rank = !rank; updateMap(); }
     });
     p.add("West", cbRank);
+
+    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
+      // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
+      Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+      cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+      cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+      cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+    }
+    
     /*    ToolTipManager.sharedInstance().registerComponent(this);
     ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
     ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -191,6 +200,29 @@ public class Map extends DragBox {
     if (e.getID() == KeyEvent.KEY_RELEASED && e.isControlDown()) {
       //      this.setToolTipText("");
       //      ToolTipManager.sharedInstance().setEnabled(false);
+    }
+    if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_F) {
+      Graphics g = this.getGraphics();
+      double[] selection = data.getSelection();
+      for( int i=0; i<polys.size(); i++) {
+        MyPoly p = (MyPoly)smallPolys.elementAt(i);
+        if( selection[match[i]] > 0 ) {
+          Rectangle r = p.getBounds();
+          if( r.width < 20 ) {
+            r.x -= (20 - r.width) / 2;
+            r.width = 20;
+          }
+          if( r.height < 20 ) {
+            r.y -= (20 - r.height) / 2;
+            r.height = 20;
+          }
+          g.setColor(new Color(1.0F, 0.0F, 0.0F, 0.5F));
+          g.fillOval(r.x, r.y, r.width, r.height);
+        }
+      }
+      long start = new Date().getTime();
+      while( new Date().getTime() < start + 1000 ) {}
+      g.drawImage(tbi, 0, 0, Color.black, null);
     }
     super.processKeyEvent(e);  // Pass other event types on.
   }
@@ -337,7 +369,7 @@ public class Map extends DragBox {
         tbg.setColor(Color.black);
         drawSelections(tbg);
         g.drawImage(tbi, 0, 0, Color.black, null);
-        tbg.dispose();
+//        tbg.dispose();
       }
 //      long stop = new Date().getTime();
       //System.out.println("Time for polys: "+(stop-start)+"ms");
