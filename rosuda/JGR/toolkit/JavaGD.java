@@ -5,37 +5,43 @@
 //  Created by Simon Urbanek on Wed Apr 28 2004.
 //  Copyright (c) 2004 Simon Urbanek. All rights reserved.
 //
+//  $Id$
 
 package org.rosuda.JGR.toolkit;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowListener;
+import java.awt.event.WindowEvent;
+import org.rosuda.javaGD.GDInterface;
+import org.rosuda.javaGD.GDContainer;
 
 /** Implementation of JavaGD which uses iFrame instead of Frame */
-public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
+public class JavaGD extends GDInterface implements ActionListener, WindowListener {
     iFrame jfr;
 
     public void     gdOpen(double w, double h) {
-      if (jfr!=null) gdClose();
+        System.out.println("gdOpen");
+        open=true;
+        if (jfr!=null) gdClose();
 
-        jfr=new iFrame("JavaGD", iFrame.clsJavaGD) {
-            public void dispose() {
-                if (c!=null) executeDevOff();
-                super.dispose();
-            }
-        };
+        jfr=new iFrame("JavaGD", iFrame.clsJavaGD);        
         jfr.addWindowListener(this);
 
         String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
         iMenu.getMenu(jfr, this, Menu);
 
         jfr.setDefaultCloseOperation(jfr.DISPOSE_ON_CLOSE);
-        c=new org.rosuda.javaGD.GDCanvas(w, h);
-        jfr.getContentPane().add((org.rosuda.javaGD.GDCanvas)c);
+        System.out.println("gdOpen:creating JGDPanel");
+        c=new org.rosuda.javaGD.JGDPanel(w, h);
+        System.out.println("gdOpen:creating JGDPanel done");
+        jfr.getContentPane().add((org.rosuda.javaGD.JGDPanel)c);
         jfr.pack();
+        System.out.println("gdOpen:visible");
         jfr.setVisible(true);
+        System.out.println("gdOpen:returning");
     }
-
+    
     public void     gdNewPage(int devNr) {
         super.gdNewPage(devNr);
         jfr.setTitle("JavaGD ("+(getDeviceNumber()+1)+")"+(active?" *active*":""));
@@ -67,4 +73,14 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
         if (cmd.equals("copyImg"))
             org.rosuda.util.ImageSelection.copyComponent((java.awt.Component)c,false,true);
     }
+
+    public void windowClosing(WindowEvent e) {
+        if (c!=null) executeDevOff();
+    }
+    public void windowClosed(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowActivated(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}    
 }
