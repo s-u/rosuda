@@ -59,6 +59,7 @@ public class RTalk {
             String[] result = y.asStringArray();
             for (int i = 0; i < result.length; i++) {
                 String sx = result[i];
+                //System.out.println(sx);
                 if (sx.startsWith(part)) {
                     if (sx.equals(part)) exactmatches++;
                     if (matches==0) {

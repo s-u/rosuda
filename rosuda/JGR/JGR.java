@@ -57,6 +57,7 @@ public class JGR {
             System.out.println("Cannot load R");
             System.exit(1);
         }
+        //R.eval("library(JGR)");
         Preferences.refreshKeyWords();
         RHOME = RTalk.getRHome();
         RLIBS = RTalk.getRLIBS();

@@ -65,7 +65,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     public RHelp() {
         this(null);
     }
-    
+
     public RHelp(String location) {
         super("Help", iFrame.clsHelp);
         MyEntry = this.getMYEntry();
@@ -90,12 +90,14 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
         }
-        
+
         //if (location != null) RHELPLOCATION = location;
         //else RHELPLOCATION = JGR.RHOME;
-        
-        index = "file://"+RHELPLOCATION+"/doc/html/packages.html";
-        
+
+        index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
+
+        //System.out.println("index"+index);
+
         searchRHelp = new SearchEngine();
         searchRHelp.setRHelp(this);
 
@@ -182,16 +184,16 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         inputKeyWord.requestFocus();
         last = this;
     }
-    
+
     public void refresh() {
         /*if (location != null) RHELPLOCATION = location;
         else RHELPLOCATION = JGR.RHOME;
-        
+
         index = RHELPLOCATION+"/doc/html/packages.html";
-        
+
         searchRHelp = new SearchEngine();
-        searchRHelp.setRHelp(this);  
-        
+        searchRHelp.setRHelp(this);
+
         //if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);*/
         helpArea = new HelpArea(this,null);
         //tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
@@ -214,7 +216,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         finalize();
         dispose();
     }
-    
+
     public void goTo(String keyword, String file) {
             if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);
             tabArea.add(new HelpArea(this, keyword), 0);
@@ -248,7 +250,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             tabArea.setTitleAt(0,keyword);
         }
     }
-    
+
     public void popUpMenu(MouseEvent e) {
         JPopupMenu close = new JPopupMenu();
         JMenuItem closeItem = new JMenuItem("Close");
@@ -364,16 +366,20 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             rhelp.back.setEnabled(currentURLIndex > 0);
             rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
             URL url = (URL) history.get(currentURLIndex);
+            //System.out.println("test"+url);
             try {
                 helpPane.setPage(url);
             } catch (IOException ex) {
+                ex.printStackTrace();
                 try { history.remove(currentURLIndex);
                     currentURLIndex--;
                     rhelp.back.setEnabled(currentURLIndex > 0);
                     rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
                     url = (URL) history.get(currentURLIndex);
+                    //System.out.println(url.toString());
                 }
                 catch (Exception e) {
+                    e.printStackTrace();
                     JOptionPane.showMessageDialog(this, ex.getMessage(),
                                                   "URL Error",
                                                   JOptionPane.ERROR_MESSAGE);
@@ -404,9 +410,12 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         public void goTo(String urls) {
             URL url = null;
             try {
+                System.out.println(urls);
                 url = new URL(urls);
+                //System.out.println(url.toString());
                 goTo(url);
             } catch (MalformedURLException e) {
+                e.printStackTrace();
                 JOptionPane.showMessageDialog(null, e.getMessage(),
                                               "URL Error",
                                               JOptionPane.ERROR_MESSAGE);
@@ -419,9 +428,9 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
                 if (rhelp.searchRHelp != null) goTo(rhelp.searchRHelp.search(keyword,rhelp.exactMatch.isSelected(),rhelp.searchDesc.isSelected(),rhelp.searchKeyWords.isSelected(),rhelp.searchAliases.isSelected()));
         }
     }
-    
-    
-    
+
+
+
     public class JComboBoxExt extends JComboBox
     implements JComboBox.KeySelectionManager {
 
