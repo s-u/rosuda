@@ -42,9 +42,14 @@ public class Axis extends Notifier
     /** type (see <code>T_..</code> constants) currently: 0=numerical,
 	1=equidistant categories, 2=proportional category population, 3=equidistant */
     int type;
-    /** for categorial vars - sequence of categories i.e. position for each categotry
-	(ergo cseq[0] is the position of first cat) */
-    int []cseq=null;
+
+    /** gap between categories */
+    int gap=0;
+
+    /** category sequence */
+    SCatSequence seq;
+    /** geometry caching sequence */
+    AxisCatSequence seqgeom;
     
     /** create a new Axis with variable srcv, default orientation (horizontal) and default type guessing and default range
 	@param srcv source variable (cannot be <code>null</code>! for pure numerical axes use {@Axis(SVar,int,int)} constructor!) */
@@ -53,7 +58,10 @@ public class Axis extends Notifier
 	type=3; // some default type guessing
 	if (v.isNum()) type=0;
 	if (v.isCat()) type=2;
-	setDefaultRange();
+        seq=new SCatSequence(v,this,false); // private sequence
+                                            // seq=v.mainSequence(); // <- use this for global sequences
+        seqgeom=new AxisCatSequence(this, seq);
+        setDefaultRange();
      };
 
     /** create new Axis with variable srvc, specified orientation and type and default range 
@@ -62,7 +70,10 @@ public class Axis extends Notifier
      @param axisType axis type */
     public Axis(SVar srcv, int orientation, int axisType) {
 	v=srcv; type=axisType; or=orientation; ticks=null; gInterSpc=0;
-	setDefaultRange();
+        seq=new SCatSequence(v,this,false); // private sequence
+                                            // seq=v.mainSequence(); // <- use this for global sequences
+        seqgeom=new AxisCatSequence(this, seq);
+        setDefaultRange();
     };
 
     /** change axis type (implicitely calls {@link #setDefaultRange} but preserves
@@ -146,19 +157,16 @@ public class Axis extends Notifier
             vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
         };
 	if (type==2||type==1) {
-	    if (cseq==null || resetCseq) {
-		if (v.getNumCats()>0) {
-		    int i=0;
-		    cseq=new int[v.getNumCats()];
-		    while (i<cseq.length) { /* initial sequence is by cat ID */
-			cseq[i]=i; i++;
-		    };
-		} else cseq=null;
-	    };
+            if (resetCseq) seq.reset();
 	};
 	NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
     };
 
+    /** returns associated variable. Please note that this can be <code>null</code> for virtual axes */
+    public SVar getVariable() {
+        return v;
+    }
+    
     /** get graphical position of case with index i (for categorial vars returns
 	the same as getCatCenter called for the category of the case)
 	@param i index of the case
@@ -177,7 +185,7 @@ public class Axis extends Notifier
 	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
         //System.out.println(""+val+" -[vBegin="+vBegin+",vLen="+vLen+"]-> "+(gBegin+(int)(((double)gLen)*(val-vBegin)/vLen)));
 	if (type==0) return gBegin+(int)(((double)gLen)*(val-vBegin)/vLen);
-	if (type==2||type==1) return getCatCenter((int)val); // we assume that the supplied value is category index
+	if (type==2||type==1) return getCatCenter((int)(val+0.5)); // we assume that the supplied value is category index
 	return -1;
     };
 
@@ -203,81 +211,28 @@ public class Axis extends Notifier
      @param i category index
      @return lower position of the category */
     public int getCatLow(int i) {	
-	if (i<0||i>=v.getNumCats()) return -1;
-	int xi=(cseq==null)?i:cseq[i];
-	if (type==1) return gBegin+gLen*xi/datacount;
-	int agg=0,j=0;
-	while (j<xi) {
-	    agg+=v.getSizeCatAt((cseq==null)?j:cseq[j]); j++;
-	};
-	return gBegin+gLen*agg/datacount;
+	return seqgeom.getLowerEdgeOfCat(i);
     };
 
     /** get upper geometry for category of index i (type 1,2 only)
 	@param i category index
 	@return upper position of the category */
-    public int getCatUp(int i) {	
-	if (i<0||i>=v.getNumCats()) return -1;
-	int xi=(cseq==null)?i:cseq[i];
-	if (type==1) return gBegin+gLen*(xi+1)/datacount;
-	int agg=0,j=0;
-	while (j<=xi) {
-	    agg+=v.getSizeCatAt((cseq==null)?j:cseq[j]); j++;
-	};
-	return gBegin+gLen*agg/datacount;
+    public int getCatUp(int i) {
+        return seqgeom.getUpperEdgeOfCat(i);
     };
 
     /** get central geometry for category of index i (just a faster way to get (Low+Up)/2 )
 	@param i category index
 	@return central position of the category */
     public int getCatCenter(int i) {
-	if (i<0||i>=v.getNumCats()) return -1;
-	int xi=(cseq==null)?i:cseq[i];
-	if (type==1) return gBegin+gLen*xi/datacount+gLen/(2*datacount);
-	int agg=0,j=0;
-	while (j<=xi) {
-	    agg+=(j==xi)
-		?v.getSizeCatAt((cseq==null)?j:cseq[j])/2
-		:v.getSizeCatAt((cseq==null)?j:cseq[j]); j++;
-	};
-	return gBegin+gLen*agg/datacount;
+        return seqgeom.getCenterOfCat(i);
     };
 
     /** get category corresponding to a position on screen (type1 and 2 only)
 	@param pos position
 	@return category ID or -1 on failure (e.g. if not of type 1 or 2) */
     public int getCatByPos(int pos) {
-	if (type!=1&&type!=2) return -1;
-	if (cseq==null&&type==1) {
-	    int rc=(pos-gBegin)/gLen;
-	    if (rc<0) rc=0;
-	    if (rc>=v.getNumCats()) rc=v.getNumCats()-1;
-	    return rc;
-	};
-	int i=0, l=0, maxi=0, maxx=0, agg=0, aggp, aggp2, cs=v.getNumCats();
-	int tot=datacount;       
-	int[] invcs=null;
-	if (cseq!=null) {
-	    invcs=new int[cseq.length];
-	    int ii=0;
-	    while(ii<cseq.length) { invcs[cseq[ii]]=ii; ii++; };
-	};
-	if (type==1) tot=cs;
-	while (i<cs) {
-	    aggp=gBegin+gLen*agg/tot;
-	    if  (aggp>maxx) { maxx=aggp; maxi=(cseq==null)?i:invcs[i]; };
-	    if (type==1)
-		l=1;
-	    else
-		l=v.getSizeCatAt((cseq==null)?i:invcs[i]);
-	    agg+=l;
-	    aggp2=gBegin+gLen*agg/tot;
-	    //System.out.println("i="+i+", pos="+pos+" ["+aggp+"-"+aggp2+"]");
-	    if ((pos>=aggp&&pos<aggp2) ||
-		(pos>aggp2&&pos<=aggp)) return (cseq==null)?i:invcs[i];
-	    i++;
-	};
-	return maxi; // assuming pos is out of range, ergo return maxi
+        return seqgeom.getCatByGeometryPos(pos);
     };
 
     /** swap positions of two categories
@@ -286,12 +241,7 @@ public class Axis extends Notifier
 	@return <code>true</code> on success, <code>false</code> on failure
 	(i.e. some index was out of bounds) */
     public boolean swapCats(int c1, int c2) {
-	if (cseq==null||c1<0||c2<0||c1>=cseq.length||c2>=cseq.length)
-	    return false;
-	if (c1!=c2) {
-	    int i=cseq[c1]; cseq[c1]=cseq[c2]; cseq[c2]=i;
-	};
-	return true;
+        return seq.swapCats(c1,c2);
     };
 
     /** move category to another position in the sequence, all remaining
@@ -303,28 +253,10 @@ public class Axis extends Notifier
 	move it to the end of the sequence
 	@return <code>true</code> on success, <code>false</code> on failure */
     public boolean moveCat(int c, int npos) {
-	if (cseq==null||c<0||c>=cseq.length)
-	    return false;
-	if (npos<0) npos=0;
-	if (npos>=cseq.length) npos=cseq.length-1;
-	int cp=cseq[c];
-	if (cp==npos) return true;
-	if (cp<npos) {
-	    int i=0; 
-	    while(i<cseq.length) {
-		if (cseq[i]>cp&&cseq[i]<=npos) cseq[i]--;
-		i++;
-	    };	    
-	    cseq[c]=npos;
-	} else {
-	    int i=0;
-	    while(i<cseq.length) {
-		if (cseq[i]>=npos&&cseq[i]<cp) cseq[i]++;
-		i++;
-	    };
-	    cseq[c]=npos;
-	};
-	return true;
+        if (npos<0) npos=0;
+        int cats=v.getNumCats();
+        if (npos>=cats) npos=cats-1;
+        return seq.moveCatAtPosTo(seq.posOfCat(c),npos);
     };
 
     /** for cat types return the position of a category in the sequence
@@ -335,8 +267,7 @@ in conjunction with {@link #moveCat} as npos parameter when destination
 	@return position of the category in the sequence
     */
     public int getCatSeqIndex(int c) {
-	if (cseq==null) return c;
-	return (c<0||c>=cseq.length)?-1:cseq[c];
+        return seq.posOfCat(c);
     };
 
     /** returns a tick distance that is somewhat "sensible" to be used for 
@@ -386,10 +317,12 @@ used in conjunction with {@link #getSensibleTickDistance}
 
     /** returns category sequence - useful basically for plots that want to sequentially plot categories
         @return array of indices of categories. do not modify that array */
+    /*
     public int[] getCatSequence() {
         return cseq;
     }
-
+     */
+     
     /** returns value range as an array of two doubles specifying top and bottom end. to ensure reproducibility the orientation is preserved, therefore it is not guaranteed that the second value is greater that the first one.
     */
     public double[] getValueRange() {
@@ -401,6 +334,6 @@ used in conjunction with {@link #getSensibleTickDistance}
 
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
-	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
+	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+",seq="+seq.toString()+")";
     };
 };
