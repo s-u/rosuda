@@ -67,7 +67,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
     
     public void saveFile() {
 		if (this.getSelectedFile() != null) {
-			JGRConsole.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
+			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
 			String file = this.getSelectedFile().toString();
 			
 			String useSep;

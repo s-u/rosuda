@@ -91,11 +91,29 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		filename.add(buttons);
 		this.showOpenDialog(f);
 		this.setSize(this.getSize().width, this.getSize().height+60);
+		searchFileViewComponent();
+	}
+	
+	private int searchFileViewComponent() {
+	    for (int i = 0; i < this.getComponentCount(); i++) {
+	        Component c = this.getComponent(i);
+	        System.out.println("i "+c.getClass().getName());
+	        for (int ii = 0; ii < this.getComponentCount(); ii++) {
+		        Component cc = this.getComponent(i);
+		        System.out.println("ii "+cc.getClass().getName());
+		        for (int iii = 0; iii < this.getComponentCount(); iii++) {
+			        Component ccc = this.getComponent(i);
+			        System.out.println("iii "+ccc.getClass().getName());
+			        
+			    }
+		    }
+	    }
+	    return -1;
 	}
 
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
-			JGRConsole.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
+			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
 			String file = this.getSelectedFile().toString();
 			
 			String useSep;
