@@ -321,6 +321,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         Vector cp=new Vector();
                         editSuffix++;
                         SNode nt=InTr.makePrunedCopy(root,true,n,true,cp,"Ed_"+root.name+"_"+editSuffix);
+			nt.formula=root.formula;
                         
                         /* build the two other chunks here */
                         ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
@@ -333,9 +334,11 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                             return;
                         }
                         gt.setParameter("dataset",vs);
+			if (root.formula!=null)
+			    gt.setParameter("formula",root.formula);
                         gt.checkParameters();
                         pd.setVisible(false);
-                        if (!gt.pluginDlg(this)) {
+                        if (root.formula==null && !gt.pluginDlg(this)) {
                             pd.dispose();
                             if (gt.cancel) {
                                 gt.donePlugin();

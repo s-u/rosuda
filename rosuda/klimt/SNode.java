@@ -61,6 +61,9 @@ public class SNode extends Node implements Cloneable
     /** value of the split condition as string */
     double splitValF;
 
+    /** formula used to grow the tree */
+    String formula;
+
     /** associated frame */
     TFrame frame;
     

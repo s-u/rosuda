@@ -94,6 +94,7 @@ public class InTr
             n.name=(newName==null)?"Pr_"+root.name:newName;
             n.prediction=root.prediction;
             n.response=root.response;
+	    n.formula=root.formula;
         }
 	n.Cases=t.Cases; n.Cond=t.Cond;
         if (deepCopy) {

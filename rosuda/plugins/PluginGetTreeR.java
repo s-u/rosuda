@@ -1,6 +1,8 @@
 import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /* generate tree plugin */
 
@@ -62,7 +64,33 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         if (par=="dataset") vs=(SVarSet)val;
         if (par=="selectedOnly") useAll=!((Boolean)val).booleanValue();
         if (par=="treeLibrary") lib=(String)val;
-        if (par=="formula") formula=(String)val;
+        if (par=="formula") { // parse the formula
+	    String f=(String)val;
+	    //System.out.println("Formula: "+f);
+	    if (f==null || vs==null || f.indexOf("~")<1) return;	    
+	    String pnam=f.substring(0,f.indexOf("~")).trim();
+	    String covs=f.substring(f.indexOf("~")+1);
+	    StringTokenizer st=new StringTokenizer(covs,"+");
+	    Vector v=new Vector();
+	    while(st.hasMoreTokens()) {
+		String cov=st.nextToken().trim();
+		int id=vs.indexOf(cov);
+		//System.out.println("covariate: ("+id+") \""+cov+"\"");
+		if (id>=0)
+		    v.add(new Integer(id));
+	    }
+	    int id=vs.indexOf(pnam);
+	    //System.out.println("response: ("+id+") \""+pnam+"\"");
+	    if (id>=0) {
+		resp=vs.at(id);
+		v.add(new Integer(id));
+	    };
+	    pred=new int[v.size()];
+	    int i=0;
+	    while(i<v.size()) { pred[i]=((Integer)v.elementAt(i)).intValue(); i++; };
+	    formula=f;
+	}
+
         if (par=="treeOptions") treeOpt=(String)val;
         if (par=="registerTree") registerPar=((Boolean)val).booleanValue();
         if (par=="useRserv") useRserv=((Boolean)val).booleanValue();    
@@ -397,6 +425,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                     if (fd.exists()) fd.delete();
                     fo.delete();
                     System.out.println("Tree loaded!\n"+root.toString());
+		    root.formula=formula; // set formula manually since RTree may have loaded partial formula only
                     return true;
                 }
                 err="Commands executed, but no tree was found.";
