@@ -43,7 +43,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected boolean allowDragZoom=true;
     /** if set to <code>true</code> then zooming-in always retians the aspect ratio (at least default zoom handling via axes does. If you implement a subclass providing its own zooming features you should honor this flag where applicable) */
     protected boolean zoomRetainsAspect=true;
-    
+    /** determines whether axis labels should be shown (currently not implemented by BaseCanvas itself) */
+    protected boolean showLabels=true;
     /** run-time flag is set to <code>true</code> if baseDragging is in process */
     protected boolean baseDrag;
     /** run-time flag is set to <code>true</code> if the current baseDrag is a selection */
