@@ -93,7 +93,64 @@ public class SVar extends Vector
 		    ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
 		};
 	    };
+            if (isNum()) { // if numerical and categorical then sort categories for convenience
+                sortCategories();
+            };
 	};
+    };
+
+    public static final int SM_lexi = 0; /** sort method lexicograph. */
+    public static final int SM_num  = 1; /** sort method numerical (all objects are cast to Number, non-castable are assigned -0.01,
+                                             basically to appear just before zero) */
+
+    /** sort caregotires, using default method which is numerical for num. variables, lexicogr. otherwise */
+    public void sortCategories() {
+        sortCategories(isNum()?SM_num:SM_lexi);
+    }
+    /** sort categories by specifeid method
+        @param method sort method, see SM_xxx constants */
+    public void sortCategories(int method) {
+        if (!isCat()) return;
+        Vector ocats=cats; Vector occnts=ccnts;
+        cats=new Vector(); ccnts=new Vector();
+        boolean found=true;
+        int cs=ocats.size();
+        while (found) {
+            found=false; int i=0,p=-1;
+            double min=-0.01; boolean gotmin=false;
+            String mino=null;
+            while (i<cs) {
+                Object o=ocats.elementAt(i);
+                if (o!=null) {
+                    if (method==SM_num) {
+                        double val=-0.01;
+                        try {
+                            val=((Number)o).doubleValue();
+                        } catch(Exception e) {};
+                        if (!gotmin) {
+                            gotmin=true; min=val; p=i;
+                        } else {
+                            if (val<min) {
+                                min=val; p=i;
+                            }
+                        }
+                    } else {
+                        if (!gotmin) {
+                            gotmin=true; mino=o.toString(); p=i;
+                        } else {
+                            if (mino.compareTo(o)>0) {
+                                mino=o.toString(); p=i;
+                            }
+                        }
+                    }
+                }
+                i++;
+            }
+            if (found=gotmin) {
+                cats.add(ocats.elementAt(p)); ccnts.add(occnts.elementAt(p));
+                ocats.setElementAt(null,p);
+            }            
+        }
     };
     /** define the variable explicitely as categorial (equals to calling {@link #categorize(boolean) categorize(false)}) */
     public void categorize() { categorize(false); };
