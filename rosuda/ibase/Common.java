@@ -7,14 +7,16 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96f";
+    public static String Version="0.96g";
     /** application release */
-    public static String Release="C723";
+    public static String Release="C725";
 
-    /** Debug flag. When set to >0 verbose debug messages are generated. */
+    /** Debug flag. When set to >0 verbose debug messages are generated.
+        parameter equivalend: --debug / --nodebug */
     public static int DEBUG=0;
-    /** profiler flag. When set to >0 profile information (timings) are generated */
-    public static int PROFILE=2;
+    /** profiler flag. When set to >0 profile information (timings) are generated; >1 then memory info is added
+        parameter equivalent: --profile */
+    public static int PROFILE=0;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -24,8 +26,12 @@ public class Common
 
     /** use Swing classes */
     public static boolean useSwing=true;
-    /** use Aqua-style background */
-    public static boolean useAquaBg=true;
+    /** use Aqua-style background
+        parameter equivalent: --with-aqua */
+    public static boolean useAquaBg=false;
+    /** if <code>true</code> then special messages for a loader are printed
+        parameter equivalent: --with-loader */
+    public static boolean informLoader=false;
 
     public static final int AT_standalone = 0x0000;
     public static final int AT_applet     = 0x0001;
