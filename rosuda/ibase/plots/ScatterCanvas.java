@@ -517,20 +517,21 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
 		if (p!=null) {
 		    p.println(v[0].getName()+"\t"+v[1].getName());
-		    int i=0;
-		    for (Enumeration e=v[0].elements(); e.hasMoreElements();) {
-			Object oo=e.nextElement();
-			if (m.at(i))
-			    p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
-			i++;
-		    };
+                    int i=0, sz=v[0].size();
+                    while (i<sz) {
+                        if (m.at(i)) {
+                            Object oo=v[0].at(i);
+                            p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
+                        }
+                        i++;
+		    }
 		    p.close();
-		};
-	    } catch (Exception eee) {};
-	};
+		}
+	    } catch (Exception eee) {}
+	}
 	
 	return null;
-    };
+    }
 
     public void actionPerformed(ActionEvent e) {
 	if (e==null) return;

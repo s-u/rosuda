@@ -489,21 +489,21 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
 		if (p!=null) {
 		    p.println(v.getName());
-		    int i=0;
-		    for (Enumeration e=v.elements(); e.hasMoreElements();) {
-			Object oo=e.nextElement();
-			if (m.at(i)) {
-			    if (oo!=null)
-				p.println(oo.toString());
-			    else 
+		    int i=0, sz=v.size();
+                    while (i<sz) {
+                        Object oo=v.at(i);
+                        if (m.at(i)) {
+                            if (oo!=null)
+                                p.println(oo.toString());
+                            else 
 				p.println("NA");
-			};
+                        }
 			i++;
-		    };
+                    }
 		    p.close();
-		};
-	    } catch (Exception eee) {};
-	};
+		}
+	    } catch (Exception eee) {}
+	}
 	if (cmd=="exit") WinTracker.current.Exit();
 	return null;
     };

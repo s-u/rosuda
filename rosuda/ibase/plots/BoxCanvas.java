@@ -145,7 +145,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    vsCat=true;
 	    cs=cv.getNumCats();
 	    cats=cv.getCategories();
-	    int[] r=SVar.getRanked(v,null,0);
+	    int[] r=v.getRanked();
 	    oss=new OrdStats[cs*2+2];
 	    rk=new int[cs*2+2][];
 	    rs=new int[cs*2+2];
@@ -189,7 +189,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     public void updateBoxes() {
 	if (!valid) return;
-	int md[]=SVar.getRanked(v,m,-1);
+	int md[]=v.getRanked(m,-1);
 	areMarked=(md!=null);
 	if (vsCat) {
 	    if (areMarked) {
@@ -379,23 +379,23 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
 		if (p!=null) {
 		    p.println(v.getName()+(vsCat?("\t"+cv.getName()):""));
-		    int i=0;
-		    for (Enumeration e=v.elements(); e.hasMoreElements();) {
-			Object oo=e.nextElement();
-			if (m.at(i)) {
-			    if (vsCat)
-				p.println((oo==null)?"NA":oo.toString()+"\t"+cv.at(i).toString());
-			    else
+                    int i=0, sz=v.size();
+                    while (i<sz) {
+                        Object oo=v.at(i);
+                        if (m.at(i)) {
+                            if (vsCat)
+                                p.println((oo==null)?"NA":oo.toString()+"\t"+cv.at(i).toString());
+                            else
 				p.println((oo==null)?"NA":oo.toString());
-			};
+                        }
 			i++;
-		    };
+                    }
 		    p.close();
-		};
-	    } catch (Exception eee) {};
-	};
+                }
+	    } catch (Exception eee) {}
+	}
 	return null;
-    };
+    }
 
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;

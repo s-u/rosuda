@@ -82,7 +82,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	A[1].setValueRange(totMin,totMax-totMin);
          A[1].addDepend(this);
 	if (xv==null) {
-	    xv=new SVar("index.LC");
+	    xv=new SVarObj("index.LC");
 	    i=1; while(i<=v[1].size()) { xv.add(new Integer(i)); i++; };
             setTitle("Series plot of "+vnlist);
         } else setTitle("Series plot of "+xv.getName()+" vs "+vnlist);
@@ -354,17 +354,18 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
 		if (p!=null) {
 		    p.println(v[0].getName()+"\t"+v[1].getName());
-		    int i=0;
-		    for (Enumeration e=v[0].elements(); e.hasMoreElements();) {
-			Object oo=e.nextElement();
-			if (m.at(i))
-			    p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
+                    int i=0, sz=v[0].size();
+                    while(i<sz) {
+                        if (m.at(i)) {
+                            Object oo=v[0].at(i);
+                            p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
+                        }
 			i++;
-		    };
+		    }
 		    p.close();
-		};
+		}
 	    } catch (Exception eee) {};
-	};
+	}
 	
 	return null;
     };

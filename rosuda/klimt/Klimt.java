@@ -289,7 +289,7 @@ public class Klimt
             } catch(Exception e) {};
             t=TreeLoader.Load(r,fnn,dr);
             if (t!=null) t.getRootInfo().name=fnn;
-	    if (Global.DEBUG>0) SVarSet.Debug(tvs);
+	    if (Global.DEBUG>0) tvs.printSummary();
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
             String wars=Common.getWarnings();
