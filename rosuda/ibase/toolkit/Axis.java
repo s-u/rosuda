@@ -331,12 +331,14 @@ public class Axis extends Notifier
         @param mindist minimal required distance (if set to 0 only powers of 10 will be used)
 	@return proposed tick distance */
     public double getSensibleTickDistance(int medDist, int minDist) {
-	double preld=(double)Math.pow(10.0,Math.round(Math.log(vLen*((double)medDist)/((double)gLen))/Math.log(10.0)));
+        double lgLen=(double)((gLen<0)?-gLen:gLen);
+        double lvLen=(vLen<0)?-vLen:vLen;
+        double preld=(double)Math.pow(10.0,Math.round(Math.log(lvLen*((double)medDist)/lgLen)/Math.log(10.0)));
         if (minDist<1) return preld;
         // preld (preliminary distance) is the value as returned by previous versions of getSensibleTickDistance
         // some heuristic is used further to try to satisfy the minDist condition, although it's merely a guideline
         // if medDist is too small then values returned can still be bigger than minDist
-        int grs=(int)(preld/vLen*((double)gLen));
+        int grs=(int)(preld/lvLen*lgLen);
         if (grs<minDist/3) return preld*5;
         if (grs<minDist) return preld*2;
         return preld;
@@ -361,7 +363,7 @@ public class Axis extends Notifier
         if (dac==0) return ""+((int)val);
         double post=val-((double)((int)(val)));
         while(dac>0) { post*=10; dac--; };
-        return ""+((int)val)+"."+Math.round(post);
+        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
     /** somewhat simple toString implementation, basically for debugging purposes */

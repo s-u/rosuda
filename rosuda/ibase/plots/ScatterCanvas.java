@@ -13,7 +13,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     /** associated marker */
     SMarker m;
 
-    boolean showLabels=false;
+    boolean showLabels=true;
 
     boolean selRed=false;
 
@@ -144,9 +144,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    if (Pts[i]!=null) {
 		g.setColor(m.at(i)?"marked":"point");
 		if (selRed && m.at(i))
-		    g.fillRect(Pts[i].x-2,Pts[i].y-2,3,3);	    
+		    g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);	    
 		else
-		    g.fillRect(Pts[i].x,Pts[i].y,2,2);	    
+		    g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);	    
 		g.setColor("outline");
 	    };
 	g.drawLine(X,Y,X,Y+H); 
