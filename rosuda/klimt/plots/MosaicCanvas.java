@@ -59,9 +59,9 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-	MIalt=mb.getMenu(1).getItem(1);
+	MIalt=mb.getMenu(2).getItem(1);
     };
     
     public Dimension getMinimumSize() { return new Dimension(40,40); };
@@ -270,7 +270,8 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     /** implementation of the {@link Commander} interface */
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
-	if (cmd=="rotate") {
+        if (m!=null) m.run(o,cmd);
+        if (cmd=="rotate") {
 	    rotate();
 	};
 	if (cmd=="alternate") {

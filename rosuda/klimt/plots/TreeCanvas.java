@@ -143,6 +143,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	//--- this is a bit tricky - not really clean enough --
 	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...",
                           "exportPGS","Export forest data ...","exportForest","Print","print","-","Quit","quit",
+                          "+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
@@ -535,6 +536,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** commander interface implementation for all user commands */
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
+        if (m!=null) m.run(o,cmd);
 	MenuItem mi=getMenuItemByAction(cmd);
 	if (cmd=="help") {
 	    HelpFrame hf=new HelpFrame();

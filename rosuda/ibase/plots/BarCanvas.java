@@ -74,7 +74,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	Bars=new Rectangle[bars];
 	updateBars();
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Spineplot","spine","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Spineplot","spine","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIspine=mb.getMenu(1).getItem(0);
 	if (weight!=null) MIspine.setEnabled(false);
@@ -317,6 +317,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
+        if (m!=null) m.run(o,cmd);
 	if (cmd=="rotate") {
 	    //    rotate();
 	};

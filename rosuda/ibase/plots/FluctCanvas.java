@@ -58,9 +58,9 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Hide labels","labels","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-	MIlabels=mb.getMenu(1).getItem(1);	
+	MIlabels=mb.getMenu(2).getItem(1);	
     }
 
     public FluctCanvas(Frame f, SVar v1, SVar v2, SMarker mark) { this(f,v1,v2,mark,null); }
@@ -296,6 +296,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
+        if (m!=null) m.run(o,cmd);
 	if (cmd=="rotate") {
 	    rotate();
 	};
