@@ -187,5 +187,6 @@ public class Platform {
     // Applications should override those
     public void handleAbout() {}
     public void handleOpenFile(File fileName) {}
-    public void handlePrefs() {}    
+    public void handlePrefs() {}  
+    public void handleQuit() {}  
 }
