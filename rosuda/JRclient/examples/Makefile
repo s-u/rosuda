@@ -1,4 +1,4 @@
-all: jt.class
+all: jt.class t.class
 
 jt.class: jt.java ../JRclient.jar
 	javac -classpath ../JRclient.jar jt.java
