@@ -155,6 +155,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
 
         helpArea = new HelpArea(this,null);
+        helpArea.addKeyListener(this);
         tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
         tabArea.addMouseListener(this);
 
@@ -304,6 +305,8 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
     public void keyReleased(KeyEvent ke) {
         System.out.println("release");
+        String cmd = ((JTextComponent) ke.getComponent()).getSelectedText().trim();
+        JGR.MAINRCONSOLE.execute(cmd);
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -343,6 +346,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             this.getViewport().add(helpPane);
             helpPane.setEditable(false);
             helpPane.setContentType("text/html");
+            helpPane.addKeyListener(rhelp);
             helpPane.addHyperlinkListener(new HyperlinkListener() {
                 public void hyperlinkUpdate(HyperlinkEvent e) {
                     if (e.getEventType() == HyperlinkEvent.EventType.ENTERED) {
