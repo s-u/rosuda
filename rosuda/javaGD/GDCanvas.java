@@ -17,6 +17,8 @@ public class GDCanvas extends Canvas {
     Font f;
 
     Dimension lastSize;
+
+    public int devNr=-1;
     
     public GDCanvas(double w, double h) {
         this((int)w, (int)h);
@@ -43,7 +45,7 @@ public class GDCanvas extends Canvas {
                     par[0]=Class.forName("java.lang.String");
                     m=c.getMethod("eval",par);
                     Object[] pars=new Object[1];
-                    pars[0]="try(.C(\"javaGDresize\",as.integer(-1)),silent=TRUE)";
+                    pars[0]="try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)";
                     m.invoke(o, pars);
                 }
             }
