@@ -36,7 +36,6 @@ public class PC extends DragBox implements ActionListener {
   String paintMode = "Box";
   String sortMode = "ini";
   String alignMode = "center";
-  private boolean inSequence = false;
   float alpha = 1F;
   int movingID;
   boolean moving;
@@ -100,7 +99,7 @@ public class PC extends DragBox implements ActionListener {
 
     this.setBackground(frame.getBackground());
 
-    setCoordinates(0,1,0,1,1);
+    setCoordinates(0,1,0,1,-1);
 
     if( paintMode.equals("XbyY") )
       frame.setTitle("PC("+data.getName(xVar)+"|"+data.getName(yVar)+")");
@@ -441,9 +440,9 @@ public class PC extends DragBox implements ActionListener {
               permA[j] = permA[j-1];
             permA[insertBefore] = save;
           }
-          if( insertBefore < movingID || insertBefore > movingID +1 )    // Check whether the current order has been changed or not
+          if( insertBefore < movingID || insertBefore > movingID +1 ) {   // Check whether the current order has been changed or not
             sortMode = "foo";
-          
+          }
           create(width, height);
           update(this.getGraphics());
         }                                    // Moving Axis handling end	  
@@ -469,7 +468,7 @@ public class PC extends DragBox implements ActionListener {
                     //System.out.println("popXId: "+popXId+"e.getX: "+e.getX());
                   }
                 }
-                setCoordinates(0, Mins[permA[popXId]], 1, Maxs[permA[popXId]], 0);
+                setCoordinates(0, Mins[permA[popXId]], 1, Maxs[permA[popXId]], -1);
                 super.processMouseEvent(e);                           // This performs the zoom !!
                 Mins[permA[popXId]] = getLly();
                 Maxs[permA[popXId]] = getUry();
@@ -536,7 +535,7 @@ public class PC extends DragBox implements ActionListener {
                 if( !paintMode.equals("XbyY") && vars[permA[j]] == ((floatRect)S.o).var ) {
                   Selections.removeElementAt(i);
                   S.status = Selection.KILLED;
-System.out.println("Deleted Selection for variable: "+((floatRect)S.o).var+" on Slot: "+j+" mapping to: "+permA[j]+" is: "+vars[permA[j]]+" it: "+j);
+//System.out.println("Deleted Selection for variable: "+((floatRect)S.o).var+" on Slot: "+j+" mapping to: "+permA[j]+" is: "+vars[permA[j]]+" it: "+j);
                   SelectionEvent se = new SelectionEvent(this);
                   EventQueue evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
                   evtq.postEvent(se);
@@ -611,7 +610,7 @@ System.out.println("Deleted Selection for variable: "+((floatRect)S.o).var+" on 
         }
         this.dataChanged(0);
       } else if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP || e.getKeyCode() == KeyEvent.VK_PAGE_DOWN ) {
-        if( !inSequence ) {
+/*        if( !inSequence ) {
           sortMode = "foo";
           int[] newP = new int[k+1];
           newP[1] = 1;
@@ -640,7 +639,43 @@ System.out.println("Deleted Selection for variable: "+((floatRect)S.o).var+" on 
                 if( permA[j] < 0 )
                   permA[j] += k;
               }
+          } */
+        int[] tPerm = new int[k];
+        if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP ) {
+          tPerm[0] = permA[2];
+          tPerm[1] = permA[0];
+          for( int j=2; j<k-2; j++ ) { 
+            if( (j % 2) == 0 )
+              tPerm[j] = permA[j+2];
+            else
+              tPerm[j] = permA[j-2];
           }
+          if( (k % 2) == 0 ) {
+            tPerm[k-1] = permA[k-3];
+            tPerm[k-2] = permA[k-1];
+          } else {
+            tPerm[k-1] = permA[k-2];
+            tPerm[k-2] = permA[k-4];
+          }
+        } else {
+          tPerm[0] = permA[1];
+          tPerm[1] = permA[3];
+          for( int j=2; j<k-2; j++ ) { 
+            if( (j % 2) == 0 )
+              tPerm[j] = permA[j-2];
+            else
+              tPerm[j] = permA[j+2];
+          }
+          if( (k % 2) == 0 ) {
+            tPerm[k-1] = permA[k-2];
+            tPerm[k-2] = permA[k-4];
+          } else {
+            tPerm[k-1] = permA[k-3];
+            tPerm[k-2] = permA[k-1];
+          }
+        }
+        for( int j=0; j<k; j++ )
+          permA[j] = tPerm[j];
         this.dataChanged(0);
       } else
         super.processKeyEvent(e);
@@ -725,6 +760,11 @@ System.out.println("Command: "+command);
       double[] selection;
       Dimension size = this.getSize();
 
+      if( printing )
+        slotMax = 1000000;
+      else
+        slotMax = 40;
+
       if( oldWidth != size.width || oldHeight != size.height || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
 
@@ -739,12 +779,9 @@ System.out.println("Command: "+command);
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           tbi = createImage(size.width, size.height);
           bg = bi.getGraphics();
-          slotMax = 40;
         }
-        else {
+        else 
           bg = g;
-          slotMax = 1000000;
-        }
 
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") ) {
@@ -789,7 +826,7 @@ System.out.println("Command: "+command);
       else
         tbg = g;
 
-      if( !(printing)  )    
+      if( !printing  )    
         tbg.drawImage(bi, 0, 0, null);
       //tbg.setColor(Color.red);
       tbg.setColor(DragBox.hiliteColor);
@@ -1068,9 +1105,10 @@ System.out.println("Command: "+command);
       }
 
       if( alignMode.equals("ccase") )
-        for( int i=0; i<data.n; i++ )
-          if( data.getSelected(i) > 0 )
-            selID = i;
+        if( data.countSelection() == 1 )
+          for( int i=0; i<data.n; i++ )
+            if( data.getSelected(i) > 0 )
+              selID = i;
 
       for( int j=0; j<k; j++ ) {
         if( alignMode.equals("center") ) {
@@ -1080,8 +1118,8 @@ System.out.println("Command: "+command);
           Mins[j] = dMeans[j] - scaleFactor * dSDevs[j];
           Maxs[j] = dMeans[j] + scaleFactor * dSDevs[j];
         } else if( alignMode.equals("cmedian") ) {
-          Mins[j] = dMedians[j] - scaleFactor * dIQRs[j];
-          Maxs[j] = dMedians[j] + scaleFactor * dIQRs[j];
+          Mins[j] = dMedians[j] - scaleFactor * ((dIQRs[j] != 0) ? dIQRs[j] : (dMaxs[j]-dMins[j])/2);
+          Maxs[j] = dMedians[j] + scaleFactor * ((dIQRs[j] != 0) ? dIQRs[j] : (dMaxs[j]-dMins[j])/2);
         } else if( alignMode.equals("ccase") ) {
           Mins[j] = dataCopy[j][selID] - scaleFactor * dSDevs[j];
           Maxs[j] = dataCopy[j][selID] + scaleFactor * dSDevs[j];
@@ -1098,7 +1136,7 @@ System.out.println("Command: "+command);
       else
         slotWidth = 100;
 
-      //System.out.println("Slot: "+slotWidth);
+      System.out.println("Slot: "+slotWidth+"Slot Max: "+slotMax);
 
       names.removeAllElements();
       if( paintMode.equals("XbyY") )
@@ -1324,15 +1362,19 @@ System.out.println("Command: "+command);
           g.setColor(Color.black);
           g.drawRect(mid-width/2, lHP, width, lWP-lHP);
 
+          int dia = 3;
+          if( printing )
+            dia *= printFactor;
+            
           for( int i=0; i<lOutlier.length; i++ ) {
             if( lOutlier[i] < lHinge-(uHinge-lHinge)*3 )
-              g.fillOval(mid-1, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
-            g.drawOval(mid-1, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           }
           for( int i=0; i<uOutlier.length; i++ ) {
             if( uOutlier[i] > uHinge+(uHinge-lHinge)*3 )
-              g.fillOval(mid-1, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
-            g.drawOval(mid-1, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           }
         } else {
           int  MinP = low+(int)((Maxs[id]-min)/(Maxs[id]-Mins[id])*(high-low));
@@ -1398,23 +1440,26 @@ System.out.println("Command: "+command);
           g.drawRect(mid-width/2+smaller, lSWP, width-2*smaller, 1);
           g.drawLine(mid, lSWP, mid, lSHP);
 
+          int dia = 3;
+          if( printing )
+            dia *= printFactor;
           for( int i=0; i<lOutlier.length; i++ ) {
-            g.setColor(getBackground());
-            g.fillOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
-            g.drawOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
+//            g.setColor(getBackground());
+//            g.fillOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
+//            g.drawOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
             g.setColor(getHiliteColor());
             if( lOutlier[i] < lSHinge-(uSHinge-lSHinge)*3 )
-              g.fillOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
-            g.drawOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           }
           for( int i=0; i<uOutlier.length; i++ ) {
-            g.setColor(getBackground());
-            g.fillOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
-            g.drawOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
+//            g.setColor(getBackground());
+//            g.fillOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
+//            g.drawOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
             g.setColor(getHiliteColor());
             if( uOutlier[i] > uSHinge+(uSHinge-lSHinge)*3 )
-              g.fillOval(mid-1, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
-            g.drawOval(mid-1, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-1, 3, 3);
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           } 
         }
         else {
