@@ -135,7 +135,7 @@ public class JGRPrefs {
         }
 
         try {
-            Preferences.importPreferences(is);
+            if (is!=null) Preferences.importPreferences(is);
         } catch (InvalidPreferencesFormatException e) {
         } catch (IOException e) {
         }
