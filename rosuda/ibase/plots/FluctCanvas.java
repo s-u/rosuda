@@ -32,6 +32,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     
     int x1, y1, x2, y2;
     boolean drag=false, mvX=false, mvY=false; /* drag inside or move X/Y */
+    boolean centered=false;
     int dragNew;
     int mvXstart, mvYstart;
 
@@ -60,7 +61,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","@PSave as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","@WClose","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","!RRotate","rotate","@LHide labels","labels","Toggle alignment","center","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIlabels=mb.getMenu(2).getItem(1);	
     }
@@ -163,7 +164,11 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                     int rdx=(int)(((double)dx)*Math.sqrt(ct/maxCount));
                     int rdy=(int)(((double)dy)*Math.sqrt(ct/maxCount));
                     int mdy=(int)(((double)rdy)*mct/ct);
-                    g.fillRect(lx,ly,rdx,rdy);
+		    if (centered) {
+			lx+=(dx-rdx)/2;
+			ly+=(dy-rdy)/2;
+		    }
+		    g.fillRect(lx,ly,rdx,rdy);
                     if (mdy>0) {
                         g.setColor("marked");
                         g.fillRect(lx,ly+rdy-mdy,rdx,mdy);
@@ -365,6 +370,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
+	if (e.getKeyChar()=='c') run(this,"center");
  	if (e.getKeyChar()=='t') run(this,"trigraph");
     }
     
@@ -382,6 +388,11 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	    MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
             setUpdateRoot(0);
             repaint();
+	};
+	if (cmd=="center") {
+	    centered=!centered;
+	    setUpdateRoot(0);
+	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
