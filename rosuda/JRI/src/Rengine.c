@@ -6,7 +6,10 @@
 #include "jri.h"
 #include "org_rosuda_JRI_Rengine.h"
 #include <R_ext/Parse.h>
+
+#ifndef Win32
 #include <R_ext/eventloop.h>
+#endif
 
 jobject engineObj;
 jclass engineClass;
@@ -460,7 +463,9 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniExpType
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniIdle
   (JNIEnv *env, jobject this)
 {
+#ifndef Win32
     R_runHandlers(R_InputHandlers, R_checkActivity(0, 1));
+#endif
 }
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRunMainLoop
