@@ -36,6 +36,12 @@ JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $
 	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org
 	rm -rf org splash.jpg icons
 
+jgr-docs: $(IBASE_SRC) $(JGR_SRC) $(JRI_SRC)
+	rm -rf JavaDoc
+	mkdir JavaDoc
+	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
+
+
 ibase.jar: $(IBASE_SRC)
 	$(can-with-jar)
 
@@ -64,7 +70,7 @@ iwidgets.jar: iplots.jar $(IWIDGETS_SRC)
 	rm -rf org
 
 clean:
-	rm -rf $(TARGETS) org JavaDoc *~
+	rm -rf $(TARGETS) org JavaDoc *~ rtest.class TextConsole.class
 	make -C rosuda/Mondrian clean
 
 .PHONY: clean all
