@@ -77,7 +77,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    v[i+1]=yvs[i]; i++;
 	};
 	A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
-	A[1].setValueRange(totMin,totMax-totMin);
+        A[1].setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	ax=A[0];
 	ay=A[1];
