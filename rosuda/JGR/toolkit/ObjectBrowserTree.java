@@ -28,7 +28,7 @@ import javax.swing.tree.*;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.RObject;
 
-import sun.security.x509.RDN;
+
 
 public class ObjectBrowserTree extends JTree implements ActionListener, MouseListener, DragGestureListener, DragSourceListener, TreeWillExpandListener {
 
@@ -100,11 +100,11 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
     
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
-        if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGRConsole.directory);
+        if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGR.directory);
     }
     
     public void saveData() {
-        new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGRConsole.directory);
+        new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGR.directory);
     }
     
 
