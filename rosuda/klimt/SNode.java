@@ -14,7 +14,7 @@ import org.rosuda.ibase.toolkit.*;
 public class SNode extends Node implements Cloneable
 {
     /** list of indices of the data used in this node */
-    public Vector data;
+    public int data[];
     /** Data source of this node */
     SVarSet vset;
     /** root information. this should be <code>null</code> for non-root nodes. use {@link #getRootInfo()} to obrain root information from any node */
@@ -143,9 +143,9 @@ public class SNode extends Node implements Cloneable
     /** calculates deviance and deviance gain based on the sample stored in data. note that
         this deviance may be different from the F1/devGain if the tree was based on another sample */
     public void calculateSampleDeviances() {
-        if (data==null || data.size()==0) return;
+        if (data==null || data.length==0) return;
         double d=0;
-        double nt=data.size();
+        double nt=data.length;
         int rnt=0;
         SVar rv=getRootInfo().response;
         if (rv==null) return;
@@ -155,15 +155,13 @@ public class SNode extends Node implements Cloneable
             int i=0; while(i<cs) {
                 cts[i]=0; i++;
             }
-            for (Enumeration e=data.elements(); e.hasMoreElements();) {
-                Integer I=(Integer)e.nextElement();
-                if (I!=null) {
-                    i=I.intValue();
-                    int cix=rv.getCatIndex(i);
-                    if (cix>=0 && cix<cs) {
-                        cts[cix]++;
-                        rnt++;
-                    };
+            int e=0;
+            while (e<data.length) {
+                i=data[e++];
+                int cix=rv.getCatIndex(i);
+                if (cix>=0 && cix<cs) {
+                    cts[cix]++;
+                    rnt++;
                 }
             }
             i=0;
@@ -176,13 +174,11 @@ public class SNode extends Node implements Cloneable
             double pv=predValD;
             double ds=0.0;
             int vsz=rv.size();
-            for (Enumeration e=data.elements(); e.hasMoreElements();) {
-                Integer I=(Integer)e.nextElement();
-                if (I!=null) {
-                    int i=I.intValue();
-                    if (i<vsz && rv.at(i)!=null)
-                        ds+=(rv.atD(i)-pv)*(rv.atD(i)-pv);
-                }
+            int e=0;
+            while (e<data.length) {
+                int i=data[e++];
+                if (i<vsz && rv.at(i)!=null)
+                    ds+=(rv.atD(i)-pv)*(rv.atD(i)-pv);
             }
             sampleDev=ds;
         }
@@ -216,12 +212,13 @@ public class SNode extends Node implements Cloneable
         int cmp=splitComp;
         String cond=splitVal;
         double limit=splitValF;
-        data=new Vector();
+        int dv[]=new int[ct.data.length]; // tmp array - can't be bigger than the parent
+        int dvs=0;
         if (V!=null) {
             boolean lexi=!V.isNum();
-            for (Enumeration e=ct.data.elements(); e.hasMoreElements();) {
-                Object o=e.nextElement();
-                int I=((Integer)o).intValue();
+            int ei=0;
+            while (ei<ct.data.length) {
+                int I=ct.data[ei++];
                 if (I<V.size()) {
                     if (lexi) {
                         if (cond.indexOf(",")>-1) { // more cats specified
@@ -233,31 +230,34 @@ public class SNode extends Node implements Cloneable
                                 int cr=oo.toString().compareTo(cd);
                                 if (cr>0) cr=1;
                                 if (cr<0) cr=-1;
-                                if (cr==cmp) data.addElement(o);
+                                if (cr==cmp) dv[dvs++]=I;
                             }
                         } else {
                             int cr=V.at(I).toString().compareTo(cond);
                             if (cr>0) cr=1;
                             if (cr<0) cr=-1;
-                            if (cr==cmp) data.addElement(o);
+                            if (cr==cmp) dv[dvs++]=I;
                         }
                     } else {
                         if (!V.isMissingAt(I)) {
                             double F=V.atF(I);
                             if (((cmp==0)&&(F==limit))||
                                 ((cmp==-1)&&(F<=limit))||
-                                ((cmp==1)&&(F>limit))) data.addElement(o);
+                                ((cmp==1)&&(F>limit))) dv[dvs++]=I;
                         }
                     }
                 }
             }
+            data=new int[dvs];
+            System.arraycopy(dv,0,data,0,dvs);
+            dv=null;
             if (!isLeaf()) {
                 for (Enumeration e=children(); e.hasMoreElements();) {
                     SNode n=(SNode)e.nextElement();
                     n.passDownData(this);
                 }
             }
-        }
+        } else data=new int[0];
     }
 
     /** adjusts cached deviance gain for an entire subtree
