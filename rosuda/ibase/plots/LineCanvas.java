@@ -28,6 +28,9 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     /** flag whether alternative selection style should be used */
     boolean selRed=false;
 
+    /** falg to allow lines to be drawn from right to left */
+    boolean drawBackline=false;
+    
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false; 
     
@@ -75,7 +78,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle back-lines","backlines","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
@@ -183,16 +186,26 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 
 	g.setColor("line");
 	for (int j=1;j<v.length;j++) {
-	    for (int i=1;i<v[0].size();i++)
-                if (type==LT_DIRECT) {
-                    g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
-                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
-                } else {
-                    g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
-                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)));
-                    g.drawLine(A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)),
-                               A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
-                };
+            if (j==2) g.setColor(255,0,0);
+            if (j==3) g.setColor(0,0,255);
+            if (j==4) g.setColor(128,0,128);
+            if (j==5) g.setColor(0,128,128);
+            if (j==6) g.setColor(128,128,0);
+            if (j==7) g.setColor(0,0,0);
+            for (int i=1;i<v[0].size() && i<v[j].size();i++) {
+                int x1=A[0].getCasePos(i-1), x2=A[0].getCasePos(i);
+                if ((drawBackline || x2>=x1) && v[j].at(i)!=null && v[j].at(i-1)!=null) {
+                    if (type==LT_DIRECT) {
+                        g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
+                                   A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+                    } else {
+                        g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
+                                   A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)));
+                        g.drawLine(A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i-1)),
+                                   A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+                    };
+                }
+            }
 	};
 	
         g.nextLayer();
@@ -304,7 +317,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             jitter=!jitter; setUpdateRoot(0); repaint();
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
-        
+        if (cmd=="backlines") {  drawBackline=!drawBackline; setUpdateRoot(0); repaint(); }
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
