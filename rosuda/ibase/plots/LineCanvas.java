@@ -40,6 +40,8 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     int x1, y1, x2, y2;
     boolean drag;
 
+    boolean ignoreMarker=false;
+
     MenuItem MIlabels=null;
 
     int X,Y,W,H, TW,TH;
@@ -205,7 +207,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                 int x1=A[0].getCasePos(i-1), x2=A[0].getCasePos(i);
                 if ((drawBackline || x2>=x1) && v[j].at(i)!=null && v[j].at(i-1)!=null) {
                     if (m.at(i)!=lmc) { lmc=!lmc;
-                        if (lmc)
+                        if (lmc && !ignoreMarker)
                             g.setColor("marked");
                         else {
                             if (j==1) g.setColor("line");

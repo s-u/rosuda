@@ -211,6 +211,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
 	    splitText=st.getText();
             SVar[] svl=new SVar[1]; svl[0]=sdv;
             lc=new LineCanvas(this,rxv,svl,m);
+            lc.ignoreMarker=true;
             //pp.add(new ScatterCanvas(this,rxv,sdv,m));
             lc.setLineType(LineCanvas.LT_RECT);
             pp.add(lc);
