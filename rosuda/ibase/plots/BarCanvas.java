@@ -48,6 +48,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     boolean dragMode=false;
     boolean isSpine=false;
     int dragBar, dragX, dragY, dragW, dragH, dragNew;
+    int dragX1, dragX2, dragY1, dragY2;
+    boolean selDrag=false;
 
     MenuItem MIspine=null;
 
@@ -171,9 +173,11 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.begin();
 	g.defineColor("axes",0,0,0);
 	g.defineColor("outline",0,0,0);
-	g.defineColor("fill",255,255,255);
-	g.defineColor("sel",128,255,128);
+	g.defineColor("fill",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        float[] scc=Common.selectColor.getRGBComponents(null);
+        g.defineColor("sel",scc[0],scc[1],scc[2],1f);
 	g.defineColor("drag",255,0,0);
+        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
 
 	if (bars==0) return;
 	
@@ -251,7 +255,18 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    g.setColor("drag");
 	    g.fillRect(myX1,basey,myX2-myX1,4);
 	};
-	
+        
+        if (selDrag) {
+            nextLayer(g);
+            int dx1=dragX1, dx2=dragX2, dy1=dragY1, dy2=dragY2;
+            if (dx1>dx2) { int hh=dx1; dx1=dx2; dx2=hh; };
+            if (dy1>dy2) { int hh=dy1; dy1=dy2; dy2=hh; };
+            g.setColor("aSelBg");
+            g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
+            g.setColor("black");
+            g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);            
+        }
+        
 	g.end();
         setUpdateRoot(2);
     };
@@ -264,22 +279,11 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
         int i=0, bars=cats;
         boolean setTo=false;
 
-        if (Common.DEBUG>0) {
-            String mods="";
-            if (ev.isShiftDown()) mods+=" SHIFT";
-            if (ev.isAltDown()) mods+=" ALT";
-            if (ev.isControlDown()) mods+=" CTRL";
-            if (ev.isMetaDown()) mods+=" META";
-            if (ev.isAltGraphDown()) mods+=" ALT.GR";
-            if ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK) mods+=" M1";
-            if ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK) mods+=" M2";
-            if ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK) mods+=" M3";
-            if (ev.isPopupTrigger()) mods+=" POPUP";
-            System.out.println("Event:"+ev+mods);
-        }
+        Common.printEvent(ev);
         
         boolean effect=false, hideQI=true;
         boolean actionSelect=Common.isSelectTrigger(ev);
+        if (actionSelect) return; // selection is now handled by Pressed/Released
         boolean actionQuery=Common.isQueryTrigger(ev);
         boolean actionExtQuery=Common.isExtQuery(ev);
         if (Common.DEBUG>0)
@@ -333,19 +337,27 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     
     public void mousePressed(MouseEvent ev) {
 	int x=ev.getX(), y=ev.getY();
-	int i=0, bars=cats, setTo=0;
-	while (i<bars) {
-	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
-		dragMode=true;
-		dragBar=i; dragNew=i; dragW=Bars[i].width; dragH=Bars[i].height;
-		if (!inQuery) setCursor(Common.cur_hand);		
-		break;
-	    };
-	    i++;
-	};	
+        Common.printEvent(ev);
+
+        if (Common.isMoveTrigger(ev)) {
+            int i=0, bars=cats, setTo=0;
+            while (i<bars) {
+                if (Bars[i]!=null && Bars[i].contains(x,y)) {
+                    dragMode=true;
+                    dragBar=i; dragNew=i; dragW=Bars[i].width; dragH=Bars[i].height;
+                    if (!inQuery) setCursor(Common.cur_hand);
+                    break;
+                };
+                i++;
+            };
+        } else if (Common.isSelectTrigger(ev)) {
+            dragX2=dragX1=x; dragY2=dragY1=y;
+            selDrag=true;
+        }
     };
     
     public void mouseReleased(MouseEvent e) {
+        Common.printEvent(e);
 	if (dragMode) {
 	    dragMode=false;
 	    if (!inQuery) setCursor(Common.cur_arrow);
@@ -356,8 +368,34 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
                 setUpdateRoot(0);
 	    };
 	    repaint();
-	};
-    };
+	}
+        if (selDrag) {
+            boolean setTo=false, effect=false;
+            int selMode=Common.getSelectMode(e);
+            int i=0;
+            if (dragX1>dragX2) { int hh=dragX1; dragX1=dragX2; dragX2=hh; };
+            if (dragY1>dragY2) { int hh=dragY1; dragY1=dragY2; dragY2=hh; };
+            Rectangle sel=new Rectangle(dragX1,dragY1,dragX2-dragX1,dragY2-dragY1);
+
+            if (selMode==0) m.selectNone();
+            while (i<bars) {
+                if (Bars[i]!=null && Bars[i].intersects(sel)) {
+                    int j=0, pts=v.size();
+                    while (j<pts) {
+                        effect=true;
+                        if (v.getCatIndex(j)==i)
+                            m.set(j,m.at(j)?setTo:true);
+                        j++;
+                    }
+                }
+                i++;
+            }
+            if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+            selDrag=false;
+            setUpdateRoot(0);
+            repaint();
+        }
+    }
 
     public void mouseDragged(MouseEvent e) 
     {
@@ -367,7 +405,12 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    //System.out.println("dragX="+dragX+" dragY="+dragY+" dragNew="+dragNew);
             setUpdateRoot(1);
 	    repaint();
-	};
+	}
+        if (selDrag) {
+            dragX2=e.getX(); dragY2=e.getY();
+            setUpdateRoot(1);
+            repaint();
+        }
     };
 
     public void mouseMoved(MouseEvent ev) {};
