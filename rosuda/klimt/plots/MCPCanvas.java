@@ -48,7 +48,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Toggle mode","rotate","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
         updateBoxes();
-        qi=new QueryPopup(f,"MC-plot",-1);
+        qi=new QueryPopup(f,(mark==null)?null:mark.masterSet,"MC-plot");
     };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
