@@ -100,6 +100,8 @@ public class Common
 
     /** this flag is set to <code>true</code> by an external application if the underlying system supports the BREAK event */
     public static boolean supportsBREAK = false;
+    /** BREAK dispatcher for this application. check for <code>null</code> before use, since it is initialized only if BREAK event is supported *and* dispatched */
+    public static Notifier breakDispatcher = null;
     
     /** Cursor: arrow (all Common.cur_xxx variables are set by Platform class upon init) */
     public static Cursor cur_arrow;
