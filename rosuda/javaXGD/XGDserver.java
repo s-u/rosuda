@@ -387,6 +387,24 @@ public class XGDserver extends Thread {
                         c.add(new XGDfill(getInt(par,0)));
                     }
 
+
+                    if (cmd == 0x50) {
+                        byte[] b = new byte[4*8 + 4];
+                        setInt((0x50 | 0x80) | ((4*8)<<8), b, 0);
+                        double width=0d, height=0d;
+                        if (c != null) {
+                            Dimension d = c.getSize();
+                            width = d.getWidth();
+                            height = d.getHeight();
+                        }
+                        setDouble(0d, b, 4);
+                        setDouble(width, b, 12);
+                        setDouble(height, b, 20);
+                        setDouble(0d, b, 28);
+                        sos.write(b);
+                        sos.flush();
+                    }
+                    
                     if (cmd == 0x51) { // StrWidth
                         String s=new String(par, 0, par.length-1);
                         System.out.println("Request: get string width of \""+s+"\"");
