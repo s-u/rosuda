@@ -96,7 +96,7 @@ public class SVarSet {
 	@param i index
 	@return variable object or <code>null</code> if index out of range */
     public SVar at(int i) {
-	return ((i<0)||(i>=vars.size()))?null:(SVar)vars.elementAt(i);
+        return ((i<0)||(i>=vars.size()))?null:(SVar)vars.elementAt(i);
     };
 
     /** returns data value of a variable specified by name and row index
@@ -181,6 +181,30 @@ public class SVarSet {
         return false;
     }
 
+    public void test() {
+        System.out.println("DEBUG for SVarSet ["+toString()+"]");
+        for (Enumeration e=elements(); e.hasMoreElements();) {
+            SVar v2=(SVar)e.nextElement();
+            if (v2==null)
+                System.out.println("Variable: null!");
+            else {
+                System.out.println("Variable: "+v2.getName()+" ("+(v2.isNum()?"numeric":"string")+
+                                   ","+(v2.isCat()?"categorized":"free")+") with "+
+                                   v2.size()+" cases");
+                if (v2.isCat()) {
+                    Object[] c=v2.getCategories();
+                    System.out.print("  Categories: ");
+                    int i=0;
+                    while (i<c.length) {
+                        System.out.print("{"+c[i].toString()+"} ");
+                        i++;
+                    };
+                    System.out.println();
+                }
+            }
+        }
+    }
+    
     public static void Debug(SVarSet sv) {
 	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
 	for (Enumeration e=sv.elements(); e.hasMoreElements();) {

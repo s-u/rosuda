@@ -297,6 +297,22 @@ public class Common
         return Common.screenRes;
     };
 
+    static Frame workFrame;
+    
+    public static void beginWorking(String txt) {
+        if (workFrame!=null) endWorking(); // we don't support nested calls
+        workFrame=new Frame();
+        workFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        workFrame.setVisible(true);
+    }
+
+    public static void endWorking() {
+        if (workFrame!=null) {
+            workFrame.dispose();
+            workFrame=null;
+        }
+    }
+    
     // HCL color scheme routines (ported from Ross Ihaka's R code)
     /** display gamma setting (used by color conversion functions such as {@link #getHCLcolor} */
     public static double displayGamma=2.2;
