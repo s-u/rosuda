@@ -100,4 +100,20 @@ public class Tools {
         } catch(Exception dce) {};
         return i;
     }
-};
+
+    public static int parseHexInt(String s) {
+        int i=0;
+        try {
+            i=Integer.parseInt(s,16);
+        } catch(Exception dce) {};
+        return i;
+    }    
+
+    public static long parseHexLong(String s) {
+        long i=0;
+        try {
+            i=Long.parseLong(s,16);
+        } catch(Exception dce) {};
+        return i;
+    }
+}
