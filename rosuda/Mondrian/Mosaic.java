@@ -136,19 +136,20 @@ public class Mosaic extends DragBox implements ActionListener {
       }
     }
 
-    public void paint(Graphics g1d) {
-
-      Graphics2D g = (Graphics2D)g1d;
+    public void paint(Graphics2D g) {
       
       frame.setBackground(MFrame.backgroundColor);
 
       tablep.getSelection();
 
       Dimension size;
-
       size = this.getSize();
-      bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
-      bg = (Graphics2D)bi.getGraphics();
+
+      if( !printing ) {
+        bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
+        bg = (Graphics2D)bi.getGraphics();
+      } else
+        bg = g;
 
       create(border, border, size.width-border, size.height-border, "");
 
@@ -197,11 +198,11 @@ public class Mosaic extends DragBox implements ActionListener {
           t.draw(bg);
         }
       
-//      if( !(g instanceof PrintGraphics) && !(g instanceof PSGr) ) {
+      if( !printing ) {
         drawSelections(bg);
         g.drawImage(bi, 0, 0, null);
         bg.dispose();
-//      }
+      }
     }
 
     public void drawSelections(Graphics g) {
@@ -550,7 +551,10 @@ public class Mosaic extends DragBox implements ActionListener {
         aGap = new int[maxLevel+2];
 
         for( int j=0; j<maxLevel; j++) {
-          thisGap = (maxLevel - j) * 3;
+          if( !printing )
+            thisGap = (maxLevel - j) * 3;
+          else
+            thisGap = (maxLevel - j) * 3 * 5;
           if( Dirs[j] == 'x' ) {
             subX += thisGap * (levels[j]-1) * mulX;
             mulX *= levels[j];
@@ -623,14 +627,17 @@ public class Mosaic extends DragBox implements ActionListener {
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info); 
 
         // Create labels for the first 2 dimensions 
+        int pF = 1;
+        if( printing )
+          pF = 5;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
           for(int j=0; j<Math.min(2, maxLevel); j++)
             for( int i=0; i<levels[j]; i++) {
 //System.out.println("Levels("+i+"): "+lnames[j][i]);
               if( Dirs[j] == 'x' )
-                label = new MyText(lnames[j][i], (int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), border-5, 0, (x2-x1)/levels[j]-2);
+                label = new MyText(lnames[j][i], (int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), border-5*pF, 0, (x2-x1)/levels[j]-2);
               else
-                label = new MyText(lnames[j][i], -(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))), border-6, -Math.PI/2.0, (y2-y1)/levels[j]-2);
+                label = new MyText(lnames[j][i], -(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))), border-6*pF,  -Math.PI/2.0, (y2-y1)/levels[j]-2);
               Labels.addElement(label);
             }
         }
