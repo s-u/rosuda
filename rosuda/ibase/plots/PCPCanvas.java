@@ -16,9 +16,6 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     /** flag whether axis labels should be shown */
     boolean showLabels=true;
 
-    /** flag whether jittering should be used in case X is categorical */
-    boolean jitter=false;
-
     /** flag whether alternative selection style should be used */
     boolean selRed=false;
 
@@ -27,6 +24,8 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     
     /** array of axes */
     Axis A[];
+
+    boolean commonScale=true;
 
     int x1, y1, x2, y2;
     boolean drag;
@@ -43,47 +42,66 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
         super(3); // 3 layers; 0=base+points, 1=selected, 2=drag
 	setFrame(f); setTitle("PCP");
 	v=new SVar[yvs.length+1];
-	A=new Axis[2];
+	A=new Axis[yvs.length+1];
 	m=mark;
 	int i=0;
         SVar xv=new SVar("PCP.index",true);
 	while(i<yvs.length) {
-	    if (i==0) {
-		totMin=yvs[i].getMin(); totMax=yvs[i].getMax();
-	    } else {
-		if (yvs[i].getMin()<totMin) totMin=yvs[i].getMin();
-		if (yvs[i].getMax()>totMax) totMax=yvs[i].getMax();
-	    };
+	    if (yvs[i].isNum()) {
+		if (i==0) {
+		    totMin=yvs[i].getMin(); totMax=yvs[i].getMax();
+		} else {
+		    if (yvs[i].getMin()<totMin) totMin=yvs[i].getMin();
+		    if (yvs[i].getMax()>totMax) totMax=yvs[i].getMax();
+		};
+	    }
             xv.add(yvs[i].getName());
 	    v[i+1]=yvs[i]; i++;
 	};
 	A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
 	A[1].setValueRange(totMin,totMax-totMin);
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
+	ax=A[0];
+	ay=A[1];
 	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","-","Common scale on/off","common","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
 
-    public Dimension getMinimumSize() { return new Dimension(60,50); };
+    public void setCommonScale(boolean cs) {
+	if (cs==commonScale) return;
+	commonScale=cs;
+	if (cs) {
+	    A[1].setValueRange(totMin,totMax-totMin);
+	    //TODO: notify!
+	    setUpdateRoot(0); repaint();
+	    return;
+	}
+	if (A[A.length-1]==null) {
+	    Dimension Dsize=getSize();
+	    int w=Dsize.width, h=Dsize.height;
+	    int innerL=30, innerB=30, lshift=0;
+	    int innerW=w-innerL-10, innerH=h-innerB-10;
 
-    public void rotate() {
-	/*
-	SVar h=v[0]; v[0]=v[1]; v[1]=h;
-	Axis ha=A[0]; A[0]=A[1]; A[1]=ha;
-	try {
-	    ((Frame) getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
-	} catch (Exception ee) {};
-        setUpdateRoot(0);
-	repaint();
-	*/
-    };
+	    int i=2;
+	    while (i<A.length) {
+		A[i]=new Axis(v[i],Axis.O_Y,v[i].isCat()?Axis.T_EqCat:Axis.T_Num);
+		A[i].setGeometry(Axis.O_Y,innerB,innerH);
+		A[i].addDepend(this);
+		i++;
+	    }
+	};
+	A[1].setDefaultRange();
+	setUpdateRoot(0); repaint();
+    }
+
+    public Dimension getMinimumSize() { return new Dimension(60,50); };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
@@ -119,7 +137,12 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    int innerW=w-innerL-10, innerH=h-innerB-10;
 	
 	    A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
-	    A[1].setGeometry(Axis.O_Y,innerB,H=innerH);
+	    int i=1;
+	    while (i<A.length) {
+		if (A[i]!=null)
+		    A[i].setGeometry(Axis.O_Y,innerB,H=innerH);
+		i++;
+	    }
 	    Y=TH-innerB-innerH;
 	};
 
@@ -153,7 +176,7 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
         }
 
 	/* draw ticks and labels for Y axis */
-        {
+        if (commonScale) {
             double f=A[1].getSensibleTickDistance(50,18);
             double fi=A[1].getSensibleTickStart(f);
             //if (Common.DEBUG>0)
@@ -171,8 +194,8 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
         g.setColor("line");
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
-		g.drawLine(A[0].getCatCenter(j-2),TH-A[1].getValuePos(v[j-1].atD(i)),
-			   A[0].getCatCenter(j-1),TH-A[1].getValuePos(v[j].atD(i)));
+		g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
+			   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
 	};
 	
         g.nextLayer();
@@ -182,8 +205,8 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
             for (int j=2;j<v.length;j++) {
                 for (int i=0;i<v[1].size();i++)
                     if (m.at(i))
-                        g.drawLine(A[0].getCatCenter(j-2),TH-A[1].getValuePos(v[j-1].atD(i)),
-                                   A[0].getCatCenter(j-1),TH-A[1].getValuePos(v[j].atD(i)));
+			g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
+				   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
             };
         };
 
@@ -193,6 +216,8 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
 	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
+	    g.setColor("aSelBg");
+	    g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	    g.setColor("black");
 	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	};
@@ -219,18 +244,19 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (y1>y2) { Y2=y1; Y1=y2; };
 	Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
 
-	int setTo=0;
-	if (e.isControlDown()) setTo=1;
+	boolean setTo=false;
+	if (e.isControlDown()) setTo=true;
 	if (!e.isShiftDown()) m.selectNone();
 	
 	drag=false; 
-	/*
-	int i=0;
-	while (i<pts) {
-	    if (Pts[i]!=null && sel.contains(Pts[i]))
-		m.set(i,m.at(i)?setTo:1);
-	    i++;
-	    }; */
+	for (int j=1;j<v.length;j++)
+	    for (int i=0;i<v[1].size();i++) {
+		int x=A[0].getCatCenter(j-1);
+		int y=TH-A[commonScale?1:j].getValuePos(v[j].atD(i));
+		if (x>=X1 && x<=X2 && y>=Y1 && y<=Y2)
+		    m.set(i,m.at(i)?setTo:true);
+	    }
+
 	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
         setUpdateRoot(1);
 	repaint();	
@@ -252,14 +278,13 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
-	if (e.getKeyChar()=='j') run(this,"jitter");
 	if (e.getKeyChar()=='t') run(this,"trigraph");
+	if (e.getKeyChar()=='c') run(this,"common");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -267,9 +292,6 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
-	if (cmd=="rotate") {
-	    rotate();
-	};
 	if (cmd=="labels") {
 	    showLabels=!showLabels;
 	    MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
@@ -279,9 +301,7 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
-        if (cmd=="jitter") {
-            jitter=!jitter; setUpdateRoot(0); repaint();
-        }
+	if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         
         if (cmd=="exportCases") {
