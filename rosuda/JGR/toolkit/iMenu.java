@@ -162,6 +162,12 @@ public class iMenu {
                 mi.setActionCommand("selAll");
                 mi.addActionListener(al);
                 m.add(mi);
+                m.addSeparator();
+                mi=new JMenuItem("Clear Console");
+                mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('L', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                mi.setActionCommand("clearconsole");
+                mi.addActionListener(al);
+                m.add(mi);
                 if (!Common.isMac()) {
                     m.addSeparator();
                     mi=new JMenuItem("Preferences...");

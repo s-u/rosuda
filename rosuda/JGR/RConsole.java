@@ -72,14 +72,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             "@SSave Workspace", "savewspace", "!SSave Workspace as",
             "savewspaceas",
             "-", "Load Datafile", "loaddata", "~File.Quit",
-            "~Edit","-","@LClear Console","clearconsole",
+            "~Edit",
             "+", "Tools", "@EEditor", "editor", "@BObject Manager", "objectmgr",
             "DataTable", "table", "-", "Increase Font", "fontBigger",
             "Decrease Font", "fontSmaller",
-            "+", "Packages", "Package Manager", "packagemgr",/* "Install Package",
-            "packageinst",*/
+            "+", "Packages", "Package Manager", "packagemgr",
             "~Window",
-            "~Help", "R Help", "rhelp", /*"JJGR FAQ", "jrfaq", */ "~About", "0"};
+            "~Help", "R Help", "rhelp", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
 
         if (JGR.RHISTORY == null) {
@@ -188,13 +187,11 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             final String h;
             if (help!=null) h = help.trim();
             else h = null;
-        //System.out.println("thread create");
             Thread t = new Thread() {
                 public void run() {
                     progress.start("Working");
                     setWorking(true);
                     try {
-                        //System.out.println("Help");
                         new RHelp();
                         if (h!=null) RHelp.current.search(h,e);
                     } catch (Exception e1) {
@@ -203,7 +200,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     setWorking(false);
                 }
             };
-            //System.out.println("thread started");
             t.start();
         }
         else {
@@ -355,10 +351,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
             output.setCaretPosition(outputDoc.getLength());
             setWorking(false);
-            JGR.READY = true;
         }
         else {
-            JGR.READY = false;
             stopButton.setEnabled(true);
             progress.start("Working");
             setWorking(true);
@@ -366,7 +360,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
-        JGR.READY = true;
         setWorking(false);
         stopButton.setEnabled(false);
         if (prompt.indexOf("Save workspace") > -1) return JGR.exit();
@@ -447,46 +440,22 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 input.setCaretPosition(0);
             }
         }
-        //System.out.println(input.getCaretPosition()==input.getText().length());
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
-            /*int line = -1;
-            try {
-                line = input.getLineOfOffset(input.getCaretPosition());
-            }
-            catch (Exception e) {}*/
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
-                //System.out.println(currentHistPosition+" "+JGR.RHISTORY.size());
-                if (/*currentHistPosition == JGR.RHISTORY.size() && */input.getText().trim().length() > 0) {
-                    JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
-                    //JGR.RHISTORY.setElementAt(input.getText().trim(),currentHistPosition);
-                    //JGR.RHISTORY.add(input.getText().trim());
-                    //System.out.println(input.getText().trim());
-                    //we set the cursor to last hist and save the current writing in the history
-                }
+                if (input.getText().trim().length() > 0) JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
                 System.out.println(JGR.RHISTORY.get(currentHistPosition-1).toString());
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
-                //System.out.println(input.getText().length());
                 input.setCaretPosition(input.getText().length());
-                //currentHistPosition++;
                 wasHistEvent = true;
-                //System.out.println(input.getCaretPosition());
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-            /*int line = -1;
-            try {
-                line = input.getLineOfOffset(input.getCaretPosition());
-            }
-            catch (Exception e) {}*/
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (currentHistPosition < JGR.RHISTORY.size() - 1) {
-                    //we set the cursor to the next hist
                     input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
                     input.setCaretPosition(input.getText().length());
-
                 }
                 else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
-                    //we empty the input field
                     input.setText("");
                     currentHistPosition++;
                 }
@@ -546,12 +515,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         }
         else if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
             if (ke.isControlDown() || ke.isMetaDown()) {
-                //we insert new line and set the cursor to last position
                 try { inputDoc.insertString(input.getCaretPosition(), "\n", null); } catch (Exception e) {}
             }
             else {
-                //remove \n when the user want to send a cmd
-                String cmd = input.getText().trim();//send the cmd
+                String cmd = input.getText().trim();
                 input.setText("");
                 input.setCaretPosition(0);
                 input.requestFocus();
@@ -572,15 +539,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void focusGained(FocusEvent e) {
         if (e.getSource().equals(output)) {
             cutButton.setEnabled(false);
-            //pasteButton.setEnabled(false);
             iMenu.getItem(this, "cut").setEnabled(false);
-            //iMenu.getItem(this, "paste").setEnabled(false);
         } else if (e.getSource().equals(input)) {
             cutButton.setEnabled(true);
-            //pasteButton.setEnabled(true);
             iMenu.getItem(this, "cut").setEnabled(true);
-            //iMenu.getItem(this, "paste").setEnabled(true);
-            //output.setCaretPosition(outputDoc.getLength());
         }
     }
 
@@ -609,15 +571,12 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         public String getToolTipText(MouseEvent e) {
             String s = getCurrentWord();
-            //System.out.println("Tip "+RTalk.getArgs(s));
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
             return null;
         }
 
         protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
                                                 int condition, boolean pressed) {
-
-            //System.out.println(e.getKeyCode());
 
             if (e.getKeyCode() == KeyEvent.VK_ENTER) return true;
 

@@ -47,7 +47,6 @@ public class RSyntaxDocument extends RStyledDocument {
      */
     public void insertString(final int offset, String str, AttributeSet a) throws
         BadLocationException {
-        //if (str.equals("{")) str = addMatchingBrace(offset);
         boolean whitespace = false;
         if (str.equals("\t")) {
             try {
@@ -66,19 +65,12 @@ public class RSyntaxDocument extends RStyledDocument {
                 } catch (Exception ex) {}
                 try {
                     str ="\n"+ getText(off,i-off-1).replaceAll("\n","");
-                    //System.out.println("|"+str+"|");
                 }
                 catch (Exception ex2) {}
         }
         super.insertString(offset, str, a);
-        final int len = str.length();
-        /*Thread t = new Thread() {
-            public void run() {
-                try {*/ processChangedLines(offset, len);//} catch (Exception e) {new iError(e);}
-                /*this.stop();
-            }
-        };
-        t.start();*/
+        int len = str.length();
+        processChangedLines(offset, len);
     }
 
 
@@ -86,16 +78,9 @@ public class RSyntaxDocument extends RStyledDocument {
          * Override to apply syntax highlighting after the document has been updated
      */
     public void remove(int offset, int length) throws BadLocationException {
-        //System.out.println(getText(offset,length));
         if (offset==-1) return;
         super.remove(offset, length);
-        /*Thread t = new Thread() {
-            public void run() {
-                try {*/ processChangedLines(offset, 0); //} catch (Exception e) {new iError(e);}
-                /*this.stop();
-            }
-        };
-        t.start();*/
+        processChangedLines(offset, 0);
     }
 
     /*
