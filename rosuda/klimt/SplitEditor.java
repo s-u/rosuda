@@ -255,7 +255,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             //pp.add(new ScatterCanvas(this,rxv,sdv,m));
             lc.setLineType(LineCanvas.LT_RECT);
             pp.add(lc);
-            lc.getXAxis().setValueRange(cv.getMin(),cv.getMax()-cv.getMin());
+            lc.getXAxis().setValueRange(sc.getXAxis().vBegin,sc.getXAxis().vLen);
             lc.getYAxis().setValueRange(0,(maxD>n.sampleDevGain)?maxD:n.sampleDevGain);
             PlotManager pm=sc.getPlotManager();
             if (pm!=null) {
