@@ -102,6 +102,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 back.setDividerLocation( ( (int) ( (double) getHeight() * 0.65)));
+                super.componentResized(evt);
             }
         });
         this.addKeyListener(this);

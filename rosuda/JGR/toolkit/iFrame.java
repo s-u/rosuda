@@ -64,11 +64,13 @@ public class iFrame extends JFrame {
         initPlacement();
         this.addComponentListener(new ComponentListener() {
             public void componentResized(ComponentEvent e) {
-                int h = getHeight(),w= getWidth();
-                boolean resize = false;
-                if (minimumSize != null && getHeight() < minimumSize.height) { resize=true; h = minimumSize.height;}
-                if (minimumSize != null && getWidth() < minimumSize.width) { resize=true; w = minimumSize.width;}
-                if (resize) setSize(w,h);
+                if (!Common.isMac()) {
+                    int h = getHeight(),w= getWidth();
+                    boolean resize = false;
+                    if (minimumSize != null && getHeight() < minimumSize.height) { resize=true; h = minimumSize.height;}
+                    if (minimumSize != null && getWidth() < minimumSize.width) { resize=true; w = minimumSize.width;}
+                    if (resize) setSize(w,h);
+                }
             }
             public void componentMoved(ComponentEvent e) {
             }

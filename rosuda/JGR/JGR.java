@@ -53,6 +53,7 @@ public class JGR {
         splash.start();
         readHistory();
         MAINRCONSOLE = new RConsole();
+        splash.toFront();
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
         MAINRCONSOLE.progress.start("Starting R");
         MAINRCONSOLE.setWorking(true);
