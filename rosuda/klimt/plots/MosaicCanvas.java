@@ -24,6 +24,9 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     /** list of nodes, stored are objects of the class {@link SNodeGeometry} */
     Vector nodes;
 
+    /** use shading for depth encoding */
+    boolean shading=false;
+    
     /** coordinates of rubber rectangle */
     int x1, y1, x2, y2;
     /** dragging active */
@@ -59,8 +62,8 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
-	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","@WClose","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","Rotate","rotate","Spineplot of leaves","alternate","Toggle shading","shading","0"};
+        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIalt=mb.getMenu(2).getItem(1);
     };
     
@@ -87,23 +90,36 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	};
 	if (n.isLeaf() || n.isPruned()) {
 	    nodes.addElement(new SNodeGeometry(n,x1,y1,x2,y2));
-	    g.setColor("white");
-	    if (n.tmp==2)
-		g.setColor("selBg");
+            SMarker m=null;
+            if (n.getSource()!=null)
+                m=n.getSource().getMarker();
+            SNode gene=n;
+            boolean selIt=false;
+            if (m!=null) {
+                SNode sn=m.getNode();
+                while (gene!=null) { if (gene==sn) { selIt=true; break; }; gene=(SNode)gene.getParent(); };
+            };
+            int level=255-n.getLevel()*16;
+            if (level<127) level=127;
+            if (shading)
+                g.setColor(level,level,(selIt)?level*2/3:level);
+            else
+                g.setColor((selIt)?"selBg":"white");
 	    g.fillRect(x1,y1,x2-x1,y2-y1);	    
 
 	    int dMark=0; // # of selected cases in the node
-	    if (n.getSource()!=null) {
-		SMarker m=n.getSource().getMarker();
-		if ((m!=null)&&(n.data!=null))
-		    for (Enumeration e=n.data.elements(); e.hasMoreElements();) {
-			int ix=((Integer)e.nextElement()).intValue();
-			if (m.at(ix)) dMark++;
-		    };
-	    };
-	    if(dMark>0) {
-		g.setColor("marked");
-		g.fillRect(x1,y1+(y2-y1)*(myCases-dMark)/myCases,x2-x1,y2-y1-(y2-y1)*(myCases-dMark)/myCases);
+            if ((m!=null)&&(n.data!=null))
+                for (Enumeration e=n.data.elements(); e.hasMoreElements();) {
+                    int ix=((Integer)e.nextElement()).intValue();
+                    if (m.at(ix)) dMark++;
+                };
+
+            if(dMark>0) {
+                if (shading)
+                    g.setColor(level/2,level,level/2);
+                else
+                    g.setColor("marked");
+                g.fillRect(x1,y1+(y2-y1)*(myCases-dMark)/myCases,x2-x1,y2-y1-(y2-y1)*(myCases-dMark)/myCases);
 	    };
 	    g.setColor("splitRects");
 	    g.drawRect(x1,y1,x2-x1,y2-y1);
@@ -263,6 +279,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='a') run(this,"alternate");
+        if (e.getKeyChar()=='s') run(this,"shading");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -279,7 +296,11 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	    MIalt.setLabel((alternate)?"Spineplot of leaves":"Treemap");
 	    repaint();
 	};
-	if (cmd=="print") run(o,"exportPS");
+        if (cmd=="shading") {
+            shading=!shading;
+            repaint();
+        };
+        if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
 	return null;
     };

@@ -25,6 +25,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false; 
 
+    /** use shading of background according to depth */
+    boolean shading=false;
+    
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
     
@@ -65,8 +68,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","@XSave as PGS ...","exportPGS","@PSave as PostScript ...","exportPS","-","@SSave selected as ...","exportCases","-","@WClose window","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","0"};
-	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	String myMenu[]={"+","File","@XSave as PGS ...","exportPGS","@PSave as PostScript ...","exportPS","-","@SSave selected as ...","exportCases","-","@WClose window","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","0"};
+        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIlabels=mb.getMenu(2).getItem(1);	
     };
 
@@ -112,7 +115,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (n.tmp==2) {
 	    g.setColor("selBg");
 	    g.fillRect(x1,y1,x2-x1,y2-y1);
-	};
+        } else {
+            if (shading && (n.splitVar==v[0] || n.splitVar==v[1])) {
+                int level=255-n.getLevel()*16; if (level<128) level=128;
+                g.setColor(level,level,level);
+                g.fillRect(x1,y1,x2-x1,y2-y1);                
+            }
+        }
 	g.setColor("splitRects");
 	g.drawRect(x1,y1,x2-x1,y2-y1);
 	if (n.isLeaf() || n.isPruned() || (bgTopOnly && n==paint_cn)) return;
@@ -363,6 +372,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='j') run(this,"jitter");
 	if (e.getKeyChar()=='t') run(this,"trigraph");
+        if (e.getKeyChar()=='s') run(this,"shading");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -384,6 +394,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
         if (cmd=="jitter") {
             jitter=!jitter; updatePoints(); setUpdateRoot(0); repaint();
+        }
+        if (cmd=="shading") {
+            shading=!shading; updatePoints(); setUpdateRoot(0); repaint();
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         
