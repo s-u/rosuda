@@ -1,16 +1,24 @@
-all: jt.class t.class
+JAVA_PREFIX=java
+JAVAR=$(JAVA_PREFIX)
+JAVAC=$(JAVA_PREFIX)c $(JFLAGS)
+JRC_JAR=../JRclient.jar
 
-jt.class: jt.java ../JRclient.jar
-	javac -classpath ../JRclient.jar jt.java
+all: jt.class t.class PlotDemo.class
 
-t.class: t.java ../JRclient.jar
-	javac -classpath ../JRclient.jar t.java
+jt.class: jt.java $(JRC_JAR)
+	$(JAVAC) -classpath $(JRC_JAR) $<
 
-run: jt.class ../JRclient.jar
-	java -cp ../JRclient.jar:. jt
+t.class: t.java $(JRC_JAR)
+	$(JAVAC) -classpath $(JRC_JAR) $<
 
-test: t.class ../JRclient.jar
-	java -cp ../JRclient.jar:. t
+PlotDemo.class: PlotDemo.java $(JRC_JAR)
+	$(JAVAC) -classpath $(JRC_JAR) $<
+
+run: jt.class $(JRC_JAR)
+	$(JAVAR) -cp $(JRC_JAR):. jt
+
+test: t.class $(JRC_JAR)
+	$(JAVAR) -cp $(JRC_JAR):. t
 
 clean:
 	rm -rf *.class *~
