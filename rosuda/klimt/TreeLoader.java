@@ -596,6 +596,11 @@ remark: this method can be used to load trees and data separately, but data must
                                     if (cond.charAt(0)=='=')
                                         cond=cond.substring(1);
                                     SVar V=vset.byName(varn);
+                                    if (V==null) {
+                                        varn=fixVariableName(varn);
+                                        V=vset.byName(varn);
+                                    }
+                                    if (V==null) System.out.println("Warning: variable \""+varn+"\" is used in a split but is not present in the data.\n");
                                     if (Global.DEBUG>0)
                                         System.out.println("  splt var=\""+varn+"\", cond=\""+cond+"\"");
                                     sn.splitVar=V;
@@ -698,5 +703,17 @@ remark: this method can be used to load trees and data separately, but data must
         if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
         Common.endWorking();
         return root;
+    }
+
+    public static String fixVariableName(String nam) {
+        int ca=0;
+        while(ca<nam.length()) {
+            char c=nam.charAt(ca);
+            if ((c>='0'&&c<='9')||(c>='a'&&c<='z')||(c>='A'&&c<='Z')||c=='.') {} else {
+                nam=nam.replace(c,'.');
+            }
+            ca++;
+        }
+        return nam;
     }
 }
