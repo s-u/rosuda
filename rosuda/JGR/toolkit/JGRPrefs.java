@@ -231,7 +231,7 @@ public class JGRPrefs {
 	
 	public static void writeCurrentPackages() {
         Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
-		prefs.put("PreviousPackages",RController.getCurrentPackages()+","+JGRPackageManager.remindPackages);
+		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
         try {
             prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
         } catch (IOException e) {

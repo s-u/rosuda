@@ -201,7 +201,6 @@ public class JGR {
 					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
 							+ ")");
 		MAINRCONSOLE.input.requestFocus();
-		checkForMissingPkg();
 		new Refresher().run();
 	}
 
@@ -388,15 +387,16 @@ public class JGR {
 	}
 	
 	private void checkForMissingPkg() {
-		System.out.println("Checking packages");
 		String previous = JGRPrefs.previousPackages;
 		StringTokenizer st = new StringTokenizer(RController.getCurrentPackages(),",");
 		while (st.hasMoreTokens()) {
 			previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
 		}
-		if (previous.length() > 0) previous = previous.substring(0,previous.length()-1); //skip last ,
 		st = new StringTokenizer(previous,",");
-		new JGRPackageManager(previous);
+		previous = "";
+		while (st.hasMoreTokens()) 
+			previous += st.nextToken()+(st.hasMoreTokens()?",":"");
+		if (previous.trim().length() > 0) new JGRPackageManager(previous);
 	}
 
 	/**
@@ -455,6 +455,11 @@ public class JGR {
 	 * Refresher, which is looking for new keywords and objects in workspace and refreshes highlight and autocompletion information.
 	 */
 	class Refresher implements Runnable {
+		
+		public Refresher() {
+			checkForMissingPkg();
+		}
+		
 		public void run() {
 			while (true) {
 				try {
