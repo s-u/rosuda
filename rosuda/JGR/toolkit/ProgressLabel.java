@@ -49,7 +49,7 @@ public class ProgressLabel extends Canvas implements Runnable {
 		g.setColor(this.getBackground());
 		int z = 360;
 		for (int i = 0; i <=z; i += 2*gap) {
-			g.fillArc(x - length, x - length, 2*length, 2*length,i+pos,gap);
+			g.fillArc(x - length, x - length, 2*length, 2*length,i-pos,gap);
 		}
 		g.fillArc(x-a,x-a,2*a,2*a,0,360);
 	}
@@ -59,7 +59,7 @@ public class ProgressLabel extends Canvas implements Runnable {
         if (this.isVisible()) 
             next = true;
         this.setVisible(true);
-        thread.start();
+        if (thread != null) thread.start();
     }
 
     public void stop() {
