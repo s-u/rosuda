@@ -144,8 +144,112 @@ public class Scatter2D extends DragBox {
   public void dataChanged(int var) {
   }
 
-    public void processMouseEvent(MouseEvent e) {
+  public String getToolTipText(MouseEvent e) {
+    if( e.isControlDown() ) {
+      if( modeString.equals("points") ) {
+        int minDist = 5000;
+        int minId=0;
+        int minCount=0;
+        int maxOverplot = 100;
+        int restPoints = 0;
+        int minIds[] = new int[maxOverplot];
+        for( int i=0; i<data.n; i++ ) {
+          int dist = (int)Math.pow( Math.pow(userToWorldX( xVal[i] )-e.getX(), 2)
+                                  + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
+          if( dist < minDist ) {
+            minDist = dist;
+            minIds[minCount=0] = i;
+            restPoints = 0;
+            minCount++;
+          } else if( dist == minDist ) {
+            if( minCount < maxOverplot )
+              minIds[minCount++] = i;
+            else
+              restPoints++;
+          }
+        }
+        if( minDist < 5 ) {
+          String x="";
+          int[] selectedIds;
+          if( e.isShiftDown() )
+            selectedIds = varList.getSelectedIndices();
+          else
+            selectedIds = this.Vars;
+          if( selectedIds.length == 0 )
+            selectedIds = Vars;
+          if( minCount == 1 ) {
+            for( int sel=0; sel<selectedIds.length; sel++ ) {
+              if( data.categorical(selectedIds[sel]) )
+                if( data.alpha(selectedIds[sel]) )
+                  x = x + "\n" + data.getName(selectedIds[sel])+": "
+                    +data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[0]]);
+                else
+                  x = x + "\n" + data.getName(selectedIds[sel])+": "
+                    +data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
+              else
+                x = x + "\n" + data.getName(selectedIds[sel])+": "
+                  +(data.getRawNumbers(selectedIds[sel]))[minIds[0]];
+            }
+          } else {
+            x = " Count: "+minCount+" ";
+            double Mins[] = new double[selectedIds.length];
+            double Maxs[] = new double[selectedIds.length];
+            HashSet Levels[] = new HashSet[selectedIds.length];
+            for( int sel=0; sel<selectedIds.length; sel++ ) {
+              Levels[sel] = new HashSet();
+              Mins[sel] = Double.MAX_VALUE;
+              Maxs[sel] = -Double.MAX_VALUE;
+            }
+            for( int ids=0; ids<minCount; ids++ ) {
+              for( int sel=0; sel<selectedIds.length; sel++ ) {
+                if( data.categorical(selectedIds[sel]) )
+                  if( data.alpha(selectedIds[sel]) )
+                    Levels[sel].add(data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[ids]]));
+                  else
+                    Levels[sel].add(data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[ids]]));
+                else {
+                  Mins[sel] = Math.min(Mins[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                  Maxs[sel] = Math.max(Maxs[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                }
+              }
+            }
+            //
+            for( int sel=0; sel<selectedIds.length; sel++ ) {
+              String[] Names = {""};
+              Names = (String[])Levels[sel].toArray(Names);
+              if( data.categorical(selectedIds[sel]) ) {
+                x = x + "\n"+ data.getName(selectedIds[sel])+": {";
+                if( Names.length > 1 )
+                  for(int i=0; i<Names.length-1; i++) {
+                    x = x + Names[i]+", ";
+                    if( ((i+1) % 3) == 0 )
+                      x = x + "\n : ";
+                  }
+                x = x + Names[Names.length-1]+"} ";
+              }
+              else
+                x = x + "\n" + data.getName(selectedIds[sel])+": " + " ["+Mins[sel]+", "+Maxs[sel]+"] ";
+            }
+          }
+          return Util.info2Html(x);
+        } else
+          return null;
+      } else {
+        for( int i = 0;i < rects.size(); i++) {
+          MyRect r = (MyRect)rects.elementAt(i);
+          if ( r.contains( e.getX(), e.getY() )) {
+            return Util.info2Html(r.getLabel());
+          }
+        }
+        return null;
+      }
+    } else
+      return null;
+  }
 
+
+      public void processMouseEvent(MouseEvent e) {
+                
       if( e.isPopupTrigger() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
@@ -305,6 +409,11 @@ public class Scatter2D extends DragBox {
                 locfit.setSelected(true);
                 locfit.setEnabled(false);
               }
+              if( !((MFrame)frame).hasR() ) {
+                loess.setEnabled(false);
+                splines.setEnabled(false);
+                locfit.setEnabled(false);
+              }
               
               mode.add(smoothers);
               
@@ -428,7 +537,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
 
       if ((e.getID() == MouseEvent.MOUSE_MOVED)) {
 
-          if( (e.getModifiers() == CTRL_DOWN) ) {
+          if( (e.getModifiers() == ALT_DOWN) ) {
 
             frame.setCursor(Frame.CROSSHAIR_CURSOR);
               
@@ -623,6 +732,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
 //        System.out.println("Setting Graphics for Printing");
         bg = g;
         tbg = g;
+        ttbg = g;
       }
       else {
         bi = createImage(size.width, size.height);	
@@ -806,6 +916,9 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       }
 
       if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
+
+        ttbg.setColor(Color.black);
+
         try {
           Rconnection c = new Rconnection();
           if( smoothF.equals("splines") )
