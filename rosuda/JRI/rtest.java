@@ -43,9 +43,40 @@ public class rtest {
             return;
         }
 
-        java.awt.Frame f=new java.awt.Frame("hello");
-        f.setVisible(true);
+        //java.awt.Frame f=new java.awt.Frame("hello");
+        //f.setVisible(true);
 
+        // simple assignment (env=0 means use R_GlobalEnv)
+        long xp1 = re.rniPutString("hello");
+        re.rniAssign("a", xp1, 0);
+
+        // Example: how to create a named list or data.frame
+        double da[] = {1.2, 2.3, 4.5};
+        double db[] = {1.4, 2.6, 4.2};
+        long xp3 = re.rniPutDoubleArray(da);
+        long xp4 = re.rniPutDoubleArray(db);
+        
+        // now build a list
+        long la[] = {xp3, xp4};
+        long xp5 = re.rniPutVector(la);
+
+        // now let's add names
+        String sa[] = {"a","b"};
+        long xp2 = re.rniPutStringArray(sa);
+        re.rniSetAttr(xp5, "names", xp2);
+
+        // ok, we have a proper list now
+        // we could use assign and then eval "b<-data.frame(b)", but for now let's build it by hand:       
+        String rn[] = {"1", "2", "3"};
+        long xp7 = re.rniPutStringArray(rn);
+        re.rniSetAttr(xp5, "row.names", xp7);
+        
+        long xp6 = re.rniPutString("data.frame");
+        re.rniSetAttr(xp5, "class", xp6);
+        
+        // assign the whole thing to the "b" variable
+        re.rniAssign("b", xp5, 0);
+        
         if (true) {
             System.out.println("Letting go; use main loop from now on");
             return;
@@ -118,7 +149,8 @@ public class rtest {
         }
         System.out.println("R is ready, press <Enter> to continue (time to attach the debugger is necessary)");
         try { System.in.read(); } catch(Exception e2) {};
-	f.dispose();
+
+	//f.dispose();
 
         re.end();
         System.out.println("end");
