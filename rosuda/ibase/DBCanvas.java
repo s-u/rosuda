@@ -26,6 +26,12 @@ public abstract class DBCanvas extends Canvas
 
 	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
 	if (d.width<1 || d.height<1) return;
+	// yet another sanity check - some systems (e.g. X with Xinerama enabled) wrap around
+	// the 0 boundary resulting in huge numbers;
+	if (d.width>2000 || d.height>2000) {
+	    d.width=(d.width>2000)?640:d.width;
+	    d.height=(d.height>2000)?600:d.height;
+	};
 	// we will re-create the off-screen object only if the canvas was resized
 	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
             // draw the old image - after resize the background is cleared automatically
