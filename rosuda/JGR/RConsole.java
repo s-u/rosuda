@@ -106,10 +106,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 super.componentResized(evt);
                 back.setDividerLocation( ( (int) ( (double) getHeight() * 0.65)));
-                if (JGR.R != null) JGR.R.eval("options(width="+((int) (output.getWidth() / output.getFontMetrics(output.getFont()).getMaxAdvance())*1.9)+")");
-                System.out.println(output.getFontMetrics(output.getFont()).getMaxAdvance());
-                System.out.println(iToolkit.schnitt(output.getFontMetrics(output.getFont()).getWidths()));
-                System.out.println(output.getWidth());
+                if (JGR.R != null && iPreferences.isMac) JGR.R.eval("options(width="+((int) (output.getWidth() / output.getFontMetrics(output.getFont()).getMaxAdvance())*1.9)+")");
+                else if (JGR.R != null) JGR.R.eval("options(width="+((int) (output.getWidth() / iToolkit.schnitt(output.getFontMetrics(output.getFont()).getWidths())))+")");
             }
         });
         this.addKeyListener(this);
