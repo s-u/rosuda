@@ -87,11 +87,11 @@ public class GDCanvas extends Canvas {
     public void update(Graphics g) {
         if (System.currentTimeMillis()-lastUpdate<200) {
             updatePending=true;
-            if (System.currentTimeMillis()-lastUpdateFinished>500) {
+            if (System.currentTimeMillis()-lastUpdateFinished>700) {
                 g.setColor(Color.white);
-                g.fillRect(0,0,250,40);
+                g.fillRect(0,0,250,25);
                 g.setColor(Color.blue);
-                g.drawString("Building plot... ("+l.size()+" objects)",15,15);
+                g.drawString("Building plot... ("+l.size()+" objects)",10,10);
                 lastUpdateFinished=System.currentTimeMillis();
             }
             lastUpdate=System.currentTimeMillis();
@@ -259,7 +259,7 @@ class GDFont extends GDObject {
     Font font;
     
     public GDFont(double cex, double ps, double lineheight, int face, String family) {
-        //System.out.println(">> FONT("+cex+","+ps+","+lineheight+","+face+",\""+family+"\")");
+        //System.out.println(">> FONT(cex="+cex+",ps="+ps+",lh="+lineheight+",face="+face+",\""+family+"\")");
         this.cex=cex; this.ps=ps; this.lineheight=lineheight; this.face=face; this.family=family;
         int jFT=Font.PLAIN;
         if (face==2) jFT=Font.BOLD;
