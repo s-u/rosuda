@@ -13,7 +13,7 @@ public class REXP extends Object {
     public static final int XT_DOUBLE=2;
     /** xpression type: String */
     public static final int XT_STR=3;
-    /** xpression type: language construct (currently content is undefined) */
+    /** xpression type: language construct (currently content is same as list) */
     public static final int XT_LANG=4;
     /** xpression type: symbol (content is symbol name: String) */
     public static final int XT_SYM=5;
@@ -23,6 +23,8 @@ public class REXP extends Object {
     public static final int XT_VECTOR=16;
     /** xpression type: RList */
     public static final int XT_LIST=17;
+    /** xpression type: closure (no java class for that yet) */
+    public static final int XT_CLOS=18;
     /** xpression type: int[] */
     public static final int XT_ARRAY_INT=32;
     /** xpression type: double[] */
@@ -222,24 +224,101 @@ public class REXP extends Object {
 	    o=eox;
 	    return o;
 	};
-	if (xt==XT_LIST) {
+	if (xt==XT_LIST || xt==XT_LANG) {
 	    RList rl=new RList();
 	    rl.head=new REXP();
 	    rl.body=new REXP();
-	    o=parseREXP(rl.head,buf,o);
-	    o=parseREXP(rl.body,buf,o);
+	    rl.tag=null;
+	    o=parseREXP(rl.head,buf,o); // CAR
+	    o=parseREXP(rl.body,buf,o); // CDR
 	    if (o!=eox) {
-		System.out.println("Warning: int array SEXP size mismatch\n");
-		o=eox;
+		// if there is more data then it's presumably the TAG entry
+		rl.tag=new REXP();
+		o=parseREXP(rl.tag,buf,o);
+		if (o!=eox) {
+		    System.out.println("Warning: list SEXP size mismatch\n");
+		    o=eox;
+		}
 	    };
 	    x.cont=rl;
 	    return o;
 	};
-	
+
+	if (xt==XT_SYM) {
+	    REXP sym=new REXP();
+	    o=parseREXP(sym,buf,o); // PRINTNAME that's all we will use
+	    String s=null;
+	    if (sym.Xt==XT_STR) s=(String)sym.cont; else s=sym.toString();
+	    x.cont=s; // content of a symbol is its printname string (so far)
+	    o=eox;
+	    return o;
+	}
+
+	if (xt==XT_CLOS) {
+	    REXP form=new REXP();
+	    REXP body=new REXP();
+	    o=parseREXP(form,buf,o);
+	    o=parseREXP(body,buf,o);
+	    if (o!=eox) {
+		System.out.println("Warning: closure SEXP size mismatch\n");
+		o=eox;
+	    }
+	    System.out.println("Closure:\n-formals: "+form+"\n-body: "+body+"\n");
+	    x.cont=body;
+	    return o;
+	}
+
+	if (xt==XT_UNKNOWN) {
+	    x.cont=new Integer(Rtalk.getInt(buf,o));
+	    o=eox;
+	    return o;
+	}
+
 	x.cont=null;
 	o=eox;
 	System.out.println("unhandled type: "+xt);
 	return o;
+    }
+
+    public int getBinaryLength() {
+	int l=0;
+	switch (Xt) {
+	case XT_INT: l=4; break;
+	case XT_DOUBLE: l=8; break;
+	case XT_STR: l=(cont==null)?1:((String)cont).length()+1; break;
+	case XT_ARRAY_INT: l=(cont==null)?0:((int[])cont).length*4; break;
+	case XT_ARRAY_DOUBLE: l=(cont==null)?0:((double[])cont).length*8; break;
+	}
+	return l+4;
+    }
+
+    public int getBinaryRepresentation(byte[] buf, int off) {
+	int myl=getBinaryLength();
+	Rtalk.setHdr(Xt,myl-4,buf,off);
+	off+=4;
+	switch (Xt) {
+	case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
+	case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
+	case XT_ARRAY_INT:
+	    if (cont!=null) {
+		int ia[]=(int[])cont;
+		int i=0, io=off;
+		while(i<ia.length) {
+		    Rtalk.setInt(ia[i++],buf,io); io+=4;
+		}
+	    }
+	    break;
+	case XT_ARRAY_DOUBLE:
+	    if (cont!=null) {
+		double da[]=(double[])cont;
+		int i=0, io=off;
+		while(i<da.length) {
+		    Rtalk.setLong(Double.doubleToLongBits(da[i++]),buf,io); io+=8;
+		}
+	    }
+	    break;
+	}
+	return off+myl;
     }
 
     /** returns human-readable name of the xpression type as string
@@ -258,8 +337,10 @@ public class REXP extends Object {
 	if (xt==XT_SYM) return "SYMBOL";
 	if (xt==XT_LANG) return "LANG";
 	if (xt==XT_LIST) return "LIST";
+	if (xt==XT_CLOS) return "CLOS";
 	if (xt==XT_VECTOR) return "VECTOR";
 	if (xt==XT_FACTOR) return "FACTOR";
+	if (xt==XT_UNKNOWN) return "UNKNOWN";
 	return "<unknown "+xt+">";
     }	
 
@@ -356,11 +437,15 @@ public class REXP extends Object {
 	    sb.append((String)cont);
 	    sb.append("\"");
 	};
-	if (Xt==XT_LIST) {
+	if (Xt==XT_SYM) {
+	    sb.append((String)cont);
+	};
+	if (Xt==XT_LIST || Xt==XT_LANG) {
 	    RList l=(RList)cont;
 	    sb.append(l.head); sb.append(" <-> ");
 	    sb.append(l.body);
 	};
+	if (Xt==XT_UNKNOWN) sb.append((Integer)cont);
 	sb.append("]");
 	return sb.toString();
     };
