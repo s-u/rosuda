@@ -62,7 +62,7 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
     }
     
     public void handleAbout() {
-        SplashScreen.main.runAsAbout();
+        SplashScreen.runMainAsAbout();
     }
 
     public void handleOpenFile(File fileName) {
