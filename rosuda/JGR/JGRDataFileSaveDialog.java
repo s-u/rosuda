@@ -39,6 +39,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
     
     
     public JGRDataFileSaveDialog(Frame f, String data, String directory) {
+        //this.setUI(this.getUI());
         this.setDialogTitle("Save DatFile - "+data);
         if (directory != null && new File(directory).exists()) this.setCurrentDirectory(new File(directory));
         this.data = data;
@@ -50,28 +51,17 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 		
 		sepsBox.addItemListener(this);
         
-        JPanel command = new JPanel(new GridBagLayout());
-		command.add(append, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
-				 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-				 new Insets(1, 1, 1, 1), 0, 0));
-		command.add(quote, new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
-				 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-				 new Insets(1, 1, 1, 1), 0, 0));
-		command.add(new JLabel("seps="), new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-				 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-				 new Insets(1, 1, 1, 1), 0, 0));
-		command.add(sepsBox, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0
-				 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-				 new Insets(1, 1, 1, 1), 0, 0));
+        JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        command.add(append);
+		command.add(quote);
+		command.add(new JLabel("seps="));
+		command.add(sepsBox);
 		
-		JPanel accessory = new JPanel();
-		accessory.add(command);
-		
-		
-        this.setAccessory(accessory);
-        this.showSaveDialog(f);
+		JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+		filename.add(command,filename.getComponentCount()-1);
+
+		this.showSaveDialog(f);
     }
-    
     
     
     

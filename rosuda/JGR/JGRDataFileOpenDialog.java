@@ -22,29 +22,23 @@ import org.rosuda.ibase.*;
 import org.rosuda.JGR.toolkit.*;
 
 
-public class JGRDataFileOpenDialog extends JDialog implements ActionListener, ItemListener, PropertyChangeListener {
+public class JGRDataFileOpenDialog extends JFileChooser implements ActionListener, ItemListener, PropertyChangeListener {
 	
-    private JFileChooser fileChooser = new JFileChooser();
     private JTextField dataName = new JTextField();
     private JTextField otherSeps = new JTextField();
     private JCheckBox header = new JCheckBox("Header",true);
     private JCheckBox attach = new JCheckBox("Attach",false);
 	
-	private JButton ok = new JButton("Load");
-	private JButton cancel = new JButton("Cancel");
-	
-    private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"Default","\\t",",",";","|","Others..."});
+	private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"Default","\\t",",",";","|","Others..."});
     private String[] seps = new String[] {" ","\\t",",",";","|"};
 	
     private JComboBoxExt quoteBox = new JComboBoxExt(new String[] {"Default","\\\"","\\'","Others..."});
 	private String[] quotes = new String[] {""};
 
-	//private boolean useHeader = true;
-
+	
 	private Dimension screenSize = Common.getScreenRes();
 
 	public JGRDataFileOpenDialog(Frame f,String directory) {
-		super(f,"Load DataFile",true);
 		
 		dataName.setMinimumSize(new Dimension(180,22));
 		dataName.setPreferredSize(new Dimension(180,22));
@@ -57,26 +51,18 @@ public class JGRDataFileOpenDialog extends JDialog implements ActionListener, It
 		sepsBox.setMinimumSize(new Dimension(90,22));
 		sepsBox.setPreferredSize(new Dimension(90,22));
 		sepsBox.setMaximumSize(new Dimension(90,22));
-		
-		ok.addActionListener(this);
-		ok.setActionCommand("ApproveSelection");
-		
-		cancel.addActionListener(this);
-		cancel.setActionCommand("CancelSelection");
-		
+				
 		quoteBox.addItemListener(this);
 		sepsBox.addItemListener(this);
 		
-		fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-		fileChooser.addActionListener(this);
-		fileChooser.addPropertyChangeListener(this);
-		fileChooser.setControlButtonsAreShown(false);
-		if (directory != null && new File(directory).exists()) fileChooser.setCurrentDirectory(new File(directory));
+		this.addActionListener(this);
+		this.addPropertyChangeListener(this);
+		if (directory != null && new File(directory).exists()) this.setCurrentDirectory(new File(directory));
 		
-		this.getContentPane().setLayout(new BorderLayout());
 		
-		JPanel options = new JPanel(new GridBagLayout());
 		
+		JPanel options = new JPanel();
+		BoxLayout box = new BoxLayout(options,BoxLayout.Y_AXIS);
 		JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		command.add(new JLabel(" read.table(...) -> "));
 		command.add(dataName);
@@ -91,44 +77,26 @@ public class JGRDataFileOpenDialog extends JDialog implements ActionListener, It
 		JPanel att = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		att.add(attach);
 		
-		JPanel ctrlbuttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		ctrlbuttons.add(cancel);
-		ok.setEnabled(false);
-		ctrlbuttons.add(ok);
 		
-		options.add(command,  new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
-													 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-													 new Insets(1, 5, 1, 5), 0, 0));
-		options.add(command2,  new GridBagConstraints(0, 1, 2, 1, 0.0, 0.0
-													  , GridBagConstraints.WEST, GridBagConstraints.NONE,
-													  new Insets(1, 5, 1, 5), 0, 0));
-		options.add(att,  new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
-												 , GridBagConstraints.WEST, GridBagConstraints.NONE,
-												 new Insets(1, 5, 1, 5), 0, 0));
-		options.add(ctrlbuttons, new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0
-														, GridBagConstraints.EAST, GridBagConstraints.NONE,
-														new Insets(1, 5, 1, 10), 0, 0));
+		options.add(command); 
+		options.add(command2);
+		options.add(att); 
 		
-		
-		
-		
-		this.getContentPane().add(fileChooser,BorderLayout.CENTER);
-		this.getContentPane().add(options,BorderLayout.SOUTH);
-		this.setLocation((screenSize.width-500)/2,(screenSize.height-450)/2);
-		this.addWindowListener(new java.awt.event.WindowAdapter() {
-			public void windowClosing(java.awt.event.WindowEvent evt) {
-				dispose();
-			}
-		});
-		this.pack();
-		this.setSize(new Dimension(480,450));
-		this.setVisible(true);
+		JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+		JPanel buttons = (JPanel) filename.getComponent(filename.getComponentCount()-1);
+		this.setControlButtonsAreShown(false);
+		filename.add(command);
+		filename.add(command2);
+		filename.add(att);
+		filename.add(buttons);
+		this.showOpenDialog(f);
+		this.setSize(this.getSize().width, this.getSize().height+60);
 	}
 
 	public void loadFile() {
-		if (fileChooser.getSelectedFile() != null) {
-			JGRConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
-			String file = fileChooser.getSelectedFile().toString();
+		if (this.getSelectedFile() != null) {
+			JGRConsole.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
+			String file = this.getSelectedFile().toString();
 			
 			String useSep;
 			if (sepsBox.getSelectedIndex() >= seps.length) useSep = sepsBox.getSelectedItem().toString();
@@ -140,13 +108,12 @@ public class JGRDataFileOpenDialog extends JDialog implements ActionListener, It
 			String cmd = dataName.getText().trim().replaceAll("\\s","")+ "<- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
 			JGR.MAINRCONSOLE.execute(cmd);
 		}
-		dispose();
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd == "ApproveSelection") loadFile();
-		else if (cmd == "CancelSelection") dispose();
+		//else if (cmd == "CancelSelection") dispose();
 	}
 
 	public void itemStateChanged(ItemEvent e) {
@@ -178,15 +145,13 @@ public class JGRDataFileOpenDialog extends JDialog implements ActionListener, It
 	}
 
 	public void propertyChange(PropertyChangeEvent e) {
-		File file = fileChooser.getSelectedFile();
+		File file = this.getSelectedFile();
 		if(file!=null && !file.isDirectory()) {
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
 			dataName.setText(name);
-			ok.setEnabled(true);
 		}
 		else {
-			ok.setEnabled(false);
 			dataName.setText(null);
 		}
 	}
