@@ -64,4 +64,10 @@ public class PlotPolygon extends PlotObject {
     public int[] getDY() { return dy; }
     public double[] getX() { return x; }
     public double[] getY() { return y; }
+
+    public String toString() {
+	return "PlotPolygon(co="+coordX+":"+coordY+
+	",dc="+((cold==null)?"none":cold.toString())+
+        ",fc="+((colf==null)?"none":colf.toString())+",points="+((dx==null)?"none":(""+dx.length))+")";
+    }
 }
