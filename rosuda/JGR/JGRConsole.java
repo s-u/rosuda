@@ -96,8 +96,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 super.componentResized(evt);
+                if (JGR.R != null) JGR.R.eval("options(width="+getFontWidth()+")");
                 consolePanel.setDividerLocation( ( (int) ( (double) getHeight() * 0.65)));
-                
             }
         });
         this.addWindowListener(new WindowAdapter() {
@@ -309,6 +309,12 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         JOptionPane.showMessageDialog(this,message,"R Message",JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public int getFontWidth() {
+        int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
+        width = output.getWidth() / width;
+        return (int) (width*1.6);
+    }
+    
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);

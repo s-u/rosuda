@@ -328,6 +328,7 @@ public class RController {
 
     /* get short usage of function*/
     public static String getFunHelp(String s) {
+        System.out.println("s "+s); 
         if (s==null) return null;
         String tip = null;
         String res[] = null;

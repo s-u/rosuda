@@ -123,8 +123,11 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 			if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun.substring(fun.lastIndexOf("\"",pos-1)+1));
 	 			else result = RController.completeCommand(fun);
 	 			if (result != null && result.length > 1) {
-	 				if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
+                                    if (funHelpTip != null) funHelpTip.hide();
+                                    if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
 	 					showCmdCompletions(result);
+                                    if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
+    
 		 		}
 	 			else {
 	 				if (result != null && result.length > 0 && !result[0].equals(fun) ) {
@@ -139,45 +142,35 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 	else if (ke.getKeyChar() == '(' || ke.getKeyCode() == KeyEvent.VK_F1) {
 	 		if (p != null && p.equals(getCaret().getMagicCaretPosition())) {}
 	 		else {
-	 			if (funHelpTip != null) funHelpTip.hide();
-	 			fun = getLastCommand();
-	 			if (fun != null) funHelp = RController.getFunHelp(fun);
-	 			if (funHelp != null) {
-	 				Tip = new JToolTip();
-	 				Tip.setTipText(funHelp);
-	 				Tip.addMouseListener(new MouseAdapter() {
-	 					public void mouseClicked(MouseEvent e) {
-	 						if (funHelpTip != null) funHelpTip.hide();
-	 					}
-	 				});
-	 				p = getCaret().getMagicCaretPosition();
-	 				SwingUtilities.convertPointToScreen(p,this);
-	 				funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p.x,p.y+20);
-	 				funHelpTip.show();
-	 				commands.add(funHelp);
-	 				commands.add(p);
-	 			}
+                            if (funHelpTip != null) funHelpTip.hide();
+                            fun = getLastCommand();
+                            if (fun != null)
+                                SwingUtilities.invokeLater(new Runnable() {
+                                    public void run() {
+                                        showFunHelp(fun);
+                                    }
+                                });
 	 		}
 	 	}
 	 	else if (ke.getKeyChar() == ')') {
-	 		if (commands.size() > 2) {
-	 			commands.removeElementAt(commands.size()-1);
-	 			commands.removeElementAt(commands.size()-1);
-	 			Point p2 = (Point) commands.lastElement();
-	 			if (funHelpTip != null) funHelpTip.hide();
-	 			Tip = new JToolTip();
-	 			Tip.setTipText(commands.elementAt(commands.size()-2).toString());
-	 			Tip.addMouseListener(new MouseAdapter() {
-	 				public void mouseClicked(MouseEvent e) {
-	 					if (funHelpTip != null) funHelpTip.hide();
-	 				}
-	 			});
-	 			funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p2.x,p2.y+20);
-	 			funHelpTip.show();
+                    if (commands.size() > 2) {
+                            commands.removeElementAt(commands.size()-1);
+                            commands.removeElementAt(commands.size()-1);
+                            Point p2 = (Point) commands.lastElement();
+                            if (funHelpTip != null) funHelpTip.hide();
+                            Tip = new JToolTip();
+                            Tip.setTipText(commands.elementAt(commands.size()-2).toString());
+                            Tip.addMouseListener(new MouseAdapter() {
+                                    public void mouseClicked(MouseEvent e) {
+                                            if (funHelpTip != null) funHelpTip.hide();
+                                    }
+                            });
+                            funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p2.x,p2.y+20);
+                            funHelpTip.show();
 	 		}
 	 		else if (funHelpTip != null) {
-	 			funHelpTip.hide();
-	 			commands.clear();
+                            funHelpTip.hide();
+                            commands.clear();
 	 		}
 	 	}
 	 	else if (mComplete != null && mComplete.isVisible()) {
@@ -188,7 +181,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 				String[] result = new String[1];
 	 				result = RController.completeCommand(fun);
 	 				if (result != null && result.length > 0){
-	 					showCmdCompletions(result);
+                                            if (funHelpTip != null) funHelpTip.hide();
+                                            showCmdCompletions(result);
 	 				}
 	 				else {
 	 					if (cmdHelp != null) cmdHelp.hide();
@@ -202,21 +196,40 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 		}
 	 	}
 	}
+
+        private void showFunHelp(String fun) {
+            funHelp = RController.getFunHelp(fun);
+            if (fun != null && funHelp != null) {
+                Tip = new JToolTip();
+                Tip.setTipText(funHelp);
+                Tip.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (funHelpTip != null) funHelpTip.hide();
+                    }
+                });
+                p = getCaret().getMagicCaretPosition();
+                SwingUtilities.convertPointToScreen(p,this);
+                funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p.x,p.y+20);
+                funHelpTip.show();
+                commands.add(funHelp);
+                commands.add(p);
+            }
+        }
 	
 	protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,int condition, boolean pressed) {
-		if (disableEnter && e.getKeyCode() == KeyEvent.VK_ENTER) return true;
+            if (disableEnter && e.getKeyCode() == KeyEvent.VK_ENTER) return true;
 		
-		InputMap map = getInputMap(condition);
-		ActionMap am = getActionMap();
+            InputMap map = getInputMap(condition);
+            ActionMap am = getActionMap();
 
-		if(map != null && am != null && isEnabled()) {
-			Object binding = map.get(ks);
-			Action action = (binding == null) ? null : am.get(binding);
-			if (action != null) {
-				return SwingUtilities.notifyAction(action, ks, e, this, e.getModifiers());
-			}
-		}
-		return false;
+            if(map != null && am != null && isEnabled()) {
+                Object binding = map.get(ks);
+                Action action = (binding == null) ? null : am.get(binding);
+                if (action != null) {
+                    return SwingUtilities.notifyAction(action, ks, e, this, e.getModifiers());
+                }
+            }
+            return false;
 	}
 	
 	class SyntaxInputDocument extends SyntaxDocument {

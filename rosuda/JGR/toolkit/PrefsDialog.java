@@ -72,8 +72,10 @@ public class PrefsDialog extends JDialog implements ActionListener{
         Fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         font.setModel(mf = new DefaultComboBoxModel(Fonts));
         size.setModel(ms = new DefaultComboBoxModel(Sizes));
-        for (int i = 0; i < Fonts.length; i++) if (Fonts[i].equals(JGRPrefs.FontName)) { mf.setSelectedItem(Fonts[i]); break;}
-        for (int i = 0; i < Sizes.length; i++) if (Sizes[i].equals(JGRPrefs.FontSize+"")) { ms.setSelectedItem(Sizes[i]); break;}
+        mf.setSelectedItem(JGRPrefs.FontName);
+        ms.setSelectedItem(new Integer(JGRPrefs.FontSize));
+        /*for (int i = 0; i < Fonts.length; i++) if (Fonts[i].equals(JGRPrefs.FontName)) { mf.setSelectedItem(Fonts[i]); break;}
+        for (int i = 0; i < Sizes.length; i++) if (Sizes[i].equals(JGRPrefs.FontSize+"")) { ms.setSelectedItem(Sizes[i]); break;}*/
 
         font.setMinimumSize(new Dimension(200,25));
         font.setPreferredSize(new Dimension(200,25));

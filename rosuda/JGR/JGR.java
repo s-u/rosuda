@@ -80,19 +80,14 @@ public class JGR {
             System.out.println("Cannot load R");
             System.exit(1);
         }
-        //RHOME = RController.getRHome();
-        //RLIBS = RController.getRLIBS();
-        /*for (int i = 0; i< RLIBS.length; i++) {
-            if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
-        }*/
         JGRPackageManager.defaultPackages = RController.getDefaultPackages();
+        setRLibs();
         MAINRCONSOLE.setWorking(false);
-        MAINRCONSOLE.input.requestFocus();
         STARTED = true;
-        if (!System.getProperty("os.name").startsWith("Window")) splash.stop();
+        if (!System.getProperty("os.name").startsWith("Win")) splash.stop();
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
         rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
-        System.out.println(RHOME);
+        MAINRCONSOLE.input.requestFocus();
     }
 
     public static String exit() {
