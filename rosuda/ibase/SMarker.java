@@ -34,6 +34,8 @@ public class SMarker extends Notifier implements Commander {
     /** List of marked indices (each as <code>Integer</code> object). */
     Vector list;
 
+    SVarSet masterSet;
+    
     /* --- the "currentNode" code is rather experimental because it's not really clean - but still it allows us to use the marker message dispatching to include displaying of splits */    
     SNode currentNode;
 
@@ -43,7 +45,7 @@ public class SMarker extends Notifier implements Commander {
 	mask=new int[reqsize];
 	list=new Vector();
 	msize=reqsize;
-
+        masterSet=null;
 	//curIV=null; curOp=0;
     };
 
