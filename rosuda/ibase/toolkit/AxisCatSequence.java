@@ -5,6 +5,7 @@
 //  Created by Simon Urbanek on Wed Jun 04 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
 
 package org.rosuda.ibase.toolkit;
 
@@ -53,7 +54,7 @@ public class AxisCatSequence implements Dependent {
                 gap--;
                 tl=a.gLen-(isig*gap*(cats-1));
             }
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: updateCats: not enough space for categories ("+cats+") if gap ("+a.gap+") is respected. Adjusting gap to "+gap);
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: updateCats: not enough space for categories ("+cats+") if gap ("+a.gap+") is respected. Adjusting gap to "+gap);
         }
 
         boolean equal=(a.type==Axis.T_EqCat);
@@ -77,61 +78,61 @@ public class AxisCatSequence implements Dependent {
 
     public int getLowerEdgeOfCatAt(int p) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCatAt("+p+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCatAt("+p+") but Axis type is not categorical.");
         if (p<0 || p>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCatAt("+p+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCatAt("+p+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return left[p];
     }
 
     public int getUpperEdgeOfCatAt(int p) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCatAt("+p+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCatAt("+p+") but Axis type is not categorical.");
         if (p<0 || p>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+p+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+p+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return right[p];
     }
 
     public int getCenterOfCatAt(int p) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCatAt("+p+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCatAt("+p+") but Axis type is not categorical.");
         if (p<0 || p>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCatAt("+p+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCatAt("+p+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return (right[p]+left[p])/2;
     }
 
     public int getLowerEdgeOfCat(int c) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCat("+c+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCat("+c+") but Axis type is not categorical.");
         if (c<0 || c>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCat("+c+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getLowerEdgeOfCat("+c+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return left[seq.posOfCat(c)];
     }
 
     public int getUpperEdgeOfCat(int c) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+c+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+c+") but Axis type is not categorical.");
         if (c<0 || c>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+c+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getUpperEdgeOfCat("+c+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return right[seq.posOfCat(c)];
     }
 
     public int getCenterOfCat(int c) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCat("+c+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCat("+c+") but Axis type is not categorical.");
         if (c<0 || c>=cats) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCat("+c+") out of range (cats="+cats+").");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCenterOfCat("+c+") out of range (cats="+cats+").");
         if (left==null) updateCats();
         return (right[seq.posOfCat(c)]+left[seq.posOfCat(c)])/2;
     }
 
     public int getCatByGeometryPos(int pos) {
         if (a.type!=Axis.T_EqCat && a.type!=Axis.T_PropCat) return
-            Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCatByGeometryPos("+pos+") but Axis type is not categorical.");
+            Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCatByGeometryPos("+pos+") but Axis type is not categorical.");
         int i=0;
         if (left==null) updateCats();
         while (i<cats) {
@@ -140,7 +141,7 @@ public class AxisCatSequence implements Dependent {
             if (lo<=pos && hi>=pos) return seq.catAtPos(i);
             i++;
         }
-        Common.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCatByGeometryPos("+pos+") - no category found.");
+        Global.runtimeWarning("AxisCatSequence for Axis["+a.toString()+"]: getCatByGeometryPos("+pos+") - no category found.");
         return -1;
     }
 
