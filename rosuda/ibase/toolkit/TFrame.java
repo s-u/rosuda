@@ -7,6 +7,7 @@ import java.awt.*;
 public class TFrame extends Frame
 {
     WTentry WTmyself;
+    
     TFrame(String tit) {
         setBackground(Common.backgroundColor);
 	setTitle(tit);
@@ -21,6 +22,6 @@ public class TFrame extends Frame
     public void finalize() {
 	if (Common.DEBUG>0)
 	    System.out.println("Frame \""+getTitle()+"\" removed.");
-	//WinTracker.current.rm(WTmyself);
+	WinTracker.current.rm(WTmyself);
     };
 };

@@ -36,6 +36,8 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     /** current width and height of the canvas */
     int TW,TH;
 
+    /** menu item of the "alternate" */
+    MenuItem MIalt;
     /** constructs a treemap based on the passed tree
 	@param f associated frame or <code>null</code> if none
 	@param tree root of the associated tree */
@@ -56,8 +58,12 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this);
+	MenuBar mb=null;
+	String myMenu[]={"+","File","Close","close","Quit","quit","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
+	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	MIalt=mb.getMenu(1).getItem(1);
     };
-
+    
     public Dimension getMinimumSize() { return new Dimension(40,40); };
 
     /** rotate = swap axes */
@@ -269,6 +275,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	};
 	if (cmd=="alternate") {
 	    alternate=!alternate;
+	    MIalt.setLabel((alternate)?"Spineplot of leaves":"Treemap");
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");

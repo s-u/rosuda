@@ -10,8 +10,9 @@ public class DefWinL implements WindowListener
     DefWinL() {};
     public void windowClosing(WindowEvent e)
     {	
-	Window w=e.getWindow(); w.dispose();
+	Window w=e.getWindow();
 	Container cc=w.getParent();
+	w.dispose();
 	if (cc!=null) cc.remove(w);
 	WinTracker.current.rm(w);
 	w.removeAll();
@@ -23,7 +24,13 @@ public class DefWinL implements WindowListener
 	    System.exit(0);
 	};
     };
-    public void windowClosed(WindowEvent e) {};
+    public void windowClosed(WindowEvent e) {
+	if (e.getWindow()==Common.mainFrame) {
+	    if (WinTracker.current!=null)
+		WinTracker.current.disposeAll();
+	    System.exit(0);
+	};
+    };
     public void windowOpened(WindowEvent e) {};
     public void windowIconified(WindowEvent e) {};
     public void windowDeiconified(WindowEvent e) {};

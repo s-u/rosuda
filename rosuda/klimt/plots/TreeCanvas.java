@@ -166,6 +166,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    mi.addActionListener(this);
 	    i+=2; miss++;
 	};
+	if (m!=null) mb.setHelpMenu(m);
+	if (WinTracker.current!=null) mb.add(WinTracker.current.getWindowMenu());
 	cont.setMenuBar(mb);	
 
 	addMouseMotionListener(this);
@@ -432,7 +434,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (showDevGain) {
 	    g.setColor("red");
 	    if (t.devGain>0) {	    
-		int arcSize=(int)(devGainScale*t.devGain/maxDevGain*20);
+		int arcSize=(int)(Math.sqrt(devGainScale*t.devGain/maxDevGain)*20);
 		if (arcSize>20) {
 		    g.drawOval(x-25,y,20,20);
 		} else {
@@ -440,7 +442,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		};
 	    };
 	    if ((t.isLeaf())&&(t.F1>0)) {
-		int arcSize=(int)(t.F1/maxLeafDev*20);
+		int arcSize=(int)(Math.sqrt(t.F1/maxLeafDev)*20);
 		g.setColor("red");
 		g.fillRect(x-25,y,arcSize,arcSize);
 	    };

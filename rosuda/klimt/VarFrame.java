@@ -12,7 +12,7 @@ public class VarFrame extends TFrame {
     Scrollbar sb=null;
 
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
-	super(vs.getName());
+	super(vs.getName()+" (Variables)");
         setBackground(new Color(255,255,192));
 	int rh=h;
 	if (rh>vs.count()*17+6+115)

@@ -22,14 +22,15 @@ public abstract class DBCanvas extends Canvas
     public void update(Graphics g)
     {
         Dimension d = getSize();
+	Image curimg=null;
+
 	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
 	if (d.width<1 || d.height<1) return;
 	// we will re-create the off-screen object only if the canvas was resized
 	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
-	    offscreen=null;
 	    // create the offscreen buffer and associated Graphics
-	    offscreen = createImage(d.width, d.height);
-	    offgc = offscreen.getGraphics();
+	    curimg = createImage(d.width, d.height);
+	    offgc = curimg.getGraphics();
 	    offsd=d;
 	};
 	
@@ -39,8 +40,11 @@ public abstract class DBCanvas extends Canvas
         offgc.setColor(getForeground());
         // do normal redraw
         paintBuffer(offgc);
-        // transfer offscreen to window
-        g.drawImage(offscreen, 0, 0, this);
+        // transfer offscreen to window	
+        g.drawImage((curimg!=null)?curimg:offscreen, 0, 0, this);
+	// if curimg is newly created one, replace the previous (ergo free it)
+	if (curimg!=null)
+	    offscreen=curimg;
     };
 
     /** normally we would not use paint at all, but sometimes paint is called
