@@ -19,9 +19,9 @@ public class PlotObject {
     /** clipping flag. if set to <code>true</code> then this object should make sure to not plot outside the data area (see {@link Axis}) */
     boolean clip=false;
     /** coordinate system for the X values (see CS_xxx constants). */
-    int coordX=0; // 0=abs-geom, 1=var.space, 2=relative geom. (-1=min, 1=max)
+    int coordX=1; // 0=abs-geom, 1=var.space, 2=relative geom. (-1=min, 1=max)
     /** coordinate system for the Y values (see CS_xxx constants). */
-    int coordY=0;
+    int coordY=1;
     /** draw color of the object */
     PlotColor cold;
     /** fill color of the object */
