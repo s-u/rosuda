@@ -162,6 +162,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 	    };
 	};
         if (cmd=="exportPDF") {
+            new MsgDialog(myFrame,"Information","Please note that the PDF export is very experimental. If the result is unsatisfactory, please use the PostScript export instead.");
             PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as PDF to ...","output.pdf");
             if (outs!=null) {
                 PoGraSSPDF p=new PoGraSSPDF(outs);
