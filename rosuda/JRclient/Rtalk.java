@@ -22,6 +22,9 @@ public class Rtalk {
     public static final int DT_SEXP=10;
     public static final int DT_ARRAY=11;
 
+    /** this is a flag saying that the contents is large (>0xfffff0) and hence uses 56-bit length field */
+    public static final int DT_LARGE=64;
+
     public static final int CMD_login=0x001;
     public static final int CMD_voidEval=0x002;
     public static final int CMD_eval=0x003;
@@ -37,6 +40,21 @@ public class Rtalk {
     
     public static final int CMD_setBufferSize=0x081;
 
+    // errors as returned by Rserve
+    public static final int ERR_auth_failed=0x41;
+    public static final int ERR_conn_broken=0x42;
+    public static final int ERR_inv_cmd=0x43;
+    public static final int ERR_inv_par=0x44;
+    public static final int ERR_Rerror=0x45;
+    public static final int ERR_IOerror=0x46;
+    public static final int ERR_not_open=0x47;
+    public static final int ERR_access_denied=0x48;
+    public static final int ERR_unsupported_cmd=0x49;
+    public static final int ERR_unknown_cmd=0x4a;
+    public static final int ERR_data_overflow=0x4b;
+    public static final int ERR_object_too_big=0x4c;
+    public static final int ERR_out_of_mem=0x4d;
+   
     InputStream is;
     OutputStream os;
     
@@ -65,10 +83,16 @@ public class Rtalk {
 	@param buf buffer
 	@param o offset */
     public static void setHdr(int ty, int len, byte[] buf, int o) {
-	buf[o]=(byte)(ty&255); o++;
+        buf[o]=(byte)((ty&255)|((len>0xfffff0)?DT_LARGE:0)); o++;
 	buf[o]=(byte)(len&255); o++;
 	buf[o]=(byte)((len&0xff00)>>8); o++;
 	buf[o]=(byte)((len&0xff0000)>>16); o++;
+        if (len>0xfffff0) { // for large data we need to set the next 4 bytes as well
+            buf[o]=(byte)((len&0xff000000)>>24); o++;
+            buf[o]=0; o++; // since len is int, we get 32-bits only
+            buf[o]=0; o++;
+            buf[o]=0; o++;
+        }
     }
 
     /** converts bit-wise stored int in Intel-endian form into Java int
