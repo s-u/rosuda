@@ -279,7 +279,7 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
             System.out.println("dataExported");
 
             PrintStream p=new PrintStream(new FileOutputStream(fprefix+"PluginInit.r"));
-            p.print("invisible(options(echo = FALSE))\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nattach(d)\nwrite.table(("+Rcommand+"),\"PluginInit.ods\",quote=FALSE,row.names=FALSE,col.names=TRUE,sep=\"\\t\")\n");
+            p.print("invisible(options(echo = FALSE))\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nattach(d)\nnew.variable<-{"+Rcommand+"}\nwrite.table(new.variable,\"PluginInit.ods\",quote=FALSE,row.names=FALSE,col.names=TRUE,sep=\"\\t\")\n");
             p.close();
             if (!useRserv) {
                 System.out.println("execPlugin: starting R");
