@@ -20,7 +20,7 @@ public class PPrimRectangle extends PPrimBase {
     public Rectangle r;
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
-    
+
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(int x, int y) { return (r==null)?false:r.contains(x,y); }
 
@@ -68,5 +68,10 @@ public class PPrimRectangle extends PPrimBase {
             else
                 g.drawRect(r.x,r.y,r.width,r.height);
         }
+    }
+
+    public String toString() {
+        return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height))
+        +", cases="+cases()+", drawBorder="+drawBorder+", drawSelBorder="+drawSelectionBorder+")";
     }
 }

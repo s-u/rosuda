@@ -16,16 +16,16 @@ import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 
-/** Very basic plot primitive without any graphical representation, but with case handling. This class can be used as a base for any plot primitive that uses ID reference lists
+/** Very basic plot primitive without any graphical representation, but with case handling. This abstract class can be used as a base for any plot primitives that use ID reference lists. Methods concerning graphical representation (paint..., contains, intersects) are left abstract.
 */
 public abstract class PPrimBase implements PlotPrimitive {
     public Color col;
     
-    /** references to cases represented by this primitive */
+    /** references (IDs) to cases represented by this primitive */
     public int[] ref;
 
     public String toString() {
-        return "PPrimBase";
+        return "PPrimBase["+cases()+" cases]";
     }
 
     public int[] getCaseIDs() { return ref; }
