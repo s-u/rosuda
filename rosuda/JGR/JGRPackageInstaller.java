@@ -29,6 +29,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
     private JButton close = new JButton("Close");
 
     private String type = "binaries";
+	private String current = RController.getCurrentPackages();
 
     /**
      * Create a package-installer window.
@@ -37,7 +38,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
      */
     public JGRPackageInstaller(String[] pkgs, String type) {
         super("Package Installer",iFrame.clsPackageUtil);
-        this.type = type;
+		this.type = type;
         packages = pkgs;
 
         String[] Menu = {
@@ -71,7 +72,9 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 		gbc.weightx = 0.0;
 		gbc.weighty = 0.0;
         this.getContentPane().add(buttons, gbc);
-
+		
+		pkgList.setCellRenderer(new PkgCellRenderer());
+        
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getRootPane().setDefaultButton(close);
         this.setMinimumSize(new Dimension(150,250));
@@ -146,4 +149,23 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         else if (cmd=="install") installPkg();
     }
 
+	 class PkgCellRenderer extends JLabel implements ListCellRenderer {
+	     
+		 public PkgCellRenderer() {
+			 setOpaque(true);
+		 }
+		 
+		 public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
+	         setText(value.toString());
+			 if (current.indexOf(value.toString()) > -1) {
+		         setBackground(isSelected ? Color.blue : Color.green);
+		         setForeground(isSelected ? Color.green : Color.black);
+			 }
+			 else {
+				 setBackground(isSelected ? Color.blue : Color.white);
+				 setForeground(isSelected ? Color.white : Color.black);
+			 }
+	         return this;
+	     }
+	 }
 }
