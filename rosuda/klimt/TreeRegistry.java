@@ -106,6 +106,7 @@ public class TreeRegistry {
         SVarSet fs=new SVarSet(); fs.setName("Forest");
         SVar v_tree=new SVarObj("Tree",true); fs.add(v_tree);
         SVar v_node=new SVarObj("NodeID"); fs.add(v_node);
+        SVar v_bid=new SVarObj("BinaryNID"); fs.add(v_bid);
         SVar v_var=new SVarObj("Variable",true); fs.add(v_var);
         SVar v_vspl=new SVarObj("Split.num.value"); fs.add(v_vspl);
         SVar v_scases=new SVarObj("s.cases"); fs.add(v_scases);
@@ -135,7 +136,7 @@ public class TreeRegistry {
                             v_tree.add(te.name); v_var.add(n.splitVar.getName());
                             v_root.add(te.root);
                             v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
-                            v_tcases.add(new Integer(np.Cases));
+                            v_tcases.add(new Integer(np.Cases)); v_bid.add(new Integer(np.getBinaryID()));
                             v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
                             v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
                             v_vspl.add(new Double(n.splitValF));
