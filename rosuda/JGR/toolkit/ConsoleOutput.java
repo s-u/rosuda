@@ -74,7 +74,8 @@ public class ConsoleOutput extends JTextPane {
                 if(isCorrectLine(i) && isCommandLine(i)) {
 					String l = trimFront(getLine(i).replaceFirst(prompt,""));
 					if (i < this.getLineCount() && isCorrectLine(i+1) && !l.startsWith("#")) bf.append(l);
-					else if (i==this.getLineCount() && !l.startsWith("#")) bf.append(l);
+					else if (i < this.getLineCount() && !isCorrectLine(i+1) && l.startsWith(continueS)) bf.append(l);
+				    else if (i==this.getLineCount() && !l.startsWith("#")) bf.append(l);
 				}
             }
             catch (Exception e){
@@ -83,14 +84,6 @@ public class ConsoleOutput extends JTextPane {
         return bf;
     }
     
-    private StringBuffer cleanCommands(StringBuffer b) {
-    	StringBuffer bf = new StringBuffer();
-    	return bf;
-    }
-
-
-
-
     private void exportOutput(File file) {
         saveToFile(file,getOutput());
     }
