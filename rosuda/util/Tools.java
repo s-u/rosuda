@@ -116,4 +116,19 @@ public class Tools {
         } catch(Exception dce) {};
         return i;
     }
+
+    public static String color2hrgb(Color c) {
+        int i=(c.getRed()<<16)|(c.getGreen()<<8)|(c.getBlue());
+        String s=Integer.toHexString(i);
+        while (s.length()<6) { s="0"+s; };
+        return "#"+s;
+    }
+
+    public static Color hrgb2color(String s) {
+        if (s!=null && s.length()>0 && s.charAt(0)=='#') {
+            int c=Tools.parseHexInt(s.substring(1));
+            return new Color((c>>16)&255,(c>>8)&255,c&255);
+        }
+        return null;
+    }
 }
