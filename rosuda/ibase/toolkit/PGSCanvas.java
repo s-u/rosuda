@@ -83,8 +83,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
     public void paintLayer(Graphics g, int layer) {
         if (inProgress) return; /* avoid recursions */
         inProgress=true;
-        paintLayerCounter=0;
-	PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
+        PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
+        beginPaint(p);
 	paintPoGraSS(p);
 	endPaint(p);
         inProgress=false;
@@ -103,7 +103,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 	@return canvas title */
     public String getTitle() { return desc; };
 
-    /** abstract paint class to be implemented by any descendants */
+    /** abstract paint class to be implemented by any descendants. */
     public void paintPoGraSS(PoGraSS g) {};
 
     /** get the PlotManager associated with this plot */
@@ -123,6 +123,12 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 	p.nextLayer();
     }
 
+    /** before using {@link #paintPoGraSS} this method should be called to ensure that a consistent state while painting. Currently the main goal of this function is to reset the paintLayerCounter. */
+    protected void beginPaint(PoGraSS p) {
+        paintLayerCounter=0;
+    }
+
+    /** this methods finalizes painting tasks. If {@link #paintPoGraSS} is called directly this method should not be ommitted. */
     protected void endPaint(PoGraSS p) {
 	while (paintLayerCounter<layers)
 	    nextLayer(p);
@@ -160,7 +166,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
 	    if (outs!=null) {
 		PoGraSSPS p=new PoGraSSPS(outs);
 		p.setTitle(desc);
-		paintPoGraSS(p);
+                beginPaint(p);
+                paintPoGraSS(p);
 		endPaint(p);
 		p=null;
 		outs.close();
@@ -173,6 +180,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
             if (outs!=null) {
                 PoGraSSPDF p=new PoGraSSPDF(outs);
                 p.setTitle(desc);
+                beginPaint(p);
                 paintPoGraSS(p);
 		endPaint(p);
                 p=null;
@@ -229,6 +237,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
                 if (outs!=null) {
                     p.setOutPrintStream(outs);
                     p.setTitle(desc);
+                    beginPaint(p);
                     paintPoGraSS(p);
 		    endPaint(p);
                     p=null;
