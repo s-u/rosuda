@@ -55,6 +55,8 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
             return true;
         }
     }
+
+    Menu recentMenu;
     
     public SplashScreen(String txt) {
         super("About");
@@ -156,7 +158,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         if (Platform.isMac)
             myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
-        Menu rm=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
+        Menu rm=recentMenu=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
             if (recentOpen==null)
                 SplashScreen.recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
@@ -188,6 +190,19 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                 WinTracker.current.Exit();
             else
                 exit();
+        }
+
+        if (cmd=="recent-clear") {
+            if (recentOpen!=null && recentMenu!=null) {
+                recentMenu.removeAll();
+                recentMenu.addSeparator();
+                MenuItem ca=new MenuItem("Clear list");
+                ca.setActionCommand("recent-clear");
+                ca.addActionListener(this);
+                ca.setEnabled(false);
+                recentMenu.add(ca);
+                recentOpen.reset();
+            }
         }
         return null;
     }
