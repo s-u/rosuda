@@ -1,7 +1,8 @@
 
 import java.awt.*;
 
-/** Implementation of a simple progress dialog */
+/** Implementation of a simple progress dialog
+    @version $Id$ */
 public class ProgressDlg extends Frame {
     int progress=0;
     String ptxt="Processing...";

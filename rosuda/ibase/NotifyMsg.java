@@ -1,5 +1,6 @@
 
-/** messages passed with NotifyAllDep */
+/** messages passed with NotifyAllDep
+    @version $Id$ */
 public class NotifyMsg {
     Object source;
     int    messageID;

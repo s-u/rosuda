@@ -1,6 +1,7 @@
 import java.lang.*;
 
-/** very simple profile class to measure time differences */
+/** very simple profile class to measure time differences and do some basic profiling
+    @version $Id$ */
 public class Stopwatch {
     long ts_start;
     long ts_stop=0;
