@@ -7,7 +7,8 @@ PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
-JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JavaGD/*.java)
+JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
+JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(JAVAGD_SRC)
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar Mondrian.jar
