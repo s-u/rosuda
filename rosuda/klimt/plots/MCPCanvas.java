@@ -173,7 +173,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         if (xdisp) return;
 	Point cl=getFrame().getLocation();
 	int x=ev.getX(), y=ev.getY();
-	int i=0, setTo=0;
+        int i=0; boolean setTo=false;
 	boolean effect=false;
         Dimension Dsize=getSize();
         int w=Dsize.width, h=Dsize.height;
@@ -183,7 +183,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         if (v==null) return;
 
         boolean hideQI=true;
-        if (ev.isControlDown()) setTo=1;
+        if (ev.isControlDown()) setTo=true;
         if (count!=null) {
             int bs=count.length;
             double ddx=((double)(rdx-bs*3))/((double)bs);
@@ -220,7 +220,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                             int j=0;
                             while (j<c.size()) {
                                 if (c.at(j).toString().compareTo(r.at(j).toString())!=0)
-                                    m.set(j,m.at(j)?setTo:1);
+                                    m.set(j,m.at(j)?setTo:true);
                                 j++;
                             };
                         }; break;

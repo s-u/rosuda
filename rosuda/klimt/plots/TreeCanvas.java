@@ -967,14 +967,14 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		    
 		    if (toolMode==Tool_Select && Common.isSelectTrigger(ev)) {// no alt=select in node
 			SMarker m=n.getSource().getMarker();
-			int setTo=0;
-			if (Common.getSelectMode(ev)==2) setTo=1;
+                        boolean setTo=false;
+                        if (Common.getSelectMode(ev)==2) setTo=true;
 			if (Common.getSelectMode(ev)==0) m.selectNone();
 			
 			if ((m!=null)&&(n.data!=null)) {
 			    for (Enumeration e2=n.data.elements(); e2.hasMoreElements();) {
 				int j=((Integer)e2.nextElement()).intValue();
-				m.set(j,m.at(j)?setTo:1);
+				m.set(j,m.at(j)?setTo:true);
 			    };
 			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));                            
 			};

@@ -365,8 +365,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                             if (o!=null && n.data.contains(new Integer(i))) {
                                 try {
                                     double v=((Number)o).doubleValue();
-                                    if (v<=spVal) { ml.set(i,1); leftd.addElement(new Integer(i)); };
-                                    if (v>spVal) { mr.set(i,1); rightd.addElement(new Integer(i)); };
+                                    if (v<=spVal) { ml.set(i,true); leftd.addElement(new Integer(i)); };
+                                    if (v>spVal) { mr.set(i,true); rightd.addElement(new Integer(i)); };
                                 } catch(Exception ex) {};
                             }
                             i++;

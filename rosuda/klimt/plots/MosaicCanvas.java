@@ -216,14 +216,14 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	    if (x>=ng.x1&&x<=ng.x2&&y>=ng.y1&&y<=ng.y2) {
 		if (!ev.isAltDown()) {// no alt=select in node
 		    SMarker m=ng.n.getSource().getMarker();
-		    int setTo=0;
-		    if (ev.isControlDown()) setTo=1;
+                    boolean setTo=false;
+		    if (ev.isControlDown()) setTo=true;
 		    if (!ev.isShiftDown()) m.selectNone();
 
 		    if ((m!=null)&&(ng.n.data!=null)) {
 			for (Enumeration e2=ng.n.data.elements(); e2.hasMoreElements();) {
 			    int j=((Integer)e2.nextElement()).intValue();
-			    m.set(j,m.at(j)?setTo:1);
+			    m.set(j,m.at(j)?setTo:true);
 			};
 			m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 		    };

@@ -203,7 +203,7 @@ public class HistCanvasNew extends BaseCanvas
 
     public String queryObject(int i) {
         if (pp!=null && pp[i]!=null && pp[i].ref!=null) {
-            int mark=(int)(((double) pp[i].ref.length)*pp[i].getMarkedProportion(m,1)+0.5);
+            int mark=(int)(((double) pp[i].ref.length)*pp[i].getMarkedProportion(m,-1)+0.5);
             double la=ax.vBegin+binw*i;
             return "Interval: ["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\nCounts: "+mark+" of "+pp[i].ref.length+" selected";
         };

@@ -248,9 +248,9 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     {
 	int x=ev.getX(), y=ev.getY();
         //x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
-        int setTo=0;
+        boolean setTo=false;
         
-        if (ev.isControlDown()) setTo=1;
+        if (ev.isControlDown()) setTo=true;
         if (!ev.isShiftDown()) m.selectNone();
 
         int pts=v[0].size();
@@ -268,7 +268,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                         int xc=v[0].getCatIndex(i);
                         int yc=v[1].getCatIndex(i);
                         if (xc==xp && yc==yp)
-                            m.set(i,m.at(i)?setTo:1);
+                            m.set(i,m.at(i)?setTo:true);
                     };
                 };
             };
@@ -323,8 +323,8 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	    if (y1>y2) { Y2=y1; Y1=y2; };
 	    Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
 	    
-	    int setTo=0;
-	    if (e.isControlDown()) setTo=1;
+	    boolean setTo=false;
+	    if (e.isControlDown()) setTo=true;
 	    if (!e.isShiftDown()) m.selectNone();
 	    
 	    int pts=v[0].size();
@@ -342,7 +342,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 			    int xc=v[0].getCatIndex(i);
 			    int yc=v[1].getCatIndex(i);
 			    if (xc==xp && yc==yp)
-				m.set(i,m.at(i)?setTo:1);
+				m.set(i,m.at(i)?setTo:true);
 			};
 		    };
 		};
