@@ -336,6 +336,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             console.delete(0,console.length());
             output.setCaretPosition(outputDoc.getLength());
         }
+        try { Thread.sleep(5);} catch (Exception e) {}
     }
 
     public void   rBusy(Rengine re, int which) {
@@ -581,10 +582,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     class RExecuter {
         public RExecuter() {}
 
-        public synchronized void _execute(String cmd) {
+        public /*synchronized*/ void _execute(String cmd) {
             JGR.READY = false;
             JGR.rSync.triggerNotification(cmd);
-            while (!JGR.READY) try { wait(10); } catch(Exception e) {}
+            //try { wait(10); } catch(Exception e) {}
         }
     }
 
