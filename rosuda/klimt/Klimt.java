@@ -312,9 +312,10 @@ public class InTr
                             System.out.println("Start of Rserve failed.");
                 }
             }
- 	    TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
-	    Common.mainFrame=f;
-	    
+
+            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
+
 	    SVarSet tvs=new SVarSet();
             String fname=(firstNonOption>-1)?argv[firstNonOption]:null;
             if (fname==null || fname.length()<1 || fname.charAt(0)=='-') fname=null;
@@ -323,34 +324,40 @@ public class InTr
                 if (fname==null) System.out.println("InfoForLoader:Select file to load");
                 else System.out.println("InfoForLoader:Loading data...");
             }
-                                   
-	    SNode t=openTreeFile(f,fname,tvs);
-	    if (t==null && tvs.count()<1) {
-                new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected"+((fname!=null)?" ("+fname+")":"")+".");
-		System.exit(1);
-	    };
-            if (Common.informLoader)
-                System.out.println("InfoForLoader:Setting up windows...");
+            
+            if (fname!=null) {
+                TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
+                Common.mainFrame=f;
 
-	    if (Common.DEBUG>0) {
-		for(Enumeration e=tvs.elements();e.hasMoreElements();) {
-		    SVar vv=(SVar)e.nextElement();
-		    System.out.println("==> "+vv.getName()+", CAT="+vv.isCat()+", NUM="+vv.isNum());
-		    if (vv.isCat()) {
-			System.out.println("    categories: "+vv.getNumCats());
-		    };
-		};
-	    }; 
-	    
-	    f.setTitle("KLIMT "+Common.Version+", "+tvs.getName()+" - tree");
+                SNode t=openTreeFile(f,fname,tvs);
+                if (t==null && tvs.count()<1) {
+                    new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected"+((fname!=null)?" ("+fname+")":"")+".");
+                    System.exit(1);
+                }
 
-	    Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
-            Common.screenRes=sres;
-	    if (t!=null)
-		newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-	    VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-	    Common.mainFrame=vf;		
-	    
+                if (Common.informLoader)
+                    System.out.println("InfoForLoader:Setting up windows...");
+
+                if (Common.DEBUG>0) {
+                    for(Enumeration e=tvs.elements();e.hasMoreElements();) {
+                        SVar vv=(SVar)e.nextElement();
+                        System.out.println("==> "+vv.getName()+", CAT="+vv.isCat()+", NUM="+vv.isNum());
+                        if (vv.isCat()) {
+                            System.out.println("    categories: "+vv.getNumCats());
+                        };
+                    };
+                }; 
+
+                f.setTitle("KLIMT "+Common.Version+", "+tvs.getName()+" - tree");
+
+                if (t!=null)
+                    newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+                VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+                Common.mainFrame=vf;
+            }
+
+            SplashScreen ss=new SplashScreen();
+            
 	    carg=firstNonOption+1;
 	    while (carg<argv.length) {
                 if (argv[carg].compareTo("--silent")==0)
