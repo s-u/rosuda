@@ -45,6 +45,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	// sonst String contriburl = null;
 	JProgressBar p = null;
 	JLabel l = null;
+	JFrame f = null;
 	
 	/**
 	 * Install JGR from the web CRAN or Rosuda whatever you want
@@ -56,7 +57,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		if (url != null) this.contriburl = url;
 		
 		if (!System.getProperty("os.name").startsWith("Win")) {
-			JFrame f = new JFrame("Installing JGR");
+			f = new JFrame("Installing JGR");
 			p = new JProgressBar();
 			p.setMinimumSize(new Dimension(400,25));
 			p.setPreferredSize(new Dimension(400,25));
@@ -112,7 +113,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		//else 
 			sync.triggerNotification("install.packages(c("+packages+")"+(contriburl==null?"":",contriburl=\""+contriburl+"\"")+")");
 		sync.triggerNotification("y");
-		sync.triggerNotification("q('no')");
+		sync.triggerNotification("q()");
 	}
 	
 	/**
@@ -172,6 +173,13 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	//---------------R Loopbacks
 	
 	public String rReadConsole(Rengine re, String prompt, int addToHistory) {
+		if (prompt.indexOf("Save workspace") > -1) {
+			if (f != null) f.dispose();
+			JOptionPane.showMessageDialog(null,
+										  "Please restart JGR!",
+										  "Restart JGR", JOptionPane.WARNING_MESSAGE);
+			return "n\n";
+        }		
 		if (DEBUG > 0)
 			System.out.print(prompt);
 		String s = sync.waitForNotification();
