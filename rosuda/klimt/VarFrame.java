@@ -314,20 +314,7 @@ public class VarFrame extends TFrame {
                 };
             }; */
             if (cmd=="openData") {
-                TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
-                SVarSet tvs=new SVarSet();
-                DataRoot dr=Klimt.addData(tvs);
-                SNode t=Klimt.openTreeFile(f,null,dr);
-                if (t==null && tvs.count()<1) {
-                    new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
-                } else {
-                    f.setTitle(tvs.getName());
-                    Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
-                    Common.screenRes=sres;
-                    if (t!=null)
-                        Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                    VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
-                }
+                return KlimtSplash.main.run(o, cmd);
             }
             if (cmd=="map") {
                 int i=0;
