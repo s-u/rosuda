@@ -20,6 +20,9 @@ public class Rconnection {
     String Key=null;
     Rtalk rt=null;
 
+    /** This static variable specifies the character set used to encode string for transfer. Under normal circumstances there should be no reason for changing this variable. The default is UTF-8, which makes sure that 7-bit ASCII characters are sent in a backward-compatible fashion. Currently (Rserve 0.1-7) there is no further conversion on Rserve's side, i.e. the strings are passed to R without re-coding. If necessary the setting should be changed <u>before</u> connecting to the Rserve in case later Rserves will provide a possibility of setting the encoding during the handshake. */
+    public static String transferCharset="UTF-8";
+    
     /** authorization type: plain text */
     public static final int AT_plain = 0;
     /** authorization type: unix crypt */
@@ -147,18 +150,25 @@ public class Rconnection {
 	return null;
     }
 
+    /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
+        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
+        @param ct contents
+        @return <code>true</code> on success, otherwise <code>false</code>
+        */
     public boolean assign(String sym, String ct) {
 	succeeded=false;
 	if (!connected || rt==null) {
 	    lastError="Error: not connected!";
 	    return false;
 	}
-	byte[] rq=new byte[sym.length()+5+ct.length()+5];
-        sym.getBytes(0,sym.length(),rq,4);
-	ct.getBytes(0,ct.length(),rq,9+sym.length());
-	Rtalk.setHdr(Rtalk.DT_STRING,sym.length()+1,rq,0);
-	Rtalk.setHdr(Rtalk.DT_STRING,ct.length()+1,rq,sym.length()+5);
-	rq[sym.length()+4]=0; rq[rq.length-1]=0;
+        byte[] symn=sym.getBytes();
+        byte[] ctn=ct.getBytes();
+        byte[] rq=new byte[symn.length+5+ctn.length+5];
+        for(int ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
+        for(int ic=0;ic<ctn.length;ic++) rq[symn.length+9]=ctn[ic];
+	Rtalk.setHdr(Rtalk.DT_STRING,symn.length+1,rq,0);
+	Rtalk.setHdr(Rtalk.DT_STRING,ctn.length+1,rq,symn.length+5);
+	rq[symn.length+4]=0; rq[rq.length-1]=0;
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
 	if (rp!=null && rp.isOk())
 	    return succeeded=true;
@@ -166,6 +176,11 @@ public class Rconnection {
 	return false;
     }
 
+    /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
+        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
+        @param ct contents. currently only basic types (int, double, int[], double[]) are supported.
+        @return <code>true</code> on success, otherwise <code>false</code>
+        */
     public boolean assign(String sym, REXP r) {
 	succeeded=false;
 	if (!connected || rt==null) {
@@ -173,12 +188,13 @@ public class Rconnection {
 	    return false;
 	}
 	int rl=r.getBinaryLength();
-	byte[] rq=new byte[sym.length()+5+rl+4];
-        sym.getBytes(0,sym.length(),rq,4);
-	Rtalk.setHdr(Rtalk.DT_STRING,sym.length()+1,rq,0);
-	rq[sym.length()+4]=0;
-	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,sym.length()+5);
-	r.getBinaryRepresentation(rq,sym.length()+9);
+        byte[] symn=sym.getBytes();
+	byte[] rq=new byte[symn.length+5+rl+4];
+        for(int ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
+	Rtalk.setHdr(Rtalk.DT_STRING,symn.length+1,rq,0);
+	rq[symn.length+4]=0;
+	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,symn.length+5);
+	r.getBinaryRepresentation(rq,symn.length+9);
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
 	if (rp!=null && rp.isOk())
 	    return succeeded=true;
@@ -186,10 +202,28 @@ public class Rconnection {
 	return false;
     }
 
+    /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
+        equals to calling {@link #assign(String, REXP)} */        
+    public boolean assign(String sym, double[] val) {
+        return assign(sym,new REXP(val));
+    }
+
+    /** assign values of an array of integers to a symbol in R (creating as vector of numbers).<br>
+        equals to calling {@link #assign(String, REXP)} */        
+    public boolean assign(String sym, int[] val) {
+        return assign(sym,new REXP(val));
+    }
+
+    /** open a file on the Rserve for reading
+        @param fn file name. should not contain any path delimiters, since Rserve may restrict the access to local working directory.
+        @return input stream to be used for reading. Note that the stream is read-once only, there is no support for seek or rewind. */
     public RFileInputStream openFile(String fn) throws IOException {
 	return new RFileInputStream(rt,fn);
     };
 
+    /** remove a file on the Rserve
+        @param fn file name. should not contain any path delimiters, since Rserve may restrict the access to local working directory.
+        @return <code>true</code> on success, <code>false</code> otherwise */
     public boolean removeFile(String fn) {
 	succeeded=false;
 	if (!connected || rt==null) {
