@@ -184,7 +184,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
 	/* draw ticks and labels for Y axis */
         {
-            double f=A[1].getSensibleTickDistance(50,18);
+            double f=A[1].getSensibleTickDistance(30,18);
             double fi=A[1].getSensibleTickStart(f);
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
