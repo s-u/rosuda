@@ -72,6 +72,7 @@ remark: this method can be used to load trees and data separately, but data must
         MapSegment mses[]=null;
         int msid=-1;
 
+        Common.beginWorking("Loading dataset");
         if (clen>10000 || (vset!=null && vset.count()>0 && vset.at(0)!=null && vset.at(0).size()>2000)) {
             pd=new ProgressDlg("Loading..."); pd.setText("Initializing...");
             pd.show();
@@ -118,6 +119,7 @@ remark: this method can be used to load trees and data separately, but data must
                         if (pd!=null) pd.dispose();
                         if (registerIt && root!=null) dr.getTreeRegistry().addTree(root);
                         if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
+                        Common.endWorking();
                         return root;
                     };
                 };
@@ -337,6 +339,7 @@ remark: this method can be used to load trees and data separately, but data must
                                 if (pd!=null) pd.dispose();
                                 if (registerIt && root!=null) dr.getTreeRegistry().addTree(root);
                                 if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
+                                Common.endWorking();
                                 return root;
                             };
                         };
@@ -466,6 +469,7 @@ remark: this method can be used to load trees and data separately, but data must
                             if (pd!=null) pd.dispose();
                             if (registerIt && root!=null) dr.getTreeRegistry().addTree(root);
                             if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
+                            Common.endWorking();
                             return root;
                         };
                         gotTree=true; isTree=false;
@@ -665,6 +669,7 @@ remark: this method can be used to load trees and data separately, but data must
         if (pd!=null) pd.dispose();
         if (registerIt && root!=null) dr.getTreeRegistry().addTree(root);
         if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
+        Common.endWorking();
         return root;
     }
 }
