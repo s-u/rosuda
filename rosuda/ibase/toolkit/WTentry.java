@@ -2,6 +2,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
 import java.util.*;
+import javax.swing.*;
 
 // what we ought to add to WT are among others:
 // - associated variables
@@ -17,11 +18,11 @@ public class WTentry extends Object
     public Window w;
     public String name;
     public int id=0;
-    public MenuItem mi=null;
-    public Menu menu=null;
+    public JMenuItem mi=null;
+    public JMenu menu=null;
     public int wclass=0;
 
-    public WTentry(Window win) {
+    public WTentry(JWindow win) {
 	w=win; id=lid; lid++;
 	mi=newMenuItem();
     }
@@ -33,11 +34,20 @@ public class WTentry extends Object
 	mi=newMenuItem();
     };
 
-    public MenuItem newMenuItem() {
-	MenuItem mi=new MenuItem(((name==null)?"Window":name)+" ["+id+"]");
+
+    public JMenuItem newMenuItem() {
+	JMenuItem mi=new JMenuItem(((name==null)?"Window":name)+" ["+id+"]");
 	mi.setActionCommand("WTMwindow"+id);
 	return mi;
     };
+
+    public JMenuItem newMenuItem(WinTracker wt) {
+        JMenuItem mi=new JMenuItem(((name==null)?"Window":name)+" ["+id+"]");
+        mi.setActionCommand("WTMwindow"+id);
+        mi.addActionListener(wt);
+        return mi;
+    };
+
 
     public String toString() {
 	return "WTentry(id="+id+", class="+wclass+", name="+name+", win="+((w==null)?"<null>":w.toString())+")";

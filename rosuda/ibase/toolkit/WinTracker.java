@@ -3,6 +3,7 @@ package org.rosuda.ibase.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import javax.swing.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
@@ -14,7 +15,7 @@ public class WinTracker implements ActionListener, FocusListener
 {
     public static WinTracker current=null;
 
-    Vector wins;   
+    Vector wins;
     WTentry curFocus=null;
 
     public WinTracker()
@@ -23,33 +24,44 @@ public class WinTracker implements ActionListener, FocusListener
     };
 
     void newWindowMenu(WTentry we) {
-	we.menu=new Menu("Window");
-	MenuItem mi=new MenuItem("Close window",new MenuShortcut(KeyEvent.VK_W,false)); mi.setActionCommand("WTMclose"+we.id);
+	we.menu=new JMenu("Window");
+	JMenuItem mi=new JMenuItem("Close window");
+        mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),false));
+        mi.setActionCommand("WTMclose"+we.id);
+        mi.addActionListener(this);
 	we.menu.add(mi);
-        mi=new MenuItem("Close same type",new MenuShortcut(KeyEvent.VK_W,true)); mi.setActionCommand("WTMcloseClass"+we.wclass);
+        mi=new JMenuItem("Close same type");
+        mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1,false));
+        mi.setActionCommand("WTMcloseClass"+we.wclass);
+        mi.addActionListener(this);
         we.menu.add(mi);
-        mi=new MenuItem("Close all"); mi.setActionCommand("WTMcloseAll");
+        mi=new JMenuItem("Close All");
+        mi.setActionCommand("WTMcloseAll");
+        mi.addActionListener(this);
         we.menu.add(mi);
         we.menu.addSeparator();
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we2=(WTentry)e.nextElement();
-	    if (we2!=null && we2!=we && we2.menu!=null)
-		we.menu.add(we2.newMenuItem());
-	};	
+	    if (we2!=null && we2!=we && we2.menu!=null) {
+              we.menu.add(we2.newMenuItem(this));
+            }
+	};
 	we.menu.addActionListener(this);
     };
 
-    public void add(WTentry we) { 
+    public void add(WTentry we) {
 	if (we==null) return;
 	wins.addElement(we);
-	if (we.menu==null) newWindowMenu(we);
+	if (we.menu==null) {
+          newWindowMenu(we);
+        }
 	if (we.mi!=null) {
 	    for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 		WTentry we2=(WTentry)e.nextElement();
 		if (Global.DEBUG>0)
 		    System.out.println("-- updating menu; we2="+we2.toString());
 		if (we2!=null && we2.menu!=null) {
-		    we2.menu.add(we.newMenuItem());
+		    we2.menu.add(we.newMenuItem(this));
 		    if (Global.DEBUG>0) System.out.println("-- menu updated");
 		};
 	    };
@@ -69,8 +81,9 @@ public class WinTracker implements ActionListener, FocusListener
 		    int i=0;
 		    String ac=we.mi.getActionCommand();
 		    while(i<we2.menu.getItemCount()) {
-			MenuItem mi=we2.menu.getItem(i);
-			if (mi.getActionCommand().compareTo(ac)==0) {
+			JMenuItem mi=we2.menu.getItem(i);
+                        if (mi==null);
+			else if (mi.getActionCommand().compareTo(ac)==0) {
 			    if (Global.DEBUG>0)
 				System.out.println("-- found by action command, removing");
 			    we2.menu.remove(mi);
@@ -84,9 +97,9 @@ public class WinTracker implements ActionListener, FocusListener
 	if (Global.DEBUG>0)
 	    System.out.println(">>window removed: \""+we.name+"\"");
         if (wins.size()==0) {
-            if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
+            /*if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
                 SplashScreen.main.setVisible(true);
-            else if(Global.AppType==Global.AT_standalone) {
+            else*/ if(Global.AppType==Global.AT_standalone) {
                 System.out.println("FATAL: Stand-alone mode, last window closed, but no splash screen present. Assuming exit request.");
                 System.exit(0);
             }
@@ -95,20 +108,21 @@ public class WinTracker implements ActionListener, FocusListener
 
     public void rm(Window w) {
 	if (Global.DEBUG>0)
-	    System.out.println(">>request to remove window \""+w.toString()+"\"");	
+	    System.out.println(">>request to remove window \""+w.toString()+"\"");
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we=(WTentry)e.nextElement();
 	    if (Global.DEBUG>0)
 		System.out.println("-- lookup: "+((we==null)?"<null>":we.toString()));
-	    if (we!=null && we.w==w) { 
+	    if (we!=null && we.w==w) {
 		if (Global.DEBUG>0) System.out.println("-- matches");
-		rm(we); return; 
+		rm(we); return;
 	    };
 	};
     };
 
-    public Menu getWindowMenu(Window w) {
-	WTentry we=getEntry(w);
+    public JMenu getWindowMenu(Window w) {
+        WTentry we=getEntry(w);
+        System.out.println(we.toString());
 	return (we==null)?null:we.menu;
     };
 
@@ -149,22 +163,21 @@ public class WinTracker implements ActionListener, FocusListener
 	    System.out.println(">> action: "+cmd+" by "+o.toString());
 	for(Enumeration e=wins.elements();e.hasMoreElements();){
 	    WTentry we=(WTentry)e.nextElement();
-	    if (we!=null && (cmd.compareTo("WTMclose"+we.id)==0 ||
+            if (we!=null && (cmd.compareTo("WTMclose"+we.id)==0 ||
                       (cmd=="WTMcloseAll" && we.wclass>TFrame.clsVars) ||
-                      (cmd.compareTo("WTMcloseClass"+we.wclass)==0)
+                      cmd.equals("WTMcloseClass"+we.wclass)
                       )) {
 		if (Global.DEBUG>0)
-		    System.out.println(">>close: "+we+" ("+we.w.toString()+")");
-		we.w.dispose();
-	    };
+		    System.out.println(">>close:  ("+we.id+")");
+		if (we.w!=null) we.w.dispose();
+	    }
 	    if (we!=null && cmd.compareTo("WTMwindow"+we.id)==0) {
 		if (Global.DEBUG>0)
 		    System.out.println(">>activate: \""+we.name+"\" ("+we.w.toString()+")");
-		we.w.requestFocus();
-		we.w.toFront();
-		return;
-	    };
-	};
+                if (we.w!=null) we.w.requestFocus();
+                if (we.w!=null) we.w.toFront();
+	    }
+	}
     };
 
     public void focusGained(FocusEvent ev) {
@@ -189,7 +202,7 @@ public class WinTracker implements ActionListener, FocusListener
 
     public void Exit() {
 	disposeAll();
-	System.exit(0);	
+	System.exit(0);
     };
 
     // TODO: implement things like attachVar() etc.
