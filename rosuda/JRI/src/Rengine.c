@@ -9,8 +9,16 @@
 #include "Rinit.h"
 #include "globals.h"
 
-#ifndef Win32
+#ifdef Win32
+#ifdef _MSC_VER
+__declspec(dllimport) int UserBreak;
+#else
+#define UserBreak     (*_imp__UserBreak)
+extern int UserBreak;
+#endif
+#else
 #include <R_ext/eventloop.h>
+#include <signal.h>
 #endif
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
@@ -307,3 +315,14 @@ JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetList
     }
     
 }
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
+(JNIEnv *env, jobject this, jint flag) {
+#ifdef Win32
+    UserBreak=1;
+#else
+    /* not really a perfect solution ... need to clarify what's the best ... */
+    kill(getpid(), SIGINT);
+#endif
+}
+
