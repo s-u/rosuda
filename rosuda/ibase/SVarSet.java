@@ -33,7 +33,7 @@ public class SVarSet {
     
     /** sets the marker for this dataset
 	@param m marker */
-    public void setMarker(SMarker m) { mark=m; };
+    public void setMarker(SMarker m) { mark=m; m.masterSet=this; };
     /** returns the marker of this dataset
 	@return marker */
     public SMarker getMarker() { return mark; };
@@ -93,7 +93,7 @@ public class SVarSet {
 	@param i index
 	@return variable object or <code>null</code> if index out of range */
     public SVar at(int i) {
-	return ((i<0)||(i>vars.size()))?null:(SVar)vars.elementAt(i);
+	return ((i<0)||(i>=vars.size()))?null:(SVar)vars.elementAt(i);
     };
 
     /** returns data value of a variable specified by name and row index
