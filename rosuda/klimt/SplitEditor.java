@@ -132,7 +132,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             boolean isCat=rsp.isCat();
             double sumL=0, sumR=0; // regr: sum of y[i] left/right
             int trct=0;
-            /*
+
             for (int ix=0;ix<fullrks.length;ix++)
                 if (n.data.contains(new Integer(fullrks[ix]))) {
                     rks[rki++]=fullrks[ix];
@@ -140,8 +140,8 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         sumR+=rsp.atD(fullrks[ix]); trct++;
                     }
                 };
-             */
 
+            /* experimental speedup (not working :P)
             {
                 int k=0, l=n.data.size();
                 while (k<l) {
@@ -161,7 +161,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         }
                     };
             }
-
+            */
             sw.profile("innerPlots: calc tree ranks");
             double mnL=0.0, mnR=0.0; // regr: mean left/right
             if (!isCat) {
