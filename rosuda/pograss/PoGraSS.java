@@ -36,8 +36,8 @@ public class PoGraSS
     public static final int FF_Serif     = 2; // usually Times
     public static final int FF_Mono      = 3; // usually Courier or system font
 
-    public String versionString="0.94";
-    public int    version=0x0094;
+    public String versionString="0.95";
+    public int    version=0x0095;
         
     public PoGraSS() { boundsX=0; boundsY=0; };
 
