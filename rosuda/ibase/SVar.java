@@ -44,6 +44,9 @@ public class SVar extends Vector
     
     public static final String missingCat = "NA";
 
+    /** notifier for changes */
+    public Notifier notify;
+    
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
@@ -59,7 +62,8 @@ public class SVar extends Vector
 	    cats=new Vector(); ccnts=new Vector();
 	};
 	
-	if (first!=null) add(first);	    
+	if (first!=null) add(first);
+        notify=new Notifier();
     };
     /** construct new variable (equals to <code>SVar(Name,iscat,null)</code>)
  	@param Name variable name
@@ -97,6 +101,7 @@ public class SVar extends Vector
                 sortCategories();
             };
 	};
+        notify.NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     };
 
     public static final int SM_lexi = 0; /** sort method lexicograph. */
@@ -157,6 +162,7 @@ public class SVar extends Vector
     /** define the variable explicitely as non-categorial (drop category list) */ 
     public void dropCat() {
 	cats=null; ccnts=null; cat=false;
+        notify.NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     };
 
     /** adds a new case to the variable (NEVER use addElement! see package header) Also beware, categorial varaibles are classified by object not by value!
@@ -197,10 +203,41 @@ public class SVar extends Vector
             };
 	};
        	super.addElement(o); // we don't add the element unless we're through all checks etc.
-
+        notify.NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
 	return true;
     };
 
+    /** replaces an element at specified position - use with care!. this doesn't work for categorical variables.
+        in that case you need to dropCat(), make modifications and categorize().
+        also numerical variables only "grow" their min/max - i.e. if min/max was the removed
+        element, then min/max is not adapted to shrink the range
+        */
+    public boolean replace(int i, Object o) {
+        if (i<0 || i>=size() || isCat()) return false;
+        Object oo=at(i);
+        if (oo==o) return true;
+        if (oo==null) {
+            missingCount--;
+            if (missingCount==0) hasNull=false;
+        }
+        if (o==null) {
+            missingCount++; hasNull=true;
+        }
+        if (isnum && o!=null) {
+            try {
+                double val=((Number)o).doubleValue();
+                if (val>max) max=val;
+                if (val<min) min=val;
+            } catch(Exception E) {
+                // what do we do when the cast doesn't work ? we return false indicating so
+                return false;
+            };
+        };
+       	setElementAt(o,i); // we don't modify the element unless we're through all checks etc.
+        notify.NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
+        return true;
+    }
+    
     //---- uncomment for JDK 1.2 or higher if necessary - won't work with 1.1 ------
     // since add can return false on failure addElement should NOT be activated even in 1.2 and above
     // public void addElement(Object o) { add(o); };
