@@ -47,6 +47,13 @@ public class Platform {
                 if (Global.DEBUG>0) System.out.println("Platform.init[Mac platform] failed to create platform-dependent class "+classPrefix+"PlatformMac: "+e.getMessage());
             }
             try {
+                Class c=Class.forName(classPrefix+"Platform");
+                p=(Platform) c.newInstance();
+                return p;
+            } catch (Exception e) {
+                if (Global.DEBUG>0) System.out.println("Platform.init[Mac platform] failed to create platform-dependent class "+classPrefix+"Platform: "+e.getMessage());
+            }
+            try {
                 Class c=Class.forName("org.rosuda.util.PlatformMac");
                 p=(Platform) c.newInstance();
                 return p;
@@ -62,6 +69,13 @@ public class Platform {
                     return p;
                 } catch (Exception e) {
                     if (Global.DEBUG>0) System.out.println("Platform.init[Windows platform] failed to create platform-dependent class "+classPrefix+"PlatformWin: "+e.getMessage());
+                }
+                try {
+                    Class c=Class.forName(classPrefix+"Platform");
+                    p=(Platform) c.newInstance();
+                    return p;
+                } catch (Exception e) {
+                    if (Global.DEBUG>0) System.out.println("Platform.init[Windows platform] failed to create platform-dependent class "+classPrefix+"Platform: "+e.getMessage());
                 }
                 try {
                     Class c=Class.forName("org.rosuda.util.PlatformWin");
