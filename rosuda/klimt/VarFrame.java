@@ -2,8 +2,10 @@ package org.rosuda.klimt;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.plots.*;
 import org.rosuda.util.*;
 import org.rosuda.klimt.plots.*;
+import org.rosuda.plugins.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -18,13 +20,16 @@ public class VarFrame extends TFrame {
     VarCanvas vc;
     VarCmdCanvas vcc;
     Scrollbar sb=null;
-
+    DataRoot dr;
+    
     static int newRootId=1;
 
     public static final int cmdHeight=182;
     
-    public VarFrame(SVarSet vs, int x, int y, int w, int h) {
-	super(vs.getName()+" (Variables)",TFrame.clsVars);
+    public VarFrame(DataRoot dr, int x, int y, int w, int h) {
+	super(dr.getDataSet().getName()+" (Variables)",TFrame.clsVars);
+        SVarSet vs=dr.getDataSet();
+        this.dr=dr;
         setBackground(Common.backgroundColor);
         if (h>550) h=550; // temporary fix until we know how to get really available space sub. menus etc.
 	int rh=h;
@@ -283,14 +288,16 @@ public class VarFrame extends TFrame {
             if (cmd=="exportForest") {
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(win,"Export forest data to ...","forest.txt");
-                    vs.exportForest(p);
+                    dr.getTreeRegistry().exportForest(p);
                 } catch(Exception ee) {};
             };
             if (cmd=="displayForest") {
-                SVarSet fs=vs.getForestVarSet();
+                SVarSet fs=dr.getTreeRegistry().getForestVarSet();
+                DataRoot dr=Klimt.addData(fs);
+                dr.setDataType(DataRoot.DT_Forest);
                 Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
                 Common.screenRes=sres;
-                VarFrame vf=Klimt.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
+                VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
             };
             /*
             if (cmd=="openTree") {
@@ -307,7 +314,8 @@ public class VarFrame extends TFrame {
             if (cmd=="openData") {
                 TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
                 SVarSet tvs=new SVarSet();
-                SNode t=Klimt.openTreeFile(f,null,tvs);
+                DataRoot dr=Klimt.addData(tvs);
+                SNode t=Klimt.openTreeFile(f,null,dr);
                 if (t==null && tvs.count()<1) {
                     new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
                 } else {
@@ -316,7 +324,7 @@ public class VarFrame extends TFrame {
                     Common.screenRes=sres;
                     if (t!=null)
                         Klimt.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                    VarFrame vf=Klimt.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
+                    VarFrame vf=Klimt.newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
                 }
             }
             if (cmd=="map") {
@@ -337,7 +345,7 @@ public class VarFrame extends TFrame {
                 }
             }
             if (cmd=="openTree") { // Open tree
-                SNode t=Klimt.openTreeFile(Common.mainFrame,null,vs,true,true);
+                SNode t=Klimt.openTreeFile(Common.mainFrame,null,dr,true,true);
                 if (t!=null) {
                     vc.getVars();
                     vc.repaint();
@@ -368,7 +376,7 @@ public class VarFrame extends TFrame {
                     t.calculateSampleDeviances();
                     TreeCanvas tc=Klimt.newTreeDisplay(t,ri.frame);
                     tc.repaint(); tc.redesignNodes();
-                    vc.vs.registerTree(t,tn);
+                    dr.getTreeRegistry().registerTree(t,tn);
                 }
             }
             if (cmd=="export") { // Export ...
@@ -444,7 +452,7 @@ public class VarFrame extends TFrame {
                                 xdim=100+40*vs.at(i).getNumCats(); ydim=200;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                             } else {
-                                HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker()); cvs=hc;
+                                HistCanvasEx hc=new HistCanvasEx(f,vs.at(i),vs.getMarker(),dr.getNodeMarker()); cvs=hc;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
                             };
                             cvs.setSize(new Dimension(xdim,ydim));
@@ -480,7 +488,7 @@ public class VarFrame extends TFrame {
             if (cmd=="tfplot") {
                 TFrame f=new TFrame("Tree Flow Plot",TFrame.clsUser);
                 f.addWindowListener(Common.getDefaultWindowListener());
-                TreeFlowCanvas lc=new TreeFlowCanvas(f,vs.getTrees());
+                TreeFlowCanvas lc=new TreeFlowCanvas(f,dr.getTreeRegistry().getRoots());
                 lc.setSize(400,300);
                 f.add(lc); f.pack(); f.show();
             }
@@ -521,7 +529,7 @@ public class VarFrame extends TFrame {
                                         vs.at(vnr[1]).getName()+" vs "+
                                         vs.at(vnr[0]).getName()+")",TFrame.clsScatter);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    ScatterCanvas sc=new ScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker());
+                    SectScatterCanvas sc=new SectScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),dr.getNodeMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
