@@ -344,8 +344,8 @@ public class VarFrame extends TFrame {
                     f.add(bc); f.pack(); f.show();
                 }
             }
-            if (cmd=="openTree") { // Open tree
-                SNode t=Klimt.openTreeFile(Common.mainFrame,null,dr,true,true);
+            if (cmd=="openTree" || cmd=="openTreeSilently") { // Open tree
+                SNode t=Klimt.openTreeFile(Common.mainFrame,null,dr,true,(cmd=="openTree"));
                 if (t!=null) {
                     vc.getVars();
                     vc.repaint();
@@ -938,7 +938,7 @@ public class VarFrame extends TFrame {
 		    WinTracker.current.disposeAll();
 		System.exit(0);
 	    };
-            if (cmd==1) vc.run(this,"openTree");
+            if (cmd==1) vc.run(this,ev.isShiftDown()?"openTreeSilently":"openTree");
             if (cmd==2) vc.run(this,"barchart");
             if (cmd==3) vc.run(this,"scatterplot");
             if (cmd==4) vc.run(this,"boxplot");
