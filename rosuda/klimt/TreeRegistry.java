@@ -22,10 +22,31 @@ public class TreeRegistry {
     /** register a tree with the dataset */
     public void registerTree(SNode t, String n) {
         if (trees==null) trees=new Vector();
-        trees.addElement(new TreeEntry(t,n));
+        if (!contains(t))
+            trees.addElement(new TreeEntry(t,n));
         t.getRootInfo().home=this;
     }
 
+    /** checks whether a specific root is registered in the registry */
+    public boolean contains(SNode r) {
+        if (trees==null) return false;
+        for (Enumeration e = trees.elements() ; e.hasMoreElements() ;) {
+            TreeEntry te=(TreeEntry) e.nextElement();
+            if (te!=null && te.root==r) return true;
+        }
+        return false;
+    }
+
+    /** checks whether a tree with the specified name is present in the registry */
+    public boolean contains(String name) {
+        if (trees==null) return false;
+        for (Enumeration e = trees.elements() ; e.hasMoreElements() ;) {
+            TreeEntry te=(TreeEntry) e.nextElement();
+            if (te!=null && te.name==name) return true;
+        }
+        return false;
+    }
+    
     /** this method equals to calling registerTree(t,t.getRootInfo().name) and is provided for backwards compatibility with older applications */
     public void addTree(SNode t) {
         registerTree(t,t.getRootInfo().name);
