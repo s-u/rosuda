@@ -298,6 +298,9 @@
 				1C37F18404D84C3000A8030F,
 				1C37F18604D85C5F00A8030F,
 				1C37F18A04D8681400A8030F,
+				1C4A15D304D93C2000A8030F,
+				1C4A15D604D93F5E00A8030F,
+				1C4A15D704D93F5E00A8030F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,6 +412,50 @@
 		};
 		1C37F18A04D8681400A8030F = {
 			fileRef = 1C37F18904D8681400A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C4A15D104D93C2000A8030F = {
+			children = (
+				1C4A15D204D93C2000A8030F,
+			);
+			isa = PBXGroup;
+			path = iplots;
+			refType = 4;
+		};
+		1C4A15D204D93C2000A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Framework.java;
+			refType = 4;
+		};
+		1C4A15D304D93C2000A8030F = {
+			fileRef = 1C4A15D204D93C2000A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C4A15D404D93F5E00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlotPolygon.java;
+			refType = 4;
+		};
+		1C4A15D504D93F5E00A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PlotText.java;
+			refType = 4;
+		};
+		1C4A15D604D93F5E00A8030F = {
+			fileRef = 1C4A15D404D93F5E00A8030F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1C4A15D704D93F5E00A8030F = {
+			fileRef = 1C4A15D504D93F5E00A8030F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1200,6 +1247,7 @@
 				F8EE911104D6A73700FA4796,
 				F8EE911F04D6A73700FA4796,
 				1CE96E6504D7D99D00A8030F,
+				1C4A15D104D93C2000A8030F,
 			);
 			isa = PBXGroup;
 			path = rosuda;
@@ -1287,7 +1335,9 @@
 				1CA4332F04D840DD00A8030F,
 				1CE96E5704D6D95900A8030F,
 				1CE96E5804D6D95900A8030F,
+				1C4A15D404D93F5E00A8030F,
 				1CA4331D04D819B900A8030F,
+				1C4A15D504D93F5E00A8030F,
 				1CE96E5504D6D8F500A8030F,
 				1CE96E6104D6DE5A00A8030F,
 				1CE96E7804D7E7BA00A8030F,
