@@ -39,8 +39,7 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
 
 
     /** find a specified text in a JTextComponent
-     * @param searchArea where should we search your input
-     * @param keyWord and what is much more important what do you want to search*/
+     * @param searchArea where should we search your input*/
     public TextFinder(JTextComponent searchArea) {
         this.setTitle("Find");
 

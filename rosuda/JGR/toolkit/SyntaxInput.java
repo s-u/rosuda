@@ -100,13 +100,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     public void showCmdCompletions(String[] result) {
-        if (cmdHelp != null) cmdHelp.hide();
-        p = getCaret().getMagicCaretPosition();
-        SwingUtilities.convertPointToScreen(p,this);
-        mComplete.refresh(result);
-        mComplete.setVisible(true);
-        cmdHelp = PopupFactory.getSharedInstance().getPopup(this,mComplete,p.x,p.y+15);
-        cmdHelp.show();
+        try {
+            if (cmdHelp != null) cmdHelp.hide();
+        	p = getCaret().getMagicCaretPosition();
+        	SwingUtilities.convertPointToScreen(p,this);
+        	mComplete.refresh(result);
+        	mComplete.setVisible(true);
+        	cmdHelp = PopupFactory.getSharedInstance().getPopup(this,mComplete,p.x,p.y+15);
+        	cmdHelp.show();
+        } catch (Exception e) {}
     }
 	
     public void keyTyped(KeyEvent ke) {
@@ -233,22 +235,24 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     private void showFunHelp(String fun) {
-        funHelp = RController.getFunHelpTip(fun);
-        if (fun != null && funHelp != null) {
-            Tip = new JToolTip();
-            Tip.setTipText(funHelp);
-            Tip.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (funHelpTip != null) funHelpTip.hide();
-                }
-            });
-            p = getCaret().getMagicCaretPosition();
-            SwingUtilities.convertPointToScreen(p,this);
-            funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p.x,p.y+20);
-            funHelpTip.show();
-            commands.add(funHelp);
-            commands.add(p);
-        }
+        try {
+            funHelp = RController.getFunHelpTip(fun);
+            if (fun != null && funHelp != null) {
+                Tip = new JToolTip();
+                Tip.setTipText(funHelp);
+                Tip.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        if (funHelpTip != null) funHelpTip.hide();
+                    }
+                });
+                p = getCaret().getMagicCaretPosition();
+                SwingUtilities.convertPointToScreen(p,this);
+                funHelpTip = PopupFactory.getSharedInstance().getPopup(this,Tip,p.x,p.y+20);
+                funHelpTip.show();
+                commands.add(funHelp);
+                commands.add(p);
+            }
+        } catch (Exception e) {}
     }
 	
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,int condition, boolean pressed) {

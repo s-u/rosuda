@@ -49,7 +49,7 @@ public class FileSelector extends JFrame {
         }
     }
 
-    /** @returns filename */
+    /** @return filename */
     public String getFile() {
         try {
             if (Common.isMac())
@@ -60,7 +60,7 @@ public class FileSelector extends JFrame {
         catch (Exception e) { return null;}
     }
 
-    /** @returns directory */
+    /** @return directory */
     public String getDirectory() {
         try {
             if (Common.isMac())

@@ -28,8 +28,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 
     private boolean wrap=true;
 
-    /** SyntaxArea, with highlighting matching brackets
-        * @param highlight should we do coloring and highlighting brackets */
+    /** SyntaxArea, with highlighting matching brackets */
     public SyntaxArea() {
         this.setContentType("text/rtf");
         this.setDocument(new SyntaxDocument());
@@ -225,7 +224,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     /** highlight the corresponding brackets (forward)
         * @param par String which bracket
         * @param pos int current position
-        * @return index int where the matching bracket is
         */
     public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
         //System.out.println(par);
@@ -297,7 +295,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     /** highlight the corresponding brackets (backward)
         * @param par String which bracket
         * @param pos int current position
-        * @return index int where the matching bracket is
         */
 
     public  void highlightParanthesisBackward(String par, int pos) throws BadLocationException{

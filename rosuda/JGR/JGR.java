@@ -35,7 +35,6 @@ public class JGR {
     public static final String SPLASH = "splash.jpg";
 
     /* global variables for whole JGR application */
-
     public static Vector RHISTORY = null;
     public static JGRConsole MAINRCONSOLE = null;
     public static String RHOME = null;
@@ -143,7 +142,7 @@ public class JGR {
     }
 
     /**
-        * add MenuItem at runtime to ConoleMenu
+        * add MenuItem at runtime to ConsoleMenu
      * @param menu MenuName
      * @param name ItemName
      * @param cmd  Command
