@@ -41,6 +41,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         c=new org.rosuda.javaGD.JGDPanel(w, h);
         System.out.println("gdOpen:creating JGDPanel done");
         jfr.getContentPane().add((org.rosuda.javaGD.JGDPanel)c);
+        jfr.setSize((int)w,(int)h);
         jfr.pack();
         System.out.println("gdOpen:visible");
         jfr.setVisible(true);

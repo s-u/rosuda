@@ -328,8 +328,9 @@ public class Framework implements Dependent, ActionListener {
 		vs.at(v1).getName()+")",TFrame.clsScatter);	
         f.addWindowListener(Common.getDefaultWindowListener());
         ScatterCanvas sc=new ScatterCanvas(f,vs.at(v1),vs.at(v2),vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(sc.getWidth(),sc.getHeight()));
         f.add(sc); f.pack(); f.show();
         f.initPlacement();
         return sc;
@@ -353,6 +354,7 @@ public class Framework implements Dependent, ActionListener {
         int xdim=100+40*theCat.getNumCats();
         if (xdim>800) xdim=800;
         bc.setSize(new Dimension(xdim,200));
+        f.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
         f.add(bc); f.pack(); f.show();
         f.initPlacement();
         return bc;
@@ -369,12 +371,13 @@ public class Framework implements Dependent, ActionListener {
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        LineCanvas sc=new LineCanvas(f,vs.at(rv),vl,vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
-        sc.setSize(new Dimension(400,300));
-        f.add(sc); f.pack(); f.show();
+        LineCanvas lc=new LineCanvas(f,vs.at(rv),vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(lc);
+        lc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(lc.getWidth(),lc.getHeight()));
+        f.add(lc); f.pack(); f.show();
         f.initPlacement();
-        return sc;
+        return lc;
     };
 
     public HamCanvas newHammock(int[] v) { return newHammock(cvs,v); }
@@ -386,12 +389,13 @@ public class Framework implements Dependent, ActionListener {
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        HamCanvas sc=new HamCanvas(f,vl,vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-        sc.setSize(new Dimension(400,300));
-        f.add(sc); f.pack(); f.show();
+        HamCanvas hc=new HamCanvas(f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
+        hc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(hc.getWidth(),hc.getHeight()));
+        f.add(hc); f.pack(); f.show();
         f.initPlacement();
-        return sc;
+        return hc;
     }
     
     
@@ -399,17 +403,18 @@ public class Framework implements Dependent, ActionListener {
     public PCPCanvas newPCP(SVarSet vs, int[] v) {
     	if (v.length==0) return null;
         updateMarker(vs,v[0]);
-        TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
+        TFrame f=new TFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-        sc.setSize(new Dimension(400,300));
-        f.add(sc); f.pack(); f.show();
+        PCPCanvas pc=new PCPCanvas(f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(pc);
+        pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(pc.getWidth(),pc.getHeight()));
+        f.add(pc); f.pack(); f.show();
         f.initPlacement();
-        return sc;
+        return pc;
     }    
 
     /** display a new histogram of a variables from current dataset
@@ -422,7 +427,8 @@ public class Framework implements Dependent, ActionListener {
 	f.addWindowListener(Common.getDefaultWindowListener());
 	HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker());
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-	hc.setSize(new Dimension(400,300));
+        hc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(hc.getWidth(),hc.getHeight()));
 	f.add(hc); f.pack(); f.show();
         f.initPlacement();
 	return hc;
@@ -436,14 +442,15 @@ public class Framework implements Dependent, ActionListener {
         TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
                             TFrame.clsBox);
         f.addWindowListener(Common.getDefaultWindowListener());
-        BoxCanvas sc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+        BoxCanvas bc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
-        sc.setSize(new Dimension(80,200));
-        f.add(sc); f.pack(); f.show();
+        bc.setSize(new Dimension(80,200));
+        f.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
+        f.add(bc); f.pack(); f.show();
         f.initPlacement();
-        return sc;
+        return bc;
     };
 
     // no VarFRame since that's Klimt-specific
