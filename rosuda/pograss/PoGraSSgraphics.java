@@ -39,7 +39,7 @@ class PoGraSSgraphics extends PoGraSS
 	storage instead of fixed arrays, but well, there was no need for bigger color
 	tables (yet).<p>
 	Keep in mind, that the user can use any number of colors by using
-	{@link setColor(int,int,int)}. the defineColor principle is meant just to
+        {@link #setColor(int,int,int)}. the defineColor principle is meant just to
 	define a fixed set of few colors used frequently throughout the application.
     */	
     public void defineColor(String nam, int R, int G, int B) 

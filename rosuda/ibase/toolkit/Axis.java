@@ -65,7 +65,7 @@ public class Axis extends Notifier
 	setDefaultRange();
     };
 
-    /** change axis type (implicitely calls {@link setDefaultRange} but preserves
+    /** change axis type (implicitely calls {@link #setDefaultRange} but preserves
 	cat sequence if switching between "compatible" types, i.e. 1 and 2) */
     public void setType(int nt) {
 	if (nt==type) return;
@@ -78,7 +78,7 @@ public class Axis extends Notifier
 
     /** set geomery of the axis and notifies dependents upon change
 	@param orientation orientation of the axis (horiz/vert)
-	@param begin begin/anchor of the axis - i.e. the pixel to correspond to {@link vBegin}
+        @param begin begin/anchor of the axis - i.e. the pixel to correspond to {@link #vBegin}
 	@param length length of the axis (note: may be negative if necessary)
      */
     public void setGeometry(int orientation, int begin, int len) {
@@ -111,7 +111,7 @@ public class Axis extends Notifier
 	};
     };
 
-    /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used. For categorial types this also resets categories sequence to default (ordered by cat ID) - equalt to calling @link{setDefaultRange(true)} */
+    /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used. For categorial types this also resets categories sequence to default (ordered by cat ID) - equalt to calling @link{#setDefaultRange(boolean) setDefaultRange(true)} */
     public void setDefaultRange() { setDefaultRange(true); };
 
     /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used.)
@@ -149,7 +149,7 @@ public class Axis extends Notifier
     /** get graphical position of case with index i (for categorial vars returns
 	the same as getCatCenter called for the category of the case)
 	@param i index of the case
-	@returns graphical position of the case */
+	@return graphical position of the case */
     public int getCasePos(int i) {	
 	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*((double)i));
 	if (type==0) return gBegin+(int)(((double)gLen)*(v.atF(i)-vBegin)/vLen);
@@ -168,9 +168,9 @@ public class Axis extends Notifier
     };
 
     /** get value corresponding to a geometrical position <code>val</code>
-	(for type=0 and 3 only), hence this is the inverse of {@link getValuePos}	
+(for type=0 and 3 only), hence this is the inverse of {@link #getValuePos}	
 	@param pos position on the screen
-	@returns value corresponding to the supplied position
+	@return value corresponding to the supplied position
     */
     public double getValueForPos(int pos) {
 	if (type==3) return ((double)(pos-gBegin))*((double)datacount)/((double)gLen);
@@ -314,7 +314,7 @@ public class Axis extends Notifier
 
     /** for cat types return the position of a category in the sequence
 	of categories. w/o reordering it's always c. It is often used
-	in conjunction with {@link moveCat} as npos parameter when destination
+in conjunction with {@link #moveCat} as npos parameter when destination
 	is also a category
 	@param c category index
 	@return position of the category in the sequence
@@ -347,7 +347,7 @@ public class Axis extends Notifier
     };
 
     /** returns first visible tick given a tick distance. it is mostly
-	used in conjunction with {@link getSensibleTickDistance}
+used in conjunction with {@link #getSensibleTickDistance}
 	@param tickDist tick distance
 	@return first visible tick mark
     */

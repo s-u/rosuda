@@ -66,8 +66,8 @@ public class SVar extends Vector
  	@param Name variable name */
     public SVar(String Name) { this(Name,false,null); };
 
-    /** sets the {@link guessNum} flag. It must me set before the first add(..) call because the guess is made
-        based on the first added object (hence makes no sense if {@link SVar(String,boolean,Object)} was used). */
+    /** sets the {@link #guessNum} flag. It must me set before the first add(..) call because the guess is made
+        based on the first added object (hence makes no sense if {@link #SVar(String,boolean,Object)} was used). */
     public void tryToGuessNum(boolean doit) {
         guessNum=doit;
     };
@@ -205,7 +205,7 @@ public class SVar extends Vector
     };
 
     /** returns list of indexes ordered by rank.
-	for details see @link{getRanked(SVar, SMarker, int)} */
+        for details see @link{#getRanked(SVar, SMarker, int)} */
     public int[] getRanked() { return getRanked(this,null,0); };
 
     /** returns list of indexes ordered by rank, for non-cat, num vars only. missing
@@ -213,7 +213,7 @@ public class SVar extends Vector
 	@param v variable (should be obtained by at(..))
 	@param m marker to use for filtering. if <code>null</code> all cases will be checked
 	@param markspec mark for filtering, i.e. cases with that mark will be used only
-	@returns list of indexes or <code>null</code> is any of the following
+	@return list of indexes or <code>null</code> is any of the following
 	cases: variable is not numerical or is categorical, no cases matching
 	specification are present */
     public static int[] getRanked(SVar v, SMarker m, int markspec) {

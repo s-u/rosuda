@@ -51,7 +51,7 @@ public abstract class DBCanvas extends Canvas
     };
 
     /** normally we would not use paint at all, but sometimes paint is called
-	instead of update, so we want to force {@link update} instead */
+        instead of update, so we want to force {@link #update} instead */
     public void paint(Graphics g)
     {
 	update(g);

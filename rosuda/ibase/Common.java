@@ -59,7 +59,7 @@ public class Common
 	first approach is to use capitals and numbers only. If that doesnt work
 	then first letter+first consonant+last letter is used.
     @param s string to be abbreviated 
-    @returns abbreviated string (mostly trigraph, but exceptions may include
+    @return abbreviated string (mostly trigraph, but exceptions may include
     4 letters) */
     public static String getTriGraph(String s) {
 	if (s.length()<4) return s;
@@ -103,7 +103,7 @@ public class Common
     };
 
     /** returns screen resolution. the value is cached after first successful retrival
-        @returns screen resolution */
+        @return screen resolution */
     public static Dimension getScreenRes() {
         if (Common.screenRes==null) Common.screenRes=Toolkit.getDefaultToolkit().getScreenSize();
         return Common.screenRes;

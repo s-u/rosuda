@@ -70,11 +70,11 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 {
     /** associated numerical variable */
     SVar v;
-    /** associated categorical variable if {@link vsCat} is <code>true</code> */
+    /** associated categorical variable if {@link #vsCat} is <code>true</code> */
     SVar cv;
     /** associated marker */
     SMarker m;
-    /** if <code>true</code> then side-by-side bosplots grouped by {@link cv} are drawn,
+    /** if <code>true</code> then side-by-side bosplots grouped by {@link #cv} are drawn,
 	otherwise draw just a single boxpolot */
     boolean vsCat=false;
     boolean valid=false, dragMode=false, areMarked=false;

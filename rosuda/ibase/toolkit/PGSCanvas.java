@@ -13,10 +13,10 @@ public class PGSCanvas extends DBCanvas implements Commander {
     Frame myFrame=null;
     /** description of this canvas. */
     String desc="untitled PGS canvas";
-    
-    /** paintBuffer simply calls {@link paintPoGraSS} on the supplied {@link Graphics}.
-	Any further classes should override {@link paintPoGraSS} instead of
-	{@link paintBuffer}  */
+
+    /** paintBuffer simply calls {@link #paintPoGraSS} on the supplied {@link Graphics}.
+        Any further classes should override {@link #paintPoGraSS} instead of
+        {@link #paintBuffer}  */
     public void paintBuffer(Graphics g) {
 	PoGraSSgraphics p=new PoGraSSgraphics(g);
 	paintPoGraSS(p);	
@@ -26,13 +26,13 @@ public class PGSCanvas extends DBCanvas implements Commander {
 	for dialog boxes to raise the correct frame before entering modal state.
 	If no frame is set, default common frame is used by the dialogs. */
     public void setFrame(Frame owner) { myFrame=owner; };
-    /** returns corresponding frame containing this canvas as set by {@link setFrame} 
-	@returns associated frame */
+    /** returns corresponding frame containing this canvas as set by {@link #setFrame} 
+	@return associated frame */
     public Frame getFrame() { return myFrame; };
     /** set canvas title */
     public void setTitle(String t) { desc=t; };
     /** return canvas title
-	@returns canvas title */
+	@return canvas title */
     public String getTitle() { return desc; };
 
     /** abstract paint class to be implemented by any descendants */

@@ -10,7 +10,7 @@ public class Tools {
 	@par par parent frame for the dialog (if <code>null</code> then Common.mainFrame will be used)
 	@par title dialog title
 	@par deffn default file name
-	@returns <code>null</code> if create failed or user canceled operation, the PrintStream otherwise.
+	@return <code>null</code> if create failed or user canceled operation, the PrintStream otherwise.
     */
     public static PrintStream getNewOutputStreamDlg(Frame par,
 						    String title,
