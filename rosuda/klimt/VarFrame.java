@@ -277,7 +277,11 @@ public class VarFrame extends TFrame {
                 if ( j<2 || j==7 ||
                     (j==2 && totsel>0)||boxValid||
                     (j==3 && totsel==2)||
-                    (j==5 && ((totsel==2 && selCat==2)||(totsel==3 && selCat==2 && selNum==1)))||
+                    (j==5 && (
+			      (totsel==2 && selCat==2)||
+			      (totsel==3 && selCat==2 && selNum==1)
+			      //|| totsel==3 // HACK! just to allow FCC
+			      ))||
                     (j==6 && totsel>0)|| 
                     (j==8 && totsel>0)) {
                     g.setColor(C_bg);
@@ -445,6 +449,7 @@ public class VarFrame extends TFrame {
                 SVar weight=null;
                 int i,j=0,tsel=0;
                 for(i=0;i<vc.getVars();i++) if (vc.selMask[i]) {
+		    if (ev.isControlDown() && j==2 && weight==null && vs.at(i).isCat()) weight=vs.at(i);
                     if(vs.at(i).isCat() && j<2) { vnr[j]=i; j++; tsel++; };
                     if(!vs.at(i).isCat() && vs.at(i).isNum() && weight==null) weight=vs.at(i);
                 }
@@ -452,8 +457,12 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame(((weight==null)?"":"W")+"FD ("+
                                         vs.at(vnr[1]).getName()+" vs "+
                                         vs.at(vnr[0]).getName()+")"+((weight==null)?"":"*"+weight.getName()));
-                    f.addWindowListener(Common.defaultWindowListener);
-                    FluctCanvas sc=new FluctCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
+                    f.addWindowListener(Common.defaultWindowListener);		    
+                    FluctCanvas sc;
+		    if (ev.isControlDown() && weight!=null && weight.isCat())
+			sc=new FCCCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
+		    else
+			sc=new FluctCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
