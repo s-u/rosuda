@@ -16,9 +16,9 @@ public class Common
     public static WindowListener defaultWindowListener=null;
 
     /** application version */
-    public static String Version="0.95i";
+    public static String Version="0.95j";
     /** application release */
-    public static String Release="C308";
+    public static String Release="C405";
     /** application type. so far 0=stand-alone (default, 1=applet - set by Wrapper) */
     public static int AppType=0;
 
