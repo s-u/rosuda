@@ -5,7 +5,7 @@ import java.awt.event.*;
 /** basic framework interface for bulding interactive
     statistical programs */
 
-public class Framework implements Dependent {
+public class Framework implements Dependent, ActionListener {
     Vector dataset;
     SVarSet cvs;
     int tvctr;
@@ -17,7 +17,8 @@ public class Framework implements Dependent {
     public Framework() {
         Common.AppType=Common.AT_Framework;
         Common.supportsBREAK=true;
-        Common.useAquaBg=true;
+        Common.useAquaBg=true; // use aqua look
+	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         Common.initStatic();
         if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
         Common.breakDispatcher.addDepend(this);
@@ -351,6 +352,12 @@ public class Framework implements Dependent {
         if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_VarChange));
     }
 
+    public void actionPerformed(ActionEvent e) {
+	Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_ActionEvent,e.getActionCommand()));
+    }
+
+    //=============================== EVENT LOOP STUFF =========================================
+
     private boolean notificationArrived=false;
     private NotifyMsg lastNotificationMessage; // only synchronized methods are allowed to use this
 
@@ -381,8 +388,8 @@ public class Framework implements Dependent {
     }
 
     /** this methods is called from R by ievent.wait and uses {@link #waitForNotification} to wait for an event. */
-    public int eventWait() {
+    public NotifyMsg eventWait() {
         NotifyMsg m=waitForNotification();
-        return (m==null || m.getMessageID()==Common.NM_BREAK)?0:m.getMessageID();
+        return (m==null || m.getMessageID()==Common.NM_BREAK)?null:m;
     }
 }
