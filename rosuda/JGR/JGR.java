@@ -42,7 +42,7 @@ public class JGR {
 	public static final String SUBTITLE = "Java Gui for R";
 
 	/** Develtime (used for displaying the splashscreen) */
-	public static final String DEVELTIME = "2003 - 2004";
+	public static final String DEVELTIME = "2003 - 2005";
 
 	/** Organization (used for displaying the splashscreen) */
 	public static final String INSTITUTION = "RoSuDa, Univ. Augsburg";
