@@ -51,11 +51,11 @@ public class JGR {
         splash.start();
         readHistory();
         new RConsole();
-        splash.show();
+        splash.toFront();
         MAINRCONSOLE.progress.start("Starting R");
         MAINRCONSOLE.setWorking(true);
         String[] args={"--save"};
-        R=new Rengine(args,true,MAINRCONSOLE); //JGR.MAINRCONSOLE);
+        R=new Rengine(args,true,MAINRCONSOLE);
         System.out.println("Rengine created, waiting for R");
         if (!R.waitForR()) {
             System.out.println("Cannot load R");
@@ -70,8 +70,8 @@ public class JGR {
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
-        RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
         splash.stop();
+        RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
     }
 
     public static String exit() {
@@ -84,10 +84,8 @@ public class JGR {
         if (exit == 0) {
             writeHistory();
             return "y\n";
-            //R.eval("save.image()");
-            //System.exit(0);
         }
-        else if (exit == 1) return "n\n"; //System.exit(0);
+        else if (exit == 1) return "n\n";
         else return "c\n";
     }
 

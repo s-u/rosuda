@@ -176,6 +176,9 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     }
 
     public void exit() {
+        System.out.println("tabsize "+editArea.getTabSize());
+        editArea.setTabSize(4);
+        System.out.println("tabsize "+editArea.getTabSize());
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
             if (i==1) dispose();

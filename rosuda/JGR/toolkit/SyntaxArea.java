@@ -420,6 +420,28 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+
+    public int getTabSize() {
+        int size = 8;
+        Document doc = getDocument();
+        if (doc != null) {
+            Integer i = (Integer) doc.getProperty(PlainDocument.tabSizeAttribute);
+            if (i != null) {
+                size = i.intValue();
+            }
+        }
+        return size;
+    }
+
+    public void setTabSize(int size) {
+        Document doc = getDocument();
+        if (doc != null) {
+            int old = getTabSize();
+            doc.putProperty(PlainDocument.tabSizeAttribute, new Integer(size));
+            firePropertyChange("tabSize", old, size);
+        }
+    }
+
     public void caretUpdate(final CaretEvent e) {
         final SyntaxArea sa = this;
         removeHighlights();

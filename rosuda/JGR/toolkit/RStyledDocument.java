@@ -13,6 +13,8 @@ import javax.swing.text.*;
 
 public class RStyledDocument extends DefaultStyledDocument implements StyledDocument{
 
+    public static final String tabSizeAttribute = "tabSize";
+    
     public RStyledDocument() {
     }
 
