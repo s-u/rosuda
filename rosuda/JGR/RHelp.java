@@ -81,6 +81,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             /*JGR.R.eval("try(make.packages.html(.libPaths()));try(make.search.html(.libPaths()));try(fixup.libraries.URLs(.libPaths()))");
             index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = JGR.RHOME;
+            index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {
             /*JGR.MAINRCONSOLE.execute(".Script(\"sh\", \"help-links.sh\", paste(tempdir(),paste(.libPaths(), collapse = \" \")));make.packages.html()");
@@ -89,12 +90,11 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             index = JGR.R.eval("paste(paste(\"file://\", tempdir(), \"/.R\", sep = \"\"), \"/doc/html/packages.html\", sep = \"\")").asString();
             index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
+            index = "file://"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
 
         //if (location != null) RHELPLOCATION = location;
-        //else RHELPLOCATION = JGR.RHOME;
-
-        index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
+        //else RHELPLOCATION = JGR.RHOME
 
         //System.out.println("index"+index);
 
