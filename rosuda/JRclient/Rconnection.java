@@ -264,6 +264,13 @@ public class Rconnection {
 	return new RFileInputStream(rt,fn);
     }
 
+    /** create a file on the Rserve for writing
+        @param fn file name. should not contain any path delimiters, since Rserve may restrict the access to local working directory.
+        @return output stream to be used for writinging. Note that the stream is write-once only, there is no support for seek or rewind. */
+    public RFileOutputStream createFile(String fn) throws IOException {
+        return new RFileOutputStream(rt,fn);
+    }
+
     /** remove a file on the Rserve
         @param fn file name. should not contain any path delimiters, since Rserve may restrict the access to local working directory.
         @return <code>true</code> on success, <code>false</code> otherwise */
