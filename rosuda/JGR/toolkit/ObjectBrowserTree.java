@@ -16,6 +16,8 @@ import java.awt.event.*;
 import java.awt.Point;
 import java.util.*;
 
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.event.*;
@@ -26,17 +28,22 @@ import javax.swing.tree.*;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.RObject;
 
-public class ObjectBrowserTree extends JTree implements MouseListener, DragGestureListener, DragSourceListener, TreeWillExpandListener {
+import sun.security.x509.RDN;
+
+public class ObjectBrowserTree extends JTree implements ActionListener, MouseListener, DragGestureListener, DragSourceListener, TreeWillExpandListener {
 
     private Collection data;
     private JGRObjectManager objmgr;
     private DragSource dragSource;
     private DataTreeModel objModel;
     private DefaultMutableTreeNode root;
+    
+    private String type;
 
     public ObjectBrowserTree(JGRObjectManager parent, Collection c, String name) {
         this.data = c;
         this.objmgr = parent;
+        this.type = name;
 
         if (FontTracker.current == null)
             FontTracker.current = new FontTracker();
@@ -72,6 +79,27 @@ public class ObjectBrowserTree extends JTree implements MouseListener, DragGestu
         objModel = new DataTreeModel(root);
         this.setModel(null);
         this.setModel(objModel);
+    }
+    
+    private void popUpSaveMenu(MouseEvent e, RObject o) {
+        JPopupMenu menue = new JPopupMenu();
+        JMenuItem saveData = new JMenuItem();
+        JMenuItem titleItem = new JMenuItem();
+        titleItem.setEnabled(false);
+        
+        saveData.setToolTipText("Save Data");
+        saveData.setActionCommand("saveData-"+o.getRName()+"");
+        saveData.setText("Save Data");
+        saveData.addActionListener(this);
+        
+        menue.add(titleItem);
+        menue.add(saveData);
+        menue.show(e.getComponent(), e.getX(), e.getY());
+    }
+    
+    public void actionPerformed(ActionEvent evt) {
+        String cmd = evt.getActionCommand();
+        if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGRConsole.directory);
     }
 
     public void dragGestureRecognized(DragGestureEvent evt) {
@@ -129,16 +157,22 @@ public class ObjectBrowserTree extends JTree implements MouseListener, DragGestu
             Point p = e.getPoint();
             JToolTip call  = new JToolTip();
             RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
-            String tip = RController.getSummary(o);
-            if (tip==null) {
+            if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
+                popUpSaveMenu(e,o);
                 objmgr.cursorDefault();
-                return;
             }
-            call.setTipText(tip);
-            SwingUtilities.convertPointToScreen(p,this);
-            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
-            objmgr.summary.show();
-            objmgr.cursorDefault();
+            else {
+	            String tip = RController.getSummary(o);
+	            if (tip==null) {
+	                objmgr.cursorDefault();
+	                return;
+	            }
+	            call.setTipText(tip);
+	            SwingUtilities.convertPointToScreen(p,this);
+	            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
+	            objmgr.summary.show();
+	            objmgr.cursorDefault();
+            }
         }
     }
 
@@ -148,16 +182,22 @@ public class ObjectBrowserTree extends JTree implements MouseListener, DragGestu
             Point p = e.getPoint();
             JToolTip call  = new JToolTip();
             RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
-            String tip = RController.getSummary(o);
-            if (tip==null) {
+            if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
+                popUpSaveMenu(e,o);
                 objmgr.cursorDefault();
-                return;
             }
-            call.setTipText(tip);
-            SwingUtilities.convertPointToScreen(p,this);
-            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
-            objmgr.summary.show();
-            objmgr.cursorDefault();
+            else {
+	            String tip = RController.getSummary(o);
+	            if (tip==null) {
+	                objmgr.cursorDefault();
+	                return;
+	            }
+	            call.setTipText(tip);
+	            SwingUtilities.convertPointToScreen(p,this);
+	            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
+	            objmgr.summary.show();
+	            objmgr.cursorDefault();
+            }
         }
     }
 
