@@ -33,8 +33,8 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	private JComboBoxExt sepsBox = new JComboBoxExt(new String[] {"\\t","\\w",",",";","|","Others..."});
     private String[] seps = new String[] {"\\t","",",",";","|"};
 	
-    private JComboBoxExt quoteBox = new JComboBoxExt(new String[] {"Default","\\\"","\\'","Others..."});
-	private String[] quotes = new String[] {""};
+    private JComboBoxExt quoteBox = new JComboBoxExt(new String[] {"None","\\\"","\\'","Others..."});
+	private String[] quotes = new String[] {"","\\\"","\\'"};
 
 	
 	private Dimension screenSize = Common.getScreenRes();
@@ -106,7 +106,6 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			filename.add(buttons);
 		}
 		this.showOpenDialog(f);
-		this.setSize(this.getSize().width, this.getSize().height+60);
 	}
 	
 	/**
