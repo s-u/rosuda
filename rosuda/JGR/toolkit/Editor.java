@@ -157,39 +157,34 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 			super.setTitle(title==null?"Editor":title);
 			return;
 		}
-		System.out.println(length+" "+this.getWidth());
-		while (length > this.getWidth()-100) {
-			title = cutTitle(title,cc);
+		boolean next = true;
+		while (length > this.getWidth()-100 && next) {
+			StringTokenizer st = new StringTokenizer(title,File.separator);
+			int i = st.countTokens();
+			if (!JGRPrefs.isMac) title = st.nextElement()+""+File.separator;
+			else title = File.separator;
+			if (cc > i) {
+				for (int z = 1; z< i && st.hasMoreTokens(); z++)
+					st.nextToken();
+				title = st.nextToken();
+				next = false;
+			}
+			else {
+				for (int z = 1; z <= i && st.hasMoreTokens(); z++) {
+					if (z <= i/2 - (cc - cc/2) || z > i/2 + cc /2 )
+						title += st.nextToken()+""+(st.hasMoreTokens()?File.separator:"");
+					else {
+						title += "..."+File.separator;
+						st.nextToken();
+					}
+				}
+				next = true;
+			}
 			length = this.getFontMetrics(this.getFont()).stringWidth(title);
 			cc++;
 		}
 		super.setTitle(title);
     }
-	
-	private String cutTitle(String title,int cut) {
-		StringTokenizer st = new StringTokenizer(title,File.separator);
-		int i = st.countTokens();
-		System.out.println("tokens "+i+" cut "+cut);
-		if (!JGRPrefs.isMac) title = st.nextElement()+""+File.separator;
-		else title = File.separator;
-		if (cut > i) {
-			for (int z = 1; z< i && st.hasMoreTokens(); z++)
-				st.nextToken();
-			title = st.nextToken();
-		}
-		else {
-			for (int z = 1; z <= i && st.hasMoreTokens(); z++) {
-				if (z < i/2 - cut/2 || z > i/2 + cut /2 )
-					title += st.nextToken()+""+(st.hasMoreTokens()?File.separator:"");
-				else {
-					title += "..."+File.separator;
-					st.nextToken();
-				}
-			}
-		}
-		return title;
-	}
-	
 	
     public boolean exit() {
         if (modified) {
