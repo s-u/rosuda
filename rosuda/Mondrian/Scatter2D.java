@@ -528,7 +528,7 @@ public class Scatter2D extends DragBox {
     Dimension size = this.getSize();
 
     if( oldWidth != size.width || oldHeight != size.height || scaleChanged || frame.getBackground() != MFrame.backgroundColor) {
-//      frame.setBackground(MFrame.backgroundColor);
+      frame.setBackground(MFrame.backgroundColor);
       this.width = size.width;
       this.height = size.height;
 
@@ -568,7 +568,7 @@ public class Scatter2D extends DragBox {
     if( bg == null || alphaChanged || printing ) {
 
       if( printing ) {
-        System.out.println("Setting Graphics for Printing");
+//        System.out.println("Setting Graphics for Printing");
         bg = g;
         tbg = g;
       }
@@ -613,7 +613,7 @@ public class Scatter2D extends DragBox {
         
         for( int i=0; i<data.n; i++) 
           if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
-            bg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
+            pg.fillOval( (int)userToWorldX( xVal[i] )-(radius*pF-1)/2, (int)userToWorldY( yVal[i] )-(radius*pF-1)/2, radius*pF, radius*pF);
 
         if( invert ) {
           media.addImage(bi,0);
@@ -726,13 +726,19 @@ public class Scatter2D extends DragBox {
         }
       }
       
-      for( int i=0; i<data.n; i++) {
+/*      for( int i=0; i<data.n; i++) {
         if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
           if( selection[i] > 0 ) {
             tbg.setColor(MFrame.backgroundColor);
             tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
-            tbg.setColor(DragBox.hiliteColor);
-            tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
+          }
+      }*/
+      tbg.setColor(DragBox.hiliteColor);
+      if( ((MFrame)frame).getAlphaHi() )
+        tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
+      for( int i=0; i<data.n; i++) {
+        if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
+          if( selection[i] > 0 ) {
             tbg.fillOval( (int)userToWorldX( xVal[i] )-(radius-1)/2, (int)userToWorldY( yVal[i] )-(radius-1)/2, radius*pF, radius*pF);
           }
       }
