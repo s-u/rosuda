@@ -173,8 +173,14 @@ public class SVar extends Vector
 	return cats.indexOf(oo);
     };
 
-    /** returns ID of the category of i-th case in the variable */
-    public int getCatIndex(int i) { return getCatIndex(elementAt(i)); };
+    /** returns ID of the category of i-th case in the variable or -1 if i oob */
+    public int getCatIndex(int i) {
+        try {
+            return getCatIndex(elementAt(i));
+        } catch (Exception e) {
+            return -1;
+        }
+    };
     
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public Object getCatAt(int i) {
@@ -182,10 +188,14 @@ public class SVar extends Vector
 	return cats.elementAt(i);
     };
 
-    /** returns size of the category with index ID or -1 if variable is not categorial */
+    /** returns size of the category with index ID or -1 if variable is not categorial or index oob */
     public int getSizeCatAt(int i) {
 	if (!cat) return -1;
-	return ((Integer)ccnts.elementAt(i)).intValue();
+        try { // catch exception if cat ID is out of bounds
+            return ((Integer)ccnts.elementAt(i)).intValue();
+        } catch  (Exception e) {
+            return -1;
+        }
     };
 
     /** returns size of the category o. If category does not exist or variable is not categorial, -1 is returned. */
