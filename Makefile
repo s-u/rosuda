@@ -52,7 +52,7 @@ JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $
 	$(JAVAC) -d . $^
 	cp rosuda/projects/jgr/splash.jpg .
 	cp -r rosuda/projects/jgr/icons .
-	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org
+	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org rosuda/JGR/LICENSE
 	rm -rf org splash.jpg icons
 
 jgr-docs: $(JGR_SRC) 
