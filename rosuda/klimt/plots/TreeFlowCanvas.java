@@ -19,7 +19,7 @@ import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 import org.rosuda.klimt.*;
 
-public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener, MouseListener {
+public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener, MouseListener, ActionListener {
     SNode roots[];
     int lastw,lasth;
     float alpha=0.1f;
@@ -79,6 +79,9 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
             i++;
         }
         qi=new QueryPopup(f,null,"Trace plot");
+        String myMenu[]={"+","File","~File.Graph","~Edit",//"+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg",
+            "~Window","0"};
+	EzMenu.getEzMenu(f,this,myMenu);
     }
 
     public void recDown(SNode n, int l) {
@@ -411,4 +414,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
     public void mouseExited(MouseEvent e) {
     }
 
+    public void actionPerformed(ActionEvent e) {
+	if (e==null) return;
+	run(e.getSource(),e.getActionCommand());
+    }
 }
