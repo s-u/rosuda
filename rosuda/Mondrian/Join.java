@@ -47,6 +47,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   public Query sqlConditions;
   public boolean selseq = false;
   public boolean alphaHi = false;
+  public boolean hasR = false;
   private Vector polys = new Vector(256,256);
   private JList varNames = null;
   private int numCategorical = 0;
@@ -77,8 +78,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName() );
     }
     catch (Exception e) { }
+
+    hasR = Srs.checkLocalRserve();
     
-    System.out.println("Starting RServe ... "+Srs.checkLocalRserve());
+    System.out.println("Starting RServe ... "+hasR);
 
     user = System.getProperty("user.name");
     System.out.println(user+" on "+System.getProperty("os.name"));
@@ -347,9 +350,12 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0e", 250, 280);
+    g.drawString("RC1.0f", 250, 280);
 
     mondrianRunning = true;
+
+    if( !hasR )
+      JOptionPane.showMessageDialog(this, "Connection to R failed:\nSome functions might be missing!\n\nPlease check installation of R and  Rserve\nor try starting Rserve manually ...","Rserve Error",JOptionPane.ERROR_MESSAGE);
     
     if( load )
       if( loadDB )
@@ -623,6 +629,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   }
   
   public void setVarList() {
+    if( varNames != null ) {
+      paint(this.getGraphics());
+      return;
+    }
     if( thisDataSet == -1 )
       thisDataSet = dataSets.size() - 1;
     final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
@@ -906,7 +916,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         BufferedReader br = new BufferedReader( new FileReader(filename) );
         data = new dataSet( justFile );
         dataSets.addElement(data);
-        progText.setText("Peaking ...");
+        progText.setText("Peeking ...");
         alpha = data.sniff(br);
         progBar.setMaximum(data.n);
         br = new BufferedReader( new FileReader(filename) );
@@ -1090,7 +1100,8 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     int p = (varNames.getSelectedIndices()).length;
     dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
     final MFrame scatterMf = new MFrame(this);
-    scatterMf.setSize(200*p,200*p + 20);
+    int dims = Math.min(200*p,(Toolkit.getDefaultToolkit().getScreenSize()).height);
+    scatterMf.setSize(dims-20,dims);
     scatterMf.getContentPane().setLayout(new GridLayout(p,p));
 
     int[] tmpVars = new int[2];
@@ -1324,7 +1335,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       double start = tempData.getMin(dummy);
       double width = (tempData.getMax(dummy) - tempData.getMin(dummy)) / 8.9;
       Table discrete = tempData.discretize(tempData.setName, dummy, start, width, weight);
-      
+
       hists.setSize(310, 250);
       final Histogram plotw = new Histogram(hists, 250, 310, discrete, start, width, weight);
       
@@ -1513,8 +1524,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     // This is the only method defined by ListCellRenderer.
     // We just reconfigure the JLabel each time we're called.
 
-    public Component getListCellRendererComponent(
-                                                  JList list,
+    public Component getListCellRendererComponent(JList list,
                                                   Object value,            // value to display
                                                   int index,               // cell index
                                                   boolean isSelected,      // is the cell selected
