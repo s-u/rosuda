@@ -146,7 +146,8 @@ public class Framework implements Dependent, ActionListener {
     int mmDlg(String name, int d) {
         int res=0;
         Frame f=new Frame("dummy");
-        MsgDialog md=new MsgDialog(f,"Data length mismatch","Variable \""+name+"\" consists of "+d+" cases, but your current iSet has "+cvs.at(0).size()+" cases. Do you want to create a new iSet?",MsgDialog.yesNoCancel);
+        f.toFront();
+        MsgDialog md=new MsgDialog(f,"Data length mismatch","Variable \""+name+"\" consists of "+d+" cases, but your current iSet has "+cvs.at(0).size()+" cases.\nDo you want to create a new iSet?",MsgDialog.yesNoCancel);
         if (md.lastResult=="Cancel") res=-2;
         if (md.lastResult=="Yes") res=-3;
         md.dispose();
@@ -166,6 +167,11 @@ public class Framework implements Dependent, ActionListener {
         f.dispose();
         f=null;
         return res;
+    }
+
+    /** get the length of the current dataset */
+    public int getCurVarSetLength() {
+        return (cvs.count()>0 && cvs.at(0)!=null)?cvs.at(0).size():-1;
     }
     
     /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
