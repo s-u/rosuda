@@ -14,12 +14,15 @@ import java.util.Vector;
 
 import org.rosuda.JRclient.*;
 import org.rosuda.ibase.*;
+import org.rosuda.klimt.*;
 
 public class PluginModelLoader extends Plugin implements ActionListener {
     String imagePath;
     Rconnection rc;
     Dialog d;
     SVarSet vset;
+    DataRoot dr;
+    boolean reg=true;
     
     public boolean initPlugin() {
         name="Model loader";
@@ -32,6 +35,12 @@ public class PluginModelLoader extends Plugin implements ActionListener {
             imagePath=(String)val;
         if (par.equals("dataset"))
             vset=(SVarSet)val;
+        if (par.equals("dataroot")) {
+            dr=(DataRoot)val;
+            vset=dr.getDataSet();
+        }
+        if (par.equals("register"))
+            reg=((Boolean)val).booleanValue();
     }
 
     public Object getParameter(String par) {
@@ -218,14 +227,27 @@ public class PluginModelLoader extends Plugin implements ActionListener {
                 vset.add(v);
             }
             {
+                x=rc.eval("as.character(as.list(attr(terms("+m+"),\"variables\"))[[attr(terms("+m+"),\"response\")+1]])");
+                String rvn=x.asString();
+                SVar resp=vset.byName(rvn);
+                String c0=(resp==null)?"0":resp.getCatAt(0).toString();
+                String c1=(resp==null)?"1":resp.getCatAt(1).toString();
                 SVar v=new SVarObj("C_i_"+name, true);
                 int i=0;
                 while (i<d.length) {
-                    v.add((d[i]<0.5)?"0":"1");
+                    v.add((d[i]<0.5)?c0:c1);
                     i++;
                 }
                 v.setInternalType(SVar.IVT_Prediction);
                 vset.add(v);
+                if (reg && dr!=null) {
+                    SNode n=new SNode();
+                    n.getRootInfo().name="im_"+name;
+                    n.getRootInfo().prediction=v;
+                    n.getRootInfo().response=resp;
+                    dr.getTreeRegistry().addTree(n);
+                    System.out.println("Registered "+m+": "+n.getRootInfo().prediction+", "+n.getRootInfo().response);
+                }
             }
             x=rc.eval("resid("+m+", type=\"response\")");
             d= x.asDoubleArray();
