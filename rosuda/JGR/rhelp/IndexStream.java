@@ -21,14 +21,6 @@ package org.rosuda.JGR.rhelp;
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-  $Source$
-
-  $Revision$
-
-  $Date$
-
-  $Author$
-
 ==============================================================================*/
 
 
@@ -38,7 +30,9 @@ import java.util.*;
 import java.net.*;
 import java.io.*;
 
-
+/**
+ * IndexStream.java from R-project 
+ */
 
 /*==============================================================================
                           Interface of class IndexStream
@@ -363,6 +357,9 @@ public class IndexStream extends Object
   HISTORY:
 
   $Log$
+  Revision 1.3  2005/01/15 13:12:27  helbigm
+  fully documented
+
   Revision 1.2  2004/07/31 21:31:14  helbigm
   renamed some files and added a lot of new ones
 

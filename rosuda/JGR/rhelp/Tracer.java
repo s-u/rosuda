@@ -21,16 +21,14 @@ package org.rosuda.JGR.rhelp;
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-  $Revision$
-
-  $Date$
-
-  $Author$
-
 ============================================================================*/
 
 
 import java.awt.*;
+
+/**
+ *	Tracer.java from R-project 
+ */
 
 public class Tracer extends Frame
 {

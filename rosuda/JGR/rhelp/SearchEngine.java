@@ -17,10 +17,6 @@ package org.rosuda.JGR.rhelp;
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  $Revision$
-  $Date$
-  $Author$
- modified for the JGR Gui by Markus Helbig March 2004
  ============================================================================*/
 
 import java.net.*;
@@ -30,6 +26,13 @@ import javax.swing.*;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.util.*;
+
+/**
+ * SearchEngine.java from R-project
+ * 
+ * modified version for being able to use it with JGR
+ */
+
 
 public class SearchEngine {
 

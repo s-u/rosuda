@@ -1,4 +1,11 @@
 package org.rosuda.JGR.rhelp;
+
+
+/**
+ * Value.java from R-project
+ */
+
+
 /*==============================================================================
 
   Project:
@@ -22,13 +29,6 @@ package org.rosuda.JGR.rhelp;
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-  $Source$
-
-  $Revision$
-
-  $Date$
-
-  $Author$
 
 ==============================================================================*/
 
@@ -157,6 +157,9 @@ public class Value extends Object
   HISTORY:
 
   $Log$
+  Revision 1.2  2005/01/15 13:12:27  helbigm
+  fully documented
+
   Revision 1.1  2004/04/24 21:41:48  helbigm
   *** empty log message ***
 
