@@ -23,6 +23,7 @@ import org.rosuda.JGR.toolkit.*;
 import org.rosuda.JGR.rhelp.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
 
 public class RHelp extends iFrame implements ActionListener, KeyListener,
     MouseListener {
@@ -71,7 +72,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         MyEntry = this.getMYEntry();
         while(!JGR.STARTED);
 
-        String[] Menu = {"+", "File", "~File.Basic.End",
+        String[] Menu = {"+", "File", "@PPrint", "print", "~File.Basic.End",
             "+", "Edit", "@CCopy", "copy", /*"@ASelect All", "selAll",*/
             "~Preferences",
             "~Window", "0"};
@@ -186,6 +187,11 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         current = this;
     }
 
+    public void print() {
+        DocumentRenderer docrender = new DocumentRenderer();
+        docrender.print(((HelpArea) tabArea.getSelectedComponent()).helpPane);
+    }
+
     public void refresh() {
         /*if (location != null) RHELPLOCATION = location;
         else RHELPLOCATION = JGR.RHOME;
@@ -279,7 +285,8 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else if (cmd == "selAll") {
+        } else if (cmd == "print") print();
+        else if (cmd == "selAll") {
             ((HelpArea) tabArea.getSelectedComponent()).helpPane.selectAll();
 
         }

@@ -30,9 +30,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     /** SyntaxArea, with highlighting matching brackets
      * @param highlight should we do coloring and highlighting brackets */
     public SyntaxArea() {
+        this.setContentType("text/rtf");
+        //System.out.println(this.getDocument());
+        //System.out.println(this.getEditorKit());
         this.setDocument(new RSyntaxDocument());
         if (FontTracker.current == null) FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
+        //System.out.println(this.getContentType());
         //setTabStops();
         this.addCaretListener(this);
     }
@@ -77,6 +81,24 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         try {
             Document doc = this.getDocument();
             doc.insertString(offset, str, null);
+        } catch (BadLocationException e) {
+        }
+    }
+
+    public String getText() {
+        try {
+            Document doc = this.getDocument();
+            return doc.getText(0,doc.getLength());
+        } catch (BadLocationException e) {
+            return null;
+        }   
+    }
+
+    public void setText(String str) {
+        try {
+            Document doc = this.getDocument();
+            doc.remove(0,doc.getLength());
+            doc.insertString(0,str,null);
         } catch (BadLocationException e) {
         }
     }
@@ -369,6 +391,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         int pos = this.getCaretPosition();
         if (pos < 0) return null;
         int offset = pos-1, end = pos; pos--;
+        if (text==null) return null;
         int l = text.length();
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
@@ -501,13 +524,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         try {
             Transferable t = evt.getTransferable();
 
-            System.out.println(t);
+            //System.out.println(t);
 
             if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 evt.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
                 String s = (String) t.getTransferData(DataFlavor.stringFlavor);
                 evt.getDropTargetContext().dropComplete(true);
-                System.out.println(s);
+                //System.out.println(s);
             }
             else {
                 evt.rejectDrop();

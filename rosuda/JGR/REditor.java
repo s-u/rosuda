@@ -60,7 +60,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         String[] Menu = {
             "+", "File", "@NNew", "new", "@OOpen", "open",
             "@SSave", "save", "!SSave as", "saveas",
-            "-", "Print", "print","~File.Basic.End",
+            "-", "@PPrint", "print","~File.Basic.End",
             "~Edit",
             "+", "Tools", "Increase Font", "fontBigger", "Decrease Font",
             "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
@@ -196,9 +196,9 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     }
 
     public void exit() {
-        System.out.println("tabsize "+editArea.getTabSize());
+        //System.out.println("tabsize "+editArea.getTabSize());
         editArea.setTabSize(4);
-        System.out.println("tabsize "+editArea.getTabSize());
+        //System.out.println("tabsize "+editArea.getTabSize());
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
             if (i==1) dispose();
@@ -422,6 +422,9 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         }
 
         protected void displayInfo(final CaretEvent e) {
+            //System.out.println("Area "+editArea);
+            //System.out.println("Text "+editArea.getText());
+            
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     try {

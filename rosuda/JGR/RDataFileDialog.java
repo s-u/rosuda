@@ -27,6 +27,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
     private JTextField dataName = new JTextField();
     private JTextField otherSeps = new JTextField();
     private JCheckBox header = new JCheckBox("",true);
+    private JCheckBox attach = new JCheckBox("",true);
 
     private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|",""});
     private String[] seps = new String[] {"","\\t",",",";","|"};
@@ -75,6 +76,12 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         options.add(header,  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
+        options.add(new JLabel("Attach :"),  new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
+                                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                                    new Insets(1, 5, 1, 5), 0, 0));
+        options.add(attach,  new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0
+                                                    , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                    new Insets(1, 5, 1, 5), 0, 0));
         options.add(new JLabel("Separator :"),  new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
@@ -120,7 +127,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
             else useQuote = quotes[quoteBox.getSelectedIndex()];
 
-            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")";
+            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim()+")":"")+"";
             JGR.MAINRCONSOLE.execute(cmd);
         }
         dispose();

@@ -457,6 +457,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     //System.out.println(input.getText().trim());
                     //we set the cursor to last hist and save the current writing in the history
                 }
+                System.out.println(JGR.RHISTORY.get(currentHistPosition-1).toString());
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
                 //System.out.println(input.getText().length());
                 input.setCaretPosition(input.getText().length());
