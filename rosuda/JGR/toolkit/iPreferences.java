@@ -23,7 +23,7 @@ import org.rosuda.JGR.*;
 public class iPreferences {
 
 
-    public static final String VERSION = "DP2";
+    public static final String VERSION = "DP3";
     public static final String TITLE = "JGR";
     public static final String SUBTITLE = "Java Gui for R";
     public static final String DEVELTIME = "2003 - 2004";
