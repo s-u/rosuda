@@ -230,6 +230,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                                               FileSelector.OPEN, directory);
         if (fopen.getFile() != null) {
             wspace = (directory = fopen.getDirectory()) + fopen.getFile();
+            wspace = wspace.replace('\\','/');
             execute("load(\""+wspace+"\")");
         }
     }
