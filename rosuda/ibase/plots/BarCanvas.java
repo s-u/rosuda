@@ -375,8 +375,10 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
             int i=0;
             if (dragX1>dragX2) { int hh=dragX1; dragX1=dragX2; dragX2=hh; };
             if (dragY1>dragY2) { int hh=dragY1; dragY1=dragY2; dragY2=hh; };
+	    /* on some platforms 0 width/height rects don't hit anything; fix that */
+	    if (dragX1==dragX2) dragX2++;
+	    if (dragY1==dragY2) dragY2++;
             Rectangle sel=new Rectangle(dragX1,dragY1,dragX2-dragX1,dragY2-dragY1);
-
             if (selMode==0) m.selectNone();
             while (i<bars) {
                 if (Bars[i]!=null && Bars[i].intersects(sel)) {
