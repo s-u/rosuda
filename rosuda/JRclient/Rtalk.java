@@ -170,8 +170,8 @@ public class Rtalk {
 	@return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, byte[] prefix, byte[] cont, int offset, int len) {
         if (cont!=null) {
-            if (offset>=cont.length) cont=null;
-            if (len>cont.length-offset) len=cont.length-offset;
+            if (offset>=cont.length) { cont=null; len=0; }
+            else if (len>cont.length-offset) len=cont.length-offset;
         }
         if (offset<0) offset=0;
         if (len<0) len=0;
