@@ -67,7 +67,7 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
                       argv[i]="";
               }
               argc=len+1;
-              argv[len+2]=0;
+              argv[argc]=0;
           }
       }
       initRes=initR(argc, argv);
