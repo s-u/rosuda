@@ -19,6 +19,15 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
         "Xtra red","#ffffe0","#c0c0c0","#ff0000",
         null
     };
+
+    static PreferencesFrame last=null;
+    
+    public static PreferencesFrame showPrefsDialog() {
+        if (last==null)
+            last=new PreferencesFrame();
+        last.setVisible(true);
+        return last;
+    }
     
     public PreferencesFrame() {
         super("Preferences");
@@ -85,8 +94,6 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
 
     public void windowClosing(WindowEvent e) {
         setVisible(false);
-        pc=null;
-        dispose();
     }
     public void windowClosed(WindowEvent e) {}
     public void windowOpened(WindowEvent e) {}
@@ -139,8 +146,6 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
         String cmd=e.getActionCommand();
         if (cmd=="Close") {
             setVisible(false);
-            pc=null;
-            dispose();
         }
         if (cmd=="Apply" || cmd=="Save") {
             Common.backgroundColor=pc.c[0];
@@ -155,8 +160,6 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
             pm.setParS("Common","color.select",Tools.color2hrgb(Common.selectColor));
             pm.saveSettings();
             setVisible(false);
-            pc=null;
-            dispose();
         }
     }
 }
