@@ -1,17 +1,18 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  PrefsDialog.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  PrefsDialog
+ * 
+ * 	simple dialog for setting preferences in JGR
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
@@ -29,7 +30,6 @@ public class PrefsDialog extends JDialog implements ActionListener{
     private DefaultComboBoxModel mf;
     private DefaultComboBoxModel ms;
 
-    //private JTextField helptabs = new JTextField();
     private JSpinner helptabs = new JSpinner();
     private JCheckBox useHelpAgent = new JCheckBox("Use Help Agent: ",JGRPrefs.useHelpAgent);
     private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings: ",JGRPrefs.useEmacsKeyBindings);

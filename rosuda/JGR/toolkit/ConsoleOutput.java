@@ -1,5 +1,15 @@
 package org.rosuda.JGR.toolkit;
 
+/**
+ *  ConsoleOutput
+ * 
+ * 	provides export
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -13,11 +23,6 @@ import javax.swing.text.StyledDocument;
 
 import org.rosuda.JGR.JGR;
 
-/**
- * @author Markus
- *
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ConsoleOutput extends JTextPane {
 	
 	public ConsoleOutput() {

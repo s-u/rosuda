@@ -1,11 +1,14 @@
 package org.rosuda.JGR;
-//
-//  RPackageInstaller.java
-//  JRGui
-//
-//  Created by Markus Helbig on Mon Jun 07 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+
+/**
+ *  JGRPackageInstaller
+ *
+ *  install packages if user has enough permissions  
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;

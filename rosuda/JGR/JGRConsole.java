@@ -1,12 +1,12 @@
 package org.rosuda.JGR;
 
-//
-//  JGRConsole.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  JGRConsole Console Frame
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -67,7 +67,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             "Decrease Fontsize", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
             "~Window",
-            "~Help", "R Help", "rhelp", "~About", "0"};
+            "~Help", "R Help", "help", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
         
         //Add History if we didn't found one in the user's home directory

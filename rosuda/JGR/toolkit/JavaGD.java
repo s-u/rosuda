@@ -1,20 +1,21 @@
-//
-//  JavaGD.java
-//  JRGui
-//
-//  Created by Simon Urbanek on Wed Apr 28 2004.
-//  Copyright (c) 2004 Simon Urbanek. All rights reserved.
-//
-//  $Id$
-
 package org.rosuda.JGR.toolkit;
+
+//
+//JavaGD.java
+//JRGui
+//
+//Created by Simon Urbanek on Wed Apr 28 2004.
+//Copyright (c) 2004 Simon Urbanek. All rights reserved.
+//
+//$Id$
+
+
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowListener;
 import java.awt.event.WindowEvent;
 import org.rosuda.javaGD.GDInterface;
-import org.rosuda.javaGD.GDContainer;
 
 /** Implementation of JavaGD which uses iFrame instead of Frame */
 public class JavaGD extends GDInterface implements ActionListener, WindowListener {

@@ -1,10 +1,14 @@
-/*
- * Created on 08.08.2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.rosuda.JGR.toolkit;
+
+/**
+ *  ModelBrowserTable
+ * 
+ * 	show models, and provide possibility to compare them
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
@@ -18,12 +22,6 @@ import org.rosuda.JGR.JGRObjectManager;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.util.*;
 
-/**
- * @author Markus
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ModelBrowserTable extends JTable implements MouseListener, DragGestureListener, DragSourceListener { 
 	
 	private Vector models;

@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  DataTable.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  DataTable
+ * 
+ *  show and edit SVarSets 
+ *  
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -235,7 +237,6 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             int i;
             if (save.getText()=="Save") {
             	i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            	System.out.println(i);
             	if (i==1) dispose();
             	else if (i==0 && saveData()) dispose();
             }

@@ -1,12 +1,11 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  PlatformMac.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  PlatformMac
+ * 
+ * 	mac-specific handlers
+ * 
+ */
 
 
 import java.io.*;
@@ -37,6 +36,7 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
 
 
     public void handleOpenFile(File fileName) {
+    	System.out.println(fileName);
     }
 
     public void handlePrefs() {

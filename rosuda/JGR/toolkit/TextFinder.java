@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  TextFinder.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  TextFinder
+ * 
+ *  find specified pattern in attached textcomponent
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 
 import java.awt.*;

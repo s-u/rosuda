@@ -1,12 +1,14 @@
 package org.rosuda.JGR;
 
-//
-//  RHelp.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  JGRHelp
+ * 
+ * 	little htmlbrowser combined with r-help search engine
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -394,7 +396,6 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         public void goTo(String urls) {
             URL url = null;
             try {
-                System.out.println(urls);
                 url = new URL(urls);
                 //System.out.println(url.toString());
                 goTo(url);

@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  JGRListener.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  JGRListener
+ * 
+ * 	execute commands from add menuitems at runtime
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 
 import java.awt.event.*;
@@ -20,7 +22,6 @@ public class JGRListener implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        //JGR.RCSync.triggerNotification(cmd);
         JGR.MAINRCONSOLE.execute(cmd);
     }
 }

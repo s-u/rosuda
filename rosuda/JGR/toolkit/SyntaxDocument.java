@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  RSyntaxDocument.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  SytnaxDocument
+ * 
+ * 	provides R-Syntaxhighlighting
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 
 import javax.swing.text.*;

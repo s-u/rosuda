@@ -1,12 +1,14 @@
 package org.rosuda.JGR.util;
 
-//
-//  iError.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  ErrorMSG
+ * 
+ * 	print error stacktrace to JGRError.log in the running directory
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.io.*;
 import java.util.*;

@@ -1,12 +1,14 @@
 package org.rosuda.JGR.robjects;
 
-//
-//  model.java
-//  JGR
-//
-//  Created by Markus Helbig on Mon Mar 22 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  RModel
+ * 
+ * 	java-representation of a model in R
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.text.*;
 import java.util.*;

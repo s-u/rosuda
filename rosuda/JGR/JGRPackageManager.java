@@ -1,12 +1,14 @@
 package org.rosuda.JGR;
 
-//
-//  RObjectManager.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  JGRPackageManager
+ * 
+ * 	manage packages for current session as well as default packages
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -36,7 +38,6 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         String[] Menu = {
             /*"+", "File", "~File.Basic.End",*/
             "~Window","0"};
-            //"~Help", "R Help", "rhelp",/* "JJGR FAQ", "jrfaq",*/ "~About", "0"};
         iMenu.getMenu(this, this, Menu);
 
         close.setActionCommand("exit");

@@ -1,10 +1,14 @@
-/*
- * Created on 09.08.2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.rosuda.JGR.toolkit;
+
+/**
+ *  ObjectBrowserTree
+ * 
+ * 	loads childs dynamically
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
@@ -22,12 +26,6 @@ import javax.swing.tree.*;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.RObject;
 
-/**
- * @author Markus
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class ObjectBrowserTree extends JTree implements MouseListener, DragGestureListener, DragSourceListener, TreeWillExpandListener {
 	
 	private Collection data;

@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  RStyledDocument.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  JGRStyledDocument
+ * 
+ * 	is needed because of bug in apples java runtime
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 
 import javax.swing.text.*;

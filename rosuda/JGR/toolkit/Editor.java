@@ -1,11 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  Editor.java
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  Editor
+ * 
+ * 	editor with syntaxhighlighting and autocompletion
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -68,7 +71,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             "+", "Tools", "Increase Fontsize", "fontBigger", "Decrease Fontsize",
             "fontSmaller", "-", "@FFind", "search", "@GFind Next", "searchnext",
             "~Window",
-            "~Help", "R Help", "rhelp", "~About", "0"};
+            "~Help", "R Help", "help", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {

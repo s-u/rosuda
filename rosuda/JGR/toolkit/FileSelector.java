@@ -1,12 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  FileSelector.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  FileSelector
+ * 
+ *  use awt filedialog on a mac, and swing on other machines
+ *   
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.*;
 import java.io.*;

@@ -179,7 +179,6 @@ public class SearchEngine {
 
         // get the index file and parse its contents
         try {
-            System.out.println(baseURL);
             URL idxFileURL = new URL(baseURL, idxFile);
 
             // get an IndexStream object for ease of parsing

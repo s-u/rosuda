@@ -1,12 +1,12 @@
 package org.rosuda.JGR.toolkit;
 
-//
-//  InsertRemoveUndoManager.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  InsertRemoveUndoManager
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.awt.event.*;
 import javax.swing.*;

@@ -1,15 +1,12 @@
 package org.rosuda.JGR;
 
-//
-//  JGR.java
-//  JGR
-//
-//  Created by Markus Helbig on Fri Mar 05 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
-
-
-
+/**
+ *  JGR main application
+ * 	 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.io.*;
 import java.util.*;
@@ -37,7 +34,7 @@ public class JGR {
     public static final String LOGO = "logo.jpg";
     public static final String SPLASH = "splash.jpg";
 
-
+    /* global variables for whole JGR application */
 
     public static Vector RHISTORY = null;
     public static JGRConsole MAINRCONSOLE = null;
@@ -45,8 +42,6 @@ public class JGR {
     public static String[] RLIBS = null;
     public static Rengine R = null;
     public static ConsoleSync rSync = new ConsoleSync();
-
-    public static boolean STARTED = false;
 
     public static Vector DATA = new Vector();
     public static Vector MODELS = new Vector();
@@ -57,8 +52,7 @@ public class JGR {
     public static HashMap KEYWORDS = new HashMap();
     public static HashMap KEYWORDS_OBJECTS = new HashMap();
 
-    public static int SLEEPTIME = 50;
-    public static int STRINGBUFFERSIZE = 80;
+    public static boolean STARTED = false;
 
     private static JGRListener jgrlistener  = null;
 
@@ -102,6 +96,7 @@ public class JGR {
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
         rSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
         MAINRCONSOLE.input.requestFocus();
+        new Refresher().run();
     }
 
     public static String exit() {
@@ -119,24 +114,45 @@ public class JGR {
         else return "c\n";
     }
 
+    /**
+     * add new Menu at runtime to Console
+     * @param name MenuName
+     */
     public static void addMenu(String name) {
         iMenu.addMenu(MAINRCONSOLE,name);
     }
 
+    /**
+     * add MenuItem at runtime to ConoleMenu
+     * @param menu MenuName
+     * @param name ItemName
+     * @param cmd  Command
+     */
     public static void addMenuItem(String menu, String name, String cmd) {
         if (jgrlistener == null) jgrlistener = new JGRListener();
         iMenu.addMenuItem(MAINRCONSOLE,menu,name,cmd,jgrlistener);
     }
 
-
+    /**
+     * add MenuSeparator at runtime
+     * @param menu MenuName
+     */
     public static void addMenuSeparator(String menu) {
         iMenu.addMenuSeparator(MAINRCONSOLE,menu);
     }
         
+    /**
+     * set R_HOME (in java app)
+     * @param rhome
+     */
     public static void setRHome(String rhome) {
         RHOME = rhome;
     }
 
+    /**
+     * set R_LIBS (in java app)
+     *
+     */
     public static void setRLibs() {
     	RLIBS = RController.getRLibs();
         for (int i = 0; i< RLIBS.length; i++) {
@@ -144,6 +160,10 @@ public class JGR {
         }
     }
 
+    /**
+     * set keywords for highlighting
+     *
+     */
     public static void setKeyWords() {
     	String[] words = RController.getKeyWords();
       	KEYWORDS.clear();
@@ -153,6 +173,10 @@ public class JGR {
         }
     }
 
+    /**
+     * set objects for hightlighting
+     *
+     */
     public static void setObjects() {
     	String[] objects = RController.getObjects();
        	OBJECTS.clear();
@@ -163,11 +187,21 @@ public class JGR {
         	OBJECTS.add(objects[i]);
         }
     }
-    
-    public static void refreshAll(String blabla) {
-    	setRLibs();
-        setKeyWords();
-        setObjects();
+
+    /**
+     * refresh keywords, paths ....
+     * @param what
+     */
+    public static void refresh(String what) {
+    	if (what.equals("all")) {
+    		setRLibs();
+    		setKeyWords();
+    		setObjects();
+    	}
+    	else if (what.equals(("runtime"))) {
+    		setKeyWords();
+    		setObjects();
+    	}
     }
 
     public static void readHistory() {
@@ -219,5 +253,19 @@ public class JGR {
         catch (Exception e) {
             new ErrorMsg(e);
         }
+    }
+    
+    class Refresher implements Runnable {
+    	public void run() {
+    		while(true) {
+    			try {
+    				Thread.sleep(60000);
+    				// wait for idleEval JGR.R.eval(".refresh(\"runtime\")");
+    			}
+    			catch (Exception e){
+    				new ErrorMsg(e);
+    			}
+    		}
+    	}
     }
 }

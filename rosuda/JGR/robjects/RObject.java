@@ -1,12 +1,14 @@
 package org.rosuda.JGR.robjects;
 
-//
-//  RObject.java
-//  JGR
-//
-//  Created by Markus Helbig on Wed Mar 17 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+/**
+ *  RObject
+ * 
+ * 	java-represesantion of an object out of R
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 public class RObject {
 

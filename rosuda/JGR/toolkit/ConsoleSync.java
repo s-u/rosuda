@@ -1,11 +1,14 @@
 package org.rosuda.JGR.toolkit;
-//
-//  ConsoleSync.java
-//  JGR
-//
-//  Created by Markus Helbig on Wed Apr 14 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+
+/**
+ *  TextFinder
+ * 
+ * 	take care about readconsole
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import org.rosuda.JGR.*;
 import java.util.Vector;

@@ -1,11 +1,13 @@
 package org.rosuda.JGR;
-//
-//  RTalk.java
-//  JGR
-//
-//  Created by Markus Helbig on Thu Mar 11 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
+
+/**
+ *  RController Class
+ * 	nothing else should have access to R only this RController
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 import java.io.*;
 import java.util.*;
@@ -18,27 +20,46 @@ import org.rosuda.JGR.toolkit.Editor;
 
 public class RController {
 
+	/**
+	 * dummy object
+	 */
     public static Object dummy = new Object();
 
+    /**
+     * get R_HOME
+     * @return R_HOME path
+     */
     public static String getRHome() {
         REXP x = JGR.R.eval("R.home()");
         if (x != null && x.asStringArray()!=null) return x.asStringArray()[0];
         return "";
     }
 
+    /**
+     * get R_LIBS 
+     * @return R_LIBS paths
+     */
     public static String[] getRLibs() {
         REXP x = JGR.R.eval(".Library");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
     }
     
+    /**
+     * get R_DEFAULT_PACKAGE 
+     * @return default packages
+     */
     public static String[] getDefaultPackages() {
     	REXP x = JGR.R.eval("getOption(\"defaultPackages\")");
     	if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return new String[] {};
     }
 
-    //code completion
+    /**
+     * show all posibilities to complete your given string
+     * @param partOfCmd string which you want to complete
+     * @return possible completions
+     */
     public static String[] completeCommand(String partOfCmd) {
     	int s = partOfCmd.length()-1;
         if (partOfCmd.trim().length() == 0) return null;
@@ -48,7 +69,11 @@ public class RController {
         return c;
     }
 
-    //filecompletion i'm not really using R here, but why not put this function too in the RController
+    /**
+     * completetion of a file (doesn't supports multiple fils yet) 
+     * @param part part of file to complete
+     * @return file
+     */
     public static String completeFile(String part) {
         part = part.replaceFirst("~",System.getProperty("user.home"));
         int tl = part.length();
@@ -59,7 +84,6 @@ public class RController {
         String fn = null;
         if (System.getProperty("os.name").startsWith("Windows")) part = part.replaceAll(":/","://");
         while (ls > 0 && part.charAt(ls) != '/') {
-            System.out.println(part.charAt(ls));
             ls--;
         }
         if (ls == 0 && (tl == 0 || part.charAt(ls) != '/'))
@@ -106,7 +130,10 @@ public class RController {
         return null;
     }
 
-    /* get current available keywords*/
+    /**
+     * get all keywords for syntaxhighlighting
+     * @return keywords
+     */
     public static String[] getKeyWords() {
         REXP x = JGR.R.eval(".refreshKeyWords()");
         String[] r = null;
@@ -114,6 +141,10 @@ public class RController {
         return r;
     }
     
+    /**
+     * object names used for syntaxhighlighting
+     * @return objects
+     */
     public static String[] getObjects() {
         REXP x = JGR.R.eval(".refreshObjects()");
         String[] r = null;
@@ -122,15 +153,11 @@ public class RController {
     }
 
 
-    /* get current available function names for help*/
-    public static List getFunctionNames() {
-        List fkt = new ArrayList();
-        REXP x = JGR.R.eval("");
-        Collections.sort(fkt);
-        return fkt;
-    }
-
-    /* refresh r-objects which ar in the pos=0 environment*/
+    /**
+     * select all Objects and put them in JGR.MODELS, JGR.DATA, JGR.OTHER and JGR.FUNCTIONS 
+     * currently only these things which are provided by ls(pos=1)
+     *
+     */
     public static void refreshObjects() {
         JGR.DATA.clear();
         JGR.OTHERS.clear();
@@ -175,8 +202,10 @@ public class RController {
     	}     	
     }
 
-
-    /* refresh packages (loaded and availables)*/
+    /**
+     * get information about all packages (loaded, undloaded, defaults ...)
+     * @return package information
+     */
     public static Object[][] refreshPackages() {
         Object[][] pkg = null;
         Hashtable loadedP = new Hashtable();
@@ -205,6 +234,12 @@ public class RController {
         return pkg;
     }
     
+    /**
+     * get the content of an RObject (list, data.frame, table, matrix)
+     * @param o RObject 
+     * @param c all found objects are collected in c (currently disabled)
+     * @return Vector of RObjects
+     */
     public static Vector createContent(RObject o, Collection c) {
     	Vector cont = new Vector();
     	String p = "";
@@ -218,7 +253,7 @@ public class RController {
     			boolean b = (res[i].equals("null")||res[i].trim().length()==0);
 				String name = b?a+"":res[i];
 				RObject ro = createRObject(name,res[++i],o,(!b));
-    			if (c != null) c.add(ro);
+    			//if (c != null) c.add(ro);
     			if (ro != null) cont.add(ro);
     			a++;
     		}
@@ -226,6 +261,14 @@ public class RController {
     	return cont;
     }
     
+    /**
+     * creates an RObject (java-side) out of R  
+     * @param sx		name
+     * @param type		type
+     * @param parent	parent RObject
+     * @param b			names(..) provides real names or not
+     * @return 			new RObject
+     */
     public static RObject createRObject(String sx, String type, RObject parent, boolean b)
     {
     	RObject ro = new RObject(sx,type, parent, b);
@@ -261,7 +304,12 @@ public class RController {
         return ro;
     }
 
-    /* create a r-model as java-object */
+    /**
+     * create RModel (java-side) out of R
+     * @param sx	name
+     * @param type	type (currently only lm and glm is supported
+     * @return	new RModel
+     */
     public static RModel createRModel(String sx, String type) {
     	RModel m = new RModel(sx,type);
         REXP y = JGR.R.eval("summary("+sx+")[[\"r.squared\"]]");
@@ -291,7 +339,11 @@ public class RController {
         return m;
     }
 
-    /* get short usage of function*/
+    /**
+     * show argumentes for function, tooltip
+     * @param s function name
+     * @return arguments
+     */
     public static String getFunHelp(String s) {
         if (s==null) return null;
         String tip = null;
@@ -312,7 +364,11 @@ public class RController {
         return (tip.indexOf("Error")>0)?null:tip;
     }
 
-
+    /**
+     * show summary of an RObject
+     * @param o RObject
+     * @return summary
+     */
     public static String getSummary(RObject o) {
     	if (o.getType().equals("function")) return getFunHelp(o.getRName());
         String tip = "";
@@ -332,34 +388,17 @@ public class RController {
         return tip.startsWith("<html><pre>Error")?null:tip;
     }
     
-    /** create and select a new dataset with the specified name. please note that it is possible to create
-    multiple datasets of the same name but then only the first of these will be retrieved by name, others
-    have to be selected by ID
-    @param name name of the new dataset
-    @return new dataset */
-    public static SVarSet newSet(String name) {
-    	SVarSet cvs=new SVarSet();
-    	if (name==null) {
-    		name="data."+Math.random();
-    	}
-    	cvs.setName(name);
-    	
-    	return cvs;
-    }
-
-    /** create and select a new dataset with the specified name. please note that it is possible to create
-    multiple datasets of the same name but then only the first of these will be retrieved by name, others
-    have to be selected by ID
-    @param o RObject which we want to have in a SVarSet
-    @return new dataset */
+    
+    /** create a new dataset with the specified RObject.
+     * @param o RObject which we want to have in a SVarSet
+     * @return new dataset 
+     * */
     public static SVarSet newSet(RObject o) {
     	SVarSet cvs=new SVarSet();
-    	cvs.setName(o.getRName()); //.replaceAll("\\\"","\""));
-    	System.out.println(cvs.getName());
+    	cvs.setName(o.getRName());
     	if (o.getType().equals("function")) {
     		//thats not really the best way to do this but the easiest
     		REXP x = JGR.R.eval("suppressWarnings(try(capture.output("+o.getRName()+"),silent=TRUE))");
-    		System.out.println(x);
     		String[] res;
     		if (x != null && (res = x.asStringArray()) != null) {
     			StringBuffer sb = new StringBuffer();
@@ -384,6 +423,12 @@ public class RController {
     	return cvs;
     }
     
+    /**
+     * create SVar out of an RObject 
+     * @param cvs	destination SVarSet
+     * @param o		RObject
+     * @return new SVar
+     */
     private static SVar createSVar(SVarSet cvs, RObject o) {
 		REXP x = JGR.R.eval("suppressWarnings(try("+o.getRName()+",silent=TRUE))");
 		if (x !=null && x.asStringArray() != null && x.asStringArray().length > 0 && x.asStringArray()[0].startsWith("Error"))
@@ -413,7 +458,7 @@ public class RController {
     the same name within a dataset.
     @param name variable name
     @param d array of doubles
-    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    @return SVar
     */
     public static SVar newVar(SVarSet cvs, String name, double[] d) {
     	if (d==null) return null;
@@ -433,7 +478,7 @@ public class RController {
     the same name within a dataset.
     @param name variable name
     @param d array of integers
-    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    @return SVar
     */   
     public static SVar newVar(SVarSet cvs, String name, int[] d) {
     	if (d==null) return null;
@@ -453,7 +498,7 @@ public class RController {
     the same name within a dataset.
     @param name variable name
     @param d array of strings
-    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    @return SVar
     */    
     public static SVar newVar(SVarSet cvs, String name, String[] d) {
     	if (d==null) return null;
@@ -475,7 +520,7 @@ public class RController {
     @param name variable name
     @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
     @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
-    @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+    @return SVar
     */
     public static SVar newVar(SVarSet cvs, String name, int[] ix, String[] d) {
     	if (ix==null) return null;
@@ -494,7 +539,11 @@ public class RController {
     	return v;
     }    
 
-        
+    /**
+     * export an SVarSet to R
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     public static boolean export(SVarSet vs) {
     	REXP x = JGR.R.eval("suppressWarnings(try(class("+vs.getName()+"),silent=TRUE))");
     	String type = null;
@@ -518,6 +567,11 @@ public class RController {
     	return success;
     }
     
+    /**
+     * export r-numeric
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportNumeric(SVarSet vs) {
     	try {
     		if (vs.count() > 1) return false;
@@ -531,7 +585,12 @@ public class RController {
             return false;
         }
     }
-    
+
+    /**
+     * export r-integer
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportInteger(SVarSet vs) {
     	try {
     		if (vs.count() > 1) return false;
@@ -544,7 +603,12 @@ public class RController {
             return false;
         }
     }
-    
+
+    /**
+     * export r-character
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportCharacter(SVarSet vs) {
     	try {
     		if (vs.count() > 1) return false;
@@ -561,6 +625,11 @@ public class RController {
         }
     }
    
+    /**
+     * export r-data.frame
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportDataFrame(SVarSet vs) {
     	try {
             long contlist[] = new long[vs.count()];
@@ -609,7 +678,11 @@ public class RController {
         }
     }
     
-    
+    /**
+     * export r-matrix
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportMatrix(SVarSet vs) {
     	try {
             long contlist[] = new long[vs.count()];
@@ -658,6 +731,11 @@ public class RController {
         }
     }    
     
+    /**
+     * export r-list
+     * @param vs dataset
+     * @return true if successful, false if not
+     */
     private static boolean exportList(SVarSet vs) {
     	try {
             long contlist[] = new long[vs.count()];
@@ -706,7 +784,12 @@ public class RController {
         }
     }    
 
-
+    /**
+     * compare to string and retrun the common prefix
+     * @param str1 String 1
+     * @param str2 String 2
+     * @return common prefix
+     */
     public static String commonWithPrefix(String str1, String str2) {
         int min = Math.min(str1.length(),str2.length());
         String result = "";
