@@ -20,4 +20,8 @@ public class NotifyMsg {
     public int getMessageID() {
         return messageID;
     }
+
+    public String toString() {
+        return "NotifyMsg["+messageID+"]from["+source+"]";
+    }
 }
