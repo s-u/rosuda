@@ -72,7 +72,7 @@ public class HistCanvas extends BaseCanvas
 
         if (recalcBars) {
             int i=0;
-            while(i<bars) { pp[i]=new PlotPrimitive(); i++; };
+            while(i<bars) { pp[i]=new PPrimRectangle(); i++; };
             sw.profile("HistCanvasNew.updateObject reset primitives");
             
             int countMax=0;
@@ -101,23 +101,24 @@ public class HistCanvas extends BaseCanvas
                 int b=id2bar[i];
                 if (b>0) {
                     b--;
-                    if (pp[b].ref==null) {
-                        pp[b].ref=new int[count[b]];
+                    PPrimRectangle pr=(PPrimRectangle)pp[b];
+                    if (pr.ref==null) {
+                        pr.ref=new int[count[b]];
 			int ly=bly;
                         int x1=ax.getValuePos(ax.vBegin+b*binw);
                         int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
                         int vy=ay.getValuePos(count[b]);
                         if (orientation==0)
-                            pp[b].r=new Rectangle(x1,vy,x2-x1,ly-vy);
+                            pr.r=new Rectangle(x1,vy,x2-x1,ly-vy);
 			else if (orientation==2)
-                            pp[b].r=new Rectangle(x2,ly,x1-x2,vy-ly);
+                            pr.r=new Rectangle(x2,ly,x1-x2,vy-ly);
                         else if (orientation==1)
-                            pp[b].r=new Rectangle(ly,x1,vy-ly,x2-x1);
+                            pr.r=new Rectangle(ly,x1,vy-ly,x2-x1);
 			else
-                            pp[b].r=new Rectangle(vy,x2,ly-vy,x1-x2);
+                            pr.r=new Rectangle(vy,x2,ly-vy,x1-x2);
                     }
                     count[b]--;
-                    pp[b].ref[count[b]]=i;
+                    pr.ref[count[b]]=i;
                 }
                 i++;
             }
@@ -224,10 +225,10 @@ public class HistCanvas extends BaseCanvas
     };
 
     public String queryObject(int i) {
-        if (pp!=null && pp[i]!=null && pp[i].ref!=null) {
-            int mark=(int)(((double) pp[i].ref.length)*pp[i].getMarkedProportion(m,-1)+0.5);
+        if (pp!=null && pp[i]!=null) {
+            int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
             double la=ax.vBegin+binw*i;
-            return "["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\n"+mark+" of "+pp[i].ref.length+" selected";
+            return "["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\n"+mark+" of "+pp[i].cases()+" selected";
         };
         return "N/A";
     }

@@ -107,27 +107,14 @@ public class MapCanvas extends BaseCanvas
             if (ms!=null) {
                 int j=0;
                 while (j<ms.count()) {
-                    pp[ps]=new PlotPrimitive();
-                    pp[ps].ref=new int[1];
-                    pp[ps].ref[0]=i;
-
-/*                    
+                    PPrimPolygon pri=new PPrimPolygon();
+                    pri.ref=new int[1];
+                    pri.ref[0]=i;
                     if (orientation==0 || orientation==2)
-                        pp[ps].pg=new Polygon(ms.getXtransAt(j,(orientation==0)?scale:-scale,-minX,
-                                                         (orientation==0)?mLeft:W-mLeft),
-                                          ms.getYtransAt(j,(orientation==0)?-scale:scale,-minY,(orientation==0)?H-mLeft:mLeft),
-                                          ms.getSizeAt(j));
+                        pri.pg=new Polygon(MapSegmentTools.transViaAxisX(ms,j,ax),MapSegmentTools.transViaAxisY(ms,j,ay),ms.getSizeAt(j));
                     else
-                        pp[ps].pg=new Polygon(ms.getYtransAt(j,(orientation==1)?scale:-scale,-minY,(orientation==1)?mLeft:W-mLeft),
-                                          ms.getXtransAt(j,(orientation==1)?-scale:scale,-minX,
-                                                         (orientation==1)?H-mLeft:mLeft),
-                                          ms.getSizeAt(j));
-*/
-                    if (orientation==0 || orientation==2)
-                        pp[ps].pg=new Polygon(MapSegmentTools.transViaAxisX(ms,j,ax),MapSegmentTools.transViaAxisY(ms,j,ay),ms.getSizeAt(j));
-                    else
-                        pp[ps].pg=new Polygon(MapSegmentTools.transViaAxisY(ms,j,ay),MapSegmentTools.transViaAxisX(ms,j,ax),ms.getSizeAt(j));
-                    
+                        pri.pg=new Polygon(MapSegmentTools.transViaAxisY(ms,j,ay),MapSegmentTools.transViaAxisX(ms,j,ax),ms.getSizeAt(j));
+                    pp[ps]=pri;
                     j++; ps++;
                 }
             }

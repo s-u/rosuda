@@ -195,39 +195,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             int i=0;
             g.setColor("object");
             while (i<pp.length) {
-                if (pp[i]!=null) {
-                    if (pp[i].r!=null) {
-                        if (fillInside) {
-                            if (pp[i].col!=null)
-                                g.setColor(pp[i].col.getRed(),pp[i].col.getGreen(),pp[i].col.getBlue());
-                            else
-                                g.setColor("object");
-                            g.fillRect(pp[i].r.x,pp[i].r.y,
-                                       pp[i].r.width,pp[i].r.height);
-                        }
-                        if (paintOutline) {
-                            g.setColor("outline");
-                            g.drawRect(pp[i].r.x,pp[i].r.y,
-                                       pp[i].r.width,pp[i].r.height);
-                        }
-                    }
-                    if (pp[i].pt!=null) {
-                        g.fillOval(pp[i].pt.x,pp[i].pt.y,2,2);
-                    }
-                    if (pp[i].pg!=null) {
-                        if (fillInside) {
-                            if (pp[i].col!=null)
-                                g.setColor(pp[i].col.getRed(),pp[i].col.getGreen(),pp[i].col.getBlue());
-                            else
-                                g.setColor("object");
-                            g.fillPolygon(pp[i].pg.xpoints,pp[i].pg.ypoints,pp[i].pg.npoints);
-                        }
-                        if (paintOutline) {
-                            g.setColor("outline");
-                            g.drawPolygon(pp[i].pg.xpoints,pp[i].pg.ypoints,pp[i].pg.npoints);
-                        }
-                    }
-                }
+                if (pp[i]!=null) pp[i].paint(g, orientation);
                 i++;
             }
         }
@@ -242,50 +210,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             int i=0;
             g.setColor("marked");
             while (i<pp.length) {
-                if (pp[i]!=null) {
-                    double sa=pp[i].getMarkedProportion(m,-1);
-                    //System.out.println("pp["+i+"] sa="+sa+" "+pp);
-                    if (sa>0d) {
-                        if (pp[i].r!=null) {
-                            int rX=pp[i].r.x,rY=pp[i].r.y,rW=pp[i].r.width,rH=pp[i].r.height;
-                            if (orientation==0) { // bottom-up
-                                int nrH=(int)(((double)rH)*sa);
-                                rY+=rH-nrH;
-                                rH=nrH;
-                            } else if (orientation==2) { // top-down
-                                rH=(int)(((double)rH)*sa);
-                            } else if (orientation==1) { // left-right
-                                rW=(int)(((double)rW)*sa);
-                            } else if (orientation==3) { // right-left
-                                int nrW=(int)(((double)rW)*sa);
-                                rX+=rW-nrW;
-                                rW=nrW;
-                            }
-                            if (fillInside) {
-                                g.setColor("marked");
-                                g.fillRect(rX,rY,rW,rH);
-                            }
-                            if (selectedPaintOutline) {
-                                g.setColor("outline");
-                                g.drawRect(rX,rY,rW,rH);
-                            }
-                        }
-                        if (pp[i].pt!=null) {
-                            g.fillOval(pp[i].pt.x,pp[i].pt.y,2,2);
-                        }
-                        if (pp[i].pg!=null) {
-                            // use filling color according to sa?
-                            if (fillInside) {
-                                g.setColor("marked");
-                                g.fillPolygon(pp[i].pg.xpoints,pp[i].pg.ypoints,pp[i].pg.npoints);
-                            }
-                            if (selectedPaintOutline) {
-                                g.setColor("outline");
-                                g.drawPolygon(pp[i].pg.xpoints,pp[i].pg.ypoints,pp[i].pg.npoints);
-                            }
-                        }
-                    }
-                }
+                if (pp[i]!=null)
+                    pp[i].paintSelected(g,orientation,m);
                 i++;
             }
         }
@@ -338,11 +264,11 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 while (i<pp.length) {
                     if (pp[i]!=null && pp[i].contains(x,y)) {
                         if (actionQuery) {
-                            if (pp[i].ref!=null) {
-                                if (pp[i].ref.length==1)
-                                    qi.setContent(queryObject(i),pp[i].ref[0]);
+                            if (pp[i].cases()>0) {
+                                if (pp[i].getPrimaryCase()!=-1)
+                                    qi.setContent(queryObject(i),pp[i].getPrimaryCase());
                                 else
-                                    qi.setContent(queryObject(i),pp[i].ref);
+                                    qi.setContent(queryObject(i),pp[i].getCaseIDs());
                             } else
                                 qi.setContent(queryObject(i));
                             qi.setLocation(cl.x+x,cl.y+y);
@@ -524,8 +450,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 //System.out.println("pp["+i+"]="+pp[i]);
                 if (pp[i]!=null && pp[i].intersects(sel)) {
                     pp[i].setMark(m,setTo);
-                    if (pp[i].ref!=null)
-                        while (i<pp.length-1 && pp[i+1]!=null && pp[i+1].ref!=null && pp[i+1].ref[0]==pp[i].ref[0]) i++;
+                    if (pp[i].getPrimaryCase()!=-1) // FIXIT! works for sequential 1:1 relationships only!
+                        while (i<pp.length-1 && pp[i+1]!=null && pp[i+1].getPrimaryCase()==pp[i].getPrimaryCase()) i++;
                 }
                 i++;
             };
