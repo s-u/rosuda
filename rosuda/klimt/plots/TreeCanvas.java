@@ -66,6 +66,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
     /** show node labels */
     public boolean showLabels=true;
+    public boolean shortLabels=false;
 
     /** deviance gain scale */
     public double devGainScale=1;
@@ -601,12 +602,15 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         /* draw labels (class and condition) */
         if (selectedNode!=null && t.Name.compareTo(selectedNode.Name)==0) g.setColor("selText"); else g.setColor("black");
 
-        if (zoomFactor>0.3)
-            {
-            if (showLabels && !t.isLeaf() && !t.isPruned())
-                g.drawString(t.Name,t.cx+t.width/2+5,y+15);
+        if (zoomFactor>0.3)  {
+            if (showLabels && !t.isLeaf() && !t.isPruned()) {
+                SVar prediction=root.getRootInfo().prediction;
+                String pv=t.Name;
+                if (prediction!=null && prediction.isNum())
+                    pv=Tools.getDisplayableValue(t.predValD,prediction.getMax()-prediction.getMin());
+                g.drawString(pv,t.cx+t.width/2+5,y+15);
             }
-        else if (zoomFactor>0.2)
+        } else if (zoomFactor>0.2)
 	    g.drawString(Common.getTriGraph(t.Name),x+5,y+15);
 
         g.setColor("black");
@@ -624,6 +628,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 }
                 String c=t.Cond;
                 int i=c.indexOf('>');
+                boolean isCatSplit=false;
                 if (i>=0) c=c.substring(i);
                 else {
                     i=c.indexOf('<');
@@ -631,9 +636,14 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                     else {
                         i=c.indexOf('='); if (i<0) i=c.indexOf(':');
                         if (i>=0) c=c.substring(i);
+                        isCatSplit=true;
                         // categorical - can be damn long
-                        if (c.length()>16) c=c.substring(0,16)+"...";
+                        if (c.length()>24) c=c.substring(0,24)+"...";
                     }
+                }
+                if (shortLabels) {
+                    if (isCatSplit && t.getParent()!=null && t.getParent().at(0)!=t) c="";
+                    if (!isCatSplit) c=(c.charAt(0)=='<')?("<"+Tools.getDisplayableValue(t.splitValF,t.splitVar.getMax()-t.splitVar.getMin())):"";
                 }
                 g.drawString(c,cx,cy,PoGraSS.TA_Center);
             }
@@ -1140,7 +1150,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (e.getKeyChar()=='Y') { moveNodeMpl(root,1.0d,0.5d); repaint(); };
         if (e.getKeyChar()=='w') { moveNodeMpl(root,2.0d,1.0d); repaint(); };
         if (e.getKeyChar()=='W') { moveNodeMpl(root,0.5d,1.0d); repaint(); };
-    };
+        
+        if (e.getKeyChar()=='S') { shortLabels=!shortLabels; repaint(); }
+    }
+
     public void keyPressed(KeyEvent e) {
         if (Global.DEBUG>0) System.out.println("keyPressed: "+e.toString());
 	//System.out.println("keyPressed, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
