@@ -5,11 +5,11 @@
 # (later we'll use autoconf, but probably not before the first release ;))
 
 #--- the following settings are OK for Macs
-JAVAINC=-I/System/Library/Frameworks/JavaVM.framework/Headers
-JNISO=.jnilib
-JNILD=-dynamiclib -framework JavaVM
-CPICF=-fno-common
-JAVAB=java
+#JAVAINC=-I/System/Library/Frameworks/JavaVM.framework/Headers
+#JNISO=.jnilib
+#JNILD=-dynamiclib -framework JavaVM
+#CPICF=-fno-common
+#JAVAB=java
 
 #--- the following might work on Linux
 #JAVAHOME=/usr/lib/java
@@ -19,12 +19,15 @@ JAVAB=java
 #CPICF=-fPIC
 #JAVAB=$(JAVAHOME)/bin/java
 
+include Makefile.win
+
 #--- comment out the following for non-debug version
 CFLAGS+=-g
 
 #--- uncomment the one that fits your R installation
 RHOME=/Library/Frameworks/R.framework/Resources
 #RHOME=/usr/lib/R
+RHOME=N:/rw1090
 
 #--- normally you don't need to change this - modify JAVAB instead
 JAVAC=$(JAVAB)c $(JFLAGS)
@@ -33,7 +36,7 @@ JAVAH=$(JAVAB)h
 #--------------------------------------------------------------------------
 # you shouldn't need to touch anything below this line
 
-RINC=-I$(RHOME)/include
+RINC=-I$(RHOME)/src/include
 RLD=-L$(RHOME)/bin -lR
 
 TARGETS=libjri$(JNISO) rtest.class run

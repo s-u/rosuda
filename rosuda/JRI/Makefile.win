@@ -1,0 +1,14 @@
+# Windows-specific part of the Makefile
+#
+# ** Change the following two entries to reflect your setup **
+
+JAVAHOME=N:/jdk1.4.2
+RHOME=N:/rw1090
+
+# normally you don't need to change the anything below
+
+JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/win32
+JNISO=.dll
+JNILD=-shared -L. -ljvm -L$(RHOME)/src/gncwin32
+CFLAGS+=-DWin32
+JAVAB=$(JAVAHOME)/bin/java
