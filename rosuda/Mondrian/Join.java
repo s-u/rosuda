@@ -45,6 +45,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
   public Vector selList = new Vector(10,0);
   public Query sqlConditions;
   public boolean selseq = false;
+  public boolean alphaHi = false;
   private Vector polys = new Vector(256,256);
   private JList varNames = null;
   private int numCategorical = 0;
@@ -57,7 +58,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
   public JMenu windows;
   private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, cs;
   public  JMenuItem ca;
-  private JCheckBoxMenuItem se;
+  private JCheckBoxMenuItem se, ah;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
   private int thisDataSet  = -1;
@@ -75,13 +76,15 @@ class Join extends JFrame implements SelectionListener, DataListener {
     user = System.getProperty("user.name");
     System.out.println(user+" on "+System.getProperty("os.name"));
     
-    if( user.indexOf("theus") > -1 || user.indexOf("dibene") > -1 || user.indexOf("hofmann") > -1) {
+    if( user.indexOf("dibene") > -1 || user.indexOf("hofmann") > -1) {
       PreferencesFrame.setScheme(1);
       selseq = true;
     } else if( user.indexOf("unwin") > -1 ) {
       PreferencesFrame.setScheme(0);
-    } else
-      PreferencesFrame.setScheme(2);
+    } else if( user.indexOf("theus") > -1 ) {
+      selseq = true;
+    }
+    PreferencesFrame.setScheme(2);
     
     Font SF = new Font("SansSerif", Font.BOLD, 12);
     this.setFont(SF);
@@ -99,7 +102,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
     file.add(od = new JMenuItem("Open Database"));
     od.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     if( user.indexOf("theus") > -1 )
-      od.setEnabled(false);
+      od.setEnabled(true);
     else
       od.setEnabled(false);
     file.add(s = new JMenuItem("Save"));
@@ -153,9 +156,14 @@ class Join extends JFrame implements SelectionListener, DataListener {
     options.add(cs = new JMenuItem("Clear Sequences"));
     cs.setAccelerator(KeyStroke.getKeyStroke(Event.BACK_SPACE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
+    options.addSeparator();                     // Put a separator in the menu
+    options.add(ah = new JCheckBoxMenuItem("Alpha on Hilite", alphaHi));
+    ah.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
+    options.addSeparator();                     // Put a separator in the menu
     options.add(mn = new JMenuItem("Model Navigator", KeyEvent.VK_J));
     mn.setEnabled(false);
-    
+
     options.addSeparator();                     // Put a separator in the menu
     options.add(pr = new JMenuItem("Preferences ...", KeyEvent.VK_K));
     pr.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -177,7 +185,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
     JLabel MondrianLabel = new JLabel(MondrianIcon);
     scrollPane = new JScrollPane(MondrianLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     getContentPane().add("Center", scrollPane);
-    
+
     // Add the status/progress bar
     progPanel = new JPanel();
     progText = new JLabel("   Welcome !    "); 
@@ -264,22 +272,27 @@ class Join extends JFrame implements SelectionListener, DataListener {
         switchSelection();
       }
     });
+    ah.addActionListener(new ActionListener() {     // Change the alpha mode for highlighted cases
+      public void actionPerformed(ActionEvent e) {
+        switchAlpha();
+      }
+    });
     mn.addActionListener(new ActionListener() {     // Open a new window for the model navigator
       public void actionPerformed(ActionEvent e) {
         modelNavigator();
       }
     });
-    pr.addActionListener(new ActionListener() {     // Open a new window for the ...
+    pr.addActionListener(new ActionListener() {     // Open the Preference Box
       public void actionPerformed(ActionEvent e) {
         preferenceFrame();
       }
     });
-    cs.addActionListener(new ActionListener() {     // Open a new window for the ...
+    cs.addActionListener(new ActionListener() {     // Delete the current selection sequence
       public void actionPerformed(ActionEvent e) {
         deleteSelection();
       }
     });
-    ca.addActionListener(new ActionListener() {     // Open a new window for the ...
+    ca.addActionListener(new ActionListener() {     // Close all Windows
       public void actionPerformed(ActionEvent e) {
         closeAll();
       }
@@ -297,16 +310,20 @@ class Join extends JFrame implements SelectionListener, DataListener {
     this.setResizable(false);
     this.setSize(295,315);
     this.show();
-    
+
     graphicsPerf = setGraphicsPerformance();
     
+    Graphics g = this.getGraphics();
+    g.setFont(new Font("SansSerif",0,11));
+    g.drawString("RC1.0c", 250, 280);
+
     if( load )
       if( loadDB )
         loadDataSet(true);  
       else
         loadDataSet(false);
   }
-  
+
   void showIt() {
 //    paint(this.getGraphics());
     progPanel.repaint();
@@ -391,11 +408,16 @@ class Join extends JFrame implements SelectionListener, DataListener {
 
   public void switchSelection() {
     selseq = se.isSelected();
-System.out.println("Selection Sequences : "+selseq);
+//System.out.println("Selection Sequences : "+selseq);
     if( !selseq )
       deleteSelection();
   }
 
+  public void switchAlpha() {
+    alphaHi = ah.isSelected();
+  }
+
+  
   public void deleteSelection() {
     if( selList.size() > 0 ) {
       for( int i=0; i<Plots.size(); i++ )
@@ -428,6 +450,13 @@ System.out.println("Selection Sequences : "+selseq);
         ((DragBox)Plots.elementAt(i)).switchSel = false;
         se.setSelected(!se.isSelected());
         switchSelection();
+        return;
+      }
+      if( ((DragBox)Plots.elementAt(i)).switchAlpha ) {    // This window has caused the switch event
+        ((DragBox)Plots.elementAt(i)).switchAlpha = false;
+        ah.setSelected(!ah.isSelected());
+        switchAlpha();
+        ((DragBox)Plots.elementAt(i)).updateSelection();
         return;
       }
     }
@@ -1187,9 +1216,9 @@ System.out.println("Selection Sequences : "+selseq);
     dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
     
     int[] indices = varNames.getSelectedIndices();
-    int lastX = 300;
+    int lastX = 310, oldX = 0;
     int row=0;
-    int menuOffset=0;
+    int menuOffset=0, xOff=0;
 
     for(int i=0; i<indices.length; i++) {
       final MFrame hists = new MFrame(this);
@@ -1200,25 +1229,29 @@ System.out.println("Selection Sequences : "+selseq);
       double width = (tempData.getMax(dummy) - tempData.getMin(dummy)) / 8.9;
       Table discrete = tempData.discretize(tempData.setName, dummy, start, width);
       
-      hists.setSize(400, 300);
-      final Histogram plotw = new Histogram(hists, 300, 400, discrete, start, width);
+      hists.setSize(310, 250);
+      final Histogram plotw = new Histogram(hists, 250, 310, discrete, start, width);
       
       plotw.addSelectionListener(this);
       Plots.addElement(plotw);
-      if( lastX + hists.getWidth() > (Toolkit.getDefaultToolkit().getScreenSize()).width +50 ) {
+      if( lastX + hists.getWidth() > (Toolkit.getDefaultToolkit().getScreenSize()).width +50 ) {   	// new Row
         row += 1;
-        lastX = 0;
+        lastX = oldX % 310;
       }
-      if( 300*row > (Toolkit.getDefaultToolkit().getScreenSize()).height - 150 ) {
+      if( 250*row > (Toolkit.getDefaultToolkit().getScreenSize()).height - 125 ) {									// new Page
         row = 0;
-        lastX = 330;
+        lastX = 310+xOff;
+        xOff += menuOffset;
       }
-      hists.setLocation(lastX, menuOffset+300*row);
+      hists.setLocation(lastX, xOff+250*row);
       lastX += hists.getWidth();
+      oldX = lastX;
       
       hists.show();
-      if( i==0 )
+      if( i==0 ) {
         menuOffset = hists.getY();
+        xOff = menuOffset;
+      }
     }
   }
   
