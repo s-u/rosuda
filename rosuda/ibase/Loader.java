@@ -402,6 +402,53 @@ public class Loader {
         return 0;
     }
 
+
+    class LoaderDelphiFilter {
+        static final int VT_unknown=0;
+        static final int VT_known  =1;
+        static final int VT_num    =2;
+        static final int VT_cat    =4;
+        static final int VT_miss   =8;
+        SVarSet vs;
+        int[] vt;
+        int rows;
+
+        LoaderDelphiFilter(SVarSet vs) {
+            this.vs=vs;
+            vt=new int[vs.count()];
+        }
+
+        /** adds a value to a variable
+            @param col column index (0..variables-1)
+            @param val string value to be analyzed and added
+            @param line this value will be printed in warnings (not used internally, hence optional) */
+        void addValue(int col, String val, int line) {
+            if (val!=null && (val.equals("NA"))) val=null;
+            if (col<0 || col>=vt.length) {
+                System.out.println("Loader, line "+line+": column "+(col+1)+" has no header, dropping.");
+                return;
+            }
+            SVar v=vs.at(col);
+            if (v==null) {
+                System.out.println("Loader, line "+line+": variable for column "+(col+1)+" is null.");
+                return;
+            }
+            int vsz=v.size();
+            if (vsz<rows) {
+                System.out.println("Loader, line "+line+": previous rows are missing ("+(rows-vsz)+"), filling with missings.");
+                while (vsz<rows) {
+                    v.add(null);
+                    vsz++;
+                }
+            }
+            if (rows<vsz) {
+                System.out.println("Loader, line "+line+": FATAL! The variable "+v.getName()+" has already "+vsz+" entries, but this is the entry "+rows+"!");
+                return;
+            }
+            
+        }
+    }
+    
     public static int LoadTSV(BufferedReader r, SVarSet vset) {
         try {
             int vsb=vset.count();
