@@ -30,6 +30,7 @@ public class Framework implements Dependent, ActionListener {
     public Framework() {
         Global.AppType=Common.AT_Framework;
         Common.supportsBREAK=true;
+        Common.appName="iplots";
         Global.useAquaBg=true; // use aqua look
 	Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         Platform.initPlatform();
