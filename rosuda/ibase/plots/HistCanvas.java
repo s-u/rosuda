@@ -163,7 +163,7 @@ public class HistCanvas extends BaseCanvas
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-5,t,mLeft,t);
-                g.drawString(ay.getDisplayableValue(fi),5,t+5);
+                g.drawString(ay.getDisplayableValue(fi),mLeft-8,t+5,PoGraSS.TA_Right);
                 fi+=f;
             }
         }
