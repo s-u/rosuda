@@ -5,39 +5,54 @@ import java.util.*;
     @version $Id$
 */
 public class REXP extends Object {
+    /** xpression type: NULL */
     public static final int XT_NULL=0;
+    /** xpression type: integer */
     public static final int XT_INT=1;
+    /** xpression type: double */
     public static final int XT_DOUBLE=2;
+    /** xpression type: String */
     public static final int XT_STR=3;
+    /** xpression type: language construct (currently content is undefined) */
     public static final int XT_LANG=4;
+    /** xpression type: symbol (content is symbol name: String) */
     public static final int XT_SYM=5;
+    /** xpression type: RBool */    
     public static final int XT_BOOL=6;
+    /** xpression type: Vector */
     public static final int XT_VECTOR=16;
+    /** xpression type: RList */
     public static final int XT_LIST=17;
+    /** xpression type: int[] */
     public static final int XT_ARRAY_INT=32;
+    /** xpression type: double[] */
     public static final int XT_ARRAY_DOUBLE=33;
+    /** xpression type: String[] (currently not used, Vector is used instead) */
     public static final int XT_ARRAY_STR=34;
+    /** xpression type: RBool[] */
     public static final int XT_ARRAY_BOOL=35;
+    /** xpression type: unknown; no assumptions can be made about the content */
     public static final int XT_UNKNOWN=48;
 
-    public static final int XT_FACTOR=127; // this XT is internally generated (ergo is does not come from Rsrv.h) to support RFactor class which is built from XT_ARRAY_INT
+    /** xpression type: RFactor; this XT is internally generated (ergo is does not come from Rsrv.h) to support RFactor class which is built from XT_ARRAY_INT */
+    public static final int XT_FACTOR=127; 
 
     /** xpression type */
     int Xt;
     /** attribute xpression or <code>null</code> if none */
     REXP attr;
-    /** content of the xpression - its object type is dependent on {@link #Xt} */
+    /** content of the xpression - its object type is dependent of {@link #Xt} */
     Object cont;
 
     /** construct a new, empty (NULL) expression w/o attribute */
-    public REXP() { Xt=0; attr=null; cont=null; };
+    public REXP() { Xt=0; attr=null; cont=null; }
 
     /** construct a new xpression of type t and content o, but no attribute
 	@param t xpression type (XT_...)
 	@param o content */
     public REXP(int t, Object o) {
 	Xt=t; cont=o; attr=null;
-    };
+    }
 
     /** construct a new xpression of type t, content o and attribute at
 	@param t xpression type
@@ -45,13 +60,31 @@ public class REXP extends Object {
 	@param at attribute */
     public REXP(int t, Object o, REXP at) {
 	Xt=t; cont=o; attr=at;
-    };
+    }
 
-    /** parses byte buffer for binary representation of xpressions - read one xpression
+    /** get attribute of the REXP. In R every object can have attached attribute xpression. Some more complex structures such as classes are built that way.
+        @return attribute xpression or <code>null</code> if there is none associated */
+    public REXP getAttribute() {
+        return attr;
+    }
+
+    /** get raw content. Use as... methods to retrieve contents of known type.
+        @return content of the REXP */
+    public Object getContent() {
+        return cont;
+    }
+
+    /** get xpression type (see XT_.. constants) of the content. It defines the type of the content object.
+        @return xpression type */
+    public int getType() {
+        return Xt;
+    }
+    
+    /** parses byte buffer for binary representation of xpressions - read one xpression slot (descends recursively for aggregated xpressions such as lists, vectors etc.)
 	@param x xpression object to store the parsed xpression in
 	@param buf buffer containing the binary representation
 	@param o offset in the buffer to start at
-	@return position just behind the parsed xpression */
+        @return position just behind the parsed xpression. Can be use for successive calls to {@link #parseREXP} if more than one expression is stored in the binary array. */
     public static int parseREXP(REXP x, byte[] buf, int o) {
 	int xl=Rtalk.getLen(buf,o);
 	boolean hasAtt=((buf[o]&128)!=0);
@@ -209,7 +242,7 @@ public class REXP extends Object {
 	return o;
     }
 
-    /** returns name of an xpression class
+    /** returns human-readable name of the xpression type as string
 	@param xt xpression type
 	@return name of the xpression type */
     public static String xtName(int xt) {
@@ -243,12 +276,37 @@ public class REXP extends Object {
     }
 
     /** get content of the REXP as double (if it is one)
-        @return dounle content or 0.0 if the REXP is no double */
+        @return double content or 0.0 if the REXP is no double */
     public double asDouble() {
         return (Xt==XT_DOUBLE)?((Double)cont).doubleValue():0.0;
     }
-        
-    /** display content of the expression */
+
+    /** get content of the REXP as {@link Vector} (if it is one)
+        @return Vector content or <code>null</code> if the REXP is no Vector */
+    public Vector asVector() {
+        return (Xt==XT_VECTOR)?(Vector)cont:null;
+    }
+
+    /** get content of the REXP as {@link RFactor} (if it is one)
+        @return {@link RFactor} content or <code>null</code> if the REXP is no factor */
+    public RFactor asFactor() {
+        return (Xt==XT_FACTOR)?(RFactor)cont:null;
+    }
+
+    /** get content of the REXP as {@link RList} (if it is one)
+        @return {@link RList} content or <code>null</code> if the REXP is no list */
+    public RList asList() {
+        return (Xt==XT_LIST)?(RList)cont:null;
+    }
+
+    /** get content of the REXP as {@link RBool} (if it is one)
+        @return {@link RBool} content or <code>null</code> if the REXP is no logical value */
+    public RBool asBool() {
+        return (Xt==XT_LIST)?(RBool)cont:null;
+    }
+
+    /** displayable contents of the expression. The expression is traversed recursively if aggregation types are used (Vector, List, etc.)
+        @return String descriptive representation of the xpression */
     public String toString() {
 	StringBuffer sb=
 	    new StringBuffer("["+xtName(Xt)+" ");
