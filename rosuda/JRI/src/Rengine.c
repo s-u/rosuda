@@ -97,10 +97,6 @@ void Re_Busy(int which)
     if (mid) (*eenv)->CallVoidMethod(eenv, engineObj, mid, which);
 }
 
-SEXP do_flushconsole(SEXP call, SEXP op, SEXP args, SEXP env) {
-    return R_NilValue;
-}
-
 void Re_WriteConsole(char *buf, int len)
 {
     JNIEnv *lenv=checkEnvironment();
