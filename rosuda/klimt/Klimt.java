@@ -116,10 +116,19 @@ public class InTr
 	    } else tvs.setName(fnam);
 	    
 	    BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
+            Common.flushWarnings();
 	    t=RTree.Load(r,tvs);
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
+            String wars=Common.getWarnings();
+            if (wars!=null) {
+                HelpFrame hf=new HelpFrame();
+                hf.t.setText("Following warnings were produced during dataset import:\n\n"+wars);
+                hf.setTitle("Load warnings");
+                //hf.setModal(true);
+                hf.show();
+            };            
 	} catch (Exception E) {
 	    E.printStackTrace();
 	    t=null;

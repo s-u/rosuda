@@ -31,6 +31,9 @@ public class SVar extends Vector
     /** hasNull is true if any case contains null = missing values */
     boolean hasNull;
 
+    /** specifies whether add(..) will try to guess numerical variables based on the first value added or not */
+    boolean guessNum=true;
+    
     /** minimal value (if numeric variable) */
     double min;
     /** maximal value (if numeric variable) */
@@ -41,7 +44,7 @@ public class SVar extends Vector
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
-	@param first first element to be added - see {@link #add} for details. If <code>null</code> is passed then no element is added. */
+	@param first first element to be added - see {@link #add} for details. If <code>null</code> is passed then no element is added. The usage of this constructor is discouraged/deprecated because first entry cannot contain a missing value thus leading to a loss of generality. */
     public SVar(String Name, boolean iscat, Object first) 
     {
 	name=Name;
@@ -63,6 +66,12 @@ public class SVar extends Vector
  	@param Name variable name */
     public SVar(String Name) { this(Name,false,null); };
 
+    /** sets the {@link guessNum} flag. It must me set before the first add(..) call because the guess is made
+        based on the first added object (hence makes no sense if {@link SVar(String,boolean,Object)} was used). */
+    public void tryToGuessNum(boolean doit) {
+        guessNum=doit;
+    };
+    
     /** define the variable explicitely as categorial
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. <b>(rebuild is NOT implemented yet!! ToDO!)</b> */
     public void categorize(boolean rebuild) {
@@ -92,11 +101,10 @@ public class SVar extends Vector
 
     /** adds a new case to the variable (NEVER use addElement! see package header) Also beware, categorial varaibles are classified by object not by value!
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
-     *  @return always <code>true<code> to comply with JDK 1.2 add definition */
+     *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
     public boolean add(Object o) {
-	super.addElement(o);
 	if (o==null) hasNull=true;
-	if (size()<2) {
+	if (size()<1 && guessNum) {
 	    try {	      
 		if (Class.forName("java.lang.Number").isAssignableFrom(o.getClass())==true)
 		    isnum=true;	       
@@ -121,10 +129,12 @@ public class SVar extends Vector
 		if (val>max) max=val;
 		if (val<min) min=val;
 	    } catch(Exception E) {
-		
-		// what do we do when cast doesn't work ?
-	    };
+                // what do we do when the cast doesn't work ? we return false indicating so
+                return false;
+            };
 	};
+       	super.addElement(o); // we don't add the element unless we're through all checks etc.
+
 	return true;
     };
 

@@ -5,11 +5,12 @@ import java.awt.event.*;
     @version $Id$
 */
 public class HelpFrame extends TFrame implements ActionListener {
+    TextArea t;
     
     public HelpFrame() {
 	super("Help");
 	setLayout(new BorderLayout());
-	TextArea t=new TextArea();
+	t=new TextArea();
 	t.setText("Shortcuts for commands in tree window:\n\nTool modes:\n"+
 		 "<e>        - sElect cases\n"+
 		 "<z>        - Zoom\n"+

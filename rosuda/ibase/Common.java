@@ -16,12 +16,40 @@ public class Common
     public static WindowListener defaultWindowListener=null;
 
     /** application version */
-    public static String Version="0.95b";
+    public static String Version="0.95c";
     /** application release */
-    public static String Release="C210";
+    public static String Release="C211";
     /** application type. so far 0=stand-alone (default, 1=applet - set by Wrapper) */
     public static int AppType=0;
 
+    /** buffer containing all warnings/errors */
+    static StringBuffer warnings=null;
+    /** number of warnings so far */
+    static int warningsCount=0;
+    /** max. # of warnings, any further will be dropped (0=no limit)  */
+    static int maxWarnings=20; 
+    
+    /** add an application warning/error */
+    public static void addWarning(String war) {
+        if (maxWarnings>0 && warningsCount==maxWarnings) {
+            warnings.append("** Too many warnings. No further warnings will be recoreded. **"); warningsCount++;
+        };
+        if (maxWarnings>0 && warningsCount>maxWarnings) return;
+        if (warnings==null)
+            warnings=new StringBuffer(war);
+        else
+            warnings.append(war);
+        warnings.append("\n");
+        warningsCount++;
+    };
+
+    /** get warnings/errors reported so far
+        @return <code>null</code> if there are no warnings or string containing all warnings */        
+    public static String getWarnings() { return (warnings==null)?null:warnings.toString(); };
+
+    /** clear all warnings */
+    public static void flushWarnings() { warnings=null; warningsCount=0; };
+    
     /** returns a short form of the string given in s. it is more complex but
 	tries to get a half-way sensible combination of letter from the word.
 	first approach is to use capitals and numbers only. If that doesnt work
