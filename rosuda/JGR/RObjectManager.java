@@ -336,10 +336,14 @@ public class RObjectManager extends iFrame implements ActionListener {
                     cursorDefault();
 
                 } catch (ClassCastException ex) {
-                    matrix m = (matrix) ((DefaultMutableTreeNode)((JTree)e.getSource()).getSelectionPath().getLastPathComponent()).getUserObject();
-                    cursorWait();
-                    new DataTable(RTalk.getVarSet(m));
-                    cursorDefault();
+                    try {
+                        matrix m = (matrix) ((DefaultMutableTreeNode)((JTree)e.getSource()).getSelectionPath().getLastPathComponent()).getUserObject();
+                        cursorWait();
+                        new DataTable(RTalk.getVarSet(m));
+                        cursorDefault();
+                    } catch(Exception ex1) {
+                        new iError(ex1);
+                    }
                 }
             }
         }

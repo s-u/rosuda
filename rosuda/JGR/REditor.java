@@ -121,7 +121,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.addFocusListener(this);
         editArea.addKeyListener(this);
         editArea.setToolTipText(fileName == null ? "Editor" : fileName);
-        editArea.setWordWrap(true);
+        editArea.setWordWrap(false);
 
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         this.setMinimumSize(new Dimension(600,600));

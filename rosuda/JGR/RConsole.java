@@ -165,7 +165,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void help(String help) {
         boolean exact = false;
-        System.out.println(help);
+        //System.out.println(help);
         if (help != null) {
             help = help.replaceAll("[\"|(|)]", "");
             if (help.startsWith("help.search")) {
@@ -183,13 +183,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             final String h;
             if (help!=null) h = help.trim();
             else h = null;
-        System.out.println("thread create");
+        //System.out.println("thread create");
             Thread t = new Thread() {
                 public void run() {
                     progress.start("Working");
                     setWorking(true);
                     try {
-                        System.out.println("Help");
+                        //System.out.println("Help");
                         new RHelp();
                         if (h!=null) RHelp.current.search(h,e);
                     } catch (Exception e1) {
@@ -198,7 +198,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     setWorking(false);
                 }
             };
-            System.out.println("thread started");
+            //System.out.println("thread started");
             t.start();
         }
         else {
@@ -584,7 +584,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         public String getToolTipText(MouseEvent e) {
             String s = getCurrentWord();
-            System.out.println("Tip "+RTalk.getArgs(s));
+            //System.out.println("Tip "+RTalk.getArgs(s));
             if (s!=null && JGR.STARTED) return RTalk.getArgs(s);
             return null;
         }
