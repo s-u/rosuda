@@ -1,7 +1,6 @@
 package org.rosuda.klimt;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.*;
 import java.awt.Rectangle;
 
 import org.rosuda.ibase.*;
@@ -195,6 +194,74 @@ public class SNode extends Node implements Cloneable
                 chdev+=cn.sampleDev;
             };
         sampleDevGain=isLeaf()?0:sampleDev-chdev;
+    }
+
+    /** pass data from node ct down to this node according to the conditions in this node */
+    public void passDownData(SNode ct) {
+        SVar V=splitVar;
+        int cmp=splitComp;
+        String cond=splitVal;
+        double limit=splitValF;
+        data=new Vector();
+        if (V!=null) {
+            boolean lexi=!V.isNum();
+            for (Enumeration e=ct.data.elements(); e.hasMoreElements();) {
+                Object o=e.nextElement();
+                int I=((Integer)o).intValue();
+                if (I<V.size()) {
+                    if (lexi) {
+                        if (cond.indexOf(",")>-1) { // more cats specified
+                            StringTokenizer st=new StringTokenizer(cond,",");
+                            while (st.hasMoreTokens()) {
+                                String cd=st.nextToken();
+                                Object oo=V.at(I);
+                                if (oo==null) oo=SVar.missingCat;
+                                int cr=oo.toString().compareTo(cd);
+                                if (cr>0) cr=1;
+                                if (cr<0) cr=-1;
+                                if (cr==cmp) data.addElement(o);
+                            }
+                        } else {
+                            int cr=V.at(I).toString().compareTo(cond);
+                            if (cr>0) cr=1;
+                            if (cr<0) cr=-1;
+                            if (cr==cmp) data.addElement(o);
+                        }
+                    } else {
+                        if (!V.isMissingAt(I)) {
+                            double F=V.atF(I);
+                            if (((cmp==0)&&(F==limit))||
+                                ((cmp==-1)&&(F<=limit))||
+                                ((cmp==1)&&(F>limit))) data.addElement(o);
+                        }
+                    }
+                }
+            }
+            if (!isLeaf()) {
+                for (Enumeration e=children(); e.hasMoreElements();) {
+                    SNode n=(SNode)e.nextElement();
+                    n.passDownData(this);
+                }
+            }
+        }
+    }
+
+    /** adjusts cached deviance gain for an entire subtree
+        @param t root of the subtree */
+    void adjustDevGain() {
+        double myDev=F1;
+        if (isLeaf()) {
+            devGain=0;
+        } else {
+            for (Enumeration e=children(); e.hasMoreElements();) {
+                SNode c=(SNode)e.nextElement();
+                if (c!=null) {
+                    myDev-=c.F1;
+                    c.adjustDevGain();
+                }
+            }
+            devGain=myDev;
+        }
     }
     
     /** returns basic string representation of this node (suitable for debugging only)
