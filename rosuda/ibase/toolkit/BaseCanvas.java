@@ -602,11 +602,11 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 
     public void keyPressed(KeyEvent e) {
         int kc=e.getKeyCode();
-        if (kc==KeyEvent.VK_ALT && !inZoom) {
+        if (kc==KeyEvent.VK_ALT && !inZoom && !inQuery) {
             setCursor(Common.cur_query);
             inQuery=true;
         }
-        if (kc==KeyEvent.VK_META && allowZoom && !inQuery) {
+        if (kc==KeyEvent.VK_META && allowZoom && !inZoom && !inQuery) {
             setCursor(Common.cur_zoom);
             inZoom=true;
         }
