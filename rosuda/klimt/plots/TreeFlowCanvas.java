@@ -279,8 +279,9 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
+            if (red && t==redIndex) System.out.println("RED ("+redIndex+") is "+n);
             if (red && t==redIndex) g.setColor(1f,0f,0f,1f);
-            if (n!=null) drawNode(g,n,w/2,0,0);
+            if (n!=null && (!red || t==redIndex)) drawNode(g,n,w/2,0,0);
             if (red && t==redIndex) g.setColor(0f,0f,0f,alpha);
             t++;
         }
