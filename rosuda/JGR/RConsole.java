@@ -519,7 +519,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
             else {
                 //remove \n when the user want to send a cmd
-                try { inputDoc.remove(input.getCaretPosition()-1,"\n".length()); } catch (Exception e) { e.printStackTrace();}
                 String cmd = input.getText().trim();//send the cmd
                 input.setText("");
                 input.setCaretPosition(0);
@@ -535,7 +534,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else if ((ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) && wasHistEvent) {
             wasHistEvent = false;
             input.setCaretPosition(input.getText().length());
-        }        
+        }
     }
 
     public void focusGained(FocusEvent e) {
@@ -587,9 +586,9 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
             //System.out.println(e.getKeyCode());
 
-            if (e.getKeyCode() == KeyEvent.VK_ENTER) return false;
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) return true;
 
-            InputMap map = getInputMap();
+            InputMap map = getInputMap(condition);
             ActionMap am = getActionMap();
 
             if(map != null && am != null && isEnabled()) {
@@ -598,11 +597,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 if (action != null) {
                     return SwingUtilities.notifyAction(action, ks, e, this,
                                                        e.getModifiers());
-                    }		
+                    }
                 }
             return false;
         }
-
     }
 
     class ResultOutput extends JTextPane {
