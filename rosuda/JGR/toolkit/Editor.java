@@ -102,7 +102,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
         editArea.setWordWrap(false);
-        editArea.setDragEnabled(true);
+        //editArea.setDragEnabled(true);
         
         editDoc.addUndoableEditListener(toolBar.undoMgr);
 		
