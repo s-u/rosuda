@@ -28,6 +28,9 @@ class PoGraSSPS extends PoGraSS
     String lastBaseFont;
     String italAppendix="Italic", romAppendix="";
 
+    boolean lastLT=false; // true if lineTo was last command used
+    int lastX, lastY; // coordinates of lst lineTo; used for optimizing output
+
     public PoGraSSPS(String fnn)
     {
 	lineWidth=1; fillSt=0; inPath=false; outs=null; fn=fnn;
@@ -68,48 +71,74 @@ class PoGraSSPS extends PoGraSS
 	    outPS("/color_"+nam+"  { "+(R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor } def\n");
     };
     public void setColor(int R, int G, int B) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	
 	outPS(curPen=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor "));	
     };
     public void setColor(String nam) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	outPS(curPen=("color_"+nam+" "));
     };
     public void setFillColor(int R, int G, int B) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
 	    outPS(curFill=((R/255.0)+" setgray "));		
 	else
 	    outPS(curFill=((R/255.0)+" "+(G/255.0)+" "+(B/255.0)+" setrgbcolor "));	
     };
     public void setFillColor(String nam) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	outPS(curFill=("color_"+nam+" "));
     };
     public void drawLine(int x1, int y1, int x2, int y2) {
 	moveTo(x1,y1); lineTo(x2,y2);
     };
     public void moveTo(int x, int y) {
-	if (!inPath) outPS("np "); inPath=true;
-	outPS((ox+x)+" "+(oy-y)+" m ");
+	if (!inPath) { outPS("np "); lastLT=false;}; inPath=true;
+	if (!lastLT || ox+x!=lastX || oy+y!=lastY)
+	    outPS((ox+x)+" "+(oy-y)+" m ");
+	lastLT=true; lastX=ox+x; lastY=ox+y;
     };
     public void lineTo(int x, int y) {
-	if (!inPath) outPS("np "); inPath=true;
-	outPS((ox+x)+" "+(oy-y)+" l ");
+	if (!inPath) { outPS("np "); lastLT=false;}; inPath=true;
+	if (!lastLT || ox+x!=lastX || oy+y!=lastY)
+	    outPS((ox+x)+" "+(oy-y)+" l ");
+	lastLT=true; lastX=ox+x; lastY=ox+y;
+    };
+    public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {
+	if (pts<2) return;
+	moveTo(x[0],y[0]);
+	int i=1;
+	while(i<pts) {
+	    lineTo(x[i],y[i]);
+	    i++;
+	}
+	if (closed)
+	    lineTo(x[0],y[0]);
+    }
+    public void fillPolygon(int[] x, int[] y, int pts) {
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
+	if (pts<2) return;
+	moveTo(x[0],y[0]);
+	int i=1;
+	while(i<pts) {
+	    lineTo(x[i],y[i]);
+	    i++;
+	}
+	outPS("cp fill\n"); inPath=false; lastLT=false;
     };
     public void drawRect(int x1, int y1, int x2, int y2) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	moveTo(x1,y1); lineTo(x1+x2,y1); lineTo(x1+x2,y1+y2); lineTo(x1,y1+y2); lineTo(x1,y1);
 	outPS("cp s\n"); inPath=false;
     };
     public void fillRect(int x1, int y1, int x2, int y2) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	moveTo(x1,y1); lineTo(x1+x2,y1); lineTo(x1+x2,y1+y2); lineTo(x1,y1+y2); lineTo(x1,y1);
 	outPS("cp fill\n"); inPath=false;
     };
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	dx/=2; dy/=2;
 	outPS("np "+(ox+x1+x2-dx)+" "+(oy-y1)+
 	      " m "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
@@ -118,7 +147,7 @@ class PoGraSSPS extends PoGraSS
 	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp cp s\n");
     };
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	dx/=2; dy/=2;
 	outPS("np "+(ox+x1+x2-dx)+" "+(oy-y1)+
 	      " m "+(ox+x1+x2)+" "+(oy-y1)+" "+(ox+x1+x2)+" "+(oy-y1-y2+dy)+" "+dx+" arcto fp ");
@@ -127,31 +156,31 @@ class PoGraSSPS extends PoGraSS
 	outPS((ox+x1)+" "+(oy-y1)+" "+(ox+x1+x2-dx)+" "+(oy-y1)+" "+dx+" arcto fp cp fill\n");
     };
     public void drawOval(int x, int y, int rx, int ry) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	rx/=2; ry/=2;
 	outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
 	      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp s\n");
     };
     public void fillOval(int x, int y, int rx, int ry) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	rx/=2; ry/=2;
 	outPS("np "+(ox+x+rx)+" "+(oy-y-ry)+
 	      " m "+(ox+x+rx)+" "+(oy-y-ry)+" "+rx+" 0 360 arc cp fill\n");
     };
     public void setLineWidth(int w) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	lineWidth=w; 	
     };
     public void setFillStyle(int s) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	fillSt=s; 
     };
     public void drawString(String txt, int x, int y) {
-	if (inPath) outPS(" cp s\n"); inPath=false;	
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;	
 	outPS("("+txt+") "+(ox+x)+" "+(oy-y)+" sw\n");
     };
     public void drawString(String txt, int x, int y, int att) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	String cmd="sw";
 	if ((att&TA_MASK_Or)==TA_Right) cmd="swr";
 	if ((att&TA_MASK_Or)==TA_Center) cmd="swc";
@@ -160,7 +189,7 @@ class PoGraSSPS extends PoGraSS
 
     // currently ignores rot
     public void drawString(String txt, int x, int y, double ax, double ay) {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
 	outPS(""+(x+ox)+" "+(oy-y)+" "+ax+" "+ay+" ("+txt+") xsw\n");
     };
 
@@ -188,7 +217,7 @@ class PoGraSSPS extends PoGraSS
     };
     
     public void end() {
-	if (inPath) outPS(" cp s\n"); inPath=false;
+	if (inPath) outPS(" cp s\n"); inPath=false; lastLT=false;
     };
 
     public void closePSoutput() {

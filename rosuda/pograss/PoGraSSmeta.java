@@ -89,6 +89,22 @@ public class PoGraSSmeta extends PoGraSS
 	ct.append("p.setFontStyle(\n"+attr+");\n");
     };
 
+    /* drawPoly and fillPoly are NOT interpreted yet! */
+    public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {
+	ct.append("p.drawPolygon(\n(\n");
+	int i=0; while(i<pts) { ct.append(""+x[i]+",\n"); i++; };
+	ct.append("),\n(\n");
+	i=0; while(i<pts) { ct.append(""+y[i]+",\n"); i++; };
+	ct.append("),\n"+(closed?"true":"false")+");\n");
+    };
+    public void fillPolygon(int[] x, int[] y, int pts) {
+	ct.append("p.fillPolygon(\n(\n");
+	int i=0; while(i<pts) { ct.append(""+x[i]+",\n"); i++; };
+	ct.append("),\n(\n");
+	i=0; while(i<pts) { ct.append(""+y[i]+",\n"); i++; };
+	ct.append("));\n");
+    };
+
     public void nextLayer() { ct.append("p.nextLayer(\n);\n"); };
 
     public void begin() { ct.append("p.begin(\n);\n"); };

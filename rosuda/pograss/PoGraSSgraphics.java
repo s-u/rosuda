@@ -97,6 +97,20 @@ class PoGraSSgraphics extends PoGraSS
 	};
     }
 
+    public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {
+	if (paintLayer==-1 || paintLayer==curLayer) {
+	    if (closed)
+		g.drawPolygon(x,y,pts);
+	    else
+		g.drawPolyline(x,y,pts);
+	}	
+    }
+
+    public void fillPolygon(int[] x, int[] y, int pts) {
+	if (paintLayer==-1 || paintLayer==curLayer)
+	    g.fillPolygon(x,y,pts);	
+    }
+
     public void setFontFace(int face) {
 	lastFace="SansSerif";
 	if (face==PoGraSS.FF_Serif) lastFace="Serif";

@@ -7,6 +7,7 @@ import java.awt.Rectangle;
     0.92: (CVS 1.2) support for layers (nextLayer)
     0.93: (CVS 1.3) support for version information (in the API; versionString, version and passVersionInfo)
     0.94: (CVS 1.5) support for extended drawString and font handling
+    0.95: (CVS 1.6) support for polygons
     @version $Id$
 */
 public class PoGraSS
@@ -62,6 +63,10 @@ public class PoGraSS
     public void fillRect(int x1, int y1, int x2, int y2) {};
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
+    public void drawPolygon(int[] x, int[] y, int pts) { drawPolygon(x,y,pts,true); };
+    public void drawPolyline(int[] x, int[] y, int pts) { drawPolygon(x,y,pts,false); };
+    public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {};
+    public void fillPolygon(int[] x, int[] y, int pts) {};
     public void drawOval(int x, int y, int rx, int ry) {};
     public void fillOval(int x, int y, int rx, int ry) {};
     public void setLineWidth(int w) { lineWidth=w; };
