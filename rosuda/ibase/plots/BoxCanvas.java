@@ -135,6 +135,8 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	v=var; m=mark; cv=cvar; setFrame(f);
 	setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
         a=new Axis(v,Axis.O_Y,Axis.T_Num); a.addDepend(this);
+        // get some space around (this comes from the scatterplots)
+        a.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
 	setBackground(new Color(255,255,192));
 	addMouseListener(this);
 	addMouseMotionListener(this);
@@ -256,11 +258,20 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	};
 	
     };
-    
+
+    protected int X,Y,W,H, TW,TH;
+
     public void paintPoGraSS(PoGraSS g) {
 	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
-	g.begin();
+
+        int w=r.width, h=r.height;
+        TW=w; TH=h;
+        int innerL=30, innerB=30, lshift=0;
+        int innerW=w-innerL-10, innerH=h-innerB-10;
+        Y=TH-innerB-innerH;
+        
+        g.begin();
 	if (!valid) {
 	    g.defineColor("red",255,0,0);
 	    g.drawLine(0,0,r.width,r.height);
@@ -273,7 +284,8 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	g.defineColor("selfill",0,255,0);
 	g.defineColor("sel",0,128,0);
         if (vertical) {
-	    a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
+            a.setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
+            //a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
             /* draw ticks and labels for Y axis */
             {
                 int X=30;
@@ -304,7 +316,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		if (areMarked && rs[cs+1+i]>0)
                     drawBox(g,oss[cs+1+i],48+40*i,10,"selfill","sel");
 
-                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,r.height-10,PoGraSS.TA_Center);
+                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,Y+H+20,PoGraSS.TA_Center);
                 i++;
 	    };
 	};
