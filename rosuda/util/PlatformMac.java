@@ -9,7 +9,6 @@
 import com.apple.mrj.*;
 import java.io.*;
 import java.awt.*;
-import javax.swing.JColorChooser;
 
 /** This is an implementation of the {@link Platform} class specific to Apple Macintosh systems. The fact that this class is loaded on Apple computers only allows us to use all of the Apple-specific MRJ classes without the risk of encountering missing classes.<p>Currently following "goodies" are present:<ul><li>Support for resources placed in MacOS X bundles</li><li>loading of custom MacOS X cursors.</li></ul>and ToDo:<ul><li>Register Apple-specific handlers such as "Preferences" or "About"</li><li>Apple-specific clipboard handling</li></ul> */ 
 public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHandler, MRJOpenDocumentHandler {
@@ -88,10 +87,7 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
     }
 
     public void handlePrefs() {
-        Color sc=JColorChooser.showDialog(Common.mainFrame,"Choose selection color",Common.selectColor);
-        if (sc!=null) {
-            Common.selectColor=sc;
-            
-        }
+        PreferencesFrame pf=new PreferencesFrame();
+        pf.show();
     }
 }
