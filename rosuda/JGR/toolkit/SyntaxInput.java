@@ -30,6 +30,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     /** {@see CodeCompleteMultiple} */
     public  CodeCompleteMultiple mComplete;
     private Point p;
+	private iFrame parent;
     
     private String comp;
     
@@ -66,10 +67,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         	line = this.getLineOfOffset(pos);
         	loffset = this.getLineStartOffset(line);
         	lend = this.getLineEndOffset(line);
-			if (lastb > lend) {
-				System.out.println(lastb+" "+lend);
-				return null;
-			}
+			if (lastb > lend) return null;
         }
         catch (Exception e) { return null; }
         if (text.substring(loffset,pos).indexOf("#") >= 0) return null; //comment line
@@ -119,6 +117,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      */
     public void showCmdCompletions(String[] result) {
         try {
+			this.requestFocus(true);
             if (cmdHelp != null) cmdHelp.hide();
         	p = getCaret().getMagicCaretPosition();
         	SwingUtilities.convertPointToScreen(p,this);
@@ -144,7 +143,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				try {
 					int line = this.getLineOfOffset(this.getCaretPosition());
 					int lend = this.getLineEndOffset(line);
-					this.setCaretPosition(lend-1);
+					this.setCaretPosition((this.getLineCount()==1?lend:lend-1));
 				}
 				catch (Exception e) { this.setCaretPosition(this.getText().length()); }
             }
@@ -164,6 +163,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
+			if (funHelpTip != null) {
+                funHelpTip.hide();
+                funHelpTip = null;
+            }
             String text = null;
             int pos = getCaretPosition();
             if (pos==0) return;
@@ -198,8 +201,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                     if (funHelpTip != null) funHelpTip.hide();
                     if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
                         showCmdCompletions(result);
-                    if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
-					
+                    //if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
                 }
                 else {
                     if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun) ) {
@@ -244,7 +246,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 funHelpTip = null;
             }
         }
-        if (ke.getKeyCode() != KeyEvent.VK_UP && ke.getKeyCode() != KeyEvent.VK_DOWN && ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isShiftDown() && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
+        if (ke.getKeyCode() != KeyEvent.VK_TAB && ke.getKeyCode() != KeyEvent.VK_UP && ke.getKeyCode() != KeyEvent.VK_DOWN && ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isShiftDown() && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
@@ -256,7 +258,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             mComplete.setVisible(false);
             if (funHelpTip != null) funHelpTip.hide();
         }
-		if (ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) {
+		if (mComplete.isVisible() || ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN || ke.getKeyCode() == KeyEvent.VK_TAB) {
 			if (funHelpTip != null) funHelpTip.hide();
 		}
     }
