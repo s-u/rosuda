@@ -6,12 +6,8 @@
 //      thanks
 //
 //      To Do:
-//             - Printing from KLIMT
-//             
 //             - Fonts in Histogram TT vs. Scatterplot BM
 //               
-//             - Backspace and Delete for Drag Boxes
-//
 //	       - Sorting of Intervalls in Histos ?? (DB)
 //
 //             - PC
@@ -103,7 +99,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
     file.add(od = new JMenuItem("Open Database"));
     od.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     if( user.indexOf("theus") > -1 )
-      od.setEnabled(true);
+      od.setEnabled(false);
     else
       od.setEnabled(false);
     file.add(s = new JMenuItem("Save"));
@@ -176,29 +172,10 @@ class Join extends JFrame implements SelectionListener, DataListener {
 
     this.setJMenuBar(menubar);                 // Add it to the frame.
     
-    byte[] arrayLogo;
-    try {
-      JarFile MJF;
-      try {
-        MJF = new JarFile("Mondrian.app/Contents/Resources/Java/Mondrian.jar");
-      } catch (Exception e) {
-        MJF = new JarFile(System.getProperty("java.class.path"));
-      }
-      ZipEntry LE = MJF.getEntry("Logo.gif");
-      InputStream inputLogo = MJF.getInputStream(LE);
-      arrayLogo = new byte[(int)LE.getSize()];
-      for( int i=0; i<arrayLogo.length; i++ ) {
-        arrayLogo[i] = (byte)inputLogo.read();
-      }
-    } catch (Exception e) {	
-      System.out.println("Logo Exception: "+e);
-      arrayLogo = new byte[1];
-    }
-    Icon MondrianIcon = new ImageIcon(arrayLogo);    
+    Icon MondrianIcon = new ImageIcon(readGif("Logo.gif"));    
     
     JLabel MondrianLabel = new JLabel(MondrianIcon);
-    scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.getViewport().add("Center", MondrianLabel);
+    scrollPane = new JScrollPane(MondrianLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     getContentPane().add("Center", scrollPane);
     
     // Add the status/progress bar
@@ -332,7 +309,30 @@ class Join extends JFrame implements SelectionListener, DataListener {
   
   void showIt() {
 //    paint(this.getGraphics());
-    progBar.repaint();
+    progPanel.repaint();
+  }
+
+  byte[] readGif(String name) {
+
+    byte[] arrayLogo;
+    try {
+      JarFile MJF;
+      try {
+        MJF = new JarFile("Mondrian.app/Contents/Resources/Java/Mondrian.jar");
+      } catch (Exception e) {
+        MJF = new JarFile(System.getProperty("java.class.path"));
+      }
+      ZipEntry LE = MJF.getEntry(name);
+      InputStream inputLogo = MJF.getInputStream(LE);
+      arrayLogo = new byte[(int)LE.getSize()];
+      for( int i=0; i<arrayLogo.length; i++ ) {
+        arrayLogo[i] = (byte)inputLogo.read();
+      }
+    } catch (Exception e) {
+      System.out.println("Logo Exception: "+e);
+      arrayLogo = new byte[1];
+    }
+    return arrayLogo;
   }
   
   int setGraphicsPerformance() {
@@ -454,7 +454,7 @@ System.out.println("Selection Sequences : "+selseq);
             Selection S = (Selection)(((DragBox)Plots.elementAt(i)).Selections.lastElement());
             
             if( selList.indexOf(S) == -1 )  { // Not in the list yet => new Selection to add !
-              if( S.r.width > 1 && S.r.height > 1 && selseq) {
+              if( S.r.width > 2 && S.r.height > 2 && selseq) {
                 S.step = selList.size() + 1;
                 selList.addElement(S);
               } else {
@@ -555,15 +555,15 @@ System.out.println("Selection Sequences : "+selseq);
   }
   
   public void setVarList() {
-    thisDataSet = dataSets.size() - 1;
-    dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
+    if( thisDataSet == -1 )
+      thisDataSet = dataSets.size() - 1;
+    final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
     String listNames[] = new String[data.k];
-    for( int j=0; j<data.k; j++ ) {
-      listNames[j] = data.getName(j);
-    }
+    for( int j=0; j<data.k; j++)
+      listNames[j] = " "+data.getName(j);
     
     varNames = new JList(listNames);
-    scrollPane.getViewport().setView(varNames);
+    scrollPane.setViewportView(varNames);
     
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -571,10 +571,33 @@ System.out.println("Selection Sequences : "+selseq);
     varNames.addListSelectionListener(new ListSelectionListener() {     
       public void valueChanged(ListSelectionEvent e) { maintainPlotMenu(); }
     });
+
+    varNames.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+          int index = varNames.locationToIndex(e.getPoint());
+          if( !data.alpha(index) ) {
+            if( data.categorical(index) )
+              data.catToNum(index);
+            else
+              data.numToCat(index);
+            setVarList();
+            maintainPlotMenu();
+          }
+        }
+      }
+    });
+
+    varNames.setCellRenderer(new MCellRenderer());
+
+    RepaintManager currentManager = RepaintManager.currentManager(varNames);
+    currentManager.setDoubleBufferingEnabled(true);    
     
     if( polys.size() > 0 )
       m.setEnabled(true);
-    
+
+    this.setResizable(true);
+
     this.show();
   }
   
@@ -818,6 +841,8 @@ System.out.println("Selection Sequences : "+selseq);
         //	System.out.println("# Lines: "+data.n);
         br = new BufferedReader( new FileReader(filename) );
         progText.setText("Loading ...");
+//        progBar.setIndeterminate(true);
+        progPanel.repaint();
         data.read(br, alpha, progBar);
 
         br.mark(1000000);
@@ -1253,7 +1278,7 @@ System.out.println("Selection Sequences : "+selseq);
     
     getSelectedTypes();
     
-    System.out.println("number categorical: "+numCategorical+", weight Index "+weightIndex);
+//    System.out.println("number categorical: "+numCategorical+", weight Index "+weightIndex);
     
     switch( (varNames.getSelectedIndices()).length ) {
       case 0:
@@ -1270,12 +1295,13 @@ System.out.println("Selection Sequences : "+selseq);
       case 1:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
           b.setEnabled(true);
-          n.setEnabled(true);
-        } else {
-          b.setEnabled(false);
-          n.setEnabled(false);
+          hi.setEnabled(false);
         }
-        hi.setEnabled(true);
+        else {
+          b.setEnabled(false);
+          hi.setEnabled(true);
+        }
+        n.setEnabled(false);
         bw.setEnabled(false);
         nw.setEnabled(false);
         pc.setEnabled(false);
@@ -1330,5 +1356,46 @@ System.out.println("Selection Sequences : "+selseq);
   public void maintainWindowMenu(boolean preserve) {
     for( int i=0; i<Plots.size(); i++ ) 
         ((MFrame)(((DragBox)Plots.elementAt(i)).frame)).maintainMenu(preserve);
+  }
+
+  class MCellRenderer extends JLabel implements ListCellRenderer {
+
+    final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
+
+    final ImageIcon alphaIcon = new ImageIcon(readGif("alpha.gif"));
+    final Icon catIcon = new ImageIcon(readGif("cat.gif"));
+    final Icon numIcon = new ImageIcon(readGif("num.gif"));
+    // This is the only method defined by ListCellRenderer.
+    // We just reconfigure the JLabel each time we're called.
+
+    public Component getListCellRendererComponent(
+                                                  JList list,
+                                                  Object value,            // value to display
+                                                  int index,               // cell index
+                                                  boolean isSelected,      // is the cell selected
+                                                  boolean cellHasFocus)    // the list and the cell have the focus
+    {
+      String s = value.toString();
+      setText(s);
+      if( data.alpha(index) )
+        setIcon(alphaIcon);
+      else if( data.categorical(index) )
+        setIcon(catIcon);
+      else
+        setIcon(numIcon);
+    
+      if (isSelected) {
+        setBackground(list.getSelectionBackground());
+        setForeground(list.getSelectionForeground());
+      }
+      else {
+        setBackground(list.getBackground());
+        setForeground(list.getForeground());
+      }
+      setEnabled(list.isEnabled());
+      setFont(list.getFont());
+      setOpaque(true);
+      return this;
+    }
   }
 }
