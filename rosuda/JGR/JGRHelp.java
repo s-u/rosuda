@@ -355,21 +355,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             rhelp.back.setEnabled(currentURLIndex > 0);
             rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
             URL url = (URL) history.get(currentURLIndex);
-            //System.out.println("test"+url);
             try {
                 helpPane.setPage(url);
-				                    try {
-                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
-                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
-						else {
-							int i = url.toString().indexOf("html");
-							title = url.toString().substring(0,i-1);
-							title = title.substring(title.lastIndexOf(File.separator)+1);
-							if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
-						}
-                    } catch (Exception ex2) {}
-                
-            } catch (IOException ex) {
+			} catch (IOException ex) {
                 ex.printStackTrace();
                 try { history.remove(currentURLIndex);
                     currentURLIndex--;
@@ -385,8 +373,19 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                                                   JOptionPane.ERROR_MESSAGE);
                 }
             }
-            finally { rhelp.cursorDefault(); }
-            
+            finally { 
+				try {
+                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
+                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+						else {
+							int i = url.toString().indexOf("html");
+							title = url.toString().substring(0,i-1);
+							title = title.substring(title.lastIndexOf(File.separator)+1);
+							if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+						}
+                } catch (Exception ex2) {}
+                rhelp.cursorDefault(); 
+			}
         }
 
         private void back() {
