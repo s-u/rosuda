@@ -38,6 +38,10 @@ public class EzMenu {
                 m.add(mi=new MenuItem("Save as PDF ...",new MenuShortcut('P',true))).setActionCommand("exportPDF"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as SVG ...")).setActionCommand("exportSVG"); mi.addActionListener(al);
                 if (!hasSVG) mi.setEnabled(false);
+                if (!Common.isMac) {
+                    m.addSeparator();
+                    m.add(mi=new MenuItem("Preferences ...")).setActionCommand("prefs"); mi.addActionListener(al);
+                }
                 m.addSeparator();
                 m.add(mi=new MenuItem("Save selected as ...")).setActionCommand("exportCases"); mi.addActionListener(al);
                 m.addSeparator();
@@ -46,7 +50,8 @@ public class EzMenu {
                     m.addSeparator();
                 }
                 m.add(mi=new MenuItem("Close window",new MenuShortcut('W'))).setActionCommand("WTMclose"+we.id); mi.addActionListener(wt);
-                m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
+                if (!Common.isMac)
+                    m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
             };
             if (menuDef[i]=="~Edit") {
                 i++; isNext=true;
