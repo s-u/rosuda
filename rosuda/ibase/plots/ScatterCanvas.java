@@ -30,6 +30,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
+
+    /** diameter of a point */
+    public int ptDiam=3;
     
     /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
 	compatibility with older implementations */
@@ -241,12 +244,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                         if (mm==0) g.setColor("point"); else g.setColor(ColorBridge.main.getColor(mm));
                         lastSM=mm;
                     }
-                    g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+                    g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
                 }
         } else {
             for (int i=0;i<filter.length;i++)
                 if (Pts[filter[i]]!=null)
-                    g.fillOval(Pts[filter[i]].x-1,Pts[filter[i]].y-1,3,3);
+                    g.fillOval(Pts[filter[i]].x-ptDiam/2,Pts[filter[i]].y-ptDiam/2,ptDiam,ptDiam);
         };
 
         nextLayer(g);
@@ -256,18 +259,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             if (filter==null) {
                 for (int i=0;i<pts;i++)
                     if (Pts[i]!=null && m.at(i))
-                        if (selRed)
-                            g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
-                        else
-                            g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+                        g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
             } else {
                 for (int j=0;j<filter.length;j++) {
                     int i=filter[j];
                     if (Pts[i]!=null && m.at(i))
-                        if (selRed)
-                            g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
-                        else
-                            g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+                        g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
                 }
             }
         };
@@ -404,6 +401,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             querying=true;
             qx=qy=-1;
             setCursor(Common.cur_aim);
+        }
+        if (e.getKeyCode()==KeyEvent.VK_UP) {
+            ptDiam+=2; setUpdateRoot(0); repaint();
+        }
+        if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>2) {
+            ptDiam-=2; setUpdateRoot(0); repaint();
         }
     };
     public void keyReleased(KeyEvent e) {
