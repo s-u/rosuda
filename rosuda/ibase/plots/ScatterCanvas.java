@@ -15,6 +15,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     boolean showLabels=true;
 
+    boolean jitter=false;
+
     boolean selRed=false;
 
     /** array of two axes (X and Y) */
@@ -51,7 +53,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIlabels=mb.getMenu(1).getItem(1);	
     };
@@ -229,11 +231,21 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (v[1].size()<pts) pts=v[1].size();
 	
 	Pts=new Point[pts];
-	for (int i=0;i<pts;i++)
+        for (int i=0;i<pts;i++) {
+            int jx=0, jy=0;
+            if (v[0].isCat() && jitter) {
+                double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
+                jx=(int)(d*((double)(A[0].getCatLow(v[0].getCatIndex(i))-A[0].getCasePos(i))));
+            }
+            if (v[1].isCat() && jitter) {
+                double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
+                jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));                
+            }
 	    if (!v[0].isMissingAt(i) && !v[1].isMissingAt(i))
-		Pts[i]=new Point(A[0].getCasePos(i),TH-A[1].getCasePos(i));
-	    else
+		Pts[i]=new Point(jx+A[0].getCasePos(i),jy+TH-A[1].getCasePos(i));
+            else
 		Pts[i]=null;
+        };
     };
 
     public void mouseClicked(MouseEvent ev) 
@@ -292,6 +304,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
+	if (e.getKeyChar()=='j') run(this,"jitter");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -310,6 +323,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
+        if (cmd=="jitter") {
+            jitter=!jitter; updatePoints(); setUpdateRoot(0); repaint();
+        }
 
         if (cmd=="exportCases") {
 	    try {
