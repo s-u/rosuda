@@ -13,6 +13,7 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.*;
@@ -421,22 +422,27 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     }
 
     public void dragEnter(DropTargetDragEvent evt) {
+        //System.out.println("dragEnter");
         // Called when the user is dragging and enters this drop target.
     }
 
     public void dragOver(DropTargetDragEvent evt) {
+        //System.out.println("dragOver");
         // Called when the user is dragging and moves over this drop target.
     }
 
     public void dragExit(DropTargetEvent evt) {
+        //System.out.println("dragExit");
         // Called when the user is dragging and leaves this drop target.
     }
 
     public void dropActionChanged(DropTargetDragEvent evt) {
+        //System.out.println("dropActionChanged");
         // Called when the user changes the drag action between copy or move.
     }
 
     public void drop(DropTargetDropEvent evt) {
+        //System.out.println("drop");
         try {
             Transferable t = evt.getTransferable();
 

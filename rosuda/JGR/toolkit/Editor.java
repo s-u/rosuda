@@ -53,7 +53,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private boolean modified = false;
 	
     private TextFinder textFinder = new TextFinder(editArea);
-	
+    
+    
 	
     public static RecentList recentOpen;
     public JMenu recentMenu;
@@ -101,7 +102,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
         editArea.setWordWrap(false);
-		
+        editArea.setDragEnabled(true);
+        
         editDoc.addUndoableEditListener(toolBar.undoMgr);
 		
         caretStatus.setMinimumSize(new Dimension(100, 15));
@@ -123,7 +125,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.getContentPane().add(sp,BorderLayout.CENTER);
         this.getContentPane().add(status,BorderLayout.SOUTH);
 		
-		
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 exit();
@@ -135,7 +136,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 				setTitle(fileName);
             }
         });
-        this.setMinimumSize(new Dimension(600,600));
+		
+		this.setMinimumSize(new Dimension(600,600));
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));

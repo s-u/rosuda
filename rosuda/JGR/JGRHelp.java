@@ -54,6 +54,8 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     private SearchEngine searchRHelp;
 
     private boolean INITIALIZED = false;
+    
+    private TextFinder textFinder = new TextFinder();
 
 
     private static String index;
@@ -69,7 +71,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         while(!JGR.STARTED);
 
         String[] Menu = {"+", "File", "@PPrint", "print", "~File.Basic.End",
-            "+", "Edit", "@CCopy", "copy",
+            "+", "Edit", "@CCopy", "copy",/*"@FFind","search","@GFind Next","searchnext",*/
             "~Preferences",
             "~Window", "0"};
         iMenu.getMenu(this, this, Menu);
@@ -86,7 +88,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         searchRHelp = new SearchEngine();
         searchRHelp.setRHelp(this);
 
-        search.setActionCommand("search");
+        search.setActionCommand("searchHelp");
         search.addActionListener(this);
 
         this.getRootPane().setDefaultButton(search);
@@ -253,7 +255,15 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             ((HelpArea) tabArea.getSelectedComponent()).helpPane.selectAll();
 
         }
-        else if (cmd=="search") search();
+        else if (cmd=="searchHelp") search();
+        else if (cmd == "search") {
+            textFinder.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
+            textFinder.showFind(false);
+        }
+        else if (cmd == "searchnext") {
+            textFinder.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
+            textFinder.showFind(true);
+        }
         else if (cmd=="tab_close") tabArea.remove(tabArea.getSelectedIndex());
     }
 
