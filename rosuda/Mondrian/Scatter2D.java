@@ -8,7 +8,8 @@ import java.lang.*;              //
 import java.io.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
-
+import org.rosuda.JRclient.*;	   // For Rserve
+ 
 public class Scatter2D extends DragBox {
   private Vector rects = new Vector(512,512);    // Store the tiles.
   private int width, height;                   // The preferred size.
@@ -22,7 +23,7 @@ public class Scatter2D extends DragBox {
   private int displayVar = -1;
   private Image bi, tbi, ttbi, fi;			// four buffer: 1. double, 2. hilite, 3. labels, 4. filtered
   private MediaTracker media = new MediaTracker(this);
-  private Graphics2D fg, bg, tbg;
+  private Graphics2D fg, bg, tbg, ttbg;
   private int[] Vars;
   private JList varList;
   private double[] xVal;
@@ -36,7 +37,10 @@ public class Scatter2D extends DragBox {
   private int alpha = alphas[alphap];			// transparency of points
   private String displayMode = "Free";
   private String modeString = "bins";
+  private String smoothF = "none";
+  private int smoother = 5;
   private boolean plotLines = false;
+  private boolean plotLoess = false;
   private boolean connectLines = false;
   private int lastPointId = -1;
   private int byVar = -1;
@@ -49,9 +53,10 @@ public class Scatter2D extends DragBox {
   private boolean force = false;
   private boolean invert = false;
   private boolean alphaChanged = false;
+  private boolean smoothChanged = false;
   
   /** This constructor requires a Frame and a desired size */
-  public Scatter2D(JFrame frame, int width, int height, dataSet data, JList varList) {
+  public Scatter2D(JFrame frame, int width, int height, dataSet data, int[] Vars, JList varList) {
     super(frame);
     this.data = data;
     this.width = width;
@@ -59,7 +64,7 @@ public class Scatter2D extends DragBox {
     border = 30;
     xShift = 15;
     this.varList = varList;
-    this.Vars = varList.getSelectedIndices();
+    this.Vars = Vars;
 
     //    this.setBackground(new Color(255, 255, 152));
     //this.setBackground(new Color(0, 0, 0));
@@ -257,17 +262,52 @@ public class Scatter2D extends DragBox {
               mode.add(axes);
               axes.setActionCommand("axes");
               axes.addActionListener(this);
-              if( plotLines ) {
-                JMenuItem nolines = new JMenuItem("remove regression");
-                mode.add(nolines);
-                nolines.setActionCommand("nolines");
-                nolines.addActionListener(this);
-              } else {
-                JMenuItem lines = new JMenuItem("add regression");
-                mode.add(lines);
-                lines.setActionCommand("lines");
-                lines.addActionListener(this);
+
+              JMenu smoothers = new JMenu("smoothers");
+
+              JCheckBoxMenuItem nosmooth = new JCheckBoxMenuItem("none");
+              smoothers.add(nosmooth);
+              nosmooth.setActionCommand("none");
+              nosmooth.addActionListener(this);
+              if( smoothF.equals("none") ) {
+                nosmooth.setSelected(true);
+                nosmooth.setEnabled(false);
               }
+              JCheckBoxMenuItem lsline = new JCheckBoxMenuItem("ls-line");
+              smoothers.add(lsline);
+              lsline.setActionCommand("ls-line");
+              lsline.addActionListener(this);
+              if( smoothF.equals("ls-line") ) {
+                lsline.setSelected(true);
+                lsline.setEnabled(false);
+              }
+              JCheckBoxMenuItem loess = new JCheckBoxMenuItem("loess ("+Stat.round(3.75/smoother,2)+")");
+              smoothers.add(loess);
+              loess.setActionCommand("loess");
+              loess.addActionListener(this);
+              if( smoothF.equals("loess") ) {
+                loess.setSelected(true);
+                loess.setEnabled(false);
+              }
+              JCheckBoxMenuItem splines = new JCheckBoxMenuItem("splines ("+smoother+")");
+              smoothers.add(splines);
+              splines.setActionCommand("splines");
+              splines.addActionListener(this);
+              if( smoothF.equals("splines") ) {
+                splines.setSelected(true);
+                splines.setEnabled(false);
+              }
+              JCheckBoxMenuItem locfit = new JCheckBoxMenuItem("locfit ("+Stat.round(3.5/smoother,2)+")");
+              smoothers.add(locfit);
+              locfit.setActionCommand("locfit");
+              locfit.addActionListener(this);
+              if( smoothF.equals("locfit") ) {
+                locfit.setSelected(true);
+                locfit.setEnabled(false);
+              }
+              
+              mode.add(smoothers);
+              
               JMenu conlines = new JMenu("add lines by");
               JCheckBoxMenuItem off = new JCheckBoxMenuItem("no lines");
               conlines.add(off);
@@ -326,7 +366,7 @@ public class Scatter2D extends DragBox {
 
   public void actionPerformed(ActionEvent e) {
     String command = e.getActionCommand();
-    if( command.equals("Fixed") || command.equals("Free") || command.equals("axes") || command.equals("invert") || command.equals("lines") || command.equals("nolines") || command.equals("bins") || command.equals("nobyvar") || command.substring(0,Math.min(5, command.length())).equals("byvar") || command.equals("points") || command.equals("auto") ) {
+    if( command.equals("Fixed") || command.equals("Free") || command.equals("axes") || command.equals("invert") || command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("locfit") || command.equals("nobyvar") || command.substring(0,Math.min(5, command.length())).equals("byvar") || command.equals("points") || command.equals("bins") || command.equals("auto") ) {
       if( command.equals("Fixed") || command.equals("Free")) {
         displayMode = command;
       } else if( command.equals("bins") || command.equals("points")) {
@@ -339,16 +379,15 @@ public class Scatter2D extends DragBox {
           invert = false;
         else
           invert = true;
-      } else if( command.equals("lines") ) {
-        plotLines = true;
-      } else if( command.equals("nolines") ) {
-        plotLines = false;
+      } else if( command.equals("none") || command.equals("ls-line") || command.equals("loess") || command.equals("splines") || command.equals("locfit") ) {
+        smoothF = command;
+        smoothChanged = true;
       } else if( command.equals("nobyvar") ) {
         connectLines = false;
         byVar = -1;
       } else if( command.substring(0,Math.min(5, command.length())).equals("byvar") ) {
         connectLines = true;
-        System.out.println(" ........................ by var "+command.substring(5,command.length()));
+System.out.println(" ........................ by var "+command.substring(5,command.length()));
         byVar = (int)Util.atod( command.substring(5,command.length()) );
       } else if( command.equals("axes") ) {
         int tmp = Vars[1];
@@ -380,7 +419,6 @@ public class Scatter2D extends DragBox {
 
   public void processMouseMotionEvent(MouseEvent e) {
 
-      Graphics2D ttbg;
       Graphics2D g = (Graphics2D)this.getGraphics();
       FontMetrics fm = bg.getFontMetrics();
       ttbg = (Graphics2D)ttbi.getGraphics();
@@ -478,16 +516,18 @@ public class Scatter2D extends DragBox {
 
       if (e.getID() == KeyEvent.KEY_PRESSED && (e.getKeyCode() == KeyEvent.VK_UP
                                             ||  e.getKeyCode() == KeyEvent.VK_DOWN
+                                            ||  e.getKeyCode() == KeyEvent.VK_UP && e.isShiftDown()
+                                            ||  e.getKeyCode() == KeyEvent.VK_DOWN && e.isShiftDown()
                                             ||  e.getKeyCode() == KeyEvent.VK_LEFT
                                             ||  e.getKeyCode() == KeyEvent.VK_RIGHT) ) {
-          if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
+          if( e.getKeyCode() == KeyEvent.VK_DOWN && !e.isShiftDown() ) {
               if( radius > 1 ) {
                   radius-=2;
                   scaleChanged = true;
               } else
                   return;
           }
-          if( e.getKeyCode() == KeyEvent.VK_UP ) {
+          if( e.getKeyCode() == KeyEvent.VK_UP && !e.isShiftDown() ) {
               if( radius < width/2 ) {
                   radius+=2;
                   scaleChanged = true;
@@ -506,6 +546,18 @@ public class Scatter2D extends DragBox {
               alphaChanged = true;
             } else
               return;
+          }
+          if( e.getKeyCode() == KeyEvent.VK_UP && e.isShiftDown() ) {
+            if( smoother < 12 ) {
+              smoother += 1;
+              smoothChanged = true;
+            }
+          }
+          if( e.getKeyCode() == KeyEvent.VK_DOWN && e.isShiftDown() ) {
+            if( smoother > 1 ) {
+              smoother -= 1;
+            smoothChanged = true;
+          }
           }
         paint( this.getGraphics() );
       }
@@ -580,6 +632,7 @@ public class Scatter2D extends DragBox {
         fg = (Graphics2D)fi.getGraphics();
         bg = (Graphics2D)bi.getGraphics();
         tbg = (Graphics2D)tbi.getGraphics();
+        ttbg = (Graphics2D)ttbi.getGraphics();
       }
       FontMetrics fm = bg.getFontMetrics();      
 
@@ -645,14 +698,7 @@ public class Scatter2D extends DragBox {
       }
       bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
       bg.setColor(Color.black);
-
-      // add regression lines
-      if( plotLines ) {
-        coeffs = data.regress(Vars[0], Vars[1]);
-        bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * coeffs[1] + coeffs[0]),
-                     (int)userToWorldX( xMax ), (int)userToWorldY( xMax * coeffs[1] + coeffs[0]) );
-      }
-
+      
       // x axis
       bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside*pF, 
                    (int)userToWorldX( getUrx() ), (int)userToWorldY( getLly() ) + outside*pF );  
@@ -696,13 +742,6 @@ public class Scatter2D extends DragBox {
 
     tbg.setColor(DragBox.hiliteColor);
     
-    if( plotLines )
-      if( data.countSelection() > 1 ) {
-        selCoeffs = data.selRegress(Vars[0], Vars[1]);
-        tbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
-                      (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
-      }
-
     if( modeString.equals("points") ) {
 
       double[] selection = data.getSelection();
@@ -755,20 +794,175 @@ public class Scatter2D extends DragBox {
       }
     }
             
-    tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-    tbg.setColor(Color.black);
+    if( !printing )
+      ttbg.drawImage(tbi, 0, 0, Color.black, null);
+
+    if( smoothChanged || true ) { // add regression lines
+      smoothChanged = false;
+      if( smoothF.equals("ls-line" ) ) {
+        coeffs = data.regress(Vars[0], Vars[1]);
+        ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * coeffs[1] + coeffs[0]),
+                     (int)userToWorldX( xMax ), (int)userToWorldY( xMax * coeffs[1] + coeffs[0]) );
+      }
+
+      if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
+        try {
+          Rconnection c = new Rconnection();
+          if( smoothF.equals("splines") )
+            c.voidEval("library(splines)");
+          if( smoothF.equals("locfit") )
+            c.voidEval("library(locfit)" );
+
+          c.assign("x",data.getRawNumbers(Vars[0]));
+          c.assign("y",data.getRawNumbers(Vars[1]));
+
+          double[] xForFit = new double[200+1];
+          double step = (xMax-xMin)/200;
+          for( int f=0; f<200+1; f++ )
+            xForFit[f] = xMin + step*(double)f;
+          c.assign("xf",xForFit);
+
+          double[] fitted = {0};
+          double[] CIl = {0};
+          double[] CIu = {0};
+          if( smoothF.equals("loess") ) 
+            fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+          if( smoothF.equals("locfit") ) {
+            RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
+            fitted = (double[]) sL.at("fit").getContent();
+            CIl    = new double[fitted.length];
+            CIu    = new double[fitted.length];
+            double[] se = (double[]) sL.at("se.fit").getContent();
+            for( int f=0; f<=200; f++ ) {
+              CIl[f] = fitted[f] - se[f];
+              CIu[f] = fitted[f] + se[f];
+            }
+          }
+//            fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
+          if( smoothF.equals("splines") ) {
+            c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
+            fitted = c.eval("sP[,1]").asDoubleArray();
+            CIl = c.eval("sP[,2]").asDoubleArray();
+            CIu = c.eval("sP[,3]").asDoubleArray();
+          }
+          if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
+            Polygon CI = new Polygon();
+            for( int f=0; f<200+1; f++ ) {
+              CI.addPoint( (int)userToWorldX( xMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+            }
+            for( int f=200; f>=0; f-- ) {
+              CI.addPoint( (int)userToWorldX( xMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+            }
+            ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
+            ttbg.fillPolygon(CI);
+            ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+          }
+
+          for( int f=0; f<200; f++ ) {
+            ttbg.drawLine( (int)userToWorldX( xMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+                           (int)userToWorldX( xMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+          }
+
+          c.close();
+        } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+      }
+      int nSel = data.countSelection();
+      if( nSel > 1 ) {
+        ttbg.setColor(DragBox.hiliteColor);
+        if( smoothF.equals("ls-line" ) ) {
+          selCoeffs = data.selRegress(Vars[0], Vars[1]);
+          ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
+                        (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
+        }
+        if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
+          try {
+            Rconnection c = new Rconnection();
+            if( smoothF.equals("splines") )
+              c.voidEval("library(splines)");
+            if( smoothF.equals("locfit") )
+              c.voidEval("library(locfit)" );
+
+            double[] selX = new double[nSel];
+            double[] selY = new double[nSel];
+            double[] selection = data.getSelection();
+            int k=0;
+            for( int i=0; i<data.n; i++ )
+              if( selection[i] > 0 ) {
+                selX[k]   = xVal[i];
+                selY[k++] = yVal[i];
+              }
+                c.assign("x",selX);
+            c.assign("y",selY);
+
+            double xSelMin = data.getSelQuantile(Vars[0], 0.0);
+            double xSelMax = data.getSelQuantile(Vars[0], 1.0);
+
+            double[] xForFit = new double[200+1];
+            double step = (xSelMax-xSelMin)/200;
+            for( int f=0; f<200+1; f++ )
+              xForFit[f] = xSelMin + step*(double)f;
+            c.assign("xf",xForFit);
+
+            double[] fitted = {0};
+            double[] CIl = {0};
+            double[] CIu = {0};
+            if( smoothF.equals("loess") ) 
+              fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+            if( smoothF.equals("locfit") ) {
+              RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
+              fitted = (double[]) sL.at("fit").getContent();
+              CIl    = new double[fitted.length];
+              CIu    = new double[fitted.length];
+              double[] se = (double[]) sL.at("se.fit").getContent();
+              for( int f=0; f<=200; f++ ) {
+                CIl[f] = fitted[f] - se[f];
+                CIu[f] = fitted[f] + se[f];
+              }
+            }
+//						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
+            if( smoothF.equals("splines") ) {
+              c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
+              fitted = c.eval("sP[,1]").asDoubleArray();
+              CIl = c.eval("sP[,2]").asDoubleArray();
+              CIu = c.eval("sP[,3]").asDoubleArray();
+            }
+            if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
+              Polygon CI = new Polygon();
+              for( int f=0; f<=200; f++ ) {
+                CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+              }
+              for( int f=200; f>=0; f-- ) {
+                CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+              }
+              ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
+              ttbg.fillPolygon(CI);
+              ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+            }
+
+            for( int f=0; f<200; f++ )
+              ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+                            (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+
+            c.close();
+          } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+        }
+      }
+    }
+
+    ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+    ttbg.setColor(Color.black);
     if( !printing ) {
-      tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));      
-      drawSelections(tbg);
+      ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));      
+      drawSelections(ttbg);
       g.setColor(Color.black);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
-      g.drawImage(tbi, 0, 0, Color.black, null);
+      g.drawImage(ttbi, 0, 0, Color.black, null);
     }
-        
+
     long stop = new Date().getTime();
     //System.out.println("Time for points: "+(stop-start)+"ms");
   }
-
+    
   public void drawSelections(Graphics g) {
 
     for( int i=0; i<Selections.size(); i++) {
