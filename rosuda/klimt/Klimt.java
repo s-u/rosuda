@@ -95,12 +95,17 @@ public class InTr
 	return n;
     };
 
+    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs) {
+        return openTreeFile(f,fn,tvs,false);
+    }
+    
     /** loads a dataset and a tree from a file.
 	@param f frame to be used for FileDialog if necessary
         @param fn filename of the source. If <code>null</code> {@link FileDialog} is used to let the user select the file
 	@param tvs {@link SVarSet} object to be used for storage of the dataset.
+        @param readOnlyDataset if set to <code>true</code> then tvs is not modified except for classifier
 	@return root node of the tree or <code>null</code> if no tree was present. This methods returns <code>null</code> even if the dataset was loaded correcly and no tree was present. Total failure to process the file can be determined only by using clean dataset and check for size of the dataset after the call. */	
-    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs)
+    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs,boolean readOnlyDataset)
     {
 	SNode t=null;	
 	String fnam=fn;
@@ -124,7 +129,7 @@ public class InTr
                 File fil=new File(fnam);
                 fsz=fil.length();
             } catch(Exception e) {};
-            t=RTree.Load(r,tvs,fsz);
+            t=RTree.Load(r,tvs,fsz,null,null,readOnlyDataset);
 	    if (Common.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));

@@ -306,7 +306,7 @@ public class VarFrame extends TFrame {
 		System.exit(0);
 	    };
 	    if (cmd==1) { // Open tree
-		SNode t=InTr.openTreeFile(Common.mainFrame,null,vs);
+		SNode t=InTr.openTreeFile(Common.mainFrame,null,vs,true);
 		if (t!=null) {
 		    TFrame f=new TFrame(InTr.lastTreeFileName);
 		    TreeCanvas tc=InTr.newTreeDisplay(t,f);
