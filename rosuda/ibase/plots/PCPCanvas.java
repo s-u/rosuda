@@ -31,6 +31,9 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     
     /** is NA represented as 0? (false=NA's are not drawn at all) */
     boolean na0=true;
+
+    boolean drawPoints=false;
+    boolean drawAxes=false;
     
     /** array of axes */
     Axis A[];
@@ -80,7 +83,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","-","Common scale on/off","common","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle hilight. style","selRed","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Common scale on/off","common","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
@@ -127,7 +130,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (selRed)
 	    g.defineColor("marked",255,0,0);
 	else
-	    g.defineColor("marked",128,255,128);
+	    g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+        g.defineColor("axis",192,192,192);
 	g.defineColor("black",0,0,0);
 	g.defineColor("outline",0,0,0);
 	g.defineColor("point",0,0,128);	
@@ -201,13 +205,27 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             };
         }
 
+        if (drawAxes) {
+            g.setColor("axis");
+            int xx=0;
+            while (xx<v[0].getNumCats()) {
+                int t=A[0].getCatCenter(xx++);
+                g.drawLine(t,Y,t,Y+H);
+            }
+        }
+        
         g.setColor("line");
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
-                if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null)))
+                if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
                     g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
                                A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
-	};
+                    if (drawPoints) {
+                        int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
+                        g.fillOval(x-1,y-1,3,3);
+                    }
+                }                    
+	}
 	
         g.nextLayer();
         
@@ -215,11 +233,16 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             g.setColor("marked");
             for (int j=2;j<v.length;j++) {
                 for (int i=0;i<v[1].size();i++)
-                    if (m.at(i) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null)))
+                    if (m.at(i) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
 			g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
 				   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
-            };
-        };
+                        if (drawPoints) {
+                            int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
+                            g.fillOval(x-1,y-1,3,3);
+                        }
+                    }
+            }
+        }
 
         if (drag) {
             g.nextLayer();
@@ -317,6 +340,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
+        if (cmd=="togglePts") { drawPoints=!drawPoints; setUpdateRoot(0); repaint(); }
+        if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
