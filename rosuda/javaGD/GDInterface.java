@@ -67,6 +67,7 @@ public class GDInterface {
     }
 
     public void     gdClose() {
+        if (c!=null) c.closeDisplay();
         open=false;
     }
 
@@ -111,7 +112,7 @@ public class GDInterface {
     }
 
     public void     gdMode(int mode) {
-        if (mode==0 || c!=null) c.repaint();
+        if (c!=null) c.syncDisplay(mode==0);
     }
 
     public void     gdNewPage() {
