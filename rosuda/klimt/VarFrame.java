@@ -64,7 +64,7 @@ public class VarFrame extends TFrame {
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
                 "Parallel coord. plot","PCP","Hammock plot","hammock",
-                "Series plot","lineplot","Series plot with index","lineplot2","-","Map","map",
+                "Series plot","lineplot","Series plot with index","lineplot2","Kaplan-Meier plot","kmplot","-","Map","map",
                 "-","TFP (exp!)","tfplot",
                 //"+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
@@ -469,6 +469,29 @@ public class VarFrame extends TFrame {
                         };
                 };
             };
+
+            if (cmd=="kmplot") {
+                int i=0;
+                int selC=0, selN=0;
+                SVar theCat=null, theNum=null;
+                while (i<vc.getVars()) {
+                    if (vc.selMask[i]) {
+                        if (vs.at(i).isCat()) { selC++; theCat=vs.at(i); }
+                        else if(vs.at(i).isNum()) { selN++; theNum=vs.at(i); }
+                    }
+                    i++;
+                }
+                if (selC==1 && selN==1) {
+                    TFrame f=new TFrame("Kaplan-Meier ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsUser);
+                    f.addWindowListener(Common.getDefaultWindowListener());
+                    KapMeCanvas bc=new KapMeCanvas(f,theNum,theCat,vs.getMarker());
+                    if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
+                    bc.setSize(new Dimension(300,200));
+                    f.add(bc); f.pack(); f.show();
+                    f.initPlacement();
+                }
+            }
+                    
             if (cmd=="lineplot") {
                 int i=0;
                 int selC=0, selN=0;
@@ -818,13 +841,17 @@ public class VarFrame extends TFrame {
             mi=EzMenu.getItem(win,"speckle");
             if(mi!=null) mi.setEnabled(selCat==3);
             mi=EzMenu.getItem(win,"PCP");
-            if(mi!=null) mi.setEnabled(selCat+selNum>1);
+            if(mi!=null) mi.setEnabled(/* selCat+ */ selNum>1);
             mi=EzMenu.getItem(win,"map");
             if(mi!=null) mi.setEnabled(selMap);
             mi=EzMenu.getItem(win,"lineplot");
             if(mi!=null) mi.setEnabled(selNum>0);
             mi=EzMenu.getItem(win,"lineplot2");
             if(mi!=null) mi.setEnabled(selNum>1);
+            mi=EzMenu.getItem(win,"kmplot");
+            if(mi!=null) mi.setEnabled(selCat==1 && selNum==1);
+            mi=EzMenu.getItem(win,"hammock");
+            if(mi!=null) mi.setEnabled(selCat>1);
             
 	    Dimension cd=getSize();
 
