@@ -16,9 +16,11 @@ public interface GDContainer {
     public void reset();
     public GDState getGState();
     public Graphics getGraphics(); // implementation is free to return null
-    public void repaint();
-    public void repaint(long tm);
+    //public void repaint();
+    //public void repaint(long tm);
+    public void syncDisplay(boolean finish); // true=batch finished; false=batch begins
     public void setDeviceNumber(int dn);
+    public void closeDisplay();
     public int getDeviceNumber();
     public Dimension getSize();
 }
