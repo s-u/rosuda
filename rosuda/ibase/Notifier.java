@@ -14,12 +14,16 @@ public class Notifier {
     public void addDepend(Dependent c) {
 	if (ton==null) ton=new Vector();
 	if (!ton.contains(c)) ton.addElement(c);
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): add ["+c.toString()+"]");
     };
 
     /** removes a {@link Dependent} class from the list of classes to be notified on marking change
 	@param c class to be removed */
     public void delDepend(Dependent c) {
 	if (ton!=null) ton.removeElement(c);
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): remove ["+c.toString()+"]");
     };
 
     /** notifies all {@link Dependent} classes in the notify list of a change, except for the specified class. 
@@ -29,6 +33,8 @@ public class Notifier {
 
     /** initiates cascaded notification process. use this method instead of NotifyAll if you want to make sure that also inderect dependents will recieve the notification */
     public void startCascadedNotifyAll(NotifyMsg msg) {
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): startCascadedNotifyAll("+msg+")");
 	Vector path=new Vector();
 	path.addElement(this);
 	NotifyAll(msg,null,path);
@@ -36,12 +42,16 @@ public class Notifier {
 
     /** general NotifyAll */    
     public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): send to all message "+msg);
 	if (batchMode>0 || ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
 		if (path!=null) {
 		    path.addElement(this);
+                    if (Common.DEBUG>0)
+                        System.out.println("Notifier("+toString()+"): send "+msg+" to ["+o.toString()+"]");
 		    o.Notifying(msg,this,path);
 		    path.removeElement(this);
 		} else o.Notifying(msg,this,null);
@@ -63,11 +73,15 @@ public class Notifier {
         batch mode begin/end calls may be nested, but only after last endBatch notification is made.  */
     public void beginBatch() {
         batchMode++;
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): begin batch #"+batchMode);
     }
 
     /** ends batch mode. if any notification reqests has been made since beginBatch() then the last one
         will be passed to dependents. otherwise just batch flag is cleared and no notification is sent. */
     public void endBatch() {
+        if (Common.DEBUG>0)
+            System.out.println("Notifier("+toString()+"): end batch #"+batchMode);
         if (batchMode>0) batchMode--;
         if (batchMode==0 && batchLastMsg!=null) {
             NotifyAll(batchLastMsg);
