@@ -69,26 +69,20 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 			fileview.add(command);
 			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
 			pp.add(new JPanel());
+			this.setPreferredSize(new Dimension(650,450));
 		}
 		else {
-			JPanel command = new JPanel(new GridLayout(2,1));
-			JPanel command1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			JPanel command2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-			command2.add(rownames);
-			command2.add(quote);
-			command1.add(append);
-			command1.add(new JLabel("seps="));
-			command1.add(sepsBox);
-			
-			command.add(command1);
-			command.add(command2);
-				
-		
+			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
+			command.add(append);
+			command.add(new JLabel("seps="));
+			command.add(sepsBox);
+			command.add(rownames);
+			command.add(quote);
+
 			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
 			filename.add(command,filename.getComponentCount()-1);
+			this.setPreferredSize(new Dimension(550,450));
 		}
-		
-		this.setPreferredSize(new Dimension(650,450));
 		this.showSaveDialog(f);
     }
     

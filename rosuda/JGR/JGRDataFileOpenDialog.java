@@ -95,6 +95,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			fileview.add(att);
 			JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
 			pp.add(new JPanel());
+			this.setPreferredSize(new Dimension(650,450));
 		}
 		else {
 			JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
@@ -104,8 +105,8 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			filename.add(command2);
 			filename.add(att);
 			filename.add(buttons);
+			this.setPreferredSize(new Dimension(550,450));
 		}
-		this.setPreferredSize(new Dimension(650,450));
 		this.showOpenDialog(f);
 	}
 	
