@@ -53,6 +53,7 @@ public class TFrame extends Frame
     static int lastPlaceX=0, lastPlaceY=0;
     
     public void initPlacement() { // initial frame placement
+	if (WTmyself==null) return;
         if (lastClass!=WTmyself.wclass) {
             lastClass=WTmyself.wclass;
             lastPlaceX=getWidth()+10; lastPlaceY=0;
