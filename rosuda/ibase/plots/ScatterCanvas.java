@@ -31,7 +31,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
     
-    /** array of two axes (X and Y) */
+    /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
+	compatibility with older implementations */
     Axis A[];
 
     /** array of points (in geometrical coordinates) */
@@ -61,9 +62,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	setFrame(f); setTitle("Scatterplot ("+v1.getName()+" : "+v2.getName()+")");
 	v=new SVar[2]; A=new Axis[2];
 	v[0]=v1; v[1]=v2; m=mark;
-        A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-        A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
-	pm=new PlotManager(this,A[0],A[1]);
+        ax=A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
+        ay=A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
 	setBackground(Common.backgroundColor);
 	drag=false;
 	updatePoints();
@@ -78,9 +78,6 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
-    public Axis getXAxis() { return A[0]; }
-    public Axis getYAxis() { return A[1]; }
-    
     public void setFilter(int[] f) {
         filter=f;
         setUpdateRoot(0);
@@ -95,7 +92,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     
     public void rotate() {
 	SVar h=v[0]; v[0]=v[1]; v[1]=h;
-	Axis ha=A[0]; A[0]=A[1]; A[1]=ha;
+	ay=A[0]; ax=A[0]=A[1]; A[1]=ay;
 	try {
 	    ((Frame) getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
 	} catch (Exception ee) {};
@@ -167,6 +164,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
 	g.defineColor("splitRects",128,128,255);
+        float[] scc=Common.selectColor.getRGBComponents(null);
+        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
 
 	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
@@ -250,7 +249,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                     g.fillOval(Pts[filter[i]].x-1,Pts[filter[i]].y-1,3,3);
         };
 
-        g.nextLayer();
+        nextLayer(g);
         
         if (m.marked()>0) {
             g.setColor("marked");
@@ -273,7 +272,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             }
         };
                 
-	g.nextLayer();
+	nextLayer(g);
         if (drag) {
             /* no clipping
 	    int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
@@ -281,6 +280,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             */ int dx1=x1, dx2=x2, dy1=y1, dy2=y2;
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
 	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
+	    g.setColor("aSelBg");
+	    g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	    g.setColor("black");
 	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	};
@@ -293,9 +294,6 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 g.drawString(A[1].getDisplayableValue(A[1].getValueForPos(qy)),qx+2,qy+11);
             }
         }
-	g.nextLayer();
-	if (pm!=null) pm.draw(g);
-
 	g.end();
         setUpdateRoot(3); // by default no repaint is necessary unless resize occurs
     };

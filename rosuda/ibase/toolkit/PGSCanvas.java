@@ -23,15 +23,26 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     /** inProgress flag to avoid recursions in paint methods */
     boolean inProgress=false;
 
+    /** X-axis of the plot coordinates. beware that it may be <code>null</code> */
+    Axis ax;
+    /** Y-axis of the plot coordinates. beware that it may be <code>null</code> */
+    Axis ay;
+
     boolean cancel;
     Dialog intDlg;
     
+    public PGSCanvas(int layers, Axis x, Axis y) {
+        this(layers);
+	ax=x; ay=y;
+    }
+
     public PGSCanvas(int layers) {
-        super(layers);
+	super(layers);
+	pm=new PlotManager(this);
     }
 
     public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
-        super(1);
+        this(1);
     }
 
     class IDlgCL implements ActionListener {
@@ -53,6 +64,7 @@ public class PGSCanvas extends LayerCanvas implements Commander {
         inProgress=true;
 	PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
 	paintPoGraSS(p);
+	endPaint(p);
         inProgress=false;
     };
 
@@ -75,12 +87,29 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     /** get the PlotManager associated with this plot */
     public PlotManager getPlotManager() { return pm; }
 
+    public Axis getXAxis() { return ax; }
+    public Axis getYAxis() { return ay; }
+
+    int paintLayerCounter;
+
+    void nextLayer(PoGraSS p) {
+	if (pm!=null) pm.drawLayer(p,paintLayerCounter,layers);
+	paintLayerCounter++;
+	p.nextLayer();
+    }
+
+    void endPaint(PoGraSS p) {
+	while (paintLayerCounter<layers)
+	    nextLayer(p);
+    }
+
     /** default handing of commands "exportPGS" and "exportPS". Any descendant should
 	call <code>super.run(o,cmd)</code> to retain this functionality */
     public Object run(Object o, String cmd) {
         if (cmd=="exportPGS") {
             PoGraSSmeta p=new PoGraSSmeta();
             paintPoGraSS(p);
+	    endPaint(p);
 	    PrintStream outs=Tools.getNewOutputStreamDlg(myFrame,"Export as PoGraSS to ...","output.pgs");
 	    if (outs!=null) {
 		outs.print(p.getMeta());
@@ -94,6 +123,7 @@ public class PGSCanvas extends LayerCanvas implements Commander {
 		PoGraSSPS p=new PoGraSSPS(outs);
 		p.setTitle(desc);
 		paintPoGraSS(p);
+		endPaint(p);
 		p=null;
 		outs.close();
 		outs=null;
@@ -105,6 +135,7 @@ public class PGSCanvas extends LayerCanvas implements Commander {
                 PoGraSSPDF p=new PoGraSSPDF(outs);
                 p.setTitle(desc);
                 paintPoGraSS(p);
+		endPaint(p);
                 p=null;
                 outs.close();
                 outs=null;
@@ -160,6 +191,7 @@ public class PGSCanvas extends LayerCanvas implements Commander {
                     p.setOutPrintStream(outs);
                     p.setTitle(desc);
                     paintPoGraSS(p);
+		    endPaint(p);
                     p=null;
                     outs.close();
                     outs=null;

@@ -108,6 +108,8 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
 	g.defineColor("splitRects",128,128,255);
+        float[] scc=Common.selectColor.getRGBComponents(null);
+        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
 
 	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH) {

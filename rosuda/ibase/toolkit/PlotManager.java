@@ -4,23 +4,22 @@ import java.util.*;
 */
 public class PlotManager {
     PGSCanvas c;
-    Axis ax, ay;
     Vector obj;
 
-    // Warning: we need some some more generic approach: a1/a2 may have changed in the plot after we registered with it
-    public PlotManager(PGSCanvas cv, Axis a1, Axis a2) {
-        c=cv; ax=a1; ay=a2;
+    public PlotManager(PGSCanvas cv) {
+        c=cv;
 	obj=new Vector();
     }
 
-    public Axis getXAxis() { return ax; }
-    public Axis getYAxis() { return ay; }
+    public Axis getXAxis() { return c.getXAxis(); }
+    public Axis getYAxis() { return c.getYAxis(); }
 
-    public void draw(PoGraSS g) {
+    public void drawLayer(PoGraSS g,int layer, int layers) {
 	int i=0;
 	while(i<obj.size()) {
 	    PlotObject o=(PlotObject)obj.elementAt(i);
-	    if (o!=null && o.isVisible()) o.draw(g);
+	    if (o!=null && o.isVisible() && (o.layer==layer || (o.layer==-1 && layer==layers-1)))
+		o.draw(g);
 	    i++;
 	};
     }
@@ -33,7 +32,12 @@ public class PlotManager {
         obj.removeElement(po);
     }
     
-    public void update() {
+    public void update(int layer) {
+	if (layer>-1) c.setUpdateRoot(layer);
         c.repaint();
+    }
+
+    public void update() {
+	update(0);
     }
 }

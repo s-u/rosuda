@@ -232,7 +232,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             }
 	};
 	
-        g.nextLayer();
+        nextLayer(g);
         
 	/*
         if (m.marked()>0) {
@@ -246,7 +246,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 			};*/
                 
         if (drag) {
-            g.nextLayer();
+            nextLayer(g);
 	    int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
 		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };

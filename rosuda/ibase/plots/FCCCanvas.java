@@ -125,8 +125,6 @@ class FCCCanvas extends FluctCanvas {
                 };
             } ;
 
-        //g.nextLayer();
-                      
 	paintDragLayer(g);
 
 	g.end();

@@ -26,6 +26,8 @@ public class PlotObject {
     PlotColor cold;
     /** fill color of the object */
     PlotColor colf;
+    /** layer of this object (0=in the back, -1=on the top (last layer), 1,2,3,... specific layer) */
+    int layer=-1;
 
     public PlotObject(PlotManager p) { pm=p; p.add(this); }
 
@@ -97,10 +99,17 @@ public class PlotObject {
     /** get fill color
         @return fill color of the object */
     public PlotColor gerFillColor() { return colf; }
-    
-    /** causes the entire plot object system to be updated. by default is simply calls the {@link PlotManager.update()} method. */
+
+    /** move the object to another layer */
+    public void setLayer(int l) {
+	layer=l;
+    }
+
+    public int getLayer() { return layer; }
+
+    /** causes the entire plot object system to be updated (redraws only the layer of this object and above). by default is simply calls the {@link PlotManager.update()} method with the layer of the object. */
     public void update() {
-        pm.update();
+        pm.update(layer);
     }
 
     /** toString is rather useful for debugging purposes */

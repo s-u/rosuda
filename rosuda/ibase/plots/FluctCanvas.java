@@ -178,8 +178,6 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                 };
             } ;
 
-        //g.nextLayer();
-                       
 	paintDragLayer(g);
 
 	g.end();
@@ -188,7 +186,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 
     void paintDragLayer(PoGraSS g) {
         if (drag || mvX || mvY) {
-            g.nextLayer();
+            nextLayer(g);
 	    if (drag) {
 		int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
 		    dx2=A[0].clip(x2),dy2=A[1].clip(y2);

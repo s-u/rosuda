@@ -239,7 +239,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	};
 
 	if(dragMode) {
-            g.nextLayer();
+            nextLayer(g);
 	    int myX=ax.getCatCenter(ax.getCatByPos(dragX));
 	    g.setColor(192,192,192);
 	    g.fillRect(dragX-dragW/2,basey-dragH,dragW,dragH);	

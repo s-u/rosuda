@@ -118,7 +118,6 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     PlotPrimitive[] pp;
 
     /** optional axis. Axis is not initialized by BaseCanvas (since BaseCanvas knows nothing of variables). They are provided to support some degree of consistence among plots which use one or two axes. If used, axis geometry is updated upon resize by the default paint routine and value range is changed by default zooming methods (atm for axes of type T_Num only). The axes are defined with respect to the data, NOT to the geometry. Calling the default {@link #rotate} method results in updated geometry of the axes, meaning that ax does not necessarily have the orientation O_X (unless rotation is prohibited). */
-    Axis ax,ay;
 
     /** by default BaseCanvas caches layers whenever possible, that is only {@link #paintInit} is guaranteed        to be run before {@link #paintBack}, {@link #paintObjects} and {@link #paintSelected}. This implies that none of the later three can rely on anything happening in the preceeding paint methods. This is not the usual behavior of PoGraSS. Setting this dontCache flag to <code>true</code> will enforce the defined PoGraSS behavior which means that all paint.. parts are called in the specified order, no matter which layer is being updated. */
     boolean dontCache=false;
@@ -251,9 +250,9 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
         paintInit(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintObjects(g);
-        g.nextLayer();
+        nextLayer(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);
-        g.nextLayer();
+        nextLayer(g);
         if (baseDrag && (dontCache || g.localLayerCache<0 || g.localLayerCache==2)) {
             /* no clipping
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
@@ -268,9 +267,8 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
         };
         
-        g.nextLayer();
+        nextLayer(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==3) paintPost(g);
-        if (pm!=null && (g.localLayerCache<0 || g.localLayerCache==3)) pm.draw(g);
 	g.end();
         setUpdateRoot(4);
     }
