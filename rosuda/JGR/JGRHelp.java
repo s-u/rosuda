@@ -84,7 +84,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         while(!JGR.STARTED);
 
         String[] Menu = {"+", "File", "@PPrint", "print", "~File.Basic.End",
-            "+", "Edit", "@CCopy", "copy",/*"@FFind","search","@GFind Next","searchnext",*/
+            "+", "Edit", "@CCopy", "copy","-","@RRun selection","runselection",/*"@FFind","search","@GFind Next","searchnext",*/
             "~Preferences",
             "~Window", "0"};
         iMenu.getMenu(this, this, Menu);
@@ -281,6 +281,12 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                 ex.printStackTrace();
             }
         } else if (cmd == "print") print();
+        else if (cmd == "runselection") {
+        	try {
+        		String s = ((HelpArea) tabArea.getSelectedComponent()).helpPane.getSelectedText().trim();
+        		JGR.MAINRCONSOLE.execute(s,true);
+        	} catch (Exception ex) {}
+        }
         else if (cmd == "selAll") {
             ((HelpArea) tabArea.getSelectedComponent()).helpPane.selectAll();
 

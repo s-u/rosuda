@@ -416,7 +416,20 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                 if (toolBar.undoMgr.canRedo())
                     toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
-        } else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
+        }
+        else if (cmd == "runall") {
+        	try {
+        		String s = editArea.getText();
+        		JGR.MAINRCONSOLE.execute(s,true);
+        	} catch (Exception ex) {}
+        }
+        else if (cmd == "runselection") {
+        	try {
+        		String s = editArea.getSelectedText().trim();
+        		JGR.MAINRCONSOLE.execute(s,true);
+        	} catch (Exception ex) {}
+        }
+        else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
         else if (cmd == "save") saveFile();
         else if (cmd == "saveas") saveFileAs();
         else if (cmd == "search") textFinder.showFind(false);

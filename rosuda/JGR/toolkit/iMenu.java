@@ -194,6 +194,18 @@ public class iMenu {
                 mi.addActionListener(al);
                 m.add(mi);
                 m.addSeparator();
+                if (menuDef[i-1].equals("~Editor")) {
+                	mi=new JMenuItem("Run selection");
+                    mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('R', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                    mi.setActionCommand("runselection");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    mi=new JMenuItem("Run all");
+                    mi.setActionCommand("runall");
+                    mi.addActionListener(al);
+                    m.add(mi);
+                    m.addSeparator();
+                }
                 mi=new JMenuItem("Find");
                 mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('F', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                 mi.setActionCommand("search");
