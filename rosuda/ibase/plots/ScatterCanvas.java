@@ -61,7 +61,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	@param v2 variable 2
 	@param mark associated marker */
     public ScatterCanvas(Frame f, SVar v1, SVar v2, SMarker mark) {
-        super(4); // 4 layers; 0=base+points, 1=selected, 2=drag, 3=PM
+        super(4); // 4 layers; 0=base, 1=points, 2=selected, 3=drag
 	setFrame(f); setTitle("Scatterplot ("+v1.getName()+" : "+v2.getName()+")");
 	v=new SVar[2]; A=new Axis[2];
 	v[0]=v1; v[1]=v2; m=mark;
@@ -83,7 +83,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public void setFilter(int[] f) {
         filter=f;
-        setUpdateRoot(0);
+        setUpdateRoot(1);
         repaint();
     };
 
@@ -107,7 +107,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	if((msg.getMessageID()&Common.NM_MASK)==Common.NM_VarChange || msg.getMessageID()==Common.NM_AxisChange)
 	    updatePoints();
-        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
+        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?2:0);
         repaint();
     };
 
@@ -234,6 +234,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             };
         }
 
+        nextLayer(g);
+        
         int lastSM=0;
 	g.setColor("point");
         if (filter==null) {
@@ -292,7 +294,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             }
         }
 	g.end();
-        setUpdateRoot(3); // by default no repaint is necessary unless resize occurs
+        setUpdateRoot(4); // by default no repaint is necessary unless resize occurs
     };
 
     public void updatePoints() {
@@ -358,7 +360,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    i++;
 	};
 	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-        setUpdateRoot(1);
+        setUpdateRoot(2);
 	repaint();	
     };
     public void mouseEntered(MouseEvent e) {};
@@ -369,7 +371,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    int x=e.getX(), y=e.getY();
 	    if (x!=x2 || y!=y2) {
 		x2=x; y2=y;
-                setUpdateRoot(2);
+                setUpdateRoot(3);
 		repaint();
 	    };
 	};
@@ -377,7 +379,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     public void mouseMoved(MouseEvent ev) {
         if (querying) {
             qx=ev.getX(); qy=ev.getY();
-            setUpdateRoot(2);
+            setUpdateRoot(3);
             repaint();
         }
     };
@@ -415,7 +417,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (e.getKeyCode()==KeyEvent.VK_ALT) {
             querying=false;
             setCursor(Common.cur_arrow);
-            setUpdateRoot(2); repaint();
+            setUpdateRoot(3); repaint();
         }
     };
 
@@ -433,9 +435,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
-        if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
+        if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(2); repaint(); };
         if (cmd=="jitter") {
-            jitter=!jitter; updatePoints(); setUpdateRoot(0); repaint();
+            jitter=!jitter; updatePoints(); setUpdateRoot(1); repaint();
         }
         if (cmd=="shading") {
             shading=!shading; updatePoints(); setUpdateRoot(0); repaint();
