@@ -451,22 +451,22 @@ KeyListener {
                 out = new BufferedWriter(new FileWriter(fileName));
                 int cols = vs.count();
                 for (int k = 0; k < cols - 1; k++) {
-                    out.write("\""+vs.at(k).getName() + "\"\t");
+                    out.write(""+vs.at(k).getName() + "\t");
                     //System.out.print(vs.at(k).getName() + "\t");
                 }
-                out.write("\""+vs.at(cols - 1).getName() + "\"\n");
+                out.write(""+vs.at(cols - 1).getName() + "\n");
                 //System.out.println(vs.at(cols - 1).getName());
                 out.flush();
                 for (int i = 0; i < vs.length(); i++) {
                     for (int z = 0; z < cols - 1; z++) {
                         s = vs.at(z).at(i) == null ? " " :
                         vs.at(z).at(i).toString();
-                        out.write("\""+s + "\"\t");
+                        out.write(""+s + "\t");
                         //System.out.print(s+"\t");
                     }
                     s = vs.at(cols - 1).at(i) == null ? " " :
                     vs.at(cols - 1).at(i).toString();
-                    out.write("\""+s + "\"\n");
+                    out.write(""+s + "\n");
                     //System.out.println(s);
                     out.flush();
                 }
@@ -625,7 +625,7 @@ KeyListener {
             else if (cmd == "searchnext") find(searchIndex[0], searchIndex[1]);
             else if (cmd == "gotoCase") gotoCase( -1);
             else if (cmd == "loadData") loadData();
-            else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()");
+            else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()",false);
             else if (cmd == "paste") ((JTextComponent) cell.getComponent()).paste();
             else if (cmd == "renameCol" && selectedColumn > 0) {
                 renameColumn(selectedColumn);
