@@ -1,0 +1,758 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 38;
+	objects = {
+		0111F2C600819D1A7F000001 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = AboutBox.java;
+			refType = 4;
+		};
+		0111F2C700819D1A7F000001 = {
+			fileRef = 0111F2C600819D1A7F000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		01F12F4CFEC8CE2211DB9C8B = {
+			buildStyles = (
+				0E20B662001FAFA711DB9C8B,
+				0E20B663001FAFA711DB9C8B,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 01F12F4DFEC8CE2211DB9C8B;
+			productRefGroup = 01F12F4FFEC8CEF111DB9C8B;
+			projectDirPath = "";
+			targets = (
+				1601BCDBFEEE210811DB9C8B,
+			);
+		};
+		01F12F4DFEC8CE2211DB9C8B = {
+			children = (
+				F5FCD7B4023CC352015B9A6A,
+				F539377301F5CC7401FA4797,
+				F539377401F5CC7401FA4797,
+				F539377501F5CC7401FA4797,
+				F539377601F5CC7401FA4797,
+				F539377701F5CC7401FA4797,
+				F539377201F5CC7401FA4797,
+				D07E9E1E057F1DA800C2084A,
+				F59B7530022FE93101B238D8,
+				F539377801F5CC7401FA4797,
+				F539377901F5CC7401FA4797,
+				F539377A01F5CC7401FA4797,
+				F539377B01F5CC7401FA4797,
+				01F12F4EFEC8CE6A11DB9C8B,
+				F539377C01F5CC7401FA4797,
+				F539377D01F5CC7401FA4797,
+				F539377E01F5CC7401FA4797,
+				F539377F01F5CC7401FA4797,
+				F539378001F5CC7401FA4797,
+				F539378101F5CC7401FA4797,
+				F539378201F5CC7401FA4797,
+				D08C744104B997AB00FA48CA,
+				F518DE9002928EC501A67908,
+				F539378301F5CC7401FA4797,
+				F539378401F5CC7401FA4797,
+				F54802D4026ED61401FA478D,
+				F5FBD732027EE38A01FA478D,
+				F539378601F5CC7401FA4797,
+				F539378701F5CC7401FA4797,
+				F539378801F5CC7401FA4797,
+				F539378901F5CC7401FA4797,
+				F539378A01F5CC7401FA4797,
+				F539378B01F5CC7401FA4797,
+				0111F2C600819D1A7F000001,
+				F510801203B3247801FA48CB,
+				10F9BF62FEEDA25E11DB9C8B,
+				F52CCF8B0237C0F701FA478D,
+				01F12F4FFEC8CEF111DB9C8B,
+			);
+			isa = PBXGroup;
+			refType = 4;
+		};
+		01F12F4EFEC8CE6A11DB9C8B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mondrian.java;
+			refType = 4;
+			tabWidth = 8;
+		};
+		01F12F4FFEC8CEF111DB9C8B = {
+			children = (
+				06D05853FF24F2DB11DB9C8B,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+//010
+//011
+//012
+//013
+//014
+//060
+//061
+//062
+//063
+//064
+		06D05853FF24F2DB11DB9C8B = {
+			isa = PBXApplicationReference;
+			path = Mondrian.app;
+			refType = 3;
+		};
+//060
+//061
+//062
+//063
+//064
+//0E0
+//0E1
+//0E2
+//0E3
+//0E4
+		0E20B662001FAFA711DB9C8B = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		0E20B663001FAFA711DB9C8B = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+//0E0
+//0E1
+//0E2
+//0E3
+//0E4
+//100
+//101
+//102
+//103
+//104
+		10F9BF62FEEDA25E11DB9C8B = {
+			isa = PBXFileReference;
+			path = Mondrian.icns;
+			refType = 4;
+		};
+//100
+//101
+//102
+//103
+//104
+//160
+//161
+//162
+//163
+//164
+		1601BCDBFEEE210811DB9C8B = {
+			buildPhases = (
+				1601BCDCFEEE210811DB9C8B,
+				1601BCDEFEEE210811DB9C8B,
+				1601BCDFFEEE210811DB9C8B,
+				1601BCE2FEEE210811DB9C8B,
+			);
+			buildSettings = {
+				JAVA_CLASS_SEARCH_PATHS = "";
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_MANIFEST_FILE = Mondrian.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				PRODUCT_NAME = Mondrian;
+			};
+			dependencies = (
+			);
+			isa = PBXApplicationTarget;
+			name = Mondrian;
+			productName = Mondrian;
+			productReference = 06D05853FF24F2DB11DB9C8B;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Mondrian</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>Mondrian.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.98</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/Mondrian.jar</string>
+			<string>/usr/local/mysql/mysql-connector-java-3.0.9-stable/</string>
+		</array>
+		<key>MainClass</key>
+		<string>Mondrian</string>
+		<key>Properties</key>
+		<dict>
+			<key>apple.awt.antialiasing</key>
+			<string>true</string>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.macos.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.mrj.application.apple.menu.about.name</key>
+			<string>Mondrian</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
+	</dict>
+	<key>NSJavaNeeded</key>
+	<string>YES</string>
+	<key>NSJavaPath</key>
+	<array>
+		<string>Mondrian.jar</string>
+	</array>
+	<key>NSJavaRoot</key>
+	<string>Contents/Resources/Java</string>
+	<key>NSPrincipalClass</key>
+	<string>Mondrian</string>
+</dict>
+</plist>
+";
+		};
+		1601BCDCFEEE210811DB9C8B = {
+			buildActionMask = 2147483647;
+			files = (
+				1601BCDDFEEE210811DB9C8B,
+				0111F2C700819D1A7F000001,
+				F539378C01F5CC7401FA4797,
+				F539378D01F5CC7401FA4797,
+				F539378E01F5CC7401FA4797,
+				F539379001F5CC7401FA4797,
+				F539379101F5CC7401FA4797,
+				F539379201F5CC7401FA4797,
+				F539379301F5CC7401FA4797,
+				F539379401F5CC7401FA4797,
+				F539379501F5CC7401FA4797,
+				F539379601F5CC7401FA4797,
+				F539379701F5CC7401FA4797,
+				F539379801F5CC7401FA4797,
+				F539379901F5CC7401FA4797,
+				F539379A01F5CC7401FA4797,
+				F539379B01F5CC7401FA4797,
+				F539379C01F5CC7401FA4797,
+				F539379D01F5CC7401FA4797,
+				F539379F01F5CC7401FA4797,
+				F53937A001F5CC7401FA4797,
+				F53937A101F5CC7401FA4797,
+				F53937A201F5CC7401FA4797,
+				F53937A301F5CC7401FA4797,
+				F53937A401F5CC7401FA4797,
+				F59B7531022FE93101B238D8,
+				F5FCD7B5023CC352015B9A6A,
+				F54802D5026ED61501FA478D,
+				F5FBD733027EE38A01FA478D,
+				F518DE9102928EC501A67908,
+				F5A4C09003BE533601FEB7DC,
+				D08C744204B997AB00FA48CA,
+				D07E9E1F057F1DA800C2084A,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1601BCDDFEEE210811DB9C8B = {
+			fileRef = 01F12F4EFEC8CE6A11DB9C8B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+				);
+			};
+		};
+		1601BCDEFEEE210811DB9C8B = {
+			buildActionMask = 2147483647;
+			files = (
+				F52CCF8C0237C0F701FA478D,
+				F510801303B3247801FA48CB,
+			);
+			isa = PBXJavaArchiveBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1601BCDFFEEE210811DB9C8B = {
+			buildActionMask = 2147483647;
+			files = (
+				1601BCE0FEEE210811DB9C8B,
+			);
+			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1601BCE0FEEE210811DB9C8B = {
+			fileRef = 10F9BF62FEEDA25E11DB9C8B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		1601BCE2FEEE210811DB9C8B = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+//160
+//161
+//162
+//163
+//164
+//D00
+//D01
+//D02
+//D03
+//D04
+		D07E9E1E057F1DA800C2084A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Join.java;
+			refType = 4;
+		};
+		D07E9E1F057F1DA800C2084A = {
+			fileRef = D07E9E1E057F1DA800C2084A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D08C744104B997AB00FA48CA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PreferencesFrame.java;
+			refType = 4;
+		};
+		D08C744204B997AB00FA48CA = {
+			fileRef = D08C744104B997AB00FA48CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//D00
+//D01
+//D02
+//D03
+//D04
+//F50
+//F51
+//F52
+//F53
+//F54
+		F510801203B3247801FA48CB = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mondrian.mft;
+			refType = 4;
+		};
+		F510801303B3247801FA48CB = {
+			fileRef = F510801203B3247801FA48CB;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		F518DE9002928EC501A67908 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PrintUtilities.java;
+			refType = 4;
+		};
+		F518DE9102928EC501A67908 = {
+			fileRef = F518DE9002928EC501A67908;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F52CCF8B0237C0F701FA478D = {
+			isa = PBXFileReference;
+			path = Logo.gif;
+			refType = 4;
+		};
+		F52CCF8C0237C0F701FA478D = {
+			fileRef = F52CCF8B0237C0F701FA478D;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
+			};
+		};
+		F539377201F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Jlpr.java;
+			refType = 4;
+		};
+		F539377301F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Barchart.java;
+			refType = 4;
+		};
+		F539377401F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DataListener.java;
+			refType = 4;
+		};
+		F539377501F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = dataSet.java;
+			refType = 4;
+		};
+		F539377601F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = DragBox.java;
+			refType = 4;
+		};
+		F539377701F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = InteractionSet.java;
+			refType = 4;
+		};
+		F539377801F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Map.java;
+			refType = 4;
+		};
+		F539377901F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MFrame.java;
+			refType = 4;
+		};
+		F539377A01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ModelListener.java;
+			refType = 4;
+		};
+		F539377B01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = ModelNavigator.java;
+			refType = 4;
+		};
+		F539377C01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = "Mondrian-proj.java";
+			refType = 4;
+		};
+		F539377D01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Mosaic.java;
+			refType = 4;
+		};
+		F539377E01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MyPoly.java;
+			refType = 4;
+		};
+		F539377F01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MyRect.java;
+			refType = 4;
+		};
+		F539378001F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MyText.java;
+			refType = 4;
+		};
+		F539378101F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PC.java;
+			refType = 4;
+		};
+		F539378201F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PixelConsumer.java;
+			refType = 4;
+		};
+		F539378301F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = PSGr.java;
+			refType = 4;
+		};
+		F539378401F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Qsort.java;
+			refType = 4;
+		};
+		F539378601F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Selection.java;
+			refType = 4;
+		};
+		F539378701F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = SelectionListener.java;
+			refType = 4;
+		};
+		F539378801F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Stat.java;
+			refType = 4;
+		};
+		F539378901F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Table.java;
+			refType = 4;
+		};
+		F539378A01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Test.java;
+			refType = 4;
+		};
+		F539378B01F5CC7401FA4797 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Util.java;
+			refType = 4;
+		};
+		F539378C01F5CC7401FA4797 = {
+			fileRef = F539377201F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539378D01F5CC7401FA4797 = {
+			fileRef = F539377301F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539378E01F5CC7401FA4797 = {
+			fileRef = F539377401F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379001F5CC7401FA4797 = {
+			fileRef = F539377601F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379101F5CC7401FA4797 = {
+			fileRef = F539377701F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379201F5CC7401FA4797 = {
+			fileRef = F539377801F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379301F5CC7401FA4797 = {
+			fileRef = F539377901F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379401F5CC7401FA4797 = {
+			fileRef = F539377A01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379501F5CC7401FA4797 = {
+			fileRef = F539377B01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379601F5CC7401FA4797 = {
+			fileRef = F539377D01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379701F5CC7401FA4797 = {
+			fileRef = F539377E01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379801F5CC7401FA4797 = {
+			fileRef = F539377F01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379901F5CC7401FA4797 = {
+			fileRef = F539378001F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379A01F5CC7401FA4797 = {
+			fileRef = F539378101F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379B01F5CC7401FA4797 = {
+			fileRef = F539378201F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379C01F5CC7401FA4797 = {
+			fileRef = F539378301F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379D01F5CC7401FA4797 = {
+			fileRef = F539378401F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F539379F01F5CC7401FA4797 = {
+			fileRef = F539378601F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53937A001F5CC7401FA4797 = {
+			fileRef = F539378701F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53937A101F5CC7401FA4797 = {
+			fileRef = F539378801F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53937A201F5CC7401FA4797 = {
+			fileRef = F539378901F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53937A301F5CC7401FA4797 = {
+			fileRef = F539378A01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53937A401F5CC7401FA4797 = {
+			fileRef = F539378B01F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F54802D4026ED61401FA478D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Query.java;
+			refType = 4;
+		};
+		F54802D5026ED61501FA478D = {
+			fileRef = F54802D4026ED61401FA478D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F59B7530022FE93101B238D8 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Histogram.java;
+			refType = 4;
+		};
+		F59B7531022FE93101B238D8 = {
+			fileRef = F59B7530022FE93101B238D8;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4C09003BE533601FEB7DC = {
+			fileRef = F539377501F5CC7401FA4797;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5FBD732027EE38A01FA478D = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Scatter2D.java;
+			refType = 4;
+		};
+		F5FBD733027EE38A01FA478D = {
+			fileRef = F5FBD732027EE38A01FA478D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5FCD7B4023CC352015B9A6A = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Axis.java;
+			refType = 4;
+		};
+		F5FCD7B5023CC352015B9A6A = {
+			fileRef = F5FCD7B4023CC352015B9A6A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+	};
+	rootObject = 01F12F4CFEC8CE2211DB9C8B;
+}
