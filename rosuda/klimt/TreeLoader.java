@@ -13,7 +13,11 @@ import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
 public class TreeLoader extends Loader {
-    public static SNode LoadTree(BufferedReader r, SVarSet vset, String name) {
+    public static SNode LoadTree(BufferedReader r, DataRoot dr, String name) {
+        try {
+            return Load(r,name,dr,0,null,null,true,true);
+        } catch (Exception e) {
+        }
         return null;
     }
 
