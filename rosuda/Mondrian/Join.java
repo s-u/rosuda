@@ -6,20 +6,19 @@
 //      thanks
 //
 //      To Do:
-//             - Fonts in Histogram TT vs. Scatterplot BM
 //               
 //	       - Sorting of Intervalls in Histos ?? (DB)
 //
-//             - PC
-//               - zoom after permuting the axis ???
-//               - zoom back -> common scale ?!
+//         - PC
+//           - zoom after permuting the axis ???
+//           - zoom back -> common scale ?!
 
 
 import java.awt.*;               // ScrollPane, PopupMenu, MenuShortcut, etc.
 import java.awt.image.*;         
 import java.awt.event.*;         // New event model.
 import java.io.*;                // Object serialization streams.
-import java.io.InputStream;                // Object serialization streams.
+import java.io.InputStream;      // Object serialization streams.
 import java.util.*;              // For StingTokenizer.
 import java.util.Vector;         // 
 import java.util.Properties;     // To store printing preferences in.
@@ -32,6 +31,7 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.border.*;
+import org.rosuda.JRclient.*;
 
 /**
 */
@@ -56,7 +56,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, cs;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, cs, vm;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah;
   private ModelNavigator Mn;
@@ -72,6 +72,8 @@ class Join extends JFrame implements SelectionListener, DataListener {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName() );
   }
     catch (Exception e) { }
+
+    System.out.println("Starting RServe ... "+Srs.checkLocalRserve());
 
     user = System.getProperty("user.name");
     System.out.println(user+" on "+System.getProperty("os.name"));
@@ -121,7 +123,13 @@ class Join extends JFrame implements SelectionListener, DataListener {
       q.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
       q.addActionListener(new ActionListener() {     // Quit the program.
-        public void actionPerformed(ActionEvent e) { System.exit(0); }
+        public void actionPerformed(ActionEvent e) {
+          try {																				// Shut down RServe if running ...
+            Rconnection c=new Rconnection();
+            c.shutdown();
+          } catch (Exception x) {};
+
+          System.exit(0); }
       });
     }
     menubar.add(file);                         // Add to menubar.
@@ -145,10 +153,12 @@ class Join extends JFrame implements SelectionListener, DataListener {
     sc2.setEnabled(false);
     plot.add(m = new JMenuItem("Map"));
     m.setEnabled(false);
-    // MTh plot.addSeparator();                     // Put a separator in the menu
-    // MTh plot.add(t = new JMenuItem("Test Alpha", KeyEvent.VK_T));
+    if( user.indexOf("theus") > -1 ) {
+      plot.addSeparator();                     // Put a separator in the menu
+      plot.add(t = new JMenuItem("Test"));
+    }
     menubar.add(plot);                         // Add to menubar.
-                                               //
+    //
     JMenu options = new JMenu("Options");      // Create an Option menu.
     options.add(se = new JCheckBoxMenuItem("Selection Sequences", selseq));
     se.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -159,6 +169,10 @@ class Join extends JFrame implements SelectionListener, DataListener {
     options.addSeparator();                     // Put a separator in the menu
     options.add(ah = new JCheckBoxMenuItem("Alpha on Hilite", alphaHi));
     ah.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
+    options.addSeparator();                     // Put a separator in the menu
+    options.add(vm = new JMenuItem("Switch Variable Mode"));
+    vm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
     options.addSeparator();                     // Put a separator in the menu
     options.add(mn = new JMenuItem("Model Navigator", KeyEvent.VK_J));
@@ -237,21 +251,17 @@ class Join extends JFrame implements SelectionListener, DataListener {
         pc("Box");
       }
     });
-    /*    sc.addActionListener(new ActionListener() {     // Open a scatterplot window
-      public void actionPerformed(ActionEvent e) {
-        scatterplot();
-      }
-    });*/
     sc2.addActionListener(new ActionListener() {     // Open a scatterplot window
       public void actionPerformed(ActionEvent e) {
         scatterplot2D();
       }
     });
-    /* MTh    t.addActionListener(new ActionListener() {     // Open a new test window
-      public void actionPerformed(ActionEvent e) {
-        test();
-      }
-    }); */
+    if( user.indexOf("theus") > -1 )
+      t.addActionListener(new ActionListener() {     // Open a new test window
+        public void actionPerformed(ActionEvent e) {
+          test();
+        }
+      }); 
     o.addActionListener(new ActionListener() {     // Load a dataset
       public void actionPerformed(ActionEvent e) {
         loadDataSet(false);
@@ -292,6 +302,11 @@ class Join extends JFrame implements SelectionListener, DataListener {
         deleteSelection();
       }
     });
+    vm.addActionListener(new ActionListener() {     // Delete the current selection sequence
+      public void actionPerformed(ActionEvent e) {
+        switchVariableMode();
+      }
+    });
     ca.addActionListener(new ActionListener() {     // Close all Windows
       public void actionPerformed(ActionEvent e) {
         closeAll();
@@ -315,7 +330,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0c", 250, 280);
+    g.drawString("RC1.0d", 250, 280);
 
     if( load )
       if( loadDB )
@@ -547,7 +562,7 @@ class Join extends JFrame implements SelectionListener, DataListener {
 				
     int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
     int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
-    String Display = nom+"/"+denom;
+    String Display = nom+"/"+denom+" ("+Stat.roundToString(100F*nom/denom,2)+"%)";
     progText.setText(Display);
     progBar.setValue(nom);   
   }
@@ -573,6 +588,12 @@ class Join extends JFrame implements SelectionListener, DataListener {
           setVarList();
           this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
           c.setEnabled(true);
+
+          int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
+          int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
+          String Display = nom+"/"+denom+" ("+Stat.roundToString(100*nom/denom,2)+"%)";
+          progText.setText(Display);
+          progBar.setValue(nom);          
         }
       }
     }
@@ -1042,11 +1063,37 @@ class Join extends JFrame implements SelectionListener, DataListener {
   }
   
   public void test() {
-    final MFrame test = new MFrame(this);
-    test.setSize(400,400);
-    
-    Test plotw = new Test();
-    test.show();
+    int p = (varNames.getSelectedIndices()).length;
+    dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
+    final MFrame scatterMf = new MFrame(this);
+    scatterMf.setSize(200*p,200*p + 20);
+    scatterMf.getContentPane().setLayout(new GridLayout(p,p));
+
+    int[] tmpVars = new int[2];
+    for(int i=0; i<p; i++)
+      for(int j=0; j<p; j++) {
+        if( i==j ) {
+          int k = varNames.getSelectedIndices()[i];
+          double start = tempData.getMin(k);
+          double width = (tempData.getMax(k) - tempData.getMin(k)) / 8.9;
+          Table discrete = tempData.discretize(tempData.setName, k, start, width);
+
+          Histogram scat = new Histogram(scatterMf, 200, 200, discrete, start, width);
+          scat.addSelectionListener(this);
+          Plots.addElement(scat);
+        }
+        else {
+          tmpVars[0] = varNames.getSelectedIndices()[j];
+          tmpVars[1] = varNames.getSelectedIndices()[i];
+          //
+          Scatter2D scat = new Scatter2D(scatterMf, 200, 200, (dataSet)dataSets.elementAt(thisDataSet), tmpVars, varNames);
+          scat.addSelectionListener(this);
+          Plots.addElement(scat);
+        }
+    }
+    scatterMf.setLocation(300, 0);
+    scatterMf.setTitle("Scatterplot Matrix");
+    scatterMf.show();
   }
   
   public void pc(String mode) {
@@ -1146,7 +1193,8 @@ class Join extends JFrame implements SelectionListener, DataListener {
       
       bars.setSize(300, tmpHeight);
       final Barchart plotw = new Barchart(bars, 300, tmpHeight, breakdown);
-      
+
+      plotw.setScrollX();
       plotw.addSelectionListener(this);
       plotw.addDataListener(this);
       Plots.addElement(plotw);
@@ -1190,7 +1238,8 @@ class Join extends JFrame implements SelectionListener, DataListener {
       
       bars.setSize(300, tmpHeight);
       final Barchart plotw = new Barchart(bars, 300, tmpHeight, breakdown);
-      
+
+      plotw.setScrollX();
       plotw.addSelectionListener(this);
       plotw.addDataListener(this);
       Plots.addElement(plotw);
@@ -1273,28 +1322,31 @@ class Join extends JFrame implements SelectionListener, DataListener {
     mapf.show();
   }
   
-/*  public void scatterplot() {
-    final MFrame scatterf = new MFrame(this);
-    scatterf.setSize(400,400);
-    scatterf.setTitle("Scatterplot");
-    
-    //    Scatter scat = new Scatter(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices());
-    Scatter scat = new Scatter(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames);
-    scat.addSelectionListener(this);
-    Plots.addElement(scat);
-    scatterf.show();
-  } */
-  
   public void scatterplot2D() {
     final MFrame scatterf = new MFrame(this);
     scatterf.setSize(400,400);
     scatterf.setTitle("Scatterplot 2D");
     
-    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames);
+    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), varNames);
     scat.addSelectionListener(this);
     Plots.addElement(scat);
     scatterf.setLocation(300, 333);
     scatterf.show();
+  }
+
+  public void switchVariableMode(){
+    for(int i=0; i<varNames.getSelectedIndices().length; i++) {
+      int index=(varNames.getSelectedIndices())[i];
+      dataSet data = (dataSet)dataSets.elementAt(thisDataSet);
+      if( !data.alpha(index) ) {
+        if( data.categorical(index) )
+          data.catToNum(index);
+        else
+          data.numToCat(index);
+      }
+    }
+    setVarList();
+    maintainPlotMenu();
   }
   
   public void getSelectedTypes() {
