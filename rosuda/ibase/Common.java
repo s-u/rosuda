@@ -303,7 +303,6 @@ public class Common
         if (workFrame!=null) endWorking(); // we don't support nested calls
         workFrame=new Frame();
         workFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        workFrame.setVisible(true);
     }
 
     public static void endWorking() {
