@@ -60,6 +60,8 @@ public class SVar extends Vector
     /** notifier for changes */
     public Notifier notify;
 
+    SCatSequence seq=null;
+
     /** derived is not internal (and hence isInternal will return false) */
     public static final int IVT_Derived    =-1;
     public static final int IVT_Normal     = 0;
@@ -111,6 +113,13 @@ public class SVar extends Vector
         internalType=it;
     }
 
+    /** returns the main category sequence for this variable. */
+    public SCatSequence mainSeq() {
+        if (seq==null)
+            seq=new SCatSequence(this,this,true);
+        return seq;        
+    }
+    
     /** returns the internal type of the variable */
     public int getInternalType() { return internalType; }
     /** returns true if the variable is internal, i.e. generated on-the fly. note that derived variables are
@@ -146,6 +155,25 @@ public class SVar extends Vector
         notify.NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     };
 
+    /** pass notification events to the corresponding notifier */
+    public void NotifyAll(NotifyMsg msg) {
+        notify.NotifyAll(msg);
+    }
+
+    /** pass addDepend to the underlying notifier */
+    public void addDepend(Dependent dep) {
+        notify.addDepend(dep);
+    }
+
+    public void delDepend(Dependent dep) {
+        notify.delDepend(dep);
+    }
+    
+    /** please note that in future implementations this may return "self" */
+    Notifier getNotifier() {
+        return notify;
+    }
+    
     /** retrieves contents type of the variable
         @return contents type (see CT_xxx constants)
         */
@@ -468,4 +496,8 @@ public class SVar extends Vector
 	// return the resulting list
 	return r;
     };
+
+    public String toString() {
+        return "SVar(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
+    }
 };
