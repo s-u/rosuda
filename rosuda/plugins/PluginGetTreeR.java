@@ -174,22 +174,29 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
         d.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
-        List l=new List((vs.count()>10)?10:vs.count(),true);
-        int j=0; boolean frv=false;
+        int j=0,lct=0; boolean frv=false;
         while(j<vs.count()) {
-            c.add(vs.at(j).getName());
-            if (vs.at(j)==resp) {
-                c.select(vs.at(j).getName());
-                frv=true;
-            };
-            l.add(vs.at(j).getName());
+            if (!vs.at(j).isInternal()) lct++; // consider non-internal variables only
+            j++;
+        };
+        List l=new List((lct>10)?10:lct,true);
+        j=0;
+        while(j<vs.count()) {
+            if (!vs.at(j).isInternal()) { // consider non-internal variables only
+                c.add(vs.at(j).getName());
+                if (vs.at(j)==resp) {
+                    c.select(vs.at(j).getName());
+                    frv=true;
+                };
+                l.add(vs.at(j).getName());
+            }
             j++;
         }
-        j=0; while(j<vs.count()) {
+        j=0; while(j<lct) {
             l.select(j); j++;
         }
         if (!frv)
-            c.select(vs.at(vs.count()-1).getName());
+            c.select(vs.at(lct-1).getName());
         Panel p=new Panel();
         p.setLayout(new BorderLayout());
         d.add(p);
