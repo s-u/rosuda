@@ -161,12 +161,6 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
 
     Dialog d;
 
-    class SpacingPanel extends Panel {
-        public Dimension getMinimumSize() { return new Dimension(15,15); }
-        public Dimension getMaximumSize() { return new Dimension(15,15); }
-        public Dimension getPreferredSize() { return new Dimension(15,15); }
-    }
-
     public boolean pluginDlg(Frame f) {
         Button b=null, b2=null; cancel=false;
         d=new Dialog(f,"Generate Tree Plug-in",true);
