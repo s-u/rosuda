@@ -680,8 +680,16 @@ System.out.println(newQ.makeQuery());
     return ((Variable)data.elementAt(i)).Min();
   }
 
+  public double getSelMin(int i) {
+    return ((Variable)data.elementAt(i)).SelMin();
+  }
+
   public double getMax(int i) {
     return ((Variable)data.elementAt(i)).Max();
+  }
+
+  public double getSelMax(int i) {
+    return ((Variable)data.elementAt(i)).SelMax();
   }
 
   public double getMean(int i) {
@@ -1015,6 +1023,14 @@ System.out.println("query: "+query+" ---> "+this.min);
         return this.min;
     }
     
+    public double SelMin() {
+      double SM = Double.MAX_VALUE;
+      for ( int i=0; i<data.length; i++ )
+        if( selectionArray[i] > 0 )
+          SM = Math.min(SM, data[i]);
+      return SM;
+    }
+
     public double Max() {
         if( !maxSet )
             if( isDB ) {
@@ -1036,6 +1052,14 @@ System.out.println("query: "+query+" ---> "+this.max);
                     this.max = Math.max(data[i], this.max);
         maxSet = true;
         return this.max;
+    }
+
+    public double SelMax() {
+      double SM = Double.MIN_VALUE;
+      for ( int i=0; i<data.length; i++ )
+        if( selectionArray[i] > 0 )
+          SM = Math.max(SM, data[i]);
+      return SM;
     }
 
     public double Mean() {
