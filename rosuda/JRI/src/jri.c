@@ -358,3 +358,13 @@ SEXP jri_getDoubleArray(JNIEnv *env, jarray o) {
   profReport("RgetDoubleArrayCont[%d]:",o);
   return ar;
 }
+
+void jri_checkExceptions(JNIEnv *env, int describe)
+{
+    jthrowable t=(*env)->ExceptionOccurred(env);
+    if (t) {
+        if (describe)
+            (*env)->ExceptionDescribe(env);
+        (*env)->ExceptionClear(env);
+    }
+}

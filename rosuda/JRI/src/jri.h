@@ -32,6 +32,8 @@ jstring jri_putString(JNIEnv *env, SEXP e, int ix); /* ix=index, 0=1st */
 jarray  jri_putStringArray(JNIEnv *env, SEXP e);
 jarray jri_putSEXPLArray(JNIEnv *env, SEXP e); /* SEXPs are strored as "long"s */
 
+void jri_checkExceptions(JNIEnv *env, int describe);
+
 #ifdef __cplusplus
 }
 #endif
