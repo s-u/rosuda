@@ -230,6 +230,24 @@ public class REXP extends Object {
 	return "<unknown "+xt+">";
     }	
 
+    /** get content of the REXP as string (if it is one)
+        @return string content or <code>null</code> if the REXP is no string */
+    public String asString() {
+        return (Xt==XT_STR)?(String)cont:null;
+    }
+
+    /** get content of the REXP as int (if it is one)
+        @return int content or 0 if the REXP is no integer */
+    public int asInt() {
+        return (Xt==XT_INT)?((Integer)cont).intValue():0;
+    }
+
+    /** get content of the REXP as double (if it is one)
+        @return dounle content or 0.0 if the REXP is no double */
+    public double asDouble() {
+        return (Xt==XT_DOUBLE)?((Double)cont).doubleValue():0.0;
+    }
+        
     /** display content of the expression */
     public String toString() {
 	StringBuffer sb=
