@@ -90,6 +90,9 @@ public class PGSCanvas extends LayerCanvas implements Commander {
 
     public Axis getXAxis() { return ax; }
     public Axis getYAxis() { return ay; }
+    
+    /** this method provides an API to fetch data contents of the plot. The id is implementation-dependent, but first two variables x and y should be mapped to 0 and 1 correspondingly. Therefore every plot containting data must support getData(0). For invalid ids <code>null</code> is returned. */
+    public SVar getData(int id) { return null; }
 
     int paintLayerCounter;
 

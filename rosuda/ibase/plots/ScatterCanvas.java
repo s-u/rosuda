@@ -79,6 +79,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	MIlabels=EzMenu.getItem(f,"labels");	
     };
 
+    public SVar getData(int id) { return (id<0||id>1)?null:v[id]; }
+    
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
     public void setFilter(int[] f) {

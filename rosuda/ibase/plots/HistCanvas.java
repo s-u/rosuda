@@ -48,6 +48,8 @@ public class HistCanvasNew extends BaseCanvas
         allowDragZoom=false;
     };
 
+    public SVar getData(int id) { return (id==0)?v:null; }
+    
     public void updateObjects() {
         boolean recalcBars=true;
         // we should set recalcBar to false if anchor/binw didn't change 

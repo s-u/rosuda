@@ -87,6 +87,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     
     public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
 
+    public SVar getData(int id) { return (id==0)?v:((id==1)?weight:null); }
+    
     /** notification handler - rebuilds bars and repaints */
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
 	updateBars();

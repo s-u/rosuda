@@ -29,9 +29,10 @@ class OrdStats { // get ordinal statistics to be used in boxplot
     /* v=variable, r=ranked index as returned by getRanked, n=# of el to use */
     void update(SVar v, int[] r, int n) {
 	lastTop=n;
+        if (n<1) return;
 	med=medFrom(v,r,0,n-1);
 	uh=medFrom(v,r,n/2,n-1);
-	if ((n&1)==1)
+	if (n>1 && (n&1)==1)
 	    lh=medFrom(v,r,0,n/2-1);
 	else
 	    lh=medFrom(v,r,0,n/2);
@@ -167,6 +168,8 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
             EzMenu.getEzMenu(f,this,myMenu);
 	};
     };
+
+    public SVar getData(int id) { return (id==0)?v:((id==1)?cv:null); }
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
