@@ -20,18 +20,26 @@ public class PoGraSSSVG extends PoGraSSgraphics {
     
     public PoGraSSSVG(PrintStream nps, int layer) {
         super(null,layer);
-        ps=nps;
-        // Get a DOMImplementation
-        domImpl = GenericDOMImplementation.getDOMImplementation();
-        document = domImpl.createDocument(null, "svg", null);
-                // Create an instance of the SVG Generator
-        g=svgGenerator= new SVGGraphics2D(document);
-    };
+        setOutPrintStream(nps);
+    }
 
     public PoGraSSSVG(PrintStream nps) {
         this(nps,-1);
     }
 
+    public PoGraSSSVG()  {
+        super(null,-1);
+    }
+
+    public void setOutPrintStream(PrintStream ops) {
+        ps=ops;
+        // Get a DOMImplementation
+        domImpl = GenericDOMImplementation.getDOMImplementation();
+        document = domImpl.createDocument(null, "svg", null);
+        // Create an instance of the SVG Generator
+        g=svgGenerator= new SVGGraphics2D(document);
+    }
+    
     public void begin() { curLayer=0; }
     
     public void end() {
