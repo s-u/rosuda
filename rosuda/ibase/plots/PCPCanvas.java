@@ -41,7 +41,7 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	@param mark associated marker */
     public PCPCanvas(Frame f, SVar[] yvs, SMarker mark) {
         super(3); // 3 layers; 0=base+points, 1=selected, 2=drag
-	setFrame(f); setTitle("Lineplot");
+	setFrame(f); setTitle("PCP");
 	v=new SVar[yvs.length+1];
 	A=new Axis[2];
 	m=mark;
@@ -103,7 +103,7 @@ class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.defineColor("outline",0,0,0);
 	g.defineColor("point",0,0,128);	
 	g.defineColor("red",255,0,0);
-	g.defineColor("line",0,0,128); // color of line plot
+	g.defineColor("line",128,128,192); // color of line plot
 	g.defineColor("lines",96,96,255);	
 	g.defineColor("selText",255,0,0);
 	g.defineColor("selBg",255,255,192);
