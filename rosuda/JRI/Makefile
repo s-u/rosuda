@@ -67,7 +67,7 @@ run:
 	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
 	echo "export LD_LIBRARY_PATH=.:$(RHOME)/bin:$(JAVAHOME)/jre/lib/i386:$(JAVAHOME)/jre/lib/i386/client" >> run
 	echo "$(JAVAB) rtest \$$*" >> run
-	chmod a+x run
+	-chmod a+x run
 
 clean:
 	rm -rf $(TARGETS) org src/*.o src/*~ src/org_rosuda_JRI_Rengine.h src/*$(JNISO) *.class *~
