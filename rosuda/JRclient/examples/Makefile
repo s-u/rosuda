@@ -9,5 +9,8 @@ t.class: t.java ../JRclient.jar
 run: jt.class ../JRclient.jar
 	java -cp ../JRclient.jar:. jt
 
+test: t.class ../JRclient.jar
+	java -cp ../JRclient.jar:. t
+
 clean:
 	rm -rf *.class *~
