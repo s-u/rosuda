@@ -497,6 +497,7 @@ public class VarFrame extends TFrame {
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.setSize(new Dimension(80,300));
                             f.add(sc); f.pack(); f.show();
+                            f.initPlacement();
                         };
                         bJ++;
                     };
