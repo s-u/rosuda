@@ -158,8 +158,8 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgent", useHelpAgent);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
-            String packages = JGRPackageManager.defaultPackages[0].toString();
-            for (int i = 1; i < JGRPackageManager.defaultPackages.length; i++)
+            String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
+            for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)
                 packages += ", "+JGRPackageManager.defaultPackages[i];
             prefs.put("DefaultPackages", packages);
         }
@@ -167,7 +167,6 @@ public class JGRPrefs {
             String libpaths = JGR.RLIBS[0].toString();
             for (int i = 1; i < JGR.RLIBS.length; i++) 
 				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];
-			System.out.println(libpaths);
             prefs.put("InitialRLibraryPath", libpaths);
         }
         try {

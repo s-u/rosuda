@@ -173,7 +173,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         }
 
         public boolean isCellEditable(int row, int col) {
-            return col > 1 ? false : true;
+			return col > 1 ? false : true;
         }
 
         public Class getColumnClass(int c) {
