@@ -1,5 +1,11 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.util.Date;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Frame;
+import java.awt.Toolkit;
+import java.awt.Dimension;
+import java.awt.event.WindowListener;
+import java.awt.event.MouseEvent;
 
 /** Common constants and gereral static methods for the entire application
     @version $Id$
@@ -17,6 +23,9 @@ public class Common
     /** profiler flag. When set to >0 profile information (timings) are generated; >1 then memory info is added
         parameter equivalent: --profile */
     public static int PROFILE=0;
+    /** warnings flag. If the to <code>true</code> runtime warnings are printed.
+        parameter equivalent: --warn */
+    public static boolean printWarnings=false;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -86,12 +95,18 @@ public class Common
     public static final int NM_VarContentChange =0x301;
     /** Notify-Message constant: SVar changed: type (cat/num) changed */
     public static final int NM_VarTypeChange    =0x302;
+    /** Notify-Message constant: SVar changed: sequence of categories changed */
+    public static final int NM_VarSeqChange     =0x303;
 
     /** Notify-Message constant: SVarSet changed (e.g. # of vars...) */
     public static final int NM_VarSetChange     =0x400;
     /** Notify-Message constant: current node changed */
     public static final int NM_NodeChange       =0x500;
 
+    /** Notify-Message constant: category sequence changed (fired by SCatSeqence)
+        note that SCatSequence passes change events to SVar only if it is told to. This allows other classes to maintain private category sequences independent of the variable's main sequence. This event is sent to the private dependents. */
+    public static final int NM_CatSeqChange     =0x600;
+    
     /** Notify-Message constant: BREAK event - this one is usually not processed in Java but sent to the calling system. Usually this event is used to stop an external event loop, such as an iPlots event loop. */
     public static final int NM_BREAK            =0x700;
 
@@ -283,6 +298,12 @@ public class Common
         return Common.screenRes;
     };
 
+    public static int runtimeWarning(String w) {
+        if (Common.DEBUG>0 || Common.printWarnings)
+            System.out.println("*RTW "+(new Date()).toString()+": "+w);
+        return -1;
+    }
+    
     // HCL color scheme routines (ported from Ross Ihaka's R code)
     /** display gamma setting (used by color conversion functions such as {@link #getHCLcolor} */
     public static double displayGamma=2.2;
