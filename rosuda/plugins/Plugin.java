@@ -11,6 +11,8 @@ public class Plugin {
     int    type  =0;
     String err   =null;
 
+    public boolean cancel=false; /* can be checked after pluginDlg whether used cancelled manually */
+    
     String getName() { return name; }
     String getAuthor() { return author; }
     String getDescription() { return desc; }

@@ -477,6 +477,10 @@ public class VarFrame extends TFrame {
                 pd.setVisible(false);
                 if (!gt.pluginDlg(win)) {
                     pd.dispose();
+                    if (gt.cancel) {
+                        gt.donePlugin();
+                        return;
+                    };
                     new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
                     return;
                 }

@@ -152,13 +152,14 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
 
     public boolean pluginDlg(Frame f) {
-        Button b=null;
+        Button b=null, b2=null; cancel=false;
         d=new Dialog(f,"Generate Tree Plug-in",true);
         d.setLayout(new BorderLayout());
         d.add(new SpacingPanel(),BorderLayout.WEST);
         d.add(new SpacingPanel(),BorderLayout.EAST);
         Panel bp=new Panel(); bp.setLayout(new FlowLayout());
-        bp.add(b=new Button("OK")); d.add(bp,BorderLayout.SOUTH);
+        bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+        d.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
         List l=new List((vs.count()>10)?10:vs.count(),true);
         int j=0;
@@ -182,8 +183,13 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         TextField t=new TextField("");
         p.add(t,BorderLayout.SOUTH);
         d.pack();
-        b.addActionListener(this);
+        b.addActionListener(this);b2.addActionListener(this);
         d.setVisible(true);
+        if (cancel) {
+            d.dispose();
+            err="Cancelled by user.";
+            return false;
+        }
         System.out.println("back for good ... ");
         int vc=0;
         int ri=vs.indexOf(c.getSelectedItem());
@@ -228,6 +234,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     }
     
     public void actionPerformed(ActionEvent e) {
+        cancel=!e.getActionCommand().equals("OK");
         d.setVisible(false);
     };
     
@@ -260,6 +267,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             System.out.println("execPlugin: R finished");
 
             if (fr.exists()) fr.delete();
+            if (fd.exists()) fd.delete();
             if (!fo.exists()) {
                 err="Unable to use R! Make sure R is installed and in your PATH.";
                 System.out.println("execPlugin: ERR: "+err);
@@ -281,13 +289,13 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 } br.close();
                 fo.delete();
                 lastDump=dump.toString();
-                System.out.println("execPlugin: ERR: "+err+"lastDump:\n"+lastDump);
+                System.out.println("execPlugin: ERR: "+err+"\nlastDump:\n"+lastDump);
                 return false;
             }
         } catch(Exception e) {
             System.out.println("execPlugin: "+e.getMessage()); err="White trying to run R: "+e.getMessage(); e.printStackTrace();
         }
-        System.out.println("execPlugin: unexpectedly reched return, ERR: "+err);
+        System.out.println("execPlugin: unexpectedly reached return, ERR: "+err);
         return false;
     }
 
