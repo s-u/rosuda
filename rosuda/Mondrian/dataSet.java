@@ -673,8 +673,16 @@ System.out.println(newQ.makeQuery());
     return ((Variable)data.elementAt(i)).Mean();
   }
 
+  public double getSelMean(int i) {
+    return ((Variable)data.elementAt(i)).selMean();
+  }
+
   public double getSDev(int i) {
     return ((Variable)data.elementAt(i)).SDev();
+  }
+
+  public double getSelSDev(int i) {
+    return ((Variable)data.elementAt(i)).selSDev();
   }
 
   public double[] getSelection() {
@@ -1021,12 +1029,34 @@ System.out.println("query: "+query+" ---> "+this.max);
         sum += data[i];
       return sum/data.length;
     }
-    
+
+    public double selMean() {
+      double sum=0;
+      int counter=0;
+      for ( int i=0; i<data.length; i++ )
+        if( selectionArray[i] > 0 ) {
+          sum += data[i];
+          counter++;
+        }
+      return sum/counter;
+    }
+
     public double SDev() {
       double sum2=0;
       for ( int i=0; i<data.length; i++ ) 
         sum2 += data[i] * data[i];
       return Math.pow((sum2 - Math.pow(Mean(),2) * data.length) / (data.length - 1), 0.5);
+    }
+
+    public double selSDev() {
+      double sum2=0;
+      int counter=0;
+      for ( int i=0; i<data.length; i++ )
+        if( selectionArray[i] > 0 ) {
+          sum2 += data[i] * data[i];
+          counter++;
+        }
+      return Math.pow((sum2 - Math.pow(selMean(),2) * counter) / (counter - 1), 0.5);
     }
 
     public double getQuantile(double q) {
