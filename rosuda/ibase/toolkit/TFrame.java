@@ -8,8 +8,8 @@ public class TFrame extends Frame
 {
     WTentry WTmyself;
     
-    TFrame(String tit) {
-        setBackground(Common.backgroundColor);
+    public TFrame(String tit, boolean useCommonBg) {
+        if (useCommonBg) setBackground(Common.backgroundColor);
 	setTitle(tit);
 	// add myself to WinTracker
 	if (WinTracker.current==null) WinTracker.current=new WinTracker();
@@ -17,7 +17,9 @@ public class TFrame extends Frame
 	WinTracker.current.add(WTmyself);
     };
 
-    TFrame() { this("<unnamed>"); };
+    public TFrame(String tit) { this(tit,true); }
+    
+    public TFrame() { this("<unnamed>",true); }
 
     public void finalize() {
 	if (Common.DEBUG>0)
