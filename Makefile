@@ -26,9 +26,10 @@ RGui.jar: $(IBASE_SRC) $(RGUI_SRC)
 	rm -rf org
 	$(JAVAC) -d . $^
 	cp rosuda/projects/jrgui/splash.jpg .
+	cp -r rosuda/projects/jrgui/icons .
 	cp rosuda/projects/jrgui/version.properties .
-	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg version.properties org
-	rm -rf org splash.jpg version.properties
+	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg icons version.properties org
+	rm -rf org splash.jpg icons version.properties
 
 ibase.jar: $(IBASE_SRC)
 	$(can-with-jar)
