@@ -2,6 +2,7 @@ package org.rosuda.javaGD;
 
 import java.util.*;
 import java.awt.*;
+import java.lang.reflect.Method;
 
 class GDObject {
     public void paint(GDCanvas c, Graphics g) {};
@@ -14,6 +15,8 @@ class GDCanvas extends Canvas {
     Color col;
 
     Font f;
+
+    Dimension lastSize;
     
     public GDCanvas(double w, double h) {
         this((int)w, (int)h);
@@ -23,11 +26,41 @@ class GDCanvas extends Canvas {
         l=new Vector();
         f=new Font(null,0,12);
         setSize(w,h);
+        lastSize=getSize();
     }
 
+    public void initRefresh() {
+        System.out.println("resize requested");
+        try { // for now we use no cache - just pure reflection API for: Rengine.getMainEngine().eval("...")
+            Class c=Class.forName("org.rosuda.JRI.Rengine");
+            if (c==null)
+                System.out.println(">> can't find Rengine, automatic resizing disabled. [c=null]");
+            else {
+                Method m=c.getMethod("getMainEngine",null);
+                Object o=m.invoke(null,null);
+                if (o!=null) {
+                    Class[] par=new Class[1];
+                    par[0]=Class.forName("java.lang.String");
+                    m=c.getMethod("eval",par);
+                    Object[] pars=new Object[1];
+                    pars[0]="try(.C(\"javaGDresize\",as.integer(-1)),silent=TRUE)";
+                    m.invoke(o, pars);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(">> can't find Rengine, automatic resizing disabled. [x:"+e.getMessage()+"]");
+        }
+    }
+    
     public void add(GDObject o) { l.add(o); }
     public void reset() { l.removeAllElements(); }
     public void paint(Graphics g) {
+        Dimension d=getSize();
+        if (!d.equals(lastSize)) {
+            initRefresh();
+            lastSize=d;
+        }
+        
         int i=0, j=l.size();
         g.setFont(f);
         while (i<j) {
