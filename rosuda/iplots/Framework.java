@@ -275,13 +275,15 @@ public class Framework {
         return (v.isNum())?1:0;
     }
 
-    public void setSecMark(int[] ml) {
+    public void setSecMark(int[] ml) { setSecMark(ml,true); }
+    public void setSecMark(int[] ml, boolean circular) {
         if (cvs==null) return;
-        int i=0;
+        int i=0, j=0;
         SMarker m=cvs.getMarker();
-        while(i<ml.length && i<m.size()) {
-            m.setSec(i,ml[i]);
-            i++;
+        while(i<ml.length && j<m.size()) {
+            m.setSec(j,ml[i]);
+            i++; j++;
+	    if (circular && i>=ml.length) i=0;
         }
         m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
     }
