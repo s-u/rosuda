@@ -49,7 +49,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
   public PrinterJob pj;
 
-  public int printFactor = 4;														// Increase in resolution for printing
+  public int printFactor = 1;														// Increase in resolution for printing
 
   public Dimension printerPage;                               // must be accessible in different paints ...
 
@@ -276,10 +276,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
         evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
         enableEvents(0);
 
-        //    sb = new Scrollbar(Scrollbar.VERTICAL, 0, 300, 0, 300);
         sb = new JScrollBar(Scrollbar.VERTICAL, 0, 300, 0, 300);
         sb.addAdjustmentListener(this);
-        frame.getContentPane().add(sb,"East");
         sb.setVisible(false);
 
         this.enableEvents(AWTEvent.KEY_EVENT_MASK);
@@ -297,6 +295,10 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
           SYSTEM = NN;
       }
 
+    public void setScrollX() {
+      frame.getContentPane().add(sb,"East");
+    }
+    
     public void setDragBoxConstraints(int minX, int minY, int maxX, int maxY, int maxWidth, int maxHeight) {
       this.minX      = minX;
       this.minY      = minY;
@@ -544,8 +546,10 @@ System.out.println(" dragEnd! ");
         g2d.scale(1.0/printFactor, 1.0/printFactor);
         // Turn off double buffering
         Dimension save = this.getViewportSize();
-        int setWidth  = (int)(pageFormat.getImageableWidth()*0.9)*printFactor;
-        int setHeight = (int)(pageFormat.getImageableHeight()*0.9)*printFactor;
+//        int setWidth  = (int)(pageFormat.getImageableWidth()*0.9)*printFactor;
+//        int setHeight = (int)(pageFormat.getImageableHeight()*0.9)*printFactor;
+        int setWidth  = save.width;
+        int setHeight = save.height;
         if( aspectRatio == -1 )
           if(   (double)setWidth / (double)setHeight
                 < (double)save.width / (double)save.height ) 
