@@ -29,11 +29,15 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false; 
     
+    /** is NA represented as 0? (false=NA's are not drawn at all) */
+    boolean na0=true;
+    
     /** array of axes */
     Axis A[];
 
     boolean commonScale=true;
-
+    boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
+    
     int x1, y1, x2, y2;
     boolean drag;
 
@@ -200,8 +204,9 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         g.setColor("line");
 	for (int j=2;j<v.length;j++) {
 	    for (int i=0;i<v[1].size();i++)
-		g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
-			   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
+                if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null)))
+                    g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
+                               A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
 	};
 	
         g.nextLayer();
@@ -210,7 +215,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             g.setColor("marked");
             for (int j=2;j<v.length;j++) {
                 for (int i=0;i<v[1].size();i++)
-                    if (m.at(i))
+                    if (m.at(i) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null)))
 			g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
 				   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
             };
@@ -291,11 +296,14 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='t') run(this,"trigraph");
 	if (e.getKeyChar()=='c') run(this,"common");
+	if (e.getKeyChar()=='n') run(this,"toggleNA");
+	if (e.getKeyChar()=='S') run(this,"scaleDlg");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
 
     public Object run(Object o, String cmd) {
+	if (cmd=="print") { drawHidden=false; run(o,"exportPS"); drawHidden=true; return this; }
 	super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
 	if (cmd=="labels") {
@@ -304,12 +312,11 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             setUpdateRoot(0);
             repaint();
 	};
-	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
 	if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
-        
+        if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
@@ -327,6 +334,25 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		}
 	    } catch (Exception eee) {}
 	}
+        if (cmd=="scaleDlg" && commonScale) {
+            RespDialog d=new RespDialog(myFrame,"Set y scale",true,RespDialog.okCancel);
+            Panel cp=d.getContentPanel();
+            cp.add(new Label("begin: "));
+            TextField tw=new TextField(""+A[1].vBegin,6);
+            TextField th=new TextField(""+(A[1].vBegin+A[1].vLen),6);
+            cp.add(tw);
+            cp.add(new Label(", end: "));
+            cp.add(th);
+            d.pack();
+            d.setVisible(true);
+            if (!cancel) {
+                double vb=Tools.parseDouble(tw.getText());
+                double ve=Tools.parseDouble(th.getText());
+                if (ve-vb>0) A[1].setValueRange(vb,ve-vb);
+                if (myFrame!=null) myFrame.pack();
+            }
+            d.dispose();
+        }
 	
 	return null;
     }
