@@ -31,7 +31,10 @@ public class PluginManager {
     }
 
     public boolean setParS(String plugin, String Par, String Val) {
-        return internal_setParS(plugin+"."+Par,Val);
+        boolean r=internal_setParS(plugin+"."+Par,Val);
+        if (r)         // as long as we don't have shutdown hook we save setting upon change
+            saveSettings();
+        return r;
     };
     
     boolean internal_setParS(String pn, String Val) {
@@ -42,8 +45,6 @@ public class PluginManager {
         } else {
             val.setElementAt(Val,i);
         }
-        // as long as we don't have shutdown hook we save setting upon change
-        saveSettings();
         return true;
     }
 
@@ -80,8 +81,9 @@ public class PluginManager {
                 String s=b.readLine();
                 int cf=s.indexOf("</setting>");
                 int of=s.indexOf("<setting name=");
+                if (Common.DEBUG>0)
+                    System.out.println("LoadSetting: cf="+cf+", of="+of+", isVal="+isVal+", curPar="+curPar+", ln="+s);
                 // we process generated file only, so we assume each flag has its own line
-                if (cf>=0) isVal=false;
                 if (isVal) {
                     if (cf>=0) {
                         if (curCont!=null) internal_setParS(curPar,curCont);
@@ -101,7 +103,12 @@ public class PluginManager {
             }
             b.close();
             return true;
-        } catch (Exception e) { }
+        } catch (Exception e) {
+            if (Common.DEBUG>0) {
+                System.out.println("PluginManager.saveSettings ERR: "+e.getMessage());
+                e.printStackTrace();
+            }
+        }
         return false;
     }
 }

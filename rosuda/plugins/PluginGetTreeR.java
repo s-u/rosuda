@@ -18,6 +18,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     String formula;
     String Rver="?";
     String Rbin=null;
+    String Rcall=null;
 
     PluginManager pm=null;
     
@@ -25,6 +26,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     public static boolean initializedSuccessfully=false;
     public static String lastRbin=null;
     public static String lastRver=null;
+    public static String lastRcall=null;
 
     String lastDump=null;
     
@@ -35,6 +37,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         type=PT_GenTree;
         pm=PluginManager.getManager();
         Rbin=pm.getParS("AllPlugins","latestRbinary");
+        Rcall=pm.getParS("PluginGetTreeR","Rcall");
     }
     public void setParameter(String par, Object val) {
         if (par=="dataset") vs=(SVarSet)val;
@@ -51,7 +54,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
     
     public boolean initPlugin() {
         if (initializedSuccessfully) { /* cached initialization if another instance found R already */
-            Rbin=lastRbin; Rver=lastRver;
+            Rbin=lastRbin; Rver=lastRver; Rcall=lastRcall;
             return true;
         }
         
@@ -64,29 +67,31 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             p.close();
 
             Process pc=null;
-            if (Rbin!=null) {
+            String postBin=" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out";
+            if (Rbin!=null || Rcall!=null) {
+                if (Rcall==null) Rcall=Rbin+postBin; 
                 try {
-                    pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                    pc=Runtime.getRuntime().exec(Rcall);
                 } catch (Exception e0) {};
             };
             if (pc==null) {
                 try {
-                    Rbin="R";
-                    pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                    Rbin="R"; Rcall=Rbin+postBin;
+                    pc=Runtime.getRuntime().exec(Rcall);
                 } catch (Exception e1) {
                     try {
-                        Rbin="/usr/bin/R";
-                        pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                        Rbin="/usr/bin/R"; Rcall=Rbin+postBin;
+                        pc=Runtime.getRuntime().exec(Rcall);
                         pm.setParS("AllPlugins","latestRbinary",Rbin);
                     } catch (Exception e2) {
                         try {
-                            Rbin="/usr/local/bin/R";
-                            pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                            Rbin="/usr/local/bin/R"; Rcall=Rbin+postBin;
+                            pc=Runtime.getRuntime().exec(Rcall);
                             pm.setParS("AllPlugins","latestRbinary",Rbin);
                         } catch (Exception e3) {
                             try {
-                                Rbin="/sw/bin/R";
-                                pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+                                Rbin="/sw/bin/R"; Rcall=Rbin+postBin;
+                                pc=Runtime.getRuntime().exec(Rcall);
                                 pm.setParS("AllPlugins","latestRbinary",Rbin);
                             } catch (Exception e4) {
                                 err="Cannot find R executable!"; return false;
@@ -113,7 +118,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 System.out.println("Found R "+Rver);
                 initializedSuccessfully=true;
                 lastRbin=Rbin;
-                lastRver=Rver;
+                lastRver=Rver; lastRcall=Rcall;
                 return true;
             }
         } catch(Exception e) {
@@ -228,7 +233,11 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             j++;
         }
         formula=sb.toString();
-        System.out.println("formula: "+formula);
+        if (Common.DEBUG>0)
+            System.out.println("formula: "+formula);
+        treeOpt=t.getText();
+        if (Common.DEBUG>0)
+            System.out.println("tree options: \""+treeOpt+"\"");
         d.dispose();
         return true;
     }
@@ -261,7 +270,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             p.println("invisible(options(echo = FALSE))\nlibrary(tree)\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nprint(\"TREE\",quote=FALSE)\nt<-tree("+formula+",d"+treeOpt+")\nprint(t)\nprint(formula(terms(t)))\nprint(\"END\",quote=FALSE)\n");
             p.close();
             System.out.println("execPlugin: starting R");
-            Process pc=Runtime.getRuntime().exec(Rbin+" --slave --no-save --no-restore CMD BATCH PluginInit.r PluginInit.out");
+            Process pc=Runtime.getRuntime().exec(Rcall);
             System.out.println("execPlugin: waiting for R to finish");            
             pc.waitFor();
             System.out.println("execPlugin: R finished");
