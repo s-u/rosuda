@@ -27,7 +27,10 @@ import org.rosuda.JGR.JGR;
  */
 
 public class ConsoleOutput extends JTextPane {
-
+	
+	private boolean lastLineWasEmpty = false;
+	private String prompt = null;
+	private String continueS = null;
     public ConsoleOutput() {
         if (FontTracker.current == null) FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
@@ -68,8 +71,10 @@ public class ConsoleOutput extends JTextPane {
         String line = null;
         for (int i = a; i < b; i++) {
             try {
-                if(isCorrectLine(i) && isCommandLine(i))
-                    bf.append(trimFront(getLine(i).replaceFirst(">","")));
+                if(isCorrectLine(i) && isCommandLine(i)) {
+					String l = trimFront(getLine(i).replaceFirst(prompt,""));
+                    if (!l.startsWith("#")) bf.append(l);
+				}
             }
             catch (Exception e){
             }
@@ -144,10 +149,17 @@ public class ConsoleOutput extends JTextPane {
         for (int i = a; i < b; i++) {
             try {
                 if(isCorrectLine(i)){
-                    if (isResultLine(i))
-                        bf.append(getLine(i));
-                    else
-                        bf.append("\n");
+                    if (isResultLine(i)) {
+						String line = getLine(i);
+                        if (!line.trim().startsWith("Error")) {
+							bf.append(getLine(i));
+							lastLineWasEmpty = false;
+						}
+					}
+                    else {
+                        if (!lastLineWasEmpty) bf.append("\n");
+						lastLineWasEmpty = true;
+					}
                 }
             }
             catch (Exception e){
@@ -157,16 +169,24 @@ public class ConsoleOutput extends JTextPane {
     }
 
     private boolean isCommandLine(int i) throws BadLocationException {
-        this.setCaretPosition(getLineStartOffset(i));
-        return this.getCharacterAttributes().isEqual(JGRPrefs.CMD);
+		if (prompt == null) prompt = org.rosuda.JGR.RController.getRPrompt();
+		if (continueS == null) continueS = org.rosuda.JGR.RController.getRContinue();
+		String line = getLine(i);
+		if (line.equals(prompt.trim())) return false;
+		return (line.trim().startsWith(prompt.trim())||line.trim().startsWith(continueS.trim()));
     }
 
     private boolean isResultLine(int i) throws BadLocationException {
-        this.setCaretPosition(getLineStartOffset(i));
-        return this.getCharacterAttributes().isEqual(JGRPrefs.RESULT);
+		if (prompt == null) prompt = org.rosuda.JGR.RController.getRPrompt();
+		if (continueS == null) continueS = org.rosuda.JGR.RController.getRContinue();
+		String line = getLine(i);
+		return (!line.trim().startsWith(prompt.trim()) && !line.trim().startsWith(continueS.trim()));
     }
 
     private boolean isCorrectLine(int i) {
+		if (prompt == null) prompt = org.rosuda.JGR.RController.getRPrompt();
+		if (continueS == null) continueS = org.rosuda.JGR.RController.getRContinue();
+		if (getLine(i).trim().length()==0 || getLine(i).trim().equals(prompt.trim())) return false;
         return true;
     }
 
@@ -175,7 +195,6 @@ public class ConsoleOutput extends JTextPane {
         return s;
     }
 
-    
     private String getLine(int i) {
         String line = null;
         try {
