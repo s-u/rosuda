@@ -172,15 +172,21 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         d.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
         List l=new List((vs.count()>10)?10:vs.count(),true);
-        int j=0;
+        int j=0; boolean frv=false;
         while(j<vs.count()) {
             c.add(vs.at(j).getName());
+            if (vs.at(j)==resp) {
+                c.select(vs.at(j).getName());
+                frv=true;
+            };
             l.add(vs.at(j).getName());
             j++;
         }
         j=0; while(j<vs.count()) {
             l.select(j); j++;
         }
+        if (!frv)
+            c.select(vs.at(vs.count()-1).getName());
         Panel p=new Panel();
         p.setLayout(new BorderLayout());
         d.add(p);
@@ -191,7 +197,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         p.add(l,BorderLayout.NORTH);
         
         Panel bPanel=new Panel();
-        TextField t=new TextField("",30);
+        TextField t=new TextField((treeOpt==null)?"":treeOpt,30);
         GridBagLayout gbl=new GridBagLayout();
         bPanel.setLayout(gbl);
         GridBagConstraints gcw = new GridBagConstraints();
@@ -202,8 +208,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         gbl.setConstraints(bPanel.add(c),gce);
         gbl.setConstraints(bPanel.add(new Label("Library:" )),gcw);
         Choice chLibrary=new Choice();
-        chLibrary.add("tree");
         chLibrary.add("rpart");
+        chLibrary.add("tree");
+        if (lib!=null) chLibrary.select(lib);
         gbl.setConstraints(bPanel.add(chLibrary),gce);
         gbl.setConstraints(bPanel.add(new Label("Parameters: ")),gcw);
         gbl.setConstraints(bPanel.add(t),gce);
