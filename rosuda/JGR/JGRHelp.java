@@ -138,7 +138,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         link.setPreferredSize(new Dimension(200, 20));
 
 
-        helpArea = new HelpArea(this,null);
+        helpArea = new HelpArea(tabArea,this,null);
         helpArea.addKeyListener(this);
         tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
         tabArea.addMouseListener(this);
@@ -169,7 +169,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     public void refresh() {
-        helpArea = new HelpArea(this,null);
+        helpArea = new HelpArea(tabArea,this,null);
     }
 
 
@@ -193,7 +193,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
     public void goTo(String keyword, String file) {
             if (tabArea.getTabCount()==JGRPrefs.maxHelpTabs) tabArea.remove(JGRPrefs.maxHelpTabs-1);
-            tabArea.add(new HelpArea(this, keyword), 0);
+            tabArea.add(new HelpArea(tabArea,this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
             tabArea.setTitleAt(0,keyword);
@@ -217,7 +217,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     public void search(String keyword) {
         if (keyword != null && !keyword.equals("")) {
             if (tabArea.getTabCount()==JGRPrefs.maxHelpTabs) tabArea.remove(JGRPrefs.maxHelpTabs-1);
-            tabArea.add(new HelpArea(this, keyword), 0);
+            tabArea.add(new HelpArea(tabArea, this, keyword), 0);
             tabArea.setSelectedIndex(0);
             tabArea.setIconAt(0,new CloseIcon(getClass().getResource("/icons/close.png")));
             tabArea.setTitleAt(0,keyword);
@@ -309,11 +309,14 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
         private Vector history = new Vector();
         private int currentURLIndex = -1;
-
-        public HelpArea(JGRHelp rhelp, String keyword) {
+        
+        private JTabbedPane tabArea = null;
+        
+        
+        public HelpArea(JTabbedPane parent, JGRHelp rhelp, String keyword) {
             this.rhelp = rhelp;
             this.keyword = keyword;
-            
+            this.tabArea = parent;
             FontTracker.current.add(helpPane);
             this.getViewport().add(helpPane);
             this.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -329,7 +332,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                         if (link != null) link.setText(" ");
                     }
                     else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        goTo(e.getURL());
+                        goTo(e.getURL(),true);
                     }
                 }
             });
@@ -355,6 +358,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             //System.out.println("test"+url);
             try {
                 helpPane.setPage(url);
+                
             } catch (IOException ex) {
                 ex.printStackTrace();
                 try { history.remove(currentURLIndex);
@@ -372,6 +376,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                 }
             }
             finally { rhelp.cursorDefault(); }
+            
         }
 
         private void back() {
@@ -385,11 +390,21 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         }
 
         public void goTo(URL url) {
+            goTo(url,false);
+        }
+        
+        public void goTo(URL url,boolean href) {
             if (url != null) {
                 currentURLIndex++;
                 history.setSize(currentURLIndex);
                 history.add(url);
                 updatePage();
+                if (href) {
+                    try {
+                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
+                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+                    } catch (Exception ex2) {}
+                }
             }
         }
 
@@ -400,7 +415,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                 //System.out.println(url.toString());
                 goTo(url);
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                new org.rosuda.JGR.util.ErrorMsg(e);
                 JOptionPane.showMessageDialog(null, e.getMessage(),
                                               "URL Error",
                                               JOptionPane.ERROR_MESSAGE);
