@@ -34,6 +34,8 @@ public class Rengine extends Thread {
     public synchronized native int[] rniGetDoubleArray(long exp);
     public synchronized native int rniExpType(long exp);
 
+    public synchronized native void rniIdle();
+
     public synchronized RXP eval(String s) {
         long pr=rniParse(s, 1);
         if (pr>0) {
@@ -60,7 +62,8 @@ public class Rengine extends Thread {
         if (setupR()==0) {
             while (alive) {
                 try {
-                    sleep(1000000);
+                    sleep(100);
+		    rniIdle();
                 } catch (InterruptedException ie) {
                     interrupted();
                 }
