@@ -58,6 +58,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     private boolean wasHistEvent = false;
 
     public int end = 0;
+    private Integer clearpoint = null;
 
     public RConsole() {
         this(null);
@@ -144,13 +145,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void execute(String cmd) {
          if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
-        /*
-        try { outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD); } catch (Exception e) {}
-        if (!isHelpCMD(cmd)) JGR.rSync.triggerNotification(cmd);
-         */
 
-        /*
-        put command line by line nut it doesn't work but we need this because of R */
         String[] cmdArray = cmd.split("\n");
 
         String c = null;
@@ -161,15 +156,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             else
                 try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n> ",iPreferences.CMD); } catch (Exception e) {}
         }
-    }
-
-    private synchronized void _execute(String cmd) {
-        //JGR.READY = false;
-        System.out.println(cmd);
-        JGR.rSync.triggerNotification(cmd);
-        /*while (!JGR.READY); was ich hier möchte ist dass er erst den die nächste zeile übergibt wenn R wieder in readConsole ist, allerdings wenn
-        wenn man _execute synchronized macht funktioniert das auch allerdings gibt es dann keinen consolenoutput sondern erst wenn er komplett durch ist gibt er aus,
-        der vorteil von zeilenweisem übergeben ist, dass bei langen funktionen kein syntax error mehr kommt, der sonst auftauchen würde*/
     }
 
     public boolean isHelpCMD(String cmd) {
@@ -244,10 +230,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void clearconsole() {
         try {
-            System.out.println(output.getLineOfOffset(end));
-            int o = output.getLineEndOffset(output.getLineOfOffset(end)-1)+2;
-            System.out.println(o);
-            output.removeAllFrom(o);
+            if (clearpoint==null) clearpoint = new Integer(output.getLineEndOffset(output.getLineOfOffset(end)-1)+2);
+            output.removeAllFrom(clearpoint.intValue());
         } catch (Exception e) { new iError(e);/*e.printStackTrace();*/ }
     }
 
@@ -666,7 +650,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             Element map = getDocument().getDefaultRootElement();
             return map.getElementCount();
         }
-        
+
 
         public int getLineStartOffset(int line) throws BadLocationException {
             int lineCount = getLineCount();
@@ -713,7 +697,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         public void removeAllFrom(int index) throws BadLocationException {
             this.getDocument().remove(index,this.getDocument().getLength()-index);
         }
-        
+
 
         public void setFont(Font f) {
             super.setFont(f);
