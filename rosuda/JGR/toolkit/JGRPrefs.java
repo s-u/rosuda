@@ -1,13 +1,13 @@
 package org.rosuda.JGR.toolkit;
 
 /**
- *  JGRPrefs
- * 
+*  JGRPrefs
+ *
  * 	preferences like fonts colors ....
- * 
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -22,7 +22,7 @@ import java.util.prefs.Preferences;
 public class JGRPrefs {
 
 
-	public static final int DEBUG = 0;
+    public static final int DEBUG = 0;
     public static boolean isMac = false;
 
     /** DefaultFontName */
@@ -31,7 +31,7 @@ public class JGRPrefs {
     public static int FontStyle = Font.PLAIN;
     /** DefaultFontSize */
     public static int  FontSize = 12;
-    
+
     public static final int MINFONTSIZE = 18;
     /** DefaultFont */
     public static Font DefaultFont;
@@ -75,15 +75,15 @@ public class JGRPrefs {
     public static MutableAttributeSet QUOTE = new SimpleAttributeSet();
     /** DefaultQuoteColor */
     public static Color QUOTEColor = Color.blue;
-    
-    
+
+
     public static int maxHelpTabs = 10;
-    
+
     public static boolean useHelpAgent = true;
-    
+
     public static boolean useEmacsKeyBindings = false;
-    
-    
+
+
 
     public static void apply() {
         JGRPrefs.refresh();
@@ -158,10 +158,10 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgent", useHelpAgent);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         String packages = "";
-        if (JGRPackageManager.defaultPackages.length > 0) {
-        packages = JGRPackageManager.defaultPackages[0].toString();
-        for (int i = 1; i < JGRPackageManager.defaultPackages.length; i++)
-        	packages += ", "+JGRPackageManager.defaultPackages[i];
+        if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
+            packages = JGRPackageManager.defaultPackages[0].toString();
+            for (int i = 1; i < JGRPackageManager.defaultPackages.length; i++)
+                packages += ", "+JGRPackageManager.defaultPackages[i];
         }
         prefs.put("DefaultPackages", packages);
         try {

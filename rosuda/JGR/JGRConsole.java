@@ -1,11 +1,11 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRConsole Console Frame
- * 
+*  JGRConsole Console Frame
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -24,18 +24,18 @@ import org.rosuda.JGR.toolkit.*;
 import org.rosuda.JGR.util.*;
 
 public class JGRConsole extends iFrame implements ActionListener, KeyListener,
-    FocusListener, RMainLoopCallbacks {
+FocusListener, RMainLoopCallbacks {
 
     private JSplitPane consolePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
     public ConsoleOutput output = new ConsoleOutput();
     public SyntaxInput input = new SyntaxInput(true);
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
-    
+
     private TextFinder textFinder = new TextFinder(output);
-    
+
     private ToolBar toolBar;
-    
+
     private String wspace = null;
     public static String directory = System.getProperty("user.home");
 
@@ -54,22 +54,22 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 
     public JGRConsole(File workSpace) {
         super("Console", iFrame.clsMain);
-        
+
         //Initialize JGRConsoleMenu
         String[] Menu = {
             "+", "File","Load Datafile", "loaddata","Export Output","exportOutput","-","@NNew Workspace", "new", "@OLoad Workspace",
             "open",
             "@SSave Workspace", "save", "!SSave Workspace as",
             "saveas","~File.Quit",
-            "~Edit",
+            "~EditCPS",
             "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
-            "DataTable", "table", "-", "Increase Fontsize", "fontBigger",
-            "Decrease Fontsize", "fontSmaller",
+            "DataTable", "table", "-", "Increase Font Size", "fontBigger",
+            "Decrease Font Size", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
             "~Window",
             "~Help", "R Help", "help", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
-        
+
         //Add History if we didn't found one in the user's home directory
         if (JGR.RHISTORY == null) {
             JGR.RHISTORY = new Vector();
@@ -78,12 +78,12 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 
         //Add default toolbar with stop button to interrupt R
         toolBar = new ToolBar(this,true,progress);
-        
+
         input.addKeyListener(this);
         input.setWordWrap(false);
         input.addFocusListener(this);
         inputDoc.addUndoableEditListener(toolBar.undoMgr);
-        
+
         output.setEditable(false);
         output.addFocusListener(this);
         output.addKeyListener(this);
@@ -95,7 +95,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         sp2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         consolePanel.setBottomComponent(sp2);
         consolePanel.setDividerLocation( ( (int) ( (double)this.getHeight() * 0.65)));
-        
+
         this.addComponentListener(new ComponentAdapter() {
             public void componentResized(ComponentEvent evt) {
                 super.componentResized(evt);
@@ -104,12 +104,12 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             }
         });
         this.addWindowListener(new WindowAdapter() {
-        	public void windowClosing(WindowEvent evt) {
-        		dispose();
-        	}
+            public void windowClosing(WindowEvent evt) {
+                dispose();
+            }
         });
         this.addKeyListener(this);
-                
+
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(toolBar,BorderLayout.NORTH);
         this.getContentPane().add(consolePanel,BorderLayout.CENTER);
@@ -141,7 +141,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         if (JGR.RHISTORY.size()==0)  JGR.RHISTORY.add(cmd);
         else if (cmd.trim().length() > 0 && JGR.RHISTORY.size() > 0 && !JGR.RHISTORY.lastElement().equals(cmd.trim())) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
-        
+
         String[] cmdArray = cmd.split("\n");
 
         String c = null;
@@ -186,13 +186,12 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             else h = null;
             Thread t = new Thread() {
                 public void run() {
-                    progress.start();
                     setWorking(true);
                     try {
                         new JGRHelp();
                         if (h!=null) JGRHelp.current.search(h,e);
                     } catch (Exception e1) {
-                        e1.printStackTrace();
+                        new ErrorMsg(e1);
                     }
                     setWorking(false);
                 }
@@ -204,13 +203,12 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
                 final String h = help.trim();
                 Thread t = new Thread() {
                     public void run() {
-                        progress.start();
                         setWorking(true);
                         JGRHelp.current.show();
                         try {
                             JGRHelp.current.search(h,e);
                         } catch (Exception e1) {
-                            e1.printStackTrace();
+                            new ErrorMsg(e1);
                         }
                         setWorking(false);
                     }
@@ -240,15 +238,15 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 
     public void newWorkSpace() {
         int neww = JOptionPane.showConfirmDialog(null, "Save current workspace?",
-                                                  "New Workspace",
-                                                  JOptionPane.
-                                                  YES_NO_CANCEL_OPTION,
-                                                  JOptionPane.QUESTION_MESSAGE);
+                                                 "New Workspace",
+                                                 JOptionPane.
+                                                 YES_NO_CANCEL_OPTION,
+                                                 JOptionPane.QUESTION_MESSAGE);
 
-         if (neww == 0) {
-             if (saveWorkSpaceAs()) execute("rm(list=ls())");
-         }
-         else if (neww == 1) execute("rm(list=ls())");
+        if (neww == 0) {
+            if (saveWorkSpaceAs()) execute("rm(list=ls())");
+        }
+        else if (neww == 1) execute("rm(list=ls())");
     }
 
     public void saveWorkSpace(final String file) {
@@ -289,13 +287,11 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         }
         else {
             toolBar.stopButton.setEnabled(true);
-            progress.start();
             setWorking(true);
         }
     }
 
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
-        setWorking(false);
         toolBar.stopButton.setEnabled(false);
         if (prompt.indexOf("Save workspace") > -1) return JGR.exit();
         else {
@@ -303,7 +299,6 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             output.setCaretPosition(outputDoc.getLength());
             String s = JGR.rSync.waitForNotification();
             try { outputDoc.insertString(outputDoc.getLength()," "+s+"\n",JGRPrefs.CMD); } catch (Exception e) {}
-            System.out.println("read console "+s);
             return (s==null||s.length()==0)?"\n":s+"\n";
         }
     }
@@ -313,16 +308,16 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public int getFontWidth() {
-    	int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
-    	width = output.getWidth() / width;
-    	if (JGRPrefs.isMac) {
-        	return (int) (width*1.6);
+        int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
+        width = output.getWidth() / width;
+        if (JGRPrefs.isMac) {
+            return (int) (width*1.5);
         }
         else {
-        	return (int) (width*2.5);
+            return (int) (width*2.5);
         }
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
@@ -330,7 +325,10 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "copy") {
             input.copy();
             output.copy();
-        } else if (cmd == "clearconsole") clearconsole();
+        } else if (cmd=="copyoutput") output.copyOutput();
+        else if (cmd=="copycmds") output.copyCommands();
+        else if (cmd=="copyresult") output.copyResults();
+        else if (cmd == "clearconsole") clearconsole();
         else if (cmd == "delete") {
             try {
                 int i = 0;
@@ -338,7 +336,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             } catch (BadLocationException ex) {}
         } else if (cmd == "editor") new Editor();
         else if (cmd == "exit") dispose();
-        else if (cmd == "exportOutput") output.startExort();
+        else if (cmd == "exportOutput") output.startExport();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "loaddata") new JGRDataFileDialog(this, directory);
@@ -350,11 +348,11 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "prefs") new PrefsDialog(this);
         else if (cmd == "redo") {
             try {
-                if (toolBar.undoMgr.canRedo()) 
-                	toolBar.undoMgr.redo();
+                if (toolBar.undoMgr.canRedo())
+                    toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
         } else if (cmd == "help")  execute("help.start()");
-        else if (cmd == "table") new DataTable(null);
+        else if (cmd == "table") new DataTable(null,null);
         else if (cmd == "save") saveWorkSpace(wspace);
         else if (cmd == "saveas") saveWorkSpaceAs();
         else if (cmd == "search") textFinder.showFind(false);
@@ -367,8 +365,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             }
         } else if (cmd == "undo") {
             try {
-                if (toolBar.undoMgr.canUndo()) 
-                	toolBar.undoMgr.undo();
+                if (toolBar.undoMgr.canUndo())
+                    toolBar.undoMgr.undo();
             } catch (Exception ex) {}
         }
     }
@@ -377,7 +375,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyPressed(KeyEvent ke) {
-    	if (JGRPrefs.useEmacsKeyBindings) {
+        if (JGRPrefs.useEmacsKeyBindings) {
             if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
                 input.setCaretPosition(input.getText().length());
             }
@@ -386,64 +384,64 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         if (ke.getKeyCode() == KeyEvent.VK_UP) {
-        	if (input.mComplete != null && input.mComplete.isVisible()) {
-        		input.mComplete.selectPrevios();
-        	}
+            if (input.mComplete != null && input.mComplete.isVisible()) {
+                input.mComplete.selectPrevios();
+            }
             else if (currentHistPosition > 0){
-            	if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
-            		if (input.getText().trim().length() > 0) {
-            			if (currentHistPosition==JGR.RHISTORY.size() && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
-            				JGR.RHISTORY.add(input.getText().trim()); 
-            			}
-            		}
-            		input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
-            		input.setCaretPosition(input.getText().length());
-            		wasHistEvent = true;
-            	}
+                if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
+                    if (input.getText().trim().length() > 0) {
+                        if (currentHistPosition==JGR.RHISTORY.size() && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
+                            JGR.RHISTORY.add(input.getText().trim());
+                        }
+                    }
+                    input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
+                    input.setCaretPosition(input.getText().length());
+                    wasHistEvent = true;
+                }
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-        	if (input.mComplete != null && input.mComplete.isVisible()) {
-        		input.mComplete.selectNext();
-        	}
+            if (input.mComplete != null && input.mComplete.isVisible()) {
+                input.mComplete.selectNext();
+            }
             else {
-            	if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
-            		if (currentHistPosition < JGR.RHISTORY.size() - 1) {
-            			input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
-            			input.setCaretPosition(input.getText().length());
-            		}
-            		else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
-            			input.setText("");
-            			currentHistPosition++;
-            		}
-            		wasHistEvent = true;
-            	}
+                if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
+                    if (currentHistPosition < JGR.RHISTORY.size() - 1) {
+                        input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
+                        input.setCaretPosition(input.getText().length());
+                    }
+                    else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
+                        input.setText("");
+                        currentHistPosition++;
+                    }
+                    wasHistEvent = true;
+                }
             }
         }
     }
 
     public void keyReleased(KeyEvent ke) {
-    	if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-        	if (input.mComplete != null && input.mComplete.isVisible() && !(ke.isControlDown() || ke.isMetaDown())) {
-        		input.mComplete.completeCommand();
-        	}
+        if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (input.mComplete != null && input.mComplete.isVisible() && !(ke.isControlDown() || ke.isMetaDown())) {
+                input.mComplete.completeCommand();
+            }
             else {
-            	if (ke.isControlDown() || ke.isMetaDown()) {
-            		try { 
-            			inputDoc.insertString(input.getCaretPosition(), "\n", null);
-            			input.mComplete.setVisible(false);
-            		} catch (Exception e) {}
-            	}
-            	else {
-            		String cmd = input.getText().trim();
-            		input.setText("");
-            		input.setCaretPosition(0);
-            		input.requestFocus();
-            		execute(cmd);
-            	}
+                if (ke.isControlDown() || ke.isMetaDown()) {
+                    try {
+                        inputDoc.insertString(input.getCaretPosition(), "\n", null);
+                        input.mComplete.setVisible(false);
+                    } catch (Exception e) {}
+                }
+                else {
+                    String cmd = input.getText().trim();
+                    input.setText("");
+                    input.setCaretPosition(0);
+                    input.requestFocus();
+                    execute(cmd);
+                }
             }
         }
-    	if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
+        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
             input.requestFocus();
             //input.setCaretPosition(input.getText().length());
             input.paste();

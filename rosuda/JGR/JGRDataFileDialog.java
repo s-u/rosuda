@@ -2,13 +2,13 @@ package org.rosuda.JGR;
 
 
 /**
- *  JGRDataFileDialog
- *  
+*  JGRDataFileDialog
+ *
  *  load datasets into R
- * 
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -28,10 +28,10 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
     private JCheckBox header = new JCheckBox("Header",true);
     private JCheckBox attach = new JCheckBox("Attach",false);
 
-    private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|",""});
+    private JComboBox sepsBox = new JComboBox(new String[] {"Default","\\t",",",";","|","Others..."});
     private String[] seps = new String[] {"","\\t",",",";","|"};
 
-    private JComboBox quoteBox = new JComboBox(new String[] {"Default",""});
+    private JComboBox quoteBox = new JComboBox(new String[] {"Default","\\\"","\\'","Others..."});
     private String[] quotes = new String[] {""};
 
     private boolean useHeader = true;
@@ -53,7 +53,7 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         sepsBox.setPreferredSize(new Dimension(90,20));
         sepsBox.setMaximumSize(new Dimension(90,20));
 
-        
+
         quoteBox.addItemListener(this);
         sepsBox.addItemListener(this);
 
@@ -64,7 +64,7 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         this.getContentPane().setLayout(new BorderLayout());
 
         JPanel options = new JPanel(new GridBagLayout());
-        
+
         JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
         command.add(dataName);
         command.add(new JLabel(" <- (...,"));
@@ -74,16 +74,16 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         command.add(new JLabel(", quote="));
         command.add(quoteBox);
         command.add(new JLabel(")"));
-        
+
         options.add(command,  new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0
-                , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                new Insets(1, 5, 1, 5), 0, 0));
+                                                 , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                 new Insets(1, 5, 1, 5), 0, 0));
         options.add(attach,  new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-        		, GridBagConstraints.WEST, GridBagConstraints.NONE,
-				new Insets(1, 5, 1, 5), 0, 0));
+                                                , GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                new Insets(1, 5, 1, 5), 0, 0));
         options.add(new JPanel(), new GridBagConstraints(3, 0, 1, 2, 1.0, 1.0
-	            , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-	            new Insets(1, 5, 1, 5), 0, 0));
+                                                     , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                                                     new Insets(1, 5, 1, 5), 0, 0));
 
 
         this.getContentPane().add(fileChooser,BorderLayout.CENTER);
@@ -103,14 +103,14 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         if (fileChooser.getSelectedFile() != null) {
             JGRConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = fileChooser.getSelectedFile().toString();
-
+    
             String useSep;
             if (sepsBox.getSelectedIndex() >= seps.length) useSep = sepsBox.getSelectedItem().toString();
             else useSep = seps[sepsBox.getSelectedIndex()];
             String useQuote;
             if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
             else useQuote = quotes[quoteBox.getSelectedIndex()];
-
+    
             String cmd = dataName.getText().trim().replaceAll("\\s","")+ "<- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
             JGR.MAINRCONSOLE.execute(cmd);
         }
@@ -123,35 +123,37 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
         if (cmd == "ApproveSelection") loadFile();
         else if (cmd == "CancelSelection") dispose();
     }
-
+    
     public void itemStateChanged(ItemEvent e) {
         Object source = e.getItemSelectable();
         boolean edit = false;
         if (source == quoteBox) {
             edit = quoteBox.getSelectedIndex() == quoteBox.getItemCount()-1?true:false;
             quoteBox.setEditable(edit);
+            quoteBox.requestFocus();
         }
         else if (source == sepsBox) {
             edit = sepsBox.getSelectedIndex() == sepsBox.getItemCount()-1?true:false;
             sepsBox.setEditable(edit);
+            sepsBox.requestFocus();
         }
     }
-
+    
     public void mouseClicked(MouseEvent e) {
     }
-
+    
     public void mouseEntered(MouseEvent e) {
     }
-
+    
     public void mousePressed(MouseEvent e) {
     }
-
+    
     public void mouseReleased(MouseEvent e) {
     }
-
+    
     public void mouseExited(MouseEvent e) {
     }
-
+    
     public void propertyChange(PropertyChangeEvent e) {
         File file = fileChooser.getSelectedFile();
         if(file!=null && !file.isDirectory()) {

@@ -40,14 +40,14 @@ public class iMenu {
             if (menuDef[i]=="0") break;
             if (menuDef[i]=="~File.Basic.End") {
                 i++; isNext=true;
-                /*if (Common.isMac()) {
+                if (Common.isMac()) {
                     mi=new JMenuItem("Close window");
                     mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                     //mi.setActionCommand("WTMclose"+we.id);
                     mi.setActionCommand("exit");
                     mi.addActionListener(al);
                     m.add(mi);
-                }*/
+                }
                 if (!Common.isMac()) {
                     m.addSeparator();
                     mi=new JMenuItem("Quit");
@@ -122,7 +122,7 @@ public class iMenu {
                     mi.addActionListener(al);
                     m.add(mi);
             };
-            if (menuDef[i]=="~Edit") {
+            if (menuDef[i].indexOf("~Edit") >=0) {
                 i++; isNext=true;
                 mb.add(m=new JMenu("Edit"));
                 mi=new JMenuItem("Undo");
@@ -146,6 +146,22 @@ public class iMenu {
                 mi.setActionCommand("copy");
                 mi.addActionListener(al);
                 m.add(mi);
+                if (menuDef[i-1].equals("~EditCPS")) {
+                    JMenu m2 = new JMenu("Copy Special");
+                    JMenuItem mi21 = new JMenuItem("Copy Output");
+                    mi21.setActionCommand("copyoutput");
+                    mi21.addActionListener(al);
+                    m2.add(mi21);
+                    JMenuItem mi22 = new JMenuItem("Copy Commands");
+                    mi22.setActionCommand("copycmds");
+                    mi22.addActionListener(al);
+                    m2.add(mi22);
+                    JMenuItem mi23 = new JMenuItem("Copy Results");
+                    mi23.setActionCommand("copyresult");
+                    mi23.addActionListener(al);
+                    m2.add(mi23);
+                    m.add(m2);
+                }
                 mi=new JMenuItem("Paste");
                 mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
                 mi.setActionCommand("paste");

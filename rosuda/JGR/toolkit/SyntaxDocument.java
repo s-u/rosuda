@@ -3,11 +3,11 @@ package org.rosuda.JGR.toolkit;
 /**
  *  SytnaxDocument
  * 
- * 	provides R-Syntaxhighlighting
+ *  provides R-Syntaxhighlighting
  * 
- *	@author Markus Helbig
+ *  @author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2004 
+ *  RoSuDA 2003 - 2004 
  */
 
 

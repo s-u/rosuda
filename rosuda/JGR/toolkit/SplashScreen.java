@@ -1,11 +1,11 @@
 package org.rosuda.JGR.toolkit;
 
 /**
- *  SplashScreen
- * 	 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+*  SplashScreen
+ *
+ * @author Markus Helbig
+ *
+ * RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -25,6 +25,7 @@ public class SplashScreen extends JWindow implements Runnable {
     private Image splash;
 
     /** SplashScreen
+     *
      */
 
 
@@ -39,7 +40,6 @@ public class SplashScreen extends JWindow implements Runnable {
         this.setLocation((screenSize.width-300)/2,(screenSize.height-200)/2);
         this.setBackground(Color.white);
         thread = new Thread(this);
-        //this.start();
     }
 
     public void paint(Graphics g) {

@@ -113,6 +113,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 
     public void keyPressed(KeyEvent ke) {
+        if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            if (cmdHelp != null) cmdHelp.hide();
+            return;
+        }
     }
 
     public void keyReleased(KeyEvent ke) {

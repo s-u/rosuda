@@ -1,13 +1,13 @@
 package org.rosuda.JGR.toolkit;
 
 /**
- *  Editor
- * 
+*  Editor
+ *
  * 	editor with syntaxhighlighting and autocompletion
- * 
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -44,13 +44,13 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private Document editDoc = editArea.getDocument();
 
     private ToolBar toolBar;
-    
+
     private String fileName = null;
     private static String directory = System.getProperty("user.home");
     private String keyWord = null;
 
     private boolean modified = false;
-    
+
     private TextFinder textFinder = new TextFinder(editArea);
 
 
@@ -68,7 +68,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             "@SSave", "save", "!SSave as", "saveas",
             "-", "@PPrint", "print","~File.Basic.End",
             "~Edit",
-            "+", "Tools", "Increase Fontsize", "fontBigger", "Decrease Fontsize",
+            "+", "Tools", "Increase Font Size", "fontBigger", "Decrease Font Size",
             "fontSmaller", "-", "@FFind", "search", "@GFind Next", "searchnext",
             "~Window",
             "~Help", "R Help", "help", "~About", "0"};
@@ -94,14 +94,14 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             rm.add(ca);
             if (i==0) ca.setEnabled(false);
         }
-        
+
         toolBar = new ToolBar(this,false, progress);
-        
+
 
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
         editArea.setWordWrap(false);
-        
+
         editDoc.addUndoableEditListener(toolBar.undoMgr);
 
         caretStatus.setMinimumSize(new Dimension(100, 15));
@@ -111,11 +111,11 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         modifiedStatus.setMinimumSize(new Dimension(80, 15));
         modifiedStatus.setPreferredSize(new Dimension(80, 15));
         modifiedStatus.setMaximumSize(new Dimension(80, 15));
-        
+
         JPanel status = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         status.add(modifiedStatus);
         status.add(caretStatus);
-        
+
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(toolBar,BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(editArea);
@@ -134,6 +134,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));
         this.setLocation(this.getLocation().x+100, 10);
+        this.setWorking(false);
         this.setVisible(true);
         if (file != null) this.fileName = file;
         if (this.fileName != null) loadFile();
@@ -141,7 +142,20 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         editArea.requestFocus();
     }
 
-   
+
+    public void setTitle(String title) {
+        int i = title.lastIndexOf(File.separator);
+        if (i!=-1) {
+            int z = title.indexOf(File.separator);
+            if (z!=-1) {
+                int x = title.substring(z+1,i).indexOf(File.separator);
+                if (x!= -1 && x!=z) title = title.substring(0,z+x+2)+"..."+title.substring(i);
+            }
+        }
+        super.setTitle(title);
+    }
+
+
     public boolean exit() {
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
@@ -173,7 +187,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     }
 
     public void loadFile() {
-        progress.start();
         setWorking(true);
         editArea.setText("");
         try {
@@ -193,13 +206,16 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                         reader.close();
                         editArea.append(text.toString());
                         text.delete(0,text.length());
-                    } catch (Exception e) {}
+                    } catch (Exception e) {
+                        setWorking(false);
+                    }
                     setWorking(false);
                 }
             };
             t.start();
         }
         catch (Exception e) {
+            setWorking(false);
         }
         recentOpen.addEntry(fileName);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
@@ -227,11 +243,11 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
     }
-    
+
     public void setText(StringBuffer sb) {
-    	cursorWait();
-    	editArea.setText(sb.toString());
-    	cursorDefault();
+        cursorWait();
+        editArea.setText(sb.toString());
+        cursorDefault();
     }
 
 
@@ -244,7 +260,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         if (fileName == null || fileName.equals("")) {
             return saveFileAs();
         } else {
-            progress.start();
             setWorking(true);
             new FileSave(this);
             this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
@@ -297,8 +312,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd.startsWith("recent:")) {
             if (modified) new Editor(cmd.replaceFirst("recent:",""));
             else {
-            	fileName = cmd.replaceFirst("recent:","");
-            	loadFile();
+                fileName = cmd.replaceFirst("recent:","");
+                loadFile();
             }
         }
         else if (cmd == "paste") editArea.paste();
@@ -318,8 +333,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
         else if (cmd == "redo") {
             try {
-                if (toolBar.undoMgr.canRedo()) 
-                	toolBar.undoMgr.redo();
+                if (toolBar.undoMgr.canRedo())
+                    toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
         } else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()");
         else if (cmd == "save") saveFile();
@@ -329,8 +344,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd == "selAll") editArea.selectAll();
         else if (cmd == "undo") {
             try {
-                if (toolBar.undoMgr.canUndo()) 
-                	toolBar.undoMgr.undo();
+                if (toolBar.undoMgr.canUndo())
+                    toolBar.undoMgr.undo();
             } catch (CannotUndoException ex) {}
         }
 
@@ -342,23 +357,23 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent ke) {
         setModified(modified = true);
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-        	if ((ke.isControlDown() || ke.isMetaDown()) && JGR.MAINRCONSOLE != null && editArea.getSelectedText() != null) {
+            if ((ke.isControlDown() || ke.isMetaDown()) && JGR.MAINRCONSOLE != null && editArea.getSelectedText() != null) {
                 JGR.MAINRCONSOLE.execute(editArea.getSelectedText());
             }
             else if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
-            	editArea.mComplete.completeCommand();
+                editArea.mComplete.completeCommand();
             }
             else editArea.insertAt(editArea.getCaretPosition(),"\n");
         }
         else if (ke.getKeyCode() == KeyEvent.VK_UP) {
-        	if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
-        		editArea.mComplete.selectPrevios();
-        	}
+            if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
+                editArea.mComplete.selectPrevios();
+            }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-        	if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
-        		editArea.mComplete.selectNext();
-        	}
+            if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
+                editArea.mComplete.selectNext();
+            }
         }
     }
 
@@ -379,11 +394,11 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                     try {
                         int currentpos = editArea.getCaretPosition();
                         int lastnewline = editArea.getText().lastIndexOf("\n",
-                            currentpos - 1);
+                                                                         currentpos - 1);
                         int chars = editArea.getText(0,
-                            lastnewline < 0 ? 0 : lastnewline).length();
+                                                     lastnewline < 0 ? 0 : lastnewline).length();
                         int currentline = editArea.getLineOfOffset(editArea.
-                            getCaretPosition());
+                                                                   getCaretPosition());
                         currentpos -= chars;
                         setText(currentline + ":" +
                                 (currentline == 0 ? currentpos + 1 : currentpos));

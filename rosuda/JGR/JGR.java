@@ -1,11 +1,11 @@
 package org.rosuda.JGR;
 
 /**
- *  JGR main application
- * 	 
+*  JGR main application
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.io.*;
@@ -20,10 +20,10 @@ import org.rosuda.JGR.util.*;
 
 
 public class JGR {
-	
-	/* Copyright information and other stuff */
-	
-	public static final String VERSION = "DP5";
+
+    /* Copyright information and other stuff */
+
+    public static final String VERSION = "DP5";
     public static final String TITLE = "JGR";
     public static final String SUBTITLE = "Java Gui for R";
     public static final String DEVELTIME = "2003 - 2004";
@@ -60,28 +60,27 @@ public class JGR {
 
     public JGR() {
         SVar.int_NA=-2147483648;
-        
+
         Object dummy = new Object();
         JGRPackageManager.neededPackages.put("base",dummy);
         JGRPackageManager.neededPackages.put("graphics",dummy);
         JGRPackageManager.neededPackages.put("utils",dummy);
         JGRPackageManager.neededPackages.put("methods",dummy);
         JGRPackageManager.neededPackages.put("stats",dummy);
-        
+
         JGRPackageManager.neededPackages.put("JGR",dummy);
         JGRPackageManager.neededPackages.put("rJava",dummy);
         JGRPackageManager.neededPackages.put("JavaGD",dummy);
-        
+
         org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
         JGRPrefs.initialize();
         splash = new org.rosuda.JGR.toolkit.SplashScreen();
         splash.start();
         readHistory();
         MAINRCONSOLE = new JGRConsole();
+        MAINRCONSOLE.setWorking(true);
         splash.toFront();
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
-        MAINRCONSOLE.progress.start();
-        MAINRCONSOLE.setWorking(true);
         String[] args={"--save"};
         R=new Rengine(args,true,MAINRCONSOLE);
         System.out.println("Rengine created, waiting for R");
@@ -115,7 +114,7 @@ public class JGR {
     }
 
     /**
-     * add new Menu at runtime to Console
+        * add new Menu at runtime to Console
      * @param name MenuName
      */
     public static void addMenu(String name) {
@@ -123,7 +122,7 @@ public class JGR {
     }
 
     /**
-     * add MenuItem at runtime to ConoleMenu
+        * add MenuItem at runtime to ConoleMenu
      * @param menu MenuName
      * @param name ItemName
      * @param cmd  Command
@@ -134,15 +133,15 @@ public class JGR {
     }
 
     /**
-     * add MenuSeparator at runtime
+        * add MenuSeparator at runtime
      * @param menu MenuName
      */
     public static void addMenuSeparator(String menu) {
         iMenu.addMenuSeparator(MAINRCONSOLE,menu);
     }
-        
+
     /**
-     * set R_HOME (in java app)
+        * set R_HOME (in java app)
      * @param rhome
      */
     public static void setRHome(String rhome) {
@@ -150,77 +149,77 @@ public class JGR {
     }
 
     /**
-     * set R_LIBS (in java app)
+        * set R_LIBS (in java app)
      *
      */
     public static void setRLibs() {
-    	RLIBS = RController.getRLibs();
+        RLIBS = RController.getRLibs();
         for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
     }
 
     /**
-     * set keywords for highlighting
+        * set keywords for highlighting
      *
      */
     public static void setKeyWords() {
-    	String[] words = RController.getKeyWords();
-      	KEYWORDS.clear();
+        String[] words = RController.getKeyWords();
+        KEYWORDS.clear();
         Object dummy = new Object();
         for (int i = 0; i < words.length; i++) {
-        	KEYWORDS.put(words[i],dummy);
+            KEYWORDS.put(words[i],dummy);
         }
     }
 
     /**
-     * set objects for hightlighting
+        * set objects for hightlighting
      *
      */
     public static void setObjects() {
-    	String[] objects = RController.getObjects();
+        String[] objects = RController.getObjects();
        	OBJECTS.clear();
        	KEYWORDS_OBJECTS.clear();
         Object dummy = new Object();
         for (int i = 0; i < objects.length; i++) {
-        	KEYWORDS_OBJECTS.put(objects[i],dummy);
-        	OBJECTS.add(objects[i]);
+            KEYWORDS_OBJECTS.put(objects[i],dummy);
+            OBJECTS.add(objects[i]);
         }
     }
 
     /**
-     * refresh keywords, paths ....
+        * refresh keywords, paths ....
      * @param what
      */
     public static void refresh(String what) {
-    	if (what.equals("all")) {
-    		setRLibs();
-    		setKeyWords();
-    		setObjects();
-    	}
-    	else if (what.equals(("runtime"))) {
-    		setKeyWords();
-    		setObjects();
-    	}
+        if (what.equals("all")) {
+            setRLibs();
+            setKeyWords();
+            setObjects();
+        }
+        else if (what.equals(("runtime"))) {
+            setKeyWords();
+            setObjects();
+        }
     }
 
     public static void readHistory() {
         File hist = null;
         try {
             if ((hist = new File(System.getProperty("user.home") +
-                                  File.separator + ".Rhistory")).exists()) {
+                                 File.separator + ".Rhistory")).exists()) {
 
-                 BufferedReader reader = new BufferedReader(new FileReader(hist));
-                 RHISTORY = new Vector();
-                 String cmd = null;
-                 while (reader.ready()) {
-                 	cmd = (cmd==null?"":cmd+"\n")+reader.readLine();
-                 	if (cmd.endsWith("#")) {
-                 		RHISTORY.add(cmd.substring(0,cmd.length()-1));
-                 		cmd = null;
-                 	}
-                 }
-                 reader.close();
+                BufferedReader reader = new BufferedReader(new FileReader(hist));
+                RHISTORY = new Vector();
+                String cmd = null;
+                while (reader.ready()) {
+                    cmd = (cmd==null?"":cmd+"\n")+reader.readLine();
+                    if (cmd.endsWith("#")) {
+                        RHISTORY.add(cmd.substring(0,cmd.length()-1));
+                        cmd = null;
+                    }
+                }
+                reader.close();
             }
         }
         catch (Exception e) {
@@ -232,7 +231,7 @@ public class JGR {
         File hist = null;
         try {
             hist = new File(System.getProperty("user.home") +
-                                  File.separator + ".Rhistory");
+                            File.separator + ".Rhistory");
             BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
             Enumeration e = RHISTORY.elements(); int i = 0;
             while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"#\n");
@@ -254,18 +253,18 @@ public class JGR {
             new ErrorMsg(e);
         }
     }
-    
+
     class Refresher implements Runnable {
-    	public void run() {
-    		while(true) {
-    			try {
-    				Thread.sleep(60000);
-    				// wait for idleEval JGR.R.eval(".refresh(\"runtime\")");
-    			}
-    			catch (Exception e){
-    				new ErrorMsg(e);
-    			}
-    		}
-    	}
+        public void run() {
+            while(true) {
+                try {
+                    Thread.sleep(60000);
+                    // wait for idleEval JGR.R.eval(".refresh(\"runtime\")");
+                }
+                catch (Exception e){
+                    new ErrorMsg(e);
+                }
+            }
+        }
     }
 }

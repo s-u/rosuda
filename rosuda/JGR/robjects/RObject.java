@@ -52,6 +52,12 @@ public class RObject {
     	return parent;
     }
 
+    public boolean isAtomar() {
+        if (type.indexOf("function") >= 0 || type.indexOf("integer") >= 0 || type.indexOf("numeric") >= 0 || type.indexOf("character") >= 0 || type.indexOf("logical") >= 0 || type.indexOf("factor") >= 0)
+            return true;
+        return false;
+    }
+
     public String getRName() {
     	if (parent != null && parent.getType().equals("matrix"))
     		return parent.getName()+"[,"+(realName?"\"":"")+getName()+(realName?"\"":"")+"]";

@@ -1,13 +1,13 @@
 package org.rosuda.JGR.toolkit;
 
 /**
- *  DataTable
- * 
- *  show and edit SVarSets 
- *  
+*  DataTable
+ *
+ *  show and edit SVarSets
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -24,7 +24,7 @@ import org.rosuda.JGR.*;
 import org.rosuda.JGR.util.*;
 
 public class DataTable extends iFrame implements ActionListener, MouseListener,
-    KeyListener, TableColumnModelListener {
+KeyListener, TableColumnModelListener {
 
     private GridBagLayout layout = new GridBagLayout();
     private JScrollPane scrollArea = new JScrollPane();
@@ -61,14 +61,16 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     private boolean modified = false;
 
+    private String type = "data.frame";
+
 
     /** create a Table without a SVarSet*/
     public DataTable() {
-        this(null);
+        this(null,null);
     }
 
     /** create Table with specified SVarSet*/
-    public DataTable(SVarSet vs) {
+    public DataTable(SVarSet vs, String type) {
         super("DataTable Editor", 153);
         if (vs == null) {
             vs = new SVarSet();
@@ -82,6 +84,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             save.setToolTipText("Update");
             save.setActionCommand("export");
             this.setTitle("DataTable - "+vs.getName().replaceFirst("jgr_temp",""));
+            if (type != null) this.type = type;
         }
         this.vs = vs;
 
@@ -99,7 +102,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         iMenu.getItem(this, "redo").setEnabled(false);
 
         if (FontTracker.current == null)
-        	FontTracker.current = new FontTracker();
+            FontTracker.current = new FontTracker();
         FontTracker.current.add(dataTable);
 
         save.addActionListener(this);
@@ -130,16 +133,16 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         this.getContentPane().setLayout(layout);
         this.getContentPane().add(new JScrollPane(dataTable),
                                   new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0,
-            GridBagConstraints.WEST, GridBagConstraints.BOTH,
-            new Insets(5, 5, 2, 5), 0, 0));
+                                                         GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                                                         new Insets(5, 5, 2, 5), 0, 0));
         this.getContentPane().add(save,
                                   new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-            GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 5, 5, 5), 0, 0));
+                                                         GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                                         new Insets(2, 5, 5, 5), 0, 0));
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
-            	exit();
+                exit();
             }
         });
         this.addKeyListener(this);
@@ -160,7 +163,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     /** add a column (we allow numerical variables or strings), we add this column after the selected one, if none is selected we  add at the end*/
     private void addColumn() {
-    	modified = true;
+        modified = true;
         String[] val = new NewColumnDialog(this).showInputDialog();
         String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor"};
         if (val != null) {
@@ -176,7 +179,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     /** add a row, we add rows after the selected one, if none is selected we  add at the bottom*/
     private void addRow() {
-    	modified = true;
+        modified = true;
         int selectedRow = currentRow();
         vs.insertCaseAt(selectedRow + 1);
         refresh();
@@ -188,14 +191,14 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** get current selected column,
-     * @param e MouseEvent */
+        * @param e MouseEvent */
     public int currentCol(MouseEvent e) {
         if (e.getSource().equals(tableHeader)) {
             return tableHeader.columnAtPoint(e.getPoint());
         }
         return dataTable.getSelectedColumn() == -1 ?
-            tableHeader.columnAtPoint(e.getPoint()) :
-            dataTable.getSelectedColumn();
+        tableHeader.columnAtPoint(e.getPoint()) :
+        dataTable.getSelectedColumn();
     }
 
     /** get selected range of columns*/
@@ -214,8 +217,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** delete content of selected cells
-     * @param cols colrange
-     * @param rows rowrange */
+        * @param cols colrange
+        * @param rows rowrange */
     private void deleteContent(int[] cols, int[] rows) {
         for (int i = 0; i < cols.length; i++) {
             if (cols[i] != 0) {
@@ -234,28 +237,28 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         if (modified) {
             int i;
             if (save.getText()=="Save") {
-            	i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            	System.out.println(i);
-            	if (i==1) super.dispose();
-            	else if (i==0 && saveData()) super.dispose();
+                i = JOptionPane.showConfirmDialog(this,"Save data?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
+                System.out.println(i);
+                if (i==1) super.dispose();
+                else if (i==0 && saveData()) super.dispose();
             }
             else {
-            	export(true);
+                export(true);
             }
         }
         else {
-        	super.dispose();
+            super.dispose();
         }
     }
-    
+
     /** find a specified object in the table
-     * @param x x-coordinate we begin to search from this index
-     * @param y y-coordinate we begin to search from this index*/
+        * @param x x-coordinate we begin to search from this index
+        * @param y y-coordinate we begin to search from this index*/
     private void find(int x, int y) {
         if (searchString == "" || y == -1) {
             searchString = ( (String) JOptionPane.showInputDialog(new
-                JTextField(), "Search:", "Search for:",
-                JOptionPane.PLAIN_MESSAGE));
+                                                                  JTextField(), "Search:", "Search for:",
+                                                                  JOptionPane.PLAIN_MESSAGE));
         }
         if (searchString != null) {
             int[] f_index = vs.whereis(searchString, x == -1 ? 0 : x,
@@ -278,14 +281,14 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** selecte case (row)
-     * @param c row which should be searched*/
+        * @param c row which should be searched*/
     private void gotoCase(int c) {
         String val = null;
         JScrollBar vscroll = scrollArea.getVerticalScrollBar();
         int rowHeight = dataTable.getRowHeight();
         if (c == -1) {
             val = ( (String) JOptionPane.showInputDialog(new JTextField(),
-                "Goto Case:", "Goto Case", JOptionPane.PLAIN_MESSAGE));
+                                                         "Goto Case:", "Goto Case", JOptionPane.PLAIN_MESSAGE));
         }
         if (val != null) {
             try {
@@ -303,8 +306,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** selected cell
-     * @param x x-coordinate
-     * @param y y-coordinate*/
+        * @param x x-coordinate
+        * @param y y-coordinate*/
     private void gotoCell(int col, int row) {
         int rowHeight = dataTable.getRowHeight();
         dataTable.setRowSelectionInterval(row, row);
@@ -343,8 +346,8 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** move the vars in the SVarSet
-     * @param from old column index
-     * @param to new column index */
+        * @param from old column index
+        * @param to new column index */
     private void moveColumns(int from, int to) {
         vs.move(from - 1, to - 1);
         refresh();
@@ -360,12 +363,12 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** rename columnheader
-     * @param index columnindex*/
+        * @param index columnindex*/
     private void renameColumn(int index) {
         String old_name = vs.at(index - 1).getName();
         String val = (String) JOptionPane.showInputDialog(new JTextField(),
-            "Rename Column into:", "Rename Column", JOptionPane.PLAIN_MESSAGE, null, null,
-            old_name);
+                                                          "Rename Column into:", "Rename Column", JOptionPane.PLAIN_MESSAGE, null, null,
+                                                          old_name);
         if (val != null) {
             vs.at(index - 1).setName(val);
             refresh();
@@ -395,23 +398,26 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
         refresh();
     }
-    
+
     private void export(boolean quit) {
-    	String objname = (String) JOptionPane.showInputDialog(this,"Object Name","Export to R?",JOptionPane.INFORMATION_MESSAGE,null,null,vs.getName());
-    	if (objname!=null && quit) super.dispose();
-    	else if (objname != null && objname.trim().length() > 0){
-    		vs.setName(objname);
-    		boolean b = RController.export(vs);
-    		if (quit) {
-    			if (b) {
-    				super.dispose();
-    			}
-    			else if (JOptionPane.showConfirmDialog(this,"Export to R is not supported\nExit Anyway?","Export Error",JOptionPane.YES_NO_OPTION,JOptionPane.ERROR_MESSAGE)==0) dispose();
-    		}
-    		else if (!b) {
-    			JOptionPane.showMessageDialog(this,"Export to R is not supported","Export Error",JOptionPane.ERROR_MESSAGE);
-    		}
-    	}
+        JTextField name = new JTextField(vs.getName());
+        int op = JOptionPane.showOptionDialog(this,name,"Export to R?",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null,null,vs.getName());
+        String objname = name.getText();
+        if (op==2) return;
+        if (op==1 && objname!=null && quit) super.dispose();
+        else if (op==0 && objname != null && objname.trim().length() > 0){
+            vs.setName(objname.trim());
+            boolean b = RController.export(vs,type);
+            if (quit) {
+                if (b) {
+                    super.dispose();
+                }
+                else if (JOptionPane.showConfirmDialog(this,"Export to R is not supported\nExit Anyway?","Export Error",JOptionPane.OK_OPTION,JOptionPane.ERROR_MESSAGE)==0) dispose();
+            }
+            else if (!b) {
+                JOptionPane.showMessageDialog(this,"Export to R is not supported","Export Error",JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     /**save file*/
@@ -432,11 +438,11 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 for (int i = 0; i < vs.length(); i++) {
                     for (int z = 0; z < cols - 1; z++) {
                         s = vs.at(z).at(i) == null ? " " :
-                            vs.at(z).at(i).toString();
+                        vs.at(z).at(i).toString();
                         out.write("\""+s + "\"\t");
                     }
                     s = vs.at(cols - 1).at(i) == null ? " " :
-                        vs.at(cols - 1).at(i).toString();
+                    vs.at(cols - 1).at(i).toString();
                     out.write("\""+s + "\"\n");
                     out.flush();
                     out.close();
@@ -462,7 +468,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     }
 
     /** PopupMenu
-     * @param e MouseEvent */
+        * @param e MouseEvent */
     private void popUpMenu(MouseEvent e) {
         JPopupMenu tabMenue = new JPopupMenu();
         JMenuItem renameColItem = new JMenuItem();
@@ -499,19 +505,19 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         cutItem.setActionCommand("cut");
         cutItem.setText("Cut");
         cutItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('X',
-            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                                                                  Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         cutItem.addActionListener(this);
         copyItem.setToolTipText("Copy");
         copyItem.setActionCommand("copy");
         copyItem.setText("Copy");
         copyItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('C',
-            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                                                                   Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         copyItem.addActionListener(this);
         pasteItem.setToolTipText("Paste");
         pasteItem.setActionCommand("paste");
         pasteItem.setText("Paste");
         pasteItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('V',
-            Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+                                                                    Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
         pasteItem.addActionListener(this);
         titleItem.setEnabled(false);
 
@@ -688,7 +694,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                 else {
                     selectedColumn = currentCol(e);
                     int from = dataTable.getColumn(dataTable.getColumnName(
-                        selectedColumn)).getModelIndex();
+                                                                           selectedColumn)).getModelIndex();
                     int to = selectedColumn;
                     if (from != to) {
                         moveColumns(from, to);
@@ -776,11 +782,11 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
                     if (value != null) {
                         if (value.toString().indexOf(".") != -1) {
                             tab.vs.at(col - 1).replace(row,
-                                Double.parseDouble(value.toString()));
+                                                       Double.parseDouble(value.toString()));
                         }
                         else {
                             tab.vs.at(col - 1).replace(row,
-                                Integer.parseInt(value.toString()));
+                                                       Integer.parseInt(value.toString()));
                         }
                     }
                     else {
@@ -822,23 +828,23 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     public class DataTableCellEditor extends AbstractCellEditor implements
         TableCellEditor {
 
-        JTextField component = new JTextField(new DataTableCellDocument(),null,1);
+            JTextField component = new JTextField(new DataTableCellDocument(),null,1);
 
-        public Component getComponent() {
-            return component;
+            public Component getComponent() {
+                return component;
+            }
+
+            public Component getTableCellEditorComponent(JTable t, Object v, boolean b, int r, int c) {
+                dataTable.setColumnSelectionInterval(c,c);
+                component.setText(v.toString().equals("NA")?"":v.toString());
+                return component;
+            }
+
+            public Object getCellEditorValue() {
+                return (Object) component.getText();
+            }
+
         }
-
-        public Component getTableCellEditorComponent(JTable t, Object v, boolean b, int r, int c) {
-            dataTable.setColumnSelectionInterval(c,c);
-            component.setText(v.toString().equals("NA")?"":v.toString());
-            return component;
-        }
-
-        public Object getCellEditorValue() {
-            return (Object) component.getText();
-        }
-
-    }
 
     public class DataTableCellDocument extends PlainDocument {
 
@@ -856,27 +862,27 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
     public class DataTableCellRenderer extends JLabel implements TableCellRenderer {
 
-            public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
 
-                if (isSelected) {
-                }
-
-                if (hasFocus) {
-                }
-
-                setText(value.toString());
-
-                //setToolTipText((String)value);
-
-                return this;
+            if (isSelected) {
             }
 
-            public void validate() {}
-            public void revalidate() {}
-            protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
-            public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+            if (hasFocus) {
+            }
+
+            setText(value.toString());
+
+            //setToolTipText((String)value);
+
+            return this;
         }
+
+        public void validate() {}
+        public void revalidate() {}
+        protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
+        public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
+    }
 
 
 
@@ -900,21 +906,21 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
             this.getContentPane().setLayout(new GridBagLayout());
             this.getContentPane().add(name,
-                                  new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.BOTH,
-            new Insets(5, 5, 2, 5), 0, 0));
+                                      new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
+                                                             GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                                                             new Insets(5, 5, 2, 5), 0, 0));
             this.getContentPane().add(typeChooser,
-                                  new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.BOTH,
-            new Insets(2, 5, 2, 5), 0, 0));
+                                      new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0,
+                                                             GridBagConstraints.WEST, GridBagConstraints.BOTH,
+                                                             new Insets(2, 5, 2, 5), 0, 0));
             this.getContentPane().add(cancel,
-                                  new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
-            GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 50, 2, 5), 0, 0));
+                                      new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
+                                                             GridBagConstraints.EAST, GridBagConstraints.NONE,
+                                                             new Insets(2, 50, 2, 5), 0, 0));
             this.getContentPane().add(ok,
-                                  new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(2, 5, 2, 5), 0, 0));
+                                      new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
+                                                             GridBagConstraints.WEST, GridBagConstraints.NONE,
+                                                             new Insets(2, 5, 2, 5), 0, 0));
 
             this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
             this.getRootPane().setDefaultButton(ok);
@@ -1089,11 +1095,11 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public void insertIndexInterval(int index, int length, boolean before) {
-        //System.out.println("insertIndexInterval: I don't really know what to do here ("+index+","+length+","+before+")");
+            //System.out.println("insertIndexInterval: I don't really know what to do here ("+index+","+length+","+before+")");
         }
 
         public void removeIndexInterval(int index0, int index1) {
-        //System.out.println("removeIndexInterval("+index0+","+index1+") unsupported");
+            //System.out.println("removeIndexInterval("+index0+","+index1+") unsupported");
         }
 
         boolean isadj = false;
@@ -1109,7 +1115,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
         }
 
         public void setSelectionMode(int selectionMode) {
-        //System.out.println("setSelectionMode("+selectionMode+") [supported only "+ListSelectionModel.MULTIPLE_INTERVAL_SELECTION+"]");
+            //System.out.println("setSelectionMode("+selectionMode+") [supported only "+ListSelectionModel.MULTIPLE_INTERVAL_SELECTION+"]");
         }
 
         public int getSelectionMode() {

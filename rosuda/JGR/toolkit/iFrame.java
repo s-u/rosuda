@@ -53,7 +53,7 @@ public class iFrame extends JFrame {
 
     public WTentrySwing MYEntry;
 
-    public ProgressLabel progress = new ProgressLabel(24);
+    public ProgressLabel progress;
 
 
     public iFrame(String title, int wclass) {
@@ -91,6 +91,7 @@ public class iFrame extends JFrame {
             public void componentHidden(ComponentEvent e) {
             }
         });
+        //progress = new ProgressLabel(24);
     }
 
     public iFrame() {
@@ -120,7 +121,7 @@ public class iFrame extends JFrame {
     static int lastOffset=0;
 
     public void initPlacement() { // initial frame placement
-	if (MYEntry==null) return;
+        if (MYEntry==null) return;
         if (lastClass!=MYEntry.wclass) {
             lastClass=MYEntry.wclass;
             lastPlaceX=getWidth()+10; lastPlaceY=0; lastOffset=0;
@@ -140,16 +141,15 @@ public class iFrame extends JFrame {
     }
 
     public synchronized void setWorking(final boolean work) {
-           SwingUtilities.invokeLater(new Runnable() {
-               public void run() {
-                   if (work) {
-                       cursorWait();
-                   } else {
-                       progress.stop();
-                       cursorDefault();
-                   }
-               }
-           });
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                if (work) {
+                    cursorWait();
+                } else {
+                    cursorDefault();
+                }
+            }
+        });
     }
 
     public void cursorWait() {

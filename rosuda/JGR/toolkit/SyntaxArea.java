@@ -1,13 +1,13 @@
 package org.rosuda.JGR.toolkit;
 
 /**
- *  SyntaxArea
- * 
+*  SyntaxArea
+ *
  * 	inherits JTextPane, but provides a lot more functionality
- * 
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -29,12 +29,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     private boolean wrap=true;
 
     /** SyntaxArea, with highlighting matching brackets
-     * @param highlight should we do coloring and highlighting brackets */
+        * @param highlight should we do coloring and highlighting brackets */
     public SyntaxArea() {
         this.setContentType("text/rtf");
         this.setDocument(new SyntaxDocument());
-        if (FontTracker.current == null) 
-        	FontTracker.current = new FontTracker();
+        if (FontTracker.current == null)
+            FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
         this.addCaretListener(this);
     }
@@ -66,17 +66,17 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             return doc.getText(0,doc.getLength());
         } catch (BadLocationException e) {
             return null;
-        }   
+        }
     }
-    
+
     public String getText(int offs, int len) {
         try {
             Document doc = this.getDocument();
             return doc.getText(offs,len);
         } catch (BadLocationException e) {
             return null;
-        }   
-    }      
+        }
+    }
 
     public void setText(String str) {
         try {
@@ -103,13 +103,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         this.removeCaretListener(this);
         try {
             SyntaxDocument doc = (SyntaxDocument) this.getDocument();
-        	if (isEditable() && isEnabled()) {
-        		int s = this.getSelectionStart();
-        		int e = this.getSelectionEnd();
-        		if (s != -1 && e != -1)
-        			doc.remove(s,e-s);
-        			doc.insertStringWithoutWhiteSpace(this.getCaretPosition(),Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(),null);
-        	}
+            if (isEditable() && isEnabled()) {
+                int s = this.getSelectionStart();
+                int e = this.getSelectionEnd();
+                if (s != -1 && e != -1)
+                    doc.remove(s,e-s);
+                doc.insertStringWithoutWhiteSpace(this.getCaretPosition(),Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(),null);
+            }
         } catch (Exception e) {
         }
         this.addCaretListener(this);
@@ -215,28 +215,18 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             return false;
         }
         if (this.getText(pos - 1, 1) != null && this.getText(pos - 1, 1).equals(cont)) {
-        	return true;
+            return true;
         }
         else {
-        	return false;
+            return false;
         }
     }
 
-
-    public void setFont(Font f) {
-        super.setFont(f);
-        try {
-            ((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(),JGRPrefs.DEFAULTFONT, false);
-        } catch (Exception e) {}
-    }
-
-
     /** highlight the corresponding brackets (forward)
-     * @param par String which bracket
-     * @param pos int current position
-     * @return index int where the matching bracket is
-     */
-
+        * @param par String which bracket
+        * @param pos int current position
+        * @return index int where the matching bracket is
+        */
     public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
         //System.out.println(par);
         int open = pos;
@@ -305,10 +295,10 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     }
 
     /** highlight the corresponding brackets (backward)
-     * @param par String which bracket
-     * @param pos int current position
-     * @return index int where the matching bracket is
-     */
+        * @param par String which bracket
+        * @param pos int current position
+        * @return index int where the matching bracket is
+        */
 
     public  void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
 
@@ -434,19 +424,19 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     }
 
     public void dragEnter(DropTargetDragEvent evt) {
-    // Called when the user is dragging and enters this drop target.
+        // Called when the user is dragging and enters this drop target.
     }
 
     public void dragOver(DropTargetDragEvent evt) {
-    // Called when the user is dragging and moves over this drop target.
+        // Called when the user is dragging and moves over this drop target.
     }
 
     public void dragExit(DropTargetEvent evt) {
-    // Called when the user is dragging and leaves this drop target.
+        // Called when the user is dragging and leaves this drop target.
     }
 
     public void dropActionChanged(DropTargetDragEvent evt) {
-    // Called when the user changes the drag action between copy or move.
+        // Called when the user changes the drag action between copy or move.
     }
 
     public void drop(DropTargetDropEvent evt) {
