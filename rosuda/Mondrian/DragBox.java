@@ -534,8 +534,8 @@ System.out.println(" dragEnd! ");
       if (pageIndex > 0) {
         return(NO_SUCH_PAGE);
       } else {
-//        printFactor = 5;
-        System.out.println(" P R I N T I N G at: "+pageFormat.getImageableWidth()+" by "+pageFormat.getImageableHeight());
+//         printFactor = 5;
+        System.out.println(" P R I N T I N G at: "+pageFormat.getImageableWidth()+" by "+pageFormat.getImageableHeight()+"printFactor: "+printFactor);
         Graphics2D g2d = (Graphics2D)g;
         g2d.translate(pageFormat.getImageableX() + pageFormat.getImageableWidth()*0.05,
                       pageFormat.getImageableY() + pageFormat.getImageableHeight()*0.05);
@@ -545,10 +545,10 @@ System.out.println(" dragEnd! ");
         int setWidth  = (int)(pageFormat.getImageableWidth()*0.9)*printFactor;
         int setHeight = (int)(pageFormat.getImageableHeight()*0.9)*printFactor;
         if( aspectRatio == -1 )
-          if(   pageFormat.getImageableWidth() / pageFormat.getImageableHeight()
-              < save.width / save.height )
+          if(   (double)setWidth / (double)setHeight
+                < (double)save.width / (double)save.height ) 
             setHeight = (int)((double)(setWidth *  ((double)save.height / (double)save.width)));
-          else
+          else 
             setWidth  = (int)((double)(setHeight * ((double)save.width / (double)save.height)));
         super.setSize(setWidth, setHeight);
         g2d.setFont(new Font("SansSerif",0,11*printFactor));
