@@ -12,7 +12,7 @@ public class VarFrame extends TFrame {
     VarCmdCanvas vcc;
     Scrollbar sb=null;
 
-    public static final int cmdHeight=148;
+    public static final int cmdHeight=165;
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)");
