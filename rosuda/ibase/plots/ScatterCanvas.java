@@ -83,6 +83,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
+        if (Common.useAquaBg) fieldBg=2;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
