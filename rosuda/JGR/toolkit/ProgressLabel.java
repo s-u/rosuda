@@ -24,68 +24,66 @@ public class ProgressLabel extends Canvas implements Runnable {
     private Image img = null;
     private Graphics g2 = null;
     private Color col = Color.darkGray;
-    private int sleep = 150;
+    private int sleep = 180;
 
     public ProgressLabel(int g) {
-        //super(true);
         this.setSize(g+10,g+10);
         this.x = g / 2;
         this.length = x - (x/10);
         this.x += 5;
         a = (length*3)/5;
-        thread = new Thread(this);
-        thread.start();
     }
 
     public void update(Graphics g) {
-        if (img == null) {
+    	if (img == null) {
             img = createImage(this.getWidth(),this.getHeight());
             g2 = img.getGraphics();
         }
+    	Graphics2D g2d=(Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2.setColor(this.getBackground());
         g2.fillRect(0,0,this.getWidth(),this.getHeight());
-        g2.setColor(col);
-        g2.fillArc(x - length, x - length, 2*length,2*length,0,360);
-        drawProgress(g2,angle % 60);
+    	drawProgress(g2);
         g.drawImage(img,0,0,this);
     }
 
-    private void drawProgress(Graphics g, int pos) {
-        g.setColor(this.getBackground());
-        int z = 360;
-        for (int i = 0; i <=z; i += 2*gap) {
-            g.fillArc(x - length, x - length, 2*length, 2*length,i-pos,gap);
+    private void drawProgress(Graphics g) {
+        for (int i = 0; i < 360; i += 2*gap) {
+        	if (i >= angle*6 && i <= angle*6+90) {
+        		g.setColor(new Color(col.getRed(),col.getGreen(),col.getBlue(),200));
+        	}
+        	else
+        		g.setColor(new Color(0,0,0,(int) (360-i+100) / 10));
+       		g.fillArc(x - length, x - length, 2*length, 2*length,-i,gap);
         }
+        g.setColor(this.getBackground());
         g.fillArc(x-a,x-a,2*a,2*a,0,360);
     }
 
     public void start() {
-        //if (this.isVisible()) next = true;
+        if (this.isVisible()) next = true;
         this.setVisible(true);
-        //this.repaint();
+        thread = new Thread(this);
+        thread.start();
     }
 
     public void stop() {
         this.setVisible(false);
-        //if (next) { next = false; this.start(); }
-    }
-
-    public void setVisible(boolean b) {
-        System.out.println("setVisible "+b);
-        super.setVisible(b);
+        try { thread.stop(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
+        thread = null;
+        if (next) { next = false; this.start(); }
     }
 
     public void run() {
         try {
-            while (true) {
+            while (this.isVisible()) {
                 Thread.sleep(sleep);
-                //System.out.println("isrunning");
-                angle += 10;
+                angle = (angle+10) % 60;
                 repaint();
             }
         }
         catch(Exception e){
-
+        	new org.rosuda.JGR.util.ErrorMsg(e);
         }
     }
 

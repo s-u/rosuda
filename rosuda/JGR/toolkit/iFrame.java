@@ -91,7 +91,7 @@ public class iFrame extends JFrame {
             public void componentHidden(ComponentEvent e) {
             }
         });
-        //progress = new ProgressLabel(24);
+        progress = new ProgressLabel(24);
     }
 
     public iFrame() {
@@ -141,12 +141,14 @@ public class iFrame extends JFrame {
     }
 
     public synchronized void setWorking(final boolean work) {
+    	if (work) progress.start();
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 if (work) {
                     cursorWait();
                 } else {
                     cursorDefault();
+                    progress.stop();
                 }
             }
         });
