@@ -119,6 +119,7 @@ public class Axis extends Notifier
 	@param len length of the axis (can be negative if necessary)
         @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */
     public boolean setValueRange(double begin, double len) {
+        if (Global.DEBUG>0) System.out.println("Axis.setValueRange("+begin+","+len+")");
 	if (vBegin!=begin||vLen!=len) { // lazy notification
 	    vBegin=begin; vLen=len;
             vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
@@ -130,6 +131,7 @@ public class Axis extends Notifier
 
     /** same as {@link #setValueRange(double, double)}, but takes an array of two doubles as returned by {@link #getValueRange} */
     public boolean setValueRange(double[] range) {
+        if (Global.DEBUG>0) System.out.println("Axis.setValueRange(double[2])");
         if (range==null || range.length!=2) return false;
         return setValueRange(range[0],range[1]);
     }
@@ -138,7 +140,8 @@ public class Axis extends Notifier
 	@param dc data count, if <1 then set to 1
         @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */        
     public boolean setValueRange(int dc) {
-	if (dc<1) dc=1;
+        if (Global.DEBUG>0) System.out.println("Axis.setValueRange("+dc+")");
+        if (dc<1) dc=1;
 	if (dc!=datacount) { // lazy notification
 	    datacount=dc;
 	    vBegin=0; vLen=dc; // this is necessary if get SensibleTick.. functions are used
