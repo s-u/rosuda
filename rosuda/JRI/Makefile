@@ -3,9 +3,9 @@
 
 # please uncomment the platform you use
 
-include Makefile.win
+#include Makefile.win
 #include Makefile.linux
-#include Makefile.osx
+include Makefile.osx
 
 #--- comment out the following for non-debug version
 CFLAGS+=-g
