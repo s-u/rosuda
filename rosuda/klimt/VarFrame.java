@@ -48,7 +48,7 @@ public class VarFrame extends TFrame {
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
             String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-",
-                "New derived variable ...","deriveVar","New tree root","newRoot","Grow tree ...","growTree","-",
+                "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
                 "Export forest ...","exportForest","Display Forest","displayForest","-",
                 "@QQuit","exit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
@@ -58,6 +58,8 @@ public class VarFrame extends TFrame {
                 //"+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
+            MenuItem mi=EzMenu.getItem(this,"datatab");
+            if (!PluginManager.pluginExists("PluginTable")) mi.setEnabled(false);
         //};
 	setVisible(true);
     };
@@ -417,7 +419,7 @@ public class VarFrame extends TFrame {
                     f.addWindowListener(Common.defaultWindowListener);
                     BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-                    bc.setSize(new Dimension(400,300));
+                    bc.setSize(new Dimension(100+40*theCat.getNumCats(),200));
                     f.add(bc); f.pack(); f.show();
                     f.initPlacement();
                 } else {
@@ -427,14 +429,16 @@ public class VarFrame extends TFrame {
                                                 vs.at(i).isCat()?TFrame.clsBar:TFrame.clsHist);
                             f.addWindowListener(Common.defaultWindowListener);
                             Canvas cvs=null;
+                            int xdim=400, ydim=300;
                             if (vs.at(i).isCat()) {
                                 BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker()); cvs=bc;
+                                xdim=100+40*vs.at(i).getNumCats(); ydim=200;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                             } else {
                                 HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker()); cvs=hc;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
                             };
-                            cvs.setSize(new Dimension(400,300));
+                            cvs.setSize(new Dimension(xdim,ydim));
                             f.add(cvs); f.pack(); f.show();
                             f.initPlacement();
                         };
@@ -668,6 +672,11 @@ public class VarFrame extends TFrame {
                 pd.setProgress(100);
                 gt.donePlugin();
                 pd.dispose();
+            }
+            if (cmd=="datatab") {
+                Plugin p=PluginManager.loadPlugin("PluginTable");
+                p.setParameter("dataset",vs);
+                p.execPlugin();
             }
 
             if (cmd=="exportCases") {
