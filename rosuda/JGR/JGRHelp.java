@@ -140,7 +140,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
         helpArea = new HelpArea(tabArea,this,null);
         helpArea.addKeyListener(this);
-        tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
+        tabArea.addTab(keyWord==null?"packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
         tabArea.addMouseListener(this);
 
         this.getContentPane().setLayout(new BorderLayout());
@@ -178,7 +178,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     private void home() {
-        ((HelpArea) tabArea.getSelectedComponent()).goTo(index);
+        ((HelpArea) tabArea.getSelectedComponent()).goTo(index,true);
     }
 
     private void forward() {
@@ -332,7 +332,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                         if (link != null) link.setText(" ");
                     }
                     else if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                        goTo(e.getURL());
+                        goTo(e.getURL(),true);
                     }
                 }
             });
@@ -350,12 +350,12 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             forward.setEnabled(currentURLIndex + 1 < history.size());
         }
 
-        private void updatePage() {
+        private void updatePage(boolean href) {
             rhelp.cursorWait();
             rhelp.back.setEnabled(currentURLIndex > 0);
             rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
             URL url = (URL) history.get(currentURLIndex);
-            try {
+			try {
                 helpPane.setPage(url);
 			} catch (IOException ex) {
                 ex.printStackTrace();
@@ -374,45 +374,63 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
                 }
             }
             finally { 
-				try {
-                        String title = url.toString().substring(url.toString().lastIndexOf(File.separator)+1,url.toString().lastIndexOf('.'));
-                        if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+			if (href ) {
+					try {
+						System.out.println(url);
+						String title = url.toString().substring(url.toString().lastIndexOf("/")+1);
+						title = title.substring(0,title.lastIndexOf('.'));
+						int index = tabArea.getSelectedIndex();
+						
+						System.out.println("index "+index);
+						System.out.println(title);
+						
+						
+						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("file")) tabArea.setTitleAt(index,title);
 						else {
 							int i = url.toString().indexOf("html");
 							title = url.toString().substring(0,i-1);
-							title = title.substring(title.lastIndexOf(File.separator)+1);
-							if (!title.matches("^[0-9][0-9].*")) tabArea.setTitleAt(tabArea.getSelectedIndex(),title);
+							title = title.substring(title.lastIndexOf("/")+1);
+							if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("file")) tabArea.setTitleAt(index,title);
 						}
-                } catch (Exception ex2) {}
+					} catch (Exception ex2) {}
+				}
+
                 rhelp.cursorDefault(); 
 			}
         }
 
         private void back() {
             currentURLIndex--;
-            updatePage();
+            updatePage(true);
         }
 
         private void forward() {
             currentURLIndex++;
-            updatePage();
+            updatePage(true);
+        }
+		
+		public void goTo(URL url) {
+            goTo(url,false);
         }
         
-        public void goTo(URL url) {
+        public void goTo(URL url,boolean href) {
             if (url != null) {
                 currentURLIndex++;
                 history.setSize(currentURLIndex);
                 history.add(url);
-                updatePage();
-            }
+				updatePage(href);
+			}
         }
+		
+		public void goTo(String url) {
+			goTo(url,false);
+		}
 
-        public void goTo(String urls) {
+        public void goTo(String url_l,boolean href) {
             URL url = null;
             try {
-                url = new URL(urls);
-                //System.out.println(url.toString());
-                goTo(url);
+                url = new URL(url_l);
+                goTo(url,href);
             } catch (MalformedURLException e) {
                 new org.rosuda.JGR.util.ErrorMsg(e);
                 JOptionPane.showMessageDialog(null, e.getMessage(),
