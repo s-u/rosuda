@@ -29,6 +29,11 @@ public class SNode extends Node implements Cloneable
     /** pruning flag. if set to <code>true</code> then all <i>children</i> has been pruned. beware, that does mean that the node has to check prune flag of its parent to see if it's been pruned also. */
     boolean pruned;
 
+    /** deviance in this node based on the sample */
+    public double sampleDev;
+    /** deviance gain based on the sample */
+    public double sampleDevGain;
+    
     /** position of the node and its geometry */
     public int x,y,x2,y2;
 
@@ -99,7 +104,50 @@ public class SNode extends Node implements Cloneable
 	    for (Enumeration e=ch.elements(); e.hasMoreElements();)
 		((SNode)e.nextElement()).setAllTmp(v);	
     };
-	
+
+    /** calculates deviance and deviance gain based on the sample stored in data. note that
+        this deviance may be different from the F1/devGain if the tree was based on another sample */
+    public void calculateSampleDeviances() {
+        if (data==null || data.size()==0) return;
+        double d=0;
+        double nt=data.size();
+        int rnt=0;
+        SVar rv=((SNode)getRoot()).response;
+        if (rv==null) return;
+        if (rv.isCat()) {
+            int cs=rv.getNumCats();
+            int cts[]=new int[cs];
+            int i=0; while(i<cs) {
+                cts[i]=0; i++;
+            }
+            for (Enumeration e=data.elements(); e.hasMoreElements();) {
+                Integer I=(Integer)e.nextElement();
+                if (I!=null) {
+                    i=I.intValue();
+                    int cix=rv.getCatIndex(i);
+                    if (cix>=0 && cix<cs) {
+                        cts[cix]++;
+                        rnt++;
+                    };
+                }
+            }
+            i=0;
+            while (i<cs) {
+                if (cts[i]>0) d+=((double)cts[i])*Math.log(((double)cts[i])/((double)rnt));
+                i++;
+            }
+            sampleDev=-d;
+        }
+        double chdev=0;
+        if ((ch!=null)&&(ch.size()>0))
+            for (Enumeration e=ch.elements(); e.hasMoreElements();) {
+                SNode cn=(SNode)e.nextElement();
+                cn.calculateSampleDeviances();
+                chdev+=cn.sampleDev;
+            };
+        sampleDevGain=isLeaf()?0:sampleDev-chdev;
+    }
+    
     /** returns basic string representation of this node (suitable for debugging only)
 	@return string representation of the contained data */
     public String toString()

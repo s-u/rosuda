@@ -53,6 +53,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public boolean finalAlign=false;
     /** show deviance gain */
     public boolean showDevGain=false;
+    /** show sample deviance as well (has no effect in showDevGain=false) */
+    public boolean showSampleDev=true;
 
     /** show node labels */
     public boolean showLabels=true;
@@ -318,6 +320,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	p.defineColor("black",0,0,0);
 	p.defineColor("hilite",128,255,128);
 	p.defineColor("red",255,0,0);
+	p.defineColor("sampleDev",0,128,64);
 	p.defineColor("lines",96,96,255);	
 	p.defineColor("selText",255,0,0);
 	p.defineColor("shadow",160,160,160);
@@ -330,6 +333,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    p.drawRect(ldx,ldy,zoomDragX-ldx,zoomDragY-ldy);
 	};
 
+        showSampleDev=(root.sampleDev>0 && root.sampleDev!=root.F1);
 	paintLeaf(p,root);
 
 	//System.out.println("paint; zoomFactor="+zoomFactor);
@@ -448,7 +452,23 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		g.setColor("red");
 		g.fillRect(x-25,y,arcSize,arcSize);
 	    };
-	};
+
+            if (showSampleDev) {
+                g.setColor("sampleDev");
+                if (t.sampleDevGain>0) {
+                    int arcSize=(int)(Math.sqrt(devGainScale*t.sampleDevGain/maxDevGain)*20);
+                    if (arcSize>20) {
+                        g.drawOval(x-45,y,20,20);
+                    } else {
+                        g.fillOval(x-45,y,arcSize,arcSize);
+                    };
+                };
+                if ((t.isLeaf())&&(t.sampleDev>0)) {
+                    int arcSize=(int)(Math.sqrt(t.sampleDev/maxLeafDev)*20);
+                    g.fillRect(x-45,y,arcSize,arcSize);
+                };
+            }
+        };
 	
 	/* draw labels (class and condition) */
 	if (selectedNode!=null && t.Name.compareTo(selectedNode.Name)==0)

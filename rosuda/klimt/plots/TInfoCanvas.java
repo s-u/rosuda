@@ -48,8 +48,8 @@ class TInfoCanvas extends DBCanvas
 	    g.drawString("Name: "+cn.Name,15,20);
 	    g.drawString("Cases: "+cn.Cases,15,34);
 	    g.drawString("Split: "+cn.Cond,15,48);
-	    g.drawString("Dev: "+Tools.getDisplayableValue(cn.F1),15,62);
-	    g.drawString("Dev Gain: "+Tools.getDisplayableValue(cn.devGain),15,76);
+	    g.drawString("Dev: "+Tools.getDisplayableValue(cn.F1)+" tree / "+Tools.getDisplayableValue(cn.sampleDev)+" sample",15,62);
+	    g.drawString("Dev Gain: "+Tools.getDisplayableValue(cn.devGain)+" tree / "+Tools.getDisplayableValue(cn.sampleDevGain)+" sample",15,76);
 	    if (cn.getSource()!=null) {
 		SVarSet src=cn.getSource();
 		SMarker m=cn.getSource().getMarker();
