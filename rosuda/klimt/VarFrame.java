@@ -59,8 +59,7 @@ public class VarFrame extends TFrame {
         //if (System.getProperty("").indexOf("")>-1) {
             String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-",
                 "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
-                "Export forest ...","exportForest","Display Forest","displayForest","-",
-                "@QQuit","exit",
+                "Export forest ...","exportForest","Display Forest","displayForest","~File.Quit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
