@@ -23,7 +23,7 @@ public class REXP extends Object {
     public static final int XT_VECTOR=16;
     /** xpression type: RList */
     public static final int XT_LIST=17;
-    /** xpression type: closure (no java class for that yet) */
+    /** xpression type: closure (there is no java class for that type (yet?). currently the body of the closure is stored in the content part of the REXP. Please note that this may change in the future!) */
     public static final int XT_CLOS=18;
     /** xpression type: int[] */
     public static final int XT_ARRAY_INT=32;
@@ -263,7 +263,7 @@ public class REXP extends Object {
 		System.out.println("Warning: closure SEXP size mismatch\n");
 		o=eox;
 	    }
-	    System.out.println("Closure:\n-formals: "+form+"\n-body: "+body+"\n");
+            /* curently closures are not coded into their own objects, basically due to lack of demand. */
 	    x.cont=body;
 	    return o;
 	}
