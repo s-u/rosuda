@@ -338,7 +338,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
 			    gt.setParameter("formula",root.formula);
                         gt.checkParameters();
                         pd.setVisible(false);
-                        if (root.formula==null && !gt.pluginDlg(this)) {
+                        if (!gt.pluginDlg(this)) {
                             pd.dispose();
                             if (gt.cancel) {
                                 gt.donePlugin();

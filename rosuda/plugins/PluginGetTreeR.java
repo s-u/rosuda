@@ -240,6 +240,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         };
         List l=new List((lct>10)?10:lct,true);
         j=0;
+	int ji=0;
         while(j<vs.count()) {
             if (!vs.at(j).isInternal()) { // consider non-internal variables only
                 c.add(vs.at(j).getName());
@@ -248,12 +249,23 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                     frv=true;
                 };
                 l.add(vs.at(j).getName());
+		if (pred!=null) {
+		    int jj=0; while(jj<pred.length) {
+			if (pred[jj]==j)
+			    l.select(ji);
+			jj++;
+		    };
+		};
+		ji++;
             }
             j++;
         }
-        j=0; while(j<lct) {
-            l.select(j); j++;
-        }
+        j=0; 
+	if (pred==null)
+	    while(j<lct) {
+		l.select(j); 
+		j++;
+	    }
         if (!frv)
             c.select(vs.at(lniv).getName());
         Panel p=new Panel();
