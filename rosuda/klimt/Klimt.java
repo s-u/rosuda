@@ -33,8 +33,8 @@ import org.rosuda.plugins.*;
     original project name until it was renamed to Klimt) */
 public class Klimt
 {
-    public static String Version = "0.98-pre1";
-    public static String Release = "DB14";
+    public static String Version = "0.98-pre2";
+    public static String Release = "E626";
     
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
