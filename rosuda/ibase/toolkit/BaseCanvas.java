@@ -8,7 +8,8 @@ class PlotPrimitive {
     Rectangle r;
     Polygon pg;
     Point pt;
-
+    Color col;
+    
     /** references to cases represented by this primitive */
     int[] ref;
 
@@ -33,11 +34,11 @@ class PlotPrimitive {
     }
 
     /** sets mark for cases represented by this PlotPrimitive in following fashion: if the case is already marked then its mark is set to setTo, otherwise the mark is set to 1. */ 
-    public void setMark(SMarker m, int setTo) {
+    public void setMark(SMarker m, boolean setTo) {
         if (ref!=null) {
             int j=0, pts=ref.length;
             while (j<pts) {
-                m.set(ref[j],m.at(ref[j])?setTo:1);
+                m.set(ref[j],m.at(ref[j])?setTo:true);
                 j++;
             }
         }
@@ -50,13 +51,58 @@ class PlotPrimitive {
             if (pts==0) return 0d;
             int sc=0;
             while (j<pts) {
-                if (m.getMark(ref[j])==mark) sc++;
+                if (m.get(ref[j])==mark) sc++;
                 j++;
             }
             return ((double)sc)/((double)pts);
         }
         return 0d;
     }
+
+    public int[] getMarkedList(SMarker m) { // [total][count mark 0][mark][count][mark][count]...
+        if (m==null) return null;
+        if (ref!=null) {
+            if (ref.length<1) return null;
+            if (ref.length==1) {
+                int mark=m.get(ref[0]);
+                int[] lst=new int[(mark!=0)?4:2];
+                lst[0]=1;
+                lst[1]=(mark==0)?1:0;
+                if (mark!=0) {
+                    lst[2]=mark;
+                    lst[3]=1;
+                }
+                return lst;
+            }
+            int pts=ref.length;
+            int j=0;
+            int[] cts=new int[m.getMaxMark()+2];
+            while (j<pts) {
+                int mark=m.get(ref[j]);
+                mark++;
+                if (mark<cts.length) cts[mark]++;
+                j++;
+            }
+            int ums=0;
+            j=2;
+            while(j<cts.length) { if (cts[j++]>0) ums++; };
+            int lst[]=new int[3+(ums*2)];
+            lst[0]=pts;
+            lst[1]=cts[1];
+            j=0;
+            int k=2;
+            while(j<cts.length) {
+                if (j!=1 && cts[j]>0) {
+                    lst[k++]=j-1; lst[k++]=cts[j];
+                }
+                j++;
+            }
+            return lst;
+        }
+        return null;
+    }
+    
+    public Color getColor() { return col; }
 }
 
 /** BaseCanvas - basis for all interactive plots which rely on plot primitives concept. To ensure consistent behavior all plots should be based on this class whenever possible. BaseCanvas includes key and mouse handling, selection and queries.<p>Although BaseCanvas is not abstract, is it not usable on its own (except maybe for testing). Any subclasses should override at least the {@link #updateObjects} method to initialize plot primitives. Displaying and selection of following plot primitives is supported out-of-the-box: points, rectangles and polygons. The subclass constructor should (beside calling super constructor) set any of the control flags to customize the behavior of this class.<p>BaseCanvas implements all key and mouse listeners as well as commander interface (actions are mapped into commands). This implies that a subclass it free to overload any individual methods of those. Just make sure that you provide calls to parent methods to preserve all functionality.
@@ -249,7 +295,10 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                 if (pp[i]!=null) {
                     if (pp[i].r!=null) {
                         if (fillInside) {
-                            g.setColor("object");
+                            if (pp[i].col!=null)
+                                g.setColor(pp[i].col.getRed(),pp[i].col.getGreen(),pp[i].col.getBlue());
+                            else
+                                g.setColor("object");
                             g.fillRect(pp[i].r.x,pp[i].r.y,
                                        pp[i].r.width,pp[i].r.height);
                         }
@@ -264,7 +313,10 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                     }
                     if (pp[i].pg!=null) {
                         if (fillInside) {
-                            g.setColor("object");
+                            if (pp[i].col!=null)
+                                g.setColor(pp[i].col.getRed(),pp[i].col.getGreen(),pp[i].col.getBlue());
+                            else
+                                g.setColor("object");
                             g.fillPolygon(pp[i].pg.xpoints,pp[i].pg.ypoints,pp[i].pg.npoints);
                         }
                         if (paintOutline) {
@@ -285,7 +337,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
             g.setColor("marked");
             while (i<pp.length) {
                 if (pp[i]!=null) {
-                    double sa=pp[i].getMarkedProportion(m,1);
+                    double sa=pp[i].getMarkedProportion(m,-1);
                     //System.out.println("pp["+i+"] sa="+sa+" "+pp);
                     if (sa>0d) {
                         if (pp[i].r!=null) {
@@ -341,7 +393,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 
         Point cl=getFrame().getLocation();
 	Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
-	int setTo=0;
+	boolean setTo=false;
 
         if (Common.DEBUG>0) {
             String mods="";
@@ -373,7 +425,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
         if (actionQuery || actionSelect) {
             int selMode=Common.getSelectMode(ev);
-            if (selMode>1) setTo=1;
+            if (selMode>1) setTo=true;
             if (pp!=null) {
                 int i=0;
                 while (i<pp.length) {
@@ -556,8 +608,8 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
         //System.out.println("BaseCanvas.mouseReleased");
         setUpdateRoot(2);
         if (selDrag) {
-            int setTo=0;
-            if (Common.getSelectMode(e)==2) setTo=1;
+            boolean setTo=false;
+            if (Common.getSelectMode(e)==2) setTo=true;
             if (Common.getSelectMode(e)==0) m.selectNone();
 
             int i=0;
