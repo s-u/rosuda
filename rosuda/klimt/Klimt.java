@@ -156,7 +156,8 @@ public class InTr
      */
     public static void main(String[] argv)
     {
-	try {
+        boolean silentTreeLoad=false;
+        try {
 	    int argc=argv.length;
 	    int carg=0;
 	    
@@ -198,12 +199,23 @@ public class InTr
 	    
 	    carg++;
 	    while (carg<argv.length) {
-		SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
-		if (ttt!=null) {
-		    TFrame fff=new TFrame(InTr.lastTreeFileName);
-		    TreeCanvas tc=InTr.newTreeDisplay(ttt,fff);
-		    tc.repaint(); tc.redesignNodes();		
-		};
+                if (argv[carg].compareTo("--silent")==0)
+                    silentTreeLoad=true;
+                if (argv[carg].compareTo("--debug")==0)
+                    Common.DEBUG=1;
+                if (argv[carg].compareTo("--profile")==0)
+                    Common.DEBUG=2;
+                if (argv[carg].compareTo("--nodebug")==0)
+                    Common.DEBUG=0;
+                
+                if (argv[carg].length()<2 || argv[carg].substring(0,2).compareTo("--")!=0) {
+                    SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
+                    if (ttt!=null && !silentTreeLoad) {
+                        TFrame fff=new TFrame(InTr.lastTreeFileName);
+                        TreeCanvas tc=InTr.newTreeDisplay(ttt,fff);
+                        tc.repaint(); tc.redesignNodes();
+                    };
+                };
 		carg++;
 	    };  
 		
