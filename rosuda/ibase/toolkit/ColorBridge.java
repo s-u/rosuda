@@ -9,6 +9,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Color;
+import org.rosuda.ibase.Common;
 
 /** ColorBridge maps integers, doubles or strings to colors */
 public class ColorBridge {
@@ -18,7 +19,7 @@ public class ColorBridge {
     protected static ColorBridge main;
     
     public ColorBridge() {
-        basicCol=new Color[9]; name=new String[9];
+        basicCol=new Color[128]; name=new String[128];
         basicCol[0]=new Color(255,255,255); name[0]="white";
         basicCol[1]=new Color(0,0,0);       name[1]="black";
         basicCol[2]=new Color(255,0,0);     name[2]="red";
@@ -28,15 +29,24 @@ public class ColorBridge {
         basicCol[6]=new Color(255,0,255);
         basicCol[7]=new Color(255,255,0);   name[7]="yellow";
         basicCol[8]=new Color(190,190,190);
+        setHCLParameters(35.0, 85.0);
     }
 
+    public void setHCLParameters(double chroma, double luminance) {
+        int i=0;
+        while (i<64) {
+            basicCol[i+64]=Common.getHCLcolor(((double)i)*360.0/64.0,chroma,luminance);
+            i++;
+        }
+    }
+    
     public static ColorBridge getMain() {
         if (main==null) main=new ColorBridge();
         return main;
     }
     
     public Color getColor(int id) {
-        return basicCol[(id==0)?0:(((id-1)&7)+1)];
+        return basicCol[(id==0)?0:(((id-1)&127)+1)];
     }
 
     public Color getColor(double d) {
