@@ -66,7 +66,7 @@ public class JGR {
         MAINRCONSOLE.setWorking(false);
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
-        RCSync.triggerNotification("library(JGR)");
+        RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
     }
 
     public static String exit() {
