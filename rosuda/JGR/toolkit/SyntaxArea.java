@@ -518,18 +518,18 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    public boolean handleEvent(Event e) {
-        System.out.println(e);
+    /*public boolean handleEvent(Event e) {
+        System.out.println("hanlde" +e);
         return true;
     }
 
     public void processEvent(Event e) {
-        System.out.println(e);
+        System.out.println("process" +e);
     }
 
     public void processInputMethodEvent(InputMethodEvent e) {
-        System.out.println(e);
-    }
+        System.out.println("processI "+e);
+    }*/
 
 
     class HighlightPainter extends DefaultHighlighter.DefaultHighlightPainter {

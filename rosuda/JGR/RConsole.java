@@ -55,6 +55,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     private StringBuffer console = new StringBuffer();
 
+    private boolean wasHistEvent = false;
+
     public RConsole() {
         this(null);
     }
@@ -418,11 +420,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyPressed(KeyEvent ke) {
-        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
-            input.paste();
-            input.requestFocus();
-            input.setCaretPosition(input.getText().length());
-        }
+        //System.out.println(input.getCaretPosition()==input.getText().length());
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
             /*int line = -1;
             try {
@@ -436,7 +434,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     //we set the cursor to last hist and save the current writing in the history
                 }
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
+                //System.out.println(input.getText().length());
                 input.setCaretPosition(input.getText().length());
+                wasHistEvent = true;
+                //System.out.println(input.getCaretPosition());
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -457,9 +458,9 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                     input.setText("");
                     currentHistPosition++;
                 }
+                wasHistEvent = true;
             }
         }
-
     }
 
     public void keyReleased(KeyEvent ke) {
@@ -526,6 +527,15 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 execute(cmd);
             }
         }
+        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
+            input.paste();
+            input.requestFocus();
+            input.setCaretPosition(input.getText().length());
+        }
+        else if ((ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) && wasHistEvent) {
+            wasHistEvent = false;
+            input.setCaretPosition(input.getText().length());
+        }        
     }
 
     public void focusGained(FocusEvent e) {
@@ -564,9 +574,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     class CmdInput extends SyntaxArea {
 
         public CmdInput() {
-            KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
-            Keymap map = JTextComponent.getKeymap(JTextComponent.DEFAULT_KEYMAP);
-            map.removeKeyStrokeBinding(enter);
         }
 
         public String getToolTipText(MouseEvent e) {
@@ -578,20 +585,22 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
                                                 int condition, boolean pressed) {
 
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) return true;
+            //System.out.println(e.getKeyCode());
 
-                InputMap map = getInputMap();
-                ActionMap am = getActionMap();
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) return false;
 
-                if(map != null && am != null && isEnabled()) {
-                    Object binding = map.get(ks);
-                    Action action = (binding == null) ? null : am.get(binding);
-                    if (action != null) {
-                        return SwingUtilities.notifyAction(action, ks, e, this,
-                                                           e.getModifiers());
-                    }
+            InputMap map = getInputMap();
+            ActionMap am = getActionMap();
+
+            if(map != null && am != null && isEnabled()) {
+                Object binding = map.get(ks);
+                Action action = (binding == null) ? null : am.get(binding);
+                if (action != null) {
+                    return SwingUtilities.notifyAction(action, ks, e, this,
+                                                       e.getModifiers());
+                    }		
                 }
-                return false;
+            return false;
         }
 
     }

@@ -97,12 +97,12 @@ public class JGR {
         if (file.trim().equals("null")) file = null;
         if (keyword.trim().equals("null")) keyword = null;
         if (location.trim().equals("null")) location = null;
-        if (RHelp.last == null) new RHelp(location);
+        if (RHelp.current == null) new RHelp(location);
         else {
-            RHelp.last.show();
-            RHelp.last.refresh();
+            RHelp.current.show();
+            RHelp.current.refresh();
         }
-        if (keyword!=null && file !=null) RHelp.last.goTo(keyword, file);
+        if (keyword!=null && file !=null) RHelp.current.goTo(keyword, file);
     }
 
     public static void addMenu(String name) {
