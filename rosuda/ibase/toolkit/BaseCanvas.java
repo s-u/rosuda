@@ -276,7 +276,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     public void paintInit(PoGraSS g) {
         //System.out.println("BaseCanvas.paintInit");
         g.defineColor("outline",0,0,0);
-        g.defineColor("object",255,255,255);
+        g.defineColor("object",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
     }
 
     public void paintBack(PoGraSS g) {
