@@ -397,8 +397,12 @@ public class SVar extends Vector
     
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public Object getCatAt(int i) {
-	if (cats==null) return null;
-	return cats.elementAt(i);
+        if (cats==null) return null;
+        try {
+            return cats.elementAt(i);
+        } catch (Exception e) {
+            return null;
+        }
     };
 
     /** returns size of the category with index ID or -1 if variable is not categorial or index oob */
