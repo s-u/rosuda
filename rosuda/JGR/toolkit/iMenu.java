@@ -265,6 +265,19 @@ public class iMenu {
         return mb;
     };
 
+    public static void addMenu(JFrame f, String name) {
+        JMenuBar mb = f.getJMenuBar();
+        mb.add(new JMenu(name),(mb.getMenuCount()-2));
+    }
+
+    public static void addMenuItem(JFrame f, String menu, String name, String command, ActionListener al) {
+        JMenu m = getMenu(f,menu);
+        JMenuItem mi = new JMenuItem(name);
+        mi.addActionListener(al);
+        mi.setActionCommand(command);
+        m.add(mi);
+    }
+
     public static JMenu getMenu(JFrame f, String nam) {
         JMenuBar mb=f.getJMenuBar();
         if (mb==null) return null;
@@ -272,8 +285,7 @@ public class iMenu {
         int i=0;
         while(i<mc) {
             JMenu m=mb.getMenu(i);
-            if (m.getText()==nam)
-                return m;
+            if (m.getText().equals(nam)) return m;
             i++;
         };
         return null;

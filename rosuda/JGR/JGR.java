@@ -41,6 +41,8 @@ public class JGR {
     public static int SLEEPTIME = 50;
     public static int STRINGBUFFERSIZE = 80;
 
+    private static JGRListener jgrlistener  = null;
+
     public JGR() {
         SVar.int_NA=-2147483648;
         Platform.initPlatform("org.rosuda.JGR.toolkit.");
@@ -62,7 +64,7 @@ public class JGR {
         Preferences.refreshKeyWords();
         RHOME = RTalk.getRHome();
         RLIBS = RTalk.getRLIBS();
-        for (int i = 0; i< RLIBS.length; i++) { 
+        for (int i = 0; i< RLIBS.length; i++) {
             if(RLIBS[i].startsWith("~")) RLIBS[i] = RLIBS[i].replaceFirst("~",System.getProperty("user.home"));
         }
         MAINRCONSOLE.setWorking(false);
@@ -87,8 +89,8 @@ public class JGR {
         else if (exit == 1) return "n\n"; //System.exit(0);
         else return "c\n";
     }
-    
-    
+
+
     public static void help(String keyword, String file, String location) {
         if (file.trim().equals("null")) file = null;
         if (keyword.trim().equals("null")) keyword = null;
@@ -100,11 +102,21 @@ public class JGR {
         }
         if (keyword!=null && file !=null) RHelp.last.goTo(keyword, file);
     }
-    
+
+    public static void addMenu(String name) {
+        iMenu.addMenu(MAINRCONSOLE,name);
+    }
+
+    public static void addMenuItem(String menu, String name, String cmd) {
+        if (jgrlistener == null) jgrlistener = new JGRListener();
+        iMenu.addMenuItem(MAINRCONSOLE,menu,name,cmd,jgrlistener);
+    }
+
     public static void fix(String data) {
         new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));
     }
-    
+
+
 
     public static void readHistory() {
         File hist = null;

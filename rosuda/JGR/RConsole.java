@@ -91,6 +91,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
         //output.setText("\n");
 
+        output.addKeyListener(this);
+
 
         inputDoc.addUndoableEditListener(undoMgr);
 
@@ -166,7 +168,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             if (help.startsWith("help.search")) {
                 help = help.replaceFirst("help.search", "");
             }
-            else if (help.startsWith("help.start")) help=null;  
+            else if (help.startsWith("help.start")) help=null;
             else {
                 help = help.replaceFirst("help", "");
                 help = help.replaceFirst("\\?", "");
@@ -393,7 +395,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyPressed(KeyEvent ke) {
-
+        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) input.paste();
     }
 
     public void keyReleased(KeyEvent ke) {

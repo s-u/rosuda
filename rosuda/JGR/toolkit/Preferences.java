@@ -22,12 +22,12 @@ import org.rosuda.JGR.*;
 public class Preferences {
 
 
-    public static String VERSION = "0.1a";
+    public static String VERSION = "DP1";
     public static String TITLE = "JGR";
     public static String SUBTITLE = "Java Gui for R";
     public static String DEVELTIME = "2003 - 2004";
-    public static String INSTITUTION = "University Augsburg";
-    public static String AUTHORS = "Gui - Markus Helbig \nCommunication - Simon Urbanek";
+    public static String INSTITUTION = "RoSuDA, Univ. Augsburg";
+    public static String AUTHORS = "Markus Helbig, Simon Urbanek";
     public static String LOGO = "logo.jpg";
     public static String SPLASH = "splash.jpg";
 

@@ -29,6 +29,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
     private JPanel sepPanel = new JPanel();
     private JTextField dataName = new JTextField();
     private JTextField otherSeps = new JTextField();
+    private JTextField quote = new JTextField();
     private ButtonGroup sepButtons = new ButtonGroup();
     private JCheckBox header = new JCheckBox("",true);
     private JRadioButton def = new JRadioButton("Default",true);
@@ -71,6 +72,8 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         otherSeps.setEditable(false);
         otherSeps.setMinimumSize(new Dimension(100,50));
         otherSeps.setMaximumSize(new Dimension(200,50));
+        quote.setMinimumSize(new Dimension(50,25));
+        quote.setMaximumSize(new Dimension(50,25));
 
         fileChooser.addActionListener(this);
         fileChooser.addPropertyChangeListener(this);
@@ -111,18 +114,24 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
         this.getContentPane().add(dataName,  new GridBagConstraints(1, 1, 2, 1, 1.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 50), 0, 0));
         this.getContentPane().add(new JLabel("Header :"),  new GridBagConstraints(0, 2, 1, 1, 0.0, 1.0
             , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
         this.getContentPane().add(header,  new GridBagConstraints(1, 2, 1, 1, 1.0, 1.0
-            , GridBagConstraints.WEST, GridBagConstraints.BOTH,
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 50), 0, 0));
-        this.getContentPane().add(new JLabel("Separators :"),  new GridBagConstraints(0, 3, 1, 1, 0.0, 1.0
+        this.getContentPane().add(new JLabel("Quote :"),  new GridBagConstraints(0, 3, 1, 1, 0.0, 1.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(1, 5, 1, 5), 0, 0));
+        this.getContentPane().add(quote,  new GridBagConstraints(1, 3, 1, 1, 1.0, 1.0
+            , GridBagConstraints.WEST, GridBagConstraints.NONE,
+            new Insets(1, 5, 1, 50), 0, 0));
+        this.getContentPane().add(new JLabel("Separators :"),  new GridBagConstraints(0, 4, 1, 1, 0.0, 1.0
             , GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
             new Insets(1, 5, 1, 5), 0, 0));
-        this.getContentPane().add(sepPanel,  new GridBagConstraints(1, 3, 2, 1, 0.0, 1.0
+        this.getContentPane().add(sepPanel,  new GridBagConstraints(1, 4, 2, 1, 0.0, 1.0
             , GridBagConstraints.WEST, GridBagConstraints.BOTH,
             new Insets(1, 5, 1, 5), 0, 0));
 
@@ -147,7 +156,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
             RConsole.directory = fileChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = fileChooser.getSelectedFile().toString();
             if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('\\','/');
-            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(useHeader?"T":"F")+",sep=\""+seps.trim()+"\")";
+            String cmd = dataName.getText().trim()+" <- read.table(\""+file+"\",header="+(useHeader?"T":"F")+",sep=\""+seps.trim()+"\", quote=\""+(quote.getText().length()==0?"\\\"'":quote.getText().trim())+"\")";
             JGR.MAINRCONSOLE.execute(cmd);
         }
         dispose();

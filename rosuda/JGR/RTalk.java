@@ -31,7 +31,7 @@ public class RTalk {
     }
 
     public static String[] getRLIBS() {
-        REXP x = JGR.R.eval(".libPaths()");
+        REXP x = JGR.R.eval(".Library");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
     }
