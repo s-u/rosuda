@@ -34,6 +34,8 @@ public class JGR {
     public static final String LOGO = "logo.jpg";
     public static final String SPLASH = "splash.jpg";
 
+    public static String directory = System.getProperty("user.home");
+    
     /* global variables for whole JGR application */
     public static Vector RHISTORY = null;
     public static JGRConsole MAINRCONSOLE = null;
