@@ -2,9 +2,10 @@ package org.rosuda.javaGD;
 
 import java.util.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.lang.reflect.Method;
 
-public class GDCanvas extends Canvas implements GDContainer {
+public class GDCanvas extends Canvas implements GDContainer, MouseListener {
     Vector l;
 
     boolean listChanged;
@@ -30,6 +31,7 @@ public class GDCanvas extends Canvas implements GDContainer {
         setSize(w,h);
         lastSize=getSize();
         setBackground(Color.white);
+	addMouseListener(this);
         (r=new Refresher(this)).start();
     }
 
@@ -83,6 +85,39 @@ public class GDCanvas extends Canvas implements GDContainer {
         l.removeAllElements();
         listChanged=true;
     }
+
+    LocatorSync lsCallback=null;
+
+    public synchronized boolean prepareLocator(LocatorSync ls) {
+	if (lsCallback!=null && lsCallback!=ls) // make sure we cause no deadlock
+	    lsCallback.triggerAction(null);
+	lsCallback=ls;
+	
+	return true;
+    }
+
+    // MouseListener for the Locator support
+    public void mouseClicked(MouseEvent e) {
+	if (lsCallback!=null) {
+	    double[] pos = null;
+	    if ((e.getModifiers()&InputEvent.BUTTON1_MASK)>0) { // B1 = return position
+		pos = new double[2];
+		pos[0] = (double)e.getX();
+		pos[1] = (double)e.getY();
+	    }
+
+	    // pure security measure to make sure the trigger doesn't mess with the locator sync object
+	    LocatorSync ls=lsCallback;
+	    lsCallback=null; // reset the callback - we'll get a new one if necessary
+	    ls.triggerAction(pos);
+	}
+    }
+
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
+
 
     public synchronized Vector getGDOList() { return l; }
 

@@ -47,6 +47,7 @@ public class GDInterface {
     int devNr=-1;
     
     public GDContainer c=null;
+    public LocatorSync ls=null;
     
     public void     gdOpen(double w, double h) {
         open=true;
@@ -79,10 +80,10 @@ public class GDInterface {
     }
 
     public double[] gdLocator() {
-        double[] res=new double[2];
-        // FixME
-        res[0]=0.0; res[1]=0.0;
-        return res;
+	if (c==null) return null;
+	if (ls==null) ls=new LocatorSync();
+	if (!c.prepareLocator(ls)) return null;
+        return ls.waitForAction();
     }
 
     public void     gdLine(double x1, double y1, double x2, double y2) {

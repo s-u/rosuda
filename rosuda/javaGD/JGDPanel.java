@@ -9,11 +9,12 @@
 package org.rosuda.javaGD;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import java.util.Vector;
 import java.lang.reflect.Method;
 
-public class JGDPanel extends JPanel implements GDContainer {
+public class JGDPanel extends JPanel implements GDContainer, MouseListener {
     Vector l;
     boolean listChanged;
     public static boolean forceAntiAliasing=true;
@@ -36,6 +37,7 @@ public class JGDPanel extends JPanel implements GDContainer {
         gs.f=new Font(null,0,12);
         setSize(w,h);
         lastSize=getSize();
+	addMouseListener(this);
         setBackground(Color.white);
     }
 
@@ -49,6 +51,38 @@ public class JGDPanel extends JPanel implements GDContainer {
         reset();
         l=null;
     }
+
+    LocatorSync lsCallback=null;
+
+    public synchronized boolean prepareLocator(LocatorSync ls) {
+	if (lsCallback!=null && lsCallback!=ls) // make sure we cause no deadlock
+	    lsCallback.triggerAction(null);
+	lsCallback=ls;
+	
+	return true;
+    }
+
+    // MouseListener for the Locator support
+    public void mouseClicked(MouseEvent e) {
+	if (lsCallback!=null) {
+	    double[] pos = null;
+	    if ((e.getModifiers()&InputEvent.BUTTON1_MASK)>0) { // B1 = return position
+		pos = new double[2];
+		pos[0] = (double)e.getX();
+		pos[1] = (double)e.getY();
+	    }
+
+	    // pure security measure to make sure the trigger doesn't mess with the locator sync object
+	    LocatorSync ls=lsCallback;
+	    lsCallback=null; // reset the callback - we'll get a new one if necessary
+	    ls.triggerAction(pos);
+	}
+    }
+
+    public void mousePressed(MouseEvent e) {}
+    public void mouseReleased(MouseEvent e) {}
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 
     public void initRefresh() {
         //System.out.println("resize requested");

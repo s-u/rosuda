@@ -45,13 +45,6 @@ public class JavaGD extends GDInterface implements WindowListener {
         if (f!=null) f.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):""));
     }
 
-    public double[] gdLocator() {
-        double[] res=new double[2];
-        // FixME
-        res[0]=0.0; res[1]=0.0;
-        return res;
-    }
-
     public void     gdNewPage(int devNr) { // new API: provides the device Nr.
         super.gdNewPage(devNr);
         if (f!=null) f.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
