@@ -172,6 +172,6 @@ public class RModel {
     }
 
     public String toString() {
-            return getName() + "model";
+            return getName() + " (model)";
     }
 }
