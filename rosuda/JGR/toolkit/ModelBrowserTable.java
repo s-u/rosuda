@@ -5,13 +5,20 @@ package org.rosuda.JGR.toolkit;
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
 
+import java.awt.FlowLayout;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 import java.awt.event.*;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableColumnModelListener;
 import javax.swing.table.*;
+import javax.swing.text.TabExpander;
 
 import org.rosuda.JGR.JGRObjectManager;
 import org.rosuda.JGR.robjects.RModel;
@@ -28,13 +35,16 @@ import org.rosuda.JGR.util.*;
 public class ModelBrowserTable extends JTable implements MouseListener, DragGestureListener, DragSourceListener { 
 	
 	private Vector models;
+	private Vector fmodels;
 	private TableSorter sorter;
 	private JGRObjectManager objmgr;
     private DragSource dragSource;
-
-    
+    /** Panel which includes textfiels for column filters */
+    public FilterPanel filter;
+        
 	public ModelBrowserTable(JGRObjectManager parent, Vector models) {
 		this.models = models;
+		this.fmodels = new Vector(this.models);
 		this.objmgr = parent;
         this.setColumnModel(new ModelTableColumnModel());
         sorter = new TableSorter(new ModelTableModel());
@@ -46,6 +56,9 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         this.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(this.getTableHeader());
 
+        
+        filter = new FilterPanel(this);
+        
         dragSource = new DragSource();
         dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
         
@@ -56,8 +69,13 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 	 * Refresh models form workspace.
 	 */
 	public void refresh() {
+		int[] st = new int[sorter.getColumnCount()];
+		for (int i = 0; i < st.length; i++)
+			st[i] = sorter.getSortingStatus(i);
         sorter = new TableSorter(new ModelTableModel());
         sorter.setTableHeader(this.getTableHeader());
+        for (int i = 0; i < st.length; i++)
+        	sorter.setSortingStatus(i,st[i]);
         this.setModel(sorter);
 	}
 	
@@ -65,7 +83,7 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 	 * dragGestureRecognized: handle dragGesture event: when dragging a model, provide the R-call.
 	 */
     public void dragGestureRecognized(DragGestureEvent evt) {
-    	RModel m = (RModel) models.elementAt(this.rowAtPoint(evt.getDragOrigin()));
+    	RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(evt.getDragOrigin())));
 		if (m == null || m.getCall().trim().length() == 0) return;
 		
         Transferable t = new java.awt.datatransfer.StringSelection(m.getName()+" <- "+m.getTypeName()+"("+m.getCall()+(m.getFamily()!=null?(",family="+m.getFamily()):"")+(m.getData()!=null?(",data="+m.getData()):"")+")");
@@ -139,7 +157,7 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 		if (e.isPopupTrigger()) {
 			objmgr.cursorWait();
 			JToolTip call  = new JToolTip();
-			RModel m = (RModel) models.elementAt(this.rowAtPoint(e.getPoint()));
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
 			if (m == null || m.getToolTip().trim().length() == 0) return;
 			String tip = m.getToolTip();
 			if (tip==null) {
@@ -162,7 +180,7 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 		if (e.isPopupTrigger()) {
 			objmgr.cursorWait();
 			JToolTip call  = new JToolTip();
-			RModel m = (RModel) models.elementAt(this.rowAtPoint(e.getPoint()));
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
 			if (m == null || m.getToolTip().trim().length() == 0) return;
 			String tip = m.getToolTip();
 			if (tip==null) {
@@ -178,17 +196,17 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 		}
 	}	
 
+    private String[] colnames = {"Name","Data","Type","family","df","r.squared","aic","deviance"};
+    
     class ModelTableModel extends AbstractTableModel {
 
-
-        private String[] colnames = {"Name","Data","Type","family","df","r.squared","aic","deviance"};
 
         public int getColumnCount() {
             return colnames.length;
         }
 
         public int getRowCount() {
-            return models.size();
+            return fmodels.size();
         }
 
         public String getColumnName(int col) {
@@ -196,17 +214,17 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         }
 
         public Object getValueAt(int row, int col) {
-            return ((Vector) ((RModel) models.elementAt(row)).getInfo()).elementAt(col); 
+            return ((Vector) ((RModel) fmodels.elementAt(row)).getInfo()).elementAt(col); 
         }
 
         public Class getColumnClass(int col) {
             int i = 0;
-            while (((Vector) ((RModel) models.elementAt(i)).getInfo()).elementAt(col) == null) i++;
+            while (((Vector) ((RModel) fmodels.elementAt(i)).getInfo()).elementAt(col) == null) i++;
             if (i > getRowCount()) return null;
-            return ((Vector) ((RModel) models.elementAt(i)).getInfo()).elementAt(col).getClass();
+            return ((Vector) ((RModel) fmodels.elementAt(i)).getInfo()).elementAt(col).getClass();
         }
     }
-	
+    
     class ModelTableColumnModel extends DefaultTableColumnModel {
 
         public ModelTableColumnModel() {
@@ -232,5 +250,100 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         public TableColumn getColumn(int index) {
             return super.getColumn(index < 0 ? 0 : index);
         }
+    }
+    
+    class FilterPanel extends JPanel implements KeyListener {
+    	
+    	JTextField name = new JTextField();
+    	JTextField data = new JTextField();
+    	JTextField type = new JTextField();
+    	JTextField family = new JTextField();
+    	
+    	JTextField[] filters = {name,data,type,family};
+    	
+    	ModelBrowserTable table;
+    	
+    	public FilterPanel(ModelBrowserTable table) {
+    		FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
+    		fl.setVgap(0);
+    		fl.setHgap(0);
+    		this.setLayout(fl);
+    		this.table = table;
+    		this.add(name);
+    		this.add(data);
+    		this.add(type);
+    		this.add(family);
+    		name.addKeyListener(this);
+    		data.addKeyListener(this);
+    		type.addKeyListener(this);
+    		family.addKeyListener(this);
+            this.addComponentListener(new ComponentAdapter() {
+            	public void componentResized(ComponentEvent e) {
+            		resizeFields();
+            	}
+            });
+    	}
+    	
+    	public void resizeFields() {
+    		name.setPreferredSize(new Dimension(table.getColumn(colnames[0]).getWidth(),25));
+    		data.setPreferredSize(new Dimension(table.getColumn(colnames[1]).getWidth(),25));
+    		type.setPreferredSize(new Dimension(table.getColumn(colnames[2]).getWidth(),25));
+    		family.setPreferredSize(new Dimension(table.getColumn(colnames[3]).getWidth(),25));
+    	}
+    	
+    	public void setSize(Dimension d) {
+    		resizeFields();
+    		super.setSize(d);
+    	}
+    	
+    	public void setSize(int w, int h) {
+    		resizeFields();
+    		super.setSize(w,h);
+    	}
+    	
+    	private void filterModels() {
+    		fmodels.clear();
+    		Iterator i = models.iterator();
+    		while (i.hasNext()) {
+    			RModel r = (RModel) i.next();
+    			if (matches(r.getInfo()))
+    				fmodels.add(r);
+    		}
+    		table.refresh();
+    	}
+    	
+    	private boolean matches(Vector v) {
+    		for (int i = 0; i < filters.length; i++) {
+    			String f = filters[i].getText();
+    			String m = (String) v.elementAt(i);
+    			if (f != null && f.trim().length() > 0 && (m == null || m.trim().length() == 0)) return false;
+    			if (f != null && m != null && !compareF(m.trim(),f.trim())) return false;
+    		}
+    		return true;
+    	}
+    	
+    	private boolean compareF(String s1, String s2) {
+    		if (s1.startsWith(s2)) return true;
+    		try {
+    			if (s1.matches(s2)) return true;
+    		} catch (Exception e) {} // if there's an regex exception
+    		return false;
+    	}
+
+		/**
+		 */
+		public void keyTyped(KeyEvent e) {
+		}
+
+		/**
+		 */
+		public void keyPressed(KeyEvent e) {
+		}
+
+		/**
+		 */
+		public void keyReleased(KeyEvent e) {
+			filterModels();
+		}
     }
 }
