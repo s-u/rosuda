@@ -548,7 +548,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
               return;
           }
           if( e.getKeyCode() == KeyEvent.VK_UP && e.isShiftDown() ) {
-            if( smoother < 12 ) {
+            if( smoother < 30 ) {
               smoother += 1;
               smoothChanged = true;
             }
