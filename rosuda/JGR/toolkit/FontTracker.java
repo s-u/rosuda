@@ -57,7 +57,7 @@ public class FontTracker {
             try {
                 //System.out.println(comp.getClass().getName());
                 if (comp.getClass().getName().equals("javax.swing.JTable") || comp.getClass().getName().equals("org.rosuda.JGR.RObjectManager$1")) {
-                    ((JTable) comp).setRowHeight((int) (iPreferences.FontSize *1.3));
+                    ((JTable) comp).setRowHeight((int) (iPreferences.FontSize *1.4));
                 }
             } catch (Exception ex) {}
         }
