@@ -16,7 +16,7 @@ import org.rosuda.util.*;
 
 public class Platform extends org.rosuda.util.Platform {
     public void handleAbout() {
-        SplashScreen.runMainAsAbout("iPlots");
+        SplashScreen.runMainAsAbout("iPlots "+Common.Version);
     }
 
     public void handlePrefs() {

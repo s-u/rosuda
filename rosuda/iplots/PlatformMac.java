@@ -15,7 +15,7 @@ import org.rosuda.util.*;
 
 public class PlatformMac extends org.rosuda.util.PlatformMac {
     public void handleAbout() {
-        SplashScreen.runMainAsAbout("About iPlots");
+        SplashScreen.runMainAsAbout("iPlots "+Common.Version);
     }
 
     public void handlePrefs() {
