@@ -68,9 +68,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             "+", "File", "@NNew", "new", "@OOpen", "open","#Open Recent","",
             "@SSave", "save", "!SSave as", "saveas",
             "-", "@PPrint", "print","~File.Basic.End",
-            "~Edit",
+            "~Editor",
             "+", "Tools", "Increase Font Size", "fontBigger", "Decrease Font Size",
-            "fontSmaller", "-", "@FFind", "search", "@GFind Next", "searchnext",
+            "fontSmaller",
             "~Window",
             "~Help", "R Help", "help", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
@@ -399,7 +399,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             else if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
                 editArea.mComplete.completeCommand();
             }
-            else editArea.insertAt(editArea.getCaretPosition(),"\n");
+            else {
+                try {
+                   editArea.replaceSelection("");
+                } catch (Exception ex) {}
+                editArea.insertAt(editArea.getCaretPosition(),"\n");
+            }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_UP) {
             if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
