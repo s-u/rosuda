@@ -48,6 +48,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     int []filter=null;
 
+    boolean querying=false;
+    int qx,qy;
+    
     /** create a new scatterplot
 	@param f associated frame (or <code>null</code> if none)
 	@param v1 variable 1
@@ -274,6 +277,15 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    g.setColor("black");
 	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	};
+        if (querying) {
+            g.setColor("black");
+            if (qx==A[0].clip(qx) && qy==A[1].clip(qy)) {
+                g.drawLine(A[0].gBegin,qy,A[0].gBegin+A[0].gLen,qy);
+                g.drawLine(qx,A[1].gBegin,qx,A[1].gBegin+A[1].gLen);
+                g.drawString(A[0].getDisplayableValue(A[0].getValueForPos(qx)),qx+2,qy-2);
+                g.drawString(A[1].getDisplayableValue(A[1].getValueForPos(qy)),qx+2,qy+11);
+            }
+        }
 	g.nextLayer();
 	if (pm!=null) pm.draw(g);
 
@@ -360,7 +372,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	    };
 	};
     };
-    public void mouseMoved(MouseEvent ev) {};
+    public void mouseMoved(MouseEvent ev) {
+        if (querying) {
+            qx=ev.getX(); qy=ev.getY();
+            setUpdateRoot(2);
+            repaint();
+        }
+    };
 
     public void keyTyped(KeyEvent e) 
     {
@@ -374,8 +392,20 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='t') run(this,"trigraph");
         if (e.getKeyChar()=='s') run(this,"shading");
     };
-    public void keyPressed(KeyEvent e) {};
-    public void keyReleased(KeyEvent e) {};
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_ALT) {
+            querying=true;
+            qx=qy=-1;
+            setCursor(Common.cur_aim);
+        }
+    };
+    public void keyReleased(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_ALT) {
+            querying=false;
+            setCursor(Common.cur_arrow);
+            setUpdateRoot(2); repaint();
+        }
+    };
 
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
