@@ -1,7 +1,16 @@
+# Makefile for most Java-based RoSuDa projects
+# $Id$
+#
+# Note that some projects may be better compiled using xcodebuild
+
 IGLOBAL_SRC:=$(wildcard rosuda/util/*.java)
 # PoGraSS must be generated manually, because SVG is optional
 POGRASS_SRC:=rosuda/pograss/PoGraSS.java rosuda/pograss/PoGraSSPS.java rosuda/pograss/PoGraSSPDF.java rosuda/pograss/PoGraSSmeta.java rosuda/pograss/PoGraSSgraphics.java
-IBASE_SRC:= $(IGLOBAL_SRC) $(wildcard rosuda/ibase/*.java) $(wildcard rosuda/ibase/plots/*.java) $(wildcard rosuda/ibase/toolkit/*.java) $(POGRASS_SRC) rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java
+# variables with XTREME suffix use JOGL for OpenGL
+POGRASS_SRC_XTREME:=$(POGRASS_SRC) rosuda/pograss/PoGraSSjogl.java
+IBASE_SRC_RAW:= $(IGLOBAL_SRC) $(wildcard rosuda/ibase/*.java) $(wildcard rosuda/ibase/plots/*.java) $(wildcard rosuda/ibase/toolkit/*.java) $(POGRASS_SRC) rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java
+IBASE_SRC_XTREME:=rosuda/ibase/toolkit/PGSJoglCanvas.java
+IBASE_SRC:=$(filter-out $(IBASE_SRC_XTREME),$(IBASE_SRC_RAW))
 KLIMT_SRC:=$(wildcard rosuda/klimt/*.java) $(wildcard rosuda/klimt/plots/*.java)
 PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
@@ -10,6 +19,15 @@ IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
 JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) 
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
+CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
+
+ifneq ($(shell uname),Darwin)
+# remove all references to Mac platform as those classes can be compiled on a Mac only
+IBASE_SRC:=$(filter-out %PlatformMac.java,$(IBASE_SRC))
+KLIMT_SRC:=$(filter-out %PlatformMac.java,$(KLIMT_SRC))
+IGLOBAL_SRC:=$(filter-out %PlatformMac.java,$(IGLOBAL_SRC))
+IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
+endif
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar Mondrian.jar
 
@@ -29,7 +47,7 @@ Mondrian.jar:
 	cp rosuda/Mondrian/Mondrian.jar .
 
 JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC) $(JAVAGD_SRC)
-        rm -rf org
+	rm -rf org
 	$(JAVAC) -d . $^
 	cp rosuda/projects/jgr/splash.jpg .
 	cp -r rosuda/projects/jgr/icons .
