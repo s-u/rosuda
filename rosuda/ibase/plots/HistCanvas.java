@@ -1,10 +1,12 @@
 //
-//  HistCanvasNew.java
+//  HistCanvas.java
 //  Klimt
 //
 //  Created by Simon Urbanek on Thu Dec 05 2002.
 //  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
+
 package org.rosuda.ibase.plots;
 
 import java.awt.*;
@@ -20,7 +22,7 @@ import org.rosuda.util.*;
 /** implementation of histograms (new version - based on BaseCanvas).
     @version $Id$
 */
-public class HistCanvasNew extends BaseCanvas
+public class HistCanvas extends BaseCanvas
 {
     /** associated variable */
     protected SVar v;
@@ -40,7 +42,7 @@ public class HistCanvasNew extends BaseCanvas
 	@param var source variable
 	@param mark associated marker
     */
-    public HistCanvasNew(Frame f, SVar var, SMarker mark) {
+    public HistCanvas(Frame f, SVar var, SMarker mark) {
         super(f,mark);
 	v=var; setTitle("Histogram ("+v.getName()+")");
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
