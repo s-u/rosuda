@@ -83,7 +83,8 @@ public class JGR {
         if (System.getProperty("os.name").startsWith("Window")) splash.stop();
         String[] args={"--save"};
         R=new Rengine(args,true,MAINRCONSOLE);
-        System.out.println("Rengine created, waiting for R");
+        if (org.rosuda.util.Global.DEBUG>0)
+			System.out.println("Rengine created, waiting for R");
         if (!R.waitForR()) {
             System.out.println("Cannot load R");
             System.exit(1);
