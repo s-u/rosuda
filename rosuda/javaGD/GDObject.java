@@ -203,7 +203,7 @@ class GDColor extends GDObject {
 
     public void paint(Component c, GDState gs, Graphics g) {
         gs.col=gc;
-        System.out.println(" paint > color> (col="+col+") "+gc);
+        //System.out.println(" paint > color> (col="+col+") "+gc);
         if (gc!=null) g.setColor(gc);
     }
 }

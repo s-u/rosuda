@@ -22,7 +22,6 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
     iFrame jfr;
 
     public void     gdOpen(double w, double h) {
-        System.out.println("gdOpen");
         open=true;
         if (jfr!=null) gdClose();
 
@@ -38,15 +37,11 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         iMenu.getMenu(jfr, this, Menu);
 
         jfr.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
-        System.out.println("gdOpen:creating JGDPanel");
         c=new org.rosuda.javaGD.JGDBufferedPanel(w, h);
-        System.out.println("gdOpen:creating JGDPanel done");
         jfr.getContentPane().add((org.rosuda.javaGD.JGDPanel)c);
         jfr.setSize((int)w,(int)h);
         jfr.pack();
-        System.out.println("gdOpen:visible");
         jfr.setVisible(true);
-        System.out.println("gdOpen:returning");
     }
     
     public void     gdNewPage(int devNr) {
