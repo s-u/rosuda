@@ -146,7 +146,7 @@ int Re_ChooseFile(int new, char *buf, int len)
 void Re_ShowMessage(char *buf)
 {
     jstring s=(*eenv)->NewStringUTF(eenv, buf);
-    jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriShowMessage", "(Ljava/lang/String)V");
+    jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriShowMessage", "(Ljava/lang/String;)V");
     printf("jriShowMessage mid=%x\n", mid);
     if (mid)
         (*eenv)->CallVoidMethod(eenv, engineObj, mid, s);
