@@ -29,7 +29,7 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
         
         ifr.setDefaultCloseOperation(ifr.DISPOSE_ON_CLOSE);
         c=new org.rosuda.javaGD.GDCanvas(w, h);
-        ifr.setSize((int)w,(int)h); //added because sometimes the device isn't shown
+        //ifr.setSize((int)w,(int)h); //added because sometimes the device isn't shown
         ifr.getContentPane().add(c);
         ifr.pack();
         ifr.setVisible(true);
