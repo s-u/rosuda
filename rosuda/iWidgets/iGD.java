@@ -10,21 +10,29 @@
 package org.rosuda.iWidgets;
 
 import org.rosuda.javaGD.*;
+import java.awt.*;
 
-public class iGD extends org.rosuda.javaGD.JavaGD {
-    public iGD(java.awt.Frame f) {
-        this.f=f;
+public class iGD extends org.rosuda.javaGD.JavaGD {   
+    public iGD() {
+        super();
+        f=null;
     }
+
+    public Canvas getCanvas() { return c; }
 
     public void     gdOpen(double w, double h) {
         c=new GDCanvas(w, h);
-        f.add(c);
-        f.validate();
+        if (f!=null) {
+            f.add(c);
+            f.validate();
+        }
     }
 
     public void     gdClose() {
-        f.remove(c);
-        f.validate();
+        if (f!=null) {
+            f.remove(c);
+            f.validate();
+        }
         c=null;
     }
 }
