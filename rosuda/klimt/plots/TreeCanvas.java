@@ -416,13 +416,19 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			    g.drawLine((x+x2)/2,cn.y+10,(cn.x+cn.x2)/2,cn.y+10);
 			};
 		    } else /* direct lines */ {
-			if (PD_lines) {			    
+			if (PD_lines) {
+			    int[] px=new int[4];
+			    int[] py=new int[4];
 			    double dlw=(double)(x2-x);
 			    dlw*=((double)cn.Cases)/((double)t.Cases);
 			    int lw=(int)dlw;
-			    g.drawLine((int)cumx,y2,cn.x,cn.y);
+			    px[0]=(int)cumx; py[0]=y2; px[1]=cn.x; py[1]=cn.y;
+			    px[2]=cn.x2; py[2]=cn.y; 
+			    //g.drawLine((int)cumx,y2,cn.x,cn.y);
 			    cumx+=dlw;
-			    g.drawLine((int)cumx,y2,cn.x2,cn.y);
+			    px[3]=(int)cumx; py[3]=y2;
+			    g.fillPolygon(px,py,4);
+			    //g.drawLine((int)cumx,y2,cn.x2,cn.y);
 			} else
 			    g.drawLine((x+x2)/2,y+10,(cn.x+cn.x2)/2,cn.y+10);
 		    }
