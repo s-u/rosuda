@@ -23,6 +23,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
     int lastw,lasth;
     float alpha=0.1f;
     boolean eq=false, red=false;
+    boolean tri=false;
+    int xstretch=1;
     
     int[] levl; // # of vars per level (max 64)
     SVar[] vg;  // 64*32 matrix of vars (l*32+i)
@@ -130,8 +132,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
                     spc=vw/seq;
                     x=(vw+spc)*(vg[i*32+j].tag-1)+spc;
                 }
-                g.drawLine(x,y,x+vw,y);
-                g.drawString(vg[i*32+j].getName(),x,y+15);
+                g.drawLine(x*xstretch,y,(x+vw)*xstretch,y);
+                g.drawString(tri?Common.getTriGraph(vg[i*32+j].getName()):vg[i*32+j].getName(),x*xstretch,y+15);
                 x+=vw+spc;
                 j++;
             }
@@ -177,8 +179,12 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
                     double vr=sv.getMax()-sv.getMin();
                     int sp=(int)(((sl-sv.getMin())/vr)*((double)vw));
                     x+=sp;
-                    g.drawLine(x,y-5,x,y+5);
-                    g.drawLine(ox,oy,x,y);
+                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
+                    g.drawLine(ox*xstretch,oy,x*xstretch,y);
+                } else {
+                    x+=vw/2;
+                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
+                    g.drawLine(ox*xstretch,oy,x*xstretch,y);
                 }
                 break;
             }
@@ -203,7 +209,10 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
     {
         if (e.getKeyChar()=='0') { eq=!eq; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()=='R') { red=!red; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()=='t') { tri=!tri; setUpdateRoot(0); repaint(); }
         int sw=-1;
+        if (e.getKeyChar()=='+') { xstretch+=1; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()=='-' && xstretch>1) { xstretch-=1; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()=='1') sw=1;
         if (e.getKeyChar()=='2') sw=2;
         if (e.getKeyChar()=='3') sw=3;
