@@ -36,6 +36,63 @@ public class Klimt
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
 
+    /** this vector stores data roots of all data loaded in Klimt. each entry is of the class {@link DataRoot}. */
+    static Vector data;
+
+    /** return vector of all data roots */
+    public static Vector getData() {
+        if (data==null) data=new Vector();
+        return data;
+    }
+
+    /** return corresponding {@link DataRoot} object to the specified dataset
+        @param vs dataset
+        @return root object or <code>null</code> if none was found
+        */
+    public static DataRoot getRootForData(SVarSet vs) {
+        Vector v=getData();
+        int l=v.size();
+        int i=0;
+        while (i<l) {
+            DataRoot dr=(DataRoot) v.elementAt(i++);
+            if (dr.getDataSet()==vs)
+                return dr;
+        }
+        return null;
+    }
+
+    /** return corresponding {@link DataRoot} object to the specified dataset
+        @param vs dataset
+        @return root object or <code>null</code> if none was found
+        */
+    public static DataRoot getRootForTreeRegistry(TreeRegistry tr) {
+        Vector v=getData();
+        int l=v.size();
+        int i=0;
+        while (i<l) {
+            DataRoot dr=(DataRoot) v.elementAt(i++);
+            if (dr.getTreeRegistry()==tr)
+                return dr;
+        }
+        return null;
+    }
+
+    /** add a new data root
+        @param dr data root to add */
+    public static void addData(DataRoot dr) {
+        getData().addElement(dr);
+    }
+
+    /** create a new data root for the data set and return the corresponding root. if a root containing this dataset is already present, if will be returned without creating a new root. therefore it is safe to use this method for existing data sets.
+        @param vs data set to add
+        @return data root corresponding to the data set (created if necessary) */
+    public static DataRoot addData(SVarSet vs) {
+        DataRoot xdr=getRootForData(vs);
+        if (xdr==null) getData().addElement(xdr=new DataRoot(vs));
+        return xdr;
+    }
+
+    
     /** creates a new tree display
 	@param t root node
 	@param tf frame of the tree
@@ -43,7 +100,7 @@ public class Klimt
 	@return the newly created canvas */
     public static TreeCanvas newTreeDisplay(SNode t, TFrame tf,int x, int y, int w, int h) {
 	if (t==null) return null;
-	adjustDevGain(t);
+	t.adjustDevGain();
 
 	TFrame f=tf;
 	if (f==null)
@@ -73,16 +130,16 @@ public class Klimt
 	@param vs the underlying dataset
 	@param x,y,w,h initial geomery. Note: VarFrame itself modifies the height if necessary
 	@return the newly created variables canvas */
-    public static VarFrame newVarDisplay(SVarSet vs,int x, int y, int w, int h) {
-	VarFrame VarF=new VarFrame(vs,x,y,w,h);
+    public static VarFrame newVarDisplay(DataRoot dr, int x, int y, int w, int h) {
+	VarFrame VarF=new VarFrame(dr,x,y,w,h);
 	return VarF;
     };
 
     /** creates a new variables display with default geometry (0,0,140,200)
 	@param vs the underlying dataset
 	@return the newly created variables canvas */
-    public static VarFrame newVarDisplay(SVarSet vs) {
-	return newVarDisplay(vs,0,0,140,200);
+    public static VarFrame newVarDisplay(DataRoot dr) {
+	return newVarDisplay(dr,0,0,140,200);
     };
 
     /** creates a pruned copy of a tree
@@ -96,7 +153,7 @@ public class Klimt
     {
 	SNode n=new SNode();
         if (imTheRoot) {
-            RootInfo myRI=getRootInfo();
+            RootInfo myRI=n.getRootInfo();
             RootInfo root=t.getRootInfo();
             myRI.name=(newName==null)?"Pr_"+root.name:newName;
             myRI.prediction=root.prediction;
@@ -130,8 +187,8 @@ public class Klimt
         return n;
     };
 
-    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs) {
-        return openTreeFile(f,fn,tvs,false,true);
+    public static SNode openTreeFile(Frame f,String fn,DataRoot dr) {
+        return openTreeFile(f,fn,dr,false,true);
     }
 
     public static String lastUsedDir=null;
@@ -142,9 +199,11 @@ public class Klimt
 	@param tvs {@link SVarSet} object to be used for storage of the dataset.
         @param readOnlyDataset if set to <code>true</code> then tvs is not modified except for classifier
 	@return root node of the tree or <code>null</code> if no tree was present. This methods returns <code>null</code> even if the dataset was loaded correcly and no tree was present. Total failure to process the file can be determined only by using clean dataset and check for size of the dataset after the call. */	
-    public static SNode openTreeFile(Frame f,String fn,SVarSet tvs,boolean readOnlyDataset,boolean createFrames)
+    public static SNode openTreeFile(Frame f,String fn, DataRoot dr,boolean readOnlyDataset,boolean createFrames)
     {
-	SNode t=null;	
+        SVarSet tvs=dr.getDataSet();
+        TreeRegistry tr=dr.getTreeRegistry();
+        SNode t=null;	
 	String fnam=fn;
 	try {
 	    lastTreeFileName=fnam;
@@ -170,16 +229,16 @@ public class Klimt
                                 try {
                                     fsz=fs[fi].length();
                                 } catch(Exception e) {};
-                                t=RTree.Load(r,fs[fi].getName(),tvs,fsz,null,null,readOnlyDataset,true);
+                                t=TreeLoader.LoadTree(r,tvs,fs[fi].getName());
                                 if (t!=null && tvs!=null) {
                                     TFrame ff=null;
-                                    t.name=fs[fi].getName();
+                                    t.getRootInfo().name=fs[fi].getName();
                                     if (createFrames) {
-                                        t.frame=ff=new TFrame(fs[fi].getName(),TFrame.clsTree);
+                                        t.getRootInfo().frame=ff=new TFrame(fs[fi].getName(),TFrame.clsTree);
                                         TreeCanvas tc=Klimt.newTreeDisplay(t,ff);
                                         tc.repaint(); tc.redesignNodes();                                        
                                     }
-                                    tvs.registerTree(t,fs[fi].getName());
+                                    tr.registerTree(t,fs[fi].getName());
                                 };
                                 fi++;
                             }
@@ -217,8 +276,8 @@ public class Klimt
                 fnn=fil.getName();
                 fsz=fil.length();
             } catch(Exception e) {};
-            t=RTree.Load(r,fnn,tvs,fsz,null,null,readOnlyDataset,true);
-            if (t!=null) t.name=fnn;
+            t=TreeLoader.LoadTree(r,tvs,fnn);
+            if (t!=null) t.getRootInfo().name=fnn;
 	    if (Global.DEBUG>0) SVarSet.Debug(tvs);
 	    if (tvs.getMarker()==null && (tvs.at(0)!=null)&&(tvs.at(0).size()>0))
 		tvs.setMarker(new SMarker(tvs.at(0).size()));
@@ -234,7 +293,7 @@ public class Klimt
 	    E.printStackTrace();
 	    t=null;
 	};
-        if (t!=null && tvs!=null) tvs.registerTree(t,fnam);
+        if (t!=null && tr!=null) tr.registerTree(t,fnam);
 	return t;
     };
 
@@ -284,10 +343,10 @@ public class Klimt
             
             PluginManager pm=PluginManager.getManager();
             Common.initValuesFromConfigFile(pm);
-            String uRs=pm.getParS("Klimt","startRserv");
+            String uRs=GlobalConfig.getS("Klimt.startRserve");
             if (uRs!=null && uRs.length()>0 && (uRs.charAt(0)=='y' || uRs.charAt(0)=='1')) {
                 Common.startRserv=true;
-                uRs=pm.getParS("Rserv","launch");
+                uRs=GlobalConfig.getS("Rserve.launch");
                 if (uRs==null) uRs="R CMD Rserve";
                 Plugin srp=PluginManager.loadPlugin("PluginDtartRserve");
                 if (srp==null) {
@@ -308,6 +367,7 @@ public class Klimt
             Common.screenRes=sres;
 
 	    SVarSet tvs=new SVarSet();
+            DataRoot dr=Klimt.addData(tvs);
             String fname=(firstNonOption>-1)?argv[firstNonOption]:null;
             if (fname==null || fname.length()<1 || fname.charAt(0)=='-') fname=null;
 
@@ -319,8 +379,7 @@ public class Klimt
             if (fname!=null) {
                 TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
                 Common.mainFrame=f;
-
-                SNode t=openTreeFile(f,fname,tvs);
+                SNode t=openTreeFile(f,fname,dr);
                 if (t==null && tvs.count()<1) {
                     new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected"+((fname!=null)?" ("+fname+")":"")+".");
                     System.exit(1);
@@ -343,7 +402,7 @@ public class Klimt
 
                 if (t!=null)
                     newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
+                VarFrame vf=newVarDisplay(dr,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
                 Common.mainFrame=vf;
             }
 
@@ -354,7 +413,7 @@ public class Klimt
                 if (argv[carg].compareTo("--silent")==0)
                     silentTreeLoad=true;                
                 if (argv[carg].length()<2 || argv[carg].substring(0,2).compareTo("--")!=0) {
-                    SNode ttt=Klimt.openTreeFile(Common.mainFrame,argv[carg],tvs);
+                    SNode ttt=Klimt.openTreeFile(Common.mainFrame,argv[carg],dr);
                     if (ttt!=null && !silentTreeLoad) {
                         TFrame fff=new TFrame(Klimt.lastTreeFileName,TFrame.clsTree);
                         TreeCanvas tc=Klimt.newTreeDisplay(ttt,fff);
@@ -373,23 +432,143 @@ public class Klimt
         }
     }
 
-    /** adjusts cached deviance gain for an entire subtree
-	@param t root of the subtree */
-    static void adjustDevGain(SNode t) {
-	if (t==null) return;
-	double myDev=t.F1;
-	if (t.isLeaf()) {
-	    t.devGain=0;
-	} else {
-	    for (Enumeration e=t.children(); e.hasMoreElements();) {
-		SNode c=(SNode)e.nextElement();
-		if (c!=null) {
-		    myDev-=c.F1;
-		    adjustDevGain(c);
-		}
-            }
-	    t.devGain=myDev;
+    /** manages internal misclassification variable - that is creates new one if none exists
+        or updates existing one
+        @@param t root of the tree (prediction and response must be set in that node)
+        @@param smcv system misclass variable or null if none exists yet
+        @@return either smcv or newly created miscalss variable */
+    public static SVar manageMisclassVar(SNode t, SVar smcv) {
+        SVar mcv=smcv;
+        SVar c=t.getRootInfo().prediction;
+        SVar r=t.getRootInfo().response;
+        if (c==null || r==null) return null;
+
+        if (mcv!=null)
+            mcv.notify.beginBatch();
+        if (mcv==null) {
+            int j=0; mcv=new SVar("Misclass"); mcv.setInternalType(SVar.IVT_Misclass);
+            mcv.getNotifier().beginBatch();
+            while (j<c.size()) {
+                if (c.at(j)!=null && r.at(j)!=null && c.at(j).toString().compareTo(r.at(j).toString())!=0)
+                    mcv.add(new Integer(1));
+                else
+                    mcv.add(new Integer(0));
+                j++;
+            };
+        } else {
+            boolean wasCat=mcv.isCat();
+            mcv.dropCat();
+            int j=0;
+            while (j<c.size()) {
+                if (c.at(j)!=null && r.at(j)!=null && c.at(j).toString().compareTo(r.at(j).toString())!=0) {
+                    int ct=mcv.atI(j)+1;
+                    mcv.replace(j,new Integer(ct));
+                }
+                j++;
+            };
+            if (wasCat) mcv.categorize(true);
         }
+        if (mcv!=null) mcv.notify.endBatch();
+        return mcv;
+    }
+
+    static int help11=0;
+
+    public static SVar getPredictionVar(SNode t, SVar cv) {
+        help11++;
+        SVar v=null;
+        v=new SVar("R_"+t.getRootInfo().name+"_"+help11,false); v.setInternalType(cv.isCat()?SVar.IVT_RCC:SVar.IVT_Resid);
+        t.getSource().add(v);
+        SVar nv=new SVar("N_"+t.getRootInfo().name+"_"+help11,true); nv.setInternalType(SVar.IVT_LeafID);
+        t.getSource().add(nv);
+        return getPredictionVar(t,cv,v,nv);
+    }
+    
+    /** construct prediction variable, RCC/residuals variabe and node-index variable
+        @@param t root of the tree
+        @@param cv response variable (usually same as t.response)
+        @@param tccv empty variable object for RCC (right class confidence) or residuals variable.
+        if <code>null</code> then such variable is not created.
+        @@param nids empty variable for node-IDs (numerical, discrete)
+        @@return prediction variable corresponding to predictions made by the tree */
+    public static SVar getPredictionVar(SNode t, SVar cv, SVar rccv, SVar nids) {
+        Vector ns=new Vector();
+        int maxid=cv.size();
+        int cl[]= new int[maxid];
+        //int nid[]= new int[maxid];
+        SNode nod[] = new SNode[maxid];
+        double cf[]=new double[maxid];
+        boolean isCat=cv.isCat();
+        int i=0; while(i<maxid) { cl[i]=-1; i++; };
+        Object cat[]=null;
+        if (isCat) cat=cv.getCategories();
+        SNode root=(SNode)t.getRoot();
+        int lid=1;
+
+        t.getAllNodes(ns); // important - nodes are in prefix order, i.e. classification in this order is
+                           // correct as no node has higher-order node in its path to root
+        for (Enumeration e=ns.elements(); e.hasMoreElements();) {
+            SNode n=(SNode)e.nextElement();
+            if (true || n.isLeaf()) { // to catch all cases, even those with missing vals we consider all nodes
+                                      // this won't be necessary if all cases will be dropped to leaf level (mv resolve)
+                if (Global.DEBUG>0)
+                    System.out.println("Leaf: "+n.toString());
+                int j=-1;
+                if (isCat) {
+                    i=0; while(i<cat.length) {
+                        if (cat[i].toString().compareTo(n.Name)==0) {
+                            if (Global.DEBUG>0)
+                                System.out.println("-- found at "+i+" ("+cat[i]+")");
+                            j=i; break;
+                        };
+                        i++;
+                    };
+                };
+                if(n.isLeaf()) n.tmp=lid++;
+                if (!isCat || j>-1) {
+                    int[] right=null;
+                    if (isCat) right=new int[cat.length];
+                    for (Enumeration f=n.data.elements(); f.hasMoreElements();) {
+                        int cid=((Integer)f.nextElement()).intValue();
+                        if (cid>=0 && cid<maxid) {
+                            if (isCat) cl[cid]=j; //nid[cid]=n.id;
+                            nod[cid]=n;
+                            if (isCat) {
+                                int ci=cv.getCatIndex(cid);
+                                if (ci>-1 && ci<right.length) right[ci]++;
+                            }
+                        };
+                    };
+                    if (isCat && rccv!=null) {
+                        for (Enumeration f=n.data.elements(); f.hasMoreElements();) {
+                            int cid=((Integer)f.nextElement()).intValue();
+                            if (cid>=0 && cid<maxid) {
+                                cl[cid]=j;
+                                int ci=cv.getCatIndex(cid);
+                                if (ci>-1 && ci<right.length)
+                                    cf[cid]=((double)right[ci])/((double)n.data.size());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        SVar clv=new SVar((isCat?"C_":"P_")+t.getRootInfo().name+"_"+help11,isCat); clv.setInternalType(SVar.IVT_Prediction);
+        clv.getNotifier().beginBatch();
+        i=0; while(i<maxid) {
+            if (isCat)
+                clv.add((cl[i]==-1)?null:cat[cl[i]]);
+            else
+                clv.add((nod[i]==null)?null:new Double(nod[i].predValD));
+            if (isCat && rccv!=null) rccv.add(new Double(cf[i]));
+            if (!isCat && rccv!=null) rccv.add((nod[i]==null||clv.at(i)==null)?null:new Double(cv.atD(i)-nod[i].predValD));
+            // warning nod[i]=null should not happen, but appeared when response contained NAs
+            if (nids!=null) nids.add((nod[i]!=null && nod[i].isLeaf())?(new Integer(nod[i].tmp)):null);
+            i++;
+        }
+        if (nids!=null) nids.sortCategories();
+        clv.getNotifier().endBatch();
+        return clv;
     }
 }
 
