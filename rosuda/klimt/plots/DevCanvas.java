@@ -38,7 +38,7 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	setBackground(Common.backgroundColor);
 	addMouseListener(this);
 	//addMouseMotionListener(this);
-	addKeyListener(this);
+	addKeyListener(this); f.addKeyListener(this);
 	ax=new Axis(null,Axis.O_X,Axis.T_EqSize);
 	ay=new Axis(null,Axis.O_Y,Axis.T_Num);
 	setNode(fin);

@@ -174,7 +174,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
 	addMouseMotionListener(this);
 	addMouseListener(this);
-	addKeyListener(this);
+        addKeyListener(this); cont.addKeyListener(this);
     };
 
     /** supply minimal resize dimension (needed especially by MacOS X) */
@@ -732,7 +732,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			SMarker m=n.getSource().getMarker();
 			int setTo=0;
 			if (ev.isControlDown()) setTo=1;
-			if (!ev.isShiftDown()) m.selectNone();
+			if (!ev.isShiftDown() && !ev.isControldown()) m.selectNone();
 			
 			if ((m!=null)&&(n.data!=null)) {
 			    for (Enumeration e2=n.data.elements(); e2.hasMoreElements();) {
@@ -799,6 +799,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /* key handling */
     public void keyTyped(KeyEvent e) 
     {
+        if (Common.DEBUG>0) System.out.println("keyTyped: "+e.toString());
 	if (e.getKeyChar()=='e') run(this,"toolSelect");
 	if (e.getKeyChar()=='z') run(this,"toolZoom");
 	if (e.getKeyChar()=='v') run(this,"toolMove");
@@ -824,6 +825,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
     };
     public void keyPressed(KeyEvent e) {
+        if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
 	//System.out.println("keyPressed, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
 	if (e.getKeyChar()==' ') {
 	    /*
@@ -840,6 +842,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
     };
     public void keyReleased(KeyEvent e) {
+        if (Common.DEBUG>0) System.out.println("keyReleased: "+e.toString());
 	//System.out.println("keyReleased, char='"+e.getKeyChar()+"', Shift="+e.isShiftDown()+", Ctrl="+e.isControlDown()+", PS="+e.paramString());
 	if (e.getKeyChar()==' ')
 	    setToolMode(lastToolModeBeforeMove);

@@ -57,7 +57,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	drag=false;	
 	addMouseListener(this);
 	addMouseMotionListener(this);
-	addKeyListener(this);
+	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
 	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
