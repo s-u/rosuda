@@ -104,12 +104,10 @@ public class LoaderFLF {
 				}
 				v = new SVarFixDouble(fieldName, da, false);
 			} else if (ft.equals("PLN")) {
-				System.out.println("FLF.polygons");
 				v= new SVarObj(fieldName, false);
 				v.setContentsType(SVar.CT_Map);
 				int k=0;
 				while (k<recs) {
-					System.out.println("FLF.polygons r"+k);
 					s=r.readLine();
 					if (s==null) throw new IOException("Corrupted file");
 					int ps = Tools.parseInt(s);
