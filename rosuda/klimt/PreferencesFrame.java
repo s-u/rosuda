@@ -5,10 +5,17 @@
 //  Created by Simon Urbanek on Wed Jun 11 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
+
+package org.rosuda.klimt;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JColorChooser;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.util.*;
 
 public class PreferencesFrame extends Frame implements WindowListener, MouseListener, ActionListener, ItemListener {
     PrefCanvas pc;
@@ -154,11 +161,11 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
             PGSCanvas.getGlobalNotifier().NotifyAll(new NotifyMsg(this,Common.NM_PrefsChanged));            
         }
         if (cmd=="Save") {
-            PluginManager pm=PluginManager.getManager();
-            pm.setParS("Common","color.background",Tools.color2hrgb(Common.backgroundColor));
-            pm.setParS("Common","color.objects",Tools.color2hrgb(Common.objectsColor));
-            pm.setParS("Common","color.select",Tools.color2hrgb(Common.selectColor));
-            pm.saveSettings();
+            GlobalConfig gc=GlobalConfig.getGlobalConfig();
+            gc.setParS("Common.color.background",Tools.color2hrgb(Common.backgroundColor));
+            gc.setParS("Common.color.objects",Tools.color2hrgb(Common.objectsColor));
+            gc.setParS("Common.color.select",Tools.color2hrgb(Common.selectColor));
+            gc.saveSettings();
             setVisible(false);
         }
     }
