@@ -307,18 +307,21 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
      * keyTyped: handle key event.
      */
     public void keyTyped(KeyEvent ke) {
+    	if (System.getProperty("os.name").indexOf("Win")>-1)
+    		this.getRootPane().setDefaultButton(search);
     }
 
     /**
      * keyPressed: handle key event.
      */
     public void keyPressed(KeyEvent ke) {
-    	try {
-    		if (((JTextComponent) ke.getComponent()).getSelectedText().trim().length() > 0) {
-    			this.getRootPane().setDefaultButton(null);
-    		}
-    	} catch (Exception e) {}
-        
+    	if (ke.getKeyCode() == KeyEvent.VK_ENTER && ke.isControlDown() && System.getProperty("os.name").indexOf("Win")>-1) {
+    		try {
+    			if (((JTextComponent) ke.getComponent()).getSelectedText().trim().length() > 0) {
+    				this.getRootPane().setDefaultButton(null);
+    			}
+    		} catch (Exception e) {}
+    	}
     }
 
     /**
@@ -329,8 +332,6 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             String cmd = ( (JTextComponent) ke.getComponent()).getSelectedText().trim();
             if (cmd.length() > 0) JGR.MAINRCONSOLE.execute(cmd,true);
         }
-    	if (this.getRootPane().getDefaultButton() == null)
-    		this.getRootPane().setDefaultButton(search);
     }
 
     /**
