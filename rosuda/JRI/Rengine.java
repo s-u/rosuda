@@ -12,6 +12,10 @@ public class Rengine extends Thread {
             System.exit(1);
         }
     }
+    
+    static Rengine mainEngine=null;
+    
+    public static Rengine getMainEngine() { return mainEngine; }
 
     boolean died, alive, runLoop, loopRunning;
     String[] args;
@@ -27,6 +31,7 @@ public class Rengine extends Thread {
         loopRunning=false;
         this.args=args;
         callback=initialCallbacks;
+        mainEngine=this;
         start();
         while (!alive && !died) yield();
     }
