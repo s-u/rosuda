@@ -57,15 +57,13 @@ FocusListener, RMainLoopCallbacks {
 
         //Initialize JGRConsoleMenu
         String[] Menu = {
-            "+", "File","Load Datafile", "loaddata"/*,"Export Output","exportOutput"*/,"-","@NNew Workspace", "new", "@OLoad Workspace",
-            "open",
-            "@SSave Workspace", "save", "!SSave Workspace as",
-            "saveas","~File.Quit",
+            "+", "File","Load Datafile", "loaddata","-","@NNew Document","new","@OOpen Document","open","!OSource File...","source","-", "@DSet Working Directory", "setwd","~File.Quit", 
             "~EditC",
             "+", "Tools", "@EEditor", "editor", "@BObject Browser", "objectmgr",
-            "DataTable", "table", "-", "@DSet Working Directory", "setwd", "-", "Increase Font Size", "fontBigger",
+            "DataTable", "table", "-", "Increase Font Size", "fontBigger",
             "Decrease Font Size", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",
+            "+","Workspace","Load Workspace","openwsp","Save Workspace", "savewsp", "Save Workspace as", "saveaswsp","Clear Workspace", "clearwsp", 
             "~Window",
             "~Help", "R Help", "help", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
@@ -320,8 +318,8 @@ FocusListener, RMainLoopCallbacks {
     }
 
 	public String rChooseFile(Rengine re, int newFile) {
-		FileDialog fd = new FileDialog(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE);
-		fd.show();
+		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,directory);
+		//fd.show();
 		String res=null;
 		if (fd.getDirectory()!=null) res=fd.getDirectory();
 		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
@@ -354,6 +352,7 @@ FocusListener, RMainLoopCallbacks {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
         else if (cmd == "cut") input.cut();
+        else if (cmd == "clearwsp") execute("rm(list=ls())");
         else if (cmd == "copy") {
             input.copy();
             output.copy();
@@ -372,8 +371,10 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, directory);
-        else if (cmd == "open") loadWorkSpace();
-        else if (cmd == "new") newWorkSpace();
+        else if (cmd == "open") new Editor().open();
+        else if (cmd == "openwsp") loadWorkSpace();
+        else if (cmd == "new") new Editor();
+        //else if (cmd == "newwsp") newWorkSpace();
         else if (cmd == "objectmgr") execute("object.browser()");
         else if (cmd == "packagemgr") execute("package.manager()");
         else if (cmd == "paste") input.paste();
@@ -385,10 +386,11 @@ FocusListener, RMainLoopCallbacks {
             } catch (CannotUndoException ex) {}
         } else if (cmd == "help")  execute("help.start()");
         else if (cmd == "table") new DataTable(null,null);
-        else if (cmd == "save") saveWorkSpace(wspace);
-        else if (cmd == "saveas") saveWorkSpaceAs();
+        else if (cmd == "savewsp" || cmd == "save") saveWorkSpace(wspace);
+        else if (cmd == "saveaswsp") saveWorkSpaceAs();
         else if (cmd == "search") textFinder.showFind(false);
         else if (cmd == "searchnext") textFinder.showFind(true);
+        else if (cmd == "source") execute("source(file.choose())");
         else if (cmd == "stop") JGR.R.rniStop(1);
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {
