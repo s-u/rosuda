@@ -90,7 +90,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 
     public void paste() {
         this.removeCaretListener(this);
-        super.paste();
+        try {
+            SyntaxDocument doc = (SyntaxDocument) this.getDocument();
+        	if (isEditable() && isEnabled()) {
+               doc.insertStringWithoutWhiteSpace(this.getCaretPosition(),Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(),null);
+    	}
+        } catch (Exception e) {
+        }
         this.addCaretListener(this);
     }
 

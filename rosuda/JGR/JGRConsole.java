@@ -84,6 +84,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
         
         output.setEditable(false);
         output.addFocusListener(this);
+        output.addKeyListener(this);
 
         JScrollPane sp1 = new JScrollPane(output);
         sp1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -375,11 +376,11 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
                 input.setCaretPosition(0);
             }
         }
-        if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
-        	if (SyntaxInput.mComplete != null && SyntaxInput.mComplete.isVisible()) {
-        		SyntaxInput.mComplete.selectPrevios();
+        if (ke.getKeyCode() == KeyEvent.VK_UP) {
+        	if (input.mComplete != null && input.mComplete.isVisible()) {
+        		input.mComplete.selectPrevios();
         	}
-            else {
+            else if (currentHistPosition > 0){
             	if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
             		if (input.getText().trim().length() > 0) {
             			if (currentHistPosition==JGR.RHISTORY.size() && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
@@ -393,8 +394,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-        	if (SyntaxInput.mComplete != null && SyntaxInput.mComplete.isVisible()) {
-        		SyntaxInput.mComplete.selectNext();
+        	if (input.mComplete != null && input.mComplete.isVisible()) {
+        		input.mComplete.selectNext();
         	}
             else {
             	if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
@@ -414,12 +415,15 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 
     public void keyReleased(KeyEvent ke) {
     	if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
-        	if (SyntaxInput.mComplete != null && SyntaxInput.mComplete.isVisible()) {
-        		SyntaxInput.mComplete.completeCommand();
+        	if (input.mComplete != null && input.mComplete.isVisible() && !(ke.isControlDown() || ke.isMetaDown())) {
+        		input.mComplete.completeCommand();
         	}
             else {
             	if (ke.isControlDown() || ke.isMetaDown()) {
-            		try { inputDoc.insertString(input.getCaretPosition(), "\n", null); } catch (Exception e) {}
+            		try { 
+            			inputDoc.insertString(input.getCaretPosition(), "\n", null);
+            			input.mComplete.setVisible(false);
+            		} catch (Exception e) {}
             	}
             	else {
             		String cmd = input.getText().trim();
@@ -430,9 +434,10 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
             	}
             }
         }
-        if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
-            input.paste();
+    	if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
             input.requestFocus();
+            //input.setCaretPosition(input.getText().length());
+            input.paste();
             input.setCaretPosition(input.getText().length());
         }
         else if ((ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) && wasHistEvent) {

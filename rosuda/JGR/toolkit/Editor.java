@@ -37,7 +37,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private GridBagLayout layout = new GridBagLayout();
     private CaretListenerLabel caretStatus = new CaretListenerLabel();
     private JLabel modifiedStatus = new JLabel();
-    private SyntaxInput editArea = new SyntaxInput(false);
+    private SyntaxInput editArea = new SyntaxInput(true);
     private Document editDoc = editArea.getDocument();
 
     private ToolBar toolBar;
@@ -163,7 +163,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             fileName = (directory = fopen.getDirectory()) + fopen.getFile();
         }
         if (!modified) loadFile();
-        else new Editor(fileName);
+        else if (fileName != null && fileName.trim().length() > 0) new Editor(fileName);
     }
 
     public void loadFile() {
@@ -286,8 +286,11 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()");
         else if (cmd == "open") open();
         else if (cmd.startsWith("recent:")) {
-            fileName = cmd.replaceFirst("recent:","");
-            loadFile();
+            if (modified) new Editor(cmd.replaceFirst("recent:",""));
+            else {
+            	fileName = cmd.replaceFirst("recent:","");
+            	loadFile();
+            }
         }
         else if (cmd == "paste") editArea.paste();
         else if (cmd == "prefs") new PrefsDialog(this);
@@ -327,11 +330,24 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 
     public void keyPressed(KeyEvent ke) {
         setModified(modified = true);
-        if (ke.getKeyCode() == KeyEvent.VK_ENTER &&
-            (ke.isControlDown() || ke.isMetaDown())) {
-            if (JGR.MAINRCONSOLE != null) {
+        if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+        	if ((ke.isControlDown() || ke.isMetaDown()) && JGR.MAINRCONSOLE != null && editArea.getSelectedText() != null) {
                 JGR.MAINRCONSOLE.execute(editArea.getSelectedText());
             }
+            else if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
+            	editArea.mComplete.completeCommand();
+            }
+            else editArea.insertAt(editArea.getCaretPosition(),"\n");
+        }
+        else if (ke.getKeyCode() == KeyEvent.VK_UP) {
+        	if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
+        		editArea.mComplete.selectPrevios();
+        	}
+        }
+        else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+        	if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
+        		editArea.mComplete.selectNext();
+        	}
         }
     }
 

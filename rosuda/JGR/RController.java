@@ -13,7 +13,6 @@ import java.util.*;
 import org.rosuda.ibase.*;
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.robjects.*;
-import org.rosuda.JGR.toolkit.*;
 
 public class RController {
 
@@ -154,27 +153,12 @@ public class RController {
         JGR.DATA.clear();
         JGR.OTHERS.clear();
         JGR.MODELS.clear();
-        String[] res1;
-        REXP x = JGR.R.eval("ls()");
-        if (x!= null && (res1 = x.asStringArray()) != null) {
-            for (int i = 0; i < res1.length; i++) {
-                String sx = res1[i];
-                    if (!sx.equals("last.warning")) {
-                    if (isClass(sx,"data.frame")) JGR.DATA.add(createDataFrame(sx));
-                    else if (isClass(sx,"table")) JGR.DATA.add(createTable(sx));
-                    else if (isClass(sx,"lm")) JGRObjectManager.models.add(createModel(sx,RObject.LM));
-                    else if (isClass(sx,"glm")) JGRObjectManager.models.add(createModel(sx,RObject.GLM));
-                    //else if (isClass(sx,"aov")) RObjectManager.models.add(createModel(sx,RObject.ANOVA));
-                    else if (isClass(sx,"list")) JGR.OTHERS.add(createList(sx));
-                    else if (isClass(sx,"matrix")) JGR.OTHERS.add(createMatrix(sx));
-                    else {
-                    	RObject other = createOther(sx);
-                    	if (other != null) JGR.OTHERS.add(other);
-                    }
-                }
-            }
+        String models[];
+        REXP x = JGR.R.eval(".getModels()");
+        if (x != null && (models = x.asStringArray()) != null) {
+        	for (int i = 0; i < models.length; i++)
+        		JGR.MODELS.add(createModel(models[i],models[++i]));
         }
-        else return;
     }
 
 
@@ -303,39 +287,39 @@ public class RController {
     }
 
     /* create a r-model as java-object */
-    public static model createModel(String sx, int type) {
-        model m = new model(sx,type);
-        REXP y = JGR.R.eval("summary("+sx+")$r.squared");
+    public static RModel createModel(String sx, String type) {
+    	RModel m = new RModel(sx,type);
+        REXP y = JGR.R.eval("summary("+sx+")[[\"r.squared\"]]");
         double[] res;
         if (y != null && (res = y.asDoubleArray()) != null) m.setRsquared(res[0]);
-        y = JGR.R.eval("summary("+sx+")$aic");
+        y = JGR.R.eval("summary("+sx+")[[\"aic\"]]");
         if (y != null && (res = y.asDoubleArray()) != null) m.setAic(res[0]);
-        y = JGR.R.eval("summary("+sx+")$deviance");
+        y = JGR.R.eval("summary("+sx+")[[\"deviance\"]]");
         if (y != null && (res = y.asDoubleArray()) != null) m.setDeviance(res[0]);
         int[] res1;
-        y = JGR.R.eval("summary("+sx+")$df");
+        y = JGR.R.eval("summary("+sx+")[[\"df\"]]");
         if (y != null && (res1 = y.asIntArray()) != null) m.setDf(res1[0]);
         String[] res2;
-        y = JGR.R.eval("summary("+sx+")$family$family");
+        y = JGR.R.eval("summary("+sx+")[[\"family\"]][[\"family\"]]");
         if (y != null && (res2 = y.asStringArray()) != null) m.setFamily(res2[0]);
-        y = JGR.R.eval("as.character(("+sx+"$call))"); //as.character((cm$call))
+        y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]])))"); //as.character((cm$call))
         if (y != null && (res2 = y.asStringArray()) != null) {
-            m.setCall(res2[1]+(res2.length==3?(", data = "+res2[2]):""));
-            if (res2.length==3) m.setData(res2[2]);
+            m.setCall(res2[0]);
+            int i = -1;
+            if ((i = res2[0].indexOf("data")) > 0) m.setData(res2[0].substring(i+6).replace(')',' ').trim());
         }
         return m;
     }
 
     /* get short usage of function*/
     public static String getFunHelp(String s) {
-        System.out.println("s "+s); 
         if (s==null) return null;
         String tip = null;
         String res[] = null;
         REXP x;
         try { x = JGR.R.eval("try(deparse(args("+s+")),silent=T)"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null) {
-            tip = "<html><pre>"; 
+        	tip = "<html><pre>"; 
             int l = -1;
             for (int i = 0; i < (l=res.length); i++) {
                 System.out.println(res[i]);
@@ -345,6 +329,7 @@ public class RController {
             tip += "</pre></html>";
         }
         else return null;
+        if (tip.trim().equals("<html><pre></pre></html>")) return null;
         return (tip.indexOf("Error")>0)?null:tip;
     }
 

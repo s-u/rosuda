@@ -64,6 +64,12 @@ public class SyntaxDocument extends JGRStyledDocument {
         int len = str.length();
         processChangedLines(offset, len);
     }
+    
+    public void insertStringWithoutWhiteSpace(final int offset, String str, AttributeSet a) throws BadLocationException {
+    	super.insertString(offset, str, a);
+    	int len = str.length();
+    	processChangedLines(offset, len);
+    }    
 
 
     /*

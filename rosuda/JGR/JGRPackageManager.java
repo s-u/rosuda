@@ -31,7 +31,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
     private JTable pkgTable = new JTable();
 
     public JGRPackageManager() {
-        super("Package Manager",157);
+        super("Package Manager",iFrame.clsPackageUtil);
         try {
         String[] Menu = {
             /*"+", "File", "~File.Basic.End",*/

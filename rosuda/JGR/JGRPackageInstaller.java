@@ -23,7 +23,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
     private JButton close = new JButton("Close");
 
     public JGRPackageInstaller(String[] pkgs) {
-        super("Package Installer",157);
+        super("Package Installer",iFrame.clsPackageUtil);
 
         packages = pkgs;
 

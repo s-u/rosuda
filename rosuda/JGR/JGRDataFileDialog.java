@@ -95,12 +95,6 @@ public class JGRDataFileDialog extends JDialog implements ActionListener, ItemLi
 
         this.setSize(new Dimension(500, 450));
         this.setLocation((screenSize.width-500)/2,(screenSize.height-450)/2);
-        //if (iPreferences.isMac) this.setResizable(false);
-        /*this.addComponentListener( new java.awt.event.ComponentAdapter() {
-            public void componentResized(java.awt.event.ComponentEvent evt) {
-                fileChooser.setSize((int) (getWidth()-10),(int) (getHeight()-150));
-            }
-        });*/
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 dispose();

@@ -25,12 +25,12 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
 	private boolean disableEnter = false;
 	private Vector commands = new Vector();
-	private static String fun = null;
-	private static String funHelp = null;
+	private String fun = null;
+	private String funHelp = null;
 	private Popup funHelpTip = null;
 	private Popup cmdHelp = null;
 	private JToolTip Tip = new JToolTip();
-	public static CodeCompleteMultiple mComplete;
+	public  CodeCompleteMultiple mComplete;
 	private Point p;
 	
 	public SyntaxInput(boolean disableEnter){
@@ -98,8 +98,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 		int pos = getCaretPosition();
 	 		if (pos==0) return;
 	 		try {
-	 			text = getText(getLineStartOffset(getLineOfOffset(pos)),pos);
-	 		} catch (Exception e) {}
+	 			int i = getLineStartOffset(getLineOfOffset(pos));
+	 			text = getText(i,pos-i);
+	 		} catch (Exception e) {
+	 		}
 	 		if (text == null) return;
 	 		int tl = text.length(), tp=0, quotes=0, dquotes=0, lastQuote=-1;
 	 		while (tp<tl) {
@@ -139,7 +141,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 			}
 	 		}	
 	 	}
-	 	else if (ke.getKeyChar() == '(' || ke.getKeyCode() == KeyEvent.VK_F1) {
+	 	else if (JGRPrefs.useHelpAgent && ke.getKeyChar() == '(' || ke.getKeyCode() == KeyEvent.VK_F1) {
 	 		if (p != null && p.equals(getCaret().getMagicCaretPosition())) {}
 	 		else {
                             if (funHelpTip != null) funHelpTip.hide();
@@ -152,7 +154,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                                 });
 	 		}
 	 	}
-	 	else if (ke.getKeyChar() == ')') {
+	 	else if (JGRPrefs.useHelpAgent && ke.getKeyChar() == ')') {
                     if (commands.size() > 2) {
                             commands.removeElementAt(commands.size()-1);
                             commands.removeElementAt(commands.size()-1);
@@ -175,14 +177,14 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 	}
 	 	else if (mComplete != null && mComplete.isVisible()) {
 			int k = ke.getKeyCode();
-	 		if (k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
+	 		if (k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
 	 			fun = getLastCommand();
 	 			if (fun != null) {
 	 				String[] result = new String[1];
 	 				result = RController.completeCommand(fun);
 	 				if (result != null && result.length > 0){
-                                            if (funHelpTip != null) funHelpTip.hide();
-                                            showCmdCompletions(result);
+                        if (funHelpTip != null) funHelpTip.hide();
+                        showCmdCompletions(result);
 	 				}
 	 				else {
 	 					if (cmdHelp != null) cmdHelp.hide();
@@ -194,6 +196,11 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	 				mComplete.setVisible(false);
 	 			}
 	 		}
+	 	}
+	 	else if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (cmdHelp != null) cmdHelp.hide();
+ 				mComplete.setVisible(false);
+ 				if (funHelpTip != null) funHelpTip.hide();
 	 	}
 	}
 
@@ -234,7 +241,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
 	class SyntaxInputDocument extends SyntaxDocument {
 		public void remove(int offset, int length) throws BadLocationException {
-			if (getText(offset,length).equals("(")) {
+			if (JGRPrefs.useHelpAgent && getText(offset,length).equals("(")) {
 		 		if (commands.size() > 2) {
 		 			commands.removeElementAt(commands.size()-1);
 		 			commands.removeElementAt(commands.size()-1);
@@ -344,6 +351,11 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			int i = cmds.getSelectedIndex();
 			if (++i < cmds.getItemCount())
 				cmds.select(i);
+		}
+		
+		public void setVisible(boolean b) {
+			if (!b && cmdHelp != null) cmdHelp.hide();
+			super.setVisible(b);
 		}
 	}
 }

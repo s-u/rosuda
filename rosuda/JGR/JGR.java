@@ -23,6 +23,20 @@ import org.rosuda.JGR.util.*;
 
 
 public class JGR {
+	
+	/* Copyright information and other stuff */
+	
+	public static final String VERSION = "DP5 (inofficial)";
+    public static final String TITLE = "JGR";
+    public static final String SUBTITLE = "Java Gui for R";
+    public static final String DEVELTIME = "2003 - 2004";
+    public static final String INSTITUTION = "RoSuDa, Univ. Augsburg";
+    public static final String AUTHOR1 = "Markus Helbig";
+    public static final String AUTHOR2 = "Simon Urbanek";
+    public static final String WEBSITE = "http://www.rosuda.org";
+    public static final String LOGO = "logo.jpg";
+    public static final String SPLASH = "splash.jpg";
+
 
 
     public static Vector RHISTORY = null;

@@ -14,6 +14,7 @@ import javax.swing.*;
 
 import org.rosuda.ibase.*;
 
+import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.util.*;
 
 public class SplashScreen extends JWindow implements Runnable {
@@ -29,7 +30,7 @@ public class SplashScreen extends JWindow implements Runnable {
 
     public SplashScreen() {
         try {
-            splash = loadSplash(JGRPrefs.SPLASH);
+            splash = loadSplash(JGR.SPLASH);
         }
         catch (Exception e) {
             if (JGRPrefs.DEBUG>0) System.out.println("Missing Splashlogo: "+e.getMessage());
@@ -46,25 +47,25 @@ public class SplashScreen extends JWindow implements Runnable {
             if (splash != null)
                 g.drawImage(splash, 0, 0, splash.getWidth(this),splash.getHeight(this),this);
             g.setFont(new Font("Dialog", Font.BOLD, 26));
-            g.drawString(JGRPrefs.TITLE, 170,
+            g.drawString(JGR.TITLE, 170,
                          40);
             g.setFont(new Font("Dialog", Font.BOLD, 16));
-            g.drawString(JGRPrefs.SUBTITLE, 150,
+            g.drawString(JGR.SUBTITLE, 150,
                          70);
             g.setFont(new Font("Dialog", 0, 11));
-            g.drawString("Version: " + JGRPrefs.VERSION,
+            g.drawString("Version: " + JGR.VERSION,
                          175, 85);
             g.setFont(new Font("Dialog", Font.ITALIC, 13));
-            g.drawString("" + JGRPrefs.AUTHOR1,
+            g.drawString("" + JGR.AUTHOR1,
                          163, 119);
-            g.drawString("" + JGRPrefs.AUTHOR2,
+            g.drawString("" + JGR.AUTHOR2,
                          160, 135);
             g.setFont(new Font("Dialog", 0, 12));
             g.setColor(Color.blue);
-            g.drawString(JGRPrefs.WEBSITE,150, splashSize.height - 35);
+            g.drawString(JGR.WEBSITE,150, splashSize.height - 35);
             g.setColor(Color.black);
             g.setFont(new Font("Dialog", 0, 12));
-            g.drawString("(c) " + JGRPrefs.DEVELTIME+ ", " +JGRPrefs.INSTITUTION, 10,
+            g.drawString("(c) " + JGR.DEVELTIME+ ", " +JGR.INSTITUTION, 10,
                          splashSize.height - 10);
             g.drawRect(0, 0, splashSize.width - 1, splashSize.height - 1);
         }

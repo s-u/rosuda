@@ -10,7 +10,6 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
 import java.io.*;
-import java.util.*;
 import java.util.prefs.*;
 import javax.swing.text.*;
 
@@ -21,18 +20,7 @@ import java.util.prefs.Preferences;
 public class JGRPrefs {
 
 
-    public static final String VERSION = "DP5";
-    public static final String TITLE = "JGR";
-    public static final String SUBTITLE = "Java Gui for R";
-    public static final String DEVELTIME = "2003 - 2004";
-    public static final String INSTITUTION = "RoSuDa, Univ. Augsburg";
-    public static final String AUTHOR1 = "Markus Helbig";
-    public static final String AUTHOR2 = "Simon Urbanek";
-    public static final String WEBSITE = "http://www.rosuda.org";
-    public static final String LOGO = "logo.jpg";
-    public static final String SPLASH = "splash.jpg";
-
-    public static final int DEBUG = 0;
+	public static final int DEBUG = 0;
     public static boolean isMac = false;
 
     /** DefaultFontName */
@@ -83,13 +71,15 @@ public class JGRPrefs {
     public static MutableAttributeSet QUOTE = new SimpleAttributeSet();
     /** DefaultQuoteColor */
     public static Color QUOTEColor = Color.blue;
-    /** Tabsize */
-    public static int TABSIZE = 4;
-
-    public static int MAXHELPTABS = 10;
-
+    
+    
+    public static int maxHelpTabs = 10;
+    
+    public static boolean useHelpAgent = true;
     
     public static boolean useEmacsKeyBindings = false;
+    
+    
 
     public static void apply() {
         JGRPrefs.refresh();
@@ -97,7 +87,6 @@ public class JGRPrefs {
     }
 
     public static void initialize() {
-        //later we will read the prefs file
         readPrefs();
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
@@ -151,7 +140,8 @@ public class JGRPrefs {
         Preferences prefs = Preferences.userNodeForPackage(String.class);
         FontName = prefs.get("FontName","Dialog");
         FontSize = prefs.getInt("FontSize",12);
-        MAXHELPTABS = prefs.getInt("MaxHelpTabs",10);
+        maxHelpTabs = prefs.getInt("MaxHelpTabs",10);
+        useHelpAgent = prefs.getBoolean("UseHelpAgent", true);
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
     }
@@ -161,7 +151,8 @@ public class JGRPrefs {
 
         prefs.put("FontName", FontName);        // String
         prefs.putInt("FontSize", FontSize);               // int
-        prefs.putInt("MaxHelpTabs",MAXHELPTABS);
+        prefs.putInt("MaxHelpTabs",maxHelpTabs);
+        prefs.putBoolean("UseHelpAgent", useHelpAgent);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
         String packages = "";
         if (JGRPackageManager.defaultPackages.length > 0) {
