@@ -19,7 +19,12 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     int mark[];
     /** maximum of misclassified cases per tree */
     int xv;
+    /** maximal range */
+    int xr;
 
+    /** alternate display (horizontal) */
+    boolean xdisp=false;
+    
     /** query popup handler */
     QueryPopup qi;
     
@@ -63,7 +68,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         count=new int[bs];
         mark=new int[bs];
         int i=0;
-        xv=0;
+        xv=xr=0;
         SVar r=null;
         while(i<bs) {
             SNode n=(SNode)v.elementAt(i);
@@ -80,6 +85,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                 }
             }
             if (count[i]>xv) xv=count[i];
+            if (c.size()-count[i]+xv>xr) xr=c.size()-count[i]+xv;
             if (Common.DEBUG>0)
                 System.out.println("i="+i+", xv="+xv+", count="+count[i]+", mark="+mark[i]);
             i++;
@@ -100,35 +106,65 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         g.defineColor("marked",128,255,128);
         g.defineColor("red",255,0,0);
 
-        g.setColor("outline");
-        g.drawLine(leftm,h-botm,leftm,topm);
-        g.drawLine(leftm,h-botm,w-rightm,h-botm);
+        if (!xdisp) {
+            g.setColor("outline");
+            g.drawLine(leftm,h-botm,leftm,topm);
+            g.drawLine(leftm,h-botm,w-rightm,h-botm);
 
-        if (count!=null) {
-            int bs=count.length;
-            double ddx=((double)(rdx-bs*3))/((double)bs);
-            double yf=((double)rdy)/((double)xv);
-            int i=0;
-            while(i<bs) {
-                int x1=leftm+(int)(ddx*i)+i*3;
-                g.setColor("fill");
-                int ht=(int)(yf*count[i]);
-                int hm=(int)(yf*mark[i]);
-                g.fillRect(x1,h-botm-ht,(int)ddx,ht);
-                if (mark[i]>0) {
-                    g.setColor("marked");
-                    g.fillRect(x1,h-botm-hm,(int)ddx,hm);
+            if (count!=null) {
+                int bs=count.length;
+                double ddx=((double)(rdx-bs*3))/((double)bs);
+                double yf=((double)rdy)/((double)xv);
+                int i=0;
+                while(i<bs) {
+                    int x1=leftm+(int)(ddx*i)+i*3;
+                    g.setColor("fill");
+                    int ht=(int)(yf*count[i]);
+                    int hm=(int)(yf*mark[i]);
+                    g.fillRect(x1,h-botm-ht,(int)ddx,ht);
+                    if (mark[i]>0) {
+                        g.setColor("marked");
+                        g.fillRect(x1,h-botm-hm,(int)ddx,hm);
+                    };
+                    g.setColor("outline");
+                    g.drawRect(x1,h-botm-ht,(int)ddx,ht);
+                    i++;
+                };
+            };
+        } else {
+            if (count!=null) {
+                int bs=count.length;
+                double ddy=((double)(rdy))/((double)bs);
+                double xf=((double)rdx)/((double)xr);
+                int base=leftm+(int)(xf*xv);
+                int i=0;
+                int sc=(int)(xf*m.size());
+                while(i<bs) {
+                    int y1=topm+(int)(ddy*(0.15+(double)i));
+                    g.setColor("fill");
+                    int ht=(int)(xf*count[i]);
+                    int hm=(int)(xf*mark[i]);
+                    int rm=(int)(xf*(m.marked()-mark[i]));
+                    g.fillRect(base-ht,y1,sc,(int)(ddy*0.7));
+                    if (m.marked()>0) {
+                        g.setColor("marked");
+                        g.fillRect(base-hm,y1,hm+rm,(int)(ddy*0.7));
+                    };
+                    g.setColor("outline");
+                    g.drawRect(base-ht,y1,sc,(int)(ddy*0.7));
+                    i++;
                 };
                 g.setColor("outline");
-                g.drawRect(x1,h-botm-ht,(int)ddx,ht);
-                i++;
-            };
-	};
+                g.drawLine(base,topm,base,h-botm);
+            }
+            
+        }
         g.end();
     };
     
     public void mouseClicked(MouseEvent ev) 
     {
+        if (xdisp) return;
 	Point cl=getFrame().getLocation();
 	int x=ev.getX(), y=ev.getY();
 	int i=0, setTo=0;
@@ -230,6 +266,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
+        if (e.getKeyChar()=='R') run(this,"rotate");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -238,6 +275,10 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
         if (cmd=="print") run(o,"exportPS");
+        if (cmd=="rotate") {
+            xdisp=!xdisp;
+            repaint();
+        };
         if (cmd=="exportCases") {
 /*
             try {
