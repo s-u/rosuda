@@ -146,7 +146,8 @@ public class REXP extends Object {
 	if (xt==XT_BOOL) {
 	    x.cont=new RBool(buf[o]); o++;
 	    if (o!=eox) {
-		System.out.println("Warning: bool SEXP size mismatch\n");
+                if (eox!=o+3) // o+3 could happen if the result was aligned (1 byte data + 3 bytes padding)
+                    System.out.println("Warning: bool SEXP size mismatch\n");
 		o=eox;
 	    };
 	    return o;
