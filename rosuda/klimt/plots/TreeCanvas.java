@@ -152,7 +152,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	
 	//--- this is a bit tricky - not really clean enough --
 	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...",
-                          "exportPGS","Export forest data ...","exportForest","Print","print","-","Quit","quit",
+                          "exportPGS","Export forest data ...","exportForest","Display forest","displayForest","Print","print","-","Quit","quit",
                           "+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
@@ -718,6 +718,43 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 };
             } catch (Exception eee) {};
             
+        }
+        if (cmd=="displayForest") {
+            SVarSet fs=new SVarSet(); fs.setName("Forest");
+            SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
+            SVar v_var=new SVar("Variable",true); fs.add(v_var);
+            SVar v_node=new SVar("NodeID"); fs.add(v_node);
+            SVar v_cases=new SVar("cases"); fs.add(v_cases);
+            SVar v_sdg=new SVar("dev.Gain"); fs.add(v_sdg);
+            
+            SVarSet.TreeEntry te;
+            if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
+            for (Enumeration e=root.getSource().trees.elements(); e.hasMoreElements();) {
+                te=(SVarSet.TreeEntry)e.nextElement();
+                if (Common.DEBUG>0) System.out.println("including tree \""+te.name+"\"...");
+                if (te.root!=null) {
+                    Vector v=new Vector();
+                    te.root.getAllNodes(v);
+                    if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
+                    for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
+                        SNode np=(SNode)e2.nextElement();
+                        if (!np.isLeaf()) {
+                            SNode n=(SNode)np.at(0);
+                            if (n!=null) {
+                                //p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
+                                v_tree.add(te.name); v_var.add(n.splitVar.getName());
+                                v_node.add(new Integer(n.id)); v_cases.add(new Integer(np.data.size()));
+                                v_sdg.add(new Double(np.sampleDevGain));
+                            };
+                        }
+                    }
+                }
+            }
+            SMarker m=new SMarker(v_var.size());
+            fs.setMarker(m);
+            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
+            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
         }
 	return null;
     };  
