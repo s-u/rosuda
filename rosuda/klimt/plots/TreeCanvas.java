@@ -745,9 +745,15 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (cmd=="new") {
  	    TFrame f=new TFrame("Pruned copy of \""+root.getSource().getName()+"\"",TFrame.clsTree);
 	    SNode t=Klimt.makePrunedCopy(root);
-	    TreeCanvas tc=Klimt.newTreeDisplay(t,f);
-	    //Common.mainFrame.add(f);
-	    tc.repaint(); tc.redesignNodes();
+            if (t!=null) {
+                if (t.getRootInfo().name==null)
+                    t.getRootInfo().name="Pr_"+root.getSource().getName();
+                if (root.getRootInfo().home!=null)
+                    root.getRootInfo().home.registerTree(t,t.getRootInfo().name);
+                TreeCanvas tc=Klimt.newTreeDisplay(t,f);
+                //Common.mainFrame.add(f);
+                tc.repaint(); tc.redesignNodes();
+            }
 	};
 	if (cmd=="openTree") {
 	    //SVarSet tvs=new SVarSet();
