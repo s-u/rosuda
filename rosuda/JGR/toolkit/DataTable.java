@@ -117,7 +117,6 @@ KeyListener {
         sorter = new TableSorter(tabModel = new DataTableModel(this));
         dataTable.setModel(sorter);
         sorter.setTableHeader(tableHeader);
-        dataTable.setToolTipText(vs.getName());
         dataTable.setShowGrid(true);
         dataTable.setRowHeight((int) (JGRPrefs.FontSize*1.6));
         dataTable.setColumnSelectionAllowed(true);
