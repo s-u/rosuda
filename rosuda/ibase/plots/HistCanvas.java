@@ -132,6 +132,12 @@ public class HistCanvas extends BaseCanvas
         setUpdateRoot(0);
         repaint();
     }
+
+    public double[] getHistParam() {
+        double[] hp=new double[3];
+        hp[0]=anchor; hp[1]=binw; hp[2]=v.getMax();
+        return hp;
+    }
     
     public void paintBack(PoGraSS g) {        
         g.setColor("black");
@@ -228,8 +234,8 @@ public class HistCanvas extends BaseCanvas
         if (pp!=null && pp[i]!=null) {
             int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
             double la=ax.vBegin+binw*i;
-            return "["+ax.getDisplayableValue(la)+" - "+ax.getDisplayableValue(la+binw)+")\n"+mark+" of "+pp[i].cases()+" selected";
-        };
+            return "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
+        }
         return "N/A";
     }
     
