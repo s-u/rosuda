@@ -36,6 +36,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     boolean drawAxes=false;
     boolean dropColor=false;
 
+    int xtraShift=0; // hack,hack,hack - this allows individual scales to be move up a bit to prevent clutter on the y axis
+    int nodeSize=3;
     boolean isResidPlot=false; // we should move this out - that's a specific PCP ...
     boolean showResidLines=false;
     
@@ -168,7 +170,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    int i=1;
 	    while (i<A.length) {
 		if (A[i]!=null)
-		    A[i].setGeometry(Axis.O_Y,innerB,H=innerH);
+		    A[i].setGeometry(Axis.O_Y,innerB+xtraShift,(H=innerH)-xtraShift);
 		i++;
 	    }
 	    Y=TH-innerB-innerH;
@@ -235,7 +237,8 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         
         g.setColor("line",alpha);
         boolean isZ=false;
-	for (int j=2;j<v.length;j++) {
+        int pd=(nodeSize>>1);
+	for (int j=2;j<v.length;j++)
 	    for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
                     if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
@@ -243,31 +246,43 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                     }
                     if (drawPoints) {
                         int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
-                        g.fillOval(x-1,y-1,3,3);
+                        g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
                     }
                     if ((dropColor && (v[j].at(i)==null))!=isZ) {
                         isZ=!isZ; g.setColor(isZ?"lineZ":"line",alpha);
                     }
                     g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
                                A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
-                }                    
-	}
+                }
+                    
+        if (drawPoints) // last variable is not painted in the loop above, so we do it now
+	    for (int i=0;i<v[1].size();i++)
+                if ((drawHidden || !m.at(i)) && (na0 || (v[v.length-1].at(i)!=null))) {
+                    int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
+                    g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
+                }
 	
         g.nextLayer();
         
         if (m.marked()>0) {
             g.setColor("marked");
-            for (int j=2;j<v.length;j++) {
+            for (int j=2;j<v.length;j++)
                 for (int i=0;i<v[1].size();i++)
                     if (m.at(i) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
 			g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
 				   A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
                         if (drawPoints) {
                             int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
-                            g.fillOval(x-1,y-1,3,3);
+                            g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
                         }
                     }
-            }
+                        
+            if (drawPoints) // last variable is not painted in the loop above, so we do it now
+                for (int i=0;i<v[1].size();i++)
+                    if (m.at(i) && (na0 || (v[v.length-1].at(i)!=null))) {
+                        int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
+                        g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
+                    }
         }
 
         if (drag) {
@@ -347,11 +362,15 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	if (e.getKeyChar()=='c') run(this,"common");
 	if (e.getKeyChar()=='n') run(this,"toggleNA");
 	if (e.getKeyChar()=='S') run(this,"scaleDlg");
+        if (e.getKeyChar()=='.') { xtraShift+=5; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()==',') { xtraShift-=5; if (xtraShift<0) xtraShift=0; setUpdateRoot(0); repaint(); }
     }
     
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT) run(this, "alphaUp");
         if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, "alphaDown");
+        if (e.getKeyCode()==KeyEvent.VK_UP) { nodeSize+=1; setUpdateRoot(0); repaint(); };
+        if (e.getKeyCode()==KeyEvent.VK_DOWN) { nodeSize-=1; if (nodeSize<3) nodeSize=3; setUpdateRoot(0); repaint(); };
     }
     
     public void keyReleased(KeyEvent e) {}
