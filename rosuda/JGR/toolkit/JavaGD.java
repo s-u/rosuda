@@ -34,7 +34,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         };        
         jfr.addWindowListener(this);
 
-        String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
+        String[] Menu = { "+","File","Save as PDF...","savePDF","Save as EPS...","saveEPS","+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
         iMenu.getMenu(jfr, this, Menu);
 
         jfr.setDefaultCloseOperation(javax.swing.JFrame.DISPOSE_ON_CLOSE);
@@ -80,6 +80,10 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         String cmd = e.getActionCommand();
         if (cmd.equals("copyImg"))
             org.rosuda.util.ImageSelection.copyComponent((java.awt.Component)c,false,true);
+		if (cmd.equals("savePDF"))
+			org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=pdf, source="+(getDeviceNumber()+1)+", onefile=TRUE, paper=\"special\")");
+		if (cmd.equals("saveEPS"))
+			org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=postscript, "+(getDeviceNumber()+1)+", onefile=TRUE, paper=\"special\")");
     }
 
     public void windowClosing(WindowEvent e) {
