@@ -1,4 +1,5 @@
 import java.awt.Rectangle;
+import java.awt.Color;
 import java.io.PrintStream;
 
 /** Portable Graphics SubSystem - first draft of the abstract interface definition.
@@ -10,7 +11,9 @@ import java.io.PrintStream;
     0.94: (CVS 1.5) support for extended drawString and font handling
     0.95: (CVS 1.6) support for polygons
     0.96: (CVS 1.7) support for separate fill/pen colors and regular commands (rect, oval,...)
-                    backwards compatibility is provided by the {@link #jointColors} flag. 
+                    backwards compatibility is provided by the {@link #jointColors} flag.
+       b            added setColor(Color) for compatibility with Graphics
+
     @version $Id$
 */
 public class PoGraSS
@@ -92,6 +95,7 @@ public class PoGraSS
     public void defineColor(String nam, int R, int G, int B) {};
     public void setColor(int R, int G, int B) {};
     public void setColor(String nam) {};
+    public void setColor(Color c) { setColor(c.getRed(),c.getGreen(),c.getBlue()); }; // for compatibility only (drops alpha info) since 0.96b
     public void drawLine(int x1, int y1, int x2, int y2) {};
     public void moveTo(int x, int y) {};
     public void lineTo(int x, int y) {};
