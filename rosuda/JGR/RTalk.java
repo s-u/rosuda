@@ -105,6 +105,7 @@ public class RTalk {
         fn = (fb < tl) ? part.substring(fb) : "";
         File directory = null;
         String[] cont = null;
+        System.out.println(dir);
         if ( (directory = new File(dir)).exists())
             cont = directory.list();
         if (cont == null)

@@ -500,14 +500,14 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void focusGained(FocusEvent e) {
         if (e.getSource().equals(output)) {
             cutButton.setEnabled(false);
-            pasteButton.setEnabled(false);
+            //pasteButton.setEnabled(false);
             iMenu.getItem(this, "cut").setEnabled(false);
-            iMenu.getItem(this, "paste").setEnabled(false);
+            //iMenu.getItem(this, "paste").setEnabled(false);
         } else if (e.getSource().equals(input)) {
             cutButton.setEnabled(true);
-            pasteButton.setEnabled(true);
+            //pasteButton.setEnabled(true);
             iMenu.getItem(this, "cut").setEnabled(true);
-            iMenu.getItem(this, "paste").setEnabled(true);
+            //iMenu.getItem(this, "paste").setEnabled(true);
             //output.setCaretPosition(outputDoc.getLength());
         }
     }
