@@ -108,6 +108,7 @@ public class REXP extends Object {
 	boolean hasAtt=((buf[o]&128)!=0);
         boolean isLong=((buf[o]&64)!=0);
 	int xt=(int)(buf[o]&63);
+        //System.out.println("parseREXP: type="+xt+", len="+xl+", hasAtt="+hasAtt+", isLong="+isLong);
         if (isLong) o+=4;
         o+=4;
 	int eox=o+xl;
@@ -311,6 +312,9 @@ public class REXP extends Object {
 	return o;
     }
 
+    /** Calculates the length of the binary representation of the REXP including all headers. This is the amount of memory necessary to store the REXP via {@link #getBinaryRepresentation}.
+        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_STR are supported! All other types will return 4 which is the size of the header.
+        @return length of the REXP including headers (4 or 8 bytes)*/
     public int getBinaryLength() {
 	int l=0;
 	switch (Xt) {
@@ -320,13 +324,20 @@ public class REXP extends Object {
 	case XT_ARRAY_INT: l=(cont==null)?0:((int[])cont).length*4; break;
 	case XT_ARRAY_DOUBLE: l=(cont==null)?0:((double[])cont).length*8; break;
 	}
+        if (l>0xfffff0) l+=4; // large data need 4 more bytes
 	return l+4;
     }
 
+    /** Stores the REXP in its binary (ready-to-send) representation including header into a buffer and returns the index of the byte behind the REXP.
+        <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_STR are supported! All other types will be stored as SEXP of the length 0 without any contents.
+        @param buf buffer to store the REXP binary into
+        @param off offset of the first byte where to store the REXP
+        @return the offset of the first byte behind the stored REXP */
     public int getBinaryRepresentation(byte[] buf, int off) {
 	int myl=getBinaryLength();
-	Rtalk.setHdr(Xt,myl-4,buf,off);
-	off+=4;
+        boolean isLarge=(myl>0xfffff0);
+        Rtalk.setHdr(Xt,myl-(isLarge?8:4),buf,off);
+        off+=(isLarge?8:4);
 	switch (Xt) {
 	case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
 	case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
@@ -352,7 +363,7 @@ public class REXP extends Object {
 	return off+myl;
     }
 
-    /** returns human-readable name of the xpression type as string
+    /** returns human-readable name of the xpression type as string. Arrays are denoted by a trailing asterisk (*).
 	@param xt xpression type
 	@return name of the xpression type */
     public static String xtName(int xt) {
@@ -450,7 +461,7 @@ public class REXP extends Object {
         return null;
     }
 
-    /** returns the contentof the REXP as a matrix of doubles (2D-array: m[rows][cols]). This is the same form as used by popular math packages for Java, such as JAMA. This means that following leads to desired results:<br>
+    /** returns the content of the REXP as a matrix of doubles (2D-array: m[rows][cols]). This is the same form as used by popular math packages for Java, such as JAMA. This means that following leads to desired results:<br>
         <code>Matrix m=new Matrix(c.eval("matrix(c(1,2,3,4,5,6),2,3)").asDoubleMatrix());</code>
         @return 2D array of doubles in the form double[rows][cols] or <code>null</code> if the contents is no 2-dimensional matrix of doubles */
     public double[][] asDoubleMatrix() {
@@ -497,6 +508,10 @@ public class REXP extends Object {
 	    for(int i=0; i<d.length; i++) {
 		sb.append(d[i]);
 		if (i<d.length-1) sb.append(", ");
+                if (i==99) {
+                    sb.append("... ("+(d.length-100)+" more values follow)");
+                    break;
+                }
 	    };
 	    sb.append(")");
 	};
@@ -506,7 +521,11 @@ public class REXP extends Object {
 	    for(int i=0; i<d.length; i++) {
 		sb.append(d[i]);
 		if (i<d.length-1) sb.append(", ");
-	    };
+                if (i==99) {
+                    sb.append("... ("+(d.length-100)+" more values follow)");
+                    break;
+                }
+            };
 	    sb.append(")");
 	};
 	if (Xt==XT_ARRAY_BOOL) {
