@@ -70,7 +70,9 @@ public class Common
 
     /** Notify-Message constant: SMarker state changed */
     public static final int NM_MarkerChange     =0x100;
-
+    /** Notify-Message constant: SMarker state changed (secondary marks) */
+    public static final int NM_SecMarkerChange  =0x102;
+    
     /** Notify-Message constant: Axis changed */
     public static final int NM_AxisChange       =0x200;
     /** Notify-Message constant: geometry part of an Axis changed */
@@ -122,6 +124,7 @@ public class Common
     static void initStatic() {
         if (initializedStatic) return; // prevent loops
         initializedStatic=true;
+        ColorBridge.main=new ColorBridge();
         if (System.getProperty("java.vendor").indexOf("Apple")>-1) {
             isMac=true;
             try {
