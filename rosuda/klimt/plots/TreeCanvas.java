@@ -90,6 +90,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** # of cases in the root node */
     int rootCases;
 
+    /** if true node labels (selectable) have background rectangle even if not selected */
+    public boolean labelBg=false;
+    
     int hUnitMpl=1;
     
     /** virtual base width for root node. real width will be censored, but this one is used for proportional scaling */
@@ -160,7 +163,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			  /* "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom", */
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
                           "Show MCP","showMCP","Show deviance plot","devplot","-",
-			  "Hide labels","labels",
+			  "Hide labels","labels","Show label background","labelBg",
 			  "Show deviance","deviance","Show path window","pathwin","-",
 			  "Use fixed size","size",
 			  "Use vertical lines","connect","Align leaves","final",
@@ -369,7 +372,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	p.defineColor("leaf",255,255,192);
 	p.defineColor("path",192,255,255);
 	p.defineColor("black",0,0,0);
-	p.defineColor("hilite",128,255,128);
+        p.defineColor("obj",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+	p.defineColor("hilite",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
 	p.defineColor("red",255,0,0);
 	p.defineColor("sampleDev",0,128,64);
 	p.defineColor("lines",96,96,255);	
@@ -477,7 +481,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 
         if (zoomFactor>0.3) {
             // paint base rect
-            String bgc="white";
+            String bgc="obj";
             // if (t.sel==1) bgc="selected";
             // if (t.sel==3) bgc="leaf";
             // if (t.sel==2) bgc="path";
@@ -503,7 +507,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             // if hilighted draw it
             if (dMark>0) {
 	    // base is always white regardles of type
-		g.setColor("white"); g.fillRect(x,y2-10,x2-x,10);
+		g.setColor("obj"); g.fillRect(x,y,x2-x,y2-y);
 		//g.setColor("black"); g.drawRect(x,y2-10,x2-x,10);
 		g.setColor("hilite");
                 int markWidth=(int)(((double)dMark)/((double)dTotal)*((double)(x2-x)));
@@ -513,9 +517,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		    g.drawRect(x,y,markWidth,y2-y);
 		    g.drawRect(x,y,x2-x,y2-y);
 		} else {
-		    g.fillRect(x,y2-10,markWidth,10);
+		    g.fillRect(x,y,markWidth,y2-y);
 		    g.setColor("black");
-		    g.moveTo(x,y2-10); g.lineTo(x,y2); g.lineTo(x2,y2); g.lineTo(x2,y2-10); g.moveTo(x,y2-10);
+                    //g.moveTo(x,y2-10); g.lineTo(x,y2); g.lineTo(x2,y2); g.lineTo(x2,y2-10); g.moveTo(x,y2-10);
+                    g.drawRect(x,y,x2-x,y2-y);
 		};
                 if ((markWidth<2 && dMark>0) || (markWidth>=x2-x-1 && dMark<dTotal)) {
                     g.setColor("red"); g.drawLine(x,y2+2,x2,y2+2);
@@ -600,9 +605,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                     pv=Tools.getDisplayableValue(t.predValD,root.prediction.getMax()-root.prediction.getMin());
                 int tw=g.getWidthEstimate(pv);
                 int th=g.getHeightEstimate(pv);
-                g.setColor((t.sel==1)?"selnode":"white");
+                g.setColor((t.sel==1)?"selnode":"obj");
                 t.labelR=new Rectangle(t.cx-tw/2-3,t.cy+12,tw+6,th);
-                g.fillRect(t.cx-tw/2-3,t.cy+12,tw+6,th);
+                if (t.sel==1 || labelBg)
+                    g.fillRect(t.cx-tw/2-3,t.cy+12,tw+6,th);
                 g.setColor((t.sel==1)?"white":(selectedNode==null||!selectedNode.Name.equals(t.Name))?"black":"red");
                 g.drawString(pv,t.cx,t.cy+9+th,PoGraSS.TA_Center);                
             } else { // ok, fetch children and the split values
@@ -610,9 +616,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 if (c1!=null && c1.splitVar!=null) {
                     int tw=g.getWidthEstimate(c1.splitVar.getName());
                     int th=g.getHeightEstimate(c1.splitVar.getName());
-                    g.setColor((t.sel==1)?"selnode":"white");
+                    g.setColor((t.sel==1)?"selnode":"obj");
                     t.labelR=new Rectangle(t.cx-tw/2-3,t.cy-12-th,tw+6,th);
-                    g.fillRect(t.cx-tw/2-3,t.cy-12-th,tw+6,th);
+                    if (t.sel==1 || labelBg)
+                        g.fillRect(t.cx-tw/2-3,t.cy-12-th,tw+6,th);
                     g.setColor((t.sel==1)?"white":"black");
                     g.drawString(c1.splitVar.getName(),t.cx,t.cy-15,PoGraSS.TA_Center);
                 }
@@ -760,7 +767,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    repaint();
 	    if (mi!=null) mi.setLabel(connMode?"Use straight lines":"Use vertical lines");
 	};
-	if (cmd=="final") {
+        if (cmd=="labelBg") {
+            labelBg=!labelBg;
+            repaint();
+            if (mi!=null) mi.setLabel(labelBg?"Hide label background":"Show label background");
+        };
+        if (cmd=="final") {
 	    finalAlign=!finalAlign;
 	    redesignNodes(true);
 	    if (mi!=null) mi.setLabel(finalAlign?"Scatter leaves":"Align leaves");
@@ -1057,9 +1069,11 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='o') run(this,"open");
 	if (e.getKeyChar()=='d') run(this,"deviance");
 	if (e.getKeyChar()=='D') run(this,"devplot");
+        if (e.getKeyChar()=='g') run(this,"labelBg");
 	if (e.getKeyChar()=='c') run(this,"connect");
 	if (e.getKeyChar()=='f') run(this,"final");
-	if (e.getKeyChar()=='q') run(this,"quit");
+        // disable direct quit - too dangerous ;)
+        // if (e.getKeyChar()=='q') run(this,"quit");
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='+') run(this,"zoomDevIn");
 	if (e.getKeyChar()=='-') run(this,"zoomDevOut");
