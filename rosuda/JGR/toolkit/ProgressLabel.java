@@ -19,6 +19,7 @@ public class ProgressLabel extends JLabel implements Runnable {
     private Thread thread;
 
     public ProgressLabel() {
+    	this.setFont(new Font("Dialog",Font.BOLD,12));
         setMinimumSize(new Dimension(90, 15));
         setPreferredSize(new Dimension(90, 15));
         //setMaximumSize(new Dimension(90, 15));

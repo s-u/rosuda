@@ -139,28 +139,6 @@ public class iFrame extends JFrame {
         }
     }
 
-    /*public void start(final String name) {
-        Thread t = new Thread() {
-            public void run() {
-                progress.start("Working");
-                setWorking(true);
-                try {
-                    Class c = Class.forName("org.rosuda.JGR."+name);
-                    Frame f = (Frame) c.newInstance();
-                    f.show();
-                } catch (Exception e1) {
-                    try {
-                        Class c = Class.forName("org.rosuda.JGR.toolkit"+name);
-                        Frame f = (Frame) c.newInstance();
-                        f.show();
-                    } catch (Exception e2) {}
-                }
-                setWorking(false);
-            }
-        };
-        t.start();
-    }*/
-
     public synchronized void setWorking(final boolean work) {
            SwingUtilities.invokeLater(new Runnable() {
                public void run() {

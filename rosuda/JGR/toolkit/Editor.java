@@ -92,7 +92,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             if (i==0) ca.setEnabled(false);
         }
         
-        toolBar = new ToolBar(this,false);
+        toolBar = new ToolBar(this,false, progress);
+        
 
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
@@ -190,7 +191,6 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                         editArea.append(text.toString());
                         text.delete(0,text.length());
                     } catch (Exception e) {}
-                    editArea.setToolTipText(fileName);
                     setWorking(false);
                 }
             };

@@ -108,7 +108,6 @@ public class JGRPrefs {
     }
 
     public static void refresh() {
-        System.out.println(FontName);
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
         StyleConstants.setFontSize(DEFAULTFONT,FontSize);
