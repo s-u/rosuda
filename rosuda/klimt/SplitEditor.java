@@ -221,18 +221,18 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             if (pm!=null) {
                 li=new PlotLine(pm);
                 li.setCoordinates(1,2);
-                li.setColor(new PlotColor(255,0,0));
+                li.setDrawColor(new PlotColor(255,0,0));
                 li.set(spVal,-1,spVal,1);
                 li.setVisible(true);
                 if (!isCat) {
                     lrl=new PlotLine(pm);
                     lrl.setCoordinates(1,1);
-                    lrl.setColor(new PlotColor(160,160,160));
+                    lrl.setDrawColor(new PlotColor(160,160,160));
                     lrl.set(cv.getMin(),0,spVal,0);
                     lrl.setVisible(true);
                     rrl=new PlotLine(pm);
                     rrl.setCoordinates(1,1);
-                    rrl.setColor(new PlotColor(160,160,160));
+                    rrl.setDrawColor(new PlotColor(160,160,160));
                     rrl.set(spVal,0,cv.getMax(),0);
                     rrl.setVisible(true);
                     setSplitValue(spVal);
