@@ -50,7 +50,7 @@ int initR(int argc, char **argv) {
         fprintf(stderr, "R_HOME is not set. Please set all required environment variables before running this program.\n");
         return -1;
     }
-    
+
     int stat=Rf_initialize_R(argc, argv);
     if (stat<0) {
         printf("Failed to initialize embedded R! (stat=%d)\n",stat);
@@ -83,7 +83,7 @@ int initR(int argc, char **argv) {
 #ifdef JGR_DEBUG
 	printf("Setting up R event loop\n");
 #endif
-	
+
     setup_Rmainloop();
 
 #ifdef JGR_DEBUG
@@ -189,7 +189,7 @@ int initR(int argc, char **argv)
 	MessageBox(0, msg, "Version mismatch", MB_OK|MB_ICONERROR);
 	return -1;
     }
-    
+
     R_DefParams(Rp);
     if(getenv("R_HOME")) {
 	strcpy(RHome, getenv("R_HOME"));
@@ -222,13 +222,19 @@ int initR(int argc, char **argv)
     Rp->home = RUser;
     Rp->ReadConsole = Re_ReadConsole;
     Rp->WriteConsole = Re_WriteConsole;
+
+#if R_VERSION > 0x20001
+    Rp->Busy = Re_Busy;
+    Rp->ShowMessage = Re_ShowMessage;
+    Rp->YesNoCancel = myYesNoCancel;
+#else
     Rp->busy = Re_Busy;
     Rp->message = Re_ShowMessage;
-
-    Rp->CallBack = myCallBack;
     Rp->yesnocancel = myYesNoCancel;
-    Rp->CharacterMode = LinkDLL;
-    
+#endif   
+    Rp->CallBack = myCallBack;
+	Rp->CharacterMode = LinkDLL;
+
     Rp->R_Quiet = FALSE;
     Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
@@ -245,14 +251,13 @@ int initR(int argc, char **argv)
     R_SetParams(Rp); /* so R_ShowMessage is set */
     R_SizeFromEnv(Rp);
     R_SetParams(Rp);
-    
+
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-    
+
     signal(SIGBREAK, my_onintr);
     setup_term_ui();
     setup_Rmainloop();
-    
+
     return 0;
 }
 #endif
-
