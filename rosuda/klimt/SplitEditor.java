@@ -507,10 +507,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                                 }
                             }
                         }
+                        root.getRootInfo().home.registerTree(nt,nt.getRootInfo().name);
                         TFrame f=new TFrame(nt.getRootInfo().name,TFrame.clsTree);
                         TreeCanvas tc=Klimt.newTreeDisplay(nt,f);
                         tc.repaint(); tc.redesignNodes();
-                        root.getRootInfo().home.registerTree(nt,nt.getRootInfo().name);
 
                         WinTracker.current.rm(this);
                         sc=null; li=null; removeAll();
