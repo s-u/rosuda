@@ -1,3 +1,5 @@
+package org.rosuda.ibase;
+
 import java.util.*;
 
 /**
@@ -19,9 +21,6 @@ public class SMarker extends Notifier implements Commander {
     
     SVarSet masterSet;
     
-    /* --- the "currentNode" code is rather experimental because it's not really clean - but still it allows us to use the marker message dispatching to include displaying of splits */    
-    SNode currentNode;
-
     /** The only constructor, allocates a new marker
 	@param reqsize desired size of the marker array (# of indices) */
     public SMarker(int reqsize) {
@@ -158,13 +157,5 @@ public class SMarker extends Notifier implements Commander {
             selectInverse(); NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
         }
         return null;
-    };
-    
-    /* --- the experimental currentNode code --- */
-    public void setNode(SNode n) {
-	currentNode=n; NotifyAll(new NotifyMsg(this,Common.NM_NodeChange));
-    };
-    public SNode getNode() { return currentNode; };
-
-    //---
+    };    
 };

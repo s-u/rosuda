@@ -1,3 +1,4 @@
+package org.rosuda.ibase;
 
 /** messages passed with NotifyAllDep
     @version $Id$ */

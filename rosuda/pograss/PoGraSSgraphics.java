@@ -1,3 +1,5 @@
+package org.rosuda.pograss;
+
 import java.awt.*;
 
 /** Portable Graphics SubSystem - Graphics implementation

@@ -1,3 +1,5 @@
+package org.rosuda.plugins;
+
 import java.awt.Frame;
 
 /* framework for pligins for KLIMT */

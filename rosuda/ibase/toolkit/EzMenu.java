@@ -6,6 +6,8 @@
 //  $Id$
 //
 
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
 import java.awt.event.ActionListener;
 

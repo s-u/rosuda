@@ -1,3 +1,5 @@
+package org.rosuda.ibase;
+
 import java.util.Vector;
 import java.util.Enumeration;
 

@@ -1,3 +1,5 @@
+package org.rosuda.util;
+
 import java.io.*;
 
 /** This class provides means of constructing one-pass, basic, uncompressed PDF files. It is the lowest level (objects-level) of PDF construction. Reference index and trailer is created automatically. Output is written to a supplied {@link PrintStream}.<p>Sample usage:<pre>

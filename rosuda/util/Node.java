@@ -1,3 +1,5 @@
+package org.rosuda.util;
+
 import java.util.*;
 
 /**

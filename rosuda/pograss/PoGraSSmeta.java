@@ -1,3 +1,5 @@
+package org.rosuda.pograss;
+
 import java.util.*;
 
 /** Portable Graphics SubSystem, meta data implementation

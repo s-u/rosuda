@@ -6,7 +6,10 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.ibase.toolkit;
+
 import java.util.Vector;
+import org.rosuda.ibase.*;
 
 /* Special SCatSequence which caches the graphical representations as well */
 public class AxisCatSequence implements Dependent {

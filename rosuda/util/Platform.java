@@ -6,6 +6,8 @@
 //  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.util;
+
 import java.io.*;
 import java.awt.*;
 import java.lang.reflect.*;

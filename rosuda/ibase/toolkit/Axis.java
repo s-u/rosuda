@@ -1,4 +1,7 @@
+package org.rosuda.ibase.toolkit;
+
 import java.util.Vector;
+import org.rosuda.ibase.*;
 
 /** Axis - implements transformation of cases, values or categories to orthogonal graphical
     coordinates and vice versa. Supported axis types are: numerical, equidistant (i.e. nominal/ordinal by index), categorical-equidistant, categorical-proportional by population.

@@ -1,3 +1,5 @@
+package org.rosuda.ibase;
+
 /** Commander interface to pass action commands between objects
     @version $Id$
  */

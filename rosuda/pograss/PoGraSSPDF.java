@@ -1,3 +1,5 @@
+package org.rosuda.pograss;
+
 import java.io.*;
 
 /** Portable Graphics SubSystem - PDF implementation, based on PS implementation

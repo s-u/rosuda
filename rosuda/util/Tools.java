@@ -1,3 +1,5 @@
+package org.rosuda.util;
+
 import java.awt.*;
 import java.io.*;
 

@@ -1,3 +1,5 @@
+package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
 
 /** enhanced {@link Frame} that uses {@link WinTracker} to keep track of

@@ -6,6 +6,8 @@
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
+package org.rosuda.ibase;
+
 public class SCatSequence extends Notifier {
     /** array mapping positions to categories - seqToCat[position]=category */
     int[] seqToCat=null;

@@ -5,6 +5,8 @@
 //  Created by Simon Urbanek on Thu Oct 10 2002.
 //  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
 //
+package org.rosuda.pograss;
+
 import java.awt.*;
 import java.io.*;
 import org.apache.batik.svggen.SVGGraphics2D;
