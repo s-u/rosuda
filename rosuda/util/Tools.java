@@ -82,6 +82,7 @@ public class Tools {
             ipost-=implr;
             if (front>=0) front++; else front--;
         }
+        String spost=""+ipost; while (spost.length()<dac) { spost="0"+spost; };
         return sig+front+((ipost==0)?"":"."+ipost);
     };
 
