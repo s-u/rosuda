@@ -1,5 +1,5 @@
 import java.awt.*;               // ScrollPane, PopupMenu, MenuShortcut, etc.
-import java.awt.image.*;         
+import java.awt.image.*;
 import java.awt.datatransfer.*;  // Clipboard, Transferable, DataFlavor, etc.
 import java.awt.event.*;         // New event model.
 import java.io.*;                // Object serialization streams.
@@ -7,9 +7,9 @@ import java.util.*;              // For StingTokenizer.
 import java.util.zip.*;          // Data compression/decompression streams.
 import java.util.Vector;         // To store the scribble in.
 import java.util.Properties;     // To store printing preferences in.
-import java.lang.*;              // 
+import java.lang.*;              //
 import javax.swing.*;
-import javax.swing.event.*; 
+import javax.swing.event.*;
 
 public class Barchart extends DragBox implements ActionListener {
   private Vector rects = new Vector(256,0);            // Store the tiles.
@@ -26,7 +26,7 @@ public class Barchart extends DragBox implements ActionListener {
   private Image bi;
   private Graphics bg;
   private int k;
-  
+
   public Barchart(JFrame frame, int width, int height, Table tablep) {
     super(frame);
     this.tablep = tablep;
@@ -36,24 +36,24 @@ public class Barchart extends DragBox implements ActionListener {
     this.lnames = tablep.lnames;
     this.width = width;
     this.height = height;
-    
+
     sb.setUnitIncrement(22);
     sb.setBlockIncrement(22);
 
- /*   ToolTipManager.sharedInstance().setDismissDelay(300000);
+    /*   ToolTipManager.sharedInstance().setDismissDelay(300000);
     ToolTipManager.sharedInstance().setInitialDelay(0);
     ToolTipManager.sharedInstance().setReshowDelay(0);
-    
+
     this.setToolTipText(" This is it\n is this it?"); */
 
     frame.getContentPane().add(this);
-    
+
     border = 20;
-    
+
     String titletext;
     if( tablep.count == -1 )
       titletext = "Barchart("+names[0]+")";
-    else    
+    else
       titletext = "Barchart("+names[0]+"|"+tablep.data.getName(tablep.count)+")";
 
     frame.setTitle(titletext);
@@ -72,11 +72,11 @@ public class Barchart extends DragBox implements ActionListener {
   public void addDataListener(DataListener l) {
     listener = l;
   }
-  
+
   public void processEvent(AWTEvent evt) {
     if( evt instanceof DataEvent ) {
       if( listener != null )
-	listener.dataChanged(tablep.initialVars[0]);
+        listener.dataChanged(tablep.initialVars[0]);
     }
     else super.processEvent(evt);
   }
@@ -100,12 +100,12 @@ public class Barchart extends DragBox implements ActionListener {
     else
       x1 = (double)(S.r.x - startX)/(double)(size.width - startX - border);
 
-    S.o = new floatRect(x1, 
-                        (double)(S.r.y-border)/(double)(realHeight), 
-                        x2, 
-                        (double)(S.r.y + S.r.height - border)/(realHeight)); 
+    S.o = new floatRect(x1,
+                        (double)(S.r.y-border)/(double)(realHeight),
+                        x2,
+                        (double)(S.r.y + S.r.height - border)/(realHeight));
 
-//System.out.println("In: "+((floatRect)S.o).y1+" <-> "+((floatRect)S.o).y2+" ... "+realHeight);
+    //System.out.println("In: "+((floatRect)S.o).y1+" <-> "+((floatRect)S.o).y2+" ... "+realHeight);
 
     S.condition = new Query();
     for( int i = 0;i < rects.size(); i++) {
@@ -118,7 +118,7 @@ public class Barchart extends DragBox implements ActionListener {
           double sum=0, sumh=0;
           for( int j=0; j<r.tileIds.size(); j++ ) {
             int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
-//System.out.println("Id: "+id+":"+i);
+            //System.out.println("Id: "+id+":"+i);
             tablep.setSelection(id,1,mode);
             sumh += tablep.getSelected(id)*tablep.table[id];
             sum  += tablep.table[id];
@@ -131,42 +131,42 @@ public class Barchart extends DragBox implements ActionListener {
             int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
             tablep.setSelection(id,0,mode);
           }
-    }	
-  }
-    
-  public void updateSelection() {
-      paint(this.getGraphics());
-  }
-
-  public void dataChanged(int var) {
-    if( var == tablep.initialVars[0] ) {
-      tablep.rebreak();
-      realHeight = create(border, border, width-border, height-border, "");
-      paint(this.getGraphics());
     }
   }
 
-  public void adjustmentValueChanged(AdjustmentEvent e) {
-    paint(this.getGraphics());
-  }
-
-  public void scrollTo(int id) {
-    sb.setValue(id);
-    if( !moving )
+    public void updateSelection() {
       paint(this.getGraphics());
-  }
+    }
 
-    public void paint(Graphics g) {
+    public void dataChanged(int var) {
+      if( var == tablep.initialVars[0] ) {
+        tablep.rebreak();
+        realHeight = create(border, border, width-border, height-border, "");
+        paint(this.getGraphics());
+      }
+    }
 
-      //System.out.println("Still alive 1!");
+    public void adjustmentValueChanged(AdjustmentEvent e) {
+      paint(this.getGraphics());
+    }
+
+    public void scrollTo(int id) {
+      sb.setValue(id);
+      if( !moving )
+        paint(this.getGraphics());
+    }
+
+    public void paint(Graphics2D g) {
 
       tablep.getSelection();
 
-      //System.out.println("Still alive 2!");
-
       frame.setBackground(MFrame.backgroundColor);
 
-      Dimension size = this.getViewportSize();
+      Dimension size;
+      if( !printing )
+        size = this.getViewportSize();
+      else
+        size = this.getSize();
 
       if( oldWidth != size.width || oldHeight != size.height ) {
         this.width = size.width;
@@ -178,12 +178,8 @@ public class Barchart extends DragBox implements ActionListener {
         oldHeight = size.height;
       }
 
-      if( g instanceof PrintGraphics ) {
-        size = pj.getPageDimension();
-        Font SF = new Font("SansSerif", Font.BOLD, 12);
-        g.setFont(SF);
+      if( printing )
         bg = g;
-      }
       else {
         if( bi != null ) {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
@@ -204,17 +200,27 @@ public class Barchart extends DragBox implements ActionListener {
 
       int start = -1, stop = k-1;
 
-      for( int i = 0;i < labels.size(); i++) {
-        MyText t = (MyText)labels.elementAt(i);
-        if( t.y >= sb.getValue() ) {
+      if( !printing ) {
+        for( int i = 0;i < labels.size(); i++) {
+          MyText t = (MyText)labels.elementAt(i);
+          if( t.y >= sb.getValue() ) {
+            t.draw(bg, 1);
+            if( start == -1 )
+              start = Math.max(0, i-1);
+          }
+          if( t.y - sb.getValue() > size.height ) {
+            stop = i-1;
+            i = labels.size();
+          }
+        }
+      }
+      else {
+        for( int i = 0;i < labels.size(); i++) {
+          MyText t = (MyText)labels.elementAt(i);
           t.draw(bg, 1);
-          if( start == -1 )
-            start = Math.max(0, i-1);
         }
-        if( t.y - sb.getValue() > size.height ) {
-          stop = i-1;
-          i = labels.size();
-        }
+        start = 0;
+        stop = k-1;
       }
 
       for( int i = start;i <= stop; i++) {
@@ -233,46 +239,45 @@ public class Barchart extends DragBox implements ActionListener {
         movingRect.draw(bg);
       }
 
-      if( !(g instanceof PrintGraphics) ) {
+      if( !printing ) {
         drawSelections(bg);
         g.drawImage(bi, 0, 0, null);
         bg.dispose();
-        //System.out.println("Painting in Barchart from: "+start+"  to: "+stop);
-      }  
-    }
-    
-  public void drawSelections(Graphics bg) {
-
-    for( int i=0; i<Selections.size(); i++) {
-      Selection S = (Selection)Selections.elementAt(i);
-      drawBoldDragBox(bg, S);
-    }
-  }
-  
-  public void processMouseMotionEvent(MouseEvent e) {
-
-    boolean info = false;
-
-    if( moving ) {
-      movingRect.moveTo(-1, e.getY()+sb.getValue());
-      paint(this.getGraphics());
-    }/*
-    else {
-      for( int i = 0;i < rects.size(); i++) {
-	MyRect r = (MyRect)rects.elementAt(i);
-	if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
-	  info = true;
-	  ToolTipManager.sharedInstance().setEnabled(true);
-	  this.setToolTipText(r.getLabel());
-	}
       }
-      if( !info ) {
-	ToolTipManager.sharedInstance().setEnabled(false);
-	this.setToolTipText("");
+    }
+
+    public void drawSelections(Graphics bg) {
+
+      for( int i=0; i<Selections.size(); i++) {
+        Selection S = (Selection)Selections.elementAt(i);
+        drawBoldDragBox(bg, S);
       }
-    }*/
-    super.processMouseMotionEvent(e);  // Pass other event types on.
-  }
+    }
+
+    public void processMouseMotionEvent(MouseEvent e) {
+
+      boolean info = false;
+
+      if( moving ) {
+        movingRect.moveTo(-1, e.getY()+sb.getValue());
+        paint(this.getGraphics());
+      }/*
+       else {
+         for( int i = 0;i < rects.size(); i++) {
+           MyRect r = (MyRect)rects.elementAt(i);
+           if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+             info = true;
+             ToolTipManager.sharedInstance().setEnabled(true);
+             this.setToolTipText(r.getLabel());
+           }
+         }
+         if( !info ) {
+           ToolTipManager.sharedInstance().setEnabled(false);
+           this.setToolTipText("");
+         }
+       }*/
+      super.processMouseMotionEvent(e);  // Pass other event types on.
+    }
 
     public void processMouseEvent(MouseEvent e) {
 
@@ -281,13 +286,13 @@ public class Barchart extends DragBox implements ActionListener {
       if( changePop ) {
         changePop = false;
         return;
-      } 
+      }
 
       boolean info = false;
       if (e.getID() == MouseEvent.MOUSE_PRESSED ||
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
         if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN ) {
-//System.out.println("pop up trigger in Barchart!!!!"+e.getModifiers());          
+          //System.out.println("pop up trigger in Barchart!!!!"+e.getModifiers());
           for( int i = 0;i < rects.size(); i++) {
             MyRect r = (MyRect)rects.elementAt(i);
             if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
@@ -310,22 +315,34 @@ public class Barchart extends DragBox implements ActionListener {
               Barchart.addActionListener(this);
             }
             JMenu sorts = new JMenu("Sort by");
+            JMenuItem frq = new JMenuItem("Frequency");
             JMenuItem abs = new JMenuItem("absolute Hiliting");
             JMenuItem rel = new JMenuItem("relative Hiliting");
             JMenuItem lex = new JMenuItem("lexicographic");
+            JMenuItem rev = new JMenuItem("reverse");
+            sorts.add(frq);
             sorts.add(abs);
             sorts.add(rel);
             sorts.add(lex);
+            sorts.addSeparator();
+            sorts.add(rev);
+            frq.setActionCommand("frq");
             abs.setActionCommand("abs");
             rel.setActionCommand("rel");
             lex.setActionCommand("lex");
+            rev.setActionCommand("rev");
+            frq.addActionListener(this);
             abs.addActionListener(this);
             rel.addActionListener(this);
             lex.addActionListener(this);
+            rev.addActionListener(this);
             mode.add(sorts);
 
+            JMenuItem diss = new JMenuItem("dismiss");
+            mode.add(diss);
+
             mode.show(this, e.getX(), e.getY());
-          }	
+          }
         }
         else
           if( e.getModifiers() ==  BUTTON1_UP + ALT_DOWN ) {
@@ -333,7 +350,7 @@ public class Barchart extends DragBox implements ActionListener {
               MyRect r = (MyRect)rects.elementAt(i);
               if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
                 movingId   = i;
-System.out.println("Mooving ....................");                
+                System.out.println("Mooving ....................");
                 movingRect = r;
                 oldY       = r.getRect().y;
                 movingText = (MyText)labels.elementAt(i);
@@ -353,114 +370,131 @@ System.out.println("Mooving ....................");
           movingRect.moveTo(-1, oldY);
           frame.setCursor(Frame.DEFAULT_CURSOR);
           dataSet.Variable v = (dataSet.Variable)(tablep.data.data.elementAt(tablep.initialVars[0]));
-out: {
-  for( int i = 0;i < rects.size(); i++) {
-    MyRect r = (MyRect)rects.elementAt(i);
-    if( r.contains( e.getX(), e.getY()+sb.getValue() ) ) {
-      //System.out.println("Exchange: "+movingId+" with: "+i);
-      int tmp = v.permA[movingId];
-      v.permA[movingId] = v.permA[i];
-      v.permA[i] = tmp;
-      break out;
-    }
-    if( (e.getY()+sb.getValue() < (r.getRect()).y) ) {
-      //System.out.println("Insert: "+movingId+" before: "+i);
-      if( movingId < i ) {
-        int tmp = v.permA[movingId];
-        for( int j=movingId; j<i-1; j++ ) {
-          v.permA[j] = v.permA[j+1];
-        }
-        v.permA[i-1] = tmp;
-      }
-      else {
-        int tmp = v.permA[movingId];
-        for( int j=movingId; j>i; j-- ) {
-          v.permA[j] = v.permA[j-1];
-        }
-        v.permA[i] = tmp;
-      }		  
-      break out;
-    }
-  }
-  int tmp = v.permA[movingId];                    // Insert AFTER the last Bin
-  for( int j=movingId; j<rects.size()-1; j++ ) {
-    v.permA[j] = v.permA[j+1];
-  }
-  v.permA[rects.size()-1] = tmp;
-}
-for( int j=0; j<v.levelP; j++ )
-v.IpermA[v.permA[j]] = j;
-
-this.dataFlag = true;                            // this plot was responsible
-dataChanged(tablep.initialVars[0]);              // and is updated first!
-
-DataEvent de = new DataEvent(this);              // now the rest is informed ...
-evtq.postEvent(de);
+          out: {
+            for( int i = 0;i < rects.size(); i++) {
+              MyRect r = (MyRect)rects.elementAt(i);
+              if( r.contains( e.getX(), e.getY()+sb.getValue() ) ) {
+                //System.out.println("Exchange: "+movingId+" with: "+i);
+                int tmp = v.permA[movingId];
+                v.permA[movingId] = v.permA[i];
+                v.permA[i] = tmp;
+                break out;
+              }
+              if( (e.getY()+sb.getValue() < (r.getRect()).y) ) {
+                //System.out.println("Insert: "+movingId+" before: "+i);
+                if( movingId < i ) {
+                  int tmp = v.permA[movingId];
+                  for( int j=movingId; j<i-1; j++ ) {
+                    v.permA[j] = v.permA[j+1];
+                  }
+                  v.permA[i-1] = tmp;
+                }
+                else {
+                  int tmp = v.permA[movingId];
+                  for( int j=movingId; j>i; j-- ) {
+                    v.permA[j] = v.permA[j-1];
+                  }
+                  v.permA[i] = tmp;
+                }
+                break out;
+              }
+            }
+            int tmp = v.permA[movingId];                    // Insert AFTER the last Bin
+            for( int j=movingId; j<rects.size()-1; j++ ) {
+              v.permA[j] = v.permA[j+1];
+            }
+            v.permA[rects.size()-1] = tmp;
           }
-else
-super.processMouseEvent(e);  // Pass other event types on.
+          for( int j=0; j<v.levelP; j++ )
+            v.IpermA[v.permA[j]] = j;
+
+          this.dataFlag = true;                            // this plot was responsible
+          dataChanged(tablep.initialVars[0]);              // and is updated first!
+
+          DataEvent de = new DataEvent(this);              // now the rest is informed ...
+          evtq.postEvent(de);
+          }
+        else
+          super.processMouseEvent(e);  // Pass other event types on.
     }
-else
-super.processMouseEvent(e);  // Pass other event types on.
+      else
+        super.processMouseEvent(e);  // Pass other event types on.
   }
-  
-  public void actionPerformed(ActionEvent e) {
-    String command = e.getActionCommand();
-    if( command.equals("Barchart") || command.equals("Spineplot")) {
-      displayMode = command;
-      rects.removeAllElements();
-      realHeight = create(border, border, width-border, height-border, "");
-      Graphics g = this.getGraphics();
-      paint(g);
-      g.dispose();
-    }
-    else if( command.equals("abs") || command.equals("rel") || command.equals("lex") ) {
-        double[] sortA = new double[tablep.levels[0]];
-        dataSet.Variable v = (dataSet.Variable)(tablep.data.data.elementAt(tablep.initialVars[0]));
-        //
-        // first get all highlighting fixed
-        //
-        for( int i = 0;i <sortA.length; i++) {
+
+    public void actionPerformed(ActionEvent e) {
+      String command = e.getActionCommand();
+      if( command.equals("Barchart") || command.equals("Spineplot")) {
+        displayMode = command;
+        rects.removeAllElements();
+        realHeight = create(border, border, width-border, height-border, "");
+        Graphics g = this.getGraphics();
+        paint(g);
+        g.dispose();
+      }
+      else if( command.equals("abs") || command.equals("rel") || command.equals("lex") || command.equals("frq") || command.equals("rev") ) {
+        if( command.equals("abs") || command.equals("rel") || command.equals("lex") || command.equals("frq") ) {
+          double[] sortA = new double[tablep.levels[0]];
+          dataSet.Variable v = (dataSet.Variable)(tablep.data.data.elementAt(tablep.initialVars[0]));
+          //
+          // first get all highlighting fixed
+          //
+          for( int i = 0;i <sortA.length; i++) {
             MyRect r = (MyRect)rects.elementAt(i);
             double sum=0, sumh=0;
             for( int j=0; j<r.tileIds.size(); j++ ) {
-                int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
-                sumh += tablep.getSelected(id)*tablep.table[id];
-                sum  += tablep.table[id];
+              int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
+              sumh += tablep.getSelected(id)*tablep.table[id];
+              sum  += tablep.table[id];
             }
             r.setHilite( sumh/sum );
-        }
-        //
-        // filling arrays to sort them
-        //
-        if( command.equals("abs") )
-            for( int i=0; i<sortA.length; i++ ) 
-                sortA[i] = ((MyRect)rects.elementAt(i)).getAbsHilite();
-        if( command.equals("rel") ) 
+          }
+          //
+          // filling arrays to sort them
+          //
+          if( command.equals("frq") )
             for( int i=0; i<sortA.length; i++ )
-                sortA[i] = ((MyRect)rects.elementAt(i)).getHilite();
-        int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
-        int[] tperm = new int[perm.length];
-        for( int i=0; i<perm.length; i++ )
+              sortA[i] = ((MyRect)rects.elementAt(i)).obs;
+          if( command.equals("abs") )
+            for( int i=0; i<sortA.length; i++ )
+              sortA[i] = ((MyRect)rects.elementAt(i)).getAbsHilite();
+          if( command.equals("rel") )
+            for( int i=0; i<sortA.length; i++ )
+              sortA[i] = ((MyRect)rects.elementAt(i)).getHilite();
+          int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
+          int[] tperm = new int[perm.length];
+          for( int i=0; i<perm.length; i++ )
             tperm[i] = v.permA[perm[i]];
-        for( int i=0; i<perm.length; i++ ) {
+          for( int i=0; i<perm.length; i++ ) {
             v.permA[i] = tperm[i];
             v.IpermA[v.permA[i]] = i;
+          }
+          if( command.equals("lex") )
+            v.sortLevels();
         }
-        if( command.equals("lex") )
-            v.sortLevels();	
-
+        else if( command.equals("rev") ) {
+          dataSet.Variable v = (dataSet.Variable)(tablep.data.data.elementAt(tablep.initialVars[0]));
+          for( int i=0; i<v.permA.length/2; i++ ) {
+            int save = v.permA[i];
+            v.permA[i] = v.permA[v.permA.length-i-1];
+            v.permA[v.permA.length-i-1] = save;
+          }
+          for( int i=0; i<v.permA.length; i++ ) {
+            v.IpermA[v.permA[i]] = i;
+          }
+        }
         this.dataFlag = true;                            // this plot was responsible
         dataChanged(tablep.initialVars[0]);              // and is updated first!
-      
+
         DataEvent de = new DataEvent(this);              // now the rest is informed ...
         evtq.postEvent(de);
-    }
-    else
+      }
+      else
         super.actionPerformed(e);
-  }
-  
+    }
+
     public int create(int x1, int y1, int x2, int y2, String info) {
+
+//System.out.println(x1+" "+y1+" "+x2+" "+y2);
 
       rects.removeAllElements();
       labels.removeAllElements();
@@ -475,14 +509,14 @@ super.processMouseEvent(e);  // Pass other event types on.
       double max = 0;
       Vector[] tileIds = new Vector[k];
 
-//      boolean allDotNull = true;
-//      for(int i=0; i<lnames[0].length; i++)
-//        if( !lnames[0][i].endsWith(".0"))
-//          allDotNull = false;
-//      if( allDotNull )
-//        for(int i=0; i<lnames[0].length; i++)
-//          lnames[0][i] = lnames[0][i].substring(0, lnames[0][i].length()-2);
-      
+      //      boolean allDotNull = true;
+      //      for(int i=0; i<lnames[0].length; i++)
+      //        if( !lnames[0][i].endsWith(".0"))
+      //          allDotNull = false;
+      //      if( allDotNull )
+      //        for(int i=0; i<lnames[0].length; i++)
+      //          lnames[0][i] = lnames[0][i].substring(0, lnames[0][i].length()-2);
+
       for(int i=0; i<k; i++ ) {
         sum += tablep.table[i];
         max = Math.max( max, tablep.table[i] );
@@ -490,11 +524,14 @@ super.processMouseEvent(e);  // Pass other event types on.
         tileIds[i].addElement(new Integer(i));
       }
 
+      int pF=1;
+      if( printing )
+        pF = printFactor;
+
       Image ti = createImage(10,10);
       Graphics g = ti.getGraphics();
       FontMetrics FM = g.getFontMetrics();
-
-      int fh = FM.getHeight();
+      int fh = FM.getHeight() * pF;
       g.dispose();
 
       int x = 0;
@@ -504,7 +541,8 @@ super.processMouseEvent(e);  // Pass other event types on.
         else
           x = Math.max(x, FM.stringWidth(lnames[0][i]));
 
-      x = Math.min(x, 100);
+      x = Math.min(x*pF, 100*pF);
+
       startX= x1 + x;
       int y = 0;
 
@@ -512,10 +550,10 @@ super.processMouseEvent(e);  // Pass other event types on.
       double h, hi;
 
       for(int i=0; i<k; i++ ) {
-        h = (Math.max(y2-y1, k*22)+10)/k-10;
+        h = (Math.max(y2-y1, k*22)+10*pF)/k-10*pF;
         w = (x2-x1-x);
         if( tablep.data.phoneNumber( tablep.initialVars[0] ) )
-          labels.addElement(new MyText( Util.toPhoneNumber(Util.atod(lnames[0][i])), x1 + x-10, y1 + y+(int)(h/2)+fh/2));
+          labels.addElement(new MyText( Util.toPhoneNumber(Util.atod(lnames[0][i])), x1 + x-10*pF, y1 + y+(int)(h/2)+fh/2));
         else {
           String shorty = lnames[0][i];
           String addOn = "";
@@ -523,23 +561,24 @@ super.processMouseEvent(e);  // Pass other event types on.
             shorty = shorty.substring(0,shorty.length() - 1);
             addOn = "...";
           }
-          labels.addElement(new MyText( shorty.trim()+addOn, x1 + x-8, y1 + y+(int)(h/2) + fh/2));      
+          labels.addElement(new MyText( shorty.trim()+addOn, x1 + x-8*pF, y1 + y+(int)(h/2) + fh/2));
         }
-        hi = Math.max(12, h);
+        hi = Math.max(12*pF, h);
+
         if( displayMode.equals("Barchart") ) {
           h = hi;
           w *= tablep.table[i] / max;
         }
-        else 
+        else
           h *= tablep.table[i] / max;
         if( tablep.data.phoneNumber( tablep.initialVars[0] ) )
-          rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h, 
-                                       tablep.table[i], tablep.table[i], 1, 0, 
+          rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h,
+                                       tablep.table[i], tablep.table[i], 1, 0,
                                        Util.toPhoneNumber(Util.atod(lnames[0][i]))+'\n', tileIds[i]));
         else
-          rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h, 
+          rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h,
                                        tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
-        y += hi+10;
+        y += hi+10*pF;
       }
 
       realHeight = y - 10;
@@ -549,7 +588,7 @@ super.processMouseEvent(e);  // Pass other event types on.
       for( int i=0; i<Selections.size(); i++) {
         Selection S = (Selection)Selections.elementAt(i);
         if( ((floatRect)S.o).x1 <= 0 )
-          S.r.x      = (int)(startX + ((floatRect)S.o).x1);	    
+          S.r.x      = (int)(startX + ((floatRect)S.o).x1);
         else
           S.r.x      = startX + (int)(((floatRect)S.o).x1*(double)(size.width-startX-border));
 
@@ -559,7 +598,7 @@ super.processMouseEvent(e);  // Pass other event types on.
           S.r.width  = (int)(((floatRect)S.o).x2*(size.width - startX - border) + startX - S.r.x);
 
         S.r.y        = border + (int)(((floatRect)S.o).y1*(double)(realHeight));
-        S.r.height   = (int)(((floatRect)S.o).y2*(realHeight)  - 
+        S.r.height   = (int)(((floatRect)S.o).y2*(realHeight)  -
                              ((floatRect)S.o).y1*(realHeight));
 
         //System.out.println("Out: "+S.r.y+" <-> "+S.r.height);
@@ -567,28 +606,28 @@ super.processMouseEvent(e);  // Pass other event types on.
 
       return realHeight;
     }
-    
-  private String name;          // the name of the table;
-  private double table[];	// data in classical generalized binary order
-  private int[] levels;    	// number of levels for each variable
-  private int[] plevels;        // reverse cummulative product of levels
 
-  private String[] names;	// variable names
-  private String[][] lnames;	// names of levels
-  private DataListener listener;
-  private static EventQueue evtq;
+    private String name;          // the name of the table;
+    private double table[];	// data in classical generalized binary order
+    private int[] levels;    	// number of levels for each variable
+    private int[] plevels;        // reverse cummulative product of levels
 
-  class floatRect {
-    
-    double x1, y1, x2, y2;
-    
-    public floatRect(double x1, double y1, double x2, double y2) {
-      this.x1 = x1;
-      this.y1 = y1;
-      this.x2 = x2;
-      this.y2 = y2;
+    private String[] names;	// variable names
+    private String[][] lnames;	// names of levels
+    private DataListener listener;
+    private static EventQueue evtq;
+
+    class floatRect {
+
+      double x1, y1, x2, y2;
+
+      public floatRect(double x1, double y1, double x2, double y2) {
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
+      }
     }
-  }
 }
 
 class DataEvent extends AWTEvent {
