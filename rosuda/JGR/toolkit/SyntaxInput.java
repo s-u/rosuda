@@ -233,7 +233,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 
     private void showFunHelp(String fun) {
-        funHelp = RController.getFunHelp(fun);
+        funHelp = RController.getFunHelpTip(fun);
         if (fun != null && funHelp != null) {
             Tip = new JToolTip();
             Tip.setTipText(funHelp);
@@ -329,9 +329,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             }
             }*/
             super.remove(offset,length);
-            if (getLength() == 0) {
-                if (funHelpTip != null) funHelpTip.hide();
-            }            
+            fun = getLastCommand();
+			if (fun != null)
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						showFunHelp(fun);
+					}
+				});
+			
+			if (funHelpTip != null) funHelpTip.hide();
         }
     }
 

@@ -299,7 +299,7 @@ public class RController {
             if (y!=null && y.asIntArray() != null) ro.setInfo("dim: "+y.asIntArray()[0]);
         }
         else if (type.equals("function")) {
-            ro.setInfo("arguments: "+getFunHelp(ro.getRName()).replaceFirst(ro.getRName(),""));
+            ro.setInfo("arguments: "+getFunHelp(ro.getRName()).replaceFirst(ro.getRName(),"").replaceAll("<br>",""));
         }
         else if (parent != null && parent.getType().equals("table")) {
             y = JGR.R.eval("length(dimnames("+parent.getRName()+")[[\""+ro.getName()+"\"]])");
@@ -342,13 +342,18 @@ public class RController {
         }
         return m;
     }
+	
+	public static String getFunHelpTip(String s) {
+		String tip = getFunHelp(s);
+		return tip!=null?"<html><pre>"+tip+"</pre></html>":null;
+	}
 
     /**
         * show argumentes for function, tooltip
      * @param s function name
      * @return arguments
      */
-    public static String getFunHelp(String s) {
+    private static String getFunHelp(String s) {
         if (s==null) return null;
         String tip = null;
         String res[] = null;
@@ -365,7 +370,7 @@ public class RController {
         }
         else return null;
         if (tip.trim().length() == 0) return null;
-        return (tip.indexOf("Error")>0)?null:tip;
+        return (tip.indexOf("Error")>=0)?null:tip;
     }
 
     /**

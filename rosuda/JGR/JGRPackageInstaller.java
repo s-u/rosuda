@@ -109,6 +109,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
             cmd += "\""+instPkgs[instPkgs.length-1]+"\")";
             if (type.equals("binaries") && JGRPrefs.isMac)
                 JGR.MAINRCONSOLE.execute("install.binaries("+cmd+",\""+destDir+"\")");
+				//JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
             else
                 JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\")");
         }

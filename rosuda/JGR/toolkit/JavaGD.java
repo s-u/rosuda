@@ -29,6 +29,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         jfr=new iFrame("JavaGD", iFrame.clsJavaGD) {
         	public void dispose() {
                 if (c!=null) executeDevOff();
+				super.dispose();
         	}
         };        
         jfr.addWindowListener(this);
