@@ -18,6 +18,10 @@ import java.util.*;
  */
 public class SVar extends Vector
 {
+    public static final int CT_String = 0;
+    public static final int CT_Number = 1;
+    public static final int CT_Map    = 8;
+    
     /** variable name */
     String  name;
     /** type of variable, <code>true</code> if categorial variable */
@@ -31,6 +35,12 @@ public class SVar extends Vector
     /** hasNull is true if any case contains null = missing values */
     boolean hasNull;
 
+    /** type of the contents */
+    int contentsType;
+
+    /** flag denoting selection in a SVarSet */
+    boolean selected;
+    
     /** specifies whether add(..) will try to guess numerical variables based on the first value added or not */
     boolean guessNum=true;
     
@@ -70,7 +80,9 @@ public class SVar extends Vector
 	cat=iscat;
 	isnum=false;
 	hasNull=false;
-
+        contentsType=CT_String;
+        selected=false;
+        
 	if (iscat) {
 	    cats=new Vector(); ccnts=new Vector();
 	};
@@ -104,6 +116,10 @@ public class SVar extends Vector
     /** returns true if the variable is internal, i.e. generated on-the fly. note that derived variables are
         NOT internal. use (getInterrnalType()==SVar.IVT_Normal) to check for original, non-derived variables. */
     public boolean isInternal() { return (internalType>0); }
+
+    public boolean isSelected() { return selected; }
+
+    public void setSelected(boolean setit) { selected=setit; }
     
     /** define the variable explicitely as categorical
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
@@ -130,6 +146,27 @@ public class SVar extends Vector
         notify.NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     };
 
+    /** retrieves contents type of the variable
+        @return contents type (see CT_xxx constants)
+        */
+    public int getContentsType() { return contentsType; }
+
+    /** If it is to be used then is should be used BEFORE first data entries are inserted.
+        A call to this method implicitely disables any type guessing. The results of
+        calling this method on non-empty SVar is undefined, but the current
+        implementation allows such use for custom types.
+        @return returns <code>true</code> upon success. This method is guaranteed to succeed if
+        setting a custom type when no data were inserted yet. The method may succeed in other cases,
+        but its return value should be checked in that case.
+    */
+    public boolean setContentsType(int ct) {
+        if (ct==CT_Number && size()>0) return false;
+        if (ct!=CT_Number) isnum=false;
+        guessNum=false; // the type was set specifically, so no guessing from now on
+        contentsType=ct;
+        return true;
+    }
+    
     public static final int SM_lexi = 0; /** sort method lexicograph. */
     public static final int SM_num  = 1; /** sort method numerical (all objects are cast to Number, non-castable are assigned -0.01,
                                              basically to appear just before zero) */
@@ -142,6 +179,11 @@ public class SVar extends Vector
         @param method sort method, see SM_xxx constants */
     public void sortCategories(int method) {
         if (!isCat() || cats.size()<2) return;
+        Stopwatch sw=null;
+        if (Common.DEBUG>0) {
+            sw=new Stopwatch();
+            System.out.println("Sorting variable \""+name+"\"");
+        };
         Vector ocats=cats; Vector occnts=ccnts;
         cats=new Vector(); ccnts=new Vector();
         boolean found=true;
@@ -182,6 +224,9 @@ public class SVar extends Vector
                 ocats.setElementAt(null,p);
             }            
         }
+        if (Common.DEBUG>0) {
+            sw.profile("sorted");
+        };
     };
     /** define the variable explicitely as categorial (equals to calling {@link #categorize(boolean) categorize(false)}) */
     public void categorize() { categorize(false); };
@@ -191,6 +236,14 @@ public class SVar extends Vector
         notify.NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     };
 
+    public void setCategorical(boolean nc) {
+        if (!nc) {
+            cat=false;
+        } else {
+            if (cats==null) categorize(); else cat=true;
+        }
+    }
+    
     /** adds a new case to the variable (NEVER use addElement! see package header) Also beware, categorial varaibles are classified by object not by value!
      *  @param o object to be added. First call to <code>add</code> (even implicit if an object was specified on the call to the constructor) does also decide whether the variable will be numeric or not. If the first object is a subclass of <code>Number</code> then the variable is defined as numeric. There is a significant difference in handling numeric and non-numeric variabels, see package header.
      *  @return <code>true<code> if element was successfully added, or <code>false</code> upon failure - currently when non-numerical value is inserted in a numerical variable. It is strongly recommended to check the result and act upon it, because failing to do so can result in non-consistent datasets - i.e. mismatched row IDs */
@@ -200,9 +253,10 @@ public class SVar extends Vector
             hasNull=true;
         }
 	if (o!=null && size()==missingCount && guessNum) { // o not missing and all just missing so far and guess
-	    try {	      
-		if (Class.forName("java.lang.Number").isAssignableFrom(o.getClass())==true)
-		    isnum=true;	       
+	    try {
+                if (Class.forName("java.lang.Number").isAssignableFrom(o.getClass())==true) {
+                    isnum=true;	contentsType=CT_Number;
+                }
 	    } catch (Exception E) {};
 	    if (isnum)
 		min=max=((Number)o).doubleValue();	    
@@ -275,7 +329,7 @@ public class SVar extends Vector
     public int atI(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).intValue():0; };
     public double atF(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
     public double atD(int i) { return (isnum)?(elementAt(i)==null)?0:((Number)elementAt(i)).doubleValue():0; };
-    public String atS(int i) { return elementAt(i).toString(); };
+    public String atS(int i) { return (elementAt(i)==null)?null:elementAt(i).toString(); };
     public boolean isMissingAt(int i) { return elementAt(i)==null; };
 
     /** returs the # of missing values in this variable */
@@ -332,6 +386,10 @@ public class SVar extends Vector
     /** returns <code>true</code> if it's a categorial variable */
     public boolean isCat() { return cat; };
 
+    /** warning! use with care! Nameshould not be changed after hte variable was registered with
+        SVarSet. The behavior for doing so is undefined. */
+    public void setName(String nn) { name=nn; };
+    
     /** returns the number of categories for this variable or 0 if the variable is not categorial */
     public int getNumCats() {
 	if (!cat) return 0;
