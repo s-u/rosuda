@@ -37,6 +37,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
     private DragSource dragSource;
     private DataTreeModel objModel;
     private DefaultMutableTreeNode root;
+    private RObject selectedObject = null;
     
     private String type;
 
@@ -101,6 +102,11 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         String cmd = evt.getActionCommand();
         if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGRConsole.directory);
     }
+    
+    public void saveData() {
+        new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGRConsole.directory);
+    }
+    
 
     public void dragGestureRecognized(DragGestureEvent evt) {
         Point p = evt.getDragOrigin();
@@ -129,19 +135,21 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
     }
 
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount()==2) {
             Point p = e.getPoint();
             RObject o = null;
             try {
                 o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
+                objmgr.savedata.setEnabled(o.isEditable());
+                selectedObject = o;
             }
             catch (Exception ex) {
+                objmgr.savedata.setEnabled(false);
+                selectedObject = null;
             }
-            if (o != null) {
+            if (e.getClickCount()==2 && o != null) {
                 org.rosuda.ibase.SVarSet vs = RController.newSet(o);
-                if (vs != null && vs.count() != 0) new DataTable(vs,o.getType());
+                if (vs != null && vs.count() != 0) new DataTable(vs,o.getType(),o.isEditable());
             }
-        }
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -157,11 +165,11 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
             Point p = e.getPoint();
             JToolTip call  = new JToolTip();
             RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
-            if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
+            /*if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
                 popUpSaveMenu(e,o);
                 objmgr.cursorDefault();
             }
-            else {
+            else {*/
 	            String tip = RController.getSummary(o);
 	            if (tip==null) {
 	                objmgr.cursorDefault();
@@ -172,7 +180,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
 	            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
 	            objmgr.summary.show();
 	            objmgr.cursorDefault();
-            }
+            //}
         }
     }
 
@@ -182,11 +190,11 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
             Point p = e.getPoint();
             JToolTip call  = new JToolTip();
             RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
-            if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
+            /*if (type == "data" && ((org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isMetaDown()) || (!org.rosuda.JGR.toolkit.JGRPrefs.isMac && e.isControlDown()))) {
                 popUpSaveMenu(e,o);
                 objmgr.cursorDefault();
             }
-            else {
+            else {*/
 	            String tip = RController.getSummary(o);
 	            if (tip==null) {
 	                objmgr.cursorDefault();
@@ -197,7 +205,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
 	            objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,call,p.x+20,p.y+25);
 	            objmgr.summary.show();
 	            objmgr.cursorDefault();
-            }
+            //}
         }
     }
 
