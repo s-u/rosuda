@@ -451,7 +451,7 @@ KeyListener {
                 out = new BufferedWriter(new FileWriter(fileName));
                 int cols = vs.count();
                 for (int k = 0; k < cols - 1; k++) {
-                    out.write(""+vs.at(k).getName() + "\t");
+                    if (!vs.at(k).getName().equals("row.names")) out.write(""+vs.at(k).getName() + "\t");
                     //System.out.print(vs.at(k).getName() + "\t");
                 }
                 out.write(""+vs.at(cols - 1).getName() + "\n");
@@ -461,12 +461,12 @@ KeyListener {
                     for (int z = 0; z < cols - 1; z++) {
                         s = vs.at(z).at(i) == null ? " " :
                         vs.at(z).at(i).toString();
-                        out.write(""+s + "\t");
+                        if (!vs.at(z).getName().equals("row.names")) out.write(""+s + "\t");
                         //System.out.print(s+"\t");
                     }
                     s = vs.at(cols - 1).at(i) == null ? " " :
                     vs.at(cols - 1).at(i).toString();
-                    out.write(""+s + "\n");
+                    if (!vs.at(cols-1).getName().equals("row.names")) out.write(""+s + "\n");
                     //System.out.println(s);
                     out.flush();
                 }
