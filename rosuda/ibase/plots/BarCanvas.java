@@ -78,7 +78,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIspine=EzMenu.getItem(f,"spine");
 	if (weight!=null) MIspine.setEnabled(false);
-	qi=new QueryPopup(f,"BarCanvas",-1);
+        qi=new QueryPopup(f,mark==null?null:mark.masterSet,"BarCanvas");
     };
     
     public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
@@ -224,48 +224,74 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	Point cl=getFrame().getLocation();
 	Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
 	int i=0, bars=cats, setTo=0;
-	boolean effect=false, hideQI=true;
-	if (ev.isControlDown()) setTo=1;
-	//System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
+
+        if (Common.DEBUG>0) {
+            String mods="";
+            if (ev.isShiftDown()) mods+=" SHIFT";
+            if (ev.isAltDown()) mods+=" ALT";
+            if (ev.isControlDown()) mods+=" CTRL";
+            if (ev.isMetaDown()) mods+=" META";
+            if (ev.isAltGraphDown()) mods+=" ALT.GR";
+            if ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK) mods+=" M1";
+            if ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK) mods+=" M2";
+            if ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK) mods+=" M3";
+            if (ev.isPopupTrigger()) mods+=" POPUP";
+            System.out.println("Event:"+ev+mods);
+        }
+        
+        boolean effect=false, hideQI=true;
+        boolean actionSelect=Common.isSelectTrigger(ev);
+        boolean actionQuery=Common.isQueryTrigger(ev);
+        boolean actionExtQuery=Common.isExtQuery(ev);
+        if (Common.DEBUG>0)
+            System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac);
+        
+        //System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
-	while (i<bars) {
-	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
-		if (Common.isQueryTrigger(ev)) {
-		    String qs="Name: "+cat_nam[i]+"\n";
-		    if (weight==null) {
-			if (ev.isShiftDown()) {
-			    qs+="consists of "+count[i]+" cases ("+
-				Tools.getDisplayableValue(100.0*((double)count[i])/((double)v.size()),2)+
-				"% of total)\nSelected "+marked[i]+" cases ("+
-				Tools.getDisplayableValue(100.0*((double)marked[i])/((double)count[i]),2)+
-				"% of this cat., " +
-				Tools.getDisplayableValue(100.0*((double)marked[i])/((double)v.size()),2)+"% of total)";
-			} else {
-			    qs+="Selected "+marked[i]+" of "+count[i];
-			};
-		    } else {
-		    };
-		    qi.setContent(qs);
-		    qi.setLocation(cl.x+x,cl.y+y);
-		    qi.show(); hideQI=false;
-		} else {
-		    effect=true;
-		    if (!ev.isShiftDown()) m.selectNone();
-		    int j=0, pts=v.size();
-		    while (j<pts) {
-			if (v.getCatIndex(j)==i) 
-			    m.set(j,m.at(j)?setTo:1);			
-			j++;
-		    };
-		    break; // one can be inside one bar only
-		};
-	    };
-	    i++;
-	};
-	if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+        if (actionQuery || actionSelect) {
+            int selMode=Common.getSelectMode(ev);
+            if (selMode>1) setTo=1;
+            while (i<bars) {
+                if (Bars[i]!=null && Bars[i].contains(x,y)) {
+                    if (actionQuery) {
+                        String qs="Name: "+cat_nam[i]+"\n";
+                        if (weight==null) {
+                            if (actionExtQuery) {
+                                qs+="consists of "+count[i]+" cases ("+
+                                Tools.getDisplayableValue(100.0*((double)count[i])/((double)v.size()),2)+
+                                "% of total)\nSelected "+marked[i]+" cases ("+
+                                Tools.getDisplayableValue(100.0*((double)marked[i])/((double)count[i]),2)+
+                                "% of this cat., " +
+                                Tools.getDisplayableValue(100.0*((double)marked[i])/((double)v.size()),2)+"% of total)";
+                            } else {
+                                qs+="Selected "+marked[i]+" of "+count[i];
+                            };
+                        } else {
+                        };
+                        qi.setContent(qs);
+                        qi.setLocation(cl.x+x,cl.y+y);
+                        qi.show(); hideQI=false;
+                    } else {
+                        effect=true;
+                        if (selMode==0) m.selectNone();
+                        int j=0, pts=v.size();
+                        while (j<pts) {
+                            if (v.getCatIndex(j)==i)
+                                m.set(j,m.at(j)?setTo:1);
+                            j++;
+                        };
+                        break; // one can be inside one bar only
+                    };
+                };
+                i++;
+            };
+        }
+        if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 	if (hideQI) qi.hide();
     };
 
+    boolean inQuery=false;
+    
     public void mousePressed(MouseEvent ev) {
 	int x=ev.getX(), y=ev.getY();
 	int i=0, bars=cats, setTo=0;
@@ -273,16 +299,17 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
 		dragMode=true;
 		dragBar=i; dragNew=i; dragW=Bars[i].width; dragH=Bars[i].height;
-		setCursor(new Cursor(Cursor.HAND_CURSOR));		
+		if (!inQuery) setCursor(Common.cur_hand);		
 		break;
 	    };
 	    i++;
 	};	
     };
+    
     public void mouseReleased(MouseEvent e) {
 	if (dragMode) {
 	    dragMode=false;
-	    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	    if (!inQuery) setCursor(Common.cur_arrow);
             setUpdateRoot(1);
 	    if (dragNew!=dragBar) {
 		ax.moveCat(dragBar,ax.getCatSeqIndex(dragNew));
@@ -318,8 +345,22 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
     };
-    public void keyPressed(KeyEvent e) {};
-    public void keyReleased(KeyEvent e) {};
+
+    public void keyPressed(KeyEvent e) {
+        int kc=e.getKeyCode();
+        if (kc==KeyEvent.VK_ALT) {
+            setCursor(Common.cur_query);
+            inQuery=true;
+        }
+    };
+
+    public void keyReleased(KeyEvent e) {
+        int kc=e.getKeyCode();
+        if (kc==KeyEvent.VK_ALT) {
+            setCursor(Common.cur_arrow);
+            inQuery=false;
+        }
+    };
 
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
