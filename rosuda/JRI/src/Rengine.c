@@ -66,6 +66,7 @@ int Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory)
 {
     JNIEnv *lenv=checkEnvironment();
     if (lenv && engineObj) {
+        jri_checkExceptions(lenv, 1);
         jstring r;
         jstring s=(*lenv)->NewStringUTF(eenv, prompt);
         jmethodID mid=(*lenv)->GetMethodID(eenv, engineClass, "jriReadConsole", "(Ljava/lang/String;I)Ljava/lang/String;");
@@ -73,6 +74,7 @@ int Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory)
         if (!mid) return -1;
         r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, s, addtohistory);
         (*lenv)->DeleteLocalRef(lenv, s);
+        jri_checkExceptions(lenv, 1);
         if (r) {
             const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
             if (!c) return -1;
@@ -100,12 +102,14 @@ void Re_Busy(int which)
 void Re_WriteConsole(char *buf, int len)
 {
     JNIEnv *lenv=checkEnvironment();
+    jri_checkExceptions(lenv, 1);
     jstring s=(*lenv)->NewStringUTF(lenv, buf);
     jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
     if (!mid)
         printf("jriWriteconsole mid=%x\n", mid);
     if (mid)
         (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+    jri_checkExceptions(lenv, 1);
     (*lenv)->DeleteLocalRef(lenv, s);
 }
 
