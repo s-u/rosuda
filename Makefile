@@ -27,6 +27,7 @@ IBASE_SRC:=$(filter-out %PlatformMac.java,$(IBASE_SRC))
 KLIMT_SRC:=$(filter-out %PlatformMac.java,$(KLIMT_SRC))
 IGLOBAL_SRC:=$(filter-out %PlatformMac.java,$(IGLOBAL_SRC))
 IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
+JGR_SRC:=$(filter-out %PlatformMac.java,$(JGR_SRC))
 endif
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar Mondrian.jar
