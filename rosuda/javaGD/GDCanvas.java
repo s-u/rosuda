@@ -62,9 +62,18 @@ public class GDCanvas extends Canvas {
             initRefresh();
             lastSize=d;
         }
+
+        Graphics2D g2=(Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // clear the background
+        g.setColor(Color.white);
+        g.fillRect(0,0,d.width,d.height);
+        g.setColor(Color.black);
         
         int i=0, j=l.size();
         g.setFont(f);
+        g.setClip(0,0,d.width,d.height); // reset clipping rect
         while (i<j) {
             GDObject o=(GDObject) l.elementAt(i++);
             o.paint(this, g);
@@ -101,6 +110,20 @@ class GDRect extends GDObject {
         }
         if (c.col!=null)
             g.drawRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
+    }
+}
+
+class GDClip extends GDObject {
+    double x1,y1,x2,y2;
+    public GDClip(double x1, double y1, double x2, double y2) {
+        double tmp;
+        if (x1>x2) { tmp=x1; x1=x2; x2=tmp; }
+        if (y1>y2) { tmp=y1; y1=y2; y2=tmp; }
+        this.x1=x1; this.y1=y1; this.x2=x2; this.y2=y2;
+    }
+
+    public void paint(GDCanvas c, Graphics g) {
+        g.setClip((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
     }
 }
 
