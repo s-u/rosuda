@@ -68,10 +68,10 @@ public class RecentList {
             i++;
         }
         if (active>=maxEntries) {
-            int j=active-1;
+            int j=maxEntries-1;
             while (j>0) {
                 list[j]=list[j-1];
-                j++;
+                j--;
             }
             list[0]=e;
         } else {
