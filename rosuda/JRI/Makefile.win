@@ -3,14 +3,24 @@
 # ** Change the following two entries to reflect your setup **
 
 JAVAHOME=N:/jdk1.4.2
-RHOME=N:/rw1090
+RHOME=F:/Programme/R/rw1091
 
 # normally you don't need to change the anything below
 
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/win32
 JNISO=.dll
-JNILD=-shared -L. -ljvm -L$(RHOME)/src/gncwin32 -Wl,--kill-at
+JNILD=-shared -L. -ljvm -L$(RHOME)/src/gnuwin32 -Wl,--kill-at
 CFLAGS+=-DWin32 -D_JNI_IMPLEMENTATION_
 JAVAB=$(JAVAHOME)/bin/java
-JRIDEPS=libjvm.dll.a
+JRIDEPS=libjvm.dll.a $(RHOME)/src/gnuwin32/libR.a
 JNIPREFIX=
+PLATFORMT=run.bat
+
+windows.all: all
+
+$(RHOME)/src/gnuwin32/libR.a:
+	make -C $(RHOME)/src/gnuwin32 libR.a
+
+run.bat:
+	echo "set PATH=%PATH%;$(RHOME)\\bin" > run.bat
+	echo "$(JAVAB) rtest \$$*" >> run.bat
