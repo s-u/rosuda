@@ -341,6 +341,8 @@ in conjunction with {@link #moveCat} as npos parameter when destination
         // some heuristic is used further to try to satisfy the minDist condition, although it's merely a guideline
         // if medDist is too small then values returned can still be bigger than minDist
         int grs=(int)(preld/lvLen*lgLen);
+        if (Common.DEBUG>0) System.out.println("Axis.getSensibleTickDistance("+medDist+","+minDist+"): grs="+grs+", preld="+preld);
+        while (grs>2*medDist) { grs/=2; preld/=2; };
         if (grs<minDist/3) return preld*5;
         if (grs<minDist) return preld*2;
         return preld;
@@ -364,10 +366,7 @@ used in conjunction with {@link #getSensibleTickDistance}
     */
     public String getDisplayableValue(double val) {
         int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
-        if (dac==0) return ""+((int)val);
-        double post=val-((double)((int)(val)));
-        while(dac>0) { post*=10; dac--; };
-        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
+        return Tools.getDisplayableValue(val,dac);
     };
 
     /** returns category sequence - useful basically for plots that want to sequentially plot categories

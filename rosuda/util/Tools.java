@@ -38,19 +38,18 @@ public class Tools {
     public static String getDisplayableValue(double val, double range) {
         double vLenLog10=(range>0)?Math.log(range)/Math.log(10):0;
         int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
-        if (dac==0) return ""+((int)val);
-        double post=val-((double)((int)(val)));
-        while(dac>0) { post*=10; dac--; };
-        if (post<0) post=-post;
-        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
+        return getDisplayableValue(val,dac);
     };
 
     public static String getDisplayableValue(double val, int dac) {
         if (dac==0) return ""+((int)val);
-        double post=val-((double)((int)(val)));
+        double mplr=10.0;
+        while(dac>0) { mplr*=10.0; dac--; };
+        int front=(int)(Math.round(val*mplr)/mplr);
+        mplr/=10.0;
+        double post=(val-((double)front))*mplr;
         if (post<0) post=-post;
-        while(dac>0) { post*=10; dac--; };
-        return ""+((int)val)+((Math.round(post)==0)?"":"."+Math.round(post));
+        return ""+front+((Math.round(post)==0)?"":"."+Math.round(post));
     };
 
 };
