@@ -50,16 +50,22 @@ public class SVarFixDouble extends SVar
     public SVarFixDouble(String Name, double[] d, boolean copyContents)
     {
         super(Name, false);
-        if (d.length>0) min=max=d[0];
+        boolean firstValid=true;
+        min=max=0;
         if (copyContents) {
             cont=new double[d.length];
             int i=0;
             while (i<d.length) {
                 cont[i]=d[i];
-                if (cont[i]==double_NA) missingCount++;
+                if (Double.isNaN(cont[i])) missingCount++;
                 else {
-                    if (cont[i]>max) max=cont[i]; else
-                        if (cont[i]<min) min=cont[i];
+                    if (firstValid) {
+                        min=max=cont[i];
+                        firstValid=false;
+                    } else {
+                        if (cont[i]>max) max=cont[i]; else
+                            if (cont[i]<min) min=cont[i];
+                    }
                 }
                 i++;
             }
@@ -67,14 +73,20 @@ public class SVarFixDouble extends SVar
             cont=d;
             int i=0;
             while (i<d.length) {
-                if (cont[i]==double_NA) missingCount++;
+                if (Double.isNaN(cont[i])) missingCount++;
                 else {
-                    if (cont[i]>max) max=cont[i]; else
-                        if (cont[i]<min) min=cont[i];
+                    if (firstValid) {
+                        min=max=cont[i];
+                        firstValid=false;
+                    } else {
+                        if (cont[i]>max) max=cont[i]; else
+                            if (cont[i]<min) min=cont[i];
+                    }
                 }
                 i++;
             }
         }
+        insertPos=d.length;
         guessing=false;
         contentsType=CT_Number;
         isnum=true;
@@ -91,7 +103,7 @@ public class SVarFixDouble extends SVar
 	if (!isEmpty()) {
             int ci=0;
             while (ci<cont.length) {
-                String oo=(cont[ci]==SVar.double_NA)?missingCat:Double.toString(cont[ci]);
+                String oo=Double.isNaN(cont[ci])?missingCat:Double.toString(cont[ci]);
 		int i=cats.indexOf(oo);
                 if (i==-1) {
                     cats.addElement(oo);
@@ -197,7 +209,7 @@ public class SVarFixDouble extends SVar
     public boolean add(double d) {
         if (insertPos>=cont.length) return false;
 	if (cat) {
-            Object oo=(d==double_NA)?missingCat:Double.toString(d);
+            Object oo=Double.isNaN(d)?missingCat:Double.toString(d);
 	    int i=cats.indexOf(oo);
 	    if (i==-1) {
 		cats.addElement(oo);
@@ -206,7 +218,7 @@ public class SVarFixDouble extends SVar
 		ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
 	    }
 	}
-	if (d!=double_NA) {
+	if (!Double.isNaN(d)) {
             if (d>max) max=d;
             if (d<min) min=d;
 	} else
@@ -227,16 +239,16 @@ public class SVarFixDouble extends SVar
 
     public boolean replace(int i, double d) {
         if (i<0 || i>=cont.length || isCat()) return false;
-        if (cont[i]==double_NA) missingCount--;
+        if (Double.isNaN(cont[i])) missingCount--;
         cont[i]=d;
-        if (d==double_NA) missingCount++;
+        if (Double.isNaN(d)) missingCount++;
         return true;
     }
 
-    public Object at(int i) { return (i<0||i>=insertPos||cont[i]==double_NA)?null:new Double(cont[i]); };
+    public Object at(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Double(cont[i]); };
     public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
-    public int atI(int i) { return (i<0||i>=insertPos||cont[i]==double_NA)?int_NA:((int)(cont[i]+0.5)); }
-    public String asS(int i) { return (i<0||i>=insertPos||cont[i]==double_NA)?null:Double.toString(cont[i]); }
+    public int atI(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?int_NA:((int)(cont[i]+0.5)); }
+    public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Double.toString(cont[i]); }
     
     /** returns the ID of the category of the object
         @param object
