@@ -324,15 +324,15 @@ public class Framework implements Dependent, ActionListener {
     public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
         updateMarker(vs,v1);
         TFrame f=new TFrame("Scatterplot ("+
-			    vs.at(v2).getName()+" vs "+
-			    vs.at(v1).getName()+")",TFrame.clsScatter);	
-	f.addWindowListener(Common.getDefaultWindowListener());
-	ScatterCanvas sc=new ScatterCanvas(f,vs.at(v1),vs.at(v2),vs.getMarker());
-	if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
-	sc.setSize(new Dimension(400,300));
-	f.add(sc); f.pack(); f.show();
+		vs.at(v2).getName()+" vs "+
+		vs.at(v1).getName()+")",TFrame.clsScatter);	
+        f.addWindowListener(Common.getDefaultWindowListener());
+        ScatterCanvas sc=new ScatterCanvas(f,vs.at(v1),vs.at(v2),vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
+        sc.setSize(new Dimension(400,300));
+        f.add(sc); f.pack(); f.show();
         f.initPlacement();
-	return sc;
+        return sc;
     };
 
     public BarCanvas newBarchart(int v) { return newBarchart(cvs,v,-1); }
@@ -341,7 +341,7 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,v);
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
-	if (!theCat.isCat()) theCat.categorize();
+        if (!theCat.isCat()) theCat.categorize();
         TFrame f=new TFrame(
                             (theNum!=null)?
                             "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
@@ -362,19 +362,19 @@ public class Framework implements Dependent, ActionListener {
     public LineCanvas newLineplot(int rv, int[] v) { return newLineplot(cvs,rv,v); }
     public LineCanvas newLineplot(int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(cvs,rv,vv); }
     public LineCanvas newLineplot(SVarSet vs, int rv, int[] v) {
-	if (v.length==0) return null;
+    	if (v.length==0) return null;
         updateMarker(vs,v[0]);
-	TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
-	f.addWindowListener(Common.getDefaultWindowListener());
-	SVar[] vl=new SVar[v.length];
-	int i=0;
-	while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-	LineCanvas sc=new LineCanvas(f,vs.at(rv),vl,vs.getMarker());
-	if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
-	sc.setSize(new Dimension(400,300));
-	f.add(sc); f.pack(); f.show();
+        TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
+        f.addWindowListener(Common.getDefaultWindowListener());
+        SVar[] vl=new SVar[v.length];
+        int i=0;
+        while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
+        LineCanvas sc=new LineCanvas(f,vs.at(rv),vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);	    
+        sc.setSize(new Dimension(400,300));
+        f.add(sc); f.pack(); f.show();
         f.initPlacement();
-	return sc;
+        return sc;
     };
 
     public HamCanvas newHammock(int[] v) { return newHammock(cvs,v); }
@@ -393,6 +393,27 @@ public class Framework implements Dependent, ActionListener {
         f.initPlacement();
         return sc;
     }
+    
+    
+    public PCPCanvas newPCP(int[] v) { return newPCP(cvs,v); }
+    public PCPCanvas newPCP(SVarSet vs, int[] v) {
+    	if (v.length==0) return null;
+        updateMarker(vs,v[0]);
+        TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
+        f.addWindowListener(Common.getDefaultWindowListener());
+        SVar[] vl=new SVar[v.length];
+        int i=0;
+        while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
+        for (i = 0; i < vs.count(); i++)
+    		System.out.println(vs.at(i));
+        
+        PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+        sc.setSize(new Dimension(400,300));
+        f.add(sc); f.pack(); f.show();
+        f.initPlacement();
+        return sc;
+    }    
 
     /** display a new histogram of a variables from current dataset
         @param v variable ID
