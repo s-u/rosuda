@@ -43,10 +43,8 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
         this.addCaretListener(this);
-        System.out.println(this.getTransferHandler());
         this.setTransferHandler(new TextTransferHandler());
-        System.out.println(this.getTransferHandler());
-    	this.setDragEnabled(true);
+        this.setDragEnabled(true);
     }
 
     public void append(String str) {
