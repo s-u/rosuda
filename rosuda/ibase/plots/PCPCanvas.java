@@ -81,7 +81,7 @@ public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	ax=A[0];
 	ay=A[1];
-        if (v[1].getInternalType()==SVar.IVT_Resid) isResidPlot=true;
+        if (v[1].getInternalType()==SVar.IVT_Resid || v[1].getInternalType()==SVar.IVT_RCC) isResidPlot=true;
 	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
