@@ -13,7 +13,13 @@ import org.rosuda.util.*;
 /** implementation of line plot
     @version $Id$
 */
-public class PCPCanvas extends PGSJoglCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+public class PCPCanvas
+//#ifdef XTREME
+//extends PGSJoglCanvas
+//#else
+extends PGSCanvas
+//#endif
+implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     /** variables; 0=x, 1,2,3...=Y */
     SVar v[];

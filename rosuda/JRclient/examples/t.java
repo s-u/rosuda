@@ -1,5 +1,6 @@
 import org.rosuda.JRclient.*;
 import java.io.*;
+import java.util.*;
 
 // this is just a collection of various silly things you can do when
 // accessing Rserve. it's not very useful in particular, but it may
@@ -9,6 +10,23 @@ public class t {
     public static void main(String args[]) {
 	try {
 	    Rconnection c=new Rconnection((args.length>0)?args[0]:"127.0.0.1");
+
+	    System.out.println("ok, connected, press <enter> to continue\n");
+	    System.in.read();
+
+	    /*	    {
+		REXP x=c.eval("c(\"bla\",\"blu\",\"ble\")");
+		System.out.println("x="+x);
+		Vector v=(Vector)x.getContent();
+		System.out.println("v.size()="+v.size());
+		
+		int i=0;
+		while (i<v.size()) {
+		    System.out.println("v("+i+")="+((REXP)v.elementAt(i)).asString());
+		    i++;
+		}
+		System.exit(0);
+		} */
 
 	    // lowess example
 	    System.out.println("lowess: create points");
