@@ -11,6 +11,10 @@ public class Rengine extends Thread {
             e.printStackTrace();
             System.exit(1);
         }
+        if (rniGetVersion()<0x0101) {
+            System.err.println("JRI library version doesn't match! Please update your JRI dynamic library.");
+            System.exit(2);
+        }
     }
     
     static Rengine mainEngine=null;
@@ -75,7 +79,11 @@ public class Rengine extends Thread {
     public synchronized native long rniCDR(long exp);
     public synchronized native long rniPutList(long[] cont);
     public synchronized native long[] rniGetList(long exp);
-        
+
+    public static native void rniSetEnv(String key, String val);
+    public static native String rniGetEnv(String key);
+    public static native long rniGetVersion();
+    
     public native int rniStop(int flag);
     
     public synchronized native void rniAssign(String name, long exp, long rho);
@@ -105,6 +113,7 @@ public class Rengine extends Thread {
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
+        System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
         Rsync.unlock();
         String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
         if (!Rsync.safeLock()) {
@@ -112,6 +121,7 @@ public class Rengine extends Thread {
             jriWriteConsole(es);
             System.err.print(es);
         }
+        System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
         return s;
     }
 
@@ -125,6 +135,7 @@ public class Rengine extends Thread {
 
     
     public synchronized REXP eval(String s) {
+        //System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
         boolean obtainedLock=Rsync.safeLock();
         try {
             /* --- so far, we ignore this, because it can happen when a callback needs an eval which is ok ...
@@ -140,12 +151,14 @@ public class Rengine extends Thread {
                 if (er>0) {
                     REXP x=new REXP(this, er);
                     Rsync.unlock();
+                    //System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
                     return x;
                 }
             }
         } finally {
             if (obtainedLock) Rsync.unlock();
         }
+        //System.out.println("Rengine.eval("+s+"): END (ERR)"+Thread.currentThread());
         return null;
     }
     
