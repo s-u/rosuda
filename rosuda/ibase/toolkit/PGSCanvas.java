@@ -20,25 +20,25 @@ import org.rosuda.util.*;
 public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
     /** frame that owns this canvas. can be null if none does. it is mainly used
 	to identify current frame in calls to dialogs */
-    Frame myFrame=null;
+    protected Frame myFrame=null;
     /** description of this canvas. */
-    String desc="untitled PGS canvas";
+    protected String desc="untitled PGS canvas";
 
     static Notifier globalNotifier=null;
     
     /** plot manager for any additional objects */
-    PlotManager pm;
+    protected PlotManager pm;
 
     /** inProgress flag to avoid recursions in paint methods */
-    boolean inProgress=false;
+    protected boolean inProgress=false;
 
     /** X-axis of the plot coordinates. beware that it may be <code>null</code> */
-    Axis ax;
+    protected Axis ax;
     /** Y-axis of the plot coordinates. beware that it may be <code>null</code> */
-    Axis ay;
+    protected Axis ay;
 
-    boolean cancel;
-    Dialog intDlg;
+    protected boolean cancel;
+    protected Dialog intDlg;
     
     public PGSCanvas(int layers, Axis x, Axis y) {
         this(layers);
@@ -115,15 +115,15 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
     /** this method provides an API to fetch data contents of the plot. The id is implementation-dependent, but first two variables x and y should be mapped to 0 and 1 correspondingly. Therefore every plot containting data must support getData(0). For invalid ids <code>null</code> is returned. */
     public SVar getData(int id) { return null; }
 
-    int paintLayerCounter;
+    protected int paintLayerCounter;
 
-    void nextLayer(PoGraSS p) {
+    protected void nextLayer(PoGraSS p) {
 	if (pm!=null) pm.drawLayer(p,paintLayerCounter,layers);
 	paintLayerCounter++;
 	p.nextLayer();
     }
 
-    void endPaint(PoGraSS p) {
+    protected void endPaint(PoGraSS p) {
 	while (paintLayerCounter<layers)
 	    nextLayer(p);
     }
@@ -142,7 +142,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
             Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_BREAK));
         }
         if (cmd=="prefs") {
-            PreferencesFrame.showPrefsDialog();
+            Platform.getPlatform().handlePrefs();
         }
         if (cmd=="exportPGS") {
             PoGraSSmeta p=new PoGraSSmeta();
