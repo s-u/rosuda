@@ -724,8 +724,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
             SVar v_var=new SVar("Variable",true); fs.add(v_var);
             SVar v_node=new SVar("NodeID"); fs.add(v_node);
-            SVar v_cases=new SVar("cases"); fs.add(v_cases);
-            SVar v_sdg=new SVar("dev.Gain"); fs.add(v_sdg);
+            SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
+            SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
+            SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
+            SVar v_td=new SVar("t.deviance"); fs.add(v_td);
+            SVar v_sdg=new SVar("s.dev.Gain"); fs.add(v_sdg);
+            SVar v_tdg=new SVar("t.dev.Gain"); fs.add(v_tdg);
             
             SVarSet.TreeEntry te;
             if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
@@ -743,8 +747,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                             if (n!=null) {
                                 //p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
                                 v_tree.add(te.name); v_var.add(n.splitVar.getName());
-                                v_node.add(new Integer(n.id)); v_cases.add(new Integer(np.data.size()));
-                                v_sdg.add(new Double(np.sampleDevGain));
+                                v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
+                                v_tcases.add(new Integer(np.Cases));
+                                v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
+                                v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
                             };
                         }
                     }
