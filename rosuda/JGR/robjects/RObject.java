@@ -57,6 +57,12 @@ public class RObject {
             return true;
         return false;
     }
+    
+    public boolean isEditable() {
+        if (type.indexOf("numeric") >= 0 || type.indexOf("integer") >= 0 || type.indexOf("factor") >= 0 || type.indexOf("character") >= 0 || type.indexOf("data.frame") >= 0 || type.indexOf("matrix") >= 0 || type.indexOf("list") >= 0)
+            return true;
+        return false;
+    }
 
     public String getRName() {
     	if (parent != null && parent.getType().equals("matrix"))
