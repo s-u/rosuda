@@ -125,6 +125,13 @@ public class HistCanvas extends BaseCanvas
         }
     }
 
+    public void setHistParam(double anchor, double binw) {
+        this.anchor=anchor; this.binw=binw;
+        updateObjects();
+        setUpdateRoot(0);
+        repaint();
+    }
+    
     public void paintBack(PoGraSS g) {        
         g.setColor("black");
 	if (orientation!=3)
