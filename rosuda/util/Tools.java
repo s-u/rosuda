@@ -33,6 +33,14 @@ public class Tools {
 	return null;	
     };
 
+    public static double nlogn(double n) {
+        return (n<=0)?0:n*Math.log(n);
+    }
+
+    public static double nlogn(int n) {
+        return (n<=0)?0.0:((double)n)*Math.log((double)n);
+    }
+    
     public static String getDisplayableValue(double val) { return getDisplayableValue(val,val); };
     
     public static String getDisplayableValue(double val, double range) {
