@@ -75,6 +75,8 @@ public class VarFrame extends TFrame {
 	Dimension minDim;
 	Dimension lastSize;
 
+	QueryPopup qp;
+
 	int offset=0;
         int genCount=0;
         int firstSel=-1;
@@ -91,6 +93,7 @@ public class VarFrame extends TFrame {
 	    addMouseListener(this);
 	    sb=s;
 	    minDim=new Dimension(140,100);
+	    qp=new QueryPopup(w,null,"variables");
 	};
 
         public int getVars() {
@@ -198,6 +201,22 @@ public class VarFrame extends TFrame {
 	    int svar=-1;
 	    if ((x>5)&&(x<115)) svar=(y-3)/17;
 	
+	    if (Common.isQueryTrigger(ev)) {
+		if (svar<vs.count() && svar>=0) {
+		    SVar v=vs.at(svar);
+		    qp.setContent("Name: "+v.getName()+
+				  "\nType: "+(v.isNum()?"numeric":"text")+
+				  (v.isCat()?", discrete":", continuous")+
+				  "\nHas missings: "+(v.hasMissing()?"yes ("+v.getMissingCount()+")":"no")+
+				  (v.isCat()?("\nLevels: "+v.getNumCats()):"")+
+				  (v.isNum()?("\nRange: "+Tools.getDisplayableValue(v.getMin(),v.getMax()-v.getMin())+" .. "+Tools.getDisplayableValue(v.getMax(),v.getMax()-v.getMin())):""));
+		    Point cl=win.getLocation();
+		    qp.setLocation(cl.x+x,cl.y+y);
+		    qp.show();
+		}
+		return;
+	    };
+	    qp.hide();
 	    if (svar<vs.count()) {
 		if (ev.isMetaDown() || ev.isControlDown()) {
                     if (svar>=0) {
