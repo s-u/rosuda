@@ -29,12 +29,13 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 
     public FunctionList(JGRObjectManager obm, Collection functions) {
         this.setModel(fmodel);
+        fmodel.removeAllElements();
 		Iterator i = functions.iterator();
 		while (i.hasNext())
 			fmodel.addElement(i.next());
         this.objmgr = obm;
-        this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.addMouseListener(this);
+        this.addKeyListener(this);
     }
 
     /**
@@ -42,6 +43,7 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
      * @param functions new functions
      */
     public void refresh(Collection functions) {
+    	fmodel.removeAllElements();
 		Iterator i = functions.iterator();
 		while (i.hasNext())
 			fmodel.addElement(i.next());
@@ -116,7 +118,7 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 	            }
 				if (o != null) {
 					JGR.R.eval("rm("+o.getRName()+")");
-					fmodel.remove(i);
+					fmodel.removeElement(sfunctions[i]);
 				}
 			}
 		}
