@@ -23,7 +23,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
     public static int editSuffix=0;
     
     public SplitEditor(SNode nd) {
-        super("Split Editor");
+        super("Split Editor",TFrame.clsUser);
         n=nd; vs=n.getSource();
         m=vs.getMarker();
         root=(SNode)n.getRoot();
@@ -430,7 +430,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                                 }
                             }
                         };
-                        TFrame f=new TFrame(nt.name);
+                        TFrame f=new TFrame(nt.name,TFrame.clsTree);
                         TreeCanvas tc=InTr.newTreeDisplay(nt,f);
                         tc.repaint(); tc.redesignNodes();
                         RTree.getManager().addTree(nt);

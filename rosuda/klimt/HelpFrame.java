@@ -8,7 +8,7 @@ public class HelpFrame extends TFrame implements ActionListener {
     TextArea t;
     
     public HelpFrame() {
-	super("Help");
+	super("Help",clsHelp);
 	setLayout(new BorderLayout());
 	t=new TextArea();
 	t.setText("Shortcuts for commands in tree window:\n\nTool modes:\n"+

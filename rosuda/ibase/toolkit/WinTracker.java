@@ -20,7 +20,12 @@ public class WinTracker implements ActionListener, FocusListener
     void newWindowMenu(WTentry we) {
 	we.menu=new Menu("Window");
 	MenuItem mi=new MenuItem("Close window",new MenuShortcut(KeyEvent.VK_W,false)); mi.setActionCommand("WTMclose"+we.id);
-	we.menu.add(mi); we.menu.addSeparator();
+	we.menu.add(mi);
+        mi=new MenuItem("Close same type",new MenuShortcut(KeyEvent.VK_W,true)); mi.setActionCommand("WTMcloseClass"+we.wclass);
+        we.menu.add(mi);
+        mi=new MenuItem("Close all"); mi.setActionCommand("WTMcloseAll");
+        we.menu.add(mi);
+        we.menu.addSeparator();
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we2=(WTentry)e.nextElement();
 	    if (we2!=null && we2!=we && we2.menu!=null)
@@ -131,9 +136,12 @@ public class WinTracker implements ActionListener, FocusListener
 	    System.out.println(">> action: "+cmd+" by "+o.toString());
 	for(Enumeration e=wins.elements();e.hasMoreElements();){
 	    WTentry we=(WTentry)e.nextElement();
-	    if (we!=null && cmd.compareTo("WTMclose"+we.id)==0) {
+	    if (we!=null && (cmd.compareTo("WTMclose"+we.id)==0 ||
+                      (cmd=="WTMcloseAll" && we.wclass>TFrame.clsVars) ||
+                      (cmd.compareTo("WTMcloseClass"+we.wclass)==0)
+                      )) {
 		if (Common.DEBUG>0)
-		    System.out.println(">>close: \""+we.name+"\" ("+we.w.toString()+")");
+		    System.out.println(">>close: "+we+" ("+we.w.toString()+")");
 		we.w.dispose();
 	    };
 	    if (we!=null && cmd.compareTo("WTMwindow"+we.id)==0) {

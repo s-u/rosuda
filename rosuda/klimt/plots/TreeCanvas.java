@@ -718,7 +718,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="new") {
- 	    TFrame f=new TFrame("Pruned copy of \""+root.getSource().getName()+"\"");
+ 	    TFrame f=new TFrame("Pruned copy of \""+root.getSource().getName()+"\"",TFrame.clsTree);
 	    SNode t=InTr.makePrunedCopy(root);
 	    TreeCanvas tc=InTr.newTreeDisplay(t,f);
 	    //Common.mainFrame.add(f);
@@ -729,14 +729,14 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    SVarSet tvs=root.getSource();
 	    SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
 	    if (t!=null) {
-		TFrame f=new TFrame(tvs.getName()+" - tree");
+		TFrame f=new TFrame(tvs.getName()+" - tree",TFrame.clsTree);
 		TreeCanvas tc=InTr.newTreeDisplay(t,f);
 		tc.repaint(); tc.redesignNodes();		
 		//InTr.newVarDisplay(tvs);
 	    };
 	};
         if (cmd=="openData") {
-            TFrame f=new TFrame("KLIMT "+Common.Version);
+            TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
             SVarSet tvs=new SVarSet();
             SNode t=InTr.openTreeFile(f,null,tvs);
             if (t==null && tvs.count()<1) {
@@ -805,7 +805,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		WinTracker.current.rm(myMosaicFrame);
 		myMosaicFrame=null;
 	    }; */
-	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)");
+	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)",TFrame.clsTreeMap);
 	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root));
 	    myMosaicFrame.addWindowListener(Common.defaultWindowListener);
 	    myMosaic.setBounds(0,0,400,300);
@@ -819,7 +819,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		WinTracker.current.rm(myDevFrame);
 		myDevFrame=null;
 	    }; */
-	    myDevFrame=new TFrame(InTr.lastTreeFileName+" (deviance plot)");
+	    myDevFrame=new TFrame(InTr.lastTreeFileName+" (deviance plot)",TFrame.clsDevPlot);
 	    DevCanvas dc=new DevCanvas(myDevFrame,root);
 	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.defaultWindowListener);
 	    dc.setBounds(0,0,400,300);
@@ -838,7 +838,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
         };            
         if (cmd=="showMCP") {
-            TFrame mcpf=new TFrame("MC-plot");
+            TFrame mcpf=new TFrame("MC-plot",TFrame.clsMCP);
             MCPCanvas dc=new MCPCanvas(mcpf,RTree.getManager(),m);
             mcpf.add(dc); mcpf.addWindowListener(Common.defaultWindowListener);
             dc.setBounds(0,0,400,300);

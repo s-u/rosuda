@@ -15,7 +15,7 @@ public class VarFrame extends TFrame {
     public static final int cmdHeight=182;
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
-	super(vs.getName()+" (Variables)");
+	super(vs.getName()+" (Variables)",TFrame.clsVars);
         setBackground(Common.backgroundColor);
 	int rh=h;
 	if (rh>vs.count()*17+6+cmdHeight+40)
@@ -274,7 +274,7 @@ public class VarFrame extends TFrame {
                 };
             }; */
             if (cmd=="openData") {
-                TFrame f=new TFrame("KLIMT "+Common.Version);
+                TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
                 SVarSet tvs=new SVarSet();
                 SNode t=InTr.openTreeFile(f,null,tvs);
                 if (t==null && tvs.count()<1) {
@@ -297,7 +297,7 @@ public class VarFrame extends TFrame {
                     i++;
                 };
                 if (map!=null) { // ok, go for weighter barchart instead
-                    TFrame f=new TFrame("Map ("+map.getName()+")");
+                    TFrame f=new TFrame("Map ("+map.getName()+")",TFrame.clsMap);
                     f.addWindowListener(Common.defaultWindowListener);
                     MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
@@ -365,16 +365,18 @@ public class VarFrame extends TFrame {
                     i++;
                 };
                 if (selC==1 && selN==1) { // ok, go for weighter barchart instead
-                    TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")");
+                    TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsBar);
                     f.addWindowListener(Common.defaultWindowListener);
                     BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                     bc.setSize(new Dimension(400,300));
                     f.add(bc); f.pack(); f.show();
+                    f.initPlacement();
                 } else {
                     for(i=0;i<vc.getVars();i++)
                         if (vc.selMask[i]) {
-                            TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")");
+                            TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")",
+                                                vs.at(i).isCat()?TFrame.clsBar:TFrame.clsHist);
                             f.addWindowListener(Common.defaultWindowListener);
                             Canvas cvs=null;
                             if (vs.at(i).isCat()) {
@@ -386,6 +388,7 @@ public class VarFrame extends TFrame {
                             };
                             cvs.setSize(new Dimension(400,300));
                             f.add(cvs); f.pack(); f.show();
+                            f.initPlacement();
                         };
                 };
             };
@@ -406,7 +409,7 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[i] &&vs.at(i).isNum()) vars[vsc++]=vs.at(i);
                         i++;
                     };
-                    TFrame f=new TFrame("Line plot");
+                    TFrame f=new TFrame("Line plot",TFrame.clsLine);
                     f.addWindowListener(Common.defaultWindowListener);
                     LineCanvas lc=new LineCanvas(f,null,vars,vs.getMarker());
                     lc.setSize(400,300);
@@ -433,11 +436,12 @@ public class VarFrame extends TFrame {
                         }
                         i++;
                     };
-                    TFrame f=new TFrame("Line plot");
+                    TFrame f=new TFrame("Line plot",TFrame.clsLine);
                     f.addWindowListener(Common.defaultWindowListener);
                     LineCanvas lc=new LineCanvas(f,idx,vars,vs.getMarker());
                     lc.setSize(400,300);
                     f.add(lc); f.pack(); f.show();
+                    f.initPlacement();
                 }
             }
             if (cmd=="scatterplot") { // Scatterplot
@@ -447,12 +451,13 @@ public class VarFrame extends TFrame {
                 if (tsel==2) {
                     TFrame f=new TFrame("Scatterplot ("+
                                         vs.at(vnr[1]).getName()+" vs "+
-                                        vs.at(vnr[0]).getName()+")");
+                                        vs.at(vnr[0]).getName()+")",TFrame.clsScatter);
                     f.addWindowListener(Common.defaultWindowListener);
                     ScatterCanvas sc=new ScatterCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
+                    f.initPlacement();
                 };
             };
             if (cmd=="boxplot") { // Boxplot
@@ -467,7 +472,7 @@ public class VarFrame extends TFrame {
                 if (catVar==null) {
                     while(bJ<vc.getVars()) {
                         if (vc.selMask[bJ]) {
-                            TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")");
+                            TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.defaultWindowListener);
                             BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
@@ -480,15 +485,13 @@ public class VarFrame extends TFrame {
                     int lx=0, ly=0;
                     while(bJ<vc.getVars()) {
                         if (vc.selMask[bJ] && bJ!=bI) {
-                            TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")");
+                            TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.defaultWindowListener);
                             BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),catVar,vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.setSize(new Dimension(40+catVar.getNumCats()*40,300));
                             f.add(sc); f.pack(); f.show();
-                            f.setLocation(lx,ly);
-                            lx+=sc.getWidth();
-                            
+                            f.initPlacement();
                         };
                         bJ++;
                     };
@@ -506,7 +509,7 @@ public class VarFrame extends TFrame {
                     if (tsel==2) {
                         TFrame f=new TFrame(((weight==null)?"":"W")+"FD ("+
                                             vs.at(vnr[1]).getName()+" vs "+
-                                            vs.at(vnr[0]).getName()+")"+((weight==null)?"":"*"+weight.getName()));
+                                            vs.at(vnr[0]).getName()+")"+((weight==null)?"":"*"+weight.getName()),TFrame.clsFD);
                         f.addWindowListener(Common.defaultWindowListener);
                         FluctCanvas sc;
                         if (cmd=="speckle" && weight!=null && weight.isCat())
@@ -516,6 +519,7 @@ public class VarFrame extends TFrame {
                         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                         sc.setSize(new Dimension(400,300));
                         f.add(sc); f.pack(); f.show();
+                        f.initPlacement();
                     };
             };
             if (cmd=="PCP") { //PCP
@@ -526,12 +530,13 @@ public class VarFrame extends TFrame {
                     for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isNum()) {
                         vl[j]=vs.at(i); j++;
                     };
-                    TFrame f=new TFrame("Parallel coord. plot");
+                    TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
                     f.addWindowListener(Common.defaultWindowListener);
                     PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.setSize(new Dimension(400,300));
                     f.add(sc); f.pack(); f.show();
+                    f.initPlacement();
                 }
             }
             if (cmd=="growTree") { // grow tree
@@ -572,7 +577,7 @@ public class VarFrame extends TFrame {
                 gt.donePlugin();
                 if (nr!=null) {
                     genCount++;
-                    TFrame fff=new TFrame("Generated_"+genCount);
+                    TFrame fff=new TFrame("Generated_"+genCount,TFrame.clsTree);
                     TreeCanvas tc=InTr.newTreeDisplay(nr,fff);
                 }
                 pd.dispose();

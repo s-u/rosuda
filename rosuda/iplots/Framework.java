@@ -158,7 +158,7 @@ public class Framework {
 	    vs.setMarker(new SMarker(vs.at(v1).size()));
 	TFrame f=new TFrame("Scatterplot ("+
 			    vs.at(v2).getName()+" vs "+
-			    vs.at(v1).getName()+")");	
+			    vs.at(v1).getName()+")",TFrame.clsScatter);	
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
 	f.addWindowListener(Common.defaultWindowListener);
@@ -176,7 +176,7 @@ public class Framework {
 	if (v.length==0) return null;
 	if (vs.getMarker()==null)
 	    vs.setMarker(new SMarker(vs.at(v[0]).size()));
-	TFrame f=new TFrame("Lineplot");	
+	TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
 	f.addWindowListener(Common.defaultWindowListener);
@@ -197,7 +197,7 @@ public class Framework {
     public HistCanvasNew newHistogram(SVarSet vs, int i) {
 	if (vs.getMarker()==null)
 	    vs.setMarker(new SMarker(vs.at(i).size()));
-	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")");
+	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
 	f.addWindowListener(Common.defaultWindowListener);

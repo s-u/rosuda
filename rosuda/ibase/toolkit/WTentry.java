@@ -17,15 +17,17 @@ class WTentry extends Object
     int id=0;
     MenuItem mi=null;
     Menu menu=null;
+    int wclass=0;
 
     WTentry(Window win) {
 	w=win; id=lid; lid++;
 	mi=newMenuItem();
     }
 
-    WTentry(Window win,String nam) {
+    WTentry(Window win,String nam,int wndclass) {
         name=nam; 
 	w=win; id=lid; lid++;
+        wclass=wndclass;
 	mi=newMenuItem();
     };
 
@@ -36,6 +38,6 @@ class WTentry extends Object
     };
 
     public String toString() {
-	return "WTentry(id="+id+", name="+name+", win="+((w==null)?"<null>":w.toString())+")";
+	return "WTentry(id="+id+", class="+wclass+", name="+name+", win="+((w==null)?"<null>":w.toString())+")";
     };
 };

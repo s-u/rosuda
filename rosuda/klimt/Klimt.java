@@ -39,7 +39,7 @@ public class InTr
 
 	TFrame f=tf;
 	if (f==null)
-	    f=new TFrame("KLIMT "+Common.Version);
+	    f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
 	
 	TreeCanvas tc=new TreeCanvas(t,f);
 	f.add(tc);
@@ -168,7 +168,7 @@ public class InTr
                                     TFrame ff=null;
                                     t.name=fs[fi].getName();
                                     if (createFrames) {
-                                        t.frame=ff=new TFrame(fs[fi].getName());
+                                        t.frame=ff=new TFrame(fs[fi].getName(),TFrame.clsTree);
                                         TreeCanvas tc=InTr.newTreeDisplay(t,ff);
                                         tc.repaint(); tc.redesignNodes();                                        
                                     }
@@ -308,7 +308,7 @@ public class InTr
                     };
                 }
             }
- 	    TFrame f=new TFrame("KLIMT "+Common.Version);
+ 	    TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
 	    Common.mainFrame=f;
 	    
 	    SVarSet tvs=new SVarSet();
@@ -354,7 +354,7 @@ public class InTr
                 if (argv[carg].length()<2 || argv[carg].substring(0,2).compareTo("--")!=0) {
                     SNode ttt=InTr.openTreeFile(Common.mainFrame,argv[carg],tvs);
                     if (ttt!=null && !silentTreeLoad) {
-                        TFrame fff=new TFrame(InTr.lastTreeFileName);
+                        TFrame fff=new TFrame(InTr.lastTreeFileName,TFrame.clsTree);
                         TreeCanvas tc=InTr.newTreeDisplay(ttt,fff);
                         tc.repaint(); tc.redesignNodes();
                     };
