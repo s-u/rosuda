@@ -13,6 +13,8 @@ import java.io.*;
 import java.util.zip.*;
 
 public class SplashScreen extends Frame implements ActionListener, WindowListener, Commander {
+    public static SplashScreen main;
+    
     class SplashImageCanvas extends Canvas implements ImageObserver {
         Image logo;
         int w,h;
@@ -48,30 +50,52 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
     
     public SplashScreen() {
         super("Klimt "+Common.Version);
+
+        Image splash=null;
+        main=this;
+
         addWindowListener(this);
         byte[] arrayLogo;
+
+        // first try platform's "getResourceFile". This should work anywhere except for single .jar files
         try {
-            ZipFile MJF;
+            splash=Toolkit.getDefaultToolkit().getImage(Platform.getPlatform().getResourceFile("splash.jpg"));
+            if (Common.DEBUG>0 && splash!=null)
+                System.out.println("Good, obtained logo via Platform.getResourceFile");
+        } catch (Exception ex) {}
+
+        if (splash==null) { // ok, if that failed, try to extract it from the jar file
             try {
-                MJF = new ZipFile("KlimtLite.app/Contents/Resources/Java/KlimtLite.jar");
+                ZipFile MJF=null;
+                String jar=System.getProperty("java.class.path");
+                if (jar!=null) {
+                    // if there are more path entries we assume that ours is the last one
+                    int i=jar.lastIndexOf(File.pathSeparatorChar);
+                    if (i>-1)
+                        jar=jar.substring(i+1);
+                    if (Common.DEBUG>0)
+                        System.out.println("my own jar file: "+jar);
+                    MJF = new ZipFile(jar);
+                }
+                if (MJF!=null) {
+                    ZipEntry LE = MJF.getEntry("splash.jpg");
+                    InputStream inputLogo = MJF.getInputStream(LE);
+                    arrayLogo = new byte[(int)LE.getSize()];
+                    for( int i=0; i<arrayLogo.length; i++ ) {
+                        arrayLogo[i] = (byte)inputLogo.read();
+                    }
+                    if (Common.DEBUG>0)
+                        System.out.println("Logo OK, "+arrayLogo.length+" bytes.");
+                    splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
+                }
             } catch (Exception e) {
-                MJF = new ZipFile(System.getProperty("java.class.path"));
+                System.out.println("Can't find splash image (neither via Platform.getResourceFile, nor in the jar file). Exception: "+e);
             }
-            ZipEntry LE = MJF.getEntry("splash.jpg");
-            InputStream inputLogo = MJF.getInputStream(LE);
-            arrayLogo = new byte[(int)LE.getSize()];
-            for( int i=0; i<arrayLogo.length; i++ ) {
-                arrayLogo[i] = (byte)inputLogo.read();
-            }
-            System.out.println("Logo OK, "+arrayLogo.length+" bytes.");
-        } catch (Exception e) {
-            System.out.println("Logo Exception: "+e);
-            arrayLogo = new byte[1];
         }
 
         setLayout(new BorderLayout());
         Panel p=new Panel();
-        p.add(new SplashImageCanvas(Toolkit.getDefaultToolkit().createImage(arrayLogo),this));
+        p.add(new SplashImageCanvas(splash,this));
         add(p);
         p=new Panel();
         add(p, BorderLayout.SOUTH);
@@ -87,34 +111,44 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
     }
 
     public Object run(Object o, String cmd) {
-        if (cmd=="exit") WinTracker.current.Exit();
+        if (cmd=="exit") {
+            if (WinTracker.current!=null)
+                WinTracker.current.Exit();
+            else
+                exit();
+        }
+        
         if (cmd=="openData") {
             SVarSet tvs=new SVarSet();
             SNode t=InTr.openTreeFile(this,null,tvs);
             if (t==null && tvs.count()<1) {
-                Frame f=new Frame("dummy");
-                new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
-                f=null;
             } else {
                 if (t!=null) {
                     TFrame f=new TFrame("Tree "+tvs.getName(),TFrame.clsTree);
                     InTr.newTreeDisplay(t,f,0,0,Common.screenRes.width-160,(Common.screenRes.height>600)?600:Common.screenRes.height-20);
                 }
                 VarFrame vf=InTr.newVarDisplay(tvs,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height);
+                setVisible(false);
             }
         }
         return null;
     }
 
+    void exit() {
+        System.exit(0);
+    }
+    
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
         run(e.getSource(),e.getActionCommand());
     }
 
     public void windowOpened(WindowEvent e) {}
-    public void windowClosing(WindowEvent e) {}
+    public void windowClosing(WindowEvent e) {
+        exit();
+    }
     public void windowClosed(WindowEvent e) {
-        System.exit(0);
+        exit();
     }
     public void windowIconified(WindowEvent e) {}
     public void windowDeiconified(WindowEvent e) {}
