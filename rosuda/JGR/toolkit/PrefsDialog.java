@@ -31,8 +31,8 @@ public class PrefsDialog extends JDialog implements ActionListener{
     private DefaultComboBoxModel ms;
 
     private JSpinner helptabs = new JSpinner();
-    private JCheckBox useHelpAgent = new JCheckBox("Use Help Agent: ",JGRPrefs.useHelpAgent);
-    private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings: ",JGRPrefs.useEmacsKeyBindings);
+    private JCheckBox useHelpAgent = new JCheckBox("Use Help Agent",JGRPrefs.useHelpAgent);
+    private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings",JGRPrefs.useEmacsKeyBindings);
 
     private JButton cancel = new JButton("Cancel");
     private JButton apply = new JButton("Apply");
@@ -48,9 +48,9 @@ public class PrefsDialog extends JDialog implements ActionListener{
     public PrefsDialog(JFrame f) {
         super(f,"Preferences",true);
 
-        helptabs.setMinimumSize(new Dimension(40,20));
-        helptabs.setPreferredSize(new Dimension(40,20));
-        helptabs.setMaximumSize(new Dimension(40,20));
+        helptabs.setMinimumSize(new Dimension(40,22));
+        helptabs.setPreferredSize(new Dimension(40,22));
+        helptabs.setMaximumSize(new Dimension(40,22));
         helptabs.setValue(new Integer(JGRPrefs.maxHelpTabs));
                 
         fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
@@ -59,16 +59,16 @@ public class PrefsDialog extends JDialog implements ActionListener{
         mf.setSelectedItem(JGRPrefs.FontName);
         ms.setSelectedItem(new Integer(JGRPrefs.FontSize));
 
-        font.setMinimumSize(new Dimension(200,20));
-        font.setPreferredSize(new Dimension(200,20));
-        font.setMaximumSize(new Dimension(200,20));
-        size.setMinimumSize(new Dimension(50,20));
-        size.setPreferredSize(new Dimension(50,20));
-        size.setMaximumSize(new Dimension(50,20));
+        font.setMinimumSize(new Dimension(200,22));
+        font.setPreferredSize(new Dimension(200,22));
+        font.setMaximumSize(new Dimension(200,22));
+        size.setMinimumSize(new Dimension(50,22));
+        size.setPreferredSize(new Dimension(50,22));
+        size.setMaximumSize(new Dimension(50,22));
         size.setEditable(true);
         
         JPanel prefs = new JPanel();
-        prefs.setLayout(new GridLayout(6,1,5,5));
+        prefs.setLayout(new GridBagLayout());
         
         JPanel title = new JPanel(new FlowLayout(FlowLayout.CENTER));
         title.add(new JLabel("Preferences"));
@@ -82,12 +82,21 @@ public class PrefsDialog extends JDialog implements ActionListener{
         JPanel helpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         helpPanel.add(new JLabel("Help Pages: "));
         helpPanel.add(helptabs);
-        
-        prefs.add(title);
-        prefs.add(fontPanel);
-        prefs.add(helpPanel);
-        prefs.add(useHelpAgent);
-        prefs.add(useEmacsKeyBindings);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(2,2,2,2);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        //prefs.add(title,gbc);
+        gbc.gridy = 1;
+        prefs.add(fontPanel,gbc);
+        gbc.gridy = 2;
+        prefs.add(helpPanel,gbc);
+        gbc.gridy = 3;
+        prefs.add(useHelpAgent,gbc);
+        gbc.gridy = 4;
+        prefs.add(useEmacsKeyBindings,gbc);
         
 
         cancel.setActionCommand("cancel");
@@ -113,7 +122,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
         this.getContentPane().add(buttons,BorderLayout.SOUTH);
         
         this.getRootPane().setDefaultButton(save);
-        
+        this.setResizable(false);
         this.setSize(new Dimension(400, 350));
         this.setLocation((screenSize.width-400)/2,(screenSize.height-350)/2);
         this.addWindowListener(new java.awt.event.WindowAdapter() {

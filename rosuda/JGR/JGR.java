@@ -48,7 +48,7 @@ public class JGR {
     public static Vector OTHERS = new Vector();
     public static Vector FUNCTIONS = new Vector();
 
-    public static Vector OBJECTS = new Vector();
+    public static Vector  OBJECTS = new Vector();
     public static HashMap KEYWORDS = new HashMap();
     public static HashMap KEYWORDS_OBJECTS = new HashMap();
 

@@ -1,13 +1,13 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRPackageManager
- * 
+*  JGRPackageManager
+ *
  * 	manage packages for current session as well as default packages
- * 
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -35,62 +35,69 @@ public class JGRPackageManager extends iFrame implements ActionListener {
     public JGRPackageManager() {
         super("Package Manager",iFrame.clsPackageUtil);
         try {
-        String[] Menu = {
-            /*"+", "File", "~File.Basic.End",*/
-            "~Window","0"};
-        iMenu.getMenu(this, this, Menu);
+            String[] Menu = {
+                /*"+", "File", "~File.Basic.End",*/
+                "~Window","0"};
+            iMenu.getMenu(this, this, Menu);
 
-        close.setActionCommand("exit");
-        close.addActionListener(this);
-        refresh.setActionCommand("refresh");
-        refresh.addActionListener(this);
+            close.setActionCommand("exit");
+            close.addActionListener(this);
+            refresh.setActionCommand("refresh");
+            refresh.addActionListener(this);
 
-        while(!JGR.STARTED);
+            while(!JGR.STARTED);
 
-        Packages = RController.refreshPackages();
+            Packages = RController.refreshPackages();
 
-        sorter = new TableSorter(pkgModel = new PTableModel(this));
-        scrollArea.setBackground(this.getBackground());
-        pkgTable.setBackground(this.getBackground());
-        pkgTable.setColumnModel(new PTableColumnModel());
-        pkgTable.setModel(sorter);
-        pkgTable.setShowGrid(false);
-        pkgTable.setCellSelectionEnabled(false);
-        pkgTable.setColumnSelectionAllowed(false);
-        pkgTable.setRowSelectionAllowed(false);
-        pkgTable.setFocusable(false);
-        pkgTable.getTableHeader().setReorderingAllowed(false);
-        sorter.setTableHeader(pkgTable.getTableHeader());
+            sorter = new TableSorter(pkgModel = new PTableModel(this));
+            scrollArea.setBackground(this.getBackground());
+            pkgTable.setBackground(this.getBackground());
+            pkgTable.setColumnModel(new PTableColumnModel());
+            pkgTable.setModel(sorter);
+            pkgTable.setShowGrid(false);
+            pkgTable.setCellSelectionEnabled(false);
+            pkgTable.setColumnSelectionAllowed(false);
+            pkgTable.setRowSelectionAllowed(false);
+            pkgTable.setFocusable(false);
+            pkgTable.getTableHeader().setReorderingAllowed(false);
+            sorter.setTableHeader(pkgTable.getTableHeader());
 
-        scrollArea.getViewport().setBackground(this.getBackground());
-        scrollArea.getViewport().add(pkgTable);
+            scrollArea.getViewport().setBackground(this.getBackground());
+            scrollArea.getViewport().add(pkgTable);
 
-        JPanel buttons = new JPanel();
-        buttons.add(refresh);
-        buttons.add(close);
+            JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            buttons.add(refresh);
+            buttons.add(close);
 
-        this.getContentPane().setLayout(new GridBagLayout());
-        this.getContentPane().add(scrollArea,
-                                  new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0
-            , GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-            new Insets(5, 5, 1, 5), 0, 0));
-        this.getContentPane().add(buttons,
-                                  new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0
-            , GridBagConstraints.EAST, GridBagConstraints.NONE,
-            new Insets(2, 5, 5, 5), 0, 0));
+            this.getContentPane().setLayout(new GridBagLayout());
 
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.getRootPane().setDefaultButton(close);
-        this.setMinimumSize(new Dimension(300,350));
-        this.setLocation(200,10);
-        this.setSize(420,450);
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.WEST;
+            gbc.insets = new Insets(2,2,2,2);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            this.getContentPane().add(scrollArea,gbc);
+            gbc.gridy = 1;
+            this.getContentPane().add(buttons,gbc);
+
+            this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            this.getRootPane().setDefaultButton(close);
+            this.setMinimumSize(new Dimension(300,350));
+            this.setLocation(200,10);
+            this.setSize(420,450);
+            this.setResizable(false);
         } catch (Exception e) { e.printStackTrace();}//this.show(); //do it manually when you really want to see it
     }
-    
+
     public void exit() {
-    	dispose();
-    	setDefaultPackages();
-    	JGRPrefs.writePrefs();
+        dispose();
+    }
+
+
+    public void dispose() {
+        setDefaultPackages();
+        JGRPrefs.writePrefs();
+        super.dispose();
     }
 
     public void refresh() {
@@ -109,15 +116,15 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         else JGR.MAINRCONSOLE.execute("detach(\"package:"+pkg+"\")");
         this.cursorDefault();
     }
-    
+
     public void setDefaultPackages() {
         ArrayList packages = new ArrayList();
         for (int i = 0; i < pkgModel.getRowCount(); i++) {
-        	if (pkgModel.getValueAt(i,1).toString().equals("true")) 
-        		packages.add(pkgModel.getValueAt(i,2));
+            if (pkgModel.getValueAt(i,1).toString().equals("true"))
+                packages.add(pkgModel.getValueAt(i,2));
         }
         defaultPackages = packages.toArray();
-    }    
+    }
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -125,7 +132,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         else if (cmd=="refresh") refresh();
 
     }
-   
+
     class PTableModel extends DefaultTableModel {
 
         public int cols, rows;
@@ -136,7 +143,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
-        	return Packages[row][col];
+            return Packages[row][col];
         }
 
         public int getColumnCount() {
@@ -150,8 +157,8 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         public void setValueAt(Object value, int row, int col) {
             if (col==0) setPKGStatus(getValueAt(row,2).toString(),value.toString());
             if (col==1) {
-            	String val = getValueAt(row,2).toString();
-            	if (neededPackages.containsKey(val)) value = new Boolean(true);
+                String val = getValueAt(row,2).toString();
+                if (neededPackages.containsKey(val)) value = new Boolean(true);
             }
             Packages[row][col] = value;
         }
@@ -165,7 +172,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         }
 
         public Class getColumnClass(int c) {
-        	return getValueAt(0, c).getClass();
+            return getValueAt(0, c).getClass();
         }
 
     }

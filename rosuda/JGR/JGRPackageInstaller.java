@@ -1,13 +1,13 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRPackageInstaller
+*  JGRPackageInstaller
  *
- *  install packages if user has enough permissions  
- * 
+ *  install packages if user has enough permissions
+ *
  *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
+ *
+ * 	RoSuDA 2003 - 2004
  */
 
 import java.awt.*;
@@ -25,9 +25,11 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
     private JButton install = new JButton("Install");
     private JButton close = new JButton("Close");
 
-    public JGRPackageInstaller(String[] pkgs) {
-        super("Package Installer",iFrame.clsPackageUtil);
+    private String type = "binaries";
 
+    public JGRPackageInstaller(String[] pkgs, String type) {
+        super("Package Installer",iFrame.clsPackageUtil);
+        this.type = type;
         packages = pkgs;
 
         String[] Menu = {
@@ -41,35 +43,57 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         install.addActionListener(this);
 
 
-        JPanel buttons = new JPanel();
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttons.add(install);
         buttons.add(close);
-        
+
+
         this.getContentPane().setLayout(new GridBagLayout());
-        this.getContentPane().add(new JScrollPane(pkgList = new JList(packages)),
-            new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.CENTER, GridBagConstraints.BOTH, new Insets(5, 5, 1, 5), 0, 0));
-        this.getContentPane().add(buttons, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 5, 5), 0, 0));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(2,2,2,2);
+        gbc.gridx = 0;
+        gbc.gridy = 0;        
+        this.getContentPane().add(new JScrollPane(pkgList = new JList(packages)),gbc);
+        gbc.gridy = 1;
+        this.getContentPane().add(buttons, gbc);
 
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getRootPane().setDefaultButton(close);
         this.setMinimumSize(new Dimension(150,250));
         this.setLocation(200,10);
         this.setSize(200,400);
-        
-
-
+        this.setResizable(false);
     }
 
     public void installPkg() {
-        try {
-            String file = JGR.RLIBS[0]+"/JGR.test";
-            if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('/','\\');
-            File f = new File(file);
-            f.createNewFile();
-            f.delete();
+        String destDir = null;
+        for (int i = 0; i < JGR.RLIBS.length; i++) {
+            if (checkLibPaths(JGR.RLIBS[i])) {
+                destDir = JGR.RLIBS[i];
+                break;
+            }
         }
-        catch (Exception e) {
-            e.printStackTrace();
+        if (destDir == null) {
+            JFileChooser chooser = new JFileChooser();
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            chooser.setDialogTitle("Choose Installation Directory");
+            int r = chooser.showOpenDialog(this);
+            if (r == JFileChooser.CANCEL_OPTION) return;
+            if (chooser.getSelectedFile()!=null)
+                destDir = chooser.getSelectedFile().toString();
+            if (!checkLibPaths(destDir)) destDir = null;
+            if (destDir != null) {
+                String[] libs = new String[(JGR.RLIBS.length+1)];
+                libs[0] = destDir;
+                System.arraycopy(JGR.RLIBS,0,libs,1,JGR.RLIBS.length);
+                JGR.RLIBS = libs;
+                JGRPrefs.writePrefs();
+                JGR.R.eval(".libPaths(\""+destDir+"\")");
+            }
+        }
+        if (destDir == null) {
             JOptionPane.showMessageDialog(this,"JGR was unable to write to the library directory.\nPlease change your library path or get sufficient rights.","Permisson denied",JOptionPane.OK_OPTION);
             return;
         }
@@ -78,13 +102,29 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         if (instPkgs.length > 0) {
             for (int i = 0; i < instPkgs.length-1; i++) cmd += "\""+instPkgs[i]+"\",";
             cmd += "\""+instPkgs[instPkgs.length-1]+"\")";
-            JGR.MAINRCONSOLE.execute("install.packages("+cmd+")");
+            if (type.equals("binaries") && JGRPrefs.isMac)
+                JGR.MAINRCONSOLE.execute("install.binaries("+cmd+",\""+destDir+"\")");
+            else
+                JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\")");
         }
+    }
+
+    private boolean checkLibPaths(String path) {
+        try {
+            String file = path+"/JGR.test";
+            if (System.getProperty("os.name").startsWith("Windows")) file = file.replace('/','\\');
+            File f = new File(file);
+            f.createNewFile();
+            f.delete();
+        }
+        catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        System.out.println(cmd);
         if (cmd=="close" || cmd=="exit") dispose();
         else if (cmd=="install") installPkg();
     }

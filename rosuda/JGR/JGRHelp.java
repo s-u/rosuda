@@ -33,7 +33,6 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
     private String keyWord = null;
 
-    private GridBagLayout layout = new GridBagLayout();
     private JPanel topPanel = new JPanel();
     private JTabbedPane tabArea = new JTabbedPane();
     private HelpArea helpArea;
@@ -142,19 +141,10 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
         tabArea.addMouseListener(this);
 
-        this.getContentPane().setLayout(layout);
-        this.getContentPane().add(topPanel,
-                                  new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.NONE,
-            new Insets(5, 5, 2, 5), 0, 0));
-        this.getContentPane().add(tabArea,
-                                  new GridBagConstraints(0, 1, 1, 1, 1.0, 1.0,
-            GridBagConstraints.WEST, GridBagConstraints.BOTH,
-            new Insets(2, 5, 2, 5), 0, 0));
-        this.getContentPane().add(link,
-                                  new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0,
-            GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-            new Insets(2, 5, 5, 5), 0, 0));
+        this.getContentPane().setLayout(new BorderLayout());
+        this.getContentPane().add(topPanel,BorderLayout.NORTH);
+        this.getContentPane().add(tabArea,BorderLayout.CENTER);
+        this.getContentPane().add(link,BorderLayout.SOUTH);
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

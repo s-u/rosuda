@@ -23,7 +23,7 @@ public class ProgressLabel extends Canvas implements Runnable {
     private Image img = null;
     private Graphics g2 = null;
     private Color col = Color.darkGray;
-    private int sleep = 180;
+    private int sleep = 240;
 
     public ProgressLabel(int g) {
         this.setSize(g+10,g+10);

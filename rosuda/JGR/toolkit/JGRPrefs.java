@@ -157,13 +157,18 @@ public class JGRPrefs {
         prefs.putInt("MaxHelpTabs",maxHelpTabs);
         prefs.putBoolean("UseHelpAgent", useHelpAgent);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
-        String packages = "";
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
-            packages = JGRPackageManager.defaultPackages[0].toString();
+            String packages = JGRPackageManager.defaultPackages[0].toString();
             for (int i = 1; i < JGRPackageManager.defaultPackages.length; i++)
                 packages += ", "+JGRPackageManager.defaultPackages[i];
+            prefs.put("DefaultPackages", packages);
         }
-        prefs.put("DefaultPackages", packages);
+        if (JGR.RLIBS != null && JGR.RLIBS.length > 0) {
+            String libpaths = JGR.RLIBS[0].toString();
+            for (int i = 1; i < JGR.RLIBS.length; i++)
+                libpaths +=  isMac?":":";"+JGR.RLIBS[i];
+            prefs.put("InitialRLibraryPath", libpaths);
+        }
         try {
             prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
         } catch (IOException e) {

@@ -40,7 +40,7 @@ public class RController {
      * @return R_LIBS paths
      */
     public static String[] getRLibs() {
-        REXP x = JGR.R.eval(".Library");
+        REXP x = JGR.R.eval(".libPaths()");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return null;
     }
