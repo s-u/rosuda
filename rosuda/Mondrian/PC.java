@@ -838,15 +838,24 @@ System.out.println("Command: "+command);
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
         }
         for( int j=0; j<k; j++ ) {	                    		// Axes
-          bg.setColor(new Color(255, 255, 255, 75));
+          if( !printing )
+            bg.setColor(new Color(255, 255, 255, 75));
+          else
+            bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.35F));
           bg.drawLine( poly[1].xpoints[j]-1, border, (poly[1].xpoints)[j]-1, size.height-border-3);
           bg.drawLine( poly[1].xpoints[j]+1, border, (poly[1].xpoints)[j]+1, size.height-border-3);
-          bg.setColor(new Color(255, 255, 255, 140));
+          if( !printing )
+            bg.setColor(new Color(255, 255, 255, 140));
+          else
+            bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
           bg.drawLine( poly[1].xpoints[j],   border-1, (poly[1].xpoints)[j],   size.height-border-2);
         }	
         for( int j=0; j<k; j++ ) {													// Arrows at Axes
           if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
-            bg.setColor(new Color(255, 255, 255, 140));
+            if( !printing )
+              bg.setColor(new Color(255, 255, 255, 140));
+            else
+              bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
             bg.drawLine( poly[1].xpoints[j]-3,   border+2, (poly[1].xpoints)[j]+3,   border+2);
             bg.drawLine( poly[1].xpoints[j]-2,   border+1, (poly[1].xpoints)[j]+2,   border+1);
             bg.drawLine( poly[1].xpoints[j]-1,   border,   (poly[1].xpoints)[j]+1,   border);
