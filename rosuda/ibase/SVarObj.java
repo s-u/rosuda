@@ -240,7 +240,7 @@ public class SVarObj extends SVar
         element, then min/max is not adapted to shrink the range
         */
     /* added 31.12.03 MH */
-    public boolean replace(Object o, int i) {
+    public boolean replace(int i, Object o) {
       if (i < 0 || i >= size()) return false;
       Object oo = at(i);
       if (oo == o) return true;
