@@ -50,16 +50,37 @@ public class Tools {
     };
 
     public static String getDisplayableValue(double val, int dac) {
+        /*
+        String s=Double.toString(val);
+        String ps="";
+        int i;
+        if (i=s.indexOf('E')) {
+            ps="e"+s.substring(i+1);
+            s=s.substring(0,i);
+        }
+        int digs=0;
+        int len=0;
+        i=0;
+        while (i<s.length()) {
+            if (s.charAt(i)>='0' && s.charAt(i)<='9') digs++;
+        */
+
+        String sig="";
         if (dac==0) return ""+((int)val);
         double mplr=10.0;
-        while(dac>0) { mplr*=10.0; dac--; };
-        int front=(int)(Math.round(val*mplr)/mplr);
+        long implr=10;
+        while(dac>0) { mplr*=10.0; implr*=10; dac--; };
+        long front=(long)(Math.round(val*mplr)/mplr);
         mplr/=10.0;
         double post=(val-((double)front))*mplr;
         if (post<0) post=-post;
-        // while rounding post may reach mplr (e.g. 4.9 +0.1 = 4.10 -> 5.0) so take care of that
-        if (post>=((int)mplr)) { post-=(int)mplr; if (front>=0) front++; else front--; };
-        return ""+front+((Math.round(post)==0)?"":"."+Math.round(post));
+        long ipost=(long)Math.round(post);
+        if (val<0 && front==0 && ipost>0) sig="-";
+        if (ipost>=implr) {
+            ipost-=implr;
+            if (front>=0) front++; else front--;
+        }
+        return sig+front+((ipost==0)?"":"."+ipost);
     };
 
     public static double parseDouble(String s) {
