@@ -93,7 +93,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");
         MenuItem mi=EzMenu.getItem(f,"rotate");
@@ -349,6 +349,39 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="backlines") {  drawBackline=!drawBackline; setUpdateRoot(0); repaint(); }
+        if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
+            int rt=(cmd=="YrangeDlg")?1:0;
+            Dialog d=intDlg=new Dialog(myFrame,(rt==1)?"Y range":"X range",true);
+            IDlgCL ic=new IDlgCL(this);
+            d.setBackground(Color.white);
+            d.setLayout(new BorderLayout());
+            d.add(new SpacingPanel(),BorderLayout.WEST);
+            d.add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+            d.add(bp,BorderLayout.SOUTH);
+            d.add(new Label(" "),BorderLayout.NORTH);
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            d.add(cp);
+            cp.add(new Label("start: "));
+            TextField tw=new TextField(""+A[rt].vBegin,6);
+            TextField th=new TextField(""+(A[rt].vBegin+A[rt].vLen),6);
+            cp.add(tw);
+            cp.add(new Label(", end: "));
+            cp.add(th);
+            d.pack();
+            b.addActionListener(ic);b2.addActionListener(ic);
+            d.setVisible(true);
+            if (!cancel) {
+                double w=Tools.parseDouble(tw.getText());
+                double h=Tools.parseDouble(th.getText());
+                A[rt].setValueRange(w,h-w);
+                setUpdateRoot(0);
+                repaint();
+            };
+            d.dispose();
+        };
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");

@@ -95,7 +95,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
@@ -503,6 +503,39 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             updatePoints();
             setUpdateRoot(0);
             repaint();
+        }
+        if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
+            int rt=(cmd=="YrangeDlg")?1:0;
+            Dialog d=intDlg=new Dialog(myFrame,(rt==1)?"Y range":"X range",true);
+            IDlgCL ic=new IDlgCL(this);
+            d.setBackground(Color.white);
+            d.setLayout(new BorderLayout());
+            d.add(new SpacingPanel(),BorderLayout.WEST);
+            d.add(new SpacingPanel(),BorderLayout.EAST);
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
+            d.add(bp,BorderLayout.SOUTH);
+            d.add(new Label(" "),BorderLayout.NORTH);
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            d.add(cp);
+            cp.add(new Label("start: "));
+            TextField tw=new TextField(""+A[rt].vBegin,6);
+            TextField th=new TextField(""+(A[rt].vBegin+A[rt].vLen),6);
+            cp.add(tw);
+            cp.add(new Label(", end: "));
+            cp.add(th);
+            d.pack();
+            b.addActionListener(ic);b2.addActionListener(ic);
+            d.setVisible(true);
+            if (!cancel) {
+                double w=Tools.parseDouble(tw.getText());
+                double h=Tools.parseDouble(th.getText());
+                A[rt].setValueRange(w,h-w);
+                setUpdateRoot(0);
+                repaint();
+            }
+            d.dispose();
         }
         if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
         if (cmd=="resetZoom") { resetZoom(); repaint(); }
