@@ -22,7 +22,7 @@ public class Histogram extends DragBox implements ActionListener {
   private double bStart, bWidth;			// Anker and Width of the Bins
   private Table tablep;                                	// The datatable to deal with.
   private Image bi;
-  private Graphics bg;
+  private Graphics2D bg;
   private int k;
   public String displayMode = "Histogram";
   private dataSet data;
@@ -128,36 +128,33 @@ public class Histogram extends DragBox implements ActionListener {
       paint(this.getGraphics());
     }
 
-    public void paint(Graphics g) {
+    public void paint(Graphics2D g) {
 
       frame.setBackground(MFrame.backgroundColor);
 
       tablep.getSelection();
 
-      Dimension size = this.getViewportSize();
-
+//      Dimension size = this.getViewportSize();
+      Dimension size = this.getSize();
+      
       if( oldWidth != size.width || oldHeight != size.height ) {
         this.width = size.width;
         this.height = size.height;
+//        updateScale();
         create(border, border, size.width-border, size.height-border, "");
-        this.setSize( size.width, size.height);
+//        this.setSize( size.width, size.height);
         size = this.getSize();
         oldWidth = size.width;
         oldHeight = size.height;
       }
 
-      if( scaleChanged )
-      {
-        updateScale();
+      if( scaleChanged ) {
+//        updateScale();
         create(border, border, size.width-border, size.height-border, "");
       }
 
-      if( g instanceof PrintGraphics || g instanceof PSGr ) {
-        size = pj.getPageDimension();
-        Font SF = new Font("SansSerif", Font.BOLD, 12);
-        g.setFont(SF);
+      if( printing )
         bg = g;
-      }
       else {
         if( bi != null ) {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
@@ -170,10 +167,17 @@ public class Histogram extends DragBox implements ActionListener {
         else {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
         }
-        bg = bi.getGraphics();
+        bg = (Graphics2D)bi.getGraphics();
         bg.clearRect(0, 0, size.width, size.height);
       }
       FontMetrics fm = bg.getFontMetrics();
+
+      outside = height/65;
+      if( !printing ) {
+        outside = Math.min(outside, 6);
+        outside = Math.max(outside, 2);
+      }
+      tick = outside;
 
       bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( 0 ) + outside, 
                    (int)userToWorldX( xMax ), (int)userToWorldY( 0 ) + outside );  
@@ -193,6 +197,7 @@ public class Histogram extends DragBox implements ActionListener {
                     (int)userToWorldY( 0 ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
 
 
+      boolean stillEmpty = true;               // Flag to avoid heading empty bins
       for( int i = 0;i < levels[0]; i++) {
         MyRect r = (MyRect)rects.elementAt(i);
         double sum=0, sumh=0;
@@ -201,11 +206,15 @@ public class Histogram extends DragBox implements ActionListener {
           sumh += tablep.getSelected(id)*tablep.table[id];
           sum  += tablep.table[id];
         }
-        r.setHilite( sumh/sum );
-        r.draw(bg);
+        if( sum > 0 )
+          stillEmpty = false;
+        if( !stillEmpty ) {
+          r.setHilite( sumh/sum );
+          r.draw(bg);
+        }
       }
 
-      if( !(g instanceof PrintGraphics || g instanceof PSGr ) ) {
+      if( !printing ) {
         drawSelections(bg);
         g.drawImage(bi, 0, 0, null);
         bg.dispose();
@@ -233,12 +242,14 @@ public class Histogram extends DragBox implements ActionListener {
 
     public void processKeyEvent(KeyEvent e) {
 
-      if (e.getID() == KeyEvent.KEY_PRESSED && (e.getKeyCode() == KeyEvent.VK_UP
+      if (e.getID() == KeyEvent.KEY_PRESSED &&     (e.getKeyCode() == KeyEvent.VK_UP
                                                 ||  e.getKeyCode() == KeyEvent.VK_DOWN
                                                 ||  e.getKeyCode() == KeyEvent.VK_LEFT
                                                 ||  e.getKeyCode() == KeyEvent.VK_RIGHT
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                    && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0)))) {
+                                                 && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
+                                                || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                 &&   e.getKeyCode() == KeyEvent.VK_T ))) {
         if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
           if( bWidth > 0 ) {
             tablep.updateBins(bStart, bWidth -= bWidth*0.1);
@@ -264,7 +275,13 @@ public class Histogram extends DragBox implements ActionListener {
             && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
           home();
         }
-
+        if( e.getKeyCode() == KeyEvent.VK_T && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+          if( displayMode.equals("Histogram") )
+            displayMode = "Spinogramm";
+          else
+            displayMode = "Histogram";
+        }
+        
         create(border, border, this.width-border, this.height-border, "");
         for( int i=0; i<Selections.size(); i++) {
           Selection S = (Selection)Selections.elementAt(i);
@@ -307,6 +324,8 @@ public class Histogram extends DragBox implements ActionListener {
             JPopupMenu mode = new JPopupMenu();
             if( displayMode.equals("Histogram") ) {
               JMenuItem Spineplot = new JMenuItem("Spinogram");
+              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
               mode.add(Spineplot);
 
               Spineplot.setActionCommand("Spinogram");
@@ -349,7 +368,11 @@ public class Histogram extends DragBox implements ActionListener {
                   }
                 }
               }
-                
+              JMenuItem wvalue = new JMenuItem("Value ...");
+              wvalue.setActionCommand("bwidth");
+              wvalue.addActionListener(this);
+              menuWidth.add(wvalue);
+                            
               JMenu menuStart = new JMenu("Start");
               
               mode.add(menuStart);
@@ -412,13 +435,24 @@ public class Histogram extends DragBox implements ActionListener {
                   }
                 });
               }
+              JMenuItem svalue = new JMenuItem("Value ...");
+              svalue.setActionCommand("bstart");
+              svalue.addActionListener(this);
+              menuStart.add(svalue);              
             }
             else {
               JMenuItem Barchart  = new JMenuItem("Histogram");
+              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
               mode.add(Barchart);
               Barchart.setActionCommand("Histogram");
               Barchart.addActionListener(this);
             }
+            JMenuItem homeView  = new JMenuItem("Home View");
+            homeView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            homeView.setActionCommand("home");
+            mode.add(homeView);
+            
             mode.add(new JMenuItem("Dismiss"));
             mode.show(this, e.getX(), e.getY());
           }	
@@ -435,6 +469,15 @@ public class Histogram extends DragBox implements ActionListener {
       if( command.equals("Histogram") || command.equals("Spinogram")) {
         displayMode = command;
         Update();
+      } else if( command.equals("bwidth") || command.equals("bstart") ) {
+        if( command.equals("bwidth") )
+          bWidth = Util.atod(JOptionPane.showInputDialog(this, "Set bin width to:"));
+        if( command.equals("bstart") )
+          bStart = Util.atod(JOptionPane.showInputDialog(this, "Set anchor point to:"));
+        tablep.updateBins(bStart, bWidth);
+        Update();
+      } else if( command.equals("home") ) {
+        home();
       } else
         super.actionPerformed(e);
     }
@@ -443,7 +486,7 @@ public class Histogram extends DragBox implements ActionListener {
     public void Update() {
       rects.removeAllElements();
       create(border, border, width-border, height-border, "");
-      Graphics g = this.getGraphics();
+      Graphics2D g = (Graphics2D)this.getGraphics();
       paint(g);
       g.dispose();
     }
