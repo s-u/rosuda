@@ -244,65 +244,36 @@ public class ConsoleOutput extends JTextPane {
         } catch (Exception e) {}
     }
 
-    class ExportOutput extends JDialog implements ActionListener, PropertyChangeListener {
+    class ExportOutput extends JFileChooser implements ActionListener { 
 
         private ConsoleOutput out;
 
-        private JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
         private JRadioButton wholeOutput = new JRadioButton("Complete Output",true);
         private JRadioButton cmdsOutput = new JRadioButton("Commands",false);
         private JRadioButton resultOutput = new JRadioButton("Results",false);
 		
-		private JButton ok = new JButton("Load");
+		private JButton ok = new JButton("Save");
 		private JButton cancel = new JButton("Cancel");
 
         public ExportOutput(ConsoleOutput co) {
-            super(JGR.MAINRCONSOLE,"Export Output");
-
             this.out = co;
-            this.getContentPane().setLayout(new BorderLayout());
-			
-			ok.addActionListener(this);
-			ok.setActionCommand("ApproveSelection");
-			
-			cancel.addActionListener(this);
-			cancel.setActionCommand("CancelSelection");
-			
-			JPanel ctrlbuttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-			ctrlbuttons.add(ok);
-			ok.setEnabled(false);
-			ctrlbuttons.add(cancel);
-
-            JPanel options = new JPanel(new GridBagLayout());
-            options.add(new JLabel("Options:"),new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0
-                                                                     , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                                     new Insets(1, 5, 1, 5), 0, 0));
-            options.add(wholeOutput, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0
-                                                            , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                            new Insets(1, 5, 1, 5), 0, 0));
-            options.add(cmdsOutput, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0
-                                                           , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                           new Insets(1, 5, 1, 5), 0, 0));
-            options.add(resultOutput, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0
-                                                             , GridBagConstraints.WEST, GridBagConstraints.NONE,
-                                                             new Insets(1, 5, 1, 5), 0, 0));
-            options.add(ctrlbuttons, new GridBagConstraints(2, 2, 1, 1, 1.0, 1.0
-                                                             , GridBagConstraints.EAST, GridBagConstraints.BOTH,
-                                                             new Insets(1, 5, 1, 5), 0, 0));
-
+            
             ButtonGroup bg = new ButtonGroup();
             bg.add(wholeOutput);
             bg.add(cmdsOutput);
             bg.add(resultOutput);
 
-            fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
-            fileChooser.addActionListener(this);
-			fileChooser.setControlButtonsAreShown(false);
-            this.getContentPane().add(fileChooser,BorderLayout.CENTER);
-            this.getContentPane().add(options,BorderLayout.SOUTH);
-            this.pack();
-            this.setSize(new Dimension(500,450));
-            this.setVisible(true);
+            this.addActionListener(this);
+            JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
+            JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
+            options.add(new JLabel("Options: ")); 
+            options.add(wholeOutput);
+            options.add(cmdsOutput); 
+            options.add(resultOutput); 
+            
+            filename.add(options,filename.getComponentCount()-1);
+			
+            this.showSaveDialog(co);
         }
 
 
@@ -317,16 +288,7 @@ public class ConsoleOutput extends JTextPane {
 
         public void actionPerformed(ActionEvent e){
             String cmd = e.getActionCommand();
-            if (cmd == "ApproveSelection") export(fileChooser.getSelectedFile());
-            dispose();
+            if (cmd == "ApproveSelection") export(this.getSelectedFile());
         }
-		
-		public void propertyChange(PropertyChangeEvent e) {
-			File file = fileChooser.getSelectedFile();
-			if(file!=null && !file.isDirectory()) 
-				ok.setEnabled(true);
-			else 
-				ok.setEnabled(false);
-		}
     }
 }
