@@ -330,7 +330,7 @@ public class Klimt
             Common.Release=Klimt.Release;
         argv=Global.parseArguments(argv);
 
-        Platform.initPlatform("org.rosuda.klimt.");
+        org.rosuda.util.Platform.initPlatform("org.rosuda.klimt.");
 
         try {
 	    int argc=argv.length;

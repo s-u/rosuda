@@ -50,7 +50,7 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
             df=null;
         } else {
             df=null;
-            Dimension sres=Platform.screenRes;
+            Dimension sres=org.rosuda.util.Platform.screenRes;
             /*
             if (t!=null) {
                 TFrame f=new TFrame(tvs.getName()+" tree",TFrame.clsTree);

@@ -28,7 +28,7 @@ public class KlimtSplash extends SplashScreen {
         String openFn=null;
         
         if (cmd=="prefs") {
-            Platform.getPlatform().handlePrefs();
+            org.rosuda.util.Platform.getPlatform().handlePrefs();
         }
 
         if (cmd.startsWith("recent:")) {
