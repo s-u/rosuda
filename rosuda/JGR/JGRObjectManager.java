@@ -15,14 +15,18 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
+import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.*;
 
 public class JGRObjectManager extends iFrame implements ActionListener, MouseListener {
 
     private JButton close = new JButton("Close");
     private JButton refresh = new JButton("Refresh");
+    public JButton savedata = new JButton("Save Data");
     private JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+    private JPanel buttonPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
     private ModelBrowserTable mBrowser;
     private ObjectBrowserTree dBrowser;
@@ -49,9 +53,16 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         close.setActionCommand("close");
         close.addActionListener(this);
         close.setToolTipText("Close Browser");
+        
+        savedata.setActionCommand("savedata");
+        savedata.addActionListener(this);
+        savedata.setToolTipText("Save Data");
+        savedata.setEnabled(false);
+        
 
         buttonPanel.add(refresh);
         buttonPanel.add(close);
+        buttonPanel2.add(savedata);
 
 
         dBrowser = new ObjectBrowserTree(this,JGR.DATA,"data");
@@ -86,12 +97,21 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
 		gbc.fill = GridBagConstraints.BOTH;
 		gbc.insets = new Insets(1,1,1,1);
 		gbc.gridx = 0;
-		gbc.gridy = 0;  
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
         this.getContentPane().add(browsers,gbc);
 		gbc.gridy = 1;
 		gbc.weightx = 0.0;
 		gbc.weighty = 0.0;
+		gbc.gridwidth = 1;
 		gbc.insets = new Insets(1,1,1,10);
+		this.getContentPane().add(buttonPanel2,gbc);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
+		gbc.weightx = 0.0;
+		gbc.weighty = 0.0;
+		gbc.insets = new Insets(1,1,1,10);
+		
         this.getContentPane().add(buttonPanel,gbc);
 		
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -116,10 +136,12 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         oBrowser.refresh(JGR.OTHERS);
         dBrowser.refresh(JGR.DATA);
         fBrowser.refresh(JGR.FUNCTIONS);
+        savedata.setEnabled(false);
     }
     
     public void mouseClicked(MouseEvent e) {
         if (summary != null) summary.hide();
+        savedata.setEnabled(false);
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -138,5 +160,9 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         String cmd = e.getActionCommand();
         if (cmd=="close") dispose();
         else if (cmd=="refresh") refresh();
+        else if (cmd=="savedata") 
+            try {
+                ((ObjectBrowserTree)((JScrollPane) browsers.getSelectedComponent()).getViewport().getComponent(0)).saveData();
+            } catch (Exception ex) { ex.printStackTrace();}
     }
 }
