@@ -33,7 +33,7 @@
 		};
 		01F12F4FFEC8CEF111DB9C8B = {
 			children = (
-				06D05853FF24F2DB11DB9C8B,
+				F8DEC51106C920160054EA9A,
 			);
 			isa = PBXGroup;
 			name = Products;
@@ -45,23 +45,6 @@
 //012
 //013
 //014
-//060
-//061
-//062
-//063
-//064
-		06D05853FF24F2DB11DB9C8B = {
-			explicitFileType = wrapper.application;
-			isa = PBXFileReference;
-			path = Klimt.app;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-//060
-//061
-//062
-//063
-//064
 //0E0
 //0E1
 //0E2
@@ -137,7 +120,7 @@
 			isa = PBXApplicationTarget;
 			name = Klimt;
 			productName = Klimt;
-			productReference = 06D05853FF24F2DB11DB9C8B;
+			productReference = F8DEC51106C920160054EA9A;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -342,6 +325,7 @@
 				1C42D10406D39C9F00B9B7D6,
 				1C42D10A06D39CF900B9B7D6,
 				1C42D10E06D39D3900B9B7D6,
+				F80E96F806D4E6B7000F58C0,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1806,6 +1790,20 @@
 //F82
 //F83
 //F84
+		F80E96F706D4E6B7000F58C0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PngEncoder.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F80E96F806D4E6B7000F58C0 = {
+			fileRef = F80E96F706D4E6B7000F58C0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F8D5EAB305C527D300071680 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1819,6 +1817,13 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F8DEC51106C920160054EA9A = {
+			explicitFileType = wrapper.application;
+			isa = PBXFileReference;
+			path = Klimt.app;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		F8EE90F804D6A73600FA4796 = {
 			children = (
@@ -2188,6 +2193,7 @@
 				F8EE912304D6A73700FA4796,
 				F8EE912404D6A73700FA4796,
 				F8EE912504D6A73700FA4796,
+				F80E96F706D4E6B7000F58C0,
 				1CE96FF204D80BD100A8030F,
 				1C4BC7D6052F03BB00A8030F,
 				1C9A86D20661738000FA73AE,
