@@ -8,7 +8,6 @@ public class JavaGD {
     
     public JavaGD() {
         super();
-        System.out.println("JavaGD created");
     }
     
     /*---- external API: those methods are called via JNI from the GD C code
@@ -41,8 +40,6 @@ public class JavaGD {
     -- implementation --*/
     
     public void     gdOpen(double w, double h) {
-        System.out.println("gdOpen("+w+","+h+")");
-        
         if (f!=null) gdClose();
             
         f=new Frame("JavaGD");
