@@ -111,11 +111,11 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
         g.setBounds(w,h);
         g.begin();
-        g.defineColor("fill",255,255,255);
-        g.defineColor("selected",192,192,255);
+    	g.defineColor("fill",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        float[] scc=Common.selectColor.getRGBComponents(null);
+        g.defineColor("selected",scc[0],scc[1],scc[2],1f);        
         g.defineColor("outline",0,0,0);
-        g.defineColor("marked",128,255,128);
-        g.defineColor("red",255,0,0);
+        g.defineColor("marked",scc[0],scc[1],scc[2],1f);        
 
         if (!xdisp) {
             g.setColor("outline");
