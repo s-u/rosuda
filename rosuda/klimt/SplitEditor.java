@@ -327,10 +327,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
                         pd.setText("Initializing plugin, loading R ...");
                         pd.show();
-                        PluginGetTreeR gt=new PluginGetTreeR();
-                        if (!gt.initPlugin()) {
+                        Plugin gt=PluginManager.loadPlugin("PluginGetTreeR");
+                        if (gt==null || !gt.initPlugin()) {
                             pd.dispose();
-                            new MsgDialog(this,"Plugin init failed","Cannot initialize R-plugin.\n"+gt.getLastError());
+                            new MsgDialog(this,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Tree generation plugin not found":gt.getLastError()));
                             return;
                         }
                         gt.setParameter("dataset",vs);
