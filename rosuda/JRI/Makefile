@@ -4,14 +4,14 @@
 # please uncomment the platform you use
 
 #include Makefile.win
-#include Makefile.linux
-include Makefile.osx
+include Makefile.linux
+#include Makefile.osx
 
 #--- comment out the following for non-debug version
 CFLAGS+=-g
 
 #--- if RHOME is different from the system defaults, set it here
-#RHOME=/usr/lib/R
+#RHOME=/usr/local/lib/R
 
 #--- normally you don't need to change this - modify JAVAB instead
 JAVAC=$(JAVAB)c $(JFLAGS)

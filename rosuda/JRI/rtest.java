@@ -1,13 +1,27 @@
 import java.io.*;
 
+import java.awt.*;
+import javax.swing.*;
+
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 
 class TextConsole implements RMainLoopCallbacks
 {
+
+    public JTextArea textarea = new JTextArea();
+
+    public TextConsole() {
+        JFrame f = new JFrame();
+        f.getContentPane().add(new JScrollPane(textarea));
+        f.setSize(new Dimension(800,600));
+        f.show();
+    }
+
     public void rWriteConsole(Rengine re, String text) {
-        System.out.print(text);
+        textarea.append(text);
+        //System.out.print(text);
     }
     
     public void rBusy(Rengine re, int which) {
