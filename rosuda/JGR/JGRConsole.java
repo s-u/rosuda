@@ -168,10 +168,10 @@ FocusListener, RMainLoopCallbacks {
         String c = null;
         for (int i = 0; i < cmdArray.length; i++) {
             c = cmdArray[i];
-            if (!isHelpCMD(c))
-                JGR.rSync.triggerNotification(c);
-            else
-                try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n>",JGRPrefs.CMD); } catch (Exception e) {}
+            if (isHelpCMD(c))
+            	try { outputDoc.insertString(outputDoc.getLength(),c+"\n"+RController.getRPrompt(),JGRPrefs.CMD); } catch (Exception e) {}
+            else if (isSupported(c))
+            	JGR.rSync.triggerNotification(c);
         }
     }
 
@@ -187,6 +187,18 @@ FocusListener, RMainLoopCallbacks {
             return true;
         }
         return false;
+    }
+    
+    private boolean isSupported(String cmd) {
+    	System.out.println(cmd);
+    	if (cmd.indexOf("fix(") >= 0 || cmd.indexOf("edit(") >= 0 || cmd.indexOf("edit.data.frame(") >= 0) {
+    		try { outputDoc.insertString(outputDoc.getLength(),cmd+"\n",JGRPrefs.CMD); } catch (Exception e) {}
+    		try { outputDoc.insertString(outputDoc.getLength(),"Editing is not supported yet!",JGRPrefs.RESULT); } catch (Exception e) {}
+    		try { outputDoc.insertString(outputDoc.getLength(),"\n"+RController.getRPrompt(),JGRPrefs.CMD); } catch (Exception e) {}
+    		return false;
+    	}
+    		
+    	return true;
     }
 
 
@@ -314,7 +326,7 @@ FocusListener, RMainLoopCallbacks {
 	 * @param text output
 	 */
     public void   rWriteConsole(Rengine re, String text) {
-        console.append(text);
+    	console.append(text);
         if (console.length() > 100) {
             output.append(console.toString(),JGRPrefs.RESULT);
             console.delete(0,console.length());
@@ -350,7 +362,14 @@ FocusListener, RMainLoopCallbacks {
      */
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
         toolBar.stopButton.setEnabled(false);
-        if (prompt.indexOf("Save workspace") > -1) return JGR.exit();
+        if (prompt.indexOf("Save workspace") > -1) {
+        	String retVal = JGR.exit(); 
+        	if (wspace != null && retVal.indexOf('y') >= 0) {
+        		JGR.R.eval("save.image(\""+wspace.replace('\\','/')+"\")");
+        		return "n\n";
+        	}
+        	else return retVal;
+        }
         else {
             output.append(prompt,JGRPrefs.CMD);
             output.setCaretPosition(outputDoc.getLength());
