@@ -146,7 +146,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
-                          "Show deviance plot","devplot","-",
+                          "Show MCP","showMCP","Show deviance plot","devplot","-",
 			  "Hide labels","labels",
 			  "Show deviance","deviance","Show path window","pathwin","-",
 			  "Use fixed size","size",
@@ -646,6 +646,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    dc.setBounds(0,0,400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
         };
+        if (cmd=="showMCP") {
+            TFrame mcpf=new TFrame("MC-plot");
+            MCPCanvas dc=new MCPCanvas(mcpf,RTree.getManager(),m);
+            mcpf.add(dc); mcpf.addWindowListener(Common.defaultWindowListener);
+            dc.setBounds(0,0,400,300);
+            mcpf.pack(); mcpf.setVisible(true);
+        };
         if (cmd=="exportForest") {
             try {
                 PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
@@ -863,6 +870,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='p') run(this,"prune");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='m') run(this,"showMosaic");
+        if (e.getKeyChar()=='M') run(this,"showMCP");
 	if (e.getKeyChar()=='N') run(this,"new");
 	if (e.getKeyChar()=='o') run(this,"open");
 	if (e.getKeyChar()=='d') run(this,"deviance");
