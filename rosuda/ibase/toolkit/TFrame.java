@@ -9,6 +9,7 @@ public class TFrame extends Frame
     WTentry WTmyself;
 
     public static final int clsMain     = 1;
+    public static final int clsSplash   = 2;
     public static final int clsVars     = 8;
     public static final int clsHelp     = 16;
     public static final int clsPlot     = 128;
