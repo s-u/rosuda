@@ -41,6 +41,10 @@ public class EzMenu {
                 m.addSeparator();
                 m.add(mi=new MenuItem("Save selected as ...")).setActionCommand("exportCases"); mi.addActionListener(al);
                 m.addSeparator();
+                if (Common.supportsBREAK) {
+                    m.add(mi=new MenuItem("Break",new MenuShortcut('B',true))).setActionCommand("BREAK"); mi.addActionListener(al);
+                    m.addSeparator();
+                }
                 m.add(mi=new MenuItem("Close window",new MenuShortcut('W'))).setActionCommand("WTMclose"+we.id); mi.addActionListener(wt);
                 m.add(mi=new MenuItem("Quit",new MenuShortcut('Q'))).setActionCommand("exit"); mi.addActionListener(al);
             };

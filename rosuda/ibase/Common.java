@@ -92,9 +92,15 @@ public class Common
     /** Notify-Message constant: current node changed */
     public static final int NM_NodeChange       =0x500;
 
+    /** Notify-Message constant: BREAK event - this one is usually not processed in Java but sent to the calling system. Usually this event is used to stop an external event loop, such as an iPlots event loop. */
+    public static final int NM_BREAK            =0x700;
+    
     /** mask to apply in order to get the top-level event */
     public static final int NM_MASK             =0xf00;
 
+    /** this flag is set to <code>true</code> by an external application if the underlying system supports the BREAK event */
+    public static boolean supportsBREAK = false;
+    
     /** Cursor: arrow (all Common.cur_xxx variables are set by Platform class upon init) */
     public static Cursor cur_arrow;
     /** Cursor: query (usually arrow with a question mark) */
