@@ -166,38 +166,6 @@ public class WinTracker implements ActionListener, FocusListener
 	};
     };
 
-    public MenuBar buildQuickMenuBar(Frame f, ActionListener al,
-				     String[] menuDef, boolean help) {
-	WTentry we=getEntry(f);
-	MenuBar mb=f.getMenuBar();
-	if (mb==null) mb=new MenuBar();	
-	Menu m=null;
-	int i=0;
-	while (menuDef[i]!="0") {
-	    MenuItem mi;
-	    if (menuDef[i]=="+") {
-		i++;
-		mb.add(m=new Menu(menuDef[i])); i++;
-	    };
-	    if (menuDef[i]=="-") { m.addSeparator(); i++; };
-	    String rac=menuDef[i+1];
-	    if (rac=="WTMclose") rac="WTMclose"+we.id;
-            if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
-                m.add(mi=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(rac);
-            } else
-                m.add(mi=new MenuItem(menuDef[i])).setActionCommand(rac);
-	    mi.addActionListener(al);
-	    if (menuDef[i+1]=="WTMclose") mi.addActionListener(this);
-	    i+=2;
-	};
-	
-	if (help) mb.setHelpMenu(m);
-	if (we!=null && we.menu!=null)
-	    mb.add(we.menu); // add window menu
-	f.setMenuBar(mb);
-	return mb;
-    };	
-    
     public void Exit() {
 	disposeAll();
 	System.exit(0);	
