@@ -67,7 +67,8 @@ public class PluginManager {
             Plugin p=new Plugin();
             if (p.getClass().isAssignableFrom(c)) return true;
         } catch(Exception e) {
-            System.out.println("PluginManager.pluginExists(\""+className+"\"): failed to find plugin's class, "+e.getMessage());
+            if (Global.DEBUG>0)
+                System.out.println("PluginManager.pluginExists(\""+className+"\"): failed to find plugin's class, "+e.getMessage());
         }
         className="org.rosuda.plugins."+className;
         try {
@@ -75,7 +76,8 @@ public class PluginManager {
             Plugin p=new Plugin();
             if (p.getClass().isAssignableFrom(c)) return true;
         } catch(Exception e) {
-            System.out.println("PluginManager.pluginExists(\""+className+"\"): failed to find plugin's class, "+e.getMessage());
+            if (Global.DEBUG>0)
+                System.out.println("PluginManager.pluginExists(\""+className+"\"): failed to find plugin's class, "+e.getMessage());
         }
         return false;
     }
