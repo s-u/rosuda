@@ -77,12 +77,13 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	count=new int[bars];
 	marked=new int[bars];
 	Object[] cts=v.getCategories();
-	cat_nam=new String[cts.length];
+	cat_nam=new String[cts.length+1];
 	int j=0;
 	while (j<cats) {
 	    cat_nam[j]=cts[j].toString();
 	    j++;
-	};	
+        };
+        cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
 	j=0;
 	while (j<v.size()) {
 	    int i=v.getCatIndex(j);
