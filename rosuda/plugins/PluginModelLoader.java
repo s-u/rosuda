@@ -221,18 +221,20 @@ public class PluginModelLoader extends Plugin implements ActionListener {
         try {
             REXP x=rc.eval("predict("+m+", type=\"response\")");
             double[] d= x.asDoubleArray();
+            SVar v = null;
             if (d!=null) {
-                SVar v = new SVarFixDouble("P_i_"+name, d, false);
+                v = new SVarFixDouble("P_i_"+name, d, false);
                 v.setInternalType(SVar.IVT_Prediction);
                 vset.add(v);
             }
-            {
-                x=rc.eval("as.character(as.list(attr(terms("+m+"),\"variables\"))[[attr(terms("+m+"),\"response\")+1]])");
-                String rvn=x.asString();
-                SVar resp=vset.byName(rvn);
+
+            x=rc.eval("as.character(as.list(attr(terms("+m+"),\"variables\"))[[attr(terms("+m+"),\"response\")+1]])");
+            String rvn=x.asString();
+            SVar resp=vset.byName(rvn);
+            if (resp.isCat()) {
                 String c0=(resp==null)?"0":resp.getCatAt(0).toString();
                 String c1=(resp==null)?"1":resp.getCatAt(1).toString();
-                SVar v=new SVarObj("C_i_"+name, true);
+                v = new SVarObj("C_i_"+name, true);
                 int i=0;
                 while (i<d.length) {
                     v.add((d[i]<0.5)?c0:c1);
@@ -240,19 +242,19 @@ public class PluginModelLoader extends Plugin implements ActionListener {
                 }
                 v.setInternalType(SVar.IVT_Prediction);
                 vset.add(v);
-                if (reg && dr!=null) {
-                    SNode n=new SNode();
-                    n.getRootInfo().name="im_"+name;
-                    n.getRootInfo().prediction=v;
-                    n.getRootInfo().response=resp;
-                    dr.getTreeRegistry().addTree(n);
-                    System.out.println("Registered "+m+": "+n.getRootInfo().prediction+", "+n.getRootInfo().response);
-                }
+            }
+            if (reg && dr!=null) {
+                SNode n=new SNode();
+                n.getRootInfo().name="im_"+name;
+                n.getRootInfo().prediction=v;
+                n.getRootInfo().response=resp;
+                dr.getTreeRegistry().addTree(n);
+                System.out.println("Registered "+m+": "+n.getRootInfo().prediction+", "+n.getRootInfo().response);
             }
             x=rc.eval("resid("+m+", type=\"response\")");
             d= x.asDoubleArray();
             if (d!=null) {
-                SVar v = new SVarFixDouble("R_i_"+name, d, false);
+                v = new SVarFixDouble("R_i_"+name, d, false);
                 v.setInternalType(SVar.IVT_Resid);
                 vset.add(v);
             }
