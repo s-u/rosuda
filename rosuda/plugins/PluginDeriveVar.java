@@ -279,7 +279,7 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
             System.out.println("dataExported");
 
             PrintStream p=new PrintStream(new FileOutputStream(fprefix+"PluginInit.r"));
-            p.print("invisible(options(echo = FALSE))\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nattach(d)\nwrite.table(("+Rcommand+"),\"PluginInit.ods\",quote=FALSE,row.names=FALSE,sep=\"\\t\")\n");
+            p.print("invisible(options(echo = FALSE))\nd<-read.table(\"PluginInit.rds\",TRUE,\"\\t\",comment.char=\"\")\nattach(d)\nwrite.table(("+Rcommand+"),\"PluginInit.ods\",quote=FALSE,row.names=FALSE,col.names=TRUE,sep=\"\\t\")\n");
             p.close();
             if (!useRserv) {
                 System.out.println("execPlugin: starting R");
@@ -323,7 +323,7 @@ public class PluginDeriveVar extends Plugin implements ActionListener {
                     return true;
                 }
                 err="Commands executed, but no valid data was found. ";
-                if (newvs.count()>0) err+="The newly created variable does not have the same size as the original dataset.";
+                if (newvs.count()>0) err+="The newly created variable does not have the same size as the original dataset. ("+newvs.at(0).size()+" vs "+vs.at(0).size()+")";
                 br.close();
                 br=new BufferedReader(new FileReader(fprefix+"PluginInit.out"));
                 StringBuffer dump=new StringBuffer();
