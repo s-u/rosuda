@@ -190,11 +190,14 @@ public class dataSet {
       try{
         double x;
         String token;
+//        progBar.setIndeterminate(true);
+        progBar.setValue(0);
         for( int i=0; i<this.n; i++ ) {
-          if( i % (int)(Math.max(n/20, 1)) == 0 ) {
+//          if( i % (int)(Math.max(n/50, 1)) == 0 ) {
             progBar.setValue(i/n);
+            progBar.repaint();
 //System.out.println("Reading Line: "+i);
-          }
+//          }
           line = br.readLine();
           StringTokenizer dataLine = new StringTokenizer(line, "\t");
           for( int j=0; j<this.k; j++ ) {
@@ -231,6 +234,30 @@ public class dataSet {
     }
   }	
 
+  public void numToCat(int i) {
+    Variable Var=((Variable)data.elementAt(i));
+    if( alpha[i] && Var.isCategorical )
+      return;
+    else {
+      Var.forceCategorical = true;
+      Var.isCategorical = true;
+      for( int j=0; j<this.n; j++ )
+        Var.isLevel( Double.toString(Var.data[j]) );
+      Var.sortLevels();
+    }
+  }
+  
+  public void catToNum(int i) {
+    Variable Var=((Variable)data.elementAt(i));
+    if( alpha[i] && !Var.isCategorical )
+      return;
+    else {
+      Var.forceCategorical = false;
+      Var.isCategorical = false;
+      Var.sortData();
+    }
+  }
+  
   public Table discretize(String name, int dvar, double start, double width) {
 
       int     tablelength = (int)((this.getMax(dvar) - start) / width) + 1;
@@ -321,7 +348,7 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
       int           y_num = nY;
       double 	   xWidth = (xEnd - xStart) / nX;
       double 	   yWidth = (yEnd - yStart) / nY;
-System.out.println("x: "+x_num+"y: "+y_num);
+//System.out.println("x: "+x_num+"y: "+y_num);
       int     tablelength = x_num * y_num;
       int[]          vars = new int[2];
       vars[0]             = xVar;
@@ -419,7 +446,7 @@ System.out.println("x: "+x_num+"y: "+y_num);
       plevels[j] = varlevels[j+1] * plevels[j+1];
     }
     for( int j=0; j<vars.length; j++ ) {
-      System.out.println("Tablelength: "+tablelength+"  Name: "+ varnames[j]+"  Levels: "+lnames[j][0]+"..."+"   Plevels: "+plevels[j]);
+//      System.out.println("Tablelength: "+tablelength+"  Name: "+ varnames[j]+"  Levels: "+lnames[j][0]+"..."+"   Plevels: "+plevels[j]);
     }
     Ids = new int[tablelength][];
     dimA = new int[tablelength];
@@ -622,6 +649,18 @@ System.out.println(newQ.makeQuery());
     return v.data;
   }
 
+  public int[] getRank(int i) {
+    Variable v = (Variable)data.elementAt(i);
+    int[] ranks = new int[this.n];
+    if( !categorical(i) )
+      for( int j=0; j<this.n; j++ )
+        ranks[v.sortI[j]] = j;
+    else
+      for( int j=0; j<this.n; j++ )
+        ranks[j] = v.permA[(int)v.data[j]];
+    return ranks;
+  }
+
   public double getMin(int i) {
     return ((Variable)data.elementAt(i)).Min();
   }
@@ -801,7 +840,7 @@ System.out.println(newQ.makeQuery());
   }
     
   class Variable {
-    private int catThres = 10 * Math.max(1, (int)Math.log(n));
+    private int catThres = 15 * Math.max(1, (int)(Math.log(n)/Math.log(10))-1);
     protected Vector level = new Vector(100, 100);
     private int dimThres = 17000;
     protected String[] levelA = new String[dimThres];
@@ -987,7 +1026,7 @@ System.out.println("query: "+query+" ---> "+this.max);
       double sum2=0;
       for ( int i=0; i<data.length; i++ ) 
         sum2 += data[i] * data[i];
-      return (sum2 - Math.pow(Mean(),2) * data.length) / (data.length - 1);
+      return Math.pow((sum2 - Math.pow(Mean(),2) * data.length) / (data.length - 1), 0.5);
     }
 
     public double getQuantile(double q) {
