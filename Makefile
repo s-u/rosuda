@@ -7,7 +7,8 @@ PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
-JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JRI/*.java) $(wildcard rosuda/JavaGD/*.java)
+JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JavaGD/*.java)
+JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar
 
@@ -22,7 +23,7 @@ define can-with-jar
 	rm -rf org	
 endef
 
-JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC)
+JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC)
 	rm -rf org
 	$(JAVAC) -d . $^
 	cp rosuda/projects/jrgui/splash.jpg .
