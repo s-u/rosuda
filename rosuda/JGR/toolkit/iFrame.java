@@ -56,6 +56,16 @@ public class iFrame extends JFrame {
 
 
     public iFrame(String title, int wclass) {
+        String nativeLF = UIManager.getSystemLookAndFeelClassName();
+
+        // Install the look and feel
+        try {
+            UIManager.setLookAndFeel(nativeLF);
+        } catch (InstantiationException e) {
+        } catch (ClassNotFoundException e) {
+        } catch (UnsupportedLookAndFeelException e) {
+        } catch (IllegalAccessException e) {
+        }
         this.setTitle(title);
         this.addWindowListener(new WinListener());
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
