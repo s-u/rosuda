@@ -81,7 +81,28 @@ public class Util {
     } catch(Exception dce) {};
     return i;
   }
-  
+
+  public static String info2Html(String infoText) {
+    
+    String infoTxt = "";
+    String     sep =":<TD  align='left'> <font size=-1 face='verdana, helvetica'>";
+    String    para = "<TR height=5><TD align=right><font size=-1 face='verdana, helvetica'> ";
+    
+    StringTokenizer info = new StringTokenizer(infoText, "\n");
+
+    String nextT;
+    while( info.hasMoreTokens() ) {
+      nextT = info.nextToken();
+      StringTokenizer line = new StringTokenizer(nextT, ":");
+
+      if( nextT.indexOf(":") > -1  )
+        infoTxt = infoTxt + para + line.nextToken() + sep + line.nextToken();
+      else
+        infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=-1 face='verdana, helvetica'>"+nextT;
+    }
+    
+    return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>";
+  }
 }  
 
  
