@@ -70,7 +70,7 @@ run:
 	chmod a+x run
 
 clean:
-	rm -rf $(TARGETS) org src/*.o src/*~ src/Rengine.h src/*$(JNISO) *.class *~
+	rm -rf $(TARGETS) org src/*.o src/*~ src/org_rosuda_JRI_Rengine.h src/*$(JNISO) *.class *~
 
 .PHONY: clean all
 
