@@ -66,7 +66,10 @@ public class ProgressLabel extends JLabel implements Runnable {
 
     public void stop() {
         this.setVisible(false);
-        if (thread != null) thread.stop();
+        if (thread != null) {
+            thread.stop();
+            thread = null;
+        }
         if (next) {
             next = false;
             start(temp);

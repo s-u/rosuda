@@ -17,23 +17,29 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
     iFrame ifr;
 
     public void     gdOpen(double w, double h) {
-        if (ifr!=null) gdClose();
+      if (ifr!=null) gdClose();
 
-        ifr=new iFrame("JavaGD", iFrame.clsJavaGD);
+        ifr=new iFrame("JavaGD", iFrame.clsJavaGD) {
+            public void dispose() {
+                if (c!=null) executeDevOff();
+                super.dispose();
+            }
+        };
         ifr.addWindowListener(this);
 
         /* -- too much trouble with this - especially the "close" part...
-         String[] Menu = { "~Window", "0" };
-         iMenu.getMenu(ifr, this, Menu);
-         */
-        
+        String[] Menu = { "~Window", "0" };
+        iMenu.getMenu(ifr, this, Menu);*/
+
+
+
         ifr.setDefaultCloseOperation(ifr.DISPOSE_ON_CLOSE);
         c=new org.rosuda.javaGD.GDCanvas(w, h);
-        //ifr.setSize((int)w,(int)h); //added because sometimes the device isn't shown
         ifr.getContentPane().add(c);
         ifr.pack();
         ifr.setVisible(true);
     }
+
 
     public void     gdClose() {
         if (ifr!=null) {
