@@ -1,9 +1,11 @@
 import java.awt.*;               // ScrollPane, PopupMenu, MenuShortcut, etc.
+import java.awt.geom.*;         
 import java.awt.image.*;         
-import java.awt.event.*;         // New event model.
-import java.util.*;              // For StingTokenizer.
-import java.util.Vector;         // To store the scribble in.
+import java.awt.event.*;         // 
+import java.util.*;              // 
+import java.util.Vector;         // 
 import java.lang.*;              // 
+import java.io.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -31,6 +33,9 @@ public class PC extends DragBox implements ActionListener {
   protected double[] sortA;
   protected boolean[] selected;
   protected boolean[] inverted;
+  protected boolean hotSelection = false;
+  protected boolean zoomToSel = false;
+  protected boolean[] onlyHi;
   Polygon[] poly;
   String Scale = "Common";
   String paintMode = "Box";
@@ -60,6 +65,10 @@ public class PC extends DragBox implements ActionListener {
 
     border = 20;
 
+    onlyHi = new boolean[data.n];
+    for( int i=0; i<data.n; i++ )
+      onlyHi[i] = true;
+    
     if( k == 2 ) {
       if( data.categorical(vars[0]) && !data.categorical(vars[1]) ) {
         paintMode = "XbyY";
@@ -371,6 +380,20 @@ public class PC extends DragBox implements ActionListener {
 
             scaleType.add(plotM);
             
+            JCheckBoxMenuItem hotSelM = new JCheckBoxMenuItem("HotSelector", hotSelection);
+            hotSelM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            hotSelM.setActionCommand("Hot");
+            hotSelM.addActionListener(this);
+
+            scaleType.add(hotSelM);
+
+            JCheckBoxMenuItem zoomM = new JCheckBoxMenuItem("Zeiser", zoomToSel);
+            zoomM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            zoomM.setActionCommand("Zeiser");
+            zoomM.addActionListener(this);
+
+            scaleType.add(zoomM);
+
             scaleType.add(new JMenuItem("Dismiss"));
             
             if( k > 1 && !paintMode.equals("XbyY") ) {
@@ -610,36 +633,6 @@ public class PC extends DragBox implements ActionListener {
         }
         this.dataChanged(0);
       } else if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP || e.getKeyCode() == KeyEvent.VK_PAGE_DOWN ) {
-/*        if( !inSequence ) {
-          sortMode = "foo";
-          int[] newP = new int[k+1];
-          newP[1] = 1;
-          for( int j=1; j<k; j++ ) {
-            newP[j+1] = ((newP[j] + (int)Math.pow(-1, j+1)*j) % k);
-            if( newP[j+1] == 0 )
-              newP[j+1] = k;
-            if( newP[j+1] < 0 )
-              newP[j+1] += k;
-          }
-          for( int j=0; j<k; j++ )
-            permA[j] = newP[j+1] - 1;
-          inSequence = true;
-        }
-        else
-          if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP ) {
-            for( int j=0; j<k; j++ ) 
-              permA[j] = (permA[j]+1) % k;
-            if( permA[0] == 0 )
-              Toolkit.getDefaultToolkit().beep();
-          }
-          else {
-            if( inSequence )
-              for( int j=0; j<k; j++ ) { 
-                permA[j] = (permA[j]-1) % k;
-                if( permA[j] < 0 )
-                  permA[j] += k;
-              }
-          } */
         int[] tPerm = new int[k];
         if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP ) {
           tPerm[0] = permA[2];
@@ -677,7 +670,12 @@ public class PC extends DragBox implements ActionListener {
         for( int j=0; j<k; j++ )
           permA[j] = tPerm[j];
         this.dataChanged(0);
-      } else
+      } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R ) {
+        actionPerformed(new ActionEvent(this, 325145, "Zeiser"));
+      } else if ( e.getModifiers() == (Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_H ) {
+        actionPerformed(new ActionEvent(this, 325141, "Hot"));
+      }      
+      else
         super.processKeyEvent(e);
     }
 
@@ -749,7 +747,30 @@ System.out.println("Command: "+command);
 
         create(width, height);
         update(this.getGraphics());
-      } else
+      } else if ( command.equals("Hot") ) {
+        hotSelection = !hotSelection;
+        zoomToSel = false;
+        for( int i=0; i<data.n; i++ )
+          onlyHi[i] = true;
+        this.dataChanged(0);
+      } else if ( command.equals("Zeiser") ) {
+        if( !zoomToSel ) {
+          bg = null;
+          double[] selection = data.getSelection();
+          for(int i=0; i<data.n; i++)
+            if( selection[i] > 0 )
+              onlyHi[i] = true;
+            else
+              onlyHi[i] = false;
+          hotSelection = true;
+        } else
+          for( int i=0; i<data.n; i++ )
+            onlyHi[i] = true;
+
+        zoomToSel = !zoomToSel;
+        this.dataChanged(0);
+      }
+      else
         super.actionPerformed(e);
     }
 
@@ -765,11 +786,15 @@ System.out.println("Command: "+command);
       else
         slotMax = 40;
 
-      if( oldWidth != size.width || oldHeight != size.height || frame.getBackground() != MFrame.backgroundColor) {
+      if( oldWidth != size.width || oldHeight != size.height || hotSelection || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
 
         this.width = size.width;
         this.height = size.height;
+        if( hotSelection )
+          getData();
+        if( zoomToSel )
+          hotSelection = false;
         create( width, height );
         oldWidth = size.width;
         oldHeight = size.height;
@@ -784,18 +809,23 @@ System.out.println("Command: "+command);
           bg = g;
 
         bg.setColor(new Color(0, 0, 0, alpha));
-        if( paintMode.equals("Poly") ) {
+        if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
           for( int i=0; i<data.n; i++ )
-            bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+              bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
         }
-        for( int j=0; j<k; j++ ) {	
+        if( paintMode.equals("Poly") && zoomToSel ) {
+          for( int i=0; i<data.n; i++ )
+            if( onlyHi[i] )
+              bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+        }
+        for( int j=0; j<k; j++ ) {	                    		// Axes
           bg.setColor(new Color(255, 255, 255, 75));
           bg.drawLine( poly[1].xpoints[j]-1, border, (poly[1].xpoints)[j]-1, size.height-border-3);
           bg.drawLine( poly[1].xpoints[j]+1, border, (poly[1].xpoints)[j]+1, size.height-border-3);
           bg.setColor(new Color(255, 255, 255, 140));
           bg.drawLine( poly[1].xpoints[j],   border-1, (poly[1].xpoints)[j],   size.height-border-2);
         }	
-        for( int j=0; j<k; j++ ) {	
+        for( int j=0; j<k; j++ ) {													// Arrows at Axes
           if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
             bg.setColor(new Color(255, 255, 255, 140));
             bg.drawLine( poly[1].xpoints[j]-3,   border+2, (poly[1].xpoints)[j]+3,   border+2);
@@ -812,8 +842,9 @@ System.out.println("Command: "+command);
         }
         bg.setColor(Color.black);
         if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY")) {
-          for( int i=0; i<bPlots.size(); i++ )
-            ((boxPlot)(bPlots.elementAt(i))).draw(bg);
+          if( !hotSelection )
+            for( int i=0; i<bPlots.size(); i++ )
+              ((boxPlot)(bPlots.elementAt(i))).draw(bg);
           for( int i=0; i<rects.size(); i++ )
             ((MyRect)(rects.elementAt(i))).draw(bg);
         }
@@ -833,8 +864,12 @@ System.out.println("Command: "+command);
       if( data.countSelection()>0 ) {
         selection = data.getSelection();
         if( paintMode.equals("Poly") || paintMode.equals("Both")) {
+          if( ((MFrame)frame).getAlphaHi() )
+            ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
+          else
+            ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
           for( int i=0; i<data.n; i++ ) {
-            if( selection[i] > 0 )
+            if( selection[i] > 0 && onlyHi[i] )
               tbg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k);
           }
         }
@@ -864,6 +899,10 @@ System.out.println("Command: "+command);
             }
           }
         }
+      }
+      else if( hotSelection ) {
+        MyText warning = new MyText("No Data Selected!", size.width/2, size.height/2, 2);
+        warning.draw(tbg);
       }
 
       // Plot the labels ...
@@ -909,6 +948,16 @@ System.out.println("Command: "+command);
       }
 
       if( !(printing) ) {
+        if( hotSelection || zoomToSel ) {
+          ttbg.setColor(Color.red);
+          ttbg.drawRect(0, 0, size.width-1, size.height-1);
+          ((Graphics2D)ttbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6F));
+          ttbg.drawRect(1, 1, size.width-3, size.height-3);
+          ((Graphics2D)ttbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25F));
+          ttbg.drawRect(2, 2, size.width-5, size.height-5);
+          ((Graphics2D)ttbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+        }
+
         ttbg.setColor(Color.black);
         drawSelections(ttbg);
         g.drawImage(ttbi, 0, 0, Color.black, null);
@@ -1079,13 +1128,27 @@ System.out.println("Command: "+command);
 
       dataCopy = new double[k][data.n];
 
+      if( !hotSelection ) {
+        for( int j=0; j<k; j++ ) {
+          dMins[j] = data.getMin(vars[j]);
+          dIQRs[j] = data.getQuantile(vars[j], 0.75) - data.getQuantile(vars[j], 0.25);
+          dMedians[j] = data.getQuantile(vars[j], 0.5);
+          dMeans[j] = data.getMean(vars[j]);
+          dSDevs[j] = data.getSDev(vars[j]);
+          dMaxs[j] = data.getMax(vars[j]);
+        }
+      }
+      else if( data.countSelection() > 0 ) {
+        for( int j=0; j<k; j++ ) {
+          dMins[j] = data.getSelQuantile(vars[j], 0);
+          dIQRs[j] = data.getSelQuantile(vars[j], 0.75) - data.getSelQuantile(vars[j], 0.25);
+          dMedians[j] = data.getSelQuantile(vars[j], 0.5);
+          dMeans[j] = data.getSelMean(vars[j]);
+          dSDevs[j] = data.getSelSDev(vars[j]);
+          dMaxs[j] = data.getSelQuantile(vars[j], 1);
+        }
+      }
       for( int j=0; j<k; j++ ) {
-        dMins[j] = data.getMin(vars[j]);
-        dIQRs[j] = data.getQuantile(vars[j], 0.75) - data.getQuantile(vars[j], 0.25);
-        dMedians[j] = data.getQuantile(vars[j], 0.5);
-        dMeans[j] = data.getMean(vars[j]);
-        dSDevs[j] = data.getSDev(vars[j]);
-        dMaxs[j] = data.getMax(vars[j]);
         if( data.categorical(vars[j]) && !data.alpha(vars[j]) )
           dataCopy[j] = data.getRawNumbers(vars[j]);
         else
