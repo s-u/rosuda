@@ -88,6 +88,8 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
         } else setTitle("Series plot of "+xv.getName()+" vs "+vnlist);
         f.setTitle(getTitle());
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
+	A[0].setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
+
 	setBackground(Common.backgroundColor);
 	drag=false;
 	addMouseListener(this);
@@ -149,7 +151,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	if (Dsize.width!=TW || Dsize.height!=TH) {
 	    int w=Dsize.width, h=Dsize.height;
 	    TW=w; TH=h;
-	    int innerL=30, innerB=30, lshift=0;
+	    int innerL=45, innerB=30, lshift=0;
 	    int innerW=w-innerL-10, innerH=h-innerB-10;
 	
 	    A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
