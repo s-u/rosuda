@@ -21,55 +21,36 @@ public class WinTracker implements ActionListener, FocusListener
     public WinTracker()
     {
 	wins=new Vector();
-    };
+    }
 
     void newWindowMenu(WTentry we) {
-	we.menu=new JMenu("Window");
-	JMenuItem mi=new JMenuItem("Close window");
-        mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),false));
-        mi.setActionCommand("WTMclose"+we.id);
-        mi.addActionListener(this);
-	we.menu.add(mi);
-        mi=new JMenuItem("Close same type");
-        mi.setAccelerator(javax.swing.KeyStroke.getKeyStroke('W',Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1,false));
-        mi.setActionCommand("WTMcloseClass"+we.wclass);
-        mi.addActionListener(this);
-        we.menu.add(mi);
-        mi=new JMenuItem("Close All");
-        mi.setActionCommand("WTMcloseAll");
-        mi.addActionListener(this);
-        we.menu.add(mi);
-        we.menu.addSeparator();
+        we.addMenuItem("@WClose window","WTMclose"+we.id);
+        we.addMenuItem("!WClose same type","WTMcloseClass"+we.wclass);
+        we.addMenuItem("Close all","WTMcloseAll");
+        we.addMenuSeparator();
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we2=(WTentry)e.nextElement();
-	    if (we2!=null && we2!=we && we2.menu!=null) {
-              we.menu.add(we2.newMenuItem(this));
-            }
-	};
-	we.menu.addActionListener(this);
-    };
+	    if (we2!=null && we2!=we)
+                we2.addWindowMenuEntry(we);
+	}
+    }
 
     public void add(WTentry we) {
 	if (we==null) return;
 	wins.addElement(we);
-	if (we.menu==null) {
-          newWindowMenu(we);
+        for(Enumeration e=wins.elements(); e.hasMoreElements();) {
+            WTentry we2=(WTentry)e.nextElement();
+            if (Global.DEBUG>0)
+                System.out.println("-- updating menu; we2="+we2.toString());
+            if (we2!=null) {
+                we.addWindowMenuEntry(we2);
+                if (Global.DEBUG>0) System.out.println("-- menu updated");
+            }
         }
-	if (we.mi!=null) {
-	    for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-		WTentry we2=(WTentry)e.nextElement();
-		if (Global.DEBUG>0)
-		    System.out.println("-- updating menu; we2="+we2.toString());
-		if (we2!=null && we2.menu!=null) {
-		    we2.menu.add(we.newMenuItem(this));
-		    if (Global.DEBUG>0) System.out.println("-- menu updated");
-		};
-	    };
-	};
 	if (we.w!=null) we.w.addFocusListener(this);
 	if (Global.DEBUG>0)
 	    System.out.println(">>new window: \""+we.name+"\" ("+we.w.toString()+")");
-    };
+    }
 
     public boolean contains(int wclass) {
         Enumeration e = wins.elements();
@@ -103,32 +84,17 @@ public class WinTracker implements ActionListener, FocusListener
     public void rm(WTentry we) {
 	if (we==null) return;
 	wins.removeElement(we);
-	if (we.mi!=null) {
-	    for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-		WTentry we2=(WTentry)e.nextElement();
-		if (we2!=null && we2.menu!=null) {
-		    int i=0;
-		    String ac=we.mi.getActionCommand();
-		    while(i<we2.menu.getItemCount()) {
-			JMenuItem mi=we2.menu.getItem(i);
-                        if (mi==null);
-			else if (mi.getActionCommand().compareTo(ac)==0) {
-			    if (Global.DEBUG>0)
-				System.out.println("-- found by action command, removing");
-			    we2.menu.remove(mi);
-			    break;
-			};
-			i++;
-		    };
-		};
-	    };
-	};
+        for(Enumeration e=wins.elements(); e.hasMoreElements();) {
+            WTentry we2=(WTentry)e.nextElement();
+            if (we2!=null)
+                we.rmWindowMenuEntry(we2);
+	}
 	if (Global.DEBUG>0)
 	    System.out.println(">>window removed: \""+we.name+"\"");
         if (wins.size()==0) {
-            /*if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
+            if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
                 SplashScreen.main.setVisible(true);
-            else*/ if(Global.AppType==Global.AT_standalone) {
+            else if(Global.AppType==Global.AT_standalone) {
                 System.out.println("FATAL: Stand-alone mode, last window closed, but no splash screen present. Assuming exit request.");
                 System.exit(0);
             }
@@ -149,11 +115,11 @@ public class WinTracker implements ActionListener, FocusListener
 	};
     };
 
-    public JMenu getWindowMenu(Window w) {
+    public Object getWindowMenu(Window w) {
         WTentry we=getEntry(w);
         System.out.println(we.toString());
-	return (we==null)?null:we.menu;
-    };
+	return (we==null)?null:we.getWindowMenu();
+    }
 
     public Enumeration elements() { return wins.elements(); };
 
@@ -161,17 +127,17 @@ public class WinTracker implements ActionListener, FocusListener
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.id==id) return we;
-	};
+	}
 	return null;
-    };
+    }
 
     public WTentry getEntry(Window w) {
 	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
 	    WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.w==w) return we;
-	};
+	}
 	return null;
-    };
+    }
 
     public void disposeAll() {
 	if (Global.DEBUG>0)
