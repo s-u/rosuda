@@ -227,8 +227,8 @@ public class Framework implements Dependent, ActionListener {
         @return ID of the new variable or -1 if error occured (variable name already exists etc.)
         */
     public int newVar(String name, int[] ix, String[] d) {
-        if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
-            int i=mmDlg(name,d.length);
+        if (cvs.count()>0 && cvs.at(0).size()!=ix.length) {
+            int i=mmDlg(name,ix.length);
             if (i<0) return i;
         }
         SVar v=new SVar(name);
