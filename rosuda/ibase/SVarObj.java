@@ -65,8 +65,9 @@ public class SVarObj extends SVar
     public void setAllEmpty(int size) {
       for (int i = 0; i < size; i++) {
         missingCount++;
-        cont.add(null);
+        cont.add(cat?missingCat:null);
       }
+      if (cat) this.categorize(true);
     }
 
 
@@ -230,20 +231,16 @@ public class SVarObj extends SVar
     public boolean remove(Object o, int index) {
       if (o == null && missingCount > -1) missingCount--;
       cont.removeElementAt(index);
+      this.categorize(true);
       return true;
     }
 
-    /** replaces an element at specified position - use with care!. this doesn't work for categorical variables.
-        in that case you need to dropCat(), make modifications and categorize().
+    /** replaces an element at specified position - use with care!.
         also numerical variables only "grow" their min/max - i.e. if min/max was the removed
         element, then min/max is not adapted to shrink the range
         */
-
     /* added 31.12.03 MH */
-    /** replace a case, we try to treat categoricaly as well as continious, but it doesn't work in a right way at the moment
-     * categories are not updated as they should only with new created vars, and we have to find new max and min, because the way
-     * i try it now, it only works sometimes, if it works in an acceptable way we can overwrite replace*/
-    public boolean replace(int i, Object o) {
+    public boolean replace(Object o, int i) {
       if (i < 0 || i >= size()) return false;
       Object oo = at(i);
       if (oo == o) return true;
@@ -251,58 +248,21 @@ public class SVarObj extends SVar
         missingCount--;
       if (o == null)
         missingCount++;
-      if (cat) {
-          this.categorize(true);
-      }
       if (isnum && o!=null) {
         try {
           double val=((Number)o).doubleValue();
           if (val>max) max=val;
           if (val<min) min=val;
+          //Now we have to update the max and min if nescessary
         } catch(Exception E) {
           // what do we do when the cast doesn't work ? we return false indicating so
           E.printStackTrace();
           return false;
         }
       }
-
-      /*if (isnum && o != null) {
-        try {
-          if(!o.toString().trim().matches("[0-9]*\\.{0,1}[0-9]*")) return false;
-          double val = (new Double(o.toString())).doubleValue();
-          if (val > max)
-            max = val;
-          if (val < min)
-            min = val;
-          if (oo != null) {
-            val = (new Double(oo.toString())).doubleValue();
-            int z = cont.indexOf(oo);
-            try {
-              if (val == max && cont.indexOf(oo, z + 1) == -1) {
-                Object[] cont_2 = cont.toArray();
-                Arrays.sort(cont.toArray(cont_2));
-                max = (double) ((Number)cont_2[size()-2]).doubleValue();
-                cont_2 = null;
-              }
-              if (val == min && cont.indexOf(oo, z + 1) == -1) {
-                Object[] cont_2 = cont.toArray();
-                Arrays.sort(cont.toArray(cont_2));
-                System.out.println(cont_2[1]);
-                cont_2 = null;
-              }
-            }
-            catch (Exception e) {
-
-            }
-
-          }
-        }
-        catch (Exception E) {
-          return false;
-        }
-      }*/
       cont.setElementAt(o, i); // we don't modify the element unless we're through all checks etc.
       NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
+      if (cat) this.categorize(true);
       return true;
     }
 
