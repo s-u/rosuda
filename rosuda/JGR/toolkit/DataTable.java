@@ -644,13 +644,13 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
             if (e.isPopupTrigger()) {
                 popUpMenu(e);
             } else if (e.getSource().equals(tableHeader)) {
-                if (e.getClickCount() == 2 && selectedColumn > 0) {
-                    renameColumn(selectedColumn);
-                }/* else {
-                    dataTable.setColumnSelectionInterval(selectedColumn,
-                        selectedColumn);
-                    dataTable.setRowSelectionInterval(0, tabModel.rows - 1);
-                }*/
+                if (e.isPopupTrigger()) {
+                    popUpMenu(e);
+                }
+                else {
+                    if (e.getClickCount() == 2 && selectedColumn > 0)
+                        renameColumn(selectedColumn);
+                }
             } else if (selectedColumn == 0) {
                 dataTable.setColumnSelectionInterval(0, tabModel.cols - 1);
             }
@@ -662,15 +662,21 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
     public void mouseReleased(MouseEvent e) {
         try {
             if (e.getSource().equals(tableHeader)) {
-                selectedColumn = currentCol(e);
-                int from = dataTable.getColumn(dataTable.getColumnName(
-                    selectedColumn)).getModelIndex();
-                int to = selectedColumn;
-                if (from != to) {
-                    moveColumns(from, to);
+                if (e.isPopupTrigger()) {
+                    popUpMenu(e);
+                }
+                else {
+                    selectedColumn = currentCol(e);
+                    int from = dataTable.getColumn(dataTable.getColumnName(
+                        selectedColumn)).getModelIndex();
+                    int to = selectedColumn;
+                    if (from != to) {
+                        moveColumns(from, to);
+                    }
                 }
             }
             else if (e.isPopupTrigger()) {
+                System.out.println("popup");
                 popUpMenu(e);
             }
         } catch (Exception ex) {
