@@ -24,6 +24,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false; 
+
+    /** if true partition nodes above current node only */
+    public boolean bgTopOnly=false;
     
     /** array of two axes (X and Y) */
     Axis A[];
@@ -39,6 +42,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     MenuItem MIlabels=null;
 
     int X,Y,W,H, TW,TH;
+
+    int []filter=null;
 
     /** create a new scatterplot
 	@param f associated frame (or <code>null</code> if none)
@@ -67,6 +72,18 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
+    public void setFilter(int[] f) {
+        filter=f;
+        setUpdateRoot(0);
+        repaint();
+    };
+
+    public void setFilter(Vector v) {
+        if (v==null) { filter=null; return; };
+        filter=new int[v.size()];
+        int j=0; while(j<v.size()) { filter[j]=((Integer)v.elementAt(j)).intValue(); j++; };
+    };
+    
     public void rotate() {
 	SVar h=v[0]; v[0]=v[1]; v[1]=h;
 	Axis ha=A[0]; A[0]=A[1]; A[1]=ha;
@@ -85,6 +102,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         repaint();
     };
 
+    SNode paint_cn;
+    
     /** paints partitioning for a single node (and descends recursively) */	
     public void paintNode(PoGraSS g, SNode n, int x1, int y1, int x2, int y2, boolean sub) {
 	if (n.tmp==2) {
@@ -93,7 +112,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
 	g.setColor("splitRects");
 	g.drawRect(x1,y1,x2-x1,y2-y1);
-	if (n.isLeaf() || n.isPruned()) return;
+	if (n.isLeaf() || n.isPruned() || (bgTopOnly && n==paint_cn)) return;
 	for(Enumeration e=n.children();e.hasMoreElements();) {
 	    SNode c=(SNode)e.nextElement();
 	    int nx1=x1, nx2=x2, ny1=y1, ny2=y2;
@@ -149,6 +168,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	g.fillRect(X,Y,W,H);
 
 	SNode cn=(m!=null)?m.getNode():null;
+        paint_cn=cn;
 
 	if (cn!=null) {
             if (Common.DEBUG>0) System.out.println("ScatterCanvas: current node present, constructing partitions"); 
@@ -198,20 +218,37 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         }
 
 	g.setColor("point");
-	for (int i=0;i<pts;i++)
-	    if (Pts[i]!=null)
-		g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+        if (filter==null) {
+            for (int i=0;i<pts;i++)
+                if (Pts[i]!=null)
+                    g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+        } else {
+            for (int i=0;i<filter.length;i++)
+                if (Pts[filter[i]]!=null)
+                    g.fillOval(Pts[filter[i]].x-1,Pts[filter[i]].y-1,3,3);
+        };
 
         g.nextLayer();
         
         if (m.marked()>0) {
             g.setColor("marked");
-            for (int i=0;i<pts;i++)
-                if (Pts[i]!=null && m.at(i))
-                    if (selRed)
-                        g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
-                    else
-                        g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+            if (filter==null) {
+                for (int i=0;i<pts;i++)
+                    if (Pts[i]!=null && m.at(i))
+                        if (selRed)
+                            g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
+                        else
+                            g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+            } else {
+                for (int j=0;j<filter.length;j++) {
+                    int i=filter[j];
+                    if (Pts[i]!=null && m.at(i))
+                        if (selRed)
+                            g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
+                        else
+                            g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+                }
+            }
         };
                 
 	g.nextLayer();
