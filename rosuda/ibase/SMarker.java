@@ -75,6 +75,24 @@ public class SMarker extends Notifier implements Commander {
         while (i<j) { l[i]=((Integer)list.elementAt(i)).intValue(); i++; }
         return l;
     }
+
+    public static final int MASK_PRIMARY   = 0;
+    public static final int MASK_SECONDARY = 1;
+    public static final int MASK_RAW       = 2;
+
+    /** get mask of the mark entries (as a newly allocated copy) - that is an array of the same size as the data containing a mark for each case. The values depend on the mask type specified by the parameter: <ul><li>{@link MASK_PRIMARY}: 0 - no mark, -1 - primary mark set (selection). secondary mark is ignored.</li><li>{@link MASK_SECONDARY}: any value 0,1,2,... corresponding to the secondary mark. primary mark is ignored.</li><li>MASK_RAW: mask as stored internally. currently LSB defines the primary mark and the remaining bits are used for the secondary mark, however this layout may change in the future, therefore it's not wise to rely on this unless in special cases for efficiency reasons.</li></ul>
+        @param maskType one of the constants {@link MASK_PRIMARY},{@link MASK_SECONDARY} or {@link MASK_RAW}, see above */
+    public int[] getMaskCopy(int maskType) {
+        int mc[] = new int[mask.length];
+        System.arraycopy(mask, 0, mc, 0, mask.length);
+        if (maskType==MASK_PRIMARY) {
+            int i=0; while (i<mc.length) { if ((mc[i]&1)==1) mc[i]=-1; i++; }
+        }
+        if (maskType==MASK_SECONDARY) {
+            int i=0; while (i<mc.length) { mc[i]>>=1; i++; }
+        }
+        return mc;
+    }
     
     /** sets the primary mark at specified index
 	@param pos desired index
