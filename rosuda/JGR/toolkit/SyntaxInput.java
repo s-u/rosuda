@@ -91,7 +91,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         int l = text.length();
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
-            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
+            if (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_'||c=='\\'||c=='/') offset--;
             else break;
             pos--;
         }
@@ -150,8 +150,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             fun = getLastPart();
             if (fun != null) {
                 String[] result = new String[1];
-                if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun.substring(fun.lastIndexOf("\"",pos-1)+1));
-                else result = RController.completeCommand(fun);
+                if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun);
+				else result = RController.completeCommand(fun);
                 if (result != null && result.length > 1) {
                     if (funHelpTip != null) funHelpTip.hide();
                     if (p == null || !p.equals(getCaret().getMagicCaretPosition()))
@@ -294,7 +294,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 if (funHelpTip != null) funHelpTip.hide();
             }
             super.remove(offset,length);
-            if (JGRPrefs.useHelpAgent) {
+            if (JGRPrefs.useHelpAgent || funHelpTip != null) {
 				fun = getLastCommand();
 				if (fun != null)
 					SwingUtilities.invokeLater(new Runnable() {
@@ -302,7 +302,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 							showFunHelp(fun);
 						}
 					});
-				
 				if (funHelpTip != null) funHelpTip.hide();
 			}
         }

@@ -94,7 +94,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
                 libs[0] = destDir;
                 System.arraycopy(JGR.RLIBS,0,libs,1,JGR.RLIBS.length);
                 JGR.RLIBS = libs;
-                JGRPrefs.writePrefs();
+                JGRPrefs.writePrefs(true);
                 JGR.R.eval(".libPaths(\""+destDir+"\")");
             }
         }

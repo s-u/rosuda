@@ -101,7 +101,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 
     public void dispose() {
         setDefaultPackages();
-        JGRPrefs.writePrefs();
+        JGRPrefs.writePrefs(false);
         super.dispose();
     }
 

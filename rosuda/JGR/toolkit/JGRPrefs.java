@@ -149,7 +149,7 @@ public class JGRPrefs {
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
     }
 
-    public static void writePrefs() {
+    public static void writePrefs(boolean writeLibs) {
         Preferences prefs = Preferences.userNodeForPackage(String.class);
 
         prefs.put("FontName", FontName);        // String
@@ -163,9 +163,9 @@ public class JGRPrefs {
                 packages += ", "+JGRPackageManager.defaultPackages[i];
             prefs.put("DefaultPackages", packages);
         }
-        if (JGR.RLIBS != null && JGR.RLIBS.length > 0) {
+        if (writeLibs && JGR.RLIBS != null && JGR.RLIBS.length > 0) {
             String libpaths = JGR.RLIBS[0].toString();
-            for (int i = 1; i < JGR.RLIBS.length; i++) 
+            for (int i = 1; i < JGR.RLIBS.length-1; i++) 
 				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];
             prefs.put("InitialRLibraryPath", libpaths);
         }

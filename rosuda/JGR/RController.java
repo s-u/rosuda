@@ -112,10 +112,10 @@ public class RController {
                 else {
                     common = commonWithPrefix(common, sx);
                 }
-                matches++;
+				matches++;
             }
         }
-        if (common != null) {
+		if (common != null) {
             String fnp = common.replace('\\','/');
             File tfile = null;
             boolean isDir = false;

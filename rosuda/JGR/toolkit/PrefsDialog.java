@@ -144,7 +144,7 @@ public class PrefsDialog extends JDialog implements ActionListener{
         else if (cmd=="cancel") dispose();
         else if (cmd=="save") {
             applyChanges();
-            JGRPrefs.writePrefs();
+            JGRPrefs.writePrefs(false);
             this.dispose();
         }
     }
