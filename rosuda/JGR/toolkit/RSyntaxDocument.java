@@ -51,6 +51,10 @@ public class RSyntaxDocument extends RStyledDocument {
         try { whitespace = getText(offset-1,1).matches("[\\s|#]"); } catch (Exception e) {}
         if (!whitespace && offset != 0) str = str.replaceAll("\t","");
         //if (str.matches("_")) str = "<-";
+        if (str.matches("\t")) {
+            str = "";
+            for (int i = 1; i < Preferences.TABSIZE+1; i++) str+= " ";
+        }
         super.insertString(offset, str, a);
         final int len = str.length();
         SwingUtilities.invokeLater(new Runnable() {public void run() { try { processChangedLines(offset, len);} catch (Exception e) {new iError(e);}}});

@@ -45,6 +45,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         if (FontTracker.current == null)
             FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
+
+
+        
         this.addCaretListener(this);
         //new DropTarget(this,this);
     }

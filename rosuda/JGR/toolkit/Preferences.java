@@ -81,6 +81,8 @@ public class Preferences {
     public static MutableAttributeSet QUOTE = new SimpleAttributeSet();
     /** DefaultQuoteColor */
     public static Color QUOTEColor = Color.blue;
+    /** Tabsize */
+    public static int TABSIZE = 4;
 
     public static int MAXHELPTABS = 10;
 
