@@ -84,34 +84,41 @@ public class Axis extends Notifier
     public void setGeometry(int orientation, int begin, int len) {
 	if(orientation!=or||begin!=gBegin||len!=gLen) { // lazy notification
 	    gBegin=begin; gLen=len; or=orientation;
+            //if (Common.DEBUG>0) System.out.println("Axis.setGeometry("+orientation+","+begin+","+len+") preformed. ["+this+"] notifying all");
 	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
 	};
     };
 
     /** for numerical variables - set range of the variable's values.
 	@param begin begin/anchor of axis in data domain
-	@param len length of the axis (can be negative if necessary) */
-    public void setValueRange(double begin, double len) {
+	@param len length of the axis (can be negative if necessary)
+        @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */
+    public boolean setValueRange(double begin, double len) {
 	if (vBegin!=begin||vLen!=len) { // lazy notification
 	    vBegin=begin; vLen=len;
             vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
 	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
+            return true;
 	};
+        return false;
     };
 
     /** for discrete axis types - set the data count
-	@param dc data count, if <1 then set to 1 */
-    public void setValueRange(int dc) {
+	@param dc data count, if <1 then set to 1
+        @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */        
+    public boolean setValueRange(int dc) {
 	if (dc<1) dc=1;
 	if (dc!=datacount) { // lazy notification
 	    datacount=dc;
 	    vBegin=0; vLen=dc; // this is necessary if get SensibleTick.. functions are used
             vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
 	    NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
+            return true;
 	};
+        return false;
     };
 
-    /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used. For categorial types this also resets categories sequence to default (ordered by cat ID) - equalt to calling @link{#setDefaultRange(boolean) setDefaultRange(true)} */
+    /** set default range for the axis (ie for numerical variable min, max are used, for all other types the maixmal count is used. For categorial types this also resets categories sequence to default (ordered by cat ID) - equals to calling @link{#setDefaultRange(boolean) setDefaultRange(true)} */
     public void setDefaultRange() { setDefaultRange(true); };
 
     /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used.)
@@ -162,6 +169,7 @@ public class Axis extends Notifier
 	@return graphical position of the value */
     public int getValuePos(double val) {
 	if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
+        //System.out.println(""+val+" -[vBegin="+vBegin+",vLen="+vLen+"]-> "+(gBegin+(int)(((double)gLen)*(val-vBegin)/vLen)));
 	if (type==0) return gBegin+(int)(((double)gLen)*(val-vBegin)/vLen);
 	if (type==2||type==1) return getCatCenter((int)val); // we assume that the supplied value is category index
 	return -1;
@@ -378,6 +386,6 @@ used in conjunction with {@link #getSensibleTickDistance}
 
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
-	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+(gBegin+gLen)+"],v["+vBegin+":"+vLen+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
+	return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+",cseq="+((cseq==null)?"<none>":"["+cseq.length+"]")+")";
     };
 };
