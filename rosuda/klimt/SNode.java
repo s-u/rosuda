@@ -43,10 +43,15 @@ public class SNode extends Node implements Cloneable
     public double sampleDev;
     /** deviance gain based on the sample */
     public double sampleDevGain;
-    
-    /** position of the node and its geometry */
-    public int x,y,x2,y2;
 
+    /** position of the node and its geometry  (replaces former x,y,x2,y2) */
+    public int cx,cy,width,height;
+
+    /** underflow warning - if <code>true</code> then the node is displayed bigger than it should be */
+    boolean underflowWarning=false;
+    /** overflow warning - if <code>true</code> then the node is bigger than its display representation */
+    boolean overflowWarning=false;
+     
     /** selector (0=not sel, 1=selected node, 2=leaf of sel. category, 3=non-leaf of selected category */
     public int sel=0;
 
