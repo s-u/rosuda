@@ -613,6 +613,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                     else {
                         i=c.indexOf('='); if (i<0) i=c.indexOf(':');
                         if (i>=0) c=c.substring(i);
+                        // categorical - can be damn long
+                        if (c.length()>16) c=c.substring(0,16)+"...";
                     }
                 }
                 g.drawString(c,cx,cy,PoGraSS.TA_Center);
