@@ -665,10 +665,6 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                                 if (!np.isLeaf()) {
                                     SNode n=(SNode)np.at(0);
                                     if (n!=null) {
-                                        if (Common.DEBUG>0) System.out.println(" * splitVar="+n.splitVar);
-                                        if (Common.DEBUG>0) System.out.println(" * splitVar.name="+n.splitVar.getName());
-                                        if (Common.DEBUG>0) System.out.println(" - "+te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+np.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size());
-
                                         p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size());
                                     };
                                 }
