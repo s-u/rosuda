@@ -306,8 +306,8 @@ in conjunction with {@link #moveCat} as npos parameter when destination
         int grs=(int)(preld/lvLen*lgLen);
         if (Global.DEBUG>0) System.out.println("Axis.getSensibleTickDistance("+medDist+","+minDist+"): grs="+grs+", preld="+preld);
         while (grs>2*medDist) { grs/=2; preld/=2; };
-        if (grs<minDist/3) return preld*5;
-        if (grs<minDist) return preld*2;
+        if (grs<minDist/3) preld*=5; else
+            if (grs<minDist) preld*=2;
         if ((type==1 || type==2) && preld<1.0) return 1.0;
         return preld;
     };
@@ -318,6 +318,7 @@ used in conjunction with {@link #getSensibleTickDistance}
 	@return first visible tick mark
     */
     public double getSensibleTickStart(double tickDist) {
+        if (type==1 || type==2) return 0;
 	double ft=tickDist*((double)((int)(vBegin/tickDist)));
 	if (ft<vBegin) ft+=tickDist;
 	return ft;
