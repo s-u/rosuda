@@ -92,6 +92,7 @@ public class JGR {
         STARTED = true;
         if (!System.getProperty("os.name").startsWith("Win")) splash.stop();
         MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
+		if (JGR.R != null && JGR.STARTED) JGR.R.eval("options(width="+JGR.MAINRCONSOLE.getFontWidth()+")");
         MAINRCONSOLE.input.requestFocus();
         new Refresher().run();
     }

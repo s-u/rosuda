@@ -14,6 +14,8 @@ import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
+import org.rosuda.JGR.*;
+
 public class FontTracker {
 
     public static FontTracker current = null;
@@ -77,6 +79,7 @@ public class FontTracker {
             } catch (Exception ex) {
 			}
         }
+		if (JGR.R != null && JGR.STARTED) JGR.R.eval("options(width="+JGR.MAINRCONSOLE.getFontWidth()+")");
     }
 
 }

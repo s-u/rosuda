@@ -117,7 +117,7 @@ FocusListener, RMainLoopCallbacks {
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));
-        this.setVisible(true);
+		this.setVisible(true);
         //progress.setVisible(false);
 		input.mComplete.setVisible(false);
     }
@@ -310,14 +310,9 @@ FocusListener, RMainLoopCallbacks {
     }
 
     public int getFontWidth() {
-        int width = output.getFontMetrics(output.getFont()).getMaxAdvance();
+		int width = output.getFontMetrics(output.getFont()).charWidth('M');
         width = output.getWidth() / width;
-        if (JGRPrefs.isMac) {
-            return (int) (width*1.5);
-        }
-        else {
-            return (int) (width*2.5);
-        }
+		return (int) (width) - (JGRPrefs.isMac?0:1);
     }
 
     public void actionPerformed(ActionEvent e) {

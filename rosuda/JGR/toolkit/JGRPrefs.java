@@ -125,6 +125,7 @@ public class JGRPrefs {
         StyleConstants.setForeground(OBJECT, OBJECTColor);
         StyleConstants.setItalic(OBJECT, true);
         StyleConstants.setForeground(QUOTE, QUOTEColor);
+		if (JGR.R != null && JGR.STARTED) JGR.R.eval("options(width="+JGR.MAINRCONSOLE.getFontWidth()+")");
     }
 
     public static void readPrefs() {
