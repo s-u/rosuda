@@ -11,17 +11,17 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 
 import org.rosuda.JGR.toolkit.*;
+import org.rosuda.JGR.util.*;
 import org.rosuda.JGR.rhelp.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
-import org.rosuda.util.*;
 
 /**
  *  JGRHelp - an implemenation of a simple htmlbrowser combined with r-help search engine.
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class JGRHelp extends iFrame implements ActionListener, KeyListener,
