@@ -38,6 +38,13 @@ extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
 extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
 #endif
 
+#ifndef checkArity
+#define checkArity               Rf_checkArity
+#endif
+#ifndef errorcall
+#define errorcall                Rf_errorcall
+#endif
+
 /* this method is used rather for debugging purposes - it finds the correct JNIEnv for the current thread. we still have some threading issues to solve, becuase eenv!=env should never happen (uncontrolled), because concurrency issues arise */
 static JavaVM *jvm=0;
 
@@ -56,7 +63,7 @@ JNIEnv *checkEnvironment()
             fprintf(stderr, "JNI_GetCreatedJavaVMs said there's no JVM running!\n"); return;
         }
     }
-    res = (*jvm)->AttachCurrentThread(jvm, &env, 0);
+    res = (*jvm)->AttachCurrentThread(jvm, (void*) &env, 0);
     if (res!=0) {
         fprintf(stderr, "AttachCurrentThread failed! (%d)\n",res); return;
     }
@@ -67,39 +74,56 @@ JNIEnv *checkEnvironment()
 
 int Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory)
 {
+	jstring r,s;
+	jmethodID mid;
     JNIEnv *lenv=checkEnvironment();
-    if (lenv && engineObj) {
-        jri_checkExceptions(lenv, 1);
-        jstring r;
-        jstring s=(*lenv)->NewStringUTF(eenv, prompt);
-        jmethodID mid=(*lenv)->GetMethodID(eenv, engineClass, "jriReadConsole", "(Ljava/lang/String;I)Ljava/lang/String;");
-        printf("jriReadconsole mid=%x\n", mid);
-        if (!mid) return -1;
-        r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, s, addtohistory);
-        (*lenv)->DeleteLocalRef(lenv, s);
-        jri_checkExceptions(lenv, 1);
-        if (r) {
-            const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
-            if (!c) return -1;
-            {
-                int l=strlen(c);
-                strncpy(buf, c, (l>len-1)?len-1:l);
-                buf[(l>len-1)?len-1:l]=0;
-                printf("Re_ReadConsole succeeded: \"%s\"\n",buf);
-            }
-            (*lenv)->ReleaseStringUTFChars(lenv, r, c);
-            (*lenv)->DeleteLocalRef(lenv, r);
-            return 1;
-        }
+	
+    if (!lenv || !engineObj) return -1;
+	
+	jri_checkExceptions(lenv, 1);
+	mid=(*lenv)->GetMethodID(eenv, engineClass, "jriReadConsole", "(Ljava/lang/String;I)Ljava/lang/String;");
+#ifdef JRI_DEBUG
+	printf("jriReadconsole mid=%x\n", mid);
+#endif
+	jri_checkExceptions(lenv, 0);
+	if (!mid) return -1;
+		
+	s=(*lenv)->NewStringUTF(eenv, prompt);
+	r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, s, addtohistory);
+	jri_checkExceptions(lenv, 1);
+	(*lenv)->DeleteLocalRef(lenv, s);
+	jri_checkExceptions(lenv, 0);
+	if (r) {
+		const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
+		if (!c) return -1;
+		{
+			int l=strlen(c);
+			strncpy(buf, c, (l>len-1)?len-1:l);
+			buf[(l>len-1)?len-1:l]=0;
+#ifdef JRI_DEBUG
+			printf("Re_ReadConsole succeeded: \"%s\"\n",buf);
+#endif
+		}
+		(*lenv)->ReleaseStringUTFChars(lenv, r, c);
+		(*lenv)->DeleteLocalRef(lenv, r);
+		return 1;
     }
     return -1;
 }
 
 void Re_Busy(int which)
 {
-    jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriBusy", "(I)V");
-    printf("jriBusy mid=%x\n", mid);
-    if (mid) (*eenv)->CallVoidMethod(eenv, engineObj, mid, which);
+	jmethodID mid;
+    JNIEnv *lenv=checkEnvironment();
+    jri_checkExceptions(lenv, 1);
+    mid=(*lenv)->GetMethodID(lenv, engineClass, "jriBusy", "(I)V");
+    jri_checkExceptions(lenv, 0);
+#ifdef JRI_DEBUG
+	printf("jriBusy mid=%x\n", mid);
+#endif
+	if (!mid) return;
+	(*lenv)->CallVoidMethod(lenv, engineObj, mid, which);
+    jri_checkExceptions(lenv, 1);
 }
 
 void Re_WriteConsole(char *buf, int len)
@@ -108,10 +132,12 @@ void Re_WriteConsole(char *buf, int len)
     jri_checkExceptions(lenv, 1);
     jstring s=(*lenv)->NewStringUTF(lenv, buf);
     jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriWriteConsole", "(Ljava/lang/String;)V");
-    if (!mid)
-        printf("jriWriteconsole mid=%x\n", mid);
-    if (mid)
-        (*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+    jri_checkExceptions(lenv, 0);
+#ifdef JRI_DEBUG
+	printf("jriWriteConsole mid=%x\n", mid);
+#endif
+    if (!mid) return;
+	(*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
     jri_checkExceptions(lenv, 1);
     (*lenv)->DeleteLocalRef(lenv, s);
 }
@@ -124,6 +150,16 @@ void Re_ResetConsole()
 /* Stdio support to ensure the console file buffer is flushed */
 void Re_FlushConsole()
 {
+    JNIEnv *lenv=checkEnvironment();
+    jri_checkExceptions(lenv, 1);
+    jmethodID mid=(*lenv)->GetMethodID(lenv, engineClass, "jriFlushConsole", "()V");
+    jri_checkExceptions(lenv, 0);
+#ifdef JRI_DEBUG
+	printf("jriWriteconsole mid=%x\n", mid);
+#endif
+	if (!mid) return;
+	(*lenv)->CallVoidMethod(lenv, engineObj, mid);
+    jri_checkExceptions(lenv, 1);
 }
 
 /* Reset stdin if the user types EOF on the console. */
@@ -133,24 +169,68 @@ void Re_ClearerrConsole()
 
 int Re_ChooseFile(int new, char *buf, int len)
 {
-    int namelen;
-    char *bufp;
-    R_ReadConsole("Enter file name: ", (unsigned char *)buf, len, 0);
-    namelen = strlen(buf);
-    bufp = &buf[namelen - 1];
-    while (bufp >= buf && isspace((int)*bufp))
-        *bufp-- = '\0';
-    return strlen(buf);
+    JNIEnv *lenv=checkEnvironment();
+	
+    if (lenv && engineObj) {
+		jmethodID mid;
+		jri_checkExceptions(lenv, 1);
+		mid=(*lenv)->GetMethodID(eenv, engineClass, "jriChooseFile", "(I)Ljava/lang/String;");
+#ifdef JRI_DEBUG
+		printf("jriChooseFile mid=%x\n", mid);
+#endif
+		jri_checkExceptions(lenv, 0);
+		if (mid) {
+			jstring r=(jstring) (*lenv)->CallObjectMethod(lenv, engineObj, mid, new);
+			jri_checkExceptions(lenv, 1);
+			if (r) {
+				int slen=-1;
+				const char *c=(*lenv)->GetStringUTFChars(lenv, r, 0);
+				if (c) {
+					slen=strlen(c);
+					strncpy(buf, c, (slen>len-1)?len-1:slen);
+					buf[(slen>len-1)?len-1:slen]=0;
+#ifdef JRI_DEBUG
+					printf("Re_ChooseFile succeeded: \"%s\"\n",buf);
+#endif
+				}
+				(*lenv)->ReleaseStringUTFChars(lenv, r, c);
+				(*lenv)->DeleteLocalRef(lenv, r);
+				jri_checkExceptions(lenv, 0);
+				return slen;
+			}
+		}
+    }
+	
+	/* "native" fallback if there's no such method */
+	{
+		int namelen;
+		char *bufp;
+		R_ReadConsole("Enter file name: ", (unsigned char *)buf, len, 0);
+		namelen = strlen(buf);
+		bufp = &buf[namelen - 1];
+		while (bufp >= buf && isspace((int)*bufp))
+			*bufp-- = '\0';
+		return strlen(buf);
+	}
 }
 
 void Re_ShowMessage(char *buf)
 {
-    jstring s=(*eenv)->NewStringUTF(eenv, buf);
-    jmethodID mid=(*eenv)->GetMethodID(eenv, engineClass, "jriShowMessage", "(Ljava/lang/String;)V");
+	jstring s;
+	jmethodID mid;
+    JNIEnv *lenv=checkEnvironment();
+	
+    jri_checkExceptions(lenv, 1);
+    s=(*lenv)->NewStringUTF(lenv, buf);
+    mid=(*lenv)->GetMethodID(lenv, engineClass, "jriShowMessage", "(Ljava/lang/String;)V");
+    jri_checkExceptions(lenv, 0);
+#ifdef JGR_DEBUG
     printf("jriShowMessage mid=%x\n", mid);
+#endif
     if (mid)
-        (*eenv)->CallVoidMethod(eenv, engineObj, mid, s);
-    (*eenv)->DeleteLocalRef(eenv, s);
+        (*lenv)->CallVoidMethod(eenv, engineObj, mid, s);
+    jri_checkExceptions(lenv, 0);
+    if (s) (*lenv)->DeleteLocalRef(eenv, s);
 }
 
 void Re_read_history(char *buf)
@@ -159,6 +239,7 @@ void Re_read_history(char *buf)
 
 void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 {
+
     SEXP sfile;
     char file[PATH_MAX], *p;
 
@@ -176,16 +257,38 @@ void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 void Re_savehistory(SEXP call, SEXP op, SEXP args, SEXP env)
 {
-    SEXP sfile;
-    char file[PATH_MAX], *p;
-    /*
-    checkArity(op, args);
-    sfile = CAR(args);
-    if (!isString(sfile) || LENGTH(sfile) < 1)
-        errorcall(call, "invalid file argument");
-    p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
-    if(strlen(p) > PATH_MAX - 1)
-        errorcall(call, "file argument is too long");
+	jmethodID mid;
+	jstring s;
+    JNIEnv *lenv=checkEnvironment();
+	
+    jri_checkExceptions(lenv, 1);
+    mid=(*lenv)->GetMethodID(lenv, engineClass, "jriSaveHistory", "(Ljava/lang/String;)V");
+    jri_checkExceptions(lenv, 0);
+#ifdef JRI_DEBUG
+	printf("jriSaveHistory mid=%x\n", mid);
+#endif
+	if (!mid)
+		errorcall(call, "can't find jriSaveHistory method");		
+
+	{
+		SEXP sfile;
+		char file[PATH_MAX], *p;
+		
+		checkArity(op, args);
+		sfile = CAR(args);
+		if (!isString(sfile) || LENGTH(sfile) < 1)
+			errorcall(call, "invalid file argument");
+		p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
+		if(strlen(p) > PATH_MAX - 1)
+			errorcall(call, "file argument is too long");	
+		s=(*lenv)->NewStringUTF(lenv, p);
+	}
+	(*lenv)->CallVoidMethod(lenv, engineObj, mid, s);
+    jri_checkExceptions(lenv, 1);
+	if (s)
+		(*lenv)->DeleteLocalRef(lenv, s);
+	
+	/*
     strcpy(file, p);
         write_history(file);
         history_truncate_file(file, R_HistorySize);
