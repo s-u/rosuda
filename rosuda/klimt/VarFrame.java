@@ -7,7 +7,43 @@ import java.util.*;
 */
 
 public class VarFrame extends TFrame {
-    public class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener
+    VarCanvas vc;
+    VarCmdCanvas vcc;
+    Scrollbar sb=null;
+
+    public VarFrame(SVarSet vs, int x, int y, int w, int h) {
+	super(vs.getName());
+        setBackground(new Color(255,255,192));
+	int rh=h;
+	if (rh>vs.count()*17+6+115)
+	    rh=vs.count()*17+6+115;
+	setLayout(new BorderLayout());
+	int minus=0;
+	if (rh==h) {
+	    add(sb=new Scrollbar(Scrollbar.VERTICAL,0,17,0,vs.count()*17+23+115-h),"East");
+	    pack();
+	    Dimension sbd=sb.getSize();
+	    minus=sbd.width;
+            sb.setBlockIncrement(17*4);
+	};
+	add(vc=new VarCanvas(this,vs,sb));
+	if (rh!=h)
+	    vc.minDim=new Dimension(w,rh-115);
+	else
+	    sb.addAdjustmentListener(vc);
+	
+	add(vcc=new VarCmdCanvas(this,vs),"South");
+	if (Common.defaultWindowListener==null)
+	    Common.defaultWindowListener=new DefWinL();
+	addWindowListener(Common.defaultWindowListener);
+	setBounds(x-minus,y,w,rh);
+	vc.setBounds(x-minus,y,w,rh-115);
+	vcc.setBounds(x-minus,y+rh-115,w,115);
+	pack(); 
+	setVisible(true);
+    };
+
+    class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener
     {
 	/** associated window */
 	VarFrame win;
@@ -126,7 +162,7 @@ public class VarFrame extends TFrame {
 		};
 	    };
 
-	    win.vcc.repaint();
+	    win.getVarCmdCanvas().repaint();
 	};
 	public void mousePressed(MouseEvent ev) {};
 	public void mouseReleased(MouseEvent e) {};
@@ -134,7 +170,7 @@ public class VarFrame extends TFrame {
 	public void mouseExited(MouseEvent e) {};
     };
 
-    public class VarCmdCanvas extends DBCanvas implements MouseListener
+    class VarCmdCanvas extends DBCanvas implements MouseListener
     {
 	/** associated window */
         VarFrame win;
@@ -316,39 +352,7 @@ public class VarFrame extends TFrame {
 	public void mouseExited(MouseEvent e) {};
     };
 
-    VarCanvas vc;
-    VarCmdCanvas vcc;
-    Scrollbar sb=null;
+    public VarCanvas getVarCanvas() { return vc; };
+    public VarCmdCanvas getVarCmdCanvas() { return vcc; };
 
-    public VarFrame(SVarSet vs, int x, int y, int w, int h) {
-	super(vs.getName());
-        setBackground(new Color(255,255,192));
-	int rh=h;
-	if (rh>vs.count()*17+6+115)
-	    rh=vs.count()*17+6+115;
-	setLayout(new BorderLayout());
-	int minus=0;
-	if (rh==h) {
-	    add(sb=new Scrollbar(Scrollbar.VERTICAL,0,17,0,vs.count()*17+23+115-h),"East");
-	    pack();
-	    Dimension sbd=sb.getSize();
-	    minus=sb.getWidth();
-            sb.setBlockIncrement(17*4);
-	};
-	add(vc=new VarCanvas(this,vs,sb));
-	if (rh!=h)
-	    vc.minDim=new Dimension(w,rh-115);
-	else
-	    sb.addAdjustmentListener(vc);
-	
-	add(vcc=new VarCmdCanvas(this,vs),"South");
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	addWindowListener(Common.defaultWindowListener);
-	setBounds(x-minus,y,w,rh);
-	vc.setBounds(x-minus,y,w,rh-115);
-	vcc.setBounds(x-minus,y+rh-115,w,115);
-	pack(); 
-	show();
-    };
 };

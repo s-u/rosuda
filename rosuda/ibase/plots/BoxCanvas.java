@@ -132,6 +132,7 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (var!=null && !var.isCat() && var.isNum() && cvar.isCat())
 	    valid=true; // valid are only numerical vars non-cat'd, cvar is cat
 	if (valid) { // split into ranked chunks by cat.
+	    vsCat=true;
 	    cs=cv.getNumCats();
 	    cats=cv.getCategories();
 	    int[] r=SVar.getRanked(v,null,0);
@@ -161,8 +162,8 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 		oss[i].update(v,rk[i],rs[i]);
 		i++;
 	    };
+	    updateBoxes();
 	};
-	vsCat=true;
     };
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
