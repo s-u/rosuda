@@ -1,12 +1,42 @@
+import java.io.*;
+
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RMainLoopCallbacks;
+
+class TextConsole implements RMainLoopCallbacks
+{
+    public void rWriteConsole(Rengine re, String text) {
+        System.out.print(text);
+    }
+    
+    public void rBusy(Rengine re, int which) {
+        System.out.println("rBusy("+which+")");
+    }
+    
+    public String rReadConsole(Rengine re, String prompt, int addToHistory) {
+        System.out.print(prompt);
+        try {
+            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+            String s=br.readLine();
+            return (s==null||s.length()==0)?s:s+"\n";
+        } catch (Exception e) {
+            System.out.println("jriReadConsole exception: "+e.getMessage());
+        }
+        return null;
+    }
+    
+    public void rShowMessage(Rengine re, String message) {
+        System.out.println("rShowMessage \""+message+"\"");
+    }
+}
 
 public class rtest {
     public static void main(String[] args) {
         System.out.println("Press <Enter> to continue (time to attach the debugger if necessary)");
         try { System.in.read(); } catch(Exception e) {};
         System.out.println("Creating Rengine (with arguments)");
-	Rengine re=new Rengine(args, true);
+	Rengine re=new Rengine(args, true, new TextConsole());
         System.out.println("Rengine created, waiting for R");
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
