@@ -221,7 +221,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 funHelpTip = null;
             }
         }
-        if (ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
+        if (ke.getKeyCode() != KeyEvent.VK_UP && ke.getKeyCode() != KeyEvent.VK_DOWN && ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isShiftDown() && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
@@ -271,11 +271,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		if (mComplete.isVisible() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) return true;
         InputMap map = getInputMap(condition);
         ActionMap am = getActionMap();
-		if (e.getKeyCode() == KeyEvent.VK_ENTER && funHelpTip != null) {
-			funHelpTip.hide();
-			funHelpTip = null;
-		}
-		
+
         if(map != null && am != null && isEnabled()) {
             Object binding = map.get(ks);
             Action action = (binding == null) ? null : am.get(binding);
