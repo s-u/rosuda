@@ -11,6 +11,77 @@ import java.io.*;
 import java.util.*;
 import org.rosuda.util.*;
 
+class LoaderDelphiFilter {
+    static final int VT_unknown=0;
+    static final int VT_known  =1;
+    static final int VT_num    =2;
+    static final int VT_cat    =4;
+    static final int VT_miss   =8;
+    SVarSet vs;
+    int[] vt;
+    int rows;
+
+    LoaderDelphiFilter(SVarSet vs) {
+        this.vs=vs;
+        vt=new int[vs.count()];
+    }
+
+    /** adds a value to a variable
+        @param col column index (0..variables-1)
+        @param val string value to be analyzed and added
+        @param line this value will be printed in warnings (not used internally, hence optional) */
+    void addValue(int col, String val, int line) {
+        if (val!=null && (val.equals("NA"))) val=null;
+        if (col<0 || col>=vt.length) {
+            System.out.println("Loader, line "+line+": column "+(col+1)+" has no header, dropping.");
+            return;
+        }
+        SVar v=vs.at(col);
+        if (v==null) {
+            System.out.println("Loader, line "+line+": variable for column "+(col+1)+" is null.");
+            return;
+        }
+        int vsz=v.size();
+        if (vsz<rows) {
+            System.out.println("Loader, line "+line+": previous rows are missing ("+(rows-vsz)+"), filling with missings.");
+            while (vsz<rows) {
+                v.add(null);
+                vsz++;
+            }
+        }
+        if (rows<vsz) {
+            System.out.println("Loader, line "+line+": FATAL! The variable "+v.getName()+" has already "+vsz+" entries, but this is the entry "+rows+"!");
+            return;
+        }
+        if (vt[col]==VT_unknown) {
+            if (val==null) { v.add(null); return; }
+            try {
+                Double d=Double.valueOf(val);
+                vt[col]|=VT_num|VT_known;
+                v.add(d);
+                return;
+            } catch (NumberFormatException nfe) {
+                v.add(val);
+                v.categorize();
+                vt[col]|=VT_cat|VT_known;
+            }
+        } else {
+            if ((vt[col]&VT_num)>0) {
+                try {
+                    Double d=Double.valueOf(val);
+                    v.add(d);
+                    return;
+                } catch (NumberFormatException nfe) {
+                    System.out.println("Loader, line "+line+", column "+(col+1)+": expected numerical value, found \""+val+"\"; treating as missing.");
+                    v.add(null);
+                    return;
+                }
+            }
+            v.add(val);
+        }
+    }
+}
+
 public class Loader {
     public static void checkPolys(SVar psv, SVarSet vset) {
         // check for empty polygons (informative only)
@@ -401,58 +472,14 @@ public class Loader {
         if (vset!=null) { int i=prevars; while (i<vset.count()) { vset.at(i++).getNotifier().endBatch(); } }
         return 0;
     }
-
-
-    class LoaderDelphiFilter {
-        static final int VT_unknown=0;
-        static final int VT_known  =1;
-        static final int VT_num    =2;
-        static final int VT_cat    =4;
-        static final int VT_miss   =8;
-        SVarSet vs;
-        int[] vt;
-        int rows;
-
-        LoaderDelphiFilter(SVarSet vs) {
-            this.vs=vs;
-            vt=new int[vs.count()];
-        }
-
-        /** adds a value to a variable
-            @param col column index (0..variables-1)
-            @param val string value to be analyzed and added
-            @param line this value will be printed in warnings (not used internally, hence optional) */
-        void addValue(int col, String val, int line) {
-            if (val!=null && (val.equals("NA"))) val=null;
-            if (col<0 || col>=vt.length) {
-                System.out.println("Loader, line "+line+": column "+(col+1)+" has no header, dropping.");
-                return;
-            }
-            SVar v=vs.at(col);
-            if (v==null) {
-                System.out.println("Loader, line "+line+": variable for column "+(col+1)+" is null.");
-                return;
-            }
-            int vsz=v.size();
-            if (vsz<rows) {
-                System.out.println("Loader, line "+line+": previous rows are missing ("+(rows-vsz)+"), filling with missings.");
-                while (vsz<rows) {
-                    v.add(null);
-                    vsz++;
-                }
-            }
-            if (rows<vsz) {
-                System.out.println("Loader, line "+line+": FATAL! The variable "+v.getName()+" has already "+vsz+" entries, but this is the entry "+rows+"!");
-                return;
-            }
-            
-        }
-    }
-    
-    public static int LoadTSV(BufferedReader r, SVarSet vset) {
+        
+    public static int LoadTSV(BufferedReader r, SVarSet vset, boolean useFilter) {
+        int line=0;
+        LoaderDelphiFilter f=null;
         try {
             int vsb=vset.count();
             String s=r.readLine(); // read line
+            line++;
             StringTokenizer st=new StringTokenizer(s,"\t");
             while (st.hasMoreTokens()) {
                 String t=st.nextToken();
@@ -460,15 +487,21 @@ public class Loader {
                 vset.add(v);
             }
             int j=0;
+            if (useFilter) f=new LoaderDelphiFilter(vset);
             while (r.ready()) {
                 String ls=r.readLine(); // read line
+                line++;
                 if (ls==null || ls.length()==0) break;
                 StringTokenizer lst=new StringTokenizer(ls,"\t");
                 int i=0;
                 while (lst.hasMoreTokens()) {
                     String t=lst.nextToken();
-                    SVar v=vset.at(vsb+i);
-                    v.add(t);
+                    if (useFilter) {
+                        f.addValue(vsb+i, t, line);
+                    } else {
+                        SVar v=vset.at(vsb+i);
+                        v.add(t);
+                    }
                     i++;
                 }
                 j++;
