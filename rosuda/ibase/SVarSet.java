@@ -125,7 +125,7 @@ public class SVarSet {
     /** register a tree with the dataset */
     public void registerTree(SNode t, String n) {
         if (trees==null) trees=new Vector();
-        trees.add(new TreeEntry(t,n));
+        trees.addElement(new TreeEntry(t,n));
     }
 
     public boolean Export(PrintStream p, boolean all) { return Export(p,all,null); }

@@ -143,7 +143,7 @@ public class SVar extends Vector
                         if (!gotmin) {
                             gotmin=true; mino=o.toString(); p=i;
                         } else {
-                            if (mino.compareTo(o)>0) {
+                            if (mino.compareTo(o.toString())>0) {
                                 mino=o.toString(); p=i;
                             }
                         }
@@ -152,7 +152,7 @@ public class SVar extends Vector
                 i++;
             }
             if (found=gotmin) {
-                cats.add(ocats.elementAt(p)); ccnts.add(occnts.elementAt(p));
+                cats.addElement(ocats.elementAt(p)); ccnts.addElement(occnts.elementAt(p));
                 ocats.setElementAt(null,p);
             }            
         }

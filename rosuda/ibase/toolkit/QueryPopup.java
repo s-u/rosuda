@@ -84,10 +84,10 @@ class QueryPopup
     Window win;
     Window owner;
    
-    public QueryPopup(Window own, String ct, int w)
+    public QueryPopup(Frame own, String ct, int w)
     {
 	owner=own;
-	win=new Window(owner);
+	win=new Window(own);
 	win.add(cvs=new QPCanvas(win,ct,w));
 	cvs.setSize(100,50);
 	win.setBackground(new Color(255,255,220));	
