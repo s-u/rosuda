@@ -7,6 +7,8 @@ package org.rosuda.JGR;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -18,7 +20,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.rosuda.JRI.*;
-import org.rosuda.ibase.Common;
 
 /**
  *  JGRInstaller and updater: install nescessary R packages if they can not be found in current R version.
@@ -31,7 +32,7 @@ import org.rosuda.ibase.Common;
 public class JGRinstaller implements RMainLoopCallbacks {
 	
 	static String VERSION = "0.1";
-	static int DEBUG = 1;
+	static int DEBUG = 0;
 	
 	Rengine R = null;
 	
@@ -54,14 +55,24 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			JFrame f = new JFrame("Installing JGR");
 			p = new JProgressBar();
+			p.setMinimumSize(new Dimension(400,25));
+			p.setPreferredSize(new Dimension(400,25));
+			p.setMaximumSize(new Dimension(400,25));
+			p.setIndeterminate(true);
 			l = new JLabel("Starting JGR installer");
 			f.getContentPane().add(l,BorderLayout.NORTH);
-			f.getContentPane().add(p,BorderLayout.CENTER);
-			f.setSize(new Dimension(400,60));
+			f.getContentPane().add(p,BorderLayout.SOUTH);
+			f.setSize(new Dimension(400,40));
 			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize(); 
 			f.setLocation((screenSize.width-f.getSize().width)/2,(screenSize.height-f.getSize().height)/2);
 			f.setResizable(false);
 			f.setVisible(true);
+			// It is not advisable to quit the installing process manually because your locking the R library directory
+			/*f.addWindowListener(new WindowAdapter() {
+				public void windowClosing(WindowEvent e) {
+					System.exit(1);
+				}
+			});*/
 		}
 
 		// let's preemptively load JRI - if we do it here, we can show an error
@@ -86,13 +97,12 @@ public class JGRinstaller implements RMainLoopCallbacks {
 		}
 		R = new Rengine(new String[] {"--vanilla","--quiet"}, true, this);
 		R.DEBUG = DEBUG;
-		if (org.rosuda.util.Global.DEBUG > 0)
+		if (DEBUG > 0)
 			System.out.println("Rengine created, waiting for R");
 		if (!R.waitForR()) {
 			System.out.println("Cannot load R");
 			System.exit(1);
 		}
-		System.out.print(contriburl);
 		if (l != null) l.setText("Installing R packages: "+packages);
 		if (System.getProperty("os.name").startsWith("Mac") && contriburl != null)
 			sync.triggerNotification("install.packages(c("+packages+"),contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
@@ -147,13 +157,13 @@ public class JGRinstaller implements RMainLoopCallbacks {
 
 	public void rWriteConsole(Rengine re, String text) {
 		if (DEBUG > 0)
-			System.out.println(text);
+			System.out.println("Rengine: "+text);
 	}
 
 	public void rBusy(Rengine re, int which) {
-		if (p != null && !System.getProperty("os.name").startsWith("Win")) {
+		/*if (p != null && !System.getProperty("os.name").startsWith("Win")) {
 			p.setIndeterminate(which==0?false:true);
-		}
+		}*/
 	}
 
 	//---------------R Loopbacks
@@ -197,7 +207,7 @@ public class JGRinstaller implements RMainLoopCallbacks {
 	        while (!notificationArrived) {
 	            try {
 	                wait(100);
-					if (JGR.R!=null) JGR.R.rniIdle();
+					if (R!=null) R.rniIdle();
 	            } catch (InterruptedException e) {
 	            }
 	        }
