@@ -12,7 +12,7 @@ public class VarFrame extends TFrame {
     VarCmdCanvas vcc;
     Scrollbar sb=null;
 
-    public static final int cmdHeight=165;
+    public static final int cmdHeight=182;
     
     public VarFrame(SVarSet vs, int x, int y, int w, int h) {
 	super(vs.getName()+" (Variables)");
@@ -255,8 +255,8 @@ public class VarFrame extends TFrame {
                 g.drawString("Total "+vs.at(0).size()+" cases",10,16);
             
 	    i=1;
-	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Fluct.Diag.","Grow tree...","Export..."};
-	    int j=0;
+	    String menu[]={"Exit","Open tree...","Hist/Barchar","Scatterplot","Boxplot","Fluct.Diag.","PCP","Grow tree...","Export..."};
+            int j=0;
 	    while (j<menu.length) {
 		boolean boxValid=false;
 		if (j==4 && totsel>0) { /* boxplot */
@@ -274,11 +274,12 @@ public class VarFrame extends TFrame {
 		    };
 		    if (!crap && bJ<2 && bK>0) boxValid=true;
 		};
-                if ( j<2 || j==6 ||
+                if ( j<2 || j==7 ||
                     (j==2 && totsel>0)||boxValid||
                     (j==3 && totsel==2)||
                     (j==5 && ((totsel==2 && selCat==2)||(totsel==3 && selCat==2 && selNum==1)))||
-                    (j==7 && totsel>0)) {
+                    (j==6 && totsel>0)|| 
+                    (j==8 && totsel>0)) {
                     g.setColor(C_bg);
                     g.fillRect(5,5+i*17,130,15);
 		};
@@ -312,7 +313,7 @@ public class VarFrame extends TFrame {
                     vc.repaint();
 		};    
 	    };
-            if (cmd==7) { // Export ...
+            if (cmd==8) { // Export ...
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
                     if (p!=null) {
@@ -458,7 +459,23 @@ public class VarFrame extends TFrame {
                     f.add(sc); f.pack(); f.show();
                 };
             };
-            if (cmd==6) { // grow tree
+            if (cmd==6) { //PCP
+                int i,j=0,tsel=0;
+                for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isNum()) tsel++;
+                if (tsel>0) {
+                    SVar[] vl=new SVar[tsel];
+                    for(i=0;i<vc.getVars();i++) if (vc.selMask[i] && vs.at(i).isNum()) {
+                        vl[j]=vs.at(i); j++;
+                    };
+                    TFrame f=new TFrame("Parallel coord. plot");
+                    f.addWindowListener(Common.defaultWindowListener);
+                    PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
+                    if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
+                    sc.setSize(new Dimension(400,300));
+                    f.add(sc); f.pack(); f.show();                    
+                }
+            }
+            if (cmd==7) { // grow tree
                 ProgressDlg pd=new ProgressDlg(null,"Running tree generation plugin ...");
                 pd.setText("Initializing plugin, loading R ...");
                 pd.show();
