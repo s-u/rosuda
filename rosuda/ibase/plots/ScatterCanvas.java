@@ -232,11 +232,18 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             };
         }
 
+        int lastSM=0;
 	g.setColor("point");
         if (filter==null) {
             for (int i=0;i<pts;i++)
-                if (Pts[i]!=null)
+                if (Pts[i]!=null) {
+                    int mm=m.getSec(i);
+                    if (mm!=lastSM) {
+                        if (mm==0) g.setColor("point"); else g.setColor(ColorBridge.main.getColor(mm));
+                        lastSM=mm;
+                    }
                     g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
+                }
         } else {
             for (int i=0;i<filter.length;i++)
                 if (Pts[filter[i]]!=null)
@@ -344,15 +351,15 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (y1>y2) { Y2=y1; Y1=y2; };
 	Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
 
-	int setTo=0;
-	if (e.isControlDown()) setTo=1;
+	boolean setTo=false;
+	if (e.isControlDown()) setTo=true;
 	if (!e.isShiftDown()) m.selectNone();
 	
 	drag=false; 
 	int i=0;
 	while (i<pts) {
 	    if (Pts[i]!=null && sel.contains(Pts[i]))
-		m.set(i,m.at(i)?setTo:1);
+		m.set(i,m.at(i)?setTo:true);
 	    i++;
 	};
 	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
