@@ -543,7 +543,7 @@ public class VarFrame extends TFrame {
                 }
             }
             if (cmd=="tfplot") {
-                TFrame f=new TFrame("Tree Flow Plot",TFrame.clsUser);
+                TFrame f=new TFrame("Trace Plot",TFrame.clsUser);
                 f.addWindowListener(Common.getDefaultWindowListener());
                 TreeFlowCanvas lc=new TreeFlowCanvas(f,dr.getTreeRegistry().getRoots());
                 lc.setSize(400,300);
