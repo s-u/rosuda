@@ -179,7 +179,8 @@ public class RObjectManager extends iFrame implements ActionListener {
             return ((Vector) ((model) models.elementAt(row)).getInfo()).elementAt(col); //null; //((Object[]) content[row])[col];
         }
 
-        public Class getClass(int col) {
+        public Class getColumnClass(int col) {
+            System.out.println(((Vector) ((model) models.elementAt(0)).getInfo()).elementAt(col).getClass());
             return ((Vector) ((model) models.elementAt(0)).getInfo()).elementAt(col).getClass();
         }
     }

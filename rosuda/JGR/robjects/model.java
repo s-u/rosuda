@@ -14,10 +14,10 @@ import org.rosuda.JGR.toolkit.*;
 
 public class model extends RObject {
 
-    //private Double rsquared, deviance, aic, fstatistics;
-    private double rsquared, deviance, aic, fstatistics;
-    private int df;
-    //private Integer df;
+    private Double rsquared, deviance, aic, fstatistics;
+    //private double rsquared, deviance, aic, fstatistics;
+    //private int df;
+    private Integer df;
     private String family;
 
     private String call;
@@ -27,6 +27,8 @@ public class model extends RObject {
     private String data;
 
     private Vector info = new Vector();
+
+    private DecimalFormat dformat = new DecimalFormat("#0.00");
 
     public model() {
         this(null,-1);
@@ -56,19 +58,20 @@ public class model extends RObject {
     }
 
     public void setRsquared(double r) {
-        this.rsquared = r;
+        
+        this.rsquared = new Double(dformat.format(r));
     }
     public void setDeviance(double d) {
-        this.deviance = d;
+        this.deviance = new Double(dformat.format(d));
     }
     public void setDf(int df) {
-        this.df = df;
+        this.df = new Integer(df);
     }
     public void setAic(double a) {
-        this.aic = a;
+        this.aic = new Double(dformat.format(a));
     }
     public void setFstat(double f) {
-        this.fstatistics = f;
+        this.fstatistics = new Double(dformat.format(f));
     }
 
     public void setFamily(String f) {
@@ -89,10 +92,10 @@ public class model extends RObject {
             info.add(getData());
             info.add(getTypeName());
             info.add(family);
-            info.add(new Integer(df));
-            info.add(new Double(rsquared));
-            info.add(new Double(aic));
-            info.add(new Double(deviance));
+            info.add(df);
+            info.add(rsquared);
+            info.add(aic);
+            info.add(deviance);
         }
         return info;
         /*Object[] o = new Object[8];

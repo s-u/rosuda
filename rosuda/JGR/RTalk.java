@@ -39,6 +39,7 @@ public class RTalk {
     //code completion
     public static String completeCode(String part) {
         int s = part.length()-1;
+        if (part.trim().length() == 0) return "";
         char c = part.charAt(s);
         while (((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||((c>='0')&&(c<='9'))||c=='.') {
             s--;

@@ -396,6 +396,42 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
 
     public void keyPressed(KeyEvent ke) {
         if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) input.paste();
+        if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
+            int line = -1;
+            try {
+                line = input.getLineOfOffset(input.getCaretPosition());
+            }
+            catch (Exception e) {}
+            if (line == 0) {
+                if (currentHistPosition == JGR.RHISTORY.size() &&
+                    input.getText().trim().length() > 0) {
+                    JGR.RHISTORY.add(input.getText().trim());
+                    //we set the cursor to last hist and save the current writing in the history
+                }
+                input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
+            }
+        }
+        else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
+            int line = -1;
+            try {
+                line = input.getLineOfOffset(input.getCaretPosition());
+            }
+            catch (Exception e) {}
+            if (line == input.getLineCount() - 1) {
+                if (currentHistPosition < JGR.RHISTORY.size() - 1) {
+                    //we set the cursor to the next hist
+                    input.setText(JGR.RHISTORY.get(++currentHistPosition).
+                                  toString());
+                }
+                else if (JGR.RHISTORY.size() > 0 &&
+                         currentHistPosition < JGR.RHISTORY.size()) {
+                    //we empty the input field
+                    input.setText("");
+                    currentHistPosition++;
+                }
+            }
+        }
+        
     }
 
     public void keyReleased(KeyEvent ke) {
@@ -460,41 +496,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 input.setCaretPosition(0);
                 input.requestFocus();
                 execute(cmd);
-            }
-        }
-        else if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
-            int line = -1;
-            try {
-                line = input.getLineOfOffset(input.getCaretPosition());
-            }
-            catch (Exception e) {}
-            if (line == 0) {
-                if (currentHistPosition == JGR.RHISTORY.size() &&
-                    input.getText().trim().length() > 0) {
-                    JGR.RHISTORY.add(input.getText().trim());
-                    //we set the cursor to last hist and save the current writing in the history
-                }
-                input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
-            }
-        }
-        else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-            int line = -1;
-            try {
-                line = input.getLineOfOffset(input.getCaretPosition());
-            }
-            catch (Exception e) {}
-            if (line == input.getLineCount() - 1) {
-                if (currentHistPosition < JGR.RHISTORY.size() - 1) {
-                    //we set the cursor to the next hist
-                    input.setText(JGR.RHISTORY.get(++currentHistPosition).
-                                  toString());
-                }
-                else if (JGR.RHISTORY.size() > 0 &&
-                         currentHistPosition < JGR.RHISTORY.size()) {
-                    //we empty the input field
-                    input.setText("");
-                    currentHistPosition++;
-                }
             }
         }
     }
