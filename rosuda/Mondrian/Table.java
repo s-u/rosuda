@@ -93,7 +93,7 @@ public class Table implements Cloneable {
   }
 
   public void updateBins(double start, double width) {
-      Table tmpTable = data.discretize(name, initialVars[0], start, width);
+      Table tmpTable = data.discretize(name, initialVars[0], start, width, count);
       this.table = tmpTable.table;
       this.names = tmpTable.names;
       this.lnames = tmpTable.lnames;
@@ -434,30 +434,30 @@ public class Table implements Cloneable {
       data.setSelection(Ids[i][j], s, mode);
   }
   
-  public double retrieve(int i) {
-    double sum=0, total=0;
-    if( count !=-1 ) {
-      double[] counts;
-      counts = data.getRawNumbers(count);
-      for( int j=0; j<Ids[i].length; j++ ) {
-	sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
-	total += counts[Ids[i][j]];
+      public double retrieve(int i) {
+        double sum=0, total=0;
+        if( count !=-1 ) {
+          double[] counts;
+          counts = data.getRawNumbers(count);
+          for( int j=0; j<Ids[i].length; j++ ) {
+            sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
+            total += counts[Ids[i][j]];
+          }
+          if( Ids[i].length > 0 )
+            return sum/total;
+          else
+            return 0;
+        }
+        else {
+          for( int j=0; j<Ids[i].length; j++ ) 
+            sum += data.getSelected(Ids[i][j]);
+          if( Ids[i].length > 0 )
+            return sum/Ids[i].length;
+          else
+            return 0;
+        }
       }
-      if( Ids[i].length > 0 )
-	return sum/total;
-      else
-	return 0;
-    }
-    else {
-      for( int j=0; j<Ids[i].length; j++ ) 
-	sum += data.getSelected(Ids[i][j]);
-      if( Ids[i].length > 0 )
-	return sum/Ids[i].length;
-      else
-	return 0;
-    }
-  }
-  
+      
   void print() {
     
     int[]   plevels = new int[k];
