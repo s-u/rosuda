@@ -36,7 +36,7 @@ public class Notifier {
 
     /** general NotifyAll */    
     public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
-	if (batchMode || ton==null || ton.isEmpty()) return;
+	if (batchMode>0 || ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
@@ -54,22 +54,24 @@ public class Notifier {
 
     /*--- since v1.3: support for batch mode ---*/
     
-    /** batch mode flag */
-    boolean batchMode=false;
+    /** batch mode counter. 0=no batch mode, >0 batch mode of that depth. */
+    int batchMode=0;
     /** last message issued in batch mode */
     NotifyMsg batchLastMsg=null;
 
-    /** initiates batch mode - in this mode no notifications are made until endBatch() has been called. */
+    /** initiates batch mode - in this mode no notifications are made until endBatch() has been called.
+        batch mode begin/end calls may be nested, but only after last endBatch notification is made.  */
     public void beginBatch() {
-        batchMode=true;
-        batchLastMsg=null;
+        batchMode++;
     }
 
     /** ends batch mode. if any notification reqests has been made since beginBatch() then the last one
         will be passed to dependents. otherwise just batch flag is cleared and no notification is sent. */
     public void endBatch() {
-        batchMode=false;
-        if (batchLastMsg!=null)
+        if (batchMode>0) batchMode--;
+        if (batchMode==0 && batchLastMsg!=null) {
             NotifyAll(batchLastMsg);
+            batchLastMsg=null;
+        };
     }
 };
