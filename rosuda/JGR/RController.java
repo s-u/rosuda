@@ -329,16 +329,21 @@ public class RController {
         String[] res2;
         y = JGR.R.eval("summary("+sx+")[[\"family\"]][[\"family\"]]");
         if (y != null && (res2 = y.asStringArray()) != null) m.setFamily(res2[0]);
-        y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]])))"); //as.character((cm$call))
+        y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]][[\"formula\"]])))"); //as.character((cm$call))
         if (y != null && (res2 = y.asStringArray()) != null) {
             String call = "";
             for (int i = 0; i < res2.length; i++) {
-                int z = -1;
-                if ((z = res2[0].indexOf("data")) > 0) m.setData(res2[i].substring(z+6).replace(')',' ').trim());
                 call += res2[i];
             }
             m.setCall(call);
-
+        }
+        y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]][[\"data\"]])))"); //as.character((cm$call))
+        if (y != null && (res2 = y.asStringArray()) != null) {
+            String data = "";
+            for (int i = 0; i < res2.length; i++) {
+                data += res2[i];
+            }
+            if (!data.trim().equals("NULL")) m.setData(data);
         }
         return m;
     }
