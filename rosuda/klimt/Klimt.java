@@ -108,8 +108,8 @@ public class InTr
             n.data=t.data;
         n.F1=t.F1; n.Name=t.Name; n.sel=0; n.id=t.id;
         n.sampleDev=t.sampleDev; n.sampleDevGain=t.sampleDevGain;
-	n.splitComp=t.splitComp; n.splitIndex=t.splitIndex;
-	n.splitVal=t.splitVal; n.splitValF=t.splitValF;
+        n.splitComp=t.splitComp; n.splitIndex=t.splitIndex; n.predValD=t.predValD;
+        n.splitVal=t.splitVal; n.splitValF=t.splitValF; n.splitVar=t.splitVar;
 	n.V=t.V; n.vset=t.vset;
         if (cutpoint!=null && t==cutpoint && cps!=null)
             cps.addElement(n);
