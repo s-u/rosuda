@@ -11,7 +11,7 @@ import org.rosuda.JGR.RController;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDa 2003 - 2004
  */
 
 public class SyntaxInput extends SyntaxArea implements KeyListener {
@@ -26,8 +26,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     /** {@see CodeCompleteMultiple} */
     public  CodeCompleteMultiple mComplete;
     private Point p;
-	
-    public SyntaxInput(boolean disableEnter){
+    
+    private String comp;
+    
+    public SyntaxInput(String parent, boolean disableEnter){
         this.disableEnter = disableEnter;
         this.addKeyListener(this);
         this.addMouseListener(new MouseAdapter() {
@@ -41,6 +43,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         });
         this.setDocument(new SyntaxInputDocument());
         mComplete = new CodeCompleteMultiple(this);
+        this.comp = parent;
     }
 	
     private String getLastCommand() {
@@ -53,12 +56,18 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         if (lastb < 0) lastb = text.indexOf('(',pos);
         if (lastb < 0) return null;
         if (pos < 0) return null;
-        
+        int line, loffset, lend;
+        try {
+        	line = this.getLineOfOffset(pos);
+        	loffset = this.getLineStartOffset(line);
+        	lend = this.getLineEndOffset(line);
+        }
+        catch (Exception e) { return null; }
+        if (text.substring(loffset,pos).indexOf("#") >= 0) return null; //comment line
         int offset = lastb--, end = lastb; pos=lastb;
         if (text==null) return null;
         while (offset > -1 && pos > -1) {
             char c = text.charAt(pos);
-            //System.out.println(c);
             if ((c>='0' && c <='9')||((c>='a')&&(c<='z'))||((c>='A')&&(c<='Z'))||c=='.'||c=='_') offset--;
             else break;
             pos--;
@@ -213,13 +222,19 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 funHelpTip = null;
             }
         }
-        if (JGRPrefs.useHelpAgent && !ke.isShiftDown()) {
+        if (JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
             if (funHelpTip != null) {
                 funHelpTip.hide();
                 funHelpTip = null;
             }
             showFunHelp(getLastCommand());
         }
+    }
+    
+    private boolean isHelpAgentWanted() {
+    	if (comp.equals("console")) return JGRPrefs.useHelpAgentConsole;
+    	if (comp.equals("editor")) return JGRPrefs.useHelpAgentEditor;
+    	return JGRPrefs.useHelpAgent;
     }
 	
     
