@@ -131,6 +131,7 @@ public class JGR {
         JGRPackageManager.neededPackages.put("utils", dummy);
         JGRPackageManager.neededPackages.put("methods", dummy);
         JGRPackageManager.neededPackages.put("stats", dummy);
+		JGRPackageManager.neededPackages.put("datasets", dummy);
 
         JGRPackageManager.neededPackages.put("JGR", dummy);
         JGRPackageManager.neededPackages.put("rJava", dummy);
