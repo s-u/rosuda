@@ -26,6 +26,9 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
     /** flag whether jittering shoul dbe used for categorical vars */
     protected boolean jitter=false;
 
+    /** in conjunction with jitter this flag determines whether random jittering or stack-plotting is to be used */
+    protected boolean stackjitter=false;
+    
     /** flag whether alternative selection style should be used */
     protected boolean selRed=false;
 
@@ -91,7 +94,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
@@ -312,11 +315,11 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 	Pts=new Point[pts];
         for (int i=0;i<pts;i++) {
             int jx=0, jy=0;
-            if (v[0].isCat() && jitter) {
+            if (v[0].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
                 jx=(int)(d*((double)(A[0].getCatLow(v[0].getCatIndex(i))-A[0].getCasePos(i))));
             }
-            if (v[1].isCat() && jitter) {
+            if (v[1].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
                 jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));                
             }
@@ -327,8 +330,22 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
                 else if (y<10) hasTop=true;
                 else if (x>w-10) hasRight=true;
                 else if (y>h-innerB) hasBot=true;
-                else
+                else {
+                    if (stackjitter && jitter && v[0].isCat() && i>0) {
+                        int j=0;
+                        while (j<i) {
+                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) x+=ptDiam;
+                            j++;
+                        }
+                    } else if (stackjitter && jitter && v[1].isCat() && i>0) {
+                        int j=0;
+                        while (j<i) {
+                            if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) y-=ptDiam;
+                            j++;
+                        }
+                    }
                     Pts[i]=new Point(x,y);
+                }
             } else { // place missings on the other side of the axes
                 int x,y;
                 if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+A[0].getCasePos(i);
@@ -418,6 +435,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='j') run(this,"jitter");
+        if (e.getKeyChar()=='J') run(this,"stackjitter");
 	if (e.getKeyChar()=='t') run(this,"trigraph");
         if (e.getKeyChar()=='s') run(this,"shading");
     };
@@ -458,6 +476,12 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             setUpdateRoot(0);
             repaint();
 	};
+        if (cmd=="points+") {
+            ptDiam+=2; setUpdateRoot(0); repaint();
+        }
+        if (cmd=="points-" && ptDiam>2) {
+            ptDiam-=2; setUpdateRoot(0); repaint();
+        }        
         if (cmd=="equiscale") {
             double sfx,sfy, usfx,usfy;
             sfx=((double)ax.gLen)/ax.vLen; usfx=(sfx<0)?-sfx:sfx;
@@ -478,6 +502,10 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(2); repaint(); };
         if (cmd=="jitter") {
             jitter=!jitter; updatePoints(); setUpdateRoot(1); repaint();
+        }
+        if (cmd=="stackjitter") {
+            if (!jitter) jitter=true;
+            stackjitter=!stackjitter; updatePoints(); setUpdateRoot(1); repaint();
         }
         if (cmd=="shading") {
             shading=!shading; updatePoints(); setUpdateRoot(0); repaint();
