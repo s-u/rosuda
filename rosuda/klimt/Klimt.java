@@ -24,7 +24,7 @@ public class InTr
 {
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
-   
+
     /** creates a new tree display
 	@param t root node
 	@param tf frame of the tree
@@ -140,6 +140,7 @@ public class InTr
 	    E.printStackTrace();
 	    t=null;
 	};
+        if (t!=null && tvs!=null) tvs.registerTree(t,fnam);
 	return t;
     };
 

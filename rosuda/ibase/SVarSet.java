@@ -14,6 +14,17 @@ public class SVarSet {
     /** dataset name */
     String name;
 
+    public class TreeEntry {
+        public SNode root;
+        public String name;
+        public TreeEntry(SNode t, String n) {
+            root=t; name=n;
+        }
+    }
+    
+    /** list of associated trees */
+    Vector trees=null;
+    
     int globalMisclassVarID=-1;
     int classifierCounter=1;
 
@@ -111,6 +122,12 @@ public class SVarSet {
 	@return # of variables */
     public int count() { return vars.size(); };
 
+    /** register a tree with the dataset */
+    public void registerTree(SNode t, String n) {
+        if (trees==null) trees=new Vector();
+        trees.add(new TreeEntry(t,n));
+    }
+    
     public static void Debug(SVarSet sv) {
 	System.out.println("DEBUG for SVarSet ["+sv.toString()+"]");
 	for (Enumeration e=sv.elements(); e.hasMoreElements();) {

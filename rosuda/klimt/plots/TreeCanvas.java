@@ -142,7 +142,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	
 	//--- this is a bit tricky - not really clean enough --
 	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...",
-                          "exportPGS","Print","print","-","Quit","quit",
+                          "exportPGS","Export forest data ...","exportForest","Print","print","-","Quit","quit",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
@@ -645,7 +645,41 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.defaultWindowListener);
 	    dc.setBounds(0,0,400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
-	};
+        };
+        if (cmd=="exportForest") {
+            try {
+                PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
+                if (p!=null) {
+                    p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.gain\tsample.gain\tsample.size");
+                    SVarSet.TreeEntry te;
+                    if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
+                    for (Enumeration e=root.getSource().trees.elements(); e.hasMoreElements();) {
+                        te=(SVarSet.TreeEntry)e.nextElement();
+                        if (Common.DEBUG>0) System.out.println("exporting tree \""+te.name+"\"...");
+                        if (te.root!=null) {
+                            Vector v=new Vector();
+                            te.root.getAllNodes(v);
+                            if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
+                            for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
+                                SNode np=(SNode)e2.nextElement();
+                                if (!np.isLeaf()) {
+                                    SNode n=(SNode)np.at(0);
+                                    if (n!=null) {
+                                        if (Common.DEBUG>0) System.out.println(" * splitVar="+n.splitVar);
+                                        if (Common.DEBUG>0) System.out.println(" * splitVar.name="+n.splitVar.getName());
+                                        if (Common.DEBUG>0) System.out.println(" - "+te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+np.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size());
+
+                                        p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size());
+                                    };
+                                }
+                            }
+                        }
+                    }
+                    p.close();
+                };
+            } catch (Exception eee) {};
+            
+        }
 	return null;
     };  
 
