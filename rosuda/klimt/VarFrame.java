@@ -57,7 +57,7 @@ public class VarFrame extends TFrame {
 	vcc.setBounds(x-minus,y+rh-cmdHeight,w,cmdHeight);
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
-            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","Save selected ...","export","-",
+            String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","Open models ...","openModel","Save selected ...","export","-",
                 "New derived variable ...","deriveVar","Show data table","datatab","-","New tree root","newRoot","Grow tree ...","growTree","-",
                 "Export forest ...","exportForest","@FDisplay forest","displayForest","~File.Quit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
@@ -72,6 +72,7 @@ public class VarFrame extends TFrame {
             MenuItem mi=EzMenu.getItem(this,"datatab");
             EzMenu.getItem(this,"export").setEnabled(false);
             if (!PluginManager.pluginExists("PluginTable")) mi.setEnabled(false);
+            if (!PluginManager.pluginExists("PluginModelLoader")) EzMenu.getItem(this,"openModel").setEnabled(false);
         //};
 	setVisible(true);
     };
@@ -694,6 +695,32 @@ public class VarFrame extends TFrame {
                     f.initPlacement();
                 }
             }
+            if (cmd=="openModel") {
+                Plugin gt=PluginManager.loadPlugin("PluginModelLoader");
+                if (gt==null || !gt.initPlugin()) {
+                    new MsgDialog(win,"Plugin init failed","Cannot initialize plugin.\n"+((gt==null)?"Model loader plugin not found":gt.getLastError()));
+                    return null;
+                }
+
+                FileDialog fd=new FileDialog(win,"Select model image file");
+                fd.setModal(true);
+                fd.show();
+                if (fd.getFile()==null) return null;
+                    
+                String fnam=fd.getDirectory()+fd.getFile();
+                gt.setParameter("image",fnam);
+                gt.setParameter("dataset",vs);
+                gt.checkParameters();
+                if (!gt.pluginDlg(win)) {
+                    if (gt.cancel) {
+                        gt.donePlugin();
+                        return null;
+                    };
+                    new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
+                    return null;
+                }
+                gt.execPlugin();
+            }
             if (cmd=="growTree") { // grow tree
                 ProgressDlg pd=new ProgressDlg("Running tree generation plugin ...");
                 pd.setText("Initializing plugin, loading R ...");
@@ -713,7 +740,7 @@ public class VarFrame extends TFrame {
                         gt.donePlugin();
                         return null;
                     };
-                    new MsgDialog(win,"Parameter check failed","Some of your selections are invalid.\n"+gt.getLastError());
+                    new MsgDialog(win,"Model load failed","Could not load the model image.\n"+gt.getLastError());
                     return null;
                 }
                 pd.setProgress(40);
