@@ -50,7 +50,7 @@ public class Rconnection {
 	} catch (Exception e) {};
 	connected=false;
 	try {
-	    s=new Socket("127.0.0.1",6311);
+	    s=new Socket(host,port);
 	    is=s.getInputStream();
 	    os=s.getOutputStream();
 	    rt=new Rtalk(is,os);
