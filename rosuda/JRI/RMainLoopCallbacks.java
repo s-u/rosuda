@@ -8,4 +8,5 @@ public interface RMainLoopCallbacks {
     public String rChooseFile   (Rengine re, int newFile);
     public void   rFlushConsole (Rengine re);
     public void   rSaveHistory  (Rengine re, String filename);
+    public void   rLoadHistory  (Rengine re, String filename);
 }

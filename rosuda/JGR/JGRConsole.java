@@ -328,6 +328,10 @@ FocusListener, RMainLoopCallbacks {
 	
     public void   rFlushConsole (Rengine re) {
 	}
+
+	public void   rLoadHistory  (Rengine re, String filename) {
+		//FIXME! load history from a file ...
+	}
 	
     public void   rSaveHistory  (Rengine re, String filename) {
         try {

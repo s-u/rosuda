@@ -133,11 +133,16 @@ public class Rengine extends Thread {
         if (callback!=null) callback.rShowMessage(this, message);
     }
     
+    public void jriLoadHistory(String filename)
+    {
+        if (callback!=null) callback.rLoadHistory(this, filename);
+    }
+
     public void jriSaveHistory(String filename)
     {
         if (callback!=null) callback.rSaveHistory(this, filename);
     }
-
+	
 	public String jriChooseFile(int newFile)
     {
         if (callback!=null) return callback.rChooseFile(this, newFile);
