@@ -219,7 +219,7 @@ public class Barchart extends DragBox implements ActionListener {
           MyText t = (MyText)labels.elementAt(i);
           t.draw(bg, 1);
         }
-        start = 0;
+        start =  0;
         stop = k-1;
       }
 
@@ -235,7 +235,7 @@ public class Barchart extends DragBox implements ActionListener {
         r.draw(bg);
       }
       if( moving ) {
-        System.out.println("Moving in Barchart: paint");
+//        System.out.println("Moving in Barchart: paint");
         movingRect.draw(bg);
       }
 
@@ -420,6 +420,54 @@ public class Barchart extends DragBox implements ActionListener {
       else
         super.processMouseEvent(e);  // Pass other event types on.
   }
+
+    public void processKeyEvent(KeyEvent e) {
+
+      if ((e.getID() == KeyEvent.KEY_PRESSED) &&
+          ( e.getKeyCode() == KeyEvent.VK_PAGE_UP || e.getKeyCode() == KeyEvent.VK_PAGE_DOWN )) {
+
+        int nextId = -1;
+        int count = 0;
+        
+        for( int i = 0;i < rects.size(); i++) {
+          MyRect r = (MyRect)rects.elementAt(i);
+          int sum=0, sumh=0;
+          for( int j=0; j<r.tileIds.size(); j++ ) {
+            int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
+            sumh += tablep.getSelected(id)*tablep.table[id];
+            sum  += tablep.table[id];
+          }
+          if( sum == sumh ) {
+            count++;
+            if( e.getKeyCode() == KeyEvent.VK_PAGE_DOWN )
+              if( i<rects.size()-1 )
+                nextId = i+1;
+              else
+                nextId = 0;
+            else
+              if( i>0 )
+                nextId = i-1;
+              else
+                nextId = rects.size()-1;
+          }
+        }
+        if( count == 1 ) {
+          tablep.data.clearSelection();
+          MyRect r = (MyRect)rects.elementAt(nextId);
+          int sum=0, sumh=0;
+          for( int j=0; j<r.tileIds.size(); j++ ) {
+            int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
+            tablep.setSelection(id,1,Selection.MODE_STANDARD);
+            sumh += tablep.getSelected(id)*tablep.table[id];
+            sum  += tablep.table[id];
+          }
+          r.setHilite( sumh/sum );
+
+          SelectionEvent se = new SelectionEvent(this);
+          evtq.postEvent(se);
+        }
+      }
+    }
 
     public void actionPerformed(ActionEvent e) {
       String command = e.getActionCommand();
