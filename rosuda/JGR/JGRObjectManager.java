@@ -1,13 +1,11 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRObjectManager
- *
- * 	browse workspace
+ *  JGRObjectManager (should better be named ObjectBrowser) - implemenation of a browser showing the R-workspace: Datasets, and other objects as a tree, models in a table for sorting and comparing them, functions as a list.
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 
@@ -21,6 +19,7 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
 
     private JButton close = new JButton("Close");
     private JButton refresh = new JButton("Refresh");
+    /**Save Data button */
     public JButton savedata = new JButton("Save Data");
     private JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
     private JPanel buttonPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -32,6 +31,7 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
 
     private JTabbedPane browsers = new JTabbedPane();
 
+    /** Tooltip showing the summary for selected object*/
     public Popup summary = null;
 
     public JGRObjectManager() {
@@ -124,6 +124,9 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         this.setLocation(this.getLocation().x+400, 10);
     }
 
+    /**
+     * Refresh shown objects and synchronize them with workspace (R -> Objectbrowser).
+     */
     public void refresh() {
         RController.refreshObjects();
         mBrowser.refresh();
@@ -133,23 +136,41 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         savedata.setEnabled(false);
     }
     
+    /**
+     * mouseClicked: handle mouse events: disable Save Data button.
+     */
     public void mouseClicked(MouseEvent e) {
         if (summary != null) summary.hide();
         savedata.setEnabled(false);
     }
 
+    /**
+     * mouseEntered: handle mouse events.
+     */
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * mouseExited: handle mouse events.
+     */
     public void mouseExited(MouseEvent e) {
     }
 
+    /**
+     * mousePressed: handle mouse events.
+     */
     public void mousePressed(MouseEvent e) {
     }
 
+    /**
+     * mouseReleased: handle mouse events.
+     */
     public void mouseReleased(MouseEvent e) {
     }
 
+    /**
+     * actionPerformed: handle action events: menus and buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd=="close") dispose();

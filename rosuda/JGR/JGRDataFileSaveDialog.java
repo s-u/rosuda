@@ -1,9 +1,3 @@
-/*
- * Created on Dec 5, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.rosuda.JGR;
 
 import java.awt.*;
@@ -17,12 +11,14 @@ import org.rosuda.ibase.*;
 import org.rosuda.JGR.toolkit.*;
 
 /**
- * @author markus
+ *  JGRDataFileSaveDialog - implementation of a file-dialog which allows saving datasets by choosing several options.
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
  */
-public class JGRDataFileSaveDialog extends JFileChooser implements ActionListener, ItemListener, KeyListener, PropertyChangeListener {
+
+public class JGRDataFileSaveDialog extends JFileChooser implements ActionListener, ItemListener {
 
     private JCheckBox append = new JCheckBox("append",false);
     private JCheckBox quote = new JCheckBox("quote",true);
@@ -37,9 +33,13 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 	
 	private Dimension screenSize = Common.getScreenRes();
     
-    
+    /**
+     * Create a new Save-filedialog.
+     * @param f parent frame
+     * @param data name of dataset which should be saved
+     * @param directory current directory
+     */
     public JGRDataFileSaveDialog(Frame f, String data, String directory) {
-        //this.setUI(this.getUI());
         this.setDialogTitle("Save DatFile - "+data);
         if (directory != null && new File(directory).exists()) this.setCurrentDirectory(new File(directory));
         this.data = data;
@@ -79,7 +79,9 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
     }
     
     
-    
+    /**
+     * Save dataset to choosen file, with specified options.
+     */
     public void saveFile() {
 		if (this.getSelectedFile() != null) {
 			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
@@ -94,51 +96,19 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
+    /**
+     * actionPerformed: handle action events: menus.
+     */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd == "ApproveSelection") saveFile();
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.awt.event.ItemListener#itemStateChanged(java.awt.event.ItemEvent)
+	/**
+	 * itemStateChanged: handle item state changed, set seperator box editable if "Others..." is choosen.
 	 */
 	public void itemStateChanged(ItemEvent e) {
 	    if (e.getSource() == sepsBox) 
 			sepsBox.setEditable((sepsBox.getSelectedIndex() == sepsBox.getItemCount()-1?true:false));
 	}
-
-    /* (non-Javadoc)
-     * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-     */
-    public void keyTyped(KeyEvent e) {
-        System.out.println(e.getSource());
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-     */
-    public void keyPressed(KeyEvent e) {
-        System.out.println(e.getSource());
-        // TODO Auto-generated method stub
-    }
-
-    /* (non-Javadoc)
-     * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-     */
-    public void keyReleased(KeyEvent e) {
-        System.out.println(e.getSource());
-    }
-    
-        /* (non-Javadoc)
-     * @see java.beans.PropertyChangeListener#propertyChange(java.beans.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent evt) {
-        System.out.println(evt.getPropertyName());
-        System.out.println(evt.getNewValue());
-        System.out.println(evt.getOldValue());
-    }
-}
+ }

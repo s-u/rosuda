@@ -1,13 +1,11 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRHelp
- * 
- * 	little htmlbrowser combined with r-help search engine
+ *  JGRHelp - an implemenation of a simple htmlbrowser combined with r-help search engine.
  * 
  *	@author Markus Helbig
  *  
- * 	RoSuDA 2003 - 2004 
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.awt.*;
@@ -28,7 +26,9 @@ import org.rosuda.util.*;
 public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     MouseListener {
 
+	/** Current JGRHelp, because we only want to open one helpbrowser. */
     public static JGRHelp current = null;
+    
     private static WTentry MyEntry = null;
 
     private String keyWord = null;
@@ -39,6 +39,8 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
     private JTextField inputKeyWord = new JTextField();
     private JButton search = new JButton("Search");
+    
+    /** Current link located with the mouse cursor*/
     public JLabel link = new JLabel(" ");
 
     private JPanel options = new JPanel();
@@ -47,9 +49,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     private JCheckBox searchKeyWords = new JCheckBox("Keywords", false);
     private JCheckBox searchAliases = new JCheckBox("Object Names", false);
 
-    public IconButton back;
-    public IconButton home;
-    public IconButton forward;
+    private IconButton back;
+    private IconButton home;
+    private IconButton forward;
 
     private SearchEngine searchRHelp;
 
@@ -59,12 +61,18 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 
 
     private static String index;
+    
+    /** Path to html help of R */
     public static String RHELPLOCATION;
 
     public JGRHelp() {
         this(null);
     }
 
+    /**
+     * Create a new JGRHelp - browser with specified help-location.
+     * @param location path pointing to html-help
+     */
     public JGRHelp(String location) {
         super("Help", iFrame.clsHelp);
         MyEntry = this.getMYEntry();
@@ -81,8 +89,8 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {
-            RHELPLOCATION = JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
-            index = "file://"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
+            RHELPLOCATION = JGR.R.eval("tempdir()").asString();
+            index = "file://"+RHELPLOCATION.replace('\\','/')+"/.R/doc/html/packages.html";
         }
 
         searchRHelp = new SearchEngine();
@@ -163,12 +171,15 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         current = this;
     }
 
+    /**
+     * Print current help-page.
+     */
     public void print() {
         DocumentRenderer docrender = new DocumentRenderer();
         docrender.print(((HelpArea) tabArea.getSelectedComponent()).helpPane);
     }
 
-    public void refresh() {
+    private void refresh() {
         helpArea = new HelpArea(tabArea,this,null);
     }
 
@@ -191,7 +202,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         dispose();
     }
 
-    public void goTo(String keyword, String file) {
+    private void goTo(String keyword, String file) {
             if (tabArea.getTabCount()==JGRPrefs.maxHelpTabs) tabArea.remove(JGRPrefs.maxHelpTabs-1);
             tabArea.add(new HelpArea(tabArea,this, keyword), 0);
             tabArea.setSelectedIndex(0);
@@ -199,11 +210,19 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             tabArea.setTitleAt(0,keyword);
     }
 
-    private void search() {
+    /**
+     * Search for the keyword written in the search-field.
+     */
+    public void search() {
         String keyword = inputKeyWord.getText().trim();
         search(keyword);
     }
 
+    /**
+     * Search for the keyword, you can choosed it it should match exactly or not
+     * @param keyword keyword
+     * @param exact match exactly or not
+     */
     public void search(String keyword, boolean exact) {
         exactMatch.setSelected(exact);
         if (!exact) {
@@ -214,6 +233,10 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         search(keyword);
     }
 
+    /**
+     * Search for the keyword.
+     * @param keyword keyword
+     */
     public void search(String keyword) {
         if (keyword != null && !keyword.equals("")) {
             if (tabArea.getTabCount()==JGRPrefs.maxHelpTabs) tabArea.remove(JGRPrefs.maxHelpTabs-1);
@@ -224,7 +247,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         }
     }
 
-    public void popUpMenu(MouseEvent e) {
+    private void popUpMenu(MouseEvent e) {
         JPopupMenu close = new JPopupMenu();
         JMenuItem closeItem = new JMenuItem("Close");
         closeItem.setActionCommand("tab_close");
@@ -233,7 +256,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         close.show((JComponent)e.getSource(),e.getX(),e.getY());
     }
 
-
+    /**
+     * actionPerformed: handle action events: menus.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "back") {
@@ -267,12 +292,21 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         else if (cmd=="tab_close") tabArea.remove(tabArea.getSelectedIndex());
     }
 
+    /**
+     * keyTyped: handle key events.
+     */
     public void keyTyped(KeyEvent ke) {
     }
 
+    /**
+     * keyPressed: handle key events.
+     */
     public void keyPressed(KeyEvent ke) {
     }
 
+    /**
+     * keyReleased: handle key events: transfer selected commands to console.
+     */
     public void keyReleased(KeyEvent ke) {
         if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
             String cmd = ( (JTextComponent) ke.getComponent()).getSelectedText().trim();
@@ -280,6 +314,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         }
     }
 
+    /**
+     * mouseClicked: handle mouse event: close tab.
+     */
     public void mouseClicked(MouseEvent e) {
         int tabNumber= tabArea.getUI().tabForCoordinate(tabArea, e.getX(), e.getY());
         if (tabNumber < 0) return;
@@ -287,18 +324,35 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         if (rect.contains(e.getX(), e.getY())) tabArea.remove(tabNumber);
     }
 
+    /**
+     * mouseEntered: handle mouse event.
+     */
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * mousePressed: handle mouse event.
+     */
     public void mousePressed(MouseEvent e) {
     }
 
+    /**
+     * mouseReleased: handle mouse event.
+     */
     public void mouseReleased(MouseEvent e) {
     }
 
+    /**
+     * mouseExited: handle mouse event.
+     */
     public void mouseExited(MouseEvent e) {
     }
 
+    /*
+     * HelpArea, inner tab of the browser.
+     * 
+     * navigating and showing selected pages is implemented here.
+     */
     class HelpArea extends JScrollPane {
 
         public JEditorPane helpPane = new JEditorPane();
@@ -440,6 +494,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         }
     }
 
+    /*
+     * Icon for closing a tab in {@see JTabbedPane} 
+     */
     class CloseIcon extends ImageIcon {
 
         private int x,y,width,height;
@@ -459,92 +516,4 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
             return new Rectangle(x, y, width, height);
         }
     }
-
-    /*public class JComboBoxExt extends JComboBox implements JComboBox.KeySelectionManager {
-
-        public class CBDocument
-            extends PlainDocument {
-
-            public void insertString(int offset, String str, AttributeSet a) throws
-                BadLocationException {
-                if (str == null)
-                    return;
-                super.insertString(offset, str, a);
-                if (!isPopupVisible() && str.length() != 0) {
-                    fireActionEvent();
-                }
-            }
-        }
-
-        public JComboBoxExt(ComboBoxModel aModel) {
-            super(aModel);
-            lap = new java.util.Date().getTime();
-            setKeySelectionManager(this);
-            final JTextField tf;
-            if (getEditor() != null) {
-                tf = (JTextField) getEditor().getEditorComponent();
-                tf.addKeyListener(new KeyAdapter() {
-                    public void keyPressed(KeyEvent e) {
-                    }
-
-                    public void keyReleased(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_ENTER)
-                            search();
-                    }
-                });
-                if (tf != null) {
-                    tf.setDocument(new CBDocument());
-                    addActionListener(new ActionListener() {
-                        public void actionPerformed(ActionEvent evt) {
-                            JTextField tf = (JTextField) getEditor().
-                                getEditorComponent();
-                            String text = tf.getText();
-                            ComboBoxModel aModel = getModel();
-                            String current;
-                            for (int i = 0; i < aModel.getSize(); i++) {
-                                current = aModel.getElementAt(i).toString();
-                                if (current.startsWith(text)) {
-                                    tf.setText(current);
-                                    tf.setSelectionStart(text.length());
-                                    tf.setSelectionEnd(current.length());
-                                    break;
-                                }
-                            }
-                        }
-                    });
-                }
-            }
-        }
-
-        public int selectionForKey(char aKey, ComboBoxModel aModel) {
-            long now = new java.util.Date().getTime();
-            if (searchFor != null && aKey == KeyEvent.VK_BACK_SPACE &&
-                searchFor.length() > 0) {
-                searchFor = searchFor.substring(0, searchFor.length() - 1);
-            }
-            else {
-                if (lap + 1000 < now) {
-                    searchFor = "" + aKey;
-                }
-                else {
-                    searchFor = searchFor + aKey;
-                }
-            }
-            lap = now;
-            String current;
-            for (int i = 0; i < aModel.getSize(); i++) {
-                current = aModel.getElementAt(i).toString();
-                if (current.startsWith(searchFor))
-                    return i;
-            }
-            return -1;
-        }
-
-        public void fireActionEvent() {
-            super.fireActionEvent();
-        }
-
-        private String searchFor;
-        private long lap;
-    }*/
 }

@@ -1,13 +1,11 @@
 package org.rosuda.JGR;
 
 /**
- *  JGRPackageInstaller
- *
- *  install packages if user has enough permissions
+ *  JGRPackageInstaller - implementation of a simple package installer widget.
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.awt.*;
@@ -27,6 +25,11 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 
     private String type = "binaries";
 
+    /**
+     * Create a package-installer window.
+     * @param pkgs array of packages
+     * @param type binary- or source-packages
+     */
     public JGRPackageInstaller(String[] pkgs, String type) {
         super("Package Installer",iFrame.clsPackageUtil);
         this.type = type;
@@ -72,7 +75,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         this.setResizable(false);
     }
 
-    public void installPkg() {
+    private void installPkg() {
         String destDir = null;
         for (int i = 0; i < JGR.RLIBS.length; i++) {
             if (checkLibPaths(JGR.RLIBS[i])) {
@@ -129,6 +132,9 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
         return true;
     }
 
+    /**
+     * actionPerformed: handle action events: buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd=="close" || cmd=="exit") dispose();

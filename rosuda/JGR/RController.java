@@ -1,12 +1,11 @@
 package org.rosuda.JGR;
 
 /**
-*  RController Class
- * 	nothing else should have access to R only this RController
+ *  RController - implementations of an interface between JGR and Rengine, providing all needed functions for working with R.
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.io.*;
@@ -21,12 +20,12 @@ import org.rosuda.JGR.toolkit.Editor;
 public class RController {
 
     /**
-    * dummy object
+     * dummy object.
      */
     public static Object dummy = new Object();
 
     /**
-    * get R_HOME
+     * Get R_HOME.
      * @return R_HOME path
      */
     public static String getRHome() {
@@ -36,7 +35,7 @@ public class RController {
     }
 
     /**
-        * get R_LIBS
+     * Get R_LIBS.
      * @return R_LIBS paths
      */
     public static String[] getRLibs() {
@@ -46,7 +45,7 @@ public class RController {
     }
 
     /**
-        * get R_DEFAULT_PACKAGE
+     * Get R_DEFAULT_PACKAGES.
      * @return default packages
      */
     public static String[] getDefaultPackages() {
@@ -56,8 +55,8 @@ public class RController {
     }
 
     /**
-        * show all posibilities to complete your given string
-     * @param partOfCmd string which you want to complete
+     * Show all posibilities to complete your given part of a command.
+     * @param partOfCmd part which you want to complete
      * @return possible completions
      */
     public static String[] completeCommand(String partOfCmd) {
@@ -71,8 +70,8 @@ public class RController {
     }
 
     /**
-        * completetion of a file (doesn't supports multiple fils yet)
-     * @param part part of file to complete
+     * Completetion of a file (doesn't supports multiple fils yet).
+     * @param part of file to complete
      * @return file
      */
     public static String completeFile(String part) {
@@ -132,7 +131,7 @@ public class RController {
     }
 
     /**
-        * get all keywords for syntaxhighlighting
+     * Get all keywords for syntaxhighlighting.
      * @return keywords
      */
     public static String[] getKeyWords() {
@@ -143,7 +142,7 @@ public class RController {
     }
 
     /**
-        * object names used for syntaxhighlighting
+     * Get object names used for syntaxhighlighting.
      * @return objects
      */
     public static String[] getObjects() {
@@ -155,9 +154,8 @@ public class RController {
 
 
     /**
-        * select all Objects and put them in JGR.MODELS, JGR.DATA, JGR.OTHER and JGR.FUNCTIONS
-     * currently only these things which are provided by ls(pos=1)
-     *
+     * Browse the workspace for objects and put them in JGR.MODELS, JGR.DATA, JGR.OTHER and JGR.FUNCTIONS.
+     * currently only these things which are provided by R-command: ls(pos=1).
      */
     public static void refreshObjects() {
         JGR.DATA.clear();
@@ -204,7 +202,7 @@ public class RController {
     }
 
     /**
-        * get information about all packages (loaded, undloaded, defaults ...)
+     * Get information about all packages (loaded, undloaded, defaults ...).
      * @return package information
      */
     public static Object[][] refreshPackages() {
@@ -236,10 +234,10 @@ public class RController {
     }
 
     /**
-        * get the content of an RObject (list, data.frame, table, matrix)
-     * @param o RObject
+     * Get the content of an {@seeRObjects} (list, data.frame, table, matrix).
+     * @param o {@seeRObjects}
      * @param c all found objects are collected in c (currently disabled)
-     * @return Vector of RObjects
+     * @return vector of {@seeRObjects}
      */
     public static Vector createContent(RObject o, Collection c) {
         Vector cont = new Vector();
@@ -263,10 +261,10 @@ public class RController {
     }
 
     /**
-        * creates an RObject (java-side) out of R
+     * Ceates an {@seeRObjects} (java-side) out of R
      * @param sx		name
      * @param type		type
-     * @param parent	parent RObject
+     * @param parent	parent {@seeRObjects}
      * @param b			names(..) provides real names or not
      * @return 			new RObject
      */
@@ -309,11 +307,11 @@ public class RController {
     }
 
     /**
-        * create RModel (java-side) out of R
+     * Create {@see RModel} (java-side) out of R
      * @param sx	name
      * @param type	type (currently only lm and glm is supported
-                         * @return	new RModel
-                         */
+     * @return	new {@see RModel}
+    */
     public static RModel createRModel(String sx, String type) {
         RModel m = new RModel(sx,type);
         REXP y = JGR.R.eval("summary("+sx+")[[\"r.squared\"]]");
@@ -354,7 +352,7 @@ public class RController {
 	}
 
     /**
-        * show argumentes for function, tooltip
+     * Get argumentes for function
      * @param s function name
      * @return arguments
      */
@@ -379,9 +377,9 @@ public class RController {
     }
 
     /**
-     * show summary of an RObject
-     * @param o RObject
-     * @return summary
+     * Get summary of an {@see RObject}, R-command summary(...).
+     * @param o {@see RObject}
+     * @return summary of object
      */
     public static String getSummary(RObject o) {
         if (o.getType().equals("function")) return "<html><pre>"+getFunHelp(o.getRName())+"</pre></html>";
@@ -417,10 +415,11 @@ public class RController {
     }
 
 
-    /** create a new dataset with the specified RObject.
-        * @param o RObject which we want to have in a SVarSet
-        * @return new dataset
-        * */
+    /** 
+     * Create a new {@see SVarSet} of the specified {@see RObject}.
+     * @param o {@see RObject} which should be parsed into the dataset
+     * @return new dataset
+     */
     public static SVarSet newSet(RObject o) {
         SVarSet cvs=new SVarSet();
         cvs.setName(o.getRName());
@@ -458,9 +457,9 @@ public class RController {
     }
 
     /**
-     * create SVar out of an RObject
+     * Create SVar out of an {@see RObject}.
      * @param cvs	destination SVarSet
-     * @param o		RObject
+     * @param o		{@see RObject}
      * @return new SVar
      */
     private static SVar createSVar(SVarSet cvs, RObject o) {
@@ -488,12 +487,12 @@ public class RController {
         return v;
     }
 
-    /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of doubles
-        @return SVar
-        */
+    /** 
+     * Construct a new numerical variable from supplied array of doubles.
+     * @param name variable name
+     * @param d array of doubles
+     * @return SVar
+     */
     public static SVar newVar(SVarSet cvs, String name, double[] d) {
         if (d==null) return null;
         if (Global.DEBUG>0)
@@ -508,12 +507,12 @@ public class RController {
         return v;
     }
 
-    /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of integers
-        @return SVar
-        */
+    /**
+     * Construct a new numerical variable from supplied array of integers.
+     * @param name variable name
+     * @param d array of integers
+     * @return SVar
+     */
     public static SVar newVar(SVarSet cvs, String name, int[] d) {
         if (d==null) return null;
         if (Global.DEBUG>0)
@@ -528,12 +527,12 @@ public class RController {
         return v;
     };
 
-    /** construct a new categorical variable from supplied array of strings. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of strings
-        @return SVar
-        */
+    /**
+     * Construct a new categorical variable from supplied array of strings.
+     * @param name variable name
+     * @param d array of strings
+     * @return SVar
+     */
     public static SVar newVar(SVarSet cvs, String name, String[] d) {
         if (d==null) return null;
         if (Global.DEBUG>0)
@@ -550,12 +549,12 @@ public class RController {
     }
 
 
-    /** construct a new factor variable from supplied array of integers (cases) and strings (levels). Unlike datasets variables cannot have the same name within a dataset.
-        @param name variable name
-        @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
-        @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
-        @return SVar
-        */
+    /* Construct a new factor variable from supplied array of integers (cases) and strings (levels).
+     * @param name variable name
+     * @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
+     * @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
+     * @return SVar
+     */
     public static SVar newVar(SVarSet cvs, String name, int[] ix, String[] d) {
         if (ix==null) return null;
         if (d==null) return newVar(cvs, name,ix);
@@ -574,17 +573,12 @@ public class RController {
     }
 
     /**
-     * export an SVarSet to R
+     * Export an SVarSet to R.
      * @param vs dataset
+     * @þaram type R-class of {@see RObject} behind vs
      * @return true if successful, false if not
      */
     public static boolean export(SVarSet vs,String type) {
-        /*REXP x = JGR.R.eval("suppressWarnings(try(class("+vs.getName()+"),silent=TRUE))");
-        String type = null;
-        if (x != null && x.asString() != null && !x.asString().startsWith("Error"))
-            type = x.asString();
-        boolean success = false;
-        System.out.println(type);*/
         boolean success = false;
         if (type == null || type.equals("data.frame"))
             success = exportDataFrame(vs);
@@ -619,7 +613,7 @@ public class RController {
     
 
     /**
-     * export r-numeric
+     * Export r-numeric.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -638,7 +632,7 @@ public class RController {
     }
 
     /**
-     * export r-integer
+     * Export r-integer.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -657,7 +651,7 @@ public class RController {
 
 
     /**
-     * export r-factor
+     * Export r-factor.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -683,7 +677,7 @@ public class RController {
     
 
     /**
-     * export r-character
+     * Export r-character.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -704,7 +698,7 @@ public class RController {
     }
 
     /**
-     * export r-data.frame
+     * Export r-data.frame.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -776,7 +770,7 @@ public class RController {
     }
 
     /**
-     * export r-matrix
+     * Export r-matrix.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -838,7 +832,7 @@ public class RController {
     }
 
     /**
-     * export r-list
+     * Export r-list.
      * @param vs dataset
      * @return true if successful, false if not
      */
@@ -884,7 +878,7 @@ public class RController {
     }
 
     /**
-     * compare to string and retrun the common prefix
+     * Compare to string and return the common prefix.
      * @param str1 String 1
      * @param str2 String 2
      * @return common prefix

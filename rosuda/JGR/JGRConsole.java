@@ -1,11 +1,11 @@
 package org.rosuda.JGR;
 
 /**
-*  JGRConsole Console Frame
+*   JGRConsole Console Frame, the main window of JGR.
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.awt.*;
@@ -32,6 +32,7 @@ FocusListener, RMainLoopCallbacks {
     public ConsoleOutput output = new ConsoleOutput();
     /** Console command input area*/
     public SyntaxInput input = new SyntaxInput(true);
+    
     private Document inputDoc = input.getDocument();
     private Document outputDoc = output.getDocument();
 
@@ -52,16 +53,12 @@ FocusListener, RMainLoopCallbacks {
     public int end = 0;
     private Integer clearpoint = null;
 
-    /**
-     * Creating a new Console
-     *
-     */
     public JGRConsole() {
         this(null);
     }
 
     /**
-     * Create a new Console
+     * Create a new Console window.
      * @param workSpace workspace which should be loaded when starting JGR
      */
     public JGRConsole(File workSpace) {
@@ -136,15 +133,14 @@ FocusListener, RMainLoopCallbacks {
 
 
     /**
-     * Close Console, but not before we asked the user if he wants to save opened Editors
-     *
+     * Close Console, but not before we asked the user if he wants to save opened Editors.
      */
     public void exit() {
         dispose();
     }
 
     /**
-     * Close Console, but not before we asked the user if he wants to save opened Editors
+     * Close Console, but not before we asked the user if he wants to save opened Editors.
      */
     public void dispose() {
         Enumeration e = WinTracker.current.elements();
@@ -158,7 +154,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Execute a command and put it into history
+     * Execute a command and add it into history.
      * @param cmd command for execution
      */
     public void execute(String cmd) {
@@ -180,7 +176,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Parse command if it is a helpcommand
+     * Parse command if it is a helpcommand.
      * @param cmd command which should be executed
      * @return true if help should be started, false if not
      */
@@ -195,7 +191,7 @@ FocusListener, RMainLoopCallbacks {
 
 
     /**
-     * Invoke the help engine, first parse for the keyword
+     * Start the help-browser, first parse for the keyword.
      * @param help help-command
      */
     public void help(String help) {
@@ -254,8 +250,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Clear the console's content
-     *
+     * Clear the console's content, if it's too full.
      */
     public void clearconsole() {
         try {
@@ -265,8 +260,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Load a workspace, load(...)
-     *
+     * Load a workspace, R-command: load(...).
      */
     public void loadWorkSpace() {
         FileSelector fopen = new FileSelector(this, "Open Workspace",
@@ -278,22 +272,8 @@ FocusListener, RMainLoopCallbacks {
         }
     }
 
-    /*
-    public void newWorkSpace() {
-        int neww = JOptionPane.showConfirmDialog(null, "Save current workspace?",
-                                                 "New Workspace",
-                                                 JOptionPane.
-                                                 YES_NO_CANCEL_OPTION,
-                                                 JOptionPane.QUESTION_MESSAGE);
-
-        if (neww == 0) {
-            if (saveWorkSpaceAs()) execute("rm(list=ls())");
-        }
-        else if (neww == 1) execute("rm(list=ls())");
-    }*/
-
     /**
-     * Save workspace with specified filename, save.image(...)
+     * Save workspace with specified filename, R-command: save.image(...).
      * @param file filename
      */
     public void saveWorkSpace(String file) {
@@ -303,7 +283,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Save workspace with a different name then .RData
+     * Save workspace to a different file then .RData.
      */
     public void saveWorkSpaceAs() {
         FileSelector fsave = new FileSelector(this, "Save Workspace as...",
@@ -317,7 +297,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Get the font's width form current settings using the fontmetrics
+     * Get the font's width form current settings using {@see FontMetrics}.
      * @return fontwidth
      */
 	public int getFontWidth() {
@@ -329,8 +309,8 @@ FocusListener, RMainLoopCallbacks {
 	//======================================================= R callbacks ===
 
 	/**
-	 * Write output from R into console (R callback)
-	 * @param re used Renging
+	 * Write output from R into console (R callback).
+	 * @param re used Rengine
 	 * @param text output
 	 */
     public void   rWriteConsole(Rengine re, String text) {
@@ -343,7 +323,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Invoke the busy cursor (R callback)
+     * Invoke the busy cursor (R callback).
      * @param re used Rengine
      * @param which busy (1) or not (0)
      */
@@ -363,9 +343,9 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Read the commands from input area (R callback)
+     * Read the commands from input area (R callback).
      * @param re used Rengine
-     * @param prompt prompt coming from R
+     * @param prompt prompt from R
      * @param addToHistory is it an command which to add to the history
      */
     public String rReadConsole(Rengine re, String prompt, int addToHistory) {
@@ -381,7 +361,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Showing a message from the rengine (R callback)
+     * Showing a message from the rengine (R callback).
      * @param re used Rengine
      * @param message message from R
      */
@@ -390,7 +370,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * Choose a file invoked be file.choose() (R callback)
+     * Choose a file invoked be file.choose() (R callback).
      * @param re used Rengine
      * @param newFile if it's a new file
      */
@@ -404,7 +384,7 @@ FocusListener, RMainLoopCallbacks {
 	}
 	
 	/**
-	 * Flush the console (R callback)
+	 * Flush the console (R callback).
 	 * !! not implemented yet !!
 	 * @param re used Rengine
 	 */
@@ -412,7 +392,7 @@ FocusListener, RMainLoopCallbacks {
 	}
 
     /**
-     * Load history from a file (R callback)
+     * Load history from a file (R callback).
      * !! not implemented yet !!
      * @param re used Rengine
      * @param filename history file
@@ -422,7 +402,7 @@ FocusListener, RMainLoopCallbacks {
 	}
 	
 	/**
-	 * Save history to a file (R callback)
+	 * Save history to a file (R callback).
 	 * @param re used Rengine
 	 * @param filename history file
 	 */
@@ -442,8 +422,7 @@ FocusListener, RMainLoopCallbacks {
 	//======================================================= other events ===
 	
     /**
-     * actionPerformed: handle action events
-     * @param e event
+     * actionPerformed: handle action events: menus.
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -516,15 +495,13 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * handle key events
-     * @param ke event
+     * keyTyped: handle key events.
      */
     public void keyTyped(KeyEvent ke) {
     }
 
     /**
-     * handle key events
-     * @param ke event
+     * keyPressed: handle key events, like: adding a new line, history ....
      */
     public void keyPressed(KeyEvent ke) {
         if (ke.getSource().equals(output) && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown())
@@ -567,8 +544,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * handle key events
-     * @param ke event
+     * keyReleased: handle key events, sending the command.
      */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -593,7 +569,6 @@ FocusListener, RMainLoopCallbacks {
         }
         if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
             input.requestFocus();
-            //input.setCaretPosition(input.getText().length());
             input.paste();
             input.setCaretPosition(input.getText().length());
         }
@@ -604,22 +579,24 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * handle focus event
-     * @param e event
+     * focusGained: handle focus event, enable and disable cut and paste button.
      */
     public void focusGained(FocusEvent e) {
         if (e.getSource().equals(output)) {
             toolBar.cutButton.setEnabled(false);
             iMenu.getItem(this, "cut").setEnabled(false);
+            toolBar.pasteButton.setEnabled(false);
+            iMenu.getItem(this, "paste").setEnabled(false);
         } else if (e.getSource().equals(input)) {
             toolBar.cutButton.setEnabled(true);
             iMenu.getItem(this, "cut").setEnabled(true);
+            toolBar.pasteButton.setEnabled(true);
+            iMenu.getItem(this, "paste").setEnabled(true);
         }
     }
 
     /**
-     * handle focus event
-     * @param e event
+     * focusLost: handle focus event.
      */
     public void focusLost(FocusEvent e) {
     }

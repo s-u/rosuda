@@ -1,13 +1,11 @@
 package org.rosuda.JGR;
 
 /**
-*  JGRPackageManager
- *
- * 	manage packages for current session as well as default packages
+ *  JGRPackageManager - manage packages for current session as well as default packages
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.awt.*;
@@ -21,9 +19,12 @@ import org.rosuda.JGR.util.*;
 
 public class JGRPackageManager extends iFrame implements ActionListener {
 
-    public Object[][] Packages = null;
-    public String[] columnNames = {"loaded","default","Package","Description"};
+    private Object[][] Packages = null;
+    private String[] columnNames = {"loaded","default","Package","Description"};
+    
+    /** Array of default-packages (loaded at startup).*/
     public static Object[] defaultPackages;
+    /** Packages which must be loaded for stable and secure working with JGR*/
     public static HashMap neededPackages = new HashMap();
     private JScrollPane scrollArea = new JScrollPane();
     private JButton close = new JButton("Close");
@@ -94,17 +95,18 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         } catch (Exception e) { e.printStackTrace();}//this.show(); //do it manually when you really want to see it
     }
 
+    /**
+     * Exit the package-manager but before save default-packages.
+     */
     public void exit() {
+    	setDefaultPackages();
+        JGRPrefs.writePrefs(false);
         dispose();
     }
 
-
-    public void dispose() {
-        setDefaultPackages();
-        JGRPrefs.writePrefs(false);
-        super.dispose();
-    }
-
+    /**
+     * Refresh status of loaded and unloaded packages.
+     */
     public void refresh() {
         this.cursorWait();
         setDefaultPackages();
@@ -115,14 +117,14 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         this.cursorDefault();
     }
 
-    public void setPKGStatus(String pkg,String load) {
+    private void setPKGStatus(String pkg,String load) {
         this.cursorWait();
         if (load.equals("true")) JGR.MAINRCONSOLE.execute("library("+pkg+")");
         else JGR.MAINRCONSOLE.execute("detach(\"package:"+pkg+"\")");
         this.cursorDefault();
     }
 
-    public void setDefaultPackages() {
+    private void setDefaultPackages() {
         ArrayList packages = new ArrayList();
         for (int i = 0; i < pkgModel.getRowCount(); i++) {
             if (pkgModel.getValueAt(i,1).toString().equals("true"))
@@ -131,6 +133,9 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         defaultPackages = packages.toArray();
     }
 
+    /**
+     * actionPerformed: handle action events: buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd=="exit") exit();

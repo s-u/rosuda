@@ -2,13 +2,11 @@ package org.rosuda.JGR;
 
 
 /**
-*  JGRDataFileDialog
- *
- *  load datasets into R
+ *  JGRDataFileOpenDialog - implementation of a file-dialog which allows loading datasets into R by choosing several options.
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2004
+ * 	RoSuDA 2003 - 2005
  */
 
 import java.awt.*;
@@ -109,8 +107,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 	
 	/**
-	 * Open selected datafile, with specified options, read.table(...)
-	 *
+	 * Open selected datafile, with specified options, R-command: read.table(...)
 	 */
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
@@ -130,8 +127,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 
 	/**
-	 * handle action events
-	 * @param e event
+	 * actionPerformed: handle action events: menus.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -140,9 +136,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 
 	/**
-	 * handle itemStateChanged event
-	 * used for user specified separator and quotes
-	 * @param e event
+	 * itemStateChanged: handle itemStateChanged event, et seperator and quote box enabled if "Others..." is choosen.
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getItemSelectable();
@@ -158,9 +152,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 
 	/**
-	 * handle propertyChange
-	 * used for setting the name where the file should be assigned to
-	 * @param e event
+	 * propertyChange: handle propertyChange, used for setting the name where the file should be assigned to.
 	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		File file = this.getSelectedFile();
