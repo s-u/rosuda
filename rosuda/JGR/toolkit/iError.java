@@ -14,8 +14,8 @@ import java.util.*;
 public class iError {
 
     public iError(Exception e) {
-        String curDir = System.getProperty("user.home");
-        String filename = curDir + "/.Error.log";
+        String curDir = System.getProperty("user.dir");
+        String filename = curDir + "/JGRError.log";
         String[] months = {
             "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep",
             "Oct", "Nov", "Dec"};
