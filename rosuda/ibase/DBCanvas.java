@@ -22,7 +22,8 @@ public abstract class DBCanvas extends Canvas
     public void update(Graphics g)
     {
         Dimension d = getSize();
-	
+	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
+	if (d.width<1 || d.height<1) return;
 	// we will re-create the off-screen object only if the canvas was resized
 	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
 	    offscreen=null;

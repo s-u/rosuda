@@ -538,7 +538,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	if (cmd=="print") run(o,"exportPS");
 	if (cmd=="new") {
- 	    TFrame f=new TFrame("Pruned copy of \""+InTr.lastTreeFileName+"\"");
+ 	    TFrame f=new TFrame("Pruned copy of \""+root.getSource().getName()+"\"");
 	    SNode t=InTr.makePrunedCopy(root);
 	    TreeCanvas tc=InTr.newTreeDisplay(t,f);
 	    //Common.mainFrame.add(f);
@@ -549,7 +549,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    SVarSet tvs=root.getSource();
 	    SNode t=InTr.openTreeFile(Common.mainFrame,null,tvs);
 	    if (t!=null) {
-		TFrame f=new TFrame(InTr.lastTreeFileName);
+		TFrame f=new TFrame(tvs.getName()+" - tree");
 		TreeCanvas tc=InTr.newTreeDisplay(t,f);
 		tc.repaint(); tc.redesignNodes();		
 		//InTr.newVarDisplay(tvs);

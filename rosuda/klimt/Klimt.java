@@ -62,28 +62,15 @@ public class InTr
 	@param vs the underlying dataset
 	@param x,y,w,h initial geomery. Note: VadCanvas itself modifies the hegiht if it is too small
 	@return the newly created variables canvas */
-    public static VarCanvas newVarDisplay(SVarSet vs,int x, int y, int w, int h) {
-	//Window varw=new Window(f);
-	TFrame varw=new TFrame("Variables");
-	VarCanvas VarC=new VarCanvas(varw,vs);
-	varw.add(VarC);
-	if (Common.defaultWindowListener==null)
-	    Common.defaultWindowListener=new DefWinL();
-	varw.addWindowListener(Common.defaultWindowListener);
-	//VarC.setSize(new Dimension(140,200));
-	varw.setBounds(x,y,w,h);
-	VarC.setBounds(x,y,w,h);
-	VarC.repaint();
-	varw.pack(); 
-	//varw.setSize(new Dimension(140,200));
-	varw.show();
-	return VarC;
+    public static VarFrame newVarDisplay(SVarSet vs,int x, int y, int w, int h) {
+	VarFrame VarF=new VarFrame(vs,x,y,w,h);
+	return VarF;
     };
 
     /** creates a new variables display with default geometry (0,0,140,200)
 	@param vs the underlying dataset
 	@return the newly created variables canvas */
-    public static VarCanvas newVarDisplay(SVarSet vs) {
+    public static VarFrame newVarDisplay(SVarSet vs) {
 	return newVarDisplay(vs,0,0,140,200);
     };
 
@@ -116,14 +103,17 @@ public class InTr
 	SNode t=null;	
 	String fnam=fn;
 	try {
+	    lastTreeFileName=fnam;
 	    if (fnam==null) {
 		FileDialog fd=new FileDialog(f,"Select data and tree file");
 		fd.setModal(true);
 		fd.show();
 		fnam=fd.getDirectory()+fd.getFile();
-                if(fd.getFile()==null) return null;
-	    };
-	    lastTreeFileName=fnam;
+		if (fd.getFile()!=null)
+		    tvs.setName(lastTreeFileName=fd.getFile());
+		else
+		    return null;
+	    } else tvs.setName(fnam);
 	    
 	    BufferedReader r=new BufferedReader(new InputStreamReader(new FileInputStream(fnam)));
 	    t=RTree.Load(r,tvs);
@@ -134,7 +124,6 @@ public class InTr
 	    E.printStackTrace();
 	    t=null;
 	};
-	lastTreeFileName=fnam;
 	return t;
     };
 
@@ -181,12 +170,14 @@ public class InTr
 		};
 	    }; 
 	    
+	    f.setTitle("KLIMT "+Common.Version+", "+tvs.getName()+" - tree");
+
 	    Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
 	    if (t!=null)
 		newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-	    VarCanvas vc=newVarDisplay(tvs,sres.width-150,0,140,200);
+	    VarFrame vf=newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
 	    if (t==null)
-		Common.mainFrame=(TFrame)vc.getParent();		
+		Common.mainFrame=vf;		
 
 	    carg++;
 	    while (carg<argv.length) {

@@ -11,9 +11,11 @@ public class SVarSet {
     Vector vars;
     /** marker associated with this dataset */
     SMarker mark;
+    /** dataset name */
+    String name;
 
     /** default constructor of empty dataset */
-    SVarSet() { vars=new Vector(); };
+    SVarSet() { vars=new Vector(); name="<unknown>"; };
     
     /** sets the marker for this dataset
 	@param m marker */
@@ -21,7 +23,15 @@ public class SVarSet {
     /** returns the marker of this dataset
 	@return marker */
     public SMarker getMarker() { return mark; };
-    
+    /** set dataset name
+	@param s name */
+    public void setName(String s) {
+	name=s;
+    };
+    /** get dataset name
+	@return dataset name */
+    public String getName() { return name; };
+
     /** add a new varaible to the dataset 
 	@param v variable
 	@return index of the newly create variable or <0 if an error occured (-1 on null-problems, -2 if that variable-name already exists) */
