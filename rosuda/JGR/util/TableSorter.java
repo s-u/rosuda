@@ -402,7 +402,7 @@ public class TableSorter extends AbstractTableModel {
             if (column != -1) {
                 int status = getSortingStatus(column);
                 SORTEDCOLUMN = column;
-                if (!e.isControlDown()) {
+                if (!e.isControlDown() || !e.isMetaDown()) {
                     cancelSorting();
                 }
                 // Cycle the sorting states through {NOT_SORTED, ASCENDING, DESCENDING} or
