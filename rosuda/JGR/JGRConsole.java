@@ -309,9 +309,13 @@ FocusListener, RMainLoopCallbacks {
         JOptionPane.showMessageDialog(this,message,"R Message",JOptionPane.INFORMATION_MESSAGE);
     }
 
-	public String rChooseFile   (Rengine re, int newFile) {
-		// FIXME! implement!
-		return null;
+	public String rChooseFile(Rengine re, int newFile) {
+		FileDialog fd = new FileDialog(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE);
+		fd.show();
+		String res=null;
+		if (fd.getDirectory()!=null) res=fd.getDirectory();
+		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
+		return res;
 	}
 	
     public void   rFlushConsole (Rengine re) {
