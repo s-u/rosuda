@@ -698,6 +698,7 @@ System.out.println("Command: "+command);
       else if( command.equals("1.0") || command.equals("0.5") || command.equals("0.1") || command.equals("0.05") || command.equals("0.01") || command.equals("0.005") ) {
         alpha = (float)Util.atod(command);
 //System.out.println("alpha: "+alpha);
+
         create(width, height);
         update(this.getGraphics());
       } else if( command.equals("min") || command.equals("quar") || command.equals("sdev") || command.equals("mean") || command.equals("median") || command.equals("max") || command.equals("ini") || command.equals("rev") ) {
@@ -762,7 +763,7 @@ System.out.println("Command: "+command);
               onlyHi[i] = true;
             else
               onlyHi[i] = false;
-          hotSelection = true;
+          hotSelection = true;									// we need to set an initial hotSelector to rescale (is switched off in first paint)
         } else
           for( int i=0; i<data.n; i++ )
             onlyHi[i] = true;
@@ -791,7 +792,7 @@ System.out.println("Command: "+command);
 
         this.width = size.width;
         this.height = size.height;
-        if( hotSelection )
+        if( hotSelection && !zoomToSel )
           getData();
         if( zoomToSel )
           hotSelection = false;
@@ -807,6 +808,24 @@ System.out.println("Command: "+command);
         }
         else 
           bg = g;
+
+        if( alignMode.equals("cvalue") ) {          // draw reference axis if values are aligned at a certain value
+          bg.setColor(Color.gray);
+          bg.drawLine(border-6,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1]))),
+                      width-border+6,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1]))));
+          bg.setColor(Color.lightGray);
+          bg.drawLine(border-5,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))+1,
+                      width-border+5,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))+1);
+          bg.setColor(Color.lightGray);
+          bg.drawLine(border-5,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))-1,
+                      width-border+5,
+                      (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))-1);
+        }
 
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
@@ -849,7 +868,7 @@ System.out.println("Command: "+command);
             ((MyRect)(rects.elementAt(i))).draw(bg);
         }
       }
-
+      
       long start = new Date().getTime();
       Graphics tbg, ttbg;
       if( !printing )
@@ -946,7 +965,7 @@ System.out.println("Command: "+command);
 
         mt.draw(ttbg);
       }
-
+      
       if( !(printing) ) {
         if( hotSelection || zoomToSel ) {
           ttbg.setColor(Color.red);
@@ -1117,35 +1136,38 @@ System.out.println("Command: "+command);
       
       sortA = new double[k];
 
-      dMins = new double[k];
-      dIQRs = new double[k];
-      dMedians = new double[k];
-      dMeans = new double[k];
-      dSDevs = new double[k];
-      dMaxs = new double[k];
-      Mins = new double[k];
-      Maxs = new double[k];
+      if( hotSelection == zoomToSel ) {
+        dMins = new double[k];
+        dIQRs = new double[k];
+        dMedians = new double[k];
+        dMeans = new double[k];
+        dSDevs = new double[k];
+        dMaxs = new double[k];
+        Mins = new double[k];
+        Maxs = new double[k];
 
-      dataCopy = new double[k][data.n];
+        dataCopy = new double[k][data.n];
 
-      if( !hotSelection ) {
-        for( int j=0; j<k; j++ ) {
-          dMins[j] = data.getMin(vars[j]);
-          dIQRs[j] = data.getQuantile(vars[j], 0.75) - data.getQuantile(vars[j], 0.25);
-          dMedians[j] = data.getQuantile(vars[j], 0.5);
-          dMeans[j] = data.getMean(vars[j]);
-          dSDevs[j] = data.getSDev(vars[j]);
-          dMaxs[j] = data.getMax(vars[j]);
+        if( !hotSelection ) {   // we need an XOR here ;-)
+          System.out.println(" *** RESET *** ");
+          for( int j=0; j<k; j++ ) {
+            dMins[j] = data.getMin(vars[j]);
+            dIQRs[j] = data.getQuantile(vars[j], 0.75) - data.getQuantile(vars[j], 0.25);
+            dMedians[j] = data.getQuantile(vars[j], 0.5);
+            dMeans[j] = data.getMean(vars[j]);
+            dSDevs[j] = data.getSDev(vars[j]);
+            dMaxs[j] = data.getMax(vars[j]);
+          }
         }
-      }
-      else if( data.countSelection() > 0 ) {
-        for( int j=0; j<k; j++ ) {
-          dMins[j] = data.getSelQuantile(vars[j], 0);
-          dIQRs[j] = data.getSelQuantile(vars[j], 0.75) - data.getSelQuantile(vars[j], 0.25);
-          dMedians[j] = data.getSelQuantile(vars[j], 0.5);
-          dMeans[j] = data.getSelMean(vars[j]);
-          dSDevs[j] = data.getSelSDev(vars[j]);
-          dMaxs[j] = data.getSelQuantile(vars[j], 1);
+        else if( data.countSelection() > 0 ) {
+          for( int j=0; j<k; j++ ) {
+            dMins[j] = data.getSelQuantile(vars[j], 0);
+            dIQRs[j] = data.getSelQuantile(vars[j], 0.75) - data.getSelQuantile(vars[j], 0.25);
+            dMedians[j] = data.getSelQuantile(vars[j], 0.5);
+            dMeans[j] = data.getSelMean(vars[j]);
+            dSDevs[j] = data.getSelSDev(vars[j]);
+            dMaxs[j] = data.getSelQuantile(vars[j], 1);
+          }
         }
       }
       for( int j=0; j<k; j++ ) {
@@ -1360,6 +1382,7 @@ System.out.println("Command: "+command);
       double lWhisker, uWhisker;
       double lSWhisker, uSWhisker;
       double[] lOutlier, uOutlier;
+      double[] lsOutlier, usOutlier;
       int var, id;
       int mid, width, low, high;
 
@@ -1468,8 +1491,8 @@ System.out.println("Command: "+command);
         sMax    = data.getSelQuantile(var, 1);
 
         if( count > 3 ) {
-          lOutlier = data.getAllSelSmaller(var, lSHinge-(uSHinge-lSHinge)*1.5);
-          uOutlier = data.getAllSelGreater(var, uSHinge+(uSHinge-lSHinge)*1.5);
+          lsOutlier = data.getAllSelSmaller(var, lSHinge-(uSHinge-lSHinge)*1.5);
+          usOutlier = data.getAllSelGreater(var, uSHinge+(uSHinge-lSHinge)*1.5);
           /*        if( lOutlier.length == 0 )
             lSWhisker = sMin;
           else
@@ -1506,23 +1529,23 @@ System.out.println("Command: "+command);
           int dia = 3;
           if( printing )
             dia *= printFactor;
-          for( int i=0; i<lOutlier.length; i++ ) {
+          for( int i=0; i<lsOutlier.length; i++ ) {
 //            g.setColor(getBackground());
 //            g.fillOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
 //            g.drawOval(mid-2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
             g.setColor(getHiliteColor());
-            if( lOutlier[i] < lSHinge-(uSHinge-lSHinge)*3 )
-              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
-            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-lOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            if( lsOutlier[i] < lSHinge-(uSHinge-lSHinge)*3 )
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-lsOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-lsOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           }
-          for( int i=0; i<uOutlier.length; i++ ) {
+          for( int i=0; i<usOutlier.length; i++ ) {
 //            g.setColor(getBackground());
 //            g.fillOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
 //            g.drawOval(mid-2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-2, 5, 5);
             g.setColor(getHiliteColor());
-            if( uOutlier[i] > uSHinge+(uSHinge-lSHinge)*3 )
-              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
-            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-uOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            if( usOutlier[i] > uSHinge+(uSHinge-lSHinge)*3 )
+              g.fillOval(mid-dia/2, low+(int)((Maxs[id]-usOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
+            g.drawOval(mid-dia/2, low+(int)((Maxs[id]-usOutlier[i])/(Maxs[id]-Mins[id])*(high-low))-dia/2, dia, dia);
           } 
         }
         else {
