@@ -393,13 +393,17 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (e.getKeyChar()=='s') run(this,"shading");
     };
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode()==KeyEvent.VK_ALT) {
+        if (Common.DEBUG>0)
+            System.out.println("ScatterCanvas: "+e);
+        if (e.getKeyCode()==KeyEvent.VK_ALT && !querying) {
             querying=true;
             qx=qy=-1;
             setCursor(Common.cur_aim);
         }
     };
     public void keyReleased(KeyEvent e) {
+        if (Common.DEBUG>0)
+            System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT) {
             querying=false;
             setCursor(Common.cur_arrow);
