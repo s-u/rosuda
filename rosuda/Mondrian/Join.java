@@ -37,7 +37,7 @@ import com.apple.mrj.*;
 /**
 */
 
-class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler { 
+class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler {  
   
   /** Remember # of open windows so we can quit when last one is closed */
   protected static int num_windows = 0;
