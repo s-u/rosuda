@@ -19,7 +19,7 @@ class XGDcanvas extends Canvas {
     Color col;
 
     Font f;
-    
+
     public XGDcanvas(int w, int h) {
         l=new Vector();
         f=new Font(null,0,12);
@@ -109,7 +109,7 @@ class XGDtext extends XGDobject {
                 rx=x-(((double)w)*h);
             }
             int ix=(int)(rx+0.5), iy=(int)(ry+0.5);
-                       
+
             if (r!=0d) {
                 Graphics2D g2d=(Graphics2D) g;
                 g2d.translate(x,y);
@@ -135,7 +135,7 @@ class XGDfont extends XGDobject {
     String family;
 
     Font font;
-    
+
     public XGDfont(double cex, double ps, double lineheight, int face, String family) {
         System.out.println(">> FONT("+cex+","+ps+","+lineheight+","+face+",\""+family+"\")");
         this.cex=cex; this.ps=ps; this.lineheight=lineheight; this.face=face; this.family=family;
@@ -151,7 +151,7 @@ class XGDfont extends XGDobject {
         c.f=font;
     }
 }
-        
+
 class XGDpolygon extends XGDobject {
     int n;
     double x[],y[];
@@ -220,7 +220,7 @@ class XGDfill extends XGDobject {
                          1f-((float)((col>>24)&255))/255f);
         System.out.println("          "+gc);
     }
-    
+
     public void paint(XGDcanvas c, Graphics g) {
         c.fill=gc;
     }
@@ -301,7 +301,7 @@ public class XGDserver extends Thread {
                 buf[o]=(byte)((v&0xff0000)>>16); o++;
                 buf[o]=(byte)((v&0xff000000)>>24);
             } else {
-                buf[o+3]=(byte)(v&255); 
+                buf[o+3]=(byte)(v&255);
                 buf[o+2]=(byte)((v&0xff00)>>8);
                 buf[o+1]=(byte)((v&0xff0000)>>16);
                 buf[o]=(byte)((v&0xff000000)>>24);
@@ -316,7 +316,7 @@ public class XGDserver extends Thread {
         void setDouble(double d, byte[] buf, int o) {
             setLong(Double.doubleToLongBits(d),buf,o);
         }
-        
+
         void dump(String s, byte[] b) {
             System.out.print(s);
             int i=0;
@@ -326,7 +326,7 @@ public class XGDserver extends Thread {
             }
             System.out.println("");
         }
-        
+
         public void run() {
             try {
                 s.setTcpNoDelay(true); // send packets immediately (important, because R is waiting for the response)
@@ -377,7 +377,7 @@ public class XGDserver extends Thread {
                     }
 
                     //dump("Got pars: ",par);
-                    
+
                     if (cmd == 1) {
                         double w=getDouble(par, 0);
                         double h=getDouble(par, 8);
@@ -443,7 +443,7 @@ public class XGDserver extends Thread {
                         }
                         c.add(new XGDpolygon(pn, x, y, cmd==14));
                     }
-                    
+
                     if (cmd == 18 && c!=null) {
                         c.add(new XGDtext(getDouble(par,0), getDouble(par,8), getDouble(par,16), getDouble(par,24), new String(par,32,par.length-33)));
                     }
@@ -466,7 +466,7 @@ public class XGDserver extends Thread {
                     if (cmd == 0x16 && c!=null) {
                         c.add(new XGDlinePar(getDouble(par,0), getInt(par,8)));
                     }
-                    
+
                     if (cmd == 0x50) {
                         byte[] b = new byte[4*8 + 4];
                         setInt((0x50 | 0x80) | ((4*8)<<8), b, 0);
@@ -483,7 +483,7 @@ public class XGDserver extends Thread {
                         sos.write(b);
                         sos.flush();
                     }
-                    
+
                     if (cmd == 0x51) { // StrWidth
                         String s=new String(par, 0, par.length-1);
                         System.out.println("Request: get string width of \""+s+"\"");
