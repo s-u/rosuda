@@ -12,18 +12,14 @@ package org.rosuda.JGR.toolkit;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
 
 import org.rosuda.JGR.RController;
 
 /**
 * @author Markus
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * 
  */
 public class SyntaxInput extends SyntaxArea implements KeyListener {
 	

@@ -216,6 +216,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, JGR.directory);
+        fopen.setVisible(true);
         if (fopen.getFile() != null) 
             newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
         if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
@@ -312,6 +313,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     public boolean saveFileAs() {
         FileSelector fsave = new FileSelector(this, "Save as...",
                                               FileSelector.SAVE, JGR.directory);
+        fsave.setVisible(true);
         if (fsave.getFile() != null) {
             fileName = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
             return saveFile();

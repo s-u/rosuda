@@ -15,9 +15,6 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.*;
 
 public class JGRObjectManager extends iFrame implements ActionListener, MouseListener {

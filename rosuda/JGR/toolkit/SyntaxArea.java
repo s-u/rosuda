@@ -13,16 +13,10 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.*;
-import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.text.*;
 
 import org.rosuda.JGR.util.*;

@@ -85,6 +85,7 @@ FocusListener, RMainLoopCallbacks {
         output.setEditable(false);
         output.addFocusListener(this);
         output.addKeyListener(this);
+        output.setDragEnabled(true);
 		output.setCaret(new SelectionPreservingCaret());
 
         JScrollPane sp1 = new JScrollPane(output);
@@ -233,6 +234,7 @@ FocusListener, RMainLoopCallbacks {
     public void loadWorkSpace() {
         FileSelector fopen = new FileSelector(this, "Open Workspace",
                                               FileSelector.OPEN, JGR.directory);
+        fopen.setVisible(true);
         if (fopen.getFile() != null) {
             wspace = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
             execute("load(\""+wspace.replace('\\','/')+"\")");
@@ -261,6 +263,7 @@ FocusListener, RMainLoopCallbacks {
     public boolean saveWorkSpaceAs() {
         FileSelector fsave = new FileSelector(this, "Save Workspace as...",
                                               FileSelector.SAVE, JGR.directory);
+        fsave.setVisible(true);
         if (fsave.getFile() != null) {
             String file = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
             saveWorkSpace(file);
@@ -320,9 +323,9 @@ FocusListener, RMainLoopCallbacks {
 
 	public String rChooseFile(Rengine re, int newFile) {
 		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,JGR.directory);
-		//fd.show();
+		fd.setVisible(true);
 		String res=null;
-		if (fd.getDirectory()!=null) res=fd.getDirectory();
+		if (fd.getDirectory()!=null && fd.getFile() != null) res=fd.getDirectory();
 		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
 		return res;
 	}
@@ -339,7 +342,7 @@ FocusListener, RMainLoopCallbacks {
             File hist = new File(filename);
             BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
             Enumeration e = JGR.RHISTORY.elements(); int i = 0;
-            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"\n");
+            while(e.hasMoreElements()) writer.write(e.nextElement().toString()+"#\n");
             writer.flush();
             writer.close();
         } catch (Exception e) {

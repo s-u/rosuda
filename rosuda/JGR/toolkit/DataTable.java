@@ -56,9 +56,7 @@ KeyListener, TableColumnModelListener {
     /** current filename */
     private String fileName = null;
 
-    /** current directory for the FileDialog */
-    private static String directory = System.getProperty("user.home");
-
+    /** Indicates if the user hase modified current datasheet*/
     private boolean modified = false;
 
     private String type = "data.frame";
@@ -327,10 +325,11 @@ KeyListener, TableColumnModelListener {
     }
 
     private void loadData() {
-        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.OPEN,directory);
+        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.OPEN,JGR.directory);
+        fopen.setVisible(true);
         if (fopen.getFile() != null) {
             this.cursorWait();
-            fileName = (directory = fopen.getDirectory()) + fopen.getFile();
+            fileName = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
             try {
                 vs = new SVarSet();
                 BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -475,9 +474,10 @@ KeyListener, TableColumnModelListener {
 
     /** save file as with a new filename*/
     private boolean saveDataAs() {
-        FileSelector fsave = new FileSelector(this,"Save as...",FileSelector.SAVE,directory);
+        FileSelector fsave = new FileSelector(this,"Save as...",FileSelector.SAVE,JGR.directory);
+        fsave.setVisible(true);
         if (fsave.getFile() != null) {
-            fileName = (directory = fsave.getDirectory()) + fsave.getFile();
+            fileName = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
             return saveData();
         }
         return false;
@@ -939,7 +939,7 @@ KeyListener, TableColumnModelListener {
         }
 
         public String[] showInputDialog() {
-            this.show();
+            this.setVisible(true);
             return result;
         }
 

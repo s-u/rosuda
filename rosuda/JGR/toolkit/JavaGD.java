@@ -22,6 +22,8 @@ import org.rosuda.javaGD.GDInterface;
 /** Implementation of JavaGD which uses iFrame instead of Frame */
 public class JavaGD extends GDInterface implements ActionListener, WindowListener {
     iFrame jfr;
+    
+    static int count = 0;
 
     public void     gdOpen(double w, double h) {
         open=true;
@@ -72,14 +74,13 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         }
     }
 
-	String getFileDlg(boolean newFile) {
-		FileDialog fd = new FileDialog(jfr, (!newFile)?"Select a file":"Select a new file", (!newFile)?FileDialog.LOAD:FileDialog.SAVE);
-		fd.show();
+	String getFileDlg(boolean newFile,String suffix) {
+		FileSelector fd = new FileSelector(jfr, (!newFile)?"Select a file":"Select a new file", (!newFile)?FileSelector.LOAD:FileSelector.SAVE,org.rosuda.JGR.JGR.directory);
+		fd.setVisible(true);
 		String res=null;
-		if (fd.getDirectory()!=null) res=fd.getDirectory();
+		if (fd.getDirectory()!=null && fd.getFile() != null) res=fd.getDirectory();
 		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
-		return res;
-	}
+		return res;}
 	
 	String escapeStr(String s) {
 		int i=0;
@@ -99,14 +100,14 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         if (cmd.equals("copyImg"))
             org.rosuda.util.ImageSelection.copyComponent((java.awt.Component)c,false,true);
 		if (cmd.equals("savePDF")) {
-			String fn = getFileDlg(true);
+			String fn = getFileDlg(true,"pdf");
 			if (fn!=null) {
 				fn=escapeStr(fn);
 				org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=pdf, source="+(getDeviceNumber()+1)+", file=\""+fn+"\",onefile=TRUE, paper=\"special\")");
 			}
 		}
 		if (cmd.equals("saveEPS")) {
-			String fn = getFileDlg(true);
+			String fn = getFileDlg(true,"eps");
 			if (fn!=null) {
 				fn=escapeStr(fn);
 				org.rosuda.JRI.Rengine.getMainEngine().eval(".jgr.save.JavaGD.as(useDevice=postscript, "+(getDeviceNumber()+1)+", file=\""+fn+"\",onefile=TRUE, paper=\"special\")");

@@ -19,14 +19,18 @@ import org.rosuda.ibase.*;
 
 public class FileSelector extends JFrame {
 
-    /** OPEN DIALOG */
+    /** @deprecated use LOAD, OPEN DIALOG */
     public final static int OPEN = 0;
+    /** OPEN DIALOG */
+    public final static int LOAD = 0;
     /** SAVE DIALOG */
     public final static int SAVE = 1;
 
     private FileDialog awtDialog = null;
     private JFileChooser swingChooser = null;
 
+    private int type = 0;
+    private Frame f;
 
     /** create a FileDialog, on Mac we use the AWT on others we are currently using SWING
      * @param f parent Frame
@@ -34,15 +38,24 @@ public class FileSelector extends JFrame {
      * @param type OPEN or SAVE
      * @param directory should we start in a specified directory */
     public FileSelector(Frame f, String title, int type,  String directory) {
+        this.type = type;
+        this.f = f;
         if (Common.isMac()) {
             awtDialog = new FileDialog(f,title,type);
             if (directory != null) awtDialog.setDirectory(directory);
-            awtDialog.show();
         }
         else {
             if (directory != null) swingChooser = new JFileChooser(directory);
             else swingChooser = new JFileChooser();
             swingChooser.setDialogTitle(title);
+        }
+    }
+    
+    public void setVisible(boolean b) {
+        if (Common.isMac()) {
+            awtDialog.setVisible(true);
+        }
+        else {
             if(type==OPEN) swingChooser.showOpenDialog(f);
             else if (type==SAVE) swingChooser.showSaveDialog(f);
             else swingChooser.showDialog(f,"OK");
@@ -69,5 +82,15 @@ public class FileSelector extends JFrame {
                 return swingChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
         }
         catch (Exception e) { return null;}
+    }
+
+    public void setFile(String file) {
+        try {
+            if (Common.isMac())
+                awtDialog.setFile(file);
+            else
+                swingChooser.setSelectedFile(new File(file));
+        }
+        catch (Exception e) { }
     }
 }
