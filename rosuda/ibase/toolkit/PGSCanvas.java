@@ -14,6 +14,9 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     /** description of this canvas. */
     String desc="untitled PGS canvas";
 
+    /** plot manager for any additional objects */
+    PlotManager pm;
+
     /** inProgress flag to avoid recursions in paint methods */
     boolean inProgress=false;
 
@@ -51,6 +54,9 @@ public class PGSCanvas extends LayerCanvas implements Commander {
 
     /** abstract paint class to be implemented by any descendants */
     public void paintPoGraSS(PoGraSS g) {};
+
+    /** get the PlotManager associated with this plot */
+    public PlotManager getPlotManager() { return pm; }
 
     /** default handing of commands "exportPGS" and "exportPS". Any descendant should
 	call <code>super.run(o,cmd)</code> to retain this functionality */

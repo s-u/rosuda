@@ -3,12 +3,12 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
-/** implementation of scatterplots
+/** implementation of line plot
     @version $Id$
 */
-class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
-    /** array of two variables (X and Y) */
+    /** variables; 0=x, 1,2,3...=Y */
     SVar v[];
     /** associated marker */
     SMarker m;
@@ -16,7 +16,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     /** flag whether axis labels should be shown */
     boolean showLabels=true;
 
-    /** flag whether jittering shoul dbe used for categorical vars */
+    /** flag whether jittering should be used in case X is categorical */
     boolean jitter=false;
 
     /** flag whether alternative selection style should be used */
@@ -25,13 +25,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false; 
     
-    /** array of two axes (X and Y) */
+    /** array of axes */
     Axis A[];
-
-    /** array of points (in geometrical coordinates) */
-    Point[] Pts;
-    /** # of points */
-    int pts;
 
     int x1, y1, x2, y2;
     boolean drag;
@@ -39,23 +34,37 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     MenuItem MIlabels=null;
 
     int X,Y,W,H, TW,TH;
-
-    /** create a new scatterplot
+    double totMin, totMax;
+    /** create a new lineplot
 	@param f associated frame (or <code>null</code> if none)
 	@param v1 variable 1
 	@param v2 variable 2
 	@param mark associated marker */
-    public ScatterCanvas(Frame f, SVar v1, SVar v2, SMarker mark) {
-        super(4); // 4 layers; 0=base+points, 1=selected, 2=drag, 3=PM
-	setFrame(f); setTitle("Scatterplot ("+v1.getName()+" : "+v2.getName()+")");
-	v=new SVar[2]; A=new Axis[2];
-	v[0]=v1; v[1]=v2; m=mark;
-        A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-        A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
-	pm=new PlotManager(this,A[0],A[1],30,10,10,30);
+    public LineCanvas(Frame f, SVar xv, SVar[] yvs, SMarker mark) {
+        super(3); // 3 layers; 0=base+points, 1=selected, 2=drag
+	setFrame(f); setTitle("Lineplot");
+	v=new SVar[yvs.length+1];
+	A=new Axis[2];
+	m=mark;
+	int i=0;
+	while(i<yvs.length) {
+	    if (i==0) {
+		totMin=yvs[i].getMin(); totMax=yvs[i].getMax();
+	    } else {
+		if (yvs[i].getMin()<totMin) totMin=yvs[i].getMin();
+		if (yvs[i].getMax()>totMax) totMax=yvs[i].getMax();
+	    };
+	    v[i+1]=yvs[i]; i++;
+	};
+	A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
+	A[1].setValueRange(totMin,totMax);
+	if (xv==null) {
+	    xv=new SVar("index.LC");
+	    i=1; while(i<=v[1].size()) { xv.add(new Integer(i)); i++; };
+	};
+	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	setBackground(new Color(255,255,192));
 	drag=false;
-	updatePoints();
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
@@ -68,51 +77,20 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     public Dimension getMinimumSize() { return new Dimension(60,50); };
 
     public void rotate() {
+	/*
 	SVar h=v[0]; v[0]=v[1]; v[1]=h;
 	Axis ha=A[0]; A[0]=A[1]; A[1]=ha;
 	try {
 	    ((Frame) getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
 	} catch (Exception ee) {};
-	updatePoints();
         setUpdateRoot(0);
 	repaint();
+	*/
     };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
-	if((msg.getMessageID()&Common.NM_MASK)==Common.NM_VarChange)
-	    updatePoints();
         setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
         repaint();
-    };
-
-    /** paints partitioning for a single node (and descends recursively) */	
-    public void paintNode(PoGraSS g, SNode n, int x1, int y1, int x2, int y2, boolean sub) {
-	if (n.tmp==2) {
-	    g.setColor("selBg");
-	    g.fillRect(x1,y1,x2-x1,y2-y1);
-	};
-	g.setColor("splitRects");
-	g.drawRect(x1,y1,x2-x1,y2-y1);
-	if (n.isLeaf() || n.isPruned()) return;
-	for(Enumeration e=n.children();e.hasMoreElements();) {
-	    SNode c=(SNode)e.nextElement();
-	    int nx1=x1, nx2=x2, ny1=y1, ny2=y2;
-	    if (c.splitVar==v[0]) {
-		if (!c.splitVar.isCat()) {
-		    int spl=A[0].getValuePos(c.splitValF);
-		    if (c.splitComp==-1) nx2=spl;
-		    if (c.splitComp==1) nx1=spl;
-		};
-	    };
-	    if (c.splitVar==v[1]) {
-		if (!c.splitVar.isCat()) {
-		    int spl=A[1].getValuePos(c.splitValF);
-		    if (c.splitComp==-1) ny1=spl;
-		    if (c.splitComp==1) ny2=spl;
-		};
-	    };
-	    paintNode(g,c,nx1,ny1,nx2,ny2,(n.tmp==2)?true:sub);
-	};
     };
 
     public void paintPoGraSS(PoGraSS g) {
@@ -135,8 +113,16 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	g.defineColor("splitRects",128,128,255);
 
 	Dimension Dsize=getSize();
-	if (Dsize.width!=TW || Dsize.height!=TH)
-	    updatePoints();
+	if (Dsize.width!=TW || Dsize.height!=TH) {
+	    int w=Dsize.width, h=Dsize.height;
+	    TW=w; TH=h;
+	    int innerL=30, innerB=30, lshift=0;
+	    int innerW=w-innerL-10, innerH=h-innerB-10;
+	
+	    A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
+	    A[1].setGeometry(Axis.O_Y,innerB,H=innerH);
+	    Y=TH-innerB-innerH;
+	};
 
 	if (TW<50||TH<50) {
 	    g.setColor("red");
@@ -147,21 +133,6 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 
 	g.setColor("white");
 	g.fillRect(X,Y,W,H);
-
-	SNode cn=(m!=null)?m.getNode():null;
-
-	if (cn!=null) {
-            if (Common.DEBUG>0) System.out.println("ScatterCanvas: current node present, constructing partitions"); 
-	    ((SNode)cn.getRoot()).setAllTmp(0);
-	    SNode t=cn;
-	    t.tmp=2;
-	    while (t.getParent()!=null) {
-		t=(SNode)t.getParent();
-		t.tmp=1;
-	    };
-	    paintNode(g,t,X,Y,X+W,Y+H,false);
-	};
-
         g.setColor("black");
         g.drawLine(X,Y,X,Y+H);
         g.drawLine(X,Y+H,X+W,Y+H);
@@ -189,7 +160,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             while (fi<A[1].vBegin+A[1].vLen) {
-                int t=A[1].getValuePos(fi);
+                int t=TH-A[1].getValuePos(fi);
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
                     g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
@@ -197,72 +168,38 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             };
         }
 
-	g.setColor("point");
-	for (int i=0;i<pts;i++)
-	    if (Pts[i]!=null)
-		g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
-
+	g.setColor("line");
+	for (int j=1;j<v.length;j++) {
+	    for (int i=1;i<v[0].size();i++)
+		g.drawLine(A[0].getCasePos(i-1),TH-A[1].getValuePos(v[j].atD(i-1)),
+			   A[0].getCasePos(i),TH-A[1].getValuePos(v[j].atD(i)));
+	};
+	
         g.nextLayer();
         
+	/*
         if (m.marked()>0) {
             g.setColor("marked");
-            for (int i=0;i<pts;i++)
-                if (Pts[i]!=null && m.at(i))
+            for (int i=0;i<m.size();i++)
+                if (m.at(i))
                     if (selRed)
                         g.fillOval(Pts[i].x-2,Pts[i].y-2,4,4);
                     else
                         g.fillOval(Pts[i].x-1,Pts[i].y-1,3,3);
-        };
+			};*/
                 
-	g.nextLayer();
         if (drag) {
-            /* no clipping
-	    int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
-		dx2=A[0].clip(x2),dy2=A[1].clip(y2);
-            */ int dx1=x1, dx2=x2, dy1=y1, dy2=y2;
+            g.nextLayer();
+	    int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
+		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
 	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
 	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
 	    g.setColor("black");
 	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
 	};
-	g.nextLayer();
-	if (pm!=null) pm.draw(g);
 
 	g.end();
         setUpdateRoot(3); // by default no repaint is necessary unless resize occurs
-    };
-
-    public void updatePoints() {
-	Dimension Dsize=getSize();
-	int w=Dsize.width, h=Dsize.height;
-	TW=w; TH=h;
-	int innerL=30, innerB=30, lshift=0;
-	int innerW=w-innerL-10, innerH=h-innerB-10;
-	boolean xcat=v[0].isCat(), ycat=v[1].isCat();	
-	
-	A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
-	A[1].setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
-	Y=TH-innerB-innerH;
-
-	pts=v[0].size();
-	if (v[1].size()<pts) pts=v[1].size();
-	
-	Pts=new Point[pts];
-        for (int i=0;i<pts;i++) {
-            int jx=0, jy=0;
-            if (v[0].isCat() && jitter) {
-                double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jx=(int)(d*((double)(A[0].getCatLow(v[0].getCatIndex(i))-A[0].getCasePos(i))));
-            }
-            if (v[1].isCat() && jitter) {
-                double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));                
-            }
-	    if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat()))
-		Pts[i]=new Point(jx+A[0].getCasePos(i),jy+A[1].getCasePos(i));
-            else
-		Pts[i]=null;
-        };
     };
 
     public void mouseClicked(MouseEvent ev) 
@@ -288,12 +225,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (!e.isShiftDown()) m.selectNone();
 	
 	drag=false; 
+	/*
 	int i=0;
 	while (i<pts) {
 	    if (Pts[i]!=null && sel.contains(Pts[i]))
 		m.set(i,m.at(i)?setTo:1);
 	    i++;
-	};
+	    }; */
 	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
         setUpdateRoot(1);
 	repaint();	
@@ -343,7 +281,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
         if (cmd=="jitter") {
-            jitter=!jitter; updatePoints(); setUpdateRoot(0); repaint();
+            jitter=!jitter; setUpdateRoot(0); repaint();
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         
@@ -372,7 +310,3 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	run(e.getSource(),e.getActionCommand());
     };
 };
-
-/* Changes Glasgow:
-   - update Notifying to rebuild points on NM_VarChange
-*/
