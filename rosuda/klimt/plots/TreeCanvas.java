@@ -626,7 +626,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		WinTracker.current.rm(myMosaicFrame);
 		myMosaicFrame=null;
 	    }; */
-	    myMosaicFrame=new TFrame(InTr.lastTreeFileName+" (treemap)");
+	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)");
 	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root));
 	    myMosaicFrame.addWindowListener(Common.defaultWindowListener);
 	    myMosaic.setBounds(0,0,400,300);
