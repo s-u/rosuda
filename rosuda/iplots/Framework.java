@@ -404,9 +404,6 @@ public class Framework implements Dependent, ActionListener {
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        for (i = 0; i < vs.count(); i++)
-    		System.out.println(vs.at(i));
-        
         PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(400,300));
