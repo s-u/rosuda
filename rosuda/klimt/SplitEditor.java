@@ -125,7 +125,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             SVar rxv=new SVarObj("RankedXV",false);
             int []fullrks=cv.getRanked();
             sw.profile("innerPlots: cv.getRanked");
-            int []rks=new int[n.data.size()];
+            int []rks=new int[n.data.length];
             int rki=0;
             double D=0;
             SVar rsp=root.getRootInfo().response;
@@ -133,13 +133,18 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             double sumL=0, sumR=0; // regr: sum of y[i] left/right
             int trct=0;
 
-            for (int ix=0;ix<fullrks.length;ix++)
-                if (n.data.contains(new Integer(fullrks[ix]))) {
+            int map[] = new int[fullrks.length];
+            int ix=0;
+            while (ix<n.data.length) { map[n.data[ix]]=1; ix++; } // build a temporary map
+            for (ix=0;ix<fullrks.length;ix++) {
+                if (map[fullrks[ix]]==1) {
                     rks[rki++]=fullrks[ix];
                     if (!isCat && rsp.at(fullrks[ix])!=null) {
                         sumR+=rsp.atD(fullrks[ix]); trct++;
                     }
-                };
+                }
+            }
+            map=null;
 
             /* experimental speedup (not working :P)
             {
@@ -166,7 +171,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             double mnL=0.0, mnR=0.0; // regr: mean left/right
             if (!isCat) {
                 mnR=sumR/((double)trct);
-                for(int ix=0;ix<rks.length;ix++)
+                for(ix=0;ix<rks.length;ix++)
                     if(rsp.at(rks[ix])!=null)
                         D+=(rsp.atD(rks[ix])-mnR)*(rsp.atD(rks[ix])-mnR);
             }
@@ -193,11 +198,14 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             }
             int lct=0, eq=0;
             boolean isOpt=false;
-            double lv=0, devL=0, devR=D;
+            double lv=0, devL=0, devR=D, minX=0, maxX=0;
             q=0;
             double XdevL=devL, XdevR=devR; // experimental
             while(q<rks.length) {
                 lv=cv.atD(rks[q]);
+                if (q==0) { minX=lv; maxX=lv; }
+                else if (minX>lv) minX=lv;
+                else if (maxX<lv) maxX=lv;
                 if (isOpt)
                     optSP=(lv+maxDP)/2;
                 eq=0;
@@ -267,8 +275,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             //pp.add(new ScatterCanvas(this,rxv,sdv,m));
             lc.setLineType(LineCanvas.LT_RECT);
             pp.add(lc);
+            sc.getXAxis().setValueRange(minX, maxX-minX);
             lc.getXAxis().setValueRange(sc.getXAxis().vBegin,sc.getXAxis().vLen);
-            lc.getYAxis().setValueRange(0,(maxD>n.sampleDevGain)?maxD:n.sampleDevGain);
+            //lc.getYAxis().setValueRange(0,(maxD>n.sampleDevGain)?maxD:n.sampleDevGain);
+            lc.getYAxis().setValueRange(0,n.sampleDevGain);
             PlotManager pm=sc.getPlotManager();
             if (pm!=null) {
                 li=new PlotLine(pm);
@@ -314,14 +324,11 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             double sumL=0, sumR=0;
             int ctl=0, ctr=0;
             int i=0,j;
-            while(i<n.data.size()) {
-                Integer iN=(Integer)n.data.elementAt(i);
-                if (iN!=null) {
-                    j=iN.intValue();
-                    double pv=response.atD(j);
-                    if (cv.atD(j)<=v) { sumL+=pv; ctl++; }
-                    else { sumR+=pv; ctr++; }
-                }
+            while(i<n.data.length) {
+                j=n.data[i];
+                double pv=response.atD(j);
+                if (cv.atD(j)<=v) { sumL+=pv; ctl++; }
+                else { sumR+=pv; ctr++; }
                 i++;
             }
             double pvL=(ctl>0)?sumL/((double)ctl):0;
@@ -412,22 +419,28 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                             gt.setParameter("selectedOnly",Boolean.TRUE);
                             gt.setParameter("registerTree",Boolean.FALSE);
                         }
+                        int cs=cv.size();
                         SMarker bak=vs.getMarker();
-                        SMarker ml=new SMarker(cv.size());
-                        SMarker mr=new SMarker(cv.size());
+                        SMarker ml=new SMarker(cs);
+                        SMarker mr=new SMarker(cs);
                         int i=0;
-                        Vector leftd=new Vector(), rightd=new Vector();
+                        int leftd[]=new int[cs]; int lefts=0;
+                        int rightd[]=new int[cs]; int rights=0;
+                        int map[] = new int[cs];
+                        while (i<n.data.length) { map[n.data[i]]=1; i++; } // build a temporary map
+                        i=0;
                         while(i<cv.size()) {
                             Object o=cv.at(i);
-                            if (o!=null && n.data.contains(new Integer(i))) {
+                            if (o!=null && map[i]==1) {
                                 try {
                                     double v=((Number)o).doubleValue();
-                                    if (v<=spVal) { ml.set(i,true); leftd.addElement(new Integer(i)); };
-                                    if (v>spVal) { mr.set(i,true); rightd.addElement(new Integer(i)); };
+                                    if (v<=spVal) { ml.set(i,true); leftd[lefts++]=i; };
+                                    if (v>spVal) { mr.set(i,true); rightd[rights++]=1; };
                                 } catch(Exception ex) {};
                             }
                             i++;
                         }
+                        map=null;
                         if (Global.DEBUG>0)
                             System.out.println("Markers: ml="+ml.marked()+", mr="+mr.marked());
                         vs.setMarker(ml);
@@ -471,9 +484,10 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         if (!single)
                             gt.donePlugin();
                         else {
-                            leftb.data=leftd; rightb.data=rightd;
-                            leftb.Cases=leftb.data.size();
-                            rightb.Cases=rightb.data.size();
+                            leftb.data=new int[lefts]; System.arraycopy(leftd,0,leftb.data,0,lefts);
+                            rightb.data=new int[rights]; System.arraycopy(rightd,0,rightb.data,0,rights);
+                            leftb.Cases=lefts;
+                            rightb.Cases=rights;
                             leftb.Name="left"; rightb.Name="right";
                             leftb.vset=rightb.vset=vs;
                         }

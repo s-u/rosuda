@@ -369,12 +369,10 @@ public class VarFrame extends TFrame {
                     }
                     String tn="new.tree."+(VarFrame.newRootId++);
                     SNode t=new SNode();
-                    t.data=new Vector();
                     int i=0;
                     int cn=vc.vs.at(0).size();
-                    while (i<cn) {
-                        t.data.add(new Integer(i++));
-                    }
+                    t.data=new int[cn];
+                    while (i<cn) { t.data[i]=i; i++; }
                     t.vset=vc.vs;
                     t.Cases=cn;
                     t.Name="root";

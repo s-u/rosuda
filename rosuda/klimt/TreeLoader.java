@@ -565,10 +565,12 @@ remark: this method can be used to load trees and data separately, but data must
                         if (gotData) { // create data index for the current node
                             if (ct==null) {
                                 int I=0, L=(vset.at(0)!=null)?vset.at(0).size():0;
-                                sn.data=new Vector((L<5)?5:L);
-                                while (I<L) { sn.data.addElement(new Integer(I)); I++; };
+                                sn.data=new int[L];
+                                while (I<L) { sn.data[I]=I; I++; };
                             } else {
-                                sn.data=new Vector();
+                                sn.data=new int[0];
+                                int dv[]=new int[ct.data.length];
+                                int dvs=0;
                                 int split, cmp=0;
                                 split=sn.Cond.indexOf(':');
                                 if (split<0) { // problem with = is that it may be part of <= or >=
@@ -610,9 +612,9 @@ remark: this method can be used to load trees and data separately, but data must
                                         };
                                         sn.splitVal=cond;
                                         sn.splitValF=limit;
-                                        for (Enumeration e=ct.data.elements(); e.hasMoreElements();) {
-                                            Object o=e.nextElement();
-                                            int I=((Integer)o).intValue();
+                                        int ei=0;
+                                        while (ei<ct.data.length) {
+                                            int I=ct.data[ei++];
                                             if (I<V.size()) {
                                                 if (lexi) {
                                                     Object oo=V.at(I);
@@ -625,41 +627,44 @@ remark: this method can be used to load trees and data separately, but data must
                                                             if (cr>0) cr=1;
                                                             if (cr<0) cr=-1;
                                                             if (cr==cmp)
-                                                                sn.data.addElement(o);
+                                                                dv[dvs++]=I;
                                                         };
                                                     } else {
                                                         int cr=oo.toString().compareTo(cond);
                                                         if (cr>0) cr=1;
                                                         if (cr<0) cr=-1;
-                                                        if (cr==cmp) sn.data.addElement(o);
-                                                    };
+                                                        if (cr==cmp) dv[dvs++]=I;
+                                                    }
                                                 } else {
                                                     if (!V.isMissingAt(I)) {
                                                         double F=V.atF(I);
                                                         if (((cmp==0)&&(F==limit))||
                                                             ((cmp==-1)&&(F<limit))||
-                                                            ((cmp==1)&&(F>limit))) sn.data.addElement(o);
-                                                    };
-                                                };
-                                            };
-                                        };
-                                    };
-                                };
-                            };
-                        };
-
-
+                                                            ((cmp==1)&&(F>limit))) dv[dvs++]=I;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                if (dvs>0) {
+                                    sn.data=new int[dvs];
+                                    System.arraycopy(dv,0,sn.data,0,dvs);
+                                }
+                                dv=null;
+                            }
+                        }
                         if (ct==null) {
                             root=ct=sn;
                             cl=1;
                         } else {
                             ct.add(sn);
                             if (!isLast) { ct=sn; cl++; };
-                        };
-                    };
-                };
-	    };
-	};
+                        }
+                    }
+                }
+	    }
+	}
 
         if (curPolySV!=null && mses!=null) {
             if (msid>=0) {

@@ -95,7 +95,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     };
 
     public void paintNode(PoGraSS g, SNode n, int x1, int y1, int x2, int y2, boolean vertical) {
-	int myCases=n.data.size();
+	int myCases=n.data.length;
 	int im=0;
         float[] scc=Common.selectColor.getRGBComponents(null);
 
@@ -124,23 +124,24 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	    g.fillRect(x1,y1,x2-x1,y2-y1);	    
 
 	    int dMark=0; // # of selected cases in the node
-            if ((m!=null)&&(n.data!=null))
-                for (Enumeration e=n.data.elements(); e.hasMoreElements();) {
-                    int ix=((Integer)e.nextElement()).intValue();
-                    if (m.at(ix)) dMark++;
-                };
-
+            if ((m!=null)&&(n.data!=null)) {
+                int e=0;
+                while (e<n.data.length) {
+                    if (m.at(n.data[e++])) dMark++;
+                }
+            }
+            
             if(dMark>0) {
                 if (shading)
                     g.setColor((int)(scc[0]*((float)level)),(int)(scc[1]*((float)level)),(int)(scc[2]*((float)level)));
                 else
                     g.setColor("marked");
                 g.fillRect(x1,y1+(y2-y1)*(myCases-dMark)/myCases,x2-x1,y2-y1-(y2-y1)*(myCases-dMark)/myCases);
-            };
+            }
 	    g.setColor("splitRects");
 	    g.drawRect(x1,y1,x2-x1,y2-y1);
 	    return;
-	};
+	}
 
 	int start=0, totalSpace=0;
 	if (vertical) {
@@ -149,7 +150,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	} else {
 	    totalSpace=y2-y1-2*n.count()+2;
 	    start=y1;
-	};
+	}
 	for(Enumeration e=n.children();e.hasMoreElements();) {
 	    SNode c=(SNode)e.nextElement();
 	    boolean empty=false;
@@ -242,13 +243,14 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 		    if (!ev.isShiftDown()) m.selectNone();
 
 		    if ((m!=null)&&(ng.n.data!=null)) {
-			for (Enumeration e2=ng.n.data.elements(); e2.hasMoreElements();) {
-			    int j=((Integer)e2.nextElement()).intValue();
-			    m.set(j,m.at(j)?setTo:true);
-			};
+                        int e2=0;
+                        while (e2<ng.n.data.length) {
+			    int j=ng.n.data[e2++];
+                            m.set(j,m.at(j)?setTo:true);
+			}
 			m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-		    };
-		};
+		    }
+		}
                 if (isQuery) {
                     SNode n=ng.n;
                     String qs="node:"+n;

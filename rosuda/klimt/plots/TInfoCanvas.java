@@ -63,21 +63,19 @@ class TInfoCanvas extends DBCanvas
 		SMarker m=cn.getSource().getMarker();
 		int dMark=0, dTot=0;
 		if (m!=null) {
-		    if ((m!=null)&&(cn.data!=null))
-			for (Enumeration e=cn.data.elements(); e.hasMoreElements();) {
-			    int ix=((Integer)e.nextElement()).intValue();
-			    if (m.at(ix)) dMark++;
-			    dTot++;
-			};
-		    
-		    g.drawString("Total selected: "+m.marked()+" of "+m.size(),15,90);
-		    g.drawString("Node selected: "+dMark+" of "+dTot,15,104);
-		};
+                    if ((m!=null)&&(cn.data!=null)) {
+                        while (dTot<cn.data.length) {
+                            if (m.at(cn.data[dTot++])) dMark++;
+                        }
+                    }
+                    g.drawString("Total selected: "+m.marked()+" of "+m.size(),15,90);
+                    g.drawString("Node selected: "+dMark+" of "+dTot,15,104);
+                }
 		//g.drawString("Split value: "+cn.splitVal,15,104);	    
-	    };
+	    }
 	} else {
 	    g.drawString("Cases: "+cn.Cases,15,20);
-	};
+	}
 	g.setFont(fo);
 	g.setColor(Color.black);
 	int yp=det?118:37, cln=1;

@@ -171,12 +171,8 @@ public class Klimt
         }
 	n.Cases=t.Cases; n.Cond=t.Cond;
         if (deepCopy) {
-            /*BEGINNEW*/
-            n.data=new Vector(t.data);
-            /*ELSEOLD*
-            n.data=new Vector();
-            int i=0; while(i<t.data.size()) { n.data.addElement(t.data.elementAt(i)); i++; };
-            *ENDNEW*/
+            n.data=new int[t.data.length];
+            System.arraycopy(t.data,0,n.data,0,t.data.length);
         } else
             n.data=t.data;
         n.F1=t.F1; n.Name=t.Name; n.sel=0; n.id=t.id;
@@ -548,8 +544,9 @@ public class Klimt
                 if (!isCat || j>-1) {
                     int[] right=null;
                     if (isCat) right=new int[cat.length];
-                    for (Enumeration f=n.data.elements(); f.hasMoreElements();) {
-                        int cid=((Integer)f.nextElement()).intValue();
+                    int f=0;
+                    while (f<n.data.length) {
+                        int cid=n.data[f++];
                         if (cid>=0 && cid<maxid) {
                             if (isCat) cl[cid]=j; //nid[cid]=n.id;
                             nod[cid]=n;
@@ -557,16 +554,17 @@ public class Klimt
                                 int ci=cv.getCatIndex(cid);
                                 if (ci>-1 && ci<right.length) right[ci]++;
                             }
-                        };
-                    };
+                        }
+                    }
                     if (isCat && rccv!=null) {
-                        for (Enumeration f=n.data.elements(); f.hasMoreElements();) {
-                            int cid=((Integer)f.nextElement()).intValue();
+                        f=0;
+                        while (f<n.data.length) {
+                            int cid=n.data[f++];
                             if (cid>=0 && cid<maxid) {
                                 cl[cid]=j;
                                 int ci=cv.getCatIndex(cid);
                                 if (ci>-1 && ci<right.length)
-                                    cf[cid]=((double)right[ci])/((double)n.data.size());
+                                    cf[cid]=((double)right[ci])/((double)n.data.length);
                             }
                         }
                     }

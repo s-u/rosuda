@@ -71,7 +71,7 @@ public class TreeRegistry {
                             if (!np.isLeaf()) {
                                 SNode n=(SNode)np.at(0);
                                 if (n!=null) {
-                                    p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
+                                    p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.length+"\t"+np.getLevel());
                                 };
                             }
                         }
@@ -132,10 +132,10 @@ public class TreeRegistry {
                         SNode n=(SNode)np.at(0);
                         if (n!=null) {
                             if (Global.DEBUG>0)
-                                System.out.println(te.name+", var="+n.splitVar.getName()+", cond="+n.Cond+", svF="+n.splitValF+", F1="+np.F1+", dg="+np.devGain+", cases="+n.Cases+", sd="+np.sampleDev+", sdg="+np.sampleDevGain+", ds="+np.data.size()+", lev="+np.getLevel());
+                                System.out.println(te.name+", var="+n.splitVar.getName()+", cond="+n.Cond+", svF="+n.splitValF+", F1="+np.F1+", dg="+np.devGain+", cases="+n.Cases+", sd="+np.sampleDev+", sdg="+np.sampleDevGain+", ds="+np.data.length+", lev="+np.getLevel());
                             v_tree.add(te.name); v_var.add(n.splitVar.getName());
                             v_root.add(te.root);
-                            v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
+                            v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.length));
                             v_tcases.add(new Integer(np.Cases)); v_bid.add(new Integer(np.getBinaryID()));
                             v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
                             v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));

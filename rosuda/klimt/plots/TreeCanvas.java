@@ -434,15 +434,16 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             };
             */
             // get # of marked cases (dMark) and total # of cases (dTotal) in that node
-            if (t.data!=null) dTotal=t.data.size();
+            if (t.data!=null) dTotal=t.data.length;
             if (t.getSource()!=null) {
                 SMarker m=t.getSource().getMarker();
-                if ((m!=null)&&(t.data!=null))
-                    for (Enumeration e=t.data.elements(); e.hasMoreElements();) {
-                        int ix=((Integer)e.nextElement()).intValue();
-                        if (m.at(ix)) dMark++;
-                    };
-            };
+                if ((m!=null)&&(t.data!=null)) {
+                    int e=0;
+                    while (e<t.data.length) {
+                        if (m.at(t.data[e++])) dMark++;
+                    }
+                }
+            }
 
             // eqi-mode + marked => rectangular shadow
             /*
@@ -1012,22 +1013,23 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			if (Common.getSelectMode(ev)==0) m.selectNone();
 			
 			if ((m!=null)&&(n.data!=null)) {
-			    for (Enumeration e2=n.data.elements(); e2.hasMoreElements();) {
-				int j=((Integer)e2.nextElement()).intValue();
+                            int e2=0;
+                            while (e2<n.data.length) {
+                                int j=n.data[e2++];
 				m.set(j,m.at(j)?setTo:true);
-			    };
+			    }
 			    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));                            
-			};
-		    };
+			}
+		    }
 
                     if (Common.isQueryTrigger(ev)) {
                         queryNode(n,Common.isExtQuery(ev));
                         killQuery=false;
                     }
-                };
+                }
                 if (gotSel) break;
-	    };
-	};
+	    }
+	}
 
 	if(nodeSel || deSelNode) {
 	    for (Enumeration e=nod.elements(); e.hasMoreElements();) {
