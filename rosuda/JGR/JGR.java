@@ -37,7 +37,7 @@ public class JGR {
 	/* Copyright information and other stuff */
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.1a-pre";
+	public static final String VERSION = "1.1a";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -192,6 +192,7 @@ public class JGR {
 			System.exit(1);
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
+		R.eval("setwd(\""+JGRPrefs.WorkingDirectory+"\")");
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
