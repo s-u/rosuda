@@ -338,12 +338,12 @@ public class Framework implements Dependent, ActionListener {
     /** display a new histogram of a variables from current dataset
         @param v variable ID
         @return histogram canvas object */
-    public HistCanvasNew newHistogram(int v) { return newHistogram(cvs,v); };
-    public HistCanvasNew newHistogram(SVarSet vs, int i) {
+    public HistCanvas newHistogram(int v) { return newHistogram(cvs,v); };
+    public HistCanvas newHistogram(SVarSet vs, int i) {
         updateMarker(vs,i);
 	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
 	f.addWindowListener(Common.getDefaultWindowListener());
-	HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker());
+	HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker());
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
 	hc.setSize(new Dimension(400,300));
 	f.add(hc); f.pack(); f.show();
