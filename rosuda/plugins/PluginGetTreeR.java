@@ -12,6 +12,8 @@ import org.rosuda.klimt.*;
 import org.rosuda.JRclient.*;
 import org.rosuda.util.*;
 
+import javax.swing.*;
+
 /* generate tree plugin */
 
 public class PluginGetTreeR extends Plugin implements ActionListener {
@@ -243,76 +245,87 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
                 Check the boolean "cancel" variable to see if the cause was error or cancel */
     public boolean pluginDlg(Frame f) {
         Button b=null, b2=null; cancel=false;
-        d=new Dialog(f,"Generate Tree Plug-in",true);
-        d.setBackground(Color.white);
-        d.setLayout(new BorderLayout());
-        d.add(new SpacingPanel(),BorderLayout.WEST);
-        d.add(new SpacingPanel(),BorderLayout.EAST);
-        Panel bp=new Panel(); bp.setLayout(new FlowLayout());
-        bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
-        d.add(bp,BorderLayout.SOUTH);
+        JDialog jd=new JDialog(f,"Generate Tree Plug-in",true);
+        d=jd;
+        //d.setBackground(Color.white);
+        Container rp=jd.getContentPane();
+        rp.setLayout(new BorderLayout());
+        rp.add(new JSpacingPanel(),BorderLayout.WEST);
+        rp.add(new JSpacingPanel(),BorderLayout.EAST);
+        JPanel bp=new JPanel(new FlowLayout());
+        bp.add(b=new Button("OK"));
+        bp.add(b2=new Button("Cancel"));
+        rp.add(bp,BorderLayout.SOUTH);
         Choice c=new Choice();
         int j=0,lniv=0,lct=0; boolean frv=false;
         while(j<vs.count()) {
             if (!vs.at(j).isInternal()) { lniv=j; lct++; } // consider non-internal variables only
             j++;
         };
-        List l=new List((lct>10)?10:lct,true);
+        Vector pv=new Vector();
+        Vector vsel=new Vector();
         j=0;
 	int ji=0;
+        int totNSel=0;
         while(j<vs.count()) {
             if (!vs.at(j).isInternal()) { // consider non-internal variables only
                 c.add(vs.at(j).getName());
                 if (vs.at(j)==resp) {
                     c.select(vs.at(j).getName());
                     frv=true;
-                };
-                l.add(vs.at(j).getName());
+                }
+                pv.add(vs.at(j).getName());
+                boolean selMe=false;
 		if (pred!=null) {
 		    int jj=0; while(jj<pred.length) {
-			if (pred[jj]==j)
-			    l.select(ji);
+			if (pred[jj]==j) {
+			    selMe=true; break;
+                        }
 			jj++;
-		    };
-		};
+		    }
+		} else selMe=true;
+                if (selMe) totNSel++;
+                vsel.add(new Boolean(selMe));
 		ji++;
             }
             j++;
         }
-        j=0; 
-	if (pred==null)
-	    while(j<lct) {
-		l.select(j); 
-		j++;
-	    }
+        JList l=new JList(pv);
+        int[] si=new int[totNSel];
+        j=0; int six=0;
+        while(j<lct) {
+            if (((Boolean)vsel.elementAt(j)).booleanValue())
+                si[six++]=j;
+            j++;
+        }
+        l.setSelectedIndices(si);
+        si=null; vsel=null; pv=null;
         if (!frv)
             c.select(vs.at(lniv).getName());
-        Panel p=new Panel();
-        p.setLayout(new BorderLayout());
-        d.add(p);
-        Panel lp=new Panel();
-        lp.setLayout(new FlowLayout());
-        lp.add(new Label("     Using R "+Rver+" in "+Rbin+"     "));
-        d.add(lp,BorderLayout.NORTH);
+        JPanel p=new JPanel(new BorderLayout());
+        rp.add(p);
+        JPanel lp=new JPanel(new FlowLayout());
+        lp.add(new JLabel("     Using R "+Rver+" in "+Rbin+"     "));
+        rp.add(lp,BorderLayout.NORTH);
         p.add(l,BorderLayout.NORTH);
         
-        Panel bPanel=new Panel();
-        TextField t=new TextField((treeOpt==null)?"":treeOpt,30);
+        JPanel bPanel=new JPanel();
+        JTextField t=new JTextField((treeOpt==null)?"":treeOpt,30);
         GridBagLayout gbl=new GridBagLayout();
         bPanel.setLayout(gbl);
         GridBagConstraints gcw = new GridBagConstraints();
         GridBagConstraints gce = new GridBagConstraints();
         gcw.gridx=0; gcw.anchor=GridBagConstraints.EAST;
         gce.gridx=1; gce.anchor=GridBagConstraints.WEST;
-        gbl.setConstraints(bPanel.add(new Label("Response: ")),gcw);
+        gbl.setConstraints(bPanel.add(new JLabel("Response: ")),gcw);
         gbl.setConstraints(bPanel.add(c),gce);
-        gbl.setConstraints(bPanel.add(new Label("Library:" )),gcw);
+        gbl.setConstraints(bPanel.add(new JLabel("Library: " )),gcw);
         Choice chLibrary=new Choice();
         chLibrary.add("rpart");
         chLibrary.add("tree");
         if (lib!=null) chLibrary.select(lib);
         gbl.setConstraints(bPanel.add(chLibrary),gce);
-        gbl.setConstraints(bPanel.add(new Label("Parameters: ")),gcw);
+        gbl.setConstraints(bPanel.add(new JLabel("Parameters: ")),gcw);
         gbl.setConstraints(bPanel.add(t),gce);
         p.add(bPanel,BorderLayout.SOUTH);
         d.pack();
@@ -329,9 +342,9 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         resp=vs.byName(c.getSelectedItem());
         j=0;
         boolean inclResp=false;
-        String [] sel=l.getSelectedItems();
+        int[] sel=l.getSelectedIndices();
         while(j<sel.length) {
-            int vi=vs.indexOf(sel[j]);
+            int vi=sel[j];
             if (vi>=0) vc++;
             if (vi==ri) inclResp=true;
             j++;
@@ -344,7 +357,7 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
         j=0;
         pred=new int[vc]; int k=0;
         while(j<sel.length) {
-            int vi=vs.indexOf(sel[j]);
+            int vi=sel[j];
             if (vi>=0 && vi!=ri) {
                 pred[k]=vi; k++;
             }
