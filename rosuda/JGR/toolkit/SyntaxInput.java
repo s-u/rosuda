@@ -51,6 +51,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     }
 	
     private String getLastCommand() {
+		if (funHelpTip != null) funHelpTip.hide();
         String word = null;
         String text = this.getText();
         int pos = this.getCaretPosition();
@@ -59,12 +60,16 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         if (lasteb > lastb) return null;
         if (lastb < 0) lastb = text.indexOf('(',pos);
         if (lastb < 0) return null;
-        if (pos < 0) return null;
+		if (pos < 0) return null;
         int line, loffset, lend;
-        try {
+		try {
         	line = this.getLineOfOffset(pos);
         	loffset = this.getLineStartOffset(line);
         	lend = this.getLineEndOffset(line);
+			if (lastb > lend) {
+				System.out.println(lastb+" "+lend);
+				return null;
+			}
         }
         catch (Exception e) { return null; }
         if (text.substring(loffset,pos).indexOf("#") >= 0) return null; //comment line
@@ -77,6 +82,14 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             pos--;
         }
         offset = offset==-1?0:offset;
+		try {
+        	line = this.getLineOfOffset(this.getCaretPosition());
+        	loffset = this.getLineStartOffset(line);
+        	lend = this.getLineEndOffset(line);
+			if (offset < loffset || end > lend) return null;
+        }
+        catch (Exception e) { return null; }
+		if (this.getCaretPosition() < offset) return null;
         end = ++lastb;
         return (offset!=end)?text.substring(offset,end).trim():null;
     }
@@ -233,6 +246,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             mComplete.setVisible(false);
             if (funHelpTip != null) funHelpTip.hide();
         }
+		if (ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) {
+			if (funHelpTip != null) funHelpTip.hide();
+		}
     }
     
     private boolean isHelpAgentWanted() {
