@@ -26,5 +26,6 @@ public class RootInfo {
     /** associated frame */
     public TFrame frame;
 
-    
+    /** tree registry containing this tree (in general a tree should be in one registry only) */
+    public TreeRegistry home;
 }
