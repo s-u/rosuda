@@ -67,19 +67,23 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
     }
 
     public void handleOpenFile(File fileName) {
-        TFrame f=new TFrame("KLIMT "+Common.Version,TFrame.clsTree);
         SVarSet tvs=new SVarSet();
-        SNode t=InTr.openTreeFile(f,fileName.getAbsolutePath(),tvs);
+        Frame df=new Frame();
+        SNode t=InTr.openTreeFile(df,fileName.getAbsolutePath(),tvs);
         if (t==null && tvs.count()<1) {
-            f=null;
-            new MsgDialog(f,"Load Error","I'm sorry, but I was unable to load the file you selected.");
+            new MsgDialog(df,"Load Error","I'm sorry, but I was unable to load the file you selected.");
+            df=null;
         } else {
-            f.setTitle(tvs.getName());
+            df=null;
             Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
             Common.screenRes=sres;
-            if (t!=null)
+            if (t!=null) {
+                TFrame f=new TFrame(tvs.getName()+" tree",TFrame.clsTree);
                 InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
+            }
             VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+            if (SplashScreen.main!=null)
+                SplashScreen.main.setVisible(false);
         }
     }
 
