@@ -53,6 +53,7 @@ public class JavaGD implements WindowListener {
     }
     
     public void     gdActivate() {
+        if (f!=null) f.requestFocus();
     }
 
     public void     gdCircle(double x, double y, double r) {
@@ -61,7 +62,8 @@ public class JavaGD implements WindowListener {
     }
     
     public void     gdClip(double x0, double x1, double y0, double y1) {
-        // FixME
+        if (c==null) return;
+        c.add(new GDClip(x0, y0, x1, y1));
     }
 
     public void     gdClose() {
@@ -126,12 +128,12 @@ public class JavaGD implements WindowListener {
 
     public void     gdPolygon(int n, double[] x, double[] y) {
         if (c==null) return;
-        c.add(new GDPolygon(n, x, y, true));
+        c.add(new GDPolygon(n, x, y, false));
     }
     
     public void     gdPolyline(int n, double[] x, double[] y) {
         if (c==null) return;
-        c.add(new GDPolygon(n, x, y, false));
+        c.add(new GDPolygon(n, x, y, true));
     }
     
     public void     gdRect(double x0, double y0, double x1, double y1) {
