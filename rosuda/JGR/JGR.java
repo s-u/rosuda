@@ -20,6 +20,7 @@ import org.rosuda.JRI.*;
 import org.rosuda.JGR.rhelp.*;
 import org.rosuda.JGR.toolkit.*;
 import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
 
 public class JGR {
@@ -31,8 +32,8 @@ public class JGR {
     public static String[] RLIBS;
     public static Rengine R = null;
     public static ConsoleSync rSync = new ConsoleSync();
+
     public static boolean STARTED = false;
-    public static boolean READY = false;
 
     public static Vector DATA = new Vector();
     public static Vector MODELS = new Vector();
@@ -43,13 +44,13 @@ public class JGR {
 
     private static JGRListener jgrlistener  = null;
 
-    public static SplashScreen splash;
+    public static org.rosuda.JGR.toolkit.SplashScreen splash;
 
     public JGR() {
         SVar.int_NA=-2147483648;
-        Platform.initPlatform("org.rosuda.JGR.toolkit.");
+        org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
         iPreferences.initialize();
-        splash = new SplashScreen();
+        splash = new org.rosuda.JGR.toolkit.SplashScreen();
         splash.start();
         readHistory();
         MAINRCONSOLE = new RConsole();
@@ -79,6 +80,14 @@ public class JGR {
     }
 
     public static String exit() {
+        Enumeration e = WinTracker.current.elements();
+        while (e.hasMoreElements()) {
+            WTentry we = (WTentry) e.nextElement();
+            if (we.wclass == iFrame.clsEditor) {
+                if (!((REditor) we.w).exit()) return null;
+            }
+        }
+
         int exit = JOptionPane.showConfirmDialog(null, "Save workspace?",
                                                  "Close JGR",
                                                  JOptionPane.
@@ -137,11 +146,6 @@ public class JGR {
         for (int i = 0; i < words.length; i++) iPreferences.KEYWORDS.put(words[i],dummy);
     }
 
-    public static void installPackages(String[] pkgs) {
-        //for(int i = 0; i < pkgs.length; i++) System.out.println(pkgs[i]);
-    }
-
-
     public static void readHistory() {
         File hist = null;
         try {
@@ -179,10 +183,9 @@ public class JGR {
 
     public static void main(String[] args) {
         try {
-            JGR JGR1 = new JGR();
+            new JGR();
         }
         catch (Exception e) {
-            e.printStackTrace();
             new iError(e);
         }
     }

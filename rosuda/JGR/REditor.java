@@ -69,7 +69,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
             "+", "Tools", "Increase", "fontBigger", "Decrease Font",
             "fontSmaller", "-", "@FFind", "find", "@GFind Next", "findnext",
             "~Window",
-            "~Help", "R Help", "rhelp", /*"JJGR FAQ", "jrfaq",*/ "~About", "0"};
+            "~Help", "R Help", "rhelp", "~About", "0"};
         iMenu.getMenu(this, this, Menu);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
@@ -92,13 +92,11 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
             rm.add(ca);
             if (i==0) ca.setEnabled(false);
         }
-        
+
 
         editDoc.addUndoableEditListener(undoMgr);
 
-        //Ruler ruler = new Ruler(editArea);
         scrollArea.getViewport().add(editArea);
-        //scrollArea.setColumnHeaderView(ruler);
 
         caretStatus.setMinimumSize(new Dimension(100, 15));
         caretStatus.setPreferredSize(new Dimension(100, 15));
@@ -141,7 +139,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
 
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
-                exit(); //we have to ask the user something about what to do with the current file
+                exit();
             }
         });
         editArea.addCaretListener(caretStatus);
@@ -149,10 +147,8 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         editArea.addKeyListener(this);
         editArea.setToolTipText(fileName == null ? "Editor" : fileName);
         editArea.setWordWrap(false);
-        //editArea.setContentType("text/html");
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         this.setMinimumSize(new Dimension(600,600));
-        //this.setSize(new Dimension(600,800));
         this.setSize(new Dimension(600,
                                    Common.screenRes.height < 800 ?
                                    Common.screenRes.height - 50 : 700));
@@ -221,27 +217,35 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         return buttons;
     }
 
-    public void exit() {
-        //System.out.println("tabsize "+editArea.getTabSize());
-        editArea.setTabSize(4);
-        //System.out.println("tabsize "+editArea.getTabSize());
+    public boolean exit() {
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-            if (i==1) dispose();
-            else if (i==0 && saveFile()) dispose();
+            if (i==1) {
+                dispose();
+                return true;
+            }
+            else if (i==0 && saveFile()) {
+                dispose();
+                return true;
+            }
+            else return false;
         }
-        else dispose();
+        else {
+            dispose();
+            return true;
+        }
     }
 
     public void open() {
+        if (modified) {
+            int i = JOptionPane.showConfirmDialog(this, "Save File?", "Exit",
+                                                  JOptionPane.
+                                                  YES_NO_CANCEL_OPTION,
+                                                  JOptionPane.QUESTION_MESSAGE);
+            if (i == 0 && !saveFile()) return;
+        }
         FileSelector fopen = new FileSelector(this, "Open...",
                                               FileSelector.OPEN, directory);
-        /*FilenameFilter filter = new FilenameFilter() {
-        public boolean accept(File file, String name) {
-            return name.endsWith(".R") || name.endsWith(".r");
-        }
-        };
-        fopen.setFilenameFilter(filter)*/
         if (fopen.getFile() != null) {
             editArea.setText("");
             fileName = (directory = fopen.getDirectory()) + fopen.getFile();
@@ -280,7 +284,28 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         catch (Exception e) {
         }
         recentOpen.addEntry(fileName);
-        //System.out.println("Pattern"+fileName.replaceAll("(/[^/]*/)(.*)(/[^/]*/[^/]*)","(1)(3)"));
+        JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
+        if (rm!=null) {
+            rm.removeAll();
+            if (recentOpen==null)
+                recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+            String[] shortNames=recentOpen.getShortEntries();
+            String[] longNames =recentOpen.getAllEntries();
+            int i=0;
+            while (i<shortNames.length) {
+                JMenuItem mi=new JMenuItem(shortNames[i]);
+                mi.setActionCommand("recent:"+longNames[i]);
+                mi.addActionListener(this);
+                rm.add(mi);
+                i++;
+            }
+            if (i>0) rm.addSeparator();
+            JMenuItem ca=new JMenuItem("Clear list");
+            ca.setActionCommand("recent-clear");
+            ca.addActionListener(this);
+            rm.add(ca);
+            if (i==0) ca.setEnabled(false);
+        }
         this.setTitle("Editor"+(fileName == null ? "" : (" - "+fileName)));
         editArea.requestFocus();
     }
@@ -352,7 +377,6 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         else if (cmd == "open") open();
         else if (cmd.startsWith("recent:")) {
             fileName = cmd.replaceFirst("recent:","");
-            //System.out.print(fileName);
             loadFile();
         }
         else if (cmd == "paste") editArea.paste();
@@ -394,7 +418,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
     }
 
     public void keyPressed(KeyEvent ke) {
-        setModified(modified = true); //we assume that the user has modified sth.
+        setModified(modified = true);
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
             String text = null;
             int pos = editArea.getCaretPosition();
@@ -472,7 +496,7 @@ public class REditor extends iFrame implements ActionListener, FocusListener,
         protected void displayInfo(final CaretEvent e) {
             //System.out.println("Area "+editArea);
             //System.out.println("Text "+editArea.getText());
-            
+
             SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                     try {
