@@ -25,6 +25,8 @@ public class DefWinL implements WindowListener
 	};
     };
     public void windowClosed(WindowEvent e) {
+	Window w=e.getWindow();
+	WinTracker.current.rm(w);
 	if (e.getWindow()==Common.mainFrame) {
 	    if (WinTracker.current!=null)
 		WinTracker.current.disposeAll();

@@ -139,7 +139,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
 	
 	//--- this is a bit tricky - not really clean enough --
-	String[] menuDef={"+","File","Open...","open","New","new","-","Print","print","-","Quit","quit",
+	String[] menuDef={"+","File","Open ...","open","New","new","-","Save as PGS ...","exportPGS","Print","print","-","Quit","quit",
 			  "+","Node","Prune","prune",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic","-",
@@ -167,7 +167,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    i+=2; miss++;
 	};
 	if (m!=null) mb.setHelpMenu(m);
-	if (WinTracker.current!=null) mb.add(WinTracker.current.getWindowMenu());
+	if (WinTracker.current!=null) mb.add(WinTracker.current.getWindowMenu(cont));
 	cont.setMenuBar(mb);	
 
 	addMouseMotionListener(this);

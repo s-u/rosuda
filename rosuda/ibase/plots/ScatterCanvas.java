@@ -6,7 +6,7 @@ import java.io.PrintStream;
 /** implementation of scatterplots
     @version $Id$
 */
-class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander
+class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     /** array of two variables (X and Y) */
     SVar v[];
@@ -28,6 +28,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     int x1, y1, x2, y2;
     boolean drag;
 
+    MenuItem MIlabels=null;
+
     int X,Y,W,H, TW,TH;
 
     /** create a new scatterplot
@@ -47,6 +49,10 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseListener(this);
 	addMouseMotionListener(this);
 	addKeyListener(this);
+	MenuBar mb=null;
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","0"};
+	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	MIlabels=mb.getMenu(1).getItem(1);	
     };
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };
@@ -265,7 +271,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	// ugly temporary fix
-	if (e.getKeyChar()=='e') { selRed=!selRed; repaint(); };
+	if (e.getKeyChar()=='e') run(this,"selRed");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -277,9 +283,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
 	if (cmd=="labels") {
 	    showLabels=!showLabels;
+	    MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
+	if (cmd=="selRed") { selRed=!selRed; repaint(); };
+
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
@@ -298,5 +307,10 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	};
 	
 	return null;
+    };
+
+    public void actionPerformed(ActionEvent e) {
+	if (e==null) return;
+	run(e.getSource(),e.getActionCommand());
     };
 };

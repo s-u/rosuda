@@ -6,7 +6,7 @@ import java.io.*;
 /** BarCanvas - implementation of the barcharts
     @version $Id$
 */
-class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander
+class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
 {
     /** corresponding variable */
     SVar v;
@@ -35,6 +35,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     boolean isSpine=false;
     int dragBar, dragX, dragY, dragW, dragH, dragNew;
 
+    MenuItem MIspine=null;
+
     /** creates a barchart
 	@param f associated frame (or <code>null</code> if common default frame is to be used)
 	@param var associated variable
@@ -55,6 +57,10 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	
 	Bars=new Rectangle[bars];
 	updateBars();
+	MenuBar mb=null;
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Spineplot","spine","0"};
+	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	MIspine=mb.getMenu(1).getItem(0);
     };
 
     /** notification handler - rebuilds bars and repaints */
@@ -251,9 +257,11 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (cmd=="spine") {
 	    if (isSpine) {
 		ax.setType(Axis.T_EqCat);
+		MIspine.setLabel("Spineplot");
 		isSpine=false;
 	    } else {
 		ax.setType(Axis.T_PropCat);
+		MIspine.setLabel("Barchart");
 		isSpine=true;
 	    };
 	};
@@ -277,6 +285,12 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 		};
 	    } catch (Exception eee) {};
 	};
+	if (cmd=="exit") WinTracker.current.Exit();
 	return null;
+    };
+
+    public void actionPerformed(ActionEvent e) {
+	if (e==null) return;
+	run(e.getSource(),e.getActionCommand());
     };
 };

@@ -20,14 +20,19 @@ class WTentry extends Object
 
     WTentry(Window win) {
 	w=win; id=lid; lid++;
-	mi=new MenuItem("Window ["+id+"]");
-	mi.setActionCommand("WTMwindow"+id);
+	mi=newMenuItem();
     }
+
     WTentry(Window win,String nam) {
         name=nam; 
 	w=win; id=lid; lid++;
-	mi=new MenuItem(name+" ["+id+"]");
+	mi=newMenuItem();
+    };
+
+    public MenuItem newMenuItem() {
+	MenuItem mi=new MenuItem(((name==null)?"Window":name)+" ["+id+"]");
 	mi.setActionCommand("WTMwindow"+id);
+	return mi;
     };
 
     public String toString() {

@@ -59,7 +59,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	addMouseMotionListener(this);
 	addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Close","close","Quit","quit","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
+	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Rotate","rotate","Spineplot of leaves","alternate","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIalt=mb.getMenu(1).getItem(1);
     };
@@ -279,6 +279,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
+	if (cmd=="exit") WinTracker.current.Exit();
 	return null;
     };
 
