@@ -217,6 +217,16 @@ public class PluginModelLoader extends Plugin implements ActionListener {
                 v.setInternalType(SVar.IVT_Prediction);
                 vset.add(v);
             }
+            {
+                SVar v=new SVarObj("C_i_"+name, true);
+                int i=0;
+                while (i<d.length) {
+                    v.add((d[i]<0.5)?"0":"1");
+                    i++;
+                }
+                v.setInternalType(SVar.IVT_Prediction);
+                vset.add(v);
+            }
             x=rc.eval("resid("+m+", type=\"response\")");
             d= x.asDoubleArray();
             if (d!=null) {
