@@ -17,4 +17,8 @@ public class PlotColor {
 	else
 	    p.setColor(nam);
     }
+
+    public String toString() {
+        return "PlotColor("+((RGB)?""+r+"/"+g+"/"+b:nam)+")";
+    }
 }
