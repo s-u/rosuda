@@ -9,6 +9,7 @@ public class Framework implements Dependent, ActionListener {
     Vector dataset;
     SVarSet cvs;
     int tvctr;
+    int dtctr;
 
     /** initialize framework, create and select a dataset which id called "default".
         one framework supports multiple datasets, plots etc. so there should be no
@@ -27,7 +28,7 @@ public class Framework implements Dependent, ActionListener {
 	dataset=new Vector();
 	dataset.addElement(cvs);
     }
-
+    
     public String getNewTmpVar(String t) {
         int i=cvs.indexOf(t);
         if (i==-1) return t;
@@ -64,21 +65,53 @@ public class Framework implements Dependent, ActionListener {
         @param i the ID
         @return selected dataset or <code>null</code> if ID out of range */
     public SVarSet selectSet(int i) {
-	return (i<0||i>=dataset.size())?null:(SVarSet)dataset.elementAt(i);
-    };
+	return (i<0||i>=dataset.size())?null:(cvs=(SVarSet)dataset.elementAt(i));
+    }
 
+    public SVarSet getSet(int i) {
+        return (i<0||i>=dataset.size())?null:(SVarSet)dataset.elementAt(i);
+    }
+
+    public int countSets() {
+        return dataset.size();
+    }
+    
+    public int curSetId() {
+        return dataset.indexOf(cvs);
+    }
+
+    public String getSetName(int i) {
+        try {
+            SVarSet vs=(SVarSet) dataset.elementAt(i);
+            return vs.getName();
+        } catch (Exception e) {}
+        return null;
+    }
+
+    public String getSetName() {
+        return cvs.getName();
+    }
+    
     /** create and select a new dataset with the specified name. please note that it is possible to create
         multiple datasets of the same name but then only the first of these will be retrieved by name, others
         have to be selected by ID
         @param name name of the new dataset
         @return new dataset */
-    public SVarSet newSet(String name) {
+    public int newSet(String name) {
 	cvs=new SVarSet();
+        if (name==null) {
+            dtctr++;
+            name="data."+dtctr;
+        }
 	cvs.setName(name);
 	dataset.addElement(cvs);
-	return cvs;
-    };
+	return dataset.indexOf(cvs);
+    }
 
+    public int getLength() {
+        return (cvs==null || cvs.at(0)==null)?0:cvs.at(0).size();
+    }
+    
     /** add a variable to the current dataset. Note that many plots assume that all variables of a dataset
         have the same size.
         @param v the variable
@@ -86,6 +119,8 @@ public class Framework implements Dependent, ActionListener {
         most plots take the ID of a variable as parameter and NOT the {@link SVar} object itself.
         */
     public int addVar(SVar v) {
+        if (cvs.getMarker()==null)
+            cvs.setMarker(new SMarker(v.size()));
 	return cvs.add(v);
     }
 
