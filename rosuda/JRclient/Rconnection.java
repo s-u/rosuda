@@ -2,7 +2,9 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-/**  class providing TCP/IP connection to an Rserv */
+/**  class providing TCP/IP connection to an Rserv
+     @version $Id$
+*/
 public class Rconnection {
     /** last error string */
     String lastError=null;
@@ -23,7 +25,7 @@ public class Rconnection {
     /** authorization type: unix crypt */
     public static final int AT_crypt = 1;
 
-    /** make a new local connection on default post (6311) */
+    /** make a new local connection on default port (6311) */
     public Rconnection() {
 	this("127.0.0.1",6311);
     }
@@ -35,7 +37,7 @@ public class Rconnection {
 	this(host,6311);
     }
 
-    /** make a new connection to specified host at given port.
+    /** make a new connection to specified host and given port.
 	Make sure you check {@link #isConnected} and/or {@link #isOk}.
 	@param host host name/IP
 	@param port TCP port
@@ -177,15 +179,18 @@ public class Rconnection {
     /** check success of the last operation
 	@return <code>true</code> if last function was successful */
     public boolean isOk() { return succeeded; }
+    
     /** check connection state. Note that currently this state is not checked on-the-spot,
 	that is if connection went down by an outside event this is not reflected by
 	the flag
 	@return <code>true</code> if this connection is alive */
     public boolean isConnected() { return connected; }
+    
     /** check authentication requirement sent by server
 	@return <code>true</code> is server requires authentication. In such case first
 	command after connecting must be {@link #login}. */
     public boolean needLogin() { return authReq; }
+    
     /** get last error string
 	@return last error string */
     public String getLastError() { return lastError; }

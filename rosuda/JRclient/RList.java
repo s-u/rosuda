@@ -20,24 +20,27 @@ public class RList extends Object {
 	This might change with later versions of Rserv */
     public REXP head, body;
     /** usual assumption is that both head and body are xpressions containing vectors.
-	In such case the actual content objects (Vectors) are cached for key/avlue access. */
+	In such case the actual content objects (Vectors) are cached for key/value access. */
     Vector h,b;
 
     /** constructs an empty list */
-    public RList() { head=body=null; };
+    public RList() { head=body=null; }
+    
     /** constructs an initialized list
 	@param h head xpression
 	@param b body xpression */
-    public RList(REXP h, REXP b) { head=h; body=b; };
+    public RList(REXP h, REXP b) { head=h; body=b; }
     
     /** get head xpression
 	@return head xpression */
-    public REXP getHead() { return head; };
+    public REXP getHead() { return head; }
+    
     /** get body xpression
 	@return body xpression */
-    public REXP getBody() { return body; };
+    public REXP getBody() { return body; }
 
-    /** internal function that updates cached vectors  */
+    /** internal function that updates cached vectors
+        @return <code>true</code> if both expressions are vectors and of the same length */
     boolean updateVec() {
 	if (head==null||body==null||
 	    head.Xt!=REXP.XT_VECTOR||body.Xt!=REXP.XT_VECTOR)
@@ -63,7 +66,7 @@ public class RList extends Object {
 
     /** get element at the specified position
 	@param i index
-	@return <code>null</code> if list is not standartized or
+	@return xpression at the index or <code>null</code> if list is not standartized or
 	        if index out of bounds */
     public REXP at(int i) {
 	if (!updateVec()) return null;
@@ -71,7 +74,7 @@ public class RList extends Object {
     }
 
     /** returns all keys of the list
-	@return array containing all keys*/
+	@return array containing all keys or <code>null</code> if list is not standartized */
     public String[] keys() {
 	if (!updateVec()) return null;
 	String[] k=new String[h.size()];

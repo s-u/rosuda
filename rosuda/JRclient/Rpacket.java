@@ -15,15 +15,18 @@ public class Rpacket {
     /** get command
         @return command */
     public int getCmd() { return cmd; }
+    
     /** check last response for RESP_OK
 	@return <code>true</code> if last response was OK */
-    public boolean isOk() { return ((cmd&15)==1); };
+    public boolean isOk() { return ((cmd&15)==1); }
+    
     /** check last response for RESP_ERR
 	@return <code>true</code> if last response was ERROR */
-    public boolean isError() { return ((cmd&15)==2); };
+    public boolean isError() { return ((cmd&15)==2); }
+    
     /** get status code of last response
 	@return status code returned on last response */
-    public int getStat() { return ((cmd>>24)&127); };
+    public int getStat() { return ((cmd>>24)&127); }
 
     /** get content
 	@return inner package content */

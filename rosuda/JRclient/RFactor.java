@@ -1,6 +1,6 @@
 import java.util.*;
 
-/** representation of a factor variable. In R there is no really xpression
+/** representation of a factor variable. In R there is no actual xpression
     type called "factor", instead it is coded as an int vector with a list
     attribute. The parser code of REXP converts such constructs directly into
     the RFactor objects and defines an own XT_FACTOR type 
@@ -14,8 +14,9 @@ public class RFactor extends Object {
     Vector val;
 
     /** create a new, empty factor var */
-    public RFactor() { id=new Vector(); val=new Vector(); };
-    /** cerate a new factor variable, based on the supplied arrays.
+    public RFactor() { id=new Vector(); val=new Vector(); }
+    
+    /** create a new factor variable, based on the supplied arrays.
 	@param i array if IDs (0..v.length-1)
 	@param v values - cotegory names */
     public RFactor(int[] i, String[] v) {
@@ -30,7 +31,9 @@ public class RFactor extends Object {
     }
 
     /** special constructor used by REXP parser to save some re-indexing
-	and performing automatic index conversion */
+	and performing automatic index conversion
+        @param i index array
+        @param v vector of xpressions which should be all strings */
     public RFactor(int[] i, Vector v) {
 	id=new Vector(); val=new Vector();
 	int j;
@@ -66,7 +69,7 @@ public class RFactor extends Object {
     /** returns the number of caes */
     public int size() { return id.size(); }
 
-    /** displayable representation of the factor cariable */
+    /** displayable representation of the factor variable */
     public String toString() {
 	//return "{"+((val==null)?"<null>;":("levels="+val.size()+";"))+((id==null)?"<null>":("cases="+id.size()))+"}";
 	StringBuffer sb=new StringBuffer("{levels=(");

@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.*;
 
 /** this class encapsulated the QAP1 protocol used by Rserv.
-    it is independent of the undelying protocol(s), therefore Rtalk
+    it is independent of the underying protocol(s), therefore Rtalk
     can be used over any transport layer
     @version $Id$
 */
@@ -58,7 +58,7 @@ public class Rtalk {
 	buf[o]=(byte)(len&255); o++;
 	buf[o]=(byte)((len&0xff00)>>8); o++;
 	buf[o]=(byte)((len&0xff0000)>>16); o++;
-    };
+    }
 
     /** converts bit-wise store int in Intel-endian form into Java int
 	@param buf buffer containg the representation
@@ -144,5 +144,5 @@ public class Rtalk {
 	} catch (Exception e) {
 	};
 	return null;
-    };
+    }
 }
