@@ -106,10 +106,6 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     /** list info canvas */
     TNodeListCanvas ListInfoCV;
 
-    /** menu items */
-    MenuItem[] mis;
-    int miss;
-
     int leftA, iwidth;
 
     /** marker associated with the dataset of the tree (cached) */
@@ -157,9 +153,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	};
 	
 	//--- this is a bit tricky - not really clean enough --
-	String[] menuDef={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-","Clone tree","new","-","Save as PGS ...",
-                          "exportPGS","Save as SVG ...","exportSVG","Export forest data ...","exportForest","Display forest","displayForest","Save as EPS ...","print","-","Quit","quit",
-                          "+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv",
+	String[] menuDef={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-","Clone tree","new","-",
+                          "Export forest data ...","exportForest","Display forest","displayForest","-","~File.Graph",
+                          "~Edit",
 			  "+","Node","Prune","prune","Edit split","editSplit",
 			  "+","Tools","Select cases","toolSelect","Node picker","toolNode","Move","toolMove","Zoom","toolZoom",
 			  "+","View","Re-arrange","arrange","Rotate","rotate","-","Show treemap","showMosaic",
@@ -168,32 +164,12 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 			  "Show deviance","deviance","Show path window","pathwin","-",
 			  "Use fixed size","size",
 			  "Use vertical lines","connect","Align leaves","final",
-			  "+","Help","Shortcuts","help",
+                          "~Window","~Help","Shortcuts","help",
 			  "0"};
 
-	mis=new MenuItem[32]; miss=0;
-	MenuBar mb=cont.getMenuBar();
-	if (mb==null) mb=new MenuBar();	
-	Menu m=null;
-	int i=0;
-	while (menuDef[i]!="0") {
-	    MenuItem mi;
-	    if (menuDef[i]=="+") {
-		i++;
-		mb.add(m=new Menu(menuDef[i])); i++;
-	    };
-	    if (menuDef[i]=="-") { m.addSeparator(); i++; };
-            if (menuDef[i].charAt(0)=='@' || menuDef[i].charAt(0)=='!') {
-                m.add(mi=mis[miss]=new MenuItem(menuDef[i].substring(2),new MenuShortcut((int)menuDef[i].charAt(1),(menuDef[i].charAt(0)=='!')))).setActionCommand(menuDef[i+1]);
-            } else
-                m.add(mi=mis[miss]=new MenuItem(menuDef[i])).setActionCommand(menuDef[i+1]);
-            mi.addActionListener(this);
-	    i+=2; miss++;
-	};
-	if (m!=null) mb.setHelpMenu(m);
-	if (WinTracker.current!=null) mb.add(WinTracker.current.getWindowMenu(cont));
-	cont.setMenuBar(mb);	
-
+        EzMenu.getEzMenu(cont,this,menuDef);
+        getMenuItemByAction("prune").setEnabled(false);
+        getMenuItemByAction("editSplit").setEnabled(false);
 	addMouseMotionListener(this);
 	addMouseListener(this);
         addKeyListener(this); cont.addKeyListener(this);
@@ -623,13 +599,21 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	    return;
 	};
-	selectedNode=n;
+        if (n==null && selectedNode!=null) {
+            getMenuItemByAction("prune").setEnabled(false);
+            getMenuItemByAction("editSplit").setEnabled(false);
+        };
+        if (n!=null && selectedNode==null) {
+            getMenuItemByAction("prune").setEnabled(true);
+            getMenuItemByAction("editSplit").setEnabled(true);
+        };
+        selectedNode=n;
 
 	ListInfoCV.setNode(n);
 
 	if (showPathWindow && !w_listinfo.isShowing()) { w_listinfo.pack(); w_listinfo.show(); };
 	if (!showPathWindow && w_listinfo.isShowing()) w_listinfo.dispose();
-
+       
 	if (n==null || !showInfo) {
 	    if (w_info.isShowing()) w_info.dispose();
 	    return;
@@ -782,6 +766,18 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    dc.setBounds(0,0,400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
         };
+        if (cmd=="exportForest") {
+            try {
+                PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
+                root.getSource().exportForest(p);
+            } catch(Exception ee) {};
+        };
+        if (cmd=="displayForest") {
+            SVarSet fs=root.getSource().getForestVarSet();
+            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
+            Common.screenRes=sres;
+            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+        };            
         if (cmd=="showMCP") {
             TFrame mcpf=new TFrame("MC-plot");
             MCPCanvas dc=new MCPCanvas(mcpf,RTree.getManager(),m);
@@ -789,80 +785,6 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             dc.setBounds(0,0,400,300);
             mcpf.pack(); mcpf.setVisible(true);
         };
-        if (cmd=="exportForest") {
-            try {
-                PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export forest data to ...","forest.txt");
-                if (p!=null) {
-                    p.println("Tree\tVar\ttree.dev\ttree.gain\ttree.size\tsample.dev\tsample.gain\tsample.size\tdepth");
-                    SVarSet.TreeEntry te;
-                    if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
-                    for (Enumeration e=root.getSource().trees.elements(); e.hasMoreElements();) {
-                        te=(SVarSet.TreeEntry)e.nextElement();
-                        if (Common.DEBUG>0) System.out.println("exporting tree \""+te.name+"\"...");
-                        if (te.root!=null) {
-                            Vector v=new Vector();
-                            te.root.getAllNodes(v);
-                            if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
-                            for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
-                                SNode np=(SNode)e2.nextElement();
-                                if (!np.isLeaf()) {
-                                    SNode n=(SNode)np.at(0);
-                                    if (n!=null) {
-                                        p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
-                                    };
-                                }
-                            }
-                        }
-                    }
-                    p.close();
-                };
-            } catch (Exception eee) {};
-            
-        }
-        if (cmd=="displayForest") {
-            SVarSet fs=new SVarSet(); fs.setName("Forest");
-            SVar v_tree=new SVar("Tree",true); fs.add(v_tree);
-            SVar v_node=new SVar("NodeID"); fs.add(v_node);
-            SVar v_var=new SVar("Variable",true); fs.add(v_var);
-            SVar v_scases=new SVar("s.cases"); fs.add(v_scases);
-            SVar v_tcases=new SVar("t.cases"); fs.add(v_tcases);
-            SVar v_sd=new SVar("s.deviance"); fs.add(v_sd);
-            SVar v_td=new SVar("t.deviance"); fs.add(v_td);
-            SVar v_sdg=new SVar("s.dev.Gain"); fs.add(v_sdg);
-            SVar v_tdg=new SVar("t.dev.Gain"); fs.add(v_tdg);
-            
-            SVarSet.TreeEntry te;
-            if (Common.DEBUG>0) System.out.println("Forest export; total "+root.getSource().trees.size()+" trees associated.");
-            for (Enumeration e=root.getSource().trees.elements(); e.hasMoreElements();) {
-                te=(SVarSet.TreeEntry)e.nextElement();
-                if (Common.DEBUG>0) System.out.println("including tree \""+te.name+"\"...");
-                if (te.root!=null) {
-                    Vector v=new Vector();
-                    te.root.getAllNodes(v);
-                    if (Common.DEBUG>0) System.out.println(" total "+v.size()+" nodes.");
-                    for (Enumeration e2=v.elements(); e2.hasMoreElements();) {
-                        SNode np=(SNode)e2.nextElement();
-                        if (!np.isLeaf()) {
-                            SNode n=(SNode)np.at(0);
-                            if (n!=null) {
-                                //p.println(te.name+"\t"+n.splitVar.getName()+"\t"+np.F1+"\t"+np.devGain+"\t"+n.Cases+"\t"+np.sampleDev+"\t"+np.sampleDevGain+"\t"+np.data.size()+"\t"+np.getLevel());
-                                v_tree.add(te.name); v_var.add(n.splitVar.getName());
-                                v_node.add(new Integer(n.id)); v_scases.add(new Integer(np.data.size()));
-                                v_tcases.add(new Integer(np.Cases));
-                                v_sdg.add(new Double(np.sampleDevGain)); v_sd.add(new Double(np.sampleDev));
-                                v_tdg.add(new Double(np.devGain)); v_td.add(new Double(np.F1));
-                            };
-                        }
-                    }
-                }
-            }
-            SMarker m=new SMarker(v_var.size());
-            fs.setMarker(m);
-            Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
-            Common.screenRes=sres;
-            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
-        }
-
         if (cmd=="editSplit") {
             SNode cn=root.getSource().getMarker().currentNode;
             if (cn!=null) {
@@ -874,8 +796,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     };  
 
     MenuItem getMenuItemByAction(String act) {
-	int i=0; while(i<miss) { if (mis[i].getActionCommand()==act) return mis[i]; i++; };
-	return null;
+	return EzMenu.getItem(getFrame(),act);
     };
 
     /** action listener methods reroutes all request to the commander interface */
