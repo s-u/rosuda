@@ -8,7 +8,19 @@ public class PlotColor {
     }
 
     public PlotColor(String n) {
-	nam=n; RGB=false;
+	if (n.length()==7 && n.charAt(0)=='#') { // #RRGGBB notation
+	    try {
+		int ir=Integer.parseInt(n.substring(1,3),16);
+		int ig=Integer.parseInt(n.substring(3,5),16);
+		int ib=Integer.parseInt(n.substring(5,7),16);
+		r=ir; g=ig; b=ib;
+		RGB=true;
+	    } catch(Exception e) {
+		nam=n; RGB=false;
+	    }	    
+	} else {
+	    nam=n; RGB=false;
+	}
     }
 
     public void use(PoGraSS p) {
