@@ -14,9 +14,16 @@ import org.rosuda.util.*;
 
 public class TreeLoader extends Loader {
     public static SNode LoadTree(BufferedReader r, DataRoot dr, String name) {
+        return LoadTree(r, dr, name, true);
+    }
+    
+    public static SNode LoadTree(BufferedReader r, DataRoot dr, String name, boolean registerIt) {
         try {
-            return Load(r,name,dr,0,null,null,true,true);
+            return Load(r,name,dr,0,null,null,true,registerIt);
         } catch (Exception e) {
+            System.out.println("TreeLoader.LoadTree: "+e.getMessage());
+            if (Global.DEBUG>0)
+                e.printStackTrace();
         }
         return null;
     }
