@@ -13,9 +13,9 @@ import java.awt.event.MouseEvent;
 public class Common
 {
     /** application version */
-    public static String Version="0.96v";
+    public static String Version="0.96w";
     /** application release */
-    public static String Release="D512";
+    public static String Release="D605";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
         parameter equivalent: --debug / --nodebug */
@@ -73,6 +73,8 @@ public class Common
     /** common selection color (so far only BaseCanvas-based plots use this) */
     //public static Color selectColor=new Color(255,0,0);
     public static Color selectColor=new Color(128,255,128);
+    /** common objects color */
+    public static Color objectsColor=new Color(255,255,255);
     /** if <code>true</code> no internal variables are created */
     public static boolean noIntVar=false;
 
@@ -174,6 +176,32 @@ public class Common
             };
         };
         new Platform();
+    }
+
+    public static void initValuesFromConfigFile(PluginManager pm) {
+        if (Common.DEBUG>0)
+            System.out.println("Common.initValuesFromConfigFile: loading values");
+        String s=pm.getParS("Common","color.background");
+        if (Common.DEBUG>0)
+            System.out.println("Common.color.background="+s);
+        if (s!=null && s.length()>0 && s.charAt(0)=='#') {
+            int c=Tools.parseHexInt(s.substring(1));
+            backgroundColor=new Color((c>>16)&255,(c>>8)&255,c&255);            
+        }
+        s=pm.getParS("Common","color.select");
+        if (Common.DEBUG>0)
+            System.out.println("Common.color.select="+s);
+        if (s!=null && s.length()>0 && s.charAt(0)=='#') {
+            int c=Tools.parseHexInt(s.substring(1));
+            selectColor=new Color((c>>16)&255,(c>>8)&255,c&255);
+        }
+        s=pm.getParS("Common","color.objects");
+        if (Common.DEBUG>0)
+            System.out.println("Common.color.objects="+s);
+        if (s!=null && s.length()>0 && s.charAt(0)=='#') {
+            int c=Tools.parseHexInt(s.substring(1));
+            objectsColor=new Color((c>>16)&255,(c>>8)&255,c&255);
+        }
     }
 
     /** returns <code>true</code> if ran on an Apple Macintosh computer */
