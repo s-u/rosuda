@@ -56,7 +56,9 @@ int initR(int argc, char **argv) {
         return -1;
     };
 
+#ifdef JGR_DEBUG
     printf("R primary initialization done. Setting up parameters.\n");
+#endif
 
     R_Outputfile = NULL;
     R_Consolefile = NULL;
@@ -72,9 +74,9 @@ int initR(int argc, char **argv) {
     ptr_R_FlushConsole = Re_FlushConsole;
     ptr_R_ClearerrConsole = Re_ClearerrConsole;
     ptr_R_Busy = Re_Busy;
-    /* ptr_R_ShowFiles = Re_ShowFiles; */
+    ptr_R_ShowFiles = Re_ShowFiles;
     ptr_R_ChooseFile = Re_ChooseFile;
-	/* ptr_R_loadhistory = Re_loadhistory; */
+	ptr_R_loadhistory = Re_loadhistory;
     ptr_R_savehistory = Re_savehistory;
 
 #ifdef JGR_DEBUG
