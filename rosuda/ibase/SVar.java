@@ -180,7 +180,7 @@ public class SVar extends Vector
     }
     
     /** please note that in future implementations this may return "self" */
-    Notifier getNotifier() {
+    public Notifier getNotifier() {
         return notify;
     }
     
