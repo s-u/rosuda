@@ -7,6 +7,9 @@ public class Rengine extends Thread {
     static {
         try {
             System.loadLibrary("jri");
+        } catch (RuntimeException e) {
+            System.out.println("jri not found");
+            System.exit(1);
         } catch (Exception e) {
             System.out.println("jri not found");
             System.exit(1);
