@@ -231,7 +231,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
 	while (i<bars) {
 	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
-		if (ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0) {
+		if (Common.isQueryTrigger(ev)) {
 		    String qs="Name: "+cat_nam[i]+"\n";
 		    if (weight==null) {
 			if (ev.isShiftDown()) {

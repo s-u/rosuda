@@ -7,7 +7,7 @@ import java.awt.event.*;
 public class Common
 {
     /** Debug flag. When set to >0 verbose debug messages are generated. (>1 profiling enabled)  */
-    public static int DEBUG=1;
+    public static int DEBUG=0;
     /** Frame of the main window. Used by close-window-handler
      *  in {@link DefWinL} for exiting application if this window is closed. */
     public static Frame mainFrame=null;
@@ -16,9 +16,9 @@ public class Common
     public static WindowListener defaultWindowListener=null;
 
     /** application version */
-    public static String Version="0.96a";
+    public static String Version="0.96b";
     /** application release */
-    public static String Release="C508";
+    public static String Release="C604";
     /** application type. so far 0=stand-alone (default, 1=applet - set by Wrapper) */
     public static int AppType=0;
 
@@ -33,11 +33,30 @@ public class Common
     /** common background color. TFrame uses this as default */
     public static Color backgroundColor=new Color(255,255,192);
 
-    public static final int NM_MarkerChange   =0x101;
-    public static final int NM_AxisChange     =0x102;
-    public static final int NM_VariableChange =0x103;
-    public static final int NM_VarSetChange   =0x104;
-    public static final int NM_NodeChange     =0x105;
+    /** SMarker state changed */
+    public static final int NM_MarkerChange     =0x100;
+    /** Axis changed */
+    public static final int NM_AxisChange       =0x200;
+    /** SVar changed */
+    public static final int NM_VarChange        =0x300;
+    /** SVar changed: content of a variable changed */
+    public static final int NM_VarContentChange =0x301;
+    /** SVar changed: type (cat/num) changed */
+    public static final int NM_VarTypeChange    =0x302;
+    /** SVarSet changed (e.g. # of vars...) */
+    public static final int NM_VarSetChange     =0x400;
+    /** current node changed */
+    public static final int NM_NodeChange       =0x500;
+
+    /** mask to apply in order to become top-level event */
+    public static final int NM_MASK             =0xf00;
+
+    /** returns true if the supplied event corresponds to popup query trigger. */
+    public static boolean isQueryTrigger(MouseEvent ev) {
+        /* this one prevents the use of <ctrl><shift>-select on Mac, so we drop the other button
+           return ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0; */
+        return ev.isAltDown() || ev.isPopupTrigger();
+    }
     
     /** add an application warning/error */
     public static void addWarning(String war) {
