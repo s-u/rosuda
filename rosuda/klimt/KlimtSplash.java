@@ -32,18 +32,17 @@ public class KlimtSplash extends SplashScreen {
 
         if (cmd=="openData") {
             SVarSet tvs=new SVarSet();
-            /*
-            SNode t=InTr.openTreeFile(this,null,tvs);
+            DataRoot dr=Klimt.addData(tvs);
+            SNode t=Klimt.openTreeFile(this,null,dr);
             if (t==null && tvs.count()<1) {
             } else {
                 if (t!=null) {
                     TFrame f=new TFrame("Tree "+tvs.getName(),TFrame.clsTree);
-                    InTr.newTreeDisplay(t,f,0,0,Common.screenRes.width-160,(Common.screenRes.height>600)?600:Common.screenRes.height-20);
+                    Klimt.newTreeDisplay(t,f,0,0,Common.screenRes.width-160,(Common.screenRes.height>600)?600:Common.screenRes.height-20);
                 }
-                VarFrame vf=InTr.newVarDisplay(tvs,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height-30);
+                VarFrame vf=Klimt.newVarDisplay(dr,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height-30);
                 setVisible(false);
             }
-             */
         }
         return null;
     }
