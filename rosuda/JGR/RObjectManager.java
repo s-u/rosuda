@@ -71,7 +71,13 @@ public class RObjectManager extends iFrame implements ActionListener {
                 Point p = e.getPoint();
                 int rowIndex = rowAtPoint(p);
                 int colIndex = columnAtPoint(p);
-                if (colIndex == 0) return ((model) models.elementAt(rowIndex)).getToolTip();
+                //System.out.println(getModel().getValueAt(rowIndex,0));
+                if (colIndex == 0) {
+                    for (int i = 0; i < models.size(); i++) {
+                        model m = (model) models.elementAt(i);
+                        if (m.getName().equals(getModel().getValueAt(rowIndex,0))) return m.getToolTip();
+                    }
+                }
                 return null;
             }
         };
@@ -81,7 +87,7 @@ public class RObjectManager extends iFrame implements ActionListener {
         modelTable.setModel(sorter);
         modelTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
         FontTracker.current.add(modelTable);
-        modelTable.setRowHeight((int) (iPreferences.FontSize*1.3));
+        modelTable.setRowHeight((int) (iPreferences.FontSize*1.5));
         modelTable.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(modelTable.getTableHeader());
         tabArea.add("Models",new JScrollPane(modelTable));

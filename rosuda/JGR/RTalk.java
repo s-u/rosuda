@@ -76,6 +76,7 @@ public class RTalk {
             pos++;
         }
         if (common != null) {
+            //System.out.println(exactmatches+" "+matches);
             if (exactmatches > 0 && matches > 0) return common.replaceFirst(part,"");
             else {
                 REXP z = JGR.R.eval("try(class("+common+"),silent=TRUE)");
