@@ -27,11 +27,8 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
         };
         ifr.addWindowListener(this);
 
-        /* -- too much trouble with this - especially the "close" part...
-        String[] Menu = { "~Window", "0" };
-        iMenu.getMenu(ifr, this, Menu);*/
-
-
+        String[] Menu = { "+","Edit","@CCopy (as image)","copyImg","~Window", "0" };
+        iMenu.getMenu(ifr, this, Menu);
 
         ifr.setDefaultCloseOperation(ifr.DISPOSE_ON_CLOSE);
         c=new org.rosuda.javaGD.GDCanvas(w, h);
@@ -40,7 +37,22 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
         ifr.setVisible(true);
     }
 
+    public void     gdNewPage(int devNr) {
+        super.gdNewPage(devNr);
+        ifr.setTitle("JavaGD ("+(devNr+1)+")"+(active?" *active*":""));
+    }
 
+    public void     gdActivate() {
+        super.gdActivate();
+        ifr.toFront();
+        ifr.setTitle("JavaGD "+((devNr>0)?("("+(devNr+1)+")"):"")+" *active*");
+    }
+
+    public void     gdDeactivate() {
+        super.gdDeactivate();
+        ifr.setTitle("JavaGD ("+(devNr+1)+")");
+    }
+    
     public void     gdClose() {
         if (ifr!=null) {
             c=null;
@@ -53,5 +65,7 @@ public class JavaGD extends org.rosuda.javaGD.JavaGD implements ActionListener {
     // we'll use this once the menu is available ...
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
+        if (cmd.equals("copyImg"))
+            org.rosuda.util.ImageSelection.copyComponent(c,false,true);
     }
 }
