@@ -354,19 +354,32 @@ public class VarFrame extends TFrame {
             }
             if (cmd=="map") {
                 int i=0;
-                SVar map=null;
+                SVar map=null, vLat=null, vLon=null;
                 while (i<vc.getVars()) {
-                    if (vc.selMask[i])
+                    if (vc.selMask[i]) {
                         if (vs.at(i).getContentsType()==SVar.CT_Map) map=vs.at(i);
+						if (vs.at(i).isNum()) {
+							if (vLat==null) vLat=vs.at(i); else
+								if (vLon==null) vLon=vs.at(i);
+						}
+					}
                     i++;
-                };
-                if (map!=null) { // ok, go for weighter barchart instead
+                }
+                if (map!=null) {
                     TFrame f=new TFrame("Map ("+map.getName()+")",TFrame.clsMap);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
-                    if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-                    bc.setSize(new Dimension(400,300));
-                    f.add(bc); f.pack(); f.show();
+					if (vLon!=null) { // if we have lat/lon, got for mapped SP
+						MapScatterCanvas bc=new MapScatterCanvas(f,vLat,vLon,map,vs.getMarker());
+						if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
+						bc.setSize(new Dimension(400,300));
+						f.add(bc);
+					} else {
+						MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
+						if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
+						bc.setSize(new Dimension(400,300));
+						f.add(bc);
+					}
+                    f.pack(); f.show();
                 }
             }
             if (cmd=="openTree" || cmd=="openTreeSilently") { // Open tree
