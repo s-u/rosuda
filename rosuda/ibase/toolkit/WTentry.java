@@ -22,7 +22,7 @@ public class WTentry extends Object
     public JMenu menu=null;
     public int wclass=0;
 
-    public WTentry(JWindow win) {
+    public WTentry(Window win) {
 	w=win; id=lid; lid++;
 	mi=newMenuItem();
     }

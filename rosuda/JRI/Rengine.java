@@ -55,12 +55,12 @@ public class Rengine extends Thread {
 
     public void jriWriteConsole(String text)
     {
-        if (console != null) {
+        /*if (console != null) {
             try {
                 console.output.append(text,Preferences.RESULT);
             } catch (Exception e) { e.printStackTrace();}
         }
-        else System.out.println("R> "+text);
+        else*/ System.out.println("R> "+text);
     }
 
     public void jriBusy(int which)

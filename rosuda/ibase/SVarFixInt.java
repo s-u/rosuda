@@ -1,5 +1,5 @@
 //
-//  SVarFixDouble.java
+//  SVarFixInt.java
 //  Klimt
 //
 //  Created by Simon Urbanek on Fri Nov 14 2003.
@@ -14,10 +14,10 @@ import org.rosuda.util.*;
 /** SVar implementation for fixed-length doubles variable
 */
 
-public class SVarFixDouble extends SVar
+public class SVarFixInt extends SVar
 {
     /** the actual content */
-    double[] cont;
+    int[] cont;
 
     /** insertion point for add */
     int insertPos=0;
@@ -33,27 +33,27 @@ public class SVarFixDouble extends SVar
 	@param Name variable name
 	@param len length of the fixed variable
         */
-    public SVarFixDouble(String Name, int len)
+    public SVarFixInt(String Name, int len)
     {
         super(Name, false);
         if (len<0) len=0;
         guessing=false;
         contentsType=CT_Number;
         isnum=true;
-        cont=new double[len];
+        cont=new int[len];
     }
 
-    public SVarFixDouble(String Name, double[] d) {
+    public SVarFixInt(String Name, int[] d) {
         this(Name, d, true);
     }
     
-    public SVarFixDouble(String Name, double[] d, boolean copyContents)
+    public SVarFixInt(String Name, int[] d, boolean copyContents)
     {
         super(Name, false);
         boolean firstValid=true;
         min=max=0;
         if (copyContents) {
-            cont=new double[d.length];
+            cont=new int[d.length];
             int i=0;
             while (i<d.length) {
                 cont[i]=d[i];
@@ -193,10 +193,10 @@ public class SVarFixDouble extends SVar
     public boolean add(Object o) {
         if (insertPos>=cont.length) return false;
         if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
-        double val=double_NA;
+        int val=int_NA;
         if (o!=null) {
             try {
-                val=Double.parseDouble(o.toString());
+                val=Integer.parseInt(o.toString());
             } catch(NumberFormatException nfe) {
                 return false;
             }
@@ -204,12 +204,12 @@ public class SVarFixDouble extends SVar
         return add(val);
     }
 
-    public boolean add(int i) { return add((i==int_NA)?double_NA:((double)i)); }
+    public boolean add(double i) { return add((i==int_NA)?double_NA:((int)i)); }
     
-    public boolean add(double d) {
+    public boolean add(int d) {
         if (insertPos>=cont.length) return false;
 	if (cat) {
-            Object oo=Double.isNaN(d)?missingCat:Double.toString(d);
+            Object oo=Double.isNaN(d)?missingCat:Integer.toString(d);
 	    int i=cats.indexOf(oo);
 	    if (i==-1) {
 		cats.addElement(oo);
@@ -234,12 +234,11 @@ public class SVarFixDouble extends SVar
         element, then min/max is not adapted to shrink the range
         */
     public boolean replace(int i, Object o) {
-        try {replace(i,Double.parseDouble(o.toString())); return true;} catch (Exception e) {}
+        try {replace(i,Integer.parseInt(o.toString())); return true;} catch (Exception e) {}
         return false;
     }
 
-    public boolean replace(int i, double d) {
-        System.out.println(d);
+    public boolean replace(int i, int d) {
         if (i<0 || i>=cont.length || isCat()) return false;
         if (Double.isNaN(cont[i])) missingCount--;
         cont[i]=d;
@@ -247,10 +246,10 @@ public class SVarFixDouble extends SVar
         return true;
     }
 
-    public Object at(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Double(cont[i]); };
-    public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
+    public Object at(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Integer(cont[i]); };
+    public double atD(int i) { return (i<0||i>=insertPos)?int_NA:cont[i]; }
     public int atI(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?int_NA:((int)(cont[i]+0.5)); }
-    public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Double.toString(cont[i]); }
+    public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Integer.toString(cont[i]); }
     
     /** returns the ID of the category of the object
         @param object
@@ -345,7 +344,7 @@ cases: variable is not numerical or is categorical, no cases matching
             }
             int ct=size();
             r = new int[ct];
-            double[] da = cont;
+            int[] da = cont;
 
             sw.profile("getRanked: pass 1: store relevant values");
 
@@ -407,6 +406,7 @@ cases: variable is not numerical or is categorical, no cases matching
     }
     
     public String toString() {
-        return "SVarFixDouble(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+"/"+cont.length+",miss="+missingCount+")";
+        return "SVarFixInt(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+"/"+cont.length+",miss="+missingCount+")";
     }
 }
+

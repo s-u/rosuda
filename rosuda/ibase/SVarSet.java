@@ -73,14 +73,16 @@ public class SVarSet {
             @param size size of SVar
             @param isnum numbers
             @param cat categorical
-    /* added 28.12.04 MH */
+    /* added 28.12.03 MH */
 
     public void insert(int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
         insert("Var"+index, index, size, isnum, cat);
     };
     
     public void insert(String name, int index,int size,boolean isnum, boolean cat) {  // return position or -1 on error or -2 if name exists
-      SVar v = new SVarObj(name,isnum,cat);
+      SVar v;
+      if (isnum) v = new SVarFixDouble(name,length());
+      else v = new SVarObj(name,isnum,cat);
       v.setAllEmpty(size);
       vars.insertElementAt(v,index);
     };

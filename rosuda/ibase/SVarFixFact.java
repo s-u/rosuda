@@ -27,6 +27,8 @@ public class SVarFixFact extends SVar
     int[] ranks=null;
 
     boolean lastIsMissing=false;
+    
+    static int maxID = -1;
 
     public boolean muteNotify=false;
 
@@ -50,8 +52,10 @@ public class SVarFixFact extends SVar
         ccnts=new int[cnames.length+1];
         int i=0;
         while (i<ids.length) {
-            if (ids[i]>=0 && ids[i]<cats.length)
+            if (ids[i]>=0 && ids[i]<cats.length) {
                 ccnts[ids[i]]++;
+                maxID = maxID < ids[i]?ids[i]:maxID;
+            }
             else {
                 cont[i]=-1; missingCount++;
             }
@@ -127,6 +131,8 @@ public class SVarFixFact extends SVar
     }
 
     public boolean replace(int i, Object o) {
+        cats[i] = o.toString();
+        cont[i] = getCatIndex(o)==-1?maxID++:getCatIndex(o);
         return false;
     }
 
