@@ -566,7 +566,7 @@ class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
                 if (pp[i]!=null && pp[i].intersects(sel)) {
                     pp[i].setMark(m,setTo);
                     if (pp[i].ref!=null)
-                        while (i<pp.length-1 && pp[i+1].ref!=null && pp[i+1].ref[0]==pp[i].ref[0]) i++;
+                        while (i<pp.length-1 && pp[i+1]!=null && pp[i+1].ref!=null && pp[i+1].ref[0]==pp[i].ref[0]) i++;
                 }
                 i++;
             };
