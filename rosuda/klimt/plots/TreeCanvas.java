@@ -77,7 +77,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public boolean PD_goCart= false;
     /** P.Dirschedl proposed PlaceOverExpectation */
     public boolean PD_POE= false;
-
+    /** use log scale for expectations/predictions */
+    public boolean PD_POE_log= false;
     /** temporary variable for zoom mode when <space> is used */
     int lastToolModeBeforeMove=0;
 
@@ -297,8 +298,22 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    };
 	};
 	if (PD_POE) {
-	    double perc=((Float)t.V.elementAt(0)).doubleValue();
-	    x=leftA+(int)(((double)iwidth)*perc);
+            if (root.response!=null) {
+                double perc=0.5;
+                if (root.response.isCat()) {
+                    perc=((Float)t.V.elementAt(0)).doubleValue();
+                } else {
+                    try {
+                        if (PD_POE_log && root.response.getMin()>=0) {
+                            double logMin=(root.response.getMin()>0)?Math.log(root.response.getMin()):0;
+                            double logMax=(root.response.getMax()>0)?Math.log(root.response.getMax()):0;
+                            perc=(((t.predValD>0)?Math.log(t.predValD):0)-logMin)/(logMax-logMin);
+                        } else
+                            perc=(t.predValD-root.response.getMin())/(root.response.getMax()-root.response.getMin());
+                    } catch (Exception swc) {};
+                }
+                x=leftA+(int)(((double)iwidth)*perc);
+            }
 	}
 	t.x=x-(nodeWidth/2); t.y=y+5;
 	t.x2=t.x+nodeWidth; t.y2=t.y+20;
@@ -995,6 +1010,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='1') { PD_goCart=!PD_goCart; redesignNodes(); }
 	if (e.getKeyChar()=='2') { PD_lines=!PD_lines; redesignNodes(); }
 	if (e.getKeyChar()=='3') { PD_POE=!PD_POE; redesignNodes(); }
+        if (e.getKeyChar()=='L') { PD_POE_log=!PD_POE_log; redesignNodes(); }
     };
     public void keyPressed(KeyEvent e) {
         if (Common.DEBUG>0) System.out.println("keyPressed: "+e.toString());
