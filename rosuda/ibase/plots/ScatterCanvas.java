@@ -190,13 +190,15 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
             double f=A[0].getSensibleTickDistance(50,26);
             double fi=A[0].getSensibleTickStart(f);
             //if (Common.DEBUG>0)
-            //System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
+            System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
             while (fi<A[0].vBegin+A[0].vLen) {
                 int t=A[0].getValuePos(fi);
                 g.drawLine(t,Y+H,t,Y+H+5);
-                if (showLabels)
-                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
+                if (showLabels) {
+                    if (v[0].isCat()) System.out.println("Var:"+v[0].getName()+", getCatAt("+((int)(fi+0.5))+"), drawAt"+t);
+                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)(fi+0.5)).toString()):v[0].getCatAt((int)(fi+0.5)).toString()):
                                  A[0].getDisplayableValue(fi),t,Y+H+20,0.5,0);
+                }
                 fi+=f;
             };
         }
