@@ -115,7 +115,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
             if (cmdHelp != null) cmdHelp.hide();
-            return;
+            mComplete.setVisible(false);
+            if (funHelpTip != null) funHelpTip.hide();
         }
     }
 
@@ -204,7 +205,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         }
         else if (mComplete != null && mComplete.isVisible()) {
             int k = ke.getKeyCode();
-            if (k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
+            if (k != KeyEvent.VK_ESCAPE && k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown() && !ke.isAltGraphDown()) {
                 fun = getLastPart();
                 if (fun != null) {
                     String[] result = new String[1];
