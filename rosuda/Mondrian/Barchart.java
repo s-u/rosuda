@@ -254,6 +254,22 @@ public class Barchart extends DragBox implements ActionListener {
       }
     }
 
+    public String getToolTipText(MouseEvent e) {
+
+      if( e.isControlDown() ) {
+
+        for( int i = 0;i < rects.size(); i++) {
+          MyRect r = (MyRect)rects.elementAt(i);
+          if ( r.contains( e.getX(), e.getY() )) {
+            return Util.info2Html(r.getLabel());
+          }
+        }
+        // end FOR
+        return null;
+      } else
+        return null;
+    }
+    
     public void processMouseMotionEvent(MouseEvent e) {
 
       boolean info = false;
@@ -304,14 +320,14 @@ public class Barchart extends DragBox implements ActionListener {
             JPopupMenu mode = new JPopupMenu();
             if( displayMode.equals("Barchart") ) {
               JMenuItem Spineplot = new JMenuItem("Spineplot");
-              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
               mode.add(Spineplot);
               Spineplot.setActionCommand("Spineplot");
               Spineplot.addActionListener(this);
             }
             else {
               JMenuItem Barchart  = new JMenuItem("Barchart");
-              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
               mode.add(Barchart);
               Barchart.setActionCommand("Barchart");
               Barchart.addActionListener(this);
@@ -468,7 +484,7 @@ public class Barchart extends DragBox implements ActionListener {
           SelectionEvent se = new SelectionEvent(this);
           evtq.postEvent(se);
         }
-      } else if( e.getKeyCode() == KeyEvent.VK_T && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+      } else if( e.getKeyCode() == KeyEvent.VK_R && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
         if( displayMode.equals("Barchart") )
           displayMode = "Spineplot";
         else
