@@ -3,13 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 39;
 	objects = {
 		0111F2C600819D1A7F000001 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = AboutBox.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		0111F2C700819D1A7F000001 = {
 			fileRef = 0111F2C600819D1A7F000001;
@@ -18,6 +20,8 @@
 			};
 		};
 		01F12F4CFEC8CE2211DB9C8B = {
+			buildSettings = {
+			};
 			buildStyles = (
 				0E20B662001FAFA711DB9C8B,
 				0E20B663001FAFA711DB9C8B,
@@ -79,12 +83,15 @@
 			);
 			isa = PBXGroup;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		01F12F4EFEC8CE6A11DB9C8B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Mondrian.java;
 			refType = 4;
+			sourceTree = "<group>";
 			tabWidth = 8;
 		};
 		01F12F4FFEC8CEF111DB9C8B = {
@@ -94,6 +101,7 @@
 			isa = PBXGroup;
 			name = Products;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //010
 //011
@@ -106,9 +114,11 @@
 //063
 //064
 		06D05853FF24F2DB11DB9C8B = {
-			isa = PBXApplicationReference;
+			explicitFileType = wrapper.application;
+			isa = PBXFileReference;
 			path = Mondrian.app;
 			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 //060
 //061
@@ -121,8 +131,6 @@
 //0E3
 //0E4
 		0E20B662001FAFA711DB9C8B = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -135,8 +143,6 @@
 			name = Development;
 		};
 		0E20B663001FAFA711DB9C8B = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -157,8 +163,10 @@
 //104
 		10F9BF62FEEDA25E11DB9C8B = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = Mondrian.icns;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 //100
 //101
@@ -393,8 +401,10 @@
 		D07E9E1E057F1DA800C2084A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Join.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D07E9E1F057F1DA800C2084A = {
 			fileRef = D07E9E1E057F1DA800C2084A;
@@ -405,8 +415,10 @@
 		D08C744104B997AB00FA48CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = PreferencesFrame.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D08C744204B997AB00FA48CA = {
 			fileRef = D08C744104B997AB00FA48CA;
@@ -416,8 +428,10 @@
 		};
 		D097A9DA06F9B94100684C11 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.gif;
 			path = alpha.gif;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D097A9DB06F9B94100684C11 = {
 			fileRef = D097A9DA06F9B94100684C11;
@@ -428,13 +442,17 @@
 		};
 		D097A9DC06F9BAF900684C11 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.gif;
 			path = cat.gif;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D097A9DD06F9BAF900684C11 = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.gif;
 			path = num.gif;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D097A9DE06F9BAF900684C11 = {
 			fileRef = D097A9DC06F9BAF900684C11;
@@ -468,72 +486,95 @@
 			name = JRclient;
 			path = ../JRclient;
 			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		D0BF0A040792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = jcrypt.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A050792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RBool.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A060792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Rconnection.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A070792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = REXP.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A080792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RFactor.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A090792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RFileInputStream.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A0A0792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RFileOutputStream.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A0B0792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RList.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A0C0792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Rpacket.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A0D0792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = RSrvException.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A0E0792C180007E65A3 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Rtalk.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0BF0A100792C180007E65A3 = {
 			fileRef = D0BF0A040792C180007E65A3;
@@ -604,8 +645,10 @@
 		D0C7E78A076EDB9F00B94ACD = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Srs.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		D0C7E78B076EDB9F00B94ACD = {
 			fileRef = D0C7E78A076EDB9F00B94ACD;
@@ -626,8 +669,10 @@
 		F510801203B3247801FA48CB = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = Mondrian.mft;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F510801303B3247801FA48CB = {
 			fileRef = F510801203B3247801FA48CB;
@@ -639,13 +684,17 @@
 		F518DE9002928EC501A67908 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = PrintUtilities.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52CCF8B0237C0F701FA478D = {
 			isa = PBXFileReference;
+			lastKnownFileType = image.gif;
 			path = Logo.gif;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F52CCF8C0237C0F701FA478D = {
 			fileRef = F52CCF8B0237C0F701FA478D;
@@ -657,152 +706,202 @@
 		F539377201F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Jlpr.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377301F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Barchart.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377401F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = DataListener.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377501F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = dataSet.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377601F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = DragBox.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377701F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = InteractionSet.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377801F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Map.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377901F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = MFrame.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377A01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = ModelListener.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377B01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = ModelNavigator.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377C01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = "Mondrian-proj.java";
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377D01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Mosaic.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377E01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = MyPoly.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539377F01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = MyRect.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378001F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = MyText.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378101F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = PC.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378201F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = PixelConsumer.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378301F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = PSGr.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378401F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Qsort.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378601F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Selection.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378701F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = SelectionListener.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378801F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Stat.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378901F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Table.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378A01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Test.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378B01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Util.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F539378C01F5CC7401FA4797 = {
 			fileRef = F539377201F5CC7401FA4797;
@@ -939,8 +1038,10 @@
 		F54802D4026ED61401FA478D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Query.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F54802D5026ED61501FA478D = {
 			fileRef = F54802D4026ED61401FA478D;
@@ -951,8 +1052,10 @@
 		F59B7530022FE93101B238D8 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Histogram.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F59B7531022FE93101B238D8 = {
 			fileRef = F59B7530022FE93101B238D8;
@@ -969,8 +1072,10 @@
 		F5FBD732027EE38A01FA478D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Scatter2D.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5FBD733027EE38A01FA478D = {
 			fileRef = F5FBD732027EE38A01FA478D;
@@ -981,8 +1086,10 @@
 		F5FCD7B4023CC352015B9A6A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
 			path = Axis.java;
 			refType = 4;
+			sourceTree = "<group>";
 		};
 		F5FCD7B5023CC352015B9A6A = {
 			fileRef = F5FCD7B4023CC352015B9A6A;

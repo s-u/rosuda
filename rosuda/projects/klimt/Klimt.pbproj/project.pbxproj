@@ -329,6 +329,8 @@
 				1C42D10A06D39CF900B9B7D6,
 				1C42D10E06D39D3900B9B7D6,
 				F80E96F806D4E6B7000F58C0,
+				685F538007A58534004B99BD,
+				6845652807CBD59D00A48DC9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -727,6 +729,8 @@
 				1C5E09D80799DCC600A0658F,
 				1C5E09D90799DCC600A0658F,
 				1C5E09DA0799DCC600A0658F,
+				685F538107A58534004B99BD,
+				6845652707CBD59D00A48DC9,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2861,6 +2865,46 @@
 //682
 //683
 //684
+		6845652607CBD59D00A48DC9 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = MapScatterCanvas.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6845652707CBD59D00A48DC9 = {
+			fileRef = 6845652607CBD59D00A48DC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6845652807CBD59D00A48DC9 = {
+			fileRef = 6845652607CBD59D00A48DC9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		685F537F07A58534004B99BD = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = LoaderFLF.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		685F538007A58534004B99BD = {
+			fileRef = 685F537F07A58534004B99BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		685F538107A58534004B99BD = {
+			fileRef = 685F537F07A58534004B99BD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		68AC23930798656000715278 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3000,6 +3044,7 @@
 				1CE96E9604D8024000A8030F,
 				F8EE90FB04D6A73600FA4796,
 				1CE96E7D04D7ED0900A8030F,
+				685F537F07A58534004B99BD,
 				1CA4331904D8184500A8030F,
 				1CA4331F04D81D3700A8030F,
 				F8EE90FC04D6A73600FA4796,
@@ -3050,6 +3095,7 @@
 				1C993595058F776F0040221D,
 				1CA4330804D814C200A8030F,
 				1CA4330904D814C200A8030F,
+				6845652607CBD59D00A48DC9,
 				1C42D10306D39C9F00B9B7D6,
 				1CA4330A04D814C200A8030F,
 				1CA4330C04D814C200A8030F,
