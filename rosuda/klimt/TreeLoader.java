@@ -454,10 +454,7 @@ remark: this method can be used to load trees and data separately, but data must
                                     if (registerIt && !Common.noIntVar) { // in some cases we don't want the additional vars to be built
                                         SVar vvv;
                                         vvv=Klimt.getPredictionVar(root,clv);
-                                        vset.add(vvv);
-                                        root.getRootInfo().prediction=vvv;
-                                        dr.getTreeRegistry().registerTree(root,root.getRootInfo().name);
-                                        if (vvv!=null && clv.isCat()) {
+                                        if (vvv!=null && clv.isCat()) { // first we add misclass
                                             //vvv.name="tree-clsf-"+vset.classifierCounter;
                                             vset.classifierCounter++;
                                             if (vset.globalMisclassVarID!=-1)
@@ -467,6 +464,9 @@ remark: this method can be used to load trees and data separately, but data must
                                                 vset.globalMisclassVarID=vset.add(vmc);
                                             }
                                         }
+                                        vset.add(vvv);
+                                        root.getRootInfo().prediction=vvv;
+                                        dr.getTreeRegistry().registerTree(root,root.getRootInfo().name);
                                     }
                                 };
                             };
