@@ -11,11 +11,15 @@ class GDObject {
 public class GDCanvas extends Canvas {
     Vector l;
 
+    boolean listChanged;
+    
     Color fill;
     Color col;
 
     Font f;
 
+    Refresher r;
+    
     Dimension lastSize;
 
     public int devNr=-1;
@@ -29,8 +33,18 @@ public class GDCanvas extends Canvas {
         f=new Font(null,0,12);
         setSize(w,h);
         lastSize=getSize();
+        setBackground(Color.white);
+        (r=new Refresher(this)).start();
     }
 
+    public synchronized void cleanup() {
+        r.active=false;
+        r.interrupt();
+        reset();
+        r=null;
+        l=null;
+    }
+    
     public void initRefresh() {
         //System.out.println("resize requested");
         try { // for now we use no cache - just pure reflection API for: Rengine.getMainEngine().eval("...")
@@ -54,23 +68,73 @@ public class GDCanvas extends Canvas {
         }
     }
     
-    public synchronized void add(GDObject o) { l.add(o); }
-    public synchronized void reset() { l.removeAllElements(); }
+    public synchronized void add(GDObject o) {
+        l.add(o);
+        listChanged=true;
+    }
+    
+    public synchronized void reset() {
+        l.removeAllElements();
+        listChanged=true;
+    }
+
+    long lastUpdate;
+    long lastUpdateFinished;
+    boolean updatePending=false;
+    
+    public void update(Graphics g) {
+        if (System.currentTimeMillis()-lastUpdate<200) {
+            updatePending=true;
+            if (System.currentTimeMillis()-lastUpdateFinished>500) {
+                g.setColor(Color.white);
+                g.fillRect(0,0,250,40);
+                g.setColor(Color.blue);
+                g.drawString("Building plot... ("+l.size()+" objects)",15,15);
+                lastUpdateFinished=System.currentTimeMillis();
+            }
+            lastUpdate=System.currentTimeMillis();
+            return;
+        }
+        updatePending=false;
+        super.update(g);
+        lastUpdateFinished=lastUpdate=System.currentTimeMillis();
+    }
+
+    class Refresher extends Thread {
+        GDCanvas c;
+        boolean active;
+
+        public Refresher(GDCanvas c) {
+            this.c=c;
+        }
+
+        public void run() {
+            active=true;
+            while (active) {
+                try {
+                    Thread.sleep(300);
+                } catch (Exception e) {}
+                if (!active) break;
+                if (c.updatePending && (System.currentTimeMillis()-lastUpdate>200)) {
+                    c.repaint();
+                }
+            }
+            c=null;
+        }
+    }
+    
     public synchronized void paint(Graphics g) {
+        updatePending=false;
         Dimension d=getSize();
         if (!d.equals(lastSize)) {
             initRefresh();
             lastSize=d;
+            return;
         }
 
         Graphics2D g2=(Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        
-        // clear the background
-        g.setColor(Color.white);
-        g.fillRect(0,0,d.width,d.height);
-        g.setColor(Color.black);
-        
+               
         int i=0, j=l.size();
         g.setFont(f);
         g.setClip(0,0,d.width,d.height); // reset clipping rect
@@ -78,6 +142,7 @@ public class GDCanvas extends Canvas {
             GDObject o=(GDObject) l.elementAt(i++);
             o.paint(this, g);
         }
+        lastUpdate=System.currentTimeMillis();
     }
 }
 
@@ -89,7 +154,7 @@ class GDLine extends GDObject {
 
     public void paint(GDCanvas c, Graphics g) {
         if (c.col!=null)
-            g.drawLine((int)x1,(int)y1,(int)x2,(int)y2);
+            g.drawLine((int)(x1+0.5),(int)(y1+0.5),(int)(x2+0.5),(int)(y2+0.5));
     }
 }
 
@@ -105,11 +170,11 @@ class GDRect extends GDObject {
     public void paint(GDCanvas c, Graphics g) {
         if (c.fill!=null) {
             g.setColor(c.fill);
-            g.fillRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
+            g.fillRect((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+0.5),(int)(y2-y1+0.5));
             if (c.col!=null) g.setColor(c.col);
         }
         if (c.col!=null)
-            g.drawRect((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
+            g.drawRect((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+0.5),(int)(y2-y1+0.5));
     }
 }
 
@@ -123,7 +188,7 @@ class GDClip extends GDObject {
     }
 
     public void paint(GDCanvas c, Graphics g) {
-        g.setClip((int)x1,(int)y1,(int)(x2-x1),(int)(y2-y1));
+        g.setClip((int)(x1+0.5),(int)(y1+0.5),(int)(x2-x1+1.7),(int)(y2-y1+1.7));
     }
 }
 
@@ -136,7 +201,7 @@ class GDCircle extends GDObject {
     public void paint(GDCanvas c, Graphics g) {
         if (c.fill!=null) {
             g.setColor(c.fill);
-            g.fillOval((int)(x-r),(int)(y-r),(int)(r+r),(int)(r+r));
+            g.fillOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+0.5),(int)(r+r+0.5));
             if (c.col!=null) g.setColor(c.col);
         }
         if (c.col!=null)
