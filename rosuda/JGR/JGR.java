@@ -51,9 +51,9 @@ public class JGR {
         splash.start();
         readHistory();
         new RConsole();
+        splash.show();
         MAINRCONSOLE.progress.start("Starting R");
         MAINRCONSOLE.setWorking(true);
-        splash.stop();
         String[] args={"--save"};
         R=new Rengine(args,true,MAINRCONSOLE); //JGR.MAINRCONSOLE);
         System.out.println("Rengine created, waiting for R");
@@ -71,6 +71,7 @@ public class JGR {
         MAINRCONSOLE.input.requestFocus();
         STARTED = true;
         RCSync.triggerNotification("library(JGR, warn.conflicts=FALSE)");
+        splash.stop();
     }
 
     public static String exit() {

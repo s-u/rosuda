@@ -69,7 +69,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             "savewspaceas",
             "-", "Load Datafile", "loaddata", "~File.Quit",
             "~Edit",
-            "+", "Tools", "Editor", "editor", "Object Manager", "objectmgr",
+            "+", "Tools", "@EEditor", "editor", "@BObject Manager", "objectmgr",
             "DataTable", "table", "-", "Increase Font", "fontBigger",
             "Decrease Font", "fontSmaller",
             "+", "Packages", "Package Manager", "packagemgr",/* "Install Package",
@@ -378,7 +378,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "table") new DataTable(null);
         else if (cmd == "savewspace") saveWorkSpace(wspace);
         else if (cmd == "savewspaceas") saveWorkSpaceAs();
-        else if (cmd == "stop") ; //stop R
+        else if (cmd == "stop") JGR.R.rniStop(1);
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {
                 input.selectAll();
