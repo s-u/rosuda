@@ -73,13 +73,19 @@ public class ConsoleOutput extends JTextPane {
             try {
                 if(isCorrectLine(i) && isCommandLine(i)) {
 					String l = trimFront(getLine(i).replaceFirst(prompt,""));
-                    if (!l.startsWith("#")) bf.append(l);
+					if (i < b && isCorrectLine(i+1) && !l.startsWith("#")) bf.append(l);
+					else if (i==b && !l.startsWith("#")) bf.append(l);
 				}
             }
             catch (Exception e){
             }
         }
         return bf;
+    }
+    
+    private StringBuffer cleanCommands(StringBuffer b) {
+    	StringBuffer bf = new StringBuffer();
+    	return bf;
     }
 
 
@@ -186,7 +192,7 @@ public class ConsoleOutput extends JTextPane {
     private boolean isCorrectLine(int i) {
 		if (prompt == null) prompt = org.rosuda.JGR.RController.getRPrompt();
 		if (continueS == null) continueS = org.rosuda.JGR.RController.getRContinue();
-		if (getLine(i).trim().length()==0 || getLine(i).trim().equals(prompt.trim())) return false;
+		if (getLine(i).trim().length()==0 || getLine(i).trim().equals(prompt.trim()) || getLine(i).trim().startsWith("Error")) return false;
         return true;
     }
 
