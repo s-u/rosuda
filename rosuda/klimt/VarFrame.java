@@ -51,7 +51,7 @@ public class VarFrame extends TFrame {
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
-                "Parallel coord. plot","PCP","-","Map","map",
+                "Parallel coord. plot","PCP","Series plot","lineplot","-","Map","map",
                 "+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
@@ -388,7 +388,31 @@ public class VarFrame extends TFrame {
                             f.add(cvs); f.pack(); f.show();
                         };
                 };
-            };            
+            };
+            if (cmd=="lineplot") {
+                int i=0;
+                int selC=0, selN=0;
+                while (i<vc.getVars()) {
+                    if (vc.selMask[i]) {
+                        if (vs.at(i).isCat()) selC++;
+                        if (vs.at(i).isNum()) selN++;
+                    };
+                    i++;
+                };
+                if (selN>0) {
+                    SVar[] vars=new SVar[selN];
+                    i=0; int vsc=0;
+                    while (i<vc.getVars()) {
+                        if (vc.selMask[i] &&vs.at(i).isNum()) vars[vsc++]=vs.at(i);
+                        i++;
+                    };
+                    TFrame f=new TFrame("Line plot");
+                    f.addWindowListener(Common.defaultWindowListener);
+                    LineCanvas lc=new LineCanvas(f,null,vars,vs.getMarker());
+                    lc.setSize(400,300);
+                    f.add(lc); f.pack(); f.show();
+                }
+            }
             if (cmd=="scatterplot") { // Scatterplot
                 int vnr[]=new int[2];
                 int i,j=0,tsel=0;
@@ -658,6 +682,8 @@ public class VarFrame extends TFrame {
             if(mi!=null) mi.setEnabled(selCat+selNum>1);
             mi=EzMenu.getItem(win,"map");
             if(mi!=null) mi.setEnabled(selMap);
+            mi=EzMenu.getItem(win,"lineplot");
+            if(mi!=null) mi.setEnabled(selNum>0);
             
 	    Dimension cd=getSize();
 
