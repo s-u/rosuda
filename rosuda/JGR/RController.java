@@ -343,15 +343,15 @@ public class RController {
         REXP y = JGR.R.eval("summary("+sx+")[[\"r.squared\"]]");
         double[] res;
         if (y != null && (res = y.asDoubleArray()) != null) m.setRsquared(res[0]);
-        y = JGR.R.eval("summary("+sx+")[[\"aic\"]]");
+        y = JGR.R.eval("AIC("+sx+")");
         if (y != null && (res = y.asDoubleArray()) != null) m.setAic(res[0]);
-        y = JGR.R.eval("summary("+sx+")[[\"deviance\"]]");
+        y = JGR.R.eval("deviance("+sx+")");
         if (y != null && (res = y.asDoubleArray()) != null) m.setDeviance(res[0]);
         int[] res1;
         y = JGR.R.eval("summary("+sx+")[[\"df\"]]");
         if (y != null && (res1 = y.asIntArray()) != null) m.setDf(res1[0]);
         String[] res2;
-        y = JGR.R.eval("summary("+sx+")[[\"family\"]][[\"family\"]]");
+        y = JGR.R.eval("family("+sx+")[[\"family\"]]");
         if (y != null && (res2 = y.asStringArray()) != null) m.setFamily(res2[0]);
         y = JGR.R.eval("suppressWarnings(try(capture.output("+sx+"[[\"call\"]][[\"formula\"]])))"); //as.character((cm$call))
         if (y != null && (res2 = y.asStringArray()) != null) {
