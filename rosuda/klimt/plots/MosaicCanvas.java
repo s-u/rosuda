@@ -51,6 +51,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     MenuItem MIalt;
 
     NodeMarker nm;
+    QueryPopup qi;
     
     /** constructs a treemap based on the passed tree
 	@param f associated frame or <code>null</code> if none
@@ -78,6 +79,7 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Spineplot of leaves","alternate","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
 	MIalt=EzMenu.getItem(f,"alternate");
+        qi=new QueryPopup(f,vs,"Treemap");
     };
     
     public Dimension getMinimumSize() { return new Dimension(40,40); };
@@ -225,6 +227,10 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
     public void mouseClicked(MouseEvent ev) 
     {
 	int x=ev.getX(), y=ev.getY();
+        Point cl=getFrame().getLocation();
+        boolean hideQI=true;
+        boolean isQuery=Common.isQueryTrigger(ev);
+
 	//x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
 	for (Enumeration e=nodes.elements(); e.hasMoreElements();) {
 	    SNodeGeometry ng=(SNodeGeometry)e.nextElement();
@@ -242,9 +248,17 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 			};
 			m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
 		    };
-		};		
+		};
+                if (isQuery) {
+                    SNode n=ng.n;
+                    String qs="node:"+n;
+                    qi.setContent(qs);
+                    qi.setLocation(cl.x+x,cl.y+y);
+                    qi.show(); hideQI=false;
+                }
 	    };
 	};
+        if (hideQI) qi.hide();
 
     };
 
