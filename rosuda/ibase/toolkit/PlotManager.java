@@ -41,8 +41,16 @@ public class PlotManager {
     }
 
     public void rm(PlotObject po) {
-        if (ptr>=0 && obj.elementAt(ptr)==po) ptr=obj.size()-2;
-        obj.removeElement(po);
+        if (ptr<0) ptr=obj.size()-1;
+        if (ptr>=0) {
+            PlotObject cpo=(PlotObject) obj.elementAt(ptr);
+            obj.removeElement(po);
+            if (cpo==po || ptr>=obj.size() || cpo!=obj.elementAt(ptr))
+                ptr=obj.size()-1;
+        } else {
+            obj.removeElement(po);
+            ptr=obj.size()-1;
+        }
     }
 
     public int getCurrentID() { return ptr; }
