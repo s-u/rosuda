@@ -10,14 +10,18 @@ import javax.swing.event.*;
 public class PC extends DragBox implements ActionListener {
   protected int width, height;                   // The preferred size.
   protected int oldWidth, oldHeight;             // The last size for constructing the polygons.
-  private Image bi, tbi;
+  private Image bi, tbi, ttbi;
   private Graphics bg;
   protected int[] vars;
   protected int xVar;
   protected int yVar;
   protected int k;
   protected double slotWidth;
+  protected int slotMax = 40;
   protected int addBorder = 0;
+  protected int selID = -1;
+  protected int scaleFactor = 3;
+  protected double centerAt = 0;
   protected dataSet data;
   protected double[] dMins, dIQRs, dMedians, dMeans, dSDevs, dMaxs;
   protected double[] Mins, Maxs;
@@ -25,9 +29,14 @@ public class PC extends DragBox implements ActionListener {
   protected String[] lNames;
   protected int[] permA;
   protected double[] sortA;
+  protected boolean[] selected;
+  protected boolean[] inverted;
   Polygon[] poly;
   String Scale = "Common";
   String paintMode = "Box";
+  String sortMode = "ini";
+  String alignMode = "center";
+  private boolean inSequence = false;
   float alpha = 1F;
   int movingID;
   boolean moving;
@@ -50,9 +59,6 @@ public class PC extends DragBox implements ActionListener {
     this.k = vars.length;
     this.paintMode = mode;
 
-    if( k == 1 )
-      addBorder = 30;
-
     border = 20;
 
     if( k == 2 ) {
@@ -67,7 +73,23 @@ public class PC extends DragBox implements ActionListener {
         yVar = vars[1];
       }
     }
-    //this.setDoubleBuffered(true);
+
+    if( paintMode.equals("XbyY") ) {
+      k = data.getNumLevels(yVar);
+      frame.setSize(50 * (1 + k), 400);
+    }
+
+    selected = new boolean[k];
+    inverted = new boolean[k];
+
+    for( int j=0; j<k; j++ ) {
+      selected[j] = false;
+      inverted[j] = false;
+    }      
+
+    permA = new int[k];
+    for(int j=0; j<k; j++)
+      permA[j] = j;
 
     frame.getContentPane().add(this);
 
@@ -94,6 +116,27 @@ public class PC extends DragBox implements ActionListener {
   }
 
   public void processMouseEvent(MouseEvent e) {
+
+    if (e.getID() == MouseEvent.MOUSE_PRESSED && !paintMode.equals("XbyY")) {
+      boolean hit = false;
+      for( int j=0; j<k; j++ ) {
+        MyText mt = (MyText)names.elementAt(j);
+        //System.out.println("Testing Slot: "+j);
+        if( mt.contains( e.getX(), e.getY(), (Graphics2D)(this.getGraphics()) ) ) {
+          hit = true;
+          if( e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN )
+            selected[permA[j]] = !selected[permA[j]];
+          else
+            selected[permA[j]] = true;
+        }
+        else if( e.getModifiers() != BUTTON1_DOWN + SHIFT_DOWN )
+          selected[permA[j]] = false;
+      }
+      if( hit ) {
+        update(this.getGraphics());
+        return;
+      }
+    }
 
     if( e.isPopupTrigger() )
       super.processMouseEvent(e);  // Pass other event types on.
@@ -170,30 +213,73 @@ public class PC extends DragBox implements ActionListener {
               Ind.addActionListener(this);
             }
 
-            JMenu plotM = new JMenu("Type");
-            JMenuItem polyM = new JMenuItem("Polygons");
-            JMenuItem boxM  = new JMenuItem("Box Plots");
-            JMenuItem bothM = new JMenuItem("Both");
-            plotM.add(polyM);
-            plotM.add(boxM);
-            plotM.add(bothM);
-            polyM.setActionCommand("Poly");
-            boxM.setActionCommand("Box");
-            bothM.setActionCommand("Both");
-            polyM.addActionListener(this);
-            boxM.addActionListener(this);
-            bothM.addActionListener(this);	  
-            scaleType.add(plotM);
+            JMenu alignM = new JMenu("Align at");
+
+            JCheckBoxMenuItem centerM = new JCheckBoxMenuItem("Center", false);
+            JCheckBoxMenuItem cmeanM = new JCheckBoxMenuItem("Mean", false);
+            JCheckBoxMenuItem cmedianM = new JCheckBoxMenuItem("Median", false);
+            JCheckBoxMenuItem ccaseM = new JCheckBoxMenuItem("Case", false);
+            JCheckBoxMenuItem cvalueM = new JCheckBoxMenuItem("Value ...", false);
+
+            if( alignMode.equals("center") )
+              centerM.setState(true);
+            if( alignMode.equals("cmean") )
+              cmeanM.setState(true);
+            if( alignMode.equals("cmedian") )
+              cmedianM.setState(true);
+            if( data.countSelection() == 1 )
+              ccaseM.setEnabled(true);
+            else
+              ccaseM.setEnabled(false);
+            if( alignMode.equals("ccase") )
+              ccaseM.setState(true);
+            if( alignMode.equals("cvalue") )
+              cvalueM.setState(true);
+
+            alignM.add(centerM);
+            alignM.add(cmeanM);
+            alignM.add(cmedianM);
+            alignM.add(ccaseM);
+            alignM.add(cvalueM);
+            centerM.setActionCommand("center");
+            cmeanM.setActionCommand("cmean");
+            cmedianM.setActionCommand("cmedian");
+            ccaseM.setActionCommand("ccase");
+            cvalueM.setActionCommand("cvalue");
+            centerM.addActionListener(this);
+            cmeanM.addActionListener(this);
+            cmedianM.addActionListener(this);
+            ccaseM.addActionListener(this);
+            cvalueM.addActionListener(this);
+
+            scaleType.add(alignM);
 
             JMenu sortM = new JMenu("Sort Axes by");
-            JMenuItem minM = new JMenuItem("Minimum");
-            JMenuItem quarM  = new JMenuItem("IQ-Range");
-            JMenuItem medianM  = new JMenuItem("Median");
-            JMenuItem meanM = new JMenuItem("Mean");
-            JMenuItem sdevM  = new JMenuItem("Std. Dev.");
-            JMenuItem maxM  = new JMenuItem("Maximum");
-            JMenuItem iniM  = new JMenuItem("Initial");
-            JMenuItem revM  = new JMenuItem("Reverse");
+            JCheckBoxMenuItem minM = new JCheckBoxMenuItem("Minimum");
+            JCheckBoxMenuItem quarM  = new JCheckBoxMenuItem("IQ-Range");
+            JCheckBoxMenuItem medianM  = new JCheckBoxMenuItem("Median");
+            JCheckBoxMenuItem meanM = new JCheckBoxMenuItem("Mean");
+            JCheckBoxMenuItem sdevM  = new JCheckBoxMenuItem("Std. Dev.");
+            JCheckBoxMenuItem maxM  = new JCheckBoxMenuItem("Maximum");
+            JCheckBoxMenuItem iniM  = new JCheckBoxMenuItem("Initial");
+            JCheckBoxMenuItem revM  = new JCheckBoxMenuItem("Reverse");
+
+            if( sortMode.equals("ini") )
+              iniM.setState(true);
+            else if( sortMode.equals("rev") )
+              revM.setState(true);
+            else if( sortMode.equals("min") )
+              minM.setState(true);
+            else if( sortMode.equals("quar") )
+              quarM.setState(true);
+            else if( sortMode.equals("median") )
+              medianM.setState(true);
+            else if( sortMode.equals("mean") )
+              meanM.setState(true);
+            else if( sortMode.equals("sdev") )
+              sdevM.setState(true);
+            else if( sortMode.equals("max") )
+              maxM.setState(true);
             sortM.add(minM);
             sortM.add(quarM);
             sortM.add(medianM);
@@ -222,27 +308,72 @@ public class PC extends DragBox implements ActionListener {
             scaleType.add(sortM);
 
             JMenu alphaM = new JMenu("Alpha");
-            JMenuItem alpha1 = new JMenuItem("1.0");
-            JMenuItem alpha01 = new JMenuItem("0.1");
-            JMenuItem alpha005  = new JMenuItem("0.05");
-            JMenuItem alpha001 = new JMenuItem("0.01");
-            JMenuItem alpha0005 = new JMenuItem("0.005");
+            JCheckBoxMenuItem alpha1 = new JCheckBoxMenuItem("1.0");
+            JCheckBoxMenuItem alpha05 = new JCheckBoxMenuItem("0.5");
+            JCheckBoxMenuItem alpha01 = new JCheckBoxMenuItem("0.1");
+            JCheckBoxMenuItem alpha005  = new JCheckBoxMenuItem("0.05");
+            JCheckBoxMenuItem alpha001 = new JCheckBoxMenuItem("0.01");
+            JCheckBoxMenuItem alpha0005 = new JCheckBoxMenuItem("0.005");
+            if( alpha >= 0.99 )
+              alpha1.setState(true);
+            else if( alpha >= 0.49 )
+              alpha05.setState(true);
+            else if( alpha >= 0.099 )
+              alpha01.setState(true);
+            else if( alpha >= 0.049 )
+              alpha005.setState(true);
+            else if( alpha >= 0.0099 )
+              alpha001.setState(true);
+            else if( alpha >= 0.0049 )
+              alpha0005.setState(true);
+              
             alphaM.add(alpha1);
+            alphaM.add(alpha05);
             alphaM.add(alpha01);
             alphaM.add(alpha005);
             alphaM.add(alpha001);
             alphaM.add(alpha0005);
-            alpha01.setActionCommand("1.0");
+            alpha1.setActionCommand("1.0");
+
+            alpha05.setActionCommand("0.5");
             alpha01.setActionCommand("0.1");
             alpha005.setActionCommand("0.05");
             alpha001.setActionCommand("0.01");
             alpha0005.setActionCommand("0.005");
             alpha1.addActionListener(this);
+            alpha05.addActionListener(this);
             alpha01.addActionListener(this);
             alpha005.addActionListener(this);
             alpha001.addActionListener(this);	  
             alpha0005.addActionListener(this);	  
-            scaleType.add(alphaM);          
+            scaleType.add(alphaM);
+
+
+            JMenu plotM = new JMenu("Type");
+            JCheckBoxMenuItem polyM = new JCheckBoxMenuItem("Polygons", false);
+            JCheckBoxMenuItem boxM = new JCheckBoxMenuItem("Box Plots", false);
+            JCheckBoxMenuItem bothM = new JCheckBoxMenuItem("Both", false);
+            if( paintMode.equals("Poly") )
+              polyM.setState(true);
+            else if( paintMode.equals("Box") )
+              boxM.setState(true);
+            else if( paintMode.equals("Both") )
+              bothM.setState(true);
+
+            plotM.add(polyM);
+            plotM.add(boxM);
+            plotM.add(bothM);
+            polyM.setActionCommand("Poly");
+            boxM.setActionCommand("Box");
+            bothM.setActionCommand("Both");
+            polyM.addActionListener(this);
+            boxM.addActionListener(this);
+            bothM.addActionListener(this);
+
+            scaleType.add(plotM);
+            
+            scaleType.add(new JMenuItem("Dismiss"));
+            
             if( k > 1 && !paintMode.equals("XbyY") ) {
               scaleType.show(e.getComponent(), e.getX(), e.getY());
             }
@@ -254,10 +385,11 @@ public class PC extends DragBox implements ActionListener {
                (e.getModifiers() == ALT_DOWN+4) && (System.getProperty("os.name").equals("Linux")) ||
                (e.getModifiers() == ALT_DOWN) && (System.getProperty("os.name").equals("Mac OS")) ||
                (e.getModifiers() == BUTTON1_DOWN + ALT_DOWN)) ) {
-            //System.out.println("Moving Start");
+            //
+            //  System.out.println("Moving Start");
+            //
             moving = true;
             frame.setCursor(Frame.HAND_CURSOR);
-            Graphics g = this.getGraphics();
 
             int minXDist = 5000;
             int popXId = 0;
@@ -273,30 +405,12 @@ public class PC extends DragBox implements ActionListener {
 
             movingName = (MyText)names.elementAt(movingID);
 
-            g.setColor(MFrame.backgroundColor);
-
-            if( movingID == 0 )
-              movingName.draw(g, 0);
-            else if( movingID == k-1)
-              movingName.draw(g, 1);
-            else
-              movingName.draw(g, 2);
-
-            g.setXORMode(MFrame.backgroundColor);
-
-            g.setColor(Color.black);
             lastX = e.getX();
-            movingName.moveXTo(lastX);
-            movingName.draw(g, 2);
-            g.fillRect(lastX-1, border, 3, height - 2*border);
           }
         else if( (e.getID() == MouseEvent.MOUSE_RELEASED) && moving ) {
-          //System.out.println("Moving Stop");
-          Graphics g = this.getGraphics();
-          g.setXORMode(MFrame.backgroundColor);
-          g.fillRect(lastX-1, border, 3, height - 2*border);
-          movingName.moveXTo(lastX);
-          movingName.draw(g, 2);
+          //
+          //   System.out.println("Moving Stop");
+          //
           moving = false;
           frame.setCursor(Frame.DEFAULT_CURSOR);
 
@@ -327,6 +441,9 @@ public class PC extends DragBox implements ActionListener {
               permA[j] = permA[j-1];
             permA[insertBefore] = save;
           }
+          if( insertBefore < movingID || insertBefore > movingID +1 )    // Check whether the current order has been changed or not
+            sortMode = "foo";
+          
           create(width, height);
           update(this.getGraphics());
         }                                    // Moving Axis handling end	  
@@ -369,7 +486,7 @@ public class PC extends DragBox implements ActionListener {
                 Maxs[permA[popXId]] = dMaxs[permA[popXId]];
               }
               //System.out.println("Id: "+popXId);
-              create(width, height);
+              //            create(width, height);
               update(this.getGraphics());
             }
           }
@@ -383,16 +500,13 @@ public class PC extends DragBox implements ActionListener {
     public void processMouseMotionEvent(MouseEvent e) {
       if( moving ) {
         Graphics g = this.getGraphics();
-        g.setXORMode(MFrame.backgroundColor);
+        g.drawImage(ttbi, 0, 0, Color.black, null);
         g.fillRect(lastX-1, border, 3, height - 2 * border);
         movingName.moveXTo(lastX);
         movingName.draw(g, 2);
         lastX = e.getX();
         lastX = Math.max(lastX, border);
         lastX = Math.min(lastX, width-border);
-        g.fillRect(lastX-1, border, 3, height - 2 * border);
-        movingName.moveXTo(lastX);
-        movingName.draw(g, 2);
       }
       else
         super.processMouseMotionEvent(e);  // Pass other event types on.
@@ -400,21 +514,141 @@ public class PC extends DragBox implements ActionListener {
 
     public void processKeyEvent(KeyEvent e) {
 
+      boolean hit = false;
+
       if (     e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-          && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0)) {
+               && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0)) {
         if( (e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0  )
             && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
             frame.getWidth() > Toolkit.getDefaultToolkit().getScreenSize().width) {
           frame.setSize((Toolkit.getDefaultToolkit().getScreenSize()).width, frame.getHeight());
           this.setSize((Toolkit.getDefaultToolkit().getScreenSize()).width, this.getHeight());
         }
-      } else                                     
-          super.processKeyEvent(e);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) &&  (e.getKeyCode() == Event.BACK_SPACE))  {
+        if( k>2 && paintMode.equals("Poly") || k>1 && !paintMode.equals("Poly") ) {
+          for( int j=0; j<k; j++ ) {
+            if( selected[permA[j]] ) {
+              hit = true;
+              // First take care of eventually deleted selections
+              for( int i=0; i<Selections.size(); i++) {
+                Selection S = (Selection)Selections.elementAt(i);
+                if( !paintMode.equals("XbyY") && vars[permA[j]] == ((floatRect)S.o).var ) {
+                  Selections.removeElementAt(i);
+                  S.status = Selection.KILLED;
+System.out.println("Deleted Selection for variable: "+((floatRect)S.o).var+" on Slot: "+j+" mapping to: "+permA[j]+" is: "+vars[permA[j]]+" it: "+j);
+                  SelectionEvent se = new SelectionEvent(this);
+                  EventQueue evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
+                  evtq.postEvent(se);
+                }
+//                if( ((floatRect)S.o).var > vars[permA[j]] )
+//                  ((floatRect)S.o).var -= 1;
+              }
+              // 
+              for( int i=permA[j]; i<k-1; i++) {
+                vars[i] = vars[i+1];
+                selected[i] = selected[i+1];
+                inverted[i] = inverted[i+1];
+              }
+              for( int i=0; i<k; i++)
+                if( permA[i] > permA[j] )
+                  permA[i] -= 1;
+              for( int i=j; i<k-1; i++) {
+                permA[i] = permA[i+1];
+              }
+              k -= 1;
+              j -= 1;
+            }
+          }
+          if( hit ) {
+            this.dataChanged(0);
+            return;
+          }
+        }
+      }
+      if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
+          e.getKeyCode() == KeyEvent.VK_I && !paintMode.equals("XbyY")) {
+        for( int j=0; j<k; j++ ) {
+          if( selected[permA[j]] )
+            inverted[permA[j]] = !inverted[permA[j]];
+        }
+        this.dataChanged(0);
+      } else if(e.getID() == KeyEvent.KEY_PRESSED && ( e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN )) {
+        if( e.getKeyCode() == KeyEvent.VK_UP )
+          scaleFactor += 1;
+        else
+          if( scaleFactor >= 2 )
+            scaleFactor -= 1;
+        this.dataChanged(0);
+      } else if(e.getID() == KeyEvent.KEY_PRESSED && ( e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT )) {
+        if( e.getKeyCode() == KeyEvent.VK_RIGHT ) {
+          if( alpha >= 0.99 )
+            return;
+          else if( alpha >= 0.49 )
+            alpha = 1.0F;
+          else if( alpha >= 0.099 )
+            alpha = 0.5F;
+          else if( alpha >= 0.049 )
+            alpha = 0.1F;
+          else if( alpha >= 0.0099 )
+            alpha = 0.05F;
+          else if( alpha >= 0.0049 )
+            alpha = 0.01F;
+        }
+        else {
+          if( alpha >= 0.99 )
+            alpha = 0.5F;
+          else if( alpha >= 0.49 )
+            alpha = 0.1F;
+          else if( alpha >= 0.099 )
+            alpha = 0.05F;
+          else if( alpha >= 0.049 )
+            alpha = 0.01F;
+          else if( alpha >= 0.0099 )
+            alpha = 0.005F;
+          else if( alpha >= 0.0049 )
+            return;
+        }
+        this.dataChanged(0);
+      } else if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP || e.getKeyCode() == KeyEvent.VK_PAGE_DOWN ) {
+        if( !inSequence ) {
+          sortMode = "foo";
+          int[] newP = new int[k+1];
+          newP[1] = 1;
+          for( int j=1; j<k; j++ ) {
+            newP[j+1] = ((newP[j] + (int)Math.pow(-1, j+1)*j) % k);
+            if( newP[j+1] == 0 )
+              newP[j+1] = k;
+            if( newP[j+1] < 0 )
+              newP[j+1] += k;
+          }
+          for( int j=0; j<k; j++ )
+            permA[j] = newP[j+1] - 1;
+          inSequence = true;
+        }
+        else
+          if ( e.getKeyCode() == KeyEvent.VK_PAGE_UP ) {
+            for( int j=0; j<k; j++ ) 
+              permA[j] = (permA[j]+1) % k;
+            if( permA[0] == 0 )
+              Toolkit.getDefaultToolkit().beep();
+          }
+          else {
+            if( inSequence )
+              for( int j=0; j<k; j++ ) { 
+                permA[j] = (permA[j]-1) % k;
+                if( permA[j] < 0 )
+                  permA[j] += k;
+              }
+          }
+        this.dataChanged(0);
+      } else
+        super.processKeyEvent(e);
     }
 
     public void actionPerformed(ActionEvent e) {
       String command = e.getActionCommand();
-      System.out.println("Command: "+command);
+System.out.println("Command: "+command);
       if( command.equals("Common") || command.equals("Individual") ) {
         if( command.equals("Common") ) 
           Scale = "Individual";
@@ -428,11 +662,13 @@ public class PC extends DragBox implements ActionListener {
         create(width, height);
         update(this.getGraphics());
       }
-      else if( command.equals("1.0") || command.equals("0.1") || command.equals("0.05") || command.equals("0.01") || command.equals("0.005") ) {
+      else if( command.equals("1.0") || command.equals("0.5") || command.equals("0.1") || command.equals("0.05") || command.equals("0.01") || command.equals("0.005") ) {
         alpha = (float)Util.atod(command);
+//System.out.println("alpha: "+alpha);
         create(width, height);
         update(this.getGraphics());
       } else if( command.equals("min") || command.equals("quar") || command.equals("sdev") || command.equals("mean") || command.equals("median") || command.equals("max") || command.equals("ini") || command.equals("rev") ) {
+        sortMode = command;
         if( command.equals("ini") )
           for( int i=0; i<sortA.length; i++ )
             permA[i] =i;
@@ -471,13 +707,20 @@ public class PC extends DragBox implements ActionListener {
         }
         create(width, height);
         update(this.getGraphics());
+      } else if ( command.equals("center") || command.equals("cmean") || command.equals("cmedian") || command.equals("ccase") || command.equals("cvalue") ) {
+        alignMode = command;
+        if( alignMode.equals("cvalue") )
+          centerAt = Util.atod(JOptionPane.showInputDialog(this, "Align values at:"));
+
+        create(width, height);
+        update(this.getGraphics());
       } else
         super.actionPerformed(e);
     }
 
-    public void paint(Graphics g2d) {
+    public void paint(Graphics2D g2d) {
 
-      Graphics g = (Graphics2D)g2d;
+      Graphics2D g = (Graphics2D)g2d;
 
       double[] selection;
       Dimension size = this.getSize();
@@ -491,15 +734,18 @@ public class PC extends DragBox implements ActionListener {
         oldWidth = size.width;
         oldHeight = size.height;
       }
-      if( bg == null || printing || g instanceof PSGr ) {
-        if( !(printing)  && !(g instanceof PSGr) ) {
+      if( bg == null || printing ) {
+        if( !printing )  {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           tbi = createImage(size.width, size.height);
           bg = bi.getGraphics();
+          slotMax = 40;
         }
-        else
+        else {
           bg = g;
-        //bg.setColor(Color.black);
+          slotMax = 1000000;
+        }
+
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") ) {
           for( int i=0; i<data.n; i++ )
@@ -507,12 +753,26 @@ public class PC extends DragBox implements ActionListener {
         }
         for( int j=0; j<k; j++ ) {	
           bg.setColor(new Color(255, 255, 255, 75));
-          bg.drawLine( poly[1].xpoints[j]-1, border-2, (poly[1].xpoints)[j]-1, size.height-border+2);
+          bg.drawLine( poly[1].xpoints[j]-1, border, (poly[1].xpoints)[j]-1, size.height-border-3);
+          bg.drawLine( poly[1].xpoints[j]+1, border, (poly[1].xpoints)[j]+1, size.height-border-3);
           bg.setColor(new Color(255, 255, 255, 140));
-          bg.drawLine( poly[1].xpoints[j],   border-2, (poly[1].xpoints)[j],   size.height-border+2);
-          bg.setColor(new Color(255, 255, 255, 75));
-          bg.drawLine( poly[1].xpoints[j]+1, border-2, (poly[1].xpoints)[j]+1, size.height-border+2);
+          bg.drawLine( poly[1].xpoints[j],   border-1, (poly[1].xpoints)[j],   size.height-border-2);
         }	
+        for( int j=0; j<k; j++ ) {	
+          if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
+            bg.setColor(new Color(255, 255, 255, 140));
+            bg.drawLine( poly[1].xpoints[j]-3,   border+2, (poly[1].xpoints)[j]+3,   border+2);
+            bg.drawLine( poly[1].xpoints[j]-2,   border+1, (poly[1].xpoints)[j]+2,   border+1);
+            bg.drawLine( poly[1].xpoints[j]-1,   border,   (poly[1].xpoints)[j]+1,   border);
+            bg.drawLine( poly[1].xpoints[j],     border-1, (poly[1].xpoints)[j],     border-1);
+          } else {
+            bg.setColor(Color.red);
+            bg.drawLine( poly[1].xpoints[j]-3,   size.height-border-4, (poly[1].xpoints)[j]+3,   size.height-border-4);
+            bg.drawLine( poly[1].xpoints[j]-2,   size.height-border-3, (poly[1].xpoints)[j]+2,   size.height-border-3);
+            bg.drawLine( poly[1].xpoints[j]-1,   size.height-border-2, (poly[1].xpoints)[j]+1,   size.height-border-2);
+            bg.drawLine( poly[1].xpoints[j],     size.height-border-1, (poly[1].xpoints)[j],     size.height-border-1);
+          }
+        }
         bg.setColor(Color.black);
         if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY")) {
           for( int i=0; i<bPlots.size(); i++ )
@@ -520,34 +780,16 @@ public class PC extends DragBox implements ActionListener {
           for( int i=0; i<rects.size(); i++ )
             ((MyRect)(rects.elementAt(i))).draw(bg);
         }
-        for( int j=0; j<k; j++ ) {
-          int x = border+addBorder+(int)(0.5+(j*slotWidth));
-          MyText mt = (MyText)names.elementAt(j);
-          if( (j % 2) == 1 )
-            mt.moveYTo(border - 3);
-          else
-            mt.moveYTo(height - border + 13);
-          mt.moveXTo(x);
-          if( k == 1 )
-            mt.draw(bg, 2);
-          else
-            if( j == 0 )
-              mt.draw(bg, 0);
-          else if( j == k-1)
-            mt.draw(bg, 1);
-          else
-            mt.draw(bg, 2);
-        }
       }
 
       long start = new Date().getTime();
-      Graphics tbg;
-      if( !(printing)  && !(g instanceof PSGr) )
+      Graphics tbg, ttbg;
+      if( !printing )
         tbg = (Graphics2D)tbi.getGraphics();
       else
         tbg = g;
 
-      if( !(printing)  && !(g instanceof PSGr) )    
+      if( !(printing)  )    
         tbg.drawImage(bi, 0, 0, null);
       //tbg.setColor(Color.red);
       tbg.setColor(DragBox.hiliteColor);
@@ -587,11 +829,54 @@ public class PC extends DragBox implements ActionListener {
         }
       }
 
-      if( !(printing)  && !(g instanceof PSGr) ) {
-        tbg.setColor(Color.black);
-        drawSelections(tbg);
-        g.drawImage(tbi, 0, 0, Color.black, null);
+      // Plot the labels ...
+      if( !printing )  {
+        ttbi = createImage(size.width, size.height);
+        ttbg = ttbi.getGraphics();
+        ttbg.drawImage(tbi, 0, 0, Color.black, null);
+      }
+      else
+        ttbg = g;
+
+      for( int j=0; j<k; j++ ) {
+        int x = border+addBorder+(int)(0.5+(j*slotWidth));
+        MyText mt = (MyText)names.elementAt(j);
+        if( k == 1 )
+          mt.setAlign( 2 );
+        else {
+          if( j == 0 )
+            mt.setAlign( 0 );
+          else if( j== k-1 )
+            mt.setAlign( 1 );
+          else
+            mt.setAlign( 2 );
+        }
+        if( !printing ) {
+          Font SF = new Font("SansSerif", Font.PLAIN, 11);
+          ttbg.setFont(SF);
+        }
+        if( selected[permA[j]] && !printing ) {
+          Font SF = new Font("SansSerif", Font.BOLD, 12);
+          ttbg.setFont(SF);
+          ttbg.setColor(DragBox.hiliteColor);
+        } else
+          ttbg.setColor(Color.black);
+        // Set Y position of Text AFTER we set the font size
+        if( (j % 2) == 1 )
+          mt.moveYTo(border - 4);
+        else
+          mt.moveYTo(height - border + 1 + (ttbg.getFont()).getSize());
+        mt.moveXTo(x);
+
+        mt.draw(ttbg);
+      }
+
+      if( !(printing) ) {
+        ttbg.setColor(Color.black);
+        drawSelections(ttbg);
+        g.drawImage(ttbi, 0, 0, Color.black, null);
         tbg.dispose();
+        ttbg.dispose();
       }
 
       long stop = new Date().getTime();
@@ -601,18 +886,24 @@ public class PC extends DragBox implements ActionListener {
     public void drawSelections(Graphics g) {
 
       int plotID = 0;
-
+      int slotID = 0;
+      
       for( int i=0; i<Selections.size(); i++) {
         Selection S = (Selection)Selections.elementAt(i);
         for( int j=0; j<k; j++)
           if( (  paintMode.equals("XbyY") && j == ((floatRect)S.o).var ) ||
-              ( !paintMode.equals("XbyY") && vars[permA[j]] == ((floatRect)S.o).var ) )
-            plotID = j;
+              ( !paintMode.equals("XbyY") && vars[permA[j]] == ((floatRect)S.o).var ) ) {
+            plotID = permA[j];
+            slotID = j;
+          }
 
-        S.r.x      = (int)(border + addBorder + slotWidth * plotID - (1.0-((floatRect)S.o).x) * (double)slotWidth);
-        S.r.y      = (int)(-border + height - (height-2*border) * ((((floatRect)S.o).y - Mins[plotID])/(Maxs[plotID]-Mins[plotID])));
         S.r.width  = (int)(((floatRect)S.o).w * Math.round(slotWidth));
+        S.r.x      = (int)(border + addBorder + slotWidth * slotID - (1.0-((floatRect)S.o).x) * (double)slotWidth);
         S.r.height = (int)((height-2*border) * ((floatRect)S.o).h / (Maxs[plotID]-Mins[plotID]));
+        if( inverted[plotID] && paintMode.equals("Poly") )
+          S.r.y      = (int)(-border + height - (height-2*border) * ((((floatRect)S.o).y - Maxs[plotID])/(Mins[plotID]-Maxs[plotID]))) - S.r.height;
+        else
+          S.r.y      = (int)(-border + height - (height-2*border) * ((((floatRect)S.o).y - Mins[plotID])/(Maxs[plotID]-Mins[plotID])));
 
         //System.out.println("S.r.x: "+S.r.x+" S.r.y: "+S.r.y+" S.r.width: "+S.r.width+" S.r.height: "+S.r.height);
 
@@ -628,29 +919,44 @@ public class PC extends DragBox implements ActionListener {
       int mode = S.mode;
 
       int selectCol=0;
+      int checkCol=0;
 
       Polygon p = poly[0];
       for( int j=0; j<p.npoints-1; j++ ) {
         if( p.xpoints[j] <= sr.x && p.xpoints[j+1] > sr.x )
-          selectCol = j+1;
+          checkCol = j+1;
       }
-      //System.out.println(" **** select col: "+selectCol);
-      int passID = vars[permA[selectCol]];
+      //		System.out.println(" **** select col: "+selectCol);
+      int passID = vars[permA[checkCol]];
       if( paintMode.equals("XbyY") )
-        passID = selectCol;
+        passID = checkCol;
 
+      selectCol = permA[checkCol];
+      double denom=0;
       if( k == 1 )
-        S.o = new floatRect((double)((S.r.x - border - addBorder) % slotWidth)/slotWidth,
-                            ((double)(height-border-S.r.y))/(height-40)*(Maxs[selectCol]-Mins[selectCol])+Mins[selectCol],
-                            (double)(S.r.width)/slotWidth ,
-                            (double)(S.r.height)/(height-2*border)*(Maxs[selectCol]-Mins[selectCol]),
-                            passID);	
+        denom = slotWidth;
       else
+        denom = p.xpoints[1] - p.xpoints[0];
+
+      if( inverted[selectCol] && paintMode.equals("Poly") )
+        S.o = new floatRect((double)((S.r.x - border - addBorder) % slotWidth)/slotWidth,
+                            ((double)(-border+S.r.y+S.r.height))/(height-2*border)*(Maxs[selectCol]-Mins[selectCol])+Mins[selectCol],
+                            (double)(S.r.width)/denom,
+                            (double)(S.r.height)/(height-2*border)*(Maxs[selectCol]-Mins[selectCol]),
+                            passID);
+      else
+        S.o = new floatRect((double)((S.r.x - border - addBorder) % slotWidth)/slotWidth,
+                            ((double)(height-border-S.r.y))/(height-2*border)*(Maxs[selectCol]-Mins[selectCol])+Mins[selectCol],
+                            (double)(S.r.width)/denom,
+                            (double)(S.r.height)/(height-2*border)*(Maxs[selectCol]-Mins[selectCol]),
+                            passID);
+
+      /*      else
         S.o = new floatRect((double)((S.r.x - border) % slotWidth)/slotWidth,
                             ((double)(height-border-S.r.y))/(height-40)*(Maxs[selectCol]-Mins[selectCol])+Mins[selectCol],
                             (double)(S.r.width)/(p.xpoints[1] - p.xpoints[0]),
                             (double)(S.r.height)/(height-2*border)*(Maxs[selectCol]-Mins[selectCol]),
-                            passID);
+                            passID);*/
 
       if( ((floatRect)S.o).x < 0 )
         ((floatRect)S.o).x = 1-Math.abs(((floatRect)S.o).x);
@@ -700,7 +1006,7 @@ public class PC extends DragBox implements ActionListener {
         }
         for( int i=0; i<data.n; i++ ) {
           p = poly[i];
-          if( sr.contains(p.xpoints[selectCol], p.ypoints[selectCol] ) ) {
+          if( sr.contains(p.xpoints[checkCol], p.ypoints[checkCol] ) ) {
             data.setSelection(i,1,mode);
           }
           else
@@ -712,19 +1018,18 @@ public class PC extends DragBox implements ActionListener {
 
     void getData() {
 
+      if( k == 1 )
+        addBorder = 30;
+
       if( paintMode.equals("XbyY") ) {
         k = data.getNumLevels(yVar);
         vars = new int[k];
         for( int j=0; j<k; j++ ) {
           vars[j] = xVar;
         }
-        frame.setSize(50 * (1 + k), 400);
       }
-
+      
       sortA = new double[k];
-      permA = new int[k];
-      for(int i=0; i<k; i++)
-        permA[i] = i;
 
       dMins = new double[k];
       dIQRs = new double[k];
@@ -734,6 +1039,7 @@ public class PC extends DragBox implements ActionListener {
       dMaxs = new double[k];
       Mins = new double[k];
       Maxs = new double[k];
+
       dataCopy = new double[k][data.n];
 
       for( int j=0; j<k; j++ ) {
@@ -743,9 +1049,8 @@ public class PC extends DragBox implements ActionListener {
         dMeans[j] = data.getMean(vars[j]);
         dSDevs[j] = data.getSDev(vars[j]);
         dMaxs[j] = data.getMax(vars[j]);
-        if( data.categorical(vars[j]) && !data.alpha(vars[j]) ) {
+        if( data.categorical(vars[j]) && !data.alpha(vars[j]) )
           dataCopy[j] = data.getRawNumbers(vars[j]);
-        }
         else
           dataCopy[j] = data.getNumbers(vars[j]);
       }
@@ -753,14 +1058,37 @@ public class PC extends DragBox implements ActionListener {
 
     void create(int width, int height) {
 
+//      System.out.println("- - - - - - - - - - - ");
+//      for(int j=0; j<k; j++)
+//        System.out.print(" "+dSDevs[j]);
+
       if( bg != null ) {
         bg.dispose();
         bg = null;
       }
 
+      if( alignMode.equals("ccase") )
+        for( int i=0; i<data.n; i++ )
+          if( data.getSelected(i) > 0 )
+            selID = i;
+
       for( int j=0; j<k; j++ ) {
-        Mins[j] = dMins[j];
-        Maxs[j] = dMaxs[j];
+        if( alignMode.equals("center") ) {
+          Mins[j] = dMins[j] - (dMaxs[j]-dMins[j])/height*4;
+          Maxs[j] = dMaxs[j] + (dMaxs[j]-dMins[j])/height*4;
+        } else if( alignMode.equals("cmean") ) {
+          Mins[j] = dMeans[j] - scaleFactor * dSDevs[j];
+          Maxs[j] = dMeans[j] + scaleFactor * dSDevs[j];
+        } else if( alignMode.equals("cmedian") ) {
+          Mins[j] = dMedians[j] - scaleFactor * dIQRs[j];
+          Maxs[j] = dMedians[j] + scaleFactor * dIQRs[j];
+        } else if( alignMode.equals("ccase") ) {
+          Mins[j] = dataCopy[j][selID] - scaleFactor * dSDevs[j];
+          Maxs[j] = dataCopy[j][selID] + scaleFactor * dSDevs[j];
+        } else if( alignMode.equals("cvalue") ) {
+          Mins[j] = centerAt - scaleFactor * dSDevs[j];
+          Maxs[j] = centerAt + scaleFactor * dSDevs[j];
+        }
       }
       if( Scale.equals("Individual") )
         scaleCommon();
@@ -770,17 +1098,17 @@ public class PC extends DragBox implements ActionListener {
       else
         slotWidth = 100;
 
-System.out.println("Slot: "+slotWidth);
-      
+      //System.out.println("Slot: "+slotWidth);
+
       names.removeAllElements();
       if( paintMode.equals("XbyY") )
         lNames = data.getLevels(yVar);
 
       for( int j=0; j<k; j++ ) {
         if( !paintMode.equals("XbyY") )
-          names.addElement(new MyText(data.getName(vars[permA[j]]), 1, 1));
+          names.addElement(new MyText(data.getName(vars[permA[j]]), 1, 1, 0));
         else {
-          names.addElement(new MyText(lNames[j], 1, 1));
+          names.addElement(new MyText(lNames[j], 1, 1, 0));
         }
       }
 
@@ -789,7 +1117,11 @@ System.out.println("Slot: "+slotWidth);
         poly[i] = new Polygon();
         for( int j=0; j<k; j++ ) {	
           int x = border+addBorder+(int)(0.5+slotWidth*j);
-          int y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Mins[permA[j]])/(Maxs[permA[j]]-Mins[permA[j]])));
+          int y;
+          if( !inverted[permA[j]] || !paintMode.equals("Poly") )
+            y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Mins[permA[j]])/(Maxs[permA[j]]-Mins[permA[j]])));
+          else
+            y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Maxs[permA[j]])/(Mins[permA[j]]-Maxs[permA[j]])));
           poly[i].addPoint(x, y);
         }
       }
@@ -803,7 +1135,7 @@ System.out.println("Slot: "+slotWidth);
           if( !data.categorical(vars[permA[j]]) ) {
             if( paintMode.equals("XbyY") )
               data.setFilter( yVar, lNames[j]);
-            bPlots.addElement(new boxPlot( j, vars[permA[j]] , x + addBorder, (int)(0.5+Math.min(slotWidth/2, 40)), border, height-border));
+            bPlots.addElement(new boxPlot( j, vars[permA[j]] , x + addBorder, (int)(0.5+Math.min(slotWidth/2, slotMax)), border, height-border));
             data.resetFilter();
           }
           else {
@@ -840,7 +1172,7 @@ System.out.println("Slot: "+slotWidth);
       }
 
       /*
-        if( paintMode.equals("XbysdddsY") ) {
+        if( paintMode.equals("XbyY") ) {
           bPlots.removeAllElements();
           for( int j=0; j<k; j++ ) {
             int x = border+slotWidth*j;
@@ -853,19 +1185,41 @@ System.out.println("Slot: "+slotWidth);
     }
 
     void scaleCommon() {
-      double totMin = 1000000, totMax=-10000000;
-      for( int j=0; j<k; j++ ) {
-        if( totMin >= Mins[j] )
-          totMin = Mins[j];
-        if( totMax <= Maxs[j] )
-          totMax = Maxs[j];
-      }
-      for( int j=0; j<k; j++ ) {
-        Mins[j] = totMin;
-        Maxs[j] = totMax;
+      if( alignMode.equals("center") || paintMode.equals("XbyY") ) {
+        double totMin = 1000000, totMax=-10000000;
+        for( int j=0; j<k; j++ ) {
+          if( totMin >= Mins[j] )
+            totMin = Mins[j];
+          if( totMax <= Maxs[j] )
+            totMax = Maxs[j];
+        }
+        for( int j=0; j<k; j++ ) {
+          Mins[j] = totMin;
+          Maxs[j] = totMax;
+        }
+      } else {
+        double maxRange = 0, range;
+        for( int j=0; j<k; j++ )
+          if( (range = dMaxs[j] - dMins[j]) > maxRange )
+            maxRange = range;
+        for( int j=0; j<k; j++ ) {
+          if( alignMode.equals("cmean") ) {
+            Mins[j] = dMeans[j] - maxRange / 6 * scaleFactor;
+            Maxs[j] = dMeans[j] + maxRange / 6 * scaleFactor;
+          } else if( alignMode.equals("cmedian") ) {
+            Mins[j] = dMedians[j] - maxRange / 6 * scaleFactor;
+            Maxs[j] = dMedians[j] + maxRange / 6 * scaleFactor;
+          } else if( alignMode.equals("ccase") ) {
+            Mins[j] = dataCopy[j][selID] - maxRange / 6 * scaleFactor;
+            Maxs[j] = dataCopy[j][selID] + maxRange / 6 * scaleFactor;
+          } else if( alignMode.equals("cvalue") ) {
+            Mins[j] = centerAt - maxRange / 6 * scaleFactor;
+            Maxs[j] = centerAt + maxRange / 6 * scaleFactor;
+          }
+        }
       }
     }
-
+    
     public void updateSelection() {
       paint(this.getGraphics());
     }
@@ -1029,18 +1383,19 @@ System.out.println("Slot: "+slotWidth);
           int  uSHP  = low+(int)((Maxs[id]-uSHinge)/(Maxs[id]-Mins[id])*(high-low));
           int  uSWP  = low+(int)((Maxs[id]-uSWhisker)/(Maxs[id]-Mins[id])*(high-low));
           // Highlight Boxes
+          int smaller = width/8;
           g.setColor(getHiliteColor());
-          g.drawRect(mid-width/2+4, uSWP, width-8, 1);
+          g.drawRect(mid-width/2+smaller, uSWP, width-2*smaller, 1);
           g.drawLine(mid, uSWP, mid, uSHP);
-          g.fillRect(mid-width/2+4, uSHP, width-8, sMedP-uSHP);
+          g.fillRect(mid-width/2+smaller, uSHP, width-2*smaller, sMedP-uSHP);
           g.setColor(Color.black);
-          g.drawRect(mid-width/2+4, uSHP, width-8, sMedP-uSHP);
+          g.drawRect(mid-width/2+smaller, uSHP, width-2*smaller, sMedP-uSHP);
           g.setColor(getHiliteColor());
-          g.fillRect(mid-width/2+4, sMedP, width-8, lSHP-sMedP);
+          g.fillRect(mid-width/2+smaller, sMedP, width-2*smaller, lSHP-sMedP);
           g.setColor(Color.black);
-          g.drawRect(mid-width/2+4, sMedP, width-8, lSHP-sMedP);
+          g.drawRect(mid-width/2+smaller, sMedP, width-2*smaller, lSHP-sMedP);
           g.setColor(getHiliteColor());
-          g.drawRect(mid-width/2+4, lSWP, width-8, 1);
+          g.drawRect(mid-width/2+smaller, lSWP, width-2*smaller, 1);
           g.drawLine(mid, lSWP, mid, lSHP);
 
           for( int i=0; i<lOutlier.length; i++ ) {
