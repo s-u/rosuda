@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Font;
 import java.awt.Dimension;
 import java.awt.event.WindowListener;
 import java.awt.event.MouseEvent;
@@ -56,6 +57,8 @@ public class Common
     /** if <code>true</code> no internal variables are created */
     public static boolean noIntVar=false;
 
+    public static Font defaultFont=new Font("SansSerif",Font.PLAIN,10);
+    
     /** Notify-Message constant: SMarker state changed */
     public static final int NM_MarkerChange       =0x001000;
     /** Notify-Message constant: SMarker state changed (secondary marks) */

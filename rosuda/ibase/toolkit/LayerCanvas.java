@@ -68,6 +68,11 @@ public abstract class LayerCanvas extends Canvas
 	Image curimg=null;
         int firstPaintLayer=updateRoot;
 
+        if (Global.forceAntiAliasing) {
+            Graphics2D g2=(Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+        
         if (Global.DEBUG>0) System.out.println("LayerCanvas: update, layers="+layers+", root="+updateRoot);        
         
 	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
@@ -101,7 +106,12 @@ public abstract class LayerCanvas extends Canvas
 
             if (offgc!=null) { /* insane sanity checks, because sometimes it happens that
                                   the graphics subsystem returns null */
-                 if (Global.useAquaBg) {
+                offgc.setFont(Common.defaultFont);
+                if (Global.forceAntiAliasing) {
+                    Graphics2D g2=(Graphics2D) offgc;
+                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                }
+                if (Global.useAquaBg) {
                     offgc.setColor(Color.white);
                     offgc.fillRect(0, 0, d.width, d.height);
 

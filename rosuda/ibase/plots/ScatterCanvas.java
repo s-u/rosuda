@@ -300,7 +300,7 @@ public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener
 	Dimension Dsize=getSize();
 	int w=Dsize.width, h=Dsize.height;
 	TW=w; TH=h;
-	int innerL=30, innerB=30, lshift=0;
+	int innerL=45, innerB=30, lshift=0;
 	int innerW=w-innerL-10, innerH=h-innerB-10;
 	boolean xcat=v[0].isCat(), ycat=v[1].isCat();	
 	

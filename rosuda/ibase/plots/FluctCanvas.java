@@ -138,7 +138,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                                 A[0].getDisplayableValue(fi),t-5,Y+H+20,PoGraSS.TA_Center);
+                                 A[0].getDisplayableValue(fi),t,Y+H+20,PoGraSS.TA_Center);
                 fi+=f;
             };
         }
