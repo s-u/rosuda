@@ -1,32 +1,39 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** implementation of scatterplots
     @version $Id$
 */
-class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+public class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     /** array of two variables (X and Y) */
-    SVar v[];
+    protected SVar v[];
     /** associated marker */
-    SMarker m;
+    protected SMarker m;
 
     /** flag whether axis labels should be shown */
-    boolean showLabels=true;
+    protected boolean showLabels=true;
 
     /** flag whether jittering shoul dbe used for categorical vars */
-    boolean jitter=false;
+    protected boolean jitter=false;
 
     /** flag whether alternative selection style should be used */
-    boolean selRed=false;
+    protected boolean selRed=false;
 
     /** use trigraph for X axis in case X is categorical */
-    boolean useX3=false; 
+    protected boolean useX3=false; 
 
     /** use shading of background according to depth */
-    boolean shading=false;
+    protected boolean shading=false;
     
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
@@ -38,26 +45,26 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     
     /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
 	compatibility with older implementations */
-    Axis A[];
+    protected Axis A[];
 
     /** array of points (in geometrical coordinates) */
-    Point[] Pts;
+    protected Point[] Pts;
     /** # of points */
-    int pts;
+    protected int pts;
 
-    int x1, y1, x2, y2;
-    boolean drag;
+    protected int x1, y1, x2, y2;
+    protected boolean drag;
 
-    MenuItem MIlabels=null;
+    protected MenuItem MIlabels=null;
 
-    int X,Y,W,H, TW,TH;
+    protected int X,Y,W,H, TW,TH;
 
-    int []filter=null;
+    protected int []filter=null;
 
-    boolean querying=false;
-    int qx,qy;
+    protected boolean querying=false;
+    protected int qx,qy;
 
-    boolean zoomRetainsAspect=false;
+    protected boolean zoomRetainsAspect=false;
     
     /** create a new scatterplot
 	@param f associated frame (or <code>null</code> if none)
@@ -83,13 +90,13 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-        if (Common.useAquaBg) fieldBg=2;
+        if (Global.useAquaBg) fieldBg=2;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
             EzMenu.getItem(f,"jitter").setEnabled(false);
-        if (Common.AppType==Common.AT_Framework)
+        if (Global.AppType==Common.AT_Framework)
             EzMenu.getItem(f,"shading").setEnabled(false);
     }
 
@@ -127,47 +134,12 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         repaint();
     };
 
-    SNode paint_cn;
-    
-    /** paints partitioning for a single node (and descends recursively) */	
-    public void paintNode(PoGraSS g, SNode n, int x1, int y1, int x2, int y2, boolean sub) {
-	if (n.tmp==2) {
-	    g.setColor("selBg");
-	    g.fillRect(x1,y1,x2-x1,y2-y1);
-        } else {
-            if (shading && (n.splitVar==v[0] || n.splitVar==v[1])) {
-                int level=255-n.getLevel()*16; if (level<128) level=128;
-                g.setColor(level,level,level);
-                g.fillRect(x1,y1,x2-x1,y2-y1);                
-            }
-        }
-	g.setColor("splitRects");
-	g.drawRect(x1,y1,x2-x1,y2-y1);
-	if (n.isLeaf() || n.isPruned() || (bgTopOnly && n==paint_cn)) return;
-	for(Enumeration e=n.children();e.hasMoreElements();) {
-	    SNode c=(SNode)e.nextElement();
-	    int nx1=x1, nx2=x2, ny1=y1, ny2=y2;
-	    if (c.splitVar==v[0]) {
-		if (!c.splitVar.isCat()) {
-		    int spl=A[0].getValuePos(c.splitValF);
-		    if (c.splitComp==-1) nx2=spl;
-		    if (c.splitComp==1) nx1=spl;
-		};
-	    };
-	    if (c.splitVar==v[1]) {
-		if (!c.splitVar.isCat()) {
-		    int spl=A[1].getValuePos(c.splitValF);
-		    if (c.splitComp==-1) ny1=spl;
-		    if (c.splitComp==1) ny2=spl;
-		};
-	    };
-	    paintNode(g,c,nx1,ny1,nx2,ny2,(n.tmp==2)?true:sub);
-	};
-    };
-
     // clipping warnings
     boolean hasLeft, hasTop, hasRight, hasBot;
-    
+
+    public void paintBackground(PoGraSS g) {}
+    public void paintTop(PoGraSS g) {}
+
     public void paintPoGraSS(PoGraSS g) {
 	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
@@ -207,20 +179,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
             g.fillRect(X,Y,W,H);
         }
         
-	SNode cn=(m!=null)?m.getNode():null;
-        paint_cn=cn;
-
-	if (cn!=null) {
-            if (Common.DEBUG>0) System.out.println("ScatterCanvas: current node present, constructing partitions"); 
-	    ((SNode)cn.getRoot()).setAllTmp(0);
-	    SNode t=cn;
-	    t.tmp=2;
-	    while (t.getParent()!=null) {
-		t=(SNode)t.getParent();
-		t.tmp=1;
-	    };
-	    paintNode(g,t,X,Y,X+W,Y+H,false);
-	};
+        paintBackground(g);
 
         g.setColor("black");
         g.drawLine(X,Y,X,Y+H);
@@ -295,7 +254,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
                 }
             }
         };
-                
+
+        paintTop(g);
+        
 	nextLayer(g);
         if (drag) {
             /* no clipping
@@ -455,7 +416,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         if (e.getKeyChar()=='s') run(this,"shading");
     };
     public void keyPressed(KeyEvent e) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT && !querying) {
             querying=true;
@@ -470,7 +431,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         }
     };
     public void keyReleased(KeyEvent e) {
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT) {
             querying=false;
@@ -567,7 +528,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     Vector zoomSequence;
 
     public void performZoomIn(int x1, int y1, int x2, int y2) {
-        if (Common.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         double ax1=1.0, ax2=1.0, ay1=1.0, ay2=1.0;
@@ -613,7 +574,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     }
 
     public void performZoomOut(int x, int y) {
-        if (Common.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
         int tail=zoomSequence.size()-1;
         if (tail<1) return;
         ZoomDescriptorComponent zx,zy;
@@ -634,7 +595,7 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
     }
 
     public void resetZoom() {
-        if (Common.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
+        if (Global.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
         if (zoomSequence.size()>1) {
             ZoomDescriptorComponent zx,zy;
             zx=(ZoomDescriptorComponent)zoomSequence.elementAt(0);

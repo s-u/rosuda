@@ -1,12 +1,19 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** implementation of line plot
     @version $Id$
 */
-class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+public class PCPCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     /** variables; 0=x, 1,2,3...=Y */
     SVar v[];

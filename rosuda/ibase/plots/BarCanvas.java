@@ -1,12 +1,19 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** BarCanvas - implementation of the barcharts
     @version $Id$
 */
-class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
+public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
 {
     /** corresponding variable */
     SVar v;
@@ -84,7 +91,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIspine=EzMenu.getItem(f,"spine");
 	if (weight!=null) MIspine.setEnabled(false);
-        qi=new QueryPopup(f,mark==null?null:mark.masterSet,"BarCanvas");
+        qi=new QueryPopup(f,mark==null?null:mark.getMasterSet(),"BarCanvas");
     };
     
     public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
@@ -115,7 +122,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	while (j<cats) {
 	    cat_nam[j]=cts[j].toString();
 	    if (m!=null)
-		cols[j]=new int[m.maxMark+1];
+		cols[j]=new int[m.getMaxMark()+1];
 	    j++;
         };
         cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
@@ -286,8 +293,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
         if (actionSelect) return; // selection is now handled by Pressed/Released
         boolean actionQuery=Common.isQueryTrigger(ev);
         boolean actionExtQuery=Common.isExtQuery(ev);
-        if (Common.DEBUG>0)
-            System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac);
+        if (Global.DEBUG>0)
+            System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac());
         
         //System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
 	//		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());

@@ -5,11 +5,17 @@
 //  Created by Simon Urbanek on Thu Dec 05 2002.
 //  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
 //
+package org.rosuda.ibase.plots;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 /** implementation of histograms (new version - based on BaseCanvas).
     @version $Id$
@@ -17,17 +23,17 @@ import java.io.*;
 public class HistCanvasNew extends BaseCanvas
 {
     /** associated variable */
-    SVar v;
+    protected SVar v;
 
-    double anchor, binw;
+    protected double anchor, binw;
 
-    boolean inTick=false;
+    protected boolean inTick=false;
 
-    int dragMode; // 0=none, 1=binw, 2=anchor
-    int dragX;
-    int tickMark1,tickMark2;
-    
-    int bars=22;
+    protected int dragMode; // 0=none, 1=binw, 2=anchor
+    protected int dragX;
+    protected int tickMark1,tickMark2;
+
+    protected int bars=22;
 
     /** creates a new histogram canvas
 	@param f frame owning this canvas or <code>null</code> if none
@@ -144,14 +150,6 @@ public class HistCanvasNew extends BaseCanvas
                 g.drawString(ay.getDisplayableValue(fi),5,t+5);
                 fi+=f;
             }
-        }
-    }
-    
-    public void paintPost(PoGraSS g) {
-        SNode cn=(m!=null)?m.getNode():null;
-        if (cn!=null && cn.splitVar==v) {
-            g.setColor("red");
-            g.drawLine(ax.getValuePos(cn.splitValF),mTop,ax.getValuePos(cn.splitValF),H-mBottom);
         }
     }
     

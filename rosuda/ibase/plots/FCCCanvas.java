@@ -1,12 +1,19 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** color coded fluctuation diagram (dirty hack)
     @version $Id$
 */
-class FCCCanvas extends FluctCanvas {
+public class FCCCanvas extends FluctCanvas {
     SVar ccv;
     public FCCCanvas(Frame f, SVar v1, SVar v2, SMarker mark, SVar ccvar) {
 	super(f,v1,v2,mark,null);

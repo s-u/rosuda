@@ -1,7 +1,14 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
 
 /** OrdStats - ordinal statistics of a variable, used internally by {@link BoxCanvas}
     to get necessary information to plot bopxplots */
@@ -67,7 +74,7 @@ class OrdStats { // get ordinal statistics to be used in boxplot
 /** BoxCanvas - implementation of the boxplots
     @version $Id$
 */
-class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
+public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, Commander, ActionListener
 {
     /** associated numerical variable */
     SVar v;

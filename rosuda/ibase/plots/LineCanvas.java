@@ -1,12 +1,19 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** implementation of line plot
     @version $Id$
 */
-class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
+public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener, Commander
 {
     public static final int LT_DIRECT = 0;
     public static final int LT_RECT   = 1;
@@ -40,7 +47,7 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
     int x1, y1, x2, y2;
     boolean drag;
 
-    boolean ignoreMarker=false;
+    public boolean ignoreMarker=false;
 
     MenuItem MIlabels=null;
 

@@ -1,12 +1,19 @@
+package org.rosuda.ibase.plots;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.PrintStream;
 
+import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.*;
+import org.rosuda.util.*;
+
 /** implementation of maps (uses {@link BaseCanvas})
     @version $Id$
 */
-class MapCanvas extends BaseCanvas
+public class MapCanvas extends BaseCanvas
 {
     /** map variable */
     SVar v;
@@ -32,7 +39,7 @@ class MapCanvas extends BaseCanvas
     public void updateObjects() {
         Dimension Dsize=getSize();
         int w=Dsize.width, h=Dsize.height;
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println("MapCanvas.updateObjects(): ("+w+","+h+")/("+W+","+H+") pp="+pp);
         /* beware! mLeft=mRight=mTop=mBottom should be true! For optimization we assumes that. */
         w=W-mLeft*2; h=H-mLeft*2;
@@ -76,21 +83,21 @@ class MapCanvas extends BaseCanvas
         int reqH=(int)(scale*(maxY-minY));
         if (orientation==0 || orientation==2) {
             if (W>reqW+mLeft*2+25 || H>reqH+mLeft*2+25) {
-                if (Common.DEBUG>0)
+                if (Global.DEBUG>0)
                     System.out.println("MapCanvas.updateObjects(): W/H="+W+"/"+H+" req="+(reqW+mLeft*2)+"/"+(reqH+mLeft*2));
                 setSize(reqW+mLeft*2+20,reqH+mLeft*2+20);
                 getFrame().pack();
                 return;
             }
         } else if (H>reqW+mLeft*2+25 || W>reqH+mLeft*2+25) {
-            if (Common.DEBUG>0)
+            if (Global.DEBUG>0)
                 System.out.println("MapCanvas.updateObjects(): W/H="+W+"/"+H+" req="+(reqW+mLeft*2)+"/"+(reqH+mLeft*2));
             setSize(reqH+mLeft*2+20,reqW+mLeft*2+20);
             getFrame().pack();
             return;
         }
 
-        if (Common.DEBUG>0)
+        if (Global.DEBUG>0)
             System.out.println(" X:["+ax+"]["+minX+".."+maxX+"] Y:["+ay+"]["+minY+".."+maxY+"]");
         
         int i=0;
@@ -117,9 +124,9 @@ class MapCanvas extends BaseCanvas
                                           ms.getSizeAt(j));
 */
                     if (orientation==0 || orientation==2)
-                        pp[ps].pg=new Polygon(ms.transViaAxisX(j,ax),ms.transViaAxisY(j,ay),ms.getSizeAt(j));
+                        pp[ps].pg=new Polygon(MapSegmentTools.transViaAxisX(ms,j,ax),MapSegmentTools.transViaAxisY(ms,j,ay),ms.getSizeAt(j));
                     else
-                        pp[ps].pg=new Polygon(ms.transViaAxisY(j,ay),ms.transViaAxisX(j,ax),ms.getSizeAt(j));
+                        pp[ps].pg=new Polygon(MapSegmentTools.transViaAxisY(ms,j,ay),MapSegmentTools.transViaAxisX(ms,j,ax),ms.getSizeAt(j));
                     
                     j++; ps++;
                 }
