@@ -439,7 +439,8 @@ public class PluginGetTreeR extends Plugin implements ActionListener {
             } else {
                 BufferedReader br=new BufferedReader(new FileReader(fprefix+"PluginInit.out"));
                 lastTreeID++;
-                root=TreeLoader.LoadTree(br,vs,"GrownTree_"+lastTreeID
+                DataRoot dr=Klimt.getRootForData(vs);
+                root=TreeLoader.LoadTree(br,dr,"GrownTree_"+lastTreeID
                                          /*,vs,0,"[1] TREE","[1] END",true,registerPar */
                                          );
                 if (root!=null) {
