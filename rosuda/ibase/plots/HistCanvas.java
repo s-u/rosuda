@@ -125,10 +125,7 @@ public class HistCanvasNew extends BaseCanvas
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-5,t,mLeft,t);
-                String s=""+fi;
-                if (s.length()>2 && s.substring(s.length()-2).compareTo(".0")==0)
-                    s=s.substring(0,s.length()-2);
-                g.drawString(s,5,t+5);
+                g.drawString(ay.getDisplayableValue(fi),5,t+5);
                 fi+=f;
             }
         }
