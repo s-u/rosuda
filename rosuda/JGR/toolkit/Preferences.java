@@ -33,7 +33,7 @@ public class Preferences {
     public static final String SPLASH = "splash.jpg";
 
     public static final int DEBUG = 0;
-    //public static boolean isMac = false;
+    public static boolean isMac = false;
 
     /** DefaultFontName */
     public static String FontName = "Dialog";

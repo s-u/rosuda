@@ -9,12 +9,15 @@ package org.rosuda.JGR.robjects;
 //
 
 import java.text.*;
+import java.util.*;
 import org.rosuda.JGR.toolkit.*;
 
 public class model extends RObject {
 
-    private Double rsquared, deviance, aic, fstatistics;
-    private Integer df;
+    //private Double rsquared, deviance, aic, fstatistics;
+    private double rsquared, deviance, aic, fstatistics;
+    private int df;
+    //private Integer df;
     private String family;
 
     private String call;
@@ -22,6 +25,8 @@ public class model extends RObject {
     private String temp;
 
     private String data;
+
+    private Vector info = new Vector();
 
     public model() {
         this(null,-1);
@@ -51,19 +56,19 @@ public class model extends RObject {
     }
 
     public void setRsquared(double r) {
-        this.rsquared = new Double(r);
+        this.rsquared = r;
     }
     public void setDeviance(double d) {
-        this.deviance = new Double(d);
+        this.deviance = d;
     }
     public void setDf(int df) {
-        this.df = new Integer(df);
+        this.df = df;
     }
     public void setAic(double a) {
-        this.aic = new Double(a);
+        this.aic = a;
     }
     public void setFstat(double f) {
-        this.fstatistics = new Double(f);
+        this.fstatistics = f;
     }
 
     public void setFamily(String f) {
@@ -78,9 +83,19 @@ public class model extends RObject {
         return data;
     }
 
-    public Object[] getInfo() {
-        DecimalFormat dformat = new DecimalFormat("#0.00");
-        Object[] o = new Object[8];
+    public Vector getInfo() {
+        if (info.size() == 0) {
+            info.add(getName());
+            info.add(getData());
+            info.add(getTypeName());
+            info.add(family);
+            info.add(new Integer(df));
+            info.add(new Double(rsquared));
+            info.add(new Double(aic));
+            info.add(new Double(deviance));
+        }
+        return info;
+        /*Object[] o = new Object[8];
         o[0] = getName();
         o[1] = getData();
         o[2] = this.getTypeName();
@@ -88,9 +103,9 @@ public class model extends RObject {
         o[4] = df;
         o[5] = rsquared;
         o[6] = aic;
-        o[7] = deviance;
+        o[7] = deviance;*/
         //o[6] = fstatistics;
-        return o;
+        //return o;
     }
 
     public String toString() {

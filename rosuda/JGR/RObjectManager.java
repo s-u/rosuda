@@ -150,11 +150,11 @@ public class RObjectManager extends iFrame implements ActionListener {
 
 
         private String[] colnames = {"Name","Data","Type","family","df","r.squared","aic","deviance"};
-        private Object[] content;
+        private Vector content;
 
         public ModelTable() {
-            content= new Object[models.size()];
-            for (int i = 0; i < content.length; i++) content[i] = ((model) models.toArray()[i]).getInfo();
+            content= new Vector(models.size());
+            for (int i = 0; i < content.size(); i++) content.add(((model) models.elementAt(i)).getInfo());
         }
 
         public int getColumnCount() {
@@ -170,17 +170,17 @@ public class RObjectManager extends iFrame implements ActionListener {
         }
 
         public Object getValueAt(int row, int col) {
-            try {
+            /*try {
                 if(Class.forName("java.lang.Number").isAssignableFrom((((Object[] )content[row])[col]).getClass())) {
                     DecimalFormat df = new DecimalFormat("#0.00");
                     return df.format(((Object[]) content[row])[col]).replace(',','.');
                 };
-            } catch (Exception e) {}
-            return ((Object[]) content[row])[col];
+            } catch (Exception e) {}*/
+            return ((Vector) ((model) models.elementAt(row)).getInfo()).elementAt(col); //null; //((Object[]) content[row])[col];
         }
 
         public Class getClass(int col) {
-            return ((Object) content[col]).getClass();
+            return ((Vector) ((model) models.elementAt(0)).getInfo()).elementAt(col).getClass();
         }
     }
 
