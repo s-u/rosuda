@@ -1,3 +1,4 @@
+import java.util.Vector;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.*;
@@ -10,13 +11,15 @@ import java.io.PrintStream;
     class must use PoGraSS methods instead of Graphics.
     @version $Id$
 */
-public class PGSCanvas extends LayerCanvas implements Commander {
+public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
     /** frame that owns this canvas. can be null if none does. it is mainly used
 	to identify current frame in calls to dialogs */
     Frame myFrame=null;
     /** description of this canvas. */
     String desc="untitled PGS canvas";
 
+    static Notifier globalNotifier=null;
+    
     /** plot manager for any additional objects */
     PlotManager pm;
 
@@ -39,12 +42,18 @@ public class PGSCanvas extends LayerCanvas implements Commander {
     public PGSCanvas(int layers) {
 	super(layers);
 	pm=new PlotManager(this);
+        if (globalNotifier==null) globalNotifier=new Notifier();
+        globalNotifier.addDepend(this);
     }
 
     public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
         this(1);
     }
 
+    protected void finalize() {
+        globalNotifier.delDepend(this);
+    }
+    
     class IDlgCL implements ActionListener {
         PGSCanvas c;
         IDlgCL(PGSCanvas cc) { c=cc; };
@@ -56,6 +65,12 @@ public class PGSCanvas extends LayerCanvas implements Commander {
         };
     }
 
+    /** returns the global notifier common to all PGScanvas descendants. It is mainly used by routines which change some user settings and need to notify all plots regardless of content. */
+    public static Notifier getGlobalNotifier() {
+        if (globalNotifier==null) globalNotifier=new Notifier();
+        return globalNotifier;
+    }
+    
     /** paintBuffer simply calls {@link #paintPoGraSS} on the supplied {@link Graphics}.
         Any further classes should override {@link #paintPoGraSS} instead of
         {@link #paintLayer}  */
@@ -216,4 +231,9 @@ public class PGSCanvas extends LayerCanvas implements Commander {
         };
         return null;
     };
+
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        setUpdateRoot(0);
+        repaint();
+    }    
 }
