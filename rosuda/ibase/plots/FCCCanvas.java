@@ -78,7 +78,7 @@ class FCCCanvas extends FluctCanvas {
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             while (fi<A[1].vBegin+A[1].vLen) {
-                int t=TH-A[1].getValuePos(fi);
+                int t=A[1].getValuePos(fi);
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
                     g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
@@ -93,9 +93,9 @@ class FCCCanvas extends FluctCanvas {
                 pic++;
                 if (ct>0) {
                     int lx=A[0].getCatLow(xp);
-                    int ly=TH-A[1].getCatLow(yp);
+                    int ly=A[1].getCatLow(yp);
                     int dx=A[0].getCatUp(xp)-lx;
-                    int dy=TH-A[1].getCatUp(yp)-ly;
+                    int dy=A[1].getCatUp(yp)-ly;
                     if (dx<0) { lx+=dx; dx=-dx; };
                     if (dy<0) { ly+=dy; dy=-dy; };
                     g.setColor("white");
@@ -126,16 +126,8 @@ class FCCCanvas extends FluctCanvas {
             } ;
 
         //g.nextLayer();
-                       
-        if (drag) {
-            g.nextLayer();
-	    int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
-		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
-	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
-	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
-	    g.setColor("black");
-	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-	};
+                      
+	paintDragLayer(g);
 
 	g.end();
         setUpdateRoot(2); // by default no repaint is necessary unless resize occurs

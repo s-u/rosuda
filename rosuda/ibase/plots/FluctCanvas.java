@@ -31,7 +31,9 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     double maxCount;
     
     int x1, y1, x2, y2;
-    boolean drag;
+    boolean drag=false, mvX=false, mvY=false; /* drag inside or move X/Y */
+    int dragNew;
+    int mvXstart, mvYstart;
 
     MenuItem MIlabels=null;
 
@@ -137,7 +139,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             while (fi<A[1].vBegin+A[1].vLen) {
-                int t=TH-A[1].getValuePos(fi);
+                int t=A[1].getValuePos(fi);
                 g.drawLine(X-5,t,X,t);
                 if(showLabels)
                     g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-25,t+5);
@@ -152,9 +154,9 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
                 pic++;
                 if (ct>0) {
                     int lx=A[0].getCatLow(xp);
-                    int ly=TH-A[1].getCatLow(yp);
+                    int ly=A[1].getCatLow(yp);
                     int dx=A[0].getCatUp(xp)-lx;
-                    int dy=TH-A[1].getCatUp(yp)-ly;
+                    int dy=A[1].getCatUp(yp)-ly;
                     if (dx<0) { lx+=dx; dx=-dx; };
                     if (dy<0) { ly+=dy; dy=-dy; };
                     g.setColor("white");
@@ -173,18 +175,38 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 
         //g.nextLayer();
                        
-        if (drag) {
-            g.nextLayer();
-	    int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
-		dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
-	    if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
-	    if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
-	    g.setColor("black");
-	    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-	};
+	paintDragLayer(g);
 
 	g.end();
         setUpdateRoot(2); // by default no repaint is necessary unless resize occurs
+    }
+
+    void paintDragLayer(PoGraSS g) {
+        if (drag || mvX || mvY) {
+            g.nextLayer();
+	    if (drag) {
+		int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
+		    dx2=A[0].clip(x2),dy2=A[1].clip(y2);
+		if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
+		if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
+		g.setColor("black");
+		g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
+	    };
+	    if (mvX) {
+		int myXl=A[0].getCatLow(dragNew);
+		int myXh=A[0].getCatUp(dragNew);
+		g.setColor("red");
+		if (myXh<myXl) { int h=myXl; myXl=myXh; myXh=h; };
+		g.drawRect(myXl,Y+H,myXh-myXl,2);		
+	    }
+	    if (mvY) {
+		int myYl=A[1].getCatLow(dragNew);
+		int myYh=A[1].getCatUp(dragNew);
+		g.setColor("red");
+		if (myYh<myYl) { int h=myYl; myYl=myYh; myYh=h; };
+		g.drawRect(X,myYl,2,myYh-myYl);	
+	    }
+	}
     }
 
     public void updatePoints() {
@@ -196,7 +218,7 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 	boolean xcat=v[0].isCat(), ycat=v[1].isCat();	
 	
 	A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
-	A[1].setGeometry(Axis.O_Y,innerB,H=innerH);
+	A[1].setGeometry(Axis.O_Y,TH-innerB,-(H=innerH));
 	Y=TH-innerB-innerH;
 
         v1l=v[0].getNumCats(); v2l=v[1].getNumCats();
@@ -220,51 +242,82 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
     public void mouseClicked(MouseEvent ev) 
     {
 	int x=ev.getX(), y=ev.getY();
-	x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
+	x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);	
     }
 
     public void mousePressed(MouseEvent ev) 
     {	
-	x1=ev.getX(); y1=ev.getY();
-	drag=true;
+	int x=x1=ev.getX(); int y=y1=ev.getY();
+	
+	if (x<X || y>Y+H) { /* border */
+	    if (x<X) {
+		for (int yp=0;yp<v2l;yp++) {
+                    int ly=A[1].getCatLow(yp);
+                    int dy=A[1].getCatUp(yp);
+		    if (ly>dy) { int h=ly; ly=dy; dy=h; };
+		    if (y>ly && y<dy) {
+			setCursor(new Cursor(Cursor.HAND_CURSOR));		
+			mvY=true; mvYstart=yp; return;
+		    }
+		}
+	    } else {
+		for (int xp=0;xp<v1l;xp++) {
+                    int lx=A[0].getCatLow(xp);
+                    int dx=A[0].getCatUp(xp);
+		    if (lx>dx) { int h=lx; lx=dx; dx=h; };
+		    if (x>lx && x<dx) {
+			setCursor(new Cursor(Cursor.HAND_CURSOR));		
+			mvX=true; mvXstart=xp; return;
+		    }
+		}
+	    };
+	} else
+	    drag=true;
     }
     
     public void mouseReleased(MouseEvent e)
     {
-	int X1=x1, Y1=y1, X2=x2, Y2=y2;
-	if (x1>x2) { X2=x1; X1=x2; };
-	if (y1>y2) { Y2=y1; Y1=y2; };
-	Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
-
-	int setTo=0;
-	if (e.isControlDown()) setTo=1;
-	if (!e.isShiftDown()) m.selectNone();
-
-        int pts=v[0].size();
-        if (pts>v[1].size()) pts=v[1].size();
-        for (int yp=0;yp<v2l;yp++)
-            for (int xp=0;xp<v1l;xp++) {
-                int lx=A[0].getCatLow(xp);
-                int ly=TH-A[1].getCatLow(yp);
-                int dx=A[0].getCatUp(xp)-lx;
-                int dy=TH-A[1].getCatUp(yp)-ly;
-                if (dx<0) { lx+=dx; dx=-dx; };
-                if (dy<0) { ly+=dy; dy=-dy; };
-                if (x1<lx+dx&&x2>lx&&y1<ly+dy&&y2>ly) {
-                    for (int i=0;i<pts;i++) {
-                        int xc=v[0].getCatIndex(i);
-                        int yc=v[1].getCatIndex(i);
-                        if (xc==xp && yc==yp)
-                            m.set(i,m.at(i)?setTo:1);
-                    };
-                };
-            };
-
-        drag=false;
-        int i=0;
-	m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-        setUpdateRoot(0);
-	repaint();	
+	if (mvX || mvY) {
+	    mvX=false; mvY=false;
+	    setUpdateRoot(0);
+	    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	    repaint();
+	} else {
+	    int X1=x1, Y1=y1, X2=x2, Y2=y2;
+	    if (x1>x2) { X2=x1; X1=x2; };
+	    if (y1>y2) { Y2=y1; Y1=y2; };
+	    Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
+	    
+	    int setTo=0;
+	    if (e.isControlDown()) setTo=1;
+	    if (!e.isShiftDown()) m.selectNone();
+	    
+	    int pts=v[0].size();
+	    if (pts>v[1].size()) pts=v[1].size();
+	    for (int yp=0;yp<v2l;yp++)
+		for (int xp=0;xp<v1l;xp++) {
+		    int lx=A[0].getCatLow(xp);
+		    int ly=A[1].getCatLow(yp);
+		    int dx=A[0].getCatUp(xp)-lx;
+		    int dy=A[1].getCatUp(yp)-ly;
+		    if (dx<0) { lx+=dx; dx=-dx; };
+		    if (dy<0) { ly+=dy; dy=-dy; };
+		    if (X1<lx+dx&&X2>lx&&Y1<ly+dy&&Y2>ly) {
+			for (int i=0;i<pts;i++) {
+			    int xc=v[0].getCatIndex(i);
+			    int yc=v[1].getCatIndex(i);
+			    if (xc==xp && yc==yp)
+				m.set(i,m.at(i)?setTo:1);
+			};
+		    };
+		};
+	    
+	    drag=false;
+	    int i=0;
+	    m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+	    setUpdateRoot(0);
+	    repaint();	
+	};
     };
     public void mouseEntered(MouseEvent e) {};
     public void mouseExited(MouseEvent e) {};
@@ -278,7 +331,31 @@ class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMo
 		repaint();
 	    };
 	};
+	if (mvX) {
+	    int dragX=e.getX(); int dragY=e.getY();
+	    dragNew=A[0].getCatByPos(dragX);
+	    //System.out.println("dragX="+dragX+" dragY="+dragY+" dragNew="+dragNew);
+            setUpdateRoot(1);
+	    if (dragNew!=mvXstart) {
+		A[0].moveCat(mvXstart,A[0].getCatSeqIndex(dragNew));
+                setUpdateRoot(0);
+	    };
+	    repaint();
+	};
+	if (mvY) {
+	    int dragX=e.getX(); int dragY=e.getY();
+	    dragNew=A[1].getCatByPos(dragY);
+	    //System.out.println("dragX="+dragX+" dragY="+dragY+" dragNew="+dragNew);
+            setUpdateRoot(1);
+	    if (dragNew!=mvYstart) {
+		A[1].moveCat(mvYstart,A[1].getCatSeqIndex(dragNew));
+                setUpdateRoot(0);
+	    };
+	    repaint();
+	};
     };
+
+
     public void mouseMoved(MouseEvent ev) {};
 
     public void keyTyped(KeyEvent e) 
