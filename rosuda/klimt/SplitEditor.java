@@ -508,7 +508,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
                         }
                         //---
                         SVar vvv;
-                        vvv=Klimt.getPredictionVar(nt,nt.getRootInfo().response);
+                        vvv=Klimt.getPredictionVar(nt,nt.getRootInfo().response,vs);
                         if (vvv!=null) {
                             vs.add(vvv);
                             nt.getRootInfo().prediction=vvv;
