@@ -130,6 +130,7 @@ public class QueryPopup implements MouseListener
 	public void paintLayer(Graphics g, int layer) {
 	    if (doUpdate) updateGeometry(g);
 	    Dimension s=getSize();
+            g.setColor(Color.black);
 	    g.drawRect(0,0,s.width-1,s.height-1);
 	    int y=topMargin+xh*3/4;
 	    int i=0;
