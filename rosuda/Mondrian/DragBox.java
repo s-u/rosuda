@@ -39,6 +39,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
   public boolean switchSel = false;                          // True if the user pressed META-M
 
+  public boolean switchAlpha = false;                          // True if the user pressed META-L
+
   public boolean changePop = false;												// True if the Sel Seq Popup was triggered
   
   public boolean scaleChanged = false;              // To indicate paint the new scale (without using events)
@@ -929,6 +931,14 @@ System.out.println("Mouse Action to check: "+mouse);
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))  {
         System.out.println("Switch Selection Mode");
         switchSel = true;
+        SelectionEvent se = new SelectionEvent(this);
+        evtq.postEvent(se);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+          (e.getKeyCode() == KeyEvent.VK_L) &&
+          (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))  {
+        System.out.println("Switch Alpha Mode");
+        switchAlpha = true;
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
