@@ -116,6 +116,7 @@
 				JAVA_ARCHIVE_COMPRESSION = YES;
 				JAVA_COMPILER = /usr/bin/javac;
 				JAVA_COMPILER_TARGET_VM_VERSION = 1.3;
+				JAVA_MANIFEST_FILE = Klimt.mft;
 				JAVA_ONLY = YES;
 				JAVA_SOURCE_SUBDIR = .;
 				PRODUCT_NAME = Klimt;
@@ -183,6 +184,8 @@
 			<key>com.apple.mrj.application.apple.menu.about.name</key>
 			<string>Klimt</string>
 		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
 	</dict>
@@ -314,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C37F18804D85FE600A8030F,
+				1CC795E2055965C100A8030F,
 			);
 			isa = PBXJavaArchiveBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -739,6 +743,19 @@
 			fileRef = 1CA4332F04D840DD00A8030F;
 			isa = PBXBuildFile;
 			settings = {
+			};
+		};
+		1CC795E1055965C100A8030F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = Klimt.mft;
+			refType = 4;
+		};
+		1CC795E2055965C100A8030F = {
+			fileRef = 1CC795E1055965C100A8030F;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = "";
 			};
 		};
 		1CE96E4B04D6D6B300A8030F = {
@@ -1294,6 +1311,7 @@
 			children = (
 				10F9BF62FEEDA25E11DB9C8B,
 				1C37F18704D85FE600A8030F,
+				1CC795E1055965C100A8030F,
 			);
 			isa = PBXGroup;
 			name = Resources;
