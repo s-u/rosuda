@@ -35,6 +35,7 @@ rec:<number of records>
 ** types **
 INT - integer, no TSP
 FLT - float, no TSP
+PLN - polygons, no TSP (for data format see below)
 FAC - factor
   TSP:
     <number of levels>
@@ -46,6 +47,18 @@ FAC - factor
 The flag @ after a type denotes that there are missing values.
 
 Any data beyond the last record of the last field are silently discarded.
+
+PLN - polygons, no TSP
+data are more tricky:
+<# of segments (polygons) for this case> (-1 = NA, structures below are not stored then; currently 0 is silently converted to -1)
+<# of points in this poly>
+<flags> (currently ignored and should be always "L" = land; later may be "W" for water etc. )
+<x>
+..
+<y>
+..
+[<next poly>]
+
 */
 
 public class LoaderFLF {
@@ -90,6 +103,50 @@ public class LoaderFLF {
 					da[k++]=s.equals("NA")?SVar.double_NA:Tools.parseDouble(s);
 				}
 				v = new SVarFixDouble(fieldName, da, false);
+			} else if (ft.equals("PLN")) {
+				System.out.println("FLF.polygons");
+				v= new SVarObj(fieldName, false);
+				v.setContentsType(SVar.CT_Map);
+				int k=0;
+				while (k<recs) {
+					System.out.println("FLF.polygons r"+k);
+					s=r.readLine();
+					if (s==null) throw new IOException("Corrupted file");
+					int ps = Tools.parseInt(s);
+					if (ps<1) {
+						v.add(null);
+					} else {
+						MapSegment ms = new MapSegment();
+						while (ps>0) {
+							double x[], y[];
+							s=r.readLine();
+							if (s==null) throw new IOException("Corrupted file");
+							int pts = Tools.parseInt(s);
+							if (pts<0) throw new IOException("Corrupted file (PLN.points<0)");
+							x=new double[pts];
+							y=new double[pts];
+							int i=0;
+							s=r.readLine(); // flags - currently ignored
+							while (i<pts) {
+								s=r.readLine();
+								if (s==null) throw new IOException("Corrupted file");
+								x[i]=Tools.parseDouble(s);
+								i++;
+							}
+							i=0;
+							while (i<pts) {
+								s=r.readLine();
+								if (s==null) throw new IOException("Corrupted file");
+								y[i]=Tools.parseDouble(s);
+								i++;
+							}
+							ms.add(x,y);
+							ps--;
+						}
+						v.add(ms);
+					}
+					k++;
+				}
 			} else if (ft.equals("FAC")) {
 				s = r.readLine();
 				if (s==null) throw new IOException("Corrupted file");
