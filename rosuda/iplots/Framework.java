@@ -193,15 +193,15 @@ public class Framework {
     /** display a new histogram of a variables from current dataset
         @param v variable ID
         @return histogram canvas object */
-    public HistCanvas newHistogram(int v) { return newHistogram(cvs,v); };
-    public HistCanvas newHistogram(SVarSet vs, int i) {
+    public HistCanvasNew newHistogram(int v) { return newHistogram(cvs,v); };
+    public HistCanvasNew newHistogram(SVarSet vs, int i) {
 	if (vs.getMarker()==null)
 	    vs.setMarker(new SMarker(vs.at(i).size()));
 	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")");
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
 	f.addWindowListener(Common.defaultWindowListener);
-	HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker());
+	HistCanvasNew hc=new HistCanvasNew(f,vs.at(i),vs.getMarker());
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
 	hc.setSize(new Dimension(400,300));
 	f.add(hc); f.pack(); f.show();
