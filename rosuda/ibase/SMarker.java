@@ -54,9 +54,17 @@ public class SMarker extends Notifier implements Commander {
     */
     public boolean at(int pos) { return ((pos<0)||(pos>=msize))?false:((mask[pos]&1)==1); };
 
-    /** returs a list of all marked indices
+    /** returns a list of all marked indices
 	@return <code>Vector</code> of <code>Integer</code> objects */
     public Vector getList() { return list; };
+
+    /** returns an array with all selected IDs */
+    public int[] getSelectedIDs() {
+        int i=0, j=list.size();
+        int[] l=new int[j];
+        while (i<j) { l[i]=((Integer)list.elementAt(i)).intValue(); i++; }
+        return l;
+    }
     
     /** sets the primary mark at specified index
 	@param pos desired index
