@@ -57,6 +57,8 @@ public class Rconnection {
         connected=false;
         try {
             s=new Socket(host,port);
+	    // disable Nagle's algorithm since we really want immediate replies
+	    s.setTcpNoDelay(true);
         } catch (Exception sce) {
             throw new RSrvException(this,"Cannot connect: "+sce.getMessage());
         }
