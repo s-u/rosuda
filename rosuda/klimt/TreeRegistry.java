@@ -26,6 +26,12 @@ public class TreeRegistry {
         t.getRootInfo().home=this;
     }
 
+    /** this method equals to calling registerTree(t,t.getRootInfo().name) and is provided for backwards compatibility with older applications */
+    public void addTree(SNode t) {
+        registerTree(t,t.getRootInfo().name);
+    }
+
+    /** export forest data of teh forest formed by the trees in this registry */
     public boolean exportForest(PrintStream p) {
         try {
             if (p!=null) {
