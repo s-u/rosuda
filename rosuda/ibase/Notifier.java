@@ -42,16 +42,16 @@ public class Notifier {
 
     /** general NotifyAll */    
     public void NotifyAll(NotifyMsg msg, Dependent c, Vector path) {
-        if (Common.DEBUG>0)
+        if (Common.DEBUG>1)
             System.out.println("Notifier("+toString()+"): send to all message "+msg);
 	if (batchMode>0 || ton==null || ton.isEmpty()) return;
 	for (Enumeration e=ton.elements(); e.hasMoreElements();) {
 	    Dependent o=(Dependent)e.nextElement();	    
 	    if (o!=c) {
+                if (Common.DEBUG>0)
+                    System.out.println("Notifier("+toString()+"): send "+msg+" to ["+o.toString()+"]");
 		if (path!=null) {
 		    path.addElement(this);
-                    if (Common.DEBUG>0)
-                        System.out.println("Notifier("+toString()+"): send "+msg+" to ["+o.toString()+"]");
 		    o.Notifying(msg,this,path);
 		    path.removeElement(this);
 		} else o.Notifying(msg,this,null);
