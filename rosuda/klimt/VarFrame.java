@@ -296,7 +296,7 @@ public class VarFrame extends TFrame {
 		    WinTracker.current.disposeAll();
 		System.exit(0);
 	    };
-	    if (cmd==1) {
+	    if (cmd==1) { // Open tree
 		SNode t=InTr.openTreeFile(Common.mainFrame,null,vs);
 		if (t!=null) {
 		    TFrame f=new TFrame(InTr.lastTreeFileName);
@@ -307,7 +307,7 @@ public class VarFrame extends TFrame {
                     vc.repaint();
 		};    
 	    };
-            if (cmd==5) {
+            if (cmd==5) { // Export ...
                 try {
                     PrintStream p=Tools.getNewOutputStreamDlg(Common.mainFrame,"Export selected variables to ...","selected.txt");
                     if (p!=null) {
@@ -341,27 +341,50 @@ public class VarFrame extends TFrame {
                         };
                         p.close();
                     };
-                } catch (Exception eee) {};                
-            }
-	    if (cmd==2) {
-		int i=0;
-		for(i=0;i<vc.getVars();i++)
-		    if (vc.selMask[i]) {		    
-			TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")");
-			f.addWindowListener(Common.defaultWindowListener);
-			Canvas cvs=null;
-			if (vs.at(i).isCat()) {
-			    BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker()); cvs=bc;
-			    if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);	    
-			} else {
-			    HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker()); cvs=hc;
-			    if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-			};
-			cvs.setSize(new Dimension(400,300));
-			f.add(cvs); f.pack(); f.show();
+                } catch (Exception eee) {
+		    if (Common.DEBUG>0) {
+			System.out.println("* VarFrame.Export...: something went wrong during the export: "+eee.getMessage()); eee.printStackTrace();
 		    };
+		};
+            }
+	    if (cmd==2) { //  Histogram/barchart
+		// we got one special case here - one cat and one num(non-cat) are used to plot weighted barchart
+		int i=0;
+		int selC=0, selN=0;
+		SVar theCat=null, theNum=null;
+		while (i<vc.getVars()) {
+		    if (vc.selMask[i]) {
+			if (vs.at(i).isCat()) { selC++; theCat=vs.at(i); }
+			else if(vs.at(i).isNum()) { selN++; theNum=vs.at(i); };
+		    };
+		    i++;
+		};
+		if (selC==1 && selN==1) { // ok, go for weighter barchart instead
+		    TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")");
+		    f.addWindowListener(Common.defaultWindowListener);
+		    BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
+		    if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);	    
+		    bc.setSize(new Dimension(400,300));
+		    f.add(bc); f.pack(); f.show();
+		} else {
+		    for(i=0;i<vc.getVars();i++)
+			if (vc.selMask[i]) {		    
+			    TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")");
+			    f.addWindowListener(Common.defaultWindowListener);
+			    Canvas cvs=null;
+			    if (vs.at(i).isCat()) {
+				BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker()); cvs=bc;
+				if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);	    
+			    } else {
+				HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker()); cvs=hc;
+				if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
+			    };
+			    cvs.setSize(new Dimension(400,300));
+			    f.add(cvs); f.pack(); f.show();
+			};
+		};
 	    };
-	    if (cmd==3) {
+	    if (cmd==3) { // Scatterplot
 		int vnr[]=new int[2];
 		int i,j=0,tsel=0;
 		for(i=0;i<vc.getVars();i++) if (vc.selMask[i]) { vnr[j]=i; j++; tsel++; };
@@ -376,7 +399,7 @@ public class VarFrame extends TFrame {
 		    f.add(sc); f.pack(); f.show();
 		};
 	    };
-	    if (cmd==4) {
+	    if (cmd==4) { // Boxplot
 		int bI=0; int bJ=0;
 		SVar catVar=null;
 		while(bI<vc.getVars()) {

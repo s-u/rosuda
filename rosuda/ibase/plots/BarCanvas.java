@@ -10,6 +10,9 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 {
     /** corresponding variable */
     SVar v;
+    /** weight variable for weighted barcharts */
+    SVar weight;
+
     /** corresponding marker */
     SMarker m;
     /** axes */
@@ -28,6 +31,11 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     int count[];
     int marked[];
 
+    // for weighted barcharts
+    double c_max;
+    double cumulated[];
+    double c_marked[];
+
     int ow=0,oh=0;
 
     int bars=20;
@@ -37,16 +45,21 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     MenuItem MIspine=null;
 
-    /** creates a barchart
+    /** creates a (weighted) barchart
 	@param f associated frame (or <code>null</code> if common default frame is to be used)
 	@param var associated variable
-	@param mark associated marker */
-    public BarCanvas(Frame f, SVar var, SMarker mark) {
+	@param mark associated marker
+	@param wvar weight variable for weoghted barcharts or null for normal ones */
+    public BarCanvas(Frame f, SVar var, SMarker mark, SVar wvar) {
         super(2); // 2 layers; 0=bars, 1=drag
-	v=var; m=mark; setFrame(f); setTitle("Barchart ("+v.getName()+")");
+	v=var; weight=wvar; m=mark; setFrame(f);
+	setTitle(((wvar==null)?"":"w.")+"Barchart ("+v.getName()+((wvar==null)?"":("*"+wvar.getName()))+")");
 	ax=new Axis(v,Axis.O_X,Axis.T_EqCat);
 	ax.addDepend(this);
-	ay=new Axis(v,Axis.O_Y,Axis.T_EqSize);
+	if (weight==null)
+	    ay=new Axis(v,Axis.O_Y,Axis.T_EqSize);
+	else
+	    ay=new Axis(weight,Axis.O_Y,Axis.T_Num);
 	ay.addDepend(this);
 	setBackground(new Color(255,255,192));
 	addMouseListener(this);
@@ -62,7 +75,10 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","View","Spineplot","spine","0"};
 	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
 	MIspine=mb.getMenu(1).getItem(0);
+	if (weight!=null) MIspine.setEnabled(false);
     };
+    
+    public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
 
     /** notification handler - rebuilds bars and repaints */
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
@@ -73,9 +89,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 
     /** rebuilds bars */
     public void updateBars() {
-	countMax=0;
-	count=new int[bars];
-	marked=new int[bars];
+	countMax=0; c_max=0;
 	Object[] cts=v.getCategories();
 	cat_nam=new String[cts.length+1];
 	int j=0;
@@ -84,25 +98,35 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    j++;
         };
         cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
-	j=0;
-	while (j<v.size()) {
-	    int i=v.getCatIndex(j);
-	    if (i==-1) i=cats;
-	    count[i]++;
-	    if ((m!=null)&&(m.at(j))) marked[i]++;
-	    if (count[i]>countMax) countMax=count[i];
-	    j++;
+	if (weight==null) {
+	    count=new int[bars];
+	    marked=new int[bars];
+	    j=0;
+	    while (j<v.size()) {
+		int i=v.getCatIndex(j);
+		if (i==-1) i=cats;
+		count[i]++;
+		if ((m!=null)&&(m.at(j))) marked[i]++;
+		if (count[i]>countMax) countMax=count[i];
+		j++;
+	    };
+	    ay.setValueRange(countMax);
+	} else {
+	    cumulated=new double[bars];
+	    c_marked=new double[bars];
+	    j=0;
+	    while (j<v.size()) {
+		int i=v.getCatIndex(j);
+		if (i==-1) i=cats;
+		double wval=weight.atD(j);
+		if (wval<0) wval=-wval; // weight are always treated as positive
+		cumulated[i]+=wval;
+		if ((m!=null)&&(m.at(j))) c_marked[i]+=wval;
+		if (cumulated[i]>c_max) c_max=cumulated[i];
+		j++;
+	    };
+	    ay.setValueRange(0,c_max);	    
 	};
-	ay.setValueRange(countMax);
-	/*
-	Dimension Dsize=getSize();
-	int w=Dsize.width, h=Dsize.height;
-	if (oh!=h) 
-	    ay.setGeometry(Axis.O_Y,topSpace,h-topSpace-botSpace);
-	if (ow!=w)
-	    ax.setGeometry(Axis.O_X,sideSpace,w-2*sideSpace);
-	    ow=w; oh=h; */
-	//System.out.println("BarCanvas.updateBars\n ax="+ax.toString()+"\n ay="+ay.toString());
     };
 
     public Dimension getMinimumSize() { return new Dimension(sideSpace*2+30,topSpace+botSpace+30); };
@@ -131,7 +155,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.drawLine(sideSpace,basey,w-2*sideSpace,basey); 
 
 	int i=0;
-	int lh=ay.getCasePos(0);
+	int lh=(weight==null)?ay.getCasePos(0):ay.getValuePos(0);
 	while(i<bars) {
 	    g.setColor("fill");
 	    int cl=ax.getCatLow(i);
@@ -139,20 +163,27 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    int cd=cu-cl;
 	    cu-=cd/10;
 	    cl+=cd/10;
-	    int ch=ay.getCasePos(count[i]);
+	    
+	    int ch=0;
+	    if (weight==null)
+		ch=ay.getCasePos(count[i]);
+	    else
+		ch=ay.getValuePos(cumulated[i]);
 	    if (isSpine) ch=lh+ay.gLen;
 	    //System.out.println(">>Bar["+i+"] cl="+cl+", cu="+cu+", ch="+ch+" (w="+w+",h="+h+")");
 	    g.fillRect(cl,h-ch,cu-cl,ch-lh);
 	    Bars[i]=new Rectangle(cl,h-ch,cu-cl,ch-lh);
-	    if (marked[i]>0) {
+	    
+	    if ((weight==null && marked[i]>0)||(weight!=null && c_marked[i]>0)) {
 		int mh=0;
 		if (isSpine)
-		    mh=lh+(ch-lh)*marked[i]/count[i];
+		    mh=lh+((weight==null)?(ch-lh)*marked[i]/count[i]:(int)(((double)(ch-lh))*c_marked[i]/cumulated[i]));
 		else
-		    mh=ay.getCasePos(marked[i]);
+		    mh=(weight==null)?ay.getCasePos(marked[i]):ay.getValuePos(c_marked[i]);
 		g.setColor("sel");
 		g.fillRect(cl,h-mh,cu-cl,mh-lh);
 	    };
+	    
 	    g.setColor("outline");
 	    g.drawRect(cl,h-ch,cu-cl,ch-lh);
 	    if (cu-cl<cat_nam[i].length()*8)
@@ -172,7 +203,7 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    g.setColor("drag");
 	    g.fillRect(myX-dragW/2,basey,dragW,4);
 	};
-
+	
 	g.end();
         setUpdateRoot(2);
     };
@@ -305,4 +336,4 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	if (e==null) return;
 	run(e.getSource(),e.getActionCommand());
     };
-};
+}
