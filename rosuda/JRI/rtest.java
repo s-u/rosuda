@@ -9,11 +9,12 @@ import org.rosuda.JRI.RMainLoopCallbacks;
 
 class TextConsole implements RMainLoopCallbacks
 {
-
+	JFrame f;
+	
     public JTextArea textarea = new JTextArea();
 
     public TextConsole() {
-        JFrame f = new JFrame();
+        f = new JFrame();
         f.getContentPane().add(new JScrollPane(textarea));
         f.setSize(new Dimension(800,600));
         f.show();
@@ -43,6 +44,21 @@ class TextConsole implements RMainLoopCallbacks
     public void rShowMessage(Rengine re, String message) {
         System.out.println("rShowMessage \""+message+"\"");
     }
+	
+	public String rChooseFile(Rengine re, int newFile) {
+		FileDialog fd = new FileDialog(f, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE);
+		fd.show();
+		String res=null;
+		if (fd.getDirectory()!=null) res=fd.getDirectory();
+		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
+		return res;
+	}
+	
+    public void   rFlushConsole (Rengine re) {
+	}
+	
+    public void   rSaveHistory  (Rengine re, String filename) {
+	}			
 }
 
 public class rtest {
