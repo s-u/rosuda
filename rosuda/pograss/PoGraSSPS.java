@@ -66,6 +66,12 @@ public class PoGraSSPS extends PoGraSS
 	title=t;
     };
 
+    public void defineColor(String nam, float r, float g, float b, float a) {
+        if (a!=1.0)
+            outPS("%% Warning: color \""+nam+"\" is defined with alpha="+a+", unsupported by PS. Defining with alpha=1\n");
+        defineColor(nam,(int)(r*255.0+0.5),(int)(g*255.0+0.5),(int)(b*255.0+0.5));
+    }
+    
     public void defineColor(String nam, int R, int G, int B) {
 	if (R==G && G==B) // if R=G=B then use grayscale instead. this allows us to produce monochr. PS
 	    outPS("/color_"+nam+"  { "+(R/255.0)+" setgray } def\n");
