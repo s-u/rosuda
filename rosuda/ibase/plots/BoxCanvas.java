@@ -205,38 +205,38 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	Rectangle r=getBounds();
 	if (fillColor!=null) {
 	    g.setColor(fillColor);
-	    g.fillRect(x,r.height-a.getValuePos(os.uh),
-		       w,a.getValuePos(os.uh)-a.getValuePos(os.lh));
+	    g.fillRect(x,a.getValuePos(os.uh),
+		       w,a.getValuePos(os.lh)-a.getValuePos(os.uh));
 	};
 	g.setColor(drawColor);
-	g.drawRect(x,r.height-a.getValuePos(os.uh),
-		   w,a.getValuePos(os.uh)-a.getValuePos(os.lh));
-	g.drawLine(x,r.height-a.getValuePos(os.med),
-		   x+w,r.height-a.getValuePos(os.med));
-	g.drawLine(x,r.height-a.getValuePos(os.uh15),
-		   x+w,r.height-a.getValuePos(os.uh15));
-	g.drawLine(x,r.height-a.getValuePos(os.lh15),
-		   x+w,r.height-a.getValuePos(os.lh15));
-	g.drawLine(x+w/2,r.height-a.getValuePos(os.uh),
-		   x+w/2,r.height-a.getValuePos(os.uh15));
-	g.drawLine(x+w/2,r.height-a.getValuePos(os.lh),
-		   x+w/2,r.height-a.getValuePos(os.lh15));
+	g.drawRect(x,a.getValuePos(os.uh),
+		   w,a.getValuePos(os.lh)-a.getValuePos(os.uh));
+	g.drawLine(x,a.getValuePos(os.med),
+		   x+w,a.getValuePos(os.med));
+	g.drawLine(x,a.getValuePos(os.uh15),
+		   x+w,a.getValuePos(os.uh15));
+	g.drawLine(x,a.getValuePos(os.lh15),
+		   x+w,a.getValuePos(os.lh15));
+	g.drawLine(x+w/2,a.getValuePos(os.uh),
+		   x+w/2,a.getValuePos(os.uh15));
+	g.drawLine(x+w/2,a.getValuePos(os.lh),
+		   x+w/2,a.getValuePos(os.lh15));
 	int i=os.lowEdge;
 	while(i>=0) {
 	    double val=v.atF(os.lastR[i]);
 	    if (val<os.lh3)
-		g.drawOval(x+w/2-2,r.height-a.getValuePos(val)-2,3,3);
+		g.drawOval(x+w/2-2,a.getValuePos(val)-2,3,3);
 	    else
-		g.fillRect(x+w/2-1,r.height-a.getValuePos(val)-1,2,2);
+		g.fillRect(x+w/2-1,a.getValuePos(val)-1,2,2);
 	    i--;
 	};
 	i=os.highEdge;
 	while(i<os.lastTop) {
 	    double val=v.atF(os.lastR[i]);
 	    if (val>os.uh3)
-		g.drawOval(x+w/2-2,r.height-a.getValuePos(val)-2,3,3);
+		g.drawOval(x+w/2-2,a.getValuePos(val)-2,3,3);
 	    else
-		g.fillRect(x+w/2-1,r.height-a.getValuePos(val)-1,2,2);
+		g.fillRect(x+w/2-1,a.getValuePos(val)-1,2,2);
 	    i++;
 	};
 	
@@ -258,9 +258,9 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	g.defineColor("selfill",0,255,0);
 	g.defineColor("sel",0,128,0);
 	if (vertical)
-	    a.setGeometry(Axis.O_Y,10,r.height-20);
+	    a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
 	else
-	    a.setGeometry(Axis.O_X,10,r.width-20);
+	    a.setGeometry(Axis.O_X,40,r.width-50);
 	if (!vsCat) {
 	    drawBox(g,OSdata,10,20,"white","black");
 	    if (areMarked)
@@ -270,8 +270,10 @@ class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	    while(i<cs) {		
 		drawBox(g,oss[i],10+40*i,20,"white","black");
 		if (areMarked && rs[cs+1+i]>0)
-		    drawBox(g,oss[cs+1+i],18+40*i,10,"selfill","sel");		    
-		i++;
+                    drawBox(g,oss[cs+1+i],18+40*i,10,"selfill","sel");
+
+                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),12+40*i,r.height-10);
+                i++;
 	    };
 	};
 	g.end();
