@@ -147,7 +147,7 @@ public class PoGraSSgraphics extends PoGraSS
 	lastFace=name;
 	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     };
-    public void setFontSize(int pt) {
+    public void setFontSize(double pt) {
         lastFontSize=pt;
 	g.setFont(currentFont=new Font(lastFace,lastFontAttr,(int)(0.5+lastFontSize)));
     }
