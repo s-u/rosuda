@@ -486,7 +486,7 @@ public class VarFrame extends TFrame {
                 if (selC==1 && selN==1) {
                     TFrame f=new TFrame("Kaplan-Meier ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsUser);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    KapMeCanvas bc=new KapMeCanvas(f,theNum,theCat,vs.getMarker());
+                    KapMeNodeCanvas bc=new KapMeNodeCanvas(f,theNum,theCat,vs.getMarker(),dr.getNodeMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                     bc.setSize(new Dimension(300,200));
                     f.add(bc); f.pack(); f.show();
