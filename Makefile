@@ -7,9 +7,9 @@ PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
-RGUI_SRC:=$(wildcard rosuda/RGui/*.java) $(wildcard rosuda/RGui/toolkit/*.java)
+JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JRI/*.java) $(wildcard rosuda/JavaGD/*.java)
 
-TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar RGui.jar
+TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar
 
 JAVAC=javac $(JFLAGS)
 
@@ -22,14 +22,13 @@ define can-with-jar
 	rm -rf org	
 endef
 
-RGui.jar: $(IBASE_SRC) $(RGUI_SRC)
+JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC)
 	rm -rf org
 	$(JAVAC) -d . $^
 	cp rosuda/projects/jrgui/splash.jpg .
 	cp -r rosuda/projects/jrgui/icons .
-	cp rosuda/projects/jrgui/version.properties .
-	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg icons version.properties org
-	rm -rf org splash.jpg icons version.properties
+	jar fcm $@ rosuda/projects/jrgui/JRGui.mft splash.jpg icons org
+	rm -rf org splash.jpg icons
 
 ibase.jar: $(IBASE_SRC)
 	$(can-with-jar)
