@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  SyntaxInput
- *
- * 	inherits SyntaxArea, is responsible for codecompletion and helpagent
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -17,10 +7,13 @@ import javax.swing.*;
 import org.rosuda.JGR.RController;
 
 /**
-* @author Markus
+ *  SyntaxInput - is responsible for codecompletion and helpagent
  *
- * 
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2004
  */
+
 public class SyntaxInput extends SyntaxArea implements KeyListener {
 	
     private boolean disableEnter = false;
@@ -30,6 +23,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     private Popup funHelpTip = null;
     private Popup cmdHelp = null;
     private JToolTip Tip = new JToolTip();
+    /** {@see CodeCompleteMultiple} */
     public  CodeCompleteMultiple mComplete;
     private Point p;
 	
@@ -93,6 +87,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         return (offset!=end)?text.substring(offset,end).trim():null;
     }
 	
+    /**
+     * Show possibilities for current part of command.
+     * @param result possibilities for completion.
+     */
     public void showCmdCompletions(String[] result) {
         try {
             if (cmdHelp != null) cmdHelp.hide();
@@ -105,9 +103,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         } catch (Exception e) {}
     }
 	
+    /**
+     * keyTyped: handle key event.
+     */
     public void keyTyped(KeyEvent ke) {
     }
 	
+    /**
+     * keyPressed: handle key event: ESC hide tooltips, take care about emacs-keybindings.
+     */
     public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ESCAPE) {
             if (cmdHelp != null) cmdHelp.hide();
@@ -124,6 +128,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         }
     }
 	
+    /**
+     * keyReleased: handle key event: TAB show completions and/ or complete.
+     */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_TAB) {
             String text = null;
@@ -215,6 +222,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         }
     }
 	
+    
     private void showFunHelp(String fun) {
         try {
             funHelp = RController.getFunHelpTip(fun);
@@ -258,6 +266,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     class SyntaxInputDocument extends SyntaxDocument {
     }
 	
+    /**
+     * 
+     * CodeCompleteMultiple - implementation of a panel showing a list of completion-possibilities.
+     * 
+     * @author Markus Helbig
+     * 
+     * RoSuDA 2003 - 2005
+     *
+     */
     public class CodeCompleteMultiple extends Panel {
 		
         public java.awt.List cmds = new java.awt.List();
@@ -284,6 +301,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             this.setVisible(false);
         }
 		
+        /**
+         * Refresh content.
+         * @param commands new commands
+         */
         public void refresh(String[] commands) {
             cmds.removeAll();
             for (int i = 0; i < commands.length; i++)
@@ -291,24 +312,36 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
             cmds.select(0);
         }
 		
+        /**
+         * Complete current part.
+         */
         public void completeCommand() {
             parent.insertAt(parent.getCaretPosition(),cmds.getSelectedItem().replaceFirst(fun,""));
             this.setVisible(false);
             if (cmdHelp != null) cmdHelp.hide();
         }
 		
-        public void selectPrevios() {
+        /**
+         * Select previous possibility.
+         */
+        public void selectPrevious() {
             int i = cmds.getSelectedIndex();
             if (--i >= 0)
                 cmds.select(i);
         }
 		
+        /**
+         * Select next possibility.
+         */
         public void selectNext() {
             int i = cmds.getSelectedIndex();
             if (++i < cmds.getItemCount())
                 cmds.select(i);
         }
 		
+        /**
+         * Show CodeCompletionMultiple.
+         */
         public void setVisible(boolean b) {
             if (!b && cmdHelp != null) cmdHelp.hide();
             super.setVisible(b);

@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  DataTable
- *
- *  show and edit SVarSets
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -23,8 +13,16 @@ import org.rosuda.ibase.*;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.util.*;
 
+/**
+ *  DataTable - implementation of a simple spreadsheet for showing and editing SVarSets.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
+
 public class DataTable extends iFrame implements ActionListener, MouseListener,
-KeyListener, TableColumnModelListener {
+KeyListener {
 
     private GridBagLayout layout = new GridBagLayout();
     private JScrollPane scrollArea = new JScrollPane();
@@ -63,12 +61,17 @@ KeyListener, TableColumnModelListener {
 
     private boolean editable = true;
 
-    /** create a Table without a SVarSet*/
+    /** Create a Table with an empty SVarSet.*/
     public DataTable() {
         this(null,null,true);
     }
 
-    /** create Table with specified SVarSet*/
+    /**
+     * Create a Table and show supplied {@see SVarSet}.
+     * @param vs SVarSet which contains data
+     * @param type type of {@see RObject} related to vs
+     * @param editable if related {@see RObject} is editable or not
+     */
     public DataTable(SVarSet vs, String type, boolean editable) {
         super("DataTable Editor", 153);
         if (vs == null) {
@@ -186,13 +189,15 @@ KeyListener, TableColumnModelListener {
         refresh();
     }
 
-    /** get current selected column*/
+    /** Get current selected column.*/
     public int currentCol() {
         return dataTable.getSelectedColumn();
     }
 
-    /** get current selected column,
-        * @param e MouseEvent */
+    /** 
+     * Get current selected column.,
+     * @param e MouseEvent 
+     */
     public int currentCol(MouseEvent e) {
         if (e.getSource().equals(tableHeader)) {
             return tableHeader.columnAtPoint(e.getPoint());
@@ -202,17 +207,19 @@ KeyListener, TableColumnModelListener {
         dataTable.getSelectedColumn();
     }
 
-    /** get selected range of columns*/
+    /** 
+     * Get selected range of columns.
+     */
     public int[] currentCols() {
         return dataTable.getSelectedColumns();
     }
 
-    /** get current row*/
+    /** Get current selected row.*/
     public int currentRow() {
         return dataTable.getSelectedRow();
     }
 
-    /** get current selected range of rows*/
+    /** Get current selected range of rows.*/
     public int[] currentRows() {
         return dataTable.getSelectedRows();
     }
@@ -231,8 +238,8 @@ KeyListener, TableColumnModelListener {
         refresh();
     }
 
-    /*
-     * Exit DataTable and save or update to R
+    /**
+     * Exit DataTable but before ask the user if we should save the data.
      */
     public void exit() {
         if (modified && editable) {
@@ -597,6 +604,9 @@ KeyListener, TableColumnModelListener {
         tabMenue.show(e.getComponent(), e.getX(), e.getY());
     }
 
+    /**
+     * actionPerformed: handle action event: menus and buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         try {
             String cmd = e.getActionCommand();
@@ -629,25 +639,15 @@ KeyListener, TableColumnModelListener {
         }
     }
 
-    public void columnAdded(TableColumnModelEvent e) {
-    }
-
-    public void columnMarginChanged(ChangeEvent e) {
-
-    }
-
-    public void columnMoved(TableColumnModelEvent e) {
-    }
-
-    public void columnRemoved(TableColumnModelEvent e) {
-    }
-
-    public void columnSelectionChanged(ListSelectionEvent e) {
-    }
-
+    /**
+     * keyTyped: handle key event.
+     */
     public void keyTyped(KeyEvent ke) {
     }
 
+    /**
+     * keyPressed: handle key event: delete (DEL), and search_again (F3).
+     */
     public void keyPressed(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_DELETE &&
             (dataTable.getSelectedColumnCount() > 1 ||
@@ -660,12 +660,21 @@ KeyListener, TableColumnModelListener {
         }
     }
 
+    /**
+     * keyReleased: handle key event.
+     */
     public void keyReleased(KeyEvent ke) {
     }
 
+    /**
+     * mouseEntered: handle mouse event.
+     */
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * mousePressed: handle mouse pressed: popup-menu.
+     */
     public void mousePressed(MouseEvent e) {
         //System.out.println(dataTable.getSelectedColumn());
         modified = dataTable.getSelectedColumn()>0?true:false;
@@ -693,6 +702,9 @@ KeyListener, TableColumnModelListener {
         }
     }
    
+    /**
+     * mouseReleased: handle mouse pressed: popup-menu.
+     */
     public void mouseReleased(MouseEvent e) {
         try {
             if (e.getSource().equals(tableHeader)) {
@@ -720,9 +732,15 @@ KeyListener, TableColumnModelListener {
 
     }
 
+    /**
+     * mouseClicked: handle mouse event.
+     */
     public void mouseClicked(MouseEvent e) {
     }
 
+    /**
+     * mouseExited: handle mouse event.
+     */
     public void mouseExited(MouseEvent e) {
     }
 
@@ -834,7 +852,7 @@ KeyListener, TableColumnModelListener {
         }
     }
 
-    public class DataTableCellEditor extends AbstractCellEditor implements
+    class DataTableCellEditor extends AbstractCellEditor implements
         TableCellEditor {
 
             JTextField component = new JTextField(new DataTableCellDocument(),null,1);
@@ -855,7 +873,7 @@ KeyListener, TableColumnModelListener {
 
         }
 
-    public class DataTableCellDocument extends PlainDocument {
+    class DataTableCellDocument extends PlainDocument {
 
         public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
             try {
@@ -869,7 +887,7 @@ KeyListener, TableColumnModelListener {
 
     }
 
-    public class DataTableCellRenderer extends JLabel implements TableCellRenderer {
+    class DataTableCellRenderer extends JLabel implements TableCellRenderer {
 
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
@@ -892,11 +910,9 @@ KeyListener, TableColumnModelListener {
         protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
         public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {}
     }
-
-
-
-
-    public class NewColumnDialog extends JDialog implements ActionListener {
+    
+    /* Dialog for adding a new column */
+    class NewColumnDialog extends JDialog implements ActionListener {
 
         String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor"};
         String[] result = null;
@@ -956,7 +972,6 @@ KeyListener, TableColumnModelListener {
 
 
     }
-
 
 
     /*Selectionmodell to link table with plots*/

@@ -1,17 +1,15 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  TextFinder
- * 
- * 	take care about readconsole
- * 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
 import org.rosuda.JGR.*;
 import java.util.Vector;
+
+/**
+ *  ConsoleSync - notifys when commands are in the queue and send them.
+ * 
+ *	@author Markus Helbig/ Simon Urbanek
+ *  
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class ConsoleSync {
     Vector msgs;

@@ -1,12 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  iMenu
- * 
- *  simple menu
- *  
- */
-
 
 import java.awt.*;
 import java.awt.event.*;
@@ -16,11 +9,27 @@ import javax.swing.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 
-/** class that simplified menu building from lists */
+
+/**
+ *  iMenu - implementation of an menu build form an String array.
+ * 
+ *  @author Markus Helbig
+ * 
+ *  RoSuDa 2003 - 2005
+ *  
+ */
+
 public class iMenu {
     public static boolean staticInitDone=false;
     public static boolean hasSVG=false;
 
+    /**
+     * Get JMenuBar build from menuDef.
+     * @param f frame where menubar should be added
+     * @param al ActionListener which cares about menu-actions
+     * @param menuDef menuitem list
+     * @return menubar
+     */
     public static JMenuBar getMenu(JFrame f, ActionListener al, String[] menuDef) {
         if (!staticInitDone) {
             try { Class c=Class.forName("PoGraSSSVG"); hasSVG=true; }
@@ -277,11 +286,24 @@ public class iMenu {
         return mb;
     };
 
+    /**
+     * Add menu to existing menubar.
+     * @param f frame where to add menu.
+     * @param name menuname
+     */
     public static void addMenu(JFrame f, String name) {
         JMenuBar mb = f.getJMenuBar();
         mb.add(new JMenu(name),(mb.getMenuCount()-2));
     }
 
+    /**
+     * Add menuitem to existing menu.
+     * @param f frame which contains menu
+     * @param menu menu where to add new item
+     * @param name name of new item
+     * @param command ActionCommand of this new item
+     * @param al ActionListener which should be attached to this menuitem
+     */
     public static void addMenuItem(JFrame f, String menu, String name, String command, ActionListener al) {
         JMenu m = getMenu(f,menu);
         JMenuItem mi = new JMenuItem(name);
@@ -290,26 +312,42 @@ public class iMenu {
         m.add(mi);
     }
 
+    /**
+     * Add a menuseparator to existing menu.
+     * @param f frame which contains menu
+     * @param menu menu where to ad separator
+     */
     public static void addMenuSeparator(JFrame f, String menu) {
         JMenu m = getMenu(f,menu);
         m.addSeparator();
     }
     
-
-    public static JMenu getMenu(JFrame f, String nam) {
+    /**
+     * Get JMenu to supplied name.
+     * @param f frame which might contains this menu
+     * @param name name of menu
+     * @return JMenu which matches name
+     */
+    public static JMenu getMenu(JFrame f, String name) {
         JMenuBar mb=f.getJMenuBar();
         if (mb==null) return null;
         int mc=mb.getMenuCount();
         int i=0;
         while(i<mc) {
             JMenu m=mb.getMenu(i);
-            if (m.getText().equals(nam)) return m;
+            if (m.getText().equals(name)) return m;
             i++;
         };
         return null;
     };
 
-    public static JMenuItem getItem(JFrame f,String nam) {
+    /**
+     * Get JMenuItem to supplied name (ActionCommand).
+     * @param f frame which might contain menuitem
+     * @param name name of searched menuitem
+     * @return JMenuItem which equals to name
+     */
+    public static JMenuItem getItem(JFrame f,String name) {
         JMenuBar mb=f.getJMenuBar();
         if (mb==null) return null;
         int mc=mb.getMenuCount();
@@ -320,7 +358,7 @@ public class iMenu {
             int j=0;
             while(j<ic) {
                 JMenuItem mi=m.getItem(j);
-                if (mi!=null && mi.getActionCommand()==nam)
+                if (mi!=null && mi.getActionCommand()==name)
                     return mi;
                 j++;
             };
@@ -329,7 +367,13 @@ public class iMenu {
         return null;
     };
 
-    public static JMenuItem getItemByLabel(JFrame f,String nam) {
+    /**
+     * Get JMenuItem to supplied name (Label).
+     * @param f frame which might contain menuitem
+     * @param name name of searched menuitem
+     * @return JMenuItem which equals to name
+     */
+    public static JMenuItem getItemByLabel(JFrame f,String name) {
         JMenuBar mb=f.getJMenuBar();
         if (mb==null) return null;
         int mc=mb.getMenuCount();
@@ -340,7 +384,7 @@ public class iMenu {
             int j=0;
             while(j<ic) {
                 JMenuItem mi=m.getItem(j);
-                if (mi!=null && mi.getText().compareTo(nam)==0)
+                if (mi!=null && mi.getText().compareTo(name)==0)
                     return mi;
                 j++;
             };

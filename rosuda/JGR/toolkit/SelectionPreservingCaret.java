@@ -5,7 +5,7 @@ import javax.swing.text.DefaultCaret;
 import java.awt.event.FocusEvent;
 
 /**
-* Caret implementation that doesn't blow away the selection when
+ * Caret implementation that doesn't blow away the selection when
  * we lose focus.
  */
 public class SelectionPreservingCaret extends DefaultCaret {
@@ -15,7 +15,7 @@ public class SelectionPreservingCaret extends DefaultCaret {
 private static SelectionPreservingCaret last = null;
 
 /**
-* The last event that indicated loss of focus
+ * The last event that indicated loss of focus
  */
 private static FocusEvent lastFocusEvent = null;
 
@@ -38,7 +38,7 @@ public SelectionPreservingCaret() {
 }
 
 /**
-* Called when the component containing the caret gains focus. 
+ * Called when the component containing the caret gains focus. 
  * DefaultCaret does most of the work, while the subclass checks
  * to see if another instance of SelectionPreservingCaret previously
  * had focus.
@@ -57,7 +57,7 @@ public void focusGained(FocusEvent evt) {
 }
 
 /**
-* Called when the component containing the caret loses focus. Instead
+ * Called when the component containing the caret loses focus. Instead
  * of hiding both the caret and the selection, the subclass only 
  * hides the caret and saves a (static) reference to the event and this
  * specific caret instance so that the event can be delivered later
@@ -73,7 +73,7 @@ public void focusLost(FocusEvent evt) {
 }
 
 /**
-* Delivers a defered focusLost event to this caret.
+ * Delivers a defered focusLost event to this caret.
  */
 protected void hide() {
 	if (last == this) {

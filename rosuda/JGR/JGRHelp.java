@@ -258,7 +258,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     /**
-     * actionPerformed: handle action events: menus.
+     * actionPerformed: handle action event: menus.
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -294,19 +294,19 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     /**
-     * keyTyped: handle key events.
+     * keyTyped: handle key event.
      */
     public void keyTyped(KeyEvent ke) {
     }
 
     /**
-     * keyPressed: handle key events.
+     * keyPressed: handle key event.
      */
     public void keyPressed(KeyEvent ke) {
     }
 
     /**
-     * keyReleased: handle key events: transfer selected commands to console.
+     * keyReleased: handle key event: transfer selected commands to console.
      */
     public void keyReleased(KeyEvent ke) {
         if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {

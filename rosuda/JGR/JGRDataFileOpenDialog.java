@@ -125,7 +125,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 
 	/**
-	 * actionPerformed: handle action events: menus.
+	 * actionPerformed: handle action event: menus.
 	 */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -134,7 +134,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	}
 
 	/**
-	 * itemStateChanged: handle itemStateChanged event, et seperator and quote box enabled if "Others..." is choosen.
+	 * itemStateChanged: handle itemStateChanged event, et separator and quote box enabled if "Others..." is choosen.
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		Object source = e.getItemSelectable();

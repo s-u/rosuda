@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  SyntaxArea
- *
- * 	inherits JTextPane, but provides a lot more functionality
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
@@ -21,6 +11,13 @@ import javax.swing.text.*;
 
 import org.rosuda.JGR.util.*;
 
+/**
+ *  SyntaxArea - extends JTextPane and provides bracketmatching. 
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2004
+ */
 
 public class SyntaxArea extends JTextPane implements CaretListener, DropTargetListener {
 
@@ -41,10 +38,16 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         this.setDragEnabled(true);
     }
 
+    /**
+     * Append text.
+     */
     public void append(String str) {
         append(str,null);
     }
 
+    /**
+     * Append text with supplied attributeset.
+     */
     public void append(String str, AttributeSet attr) {
         try {
             Document doc = this.getDocument();
@@ -53,7 +56,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-
+    /**
+     * Insert text at position. 
+     */
     public void insertAt(int offset, String str) {
         try {
             Document doc = this.getDocument();
@@ -62,6 +67,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Get text.
+     */
     public String getText() {
         try {
             Document doc = this.getDocument();
@@ -71,6 +79,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Get text from offset with supplied length.
+     */
     public String getText(int offs, int len) {
         try {
             Document doc = this.getDocument();
@@ -80,6 +91,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Set text.
+     */
     public void setText(String str) {
         try {
             Document doc = this.getDocument();
@@ -89,6 +103,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Cut text.
+     */
     public void cut() {
         this.removeCaretListener(this);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents((Transferable) new StringSelection(this.getSelectedText()),null);
@@ -96,12 +113,18 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         this.addCaretListener(this);
     }
 
+    /**
+     * Copy text.
+     */
     public void copy() {
         this.removeCaretListener(this);
         super.copy();
         this.addCaretListener(this);
     }
 
+    /**
+     * Paste from clipboard.
+     */
     public void paste() {
         this.removeCaretListener(this);
         try {
@@ -118,12 +141,15 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         this.addCaretListener(this);
     }
 
-
+    /**
+     * Get amount of lines.
+     */
     public int getLineCount() {
         Element map = getDocument().getDefaultRootElement();
         return map.getElementCount();
     }
 
+    
     public int getLineStartOffset(int line) throws BadLocationException {
         int lineCount = getLineCount();
         if (line < 0) {
@@ -165,10 +191,18 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Set word wrap behavior.
+     * @param wrap true if wrap, false if not
+     */
     public void setWordWrap(boolean wrap) {
         this.wrap=wrap;
     }
 
+    /**
+     * Set word wrap behavior.
+     * @return true if wrap, false if not
+     */
     public boolean getWordWrap() {
         return this.wrap;
     }
@@ -199,8 +233,11 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-
-
+    /**
+     * Checks wether character is escaped.
+     * @param pos postion where to check
+     * @return true if escaped, false if not
+     */
     public boolean isEscaped(int pos) {
         boolean escaped = false;
         try {
@@ -213,6 +250,12 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         return escaped;
     }
 
+    /**
+     * Check wether last character matches cont.
+     * @param pos postion
+     * @param cont pattern
+     * @return true if matches, fals if not
+     */
     public boolean lastChar(int pos, String cont) {
         if (pos == 0) {
             return false;
@@ -225,10 +268,11 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    /** highlight the corresponding brackets (forward)
-        * @param par String which bracket
-        * @param pos int current position
-        */
+    /** 
+     * Highlight the corresponding brackets (forward).
+     * @param par String which bracket
+     * @param pos int current position
+     */
     public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
         //System.out.println(par);
         int open = pos;
@@ -296,10 +340,11 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-    /** highlight the corresponding brackets (backward)
-        * @param par String which bracket
-        * @param pos int current position
-        */
+    /** 
+     * Highlight the corresponding brackets (backward).
+     * @param par String which bracket
+     * @param pos int current position
+     */
 
     public  void highlightParanthesisBackward(String par, int pos) throws BadLocationException{
 
@@ -365,6 +410,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Highlight pattern at position.
+     * @param textComp textcomponent
+     * @param pattern pattern
+     * @param pos position
+     * @param hipainter highlightpainter
+     */
     public void highlight(JTextComponent textComp, String pattern, int pos,
                           HighlightPainter hipainter) {
         try {
@@ -378,6 +430,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
+    /**
+     * Remove current highlights.
+     */
     public void removeHighlights() {
         Highlighter hilite = this.getHighlighter();
         Highlighter.Highlight[] hilites = hilite.getHighlights();
@@ -389,7 +444,9 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         }
     }
 
-
+    /**
+     * caretUpdate: handle caret event: if it was a bracket, highlight the matching one if there is one.
+     */
     public void caretUpdate(final CaretEvent e) {
         final SyntaxArea sa = this;
         removeHighlights();
@@ -424,26 +481,41 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
         } catch (Exception ex3) { new ErrorMsg(ex3);}
     }
 
+    /**
+     * dragEnter: handle drag event.
+     */
     public void dragEnter(DropTargetDragEvent evt) {
         //System.out.println("dragEnter");
         // Called when the user is dragging and enters this drop target.
     }
 
+    /**
+     * dragOver: handle drag event.
+     */
     public void dragOver(DropTargetDragEvent evt) {
         //System.out.println("dragOver");
         // Called when the user is dragging and moves over this drop target.
     }
 
+    /**
+     * dragExit: handle drag event.
+     */
     public void dragExit(DropTargetEvent evt) {
         //System.out.println("dragExit");
         // Called when the user is dragging and leaves this drop target.
     }
 
+    /**
+     * dropActionChanged: handle drop event.
+     */
     public void dropActionChanged(DropTargetDragEvent evt) {
         //System.out.println("dropActionChanged");
         // Called when the user changes the drag action between copy or move.
     }
 
+    /**
+     * drop: handle drop target event: insert string representation of dragged object.
+     */
     public void drop(DropTargetDropEvent evt) {
         //System.out.println("drop");
         try {

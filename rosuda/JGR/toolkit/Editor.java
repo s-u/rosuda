@@ -1,14 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  Editor
- *
- * 	editor with syntaxhighlighting and autocompletion
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -24,6 +15,14 @@ import org.rosuda.util.*;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.util.*;
+
+/**
+ *  Editor - simple implementation of an editor with syntaxhighlighting.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class Editor extends iFrame implements ActionListener, KeyListener {
 	
@@ -55,14 +54,19 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private TextFinder textFinder = new TextFinder(editArea);
     
     
-	
+	/** Recent documents which where opened the last times with the editor.*/
     public static RecentList recentOpen;
+    /** Menuitem for the recent-list*/
     public JMenu recentMenu;
 	
     public Editor() {
         this(null);
     }
 	
+    /**
+     * Create a new editor with supplied file opening immediatly.
+     * @param file file to open
+     */
     public Editor(String file) {
         super("Editor", iFrame.clsEditor);
         String[] Menu = {
@@ -97,7 +101,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             if (i==0) ca.setEnabled(false);
         }
 		
-        toolBar = new ToolBar(this,false, progress);
+        toolBar = new ToolBar(this,false);
 		
         editArea.addCaretListener(caretStatus);
         editArea.addKeyListener(this);
@@ -151,7 +155,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         editArea.requestFocus();
     }
 	
-	
+	/**
+	 * Set title of the editor, which will be the shortend filename. 
+	 */
     public void setTitle(String title) {
 		int length,cc=1;
 		if (System.getProperty("os.name").startsWith("Win")) {
@@ -193,6 +199,10 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 		super.setTitle(title);
     }
 	
+    /**
+     * Exit editor but ask the user if he wants to save current content.
+     * @return true if it should be disposed now or not
+     */
     public boolean exit() {
         if (modified) {
             int i = JOptionPane.showConfirmDialog(this,"Save File?","Exit",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
@@ -212,6 +222,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
     }
 	
+    /**
+     * Open a file and load it into editor.
+     */
     public void open() {
         String newFile = null;
         FileSelector fopen = new FileSelector(this, "Open...",
@@ -223,6 +236,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
 	
+    /**
+     * Load file into textarea.
+     */
     public void loadFile() {
         setWorking(true);
         editArea.setText("");
@@ -286,18 +302,28 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         editArea.requestFocus();
     }
 	
+    /**
+     * Set text into area, while doing this show spinwheel.
+     * @param sb
+     */
     public void setText(StringBuffer sb) {
         cursorWait();
         editArea.setText(sb.toString());
         cursorDefault();
     }
 	
-	
+	/**
+	 * Print current content.
+	 */
     public void print() {
         DocumentRenderer docrender = new DocumentRenderer();
         docrender.print(editArea);
     }
 	
+    /**
+     * Save current content to file.
+     * @return if saved true else false
+     */
     public boolean saveFile() {
         if (fileName == null || fileName.equals("")) {
             return saveFileAs();
@@ -310,6 +336,10 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
     }
 	
+    /**
+     * Save current content to a choosen filename.
+     * @return true if saved else false
+     */
     public boolean saveFileAs() {
         FileSelector fsave = new FileSelector(this, "Save as...",
                                               FileSelector.SAVE, JGR.directory);
@@ -321,7 +351,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         return false;
     }
 	
-    public void setModified(boolean mod) {
+    
+    private void setModified(boolean mod) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 modifiedStatus.setText(modified ? "Modified" : "");
@@ -329,11 +360,13 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         });
     }
 	
-    public void startNew() {
+    private void startNew() {
         new Editor();
     }
 	
-	
+	/**
+	 * actionPerformed: handle action event: menus and buttons
+	 */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
@@ -394,9 +427,15 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 		
     }
 	
+    /**
+     * keyTyped: handle key event.
+     */
     public void keyTyped(KeyEvent ke) {
     }
 	
+    /**
+     * keyPressed: handle key event: send command to console.
+     */
     public void keyPressed(KeyEvent ke) {
         setModified(modified = true);
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -415,7 +454,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
         else if (ke.getKeyCode() == KeyEvent.VK_UP) {
             if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
-                editArea.mComplete.selectPrevios();
+                editArea.mComplete.selectPrevious();
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -425,6 +464,9 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         }
     }
 	
+    /**
+     * keyReleased: handle key event.
+     */
     public void keyReleased(KeyEvent ke) {
     }
 	

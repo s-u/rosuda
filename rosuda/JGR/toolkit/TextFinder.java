@@ -1,16 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  TextFinder
- * 
- *  find specified pattern in attached textcomponent
- * 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -18,7 +7,15 @@ import javax.swing.text.*;
 
 import org.rosuda.ibase.*;
 
-public class TextFinder extends JDialog implements ActionListener, KeyListener {
+/**
+ *  TextFinder - find specified pattern in attached textcomponent
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2005 
+ */
+
+public class TextFinder extends JDialog implements ActionListener {
 
     private GridBagLayout layout = new GridBagLayout();
 
@@ -41,8 +38,6 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         this(null);
     }
 
-    /** find a specified text in a JTextComponent
-     * @param searchArea where should we search your input*/
     public TextFinder(JTextComponent searchArea) {
         this.setTitle("Find");
 
@@ -80,7 +75,6 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
             }
         });
         this.setResizable(false);
-        keyWordField.addKeyListener(this);
     }
 
     private void exit() {
@@ -88,6 +82,10 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         setVisible(false);
     }
     
+    /**
+     * Attach textcomponent to finder.
+     * @param comp textcomponent
+     */
     public void setSearchArea(JTextComponent comp) {
         this.searchArea = comp;
     }
@@ -149,7 +147,11 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         super.toFront();
     }
 
-
+    /**
+     * Show the textfinder.
+     * @param next false if show a new one, true if searching for the same keyword as before.
+     * @return TextFinder
+     */
     public TextFinder showFind(boolean next) {
         if (!next) {
             keyWordField.setText(null);
@@ -166,30 +168,18 @@ public class TextFinder extends JDialog implements ActionListener, KeyListener {
         return last;
     }
 
+    /**
+     * actionPerformed: handle action event: buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd=="cancel") this.exit();
         else if (cmd=="search") this.find();
     }
 
-
-    public void keyTyped(KeyEvent ke) {
-    }
-
-    public void keyPressed(KeyEvent ke) {
-    }
-
-    public void keyReleased(KeyEvent ke) {
-    }
-
-
     class FoundHighlighter extends DefaultHighlighter.DefaultHighlightPainter {
         public FoundHighlighter(Color color) {
             super(color);
         }
     }
-
-
-
-
 }

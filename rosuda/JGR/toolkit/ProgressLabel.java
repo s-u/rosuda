@@ -1,18 +1,15 @@
 package org.rosuda.JGR.toolkit;
 
+import java.awt.*;
+
 /**
-*  ProgressLabel
- *
- *  similar to Cocoa ProgressIcon
+ *  !! Currently not used !!
+ *  ProgressLabel - similar to Cocoa ProgressIcon
  *
  *  @author Markus Helbig
  *
  *  RoSuDA 2003 - 2004
  */
-
-
-import java.awt.*;
-
 
 public class ProgressLabel extends Canvas implements Runnable {
 
@@ -58,6 +55,9 @@ public class ProgressLabel extends Canvas implements Runnable {
         g.fillArc(x-a,x-a,2*a,2*a,0,360);
     }
 
+    /**
+     * Start progess-label to show JGR is working.
+     */
     public void start() {
         if (this.isVisible()) next = true;
         this.setVisible(true);
@@ -65,6 +65,10 @@ public class ProgressLabel extends Canvas implements Runnable {
         if (thread != null) thread.start();
     }
 
+    /**
+     * Stop progress-label to show JGR is ready.
+     *
+     */
     public void stop() {
         this.setVisible(false);
         try { if (thread != null) thread.interrupt(); } catch (Exception e) { new org.rosuda.JGR.util.ErrorMsg(e);}
@@ -72,6 +76,9 @@ public class ProgressLabel extends Canvas implements Runnable {
         if (next) { next = false; this.start(); }
     }
 
+    /**
+     * Run method.
+     */
     public void run() {
         try {
             while (isVisible()) {
@@ -84,14 +91,4 @@ public class ProgressLabel extends Canvas implements Runnable {
             new org.rosuda.JGR.util.ErrorMsg(e);
         }
     }
-
-    public static void main(String[] args) {
-        Frame f = new Frame();
-        ProgressLabel p = new ProgressLabel(28);
-        f.add(p);
-        f.pack();
-        f.setVisible(true);
-        p.setVisible(true);
-    }
-
 }

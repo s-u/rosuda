@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  ObjectBrowserTree
- *
- * 	loads childs dynamically
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 import java.awt.event.*;
@@ -28,7 +18,13 @@ import javax.swing.tree.*;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.RObject;
 
-
+/**
+ *  ObjectBrowserTree - show {@see RObject}s and supports dynamically loading of childs.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2004
+ */
 
 public class ObjectBrowserTree extends JTree implements ActionListener, MouseListener, DragGestureListener, DragSourceListener, TreeWillExpandListener {
 
@@ -62,7 +58,8 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         this.addTreeWillExpandListener(this);
     }
 
-    public void addNodes(DefaultMutableTreeNode node) {
+    
+    private void addNodes(DefaultMutableTreeNode node) {
         RObject o = (RObject) node.getUserObject();
         Iterator i = RController.createContent(o,data).iterator();
         while (i.hasNext()) {
@@ -74,6 +71,10 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         }
     }
 
+    /**
+     * Refresh current objects.
+     * @param c collection of objects
+     */
     public void refresh(Collection c) {
         this.data = c;
         ((DefaultMutableTreeNode)root).removeAllChildren();
@@ -98,16 +99,24 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         menue.show(e.getComponent(), e.getX(), e.getY());
     }
     
+    /**
+     * actionPerformed: handle action event: buttons.
+     */
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
         if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGR.directory);
     }
     
+    /**
+     * Save selected object to a file.
+     */
     public void saveData() {
         new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGR.directory);
     }
     
-
+    /**
+     * dragGestureRecognized: handle drag gesture event: transfer the name of dragged object.
+     */
     public void dragGestureRecognized(DragGestureEvent evt) {
         Point p = evt.getDragOrigin();
         RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
@@ -115,25 +124,48 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         Transferable t = new java.awt.datatransfer.StringSelection(o.getRName());
         dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
     }
+    
+    /**
+     * dragEnter: handel drag source drag event.
+     */
     public void dragEnter(DragSourceDragEvent evt) {
         // Called when the user is dragging this drag source and enters
         // the drop target.
     }
+    
+    /**
+     * dragOver: handle drag source drag event.
+     */
     public void dragOver(DragSourceDragEvent evt) {
         // Called when the user is dragging this drag source and moves
         // over the drop target.
     }
+    
+    /**
+     * dragExit: handle drag source event.
+     */
     public void dragExit(DragSourceEvent evt) {
         // Called when the user is dragging this drag source and leaves
         // the drop target.
     }
+    
+    /**
+     * dropActionChanged: handle drag source drag event.
+     */
     public void dropActionChanged(DragSourceDragEvent evt) {
         // Called when the user changes the drag action between copy or move.
     }
+    
+    /**
+     * dragDropEnd: handle drag source drop event.
+     */
     public void dragDropEnd(DragSourceDropEvent evt) {
         // Called when the user finishes or cancels the drag operation.
     }
 
+    /**
+     * mouseClicked: hanlde mouse event.
+     */
     public void mouseClicked(MouseEvent e) {
             Point p = e.getPoint();
             RObject o = null;
@@ -152,12 +184,21 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
             }
     }
 
+    /**
+     * mouseEntered: handle mouse event.
+     */
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * mouseExited: handle mouse event.
+     */
     public void mouseExited(MouseEvent e) {
     }
 
+    /**
+     * mousePressed: handle mouse event: show summary of selected object.
+     */
     public void mousePressed(MouseEvent e) {
         if (objmgr.summary != null)	objmgr.summary.hide();
         if (e.isPopupTrigger()) {
@@ -184,6 +225,9 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         }
     }
 
+    /**
+     * mouseReleased: hanlde mouse event: show summary of selected object.
+     */
     public void mouseReleased(MouseEvent e) {
         if (e.isPopupTrigger()) {
             objmgr.cursorWait();
@@ -209,6 +253,9 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         }
     }
 
+    /**
+     * treeWillExpand: handle tree expansion event: add childs to object if there is a content.
+     */
     public void treeWillExpand(TreeExpansionEvent e) {
         TreePath p = e.getPath();
         if (!this.hasBeenExpanded(p)) {
@@ -220,6 +267,9 @@ public class ObjectBrowserTree extends JTree implements ActionListener, MouseLis
         }
     }
 
+    /**
+     * treeWillCollapse: handle tree expansion event.
+     */
     public void treeWillCollapse(TreeExpansionEvent e) {
     }
 

@@ -1,36 +1,46 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  ToolBar
- *
- * 	icon ToolBar
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import javax.swing.JPanel;
 
+/**
+ *  ToolBar - icon toolbar for console and editor
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
+
 public class ToolBar extends JPanel {
 
 
+	/** New button*/
     public IconButton newButton;
+    /** Open button*/
     public IconButton openButton;
+    /** Save button*/
     public IconButton saveButton;
+    /** Undo button*/
     public IconButton undoButton;
+    /** Redo button*/
     public IconButton redoButton;
+    /** Cut button*/
     public IconButton cutButton;
+    /** Copy button*/
     public IconButton copyButton;
+    /** Paste button*/
     public IconButton pasteButton;
+    /** Find button*/
     public IconButton findButton;
+    /** Stop button*/
     public IconButton stopButton;
+    /** Help button*/
     public IconButton helpButton;
 
+    /** UndoManager */
     public InsertRemoveUndoManager undoMgr;
 
 
@@ -42,6 +52,12 @@ public class ToolBar extends JPanel {
         this(al,useStopButton,null);
     }
 
+    /**
+     * Create a new toolbar.
+     * @param al ActionListener
+     * @param useStopButton Show the stopbutton or not
+     * @param progress show progresslabel or not (currently it is not recommended to use it
+     */
     public ToolBar(ActionListener al, boolean useStopButton, ProgressLabel progress) {
         this.setLayout(new BorderLayout());
 

@@ -84,7 +84,7 @@ FocusListener, RMainLoopCallbacks {
         currentHistPosition = JGR.RHISTORY.size();
 
         //Add default toolbar with stop button to interrupt R
-        toolBar = new ToolBar(this,true,progress);
+        toolBar = new ToolBar(this,true);
 
         input.addKeyListener(this);
         input.setWordWrap(false);
@@ -422,7 +422,7 @@ FocusListener, RMainLoopCallbacks {
 	//======================================================= other events ===
 	
     /**
-     * actionPerformed: handle action events: menus.
+     * actionPerformed: handle action event: menus.
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
@@ -495,20 +495,20 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * keyTyped: handle key events.
+     * keyTyped: handle key event.
      */
     public void keyTyped(KeyEvent ke) {
     }
 
     /**
-     * keyPressed: handle key events, like: adding a new line, history ....
+     * keyPressed: handle key event, like: adding a new line, history ....
      */
     public void keyPressed(KeyEvent ke) {
         if (ke.getSource().equals(output) && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown())
             input.requestFocus();
         if (ke.getKeyCode() == KeyEvent.VK_UP) {
             if (input.mComplete != null && input.mComplete.isVisible()) {
-                input.mComplete.selectPrevios();
+                input.mComplete.selectPrevious();
             }
             else if (currentHistPosition > 0){
                 if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
@@ -544,7 +544,7 @@ FocusListener, RMainLoopCallbacks {
     }
 
     /**
-     * keyReleased: handle key events, sending the command.
+     * keyReleased: handle key event, sending the command.
      */
     public void keyReleased(KeyEvent ke) {
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {

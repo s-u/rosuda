@@ -1,25 +1,22 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  FileSelector
- * 
- *  use awt filedialog on a mac, and swing on other machines
- *   
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
 import java.awt.*;
 import java.io.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
 
+/**
+ *  FileSelector - use AWT filedialog on a Mac because of look&feel, and SWING on other machines because it provides more features.
+ *   
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2005 
+ */
 
 public class FileSelector extends JFrame {
 
-    /** @deprecated use LOAD, OPEN DIALOG */
+    /** @deprecated use LOAD*/
     public final static int OPEN = 0;
     /** OPEN DIALOG */
     public final static int LOAD = 0;
@@ -32,11 +29,13 @@ public class FileSelector extends JFrame {
     private int type = 0;
     private Frame f;
 
-    /** create a FileDialog, on Mac we use the AWT on others we are currently using SWING
+    /** 
+     * Create a FileDialog, on Mac we use the AWT on others i'm currently using SWING.
      * @param f parent Frame
      * @param title Title
      * @param type OPEN or SAVE
-     * @param directory should we start in a specified directory */
+     * @param directory should we start in a specified directory 
+     */
     public FileSelector(Frame f, String title, int type,  String directory) {
         this.type = type;
         this.f = f;
@@ -51,6 +50,9 @@ public class FileSelector extends JFrame {
         }
     }
     
+    /**
+     * Show fileselector.
+     */
     public void setVisible(boolean b) {
         if (Common.isMac()) {
             awtDialog.setVisible(true);
@@ -62,7 +64,10 @@ public class FileSelector extends JFrame {
         }
     }
 
-    /** @return filename */
+    /**
+     * Get selected filename. 
+     * @return filename 
+     */
     public String getFile() {
         try {
             if (Common.isMac())
@@ -73,7 +78,10 @@ public class FileSelector extends JFrame {
         catch (Exception e) { return null;}
     }
 
-    /** @return directory */
+    /**
+     * Get selected directoryname.
+     *  @return directory 
+     */
     public String getDirectory() {
         try {
             if (Common.isMac())
@@ -84,6 +92,10 @@ public class FileSelector extends JFrame {
         catch (Exception e) { return null;}
     }
 
+    /**
+     * Set current file.
+     * @param file filename
+     */
     public void setFile(String file) {
         try {
             if (Common.isMac())

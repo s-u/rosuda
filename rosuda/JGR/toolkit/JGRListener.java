@@ -1,25 +1,23 @@
 package org.rosuda.JGR.toolkit;
 
+import java.awt.event.*;
+
+import org.rosuda.JGR.*;
+
 /**
- *  JGRListener
- * 
- * 	execute commands from add menuitems at runtime
+ *  JGRListener - an actionlistener listening menuitems which the user added to the console on-the-fly.
  * 
  *	@author Markus Helbig
  *  
  * 	RoSuDA 2003 - 2004 
  */
 
-
-import java.awt.event.*;
-
-import org.rosuda.JGR.*;
-
 public class JGRListener implements ActionListener {
 
-    public JGRListener() {
-    }
-
+    
+    /**
+     * actionPerformed: handle action event: on-the-fly added menuitems.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         JGR.MAINRCONSOLE.execute(cmd);

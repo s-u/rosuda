@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  ModelBrowserTable
- * 
- * 	show models, and provide possibility to compare them
- * 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
@@ -21,6 +11,14 @@ import javax.swing.table.*;
 import org.rosuda.JGR.JGRObjectManager;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.util.*;
+
+/**
+ *  ModelBrowserTable - show models, and provide possibility to compare them
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 public class ModelBrowserTable extends JTable implements MouseListener, DragGestureListener, DragSourceListener { 
 	
@@ -49,12 +47,18 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         this.addMouseListener(this);
 	}
 	
+	/**
+	 * Refresh models form workspace.
+	 */
 	public void refresh() {
         sorter = new TableSorter(new ModelTableModel());
         sorter.setTableHeader(this.getTableHeader());
         this.setModel(sorter);
 	}
 	
+	/**
+	 * dragGestureRecognized: handle dragGesture event: when dragging a model, provide the R-call.
+	 */
     public void dragGestureRecognized(DragGestureEvent evt) {
     	RModel m = (RModel) models.elementAt(this.rowAtPoint(evt.getDragOrigin()));
 		if (m == null || m.getCall().trim().length() == 0) return;
@@ -62,35 +66,70 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         Transferable t = new java.awt.datatransfer.StringSelection(m.getName()+" <- "+m.getCall());
         dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
     }
+    
+    /**
+     * dragEnter: handle drag source drag event.
+     */
     public void dragEnter(DragSourceDragEvent evt) {
         // Called when the user is dragging this drag source and enters
         // the drop target.
     }
+    
+    /**
+     * dragOver: handle drag source drag event.
+     */
     public void dragOver(DragSourceDragEvent evt) {
         // Called when the user is dragging this drag source and moves
         // over the drop target.
     }
+    
+    
+    /**
+     * dragExit: handle drag source event.
+     */
     public void dragExit(DragSourceEvent evt) {
         // Called when the user is dragging this drag source and leaves
         // the drop target.
     }
+    
+    
+    /**
+     * dragActionChanged: handle drag source drag event.
+     */
     public void dropActionChanged(DragSourceDragEvent evt) {
         // Called when the user changes the drag action between copy or move.
     }
+    
+    
+    /**
+     * dragDropEnd: handle drag source drop event.
+     */
     public void dragDropEnd(DragSourceDropEvent evt) {
         // Called when the user finishes or cancels the drag operation.
     }	
 	
-	public void mouseClicked(MouseEvent e) {
+    /**
+     * mouseClicked: handle mouse event.
+     */
+    public void mouseClicked(MouseEvent e) {
 	}	
 	
-	public void mouseEntered(MouseEvent e) {
+    /**
+     * mouseEntered: handle mouse event.
+     */
+    public void mouseEntered(MouseEvent e) {
 	}
 
-	public void mouseExited(MouseEvent e) {
+    /**
+     * mouseExited: handle mouse event.
+     */
+    public void mouseExited(MouseEvent e) {
 	}
 
-	public void mousePressed(MouseEvent e) {
+    /**
+     * mousePressed: handle mouse event: show call of model.
+     */
+    public void mousePressed(MouseEvent e) {
 		if (objmgr.summary != null)	objmgr.summary.hide();
 		if (e.isPopupTrigger()) {
 			objmgr.cursorWait();
@@ -109,9 +148,12 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
 			objmgr.summary.show();
 			objmgr.cursorDefault();
 		}
-        }
+     }
 
-        public void mouseReleased(MouseEvent e) {
+    /**
+     * dragEnter: handle drag source event: show call of model.
+     */
+    public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			objmgr.cursorWait();
 			JToolTip call  = new JToolTip();

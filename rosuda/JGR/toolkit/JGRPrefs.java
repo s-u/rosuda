@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  JGRPrefs
- *
- * 	preferences like fonts colors ....
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.io.*;
 import java.util.prefs.*;
@@ -19,10 +9,23 @@ import org.rosuda.JGR.*;
 
 import java.util.prefs.Preferences;
 
-public class JGRPrefs {
-	public static final int prefsVersion = 0x0100; // version 1.0
+/**
+ *  JGRPrefs - preferences like fonts colors ....
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
 
+public class JGRPrefs {
+
+	/** Preference version */
+	public static final int prefsVersion = 0x0110; // version 1.1
+
+	/** Debuglevel */
     public static final int DEBUG = 0;
+    
+    /** Is JGR running on a Mac?*/
     public static boolean isMac = false;
 
     /** DefaultFontName */
@@ -31,7 +34,7 @@ public class JGRPrefs {
     public static int FontStyle = Font.PLAIN;
     /** DefaultFontSize */
     public static int  FontSize = 12;
-
+    /** MinimalFontSize */
     public static final int MINFONTSIZE = 18;
     /** DefaultFont */
     public static Font DefaultFont;
@@ -76,20 +79,27 @@ public class JGRPrefs {
     /** DefaultQuoteColor */
     public static Color QUOTEColor = Color.blue;
 
-
+    /** MaximalHelpTabs*/
     public static int maxHelpTabs = 10;
 
+    /** UseHelpAgent*/
     public static boolean useHelpAgent = true;
 
+    /** UseEmacsKeyBindings*/
     public static boolean useEmacsKeyBindings = false;
 
 
-
+    /**
+     * Apply current settings to JGR.
+     */
     public static void apply() {
         JGRPrefs.refresh();
         FontTracker.current.applyFont();
     }
 
+    /**
+     * Initialize settings from .JGRPrefsrc.
+     */
     public static void initialize() {
         readPrefs();
         DefaultFont = new Font(FontName,FontStyle,FontSize);
@@ -109,6 +119,9 @@ public class JGRPrefs {
         StyleConstants.setForeground(QUOTE, QUOTEColor);
     }
 
+    /**
+     * Refresh current settings. 
+     */
     public static void refresh() {
         DefaultFont = new Font(FontName,FontStyle,FontSize);
         StyleConstants.setFontSize(SIZE,FontSize);
@@ -128,6 +141,9 @@ public class JGRPrefs {
 		if (JGR.R != null && JGR.STARTED) JGR.R.eval("options(width="+JGR.MAINRCONSOLE.getFontWidth()+")");
     }
 
+    /**
+     * Read prefs form .JGRPrefsrc in user's home directory.
+     */
     public static void readPrefs() {
         InputStream is = null;
         try {
@@ -157,6 +173,10 @@ public class JGRPrefs {
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
     }
 
+    /**
+     * Save preferences to .JGRPrefsrc.
+     * @param writeLibs R_LIBS should only be saved when new packages where installed.
+     */
     public static void writePrefs(boolean writeLibs) {
         Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
 		

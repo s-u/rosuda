@@ -1,5 +1,8 @@
 package org.rosuda.JGR.robjects;
 
+import java.text.*;
+import java.util.*;
+
 /**
  *  RModel - This is a simple java-representation of a model in R (currently only lm and glm are implemented) providing several information.
  * 
@@ -7,9 +10,6 @@ package org.rosuda.JGR.robjects;
  * 	
  *  RoSuDA 2003 - 2005 
  */
-
-import java.text.*;
-import java.util.*;
 
 public class RModel {
 

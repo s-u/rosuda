@@ -1,9 +1,3 @@
-/*
- * Created on Dec 5, 2004
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package org.rosuda.JGR.toolkit;
 
 import java.awt.event.KeyAdapter;
@@ -16,10 +10,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
 /**
- * @author markus
+ * 
+ * JComboBoxExt - add JTextField in a JComboBox.
+ * 
+ * @author Markus Helbig
  *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
+ * RoSuDA 2003 - 2005
+ * 
  */
 
 public class JComboBoxExt extends JComboBox {
@@ -49,6 +46,9 @@ public class JComboBoxExt extends JComboBox {
 		}
 	}
 	
+	/**
+	 * Set the combobox editable.
+	 */
 	public void setEditable(boolean b) {
 		if (b && tf != null) {
 			tf.requestFocus();

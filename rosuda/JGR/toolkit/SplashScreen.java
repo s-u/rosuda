@@ -1,13 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  SplashScreen
- *
- * @author Markus Helbig
- *
- * RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.net.*;
 import javax.swing.*;
@@ -17,17 +9,21 @@ import org.rosuda.ibase.*;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.util.*;
 
+
+/**
+ * SplashScreen
+ *
+ * @author Markus Helbig
+ *
+ * RoSuDA 2003 - 2004
+ */
+
 public class SplashScreen extends JWindow implements Runnable {
 
     private Thread thread;
     private Dimension screenSize = Common.getScreenRes();
     private Dimension splashSize = new Dimension(300,200);
     private Image splash;
-
-    /** SplashScreen
-     *
-     */
-
 
     public SplashScreen() {
         try {
@@ -90,13 +86,12 @@ public class SplashScreen extends JWindow implements Runnable {
         return img;
     }
 
+    /**
+     * Show splashscreen.
+     */
     public void start() {
         setVisible(true);
         thread.start();
-    }
-
-    public boolean isAlive() {
-        return thread.isAlive();
     }
 
     public void run() {
@@ -109,13 +104,12 @@ public class SplashScreen extends JWindow implements Runnable {
         }
     }
 
+    /**
+     * Dispose splashscreen.
+     */
     public void stop() {
         setVisible(false);
         dispose();
         thread = null;
-    }
-
-    public static void main(String[] args) {
-        new SplashScreen();
     }
 }

@@ -1,20 +1,18 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  FontTracker
- * 
- * 	collect all componentes and apply prefs-font to them 
- *  
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 
 import org.rosuda.JGR.*;
+
+/**
+ *  FontTracker - collect all componentes and apply prefs-font to them 
+ *  
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2005
+ */
 
 public class FontTracker {
 
@@ -23,24 +21,30 @@ public class FontTracker {
     Vector components;
 
 
-    /** FontTracker, every added component will change its font
-      * currently there is a bug in the apple jre so we need to make some hacks*/
-
     public FontTracker() {
         components = new Vector();
     }
 
-    /** add a Component
-      * @param comp component to add */
+    /** 
+     * Add a component to the list.
+     * @param comp component to add 
+     */
     public void add(Component comp) {
         comp.setFont(JGRPrefs.DefaultFont);
         components.add(comp);
     }
 
+    /** 
+     * Add a component to the list.
+     * @param comp component to add 
+     */
     public void add(JComponent comp) {
         add((Component) comp);
     }
 
+    /**
+     * Increase fontsize, current step is 2.
+     */
     public void setFontBigger() {
         Enumeration e = components.elements();
         JGRPrefs.FontSize +=2;
@@ -48,6 +52,9 @@ public class FontTracker {
         applyFont();
     }
 
+    /**
+     * Decrease fontsize, current step is 2.
+     */
     public void setFontSmaller() {
         Enumeration e = components.elements();
         JGRPrefs.FontSize -=2;
@@ -55,6 +62,9 @@ public class FontTracker {
         applyFont();
     }
 
+    /**
+     * Apply font, fontsize from JGRPrefs to components contained in the tracker.
+     */
     public void applyFont() {
         Enumeration e = components.elements();
         Font f = JGRPrefs.DefaultFont;

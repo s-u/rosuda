@@ -17,6 +17,15 @@ import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 
+
+/**
+ * 
+ * TextTransferHandler - copied out of the Java sources, because i need it as accessible class.
+ * 
+ * RoSuDA 2003 - 2005
+ *
+ */
+
 public class TextTransferHandler extends TransferHandler implements UIResource {
 
     private JTextComponent exportComp;

@@ -1,21 +1,18 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  PrefsDialog
- * 
- * 	simple dialog for setting preferences in JGR
- * 
- *	@author Markus Helbig
- *  
- * 	RoSuDA 2003 - 2004 
- */
-
-
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
+
+/**
+ *  PrefsDialog - dialog for setting preferences in JGR
+ * 
+ *	@author Markus Helbig
+ *  
+ * 	RoSuDA 2003 - 2004 
+ */
 
 public class PrefsDialog extends JDialog implements ActionListener{
 
@@ -38,12 +35,11 @@ public class PrefsDialog extends JDialog implements ActionListener{
     private JButton apply = new JButton("Apply");
     private JButton save = new JButton("Save");
 
-    /** new PrefsDialog */
     public PrefsDialog() {
         this(null);
     }
 
-    /** new PrefsDialog
+    /** Create PrefsDialog.
      *  @param f parent JFrame */
     public PrefsDialog(JFrame f) {
         super(f,"Preferences",true);
@@ -130,6 +126,9 @@ public class PrefsDialog extends JDialog implements ActionListener{
         this.setVisible(true);
     }
 
+    /**
+     * Apply changes the user made.
+     */
     public void applyChanges() {
         JGRPrefs.FontName = font.getSelectedItem().toString();
         JGRPrefs.FontSize = new Integer(size.getSelectedItem().toString()).intValue();
@@ -139,7 +138,9 @@ public class PrefsDialog extends JDialog implements ActionListener{
         JGRPrefs.apply();
     }
 
-
+    /**
+     * actionPerformed: handle action event: buttons.
+     */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd=="apply") applyChanges();

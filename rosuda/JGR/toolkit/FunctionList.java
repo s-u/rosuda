@@ -1,11 +1,4 @@
 package org.rosuda.JGR.toolkit;
-//
-//  FunctionList.java
-//  JGR
-//
-//  Created by Markus Helbig on Tue Aug 17 2004.
-//  Copyright (c) 2004 __MyCompanyName__. All rights reserved.
-//
 
 import java.awt.event.*;
 import java.util.*;
@@ -13,6 +6,14 @@ import javax.swing.*;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
+
+/**
+ * FunctionList - implemenation of a JList with some JGR specific features.
+ * 
+ * @author Markus Helbig
+ *
+ *	RoSuDA 2003 - 2005
+ */
 
 public class FunctionList extends JList implements MouseListener {
 
@@ -25,10 +26,17 @@ public class FunctionList extends JList implements MouseListener {
         this.addMouseListener(this);
     }
 
+    /**
+     * Refresh list and set supplied functions.
+     * @param functions new functions
+     */
     public void refresh(Collection functions) {
         this.setListData(new Vector(functions));
     }
 
+    /**
+     * mouseClicked: handle mouse event: double-click -> show function.
+     */
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount()==2) {
             RObject o = null;
@@ -42,16 +50,28 @@ public class FunctionList extends JList implements MouseListener {
         }
     }
 
+    /**
+     * mouseEntered: handle mouse event.
+     */
     public void mouseEntered(MouseEvent e) {
     }
 
+    /**
+     * mouseExited: handle mouse event.
+     */
     public void mouseExited(MouseEvent e) {
     }
 
+    /**
+     * mousePressed: handle mouse event.
+     */
     public void mousePressed(MouseEvent e) {
         if (objmgr.summary != null)	objmgr.summary.hide();
     }
 
+    /**
+     * mouseReleased: handle mouse event.
+     */
     public void mouseReleased(MouseEvent e) {
     }
 

@@ -1,15 +1,5 @@
 package org.rosuda.JGR.toolkit;
 
-/**
-*  ConsoleOutput
- *
- * 	provides export
- *
- *	@author Markus Helbig
- *
- * 	RoSuDA 2003 - 2004
- */
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -23,6 +13,14 @@ import javax.swing.text.StyledDocument;
 
 import org.rosuda.JGR.JGR;
 
+/**
+ *  ConsoleOutput - implementation of a textpane providing different export possibilities.
+ *
+ *	@author Markus Helbig
+ *
+ * 	RoSuDA 2003 - 2005
+ */
+
 public class ConsoleOutput extends JTextPane {
 
     public ConsoleOutput() {
@@ -31,6 +29,9 @@ public class ConsoleOutput extends JTextPane {
         setDocument(new JGRStyledDocument());
     }
 
+    /**
+     * Open export dialog.
+     */
     public void startExport() {
         new ExportOutput(this);
     }
@@ -39,6 +40,9 @@ public class ConsoleOutput extends JTextPane {
         saveToFile(file,getCommands());
     }
 
+    /**
+     * Copy only the commands out of the pane.
+     */
     public void copyCommands() {
         java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getCommands().toString());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
@@ -66,6 +70,9 @@ public class ConsoleOutput extends JTextPane {
         saveToFile(file,getOutput());
     }
 
+    /**
+     * Copy the whole content of the pane.
+     */
     public void copyOutput() {
         java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getOutput().toString());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
@@ -91,6 +98,9 @@ public class ConsoleOutput extends JTextPane {
         saveToFile(file,getResult());
     }
 
+    /**
+     * Copy only the results from the pane.
+     */
     public void copyResults() {
         java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getResult().toString());
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s,s);
@@ -133,7 +143,8 @@ public class ConsoleOutput extends JTextPane {
         return s;
     }
 
-    public String getLine(int i) {
+    
+    private String getLine(int i) {
         String line = null;
         try {
 
@@ -158,6 +169,9 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Get text content of pane.
+     */
     public String getText() {
         try {
             Document doc = this.getDocument();
@@ -167,6 +181,9 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Get text content of pane, specified by supplied startposition and length.
+     */
     public String getText(int offs, int len) {
         try {
             Document doc = this.getDocument();
@@ -176,6 +193,11 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Append text to pane.
+     * @param str text which shoudl be appended
+     * @param a attribute-set for insertion
+     */
     public void append(String str, AttributeSet a) {
         Document doc = getDocument();
         if (doc != null) {
@@ -186,11 +208,21 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Count lines in this pane.
+     * @return number of lines
+     */
     public int getLineCount() {
         Element map = getDocument().getDefaultRootElement();
         return map.getElementCount();
     }
 
+    /**
+     * Get startposition of line.
+     * @param line line-number
+     * @return startposition
+     * @throws BadLocationException
+     */
     public int getLineStartOffset(int line) throws BadLocationException {
         int lineCount = getLineCount();
         if (line < 0) {
@@ -204,6 +236,12 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Get endposition of line.
+     * @param line line-number
+     * @return endposition
+     * @throws BadLocationException
+     */
     public int getLineEndOffset(int line) throws BadLocationException {
         int lineCount = getLineCount();
         if (line < 0) {
@@ -219,6 +257,12 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Get line related to current position.
+     * @param offset current position
+     * @return line-number
+     * @throws BadLocationException
+     */
     public int getLineOfOffset(int offset) throws BadLocationException {
         Document doc = getDocument();
         if (offset < 0) {
@@ -232,10 +276,18 @@ public class ConsoleOutput extends JTextPane {
         }
     }
 
+    /**
+     * Removes text beginnig at supplied position.
+     * @param index startindex
+     * @throws BadLocationException
+     */
     public void removeAllFrom(int index) throws BadLocationException {
         this.getDocument().remove(index,this.getDocument().getLength()-index);
     }
 
+    /**
+     * Apply font to pane.
+     */
     public void setFont(Font f) {
         super.setFont(f);
         try {

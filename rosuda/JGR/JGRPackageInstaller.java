@@ -133,7 +133,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
     }
 
     /**
-     * actionPerformed: handle action events: buttons.
+     * actionPerformed: handle action event: buttons.
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();

@@ -19,12 +19,15 @@ import java.awt.FileDialog;
 
 import org.rosuda.javaGD.GDInterface;
 
-/** Implementation of JavaGD which uses iFrame instead of Frame */
+/** Implementation of {@see JavaGD} which uses iFrame instead of Frame */
 public class JavaGD extends GDInterface implements ActionListener, WindowListener {
     iFrame jfr;
     
     static int count = 0;
 
+    /**
+     * Open JavaGD device.
+     */
     public void     gdOpen(double w, double h) {
         open=true;
         if (jfr!=null) gdClose();
@@ -48,22 +51,34 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
         jfr.setVisible(true);
     }
     
+    /**
+     * Create new page.
+     */
     public void     gdNewPage(int devNr) {
         super.gdNewPage(devNr);
         jfr.setTitle("JavaGD ("+(getDeviceNumber()+1)+")"+(active?" *active*":""));
     }
 
+    /**
+     * Activate device.
+     */
     public void     gdActivate() {
         super.gdActivate();
         jfr.toFront();
         jfr.setTitle("JavaGD "+((getDeviceNumber()>0)?("("+(getDeviceNumber()+1)+")"):"")+" *active*");
     }
 
+    /**
+     * Deactivate device.
+     */
     public void     gdDeactivate() {
         super.gdDeactivate();
         jfr.setTitle("JavaGD ("+(getDeviceNumber()+1)+")");
     }
     
+    /**
+     * Close device.
+     */
     public void     gdClose() {
         super.gdClose();
         if (jfr!=null) {
@@ -93,8 +108,10 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
 		}
 		return r.toString();
 	}
-	
-    // we'll use this once the menu is available ...
+
+	/**
+	 * actionPerformed: handle action event: menus.
+	 */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
         if (cmd.equals("copyImg"))

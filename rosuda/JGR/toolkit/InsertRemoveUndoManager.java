@@ -1,24 +1,26 @@
 package org.rosuda.JGR.toolkit;
 
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.undo.*;
+
 /**
- *  InsertRemoveUndoManager
+ *  InsertRemoveUndoManager - undo only insertion and remove events.
  * 
  *	@author Markus Helbig
  *  
  * 	RoSuDA 2003 - 2004 
  */
 
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.undo.*;
-
-
 public  class InsertRemoveUndoManager extends UndoManager {
 
+	/** Undo button from toobar*/
     public IconButton undoButton;
+    /** Redo button from toobar*/
     public IconButton redoButton;
 
+    
     public InsertRemoveUndoManager(ActionListener al) {
         this.setLimit(10000);
         undoButton = new IconButton("/icons/undo.png","Undo", al, "undo");
@@ -27,12 +29,16 @@ public  class InsertRemoveUndoManager extends UndoManager {
         redoButton.setEnabled(false);
     }
 
+    
     public void undoableEditHappened(UndoableEditEvent e) {
         UndoableEdit ue = e.getEdit();
         addEdit(ue);
         undoButton.setEnabled(true);
     }
 
+    /**
+     * Undo an insertion or remove event.
+     */
     public void undo() {
         while (this.editToBeUndone().getPresentationName().equals(UIManager.getString("AbstractDocument.styleChangeText"))) super.undo();
         super.undo();
@@ -40,6 +46,9 @@ public  class InsertRemoveUndoManager extends UndoManager {
         redoButton.setEnabled(true);
     }
 
+    /**
+     * Redo an insertion or remove event.
+     */
     public void redo() {
         super.redo();
         while (this.editToBeRedone() != null && this.editToBeRedone().getPresentationName().equals(UIManager.getString("AbstractDocument.styleChangeText"))) 

@@ -1,19 +1,17 @@
 package org.rosuda.JGR.toolkit;
 
-/**
- *  SytnaxDocument
- * 
- *  provides R-Syntaxhighlighting
- * 
- *  @author Markus Helbig
- *  
- *  RoSuDA 2003 - 2004 
- */
-
 
 import javax.swing.text.*;
 
 import org.rosuda.JGR.*;
+
+/**
+ *  SytnaxDocument - provides R-Syntaxhighlighting.
+ * 
+ *  @author Markus Helbig adapted from java-developer forum
+ *  
+ *  RoSuDA 2003 - 2004 
+ */
 
 public class SyntaxDocument extends JGRStyledDocument {
 
@@ -26,7 +24,6 @@ public class SyntaxDocument extends JGRStyledDocument {
     private static MutableAttributeSet BOLD = new SimpleAttributeSet();
 
 
-    /** we're doing a lot here, but it is enough to know that we are coloring the text*/
     public SyntaxDocument() {
         doc = this;
         rootElement = doc.getDefaultRootElement();
@@ -36,8 +33,8 @@ public class SyntaxDocument extends JGRStyledDocument {
         putProperty(DefaultEditorKit.EndOfLineStringProperty, "\n");
     }
 
-    /*
-         * Override to apply syntax highlighting after the document has been updated
+    /**
+     * Insert text and apply coloring. 
      */
     public void insertString(final int offset, String str, AttributeSet a) throws
         BadLocationException {
@@ -67,6 +64,9 @@ public class SyntaxDocument extends JGRStyledDocument {
         processChangedLines(offset, len);
     }
     
+    /**
+     * Insert text without whitespaces.
+     */
     public void insertStringWithoutWhiteSpace(final int offset, String str, AttributeSet a) throws BadLocationException {
     	super.insertString(offset, str, a);
     	int len = str.length();
@@ -74,8 +74,8 @@ public class SyntaxDocument extends JGRStyledDocument {
     }    
 
 
-    /*
-         * Override to apply syntax highlighting after the document has been updated
+    /**
+     * Remove text and apply again coloring.
      */
     public void remove(int offset, int length) throws BadLocationException {
         if (offset==-1) return;
@@ -83,9 +83,8 @@ public class SyntaxDocument extends JGRStyledDocument {
         processChangedLines(offset, 0);
     }
 
-    /*
-     * Determine how many lines have been changed,
-     * then apply highlighting to each line
+    /**
+     *	Determine which lines have changed and apply highlighting to them. 
      */
     public synchronized void processChangedLines(int offset, int length) throws
         BadLocationException {
@@ -100,8 +99,8 @@ public class SyntaxDocument extends JGRStyledDocument {
 
 
 
-    /*
-     * Parse the line to determine the appropriate highlighting
+    /**
+     * Parse the line to determine the appropriate highlighting.
      */
     private synchronized void applyHighlighting(String content, int line) throws
         BadLocationException {
@@ -126,8 +125,8 @@ public class SyntaxDocument extends JGRStyledDocument {
         checkForTokens(content, startOffset, endOffset);
     }
 
-    /*
-     * Parse the line for tokens to highlight
+    /**
+     * Parse the line for tokens to highlight.
      */
     private synchronized void checkForTokens(String content, int startOffset, int endOffset) {
         while (startOffset <= endOffset) {
@@ -146,8 +145,8 @@ public class SyntaxDocument extends JGRStyledDocument {
         }
     }
 
-    /*
-     *
+    /**
+     * Parse the line for quote-tokens.
      */
     private synchronized int getQuoteToken(String content, int startOffset, int endOffset) {
         String quoteDelimiter = content.substring(startOffset, startOffset + 1);
@@ -229,8 +228,8 @@ public class SyntaxDocument extends JGRStyledDocument {
         return content.substring(start, end - 1);
     }
 
-    /*
-     * Override for other languages
+    /**
+     * Is character a delimiter (,;:{}()[]+-/%<=>!&|^~*$).
      */
     protected synchronized boolean isDelimiter(String character) {
         String operands = ",;:{}()[]+-/%<=>!&|^~*$";
@@ -241,8 +240,8 @@ public class SyntaxDocument extends JGRStyledDocument {
             return false;
     }
 
-    /*
-     * Override for other languages
+    /**
+     * Is character a qoutedelimiter (").
      */
     protected synchronized boolean isQuoteDelimiter(String character) {
         String quoteDelimiters = "\"'";
@@ -252,43 +251,45 @@ public class SyntaxDocument extends JGRStyledDocument {
             return true;
     }
 
-    /*
-     * Override for other languages
+    /**
+     * Is character a keyword.
      */
     protected synchronized boolean isKeyword(String token) {
         Object o = JGR.KEYWORDS.get(token);
         return o == null ? false : true;
     }
-    /*
-     * Override for other languages
+    
+    /**
+     * Is character a number.
      */
     protected synchronized boolean isNumber(String token) {
         return token.matches("[[0-9]+.[0-9]+]*[0-9]+");
     }
 
+    /**
+     * Is character a object in current workspace.
+     */
     protected synchronized boolean isObject(String token) {
         Object o = JGR.KEYWORDS_OBJECTS.get(token);
         return o == null ? false : true;
     }
 
-    /*
-     * Override for other languages
+    /**
+     * Get character which indicates comments (#).
+     * @return #
      */
-
     protected synchronized String getSingleLineDelimiter() {
         return "#";
     }
 
-    /*
-     * Override for other languages
+    /**
+     * Get escape character.
+     * @return \\
      */
     protected synchronized String getEscapeString(String quoteDelimiter) {
         return "\\" + quoteDelimiter;
     }
 
-    /*
-     *
-     */
     protected synchronized String addMatchingBrace(int offset) throws BadLocationException {
         StringBuffer whiteSpace = new StringBuffer();
         int line = rootElement.getElementIndex(offset);

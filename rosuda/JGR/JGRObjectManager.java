@@ -136,7 +136,7 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
     }
     
     /**
-     * mouseClicked: handle mouse events: disable Save Data button.
+     * mouseClicked: handle mouse event: disable Save Data button.
      */
     public void mouseClicked(MouseEvent e) {
         if (summary != null) summary.hide();
@@ -144,31 +144,31 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
     }
 
     /**
-     * mouseEntered: handle mouse events.
+     * mouseEntered: handle mouse event.
      */
     public void mouseEntered(MouseEvent e) {
     }
 
     /**
-     * mouseExited: handle mouse events.
+     * mouseExited: handle mouse event.
      */
     public void mouseExited(MouseEvent e) {
     }
 
     /**
-     * mousePressed: handle mouse events.
+     * mousePressed: handle mouse event.
      */
     public void mousePressed(MouseEvent e) {
     }
 
     /**
-     * mouseReleased: handle mouse events.
+     * mouseReleased: handle mouse event.
      */
     public void mouseReleased(MouseEvent e) {
     }
 
     /**
-     * actionPerformed: handle action events: menus and buttons.
+     * actionPerformed: handle action event: menus and buttons.
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
