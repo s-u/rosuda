@@ -9,6 +9,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
+import java.util.StringTokenizer;
+
 import javax.swing.*;
 
 import org.rosuda.ibase.*;
@@ -123,7 +125,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			if (quoteBox.getSelectedIndex() >= quotes.length) useQuote = quoteBox.getSelectedItem().toString();
 			else useQuote = quotes[quoteBox.getSelectedIndex()];
 			
-			String cmd = dataName.getText().trim().replaceAll("\\s","")+ "<- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
+			String cmd = dataName.getText().trim().replaceAll("\\s","")+ " <- read.table(\""+file.replace('\\','/')+"\",header="+(header.isSelected()?"T":"F")+",sep=\""+useSep+"\", quote=\""+useQuote+"\")"+(attach.isSelected()?";attach("+dataName.getText().trim().replaceAll("\\s","")+")":"")+"";
 			JGR.MAINRCONSOLE.execute(cmd,true);
 		}
 	}
@@ -152,6 +154,53 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			sepsBox.setEditable(edit);
 		}
 	}
+	
+	private void checkFile(File file) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String line1 = null;
+			String line2 = null;
+			if (reader.ready()) line1 = reader.readLine();
+			if (reader.ready()) line2 = reader.readLine();
+			reader.close();
+			if (line2 != null) {
+				int i = line2.indexOf("\"");
+				if (i > -1 && line2.indexOf("\"",i+1) > -1) quoteBox.setSelectedItem("\\\"");
+				else {
+					i = line2.indexOf("\'");
+					if (i > -1 && line2.indexOf("\'",i+1) > -1) quoteBox.setSelectedItem("\\\'");
+					else quoteBox.setSelectedItem("None");
+				}
+				sepsBox.setSelectedItem("\\w"); //fallback
+				i = line2.indexOf("\t");
+				if (i > -1 && line2.indexOf("\t",i+1) > -1) sepsBox.setSelectedItem("\\t");
+				i = line2.indexOf(";");
+				if (i > -1 && line2.indexOf(";",i+1) > -1) sepsBox.setSelectedItem(";");
+				i = line2.indexOf(",");
+				if (i > -1 && line2.indexOf(",",i+1) > -1) sepsBox.setSelectedItem(",");
+				i = line2.indexOf("|");
+				if (i > -1 && line2.indexOf("|",i+1) > -1) sepsBox.setSelectedItem("|");
+			}
+			if (line1 != null && line2 != null) {
+				String sep = seps[sepsBox.getSelectedIndex()];
+				sep = sep=="\\t"?"\t":sep;
+				int z1 = 0, z2 = 0;
+				if (sep.length() == 0) {
+					z1 = new StringTokenizer(line1).countTokens();
+					z2 = new StringTokenizer(line2).countTokens();
+				}
+				else {
+					int i = -1; 
+					while ((i = line1.trim().indexOf(sep,i+1)) > -1) z1++;
+					i = -1;
+					while ((i = line2.trim().indexOf(sep,i+1)) > -1) z2++;
+				}
+				if (z1+1==z2) header.setSelected(true);
+				else header.setSelected(false);
+			}
+			
+		} catch (Exception e) {}
+	}
 
 	/**
 	 * propertyChange: handle propertyChange, used for setting the name where the file should be assigned to.
@@ -162,6 +211,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
 			dataName.setText(name);
+			checkFile(file);
 		}
 		else {
 			dataName.setText(null);
