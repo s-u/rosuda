@@ -67,8 +67,10 @@ JNIEnv *checkEnvironment()
     if (res!=0) {
         fprintf(stderr, "AttachCurrentThread failed! (%d)\n",res); return;
     }
+#ifdef JRI_DEBUG
     if (eenv!=env)
         fprintf(stderr, "Warning! eenv=%x, but env=%x - different environments encountered!\n", eenv, env);
+#endif
     return env;
 }
 

@@ -36,8 +36,10 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR
       char **argv=fallbackArgv;
       int argc=1;
       
+#ifdef JRI_DEBUG
       printf("rniSetupR\n");
-
+#endif
+	  
       engineObj=(*env)->NewGlobalRef(env, this);
       engineClass=(*env)->NewGlobalRef(env, (*env)->GetObjectClass(env, engineObj));
       eenv=env;
@@ -81,9 +83,13 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniParse
       SEXP pstr, cv;
 
       PROTECT(cv=jri_getString(env, str));
+#ifdef JRI_DEBUG
       printf("parsing \"%s\"\n", CHAR(STRING_ELT(cv,0)));
+#endif
       pstr=R_ParseVector(cv, parts, &ps);
+#ifdef JRI_DEBUG
       printf("parse status=%d, result=%x, type=%d\n", ps, (int) pstr, (pstr!=0)?TYPEOF(pstr):0);
+#endif
       UNPROTECT(1);
 
       return SEXP2L(pstr);
