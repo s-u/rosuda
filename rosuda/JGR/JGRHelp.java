@@ -284,7 +284,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         else if (cmd == "runselection") {
         	try {
         		String s = ((HelpArea) tabArea.getSelectedComponent()).helpPane.getSelectedText().trim();
-        		JGR.MAINRCONSOLE.execute(s,true);
+        		if (s.length() > 0) JGR.MAINRCONSOLE.execute(s,true);
         	} catch (Exception ex) {}
         }
         else if (cmd == "selAll") {
