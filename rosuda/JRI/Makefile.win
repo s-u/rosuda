@@ -12,3 +12,4 @@ JNISO=.dll
 JNILD=-shared -L. -ljvm -L$(RHOME)/src/gncwin32
 CFLAGS+=-DWin32
 JAVAB=$(JAVAHOME)/bin/java
+JRIDEPS=libjvm.dll.a

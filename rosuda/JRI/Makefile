@@ -52,8 +52,11 @@ src/Rengine.o: src/Rengine.c src/org_rosuda_JRI_Rengine.h
 src/jri.o: src/jri.c
 	$(CC) -c -o $@ src/jri.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
-src/jri$(JNISO): src/Rengine.o src/jri.o
+src/jri$(JNISO): src/Rengine.o src/jri.o $(JRIDEPS)
 	$(CC) -o $@ $^ $(JNILD) $(RLD)
+
+libjvm.dll.a: jvm.def
+	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
 
 libjri$(JNISO): src/jri$(JNISO)
 	ln -sf $^ $@
