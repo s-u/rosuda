@@ -1,3 +1,11 @@
+2005-03-25
+- added: checking for previously installed packages, if they're
+  missing tell the user and ask him what to do
+  
+2005-03-23
+- added: menu item "Update JGR" (it can be used when we're on CRAN
+  or provide all packages at rosuda.org
+
 2005-03-16
 - added: row.names checkbox in save datafile dialog
 - fixed: size of datafile dialogs
