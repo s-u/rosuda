@@ -14,17 +14,19 @@ import java.awt.event.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.plots.*;
 import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 import org.rosuda.klimt.*;
 
-public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener {
+public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener, MouseListener {
     SNode roots[];
     int lastw,lasth;
     float alpha=0.1f;
     boolean eq=false, red=false;
     boolean tri=false;
     int xstretch=1;
+    QueryPopup qi;
     
     int[] levl; // # of vars per level (max 64)
     SVar[] vg;  // 64*32 matrix of vars (l*32+i)
@@ -38,6 +40,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
         roots=trees;
 
         addKeyListener(this); f.addKeyListener(this);
+        addMouseListener(this);
         levl=new int[64];
         vg=new SVar[64*32];
 
@@ -74,6 +77,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
             }
             i++;
         }
+        qi=new QueryPopup(f,null,"Trace plot");
     }
 
     public void recDown(SNode n, int l) {
@@ -99,7 +103,132 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
             recDown((SNode)n.at(ct++),l+1);
         }
     }
+
+    SVar splitHist;
+    SVar splitLeft, splitRight;
+    boolean createPlots=false;
+    int countQ=0, countL=0;    
+
+    public int queryMatrix(int mx, int my) {
+        int yspc=h/(ls+1);
+        int l=my/yspc;
+        int i=0;
+        while (i<levl[l]) {
+            int vw=w/(levl[l]+1);
+            int spc=(w-(vw*levl[l]))/(levl[l]+1);
+            int x=spc+(vw+spc)*i;
+            if (eq) {
+                vw=w/seq;
+                spc=vw/seq;
+                x=(vw+spc)*i+spc;
+            }
+            if (x<mx && x+vw>mx)
+                return i+l*32;
+            i++;
+        }
+        return -1;
+    }
+
+    public void queryPlot(int vid) {
+        if (vid<0) return;
+        int l=vid/32;
+        int i=vid-(l*32);
+        if (Global.DEBUG>0) System.out.println("query at level "+l+", index "+i+", variable "+vg[i+l*32]);
+        SVar sv=vg[vid];
+        if (sv.isCat()) {
+            splitLeft=new SVarObj("SL",true);
+            splitRight=new SVarObj("SR",true);
+        } else {
+            splitHist=new SVarObj("SVH",false);
+        }
+        int t=0;
+        while (t<roots.length) {
+            SNode n=roots[t++];
+            queryDown(n, 0, sv, l);
+        }
+        if (sv.isCat()) {
+            TFrame f=new TFrame("Barchart (left "+sv.getName()+" at "+l+")",TFrame.clsBar);
+            f.addWindowListener(Common.getDefaultWindowListener());
+            int xdim=400, ydim=300;
+            SMarker dm=new SMarker(sv.size());
+            BarCanvas bc=new BarCanvas(f,splitLeft,dm);
+            xdim=100+40*splitLeft.getNumCats(); ydim=200;
+            if (xdim>800) xdim=800;
+            dm.addDepend(bc);
+            bc.setSize(new Dimension(xdim,ydim));
+            f.add(bc); f.pack(); f.show();
+            f.initPlacement();
+            f=new TFrame("Barchart (right "+sv.getName()+" at "+l+")",TFrame.clsBar);
+            f.addWindowListener(Common.getDefaultWindowListener());
+            xdim=400; ydim=300;
+            dm=new SMarker(sv.size());
+            bc=new BarCanvas(f,splitRight,dm);
+            xdim=100+40*splitRight.getNumCats(); ydim=200;
+            if (xdim>800) xdim=800;
+            dm.addDepend(bc);
+            bc.setSize(new Dimension(xdim,ydim));
+            f.add(bc); f.pack(); f.show();
+            f.initPlacement();
+        } else {
+            TFrame f=new TFrame("Histogram (s.f. of "+sv.getName()+" at "+l+")",TFrame.clsHist);
+            f.addWindowListener(Common.getDefaultWindowListener());
+            int xdim=400, ydim=300;
+            SMarker dm=new SMarker(sv.size());
+            HistCanvas hc=new HistCanvas(f,splitHist,dm);
+            dm.addDepend(hc);
+            hc.setSize(new Dimension(xdim,ydim));
+            f.add(hc); f.pack(); f.show();
+            f.initPlacement();
+        }
+    }
+
+    public void queryResult(SNode n) {
+        SVar sv=n.splitVar;
+        if (Global.DEBUG>0)
+            System.out.println("queryResult("+n+") with "+sv+", split="+n.splitValF);
+        if (!createPlots) {
+            countQ++;
+            return;
+        }
+        if (sv.isCat()) {
+            String s=n.splitVal;
+            System.out.println("qR: left=\""+s+"\"");
+            StringTokenizer st=new StringTokenizer(s,",");
+            while (st.hasMoreTokens()) {
+                splitLeft.add(st.nextToken());
+            }
+            SNode par=(SNode)n.getParent();
+            if (par!=null) par=(SNode)par.at(1);
+            if (par!=null) {
+                s=par.splitVal;
+                System.out.println("qR: right=\""+s+"\"");
+                st=new StringTokenizer(s,",");
+                while (st.hasMoreTokens()) {
+                    splitRight.add(st.nextToken());
+                }
+            }
+        } else {
+            splitHist.add(new Double(n.splitValF));
+        }
+    }
     
+    public void queryDown(SNode n, int l, SVar target, int targetL) {
+        if (Global.DEBUG>0) System.out.println("queryDown("+n+","+l+")");
+        int chs=n.count(), ct=0;
+        if (chs>0) {
+            SNode ln=(SNode)n.at(0);
+            SVar sv=ln.splitVar;
+            if (sv==target && targetL==l) queryResult(ln);
+            if (targetL==l) countL++;
+        }
+        l++;
+        if (l>targetL) return;
+        while (ct<chs) {
+            queryDown((SNode)n.at(ct),l,target,targetL);
+            ct++;
+        }
+    }
+
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         repaint();
     }
@@ -244,5 +373,40 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener 
     public void keyReleased(KeyEvent e) {
     }
 
+    public void mouseClicked(MouseEvent e) {
+        int i=queryMatrix(e.getX(),e.getY());
+        if (i>=0) {
+            if (e.isShiftDown()) {
+                createPlots=true;
+                queryPlot(i);
+            } else {
+                createPlots=false;
+                countQ=countL=0;
+                int t=0;
+                int l=i/32;
+                while (t<roots.length) {
+                    SNode n=roots[t++];
+                    queryDown(n, 0, vg[i], l);
+                }
+                int x=e.getX(), y=e.getY();
+                Point cl=getFrame().getLocation();
+                Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+                
+                SVar v=vg[i];
+                qi.setContent("Variable: "+v.getName()+"\nSplits: "+countQ+" (of "+countL+" s.l.)");
+                qi.setLocation(cl.x+x,cl.y+y);
+                qi.show();
+            }
+        }
+    }
     
+    public void mousePressed(MouseEvent e) {
+    }
+    public void mouseReleased(MouseEvent e) {
+    }
+    public void mouseEntered(MouseEvent e) {
+    }
+    public void mouseExited(MouseEvent e) {
+    }
+
 }
