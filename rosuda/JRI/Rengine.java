@@ -3,6 +3,9 @@ package org.rosuda.JRI;
 import java.lang.*;
 import java.io.*;
 
+import org.rosuda.RGui.*;
+import org.rosuda.RGui.toolkit.*;
+
 public class Rengine extends Thread {
     static {
 	System.loadLibrary("jri");
@@ -63,12 +66,13 @@ public class Rengine extends Thread {
 
     public void jriWriteConsole(String text)
     {
-        /*if (console != null) {
+        if (RGui.MAINRCONSOLE != null) {
             try {
-                console.output.append(text,Preferences.RESULT);
+                RGui.MAINRCONSOLE.output.append(text,Preferences.RESULT);
+                RGui.MAINRCONSOLE.output.setCaretPosition(RGui.MAINRCONSOLE.output.getText().length());
             } catch (Exception e) { e.printStackTrace();}
         }
-        else*/ System.out.println("R> "+text);
+        else System.out.println("R> "+text);
     }
 
     public void jriBusy(int which)
@@ -78,13 +82,18 @@ public class Rengine extends Thread {
 
     public String jriReadConsole(String prompt, int addToHistory)
     {
-        System.out.print(prompt);
-        try {
-            BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-            String s=br.readLine();
-            return (s==null||s.length()==0)?s:s+"\n";
-        } catch (Exception e) {
-            System.out.println("jriReadConsole exception: "+e.getMessage());
+        if (RGui.MAINRCONSOLE != null) {
+            //RGui.waitForNotification();
+        }
+        else {
+            System.out.print(prompt);
+            try {
+                BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+                String s=br.readLine();
+                return (s==null||s.length()==0)?s:s+"\n";
+            } catch (Exception e) {
+                System.out.println("jriReadConsole exception: "+e.getMessage());
+            }
         }
         return "q('no')\n";
     }

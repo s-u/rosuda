@@ -188,7 +188,7 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
-	SVar v=new SVarFixDouble(name,d);
+	SVar v=new SVarDouble(name,d);
 	return addVar(v);
     }
 
@@ -253,7 +253,7 @@ public class Framework implements Dependent, ActionListener {
         }
         int j=0;
         while (j<ix.length) { ix[j++]--; }; // reduce index by 1 since R is 1-based
-        SVar v=new SVarFixFact(name, ix, d);
+        SVar v=new SVarFact(name, ix, d);
         return addVar(v);
     }
 
