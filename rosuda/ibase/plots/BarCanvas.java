@@ -245,9 +245,9 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    g.setColor("outline");
 	    g.drawRect(cl,h-ch,cu-cl,ch-lh);
 	    if (cu-cl<cat_nam[i].length()*8)
-		g.drawString(Common.getTriGraph(cat_nam[i]),cl+5,h-botSpace/2);
+		g.drawString(Common.getTriGraph(cat_nam[i]),(cl+cu)/2,h-botSpace/2,0.5,0.3);
 	    else
-		g.drawString(cat_nam[i],cl+5,h-botSpace/2);
+		g.drawString(cat_nam[i],(cl+cu)/2,h-botSpace/2,0.5,0.3);
 	    i++;
 	};
 
