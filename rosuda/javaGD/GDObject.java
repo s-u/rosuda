@@ -84,11 +84,11 @@ class GDCircle extends GDObject {
     public void paint(Component c, GDState gs, Graphics g) {
         if (gs.fill!=null) {
             g.setColor(gs.fill);
-            g.fillOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+0.5),(int)(r+r+0.5));
+            g.fillOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+1.5),(int)(r+r+1.5));
             if (gs.col!=null) g.setColor(gs.col);
         }
         if (gs.col!=null)
-            g.drawOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+0.5),(int)(r+r+0.5));
+            g.drawOval((int)(x-r+0.5),(int)(y-r+0.5),(int)(r+r+1.5),(int)(r+r+1.5));
     }
 }
 
