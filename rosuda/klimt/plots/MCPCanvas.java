@@ -106,17 +106,20 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
         g.defineColor("marked",128,255,128);
         g.defineColor("red",255,0,0);
 
+        Vector v=tm.getTrees();
+
         if (!xdisp) {
             g.setColor("outline");
             g.drawLine(leftm,h-botm,leftm,topm);
             g.drawLine(leftm,h-botm,w-rightm,h-botm);
 
-            if (count!=null) {
+            if (count!=null) { // misclass-only-view
                 int bs=count.length;
                 double ddx=((double)(rdx-bs*3))/((double)bs);
                 double yf=((double)rdy)/((double)xv);
                 int i=0;
                 while(i<bs) {
+                    SNode r=(SNode)v.elementAt(i);
                     int x1=leftm+(int)(ddx*i)+i*3;
                     g.setColor("fill");
                     int ht=(int)(yf*count[i]);
@@ -128,6 +131,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
                     };
                     g.setColor("outline");
                     g.drawRect(x1,h-botm-ht,(int)ddx,ht);
+                    g.drawString(Common.getTriGraph(r.name),x1,h-botm/2);
                     i++;
                 };
             };
@@ -185,15 +189,17 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
             if (!ev.isShiftDown()) m.selectNone();
             i=0;
             SVar r=null;
+            Vector tv=tm.getTrees();
             while(i<bs) {
                 int x1=leftm+(int)(ddx*i)+i*3;
                 int ht=(int)(yf*count[i]);
                 if (ht<10) ht=10;
                 if (x>=x1&&x<x1+(int)ddx&&y<=h-botm&&y>=h-botm-ht) {
+                    SNode rt=(SNode)tv.elementAt(i);
                     if (Common.isQueryTrigger(ev)) {
-                        String qs="Tree "+i+"\nMiscl. "+count[i]+" ("+mark[i]+" sel.)";
+                        String qs="Tree "+rt.name+"\nMiscl. "+count[i]+" ("+mark[i]+" sel.)";
                         if (ev.isShiftDown()) {
-                            qs="Tree "+i+"\nMisclassified:\n   "+count[i]+" of "+m.size()+" ("+
+                            qs="Tree "+rt.name+" ("+i+")\nMisclassified:\n   "+count[i]+" of "+m.size()+" ("+
                             Tools.getDisplayableValue(100.0*((double)count[i])/((double)m.size()),2)+
                             "%)\nSelected:\n  "+mark[i]+" ("+
                             Tools.getDisplayableValue(100.0*((double)mark[i])/((double)count[i]),2)+
