@@ -387,6 +387,7 @@ public class BarCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    if (dragY1==dragY2) dragY2++;
             Rectangle sel=new Rectangle(dragX1,dragY1,dragX2-dragX1,dragY2-dragY1);
             if (selMode==0) m.selectNone();
+            if (selMode==2) setTo=true;
             while (i<bars) {
                 if (Bars[i]!=null && Bars[i].intersects(sel)) {
                     int j=0, pts=v.size();
