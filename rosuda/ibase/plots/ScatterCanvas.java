@@ -71,6 +71,8 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
         ay=A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
         if (!v1.isCat()) ax.setValueRange(v1.getMin()-(v1.getMax()-v1.getMin())/20,(v1.getMax()-v1.getMin())*1.1);
         if (!v2.isCat()) ay.setValueRange(v2.getMin()-(v2.getMax()-v2.getMin())/20,(v2.getMax()-v2.getMin())*1.1);
+        if (!v1.isCat() && v1.getMax()-v1.getMin()==0) ax.setValueRange(v1.getMin()-0.5,1);
+        if (!v2.isCat() && v2.getMax()-v2.getMin()==0) ay.setValueRange(v2.getMin()-0.5,1);
 	setBackground(Common.backgroundColor);
         zoomSequence=new Vector();
 	drag=false;
