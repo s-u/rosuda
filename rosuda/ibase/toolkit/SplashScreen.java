@@ -19,6 +19,7 @@ import org.rosuda.util.*;
 
 public class SplashScreen extends Frame implements ActionListener, WindowListener, Commander {
     public static SplashScreen main;
+    public static RecentList recentOpen;
     
     class SplashImageCanvas extends Canvas implements ImageObserver {
         Image logo;
@@ -148,13 +149,34 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
          */
         l.setFont(new Font("SansSerif",Font.BOLD,14));
         p.add(l);
-        
-        String myMenu[]={"+","File","@OOpen dataset ...","openData","-",
+
+        String myMenu[]={"+","File","@OOpen dataset ...","openData","#Open Recent","","-",
             "Preferences ...","prefs","-","@QQuit","exit", "~Window","0"};
-        String macMenu[]={"+","File","@OOpen dataset ...","openData","0"};
+        String macMenu[]={"+","File","@OOpen dataset ...","openData","#Open Recent","","0"};
         if (Platform.isMac)
             myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
+        Menu rm=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
+        if (rm!=null) {
+            if (recentOpen==null)
+                SplashScreen.recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
+            String[] shortNames=SplashScreen.recentOpen.getShortEntries();
+            String[] longNames =SplashScreen.recentOpen.getAllEntries();
+            int i=0;
+            while (i<shortNames.length) {
+                MenuItem mi=new MenuItem(shortNames[i]);
+                mi.setActionCommand("recent:"+longNames[i]);
+                mi.addActionListener(this);
+                rm.add(mi);
+                i++;
+            }
+            if (i>0) rm.addSeparator();
+            MenuItem ca=new MenuItem("Clear list");
+            ca.setActionCommand("recent-clear");
+            ca.addActionListener(this);
+            rm.add(ca);
+            if (i==0) ca.setEnabled(false);
+        }
         pack();
 	if (splash==null) // if there's no image, we can't wait for async show
 	    setVisible(true);
