@@ -20,14 +20,14 @@ public class RModel {
 
     private Double rsquared, deviance, aic, fstatistics;
     
-    private Integer df;
+    private Integer df = null;
     
-    private String family;
+    private String family = null;
 
-    private String call;
+    private String call = null;;
 
-    private String data;
-
+    private String data = null;
+	
     private Vector info = new Vector();
 
     private DecimalFormat dformat = new DecimalFormat("#0.00");
@@ -127,6 +127,14 @@ public class RModel {
      */
     public void setFamily(String f) {
         this.family = f;
+    }
+	
+	/**
+	 * Get family type of model.
+     * @return family-type
+     */
+    public String getFamily() {
+        return family;
     }
 
     /**

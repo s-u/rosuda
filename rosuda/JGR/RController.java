@@ -59,6 +59,16 @@ public class RController {
         if (x != null && x.asStringArray()!=null) return x.asStringArray()==null?"> ":x.asStringArray()[0];
         return "> ";
     }
+	
+	/**
+	 * Get R continue
+     * @return continue
+     */
+    public static String getRContinue() {
+    	REXP x = JGR.R.eval("try(as.character(options('continue')),silent=TRUE)");
+        if (x != null && x.asStringArray()!=null) return x.asStringArray()==null?"> ":x.asStringArray()[0];
+        return "> ";
+    }
 
     /**
      * Get R_DEFAULT_PACKAGES.

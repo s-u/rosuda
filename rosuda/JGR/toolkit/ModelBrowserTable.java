@@ -68,7 +68,7 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
     	RModel m = (RModel) models.elementAt(this.rowAtPoint(evt.getDragOrigin()));
 		if (m == null || m.getCall().trim().length() == 0) return;
 		
-        Transferable t = new java.awt.datatransfer.StringSelection(m.getName()+" <- "+m.getCall());
+        Transferable t = new java.awt.datatransfer.StringSelection(m.getName()+" <- "+m.getTypeName()+"("+m.getCall()+(m.getFamily()!=null?(",family="+m.getFamily()):"")+(m.getData()!=null?(",data="+m.getData()):"")+")");
         dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
     }
     
