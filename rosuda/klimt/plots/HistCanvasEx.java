@@ -27,8 +27,9 @@ public class HistCanvasEx extends HistCanvas {
     
     public void paintPost(PoGraSS g) {
         SNode cn=(nm!=null)?nm.getNode():null;
+        if (cn!=null) cn=(SNode) cn.at(0); // we must go for a child since split info is one level deeper
         if (cn!=null && cn.splitVar==v) {
-            g.setColor("red");
+            g.setColor(255,0,0);
             g.drawLine(ax.getValuePos(cn.splitValF),mTop,ax.getValuePos(cn.splitValF),H-mBottom);
         }
     }    
