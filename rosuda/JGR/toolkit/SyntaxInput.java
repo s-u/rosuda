@@ -51,6 +51,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         this.setDocument(new SyntaxInputDocument());
         mComplete = new CodeCompleteMultiple(this);
         this.comp = parent;
+		this.setFocusTraversalKeysEnabled(false);
     }
 	
     private String getLastCommand() {
@@ -117,7 +118,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      * Show possibilities for current part of command.
      * @param result possibilities for completion.
      */
-    public void showCmdCompletions(String[] result) {
+    public void showCompletions(String[] result) {
         try {
 			this.requestFocus(true);
             if (cmdHelp != null) cmdHelp.hide();
@@ -133,6 +134,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         	cmdHelp = PopupFactory.getSharedInstance().getPopup(this,mComplete,pc.x,pc.y+15);
         	cmdHelp.show();
         } catch (Exception e) {}
+		finally {
+			this.requestFocus(true);
+		}
     }
 	
     /**
@@ -145,6 +149,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      * keyPressed: handle key event: take care about emacs-keybindings.
      */
     public void keyPressed(KeyEvent ke) {
+		this.requestFocus(true);
         if (JGRPrefs.useEmacsKeyBindings) {
             if (ke.getKeyCode() == KeyEvent.VK_E && ke.isControlDown()) {
 				try {
@@ -207,7 +212,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 if (result != null && result.length > 1) {
                     if (funHelpTip != null) funHelpTip.hide();
                     if (pc == null || !pc.equals(getCaret().getMagicCaretPosition()))
-                        showCmdCompletions(result);
+                        showCompletions(result);
                     //if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
                 }
                 else {
@@ -232,7 +237,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                             funHelpTip.hide();
                             funHelpTip = null;
                         }
-                        showCmdCompletions(result);
+                        showCompletions(result);
                     }
                     else {
                         if (cmdHelp != null) cmdHelp.hide();
@@ -280,6 +285,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     
     private void showFunHelp(String fun) {
         try {
+			this.requestFocus(true);
             funHelp = RController.getFunHelpTip(fun);
             if (fun != null && funHelp != null) {
                 Tip = new JToolTip();
@@ -300,6 +306,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 //commands.add(p);
             }
         } catch (Exception e) {}
+		finally {
+			this.requestFocus(true);
+		}
     }
 	
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,int condition, boolean pressed) {
