@@ -765,6 +765,14 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             Common.screenRes=sres;
             VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
         }
+
+        if (cmd=="editSplit") {
+            SNode cn=root.getSource().getMarker().currentNode;
+            if (cn!=null) {
+                SplitEditor se=new SplitEditor(cn);
+                se.show();
+            };
+        };
 	return null;
     };  
 
@@ -964,6 +972,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='+') run(this,"zoomDevIn");
 	if (e.getKeyChar()=='-') run(this,"zoomDevOut");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
+        if (e.getKeyChar()=='E') run(this,"editSplit");
 
 	if (e.getKeyChar()=='1') { PD_goCart=!PD_goCart; redesignNodes(); }
 	if (e.getKeyChar()=='2') { PD_lines=!PD_lines; redesignNodes(); }
