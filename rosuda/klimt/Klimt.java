@@ -28,13 +28,11 @@ import org.rosuda.plugins.*;
 // Klimt
 //---------------------------------------------------------------------------
 
-/** Main Klimt Trees class. For historical reasons the main class of the KLIMT application
-    is not Klimt (which is still provided as a wrapper) but this InTr (which stands for Interactive Trees, the
-    original project name until it was renamed to Klimt) */
+/** Main Klimt Trees class. Besides the main method it also contains methods for data root and tree handling. */
 public class Klimt
 {
-    public static String Version = "0.98-pre6";
-    public static String Release = "E818";
+    public static String Version = "0.98-pre7";
+    public static String Release = "E912";
     
     /** file name of the most recently loaded tree. Because of more recent support of multiple trees the use of the variable is deprecated for external packages. */
     public static String lastTreeFileName;
