@@ -123,6 +123,30 @@ class XGDtext extends XGDobject {
     }
 }
 
+
+class XGDfont extends XGDobject {
+    double cex,ps,lineheight;
+    int face;
+    String family;
+
+    Font font;
+    
+    public XGDfont(double cex, double ps, double lineheight, int face, String family) {
+        System.out.println(">> FONT("+cex+","+ps+","+lineheight+","+face+",\""+family+"\")");
+        this.cex=cex; this.ps=ps; this.lineheight=lineheight; this.face=face; this.family=family;
+        int jFT=Font.PLAIN;
+        if (face==2) jFT=Font.BOLD;
+        if (face==3) jFT=Font.ITALIC;
+        if (face==4) jFT=Font.BOLD|Font.ITALIC;
+        font=new Font(family.equals("")?null:family, jFT, (int)(cex*ps+0.5));
+    }
+
+    public void paint(XGDcanvas c, Graphics g) {
+        g.setFont(font);
+        c.f=font;
+    }
+}
+        
 class XGDpolygon extends XGDobject {
     int n;
     double x[],y[];
@@ -197,6 +221,43 @@ class XGDfill extends XGDobject {
     }
 }
 
+class XGDlinePar extends XGDobject {
+    double lwd;
+    int lty;
+    BasicStroke bs;
+
+    public XGDlinePar(double lwd, int lty) {
+        this.lwd=lwd; this.lty=lty;
+        System.out.println(">> LINE TYPE: width="+lwd+", type="+Integer.toString(lty,16));
+        bs=null;
+        if (lty==0)
+            bs=new BasicStroke((float)lwd);
+        else if (lty==-1)
+            bs=new BasicStroke(0f);
+        else {
+            int l=0;
+            int dt=lty;
+            while (dt>0) {
+                dt>>=4;
+                l++;
+            }
+            float[] dash=new float[l];
+            dt=lty;
+            l=0;
+            while (dt>0) {
+                int rl=dt&15;
+                dash[l++]=(float)rl;
+                dt>>=4;
+            }
+            bs=new BasicStroke((float)lwd, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3f, dash, 0f);
+        }
+    }
+
+    public void paint(XGDcanvas c, Graphics g) {
+        if (bs!=null)
+            ((Graphics2D)g).setStroke(bs);
+    }
+}
 
 public class XGDserver extends Thread {
     class XGDworker extends Thread {
@@ -387,7 +448,17 @@ public class XGDserver extends Thread {
                         c.add(new XGDfill(getInt(par,0)));
                     }
 
+                    if (cmd == 0x15 && c!=null) {
+                        XGDfont xf=new XGDfont(getDouble(par,0), getDouble(par,8), getDouble(par,16), getInt(par,24), new String(par,32,par.length-33));
+                        c.add(xf);
+                        // we need to set Canvas' internal font to this new font for further metrics calculations
+                        c.f=xf.font;
+                    }
 
+                    if (cmd == 0x16 && c!=null) {
+                        c.add(new XGDlinePar(getDouble(par,0), getInt(par,8)));
+                    }
+                    
                     if (cmd == 0x50) {
                         byte[] b = new byte[4*8 + 4];
                         setInt((0x50 | 0x80) | ((4*8)<<8), b, 0);
