@@ -23,12 +23,14 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         
         SplashImageCanvas(Image img, SplashScreen p) {
             logo=img; par=p;
-            img.getWidth(this);
-            img.getHeight(this);
+	    if (img!=null) {
+		img.getWidth(this);
+		img.getHeight(this);
+	    }
         }
 
         public void paint(Graphics g) {
-            g.drawImage(logo,0,0,this);
+            if (logo!=null) g.drawImage(logo,0,0,this);
         }
         
         public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)
@@ -59,9 +61,12 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 
         // first try platform's "getResourceFile". This should work anywhere except for single .jar files
         try {
-            splash=Toolkit.getDefaultToolkit().getImage(Platform.getPlatform().getResourceFile("splash.jpg"));
-            if (Common.DEBUG>0 && splash!=null)
-                System.out.println("Good, obtained logo via Platform.getResourceFile");
+	    String fn=Platform.getPlatform().getResourceFile("splash.jpg");
+	    if (new File(fn).exists()) {
+		splash=Toolkit.getDefaultToolkit().getImage(fn);
+		if (Common.DEBUG>0 && splash!=null)
+		    System.out.println("Good, obtained logo via Platform.getResourceFile");
+	    }
         } catch (Exception ex) {}
 
         if (splash==null) { // ok, if that failed, try to extract it from the jar file
@@ -89,13 +94,13 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     splash=Toolkit.getDefaultToolkit().createImage(arrayLogo);
                 }
             } catch (Exception e) {
-                System.out.println("Can't find splash image (neither via Platform.getResourceFile, nor in the jar file). Exception: "+e);
+                System.out.println("Can't find splash image (neither via Platform.getResourceFile, nor in the jar file).");
             }
         }
 
         setLayout(new BorderLayout());
         Panel p=new Panel();
-        p.add(new SplashImageCanvas(splash,this));
+	p.add(new SplashImageCanvas(splash,this));
         add(p);
         p=new Panel();
         add(p, BorderLayout.SOUTH);
@@ -112,6 +117,8 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
             myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
         pack();
+	if (splash==null) // if there's no image, we can't wait for async show
+	    setVisible(true);
     }
 
     public Object run(Object o, String cmd) {
