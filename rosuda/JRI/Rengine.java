@@ -165,6 +165,30 @@ public class Rengine extends Thread {
         return null;
     }
     
+    /** This method is very much like {@link eval(String)}, except that it is non-blocking and return <code>null</code> if the engine is busy.
+        @param s string to evaluate
+        @return result of the evaluation or <code>null</code> if the engine is busy
+        */
+    public synchronized REXP idleEval(String s) {
+        int lockStatus=Rsync.tryLock();
+        if (lockStatus==1) return null; // 1=locked by someone else
+        boolean obtainedLock=(lockStatus==0);
+        try {
+            long pr=rniParse(s, 1);
+            if (pr>0) {
+                long er=rniEval(pr, 0);
+                if (er>0) {
+                    REXP x=new REXP(this, er);
+                    Rsync.unlock();
+                    return x;
+                }
+            }
+        } finally {
+            if (obtainedLock) Rsync.unlock();
+        }
+        return null;
+    }
+    
     public synchronized boolean waitForR() {
         return alive;
     }
