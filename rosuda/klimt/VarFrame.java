@@ -51,8 +51,8 @@ public class VarFrame extends TFrame {
 	boolean[] selMask;
 	/** data source */
 	SVarSet vs;
-	/** # of variables (cached from data source) */
-	int vars;
+        /** # of variables (cached from data source) - do NOT use directly, access via {@link #getVars} */
+	int c_vars;
 	/** scrollbar if too many vars are present */
 	Scrollbar sb;
 	Dimension minDim;
@@ -67,16 +67,23 @@ public class VarFrame extends TFrame {
 	VarCanvas(VarFrame w, SVarSet dataset,Scrollbar s) {
 	    setBackground(new Color(255,255,192));
 	    win=w; vs=dataset;
-	    vars=vs.count();
-	    selMask=new boolean[vars];
+	    c_vars=vs.count();
+	    selMask=new boolean[c_vars+4];
 	    addMouseListener(this);
 	    sb=s;
 	    minDim=new Dimension(140,100);
 	};
 
+        public int getVars() {
+            if (vs.count()!=c_vars) rebuildVars();
+            return c_vars;
+        };
+        
         public void rebuildVars() {
-            vars=vs.count();
-            selMask=new boolean[vars];
+            if (Common.DEBUG>0)
+                System.out.println("VarFrame.VarCanvas:rebuilding variables ("+c_vars+"/"+vs.count()+")");
+            c_vars=vs.count();
+            selMask=new boolean[c_vars+4]; lastSize=null; // force rebuild of scrollbar etc.
             repaint();
         };
         
@@ -91,16 +98,18 @@ public class VarFrame extends TFrame {
 	public void paintBuffer(Graphics g) {
 	    int totsel=0;	    
 	    Dimension cd=getSize();
+            if (c_vars!=vs.count()) // make sure the # of vars didint grow
+                rebuildVars();
 
 	    if (lastSize==null || cd.width!=lastSize.width || cd.height!=lastSize.height) {
-		int minh=vars*17+6;
+		int minh=getVars()*17+6;
 		if (minh>200) minh=200;
 		if (cd.width<140 || cd.height<minh) {
 		    setSize((cd.width<140)?140:cd.width,(cd.height<minh)?minh:cd.height);
 		    win.pack();
                     cd=getSize();
 		}; 
-		minh=vars*17+6;
+		minh=getVars()*17+6;
                 if (sb!=null) {
                     if (minh-cd.height+17<=0) {
                         sb.setValue(offset=0); vc.repaint();
@@ -183,8 +192,6 @@ public class VarFrame extends TFrame {
         VarFrame win;
 	/** data source */
 	SVarSet vs;
-	/** # of variables (cached from data source) */
-	int vars;
 	VarCanvas vc;
 	Dimension minDim;
         SMarker sm;
@@ -196,7 +203,6 @@ public class VarFrame extends TFrame {
 	VarCmdCanvas(VarFrame w, SVarSet dataset) {
 	    setBackground(new Color(255,255,192));
 	    win=w; vs=dataset;
-	    vars=vs.count();
 	    addMouseListener(this);
             vc=w.vc; sm=vs.getMarker();
             if (sm!=null) sm.addDepend(this);
@@ -214,7 +220,7 @@ public class VarFrame extends TFrame {
 	public void paintBuffer(Graphics g) {
 	    int totsel=0;
 	    int i=0;
-	    while (i<vars) {
+	    while (i<vc.getVars()) {
 		if (vc.selMask[i]) totsel++;
 		i++;
 	    };
@@ -243,7 +249,7 @@ public class VarFrame extends TFrame {
 		if (j==4 && totsel>0) { /* boxplot */
 		    int bI=0, bJ=0, bK=0;
 		    boolean crap=false;
-		    while(bI<vars && bJ<2) {
+		    while(bI<vc.getVars() && bJ<2) {
 			if (vc.selMask[bI]) {
 			    if (vs.at(bI).isCat()) bJ++;
 			    else {
@@ -291,15 +297,13 @@ public class VarFrame extends TFrame {
 		    TreeCanvas tc=InTr.newTreeDisplay(t,f);
 		    tc.repaint(); tc.redesignNodes();		
 		    //InTr.newVarDisplay(tvs);
-                    if (vc.vars!=vs.count()) {
-                        vars=vs.count();
-                        vc.rebuildVars();
-                    };
+                    vc.getVars();
+                    vc.repaint();
 		};    
 	    };
 	    if (cmd==2) {
 		int i=0;
-		for(i=0;i<vars;i++)
+		for(i=0;i<vc.getVars();i++)
 		    if (vc.selMask[i]) {		    
 			TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")");
 			f.addWindowListener(Common.defaultWindowListener);
@@ -318,7 +322,7 @@ public class VarFrame extends TFrame {
 	    if (cmd==3) {
 		int vnr[]=new int[2];
 		int i,j=0,tsel=0;
-		for(i=0;i<vars;i++) if (vc.selMask[i]) { vnr[j]=i; j++; tsel++; };
+		for(i=0;i<vc.getVars();i++) if (vc.selMask[i]) { vnr[j]=i; j++; tsel++; };
 		if (tsel==2) {
 		    TFrame f=new TFrame("Scatterplot ("+
 					vs.at(vnr[1]).getName()+" vs "+
@@ -333,14 +337,14 @@ public class VarFrame extends TFrame {
 	    if (cmd==4) {
 		int bI=0; int bJ=0;
 		SVar catVar=null;
-		while(bI<vars) {
+		while(bI<vc.getVars()) {
 		    if (vc.selMask[bI] && vs.at(bI).isCat()) {
 			catVar=vs.at(bI); break;
 		    };
 		    bI++;
 		};
 		if (catVar==null) {
-		    while(bJ<vars) {
+		    while(bJ<vc.getVars()) {
 			if (vc.selMask[bJ]) {
 			    TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")");
 			    f.addWindowListener(Common.defaultWindowListener);
@@ -352,7 +356,7 @@ public class VarFrame extends TFrame {
 			bJ++;
 		    };
 		} else {
-		    while(bJ<vars) {
+		    while(bJ<vc.getVars()) {
 			if (vc.selMask[bJ] && bJ!=bI) {
 			    TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")");
 			    f.addWindowListener(Common.defaultWindowListener);
