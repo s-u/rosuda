@@ -215,6 +215,8 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
     public void mouseClicked(MouseEvent ev) 
     {
 	int x=ev.getX(), y=ev.getY();
+	Point cl=getFrame().getLocation();
+	Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
 	int i=0, bars=cats, setTo=0;
 	boolean effect=false, hideQI=true;
 	if (ev.isControlDown()) setTo=1;
@@ -223,10 +225,22 @@ class BarCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMoti
 	while (i<bars) {
 	    if (Bars[i]!=null && Bars[i].contains(x,y)) {
 		if (ev.isAltDown() || ev.isPopupTrigger() || (ev.getModifiers()&MouseEvent.BUTTON3_MASK)>0) {
-		    if (Common.DEBUG>0)
-			System.out.println("BarCanvas: Requesting QueryPopup to show up");
-		    qi.setContent("here be dragons\nthis is bar# "+i);
-		    qi.setLocation(x,y);
+		    String qs="Name: "+cat_nam[i]+"\n";
+		    if (weight==null) {
+			if (ev.isShiftDown()) {
+			    qs+="consists of "+count[i]+" cases ("+
+				Tools.getDisplayableValue(100.0*((double)count[i])/((double)v.size()),2)+
+				"% of total)\nSelected "+marked[i]+" cases ("+
+				Tools.getDisplayableValue(100.0*((double)marked[i])/((double)count[i]),2)+
+				"% of this cat., " +
+				Tools.getDisplayableValue(100.0*((double)marked[i])/((double)v.size()),2)+"% of total)";
+			} else {
+			    qs+="Selected "+marked[i]+" of "+count[i];
+			};
+		    } else {
+		    };
+		    qi.setContent(qs);
+		    qi.setLocation(cl.x+x,cl.y+y);
 		    qi.show(); hideQI=false;
 		} else {
 		    effect=true;
