@@ -11,19 +11,14 @@ public class Rengine extends Thread {
 	System.loadLibrary("jri");
     }
 
-    boolean died, alive;
+    boolean died, alive, runLoop, loopRunning;
     
-    RConsole console;
-    
-    public Rengine() {
-        this(null);
-    }
-    
-    public Rengine(RConsole console) {
+    public Rengine(boolean runMainLoop) {
         super();
-        this.console = console;
         died=false;
         alive=false;
+        runLoop=runMainLoop;
+        loopRunning=false;
         start();
         while (!alive && !died) yield();
     }
@@ -73,8 +68,10 @@ public class Rengine extends Thread {
         System.out.print(prompt);
         try {
             BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-            return br.readLine();
+            String s=br.readLine();
+            return (s==null||s.length()==0)?s:s+"\n";
         } catch (Exception e) {
+            System.out.println("jriReadConsole exception: "+e.getMessage());
         }
         return "q('no')\n";
     }
@@ -114,6 +111,14 @@ public class Rengine extends Thread {
         if (setupR()==0) {
             while (alive) {
                 try {
+                    if (runLoop) {                        
+                        System.out.println("***> launching main loop:");
+                        loopRunning=true;
+                        rniRunMainLoop();
+                        loopRunning=false;
+                        System.out.println("***> main loop finished:");
+                        System.exit(0);
+                    }
                     sleep(100);
                     rniIdle();
                 } catch (InterruptedException ie) {
