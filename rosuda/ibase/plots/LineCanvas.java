@@ -75,9 +75,9 @@ class LineCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMot
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","0"};
-	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-	MIlabels=mb.getMenu(2).getItem(1);	
+	String myMenu[]={"+","File","~File.Graph","~Edit","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","~Window","0"};
+	EzMenu.getEzMenu(f,this,myMenu);
+	MIlabels=EzMenu.getItem(f,"labels");	
     };
 
     public Axis getXAxis() { return A[0]; }

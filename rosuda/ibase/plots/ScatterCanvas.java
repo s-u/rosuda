@@ -68,9 +68,9 @@ class ScatterCanvas extends PGSCanvas implements Dependent, MouseListener, Mouse
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","@XSave as PGS ...","exportPGS","@PSave as PostScript ...","exportPS","Save as SVG ...","exportSVG","-","@SSave selected as ...","exportCases","-","@WClose window","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","0"};
-        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-	MIlabels=mb.getMenu(2).getItem(1);	
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Hide labels","labels","Toggle hilight. style","selRed","Toggle jittering","jitter","Toggle shading","shading","~Window","0"};
+        EzMenu.getEzMenu(f,this,myMenu);
+	MIlabels=EzMenu.getItem(f,"labels");	
     };
 
     public Dimension getMinimumSize() { return new Dimension(60,50); };

@@ -62,9 +62,9 @@ class MosaicCanvas extends PGSCanvas implements Dependent, MouseListener, MouseM
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","@WClose","WTMclose","@QQuit","exit","+","Edit","@ASelect all","selAll","@DSelect none","selNone","@IInvert selection","selInv","+","View","Rotate","rotate","Spineplot of leaves","alternate","Toggle shading","shading","0"};
-        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-	MIalt=mb.getMenu(2).getItem(1);
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Rotate","rotate","Spineplot of leaves","alternate","Toggle shading","shading","~Window","0"};
+        EzMenu.getEzMenu(f,this,myMenu);
+	MIalt=EzMenu.getItem(f,"alternate");
     };
     
     public Dimension getMinimumSize() { return new Dimension(40,40); };

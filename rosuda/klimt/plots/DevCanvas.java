@@ -43,9 +43,10 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
         ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
 	setNode(fin);
         MenuBar mb=null;
-        String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Close","WTMclose","Quit","exit","+","View","Show gain","cumulate","Show lines","lines","0"};
-        f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
-        MIcum=mb.getMenu(1).getItem(0); MIlines=mb.getMenu(1).getItem(1);
+        String myMenu[]={"+","File","~File.Graph","+","View","Show gain","cumulate","Show lines","lines","~Window","0"};
+        EzMenu.getEzMenu(f,this,myMenu);
+        MIcum=EzMenu.getItem(f,"cumulate");
+        MIlines=EzMenu.getItem(f,"lines");
     };
 
     public void setNode(SNode n) {

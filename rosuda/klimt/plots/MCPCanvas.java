@@ -45,8 +45,8 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	addMouseMotionListener(this);
 	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","Save as PGS ...","exportPGS","Save as PostScript ...","exportPS","-","Save selected as ...","exportCases","-","Close","WTMclose","Quit","exit","+","Edit","Select all","selAll","Select none","selNone","Invert selection","selInv","+","View","Toggle mode","rotate","0"};
-	f.setMenuBar(mb=WinTracker.current.buildQuickMenuBar(f,this,myMenu,false));
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Toggle mode","rotate","~Window","0"};
+	EzMenu.getEzMenu(f,this,myMenu);
         updateBoxes();
         qi=new QueryPopup(f,"MC-plot",-1);
     };
