@@ -329,6 +329,9 @@ JNIEXPORT jlongArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetList
     
 }
 
+/* by default those are disabled as it's a problem on Win32 ... */
+#ifdef JRI_ENV_CALLS
+
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetEnv
 (JNIEnv *env, jclass this, jstring key, jstring val) {
     const char *cKey, *cVal;
@@ -363,6 +366,8 @@ JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetEnv
     return (*env)->NewStringUTF(env, cVal);
 }
 
+#endif
+
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
 (JNIEnv *env, jobject this, jint flag) {
 #ifdef Win32
@@ -372,4 +377,5 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
     kill(getpid(), SIGINT);
 #endif
 }
+
 
