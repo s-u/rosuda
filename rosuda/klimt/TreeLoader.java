@@ -524,7 +524,9 @@ remark: this method can be used to load trees and data separately, but data must
                             System.out.println((!isRegrTree)?"class.tree, s=\""+s+"\", vs=\""+vs+"\"":"regression tree, s=\""+s+"\"");
 
                         int i=s.length()-1;
-                        while ((i>0)&&(s.charAt(i)!=' ')) i--;
+                        do { // if the class name contains spaces, we must be more careful as it's not quoted
+                            while ((i>0)&&(s.charAt(i)!=' ')) i--;
+                        } while (i>0 && (s.charAt(i-1)<'0' || s.charAt(i-1)>'9') && (i-->0));
                         sn.Name=s.substring(i+1);
                         sn.predValD=Tools.parseDouble(sn.Name);
                         while ((i>0)&&(s.charAt(i)==' ')) i--;
@@ -536,7 +538,8 @@ remark: this method can be used to load trees and data separately, but data must
                         while ((i>0)&&(s.charAt(i)!=' ')) i--;
                         sn.Cases=Integer.parseInt(s.substring(i+1,vi2));
                         vi2=i;
-                        while ((i>0)&&(s.charAt(i)!=')')) i--;
+                        i=0;
+                        while ((i<vi2)&&(s.charAt(i)!=')')) i++;
                         sn.Cond=s.substring(i+2,vi2);
 
                         /*
@@ -568,10 +571,22 @@ remark: this method can be used to load trees and data separately, but data must
                                 sn.data=new Vector();
                                 int split, cmp=0;
                                 split=sn.Cond.indexOf(':');
+                                if (split<0) { // problem with = is that it may be part of <= or >=
+                                    int eqs=sn.Cond.indexOf('=');
+                                    if (eqs>=0) {
+                                        int lsg=sn.Cond.indexOf('<');
+                                        int gsg=sn.Cond.indexOf('>');
+                                        int d1=lsg-eqs; if (d1<0) d1=-d1;
+                                        if (lsg<0) d1=9;
+                                        int d2=gsg-eqs; if (d2<0) d2=-d2;
+                                        if (gsg<0) d2=9;
+                                        if (d1>1 && d2>1) split=eqs;
+                                    }
+                                }
                                 if (split<0) { cmp=-1; split=sn.Cond.indexOf('<'); };
                                 if (split<0) { cmp=1; split=sn.Cond.indexOf('>'); };
                                 // rpart uses = instead of :
-                                if (split<0 && sn.Cond.indexOf('=')>0) { cmp=0; split=sn.Cond.indexOf('='); };
+                                //if (split<0 && sn.Cond.indexOf('=')>0) { cmp=0; split=sn.Cond.indexOf('='); };
 
                                 if (split>=0) {
                                     String varn=sn.Cond.substring(0,split).trim();
