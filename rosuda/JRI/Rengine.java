@@ -3,9 +3,6 @@ package org.rosuda.JRI;
 import java.lang.*;
 import java.io.*;
 
-import org.rosuda.RGui.*;
-import org.rosuda.RGui.toolkit.*;
-
 public class Rengine extends Thread {
     static {
 	System.loadLibrary("jri");
@@ -36,10 +33,26 @@ public class Rengine extends Thread {
     
     public synchronized native long rniParse(String s, int parts);
     public synchronized native long rniEval(long exp, long rho);
+    
     public synchronized native String rniGetString(long exp);
     public synchronized native String[] rniGetStringArray(long exp);
     public synchronized native int[] rniGetIntArray(long exp);
-    public synchronized native int[] rniGetDoubleArray(long exp);
+    public synchronized native double[] rniGetDoubleArray(long exp);
+
+    public synchronized native long rniPutString(String s);
+    public synchronized native long rniPutStringArray(String[] a);
+    public synchronized native long rniPutIntArray(int [] a);
+    public synchronized native long rniPutDoubleArray(double[] exp);
+    
+    public synchronized native long rniAttr(long exp);
+    public synchronized native void rniSetAttr(long exp);
+
+    public synchronized native long rniCons(long head, long tail);
+    public synchronized native long rniCAR(long exp);
+    public synchronized native long rniCDR(long exp);
+    public synchronized native long rniPutList(long[] cont);
+    public synchronized native long[] rniGetList(long exp);
+        
     public synchronized native int rniExpType(long exp);
     public native void rniRunMainLoop();
     
@@ -85,12 +98,12 @@ public class Rengine extends Thread {
     //============ "official" API =============
 
     
-    public synchronized RXP eval(String s) {
+    public synchronized REXP eval(String s) {
         long pr=rniParse(s, 1);
         if (pr>0) {
             long er=rniEval(pr, 0);
             if (er>0) {
-                RXP x=new RXP(this, er);
+                REXP x=new REXP(this, er);
                 return x;
             }
         }
