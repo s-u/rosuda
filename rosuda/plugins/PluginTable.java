@@ -207,13 +207,13 @@ public class PluginTable extends Plugin implements Commander,ActionListener {
     }
 
     public void setParameter(String par, Object val) {
-        if (par=="dataset") vs=(SVarSet) val;
-        if (par=="varids") vars=(int[]) val;
+        if (par.equals("dataset")) vs=(SVarSet) val;
+        if (par.equals("varids")) vars=(int[]) val;
     }
     
     public Object getParameter(String par) {
-        if (par=="dataset") return(vs);
-        if (par=="varids") return(vars);
+        if (par.equals("dataset")) return(vs);
+        if (par.equals("varids")) return(vars);
         return null;
     }
 
