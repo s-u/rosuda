@@ -387,7 +387,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
         else if (cmd == "new") startNew();
-        else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()");
+        else if (cmd == "objectmgr") JGR.MAINRCONSOLE.execute("object.manager()",false);
         else if (cmd == "open") open();
         else if (cmd.startsWith("recent:")) {
             if (modified) new Editor(cmd.replaceFirst("recent:",""));
@@ -416,7 +416,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
                 if (toolBar.undoMgr.canRedo())
                     toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
-        } else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()");
+        } else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
         else if (cmd == "save") saveFile();
         else if (cmd == "saveas") saveFileAs();
         else if (cmd == "search") textFinder.showFind(false);
@@ -444,12 +444,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         setModified(modified = true);
         if (ke.getKeyCode() == KeyEvent.VK_ENTER) {
             if ((ke.isControlDown() || ke.isMetaDown()) && JGR.MAINRCONSOLE != null && editArea.getSelectedText() != null) {
-                JGR.MAINRCONSOLE.execute(editArea.getSelectedText());
+                JGR.MAINRCONSOLE.execute(editArea.getSelectedText(),true);
             }
             else if (editArea.mComplete != null && editArea.mComplete.isVisible()) {
                 editArea.mComplete.completeCommand();
             }
-            else {
+            else if (!(ke.isControlDown() || ke.isMetaDown())){
                 try {
                    editArea.replaceSelection("");
                 } catch (Exception ex) {}

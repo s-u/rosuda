@@ -155,17 +155,18 @@ FocusListener, RMainLoopCallbacks {
                 if (!((Editor) we.w).exit()) return;
             }
         }
-        execute("q()");
+        execute("q()",false);
     }
 
     /**
      * Execute a command and add it into history.
      * @param cmd command for execution
+     * @param addToHist indicates wether the command should be added to history or not
      */
-    public void execute(String cmd) {
+    public void execute(String cmd, boolean addToHist) {
         if (!JGR.STARTED) return;
-        if (JGR.RHISTORY.size()==0)  JGR.RHISTORY.add(cmd);
-        else if (cmd.trim().length() > 0 && JGR.RHISTORY.size() > 0 && !JGR.RHISTORY.lastElement().equals(cmd.trim())) JGR.RHISTORY.add(cmd);
+        if (addToHist && JGR.RHISTORY.size()==0)  JGR.RHISTORY.add(cmd);
+        else if (addToHist && cmd.trim().length() > 0 && JGR.RHISTORY.size() > 0 && !JGR.RHISTORY.lastElement().equals(cmd.trim())) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
 
         String[] cmdArray = cmd.split("\n");
@@ -284,7 +285,7 @@ FocusListener, RMainLoopCallbacks {
         fopen.setVisible(true);
         if (fopen.getFile() != null) {
             wspace = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
-            execute("load(\""+wspace.replace('\\','/')+"\")");
+            execute("load(\""+wspace.replace('\\','/')+"\")",false);
         }
     }
 
@@ -293,8 +294,8 @@ FocusListener, RMainLoopCallbacks {
      * @param file filename
      */
     public void saveWorkSpace(String file) {
-        if (file==null) execute("save.image()");
-        else execute("save.image(\""+(file == null ? "" : file.replace('\\','/'))+"\")");
+        if (file==null) execute("save.image()",false);
+        else execute("save.image(\""+(file == null ? "" : file.replace('\\','/'))+"\")",false);
         JGR.writeHistory();
     }
 
@@ -451,7 +452,7 @@ FocusListener, RMainLoopCallbacks {
         String cmd = e.getActionCommand();
         if (cmd == "about") new AboutDialog(this);
         else if (cmd == "cut") input.cut();
-        else if (cmd == "clearwsp") execute("rm(list=ls())");
+        else if (cmd == "clearwsp") execute("rm(list=ls())",false);
         else if (cmd == "copy") {
             input.copy();
             output.copy();
@@ -474,8 +475,8 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "openwsp") loadWorkSpace();
         else if (cmd == "new") new Editor();
         //else if (cmd == "newwsp") newWorkSpace();
-        else if (cmd == "objectmgr") execute("object.browser()");
-        else if (cmd == "packagemgr") execute("package.manager()");
+        else if (cmd == "objectmgr") execute("object.browser()",false);
+        else if (cmd == "packagemgr") execute("package.manager()",false);
         else if (cmd == "paste") input.paste();
         else if (cmd == "prefs") new PrefsDialog(this);
         else if (cmd == "redo") {
@@ -483,14 +484,14 @@ FocusListener, RMainLoopCallbacks {
                 if (toolBar.undoMgr.canRedo())
                     toolBar.undoMgr.redo();
             } catch (CannotUndoException ex) {}
-        } else if (cmd == "help")  execute("help.start()");
+        } else if (cmd == "help")  execute("help.start()",false);
         else if (cmd == "table") new DataTable(null,null,true);
         else if (cmd == "save") output.startExport();
         else if (cmd == "savewsp") saveWorkSpace(wspace);
         else if (cmd == "saveaswsp") saveWorkSpaceAs();
         else if (cmd == "search") textFinder.showFind(false);
         else if (cmd == "searchnext") textFinder.showFind(true);
-        else if (cmd == "source") execute("source(file.choose())");
+        else if (cmd == "source") execute("source(file.choose())",false);
         else if (cmd == "stop") JGR.R.rniStop(1);
         else if (cmd == "selAll") {
             if (input.isFocusOwner()) {
@@ -513,7 +514,7 @@ FocusListener, RMainLoopCallbacks {
             if (r == JFileChooser.CANCEL_OPTION) return;
             if (chooser.getSelectedFile()!=null)
                 JGR.directory = chooser.getSelectedFile().toString();
-                execute("setwd(\""+chooser.getSelectedFile().toString().replace('\\','/')+"\")");
+                execute("setwd(\""+chooser.getSelectedFile().toString().replace('\\','/')+"\")",true);
         }
     }
 
@@ -586,7 +587,7 @@ FocusListener, RMainLoopCallbacks {
                     input.setText("");
                     input.setCaretPosition(0);
                     input.requestFocus();
-                    execute(cmd);
+                    execute(cmd,true);
                 }
             }
         }

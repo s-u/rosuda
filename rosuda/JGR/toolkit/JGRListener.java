@@ -25,6 +25,6 @@ public class JGRListener implements ActionListener {
      */
     public void actionPerformed(ActionEvent e) {
         String cmd = e.getActionCommand();
-        JGR.MAINRCONSOLE.execute(cmd);
+        JGR.MAINRCONSOLE.execute(cmd,true);
     }
 }

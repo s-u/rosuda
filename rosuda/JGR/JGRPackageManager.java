@@ -124,8 +124,8 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 
     private void setPKGStatus(String pkg,String load) {
         this.cursorWait();
-        if (load.equals("true")) JGR.MAINRCONSOLE.execute("library("+pkg+")");
-        else JGR.MAINRCONSOLE.execute("detach(\"package:"+pkg+"\")");
+        if (load.equals("true")) JGR.MAINRCONSOLE.execute("library("+pkg+")",true);
+        else JGR.MAINRCONSOLE.execute("detach(\"package:"+pkg+"\")",true);
         this.cursorDefault();
     }
 

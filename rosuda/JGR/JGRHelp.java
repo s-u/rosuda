@@ -315,7 +315,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
     public void keyReleased(KeyEvent ke) {
         if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
             String cmd = ( (JTextComponent) ke.getComponent()).getSelectedText().trim();
-            JGR.MAINRCONSOLE.execute(cmd);
+            JGR.MAINRCONSOLE.execute(cmd,true);
         }
     }
 
