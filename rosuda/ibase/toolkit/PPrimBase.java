@@ -54,7 +54,7 @@ public abstract class PPrimBase implements PlotPrimitive {
     /** calculates the proportion of cases with the given mark in relation to total population of cases represented by this PlotPrimitive. The value ranges between 0.0 (no cases with such mark) to 1.0 (all cases with that mark) */
     public double getMarkedProportion(SMarker m, int mark) {
         Stopwatch sw=new Stopwatch();
-        if (ref!=null) {
+        if (ref!=null && m!=null) {
             int j=0, pts=ref.length;
             if (pts==0) return 0d;
             int sc=0;
