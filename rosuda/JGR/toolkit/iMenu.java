@@ -259,6 +259,12 @@ public class iMenu {
         m.add(mi);
     }
 
+    public static void addMenuSeparator(JFrame f, String menu) {
+        JMenu m = getMenu(f,menu);
+        m.addSeparator();
+    }
+    
+
     public static JMenu getMenu(JFrame f, String nam) {
         JMenuBar mb=f.getJMenuBar();
         if (mb==null) return null;

@@ -133,6 +133,12 @@ public class JGR {
         iMenu.addMenuItem(MAINRCONSOLE,menu,name,cmd,jgrlistener);
     }
 
+
+    public static void addMenuSeparator(String menu) {
+        iMenu.addMenuSeparator(MAINRCONSOLE,menu);
+    }
+    
+
     public static void fix(String data, String type) {
         System.out.println(type);
         if (type.equals("data.frame")) new DataTable(RTalk.getVarSet(RTalk.createDataFrame(data)));

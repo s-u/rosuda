@@ -153,7 +153,8 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     }
 
     public void execute(String cmd) {
-         if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
+        if (!JGR.STARTED) return;
+        if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
 
         String[] cmdArray = cmd.split("\n");
@@ -452,10 +453,13 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         if (ke.getKeyCode() == KeyEvent.VK_UP && currentHistPosition > 0) {
-        	//System.out.println("Size "+JGR.RHISTORY.size());
+            //System.out.println("Size "+JGR.RHISTORY.size());
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (input.getText().trim().length() > 0) {
-                	if (!input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition))) JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
+                    if (currentHistPosition==JGR.RHISTORY.size() && !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1))) {
+                        //System.out.println(JGR.RHISTORY.elementAt(currentHistPosition-1));
+                        JGR.RHISTORY.add(input.getText().trim()); 
+                    }
                 }
                 //System.out.println(JGR.RHISTORY.get(currentHistPosition-1).toString());
                 input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
@@ -465,9 +469,10 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             }
         }
         else if (ke.getKeyCode() == KeyEvent.VK_DOWN) {
-        	//System.out.println("Size "+JGR.RHISTORY.size());
+            //System.out.println("Size "+JGR.RHISTORY.size());
             if (input.getCaretPosition()==0 || input.getCaretPosition()==input.getText().length()) {
                 if (currentHistPosition < JGR.RHISTORY.size() - 1) {
+                    //System.out.println("Pos "+currentHistPosition);
                     input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
                     input.setCaretPosition(input.getText().length());
                 }
