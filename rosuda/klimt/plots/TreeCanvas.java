@@ -132,7 +132,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	int leaves=root.getNumNodes(true);
 	iwidth=630; leftA=35;
 	buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root,400);	
-	setBackground(new Color(255,255,160));
+	setBackground(Common.backgroundColor);
 
 	updateCachedValues();
 
