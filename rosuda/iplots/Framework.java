@@ -5,7 +5,7 @@ import java.awt.event.*;
 /** basic framework interface for bulding interactive
     statistical programs */
 
-public class Framework {
+public class Framework implements Dependent {
     Vector dataset;
     SVarSet cvs;
     int tvctr;
@@ -16,6 +16,7 @@ public class Framework {
         */
     public Framework() {
         Common.AppType=Common.AT_Framework;
+        Common.supportsBREAK=true;
         Common.useAquaBg=true;
         Common.initStatic();
 	cvs=new SVarSet();
@@ -171,15 +172,23 @@ public class Framework {
         @return variable object or <code>null</code> if var of that name doesn't exist */
     public SVar getVar(String name) { return cvs.byName(name); };
 
+    /** beware!! this updateMerker has nothing to do with updateMarker() !!!!! bad thing! */
+    public void updateMarker(SVarSet vs, int vid) {
+        if (vs.getMarker()==null) {
+            SMarker m=new SMarker(vs.at(vid).size());
+            vs.setMarker(m);
+            m.addDepend(this);
+        }
+    }
+    
     /** display a new scatterplot of two variables from current dataset
         @param v1 X-axis variable
         @param v2 Y-axis variable
         @return scatterplot canvas object */
     public ScatterCanvas newScatterplot(int v1, int v2) { return newScatterplot(cvs,v1,v2); }
     public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
-	if (vs.getMarker()==null)
-	    vs.setMarker(new SMarker(vs.at(v1).size()));
-	TFrame f=new TFrame("Scatterplot ("+
+        updateMarker(vs,v1);
+        TFrame f=new TFrame("Scatterplot ("+
 			    vs.at(v2).getName()+" vs "+
 			    vs.at(v1).getName()+")",TFrame.clsScatter);	
 	if (Common.defaultWindowListener==null)
@@ -195,8 +204,7 @@ public class Framework {
     public BarCanvas newBarchart(int v) { return newBarchart(cvs,v,-1); }
     public BarCanvas newBarchart(int v, int wgt) { return newBarchart(cvs,v,wgt); }
     public BarCanvas newBarchart(SVarSet vs, int v, int wgt) {
-        if (vs.getMarker()==null)
-            vs.setMarker(new SMarker(vs.at(v).size()));
+        updateMarker(vs,v);
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
 	if (!theCat.isCat()) theCat.categorize();
@@ -219,8 +227,7 @@ public class Framework {
     public LineCanvas newLineplot(int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(cvs,rv,vv); }
     public LineCanvas newLineplot(SVarSet vs, int rv, int[] v) {
 	if (v.length==0) return null;
-	if (vs.getMarker()==null)
-	    vs.setMarker(new SMarker(vs.at(v[0]).size()));
+        updateMarker(vs,v[0]);
 	TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
@@ -240,8 +247,7 @@ public class Framework {
         @return histogram canvas object */
     public HistCanvasNew newHistogram(int v) { return newHistogram(cvs,v); };
     public HistCanvasNew newHistogram(SVarSet vs, int i) {
-	if (vs.getMarker()==null)
-	    vs.setMarker(new SMarker(vs.at(i).size()));
+        updateMarker(vs,i);
 	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
 	if (Common.defaultWindowListener==null)
 	    Common.defaultWindowListener=new DefWinL();
@@ -257,8 +263,7 @@ public class Framework {
     public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,i,ic); }
     public BoxCanvas newBoxplot(SVarSet vs, int i, int ic) {
         SVar catVar=(ic<0)?null:vs.at(ic);
-        if (vs.getMarker()==null)
-            vs.setMarker(new SMarker(vs.at(i).size()));
+        updateMarker(vs,i);
         TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
                             TFrame.clsBox);
         f.addWindowListener(Common.defaultWindowListener);
@@ -342,5 +347,40 @@ public class Framework {
 
     public void updateVars() {
         if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_VarChange));
+    }
+
+    private boolean notificationArrived=false;
+    private NotifyMsg lastNotificationMessage; // only synchronized methods are allowed to use this
+
+    /** this internal method waits until {@link #triggerNotification} is called by another thread. It is implemented by using {@link wait()} and checking {@link notificationArrived}. */
+    private synchronized NotifyMsg waitForNotification() {
+        while (!notificationArrived) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+        notificationArrived=false;
+        NotifyMsg m=lastNotificationMessage;
+        lastNotificationMessage=null; // reset lastNM
+        return m;
+    }
+
+    /** this methods awakens {@link #waitForNotification}. It is implemented by setting {@link #notificationArrived} to <code>true</code>, setting {@link #lastNotificationMessage} to the passed message and finally calling {@link notifyAll()}. */
+    private synchronized void triggerNotification(NotifyMsg msg) {
+        notificationArrived=true;
+        lastNotificationMessage=msg;
+        notifyAll();
+    }
+
+    /** is a message arrives we'll simply use {@link #triggerNotification} to inform any sleeping calls to {@link #waitForNotification} */
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        triggerNotification(msg);
+    }
+
+    /** this methods is called from R by ievent.wait and uses {@link #waitForNotification} to wait for an event. */
+    public int eventWait() {
+        NotifyMsg m=waitForNotification();
+        return (m==null || m.getMessageID()==Common.NM_BREAK)?0:m.getMessageID();
     }
 }
