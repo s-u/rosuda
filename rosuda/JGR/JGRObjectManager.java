@@ -114,9 +114,6 @@ public class JGRObjectManager extends iFrame implements ActionListener, MouseLis
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowDeactivated(WindowEvent evt) {
                 if (summary != null) summary.hide();
-               	/* that's a bad idea, if you don't trust me try it
-               	 * if (getState() != Frame.ICONIFIED)
-               		toFront();*/
             }
 
             public void windowClosing(java.awt.event.WindowEvent evt) {
