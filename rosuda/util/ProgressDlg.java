@@ -2,9 +2,11 @@ package org.rosuda.util;
 
 import java.awt.*;
 
+import javax.swing.JFrame;
+
 /** Implementation of a simple progress dialog
     @version $Id$ */
-public class ProgressDlg extends Frame {
+public class ProgressDlg extends JFrame {
     int progress=0;
     String ptxt="Processing...";
     
@@ -27,6 +29,8 @@ public class ProgressDlg extends Frame {
                 g.fillRect(0,y,d.width,2); y+=4;
             }
         }
+        g.setColor(Color.white);
+        g.fillRect(20,50,160,18);
         g.setColor(Color.black);
         g.drawString(ptxt,20,40);
         g.drawRect(20,50,160,18);
