@@ -30,13 +30,22 @@ all: $(TARGETS)
 src/org_rosuda_JRI_Rengine.h: org/rosuda/JRI/Rengine.class
 	$(JAVAH) -d src org.rosuda.JRI.Rengine
 
-src/Rengine.o: src/Rengine.c src/org_rosuda_JRI_Rengine.h
+src/Rcallbacks.o: src/Rcallbacks.c src/Rcallbacks.h src/globals.h
+	$(CC) -c -o $@ src/Rcallbacks.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
+
+src/Rinit.o: src/Rinit.c src/Rinit.h src/Rcallbacks.h
+	$(CC) -c -o $@ src/Rinit.c $(CFLAGS) $(CPICF) $(RINC)
+
+src/globals.o: src/globals.c src/globals.h
+	$(CC) -c -o $@ src/globals.c $(CFLAGS) $(CPICF) $(JAVAINC)
+
+src/Rengine.o: src/Rengine.c src/org_rosuda_JRI_Rengine.h src/globals.h src/Rcallbacks.h src/Rinit.h
 	$(CC) -c -o $@ src/Rengine.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
 src/jri.o: src/jri.c
 	$(CC) -c -o $@ src/jri.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
-src/jri$(JNISO): src/Rengine.o src/jri.o $(JRIDEPS)
+src/jri$(JNISO): src/Rengine.o src/jri.o src/Rcallbacks.o src/Rinit.o src/globals.o $(JRIDEPS)
 	$(CC) -o $@ $^ $(JNILD) $(RLD)
 
 libjvm.dll.a: jvm.def
