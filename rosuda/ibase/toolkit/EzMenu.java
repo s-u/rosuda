@@ -263,7 +263,7 @@ public class EzMenu {
             int j=0;
             while(j<ic) {
                 JMenuItem mi=m.getItem(j);
-                if (mi.getActionCommand()==nam)
+                if (mi!=null && mi.getActionCommand()==nam)
                     return mi;
                 j++;
             };
@@ -283,7 +283,7 @@ public class EzMenu {
             int j=0;
             while(j<ic) {
                 JMenuItem mi=m.getItem(j);
-                if (mi.getLabel().compareTo(nam)==0)
+                if (mi!=null && mi.getLabel().compareTo(nam)==0)
                     return mi;
                 j++;
             };
