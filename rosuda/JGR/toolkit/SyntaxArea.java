@@ -13,10 +13,16 @@ package org.rosuda.JGR.toolkit;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.dnd.*;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.plaf.*;
+import javax.swing.plaf.basic.BasicTableUI;
 import javax.swing.text.*;
 
 import org.rosuda.JGR.util.*;
@@ -37,6 +43,10 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             FontTracker.current = new FontTracker();
         FontTracker.current.add(this);
         this.addCaretListener(this);
+        System.out.println(this.getTransferHandler());
+        this.setTransferHandler(new TextTransferHandler());
+        System.out.println(this.getTransferHandler());
+    	this.setDragEnabled(true);
     }
 
     public void append(String str) {
@@ -465,4 +475,5 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             super(color);
         }
     }
+
 }
