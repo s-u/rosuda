@@ -7,19 +7,19 @@ import java.awt.Frame;
 public class Plugin {
     public static final int PT_GenTree = 0x8010;
 
-    String author="<unknown>";
-    String name  ="<unnamed>";
-    String desc  ="";
-    int    type  =0;
-    String err   =null;
+    protected String author="<unknown>";
+    protected String name  ="<unnamed>";
+    protected String desc  ="";
+    protected int    type  =0;
+    protected String err   =null;
 
     public boolean cancel=false; /* can be checked after pluginDlg whether used cancelled manually */
-    
-    String getName() { return name; }
-    String getAuthor() { return author; }
-    String getDescription() { return desc; }
-    int    getType() { return type; }
-    String getLastError() { return err; }
+
+    public String getName() { return name; }
+    public String getAuthor() { return author; }
+    public String getDescription() { return desc; }
+    public int    getType() { return type; }
+    public String getLastError() { return err; }
 
     public void setParameter(String par, Object val) {}
     public Object getParameter(String par) { return null; }
