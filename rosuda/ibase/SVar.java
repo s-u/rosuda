@@ -475,106 +475,103 @@ public class SVar extends Vector
         if (m==null && v.cacheRanks && v.ranks!=null) return v.ranks; // we can cache only ranks w/o a marker
 
         int[] r=null;
-        if (v.size()<1000) {
-            int ct=0;
-            int x=v.size();
-            int i=0; // pass 1 : find relevant cases
-            while(i<x) {
-                Object o=v.at(i);
-                if (o!=null) {
-                    if (m==null || m.get(i)==markspec) {
-                        ct++;
-                    };
-                };
-                i++;
-            };
-            if (ct==0) return null;
-            sw.profile("getRanked: pass 1: find relevant cases");
-            r = new int[ct];
-            ct=0;
-            i=0; // pass 2: store relevant IDs
-            while(i<x) {
-                Object o=v.at(i);
-                if (o!=null) {
-                    if (m==null || m.get(i)==markspec) {
-                        r[ct]=i;
-                        ct++;
-                    };
-                };
-                i++;
-            };
-            sw.profile("getRanked: pass 2: store relevant values");
 
-            // pass 3: sort by value
-            i=0;
-            while (i<ct-1) {
-                double d=v.atD(r[i]);
-                int j=ct-1;
-                while (j>i) {
-                    double d2=v.atD(r[j]);
-                    if (d2<d) {
-                        int xx=r[i]; r[i]=r[j]; r[j]=xx;
-                        d=d2;
-                    };
-                    j--;
-                };
-                i++;
-            };
-            sw.profile("getRanked: pass 3: sort");
+        /* okay in fact we always get the full ranks and then pick those marked (if desired) */
 
+        if (!v.cacheRanks || v.ranks==null) {
+            // due to the massive amount of lookups necessary during the sorting, we allocate a separate double buffer with a copy of the data and work on that one instead of the atD access, if the number of cases is large enough.
+            if (v.size()<1000) {
+                int ct=v.size();
+                if (ct==0) return null;
+                r = new int[ct];
+                int i=0;
+                while(i<ct) { r[i]=i; i++; }
+
+                sw.profile("getRanked: prepare");
+                // pass 3: sort by value
+                i=0;
+                while (i<ct-1) {
+                    double d=v.atD(r[i]);
+                    int j=ct-1;
+                    while (j>i) {
+                        double d2=v.atD(r[j]);
+                        if (d2<d) {
+                            int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                            d=d2;
+                        };
+                        j--;
+                    };
+                    i++;
+                };
+                sw.profile("getRanked: sort");
+                if (v.cacheRanks)
+                    v.ranks=r;
+            } else {
+                ProgressDlg pd=new ProgressDlg("Variable "+v.getName());
+                pd.begin("Calculating ranks ...");
+                int ct=v.size();
+                r = new int[ct];
+                double[] da = new double[ct];
+                sw.profile("getRanked: alloc double array for "+ct+" cases");
+                int i=0; // pass 2: store relevant IDs
+                while(i<ct) {
+                    r[i]=i; da[i]=v.atD(i);
+                    i++;
+                }
+                sw.profile("getRanked: pass 2: store relevant values");
+
+                // pass 3: sort by value
+                i=0;
+                while (i<ct-1) {
+                    double d=da[r[i]];
+                    int j=ct-1;
+                    if ((i&255)==0)
+                        pd.setProgress((int)(((double)i)*99.0/((double)ct)));
+                    while (j>i) {
+                        double d2=da[r[j]];
+                        if (d2<d) {
+                            int xx=r[i]; r[i]=r[j]; r[j]=xx;
+                            d=d2;
+                        }
+                        j--;
+                    }
+                    i++;
+                }
+                pd.setProgress(99);
+                sw.profile("getRanked: pass 3: sort");
+                if (v.cacheRanks)
+                    v.ranks=r;
+                da=null;
+                pd.end();
+                pd=null;
+            }
         } else {
-            int ct=0;
-            int x=v.size();
-            int i=0; // pass 1 : find relevant cases
-            while(i<x) {
-                Object o=v.at(i);
-                if (o!=null) {
-                    if (m==null || m.get(i)==markspec) {
-                        ct++;
-                    };
-                };
-                i++;
-            };
-            if (ct==0) return null;
-            sw.profile("getRanked: pass 1: find relevant cases");
-            r = new int[ct];
-            double[] da = new double[ct];
-            sw.profile("getRanked: alloc double array for "+ct+" cases");
-            ct=0;
-            i=0; // pass 2: store relevant IDs
-            while(i<x) {
-                Object o=v.at(i);
-                if (o!=null) {
-                    if (m==null || m.get(i)==markspec) {
-                        r[ct]=i; da[ct]=v.atD(i);
-                        ct++;
-                    };
-                };
-                i++;
-            };
-            sw.profile("getRanked: pass 2: store relevant values");
-
-            // pass 3: sort by value
-            i=0;
-            while (i<ct-1) {
-                double d=da[r[i]];
-                int j=ct-1;
-                while (j>i) {
-                    double d2=da[r[j]];
-                    if (d2<d) {
-                        int xx=r[i]; r[i]=r[j]; r[j]=xx;
-                        d=d2;
-                    };
-                    j--;
-                };
-                i++;
-            };
-            sw.profile("getRanked: pass 3: sort");
-            da=null;
+            r=v.ranks;
         }
 
-        if (m==null && v.cacheRanks)
-            v.ranks=r;
+        // we got the full list - now we need to thin it out if a marker was specified
+        if (m!=null && r!=null) {
+            int x=r.length;
+            int ct=0;
+            int i=0; // pass 1 : find the # of relevant cases
+            while(i<x) {
+                if (m.get(i)==markspec)
+                    ct++;
+                i++;
+            }
+            if (ct==0) return null;
+            int[] mr=new int[ct];
+            i=0;
+            int mri=0;
+            while(i<x) {
+                if (m.get(r[i])==markspec)
+                    mr[mri++]=r[i];
+                i++;
+            }
+            r=null;
+            r=mr;
+        }
+        
         // return the resulting list
         return r;
     };
