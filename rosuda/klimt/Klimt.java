@@ -82,20 +82,39 @@ public class InTr
     /** creates a pruned copy of a tree
 	@param t root of the source tree
 	@return copy of the tree without pruned nodes */
-    public static SNode makePrunedCopy(SNode t) 
+    public static SNode makePrunedCopy(SNode t) {
+        return makePrunedCopy(t,false,null,true,null);
+    }
+    
+    public static SNode makePrunedCopy(SNode t, boolean deepCopy, SNode cutpoint, boolean imTheRoot, Vector cps) 
     {
 	SNode n=new SNode();
-	n.Cases=t.Cases; n.Cond=t.Cond; n.data=t.data;
-	n.F1=t.F1; n.Name=t.Name; n.sel=0;
+        if (imTheRoot) {
+            SNode root=(SNode)t.getRoot();
+            n.name=root.name+"*";
+            n.prediction=root.prediction;
+            n.response=root.response;
+        }
+	n.Cases=t.Cases; n.Cond=t.Cond;
+        if (deepCopy)
+            n.data=new Vector(t.data);
+        else
+            n.data=t.data;
+        n.F1=t.F1; n.Name=t.Name; n.sel=0; n.id=t.id;
+        n.sampleDev=t.sampleDev; n.sampleDevGain=t.sampleDevGain;
 	n.splitComp=t.splitComp; n.splitIndex=t.splitIndex;
 	n.splitVal=t.splitVal; n.splitValF=t.splitValF;
 	n.V=t.V; n.vset=t.vset;
-	if (!t.isLeaf() && !t.isPruned())
+        if (cutpoint!=null && t==cutpoint && cps!=null)
+            cps.addElement(n);
+        if (!t.isLeaf() && (
+                     (cutpoint==null && !t.isPruned()) ||
+                     (cutpoint!=null && t!=cutpoint)))
 	    for (Enumeration e=t.children(); e.hasMoreElements();) {
-		SNode nc=makePrunedCopy((SNode)e.nextElement());
+                SNode nc=makePrunedCopy((SNode)e.nextElement(),deepCopy,cutpoint,false,cps);
 		n.add(nc);		
 	    };
-	return n;
+        return n;
     };
 
     public static SNode openTreeFile(Frame f,String fn,SVarSet tvs) {
