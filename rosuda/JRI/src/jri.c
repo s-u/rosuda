@@ -1,3 +1,4 @@
+#include "jri.h"
 #include <jni.h>
 #include <R.h>
 #include <Rdefines.h>
@@ -104,6 +105,38 @@ jarray jri_putIntArray(JNIEnv *env, SEXP e)
     }
 }
 
+jarray jri_putSEXPLArray(JNIEnv *env, SEXP e)
+{
+    rjprintf(" general vector of length %d\n",LENGTH(e));
+    {
+        unsigned len=LENGTH(e);
+        jlongArray da=(*env)->NewLongArray(env,len);
+        jlong *dae;
+        
+        if (!da) {
+            jri_error("newLongArray.new(%d) failed",len);
+            return 0;
+        }
+        
+        if (len>0) {
+            int i=0;
+            
+            dae=(*env)->GetLongArrayElements(env, da, 0);
+            if (!dae) {
+                (*env)->DeleteLocalRef(env,da);
+                jri_error("newLongArray.GetLongArrayElements failed");
+                return 0;
+            }
+            while (i<len) {
+                dae[i] = SEXP2L(VECTOR_ELT(e, i));
+                i++;
+            }
+            (*env)->ReleaseLongArrayElements(env, da, dae, 0);
+        }
+        return da;
+    }
+}
+
 jarray jri_putDoubleArray(JNIEnv *env, SEXP e)
 {
     if (TYPEOF(e)!=REALSXP) return 0;
@@ -149,6 +182,23 @@ SEXP jri_getString(JNIEnv *env, jstring s) {
   (*env)->ReleaseStringUTFChars(env, s, c);
   profReport("jri_getString:");
   return r;
+}
+
+SEXP jri_installString(JNIEnv *env, jstring s) {
+    SEXP r;
+    const char *c;
+    
+    if (!s) return R_NilValue;
+    profStart();
+    c=(*env)->GetStringUTFChars(env, s, 0);
+    if (!c) {
+        jri_error("jri_getString: can't retrieve string content");
+        return R_NilValue;
+    }
+    r = install(c);
+    (*env)->ReleaseStringUTFChars(env, s, c);
+    profReport("jri_getString:");
+    return r;
 }
 
 /** calls .toString() of the object and returns the corresponding string java object */
@@ -255,6 +305,33 @@ SEXP jri_getIntArray(JNIEnv *env, jarray o) {
   (*env)->ReleaseIntArrayElements(env, o, ap, 0);
   profReport("RgetIntArrayCont[%d]:",o);
   return ar;
+}
+
+SEXP jri_getSEXPLArray(JNIEnv *env, jarray o) {
+    SEXP ar;
+    int l,i=0;
+    jlong *ap;
+    
+    profStart();
+    rjprintf(" jarray %d\n",o);
+    if (!o) return R_NilValue;
+    l=(int)(*env)->GetArrayLength(env, o);
+    rjprintf("convert SEXPL array of length %d\n",l);
+    if (l<1) return R_NilValue;
+    ap=(jlong*)(*env)->GetLongArrayElements(env, o, 0);
+    if (!ap) {
+        jri_error("getSEXPLArray: can't fetch array contents");
+        return 0;
+    }
+    PROTECT(ar=allocVector(VECSXP,l));
+    while (i<l) {
+        SET_VECTOR_ELT(ar, i, L2SEXP(ap[i]));
+        i++;
+    }
+    UNPROTECT(1);
+    (*env)->ReleaseLongArrayElements(env, o, ap, 0);
+    profReport("jri_getSEXPLArray[%d]:",o);
+    return ar;
 }
 
 /** get contents of the double array object (int) */
