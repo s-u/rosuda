@@ -158,7 +158,8 @@ public class XGDserver extends Thread {
         
         public void run() {
             try {
-                s.setTcpNoDelay(true);
+                s.setTcpNoDelay(true); // send packets immediately (important, because R is waiting for the response)
+                //s.setSoTimeout(1);
                 System.out.println("XGDworker started with socket "+s);
                 InputStream sis = s.getInputStream();
                 OutputStream sos = s.getOutputStream();
@@ -170,10 +171,10 @@ public class XGDserver extends Thread {
                     return;
                 }
                 if (id[0]==0x58 && id[1]==0x47 && id[2]==0x44) {
-                    System.out.println("Connected to XGD version "+id[3]+" on PPC-endian machine");
+                    System.out.println("Connected to XGD version "+(id[3]-48)+" on PPC-endian machine");
                     isBE=true;
                 } else if (id[3]==0x58 && id[2]==0x47 && id[1]==0x44) {
-                    System.out.println("Connected to XGD version "+id[0]+" on Intel-endian machine");
+                    System.out.println("Connected to XGD version "+(id[0]-48)+" on Intel-endian machine");
                     isBE=false;
                 } else {
                     System.out.println("Unknown protocol, bailing out");
@@ -188,26 +189,23 @@ public class XGDserver extends Thread {
                         System.out.println("Needed 4 bytes, got "+n);
                         break;
                     }
-                    dump("Got header: ",hdr);
-                    int len =
-                        ((int)hdr[2])+
-                        (((int)hdr[1])<<8)+
-                        (((int)hdr[0])<<16);
-                    int cmd = hdr[3];
-                    if (!isBE) {
-                        len = hdr[1]+(hdr[2]<<8)+(hdr[3]<<16);
-                        cmd = hdr[0];
-                    }
+                    //dump("Got header: ",hdr);
+                    int len = getInt(hdr,0);
+                    int cmd = len&0xff;
+                    len = len >> 8;
                     System.out.println("CMD: "+hdr[3]+", length: "+len);
 
                     byte[] par=new byte[len];
-                    int n2=sis.read(par);
-                    if (n2!=len) {
-                        System.out.println("Needed "+len+" bytes, got "+n2);
-                        break;
+
+                    if (len>0) {
+                        int n2=sis.read(par);
+                        if (n2!=len) {
+                            System.out.println("Needed "+len+" bytes, got "+n2);
+                            break;
+                        }
                     }
 
-                    dump("Got pars: ",par);
+                    //dump("Got pars: ",par);
                     
                     if (cmd == 1) {
                         double w=getDouble(par, 0);
@@ -263,16 +261,19 @@ public class XGDserver extends Thread {
                     }
                     
                     if (cmd == 0x51) { // StrWidth
+                        System.out.println("--- get-par");
                         String s=new String(par, 0, par.length-1);
                         System.out.println("Request: get string width of \""+s+"\"");
                         byte[] b= new byte[12];
                         setInt((0x51 | 0x80) | 0x800,b,0);
                         setDouble((double)(8*s.length()),b,4);
-                        dump("Sending: ",b);
+                        //dump("Sending: ",b);
                         sos.write(b);
+                        sos.flush();
                     }
 
                     if (cmd == 0x4a) { // MetricInfo
+                        System.out.println("--- get-par");
                         int ch=getInt(par, 0);
                         System.out.println("Request: metric info for char "+ch);
                         byte[] b= new byte[4 + 3*8];
@@ -280,8 +281,9 @@ public class XGDserver extends Thread {
                         setDouble(8d,b,4);
                         setDouble(8d,b,12);
                         setDouble(8d,b,20);
-                        dump("Sending: ",b);
+                        //dump("Sending: ",b);
                         sos.write(b);
+                        sos.flush();
                     }
                 }
             } catch (Exception e) {
