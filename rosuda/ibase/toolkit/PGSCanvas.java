@@ -135,6 +135,9 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
         if (cmd=="BREAK" && Common.breakDispatcher!=null) {
             Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_BREAK));
         }
+        if (cmd=="prefs") {
+            PreferencesFrame.showPrefsDialog();
+        }
         if (cmd=="exportPGS") {
             PoGraSSmeta p=new PoGraSSmeta();
             paintPoGraSS(p);
@@ -233,6 +236,9 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent {
     };
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        if (myFrame!=null)
+            myFrame.setBackground(Common.backgroundColor);
+        setBackground(Common.backgroundColor);
         setUpdateRoot(0);
         repaint();
     }    
