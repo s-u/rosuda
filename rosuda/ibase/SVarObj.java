@@ -31,7 +31,7 @@ public class SVarObj extends SVar
 
     /** if set to <code>true</code> then modification methods don't fire events */
     boolean muteNotify=false;
-    
+
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
@@ -270,7 +270,6 @@ public class SVarObj extends SVar
           //Now we have to update the max and min if nescessary
         } catch(Exception E) {
           // what do we do when the cast doesn't work ? we return false indicating so
-          E.printStackTrace();
           return false;
         }
       }
