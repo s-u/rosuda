@@ -142,23 +142,7 @@ public class RDataFileDialog extends JDialog implements ActionListener, ItemList
         }
         else if (source == sepsBox) {
             edit = sepsBox.getSelectedIndex() == sepsBox.getItemCount()-1?true:false;
-            /*if (edit) {
-                try {
-                    System.out.println(((JTextField) sepsBox.getEditor().getEditorComponent()).getText());
-                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setText("");
-                    System.out.println(((JTextField) sepsBox.getEditor().getEditorComponent()).getText());
-                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setSelectionStart(0);
-                    ((JTextField) sepsBox.getEditor().getEditorComponent()).setSelectionEnd(((JTextField) sepsBox.getEditor().getEditorComponent()).getText().length());
-                }
-                catch (Exception ex) { ex.printStackTrace();}
-            }
-            else if (!edit){
-                try {
-                    //((JTextField) sepsBox.getEditor().getEditorComponent()).setText("Other ...");
-                } catch (Exception ex1) {}
-            }*/
             sepsBox.setEditable(edit);
-            //sepsBox.contentsChanged(new ListDataEvent(sepsBox,ListDataEvent.CONTENTS_CHANGED,sepsBox.getItemCount(),sepsBox.getItemCount()));
         }
     }
 
