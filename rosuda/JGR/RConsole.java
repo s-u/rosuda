@@ -142,20 +142,23 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
     public void execute(String cmd) {
          if (cmd.trim().length() > 0) JGR.RHISTORY.add(cmd);
         currentHistPosition = JGR.RHISTORY.size();
+        /*
         try { outputDoc.insertString(outputDoc.getLength()," "+cmd+"\n",iPreferences.CMD); } catch (Exception e) {}
         if (!isHelpCMD(cmd)) JGR.rSync.triggerNotification(cmd);
-
+         */
 
         /*
-        put command line by line nut it doesn't work but we need this because of R
+        put command line by line nut it doesn't work but we need this because of R */
         String[] cmdArray = cmd.split("\n");
 
         String c = null;
         for (int i = 0; i < cmdArray.length; i++) {
             c = cmdArray[i];
-            try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n",iPreferences.CMD); } catch (Exception e) {}
-            if (!isHelpCMD(c)) _execute(c);
-        }*/
+            if (!isHelpCMD(c))
+                JGR.rSync.triggerNotification(c);
+            else
+                try { outputDoc.insertString(outputDoc.getLength()," "+c+"\n> ",iPreferences.CMD); } catch (Exception e) {}
+        }
     }
 
     private synchronized void _execute(String cmd) {
@@ -234,7 +237,6 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
                 t.start();
             }
         }
-        output.append("> ",iPreferences.CMD);
     }
 
 
@@ -378,6 +380,7 @@ public class RConsole extends iFrame implements ActionListener, KeyListener,
             output.append(prompt,iPreferences.CMD);
             output.setCaretPosition(outputDoc.getLength());
             String s = JGR.rSync.waitForNotification();
+            try { outputDoc.insertString(outputDoc.getLength()," "+s+"\n",iPreferences.CMD); } catch (Exception e) {}
             System.out.println("read console "+s);
             return (s==null||s.length()==0)?"\n":s+"\n";
         }
