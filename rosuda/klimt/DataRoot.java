@@ -21,6 +21,8 @@ public class DataRoot {
     /** Data set type */
     int type;
 
+    NodeMarker nm;
+
     /** Dataset type constant: regular dataset */
     public static final int DT_Regular = 0;
     /** Dataset type constant: forest data. this changes linking behavior */
@@ -58,5 +60,10 @@ public class DataRoot {
         @param dataType new data type */
     public void setDataType(int dataType) {
         type=dataType;
+    }
+
+    public NodeMarker getNodeMarker() {
+        if (nm==null) nm=new NodeMarker();
+        return nm;
     }
 }
