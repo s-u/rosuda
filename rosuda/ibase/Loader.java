@@ -19,18 +19,23 @@ class LoaderDelphiFilter {
     static final int VT_miss   =8;
     SVarSet vs;
     int[] vt;
-    int rows;
+    int rows=-1;
 
     LoaderDelphiFilter(SVarSet vs) {
         this.vs=vs;
         vt=new int[vs.count()];
     }
 
+    void nextRecord() {
+        rows++;
+    }
+    
     /** adds a value to a variable
         @param col column index (0..variables-1)
         @param val string value to be analyzed and added
         @param line this value will be printed in warnings (not used internally, hence optional) */
     void addValue(int col, String val, int line) {
+        if (rows<0) rows=0; // if nextRow was not called, it's fine, but we need to set rows to 0
         if (val!=null && (val.equals("NA"))) val=null;
         if (col<0 || col>=vt.length) {
             System.out.println("Loader, line "+line+": column "+(col+1)+" has no header, dropping.");
@@ -493,6 +498,8 @@ public class Loader {
                 line++;
                 if (ls==null || ls.length()==0) break;
                 StringTokenizer lst=new StringTokenizer(ls,"\t");
+                if (useFilter)
+                    f.nextRecord();
                 int i=0;
                 while (lst.hasMoreTokens()) {
                     String t=lst.nextToken();
