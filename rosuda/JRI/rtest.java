@@ -65,7 +65,12 @@ public class rtest {
                 System.out.println("");
             }
         }
-        
+	re.eval("X11()");
+	re.eval("plot(rnorm(1000))");
+
+        System.out.println("R is ready, press <Enter> to continue (time to attach the debugger is necessary)");
+        try { System.in.read(); } catch(Exception e2) {};
+
         re.end();
         System.out.println("end");
     }
