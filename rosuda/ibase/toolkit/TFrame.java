@@ -58,12 +58,13 @@ public class TFrame extends Frame
 
     static int lastClass=-1;
     static int lastPlaceX=0, lastPlaceY=0;
+    static int lastOffset=0;
     
     public void initPlacement() { // initial frame placement
 	if (WTmyself==null) return;
         if (lastClass!=WTmyself.wclass) {
             lastClass=WTmyself.wclass;
-            lastPlaceX=getWidth()+10; lastPlaceY=0;
+            lastPlaceX=getWidth()+10; lastPlaceY=0; lastOffset=0;
         } else {
             setLocation(lastPlaceX,lastPlaceY);
             lastPlaceX+=getWidth()+10;
@@ -72,7 +73,8 @@ public class TFrame extends Frame
                 lastPlaceY+=getHeight()+20;
                 lastPlaceX=0;
                 if (lastPlaceY+100>Common.screenRes.height) {
-                    lastPlaceY=30; lastPlaceX=30;
+                    lastOffset+=30;
+                    lastPlaceY=lastOffset; lastPlaceX=lastOffset;
                 }
             }
         }
