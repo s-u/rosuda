@@ -8,6 +8,8 @@ package org.rosuda.JGR.toolkit;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreePath;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
@@ -20,12 +22,16 @@ import org.rosuda.JGR.robjects.*;
  *	RoSuDa 2003 - 2005
  */
 
-public class FunctionList extends JList implements MouseListener {
+public class FunctionList extends JList implements KeyListener, MouseListener {
 
     private JGRObjectManager objmgr;
+	private DefaultListModel fmodel = new DefaultListModel();
 
     public FunctionList(JGRObjectManager obm, Collection functions) {
-        super(new Vector(functions));
+        this.setModel(fmodel);
+		Iterator i = functions.iterator();
+		while (i.hasNext())
+			fmodel.addElement(i.next());
         this.objmgr = obm;
         this.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         this.addMouseListener(this);
@@ -36,7 +42,10 @@ public class FunctionList extends JList implements MouseListener {
      * @param functions new functions
      */
     public void refresh(Collection functions) {
-        this.setListData(new Vector(functions));
+		Iterator i = functions.iterator();
+		while (i.hasNext())
+			fmodel.addElement(i.next());
+        
     }
 
     /**
@@ -79,5 +88,38 @@ public class FunctionList extends JList implements MouseListener {
      */
     public void mouseReleased(MouseEvent e) {
     }
+
+    /**
+     * keyTyped: handle key event.
+     */
+	public void keyTyped(KeyEvent e) {
+	}
+
+    /**
+     * keyPressed: handle key event.
+     */
+	public void keyPressed(KeyEvent e) {
+	}
+
+    /**
+     * keyReleased: handle key event: remove functions.
+     */
+	public void keyReleased(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+			Object[] sfunctions = this.getSelectedValues();
+			for (int i = 0; i < sfunctions.length; i++) {
+				RObject o = null;
+	            try {
+	                o = (RObject) sfunctions[i];
+	            }
+	            catch (Exception ex) {
+	            }
+				if (o != null) {
+					JGR.R.eval("rm("+o.getRName()+")");
+					fmodel.remove(i);
+				}
+			}
+		}
+	}
 
 }
