@@ -39,7 +39,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     private HelpArea helpArea;
 
     private JTextField inputKeyWord = new JTextField();
-    //private JComboBoxExt inputKeyWord;
     private JButton search = new JButton("Search");
     public JLabel link = new JLabel(" ");
 
@@ -61,8 +60,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     private static String index;
     public static String RHELPLOCATION;
 
-    private static java.util.List fkts = null;
-
     public RHelp() {
         this(null);
     }
@@ -73,31 +70,19 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         while(!JGR.STARTED);
 
         String[] Menu = {"+", "File", "@PPrint", "print", "~File.Basic.End",
-            "+", "Edit", "@CCopy", "copy", /*"@ASelect All", "selAll",*/
+            "+", "Edit", "@CCopy", "copy",
             "~Preferences",
             "~Window", "0"};
         iMenu.getMenu(this, this, Menu);
 
         if (System.getProperty("os.name").startsWith("Windows")) {
-            /*JGR.R.eval("try(make.packages.html(.libPaths()));try(make.search.html(.libPaths()));try(fixup.libraries.URLs(.libPaths()))");
-            index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = RTalk.getRHome();
             index = "file:/"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
         else {
-            /*JGR.MAINRCONSOLE.execute(".Script(\"sh\", \"help-links.sh\", paste(tempdir(),paste(.libPaths(), collapse = \" \")));make.packages.html()");
-            while (!JGR.READY);
-            try {Thread.sleep(20);} catch (Exception e) {}
-            index = JGR.R.eval("paste(paste(\"file://\", tempdir(), \"/.R\", sep = \"\"), \"/doc/html/packages.html\", sep = \"\")").asString();
-            index = "file:"+JGR.RHOME+"/doc/html/packages.html";*/
             RHELPLOCATION = JGR.R.eval("paste(tempdir(), \"/.R\", sep = \"\")").asString();
             index = "file://"+RHELPLOCATION.replace('\\','/')+"/doc/html/packages.html";
         }
-
-        //if (location != null) RHELPLOCATION = location;
-        //else RHELPLOCATION = JGR.RHOME
-
-        //System.out.println("index"+index);
 
         searchRHelp = new SearchEngine();
         searchRHelp.setRHelp(this);
@@ -107,8 +92,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
         this.getRootPane().setDefaultButton(search);
 
-        //if (fkts == null) fkts = RTalk.getFunctionNames();
-        //inputKeyWord = new JComboBoxExt(new DefaultComboBoxModel(fkts.toArray()));
         FontTracker.current.add(inputKeyWord);
         inputKeyWord.setMinimumSize(new Dimension(330, 25));
         inputKeyWord.setPreferredSize(new Dimension(330, 25));
@@ -194,17 +177,7 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     public void refresh() {
-        /*if (location != null) RHELPLOCATION = location;
-        else RHELPLOCATION = JGR.RHOME;
-
-        index = RHELPLOCATION+"/doc/html/packages.html";
-
-        searchRHelp = new SearchEngine();
-        searchRHelp.setRHelp(this);
-
-        //if (tabArea.getTabCount()==Preferences.MAXHELPTABS) tabArea.remove(Preferences.MAXHELPTABS-1);*/
         helpArea = new HelpArea(this,null);
-        //tabArea.addTab(keyWord==null?"Packages":keyWord,new CloseIcon(getClass().getResource("/icons/close.png")),helpArea);
     }
 
 
@@ -236,7 +209,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
     private void search() {
         String keyword = inputKeyWord.getText().trim();
-        //String keyword = ((String) inputKeyWord.getSelectedItem()).trim();
         search(keyword);
     }
 
@@ -296,17 +268,16 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
     }
 
     public void keyTyped(KeyEvent ke) {
-        System.out.println("type");
     }
 
     public void keyPressed(KeyEvent ke) {
-        System.out.println("press");
     }
 
     public void keyReleased(KeyEvent ke) {
-        System.out.println("release");
-        String cmd = ((JTextComponent) ke.getComponent()).getSelectedText().trim();
-        JGR.MAINRCONSOLE.execute(cmd);
+        if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
+            String cmd = ( (JTextComponent) ke.getComponent()).getSelectedText().trim();
+            JGR.MAINRCONSOLE.execute(cmd);
+        }
     }
 
     public void mouseClicked(MouseEvent e) {
@@ -442,93 +413,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
         }
     }
 
-
-
-    public class JComboBoxExt extends JComboBox
-    implements JComboBox.KeySelectionManager {
-
-  public class CBDocument extends PlainDocument {
-
-    public void insertString(int offset, String str, AttributeSet a)
-        throws BadLocationException {
-      if(str == null) return;
-      super.insertString(offset, str, a);
-      if(!isPopupVisible() && str.length() != 0) {
-        fireActionEvent();
-      }
-    }
-  }
-
-    public JComboBoxExt(ComboBoxModel aModel) {
-        super(aModel);
-        lap = new java.util.Date().getTime();
-        setKeySelectionManager(this);
-        final JTextField tf;
-        if (getEditor() != null) {
-            tf = (JTextField) getEditor().getEditorComponent();
-            tf.addKeyListener(new KeyAdapter() {
-                public void keyPressed(KeyEvent e) {
-                }
-
-                public void keyReleased(KeyEvent e) {
-                    if (e.getKeyCode() == KeyEvent.VK_ENTER) search();
-                }
-            });
-            if (tf != null) {
-                tf.setDocument(new CBDocument());
-                addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent evt) {
-                        JTextField tf = (JTextField) getEditor().getEditorComponent();
-                        String text = tf.getText();
-                        ComboBoxModel aModel = getModel();
-                        String current;
-                        for (int i = 0; i < aModel.getSize(); i++) {
-                            current = aModel.getElementAt(i).toString();
-                            if (current.startsWith(text)) {
-                                tf.setText(current);
-                                tf.setSelectionStart(text.length());
-                                tf.setSelectionEnd(current.length());
-                                break;
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    public int selectionForKey(char aKey, ComboBoxModel aModel) {
-        long now = new java.util.Date().getTime();
-        if (searchFor != null && aKey == KeyEvent.VK_BACK_SPACE &&
-            searchFor.length() > 0) {
-            searchFor = searchFor.substring(0, searchFor.length() - 1);
-        }
-        else {
-            if (lap + 1000 < now) {
-                searchFor = "" + aKey;
-            }
-            else {
-                searchFor = searchFor + aKey;
-            }
-        }
-        lap = now;
-        String current;
-        for (int i = 0; i < aModel.getSize(); i++) {
-            current = aModel.getElementAt(i).toString();
-            if (current.startsWith(searchFor))
-                return i;
-        }
-        return -1;
-    }
-
-    public void fireActionEvent() {
-        super.fireActionEvent();
-    }
-
-        private String searchFor;
-        private long lap;
-    }
-
     class CloseIcon extends ImageIcon {
 
         private int x,y,width,height;
@@ -541,7 +425,6 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
 
         public void paintIcon(Component c, Graphics g, int x, int y) {
             this.x = x; this.y = y; width = getIconWidth(); height = getIconHeight();
-            //System.out.println(x+" "+y+" "+width+" "+height);
             super.paintIcon(c,g,x,y);
         }
 
@@ -549,4 +432,92 @@ public class RHelp extends iFrame implements ActionListener, KeyListener,
             return new Rectangle(x, y, width, height);
         }
     }
+
+    /*public class JComboBoxExt extends JComboBox implements JComboBox.KeySelectionManager {
+
+        public class CBDocument
+            extends PlainDocument {
+
+            public void insertString(int offset, String str, AttributeSet a) throws
+                BadLocationException {
+                if (str == null)
+                    return;
+                super.insertString(offset, str, a);
+                if (!isPopupVisible() && str.length() != 0) {
+                    fireActionEvent();
+                }
+            }
+        }
+
+        public JComboBoxExt(ComboBoxModel aModel) {
+            super(aModel);
+            lap = new java.util.Date().getTime();
+            setKeySelectionManager(this);
+            final JTextField tf;
+            if (getEditor() != null) {
+                tf = (JTextField) getEditor().getEditorComponent();
+                tf.addKeyListener(new KeyAdapter() {
+                    public void keyPressed(KeyEvent e) {
+                    }
+
+                    public void keyReleased(KeyEvent e) {
+                        if (e.getKeyCode() == KeyEvent.VK_ENTER)
+                            search();
+                    }
+                });
+                if (tf != null) {
+                    tf.setDocument(new CBDocument());
+                    addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            JTextField tf = (JTextField) getEditor().
+                                getEditorComponent();
+                            String text = tf.getText();
+                            ComboBoxModel aModel = getModel();
+                            String current;
+                            for (int i = 0; i < aModel.getSize(); i++) {
+                                current = aModel.getElementAt(i).toString();
+                                if (current.startsWith(text)) {
+                                    tf.setText(current);
+                                    tf.setSelectionStart(text.length());
+                                    tf.setSelectionEnd(current.length());
+                                    break;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        public int selectionForKey(char aKey, ComboBoxModel aModel) {
+            long now = new java.util.Date().getTime();
+            if (searchFor != null && aKey == KeyEvent.VK_BACK_SPACE &&
+                searchFor.length() > 0) {
+                searchFor = searchFor.substring(0, searchFor.length() - 1);
+            }
+            else {
+                if (lap + 1000 < now) {
+                    searchFor = "" + aKey;
+                }
+                else {
+                    searchFor = searchFor + aKey;
+                }
+            }
+            lap = now;
+            String current;
+            for (int i = 0; i < aModel.getSize(); i++) {
+                current = aModel.getElementAt(i).toString();
+                if (current.startsWith(searchFor))
+                    return i;
+            }
+            return -1;
+        }
+
+        public void fireActionEvent() {
+            super.fireActionEvent();
+        }
+
+        private String searchFor;
+        private long lap;
+    }*/
 }
