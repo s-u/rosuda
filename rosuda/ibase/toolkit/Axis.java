@@ -305,6 +305,7 @@ in conjunction with {@link #moveCat} as npos parameter when destination
         while (grs>2*medDist) { grs/=2; preld/=2; };
         if (grs<minDist/3) return preld*5;
         if (grs<minDist) return preld*2;
+        if ((type==1 || type==2) && preld<1.0) return 1.0;
         return preld;
     };
 
