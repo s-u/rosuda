@@ -1,5 +1,9 @@
 package org.rosuda.JRclient;
 
+// JRclient library - client interface to Rserve, see http://www.rosuda.org/Rserve/
+// Copyright (C) 2004 Simon Urbanek
+// --- for licensing information see LICENSE file in the original JRclient distribution ---
+
 /** Implementation of tri-state logical data type in R.
     The three states are TRUE, FALSE and NA. To obtain truly boolean
     value, you'll need to use {@link #isTRUE} or {@link #isFALSE} since there is

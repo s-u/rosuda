@@ -1,9 +1,10 @@
+// JRclient library - client interface to Rserve, see http://www.rosuda.org/Rserve/
+// Copyright (C) 2003 Simon Urbanek
+// --- for licensing information see LICENSE file in the original JRclient distribution ---
 //
 //  RFileOutputStream.java
-//  Klimt
 //
 //  Created by Simon Urbanek on Wed Oct 22 2003.
-//  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 
 package org.rosuda.JRclient;

@@ -1,9 +1,10 @@
+// JRclient library - client interface to Rserve, see http://www.rosuda.org/Rserve/
+// Copyright (C) 2004 Simon Urbanek
+// --- for licensing information see LICENSE file in the original JRclient distribution ---
 //
 //  RSrvException.java
-//  Klimt
 //
 //  Created by Simon Urbanek on Mon Aug 18 2003.
-//  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
 //  $Id$
 //
