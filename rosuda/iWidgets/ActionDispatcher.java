@@ -14,7 +14,7 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import java.util.*;
 
-public class ActionDispatcher implements ActionListener, ChangeListener, ListSelectionListener {
+public class ActionDispatcher implements ActionListener, ChangeListener, ListSelectionListener, WindowListener {
     static ActionDispatcher globalDispatcher = new ActionDispatcher();
     static int uaid = 1;
 
@@ -131,6 +131,24 @@ public class ActionDispatcher implements ActionListener, ChangeListener, ListSel
                 System.out.println("Can't find object for source "+e.getSource()+".\n");
             else
                 org.rosuda.JRI.Rengine.getMainEngine().eval(".dispatch.event.for(\""+sid+"\",type=\"onChange\")");
+        } catch (Exception ex) {
+            System.out.println("Couldn't dispatch event, error: "+ex);
+        }
+    }
+
+    public void windowActivated(WindowEvent e) {}
+    public void windowClosing(WindowEvent e) {}
+    public void windowDeactivated(WindowEvent e) {}
+    public void windowDeiconified(WindowEvent e) {}
+    public void windowIconified(WindowEvent e) {}
+    public void windowOpened(WindowEvent e) {}
+    public void windowClosed(WindowEvent e) {
+        try {
+            String sid=getID(e.getSource());
+            if (sid==null)
+                System.out.println("Can't find object for source "+e.getSource()+".\n");
+            else
+                org.rosuda.JRI.Rengine.getMainEngine().eval(".dispatch.event.for(\""+sid+"\",type=\"onClose\")");
         } catch (Exception ex) {
             System.out.println("Couldn't dispatch event, error: "+ex);
         }
