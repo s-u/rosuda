@@ -458,9 +458,21 @@ remark: this method can be used to load trees and data separately, but data must
                                             SVar vmc=new SVarObj("Misclass");
                                             vset.globalMisclassVarID=vset.add(vmc);
                                         }
+                                        if (clv.isNum() && !clv.isCat()) { // global residual per-case stats
+                                            int rv1=vset.globalResudialStat1ID;
+                                            int rv2=vset.globalResudialStat2ID;
+                                            if (rv1==-1) {
+                                                SVar rsv=new SVarObj("Resid.Mean",true,false);
+                                                vset.globalResudialStat1ID=vset.add(rsv);
+                                            }
+                                            if (rv2==-1) {
+                                                SVar rsv=new SVarObj("Resid.Sqrd",true,false);
+                                                vset.globalResudialStat2ID=vset.add(rsv);
+                                            }
+                                        }
                                         
                                         SVar vvv;
-                                        vvv=Klimt.getPredictionVar(root,clv);
+                                        vvv=Klimt.getPredictionVar(root,clv,vset);
                                         if (Global.DEBUG>0) System.out.println("Constructed prediction variable: "+vvv+" for response "+clv);
                                         vset.add(vvv);
                                         root.getRootInfo().prediction=vvv;
@@ -475,6 +487,11 @@ remark: this method can be used to load trees and data separately, but data must
                                                 vset.replace(vset.globalMisclassVarID,vmc);
                                             }
                                         }
+                                        if (vvv!=null && clv.isNum()) {// handle residual stats
+                                            Klimt.manageResidualStats(root, vset.regressionCounter, (vset.globalResudialStat1ID!=-1)?vset.at(vset.globalResudialStat1ID):null, (vset.globalResudialStat2ID!=-1)?vset.at(vset.globalResudialStat2ID):null);
+                                            vset.regressionCounter++;
+                                        }
+                                        
                                         if (Global.DEBUG>0) System.out.println("Registering tree in the registry.");
                                         dr.getTreeRegistry().registerTree(root,root.getRootInfo().name);
                                     }
