@@ -45,14 +45,14 @@ public class VarFrame extends TFrame {
 	pack();
         //if (System.getProperty("").indexOf("")>-1) {
             String myMenu[]={"+","File","@OOpen dataset ...","openData","!OOpen tree ...","openTree","-",
-                "New derived variable ...","deriveVar","-",
+                "New derived variable ...","deriveVar","Grow tree ...","growTree","-",
                 "Export forest ...","exportForest","Display Forest","displayForest","-",
                 "@QQuit","exit",
                 "+","Plot","Barchart","barchart","Histogram","histogram",
                 "Boxplot","boxplot","-","Scatterplot","scatterplot",
                 "Fluctuation diagram","fluct","-","Speckle plot","speckle",
                 "Parallel coord. plot","PCP","Series plot","lineplot","Series plot with index","lineplot2","-","Map","map",
-                "+","Tools","Grow tree ...","growTree",
+                //"+","Tools","Grow tree ...","growTree",
                 "~Window","0"};
             EzMenu.getEzMenu(this,vc,myMenu);
         //};

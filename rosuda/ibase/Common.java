@@ -7,9 +7,9 @@ import java.awt.event.*;
 public class Common
 {
     /** application version */
-    public static String Version="0.96p";
+    public static String Version="0.96r";
     /** application release */
-    public static String Release="CC13";
+    public static String Release="CC16";
 
     /** Debug flag. When set to >0 verbose debug messages are generated.
         parameter equivalent: --debug / --nodebug */
