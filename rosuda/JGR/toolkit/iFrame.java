@@ -43,6 +43,8 @@ public class iFrame extends JFrame {
     public static final int clsEditor   = 150;
     public static final int clsAbout    = 151;
     public static final int clsPrefs    = 152;
+    
+    public static final int clsJavaGD   = 160;
 
     public static final int clsUser     = 8192;
 
