@@ -227,7 +227,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     }
 
     public void updatePoints() {
-        qi.hide(); // this may invalidate any query
+        if (qi!=null) qi.hide(); // this may invalidate any query
 	Dimension Dsize=getSize();
 	int w=Dsize.width, h=Dsize.height;
 	TW=w; TH=h;
