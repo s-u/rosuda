@@ -16,13 +16,14 @@ import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
 public class TreeRegistry {
-    /** list of associated trees */
+    /** list of associated trees - each of the class {@link TreeEntry} */
     Vector trees=null;
 
     /** register a tree with the dataset */
     public void registerTree(SNode t, String n) {
         if (trees==null) trees=new Vector();
         trees.addElement(new TreeEntry(t,n));
+        t.getRootInfo().home=this;
     }
 
     public boolean exportForest(PrintStream p) {
@@ -56,7 +57,11 @@ public class TreeRegistry {
         return false;
     }
 
-    public SNode[] getTrees() {
+    public Vector getTreeEntries() {
+        return trees;
+    }
+    
+    public SNode[] getRoots() {
         SNode[] ts=new SNode[trees.size()];
         int i=0;
         TreeEntry te;
