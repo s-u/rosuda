@@ -3,6 +3,10 @@
 #include "Rinit.h"
 #include "Rcallbacks.h"
 
+/*-------------------------------------------------------------------*
+ * UNIX initialization (includes Darwin/Mac OS X)                    *
+ *-------------------------------------------------------------------*/
+
 #ifndef Win32
 /* from Defn.h */
 extern Rboolean R_Interactive;   /* TRUE during interactive use*/
@@ -71,6 +75,11 @@ int initR(int argc, char **argv) {
 }
 
 #else
+
+/*-------------------------------------------------------------------*
+ * Windows initialization is different and uses Startup.h            *
+ *-------------------------------------------------------------------*/
+
 #define NONAMELESSUNION
 #include <windows.h>
 #include <winreg.h>
@@ -100,6 +109,45 @@ extern void end_Rmainloop(void), R_ReplDLLinit(void);
 extern int R_ReplDLLdo1();
 extern void run_Rmainloop(void);
 
+void myCallBack()
+{
+    /* called during i/o, eval, graphics in ProcessEvents */
+}
+
+#ifndef YES
+#define YES    1
+#endif
+#ifndef NO
+#define NO    -1
+#endif
+#ifndef CANCEL
+#define CANCEL 0
+#endif
+
+int myYesNoCancel(char *s)
+{
+    char  ss[128];
+    unsigned char a[3];
+
+    sprintf(ss, "%s [y/n/c]: ", s);
+    Re_ReadConsole(ss, a, 3, 0);
+    switch (a[0]) {
+    case 'y':
+    case 'Y':
+	return YES;
+    case 'n':
+    case 'N':
+	return NO;
+    default:
+	return CANCEL;
+    }
+}
+
+static void my_onintr(int sig)
+{
+    UserBreak = 1;
+}
+
 static char Rversion[25], RUser[MAX_PATH], RHome[MAX_PATH];
 
 int initR(int argc, char **argv)
@@ -114,7 +162,7 @@ int initR(int argc, char **argv)
     
     sprintf(Rversion, "%s.%s", R_MAJOR, R_MINOR);
     if(strcmp(getDLLVersion(), Rversion) != 0) {
-	fprintf(stderr, "Error: R.DLL version does not match\n");
+	fprintf(stderr, "Error: R.DLL version does not match (DLL: %s, expecting: %s)\n", getDLLVersion(), Rversion);
 	return -1;
     }
     
@@ -151,20 +199,18 @@ int initR(int argc, char **argv)
     Rp->WriteConsole = Re_WriteConsole;
     Rp->busy = Re_Busy;
     Rp->message = Re_ShowMessage;
-    /*
+
     Rp->CallBack = myCallBack;
     Rp->yesnocancel = myYesNoCancel;
     Rp->CharacterMode = LinkDLL;
-    */
     
-    /*
-    Rp->R_Quiet = TRUE;
-    Rp->R_Interactive = FALSE;
+    Rp->R_Quiet = FALSE;
+    Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
-    Rp->SaveAction = SA_NOSAVE;
-    Rp->CommandLineArgs = NULL;
-    Rp->NumCommandLineArgs = 0;
-     */
+    Rp->SaveAction = SA_DEFAULT;
+    Rp->CommandLineArgs = argv;
+    Rp->NumCommandLineArgs = argc;
+
     /* Rp->nsize = 300000;
     Rp->vsize = 6e6; */
     R_SetParams(Rp); /* so R_ShowMessage is set */
@@ -173,7 +219,7 @@ int initR(int argc, char **argv)
     
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
     
-    //signal(SIGBREAK, my_onintr);
+    signal(SIGBREAK, my_onintr);
     setup_term_ui();
     setup_Rmainloop();
     
