@@ -18,7 +18,7 @@ import org.rosuda.JGR.util.*;
  *
  *	@author Markus Helbig
  *
- * 	RoSuDA 2003 - 2005
+ * 	RoSuDa 2003 - 2005
  */
 
 public class DataTable extends iFrame implements ActionListener, MouseListener,
@@ -100,7 +100,7 @@ KeyListener {
             "@FFind", "find", "@GFind Next", "findnext", "-",
             "Goto Case", "gotoCase",
             "~Window",
-            "~Help", "R Help", "rhelp", /*"JJGR FAQ", "jrfaq",*/ "~About", "0"};
+            "~Help", "R Help", "rhelp", "~About", "0"};
         iMenu.getMenu(this, this, myMenu);
         iMenu.getItem(this, "undo").setEnabled(false);
         iMenu.getItem(this, "redo").setEnabled(false);
@@ -755,7 +755,7 @@ KeyListener {
             col.setCellEditor(cell);
             col.setCellRenderer(new DefaultTableCellRenderer());
             if (col.getModelIndex() == 0) {
-                col.setMaxWidth(50);
+                col.setMaxWidth(40);
             }
             col.setMinWidth(50);
             super.addColumn(col);
@@ -897,14 +897,11 @@ KeyListener {
 
             if (hasFocus) {
             }
-
             setText(value.toString());
-
-            //setToolTipText((String)value);
 
             return this;
         }
-
+        
         public void validate() {}
         public void revalidate() {}
         protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {}
