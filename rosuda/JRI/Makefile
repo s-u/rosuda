@@ -9,24 +9,24 @@ JAVAINC=-I/System/Library/Frameworks/JavaVM.framework/Headers
 JNISO=.jnilib
 JNILD=-dynamiclib -framework JavaVM
 CPICF=-fno-common
+JAVAB=java
 
-#--- the following might work on Linux (if you fix the -L...)
-JAVAHOME=/usr/lib/java
-JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
-JNISO=.so
-JNILD=-shared -L$(JAVAHOME)/jre/lib/i386/client -ljvm
-CPICF=-fPIC
+#--- the following might work on Linux
+#JAVAHOME=/usr/lib/java
+#JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
+#JNISO=.so
+#JNILD=-shared -L$(JAVAHOME)/jre/lib/i386/client -ljvm
+#CPICF=-fPIC
+#JAVAB=$(JAVAHOME)/bin/java
 
 #--- comment out the following for non-debug version
 CFLAGS+=-g
 
 #--- uncomment the one that fits your R installation
-#RHOME=/Library/Frameworks/R.framework/Resources
-RHOME=/usr/lib/R
+RHOME=/Library/Frameworks/R.framework/Resources
+#RHOME=/usr/lib/R
 
-#--- if javac is not in the PATH you may want to change the following one
-#JAVAB=java
-JAVAB=$(JAVAHOME)/bin/java
+#--- normally you don't need to change this - modify JAVAB instead
 JAVAC=$(JAVAB)c $(JFLAGS)
 JAVAH=$(JAVAB)h
 
@@ -40,10 +40,10 @@ TARGETS=libjri$(JNISO) rtest.class run
 
 all: $(TARGETS)
 
-src/Rengine.h: Rengine.class
-	$(JAVAH) -d src Rengine
+src/org_rosuda_JRI_Rengine.h: org/rosuda/JRI/Rengine.class
+	$(JAVAH) -d src org.rosuda.JRI.Rengine
 
-src/Rengine.o: src/Rengine.c src/Rengine.h
+src/Rengine.o: src/Rengine.c src/org_rosuda_JRI_Rengine.h
 	$(CC) -c -o $@ src/Rengine.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
 src/jri.o: src/jri.c
@@ -55,13 +55,13 @@ src/jri$(JNISO): src/Rengine.o src/jri.o
 libjri$(JNISO): src/jri$(JNISO)
 	ln -sf $^ $@
 
-Rengine.class RXP.class: Rengine.java RXP.java
-	$(JAVAC) $^
+org/rosuda/JRI/Rengine.class org/rosuda/JRI/RXP.class: Rengine.java RXP.java
+	$(JAVAC) -d . $^
 
-rtest.class: rtest.java Rengine.class RXP.class
+rtest.class: rtest.java org/rosuda/JRI/Rengine.class org/rosuda/JRI/RXP.class
 	$(JAVAC) rtest.java
 
-run: libjri$(JNISO) rtest.class
+run:
 	echo "#!/bin/sh" > run
 	echo "export R_HOME=$(RHOME)" >> run
 	echo "export DYLD_LIBRARY_PATH=$(RHOME)/bin" >> run
@@ -70,7 +70,7 @@ run: libjri$(JNISO) rtest.class
 	chmod a+x run
 
 clean:
-	rm -rf $(TARGETS) src/*.o src/*~ src/Rengine.h src/*$(JNISO) *.class *~
+	rm -rf $(TARGETS) org src/*.o src/*~ src/Rengine.h src/*$(JNISO) *.class *~
 
 .PHONY: clean all
 
