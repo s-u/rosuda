@@ -144,7 +144,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     TFrame f=new TFrame("Tree "+tvs.getName(),TFrame.clsTree);
                     InTr.newTreeDisplay(t,f,0,0,Common.screenRes.width-160,(Common.screenRes.height>600)?600:Common.screenRes.height-20);
                 }
-                VarFrame vf=InTr.newVarDisplay(tvs,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height);
+                VarFrame vf=InTr.newVarDisplay(tvs,Common.screenRes.width-150,0,140,(Common.screenRes.height>600)?600:Common.screenRes.height-30);
                 setVisible(false);
             }
         }

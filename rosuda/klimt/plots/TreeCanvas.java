@@ -754,7 +754,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                 Common.screenRes=sres;
                 if (t!=null)
                     InTr.newTreeDisplay(t,f,0,0,sres.width-160,(sres.height>600)?600:sres.height-20);
-                VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height);                
+                VarFrame vf=InTr.newVarDisplay(tvs,sres.width-150,0,140,(sres.height>600)?600:sres.height-30);
             }
         }
 	if (cmd=="deviance") {
@@ -847,7 +847,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             SVarSet fs=root.getSource().getForestVarSet();
             Dimension sres=Toolkit.getDefaultToolkit().getScreenSize();
             Common.screenRes=sres;
-            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height);
+            VarFrame vf=InTr.newVarDisplay(fs,sres.width-150,0,140,(sres.height>600)?600:sres.height-20);
         };            
         if (cmd=="showMCP") {
             TFrame mcpf=new TFrame("MC-plot",TFrame.clsMCP);
