@@ -1,0 +1,183 @@
+#include <R.h>
+#include <Rinternals.h>
+#include "Rinit.h"
+#include "Rcallbacks.h"
+
+#ifndef Win32
+/* from Defn.h */
+extern Rboolean R_Interactive;   /* TRUE during interactive use*/
+
+extern FILE*    R_Consolefile;   /* Console output file */
+extern FILE*    R_Outputfile;   /* Output file */
+extern char*    R_TempDir;   /* Name of per-session dir */
+
+/* from src/unix/devUI.h */
+
+extern void (*ptr_R_Suicide)(char *);
+extern void (*ptr_R_ShowMessage)();
+extern int  (*ptr_R_ReadConsole)(char *, unsigned char *, int, int);
+extern void (*ptr_R_WriteConsole)(char *, int);
+extern void (*ptr_R_ResetConsole)();
+extern void (*ptr_R_FlushConsole)();
+extern void (*ptr_R_ClearerrConsole)();
+extern void (*ptr_R_Busy)(int);
+/* extern void (*ptr_R_CleanUp)(SA_TYPE, int, int); */
+extern int  (*ptr_R_ShowFiles)(int, char **, char **, char *, Rboolean, char *);
+extern int  (*ptr_R_ChooseFile)(int, char *, int);
+extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
+extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
+
+int initR(int argc, char **argv) {
+    //getenv("R_HOME","/Library/Frameworks/R.framework/Resources",1);
+    if (!getenv("R_HOME")) {
+        fprintf(stderr, "R_HOME is not set. Please set all required environment variables before running this program.\n");
+        return -1;
+    }
+    
+    int stat=Rf_initialize_R(argc, argv);
+    if (stat<0) {
+        printf("Failed to initialize embedded R! (stat=%d)\n",stat);
+        return -1;
+    };
+
+    printf("R primary initialization done. Setting up parameters.\n");
+
+    R_Outputfile = NULL;
+    R_Consolefile = NULL;
+    R_Interactive = 1;
+
+    /* ptr_R_Suicide = Re_Suicide; */
+    /* ptr_R_CleanUp = Re_CleanUp; */
+    ptr_R_ShowMessage = Re_ShowMessage;
+    ptr_R_ReadConsole = Re_ReadConsole;
+    ptr_R_WriteConsole = Re_WriteConsole;
+    ptr_R_ResetConsole = Re_ResetConsole;
+    ptr_R_FlushConsole = Re_FlushConsole;
+    ptr_R_ClearerrConsole = Re_ClearerrConsole;
+    ptr_R_Busy = Re_Busy;
+    /*
+    ptr_R_ShowFiles = Re_ShowFiles;
+    ptr_R_ChooseFile = Re_ChooseFile;
+    ptr_R_loadhistory = Re_loadhistory;
+    ptr_R_savehistory = Re_savehistory;
+     */
+    printf("Setting up R event loop\n");
+    
+    setup_Rmainloop();
+
+    printf("R initialized.\n");
+    
+    return 0;
+}
+
+#else
+#define NONAMELESSUNION
+#include <windows.h>
+#include <winreg.h>
+#include <stdio.h>
+#include <config.h>
+#include "Rversion.h"
+#include "Startup.h"
+
+/* for signal-handling code */
+#include "psignal.h"
+
+/* one way to allow user interrupts: called in ProcessEvents */
+#ifdef _MSC_VER
+__declspec(dllimport) int UserBreak;
+#else
+#define UserBreak     (*_imp__UserBreak)
+extern int UserBreak;
+#endif
+
+/* calls into the R DLL */
+extern char *getDLLVersion();
+extern void R_DefParams(Rstart);
+extern void R_SetParams(Rstart);
+extern void setup_term_ui(void);
+extern void ProcessEvents(void);
+extern void end_Rmainloop(void), R_ReplDLLinit(void);
+extern int R_ReplDLLdo1();
+extern void run_Rmainloop(void);
+
+static char Rversion[25], RUser[MAX_PATH], RHome[MAX_PATH];
+
+int initR(int argc, char **argv)
+{
+    structRstart rp;
+    Rstart Rp = &rp;
+    char *p;
+    char rhb[MAX_PATH+10];
+    LONG h;
+    DWORD t,s=MAX_PATH;
+    HKEY k;
+    
+    sprintf(Rversion, "%s.%s", R_MAJOR, R_MINOR);
+    if(strcmp(getDLLVersion(), Rversion) != 0) {
+	fprintf(stderr, "Error: R.DLL version does not match\n");
+	return -1;
+    }
+    
+    R_DefParams(Rp);
+    if(getenv("R_HOME")) {
+	strcpy(RHome, getenv("R_HOME"));
+    } else { /* fetch R_HOME from the registry */
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+	    RegQueryValueEx(k,"InstallPath",0,&t,RHome,&s)!=ERROR_SUCCESS) {
+	    fprintf(stderr, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n");
+	    return -2;
+	};
+	sprintf(rhb,"R_HOME=%s",RHome);
+	putenv(rhb);
+    }
+    /* on Win32 this should set R_Home (in R_SetParams) as well */
+    Rp->rhome = RHome;
+    /*
+     * try R_USER then HOME then working directory
+     */
+    if (getenv("R_USER")) {
+	strcpy(RUser, getenv("R_USER"));
+    } else if (getenv("HOME")) {
+	strcpy(RUser, getenv("HOME"));
+    } else if (getenv("HOMEDIR")) {
+	strcpy(RUser, getenv("HOMEDIR"));
+	strcat(RUser, getenv("HOMEPATH"));
+    } else
+	GetCurrentDirectory(MAX_PATH, RUser);
+    p = RUser + (strlen(RUser) - 1);
+    if (*p == '/' || *p == '\\') *p = '\0';
+    Rp->home = RUser;
+    Rp->ReadConsole = Re_ReadConsole;
+    Rp->WriteConsole = Re_WriteConsole;
+    Rp->busy = Re_Busy;
+    Rp->message = Re_ShowMessage;
+    /*
+    Rp->CallBack = myCallBack;
+    Rp->yesnocancel = myYesNoCancel;
+    Rp->CharacterMode = LinkDLL;
+    */
+    
+    /*
+    Rp->R_Quiet = TRUE;
+    Rp->R_Interactive = FALSE;
+    Rp->RestoreAction = SA_RESTORE;
+    Rp->SaveAction = SA_NOSAVE;
+    Rp->CommandLineArgs = NULL;
+    Rp->NumCommandLineArgs = 0;
+     */
+    /* Rp->nsize = 300000;
+    Rp->vsize = 6e6; */
+    R_SetParams(Rp); /* so R_ShowMessage is set */
+    R_SizeFromEnv(Rp);
+    R_SetParams(Rp);
+    
+    FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+    
+    //signal(SIGBREAK, my_onintr);
+    setup_term_ui();
+    setup_Rmainloop();
+    
+    return 0;
+}
+#endif
+
