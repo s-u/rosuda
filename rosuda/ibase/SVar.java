@@ -342,7 +342,7 @@ public class SVar extends Vector
         @return category ID
      */
     public int getCatIndex(Object o) {
-	if (!cat) return -1;
+	if (cats==null) return -1;
         Object oo=o; if(o==null) oo=missingCat;
 	return cats.indexOf(oo);
     };
@@ -358,13 +358,13 @@ public class SVar extends Vector
     
     /** returns the category with index ID or <code>null</code> if variable is not categorial */
     public Object getCatAt(int i) {
-	if (!cat) return null;
+	if (cats==null) return null;
 	return cats.elementAt(i);
     };
 
     /** returns size of the category with index ID or -1 if variable is not categorial or index oob */
     public int getSizeCatAt(int i) {
-	if (!cat) return -1;
+	if (cats==null) return -1;
         try { // catch exception if cat ID is out of bounds
             return ((Integer)ccnts.elementAt(i)).intValue();
         } catch  (Exception e) {
@@ -374,7 +374,7 @@ public class SVar extends Vector
 
     /** returns size of the category o. If category does not exist or variable is not categorial, -1 is returned. */
     public int getSizeCat(Object o) {
-	if (!cat) return -1;
+	if (cats==null) return -1;
 	int i=cats.indexOf(o);
 	return (i==1)?-1:((Integer)ccnts.elementAt(i)).intValue();
     };
@@ -392,7 +392,7 @@ public class SVar extends Vector
     
     /** returns the number of categories for this variable or 0 if the variable is not categorial */
     public int getNumCats() {
-	if (!cat) return 0;
+	if (cats==null) return 0;
 	return cats.size();
     };
 
@@ -401,7 +401,7 @@ public class SVar extends Vector
     
     /** returns new, fixed array of categories */
     public Object[] getCategories() { 
-	if (!cat) return null;
+	if (cats==null) return null;
 	
 	Object c[] = new Object[cats.size()];
 	cats.copyInto(c);
