@@ -253,6 +253,9 @@ public class Common
 	int i=0;
 	int caps=0;
 	int nums=0;
+        int lzs=0;
+        int firstNonZeroNum=0;
+        boolean isLz=true;
 
 	StringBuffer cp=new StringBuffer("");
 	StringBuffer nm=new StringBuffer("");
@@ -260,11 +263,18 @@ public class Common
 	while(i<s.length()) {
 	    char c=s.charAt(i);
 	    if (c>='A'&&c<='Z') { caps++; cp.append(c); };
-	    if (c>='0'&&c<='9') { nums++; nm.append(c); };
+            if (c>'0' && c<='9') isLz=false;
+	    if (!isLz && c>='0' &&c <='9') { nums++; nm.append(c); };
+            if (c=='0' && isLz) lzs++;
 	    i++;
-	};
+	}
+        if (nums==1) { nums=2; nm=new StringBuffer("0"+nm.toString()); } // hack hack hack
 	char lc=s.charAt(s.length()-1);
+        //System.out.println("\""+s+"\" nums="+nums+", caps="+caps);
 	if (nums>0) {
+            // hack for imported variables which have the form X_i_...
+            if (nums<3 && s.length()>4 && s.charAt(1)=='_' && s.charAt(2)=='i' && s.charAt(3)=='_')
+                return s.charAt(0)+"i"+nm.toString();
 	    if (caps+nums<5 && caps>0) // this is clumsy, but since 1.4.1 append fails
 		return cp.toString()+nm.toString();
 	    if (nums<4 && caps>0)
