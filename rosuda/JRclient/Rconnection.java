@@ -149,7 +149,7 @@ public class Rconnection {
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_voidEval,cmd+"\n");
         if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
         throw new RSrvException(this,lastError,rp.getStat());
     }
 
@@ -181,8 +181,8 @@ public class Rconnection {
             }
             return rx;
 	}
-        lastError="Request return code: "+rp.getStat();
-        throw new RSrvException(this,lastError,rp.getStat());
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
@@ -197,16 +197,22 @@ public class Rconnection {
 	}
         byte[] symn=sym.getBytes();
         byte[] ctn=ct.getBytes();
-        byte[] rq=new byte[symn.length+5+ctn.length+5];
-        for(int ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
-        for(int ic=0;ic<ctn.length;ic++) rq[ic+symn.length+9]=ctn[ic];
-	Rtalk.setHdr(Rtalk.DT_STRING,symn.length+1,rq,0);
-	Rtalk.setHdr(Rtalk.DT_STRING,ctn.length+1,rq,symn.length+5);
-	rq[symn.length+4]=0; rq[rq.length-1]=0;
+        int sl=symn.length+1;
+        int cl=ctn.length+1;
+        if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the symbol length is divisible by 4
+        if ((cl&3)>0) cl=(cl&0xfffffc)+4; // make sure the content length is divisible by 4
+        byte[] rq=new byte[sl+4+cl+4];
+        int ic;
+        for(ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
+        while (ic<sl) { rq[ic+4]=0; ic++; }
+        for(ic=0;ic<ctn.length;ic++) rq[ic+sl+8]=ctn[ic];
+        while (ic<cl) { rq[ic+sl+8]=0; ic++; }
+	Rtalk.setHdr(Rtalk.DT_STRING,sl,rq,0);
+	Rtalk.setHdr(Rtalk.DT_STRING,cl,rq,sl+4);
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
         if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
-        throw new RSrvException(this,lastError,rp.getStat());
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
@@ -221,16 +227,19 @@ public class Rconnection {
 	}
 	int rl=r.getBinaryLength();
         byte[] symn=sym.getBytes();
-	byte[] rq=new byte[symn.length+5+rl+4];
-        for(int ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
-	Rtalk.setHdr(Rtalk.DT_STRING,symn.length+1,rq,0);
-	rq[symn.length+4]=0;
-	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,symn.length+5);
-	r.getBinaryRepresentation(rq,symn.length+9);
+        int sl=symn.length+1;
+        if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the symbol length is divisible by 4
+	byte[] rq=new byte[sl+4+rl+4];
+        int ic;
+        for(ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
+        while(ic<sl) { rq[ic+4]=0; ic++; }; // pad with 0
+	Rtalk.setHdr(Rtalk.DT_STRING,sl,rq,0);
+	Rtalk.setHdr(Rtalk.DT_SEXP,rl,rq,sl+4);
+	r.getBinaryRepresentation(rq,sl+8);
 	Rpacket rp=rt.request(Rtalk.CMD_setSEXP,rq);
 	if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
-        throw new RSrvException(this,lastError,rp.getStat());
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
@@ -262,8 +271,8 @@ public class Rconnection {
 	}	    
 	Rpacket rp=rt.request(Rtalk.CMD_removeFile,fn);
 	if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
-        throw new RSrvException(this,lastError);
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** shutdown remote Rserv. Note that some Rserves cannot be shut down from
@@ -275,8 +284,8 @@ public class Rconnection {
 	}	    
 	Rpacket rp=rt.request(Rtalk.CMD_shutdown);
 	if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
-        throw new RSrvException(this,lastError);
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** login using supplied user/pwd. Note that login must be the first
@@ -290,17 +299,17 @@ public class Rconnection {
 	    if (Key==null) Key="rs";
 	    Rpacket rp=rt.request(Rtalk.CMD_login,user+"\n"+jcrypt.crypt(Key,pwd));
 	    if (rp!=null && rp.isOk()) return;
-	    lastError="Request return code: "+rp.getStat();
+            lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
 	    try { s.close(); } catch(Exception e) {};
 	    is=null; os=null; s=null; connected=false;
             throw new RSrvException(this,lastError);
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_login,user+"\n"+pwd);
 	if (rp!=null && rp.isOk()) return;
-	lastError="Request return code: "+rp.getStat();
+        lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
 	try {s.close();} catch (Exception e) {};
 	is=null; os=null; s=null; connected=false;
-        throw new RSrvException(this,lastError);
+        throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
 
     /** check connection state. Note that currently this state is not checked on-the-spot,

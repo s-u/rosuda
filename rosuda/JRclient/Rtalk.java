@@ -109,7 +109,7 @@ public class Rtalk {
 
     /** sends a request with attached parameters
 	@param cmd command
-	@param cont contents - parameters
+        @param cont contents - parameters
 	@return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, byte[] cont) {
 	byte[] hdr=new byte[16];
@@ -147,18 +147,27 @@ public class Rtalk {
 	@return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, String par) {
 	try {
-	    byte[] b=par.getBytes(Rconnection.transferCharset);
-	    byte[] rq=new byte[par.length()+5];
-	    for(int i=0;i<b.length;i++)
-		rq[i+4]=b[i];
-	    rq[b.length+4]=0;
-	    setHdr(DT_STRING,b.length+1,rq,0);
+            byte[] b=par.getBytes(Rconnection.transferCharset);
+            int sl=par.length()+1;
+            if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the length is divisible by 4
+	    byte[] rq=new byte[sl+5];
+            int i;
+	    for(i=0;i<b.length;i++)
+                rq[i+4]=b[i];
+            while (i<sl) { // pad with 0
+                rq[i+4]=0; i++;
+            };
+	    setHdr(DT_STRING,sl,rq,0);
 	    return request(cmd,rq);
 	} catch (Exception e) {
 	};
 	return null;
     }
 
+    /** sends a request with one string parameter attached
+        @param cmd command
+        @param par parameter of the type DT_INT
+        @return returned packet or <code>null</code> if something went wrong */
     public Rpacket request(int cmd, int par) {
 	try {
 	    byte[] rq=new byte[8];
