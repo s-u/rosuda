@@ -74,6 +74,7 @@ public class PlotManager {
     
     public void update(int layer) {
 	if (layer>-1) c.setUpdateRoot(layer);
+        else c.setUpdateRoot(c.layers-1);
         c.repaint();
     }
 
