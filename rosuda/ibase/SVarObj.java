@@ -29,6 +29,9 @@ public class SVarObj extends SVar
 
     int[] ranks=null;
 
+    /** if set to <code>true</code> then modification methods don't fire events */
+    boolean muteNotify=false;
+    
     /** construct new variable and add first element
 	@param Name variable name
 	@param iscat <code>true</code> if categorial variable
@@ -101,7 +104,7 @@ public class SVarObj extends SVar
                 sortCategories();
             }
 	}
-        NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
+        if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     }
 
     /** sort categories by specifeid method
@@ -161,7 +164,7 @@ public class SVarObj extends SVar
     /** define the variable explicitely as non-categorial (drop category list) */
     public void dropCat() {
 	cats=null; ccnts=null; cat=false;
-        NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
+        if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarTypeChange));
     }
 
     public void setCategorical(boolean nc) {
@@ -210,29 +213,40 @@ public class SVarObj extends SVar
             }
 	}
        	cont.addElement(o); // we don't add the element unless we're through all checks etc.
-        NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
+        if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
 	return true;
     }
 
 
-    /* added 28.12.03 MH */
-    /** insets an empty case to var*/
+    /* added 28.12.03 MH; updated to support non-empty contents (19.1.04 SU) */
+    /** inserts a case to var at any index */
     public boolean insert(Object o, int index) {
-        if (o != null) ; //replace (o,index);
+        if (o != null) { // this is rather tricky, but we don't want to repeat add the stuff "add" does... but it's not thread-safe, so watch out
+            int insp=size();
+            boolean savedMuteNotify=muteNotify;
+            muteNotify=true;
+            if (!add(o)) { muteNotify=savedMuteNotify; return false; }
+            cont.insertElementAt(o,index);
+            cont.removeElementAt(insp);
+            muteNotify=savedMuteNotify;
+            if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
+            return true;
+        }
         if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
         missingCount++;
         cont.insertElementAt(null,index);
-        NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
+        if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
         return true;
     }
 
     /* added 28.12.03 MH */
     /** remove a case, if it's an NA do missingcount--, what i do not is updating cats*/
-    public boolean remove(Object o, int index) {
-      if (o == null && missingCount > -1) missingCount--;
-      cont.removeElementAt(index);
-      this.categorize(true);
-      return true;
+    public boolean remove(int index) {
+        Object o=at(index);
+        if (o == null && missingCount > -1) missingCount--;
+        cont.removeElementAt(index);
+        if (cats!=null) this.categorize(true);
+        return true;
     }
 
     /** replaces an element at specified position - use with care!.
@@ -261,7 +275,7 @@ public class SVarObj extends SVar
         }
       }
       cont.setElementAt(o, i); // we don't modify the element unless we're through all checks etc.
-      NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
+      if (!muteNotify) NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
       if (cat) this.categorize(true);
       return true;
     }
