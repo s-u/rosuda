@@ -260,7 +260,7 @@ public class Barchart extends DragBox implements ActionListener {
 
         for( int i = 0;i < rects.size(); i++) {
           MyRect r = (MyRect)rects.elementAt(i);
-          if ( r.contains( e.getX(), e.getY() )) {
+          if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
             return Util.info2Html(r.getLabel());
           }
         }
