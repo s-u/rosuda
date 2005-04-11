@@ -67,6 +67,8 @@ public class Barchart extends DragBox implements ActionListener {
     this.enableEvents(AWTEvent.KEY_EVENT_MASK);
     this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     this.requestFocus();
+
+    sb.show();
   }
 
   public void addDataListener(DataListener l) {
