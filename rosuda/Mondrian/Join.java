@@ -57,10 +57,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   private JPanel progPanel;
   private JLabel progText;
   private JMenuBar menubar;
-  public JMenu windows;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm;
+  public JMenu windows, help;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc;
   public  JMenuItem ca;
-  private JCheckBoxMenuItem se, ah;
+  private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
   private int thisDataSet  = -1;
@@ -202,6 +202,16 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
 
     windows.addSeparator();
 
+    help = (JMenu) menubar.add(new JMenu("Help"));
+
+    help.add(rc = new JMenuItem("Reference Card"));
+    rc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    rc.setEnabled(true);
+
+    help.add(ih = new JCheckBoxMenuItem("Interactive Help"));
+    ih.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    ih.setEnabled(false);
+    
     this.setJMenuBar(menubar);                 // Add it to the frame.
     
     Icon MondrianIcon = new ImageIcon(readGif("Logo.gif"));    
@@ -330,6 +340,9 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     c.addActionListener(new ActionListener() {     // Close this window.
       public void actionPerformed(ActionEvent e) { close(); }
     });
+    rc.addActionListener(new ActionListener() {     // Show reference card window.
+      public void actionPerformed(ActionEvent e) { refCard(); }
+    });
     
     // Another event listener, this one to handle window close requests.
     this.addWindowListener(new WindowAdapter() {
@@ -443,6 +456,28 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       ((MFrame)((DragBox)Plots.elementAt(i)).frame).close();
       Plots.removeElementAt(i);
     }
+  }
+
+  public void refCard() {
+    final MFrame refCardf = new MFrame(this);
+
+    Icon RefIcon = new ImageIcon(readGif("ReferenceCard.gif"));
+
+    JLabel RefLabel = new JLabel(RefIcon);
+    JScrollPane refScrollPane = new JScrollPane(RefLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    refCardf.getContentPane().add("Center", refScrollPane);
+    refCardf.setTitle("Mondrian - Reference Card");
+    refCardf.setResizable(false);
+    refCardf.pack();
+    refCardf.setLocation((Toolkit.getDefaultToolkit().getScreenSize()).width - refCardf.getWidth(), 0);
+    refCardf.show();
+
+    refCardf.addWindowListener(new WindowAdapter() {
+      public void windowClosing(WindowEvent e) { refCardf.dispose(); }
+    });
+    refCardf.addKeyListener(new KeyAdapter() {
+      public void keyPressed(KeyEvent e) { if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_W ) refCardf.dispose(); }
+    });
   }
 
   public void switchSelection() {
