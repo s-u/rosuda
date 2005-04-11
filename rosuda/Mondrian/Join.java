@@ -363,7 +363,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0f", 250, 280);
+    g.drawString("RC1.0g", 250, 280);
 
     mondrianRunning = true;
 
