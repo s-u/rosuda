@@ -158,7 +158,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 		 public Component getListCellRendererComponent(JList list,Object value,int index,boolean isSelected,boolean cellHasFocus) {
 	         setText(value.toString());
 			 if (current.indexOf(value.toString()) > -1) {
-		         setBackground(isSelected ? Color.blue : Color.green);
+		         setBackground(isSelected ? Color.blue : Color.lightgray);
 		         setForeground(isSelected ? Color.green : Color.black);
 			 }
 			 else {
