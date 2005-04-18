@@ -388,7 +388,9 @@ public class JGR {
 	
 	private void checkForMissingPkg() {
 		String previous = JGRPrefs.previousPackages;
-		StringTokenizer st = new StringTokenizer(RController.getCurrentPackages(),",");
+		String current = RController.getCurrentPackages();
+		if (current == null) return;
+		StringTokenizer st = new StringTokenizer(current,",");
 		while (st.hasMoreTokens()) {
 			previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
 		}
