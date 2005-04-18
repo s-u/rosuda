@@ -159,7 +159,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 	         setText(value.toString());
 			 if (current.indexOf(value.toString()) > -1) {
 		         setBackground(isSelected ? Color.blue : Color.lightGray);
-		         setForeground(isSelected ? Color.green : Color.black);
+		         setForeground(isSelected ? Color.lightGray : Color.black);
 			 }
 			 else {
 				 setBackground(isSelected ? Color.blue : Color.white);
