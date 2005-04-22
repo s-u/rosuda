@@ -618,6 +618,7 @@ public class Histogram extends DragBox implements ActionListener {
             JMenuItem homeView  = new JMenuItem("Home View");
             homeView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             homeView.setActionCommand("home");
+            homeView.addActionListener(this);
             mode.add(homeView);
             
             mode.add(new JMenuItem("Dismiss"));
@@ -645,6 +646,7 @@ public class Histogram extends DragBox implements ActionListener {
         Update();
       } else if( command.equals("home") ) {
         home();
+        Update();
       } else if( command.equals("Density") ) {
         if( ((MFrame)frame).hasR() ) {
           densityMode = !densityMode;
