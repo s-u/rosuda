@@ -1,15 +1,17 @@
 
 //
 // A drag box - for my good friend Marvin.
-//
+//im
 
 import java.awt.*;
 import java.awt.print.*;
 import java.awt.event.*;
+import java.awt.datatransfer.*;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.Enumeration;
 import javax.swing.*;
+import org.rosuda.util.*;
 
 public
 abstract class DragBox
@@ -18,7 +20,6 @@ extends JPanel
 implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener, Printable
 
 {
-
   static Color hiliteColor = new Color(180, 96, 135);
   //  static Color hiliteColor = Color.green;
 
@@ -267,7 +268,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
     public DragBox(JFrame frame) {
 
-        this.frame = frame;
+      this.frame = frame;
 
       ToolTipManager.sharedInstance().registerComponent(this);
       ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
@@ -955,14 +956,16 @@ System.out.println("Mouse Action to check: "+mouse);
       if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_W ) {
         ((MFrame)frame).close();
       }
+      if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_C ) {
+        ImageSelection.copyComponent(this,false,true);
+      }
     }
-
+    
     public void keyPressed(KeyEvent e) {      System.out.println("Key typed");
     }
 
     public void keyReleased(KeyEvent e) {      System.out.println("Key typed");
     }
-
 
     public int determineAction(Rectangle r, Point p) {
 
