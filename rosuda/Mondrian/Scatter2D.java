@@ -39,8 +39,6 @@ public class Scatter2D extends DragBox {
   private String modeString = "bins";
   private String smoothF = "none";
   private int smoother = 5;
-  private boolean plotLines = false;
-  private boolean plotLoess = false;
   private boolean connectLines = false;
   private int lastPointId = -1;
   private int byVar = -1;
@@ -146,6 +144,15 @@ public class Scatter2D extends DragBox {
 
   public String getToolTipText(MouseEvent e) {
     if( e.isControlDown() ) {
+      if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
+        String x = data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(coeffs[1], 4)+" + "+Stat.roundToString(coeffs[0], 4);
+        x = x + "\n"+"R^2: "+Stat.roundToString(100*coeffs[2], 1);
+        return Util.info2Html(x);
+      } else if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * selCoeffs[1] + selCoeffs[0]) - e.getY() ) < 4 ) {
+        String x = data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(selCoeffs[1], 4)+" + "+Stat.roundToString(selCoeffs[0], 4);
+        x = x + "\n"+"R^2: "+Stat.roundToString(100*selCoeffs[2], 1);
+        return Util.info2Html(x);
+      }
       if( modeString.equals("points") ) {
         int minDist = 5000;
         int minId=0;
@@ -155,7 +162,7 @@ public class Scatter2D extends DragBox {
         int minIds[] = new int[maxOverplot];
         for( int i=0; i<data.n; i++ ) {
           int dist = (int)Math.pow( Math.pow(userToWorldX( xVal[i] )-e.getX(), 2)
-                                  + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
+                                    + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
           if( dist < minDist ) {
             minDist = dist;
             minIds[minCount=0] = i;
@@ -225,8 +232,8 @@ public class Scatter2D extends DragBox {
                     if( ((i+1) % 3) == 0 )
                       x = x + "\n : ";
                   }
-                x = x + Names[Names.length-1]+"} ";
-              }
+                    x = x + Names[Names.length-1]+"} ";
+                }
               else
                 x = x + "\n" + data.getName(selectedIds[sel])+": " + " ["+Mins[sel]+", "+Maxs[sel]+"] ";
             }
@@ -243,10 +250,10 @@ public class Scatter2D extends DragBox {
         }
         return null;
       }
-    } else
+    }  else
       return null;
   }
-
+    
 
       public void processMouseEvent(MouseEvent e) {
                 
@@ -324,8 +331,8 @@ public class Scatter2D extends DragBox {
             for( int i = 0;i < rects.size(); i++) {
               MyRect r = (MyRect)rects.elementAt(i);
               if ( r.contains( e.getX(), e.getY() )) {
-                System.out.println(">>>>>>>>> hit at : "+i);
-                System.out.println("testing: "+i+"  "+e.getX()+"  "+e.getY()+"  "+r.x+"  "+r.y+"  "+r.w+"  "+r.h);
+//                System.out.println(">>>>>>>>> hit at : "+i);
+//                System.out.println("testing: "+i+"  "+e.getX()+"  "+e.getY()+"  "+r.x+"  "+r.y+"  "+r.w+"  "+r.h);
                 info = true;
                 r.pop(this, e.getX(), e.getY());
                 r.draw(this.getGraphics());
@@ -333,7 +340,7 @@ public class Scatter2D extends DragBox {
             }
           }
           if( !info ) {
-            if( plotLines && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
+            if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
               //System.out.println(data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+coeffs[1]+" + "+coeffs[0]);
               JPopupMenu line = new JPopupMenu();
               JMenuItem formula = new JMenuItem(data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(coeffs[1], 4)+" + "+Stat.roundToString(coeffs[0], 4));
@@ -341,7 +348,7 @@ public class Scatter2D extends DragBox {
               JMenuItem r2 = new JMenuItem("R^2: "+Stat.roundToString(100*coeffs[2], 1));
               line.add(r2);
               line.show(e.getComponent(), e.getX(), e.getY());
-            } else if( plotLines && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * selCoeffs[1] + selCoeffs[0]) - e.getY() ) < 4 ) {
+            } else if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * selCoeffs[1] + selCoeffs[0]) - e.getY() ) < 4 ) {
               JPopupMenu line = new JPopupMenu();
               JMenuItem formula = new JMenuItem(data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(selCoeffs[1], 4)+" + "+Stat.roundToString(selCoeffs[0], 4));
               line.add(formula);
@@ -435,23 +442,6 @@ public class Scatter2D extends DragBox {
               }
               
               mode.add(smoothers);
-              
-              JMenu conlines = new JMenu("add lines by");
-              JCheckBoxMenuItem off = new JCheckBoxMenuItem("no lines");
-              conlines.add(off);
-              off.setActionCommand("nobyvar");
-              if( byVar < 0 )
-                off.setSelected(true);                    
-              off.addActionListener(this);                  
-              for(int i=0; i<data.k; i++) {
-                JCheckBoxMenuItem item = new JCheckBoxMenuItem(data.getName(i));
-                conlines.add(item);
-                item.setActionCommand("byvar"+i);
-                item.addActionListener(this);
-                if( i == byVar )
-                  item.setSelected(true);
-              }
-              mode.add(conlines);
 
               JMenu disMode = new JMenu("Mode");
               if( modeString.equals("bins") ) {
@@ -479,6 +469,23 @@ public class Scatter2D extends DragBox {
               invert.setActionCommand("invert");
               invert.addActionListener(this);
 
+              JMenu conlines = new JMenu("add lines by");
+              JCheckBoxMenuItem off = new JCheckBoxMenuItem("no lines");
+              conlines.add(off);
+              off.setActionCommand("nobyvar");
+              if( byVar < 0 )
+                off.setSelected(true);                    
+              off.addActionListener(this);                  
+              for(int i=0; i<data.k; i++) {
+                JCheckBoxMenuItem item = new JCheckBoxMenuItem(data.getName(i));
+                conlines.add(item);
+                item.setActionCommand("byvar"+i);
+                item.addActionListener(this);
+                if( i == byVar )
+                  item.setSelected(true);
+              }
+              mode.add(conlines);
+              
               mode.add(new JMenuItem("dismiss"));
 
               mode.show(e.getComponent(), e.getX(), e.getY());
