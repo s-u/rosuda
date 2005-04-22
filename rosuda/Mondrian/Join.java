@@ -58,7 +58,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows, help;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc, oh;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
@@ -73,12 +73,6 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
 
     MRJApplicationUtils.registerOpenDocumentHandler ( this );
     
-    try
-    {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName() );
-    }
-    catch (Exception e) { }
-
     hasR = Srs.checkLocalRserve();
     
     System.out.println("Starting RServe ... "+hasR);
@@ -211,7 +205,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     help.add(ih = new JCheckBoxMenuItem("Interactive Help"));
     ih.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     ih.setEnabled(false);
-    
+
+    help.add(oh = new JMenuItem("Online Help"));
+    oh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Event.SHIFT_MASK | Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    oh.setEnabled(true);
+
     this.setJMenuBar(menubar);                 // Add it to the frame.
     
     Icon MondrianIcon = new ImageIcon(readGif("Logo.gif"));    
@@ -343,8 +341,12 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     rc.addActionListener(new ActionListener() {     // Show reference card window.
       public void actionPerformed(ActionEvent e) { refCard(); }
     });
+    oh.addActionListener(new ActionListener() {     // Show Mondrian Webpage.
+      public void actionPerformed(ActionEvent e) { onlineHelp(); }
+    });
     
     // Another event listener, this one to handle window close requests.
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     this.addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent e) { close(); }
     });
@@ -363,12 +365,17 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0g", 250, 280);
+    g.drawString("RC1.0h", 250, 280);
 
     mondrianRunning = true;
 
-    if( !hasR )
-      JOptionPane.showMessageDialog(this, "Connection to R failed:\nSome functions might be missing!\n\nPlease check installation of R and  Rserve\nor try starting Rserve manually ...","Rserve Error",JOptionPane.ERROR_MESSAGE);
+    if( !hasR ) {
+//      JOptionPane.showMessageDialog(this, "Connection to R failed:\nSome functions might be missing!\n\nPlease check installation of R and  Rserve\nor try starting Rserve manually ...","Rserve Error",JOptionPane.WARNING_MESSAGE);
+      g.setColor(Color.white);
+      g.fillRect(9,270,200,10);
+      g.setColor(Color.red);
+      g.drawString("Connection to R failed: Please check Rserve", 9, 280);
+    }
     
     if( load )
       if( loadDB )
@@ -431,24 +438,17 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       return;
     }
     
-    String message="";
-    if( num_windows > 1 )
-      message = "Close dataset \""+((dataSet)dataSets.elementAt(thisDataSet)).setName+"\" and\n all corresponding plots?";
-    else if (num_windows == 1)
-      message = "Close dataset \""+((dataSet)dataSets.elementAt(thisDataSet)).setName+"\" and\nquit Mondrian?";
-    // Modal dialog with yes/no button
+    String message = "Close dataset \""+((dataSet)dataSets.elementAt(thisDataSet)).setName+"\" and\n all corresponding plots?";
+
     int answer = JOptionPane.showConfirmDialog(this, message);
     if (answer == JOptionPane.YES_OPTION) {
       num_windows--;
       for( int i=Plots.size()-1; i>=0; i-- )
         ((MFrame)((DragBox)Plots.elementAt(i)).frame).close();
       this.dispose();
-      if (num_windows == 0) {
-        System.exit(0);
-      }
-    } else if (answer == JOptionPane.NO_OPTION) {
-      // User clicked NO.
-    }
+      if (num_windows == 0)
+        new Join( dataSets, false , false, null);
+    } 
   }
 
   public void closeAll() {
@@ -478,6 +478,21 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     refCardf.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) { if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_W ) refCardf.dispose(); }
     });
+  }
+
+  public void onlineHelp() {
+
+    try {
+      if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
+        Runtime.getRuntime().exec("open http://www.rosuda.org/Mondrian");
+      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 )
+        Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler http://www.rosuda.org/Mondrian");
+      else
+        Runtime.getRuntime().exec("firefox http://www.rosuda.org/Mondrian");
+    }
+    catch (Exception e) {
+      System.out.println("Can't start browser!");
+    }
   }
 
   public void switchSelection() {
