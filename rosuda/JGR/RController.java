@@ -91,7 +91,7 @@ public class RController {
      * @return installed packages
      */
     public static String[] getDefaultPackages() {
-        REXP x = JGR.R.eval("");
+        REXP x = JGR.R.eval("getOption(\"defaultPackages\")");
         if (x != null && x.asStringArray()!=null) return x.asStringArray();
         return new String[] {};
     }
