@@ -79,7 +79,7 @@ FocusListener, RMainLoopCallbacks {
             "+", "Packages", "Package Manager", "packagemgr",
             "+","Workspace","Load Workspace","openwsp","Save Workspace", "savewsp", "Save Workspace as", "saveaswsp","Clear Workspace", "clearwsp", 
             "~Window",
-            "~Help","R Help","help","Update JGR","update","~About", "0"};
+            "~Help","R Help","help",/*"Update JGR","update",*/"~About", "0"};
         iMenu.getMenu(this, this, Menu);
 
         //Add History if we didn't found one in the user's home directory
