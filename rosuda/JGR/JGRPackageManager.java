@@ -120,7 +120,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.getRootPane().setDefaultButton(instnow);
 		this.setLocation((JGR.MAINRCONSOLE.getSize().width-(JGRPrefs.isMac?450:350))/2,(JGR.MAINRCONSOLE.getSize().height-250)/2);		
-		this.setSize((JGRPrefs.isMac?450:350),250);
+		this.setSize(450,250);
         this.setResizable(false);
 		this.setVisible(true);
 	}
