@@ -216,11 +216,11 @@ public class JGR {
 				JOptionPane.QUESTION_MESSAGE);
 
 		if (exit == 0) {
-			JGRPrefs.writeCurrentPackages();
 			writeHistory();
+			JGRPrefs.writeCurrentPackagesWhenExit();
 			return "y\n";
 		} else if (exit == 1) {
-			JGRPrefs.writeCurrentPackages();
+			JGRPrefs.writeCurrentPackagesWhenExit();
 			return "n\n";
 		}
 		else

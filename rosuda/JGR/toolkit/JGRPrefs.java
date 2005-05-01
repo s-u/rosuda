@@ -25,7 +25,7 @@ import java.util.prefs.Preferences;
 public class JGRPrefs {
 
 	/** Preference version */
-	public static final int prefsVersion = 0x0110; // version 1.1
+	public static final int prefsVersion = 0x0102; // version 1.2
 
 	/** Debuglevel */
     public static final int DEBUG = 0;
@@ -209,7 +209,7 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);
         prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
-		prefs.put("PreviousPackages",RController.getCurrentPackages());
+		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
             for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)
@@ -229,13 +229,11 @@ public class JGRPrefs {
         }
     }
 	
-	public static void writeCurrentPackages() {
-        Preferences prefs = Preferences.userNodeForPackage(org.rosuda.JGR.JGR.class);
-		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
-        try {
-            prefs.exportNode(new FileOutputStream(System.getProperty("user.home")+File.separator+".JGRprefsrc"));
-        } catch (IOException e) {
-        } catch (BackingStoreException e) {
-        }
+	/**
+	 * Save missing packages if the user likes to be reminded.
+	 */
+	public static void writeCurrentPackagesWhenExit() {
+		readPrefs();
+		writePrefs(false);
     }
 }
