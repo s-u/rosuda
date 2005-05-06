@@ -143,6 +143,7 @@ public class Map extends DragBox {
         recMatch[j] = true;
       } else {
         P.Id = -1;
+        match[i] = -1;
         System.out.println("Polygon "+P.Id+" not matched by any Record!");
       }
     }
@@ -181,7 +182,7 @@ public class Map extends DragBox {
         data.setSelection(match[i],1,mode);
       }
       else
-        if( !mapSelect[match[i]] )
+        if( match[i]> -1 && !mapSelect[match[i]] )
           data.setSelection(match[i],0,mode);
       //System.out.println("Multiple: "+i);
     }
@@ -310,8 +311,11 @@ public class Map extends DragBox {
                     infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
                       +data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[match[i]]);
                 } else
-                  infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
-                    +(data.getRawNumbers(selectedIds[sel]))[match[i]];
+                  if( match[i]> -1 )
+                    infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
+                      +(data.getRawNumbers(selectedIds[sel]))[match[i]];
+                  else
+                    return null;
               }
               // Tooltip Stuff
               if( !p.getLabel().equals("") )
@@ -375,7 +379,7 @@ public class Map extends DragBox {
 //      long start = new Date().getTime();
       for( int i=0; i<polys.size(); i++) {
         MyPoly p = (MyPoly)smallPolys.elementAt(i);
-        if( selection[match[i]] > 0 ) {
+        if( match[i]> -1 && selection[match[i]] > 0 ) {
           p.setHilite( selection[match[i]] );
           p.draw(tbg, drawBorder);
         }
@@ -438,20 +442,27 @@ public class Map extends DragBox {
         p.transform(shiftx, shifty, scalex, scaley);
         p.translate(border, border);
         if( displayVar < 0 )
-          p.setColor(Color.lightGray);
-        else {
-          float intensity;
-          if( !rank || data.categorical(displayVar) )
-            if( inverted )
-              intensity = (float)(1-(shade[match[i]]-min)/(max-min));
-            else
-              intensity = (float)(1-(shade[match[i]]-max)/(min-max));
+          if( p.Id > -1 )
+            p.setColor(Color.lightGray);
           else
-            if( inverted )
-              intensity = (float)(1-(shadeI[match[i]]-min)/(max-min));
+            p.setColor(MFrame.backgroundColor);
+        else {
+          float intensity=0;
+          if( match[i] > -1 ) {
+            if( !rank || data.categorical(displayVar) )
+              if( inverted )
+                intensity = (float)(1-(shade[match[i]]-min)/(max-min));
+              else
+                intensity = (float)(1-(shade[match[i]]-max)/(min-max));
             else
-              intensity = (float)(1-(shadeI[match[i]]-max)/(min-max));
-          if( scheme.equals("gray") )
+              if( inverted )
+                intensity = (float)(1-(shadeI[match[i]]-min)/(max-min));
+              else
+                intensity = (float)(1-(shadeI[match[i]]-max)/(min-max));
+          }   
+          if(p.Id == -1)
+              p.setColor(MFrame.backgroundColor);
+          else if( scheme.equals("gray") )
             p.setColor(new Color(1-intensity, 1-intensity, 1-intensity));                // gray
           else if( scheme.equals("blue to red") )
             p.setColor(new Color(intensity, 0, 1-intensity));											// blue to red
@@ -466,7 +477,7 @@ public class Map extends DragBox {
         }
         smallPolys.addElement(p);
         for( int j=0; j<data.k; j++ )
-          if( data.getName(j).toLowerCase().indexOf("name") >= 0 )
+          if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 )
             p.setLabel(data.getLevelName(j, (data.getNumbers(j))[match[i]]));
       }
 
