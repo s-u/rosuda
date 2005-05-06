@@ -33,6 +33,7 @@ import javax.swing.text.*;
 import javax.swing.border.*;
 import org.rosuda.JRclient.*;
 import com.apple.mrj.*;
+import java.text.*;
 
 /**
 */
@@ -284,10 +285,20 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         public void actionPerformed(ActionEvent e) {
           test();
         }
-      }); 
+      });
     o.addActionListener(new ActionListener() {     // Load a dataset
       public void actionPerformed(ActionEvent e) {
         loadDataSet(false, null);
+      }
+    });
+    s.addActionListener(new ActionListener() {     // Save the current dataset
+      public void actionPerformed(ActionEvent e) {
+        Save(false);
+      }
+    });
+    ss.addActionListener(new ActionListener() {     // Save the current selection
+      public void actionPerformed(ActionEvent e) {
+        Save(true);
       }
     });
     od.addActionListener(new ActionListener() {     // Load a database
@@ -638,7 +649,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
     String Display = nom+"/"+denom+" ("+Stat.roundToString(100F*nom/denom,2)+"%)";
     progText.setText(Display);
-    progBar.setValue(nom);   
+    progBar.setValue(nom);
+    if( nom > 0 )
+      ss.setEnabled(true);
+    else
+      ss.setEnabled(false);
   }
   
   public void dataChanged(int id) {
@@ -651,6 +666,71 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       else
         Plots.removeElementAt(i);
   }
+
+  public void Save(boolean selection) {
+    FileDialog f;
+    if( selection )
+      f = new FileDialog(this, "Save Selection", FileDialog.SAVE);
+    else
+      f = new FileDialog(this, "Save Data", FileDialog.SAVE);
+    f.show();
+    if (f.getFile() != null )
+      saveDataSet(f.getDirectory() + f.getFile(), selection);
+  }
+
+  public boolean saveDataSet(String file, boolean selection) {
+    try {
+      int k=((dataSet)dataSets.elementAt(thisDataSet)).k;
+      int n=((dataSet)dataSets.elementAt(thisDataSet)).n;
+      
+      FileWriter fw = new FileWriter( file );
+
+      double[][] dataCopy = new double[k][n];
+      dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
+      double[] selected = data.getSelection();
+      for( int j=0; j<k; j++ ) {
+        if( data.categorical(j) && !data.alpha(j) )
+          dataCopy[j] = data.getRawNumbers(j);
+        else
+          dataCopy[j] = data.getNumbers(j);
+      }
+
+      String line="";
+      NumberFormat nf = NumberFormat.getNumberInstance(new Locale("en", "US"));
+      DecimalFormat df = (DecimalFormat)nf;
+      df.applyPattern("#.#################"); 
+
+      boolean first = true;
+      for( int j=0; j<k; j++)
+        if( (varNames.getSelectedIndices().length == 0) || varNames.isSelectedIndex(j) ) {
+          line += (first?"":"\t") + data.getName(j);
+          first = false;
+        }
+      fw.write(line+"\r");
+        
+      for( int i=0; i<n; i++) {
+        if( !selection || (selection && selected[i]>0 ) ) {
+          line="";
+          first = true;
+          for( int j=0; j<k; j++)
+            if( (varNames.getSelectedIndices().length == 0) || varNames.isSelectedIndex(j) ) {
+              if( data.categorical(j) )
+                line += (first?"":"\t") + data.getLevelName(j,  dataCopy[j][i]);
+              else
+                line += (first?"":"\t") + df.format(dataCopy[j][i]);
+              first = false;
+            }
+          fw.write(line+(i==(n-1)?"":"\r"));
+        }
+      }
+      fw.close();
+      
+    } catch (Exception ex) {
+      System.out.println("Error writing to file: "+ex);
+      return false;
+    }
+    return true;
+  }
   
   public void loadDataSet(boolean isDB, File file) {
     if( thisDataSet == -1 ) {
@@ -662,6 +742,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
           setVarList();
           this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
           c.setEnabled(true);
+          s.setEnabled(true);
 
           int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
           int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
