@@ -106,6 +106,11 @@ public class Rengine extends Thread {
         // we don't really "add", we just replace ... (so far)
         callback = c;
     }
+
+    /** if Rengine was initialized with runMainLoop=false then this method can be used to start the main loop at a later point. It has no effect if the loop is running already. This method returns immediately but the loop will be started once the engine is ready. */
+    public void startMainLoop() {
+	runLoop=true;
+    }
     
     //============ R callback methods =========
 
