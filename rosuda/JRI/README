@@ -1,0 +1,56 @@
+ JRI - Java/R Interface
+------------------------
+
+This package contains code that is necessary to run
+R as a single thread of a Java application. It provides
+callback that make it possible to run R in REPL mode
+thus giving the Java application full access to the
+console.
+
+Currently the API is very, very low-level, comparable
+to the C level interface to R. Convenience methods for
+mid to high-level are planned, but not implemented yet.
+
+For R-to-Java interface, use rJava package which
+integrates fine with JRI. rJava hooks into the same
+JVM, so both are opertaing in the same environment.
+
+Java to R: JRI
+R to Java: rJava
+
+ How to compile
+----------------
+
+1) Edit "Makefile" and uncomment the correct line for
+   your platform. Currently Linux, Max OS X and Windows
+   are supported. For other platforms take the Linux
+   Makefile as a basis and edit appropriately.
+2) Edit the paths in your platform-specific Makefile
+   to reflect the location of Java and R (not needed
+   for Mac OS X)
+3) make
+
+Note for Windows users: you will need the same tools
+that are necessary to build R, i.e. the /bin tools
+and MinGW. See R for details.
+
+ How to use JRI
+----------------
+
+There are two Java examples in the JRI directory:
+
+rtest.java   - demonstrates the use of the low-level
+               interface to construct and retrieve
+               complex R objects. It also demonstrates
+               how to setup callbacks for handling of
+               the console.
+rtest2.java  - a very simple console using stdin as input
+               and a TextField for output.
+
+On unix the examples can be run using run and run2
+On Windows the first example can be run using run.bat,
+how to run the other example is left as an excercise
+to the user ;).
+
+---
+04/2005 S.U.
