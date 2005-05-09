@@ -3,8 +3,12 @@
 
 RHOME=/usr/local/lib/R
 JAVAHOME=/usr/local/java
-PLATFORM=amd64/server
 
+# the follwing is ok for Sun Java on x86
+# it defines the subdirectory of the jvm library
+PLATFORM=i386/client
+
+# usually you don't need to edit the following except for other unices
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/linux
 JNISO=.so
 JNILD=-shared -L$(JAVAHOME)/jre/lib/$(PLATFORM) -ljvm
