@@ -103,12 +103,18 @@ int initR(int argc, char **argv) {
 #include <windows.h>
 #include <winreg.h>
 #include <stdio.h>
-#include <config.h>
 #include "Rversion.h"
+#if R_VERSION < R_Version(2,1,0)
+#include <config.h>
 #include "Startup.h"
+#else
+/* since 2.1.0 we don't need R sources */
+#include "R_ext/RStartup.h"
+#endif
 
 /* for signal-handling code */
-#include "psignal.h"
+/* #include "psignal.h" - it's not included, so just get SIGBREAK */
+#define	SIGBREAK 21	/* to readers pgrp upon background tty read */
 
 /* one way to allow user interrupts: called in ProcessEvents */
 #ifdef _MSC_VER
@@ -223,7 +229,7 @@ int initR(int argc, char **argv)
     Rp->ReadConsole = Re_ReadConsole;
     Rp->WriteConsole = Re_WriteConsole;
 
-#if R_VERSION > 0x20001
+#if R_VERSION >= R_Version(2,1,0)
     Rp->Busy = Re_Busy;
     Rp->ShowMessage = Re_ShowMessage;
     Rp->YesNoCancel = myYesNoCancel;
@@ -239,7 +245,7 @@ int initR(int argc, char **argv)
     Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
     Rp->SaveAction = SA_SAVEASK;
-#if R_VERSION < 0x200
+#if R_VERSION < R_Version(2,0,0)
     Rp->CommandLineArgs = argv;
     Rp->NumCommandLineArgs = argc;
 #else

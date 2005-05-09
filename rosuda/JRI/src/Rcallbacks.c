@@ -12,7 +12,7 @@
 
 
 #ifdef Win32
-#include <Startup.h>
+#include <R_ext/RStartup.h>
 #else
 /* from Defn.h */
 extern Rboolean R_Interactive;   /* TRUE during interactive use*/
