@@ -53,17 +53,19 @@ class TextConsole implements RMainLoopCallbacks
 
 public class rtest {
     public static void main(String[] args) {
-        System.out.println("Press <Enter> to continue (time to attach the debugger if necessary)");
-        try { System.in.read(); } catch(Exception e) {};
         System.out.println("Creating Rengine (with arguments)");
-	Rengine re=new Rengine(args, true, new TextConsole());
+	// 1) we pass the arguments from the command line
+	// 2) we won't use the main loop at first, we'll start it later
+	// 3) the callbacks are implemented by the TextConsole class above
+	Rengine re=new Rengine(args, false, new TextConsole());
         System.out.println("Rengine created, waiting for R");
+	// the engine creates R is a new thread, so we should wait until it's ready
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
             return;
         }
 
-        // simple assignment (env=0 means use R_GlobalEnv)
+        // simple assignment like a<-"hello" (env=0 means use R_GlobalEnv)
         long xp1 = re.rniPutString("hello");
         re.rniAssign("a", xp1, 0);
 
@@ -73,7 +75,7 @@ public class rtest {
         long xp3 = re.rniPutDoubleArray(da);
         long xp4 = re.rniPutDoubleArray(db);
         
-        // now build a list
+        // now build a list (generic vector is how that's called in R)
         long la[] = {xp3, xp4};
         long xp5 = re.rniPutVector(la);
 
@@ -152,16 +154,11 @@ public class rtest {
 
         re.eval("print(1:10/3)");
         
-        if (false) {
-            re.eval("X11()");
-            re.eval("plot(rnorm(1000))");
-            re.eval("x<-rnorm(100000)");
-            re.eval("y<-rnorm(100000)");
-            re.eval("for(i in 1:10) lm(y~x,subset=sample(100000,10000))");
-        }
-	
 	if (true) {
+	    // so far we used R as a computational slave without REPL
+	    // now we start the loop, so the user can use the console
 	    System.out.println("Now the console is yours ... have fun");
+	    re.startMainLoop();
 	} else {
 	    re.end();
 	    System.out.println("end");
