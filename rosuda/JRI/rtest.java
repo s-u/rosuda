@@ -1,9 +1,6 @@
-package org.rosuda.JRI;
-
 import java.io.*;
 
 import java.awt.*;
-import javax.swing.*;
 
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
@@ -11,20 +8,8 @@ import org.rosuda.JRI.RMainLoopCallbacks;
 
 class TextConsole implements RMainLoopCallbacks
 {
-	JFrame f;
-	
-    public JTextArea textarea = new JTextArea();
-
-    public TextConsole() {
-        f = new JFrame();
-        f.getContentPane().add(new JScrollPane(textarea));
-        f.setSize(new Dimension(800,600));
-        f.show();
-    }
-
     public void rWriteConsole(Rengine re, String text) {
-        textarea.append(text);
-        //System.out.print(text);
+        System.out.print(text);
     }
     
     public void rBusy(Rengine re, int which) {
@@ -47,23 +32,23 @@ class TextConsole implements RMainLoopCallbacks
         System.out.println("rShowMessage \""+message+"\"");
     }
 	
-	public String rChooseFile(Rengine re, int newFile) {
-		FileDialog fd = new FileDialog(f, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE);
-		fd.show();
-		String res=null;
-		if (fd.getDirectory()!=null) res=fd.getDirectory();
-		if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
-		return res;
-	}
-	
+    public String rChooseFile(Rengine re, int newFile) {
+	FileDialog fd = new FileDialog(new Frame(), (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE);
+	fd.show();
+	String res=null;
+	if (fd.getDirectory()!=null) res=fd.getDirectory();
+	if (fd.getFile()!=null) res=(res==null)?fd.getFile():(res+fd.getFile());
+	return res;
+    }
+    
     public void   rFlushConsole (Rengine re) {
-	}
+    }
 	
     public void   rLoadHistory  (Rengine re, String filename) {
-	}			
-
+    }			
+    
     public void   rSaveHistory  (Rengine re, String filename) {
-	}			
+    }			
 }
 
 public class rtest {
@@ -77,9 +62,6 @@ public class rtest {
             System.out.println("Cannot load R");
             return;
         }
-
-        //java.awt.Frame f=new java.awt.Frame("hello");
-        //f.setVisible(true);
 
         // simple assignment (env=0 means use R_GlobalEnv)
         long xp1 = re.rniPutString("hello");
@@ -111,11 +93,6 @@ public class rtest {
         
         // assign the whole thing to the "b" variable
         re.rniAssign("b", xp5, 0);
-        
-        if (true) {
-            System.out.println("Letting go; use main loop from now on");
-            return;
-        }
         
         {
             System.out.println("Parsing");
@@ -182,12 +159,12 @@ public class rtest {
             re.eval("y<-rnorm(100000)");
             re.eval("for(i in 1:10) lm(y~x,subset=sample(100000,10000))");
         }
-        System.out.println("R is ready, press <Enter> to continue (time to attach the debugger is necessary)");
-        try { System.in.read(); } catch(Exception e2) {};
-
-	//f.dispose();
-
-        re.end();
-        System.out.println("end");
+	
+	if (true) {
+	    System.out.println("Now the console is yours ... have fun");
+	} else {
+	    re.end();
+	    System.out.println("end");
+	}
     }
 }
