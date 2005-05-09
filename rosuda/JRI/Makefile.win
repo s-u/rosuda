@@ -2,12 +2,13 @@
 #
 # ** Change the following two entries to reflect your setup **
 
-JAVAHOME=N:/jdk1.4.2
-RHOME=F:/Programme/R/rw1091
-PLATFORM=i386/client
+# Please use 8.3 names if the full name has spaces!!
+JAVAHOME=C:/jdk1.5.0
+RHOME=C:/Progra~1/R/rw2010
 
 # normally you don't need to change the anything below
 
+PLATFORM=i386/client
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/win32
 JNISO=.dll
 JNILD=-shared -L. -ljvm -L$(RHOME)/src/gnuwin32 -Wl,--kill-at
