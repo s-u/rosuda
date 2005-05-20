@@ -38,7 +38,7 @@ import java.text.*;
 /**
 */
 
-class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler {  
+class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler, MRJQuitHandler {  
   
   /** Remember # of open windows so we can quit when last one is closed */
   protected static int num_windows = 0;
@@ -73,6 +73,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   public Join(Vector dataSets, boolean load, boolean loadDB, File loadFile) {
 
     MRJApplicationUtils.registerOpenDocumentHandler ( this );
+    MRJApplicationUtils.registerQuitHandler(this);
     
     hasR = Srs.checkLocalRserve();
     
@@ -120,9 +121,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     c.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     c.setEnabled(false);
     //    file.add(p = new JMenuItem("Print Window",new JMenuShortcut(KeyEvent.VK_P)));
+    q = new JMenuItem("Quit");
     if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") == -1 ) {
       file.addSeparator();                     // Put a separator in the menu
-      file.add(q = new JMenuItem("Quit"));
+      file.add(q);
       q.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
       q.addActionListener(new ActionListener() {     // Quit the program.
@@ -131,8 +133,8 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
             Rconnection c=new Rconnection();
             c.shutdown();
           } catch (Exception x) {};
-
-          System.exit(0); }
+          System.exit(0); 
+        }
       });
     }
     menubar.add(file);                         // Add to menubar.
@@ -395,6 +397,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         loadDataSet(false, loadFile); 
   }
 
+  public void handleQuit()
+  {	
+    System.exit(0);
+  }
+  
   void showIt() {
     paintAll(this.getGraphics());
   }
