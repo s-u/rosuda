@@ -48,6 +48,9 @@ public class Barchart extends DragBox implements ActionListener {
 
     frame.getContentPane().add(this);
 
+    Font SF = new Font("SansSerif", Font.PLAIN, 11);
+    frame.setFont(SF);
+  
     border = 20;
 
     String titletext;
@@ -58,7 +61,6 @@ public class Barchart extends DragBox implements ActionListener {
 
     frame.setTitle(titletext);
 
-    //    this.setBackground(new Color(255, 255, 152));
     evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
     // We use low-level events, so we must specify
