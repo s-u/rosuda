@@ -873,7 +873,7 @@ System.out.println(newQ.makeQuery());
   class Variable {
     private int catThres = (n>800)?(15 * Math.max(1, (int)(Math.log(n)/Math.log(10))-1)):((int)(1.5*Math.sqrt(n)));
     protected Vector level = new Vector(100, 100);
-    private int dimThres = 17000;
+    private int dimThres = 100000;
     protected String[] levelA = new String[dimThres];
     protected int[] grpSize = new int[dimThres];
     protected int[] permA;

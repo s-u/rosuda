@@ -78,6 +78,9 @@ public class Scatter2D extends DragBox {
     roundY = (int)Math.max(0, 2 - Math.round((Math.log(yMax-yMin)/Math.log(10))));
     
     frame.getContentPane().add(this);
+    
+    Font SF = new Font("SansSerif", Font.PLAIN, 11);
+    frame.setFont(SF);
   }
 
   public void maintainSelection(Selection S) {
@@ -720,7 +723,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
     int pF = 1;
     if( printing )
       pF = printFactor;      
-
+    
     if( displayMode.equals("Fixed") )
       setAspect(1);
     else
@@ -765,12 +768,13 @@ System.out.println(" ........................ by var "+command.substring(5,comma
     }
 
     long start = new Date().getTime();
-    
+        
     if( bg == null || alphaChanged || printing ) {
 
       if( printing ) {
 //        System.out.println("Setting Graphics for Printing");
         bg = g;
+        fg = g;
         tbg = g;
         ttbg = g;
       }
@@ -1109,7 +1113,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
         }
       }
     }
-
+    
     ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
     ttbg.setColor(Color.black);
     if( !printing ) {

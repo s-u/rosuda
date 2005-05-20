@@ -863,7 +863,7 @@ System.out.println("Command: "+command);
         slotMax = 1000000;
       else
         slotMax = 40;
-
+      
       if( oldWidth != size.width || oldHeight != size.height || hotSelection || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
 
@@ -957,7 +957,7 @@ System.out.println("Command: "+command);
             ((MyRect)(rects.elementAt(i))).draw(bg);
         }
       }
-      
+
       long start = new Date().getTime();
       Graphics tbg, ttbg;
       if( !printing )
