@@ -59,7 +59,7 @@ public class Histogram extends DragBox implements ActionListener {
     this.k = levels[0];
     round = (int)Math.max(0, 3 - Math.round((Math.log(data.getMax(dvar)-data.getMin(dvar))/Math.log(10))));
 
-    Font SF = new Font("SansSerif", Font.BOLD, 12);
+    Font SF = new Font("SansSerif", Font.PLAIN, 11);
     frame.setFont(SF);
 
     String titletext;
