@@ -57,6 +57,9 @@ public class Mosaic extends DragBox implements ActionListener {
 
     frame.getContentPane().add(this);
 
+    Font SF = new Font("SansSerif", Font.PLAIN, 11);
+    frame.setFont(SF);
+    
     evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
     // We use low-level events, so we must specify
