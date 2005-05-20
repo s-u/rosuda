@@ -116,14 +116,14 @@ public class Map extends DragBox {
     });
     p.add("East", cbRank);
 
-    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
+//    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       Collist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
-    }
+//    }
 
     match = new int[polys.size()];
     boolean[] recMatch = new boolean[data.n];
