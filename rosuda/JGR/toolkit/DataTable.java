@@ -178,11 +178,15 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
     private void addColumn() {
         modified = true;
         String[] val = new NewColumnDialog(this).showInputDialog();
-        String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor"};
+        String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor", "Character"};
         if (val != null) {
             SVar v;
             if (val[1].equals(varType[0])) v = new SVarDouble(null, dataTable.getRowCount());
             else if (val[1].equals(varType[1])) v = new SVarInt(null, dataTable.getRowCount());
+            else if (val[1].equals(varType[3])) {
+				v = new SVarObj(null, false);
+				v.setAllEmpty(dataTable.getRowCount());
+            }
             else v = new SVarFact(null, dataTable.getRowCount());
             if (val[0].equals("")) vs.insert(selectedColumn < 1 ? tabModel.cols - 1 : selectedColumn,v);
             else vs.insert(val[0], selectedColumn < 1 ? tabModel.cols - 1 : selectedColumn, v);
@@ -194,6 +198,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
     private void addRow() {
         modified = true;
         int selectedRow = currentRow();
+		selectedRow = selectedRow==-1?tabModel.rows-1:selectedRow;
         vs.insertCaseAt(selectedRow + 1);
         refresh();
     }
@@ -941,7 +946,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
     /* Dialog for adding a new column */
     class NewColumnDialog extends JDialog implements ActionListener {
 
-        String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor"};
+        String[] varType = {"Numeric (double)", "Numeric (integer)", "Factor", "Character"};
         String[] result = null;
         JComboBox typeChooser = new JComboBox(varType);
         JTextField name = new JTextField();
