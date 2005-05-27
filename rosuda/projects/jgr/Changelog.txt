@@ -1,3 +1,7 @@
+2005-05-27
+- fixed: exporting data.frames
+- added: new column type "Character" in data-editor
+
 2005-03-25
 - added: checking for previously installed packages, if they're
   missing tell the user and ask him what to do
