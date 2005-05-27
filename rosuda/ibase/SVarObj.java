@@ -72,6 +72,21 @@ public class SVarObj extends SVar
       }
       if (cat) this.categorize(true);
     }
+	
+	/**
+	 * Return content as StringArray
+	 * @return content
+	 */
+	public String[] getContent() {
+		String[] content = new String[cont.size()];
+		int i = 0;
+		for (Enumeration e = cont.elements(); e.hasMoreElements() && i < content.length;i++) {
+			Object o = e.nextElement();
+			if (o != null) content[i] = o.toString();
+			else content[i] = missingCat;
+		}
+		return content;
+	}
 
 
     /** sets the {@link #guessNum} flag. It must me set before the first add(..) call because the guess is made
