@@ -84,7 +84,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
         while(!JGR.STARTED);
 
         String[] Menu = {"+", "File", "@PPrint", "print",
-            "+", "Edit", "@CCopy", "copy","-","@RRun selection","runselection",/*"@FFind","search","@GFind Next","searchnext",*/
+            "+", "Edit", "@CCopy", "copy","-","@RRun selection","runselection","@FFind","search","@GFind Next","searchnext",
             "~Preferences",
             "~Window", "0"};
         iMenu.getMenu(this, this, Menu);
