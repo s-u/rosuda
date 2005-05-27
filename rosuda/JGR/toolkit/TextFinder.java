@@ -31,7 +31,8 @@ public class TextFinder extends JDialog implements ActionListener {
     private JButton cancelButton = new JButton("Cancel");
     private JLabel status = new JLabel("                       ");
 
-    Highlighter.HighlightPainter highLighter = new FoundHighlighter(JGRPrefs.HighLightColor);
+    Highlighter.HighlightPainter highLighter = new FoundHighlighter(SystemColor.textHighlight);
+
 
     private String keyWord = null;
     private int position = -1;
