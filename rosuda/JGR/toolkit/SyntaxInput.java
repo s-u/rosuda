@@ -24,7 +24,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     private boolean disableEnter = false;
     private String fun = null;
     private String funHelp = null;
-    private Popup funHelpTip = null;
+    Popup funHelpTip = null;
     private Popup cmdHelp = null;
     private JToolTip Tip = new JToolTip();
     /** {@see CodeCompleteMultiple} */
@@ -383,15 +383,14 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
      * RoSuDA 2003 - 2005
      *
      */
-    public class CodeCompleteMultiple extends Panel {
+    public class CodeCompleteMultiple extends JPanel {
 		
-        public java.awt.List cmds = new java.awt.List();
+        public JList cmds = new JList();
+		private JScrollPane sp = new JScrollPane();
         private SyntaxInput parent = null;
 		
         public CodeCompleteMultiple(SyntaxInput tcomp) {
             parent = tcomp;
-            this.setLayout(new GridLayout(1,1));
-            this.add(cmds);
             cmds.addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent e) {
                     if (e.getKeyCode() == KeyEvent.VK_ENTER)
@@ -404,8 +403,14 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                         completeCommand();
                 }
             });
-            cmds.setSize(new Dimension(180,100));
-            this.setSize(cmds.getWidth()+10,cmds.getHeight());
+			sp = new JScrollPane(cmds);
+			sp.setMinimumSize(new Dimension(200,120));
+			sp.setPreferredSize(new Dimension(200,120));
+			sp.setMaximumSize(new Dimension(200,120));
+			sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			sp.setAutoscrolls(true);
+            this.setLayout(new GridLayout(1,1));
+            this.add(sp);
             this.setVisible(false);
         }
 		
@@ -414,17 +419,16 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
          * @param commands new commands
          */
         public void refresh(String[] commands) {
-            cmds.removeAll();
-            for (int i = 0; i < commands.length; i++)
-                cmds.add(commands[i]);
-            cmds.select(0);
+			cmds.setListData(commands);
+			cmds.setSelectedIndex(0);
+			cmds.ensureIndexIsVisible(0);
         }
 		
         /**
          * Complete current part.
          */
         public void completeCommand() {
-            parent.insertAt(parent.getCaretPosition(),cmds.getSelectedItem().replaceFirst(fun,""));
+            parent.insertAt(parent.getCaretPosition(),cmds.getSelectedValue().toString().replaceFirst(fun,""));
             this.setVisible(false);
             if (cmdHelp != null) cmdHelp.hide();
         }
@@ -435,7 +439,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         public void selectPrevious() {
             int i = cmds.getSelectedIndex();
             if (--i >= 0)
-                cmds.select(i);
+				cmds.setSelectedIndex(i);
+			cmds.ensureIndexIsVisible(cmds.getSelectedIndex());			
         }
 		
         /**
@@ -443,8 +448,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
          */
         public void selectNext() {
             int i = cmds.getSelectedIndex();
-            if (++i < cmds.getItemCount())
-                cmds.select(i);
+            if (++i < cmds.getModel().getSize())
+				cmds.setSelectedIndex(i);
+			cmds.ensureIndexIsVisible(cmds.getSelectedIndex());
         }
 		
         /**
