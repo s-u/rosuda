@@ -43,7 +43,7 @@ public class SVarFact extends SVar
         super(name,true);
         isnum = false;
         cont = new int[len];
-        for (int i = 0; i < cont.length; i++) cont[i] = SVar.int_NA;
+        for (int i = 0; i < cont.length; i++) cont[i] = getCatIndex(missingCat);
         cats = new String[0];
     }
 
@@ -155,7 +155,7 @@ public class SVarFact extends SVar
             try {
                 for (int i = 0, z = 0; z < cont.length && i < temp.length; i++, z++) {
                     if (i == index) z--;
-                    else { temp[i] = cont[z]; tempcats[i] = cats[z]; }
+                    else { temp[i] = cont[z]; }
                 }
                 cont = temp;
                 if (o==null) cont[index] = getCatIndex(missingCat);
