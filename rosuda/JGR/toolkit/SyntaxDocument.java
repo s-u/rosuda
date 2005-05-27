@@ -185,7 +185,7 @@ public class SyntaxDocument extends JGRStyledDocument {
         if (isKeyword(token))
             doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
                                        JGRPrefs.KEYWORD, false);
-        else if (isObject(token))
+        if (isObject(token)) 
             doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
                                        JGRPrefs.OBJECT, false);
         else if (isNumber(token))
