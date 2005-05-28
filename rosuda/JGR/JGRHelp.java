@@ -236,6 +236,9 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
      */
     public void search(String keyword) {
         if (keyword != null && !keyword.equals("")) {
+			try  {
+				if (((HelpArea)tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0) tabArea.remove(0);
+			} catch (Exception e) {}
             if (tabArea.getTabCount()==JGRPrefs.maxHelpTabs) tabArea.remove(JGRPrefs.maxHelpTabs-1);
             tabArea.add(new HelpArea(tabArea, this, keyword), 0);
             tabArea.setSelectedIndex(0);
