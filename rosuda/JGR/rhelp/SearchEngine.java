@@ -83,16 +83,6 @@ public class SearchEngine {
             help.link.setText("Search for \"" + iSearchTerm);
         }
 
-        /*if (searchDesc) {
-            System.out.println("Searching in Descriptions\n");
-                 }
-                 if (searchKeywords) {
-            System.out.println("Searching in Keywords\n");
-                 }
-                 if (searchAliases) {
-            System.out.println("Searching in Aliases\n");
-                 }*/
-
         Vector foundItems = null;
 
         if (iSearchTerm != null) {
