@@ -109,7 +109,7 @@ public class RController {
         REXP cmds = JGR.R.eval(".completeCommand(\""+partOfCmd+"\")");
         String[] c = null;
         if (cmds != null && (c=cmds.asStringArray()) != null) return c;
-        return c;
+        return null;
     }
 
     /**
