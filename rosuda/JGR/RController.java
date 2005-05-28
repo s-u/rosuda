@@ -105,6 +105,7 @@ public class RController {
 		if (!JGR.STARTED) return null;
         int s = partOfCmd.length()-1;
         if (partOfCmd.trim().length() == 0) return null;
+		partOfCmd = partOfCmd.replaceAll("\\.","\\\\."); //replace real . with their equivalent regex
         REXP cmds = JGR.R.eval(".completeCommand(\""+partOfCmd+"\")");
         String[] c = null;
         if (cmds != null && (c=cmds.asStringArray()) != null) return c;
