@@ -1,3 +1,9 @@
+2005-05-28
+- added: support for completing conent of data.frames
+- fixed: completing commands on Mac OS X machines
+- changed: recognize . in the right way when completing commands
+- changed: remove help tab if nothing was found
+
 2005-05-27
 - fixed: exporting data.frames
 - added: new column type "Character" in data-editor
