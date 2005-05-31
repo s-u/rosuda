@@ -1554,7 +1554,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         c.voidEval("tempData <- cbind(tempData, x)");
       }
       c.voidEval("tempData <- cbind(tempData, x)");
-      RList mdsL = c.eval("sMds <- sammon(dist(tempData)+0.001, k=2)").asList();
+      RList mdsL = c.eval("sMds <- sammon(dist(scale(tempData))+0.001, k=2)").asList();
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
 
