@@ -17,7 +17,7 @@ import javax.swing.event.*;
 public class dataSet {
 
   protected Vector data = new Vector(256,256);
-  protected Vector name = new Vector(256,256);
+//  protected Vector name = new Vector(256,256);
   protected boolean[] alpha={true};
   protected double[] selectionArray;
   protected double[] filterA;
@@ -74,7 +74,7 @@ public class dataSet {
       for( int j=0; j<k; j++ ) {
         if( rs.next() ) {
           String varName = rs.getString(1);
-          name.addElement(varName);
+//          name.addElement(varName);
           columnType[j] = rs.getString(2);
           if( columnType[j].startsWith("varchar") ) {
             alpha[j] = true;
@@ -105,6 +105,17 @@ public class dataSet {
     } catch (Exception ex) {
       System.out.println("DB Exception: get size ... "+ex);
     } 	   
+  }
+  
+  public void addVariable(String name, boolean alpha, boolean categorical, double[] data) {
+    Variable Var = new Variable(this.n, alpha, name);
+    System.arraycopy(data, 0, Var.data, 0, this.n);
+    Var.forceCategorical = false;
+    Var.isCategorical = categorical;
+    this.alpha = (boolean [])Util.resizeArray(this.alpha, ++this.k);
+    this.alpha[k-1] = alpha;
+    Var.sortData();    
+    this.data.addElement(Var);
   }
   
   public boolean[] sniff(BufferedReader br) {
@@ -169,7 +180,7 @@ public class dataSet {
       
       for( int j=0; j<this.k; j++ ) {
         varName = head.nextToken();
-        name.addElement(varName);
+//        name.addElement(varName);
 //System.out.println("adding Variable: "+varName);
         Var = new Variable(this.n, alpha[j], varName);
         if( varName.length() > 1 ) {
@@ -231,7 +242,10 @@ public class dataSet {
       else
         if( !Var.alpha )
           Var.sortData();
+      Var.shrink();
+//System.out.println("Shrinking Arrays to: "+ Var.getNumLevels()+"  Memory: "+Runtime.getRuntime().freeMemory());
     }
+    Runtime.getRuntime().gc();
   }	
 
   public void numToCat(int i) {
@@ -615,11 +629,7 @@ System.out.println(newQ.makeQuery());
   }
 
   public String getName(int i) {
-    String retName = (String)name.elementAt(i);
-    if( retName.length()>1 && retName.substring(0,1).equals("/") )
-      return retName.substring(2);
-    else
-      return retName;
+    return ((Variable)data.elementAt(i)).getName();
   }
 
   public int getNumLevels(int i) {
@@ -872,8 +882,8 @@ System.out.println(newQ.makeQuery());
     
   class Variable {
     private int catThres = (n>800)?(15 * Math.max(1, (int)(Math.log(n)/Math.log(10))-1)):((int)(1.5*Math.sqrt(n)));
-    protected Vector level = new Vector(100, 100);
-    private int dimThres = 100000;
+//    protected Vector level = new Vector(100, 100);
+    private int dimThres = 1000;
     protected String[] levelA = new String[dimThres];
     protected int[] grpSize = new int[dimThres];
     protected int[] permA;
@@ -905,6 +915,13 @@ System.out.println(newQ.makeQuery());
           isCategorical = false;
       data = new double[n];
     }
+    
+    public String getName() {
+      if( name.length()>1 && name.substring(0,1).equals("/") )
+        return name.substring(2);
+      else
+        return name;
+    }
 
     public double isLevel(String name) {
       if( !levelsSet && isDB )
@@ -920,6 +937,8 @@ System.out.println(newQ.makeQuery());
         levelA[ this.levelP++ ] = name;	
         if( ( this.levelP >=catThres || this.levelP > dimThres-2 ) && !forceCategorical && !alpha)
           isCategorical = false;	
+        if( alpha && this.levelP > dimThres-2 )
+          expand();
         return this.levelP-1;
       }
       else {
@@ -963,8 +982,21 @@ System.out.println(newQ.makeQuery());
           return levelA[permA[id]];
     }
     
-    public void sortData() {
+    public void shrink() {
+      if( !isCategorical )
+        levelP = 0;
+      levelA = (String[])Util.resizeArray(levelA, levelP);   
+      grpSize = (int[])Util.resizeArray(grpSize, levelP);
+    }
+    
+    public void expand() {
+      dimThres = (int)(1.5*dimThres);
+      System.out.println("-- Expand to: "+dimThres);
+      levelA = (String[])Util.resizeArray(levelA, dimThres);   
+      grpSize = (int[])Util.resizeArray(grpSize, dimThres);
+    }
 
+    public void sortData() {
       System.out.println("--------- Real Sort --------: "+name);
       double[] sA = new double[n];
       System.arraycopy(data, 0, sA, 0, n);

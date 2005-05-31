@@ -245,7 +245,7 @@ public class Mosaic extends DragBox implements ActionListener {
       
     public void processMouseEvent(MouseEvent e) {
 
-      if( e.isPopupTrigger() )
+      if( e.isPopupTrigger() && !e.isShiftDown() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
         changePop = false;
@@ -255,7 +255,7 @@ public class Mosaic extends DragBox implements ActionListener {
       boolean info = false;
       if (e.getID() == MouseEvent.MOUSE_PRESSED ||
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
-        if (e.isPopupTrigger() || e.isPopupTrigger() && e.isShiftDown() ) {
+        if (e.isPopupTrigger()  && !e.isShiftDown() ) {
           for( int i = 0;i < rects.size(); i++) {
             MyRect r = (MyRect)rects.elementAt(i);
             if ( r.contains( e.getX(), e.getY() )) {

@@ -18,12 +18,15 @@ public class Map extends DragBox {
   private int shiftx, shifty;
   private double scalex, scaley;
   private dataSet data;
-  private boolean drawBorder = true;
+  private int borderAlpha = 5;
+  private int[] alphas = {0, 10, 20, 40, 70, 100};
+  
   private JComboBox Varlist, Collist;
   private JList allVarList;
   private int displayVar = -1;
   private boolean inverted = false;
   private boolean rank = false;
+  private boolean alphaChanged = false;
   private int[] match;
   private Vector smallPolys = new Vector(256,256);
   private Image bi, tbi;
@@ -98,11 +101,11 @@ public class Map extends DragBox {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
 
-    JCheckBox cbBorder = new JCheckBox("Outline", true);
+/*    JCheckBox cbBorder = new JCheckBox("Outline", true);
     cbBorder.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { drawBorder = !drawBorder; updateMap(); }
     });
-    p.add("East", cbBorder);
+    p.add("East", cbBorder); */
 
     JCheckBox cbInvert = new JCheckBox("Invert", inverted);
     cbInvert.addItemListener(new ItemListener() {
@@ -116,14 +119,14 @@ public class Map extends DragBox {
     });
     p.add("East", cbRank);
 
-//    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
+    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       Collist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
-      cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+//      cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
-//    }
+    }
 
     match = new int[polys.size()];
     boolean[] recMatch = new boolean[data.n];
@@ -216,7 +219,7 @@ public class Map extends DragBox {
       double[] selection = data.getSelection();
       for( int i=0; i<polys.size(); i++) {
         MyPoly p = (MyPoly)smallPolys.elementAt(i);
-        if( selection[match[i]] > 0 ) {
+        if( match[i] > -1 && selection[match[i]] > 0 ) {
           Rectangle r = p.getBounds();
           if( r.width < 20 ) {
             r.x -= (20 - r.width) / 2;
@@ -234,12 +237,30 @@ public class Map extends DragBox {
       while( new Date().getTime() < start + 1000 ) {}
       g.drawImage(tbi, 0, 0, Color.black, null);
     }
+    if (e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+      if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+        if( borderAlpha > 0 )
+          borderAlpha--;
+        else
+          return;
+      }
+      if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        if( borderAlpha < 5 )
+          borderAlpha++;        
+        else
+          return;
+      }
+      for( int i=0; i<polys.size(); i++)
+        ((MyPoly)smallPolys.elementAt(i)).setBorderColor(new Color(0, 0, 0, (int)(2.55*alphas[borderAlpha])));
+      alphaChanged = true;
+      paint(this.getGraphics());
+    }
     super.processKeyEvent(e);  // Pass other event types on.
   }
 
   public void processMouseEvent(MouseEvent e) {
 
-    if( e.isPopupTrigger() )
+    if( e.isPopupTrigger() && !e.isShiftDown() )
       super.processMouseEvent(e);  // Pass other event types on.
     if( changePop ) {
       changePop = false;
@@ -248,7 +269,7 @@ public class Map extends DragBox {
 
     if (e.getID() == MouseEvent.MOUSE_PRESSED ||
         e.getID() == MouseEvent.MOUSE_RELEASED ) {
-      if (e.isPopupTrigger() || e.isPopupTrigger() && e.isShiftDown() ) {
+      if (e.isPopupTrigger() && !e.isShiftDown() ) {
         for( int i = 0;i < polys.size(); i++) {
           MyPoly p = (MyPoly)smallPolys.elementAt(i);
           if ( p.contains(e.getX(), e.getY()) ) {
@@ -352,7 +373,15 @@ public class Map extends DragBox {
         oldHeight = size.height;
         scaleChanged = false;
       }
-      if( bg == null || printing ) {
+
+/*      // Fix selection state of the polygons
+      double[] selection = data.getSelection();
+      for( int i=0; i<polys.size(); i++) {
+        if( match[i]> -1 ) 
+          ((MyPoly)smallPolys.elementAt(i)).setHilite( selection[match[i]] );
+      }*/
+
+      if( bg == null || printing || alphaChanged ) {
         if( !printing ) {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           tbi = createImage(size.width, size.height);
@@ -361,9 +390,11 @@ public class Map extends DragBox {
         }
         else
           bg = g;
+        alphaChanged = false;
         for( int i=0; i<polys.size(); i++) {
           MyPoly p = (MyPoly)smallPolys.elementAt(i);
-          p.draw(bg, drawBorder);
+          p.setHilite(0);
+          p.draw(bg);
         }
       }
       Graphics tbg;
@@ -371,17 +402,17 @@ public class Map extends DragBox {
         tbg = tbi.getGraphics();
       else
         tbg = g;
-      tbi.flush();
       if( !printing )
         tbg.drawImage(bi, 0, 0, null);
 //      tbg.setColor(Color.green);
-      double[] selection = data.getSelection();
 //      long start = new Date().getTime();
+      double[] selection = data.getSelection();
       for( int i=0; i<polys.size(); i++) {
         MyPoly p = (MyPoly)smallPolys.elementAt(i);
-        if( match[i]> -1 && selection[match[i]] > 0 ) {
+        if( match[i]> -1 ) {
           p.setHilite( selection[match[i]] );
-          p.draw(tbg, drawBorder);
+          if( selection[match[i]] > 0 ) 
+            p.draw(tbg);
         }
       }
       //    dumpNPAs(tbg);
@@ -475,6 +506,7 @@ public class Map extends DragBox {
           else if( scheme.equals("green") )
             p.setColor(new Color( 1-intensity, (float)(1-Math.pow(intensity,4)/2), (float)(Math.pow(1-intensity,3)/1.5+0.15)));  // green
         }
+        p.setBorderColor(new Color(0, 0, 0, (int)(2.55*alphas[borderAlpha])));
         smallPolys.addElement(p);
         for( int j=0; j<data.k; j++ )
           if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 )

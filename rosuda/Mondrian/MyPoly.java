@@ -10,6 +10,7 @@ public class MyPoly extends Polygon implements Cloneable {
   public String name;
   public int npoints;
   protected Color color = Color.lightGray;
+  protected Color borderColor = Color.black;
   protected double hilite = 0;
   public boolean[] flag;                       // This is a HACK !!!!
   
@@ -281,19 +282,29 @@ public class MyPoly extends Polygon implements Cloneable {
       return false;
   }
 
-  public void draw(Graphics g, boolean border) {
+  public void draw(Graphics g) {
     if( hilite > 0 )
       g.setColor(DragBox.hiliteColor);
     else
       g.setColor(color);
     g.fillPolygon(this);
-    if( border )
-      g.setColor(Color.black);
+    if( borderColor.getAlpha() > 2 ) 
+      g.setColor(borderColor);
+    else { 
+      if( hilite > 0 )
+        g.setColor(DragBox.hiliteColor);
+      else
+        g.setColor(color);
+    }
     g.drawPolygon(this);
   }
   
   public void setColor(Color c) {
     color = c;
+  }
+  
+  public void setBorderColor(Color c) {
+    borderColor = c;
   }
   
   public void setHilite(double hilite) {

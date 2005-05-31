@@ -389,7 +389,8 @@ System.out.println("Mouse pres: ... "+e.getModifiers());
 
       if (mouse == AVAILABLE) {
         if (e.getModifiers() == BUTTON1_DOWN ||
-            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN )
+            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN ||
+            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN + ALT_DOWN )
           dragBegin(e.getX(), e.getY(), e);
         if (e.getModifiers() ==  BUTTON1_DOWN + META_DOWN && SYSTEM == MAC ||
             e.getModifiers() ==  BUTTON2_DOWN             && SYSTEM != MAC ) {
@@ -419,7 +420,7 @@ System.out.println("Mouse pres: ... "+e.getModifiers());
           dragBegin(e.getX(), e.getY(), e);
         }
 
-        System.out.println("Mouse rel: ... "+ev);
+        System.out.println("Mouse rel: ... "+ev+" "+BUTTON1_UP +" "+ SHIFT_DOWN +" "+ ALT_DOWN);
         if (mouse != AVAILABLE) {
           switch (ev) {
             case 0:
@@ -433,6 +434,8 @@ System.out.println("Mouse pres: ... "+e.getModifiers());
             case BUTTON1_UP:
             case BUTTON1_UP + CTRL_DOWN:
             case BUTTON1_UP + SHIFT_DOWN:
+            case              SHIFT_DOWN + ALT_DOWN:
+            case BUTTON1_UP + SHIFT_DOWN + ALT_DOWN:
             case BUTTON1_UP + META_DOWN:
             case BUTTON2_UP:
             case BUTTON3_UP:
@@ -521,6 +524,21 @@ System.out.println(" dragEnd! ");
           selectFlag = true;
           se = new SelectionEvent(this);
           evtq.postEvent(se);
+      }
+      if( modifiers == BUTTON1_UP + SHIFT_DOWN + ALT_DOWN || modifiers == SHIFT_DOWN + ALT_DOWN && SYSTEM == MAC ) {
+//      if( modifiers == SHIFT_DOWN + ALT_DOWN ) && SYSTEM == MAC ) {
+        if( mouse == DRAGGING ) {
+          S = new Selection(sr, null, 0, Selection.MODE_OR, this);
+          activeS = S;
+          Selections.addElement(S);
+        }
+        else {
+          S = ((Selection)Selections.elementAt(movingID));
+          S.r = sr;
+        }
+        selectFlag = true;
+        se = new SelectionEvent(this);
+        evtq.postEvent(se);
       }
     }	
 
@@ -679,7 +697,7 @@ System.out.println("Mouse Action to check: "+mouse);
 
         case DRAGGING:
         case ZOOMING:
-          if( e.isPopupTrigger() || (e.getModifiers() ==  BUTTON3_DOWN && SYSTEM == WIN) && !e.isShiftDown() ) {
+          if( (e.isPopupTrigger()  || (e.getModifiers() ==  BUTTON3_DOWN && SYSTEM == WIN)) && !e.isShiftDown() ) {
             System.out.println(" pop up in nowhere !!");
             mouse = AVAILABLE;
           } else {

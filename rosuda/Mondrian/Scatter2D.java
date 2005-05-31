@@ -21,9 +21,9 @@ public class Scatter2D extends DragBox {
   private dataSet data;
   private JComboBox Varlist;
   private int displayVar = -1;
-  private Image bi, tbi, ttbi, fi;			// four buffer: 1. double, 2. hilite, 3. labels, 4. filtered
+  private Image bi, tbi, ttbi, tttbi, fi;			// four buffer: 1. double, 2. hilite, 3. labels, 4. filtered
   private MediaTracker media = new MediaTracker(this);
-  private Graphics2D fg, bg, tbg, ttbg;
+  private Graphics2D fg, bg, tbg, ttbg, tttbg;
   private int[] Vars;
   private JList varList;
   private double[] xVal;
@@ -258,9 +258,9 @@ public class Scatter2D extends DragBox {
   }
     
 
-      public void processMouseEvent(MouseEvent e) {
+    public void processMouseEvent(MouseEvent e) {
                 
-      if( e.isPopupTrigger() )
+      if( e.isPopupTrigger() && !e.isShiftDown() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
         changePop = false;
@@ -269,7 +269,7 @@ public class Scatter2D extends DragBox {
 
       if (e.getID() == MouseEvent.MOUSE_PRESSED ||
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
-        if (e.isPopupTrigger() || e.isPopupTrigger() && e.isShiftDown() ) {
+        if (e.isPopupTrigger() && !e.isShiftDown() ) {
           info = false;
           if( modeString.equals("points") ) {
             int minDist = 5000;
@@ -573,8 +573,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
 
       Graphics2D g = (Graphics2D)this.getGraphics();
       FontMetrics fm = bg.getFontMetrics();
-      ttbg = (Graphics2D)ttbi.getGraphics();
-      ttbg.drawImage(tbi, 0, 0, null);
+      tttbg = (Graphics2D)tttbi.getGraphics();
+      tttbg.drawImage(ttbi, 0, 0, null);
 
       drawSelections(ttbg);
 
@@ -585,7 +585,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
             frame.setCursor(Frame.CROSSHAIR_CURSOR);
               
               info = true;
-              ttbg.setColor(MFrame.backgroundColor);
+              tttbg.setColor(MFrame.backgroundColor);
 
               // Draw x-Label for CRTL_DOWN event
               int egetX = e.getX();
@@ -600,16 +600,16 @@ System.out.println(" ........................ by var "+command.substring(5,comma
               int  maxWidth = fm.stringWidth(Stat.roundToString(getUrx(), roundX));
 
               if( egetX <= userToWorldX(getLlx()) + minWidth +4 )
-                  ttbg.fillRect( (int)userToWorldX(getLlx()), (int)userToWorldY( getLly() ) + outside + tick + 1,
+                  tttbg.fillRect( (int)userToWorldX(getLlx()), (int)userToWorldY( getLly() ) + outside + tick + 1,
                                  minWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
               if( egetX >= userToWorldX(getUrx()) - maxWidth -4 )
-                  ttbg.fillRect( (int)userToWorldX(getUrx()) - maxWidth -4, (int)userToWorldY( getLly() ) + outside + tick + 1,
+                  tttbg.fillRect( (int)userToWorldX(getUrx()) - maxWidth -4, (int)userToWorldY( getLly() ) + outside + tick + 1,
                                  maxWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
               
-              ttbg.setColor(Color.black);
-              ttbg.drawLine( egetX , (int)userToWorldY( getLly() ) + outside, 
+              tttbg.setColor(Color.black);
+              tttbg.drawLine( egetX , (int)userToWorldY( getLly() ) + outside, 
                              egetX , (int)userToWorldY( getLly() ) + outside + tick );  
-              ttbg.drawString(Stat.roundToString(worldToUserX(egetX), roundX),
+              tttbg.drawString(Stat.roundToString(worldToUserX(egetX), roundX),
                               egetX - fm.stringWidth(Stat.roundToString(worldToUserX(egetX), roundX)) / 2
                                     - (int)(fm.stringWidth(Stat.roundToString(worldToUserX(egetX), roundX)) *
                                       (ratioX - 0.5)),
@@ -627,31 +627,31 @@ System.out.println(" ........................ by var "+command.substring(5,comma
               minWidth = fm.stringWidth(Stat.roundToString(getLly(), roundY));
               maxWidth = fm.stringWidth(Stat.roundToString(getUry(), roundY));
 
-              ttbg.setColor(MFrame.backgroundColor);
+              tttbg.setColor(MFrame.backgroundColor);
               if( egetY < userToWorldY(getUry()) + minWidth + 4 )
-                  ttbg.fillRect( 0, (int)userToWorldY(getUry()),
+                  tttbg.fillRect( 0, (int)userToWorldY(getUry()),
                                  (int)userToWorldX( getLlx() ) - outside - tick, minWidth + 4 );
               if( egetY > userToWorldY(getLly()) - maxWidth - 4 )
-                  ttbg.fillRect( 0, (int)userToWorldY(getLly()) -maxWidth - 4,
+                  tttbg.fillRect( 0, (int)userToWorldY(getLly()) -maxWidth - 4,
                                  (int)userToWorldX( getLlx() ) - outside - tick, maxWidth + 4 );
 
               // Fadenkreuz
-              ttbg.setColor(Color.lightGray);
-              ttbg.drawLine( egetX - outside, egetY,
+              tttbg.setColor(Color.lightGray);
+              tttbg.drawLine( egetX - outside, egetY,
                              (int)userToWorldX( getLlx() ) , egetY );  
-              ttbg.drawLine( egetX, egetY + outside,
+              tttbg.drawLine( egetX, egetY + outside,
                              egetX, (int)userToWorldY( getLly() ) );
               
-              ttbg.setColor(Color.black);
-              ttbg.drawLine( (int)userToWorldX( getLlx() ) - outside, egetY,
+              tttbg.setColor(Color.black);
+              tttbg.drawLine( (int)userToWorldX( getLlx() ) - outside, egetY,
                              (int)userToWorldX( getLlx() ) - outside - tick, egetY );  
-              ttbg.rotate(-Math.PI/2);
-              ttbg.drawString(Stat.roundToString(worldToUserY(egetY), roundY), 
+              tttbg.rotate(-Math.PI/2);
+              tttbg.drawString(Stat.roundToString(worldToUserY(egetY), roundY), 
                             (int)(-egetY - ratioY * fm.stringWidth(Stat.roundToString(worldToUserY(egetY), roundY))),
                             (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick +1);          
-              ttbg.rotate(Math.PI/2);
-              g.drawImage(ttbi, 0, 0, Color.black, null);
-              ttbg.dispose();
+              tttbg.rotate(Math.PI/2);
+              g.drawImage(tttbi, 0, 0, Color.black, null);
+              tttbg.dispose();
           }
           else {
               if( info ) {
@@ -777,16 +777,19 @@ System.out.println(" ........................ by var "+command.substring(5,comma
         fg = g;
         tbg = g;
         ttbg = g;
+        tttbg = g;
       }
       else {
         bi = createImage(size.width, size.height);	
         fi = createImage(size.width, size.height);	
         tbi = createImage(size.width, size.height);	
         ttbi = createImage(size.width, size.height);	
+        tttbi = createImage(size.width, size.height);	
         fg = (Graphics2D)fi.getGraphics();
         bg = (Graphics2D)bi.getGraphics();
         tbg = (Graphics2D)tbi.getGraphics();
         ttbg = (Graphics2D)ttbi.getGraphics();
+        tttbg = (Graphics2D)tttbi.getGraphics();
       }
       FontMetrics fm = bg.getFontMetrics();      
 

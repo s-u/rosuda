@@ -301,7 +301,7 @@ public class Barchart extends DragBox implements ActionListener {
 
     public void processMouseEvent(MouseEvent e) {
 
-      if( e.isPopupTrigger() )
+      if( e.isPopupTrigger() && !e.isShiftDown() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
         changePop = false;
@@ -311,7 +311,7 @@ public class Barchart extends DragBox implements ActionListener {
       boolean info = false;
       if (e.getID() == MouseEvent.MOUSE_PRESSED ||
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
-        if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN ) {
+        if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN && !e.isShiftDown() ) {
           //System.out.println("pop up trigger in Barchart!!!!"+e.getModifiers());
           for( int i = 0;i < rects.size(); i++) {
             MyRect r = (MyRect)rects.elementAt(i);

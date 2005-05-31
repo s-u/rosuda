@@ -59,7 +59,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows, help;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc, oh;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc, oh, mds;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
@@ -165,6 +165,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       plot.add(t = new JMenuItem("Test"));
     }
     menubar.add(plot);                         // Add to menubar.
+    //
+    JMenu calc = new JMenu("Calc");            // Create a Calc menu.
+    calc.add(mds = new JMenuItem("2-dim MDS"));
+    mds.setEnabled(true);
+    menubar.add(calc);                         // Add to menubar.
     //
     JMenu options = new JMenu("Options");      // Create an Option menu.
     options.add(se = new JCheckBoxMenuItem("Selection Sequences", selseq));
@@ -313,6 +318,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         mapPlot();
       }
     });
+    mds.addActionListener(new ActionListener() {     // Open a new window to draw an interactive maps
+      public void actionPerformed(ActionEvent e) {
+        mds();
+      }
+    });
     se.addActionListener(new ActionListener() {     // Change the selection mode
       public void actionPerformed(ActionEvent e) {
         switchSelection();
@@ -378,7 +388,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0i", 250, 280);
+    g.drawString("RC1.0j", 250, 280);
 
     mondrianRunning = true;
 
@@ -482,10 +492,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     Icon RefIcon = new ImageIcon(readGif("ReferenceCard.gif"));
 
     JLabel RefLabel = new JLabel(RefIcon);
-    JScrollPane refScrollPane = new JScrollPane(RefLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    JScrollPane refScrollPane = new JScrollPane(RefLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     refCardf.getContentPane().add("Center", refScrollPane);
     refCardf.setTitle("Mondrian - Reference Card");
     refCardf.setResizable(false);
+    refCardf.setSize(refCardf.getWidth(), (Toolkit.getDefaultToolkit().getScreenSize()).height-23);
     refCardf.pack();
     refCardf.setLocation((Toolkit.getDefaultToolkit().getScreenSize()).width - refCardf.getWidth(), 0);
     refCardf.show();
@@ -1529,7 +1540,39 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     scatterf.setLocation(300, 333);
     scatterf.show();
   }
+  
+  public void mds() {
 
+    int[] varsT = varNames.getSelectedIndices();
+    dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
+    try {
+      Rconnection c = new Rconnection();
+      c.voidEval("library(MASS)");
+      c.assign("tempData",dataT.getRawNumbers(varsT[0]));
+      for( int i=1; i<varsT.length; i++ ) {
+        c.assign("x",dataT.getRawNumbers(varsT[i]));
+        c.voidEval("tempData <- cbind(tempData, x)");
+      }
+      c.voidEval("tempData <- cbind(tempData, x)");
+      RList mdsL = c.eval("sMds <- sammon(dist(tempData)+0.001, k=2)").asList();
+      double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
+      double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
+
+      dataT.addVariable("mds1", false, false, x1);
+      dataT.addVariable("mds2", false, false, x2);
+    } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+    
+    final MFrame scatterf = new MFrame(this);
+    scatterf.setSize(400,400);
+    scatterf.setTitle("Scatterplot 2D");
+    
+    Scatter2D scat = new Scatter2D(scatterf, 400, 400, dataT, new int[] {dataT.k-2,dataT.k-1}, varNames);
+    scat.addSelectionListener(this);
+    Plots.addElement(scat);
+    scatterf.setLocation(300, 333);
+    scatterf.show();
+  }
+  
   public void switchVariableMode(){
     for(int i=0; i<varNames.getSelectedIndices().length; i++) {
       int index=(varNames.getSelectedIndices())[i];

@@ -196,15 +196,15 @@ public class PC extends DragBox implements ActionListener {
       }
     }
 
-    if( e.isPopupTrigger() )
+    if( e.isPopupTrigger() && !e.isShiftDown() )
       super.processMouseEvent(e);  // Pass other event types on.
     if( changePop ) {
       changePop = false;
       return;
     }
 
-    if (e.getID() == MouseEvent.MOUSE_PRESSED ||
-        e.getID() == MouseEvent.MOUSE_RELEASED ) {
+    if ((e.getID() == MouseEvent.MOUSE_PRESSED ||
+         e.getID() == MouseEvent.MOUSE_RELEASED) && !e.isShiftDown() ) {
       if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN ) {
         super.processMouseEvent(e);
         int minXDist = 5000;

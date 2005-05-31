@@ -22,8 +22,8 @@ public class Histogram extends DragBox implements ActionListener {
   private int tick    = 5;
   private double bStart, bWidth;			// Anker and Width of the Bins
   private Table tablep;                                	// The datatable to deal with.
-  private Image bi;
-  private Graphics2D bg;
+  private Image bi, tbi;
+  private Graphics2D bg, tbg;
   private int k;
   public String displayMode = "Histogram";
   public boolean densityMode = false;
@@ -35,6 +35,7 @@ public class Histogram extends DragBox implements ActionListener {
   private int dvar;
   private int round;					// percision for labels ...
   private boolean coordsSet = false;
+  private boolean info = false;
 
   public Histogram(JFrame frame, int width, int height, Table tablep, double bStart, double bWidth, int weight) {
     super(frame);
@@ -161,21 +162,25 @@ public class Histogram extends DragBox implements ActionListener {
         create(border, border, size.width-border, size.height-border, "");
       }
 
-      if( printing )
+      if( printing ) {
         bg = g;
-      else {
+        tbg = g;
+      } else {
         if( bi != null ) {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
             bg.dispose();
             bi = null;
             System.gc();
             bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
+            tbi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           }
         }
         else {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
+          tbi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
         }
         bg = (Graphics2D)bi.getGraphics();
+        tbg = (Graphics2D)bi.getGraphics();
         bg.clearRect(0, 0, size.width, size.height);
       }
       FontMetrics fm = bg.getFontMetrics();
@@ -416,8 +421,72 @@ public class Histogram extends DragBox implements ActionListener {
 
     public void processMouseMotionEvent(MouseEvent e) {
 
-      boolean info = false;
-
+      Graphics2D g = (Graphics2D)this.getGraphics();
+      FontMetrics fm = bg.getFontMetrics();
+      tbg = (Graphics2D)tbi.getGraphics();
+      tbg.drawImage(bi, 0, 0, null);
+      
+      drawSelections(bg);
+      
+      if ((e.getID() == MouseEvent.MOUSE_MOVED)) {
+        
+        if( (e.getModifiers() == ALT_DOWN) ) {
+          
+          frame.setCursor(Frame.CROSSHAIR_CURSOR);
+          
+          info = true;
+          tbg.setColor(MFrame.backgroundColor);
+          
+          // Draw x-Label for CRTL_DOWN event
+          int egetX = e.getX();
+          int egetY = e.getY();
+          
+          String print = Stat.roundToString(worldToUserX(egetX), round);
+          if( egetX < (int)userToWorldX( xMin ) ) {
+            egetX = (int)userToWorldX( xMin );
+            print = Stat.roundToString(xMin, round);
+          }
+          if( egetX > (int)userToWorldX( xMax ) ) {                                       
+            egetX = (int)userToWorldX( xMax );
+            print = Stat.roundToString(xMax, round);
+          }
+          
+          double ratioX = (worldToUserX(egetX) - getLlx())/(getUrx()-getLlx());
+          int  minWidth = fm.stringWidth(Stat.roundToString(getLlx(), round));
+          int  maxWidth = fm.stringWidth(Stat.roundToString(getUrx(), round));
+          
+          if( egetX <= (int)userToWorldX( xMin ) + minWidth +4 )
+            tbg.fillRect( (int)userToWorldX( xMin ), (int)userToWorldY( getLly() ) + outside + tick + 1,
+                            minWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
+          if( egetX >= (int)userToWorldX( xMax ) - maxWidth -4 )
+            tbg.fillRect( (int)userToWorldX( xMax ) - maxWidth -4, (int)userToWorldY( getLly() ) + outside + tick + 1,
+                            maxWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
+          
+          tbg.setColor(Color.black);
+          tbg.drawLine( egetX , (int)userToWorldY( getLly() ) + outside, 
+                          egetX , (int)userToWorldY( getLly() ) + outside + tick );  
+          tbg.drawString(print,
+                           egetX - fm.stringWidth(print) / 2
+                           - (int)(fm.stringWidth(print) *
+                                   (ratioX - 0.5)),
+                           (int)userToWorldY( getLly() ) + outside + tick + fm.getMaxAscent() + fm.getMaxDescent() );
+                    
+          // Fadenkreuz
+          tbg.setColor(Color.white);
+          tbg.drawLine( egetX, egetY + outside,
+                        egetX, (int)userToWorldY( getLly() ) );
+          
+          g.drawImage(tbi, 0, 0, Color.black, null);
+          tbg.dispose();
+        }
+        else {
+          if( info ) {
+            frame.setCursor(Frame.DEFAULT_CURSOR);
+            paint( this.getGraphics() );
+            info = false;
+          }
+        }
+      }
       super.processMouseMotionEvent(e);  // Pass other event types on.
     }	
 
@@ -439,7 +508,7 @@ public class Histogram extends DragBox implements ActionListener {
 
     public void processMouseEvent(MouseEvent e) {
 
-      if( e.isPopupTrigger() )
+      if( e.isPopupTrigger() && !e.isShiftDown() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
         changePop = false;
@@ -449,7 +518,7 @@ public class Histogram extends DragBox implements ActionListener {
       boolean info = false;
       if (e.getID() == MouseEvent.MOUSE_PRESSED ||
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
-        if (e.isPopupTrigger() || e.isPopupTrigger() && e.isShiftDown() ) {
+        if (e.isPopupTrigger()  && !e.isShiftDown() ) {
           for( int i = 0;i < rects.size(); i++) {
             MyRect r = (MyRect)rects.elementAt(i);
             if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
