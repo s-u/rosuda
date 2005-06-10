@@ -168,7 +168,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     //
     JMenu calc = new JMenu("Calc");            // Create a Calc menu.
     calc.add(mds = new JMenuItem("2-dim MDS"));
-    mds.setEnabled(true);
+    mds.setEnabled(false);
     menubar.add(calc);                         // Add to menubar.
     //
     JMenu options = new JMenu("Options");      // Create an Option menu.
@@ -388,7 +388,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0j", 250, 280);
+    g.drawString("RC1.0k", 250, 280);
 
     mondrianRunning = true;
 
@@ -1560,17 +1560,19 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
 
       dataT.addVariable("mds1", false, false, x1);
       dataT.addVariable("mds2", false, false, x2);
-    } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
     
-    final MFrame scatterf = new MFrame(this);
-    scatterf.setSize(400,400);
-    scatterf.setTitle("Scatterplot 2D");
+      final MFrame scatterf = new MFrame(this);
+      scatterf.setSize(400,400);
+      scatterf.setTitle("Scatterplot 2D");
+      
+      Scatter2D scat = new Scatter2D(scatterf, 400, 400, dataT, new int[] {dataT.k-2,dataT.k-1}, varNames);
+      scat.addSelectionListener(this);
+      Plots.addElement(scat);
+      scatterf.setLocation(300, 333);
+      scatterf.show();
+    } catch(RSrvException rse) {JOptionPane.showMessageDialog(this, "Calculation of MDS failed");}
     
-    Scatter2D scat = new Scatter2D(scatterf, 400, 400, dataT, new int[] {dataT.k-2,dataT.k-1}, varNames);
-    scat.addSelectionListener(this);
-    Plots.addElement(scat);
-    scatterf.setLocation(300, 333);
-    scatterf.show();
+    
   }
   
   public void switchVariableMode(){
@@ -1616,6 +1618,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         pb.setEnabled(false);
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
+        mds.setEnabled(false);
         break;
       case 1:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
@@ -1634,6 +1637,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         pb.setEnabled(true);
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
+        mds.setEnabled(false);
         break;
       case 2: 
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
@@ -1660,6 +1664,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         pc.setEnabled(true);
         pb.setEnabled(true);
         sc2.setEnabled(true);
+        mds.setEnabled(false);
         break;
       default:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
@@ -1683,6 +1688,8 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
           hi.setEnabled(false);
           hiw.setEnabled(false);
         }
+        if( (varNames.getSelectedIndices()).length - numCategorical > 2 )
+          mds.setEnabled(true);   
         pc.setEnabled(true);      
         pb.setEnabled(true);
         sc2.setEnabled(false);
@@ -1694,7 +1701,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     for( int i=0; i<Plots.size(); i++ ) 
         ((MFrame)(((DragBox)Plots.elementAt(i)).frame)).maintainMenu(preserve);
   }
-
+  
   class MCellRenderer extends JLabel implements ListCellRenderer {
 
     final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
