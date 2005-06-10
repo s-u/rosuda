@@ -475,7 +475,7 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
       plevels[j] = varlevels[j+1] * plevels[j+1];
     }
     for( int j=0; j<vars.length; j++ ) {
-//      System.out.println("Tablelength: "+tablelength+"  Name: "+ varnames[j]+"  Levels: "+lnames[j][0]+"..."+"   Plevels: "+plevels[j]);
+//     System.out.println("Tablelength: "+tablelength+"  Name: "+ varnames[j]+"  Levels: "+lnames[j][0]+"..."+"   Plevels: "+plevels[j]);
     }
     Ids = new int[tablelength][];
     dimA = new int[tablelength];
@@ -933,11 +933,12 @@ System.out.println(newQ.makeQuery());
             return i;
           }	
         }
+//        System.out.println(">>>>>>>>>>>>"+(grpSize[levelP])+"  "+levelP+"   "+grpSize.length);
         grpSize[levelP]++;
         levelA[ this.levelP++ ] = name;	
         if( ( this.levelP >=catThres || this.levelP > dimThres-2 ) && !forceCategorical && !alpha)
           isCategorical = false;	
-        if( alpha && this.levelP > dimThres-2 )
+        if( (alpha || forceCategorical) && this.levelP > dimThres-2 )
           expand();
         return this.levelP-1;
       }
@@ -984,9 +985,13 @@ System.out.println(newQ.makeQuery());
     
     public void shrink() {
       if( !isCategorical )
-        levelP = 0;
+        levelP = 10;
       levelA = (String[])Util.resizeArray(levelA, levelP);   
       grpSize = (int[])Util.resizeArray(grpSize, levelP);
+      if( !isCategorical ) {
+        levelP = 0;
+        dimThres = 10;
+      }
     }
     
     public void expand() {
