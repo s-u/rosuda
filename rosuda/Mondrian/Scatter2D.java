@@ -624,8 +624,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
                   egetY = (int)userToWorldY(getLly());
               
               double ratioY = (worldToUserY(egetY) - getLly())/(getUry()-getLly());
-              minWidth = fm.stringWidth(Stat.roundToString(getLly(), roundY));
-              maxWidth = fm.stringWidth(Stat.roundToString(getUry(), roundY));
+              minWidth = fm.stringWidth(Stat.roundToString(getUry(), roundY));
+              maxWidth = fm.stringWidth(Stat.roundToString(getLly(), roundY));
 
               tttbg.setColor(MFrame.backgroundColor);
               if( egetY < userToWorldY(getUry()) + minWidth + 4 )
