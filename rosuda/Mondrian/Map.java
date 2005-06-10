@@ -23,10 +23,12 @@ public class Map extends DragBox {
   
   private JComboBox Varlist, Collist;
   private JList allVarList;
+  private JTextField minField, maxField;
   private int displayVar = -1;
   private boolean inverted = false;
   private boolean rank = false;
   private boolean alphaChanged = false;
+  private boolean colorChanged = false;
   private int[] match;
   private Vector smallPolys = new Vector(256,256);
   private Image bi, tbi;
@@ -118,7 +120,21 @@ public class Map extends DragBox {
       public void itemStateChanged(ItemEvent e) { rank = !rank; updateMap(); }
     });
     p.add("East", cbRank);
+    
+    p.add("East", new JLabel(" Min:"));
+    
+    minField = new JTextField(5);
+    minField.addActionListener(this);
+    minField.setActionCommand("text");
+    p.add("East", minField);
+    
+    p.add("East", new JLabel(" Max:"));
 
+    maxField = new JTextField(5);
+    maxField.addActionListener(this);
+    maxField.setActionCommand("text");
+    p.add("East", maxField);
+    
     if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
@@ -127,6 +143,8 @@ public class Map extends DragBox {
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
     }
+    maxField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+    minField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
 
     match = new int[polys.size()];
     boolean[] recMatch = new boolean[data.n];
@@ -353,8 +371,17 @@ public class Map extends DragBox {
         return null;
     }
 
-
+    public void actionPerformed(ActionEvent e) {
+      String command = e.getActionCommand();
+      if( command.equals("text") ) {
+        colorChanged = true;
+        paint(this.getGraphics());
+      }
+      else
+        super.actionPerformed(e);
+    }
     
+      
     public void processMouseMotionEvent(MouseEvent e) {
 
       super.processMouseMotionEvent(e);  // Pass other event types on.
@@ -366,8 +393,9 @@ public class Map extends DragBox {
       if( printing ) {
         bg = g;
       }
-      if( oldWidth != size.width || oldHeight != size.height || scaleChanged || frame.getBackground() != MFrame.backgroundColor) {
+      if( oldWidth != size.width || oldHeight != size.height || scaleChanged || colorChanged || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
+        colorChanged = false;
         create();
         oldWidth = size.width;
         oldHeight = size.height;
@@ -457,8 +485,14 @@ public class Map extends DragBox {
       if( displayVar >= 0 ) {
         if( !rank || data.categorical(displayVar) ) {
           shade = data.getRawNumbers(displayVar);
-          min = data.getMin(displayVar);
-          max = data.getMax(displayVar);
+          if( ((minField.getText()).trim()).equals("") )
+            min = data.getMin(displayVar);
+          else
+            min = Util.atod(minField.getText());
+          if( ((maxField.getText()).trim()).equals("") )
+            max = data.getMax(displayVar);
+          else
+            max = Util.atod(maxField.getText());
         }
         else {
           shadeI = data.getRank(displayVar);
@@ -480,12 +514,14 @@ public class Map extends DragBox {
         else {
           float intensity=0;
           if( match[i] > -1 ) {
-            if( !rank || data.categorical(displayVar) )
+            if( !rank || data.categorical(displayVar) ) {
+              double value = Math.max(shade[match[i]], min);
+              value = Math.min(value, max);
               if( inverted )
-                intensity = (float)(1-(shade[match[i]]-min)/(max-min));
+                intensity = (float)(1-(value-min)/(max-min));
               else
-                intensity = (float)(1-(shade[match[i]]-max)/(min-max));
-            else
+                intensity = (float)(1-(value-max)/(min-max));
+            } else
               if( inverted )
                 intensity = (float)(1-(shadeI[match[i]]-min)/(max-min));
               else
@@ -529,16 +565,16 @@ public class Map extends DragBox {
     }
 
     public void dump() {
-      Table NPAs = this.data.breakDown("Dump",new int[] {2}, -1);
+/*      Table NPAs = this.data.breakDown("Dump",new int[] {2}, -1);
       dataSet.Variable vNPA = (dataSet.Variable)(data.data.elementAt(2));
       for( int j=0; j< NPAs.table.length; j++ )
         System.out.println("Level: "+NPAs.lnames[0][j]+" ("+
                            vNPA.Level(NPAs.lnames[0][j])+
                            ") -> "+NPAs.table[j]);
 
-      double[] polyId = data.getRawNumbers(0);
-      double[] wireId = data.getRawNumbers(1);
-      double[] npa    = data.getNumbers(2);
+      double[] polyId = data.getRawNumbers(0); */
+      double[] Id = data.getRawNumbers(2);
+/*      double[] npa    = data.getNumbers(2);
       boolean[] drop  = new boolean[data.n];
 
       for( int i=0; i<data.n; i++ )
@@ -548,12 +584,12 @@ public class Map extends DragBox {
               drop[i]=true;
             else
               drop[j]=true;
-          }
+          }*/
 
             try{
-              BufferedWriter bw = new BufferedWriter( new FileWriter("/fss/theus/Data/NPANXX/dump") );
+              BufferedWriter bw = new BufferedWriter( new FileWriter("/Users/theusm/dump") );
               String ws = "/PpolyId\twirecenter\tNPA\n";
-              bw.write(ws, 0, ws.length());
+/*              bw.write(ws, 0, ws.length());
               for( int i=0; i< data.n; i++)
                 if( !drop[i] ) {
                   ws = Integer.toString((int)polyId[i])+'\t'+
@@ -561,14 +597,14 @@ public class Map extends DragBox {
                   NPAs.lnames[0][(int)npa[i]]+'\n';
                   bw.write(ws, 0, ws.length());
                 }
-
+*/
 
                   for( int i=0; i<polys.size(); i++) {
                     MyPoly P = (MyPoly)(polys.elementAt(i));
-                    if( !drop[match[i]] ) {
+//                    if( !drop[match[i]] ) {
                       bw.write("\n", 0, 1);
-                      ws = Integer.toString((int)polyId[match[i]])+"\t/P"+
-                        Integer.toString((int)wireId[match[i]])+'\t'+
+                      if( match[i] > -1 )
+                      ws = Integer.toString((int)Id[match[i]])+"\t/PCountyFIPS"+'\t'+
                         Integer.toString((int)(P.npoints))+'\n';
                       bw.write(ws, 0, ws.length());
                       for( int j=0; j<P.npoints; j++ ) {
@@ -577,7 +613,7 @@ public class Map extends DragBox {
                         bw.write(ws, 0, ws.length());
                       }
                     }
-                  }
+//                  }
                   bw.close();
             }
           catch( IOException e ) {};
