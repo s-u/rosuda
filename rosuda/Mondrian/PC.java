@@ -187,8 +187,9 @@ public class PC extends DragBox implements ActionListener {
           else
             selected[permA[j]] = true;
         }
-        else if( e.getModifiers() != BUTTON1_DOWN + SHIFT_DOWN )
+        else if( e.getModifiers() != BUTTON1_DOWN + SHIFT_DOWN && !e.isPopupTrigger() && !(e.getModifiers() ==  BUTTON3_DOWN && SYSTEM == WIN) ) {
           selected[permA[j]] = false;
+        }
       }
       if( hit ) {
         update(this.getGraphics());
@@ -259,7 +260,10 @@ public class PC extends DragBox implements ActionListener {
             JPopupMenu scaleType = new JPopupMenu("Title");
 
             if( Scale.equals("Common") ) {
-              JMenuItem Com = new JMenuItem("Scale Common");
+              String extra = "";
+              if( anySelected() )
+                extra = "Selected ";
+              JMenuItem Com = new JMenuItem("Scale "+extra+"Common");
               scaleType.add(Com);
               Com.setActionCommand("Common");
               Com.addActionListener(this);
@@ -539,10 +543,10 @@ public class PC extends DragBox implements ActionListener {
               ((e.getModifiers() == CTRL_DOWN+16) && (System.getProperty("os.name").equals("Linux"))) ||
               ((e.getModifiers() == 20) && (System.getProperty("os.name").equals("Mac OS X"))) ||
               (e.getModifiers() == META_DOWN) ) {
-            //System.out.println("Return: "+e.getModifiers()+"  Test: "+(BUTTON1_DOWN + CTRL_DOWN));
+//System.out.println("Return: "+e.getModifiers()+"  Test: "+(BUTTON1_DOWN + CTRL_DOWN));
             if (e.getID() == MouseEvent.MOUSE_PRESSED ) {
               lastX = e.getX();
-              //System.out.println("lastX: "+lastX);
+//System.out.println("lastX: "+lastX);
             }
             else {
               int popXId = 0;
@@ -553,7 +557,7 @@ public class PC extends DragBox implements ActionListener {
                   if( (p.xpoints[j] < testX) && (lastX < p.xpoints[j]) ||
                       (p.xpoints[j] > testX) && (lastX > p.xpoints[j]) ){
                     popXId = j;
-                    //System.out.println("popXId: "+popXId+"e.getX: "+e.getX());
+//System.out.println("popXId: "+popXId+" e.getX: "+e.getX());
                   }
                 }
                 setCoordinates(0, Mins[permA[popXId]], 1, Maxs[permA[popXId]], -1);
@@ -572,8 +576,8 @@ public class PC extends DragBox implements ActionListener {
                 Mins[permA[popXId]] = dMins[permA[popXId]];
                 Maxs[permA[popXId]] = dMaxs[permA[popXId]];
               }
-              //System.out.println("Id: "+popXId);
-              //            create(width, height);
+//System.out.println("Id: "+popXId);
+//create(width, height);
               update(this.getGraphics());
             }
           }
@@ -648,6 +652,11 @@ public class PC extends DragBox implements ActionListener {
             }
           }
           if( hit ) {
+            if( zoomToSel ) {
+              for(int i=0; i<data.n; i++)
+                data.setSelection(i, onlyHi[i]?1:0, Selection.MODE_STANDARD);
+              hotSelection = true;									// we need to set an initial hotSelector to rescale (is switched off in first paint)
+            }
             this.dataChanged(0);
             return;
           }
@@ -846,6 +855,11 @@ System.out.println("Command: "+command);
 
         zoomToSel = false;
         hotSelection = false;
+        alignMode = "center";
+        if( k > 1 )
+          slotWidth = (width-2.0*border)/(k-1.0);
+        else
+          slotWidth = 100;        
         this.dataChanged(0);
       }
       else
@@ -910,14 +924,14 @@ System.out.println("Command: "+command);
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
           for( int i=0; i<data.n; i++ )
-              bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+            bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
         }
         if( paintMode.equals("Poly") && zoomToSel ) {
           for( int i=0; i<data.n; i++ )
             if( onlyHi[i] )
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
         }
-        for( int j=0; j<k; j++ ) {	                    		// Axes
+        for( int j=0; j<k; j++ ) {	                    	                      	// Axes
           if( !printing )
             bg.setColor(new Color(255, 255, 255, 75));
           else
@@ -1400,14 +1414,18 @@ System.out.println("Command: "+command);
       if( alignMode.equals("center") || paintMode.equals("XbyY") ) {
         double totMin = 1000000, totMax=-10000000;
         for( int j=0; j<k; j++ ) {
-          if( totMin >= Mins[j] )
-            totMin = Mins[j];
-          if( totMax <= Maxs[j] )
-            totMax = Maxs[j];
+          if( selected[permA[j]] || !anySelected() ) {
+            if( totMin >= Mins[j] )
+              totMin = Mins[j];
+            if( totMax <= Maxs[j] )
+              totMax = Maxs[j];
+          }
         }
         for( int j=0; j<k; j++ ) {
-          Mins[j] = totMin;
-          Maxs[j] = totMax;
+          if( selected[permA[j]] || !anySelected() ) {
+            Mins[j] = totMin;
+            Maxs[j] = totMax;
+          }
         }
       } else {
         double maxRange = 0, range;
@@ -1440,6 +1458,13 @@ System.out.println("Command: "+command);
       getData();
       create(width, height);
       update(this.getGraphics());
+    }
+    
+    public boolean anySelected() {
+      boolean ret = false;
+      for( int j=0; j<k; j++ )
+        ret = ret || selected[j];
+      return ret;
     }
 
     // dummy for scrolling  
