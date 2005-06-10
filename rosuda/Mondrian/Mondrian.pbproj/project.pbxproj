@@ -264,7 +264,7 @@
 		<key>ClassPath</key>
 		<array>
 			<string>$JAVAROOT/Mondrian.jar</string>
-			<string>/usr/local/mysql/mysql-connector-java-3.0.9-stable/</string>
+			<string>/usr/local/mysql/mysql-connector-java-3.1.8/mysql-connector-java-3.1.8-bin.jar</string>
 		</array>
 		<key>MainClass</key>
 		<string>Mondrian</string>
@@ -290,7 +290,7 @@
 			<string>false</string>
 		</dict>
 		<key>VMOptions</key>
-		<string>-Xmx384m</string>
+		<string>-Xmx384m -Xverify:none</string>
 	</dict>
 	<key>NSJavaNeeded</key>
 	<string>YES</string>
