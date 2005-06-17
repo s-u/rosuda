@@ -928,6 +928,8 @@ System.out.println("Command: "+command);
                         
         if( ( alignMode.equals("center") && Scale.equals("Individual") ) || paintMode.equals("XbyY") ) { // draw y-axis if the scaling options allow
           //
+          Font SF = new Font("SansSerif", Font.PLAIN, 11);
+          bg.setFont(SF);
           FontMetrics fm = bg.getFontMetrics();
           roundY = (int)Math.max(0, 2 - Math.round((Math.log(Mins[1]-Mins[1])/Math.log(10))));
           // y-axis  
