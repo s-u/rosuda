@@ -13,7 +13,7 @@ public class PC extends DragBox implements ActionListener {
   protected int width, height;                   // The preferred size.
   protected int oldWidth, oldHeight;             // The last size for constructing the polygons.
   private Image bi, tbi, ttbi;
-  private Graphics bg;
+  private Graphics2D bg;
   protected int[] vars;
   protected int xVar;
   protected int yVar;
@@ -21,6 +21,9 @@ public class PC extends DragBox implements ActionListener {
   protected double slotWidth;
   protected int slotMax = 40;
   protected int addBorder = 0;
+  private int outside = 5;
+  private int tick    = 5;
+  private int roundY;
   protected int selID = -1;
   protected int scaleFactor = 3;
   protected double centerAt = 0;
@@ -63,7 +66,7 @@ public class PC extends DragBox implements ActionListener {
     this.k = vars.length;
     this.paintMode = mode;
 
-    border = 20;
+    border = 22;
 
     onlyHi = new boolean[data.n];
     for( int i=0; i<data.n; i++ )
@@ -668,7 +671,8 @@ public class PC extends DragBox implements ActionListener {
           if( selected[permA[j]] )
             inverted[permA[j]] = !inverted[permA[j]];
         }
-        this.dataChanged(0);
+        create(width, height);
+        update(this.getGraphics());
       } else if(e.getID() == KeyEvent.KEY_PRESSED && ( e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN )) {
         if( e.getKeyCode() == KeyEvent.VK_UP )
           scaleFactor += 1;
@@ -870,6 +874,7 @@ System.out.println("Command: "+command);
 
       Graphics2D g = (Graphics2D)g2d;
 
+      int pF = 1;
       double[] selection;
       Dimension size = this.getSize();
 
@@ -898,7 +903,7 @@ System.out.println("Command: "+command);
         if( !printing )  {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           tbi = createImage(size.width, size.height);
-          bg = bi.getGraphics();
+          bg = (Graphics2D)bi.getGraphics();
         }
         else 
           bg = g;
@@ -920,6 +925,30 @@ System.out.println("Command: "+command);
                       width-border+5,
                       (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))-1);
         }
+                        
+        if( ( alignMode.equals("center") && Scale.equals("Individual") ) || paintMode.equals("XbyY") ) { // draw y-axis if the scaling options allow
+          //
+          FontMetrics fm = bg.getFontMetrics();
+          roundY = (int)Math.max(0, 2 - Math.round((Math.log(Mins[1]-Mins[1])/Math.log(10))));
+          // y-axis  
+          bg.drawLine( 3 + border - outside*pF, height -  border, 
+                       3 + border - outside*pF, border );  
+          // y-ticks  
+          bg.drawLine( 3 + border - outside*pF,           border, 
+                       3 + border - outside*pF - tick*pF, border );  
+          
+          bg.drawLine( 3 + border - outside*pF,           height -  border, 
+                       3 + border - outside*pF - tick*pF, height -  border );  
+          
+          bg.rotate(-Math.PI/2);
+          bg.drawString(Stat.roundToString(Mins[1], roundY), 
+                        -height + border, 
+                        border + 3 - fm.getMaxAscent() - tick*pF +1*pF);
+          bg.drawString(Stat.roundToString(Maxs[1], roundY), 
+                        -border - fm.stringWidth(Stat.roundToString(Maxs[1], roundY) ),
+                        border + 3 - fm.getMaxAscent() - tick*pF +1*pF);          
+          bg.rotate(Math.PI/2);
+        }
 
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
@@ -931,18 +960,18 @@ System.out.println("Command: "+command);
             if( onlyHi[i] )
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
         }
-        for( int j=0; j<k; j++ ) {	                    	                      	// Axes
+        for( int j=0; j<k; j++ ) {	                    	                      	// Draw Axes
           if( !printing )
             bg.setColor(new Color(255, 255, 255, 75));
           else
             bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.35F));
-          bg.drawLine( poly[1].xpoints[j]-1, border, (poly[1].xpoints)[j]-1, size.height-border-3);
-          bg.drawLine( poly[1].xpoints[j]+1, border, (poly[1].xpoints)[j]+1, size.height-border-3);
+          bg.drawLine( poly[1].xpoints[j]-1, border-2, (poly[1].xpoints)[j]-1, size.height-border-1);
+          bg.drawLine( poly[1].xpoints[j]+1, border-2, (poly[1].xpoints)[j]+1, size.height-border-1);
           if( !printing )
             bg.setColor(new Color(255, 255, 255, 140));
           else
             bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
-          bg.drawLine( poly[1].xpoints[j],   border-1, (poly[1].xpoints)[j],   size.height-border-2);
+          bg.drawLine( poly[1].xpoints[j],   border-3, (poly[1].xpoints)[j],   size.height-border);
         }	
         for( int j=0; j<k; j++ ) {													// Arrows at Axes
           if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
@@ -950,16 +979,16 @@ System.out.println("Command: "+command);
               bg.setColor(new Color(255, 255, 255, 140));
             else
               bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
-            bg.drawLine( poly[1].xpoints[j]-3,   border+2, (poly[1].xpoints)[j]+3,   border+2);
-            bg.drawLine( poly[1].xpoints[j]-2,   border+1, (poly[1].xpoints)[j]+2,   border+1);
-            bg.drawLine( poly[1].xpoints[j]-1,   border,   (poly[1].xpoints)[j]+1,   border);
-            bg.drawLine( poly[1].xpoints[j],     border-1, (poly[1].xpoints)[j],     border-1);
+            bg.drawLine( poly[1].xpoints[j]-3,   border,   (poly[1].xpoints)[j]+3,   border);
+            bg.drawLine( poly[1].xpoints[j]-2,   border-1, (poly[1].xpoints)[j]+2,   border-1);
+            bg.drawLine( poly[1].xpoints[j]-1,   border-2, (poly[1].xpoints)[j]+1,   border-2);
+            bg.drawLine( poly[1].xpoints[j],     border-3, (poly[1].xpoints)[j],     border-3);
           } else {
             bg.setColor(Color.red);
-            bg.drawLine( poly[1].xpoints[j]-3,   size.height-border-4, (poly[1].xpoints)[j]+3,   size.height-border-4);
-            bg.drawLine( poly[1].xpoints[j]-2,   size.height-border-3, (poly[1].xpoints)[j]+2,   size.height-border-3);
-            bg.drawLine( poly[1].xpoints[j]-1,   size.height-border-2, (poly[1].xpoints)[j]+1,   size.height-border-2);
-            bg.drawLine( poly[1].xpoints[j],     size.height-border-1, (poly[1].xpoints)[j],     size.height-border-1);
+            bg.drawLine( poly[1].xpoints[j]-3,   size.height-border-2, (poly[1].xpoints)[j]+3,   size.height-border-2);
+            bg.drawLine( poly[1].xpoints[j]-2,   size.height-border-1, (poly[1].xpoints)[j]+2,   size.height-border-1);
+            bg.drawLine( poly[1].xpoints[j]-1,   size.height-border,   (poly[1].xpoints)[j]+1,   size.height-border);
+            bg.drawLine( poly[1].xpoints[j],     size.height-border+1, (poly[1].xpoints)[j],     size.height-border+1);
           }
         }
         bg.setColor(Color.black);
@@ -1042,7 +1071,7 @@ System.out.println("Command: "+command);
         if( k == 1 )
           mt.setAlign( 2 );
         else {
-          if( j == 0 )
+          if( j == 0 && !paintMode.equals("XbyY") )
             mt.setAlign( 0 );
           else if( j== k-1 )
             mt.setAlign( 1 );
@@ -1061,9 +1090,9 @@ System.out.println("Command: "+command);
           ttbg.setColor(Color.black);
         // Set Y position of Text AFTER we set the font size
         if( (j % 2) == 1 )
-          mt.moveYTo(border - 4);
+          mt.moveYTo(border - 6);
         else
-          mt.moveYTo(height - border + 1 + (ttbg.getFont()).getSize());
+          mt.moveYTo(height - border + 3 + (ttbg.getFont()).getSize());
         mt.moveXTo(x);
 
         mt.draw(ttbg);
@@ -1226,9 +1255,6 @@ System.out.println("Command: "+command);
 
     void getData() {
 
-      if( k == 1 )
-        addBorder = 30;
-
       if( paintMode.equals("XbyY") ) {
         k = data.getNumLevels(yVar);
         vars = new int[k];
@@ -1292,6 +1318,17 @@ System.out.println("Command: "+command);
         bg = null;
       }
 
+      if( k == 1 )
+        addBorder = 30;
+      
+      if( ( alignMode.equals("center") && Scale.equals("Individual") ) )
+        addBorder = 3;
+      if( paintMode.equals("XbyY") )
+        if( k== 2 )
+          addBorder = 25;
+        else
+          addBorder = 17;
+      
       if( alignMode.equals("ccase") )
         if( data.countSelection() == 1 )
           for( int i=0; i<data.n; i++ )
@@ -1300,8 +1337,8 @@ System.out.println("Command: "+command);
 
       for( int j=0; j<k; j++ ) {
         if( alignMode.equals("center") ) {
-          Mins[j] = dMins[j] - (dMaxs[j]-dMins[j])/height*4;
-          Maxs[j] = dMaxs[j] + (dMaxs[j]-dMins[j])/height*4;
+          Mins[j] = dMins[j];// - (dMaxs[j]-dMins[j])/height*4;
+          Maxs[j] = dMaxs[j];// + (dMaxs[j]-dMins[j])/height*4;
         } else if( alignMode.equals("cmean") ) {
           Mins[j] = dMeans[j] - scaleFactor * dSDevs[j];
           Maxs[j] = dMeans[j] + scaleFactor * dSDevs[j];
@@ -1320,11 +1357,17 @@ System.out.println("Command: "+command);
         scaleCommon();
 
       if( k > 1 )
-        slotWidth = (width-2.0*border)/(k-1.0);
+        if( paintMode.equals("XbyY") )
+          if( k==2 )
+            slotWidth = 70;
+          else
+            slotWidth = (width-2.75*border)/(k-1.0);
+        else
+          slotWidth = (width-2.0*border)/(k-1.0);
       else
         slotWidth = 100;
 
-      System.out.println("Slot: "+slotWidth+"Slot Max: "+slotMax);
+// System.out.println("Slot: "+slotWidth+"Slot Max: "+slotMax);
 
       names.removeAllElements();
       if( paintMode.equals("XbyY") )
@@ -1426,7 +1469,7 @@ System.out.println("Command: "+command);
             Mins[j] = totMin;
             Maxs[j] = totMax;
           }
-        }
+        }        
       } else {
         double maxRange = 0, range;
         for( int j=0; j<k; j++ )
@@ -1461,10 +1504,11 @@ System.out.println("Command: "+command);
     }
     
     public boolean anySelected() {
-      boolean ret = false;
+      int sel = 0;
       for( int j=0; j<k; j++ )
-        ret = ret || selected[j];
-      return ret;
+        if( selected[j] )
+          sel++;
+      return (sel > 1);
     }
 
     // dummy for scrolling  
