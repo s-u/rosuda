@@ -945,10 +945,10 @@ System.out.println("Command: "+command);
           bg.rotate(-Math.PI/2);
           bg.drawString(Stat.roundToString(Mins[1], roundY), 
                         -height + border, 
-                        border + 3 - fm.getMaxAscent() - tick*pF +1*pF);
+                        border + 4 - fm.getMaxAscent() - tick*pF +1*pF);
           bg.drawString(Stat.roundToString(Maxs[1], roundY), 
                         -border - fm.stringWidth(Stat.roundToString(Maxs[1], roundY) ),
-                        border + 3 - fm.getMaxAscent() - tick*pF +1*pF);          
+                        border + 4 - fm.getMaxAscent() - tick*pF +1*pF);          
           bg.rotate(Math.PI/2);
         }
 
@@ -1320,12 +1320,13 @@ System.out.println("Command: "+command);
         bg = null;
       }
 
+      addBorder = 0;
       if( k == 1 )
         addBorder = 30;
       
       if( ( alignMode.equals("center") && Scale.equals("Individual") ) )
         addBorder = 3;
-      if( paintMode.equals("XbyY") )
+      if( paintMode.equals("XbyY") || ((paintMode.equals("Box") || paintMode.equals("Both")) && Scale.equals("Individual")) )
         if( k== 2 )
           addBorder = 25;
         else
@@ -1359,7 +1360,7 @@ System.out.println("Command: "+command);
         scaleCommon();
 
       if( k > 1 )
-        if( paintMode.equals("XbyY") )
+        if( paintMode.equals("XbyY") || ((paintMode.equals("Box") || paintMode.equals("Both")) && Scale.equals("Individual")) )
           if( k==2 )
             slotWidth = 70;
           else
