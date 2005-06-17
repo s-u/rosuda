@@ -18,6 +18,7 @@ public class MapCanvas extends BaseCanvas
     /** map variable */
     SVar v;
 
+	boolean fixedAspectRatio = true;
     double minX, minY, maxX, maxY;
 
     public MapCanvas(Frame f, SVar mv, SMarker mark) {
@@ -71,17 +72,39 @@ public class MapCanvas extends BaseCanvas
             ax.setValueRange(minX,maxX-minX);
             ay.setValueRange(minY,maxY-minY);
             ignoreNotifications=ins;
-        }        
-        double xscale=((double)w)/(maxX-minX);
-        double yscale=((double)h)/(maxY-minY);
-        if (orientation==1 || orientation==3) {
+        }
+
+		boolean ratioIsOk=!fixedAspectRatio;
+		while (!ratioIsOk) {
+			// retain aspect ratio (maybe we should make this more generic ...)
+			double xscale=((double)ax.gLen)/(ax.vLen);
+			double yscale=((double)ay.gLen)/(ay.vLen);
+			if (xscale<0) xscale=-xscale;
+			if (yscale<0) yscale=-yscale;
+			/*
+			 if (orientation==1 || orientation==3) {
             xscale=((double)h)/(maxX-minX);
-            yscale=((double)w)/(maxY-minY);
-        };
-        double scale=(xscale<yscale)?xscale:yscale;
+				 yscale=((double)w)/(maxY-minY);
+			 };
+			 */
+			double relscale=(xscale<yscale)?yscale/xscale:xscale/yscale;
+			Axis aa = (xscale<yscale)?ay:ax;
+			double aMid = aa.vBegin + aa.vLen/2.0;
+			double aRng = aa.vLen*relscale;
+			aa.setValueRange(aMid-aRng/2.0,aRng);
+			
+			// special case: if both axes propose vranges larger than their data ranges then prune back to the data range. This prevents "shrinking" phenomenon on resize and allows 'zooming' on the global scale
+			if (ax.vLen>(maxX-minX)*1.01 && ay.vLen>(maxY-minY)*1.01) {
+				ax.setValueRange(minX,maxX-minX);
+				ay.setValueRange(minY,maxY-minY);
+			} else ratioIsOk=true;
+		}
+		
+		/*
         int reqW=(int)(scale*(maxX-minX));
         int reqH=(int)(scale*(maxY-minY));
-        if (orientation==0 || orientation==2) {
+
+		 if (orientation==0 || orientation==2) {
             if (W>reqW+mLeft*2+25 || H>reqH+mLeft*2+25) {
                 if (Global.DEBUG>0)
                     System.out.println("MapCanvas.updateObjects(): W/H="+W+"/"+H+" req="+(reqW+mLeft*2)+"/"+(reqH+mLeft*2));
@@ -96,7 +119,7 @@ public class MapCanvas extends BaseCanvas
             getFrame().pack();
             return;
         }
-
+		 */
         if (Global.DEBUG>0)
             System.out.println(" X:["+ax+"]["+minX+".."+maxX+"] Y:["+ay+"]["+minY+".."+maxY+"]");
         
@@ -110,6 +133,7 @@ public class MapCanvas extends BaseCanvas
                     PPrimPolygon pri=new PPrimPolygon();
                     pri.ref=new int[1];
                     pri.ref[0]=i;
+					pri.drawBorder=paintOutline;
                     if (orientation==0 || orientation==2)
                         pri.pg=new Polygon(MapSegmentTools.transViaAxisX(ms,j,ax),MapSegmentTools.transViaAxisY(ms,j,ay),ms.getSizeAt(j));
                     else
@@ -140,6 +164,7 @@ public class MapCanvas extends BaseCanvas
         if (cmd=="bounds") {
             setUpdateRoot(0);
             paintOutline=!paintOutline;
+			updateObjects(); // currently the outline is a property of the objects, so we need to re-create them.. silly, I know ...
             repaint();
         }        	
 	return null;
