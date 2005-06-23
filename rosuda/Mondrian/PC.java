@@ -926,12 +926,13 @@ System.out.println("Command: "+command);
                       (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1])))-1);
         }
                         
-        if( ( alignMode.equals("center") && Scale.equals("Individual") ) || paintMode.equals("XbyY") ) { // draw y-axis if the scaling options allow
+        if( ( (alignMode.equals("center") || alignMode.equals("cvalue") ) && Scale.equals("Individual") ) || paintMode.equals("XbyY") ) { // draw y-axis if the scaling options allow
           //
+          bg.setColor(Color.black);
           Font SF = new Font("SansSerif", Font.PLAIN, 11);
           bg.setFont(SF);
           FontMetrics fm = bg.getFontMetrics();
-          roundY = (int)Math.max(0, 2 - Math.round((Math.log(Mins[1]-Mins[1])/Math.log(10))));
+          roundY = (int)Math.max(0, 2 - Math.round((Math.log(Maxs[1]-Mins[1])/Math.log(10))));
           // y-axis  
           bg.drawLine( 3 + border - outside*pF, height -  border, 
                        3 + border - outside*pF, border );  
@@ -946,6 +947,11 @@ System.out.println("Command: "+command);
           bg.drawString(Stat.roundToString(Mins[1], roundY), 
                         -height + border, 
                         border + 4 - fm.getMaxAscent() - tick*pF +1*pF);
+          if( alignMode.equals("cvalue") )
+            bg.drawString(Stat.roundToString(centerAt, roundY), 
+                          -border - fm.stringWidth(Stat.roundToString(centerAt, roundY) )/2 - (height-2*border)/2, 
+                          border + 4 - fm.getMaxAscent() - tick*pF +1*pF);            
+          
           bg.drawString(Stat.roundToString(Maxs[1], roundY), 
                         -border - fm.stringWidth(Stat.roundToString(Maxs[1], roundY) ),
                         border + 4 - fm.getMaxAscent() - tick*pF +1*pF);          
