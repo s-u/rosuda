@@ -295,7 +295,7 @@ FocusListener, RMainLoopCallbacks {
      */
     public void saveWorkSpace(String file) {
         if (file==null) execute("save.image()",false);
-        else execute("save.image(\""+(file == null ? "" : file.replace('\\','/'))+"\")",false);
+        else execute("save.image(\""+(file == null ? "" : file.replace('\\','/'))+"\",compress=TRUE)",false);
         JGR.writeHistory();
     }
 
