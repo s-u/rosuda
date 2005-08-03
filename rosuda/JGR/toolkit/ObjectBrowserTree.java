@@ -71,6 +71,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
         while (i.hasNext()) {
             RObject ro = (RObject) i.next();
             DefaultMutableTreeNode child = new DefaultMutableTreeNode(ro);
+			
             if (!ro.isAtomar())
                 child.add(new DefaultMutableTreeNode());
             node.add(child);
@@ -128,7 +129,8 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
         RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
 
         Transferable t = new java.awt.datatransfer.StringSelection(o.getRName());
-        dragSource.startDrag (evt, DragSource.DefaultCopyDrop, t, this);
+        if (t == null) return;
+		dragSource.startDrag(evt, DragSource.DefaultCopyDrop, t, this);
     }
     
     /**
