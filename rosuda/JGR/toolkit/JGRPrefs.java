@@ -99,6 +99,9 @@ public class JGRPrefs {
     /** UseEmacsKeyBindings*/
     public static boolean useEmacsKeyBindings = false;
 	
+	/** ShowHiddenFiles*/
+    public static boolean showHiddenFiles = false;
+	
 	/** Packages which were installed when JGR was running the last time*/
 	public static String previousPackages = null;
     
@@ -191,6 +194,7 @@ public class JGRPrefs {
         // it is safe to use emacs bindings on Macs since that's the default in Coca widgets. on win/unix it's not safe since ctrl may be the sc modifier
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
         previousPackages = prefs.get("PreviousPackages",null);
+		showHiddenFiles = prefs.getBoolean("ShowHiddenFiles",false);
     }
 
      /**
@@ -209,6 +213,7 @@ public class JGRPrefs {
         prefs.putBoolean("UseHelpAgentConsole", useHelpAgentConsole);
         prefs.putBoolean("UseHelpAgentEditor", useHelpAgentEditor);
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
+		prefs.putBoolean("ShowHiddenFiles",showHiddenFiles);
 		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
