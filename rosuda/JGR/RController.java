@@ -768,7 +768,9 @@ public class RController {
 					break;
                 }
             }
-                       
+            
+			System.out.println("Export data.frame with length: "+vs.count());		   
+								             
             long contlist[] = new long[vs.count()];
             String[] names = new String[vs.count()];
             for (int i = 0; i< vs.count(); i++) {
@@ -778,7 +780,7 @@ public class RController {
 	                    contlist[i] = v;
 	                }
 	                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
-	                    long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
+						long v = JGR.R.rniPutIntArray(((SVarInt) vs.at(i)).cont);
 	                    contlist[i] = v;
 	                }
 	                else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
