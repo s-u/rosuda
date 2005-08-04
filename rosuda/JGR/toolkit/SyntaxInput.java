@@ -62,7 +62,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
         int lastb = this.getText(0,pos+1).lastIndexOf('(');
         int lasteb = this.getText(0,pos).lastIndexOf(')');
         if (lasteb > lastb) return null;
-        if (lastb < 0) lastb = text.indexOf('(',pos);
+        //if (lastb < 0) lastb = text.indexOf('(',pos);
         if (lastb < 0) return null;
 		if (pos < 0) return null;
         int line, loffset, lend;
