@@ -282,12 +282,13 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
                                                                   JOptionPane.PLAIN_MESSAGE));
         }
         if (searchString != null) {
-            int[] f_index = vs.whereis(searchString, x == -1 ? 0 : x,
-                                       y == -1 ? 0 : y);
+            int[] f_index = vs.whereis(searchString, x == -1 ? 0 : x, y == -1 ? 0 : y);
+			
             if (f_index[0] == -1 && f_index[1] == -1) {
                 JOptionPane.showMessageDialog(this, "Not found", "Result",
                                               JOptionPane.WARNING_MESSAGE);
             } else {
+				f_index[1] = sorter.modelIndex(f_index[1]);
                 gotoCell(f_index[0] + 1, f_index[1]);
             }
             searchIndex[0] = f_index[0];
