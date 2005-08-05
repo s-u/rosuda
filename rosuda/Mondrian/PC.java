@@ -53,7 +53,10 @@ public class PC extends DragBox implements ActionListener {
   Vector bPlots = new Vector(10,10);
   Vector rects = new Vector(30,10);
   Vector tabs = new Vector(10,10);
-
+  
+  private DataListener listener;
+  private static EventQueue evtq;
+  
   public PC(JFrame frame, dataSet data, int[] vars, String mode) {
     super(frame);
     Dimension size = frame.getSize();
@@ -120,13 +123,27 @@ public class PC extends DragBox implements ActionListener {
     else
       frame.setTitle("PB("+data.setName+")");
 
+    evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
+    
     // which events we are interested in.
     this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     this.enableEvents(AWTEvent.KEY_EVENT_MASK);
     this.requestFocus();
   }
 
-
+  public void addDataListener(DataListener l) {
+    listener = l;
+  }
+  
+  public void processEvent(AWTEvent evt) {
+    if( evt instanceof DataEvent ) {
+      if( listener != null ) {
+        listener.dataChanged(yVar);
+      }
+    }
+    else super.processEvent(evt);
+  }
+  
   public String getToolTipText(MouseEvent e) {
     if( e.isControlDown() ) {
       int minXDist = Integer.MAX_VALUE;
@@ -261,7 +278,7 @@ public class PC extends DragBox implements ActionListener {
         }
           else {
             JPopupMenu scaleType = new JPopupMenu("Title");
-
+              
             if( Scale.equals("Common") ) {
               String extra = "";
               if( anySelected() )
@@ -277,15 +294,15 @@ public class PC extends DragBox implements ActionListener {
               Ind.setActionCommand("Individual");
               Ind.addActionListener(this);
             }
-
+            
             JMenu alignM = new JMenu("Align at");
-
+            
             JCheckBoxMenuItem centerM = new JCheckBoxMenuItem("Center", false);
             JCheckBoxMenuItem cmeanM = new JCheckBoxMenuItem("Mean", false);
             JCheckBoxMenuItem cmedianM = new JCheckBoxMenuItem("Median", false);
             JCheckBoxMenuItem ccaseM = new JCheckBoxMenuItem("Case", false);
             JCheckBoxMenuItem cvalueM = new JCheckBoxMenuItem("Value ...", false);
-
+            
             if( alignMode.equals("center") )
               centerM.setState(true);
             if( alignMode.equals("cmean") )
@@ -300,7 +317,7 @@ public class PC extends DragBox implements ActionListener {
               ccaseM.setState(true);
             if( alignMode.equals("cvalue") )
               cvalueM.setState(true);
-
+            
             alignM.add(centerM);
             alignM.add(cmeanM);
             alignM.add(cmedianM);
@@ -316,19 +333,20 @@ public class PC extends DragBox implements ActionListener {
             cmedianM.addActionListener(this);
             ccaseM.addActionListener(this);
             cvalueM.addActionListener(this);
-
+            
             scaleType.add(alignM);
-
+            
+            
             JMenu sortM = new JMenu("Sort Axes by");
             JCheckBoxMenuItem minM = new JCheckBoxMenuItem("Minimum");
             JCheckBoxMenuItem quarM  = new JCheckBoxMenuItem("IQ-Range");
-            JCheckBoxMenuItem medianM  = new JCheckBoxMenuItem("Median");
+            JCheckBoxMenuItem medianM  = new JCheckBoxMenuItem("Median");            
             JCheckBoxMenuItem meanM = new JCheckBoxMenuItem("Mean");
             JCheckBoxMenuItem sdevM  = new JCheckBoxMenuItem("Std. Dev.");
             JCheckBoxMenuItem maxM  = new JCheckBoxMenuItem("Maximum");
             JCheckBoxMenuItem iniM  = new JCheckBoxMenuItem("Initial");
             JCheckBoxMenuItem revM  = new JCheckBoxMenuItem("Reverse");
-
+            
             if( sortMode.equals("ini") )
               iniM.setState(true);
             else if( sortMode.equals("rev") )
@@ -468,9 +486,21 @@ public class PC extends DragBox implements ActionListener {
 
             scaleType.add(new JMenuItem("Dismiss"));
 
-            if( k > 1 && !paintMode.equals("XbyY") ) {
-              scaleType.show(e.getComponent(), e.getX(), e.getY());
-            }
+            if( k > 1 ) 
+              if( !paintMode.equals("XbyY") ) 
+                scaleType.show(e.getComponent(), e.getX(), e.getY());
+              else {
+                scaleType = new JPopupMenu("Title");
+                sortM = new JMenu("Sort Axes by");
+                sortM.add(quarM);
+                sortM.add(medianM);
+                sortM.addSeparator();
+                sortM.add(iniM);
+                sortM.add(revM);
+                scaleType.add(sortM);
+                scaleType.add(new JMenuItem("Dismiss"));
+                scaleType.show(e.getComponent(), e.getX(), e.getY());
+              }
           }
       }
         else
@@ -787,19 +817,34 @@ System.out.println("Command: "+command);
         update(this.getGraphics());
       } else if( command.equals("min") || command.equals("quar") || command.equals("sdev") || command.equals("mean") || command.equals("median") || command.equals("max") || command.equals("ini") || command.equals("rev") ) {
         sortMode = command;
+        dataSet.Variable v = (dataSet.Variable)data.data.elementAt(yVar);
         if( command.equals("ini") )
-          for( int i=0; i<sortA.length; i++ )
-            permA[i] =i;
+          if( paintMode.equals("XbyY") )
+            v.sortLevels();
+          else
+            for( int i=0; i<sortA.length; i++ )
+              permA[i] =i;
         else if( command.equals("rev") ) {
-          int left  = 0;              // index of leftmost element
-          int right = permA.length-1; // index of rightmost element
-          while (left < right) {   // exchange the left and right elements
-            int temp = permA[left];
-            permA[left]  = permA[right];
-            permA[right] = temp;
-            left++;                // move the bounds toward the center
-            right--;
-          }
+          if( !paintMode.equals("XbyY") ) {
+            int left  = 0;              // index of leftmost element
+            int right = permA.length-1; // index of rightmost element
+            while (left < right) {   // exchange the left and right elements
+              int temp = permA[left];
+              permA[left]  = permA[right];
+              permA[right] = temp;
+              left++;                // move the bounds toward the center
+              right--;
+            }
+          } else {
+            for( int i=0; i<v.permA.length/2; i++ ) {
+              int save = v.permA[i];
+              v.permA[i] = v.permA[v.permA.length-i-1];
+              v.permA[v.permA.length-i-1] = save;
+            }
+            for( int i=0; i<v.permA.length; i++ ) {
+              v.IpermA[v.permA[i]] = i;
+            }
+          }          
         } else {
           if( command.equals("min") )
             for( int i=0; i<sortA.length; i++ ) 
@@ -820,11 +865,32 @@ System.out.println("Command: "+command);
             for( int i=0; i<sortA.length; i++ ) 
               sortA[i] = dMaxs[i];
           int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
+
+          if( paintMode.equals("XbyY") ) {
+            
+            int[] tperm = new int[perm.length];
+            for( int i=0; i<perm.length; i++ )
+              tperm[i] = v.permA[perm[i]];
+            for( int i=0; i<perm.length; i++ ) {
+              v.permA[i] = tperm[i];
+              v.IpermA[v.permA[i]] = i;
+            }
+          } else
+
           for( int i=0; i<sortA.length; i++ )
             permA[i] = perm[i];
+          
         }
         create(width, height);
         update(this.getGraphics());
+        
+        if( paintMode.equals("XbyY") ) {
+          this.dataFlag = true;                            // this plot was responsible
+          
+          DataEvent de = new DataEvent(this);              // now the rest is informed ...
+          evtq.postEvent(de);
+        }
+        
       } else if ( command.equals("center") || command.equals("cmean") || command.equals("cmedian") || command.equals("ccase") || command.equals("cvalue") ) {
         alignMode = command;
         if( alignMode.equals("cvalue") )
@@ -1379,8 +1445,21 @@ System.out.println("Command: "+command);
 // System.out.println("Slot: "+slotWidth+"Slot Max: "+slotMax);
 
       names.removeAllElements();
-      if( paintMode.equals("XbyY") )
+      if( paintMode.equals("XbyY") ) {
         lNames = data.getLevels(yVar);
+        for( int j=0; j<k; j++ ) {
+          data.setFilter( yVar, lNames[j]);
+
+          dMins[j] = data.getMin(xVar);
+          dIQRs[j] = data.getQuantile(xVar, 0.75) - data.getQuantile(xVar, 0.25);
+          dMedians[j] = data.getQuantile(xVar, 0.5);
+          dMeans[j] = data.getMean(xVar);
+          dSDevs[j] = data.getSDev(xVar);
+          dMaxs[j] = data.getMax(xVar);   
+          
+          data.resetFilter();
+        }
+      }        
 
       for( int j=0; j<k; j++ ) {
         if( !paintMode.equals("XbyY") )
@@ -1730,7 +1809,9 @@ System.out.println("Command: "+command);
         }
       }
     }
-}
+}      
+      
+
 
 
 
