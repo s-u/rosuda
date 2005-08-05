@@ -1033,7 +1033,7 @@ System.out.println(newQ.makeQuery());
     }
 
     public int getGroupSize( int grp ) {
-      System.out.println( "grp: "+grp+" grpSize: "+getNumLevels() );
+//      System.out.println( "grp: "+grp+" grpSize: "+getNumLevels() );
       return grpSize[grp];
     }
     
@@ -1155,9 +1155,9 @@ System.out.println("query: "+query+" ---> "+this.max);
           while( filterA[sortI[i--]] != filterVal ) {}
             return data[sortI[i+1]];
         }
-        System.out.println("filterGrp: "+filterGrp+" filterGrps: "+filterGrpSize.length);
+//        System.out.println("filterGrp: "+filterGrp+" filterGrps: "+filterGrpSize.length);
         int stop = (int)(q * (filterGrpSize[filterGrp]-1));
-        System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]);
+//        System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]);
         while( count <= stop )
           if( filterA[sortI[i++]] == filterVal ) {
             count++;
