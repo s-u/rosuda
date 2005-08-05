@@ -7,6 +7,7 @@ import java.lang.*;              //
 import java.io.*;              //
 import javax.swing.*;
 import javax.swing.event.*;
+import org.rosuda.JRclient.*;
 
 public class Map extends DragBox {
   private Vector polys = new Vector(256,256);  // Store the tiles.
@@ -21,20 +22,23 @@ public class Map extends DragBox {
   private int borderAlpha = 5;
   private int[] alphas = {0, 10, 20, 40, 70, 100};
   
-  private JComboBox Varlist, Collist;
+  private JComboBox Varlist, Collist, ColMap;
   private JList allVarList;
   private JTextField minField, maxField;
   private int displayVar = -1;
   private boolean inverted = false;
-  private boolean rank = false;
   private boolean alphaChanged = false;
   private boolean colorChanged = false;
   private int[] match;
+  private Color[] terrain;
+  private Color[] heat;
+  private Color[] topo;
   private Vector smallPolys = new Vector(256,256);
   private Image bi, tbi;
   private Graphics bg;
   private int queryId = -1;
   private String scheme = "gray";
+  private String colorMapping = "linear";
 
   private Vector NPAPolys = new Vector(256,256);
   private Vector finalPolys = new Vector(256,256);
@@ -77,7 +81,7 @@ public class Map extends DragBox {
     ratio = (double)(xMax-xMin) / (double)(yMax-yMin);
 
     Varlist = new JComboBox();
-    Varlist.addItem("RESET");
+    Varlist.addItem("- none -");
     for (int j=0; j<data.k; j++) {
       Varlist.addItem(data.getName(j));
     }
@@ -90,13 +94,49 @@ public class Map extends DragBox {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
 
+    if( ((MFrame)frame).hasR() ) {
+      try {
+        Rconnection c = new Rconnection();
+        
+        double[] reds   = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[1,]").asDoubleArray();
+        double[] greens = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[2,]").asDoubleArray();
+        double[] blues  = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        
+        terrain = new Color[polys.size()];
+        for( int i=0; i<polys.size(); i++ )
+          terrain[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
+        
+        reds   = c.eval("col2rgb(heat.colors("+(polys.size())+"))[1,]").asDoubleArray();
+        greens = c.eval("col2rgb(heat.colors("+(polys.size())+"))[2,]").asDoubleArray();
+        blues  = c.eval("col2rgb(heat.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        
+        heat = new Color[polys.size()];
+        for( int i=0; i<polys.size(); i++ )
+          heat[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
+        
+        reds   = c.eval("col2rgb(topo.colors("+(polys.size())+"))[1,]").asDoubleArray();
+        greens = c.eval("col2rgb(topo.colors("+(polys.size())+"))[2,]").asDoubleArray();
+        blues  = c.eval("col2rgb(topo.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        
+        topo = new Color[polys.size()];
+        for( int i=0; i<polys.size(); i++ )
+          topo[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
+        
+        c.close();
+      } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+    }
+    
     Collist = new JComboBox();
     Collist.addItem("gray");
     Collist.addItem("red");
     Collist.addItem("green");
     Collist.addItem("blue");
-    Collist.addItem("blue to red");
-    Collist.addItem("yellow to green");
+    Collist.addItem("blue2red");
+    if( ((MFrame)frame).hasR() ) {
+      Collist.addItem("heat");
+      Collist.addItem("terrain");
+      Collist.addItem("topo");
+    }
     Collist.setSize(200, (Varlist.getSize()).height);
     p.add("West", Collist);
     Collist.addItemListener(new ItemListener() {
@@ -109,17 +149,27 @@ public class Map extends DragBox {
     });
     p.add("East", cbBorder); */
 
+/*    JCheckBox cbRank = new JCheckBox("Rank", rank);
+    cbRank.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) { rank = !rank; updateMap(); }
+    });
+    p.add("East", cbRank);*/
+    
+    ColMap = new JComboBox();
+    ColMap.addItem("linear");
+    ColMap.addItem("normal");
+    ColMap.addItem("rank");
+//    Collist.setSize(200, (Varlist.getSize()).height);
+    p.add("West", ColMap);
+    ColMap.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) { updateMap(); }
+    });
+    
     JCheckBox cbInvert = new JCheckBox("Invert", inverted);
     cbInvert.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { inverted = !inverted; updateMap(); }
     });
     p.add("East", cbInvert);
-
-    JCheckBox cbRank = new JCheckBox("Rank", rank);
-    cbRank.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) { rank = !rank; updateMap(); }
-    });
-    p.add("East", cbRank);
     
     p.add("East", new JLabel(" Min:"));
     
@@ -136,12 +186,13 @@ public class Map extends DragBox {
     p.add("East", maxField);
     
     if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
-      // Since Windows Widgets eat up their events, we need to register every single focussable object on the Panel ...
+      // Since Java 1.4+ Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       Collist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+      ColMap.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
 //      cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
-      cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
+//      cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
     }
     maxField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
     minField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
@@ -216,6 +267,7 @@ public class Map extends DragBox {
   public void updateMap() {
     displayVar = Varlist.getSelectedIndex()-1;
     scheme = (String)Collist.getSelectedItem();
+    colorMapping = (String)ColMap.getSelectedItem();
     scaleChanged = true;
     paint(this.getGraphics());
   }
@@ -483,7 +535,7 @@ public class Map extends DragBox {
       double min=0;
       double max=0;
       if( displayVar >= 0 ) {
-        if( !rank || data.categorical(displayVar) ) {
+        if( colorMapping.equals("linear") || data.categorical(displayVar) ) {
           shade = data.getRawNumbers(displayVar);
           if( ((minField.getText()).trim()).equals("") )
             min = data.getMin(displayVar);
@@ -514,7 +566,7 @@ public class Map extends DragBox {
         else {
           float intensity=0;
           if( match[i] > -1 ) {
-            if( !rank || data.categorical(displayVar) ) {
+            if( colorMapping.equals("linear") || data.categorical(displayVar) ) {
               double value = Math.max(shade[match[i]], min);
               value = Math.min(value, max);
               if( inverted )
@@ -526,15 +578,31 @@ public class Map extends DragBox {
                 intensity = (float)(1-(shadeI[match[i]]-min)/(max-min));
               else
                 intensity = (float)(1-(shadeI[match[i]]-max)/(min-max));
-          }   
+              if( colorMapping.equals("normal") ) {
+                if( intensity == 0 )
+                  intensity = -3;
+                else if( intensity == 1 )
+                  intensity = 3;
+                else
+                  intensity = (float)((Stat.qnorm(intensity)+3)/6.0);
+                intensity = Math.max(0, intensity );
+                intensity = Math.min(1, intensity );
+              }
+              
+          }
+//System.out.println("Intensity: "+intensity);
           if(p.Id == -1)
               p.setColor(MFrame.backgroundColor);
           else if( scheme.equals("gray") )
             p.setColor(new Color(1-intensity, 1-intensity, 1-intensity));                // gray
-          else if( scheme.equals("blue to red") )
-            p.setColor(new Color(intensity, 0, 1-intensity));											// blue to red
-          else if( scheme.equals("yellow to green") )
-            p.setColor(new Color(1-intensity, 1, 0));															 // yellow to green
+          else if( scheme.equals("blue2red") )
+            p.setColor(new Color(intensity, 0, 1-intensity));                            // blue2red
+          else if( scheme.equals("heat") )
+            p.setColor(heat[(int)((polys.size()-1)*intensity)]);															 // heat
+          else if( scheme.equals("terrain") )
+            p.setColor(terrain[(int)((polys.size()-1)*intensity)]);															 // terrain
+          else if( scheme.equals("topo") )
+            p.setColor(topo[(int)((polys.size()-1)*intensity)]);															 // topo
           else if( scheme.equals("red") )
             p.setColor(new Color((float)(1-Math.pow(intensity,4)/2), 1-intensity, (float)(Math.pow(1-intensity,3)/1.5+0.15) ));  // red
           else if( scheme.equals("blue") )
