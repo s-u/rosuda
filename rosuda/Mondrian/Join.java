@@ -87,9 +87,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       selseq = true;
     } else if( user.indexOf("unwin") > -1 ) {
       PreferencesFrame.setScheme(0);
-    } else if( user.indexOf("theus") > -1 ) {
-      selseq = true;
-    }
+    } 
     PreferencesFrame.setScheme(2);
     
     Font SF = new Font("SansSerif", Font.BOLD, 12);
@@ -388,7 +386,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0k", 250, 280);
+    g.drawString("RC1.0l", 250, 280);
 
     mondrianRunning = true;
 
@@ -675,6 +673,9 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   }
   
   public void dataChanged(int id) {
+    
+    System.out.println("Join got the event !!!!");
+    
     for( int i=0; i<Plots.size(); i++ )
       if( ((DragBox)Plots.elementAt(i)).frame.isVisible() )  // Plotwindow still exists
         if( ((DragBox)Plots.elementAt(i)).dataFlag )         // This window was already updated 
@@ -1296,6 +1297,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     PC plotw = new PC(pC, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), mode);
     plotw.addSelectionListener(this);
+    plotw.addDataListener(this);
     Plots.addElement(plotw);
     pC.getContentPane().add(plotw);
     pC.show();
