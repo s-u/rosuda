@@ -262,9 +262,14 @@ public class iMenu {
             };
             if (menuDef[i]=="~Help") {
                 i++; isNext=true;
-                mb.add(m=new JMenu("Help"));
-                //mb.setHelpMenu(m);
-            };
+                m=new JMenu("Help");
+				mb.add(m);
+				mi=new JMenuItem("R Help");
+				mi.setActionCommand("help");
+				mi.addActionListener(al);
+				mi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_HELP, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()+1,false));
+				m.add(mi);
+			};
             if (menuDef[i]=="~About") {
                 i++; isNext=true;
                 if (!Common.isMac()) {

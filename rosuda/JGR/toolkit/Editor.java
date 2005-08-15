@@ -81,7 +81,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             "+", "Tools", "Increase Font Size", "fontBigger", "Decrease Font Size",
             "fontSmaller",
             "~Window",
-            "~Help", "R Help", "help", "~About", "0"};
+            "~Help", /*"R Help", "help",*/ "~About", "0"};
         iMenu.getMenu(this, this, Menu);
         JMenu rm=recentMenu=(JMenu) iMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
@@ -552,7 +552,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         public FileSave(Editor editor) {
             this.fileName = editor.fileName;
             this.editor = editor;
-            try {
+			try {
                 writer = new BufferedWriter(new FileWriter(fileName));
             } catch (Exception e) {
                 new ErrorMsg(e);

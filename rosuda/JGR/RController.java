@@ -106,7 +106,7 @@ public class RController {
         int s = partOfCmd.length()-1;
         if (partOfCmd.trim().length() == 0) return null;
 		partOfCmd = partOfCmd.replaceAll("\\.","\\\\."); //replace real . with their equivalent regex
-        REXP cmds = JGR.R.eval(".completeCommand(\""+partOfCmd+"\")");
+        REXP cmds = JGR.R.idleEval(".completeCommand(\""+partOfCmd+"\")");
         String[] c = null;
         if (cmds != null && (c=cmds.asStringArray()) != null) return c;
         return null;
@@ -178,7 +178,7 @@ public class RController {
      * @return keywords
      */
     public static String[] getKeyWords() {
-        REXP x = JGR.R.eval(".refreshKeyWords()");
+        REXP x = JGR.R.idleEval(".refreshKeyWords()");
         String[] r = null;
         if (x != null && (r=x.asStringArray()) != null) return r;
         return r;
@@ -189,7 +189,7 @@ public class RController {
      * @return objects
      */
     public static String[] getObjects() {
-        REXP x = JGR.R.eval(".refreshObjects()");
+        REXP x = JGR.R.idleEval(".refreshObjects()");
         String[] r = null;
         if (x != null && (r=x.asStringArray()) != null) return r;
         return r;
@@ -206,12 +206,12 @@ public class RController {
         JGR.MODELS.clear();
         JGR.FUNCTIONS.clear();
         String models[];
-        REXP x = JGR.R.eval(".getModels()");
+        REXP x = JGR.R.idleEval(".getModels()");
         if (x != null && (models = x.asStringArray()) != null) {
             for (int i = 0; i < models.length; i++)
                 JGR.MODELS.add(createRModel(models[i],models[++i]));
         }
-        x = JGR.R.eval(".getDataObjects()");
+        x = JGR.R.idleEval(".getDataObjects()");
         String[] data;
         if (x != null && (data = x.asStringArray()) != null) {
             int a = 1;
@@ -222,7 +222,7 @@ public class RController {
                 a++;
             }
         }
-        x = JGR.R.eval(".getOtherObjects()");
+        x = JGR.R.idleEval(".getOtherObjects()");
         String[] other;
         if (x != null && (other = x.asStringArray()) != null) {
             int a = 1;
@@ -233,7 +233,7 @@ public class RController {
                 a++;
             }
         }
-        x = JGR.R.eval(".getFunctionsInWS()");
+        x = JGR.R.idleEval(".getFunctionsInWS()");
         String[] functions;
         if (x != null && (functions = x.asStringArray()) != null) {
             int a = 1;
@@ -404,7 +404,7 @@ public class RController {
         String tip = null;
         String res[] = null;
         REXP x;
-        try { x = JGR.R.eval("try(deparse(args("+s+")),silent=T)"); } catch (Exception e) { return null;}
+        try { x = JGR.R.idleEval("try(deparse(args("+s+")),silent=T)"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null) {
             tip = "";
             int l = -1;
@@ -429,7 +429,7 @@ public class RController {
         String tip = "";
         String res[] = null;
         REXP x;
-        try { x = JGR.R.eval("suppressWarnings(try(capture.output(summary("+(o.getRName())+")),silent=TRUE))"); } catch (Exception e) { return null;}
+        try { x = JGR.R.idleEval("suppressWarnings(try(capture.output(summary("+(o.getRName())+")),silent=TRUE))"); } catch (Exception e) { return null;}
         if (x!=null && (res = x.asStringArray()) != null && !res[0].startsWith("Error")) {
             //tip = "<html><pre>";
             int l = -1;

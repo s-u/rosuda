@@ -37,7 +37,8 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
      * @param type binary- or source-packages
      */
     public JGRPackageInstaller(String[] pkgs, String type) {
-        super("Package Installer",iFrame.clsPackageUtil);
+		super("Package Installer",iFrame.clsPackageUtil);
+			
 		this.type = type;
         packages = pkgs;
 

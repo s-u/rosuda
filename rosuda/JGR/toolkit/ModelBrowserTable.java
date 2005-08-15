@@ -56,7 +56,12 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         this.getTableHeader().setReorderingAllowed(false);
         sorter.setTableHeader(this.getTableHeader());
 
-        
+		ToolTipManager.sharedInstance().registerComponent(this);
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+        ToolTipManager.sharedInstance().setReshowDelay(0);
+		
         filter = new FilterPanel(this);
         
         dragSource = new DragSource();
@@ -77,6 +82,25 @@ public class ModelBrowserTable extends JTable implements MouseListener, DragGest
         for (int i = 0; i < st.length; i++)
         	sorter.setSortingStatus(i,st[i]);
         this.setModel(sorter);
+	}
+	
+	public String getToolTipText(MouseEvent e) {
+		if (objmgr.summary != null)	objmgr.summary.hide();
+        if (e.isAltDown()) {
+            objmgr.cursorWait();
+			JToolTip call  = new JToolTip();
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
+			if (m == null || m.getToolTip().trim().length() == 0) return null;
+			String tip = m.getToolTip();
+			if (tip!=null) {
+				objmgr.cursorDefault();
+                return tip;
+            }
+			
+			return null; 
+        }
+		objmgr.cursorDefault();
+		return null;
 	}
 	
 	/**

@@ -19,6 +19,7 @@ import javax.swing.event.*;
 import javax.swing.PopupFactory;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.*;
+import javax.swing.ToolTipManager;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.RObject;
@@ -46,6 +47,12 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
         this.data = c;
         this.objmgr = parent;
         this.type = name;
+		
+		ToolTipManager.sharedInstance().registerComponent(this);
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+        ToolTipManager.sharedInstance().setInitialDelay(0);
+        ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
+        ToolTipManager.sharedInstance().setReshowDelay(0);
 
         if (FontTracker.current == null)
             FontTracker.current = new FontTracker();
@@ -105,6 +112,23 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
         menue.add(saveData);
         menue.show(e.getComponent(), e.getX(), e.getY());
     }
+	
+	public String getToolTipText(MouseEvent e) {
+		if (objmgr.summary != null)	objmgr.summary.hide();
+        if (e.isAltDown()) {
+            objmgr.cursorWait();
+            Point p = e.getPoint();
+            JToolTip call  = new JToolTip();
+            RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this,p.x,p.y).getLastPathComponent()).getUserObject();
+            String tip = RController.getSummary(o);
+            if (tip!=null) {
+                objmgr.cursorDefault();
+                return tip;
+            }
+			return null; 
+        }
+		return null;
+	}
     
     /**
      * actionPerformed: handle action event: buttons.

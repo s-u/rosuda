@@ -109,7 +109,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
             "+", "Tools", "Add Column", "addCol","Remove Column","rmCol", "Add Row", "addRow", "Remove Row","rmRow","-",
 			"-", "Goto Case", "gotoCase",
             "~Window",
-            "~Help", "R Help", "rhelp", "~About", "0"};
+            "~Help", /*"R Help", "rhelp",*/ "~About", "0"};
         iMenu.getMenu(this, this, myMenu);
         iMenu.getItem(this, "undo").setEnabled(false);
         iMenu.getItem(this, "redo").setEnabled(false);
@@ -637,7 +637,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
             else if (cmd == "searchnext") find(searchIndex[0], searchIndex[1]);
             else if (cmd == "gotoCase") gotoCase( -1);
             else if (cmd == "loadData") loadData();
-            else if (cmd == "rhelp") JGR.MAINRCONSOLE.execute("help.start()",false);
+            else if (cmd == "help") JGR.MAINRCONSOLE.execute("help.start()",false);
             else if (cmd == "paste") ((JTextComponent) cell.getComponent()).paste();
             else if (cmd == "renameCol" && selectedColumn > 0) {
                 renameColumn(selectedColumn);
