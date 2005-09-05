@@ -115,6 +115,7 @@ public class SVarDouble extends SVar
 		} else {
 		    ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
 		}
+                ci++;
 	    }
             if (isNum()) { // if numerical and categorical then sort categories for convenience
                 sortCategories(SM_num);
