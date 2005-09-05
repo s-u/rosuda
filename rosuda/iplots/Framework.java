@@ -405,8 +405,8 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,v[0]);
         String title = "(";
         for (int i = 0; i < v.length-1; i++)
-        	title += vs.at(i).getName()+", ";
-        title += vs.at(v.length-1).getName()+")";
+        	title += vs.at(v[i]).getName()+", ";
+        title += vs.at(v[v.length-1]).getName()+")";
         TFrame f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
