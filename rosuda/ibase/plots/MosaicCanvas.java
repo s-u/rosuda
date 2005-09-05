@@ -29,6 +29,10 @@ public class MosaicCanvas extends BaseCanvas {
         setTitle("Mosaic Plot");
         this.v = vars;
         this.vs = v.length;
+        for(int i=0; i<vs; i++){
+            v[i].categorize();
+        }
+        
         String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Fluctuation","fluctuation","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=10; mRight=10; mTop=10; mBottom=10;
