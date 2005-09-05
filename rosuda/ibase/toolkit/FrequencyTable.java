@@ -196,7 +196,9 @@ public class FrequencyTable {
 		
 		protected boolean CombinationEqualsCase(int c) {
 			for (int i = 0; i < vsize; i++) {
-				if (!ccs.contains(vars[i].at(c))) return false;
+                                String str = (String)ccs.get(vars[i].getName());
+                                if(str.compareTo(vars[i].at(c).toString())!=0)
+                                    return false;
 			}
 			return true;
 		}
