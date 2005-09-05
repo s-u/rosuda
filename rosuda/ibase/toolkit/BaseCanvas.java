@@ -49,14 +49,18 @@ implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionLis
     protected boolean allowDragZoom=true;
     /** if set to <code>true</code> then zooming-in always retians the aspect ratio (at least default zoom handling via axes does. If you implement a subclass providing its own zooming features you should honor this flag where applicable) */
     protected boolean zoomRetainsAspect=true;
+    /** if set to <code>true</code> then move-dragging is allowed. */
+    protected boolean allowDragMove=false;
     /** determines whether axis labels should be shown (currently not implemented by BaseCanvas itself) */
     protected boolean showLabels=true;
     /** run-time flag is set to <code>true</code> if baseDragging is in process */
     protected boolean baseDrag;
     /** run-time flag is set to <code>true</code> if the current baseDrag is a selection */
     protected boolean selDrag; // current baseDrag is selection baseDrag
-    /** run-tim flag is set to <code>true</code> if the current baseDrag is a zoom */
+    /** run-time flag is set to <code>true</code> if the current baseDrag is a zoom */
     protected boolean zoomDrag;
+    /** run-time flag is set to <code>true</code> if the current baseDrag is a move */
+    protected boolean moveDrag;
 
     /** run-time flag is set to <code>true</code> if query mode is on - (currently it means that <Alt> is held down) */
     protected boolean inQuery=false;
@@ -164,7 +168,7 @@ implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionLis
         nextLayer(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);
         nextLayer(g);
-        if (baseDrag && (dontCache || g.localLayerCache<0 || g.localLayerCache==2)) {
+        if (baseDrag && !(allowDragMove && moveDrag) && (dontCache || g.localLayerCache<0 || g.localLayerCache==2)) {
             /* no clipping
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
             dx2=A[0].clip(x2),dy2=A[1].clip(y2);
@@ -427,7 +431,8 @@ implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionLis
         qi.hide();
         selDrag=Common.isSelectTrigger(ev);
         zoomDrag=Common.isZoomTrigger(ev);
-        if (selDrag || (allowDragZoom && zoomDrag))
+        moveDrag=Common.isMoveTrigger(ev);
+        if (selDrag || (allowDragZoom && zoomDrag) || (allowDragMove && moveDrag))
             baseDrag=true;
     }
 
