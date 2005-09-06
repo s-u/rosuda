@@ -97,12 +97,12 @@ public class SectScatterCanvas extends ScatterCanvas {
         }
     }
 
-    public void keyPressed(KeyEvent e) {
+    public void keyTyped(KeyEvent e)  {
         super.keyPressed(e);
-        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-            alpha/=2f; setUpdateRoot(0); repaint();
-        }
-        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+		if (e.getKeyChar()==',') {
+			alpha/=2f; setUpdateRoot(0); repaint();
+		}
+        if (e.getKeyChar()=='.') {
             alpha*=2f; if (alpha>1f) alpha=1f; setUpdateRoot(0); repaint();
         }
     }
