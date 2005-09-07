@@ -209,16 +209,16 @@ public class BarCanvas extends BaseCanvas {
     };
     
     public void paintPost(PoGraSS g){
-        if(baseDrag) {
+        if(baseDrag && moveDrag) {
             int h=getBounds().height;
             int basey=h-mBottom;
             int dragNew = ax.getCatByPos((orientation==0)?baseDragX2:baseDragY2);
             int myX1=ax.getCatLow(dragNew);
             int myX2=ax.getCatUp(dragNew);
             g.setColor(192,192,192);
-            g.fillRect(baseDragX1-dragW/2,basey-dragH,dragW,dragH);
+            g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
             g.setColor("outline");
-            g.drawRect(baseDragX1-dragW/2,basey-dragH,dragW,dragH);
+            g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
             g.setColor("drag");
             g.fillRect(myX1,basey,myX2-myX1,4);
         };
@@ -234,18 +234,17 @@ public class BarCanvas extends BaseCanvas {
             int i=0, bars=cats, setTo=0;
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
-                    baseDrag=true;
                     dragW=((PPrimRectangle)pp[i]).r.width; dragH=((PPrimRectangle)pp[i]).r.height;
                     if (!inQuery) setCursor(Common.cur_hand);
                     break;
                 };
                 i++;
             };
-        } else super.mousePressed(ev); // no longer testing for Common.isSelectTrigger. is this ok?
+        }// no longer testing for Common.isSelectTrigger. is this ok?
     };
     
     public void mouseReleased(MouseEvent e) {
-        if (baseDrag) {
+        if (baseDrag && moveDrag) {
             int dragNew;
             for(dragBar=0; dragBar<bars; dragBar++){
                 if(pp[dragBar]!=null && pp[dragBar].contains(baseDragX1,baseDragY1)) break;
@@ -327,6 +326,9 @@ public class BarCanvas extends BaseCanvas {
                 MIspine.setLabel("Barchart");
                 isSpine=true;
             };
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
         };
         if (cmd=="exportCases") {
             try {
