@@ -37,4 +37,6 @@ public class Rpacket {
     /** get content
 	@return inner package content */
     public byte[] getCont() { return cont; }
+
+    public String toString() { return "Rpacket[cmd="+cmd+",len="+((cont==null)?"<null>":cont.length)+"]"; }
 }

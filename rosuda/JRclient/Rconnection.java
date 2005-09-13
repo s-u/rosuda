@@ -23,6 +23,9 @@ public class Rconnection {
     String Key=null;
     Rtalk rt=null;
 
+    String host;
+    int port;
+
     /** This static variable specifies the character set used to encode string for transfer. Under normal circumstances there should be no reason for changing this variable. The default is UTF-8, which makes sure that 7-bit ASCII characters are sent in a backward-compatible fashion. Currently (Rserve 0.1-7) there is no further conversion on Rserve's side, i.e. the strings are passed to R without re-coding. If necessary the setting should be changed <u>before</u> connecting to the Rserve in case later Rserves will provide a possibility of setting the encoding during the handshake. */
     public static String transferCharset="UTF-8";
     
@@ -52,13 +55,27 @@ public class Rconnection {
 	@param port TCP port
     */
     public Rconnection(String host, int port) throws RSrvException {
+	this(host, port, null);
+    }
+
+    Rconnection(RSession session) throws RSrvException {
+	this(null, 0, session);
+    }
+
+    Rconnection(String host, int port, RSession session) throws RSrvException {
         try {
             if (connected) s.close();
             s=null;
         } catch (Exception e) {
             throw new RSrvException(this,"Cannot connect: "+e.getMessage());
         }
+	if (session!=null) {
+	    host=session.host;
+	    port=session.port;
+	}
         connected=false;
+	this.host=host;
+	this.port=port;
         try {
             s=new Socket(host,port);
 	    // disable Nagle's algorithm since we really want immediate replies
@@ -73,59 +90,67 @@ public class Rconnection {
             throw new RSrvException(this,"Cannot get io stream: "+gse.getMessage());
         }
         rt=new Rtalk(is,os);
-        byte[] IDs=new byte[32];
-        int n=-1;
-        try {
-            n=is.read(IDs);
-        } catch (Exception sre) {
-            throw new RSrvException(this,"Error while receiving data: "+sre.getMessage());
-        }
-        try {
-            if (n!=32) {
-                lastError="Handshake failed: expected 32 bytes header, got "+n;
-                throw new RSrvException(this,lastError);
-            }
-            String ids=new String(IDs);
-            if (ids.substring(0,4).compareTo("Rsrv")!=0) {
-                lastError="Handshake failed: Rsrv signature expected, but received \""+ids+"\" instead.";
-                throw new RSrvException(this,lastError);
-            }
-            try {
-                rsrvVersion=Integer.parseInt(ids.substring(4,8));
-            } catch (Exception px) {}
-            // we support (knowingly) up to 102 - including long data support
-            if (rsrvVersion>102) {
-                lastError="Handshake failed: The server uses more recent protocol than this client.";
-                throw new RSrvException(this,lastError);
-            }
-            if (ids.substring(8,12).compareTo("QAP1")!=0) {
-                lastError="Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.";
-                throw new RSrvException(this,lastError);
-            }
-            for (int i=12;i<32;i+=4) {
-                String attr=ids.substring(i,i+4);
-                if (attr.compareTo("ARpt")==0) {
-                    if (!authReq) { // this method is only fallback when no other was specified
-                        authReq=true;
-                        authType=AT_plain;
-                    }
-                }
-                if (attr.compareTo("ARuc")==0) {
-                    authReq=true;
-                    authType=AT_crypt;
-                }
-                if (attr.charAt(0)=='K') {
-                    Key=attr.substring(1,3);
-                }
-            }
-            connected=true;
-            lastError="OK";
-        } catch (RSrvException innerX) {
-            try { s.close(); } catch (Exception ex01) {}; is=null; os=null; s=null;
-            throw innerX;
-        }
-    }
-    
+	if (session==null) {
+	    byte[] IDs=new byte[32];
+	    int n=-1;
+	    try {
+		n=is.read(IDs);
+	    } catch (Exception sre) {
+		throw new RSrvException(this,"Error while receiving data: "+sre.getMessage());
+	    }
+	    try {
+		if (n!=32) {
+		    lastError="Handshake failed: expected 32 bytes header, got "+n;
+		    throw new RSrvException(this,lastError);
+		}
+		String ids=new String(IDs);
+		if (ids.substring(0,4).compareTo("Rsrv")!=0) {
+		    lastError="Handshake failed: Rsrv signature expected, but received \""+ids+"\" instead.";
+		    throw new RSrvException(this,lastError);
+		}
+		try {
+		    rsrvVersion=Integer.parseInt(ids.substring(4,8));
+		} catch (Exception px) {}
+		// we support (knowingly) up to 102 - including long data support
+		if (rsrvVersion>102) {
+		    lastError="Handshake failed: The server uses more recent protocol than this client.";
+		    throw new RSrvException(this,lastError);
+		}
+		if (ids.substring(8,12).compareTo("QAP1")!=0) {
+		    lastError="Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.";
+		    throw new RSrvException(this,lastError);
+		}
+		for (int i=12;i<32;i+=4) {
+		    String attr=ids.substring(i,i+4);
+		    if (attr.compareTo("ARpt")==0) {
+			if (!authReq) { // this method is only fallback when no other was specified
+			    authReq=true;
+			    authType=AT_plain;
+			}
+		    }
+		    if (attr.compareTo("ARuc")==0) {
+			authReq=true;
+			authType=AT_crypt;
+		    }
+		    if (attr.charAt(0)=='K') {
+			Key=attr.substring(1,3);
+		    }
+		}
+	    } catch (RSrvException innerX) {
+		try { s.close(); } catch (Exception ex01) {}; is=null; os=null; s=null;
+		throw innerX;
+	    }
+	} else { // we have a session to take care of
+	    try {
+		os.write(session.key,0,32);
+	    } catch (Exception sre) {
+		throw new RSrvException(this,"Error while sending session key: "+sre.getMessage());
+	    }
+	    rsrvVersion = session.rsrvVersion;
+	}
+	connected=true;
+	lastError="OK";
+    }    
     public void finalize() {
         close();
         is=null; is=null;
@@ -160,6 +185,28 @@ public class Rconnection {
         throw new RSrvException(this,lastError,rp.getStat());
     }
 
+    REXP parseEvalResponse(Rpacket rp) throws RSrvException {
+	int rxo=0;
+	byte[] pc=rp.getCont();
+	if (rsrvVersion>100) { /* since 0101 eval responds correctly by using DT_SEXP type/len header which is 4 bytes long */
+	    rxo=4;
+	    /* we should check parameter type (should be DT_SEXP) and fail if it's not */
+	    if (pc[0]!=Rtalk.DT_SEXP && pc[0]!=(Rtalk.DT_SEXP|Rtalk.DT_LARGE)) {
+		lastError="Error while processing eval output: SEXP (type "+Rtalk.DT_SEXP+") expected but found result type "+pc[0]+".";
+		throw new RSrvException(this,lastError);
+	    }
+	    if (pc[0]==(Rtalk.DT_SEXP|Rtalk.DT_LARGE))
+		rxo=8; // large data need skip of 8 bytes
+	    /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may not be in the future. */
+	}
+	REXP rx=null;
+	if (pc.length>rxo) {
+	    rx=new REXP();
+	    REXP.parseREXP(rx,pc,rxo);
+	}
+	return rx;
+    }
+
     /** evaluates the given command and retrieves the result
 	@param cmd command/expression string
 	@return R-xpression or <code>null</code> if an error occured */
@@ -169,27 +216,8 @@ public class Rconnection {
             throw new RSrvException(this,lastError);
 	}
 	Rpacket rp=rt.request(Rtalk.CMD_eval,cmd+"\n");
-	if (rp!=null && rp.isOk()) {
-            int rxo=0;
-	    byte[] pc=rp.getCont();
-            if (rsrvVersion>100) { /* since 0101 eval responds correctly by using DT_SEXP type/len header which is 4 bytes long */
-                rxo=4;
-                /* we should check parameter type (should be DT_SEXP) and fail if it's not */
-                if (pc[0]!=Rtalk.DT_SEXP && pc[0]!=(Rtalk.DT_SEXP|Rtalk.DT_LARGE)) {
-                    lastError="Error while processing eval output: SEXP (type "+Rtalk.DT_SEXP+") expected but found result type "+pc[0]+".";
-                    throw new RSrvException(this,lastError);
-                }
-                if (pc[0]==(Rtalk.DT_SEXP|Rtalk.DT_LARGE))
-                    rxo=8; // large data need skip of 8 bytes
-                /* warning: we are not checking or using the length - we assume that only the one SEXP is returned. This is true for the current CMD_eval implementation, but may not be in the future. */
-            }
-            REXP rx=null;
-            if (pc.length>rxo) {
-                rx=new REXP();
-                REXP.parseREXP(rx,pc,rxo);
-            }
-            return rx;
-	}
+	if (rp!=null && rp.isOk())
+	    return parseEvalResponse(rp);
         lastError=(rp!=null)?"Request return code: "+rp.getStat():"Communication error (Rtalk returned null)";
         throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
     }
@@ -341,6 +369,20 @@ public class Rconnection {
 	try {s.close();} catch (Exception e) {};
 	is=null; os=null; s=null; connected=false;
         throw new RSrvException(this,lastError,(rp!=null)?rp.getStat():-1);
+    }
+
+    
+    /** detaches the session and closes the connection. The session can be only resumed by calling @link{RSession.attach} */
+    public RSession detach() throws RSrvException {
+        if (!connected || rt==null) {
+            lastError="Error: not connected";
+            throw new RSrvException(this,lastError);
+        }
+	Rpacket rp=rt.request(Rtalk.CMD_detachSession);
+	if (rp==null || !rp.isOk()) return null;
+	RSession s = new RSession(this, rp);
+	close();
+	return s;
     }
 
     /** check connection state. Note that currently this state is not checked on-the-spot,
