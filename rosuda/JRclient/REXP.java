@@ -633,4 +633,13 @@ public class REXP extends Object {
 	sb.append("]");
 	return sb.toString();
     };
+	
+	public static String quoteString(String s) {
+		// this code uses API introdiced in 1.4 so it needs to be re-written for earlier JDKs
+		if (s.indexOf('\\')>=0)
+			s.replaceAll("\\","\\\\");
+		if (s.indexOf('"')>=0)
+			s.replaceAll("\"", "\\\"");
+        return "\""+s+"\"";
+	}
 }   
