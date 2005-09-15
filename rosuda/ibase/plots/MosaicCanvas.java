@@ -79,7 +79,10 @@ public class MosaicCanvas extends BaseCanvas {
     
     public void updateObjects() {
         
-        create(0,0, getWidth(), getHeight(), "");
+        double f=(1-mUse)/2;
+        int yMargin = (int)Math.round(f*getHeight());
+        int xMargin = (int)Math.round(f*getWidth());
+        create(xMargin,yMargin, getWidth()-xMargin, getHeight()-yMargin, "");
         if(pp==null) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         
@@ -118,9 +121,6 @@ public class MosaicCanvas extends BaseCanvas {
         
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
-        
-        System.out.println(table);
-        for(int i=0; i< table.length; i++) System.out.println(table[i]);
         
         Dirs = new char[v.length];
         for (int i=0; i<v.length; i++ ) {
@@ -238,20 +238,20 @@ public class MosaicCanvas extends BaseCanvas {
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
             for (int i=0; i<rects.size(); i++)
-                maxCount = Math.max(maxCount, ((MyRect)(rects.elementAt(i))).obs);
+                maxCount = Math.max(maxCount, ((PPrimMosaic)(rects.elementAt(i))).getObs());
             for (int i=0; i<rects.size(); i++) {
-                MyRect r = (MyRect)(rects.elementAt(i));
+                PPrimMosaic r = (PPrimMosaic)(rects.elementAt(i));
                 int newH = 0;
                 if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS ) {
-                    r.dir = 'y';
-                    r.h = (int)((double)r.height * (1.0+(double)censor/5.0) * r.obs/maxCount);
+                    r.setDir('y');
+                    r.r.setSize(r.r.height, (int)((double)r.r.height * (1.0+(double)censor/5.0) * r.getObs()/maxCount));
                 } else {
-                    r.w = (int)((double)r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.obs/maxCount)));
-                    r.h = (int)((double)r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.obs/maxCount)));
+                    r.r.setSize((int)((double)r.r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount))),
+                            (int)((double)r.r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount))));
                 }
-                if( (r.h >= r.height && r.w >= r.width) && censor > 0)
+                /*if( (r.h >= r.height && r.w >= r.width) && censor > 0)
                     r.censored = true;
-                r.y += r.height-r.h;
+                r.y += r.height-r.h;*/
             }
         }
     }
@@ -353,6 +353,11 @@ public class MosaicCanvas extends BaseCanvas {
             if( stop || empty ) {	            // Now the rectangles are generated
                 tile = new PPrimMosaic();
                 tile.empty = empty;
+                Integer[] idsArray = new Integer[tileIds[j].size()];
+                tileIds[j].toArray(idsArray);
+                if(tile.ref==null || tile.ref.length!=idsArray.length) tile.ref=new int[idsArray.length];
+                for(int i=0; i<tile.ref.length; i++) tile.ref[i] = idsArray[i].intValue();
+                    
                 if( Dirs[levelid] == 'x' ){
                     if( empty ){                                        // empty bin
                         tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
@@ -360,14 +365,14 @@ public class MosaicCanvas extends BaseCanvas {
                                 emptyBin,
                                 sizeY+emptyWidth);
                         //dir='y', mode=displayMode
-                        //missing: 0,exps[j], 4 / residSum, tablep.p,info, tileIds[j]
+                        //missing: 0,exps[j], 4 / residSum, tablep.p,info
                     } else{
                         tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                 y1,
                                 Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
                                 y2-y1 + addGapY);
                         //dir='y', mode=displayMode
-                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info, tileIds[j]
+                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info
                     }
                 } else {
                     if( empty ){
@@ -376,14 +381,14 @@ public class MosaicCanvas extends BaseCanvas {
                                 sizeX+emptyWidth,
                                 emptyBin);
                         //dir='x', mode=displayMode
-                        //missing: 0,exps[j], 4 / residSum, tablep.p,info, tileIds[j]
+                        //missing: 0,exps[j], 4 / residSum, tablep.p,info
                     } else {
                         tile.r = new Rectangle(x1,
                                 y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                 x2-x1 + addGapX,
                                 Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);
                         //dir='x', mode=displayMode
-                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info, tileIds[j]
+                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info
                     }
                 }
                 rects.addElement(tile);
@@ -443,161 +448,7 @@ public class MosaicCanvas extends BaseCanvas {
     public double round( double x, int n ) {
         return (double)Math.round(x*Math.pow(10,n))/Math.pow(10,n);
     }
-    
-    private final class MyRect extends Rectangle implements ActionListener {
-        public int x, y, w, h;
-        private int plusX = 0;
-        private int plusY = 1;
-        private String info;
-        private String mode;
-        private Graphics g;
-        private JMenuItem infoText;
-        private JPopupMenu popup;
-        private boolean full;
-        public boolean censored = false;
-        public char dir;
-        public double obs = 1;
-        private double hilite;
-        private double exp;
-        private double scale;
-        private float p;
-        private Color drawColor = Color.black;
-        private JPanel panel;
-        public Vector tileIds;
-        
-        public MyRect(boolean full, char dir, String mode,
-                int x, int y, int w, int h,
-                double obs, double exp, double scale, double p, String info, Vector tileIds) {
-            super(x, y, w, h);
-            this.full = full; this.dir = dir; this.exp = exp; this.scale = scale; this.mode = mode;
-            this.x = x; this.y = y; this.w = w; this.h = h; this.obs = obs; this.p = (float)p; this.info = info;
-            this.tileIds = tileIds; this.panel = panel;
-        }
-        
-        public void moveTo(int x, int y) {
-            if( x != -1 )
-                this.x = x;
-            if( y != -1 )
-                this.y = y;
-        }
-        
-        public Rectangle getRect() {
-            return (new Rectangle(x, y, w, h));
-        }
-        
-        public void actionPerformed(ActionEvent e) {
-            // Dummy, since we just use it for information display
-        }
-        
-        public void setHilite(double hilite) {
-            this.hilite = hilite;
-        }
-        
-        public void setColor(Color color) {
-            this.drawColor = color;
-        }
-        
-        public double getHilite() {
-            return hilite;
-        }
-        
-        public double getAbsHilite() {
-            return hilite * obs;
-        }
-        
-        public void draw(Graphics g) {
             
-            //System.out.println(residual);
-            if( obs > 0 ) {
-                if( dir != 'f' ) {
-                    if( info.indexOf("�") == -1 && !(info.substring(0, 2)).equals("NA") )
-                        g.setColor(Color.lightGray);
-                    else
-                        g.setColor(Color.white);
-                    g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
-                } else {
-                    g.setColor(drawColor);
-                    g.fillRect(x, y, w, h);
-                }
-            }
-            if( mode.equals("Expected") ) {
-                int high = (int)(192+63*(0.15+pnorm((1-p-0.9)*10)));
-                int low =  (int)(192*(0.85-pnorm((1-p-0.9)*10)));
-                if( obs-exp > 0.00001 )
-                    g.setColor(new Color(low, low, high));
-                else if( obs-exp < -0.00001 )
-                    g.setColor(new Color(high, low, low));
-                else
-                    g.setColor(Color.lightGray);
-                if( dir == 'x' )
-                    g.fillRect(x, y, (int)((double)w*Math.abs((obs-exp)/Math.sqrt(exp)*scale)), h);
-                else if ( dir == 'y' )
-                    g.fillRect(x, y+h-(int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
-                            w, (int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
-            }
-            if( obs == 0 || censored )
-                g.setColor(Color.red);
-            else
-                g.setColor(Color.black);
-            
-            if( hilite > 0 ) {
-                Color c = g.getColor();
-                g.setColor(hiliteColor);
-//System.out.println("wh: "+(int)((double)w*hilite));
-                if( Math.min(w, width) > 2 && Math.min(h, height) > 2 ) {  // Mit Rahmen
-                    plusX = 1;
-                    plusY = 0;
-                }
-                if( dir == 'x' )
-                    g.fillRect(x+plusX, y+Math.max(0, h-height), (((int)((double)w*hilite) == 0) ? 1: (int)Math.min(width, ((double)w*hilite))), Math.min(h, height));
-                else if ( dir == 'y' )
-                    g.fillRect(x, y+Math.max(0, h-height)+Math.min(h, height)-(((int)((double)(h+plusY)*hilite) == 0) ? (1-plusY): (int)Math.min(height, ((double)h*hilite))),
-                            Math.min(w, width), (((int)((double)(h+plusY)*hilite) == 0) ? 1: (int)Math.min(height+plusY, ((double)(h+plusY)*hilite))));
-                else {
-                    g.setColor(new Color(255, 0, 0, (int)(255*hilite)));
-                    g.fillRect(x, y, w, h);
-                }
-                g.setColor( c );
-            }
-            if( dir !='f' && Math.min(w, width) > 2 && Math.min(h, height) > 2 || obs == 0 || censored )
-                g.drawRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height));
-        }
-        
-        public void pop(DragBox panel, int x, int y) {
-            popup = new JPopupMenu();
-            
-            String pinfo = getLabel();
-            
-            StringTokenizer info = new StringTokenizer(pinfo, "\n");
-            
-            while( info.hasMoreTokens()) {
-                infoText = new JMenuItem( info.nextToken() );
-                popup.add(infoText);
-                infoText.addActionListener(this);
-                //      infoText.setEnabled(false);
-            }
-            
-            popup.show(panel, x, y);
-        }
-        
-        public String getLabel() {
-            String pinfo = info.toString();
-            if( obs > 0 )
-                pinfo += "\n" + "Count: "+obs;
-            else
-                pinfo += "\n" + "Empty Bin ";
-            if( hilite > 0 )
-                pinfo += "\n" + "Hilited: "+round(hilite*obs,0)+" ("+round(100*hilite,2)+"%)";
-            if( mode.equals("Expected") ) {
-                pinfo += "\n" + "Expected: "+round(exp,2);
-                pinfo += "\n" + "Residual: "+round(obs-exp,3);
-                pinfo += "\n" + "Scaled Res.:"+round(Math.abs((obs-exp)/Math.sqrt(exp)*scale/4*100),1)+"%";
-            }
-            
-            return pinfo;
-        }
-    }
-    
     private Color hiliteColor = new Color(180, 96, 135);
     public abstract class DragBox extends JPanel
             implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener, Printable {
