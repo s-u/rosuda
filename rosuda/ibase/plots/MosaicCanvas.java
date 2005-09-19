@@ -26,7 +26,6 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
-import java.util.StringTokenizer;
 import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -59,6 +58,7 @@ public class MosaicCanvas extends BaseCanvas {
     int mode = DISPLAY_MODE_OBSERVED;
     
     FrequencyTable ft;
+    int[] combination; // indicates position of recursion
     
     public MosaicCanvas(Frame f, SVar[] vars, SMarker mark) {
         super(f, mark);
@@ -122,8 +122,8 @@ public class MosaicCanvas extends BaseCanvas {
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
         
-        Dirs = new char[v.length];
-        for (int i=0; i<v.length; i++ ) {
+        Dirs = new char[vs];
+        for (int i=0; i<vs; i++ ) {
             if( (i % 2) == 0 )
                 Dirs[i] = 'x';
             else
@@ -132,7 +132,7 @@ public class MosaicCanvas extends BaseCanvas {
         
         int[] levels = ft.getLevels();
         String[][] lnames = ft.getLnames();
-        int k = v.length;
+        int k = vs;
         
         rects.removeAllElements();
         Labels.removeAllElements();
@@ -212,6 +212,8 @@ public class MosaicCanvas extends BaseCanvas {
                 break;
         }
         
+        combination = new int[vs];
+        
         // start the recursion ////////////
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info);
         
@@ -259,7 +261,7 @@ public class MosaicCanvas extends BaseCanvas {
     public void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
         
         int levels = ft.getLevels()[levelid];
-        int k = v.length;
+        int k = vs;
         String name = v[levelid].getName();
         String[] lnames = (String[])v[levelid].getCategories();
         
@@ -329,93 +331,94 @@ public class MosaicCanvas extends BaseCanvas {
         int sizeX = x2-x1;
         int sizeY = y2-y1;
         
-        if( total > 0 )
-            for (int j=0; j < levels; j++) {                                     // for each level in this variable
-            
-            info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
-            
-            boolean empty = false;
-            boolean stop  = false;
-            int addGapX = 0;
-            int addGapY = 0;
-            
-            if( counts[j+1] - counts[j] == 0 )
-                empty = true;
-            if( (mode==DISPLAY_MODE_SAMEBINSIZE) && oCounts[j+1]-oCounts[j] == 0 || levelid == maxLevel-1 ) {
-                stop = true;
-                for( int i=levelid+1; i<maxLevel; i++ )
-                    if( Dirs[i] == 'x' )
-                        addGapX += aGap[i];
-                    else
-                        addGapY += aGap[i];
-            }
-            
-            if( stop || empty ) {	            // Now the rectangles are generated
-                tile = new PPrimMosaic();
-                tile.empty = empty;
-                Integer[] idsArray = new Integer[tileIds[j].size()];
-                tileIds[j].toArray(idsArray);
-                if(tile.ref==null || tile.ref.length!=idsArray.length) tile.ref=new int[idsArray.length];
-                for(int i=0; i<tile.ref.length; i++) tile.ref[i] = idsArray[i].intValue();
+        if( total > 0 ){
+            for (int j=0; j < levels; j++) {
+                combination[levelid]=j;
+                
+                info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
+                
+                boolean empty = false;
+                boolean stop  = false;
+                int addGapX = 0;
+                int addGapY = 0;
+                
+                if( counts[j+1] - counts[j] == 0 )
+                    empty = true;
+                if( (mode==DISPLAY_MODE_SAMEBINSIZE) && oCounts[j+1]-oCounts[j] == 0 || levelid == maxLevel-1 ) {
+                    stop = true;
+                    for( int i=levelid+1; i<maxLevel; i++ )
+                        if( Dirs[i] == 'x' )
+                            addGapX += aGap[i];
+                        else
+                            addGapY += aGap[i];
+                }
+                
+                if( stop || empty ) {	            // Now the rectangles are generated
+                    tile = new PPrimMosaic();
+                    tile.empty = empty;
+                    tile.info=info;
+                    tile.ref = ft.getMatchingCases(combination);
                     
-                if( Dirs[levelid] == 'x' ){
-                    if( empty ){                                        // empty bin
-                        tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
-                                y1,
-                                emptyBin,
-                                sizeY+emptyWidth);
-                        //dir='y', mode=displayMode
-                        //missing: 0,exps[j], 4 / residSum, tablep.p,info
-                    } else{
-                        tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
-                                y1,
-                                Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
-                                y2-y1 + addGapY);
-                        //dir='y', mode=displayMode
-                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info
-                    }
-                } else {
-                    if( empty ){
-                        tile.r = new Rectangle(x1,
-                                y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
-                                sizeX+emptyWidth,
-                                emptyBin);
-                        //dir='x', mode=displayMode
-                        //missing: 0,exps[j], 4 / residSum, tablep.p,info
+                    if( Dirs[levelid] == 'x' ){
+                        if( empty ){                                        // empty bin
+                            tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
+                                    y1,
+                                    emptyBin,
+                                    sizeY+emptyWidth);
+                            //dir='y', mode=displayMode
+                            //missing: 0,exps[j], 4 / residSum, tablep.p
+                        } else{
+                            tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
+                                    y1,
+                                    Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
+                                    y2-y1 + addGapY);
+                            //dir='y', mode=displayMode
+                            //missing: obs[j],exps[j], 4 / residSum, tablep.p
+                        }
                     } else {
-                        tile.r = new Rectangle(x1,
-                                y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
-                                x2-x1 + addGapX,
-                                Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);
-                        //dir='x', mode=displayMode
-                        //missing: obs[j],exps[j], 4 / residSum, tablep.p,info
+                        if( empty ){
+                            tile.r = new Rectangle(x1,
+                                    y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
+                                    sizeX+emptyWidth,
+                                    emptyBin);
+                            //dir='x', mode=displayMode
+                            //missing: 0,exps[j], 4 / residSum, tablep.p
+                        } else {
+                            tile.r = new Rectangle(x1,
+                                    y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
+                                    x2-x1 + addGapX,
+                                    Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);
+                            //dir='x', mode=displayMode
+                            //missing: obs[j],exps[j], 4 / residSum, tablep.p
+                        }
+                    }
+                    rects.addElement(tile);
+                } else {						// Still to go in the recursion
+                    System.out.println("recurrieren");
+                    if( Dirs[levelid] == 'x' ) {
+                        createMosaic(start + j*plevels[levelid],
+                                levelid + 1,
+                                Mtable,
+                                x1 + j * thisGap + (int)(counts[j] / total * sizeX),
+                                y1,
+                                x1 + j * thisGap + Math.max((int)(counts[j] / total * sizeX +1),
+                                (int)(counts[j+1] / total * sizeX)),
+                                y2,
+                                info);
+                    } else {
+                        createMosaic(start + j*plevels[levelid],
+                                levelid + 1,
+                                Mtable,
+                                x1,
+                                y1 + j * thisGap + (int)(counts[j] / total * sizeY),
+                                x2,
+                                y1 + j * thisGap + Math.max((int)(counts[j] / total * sizeY +1),
+                                (int)(counts[j+1] / total * sizeY)),
+                                info);
                     }
                 }
-                rects.addElement(tile);
-            } else {						// Still to go in the recursion
-                if( Dirs[levelid] == 'x' ) {
-                    createMosaic(start + j*plevels[levelid],
-                            levelid + 1,
-                            Mtable,
-                            x1 + j * thisGap + (int)(counts[j] / total * sizeX),
-                            y1,
-                            x1 + j * thisGap + Math.max((int)(counts[j] / total * sizeX +1),
-                            (int)(counts[j+1] / total * sizeX)),
-                            y2,
-                            info);
-                } else {
-                    createMosaic(start + j*plevels[levelid],
-                            levelid + 1,
-                            Mtable,
-                            x1,
-                            y1 + j * thisGap + (int)(counts[j] / total * sizeY),
-                            x2,
-                            y1 + j * thisGap + Math.max((int)(counts[j] / total * sizeY +1),
-                            (int)(counts[j+1] / total * sizeY)),
-                            info);
-                }
             }
-            }
+        }
     }
     
     private double pnorm( double q ) {
@@ -448,7 +451,7 @@ public class MosaicCanvas extends BaseCanvas {
     public double round( double x, int n ) {
         return (double)Math.round(x*Math.pow(10,n))/Math.pow(10,n);
     }
-            
+    
     private Color hiliteColor = new Color(180, 96, 135);
     public abstract class DragBox extends JPanel
             implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener, Printable {

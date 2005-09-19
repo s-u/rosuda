@@ -12,6 +12,7 @@ public class FrequencyTable {
     private SVar[] vars;
     private CombinationEntry[] ceTable;
     private double[] table;
+    private double[] exp;
     
     public FrequencyTable(SVar[] vvs) {
         this.vars = vvs;
@@ -23,6 +24,7 @@ public class FrequencyTable {
         }
         ceTable = new CombinationEntry[tableLen];
         table = new double[tableLen];
+        exp = new double[tableLen];
         
         init();
     }
@@ -53,6 +55,11 @@ public class FrequencyTable {
                     ce.cases.add(new Integer(cs));
             }
             table[i] = (double)ce.cases.size();
+        }
+        
+        // CHANGE!!!
+        for (int i=0; i<exp.length; i++){
+            exp[i] = table[i]/2;
         }
     }
     
@@ -152,6 +159,20 @@ public class FrequencyTable {
     }
     
     public double[] getExp(){
-        return table;
+        return exp;
+    }
+    
+    public int[] getMatchingCases(int[] com){
+        int[] factors = new int[vsize];
+        factors[vsize-1]=1;
+        for(int i=vsize-2; i>=0; i--){
+            factors[i] = factors[i+1]*vars[i+1].getNumCats();
+        }
+        int n=0;
+        for(int i=0; i<com.length; i++){
+            n += factors[i]*com[i];
+        }
+        
+        return ceTable[n].getCases();
     }
 }
