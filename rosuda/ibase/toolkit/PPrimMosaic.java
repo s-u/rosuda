@@ -8,7 +8,6 @@ public class PPrimMosaic extends PPrimRectangle {
     
     public String info = null;
     public boolean empty = false;
-    private double obs;
     private char dir;
     private boolean censored;
     
@@ -35,13 +34,9 @@ public class PPrimMosaic extends PPrimRectangle {
     }
 
     public double getObs() {
-        return obs;
+        return (double)ref.length;
     }
-
-    public void setObs(double obs) {
-        this.obs = obs;
-    }
-
+    
     public char getDir() {
         return dir;
     }
