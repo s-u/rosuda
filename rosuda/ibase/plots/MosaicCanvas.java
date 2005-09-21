@@ -70,7 +70,7 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Fluctuation","fluctuation","~Edit","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Expected","expected","Same bin size","samebinsize","Multiple barcharts","multiplebarcharts","Fluctuation","fluctuation","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=10; mRight=10; mTop=10; mBottom=10;
         
@@ -101,6 +101,9 @@ public class MosaicCanvas extends BaseCanvas {
         super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
         if (cmd=="observed") { if(mode!=DISPLAY_MODE_OBSERVED) {mode=DISPLAY_MODE_OBSERVED; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (cmd=="expected") { if(mode!=DISPLAY_MODE_EXPECTED) {mode=DISPLAY_MODE_EXPECTED; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (cmd=="samebinsize") { if(mode!=DISPLAY_MODE_SAMEBINSIZE) {mode=DISPLAY_MODE_SAMEBINSIZE; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (cmd=="multiplebarcharts") { if(mode!=DISPLAY_MODE_MULTIPLEBARCHARTS) {mode=DISPLAY_MODE_MULTIPLEBARCHARTS; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="fluctuation") { if(mode!=DISPLAY_MODE_FLUCTUATION) {mode=DISPLAY_MODE_FLUCTUATION; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="print") run(o,"exportPS");
         if (cmd=="exit") WinTracker.current.Exit();
@@ -394,7 +397,6 @@ public class MosaicCanvas extends BaseCanvas {
                     }
                     rects.addElement(tile);
                 } else {						// Still to go in the recursion
-                    System.out.println("recurrieren");
                     if( Dirs[levelid] == 'x' ) {
                         createMosaic(start + j*plevels[levelid],
                                 levelid + 1,
