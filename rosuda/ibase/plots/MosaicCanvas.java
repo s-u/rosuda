@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,6 +27,7 @@ import java.awt.print.PageFormat;
 import java.awt.print.Printable;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -120,6 +122,7 @@ public class MosaicCanvas extends BaseCanvas {
     char[] Dirs;
     double residSum;
     int censor=0;
+    int border = 20;
     public void create(int x1, int y1, int x2, int y2, String info) {
         
         double[] table = ft.getTable();
@@ -220,10 +223,8 @@ public class MosaicCanvas extends BaseCanvas {
         // start the recursion ////////////
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info);
         
-        /*
-         * Lables not implemented
-         *
         // Create labels for the first 2 dimensions
+        MyText label;
         int pF = 1;
         if( printing )
             pF = printFactor;
@@ -237,8 +238,6 @@ public class MosaicCanvas extends BaseCanvas {
                 Labels.addElement(label);
                 }
         }
-         *
-         */
         
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
@@ -455,6 +454,14 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     private Color hiliteColor = new Color(180, 96, 135);
+
+    public void paintBack(org.rosuda.pograss.PoGraSS g) {
+        for(Enumeration en=Labels.elements(); en.hasMoreElements();){
+            MyText label = (MyText)en.nextElement();
+            g.drawString(Common.getTriGraph(label.s), label.x, label.y);
+        }
+    }
+    
     public abstract class DragBox extends JPanel
             implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListener, Printable {
         
@@ -1556,7 +1563,123 @@ public class MosaicCanvas extends BaseCanvas {
         public static final int SELECTION_EVENT = AWTEvent.RESERVED_ID_MAX + 1;
     }
     
+    class MyText {
+        
+        String s;
+        public int x;
+        public int y;
+        int align=0;
+        double angle=0;
+        int extend=10000;
+        
+        public MyText(String s, int x, int y) {
+            
+            this.s = s;
+            this.x = x;
+            this.y = y;
+        }
+        
+        public MyText(String s, int x, int y, int align) {
+            
+            this.s = s;
+            this.x = x;
+            this.y = y;
+            this.align = align;
+        }
+        
+        public MyText(String s, int x, int y, double angle, int extend) {
+            
+            this.s = s;
+            this.x = x;
+            this.y = y;
+            this.angle = angle;
+            this.extend = extend;
+        }
+        
+        public void draw(Graphics g) {
+            this.draw(g, align);
+        }
+        
+        public void moveYTo(int y) {
+            this.y = y;
+        }
+        
+        public void moveXTo(int x) {
+            this.x = x;
+        }
+        
+        public void moveTo(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        public void setAlign(int align) {
+            this.align = align;
+        }
+        
+        public boolean contains(int px, int py, Graphics2D g2d) {
+            
+            FontMetrics FM;
+            FM = g2d.getFontMetrics();
+            
+            switch(align) {
+                case 0:
+                    if( px >= x && px <= x+FM.stringWidth(s) &&
+                            py >= y-12 && py <= y )
+                        return true;
+                case 1:
+                    if( px >= x-FM.stringWidth(s) && px <= x &&
+                            py >= y-12 && py <= y )
+                        return true;
+                case 2:
+                    if( px >= x-FM.stringWidth(s)/2 && px <= x+FM.stringWidth(s)/2 &&
+                            py >= y-12 && py <= y )
+                        return true;
+            }
+            return false;
+        }
+        
+        public void draw(Graphics2D g2d) {
+            
+            FontMetrics FM;
+            FM = g2d.getFontMetrics();
+            
+            if( FM.stringWidth(s) >= extend ) {
+                String shorty = s;
+                String addOn = "";
+                while( FM.stringWidth( shorty ) > extend ) {
+                    shorty = shorty.substring(0,shorty.length() - 1);
+                    addOn = "�";
+                }
+                s = shorty.trim()+addOn;
+            }
+            // Draw string rotated clockwise angle degrees
+            if( angle != 0 ) {
+                g2d.rotate(angle);
+                g2d.drawString(s, x - FM.stringWidth(s)/2, y);
+                g2d.rotate(-angle);
+            } else
+                g2d.drawString(s, x - FM.stringWidth(s)/2, y);
+        }
+        
+        public void draw(Graphics g, int align) {
+            
+            FontMetrics FM;
+            switch(align) {
+                case 0:   																			// Left
+                    g.drawString(s, x, y);
+                    break;
+                case 1:   																			// Right
+                    FM = g.getFontMetrics();
+                    g.drawString(s, x - FM.stringWidth(s), y);
+                    break;
+                case 2:   																			// Center
+                    FM = g.getFontMetrics();
+                    g.drawString(s, x - FM.stringWidth(s)/2, y);
+            }
+        }
+    }
     
     
-    
+
 }
