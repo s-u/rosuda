@@ -531,6 +531,17 @@ public final class SVM implements Classifier {
     public boolean isReady() {
         return getTrained();
     }
+
+    public String classify(Data dataset) {
+        String resultsRname = "pred" + dataset.getRname() + getRname();
+        try{
+            rcon.voidEval(resultsRname +  " <- predict(" + getRname() + "," + dataset.getRname() + ")");
+        } catch(RSrvException rse){
+            ErrorDialog.show(parent, rse, "SVM.classify(Data)");
+            return null;
+        }
+        return resultsRname;
+    }
     
     private static final class Snapshot implements SVMSnapshotIF {
         
