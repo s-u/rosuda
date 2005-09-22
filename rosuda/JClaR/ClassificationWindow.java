@@ -25,6 +25,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
+import org.rosuda.JRclient.RSrvException;
 
 
 
@@ -192,7 +193,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             }
             confMxDialog.show();
         } else {
-            ErrorDialog.show(this,"SVM not trained.");
+            ErrorDialog.show(this,"Classifier not trained.");
         }
         
     }
@@ -229,6 +230,13 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_Display.add(mitem);
     }
     
+    void classify(Data dataset){
+        String result = classifier.classify(dataset);
+        if(result!=null){
+            //#T#O#D#O#: show classified data or save it
+        }
+    }
+    
     
     
     /** This method is called from within the constructor to
@@ -255,6 +263,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_FileNew = new javax.swing.JMenuItem();
         m_FileOpenDataset = new javax.swing.JMenuItem();
         m_FileOpenedDatasets = new javax.swing.JMenuItem();
+        m_ClassifyData = new javax.swing.JMenuItem();
         m_FilePreferences = new javax.swing.JMenuItem();
         m_FileClose = new javax.swing.JMenuItem();
         m_FileExit = new javax.swing.JMenuItem();
@@ -363,6 +372,15 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
 
         m_File.add(m_FileOpenedDatasets);
 
+        m_ClassifyData.setText("Classify dataset...");
+        m_ClassifyData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_ClassifyDataActionPerformed(evt);
+            }
+        });
+
+        m_File.add(m_ClassifyData);
+
         m_FilePreferences.setMnemonic('p');
         m_FilePreferences.setText("Preferences");
         m_FilePreferences.addActionListener(new java.awt.event.ActionListener() {
@@ -446,6 +464,19 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+    
+    private void m_ClassifyDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_ClassifyDataActionPerformed
+        if(!classifier.isReady()){
+            ErrorDialog.show(this, "Classifier not trained.");
+            return;
+        }
+        ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
+        cdd.show();
+        Data dataset = cdd.getSelectedDataset();
+        if (dataset!=null){
+            classify(dataset);
+        }
+    }//GEN-LAST:event_m_ClassifyDataActionPerformed
     
     private void m_FileOpenedDatasetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileOpenedDatasetsActionPerformed
         ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
@@ -574,6 +605,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private javax.swing.JPanel jPanel7;
     private javax.swing.JLabel lblPlot;
     private javax.swing.JLabel lblZoom;
+    private javax.swing.JMenuItem m_ClassifyData;
     private javax.swing.JMenu m_Display;
     private javax.swing.JCheckBoxMenuItem m_DisplayConfusionMatrix;
     private javax.swing.JCheckBoxMenuItem m_DisplayDataInPlot;
