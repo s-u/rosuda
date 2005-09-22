@@ -37,5 +37,7 @@ public interface Classifier {
     void show();
     
     String getRname();
+    
+    String classify(Data dataset);
 
 }
