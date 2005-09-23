@@ -81,7 +81,7 @@ public class MosaicCanvas extends BaseCanvas {
     public void updateObjects() {
         
         create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
-        if(pp==null) pp = new PlotPrimitive[rects.size()];
+        if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         
         setUpdateRoot(0);
@@ -131,17 +131,16 @@ public class MosaicCanvas extends BaseCanvas {
         
         int[] levels = ft.getLevels();
         String[][] lnames = ft.getLnames();
-        int k = vs;
         
         rects.removeAllElements();
         Labels.removeAllElements();
         
-        plevels = new int[k];               // reverse cumulative product of levels
-        plevels[k-1] = 0;
-        if( k>1 )
-            plevels[k-2] = levels[k-1];	// calculate the number of cells covered by a
-        // category in level k
-        for (int i=k-3; i>=0; i--) {
+        plevels = new int[vs];               // reverse cumulative product of levels
+        plevels[vs-1] = 0;
+        if( vs>1 )
+            plevels[vs-2] = levels[vs-1];	// calculate the number of cells covered by a
+        // category in level vs
+        for (int i=vs-3; i>=0; i--) {
             plevels[i] = plevels[i+1] * levels[i+1];
         }
         
@@ -249,10 +248,11 @@ public class MosaicCanvas extends BaseCanvas {
     
     public void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
         
-        int levels = ft.getLevels()[levelid];
+        //int levels = ft.getLevels()[levelid];
         int k = vs;
         String name = v[levelid].getName();
         String[] lnames = (String[])v[levelid].getCategories();
+        int levels = lnames.length;
         
         double[] exp = ft.getExp();
         double[] table = ft.getTable();
@@ -441,55 +441,65 @@ public class MosaicCanvas extends BaseCanvas {
     
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
+        boolean repaint=false;
         switch(code){
             case KeyEvent.VK_DOWN:
                 if( e.isShiftDown() )
-                    if( censor > 0 )
-                        censor--;
-                    else
+                    if( censor > 0 ){
+                    censor--;
+                    repaint=true;
+                    } else
                         return;
                 else
-                    if( maxLevel < k ) {
+                    if( maxLevel < vs ) {
                     maxLevel += 1;
+                    repaint=true;
                     }
                 break;
             case KeyEvent.VK_UP:
-                if( e.isShiftDown() )
+                if( e.isShiftDown() ){
                     censor++;
-                else
+                    repaint=true;
+                } else
                     if( maxLevel > 1 ) {
                     maxLevel -= 1;
+                    repaint=true;
                     }
                 break;
             case KeyEvent.VK_LEFT:
-                if( maxLevel != k ) {
-                    int[] rotation = new int[k];
+                if( maxLevel != vs ) {
+                    int[] rotation = new int[vs];
                     for (int i=0; i<maxLevel-1; i++)
                         rotation[i] = i;
-                    for (int i=maxLevel-1; i<k ; i++)
+                    for (int i=maxLevel-1; i<vs ; i++)
                         rotation[i] = i+1;
-                    rotation[k-1] = maxLevel-1;
-                    tablep.permute(rotation);
+                    rotation[vs-1] = maxLevel-1;
+                    ft.permute(rotation);
+                    v = ft.getVars();
+                    repaint=true;
                 }
                 break;
             case KeyEvent.VK_RIGHT:
-                if( maxLevel != k ) {
-                    int[] rotation = new int[k];
+                if( maxLevel != vs ) {
+                    int[] rotation = new int[vs];
                     for (int i=0; i<maxLevel-1; i++)
                         rotation[i] = i;
-                    for (int i=maxLevel; i<k ; i++)
+                    for (int i=maxLevel; i<vs ; i++)
                         rotation[i] = i-1;
-                    rotation[maxLevel-1] = k-1;
-                    tablep.permute(rotation);
+                    rotation[maxLevel-1] = vs-1;
+                    ft.permute(rotation);
+                    v = ft.getVars();
+                    repaint=true;
                 }
                 break;
             case KeyEvent.VK_R:
                 if(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()){
-                    for( int i=maxLevel-1; i<tablep.k; i++ )
+                    for( int i=maxLevel-1; i<vs; i++ )
                         if( Dirs[i] == 'x')
                             Dirs[i] = 'y';
                         else
                             Dirs[i] = 'x';
+                    repaint=true;
                 }
                 break;
             case KeyEvent.VK_ADD:
@@ -497,18 +507,25 @@ public class MosaicCanvas extends BaseCanvas {
                 && (e.getKeyCode() == KeyEvent.VK_ADD)))
                     break;
             case KeyEvent.VK_SUBTRACT:
-                frame.setCursor(Frame.WAIT_CURSOR);
+                //frame.setCursor(Frame.WAIT_CURSOR);
                 int[] interact = new int[maxLevel];
                 for( int i=0; i<maxLevel; i++ )
                     interact[i] = i;
                 if( e.getKeyCode() == KeyEvent.VK_ADD )
-                    if( !tablep.addInteraction( interact, true ) )
+                    if( !ft.addInteraction( interact, true ) )
                         Toolkit.getDefaultToolkit().beep();
                 if( e.getKeyCode() == KeyEvent.VK_SUBTRACT )
-                    if( !tablep.deleteInteraction( interact ) )
+                    if( !ft.deleteInteraction( interact ) )
                         Toolkit.getDefaultToolkit().beep();
-                frame.setCursor(Frame.DEFAULT_CURSOR);
+                //frame.setCursor(Frame.DEFAULT_CURSOR);
+                repaint=true;
         }
+        if(repaint){
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
+        
         super.keyReleased(e);
     }
     
