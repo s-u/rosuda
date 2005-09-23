@@ -76,6 +76,14 @@ public class MosaicCanvas extends BaseCanvas {
         mLeft=40; mRight=5; mTop=20; mBottom=5;
         
         ft = new FrequencyTable(vars);
+        
+        Dirs = new char[vs];
+        for (int i=0; i<vs; i++ ) {
+            if( (i % 2) == 0 )
+                Dirs[i] = 'x';
+            else
+                Dirs[i] = 'y';
+        }
     }
     
     public void updateObjects() {
@@ -120,14 +128,6 @@ public class MosaicCanvas extends BaseCanvas {
         
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
-        
-        Dirs = new char[vs];
-        for (int i=0; i<vs; i++ ) {
-            if( (i % 2) == 0 )
-                Dirs[i] = 'x';
-            else
-                Dirs[i] = 'y';
-        }
         
         int[] levels = ft.getLevels();
         String[][] lnames = ft.getLnames();
@@ -503,8 +503,7 @@ public class MosaicCanvas extends BaseCanvas {
                 }
                 break;
             case KeyEvent.VK_ADD:
-                if(!(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                && (e.getKeyCode() == KeyEvent.VK_ADD)))
+                if(e.getModifiers() != Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
                     break;
             case KeyEvent.VK_SUBTRACT:
                 //frame.setCursor(Frame.WAIT_CURSOR);
