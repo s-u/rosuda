@@ -46,6 +46,8 @@ public class MosaicCanvas extends BaseCanvas {
     SVar[] v;
     int vs;
     
+    Frame frame;
+    
     int maxLevel;
     
     int w,h,hgap,vgap; //width, height and gaps between mosaics
@@ -63,7 +65,8 @@ public class MosaicCanvas extends BaseCanvas {
     
     public MosaicCanvas(Frame f, SVar[] vars, SMarker mark) {
         super(f, mark);
-        setTitle("Mosaic Plot");
+        
+        this.frame=f;        
         this.v = vars;
         maxLevel = v.length; // should not be set here as it can be changed. is this the same as vs: ??
         this.vs = v.length;
@@ -91,6 +94,23 @@ public class MosaicCanvas extends BaseCanvas {
         create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
+        
+        String titletext = "Mosaic Plot (";
+        
+        for (int i=0; i<vs ; i++) {
+            if( i < vs-1 && i != maxLevel-1 )
+                titletext += v[i].getName() +", ";
+            else
+                titletext += v[i].getName();
+            if( i+1 == maxLevel && maxLevel < vs )
+                titletext += ")[";
+        }
+        if ( maxLevel < vs )
+            titletext += "]";
+        else
+            titletext += ")";
+        
+        frame.setTitle(titletext);
         
         setUpdateRoot(0);
     }
