@@ -113,6 +113,8 @@ public class DataFileSaveDialog extends JFileChooser implements ActionListener, 
             } catch (RSrvException rse){
                 ErrorDialog.show(this,rse,"DataFileSaveDialog.saveFile()");
             }
+            
+            Main.setLast_directory(this.getSelectedFile().getParent());
         }
     }
     

@@ -172,6 +172,7 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
         } else {
             status = STATUS_ERROR;
         }
+        Main.setLast_directory(selFile.getParent());
     }
     
     /**
