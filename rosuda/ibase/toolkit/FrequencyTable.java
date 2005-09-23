@@ -186,6 +186,15 @@ public class FrequencyTable {
         return ceTable[n].getCases();
     }
     
+    public boolean deleteInteraction( int[] delInteraction ) {
+        boolean in = Interactions.isMember( delInteraction );
+        if( in && delInteraction.length > 1 ) {
+            Interactions.deleteMember( delInteraction );
+            this.logLinear();
+        }
+        return in;
+    }
+    
     
     /**
      * From org.rosuda.Mondrian.Table.
@@ -305,6 +314,77 @@ public class FrequencyTable {
         
         return t - (a0 + a1*t + a2*t*t) / (1 + b1*t + b2*t*t + b3*t*t*t);
     }
+    
+    public void permute(int[] perm) {
+        
+        Interactions.permute( perm );
+        
+        int[]   plevels = new int[k];
+        int[][] index;
+        // permuted pendants
+        double[]   p_table  = new double[table.length];
+        double[]   p_exp    = new double[table.length];
+        String[][] p_lnames = new String[k][];
+        SVar[] p_vars = new SVar[k];
+        for (int i=0; i<k; i++)
+            p_lnames[i] = new String[lnames[perm[i]].length];
+        int[]      p_levels = new int[k];
+        
+        plevels[k-1] = 0;
+        plevels[k-2] = levels[k-1];		// calculate the number of cells covered by a
+        // category in level k
+        for (int i=k-3; i>=0; i--) {
+            plevels[i] = plevels[i+1] * levels[i+1];
+        }
+        
+        index = new int[table.length][k];
+        
+        int decompose;
+        
+        for (int i=0; i<table.length; i++) {
+            decompose = i;
+            for (int j=0; j<k-1; j++) {
+                index[i][j] = decompose / plevels[j];
+                decompose -= index[i][j] *  plevels[j];
+            }
+            index[i][k-1] = decompose;
+        }
+        
+        for (int i=0; i<k; i++) {                  // permute the names: this is easy
+            p_vars[i] = vars[perm[i]];
+            p_levels[i] = levels[perm[i]];
+        }
+        
+        for (int i=0; i<k; i++) {                  // and the level names
+            for (int j=0; j<(p_lnames[i].length); j++) {
+                p_lnames[i][j] = lnames[perm[i]][j];
+            }
+        }
+        
+        levels = p_levels;
+        this.lnames = p_lnames;
+        
+        plevels[k-2] = levels[k-1];		 // calculate the number of cells covered by a
+        // category in level k
+        for (int i=k-3; i>=0; i--) {
+            plevels[i] = plevels[i+1] * levels[i+1];
+        }
+        
+        for (int i=0; i<table.length; i++) {
+            decompose = 0;
+            for (int j=0; j<k-1; j++) {
+                decompose += index[i][perm[j]] * plevels[j];
+            }
+            decompose += index[i][perm[k-1]];
+            p_table[decompose]  = table[i];
+            p_exp[decompose]    = exp[i];
+        }
+        
+        table = p_table;
+        exp = p_exp;
+        vars = p_vars;
+        
+    } // end perm
     
     
     
@@ -546,6 +626,10 @@ public class FrequencyTable {
                     count++;
             return count;
         }
+    }
+
+    public SVar[] getVars() {
+        return vars;
     }
     
 }
