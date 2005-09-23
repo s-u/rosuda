@@ -117,7 +117,7 @@ public class Tools {
         if (dac==0) return ""+((int)val);
         double mplr=10.0;
         long implr=10;
-        while(dac>0) { mplr*=10.0; implr*=10; dac--; };
+        for(int i=1; i<=dac; i++) { mplr*=10.0; implr*=10; };
         long front=(long)(Math.round(val*mplr)/mplr);
         mplr/=10.0; implr/=10;
         double post=(val-((double)front))*mplr;
@@ -129,7 +129,7 @@ public class Tools {
             if (front>=0) front++; else front--;
         }
         String spost=""+ipost; while (spost.length()<dac) { spost="0"+spost; };
-        return sig+front+((ipost==0)?"":"."+ipost);
+        return sig+front+((ipost==0)?"":"."+spost);
     };
 
     public static double parseDouble(String s) {
