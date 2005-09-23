@@ -59,7 +59,7 @@ public final class WindowManager {
         
         final Data data = new Data();
         
-        DataFileOpenDialog dfod = new DataFileOpenDialog(new Frame(), "/home/tobias", data.getRname());
+        DataFileOpenDialog dfod = new DataFileOpenDialog(new Frame(), Main.getLast_directory(), data.getRname());
         switch(dfod.getStatus()){
             case DataFileOpenDialog.STATUS_SUCCESS:
                 
