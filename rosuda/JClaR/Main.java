@@ -15,6 +15,7 @@ import org.rosuda.JRclient.RSrvException;
 public class Main {
     
     private static String last_directory;
+    private static int lastGivenNumber=0;
     
     /** Creates a new instance of Main */
     public Main() {
@@ -24,8 +25,6 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
-        /*MainWindow mw = new MainWindow();
-        mw.show();*/
         final RserveConnection rcon = RserveConnection.getRconnection();
         last_directory=System.getProperty("user.dir");
         
@@ -46,7 +45,10 @@ public class Main {
             System.exit(-1);
         }
         
-        WindowManager.newWindow();
+        MainWindow mw = new MainWindow();
+        mw.show();
+        
+        //WindowManager.newWindow();
     }
     
     
@@ -56,6 +58,10 @@ public class Main {
     
     public static void setLast_directory(String aLast_directory) {
         last_directory = aLast_directory;
+    }
+    
+    public static int getNewClassifierNumber(){
+        return ++lastGivenNumber;
     }
     
 }
