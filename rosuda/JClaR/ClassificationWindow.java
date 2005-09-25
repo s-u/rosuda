@@ -198,24 +198,6 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         
     }
     
-    /**
-     * Before disposing this method notifies WindowManager.
-     */
-    public final void dispose() {
-        dispose(true);
-    }
-    
-    final void dispose(boolean notify){
-        for (final Enumeration en = subWindows.elements(); en.hasMoreElements();)  {
-            ((JFrame)en.nextElement()).dispose();
-        }
-        
-        if (notify) {
-            WindowManager.closeWindow(this);
-        }
-        super.dispose();
-    }
-    
     final void setSidePanel(final SidePanel span){
         if (sidePanel!=null)  {
             getContentPane().remove(sidePanel);
@@ -233,7 +215,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     void classify(Data dataset){
         String result = classifier.classify(dataset);
         if(result!=null){
-            //#T#O#D#O#: show classified data or save it
+            DataFileSaveDialog dfsd = new DataFileSaveDialog(this, result, Main.getLast_directory());
         }
     }
     
