@@ -23,7 +23,6 @@ public final class SVM implements Classifier {
     private RserveConnection rcon;
     private Data data;
     
-    private static int lastGivenNumber;
     private int number;
     
     private boolean trained=false;
@@ -60,7 +59,7 @@ public final class SVM implements Classifier {
     /** Creates a new instance of SVM */
     public SVM(final Data data, final int variablePos) {
         if(data!=null){
-            number = ++lastGivenNumber;
+            number = Main.getNewClassifierNumber();
             rcon=RserveConnection.getRconnection();
             
             setData(data,variablePos);
