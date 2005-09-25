@@ -54,7 +54,7 @@ public final class SVMClassificationPlot extends ContourPlot {
     }
     
     public void setShowDataInPlot(final boolean showDataInPlot) {
-        setShowDataInPlot(showDataInPlot);
+        this.showDataInPlot = showDataInPlot;
         //createPlotCall(false);
     }
     
