@@ -9,6 +9,7 @@ package org.rosuda.JClaR;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  *
@@ -17,6 +18,8 @@ import java.util.Hashtable;
 public class DatasetManager {
     
     // TODO: check if dataset on disc has changed
+    
+    private static DataClassifierListenerIF listener;
     
     /**
      * maps file names to data objects
@@ -32,6 +35,7 @@ public class DatasetManager {
      */
     public static void addDataset(Data data){
         datasets.put(data.getPath(), data);
+        if(listener!=null) listener.datasetsChanged();
     }
     
     /**
@@ -48,5 +52,13 @@ public class DatasetManager {
     
     public static Enumeration getElements(){
         return datasets.elements();
+    }
+    
+    public static Vector getDataVector(){
+        return new Vector(datasets.values());
+    }
+
+    public static void setListener(DataClassifierListenerIF aListener) {
+        listener = aListener;
     }
 }
