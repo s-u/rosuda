@@ -10,6 +10,7 @@ public class PPrimMosaic extends PPrimRectangle {
     public boolean empty = false;
     private char dir;
     private boolean censored;
+    private double obs;
     
     //get Information about this mosaic
     public String toString() {
@@ -32,9 +33,13 @@ public class PPrimMosaic extends PPrimRectangle {
             g.drawRect(r.x,r.y,r.width,r.height);
         }
     }
+    
+    public void setObs(double obs){
+        this.obs = obs;
+    }
 
     public double getObs() {
-        return (double)ref.length;
+        return obs;
     }
     
     public char getDir() {
