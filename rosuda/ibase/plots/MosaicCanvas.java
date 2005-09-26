@@ -267,7 +267,7 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
-        
+
         //int levels = ft.getLevels()[levelid];
         int k = vs;
         String name = v[levelid].getName();
@@ -374,15 +374,17 @@ public class MosaicCanvas extends BaseCanvas {
                                     y1,
                                     emptyBin,
                                     sizeY+emptyWidth);
+                            tile.setObs(0);
                             //dir='y', mode=displayMode
-                            //missing: 0,exps[j], 4 / residSum, tablep.p
+                            //missing: exps[j], 4 / residSum, tablep.p
                         } else{
                             tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
                                     y2-y1 + addGapY);
+                            tile.setObs(obs[j]);
                             //dir='y', mode=displayMode
-                            //missing: obs[j],exps[j], 4 / residSum, tablep.p
+                            //missing: exps[j], 4 / residSum, tablep.p
                         }
                     } else {
                         if( empty ){
@@ -390,15 +392,17 @@ public class MosaicCanvas extends BaseCanvas {
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     sizeX+emptyWidth,
                                     emptyBin);
+                            tile.setObs(0);
                             //dir='x', mode=displayMode
-                            //missing: 0,exps[j], 4 / residSum, tablep.p
+                            //missing: exps[j], 4 / residSum, tablep.p
                         } else {
                             tile.r = new Rectangle(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     x2-x1 + addGapX,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);
+                            tile.setObs(obs[j]);
                             //dir='x', mode=displayMode
-                            //missing: obs[j],exps[j], 4 / residSum, tablep.p
+                            //missing: exps[j], 4 / residSum, tablep.p
                         }
                     }
                     rects.addElement(tile);
