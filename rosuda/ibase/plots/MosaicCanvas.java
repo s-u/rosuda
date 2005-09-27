@@ -66,7 +66,7 @@ public class MosaicCanvas extends BaseCanvas {
     public MosaicCanvas(Frame f, SVar[] vars, SMarker mark) {
         super(f, mark);
         
-        this.frame=f;        
+        this.frame=f;
         this.v = vars;
         maxLevel = v.length; // should not be set here as it can be changed. is this the same as vs: ??
         this.vs = v.length;
@@ -251,23 +251,29 @@ public class MosaicCanvas extends BaseCanvas {
                 maxCount = Math.max(maxCount, ((PPrimMosaic)(rects.elementAt(i))).getObs());
             for (int i=0; i<rects.size(); i++) {
                 PPrimMosaic r = (PPrimMosaic)(rects.elementAt(i));
-                int newH = 0;
+                int newH, newW;
+                int newY=r.r.y;
                 if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS ) {
                     r.setDir('y');
-                    r.r.setSize(r.r.height, (int)((double)r.r.height * (1.0+(double)censor/5.0) * r.getObs()/maxCount));
+                    newW = r.r.width;
+                    newH = (int)((double)r.r.height * (1.0+(double)censor/5.0) * r.getObs()/maxCount);
                 } else {
-                    r.r.setSize((int)((double)r.r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount))),
-                            (int)((double)r.r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount))));
+                    newW = (int)((double)r.r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
+                    newH = (int)((double)r.r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
                 }
-                /*if( (r.h >= r.height && r.w >= r.width) && censor > 0)
-                    r.censored = true;
-                r.y += r.height-r.h;*/
+                if( (newH >= r.r.height && newW >= r.r.width) && censor > 0){
+                    r.setCensored(true);
+                    newH=r.r.height;
+                    newW=r.r.width;
+                }
+                newY += r.r.height-newH;
+                r.r.setBounds(r.r.x,newY,newW,newH);
             }
         }
     }
     
     public void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
-
+        
         //int levels = ft.getLevels()[levelid];
         int k = vs;
         String name = v[levelid].getName();
