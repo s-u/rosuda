@@ -266,8 +266,7 @@ public class MosaicCanvas extends BaseCanvas {
                     newH=r.r.height;
                     newW=r.r.width;
                 }
-                newY += r.r.height-newH;
-                r.r.setBounds(r.r.x,newY,newW,newH);
+                r.changeDimension(newW,newH);
             }
         }
     }
