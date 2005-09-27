@@ -29,7 +29,8 @@ public class PPrimMosaic extends PPrimRectangle {
         if (!empty)
             g.fillRect(r.x,r.y,r.width,r.height);
         if (drawBorder) {
-            if (!empty) g.setColor("outline");
+            if (censored) g.setColor(Color.red);
+            else if (!empty) g.setColor("outline");
             g.drawRect(r.x,r.y,r.width,r.height);
         }
     }
