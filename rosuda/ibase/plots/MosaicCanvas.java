@@ -352,13 +352,10 @@ public class MosaicCanvas extends BaseCanvas {
                 
                 info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
                 
-                boolean empty = false;
                 boolean stop  = false;
                 int addGapX = 0;
                 int addGapY = 0;
-                
-                if( counts[j+1] - counts[j] == 0 )
-                    empty = true;
+
                 if( (mode==DISPLAY_MODE_SAMEBINSIZE) && oCounts[j+1]-oCounts[j] == 0 || levelid == maxLevel-1 ) {
                     stop = true;
                     for( int i=levelid+1; i<maxLevel; i++ )
@@ -368,11 +365,14 @@ public class MosaicCanvas extends BaseCanvas {
                             addGapY += aGap[i];
                 }
                 
+                int[] ref = ft.getMatchingCases(combination);
+                boolean empty = (ref.length==0);
+                
                 if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
-                    tile.empty = empty;
                     tile.info=info;
-                    tile.ref = ft.getMatchingCases(combination);
+                    tile.setType(mode);
+                    tile.ref = ref;
                     
                     if( Dirs[levelid] == 'x' ){
                         if( empty ){                                        // empty bin
