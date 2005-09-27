@@ -39,11 +39,12 @@
 			children = (
 				F5FCD7B4023CC352015B9A6A,
 				F539377301F5CC7401FA4797,
+				D04E14C208BDD855001A39DA,
+				D0D4C0C8089F99F000579679,
 				F539377401F5CC7401FA4797,
 				F539377501F5CC7401FA4797,
 				F539377601F5CC7401FA4797,
 				F539377701F5CC7401FA4797,
-				F539377201F5CC7401FA4797,
 				D07E9E1E057F1DA800C2084A,
 				F59B7530022FE93101B238D8,
 				F539377801F5CC7401FA4797,
@@ -51,7 +52,6 @@
 				F539377A01F5CC7401FA4797,
 				F539377B01F5CC7401FA4797,
 				01F12F4EFEC8CE6A11DB9C8B,
-				F539377C01F5CC7401FA4797,
 				F539377D01F5CC7401FA4797,
 				F539377E01F5CC7401FA4797,
 				F539377F01F5CC7401FA4797,
@@ -59,17 +59,15 @@
 				F539378101F5CC7401FA4797,
 				F539378201F5CC7401FA4797,
 				D08C744104B997AB00FA48CA,
-				F518DE9002928EC501A67908,
-				F539378301F5CC7401FA4797,
 				F539378401F5CC7401FA4797,
 				F54802D4026ED61401FA478D,
 				F5FBD732027EE38A01FA478D,
 				F539378601F5CC7401FA4797,
+				D04E14F608BDF4AD001A39DA,
 				F539378701F5CC7401FA4797,
 				D0C7E78A076EDB9F00B94ACD,
 				F539378801F5CC7401FA4797,
 				F539378901F5CC7401FA4797,
-				F539378A01F5CC7401FA4797,
 				F539378B01F5CC7401FA4797,
 				0111F2C600819D1A7F000001,
 				F510801203B3247801FA48CB,
@@ -191,6 +189,7 @@
 				HEADER_SEARCH_PATHS = "";
 				JAVA_CLASS_SEARCH_PATHS = .;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
 				JAVA_MANIFEST_FILE = Mondrian.mft;
 				JAVA_ONLY = YES;
 				JAVA_SOURCE_SUBDIR = .;
@@ -266,6 +265,8 @@
 			<string>$JAVAROOT/Mondrian.jar</string>
 			<string>/usr/local/mysql/mysql-connector-java-3.1.8/mysql-connector-java-3.1.8-bin.jar</string>
 		</array>
+		<key>JVMVersion</key>
+		<string>1.4*</string>
 		<key>MainClass</key>
 		<string>Mondrian</string>
 		<key>Properties</key>
@@ -290,7 +291,7 @@
 			<string>false</string>
 		</dict>
 		<key>VMOptions</key>
-		<string>-Xmx384m -Xverify:none</string>
+		<string>-Xmx512m -Xverify:none</string>
 	</dict>
 	<key>NSJavaNeeded</key>
 	<string>YES</string>
@@ -311,7 +312,6 @@
 			files = (
 				1601BCDDFEEE210811DB9C8B,
 				0111F2C700819D1A7F000001,
-				F539378C01F5CC7401FA4797,
 				F539378D01F5CC7401FA4797,
 				F539378E01F5CC7401FA4797,
 				F539379001F5CC7401FA4797,
@@ -331,7 +331,6 @@
 				F53937A001F5CC7401FA4797,
 				F53937A101F5CC7401FA4797,
 				F53937A201F5CC7401FA4797,
-				F53937A301F5CC7401FA4797,
 				F53937A401F5CC7401FA4797,
 				F59B7531022FE93101B238D8,
 				F5FCD7B5023CC352015B9A6A,
@@ -353,6 +352,10 @@
 				D0BF0A190792C180007E65A3,
 				D0BF0A1A0792C180007E65A3,
 				D0E375C0081302D8004B4DF3,
+				D0D4C0C9089F99F000579679,
+				D04E14C308BDD855001A39DA,
+				D04E14F708BDF4AD001A39DA,
+				D09999EA08E9F3C7003E49CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,6 +412,34 @@
 //D02
 //D03
 //D04
+		D04E14C208BDD855001A39DA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = BufferTokenizer.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D04E14C308BDD855001A39DA = {
+			fileRef = D04E14C208BDD855001A39DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D04E14F608BDF4AD001A39DA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = SelectionEvent.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D04E14F708BDF4AD001A39DA = {
+			fileRef = D04E14F608BDF4AD001A39DA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D07E9E1E057F1DA800C2084A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -479,6 +510,20 @@
 				JAVA_ARCHIVE_SUBDIR = "";
 			};
 		};
+		D09999E908E9F3C7003E49CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = RSession.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D09999EA08E9F3C7003E49CE = {
+			fileRef = D09999E908E9F3C7003E49CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D0AD8140080A731000E77F89 = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.gif;
@@ -504,6 +549,7 @@
 				D0BF0A0A0792C180007E65A3,
 				D0BF0A0B0792C180007E65A3,
 				D0BF0A0C0792C180007E65A3,
+				D09999E908E9F3C7003E49CE,
 				D0BF0A0D0792C180007E65A3,
 				D0BF0A0E0792C180007E65A3,
 			);
@@ -681,6 +727,20 @@
 			settings = {
 			};
 		};
+		D0D4C0C8089F99F000579679 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = DataEvent.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D0D4C0C9089F99F000579679 = {
+			fileRef = D0D4C0C8089F99F000579679;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		D0E375BE081302D8004B4DF3 = {
 			children = (
 				D0E375BF081302D8004B4DF3,
@@ -731,14 +791,6 @@
 				JAVA_ARCHIVE_SUBDIR = "";
 			};
 		};
-		F518DE9002928EC501A67908 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.java;
-			path = PrintUtilities.java;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F52CCF8B0237C0F701FA478D = {
 			isa = PBXFileReference;
 			lastKnownFileType = image.gif;
@@ -752,14 +804,6 @@
 			settings = {
 				JAVA_ARCHIVE_SUBDIR = "";
 			};
-		};
-		F539377201F5CC7401FA4797 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.java;
-			path = Jlpr.java;
-			refType = 4;
-			sourceTree = "<group>";
 		};
 		F539377301F5CC7401FA4797 = {
 			fileEncoding = 30;
@@ -833,14 +877,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F539377C01F5CC7401FA4797 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.java;
-			path = "Mondrian-proj.java";
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F539377D01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -889,14 +925,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F539378301F5CC7401FA4797 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.java;
-			path = PSGr.java;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F539378401F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -937,14 +965,6 @@
 			refType = 4;
 			sourceTree = "<group>";
 		};
-		F539378A01F5CC7401FA4797 = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.java;
-			path = Test.java;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		F539378B01F5CC7401FA4797 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -952,12 +972,6 @@
 			path = Util.java;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		F539378C01F5CC7401FA4797 = {
-			fileRef = F539377201F5CC7401FA4797;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F539378D01F5CC7401FA4797 = {
 			fileRef = F539377301F5CC7401FA4797;
@@ -1069,12 +1083,6 @@
 		};
 		F53937A201F5CC7401FA4797 = {
 			fileRef = F539378901F5CC7401FA4797;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F53937A301F5CC7401FA4797 = {
-			fileRef = F539378A01F5CC7401FA4797;
 			isa = PBXBuildFile;
 			settings = {
 			};
