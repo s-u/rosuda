@@ -1,7 +1,7 @@
 
 //
 // A drag box - for my good friend Marvin.
-//im
+//
 
 import java.awt.*;
 import java.awt.print.*;
@@ -12,6 +12,16 @@ import java.util.Properties;
 import java.util.Enumeration;
 import javax.swing.*;
 import org.rosuda.util.*;
+/*import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+import javax.swing.JScrollPane;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTextField;*/
+
 
 public
 abstract class DragBox
@@ -53,6 +63,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public int printFactor = 1;														// Increase in resolution for printing
 
   public Dimension printerPage;                               // must be accessible in different paints ...
+  
+  public LimitDialog LD;
 
   //
   // The PC implementation may need two minor changes:
@@ -271,7 +283,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
       this.frame = frame;
 
       ToolTipManager.sharedInstance().registerComponent(this);
-      ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+      ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
       ToolTipManager.sharedInstance().setInitialDelay(0);
       ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
       ToolTipManager.sharedInstance().setReshowDelay(0);
@@ -476,7 +488,7 @@ System.out.println(" dragEnd! ");
 //System.out.println("mouse "+mouse);
 
       if( modifiers == BUTTON1_UP ||
-          modifiers == BUTTON1_UP + META_DOWN - 16 && SYSTEM == MAC ||
+          modifiers == BUTTON1_UP + META_DOWN && SYSTEM == MAC ||
           modifiers == BUTTON2_UP && SYSTEM != MAC ) {
         if( mouse != CHANGE && mouse != ZOOMING ) {
           if( mouse == DRAGGING ) {
@@ -933,6 +945,14 @@ System.out.println("Mouse Action to check: "+mouse);
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
+      // Fire up min max dialog
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+          (e.getKeyCode() == KeyEvent.VK_J)   &&
+          (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+
+        LD = new LimitDialog(this);
+        LD.show();
+      }        
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == Event.BACK_SPACE))  {
         if( Selections.size() > 0 ) {
@@ -1022,31 +1042,51 @@ System.out.println("Mouse Action to check: "+mouse);
     public void actionPerformed(ActionEvent e) {
       String command = e.getActionCommand();
 
-      Selection S = ((Selection)Selections.elementAt(movingID));
-      if( command.equals("Delete") ) {	// die Abfrage nach der aktivierten Selektion kann man sich sparen - es ist sowieso nur moeglich auf aktivierte Elemente zuzugreifen	
-        Selections.removeElement(S);
-        S.status = Selection.KILLED;
-
-        if( Selections.size() > 1 )
-          activeS = (Selection) Selections.elementAt(Selections.size()-1);	// solange nur aktivierte Element geloescht werden koennen, reicht es
-                                                                           // anschliessend das vorletzte Element zu selektieren
-      }	
-      if( command.equals("DeleteAll") ) {
-        deleteAll = true;
+      if( command.equals("Apply") || command.equals("OK") || command.equals("Home") || command.equals("Cancel") ) {
+        if( command.equals("Apply") || command.equals("OK") ) {
+          this.reScale(Util.atod(LD.tfXMinI.getText()), 
+                       Util.atod(LD.tfYMinI.getText()),
+                       Util.atod(LD.tfXMaxI.getText()),
+                       Util.atod(LD.tfYMaxI.getText()));
+          scaleChanged = true;
+          update(this.getGraphics());
+        } else if( command.equals("Home") ) {
+          this.home();
+          scaleChanged = true;
+          update(this.getGraphics());
+        }
+        
+        if( command.equals("OK") || command.equals("Cancel") )
+          LD.dispose();
+                       
+      } else {
+        
+        Selection S = ((Selection)Selections.elementAt(movingID));
+        if( command.equals("Delete") ) {	// die Abfrage nach der aktivierten Selektion kann man sich sparen - es ist sowieso nur moeglich auf aktivierte Elemente zuzugreifen	
+          Selections.removeElement(S);
+          S.status = Selection.KILLED;
+          
+          if( Selections.size() > 1 )
+            activeS = (Selection) Selections.elementAt(Selections.size()-1);	// solange nur aktivierte Element geloescht werden koennen, reicht es
+                                                                                // anschliessend das vorletzte Element zu selektieren
+        }	
+        if( command.equals("DeleteAll") ) {
+          deleteAll = true;
+        }
+        if( command.equals(S.getModeString(Selection.MODE_STANDARD)) )
+          S.mode = Selection.MODE_STANDARD;
+        if( command.equals(S.getModeString(Selection.MODE_AND)) )
+          S.mode = Selection.MODE_AND;
+        if( command.equals(S.getModeString(Selection.MODE_OR)) ) 
+          S.mode = Selection.MODE_OR;
+        if( command.equals(S.getModeString(Selection.MODE_XOR)) )
+          S.mode = Selection.MODE_XOR;
+        if( command.equals(S.getModeString(Selection.MODE_NOT)) )
+          S.mode = Selection.MODE_NOT;
+        
+        SelectionEvent se = new SelectionEvent(this);
+        evtq.postEvent(se);	
       }
-      if( command.equals(S.getModeString(Selection.MODE_STANDARD)) )
-        S.mode = Selection.MODE_STANDARD;
-      if( command.equals(S.getModeString(Selection.MODE_AND)) )
-        S.mode = Selection.MODE_AND;
-      if( command.equals(S.getModeString(Selection.MODE_OR)) ) 
-        S.mode = Selection.MODE_OR;
-      if( command.equals(S.getModeString(Selection.MODE_XOR)) )
-        S.mode = Selection.MODE_XOR;
-      if( command.equals(S.getModeString(Selection.MODE_NOT)) )
-        S.mode = Selection.MODE_NOT;
-
-      SelectionEvent se = new SelectionEvent(this);
-      evtq.postEvent(se);	
     }
 
     private SelectionListener listener;
@@ -1065,11 +1105,235 @@ System.out.println("Mouse Action to check: "+mouse);
         return new Rectangle(this.x-t, this.y-t, this.width+2*t, this.height+2*t);
       }
     }
-}
+    
+    class LimitDialog extends JFrame {
+      
+      public JTextField tfXMinI;
+      public JTextField tfXMaxI;
+      public JTextField tfYMinI;
+      public JTextField tfYMaxI;
 
-class SelectionEvent extends AWTEvent {
-  public SelectionEvent(DragBox s) {
-    super( s, SELECTION_EVENT );
-  }
-  public static final int SELECTION_EVENT = AWTEvent.RESERVED_ID_MAX + 1;
+      public LimitDialog(DragBox DB) {
+                
+        JPanel pnAllPanel;
+        
+        JPanel pnXPanel;
+        JLabel lbXLabelMin;
+        JLabel lbXLabelMax;
+        
+        JPanel pnYPanel;
+        JLabel lbYLabelMin;
+        JLabel lbYLabelMax;
+        
+        JButton btCancel;
+        JButton btOK;
+        JButton btHome;
+        JButton btApply;
+        
+        pnAllPanel = new JPanel();
+        pnAllPanel.setBorder( BorderFactory.createTitledBorder( "Set Coordinates" ) );
+        GridBagLayout gbAllPanel = new GridBagLayout();
+        GridBagConstraints gbcAllPanel = new GridBagConstraints();
+        pnAllPanel.setLayout( gbAllPanel );
+        
+        pnXPanel = new JPanel();
+        pnXPanel.setBorder( BorderFactory.createTitledBorder( "x limits" ) );
+        GridBagLayout gbXPanel = new GridBagLayout();
+        GridBagConstraints gbcXPanel = new GridBagConstraints();
+        pnXPanel.setLayout( gbXPanel );
+        
+        lbXLabelMin = new JLabel( "x-min"  );
+        gbcXPanel.gridx = 0;
+        gbcXPanel.gridy = 0;
+        gbcXPanel.gridwidth = 1;
+        gbcXPanel.gridheight = 1;
+        gbcXPanel.fill = GridBagConstraints.BOTH;
+        gbcXPanel.weightx = 1;
+        gbcXPanel.weighty = 1;
+        gbcXPanel.anchor = GridBagConstraints.NORTH;
+        gbXPanel.setConstraints( lbXLabelMin, gbcXPanel );
+        pnXPanel.add( lbXLabelMin );
+        
+        lbXLabelMax = new JLabel( "x-max"  );
+        gbcXPanel.gridx = 0;
+        gbcXPanel.gridy = 1;
+        gbcXPanel.gridwidth = 1;
+        gbcXPanel.gridheight = 1;
+        gbcXPanel.fill = GridBagConstraints.BOTH;
+        gbcXPanel.weightx = 1;
+        gbcXPanel.weighty = 1;
+        gbcXPanel.anchor = GridBagConstraints.NORTH;
+        gbXPanel.setConstraints( lbXLabelMax, gbcXPanel );
+        pnXPanel.add( lbXLabelMax );
+        
+        tfXMinI = new JTextField(10);
+        tfXMinI.setText(Stat.roundToString(llx,5));
+        gbcXPanel.gridx = 1;
+        gbcXPanel.gridy = 0;
+        gbcXPanel.gridwidth = 1;
+        gbcXPanel.gridheight = 1;
+        gbcXPanel.fill = GridBagConstraints.BOTH;
+        gbcXPanel.weightx = 1;
+        gbcXPanel.weighty = 0;
+        gbcXPanel.anchor = GridBagConstraints.NORTH;
+        gbXPanel.setConstraints( tfXMinI, gbcXPanel );
+        pnXPanel.add( tfXMinI );
+        
+        tfXMaxI = new JTextField(10);
+        tfXMaxI.setText(Stat.roundToString(urx,5));
+        gbcXPanel.gridx = 1;
+        gbcXPanel.gridy = 1;
+        gbcXPanel.gridwidth = 1;
+        gbcXPanel.gridheight = 1;
+        gbcXPanel.fill = GridBagConstraints.BOTH;
+        gbcXPanel.weightx = 1;
+        gbcXPanel.weighty = 0;
+        gbcXPanel.anchor = GridBagConstraints.NORTH;
+        gbXPanel.setConstraints( tfXMaxI, gbcXPanel );
+        pnXPanel.add( tfXMaxI );
+
+        gbcAllPanel.gridx = 0;
+        gbcAllPanel.gridy = 0;
+        gbcAllPanel.gridwidth = 2;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( pnXPanel, gbcAllPanel );
+        pnAllPanel.add( pnXPanel );
+        
+        pnYPanel = new JPanel();
+        pnYPanel.setBorder( BorderFactory.createTitledBorder( "y limits" ) );
+        GridBagLayout gbYPanel = new GridBagLayout();
+        GridBagConstraints gbcYPanel = new GridBagConstraints();
+        pnYPanel.setLayout( gbYPanel );
+        gbcAllPanel.gridx = 3;
+        gbcAllPanel.gridy = 0;
+        gbcAllPanel.gridwidth = 2;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( pnYPanel, gbcAllPanel );
+        pnAllPanel.add( pnYPanel );
+        
+        lbYLabelMin = new JLabel( "y-min"  );
+        gbcYPanel.gridx = 0;
+        gbcYPanel.gridy = 0;
+        gbcYPanel.gridwidth = 1;
+        gbcYPanel.gridheight = 1;
+        gbcYPanel.fill = GridBagConstraints.BOTH;
+        gbcYPanel.weightx = 1;
+        gbcYPanel.weighty = 1;
+        gbcYPanel.anchor = GridBagConstraints.NORTH;
+        gbYPanel.setConstraints( lbYLabelMin, gbcYPanel );
+        pnYPanel.add( lbYLabelMin );
+        
+        lbYLabelMax = new JLabel( "y-max"  );
+        gbcYPanel.gridx = 0;
+        gbcYPanel.gridy = 1;
+        gbcYPanel.gridwidth = 1;
+        gbcYPanel.gridheight = 1;
+        gbcYPanel.fill = GridBagConstraints.BOTH;
+        gbcYPanel.weightx = 1;
+        gbcYPanel.weighty = 1;
+        gbcYPanel.anchor = GridBagConstraints.NORTH;
+        gbYPanel.setConstraints( lbYLabelMax, gbcYPanel );
+        pnYPanel.add( lbYLabelMax );
+        
+        tfYMinI = new JTextField(10);
+        tfYMinI.setText(Stat.roundToString(lly,5));
+        gbcYPanel.gridx = 1;
+        gbcYPanel.gridy = 0;
+        gbcYPanel.gridwidth = 1;
+        gbcYPanel.gridheight = 1;
+        gbcYPanel.fill = GridBagConstraints.BOTH;
+        gbcYPanel.weightx = 1;
+        gbcYPanel.weighty = 0;
+        gbcYPanel.anchor = GridBagConstraints.NORTH;
+        gbYPanel.setConstraints( tfYMinI, gbcYPanel );
+        pnYPanel.add( tfYMinI );
+        
+        tfYMaxI = new JTextField(10);
+        tfYMaxI.setText(Stat.roundToString(ury,5));
+        gbcYPanel.gridx = 1;
+        gbcYPanel.gridy = 1;
+        gbcYPanel.gridwidth = 1;
+        gbcYPanel.gridheight = 1;
+        gbcYPanel.fill = GridBagConstraints.BOTH;
+        gbcYPanel.weightx = 1;
+        gbcYPanel.weighty = 0;
+        gbcYPanel.anchor = GridBagConstraints.NORTH;
+        gbYPanel.setConstraints( tfYMaxI, gbcYPanel );
+        pnYPanel.add( tfYMaxI );
+
+        btCancel = new JButton( "Cancel"  );
+        btCancel.setActionCommand( "Cancel" );
+        btCancel.addActionListener(DB);
+        gbcAllPanel.gridx = 0;
+        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridwidth = 1;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( btCancel, gbcAllPanel );
+        pnAllPanel.add( btCancel );
+        
+        btOK = new JButton( "OK"  );
+        btOK.setActionCommand( "OK" );
+        btOK.addActionListener(DB);
+        gbcAllPanel.gridx = 4;
+        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridwidth = 1;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( btOK, gbcAllPanel );
+        pnAllPanel.add( btOK );
+        this.getRootPane().setDefaultButton(btOK);
+        
+        btHome = new JButton( "Home" );
+        btHome.setActionCommand( "Home" );
+        btHome.addActionListener(DB);
+        gbcAllPanel.gridx = 1;
+        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridwidth = 1;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( btHome, gbcAllPanel );
+        pnAllPanel.add( btHome );
+
+        
+        btApply = new JButton( "Apply"  );
+        btApply.setActionCommand( "Apply" );
+        btApply.addActionListener(DB);
+        gbcAllPanel.gridx = 3;
+        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridwidth = 1;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( btApply, gbcAllPanel );
+        pnAllPanel.add( btApply );
+                
+        JScrollPane scpAllPanel = new JScrollPane( pnAllPanel );
+        setContentPane( scpAllPanel );
+        setSize(360, 155);
+        setResizable(false);
+        pack();
+        setVisible( true );
+
+      }
+    }
 }
