@@ -18,6 +18,7 @@ public class PPrimMosaic extends PPrimRectangle {
     public static final int TYPE_FLUCTUATION = 4;
     
     private int type=TYPE_OBSERVED;
+    private int origX,origY,fullW,fullH;
     
     //get Information about this mosaic
     public String toString() {
@@ -27,25 +28,40 @@ public class PPrimMosaic extends PPrimRectangle {
     //if empty paint in red
     public void paint(PoGraSS g, int orientation) {
         if (r==null) return;
-        if (col!=null)
-            g.setColor(col.getRed(),col.getGreen(),col.getBlue());
-        else
-            g.setColor("object");
-        if (isEmpty())
-            g.setColor(Color.red);
-        if (!isEmpty())
-            g.fillRect(r.x,r.y,r.width,r.height);
-        if (drawBorder && !((type==TYPE_FLUCTUATION || type==TYPE_MULTIPLEBARCHARTS) && isEmpty())) {
-            if (censored) g.setColor(Color.red);
-            else if (!isEmpty()) g.setColor("outline");
-            g.drawRect(r.x,r.y,r.width,r.height);
+        switch(type){
+            case TYPE_OBSERVED:
+            case TYPE_EXPECTED:
+                if (col!=null)
+                    g.setColor(col.getRed(),col.getGreen(),col.getBlue());
+                else
+                    g.setColor("object");
+                if (isEmpty())
+                    g.setColor(Color.red);
+                if (!isEmpty())
+                    g.fillRect(r.x,r.y,r.width,r.height);
+                if (!isEmpty()) g.setColor("outline");
+                if (drawBorder)
+                    g.drawRect(r.x,r.y,r.width,r.height);
+                break;
+            case TYPE_SAMEBINSIZE:
+            case TYPE_FLUCTUATION:
+            case TYPE_MULTIPLEBARCHARTS:
+                g.setColor(Color.lightGray);
+                g.fillRect(origX,origY, fullW,fullH);
+                g.drawRect(origX,origY, fullW,fullH);
+                if(!isEmpty()){
+                    g.setColor("object");
+                    g.fillRect(r.x,r.y,r.width,r.height);
+                    g.setColor("outline");
+                    g.drawRect(r.x,r.y,r.width,r.height);
+                }
         }
     }
     
     public void setObs(double obs){
         this.obs = obs;
     }
-
+    
     public double getObs() {
         return obs;
     }
@@ -53,24 +69,34 @@ public class PPrimMosaic extends PPrimRectangle {
     public char getDir() {
         return dir;
     }
-
+    
     public void setDir(char dir) {
         this.dir = dir;
     }
-
+    
     public boolean isCensored() {
         return censored;
     }
-
+    
     public void setCensored(boolean censored) {
         this.censored = censored;
     }
-
+    
     public void setType(int type) {
         this.type = type;
     }
-
+    
     public boolean isEmpty() {
         return ref.length==0;
+    }
+    
+    public void changeDimension(int newWidth, int newHeight){
+        fullW = r.width;
+        fullH = r.height;
+        origX = r.x;
+        origY = r.y;
+        r.y += fullH - newHeight;
+        r.width = newWidth;
+        r.height = newHeight;
     }
 }
