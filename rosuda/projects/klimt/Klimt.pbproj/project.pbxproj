@@ -331,6 +331,8 @@
 				F80E96F806D4E6B7000F58C0,
 				685F538007A58534004B99BD,
 				6845652807CBD59D00A48DC9,
+				D09999F608E9F852003E49CE,
+				D0999A0108E9F8C2003E49CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -731,6 +733,8 @@
 				1C5E09DA0799DCC600A0658F,
 				685F538107A58534004B99BD,
 				6845652707CBD59D00A48DC9,
+				D09999FB08E9F884003E49CE,
+				D0999A0208E9F8C2003E49CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2437,8 +2441,9 @@
 				1C8656C2055935FB00A8030F,
 				1CE96E6C04D7D99D00A8030F,
 				1CE96E6D04D7D99D00A8030F,
-				1CE96E6E04D7D99D00A8030F,
+				D09999F508E9F852003E49CE,
 				1C8CDCB504F2AF8600A8030F,
+				1CE96E6E04D7D99D00A8030F,
 			);
 			isa = PBXGroup;
 			path = JRclient;
@@ -2972,6 +2977,56 @@
 //6A2
 //6A3
 //6A4
+//D00
+//D01
+//D02
+//D03
+//D04
+		D09999F508E9F852003E49CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = RSession.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D09999F608E9F852003E49CE = {
+			fileRef = D09999F508E9F852003E49CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D09999FB08E9F884003E49CE = {
+			fileRef = D09999F508E9F852003E49CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D0999A0008E9F8C2003E49CE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = ImageSelection.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D0999A0108E9F8C2003E49CE = {
+			fileRef = D0999A0008E9F8C2003E49CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D0999A0208E9F8C2003E49CE = {
+			fileRef = D0999A0008E9F8C2003E49CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//D00
+//D01
+//D02
+//D03
+//D04
 //F80
 //F81
 //F82
@@ -3377,6 +3432,7 @@
 			children = (
 				1CE96E8304D7F74100A8030F,
 				1CA4332704D8292E00A8030F,
+				D0999A0008E9F8C2003E49CE,
 				1C5F914206C7D86600A23BBC,
 				F8EE912004D6A73700FA4796,
 				F8EE912104D6A73700FA4796,
