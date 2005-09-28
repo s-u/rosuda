@@ -8,9 +8,6 @@ import org.rosuda.ibase.SVar;
 
 public class FrequencyTable {
     
-    private static final int HORIZONTAL = 0;
-    private static final int VERTICAL = 1;
-    
     private int vsize;
     private SVar[] vars;
     private CombinationEntry[] ceTable;
