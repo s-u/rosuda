@@ -12,7 +12,6 @@ public class FrequencyTable {
     private static final int VERTICAL = 1;
     
     private int vsize;
-    private int k; // same as vsize
     private SVar[] vars;
     private CombinationEntry[] ceTable;
     private double[] table;
@@ -27,7 +26,6 @@ public class FrequencyTable {
     public FrequencyTable(SVar[] vvs) {
         this.vars = vvs;
         this.vsize = vvs.length;
-        k=vsize;
         
         int tableLen = 1;
         for(int i=0; i< vsize; i++){
@@ -206,11 +204,11 @@ public class FrequencyTable {
             interact[i] = (int[])Interactions.SmemberAt(i);
         }
         int n = this.table.length;
-        int[][] permArray = new int[interact.length][this.k];
-        int[][] ipermArray = new int[interact.length][this.k];
+        int[][] permArray = new int[interact.length][vsize];
+        int[][] ipermArray = new int[interact.length][vsize];
         int[] sumInd = new int[interact.length];
         for( int i=0; i<interact.length; i++ ) {
-            for( int j=0; j<k; j++ ) {
+            for( int j=0; j<vsize; j++ ) {
                 if( j<interact[i].length )
                     permArray[i][j] = interact[i][j];
                 else
@@ -218,7 +216,7 @@ public class FrequencyTable {
             }
         }
         for( int i=0; i<interact.length; i++ ) {
-            for( int j=0; j<this.k; j++ ) {
+            for( int j=0; j<vsize; j++ ) {
                 int l=0;
                 while( permArray[i][l] != j )
                     if( permArray[i][l] == -1 )
@@ -229,7 +227,7 @@ public class FrequencyTable {
         }
         for( int i=0; i<interact.length; i++ ) {
             sumInd[i] = 1;
-            for( int j=0; j<this.k; j++ ) {
+            for( int j=0; j<vsize; j++ ) {
                 ipermArray[i][permArray[i][j]] = j;
                 if( ! (j<interact[i].length) )
                     sumInd[i] *= getLevels()[permArray[i][j]];
@@ -319,43 +317,43 @@ public class FrequencyTable {
         
         Interactions.permute( perm );
         
-        int[]   plevels = new int[k];
+        int[]   plevels = new int[vsize];
         int[][] index;
         // permuted pendants
         double[]   p_table  = new double[table.length];
         double[]   p_exp    = new double[table.length];
-        String[][] p_lnames = new String[k][];
-        SVar[] p_vars = new SVar[k];
-        for (int i=0; i<k; i++)
+        String[][] p_lnames = new String[vsize][];
+        SVar[] p_vars = new SVar[vsize];
+        for (int i=0; i<vsize; i++)
             p_lnames[i] = new String[lnames[perm[i]].length];
-        int[]      p_levels = new int[k];
+        int[]      p_levels = new int[vsize];
         
-        plevels[k-1] = 0;
-        plevels[k-2] = levels[k-1];		// calculate the number of cells covered by a
-        // category in level k
-        for (int i=k-3; i>=0; i--) {
+        plevels[vsize-1] = 0;
+        plevels[vsize-2] = levels[vsize-1];		// calculate the number of cells covered by a
+        // category in level vsize
+        for (int i=vsize-3; i>=0; i--) {
             plevels[i] = plevels[i+1] * levels[i+1];
         }
         
-        index = new int[table.length][k];
+        index = new int[table.length][vsize];
         
         int decompose;
         
         for (int i=0; i<table.length; i++) {
             decompose = i;
-            for (int j=0; j<k-1; j++) {
+            for (int j=0; j<vsize-1; j++) {
                 index[i][j] = decompose / plevels[j];
                 decompose -= index[i][j] *  plevels[j];
             }
-            index[i][k-1] = decompose;
+            index[i][vsize-1] = decompose;
         }
         
-        for (int i=0; i<k; i++) {                  // permute the names: this is easy
+        for (int i=0; i<vsize; i++) {                  // permute the names: this is easy
             p_vars[i] = vars[perm[i]];
             p_levels[i] = levels[perm[i]];
         }
         
-        for (int i=0; i<k; i++) {                  // and the level names
+        for (int i=0; i<vsize; i++) {                  // and the level names
             for (int j=0; j<(p_lnames[i].length); j++) {
                 p_lnames[i][j] = lnames[perm[i]][j];
             }
@@ -364,18 +362,18 @@ public class FrequencyTable {
         levels = p_levels;
         this.lnames = p_lnames;
         
-        plevels[k-2] = levels[k-1];		 // calculate the number of cells covered by a
+        plevels[vsize-2] = levels[vsize-1];		 // calculate the number of cells covered by a
         // category in level k
-        for (int i=k-3; i>=0; i--) {
+        for (int i=vsize-3; i>=0; i--) {
             plevels[i] = plevels[i+1] * levels[i+1];
         }
         
         for (int i=0; i<table.length; i++) {
             decompose = 0;
-            for (int j=0; j<k-1; j++) {
+            for (int j=0; j<vsize-1; j++) {
                 decompose += index[i][perm[j]] * plevels[j];
             }
-            decompose += index[i][perm[k-1]];
+            decompose += index[i][perm[vsize-1]];
             p_table[decompose]  = table[i];
             p_exp[decompose]    = exp[i];
         }
@@ -392,7 +390,7 @@ public class FrequencyTable {
         if( !Interactions.isMember( newInteraction ) ) {
             Interactions.newMember( newInteraction );
             if( update ) {
-                if( this.k > 1 )
+                if( vsize > 1 )
                     this.logLinear();
                 else
                     System.arraycopy(this.table, 0, this.exp, 0, table.length);
