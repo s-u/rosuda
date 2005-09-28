@@ -129,19 +129,21 @@ public final class SVMWindow extends ClassificationWindow {
     }
     
     protected void restore(final SnapshotContainer snapC){
-        restoring = true;
-        
-        svm.restoreSnapshot(snapC.getSvmSnap());
-        fvd.restoreSnapshot(snapC.getFvdSnap());
-        
-        SVMClassificationPlot newPlot = (SVMClassificationPlot)svm.getPlot();
-        adjustPlotToCheckBoxMenus(newPlot);
-        setPlot(newPlot);
-        plot.setFixVariablesDialog(fvd);
-        updatePlot(false, CHANGE_TYPE_HARD);
-        
-        //Scaled + Tolerance!!
-        restoring = false;
+        if(snapC!=null){
+            restoring = true;
+            
+            svm.restoreSnapshot(snapC.getSvmSnap());
+            fvd.restoreSnapshot(snapC.getFvdSnap());
+            
+            SVMClassificationPlot newPlot = (SVMClassificationPlot)svm.getPlot();
+            adjustPlotToCheckBoxMenus(newPlot);
+            setPlot(newPlot);
+            plot.setFixVariablesDialog(fvd);
+            updatePlot(false, CHANGE_TYPE_HARD);
+            
+            //Scaled + Tolerance!!
+            restoring = false;
+        }
     }
     
     protected void plotClassifier(final boolean hardChange){
