@@ -627,9 +627,13 @@ public class FrequencyTable {
             return count;
         }
     }
-
+    
     public SVar[] getVars() {
         return vars;
+    }
+    
+    public double getP() {
+        return p;
     }
     
 }
