@@ -354,7 +354,7 @@ public class MosaicCanvas extends BaseCanvas {
                 boolean stop  = false;
                 int addGapX = 0;
                 int addGapY = 0;
-
+                
                 if( (mode==DISPLAY_MODE_SAMEBINSIZE) && oCounts[j+1]-oCounts[j] == 0 || levelid == maxLevel-1 ) {
                     stop = true;
                     for( int i=levelid+1; i<maxLevel; i++ )
@@ -372,6 +372,9 @@ public class MosaicCanvas extends BaseCanvas {
                     tile.info=info;
                     tile.setType(mode);
                     tile.ref = ref;
+                    tile.setExp(exps[j]);
+                    tile.setScale(4 / residSum);
+                    tile.setP(ft.getP());
                     
                     if( Dirs[levelid] == 'x' ){
                         if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION ){
@@ -380,16 +383,14 @@ public class MosaicCanvas extends BaseCanvas {
                                     emptyBin,
                                     sizeY+emptyWidth);
                             tile.setObs(0);
-                            //dir='y', mode=displayMode
-                            //missing: exps[j], 4 / residSum, tablep.p
+                            tile.setDir('y');
                         } else{
                             tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
                                     y2-y1 + addGapY);
                             tile.setObs(obs[j]);
-                            //dir='y', mode=displayMode
-                            //missing: exps[j], 4 / residSum, tablep.p
+                            tile.setDir('y');
                         }
                     } else {
                         if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION ){
@@ -398,16 +399,14 @@ public class MosaicCanvas extends BaseCanvas {
                                     sizeX+emptyWidth,
                                     emptyBin);
                             tile.setObs(0);
-                            //dir='x', mode=displayMode
-                            //missing: exps[j], 4 / residSum, tablep.p
+                            tile.setDir('x');
                         } else {
                             tile.r = new Rectangle(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     x2-x1 + addGapX,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);
                             tile.setObs(obs[j]);
-                            //dir='x', mode=displayMode
-                            //missing: exps[j], 4 / residSum, tablep.p
+                            tile.setDir('x');
                         }
                     }
                     rects.addElement(tile);
@@ -469,6 +468,7 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void keyReleased(KeyEvent e) {
+        int[] interact;
         int code = e.getKeyCode();
         boolean repaint=false;
         switch(code){
@@ -532,20 +532,21 @@ public class MosaicCanvas extends BaseCanvas {
                 }
                 break;
             case KeyEvent.VK_ADD:
-                if(e.getModifiers() != Toolkit.getDefaultToolkit().getMenuShortcutKeyMask())
-                    break;
-            case KeyEvent.VK_SUBTRACT:
-                //frame.setCursor(Frame.WAIT_CURSOR);
-                int[] interact = new int[maxLevel];
+            case KeyEvent.VK_PLUS:
+                interact = new int[maxLevel];
                 for( int i=0; i<maxLevel; i++ )
                     interact[i] = i;
-                if( e.getKeyCode() == KeyEvent.VK_ADD )
-                    if( !ft.addInteraction( interact, true ) )
-                        Toolkit.getDefaultToolkit().beep();
-                if( e.getKeyCode() == KeyEvent.VK_SUBTRACT )
-                    if( !ft.deleteInteraction( interact ) )
-                        Toolkit.getDefaultToolkit().beep();
-                //frame.setCursor(Frame.DEFAULT_CURSOR);
+                if( !ft.addInteraction( interact, true ) )
+                    Toolkit.getDefaultToolkit().beep();
+                repaint=true;
+                break;
+            case KeyEvent.VK_SUBTRACT:
+            case KeyEvent.VK_MINUS:
+                interact = new int[maxLevel];
+                for( int i=0; i<maxLevel; i++ )
+                    interact[i] = i;
+                if( !ft.deleteInteraction( interact ) )
+                    Toolkit.getDefaultToolkit().beep();
                 repaint=true;
         }
         if(repaint){
