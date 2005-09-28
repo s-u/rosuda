@@ -17,7 +17,6 @@ public class FrequencyTable {
     private double[] table;
     private double[] exp;
     
-    private double G2, X2;
     private double p;
     
     public InteractionSet Interactions;
@@ -264,7 +263,8 @@ public class FrequencyTable {
                 converge = converge && (Math.abs(lastIteration[l] - this.exp[l]) < 0.01);
             System.arraycopy(this.exp, 0, lastIteration, 0, n);
         }
-        G2 = 0; X2 = 0;
+        double G2 = 0;
+        double X2 = 0;
         for( int l=0; l<n; l++ ) {
             if( table[l] > 0 ) {
                 G2 += 2 * table[l] * Math.log( table[l] / exp[l] );
