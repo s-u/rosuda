@@ -18,7 +18,6 @@ public class FrequencyTable {
     private double[] exp;
     
     private double G2, X2;
-    private int df;
     private double p;
     
     public InteractionSet Interactions;
@@ -35,8 +34,6 @@ public class FrequencyTable {
         table = new double[tableLen];
         exp = new double[tableLen];
         Interactions = new InteractionSet(vsize);
-        
-        df = tableLen-1;
         
         // init frequency table
         for(int i=0; i<ceTable.length; i++) ceTable[i] = new CombinationEntry();
@@ -274,7 +271,8 @@ public class FrequencyTable {
                 X2 += Math.pow( table[l] - exp[l], 2 ) / exp[l];
             }
         }
-        this.df = table.length - 1;
+        
+        int df = table.length - 1;
         for( int i=0; i<Interactions.size(); i++ ) {
             int mul=1;
             for( int j=0; j<(Interactions.memberAt(i)).length; j++ )
