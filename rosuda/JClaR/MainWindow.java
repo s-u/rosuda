@@ -207,6 +207,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         jMenuBar1 = new javax.swing.JMenuBar();
         m_File = new javax.swing.JMenu();
         m_FileOpenDataset = new javax.swing.JMenuItem();
+        m_FileExit = new javax.swing.JMenuItem();
 
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.X_AXIS));
 
@@ -259,6 +260,16 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
 
         m_File.add(m_FileOpenDataset);
 
+        m_FileExit.setMnemonic('x');
+        m_FileExit.setText("Exit");
+        m_FileExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_FileExitActionPerformed(evt);
+            }
+        });
+
+        m_File.add(m_FileExit);
+
         jMenuBar1.add(m_File);
 
         setJMenuBar(jMenuBar1);
@@ -266,6 +277,10 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+
+    private void m_FileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_m_FileExitActionPerformed
 
     private void butClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butClassifyActionPerformed
         classify((Data)dataTM.getObjectAt(tblDatasets.getSelectedRow()),
@@ -288,6 +303,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JMenu m_File;
+    private javax.swing.JMenuItem m_FileExit;
     private javax.swing.JMenuItem m_FileOpenDataset;
     private javax.swing.JTable tblClassifiers;
     private javax.swing.JTable tblDatasets;
