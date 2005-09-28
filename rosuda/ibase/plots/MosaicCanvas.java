@@ -407,8 +407,6 @@ public class MosaicCanvas extends BaseCanvas {
         }
     }
     
-    private Color hiliteColor = new Color(180, 96, 135);
-    
     public void paintBack(org.rosuda.pograss.PoGraSS g) {
         for(Enumeration en=Labels.elements(); en.hasMoreElements();){
             MyText label = (MyText)en.nextElement();
