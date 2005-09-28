@@ -242,9 +242,6 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         butSavePlot = new javax.swing.JButton();
         jMenuBar2 = new javax.swing.JMenuBar();
         m_File = new javax.swing.JMenu();
-        m_FileNew = new javax.swing.JMenuItem();
-        m_FileOpenDataset = new javax.swing.JMenuItem();
-        m_FileOpenedDatasets = new javax.swing.JMenuItem();
         m_ClassifyData = new javax.swing.JMenuItem();
         m_FilePreferences = new javax.swing.JMenuItem();
         m_FileClose = new javax.swing.JMenuItem();
@@ -322,38 +319,6 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
 
         m_File.setMnemonic('f');
         m_File.setText("File");
-        m_FileNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        m_FileNew.setMnemonic('n');
-        m_FileNew.setText("New");
-        m_FileNew.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_FileNewActionPerformed(evt);
-            }
-        });
-
-        m_File.add(m_FileNew);
-
-        m_FileOpenDataset.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-        m_FileOpenDataset.setMnemonic('o');
-        m_FileOpenDataset.setText("Open dataset...");
-        m_FileOpenDataset.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_FileOpenDatasetActionPerformed(evt);
-            }
-        });
-
-        m_File.add(m_FileOpenDataset);
-
-        m_FileOpenedDatasets.setMnemonic('s');
-        m_FileOpenedDatasets.setText("Show open datasets...");
-        m_FileOpenedDatasets.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                m_FileOpenedDatasetsActionPerformed(evt);
-            }
-        });
-
-        m_File.add(m_FileOpenedDatasets);
-
         m_ClassifyData.setText("Classify dataset...");
         m_ClassifyData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -459,16 +424,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             classify(dataset);
         }
     }//GEN-LAST:event_m_ClassifyDataActionPerformed
-    
-    private void m_FileOpenedDatasetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileOpenedDatasetsActionPerformed
-        ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
-        cdd.show();
-        Data dataset = cdd.getSelectedDataset();
-        if (dataset!=null){
-            WindowManager.newWindow(dataset);
-        }
-    }//GEN-LAST:event_m_FileOpenedDatasetsActionPerformed
-    
+        
     private void m_FilePreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FilePreferencesActionPerformed
         if(prefd==null){
             ErrorDialog.show(this,"No preferences available.");
@@ -500,16 +456,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private final void m_FileCloseActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileCloseActionPerformed
         WindowManager.closeWindow(this);
     }//GEN-LAST:event_m_FileCloseActionPerformed
-    
-    private final void m_FileOpenDatasetActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileOpenDatasetActionPerformed
-//TODO: shouldn't do the same thing as File-New.
-        WindowManager.newWindow();
-    }//GEN-LAST:event_m_FileOpenDatasetActionPerformed
-    
-    private final void m_FileNewActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileNewActionPerformed
-        WindowManager.newWindow();
-    }//GEN-LAST:event_m_FileNewActionPerformed
-    
+            
     private final void m_DisplaySnapshotsActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplaySnapshotsActionPerformed
         if (m_DisplaySnapshots.getState()) {
             snapPan.setPreferredSize(new Dimension(120, getContentPane().getHeight()));
@@ -595,9 +542,6 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private javax.swing.JMenu m_File;
     private javax.swing.JMenuItem m_FileClose;
     private javax.swing.JMenuItem m_FileExit;
-    private javax.swing.JMenuItem m_FileNew;
-    private javax.swing.JMenuItem m_FileOpenDataset;
-    private javax.swing.JMenuItem m_FileOpenedDatasets;
     private javax.swing.JMenuItem m_FilePreferences;
     private javax.swing.JMenu m_Snapshots;
     private javax.swing.JCheckBoxMenuItem m_SnapshotsDoSnapshots;
