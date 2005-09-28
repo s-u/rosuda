@@ -35,6 +35,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Restore"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butRestoreActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

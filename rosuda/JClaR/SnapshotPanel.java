@@ -6,7 +6,10 @@
 
 package org.rosuda.JClaR;
 
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.swing.ImageIcon;
@@ -18,6 +21,7 @@ import javax.swing.ImageIcon;
 public final class SnapshotPanel extends javax.swing.JPanel {
     
     private SnapshotListModel slm;
+    private int currentSnapshot;
     
     /** Creates new form SnapshotPanel */
     public SnapshotPanel() {
@@ -29,6 +33,7 @@ public final class SnapshotPanel extends javax.swing.JPanel {
     
     public void addSnapshot(final SnapshotContainer snapC){
         slm.addSnapshot(snapC);
+        currentSnapshot=0;
     }
     
     public SnapshotContainer getSelectedSnapshot(){
@@ -74,6 +79,15 @@ public final class SnapshotPanel extends javax.swing.JPanel {
             } else{
                 ret = ((SnapshotContainer)snapshots.elementAt(index)).getThumbnail();
             }
+            if(index == currentSnapshot){
+                ImageIcon ii = (ImageIcon)ret;
+                BufferedImage bi = new BufferedImage(ii.getIconWidth(),ii.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+                Graphics g = bi.getGraphics();
+                g.drawImage(ii.getImage(),0,0,null);
+                g.setColor(Color.black);
+                g.fillRect(0,0, 5, 5);
+                ret = new ImageIcon(bi);
+            }
             return ret;
         }
         
@@ -112,6 +126,12 @@ public final class SnapshotPanel extends javax.swing.JPanel {
         setMinimumSize(new java.awt.Dimension(131, 57));
         setPreferredSize(new java.awt.Dimension(135, 10));
         butRestore.setText("Restore");
+        butRestore.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butRestoreActionPerformed(evt);
+            }
+        });
+
         jPanel1.add(butRestore);
 
         add(jPanel1, java.awt.BorderLayout.SOUTH);
@@ -128,6 +148,11 @@ public final class SnapshotPanel extends javax.swing.JPanel {
 
     }
     // </editor-fold>//GEN-END:initComponents
+
+    private void butRestoreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butRestoreActionPerformed
+        currentSnapshot=lstSnapshots.getSelectedIndex();
+        lstSnapshots.repaint();
+    }//GEN-LAST:event_butRestoreActionPerformed
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
