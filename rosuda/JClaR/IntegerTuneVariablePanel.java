@@ -21,75 +21,75 @@ public final class IntegerTuneVariablePanel extends TuneVariablePanel {
         snmFix = new SpinnerNumberModel();
     }
     
-    public int getTo() {
+    int getTo() {
         return snmTo.getNumber().intValue();
     }
     
-    public int getFrom() {
+    int getFrom() {
         return snmFrom.getNumber().intValue();
     }
     
-    public int getSteps() {
+    int getSteps() {
         return snmSteps.getNumber().intValue();
     }
     
-    public int getFix(){
+    int getFix(){
         return snmFix.getNumber().intValue();
     }
     
-    public void setFromValue(final int value){
+    private void setFromValue(final int value){
         snmFrom.setValue(new Integer(value));
     }
     
-    public void setFromStep(final int stepSize){
+    private void setFromStep(final int stepSize){
         snmFrom.setStepSize(new Integer(stepSize));
     }
     
-    public void setToValue(final int value){
+    private void setToValue(final int value){
         snmTo.setValue(new Integer(value));
     }
     
-    public void setToStep(final int stepSize){
+    private void setToStep(final int stepSize){
         snmTo.setStepSize(new Integer(stepSize));
     }
     
-    public void setByValue(final int value){
+    private void setByValue(final int value){
         snmSteps.setValue(new Integer(value));
     }
     
-    public void setByMin(final int minimum){
+    private void setByMin(final int minimum){
         snmSteps.setMinimum(new Integer(minimum));
     }
     
-    public void setByMax(final int maximum){
+    private void setByMax(final int maximum){
         snmSteps.setMaximum(new Integer(maximum));
     }
     
-    public void setByStep(final int stepSize){
+    private void setByStep(final int stepSize){
         snmSteps.setStepSize(new Integer(stepSize));
     }
     
-    public void setValue(final int value){
+    void setValue(final int value){
         snmFix.setValue(new Integer(value));
     }
     
-    public void setMin(final int minimum){
+    void setMin(final int minimum){
         snmFix.setMinimum(new Integer(minimum));
         snmFrom.setMinimum(new Integer(minimum));
         snmTo.setMinimum(new Integer(minimum));
     }
     
-    public void setMax(final int maximum){
+    private void setMax(final int maximum){
         snmFix.setMaximum(new Integer(maximum));
         snmFrom.setMaximum(new Integer(maximum));
         snmTo.setMaximum(new Integer(maximum));
     }
     
-    public void setFixStep(final int stepSize){
+    private void setFixStep(final int stepSize){
         snmFix.setStepSize(new Integer(stepSize));
     }
     
-    public void setDefaultFromToRange(){
+    void setDefaultFromToRange(){
         final Integer fromValue;
         final Integer toValue;
         final Integer value = (Integer)snmFix.getValue();

@@ -16,25 +16,25 @@ public final class TunePlot extends Plot {
     private Tune tune;
     
     /** Creates a new instance of TunePlot */
-    public TunePlot(final Tune tune) {
+    TunePlot(final Tune tune) {
         super();
         this.tune=tune;
         setPlotCall("plot(" + tune.getRname() + ")");
     }
 
-    public void setVerticalShift(final double shift) {        /* CAUTION: empty block! */
+    protected void setVerticalShift(final double shift) {        /* CAUTION: empty block! */
 
     }
 
-    public void setHorizontalShift(final double shift) {        /* CAUTION: empty block! */
+    protected void setHorizontalShift(final double shift) {        /* CAUTION: empty block! */
 
     }
 
-    public void setShowDataInPlot(final boolean showDataInPlot) {        /* CAUTION: empty block! */
+    void setShowDataInPlot(final boolean showDataInPlot) {        /* CAUTION: empty block! */
 
     }
 
-    public boolean getShowDataInPlot() {
+    boolean getShowDataInPlot() {
         return true;
     }
     

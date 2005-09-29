@@ -20,7 +20,7 @@ public final class RadioButtonRenderer implements TableCellRenderer {
     private JRadioButton jrb;
     
     /** Creates a new instance of RadioButtonRenderer */
-    public RadioButtonRenderer() {
+    RadioButtonRenderer() {
         jrb = new JRadioButton();
         jrb.setBackground(Color.WHITE);
     }

@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public final class SaveAsDialog extends JFileChooser {
     
-    public boolean showSaveAsDialog(final int extensions){
+    boolean showSaveAsDialog(final int extensions){
         switch (extensions){
             case EXTENSIONS_PLOT:
                 //XXX: png
@@ -56,11 +56,11 @@ public final class SaveAsDialog extends JFileChooser {
         }
     }
     
-    public boolean showSaveAsDialog(){
+    private boolean showSaveAsDialog(){
         return showSaveAsDialog(EXTENSIONS_NONE);
     }
     
-    public static final int EXTENSIONS_NONE = 0;
-    public static final int EXTENSIONS_PLOT = 1;
+    private static final int EXTENSIONS_NONE = 0;
+    static final int EXTENSIONS_PLOT = 1;
     
 }

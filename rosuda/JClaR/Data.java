@@ -34,7 +34,7 @@ public final class Data implements Cloneable {
     
     private Component parent;
     
-    public Data(final File f) {
+    private Data(final File f) {
         file=f;
         rcon=RserveConnection.getRconnection();
         Rname="d" + this.hashCode();
@@ -47,12 +47,12 @@ public final class Data implements Cloneable {
     }
     
     /** Creates a new instance of Data */
-    public Data(){
+    Data(){
         rcon=RserveConnection.getRconnection();
         Rname="d" + this.hashCode();
     }
     
-    public void removeNAs(){
+    void removeNAs(){
         // remove rows with NAs as they would be ignored by svm anyway
         try{
             rcon.voidEval(Rname + " <- " + Rname + "[!apply(is.na(" + Rname + "),1,any),]");
@@ -63,7 +63,7 @@ public final class Data implements Cloneable {
     
     
     
-    public String getPath() {
+    String getPath() {
         if(file!=null) {
             String path=file.getPath();
             if (File.separatorChar == '\\')  {
@@ -77,7 +77,7 @@ public final class Data implements Cloneable {
         
     }
     
-    public String getName(){
+    private String getName(){
         if(name!=null)  {
             return name;
         }
@@ -88,23 +88,23 @@ public final class Data implements Cloneable {
         
     }
     
-    public int getNumberOfVariables(){
+    int getNumberOfVariables(){
         return variables.size();
     }
     
-    public int getLength(){
+    int getLength(){
         return length;
     }
     
-    public Vector getVariables(){
+    Vector getVariables(){
         return variables;
     }
     
-    public String getRname(){
+    String getRname(){
         return Rname;
     }
     
-    public void remove(){
+    private void remove(){
         try{
             rcon.voidEval("rm(" + Rname + ")");
         } catch(RSrvException rse) {
@@ -119,19 +119,19 @@ public final class Data implements Cloneable {
         }
     }
     
-    public void addSVM(final Classifier svm){
+    void addSVM(final Classifier svm){
         svms.add(svm);
     }
     
-    public void removeSVM(final Classifier svm){
+    void removeSVM(final Classifier svm){
         svms.remove(svm);
     }
     
-    public Vector getSVMs(){
+    private Vector getSVMs(){
         return svms;
     }
     
-    public void saveAs(final File newFile){
+    private void saveAs(final File newFile){
         try{
             rcon.voidEval("write.table(" + Rname + ",file='" + newFile.getAbsolutePath() + "',quote=FALSE,sep=',')");
         } catch(RSrvException rse) {
@@ -146,11 +146,11 @@ public final class Data implements Cloneable {
         }
     }
     
-    public void setParent(final Component parent){
+    private void setParent(final Component parent){
         this.parent = parent;
     }
     
-    public void setName(final String name){
+    void setName(final String name){
         this.name = name;
     }
     
@@ -161,11 +161,11 @@ public final class Data implements Cloneable {
      *
      * @param file The new file.
      */
-    public void setFile(final File file){
+    void setFile(final File file){
         this.file = file;
     }
     
-    public void refactor(final int variablePos){
+    void refactor(final int variablePos){
         try{
             rcon.voidEval("if(!is.factor(" + Rname + "[," + (variablePos+1) +  "])) " +
                     Rname + " <- data.frame(" + 
@@ -178,7 +178,7 @@ public final class Data implements Cloneable {
         }
     }
     
-    public Object clone(){
+    protected Object clone(){
         final Data newData = new Data();
         newData.setRestricted(restricted);
         newData.setFile(file);
@@ -199,7 +199,7 @@ public final class Data implements Cloneable {
      * Fetches variable names and number of cases.
      * @throws java.lang.NullPointerException Might be thrown if data is malformed.
      */
-    public void update() throws NullPointerException {
+    void update() throws NullPointerException {
         try{
             //get variables
             Vector vars = rcon.eval("names(" + Rname + ")").asVector();
@@ -226,13 +226,13 @@ public final class Data implements Cloneable {
     /**
      * Returns a new Data object, that contains only the selected variables.
      */
-    public Data getRestrictedData(final int[] hiddenVariables){
+    Data getRestrictedData(final int[] hiddenVariables){
         final Data restrictedData = (Data)this.clone();
         restrictedData.restrict(hiddenVariables);
         return restrictedData;
     }
     
-    public void restrict(final int[] hiddenVariables){
+    private void restrict(final int[] hiddenVariables){
         String varsString="";
         for(int i=hiddenVariables.length-1; i>=0; i--){
             varsString += (hiddenVariables[i]+1) + ",";
@@ -249,26 +249,26 @@ public final class Data implements Cloneable {
         setRestricted(true);
     }
     
-    public static final int DATA_FORMAT_NONE = -1;
-    public static final int DATA_FORMAT_CSV = 0;
-    public static final int DATA_FORMAT_CSV2 = 1;
-    public static final int DATA_FORMAT_TABLE = 2;
-    public static final int DATA_FORMAT_DELIM = 3;
-    public static final int DATA_FORMAT_DELIM2 = 4;
+    private static final int DATA_FORMAT_NONE = -1;
+    private static final int DATA_FORMAT_CSV = 0;
+    private static final int DATA_FORMAT_CSV2 = 1;
+    private static final int DATA_FORMAT_TABLE = 2;
+    private static final int DATA_FORMAT_DELIM = 3;
+    private static final int DATA_FORMAT_DELIM2 = 4;
     
-    public boolean isRestricted() {
+    boolean isRestricted() {
         return restricted;
     }
     
-    public void setRestricted(final boolean restricted) {
+    private void setRestricted(final boolean restricted) {
         this.restricted = restricted;
     }
     
-    public Component getParent() {
+    Component getParent() {
         return parent;
     }
     
-    public void unclass(final int columnNotToUnclass){
+    void unclass(final int columnNotToUnclass){
         try{
             String columns="";
             boolean comma=false;

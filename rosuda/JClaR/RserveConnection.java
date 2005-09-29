@@ -22,8 +22,8 @@ import org.rosuda.JRclient.Rconnection;
  */
 public final class RserveConnection {
    
-    public static final int RERROR_SYNTAX = 3;
-    public static final int RERROR_OTHER = 127;
+    private static final int RERROR_SYNTAX = 3;
+    static final int RERROR_OTHER = 127;
     
     private static Rconnection rcon;
     private static RserveConnection instance;
@@ -32,14 +32,14 @@ public final class RserveConnection {
     private static String lastRcall="";
     
     /** Creates a new instance of RserveConnection */
-    public RserveConnection() {
+    private RserveConnection() {
     }
     
     /**
      * Opens a connection to Rserve if not done so already.
      * @return the Rconnection
      */
-    public static RserveConnection getRconnection() {
+    static RserveConnection getRconnection() {
         if(instance==null) {
             instance = new RserveConnection();
             if(System.getProperty("os.name").toLowerCase().indexOf("windows")!=-1)  {
@@ -88,7 +88,7 @@ public final class RserveConnection {
      * From org.rosuda.Mondrian.
      * @author Martin Theus
      */
-    public static boolean launchRserve(final String cmd) {
+    private static boolean launchRserve(final String cmd) {
         try {
             final Process p = Runtime.getRuntime().exec(cmd);
             System.out.println("waiting for Rserve to start ... ("+p+")");
@@ -116,7 +116,7 @@ public final class RserveConnection {
      * From org.rosuda.Mondrian.
      * @author Martin Theus
      */
-    public static boolean checkLocalRserve() {
+    private static boolean checkLocalRserve() {
         try {
             final Rconnection c = new Rconnection();
             System.out.println("Rserve is running.");
@@ -145,7 +145,7 @@ public final class RserveConnection {
      * @throws org.rosuda.JRclient.RSrvException The RSrvException thrown by the delegated method.
      * @return The object returned by R.
      */
-    public REXP eval(final String str) throws RSrvException {
+    REXP eval(final String str) throws RSrvException {
         lastRcall=str;
         if("".equals(str) || str==null)  {
             return null;
@@ -176,7 +176,7 @@ public final class RserveConnection {
      * semicolons or line breaks.
      * @throws org.rosuda.JRclient.RSrvException The RSrvException thrown by the delegated method.
      */
-    public void voidEval(final String str) throws RSrvException {
+    void voidEval(final String str) throws RSrvException {
         lastRcall=str;
         if("".equals(str) || str==null)  {
             return;
@@ -202,7 +202,7 @@ public final class RserveConnection {
     /**
      * Delegate method for org.rosuda.JRclient.Rconnection.Rserve.openFile(String str).
      */
-    public RFileInputStream openFile(final String str) throws IOException {
+    RFileInputStream openFile(final String str) throws IOException {
         return rcon.openFile(str);
     }
     
@@ -212,7 +212,7 @@ public final class RserveConnection {
                 rcall);
     }
 
-    public static String getLastRcall() {
+    static String getLastRcall() {
         return lastRcall;
     }
 }

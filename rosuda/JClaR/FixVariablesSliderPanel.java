@@ -15,32 +15,32 @@ import javax.swing.event.ChangeListener;
 public final class FixVariablesSliderPanel extends javax.swing.JPanel {
     
     /** Creates new form FixVariablesSliderPanel */
-    public FixVariablesSliderPanel() {
+    FixVariablesSliderPanel() {
         initComponents();
     }
     
-    public void addSliderListener(final ChangeListener l){
+    void addSliderListener(final ChangeListener l){
         sldValue.addChangeListener(l);
         sldDeviation.addChangeListener(l);
     }
     
-    public int getDeviation(){
+    int getDeviation(){
         return sldDeviation.getValue();
     }
     
-    public int getValue(){
+    int getValue(){
         return sldValue.getValue();
     }
     
-    public void setDeviation(final int newDev){
+    void setDeviation(final int newDev){
         sldDeviation.setValue(newDev);
     }
     
-    public void setValue(final int newVal){
+    void setValue(final int newVal){
         sldValue.setValue(newVal);
     }
     
-    public int whichSlider(final Object obj){
+    int whichSlider(final Object obj){
         if (obj.equals(sldDeviation))  {
             return 0;
         }
@@ -51,7 +51,7 @@ public final class FixVariablesSliderPanel extends javax.swing.JPanel {
         
     }
     
-    public boolean getAutoUpdate(){
+    boolean getAutoUpdate(){
         return jCheckBox1.isSelected();
     }
     

@@ -20,7 +20,7 @@ import java.awt.image.RGBImageFilter;
  */
 public class SelectImageFilter extends RGBImageFilter {
     
-    public static Image createSelectedImage(Image image){
+    static Image createSelectedImage(Image image){
         SelectImageFilter filter = new SelectImageFilter();
         ImageProducer prod = new FilteredImageSource(image.getSource(), filter);
 	Image selectedImage = Toolkit.getDefaultToolkit().createImage(prod);

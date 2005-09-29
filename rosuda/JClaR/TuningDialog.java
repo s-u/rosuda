@@ -41,7 +41,7 @@ public final class TuningDialog extends javax.swing.JDialog {
      * @param type The type of SVM.
      * @param kernel
      */
-    public TuningDialog(final JFrame parent, final int type, final int kernel, final double minNu, final double maxNu) {
+    TuningDialog(final JFrame parent, final int type, final int kernel, final double minNu, final double maxNu) {
         
         //TODO: Fix layout of TuneVariablePanels and TuningDialog: Scaling!
         
@@ -280,43 +280,43 @@ public final class TuningDialog extends javax.swing.JDialog {
      * Whether the variables should be set to the tuning result or not
      * @return <CODE>true</CODE> if values should be set, <CODE>false</CODE> otherwise
      */
-    public boolean getSetvalues(){
+    boolean getSetvalues(){
         return setvalues;
     }
     
-    public Tune getTune(){
+    Tune getTune(){
         return tune;
     }
     
-    public void setData(final Data data) {
+    void setData(final Data data) {
         this.data = data;
     }
     
-    public void setVariable(final String variable) {
+    void setVariable(final String variable) {
         this.variable = variable;
     }
     
-    public void setFixGamma(final double fixGamma) {
+    void setFixGamma(final double fixGamma) {
         panGamma.setValue(fixGamma);
     }
     
-    public void setFixNu(final double fixNu) {
+    void setFixNu(final double fixNu) {
         panNu.setValue(fixNu);
     }
     
-    public void setFixCoef0(final double fixCoef0) {
+    void setFixCoef0(final double fixCoef0) {
         panCoef0.setValue(fixCoef0);
     }
     
-    public void setFixCost(final double fixCost) {
+    void setFixCost(final double fixCost) {
         panCost.setValue(fixCost);
     }
     
-    public void setFixDegree(final int fixDegree) {
+    void setFixDegree(final int fixDegree) {
         panDegree.setValue(fixDegree);
     }
     
-    public void setDefaultRanges(){
+    void setDefaultRanges(){
         panCost.setDefaultFromToRange();
         panCoef0.setDefaultFromToRange();
         panGamma.setDefaultFromToRange();

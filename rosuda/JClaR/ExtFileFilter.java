@@ -23,7 +23,7 @@ public final class ExtFileFilter extends javax.swing.filechooser.FileFilter {
         return description;
     }
     
-    public void setDescription(final String description) {
+    void setDescription(final String description) {
         this.description = description;
     }
     
@@ -41,14 +41,14 @@ public final class ExtFileFilter extends javax.swing.filechooser.FileFilter {
         return false;
     }
     
-    public void addExtension(final String ext){
+    void addExtension(final String ext){
         extensions.add(ext.toLowerCase());
         if(stdExtension==null)  {
             stdExtension=ext.toLowerCase();
         }
         
     }
-    public String getExtension(){
+    private String getExtension(){
         return stdExtension;
     }
 }

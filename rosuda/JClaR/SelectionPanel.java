@@ -15,13 +15,13 @@ public class SelectionPanel extends javax.swing.JPanel {
     /**
      * The Object to be notified when a button is clicked.
      */
-    SelectionModIF selm;
+    private SelectionModIF selm;
     
     /**
      * Creates new form SelectionPanel
      * @param selm The Object to be notified when a button is clicked.
      */
-    public SelectionPanel(SelectionModIF selm) {
+    SelectionPanel(SelectionModIF selm) {
         this.selm=selm;
         initComponents();
     }

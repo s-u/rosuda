@@ -21,14 +21,14 @@ public final class ErrorDialog extends MessageDialog {
     private static final String RSERVE_OUTPUT_HINT = "Check Rserve output for more information.";
     
     /** Creates a new instance of ErrorDialog */
-    public ErrorDialog() {
+    private ErrorDialog() {
     }
     
-    public static void show(Component parent, final String message){
+    static void show(Component parent, final String message){
         show(parent,message,DEBUG);
     }
     
-    public static void show(Component parent, final String message, boolean show_hint){
+    private static void show(Component parent, final String message, boolean show_hint){
         if(parent==null){
             parent = new Frame();
         }
@@ -37,11 +37,11 @@ public final class ErrorDialog extends MessageDialog {
         else show(parent, message, "Error", ERROR_MESSAGE);
     }
     
-    public static void show(Component parent, final RSrvException rse, final String method){
+    static void show(Component parent, final RSrvException rse, final String method){
         show(parent, rse, method,DEBUG);
     }
     
-    public static void show(Component parent, final RSrvException rse, final String method, boolean show_hint){
+    private static void show(Component parent, final RSrvException rse, final String method, boolean show_hint){
         if(parent==null){
             parent = new Frame();
         }

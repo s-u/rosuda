@@ -21,7 +21,7 @@ public final class PlotWindow extends javax.swing.JFrame {
     private String fixedVariablesDescription;
     
     /** Creates new form PlotWindow */
-    public PlotWindow(final BufferedImage bi, final int svmNumber) {
+    private PlotWindow(final BufferedImage bi, final int svmNumber) {
         initComponents();
         
         image = bi;
@@ -34,23 +34,23 @@ public final class PlotWindow extends javax.swing.JFrame {
         this.svmNumber = svmNumber;
     }
     
-    public int getSvmNumber(){
+    private int getSvmNumber(){
         return svmNumber;
     }
     
-    public ImageIcon getThumbnail(){
+    private ImageIcon getThumbnail(){
         return thumbnail;
     }
     
-    public BufferedImage getImage(){
+    private BufferedImage getImage(){
         return image;
     }
     
-    public void setFixedVariablesDescription(final String fixedVariablesDescription){
+    private void setFixedVariablesDescription(final String fixedVariablesDescription){
         this.fixedVariablesDescription = fixedVariablesDescription;
     }
     
-    public String getFixedVariablesDescription(){
+    private String getFixedVariablesDescription(){
         return fixedVariablesDescription;
     }
     
@@ -74,7 +74,7 @@ public final class PlotWindow extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 
-    public static final int LABEL_NO=0;
-    public static final int LABEL_REGRESSION=1;
+    private static final int LABEL_NO=0;
+    private static final int LABEL_REGRESSION=1;
     
 }

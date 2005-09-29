@@ -22,13 +22,13 @@ import javax.swing.event.ListSelectionListener;
  */
 public class MainWindow extends javax.swing.JFrame implements DataClassifierListenerIF, ListSelectionListener {
     
-    NonEditableTableModel dataTM, classifierTM;
-    DefaultListSelectionModel dataSM, classifierSM;
-    final Object[] columnNamesData = {"File", "#Variables", "Length"};
-    final Object[] columnNamesClassifier = {"#", "Method"};
+    private NonEditableTableModel dataTM, classifierTM;
+    private DefaultListSelectionModel dataSM, classifierSM;
+    private final Object[] columnNamesData = {"File", "#Variables", "Length"};
+    private final Object[] columnNamesClassifier = {"#", "Method"};
     
     /** Creates new form MainWindow */
-    public MainWindow() {
+    MainWindow() {
         initComponents();
         
         dataTM = new NonEditableTableModel(columnNamesData, 0);
@@ -169,7 +169,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         }
     }
     
-    public final class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
+    private final class NonEditableTableModel extends javax.swing.table.DefaultTableModel {
         private Vector objects;
         
         public NonEditableTableModel(Object[] columnNames, int rowCount){

@@ -15,10 +15,10 @@ import java.util.TimerTask;
  */
 public final class ResizePlotTask extends TimerTask {
     
-    ClassificationWindow svmw;
+    private ClassificationWindow svmw;
     
     /** Creates a new instance of ResizePlotTask */
-    public ResizePlotTask(final ClassificationWindow svmw) {
+    ResizePlotTask(final ClassificationWindow svmw) {
         this.svmw = svmw;
     }
 

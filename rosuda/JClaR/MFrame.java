@@ -20,7 +20,7 @@ public class MFrame {
     /**
      * Taken from {@link http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4320050}.
      */
-    public static void lockInMinSize(final JFrame frame) {
+    private static void lockInMinSize(final JFrame frame) {
         //Ensures user cannot resize frame to be smaller than frame is right now.
         final int origX = frame.getSize().width;
         final int origY = frame.getSize().height;

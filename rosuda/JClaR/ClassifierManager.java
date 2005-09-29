@@ -19,21 +19,21 @@ public class ClassifierManager {
     private static DataClassifierListenerIF listener;
     
     /** Creates a new instance of ClassifierManager */
-    public ClassifierManager() {
+    private ClassifierManager() {
     }
     
-    public static Vector getClassifiers(){
+    static Vector getClassifiers(){
         if(classifiers==null) classifiers=new Vector();
         return classifiers;
     }
     
-    public static void addClassifier(Classifier newClassifier){
+    static void addClassifier(Classifier newClassifier){
         if(classifiers==null) classifiers=new Vector();
         classifiers.add(newClassifier);
         if(listener!=null) listener.classifiersChanged();
     }
     
-    public static void setListener(DataClassifierListenerIF aListener) {
+    static void setListener(DataClassifierListenerIF aListener) {
         listener = aListener;
     }
     

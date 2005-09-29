@@ -28,10 +28,10 @@ public abstract class Plot {
     private BufferedImage image;
     private static String plotFile = "plot.png";
     
-    public final static int DEVICE_NO = -1;
-    public final static int DEVICE_GDD = 0;
-    public final static int DEVICE_PNG = 1;
-    public final static int DEVICE_JPG = 2;
+    static final int DEVICE_NO = -1;
+    static final int DEVICE_GDD = 0;
+    private static final int DEVICE_PNG = 1;
+    static final int DEVICE_JPG = 2;
     
     
     private static int device = DEVICE_GDD;
@@ -125,15 +125,15 @@ public abstract class Plot {
     protected abstract void setVerticalShift(double shift);
     protected abstract void setHorizontalShift(double shift);
     
-    public Classifier getClassifier() {
+    Classifier getClassifier() {
         return classifier;
     }
     
-    public static int getDevice() {
+    private static int getDevice() {
         return device;
     }
     
-    public static void setDevice(int aDevice) {
+    static void setDevice(int aDevice) {
         device = aDevice;
         switch(device){
             case DEVICE_GDD:

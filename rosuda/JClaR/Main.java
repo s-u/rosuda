@@ -18,7 +18,7 @@ public class Main {
     private static int lastGivenNumber=0;
     
     /** Creates a new instance of Main */
-    public Main() {
+    private Main() {
     }
     
     /**
@@ -52,15 +52,15 @@ public class Main {
     }
     
     
-    public static String getLast_directory() {
+    static String getLast_directory() {
         return last_directory;
     }
     
-    public static void setLast_directory(String aLast_directory) {
+    static void setLast_directory(String aLast_directory) {
         last_directory = aLast_directory;
     }
     
-    public static int getNewClassifierNumber(){
+    static int getNewClassifierNumber(){
         return ++lastGivenNumber;
     }
     

@@ -21,17 +21,17 @@ public final class SVMPanel extends SidePanel {
     private double NU_SHIFT, NU_MULTIPLYER, MIN_NU, MAX_NU;
     
     /** Creates new form SVMPanel */
-    public SVMPanel() {
+    SVMPanel() {
         initComponents();
         setMaximumSize(new Dimension(getMinimumSize().width, Integer.MAX_VALUE));
         setPreferredSize(getMinimumSize());
     }
     
-    public void setSVM(final SVM newSVM){
+    void setSVM(final SVM newSVM){
         this.svm=newSVM;
     }
     
-    public void initFields(){
+    void initFields(){
         
         numberFormat = NumberFormat.getNumberInstance();
         numberFormat.setMaximumFractionDigits(5);
@@ -79,23 +79,23 @@ public final class SVMPanel extends SidePanel {
         updateSVMInfo();
     }
     
-    public double getCoef0(){
+    private double getCoef0(){
         return ((double)sldCoef0.getValue()-50)/20;
     }
     
-    public double getCost(){
+    private double getCost(){
         return java.lang.Math.pow(2,(double)sldCost.getValue()/25);
     }
     
-    public double getNu(){
+    private double getNu(){
         return java.lang.Math.pow(2,(double)sldNu.getValue()*NU_MULTIPLYER+NU_SHIFT);
     }
     
-    public double getGamma(){
+    private double getGamma(){
         return java.lang.Math.pow(2,-(double)(sldGamma.getMaximum()+sldGamma.getMinimum()-sldGamma.getValue())/10);
     }
     
-    public int getDegree(){
+    private int getDegree(){
         return sldDegree.getValue();
     }
     
@@ -179,7 +179,7 @@ public final class SVMPanel extends SidePanel {
         updateSVMInfo();
     }
     
-    public void update(){
+    private void update(){
         noRecalc=true;
         updateSVMInfo();
         

@@ -35,13 +35,13 @@ public class JComboBoxExt extends JComboBox {
     
     private JTextField tf;
     
-    public class CBDocument extends PlainDocument {
+    private class CBDocument extends PlainDocument {
         public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
             super.insertString(offset,str,a);
         }
     }
     
-    public JComboBoxExt(String[] str) {
+    JComboBoxExt(String[] str) {
         super(str);
         if (getEditor() != null) {
             tf = (JTextField) getEditor().getEditorComponent();

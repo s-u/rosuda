@@ -23,7 +23,7 @@ public final  class FormatFileFilter extends javax.swing.filechooser.FileFilter 
         return description;
     }
     
-    public void setDescription(final String description) {
+    private void setDescription(final String description) {
         this.description = description;
     }
     

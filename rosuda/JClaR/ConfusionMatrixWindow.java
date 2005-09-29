@@ -24,7 +24,7 @@ public final class ConfusionMatrixWindow extends javax.swing.JFrame {
     /**
      * Creates new form ConfusionMatrixWindow
      */
-    public ConfusionMatrixWindow(final int[] data, final Vector variables) {
+    ConfusionMatrixWindow(final int[] data, final Vector variables) {
         initComponents();
         
         //TODO: Have column and row headers
@@ -40,13 +40,13 @@ public final class ConfusionMatrixWindow extends javax.swing.JFrame {
         pack();
     }
     
-    public void setData(final int[] data){
+    void setData(final int[] data){
         atm.setData(data);
         atm.fireTableDataChanged();
         pack();
     }
     
-    public void setAccuracy(final double accuracy){
+    void setAccuracy(final double accuracy){
         atm.setAccuracy(accuracy);
     }
     
@@ -74,7 +74,7 @@ public final class ConfusionMatrixWindow extends javax.swing.JFrame {
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
     
-    final class AccuracyTableModel extends AbstractTableModel {
+    private final class AccuracyTableModel extends AbstractTableModel {
         
         private Vector variables;
         private int data[];

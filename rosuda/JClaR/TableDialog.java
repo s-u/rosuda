@@ -22,15 +22,15 @@ import javax.swing.table.TableColumn;
  */
 public abstract class TableDialog extends javax.swing.JDialog {
     
-    protected boolean success=false;
-    protected EventListenerList listeners=new EventListenerList();
+    boolean success=false;
+    private EventListenerList listeners=new EventListenerList();
     
     /** Creates new form TableDialog */
-    public TableDialog(final java.awt.Frame parent) {
+    TableDialog(final java.awt.Frame parent) {
         this(parent, false);
     }
     
-    public TableDialog(final java.awt.Frame parent, final boolean modal){
+    TableDialog(final java.awt.Frame parent, final boolean modal){
         super(parent,modal);
         initComponents();
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -38,7 +38,7 @@ public abstract class TableDialog extends javax.swing.JDialog {
     }
     
     //TODO: resetSize necessary?
-    protected final void resetSize(){
+    final void resetSize(){
         final Dimension dim = table.getPreferredSize();
         double w = dim.getWidth();
         double h = dim.getHeight();
@@ -55,31 +55,31 @@ public abstract class TableDialog extends javax.swing.JDialog {
         pack();
     }
     
-    protected final void addListSelectionListener(final ListSelectionListener lSelListener){
+    final void addListSelectionListener(final ListSelectionListener lSelListener){
         table.getSelectionModel().addListSelectionListener(lSelListener);
     }
     
-    public final boolean getSuccess(){
+    private final boolean getSuccess(){
         return success;
     }
     
-    protected final void setTableModel(final AbstractTableModel tm){
+    final void setTableModel(final AbstractTableModel tm){
         table.setModel(tm);
     }
     
-    public final void addSimpleChangeListener(final SimpleChangeListener l){
+    final void addSimpleChangeListener(final SimpleChangeListener l){
         listeners.add(SimpleChangeListener.class, l);
     }
     
-    public final void removeSimpleChangeListener(final SimpleChangeListener l){
+    private final void removeSimpleChangeListener(final SimpleChangeListener l){
         listeners.remove(SimpleChangeListener.class, l);
     }
     
-    protected final int getSelectedRow(){
+    final int getSelectedRow(){
         return table.getSelectedRow();
     }
     
-    protected class TableModel extends javax.swing.table.DefaultTableModel {
+    class TableModel extends javax.swing.table.DefaultTableModel {
         
         private Class[] columnClasses;
         private boolean[] columnEditable;
@@ -173,37 +173,37 @@ public abstract class TableDialog extends javax.swing.JDialog {
         }
     }
     
-    protected final void setUpdateButton(final boolean hasUpdateButton){
+    final void setUpdateButton(final boolean hasUpdateButton){
         butUpdate.setVisible(hasUpdateButton);
     }
     
-    protected final void setOkButtonText(String text, char mnemonic){
+    final void setOkButtonText(String text, char mnemonic){
         butOK.setText(text);
         butOK.setMnemonic(mnemonic);
     }
     
-    protected abstract void ok();
+    abstract void ok();
 
-    protected void update(){        /* CAUTION: empty block! */
+    void update(){        /* CAUTION: empty block! */
 
     }
-    protected final void cancel(){
+    private final void cancel(){
         success=false;
         dispose();
     }
     
-    protected final void addComponent(final Component component){
+    final void addComponent(final Component component){
         panSouth.add(component,0);
     }
     
-    protected final void fireSimpleChange(final int message){
+    final void fireSimpleChange(final int message){
         final EventListener[] els = listeners.getListeners(SimpleChangeListener.class);
         for(int i=0; i<els.length; i++){
             ((SimpleChangeListener)els[i]).stateChanged(new SimpleChangeEvent(this,message));
         }
     }
     
-    public final TableColumn getColumn(final int col){
+    final TableColumn getColumn(final int col){
         return table.getColumnModel().getColumn(col);
     }
     

@@ -23,7 +23,7 @@ public final class RadioButtonEditor extends DefaultCellEditor implements Change
     private Vector listeners = new Vector();
     
     /** Creates a new instance of RadioButtonCellEditor */
-    public RadioButtonEditor(final JRadioButton jrb) {
+    RadioButtonEditor(final JRadioButton jrb) {
         super(new JCheckBox());
         this.jrb = jrb;
         jrb.addChangeListener(this);

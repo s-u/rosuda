@@ -24,19 +24,19 @@ public final class SnapshotPanel extends javax.swing.JPanel {
     private int currentSnapshot;
     
     /** Creates new form SnapshotPanel */
-    public SnapshotPanel() {
+    SnapshotPanel() {
         initComponents();
         
         slm = new SnapshotListModel();
         lstSnapshots.setModel(slm);
     }
     
-    public void addSnapshot(final SnapshotContainer snapC){
+    void addSnapshot(final SnapshotContainer snapC){
         slm.addSnapshot(snapC);
         currentSnapshot=0;
     }
     
-    public SnapshotContainer getSelectedSnapshot(){
+    SnapshotContainer getSelectedSnapshot(){
         final int index;
         if ((index=lstSnapshots.getSelectedIndex())!=-1) {
             return slm.getSnapshotAt(index);
@@ -48,18 +48,18 @@ public final class SnapshotPanel extends javax.swing.JPanel {
         
     }
     
-    public void  addRestoreActionListener(final ActionListener l){
+    void  addRestoreActionListener(final ActionListener l){
         butRestore.addActionListener(l);
     }
     
     
-    public final class SnapshotList extends javax.swing.JList {
+    private final class SnapshotList extends javax.swing.JList {
         public String getToolTipText(final java.awt.event.MouseEvent event) {
             return slm.getSnapshotAt(locationToIndex(event.getPoint())).getToolTipText();
         }
     }
     
-    public final class SnapshotListModel extends javax.swing.AbstractListModel {
+    private final class SnapshotListModel extends javax.swing.AbstractListModel {
         private Vector snapshots=new Vector();
 
         private Hashtable cache=new Hashtable();

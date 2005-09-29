@@ -35,11 +35,11 @@ public class PreferencesDialog extends javax.swing.JDialog {
         lblGrid.setToolTipText("granularity for contour plot. [default: " + DEFAULT_GRID + "]");
     }
     
-    void addPreferencesPanel(final String title, final JPanel prefP){
+    private void addPreferencesPanel(final String title, final JPanel prefP){
         tabbedPane.add(title,prefP);
     }
     
-    public int getGrid(){
+    int getGrid(){
         return ((Integer)spinGrid.getValue()).intValue();
     }
     

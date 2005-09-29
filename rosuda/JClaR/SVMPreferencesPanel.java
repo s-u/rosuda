@@ -17,7 +17,7 @@ public class SVMPreferencesPanel extends javax.swing.JPanel {
    
     
     /** Creates new form SVMPreferencesPanel */
-    public SVMPreferencesPanel() {
+    SVMPreferencesPanel() {
         initComponents();
         
    

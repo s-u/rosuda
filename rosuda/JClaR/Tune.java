@@ -30,7 +30,7 @@ public final class Tune {
     private double bestCoef0;
     
     /** Creates a new instance of Tune */
-    public Tune(final Data data) {
+    Tune(final Data data) {
         rcon=RserveConnection.getRconnection();
         this.data=data;
         Rname = "t" + this.hashCode();
@@ -69,27 +69,27 @@ public final class Tune {
     
     private String variable;
     
-    public void setVariable(final String variable){
+    void setVariable(final String variable){
         this.variable = variable;
     }
     
-    public void setFromGamma(final double fromGamma) {
+    void setFromGamma(final double fromGamma) {
         this.fromGamma = fromGamma;
     }
     
-    public void setToGamma(final double toGamma) {
+    void setToGamma(final double toGamma) {
         this.toGamma = toGamma;
     }
     
-    public void setFromCost(final double fromCost) {
+    void setFromCost(final double fromCost) {
         this.fromCost = fromCost;
     }
     
-    public void setToCost(final double toCost) {
+    void setToCost(final double toCost) {
         this.toCost = toCost;
     }
     
-    public void tune() {
+    void tune() {
         try{
             final String gammaRange;
             final String costRange;
@@ -291,111 +291,111 @@ public final class Tune {
         return ret;
     }
     
-    public double getBestCost() {
+    double getBestCost() {
         return bestCost;
     }
     
-    public double getBestGamma() {
+    double getBestGamma() {
         return bestGamma;
     }
     
-    public void setByGamma(final int byGamma) {
+    void setByGamma(final int byGamma) {
         this.byGamma = byGamma;
     }
     
-    public void setByCost(final int byCost) {
+    void setByCost(final int byCost) {
         this.byCost = byCost;
     }
     
-    public void setFromCoef0(final double fromCoef0) {
+    void setFromCoef0(final double fromCoef0) {
         this.fromCoef0 = fromCoef0;
     }
     
-    public void setToCoef0(final double toCoef0) {
+    void setToCoef0(final double toCoef0) {
         this.toCoef0 = toCoef0;
     }
     
-    public void setByCoef0(final int byCoef0) {
+    void setByCoef0(final int byCoef0) {
         this.byCoef0 = byCoef0;
     }
     
-    public void setFromNu(final double fromNu) {
+    void setFromNu(final double fromNu) {
         this.fromNu = fromNu;
     }
     
-    public void setToNu(final double toNu) {
+    void setToNu(final double toNu) {
         this.toNu = toNu;
     }
     
-    public void setByNu(final int byNu) {
+    void setByNu(final int byNu) {
         this.byNu = byNu;
     }
     
-    public void setFromDegree(final int fromDegree) {
+    void setFromDegree(final int fromDegree) {
         this.fromDegree = fromDegree;
     }
     
-    public void setToDegree(final int toDegree) {
+    void setToDegree(final int toDegree) {
         this.toDegree = toDegree;
     }
     
-    public void setByDegree(final int byDegree) {
+    void setByDegree(final int byDegree) {
         this.byDegree = byDegree;
     }
     
-    public void setTuneGamma(final boolean tuneGamma) {
+    void setTuneGamma(final boolean tuneGamma) {
         this.tuneGamma = tuneGamma;
     }
     
-    public void setTuneCost(final boolean tuneCost) {
+    void setTuneCost(final boolean tuneCost) {
         this.tuneCost = tuneCost;
     }
     
-    public void setTuneCoef0(final boolean tuneCoef0) {
+    void setTuneCoef0(final boolean tuneCoef0) {
         this.tuneCoef0 = tuneCoef0;
     }
     
-    public void setTuneNu(final boolean tuneNu) {
+    void setTuneNu(final boolean tuneNu) {
         this.tuneNu = tuneNu;
     }
     
-    public void setTuneDegree(final boolean tuneDegree) {
+    void setTuneDegree(final boolean tuneDegree) {
         this.tuneDegree = tuneDegree;
     }
     
-    public int getBestDegree() {
+    int getBestDegree() {
         return bestDegree;
     }
     
-    public double getBestNu() {
+    double getBestNu() {
         return bestNu;
     }
     
-    public double getBestCoef0() {
+    double getBestCoef0() {
         return bestCoef0;
     }
     
-    public boolean isTuneGamma() {
+    private boolean isTuneGamma() {
         return tuneGamma;
     }
     
-    public boolean isTuneCost() {
+    private boolean isTuneCost() {
         return tuneCost;
     }
     
-    public boolean isTuneCoef0() {
+    private boolean isTuneCoef0() {
         return tuneCoef0;
     }
     
-    public boolean isTuneNu() {
+    private boolean isTuneNu() {
         return tuneNu;
     }
     
-    public boolean isTuneDegree() {
+    private boolean isTuneDegree() {
         return tuneDegree;
     }
     
-    public void error(final String message){
+    private void error(final String message){
         if(data!=null) {
             ErrorDialog.show(data.getParent(),message);
         }
@@ -406,35 +406,35 @@ public final class Tune {
         
     }
     
-    public void setFixGamma(final double fixGamma) {
+    void setFixGamma(final double fixGamma) {
         this.fixGamma = fixGamma;
     }
     
-    public void setFixCost(final double fixCost) {
+    void setFixCost(final double fixCost) {
         this.fixCost = fixCost;
     }
     
-    public void setFixCoef0(final double fixCoef0) {
+    void setFixCoef0(final double fixCoef0) {
         this.fixCoef0 = fixCoef0;
     }
     
-    public void setFixNu(final double fixNu) {
+    void setFixNu(final double fixNu) {
         this.fixNu = fixNu;
     }
     
-    public void setFixDegree(final int fixDegree) {
+    void setFixDegree(final int fixDegree) {
         this.fixDegree = fixDegree;
     }
     
-    public Plot plot() {
+    Plot plot() {
         return new TunePlot(this);
     }
     
-    public String getRname() {
+    String getRname() {
         return Rname;
     }
     
-    public int getNumberOfTunedParameters(){
+    int getNumberOfTunedParameters(){
         int n=0;
         if (tuneGamma)  {
             n++;
@@ -459,15 +459,15 @@ public final class Tune {
         return n;
     }
     
-    public Plot plot(final java.awt.Frame parent) {
+    private Plot plot(final java.awt.Frame parent) {
         return plot();
     }
     
-    public void setKernel(int kernel) {
+    void setKernel(int kernel) {
         this.kernel = kernel;
     }
     
-    public void setType(int type) {
+    void setType(int type) {
         this.type = type;
     }
     

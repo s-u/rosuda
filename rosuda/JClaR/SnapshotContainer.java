@@ -19,12 +19,12 @@ public final class SnapshotContainer {
     private FixVariablesDialogSnapshotIF fvdSnap;
     
     /** Creates a new instance of SnapshotContainer */
-    public SnapshotContainer(final SVMSnapshotIF svmSnap, final FixVariablesDialogSnapshotIF fvdSnap) {
+    SnapshotContainer(final SVMSnapshotIF svmSnap, final FixVariablesDialogSnapshotIF fvdSnap) {
         this.svmSnap = svmSnap;
         this.fvdSnap = fvdSnap;
     }
     
-    public ImageIcon getThumbnail(){
+    ImageIcon getThumbnail(){
         if(svmSnap!=null)  {
             return svmSnap.getThumbnail();
         }
@@ -36,15 +36,15 @@ public final class SnapshotContainer {
     }
     
 
-    public FixVariablesDialogSnapshotIF getFvdSnap() {
+    FixVariablesDialogSnapshotIF getFvdSnap() {
         return this.fvdSnap;
     }
 
-    public SVMSnapshotIF getSvmSnap() {
+    SVMSnapshotIF getSvmSnap() {
         return this.svmSnap;
     }
     
-    public String getToolTipText(){
+    String getToolTipText(){
         if(svmSnap!=null)  {
             return svmSnap.getToolTipText();
         }

@@ -212,7 +212,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_Display.add(mitem);
     }
     
-    void classify(Data dataset){
+    private void classify(Data dataset){
         String result = classifier.classify(dataset);
         if(result!=null){
             DataFileSaveDialog dfsd = new DataFileSaveDialog(this, result, Main.getLast_directory());
@@ -590,11 +590,11 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         newPlot.setShowDataInPlot(m_DisplayDataInPlot.getState());
     }
     
-    public PreferencesDialog getPreferencesDialog() {
+    private PreferencesDialog getPreferencesDialog() {
         return this.prefd;
     }
     
-    public void setPreferencesDialog(final PreferencesDialog prefd) {
+    void setPreferencesDialog(final PreferencesDialog prefd) {
         this.prefd = prefd;
     }
     

@@ -54,7 +54,7 @@ public class DataFileSaveDialog extends JFileChooser implements ActionListener, 
      * @param data name of dataset which should be saved
      * @param directory current directory
      */
-    public DataFileSaveDialog(Frame f, String data, String directory) {
+    DataFileSaveDialog(Frame f, String data, String directory) {
         this.setDialogTitle("Save DatFile - "+data);
         if (directory != null && new File(directory).exists()) this.setCurrentDirectory(new File(directory));
         this.data = data;
@@ -98,7 +98,7 @@ public class DataFileSaveDialog extends JFileChooser implements ActionListener, 
     /**
      * Save dataset to choosen file, with specified options.
      */
-    public void saveFile() {
+    private void saveFile() {
         if (this.getSelectedFile() != null) {
             //JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
             String file = this.getSelectedFile().toString();

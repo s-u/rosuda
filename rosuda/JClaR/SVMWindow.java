@@ -40,7 +40,7 @@ public final class SVMWindow extends ClassificationWindow {
     private JCheckBoxMenuItem m_markMisclassifiedPoints;
     
     /** Creates a new instance of SVMWindow */
-    public SVMWindow(final SVM svm) {
+    SVMWindow(final SVM svm) {
         super(svm);
         this.classifier=svm;
         this.svm=svm;
@@ -103,7 +103,7 @@ public final class SVMWindow extends ClassificationWindow {
         });
     }
     
-    public void updatePlot(final boolean doSnapshot, final int changeType){
+    void updatePlot(final boolean doSnapshot, final int changeType){
         if(plot!=null){
             if (changeType!=CHANGE_TYPE_RESIZE) {
                 plot.createPlotCall(changeType==CHANGE_TYPE_HARD);
@@ -117,7 +117,7 @@ public final class SVMWindow extends ClassificationWindow {
         }
     }
     
-    protected void probablyDoSnapshot(){
+    void probablyDoSnapshot(){
         if(getDoSnapshots() && !restoring){
             addSnaphot(new SnapshotContainer(classifier.createSnapshot(), fvd.createSnapshot()));
         }
@@ -128,7 +128,7 @@ public final class SVMWindow extends ClassificationWindow {
         updateConfusionMatrix();
     }
     
-    protected void restore(final SnapshotContainer snapC){
+    void restore(final SnapshotContainer snapC){
         if(snapC!=null){
             restoring = true;
             
@@ -146,7 +146,7 @@ public final class SVMWindow extends ClassificationWindow {
         }
     }
     
-    protected void plotClassifier(final boolean hardChange){
+    void plotClassifier(final boolean hardChange){
         plotSVM(hardChange);
     }
     
@@ -209,7 +209,7 @@ public final class SVMWindow extends ClassificationWindow {
         }
     }
     
-    public void setPlot(final Plot newPlot) {
+    void setPlot(final Plot newPlot) {
         this.plot = (SVMClassificationPlot)newPlot;
         updateCheckBoxMenus();
         super.setPlot(newPlot);
@@ -218,7 +218,7 @@ public final class SVMWindow extends ClassificationWindow {
     /**
      * Sets the checkBoxMenus' states according to plot.
      */
-    protected void updateCheckBoxMenus(){
+    void updateCheckBoxMenus(){
         if(plot!=null){
             m_markMisclassifiedPoints.setState(plot.isMarkMisclassifiedPoints());
             m_markSupportVectors.setState(plot.isMarkSupportVectors());
@@ -229,7 +229,7 @@ public final class SVMWindow extends ClassificationWindow {
     /**
      * Sets plot fields according to checkBoxMenus' states.
      */
-    protected void adjustPlotToCheckBoxMenus(Plot newPlot) {
+    void adjustPlotToCheckBoxMenus(Plot newPlot) {
         ((SVMClassificationPlot)newPlot).setMarkMisclassifiedPoints(m_markMisclassifiedPoints.getState());
         ((SVMClassificationPlot)newPlot).setMarkSupportVectors(m_markSupportVectors.getState());
         super.adjustPlotToCheckBoxMenus(newPlot);

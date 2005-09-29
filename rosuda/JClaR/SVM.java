@@ -28,7 +28,7 @@ public final class SVM implements Classifier {
     private boolean trained=false;
     private ClassificationWindow svmwindow;
     
-    protected SVMClassificationPlot plot;
+    private SVMClassificationPlot plot;
     
     //TODO: necesarry?
     private Component parent;
@@ -37,18 +37,18 @@ public final class SVM implements Classifier {
     private int variablePos; //which data column was selected (starts at 0)
     private String variableName;
     
-    protected int numberOfSupportVectors;
+    private int numberOfSupportVectors;
     
-    protected int type=TYPE_C_CLASS;
-    protected int kernel=KERNEL_RADIAL;
-    protected double gamma; //default to 1/(#variables excl. classes variable)
-    protected double cost = 1; // >0
-    protected double nu = 0.5; // >0, <2*m/(m+M), with m: minimal group size, M: maximal group size
-    protected int degree = 3;
-    protected double coef0 = 0;
-    protected boolean scale = true;
-    protected int cross = 0;
-    protected double tolerance = 0.001;
+    private int type=TYPE_C_CLASS;
+    private int kernel=KERNEL_RADIAL;
+    private double gamma; //default to 1/(#variables excl. classes variable)
+    private double cost = 1; // >0
+    private double nu = 0.5; // >0, <2*m/(m+M), with m: minimal group size, M: maximal group size
+    private int degree = 3;
+    private double coef0 = 0;
+    private boolean scale = true;
+    private int cross = 0;
+    private double tolerance = 0.001;
     private boolean fitted = true;
     //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
     
@@ -57,7 +57,7 @@ public final class SVM implements Classifier {
     private Vector classNames;
     
     /** Creates a new instance of SVM */
-    public SVM(final Data data, final int variablePos) {
+    SVM(final Data data, final int variablePos) {
         if(data!=null){
             number = Main.getNewClassifierNumber();
             rcon=RserveConnection.getRconnection();
@@ -84,14 +84,14 @@ public final class SVM implements Classifier {
         
     }
     
-    public void setType(final int t) {
+    void setType(final int t) {
         if (t<5 && t>-1)  {
             type=t;
         }
         
     }
     
-    public boolean train() {
+    boolean train() {
         try{
             String formulaOpt = "";
             if(type==TYPE_C_CLASS || type==TYPE_NU_CLASS || type==TYPE_EPS_REGR || type==TYPE_NU_REGR) {
@@ -171,16 +171,16 @@ public final class SVM implements Classifier {
         return variableName;
     }
     
-    public static final int TYPE_C_CLASS = 0;
-    public static final int TYPE_NU_CLASS = 1;
-    public static final int TYPE_ONE_CLASS = 2;
-    public static final int TYPE_EPS_REGR = 3;
-    public static final int TYPE_NU_REGR = 4;
+    static final int TYPE_C_CLASS = 0;
+    static final int TYPE_NU_CLASS = 1;
+    static final int TYPE_ONE_CLASS = 2;
+    static final int TYPE_EPS_REGR = 3;
+    private static final int TYPE_NU_REGR = 4;
     
-    public static final int KERNEL_LINEAR = 0;
-    public static final int KERNEL_POLYNOMIAL = 1;
-    public static final int KERNEL_RADIAL = 2;
-    public static final int KERNEL_SIGMOID = 3;
+    static final int KERNEL_LINEAR = 0;
+    static final int KERNEL_POLYNOMIAL = 1;
+    static final int KERNEL_RADIAL = 2;
+    static final int KERNEL_SIGMOID = 3;
     
     
     
@@ -197,11 +197,11 @@ public final class SVM implements Classifier {
         
     }
     
-    public int getType() {
+    int getType() {
         return type;
     }
     
-    public static String typeToString(final int type) {
+    static String typeToString(final int type) {
         // These strings are also used as arguments of type in "svm(..., type=<>, ...)"!
         switch(type){
             case TYPE_C_CLASS:
@@ -217,7 +217,7 @@ public final class SVM implements Classifier {
         }
     }
     
-    public static String kernelToString(final int kernel) {
+    static String kernelToString(final int kernel) {
         // These strings are also used as arguments of kernel in "svm(..., kernel=<>, ...)"!
         switch(kernel){
             case KERNEL_LINEAR:
@@ -231,14 +231,14 @@ public final class SVM implements Classifier {
         }
     }
     
-    public void setCost(final double c){
+    void setCost(final double c){
         if(c>=0)  {
             cost=c;
         }
         
     }
     
-    public void setGamma(final double g){
+    void setGamma(final double g){
         //XXX: has gamma to be nonnegative?
         if(g>=0) {
             gamma=g;
@@ -246,29 +246,29 @@ public final class SVM implements Classifier {
         
     }
     
-    public void setNu(final double n){
+    void setNu(final double n){
         if(n>=0 && n<=1)  {
             nu=n;
         }
         
     }
     
-    public void setScaled(final boolean s){
+    private void setScaled(final boolean s){
         scale=s;
     }
     
-    public void setKernel(final int k){
+    void setKernel(final int k){
         if (k<4 && k>-1)  {
             kernel = k;
         }
         
     }
     
-    public int getKernel(){
+    int getKernel(){
         return kernel;
     }
     
-    public void setDegree(final int d){
+    void setDegree(final int d){
         //XXX: has degree to be nonnegative?
         if(d>=0) {
             degree=d;
@@ -276,18 +276,18 @@ public final class SVM implements Classifier {
         
     }
     
-    public void setCoef0(final double c){
+    void setCoef0(final double c){
         coef0=c;
     }
     
-    public void setTolerance(final double t){
+    private void setTolerance(final double t){
         if(t>=0) {
             tolerance=t;
         }
         
     }
     
-    public void setFitted(final boolean f){
+    private void setFitted(final boolean f){
         fitted=f;
     }
     
@@ -314,7 +314,7 @@ public final class SVM implements Classifier {
         return data;
     }
     
-    public void setParent(final Component parent){
+    private void setParent(final Component parent){
         this.parent = parent;
     }
     
@@ -335,18 +335,18 @@ public final class SVM implements Classifier {
         }
     }
     
-    public void setCross(final int cross){
+    void setCross(final int cross){
         if(cross>=0 && cross <= data.getLength())  {
             this.cross = cross;
         }
         
     }
     
-    public boolean getFitted(){
+    private boolean getFitted(){
         return fitted;
     }
     
-    public void calculateFitted() {
+    private void calculateFitted() {
         try{
             rcon.voidEval(Rname + "$fitted <- predict(" + Rname + "," + data.getRname() + ")");
         } catch(RSrvException rse) {
@@ -364,31 +364,31 @@ public final class SVM implements Classifier {
         return variablePos;
     }
     
-    public double getGamma() {
+    double getGamma() {
         return gamma;
     }
     
-    public double getCost() {
+    double getCost() {
         return cost;
     }
     
-    public double getNu() {
+    double getNu() {
         return nu;
     }
     
-    public int getDegree() {
+    int getDegree() {
         return degree;
     }
     
-    public double getCoef0() {
+    double getCoef0() {
         return coef0;
     }
     
-    public int getNumberOfSupportVectors() {
+    int getNumberOfSupportVectors() {
         return numberOfSupportVectors;
     }
     
-    public boolean getTrained(){
+    boolean getTrained(){
         return trained;
     }
     
@@ -408,15 +408,15 @@ public final class SVM implements Classifier {
         svmwindow.show();
     }
     
-    public boolean getScale(){
+    private boolean getScale(){
         return scale;
     }
     
-    public int getCross(){
+    int getCross(){
         return cross;
     }
     
-    public double getTolerance(){
+    private double getTolerance(){
         return tolerance;
     }
     
@@ -453,7 +453,7 @@ public final class SVM implements Classifier {
         return classNames;
     }
     
-    public int getMinGroupSize(){
+    int getMinGroupSize(){
         int ret=-1;
         try{
             ret = rcon.eval("min(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))").asInt();
@@ -463,7 +463,7 @@ public final class SVM implements Classifier {
         return ret;
     }
     
-    public int getMaxGroupSize(){
+    int getMaxGroupSize(){
         int ret=-1;
         try{
             ret = rcon.eval("max(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))").asInt();

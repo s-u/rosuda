@@ -49,7 +49,7 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
     private boolean updateDevVal=true;
     
     /** Creates new form FixVariablesDialog */
-    public FixVariablesDialog(final java.awt.Frame parent, final Data data, final int varPos) {
+    FixVariablesDialog(final java.awt.Frame parent, final Data data, final int varPos) {
         super(parent);
         
         tm = new TableModel();
@@ -118,7 +118,7 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         pack();
     }
     
-    public void setData(final Data data, final int varPos){
+    private void setData(final Data data, final int varPos){
         // estimating default values for FixVariablesDialog
         // uses median and 1/3*standard deviation
         final int numVars = data.getNumberOfVariables()-1;
@@ -182,15 +182,15 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         updateDevVal=true;
     }
     
-    public String getFormula() {
+    String getFormula() {
         return formula;
     }
     
-    public String getFixedVariables(){
+    String getFixedVariables(){
         return fixedVariables;
     }
     
-    public String getSubsetExpression(){
+    String getSubsetExpression(){
         return subsetExpression;
     }
     
@@ -384,11 +384,11 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         hardChange=false;
     }
     
-    public boolean getHardChange(){
+    private boolean getHardChange(){
         return hardChange;
     }
     
-    public FixVariablesDialogSnapshotIF createSnapshot(){
+    FixVariablesDialogSnapshotIF createSnapshot(){
         final Snapshot snapshot = new Snapshot();
         snapshot.setDeviations(tm.getDeviations());
         snapshot.setFixed(tm.getFixed());
@@ -399,7 +399,7 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         return snapshot;
     }
     
-    public void restoreSnapshot(final FixVariablesDialogSnapshotIF fvdSnapIF){
+    void restoreSnapshot(final FixVariablesDialogSnapshotIF fvdSnapIF){
         final Snapshot snap = (Snapshot)fvdSnapIF;
         
         tm.setValues(snap.getValues());

@@ -14,26 +14,26 @@ import javax.swing.SpinnerNumberModel;
  */
 public abstract class TuneVariablePanel extends javax.swing.JPanel {
     
-    protected SpinnerNumberModel snmFrom;
-    protected SpinnerNumberModel snmTo;
-    protected SpinnerNumberModel snmSteps;
-    protected SpinnerNumberModel snmFix;
+    SpinnerNumberModel snmFrom;
+    SpinnerNumberModel snmTo;
+    SpinnerNumberModel snmSteps;
+    SpinnerNumberModel snmFix;
     
     /** Creates new form TuneVariablePanel */
-    public TuneVariablePanel() {
+    TuneVariablePanel() {
         initFields();
         initComponents();
     }
     
-    public final void setVariableName(final String name){
+    final void setVariableName(final String name){
         lblVariable.setText(name + ":");
     }
 
-    public final boolean getTune(){
+    final boolean getTune(){
         return jrbTune.isSelected();
     }
 
-    protected abstract void initFields();
+    abstract void initFields();
     
     /** This method is called from within the constructor to
      * initialize the form.

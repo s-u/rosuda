@@ -18,15 +18,15 @@ public final class SimpleChangeEvent extends EventObject {
     private int message;
     
     /** Creates a new instance of SimpleChangeEvent */
-    public SimpleChangeEvent(final Object source, final int message) {
+    SimpleChangeEvent(final Object source, final int message) {
         super(source);
         this.message = message;
     }
     
-    public int getMessage(){
+    int getMessage(){
         return message;
     }
     
-    public static final int HARD_CHANGE = 1;
-    public static final int UPDATE = 2;
+    static final int HARD_CHANGE = 1;
+    private static final int UPDATE = 2;
 }

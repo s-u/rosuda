@@ -21,77 +21,77 @@ public final class DoubleTuneVariablePanel extends TuneVariablePanel{
         snmFix = new SpinnerNumberModel(0.0,-Double.MAX_VALUE,Double.MAX_VALUE,0.1);
     }
     
-    public double getTo() {
+    double getTo() {
         return snmTo.getNumber().doubleValue();
     }
     
-    public double getFrom() {
+    double getFrom() {
         return snmFrom.getNumber().doubleValue();
     }
     
-    public int getSteps() {
+    int getSteps() {
         return snmSteps.getNumber().intValue();
     }
     
-    public double getFix(){
+    double getFix(){
         return snmFix.getNumber().doubleValue();
     }
     
-    public void setFromValue(final double value){
+    private void setFromValue(final double value){
         snmFrom.setValue(new Double(value));
     }
     
-    public void setFromStep(final double stepSize){
+    private void setFromStep(final double stepSize){
         snmFrom.setStepSize(new Double(stepSize));
     }
     
-    public void setToValue(final double value){
+    private void setToValue(final double value){
         snmTo.setValue(new Double(value));
     }
     
-    public void setToStep(final double stepSize){
+    private void setToStep(final double stepSize){
         snmTo.setStepSize(new Double(stepSize));
     }
     
-    public void setByValue(final double value){
+    private void setByValue(final double value){
         snmSteps.setValue(new Double(value));
     }
     
-    public void setByMin(final double minimum){
+    private void setByMin(final double minimum){
         snmSteps.setMinimum(new Double(minimum));
     }
     
-    public void setByMax(final double maximum){
+    private void setByMax(final double maximum){
         snmSteps.setMaximum(new Double(maximum));
     }
     
-    public void setByStep(final double stepSize){
+    private void setByStep(final double stepSize){
         snmSteps.setStepSize(new Double(stepSize));
     }
     
-    public void setValue(final double value){
+    void setValue(final double value){
         snmFix.setValue(new Double(value));
         snmFrom.setValue(new Double(value));
         snmTo.setValue(new Double(value));
     }
     
-    public void setMin(final double minimum){
+    void setMin(final double minimum){
         snmFix.setMinimum(new Double(minimum));
         snmFrom.setMinimum(new Double(minimum));
         snmTo.setMinimum(new Double(minimum));
     }
     
-    public void setMax(final double maximum){
+    void setMax(final double maximum){
         snmFix.setMaximum(new Double(maximum));
         snmFrom.setMaximum(new Double(maximum));
         snmTo.setMaximum(new Double(maximum));
     }
     
-    public void setFixStep(final double stepSize){
+    private void setFixStep(final double stepSize){
         snmFix.setStepSize(new Double(stepSize));
     }
     
-    public void setDefaultFromToRange(){
+    void setDefaultFromToRange(){
         final Double fromValue;
         final Double toValue;
         final Double value = (Double)snmFix.getValue();

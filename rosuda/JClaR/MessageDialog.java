@@ -16,14 +16,14 @@ import javax.swing.JOptionPane;
 public class MessageDialog extends JOptionPane {
     
     /** Creates a new instance of MessageDialog */
-    public MessageDialog() {
+    MessageDialog() {
     }
     
-    public static void show(final Component parent,final String message){
+    private static void show(final Component parent,final String message){
         showMessageDialog(parent, message);
     }
     
-    protected static final void show(final Component parent,final String message, final String title, final int messageType){
+    static final void show(final Component parent,final String message, final String title, final int messageType){
         showMessageDialog(parent, message, title, messageType);
     }
     

@@ -28,11 +28,11 @@ public final class SVMClassificationPlot extends ContourPlot {
     private Frame parent;
     
     /** Creates a new instance of SVMClassificationPlot */
-    public SVMClassificationPlot(final SVM svm, final Frame parent) {
+    private SVMClassificationPlot(final SVM svm, final Frame parent) {
         this(svm,parent,null);
     }
     
-    public SVMClassificationPlot(final SVM svm, final Frame parent, final FixVariablesDialog fvd) {
+    SVMClassificationPlot(final SVM svm, final Frame parent, final FixVariablesDialog fvd) {
         super(svm);
         this.svm=svm;
         dataSubsetOpt="dataSubset" + svm.getRname() + " <- data" + svm.getRname() + "\n"; //TODO: ändern! ist uneffizient
@@ -53,13 +53,13 @@ public final class SVMClassificationPlot extends ContourPlot {
         }
     }
     
-    public void setShowDataInPlot(final boolean showDataInPlot) {
+    void setShowDataInPlot(final boolean showDataInPlot) {
         this.showDataInPlot = showDataInPlot;
         //createPlotCall(false);
     }
     
     
-    protected void createPlotCall(){
+    void createPlotCall(){
         createPlotCall(true);
     }
     
@@ -69,7 +69,7 @@ public final class SVMClassificationPlot extends ContourPlot {
      *
      * @param hardChange Whether background should be calculated.
      */
-    protected void createPlotCall(final boolean hardChange){
+    void createPlotCall(final boolean hardChange){
         if( svm.getData().getNumberOfVariables()-1<2){ // less than two variables
             ErrorDialog.show(parent, "Too few variables to plot.");
             setPlotCall("0");
@@ -166,38 +166,38 @@ public final class SVMClassificationPlot extends ContourPlot {
         success=true;
     }
     
-    public boolean getSuccess(){
+    private boolean getSuccess(){
         return success;
     }
     
-    public void setZoom(final double zoom){
+    void setZoom(final double zoom){
         super.setZoom(zoom);
         createPlotCall();
     }
     
-    public final boolean getShowDataInPlot(){
+    final boolean getShowDataInPlot(){
         return showDataInPlot;
     }
     
-    public final FixVariablesDialog getFixVariablesDialog() {
+    private final FixVariablesDialog getFixVariablesDialog() {
         return fixVariablesDialog;
     }
     
-    public final void setFixVariablesDialog(final FixVariablesDialog fixVariablesDialog) {
+    final void setFixVariablesDialog(final FixVariablesDialog fixVariablesDialog) {
         this.fixVariablesDialog = fixVariablesDialog;
     }
     
     
     
-    public boolean isMarkMisclassifiedPoints() {
+    boolean isMarkMisclassifiedPoints() {
         return this.markMisclassifiedPoints;
     }
     
-    public boolean isMarkSupportVectors() {
+    boolean isMarkSupportVectors() {
         return this.markSupportVectors;
     }
     
-    public void setMarkSupportVectors(final boolean markSupportVectors) {
+    void setMarkSupportVectors(final boolean markSupportVectors) {
         this.markSupportVectors = markSupportVectors;
     }
 }

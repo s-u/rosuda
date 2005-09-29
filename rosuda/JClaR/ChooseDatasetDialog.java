@@ -21,7 +21,7 @@ public class ChooseDatasetDialog extends TableDialog {
     private int selectedIndex=-1;
     
     /** Creates a new instance of ChooseDatasetDialog */
-    public ChooseDatasetDialog(Frame parent) {
+    ChooseDatasetDialog(Frame parent) {
         super(parent,true);
         
         setUpdateButton(false);
@@ -53,7 +53,7 @@ public class ChooseDatasetDialog extends TableDialog {
         dispose();
     }
     
-    public Data getSelectedDataset(){
+    Data getSelectedDataset(){
         if(selectedIndex==-1) return null;
         
         final String fileName = (String)tm.getValueAt(selectedIndex,0);

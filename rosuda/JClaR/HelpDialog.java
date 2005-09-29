@@ -15,10 +15,10 @@ import java.awt.Component;
 public final class HelpDialog extends MessageDialog {
     
     /** Creates a new instance of HelpDialog */
-    public HelpDialog() {
+    private HelpDialog() {
     }
     
-    public static void show(final Component parent, final String text){
+    static void show(final Component parent, final String text){
         show(parent, text, "Help", INFORMATION_MESSAGE);
     }
     

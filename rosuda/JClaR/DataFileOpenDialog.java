@@ -53,17 +53,17 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
     private String rname="d";
     private int status=STATUS_PENDING;
     
-    public static final int STATUS_PENDING = 0;
-    public static final int STATUS_SUCCESS = 1;
-    public static final int STATUS_ERROR = 2;
-    public static final int STATUS_CANCELED = 3;
+    private static final int STATUS_PENDING = 0;
+    static final int STATUS_SUCCESS = 1;
+    static final int STATUS_ERROR = 2;
+    static final int STATUS_CANCELED = 3;
     
     /**
      * Create a new DataFileOpenDialog
      * @param f parent frame
      * @param directory current directory
      */
-    public DataFileOpenDialog(final Frame f,final String directory, final String rname) {
+    DataFileOpenDialog(final Frame f,final String directory, final String rname) {
         
         this.rname=rname;
         
@@ -136,7 +136,7 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
     /**
      * Open selected datafile, with specified options, R-command: read.table(...)
      */
-    public void loadFile() {
+    private void loadFile() {
         final File selFile = this.getSelectedFile();
         if (selFile != null && selFile.canRead()) {
             //JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
@@ -304,7 +304,7 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
         }
     }
     
-    public int getStatus() {
+    int getStatus() {
         return this.status;
     }
 }

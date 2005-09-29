@@ -18,21 +18,21 @@ public abstract class ContourPlot extends Plot {
     private String sliceOpt="";
     private String dataOpt="";
     
-    protected boolean markMisclassifiedPoints=false;
-    protected double horizontalShift=0;
-    protected double verticalShift=0;
+    boolean markMisclassifiedPoints=false;
+    private double horizontalShift=0;
+    private double verticalShift=0;
     
-    public ContourPlot(Classifier cl){
+    ContourPlot(Classifier cl){
         super();
         setClassifier(cl);
         setGrid(50);
     }
     
-    public int getGrid() {
+    int getGrid() {
         return grid;
     }
     
-    public void setGrid(int grid) {
+    void setGrid(int grid) {
         this.grid = grid;
         RserveConnection rcon = RserveConnection.getRconnection();
         try{
@@ -42,16 +42,16 @@ public abstract class ContourPlot extends Plot {
         }
     }
     
-    public void setMarkMisclassifiedPoints(final boolean markMisclassifiedPoints) {
+    void setMarkMisclassifiedPoints(final boolean markMisclassifiedPoints) {
         this.markMisclassifiedPoints = markMisclassifiedPoints;
     }
     
     
-    public void setHorizontalShift(final double shift) {
+    protected void setHorizontalShift(final double shift) {
         horizontalShift = shift;
     }
     
-    public void setVerticalShift(final double shift) {
+    protected void setVerticalShift(final double shift) {
         verticalShift = shift;
     }
     
@@ -64,7 +64,7 @@ public abstract class ContourPlot extends Plot {
      *
      * The R code is based on function plot.svm from R package e1071.
      */
-    public void calculateBackground(){
+    void calculateBackground(){
         String clRname = getClassifier().getRname();
         try{
             rcon.voidEval("if (is.null(formula" + clRname + "))\n" +
@@ -93,7 +93,7 @@ public abstract class ContourPlot extends Plot {
         }
     }
     
-    public void createSlice(){
+    void createSlice(){
         try{
             if (!"".equals(sliceOpt)) {
                 rcon.voidEval(sliceOpt);
@@ -105,18 +105,18 @@ public abstract class ContourPlot extends Plot {
         }
     }
     
-    public String getSliceOpt() {
+    private String getSliceOpt() {
         return sliceOpt;
     }
     
-    public void setSliceOpt(String sliceOpt) {
+    void setSliceOpt(String sliceOpt) {
         this.sliceOpt = sliceOpt;
     }
     
     /**
      * The R code is based on function plot.svm from R package e1071.
      */
-    public void setPlotCall(){
+    void setPlotCall(){
         String clRname = getClassifier().getRname();
         setPlotCall("filled.contour(xr" + clRname + ", yr" + clRname + ", matrix(as.numeric(preds" + clRname + "),\n" +
                 "nr = length(xr" + clRname + "), byrow = TRUE), plot.axes = {\n" +
@@ -132,11 +132,11 @@ public abstract class ContourPlot extends Plot {
                 " xlab = names(lis" + clRname + ")[2], ylab = names(lis" + clRname + ")[1]),color.palette=palette" + clRname + ")");
     }
     
-    public String getDataOpt() {
+    private String getDataOpt() {
         return dataOpt;
     }
     
-    public void setDataOpt(String dataOpt) {
+    void setDataOpt(String dataOpt) {
         this.dataOpt = dataOpt;
     }
     
