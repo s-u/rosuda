@@ -15,31 +15,31 @@ import org.rosuda.util.*;
  */
 public class BarCanvas extends BaseCanvas {
     /** corresponding variable */
-    SVar v;
+    private SVar v;
     /** weight variable for weighted barcharts */
-    SVar weight;
+    private SVar weight;
     
-    int[] cat_seq;
-    String[] cat_nam;
-    int cats;
+    private int[] cat_seq;
+    private String[] cat_nam;
+    private int cats;
     
-    int countMax=0;
-    int count[];
+    private int countMax=0;
+    private int count[];
     
     // for weighted barcharts
-    double c_max;
-    double cumulated[];
-    double c_marked[];
+    private double c_max;
+    private double cumulated[];
+    private double c_marked[];
     
-    Object[] cols; // colors 0=regular sel, 1... sec marks
-    boolean hasSec; // has sec marks
+    private Object[] cols; // colors 0=regular sel, 1... sec marks
+    private boolean hasSec; // has sec marks
     
-    int bars=20;
-    boolean isSpine=false;
-    int dragBar, dragW, dragH;
-    boolean selDrag=false;
+    private int bars=20;
+    private boolean isSpine=false;
+    private int dragBar, dragW, dragH;
+    private boolean selDrag=false;
     
-    MenuItem MIspine=null;
+    private MenuItem MIspine=null;
     
     /** creates a (weighted) barchart
      * @param f associated frame (or <code>null</code> if common default frame is to be used)
@@ -159,7 +159,7 @@ public class BarCanvas extends BaseCanvas {
     
     public Dimension getMinimumSize() { return new Dimension(mLeft*2+30,mTop+mBottom+30); };
     
-    public void sortBars(boolean bySelected) {
+    private void sortBars(boolean bySelected) {
         int ix[]=null;
         int[] marked = new int[bars];
         for (int i=0; i<bars; i++){
@@ -260,7 +260,7 @@ public class BarCanvas extends BaseCanvas {
         } else super.mouseReleased(e);
     }
     
-    double hclCh=55.0, hclLum=75.0;
+    private double hclCh=55.0, hclLum=75.0;
     
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);

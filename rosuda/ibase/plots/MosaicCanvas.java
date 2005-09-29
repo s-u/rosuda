@@ -13,25 +13,25 @@ import org.rosuda.ibase.toolkit.*;
 
 public class MosaicCanvas extends BaseCanvas {
     
-    SVar[] v;
-    int vs;
+    private SVar[] v;
+    private int vs;
     
-    Frame frame;
+    private Frame frame;
     
-    int maxLevel;
+    private int maxLevel;
     
-    int w,h,hgap,vgap; //width, height and gaps between mosaics
+    private int w,h,hgap,vgap; //width, height and gaps between mosaics
     
-    static final int DISPLAY_MODE_OBSERVED = 0;
-    static final int DISPLAY_MODE_EXPECTED = 1;
-    static final int DISPLAY_MODE_SAMEBINSIZE = 2;
-    static final int DISPLAY_MODE_MULTIPLEBARCHARTS = 3;
-    static final int DISPLAY_MODE_FLUCTUATION = 4;
+    private static final int DISPLAY_MODE_OBSERVED = 0;
+    private static final int DISPLAY_MODE_EXPECTED = 1;
+    private static final int DISPLAY_MODE_SAMEBINSIZE = 2;
+    private static final int DISPLAY_MODE_MULTIPLEBARCHARTS = 3;
+    private static final int DISPLAY_MODE_FLUCTUATION = 4;
     
-    int mode = DISPLAY_MODE_OBSERVED;
+    private int mode = DISPLAY_MODE_OBSERVED;
     
-    FrequencyTable ft;
-    int[] combination; // indicates position of recursion
+    private FrequencyTable ft;
+    private int[] combination; // indicates position of recursion
     
     public MosaicCanvas(Frame f, SVar[] vars, SMarker mark) {
         super(f, mark);
@@ -106,15 +106,15 @@ public class MosaicCanvas extends BaseCanvas {
         return null;
     }
     
-    Vector rects = new Vector();
-    Vector Labels = new Vector();
-    int[] plevels;
-    int[] aGap;
-    int[] Gaps;
-    char[] Dirs;
-    double residSum;
-    int censor=0;
-    public void create(int x1, int y1, int x2, int y2, String info) {
+    private Vector rects = new Vector();
+    private Vector Labels = new Vector();
+    private int[] plevels;
+    private int[] aGap;
+    private int[] Gaps;
+    private char[] Dirs;
+    private double residSum;
+    private int censor=0;
+    private void create(int x1, int y1, int x2, int y2, String info) {
         
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
@@ -241,7 +241,7 @@ public class MosaicCanvas extends BaseCanvas {
         }
     }
     
-    public void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
+    private void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
         
         //int levels = ft.getLevels()[levelid];
         int k = vs;
@@ -530,7 +530,7 @@ public class MosaicCanvas extends BaseCanvas {
      *  From org.rosuda.Mondrian.MyText, reduced and modified.
      *  Preliminary! org.rosuda.ibase.toolkit.PlotText should be used instead.
      */
-    class MyText {
+    private class MyText {
         String s;
         public int x;
         public int y;
