@@ -347,7 +347,7 @@ public class MosaicCanvas extends BaseCanvas {
                     tile.setP(ft.getP());
                     
                     if( Dirs[levelid] == 'x' ){
-                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION ){
+                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE ){
                             tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     emptyBin,
@@ -363,7 +363,7 @@ public class MosaicCanvas extends BaseCanvas {
                             tile.setDir('y');
                         }
                     } else {
-                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION ){
+                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE ){
                             tile.r = new Rectangle(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     sizeX+emptyWidth,
