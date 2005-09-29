@@ -148,16 +148,25 @@ public class PPrimMosaic extends PPrimRectangle {
         r.width = newWidth;
         r.height = newHeight;
     }
-
+    
     public void setP(double p) {
         this.p = p;
     }
-
+    
     public void setExp(double exp) {
         this.exp = exp;
     }
-
+    
     public void setScale(double scale) {
         this.scale = scale;
+    }
+    
+    public boolean contains(int x, int y) {
+        if(type == TYPE_MULTIPLEBARCHARTS || type == TYPE_FLUCTUATION)
+            return (x >= origX && x <= origX+fullW && y >= origY && y <= origY+fullH);
+        else if(type == TYPE_SAMEBINSIZE)
+            return (x >= r.x && x <= r.x+r.width && y >= r.y && y <= r.y+r.height);
+        else
+            return super.contains(x, y);
     }
 }
