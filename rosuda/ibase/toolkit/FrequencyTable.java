@@ -16,7 +16,7 @@ public class FrequencyTable {
     
     private double p;
     
-    public InteractionSet Interactions;
+    private InteractionSet Interactions;
     
     public FrequencyTable(SVar[] vvs) {
         this.vars = vvs;
@@ -64,7 +64,7 @@ public class FrequencyTable {
         addInteraction( new int[] { vsize-1 } , true  );
     }
     
-    class CombinationEntry {
+    private class CombinationEntry {
         
         Hashtable ccs = new Hashtable();
         
@@ -141,7 +141,7 @@ public class FrequencyTable {
         return levels;
     }
     
-    String[][] lnames;
+    private String[][] lnames;
     public String[][] getLnames(){
         if(lnames==null){
             lnames = new String[vars.length][];
@@ -190,7 +190,7 @@ public class FrequencyTable {
     /**
      * From org.rosuda.Mondrian.Table.
      */
-    public void logLinear() {
+    private void logLinear() {
         
         int[][] interact = new int[Interactions.Ssize()][];
         for( int i=0; i<Interactions.Ssize(); i++ ) {
@@ -395,7 +395,7 @@ public class FrequencyTable {
             return false;
     }
     
-    class InteractionSet implements Cloneable {
+    private class InteractionSet implements Cloneable {
         
         private Vector Set = new Vector(256,0);
         private Vector Strip;
