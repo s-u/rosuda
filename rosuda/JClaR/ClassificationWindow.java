@@ -424,7 +424,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             classify(dataset);
         }
     }//GEN-LAST:event_m_ClassifyDataActionPerformed
-        
+    
     private void m_FilePreferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FilePreferencesActionPerformed
         if(prefd==null){
             ErrorDialog.show(this,"No preferences available.");
@@ -440,23 +440,13 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     }//GEN-LAST:event_lblPlotComponentResized
     
     private final void m_FileExitActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileExitActionPerformed
-        if (WindowManager.getNumberOfWindows()>1){
-            if(JOptionPane.showConfirmDialog(
-                    this,
-                    "This will close all opened windows. Do you really want to exit this application?",
-                    "Really close all windows?",
-                    JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION){
-                System.exit(0);
-            }
-        } else {
-            System.exit(0);
-        }
+        System.exit(0);
     }//GEN-LAST:event_m_FileExitActionPerformed
     
     private final void m_FileCloseActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileCloseActionPerformed
-        WindowManager.closeWindow(this);
+        this.hide();
     }//GEN-LAST:event_m_FileCloseActionPerformed
-            
+    
     private final void m_DisplaySnapshotsActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplaySnapshotsActionPerformed
         if (m_DisplaySnapshots.getState()) {
             snapPan.setPreferredSize(new Dimension(120, getContentPane().getHeight()));
