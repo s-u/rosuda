@@ -1,5 +1,4 @@
 package org.rosuda.ibase.toolkit;
-
 import java.util.BitSet;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -163,18 +162,32 @@ public class FrequencyTable {
         return exp;
     }
     
-    public int[] getMatchingCases(int[] com){
+    public int[] getMatchingCases(int[] com, int maxLevel){
         int[] factors = new int[vsize];
         factors[vsize-1]=1;
         for(int i=vsize-2; i>=0; i--){
             factors[i] = factors[i+1]*vars[i+1].getNumCats();
         }
+        
         int n=0;
-        for(int i=0; i<com.length; i++){
+        for(int i=0; i<maxLevel; i++){
             n += factors[i]*com[i];
         }
-        
-        return ceTable[n].getCases();
+        Vector cases = new Vector();
+        int arraySize=0;
+        for(int i=0; i<factors[maxLevel-1]; i++){
+            int[] c = ceTable[n+i].getCases();
+            cases.add(c);
+            arraySize += c.length;
+        }
+        int[] ret = new int[arraySize];
+        int pos=0;
+        for(Enumeration en = cases.elements(); en.hasMoreElements();){
+            int[] c = (int[])en.nextElement();
+            System.arraycopy(c, 0, ret, pos, c.length);
+            pos += c.length;
+        }
+        return ret;
     }
     
     public boolean deleteInteraction( int[] delInteraction ) {

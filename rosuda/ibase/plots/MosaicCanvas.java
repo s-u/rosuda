@@ -334,7 +334,7 @@ public class MosaicCanvas extends BaseCanvas {
                             addGapY += aGap[i];
                 }
                 
-                int[] ref = ft.getMatchingCases(combination);
+                int[] ref = ft.getMatchingCases(combination,maxLevel);
                 boolean empty = (ref.length==0);
                 
                 if( stop || empty ) {	            // Now the rectangles are generated
