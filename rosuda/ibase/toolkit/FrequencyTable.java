@@ -168,7 +168,7 @@ public class FrequencyTable {
         for(int i=vsize-2; i>=0; i--){
             factors[i] = factors[i+1]*vars[i+1].getNumCats();
         }
-        
+
         int n=0;
         for(int i=0; i<maxLevel; i++){
             n += factors[i]*com[i];
@@ -329,6 +329,7 @@ public class FrequencyTable {
         int[][] index;
         // permuted pendants
         double[]   p_table  = new double[table.length];
+        CombinationEntry[]   p_cetable  = new CombinationEntry[table.length];
         double[]   p_exp    = new double[table.length];
         String[][] p_lnames = new String[vsize][];
         SVar[] p_vars = new SVar[vsize];
@@ -383,10 +384,12 @@ public class FrequencyTable {
             }
             decompose += index[i][perm[vsize-1]];
             p_table[decompose]  = table[i];
+            p_cetable[decompose] = ceTable[i];
             p_exp[decompose]    = exp[i];
         }
         
         table = p_table;
+        ceTable = p_cetable;
         exp = p_exp;
         vars = p_vars;
         
