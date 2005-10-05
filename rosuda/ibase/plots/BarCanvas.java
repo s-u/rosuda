@@ -212,15 +212,40 @@ public class BarCanvas extends BaseCanvas {
         if(baseDrag && moveDrag) {
             int h=getBounds().height;
             int basey=h-mBottom;
-            int dragNew = ax.getCatByPos((orientation==0)?baseDragX2:baseDragY2);
+            int pos = (orientation==0)?baseDragX2:baseDragY2;
+            int dragNew = ax.getCatByPos(pos);
             int myX1=ax.getCatLow(dragNew);
             int myX2=ax.getCatUp(dragNew);
-            g.setColor(192,192,192);
-            g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
-            g.setColor("outline");
-            g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
+            if(orientation==0){
+                g.setColor(192,192,192);
+                g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
+                g.setColor("outline");
+                g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
+            }
+            else{
+                g.setColor(192,192,192);
+                g.fillRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
+                g.setColor("outline");
+                g.drawRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
+            }
             g.setColor("drag");
-            g.fillRect(myX1,basey,myX2-myX1,4);
+            int difference;
+            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+                int x,w;
+                if(difference>0){
+                    x=ax.getCatCenter(dragNew);
+                    w=2*(myX2-x);
+                } else{
+                    w=2*(ax.getCatCenter(dragNew)-myX1);
+                    x=ax.getCatCenter(dragNew)-w;
+                    
+                }
+                if(orientation==0) g.fillRect(x,basey,w,4);
+                else g.fillRect(mLeft,x,4,w);
+            } else{
+                if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
+                else g.fillRect(mLeft,myX1,4,myX2-myX1);
+            }
         };
     }
     
@@ -245,13 +270,22 @@ public class BarCanvas extends BaseCanvas {
     
     public void mouseReleased(MouseEvent e) {
         if (baseDrag && moveDrag) {
-            int dragNew;
-            for(dragBar=0; dragBar<bars; dragBar++){
-                if(pp[dragBar]!=null && pp[dragBar].contains(baseDragX1,baseDragY1)) break;
+            int pos = (orientation==0)?e.getX():e.getY();
+            int dragNew = ax.getCatByPos(pos);
+            int difference;
+            int myX1=ax.getCatLow(dragNew);
+            int myX2=ax.getCatUp(dragNew);
+            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+                int newPos=ax.getCatSeqIndex(dragNew);
+                if(difference>0) newPos += 1;
+                for(dragBar=0; dragBar<bars; dragBar++){
+                    if(pp[dragBar]!=null && pp[dragBar].contains(baseDragX1,baseDragY1)) break;
+                }
+                ax.moveCat(dragBar, newPos);
+            } else{
+                if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
+                else ax.swapCats(dragNew, ax.getCatByPos(baseDragY1));
             }
-            dragNew = ax.getCatByPos((orientation==0)?e.getX():e.getY());
-            
-            ax.moveCat(dragBar, ax.getCatSeqIndex(dragNew));
             
             baseDrag=false;
             updateObjects();
