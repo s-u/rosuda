@@ -436,7 +436,6 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void keyReleased(KeyEvent e) {
-        int[] interact;
         int code = e.getKeyCode();
         boolean repaint=false;
         switch(code){
@@ -499,23 +498,6 @@ public class MosaicCanvas extends BaseCanvas {
                     repaint=true;
                 }
                 break;
-            case KeyEvent.VK_ADD:
-            case KeyEvent.VK_PLUS:
-                interact = new int[maxLevel];
-                for( int i=0; i<maxLevel; i++ )
-                    interact[i] = i;
-                if( !ft.addInteraction( interact, true ) )
-                    Toolkit.getDefaultToolkit().beep();
-                repaint=true;
-                break;
-            case KeyEvent.VK_SUBTRACT:
-            case KeyEvent.VK_MINUS:
-                interact = new int[maxLevel];
-                for( int i=0; i<maxLevel; i++ )
-                    interact[i] = i;
-                if( !ft.deleteInteraction( interact ) )
-                    Toolkit.getDefaultToolkit().beep();
-                repaint=true;
         }
         if(repaint){
             updateObjects();
