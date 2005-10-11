@@ -73,7 +73,7 @@ public abstract class ContourPlot extends Plot {
             rcon.voidEval("zoom" + clRname + " <- " + zoom);
             rcon.voidEval("horShift" + clRname + " <- " + horizontalShift);
             rcon.voidEval("verShift" + clRname + " <- " + verticalShift);
-            if(zoom>=1){
+            if(zoom<=1){
                 rcon.voidEval("xr" + clRname + " <- seq((1/2-horShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), (1/2-horShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), length = grid" + clRname + ")");
                 rcon.voidEval("yr" + clRname + " <- seq((1/2-verShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), (1/2-verShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), length = grid" + clRname + ")");
             } else{

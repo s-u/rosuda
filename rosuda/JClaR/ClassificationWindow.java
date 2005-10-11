@@ -130,15 +130,15 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         
         double zoom = ((Integer)spinZoom.getValue()).doubleValue()/100;
         double d;
-        if(zoom>=1) d = 1;
-        else d = 1/zoom;
+        if(zoom<=1) d = 1.0/3;
+        else d = 1/(2+1/zoom);
         
-        newHorizontalVisibleAmount = d/3*(scrPlotHorizontal.getMaximum()-scrPlotHorizontal.getMinimum());
+        newHorizontalVisibleAmount = d*(scrPlotHorizontal.getMaximum()-scrPlotHorizontal.getMinimum());
         correction = (scrPlotHorizontal.getVisibleAmount()-newHorizontalVisibleAmount)/2;
         scrPlotHorizontal.setVisibleAmount((int)Math.floor(newHorizontalVisibleAmount));
         scrPlotHorizontal.setValue((int)Math.floor(scrPlotHorizontal.getValue()+correction+0.5));
         
-        newVerticalVisibleAmount = d/3*(scrPlotVertical.getMaximum()-scrPlotVertical.getMinimum());
+        newVerticalVisibleAmount = d*(scrPlotVertical.getMaximum()-scrPlotVertical.getMinimum());
         correction = (scrPlotVertical.getVisibleAmount()-newVerticalVisibleAmount)/2;
         scrPlotVertical.setVisibleAmount((int)Math.floor(newVerticalVisibleAmount));
         scrPlotVertical.setValue((int)Math.floor(scrPlotVertical.getValue()+correction+0.5));
