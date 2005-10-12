@@ -99,8 +99,8 @@ public class FrequencyTable {
         
         protected boolean CombinationEqualsCase(int c) {
             for (int i = 0; i < vsize; i++) {
-                String str = (String)ccs.get(vars[i].getName());
-                if(str.compareTo(vars[i].at(c).toString())!=0)
+                Comparable str = (Comparable)ccs.get(vars[i].getName());
+                if(str.compareTo(vars[i].at(c))!=0)
                     return false;
             }
             return true;
@@ -137,7 +137,7 @@ public class FrequencyTable {
             for(int i=0; i<vars.length; i++){
                 lnames[i] = new String[getLevels()[i]];
                 for(int j=0; j<getLevels()[i]; j++){
-                    lnames[i][j] = (String)vars[i].getCatAt(j);
+                    lnames[i][j] = vars[i].getCatAt(j).toString();
                 }
             }
         }
@@ -153,6 +153,14 @@ public class FrequencyTable {
     }
     
     public int[] getMatchingCases(int[] com, int maxLevel){
+        
+        for(int i=0; i<com.length && i<maxLevel; i++){
+            if(com[i]==-1){
+                maxLevel=i;
+                break;
+            }
+        }
+        
         int[] factors = new int[vsize];
         factors[vsize-1]=1;
         for(int i=vsize-2; i>=0; i--){

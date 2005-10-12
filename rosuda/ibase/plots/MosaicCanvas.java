@@ -38,7 +38,7 @@ public class MosaicCanvas extends BaseCanvas {
         
         this.frame=f;
         this.v = vars;
-        maxLevel = v.length; // should not be set here as it can be changed. is this the same as vs: ??
+        maxLevel = v.length;
         this.vs = v.length;
         for(int i=0; i<vs; i++){
             v[i].categorize();
@@ -246,7 +246,8 @@ public class MosaicCanvas extends BaseCanvas {
         //int levels = ft.getLevels()[levelid];
         int k = vs;
         String name = v[levelid].getName();
-        String[] lnames = (String[])v[levelid].getCategories();
+        
+        Object[] lnames = v[levelid].getCategories();
         int levels = lnames.length;
         
         double[] exp = ft.getExp();
@@ -318,7 +319,8 @@ public class MosaicCanvas extends BaseCanvas {
         if( total > 0 ){
             for (int j=0; j < levels; j++) {
                 combination[levelid]=j;
-                
+                if(levelid+1<combination.length) combination[levelid+1]=-1;
+                                
                 info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
                 
                 boolean stop  = false;
@@ -336,7 +338,7 @@ public class MosaicCanvas extends BaseCanvas {
                 
                 int[] ref = ft.getMatchingCases(combination,maxLevel);
                 boolean empty = (ref.length==0);
-                
+
                 if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
                     tile.info=info;
