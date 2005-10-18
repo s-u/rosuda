@@ -384,7 +384,6 @@ public class BarCanvas extends BaseCanvas {
                 }
             } catch (Exception eee) {}
         }
-        if (cmd=="exit") WinTracker.current.Exit();
         return null;
     };
     

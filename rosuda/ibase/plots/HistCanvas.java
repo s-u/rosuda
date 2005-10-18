@@ -242,7 +242,7 @@ public class HistCanvas extends BaseCanvas
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
-        if (cmd=="print") run(o,"exportPS");
+        
         if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
@@ -263,7 +263,6 @@ public class HistCanvas extends BaseCanvas
 		}
 	    } catch (Exception eee) {};
 	}
-	if (cmd=="exit") WinTracker.current.Exit();
 	return null;
     }
 }

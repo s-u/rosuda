@@ -523,6 +523,7 @@ public class BaseCanvas
         if (cmd=="print") run(o,"exportPS");
         if (cmd=="rotate") rotate(1);
         if (cmd=="flip" && allow180) rotate(2);
+        if (cmd=="exit") WinTracker.current.Exit();
         return null;
     };
     
