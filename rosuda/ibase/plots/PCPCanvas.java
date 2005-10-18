@@ -80,9 +80,6 @@ public class PCPCanvas extends BaseCanvas {
         if (v[1].getInternalType()==SVar.IVT_Resid || v[1].getInternalType()==SVar.IVT_RCC) isResidPlot=true;
         setBackground(Common.backgroundColor);
         baseDrag=false;
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addKeyListener(this); f.addKeyListener(this);
         MenuBar mb=null;
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
@@ -99,6 +96,7 @@ public class PCPCanvas extends BaseCanvas {
         if (cs) {
             A[1].setValueRange(totMin,totMax-totMin);
             //TODO: notify!
+            updateObjects();
             setUpdateRoot(0); repaint();
             return;
         }
@@ -117,6 +115,7 @@ public class PCPCanvas extends BaseCanvas {
             }
         };
         A[1].setDefaultRange();
+        updateObjects();
         setUpdateRoot(0); repaint();
     }
     
@@ -188,11 +187,11 @@ public class PCPCanvas extends BaseCanvas {
             //if (Common.DEBUG>0)
             //System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
             while (fi<A[0].vBegin+A[0].vLen) {
-                int t=TH-A[0].getValuePos(fi);
-                g.drawLine(t,Y+H,t,Y+H+5);
+                int t=A[0].getValuePos(fi);
+                g.drawLine(t,TH-Y-H,t,TH-Y-H-5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                        A[0].getDisplayableValue(fi),t-5,Y+H+20);
+                        A[0].getDisplayableValue(fi),t-5,TH-Y-H-20);
                 fi+=f;
             };
         }
@@ -245,7 +244,7 @@ public class PCPCanvas extends BaseCanvas {
                     g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
                 }
                     }
-            
+         
             if (drawPoints) // last variable is not painted in the loop above, so we do it now
                 for (int i=0;i<v[1].size();i++)
                     if (m.at(i) && (na0 || (v[v.length-1].at(i)!=null))) {
@@ -298,9 +297,6 @@ public class PCPCanvas extends BaseCanvas {
     
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar()=='l') run(this,"labels");
-        if (e.getKeyChar()=='P') run(this,"print");
-        if (e.getKeyChar()=='X') run(this,"exportPGS");
-        if (e.getKeyChar()=='C') run(this,"exportCases");
         if (e.getKeyChar()=='e') run(this,"selRed");
         if (e.getKeyChar()=='t') run(this,"trigraph");
         if (e.getKeyChar()=='c') run(this,"common");
@@ -308,6 +304,7 @@ public class PCPCanvas extends BaseCanvas {
         if (e.getKeyChar()=='S') run(this,"scaleDlg");
         if (e.getKeyChar()=='.') { xtraShift+=5; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()==',') { xtraShift-=5; if (xtraShift<0) xtraShift=0; setUpdateRoot(0); repaint(); }
+        super.keyTyped(e);
     }
     
     public void keyPressed(KeyEvent e) {
@@ -419,30 +416,22 @@ public class PCPCanvas extends BaseCanvas {
         return null;
     }
     
-    public void actionPerformed(ActionEvent e) {
-        if (e==null) return;
-        run(e.getSource(),e.getActionCommand());
-    };
-    
     public void updateObjects() {
-        boolean recalcPolygons=false;
         
         if (pp==null || pp.length!=v[1].size()) {
             pp=new PlotPrimitive[v[1].size()];
-            recalcPolygons=true;
         }
         
-        if(recalcPolygons){
-            TW = getSize().width;
-            TH = getSize().height;
-            
-            boolean isZ=false;
-            int pd=(nodeSize>>1);
-            int[][] xs = new int[v[1].size()][v.length-1];
-            int[][] ys = new int[v[1].size()][v.length-1];
-            for (int j=0;j<v.length-1;j++)
-                for (int i=0;i<v[1].size();i++)
-                    if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
+        TW = getSize().width;
+        TH = getSize().height;
+        
+        boolean isZ=false;
+        int pd=(nodeSize>>1);
+        int[][] xs = new int[v[1].size()][v.length-1];
+        int[][] ys = new int[v[1].size()][v.length-1];
+        for (int j=0;j<v.length-1;j++)
+            for (int i=0;i<v[1].size();i++)
+                if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
 //            if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
 //                isZ=!isZ; g.setColor(isZ?"lineZ":"line");
 //            }
@@ -458,22 +447,21 @@ public class PCPCanvas extends BaseCanvas {
 //            if ((dropColor && (v[j].at(i)==null))!=isZ) {
 //                isZ=!isZ; g.setColor(isZ?"lineZ":"line");
 //            }
-                xs[i][j] = A[0].getCatCenter(j);
-                ys[i][j] = TH-A[commonScale?1:(j+1)].getValuePos(v[j+1].atD(i));
-                
+            xs[i][j] = A[0].getCatCenter(j);
+            ys[i][j] = A[commonScale?1:(j+1)].getValuePos(v[j+1].atD(i));
+            
 //        if (drawPoints) // last variable is not painted in the loop above, so we do it now
 //            for (int i=0;i<v[1].size();i++)
 //                if ((drawHidden || !m.at(i)) && (na0 || (v[v.length-1].at(i)!=null))) {
 //            int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
 //            g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
 //                }
-                    }
-            for(int j=0; j<xs.length; j++){
-                pp[j] = new PPrimPolygon();
-                ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
-                ((PPrimPolygon)pp[j]).closed=false;
-                ((PPrimPolygon)pp[j]).fill=false;
-            }
+                }
+        for(int j=0; j<xs.length; j++){
+            pp[j] = new PPrimPolygon();
+            ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            ((PPrimPolygon)pp[j]).closed=false;
+            ((PPrimPolygon)pp[j]).fill=false;
         }
     }
 };
