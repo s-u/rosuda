@@ -150,7 +150,6 @@ public class BaseCanvas
                 case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                 case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
             };
-            System.out.println("updada");}
             if (ax!=null && (W!=w || updateGeometry))
                 switch (orientation) {
                     case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
