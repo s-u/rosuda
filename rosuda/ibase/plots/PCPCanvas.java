@@ -55,7 +55,8 @@ public class PCPCanvas extends BaseCanvas {
         mLeft=mRight=mTop=10;
         
         v=new SVar[yvs.length+1];
-        A=new Axis[yvs.length+1];
+        A=new Axis[yvs.length-1];
+        opAy = A;
         int i=0;
         SVar xv=new SVarObj("PCP.index",true);
         while(i<yvs.length) {
@@ -70,12 +71,9 @@ public class PCPCanvas extends BaseCanvas {
             xv.add(yvs[i].getName());
             v[i+1]=yvs[i]; i++;
         };
-        A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
-        A[1].setGeometry(Axis.O_Y,mBottom,getSize().height-mBottom-mTop);
-        A[1].setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
-        v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-        ax=A[0];
-        ay=A[1];
+        ay=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
+        ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
+        v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         setBackground(Common.backgroundColor);
         baseDrag=false;
         MenuBar mb=null;
@@ -91,27 +89,28 @@ public class PCPCanvas extends BaseCanvas {
         EzMenu.getItem(getFrame(),"common").setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),"YrangeDlg").setEnabled(cs);
         if (cs) {
-            A[1].setValueRange(totMin,totMax-totMin);
+            ay.setValueRange(totMin,totMax-totMin);
             //TODO: notify!
             updateObjects();
             setUpdateRoot(0); repaint();
             return;
         }
-        if (A[A.length-1]==null) {
+        if (A[0]==null) {
             Dimension Dsize=getSize();
             int w=Dsize.width, h=Dsize.height;
             int lshift=0;
             int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
             
-            int i=2;
+            int i=0;
             while (i<A.length) {
-                A[i]=new Axis(v[i],Axis.O_Y,v[i].isCat()?Axis.T_EqCat:Axis.T_Num);
-                A[i].setGeometry(Axis.O_Y,mBottom,innerH);
+                A[i]=new Axis(v[i+2],Axis.O_Y,v[i+2].isCat()?Axis.T_EqCat:Axis.T_Num);
                 A[i].addDepend(this);
                 i++;
             }
+            
+            updateGeometry=true;
         };
-        A[1].setDefaultRange();
+        ay.setDefaultRange();
         updateObjects();
         setUpdateRoot(0); repaint();
     }
@@ -150,12 +149,12 @@ public class PCPCanvas extends BaseCanvas {
             int lshift=0;
             int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
             
-            int i=1;
+            /*int i=1;
             while (i<A.length) {
                 if (A[i]!=null)
                     A[i].setGeometry(Axis.O_Y,mBottom+xtraShift,(H=innerH)); //-xtraShift
                 i++;
-            }
+            }*/
             Y=TH-mBottom-innerH;
         };
         
@@ -168,27 +167,27 @@ public class PCPCanvas extends BaseCanvas {
         
         /* draw ticks and labels for X axis */
         {
-            double f=A[0].getSensibleTickDistance(50,26);
-            double fi=A[0].getSensibleTickStart(f);
-            while (fi<A[0].vBegin+A[0].vLen) {
-                int t=A[0].getValuePos(fi);
+            double f=ax.getSensibleTickDistance(50,26);
+            double fi=ax.getSensibleTickStart(f);
+            while (fi<ax.vBegin+ax.vLen) {
+                int t=ax.getValuePos(fi);
                 g.drawLine(t,TH-Y-H,t,TH-Y-H-5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                        A[0].getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
+                        ax.getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
                 fi+=f;
             };
         }
         
         /* draw ticks and labels for Y axis */
         if (commonScale) {
-            double f=A[1].getSensibleTickDistance(50,18);
-            double fi=A[1].getSensibleTickStart(f);
-            while (fi<A[1].vBegin+A[1].vLen) {
-                int t=A[1].getValuePos(fi);
+            double f=ay.getSensibleTickDistance(50,18);
+            double fi=ay.getSensibleTickStart(f);
+            while (fi<ay.vBegin+ay.vLen) {
+                int t=ay.getValuePos(fi);
                 g.drawLine(X-2,t,X+2,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X+4,(t+5));
+                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi),X+4,(t+5));
                 fi+=f;
             };
         }
@@ -197,42 +196,21 @@ public class PCPCanvas extends BaseCanvas {
             g.setColor("axis");
             int xx=0;
             while (xx<v[0].getNumCats()) {
-                int t=A[0].getCatCenter(xx++);
+                int t=ax.getCatCenter(xx++);
                 g.drawLine(t,mTop,t,getSize().height-mTop-mBottom);
             }
         }
         
         if (showResidLines) {
             g.setColor("Rlines");
-            g.drawLine(X,TH-A[1].getValuePos(0.5),X+W,TH-A[1].getValuePos(0.5));
-            g.drawLine(X,TH-A[1].getValuePos(-0.5),X+W,TH-A[1].getValuePos(-0.5));
+            g.drawLine(X,TH-ay.getValuePos(0.5),X+W,TH-ay.getValuePos(0.5));
+            g.drawLine(X,TH-ay.getValuePos(-0.5),X+W,TH-ay.getValuePos(-0.5));
         }
-        
-        /*if (m.marked()>0) {
-            g.setColor("marked");
-            for (int j=2;j<v.length;j++)
-                for (int i=0;i<v[1].size();i++)
-                    if (m.at(i) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
-                g.drawLine(A[0].getCatCenter(j-2),TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i)),
-                        A[0].getCatCenter(j-1),TH-A[commonScale?1:j].getValuePos(v[j].atD(i)));
-                if (drawPoints) {
-                    int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
-                    g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
-                }
-                    }
-         
-            if (drawPoints) // last variable is not painted in the loop above, so we do it now
-                for (int i=0;i<v[1].size();i++)
-                    if (m.at(i) && (na0 || (v[v.length-1].at(i)!=null))) {
-                int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
-                g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
-                    }
-        }*/
         
         if (baseDrag) {
             g.nextLayer();
-            int dx1=A[0].clip(x1),dy1=TH-A[1].clip(TH-y1),
-                    dx2=A[0].clip(x2),dy2=TH-A[1].clip(TH-y2);
+            int dx1=ax.clip(x1),dy1=TH-ay.clip(TH-y1),
+                    dx2=ax.clip(x2),dy2=TH-ay.clip(TH-y2);
             if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
             if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
             g.setColor("aSelBg");
@@ -298,8 +276,8 @@ public class PCPCanvas extends BaseCanvas {
         }
         if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
-            int rt=(cmd=="YrangeDlg")?1:0;
-            Dialog d=intDlg=new Dialog(myFrame,(rt==1)?"Y range":"X range",true);
+            Axis rt=(cmd=="YrangeDlg")?ay:ax;
+            Dialog d=intDlg=new Dialog(myFrame,(rt==ay)?"Y range":"X range",true);
             IDlgCL ic=new IDlgCL(this);
             d.setBackground(Color.white);
             d.setLayout(new BorderLayout());
@@ -313,8 +291,8 @@ public class PCPCanvas extends BaseCanvas {
             Panel cp=new Panel(); cp.setLayout(new FlowLayout());
             d.add(cp);
             cp.add(new Label("start: "));
-            TextField tw=new TextField(""+A[rt].vBegin,6);
-            TextField th=new TextField(""+(A[rt].vBegin+A[rt].vLen),6);
+            TextField tw=new TextField(""+rt.vBegin,6);
+            TextField th=new TextField(""+(rt.vBegin+rt.vLen),6);
             cp.add(tw);
             cp.add(new Label(", end: "));
             cp.add(th);
@@ -324,7 +302,7 @@ public class PCPCanvas extends BaseCanvas {
             if (!cancel) {
                 double w=Tools.parseDouble(tw.getText());
                 double h=Tools.parseDouble(th.getText());
-                A[rt].setValueRange(w,h-w);
+                rt.setValueRange(w,h-w);
                 setUpdateRoot(0);
                 repaint();
             }
@@ -351,8 +329,8 @@ public class PCPCanvas extends BaseCanvas {
             RespDialog d=new RespDialog(myFrame,"Set y scale",true,RespDialog.okCancel);
             Panel cp=d.getContentPanel();
             cp.add(new Label("begin: "));
-            TextField tw=new TextField(""+A[1].vBegin,6);
-            TextField th=new TextField(""+(A[1].vBegin+A[1].vLen),6);
+            TextField tw=new TextField(""+ay.vBegin,6);
+            TextField th=new TextField(""+(ay.vBegin+ay.vLen),6);
             cp.add(tw);
             cp.add(new Label(", end: "));
             cp.add(th);
@@ -361,7 +339,7 @@ public class PCPCanvas extends BaseCanvas {
             if (!cancel) {
                 double vb=Tools.parseDouble(tw.getText());
                 double ve=Tools.parseDouble(th.getText());
-                if (ve-vb>0) A[1].setValueRange(vb,ve-vb);
+                if (ve-vb>0) ay.setValueRange(vb,ve-vb);
                 if (myFrame!=null) myFrame.pack();
             }
             d.dispose();
@@ -386,8 +364,8 @@ public class PCPCanvas extends BaseCanvas {
         for (int j=0;j<v.length-1;j++)
             for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
-            xs[i][j] = A[0].getCatCenter(j);
-            ys[i][j] = A[commonScale?1:(j+1)].getValuePos(v[j+1].atD(i));
+            xs[i][j] = ax.getCatCenter(j);
+            ys[i][j] = ((commonScale||j==0)?ay:A[j-1]).getValuePos(v[j+1].atD(i));
                 }
         for(int j=0; j<xs.length; j++){
             pp[j] = new PPrimPolygon();
