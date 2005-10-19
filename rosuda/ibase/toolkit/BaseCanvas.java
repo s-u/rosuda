@@ -87,6 +87,10 @@ public class BaseCanvas
     
     protected float ppAlpha = 1.0f;
     
+    /** arrays of additional axes that are updated upon resize. can be null */
+    protected Axis[] opAx; // axes parallel to ax
+    protected Axis[] opAy; // axes parallel to ay
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -139,12 +143,27 @@ public class BaseCanvas
                 case 2: ay.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                 case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
             };
+            if(opAy!=null && (H!=h || updateGeometry)){
+                switch (orientation) {
+                case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+                case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+                case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+                case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+            };
+            System.out.println("updada");}
             if (ax!=null && (W!=w || updateGeometry))
                 switch (orientation) {
                     case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                     case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                     case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                     case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+                };
+            if(opAx!=null && (W!=w || updateGeometry))
+                switch (orientation) {
+                    case 0: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+                    case 1: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+                    case 2: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+                    case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                 };
                 if (H!=h || W!=w || updateGeometry) {
                     W=w; H=h;
