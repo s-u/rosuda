@@ -18,8 +18,6 @@ public class PCPCanvas extends BaseCanvas {
     /** variables; 0=x, 1,2,3...=Y */
     SVar v[];
     
-    /** flag whether alternative selection style should be used */
-    boolean selRed=false;
     
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false;
@@ -29,11 +27,9 @@ public class PCPCanvas extends BaseCanvas {
     
     boolean drawPoints=false;
     boolean drawAxes=false;
-    boolean dropColor=false;
     
     int xtraShift=0; // hack,hack,hack - this allows individual scales to be move up a bit to prevent clutter on the y axis
     int nodeSize=3;
-    boolean isResidPlot=false; // we should move this out - that's a specific PCP ...
     boolean showResidLines=false;
     
     /** array of axes */
@@ -43,8 +39,6 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
     
     int x1, y1, x2, y2;
-    
-    float alpha=1.0f;
     
     MenuItem MIlabels=null;
     
@@ -56,6 +50,10 @@ public class PCPCanvas extends BaseCanvas {
      * @param mark associated marker */
     public PCPCanvas(Frame f, SVar[] yvs, SMarker mark) {
         super(f,mark);
+        
+        mBottom=30;
+        mLeft=mRight=mTop=10;
+        
         v=new SVar[yvs.length+1];
         A=new Axis[yvs.length+1];
         int i=0;
@@ -73,18 +71,17 @@ public class PCPCanvas extends BaseCanvas {
             v[i+1]=yvs[i]; i++;
         };
         A[1]=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); A[1].addDepend(this);
+        A[1].setGeometry(Axis.O_Y,mBottom,getSize().height-mBottom-mTop);
         A[1].setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
         ax=A[0];
         ay=A[1];
-        if (v[1].getInternalType()==SVar.IVT_Resid || v[1].getInternalType()==SVar.IVT_RCC) isResidPlot=true;
         setBackground(Common.backgroundColor);
         baseDrag=false;
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","Toggle drop","toggleDrop","Toggle thresholds","toggle0.5","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
-        if (!isResidPlot) EzMenu.getItem(f,"toggle0.5").setEnabled(false);
         EzMenu.getItem(getFrame(),"XrangeDlg").setEnabled(false);
     }
     
@@ -103,13 +100,13 @@ public class PCPCanvas extends BaseCanvas {
         if (A[A.length-1]==null) {
             Dimension Dsize=getSize();
             int w=Dsize.width, h=Dsize.height;
-            int innerL=30, innerB=30, lshift=0;
-            int innerW=w-innerL-10, innerH=h-innerB-10;
+            int lshift=0;
+            int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
             
             int i=2;
             while (i<A.length) {
                 A[i]=new Axis(v[i],Axis.O_Y,v[i].isCat()?Axis.T_EqCat:Axis.T_Num);
-                A[i].setGeometry(Axis.O_Y,innerB,innerH);
+                A[i].setGeometry(Axis.O_Y,mBottom,innerH);
                 A[i].addDepend(this);
                 i++;
             }
@@ -131,17 +128,13 @@ public class PCPCanvas extends BaseCanvas {
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("white",255,255,255);
-        if (selRed)
-            g.defineColor("marked",255,0,0);
-        else
-            g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
         g.defineColor("axis",192,192,192);
         g.defineColor("black",0,0,0);
         g.defineColor("outline",0,0,0);
         g.defineColor("point",0,0,128);
         g.defineColor("red",255,0,0);
         g.defineColor("line",128,128,192); // color of line plot
-        g.defineColor("lineZ",192,192,255); // color of the line when dropped
         g.defineColor("Rlines",96,128,96); // color of the resudual thresholds
         g.defineColor("lines",96,96,255);
         g.defineColor("selText",255,0,0);
@@ -154,17 +147,16 @@ public class PCPCanvas extends BaseCanvas {
         if (Dsize.width!=TW || Dsize.height!=TH) {
             int w=Dsize.width, h=Dsize.height;
             TW=w; TH=h;
-            int innerL=30, innerB=30, lshift=0;
-            int innerW=w-innerL-10, innerH=h-innerB-10;
+            int lshift=0;
+            int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
             
-            A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
             int i=1;
             while (i<A.length) {
                 if (A[i]!=null)
-                    A[i].setGeometry(Axis.O_Y,innerB+xtraShift,(H=innerH)-xtraShift);
+                    A[i].setGeometry(Axis.O_Y,mBottom+xtraShift,(H=innerH)); //-xtraShift
                 i++;
             }
-            Y=TH-innerB-innerH;
+            Y=TH-mBottom-innerH;
         };
         
         if (TW<50||TH<50) {
@@ -174,24 +166,16 @@ public class PCPCanvas extends BaseCanvas {
             return;
         };
         
-        g.setColor("white");
-        g.fillRect(X,Y,W,H);
-        g.setColor("black");
-        g.drawLine(X,Y,X,Y+H);
-        g.drawLine(X,Y+H,X+W,Y+H);
-        
         /* draw ticks and labels for X axis */
         {
             double f=A[0].getSensibleTickDistance(50,26);
             double fi=A[0].getSensibleTickStart(f);
-            //if (Common.DEBUG>0)
-            //System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
             while (fi<A[0].vBegin+A[0].vLen) {
                 int t=A[0].getValuePos(fi);
                 g.drawLine(t,TH-Y-H,t,TH-Y-H-5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                        A[0].getDisplayableValue(fi),t-5,TH-Y-H-20);
+                        A[0].getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
                 fi+=f;
             };
         }
@@ -200,13 +184,11 @@ public class PCPCanvas extends BaseCanvas {
         if (commonScale) {
             double f=A[1].getSensibleTickDistance(50,18);
             double fi=A[1].getSensibleTickStart(f);
-            //if (Common.DEBUG>0)
-            //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
             while (fi<A[1].vBegin+A[1].vLen) {
-                int t=TH-A[1].getValuePos(fi);
-                g.drawLine(X-5,t,X,t);
+                int t=A[1].getValuePos(fi);
+                g.drawLine(X-2,t,X+2,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X-8,t+5, PoGraSS.TA_Right);
+                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):A[1].getDisplayableValue(fi),X+4,(t+5));
                 fi+=f;
             };
         }
@@ -216,7 +198,7 @@ public class PCPCanvas extends BaseCanvas {
             int xx=0;
             while (xx<v[0].getNumCats()) {
                 int t=A[0].getCatCenter(xx++);
-                g.drawLine(t,Y,t,Y+H);
+                g.drawLine(t,mTop,t,getSize().height-mTop-mBottom);
             }
         }
         
@@ -225,12 +207,6 @@ public class PCPCanvas extends BaseCanvas {
             g.drawLine(X,TH-A[1].getValuePos(0.5),X+W,TH-A[1].getValuePos(0.5));
             g.drawLine(X,TH-A[1].getValuePos(-0.5),X+W,TH-A[1].getValuePos(-0.5));
         }
-        
-        //############
-        g.setGlobalAlpha(alpha);
-        g.setColor("line");
-        //...
-        g.resetGlobalAlpha();
         
         /*if (m.marked()>0) {
             g.setColor("marked");
@@ -271,33 +247,8 @@ public class PCPCanvas extends BaseCanvas {
         x1=x-2; y1=y-2; x2=x+3; y2=y+3; baseDrag=true; mouseReleased(ev);
     };
     
-    public void mouseReleased(MouseEvent e) {
-        int X1=x1, Y1=y1, X2=x2, Y2=y2;
-        if (x1>x2) { X2=x1; X1=x2; };
-        if (y1>y2) { Y2=y1; Y1=y2; };
-        Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
-        
-        boolean setTo=false;
-        if (e.isControlDown()) setTo=true;
-        if (!e.isShiftDown()) m.selectNone();
-        
-        baseDrag=false;
-        for (int j=1;j<v.length;j++)
-            for (int i=0;i<v[1].size();i++) {
-            int x=A[0].getCatCenter(j-1);
-            int y=TH-A[commonScale?1:j].getValuePos(v[j].atD(i));
-            if (x>=X1 && x<=X2 && y>=Y1 && y<=Y2)
-                m.set(i,m.at(i)?setTo:true);
-            }
-        
-        m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-        setUpdateRoot(1);
-        repaint();
-    };
-    
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar()=='l') run(this,"labels");
-        if (e.getKeyChar()=='e') run(this,"selRed");
         if (e.getKeyChar()=='t') run(this,"trigraph");
         if (e.getKeyChar()=='c') run(this,"common");
         if (e.getKeyChar()=='n') run(this,"toggleNA");
@@ -319,7 +270,6 @@ public class PCPCanvas extends BaseCanvas {
     public Object run(Object o, String cmd) {
         if (cmd=="print") { drawHidden=false; run(o,"exportPS"); drawHidden=true; return this; }
         super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
         if (cmd=="labels") {
             showLabels=!showLabels;
             MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
@@ -327,21 +277,25 @@ public class PCPCanvas extends BaseCanvas {
             repaint();
         };
         if (cmd=="alphaDown") {
-            alpha-=(alpha>0.2)?0.10:0.05; if (alpha<0f) alpha=0.05f;
+            ppAlpha-=(ppAlpha>0.2)?0.10:0.05; if (ppAlpha<0.5f) ppAlpha=0.05f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="alphaUp") {
-            alpha+=(alpha>0.2)?0.10:0.05; if (alpha>1f) alpha=1f;
+            ppAlpha+=(ppAlpha>0.2)?0.10:0.05; if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="exit") WinTracker.current.Exit();
-        if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(1); repaint(); };
         if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
-        if (cmd=="toggle0.5") { showResidLines=!showResidLines; setUpdateRoot(0); repaint(); }
-        if (cmd=="togglePts") { drawPoints=!drawPoints; setUpdateRoot(0); repaint(); }
-        if (cmd=="toggleDrop") { dropColor=!dropColor; setUpdateRoot(0); repaint(); }
+        if (cmd=="togglePts") {
+            drawPoints=!drawPoints;
+            for(int i=0; i<pp.length; i++){
+                ((PPrimPolygon)pp[i]).drawCorners=drawPoints;
+            }
+            setUpdateRoot(0);
+            repaint();
+        }
         if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
             int rt=(cmd=="YrangeDlg")?1:0;
@@ -432,36 +386,17 @@ public class PCPCanvas extends BaseCanvas {
         for (int j=0;j<v.length-1;j++)
             for (int i=0;i<v[1].size();i++)
                 if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
-//            if ((dropColor && (v[j-1].at(i)==null))!=isZ) {
-//                isZ=!isZ; g.setColor(isZ?"lineZ":"line");
-//            }
-//            int mm=m.getSec(i);
-//            if (mm>0) {
-//                Color c=ColorBridge.getMain().getColor(mm);
-//                if (c!=null) g.setColor(c);
-//            }
-//            if (drawPoints) {
-//                int x=A[0].getCatCenter(j-2); int y=TH-A[commonScale?1:j-1].getValuePos(v[j-1].atD(i));
-//                g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
-//            }
-//            if ((dropColor && (v[j].at(i)==null))!=isZ) {
-//                isZ=!isZ; g.setColor(isZ?"lineZ":"line");
-//            }
             xs[i][j] = A[0].getCatCenter(j);
             ys[i][j] = A[commonScale?1:(j+1)].getValuePos(v[j+1].atD(i));
-            
-//        if (drawPoints) // last variable is not painted in the loop above, so we do it now
-//            for (int i=0;i<v[1].size();i++)
-//                if ((drawHidden || !m.at(i)) && (na0 || (v[v.length-1].at(i)!=null))) {
-//            int x=A[0].getCatCenter(v.length-2); int y=TH-A[commonScale?1:v.length-1].getValuePos(v[v.length-1].atD(i));
-//            g.fillOval(x-pd,y-pd,nodeSize,nodeSize);
-//                }
                 }
         for(int j=0; j<xs.length; j++){
             pp[j] = new PPrimPolygon();
             ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
             ((PPrimPolygon)pp[j]).closed=false;
             ((PPrimPolygon)pp[j]).fill=false;
+            ((PPrimPolygon)pp[j]).selectByCorners=true;
+            ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
+            ((PPrimPolygon)pp[j]).ref = new int[] {j};
         }
     }
 };
