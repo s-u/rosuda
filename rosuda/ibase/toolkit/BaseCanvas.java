@@ -143,13 +143,13 @@ public class BaseCanvas
                 case 2: ay.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                 case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
             };
-            if(opAy!=null && (H!=h || updateGeometry)){
+            if(opAy!=null && (H!=h || updateGeometry))
                 switch (orientation) {
                 case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                 case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                 case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                 case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-            };
+                };
             if (ax!=null && (W!=w || updateGeometry))
                 switch (orientation) {
                     case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
