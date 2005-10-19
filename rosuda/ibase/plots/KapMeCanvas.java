@@ -265,7 +265,7 @@ public class KapMeCanvas extends BaseCanvas
     
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
+        
         if (cmd=="counts") {
             showCounts=!showCounts;
             EzMenu.getItem(getFrame(),"counts").setLabel((showCounts)?"Hide counts":"Show counts");

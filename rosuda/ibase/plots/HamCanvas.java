@@ -197,7 +197,7 @@ public class HamCanvas extends BaseCanvas
     
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
+        
         if (cmd=="tri") { useX3=!useX3; setUpdateRoot(0); repaint(); };
         if (cmd=="labels") { showLabels=!showLabels; setUpdateRoot(0); repaint(); };
         if (cmd=="alpha" && pp!=null && pp.length>0) {

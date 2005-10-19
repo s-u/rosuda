@@ -95,7 +95,7 @@ public class MosaicCanvas extends BaseCanvas {
     
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
+        
         if (cmd=="observed") { if(mode!=DISPLAY_MODE_OBSERVED) {mode=DISPLAY_MODE_OBSERVED; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="expected") { if(mode!=DISPLAY_MODE_EXPECTED) {mode=DISPLAY_MODE_EXPECTED; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="samebinsize") { if(mode!=DISPLAY_MODE_SAMEBINSIZE) {mode=DISPLAY_MODE_SAMEBINSIZE; setUpdateRoot(0); updateObjects(); repaint();}}

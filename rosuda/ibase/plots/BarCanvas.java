@@ -319,7 +319,7 @@ public class BarCanvas extends BaseCanvas {
     
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
+        
         if (cmd=="labels") {
             showLabels=!showLabels;
             setUpdateRoot(0);

@@ -241,7 +241,6 @@ public class HistCanvas extends BaseCanvas
     
     public Object run(Object o, String cmd) {
 	super.run(o,cmd);
-        if (m!=null) m.run(o,cmd);
         
         if (cmd=="exportCases") {
 	    try {
