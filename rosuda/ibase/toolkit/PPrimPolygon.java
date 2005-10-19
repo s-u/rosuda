@@ -26,12 +26,30 @@ public class PPrimPolygon extends PPrimBase {
     public boolean useSelAlpha=true;
     public boolean closed=true;
     public boolean fill=true;
+    public boolean selectByCorners=false;
+    public boolean drawCorners=false;
     
     /** checks whether the PlotPrimitive contains the given point.*/
-    public boolean contains(int x, int y) { return (pg==null)?false:pg.contains(x,y); }
+    public boolean contains(int x, int y) {
+        if(pg==null) return false;
+        if(selectByCorners){
+            for(int i=0; i<pg.npoints; i++)
+                if(x==pg.xpoints[i] && y==pg.ypoints[i])
+                    return true;
+            return false;
+        } else return pg.contains(x,y);
+    }
     
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
-    public boolean intersects(Rectangle rt) { return (pg==null)?false:pg.intersects(rt); }
+    public boolean intersects(Rectangle rt) {
+        if(pg==null) return false;
+        if(selectByCorners){
+            for(int i=0; i<pg.npoints; i++)
+                if(rt.contains(pg.xpoints[i], pg.ypoints[i]))
+                    return true;
+            return false;
+        } else return pg.intersects(rt);
+    }
     
     /** paint the primitive */
     public void paint(PoGraSS g, int orientation) {
@@ -46,6 +64,12 @@ public class PPrimPolygon extends PPrimBase {
         if (drawBorder) {
             g.setColor("outline");
             g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+        }
+        if(drawCorners){
+            g.setColor("outline");
+            for(int i=0; i<pg.npoints; i++){
+                g.fillOval(pg.xpoints[i]-2, pg.ypoints[i]-2, 5,5);
+            }
         }
     }
     
@@ -64,7 +88,14 @@ public class PPrimPolygon extends PPrimBase {
                 g.fillPolygon(pg.xpoints,pg.ypoints,pg.npoints);
             }
             if (drawBorder) {
-                g.setColor("outline");
+                if(!fill){
+                    if (useSelAlpha && sa<1.0)
+                        g.setColor(((float)Common.selectColor.getRed())/255.0F,
+                                ((float)Common.selectColor.getGreen())/255.0F,
+                                ((float)Common.selectColor.getBlue())/255.0F,(float)sa);
+                    else
+                        g.setColor("marked");
+                } else g.setColor("outline");
                 g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
             }
         }
