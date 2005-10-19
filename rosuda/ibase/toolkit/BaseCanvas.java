@@ -3,7 +3,6 @@ package org.rosuda.ibase.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.io.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
@@ -85,6 +84,8 @@ public class BaseCanvas
     
     /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link #updateObjects} and setting everything up. */
     protected boolean updateGeometry=false;
+    
+    protected float ppAlpha = 1.0f;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -204,10 +205,12 @@ public class BaseCanvas
         if (pp!=null) {
             int i=0;
             g.setColor("object");
+            g.setGlobalAlpha(ppAlpha);
             while (i<pp.length) {
                 if (pp[i]!=null) pp[i].paint(g, orientation);
                 i++;
             }
+            g.resetGlobalAlpha();
         }
         sw.profile("BaseCanvas.paintObjects");
     }
