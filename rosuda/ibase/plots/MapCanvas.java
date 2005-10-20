@@ -169,4 +169,6 @@ public class MapCanvas extends BaseCanvas
         }        	
 	return null;
     }
+    
+    public SVar getData(int id) { return (id==0)?v:null; }
 }

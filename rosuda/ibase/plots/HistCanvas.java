@@ -238,30 +238,4 @@ public class HistCanvas extends BaseCanvas
         }
         return "N/A";
     }
-    
-    public Object run(Object o, String cmd) {
-	super.run(o,cmd);
-        
-        if (cmd=="exportCases") {
-	    try {
-		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
-		if (p!=null) {
-		    p.println(v.getName());
-                    int i=0, sz=v.size();
-                    while (i<sz) {
-			if (m.at(i)) {
-                            Object oo=v.at(i);
-                            if (oo!=null)
-                                p.println(oo.toString());
-                            else
-                                p.println("NA");
-                        }
-                        i++;
-		    }
-		    p.close();
-		}
-	    } catch (Exception eee) {};
-	}
-	return null;
-    }
 }

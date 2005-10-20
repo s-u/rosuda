@@ -386,7 +386,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    //    rotate();
 	};
 	if (cmd=="print") run(o,"exportPS");
-        if (cmd=="exportCases") {
+        /*if (cmd=="exportCases") {
 	    try {
 		PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
 		if (p!=null) {
@@ -405,7 +405,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 		    p.close();
                 }
 	    } catch (Exception eee) {}
-	}
+	}*/
 	return null;
     }
 

@@ -508,6 +508,8 @@ public class MosaicCanvas extends BaseCanvas {
         super.keyReleased(e);
     }
     
+    public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
+    
     /**
      *  From org.rosuda.Mondrian.MyText, reduced and modified.
      *  Preliminary! org.rosuda.ibase.toolkit.PlotText should be used instead.

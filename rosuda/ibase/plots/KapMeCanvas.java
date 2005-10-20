@@ -274,4 +274,15 @@ public class KapMeCanvas extends BaseCanvas
         }
         return null;
     }        
+    
+    public SVar getData(int id) { 
+        switch(id){
+            case 0:
+                return vTime;
+            case 1:
+                return vEvent;
+            default:
+                return null;
+        }
+    }
 }

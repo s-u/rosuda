@@ -308,23 +308,6 @@ public class PCPCanvas extends BaseCanvas {
             }
             d.dispose();
         }
-        if (cmd=="exportCases") {
-            try {
-                PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
-                if (p!=null) {
-                    p.println(v[0].getName()+"\t"+v[1].getName());
-                    int i=0, sz=v[0].size();
-                    while(i<sz) {
-                        if (m.at(i)) {
-                            Object oo=v[0].at(i);
-                            p.println(((oo==null)?"NA":oo.toString())+"\t"+((v[1].at(i)==null)?"NA":v[1].at(i).toString()));
-                        }
-                        i++;
-                    }
-                    p.close();
-                }
-            } catch (Exception eee) {}
-        }
         if (cmd=="scaleDlg" && commonScale) {
             RespDialog d=new RespDialog(myFrame,"Set y scale",true,RespDialog.okCancel);
             Panel cp=d.getContentPanel();
@@ -377,4 +360,6 @@ public class PCPCanvas extends BaseCanvas {
             ((PPrimPolygon)pp[j]).ref = new int[] {j};
         }
     }
+    
+    public SVar getData(int id) { return (id>=0 && id<v.length-1)?v[id+1]:null; }
 };

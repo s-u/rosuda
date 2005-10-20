@@ -2,6 +2,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.PrintStream;
 import java.util.*;
 
 import org.rosuda.ibase.*;
@@ -145,65 +146,65 @@ public class BaseCanvas
             };
             if(opAy!=null && (H!=h || updateGeometry))
                 switch (orientation) {
-                case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
-                case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
-                case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+                    case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+                    case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+                    case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+                    case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                 };
-            if (ax!=null && (W!=w || updateGeometry))
-                switch (orientation) {
-                    case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
-                    case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
-                    case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-                    case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                };
-            if(opAx!=null && (W!=w || updateGeometry))
-                switch (orientation) {
-                    case 0: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
-                    case 1: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
-                    case 2: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-                    case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                };
-                if (H!=h || W!=w || updateGeometry) {
-                    W=w; H=h;
-                    updateObjects();
-                }
-                updateGeometry=false;
-                if (Global.DEBUG>0)
-                    System.out.println("BarCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
-                int basey=h-mBottom;
-                g.setBounds(w,h);
-                g.begin();
-                g.defineColor("white",255,255,255);
-                g.defineColor("black",0,0,0);
-                g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
-                float[] scc=Common.selectColor.getRGBComponents(null);
-                g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
-                g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
-                paintInit(g);
-                if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
-                if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintObjects(g);
-                nextLayer(g);
-                if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);
-                nextLayer(g);
-                if (baseDrag && !(allowDragMove && moveDrag) && (dontCache || g.localLayerCache<0 || g.localLayerCache==2)) {
+                if (ax!=null && (W!=w || updateGeometry))
+                    switch (orientation) {
+                        case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+                        case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+                        case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+                        case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+                    };
+                    if(opAx!=null && (W!=w || updateGeometry))
+                        switch (orientation) {
+                            case 0: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+                            case 1: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+                            case 2: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+                            case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+                        };
+                        if (H!=h || W!=w || updateGeometry) {
+                            W=w; H=h;
+                            updateObjects();
+                        }
+                        updateGeometry=false;
+                        if (Global.DEBUG>0)
+                            System.out.println("BarCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
+                        int basey=h-mBottom;
+                        g.setBounds(w,h);
+                        g.begin();
+                        g.defineColor("white",255,255,255);
+                        g.defineColor("black",0,0,0);
+                        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+                        float[] scc=Common.selectColor.getRGBComponents(null);
+                        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
+                        g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
+                        paintInit(g);
+                        if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
+                        if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintObjects(g);
+                        nextLayer(g);
+                        if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);
+                        nextLayer(g);
+                        if (baseDrag && !(allowDragMove && moveDrag) && (dontCache || g.localLayerCache<0 || g.localLayerCache==2)) {
             /* no clipping
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
             dx2=A[0].clip(x2),dy2=A[1].clip(y2);
              */
-                    int dx1=baseDragX1, dx2=baseDragX2, dy1=baseDragY1, dy2=baseDragY2;
-                    if (dx1>dx2) { int hh=dx1; dx1=dx2; dx2=hh; };
-                    if (dy1>dy2) { int hh=dy1; dy1=dy2; dy2=hh; };
-                    g.setColor((selDrag)?"aSelBg":"aDragBg");
-                    g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-                    g.setColor("black");
-                    g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-                };
-                
-                nextLayer(g);
-                if (dontCache || g.localLayerCache<0 || g.localLayerCache==3) paintPost(g);
-                g.end();
-                setUpdateRoot(4);
+                            int dx1=baseDragX1, dx2=baseDragX2, dy1=baseDragY1, dy2=baseDragY2;
+                            if (dx1>dx2) { int hh=dx1; dx1=dx2; dx2=hh; };
+                            if (dy1>dy2) { int hh=dy1; dy1=dy2; dy2=hh; };
+                            g.setColor((selDrag)?"aSelBg":"aDragBg");
+                            g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
+                            g.setColor("black");
+                            g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
+                        };
+                        
+                        nextLayer(g);
+                        if (dontCache || g.localLayerCache<0 || g.localLayerCache==3) paintPost(g);
+                        g.end();
+                        setUpdateRoot(4);
     }
     
     public void paintInit(PoGraSS g) {
@@ -545,6 +546,40 @@ public class BaseCanvas
         if (cmd=="rotate") rotate(1);
         if (cmd=="flip" && allow180) rotate(2);
         if (cmd=="exit") WinTracker.current.Exit();
+        if (cmd=="exportCases") {
+            Vector vars = new Vector();
+            SVar var;
+            int i=0;
+            while((var=getData(i++))!=null) vars.add(var);
+            if(vars.size()>0) {
+                SVar[] v = new SVar[vars.size()];
+                vars.toArray(v);
+                try {
+                    PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
+                    if (p!=null) {
+                        String str = v[0].getName();
+                        for(int j=1; j<v.length; j++) str += "\t"+v[j].getName();
+                        p.println(str);
+                        i=0;
+                        int sz=v[0].size();
+                        Object oo;
+                        while(i<sz) {
+                            if (m.at(i)) {
+                                oo=v[0].at(i);
+                                str = ((oo==null)?"NA":oo.toString());
+                                for(int j=1; j<v.length; j++){
+                                    oo=v[j].at(i);
+                                    str += "\t"+((oo==null)?"NA":oo.toString());
+                                } 
+                                p.println(str);
+                            }
+                            i++;
+                        }
+                        p.close();
+                    }
+                } catch (Exception eee) {}
+            }
+        }
         return null;
     };
     

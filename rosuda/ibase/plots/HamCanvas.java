@@ -11,17 +11,16 @@ import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 
 /** implementation of hammock plots (uses {@link BaseCanvas})
-@version $Id$
-*/
-public class HamCanvas extends BaseCanvas
-{
+ * @version $Id$
+ */
+public class HamCanvas extends BaseCanvas {
     SVar[] v;
     SVar vx;
-
+    
     boolean showLabels=true;
     boolean useX3=false;
     int gap=0;
-
+    
     Axis[] ai;
     
     public HamCanvas(Frame f, SVar[] mv, SMarker mark) {
@@ -30,7 +29,7 @@ public class HamCanvas extends BaseCanvas
         v=mv;
         allow180=false;
         vx=new SVarObj("Hammock.index",true);
-
+        
         ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this); ay.setValueRange(0,1);
         ai=new Axis[mv.length];
         
@@ -41,23 +40,23 @@ public class HamCanvas extends BaseCanvas
             vx.add(mv[i].getName());
             i++;
         }
-
+        
         ax=new Axis(vx,Axis.O_X,Axis.T_EqCat); ax.addDepend(this);
-
+        
         String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=mRight=mTop=mBottom=10;
         // note: Map's updateObjects relies on equality of all margins!
         pp=null;
     }
-
+    
     public void updateObjects() {
         Dimension Dsize=getSize();
         int w=Dsize.width, h=Dsize.height;
         int axi=0; while (axi<ai.length)
             ai[axi++].setGeometry(Axis.O_Y, mLeft, h-mLeft*2);
         w=w-mLeft*2; h=h-mLeft*2;
-
+        
         if (pp==null) {
             int full=0;
             // pass 1: get # of pps
@@ -86,9 +85,9 @@ public class HamCanvas extends BaseCanvas
                 }
                 j++;
             }
-
+            
             pp=new PPrimHam[full];
-
+            
             int ppix=0;
             // pass 2: fill pps
             j=0;
@@ -141,7 +140,7 @@ public class HamCanvas extends BaseCanvas
                 j++;
             }
         }
-
+        
         int k=0;
         while (k<pp.length) {
             PPrimHam p=(PPrimHam) pp[k];
@@ -160,7 +159,7 @@ public class HamCanvas extends BaseCanvas
         
         setUpdateRoot(0);
     }
-
+    
     public void paintBack(PoGraSS g) {
         /* draw labels for X axis */
         double f=ax.getSensibleTickDistance(50,26);
@@ -169,24 +168,22 @@ public class HamCanvas extends BaseCanvas
             int t=ax.getValuePos(fi);
             if (showLabels)
                 g.drawString(vx.isCat()?((useX3)?Common.getTriGraph(vx.getCatAt((int)fi).toString()):vx.getCatAt((int)fi).toString()):
-                             ax.getDisplayableValue(fi),t,H-mLeft,0.5,0.5);
+                    ax.getDisplayableValue(fi),t,H-mLeft,0.5,0.5);
             fi+=f;
         }
     }
     
-    public String queryObject(int i)
-    {
+    public String queryObject(int i) {
         PPrimHam p=(PPrimHam) pp[i];
         double sd=p.getMarkedProportion(m,-1);
         int marked=(int)(((double)p.cases())*sd+0.5);
         int lv=p.leftVar;
         return v[lv].getName()+": "+v[lv].atS(p.ref[0])+"\n"+
-            v[lv+1].getName()+": "+v[lv+1].atS(p.ref[0])+"\n"+
-            "\n"+marked+" of "+p.cases()+" ("+Tools.getDisplayableValue(sd*100.0,1)+"%) selected";
+                v[lv+1].getName()+": "+v[lv+1].atS(p.ref[0])+"\n"+
+                "\n"+marked+" of "+p.cases()+" ("+Tools.getDisplayableValue(sd*100.0,1)+"%) selected";
     }
-
-    public void keyTyped(KeyEvent e)
-    {
+    
+    public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
         if (e.getKeyChar()=='l') run(this,"labels");
         if (e.getKeyChar()=='t') run(this,"tri");
@@ -207,5 +204,7 @@ public class HamCanvas extends BaseCanvas
             setUpdateRoot(0); repaint();
         }
         return null;
-    }    
+    }
+    
+    public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
 }
