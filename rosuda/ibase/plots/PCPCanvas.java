@@ -126,21 +126,12 @@ public class PCPCanvas extends BaseCanvas {
         Rectangle r=getBounds();
         g.setBounds(r.width,r.height);
         g.begin();
-        g.defineColor("white",255,255,255);
-        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
         g.defineColor("axis",192,192,192);
-        g.defineColor("black",0,0,0);
-        g.defineColor("outline",0,0,0);
-        g.defineColor("point",0,0,128);
-        g.defineColor("red",255,0,0);
         g.defineColor("line",128,128,192); // color of line plot
         g.defineColor("Rlines",96,128,96); // color of the resudual thresholds
         g.defineColor("lines",96,96,255);
         g.defineColor("selText",255,0,0);
         g.defineColor("selBg",255,255,192);
-        g.defineColor("splitRects",128,128,255);
-        float[] scc=Common.selectColor.getRGBComponents(null);
-        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
         
         Dimension Dsize=getSize();
         if (Dsize.width!=TW || Dsize.height!=TH) {
@@ -171,7 +162,6 @@ public class PCPCanvas extends BaseCanvas {
             double fi=ax.getSensibleTickStart(f);
             while (fi<ax.vBegin+ax.vLen) {
                 int t=ax.getValuePos(fi);
-                g.drawLine(t,TH-Y-H,t,TH-Y-H-5);
                 if (showLabels)
                     g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
                         ax.getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
@@ -185,9 +175,9 @@ public class PCPCanvas extends BaseCanvas {
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
-                g.drawLine(X-2,t,X+2,t);
+                g.drawLine(mLeft-2,t,mLeft,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi),X+4,(t+5));
+                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi),X,(t+5));
                 fi+=f;
             };
         }
