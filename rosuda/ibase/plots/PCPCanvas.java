@@ -22,9 +22,6 @@ public class PCPCanvas extends BaseCanvas {
     /** use trigraph for X axis in case X is categorical */
     boolean useX3=false;
     
-    /** is NA represented as 0? (false=NA's are not drawn at all) */
-    boolean na0=true;
-    
     boolean drawPoints=false;
     boolean drawAxes=false;
     
@@ -196,7 +193,7 @@ public class PCPCanvas extends BaseCanvas {
                 int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()+1;
                 for(int i=0; i<pp.length; i++)
                     if(pp[i]!=null)
-                            ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
                 setUpdateRoot(0); repaint();
             }
         };
@@ -205,7 +202,7 @@ public class PCPCanvas extends BaseCanvas {
                 int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()-1;
                 for(int i=0; i<pp.length; i++)
                     if(pp[i]!=null)
-                            ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
                 setUpdateRoot(0); repaint();
             }
         };
@@ -233,7 +230,6 @@ public class PCPCanvas extends BaseCanvas {
         if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="common") { setCommonScale(!commonScale); }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
-        if (cmd=="toggleNA") { na0=!na0; setUpdateRoot(0); repaint(); }
         if (cmd=="togglePts") {
             drawPoints=!drawPoints;
             for(int i=0; i<pp.length; i++){
@@ -313,20 +309,28 @@ public class PCPCanvas extends BaseCanvas {
         boolean isZ=false;
         int[][] xs = new int[v[1].size()][v.length-1];
         int[][] ys = new int[v[1].size()][v.length-1];
-        for (int j=0;j<v.length-1;j++)
-            for (int i=0;i<v[1].size();i++)
-                if ((drawHidden || !m.at(i)) && (na0 || (v[j-1].at(i)!=null && v[j].at(i)!=null))) {
-            xs[i][j] = ax.getCatCenter(j);
-            ys[i][j] = ((commonScale||j==0)?ay:A[j-1]).getValuePos(v[j+1].atD(i));
+        boolean[] na = new boolean[v[1].size()];
+        for (int i=0;i<v[1].size();i++){
+            for (int j=0;j<v.length-1;j++){
+                if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
+                    xs[i][j] = ax.getCatCenter(j);
+                    ys[i][j] = ((commonScale||j==0)?ay:A[j-1]).getValuePos(v[j+1].atD(i));
+                } else{
+                    na[i] = true;
+                    break;
                 }
+            }
+        }
         for(int j=0; j<xs.length; j++){
             pp[j] = new PPrimPolygon();
-            ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
-            ((PPrimPolygon)pp[j]).closed=false;
-            ((PPrimPolygon)pp[j]).fill=false;
-            ((PPrimPolygon)pp[j]).selectByCorners=true;
-            ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
-            ((PPrimPolygon)pp[j]).ref = new int[] {j};
+            if(!na[j]){
+                ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+                ((PPrimPolygon)pp[j]).closed=false;
+                ((PPrimPolygon)pp[j]).fill=false;
+                ((PPrimPolygon)pp[j]).selectByCorners=true;
+                ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
+                ((PPrimPolygon)pp[j]).ref = new int[] {j};
+            }
         }
     }
     
