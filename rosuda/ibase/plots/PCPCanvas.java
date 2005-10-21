@@ -28,8 +28,6 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawPoints=false;
     boolean drawAxes=false;
     
-    int nodeSize=3;
-    
     /** array of axes */
     Axis A[];
     
@@ -194,8 +192,24 @@ public class PCPCanvas extends BaseCanvas {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT) run(this, "alphaUp");
         if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, "alphaDown");
-        if (e.getKeyCode()==KeyEvent.VK_UP) { nodeSize+=1; setUpdateRoot(0); repaint(); };
-        if (e.getKeyCode()==KeyEvent.VK_DOWN) { nodeSize-=1; if (nodeSize<3) nodeSize=3; setUpdateRoot(0); repaint(); };
+        if (e.getKeyCode()==KeyEvent.VK_UP) {
+            if(pp[0]!=null){
+                int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()+1;
+                for(int i=0; i<pp.length; i++)
+                    if(pp[i]!=null)
+                            ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                setUpdateRoot(0); repaint();
+            }
+        };
+        if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+            if(pp[0]!=null){
+                int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()-1;
+                for(int i=0; i<pp.length; i++)
+                    if(pp[i]!=null)
+                            ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                setUpdateRoot(0); repaint();
+            }
+        };
     }
     
     public void keyReleased(KeyEvent e) {}
@@ -296,7 +310,6 @@ public class PCPCanvas extends BaseCanvas {
         TH = getSize().height;
         
         boolean isZ=false;
-        int pd=(nodeSize>>1);
         int[][] xs = new int[v[1].size()][v.length-1];
         int[][] ys = new int[v[1].size()][v.length-1];
         for (int j=0;j<v.length-1;j++)

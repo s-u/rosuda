@@ -29,6 +29,8 @@ public class PPrimPolygon extends PPrimBase {
     public boolean selectByCorners=false;
     public boolean drawCorners=false;
     
+    private int nodeSize=2;
+    
     /** checks whether the PlotPrimitive contains the given point.*/
     public boolean contains(int x, int y) {
         if(pg==null) return false;
@@ -68,7 +70,7 @@ public class PPrimPolygon extends PPrimBase {
         if(drawCorners){
             g.setColor("outline");
             for(int i=0; i<pg.npoints; i++){
-                g.fillOval(pg.xpoints[i]-2, pg.ypoints[i]-2, 5,5);
+                g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
         }
     }
@@ -103,5 +105,14 @@ public class PPrimPolygon extends PPrimBase {
     
     public String toString() {
         return "PPrimPolygon("+((pg==null)?"<null polygon>":(""+pg.npoints+" points"))+", drawBorder="+drawBorder+", useSelAlpha="+useSelAlpha+")";
+    }
+    
+    public int getNodeSize() {
+        return nodeSize;
+    }
+    
+    public void setNodeSize(int nodeSize) {
+        if(nodeSize>0)
+            this.nodeSize = nodeSize;
     }
 }
