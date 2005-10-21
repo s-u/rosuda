@@ -72,10 +72,9 @@ public class PCPCanvas extends BaseCanvas {
         v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         setBackground(Common.backgroundColor);
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
-        EzMenu.getItem(getFrame(),"XrangeDlg").setEnabled(false);
     }
     
     public void setCommonScale(boolean cs) {
@@ -276,6 +275,7 @@ public class PCPCanvas extends BaseCanvas {
                 repaint();
             }
             d.dispose();
+            updateGeometry=true;
         }
         if (cmd=="scaleDlg" && commonScale) {
             RespDialog d=new RespDialog(myFrame,"Set y scale",true,RespDialog.okCancel);
