@@ -151,6 +151,8 @@ public class PCPCanvas extends BaseCanvas {
                         ax.getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
                 fi+=f;
             };
+            int b = getSize().height-mBottom;
+            g.drawLine(mLeft, b, getSize().width-mRight, b); 
         }
         
         /* draw ticks and labels for Y axis */
@@ -164,6 +166,7 @@ public class PCPCanvas extends BaseCanvas {
                     g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi),X,(t+5));
                 fi+=f;
             };
+            g.drawLine(mLeft, mTop, mLeft, getSize().height-mBottom);
         }
         
         if (drawAxes) {
