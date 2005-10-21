@@ -28,9 +28,7 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawPoints=false;
     boolean drawAxes=false;
     
-    int xtraShift=0; // hack,hack,hack - this allows individual scales to be move up a bit to prevent clutter on the y axis
     int nodeSize=3;
-    boolean showResidLines=false;
     
     /** array of axes */
     Axis A[];
@@ -75,7 +73,6 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         setBackground(Common.backgroundColor);
-        baseDrag=false;
         MenuBar mb=null;
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
@@ -114,13 +111,6 @@ public class PCPCanvas extends BaseCanvas {
         updateObjects();
         setUpdateRoot(0); repaint();
     }
-    
-    public Dimension getMinimumSize() { return new Dimension(60,50); };
-    
-    public void Notifying(NotifyMsg msg, Object o, Vector path) {
-        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
-        repaint();
-    };
     
     public void paintBack(PoGraSS g){
         Rectangle r=getBounds();
@@ -190,29 +180,6 @@ public class PCPCanvas extends BaseCanvas {
                 g.drawLine(t,mTop,t,getSize().height-mTop-mBottom);
             }
         }
-        
-        if (showResidLines) {
-            g.setColor("Rlines");
-            g.drawLine(X,TH-ay.getValuePos(0.5),X+W,TH-ay.getValuePos(0.5));
-            g.drawLine(X,TH-ay.getValuePos(-0.5),X+W,TH-ay.getValuePos(-0.5));
-        }
-        
-        if (baseDrag) {
-            g.nextLayer();
-            int dx1=ax.clip(x1),dy1=TH-ay.clip(TH-y1),
-                    dx2=ax.clip(x2),dy2=TH-ay.clip(TH-y2);
-            if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
-            if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
-            g.setColor("aSelBg");
-            g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-            g.setColor("black");
-            g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-        };
-    };
-    
-    public void mouseClicked(MouseEvent ev) {
-        int x=ev.getX(), y=ev.getY();
-        x1=x-2; y1=y-2; x2=x+3; y2=y+3; baseDrag=true; mouseReleased(ev);
     };
     
     public void keyTyped(KeyEvent e) {
