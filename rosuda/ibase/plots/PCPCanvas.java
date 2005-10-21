@@ -188,8 +188,6 @@ public class PCPCanvas extends BaseCanvas {
         if (e.getKeyChar()=='c') run(this,"common");
         if (e.getKeyChar()=='n') run(this,"toggleNA");
         if (e.getKeyChar()=='S') run(this,"scaleDlg");
-        if (e.getKeyChar()=='.') { xtraShift+=5; setUpdateRoot(0); repaint(); }
-        if (e.getKeyChar()==',') { xtraShift-=5; if (xtraShift<0) xtraShift=0; setUpdateRoot(0); repaint(); }
         super.keyTyped(e);
     }
     
