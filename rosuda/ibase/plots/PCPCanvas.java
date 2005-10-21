@@ -295,6 +295,7 @@ public class PCPCanvas extends BaseCanvas {
                 if (myFrame!=null) myFrame.pack();
             }
             d.dispose();
+            updateGeometry=true;
         }
         
         return null;
