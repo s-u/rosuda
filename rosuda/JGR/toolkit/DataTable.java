@@ -710,7 +710,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
             if (e.getSource().equals(tableHeader)) {
                 String rn = dataTable.getColumnName(dataTable.columnAtPoint(e.getPoint()));
                 int i  = dataTable.columnAtPoint(e.getPoint());
-                if (i != 0 && rn != "row.names" && e.isPopupTrigger()) {
+                if (i != 0 /*&& rn != "row.names"*/ && e.isPopupTrigger()) {
                     popUpMenu(e);
                 }
                 else {
