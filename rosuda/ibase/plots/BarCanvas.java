@@ -186,13 +186,32 @@ public class BarCanvas extends BaseCanvas {
         }
         
         if(showLabels){
+            double overlap=0; // used to handle overlapping labels
+            boolean prevEmpty=true;
             for(int i=0; i<bars; i++){
                 Rectangle rec = ((PPrimRectangle)pp[i]).r;
                 if (orientation==0){
-                    if (rec.width<cat_nam[i].length()*8)
-                        g.drawString(Common.getTriGraph(cat_nam[i]),(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
-                    else
+                    if (rec.width<g.getWidthEstimate(cat_nam[i])){ // if there is not enoug space for full category name
+                        if(overlap<=0){ // if there is no label overlapping this label's space
+                            String abbrCatName = Common.getTriGraph(cat_nam[i]);
+                            if(rec.width<g.getWidthEstimate(abbrCatName)){ // if there is not enough space for TriGraph
+                                overlap=g.getWidthEstimate(abbrCatName)-rec.width+10;
+                                if(prevEmpty) g.drawString(abbrCatName,(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                            } else{
+                                g.drawString(abbrCatName,(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                                prevEmpty=false;
+                            }
+                        } else{
+                            overlap-=rec.width;
+                            prevEmpty=true;
+                        }
+                    } else{
                         g.drawString(cat_nam[i],(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                        prevEmpty=false;
+                        if(overlap>0){ // if there is a label overlapping this label's space
+                            overlap-=rec.width;
+                        }
+                    }
                 } else {
                     if (mLeft<cat_nam[i].length()*8)
                         g.drawString(Common.getTriGraph(cat_nam[i]),0,(2*rec.y+rec.height)/2,0,0.5);
