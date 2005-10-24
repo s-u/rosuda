@@ -194,7 +194,7 @@ public class BarCanvas extends BaseCanvas {
                     if (rec.width<g.getWidthEstimate(cat_nam[i])){ // if there is not enoug space for full category name
                         if(overlap<=0){ // if there is no label overlapping this label's space
                             String abbrCatName = Common.getTriGraph(cat_nam[i]);
-                            if(rec.width<g.getWidthEstimate(abbrCatName)){ // if there is not enough space for TriGraph
+                            if(rec.width<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
                                 overlap=g.getWidthEstimate(abbrCatName)-rec.width+10;
                                 if(prevEmpty) g.drawString(abbrCatName,(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
                             } else{
