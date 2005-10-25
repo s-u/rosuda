@@ -186,12 +186,12 @@ public class BarCanvas extends BaseCanvas {
         }
         
         if(showLabels){
+            labels.clear();
             String[] text = new String[bars];
             double[] X = new double[bars];
             double[] Y = new double[bars];
             double[] aX = new double[bars];
             double[] aY = new double[bars];
-            int counter=0;
             double overlap=0; // used to handle overlapping labels
             boolean prevEmpty=true;
             for(int i=0; i<bars; i++){
@@ -220,12 +220,7 @@ public class BarCanvas extends BaseCanvas {
                         }
                     }
                     if(label!=null){ 
-                        text[counter]=label;
-                        X[counter]=(2*rec.x+rec.width)/2;
-                        Y[counter]=h-mBottom/2;
-                        aX[counter]=0.5;
-                        aY[counter]=0.3;
-                        counter++;
+                        labels.add((2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3,label);
                     }
                 } else {
                     if (mLeft<cat_nam[i].length()*8)
@@ -233,28 +228,11 @@ public class BarCanvas extends BaseCanvas {
                     else
                         label=cat_nam[i];
                     if(label!=null){ 
-                        text[counter]=label;
-                        X[counter]=0;
-                        Y[counter]=(2*rec.y+rec.height)/2;
-                        aX[counter]=0;
-                        aY[counter]=0.5;
-                        counter++;
+                        labels.add(0,(2*rec.y+rec.height)/2,0,0.5,label);
                     }
                 }
             }
-            if(counter>0){
-                double[] nX = new double[counter];
-                double[] nY = new double[counter];
-                double[] naX = new double[counter];
-                double[] naY = new double[counter];
-                String[] ntext = new String[counter];
-                System.arraycopy(X, 0, nX, 0, counter);
-                System.arraycopy(Y, 0, nY, 0, counter);
-                System.arraycopy(aX, 0, naX, 0, counter);
-                System.arraycopy(aY, 0, naY, 0, counter);
-                System.arraycopy(text, 0, ntext, 0, counter);
-                labels.set(nX,nY,naX,naY,ntext);
-            }
+            labels.finishAdd();
         }
     };
     

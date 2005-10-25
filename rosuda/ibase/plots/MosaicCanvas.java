@@ -105,7 +105,6 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     private Vector rects = new Vector();
-    private Vector Labels = new Vector();
     private int[] plevels;
     private int[] aGap;
     private int[] Gaps;
@@ -121,7 +120,6 @@ public class MosaicCanvas extends BaseCanvas {
         String[][] lnames = ft.getLnames();
         
         rects.removeAllElements();
-        Labels.removeAllElements();
         
         plevels = new int[vs];               // reverse cumulative product of levels
         plevels[vs-1] = 0;
@@ -201,17 +199,17 @@ public class MosaicCanvas extends BaseCanvas {
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info);
         
         // Create labels for the first 2 dimensions
-        MyText label;
+        labels.clear();
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
             for(int j=0; j<Math.min(2, maxLevel); j++)
                 for( int i=0; i<levels[j]; i++) {
                 if( Dirs[j] == 'x' )
-                    label = new MyText(lnames[j][i], (int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), 0, 0);
+                    labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), 0, 0.5,1, lnames[j][i]);
                 else
-                    label = new MyText(lnames[j][i], 0, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))), 1);
-                Labels.addElement(label);
+                    labels.add(0, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))),0,0.5,mLeft, lnames[j][i]);
                 }
         }
+        labels.finishAdd();
         
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
@@ -318,7 +316,7 @@ public class MosaicCanvas extends BaseCanvas {
             for (int j=0; j < levels; j++) {
                 combination[levelid]=j;
                 if(levelid+1<combination.length) combination[levelid+1]=-1;
-                                
+                
                 info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
                 
                 boolean stop  = false;
@@ -336,7 +334,7 @@ public class MosaicCanvas extends BaseCanvas {
                 
                 int[] ref = ft.getMatchingCases(combination,maxLevel);
                 boolean empty = (ref.length==0);
-
+                
                 if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
                     tile.info=info;
@@ -405,34 +403,6 @@ public class MosaicCanvas extends BaseCanvas {
                 }
             }
         }
-    }
-    
-    public void paintBack(org.rosuda.pograss.PoGraSS g) {
-        for(Enumeration en=Labels.elements(); en.hasMoreElements();){
-            MyText label = (MyText)en.nextElement();
-            double ax=0;
-            double ay=0;
-            String s = label.s;
-            switch(label.rot){
-                case 0:
-                    ax=0.5;
-                    ay=1;
-                    break;
-                case 1:
-                    ax=0;
-                    ay=0.5;
-                    if (g.getWidthEstimate(label.s)>mLeft)
-                        s=Common.getTriGraph(s);
-                    break;
-            }
-            g.drawString(s, label.x, label.y, ax, ay);
-        }
-    }
-    
-    protected void processKeyEvent(KeyEvent e) {
-        super.processKeyEvent(e);
-        
-        
     }
     
     public void keyReleased(KeyEvent e) {
@@ -509,22 +479,4 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
-    
-    /**
-     *  From org.rosuda.Mondrian.MyText, reduced and modified.
-     *  Preliminary! org.rosuda.ibase.toolkit.PlotText should be used instead.
-     */
-    private class MyText {
-        String s;
-        public int x;
-        public int y;
-        public int rot; // 0: no rotation; 1: 90 degrees left
-        
-        public MyText(String s, int x, int y, int rot) {
-            this.s = s;
-            this.x = x;
-            this.y = y;
-            this.rot = rot;
-        }
-    }
 }

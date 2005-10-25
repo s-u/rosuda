@@ -164,13 +164,15 @@ public class HamCanvas extends BaseCanvas {
         /* draw labels for X axis */
         double f=ax.getSensibleTickDistance(50,26);
         double fi=ax.getSensibleTickStart(f);
+        labels.clear();
         while (fi<ax.vBegin+ax.vLen) {
             int t=ax.getValuePos(fi);
             if (showLabels)
-                g.drawString(vx.isCat()?((useX3)?Common.getTriGraph(vx.getCatAt((int)fi).toString()):vx.getCatAt((int)fi).toString()):
-                    ax.getDisplayableValue(fi),t,H-mLeft,0.5,0.5);
+                labels.add(t,H-mLeft,0.5,0.5,vx.isCat()?((useX3)?Common.getTriGraph(vx.getCatAt((int)fi).toString()):vx.getCatAt((int)fi).toString()):
+                    ax.getDisplayableValue(fi));
             fi+=f;
         }
+        labels.finishAdd();
     }
     
     public String queryObject(int i) {

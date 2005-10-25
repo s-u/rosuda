@@ -140,19 +140,26 @@ public class PCPCanvas extends BaseCanvas {
             return;
         };
         
+        labels.clear();
         /* draw ticks and labels for X axis */
         {
             double f=ax.getSensibleTickDistance(50,26);
             double fi=ax.getSensibleTickStart(f);
+            double[] vX=new double[v[0].size()];
+            double[] vY=new double[v[0].size()];
+            double[] vaX=new double[v[0].size()];
+            double[] vaY=new double[v[0].size()];
+            String[] vtext=new String[v[0].size()];
             while (fi<ax.vBegin+ax.vLen) {
                 int t=ax.getValuePos(fi);
-                if (showLabels)
-                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
-                        ax.getDisplayableValue(fi),t-5,TH-Y-H-10,PoGraSS.TA_Center);
+                if (showLabels){
+                    labels.add(t-5, TH-Y-H-10, v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
+                                v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi));
+                }
                 fi+=f;
             };
             int b = getSize().height-mBottom;
-            g.drawLine(mLeft, b, getSize().width-mRight, b); 
+            g.drawLine(mLeft, b, getSize().width-mRight, b);
         }
         
         /* draw ticks and labels for Y axis */
@@ -163,11 +170,13 @@ public class PCPCanvas extends BaseCanvas {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-2,t,mLeft,t);
                 if(showLabels)
-                    g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi),X,(t+5));
+                    labels.add(X,(t+5),0,0, v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 fi+=f;
             };
             g.drawLine(mLeft, mTop, mLeft, getSize().height-mBottom);
         }
+        
+        labels.finishAdd();
         
         if (drawAxes) {
             g.setColor("axis");
