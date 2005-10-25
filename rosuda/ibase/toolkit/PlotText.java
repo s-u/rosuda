@@ -65,9 +65,9 @@ public class PlotText extends PlotObject {
         int xc=0, yc=0, tc=0, axc=0, ayc=0; // we need separate counters to circulate in non-full arrays
         while (i<l) {
             if (ax==null || ay==null || ax.length==0 || ay.length==0)
-                g.drawString(txt[tc++],getXPos(x[xc++]),getYPos(y[yc++]));
+                g.drawString(txt[tc++],(int)Math.round(x[xc++]),(int)Math.round(y[yc++]));
             else {
-                g.drawString(txt[tc++],getXPos(x[xc++]),getYPos(y[yc++]),ax[axc++],ay[ayc++]);
+                g.drawString(txt[tc++],(int)Math.round(x[xc++]),(int)Math.round(y[yc++]),ax[axc++],ay[ayc++]);
                 if (axc>=ax.length) axc=0;
                 if (ayc>=ay.length) ayc=0;
             }                
