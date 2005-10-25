@@ -186,9 +186,16 @@ public class BarCanvas extends BaseCanvas {
         }
         
         if(showLabels){
+            String[] text = new String[bars];
+            double[] X = new double[bars];
+            double[] Y = new double[bars];
+            double[] aX = new double[bars];
+            double[] aY = new double[bars];
+            int counter=0;
             double overlap=0; // used to handle overlapping labels
             boolean prevEmpty=true;
             for(int i=0; i<bars; i++){
+                String label=null;
                 Rectangle rec = ((PPrimRectangle)pp[i]).r;
                 if (orientation==0){
                     if (rec.width<g.getWidthEstimate(cat_nam[i])){ // if there is not enoug space for full category name
@@ -196,9 +203,9 @@ public class BarCanvas extends BaseCanvas {
                             String abbrCatName = Common.getTriGraph(cat_nam[i]);
                             if(rec.width<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
                                 overlap=g.getWidthEstimate(abbrCatName)-rec.width+10;
-                                if(prevEmpty) g.drawString(abbrCatName,(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                                if(prevEmpty) label=abbrCatName;
                             } else{
-                                g.drawString(abbrCatName,(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                                label=abbrCatName;
                                 prevEmpty=false;
                             }
                         } else{
@@ -206,18 +213,47 @@ public class BarCanvas extends BaseCanvas {
                             prevEmpty=true;
                         }
                     } else{
-                        g.drawString(cat_nam[i],(2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3);
+                        label=cat_nam[i];
                         prevEmpty=false;
                         if(overlap>0){ // if there is a label overlapping this label's space
                             overlap-=rec.width;
                         }
                     }
+                    if(label!=null){ 
+                        text[counter]=label;
+                        X[counter]=(2*rec.x+rec.width)/2;
+                        Y[counter]=h-mBottom/2;
+                        aX[counter]=0.5;
+                        aY[counter]=0.3;
+                        counter++;
+                    }
                 } else {
                     if (mLeft<cat_nam[i].length()*8)
-                        g.drawString(Common.getTriGraph(cat_nam[i]),0,(2*rec.y+rec.height)/2,0,0.5);
+                        label=Common.getTriGraph(cat_nam[i]);
                     else
-                        g.drawString(cat_nam[i],0,(2*rec.y+rec.height)/2,0,0.5);
+                        label=cat_nam[i];
+                    if(label!=null){ 
+                        text[counter]=label;
+                        X[counter]=0;
+                        Y[counter]=(2*rec.y+rec.height)/2;
+                        aX[counter]=0;
+                        aY[counter]=0.5;
+                        counter++;
+                    }
                 }
+            }
+            if(counter>0){
+                double[] nX = new double[counter];
+                double[] nY = new double[counter];
+                double[] naX = new double[counter];
+                double[] naY = new double[counter];
+                String[] ntext = new String[counter];
+                System.arraycopy(X, 0, nX, 0, counter);
+                System.arraycopy(Y, 0, nY, 0, counter);
+                System.arraycopy(aX, 0, naX, 0, counter);
+                System.arraycopy(aY, 0, naY, 0, counter);
+                System.arraycopy(text, 0, ntext, 0, counter);
+                labels.set(nX,nY,naX,naY,ntext);
             }
         }
     };
