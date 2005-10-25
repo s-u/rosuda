@@ -92,6 +92,9 @@ public class BaseCanvas
     protected Axis[] opAx; // axes parallel to ax
     protected Axis[] opAy; // axes parallel to ay
     
+    /** PlotText object containing labels. Can be null. */
+    protected PlotText labels;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -108,6 +111,8 @@ public class BaseCanvas
         addKeyListener(this);
         f.addKeyListener(this);
         qi=new QueryPopup(f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        labels=new PlotText(getPlotManager());
+        labels.setLayer(0);
     };
     
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
