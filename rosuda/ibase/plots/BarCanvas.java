@@ -219,7 +219,7 @@ public class BarCanvas extends BaseCanvas {
                             overlap-=rec.width;
                         }
                     }
-                    if(label!=null){ 
+                    if(label!=null){
                         labels.add((2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3,label);
                     }
                 } else {
@@ -227,7 +227,7 @@ public class BarCanvas extends BaseCanvas {
                         label=Common.getTriGraph(cat_nam[i]);
                     else
                         label=cat_nam[i];
-                    if(label!=null){ 
+                    if(label!=null){
                         labels.add(0,(2*rec.y+rec.height)/2,0,0.5,label);
                     }
                 }
@@ -388,18 +388,16 @@ public class BarCanvas extends BaseCanvas {
     
     public void rotate(int amount) {
         int puffer;
-        if (orientation==0){
-            puffer = mTop;
-            mTop = mLeft;
-            mLeft = mBottom;
-            mBottom = mRight;
-            mRight = puffer;
+        if (orientation==0){ // so orientation 1 afterwards
+            mBottom = 10;
+            mTop = 10;
+            mLeft = 40;
+            mRight = 10;
         } else{
-            puffer = mTop;
-            mTop = mRight;
-            mRight = mBottom;
-            mBottom = mLeft;
-            mLeft = puffer;
+            mBottom = 20;
+            mTop = 10;
+            mLeft = 10;
+            mRight = 10;
         }
         super.rotate(amount);
     }
