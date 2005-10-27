@@ -50,6 +50,8 @@ public class BufferTokenizer extends Component {
 	final byte QUOTE = (byte) '"';
 	final byte KOMMA = (byte) ',';
 
+    private ProgressIndicator prId;
+
 /** #columns and #lines */
 	int columns, lines;
 	
@@ -133,7 +135,7 @@ public class BufferTokenizer extends Component {
 
 /** timeStamps: in which time distances new ActionEvent is processed
  	timeStampCounter: reference to timeStamps[]-elements */
-	int[] timeStamps = {1000,1000,1000,1000,1000,1000,1000,1000,1000,10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 100000};
+	int[] timeStamps = {100,100,100,100,100,100,100,100,100,100, 1000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 10000, 100000, 100000, 100000, 100000, 100000, 100000};
 	long timestart = 0;
 	long timestop = 0;
 	int timeStampCounter = 0;
@@ -178,10 +180,11 @@ public class BufferTokenizer extends Component {
  * @param discretLimit: discretLimit setting. for good speed use small discretLimit
  * @param acceptedErrors: make sure acceptedErrors should be >=1
  */
-	public BufferTokenizer(int discretLimit, int acceptedErrors, String file) {
+	public BufferTokenizer(int discretLimit, int acceptedErrors, String file, ProgressIndicator pi) {
 		long start, stop;
 		long startfull, stopfull;
 		error = new String[acceptedErrors];
+        prId = pi;
 		
 		timestart = System.currentTimeMillis();
 		
@@ -206,7 +209,8 @@ public class BufferTokenizer extends Component {
 		}
 		stop = System.currentTimeMillis();
 		System.out.println("Harddrive to RAM: " + (stop - start));
-		
+        prId.setProgress(.05);
+
 		format = analyzeFormat(buffer);
 		if(format == "TAB-Format") SEPERATOR = TAB;
 		else if(format == "SPACE-Format") SEPERATOR = SPACE;
@@ -473,6 +477,8 @@ public class BufferTokenizer extends Component {
 		
 		stopfull = System.currentTimeMillis();
 		System.out.println("Gesamtzeit: " + (stopfull - startfull));
+
+        prId.setProgress(.98);
 		
 		System.out.print("Total memory used: ");
 		System.out.println((Runtime.getRuntime()).totalMemory());
@@ -533,7 +539,7 @@ public class BufferTokenizer extends Component {
 
 	private boolean isChar(byte b) {
 
-		if ((b >= 65 && b <= 90) || (b >= 97 && b <= 122))
+		if ((b >= 65 && b <= 90) || (b >= 97 && b <= 122) || (b >= 192 && b <= 255))
 			return true;
 		else
 			return false;
@@ -703,9 +709,8 @@ public class BufferTokenizer extends Component {
 				
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
-
-					head[j][l] = (char) b;
-					
+                    if( b<0) System.out.println(b+" <-----");
+                    head[j][l] = (char)( b>-1?b:256+b ); 		
 				}
 				
 				if(buffer.hasRemaining()) {
@@ -2164,7 +2169,7 @@ public class BufferTokenizer extends Component {
 					if (b == SEPERATOR) {
 						j++;
 					} else if (b == RETURN) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						buffer.mark();
 						if (buffer.hasRemaining()) {
 							if (buffer.get() == NEWLINE) {
@@ -2177,7 +2182,7 @@ public class BufferTokenizer extends Component {
 							}
 						}
 					} else if (b == NEWLINE) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						i++;
 						j = 0;
 					}
@@ -2291,7 +2296,7 @@ public class BufferTokenizer extends Component {
 					if (b == SEPERATOR)
 						j++;
 					else if (b == RETURN) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						buffer.mark();
 						if (buffer.hasRemaining()) {
 							if (buffer.get() == NEWLINE) {
@@ -2304,7 +2309,7 @@ public class BufferTokenizer extends Component {
 							}
 						}
 					} else if (b == NEWLINE) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						i++;
 						j = 0;
 					}
@@ -2952,20 +2957,25 @@ public class BufferTokenizer extends Component {
 	
 	// executes ActionEvent for ProgressBar
 	private void progressing() {
+    }
+      
+    private void progressing(int i) {
+      
+      timestop = System.currentTimeMillis();
+      
+      if( timestop - timestart >= 250) {
+        timeStampCounter++;
+        timestart = System.currentTimeMillis();
+        System.out.println("old: "+(double)i/(double)lines);
+        System.out.println("old: "+(double)i);
+        System.out.println("old: "+(double)lines);
 
-		timestop = System.currentTimeMillis();
-		
-		if(timeStampCounter < timeStamps.length && timestop - timestart >= timeStamps[timeStampCounter]) {
-			Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(new ActionEvent(this,ActionEvent.ACTION_PERFORMED,"PROGRESS"));
-			timeStampCounter++;
-			timestart = System.currentTimeMillis();
-			System.out.println(timeStampCounter);
-		}
-		
 
+        if( prId != null && lines > 0 )
+          prId.setProgress((double)i/(double)lines*0.85+.1);
+      }
 	}
-	
-	
+
 	// list has to be sorted
 	// returns position if word found or added to list and
 	// sets wordNotFound = true or false
