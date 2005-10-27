@@ -8,76 +8,115 @@
 //  $Id$
 
 /** PlotText implements an array of text labels, specified by x,y,ax,ay and the text itself.
-@version $Id$
-*/
+ * @version $Id$
+ */
 
 package org.rosuda.ibase.toolkit;
 
+import java.util.Enumeration;
+import java.util.Vector;
 import org.rosuda.pograss.*;
+import org.rosuda.ibase.*;
 
 public class PlotText extends PlotObject {
-    double x[], y[], ax[], ay[];
+    int x[], y[], maxw[];
+    double ax[], ay[];
     String txt[];
-
-    public PlotText(PlotManager p) { super(p);}
-
-    public void set(double X[], double Y[], double aX[], double aY[], String text[]) {
-        ax=aX; ay=aY; x=X; y=Y; txt=text;
-    }
-    public void set(double X[], double Y[], String text[]) {
-        x=X; y=Y; txt=text;
-    }
-    public void set(double X[], double Y[]) { x=X; y=Y; }
-    public void set(double X[], double Y) { x=X; y=new double[1]; y[0]=Y; }
-    public void set(double X, double Y[]) { x=new double[1]; x[0]=X; y=Y; }
-    public void set(String text[]) { txt=text; }
-
-    public double []getX() { return x; }
-    public double []getY() { return y; }
-    public double []getAX() { return ax; }
-    public double []getAY() { return ay; }
-    public String []getText() { return txt; }
-
-    public void setAX(double[] aX) { ax=aX; }
-    public void setAX(double aX) { ax=new double[1]; ax[0]=aX; }
-    public void setAY(double[] aY) { ay=aY; }
-    public void setAY(double aY) { ay=new double[1]; ay[0]=aY; }
     
-    // fall-back versions for scalar arguments
-    public void set(double X, double Y, double aX, double aY, String text) {
-        ax=new double[1]; ax[0]=aX; ay=new double[1]; ay[0]=aY;
-        x=new double[1]; x[0]=X; y=new double[1]; y[0]=Y; txt=new String[1]; txt[0]=text;
+    Vector addX=new Vector(),
+            addY=new Vector(),
+            addAx=new Vector(),
+            addAy=new Vector(),
+            addMaxW=new Vector(),
+            addTxt=new Vector();
+    
+    public PlotText(PlotManager p) { super(p);}
+    
+    /* Clears all arrays */
+    public void clear(){
+        x=y=null;
+        ax=ay=null;
+        txt=null;
     }
-    public void set(double X, double Y, String text) {
-        x=new double[1]; x[0]=X; y=new double[1]; y[0]=Y; txt=new String[1]; txt[0]=text;
+    
+    /* Adds the specified values. finishAdd needs to be called after the last call of add! */
+    public void add(int X, int Y, double aX, double aY, int maxW, String text){
+        addX.add(new Integer(X));
+        addY.add(new Integer(Y));
+        addAx.add(new Double(aX));
+        addAy.add(new Double(aY));
+        addMaxW.add(new Integer(maxW));
+        addTxt.add(text);
     }
-    public void set(double X, double Y) { x=new double[1]; x[0]=X; y=new double[1]; y[0]=Y; }
-    public void set(String text) { txt=new String[1]; txt[0]=text; }
-
-    /** The actual draw method. It moves in the arrays in a circular fashion and uses the maximal length of the arrays x,y and txt. */
-    public void draw(PoGraSS g) {
-        if (txt==null || x==null || y==null) return;
-        if (cold!=null) cold.use(g);
-        if (ax!=null && ax.length>0 && (ay==null || ay.length==0)) { ay=new double[1]; ay[0]=0; }
-        if (ay!=null && ay.length>0 && (ax==null || ax.length==0)) { ax=new double[1]; ax[0]=0; }
-        int i=0;
-        int l=txt.length; if (x.length>l) l=x.length; if (y.length>l) l=y.length;
-        int xc=0, yc=0, tc=0, axc=0, ayc=0; // we need separate counters to circulate in non-full arrays
-        while (i<l) {
-            if (ax==null || ay==null || ax.length==0 || ay.length==0)
-                g.drawString(txt[tc++],(int)Math.round(x[xc++]),(int)Math.round(y[yc++]));
-            else {
-                g.drawString(txt[tc++],(int)Math.round(x[xc++]),(int)Math.round(y[yc++]),ax[axc++],ay[ayc++]);
-                if (axc>=ax.length) axc=0;
-                if (ayc>=ay.length) ayc=0;
-            }                
-            i++;
-            if (tc>=txt.length) tc=0;
-            if (xc>=x.length) xc=0;
-            if (yc>=y.length) yc=0;
+    
+    public void add(int X, int Y, double aX, double aY, String text){
+        add(X,Y,aX,aY,-1,text);
+    }
+    
+    public void add(int X, int Y, String text){
+        add(X, Y, 0.5, 0, -1, text);
+    }
+    
+    public void finishAdd(){
+        if(!addTxt.isEmpty()){
+            int[] dX=x;
+            int[] dY=y;
+            double[] dAx=ax;
+            double[] dAy=ay;
+            String[] dTxt=txt;
+            
+            final int oldLen=(dTxt==null)?0:dTxt.length;
+            final int newLen=addTxt.size();
+            
+            x=new int[oldLen+newLen];
+            y=new int[oldLen+newLen];
+            ax=new double[oldLen+newLen];
+            ay=new double[oldLen+newLen];
+            maxw=new int[oldLen+newLen];
+            txt=new String[oldLen+newLen];
+            
+            if(dTxt!=null){
+                System.arraycopy(dX, 0, x, 0, dX.length);
+                System.arraycopy(dY, 0, y, 0, dY.length);
+                System.arraycopy(dAx, 0, ax, 0, dAx.length);
+                System.arraycopy(dAy, 0, ay, 0, dAy.length);
+                System.arraycopy(dTxt, 0, txt, 0, dTxt.length);
+            }
+            
+            for(int i=0; i<newLen; i++)
+                x[oldLen+i] = ((Integer)addX.elementAt(i)).intValue();
+            for(int i=0; i<newLen; i++)
+                y[oldLen+i] = ((Integer)addY.elementAt(i)).intValue();
+            for(int i=0; i<newLen; i++)
+                ax[oldLen+i] = ((Double)addAx.elementAt(i)).doubleValue();
+            for(int i=0; i<newLen; i++)
+                ay[oldLen+i] = ((Double)addAy.elementAt(i)).doubleValue();
+            for(int i=0; i<newLen; i++)
+                maxw[oldLen+i] = ((Integer)addMaxW.elementAt(i)).intValue();
+            for(int i=0; i<newLen; i++)
+                txt[oldLen+i] = (String)addTxt.elementAt(i);
+            
+            addX.removeAllElements();
+            addY.removeAllElements();
+            addAx.removeAllElements();
+            addAy.removeAllElements();
+            addMaxW.removeAllElements();
+            addTxt.removeAllElements();
         }
     }
-
+    
+    /** The actual draw method. */
+    public void draw(PoGraSS g) {
+        if (txt==null || txt.length==0) return;
+        if (cold!=null) cold.use(g);
+        for (int i=0; i<txt.length; i++) {
+            String t;
+            if(maxw[i]>-1 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
+            else t=txt[i];
+            g.drawString(t,x[i],y[i],ax[i],ay[i]);
+        }
+    }
+    
     public String toString() {
         if (txt==null) return "PlotText(<no text>)";
         if (x==null || y==null) return "PlotText(<coordinates incomplete>)";
