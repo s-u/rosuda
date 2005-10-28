@@ -99,18 +99,23 @@ public class BaseCanvas
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public BaseCanvas(Frame f, SMarker mark) {
-        super(4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
+    public BaseCanvas(PlotComponent pc, Frame f, SMarker mark) {
+        super(pc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
         m=mark; setFrame(f);
         ax=ay=null;
         zoomSequence=new Vector();
         mLeft=mRight=mTop=mBottom=0;
-        setBackground(Common.backgroundColor);
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addKeyListener(this);
+        pc.setBackground(Common.backgroundColor);
+        pc.addMouseListener(this);
+        pc.addMouseMotionListener(this);
+        pc.addKeyListener(this);
         f.addKeyListener(this);
-        qi=new QueryPopup(f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        PlotComponent qpc = pc.getAssociatedPlotComponent();
+        if(qpc.getGraphicsEngine()==PlotComponent.SWING) {
+        	qi=new SwingQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        } else {
+        	qi=new AwtQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        }
         labels=new PlotText(getPlotManager());
         labels.setLayer(0);
     };
@@ -138,7 +143,7 @@ public class BaseCanvas
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(PoGraSS g) {
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         int w=r.width, h=r.height;
         if (Global.DEBUG>0)
             System.out.println("BaseCanvas.paint: real bounds ["+w+":"+h+"], existing ["+W+":"+H+"], orientation="+orientation+" mTop="+mTop+",mBottom="+mBottom);
@@ -262,7 +267,7 @@ public class BaseCanvas
         
         if(baseDragX1==x && baseDragY1==y){
             Point cl=getFrame().getLocation();
-            Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+            Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
             boolean setTo=false;
             
             if (Global.DEBUG>0) {
@@ -302,12 +307,18 @@ public class BaseCanvas
                         if (pp[i]!=null && pp[i].contains(x,y)) {
                             if (actionQuery) {
                                 if (pp[i].cases()>0) {
-                                    if (pp[i].getPrimaryCase()!=-1)
-                                        qi.setContent(queryObject(i),pp[i].getPrimaryCase());
-                                    else
-                                        qi.setContent(queryObject(i),pp[i].getCaseIDs());
-                                } else
-                                    qi.setContent(queryObject(i));
+                                    if (pp[i].getPrimaryCase()!=-1) {
+                                    	setQueryText(pc,queryObject(i),pp[i].getPrimaryCase());
+//                                        qi.setContent(queryObject(i),pp[i].getPrimaryCase());
+                                    }
+                                    else {
+                                    	setQueryText(pc,queryObject(i),pp[i].getCaseIDs());
+//                                        qi.setContent(queryObject(i),pp[i].getCaseIDs());
+                                    }
+                                } else {
+                                	setQueryText(pc,queryObject(i));
+//                                    qi.setContent(queryObject(i));
+                                }
                                 qi.setLocation(cl.x+x,cl.y+y);
                                 qi.show(); hideQI=false;
                             } else {
@@ -339,7 +350,7 @@ public class BaseCanvas
         setUpdateRoot(0);
         updateGeometry=true;
         if (resizeOnRotate && (amount==1 || amount==3)) {
-            setSize(H,W);
+            pc.setSize(H,W);
             getFrame().pack();
         } else
             repaint();
@@ -523,11 +534,11 @@ public class BaseCanvas
     public void keyPressed(KeyEvent e) {
         int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_ALT && !inZoom && !inQuery) {
-            setCursor(Common.cur_query);
+            pc.setCursor(Common.cur_query);
             inQuery=true;
         }
         if (kc==KeyEvent.VK_META && allowZoom && !inZoom && !inQuery) {
-            setCursor(Common.cur_zoom);
+            pc.setCursor(Common.cur_zoom);
             inZoom=true;
         }
     };
@@ -535,11 +546,11 @@ public class BaseCanvas
     public void keyReleased(KeyEvent e) {
         int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_ALT && !inZoom) {
-            setCursor(Common.cur_arrow);
+            pc.setCursor(Common.cur_arrow);
             inQuery=false;
         }
         if (kc==KeyEvent.VK_META && allowZoom && !inQuery) {
-            setCursor(Common.cur_arrow);
+            pc.setCursor(Common.cur_arrow);
             inZoom=false;
         }
     };
@@ -592,4 +603,19 @@ public class BaseCanvas
         if (e==null) return;
         run(e.getSource(),e.getActionCommand());
     };
+    
+    public void setQueryText(PlotComponent pc, String s) {
+    	qi.setContent(pc,s);
+    	System.out.println("old:" + s);
+    }
+    
+    public void setQueryText(PlotComponent pc, String s, int cid) {
+    	qi.setContent(pc,s,cid);
+    	System.out.println("old:" + s);
+    }
+    
+    public void setQueryText(PlotComponent pc, String s, int[] cid) {
+    	qi.setContent(pc,s,cid);
+    	System.out.println("old:" + s);
+    }
 }

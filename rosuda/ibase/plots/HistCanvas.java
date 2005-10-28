@@ -41,8 +41,8 @@ public class HistCanvas extends BaseCanvas {
      * @param var source variable
      * @param mark associated marker
      */
-    public HistCanvas(Frame f, SVar var, SMarker mark) {
-        super(f,mark);
+    public HistCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) {
+        super(pc,f,mark);
         v=var; setTitle("Histogram ("+v.getName()+")");
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
         binw=ax.vLen/bars;
@@ -195,7 +195,7 @@ public class HistCanvas extends BaseCanvas {
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
-                int bl = getSize().height-mBottom;
+                int bl = pc.getSize().height-mBottom;
                 g.drawLine(t,bl,t,bl+5);
                 labels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
                 fi+=f;
@@ -210,7 +210,7 @@ public class HistCanvas extends BaseCanvas {
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     int t=ax.getValuePos(fi);
-                    int bl = getSize().height-mBottom;
+                    int bl = pc.getSize().height-mBottom;
                     g.drawLine(t,bl,t,bl+5);
                     labels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -241,7 +241,7 @@ public class HistCanvas extends BaseCanvas {
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     int t=ax.getValuePos(fi);
-                    int rl = getSize().width-mRight;
+                    int rl = pc.getSize().width-mRight;
                     g.drawLine(rl,t,rl+5,t);
                     labels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -284,12 +284,12 @@ public class HistCanvas extends BaseCanvas {
         if (tickMark1.contains(x,y) || tickMark2.contains(x,y)) {
             if (!inTick && !inZoom && !inQuery && !baseDrag) {
                 inTick=true;
-                setCursor(Common.cur_tick);
+                pc.setCursor(Common.cur_tick);
             }
         } else {
             if (inTick) {
                 inTick=false;
-                setCursor(Common.cur_arrow);
+                pc.setCursor(Common.cur_arrow);
             }
         }
     }
