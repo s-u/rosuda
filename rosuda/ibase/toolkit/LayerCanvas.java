@@ -1,15 +1,21 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
+
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
+import org.rosuda.pograss.*;
 /**
  * Extends the {@link Canvas} class by adding multi-buffering support based on layers.
  * @version $Id$
  */
-public abstract class LayerCanvas extends Canvas
+public abstract class LayerCanvas
 {
+//	public Component comp;
+	public PlotComponent pc;
+	public int graphicsEngine;
+	
     /** off-screen buffer descriptor */
     Graphics offgc;
     /** off-screen images. they're not overlaid but hierarchical. that means that the top layer is actually drawn
@@ -26,8 +32,12 @@ public abstract class LayerCanvas extends Canvas
     int prevUpdateRoot=0;
     
     /** creates Layers layers */
-    public LayerCanvas(int Layers) {
-        layers=Layers;
+    public LayerCanvas(PlotComponent pc, int Layers) {
+//    	comp = pc.getComponent();
+    	pc.initializeLayerCanvas(this);
+    	this.pc = pc;
+    	graphicsEngine = pc.getGraphicsEngine();
+    	layers=Layers;
         offscreen=new Image[layers];
         for(int i=0;i<layers;i++) offscreen[i]=null;
         updateRoot=0;
@@ -35,8 +45,8 @@ public abstract class LayerCanvas extends Canvas
     }
 
     /** creates 1 layer as default */
-    public LayerCanvas() {
-        this(1);
+    public LayerCanvas(PlotComponent pc) {
+        this(pc, 1);
     }
 
     /** set update root layer, i.e. the first layer that has to be updated via {@link #paintLayer}.
@@ -64,10 +74,10 @@ public abstract class LayerCanvas extends Canvas
      */
     public void update(Graphics g)
     {
-        Dimension d = getSize();
-	Image curimg=null;
+    	if(g==null) return;
+    	Dimension d = pc.getComponent().getSize();
+        Image curimg=null;
         int firstPaintLayer=updateRoot;
-
         if (Global.forceAntiAliasing) {
             Graphics2D g2=(Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -75,76 +85,75 @@ public abstract class LayerCanvas extends Canvas
         
         if (Global.DEBUG>0) System.out.println("LayerCanvas: update, layers="+layers+", root="+updateRoot);        
         
-	// sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
-	if (d.width<1 || d.height<1) return;
-	// yet another sanity check - some systems (e.g. X with Xinerama enabled) wrap around
-	// the 0 boundary resulting in huge numbers;
-	if (d.width>2000 || d.height>2000) {
-	    d.width=(d.width>2000)?640:d.width;
-	    d.height=(d.height>2000)?600:d.height;
-	};
-
+        // sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
+        if (d.width<1 || d.height<1) return;
+        // yet another sanity check - some systems (e.g. X with Xinerama enabled) wrap around
+        // the 0 boundary resulting in huge numbers;
+        if (d.width>2000 || d.height>2000) {
+        	d.width=(d.width>2000)?640:d.width;
+        	d.height=(d.height>2000)?600:d.height;
+        };
+        
         Stopwatch sw=new Stopwatch();
         // we will re-create the off-screen object only if the canvas was resized
-	if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
-            if (Global.DEBUG>0) System.out.println("LayerCanvas: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
-            // draw the old image - after resize the background is cleared automatically
-            // so in order to reduce flickering draw the old image until the new one is generated
-            if (offscreen[layers-1]!=null) g.drawImage(offscreen[layers-1], 0, 0, this);
-	    // create the offscreen buffer
-            for(int i=0;i<layers;i++)
-                offscreen[i] = createImage(d.width, d.height);
-            offsd=d;
-            firstPaintLayer=0; // after resize we need to repaint them all
-            setUpdateRoot(0);
-            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
+        if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
+        	if (Global.DEBUG>0) System.out.println("LayerCanvas: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
+        	// draw the old image - after resize the background is cleared automatically
+        	// so in order to reduce flickering draw the old image until the new one is generated
+        	if (offscreen[layers-1]!=null) g.drawImage(offscreen[layers-1], 0, 0, pc.getComponent());
+        	// create the offscreen buffer
+        	for(int i=0;i<layers;i++) offscreen[i] = pc.getComponent().createImage(d.width, d.height);
+        	offsd=d;
+        	firstPaintLayer=0; // after resize we need to repaint them all
+        	setUpdateRoot(0);
+        	if (Global.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
         };
-	
+        
         // clear the image
         if (firstPaintLayer==0) { // total repaint, i.e. clear the layer 0 also
-            offgc = offscreen[0].getGraphics();
-
-            if (offgc!=null) { /* insane sanity checks, because sometimes it happens that
+        	offgc = offscreen[0].getGraphics();
+        	
+        	if (offgc!=null) { /* insane sanity checks, because sometimes it happens that
                                   the graphics subsystem returns null */
-                offgc.setFont(Common.defaultFont);
-                if (Global.forceAntiAliasing) {
-                    Graphics2D g2=(Graphics2D) offgc;
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                }
-                if (Global.useAquaBg) {
-                    offgc.setColor(Color.white);
-                    offgc.fillRect(0, 0, d.width, d.height);
+        		offgc.setFont(Common.defaultFont);
+        		if (Global.forceAntiAliasing) {
+        			Graphics2D g2=(Graphics2D) offgc;
+        			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        		}
+        		if (Global.useAquaBg) {
+        			offgc.setColor(Color.white);
+        			offgc.fillRect(0, 0, d.width, d.height);
+        			
+        			int y=0;
+        			offgc.setColor(Common.aquaBgColor);
+        			while (y<d.height-2) {
+        				offgc.fillRect(0,y,d.width,2); y+=4;
+        			}
+        		} else {
+        			Color bg=Common.backgroundColor;
+        			//Color bg=getBackground();
+        			offgc.setColor(bg==null?Color.white:bg);
+        			offgc.fillRect(0, 0, d.width, d.height);
+        		}
 
-                    int y=0;
-                    offgc.setColor(Common.aquaBgColor);
-                    while (y<d.height-2) {
-                        offgc.fillRect(0,y,d.width,2); y+=4;
-                    }
-                } else {
-                    Color bg=Common.backgroundColor;
-                    //Color bg=getBackground();
-                    offgc.setColor(bg==null?Color.white:bg);
-                    offgc.fillRect(0, 0, d.width, d.height);
-                }
-
-                Color fg=getForeground();
-                if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
-            }
-            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
+        		Color fg=pc.getComponent().getForeground();
+        		if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
+        	}
+            	if (Global.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
         }
 
         int l=firstPaintLayer;
         while(l<layers) {
-            offgc=offscreen[l].getGraphics();
-            if (l>0) offgc.drawImage(offscreen[l-1],0,0,this);
-            paintLayer(offgc,l);
-            l++;
+        	offgc=offscreen[l].getGraphics();
+        	if (l>0) offgc.drawImage(offscreen[l-1],0,0,pc.getComponent());
+        	paintLayer(offgc,l);
+        	l++;
         }
         if (Global.PROFILE>0) sw.profile("LayerCanvas.update.constructLayers");
 
         // do normal redraw
         // transfer offscreen to window, last layer should have the correct image
-        g.drawImage(offscreen[l-1], 0, 0, this);
+        g.drawImage(offscreen[l-1],0,0,pc.getComponent());
         if (Global.PROFILE>0) sw.profile("LayerCanvas.update.paintLayers");
     };
 
@@ -152,8 +161,12 @@ public abstract class LayerCanvas extends Canvas
         instead of update, so we want to force {@link #update} instead */
     public void paint(Graphics g)
     {
-	update(g);
+    	update(g);
     };
+    
+    public void repaint() {
+    	update(pc.getComponent().getGraphics());
+    }
 
     /**
      * Override with your own paint method.
@@ -161,6 +174,7 @@ public abstract class LayerCanvas extends Canvas
      * @param g is <code>Graphics</code> context you can use for painting.
      * @param layer is the currently processed layer
      */
-    abstract public void paintLayer(Graphics g, int layer);
+   abstract public void paintLayer(Graphics g, int layer);
+   
 };
 
