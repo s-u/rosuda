@@ -320,25 +320,30 @@ public class Framework implements Dependent, ActionListener {
         @param v1 X-axis variable
         @param v2 Y-axis variable
         @return scatterplot canvas object */
-    public ScatterCanvas newScatterplot(int v1, int v2) { return newScatterplot(cvs,v1,v2); }
-    public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
+    public ScatterCanvas newScatterplot(PlotComponent pc, int v1, int v2) { return newScatterplot(pc,cvs,v1,v2); }
+    public ScatterCanvas newScatterplot(PlotComponent pc, SVarSet vs, int v1, int v2) {
         updateMarker(vs,v1);
         TFrame f=new TFrame("Scatterplot ("+
 		vs.at(v2).getName()+" vs "+
 		vs.at(v1).getName()+")",TFrame.clsScatter);	
+                
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
-        ScatterCanvas sc=new ScatterCanvas(f,vs.at(v1),vs.at(v2),vs.getMarker());
+        ScatterCanvas sc=new ScatterCanvas(pc,f,vs.at(v1),vs.at(v2),vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-        sc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(sc.getWidth(),sc.getHeight()));
-        f.add(sc); f.pack(); f.show();
+        sc.pc.getComponent().setSize(new Dimension(400,300));
+        f.setSize(new Dimension(sc.pc.getComponent().getWidth(),sc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return sc;
     };
 
-    public BarCanvas newBarchart(int v) { return newBarchart(cvs,v,-1); }
-    public BarCanvas newBarchart(int v, int wgt) { return newBarchart(cvs,v,wgt); }
-    public BarCanvas newBarchart(SVarSet vs, int v, int wgt) {
+    public BarCanvas newBarchart(PlotComponent pc, int v) { return newBarchart(pc,cvs,v,-1); }
+    public BarCanvas newBarchart(PlotComponent pc, int v, int wgt) { return newBarchart(pc,cvs,v,wgt); }
+    public BarCanvas newBarchart(PlotComponent pc, SVarSet vs, int v, int wgt) {
         updateMarker(vs,v);
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
@@ -348,59 +353,74 @@ public class Framework implements Dependent, ActionListener {
                             "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
                             "Barchart ("+theCat.getName()+")"
                             ,TFrame.clsBar);
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
-        BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
+        BarCanvas bc=new BarCanvas(pc,f,theCat,vs.getMarker(),theNum);
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=100+40*theCat.getNumCats();
         if (xdim>800) xdim=800;
-        bc.setSize(new Dimension(xdim,200));
-        f.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
-        f.add(bc); f.pack(); f.show();
+        bc.pc.getComponent().setSize(new Dimension(xdim,200));
+        f.setSize(new Dimension(bc.pc.getComponent().getWidth(),bc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return bc;
     }
     
-    public LineCanvas newLineplot(int[] v) { return newLineplot(cvs,-1,v); }
-    public LineCanvas newLineplot(int rv, int[] v) { return newLineplot(cvs,rv,v); }
-    public LineCanvas newLineplot(int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(cvs,rv,vv); }
-    public LineCanvas newLineplot(SVarSet vs, int rv, int[] v) {
+    public LineCanvas newLineplot(PlotComponent pc, int[] v) { return newLineplot(pc,cvs,-1,v); }
+    public LineCanvas newLineplot(PlotComponent pc, int rv, int[] v) { return newLineplot(pc,cvs,rv,v); }
+    public LineCanvas newLineplot(PlotComponent pc, int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(pc,cvs,rv,vv); }
+    public LineCanvas newLineplot(PlotComponent pc, SVarSet vs, int rv, int[] v) {
     	if (v.length==0) return null;
         updateMarker(vs,v[0]);
         TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        LineCanvas lc=new LineCanvas(f,vs.at(rv),vl,vs.getMarker());
+        LineCanvas lc=new LineCanvas(pc,f,vs.at(rv),vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(lc);
-        lc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(lc.getWidth(),lc.getHeight()));
-        f.add(lc); f.pack(); f.show();
+        lc.pc.getComponent().setSize(new Dimension(400,300));
+        f.setSize(new Dimension(lc.pc.getComponent().getWidth(),lc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return lc;
     };
 
-    public HamCanvas newHammock(int[] v) { return newHammock(cvs,v); }
-    public HamCanvas newHammock(SVarSet vs, int[] v) {
+    public HamCanvas newHammock(PlotComponent pc, int[] v) { return newHammock(pc,cvs,v); }
+    public HamCanvas newHammock(PlotComponent pc, SVarSet vs, int[] v) {
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
         TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        HamCanvas hc=new HamCanvas(f,vl,vs.getMarker());
+        HamCanvas hc=new HamCanvas(pc,f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-        hc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(hc.getWidth(),hc.getHeight()));
-        f.add(hc); f.pack(); f.show();
+        hc.pc.getComponent().setSize(new Dimension(400,300));
+        f.setSize(new Dimension(hc.pc.getComponent().getWidth(),hc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return hc;
     }
     
     
-    public MosaicCanvas newMosaic(int[] v) { return newMosaic(cvs,v); }
-    public MosaicCanvas newMosaic(SVarSet vs, int[] v) {
+    public MosaicCanvas newMosaic(PlotComponent pc, int[] v) { return newMosaic(pc,cvs,v); }
+    public MosaicCanvas newMosaic(PlotComponent pc, SVarSet vs, int[] v) {
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
         String title = "(";
@@ -408,70 +428,107 @@ public class Framework implements Dependent, ActionListener {
         	title += vs.at(v[i]).getName()+", ";
         title += vs.at(v[v.length-1]).getName()+")";
         TFrame f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        MosaicCanvas mc=new MosaicCanvas(f,vl,vs.getMarker());
+        MosaicCanvas mc=new MosaicCanvas(pc,f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(mc);
-        mc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(mc.getWidth(),mc.getHeight()));
-        f.add(mc); f.pack(); f.show();
+        mc.pc.getComponent().setSize(new Dimension(400,300));
+        f.setSize(new Dimension(mc.pc.getComponent().getWidth(),mc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return mc;
     }    
     
     
-    public PCPCanvas newPCP(int[] v) { return newPCP(cvs,v); }
-    public PCPCanvas newPCP(SVarSet vs, int[] v) {
+    public PCPCanvas newPCP(PlotComponent pc, int[] v) { return newPCP(pc,cvs,v); }
+    public PCPCanvas newPCP(PlotComponent pc, SVarSet vs, int[] v) {
     	if (v.length==0) return null;
         updateMarker(vs,v[0]);
         TFrame f=new TFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+    	
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
-        PCPCanvas pc=new PCPCanvas(f,vl,vs.getMarker());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(pc);
-        pc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(pc.getWidth(),pc.getHeight()));
-        f.add(pc); f.pack(); f.show();
+        PCPCanvas pcpc=new PCPCanvas(pc,f,vl,vs.getMarker());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(pcpc);
+        pcpc.pc.getComponent().setSize(new Dimension(400,300));
+        f.setSize(new Dimension(pcpc.pc.getComponent().getWidth(),pcpc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
-        return pc;
+        return pcpc;
     }    
 
     /** display a new histogram of a variables from current dataset
         @param v variable ID
         @return histogram canvas object */
-    public HistCanvas newHistogram(int v) { return newHistogram(cvs,v); };
-    public HistCanvas newHistogram(SVarSet vs, int i) {
+    public HistCanvas newHistogram(PlotComponent pc, int v) { return newHistogram(pc,cvs,v); };
+    public HistCanvas newHistogram(PlotComponent pc, SVarSet vs, int i) {
         updateMarker(vs,i);
-	TFrame f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+        Frame f;
+        // we use GLCanvas in OPENGL. GLJPanel doesn't gain any speed performance
+    if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+    	f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+    	((TFrame)f).initPlacement();
+    	f.add(pc.getComponent());
+    } else { // SWING
+    	f=new TJFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+    	((TJFrame)f).initPlacement();
+    	((TJFrame)f).getContentPane().add(pc.getComponent());
+    }
+	
+	f.setVisible(true);
+	pc.initializeGraphics(f);
+	
 	f.addWindowListener(Common.getDefaultWindowListener());
-	HistCanvas hc=new HistCanvas(f,vs.at(i),vs.getMarker());
+	HistCanvas hc=new HistCanvas(pc,f,vs.at(i),vs.getMarker());
+	hc.updateObjects();
+
 	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-        hc.setSize(new Dimension(400,300));
-        f.setSize(new Dimension(hc.getWidth(),hc.getHeight()));
-	f.add(hc); f.pack(); f.show();
-        f.initPlacement();
+
+	f.setSize(400,300);
+	hc.pc.setSize(new Dimension(f.getWidth(),f.getHeight()));
+	
+	if(pc.getGraphicsEngine() == PlotComponent.SWING) {
+		// --> schützt nicht vor rotate -> Fenster wird verkleinert
+		hc.pc.setPreferredSize(new Dimension(400,300));
+		hc.pc.setMinimumSize(new Dimension(400,300));
+	}
+	f.pack();
 	return hc;
     };
 
-    public BoxCanvas newBoxplot(int i) { return newBoxplot(cvs,i,-1); }
-    public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,i,ic); }
-    public BoxCanvas newBoxplot(SVarSet vs, int i, int ic) {
+    public BoxCanvas newBoxplot(PlotComponent pc, int i) { return newBoxplot(pc,cvs,i,-1); }
+    public BoxCanvas newBoxplot(PlotComponent pc, int i, int ic) { return newBoxplot(pc,cvs,i,ic); }
+    public BoxCanvas newBoxplot(PlotComponent pc, SVarSet vs, int i, int ic) {
         SVar catVar=(ic<0)?null:vs.at(ic);
         updateMarker(vs,i);
         TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
                             TFrame.clsBox);
+        
+    	f.add(pc.getComponent());
+    	f.setVisible(true);
+    	pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
-        BoxCanvas bc=(catVar==null)?new BoxCanvas(f,vs.at(i),vs.getMarker()):new BoxCanvas(f,vs.at(i),catVar,vs.getMarker());
+        BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vs.at(i),vs.getMarker()):new BoxCanvas(pc,f,vs.at(i),catVar,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
-        bc.setSize(new Dimension(xdim,200));
-        f.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
-        f.add(bc); f.pack(); f.show();
+        bc.pc.getComponent().setSize(new Dimension(xdim,200));
+        f.setSize(new Dimension(bc.pc.getComponent().getWidth(),bc.pc.getComponent().getHeight()));
+        f.pack();
         f.initPlacement();
         return bc;
     };
