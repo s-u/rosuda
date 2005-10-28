@@ -17,8 +17,8 @@ import org.rosuda.ibase.toolkit.*;
 public class MapScatterCanvas extends ScatterCanvas {
 	// map variable
 	SVar map;
-    public MapScatterCanvas(Frame f, SVar v1, SVar v2, SVar map, SMarker mark) {
-		super(f, v1, v2, mark);
+    public MapScatterCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SVar map, SMarker mark) {
+		super(pc,f, v1, v2, mark);
 		this.map = map;
 	}
 	

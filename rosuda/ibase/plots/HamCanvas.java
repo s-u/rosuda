@@ -23,8 +23,8 @@ public class HamCanvas extends BaseCanvas {
     
     Axis[] ai;
     
-    public HamCanvas(Frame f, SVar[] mv, SMarker mark) {
-        super(f,mark);
+    public HamCanvas(PlotComponent pc, Frame f, SVar[] mv, SMarker mark) {
+        super(pc,f,mark);
         setTitle("Hammock Plot");
         v=mv;
         allow180=false;
@@ -51,7 +51,7 @@ public class HamCanvas extends BaseCanvas {
     }
     
     public void updateObjects() {
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         int w=Dsize.width, h=Dsize.height;
         int axi=0; while (axi<ai.length)
             ai[axi++].setGeometry(Axis.O_Y, mLeft, h-mLeft*2);

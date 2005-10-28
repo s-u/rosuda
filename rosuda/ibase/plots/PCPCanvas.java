@@ -41,8 +41,8 @@ public class PCPCanvas extends BaseCanvas {
      * @param f associated frame (or <code>null</code> if none)
      * @param yvs list of variables
      * @param mark associated marker */
-    public PCPCanvas(Frame f, SVar[] yvs, SMarker mark) {
-        super(f,mark);
+    public PCPCanvas(PlotComponent pc, Frame f, SVar[] yvs, SMarker mark) {
+        super(pc,f,mark);
         
         mBottom=30;
         mLeft=mRight=mTop=10;
@@ -67,7 +67,7 @@ public class PCPCanvas extends BaseCanvas {
         ay=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
-        setBackground(Common.backgroundColor);
+        pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
@@ -87,7 +87,7 @@ public class PCPCanvas extends BaseCanvas {
             return;
         }
         if (A[0]==null) {
-            Dimension Dsize=getSize();
+            Dimension Dsize=pc.getSize();
             int w=Dsize.width, h=Dsize.height;
             int lshift=0;
             int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
@@ -107,7 +107,7 @@ public class PCPCanvas extends BaseCanvas {
     }
     
     public void paintBack(PoGraSS g){
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("axis",192,192,192);
@@ -117,7 +117,7 @@ public class PCPCanvas extends BaseCanvas {
         g.defineColor("selText",255,0,0);
         g.defineColor("selBg",255,255,192);
         
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH) {
             int w=Dsize.width, h=Dsize.height;
             TW=w; TH=h;
@@ -158,8 +158,8 @@ public class PCPCanvas extends BaseCanvas {
                 }
                 fi+=f;
             };
-            int b = getSize().height-mBottom;
-            g.drawLine(mLeft, b, getSize().width-mRight, b);
+            int b = pc.getSize().height-mBottom;
+            g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
         }
         
         /* draw ticks and labels for Y axis */
@@ -173,7 +173,7 @@ public class PCPCanvas extends BaseCanvas {
                     labels.add(X,(t+5),0,0, v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 fi+=f;
             };
-            g.drawLine(mLeft, mTop, mLeft, getSize().height-mBottom);
+            g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
         }
         
         labels.finishAdd();
@@ -183,7 +183,7 @@ public class PCPCanvas extends BaseCanvas {
             int xx=0;
             while (xx<v[0].getNumCats()) {
                 int t=ax.getCatCenter(xx++);
-                g.drawLine(t,mTop,t,getSize().height-mTop-mBottom);
+                g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
             }
         }
     };
@@ -315,8 +315,8 @@ public class PCPCanvas extends BaseCanvas {
             pp=new PlotPrimitive[v[1].size()];
         }
         
-        TW = getSize().width;
-        TH = getSize().height;
+        TW = pc.getSize().width;
+        TH = pc.getSize().height;
         
         boolean isZ=false;
         int[][] xs = new int[v[1].size()][v.length-1];

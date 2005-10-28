@@ -74,8 +74,8 @@ public class ScatterCanvas extends BaseCanvas {
      * @param v1 variable 1
      * @param v2 variable 2
      * @param mark associated marker */
-    public ScatterCanvas(Frame f, SVar v1, SVar v2, SMarker mark) {
-        super(f,mark);
+    public ScatterCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark) {
+        super(pc,f,mark);
         
         v=new SVar[2]; A=new Axis[2];
         v[0]=v1; v[1]=v2; m=mark;
@@ -115,7 +115,7 @@ public class ScatterCanvas extends BaseCanvas {
         SVar h=v[0]; v[0]=v[1]; v[1]=h;
         ay=A[0]; ax=A[0]=A[1]; A[1]=ay;
         try {
-            ((Frame) getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
+            ((Frame) pc.getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
         } catch (Exception ee) {};
         updateObjects();
         setUpdateRoot(0);
@@ -126,7 +126,7 @@ public class ScatterCanvas extends BaseCanvas {
     boolean hasLeft, hasTop, hasRight, hasBot;
     
     public void updateObjects() {
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         int w=Dsize.width, h=Dsize.height;
         TW=w; TH=h;
         int innerL=45, innerB=30, lshift=0;
@@ -286,7 +286,7 @@ public class ScatterCanvas extends BaseCanvas {
         if (e.getKeyCode()==KeyEvent.VK_ALT && !querying) {
             querying=true;
             qx=qy=-1;
-            setCursor(Common.cur_aim);
+            pc.setCursor(Common.cur_aim);
         }
         if (e.getKeyCode()==KeyEvent.VK_UP) {
             ptDiam+=2; setUpdateRoot(0); updatePtDiam(); repaint();
@@ -307,7 +307,7 @@ public class ScatterCanvas extends BaseCanvas {
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT) {
             querying=false;
-            setCursor(Common.cur_arrow);
+            pc.setCursor(Common.cur_arrow);
             setUpdateRoot(3); repaint();
         }
     };
@@ -399,7 +399,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintBack(PoGraSS g) {
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("white",255,255,255);
@@ -421,7 +421,7 @@ public class ScatterCanvas extends BaseCanvas {
         g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
         g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
         
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH)
             updateObjects();
         

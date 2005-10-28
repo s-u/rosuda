@@ -21,8 +21,8 @@ public class MapCanvas extends BaseCanvas
 	boolean fixedAspectRatio = true;
     double minX, minY, maxX, maxY;
 
-    public MapCanvas(Frame f, SVar mv, SMarker mark) {
-        super(f,mark);
+    public MapCanvas(PlotComponent pc, Frame f, SVar mv, SMarker mark) {
+        super(pc,f,mark);
         setTitle("Polygon Map ("+mv.getName()+")");
         v=mv;
         allow180=true;
@@ -38,7 +38,7 @@ public class MapCanvas extends BaseCanvas
     }
 
     public void updateObjects() {
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         int w=Dsize.width, h=Dsize.height;
         if (Global.DEBUG>0)
             System.out.println("MapCanvas.updateObjects(): ("+w+","+h+")/("+W+","+H+") pp="+pp);

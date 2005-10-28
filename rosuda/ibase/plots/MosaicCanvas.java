@@ -33,8 +33,8 @@ public class MosaicCanvas extends BaseCanvas {
     private FrequencyTable ft;
     private int[] combination; // indicates position of recursion
     
-    public MosaicCanvas(Frame f, SVar[] vars, SMarker mark) {
-        super(f, mark);
+    public MosaicCanvas(PlotComponent pc, Frame f, SVar[] vars, SMarker mark) {
+        super(pc,f, mark);
         
         this.frame=f;
         this.v = vars;
@@ -61,7 +61,7 @@ public class MosaicCanvas extends BaseCanvas {
     
     public void updateObjects() {
         
-        create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
+        create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         

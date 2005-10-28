@@ -105,14 +105,15 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	@param f associated frame (or <code>null</code> if none)
 	@param var source variable
 	@param mark associated marker */
-    public BoxCanvas(Frame f, SVar var, SMarker mark) {
+    public BoxCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) {
+    	super(pc);
 	v=var; m=mark; setFrame(f);
 	setTitle("Boxplot ("+v.getName()+")");
         a=new Axis(v,Axis.O_Y,Axis.T_Num); a.addDepend(this);
-	setBackground(new Color(255,255,192));
-	addMouseListener(this);
-	addMouseMotionListener(this);
-	addKeyListener(this); f.addKeyListener(this);
+	pc.setBackground(new Color(255,255,192));
+	pc.addMouseListener(this);
+	pc.addMouseMotionListener(this);
+	pc.addKeyListener(this); f.addKeyListener(this);
 	if (var!=null && !var.isCat() && var.isNum())
 	    valid=true; // valid are only numerical vars non-cat'd
 	if (valid) {
@@ -131,16 +132,17 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	@param var source numerical variable
 	@param cvar categorical variable for grouping
 	@param mark associated marker */
-    public BoxCanvas(Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
+    public BoxCanvas(PlotComponent pc, Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
+    	super(pc);
 	v=var; m=mark; cv=cvar; setFrame(f);
 	setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
         a=new Axis(v,Axis.O_Y,Axis.T_Num); a.addDepend(this);
         // get some space around (this comes from the scatterplots)
         a.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
-	setBackground(new Color(255,255,192));
-	addMouseListener(this);
-	addMouseMotionListener(this);
-	addKeyListener(this); f.addKeyListener(this);
+        pc.setBackground(new Color(255,255,192));
+        pc.addMouseListener(this);
+        pc.addMouseMotionListener(this);
+        pc.addKeyListener(this); f.addKeyListener(this);
 	if (var!=null && !var.isCat() && var.isNum() && cvar.isCat())
 	    valid=true; // valid are only numerical vars non-cat'd, cvar is cat
 	if (valid) { // split into ranked chunks by cat.
@@ -219,7 +221,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     };
 
     void drawBox(PoGraSS g, OrdStats os, int x, int w, String fillColor, String drawColor) {
-	Rectangle r=getBounds();
+	Rectangle r=pc.getBounds();
 	if (fillColor!=null) {
 	    g.setColor(fillColor);
 	    g.fillRect(x,a.getValuePos(os.uh),
@@ -262,7 +264,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     protected int X,Y,W,H, TW,TH;
 
     public void paintPoGraSS(PoGraSS g) {
-	Rectangle r=getBounds();
+	Rectangle r=pc.getBounds();
 	g.setBounds(r.width,r.height);
 
         int w=r.width, h=r.height;

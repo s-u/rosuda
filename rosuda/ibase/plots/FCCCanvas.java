@@ -15,13 +15,13 @@ import org.rosuda.util.*;
 */
 public class FCCCanvas extends FluctCanvas {
     SVar ccv;
-    public FCCCanvas(Frame f, SVar v1, SVar v2, SMarker mark, SVar ccvar) {
-	super(f,v1,v2,mark,null);
+    public FCCCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark, SVar ccvar) {
+	super(pc,f,v1,v2,mark,null);
 	ccv=ccvar;
     };
 
     public void paintPoGraSS(PoGraSS g) {
-	Rectangle r=getBounds();
+	Rectangle r=pc.getBounds();
 	g.setBounds(r.width,r.height);
 	g.begin();
 	g.defineColor("white",255,255,255);
@@ -46,7 +46,7 @@ public class FCCCanvas extends FluctCanvas {
 		g.defineColor("class"+cc,rr,gg,bb);
 	    };
  
-	Dimension Dsize=getSize();
+	Dimension Dsize=pc.getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
 	    updatePoints();
 
