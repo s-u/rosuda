@@ -12,7 +12,6 @@ import org.rosuda.pograss.*;
  */
 public abstract class LayerCanvas
 {
-//	public Component comp;
 	public PlotComponent pc;
 	public int graphicsEngine;
 	
@@ -33,7 +32,6 @@ public abstract class LayerCanvas
     
     /** creates Layers layers */
     public LayerCanvas(PlotComponent pc, int Layers) {
-//    	comp = pc.getComponent();
     	pc.initializeLayerCanvas(this);
     	this.pc = pc;
     	graphicsEngine = pc.getGraphicsEngine();
@@ -75,7 +73,7 @@ public abstract class LayerCanvas
     public void update(Graphics g)
     {
     	if(g==null) return;
-    	Dimension d = pc.getComponent().getSize();
+    	Dimension d = pc.getSize();
         Image curimg=null;
         int firstPaintLayer=updateRoot;
         if (Global.forceAntiAliasing) {
@@ -102,7 +100,7 @@ public abstract class LayerCanvas
         	// so in order to reduce flickering draw the old image until the new one is generated
         	if (offscreen[layers-1]!=null) g.drawImage(offscreen[layers-1], 0, 0, pc.getComponent());
         	// create the offscreen buffer
-        	for(int i=0;i<layers;i++) offscreen[i] = pc.getComponent().createImage(d.width, d.height);
+        	for(int i=0;i<layers;i++) offscreen[i] = pc.createImage(d.width, d.height);
         	offsd=d;
         	firstPaintLayer=0; // after resize we need to repaint them all
         	setUpdateRoot(0);
@@ -136,7 +134,7 @@ public abstract class LayerCanvas
         			offgc.fillRect(0, 0, d.width, d.height);
         		}
 
-        		Color fg=pc.getComponent().getForeground();
+        		Color fg=pc.getForeground();
         		if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
         	}
             	if (Global.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
@@ -165,7 +163,7 @@ public abstract class LayerCanvas
     };
     
     public void repaint() {
-    	update(pc.getComponent().getGraphics());
+    	update(pc.getGraphics());
     }
 
     /**
