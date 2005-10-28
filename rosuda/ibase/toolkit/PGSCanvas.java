@@ -22,9 +22,11 @@ class must use PoGraSS methods instead of Graphics.
 @version $Id$
 */
 public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Printable {
-    /** frame that owns this canvas. can be null if none does. it is mainly used
-	to identify current frame in calls to dialogs */
-    protected Frame myFrame=null;
+    
+	/** frame that owns this canvas. can be null if none does. it is mainly used
+	 	to identify current frame in calls to dialogs */
+	protected Frame myFrame=null;
+    
     /** description of this canvas. */
     protected String desc="untitled PGS canvas";
 	
@@ -46,20 +48,20 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     
     public PageFormat pageFormat;
     
-    public PGSCanvas(int layers, Axis x, Axis y) {
-        this(layers);
+    public PGSCanvas(PlotComponent pc, int layers, Axis x, Axis y) {
+        this(pc, layers);
 		ax=x; ay=y;
     }
 	
-    public PGSCanvas(int layers) {
-		super(layers);
+    public PGSCanvas(PlotComponent pc, int layers) {
+		super(pc, layers);
 		pm=new PlotManager(this);
         if (globalNotifier==null) globalNotifier=new Notifier();
         globalNotifier.addDepend(this);
     }
 	
-    public PGSCanvas() { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
-        this(1);
+    public PGSCanvas(PlotComponent pc) { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
+        this(pc, 1);
     }
 	
     protected void finalize() {
@@ -112,7 +114,9 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     /** set the corresponding frame that contains this canvas. It is used mainly
 		for dialog boxes to raise the correct frame before entering modal state.
 		If no frame is set, default common frame is used by the dialogs. */
-    public void setFrame(Frame owner) { myFrame=owner; };
+    public void setFrame(Frame owner) {
+    	myFrame=owner;
+    };
     /** returns corresponding frame containing this canvas as set by {@link #setFrame} 
 	@return associated frame */
     public Frame getFrame() { return myFrame; };
@@ -154,10 +158,10 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     }
 	
     public void forcedFlush() {
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         setUpdateRoot(0);
         //setSize(r.width-1,r.height-1);
-        setSize(r.width,r.height);
+        pc.setSize(r.width,r.height);
     }
     
     /** default handing of commands "exportPGS" and "exportPS". Any descendant should
@@ -222,8 +226,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
             Panel cp=new Panel(); cp.setLayout(new FlowLayout());
             d.add(cp);
             cp.add(new Label("width: "));
-            TextField tw=new TextField(""+getSize().width,6);
-            TextField th=new TextField(""+getSize().height,6);
+            TextField tw=new TextField(""+pc.getSize().width,6);
+            TextField th=new TextField(""+pc.getSize().height,6);
             cp.add(tw);
             cp.add(new Label(", height: "));
             cp.add(th);
@@ -233,9 +237,9 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
             if (!cancel) {
                 int w=Tools.parseInt(tw.getText());
                 int h=Tools.parseInt(th.getText());
-                if(w<10) w=getSize().width;
-                if(h<10) w=getSize().height;
-                setSize(w,h);
+                if(w<10) w=pc.getSize().width;
+                if(h<10) w=pc.getSize().height;
+                pc.setSize(w,h);
                 if (myFrame!=null) myFrame.pack();
             };
             d.dispose();
@@ -272,8 +276,8 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
             Panel cp=new Panel(); cp.setLayout(new FlowLayout());
             d.add(cp);
             cp.add(new Label("width: "));
-            int ow=getSize().width;
-            int oh=getSize().height;
+            int ow=pc.getSize().width;
+            int oh=pc.getSize().height;
             TextField tw=new TextField(""+ow,6);
             TextField th=new TextField(""+oh,6);
             TextField tfs=new TextField("10",6);
@@ -289,10 +293,10 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
                 int w=Tools.parseInt(tw.getText());
                 int h=Tools.parseInt(th.getText());
                 double fs=Tools.parseDouble(tfs.getText());
-                if(w<10) w=getSize().width;
-                if(h<10) w=getSize().height;
+                if(w<10) w=pc.getSize().width;
+                if(h<10) w=pc.getSize().height;
                 
-                setSize(w,h);
+                pc.setSize(w,h);
                 BufferedImage img=new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
                 Graphics2D g=img.createGraphics();
                 PoGraSSgraphics p=new PoGraSSgraphics(g);
@@ -301,7 +305,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
                 p.setFontSize(fs);
                 paintPoGraSS(p);
 				endPaint(p);
-                setSize(ow,oh);
+				pc.setSize(ow,oh);
 				
                 FileDialog fd=new FileDialog(myFrame,desc,FileDialog.SAVE);
                 fd.setModal(true);
@@ -348,9 +352,9 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
 	
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         if (myFrame!=null)
-            myFrame.setBackground(Common.backgroundColor);
-        setBackground(Common.backgroundColor);
+        	myFrame.setBackground(Common.backgroundColor);
+        pc.setBackground(Common.backgroundColor);
         setUpdateRoot(0);
-        repaint();
+        pc.repaint();
     }    
 }
