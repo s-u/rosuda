@@ -84,6 +84,15 @@ public class SwingPlotComponent implements PlotComponent {
 	public Graphics getGraphics() {
 		return comp.getGraphics();
 	}
+	public Container getParent() {
+		return comp.getParent();
+	}
+	public int getWidth() {
+		return comp.getWidth();
+	}
+	public int getHeight() {
+		return comp.getHeight();
+	}
 	
 	// additions to SWING
 	public void setPreferredSize(Dimension d) {

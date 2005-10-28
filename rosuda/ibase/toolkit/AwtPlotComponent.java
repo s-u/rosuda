@@ -85,7 +85,15 @@ public class AwtPlotComponent implements PlotComponent {
 	public Graphics getGraphics() {
 		return comp.getGraphics();
 	}
-	
+	public Container getParent() {
+		return comp.getParent();
+	}
+	public int getWidth() {
+		return comp.getWidth();
+	}
+	public int getHeight() {
+		return comp.getHeight();
+	}
 	// additions to SWING: do nothing in AWT
 	public void setPreferredSize(Dimension d) {}
 	public void setMinimumSize(Dimension d) {}

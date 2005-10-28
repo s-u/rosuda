@@ -29,6 +29,9 @@ public interface PlotComponent {
 	Image createImage(int width, int height);
 	Color getForeground();
 	Graphics getGraphics();
+	Container getParent();
+	int getWidth();
+	int getHeight();
 	
 	// additions to SWING
 	void setPreferredSize(Dimension d);
