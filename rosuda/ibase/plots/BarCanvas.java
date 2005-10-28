@@ -43,8 +43,8 @@ public class BarCanvas extends BaseCanvas {
      * @param var associated variable
      * @param mark associated marker
      * @param wvar weight variable for weighted barcharts or null for normal ones; is ignored at the moment */
-    public BarCanvas(Frame f, SVar var, SMarker mark, SVar wvar) {
-        super(f,mark);
+    public BarCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark, SVar wvar) {
+        super(pc,f,mark);
         
         allowDragMove=true;
         
@@ -70,7 +70,7 @@ public class BarCanvas extends BaseCanvas {
         MIspine=EzMenu.getItem(f,"spine");
     };
     
-    public BarCanvas(Frame f, SVar var, SMarker mark) { this(f,var,mark,null); };
+    public BarCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) { this(pc,f,var,mark,null); };
     
     public SVar getData(int id) { return (id==0)?v:((id==1)?weight:null); }
     
@@ -115,7 +115,7 @@ public class BarCanvas extends BaseCanvas {
         };
         ay.setValueRange(countMax);
         
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         int w=r.width, h=r.height;
         
         int i=0;
@@ -175,7 +175,7 @@ public class BarCanvas extends BaseCanvas {
     public void paintBack(PoGraSS g) {
         if (bars==0) return;
         
-        Rectangle r=getBounds();
+        Rectangle r=pc.getBounds();
         int w=r.width, h=r.height;
         
         if (orientation==0){
@@ -238,7 +238,7 @@ public class BarCanvas extends BaseCanvas {
     
     public void paintPost(PoGraSS g){
         if(baseDrag && moveDrag) {
-            int h=getBounds().height;
+            int h=pc.getBounds().height;
             int basey=h-mBottom;
             int pos = (orientation==0)?baseDragX2:baseDragY2;
             int dragNew = ax.getCatByPos(pos);
@@ -287,7 +287,7 @@ public class BarCanvas extends BaseCanvas {
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
                     dragW=((PPrimRectangle)pp[i]).r.width; dragH=((PPrimRectangle)pp[i]).r.height;
-                    if (!inQuery) setCursor(Common.cur_hand);
+                    if (!inQuery) pc.setCursor(Common.cur_hand);
                     break;
                 };
                 i++;
