@@ -166,104 +166,38 @@ public class ScatterCanvas extends BaseCanvas {
                     if (stackjitter && jitter && v[0].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
-                            if (pp[j]!=null && ((PPrimRectangle)pp[j]).r.y==y && ((PPrimRectangle)pp[j]).r.x==x) x+=stackOff;
+                            if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) x+=stackOff;
                             //if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) x+=stackOff;
                             j++;
                         }
                     } else if (stackjitter && jitter && v[1].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
-                            if (pp[j]!=null && ((PPrimRectangle)pp[j]).r.y==y && ((PPrimRectangle)pp[j]).r.x==x) y-=stackOff;
+                            if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) y-=stackOff;
                             //if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) y-=stackOff;
                             j++;
                         }
                     }
                     Pts[i]=new Point(x,y);
-                    pp[i]=new PPrimRectangle();
-                    ((PPrimRectangle)pp[i]).r = new Rectangle(x-ptDiam/2,y-ptDiam/2,ptDiam,ptDiam);
-                    ((PPrimRectangle)pp[i]).ref = new int[] {i};
+                    pp[i]=new PPrimCircle();
+                    ((PPrimCircle)pp[i]).x = x;
+                    ((PPrimCircle)pp[i]).y = y;
+                    ((PPrimCircle)pp[i]).diam = ptDiam;
+                    ((PPrimCircle)pp[i]).ref = new int[] {i};
                 }
             } else { // place missings on the other side of the axes
                 int x,y;
                 if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+A[0].getCasePos(i);
                 if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+A[1].getCasePos(i);
                 Pts[i]=new Point(x,y);
-                pp[i]=new PPrimRectangle();
-                ((PPrimRectangle)pp[i]).r = new Rectangle(x-ptDiam/2,y-ptDiam/2,ptDiam,ptDiam);
-                ((PPrimRectangle)pp[i]).ref = new int[] {i};
+                pp[i]=new PPrimCircle();
+                ((PPrimCircle)pp[i]).x = x;
+                ((PPrimCircle)pp[i]).y = y;
+                ((PPrimCircle)pp[i]).diam = ptDiam;
+                ((PPrimCircle)pp[i]).ref = new int[] {i};
             }
         };
     };
-    
-    /*public void mouseClicked(MouseEvent ev)
-    {
-        int x=ev.getX(), y=ev.getY();
-        if (Common.isZoomTrigger(ev)) {
-            performZoomOut(x,y);
-            return;
-        }
-        //x1=x-2; y1=y-2; x2=x+3; y2=y+3; drag=true; mouseReleased(ev);
-    }
-     
-    boolean zoomDrag;
-     
-    public void mousePressed(MouseEvent ev)
-    {
-        x1=ev.getX(); y1=ev.getY();
-        drag=true;
-        zoomDrag=Common.isZoomTrigger(ev);
-    }
-     
-    public void mouseReleased(MouseEvent e)
-    {
-        int X1=x1, Y1=y1, X2=e.getX(), Y2=e.getY();
-        if (x1>x2) { X2=x1; X1=x2; };
-        if (y1>y2) { Y2=y1; Y1=y2; };
-     
-        if (Global.DEBUG>0)
-            System.out.println("ScatterCanvas.MouseReleased["+e+", zoomDrag="+zoomDrag+"]");
-        if (zoomDrag) {
-            drag=false;
-            if (X2-X1<4 || Y2-Y1<4) return;
-            performZoomIn(X1,Y1,X2,Y2);
-            repaint();
-        } else {
-            Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
-     
-            boolean setTo=false;
-            if (e.isControlDown()) setTo=true;
-            if (!e.isShiftDown()) m.selectNone();
-     
-            drag=false;
-            int i=0;
-            while (i<pts) {
-                if (Pts[i]!=null && sel.contains(Pts[i]))
-                    m.set(i,m.at(i)?setTo:true);
-                i++;
-            };
-            m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-            setUpdateRoot(2);
-            repaint();
-        }
-    };
-    public void mouseDragged(MouseEvent e)
-    {
-        if (drag) {
-            int x=e.getX(), y=e.getY();
-            if (x!=x2 || y!=y2) {
-                x2=x; y2=y;
-                setUpdateRoot(3);
-                repaint();
-            };
-        };
-    };
-    public void mouseMoved(MouseEvent ev) {
-        if (querying) {
-            qx=ev.getX(); qy=ev.getY();
-            setUpdateRoot(3);
-            repaint();
-        }
-    };*/
     
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar()=='R') run(this,"rotate");
@@ -287,18 +221,29 @@ public class ScatterCanvas extends BaseCanvas {
             querying=true;
             qx=qy=-1;
             pc.setCursor(Common.cur_aim);
+            setUpdateRoot(3); repaint();
         }
         if (e.getKeyCode()==KeyEvent.VK_UP) {
-            ptDiam+=2; setUpdateRoot(0); updatePtDiam(); repaint();
+            ptDiam+=2; setUpdateRoot(0);
+            for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
+            repaint();
         }
         if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>2) {
-            ptDiam-=2; setUpdateRoot(0); updatePtDiam(); repaint();
+            ptDiam-=2; setUpdateRoot(0);
+            for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
+            repaint();
         }
-        if (stackjitter && e.getKeyCode()==KeyEvent.VK_RIGHT) {
+        /*if (stackjitter && e.getKeyCode()==KeyEvent.VK_RIGHT) {
             stackOff++; setUpdateRoot(0); updateObjects(); repaint();
         }
         if (stackjitter && e.getKeyCode()==KeyEvent.VK_LEFT && stackOff>1) {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
+        }*/
+        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+            run(this,"alphaDown");
+        }
+        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            run(this,"alphaUp");
         }
     };
     
@@ -499,11 +444,11 @@ public class ScatterCanvas extends BaseCanvas {
                 if (Pts[filter[i]]!=null)
                     g.fillOval(Pts[filter[i]].x-ptDiam/2,Pts[filter[i]].y-ptDiam/2,ptDiam,ptDiam);
         }
-        
-        
+         
+         
         g.resetGlobalAlpha();
         //nextLayer(g);
-        
+         
         if (m.marked()>0) {
             g.setColor("marked");
             if (filter==null) {
@@ -535,6 +480,22 @@ public class ScatterCanvas extends BaseCanvas {
              g.setColor("black");
              g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
         };
+        
+    }
+    
+    public String queryObject(int i) {
+        return "point #" + i;
+    }
+    
+    public void mouseMoved(MouseEvent ev) {
+        if (querying) {
+            qx=ev.getX(); qy=ev.getY();
+            setUpdateRoot(3);
+            repaint();
+        }
+    };
+    
+    public void paintPost(PoGraSS g) {
         if (querying) {
             g.setColor("black");
             if (qx==A[0].clip(qx) && qy==A[1].clip(qy)) {
@@ -544,19 +505,6 @@ public class ScatterCanvas extends BaseCanvas {
                 g.drawString(A[1].getDisplayableValue(A[1].getValueForPos(qy)),qx+2,qy+11);
             }
         }
-        g.end();
-        setUpdateRoot(4); // by default no repaint is necessary unless resize occurs
-    }
-    
-    private void updatePtDiam(){
-        int diff=0;
-        Rectangle r;
-        for(int i=0; i<pp.length; i++){
-            if(pp[i]!=null){
-                if(diff==0) diff=(-ptDiam+((PPrimRectangle)pp[i]).r.width)/2;
-                r=((PPrimRectangle)pp[i]).r;
-                r.setBounds(r.x+diff,r.y+diff, ptDiam, ptDiam);
-            }
-        }
+        super.paintPost(g);
     }
 };
