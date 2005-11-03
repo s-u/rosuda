@@ -15,18 +15,20 @@ import org.rosuda.ibase.plots.*;
 import org.rosuda.util.*;
 
 /** basic framework interface for bulding interactive
-    statistical programs */
+ * statistical programs */
 
 public class Framework implements Dependent, ActionListener {
     Vector dataset;
     SVarSet cvs;
     int tvctr;
     int dtctr;
-
+    
+    boolean USE_SWING = true; // use AWT otherwise
+    
     /** initialize framework, create and select a dataset which id called "default".
-        one framework supports multiple datasets, plots etc. so there should be no
-        need for multiple frameworks usually.
-        */
+     * one framework supports multiple datasets, plots etc. so there should be no
+     * need for multiple frameworks usually.
+     */
     public Framework() {
         Global.AppType=Common.AT_Framework;
         Common.supportsBREAK=true;
@@ -61,31 +63,31 @@ public class Framework implements Dependent, ActionListener {
     public SVarSet getCurrentSet() { return cvs; };
     
     /** select dataset by name. the initial dataset created during framework initialization is called "default".
-        @param name name of the dataset
-        @return selected dataset or <code>null</code> if no such dataset was found */
+     * @param name name of the dataset
+     * @return selected dataset or <code>null</code> if no such dataset was found */
     public SVarSet selectSet(String name) {
-	int i=0;
-	while (i<dataset.size()) {
-	    SVarSet s=(SVarSet)dataset.elementAt(i);
-	    if (s.getName().equals(name)) {
-		cvs=s; return s;
-	    };
-	    i++;
-	};
-	return null;
+        int i=0;
+        while (i<dataset.size()) {
+            SVarSet s=(SVarSet)dataset.elementAt(i);
+            if (s.getName().equals(name)) {
+                cvs=s; return s;
+            };
+            i++;
+        };
+        return null;
     };
-
+    
     /** select dataset based on its ID (initial dataset has ID 0)/
-        @param i the ID
-        @return selected dataset or <code>null</code> if ID out of range */
+     * @param i the ID
+     * @return selected dataset or <code>null</code> if ID out of range */
     public SVarSet selectSet(int i) {
-	return (i<0||i>=dataset.size())?null:(cvs=(SVarSet)dataset.elementAt(i));
+        return (i<0||i>=dataset.size())?null:(cvs=(SVarSet)dataset.elementAt(i));
     }
-
+    
     public SVarSet getSet(int i) {
         return (i<0||i>=dataset.size())?null:(SVarSet)dataset.elementAt(i);
     }
-
+    
     public int countSets() {
         return dataset.size();
     }
@@ -93,7 +95,7 @@ public class Framework implements Dependent, ActionListener {
     public int curSetId() {
         return dataset.indexOf(cvs);
     }
-
+    
     public String getSetName(int i) {
         try {
             SVarSet vs=(SVarSet) dataset.elementAt(i);
@@ -101,37 +103,37 @@ public class Framework implements Dependent, ActionListener {
         } catch (Exception e) {}
         return null;
     }
-
+    
     public String getSetName() {
         return cvs.getName();
     }
     
     /** create and select a new dataset with the specified name. please note that it is possible to create
-        multiple datasets of the same name but then only the first of these will be retrieved by name, others
-        have to be selected by ID
-        @param name name of the new dataset
-        @return new dataset */
+     * multiple datasets of the same name but then only the first of these will be retrieved by name, others
+     * have to be selected by ID
+     * @param name name of the new dataset
+     * @return new dataset */
     public int newSet(String name) {
-	cvs=new SVarSet();
+        cvs=new SVarSet();
         if (name==null) {
             dtctr++;
             name="data."+dtctr;
         }
-	cvs.setName(name);
-	dataset.addElement(cvs);
-	return dataset.indexOf(cvs);
+        cvs.setName(name);
+        dataset.addElement(cvs);
+        return dataset.indexOf(cvs);
     }
-
+    
     public int getLength() {
         return (cvs==null || cvs.at(0)==null)?0:cvs.at(0).size();
     }
     
     /** add a variable to the current dataset. Note that many plots assume that all variables of a dataset
-        have the same size.
-        @param v the variable
-        @return index of the variable within the dataset. In order to prevent usage of variables across datasets,
-        most plots take the ID of a variable as parameter and NOT the {@link SVar} object itself.
-        */
+     * have the same size.
+     * @param v the variable
+     * @return index of the variable within the dataset. In order to prevent usage of variables across datasets,
+     * most plots take the ID of a variable as parameter and NOT the {@link SVar} object itself.
+     */
     public int addVar(SVar v) {
         if (cvs.getMarker()==null) {
             SMarker m;
@@ -140,9 +142,9 @@ public class Framework implements Dependent, ActionListener {
         }
         SMarker m=cvs.getMarker();
         if (v.size()>m.size()) m.resize(v.size());
-	return cvs.add(v);
+        return cvs.add(v);
     }
-
+    
     int mmDlg(String name, int d) {
         int res=0;
         Frame f=new Frame("dummy");
@@ -156,7 +158,7 @@ public class Framework implements Dependent, ActionListener {
         f=null;
         return res;
     }
-
+    
     public static String msgDlg(String caption, String msg, String[] buttons) {
         String res;
         Frame f=new Frame("dummy");
@@ -168,18 +170,18 @@ public class Framework implements Dependent, ActionListener {
         f=null;
         return res;
     }
-
+    
     /** get the length of the current dataset */
     public int getCurVarSetLength() {
         return (cvs.count()>0 && cvs.at(0)!=null)?cvs.at(0).size():-1;
     }
     
     /** construct a new numerical variable from supplied array of doubles. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of doubles
-        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
-        */
+     * the same name within a dataset.
+     * @param name variable name
+     * @param d array of doubles
+     * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+     */
     public int newVar(String name, double[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
@@ -188,16 +190,16 @@ public class Framework implements Dependent, ActionListener {
             int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
-	SVar v=new SVarDouble(name,d);
-	return addVar(v);
+        SVar v=new SVarDouble(name,d);
+        return addVar(v);
     }
-
+    
     /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of integers
-        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
-        */   
+     * the same name within a dataset.
+     * @param name variable name
+     * @param d array of integers
+     * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+     */
     public int newVar(String name, int[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
@@ -214,15 +216,15 @@ public class Framework implements Dependent, ActionListener {
                 v.add(new Integer(d[i]));
             i++;
         }
-	return addVar(v);
+        return addVar(v);
     };
-
+    
     /** construct a new categorical variable from supplied array of strings. Unlike datasets variables cannot have
-        the same name within a dataset.
-        @param name variable name
-        @param d array of strings
-        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
-        */    
+     * the same name within a dataset.
+     * @param name variable name
+     * @param d array of strings
+     * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+     */
     public int newVar(String name, String[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
@@ -233,15 +235,15 @@ public class Framework implements Dependent, ActionListener {
         }
         SVar v=new SVarObj(name);
         int i=0; while(i<d.length) v.add(d[i++]);
-	return addVar(v);
+        return addVar(v);
     }
-
+    
     /** construct a new factor variable from supplied array of integers (cases) and strings (levels). Unlike datasets variables cannot have the same name within a dataset.
-        @param name variable name
-        @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
-        @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
-        @return ID of the new variable or -1 if error occured (variable name already exists etc.)
-        */
+     * @param name variable name
+     * @param ix array of level IDs. IDs out of range (<1 or >length(d)) are treated as missing values
+     * @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
+     * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+     */
     public int newVar(String name, int[] ix, String[] d) {
         if (ix==null) return -1;
         if (d==null) return newVar(name,ix);
@@ -256,57 +258,57 @@ public class Framework implements Dependent, ActionListener {
         SVar v=new SVarFact(name, ix, d);
         return addVar(v);
     }
-
+    
     public static String[] toStringArray(Object[] o) {
         String[] s=new String[o.length];
         int i=0; while(i<o.length) { if (o[i]!=null) s[i]=o[i].toString(); i++; }
         return s;
     }
-
+    
     /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
-        the new content cannot exceed the original size of the variable, no cases are added.
-        @param vi ID of the variable
-        @param d new content
-        @return variable ID (same as vi) */
+     * the new content cannot exceed the original size of the variable, no cases are added.
+     * @param vi ID of the variable
+     * @param d new content
+     * @return variable ID (same as vi) */
     public int replaceVar(int vi, double[] d) {
-	SVar v=cvs.at(vi);
-	if (v==null) return -1;
-	v.getNotifier().beginBatch();
-	int i=0; while(i<d.length) { v.replace(i,new Double(d[i])); i++; };
-	v.getNotifier().endBatch();
-	return vi;
+        SVar v=cvs.at(vi);
+        if (v==null) return -1;
+        v.getNotifier().beginBatch();
+        int i=0; while(i<d.length) { v.replace(i,new Double(d[i])); i++; };
+        v.getNotifier().endBatch();
+        return vi;
     };
-
+    
     /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
-        the new content cannot exceed the original size of the variable, no cases are added.
-        @param vi ID of the variable
-        @param d new content
-        @return variable ID (same as vi) */
+     * the new content cannot exceed the original size of the variable, no cases are added.
+     * @param vi ID of the variable
+     * @param d new content
+     * @return variable ID (same as vi) */
     public int replaceVar(int vi, int[] d) {
-	SVar v=cvs.at(vi);
-	if (v==null) return -1;
-	v.getNotifier().beginBatch();
-	int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; };
-	v.getNotifier().endBatch();
-	return vi;
+        SVar v=cvs.at(vi);
+        if (v==null) return -1;
+        v.getNotifier().beginBatch();
+        int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; };
+        v.getNotifier().endBatch();
+        return vi;
     };
-
+    
     /** updates any plots associated with the current dataset by sending NM_VarContentChange message */
     public void update() {
-	SMarker m=cvs.getMarker();
-	if (m!=null) m.NotifyAll(new NotifyMsg(m,Common.NM_VarContentChange));
+        SMarker m=cvs.getMarker();
+        if (m!=null) m.NotifyAll(new NotifyMsg(m,Common.NM_VarContentChange));
     };
-
+    
     /** get variable object associated with an ID in current dataset
-        @param i variable ID
-        @return variable object or <code>null</code> if ID is invalid */
+     * @param i variable ID
+     * @return variable object or <code>null</code> if ID is invalid */
     public SVar getVar(int i) { return cvs.at(i); };
-
+    
     /** get first variable object associated with a name in current dataset
-        @param i variable name
-        @return variable object or <code>null</code> if var of that name doesn't exist */
+     * @param i variable name
+     * @return variable object or <code>null</code> if var of that name doesn't exist */
     public SVar getVar(String name) { return cvs.byName(name); };
-
+    
     /** beware!! this updateMerker has nothing to do with updateMarker() !!!!! bad thing! */
     public void updateMarker(SVarSet vs, int vid) {
         if (vs.getMarker()==null) {
@@ -316,20 +318,29 @@ public class Framework implements Dependent, ActionListener {
         }
     }
     
+    /** returns a new PlotComponent according to USE_SWING */
+    private PlotComponent newPlotComponent(){
+        if(USE_SWING)
+            return new SwingPlotComponent();
+        else
+            return new AwtPlotComponent();
+    }
+    
     /** display a new scatterplot of two variables from current dataset
-        @param v1 X-axis variable
-        @param v2 Y-axis variable
-        @return scatterplot canvas object */
-    public ScatterCanvas newScatterplot(PlotComponent pc, int v1, int v2) { return newScatterplot(pc,cvs,v1,v2); }
-    public ScatterCanvas newScatterplot(PlotComponent pc, SVarSet vs, int v1, int v2) {
+     * @param v1 X-axis variable
+     * @param v2 Y-axis variable
+     * @return scatterplot canvas object */
+    public ScatterCanvas newScatterplot(int v1, int v2) { return newScatterplot(cvs,v1,v2); }
+    public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
+        PlotComponent pc = newPlotComponent();
         updateMarker(vs,v1);
         TFrame f=new TFrame("Scatterplot ("+
-		vs.at(v2).getName()+" vs "+
-		vs.at(v1).getName()+")",TFrame.clsScatter);	
-                
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+                vs.at(v2).getName()+" vs "+
+                vs.at(v1).getName()+")",TFrame.clsScatter);
+        
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         ScatterCanvas sc=new ScatterCanvas(pc,f,vs.at(v1),vs.at(v2),vs.getMarker());
@@ -340,23 +351,24 @@ public class Framework implements Dependent, ActionListener {
         f.initPlacement();
         return sc;
     };
-
-    public BarCanvas newBarchart(PlotComponent pc, int v) { return newBarchart(pc,cvs,v,-1); }
-    public BarCanvas newBarchart(PlotComponent pc, int v, int wgt) { return newBarchart(pc,cvs,v,wgt); }
-    public BarCanvas newBarchart(PlotComponent pc, SVarSet vs, int v, int wgt) {
+    
+    public BarCanvas newBarchart(int v) { return newBarchart(cvs,v,-1); }
+    public BarCanvas newBarchart(int v, int wgt) { return newBarchart(cvs,v,wgt); }
+    public BarCanvas newBarchart(SVarSet vs, int v, int wgt) {
+        PlotComponent pc = newPlotComponent();
         updateMarker(vs,v);
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
         if (!theCat.isCat()) theCat.categorize();
         TFrame f=new TFrame(
-                            (theNum!=null)?
-                            "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
-                            "Barchart ("+theCat.getName()+")"
-                            ,TFrame.clsBar);
+                (theNum!=null)?
+                    "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
+                    "Barchart ("+theCat.getName()+")"
+                ,TFrame.clsBar);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         BarCanvas bc=new BarCanvas(pc,f,theCat,vs.getMarker(),theNum);
@@ -370,17 +382,18 @@ public class Framework implements Dependent, ActionListener {
         return bc;
     }
     
-    public LineCanvas newLineplot(PlotComponent pc, int[] v) { return newLineplot(pc,cvs,-1,v); }
-    public LineCanvas newLineplot(PlotComponent pc, int rv, int[] v) { return newLineplot(pc,cvs,rv,v); }
-    public LineCanvas newLineplot(PlotComponent pc, int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(pc,cvs,rv,vv); }
-    public LineCanvas newLineplot(PlotComponent pc, SVarSet vs, int rv, int[] v) {
-    	if (v.length==0) return null;
+    public LineCanvas newLineplot(int[] v) { return newLineplot(cvs,-1,v); }
+    public LineCanvas newLineplot(int rv, int[] v) { return newLineplot(cvs,rv,v); }
+    public LineCanvas newLineplot(int rv, int v) { int vv[]=new int[1]; vv[0]=v; return newLineplot(cvs,rv,vv); }
+    public LineCanvas newLineplot(SVarSet vs, int rv, int[] v) {
+        PlotComponent pc = newPlotComponent();
+        if (v.length==0) return null;
         updateMarker(vs,v[0]);
-        TFrame f=new TFrame("Lineplot",TFrame.clsLine);	
+        TFrame f=new TFrame("Lineplot",TFrame.clsLine);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
@@ -394,16 +407,17 @@ public class Framework implements Dependent, ActionListener {
         f.initPlacement();
         return lc;
     };
-
-    public HamCanvas newHammock(PlotComponent pc, int[] v) { return newHammock(pc,cvs,v); }
-    public HamCanvas newHammock(PlotComponent pc, SVarSet vs, int[] v) {
+    
+    public HamCanvas newHammock(int[] v) { return newHammock(cvs,v); }
+    public HamCanvas newHammock(SVarSet vs, int[] v) {
+        PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
         TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
@@ -419,19 +433,20 @@ public class Framework implements Dependent, ActionListener {
     }
     
     
-    public MosaicCanvas newMosaic(PlotComponent pc, int[] v) { return newMosaic(pc,cvs,v); }
-    public MosaicCanvas newMosaic(PlotComponent pc, SVarSet vs, int[] v) {
+    public MosaicCanvas newMosaic(int[] v) { return newMosaic(cvs,v); }
+    public MosaicCanvas newMosaic(SVarSet vs, int[] v) {
+        PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
         String title = "(";
         for (int i = 0; i < v.length-1; i++)
-        	title += vs.at(v[i]).getName()+", ";
+            title += vs.at(v[i]).getName()+", ";
         title += vs.at(v[v.length-1]).getName()+")";
         TFrame f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
@@ -444,19 +459,20 @@ public class Framework implements Dependent, ActionListener {
         f.pack();
         f.initPlacement();
         return mc;
-    }    
+    }
     
     
-    public PCPCanvas newPCP(PlotComponent pc, int[] v) { return newPCP(pc,cvs,v); }
-    public PCPCanvas newPCP(PlotComponent pc, SVarSet vs, int[] v) {
-    	if (v.length==0) return null;
+    public PCPCanvas newPCP(int[] v) { return newPCP(cvs,v); }
+    public PCPCanvas newPCP(SVarSet vs, int[] v) {
+        PlotComponent pc = newPlotComponent();
+        if (v.length==0) return null;
         updateMarker(vs,v[0]);
         TFrame f=new TFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
-    	
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
+        
         f.addWindowListener(Common.getDefaultWindowListener());
         SVar[] vl=new SVar[v.length];
         int i=0;
@@ -468,58 +484,60 @@ public class Framework implements Dependent, ActionListener {
         f.pack();
         f.initPlacement();
         return pcpc;
-    }    
-
+    }
+    
     /** display a new histogram of a variables from current dataset
-        @param v variable ID
-        @return histogram canvas object */
-    public HistCanvas newHistogram(PlotComponent pc, int v) { return newHistogram(pc,cvs,v); };
-    public HistCanvas newHistogram(PlotComponent pc, SVarSet vs, int i) {
+     * @param v variable ID
+     * @return histogram canvas object */
+    public HistCanvas newHistogram(int v) { return newHistogram(cvs,v); };
+    public HistCanvas newHistogram(SVarSet vs, int i) {
+        PlotComponent pc = newPlotComponent();
         updateMarker(vs,i);
         Frame f;
         // we use GLCanvas in OPENGL. GLJPanel doesn't gain any speed performance
-    if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
-    	f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
-    	((TFrame)f).initPlacement();
-    	f.add(pc.getComponent());
-    } else { // SWING
-    	f=new TJFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
-    	((TJFrame)f).initPlacement();
-    	((TJFrame)f).getContentPane().add(pc.getComponent());
-    }
-	
-	f.setVisible(true);
-	pc.initializeGraphics(f);
-	
-	f.addWindowListener(Common.getDefaultWindowListener());
-	HistCanvas hc=new HistCanvas(pc,f,vs.at(i),vs.getMarker());
-	hc.updateObjects();
-
-	if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-
-	f.setSize(400,300);
-	hc.pc.setSize(new Dimension(f.getWidth(),f.getHeight()));
-	
-	if(pc.getGraphicsEngine() == PlotComponent.SWING) {
-		// --> schützt nicht vor rotate -> Fenster wird verkleinert
-		hc.pc.setPreferredSize(new Dimension(400,300));
-		hc.pc.setMinimumSize(new Dimension(400,300));
-	}
-	f.pack();
-	return hc;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
+        f.setVisible(true);
+        pc.initializeGraphics(f);
+        
+        f.addWindowListener(Common.getDefaultWindowListener());
+        HistCanvas hc=new HistCanvas(pc,f,vs.at(i),vs.getMarker());
+        hc.updateObjects();
+        
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
+        
+        f.setSize(400,300);
+        hc.pc.setSize(new Dimension(f.getWidth(),f.getHeight()));
+        
+        if(pc.getGraphicsEngine() == PlotComponent.SWING) {
+            // --> schï¿½tzt nicht vor rotate -> Fenster wird verkleinert
+            hc.pc.setPreferredSize(new Dimension(400,300));
+            hc.pc.setMinimumSize(new Dimension(400,300));
+        }
+        f.pack();
+        return hc;
     };
-
-    public BoxCanvas newBoxplot(PlotComponent pc, int i) { return newBoxplot(pc,cvs,i,-1); }
-    public BoxCanvas newBoxplot(PlotComponent pc, int i, int ic) { return newBoxplot(pc,cvs,i,ic); }
-    public BoxCanvas newBoxplot(PlotComponent pc, SVarSet vs, int i, int ic) {
+    
+    public BoxCanvas newBoxplot(int i) { return newBoxplot(cvs,i,-1); }
+    public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,i,ic); }
+    public BoxCanvas newBoxplot(SVarSet vs, int i, int ic) {
+        PlotComponent pc = newPlotComponent();
         SVar catVar=(ic<0)?null:vs.at(ic);
         updateMarker(vs,i);
         TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
-                            TFrame.clsBox);
+                TFrame.clsBox);
         
-    	f.add(pc.getComponent());
-    	f.setVisible(true);
-    	pc.initializeGraphics(f);
+        f.add(pc.getComponent());
+        f.setVisible(true);
+        pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vs.at(i),vs.getMarker()):new BoxCanvas(pc,f,vs.at(i),catVar,vs.getMarker());
@@ -532,16 +550,16 @@ public class Framework implements Dependent, ActionListener {
         f.initPlacement();
         return bc;
     };
-
+    
     // no VarFRame since that's Klimt-specific
     /** display a new variables frame
-        @return variable frame object
-    public VarFrame newVarFrame() { return newVarFrame(cvs); };
-    public VarFrame newVarFrame(SVarSet v) {
-	VarFrame vf=new VarFrame(v,10,10,150,400);
-	return vf;
-    };
-    */
+     * @return variable frame object
+     * public VarFrame newVarFrame() { return newVarFrame(cvs); };
+     * public VarFrame newVarFrame(SVarSet v) {
+     * VarFrame vf=new VarFrame(v,10,10,150,400);
+     * return vf;
+     * };
+     */
     public double[] getDoubleContent(int vid) {
         SVar v=cvs.at(vid);
         if (v==null) return null;
@@ -550,7 +568,7 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.size()) { d[i]=v.atD(i); i++; };
         return d;
     };
-
+    
     public String[] getStringContent(int vid) {
         SVar v=cvs.at(vid);
         if (v==null) return null;
@@ -559,7 +577,7 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.size()) { d[i]=v.atS(i); i++; };
         return d;
     };
-
+    
     public double[] getDoubleContent(SVar v) {
         if (v==null) return null;
         double[] d=new double[v.size()];
@@ -567,7 +585,7 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.size()) { d[i]=v.atD(i); i++; };
         return d;
     }
-
+    
     public String[] getStringContent(SVar v) {
         if (v==null) return null;
         String[] d=new String[v.size()];
@@ -575,18 +593,18 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.size()) { d[i]=v.atS(i); i++; };
         return d;
     }
-
+    
     public int varIsNum(int vid) {
         SVar v=cvs.at(vid);
         if (v==null) return -1;
         return (v.isNum())?1:0;
     }
-
+    
     public int varIsNum(SVar v) {
         if (v==null) return -1;
         return (v.isNum())?1:0;
     }
-
+    
     public void setSecMark(int[] ml) { setSecMark(ml,true); }
     public void setSecMark(int[] ml, boolean circular) {
         if (cvs==null) return;
@@ -595,7 +613,7 @@ public class Framework implements Dependent, ActionListener {
         while(i<ml.length && j<m.size()) {
             m.setSec(j,ml[i]);
             i++; j++;
-	    if (circular && i>=ml.length) i=0;
+            if (circular && i>=ml.length) i=0;
         }
         m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
     }
@@ -603,15 +621,15 @@ public class Framework implements Dependent, ActionListener {
     public void updateMarker() {
         if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
     }
-
+    
     public void updateVars() {
         if (cvs!=null) cvs.getMarker().NotifyAll(new NotifyMsg(this,Common.NM_VarChange));
     }
-
+    
     public void actionPerformed(ActionEvent e) {
-	Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_ActionEvent,e.getActionCommand()));
+        Common.breakDispatcher.NotifyAll(new NotifyMsg(this,Common.NM_ActionEvent,e.getActionCommand()));
     }
-
+    
     public void setDebugLevel(int df) {
         if (Global.DEBUG>0) System.out.println("Setting DEBUG level to "+df);
         Global.DEBUG=df;
@@ -619,10 +637,10 @@ public class Framework implements Dependent, ActionListener {
     }
     
     //=============================== EVENT LOOP STUFF =========================================
-
+    
     private boolean notificationArrived=false;
     private NotifyMsg lastNotificationMessage; // only synchronized methods are allowed to use this
-
+    
     /** this internal method waits until {@link #triggerNotification} is called by another thread. It is implemented by using {@link wait()} and checking {@link notificationArrived}. */
     private synchronized NotifyMsg waitForNotification() {
         while (!notificationArrived) {
@@ -636,27 +654,27 @@ public class Framework implements Dependent, ActionListener {
         lastNotificationMessage=null; // reset lastNM
         return m;
     }
-
+    
     /** this methods awakens {@link #waitForNotification}. It is implemented by setting {@link #notificationArrived} to <code>true</code>, setting {@link #lastNotificationMessage} to the passed message and finally calling {@link notifyAll()}. */
     private synchronized void triggerNotification(NotifyMsg msg) {
         notificationArrived=true;
         lastNotificationMessage=msg;
         notifyAll();
     }
-
+    
     /** is a message arrives we'll simply use {@link #triggerNotification} to inform any sleeping calls to {@link #waitForNotification} */
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         triggerNotification(msg);
     }
-
+    
     /** this methods is called from R by ievent.wait and uses {@link #waitForNotification} to wait for an event. */
     public NotifyMsg eventWait() {
         NotifyMsg m=waitForNotification();
         return (m==null || m.getMessageID()==Common.NM_BREAK)?null:m;
     }
-
+    
     public String d2s(double d) {
         return Double.toString(d);
     }
-        
+    
 }
