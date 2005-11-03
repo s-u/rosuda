@@ -23,7 +23,7 @@ public class Framework implements Dependent, ActionListener {
     int tvctr;
     int dtctr;
     
-    boolean USE_SWING = true; // use AWT otherwise
+    boolean USE_SWING = false; // use AWT otherwise
     
     /** initialize framework, create and select a dataset which id called "default".
      * one framework supports multiple datasets, plots etc. so there should be no
