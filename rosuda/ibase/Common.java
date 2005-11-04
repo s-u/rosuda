@@ -178,7 +178,8 @@ public class Common
     /** returns true if the supplied event corresponds to popup query trigger. */
     public static boolean isQueryTrigger(MouseEvent ev) {
         // Query = <ALT> + BUTTON1; since mac emulates B2 we don't impose this on a Mac
-        return Platform.isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
+//        return Platform.isMac?(ev.isAltDown() && !ev.isControlDown()):((ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK);
+    	return ev.isControlDown();
     }
 
     /** returns true if the supplied event corresponds to object-move trigger */
