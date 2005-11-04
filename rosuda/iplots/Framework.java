@@ -23,7 +23,7 @@ public class Framework implements Dependent, ActionListener {
     int tvctr;
     int dtctr;
     
-    boolean USE_SWING = false; // use AWT otherwise
+    public boolean USE_SWING = false; // use AWT otherwise
     
     /** initialize framework, create and select a dataset which id called "default".
      * one framework supports multiple datasets, plots etc. so there should be no
@@ -334,21 +334,28 @@ public class Framework implements Dependent, ActionListener {
     public ScatterCanvas newScatterplot(SVarSet vs, int v1, int v2) {
         PlotComponent pc = newPlotComponent();
         updateMarker(vs,v1);
-        TFrame f=new TFrame("Scatterplot ("+
-                vs.at(v2).getName()+" vs "+
-                vs.at(v1).getName()+")",TFrame.clsScatter);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Scatterplot ("+vs.at(v2).getName()+" vs "+vs.at(v1).getName()+")",TFrame.clsScatter);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Scatterplot ("+vs.at(v2).getName()+" vs "+vs.at(v1).getName()+")",TFrame.clsScatter);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
         f.addWindowListener(Common.getDefaultWindowListener());
         ScatterCanvas sc=new ScatterCanvas(pc,f,vs.at(v1),vs.at(v2),vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-        sc.pc.getComponent().setSize(new Dimension(400,300));
-        f.setSize(new Dimension(sc.pc.getComponent().getWidth(),sc.pc.getComponent().getHeight()));
+        sc.pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(sc.pc.getWidth(),sc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return sc;
     };
     
@@ -360,13 +367,18 @@ public class Framework implements Dependent, ActionListener {
         SVar theCat=vs.at(v), theNum=(wgt<0)?null:vs.at(wgt);
         if (theCat==null) return null;
         if (!theCat.isCat()) theCat.categorize();
-        TFrame f=new TFrame(
-                (theNum!=null)?
-                    "w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":
-                    "Barchart ("+theCat.getName()+")"
-                ,TFrame.clsBar);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame((theNum!=null)?"w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":"Barchart ("+theCat.getName()+")",TFrame.clsBar);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame((theNum!=null)?"w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":"Barchart ("+theCat.getName()+")",TFrame.clsBar);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -375,10 +387,10 @@ public class Framework implements Dependent, ActionListener {
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=100+40*theCat.getNumCats();
         if (xdim>800) xdim=800;
-        bc.pc.getComponent().setSize(new Dimension(xdim,200));
-        f.setSize(new Dimension(bc.pc.getComponent().getWidth(),bc.pc.getComponent().getHeight()));
+        bc.pc.setSize(new Dimension(xdim,200));
+        f.setSize(new Dimension(bc.pc.getWidth(),bc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return bc;
     }
     
@@ -389,9 +401,18 @@ public class Framework implements Dependent, ActionListener {
         PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
-        TFrame f=new TFrame("Lineplot",TFrame.clsLine);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Lineplot",TFrame.clsLine);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Lineplot",TFrame.clsLine);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -401,10 +422,10 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
         LineCanvas lc=new LineCanvas(pc,f,vs.at(rv),vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(lc);
-        lc.pc.getComponent().setSize(new Dimension(400,300));
-        f.setSize(new Dimension(lc.pc.getComponent().getWidth(),lc.pc.getComponent().getHeight()));
+        lc.pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(lc.pc.getWidth(),lc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return lc;
     };
     
@@ -413,9 +434,18 @@ public class Framework implements Dependent, ActionListener {
         PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
-        TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Hammock plot",TFrame.clsPCP);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Hammock plot",TFrame.clsPCP);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -425,10 +455,10 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
         HamCanvas hc=new HamCanvas(pc,f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
-        hc.pc.getComponent().setSize(new Dimension(400,300));
-        f.setSize(new Dimension(hc.pc.getComponent().getWidth(),hc.pc.getComponent().getHeight()));
+        hc.pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(hc.pc.getWidth(),hc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return hc;
     }
     
@@ -442,9 +472,18 @@ public class Framework implements Dependent, ActionListener {
         for (int i = 0; i < v.length-1; i++)
             title += vs.at(v[i]).getName()+", ";
         title += vs.at(v[v.length-1]).getName()+")";
-        TFrame f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Mosaic plot "+title,TFrame.clsPCP);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Mosaic plot "+title,TFrame.clsPCP);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -454,10 +493,10 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
         MosaicCanvas mc=new MosaicCanvas(pc,f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(mc);
-        mc.pc.getComponent().setSize(new Dimension(400,300));
-        f.setSize(new Dimension(mc.pc.getComponent().getWidth(),mc.pc.getComponent().getHeight()));
+        mc.pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(mc.pc.getWidth(),mc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return mc;
     }
     
@@ -467,9 +506,18 @@ public class Framework implements Dependent, ActionListener {
         PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
-        TFrame f=new TFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -479,10 +527,10 @@ public class Framework implements Dependent, ActionListener {
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; };
         PCPCanvas pcpc=new PCPCanvas(pc,f,vl,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(pcpc);
-        pcpc.pc.getComponent().setSize(new Dimension(400,300));
-        f.setSize(new Dimension(pcpc.pc.getComponent().getWidth(),pcpc.pc.getComponent().getHeight()));
+        pcpc.pc.setSize(new Dimension(400,300));
+        f.setSize(new Dimension(pcpc.pc.getWidth(),pcpc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return pcpc;
     }
     
@@ -516,12 +564,7 @@ public class Framework implements Dependent, ActionListener {
         
         f.setSize(400,300);
         hc.pc.setSize(new Dimension(f.getWidth(),f.getHeight()));
-        
-        if(pc.getGraphicsEngine() == PlotComponent.SWING) {
-            // --> sch�tzt nicht vor rotate -> Fenster wird verkleinert
-            hc.pc.setPreferredSize(new Dimension(400,300));
-            hc.pc.setMinimumSize(new Dimension(400,300));
-        }
+
         f.pack();
         return hc;
     };
@@ -532,10 +575,18 @@ public class Framework implements Dependent, ActionListener {
         PlotComponent pc = newPlotComponent();
         SVar catVar=(ic<0)?null:vs.at(ic);
         updateMarker(vs,i);
-        TFrame f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),
-                TFrame.clsBox);
         
-        f.add(pc.getComponent());
+        Frame f;
+        if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
+            f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
+            ((TFrame)f).initPlacement();
+            f.add(pc.getComponent());
+        } else { // SWING
+            f=new TJFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
+            ((TJFrame)f).initPlacement();
+            ((TJFrame)f).getContentPane().add(pc.getComponent());
+        }
+        
         f.setVisible(true);
         pc.initializeGraphics(f);
         
@@ -544,10 +595,10 @@ public class Framework implements Dependent, ActionListener {
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
-        bc.pc.getComponent().setSize(new Dimension(xdim,200));
-        f.setSize(new Dimension(bc.pc.getComponent().getWidth(),bc.pc.getComponent().getHeight()));
+        bc.pc.setSize(new Dimension(xdim,200));
+        f.setSize(new Dimension(bc.pc.getWidth(),bc.pc.getHeight()));
         f.pack();
-        f.initPlacement();
+//        f.initPlacement();
         return bc;
     };
     
