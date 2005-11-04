@@ -280,6 +280,7 @@ public class HistCanvas extends BaseCanvas {
     }
     
     public void mouseMoved(MouseEvent e) {
+    	super.mouseMoved(e);
         int x=e.getX(), y=e.getY();
         if (tickMark1.contains(x,y) || tickMark2.contains(x,y)) {
             if (!inTick && !inZoom && !inQuery && !baseDrag) {
