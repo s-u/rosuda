@@ -122,7 +122,7 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 
 	
 	public void setLocation(int x, int y) {
-		// do nothing, JComponent places JToolTip
+		hide();show();
 	}
 	
     public void mouseClicked(MouseEvent e) {
