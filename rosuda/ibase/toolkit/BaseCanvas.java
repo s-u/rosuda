@@ -523,7 +523,39 @@ public class BaseCanvas
             };
         };
     };
-    public void mouseMoved(MouseEvent ev) {};
+    public void mouseMoved(MouseEvent ev) {
+    	int x=ev.getX(), y=ev.getY();
+        
+    	Point cl=getFrame().getLocation();
+        Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+        
+        boolean effect=false, hideQI=true;
+        boolean actionQuery=Common.isQueryTrigger(ev);
+        boolean actionExtQuery=Common.isExtQuery(ev);
+        if (actionQuery) {
+        	if (pp!=null) {
+        		int i=0;
+                while (i<pp.length) {
+                    if (pp[i]!=null && pp[i].contains(x,y)) {
+                    	if (pp[i].cases()>0) {
+                        if (pp[i].getPrimaryCase()!=-1) {
+                        	setQueryText(pc,queryObject(i),pp[i].getPrimaryCase());
+                            } else {
+                            	setQueryText(pc,queryObject(i),pp[i].getCaseIDs());
+                            }
+                    	} else {
+                    		setQueryText(pc,queryObject(i));
+                        }
+                        qi.setLocation(cl.x+x,cl.y+y);
+                        qi.show(); hideQI=false;
+                    }
+                    i++;
+                }
+            }
+        }
+        if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
+        if (hideQI) qi.hide();
+    };
     
     public void keyTyped(KeyEvent e) {
         if (e.getKeyChar()=='P') run(this,"print");
@@ -606,16 +638,13 @@ public class BaseCanvas
     
     public void setQueryText(PlotComponent pc, String s) {
     	qi.setContent(pc,s);
-    	System.out.println("old:" + s);
     }
     
     public void setQueryText(PlotComponent pc, String s, int cid) {
     	qi.setContent(pc,s,cid);
-    	System.out.println("old:" + s);
     }
     
     public void setQueryText(PlotComponent pc, String s, int[] cid) {
     	qi.setContent(pc,s,cid);
-    	System.out.println("old:" + s);
     }
 }
