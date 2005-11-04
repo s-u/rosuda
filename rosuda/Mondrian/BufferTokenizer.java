@@ -1,9 +1,8 @@
+package org.rosuda.Mondrian;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.awt.*;
-import java.awt.event.*;
 
 /** Funktionsweise:
  	readFile() liest Datei in den Speicher als Buffer
@@ -39,8 +38,9 @@ import java.awt.event.*;
 */
 
 
-public class BufferTokenizer extends Component {
+public class BufferTokenizer {
 
+	
 	final byte TAB = (byte) '\t';
 	final byte SPACE = (byte) ' ';
 	final byte NEWLINE = (byte) '\n';
@@ -50,7 +50,7 @@ public class BufferTokenizer extends Component {
 	final byte QUOTE = (byte) '"';
 	final byte KOMMA = (byte) ',';
 
-    private ProgressIndicator prId;
+	private ProgressIndicator prId;
 
 /** #columns and #lines */
 	int columns, lines;
@@ -59,7 +59,7 @@ public class BufferTokenizer extends Component {
 	String format;
 	
 /** headline (j,k) = (column, letter) */
-	char[][] head;
+	byte[][] head;
 
 /** items (j,i) = (column, line)
  	if column is numerical: numerical value saved
@@ -72,7 +72,7 @@ public class BufferTokenizer extends Component {
  	equal words are NOT saved twice
  	NOTE: first word, which is null in a column, indicates the end of a column
  		  -> see wordStackSize[] */
-	char[][][] word;
+	byte[][][] word;
 	
 /** sorted words: like words, but sorted
  	sorted list is not a class attribute for speed reasons */
@@ -94,6 +94,9 @@ public class BufferTokenizer extends Component {
  	if true: element (i,j) is a missing one
  	else: not a missing */
 	boolean[][] NA;
+	
+/** NACount counts amount of NA's in a numerical column */
+	int[] NACount;
 	
 /** wordCount (j,i) = (column, line) referenced to word[][][] or item[][]
  	counts #appearence of a word or numerical discret values in a column
@@ -158,7 +161,7 @@ public class BufferTokenizer extends Component {
 
 		if (!numericalColumn[j]) {
 			// word
-			return pointToWord(j,i);
+			return byteToCharArray(pointToWord(j,i));
 		} else {
 			// double
 			doubleCover[0] = item[j][i];
@@ -167,7 +170,7 @@ public class BufferTokenizer extends Component {
 
 	}
 
-	public char[] pointToWord(int j, int i) {
+	public byte[] pointToWord(int j, int i) {
 
 		return word[j][(int)item[j][i]];
 
@@ -184,19 +187,8 @@ public class BufferTokenizer extends Component {
 		long start, stop;
 		long startfull, stopfull;
 		error = new String[acceptedErrors];
-        prId = pi;
 		
 		timestart = System.currentTimeMillis();
-		
-		
-		// file = "Mappe1.txt";
-		// file = "Experiment7.txt";
-		// file = "WT-Klausur-NA";
-		// file = "GeburtsGewichtNA.txt";
-		// file = "Families '95(3).txt";
-		// file = "BowlingAloneShorted.txt";
-		// file = "access_log";
-		// file = "Co89Test.txt";
 		
 		startfull = System.currentTimeMillis();
 		
@@ -278,12 +270,13 @@ public class BufferTokenizer extends Component {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
-			item = new double[columns][lines]; progressing();
-			NA = new boolean[columns][lines]; progressing();
-			word = new char[columns][discretLimit][]; progressing();
-			wordCount = new int[columns][lines]; progressing();
-			discretValue = new double[columns][discretLimit]; progressing();
-			wordStackSize = new int[columns]; progressing();
+			item = new double[columns][lines];
+			NA = new boolean[columns][lines];
+			word = new byte[columns][discretLimit][];
+			wordCount = new int[columns][lines];
+			NACount = new int[columns];
+			discretValue = new double[columns][discretLimit];
+			wordStackSize = new int[columns];
 			stop = System.currentTimeMillis();
 			System.out.println("Initialisierungen: " + (stop - start));
 		
@@ -334,12 +327,13 @@ public class BufferTokenizer extends Component {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
-			item = new double[columns][lines];progressing();
-			NA = new boolean[columns][lines];progressing();
-			word = new char[columns][discretLimit][];progressing();
-			wordCount = new int[columns][lines]; progressing();
-			discretValue = new double[columns][discretLimit]; progressing();
-			wordStackSize = new int[columns]; progressing();
+			item = new double[columns][lines];
+			NA = new boolean[columns][lines];
+			word = new byte[columns][discretLimit][];
+			wordCount = new int[columns][lines];
+			NACount = new int[columns];
+			discretValue = new double[columns][discretLimit];
+			wordStackSize = new int[columns];
 			stop = System.currentTimeMillis();
 			System.out.println("Initialisierungen: " + (stop - start));
 		
@@ -394,12 +388,13 @@ public class BufferTokenizer extends Component {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
-			item = new double[columns][lines];progressing();
-			NA = new boolean[columns][lines];progressing();
-			word = new char[columns][discretLimit][];progressing();
-			wordCount = new int[columns][lines]; progressing();
-			discretValue = new double[columns][discretLimit]; progressing();
-			wordStackSize = new int[columns]; progressing();
+			item = new double[columns][lines];
+			NA = new boolean[columns][lines];
+			word = new byte[columns][discretLimit][];
+			wordCount = new int[columns][lines];
+			NACount = new int[columns];
+			discretValue = new double[columns][discretLimit];
+			wordStackSize = new int[columns];
 			stop = System.currentTimeMillis();
 			System.out.println("Initialisierungen: " + (stop - start));
 		
@@ -449,12 +444,13 @@ public class BufferTokenizer extends Component {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
-			item = new double[columns][lines];progressing();
-			NA = new boolean[columns][lines];progressing();
-			word = new char[columns][discretLimit][];progressing();
-			wordCount = new int[columns][lines]; progressing();
-			discretValue = new double[columns][discretLimit]; progressing();
-			wordStackSize = new int[columns]; progressing();
+			item = new double[columns][lines];
+			NA = new boolean[columns][lines];
+			word = new byte[columns][discretLimit][];
+			wordCount = new int[columns][lines];
+			NACount = new int[columns];
+			discretValue = new double[columns][discretLimit];
+			wordStackSize = new int[columns];
 			stop = System.currentTimeMillis();
 			System.out.println("Initialisierungen: " + (stop - start));
 		
@@ -488,15 +484,17 @@ public class BufferTokenizer extends Component {
 /*
 		System.out.print("	");
 		for(int j=0; j<head.length; j++) {
-			System.out.print(head[j]);
+			for(int i=0; i<head[j].length; i++) {
+				System.out.print((char)head[j][i]);
+			}
 			System.out.print("	");
 		}
 		System.out.println();
 */
 		
 /** 	items output **/
-
-/*		for(int i=0; i<lines; i++) {
+/*
+		for(int i=0; i<lines; i++) {
 			System.out.print(i); System.out.print("	");
 			for(int j=0; j<columns; j++) {
 				// System.out.print(item[j][i]); System.out.print("	");
@@ -508,9 +506,11 @@ public class BufferTokenizer extends Component {
 			System.out.println();
 		}
 */
+
+
 		
-/**		word correctness test 
-		
+/**		word correctness test **/ 
+/*		
  		start = System.currentTimeMillis();
 		if(checkIt(SEPERATOR)) {
 			System.out.println("words saved correctly");
@@ -519,14 +519,21 @@ public class BufferTokenizer extends Component {
 		}
 		stop = System.currentTimeMillis();
 		System.out.println("Time for wordcorrectness-test: " + (stop-start));
+*/
 
-**/		
 /** 	isDiscret[j] output **/ 
 /*		for(int j=0; j<columns; j++) {
 			System.out.print(isDiscret[j]); System.out.print("	");
 		}
 		System.out.println();
 */
+
+		for(int i=0;i<lines;i++) {
+			for(int j=0; j<columns;j++) {
+				if(NA[j][i]) NACount[j]++;
+			}
+		}
+	
 	}
 
 	public ByteBuffer readFile(String file) throws IOException {
@@ -678,13 +685,13 @@ public class BufferTokenizer extends Component {
 	}
 	
 	
-	public char[][] readHead(ByteBuffer buffer, String format) {
+	public byte[][] readHead(ByteBuffer buffer, String format) {
 		
 		buffer.rewind();
 		byte b;
 		int k = 0;
 		int j = 0;
-		char[][] head = new char[columns][];
+		byte[][] head = new byte[columns][];
 		
 		if(format == "TAB-Format" || format == "KOMMA-Format") {
 			while (buffer.hasRemaining()) {
@@ -704,13 +711,13 @@ public class BufferTokenizer extends Component {
 				}
 				if (!buffer.hasRemaining())
 					buffer.reset();
-				head[j] = new char[k];
+				head[j] = new byte[k];
 
 				
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
                     if( b<0) System.out.println(b+" <-----");
-                    head[j][l] = (char)( b>-1?b:256+b ); 		
+                    head[j][l] = (byte)( b>-1?b:256+b ); 		
 				}
 				
 				if(buffer.hasRemaining()) {
@@ -743,13 +750,13 @@ public class BufferTokenizer extends Component {
 
 				if (!buffer.hasRemaining())
 					buffer.reset();
-				head[j] = new char[k];
+				head[j] = new byte[k];
 
 				
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
 
-					head[j][l] = (char) b;
+					head[j][l] = (byte) b;
 					
 				}
 
@@ -768,20 +775,20 @@ public class BufferTokenizer extends Component {
 		
 		
 		// Head-Analyzer
-		char[] temp;
+		byte[] temp;
 		for(j=0; j<head.length; j++) {
 			if(head[j].length >= 2) {
 				if(head[j][0] == '/') {
 					if(head[j][1] == 'C') {
 						isDiscret[j] = false;
-						temp = new char[head[j].length - 2];
+						temp = new byte[head[j].length - 2];
 						for(k=0; k<head[j].length - 2; k++) {
 							temp[k] = head[j][k+2];
 						}
 						head[j] = temp;
 					} else if(head[j][1] == 'D') {
 						isDiscret[j] = true;
-						temp = new char[head[j].length - 2];
+						temp = new byte[head[j].length - 2];
 						for(k=0; k<head[j].length - 2; k++) {
 							temp[k] = head[j][k+2];
 						}
@@ -913,8 +920,6 @@ public class BufferTokenizer extends Component {
 			
 			while (buffer.hasRemaining()) {
 				
-				progressing();
-
 				if (numericalColumn[j]) {
 					dotAvailable = false;
 					minusAvailable = false;
@@ -1848,14 +1853,14 @@ public class BufferTokenizer extends Component {
 		}
 		boolean wordFound = false;
 		boolean valueFound = false;
-		char[] temp = null;
+		byte[] temp = null;
 		double tempNumber;
 		int[] discretLimitCounter = new int[columns];
 		int findWordIndex = 0;
 		int findValueIndex = 0;
-		char[][] previousWord = new char[columns][];
+		byte[][] previousWord = new byte[columns][];
 		int[] previousWordPosition = new int[columns];
-		char[][][] s_word = new char[columns][discretLimit][];
+		byte[][][] s_word = new byte[columns][discretLimit][];
 		int[][] pointer = new int[columns][discretLimit];
 		
 		buffer.position(positionSecondLine);
@@ -1873,7 +1878,7 @@ public class BufferTokenizer extends Component {
 					
 					// doubleSEPERATOR-Behandlung als NA
 					if(b == SEPERATOR) {
-						temp = new char[2];
+						temp = new byte[2];
 						temp[0] = 'N'; temp[1] = 'A';
 						NA[j][i] = true;
 						if(wordStackSize[j] != 0) {
@@ -1889,12 +1894,12 @@ public class BufferTokenizer extends Component {
 							if(wordNotFound) {
 								wordNotFound = false;
 								if(wordStackSize[j] >= discretLimit_c[j]) {
-									char[][] tempArray = word[j];
-									char[][] s_tempArray = s_word[j];
+									byte[][] tempArray = word[j];
+									byte[][] s_tempArray = s_word[j];
 									int[] tempPointer = pointer[j]; 
 									discretLimit_c[j] *= 2;
-									word[j] = new char[2 * wordStackSize[j]][];
-									s_word[j] = new char[2 * wordStackSize[j]][];
+									word[j] = new byte[2 * wordStackSize[j]][];
+									s_word[j] = new byte[2 * wordStackSize[j]][];
 									pointer[j] = new int[2 * wordStackSize[j]];
 									System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 									System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -1929,7 +1934,7 @@ public class BufferTokenizer extends Component {
 												
 					} else if(b == RETURN) { // hier kommt er nie rein
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
-							temp = new char[2];
+							temp = new byte[2];
 							temp[0] = 'N'; temp[1] = 'A';
 							NA[j][i] = true;
 							if(wordStackSize[j] != 0) {
@@ -1945,12 +1950,12 @@ public class BufferTokenizer extends Component {
 								if(wordNotFound) {
 									wordNotFound = false;
 									if(wordStackSize[j] >= discretLimit_c[j]) {
-										char[][] tempArray = word[j];
-										char[][] s_tempArray = s_word[j];
+										byte[][] tempArray = word[j];
+										byte[][] s_tempArray = s_word[j];
 										int[] tempPointer = pointer[j]; 
 										discretLimit_c[j] *= 2;
-										word[j] = new char[2 * wordStackSize[j]][];
-										s_word[j] = new char[2 * wordStackSize[j]][];
+										word[j] = new byte[2 * wordStackSize[j]][];
+										s_word[j] = new byte[2 * wordStackSize[j]][];
 										pointer[j] = new int[2 * wordStackSize[j]];
 										System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 										System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -1991,7 +1996,7 @@ public class BufferTokenizer extends Component {
 						continue;
 					} else if(b == NEWLINE) { // hier auch nicht
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
-							temp = new char[2];
+							temp = new byte[2];
 							temp[0] = 'N'; temp[1] = 'A';
 							NA[j][i] = true;
 							if(wordStackSize[j] != 0) {
@@ -2007,12 +2012,12 @@ public class BufferTokenizer extends Component {
 								if(wordNotFound) {
 									wordNotFound = false;
 									if(wordStackSize[j] >= discretLimit_c[j]) {
-										char[][] tempArray = word[j];
-										char[][] s_tempArray = s_word[j];
+										byte[][] tempArray = word[j];
+										byte[][] s_tempArray = s_word[j];
 										int[] tempPointer = pointer[j]; 
 										discretLimit_c[j] *= 2;
-										word[j] = new char[2 * wordStackSize[j]][];
-										s_word[j] = new char[2 * wordStackSize[j]][];
+										word[j] = new byte[2 * wordStackSize[j]][];
+										s_word[j] = new byte[2 * wordStackSize[j]][];
 										pointer[j] = new int[2 * wordStackSize[j]];
 										System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 										System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2062,11 +2067,11 @@ public class BufferTokenizer extends Component {
 				}
 				if (!buffer.hasRemaining())
 					buffer.reset();
-				temp = new char[k]; // geht schnell
+				temp = new byte[k]; // geht schnell
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
 					
-					temp[l] = (char) b;
+					temp[l] = b;
 				}
 				
 				// System.out.println("temp " + new String(temp));
@@ -2095,12 +2100,12 @@ public class BufferTokenizer extends Component {
 						// wordFound = true;
 						
 						if(wordStackSize[j] >= discretLimit_c[j]) {
-							char[][] tempArray = word[j];
-							char[][] s_tempArray = s_word[j];
+							byte[][] tempArray = word[j];
+							byte[][] s_tempArray = s_word[j];
 							int[] tempPointer = pointer[j]; 
 							discretLimit_c[j] *= 2;
-							word[j] = new char[2 * wordStackSize[j]][];
-							s_word[j] = new char[2 * wordStackSize[j]][];
+							word[j] = new byte[2 * wordStackSize[j]][];
+							s_word[j] = new byte[2 * wordStackSize[j]][];
 							pointer[j] = new int[2 * wordStackSize[j]];
 							System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 							System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2195,13 +2200,15 @@ public class BufferTokenizer extends Component {
 					b = buffer.get();
 					if(b == SEPERATOR) {
 						NA[j][i] = true;
-						item[j][i] = 0.0/0.0;
+						item[j][i] = Double.MAX_VALUE;
+//						if(!NA[j][i])NACount[j]++;
 						j++;
 						continue;
 					} else if(b == RETURN) {
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
 							NA[j][i] = true;
-							item[j][i] = 0.0/0.0;
+							item[j][i] = Double.MAX_VALUE;
+//							if(!NA[j][i])NACount[j]++;
 						}
 						buffer.position(buffer.position()-1);
 						
@@ -2209,7 +2216,8 @@ public class BufferTokenizer extends Component {
 					} else if(b == NEWLINE) {
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
 							NA[j][i] = true;
-							item[j][i] = 0.0/0.0;
+							item[j][i] = Double.MAX_VALUE;
+//							if(!NA[j][i])NACount[j]++;
 						}
 						buffer.position(buffer.position()-1);
 
@@ -2220,7 +2228,8 @@ public class BufferTokenizer extends Component {
 				while (buffer.hasRemaining()) {
 					b = buffer.get();
 					if (b == (byte) 'N') {
-						item[j][i] = 0.0 / 0.0;
+						item[j][i] = Double.MAX_VALUE;
+//						if(!NA[j][i])NACount[j]++;
 						if (buffer.get() == 'A') {
 							NA[j][i] = true;
 							break;
@@ -2332,14 +2341,14 @@ public class BufferTokenizer extends Component {
 		}
 		boolean wordFound = false;
 		boolean valueFound = false;
-		char[] temp = null;
+		byte[] temp = null;
 		double tempNumber;
 		int[] discretLimitCounter = new int[columns];
 		int findWordIndex = 0;
 		int findValueIndex = 0;
-		char[][] previousWord = new char[columns][];
+		byte[][] previousWord = new byte[columns][];
 		int[] previousWordPosition = new int[columns];
-		char[][][] s_word = new char[columns][discretLimit][];
+		byte[][][] s_word = new byte[columns][discretLimit][];
 		int[][] pointer = new int[columns][discretLimit];
 
 		
@@ -2357,7 +2366,7 @@ public class BufferTokenizer extends Component {
 
 					// doubleSEPERATOR-Behandlung als NA
 					if(b == SEPERATOR) {
-						temp = new char[2];
+						temp = new byte[2];
 						temp[0] = 'N'; temp[1] = 'A';
 						NA[j][i] = true;
 						if(wordStackSize[j] != 0) {
@@ -2373,12 +2382,12 @@ public class BufferTokenizer extends Component {
 							if(wordNotFound) {
 								wordNotFound = false;
 								if(wordStackSize[j] >= discretLimit_c[j]) {
-									char[][] tempArray = word[j];
-									char[][] s_tempArray = s_word[j];
+									byte[][] tempArray = word[j];
+									byte[][] s_tempArray = s_word[j];
 									int[] tempPointer = pointer[j]; 
 									discretLimit_c[j] *= 2;
-									word[j] = new char[2 * wordStackSize[j]][];
-									s_word[j] = new char[2 * wordStackSize[j]][];
+									word[j] = new byte[2 * wordStackSize[j]][];
+									s_word[j] = new byte[2 * wordStackSize[j]][];
 									pointer[j] = new int[2 * wordStackSize[j]];
 									System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 									System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2413,7 +2422,7 @@ public class BufferTokenizer extends Component {
 												
 					} else if(b == RETURN) { // hier kommt er nie rein
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
-							temp = new char[2];
+							temp = new byte[2];
 							temp[0] = 'N'; temp[1] = 'A';
 							NA[j][i] = true;
 							if(wordStackSize[j] != 0) {
@@ -2429,12 +2438,12 @@ public class BufferTokenizer extends Component {
 							if(wordNotFound) {
 									wordNotFound = false;
 									if(wordStackSize[j] >= discretLimit_c[j]) {
-										char[][] tempArray = word[j];
-										char[][] s_tempArray = s_word[j];
+										byte[][] tempArray = word[j];
+										byte[][] s_tempArray = s_word[j];
 										int[] tempPointer = pointer[j]; 
 										discretLimit_c[j] *= 2;
-										word[j] = new char[2 * wordStackSize[j]][];
-										s_word[j] = new char[2 * wordStackSize[j]][];
+										word[j] = new byte[2 * wordStackSize[j]][];
+										s_word[j] = new byte[2 * wordStackSize[j]][];
 										pointer[j] = new int[2 * wordStackSize[j]];
 										System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 										System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2475,7 +2484,7 @@ public class BufferTokenizer extends Component {
 						continue;
 					} else if(b == NEWLINE) { // hier auch nicht
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
-							temp = new char[2];
+							temp = new byte[2];
 							temp[0] = 'N'; temp[1] = 'A';
 							NA[j][i] = true;
 							if(wordStackSize[j] != 0) {
@@ -2491,12 +2500,12 @@ public class BufferTokenizer extends Component {
 								if(wordNotFound) {
 									wordNotFound = false;
 									if(wordStackSize[j] >= discretLimit_c[j]) {
-										char[][] tempArray = word[j];
-										char[][] s_tempArray = s_word[j];
+										byte[][] tempArray = word[j];
+										byte[][] s_tempArray = s_word[j];
 										int[] tempPointer = pointer[j]; 
 										discretLimit_c[j] *= 2;
-										word[j] = new char[2 * wordStackSize[j]][];
-										s_word[j] = new char[2 * wordStackSize[j]][];
+										word[j] = new byte[2 * wordStackSize[j]][];
+										s_word[j] = new byte[2 * wordStackSize[j]][];
 										pointer[j] = new int[2 * wordStackSize[j]];
 										System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 										System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2548,11 +2557,11 @@ public class BufferTokenizer extends Component {
 				}
 				if (!buffer.hasRemaining())
 					buffer.reset();
-				temp = new char[k]; // geht schnell
+				temp = new byte[k]; // geht schnell
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
 					
-					temp[l] = (char) b;
+					temp[l] = b;
 					
 				}
 
@@ -2581,12 +2590,12 @@ public class BufferTokenizer extends Component {
 						// wordFound = true;
 						
 						if(wordStackSize[j] >= discretLimit_c[j]) {
-							char[][] tempArray = word[j];
-							char[][] s_tempArray = s_word[j];
+							byte[][] tempArray = word[j];
+							byte[][] s_tempArray = s_word[j];
 							int[] tempPointer = pointer[j]; 
 							discretLimit_c[j] *= 2;
-							word[j] = new char[2 * wordStackSize[j]][];
-							s_word[j] = new char[2 * wordStackSize[j]][];
+							word[j] = new byte[2 * wordStackSize[j]][];
+							s_word[j] = new byte[2 * wordStackSize[j]][];
 							pointer[j] = new int[2 * wordStackSize[j]];
 							System.arraycopy(tempArray, 0, word[j], 0, wordStackSize[j]);
 							System.arraycopy(s_tempArray, 0, s_word[j], 0, wordStackSize[j]);
@@ -2657,7 +2666,7 @@ public class BufferTokenizer extends Component {
 						j++;
 					}
 					else if (b == RETURN) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						buffer.mark();
 						if (buffer.hasRemaining()) {
 							if (buffer.get() == NEWLINE) {
@@ -2670,7 +2679,7 @@ public class BufferTokenizer extends Component {
 							}
 						}
 					} else if (b == NEWLINE) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						i++;
 						j = 0;
 					}
@@ -2684,13 +2693,15 @@ public class BufferTokenizer extends Component {
 					b = buffer.get();
 					if(b == SEPERATOR) {
 						NA[j][i] = true;
-						item[j][i] = 0.0/0.0;
+						item[j][i] = Double.MAX_VALUE;
+//						if(!NA[j][i])NACount[j]++;
 						j++;
 						continue;
 					} else if(b == RETURN) {
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
 							NA[j][i] = true;
-							item[j][i] = 0.0/0.0;
+							item[j][i] = Double.MAX_VALUE;
+//							if(!NA[j][i])NACount[j]++;
 						}
 						buffer.position(buffer.position()-1);
 						
@@ -2698,7 +2709,8 @@ public class BufferTokenizer extends Component {
 					} else if(b == NEWLINE) {
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
 							NA[j][i] = true;
-							item[j][i] = 0.0/0.0;
+							item[j][i] = Double.MAX_VALUE;
+//							if(!NA[j][i])NACount[j]++;
 						}
 						buffer.position(buffer.position()-1);
 
@@ -2709,7 +2721,8 @@ public class BufferTokenizer extends Component {
 				while (buffer.hasRemaining()) {
 					b = buffer.get();
 					if (b == (byte) 'N') {
-						item[j][i] = 0.0 / 0.0;
+						item[j][i] = Double.MAX_VALUE;
+//						if(!NA[j][i])NACount[j]++;
 						if (buffer.get() == 'A') {
 							NA[j][i] = true;
 							break;
@@ -2786,7 +2799,7 @@ public class BufferTokenizer extends Component {
 					if (b == SEPERATOR) { 
 						j++;}
 					else if (b == RETURN) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						buffer.mark();
 						if (buffer.hasRemaining()) {
 							if (buffer.get() == NEWLINE) {
@@ -2799,7 +2812,7 @@ public class BufferTokenizer extends Component {
 							}
 						}
 					} else if (b == NEWLINE) {
-						progressing(); // execute progressing() every new line
+						progressing(i); // execute progressing() every new line
 						i++;
 						j = 0;
 					}
@@ -2813,7 +2826,7 @@ public class BufferTokenizer extends Component {
 	
 	
 	
-	private boolean eqCharArray(char[] char1, char[] char2) {
+	private boolean eqCharArray(byte[] char1, byte[] char2) {
 
 		int i = char1.length;
 		int j = char2.length;
@@ -2831,13 +2844,13 @@ public class BufferTokenizer extends Component {
 
 	}
 	
-	public double charArraytoDouble(char[] charArray, boolean isNA) {
+	public double charArraytoDouble(byte[] charArray, boolean isNA) {
 		double number = 0;
 		boolean dotAvailable = false;
 		int l=0;
 		int j=0;
 		
-		if(isNA) return 0.0/0.0;
+		if(isNA) return Double.MAX_VALUE;
 		
 		if(charArray[0] != '-') {
 			for(int k=0; k<charArray.length; k++) {
@@ -2905,7 +2918,8 @@ public class BufferTokenizer extends Component {
 			} else {
 				if(i == 15+k) break;
 				else i++;
-				region.append((char)b);
+//				region.append((char)b);
+				region.append(b);
 			}
 			
 		}
@@ -2916,7 +2930,7 @@ public class BufferTokenizer extends Component {
 	// compare char arrays by lexicographical order
 	// NullPointerException not implemented cause of speed performance
 	// return -1 if char1 < char2, 0 if char1 = char2, +1 if char1 > char2
-	private int compareCharArrays(char[] char1, char[] char2) {
+	private int compareCharArrays(byte[] char1, byte[] char2) {
 
 		if(char1.length < char2.length) {
 			for(int i=0; i<char1.length; i++) {
@@ -2954,11 +2968,6 @@ public class BufferTokenizer extends Component {
 		}
 	}
 	
-	
-	// executes ActionEvent for ProgressBar
-	private void progressing() {
-    }
-      
     private void progressing(int i) {
       
       timestop = System.currentTimeMillis();
@@ -2979,7 +2988,7 @@ public class BufferTokenizer extends Component {
 	// list has to be sorted
 	// returns position if word found or added to list and
 	// sets wordNotFound = true or false
-	private int findWord(char[][] list, int listStackSize, char[] word) {
+	private int findWord(byte[][] list, int listStackSize, byte[] word) {
 		
 		int lb = 0;
 		int rb = listStackSize - 1;
@@ -3116,7 +3125,7 @@ public class BufferTokenizer extends Component {
 		return true;
 	}
 	
-	private char[] doubleToCharArray(double d, boolean dotAvailable) {
+	private byte[] doubleToCharArray(double d, boolean dotAvailable) {
 		
 		
 		
@@ -3264,7 +3273,8 @@ public class BufferTokenizer extends Component {
 		buffer.position(startposition);
 		
 		while(buffer.hasRemaining()) {
-			strbuf.append((char)buffer.get()); 
+//			strbuf.append((char)buffer.get()); 
+			strbuf.append((char)buffer.get());
 		}
 		
 		buffer.position(startposition-1);
@@ -3331,4 +3341,14 @@ public class BufferTokenizer extends Component {
 			return new String(strbuf);
 		}
 	}
+	
+	// needs supportability on every machine, need general code converter
+	public char[] byteToCharArray(byte[] b) {
+		char[] c = new char[b.length];
+		for(int i=0; i<c.length; i++) {
+			c[i] = (char)b[i];
+		}
+		return c;
+	}
+
 }
