@@ -71,6 +71,8 @@ public class SwingPlotComponent implements PlotComponent {
 	}
 	public void setSize(Dimension d) {
 		comp.setSize(d);
+		comp.setPreferredSize(d);
+		comp.setMinimumSize(d);
 	}
 	public Dimension getSize() {
 		return comp.getSize();
