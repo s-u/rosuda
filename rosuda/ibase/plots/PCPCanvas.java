@@ -64,9 +64,9 @@ public class PCPCanvas extends BaseCanvas {
             xv.add(yvs[i].getName());
             v[i+1]=yvs[i]; i++;
         };
+        v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
-        v[0]=xv; ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
@@ -325,6 +325,7 @@ public class PCPCanvas extends BaseCanvas {
         for (int i=0;i<v[1].size();i++){
             for (int j=0;j<v.length-1;j++){
                 if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
+                    System.out.println(ax);
                     xs[i][j] = ax.getCatCenter(j);
                     ys[i][j] = ((commonScale||j==0)?ay:A[j-1]).getValuePos(v[j+1].atD(i));
                 } else{
