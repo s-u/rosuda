@@ -232,11 +232,11 @@ public class PCPCanvas extends BaseCanvas {
             repaint();
         };
         if (cmd=="alphaDown") {
-            ppAlpha-=(ppAlpha>0.2)?0.10:0.05; if (ppAlpha<0.05f) ppAlpha=0.05f;
+            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="alphaUp") {
-            ppAlpha+=(ppAlpha>0.2)?0.10:0.05; if (ppAlpha>1f) ppAlpha=1f;
+            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="exit") WinTracker.current.Exit();
