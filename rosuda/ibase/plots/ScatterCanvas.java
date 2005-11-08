@@ -102,9 +102,8 @@ public class ScatterCanvas extends BaseCanvas {
     
     public void rotate() {
         try {
-            ((Frame) pc.getParent()).setTitle("Scäatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
+            ((Frame) pc.getParent()).setTitle("Scatterplot ("+v[(orientation+1)&1].getName()+" vs "+v[orientation&1].getName()+")");
         } catch (Exception ee) {};
-        super.rotate();
     };
     
     // clipping warnings
@@ -255,6 +254,7 @@ public class ScatterCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         };
+        if (cmd=="rotate") rotate();
         if (cmd=="points+") {
             ptDiam+=2; setUpdateRoot(0); repaint();
         }
