@@ -28,11 +28,14 @@ public class HistCanvas extends BaseCanvas {
     
     protected double anchor, binw;
     
-    protected boolean inTick=false;
+    private final static int DRAGMODE_NONE = 0;
+    private final static int DRAGMODE_BINW = 1;
+    private final static int DRAGMODE_ANCHOR = 2;
     
-    protected int dragMode; // 0=none, 1=binw, 2=anchor
+    protected int dragMode;
     protected int dragX;
-    protected Rectangle tickMark1,tickMark2;
+    
+    protected int dragBinwBars; // number of bars left of the cursor while dragging (binw)
     
     protected int bars=22;
     
@@ -53,8 +56,6 @@ public class HistCanvas extends BaseCanvas {
         mLeft=40; mRight=10; mTop=10; mBottom=20;
         allow180=true;
         allowDragZoom=false;
-        tickMark1=new Rectangle();
-        tickMark2=new Rectangle();
     };
     
     public SVar getData(int id) { return (id==0)?v:null; }
@@ -64,7 +65,7 @@ public class HistCanvas extends BaseCanvas {
         boolean recalcBars=true;
         // we should set recalcBar to false if anchor/binw didn't change
         bars=((int)((v.getMax()-anchor)/binw))+1;
-        if (dragMode!=1)
+        if (dragMode!=DRAGMODE_BINW)
             ax.setValueRange(anchor,bars*binw);
         if (pp==null || pp.length!=bars) {
             pp=new PlotPrimitive[bars];
@@ -153,31 +154,6 @@ public class HistCanvas extends BaseCanvas {
         else
             g.drawLine(mLeft,mTop,W-mRight,mTop);
         
-        // draw lines to resize the bars
-        int t1=ax.getValuePos(ax.vBegin);
-        int t2=ax.getValuePos(ax.vBegin+binw);
-        int x1,y1,w,h,x2,y2,lw,lh;
-        if (orientation==0 || orientation==2) {
-            x1=t1;
-            x2=t2;
-            y1=y2=((orientation==0)?(H-mBottom+5):5);
-            w=5;
-            lw=0;
-            h=lh=10;
-        } else {
-            x1=x2=((orientation==1)?5:(W-mRight+5));
-            y1=t1;
-            y2=t2;
-            w=lw=10;
-            h=5;
-            lh=0;
-        }
-        g.drawLine(x1, y1, x1+lw, y1+lh);
-        g.drawLine(x2, y2, x2+lw, y2+lh);
-        tickMark1.setSize(w,h);
-        tickMark1.setLocation(x1,y1);
-        tickMark2.setSize(w,h);
-        tickMark2.setLocation(x2,y2);
         
         labels.clear();
         // draw y lables and ticks
@@ -255,48 +231,46 @@ public class HistCanvas extends BaseCanvas {
         int x=ev.getX(), y=ev.getY();
         if(orientation==0 || orientation==2){
             if ((orientation==0 && y>H-mBottom) || (orientation==2 && y<mTop)) {
-                if (x>mLeft-3 && x<mLeft+3) dragMode=2;
-                int bwp=ax.getValuePos(ax.vBegin+binw);
-                if (x>bwp-3 && x<bwp+3) dragMode=1;
+                if (x>mLeft-3 && x<mLeft+3) dragMode=DRAGMODE_ANCHOR;
+                dragX=x;
+            } else if (Common.isMoveTrigger(ev) && ((orientation==0 && y<=H-mBottom) || (orientation==2 && y>=mTop))) {
+                double bwp;
+                dragBinwBars=0;
+                while((orientation==0 && x>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3) 
+                || (orientation==2 && x<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
+                    if (x<bwp+3) dragMode=DRAGMODE_BINW;
+                    dragBinwBars++;
+                }
                 dragX=x;
             } else super.mousePressed(ev);
         } else {
             if ((orientation==1 && x<mLeft) || (orientation==3 && x>W-mRight)) {
-                if (y>mTop-3 && y<mTop+3) dragMode=2;
-                int bwp=ax.getValuePos(ax.vBegin+binw);
-                if (y>bwp-3 && y<bwp+3) dragMode=1;
+                if (y>mTop-3 && y<mTop+3) dragMode=DRAGMODE_ANCHOR;
+                dragX=y;
+            } else if (Common.isMoveTrigger(ev) && ((orientation==1 && x>=mLeft) || (orientation==3 && x<=W-mRight))) {
+                double bwp;
+                dragBinwBars=0;
+                while((orientation==1 && y>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3)
+                || (orientation==3 && y<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
+                    if (y<bwp+3) dragMode=DRAGMODE_BINW;
+                    dragBinwBars++;
+                }
                 dragX=y;
             } else super.mousePressed(ev);
         }
     };
     
     public void mouseReleased(MouseEvent e) {
-        if (dragMode!=0) {
-            dragMode=0;
+        if (dragMode!=DRAGMODE_NONE) {
+            dragMode=DRAGMODE_NONE;
             updateObjects();
             setUpdateRoot(0);
             repaint();
         } else super.mouseReleased(e);
     }
     
-    public void mouseMoved(MouseEvent e) {
-    	super.mouseMoved(e);
-        int x=e.getX(), y=e.getY();
-        if (tickMark1.contains(x,y) || tickMark2.contains(x,y)) {
-            if (!inTick && !inZoom && !inQuery && !baseDrag) {
-                inTick=true;
-                pc.setCursor(Common.cur_tick);
-            }
-        } else {
-            if (inTick) {
-                inTick=false;
-                pc.setCursor(Common.cur_arrow);
-            }
-        }
-    }
-    
     public void mouseDragged(MouseEvent e) {
-        if (dragMode==0) {
+        if (dragMode==DRAGMODE_NONE) {
             super.mouseDragged(e);
             return;
         }
@@ -307,16 +281,16 @@ public class HistCanvas extends BaseCanvas {
             x=e.getY(); // sic!
         }
         if (x!=dragX) {
-            if (dragMode==1) {
+            if (dragMode==DRAGMODE_BINW) {
                 double nbv=ax.getValueForPos(x);
                 if (nbv-ax.vBegin>0) {
-                    binw=nbv-ax.vBegin;
+                    binw=(nbv-ax.vBegin)/dragBinwBars;
                     updateObjects();
                     setUpdateRoot(0);
                     repaint();
                 };
             };
-            if (dragMode==2) {
+            if (dragMode==DRAGMODE_ANCHOR) {
                 double na=ax.getValueForPos(x);
                 anchor=na; if (anchor>v.getMin()) anchor=v.getMin();
                 if (anchor<v.getMin()-binw) anchor=v.getMin()-binw;
