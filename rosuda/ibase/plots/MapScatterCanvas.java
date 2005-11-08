@@ -30,7 +30,7 @@ public class MapScatterCanvas extends ScatterCanvas {
             if (ms!=null) {
                 int j=0;
                 while (j<ms.count()) {
-					g.drawPolygon(MapSegmentTools.transViaAxisX(ms,j,A[0]),MapSegmentTools.transViaAxisY(ms,j,A[1]),ms.getSizeAt(j));
+					g.drawPolygon(MapSegmentTools.transViaAxisX(ms,j,ax),MapSegmentTools.transViaAxisY(ms,j,ay),ms.getSizeAt(j));
                     j++;
                 }
             }

@@ -25,10 +25,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     /** in conjunction with jitter this flag determines whether random jittering or stack-plotting is to be used */
     protected boolean stackjitter=false;
-    
-    /** flag whether alternative selection style should be used */
-    protected boolean selRed=false;
-    
+        
     /** use trigraph for X axis in case X is categorical */
     protected boolean useX3=false;
     
@@ -43,11 +40,7 @@ public class ScatterCanvas extends BaseCanvas {
     public int stackOff=3;
     
     public int fieldBg=0; // 0=none, 1=objects, 2=white
-    
-    /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
-     * compatibility with older implementations */
-    protected Axis A[];
-    
+        
     /** # of points */
     protected int pts;
     
@@ -73,10 +66,10 @@ public class ScatterCanvas extends BaseCanvas {
     public ScatterCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark) {
         super(pc,f,mark);
         
-        v=new SVar[2]; A=new Axis[2];
+        v=new SVar[2];
         v[0]=v1; v[1]=v2; m=mark;
-        ax=A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-        ay=A[1]=new Axis(v[1],Axis.O_Y,v[1].isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
+        ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
+        ay=new Axis(v[1],Axis.O_Y,v[1].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
         if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())/20,(v[1].getMax()-v[1].getMin())*1.1);
         if (!v[0].isCat() && v[0].getMax()-v[0].getMin()==0) ax.setValueRange(v[0].getMin()-0.5,1);
@@ -84,7 +77,7 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Toggle hilight. style","selRed","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
@@ -125,8 +118,8 @@ public class ScatterCanvas extends BaseCanvas {
         int innerW=w-innerL-10, innerH=h-innerB-10;
         boolean xcat=v[0].isCat(), ycat=v[1].isCat();
         
-        A[orientation&1].setGeometry(Axis.O_X,X=innerL,W=innerW);
-        A[(orientation+1)&1].setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
+        ((orientation==0)?ax:ay).setGeometry(Axis.O_X,X=innerL,W=innerW);
+        ((orientation==0)?ay:ax).setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
         Y=TH-innerB-innerH;
         
         hasLeft=hasRight=hasTop=hasBot=false;
@@ -139,14 +132,14 @@ public class ScatterCanvas extends BaseCanvas {
             int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jx=(int)(d*((double)(A[0].getCatLow(v[0].getCatIndex(i))-A[0].getCasePos(i))));
+                jx=(int)(d*((double)(ax.getCatLow(v[0].getCatIndex(i))-ax.getCasePos(i))));
             }
             if (v[1].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jy=(int)(d*((double)(A[1].getCatLow(v[1].getCatIndex(i))-A[1].getCasePos(i))));
+                jy=(int)(d*((double)(ay.getCatLow(v[1].getCatIndex(i))-ay.getCasePos(i))));
             }
             if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat())) {
-                int x=jx+A[0].getCasePos(i),y=jy+A[1].getCasePos(i);
+                int x=jx+ax.getCasePos(i),y=jy+ay.getCasePos(i);
                 pp[i]=null;
                 int oX = (orientation==0)?x:y;
                 int oY = (orientation==0)?y:x;
@@ -181,8 +174,8 @@ public class ScatterCanvas extends BaseCanvas {
                 }
             } else { // place missings on the other side of the axes
                 int x,y;
-                if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+A[0].getCasePos(i);
-                if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+A[1].getCasePos(i);
+                if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+ax.getCasePos(i);
+                if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+ay.getCasePos(i);
                 pp[i]=new PPrimCircle();
                 if(orientation==0){
                     ((PPrimCircle)pp[i]).x = x;
@@ -204,7 +197,6 @@ public class ScatterCanvas extends BaseCanvas {
         if (e.getKeyChar()=='X') run(this,"exportPGS");
         if (e.getKeyChar()=='g') run(this,"nextBg");
         if (e.getKeyChar()=='C') run(this,"exportCases");
-        if (e.getKeyChar()=='e') run(this,"selRed");
         if (e.getKeyChar()=='j') run(this,"jitter");
         if (e.getKeyChar()=='J') run(this,"stackjitter");
         if (e.getKeyChar()=='t') run(this,"trigraph");
@@ -283,8 +275,8 @@ public class ScatterCanvas extends BaseCanvas {
             repaint();
         }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
-            int rt=(cmd=="YrangeDlg")?1:0;
-            Dialog d=intDlg=new Dialog(myFrame,(rt==1)?"Y range":"X range",true);
+            Axis axis=(cmd=="YrangeDlg")?ay:ax;
+            Dialog d=intDlg=new Dialog(myFrame,(cmd=="YrangeDlg")?"Y range":"X range",true);
             IDlgCL ic=new IDlgCL(this);
             d.setBackground(Color.white);
             d.setLayout(new BorderLayout());
@@ -298,8 +290,8 @@ public class ScatterCanvas extends BaseCanvas {
             Panel cp=new Panel(); cp.setLayout(new FlowLayout());
             d.add(cp);
             cp.add(new Label("start: "));
-            TextField tw=new TextField(""+A[rt].vBegin,6);
-            TextField th=new TextField(""+(A[rt].vBegin+A[rt].vLen),6);
+            TextField tw=new TextField(""+axis.vBegin,6);
+            TextField th=new TextField(""+(axis.vBegin+axis.vLen),6);
             cp.add(tw);
             cp.add(new Label(", end: "));
             cp.add(th);
@@ -309,7 +301,7 @@ public class ScatterCanvas extends BaseCanvas {
             if (!cancel) {
                 double w=Tools.parseDouble(tw.getText());
                 double h=Tools.parseDouble(th.getText());
-                A[rt].setValueRange(w,h-w);
+                axis.setValueRange(w,h-w);
                 setUpdateRoot(0);
                 repaint();
             }
@@ -317,7 +309,6 @@ public class ScatterCanvas extends BaseCanvas {
         }
         if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
         if (cmd=="resetZoom") { resetZoom(); repaint(); }
-        if (cmd=="selRed") { selRed=!selRed; setUpdateRoot(2); repaint(); };
         if (cmd=="jitter") {
             jitter=!jitter; updateObjects(); setUpdateRoot(1); repaint();
         }
@@ -346,10 +337,7 @@ public class ScatterCanvas extends BaseCanvas {
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("white",255,255,255);
-        if (selRed)
-            g.defineColor("marked",255,0,0);
-        else
-            g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
         g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
         g.defineColor("black",0,0,0);
         g.defineColor("outline",0,0,0);
@@ -460,11 +448,11 @@ public class ScatterCanvas extends BaseCanvas {
     public void paintPost(PoGraSS g) {
         if (querying) {
             g.setColor("black");
-            if (qx==A[0].clip(qx) && qy==A[1].clip(qy)) {
-                g.drawLine(A[0].gBegin,qy,A[0].gBegin+A[0].gLen,qy);
-                g.drawLine(qx,A[1].gBegin,qx,A[1].gBegin+A[1].gLen);
-                g.drawString(A[0].getDisplayableValue(A[0].getValueForPos(qx)),qx+2,qy-2);
-                g.drawString(A[1].getDisplayableValue(A[1].getValueForPos(qy)),qx+2,qy+11);
+            if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
+                g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
+                g.drawLine(qx,ay.gBegin,qx,ay.gBegin+ay.gLen);
+                g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,qy-2);
+                g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),qx+2,qy+11);
             }
         }
         super.paintPost(g);
