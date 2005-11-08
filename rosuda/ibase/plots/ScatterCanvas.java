@@ -42,16 +42,12 @@ public class ScatterCanvas extends BaseCanvas {
     public int ptDiam=3;
     public int stackOff=3;
     
-    protected float ptAlpha = 1f;
-    
     public int fieldBg=0; // 0=none, 1=objects, 2=white
     
     /** array of two axes (X and Y) - note that it is in fact just a copy of ax and ay for
      * compatibility with older implementations */
     protected Axis A[];
     
-    /** array of points (in geometrical coordinates) */
-    protected Point[] Pts;
     /** # of points */
     protected int pts;
     
@@ -79,12 +75,12 @@ public class ScatterCanvas extends BaseCanvas {
         
         v=new SVar[2]; A=new Axis[2];
         v[0]=v1; v[1]=v2; m=mark;
-        ax=A[0]=new Axis(v1,Axis.O_X,v1.isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
-        ay=A[1]=new Axis(v2,Axis.O_Y,v2.isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
-        if (!v1.isCat()) ax.setValueRange(v1.getMin()-(v1.getMax()-v1.getMin())/20,(v1.getMax()-v1.getMin())*1.1);
-        if (!v2.isCat()) ay.setValueRange(v2.getMin()-(v2.getMax()-v2.getMin())/20,(v2.getMax()-v2.getMin())*1.1);
-        if (!v1.isCat() && v1.getMax()-v1.getMin()==0) ax.setValueRange(v1.getMin()-0.5,1);
-        if (!v2.isCat() && v2.getMax()-v2.getMin()==0) ay.setValueRange(v2.getMin()-0.5,1);
+        ax=A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
+        ay=A[1]=new Axis(v[1],Axis.O_Y,v[1].isCat()?Axis.T_EqCat:Axis.T_Num); A[1].addDepend(this);
+        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
+        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())/20,(v[1].getMax()-v[1].getMin())*1.1);
+        if (!v[0].isCat() && v[0].getMax()-v[0].getMin()==0) ax.setValueRange(v[0].getMin()-0.5,1);
+        if (!v[1].isCat() && v[1].getMax()-v[1].getMin()==0) ay.setValueRange(v[1].getMin()-0.5,1);
         drag=false;
         MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
@@ -112,14 +108,10 @@ public class ScatterCanvas extends BaseCanvas {
     };
     
     public void rotate() {
-        SVar h=v[0]; v[0]=v[1]; v[1]=h;
-        ay=A[0]; ax=A[0]=A[1]; A[1]=ay;
         try {
-            ((Frame) pc.getParent()).setTitle("Scatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
+            ((Frame) pc.getParent()).setTitle("Scäatterplot ("+v[1].getName()+" vs "+v[0].getName()+")");
         } catch (Exception ee) {};
-        updateObjects();
-        setUpdateRoot(0);
-        repaint();
+        super.rotate();
     };
     
     // clipping warnings
@@ -133,8 +125,8 @@ public class ScatterCanvas extends BaseCanvas {
         int innerW=w-innerL-10, innerH=h-innerB-10;
         boolean xcat=v[0].isCat(), ycat=v[1].isCat();
         
-        A[0].setGeometry(Axis.O_X,X=innerL,W=innerW);
-        A[1].setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
+        A[orientation&1].setGeometry(Axis.O_X,X=innerL,W=innerW);
+        A[(orientation+1)&1].setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
         Y=TH-innerB-innerH;
         
         hasLeft=hasRight=hasTop=hasBot=false;
@@ -143,7 +135,6 @@ public class ScatterCanvas extends BaseCanvas {
         if (v[1].size()<pts) pts=v[1].size();
         
         pp = new PlotPrimitive[pts];
-        Pts=new Point[pts];
         for (int i=0;i<pts;i++) {
             int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
@@ -156,32 +147,35 @@ public class ScatterCanvas extends BaseCanvas {
             }
             if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat())) {
                 int x=jx+A[0].getCasePos(i),y=jy+A[1].getCasePos(i);
-                Pts[i]=null;
                 pp[i]=null;
-                if (x<innerL) hasLeft=true;
-                else if (y<10) hasTop=true;
-                else if (x>w-10) hasRight=true;
-                else if (y>h-innerB) hasBot=true;
+                int oX = (orientation==0)?x:y;
+                int oY = (orientation==0)?y:x;
+                if (oX<innerL) hasLeft=true;
+                else if (oY<10) hasTop=true;
+                else if (oX>w-10) hasRight=true;
+                else if (oY>h-innerB) hasBot=true;
                 else {
                     if (stackjitter && jitter && v[0].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
                             if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) x+=stackOff;
-                            //if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) x+=stackOff;
                             j++;
                         }
                     } else if (stackjitter && jitter && v[1].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
                             if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) y-=stackOff;
-                            //if (Pts[j]!=null && Pts[j].y==y && Pts[j].x==x) y-=stackOff;
                             j++;
                         }
                     }
-                    Pts[i]=new Point(x,y);
                     pp[i]=new PPrimCircle();
-                    ((PPrimCircle)pp[i]).x = x;
-                    ((PPrimCircle)pp[i]).y = y;
+                    if(orientation==0){
+                        ((PPrimCircle)pp[i]).x = x;
+                        ((PPrimCircle)pp[i]).y = y;
+                    } else{
+                        ((PPrimCircle)pp[i]).x = y;
+                        ((PPrimCircle)pp[i]).y = x;
+                    }
                     ((PPrimCircle)pp[i]).diam = ptDiam;
                     ((PPrimCircle)pp[i]).ref = new int[] {i};
                 }
@@ -189,10 +183,14 @@ public class ScatterCanvas extends BaseCanvas {
                 int x,y;
                 if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+A[0].getCasePos(i);
                 if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+A[1].getCasePos(i);
-                Pts[i]=new Point(x,y);
                 pp[i]=new PPrimCircle();
-                ((PPrimCircle)pp[i]).x = x;
-                ((PPrimCircle)pp[i]).y = y;
+                if(orientation==0){
+                    ((PPrimCircle)pp[i]).x = x;
+                    ((PPrimCircle)pp[i]).y = y;
+                } else{
+                    ((PPrimCircle)pp[i]).x = y;
+                    ((PPrimCircle)pp[i]).y = x;
+                }
                 ((PPrimCircle)pp[i]).diam = ptDiam;
                 ((PPrimCircle)pp[i]).ref = new int[] {i};
             }
@@ -240,10 +238,10 @@ public class ScatterCanvas extends BaseCanvas {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
         }*/
         if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
-            run(this,"alphaDown");
+            run(this,"alphaUp");
         }
         if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-            run(this,"alphaUp");
+            run(this,"alphaDown");
         }
     };
     
@@ -332,11 +330,11 @@ public class ScatterCanvas extends BaseCanvas {
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="alphaDown") {
-            ptAlpha-=(ptAlpha>0.2)?0.10:0.02; if (ptAlpha<0f) ptAlpha=0.05f;
+            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="alphaUp") {
-            ptAlpha+=(ptAlpha>0.2)?0.10:0.02; if (ptAlpha>1f) ptAlpha=1f;
+            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
         }
         
@@ -388,17 +386,19 @@ public class ScatterCanvas extends BaseCanvas {
         
         /* draw ticks and labels for X axis */
         {
-            double f=A[0].getSensibleTickDistance(50,26);
-            double fi=A[0].getSensibleTickStart(f);
+            int ori = (orientation==0)?0:1;
+            Axis axis = (orientation==0)?ax:ay;
+            double f=axis.getSensibleTickDistance(50,26);
+            double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
-                System.out.println("SP.A[0]:"+A[0].toString()+", distance="+f+", start="+fi);
+                System.out.println("SP.A[0]:"+axis.toString()+", distance="+f+", start="+fi);
             try {
-                while (fi<A[0].vBegin+A[0].vLen) {
-                    int t=A[0].getValuePos(fi);
+                while (fi<axis.vBegin+axis.vLen) {
+                    int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
-                        g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)(fi+0.5)).toString()):v[0].getCatAt((int)(fi+0.5)).toString()):
-                            A[0].getDisplayableValue(fi),t,Y+H+20,0.5,0);
+                        g.drawString(v[ori].isCat()?((useX3)?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):v[ori].getCatAt((int)(fi+0.5)).toString()):
+                            axis.getDisplayableValue(fi),t,Y+H+20,0.5,0);
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -407,16 +407,18 @@ public class ScatterCanvas extends BaseCanvas {
         
         /* draw ticks and labels for Y axis */
         {
-            double f=A[1].getSensibleTickDistance(30,18);
-            double fi=A[1].getSensibleTickStart(f);
+            int ori = (orientation==0)?1:0;
+            Axis axis = (orientation==0)?ay:ax;
+            double f=axis.getSensibleTickDistance(30,18);
+            double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
-                System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
+                System.out.println("SP.A[1]:"+ay.toString()+", distance="+f+", start="+fi);
             try {
-                while (fi<A[1].vBegin+A[1].vLen) {
-                    int t=A[1].getValuePos(fi);
+                while (fi<axis.vBegin+axis.vLen) {
+                    int t=axis.getValuePos(fi);
                     g.drawLine(X-5,t,X,t);
                     if(showLabels)
-                        g.drawString(v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)(fi+0.5)).toString()):A[1].getDisplayableValue(fi),X-8,t,1,0.3);
+                        g.drawString(v[ori].isCat()?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):axis.getDisplayableValue(fi),X-8,t,1,0.3);
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -424,47 +426,7 @@ public class ScatterCanvas extends BaseCanvas {
         }
         
         //nextLayer(g);
-        
-        int lastSM=0;
-        /* begin: old code
-         if (ptAlpha<1f) g.setGlobalAlpha(ptAlpha);
-        g.setColor("point");
-        if (filter==null) {
-            for (int i=0;i<pts;i++)
-                if (Pts[i]!=null) {
-                int mm=m.getSec(i);
-                if (mm!=lastSM) {
-                    if (mm==0) g.setColor("point"); else g.setColor(ColorBridge.getMain().getColor(mm));
-                    lastSM=mm;
-                }
-                g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
-                }
-        } else {
-            for (int i=0;i<filter.length;i++)
-                if (Pts[filter[i]]!=null)
-                    g.fillOval(Pts[filter[i]].x-ptDiam/2,Pts[filter[i]].y-ptDiam/2,ptDiam,ptDiam);
-        }
-         
-         
-        g.resetGlobalAlpha();
-        //nextLayer(g);
-         
-        if (m.marked()>0) {
-            g.setColor("marked");
-            if (filter==null) {
-                for (int i=0;i<pts;i++)
-                    if (Pts[i]!=null && m.at(i))
-                        g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
-            } else {
-                for (int j=0;j<filter.length;j++) {
-                    int i=filter[j];
-                    if (Pts[i]!=null && m.at(i))
-                        g.fillOval(Pts[i].x-ptDiam/2,Pts[i].y-ptDiam/2,ptDiam,ptDiam);
-                }
-            }
-        };*/
-        
-        //nextLayer(g);
+
         if (drag) {
             /* no clipping
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
