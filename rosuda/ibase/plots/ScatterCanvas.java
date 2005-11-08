@@ -333,24 +333,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintBack(PoGraSS g) {
-        Rectangle r=pc.getBounds();
-        g.setBounds(r.width,r.height);
-        g.begin();
-        g.defineColor("white",255,255,255);
-        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
-        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
-        g.defineColor("black",0,0,0);
-        g.defineColor("outline",0,0,0);
-        g.defineColor("point",0,0,128);
         g.defineColor("red",255,0,0);
-        g.defineColor("line",0,0,128); // color of line plot
-        g.defineColor("lines",96,96,255);
-        g.defineColor("selText",255,0,0);
-        g.defineColor("selBg",255,255,192);
-        g.defineColor("splitRects",128,128,255);
-        float[] scc=Common.selectColor.getRGBComponents(null);
-        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
-        g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
         
         Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH)
