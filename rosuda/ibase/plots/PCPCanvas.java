@@ -107,11 +107,6 @@ public class PCPCanvas extends BaseCanvas {
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("axis",192,192,192);
-        g.defineColor("line",128,128,192); // color of line plot
-        g.defineColor("Rlines",96,128,96); // color of the resudual thresholds
-        g.defineColor("lines",96,96,255);
-        g.defineColor("selText",255,0,0);
-        g.defineColor("selBg",255,255,192);
         
         Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH) {
