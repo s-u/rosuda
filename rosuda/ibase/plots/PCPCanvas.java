@@ -25,9 +25,6 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawPoints=false;
     boolean drawAxes=false;
     
-    /** array of axes */
-    Axis A[];
-    
     boolean commonScale=true;
     boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
     
@@ -48,8 +45,7 @@ public class PCPCanvas extends BaseCanvas {
         mLeft=mRight=mTop=10;
         
         v=new SVar[yvs.length+1];
-        A=new Axis[yvs.length-1];
-        opAy = A;
+        opAy=new Axis[yvs.length-1];
         int i=0;
         SVar xv=new SVarObj("PCP.index",true);
         while(i<yvs.length) {
@@ -86,16 +82,16 @@ public class PCPCanvas extends BaseCanvas {
             setUpdateRoot(0); repaint();
             return;
         }
-        if (A[0]==null) {
+        if (opAy[0]==null) {
             Dimension Dsize=pc.getSize();
             int w=Dsize.width, h=Dsize.height;
             int lshift=0;
             int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
             
             int i=0;
-            while (i<A.length) {
-                A[i]=new Axis(v[i+2],Axis.O_Y,v[i+2].isCat()?Axis.T_EqCat:Axis.T_Num);
-                A[i].addDepend(this);
+            while (i<opAy.length) {
+                opAy[i]=new Axis(v[i+2],Axis.O_Y,v[i+2].isCat()?Axis.T_EqCat:Axis.T_Num);
+                opAy[i].addDepend(this);
                 i++;
             }
             
@@ -327,7 +323,7 @@ public class PCPCanvas extends BaseCanvas {
                 if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
                     System.out.println(ax);
                     xs[i][j] = ax.getCatCenter(j);
-                    ys[i][j] = ((commonScale||j==0)?ay:A[j-1]).getValuePos(v[j+1].atD(i));
+                    ys[i][j] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
                 } else{
                     na[i] = true;
                     break;
