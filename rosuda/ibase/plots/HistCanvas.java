@@ -230,31 +230,27 @@ public class HistCanvas extends BaseCanvas {
     public void mousePressed(MouseEvent ev) {
         int x=ev.getX(), y=ev.getY();
         if(orientation==0 || orientation==2){
-            if ((orientation==0 && y>H-mBottom) || (orientation==2 && y<mTop)) {
-                if (x>mLeft-3 && x<mLeft+3) dragMode=DRAGMODE_ANCHOR;
-                dragX=x;
-            } else if (Common.isMoveTrigger(ev) && ((orientation==0 && y<=H-mBottom) || (orientation==2 && y>=mTop))) {
+            if (Common.isMoveTrigger(ev) && (orientation==0 && y<=H-mBottom) || (orientation==2 && y>=mTop)) {
                 double bwp;
-                dragBinwBars=0;
-                while((orientation==0 && x>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3) 
+                dragBinwBars=-1;
+                while((orientation==0 && x>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3)
                 || (orientation==2 && x<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
                     if (x<bwp+3) dragMode=DRAGMODE_BINW;
                     dragBinwBars++;
                 }
+                if(dragBinwBars==0) dragMode=DRAGMODE_ANCHOR;
                 dragX=x;
             } else super.mousePressed(ev);
         } else {
-            if ((orientation==1 && x<mLeft) || (orientation==3 && x>W-mRight)) {
-                if (y>mTop-3 && y<mTop+3) dragMode=DRAGMODE_ANCHOR;
-                dragX=y;
-            } else if (Common.isMoveTrigger(ev) && ((orientation==1 && x>=mLeft) || (orientation==3 && x<=W-mRight))) {
+            if (Common.isMoveTrigger(ev) && ((orientation==1 && x>=mLeft) || (orientation==3 && x<=W-mRight))) {
                 double bwp;
-                dragBinwBars=0;
+                dragBinwBars=-1;
                 while((orientation==1 && y>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3)
                 || (orientation==3 && y<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
                     if (y<bwp+3) dragMode=DRAGMODE_BINW;
                     dragBinwBars++;
                 }
+                if(dragBinwBars==0) dragMode=DRAGMODE_ANCHOR;
                 dragX=y;
             } else super.mousePressed(ev);
         }
@@ -325,4 +321,34 @@ public class HistCanvas extends BaseCanvas {
         }
         super.rotate(amount);
     }
+    
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode()==KeyEvent.VK_UP) {
+            binw*=1.1;
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+            double newBinw=Math.min(binw/1.1, 1);
+            if(Math.abs(newBinw-binw)>0.00001){
+                binw=newBinw;
+                updateObjects();
+                setUpdateRoot(0);
+                repaint();
+            }
+        }
+        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+            anchor = Math.min(anchor+0.1*binw, v.getMin());
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+            anchor = Math.max(anchor-0.1*binw, v.getMin()-binw);
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
+    };
 }
