@@ -12,8 +12,7 @@
  */
 
 package org.rosuda.ibase.toolkit;
-
-import java.util.Enumeration;
+import java.awt.Rectangle;
 import java.util.Vector;
 import org.rosuda.pograss.*;
 import org.rosuda.ibase.*;
@@ -22,6 +21,7 @@ public class PlotText extends PlotObject {
     int x[], y[], maxw[];
     double ax[], ay[];
     String txt[];
+    Rectangle txtFields[]; // the place which each text element occupies, is initialised in draw method
     
     Vector addX=new Vector(),
             addY=new Vector(),
@@ -109,11 +109,16 @@ public class PlotText extends PlotObject {
     public void draw(PoGraSS g) {
         if (txt==null || txt.length==0) return;
         if (cold!=null) cold.use(g);
+        if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
         for (int i=0; i<txt.length; i++) {
             String t;
             if(maxw[i]>-1 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
             else t=txt[i];
             g.drawString(t,x[i],y[i],ax[i],ay[i]);
+            int w = g.getWidthEstimate(t);
+            int h = g.getHeightEstimate(t);
+            txtFields[i] = new Rectangle(x[i]-(int)(ax[i]*w+0.5),y[i]+(int)((-1+ay[i])*h+0.5), w,h);
+            //g.drawRect(txtFields[i].x,txtFields[i].y, txtFields[i].x+txtFields[i].width,  txtFields[i].y+txtFields[i].height);
         }
     }
     
@@ -122,5 +127,14 @@ public class PlotText extends PlotObject {
         if (x==null || y==null) return "PlotText(<coordinates incomplete>)";
         int l=txt.length; if (x.length>l) l=x.length; if (y.length>l) l=y.length;
         return "PlotText(labels="+l+",coord="+coordX+"/"+coordY+",visible="+isVisible()+")";
+    }
+    
+    public int getTextAt(int x, int y){
+        if(txtFields!=null){
+            for (int i=0; i<txtFields.length; i++){
+                if(txtFields[i].contains(x,y)) return i;
+            }
+        }
+        return -1;
     }
 }
