@@ -29,6 +29,7 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
     
     int x1, y1, x2, y2;
+    int dragAxis=-1;
     
     MenuItem MIlabels=null;
     
@@ -40,6 +41,8 @@ public class PCPCanvas extends BaseCanvas {
      * @param mark associated marker */
     public PCPCanvas(PlotComponent pc, Frame f, SVar[] yvs, SMarker mark) {
         super(pc,f,mark);
+        
+        allowDragMove=true;
         
         mBottom=30;
         mLeft=mRight=mTop=10;
@@ -145,7 +148,7 @@ public class PCPCanvas extends BaseCanvas {
                 int t=ax.getValuePos(fi);
                 if (showLabels){
                     labels.add(t-5, TH-Y-H-10, v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
-                                v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi));
+                        v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi));
                 }
                 fi+=f;
             };
@@ -316,9 +319,8 @@ public class PCPCanvas extends BaseCanvas {
         for (int i=0;i<v[1].size();i++){
             for (int j=0;j<v.length-1;j++){
                 if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
-                    System.out.println(ax);
-                    xs[i][j] = ax.getCatCenter(j);
-                    ys[i][j] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
+                    xs[i][ax.getCatSeqIndex(j)] = ax.getCatCenter(j);
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
                 } else{
                     na[i] = true;
                     break;
@@ -339,4 +341,68 @@ public class PCPCanvas extends BaseCanvas {
     }
     
     public SVar getData(int id) { return (id>=0 && id<v.length-1)?v[id+1]:null; }
+    
+    public void mousePressed(MouseEvent ev) {
+        super.mousePressed(ev);
+        int x=ev.getX(), y=ev.getY();
+        Common.printEvent(ev);
+        
+        if (Common.isMoveTrigger(ev)) {
+            dragAxis = labels.getTextAt(x,y);
+            if(dragAxis>-1){
+                pc.setCursor(Common.cur_move);
+            }
+        }
+    };
+    
+    public void mouseReleased(MouseEvent e) {
+        if (baseDrag && moveDrag) {
+            int pos = (orientation==0)?e.getX():e.getY();
+            int dragNew = ax.getCatByPos(pos);
+            int difference;
+            int myX1=ax.getCatLow(dragNew);
+            int myX2=ax.getCatUp(dragNew);
+            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+                int newPos=ax.getCatSeqIndex(dragNew);
+                if(difference>0) newPos += 1;
+                ax.moveCat(dragAxis, newPos);
+            } else{
+                if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
+                else ax.swapCats(dragNew, ax.getCatByPos(baseDragY1));
+            }
+            
+            baseDrag=false;
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        } else super.mouseReleased(e);
+    }
+    
+    public void paintPost(PoGraSS g) {
+        if(baseDrag && moveDrag){
+            int basey=pc.getBounds().height-mBottom;
+            int pos = (orientation==0)?baseDragX2:baseDragY2;
+            int dragNew = ax.getCatByPos(pos);
+            int myX1=ax.getCatLow(dragNew);
+            int myX2=ax.getCatUp(dragNew);
+            int difference;
+            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+                int x,w;
+                if(difference>0){
+                    x=ax.getCatCenter(dragNew);
+                    w=2*(myX2-x);
+                } else{
+                    w=2*(ax.getCatCenter(dragNew)-myX1);
+                    x=ax.getCatCenter(dragNew)-w;
+                    
+                }
+                if(orientation==0) g.fillRect(x,basey,w,4);
+                else g.fillRect(mLeft,x,4,w);
+            } else{
+                if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
+                else g.fillRect(mLeft,myX1,4,myX2-myX1);
+            }
+        }
+        super.paintPost(g);
+    }
 };
