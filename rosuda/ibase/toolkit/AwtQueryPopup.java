@@ -32,7 +32,7 @@ public class AwtQueryPopup implements MouseListener, QueryPopup
 	QPCanvas(PlotComponent pc, Window wn, SVarSet uvs, String ct, int w, int cid) {
 		super(pc);
 		width=w; win=wn; vs=uvs;
-		// setContent(ct,cid); 
+//		 setContent(ct,cid); 
 	}
 
 	public void setContent(String t, int cid) {
@@ -105,8 +105,8 @@ public class AwtQueryPopup implements MouseListener, QueryPopup
 		    content[i]=c; i++;
 		};
 	    };
-	    win.setVisible(true);
-	    pcomp.initializeGraphics(win);
+//	    win.setVisible(true);
+//	    pcomp.initializeGraphics(win);
 	    doUpdate=true;
 	    repaint();
 	}
@@ -163,8 +163,8 @@ public class AwtQueryPopup implements MouseListener, QueryPopup
 	win=new Window(own);
 	cvs=new QPCanvas(pcomp,(Window)win,vs,ct,w,cid);
 	win.add(cvs.pc.getComponent());
-	// cvs.setContent(ct,cid);
-	cvs.pc.getComponent().setSize(100,50);
+//	cvs.setContent(ct,cid);
+	cvs.pc.setSize(100,50);
 	win.setBackground(Common.popupColor);
 	win.addMouseListener(this);
 	cvs.pc.getComponent().addMouseListener(this);
@@ -220,7 +220,9 @@ public class AwtQueryPopup implements MouseListener, QueryPopup
     public void mousePressed(MouseEvent e) {}
     public void mouseReleased(MouseEvent e) {}
     public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {
+   		hide();
+    }
     
     public Component getQueryComponent() {
     	return win;
