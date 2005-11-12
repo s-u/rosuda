@@ -119,7 +119,9 @@ public class BufferTokenizer {
 	
 // 	for a routine
 	boolean wordNotFound = false;
-
+	
+/** newline-seperator */ 
+	String newLineBreaker = "";
 	
 /** name of filename */
 	String file;
@@ -203,6 +205,8 @@ public class BufferTokenizer {
 		System.out.println("Harddrive to RAM: " + (stop - start));
         prId.setProgress(.05);
 
+        newLineBreaker = getNewLineBreaker(buffer);
+        
 		format = analyzeFormat(buffer);
 		if(format == "TAB-Format") SEPERATOR = TAB;
 		else if(format == "SPACE-Format") SEPERATOR = SPACE;
@@ -717,7 +721,8 @@ public class BufferTokenizer {
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
                     if( b<0) System.out.println(b+" <-----");
-                    head[j][l] = (byte)( b>-1?b:256+b ); 		
+//                    head[j][l] = (byte)( b>-1?b:256+b ); 		
+                    head[j][l] = b;
 				}
 				
 				if(buffer.hasRemaining()) {
@@ -756,7 +761,7 @@ public class BufferTokenizer {
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
 
-					head[j][l] = (byte) b;
+					head[j][l] = b;
 					
 				}
 
@@ -3273,7 +3278,6 @@ public class BufferTokenizer {
 		buffer.position(startposition);
 		
 		while(buffer.hasRemaining()) {
-//			strbuf.append((char)buffer.get()); 
 			strbuf.append((char)buffer.get());
 		}
 		
@@ -3351,4 +3355,27 @@ public class BufferTokenizer {
 		return c;
 	}
 
+	public String getNewLineBreaker(ByteBuffer buffer) {
+		byte b;
+		String str = "";
+		buffer.rewind();
+		while(buffer.hasRemaining()) {
+			b = buffer.get();
+			if(b == RETURN) {
+				if(buffer.hasRemaining()) {
+					b = buffer.get();
+					if(b == NEWLINE) {
+						str = "RN"; break; 
+					} else {
+						str = "R"; break;
+					}
+				} else {
+					str = "R"; break;
+				}
+			} else if(b == NEWLINE) {
+				str = "N"; break;
+			}
+		}
+		return str;
+	}
 }
