@@ -23,7 +23,7 @@ public class Framework implements Dependent, ActionListener {
     int tvctr;
     int dtctr;
     
-    public boolean USE_SWING = false; // use AWT otherwise
+    public int graphicsEngine = PlotComponent.SWING; // default
     
     /** initialize framework, create and select a dataset which id called "default".
      * one framework supports multiple datasets, plots etc. so there should be no
@@ -320,10 +320,16 @@ public class Framework implements Dependent, ActionListener {
     
     /** returns a new PlotComponent according to USE_SWING */
     private PlotComponent newPlotComponent(){
-        if(USE_SWING)
+        if(graphicsEngine==PlotComponent.SWING)
             return new SwingPlotComponent();
+        else if(graphicsEngine==PlotComponent.OPENGL)
+            return new AwtPlotComponent(); // OPENGL not available right now
         else
-            return new AwtPlotComponent();
+        	return new AwtPlotComponent();
+    }
+    
+    public void setGraphicsEngine(int greng) {
+    	graphicsEngine = greng;
     }
     
     /** display a new scatterplot of two variables from current dataset
