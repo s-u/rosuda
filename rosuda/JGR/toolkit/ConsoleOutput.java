@@ -69,7 +69,7 @@ public class ConsoleOutput extends JTextPane {
     private StringBuffer getCommands(int a, int b) {
         StringBuffer bf = new StringBuffer();
         String line = null;
-        for (int i = a; i < b; i++) {
+        for (int i = a; i <= b; i++) {
             try {
                 if(isCorrectLine(i) && isCommandLine(i)) {
 					String l = trimFront(getLine(i).replaceFirst(prompt,""));
@@ -108,7 +108,7 @@ public class ConsoleOutput extends JTextPane {
 
     private StringBuffer getOutput(int a, int b) {
         StringBuffer bf = new StringBuffer();
-        for (int i = a; i < b; i++) {
+        for (int i = a; i <= b; i++) {
             try {
                 if(isCorrectLine(i))
                     bf.append(getLine(i));
@@ -145,7 +145,7 @@ public class ConsoleOutput extends JTextPane {
 
     private StringBuffer getResult(int a, int b) {
         StringBuffer bf = new StringBuffer();
-        for (int i = a; i < b; i++) {
+        for (int i = a; i <= b; i++) {
             try {
                 if(isCorrectLine(i)){
                     if (isResultLine(i)) {

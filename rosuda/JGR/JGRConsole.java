@@ -253,6 +253,8 @@ FocusListener, RMainLoopCallbacks {
                     public void run() {
                         setWorking(true);
                         JGRHelp.current.show();
+			JGRHelp.current.toFront();
+			JGRHelp.current.requestFocus();
                         try {
                             JGRHelp.current.search(h,e);
                         } catch (Exception e1) {
@@ -263,6 +265,11 @@ FocusListener, RMainLoopCallbacks {
                 };
                 t.start();
             }
+	    else {
+	    	JGRHelp.current.show();
+            	JGRHelp.current.toFront();
+                JGRHelp.current.requestFocus();
+	    }
         }
     }
 
