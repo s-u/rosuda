@@ -40,7 +40,7 @@ import java.nio.channels.FileChannel;
 
 public class BufferTokenizer {
 
-	
+/** some constants for easy reading */
 	final byte TAB = (byte) '\t';
 	final byte SPACE = (byte) ' ';
 	final byte NEWLINE = (byte) '\n';
@@ -151,14 +151,20 @@ public class BufferTokenizer {
 	boolean isPolygonAvailable = false;
 	String polygonName = null;
 	
-/** sets discret limit for numerical columns */
+/**
+ * sets limit for discret handling of numerical columns
+ * @param i
+ */
 	public void setDiscretLimit(int i) {
 		discretLimit = i;
 	}
-	
-/** returns item (j,i) = (column, line) as Object.
- 	parse it to double[] if element is numerical
- 	else parse it to char[] */	
+
+/**
+ * method to get converted items as Objects
+ * @param j column-position
+ * @param i line-position
+ * @return Object in column j, line i
+ */
 	public Object getItem(int j, int i) {
 
 		if (!numericalColumn[j]) {
@@ -172,6 +178,12 @@ public class BufferTokenizer {
 
 	}
 
+/**
+ * just a little pointer to word in saved list
+ * @param j column-position
+ * @param i line-position
+ * @return byte[] found in position (j,i) in data-matrix
+ */
 	public byte[] pointToWord(int j, int i) {
 
 		return word[j][(int)item[j][i]];
@@ -182,8 +194,8 @@ public class BufferTokenizer {
 
 /** BufferTokenizer:
  * 
- * @param discretLimit: discretLimit setting. for good speed use small discretLimit
- * @param acceptedErrors: make sure acceptedErrors should be >=1
+ * @param discretLimit discretLimit setting. for good speed use small discretLimit
+ * @param acceptedErrors make sure acceptedErrors should be >=1
  */
 	public BufferTokenizer(int discretLimit, int acceptedErrors, String file, ProgressIndicator pi) {
 		long start, stop;
@@ -540,6 +552,12 @@ public class BufferTokenizer {
 	
 	}
 
+/**
+ * file to ByteBuffer converter
+ * @param file filename
+ * @return converted ByteBuffer
+ * @throws IOException if errors occured during reading
+ */
 	public ByteBuffer readFile(String file) throws IOException {
 		FileChannel fc = (new FileInputStream(file)).getChannel();
 		ByteBuffer buffer = ByteBuffer.allocate((int) fc.size());
@@ -548,6 +566,13 @@ public class BufferTokenizer {
 		return buffer;
 	}
 
+/**
+ * checks byte, if it is a real char
+ * problems on other platforms: so maybe false information if ASCII(byte)>128
+ * real chars (here): 65..90, 97..122, 192..255
+ * @param b byte
+ * @return true, if b is a real char, else false
+ */
 	private boolean isChar(byte b) {
 
 		if ((b >= 65 && b <= 90) || (b >= 97 && b <= 122) || (b >= 192 && b <= 255))
@@ -557,6 +582,12 @@ public class BufferTokenizer {
 
 	}
 
+/** 
+ * checks byte to be a real number
+ * real number = 48..57
+ * @param b byte
+ * @return true, if b is a real number, else false
+ */
 	private boolean isNumber(byte b) {
 
 		if (b >= 48 && b <= 57)
@@ -565,7 +596,15 @@ public class BufferTokenizer {
 			return false;
 
 	}
-
+/**
+ * analyzes text-format in ByteBuffer
+ * "SPACE-Format" = ... ..., where ... == number | "word"
+ * "KOMMA-QUOTE-Format" = ...,... where ... == number | "word"
+ * "TAB-Format" = ...	..., where ... == number | word
+ * "KOMMA-Format" = ...,... , where ... == number | word
+ * @param buffer the associated ByteBuffer to read
+ * @return "UNKNOWN-Format" if format not found out, "SPACE-Format", "KOMMA-QUOTE-Format" if, "TAB-Format", "KOMMA-Format"
+ */
 	public String analyzeFormat(ByteBuffer buffer) {
 
 		buffer.rewind();
@@ -688,7 +727,12 @@ public class BufferTokenizer {
 		// UNKNOWN-Format (default), TAB-Format, SPACE-Format, KOMMA-Format, KOMMA-QUOTE-Format
 	}
 	
-	
+/**
+ * reads out headline in ByteBuffer
+ * @param buffer associated ByteBuffer
+ * @param format associated formation of text in ByteBuffer
+ * @return headline ([word][letter])
+ */
 	public byte[][] readHead(ByteBuffer buffer, String format) {
 		
 		buffer.rewind();
@@ -805,9 +849,11 @@ public class BufferTokenizer {
 		return head;
 	}
 	
-	
-	
-	
+/**
+ * method to get position of second line in ByteBuffer
+ * @param buffer associated ByteBuffer
+ * @return position of second line in data-matrix
+ */	
 	public int getPositionSecondLine(ByteBuffer buffer) {
 		
 		buffer.rewind();
@@ -834,7 +880,12 @@ public class BufferTokenizer {
 		return positionSecondLine;
 	}
 	
-	
+/**
+ * 
+ * @param buffer the associated ByteBuffer to read
+ * @param format the format to handle with
+ * @return amount of columns
+ */
 	int amountColumns(ByteBuffer buffer, String format) {
 		buffer.rewind();
 		int j = 0;
@@ -901,7 +952,12 @@ public class BufferTokenizer {
 		}
 		return j + 1;
 	}
-
+/**
+ * 
+ * @param buffer the associated ByteBuffer to read
+ * @param format the format to handle with
+ * @return amount of lines
+ */
 	int amountLines(ByteBuffer buffer, String format) {
 		buffer.rewind();
 		int i = 0; // counts lines
@@ -1177,6 +1233,11 @@ public class BufferTokenizer {
 
 	}
 
+/**
+ * method to go to next line
+ * @param buffer associated ByteBuffer
+ * @return this ByteBuffer with pointer on first byte in second line
+ */
 	private ByteBuffer gotoNextLine(ByteBuffer buffer) {
 		byte b;
 		while (buffer.hasRemaining()) {
@@ -1200,6 +1261,13 @@ public class BufferTokenizer {
 		return buffer;
 	}
 
+/**
+ * tests unquoted ByteBuffer for errors
+ * @param buffer associated ByteBuffer
+ * @param SEPERATOR associated seperator of words
+ * @param maxamountErrors maximal errors amount. stop if more errors occur
+ * @return String[] of errors (which errors occur)
+*/
 	public String[] testUNQUOTEDFormat(ByteBuffer buffer, byte SEPERATOR, int maxamountErrors) {
 
 		buffer.rewind();
@@ -1419,6 +1487,13 @@ public class BufferTokenizer {
 		return error;
 	}
 
+/**
+ * tests quoted ByteBuffer for errors and gets amount of lines in quoted format
+ * @param buffer associated ByteBuffer
+ * @param SEPERATOR associated seperator of words
+ * @param maxamountErrors maximal errors amount. stop if more errors occur
+ * @return String[] of errors (which errors occur)
+ */
 	public String[] testQUOTEDFormat(ByteBuffer buffer, byte SEPERATOR, int maxamountErrors) {
 
 		for(int i = 0; i<columns; i++) {
@@ -1848,6 +1923,12 @@ public class BufferTokenizer {
 	}
 
 
+/**
+ * tokenizes errorfree ByteBuffer into tokens (unquoted format)
+ * saved in item
+ * @param buffer associated ByteBuffer
+ * @param SEPERATOR associated seperator of words
+*/
 	public void tokenizeUNQUOTEDBuffer(ByteBuffer buffer, byte SEPERATOR) {
 		byte b;
 		int i, j, k; // i = Zeilenindex, j = Spaltenindex, k = zählt Wortlänge
@@ -2334,7 +2415,13 @@ public class BufferTokenizer {
 	}
 
 
-
+/**
+ * tokenizes errorfree ByteBuffer into tokens (quoted format)
+ * saved in item
+ * @param buffer associated ByteBuffer
+ * @param SEPERATOR associated seperator of words
+ */
+	
 	public void tokenizeQUOTEDBuffer(ByteBuffer buffer, byte SEPERATOR) {
 
 		byte b;
@@ -2827,10 +2914,12 @@ public class BufferTokenizer {
 		}
 	}
 	
-	
-	
-	
-	
+/**
+ * checks byte-arrays for equality
+ * @param char1 first byte-array
+ * @param char2 second byte-array
+ * @return true, if char1==char2, else false
+ */
 	private boolean eqCharArray(byte[] char1, byte[] char2) {
 
 		int i = char1.length;
@@ -2849,6 +2938,12 @@ public class BufferTokenizer {
 
 	}
 	
+/**
+ * 
+ * @param charArray byte-array to be converted
+ * @param isNA tag for helping convertion
+ * @return converted double
+ */
 	public double charArraytoDouble(byte[] charArray, boolean isNA) {
 		double number = 0;
 		boolean dotAvailable = false;
@@ -2897,6 +2992,12 @@ public class BufferTokenizer {
 		return number;
 	}
 	
+/**
+ * method for finding neighbourhood of error-places in buffer
+ * @param buffer associated ByteBuffer
+ * @param position position to get neighbourhood of
+ * @return neighbourhood of position
+ */
 	public StringBuffer findRegion(ByteBuffer buffer, int position) {
 		
 		byte b;
@@ -2931,7 +3032,12 @@ public class BufferTokenizer {
 		return region;
 
 	}
-	
+/**
+ * compares byte-arrays
+ * @param char1 first byte-array
+ * @param char2 second byte-array
+ * @return -1 if char1<char2, 0 if char1==char2, 1 if char1>char2
+ */
 	// compare char arrays by lexicographical order
 	// NullPointerException not implemented cause of speed performance
 	// return -1 if char1 < char2, 0 if char1 = char2, +1 if char1 > char2
@@ -2990,6 +3096,13 @@ public class BufferTokenizer {
       }
 	}
 
+/**
+ * method for finding words in list
+ * @param list list to go through
+ * @param listStackSize limit of list (not capacity!, capacity==list.size)
+ * @param word word to be found in list
+ * @return position of found word in list
+ */
 	// list has to be sorted
 	// returns position if word found or added to list and
 	// sets wordNotFound = true or false
@@ -3041,6 +3154,11 @@ public class BufferTokenizer {
 	}
 	
 	
+/**
+ * Easy-checking of words (doesn't check doubles).
+ * @param SEPERATOR associated seperator in file
+ * @return true if words were converted correct, else false
+ */
 	// very easy check-text method, doesn't check doubles (not yet) 
 	private boolean checkIt(byte SEPERATOR) {
 		
@@ -3132,15 +3250,17 @@ public class BufferTokenizer {
 	
 	private byte[] doubleToCharArray(double d, boolean dotAvailable) {
 		
-		
-		
-		
 		return null;
 	}
 	
 
-/** isPolygonAvailable(ByteBuffer): returns true, if polygon is available
- 	additionally remarks hard reading error, if more then 1 polygon is available */
+/**
+ * checks if a polygon-token ("/P") is available in headline
+ * additionally remarks hard reading error, if more then 1 polygon is available
+ * @param buffer associated ByteBuffer
+ * @param format format of text
+ * @return true if check was successfull (that means: exactly 1 token in head)
+*/
 	public boolean isPolygonAvailableInHead(ByteBuffer buffer, String format) {
 		
 		byte b;
@@ -3250,7 +3370,13 @@ public class BufferTokenizer {
 		}
 	}
 	
-/** getPolygonName: returns polygonname if available, else null */
+// getPolygonName: returns polygonname if available, else null
+/**
+ * method to get polygon-name in file
+ * polygon-names can be found at the end of file
+ * @param buffer associated ByteBuffer
+ * @return polygon-name if available, else null
+*/
 	private String getPolygonName(ByteBuffer buffer) {
 		
 		byte b;
@@ -3345,7 +3471,11 @@ public class BufferTokenizer {
 			return new String(strbuf);
 		}
 	}
-	
+/**
+ * Convertion must be extended to more platforms
+ * @param b byte-array to be converted
+ * @return converted char-array
+ */
 	// needs supportability on every machine, need general code converter
 	public char[] byteToCharArray(byte[] b) {
 		char[] c = new char[b.length];
@@ -3355,6 +3485,11 @@ public class BufferTokenizer {
 		return c;
 	}
 
+/**
+ * method to get linebreaker
+ * @param buffer associated ByteBuffer
+ * @return "RN" for /r/n, "R" for /r and "N" for /n
+ */
 	public String getNewLineBreaker(ByteBuffer buffer) {
 		byte b;
 		String str = "";
