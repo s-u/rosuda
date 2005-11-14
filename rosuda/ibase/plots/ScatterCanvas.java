@@ -418,7 +418,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public String queryObject(int i) {
-        return v[0].getName() + ": " + v[0].atD(i) + "\n" 
+        return v[0].getName() + ": " + v[0].atD(i) + "\n"
                 + v[1].getName() + ": " + v[1].atD(i);
     }
     
@@ -433,11 +433,20 @@ public class ScatterCanvas extends BaseCanvas {
     public void paintPost(PoGraSS g) {
         if (querying) {
             g.setColor("black");
-            if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
-                g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
-                g.drawLine(qx,ay.gBegin,qx,ay.gBegin+ay.gLen);
-                g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,qy-2);
-                g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),qx+2,qy+11);
+            if((orientation&1) == 0){ // no rotation or 180°
+                if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
+                    g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
+                    g.drawLine(qx,ay.gBegin,qx,ay.gBegin+ay.gLen);
+                    g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,qy-2);
+                    g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),qx+2,qy+11);
+                }
+            } else {
+                if (qx==ay.clip(qx) && qy==ax.clip(qy)) {
+                    g.drawLine(qx,ax.gBegin,qx,ax.gBegin+ax.gLen);
+                    g.drawLine(ay.gBegin,qy,ay.gBegin+ay.gLen,qy);
+                    g.drawString(ax.getDisplayableValue(ay.getValueForPos(qx)),qx+2,qy-2);
+                    g.drawString(ax.getDisplayableValue(ax.getValueForPos(qy)),qx+2,qy+11);
+                }
             }
         }
         super.paintPost(g);
