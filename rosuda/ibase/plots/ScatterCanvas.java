@@ -25,7 +25,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     /** in conjunction with jitter this flag determines whether random jittering or stack-plotting is to be used */
     protected boolean stackjitter=false;
-        
+    
     /** use trigraph for X axis in case X is categorical */
     protected boolean useX3=false;
     
@@ -40,7 +40,7 @@ public class ScatterCanvas extends BaseCanvas {
     public int stackOff=3;
     
     public int fieldBg=0; // 0=none, 1=objects, 2=white
-        
+    
     /** # of points */
     protected int pts;
     
@@ -333,6 +333,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintBack(PoGraSS g) {
+        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
         g.defineColor("red",255,0,0);
         
         Dimension Dsize=pc.getSize();
@@ -397,7 +398,7 @@ public class ScatterCanvas extends BaseCanvas {
         }
         
         //nextLayer(g);
-
+        
         if (drag) {
             /* no clipping
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
@@ -417,7 +418,8 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public String queryObject(int i) {
-        return "point #" + i;
+        return v[0].getName() + ": " + v[0].atD(i) + "\n" 
+                + v[1].getName() + ": " + v[1].atD(i);
     }
     
     public void mouseMoved(MouseEvent ev) {
