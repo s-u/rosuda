@@ -365,6 +365,7 @@ public class PCPCanvas extends BaseCanvas {
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
+                if(dragAxis<newPos) newPos -=1;
                 ax.moveCat(dragAxis, newPos);
             } else{
                 if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));

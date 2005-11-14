@@ -308,6 +308,7 @@ public class BarCanvas extends BaseCanvas {
                 for(dragBar=0; dragBar<bars; dragBar++){
                     if(pp[dragBar]!=null && pp[dragBar].contains(baseDragX1,baseDragY1)) break;
                 }
+                if(dragBar<newPos) newPos -=1;
                 ax.moveCat(dragBar, newPos);
             } else{
                 if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
