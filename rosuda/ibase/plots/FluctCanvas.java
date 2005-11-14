@@ -69,7 +69,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	pc.addMouseMotionListener(this);
 	pc.addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
-	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@LHide labels","labels","Toggle alignment","center","~Window","0"};
+	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","Toggle alignment","center","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");
     PlotComponent qpc = pc.getAssociatedPlotComponent();
@@ -451,7 +451,6 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");

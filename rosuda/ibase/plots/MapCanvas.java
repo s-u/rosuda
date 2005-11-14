@@ -30,7 +30,7 @@ public class MapCanvas extends BaseCanvas
         ax=new Axis(null,Axis.O_X,Axis.T_Num); ax.addDepend(this);
         ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
 
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@BToggle border lines","bounds","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@BToggle border lines","bounds","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=mRight=mTop=mBottom=10;
         // note: Map's updateObjects relies on equality of all margins!
@@ -155,7 +155,6 @@ public class MapCanvas extends BaseCanvas
     public void keyTyped(KeyEvent e) 
     {
         super.keyTyped(e);
-	if (e.getKeyChar()=='R' || e.getKeyChar()=='r') run(this,"rotate");
 	if (e.getKeyChar()=='b') run(this,"bounds");
     }
 

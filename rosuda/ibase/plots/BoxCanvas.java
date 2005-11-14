@@ -123,7 +123,7 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	    OSdata.update(v,dr);
 	    updateBoxes();
 	};
-        String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
     };
 
@@ -374,7 +374,6 @@ public class BoxCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");

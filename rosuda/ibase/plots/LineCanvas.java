@@ -319,7 +319,6 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='R') run(this,"rotate");
 	if (e.getKeyChar()=='l') run(this,"labels");
 	if (e.getKeyChar()=='P') run(this,"print");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");

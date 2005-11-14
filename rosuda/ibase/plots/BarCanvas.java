@@ -65,7 +65,7 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Spineplot","spine","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Spineplot","spine","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIspine=EzMenu.getItem(f,"spine");
     };
@@ -326,7 +326,6 @@ public class BarCanvas extends BaseCanvas {
         super.keyTyped(e);
         if (e.getKeyChar()=='o') sortBars(false);
         if (e.getKeyChar()=='O') sortBars(true);
-        if (e.getKeyChar()=='R') run(this,"rotate");
         if (e.getKeyChar()=='s') run(this,"spine");
         if (e.getKeyChar()=='l') run(this,"labels");
         

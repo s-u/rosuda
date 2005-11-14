@@ -77,7 +77,7 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","!RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         if (!v1.isCat() && !v2.isCat())
@@ -190,7 +190,6 @@ public class ScatterCanvas extends BaseCanvas {
     };
     
     public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar()=='R') run(this,"rotate");
         if (e.getKeyChar()=='l') run(this,"labels");
         if (e.getKeyChar()=='P') run(this,"print");
         if (e.getKeyChar()=='X') run(this,"exportPGS");
