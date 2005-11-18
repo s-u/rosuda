@@ -320,11 +320,11 @@ public class ScatterCanvas extends BaseCanvas {
         }
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="alphaDown") {
-            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
+            ppAlpha-=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha<0.005f) ppAlpha=0.005f;
             setUpdateRoot(0); repaint();
         }
         if (cmd=="alphaUp") {
-            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
+            ppAlpha+=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
         }
         
