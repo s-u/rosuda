@@ -213,13 +213,16 @@ public class BoxCanvas extends BaseCanvas {
         if (!vsCat) {
             pp = new PlotPrimitive[areMarked?2:1];
             pp[0] = createBox(OSdata,40,20,"white","black");
+            ((PPrimBox)pp[0]).ref = v.getRanked();
             if (areMarked)
                 pp[1] = createBox(OSsel,48,10,"selfill","sel");
         } else {
             Vector boxes = new Vector();
             int i=0;
             while(i<cs) {
-                boxes.add(createBox(oss[i],40+40*i,20,"white","black"));
+                PPrimBox box = createBox(oss[i],40+40*i,20,"white","black");
+                box.ref = rk[i];
+                boxes.add(box);
                 if (areMarked && rs[cs+1+i]>0)
                     boxes.add(createBox(oss[cs+1+i],48+40*i,10,"selfill","sel"));
                 i++;
