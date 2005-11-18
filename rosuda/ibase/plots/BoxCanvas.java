@@ -211,20 +211,17 @@ public class BoxCanvas extends BaseCanvas {
         };
         
         if (!vsCat) {
-            pp = new PlotPrimitive[areMarked?2:1];
-            pp[0] = createBox(OSdata,40,20,"white","black");
-            ((PPrimBox)pp[0]).ref = v.getRanked();
-            if (areMarked)
-                pp[1] = createBox(OSsel,48,10,"selfill","sel");
+            pp = new PlotPrimitive[1];
+            pp[0] = createBox(OSdata,40,20,OSsel);
+            PPrimBox p = ((PPrimBox)pp[0]);
+            p.ref = v.getRanked();
         } else {
             Vector boxes = new Vector();
             int i=0;
             while(i<cs) {
-                PPrimBox box = createBox(oss[i],40+40*i,20,"white","black");
+                PPrimBox box = createBox(oss[i],40+40*i,20,oss[cs+1+i]);
                 box.ref = rk[i];
                 boxes.add(box);
-                if (areMarked && rs[cs+1+i]>0)
-                    boxes.add(createBox(oss[cs+1+i],48+40*i,10,"selfill","sel"));
                 i++;
             };
             pp = new PlotPrimitive[boxes.size()];
@@ -232,7 +229,7 @@ public class BoxCanvas extends BaseCanvas {
         };
     };
     
-    private PPrimBox createBox(OrdStats os, int x, int w, String fillColor, String drawColor){
+    private PPrimBox createBox(OrdStats os, int x, int w, OrdStats markedOs){
         PPrimBox box = new PPrimBox();
         box.x=x;
         box.w=w;
@@ -243,8 +240,6 @@ public class BoxCanvas extends BaseCanvas {
         box.uh15 = ax.getValuePos(os.uh15);
         box.lh3 = os.lh3;
         box.uh3 = os.uh3;
-        box.fillColor = fillColor;
-        box.drawColor = drawColor;
         box.lowEdge = os.lowEdge;
         box.lastR = new double[os.lastR.length];
         box.valPos = new int[os.lastR.length];
@@ -254,6 +249,27 @@ public class BoxCanvas extends BaseCanvas {
         }
         box.lastTop = os.lastTop;
         box.highEdge = os.highEdge;
+        
+        if (areMarked){
+                box.sx = x + w*2/5;
+                box.sw = w/2;
+                box.smed = ax.getValuePos(markedOs.med);
+                box.slh = ax.getValuePos(markedOs.lh);
+                box.suh = ax.getValuePos(markedOs.uh);
+                box.slh15 = ax.getValuePos(markedOs.lh15);
+                box.suh15 = ax.getValuePos(markedOs.uh15);
+                box.slh3 = markedOs.lh3;
+                box.suh3 = markedOs.uh3;
+                box.slowEdge = markedOs.lowEdge;
+                box.slastR = new double[markedOs.lastR.length];
+                box.svalPos = new int[markedOs.lastR.length];
+                for(int i=0; i< box.slastR.length; i++){
+                    box.slastR[i] = v.atF(markedOs.lastR[i]);
+                    box.svalPos[i] = ax.getValuePos(box.slastR[i]);
+                }
+                box.slastTop = markedOs.lastTop;
+                box.shighEdge = markedOs.highEdge;
+            }
         return box;
     }
     
@@ -277,10 +293,6 @@ public class BoxCanvas extends BaseCanvas {
 //	    g.end();
             return;
         };
-        g.defineColor("white",255,255,255);
-        g.defineColor("black",0,0,0);
-        g.defineColor("selfill",0,255,0);
-        g.defineColor("sel",0,128,0);
         if (vertical) {
             ax.setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
             //a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
