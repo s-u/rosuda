@@ -35,9 +35,10 @@ public class MosaicCanvas extends BaseCanvas {
     
     public MosaicCanvas(PlotComponent pc, Frame f, SVar[] vars, SMarker mark) {
         super(pc,f, mark);
-        
+        ft = new FrequencyTable(vars);
         this.frame=f;
         this.v = vars;
+        
         maxLevel = v.length;
         this.vs = v.length;
         for(int i=0; i<vs; i++){
@@ -48,7 +49,7 @@ public class MosaicCanvas extends BaseCanvas {
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=40; mRight=5; mTop=20; mBottom=5;
         
-        ft = new FrequencyTable(vars);
+        
         
         Dirs = new char[vs];
         for (int i=0; i<vs; i++ ) {
@@ -113,6 +114,7 @@ public class MosaicCanvas extends BaseCanvas {
     private int censor=0;
     private void create(int x1, int y1, int x2, int y2, String info) {
         
+        System.out.println("Du bist nicht null: " + ft);
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
         
