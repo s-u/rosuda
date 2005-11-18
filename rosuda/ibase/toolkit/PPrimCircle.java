@@ -24,7 +24,6 @@ public class PPrimCircle extends PPrimBase {
     
     public void paint(org.rosuda.pograss.PoGraSS g, int orientation) {
         g.setColor("outline");
-        g.drawOval(x-diam/2,y-diam/2, diam,diam);
         g.fillOval(x-diam/2,y-diam/2, diam,diam);
     }
     
@@ -33,7 +32,6 @@ public class PPrimCircle extends PPrimBase {
             for(int i=0; i<ref.length; i++){
                 if(m.at(ref[i])){
                     g.setColor("marked");
-                    g.drawOval(x-diam/2,y-diam/2, diam,diam);
                     g.fillOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }
