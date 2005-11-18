@@ -22,7 +22,13 @@ public class PPrimBox extends PPrimBase {
     public int x,w,lowEdge,lastTop,highEdge;
     public double[] lastR;
     public int[] valPos;
-    public String fillColor,drawColor;
+    
+    // parallel variables for selections
+    public int smed,suh,slh,suh15,slh15;
+    public double suh3,slh3;
+    public int sx,sw,slowEdge,slastTop,shighEdge;
+    public double[] slastR;
+    public int[] svalPos;
     
     /** Creates a new instance of PPrimBox */
     public PPrimBox() {
@@ -34,13 +40,16 @@ public class PPrimBox extends PPrimBase {
     }
     
     public void paint(org.rosuda.pograss.PoGraSS g, int orientation) {
-        //Rectangle r=pc.getBounds();
-        if (fillColor!=null) {
-            g.setColor(fillColor);
-            g.fillRect(x,uh,
-                    w,lh-uh);
-        };
-        g.setColor(drawColor);
+        g.defineColor("white",255,255,255);
+        g.defineColor("black",0,0,0);
+        
+        r = new Rectangle(x,uh,w-x, lh-uh-uh);
+        
+        g.setColor("white");
+        g.fillRect(x,uh,
+                w,lh-uh);
+        
+        g.setColor("black");
         g.drawRect(x,uh,
                 w,lh-uh);
         g.drawLine(x,med,
@@ -74,6 +83,44 @@ public class PPrimBox extends PPrimBase {
     }
     
     public void paintSelected(org.rosuda.pograss.PoGraSS g, int orientation, org.rosuda.ibase.SMarker m) {
+        if(slastR==null) return;
+        g.defineColor("selfill",0,255,0);
+        g.defineColor("sel",0,128,0);
+        
+        g.setColor("selfill");
+        g.fillRect(sx,suh,
+                sw,slh-suh);
+        g.setColor("sel");
+        g.drawRect(sx,suh,
+                sw,slh-suh);
+        g.drawLine(sx,smed,
+                sx+sw,smed);
+        g.drawLine(sx,suh15,
+                sx+sw,suh15);
+        g.drawLine(sx,slh15,
+                sx+sw,slh15);
+        g.drawLine(sx+sw/2,suh,
+                sx+sw/2,suh15);
+        g.drawLine(sx+sw/2,slh,
+                sx+sw/2,slh15);
+        int i=slowEdge;
+        while(i>=0) {
+            double val=slastR[i];
+            if (val<slh3)
+                g.drawOval(sx+sw/2-2,svalPos[i]-2,3,3);
+            else
+                g.fillRect(sx+sw/2-1,svalPos[i]-1,2,2);
+            i--;
+        };
+        i=shighEdge;
+        while(i<slastTop) {
+            double val=slastR[i];
+            if (val>suh3)
+                g.drawOval(sx+sw/2-2,svalPos[i]-2,3,3);
+            else
+                g.fillRect(sx+sw/2-1,svalPos[i]-1,2,2);
+            i++;
+        };
     }
     
     public boolean contains(int x, int y) {
