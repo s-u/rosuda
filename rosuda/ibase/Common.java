@@ -172,7 +172,7 @@ public class Common
 
     /** given mouse event this method determines whether zoom sequence was triggered (mouse button 3 or META on a Mac) */ 
     public static boolean isZoomTrigger(MouseEvent ev) {
-        return Platform.isMac?(ev.getModifiers()&MouseEvent.BUTTON3_MASK)==MouseEvent.BUTTON3_MASK:(ev.getModifiers()&MouseEvent.BUTTON2_MASK)==MouseEvent.BUTTON2_MASK;
+        return ev.getButton()==MouseEvent.BUTTON3;
     }
     
     /** returns true if the supplied event corresponds to popup query trigger. */
@@ -183,7 +183,7 @@ public class Common
 
     /** returns true if the supplied event corresponds to object-move trigger */
     public static boolean isMoveTrigger(MouseEvent ev) {
-        return ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown();
+        return ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown() && ev.getButton()==MouseEvent.BUTTON1;
     }
     
     public static boolean isExtQuery(MouseEvent ev) {
@@ -290,7 +290,7 @@ public class Common
 	    return cp.append(lc).toString();
 	i=1;
 	char mid=' ';
-	String ignore="aeiouAEIOU ._\t\n\röäüÖÄÜ";
+	String ignore="aeiouAEIOU ._\t\n\rï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
 	while (i<s.length()-1) {
 	    char c=s.charAt(i);
 	    if (ignore.indexOf(c)==-1) {
