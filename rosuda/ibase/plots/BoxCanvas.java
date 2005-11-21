@@ -82,7 +82,7 @@ public class BoxCanvas extends BaseCanvas {
     /** if <code>true</code> then side-by-side bosplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
-    boolean valid=false, dragMode=false, areMarked=false;
+    boolean valid=false, dragMode=false;
     boolean vertical=true;
     
     // for vsCat version
@@ -95,6 +95,9 @@ public class BoxCanvas extends BaseCanvas {
     // for plain version
     OrdStats OSdata;
     OrdStats OSsel;
+    
+    // Array mapping each PPrimBox to the OrdStats object which contains its selections
+    OrdStats markStats[];
     
     /** create a boxplot canvas for a single boxplot
      * @param f associated frame (or <code>null</code> if none)
@@ -177,59 +180,35 @@ public class BoxCanvas extends BaseCanvas {
     
     public Dimension getMinimumSize() { return new Dimension(60,50); };
     
-    public void Notifying(NotifyMsg msg, Object o, Vector path) {
-        updateObjects();
-        repaint();
-    };
-    
     public void updateObjects() {
         if (!valid) return;
-        int md[]=v.getRanked(m,-1);
-        areMarked=(md!=null);
-        if (vsCat) {
-            if (areMarked) {
-                int i=0;
-                while (i<cs) { rs[cs+1+i]=0; i++; };
-                i=0;
-                while(i<md.length) {
-                    int x=cv.getCatIndex(cv.at(md[i]));
-                    if (x<0) x=cs;
-                    x+=cs+1;
-                    rk[x][rs[x]]=md[i];
-                    rs[x]++;
-                    i++;
-                };
-                i=cs+1;
-                while(i<2*cs+1) {
-                    oss[i].update(v,rk[i],rs[i]);
-                    i++;
-                };
-            };
-        } else {
-            if (areMarked)
-                OSsel.update(v,md);
-        };
+        
         
         if (!vsCat) {
             pp = new PlotPrimitive[1];
-            pp[0] = createBox(OSdata,40,20,OSsel);
+            pp[0] = createBox(OSdata,40,20);
             PPrimBox p = ((PPrimBox)pp[0]);
             p.ref = v.getRanked();
+            markStats = new OrdStats[1];
+            markStats[0] = OSsel;
         } else {
             Vector boxes = new Vector();
             int i=0;
             while(i<cs) {
-                PPrimBox box = createBox(oss[i],40+40*i,20,oss[cs+1+i]);
+                PPrimBox box = createBox(oss[i],40+40*i,20);
                 box.ref = rk[i];
                 boxes.add(box);
                 i++;
             };
             pp = new PlotPrimitive[boxes.size()];
             boxes.toArray(pp);
+            markStats = new OrdStats[boxes.size()];
+            System.arraycopy(oss, cs+1, markStats, 0, cs);
         };
+        for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
     };
     
-    private PPrimBox createBox(OrdStats os, int x, int w, OrdStats markedOs){
+    private PPrimBox createBox(OrdStats os, int x, int w){
         PPrimBox box = new PPrimBox();
         box.x=x;
         box.w=w;
@@ -250,26 +229,7 @@ public class BoxCanvas extends BaseCanvas {
         box.lastTop = os.lastTop;
         box.highEdge = os.highEdge;
         
-        if (areMarked){
-                box.sx = x + w*2/5;
-                box.sw = w/2;
-                box.smed = ax.getValuePos(markedOs.med);
-                box.slh = ax.getValuePos(markedOs.lh);
-                box.suh = ax.getValuePos(markedOs.uh);
-                box.slh15 = ax.getValuePos(markedOs.lh15);
-                box.suh15 = ax.getValuePos(markedOs.uh15);
-                box.slh3 = markedOs.lh3;
-                box.suh3 = markedOs.uh3;
-                box.slowEdge = markedOs.lowEdge;
-                box.slastR = new double[markedOs.lastR.length];
-                box.svalPos = new int[markedOs.lastR.length];
-                for(int i=0; i< box.slastR.length; i++){
-                    box.slastR[i] = v.atF(markedOs.lastR[i]);
-                    box.svalPos[i] = ax.getValuePos(box.slastR[i]);
-                }
-                box.slastTop = markedOs.lastTop;
-                box.shighEdge = markedOs.highEdge;
-            }
+        
         return box;
     }
     
@@ -323,36 +283,52 @@ public class BoxCanvas extends BaseCanvas {
                 i++;
             };
         };
-        
-//	g.end();
     };
     
-    public Object run(Object o, String cmd) {
-        super.run(o,cmd);
-        if (cmd=="rotate") {
-            //    rotate();
+    public void paintSelected(PoGraSS g) {
+        int md[]=v.getRanked(m,-1);
+        if(md==null) return;
+        if (vsCat) {
+            int i=0;
+            while (i<cs) { rs[cs+1+i]=0; i++; };
+            i=0;
+            while(i<md.length) {
+                int x=cv.getCatIndex(cv.at(md[i]));
+                if (x<0) x=cs;
+                x+=cs+1;
+                rk[x][rs[x]]=md[i];
+                rs[x]++;
+                i++;
+            };
+            i=cs+1;
+            while(i<2*cs+1) {
+                oss[i].update(v,rk[i],rs[i]);
+                i++;
+            };
+        } else {
+            OSsel.update(v,md);
         };
-        if (cmd=="print") run(o,"exportPS");
-        /*if (cmd=="exportCases") {
-            try {
-                PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
-                if (p!=null) {
-                    p.println(v.getName()+(vsCat?("\t"+cv.getName()):""));
-                    int i=0, sz=v.size();
-                    while (i<sz) {
-                        Object oo=v.at(i);
-                        if (m.at(i)) {
-                            if (vsCat)
-                                p.println((oo==null)?"NA":oo.toString()+"\t"+cv.at(i).toString());
-                            else
-                                p.println((oo==null)?"NA":oo.toString());
-                        }
-                        i++;
-                    }
-                    p.close();
-                }
-            } catch (Exception eee) {}
-        }*/
-        return null;
+        for(int i=0; i<pp.length; i++){
+            PPrimBox box = ((PPrimBox)pp[i]);
+            box.sx = box.x + box.w*2/5;
+            box.sw = box.w/2;
+            box.smed = ax.getValuePos(markStats[i].med);
+            box.slh = ax.getValuePos(markStats[i].lh);
+            box.suh = ax.getValuePos(markStats[i].uh);
+            box.slh15 = ax.getValuePos(markStats[i].lh15);
+            box.suh15 = ax.getValuePos(markStats[i].uh15);
+            box.slh3 = markStats[i].lh3;
+            box.suh3 = markStats[i].uh3;
+            box.slowEdge = markStats[i].lowEdge;
+            box.slastR = new double[markStats[i].lastR.length];
+            box.svalPos = new int[markStats[i].lastR.length];
+            for(int j=0; j< box.slastR.length; j++){
+                box.slastR[j] = v.atF(markStats[i].lastR[j]);
+                box.svalPos[j] = ax.getValuePos(box.slastR[j]);
+            }
+            box.slastTop = markStats[i].lastTop;
+            box.shighEdge = markStats[i].highEdge;
+        }
+        super.paintSelected(g);
     }
 }
