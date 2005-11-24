@@ -115,10 +115,12 @@ public class BoxCanvas extends BaseCanvas {
             OSsel=new OrdStats();
             int dr[]=v.getRanked();
             OSdata.update(v,dr);
-            updateObjects();
+            //updateObjects();
         };
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
+        
+        dontPaint=false;
     };
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
@@ -182,7 +184,6 @@ public class BoxCanvas extends BaseCanvas {
     
     public void updateObjects() {
         if (!valid) return;
-        
         
         if (!vsCat) {
             pp = new PlotPrimitive[1];

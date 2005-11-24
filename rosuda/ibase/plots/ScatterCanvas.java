@@ -84,6 +84,7 @@ public class ScatterCanvas extends BaseCanvas {
             EzMenu.getItem(f,"jitter").setEnabled(false);
         if (Global.AppType==Common.AT_Framework)
             EzMenu.getItem(f,"shading").setEnabled(false);
+        dontPaint=false;
     }
     
     public SVar getData(int id) { return (id<0||id>1)?null:v[id]; }

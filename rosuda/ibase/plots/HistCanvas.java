@@ -56,6 +56,8 @@ public class HistCanvas extends BaseCanvas {
         mLeft=40; mRight=10; mTop=10; mBottom=20;
         allow180=true;
         allowDragZoom=false;
+        
+        dontPaint=false;
     };
     
     public SVar getData(int id) { return (id==0)?v:null; }

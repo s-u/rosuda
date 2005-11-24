@@ -35,7 +35,6 @@ public class MosaicCanvas extends BaseCanvas {
     
     public MosaicCanvas(PlotComponent pc, Frame f, SVar[] vars, SMarker mark) {
         super(pc,f, mark);
-        ft = new FrequencyTable(vars);
         this.frame=f;
         this.v = vars;
         
@@ -49,8 +48,7 @@ public class MosaicCanvas extends BaseCanvas {
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=40; mRight=5; mTop=20; mBottom=5;
         
-        
-        
+        ft=new FrequencyTable(v);
         Dirs = new char[vs];
         for (int i=0; i<vs; i++ ) {
             if( (i % 2) == 0 )
@@ -58,6 +56,8 @@ public class MosaicCanvas extends BaseCanvas {
             else
                 Dirs[i] = 'y';
         }
+        dontPaint=false;
+        System.out.println("Wenn der Fehler vor mir aufgetreten ist, dann ist alles ok.");
     }
     
     public void updateObjects() {

@@ -91,6 +91,8 @@ public class KapMeCanvas extends BaseCanvas {
         mBottom=25;
         mLeft=35;
         pp=null;
+        
+        dontPaint=false;
     }
     
     public void updateObjects() {

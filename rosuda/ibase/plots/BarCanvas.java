@@ -68,6 +68,7 @@ public class BarCanvas extends BaseCanvas {
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Spineplot","spine","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIspine=EzMenu.getItem(f,"spine");
+        dontPaint=false;
     };
     
     public BarCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) { this(pc,f,var,mark,null); };

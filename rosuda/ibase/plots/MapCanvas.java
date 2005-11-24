@@ -35,6 +35,8 @@ public class MapCanvas extends BaseCanvas
         mLeft=mRight=mTop=mBottom=10;
         // note: Map's updateObjects relies on equality of all margins!
         pp=null;
+        
+        dontPaint=false;
     }
 
     public void updateObjects() {
