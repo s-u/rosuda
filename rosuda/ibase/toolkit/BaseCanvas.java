@@ -83,6 +83,9 @@ public class BaseCanvas
     /** if set to <code>true</code> plot primitives are filled. */
     protected boolean fillInside=true;
     
+    /** prevents painting (and thus calling updateObjects) until set to false. */
+    protected boolean dontPaint=true;
+    
     /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link #updateObjects} and setting everything up. */
     protected boolean updateGeometry=false;
     
@@ -142,6 +145,9 @@ public class BaseCanvas
     
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(PoGraSS g) {
+        System.out.println("Wenn " + dontPaint + "=true, dann sollte jetzt kein Fehler auftreten.");
+        if(dontPaint) return;
+        System.out.println("Achtung! Ducken! Gleich krachts!");
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         Rectangle r=pc.getBounds();
         int w=r.width, h=r.height;
@@ -375,6 +381,10 @@ public class BaseCanvas
     }
     
     public void performZoomIn(int x1, int y1, int x2, int y2) {
+        performZoomIn(x1, y1, x2, y2, ax);
+    }
+    
+    public void performZoomIn(int x1, int y1, int x2, int y2, Axis xAy) {
         if (Global.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
@@ -388,16 +398,16 @@ public class BaseCanvas
             xExtent=(x1==x2)?ax.vLen/2.0:ax2-ax1;
             xCenter=(ax1+ax2)/2.0;
         }
-        if (ay!=null) {
-            ay1=ay.getValueForPos(y1); ay2=ay.getValueForPos(y2);
-            if ((ay2-ay1)*ay.vLen<0.0) { // fix signum - must be same as vLen
+        if (xAy!=null) {
+            ay1=xAy.getValueForPos(y1); ay2=xAy.getValueForPos(y2);
+            if ((ay2-ay1)*xAy.vLen<0.0) { // fix signum - must be same as vLen
                 double ah=ay2; ay2=ay1; ay1=ah;
             }
-            yExtent=(y1==y2)?ay.vLen/2.0:ay2-ay1;
+            yExtent=(y1==y2)?xAy.vLen/2.0:ay2-ay1;
             yCenter=(ay1+ay2)/2;
         }
-        if (ax!=null && ay!=null && zoomRetainsAspect) {
-            double ratioPre=ax.vLen/ay.vLen;
+        if (ax!=null && xAy!=null && zoomRetainsAspect) {
+            double ratioPre=ax.vLen/xAy.vLen;
             if (ratioPre<0.0) ratioPre=-ratioPre;
             double ratioPost=xExtent/yExtent;
             if (ratioPost<0.0) ratioPost=-ratioPost;
@@ -411,9 +421,9 @@ public class BaseCanvas
             ax.setValueRange(xCenter-xExtent/2.0,xExtent);
         } else zoomSequence.addElement(new ZoomDescriptorComponent());
         ignoreNotifications=ins;
-        if (ay!=null) {
-            zoomSequence.addElement(new ZoomDescriptorComponent(ay));
-            ay.setValueRange(yCenter-yExtent/2.0,yExtent);
+        if (xAy!=null) {
+            zoomSequence.addElement(new ZoomDescriptorComponent(xAy));
+            xAy.setValueRange(yCenter-yExtent/2.0,yExtent);
         } else zoomSequence.addElement(new ZoomDescriptorComponent());
         updateObjects();
         setUpdateRoot(0);
