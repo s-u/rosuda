@@ -413,10 +413,8 @@ public class PCPCanvas extends BaseCanvas {
         else{
             Axis zay=null;
             for(int i=1; i<v.length; i++){
-                System.out.println("x1: " + x1 + "; x2: " + x2 + "; ax.getCatUp(i-1): " + ax.getCatUp(i-1) + "; ax.getCatCenter(i): " + ax.getCatCenter(i) + "; ax.getCatLow(i+1)): " + ax.getCatLow(i+1)); 
                 if(x1>ax.getCatUp(i-1) && x1<ax.getCatCenter(i) && x2 > ax.getCatCenter(i) && x2 < ax.getCatLow(i+1)){
-                    zay = opAy[i];
-                    System.out.println(i);
+                    zay = opAy[i-1];
                     break;
                 }
             }
@@ -424,4 +422,6 @@ public class PCPCanvas extends BaseCanvas {
             if(zay!=null) super.performZoomIn(x1, y1, x2, y2, zay);
         }
     }
+  
+    
 };

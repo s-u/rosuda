@@ -367,6 +367,7 @@ public class BaseCanvas
         double vBegin, vLen;
         int gBegin, gLen, dc;
         boolean dummy;
+        Axis axis;
         
         ZoomDescriptorComponent() {
             dummy=true;
@@ -375,12 +376,13 @@ public class BaseCanvas
         ZoomDescriptorComponent(Axis a) {
             vBegin=a.vBegin; vLen=a.vLen; gBegin=a.gBegin; gLen=a.gLen;
             dc=a.datacount;
+            axis=a;
             dummy=false;
         }
     }
     
     public void performZoomIn(int x1, int y1, int x2, int y2) {
-        performZoomIn(x1, y1, x2, y2, ax);
+        performZoomIn(x1, y1, x2, y2, ay);
     }
     
     public void performZoomIn(int x1, int y1, int x2, int y2, Axis xAy) {
@@ -438,11 +440,11 @@ public class BaseCanvas
         zy=(ZoomDescriptorComponent)zoomSequence.elementAt(tail);
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
-        if (ax!=null && !zx.dummy)
-            ax.setValueRange(zx.vBegin,zx.vLen);
+        if (!zx.dummy && zx.axis!=null)
+            zx.axis.setValueRange(zx.vBegin,zx.vLen);
         ignoreNotifications=ins;
-        if (ay!=null && !zy.dummy)
-            ay.setValueRange(zy.vBegin,zy.vLen);
+        if (!zy.dummy && zy.axis!=null)
+            zy.axis.setValueRange(zy.vBegin,zy.vLen);
         zoomSequence.removeElement(zy);
         zoomSequence.removeElement(zx);
         updateObjects();
