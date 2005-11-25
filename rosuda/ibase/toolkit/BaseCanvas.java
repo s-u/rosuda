@@ -325,6 +325,7 @@ public class BaseCanvas
                                 }
                                 qi.setLocation(cl.x+x,cl.y+y);
                                 qi.show(); hideQI=false;
+                                break;
                             } else {
                                 effect=true;
                                 if (selMode==0) m.selectNone();
