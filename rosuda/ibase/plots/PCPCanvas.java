@@ -412,13 +412,18 @@ public class PCPCanvas extends BaseCanvas {
         if(commonScale) super.performZoomIn(x1, y1, x2, y2);
         else{
             Axis zay=null;
-            for(int i=1; i<v.length; i++){
-                if(x1>ax.getCatUp(i-1) && x1<ax.getCatCenter(i) && x2 > ax.getCatCenter(i) && x2 < ax.getCatLow(i+1)){
-                    zay = opAy[i-1];
+            // check if zoom rectangle is around one of the middle axes
+            for(int i=1; i<v.length-1; i++){
+                if(x1>ax.getCatCenter(ax.getCatAtPos(i-1)) && x1<ax.getCatCenter(ax.getCatAtPos(i)) && x2 > ax.getCatCenter(ax.getCatAtPos(i)) && x2 < ax.getCatCenter(ax.getCatAtPos(i+1))){
+                    zay = opAy[ax.getCatAtPos(i)-1];
                     break;
                 }
             }
-            if(zay==null && x1<ax.getCatLow(1)) zay=ay;
+            // otherwise check if it is around the last axis
+            if(zay==null && x1>ax.getCatCenter(ax.getCatAtPos(v.length-2-1)) && x1<ax.getCatCenter(ax.getCatAtPos(v.length-2)) && x2 > ax.getCatCenter(ax.getCatAtPos(v.length-2))) zay=opAy[ax.getCatAtPos(opAy.length)-1];
+            // otherwise check if it is around the first axis
+            if(zay==null && x1<ax.getCatCenter(ax.getCatAtPos(1))) zay=ay;
+            // perform zoom on this axis
             if(zay!=null) super.performZoomIn(x1, y1, x2, y2, zay);
         }
     }
