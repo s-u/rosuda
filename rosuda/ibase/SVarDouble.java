@@ -371,13 +371,6 @@ public class SVarDouble extends SVar {
         /* okay in fact we always get the full ranks and then pick those marked (if desired) */
         
         if (!cacheRanks || ranks==null) {
-            // due to the massive amount of lookups necessary during the sorting, we allocate a separate double buffer with a copy of the data and work on that one instead of the atD access, if the number of cases is large enough.
-            
-            ProgressDlg pd=null;
-            if (size()>1000) {
-                pd=new ProgressDlg("Variable "+getName());
-                pd.begin("Calculating ranks ...");
-            }
             int ct=size();
             r = new int[ct];
             double[] da = cont;
