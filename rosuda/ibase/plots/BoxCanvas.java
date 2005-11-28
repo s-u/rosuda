@@ -104,11 +104,19 @@ public class BoxCanvas extends BaseCanvas {
      * @param var source variable
      * @param mark associated marker */
     public BoxCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) {
+        this(pc,f,new SVar[]{var},mark);
+    }
+    
+    /** create a boxplot canvas for multiple boxplots
+     * @param f associated frame (or <code>null</code> if none)
+     * @param var source variables
+     * @param mark associated marker */
+    public BoxCanvas(PlotComponent pc, Frame f, SVar[] var, SMarker mark) {
         super(pc,f,mark);
-        v=var;
+        v=var[0];
         setTitle("Boxplot ("+v.getName()+")");
         ax=new Axis(v,Axis.O_Y,Axis.T_Num); ax.addDepend(this);
-        if (var!=null && !var.isCat() && var.isNum())
+        if (v!=null && !v.isCat() && v.isNum())
             valid=true; // valid are only numerical vars non-cat'd
         if (valid) {
             OSdata=new OrdStats();
