@@ -575,20 +575,22 @@ public class Framework implements Dependent, ActionListener {
         return hc;
     };
     
-    public BoxCanvas newBoxplot(int i) { return newBoxplot(cvs,i,-1); }
-    public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,i,ic); }
-    public BoxCanvas newBoxplot(SVarSet vs, int i, int ic) {
+    public BoxCanvas newBoxplot(int i) { return newBoxplot(cvs,new int[]{i},-1); }
+    public BoxCanvas newBoxplot(int i, int ic) { return newBoxplot(cvs,new int[]{i},ic); }
+    public BoxCanvas newBoxplot(int[] i) { return newBoxplot(cvs,i,-1); }
+    public BoxCanvas newBoxplot(int[] i, int ic) { return newBoxplot(cvs,i,ic); }
+    public BoxCanvas newBoxplot(SVarSet vs, int i[], int ic) {
         PlotComponent pc = newPlotComponent();
         SVar catVar=(ic<0)?null:vs.at(ic);
-        updateMarker(vs,i);
+        updateMarker(vs,i[0]);
         
         Frame f;
         if(pc.getGraphicsEngine() == PlotComponent.AWT || pc.getGraphicsEngine() == PlotComponent.OPENGL) {
-            f=new TFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
+            f=new TFrame("Boxplot ("+vs.at(i[0]).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
             ((TFrame)f).initPlacement();
             f.add(pc.getComponent());
         } else { // SWING
-            f=new TJFrame("Boxplot ("+vs.at(i).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
+            f=new TJFrame("Boxplot ("+vs.at(i[0]).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
             ((TJFrame)f).initPlacement();
             ((TJFrame)f).getContentPane().add(pc.getComponent());
         }
@@ -596,8 +598,12 @@ public class Framework implements Dependent, ActionListener {
         f.setVisible(true);
         pc.initializeGraphics(f);
         
+        SVar[] vl=new SVar[i.length];
+        int j=0;
+        while(j<i.length) { vl[j]=vs.at(i[j]); j++; };
+        
         f.addWindowListener(Common.getDefaultWindowListener());
-        BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vs.at(i),vs.getMarker()):new BoxCanvas(pc,f,vs.at(i),catVar,vs.getMarker());
+        BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vl,vs.getMarker()):new BoxCanvas(pc,f,vl[0],catVar,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
