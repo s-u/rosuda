@@ -104,6 +104,7 @@ public class BaseCanvas
      */
     public BaseCanvas(PlotComponent pc, Frame f, SMarker mark) {
         super(pc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
+        Global.forceAntiAliasing = true;
         m=mark; setFrame(f);
         ax=ay=null;
         zoomSequence=new Vector();
