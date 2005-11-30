@@ -202,4 +202,7 @@ public class PoGraSS
     
     public void setGlobalAlpha(float alpha) {};
     public void resetGlobalAlpha() {};   
+    
+    public void setClip(int x, int y, int width, int height) {};
+    public void resetClip() {};
 }

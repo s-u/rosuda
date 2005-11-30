@@ -184,4 +184,12 @@ public class PoGraSSgraphics extends PoGraSS
     public void resetGlobalAlpha() {
         ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+
+    public void resetClip() {
+        g.setClip(getBounds());
+    }
+
+    public void setClip(int x, int y, int width, int height) {
+        g.setClip(x, y, width, height);
+    }
 }

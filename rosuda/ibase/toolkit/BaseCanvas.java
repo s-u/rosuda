@@ -89,6 +89,9 @@ public class BaseCanvas
     /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link #updateObjects} and setting everything up. */
     protected boolean updateGeometry=false;
     
+    /** if set to <code>true</code> don't paint objects on the margins defined by mLeft etc. */
+    protected boolean objectClipping=false;
+    
     protected float ppAlpha = 1.0f;
     
     /** arrays of additional axes that are updated upon resize. can be null */
@@ -235,7 +238,7 @@ public class BaseCanvas
     public void paintObjects(PoGraSS g) {
         //System.out.println("BaseCanvas.paintObjects, (cache="+g.localLayerCache+") pp="+pp);
         Stopwatch sw=new Stopwatch();
-        
+        if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
             int i=0;
             g.setColor("object");
@@ -246,6 +249,7 @@ public class BaseCanvas
             }
             g.resetGlobalAlpha();
         }
+        if(objectClipping) g.resetClip();
         sw.profile("BaseCanvas.paintObjects");
     }
     
