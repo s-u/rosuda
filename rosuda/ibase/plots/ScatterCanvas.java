@@ -127,7 +127,7 @@ public class ScatterCanvas extends BaseCanvas {
         pts=v[0].size();
         if (v[1].size()<pts) pts=v[1].size();
         
-        pp = new PlotPrimitive[pts];
+        Vector points = new Vector(pts-pts/10, pts/10);
         for (int i=0;i<pts;i++) {
             int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
@@ -140,7 +140,7 @@ public class ScatterCanvas extends BaseCanvas {
             }
             if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat())) {
                 int x=jx+ax.getCasePos(i),y=jy+ay.getCasePos(i);
-                pp[i]=null;
+                //pp[i]=null;
                 int oX = (orientation==0)?x:y;
                 int oY = (orientation==0)?y:x;
                 if (oX<innerL) hasLeft=true;
@@ -148,7 +148,7 @@ public class ScatterCanvas extends BaseCanvas {
                 else if (oX>w-10) hasRight=true;
                 else if (oY>h-innerB) hasBot=true;
                 else {
-                    if (stackjitter && jitter && v[0].isCat() && i>0) {
+                    /*if (stackjitter && jitter && v[0].isCat() && i>0) {
                         int j=0;
                         while (j<i) {
                             if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) x+=stackOff;
@@ -160,34 +160,51 @@ public class ScatterCanvas extends BaseCanvas {
                             if (pp[j]!=null && ((PPrimCircle)pp[j]).y==y && ((PPrimCircle)pp[j]).x==x) y-=stackOff;
                             j++;
                         }
+                    }*/
+                    boolean positionAlreadyOccured=false;
+                    for(Enumeration en = points.elements(); en.hasMoreElements();){
+                        PPrimCircle p = (PPrimCircle)en.nextElement();
+                        if((orientation==0 && p.x==x && p.y==y) || (orientation==1 && p.x==y && p.y==x)){
+                            int[] newRef = new int[p.ref.length+1];
+                            System.arraycopy(p.ref, 0, newRef, 0, p.ref.length);
+                            newRef[p.ref.length] = i;
+                            p.ref=newRef;
+                            positionAlreadyOccured=true;
+                            break;
+                        }
                     }
-                    pp[i]=new PPrimCircle();
-                    if(orientation==0){
-                        ((PPrimCircle)pp[i]).x = x;
-                        ((PPrimCircle)pp[i]).y = y;
-                    } else{
-                        ((PPrimCircle)pp[i]).x = y;
-                        ((PPrimCircle)pp[i]).y = x;
+                    if(!positionAlreadyOccured){
+                        PPrimCircle p=new PPrimCircle();
+                        if(orientation==0){
+                            p.x = x;
+                            p.y = y;
+                        } else{
+                            p.x = y;
+                            p.y = x;
+                        }
+                        p.diam = ptDiam;
+                        p.ref = new int[] {i};
+                        points.add(p);
                     }
-                    ((PPrimCircle)pp[i]).diam = ptDiam;
-                    ((PPrimCircle)pp[i]).ref = new int[] {i};
                 }
             } else { // place missings on the other side of the axes
                 int x,y;
                 if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+ax.getCasePos(i);
                 if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+ay.getCasePos(i);
-                pp[i]=new PPrimCircle();
+                PPrimCircle p=new PPrimCircle();
                 if(orientation==0){
-                    ((PPrimCircle)pp[i]).x = x;
-                    ((PPrimCircle)pp[i]).y = y;
+                    p.x = x;
+                    p.y = y;
                 } else{
-                    ((PPrimCircle)pp[i]).x = y;
-                    ((PPrimCircle)pp[i]).y = x;
+                    p.x = y;
+                    p.y = x;
                 }
-                ((PPrimCircle)pp[i]).diam = ptDiam;
-                ((PPrimCircle)pp[i]).ref = new int[] {i};
+                p.diam = ptDiam;
+                p.ref = new int[] {i};
             }
         };
+        pp = new PlotPrimitive[points.size()];
+        points.toArray(pp);
     };
     
     public void keyTyped(KeyEvent e) {
@@ -418,8 +435,10 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public String queryObject(int i) {
-        return v[0].getName() + ": " + v[0].atD(i) + "\n"
-                + v[1].getName() + ": " + v[1].atD(i);
+        PPrimCircle p = (PPrimCircle)pp[i];
+        return v[0].getName() + ": " + v[0].atD(p.ref[0]) + "\n"
+                + v[1].getName() + ": " + v[1].atD(p.ref[0]) + "\n"
+                + p.ref.length + " case(s)";
     }
     
     public void mouseMoved(MouseEvent ev) {
