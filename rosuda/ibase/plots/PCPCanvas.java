@@ -45,7 +45,8 @@ public class PCPCanvas extends BaseCanvas {
         allowDragMove=true;
         
         mBottom=30;
-        mLeft=mRight=mTop=10;
+        mLeft=30;
+        mRight=mTop=10;
         
         v=new SVar[yvs.length+1];
         opAy=new Axis[yvs.length-1];
@@ -165,7 +166,7 @@ public class PCPCanvas extends BaseCanvas {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-2,t,mLeft,t);
                 if(showLabels)
-                    labels.add(X,(t+5),0,0, v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                    labels.add(mLeft-3,(t+5),1,0, v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 fi+=f;
             };
             g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
