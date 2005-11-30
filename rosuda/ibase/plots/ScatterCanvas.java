@@ -3,7 +3,6 @@ package org.rosuda.ibase.plots;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.io.PrintStream;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
@@ -57,6 +56,24 @@ public class ScatterCanvas extends BaseCanvas {
     protected int qx,qy;
     
     protected boolean zoomRetainsAspect=false;
+    
+    /** sorted set of the points, used to check with log(n) time cost if a point
+     *  belongs to an existing primitive
+     */
+    protected TreeMap sortedPoints;
+    
+    protected class ComparablePoint implements Comparable{
+        int x,y;
+        
+        public ComparablePoint(int x,int y){this.x=x;this.y=y;}
+        
+        public int compareTo(Object o) {
+            ComparablePoint p = (ComparablePoint) o;
+            if(x<p.x || (x==p.x && y<p.y)) return -1;
+            if(x==p.x && y==p.y) return 0;
+            else return 1;
+        }
+    }
     
     /** create a new scatterplot
      * @param f associated frame (or <code>null</code> if none)
@@ -127,7 +144,7 @@ public class ScatterCanvas extends BaseCanvas {
         pts=v[0].size();
         if (v[1].size()<pts) pts=v[1].size();
         
-        Vector points = new Vector(pts-pts/10, pts/10);
+        sortedPoints = new TreeMap();
         for (int i=0;i<pts;i++) {
             int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
@@ -161,20 +178,14 @@ public class ScatterCanvas extends BaseCanvas {
                             j++;
                         }
                     }*/
-                    boolean positionAlreadyOccured=false;
-                    for(Enumeration en = points.elements(); en.hasMoreElements();){
-                        PPrimCircle p = (PPrimCircle)en.nextElement();
-                        if((orientation==0 && p.x==x && p.y==y) || (orientation==1 && p.x==y && p.y==x)){
-                            int[] newRef = new int[p.ref.length+1];
-                            System.arraycopy(p.ref, 0, newRef, 0, p.ref.length);
-                            newRef[p.ref.length] = i;
-                            p.ref=newRef;
-                            positionAlreadyOccured=true;
-                            break;
-                        }
-                    }
-                    if(!positionAlreadyOccured){
-                        PPrimCircle p=new PPrimCircle();
+                    PPrimCircle p;
+                    if((p=(PPrimCircle)sortedPoints.get(new ComparablePoint(x,y)))!=null){
+                        int[] newRef = new int[p.ref.length+1];
+                        System.arraycopy(p.ref, 0, newRef, 0, p.ref.length);
+                        newRef[p.ref.length] = i;
+                        p.ref=newRef;
+                    } else{
+                        p=new PPrimCircle();
                         if(orientation==0){
                             p.x = x;
                             p.y = y;
@@ -184,7 +195,7 @@ public class ScatterCanvas extends BaseCanvas {
                         }
                         p.diam = ptDiam;
                         p.ref = new int[] {i};
-                        points.add(p);
+                        sortedPoints.put(new ComparablePoint(x,y), p);
                     }
                 }
             } else { // place missings on the other side of the axes
@@ -203,8 +214,8 @@ public class ScatterCanvas extends BaseCanvas {
                 p.ref = new int[] {i};
             }
         };
-        pp = new PlotPrimitive[points.size()];
-        points.toArray(pp);
+        pp = new PlotPrimitive[sortedPoints.values().size()];
+        sortedPoints.values().toArray(pp);
     };
     
     public void keyTyped(KeyEvent e) {
