@@ -11,15 +11,26 @@ import java.awt.Rectangle;
 
 /**
  *
- * @author tobias
+ * @author Tobias Wichtrey
  */
 public class PPrimCircle extends PPrimBase {
     
     public int x,y,diam;
     
+    /**
+     * whether {@link #intersects} and {@link #contains} check for intersection
+     * with the whole circle area (if true) or just with the center point (if
+     * false)
+     */
+    public boolean intersectionByArea = false;
+    
     public boolean intersects(java.awt.Rectangle rt) {
-        // baaaaaaaaaad!
-        return rt.intersects(new Rectangle(x-diam/2,y-diam/2, diam,diam));
+        if(intersectionByArea){
+            // baaaaaaaaaad!
+            return rt.intersects(new Rectangle(x-diam/2,y-diam/2, diam,diam));
+        } else{
+            return rt.contains(x,y);
+        }
     }
     
     public void paint(org.rosuda.pograss.PoGraSS g, int orientation) {
@@ -40,7 +51,11 @@ public class PPrimCircle extends PPrimBase {
     }
     
     public boolean contains(int x, int y) {
-        return((x-this.x)*(x-this.x)+(y-this.y)*(y-this.y) <= diam*diam/4);
+        if(intersectionByArea){
+            return((x-this.x)*(x-this.x)+(y-this.y)*(y-this.y) <= diam*diam/4);
+        } else{
+            return(Math.max(Math.abs(x-this.x),Math.abs(y-this.y))<=Math.min(4,diam/2));
+        }
     }
     
     public String toString() {
