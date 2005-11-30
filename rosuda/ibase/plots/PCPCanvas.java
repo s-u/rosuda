@@ -43,6 +43,7 @@ public class PCPCanvas extends BaseCanvas {
         super(pc,f,mark);
         
         allowDragMove=true;
+        objectClipping=true;
         
         mBottom=30;
         mLeft=30;
