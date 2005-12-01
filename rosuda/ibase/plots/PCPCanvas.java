@@ -24,6 +24,7 @@ public class PCPCanvas extends BaseCanvas {
     
     boolean drawPoints=false;
     boolean drawAxes=false;
+    boolean drawLines=true;
     
     boolean commonScale=true;
     boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
@@ -32,6 +33,9 @@ public class PCPCanvas extends BaseCanvas {
     int dragAxis=-1;
     
     MenuItem MIlabels=null;
+    MenuItem MIdots=null;
+    MenuItem MIaxes=null;
+    MenuItem MIlines=null;
     
     int X,Y,W,H, TW,TH;
     double totMin, totMax;
@@ -70,9 +74,12 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Toggle nodes","togglePts","Toggle axes","toggleAxes","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Show dots","togglePts","Show axes","toggleAxes","Hide lines","toggleLines","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
+        MIdots=EzMenu.getItem(f,"togglePts");
+        MIaxes=EzMenu.getItem(f,"toggleAxes");
+        MIlines=EzMenu.getItem(f,"toggleLines");
         dontPaint=false;
     }
     
@@ -241,13 +248,31 @@ public class PCPCanvas extends BaseCanvas {
         if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="togglePts") {
             drawPoints=!drawPoints;
+            MIdots.setLabel((drawPoints)?"Hide dots":"Show dots");
             for(int i=0; i<pp.length; i++){
                 ((PPrimPolygon)pp[i]).drawCorners=drawPoints;
             }
+            MIdots.setEnabled(!drawPoints&&drawLines);
+            MIlines.setEnabled(!drawLines&&drawPoints);
             setUpdateRoot(0);
             repaint();
         }
-        if (cmd=="toggleAxes") { drawAxes=!drawAxes; setUpdateRoot(0); repaint(); }
+        if (cmd=="toggleLines") {
+            drawLines=!drawLines;
+            MIlines.setLabel((drawLines)?"Hide lines":"Show lines");
+            for(int i=0; i<pp.length; i++){
+                ((PPrimPolygon)pp[i]).drawBorder=drawLines;
+            }
+            MIdots.setEnabled(!drawPoints&&drawLines);
+            MIlines.setEnabled(!drawLines&&drawPoints);
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (cmd=="toggleAxes") { 
+            drawAxes=!drawAxes; 
+            MIaxes.setLabel((drawAxes)?"Hide axes":"Show axes");
+            setUpdateRoot(0); repaint(); 
+        }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
             Axis rt=(cmd=="YrangeDlg")?ay:ax;
             Dialog d=intDlg=new Dialog(myFrame,(rt==ay)?"Y range":"X range",true);
@@ -411,7 +436,7 @@ public class PCPCanvas extends BaseCanvas {
     }
     
     public void performZoomIn(int x1, int y1, int x2, int y2) {
-        if(commonScale) super.performZoomIn(x1, y1, x2, y2);
+        if(commonScale) super.performZoomIn(x1, y1, x2, y2, null,ay);
         else{
             Axis zay=null;
             // check if zoom rectangle is around one of the middle axes
@@ -426,7 +451,7 @@ public class PCPCanvas extends BaseCanvas {
             // otherwise check if it is around the first axis
             if(zay==null && x1<ax.getCatCenter(ax.getCatAtPos(1))) zay=ay;
             // perform zoom on this axis
-            if(zay!=null) super.performZoomIn(x1, y1, x2, y2, zay);
+            if(zay!=null) super.performZoomIn(x1, y1, x2, y2, null, zay);
         }
     }
   
