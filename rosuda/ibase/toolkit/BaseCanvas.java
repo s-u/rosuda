@@ -257,6 +257,7 @@ public class BaseCanvas
         Stopwatch sw=new Stopwatch();
         
         //System.out.println("BaseCanvas.paintSelected, pp="+pp);
+        if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
             int i=0;
             g.setColor("marked");
@@ -266,6 +267,7 @@ public class BaseCanvas
                 i++;
             }
         }
+        if(objectClipping) g.resetClip();
         sw.profile("BaseCanvas.paintSelected");
     }
     
@@ -387,21 +389,21 @@ public class BaseCanvas
     }
     
     public void performZoomIn(int x1, int y1, int x2, int y2) {
-        performZoomIn(x1, y1, x2, y2, ay);
+        performZoomIn(x1, y1, x2, y2, ax, ay);
     }
     
-    public void performZoomIn(int x1, int y1, int x2, int y2, Axis xAy) {
+    public void performZoomIn(int x1, int y1, int x2, int y2, Axis xAx, Axis xAy) {
         if (Global.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
         boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         double ax1=1.0, ax2=1.0, ay1=1.0, ay2=1.0;
         double xExtent=1.0, yExtent=1.0, xCenter=1.0, yCenter=1.0;
-        if (ax!=null) {
-            ax1=ax.getValueForPos(x1); ax2=ax.getValueForPos(x2);
-            if ((ax2-ax1)*ax.vLen<0.0) { // fix signum - must be same as vLen
+        if (xAx!=null) {
+            ax1=xAx.getValueForPos(x1); ax2=xAx.getValueForPos(x2);
+            if ((ax2-ax1)*xAx.vLen<0.0) { // fix signum - must be same as vLen
                 double ah=ax2; ax2=ax1; ax1=ah;
             }
-            xExtent=(x1==x2)?ax.vLen/2.0:ax2-ax1;
+            xExtent=(x1==x2)?xAx.vLen/2.0:ax2-ax1;
             xCenter=(ax1+ax2)/2.0;
         }
         if (xAy!=null) {
@@ -412,8 +414,8 @@ public class BaseCanvas
             yExtent=(y1==y2)?xAy.vLen/2.0:ay2-ay1;
             yCenter=(ay1+ay2)/2;
         }
-        if (ax!=null && xAy!=null && zoomRetainsAspect) {
-            double ratioPre=ax.vLen/xAy.vLen;
+        if (xAx!=null && xAy!=null && zoomRetainsAspect) {
+            double ratioPre=xAx.vLen/xAy.vLen;
             if (ratioPre<0.0) ratioPre=-ratioPre;
             double ratioPost=xExtent/yExtent;
             if (ratioPost<0.0) ratioPost=-ratioPost;
@@ -422,7 +424,7 @@ public class BaseCanvas
             else // otherwise inflate x
                 xExtent*=ratioPost/ratioPre;
         }
-        if (ax!=null) {
+        if (xAx!=null) {
             zoomSequence.addElement(new ZoomDescriptorComponent(ax));
             ax.setValueRange(xCenter-xExtent/2.0,xExtent);
         } else zoomSequence.addElement(new ZoomDescriptorComponent());
