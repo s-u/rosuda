@@ -38,7 +38,7 @@ import java.text.*;
 /**
 */
 
-class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDocumentHandler, MRJQuitHandler {  
+class Join extends JFrame implements ProgressIndicator, SelectionListener, DataListener, MRJOpenDocumentHandler, MRJQuitHandler {  
   
   /** Remember # of open windows so we can quit when last one is closed */
   protected static int num_windows = 0;
@@ -59,7 +59,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows, help;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, p, od, mn, pr, b, bw, pc, pb, sc, sc2, hi, hiw, cs, vm, rc, oh, mds;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cs, vm, rc, oh, mds;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
@@ -138,24 +138,34 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     menubar.add(file);                         // Add to menubar.
                                                //
     JMenu plot = new JMenu("Plot");            // Create a Plot menu.
+    plot.add(mv = new JMenuItem("Missing Value Plot"));
+    mv.setEnabled(false);
+    plot.addSeparator();        
     plot.add(n = new JMenuItem("Mosaic Plot"));
     n.setEnabled(false);
     plot.add(nw = new JMenuItem("Weighted Mosaic Plot"));
     nw.setEnabled(false);
+    plot.addSeparator();        
     plot.add(b = new JMenuItem("Barchart"));
     b.setEnabled(false);
     plot.add(bw = new JMenuItem("Weighted Barchart"));
     bw.setEnabled(false);
+    plot.addSeparator();        
     plot.add(hi = new JMenuItem("Histogram"));
     hi.setEnabled(false);
     plot.add(hiw = new JMenuItem("Weighted Histogram"));
     hiw.setEnabled(false);
+    plot.addSeparator();        
     plot.add(pc = new JMenuItem("Parallel Coordinates"));
     pc.setEnabled(false);
     plot.add(pb = new JMenuItem("Parallel Boxplots"));
     pb.setEnabled(false);
+    plot.add(byx = new JMenuItem("Boxplots y by x"));
+    byx.setEnabled(false);
+    plot.addSeparator();        
     plot.add(sc2 = new JMenuItem("Scatterplots"));
     sc2.setEnabled(false);
+    plot.addSeparator();        
     plot.add(m = new JMenuItem("Map"));
     m.setEnabled(false);
     if( user.indexOf("theus") > -1 ) {
@@ -170,12 +180,19 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     menubar.add(calc);                         // Add to menubar.
     //
     JMenu options = new JMenu("Options");      // Create an Option menu.
+    options.add(sa = new JMenuItem("Select All"));
+    sa.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    
+    options.add(ts = new JMenuItem("Toggle Selection"));
+    ts.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    
+    options.addSeparator();                     // Put a separator in the menu
     options.add(se = new JCheckBoxMenuItem("Selection Sequences", selseq));
     se.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
+    
     options.add(cs = new JMenuItem("Clear Sequences"));
     cs.setAccelerator(KeyStroke.getKeyStroke(Event.BACK_SPACE, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
+    
     options.addSeparator();                     // Put a separator in the menu
     options.add(ah = new JCheckBoxMenuItem("Alpha on Hilite", alphaHi));
     ah.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
@@ -276,9 +293,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       }
     });
     pb.addActionListener(new ActionListener() {     // Open a parallel boxplot plot window
-      public void actionPerformed(ActionEvent e) {
-        pc("Box");
-      }
+      public void actionPerformed(ActionEvent e) { pc("Box"); }
+    });
+    byx.addActionListener(new ActionListener() {     // Open a boxplot plot y by x window
+      public void actionPerformed(ActionEvent e) { pc("Box"); }
     });
     sc2.addActionListener(new ActionListener() {     // Open a scatterplot window
       public void actionPerformed(ActionEvent e) {
@@ -325,6 +343,12 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       public void actionPerformed(ActionEvent e) {
         switchSelection();
       }
+    });
+    sa.addActionListener(new ActionListener() {     // Select All via Menu
+      public void actionPerformed(ActionEvent e) { selectAll(); }
+    });
+    ts.addActionListener(new ActionListener() {     // Toggle Selection via Menu
+      public void actionPerformed(ActionEvent e) { toggleSelection(); }
     });
     ah.addActionListener(new ActionListener() {     // Change the alpha mode for highlighted cases
       public void actionPerformed(ActionEvent e) {
@@ -374,7 +398,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     // Set the window size and pop it up.
     this.setResizable(false);
-    this.setSize(295,315);
+    this.setSize(295,320);
     this.show();
 
     if( dataSets.isEmpty() )
@@ -386,7 +410,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0l", 250, 280);
+    g.drawString("RC1.0n", 250, 285);
 
     mondrianRunning = true;
 
@@ -395,7 +419,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       g.setColor(Color.white);
       g.fillRect(9,270,200,10);
       g.setColor(Color.red);
-      g.drawString("Connection to R failed: Please check Rserve", 9, 280);
+      g.drawString("Connection to R failed: Please check Rserve", 9, 285);
     }
     
     if( load )
@@ -494,8 +518,8 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     refCardf.getContentPane().add("Center", refScrollPane);
     refCardf.setTitle("Mondrian - Reference Card");
     refCardf.setResizable(false);
-    refCardf.setSize(refCardf.getWidth(), (Toolkit.getDefaultToolkit().getScreenSize()).height-23);
     refCardf.pack();
+    refCardf.setSize(refCardf.getWidth(), Math.min(refCardf.getHeight(), (Toolkit.getDefaultToolkit().getScreenSize()).height-34));
     refCardf.setLocation((Toolkit.getDefaultToolkit().getScreenSize()).width - refCardf.getWidth(), 0);
     refCardf.show();
 
@@ -532,7 +556,21 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   public void switchAlpha() {
     alphaHi = ah.isSelected();
   }
-
+  
+  public void selectAll() {
+    if(thisDataSet > -1) { 
+      ((dataSet)dataSets.elementAt(thisDataSet)).selectAll();
+      updateSelection();
+    }
+  }
+  
+  public void toggleSelection() {
+    if(thisDataSet > -1) { 
+      ((dataSet)dataSets.elementAt(thisDataSet)).toggleSelection();
+      updateSelection();
+    }
+  }
+  
   
   public void deleteSelection() {
     if( selList.size() > 0 ) {
@@ -549,6 +587,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
     // Remove Selections from list, which are no longer active
     //
     boolean selectAll = false;
+    boolean toggleSelection = false;
     boolean deleteAll = false;
     boolean switchSel = false;
     
@@ -556,6 +595,10 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       if( ((DragBox)Plots.elementAt(i)).selectAll ) {    // This window has caused the select all event 
         ((DragBox)Plots.elementAt(i)).selectAll = false;
         selectAll = true;
+      }
+      if( ((DragBox)Plots.elementAt(i)).toggleSelection ) {    // This window has caused the toggle selection event 
+        ((DragBox)Plots.elementAt(i)).toggleSelection = false;
+        toggleSelection = true;
       }
       if( ((DragBox)Plots.elementAt(i)).deleteAll ) {    // This window has caused the deletion event 
         ((DragBox)Plots.elementAt(i)).deleteAll = false;
@@ -577,7 +620,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       }
     }
     
-    if( !selectAll ) {
+    if( !(selectAll || toggleSelection) ) {
       
       for( int i=selList.size()-1; i>=0; i-- ) {
         if( (((Selection)selList.elementAt(i)).status == Selection.KILLED) || 
@@ -592,14 +635,14 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
 
       // Get the latest selection and add it, if its a new selection
       //
-      for( int i=0; i<Plots.size(); i++ )
+      for( int i=0; i<Plots.size(); i++ ) 
         if( ((DragBox)Plots.elementAt(i)).frame.isVisible() ) {  // Plotwindow still exists
           if( ((DragBox)Plots.elementAt(i)).selectFlag ) {       // This window has caused the selection event 
             ((DragBox)Plots.elementAt(i)).selectFlag = false;    // We need to get the last selection from this plot
             Selection S = (Selection)(((DragBox)Plots.elementAt(i)).Selections.lastElement());
-            
             if( selList.indexOf(S) == -1 )  { // Not in the list yet => new Selection to add !
               if( S.r.width > 2 && S.r.height > 2 && selseq) {
+                System.out.println("Selection Sequence  !!");
                 S.step = selList.size() + 1;
                 selList.addElement(S);
               } else {
@@ -611,7 +654,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
             }
           }
         } else 
-          Plots.removeElementAt(i);
+          Plots.removeElementAt(i--);
       
       if( selList.size() > 0 ) {
         ((Selection)(selList.firstElement())).mode = Selection.MODE_STANDARD;
@@ -648,7 +691,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
 //      System.out.println("Main Update: "+sqlConditions.makeQuery());
       
     } else {
-      ((dataSet)(dataSets.elementAt(thisDataSet))).selectAll();
+      if( toggleSelection )
+        ((dataSet)(dataSets.elementAt(thisDataSet))).toggleSelection();
+      else
+        ((dataSet)(dataSets.elementAt(thisDataSet))).selectAll();
+        
       if( ((dataSet)dataSets.elementAt(thisDataSet)).isDB )
         sqlConditions.clearConditions();
     }
@@ -1035,11 +1082,11 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   }
 
   boolean loadAsciiFile(File file) {
-
+    
     boolean[] alpha;
     dataSet data;
     String filename = "";
-
+    
     if( file == null ) {
       FileDialog f = new FileDialog(this, "Load Data", FileDialog.LOAD);
       //      JFileChooser f = new JFileChooser(this, "Load Data", FileDialog.LOAD);
@@ -1057,100 +1104,122 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
       filename = file.getAbsolutePath();
       justFile = file.getName();
     }
-
+    
     if( !filename.equals("") ) {
-
+      
       String line="";
-
-      try {
-        BufferedReader br = new BufferedReader( new FileReader(filename) );
+      
+      if( true ) {
+        progBar.setMinimum(0);
+        progBar.setMaximum(100);
         data = new dataSet( justFile );
         dataSets.addElement(data);
-        progText.setText("Peeking ...");
-        alpha = data.sniff(br);
-        progBar.setMaximum(data.n);
-        br = new BufferedReader( new FileReader(filename) );
         progText.setText("Loading ...");
-        data.read(br, alpha, progBar);
-
-        br.mark(1000000);
-        line = br.readLine();
-
-        while( line != null && (line.trim()).equals("") ) {       // skip empty lines
+        
+        data.turboRead(filename, this);
+        
+        progText.setText(""); 
+        progBar.setValue(0);
+        progBar.setMaximum(data.n);
+        return true;
+        
+      } else {
+        
+        try {
+          BufferedReader br = new BufferedReader( new FileReader(filename) );
+          data = new dataSet( justFile );
+          dataSets.addElement(data);
+          progText.setText("Peeking ...");
+          alpha = data.sniff(br);
+          progBar.setMaximum(data.n);
+          br = new BufferedReader( new FileReader(filename) );
+          progText.setText("Loading ...");
+          data.read(br, alpha, progBar);
+          
           br.mark(1000000);
           line = br.readLine();
+          
+          while( line != null && (line.trim()).equals("") ) {       // skip empty lines
+            br.mark(1000000);
+            line = br.readLine();
+          }
+          
+          if( line != null ) {                          // more lines detected -> read the polygon
+            
+            progText.setText("Polygons ..."); 
+            
+            //====================== Check Scaling of the Polygon ===============================//
+            String tLine;
+            
+            double xMin =  10e10;
+            double xMax = -10e10;
+            double yMin =  10e10;
+            double yMax = -10e10;
+            
+            try {
+              tLine = line;
+              
+              StringTokenizer head = new StringTokenizer(tLine, "\t");
+              
+              try{
+                int      Id = Integer.valueOf(head.nextToken()).intValue();
+                String name = head.nextToken();
+                int npoints = Integer.valueOf(head.nextToken()).intValue();
+                double[] x = new double[npoints];
+                double[] y = new double[npoints];
+                
+                for( int i=0; i<npoints; i++ ) {
+                  tLine = br.readLine();
+                  StringTokenizer coord = new StringTokenizer(tLine);
+                  x[i] = Float.valueOf(coord.nextToken()).floatValue();
+                  xMin = Math.min(xMin, x[i]);
+                  xMax = Math.max(xMax, x[i]);
+                  y[i] = Float.valueOf(coord.nextToken()).floatValue();
+                  yMin = Math.min(yMin, y[i]);
+                  yMax = Math.max(yMax, y[i]);
+                }
+                //                  System.out.println("Read: "+npoints+" Points - xMin: "+xMin+"xMax: "+xMax+"yMin: "+yMin+"yMax: "+yMax);
+              }	
+              catch(NoSuchElementException e) {System.out.println("Poly Read Error: "+line);}
+            }
+            catch( IOException e ) {
+              System.out.println("Error: "+e);
+              System.exit(1);
+            }
+            //==================================================================//
+            
+            br.reset();
+            int count = 0;
+            while( line != null ) {
+              MyPoly p = new MyPoly();
+              p.read(br, xMin, 100000/Math.min(xMax-xMin, yMax-yMin), yMin, 100000/Math.min(xMax-xMin, yMax-yMin));
+              if( count++ % (int)(Math.max(data.n/20, 1)) == 0 )
+                progBar.setValue(Math.min(count, data.n));
+              //MyPoly newP = p.thinHard();
+              polys.addElement(p);
+              line = br.readLine();                          // Read seperator (single blank line)
+            }
+          }
         }
-
-        if( line != null ) {                          // more lines detected -> read the polygon
-
-          progText.setText("Polygons ..."); 
-
-          //====================== Check Scaling of the Polygon ===============================//
-          String tLine;
-
-          double xMin =  10e10;
-          double xMax = -10e10;
-          double yMin =  10e10;
-          double yMax = -10e10;
-
-          try {
-            tLine = line;
-
-            StringTokenizer head = new StringTokenizer(tLine, "\t");
-
-            try{
-              int      Id = Integer.valueOf(head.nextToken()).intValue();
-              String name = head.nextToken();
-              int npoints = Integer.valueOf(head.nextToken()).intValue();
-              double[] x = new double[npoints];
-              double[] y = new double[npoints];
-
-              for( int i=0; i<npoints; i++ ) {
-                tLine = br.readLine();
-                StringTokenizer coord = new StringTokenizer(tLine);
-                x[i] = Float.valueOf(coord.nextToken()).floatValue();
-                xMin = Math.min(xMin, x[i]);
-                xMax = Math.max(xMax, x[i]);
-                y[i] = Float.valueOf(coord.nextToken()).floatValue();
-                yMin = Math.min(yMin, y[i]);
-                yMax = Math.max(yMax, y[i]);
-              }
-              //                  System.out.println("Read: "+npoints+" Points - xMin: "+xMin+"xMax: "+xMax+"yMin: "+yMin+"yMax: "+yMax);
-            }	
-            catch(NoSuchElementException e) {System.out.println("Poly Read Error: "+line);}
-          }
-          catch( IOException e ) {
-            System.out.println("Error: "+e);
-            System.exit(1);
-          }
-          //==================================================================//
-
-          br.reset();
-          int count = 0;
-          while( line != null ) {
-            MyPoly p = new MyPoly();
-            p.read(br, xMin, 100000/Math.min(xMax-xMin, yMax-yMin), yMin, 100000/Math.min(xMax-xMin, yMax-yMin));
-            if( count++ % (int)(Math.max(data.n/20, 1)) == 0 )
-              progBar.setValue(Math.min(count, data.n));
-            //MyPoly newP = p.thinHard();
-            polys.addElement(p);
-            line = br.readLine();                          // Read seperator (single blank line)
-          }
+        
+        catch( IOException e ) {
+          System.out.println("Error: "+e);
+          System.exit(1);
         }
+        progText.setText(""); 
+        progBar.setValue(0);
+        
+        return true;
       }
-
-      catch( IOException e ) {
-        System.out.println("Error: "+e);
-        System.exit(1);
-      }
-      progText.setText(""); 
-      progBar.setValue(0);
-      
-      return true;
     } else
       return false;
   }
 
+  public void setProgress(double progress) {
+    progBar.setValue((int)(100*progress));
+  }
+  
+  
   public void handleOpenFile( File inFile )
   {
     while( !mondrianRunning ) {}   // Wait until Mondrian initialized
@@ -1534,7 +1603,6 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
   public void scatterplot2D() {
     final MFrame scatterf = new MFrame(this);
     scatterf.setSize(400,400);
-    scatterf.setTitle("Scatterplot 2D");
     
     Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), varNames);
     scat.addSelectionListener(this);
@@ -1555,7 +1623,6 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         c.assign("x",dataT.getRawNumbers(varsT[i]));
         c.voidEval("tempData <- cbind(tempData, x)");
       }
-      c.voidEval("tempData <- cbind(tempData, x)");
       RList mdsL = c.eval("sMds <- sammon(dist(scale(tempData))+0.001, k=2)").asList();
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
@@ -1626,22 +1693,30 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
           b.setEnabled(true);
           hi.setEnabled(false);
+          hiw.setEnabled(false);
+          pb.setEnabled(false);
         }
         else {
           b.setEnabled(false);
           hi.setEnabled(true);
           hiw.setEnabled(true);
+          pb.setEnabled(true);
         }
         n.setEnabled(false);
         bw.setEnabled(false);
         nw.setEnabled(false);
         pc.setEnabled(false);
-        pb.setEnabled(true);
+        byx.setEnabled(false);
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
         mds.setEnabled(false);
         break;
       case 2: 
+        pc.setEnabled(true);
+        sc2.setEnabled(true);
+        mds.setEnabled(false);
+        pb.setEnabled(true);
+        byx.setEnabled(false);
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
           b.setEnabled(true);
           n.setEnabled(true);
@@ -1652,6 +1727,8 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
         if( numCategorical == 1 ) {
           bw.setEnabled(true);
           nw.setEnabled(true);
+          pb.setEnabled(false);
+          byx.setEnabled(true);
         } else {
           bw.setEnabled(false);
           nw.setEnabled(false);
@@ -1663,10 +1740,6 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
           hi.setEnabled(false);
           hiw.setEnabled(false);
         }
-        pc.setEnabled(true);
-        pb.setEnabled(true);
-        sc2.setEnabled(true);
-        mds.setEnabled(false);
         break;
       default:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
@@ -1690,7 +1763,7 @@ class Join extends JFrame implements SelectionListener, DataListener, MRJOpenDoc
           hi.setEnabled(false);
           hiw.setEnabled(false);
         }
-        if( (varNames.getSelectedIndices()).length - numCategorical > 2 )
+        if( (varNames.getSelectedIndices()).length - numCategorical > 2 && hasR )
           mds.setEnabled(true);   
         pc.setEnabled(true);      
         pb.setEnabled(true);
