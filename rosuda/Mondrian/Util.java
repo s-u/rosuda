@@ -101,11 +101,11 @@ public class Util {
       StringTokenizer line = new StringTokenizer(nextT, ":");
 
       if( nextT.indexOf(":") > -1  )
-        infoTxt = infoTxt + para + line.nextToken() + sep + line.nextToken();
+        infoTxt = infoTxt + para + line.nextToken() + sep + line.nextToken() + "</TR>";
       else
-        infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=-1 face='verdana, helvetica'>"+nextT;
+        infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=-1 face='verdana, helvetica'>"+nextT+"</TR>";
     }
-    
+    //System.out.println("<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>");
     return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>";
   }
 }  
