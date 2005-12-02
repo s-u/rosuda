@@ -72,14 +72,14 @@ public class MyRect extends Rectangle implements ActionListener {
     //System.out.println(residual);
     if( obs > 0 ) {
       if( dir != 'f' ) {
-        if( info.indexOf("¥") == -1 && !(info.substring(0, 2)).equals("NA") )
+        if( info.indexOf("¥") == -1 && info.indexOf(": NA\n") == -1 && !(info.substring(0, 2)).equals("NA") )
           g.setColor(Color.lightGray);
         else
           g.setColor(Color.white);
         g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
       } else {
         g.setColor(drawColor);
-        g.fillRect(x, y, w, h);
+        g.fillRect(x, y, Math.max(1, w), h);
       }
     }
     if( mode.equals("Expected") ) {
