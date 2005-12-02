@@ -19,6 +19,7 @@ public class dataSet {
   protected Vector data = new Vector(256,256);
 //  protected Vector name = new Vector(256,256);
   protected boolean[] alpha={true};
+  protected int[] NAcount={0};
   protected double[] selectionArray;
   protected double[] filterA;
   protected int[] filterGrpSize;
@@ -30,6 +31,7 @@ public class dataSet {
   private String[] columnType={""};
   public int n=0;
   public int k=0;
+  public boolean hasMissings = false;
   public boolean isDB;
   public String setName;
   private Driver d;
@@ -248,6 +250,41 @@ public class dataSet {
     Runtime.getRuntime().gc();
   }	
 
+  public void turboRead(String fileName, Join joint) {
+    BufferTokenizer BT = new BufferTokenizer(10, 5, fileName, joint);
+    this.n = BT.lines;
+    this.k = BT.columns;
+    
+    NAcount = new int[this.k];
+    alpha = new boolean[this.k];
+    selectionArray = new double[n];
+    filterA = new double[n];
+
+    for(int j=0; j<k; j++) {
+      NAcount[j] = BT.NACount[j];
+      alpha[j] = !BT.numericalColumn[j];
+      
+      Variable Var = new Variable(BT, j);
+      Var.numMiss = NAcount[j];
+      if( Var.numMiss > 0 )
+        hasMissings = true;
+      String varName = Var.getName();
+      if( varName.length() > 1 ) {
+        if( varName.substring(0,2).equals("/T") ) 
+          Var.phoneNumber = true;
+        if( varName.substring(0,2).equals("/P") ) {
+          Var.isPolyID = true;
+          Var.forceCategorical = true;
+        }
+        if( varName.substring(0,2).equals("/C") )
+          Var.isCategorical = false;
+        if( varName.substring(0,2).equals("/D") )
+          Var.forceCategorical = true;
+      }
+      data.addElement(Var);
+    }
+  }
+    
   public void numToCat(int i) {
     Variable Var=((Variable)data.elementAt(i));
     if( alpha[i] && Var.isCategorical )
@@ -283,6 +320,7 @@ public class dataSet {
       int[]      tableDim = new int[tablelength];	// !
       String[][]   lnames = new String[1][tablelength];	// !
       double[]   datacopy = this.getRawNumbers(dvar);
+      int[]         sorts = this.getSort(dvar);
       int[]     varlevels = new int[1];			// !
              varlevels[0] = tablelength;
       String[]   varnames = new String[1];		// !
@@ -330,16 +368,16 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
           }
       } else {
         if( weight == -1 )
-          for( int i=0; i<this.n; i++ ) {
-            int index = (int)((datacopy[i]-start)/width);
+          for( int i=0; i<getN(dvar); i++ ) {
+            int index = (int)((datacopy[sorts[i]]-start)/width);
             bdtable[index]++;
             tableDim[index]++;
           } else {
           double[] weights;
           weights = getRawNumbers(weight);
 
-          for( int i=0; i<this.n; i++ ) {
-            int index = (int)((datacopy[i]-start)/width);
+          for( int i=0; i<getN(dvar); i++ ) {
+            int index = (int)((datacopy[sorts[i]]-start)/width);
             bdtable[index] += weights[i];
             tableDim[index]++;
           }
@@ -358,9 +396,9 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
       int index=0;
 
       if( !isDB ) 
-          for( int i=0; i<this.n; i++ ) {
-              index = (int)((datacopy[i]-start)/width); 
-              Ids[index][pointers[index]++] = i; 
+          for( int i=0; i<getN(dvar); i++ ) {
+              index = (int)((datacopy[sorts[i]]-start)/width); 
+              Ids[index][pointers[index]++] = sorts[i]; 
           }
        else 
           for( int i=0; i<tablelength; i++ )
@@ -662,8 +700,9 @@ System.out.println(newQ.makeQuery());
           retA[j] = (double)v.IpermA[(int)v.data[j]];
       }
       else {
-        for( int j=0; j<this.n; j++ )
+        for( int j=0; j<this.n; j++ ) {
           retA[j] = (double)v.IpermA[(int)v.Level( Double.toString(v.data[j]) )];
+        }
       }
       return retA;
     }
@@ -673,7 +712,17 @@ System.out.println(newQ.makeQuery());
     Variable v = (Variable)data.elementAt(i);
     return v.data;
   }
-
+      
+  public boolean[] getMissings(int i) {
+    Variable v = (Variable)data.elementAt(i);
+    return v.missing;
+  }
+      
+  public int[] getSort(int i) {
+    Variable v = (Variable)data.elementAt(i);
+    return v.sortI;
+  }
+      
   public int[] getRank(int i) {
     Variable v = (Variable)data.elementAt(i);
     int[] ranks = new int[this.n];
@@ -686,6 +735,10 @@ System.out.println(newQ.makeQuery());
     return ranks;
   }
 
+  public int getN(int i) {
+    return this.n - NAcount[i];
+  }    
+      
   public double getMin(int i) {
     return ((Variable)data.elementAt(i)).Min();
   }
@@ -798,8 +851,13 @@ System.out.println(newQ.makeQuery());
   }
 
   public void selectAll() {
-      for( int i=0; i<this.n; i++ )
-          setSelection(i, 1, Selection.MODE_STANDARD );
+    for( int i=0; i<this.n; i++ )
+      setSelection(i, 1, Selection.MODE_STANDARD );
+  }
+      
+  public void toggleSelection() {
+    for( int i=0; i<this.n; i++ )
+      setSelection(i, 1, Selection.MODE_XOR );
   }
       
   public int countSelection() {
@@ -882,7 +940,6 @@ System.out.println(newQ.makeQuery());
     
   class Variable {
     private int catThres = (n>800)?(15 * Math.max(1, (int)(Math.log(n)/Math.log(10))-1)):((int)(1.5*Math.sqrt(n)));
-//    protected Vector level = new Vector(100, 100);
     private int dimThres = 1000;
     protected String[] levelA = new String[dimThres];
     protected int[] grpSize = new int[dimThres];
@@ -896,7 +953,9 @@ System.out.println(newQ.makeQuery());
     public boolean isPolyID = false;
     private String name;
     public double[] data;
+    public int numMiss = 0;
     public int[] sortI;
+    public boolean missing[];
     public double min=1e+100, max=-1e+100;
     protected boolean minSet=false, maxSet=false, levelsSet=false;
     
@@ -914,6 +973,35 @@ System.out.println(newQ.makeQuery());
         if( name.substring(0,2).equals("/P") )
           isCategorical = false;
       data = new double[n];
+    }
+    
+    Variable(BufferTokenizer BT, int col) {
+      this.alpha = !BT.numericalColumn[col];
+      this.name = new String(BT.head[col]);
+      this.isCategorical = BT.isDiscret[col];
+      data = new double[BT.lines];
+      missing = new boolean[BT.lines];
+
+      System.arraycopy(BT.item[col], 0, data, 0, BT.lines);
+      System.arraycopy(BT.NA[col], 0, missing, 0, BT.lines);
+      BT.item[col] = null;
+      
+      if( !isCategorical )
+        sortData();
+      else {
+        levelP = BT.wordStackSize[col];
+        levelA = new String[levelP];
+        grpSize = new int[levelP];
+        for( int j=0; j<levelP; j++) {
+          if( alpha )
+            levelA[j] = new String(BT.word[col][j]);
+          else
+            levelA[j] = Double.toString( Double.valueOf( BT.discretValue[col][j]+"" ).doubleValue() );
+          grpSize[j] = BT.wordCount[col][j];
+//          System.out.println(levelP+" -|- >"+levelA[j]+"< ("+grpSize[j]+")");
+        }
+        sortLevels();
+      }
     }
     
     public String getName() {
@@ -954,11 +1042,13 @@ System.out.println(newQ.makeQuery());
       if( isCategorical ) {
         if( IpermA == null )
           sortLevels();
-        for( int i=0; i< levelP; i++)
+        for( int i=0; i< levelP; i++) {
+//System.out.println(name+" <-> "+levelA[i]);
           if(	 levelA[i].equals(name) ) {
             return i; //permA[i];
           }
-            return 3.1415926;
+        }
+        return 3.1415926;
       }
       else {
         return -1;
@@ -974,13 +1064,16 @@ System.out.println(newQ.makeQuery());
     public String[] getLevels() {
       String[] returnA = new String[levelP];
       for( int i=0; i<levelP; i++ ) {
-        returnA[i] = levelA[permA[i]];
+        if( !levelA[permA[i]].equals("1.7976931348623157E308") )   // We rely on the IEEE double floating point system here !!!!!!!!!!
+          returnA[i] = levelA[permA[i]];
+        else
+          returnA[i] = "NA";
       }
       return returnA;
     }
 
     public String getLevel(int id) {
-          return levelA[permA[id]];
+      return levelA[permA[id]];
     }
     
     public void shrink() {
@@ -1085,8 +1178,12 @@ System.out.println("query: "+query+" ---> "+this.max);
                     System.out.println("DB Exception: get max ... "+ex);
                 }
             } else
+              if( !alpha )
+                for ( int i=0; i<data.length - numMiss; i++ ) 
+                  this.max = Math.max(data[sortI[i]], this.max);
+              else
                 for ( int i=0; i<data.length; i++ ) 
-                    this.max = Math.max(data[i], this.max);
+                  this.max = Math.max(data[i], this.max);
         maxSet = true;
         return this.max;
     }
