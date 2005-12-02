@@ -1,4 +1,4 @@
-package org.rosuda.Mondrian;
+//package org.rosuda.Mondrian;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -201,7 +201,8 @@ public class BufferTokenizer {
 		long start, stop;
 		long startfull, stopfull;
 		error = new String[acceptedErrors];
-		
+        prId = pi;
+
 		timestart = System.currentTimeMillis();
 		
 		startfull = System.currentTimeMillis();
