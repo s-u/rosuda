@@ -90,7 +90,8 @@ public class MyText {
         shorty = shorty.substring(0,shorty.length() - 1);
         addOn = "É";
       }
-      s = shorty.trim()+addOn;
+      if( shorty.length() + 1 < s.length() )
+        s = shorty.trim()+addOn;
     }
     // Draw string rotated clockwise angle degrees
     if( angle != 0 ) {
