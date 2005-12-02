@@ -20,7 +20,7 @@ public class Mosaic extends DragBox implements ActionListener {
   private Graphics2D bg;
 
   /** This constructor requires a Frame and a desired size */
-  public Mosaic(JFrame frame, int width, int height, Table tablep) {
+  public Mosaic(MFrame frame, int width, int height, Table tablep) {
     super(frame);
     this.tablep = tablep;
     this.width = width;

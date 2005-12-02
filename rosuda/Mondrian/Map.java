@@ -44,7 +44,7 @@ public class Map extends DragBox {
   private Vector finalPolys = new Vector(256,256);
 
   /** This constructor requires a Frame and a desired size */
-  public Map(JFrame frame, int width, int height, dataSet data, Vector polys, JList varList) {
+  public Map(MFrame frame, int width, int height, dataSet data, Vector polys, JList varList) {
     super(frame);
     this.polys = polys;
     this.data = data;
