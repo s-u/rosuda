@@ -80,6 +80,7 @@ public class PCPCanvas extends BaseCanvas {
         MIdots=EzMenu.getItem(f,"togglePts");
         MIaxes=EzMenu.getItem(f,"toggleAxes");
         MIlines=EzMenu.getItem(f,"toggleLines");
+        MIlines.setEnabled(false);
         dontPaint=false;
     }
     
@@ -252,8 +253,8 @@ public class PCPCanvas extends BaseCanvas {
             for(int i=0; i<pp.length; i++){
                 ((PPrimPolygon)pp[i]).drawCorners=drawPoints;
             }
-            MIdots.setEnabled(!drawPoints&&drawLines);
-            MIlines.setEnabled(!drawLines&&drawPoints);
+            MIdots.setEnabled(!drawPoints||drawLines);
+            MIlines.setEnabled(drawPoints||!drawLines);
             setUpdateRoot(0);
             repaint();
         }
@@ -263,8 +264,8 @@ public class PCPCanvas extends BaseCanvas {
             for(int i=0; i<pp.length; i++){
                 ((PPrimPolygon)pp[i]).drawBorder=drawLines;
             }
-            MIdots.setEnabled(!drawPoints&&drawLines);
-            MIlines.setEnabled(!drawLines&&drawPoints);
+            MIdots.setEnabled(!drawPoints||drawLines);
+            MIlines.setEnabled(drawPoints||!drawLines);
             setUpdateRoot(0);
             repaint();
         }
