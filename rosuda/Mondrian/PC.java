@@ -31,6 +31,7 @@ public class PC extends DragBox implements ActionListener {
   protected double[] dMins, dIQRs, dMedians, dMeans, dSDevs, dMaxs;
   protected double[] Mins, Maxs;
   protected double[][] dataCopy;
+  protected boolean[][] missCopy;
   protected String[] lNames;
   protected int[] permA;
   protected double[] sortA;
@@ -57,7 +58,7 @@ public class PC extends DragBox implements ActionListener {
   private DataListener listener;
   private static EventQueue evtq;
   
-  public PC(JFrame frame, dataSet data, int[] vars, String mode) {
+  public PC(MFrame frame, dataSet data, int[] vars, String mode) {
     super(frame);
     Dimension size = frame.getSize();
     this.width = size.width;
@@ -76,12 +77,12 @@ public class PC extends DragBox implements ActionListener {
       onlyHi[i] = true;
     
     if( k == 2 ) {
-      if( data.categorical(vars[0]) && !data.categorical(vars[1]) ) {
+      if( data.categorical(vars[0]) && !data.categorical(vars[1]) && mode.equals("Box")) {
         paintMode = "XbyY";
         xVar = vars[1];
         yVar = vars[0];
       }
-      if( data.categorical(vars[1]) && !data.categorical(vars[0])) {
+      if( data.categorical(vars[1]) && !data.categorical(vars[0]) && mode.equals("Box")) {
         paintMode = "XbyY";
         xVar = vars[0];
         yVar = vars[1];
@@ -117,7 +118,7 @@ public class PC extends DragBox implements ActionListener {
     setCoordinates(0,1,0,1,-1);
 
     if( paintMode.equals("XbyY") )
-      frame.setTitle("PC("+data.getName(xVar)+"|"+data.getName(yVar)+")");
+      frame.setTitle("PB("+data.getName(xVar)+"|"+data.getName(yVar)+")");
     else if( paintMode.equals("Poly") )
       frame.setTitle("PC("+data.setName+")");
     else
@@ -172,7 +173,7 @@ public class PC extends DragBox implements ActionListener {
         else if( data.categorical(vars[permA[popXId]]) )
           if( paintMode.equals("Poly") ) {
             x = " " + data.getName(vars[permA[popXId]]);
-            x = " Level: "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
+            x = x + " \n Level: "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
           }
             else
               for( int i = 0;i < rects.size(); i++) {
@@ -182,8 +183,8 @@ public class PC extends DragBox implements ActionListener {
                 }
               }
                 else {
-                  x = data.getName(vars[permA[popXId]]);
-                  x = " Value: "+dataCopy[permA[popXId]][popYId];
+                  x = " "+data.getName(vars[permA[popXId]]);
+                  x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
                 }
           return Util.info2Html(x);
         }
@@ -1026,13 +1027,19 @@ System.out.println("Command: "+command);
 
         bg.setColor(new Color(0, 0, 0, alpha));
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
-          for( int i=0; i<data.n; i++ )
-            bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+          for( int i=0; i<data.n; i++ ) 
+            if( !data.hasMissings )
+              bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+            else
+              myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
         }
         if( paintMode.equals("Poly") && zoomToSel ) {
           for( int i=0; i<data.n; i++ )
             if( onlyHi[i] )
-              bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+              if( !data.hasMissings )
+                bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+              else
+                myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
         }
         for( int j=0; j<k; j++ ) {	                    	                      	// Draw Axes
           if( !printing )
@@ -1095,13 +1102,16 @@ System.out.println("Command: "+command);
             ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
           for( int i=0; i<data.n; i++ ) {
             if( selection[i] > 0 && onlyHi[i] )
-              tbg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k);
+              if( !data.hasMissings )
+                tbg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
+              else
+                myDrawPolyline(tbg, poly[i].xpoints, poly[i].ypoints, i);
           }
         }
         if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY") ) {
           for( int i=0; i<bPlots.size(); i++ ) {
             if( paintMode.equals("XbyY") )
-              data.setFilter( yVar, lNames[i]);
+              data.setFilter( yVar, lNames[permA[i]]);
             ((boxPlot)(bPlots.elementAt(i))).drawHighlight(tbg);
             data.resetFilter();
           }
@@ -1327,6 +1337,25 @@ System.out.println("Command: "+command);
       }		
     }
 
+    void myDrawPolyline(Graphics g, int[] xpoints, int[] ypoints, int caseId) {
+
+      for( int j=0; j<k-1; j++) {
+        //System.out.println(ypoints[j]);
+        if( !(ypoints[j] == -2147483648 || ypoints[j+1] == -2147483648 || ypoints[j] == 2147483647 || ypoints[j+1] == 2147483647) ) {
+          g.drawLine(xpoints[j], ypoints[j], xpoints[j+1], ypoints[j+1]);
+        }
+        if( j==0   && !(ypoints[j] == -2147483648 || ypoints[j] == 2147483647) && (ypoints[j+1] == -2147483648 || ypoints[j+1] == 2147483647) )
+          g.drawLine(xpoints[j]-2, ypoints[j], xpoints[j]+2, ypoints[j]);
+        if( j==k-2 && !(ypoints[j+1] == -2147483648 || ypoints[j+1] == 2147483647) && (ypoints[j] == -2147483648 || ypoints[j] == 2147483647) )
+          g.drawLine(xpoints[j+1]-2, ypoints[j+1], xpoints[j+1]+2, ypoints[j+1]);
+        if( j!=k-1 && j!=0 && !(ypoints[j] == -2147483648 || ypoints[j] == 2147483647) 
+                           &&  (ypoints[j-1] == -2147483648 || ypoints[j-1] == 2147483647)
+                           &&  (ypoints[j+1] == -2147483648 || ypoints[j+1] == 2147483647) )
+          g.drawLine(xpoints[j]-2, ypoints[j], xpoints[j]+2, ypoints[j]);
+      }
+    }    
+      
+      
     void getData() {
 
       if( paintMode.equals("XbyY") ) {
@@ -1350,6 +1379,7 @@ System.out.println("Command: "+command);
         Maxs = new double[k];
 
         dataCopy = new double[k][data.n];
+        missCopy = new boolean[k][data.n];
 
         if( !hotSelection ) {   // we need an XOR here ;-)
           System.out.println(" *** RESET *** ");
@@ -1378,6 +1408,7 @@ System.out.println("Command: "+command);
           dataCopy[j] = data.getRawNumbers(vars[j]);
         else
           dataCopy[j] = data.getNumbers(vars[j]);
+        missCopy[j] = data.getMissings(vars[j]);
       }
     }	
 
@@ -1445,10 +1476,21 @@ System.out.println("Command: "+command);
 // System.out.println("Slot: "+slotWidth+"Slot Max: "+slotMax);
 
       names.removeAllElements();
-      if( paintMode.equals("XbyY") ) {
+      if( paintMode.equals("XbyY") ) 
         lNames = data.getLevels(yVar);
+      for( int j=0; j<k; j++ ) {
+        if( !paintMode.equals("XbyY") )
+          names.addElement(new MyText(data.getName(vars[permA[j]]), 1, 1, 0));
+        else {
+          names.addElement(new MyText(lNames[j], 1, 1, 0));
+        }
+      }
+      
+      if( paintMode.equals("XbyY") ) {
         for( int j=0; j<k; j++ ) {
-          data.setFilter( yVar, lNames[j]);
+          if( lNames[permA[j]].equals("NA") )                        // Set Constant for Missing values
+            lNames[permA[j]] = "1.7976931348623157E308";
+          data.setFilter( yVar, lNames[permA[j]]);
 
           dMins[j] = data.getMin(xVar);
           dIQRs[j] = data.getQuantile(xVar, 0.75) - data.getQuantile(xVar, 0.25);
@@ -1460,14 +1502,6 @@ System.out.println("Command: "+command);
           data.resetFilter();
         }
       }        
-
-      for( int j=0; j<k; j++ ) {
-        if( !paintMode.equals("XbyY") )
-          names.addElement(new MyText(data.getName(vars[permA[j]]), 1, 1, 0));
-        else {
-          names.addElement(new MyText(lNames[j], 1, 1, 0));
-        }
-      }
 
       poly = new Polygon[data.n];
       for( int i=0; i<data.n; i++ ) {
@@ -1491,7 +1525,7 @@ System.out.println("Command: "+command);
           int x = border+(int)(0.5+slotWidth*j);
           if( !data.categorical(vars[permA[j]]) ) {
             if( paintMode.equals("XbyY") )
-              data.setFilter( yVar, lNames[j]);
+              data.setFilter( yVar, lNames[permA[j]]);
             bPlots.addElement(new boxPlot( j, vars[permA[j]] , x + addBorder, (int)(0.5+Math.min(slotWidth/2, slotMax)), border, height-border));
             data.resetFilter();
           }
@@ -1759,18 +1793,19 @@ System.out.println("Command: "+command);
           // Highlight Boxes
           int smaller = width/8;
           g.setColor(getHiliteColor());
-          g.drawRect(mid-width/2+smaller, uSWP, width-2*smaller, 1);
           g.drawLine(mid, uSWP, mid, uSHP);
+          g.drawLine(mid, lSWP, mid, lSHP);
+          g.drawRect(mid-width/2+smaller, uSWP, width-2*smaller, 1);
+          g.drawRect(mid-width/2+smaller, lSWP, width-2*smaller, 1);
+
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6F));
           g.fillRect(mid-width/2+smaller, uSHP, width-2*smaller, sMedP-uSHP);
+          g.fillRect(mid-width/2+smaller, sMedP, width-2*smaller, lSHP-sMedP);
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+
           g.setColor(Color.black);
           g.drawRect(mid-width/2+smaller, uSHP, width-2*smaller, sMedP-uSHP);
-          g.setColor(getHiliteColor());
-          g.fillRect(mid-width/2+smaller, sMedP, width-2*smaller, lSHP-sMedP);
-          g.setColor(Color.black);
           g.drawRect(mid-width/2+smaller, sMedP, width-2*smaller, lSHP-sMedP);
-          g.setColor(getHiliteColor());
-          g.drawRect(mid-width/2+smaller, lSWP, width-2*smaller, 1);
-          g.drawLine(mid, lSWP, mid, lSHP);
 
           int dia = 3;
           if( printing )
