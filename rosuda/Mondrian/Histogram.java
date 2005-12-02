@@ -37,7 +37,7 @@ public class Histogram extends DragBox implements ActionListener {
   private boolean coordsSet = false;
   private boolean info = false;
 
-  public Histogram(JFrame frame, int width, int height, Table tablep, double bStart, double bWidth, int weight) {
+  public Histogram(MFrame frame, int width, int height, Table tablep, double bStart, double bWidth, int weight) {
     super(frame);
     this.tablep = tablep;
     this.name = tablep.name;
@@ -360,7 +360,8 @@ public class Histogram extends DragBox implements ActionListener {
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
-                                                    &&   e.getKeyCode() == KeyEvent.VK_R )                                                	                                                    																								|| (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                    &&   e.getKeyCode() == KeyEvent.VK_R )                                                	                                                    																					
+                                                || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     &&   e.getKeyCode() == KeyEvent.VK_E )
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     &&   e.getKeyCode() == KeyEvent.VK_D ))) {
@@ -609,7 +610,7 @@ public class Histogram extends DragBox implements ActionListener {
               wvalue.addActionListener(this);
               menuWidth.add(wvalue);
                             
-              JMenu menuStart = new JMenu("Start");
+              JMenu menuStart = new JMenu("Anchorpoint");
               
               mode.add(menuStart);
               JCheckBoxMenuItem[][] fst = new JCheckBoxMenuItem[3][4];
