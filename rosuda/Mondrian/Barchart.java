@@ -27,7 +27,7 @@ public class Barchart extends DragBox implements ActionListener {
   private Graphics bg;
   private int k;
   
-  public Barchart(JFrame frame, int width, int height, Table tablep) {
+  public Barchart(MFrame frame, int width, int height, Table tablep) {
     super(frame);
     this.tablep = tablep;
     this.name = tablep.name;
@@ -144,7 +144,7 @@ public class Barchart extends DragBox implements ActionListener {
     
     public void dataChanged(int var) {
       
-System.out.println("Changed: "+var);
+      System.out.println("Changed: "+var);
       
       if( var == tablep.initialVars[0] ) {
         tablep.rebreak();
@@ -299,12 +299,13 @@ System.out.println("Changed: "+var);
            this.setToolTipText("");
          }
        }*/
-      super.processMouseMotionEvent(e);  // Pass other event types on.
+      else
+        super.processMouseMotionEvent(e);  // Pass other event types on.
     }
     
     public void processMouseEvent(MouseEvent e) {
       
-      if( e.isPopupTrigger() && !e.isShiftDown() )
+      if( e.isPopupTrigger() && !e.isShiftDown() && !moving )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
         changePop = false;
@@ -370,12 +371,12 @@ System.out.println("Changed: "+var);
           }
         }
         else
-          if( e.getModifiers() ==  BUTTON1_UP + ALT_DOWN ) {
+          if( e.getID() == MouseEvent.MOUSE_PRESSED && e.getModifiers() ==  BUTTON1_DOWN + ALT_DOWN ) {
             for( int i = 0;i < rects.size(); i++) {
               MyRect r = (MyRect)rects.elementAt(i);
               if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
                 movingId   = i;
-                System.out.println("Mooving ....................");
+                System.out.println("Moooving ....................");
                 movingRect = r;
                 oldY       = r.getRect().y;
                 movingText = (MyText)labels.elementAt(i);
@@ -386,8 +387,8 @@ System.out.println("Changed: "+var);
           }
         else if( (e.getID() == MouseEvent.MOUSE_RELEASED) && moving &&
                  ((e.getModifiers() ==  BUTTON1_UP + ALT_DOWN) ||
-                  (e.getModifiers() ==  BUTTON1_UP) ||
-                  (e.getModifiers() ==  ALT_DOWN))) {
+                  (e.getModifiers() ==  BUTTON1_UP))) {
+          //        (e.getModifiers() ==  ALT_DOWN))) 
           //	 ((e.getModifiers() ==  BUTTON1_UP + CTRL_DOWN) || (e.getModifiers() ==  BUTTON1_UP))) {
           System.out.println("in Barchart up: e.getModifiers(): "+e.getModifiers()+"  BUTTON1_UP: "+BUTTON1_UP);
           (this.getGraphics()).drawImage(bi, 0, 0, null);
@@ -655,6 +656,9 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     }
     else
       h *= tablep.table[i] / max;
+    // In Java 1.4 Boxes with "0" dimension in x or y are NOT drawn !!!!
+    w = Math.max(w,1);
+    h = Math.max(h,1);
     if( tablep.data.phoneNumber( tablep.initialVars[0] ) )
       rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h,
                                    tablep.table[i], tablep.table[i], 1, 0,
