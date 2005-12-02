@@ -100,6 +100,12 @@ public class PPrimPolygon extends PPrimBase {
                 } else g.setColor("outline");
                 g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
             }
+            if(drawCorners){
+                g.setColor("marked");
+                for(int i=0; i<pg.npoints; i++){
+                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
+                }
+            }
         }
     }
     
