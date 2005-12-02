@@ -452,14 +452,6 @@ public class ScatterCanvas extends BaseCanvas {
                 + p.ref.length + " case(s)";
     }
     
-    public void mouseMoved(MouseEvent ev) {
-        if (querying) {
-            qx=ev.getX(); qy=ev.getY();
-            setUpdateRoot(3);
-            repaint();
-        }
-    };
-    
     public void paintPost(PoGraSS g) {
         if (querying) {
             g.setColor("black");
