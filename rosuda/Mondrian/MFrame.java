@@ -39,11 +39,14 @@ public class MFrame extends JFrame implements WindowListener {
   }
 
   public void close() {
+    System.out.println("Window Closed!!");
+
     J.windows.remove(m);
     if( J.windows.getItemCount() < 3 )
       J.ca.setEnabled(false);
     if( !selString.equals("") )
       J.updateSelection();
+    this.setVisible(false);
     this.dispose();
   }
 
