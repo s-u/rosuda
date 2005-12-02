@@ -54,7 +54,7 @@ public class Scatter2D extends DragBox {
   private boolean smoothChanged = false;
   
   /** This constructor requires a Frame and a desired size */
-  public Scatter2D(JFrame frame, int width, int height, dataSet data, int[] Vars, JList varList) {
+  public Scatter2D(MFrame frame, int width, int height, dataSet data, int[] Vars, JList varList) {
     super(frame);
     this.data = data;
     this.width = width;
@@ -146,7 +146,7 @@ public class Scatter2D extends DragBox {
   }
 
   public String getToolTipText(MouseEvent e) {
-    if( e.isControlDown() ) {
+    if( e.isControlDown() && !e.isAltDown() ) {
       if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
         String x = data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(coeffs[1], 4)+" + "+Stat.roundToString(coeffs[0], 4);
         x = x + "\n"+"R^2: "+Stat.roundToString(100*coeffs[2], 1);
