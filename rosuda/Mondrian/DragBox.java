@@ -37,7 +37,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   protected Color	dragboxcolor = Color.red;
   protected Graphics dragboxgraphics = null;
 
-  public JFrame frame;                               // The frame we are within.
+  public MFrame frame;                               // The frame we are within.
   public JScrollBar sb;                             // We might need a scroll bar
 
   public boolean selectFlag;                        // True if selection occured in this DragBox
@@ -45,7 +45,9 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public boolean dataFlag;                          // True if change occured in this DragBox
 
   public boolean selectAll = false;                          // True if the user pressed META-A
-
+  
+  public boolean toggleSelection = false;                    // True if the user pressed META-K
+  
   public boolean deleteAll = false;                          // True if the user pressed META-BACKSPACE
 
   public boolean switchSel = false;                          // True if the user pressed META-M
@@ -75,26 +77,26 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   // Modifiers, as seen during button press - button 1 is strange!
   //
 
-  protected final static int	BUTTON1_DOWN = 16; //InputEvent.BUTTON1_MASK;
-  protected final static int	BUTTON2_DOWN = 8;  //InputEvent.BUTTON2_MASK;
-  protected final static int	BUTTON3_DOWN = 4;  //InputEvent.BUTTON3_MASK;
+  protected final static int	BUTTON1_DOWN = InputEvent.BUTTON1_MASK;
+  protected final static int	BUTTON2_DOWN = InputEvent.BUTTON2_MASK;
+  protected final static int	BUTTON3_DOWN = InputEvent.BUTTON3_MASK;
 
   //
   // Modifiers, as seen during button release - notice button 1.
   //
 
-  protected final static int	BUTTON1_UP = BUTTON1_DOWN; //InputEvent.BUTTON1_MASK;
-  protected final static int	BUTTON2_UP = BUTTON2_DOWN; //InputEvent.BUTTON2_MASK;
-  protected final static int	BUTTON3_UP = BUTTON3_DOWN; //InputEvent.BUTTON3_MASK;
+  protected final static int	BUTTON1_UP = InputEvent.BUTTON1_MASK;
+  protected final static int	BUTTON2_UP = InputEvent.BUTTON2_MASK;
+  protected final static int	BUTTON3_UP = InputEvent.BUTTON3_MASK;
 
   //
   // Modifiers, as seen during button release - notice button 1.
   //
 
-  protected final static int	SHIFT_DOWN = 1; //InputEvent.SHIFT_MASK;
-  protected final static int	CTRL_DOWN  = 2; //InputEvent.CTRL_MASK;
-  protected final static int	META_DOWN  = 4; //InputEvent.META_MASK;
-  protected final static int	ALT_DOWN   = 8; //InputEvent.ALT_MASK;
+  protected final static int	SHIFT_DOWN = InputEvent.SHIFT_MASK;
+  protected final static int	CTRL_DOWN  = InputEvent.CTRL_MASK;
+  protected final static int	META_DOWN  = InputEvent.META_MASK;
+  protected final static int	ALT_DOWN   = InputEvent.ALT_MASK;
 
   //
   // Mouse status.
@@ -278,7 +280,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     }
     ///////////////////////////////////////////////////////////////////////////
 
-    public DragBox(JFrame frame) {
+    public DragBox(MFrame frame) {
 
       this.frame = frame;
 
@@ -397,12 +399,13 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
 System.out.println("SYSTEM = "+SYSTEM);
 System.out.println("mouse = "+mouse);
-System.out.println("Mouse pres: ... "+e.getModifiers());
+System.out.println("Mouse press: ... "+e.getModifiers()+" "+BUTTON1_DOWN +" "+ SHIFT_DOWN +" "+ ALT_DOWN+" "+CTRL_DOWN);
 
       if (mouse == AVAILABLE) {
         if (e.getModifiers() == BUTTON1_DOWN ||
             e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN ||
-            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN + ALT_DOWN )
+            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN + ALT_DOWN || 
+            e.getModifiers() == BUTTON1_DOWN + SHIFT_DOWN + ALT_DOWN + CTRL_DOWN )
           dragBegin(e.getX(), e.getY(), e);
         if (e.getModifiers() ==  BUTTON1_DOWN + META_DOWN && SYSTEM == MAC ||
             e.getModifiers() ==  BUTTON2_DOWN             && SYSTEM != MAC ) {
@@ -438,9 +441,7 @@ System.out.println("Mouse pres: ... "+e.getModifiers());
             case 0:
             case 1:
             case 2:
-              //	            if((System.getProperty("os.name")).equals("Mac OS") && (mouse != CHANGE) ) {
-             		        dragEnd(e);
-              //		    }
+              dragEnd(e);
               mouse = AVAILABLE;
               break;
             case BUTTON1_UP:
@@ -497,8 +498,10 @@ System.out.println(" dragEnd! ");
             Selections.addElement(S);
           }   
           else {
-            S = ((Selection)Selections.elementAt(movingID));
-            S.r = sr;
+            if(Selections.size() > 0) {
+              S = ((Selection)Selections.elementAt(movingID));
+              S.r = sr;
+            }
           }
           selectFlag = true;
           se = new SelectionEvent(this);
@@ -538,9 +541,22 @@ System.out.println(" dragEnd! ");
           evtq.postEvent(se);
       }
       if( modifiers == BUTTON1_UP + SHIFT_DOWN + ALT_DOWN || modifiers == SHIFT_DOWN + ALT_DOWN && SYSTEM == MAC ) {
-//      if( modifiers == SHIFT_DOWN + ALT_DOWN ) && SYSTEM == MAC ) {
         if( mouse == DRAGGING ) {
           S = new Selection(sr, null, 0, Selection.MODE_OR, this);
+          activeS = S;
+          Selections.addElement(S);
+        }
+        else {
+          S = ((Selection)Selections.elementAt(movingID));
+          S.r = sr;
+        }
+        selectFlag = true;
+        se = new SelectionEvent(this);
+        evtq.postEvent(se);
+      }
+      if( modifiers == BUTTON1_UP + SHIFT_DOWN + ALT_DOWN + CTRL_DOWN ) {
+        if( mouse == DRAGGING ) {
+          S = new Selection(sr, null, 0, Selection.MODE_AND, this);
           activeS = S;
           Selections.addElement(S);
         }
@@ -940,14 +956,22 @@ System.out.println("Mouse Action to check: "+mouse);
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_A)   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
-
+        
         selectAll = true;
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
-      // Fire up min max dialog
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
-          (e.getKeyCode() == KeyEvent.VK_J)   &&
+          (e.getKeyCode() == KeyEvent.VK_K)   &&
+          (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        
+        toggleSelection = true;
+        SelectionEvent se = new SelectionEvent(this);
+        evtq.postEvent(se);
+      }
+      // Fire up min-max dialog
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+          (e.getKeyCode() == KeyEvent.VK_J )   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
 
         LD = new LimitDialog(this);
