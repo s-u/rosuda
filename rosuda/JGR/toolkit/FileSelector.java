@@ -6,6 +6,7 @@ package org.rosuda.JGR.toolkit;
 
 
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.io.*;
 import javax.swing.*;
 
@@ -56,6 +57,10 @@ public class FileSelector extends JFrame {
         }
     }
     
+    public void addActionListener(ActionListener al) {
+    	if (!Common.isMac()) swingChooser.addActionListener(al);
+    }
+    
     /**
      * Show fileselector.
      */
@@ -92,8 +97,7 @@ public class FileSelector extends JFrame {
         try {
             if (Common.isMac())
                 return awtDialog.getDirectory();
-            else
-                return swingChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
+			return swingChooser.getCurrentDirectory().getAbsolutePath()+File.separator;
         }
         catch (Exception e) { return null;}
     }
@@ -110,5 +114,11 @@ public class FileSelector extends JFrame {
                 swingChooser.setSelectedFile(new File(file));
         }
         catch (Exception e) { }
+    }
+    
+    public Component getSelector() {
+        if (Common.isMac())
+            return awtDialog;
+		return swingChooser;
     }
 }

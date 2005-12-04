@@ -230,15 +230,22 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
      * Open a file and load it into editor.
      */
     public void open() {
-        String newFile = null;
-        FileSelector fopen = new FileSelector(this, "Open...",
-                                              FileSelector.LOAD, JGR.directory);
+        FileSelector fopen = new FileSelector(this, "Open...",FileSelector.LOAD, JGR.directory);
         fopen.setVisible(true);
-        if (fopen.getFile() != null) 
-            newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
-        if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
-        else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
+        
+        if (Common.isMac()) openFile(fopen);
+        else if(((JFileChooser)fopen.getSelector()).toString().indexOf("APPROVE_OPTION")!=-1)
+        		openFile(fopen);
     }
+
+    private void openFile(FileSelector fopen) {
+    	String newFile = null;
+    	if (fopen.getFile() != null) 
+    		newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
+    	if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
+    	else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
+    }
+
 	
     /**
      * Load file into textarea.
