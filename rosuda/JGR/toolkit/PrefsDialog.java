@@ -39,6 +39,9 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
     private JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",JGRPrefs.useHelpAgentEditor);
     private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings",JGRPrefs.useEmacsKeyBindings);
     
+    
+    private JCheckBox showHiddenFiles = new JCheckBox("Show hidden files",!JGRPrefs.showHiddenFiles);
+    
     //private JTextField workinDirectory = new JTextField(JGRPrefs.WorkingDirectory);
 
     private JButton cancel = new JButton("Cancel");
@@ -119,6 +122,10 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         prefs.add(useEmacsKeyBindings,gbc);
         gbc.gridy = 6;
         prefs.add(new JLabel("* Emacs Keybindings are only advisable for Mac OS X!"),gbc);
+        
+        gbc.gridy = 7;
+        prefs.add(showHiddenFiles,gbc);
+        
         /*gbc.gridy = 7;
         prefs.add(new JLabel(" "),gbc);
         gbc.gridy = 8;
@@ -186,6 +193,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
         JGRPrefs.useHelpAgentEditor = useHelpAgentEditor.isSelected();
         JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
+        JGRPrefs.showHiddenFiles = !showHiddenFiles.isSelected();
         //JGRPrefs.WorkingDirectory = workinDirectory.getText().trim().length()==0?System.getProperty("user.home"):workinDirectory.getText().trim();
         JGRPrefs.apply();
     }

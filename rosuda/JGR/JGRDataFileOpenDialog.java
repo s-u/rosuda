@@ -107,6 +107,9 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			filename.add(buttons);
 			this.setPreferredSize(new Dimension(550,450));
 		}
+		
+		
+		this.setFileHidingEnabled(JGRPrefs.showHiddenFiles);
 		this.showOpenDialog(f);
 	}
 	

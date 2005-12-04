@@ -83,6 +83,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements ActionListene
 			filename.add(command,filename.getComponentCount()-1);
 			this.setPreferredSize(new Dimension(550,450));
 		}
+		this.setFileHidingEnabled(JGRPrefs.showHiddenFiles);
 		this.showSaveDialog(f);
     }
     
