@@ -176,6 +176,8 @@
 		<string>org.rosuda.klimt.Klimt</string>
 		<key>Properties</key>
 		<dict>
+			<key>apple.awt.textantialiasing</key>
+			<string>true</string>
 			<key>com.apple.macos.useScreenMenuBar</key>
 			<string>true</string>
 			<key>com.apple.mrj.application.apple.menu.about.name</key>
@@ -333,6 +335,17 @@
 				6845652807CBD59D00A48DC9,
 				D09999F608E9F852003E49CE,
 				D0999A0108E9F8C2003E49CE,
+				6868FD0909448AAD00189B81,
+				6868FD0A09448AAD00189B81,
+				6868FD0B09448AAD00189B81,
+				6868FD0C09448AAD00189B81,
+				6868FD0D09448AAD00189B81,
+				6868FD0E09448AAD00189B81,
+				6868FD0F09448AAD00189B81,
+				6868FD1009448AAD00189B81,
+				6868FD1109448AAD00189B81,
+				6868FD1209448AAD00189B81,
+				6868FD1309448AAD00189B81,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -735,6 +748,17 @@
 				6845652707CBD59D00A48DC9,
 				D09999FB08E9F884003E49CE,
 				D0999A0208E9F8C2003E49CE,
+				6868FD1409448AAD00189B81,
+				6868FD1509448AAD00189B81,
+				6868FD1609448AAD00189B81,
+				6868FD1709448AAD00189B81,
+				6868FD1809448AAD00189B81,
+				6868FD1909448AAD00189B81,
+				6868FD1A09448AAD00189B81,
+				6868FD1B09448AAD00189B81,
+				6868FD1C09448AAD00189B81,
+				6868FD1D09448AAD00189B81,
+				6868FD1E09448AAD00189B81,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2910,6 +2934,226 @@
 			settings = {
 			};
 		};
+		6868FCFE09448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = AwtPlotComponent.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FCFF09448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = AwtQueryPopup.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0009448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PlotCanvas.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0109448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PlotComponent.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0209448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PlotComponentFactory.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0309448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PlotJPanel.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0409448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PPrimBox.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0509448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = PPrimCircle.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0609448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = SwingPlotComponent.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0709448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = SwingQueryPopup.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0809448AAD00189B81 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = TJFrame.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		6868FD0909448AAD00189B81 = {
+			fileRef = 6868FCFE09448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0A09448AAD00189B81 = {
+			fileRef = 6868FCFF09448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0B09448AAD00189B81 = {
+			fileRef = 6868FD0009448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0C09448AAD00189B81 = {
+			fileRef = 6868FD0109448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0D09448AAD00189B81 = {
+			fileRef = 6868FD0209448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0E09448AAD00189B81 = {
+			fileRef = 6868FD0309448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD0F09448AAD00189B81 = {
+			fileRef = 6868FD0409448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1009448AAD00189B81 = {
+			fileRef = 6868FD0509448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1109448AAD00189B81 = {
+			fileRef = 6868FD0609448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1209448AAD00189B81 = {
+			fileRef = 6868FD0709448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1309448AAD00189B81 = {
+			fileRef = 6868FD0809448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1409448AAD00189B81 = {
+			fileRef = 6868FCFE09448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1509448AAD00189B81 = {
+			fileRef = 6868FCFF09448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1609448AAD00189B81 = {
+			fileRef = 6868FD0009448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1709448AAD00189B81 = {
+			fileRef = 6868FD0109448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1809448AAD00189B81 = {
+			fileRef = 6868FD0209448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1909448AAD00189B81 = {
+			fileRef = 6868FD0309448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1A09448AAD00189B81 = {
+			fileRef = 6868FD0409448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1B09448AAD00189B81 = {
+			fileRef = 6868FD0509448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1C09448AAD00189B81 = {
+			fileRef = 6868FD0609448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1D09448AAD00189B81 = {
+			fileRef = 6868FD0709448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6868FD1E09448AAD00189B81 = {
+			fileRef = 6868FD0809448AAD00189B81;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		68AC23930798656000715278 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3186,6 +3430,9 @@
 		};
 		F8EE910104D6A73600FA4796 = {
 			children = (
+				6868FCFE09448AAD00189B81,
+				6868FCFF09448AAD00189B81,
+				6868FD0809448AAD00189B81,
 				F8EE910204D6A73600FA4796,
 				F8EE910304D6A73600FA4796,
 				F8EE910404D6A73600FA4796,
@@ -3196,13 +3443,19 @@
 				1CA4332304D820AA00A8030F,
 				1CE96E5204D6D86100A8030F,
 				68AC23930798656000715278,
+				6868FD0009448AAD00189B81,
 				1CE96E5B04D6DA8000A8030F,
+				6868FD0109448AAD00189B81,
+				6868FD0209448AAD00189B81,
+				6868FD0309448AAD00189B81,
 				1CA4332F04D840DD00A8030F,
 				1CE96E5704D6D95900A8030F,
 				1CE96E5804D6D95900A8030F,
 				1C4A15D404D93F5E00A8030F,
 				1CA4331D04D819B900A8030F,
 				1C8656BA055935AE00A8030F,
+				6868FD0409448AAD00189B81,
+				6868FD0509448AAD00189B81,
 				1C166470058E084200A30C14,
 				1C42D10D06D39D3900B9B7D6,
 				1C8656BB055935AE00A8030F,
@@ -3212,6 +3465,8 @@
 				1C4A15D504D93F5E00A8030F,
 				1CE96E5504D6D8F500A8030F,
 				1CE96E7804D7E7BA00A8030F,
+				6868FD0609448AAD00189B81,
+				6868FD0709448AAD00189B81,
 				F8EE910604D6A73600FA4796,
 				F8EE910704D6A73600FA4796,
 				F8EE910804D6A73600FA4796,
