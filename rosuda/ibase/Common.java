@@ -59,6 +59,9 @@ public class Common
 
     public static Font defaultFont=new Font("SansSerif",Font.PLAIN,10);
     
+	/** default plot component type (AWT/Swing/...) for automatically created plot components */
+	public static int defaultPlotComponentType = org.rosuda.ibase.toolkit.PlotComponent.AWT;
+	
     /** Notify-Message constant: SMarker state changed */
     public static final int NM_MarkerChange       =0x001000;
     /** Notify-Message constant: SMarker state changed (secondary marks) */
