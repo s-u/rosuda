@@ -48,11 +48,13 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
     
     public PageFormat pageFormat;
     
+	/** creates a new PoGraSS-capable driver consisting of layers to draw on, using ps plot component as its target, specified number of layers and the axes x and y. If pc is set to <code>null</code> then a plot component of the default type (see Common.defaultPlotComponentType) is created automatically. Axes can be <code>null</code> if not used. */
     public PGSCanvas(PlotComponent pc, int layers, Axis x, Axis y) {
         this(pc, layers);
 		ax=x; ay=y;
     }
 	
+	/** equals to using PGSCanvas(pc, layers, null, null) */
     public PGSCanvas(PlotComponent pc, int layers) {
 		super(pc, layers);
 		pm=new PlotManager(this);
@@ -60,8 +62,19 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
         globalNotifier.addDepend(this);
     }
 	
+	/** equals to using PGSCanvas(pc, 1, null, null) */
     public PGSCanvas(PlotComponent pc) { // if no layer # specified, use 1 resulting in old behavior when DBCanvas was used
         this(pc, 1);
+    }
+
+	/** equals to using PGSCanvas(null, layers) */
+	public PGSCanvas(int layers) {
+        this(null, layers);
+    }
+	
+	/** equals to using PGSCanvas(null, 1) */
+	public PGSCanvas() {
+        this(null, 1);
     }
 	
     protected void finalize() {
@@ -79,7 +92,7 @@ public class PGSCanvas extends LayerCanvas implements Commander, Dependent, Prin
         }
     }
 	
-    /** returns the global notifier common to all PGScanvas descendants. It is mainly used by routines which change some user settings and need to notify all plots regardless of content. */
+    /** returns the global notifier common to all PGSCanvas descendants. It is mainly used by routines which change some user settings and need to notify all plots regardless of content. */
     public static Notifier getGlobalNotifier() {
         if (globalNotifier==null) globalNotifier=new Notifier();
         return globalNotifier;
