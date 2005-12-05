@@ -4,9 +4,10 @@ import java.util.Vector;
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
-/** Axis - implements transformation of cases, values or categories to orthogonal graphical
- * coordinates and vice versa. Supported axis types are: numerical, equidistant (i.e. nominal/ordinal by index), categorical-equidistant, categorical-proportional by population.
- * @version $Id$ */
+/** Axis - implements transformation of cases, values or categories to orthogonal graphical coordinates and vice versa. Supported axis types are: numerical, equidistant (i.e. nominal/ordinal by index), categorical-equidistant, categorical-proportional by population.
+
+@version $Id$
+*/
 
 public class Axis extends Notifier {
     /** Axis orientation: horizontal (X) */
@@ -284,23 +285,22 @@ public class Axis extends Notifier {
      */
     public int getCatSeqIndex(int c) {
         return seq.posOfCat(c);
-    };
-    
-    /**
-     * Inverse of {@link #getCatSeqIndex}.
-     */
-    public int getCatAtPos(int p){
-        return seq.catAtPos(p);
     }
     
-    /** returns a tick distance that is somewhat "sensible" to be used for
-     * ticks given mean required distance. The tick distance will be a power
-     * of 10. The result can be used to obtain more sophisticated tick
-     * values by simply dividing by 2,4 or 5 - or alternatively multipl.
-     * by 2, 2.5 or 5
-     * @param medDist mean required distance
-     * @param mindist minimal required distance (if set to 0 only powers of 10 will be used)
-     * @return proposed tick distance */
+
+	/** Inverse of {@link #getCatSeqIndex}. */
+	public int getCatAtSeqIndex(int c) {
+        return seq.catAtPos(c);
+    }
+	
+    /** returns a tick distance that is somewhat "sensible" to be used for 
+	ticks given mean required distance. The tick distance will be a power
+	of 10. The result can be used to obtain more sophisticated tick
+	values by simply dividing by 2,4 or 5 - or alternatively multipl.
+	by 2, 2.5 or 5
+	@param medDist mean required distance
+        @param mindist minimal required distance (if set to 0 only powers of 10 will be used)
+	@return proposed tick distance */
     public double getSensibleTickDistance(int medDist, int minDist) {
         double lgLen=(double)((gLen<0)?-gLen:gLen);
         double lvLen=(vLen<0)?-vLen:vLen;

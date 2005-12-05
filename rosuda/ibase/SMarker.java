@@ -6,6 +6,13 @@ import java.util.*;
    Maintains a fixed list of markers, i.e. an array of 0..xxx indices that can be marked each.
    It uses both a fixed map and dynamic list of marked positions. Moreover it extends
    {@link Notifier} class to allow notification upon changes of state.
+ 
+   <p>This marker class implements two independent ways of tagging individual cases: primary and secondary markings.
+  
+   <p><b>primary marks</b> are binary only (i.e. on/off) and are implemented in a fashion that allows efficient access to both list of marked cases and fast query for a mark of a case. Main use is to implement highlighting.
+ 
+   <p><b>secondary marks</b> allow (almost) arbitrary integers to be associated with individual cases. This kind of mark is not specially efficient. Main use is to implement color brushing.
+ 
    @version $Id$
  */
 public class SMarker extends Notifier implements Commander {
@@ -18,6 +25,9 @@ public class SMarker extends Notifier implements Commander {
 
     /** highest used mark - for friend functions that need to allocate arrays for mask maps */
     int maxMark;
+	
+	/** number of secondary marked cases */
+	int secMarked=0;
     
     SVarSet masterSet;
     
@@ -40,7 +50,8 @@ public class SMarker extends Notifier implements Commander {
         list=new Vector();
         msize=newsize;
         masterSet=null;
-        maxMark=1; // it is never below 1 since 0 and 1 are used for primary mask        
+        maxMark=1; // it is never below 1 since 0 and 1 are used for primary mask
+		secMarked=0;
     }
     
     /** returns size of the marker array */
@@ -51,7 +62,7 @@ public class SMarker extends Notifier implements Commander {
 
     /** gets mark at index <code>pos</code>
 	@param pos desired index
-	@return mark at the index <code>pos</code>. primary mask always returns 1 regardless of secondary mark
+	@return mark at the index <code>pos</code>. primary mask always returns -1 regardless of secondary mark
     */
     public int get(int pos) { return ((pos<0)||(pos>=msize))?0:(((mask[pos]&1)==1)?-1:(mask[pos]>>1)); };
 
@@ -110,6 +121,8 @@ public class SMarker extends Notifier implements Commander {
     public void setSec(int pos, int mark) {
         if (mark>maxMark) maxMark=mark;
         mark<<=1;
+		if (mark>0 && (mask[pos]>>1)==0) secMarked++;
+		else if (mark==0 && (mask[pos]>>1)>0) secMarked--;
         mask[pos]=(mask[pos]&1)|mark;
     }
 
@@ -121,12 +134,18 @@ public class SMarker extends Notifier implements Commander {
             Integer i=(Integer)e.nextElement();
             if (i!=null) {
                 int id=i.intValue();
+				if (mark>0 && (mask[id]>>1)==0) secMarked++;
+				else if (mark==0 && (mask[id]>>1)>0) secMarked--;
                 mask[id]=(mask[id]&1)|mark;
             }
         }
     }
 
+	/** returns the highest secondary mark. The return value does not necessarily reflect the highest currently used mark - it should be used as upper bound only. */
     public int getMaxMark() { return maxMark; }
+	
+	/** returns the number of cases having a secondary mark (irrespective of any primary mark). */
+	public int getSecCount() { return secMarked; }
     
     /** returns <code>Enumeration</code> of the marked indices.
 	@return <Enumeration> of marked indices (which are a list of <code>Integer</code> objects). Analogous to <code>emelents()</code> method of a <code>Vector</code> */
@@ -164,6 +183,16 @@ public class SMarker extends Notifier implements Commander {
         };
     }
 
+	/** removes all secondary marks */
+	public void resetSec() {
+		if (secMarked>0) {
+			int i=0;
+			while (i<msize) mask[i++]&=1;
+		}
+		maxMark=1;
+		secMarked=0;
+	}
+	
     /** returns master dataset associated with this marker. Please note that a marker doesn't have to be associated with any SVarSet */
     public SVarSet getMasterSet() {
         return masterSet;

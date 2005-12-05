@@ -213,7 +213,7 @@ public class Klimt
             System.out.println("Klimt.openTreeFile("+f+","+fn+","+dr+","+readOnlyDataset+","+createFrames+")");
         SVarSet tvs=dr.getDataSet();
         TreeRegistry tr=dr.getTreeRegistry();
-		if (fn.substring(fn.length()-4).equals(".flf")) {
+		if (fn!=null && fn.substring(fn.length()-4).equals(".flf")) {
 			try {
 				LoaderFLF l = new LoaderFLF();
 				l.load(new File(fn), tvs);

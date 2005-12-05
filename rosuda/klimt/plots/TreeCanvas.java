@@ -63,7 +63,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public boolean showDevGain=false;
     /** show sample deviance as well (has no effect in showDevGain=false) */
     public boolean showSampleDev=true;
-
+	/** show prediction in inner nodes, too */
+	public boolean showPVAll=false;
+	
     /** show node labels */
     public boolean showLabels=true;
     public boolean shortLabels=false;
@@ -400,36 +402,36 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param g graphic context to paint on */
 
     public void paintPoGraSS(PoGraSS p) {	
-	Rectangle r=pc.getBounds();
-	p.setBounds(r.width,r.height);
-	p.begin();
-	p.defineColor("white",255,255,255);
-	p.defineColor("selected",192,192,255);
-	p.defineColor("leaf",255,255,192);
-	p.defineColor("path",192,255,255);
-	p.defineColor("black",0,0,0);
+		Rectangle r=pc.getBounds();
+		p.setBounds(r.width,r.height);
+		p.begin();
+		p.defineColor("white",255,255,255);
+		p.defineColor("selected",192,192,255);
+		p.defineColor("leaf",255,255,192);
+		p.defineColor("path",192,255,255);
+		p.defineColor("black",0,0,0);
         p.defineColor("obj",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
-	p.defineColor("hilite",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
-	p.defineColor("red",255,0,0);
-	p.defineColor("sampleDev",0,128,64);
-	p.defineColor("lines",96,96,255);	
-	p.defineColor("selText",255,0,0);
-	p.defineColor("shadow",160,160,160);
-	p.defineColor("zoomOut",0,0,128);
+		p.defineColor("hilite",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+		p.defineColor("red",255,0,0);
+		p.defineColor("sampleDev",0,128,64);
+		p.defineColor("lines",96,96,255);	
+		p.defineColor("selText",255,0,0);
+		p.defineColor("shadow",160,160,160);
+		p.defineColor("zoomOut",0,0,128);
         p.defineColor("selnode",0,0,192);
-
-	if (zoomDrag) {
-	    p.setColor("white");
-	    p.fillRect(ldx,ldy,zoomDragX-ldx,zoomDragY-ldy);
-	    p.setColor("red");
-	    p.drawRect(ldx,ldy,zoomDragX-ldx,zoomDragY-ldy);
-	};
-
+		
+		if (zoomDrag) {
+			p.setColor("white");
+			p.fillRect(ldx,ldy,zoomDragX-ldx,zoomDragY-ldy);
+			p.setColor("red");
+			p.drawRect(ldx,ldy,zoomDragX-ldx,zoomDragY-ldy);
+		};
+		
         showSampleDev=(root.sampleDev>0 && root.sampleDev!=root.F1);
-	paintLeaf(p,root);
+		paintLeaf(p,root);
 
-	//System.out.println("paint; zoomFactor="+zoomFactor);
-	p.end();
+		//System.out.println("paint; zoomFactor="+zoomFactor);
+		p.end();
     };
 
     /** paints a node and all its subnodes recursively.
@@ -443,7 +445,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         int w=t.width, h=t.height;
         int x=t.cx-w/2, y=t.cy-h/2, x2=x+w, y2=y+h;
         int dTotal=0, dMark=0;
-
+		SMarker m=null;
+		
         if (zoomFactor>0.3) {
             // shadow
             /* disable all shadows; this is no beauty contest
@@ -455,7 +458,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             // get # of marked cases (dMark) and total # of cases (dTotal) in that node
             if (t.data!=null) dTotal=t.data.length;
             if (t.getSource()!=null) {
-                SMarker m=t.getSource().getMarker();
+                m=t.getSource().getMarker();
                 if ((m!=null)&&(t.data!=null)) {
                     int e=0;
                     while (e<t.data.length) {
@@ -519,9 +522,11 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (zoomFactor>0.3) {
             // paint base rect
             String bgc="obj";
-            // if (t.sel==1) bgc="selected";
-            // if (t.sel==3) bgc="leaf";
-            // if (t.sel==2) bgc="path";
+			if (m!=null && m.marked()==0) {
+				if (t.sel==1) bgc="selected";
+				if (t.sel==3) bgc="leaf";
+				if (t.sel==2) bgc="path";
+			}
             g.setColor(bgc);
             if (nodeMode) {
                 g.fillRect(x,y,x2-x,y2-y);
@@ -534,7 +539,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                      g.setColor("red"); g.drawLine(x,y2+2,x2,y2+2);
                  }; */
             } else {
-                if (t.isLeaf() || t.isPruned()) {
+                if (t.isLeaf() || t.isPruned() || (m!=null && (m.marked()>0 || m.getSecCount()>0))) {
                     g.fillRect(x,y,x2-x,y2-y); g.setColor("black"); g.drawRect(x,y,x2-x,y2-y);
                 } else {
                     g.fillRoundRect(x,y,x2-x,y2-y,15,15); g.setColor("black"); g.drawRoundRect(x,y,x2-x,y2-y,15,15);
@@ -542,23 +547,28 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             };
 
             // if hilighted draw it
-            if (dMark>0) {
-	    // base is always white regardles of type
-		g.setColor("obj"); g.fillRect(x,y,x2-x,y2-y);
-		//g.setColor("black"); g.drawRect(x,y2-10,x2-x,10);
-		g.setColor("hilite");
+			if (m!=null && m.getSecCount()>0) {
+				g.setColor("obj"); g.fillRect(x,y,x2-x,y2-y);
+				drawGroupsRect(g,x,y,x2-x,y2-y,m,t.data);
+				g.setColor((nodeMode && t.underflowWarning)?"red":"black");
+				g.drawRect(x,y,x2-x,y2-y);
+			} else if (dMark>0) {
+				// base is always white regardles of type
+				g.setColor("obj"); g.fillRect(x,y,x2-x,y2-y);
+				//g.setColor("black"); g.drawRect(x,y2-10,x2-x,10);
+				g.setColor("hilite");
                 int markWidth=(int)(((double)dMark)/((double)dTotal)*((double)(x2-x)));
-		if (nodeMode) {
-		    g.fillRect(x,y,markWidth,y2-y);
+				if (nodeMode) {
+					g.fillRect(x,y,markWidth,y2-y);
                     g.setColor((t.underflowWarning)?"red":"black");
-		    g.drawRect(x,y,markWidth,y2-y);
-		    g.drawRect(x,y,x2-x,y2-y);
-		} else {
-		    g.fillRect(x,y,markWidth,y2-y);
-		    g.setColor("black");
+					g.drawRect(x,y,markWidth,y2-y);
+					g.drawRect(x,y,x2-x,y2-y);
+				} else {
+					g.fillRect(x,y,markWidth,y2-y);
+					g.setColor("black");
                     //g.moveTo(x,y2-10); g.lineTo(x,y2); g.lineTo(x2,y2); g.lineTo(x2,y2-10); g.moveTo(x,y2-10);
                     g.drawRect(x,y,x2-x,y2-y);
-		};
+				};
                 if ((markWidth<2 && dMark>0) || (markWidth>=x2-x-1 && dMark<dTotal)) {
                     g.setColor("red"); g.drawLine(x,y2+2,x2,y2+2);
                 };
@@ -603,7 +613,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (selectedNode!=null && t.Name.compareTo(selectedNode.Name)==0) g.setColor("selText"); else g.setColor("black");
 
         if (zoomFactor>0.3)  {
-            if (showLabels && !t.isLeaf() && !t.isPruned()) {
+            if (showPVAll && showLabels && !t.isLeaf() && !t.isPruned()) {
                 SVar prediction=root.getRootInfo().prediction;
                 String pv=t.Name;
                 if (prediction!=null && prediction.isNum())
@@ -641,7 +651,10 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
                         if (c.length()>24) c=c.substring(0,24)+"...";
                     }
                 }
-                if (shortLabels) {
+				i=c.indexOf(">=");
+				if (i>=0)
+					c="³"+c.substring(i+2);
+				if (shortLabels) {
                     if (isCatSplit && t.getParent()!=null && t.getParent().at(0)!=t) c="";
                     if (!isCatSplit) c=(c.charAt(0)=='<')?("<"+Tools.getDisplayableValue(t.splitValF,t.splitVar.getMax()-t.splitVar.getMin())):"";
                 }
@@ -1137,6 +1150,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         // disable direct quit - too dangerous ;)
         // if (e.getKeyChar()=='q') run(this,"quit");
 	if (e.getKeyChar()=='l') run(this,"labels");
+	if (e.getKeyChar()=='L') { showPVAll=!showPVAll; setUpdateRoot(0); repaint(); }
 	if (e.getKeyChar()=='+') run(this,"zoomDevIn");
 	if (e.getKeyChar()=='-') run(this,"zoomDevOut");
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
@@ -1147,7 +1161,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()=='1') { PD_goCart=!PD_goCart; redesignNodes(true); }
 	if (e.getKeyChar()=='2') { PD_lines=!PD_lines; redesignNodes(false); }
 	if (e.getKeyChar()=='3') { PD_POE=!PD_POE; redesignNodes(true); }
-        if (e.getKeyChar()=='L') { PD_POE_log=!PD_POE_log; redesignNodes(true); }
+        if (e.getKeyChar()=='O') { PD_POE_log=!PD_POE_log; redesignNodes(true); }
         if (e.getKeyChar()=='y') { moveNodeMpl(root,1.0d,2.0d); repaint(); };
         if (e.getKeyChar()=='Y') { moveNodeMpl(root,1.0d,0.5d); repaint(); };
         if (e.getKeyChar()=='w') { moveNodeMpl(root,2.0d,1.0d); repaint(); };
@@ -1185,4 +1199,31 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	if (e.getKeyChar()==' ' || e.getKeyCode()==KeyEvent.VK_META)
 	    setToolMode(lastToolModeBeforeMove);
     };
+
+/** tool: draws all selections including secondary marks in a rectangle from left to right */
+public void drawGroupsRect(PoGraSS g, int x, int y, int w, int h, SMarker m, int[] cases) {
+	int mx[]=new int[m.getMaxMark()+1];
+	int i=0;
+	while (i<cases.length) {
+		int k=m.get(cases[i]);
+		if (k!=0) {			
+			if (k==-1) k=0; 
+			mx[k]++;
+		}
+		i++;
+	}
+	i=0;
+	double tw=(double)w, shift=0d, N=(double)cases.length;
+	while(i<mx.length) {
+		if (mx[i]>0) {
+			if (i==0) g.setColor("hilite");
+			else g.setColor(ColorBridge.getMain().getColor(i));
+			double lw=(double)mx[i]/N*tw;
+			g.fillRect(x+(int)shift,y,(int)lw+1,h);
+			shift+=lw;
+		}
+		i++;
+	}
+}
+
 };

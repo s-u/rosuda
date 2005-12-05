@@ -65,7 +65,7 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Spineplot","spine","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","Spineplot","spine","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIspine=EzMenu.getItem(f,"spine");
         dontPaint=false;
@@ -345,7 +345,7 @@ public class BarCanvas extends BaseCanvas {
             showLabels=!showLabels;
             setUpdateRoot(0);
             repaint();
-        };
+        }
         if (cmd=="spine") {
             if (isSpine) {
                 ax.setType(Axis.T_EqCat);
@@ -359,7 +359,40 @@ public class BarCanvas extends BaseCanvas {
             updateObjects();
             setUpdateRoot(0);
             repaint();
-        };
+        }
+		if (cmd=="set1") {
+			if (pp!=null && pp.length>0) {
+				int i=0;
+				while (i<pp.length) {
+					int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+					int j=0;
+					while (j<cs.length)
+						m.setSec(cs[j++],i+16);
+					i++;
+				}
+				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+			}
+		}
+		if (cmd=="set64") {
+			if (pp!=null && pp.length>0) {
+				int i=0;
+				while (i<pp.length) {
+					System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
+					int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+					int j=0;
+					while (j<cs.length)
+						m.setSec(cs[j++],64+(64*i/pp.length));
+					i++;
+				}
+				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+			}
+		}
+		if (cmd=="reset") {
+			if (m.getSecCount()>0) {
+				m.resetSec();
+				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+			}
+		}
         return null;
     };
     

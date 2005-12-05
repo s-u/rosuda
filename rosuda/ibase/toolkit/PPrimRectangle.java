@@ -43,31 +43,47 @@ public class PPrimRectangle extends PPrimBase {
 
     public void paintSelected(PoGraSS g, int orientation, SMarker m) {
         if (r==null) return;
-        double sa=getMarkedProportion(m,-1);
-        //System.out.println("pp["+i+"] sa="+sa+" "+pp);
-        if (sa>0d) {
-            int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
-            if (orientation==0) { // bottom-up
-                int nrH=(int)(((double)rH)*sa);
-                rY+=rH-nrH;
-                rH=nrH;
-            } else if (orientation==2) { // top-down
-                rH=(int)(((double)rH)*sa);
-            } else if (orientation==1) { // left-right
-                rW=(int)(((double)rW)*sa);
-            } else if (orientation==3) { // right-left
-                int nrW=(int)(((double)rW)*sa);
-                rX+=rW-nrW;
-                rW=nrW;
-            }
-            g.setColor("marked");
-            g.fillRect(rX,rY,rW,rH);
-            g.setColor("outline");
-            if (drawSelectionBorder)
-                g.drawRect(rX,rY,rW,rH);
-            else
-                g.drawRect(r.x,r.y,r.width,r.height);
+		int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
+		double totW=(double)rW, totH=(double)rH;
+		int mark=-1;
+		double shift=0d;
+		boolean hasAny=false;
+		
+		while (mark<=m.getMaxMark()) {
+			double sa=getMarkedProportion(m,mark);
+			//System.out.println("pp["+i+"] sa="+sa+" "+pp);
+			if (sa>0d) {
+				hasAny=true;
+				if (orientation==0) { // bottom-up
+					rH=(int)(totH*sa);
+					rY=r.y+(int)(totH-totH*shift)-rH;
+				} else if (orientation==2) { // top-down
+					rH=(int)(totH*sa);
+					rY=r.y+(int)(totH*shift);
+				} else if (orientation==1) { // left-right
+					rW=(int)(totW*sa);
+					rX=r.x+(int)(totW*shift);					
+				} else if (orientation==3) { // right-left
+					rW=(int)(totW*sa);
+					rX=r.x+(int)(totW-totW*shift)-rW;
+				}
+				shift+=sa;
+				if (mark==-1)
+					g.setColor("marked");
+				else
+					g.setColor(ColorBridge.getMain().getColor(mark));
+				g.fillRect(rX,rY,rW,rH);
+				g.setColor("outline");
+				if (drawSelectionBorder)
+					g.drawRect(rX,rY,rW,rH);
+			}
+			if (mark==-1 && m.getSecCount()<1) break;
+			mark++;			
         }
+		if (hasAny) {
+			g.setColor("outline");
+			g.drawRect(r.x,r.y,r.width,r.height);
+		}
     }
 
     public String toString() {

@@ -41,8 +41,13 @@ public class PPrimCircle extends PPrimBase {
     public void paintSelected(org.rosuda.pograss.PoGraSS g, int orientation, org.rosuda.ibase.SMarker m) {
         if(ref!=null){
             for(int i=0; i<ref.length; i++){
-                if(m.at(ref[i])){
-                    g.setColor("marked");
+				int mark = m.get(ref[i]);
+                if (mark!=0) {
+					// FIXME: if we represent more that 1 ID then we're screwed ..
+					if (mark==-1)
+						g.setColor("marked");
+					else
+						g.setColor(ColorBridge.getMain().getColor(mark));
                     g.fillOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }
