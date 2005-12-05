@@ -94,6 +94,19 @@ public class AwtPlotComponent implements PlotComponent {
 	public int getHeight() {
 		return comp.getHeight();
 	}
+	
+	public Window getParentWindow() {
+		//System.out.println("AwtPlotComponent["+this+"].getParentWindow().comp="+comp);
+		Container p = getParent();
+		//System.out.println("  container: "+p);
+		while (p!=null && !(p instanceof Window)) {
+			//System.out.println("  container: "+p);
+			p=p.getParent();
+		}
+		System.out.println("-->"+p);
+		return (Window)p;
+	}
+
 	// additions to SWING: do nothing in AWT
 	public void setPreferredSize(Dimension d) {}
 	public void setMinimumSize(Dimension d) {}

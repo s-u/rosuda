@@ -9,10 +9,11 @@ public interface PlotComponent {
 	public final int OPENGL = 2;
 	
 	public Component getComponent();
+	/* FIME: the two methods below destroy the independence and should be removed */
 	public void initializeLayerCanvas(LayerCanvas l);
 	public void initializeGraphics(Window w);
+	
 	public int getGraphicsEngine();
-	public PlotComponent getAssociatedPlotComponent();
 	
 	// we redirect only necessary methods to the component
 	void repaint();
@@ -28,8 +29,10 @@ public interface PlotComponent {
 	Dimension getSize();
 	Image createImage(int width, int height);
 	Color getForeground();
+	/* this should be removed! a PC doesn't have to be Graphics based (e.g. OpenGL is not) */
 	Graphics getGraphics();
 	Container getParent();
+	Window getParentWindow();
 	int getWidth();
 	int getHeight();
 	

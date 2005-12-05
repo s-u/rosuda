@@ -95,6 +95,12 @@ public class SwingPlotComponent implements PlotComponent {
 	public int getHeight() {
 		return comp.getHeight();
 	}
+	public Window getParentWindow() {
+		if (comp==null) return null;
+		Container p = comp.getParent();
+		while (p!=null && !(p instanceof Window)) p=p.getParent();
+		return (Window)p;
+	}
 	
 	// additions to SWING
 	public void setPreferredSize(Dimension d) {
