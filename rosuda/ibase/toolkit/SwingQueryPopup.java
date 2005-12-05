@@ -14,18 +14,19 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 
 	JToolTip win;
     Window owner;
-    PlotComponent pcomp;
+    PlotComponent parentcomp, pcomp;
     
     SVarSet vs;
 	
-    public SwingQueryPopup(PlotComponent pc, Frame own, SVarSet vs, String ct) {
-        this(pc,own,vs,ct,-1,-1);
+    public SwingQueryPopup(PlotComponent pc, Window ow, SVarSet vs, String ct) {
+        this(pc,ow,vs,ct,-1,-1);
     }
 
-    public SwingQueryPopup(PlotComponent pc, Frame own, SVarSet uvs, String ct, int w, int cid)
+    public SwingQueryPopup(PlotComponent pc, Window ow, SVarSet uvs, String ct, int w, int cid)
     {
-    	pcomp = pc;
-    	owner=own;
+		parentcomp = pc;
+    	pcomp = new SwingPlotComponent();
+		owner = ow; if (owner==null) owner=pc.getParentWindow();
     	vs = uvs;
     	
     	ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -45,11 +46,11 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 	    if (Global.DEBUG>0) System.out.println("hiding win");
 	    ToolTipManager.sharedInstance().setEnabled(false);
 	}
-	public void setContent(PlotComponent pc, String s) {
-		setContent(pc,s,-1);
+	public void setContent(String s) {
+		setContent(s,-1);
 	}
 	
-	public void setContent(PlotComponent pc, String t, int cid) {
+	public void setContent(String t, int cid) {
         String s=t;
         if (vs!=null && cid>=0) {
             int i=0;
@@ -61,10 +62,10 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
                 i++;
             }
         }
-        setContentString(pc,s);
+        setContentString(s);
 	}
 	
-    public void setContent(PlotComponent pc, String t, int[] cid) {
+    public void setContent(String t, int[] cid) {
         String s=t;
         if (vs!=null && cid!=null && cid.length>0) {
             int i=0;
@@ -103,11 +104,11 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
                 i++;
             }
         }
-        setContentString(pc,s);
+        setContentString(s);
     }
 
 	
-	void setContentString(PlotComponent pc, String s) {
+	void setContentString(String s) {
 		String t = "<html>";
 //		t+= "<BODY BGCOLOR=\"#"+ Math.abs(Common.popupColor.getRGB()) + "\">";
 		t+= "<BODY BGCOLOR=\"YELLOW\">";
@@ -117,7 +118,7 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     		if(st.hasMoreElements()) t+="<br>";
     	};
 		t+="</body></html>";
-        pc.setToolTipText(t);
+        parentcomp.setToolTipText(t);
 	}
 
 	
