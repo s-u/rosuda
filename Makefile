@@ -89,9 +89,12 @@ klimt-docs: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC)
 iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC)
 	$(can-with-jar)
 
-iwidgets.jar: iplots.jar $(IWIDGETS_SRC)
+javaGD.jar: $(JAVAGD_SRC)
+	$(can-with-jar)
+
+iwidgets.jar: iplots.jar JGR.jar $(IWIDGETS_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath iplots.jar $(IWIDGETS_SRC)
+	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
 
