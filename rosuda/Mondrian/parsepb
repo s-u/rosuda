@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+# alternative paths to look for files when relative to enclosing group
+@path=("../JRclient");
+
 #$pf="/Network/Servers/phaeton.math.uni-augsburg.de/NetUsers/urbaneks/develop/org/rosuda/Mondrian/Mondrian.pbproj";
 $pf=shift;
 
@@ -66,7 +69,19 @@ foreach(@build) {
             $matches++ if ($t=~/\.$_$/);
         }
     }
-    print "$t " if($matches>0);
+    if($matches>0) {
+	$ok=0;
+	if (-e $t) {
+	    print "$t ";
+	    $ok=1;
+	} else {
+	    foreach(@path) { if (-e "$_/$t") { print "$_/$t "; $ok=1; last; } }
+	}
+	if ($ok==0) {
+	    print STDERR "(parsepb.warning: $t not found, adding anyway)";
+	    print "$t ";
+	}
+    }
 }
 
 #foreach(sort(keys(%fref))) { print "$_\t$fref{$_}\n"; };
