@@ -111,8 +111,8 @@ public class BoxCanvas extends BaseCanvas {
      * @param f associated frame (or <code>null</code> if none)
      * @param var source variables
      * @param mark associated marker */
-    public BoxCanvas(PlotComponent pc, Frame f, SVar[] var, SMarker mark) {
-        super(pc,f,mark);
+    public BoxCanvas(PlotComponent ppc, Frame f, SVar[] var, SMarker mark) {
+        super(ppc,f,mark);
         v=var[0];
         setTitle("Boxplot ("+v.getName()+")");
         ax=new Axis(v,Axis.O_Y,Axis.T_Num); ax.addDepend(this);
@@ -136,8 +136,8 @@ public class BoxCanvas extends BaseCanvas {
      * @param var source numerical variable
      * @param cvar categorical variable for grouping
      * @param mark associated marker */
-    public BoxCanvas(PlotComponent pc, Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
-        super(pc,f,mark);
+    public BoxCanvas(PlotComponent ppc, Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
+        super(ppc,f,mark);
         v=var; m=mark; cv=cvar; setFrame(f);
         setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
         ax=new Axis(v,Axis.O_Y,Axis.T_Num); ax.addDepend(this);

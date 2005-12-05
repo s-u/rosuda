@@ -33,8 +33,8 @@ public class MosaicCanvas extends BaseCanvas {
     private FrequencyTable ft;
     private int[] combination; // indicates position of recursion
     
-    public MosaicCanvas(PlotComponent pc, Frame f, SVar[] vars, SMarker mark) {
-        super(pc,f, mark);
+    public MosaicCanvas(PlotComponent ppc, Frame f, SVar[] vars, SMarker mark) {
+        super(ppc,f, mark);
         this.frame=f;
         this.v = vars;
         

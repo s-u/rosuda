@@ -43,8 +43,8 @@ public class BarCanvas extends BaseCanvas {
      * @param var associated variable
      * @param mark associated marker
      * @param wvar weight variable for weighted barcharts or null for normal ones; is ignored at the moment */
-    public BarCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark, SVar wvar) {
-        super(pc,f,mark);
+    public BarCanvas(PlotComponent ppc, Frame f, SVar var, SMarker mark, SVar wvar) {
+        super(ppc,f,mark);
         
         allowDragMove=true;
         

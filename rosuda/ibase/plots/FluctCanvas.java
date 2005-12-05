@@ -54,8 +54,8 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	@param v2 variable 2
 	@param mark associated marker
         @param wght weight variable or null for counts */
-    public FluctCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark, SVar wght) {
-        super(pc,2); // 2 layers; 0=base, 1=drag
+    public FluctCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark, SVar wght) {
+        super(ppc,2); // 2 layers; 0=base, 1=drag
         weight=wght;
         setFrame(f); setTitle(((weight==null)?"FD":"WFD")+" ("+v1.getName()+" : "+v2.getName()+")"+((weight==null)?"":"*"+weight.getName()));
 	v=new SVar[2]; A=new Axis[2];
@@ -72,12 +72,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","Toggle alignment","center","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");
-    PlotComponent qpc = pc.getAssociatedPlotComponent();
-    if(qpc.getGraphicsEngine()==PlotComponent.SWING) {
-    	qi=new SwingQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
-    } else {
-    	qi=new AwtQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
-    }
+    qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
     }
 
     public FluctCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark) { this(pc,f,v1,v2,mark,null); }

@@ -80,8 +80,8 @@ public class ScatterCanvas extends BaseCanvas {
      * @param v1 variable 1
      * @param v2 variable 2
      * @param mark associated marker */
-    public ScatterCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark) {
-        super(pc,f,mark);
+    public ScatterCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark) {
+        super(ppc,f,mark);
         
         v=new SVar[2];
         v[0]=v1; v[1]=v2; m=mark;

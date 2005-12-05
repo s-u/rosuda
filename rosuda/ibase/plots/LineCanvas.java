@@ -58,11 +58,11 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	@param v1 variable 1
 	@param v2 variable 2
 	@param mark associated marker */
-    public LineCanvas(PlotComponent pc, Frame f, SVar xv, SVar[] yvs, SMarker mark) {
-        super(pc,3); // 3 layers; 0=base+points, 1=selected, 2=drag
-	setFrame(f);
-	v=new SVar[yvs.length+1];
-	A=new Axis[2];
+    public LineCanvas(PlotComponent ppc, Frame f, SVar xv, SVar[] yvs, SMarker mark) {
+        super(ppc,3); // 3 layers; 0=base+points, 1=selected, 2=drag
+		setFrame(f);
+		v=new SVar[yvs.length+1];
+		A=new Axis[2];
         m=mark; if (m!=null) m.addDepend(this);
 	int i=0;
         String vnlist=null;
@@ -101,6 +101,10 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
         MenuItem mi=EzMenu.getItem(f,"rotate");
         if (mi!=null) mi.setEnabled(false);
     };
+
+    public LineCanvas(Frame f, SVar xv, SVar[] yvs, SMarker mark) {
+		this(null, f, xv, yvs, mark);
+	}
 
     public Axis getXAxis() { return A[0]; }
     public Axis getYAxis() { return A[1]; }

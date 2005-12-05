@@ -15,8 +15,8 @@ import org.rosuda.util.*;
 */
 public class FCCCanvas extends FluctCanvas {
     SVar ccv;
-    public FCCCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark, SVar ccvar) {
-	super(pc,f,v1,v2,mark,null);
+    public FCCCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark, SVar ccvar) {
+	super(ppc,f,v1,v2,mark,null);
 	ccv=ccvar;
     };
 

@@ -23,8 +23,8 @@ public class HamCanvas extends BaseCanvas {
     
     Axis[] ai;
     
-    public HamCanvas(PlotComponent pc, Frame f, SVar[] mv, SMarker mark) {
-        super(pc,f,mark);
+    public HamCanvas(PlotComponent ppc, Frame f, SVar[] mv, SMarker mark) {
+        super(ppc,f,mark);
         setTitle("Hammock Plot");
         v=mv;
         allow180=false;

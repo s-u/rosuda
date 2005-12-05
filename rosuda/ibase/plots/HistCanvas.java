@@ -44,8 +44,8 @@ public class HistCanvas extends BaseCanvas {
      * @param var source variable
      * @param mark associated marker
      */
-    public HistCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) {
-        super(pc,f,mark);
+    public HistCanvas(PlotComponent ppc, Frame f, SVar var, SMarker mark) {
+        super(ppc,f,mark);
         v=var; setTitle("Histogram ("+v.getName()+")");
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
         binw=ax.vLen/bars;

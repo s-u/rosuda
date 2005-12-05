@@ -43,8 +43,8 @@ public class PCPCanvas extends BaseCanvas {
      * @param f associated frame (or <code>null</code> if none)
      * @param yvs list of variables
      * @param mark associated marker */
-    public PCPCanvas(PlotComponent pc, Frame f, SVar[] yvs, SMarker mark) {
-        super(pc,f,mark);
+    public PCPCanvas(PlotComponent ppc, Frame f, SVar[] yvs, SMarker mark) {
+        super(ppc,f,mark);
         
         allowDragMove=true;
         objectClipping=true;

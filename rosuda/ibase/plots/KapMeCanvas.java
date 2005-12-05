@@ -76,8 +76,8 @@ public class KapMeCanvas extends BaseCanvas {
         return kmp+1;
     }
     
-    public KapMeCanvas(PlotComponent pc, Frame f, SVar time, SVar event, SMarker mark) {
-        super(pc,f,mark);
+    public KapMeCanvas(PlotComponent ppc, Frame f, SVar time, SVar event, SMarker mark) {
+        super(ppc,f,mark);
         setTitle("Kaplan-Meier Plot");
         allow180=false;
         

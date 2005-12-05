@@ -105,8 +105,8 @@ public class BaseCanvas
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public BaseCanvas(PlotComponent pc, Frame f, SMarker mark) {
-        super(pc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
+    public BaseCanvas(PlotComponent ppc, Frame f, SMarker mark) {
+        super(ppc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
         Global.forceAntiAliasing = true;
         m=mark; setFrame(f);
         ax=ay=null;
@@ -117,15 +117,10 @@ public class BaseCanvas
         pc.addMouseMotionListener(this);
         pc.addKeyListener(this);
         f.addKeyListener(this);
-        PlotComponent qpc = pc.getAssociatedPlotComponent();
-        if(qpc.getGraphicsEngine()==PlotComponent.SWING) {
-        	qi=new SwingQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
-        } else {
-        	qi=new AwtQueryPopup(qpc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
-        }
+		qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
         labels=new PlotText(getPlotManager());
         labels.setLayer(0);
-    };
+    }
     
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
@@ -319,15 +314,15 @@ public class BaseCanvas
                             if (actionQuery) {
                                 if (pp[i].cases()>0) {
                                     if (pp[i].getPrimaryCase()!=-1) {
-                                    	setQueryText(pc,queryObject(i),pp[i].getPrimaryCase());
+                                    	setQueryText(queryObject(i),pp[i].getPrimaryCase());
 //                                        qi.setContent(queryObject(i),pp[i].getPrimaryCase());
                                     }
                                     else {
-                                    	setQueryText(pc,queryObject(i),pp[i].getCaseIDs());
+                                    	setQueryText(queryObject(i),pp[i].getCaseIDs());
 //                                        qi.setContent(queryObject(i),pp[i].getCaseIDs());
                                     }
                                 } else {
-                                	setQueryText(pc,queryObject(i));
+                                	setQueryText(queryObject(i));
 //                                    qi.setContent(queryObject(i));
                                 }
                                 qi.setLocation(cl.x+x,cl.y+y);
@@ -557,12 +552,12 @@ public class BaseCanvas
                     if (pp[i]!=null && pp[i].contains(x,y)) {
                     	if (pp[i].cases()>0) {
                         if (pp[i].getPrimaryCase()!=-1) {
-                        	setQueryText(pc,queryObject(i),pp[i].getPrimaryCase());
+                        	setQueryText(queryObject(i),pp[i].getPrimaryCase());
                             } else {
-                            	setQueryText(pc,queryObject(i),pp[i].getCaseIDs());
+                            	setQueryText(queryObject(i),pp[i].getCaseIDs());
                             }
                     	} else {
-                    		setQueryText(pc,queryObject(i));
+                    		setQueryText(queryObject(i));
                         }
                         qi.setLocation(cl.x+x,cl.y+y);
                         qi.show(); hideQI=false;
@@ -654,15 +649,15 @@ public class BaseCanvas
         run(e.getSource(),e.getActionCommand());
     };
     
-    public void setQueryText(PlotComponent pc, String s) {
-    	qi.setContent(pc,s);
+    public void setQueryText(String s) {
+    	qi.setContent(s);
     }
     
-    public void setQueryText(PlotComponent pc, String s, int cid) {
-    	qi.setContent(pc,s,cid);
+    public void setQueryText(String s, int cid) {
+    	qi.setContent(s,cid);
     }
     
-    public void setQueryText(PlotComponent pc, String s, int[] cid) {
-    	qi.setContent(pc,s,cid);
+    public void setQueryText(String s, int[] cid) {
+    	qi.setContent(s,cid);
     }
 }
