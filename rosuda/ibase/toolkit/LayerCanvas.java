@@ -30,9 +30,10 @@ public abstract class LayerCanvas
     /** previous update root */
     int prevUpdateRoot=0;
     
-    /** creates Layers layers */
+    /** creates a Graphics-based driver consisting of layers to draw on, using ps plot component as its target, specified number of layers. If pc is set to <code>null</code> then a plot component of the default type (see Common.defaultPlotComponentType) is created automatically. */
     public LayerCanvas(PlotComponent pc, int Layers) {
-    	pc.initializeLayerCanvas(this);
+		if (pc==null) pc=PlotComponentFactory.createPlotComponent();
+		pc.initializeLayerCanvas(this);
     	this.pc = pc;
     	graphicsEngine = pc.getGraphicsEngine();
     	layers=Layers;
@@ -46,6 +47,11 @@ public abstract class LayerCanvas
     public LayerCanvas(PlotComponent pc) {
         this(pc, 1);
     }
+
+	/** creates default plot component and initializes layers */
+	public LayerCanvas(int layers) {
+		this(null, layers);
+	}
 
     /** set update root layer, i.e. the first layer that has to be updated via {@link #paintLayer}.
         Note that after resize full repaint of all layers is done but updateRoot is not changed.
@@ -174,5 +180,14 @@ public abstract class LayerCanvas
      */
    abstract public void paintLayer(Graphics g, int layer);
    
+	public Component getComponent() { return pc.getComponent(); }
+	
+	public void setSize(int w, int h) {
+		pc.setSize(w, h);
+	}
+
+	public void setSize(Dimension d) {
+		pc.setSize(d.width, d.height);
+	}
 };
 
