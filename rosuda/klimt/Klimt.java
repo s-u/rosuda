@@ -119,9 +119,9 @@ public class Klimt
 	    f=new TFrame("KLIMT "+Common.Version,TFrame.clsMain);
 	
 	TreeCanvas tc=new TreeCanvas(t,f);
-	f.add(tc);
+	f.add(tc.getComponent());
 	f.addWindowListener(Common.getDefaultWindowListener());
-	tc.setBounds(x,y,w,h);
+	tc.pc.setSize(w,h);
 	f.setBounds(x,y,w,h);
 	f.pack();
 	f.show();

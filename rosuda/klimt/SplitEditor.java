@@ -88,9 +88,9 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
 
     void constructInnerPlots() {
         Dimension scd=null;
-        if (sc!=null) scd=sc.getSize(); else scd=new Dimension(400,100);
-        if (sc!=null) { pp.remove(sc); sc=null; };
-        if (lc!=null) { pp.remove(lc); lc=null; };
+        if (sc!=null) scd=sc.pc.getSize(); else scd=new Dimension(400,100);
+        if (sc!=null) { pp.remove(sc.getComponent()); sc=null; };
+        if (lc!=null) { pp.remove(lc.getComponent()); lc=null; };
         if (st!=null) { sp.remove(st); st=null; };
         if (l1!=null) { sp.remove(l1); l1=null; };
         if (cv==null) return;
@@ -104,13 +104,13 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             sp.add(st=new TextField((ln==null)?"0":""+spVal,10));
 	    splitText=st.getText();
             st.addActionListener(this);
-            sc=new ScatterCanvas(this,cv,root.getRootInfo().response,m);
+            sc=new ScatterCanvas(null,this,cv,root.getRootInfo().response,m);
             m.addDepend(sc);
 	    //sc.removeMouseListener(sc);
-	    sc.addMouseListener(this);
+			sc.getComponent().addMouseListener(this);
             sc.setFilter(n.data);
             sc.setSize(scd); sc.bgTopOnly=true;
-            cp.add(pp); pp.add(sc);
+            cp.add(pp); pp.add(sc.getComponent());
             sw.profile("innerPlots.build graphics");
             double maxD=0, maxDP=0, optSP=0;
             
@@ -274,7 +274,7 @@ public class SplitEditor extends TFrame implements ActionListener, ItemListener,
             lc.ignoreMarker=true;
             //pp.add(new ScatterCanvas(this,rxv,sdv,m));
             lc.setLineType(LineCanvas.LT_RECT);
-            pp.add(lc);
+            pp.add(lc.getComponent());
             sc.getXAxis().setValueRange(minX, maxX-minX);
             lc.getXAxis().setValueRange(sc.getXAxis().vBegin,sc.getXAxis().vLen);
             //lc.getYAxis().setValueRange(0,(maxD>n.sampleDevGain)?maxD:n.sampleDevGain);

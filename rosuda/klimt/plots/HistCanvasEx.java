@@ -11,6 +11,7 @@ package org.rosuda.klimt.plots;
 import java.awt.*;
 
 import org.rosuda.ibase.*;
+import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.plots.*;
 import org.rosuda.pograss.*;
 import org.rosuda.klimt.*;
@@ -19,8 +20,8 @@ import org.rosuda.klimt.*;
 public class HistCanvasEx extends HistCanvas {
     NodeMarker nm;
     
-    public HistCanvasEx(Frame f, SVar v, SMarker mark, NodeMarker nm) {
-        super(f,v,mark);
+    public HistCanvasEx(PlotComponent ppc, Frame f, SVar v, SMarker mark, NodeMarker nm) {
+        super(ppc,f,v,mark);
         this.nm=nm;
         nm.addDepend(this);
     }

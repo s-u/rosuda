@@ -144,17 +144,17 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param troot root of the tree
 	@param cont parent frame */
     public TreeCanvas(SNode troot, Frame cont) {		
-	setFrame(cont); setTitle("Tree");
+		setFrame(cont); setTitle("Tree");
         dr=Klimt.getRootForTreeRegistry(troot.getRootInfo().home);
         nm=dr.getNodeMarker();
         nm.addDepend(this);
-	nod=new Vector(); outside=cont;
-	root=troot; 
-	w=700;
-	int leaves=root.getNumNodes(true);
-	iwidth=630; leftA=35;
-	buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root,400,true);	
-	setBackground(Common.backgroundColor);
+		nod=new Vector(); outside=cont;
+		root=troot; 
+		w=700;
+		int leaves=root.getNumNodes(true);
+		iwidth=630; leftA=35;
+		buildLeaf(w/2,30,w/leaves,40,w,root.getHeight(),root,400,true);	
+		pc.setBackground(Common.backgroundColor);
 
         Vector alln=new Vector();
         root.getAllNodes(alln);
@@ -203,9 +203,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         EzMenu.getEzMenu(cont,this,menuDef);
         getMenuItemByAction("prune").setEnabled(false);
         getMenuItemByAction("editSplit").setEnabled(false);
-	addMouseMotionListener(this);
-	addMouseListener(this);
-        addKeyListener(this); cont.addKeyListener(this);
+		pc.addMouseMotionListener(this);
+		pc.addMouseListener(this);
+        pc.addKeyListener(this); cont.addKeyListener(this);
     };
 
     /** supply minimal resize dimension (needed especially by MacOS X) */
@@ -253,8 +253,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	(result in a call to {@link #redesignNodes(Dimension, boolean)}) */
     public void redesignNodes(boolean updatePlacement)
     {
-	Dimension os=getSize();
-	redesignNodes(os,updatePlacement);
+		Dimension os=pc.getSize();
+		redesignNodes(os,updatePlacement);
     };
 
     /** redesign nodes based on the specifie geometry.
@@ -400,7 +400,7 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	@param g graphic context to paint on */
 
     public void paintPoGraSS(PoGraSS p) {	
-	Rectangle r=getBounds();
+	Rectangle r=pc.getBounds();
 	p.setBounds(r.width,r.height);
 	p.begin();
 	p.defineColor("white",255,255,255);
@@ -702,8 +702,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
             w_info.show();
         };
         /** TODO: somethimes localtion "jumps" around (async event handling stuff...) - fixme */
-        w_info.setLocation(n.cx+n.width/2+outside.getLocation().x+getLocation().x,
-                           n.cy+n.height/2+getLocation().y+outside.getLocation().y);
+        w_info.setLocation(n.cx+n.width/2+outside.getLocation().x+pc.getLocation().x,
+                           n.cy+n.height/2+pc.getLocation().y+outside.getLocation().y);
     };
 
     /** set currently selected node */
@@ -874,12 +874,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 		WinTracker.current.rm(myMosaicFrame);
 		myMosaicFrame=null;
 	    }; */
-	    myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)",TFrame.clsTreeMap);
-	    myMosaicFrame.add(myMosaic=new MosaicCanvas(myMosaicFrame,root,nm));
-	    myMosaicFrame.addWindowListener(Common.getDefaultWindowListener());
-	    myMosaic.setBounds(0,0,400,300);
-	    myMosaicFrame.pack(); myMosaicFrame.show();		
-	};
+			myMosaicFrame=new TFrame(outside.getTitle()+" (treemap)",TFrame.clsTreeMap);
+			myMosaic=new MosaicCanvas(myMosaicFrame,root,nm);
+			myMosaicFrame.add(myMosaic.getComponent());
+			myMosaicFrame.addWindowListener(Common.getDefaultWindowListener());
+			myMosaic.pc.setSize(400,300);
+			myMosaicFrame.pack(); myMosaicFrame.show();		
+		};
 	if (cmd=="devplot") {
             /* since 0.95g: allow more windows at once, the use of myDevFrame is deprecated
 
@@ -890,8 +891,9 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
 	    }; */
 	    myDevFrame=new TFrame(Klimt.lastTreeFileName+" (deviance plot)",TFrame.clsDevPlot);
 	    DevCanvas dc=new DevCanvas(myDevFrame,root,nm);
-	    myDevFrame.add(dc); myDevFrame.addWindowListener(Common.getDefaultWindowListener());
-	    dc.setBounds(0,0,400,300);
+	    myDevFrame.add(dc.getComponent());
+		myDevFrame.addWindowListener(Common.getDefaultWindowListener());
+	    dc.pc.setSize(400,300);
 	    myDevFrame.pack(); myDevFrame.setVisible(true);
         };
         if (cmd=="exportForest") {
@@ -911,8 +913,8 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
         if (cmd=="showMCP") {
             TFrame mcpf=new TFrame("MC-plot",TFrame.clsMCP);
             MCPCanvas dc=new MCPCanvas(mcpf,root.getRootInfo().home,m);
-            mcpf.add(dc); mcpf.addWindowListener(Common.getDefaultWindowListener());
-            dc.setBounds(0,0,400,300);
+            mcpf.add(dc.getComponent()); mcpf.addWindowListener(Common.getDefaultWindowListener());
+            dc.pc.setSize(400,300);
             mcpf.pack(); mcpf.setVisible(true);
         };
         if (cmd=="editSplit") {
@@ -939,13 +941,13 @@ public class TreeCanvas extends PGSCanvas implements Dependent, Commander, Actio
     public void setToolMode(int mode) {
 	toolMode=mode;
 	if (toolMode==Tool_Move)
-	    setCursor(Common.cur_move);
+	    pc.setCursor(Common.cur_move);
 	if (toolMode==Tool_Select)
-	    setCursor(Common.cur_arrow);
+	    pc.setCursor(Common.cur_arrow);
 	if (toolMode==Tool_Zoom)
-	    setCursor(Common.cur_zoom);    
+	    pc.setCursor(Common.cur_zoom);    
 	if (toolMode==Tool_Node)
-	    setCursor(Common.cur_hand);	
+	    pc.setCursor(Common.cur_hand);	
     };
 
     /* mouse listeners */

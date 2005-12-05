@@ -103,7 +103,7 @@ public class VarFrame extends TFrame {
     };
 
     /** VarCanvas is canvas for the variables list */
-    class VarCanvas extends DBCanvas implements MouseListener, AdjustmentListener, Commander, ActionListener
+    class VarCanvas extends DBCanvas implements PlotComponent, MouseListener, AdjustmentListener, Commander, ActionListener
     {
 	/** associated window */
 	VarFrame win;
@@ -136,8 +136,8 @@ public class VarFrame extends TFrame {
 	    addMouseListener(this);
 	    sb=s;
 	    minDim=new Dimension(140,100);
-	    qp=new QueryPopup(w,null,"variables");
-	};
+	    qp=PlotComponentFactory.createQueryPopup(this,w, null,"variables");
+	}
 
         public int getVars() {
             if (vs.count()!=c_vars) rebuildVars();
@@ -157,6 +157,18 @@ public class VarFrame extends TFrame {
 	    repaint();
 	};
 	public Dimension getMinimumSize() { return minDim; };
+
+	public void initializeLayerCanvas(LayerCanvas l) {};
+	public void initializeGraphics(Window w) {};
+	
+	public Window getParentWindow() { return win; };
+	public int getGraphicsEngine()  { return PlotComponent.AWT; }
+	public Component getComponent() { return this; };
+
+	public void setPreferredSize(Dimension d) {};
+	public void setMinimumSize(Dimension d) {};
+	public void setMaximumSize(Dimension d) {};
+	public void setToolTipText(String s) {};
 
 	/** implementation of the {@link DBCanvas#paintBuffer} method
 	    @param g graphic context to paint on */
@@ -369,15 +381,15 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame("Map ("+map.getName()+")",TFrame.clsMap);
                     f.addWindowListener(Common.getDefaultWindowListener());
 					if (vLon!=null) { // if we have lat/lon, got for mapped SP
-						MapScatterCanvas bc=new MapScatterCanvas(f,vLat,vLon,map,vs.getMarker());
+						MapScatterCanvas bc=new MapScatterCanvas(null,f,vLat,vLon,map,vs.getMarker());
 						if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-						bc.setSize(new Dimension(400,300));
-						f.add(bc);
+						bc.pc.setSize(new Dimension(400,300));
+						f.add(bc.getComponent());
 					} else {
-						MapCanvas bc=new MapCanvas(f,map,vs.getMarker());
+						MapCanvas bc=new MapCanvas(null,f,map,vs.getMarker());
 						if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-						bc.setSize(new Dimension(400,300));
-						f.add(bc);
+						bc.pc.setSize(new Dimension(400,300));
+						f.add(bc.getComponent());
 					}
                     f.pack(); f.show();
                 }
@@ -479,11 +491,11 @@ public class VarFrame extends TFrame {
                 if (selC==1 && selN==1) { // ok, go for weighter barchart instead
                     TFrame f=new TFrame("w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")",TFrame.clsBar);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    BarCanvas bc=new BarCanvas(f,theCat,vs.getMarker(),theNum);
+                    BarCanvas bc=new BarCanvas(null,f,theCat,vs.getMarker(),theNum);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                     int iw=100+40*theCat.getNumCats(); if (iw>800) iw=800;
-                    bc.setSize(new Dimension(iw,200));
-                    f.add(bc); f.pack(); f.show();
+                    bc.pc.setSize(new Dimension(iw,200));
+                    f.add(bc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 } else {
                     for(i=0;i<vc.getVars();i++)
@@ -491,19 +503,19 @@ public class VarFrame extends TFrame {
                             TFrame f=new TFrame((vs.at(i).isCat()?"Barchart":"Histogram")+" ("+vs.at(i).getName()+")",
                                                 vs.at(i).isCat()?TFrame.clsBar:TFrame.clsHist);
                             f.addWindowListener(Common.getDefaultWindowListener());
-                            Canvas cvs=null;
+                            PGSCanvas cvs=null;
                             int xdim=400, ydim=300;
                             if (vs.at(i).isCat()) {
-                                BarCanvas bc=new BarCanvas(f,vs.at(i),vs.getMarker()); cvs=bc;
+                                BarCanvas bc=new BarCanvas(null,f,vs.at(i),vs.getMarker()); cvs=bc;
                                 xdim=100+40*vs.at(i).getNumCats(); ydim=200;
                                 if (xdim>800) xdim=800;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
                             } else {
-                                HistCanvasEx hc=new HistCanvasEx(f,vs.at(i),vs.getMarker(),dr.getNodeMarker()); cvs=hc;
+                                HistCanvasEx hc=new HistCanvasEx(null,f,vs.at(i),vs.getMarker(),dr.getNodeMarker()); cvs=hc;
                                 if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
                             };
-                            cvs.setSize(new Dimension(xdim,ydim));
-                            f.add(cvs); f.pack(); f.show();
+                            cvs.pc.setSize(new Dimension(xdim,ydim));
+                            f.add(cvs.getComponent()); f.pack(); f.show();
                             f.initPlacement();
                         };
                 };
@@ -525,8 +537,8 @@ public class VarFrame extends TFrame {
                     f.addWindowListener(Common.getDefaultWindowListener());
                     KapMeNodeCanvas bc=new KapMeNodeCanvas(f,theNum,theCat,vs.getMarker(),dr.getNodeMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-                    bc.setSize(new Dimension(300,200));
-                    f.add(bc); f.pack(); f.show();
+                    bc.pc.setSize(new Dimension(300,200));
+                    f.add(bc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 }
             }
@@ -551,16 +563,16 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame("Line plot",TFrame.clsLine);
                     f.addWindowListener(Common.getDefaultWindowListener());
                     LineCanvas lc=new LineCanvas(f,null,vars,vs.getMarker());
-                    lc.setSize(400,300);
-                    f.add(lc); f.pack(); f.show();
+                    lc.pc.setSize(400,300);
+                    f.add(lc.getComponent()); f.pack(); f.show();
                 }
             }
             if (cmd=="tfplot") {
                 TFrame f=new TFrame("Trace Plot",TFrame.clsUser);
                 f.addWindowListener(Common.getDefaultWindowListener());
                 TreeFlowCanvas lc=new TreeFlowCanvas(f,dr.getTreeRegistry().getRoots());
-                lc.setSize(400,300);
-                f.add(lc); f.pack(); f.show();
+                lc.pc.setSize(400,300);
+                f.add(lc.getComponent()); f.pack(); f.show();
             }
             if (cmd=="lineplot2") {
                 int i=0;
@@ -585,8 +597,8 @@ public class VarFrame extends TFrame {
                     TFrame f=new TFrame("Line plot",TFrame.clsLine);
                     f.addWindowListener(Common.getDefaultWindowListener());
                     LineCanvas lc=new LineCanvas(f,idx,vars,vs.getMarker());
-                    lc.setSize(400,300);
-                    f.add(lc); f.pack(); f.show();
+                    lc.pc.setSize(400,300);
+                    f.add(lc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 }
             }
@@ -599,10 +611,10 @@ public class VarFrame extends TFrame {
                                         vs.at(vnr[1]).getName()+" vs "+
                                         vs.at(vnr[0]).getName()+")",TFrame.clsScatter);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    SectScatterCanvas sc=new SectScatterCanvas(win.dr,f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),dr.getNodeMarker());
+                    SectScatterCanvas sc=new SectScatterCanvas(null,win.dr,f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),dr.getNodeMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                    sc.setSize(new Dimension(400,300));
-                    f.add(sc); f.pack(); f.show();
+                    sc.pc.setSize(new Dimension(400,300));
+                    f.add(sc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 };
             };
@@ -620,10 +632,10 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[bJ]) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.getDefaultWindowListener());
-                            BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),vs.getMarker());
+                            BoxCanvas sc=new BoxCanvas(null,f,vs.at(bJ),vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                            sc.setSize(new Dimension(80,300));
-                            f.add(sc); f.pack(); f.show();
+                            sc.pc.setSize(new Dimension(80,300));
+                            f.add(sc.getComponent()); f.pack(); f.show();
                             f.initPlacement();
                         };
                         bJ++;
@@ -634,10 +646,10 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[bJ] && bJ!=bI) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.getDefaultWindowListener());
-                            BoxCanvas sc=new BoxCanvas(f,vs.at(bJ),catVar,vs.getMarker());
+                            BoxCanvas sc=new BoxCanvas(null,f,vs.at(bJ),catVar,vs.getMarker());
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                            sc.setSize(new Dimension(40+catVar.getNumCats()*40,300));
-                            f.add(sc); f.pack(); f.show();
+                            sc.pc.setSize(new Dimension(40+catVar.getNumCats()*40,300));
+                            f.add(sc.getComponent()); f.pack(); f.show();
                             f.initPlacement();
                         };
                         bJ++;
@@ -660,12 +672,12 @@ public class VarFrame extends TFrame {
                         f.addWindowListener(Common.getDefaultWindowListener());
                         FluctCanvas sc;
                         if (cmd=="speckle" && weight!=null && weight.isCat())
-                            sc=new FCCCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
+                            sc=new FCCCanvas(null,f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
                         else
-                            sc=new FluctCanvas(f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
+                            sc=new FluctCanvas(null,f,vs.at(vnr[0]),vs.at(vnr[1]),vs.getMarker(),weight);
                         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                        sc.setSize(new Dimension(400,300));
-                        f.add(sc); f.pack(); f.show();
+                        sc.pc.setSize(new Dimension(400,300));
+                        f.add(sc.getComponent()); f.pack(); f.show();
                         f.initPlacement();
                     };
             };
@@ -679,10 +691,10 @@ public class VarFrame extends TFrame {
                     };
                     TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    PCPCanvas sc=new PCPCanvas(f,vl,vs.getMarker());
+                    PCPCanvas sc=new PCPCanvas(null,f,vl,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                    sc.setSize(new Dimension(400,300));
-                    f.add(sc); f.pack(); f.show();
+                    sc.pc.setSize(new Dimension(400,300));
+                    f.add(sc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 }
             }
@@ -696,10 +708,10 @@ public class VarFrame extends TFrame {
                     };
                     TFrame f=new TFrame("Hammock plot",TFrame.clsPCP);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    HamCanvas sc=new HamCanvas(f,vl,vs.getMarker());
+                    HamCanvas sc=new HamCanvas(null,f,vl,vs.getMarker());
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
-                    sc.setSize(new Dimension(400,300));
-                    f.add(sc); f.pack(); f.show();
+                    sc.pc.setSize(new Dimension(400,300));
+                    f.add(sc.getComponent()); f.pack(); f.show();
                     f.initPlacement();
                 }
             }
@@ -725,15 +737,15 @@ public class VarFrame extends TFrame {
                     
                     TFrame f=new TFrame("Misclassification plot",TFrame.clsMCP);
                     MCPCanvas dc=new MCPCanvas(f,tr,vs.getMarker());
-                    f.add(dc); f.addWindowListener(Common.getDefaultWindowListener());
-                    dc.setBounds(0,0,400,300);
+                    f.add(dc.getComponent()); f.addWindowListener(Common.getDefaultWindowListener());
+                    dc.pc.setSize(400,300);
                     f.pack(); f.setVisible(true);
                     f.initPlacement();
                 } else {
                     TFrame mcpf=new TFrame("Misclassification plot",TFrame.clsMCP);
                     MCPCanvas dc=new MCPCanvas(mcpf,dr.getTreeRegistry(),vs.getMarker());
-                    mcpf.add(dc); mcpf.addWindowListener(Common.getDefaultWindowListener());
-                    dc.setBounds(0,0,400,300);
+                    mcpf.add(dc.getComponent()); mcpf.addWindowListener(Common.getDefaultWindowListener());
+                    dc.pc.setSize(400,300);
                     mcpf.pack(); mcpf.setVisible(true);
                     mcpf.initPlacement();
                 }

@@ -43,19 +43,19 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
 	root=t; setFrame(f); setTitle("Deviance plot");
         this.nm=nm;
         nm.addDepend(this);
-        setBackground(Common.backgroundColor);
-	addMouseListener(this);
+        pc.setBackground(Common.backgroundColor);
+		pc.addMouseListener(this);
 	//addMouseMotionListener(this);
-	addKeyListener(this); f.addKeyListener(this);
+		pc.addKeyListener(this); f.addKeyListener(this);
         ax=new Axis(null,Axis.O_X,Axis.T_EqSize); ax.addDepend(this);
         ay=new Axis(null,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
-	setNode(fin);
+		setNode(fin);
         MenuBar mb=null;
         String myMenu[]={"+","File","~File.Graph","+","View","Show gain","cumulate","Show lines","lines","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIcum=EzMenu.getItem(f,"cumulate");
         MIlines=EzMenu.getItem(f,"lines");
-    };
+    }
 
     public void setNode(SNode n) {
 	if (n==null) n=root;
@@ -90,12 +90,12 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
     public Dimension getMinimumSize() { return new Dimension(leftm+rightm+10,topm+botm+10); };
 
     public void paintPoGraSS(PoGraSS g) {
-	Dimension Dsize=getSize();
-	int w=Dsize.width, h=Dsize.height;
+		Dimension Dsize=pc.getSize();
+		int w=Dsize.width, h=Dsize.height;
         if (w!=lastw || h!=lasth) {
             ax.setGeometry(ax.getOrientation(),leftm,w-leftm-rightm);
             ay.setGeometry(ay.getOrientation(),h-botm,topm+botm-h);
-        };
+        }
 
         g.setBounds(w,h);
         g.begin();
@@ -104,15 +104,15 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
         g.defineColor("red",255,0,0);
         g.defineColor("labels",0,0,64);
         
-	g.setColor("outline");
-	g.drawLine(leftm,h-botm,leftm,topm); 
-	g.drawLine(leftm,h-botm,w-rightm,h-botm);
+		g.setColor("outline");
+		g.drawLine(leftm,h-botm,leftm,topm); 
+		g.drawLine(leftm,h-botm,w-rightm,h-botm);
 
-	int i=0;
+		int i=0;
         int lsy=0;
         if (lines) g.setColor("red");
         
-	while(i<devs) {
+		while(i<devs) {
             int x1=ax.getValuePos(i);
             int x2=ax.getValuePos(i+1);
 
@@ -133,78 +133,76 @@ public class DevCanvas extends PGSCanvas implements Dependent, MouseListener, Ke
                 g.fillRect(x1,vy,x2-x1,ly-vy);
                 g.setColor("outline");
                 g.drawRect(x1,vy,x2-x1,ly-vy);
-            };
-	    i++;
-	};
-
+            }
+			i++;
+		}
+		
         g.setColor("labels");
-	{
+		
 	    double f=ay.getSensibleTickDistance(50,18);
 	    double fi=ay.getSensibleTickStart(f);
 	    while (fi<ay.vBegin+ay.vLen) {
-		int t=ay.getValuePos(fi);
-		g.drawLine(leftm-5,t,leftm,t);
-		//if (showLabels)
-		String s=""+fi;
-		if (s.length()>2 && s.substring(s.length()-2).compareTo(".0")==0)
-		    s=s.substring(0,s.length()-2);
-		g.drawString(s,5,t+5);
-		fi+=f;
-	    };
-	}
+			int t=ay.getValuePos(fi);
+			g.drawLine(leftm-5,t,leftm,t);
+			//if (showLabels)
+			String s=""+fi;
+			if (s.length()>2 && s.substring(s.length()-2).compareTo(".0")==0)
+				s=s.substring(0,s.length()-2);
+			g.drawString(s,5,t+5);
+			fi+=f;
+		}
         g.end();
-    };
+    }
     
     public void mouseClicked(MouseEvent ev) 
     {
-	int x=ev.getX(), y=ev.getY();
-    };
+		int x=ev.getX(), y=ev.getY();
+    }
 
     public void mousePressed(MouseEvent ev) {
-	int x=ev.getX(), y=ev.getY();
-    };
+		int x=ev.getX(), y=ev.getY();
+    }
+	
     public void mouseReleased(MouseEvent e) {
-    };
-    public void mouseEntered(MouseEvent e) {};
-    public void mouseExited(MouseEvent e) {};
+    }
+	
+    public void mouseEntered(MouseEvent e) {}
+    public void mouseExited(MouseEvent e) {}
 
-    public void mouseDragged(MouseEvent e) {
-	int x=e.getX();
-    };
-    public void mouseMoved(MouseEvent e) {
-    };
+    public void mouseDragged(MouseEvent e) {}
+    public void mouseMoved(MouseEvent e) {}
 
     public void keyTyped(KeyEvent e) 
     {
-	if (e.getKeyChar()=='C') run(this,"exportCases");
-	if (e.getKeyChar()=='P') run(this,"print");
-	if (e.getKeyChar()=='l') run(this,"lines");
-	if (e.getKeyChar()=='X') run(this,"exportPGS");
-	if (e.getKeyChar()=='c') run(this,"cumulate");
-    };
+		if (e.getKeyChar()=='C') run(this,"exportCases");
+		if (e.getKeyChar()=='P') run(this,"print");
+		if (e.getKeyChar()=='l') run(this,"lines");
+		if (e.getKeyChar()=='X') run(this,"exportPGS");
+		if (e.getKeyChar()=='c') run(this,"cumulate");
+    }
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
-
+	
     public Object run(Object o, String cmd) {
-	super.run(o,cmd);
+		super.run(o,cmd);
         if (cmd=="print") run(o,"exportPS");
         if (cmd=="lines") {
             lines=!lines;
             MIlines.setLabel(lines?"Show bars":"Show lines");
             repaint();
         };
-	if (cmd=="cumulate") {
-	    cumulate=!cumulate;
+		if (cmd=="cumulate") {
+			cumulate=!cumulate;
             MIcum.setLabel(cumulate?"Show gain":"Show deviance");
-	    repaint();
-	};
-	return null;
-    };
-
+			repaint();
+		};
+		return null;
+    }
+	
     /** action listener methods reroutes all request to the commander interface */
     public void actionPerformed(ActionEvent e) {
         if (e==null) return;
         run(e.getSource(),e.getActionCommand());
-    };
+    }
     
-};
+}

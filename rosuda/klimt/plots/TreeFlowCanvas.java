@@ -40,8 +40,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         setFrame(f);
         roots=trees;
 
-        addKeyListener(this); f.addKeyListener(this);
-        addMouseListener(this);
+        pc.addKeyListener(this); f.addKeyListener(this);
+        pc.addMouseListener(this);
         levl=new int[64];
         vg=new SVar[64*32];
 
@@ -78,10 +78,10 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
             }
             i++;
         }
-        qi=new QueryPopup(f,null,"Trace plot");
+        qi=PlotComponentFactory.createQueryPopup(pc,f,null,"Trace plot");
         String myMenu[]={"+","File","~File.Graph","~Edit",//"+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg",
             "~Window","0"};
-	EzMenu.getEzMenu(f,this,myMenu);
+		EzMenu.getEzMenu(f,this,myMenu);
     }
 
     public void recDown(SNode n, int l) {
@@ -155,33 +155,33 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
             f.addWindowListener(Common.getDefaultWindowListener());
             int xdim=400, ydim=300;
             SMarker dm=new SMarker(sv.size());
-            BarCanvas bc=new BarCanvas(f,splitLeft,dm);
+            BarCanvas bc=new BarCanvas(null,f,splitLeft,dm);
             xdim=100+40*splitLeft.getNumCats(); ydim=200;
             if (xdim>800) xdim=800;
             dm.addDepend(bc);
             bc.setSize(new Dimension(xdim,ydim));
-            f.add(bc); f.pack(); f.show();
+            f.add(bc.getComponent()); f.pack(); f.show();
             f.initPlacement();
             f=new TFrame("Barchart (right "+sv.getName()+" at "+l+")",TFrame.clsBar);
             f.addWindowListener(Common.getDefaultWindowListener());
             xdim=400; ydim=300;
             dm=new SMarker(sv.size());
-            bc=new BarCanvas(f,splitRight,dm);
+            bc=new BarCanvas(null,f,splitRight,dm);
             xdim=100+40*splitRight.getNumCats(); ydim=200;
             if (xdim>800) xdim=800;
             dm.addDepend(bc);
             bc.setSize(new Dimension(xdim,ydim));
-            f.add(bc); f.pack(); f.show();
+            f.add(bc.getComponent()); f.pack(); f.show();
             f.initPlacement();
         } else {
             TFrame f=new TFrame("Histogram (s.f. of "+sv.getName()+" at "+l+")",TFrame.clsHist);
             f.addWindowListener(Common.getDefaultWindowListener());
             int xdim=400, ydim=300;
             SMarker dm=new SMarker(sv.size());
-            HistCanvas hc=new HistCanvas(f,splitHist,dm);
+            HistCanvas hc=new HistCanvas(null,f,splitHist,dm);
             dm.addDepend(hc);
             hc.setSize(new Dimension(xdim,ydim));
-            f.add(hc); f.pack(); f.show();
+            f.add(hc.getComponent()); f.pack(); f.show();
             f.initPlacement();
         }
     }
@@ -240,7 +240,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
     int w,h;
     
     public void paintPoGraSS(PoGraSS g) {
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         w=Dsize.width; h=Dsize.height;
 
         g.setBounds(w,h);
@@ -396,7 +396,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
                 }
                 int x=e.getX(), y=e.getY();
                 Point cl=getFrame().getLocation();
-                Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+                Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
                 
                 SVar v=vg[i];
                 qi.setContent("Variable: "+v.getName()+"\nSplits: "+countQ+" (of "+countL+" s.l.)");

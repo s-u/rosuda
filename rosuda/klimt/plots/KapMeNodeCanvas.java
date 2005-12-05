@@ -18,7 +18,7 @@ public class KapMeNodeCanvas extends org.rosuda.ibase.plots.KapMeCanvas {
     NodeMarker nm;
     
     public KapMeNodeCanvas(Frame f, SVar time, SVar event, SMarker mark, NodeMarker nm) {
-        super(f, time, event, mark);
+        super(null, f, time, event, mark);
         this.nm=nm;
         nm.addDepend(this);
     }

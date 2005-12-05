@@ -27,8 +27,8 @@ public class SectScatterCanvas extends ScatterCanvas {
     
     boolean paintAllTrees=true;
 
-    public SectScatterCanvas(DataRoot dr, Frame f, SVar v1, SVar v2, SMarker mark, NodeMarker nm) {
-        super(f,v1,v2,mark);
+    public SectScatterCanvas(PlotComponent ppc, DataRoot dr, Frame f, SVar v1, SVar v2, SMarker mark, NodeMarker nm) {
+        super(ppc, f,v1,v2,mark);
         this.nm=nm; this.dr=dr;
         nm.addDepend(this);
     }
@@ -53,14 +53,14 @@ public class SectScatterCanvas extends ScatterCanvas {
             int nx1=x1, nx2=x2, ny1=y1, ny2=y2;
             if (c.splitVar==v[0]) {
                 if (!c.splitVar.isCat()) {
-                    int spl=A[0].getValuePos(c.splitValF);
+                    int spl=ax.getValuePos(c.splitValF);
                     if (c.splitComp==-1) nx2=spl;
                     if (c.splitComp==1) nx1=spl;
                 }
             }
             if (c.splitVar==v[1]) {
                 if (!c.splitVar.isCat()) {
-                    int spl=A[1].getValuePos(c.splitValF);
+                    int spl=ay.getValuePos(c.splitValF);
                     if (c.splitComp==-1) ny1=spl;
                     if (c.splitComp==1) ny2=spl;
                 }
@@ -81,14 +81,14 @@ public class SectScatterCanvas extends ScatterCanvas {
             int nx1=x1, nx2=x2, ny1=y1, ny2=y2;
             if (c.splitVar==v[0]) {
                 if (!c.splitVar.isCat()) {
-                    int spl=A[0].getValuePos(c.splitValF);
+                    int spl=ax.getValuePos(c.splitValF);
                     if (c.splitComp==-1) { nx2=spl; edge=2; }
                     if (c.splitComp==1) { nx1=spl; edge=4; }
                 }
             }
             if (c.splitVar==v[1]) {
                 if (!c.splitVar.isCat()) {
-                    int spl=A[1].getValuePos(c.splitValF);
+                    int spl=ay.getValuePos(c.splitValF);
                     if (c.splitComp==-1) { ny1=spl; edge=1; }
                     if (c.splitComp==1) { ny2=spl; edge=3; }
                 }

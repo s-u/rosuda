@@ -50,16 +50,16 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     */
     public MCPCanvas(Frame f,TreeRegistry tman, SMarker mark) {
         tm=tman; m=mark; setFrame(f); setTitle("MCP"); m.addDepend(this);
-	setBackground(Common.backgroundColor);
-	addMouseListener(this);
-	addMouseMotionListener(this);
-	addKeyListener(this); f.addKeyListener(this);
+	pc.setBackground(Common.backgroundColor);
+	pc.addMouseListener(this);
+	pc.addMouseMotionListener(this);
+	pc.addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Toggle mode","rotate","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
         ay=new Axis(null, Axis.O_Y, Axis.T_EqSize);
         updateBoxes();
-        qi=new QueryPopup(f,(mark==null)?null:mark.getMasterSet(),"MC-plot");
+        qi=PlotComponentFactory.createQueryPopup(pc,f,(mark==null)?null:mark.getMasterSet(),"MC-plot");
     }
 
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
@@ -108,7 +108,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
     }
     
     public void paintPoGraSS(PoGraSS g) {
-	Dimension Dsize=getSize();
+	Dimension Dsize=pc.getSize();
 	int w=Dsize.width, h=Dsize.height;
         int rdx=w-leftm-rightm;
         int rdy=h-botm-topm;
@@ -208,7 +208,7 @@ public class MCPCanvas extends PGSCanvas implements Dependent, MouseListener, Mo
 	int x=ev.getX(), y=ev.getY();
         int i=0; boolean setTo=false;
 	boolean effect=false;
-        Dimension Dsize=getSize();
+        Dimension Dsize=pc.getSize();
         int w=Dsize.width, h=Dsize.height;
         int rdx=w-leftm-rightm;
         int rdy=h-botm-topm;
