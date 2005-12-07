@@ -23,7 +23,8 @@ import java.io.PrintStream;
 public class PoGraSS
 {
     int boundsWidth, boundsHeight, boundsX, boundsY;
-    int fillStyle, lineWidth;
+    int fillStyle;
+	float lineWidth=0.0f;
     int lastFont=1;
     double lastFontSize=10.0;
     int lastFontAttr=0;
@@ -117,7 +118,7 @@ public class PoGraSS
     public void drawOval(int x, int y, int rx, int ry) {};
     public void oval(int x, int y, int rx, int ry) {}; // since 0.96
     public void fillOval(int x, int y, int rx, int ry) {};
-    public void setLineWidth(int w) { lineWidth=w; };
+    public void setLineWidth(float w) { lineWidth=w; };
     public void setFillStyle(int s) { fillStyle=s; };
     public void drawString(String txt, int x, int y) { drawString(txt,x,y,0); };
 
