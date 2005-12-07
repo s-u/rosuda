@@ -23,7 +23,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
     SNode roots[];
     int lastw,lasth;
     float alpha=0.1f;
-    boolean eq=false, red=false;
+    boolean eq=true, red=false, grColor=false, useLW=false;
     boolean tri=false;
     int xstretch=1;
     QueryPopup qi;
@@ -34,6 +34,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
     int seq=0;
     int redIndex=0;
     SVar[] vars;
+	
+	int dsSize;  // normalization for line width - data set size
 
     public TreeFlowCanvas(TFrame f, SNode[] trees) {
         super(2);
@@ -279,9 +281,10 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         int t=0;
         while (t<roots.length) {
             SNode n=roots[t];
+			dsSize=n.Cases;
             if (red && t==redIndex) System.out.println("RED ("+redIndex+") is "+n);
             if (red && t==redIndex) g.setColor(1f,0f,0f,1f);
-            if (n!=null && (!red || t==redIndex)) drawNode(g,n,w/2,0,0);
+            if (n!=null && (!red || t==redIndex)) drawNode(g,n,w/2,0,0, red && t==redIndex, n.getRootInfo().response);
             if (red && t==redIndex) g.setColor(0f,0f,0f,alpha);
             t++;
         }
@@ -289,7 +292,7 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         g.end();
     }
 
-    public void drawNode(PoGraSS g, SNode n, int ox, int oy, int l) {
+    public void drawNode(PoGraSS g, SNode n, int ox, int oy, int l, boolean selected, SVar resp) {
         int chs=n.count();
         if (chs<1) return;
         SNode cn=(SNode)n.at(0);
@@ -308,17 +311,43 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
                     spc=vw/seq;
                     x=(vw+spc)*(sv.tag-1)+spc;
                 }
+
+				if (selected)
+					g.setColor(1f,0f,0f,1f);
+				else if (grColor && resp!=null) {
+					boolean hasColor=false;
+					if (resp.isCat()) {
+						int ci=resp.getCatIndex(cn.Name);
+						if (ci>=0) {
+							int cs=resp.getNumCats();
+							if (cs>0) {
+								float[] scc=ColorBridge.getMain().getColor(64+(ci*64/cs)).getRGBComponents(null);
+								g.setColor(scc[0],scc[1],scc[2],alpha);
+								hasColor=true;
+							}
+						}
+					}
+					if (!hasColor)
+						g.setColor(0f,0f,0f,alpha);
+				} else
+					g.setColor(0f,0f,0f,alpha);
+				if (useLW)
+					g.setLineWidth(8f*(float)Math.sqrt(((double)cn.Cases)/((double)dsSize)));
                 if (sv.isNum()) {
                     double sl=cn.splitValF;
                     double vr=sv.getMax()-sv.getMin();
                     int sp=(int)(((sl-sv.getMin())/vr)*((double)vw));
                     x+=sp;
-                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
                     g.drawLine(ox*xstretch,oy,x*xstretch,y);
+					if (useLW)
+						g.setLineWidth(1f);
+                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
                 } else {
                     x+=vw/2;
-                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
                     g.drawLine(ox*xstretch,oy,x*xstretch,y);
+					if (useLW)
+						g.setLineWidth(1f);
+                    g.drawLine(x*xstretch,y-5,x*xstretch,y+5);
                 }
                 break;
             }
@@ -326,10 +355,10 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         }
         int ch=0;
         while (ch<chs) {
-            drawNode(g,(SNode)n.at(ch++),x,y,l+1);
+            drawNode(g,(SNode)n.at(ch++),x,y,l+1,selected,resp);
         }
     }
-
+	
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_LEFT) {
             alpha/=2f; setUpdateRoot(0); repaint();
@@ -344,6 +373,8 @@ public class TreeFlowCanvas extends PGSCanvas implements Dependent, KeyListener,
         if (e.getKeyChar()=='0') { eq=!eq; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()=='R') { red=!red; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()=='t') { tri=!tri; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()=='w') { useLW=!useLW; setUpdateRoot(0); repaint(); }
+        if (e.getKeyChar()=='c') { grColor=!grColor; setUpdateRoot(0); repaint(); }
         int sw=-1;
         if (e.getKeyChar()=='+') { xstretch+=1; setUpdateRoot(0); repaint(); }
         if (e.getKeyChar()=='-' && xstretch>1) { xstretch-=1; setUpdateRoot(0); repaint(); }
