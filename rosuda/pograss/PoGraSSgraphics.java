@@ -17,7 +17,6 @@ public class PoGraSSgraphics extends PoGraSS
     int cs;
 
     int fillSt;
-    int lineWidth;
     int cx,cy;
     int curLayer=0, paintLayer=0;
 
@@ -184,6 +183,11 @@ public class PoGraSSgraphics extends PoGraSS
     public void resetGlobalAlpha() {
         ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+	
+	public void setLineWidth(float w) {
+		super.setLineWidth(w);
+		((Graphics2D)g).setStroke(new BasicStroke(w));
+	}
 
     public void resetClip() {
         g.setClip(getBounds());
