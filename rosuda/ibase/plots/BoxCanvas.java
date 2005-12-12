@@ -115,7 +115,7 @@ public class BoxCanvas extends BaseCanvas {
         super(ppc,f,mark);
         v=var[0];
         setTitle("Boxplot ("+v.getName()+")");
-        ax=new Axis(v,Axis.O_Y,Axis.T_Num); ax.addDepend(this);
+        ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         if (v!=null && !v.isCat() && v.isNum())
             valid=true; // valid are only numerical vars non-cat'd
         if (valid) {
@@ -140,9 +140,9 @@ public class BoxCanvas extends BaseCanvas {
         super(ppc,f,mark);
         v=var; m=mark; cv=cvar; setFrame(f);
         setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
-        ax=new Axis(v,Axis.O_Y,Axis.T_Num); ax.addDepend(this);
+        ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         // get some space around (this comes from the scatterplots)
-        ax.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
+        ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
         pc.setBackground(new Color(255,255,192));
         pc.addMouseListener(this);
         pc.addMouseMotionListener(this);
@@ -184,6 +184,7 @@ public class BoxCanvas extends BaseCanvas {
             String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
             EzMenu.getEzMenu(f,this,myMenu);
         };
+        dontPaint=false;
     };
     
     public SVar getData(int id) { return (id==0)?v:((id==1)?cv:null); }
@@ -221,11 +222,11 @@ public class BoxCanvas extends BaseCanvas {
         PPrimBox box = new PPrimBox();
         box.x=x;
         box.w=w;
-        box.med = ax.getValuePos(os.med);
-        box.lh = ax.getValuePos(os.lh);
-        box.uh = ax.getValuePos(os.uh);
-        box.lh15 = ax.getValuePos(os.lh15);
-        box.uh15 = ax.getValuePos(os.uh15);
+        box.med = ay.getValuePos(os.med);
+        box.lh = ay.getValuePos(os.lh);
+        box.uh = ay.getValuePos(os.uh);
+        box.lh15 = ay.getValuePos(os.lh15);
+        box.uh15 = ay.getValuePos(os.uh15);
         box.lh3 = os.lh3;
         box.uh3 = os.uh3;
         box.lowEdge = os.lowEdge;
@@ -233,12 +234,13 @@ public class BoxCanvas extends BaseCanvas {
         box.valPos = new int[os.lastR.length];
         for(int i=0; i< box.lastR.length; i++){
             box.lastR[i] = v.atF(os.lastR[i]);
-            box.valPos[i] = ax.getValuePos(box.lastR[i]);
+            box.valPos[i] = ay.getValuePos(box.lastR[i]);
         }
         box.lastTop = os.lastTop;
         box.highEdge = os.highEdge;
         
-        
+        //System.out.println("x: " + x + ", w: " + w + ", med: " + ay.getValuePos(os.med) + ", lh: " + ay.getValuePos(os.lh) + ", uh: " + ay.getValuePos(os.uh)
+        //+  ", lh15: " + ay.getValuePos(os.lh15) + ", uh15: " + ay.getValuePos(os.uh15) + ", lh3:" +  os.lh3 + ", uh3: " + os.uh3 + ", lowedge: " + os.lowEdge);
         return box;
     }
     
@@ -263,26 +265,26 @@ public class BoxCanvas extends BaseCanvas {
             return;
         };
         if (vertical) {
-            ax.setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
+            ay.setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
             //a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
             /* draw ticks and labels for Y axis */
             {
                 int X=30;
-                double f=ax.getSensibleTickDistance(30,18);
-                double fi=ax.getSensibleTickStart(f);
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
                 //if (Common.DEBUG>0)
                 //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
-                while (fi<ax.vBegin+ax.vLen) {
-                    int t=ax.getValuePos(fi);
+                while (fi<ay.vBegin+ay.vLen) {
+                    int t=ay.getValuePos(fi);
                     g.drawLine(X-5,t,X,t);
                     //if(showLabels)
-                    g.drawString(ax.getDisplayableValue(fi),X-25,t+5);
+                    g.drawString(ay.getDisplayableValue(fi),X-25,t+5);
                     fi+=f;
                 };
-                g.drawLine(X,ax.gBegin,X,ax.gLen);
+                g.drawLine(X,ay.gBegin,X,ay.gLen);
             }
         } else {
-            ax.setGeometry(Axis.O_X,40,r.width-50);
+            ay.setGeometry(Axis.O_X,40,r.width-50);
         }
         
         if (vsCat) {
@@ -321,11 +323,11 @@ public class BoxCanvas extends BaseCanvas {
             PPrimBox box = ((PPrimBox)pp[i]);
             box.sx = box.x + box.w*2/5;
             box.sw = box.w/2;
-            box.smed = ax.getValuePos(markStats[i].med);
-            box.slh = ax.getValuePos(markStats[i].lh);
-            box.suh = ax.getValuePos(markStats[i].uh);
-            box.slh15 = ax.getValuePos(markStats[i].lh15);
-            box.suh15 = ax.getValuePos(markStats[i].uh15);
+            box.smed = ay.getValuePos(markStats[i].med);
+            box.slh = ay.getValuePos(markStats[i].lh);
+            box.suh = ay.getValuePos(markStats[i].uh);
+            box.slh15 = ay.getValuePos(markStats[i].lh15);
+            box.suh15 = ay.getValuePos(markStats[i].uh15);
             box.slh3 = markStats[i].lh3;
             box.suh3 = markStats[i].uh3;
             box.slowEdge = markStats[i].lowEdge;
@@ -333,7 +335,7 @@ public class BoxCanvas extends BaseCanvas {
             box.svalPos = new int[markStats[i].lastR.length];
             for(int j=0; j< box.slastR.length; j++){
                 box.slastR[j] = v.atF(markStats[i].lastR[j]);
-                box.svalPos[j] = ax.getValuePos(box.slastR[j]);
+                box.svalPos[j] = ay.getValuePos(box.slastR[j]);
             }
             box.slastTop = markStats[i].lastTop;
             box.shighEdge = markStats[i].highEdge;
