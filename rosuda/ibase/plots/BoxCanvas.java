@@ -342,4 +342,10 @@ public class BoxCanvas extends BaseCanvas {
         }
         super.paintSelected(g);
     }
+
+    public void paintObjects(PoGraSS g) {
+        updateObjects();
+        super.paintObjects(g);
+    }
+    
 }
