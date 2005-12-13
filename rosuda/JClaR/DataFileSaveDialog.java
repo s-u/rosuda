@@ -66,7 +66,7 @@ public class DataFileSaveDialog extends JFileChooser implements ActionListener, 
         
         sepsBox.addItemListener(this);
         
-        if (System.getProperty("os.name").startsWith("Window")) {
+        /*if (System.getProperty("os.name").startsWith("Window")) {
             JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
             JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
             command.add(append);
@@ -79,7 +79,7 @@ public class DataFileSaveDialog extends JFileChooser implements ActionListener, 
             JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
             pp.add(new JPanel());
             this.setPreferredSize(new Dimension(655,450));
-        } else {
+        } else*/ {
             JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
             command.add(append);
             command.add(new JLabel("seps="));

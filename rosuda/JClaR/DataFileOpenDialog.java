@@ -112,7 +112,7 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
         options.add(command2);
         //options.add(att);
         
-        if (System.getProperty("os.name").startsWith("Window")) {
+        /*if (System.getProperty("os.name").startsWith("Window")) {
             final JPanel fileview = (JPanel)((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(2);
             //fileview.add(command);
             fileview.add(command2);
@@ -120,7 +120,7 @@ public final class DataFileOpenDialog extends JFileChooser implements ActionList
             final JPanel pp = (JPanel) ((JComponent)((JComponent)this.getComponent(2)).getComponent(2)).getComponent(0);
             pp.add(new JPanel());
             this.setPreferredSize(new Dimension(660,450));
-        } else {
+        } else*/ {
             final JPanel filename = (JPanel) this.getComponent(this.getComponentCount()-1);
             final JPanel buttons = (JPanel) filename.getComponent(filename.getComponentCount()-1);
             this.setControlButtonsAreShown(false);
