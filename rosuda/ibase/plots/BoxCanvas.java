@@ -113,9 +113,11 @@ public class BoxCanvas extends BaseCanvas {
      * @param mark associated marker */
     public BoxCanvas(PlotComponent ppc, Frame f, SVar[] var, SMarker mark) {
         super(ppc,f,mark);
+        mTop=mBottom=10;
         v=var[0];
         setTitle("Boxplot ("+v.getName()+")");
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
+        ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
         if (v!=null && !v.isCat() && v.isNum())
             valid=true; // valid are only numerical vars non-cat'd
         if (valid) {
