@@ -152,6 +152,19 @@ int main(void) {
         ],[AC_MSG_RESULT(yes)],
         [AC_MSG_ERROR([Cannot compile a simple JNI program. See config.log for details.])])
 
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${JAVA_LD_PATH}
+export LD_LIBRARY_PATH
+
+AC_MSG_CHECKING([whether JNI programs can be run])
+AC_RUN_IFELSE([
+#include <jni.h>
+int main(void) {
+    jobject o;
+    return 0;
+}
+        ],[AC_MSG_RESULT(yes)],
+        [AC_MSG_ERROR([Cannot run a simple JNI program - probably your jvm library is in non-standard location or JVM is unsupported. See config.log for details.])])
+
 AC_MSG_CHECKING([JNI data types])
 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 #include <jni.h>
