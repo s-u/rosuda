@@ -11,6 +11,21 @@ int main(int argc, char **argv) {
   HKEY root=HKEY_LOCAL_MACHINE;
   char *javakey="Software\\JavaSoft\\Java Runtime Environment";
 
+  if (argc>1 && argv[1][0]=='-' && argv[1][1]=='R') {
+    if (getenv("R_HOME")) {
+      strcpy(RegStrBuf,getenv("R_HOME"));
+    } else {
+      javakey="Software\\R-core\\R"; s=32767;
+      if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,javakey,0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+	  RegQueryValueEx(k,"InstallPAth",0,&t,RegStrBuf,&s)!=ERROR_SUCCESS) {
+	if (RegOpenKeyEx(HKEY_CURRENT_USER,javakey,0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+	    RegQueryValueEx(k,"InstallPath",0,&t,RegStrBuf,&s)!=ERROR_SUCCESS) {
+	  fprintf(stderr, "ERROR*> R - can't open registry keys.\n");
+	  return -1;
+	}
+      }
+    }
+  } else
   /* JAVA_HOME can override our detection - but we still post-process it */
   if (getenv("JAVA_HOME")) {
     strcpy(RegStrBuf,getenv("JAVA_HOME"));
