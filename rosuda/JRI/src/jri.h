@@ -8,7 +8,8 @@
 
 /* the viewpoint is from R, i.e. "get" means "Java->R" whereas "put" means "R->Java" */
 
-#define JRI_VERSION 0x0103 /* JRI v0.1-3 */
+#define JRI_VERSION 0x0200 /* JRI v0.2-0 */
+#define JRI_API     0x0103 /* API-version 1.3 */
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,0 +1,63 @@
+# JRI - Java/R Interface      experimental!
+#--------------------------------------------------------------------------
+
+#--- comment out the following for non-debug version
+CFLAGS+=-g
+
+CFLAGS+=-Iinclude
+
+CC=@CC@
+RHOME=@R_HOME@
+JAVAC=@JAVAC@ $(JFLAGS)
+JAVAH=@JAVAH@
+JAVAINC=@JAVA_INC@
+JAR=@JAR@
+
+RINC=-I$(RHOME)/src/include -I$(RHOME)/include
+RLD=-L$(RHOME)/bin -L$(RHOME)/lib -lR
+JNILD=@JNILD@
+JNISO=@JNISO@
+JNIPREFIX=@JNIPREFIX@
+CPICF=@CPICF@
+
+JRI_JSRC=$(wildcard *.java)
+TARGETS=$(JNIPREFIX)jri$(JNISO) JRI.jar
+
+all: $(TARGETS)
+
+JRI.jar: $(JRI_JSRC) $(JNIPREFIX)jri$(JNISO)
+	$(JAVAC) -d . $(JRI_JSRC)
+	$(JAR) fc $@ org $(JNIPREFIX)jri$(JNISO)
+
+org_rosuda_JRI_Rengine.h: org/rosuda/JRI/Rengine.class
+	$(JAVAH) -d . org.rosuda.JRI.Rengine
+
+Rcallbacks.o: Rcallbacks.c Rcallbacks.h globals.h
+	$(CC) -c -o $@ Rcallbacks.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
+
+Rinit.o: Rinit.c Rinit.h Rcallbacks.h
+	$(CC) -c -o $@ Rinit.c $(CFLAGS) $(CPICF) $(RINC)
+
+globals.o: globals.c globals.h
+	$(CC) -c -o $@ globals.c $(CFLAGS) $(CPICF) $(JAVAINC)
+
+Rengine.o: Rengine.c org_rosuda_JRI_Rengine.h globals.h Rcallbacks.h Rinit.h
+	$(CC) -c -o $@ Rengine.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
+
+jri.o: jri.c
+	$(CC) -c -o $@ jri.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
+
+$(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o $(JRIDEPS)
+	$(CC) -o $@ $^ $(JNILD) $(RLD)
+
+libjvm.dll.a: jvm.def
+	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
+
+org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: Rengine.java REXP.java Mutex.java RMainLoopCallbacks.java
+	$(JAVAC) -d . $^
+
+clean:
+	rm -rf $(TARGETS) org *.o *~ org_rosuda_JRI_Rengine.h *$(JNISO) *.class *~
+
+.PHONY: clean all
+

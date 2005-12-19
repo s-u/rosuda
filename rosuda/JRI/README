@@ -21,14 +21,16 @@ R to Java: rJava
  How to compile
 ----------------
 
-1) Edit "Makefile" and uncomment the correct line for
-   your platform. Currently Linux, Max OS X and Windows
-   are supported. For other platforms take the Linux
-   Makefile as a basis and edit appropriately.
-2) Edit the paths in your platform-specific Makefile
-   to reflect the location of Java and R (not needed
-   for Mac OS X)
+As of JRI 0.2 everything is 'autoconf'igured.
+
+1) Make sure JDK 1.4 or higher is installed (on Linux
+   1.5 or later must be installed) and all java
+   commands are ont the PATH. Alternatively you can
+   set JAVA_HOME instead.
+2) ./configure
 3) make
+
+On Windows run "sh configure.win" instead of configure
 
 Note for Windows users: you will need the same tools
 that are necessary to build R, i.e. the /bin tools
@@ -47,10 +49,11 @@ rtest.java   - demonstrates the use of the low-level
 rtest2.java  - a very simple console using stdin as input
                and a TextField for output.
 
-On unix the examples can be run using run and run2
-On Windows the first example can be run using run.bat,
-how to run the other example is left as an excercise
-to the user ;).
+The examples can be run with
+./run rtest
+./run rtest2
+
+On Windows use run.bat instead
 
 ---
-04/2005 S.U.
+12/2005 S.U.

@@ -11,11 +11,17 @@ rm -f /tmp/${PNAME}/mkdist
 
 cd /tmp/${PNAME}
 
-#echo "Running autoconf ..."
-#mkdir inst
+echo "Running autoconf ..."
+rm -rf autom4te*
+autoreconf
 #autoheader
 #autoconf
-#rm -rf autom4te*
+rm -rf autom4te*
+
+echo "Compiling getsp ..."
+if [ ! -e getsp.class ]; then
+    javac getsp.java
+fi
 
 echo "Removing CVS and backup stuff ..."
 find . -name CVS | xargs rm -rf

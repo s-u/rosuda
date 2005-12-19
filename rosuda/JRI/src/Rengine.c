@@ -25,7 +25,7 @@ extern int UserBreak;
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetVersion
 (JNIEnv *env, jclass this)
 {
-    return (jlong) JRI_VERSION;
+    return (jlong) JRI_API;
 }
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupR

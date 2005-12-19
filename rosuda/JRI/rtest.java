@@ -57,7 +57,7 @@ public class rtest {
 	// 1) we pass the arguments from the command line
 	// 2) we won't use the main loop at first, we'll start it later
 	// 3) the callbacks are implemented by the TextConsole class above
-	Rengine re=new Rengine(args, false, new TextConsole());
+	Rengine re=new Rengine(args, false, null);
         System.out.println("Rengine created, waiting for R");
 	// the engine creates R is a new thread, so we should wait until it's ready
         if (!re.waitForR()) {
@@ -65,6 +65,12 @@ public class rtest {
             return;
         }
 
+		re.eval("data(iris)");
+		System.out.println(re.eval("objects()"));
+		System.out.println(re.eval("sqrt(36)"));
+
+		System.exit(0);
+		
         // simple assignment like a<-"hello" (env=0 means use R_GlobalEnv)
         long xp1 = re.rniPutString("hello");
         re.rniAssign("a", xp1, 0);
