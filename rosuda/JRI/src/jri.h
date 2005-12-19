@@ -15,8 +15,9 @@
 extern "C" {
 #endif
     
-#define SEXP2L(s) ((long)(s))
-#define L2SEXP(s) ((SEXP)((int)(s)))
+  /* jlong can always hold a pointer */
+#define SEXP2L(s) ((jlong)(s))
+#define L2SEXP(s) ((SEXP)((jlong)(s)))
         
 jstring jri_callToString(JNIEnv *env, jobject o);
 
