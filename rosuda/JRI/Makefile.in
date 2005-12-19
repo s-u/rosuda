@@ -1,5 +1,6 @@
 # JRI - Java/R Interface      experimental!
 #--------------------------------------------------------------------------
+# See Makefile.all for the actual building process
 
 # The values are all auto-configured
 RHOME=@R_HOME@

@@ -1,7 +1,7 @@
 # JRI - Java/R Interface      experimental!
 #--------------------------------------------------------------------------
 
-JRI_JSRC=$(wildcard *.java)
+JRI_JSRC=$(wildcard ../*.java)
 TARGETS=$(JNIPREFIX)jri$(JNISO) JRI.jar
 
 all: $(TARGETS)
@@ -34,7 +34,7 @@ $(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o $(JRIDEP
 win32/libjvm.dll.a:
 	make -C win32 libjvm.dll.a
 
-org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: Rengine.java REXP.java Mutex.java RMainLoopCallbacks.java
+org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: $(JRI_JSRC)
 	$(JAVAC) -d . $^
 
 clean:
