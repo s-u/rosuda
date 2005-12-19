@@ -1,0 +1,31 @@
+# JRI 0.2   (C) Simon Urbanek
+# This is the actual Makefile - all autconf'ed values should
+# be passed as vars, because we also want to use this for
+# the Windows build that has no autoconf
+
+TARGETS=src/JRI.jar $(JRILIB) rtest.class rtest2.class
+
+all: $(TARGETS)
+
+src/JRI.jar:
+	$(MAKE) $(SUBMP) -C src JRI.jar
+
+src/${JRILIB}:
+	$(MAKE) $(SUBMP) -C src $(JRILIB)
+
+$(JRILIB): src/$(JRILIB)
+	rm -f $@
+	cp $< $@
+
+rtest.class: rtest.java src/JRI.jar
+	$(JAVAC) -classpath src/JRI.jar -d . $<
+
+rtest2.class: rtest2.java src/JRI.jar
+	$(JAVAC) -classpath src/JRI.jar -d . $<
+
+clean:
+	$(MAKE) $(SUBMP) -C src clean
+	rm -rf $(TARGETS) *~
+
+.PHONY: clean all
+

@@ -1,35 +1,12 @@
 # JRI - Java/R Interface      experimental!
 #--------------------------------------------------------------------------
 
+# The values are all auto-configured
 RHOME=@R_HOME@
 JAVAC=@JAVAC@ $(JFLAGS)
 JAVAH=@JAVAH@
 JAVA=@JAVA_PROG@
 
 JRILIB=@JNIPREFIX@jri@JNISO@
-TARGETS=src/JRI.jar ${JRILIB} rtest.class rtest2.class
 
-all: $(TARGETS)
-
-src/JRI.jar:
-	$(MAKE) -C src JRI.jar
-
-src/${JRILIB}:
-	$(MAKE) -C src ${JRILIB}
-
-${JRILIB}: src/${JRILIB}
-	rm -f $@
-	cp $< $@
-
-rtest.class: rtest.java src/JRI.jar
-	$(JAVAC) -classpath src/JRI.jar -d . $<
-
-rtest2.class: rtest2.java src/JRI.jar
-	$(JAVAC) -classpath src/JRI.jar -d . $<
-
-clean:
-	$(MAKE) -C src clean
-	rm -rf $(TARGETS) *~
-
-.PHONY: clean all
-
+include Makefile.all
