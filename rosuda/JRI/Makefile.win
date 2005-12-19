@@ -8,8 +8,8 @@ windows.all: all run.bat
 $(RHOME)/src/gnuwin32/libR.a:
 	make -C $(RHOME)/src/gnuwin32 libR.a
 
-run.bat:
+run.bat: jri.dll
 	echo "set PATH=%PATH%;$(RHOME)\\bin;$(RHOME)\\lib" > run.bat
-	echo "$(JAVA_PROG) rtest \$$*" >> run.bat
+	echo "$(JAVA_PROG) -cp .;src/JRI.jar rtest \$$*" >> run.bat
 
 include Makefile.all

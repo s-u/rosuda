@@ -1,16 +1,17 @@
 R_HOME=$(RHOME)
 JAVA_HOME=$(JAVAHOME)
 JAVAINC=-I$(JAVAHOME)/include -I$(JAVAHOME)/include/win32
+RINC=-I$(RHOME)/include
 JNISO=.dll
-JAVA_LIBS=-L. -ljvm
+JAVA_LIBS=-Lwin32 -ljvm
 JNILD=-shared $(JAVA_LIBS) -L$(RHOME)/src/gnuwin32 -Wl,--kill-at
 CFLAGS+=-DWin32 -D_JNI_IMPLEMENTATION_
 JAVA_PROG=$(JAVAHOME)/bin/java
 JAVAC=$(JAVAHOME)/bin/javac
 JAVAH=$(JAVAHOME)/bin/javah
 JAR=$(JAVAHOME)/bin/jar
-JRIDEPS=libjvm.dll.a $(RHOME)/src/gnuwin32/libR.a
+JRIDEPS=win32/libjvm.dll.a $(RHOME)/src/gnuwin32/libR.a
 JNIPREFIX=
 PLATFORMT=run.bat
 CC=gcc
-
+JRILIB=jri.dll

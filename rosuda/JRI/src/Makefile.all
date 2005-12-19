@@ -31,8 +31,8 @@ jri.o: jri.c
 $(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o $(JRIDEPS)
 	$(CC) -o $@ $^ $(JNILD) $(RLD)
 
-libjvm.dll.a: jvm.def
-	dlltool --input-def jvm.def --kill-at --dllname jvm.dll --output-lib libjvm.dll.a
+win32/libjvm.dll.a:
+	make -C win32 libjvm.dll.a
 
 org/rosuda/JRI/Rengine.class org/rosuda/JRI/REXP.class org/rosuda/JRI/Mutex.class: Rengine.java REXP.java Mutex.java RMainLoopCallbacks.java
 	$(JAVAC) -d . $^
