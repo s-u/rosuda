@@ -3,29 +3,31 @@
 # be passed as vars, because we also want to use this for
 # the Windows build that has no autoconf
 
-TARGETS=src/JRI.jar $(JRILIB) rtest.class rtest2.class
+EX_JAVA=$(wildcard examples/*.java)
+EX_CLASS=$(EX_JAVA:%.java=%.class)
+
+TARGETS=src/JRI.jar $(JRILIB) $(EX_CLASS)
 
 all: $(TARGETS)
 
 src/JRI.jar:
-	$(MAKE) $(SUBMP) -C src JRI.jar
+	$(MAKE) -C src JRI.jar
 
 src/${JRILIB}:
-	$(MAKE) $(SUBMP) -C src $(JRILIB)
+	$(MAKE) -C src $(JRILIB)
 
 $(JRILIB): src/$(JRILIB)
 	rm -f $@
 	cp $< $@
 
-rtest.class: rtest.java src/JRI.jar
-	$(JAVAC) -classpath src/JRI.jar -d . $<
-
-rtest2.class: rtest2.java src/JRI.jar
-	$(JAVAC) -classpath src/JRI.jar -d . $<
+examples/%.class: examples/%.java src/JRI.jar
+	$(JAVAC) -classpath src/JRI.jar -d examples $<
 
 clean:
-	$(MAKE) $(SUBMP) -C src clean
-	rm -rf $(TARGETS) *~
+	$(MAKE) -C src clean
+	rm -rf $(TARGETS) *~ examples/*.class
 
-.PHONY: clean all
+examples: $(EX_CLASS)
+
+.PHONY: clean all examples
 
