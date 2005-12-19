@@ -19,8 +19,10 @@ autoreconf
 rm -rf autom4te*
 
 echo "Compiling getsp ..."
-if [ ! -e getsp.class ]; then
+if [ ! -e tools/getsp.class ]; then
+    cd tools
     javac getsp.java
+    cd ..
 fi
 
 echo "Removing CVS and backup stuff ..."

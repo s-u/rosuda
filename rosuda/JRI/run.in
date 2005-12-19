@@ -9,15 +9,18 @@ else
 fi
 JAVA=@JAVA_PROG@
 
+: ${CLASSPATH=.:examples}
+
 export R_HOME
 export LD_LIBRARY_PATH
 
 if [ -z "$1" ]; then
     echo ""
-    echo " Usage: run <class>"
+    echo " Usage: run <class> [...]"
     echo ""
     echo " For example: ./run rtest"
+    echo " Set CLASSPATH variable if other than .:examples is desired"
     echo ""
 else
-    $JAVA -Djava.library.path=.:@JAVA_LD_PATH@ -cp .:src/JRI.jar $*
+    ${JAVA} -Djava.library.path=.:@JAVA_LD_PATH@ -cp ${CLASSPATH}:src/JRI.jar $*
 fi

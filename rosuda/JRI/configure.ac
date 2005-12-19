@@ -65,8 +65,8 @@ AC_PATH_PROGS(JAVAC,javac,,${JAVA_PATH})
 AC_PATH_PROGS(JAVAH,javah,,${JAVA_PATH})
 AC_PATH_PROGS(JAR,jar,,${JAVA_PATH})
 
-## this is where our test-class lives (current directory)
-getsp_cp=.
+## this is where our test-class lives
+getsp_cp=tools
 
 AC_MSG_CHECKING([whether Java interpreter works])
 acx_java_works=no
