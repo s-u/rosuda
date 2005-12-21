@@ -155,8 +155,10 @@ public class BufferTokenizer {
  * sets limit for discret handling of numerical columns
  * @param i
  */
-	public void setDiscretLimit(int i) {
-		discretLimit = i;
+	public void setDiscretLimit(int n) {
+        this.discretLimit = (n>800)?(15 * Math.max(1, (int)(Math.log(n)/Math.log(10))-1)):((int)(1.5*Math.sqrt(n)));
+	 //	discretLimit = n;
+      System.out.println(" Set Limit to: "+discretLimit);
 	}
 
 /**
@@ -268,6 +270,9 @@ public class BufferTokenizer {
 			numericalColumn = new boolean[columns];
 			positionSecondLine = getPositionSecondLine(buffer);
 			lines = amountLines(buffer, format);
+
+            setDiscretLimit(lines);
+            
 			if(buffer.get(buffer.limit()-1) == NEWLINE) {
 				if(buffer.get(buffer.limit()-2) == RETURN) {
 					buffer.limit(buffer.limit()-2);
@@ -292,7 +297,7 @@ public class BufferTokenizer {
 			word = new byte[columns][discretLimit][];
 			wordCount = new int[columns][lines];
 			NACount = new int[columns];
-			discretValue = new double[columns][discretLimit];
+			discretValue = new double[columns][this.discretLimit];
 			wordStackSize = new int[columns];
 			stop = System.currentTimeMillis();
 			System.out.println("Initialisierungen: " + (stop - start));
@@ -1228,10 +1233,7 @@ public class BufferTokenizer {
 			System.exit(0);
 		}
 
-
 		return i + 1;
-
-
 	}
 
 /**
@@ -2334,8 +2336,8 @@ public class BufferTokenizer {
 									if (b == SEPERATOR || b == NEWLINE || b == RETURN) {
 										break;
 									} else {
-										item[j][i] = item[j][i] + (b - 48) * Math.pow(10, -(++k));
-									}
+										item[j][i] += (b - 48) * Math.pow(10, -(++k));
+                                    }
 								}
 								break;
 							} else if (b == SEPERATOR || b == RETURN || b == NEWLINE) {
@@ -2351,7 +2353,7 @@ public class BufferTokenizer {
 							if (b == SEPERATOR || b == NEWLINE || b == RETURN)
 								break;
 							else {
-								item[j][i] = item[j][i] + (b - 48) * Math.pow(10, -(++k));
+                              item[j][i] += (b - 48) * Math.pow(10, -(++k));
 							}
 						}
 						break;
@@ -3485,7 +3487,7 @@ public class BufferTokenizer {
 		}
 		return c;
 	}
-
+    
 /**
  * method to get linebreaker
  * @param buffer associated ByteBuffer
