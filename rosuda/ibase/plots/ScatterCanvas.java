@@ -48,7 +48,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected MenuItem MIlabels=null;
     
-    protected int X,Y,W,H, TW,TH;
+    protected int Y,W,H, TW,TH;
     
     protected int []filter=null;
     
@@ -82,6 +82,10 @@ public class ScatterCanvas extends BaseCanvas {
      * @param mark associated marker */
     public ScatterCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark) {
         super(ppc,f,mark);
+        
+        mLeft=45;
+        mBottom=30;
+        mRight=mTop=10;
         
         v=new SVar[2];
         v[0]=v1; v[1]=v2; m=mark;
@@ -131,13 +135,13 @@ public class ScatterCanvas extends BaseCanvas {
         Dimension Dsize=pc.getSize();
         int w=Dsize.width, h=Dsize.height;
         TW=w; TH=h;
-        int innerL=45, innerB=30, lshift=0;
-        int innerW=w-innerL-10, innerH=h-innerB-10;
+        int lshift=0;
+        int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
         boolean xcat=v[0].isCat(), ycat=v[1].isCat();
         
-        ((orientation==0)?ax:ay).setGeometry(Axis.O_X,X=innerL,W=innerW);
-        ((orientation==0)?ay:ax).setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
-        Y=TH-innerB-innerH;
+        ((orientation==0)?ax:ay).setGeometry(Axis.O_X,mLeft,W=innerW);
+        ((orientation==0)?ay:ax).setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
+        Y=TH-mBottom-innerH;
         
         hasLeft=hasRight=hasTop=hasBot=false;
         
@@ -160,10 +164,10 @@ public class ScatterCanvas extends BaseCanvas {
                 //pp[i]=null;
                 int oX = (orientation==0)?x:y;
                 int oY = (orientation==0)?y:x;
-                if (oX<innerL) hasLeft=true;
-                else if (oY<10) hasTop=true;
-                else if (oX>w-10) hasRight=true;
-                else if (oY>h-innerB) hasBot=true;
+                if (oX<mLeft) hasLeft=true;
+                else if (oY<mTop) hasTop=true;
+                else if (oX>w-mRight) hasRight=true;
+                else if (oY>h-mBottom) hasBot=true;
                 else {
                     /*if (stackjitter && jitter && v[0].isCat() && i>0) {
                         int j=0;
@@ -200,8 +204,8 @@ public class ScatterCanvas extends BaseCanvas {
                 }
             } else { // place missings on the other side of the axes
                 int x,y;
-                if (v[0].isMissingAt(i)) x=innerL-4; else x=jx+ax.getCasePos(i);
-                if (v[1].isMissingAt(i)) y=h-innerB+4; else y=jy+ay.getCasePos(i);
+                if (v[0].isMissingAt(i)) x=mLeft-4; else x=jx+ax.getCasePos(i);
+                if (v[1].isMissingAt(i)) y=h-mBottom+4; else y=jy+ay.getCasePos(i);
                 PPrimCircle p=new PPrimCircle();
                 if(orientation==0){
                     p.x = x;
@@ -377,12 +381,12 @@ public class ScatterCanvas extends BaseCanvas {
         
         if (fieldBg!=0) {
             g.setColor((fieldBg==1)?"white":"objects");
-            g.fillRect(X,Y,W,H);
+            g.fillRect(mLeft,Y,W,H);
         }
         
         g.setColor("black");
-        g.drawLine(X,Y,X,Y+H);
-        g.drawLine(X,Y+H,X+W,Y+H);
+        g.drawLine(mLeft,Y,mLeft,Y+H);
+        g.drawLine(mLeft,Y+H,mLeft+W,Y+H);
         
         /* draw ticks and labels for X axis */
         {
@@ -416,9 +420,9 @@ public class ScatterCanvas extends BaseCanvas {
             try {
                 while (fi<axis.vBegin+axis.vLen) {
                     int t=axis.getValuePos(fi);
-                    g.drawLine(X-5,t,X,t);
+                    g.drawLine(mLeft-5,t,mLeft,t);
                     if(showLabels)
-                        g.drawString(v[ori].isCat()?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):axis.getDisplayableValue(fi),X-8,t,1,0.3);
+                        g.drawString(v[ori].isCat()?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):axis.getDisplayableValue(fi),mLeft-8,t,1,0.3);
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
