@@ -28,6 +28,7 @@ public class PPrimPolygon extends PPrimBase {
     public boolean fill=true;
     public boolean selectByCorners=false;
     public boolean drawCorners=false;
+    public float[] lineWidth;
     
     private int nodeSize=2;
     
@@ -65,7 +66,15 @@ public class PPrimPolygon extends PPrimBase {
         }
         if (drawBorder) {
             g.setColor("outline");
-            g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+            //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+            for(int i=1; i<pg.npoints; i++){
+                if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
+                g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+            }
+            if(closed){
+                if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
+                g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
+            }
         }
         if(drawCorners){
             g.setColor("outline");
@@ -98,7 +107,15 @@ public class PPrimPolygon extends PPrimBase {
                     else
                         g.setColor("marked");
                 } else g.setColor("outline");
-                g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+                //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+                for(int i=1; i<pg.npoints; i++){
+                    if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
+                    g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+                }
+                if(closed){
+                    if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
+                    g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
+                }
             }
             if(drawCorners){
                 g.setColor("marked");
