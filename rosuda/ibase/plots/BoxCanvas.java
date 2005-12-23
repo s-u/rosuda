@@ -113,7 +113,9 @@ public class BoxCanvas extends BaseCanvas {
      * @param mark associated marker */
     public BoxCanvas(PlotComponent ppc, Frame f, SVar[] var, SMarker mark) {
         super(ppc,f,mark);
-        mTop=mBottom=10;
+        mLeft=30;
+        mBottom=10;
+        mTop=10;
         v=var[0];
         setTitle("Boxplot ("+v.getName()+")");
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
@@ -129,7 +131,7 @@ public class BoxCanvas extends BaseCanvas {
         };
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        
+        objectClipping=true;
         dontPaint=false;
     };
     
@@ -140,6 +142,9 @@ public class BoxCanvas extends BaseCanvas {
      * @param mark associated marker */
     public BoxCanvas(PlotComponent ppc, Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
         super(ppc,f,mark);
+        mLeft=30;
+        mBottom=30;
+        mTop=10;
         v=var; m=mark; cv=cvar; setFrame(f);
         setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
@@ -186,6 +191,7 @@ public class BoxCanvas extends BaseCanvas {
             String myMenu[]={"+","File","~File.Graph","~Edit","~Window","0"};
             EzMenu.getEzMenu(f,this,myMenu);
         };
+        objectClipping=true;
         dontPaint=false;
     };
     
@@ -253,37 +259,32 @@ public class BoxCanvas extends BaseCanvas {
         g.setBounds(r.width,r.height);
         
         int w=r.width, h=r.height;
-        TW=w; TH=h;
-        int innerL=30, innerB=30, lshift=0;
-        int innerW=w-innerL-10, innerH=h-innerB-10;
-        Y=TH-innerB-innerH;
         
-        //g.begin();
+        int innerW=w-mLeft-10, innerH=h-mBottom-mTop;
+        
         if (!valid) {
             g.defineColor("red",255,0,0);
             g.drawLine(0,0,r.width,r.height);
             g.drawLine(0,r.height,r.width,0);
-//	    g.end();
             return;
         };
         if (vertical) {
-            ay.setGeometry(Axis.O_Y,h-innerB,-(H=innerH));
-            //a.setGeometry(Axis.O_Y,r.height-20,-r.height+30);
+            ay.setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
+
             /* draw ticks and labels for Y axis */
             {
-                int X=30;
                 double f=ay.getSensibleTickDistance(30,18);
                 double fi=ay.getSensibleTickStart(f);
                 //if (Common.DEBUG>0)
                 //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
                 while (fi<ay.vBegin+ay.vLen) {
                     int t=ay.getValuePos(fi);
-                    g.drawLine(X-5,t,X,t);
+                    g.drawLine(mLeft-5,t,mLeft,t);
                     //if(showLabels)
-                    g.drawString(ay.getDisplayableValue(fi),X-25,t+5);
+                    g.drawString(ay.getDisplayableValue(fi),mLeft-25,t+5);
                     fi+=f;
                 };
-                g.drawLine(X,ay.gBegin,X,ay.gLen);
+                g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
             }
         } else {
             ay.setGeometry(Axis.O_X,40,r.width-50);
@@ -292,7 +293,7 @@ public class BoxCanvas extends BaseCanvas {
         if (vsCat) {
             int i=0;
             while(i<cs) {
-                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,Y+H+20,PoGraSS.TA_Center);
+                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,mTop+H+20,PoGraSS.TA_Center);
                 i++;
             };
         };
