@@ -105,6 +105,7 @@ public class ScatterCanvas extends BaseCanvas {
             EzMenu.getItem(f,"jitter").setEnabled(false);
         if (Global.AppType==Common.AT_Framework)
             EzMenu.getItem(f,"shading").setEnabled(false);
+        objectClipping=true;
         dontPaint=false;
     }
     
