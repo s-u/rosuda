@@ -37,6 +37,8 @@ public class PCPCanvas extends BaseCanvas {
     MenuItem MIaxes=null;
     MenuItem MIlines=null;
     
+    int nodeSize=2;
+    
     int X,Y,W,H, TW,TH;
     double totMin, totMax;
     /** create a new PCP
@@ -74,7 +76,7 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide labels","labels","Show dots","togglePts","Show axes","toggleAxes","Hide lines","toggleLines","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","Hide labels","labels","Show dots","togglePts","Show axes","toggleAxes","Hide lines","toggleLines","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         MIdots=EzMenu.getItem(f,"togglePts");
@@ -207,7 +209,7 @@ public class PCPCanvas extends BaseCanvas {
         if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, "alphaDown");
         if (e.getKeyCode()==KeyEvent.VK_UP) {
             if(pp[0]!=null){
-                int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()+1;
+                nodeSize++;
                 for(int i=0; i<pp.length; i++)
                     if(pp[i]!=null)
                         ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
@@ -216,7 +218,7 @@ public class PCPCanvas extends BaseCanvas {
         };
         if (e.getKeyCode()==KeyEvent.VK_DOWN) {
             if(pp[0]!=null){
-                int nodeSize = ((PPrimPolygon)pp[0]).getNodeSize()-1;
+                nodeSize--;
                 for(int i=0; i<pp.length; i++)
                     if(pp[i]!=null)
                         ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
@@ -269,10 +271,10 @@ public class PCPCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-        if (cmd=="toggleAxes") { 
-            drawAxes=!drawAxes; 
+        if (cmd=="toggleAxes") {
+            drawAxes=!drawAxes;
             MIaxes.setLabel((drawAxes)?"Hide axes":"Show axes");
-            setUpdateRoot(0); repaint(); 
+            setUpdateRoot(0); repaint();
         }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
             Axis rt=(cmd=="YrangeDlg")?ay:ax;
@@ -328,6 +330,41 @@ public class PCPCanvas extends BaseCanvas {
             d.dispose();
             updateGeometry=true;
         }
+        if (cmd=="set1") {
+            if (pp!=null && pp.length>0) {
+                int i=0;
+                while (i<pp.length) {
+                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    int j=0;
+                    if (cs!=null)
+                        while (j<cs.length)
+                            m.setSec(cs[j++],i+16);
+                    i++;
+                }
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
+        if (cmd=="set64") {
+            if (pp!=null && pp.length>0) {
+                int i=0;
+                while (i<pp.length) {
+                    //System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
+                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    int j=0;
+                    if (cs!=null)
+                        while (j<cs.length)
+                            m.setSec(cs[j++],64+(64*i/pp.length));
+                    i++;
+                }
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
+        if (cmd=="reset") {
+            if (m.getSecCount()>0) {
+                m.resetSec();
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
         
         return null;
     }
@@ -365,6 +402,7 @@ public class PCPCanvas extends BaseCanvas {
                 ((PPrimPolygon)pp[j]).selectByCorners=true;
                 ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
                 ((PPrimPolygon)pp[j]).ref = new int[] {j};
+                ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
             }
         }
     }
@@ -455,6 +493,6 @@ public class PCPCanvas extends BaseCanvas {
             if(zay!=null) super.performZoomIn(x1, y1, x2, y2, null, zay);
         }
     }
-  
+    
     
 };
