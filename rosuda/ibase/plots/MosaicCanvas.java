@@ -57,7 +57,6 @@ public class MosaicCanvas extends BaseCanvas {
                 Dirs[i] = 'y';
         }
         dontPaint=false;
-        System.out.println("Wenn der Fehler vor mir aufgetreten ist, dann ist alles ok.");
     }
     
     public void updateObjects() {
@@ -114,7 +113,6 @@ public class MosaicCanvas extends BaseCanvas {
     private int censor=0;
     private void create(int x1, int y1, int x2, int y2, String info) {
         
-        System.out.println("Du bist nicht null: " + ft);
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
         
