@@ -51,6 +51,38 @@ public class FrequencyTable {
             }
             table[i] = (double)ce.cases.size();
         }
+        
+        // init expected table assuming independence
+        int maxNumCats=0;
+        for(int v=0; v<vsize; v++){
+            if(vars[v].getNumCats() > maxNumCats) maxNumCats=vars[v].getNumCats();
+        }
+        
+        int[][] counts;
+        System.out.println("maxNC: " + maxNumCats);
+        counts = new int[vsize][maxNumCats];
+        
+        for(int v=0; v<vsize; v++)
+            for(int i=0; i<vars[v].getNumCats(); i++)
+                counts[v][i]=0;
+        
+        for(int v=0; v<vsize; v++)
+            for(int i=0; i<vars[v].size(); i++)
+                counts[v][vars[v].getCatIndex(i)]++;
+        
+        double denom = Math.pow(vars[0].size(), -vsize);
+        for(int i=0; i<exp.length; i++){
+            exp[i]=1;
+            int j=i;
+            for(int v=vsize-1; v>=0; v--){
+                exp[i]*=counts[v][j%vars[v].getNumCats()];
+                j = j/vars[v].getNumCats();
+            }
+            exp[i] *= denom;
+        }
+        
+        for(int i=0; i<exp.length; i++) System.out.println(exp[i]);
+        
     }
     
     private class CombinationEntry {
