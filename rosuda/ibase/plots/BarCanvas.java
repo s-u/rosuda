@@ -37,6 +37,7 @@ public class BarCanvas extends BaseCanvas {
     private int dragBar, dragW, dragH;
     
     private MenuItem MIspine=null;
+    private MenuItem MIlabels=null;
     
     /** creates a (weighted) barchart
      * @param f associated frame (or <code>null</code> if common default frame is to be used)
@@ -65,9 +66,10 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","Spineplot","spine","@RRotate","rotate","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","@SSpineplot","spine","@OSort by count","sortByCount","!OSort by marked","sortByMarked","@LHide Labels","labels","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIspine=EzMenu.getItem(f,"spine");
+        MIlabels=EzMenu.getItem(f,"labels");
         dontPaint=false;
     };
     
@@ -186,7 +188,7 @@ public class BarCanvas extends BaseCanvas {
             g.drawLine(mLeft,mTop,mLeft,h-mTop-mBottom);
         }
         
-        if(showLabels){
+        if(isShowLabels()){
             labels.clear();
             String[] text = new String[bars];
             double[] X = new double[bars];
@@ -323,26 +325,23 @@ public class BarCanvas extends BaseCanvas {
         } else super.mouseReleased(e);
     }
     
-    public void keyTyped(KeyEvent e) {
-        super.keyTyped(e);
-        if (e.getKeyChar()=='o') sortBars(false);
-        if (e.getKeyChar()=='O') sortBars(true);
-        if (e.getKeyChar()=='s') run(this,"spine");
-        if (e.getKeyChar()=='l') run(this,"labels");
-        
-        if (e.getKeyChar()>='0' && e.getKeyChar()<='9') {
-            m.setSelected(e.getKeyChar()-'0');
-            m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
-            setUpdateRoot(0);
-            repaint();
-        }
-    }
-    
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
         
+        if(cmd=="sortByCount") {
+            sortBars(false);
+        }
+        if(cmd=="sortByMarked") {
+            sortBars(true);
+        }
         if (cmd=="labels") {
-            showLabels=!showLabels;
+            if(isShowLabels()){
+                MIlabels.setLabel("Show Labels");
+                setShowLabels(false);
+            } else{
+                MIlabels.setLabel("Hide Labels");
+                setShowLabels(true);
+            }
             setUpdateRoot(0);
             repaint();
         }
@@ -360,41 +359,41 @@ public class BarCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-		if (cmd=="set1") {
-			if (pp!=null && pp.length>0) {
-				int i=0;
-				while (i<pp.length) {
-					int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
-					int j=0;
-					if (cs!=null)
-						while (j<cs.length)
-							m.setSec(cs[j++],i+16);
-					i++;
-				}
-				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-			}
-		}
-		if (cmd=="set64") {
-			if (pp!=null && pp.length>0) {
-				int i=0;
-				while (i<pp.length) {
-					//System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
-					int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
-					int j=0;
-					if (cs!=null)
-						while (j<cs.length)
-							m.setSec(cs[j++],64+(64*i/pp.length));
-					i++;
-				}
-				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-			}
-		}
-		if (cmd=="reset") {
-			if (m.getSecCount()>0) {
-				m.resetSec();
-				m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-			}
-		}
+        if (cmd=="set1") {
+            if (pp!=null && pp.length>0) {
+                int i=0;
+                while (i<pp.length) {
+                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    int j=0;
+                    if (cs!=null)
+                        while (j<cs.length)
+                            m.setSec(cs[j++],i+16);
+                    i++;
+                }
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
+        if (cmd=="set64") {
+            if (pp!=null && pp.length>0) {
+                int i=0;
+                while (i<pp.length) {
+                    //System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
+                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    int j=0;
+                    if (cs!=null)
+                        while (j<cs.length)
+                            m.setSec(cs[j++],64+(64*i/pp.length));
+                    i++;
+                }
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
+        if (cmd=="reset") {
+            if (m.getSecCount()>0) {
+                m.resetSec();
+                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+            }
+        }
         return null;
     };
     
