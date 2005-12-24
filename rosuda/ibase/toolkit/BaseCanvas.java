@@ -50,8 +50,8 @@ public class BaseCanvas
     protected boolean zoomRetainsAspect=true;
     /** if set to <code>true</code> then move-dragging is allowed. */
     protected boolean allowDragMove=false;
-    /** determines whether axis labels should be shown (currently not implemented by BaseCanvas itself) */
-    protected boolean showLabels=true;
+    /** determines whether axis labels should be shown. */
+    private boolean showLabels=true;
     /** run-time flag is set to <code>true</code> if baseDragging is in process */
     protected boolean baseDrag;
     /** run-time flag is set to <code>true</code> if the current baseDrag is a selection */
@@ -659,5 +659,14 @@ public class BaseCanvas
     
     public void setQueryText(String s, int[] cid) {
     	qi.setContent(s,cid);
+    }
+
+    public boolean isShowLabels() {
+        return showLabels;
+    }
+
+    public void setShowLabels(boolean showLabels) {
+        this.showLabels = showLabels;
+        labels.show=showLabels;
     }
 }
