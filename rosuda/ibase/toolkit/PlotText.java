@@ -22,6 +22,7 @@ public class PlotText extends PlotObject {
     double ax[], ay[];
     String txt[];
     Rectangle txtFields[]; // the place which each text element occupies, is initialised in draw method
+    boolean show=true;
     
     Vector addX=new Vector(),
             addY=new Vector(),
@@ -107,7 +108,7 @@ public class PlotText extends PlotObject {
     
     /** The actual draw method. */
     public void draw(PoGraSS g) {
-        if (txt==null || txt.length==0) return;
+        if (!show || txt==null || txt.length==0) return;
         if (cold!=null) cold.use(g);
         if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
         for (int i=0; i<txt.length; i++) {
