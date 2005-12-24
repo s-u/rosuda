@@ -159,7 +159,7 @@ public class PCPCanvas extends BaseCanvas {
             String[] vtext=new String[v[0].size()];
             while (fi<ax.vBegin+ax.vLen) {
                 int t=ax.getValuePos(fi);
-                if (showLabels){
+                if (isShowLabels()){
                     labels.add(t-5, TH-Y-H-10, v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
                         v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi));
                 }
@@ -176,7 +176,7 @@ public class PCPCanvas extends BaseCanvas {
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-2,t,mLeft,t);
-                if(showLabels)
+                if(isShowLabels())
                     labels.add(mLeft-3,(t+5),1,0, v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 fi+=f;
             };
@@ -233,8 +233,8 @@ public class PCPCanvas extends BaseCanvas {
         if (cmd=="print") { drawHidden=false; run(o,"exportPS"); drawHidden=true; return this; }
         super.run(o,cmd);
         if (cmd=="labels") {
-            showLabels=!showLabels;
-            MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
+            setShowLabels(!isShowLabels());
+            MIlabels.setLabel((isShowLabels())?"Hide labels":"Show labels");
             setUpdateRoot(0);
             repaint();
         };

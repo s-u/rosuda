@@ -159,7 +159,7 @@ public class KapMeCanvas extends BaseCanvas {
                 while (fi<ax.vBegin+ax.vLen) {
                     int t=ax.getValuePos(fi);
                     g.drawLine(t,H-mBottom,t,H-mBottom+5);
-                    if (showLabels)
+                    if (isShowLabels())
                         labels.add(t,H-mBottom+20,0.5,0,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
@@ -177,7 +177,7 @@ public class KapMeCanvas extends BaseCanvas {
                 while (fi<ay.vBegin+ay.vLen) {
                     int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    if(showLabels)
+                    if(isShowLabels())
                         labels.add(mLeft-8,t,1,0.3,ay.getDisplayableValue(fi));
                     fi+=f;
                 }
