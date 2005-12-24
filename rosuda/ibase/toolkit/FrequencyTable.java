@@ -59,7 +59,6 @@ public class FrequencyTable {
         }
         
         int[][] counts;
-        System.out.println("maxNC: " + maxNumCats);
         counts = new int[vsize][maxNumCats];
         
         for(int v=0; v<vsize; v++)
@@ -80,9 +79,6 @@ public class FrequencyTable {
             }
             exp[i] *= denom;
         }
-        
-        for(int i=0; i<exp.length; i++) System.out.println(exp[i]);
-        
     }
     
     private class CombinationEntry {
