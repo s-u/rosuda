@@ -51,7 +51,7 @@ public class HistCanvas extends BaseCanvas {
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@" + (char)KeyEvent.VK_UP + "Increase bin width","binUp","@" + (char)KeyEvent.VK_DOWN + "Decrease bin width","binDown","@" + (char)KeyEvent.VK_LEFT + "Move anchor left","anchorLeft","@" + (char)KeyEvent.VK_RIGHT + "Move anchor right","anchorRight","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=40; mRight=10; mTop=10; mBottom=20;
         allow180=true;
@@ -324,14 +324,16 @@ public class HistCanvas extends BaseCanvas {
         super.rotate(amount);
     }
     
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode()==KeyEvent.VK_UP) {
+    public Object run(Object o, String cmd) {
+        super.run(o,cmd);
+        
+        if(cmd=="binUp") {
             binw*=1.1;
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-        if (e.getKeyCode()==KeyEvent.VK_DOWN) {
+        if(cmd=="binDown"){
             double newBinw=Math.min(binw/1.1, 1);
             if(Math.abs(newBinw-binw)>0.00001){
                 binw=newBinw;
@@ -340,17 +342,18 @@ public class HistCanvas extends BaseCanvas {
                 repaint();
             }
         }
-        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
+        if (cmd=="anchorRight") {
             anchor = Math.min(anchor+0.1*binw, v.getMin());
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
+        if (cmd=="anchorLeft") {
             anchor = Math.max(anchor-0.1*binw, v.getMin()-binw);
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-    };
+        return null;
+    }
 }
