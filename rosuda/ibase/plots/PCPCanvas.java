@@ -36,6 +36,9 @@ public class PCPCanvas extends BaseCanvas {
     MenuItem MIdots=null;
     MenuItem MIaxes=null;
     MenuItem MIlines=null;
+    MenuItem MItrigraph=null;
+    MenuItem MInodeSizeUp=null;
+    MenuItem MInodeSizeDown=null;
     
     int nodeSize=2;
     
@@ -76,13 +79,18 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","Hide labels","labels","Show dots","togglePts","Show axes","toggleAxes","Hide lines","toggleLines","-","Individual scales","common","-","Set Y Range ...","YrangeDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","@LHide labels","labels","@TShorten lables","trigraph","Show dots","togglePts","Increase dot size (up)","nodeSizeUp","Decrease dot size (down)","nodeSizeDown","Show axes","toggleAxes","Hide lines","toggleLines","-","@CIndividual scales","common","-","Set Y Range ...","YrangeDlg","!SShow scale dialog","scaleDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         MIdots=EzMenu.getItem(f,"togglePts");
         MIaxes=EzMenu.getItem(f,"toggleAxes");
         MIlines=EzMenu.getItem(f,"toggleLines");
         MIlines.setEnabled(false);
+        MItrigraph=EzMenu.getItem(f, "trigraph");
+        MInodeSizeUp=EzMenu.getItem(f, "nodeSizeUp");
+        MInodeSizeUp.setEnabled(false);
+        MInodeSizeDown=EzMenu.getItem(f, "nodeSizeDown");
+        MInodeSizeUp.setEnabled(false);
         dontPaint=false;
     }
     
@@ -195,39 +203,12 @@ public class PCPCanvas extends BaseCanvas {
         }
     };
     
-    public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar()=='l') run(this,"labels");
-        if (e.getKeyChar()=='t') run(this,"trigraph");
-        if (e.getKeyChar()=='c') run(this,"common");
-        if (e.getKeyChar()=='n') run(this,"toggleNA");
-        if (e.getKeyChar()=='S') run(this,"scaleDlg");
-        super.keyTyped(e);
-    }
-    
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode()==KeyEvent.VK_RIGHT) run(this, "alphaUp");
         if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, "alphaDown");
-        if (e.getKeyCode()==KeyEvent.VK_UP) {
-            if(pp[0]!=null){
-                nodeSize++;
-                for(int i=0; i<pp.length; i++)
-                    if(pp[i]!=null)
-                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
-                setUpdateRoot(0); repaint();
-            }
-        };
-        if (e.getKeyCode()==KeyEvent.VK_DOWN) {
-            if(pp[0]!=null){
-                nodeSize--;
-                for(int i=0; i<pp.length; i++)
-                    if(pp[i]!=null)
-                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
-                setUpdateRoot(0); repaint();
-            }
-        };
+        if (e.getKeyCode()==KeyEvent.VK_UP) run(this, "nodeSizeUp");
+        if (e.getKeyCode()==KeyEvent.VK_DOWN) run(this,"nodeSizeDown");
     }
-    
-    public void keyReleased(KeyEvent e) {}
     
     public Object run(Object o, String cmd) {
         if (cmd=="print") { drawHidden=false; run(o,"exportPS"); drawHidden=true; return this; }
@@ -248,7 +229,11 @@ public class PCPCanvas extends BaseCanvas {
         }
         if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="common") { setCommonScale(!commonScale); }
-        if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
+        if (cmd=="trigraph") {
+            useX3=!useX3;
+            MItrigraph.setLabel(useX3?"Extend labels":"Shorten labels");
+            setUpdateRoot(0); repaint();
+        }
         if (cmd=="togglePts") {
             drawPoints=!drawPoints;
             MIdots.setLabel((drawPoints)?"Hide dots":"Show dots");
@@ -257,6 +242,8 @@ public class PCPCanvas extends BaseCanvas {
             }
             MIdots.setEnabled(!drawPoints||drawLines);
             MIlines.setEnabled(drawPoints||!drawLines);
+            MInodeSizeDown.setEnabled(drawPoints);
+            MInodeSizeUp.setEnabled(drawPoints);
             setUpdateRoot(0);
             repaint();
         }
@@ -365,6 +352,24 @@ public class PCPCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
             }
         }
+        if (cmd=="nodeSizeUp") {
+            if(pp[0]!=null){
+                nodeSize++;
+                for(int i=0; i<pp.length; i++)
+                    if(pp[i]!=null)
+                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                setUpdateRoot(0); repaint();
+            }
+        };
+        if (cmd=="nodeSizeDown") {
+            if(pp[0]!=null){
+                nodeSize--;
+                for(int i=0; i<pp.length; i++)
+                    if(pp[i]!=null)
+                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+                setUpdateRoot(0); repaint();
+            }
+        };
         
         return null;
     }
