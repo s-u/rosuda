@@ -28,9 +28,6 @@ public class ScatterCanvas extends BaseCanvas {
     /** use trigraph for X axis in case X is categorical */
     protected boolean useX3=false;
     
-    /** use shading of background according to depth */
-    protected boolean shading=false;
-    
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
     
@@ -47,6 +44,7 @@ public class ScatterCanvas extends BaseCanvas {
     protected boolean drag;
     
     protected MenuItem MIlabels=null;
+    protected MenuItem MItrigraph=null;
     
     protected int Y,W,H, TW,TH;
     
@@ -98,13 +96,12 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","Hide labels","labels","Change background","nextBg","Toggle jittering","jitter","Toggle stacking","stackjitter","Toggle shading","shading","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@0Reset zoom","resetZoom","Same scale","equiscale","-","@LHide labels","labels","@TShorten labels","trigraph","@GChange background","nextBg","@JToggle jittering","jitter","!JToggle stacking","stackjitter","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","-","Bigger points (up)","points+","Smaller points (down)","points-","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
+        MItrigraph=EzMenu.getItem(f,"trigraph");
         if (!v1.isCat() && !v2.isCat())
             EzMenu.getItem(f,"jitter").setEnabled(false);
-        if (Global.AppType==Common.AT_Framework)
-            EzMenu.getItem(f,"shading").setEnabled(false);
         objectClipping=true;
         dontPaint=false;
     }
@@ -223,19 +220,6 @@ public class ScatterCanvas extends BaseCanvas {
         sortedPoints.values().toArray(pp);
     };
     
-    public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar()=='l') run(this,"labels");
-        if (e.getKeyChar()=='P') run(this,"print");
-        if (e.getKeyChar()=='X') run(this,"exportPGS");
-        if (e.getKeyChar()=='g') run(this,"nextBg");
-        if (e.getKeyChar()=='C') run(this,"exportCases");
-        if (e.getKeyChar()=='j') run(this,"jitter");
-        if (e.getKeyChar()=='J') run(this,"stackjitter");
-        if (e.getKeyChar()=='t') run(this,"trigraph");
-        if (e.getKeyChar()=='s') run(this,"shading");
-        if (e.getKeyChar()=='.') run(this,"alphaUp");
-        if (e.getKeyChar()==',') run(this,"alphaDown");
-    };
     public void keyPressed(KeyEvent e) {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
@@ -349,10 +333,7 @@ public class ScatterCanvas extends BaseCanvas {
             if (!jitter) jitter=true;
             stackjitter=!stackjitter; updateObjects(); setUpdateRoot(1); repaint();
         }
-        if (cmd=="shading") {
-            shading=!shading; updateObjects(); setUpdateRoot(0); repaint();
-        }
-        if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
+        if (cmd=="trigraph") { useX3=!useX3; MItrigraph.setLabel(useX3?"Expand labels":"Shorten labels"); setUpdateRoot(0); repaint(); }
         if (cmd=="alphaDown") {
             ppAlpha-=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha<0.005f) ppAlpha=0.005f;
             setUpdateRoot(0); repaint();
