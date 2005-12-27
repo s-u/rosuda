@@ -433,10 +433,14 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public String queryObject(int i) {
-        PPrimCircle p = (PPrimCircle)pp[i];
-        return v[0].getName() + ": " + v[0].atD(p.ref[0]) + "\n"
-                + v[1].getName() + ": " + v[1].atD(p.ref[0]) + "\n"
-                + p.ref.length + " case(s)";
+        return queryObject(pp[i]);
+    }
+    
+    public String queryObject(PlotPrimitive p) {
+        PPrimCircle ppc = (PPrimCircle)p;
+        return v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+                + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                + ppc.ref.length + " case(s)";
     }
     
     public void paintPost(PoGraSS g) {
@@ -459,5 +463,33 @@ public class ScatterCanvas extends BaseCanvas {
             }
         }
         super.paintPost(g);
+    }
+
+    /* TODO: at the moment one has to hit the center point exactly which makes
+     * things easier and faster here but more difficult for the user, so this
+     * should be changed in the future.
+     */
+    protected PlotPrimitive getFirstPrimitiveContaining(int x, int y) {
+        return (PlotPrimitive)sortedPoints.get(new ComparablePoint(x,y));
+    }
+
+    /* TODO: see remark above */
+    protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
+        return new PlotPrimitive[] {getFirstPrimitiveContaining(x,y)};
+    }
+
+    protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec) {
+        Object[] obj = sortedPoints.subMap(new ComparablePoint(rec.x, rec.y), new ComparablePoint(rec.x+rec.width, rec.y+rec.height)).values().toArray();
+        System.out.println(obj.length);
+        PPrimCircle[] plp = new PPrimCircle[obj.length];
+        int j=0;
+        PPrimCircle ppc;
+        for(int i=0; i< obj.length; i++) {
+            ppc=(PPrimCircle)obj[i];
+            if(ppc!=null && ppc.y>=rec.y && ppc.y<=rec.y+rec.height) plp[j++]=ppc;
+        }
+        PlotPrimitive[] ret = new PlotPrimitive[j];
+        System.arraycopy(plp,0, ret,0, j);
+        return ret;
     }
 };
