@@ -117,7 +117,7 @@ public class BaseCanvas
         pc.addMouseMotionListener(this);
         pc.addKeyListener(this);
         f.addKeyListener(this);
-		qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
         labels=new PlotText(getPlotManager());
         labels.setLayer(0);
     }
@@ -308,33 +308,32 @@ public class BaseCanvas
                 int selMode=Common.getSelectMode(ev);
                 if (selMode>1) setTo=true;
                 if (pp!=null) {
-                    int i=0;
-                    while (i<pp.length) {
-                        if (pp[i]!=null && pp[i].contains(x,y)) {
-                            if (actionQuery) {
-                                if (pp[i].cases()>0) {
-                                    if (pp[i].getPrimaryCase()!=-1) {
-                                    	setQueryText(queryObject(i),pp[i].getPrimaryCase());
-//                                        qi.setContent(queryObject(i),pp[i].getPrimaryCase());
-                                    }
-                                    else {
-                                    	setQueryText(queryObject(i),pp[i].getCaseIDs());
-//                                        qi.setContent(queryObject(i),pp[i].getCaseIDs());
-                                    }
+                    if (actionQuery) {
+                        PlotPrimitive p = getFirstPrimitiveContaining(x,y);
+                        if(p!=null){
+                            if (p.cases()>0) {
+                                if (p.getPrimaryCase()!=-1) {
+                                    setQueryText(queryObject(p),p.getPrimaryCase());
                                 } else {
-                                	setQueryText(queryObject(i));
-//                                    qi.setContent(queryObject(i));
+                                    setQueryText(queryObject(p),p.getCaseIDs());
                                 }
-                                qi.setLocation(cl.x+x,cl.y+y);
-                                qi.show(); hideQI=false;
-                                break;
                             } else {
+                                setQueryText(queryObject(p));
+                            }
+                            qi.setLocation(cl.x+x,cl.y+y);
+                            qi.show(); hideQI=false;
+                        }
+                    } else {
+                        PlotPrimitive[] pps = getPrimitivesContaining(x,y);
+                        int i=0;
+                        while (i<pps.length) {
+                            if (pps[i]!=null) {
                                 effect=true;
                                 if (selMode==0) m.selectNone();
-                                pp[i].setMark(m,setTo);
+                                pps[i].setMark(m,setTo);
                             }
+                            i++;
                         }
-                        i++;
                     }
                 }
             }
@@ -349,6 +348,10 @@ public class BaseCanvas
     
     public String queryObject(int i) {
         return "object ID "+i;
+    }
+    
+    public String queryObject(PlotPrimitive p) {
+        return "object "+p.toString();
     }
     
     public void rotate(int amount) {
@@ -506,14 +509,10 @@ public class BaseCanvas
             if (Common.getSelectMode(e)==2) setTo=true;
             if (Common.getSelectMode(e)==0) m.selectNone();
             
+            PlotPrimitive[] pps=getPrimitivesIntersecting(sel);
             int i=0;
-            while (i<pp.length) {
-                //System.out.println("pp["+i+"]="+pp[i]);
-                if (pp[i]!=null && pp[i].intersects(sel)) {
-                    pp[i].setMark(m,setTo);
-                    if (pp[i].getPrimaryCase()!=-1) // FIXIT! works for sequential 1:1 relationships only!
-                        while (i<pp.length-1 && pp[i+1]!=null && pp[i+1].getPrimaryCase()==pp[i].getPrimaryCase()) i++;
-                }
+            while (i<pps.length) {
+                if (pps[i]!=null) pps[i].setMark(m,setTo);
                 i++;
             };
             m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
@@ -537,27 +536,27 @@ public class BaseCanvas
         };
     };
     public void mouseMoved(MouseEvent ev) {
-    	int x=ev.getX(), y=ev.getY();
+        int x=ev.getX(), y=ev.getY();
         
-    	Point cl=getFrame().getLocation();
+        Point cl=getFrame().getLocation();
         Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
         
         boolean effect=false, hideQI=true;
         boolean actionQuery=Common.isQueryTrigger(ev);
         boolean actionExtQuery=Common.isExtQuery(ev);
         if (actionQuery) {
-        	if (pp!=null) {
-        		int i=0;
+            if (pp!=null) {
+                int i=0;
                 while (i<pp.length) {
                     if (pp[i]!=null && pp[i].contains(x,y)) {
-                    	if (pp[i].cases()>0) {
-                        if (pp[i].getPrimaryCase()!=-1) {
-                        	setQueryText(queryObject(i),pp[i].getPrimaryCase());
+                        if (pp[i].cases()>0) {
+                            if (pp[i].getPrimaryCase()!=-1) {
+                                setQueryText(queryObject(i),pp[i].getPrimaryCase());
                             } else {
-                            	setQueryText(queryObject(i),pp[i].getCaseIDs());
+                                setQueryText(queryObject(i),pp[i].getCaseIDs());
                             }
-                    	} else {
-                    		setQueryText(queryObject(i));
+                        } else {
+                            setQueryText(queryObject(i));
                         }
                         qi.setLocation(cl.x+x,cl.y+y);
                         qi.show(); hideQI=false;
@@ -631,7 +630,7 @@ public class BaseCanvas
                                 for(int j=1; j<v.length; j++){
                                     oo=v[j].at(i);
                                     str += "\t"+((oo==null)?"NA":oo.toString());
-                                } 
+                                }
                                 p.println(str);
                             }
                             i++;
@@ -650,23 +649,74 @@ public class BaseCanvas
     };
     
     public void setQueryText(String s) {
-    	qi.setContent(s);
+        qi.setContent(s);
     }
     
     public void setQueryText(String s, int cid) {
-    	qi.setContent(s,cid);
+        qi.setContent(s,cid);
     }
     
     public void setQueryText(String s, int[] cid) {
-    	qi.setContent(s,cid);
+        qi.setContent(s,cid);
     }
-
+    
     public boolean isShowLabels() {
         return showLabels;
     }
-
+    
     public void setShowLabels(boolean showLabels) {
         this.showLabels = showLabels;
         labels.show=showLabels;
+    }
+    
+    /**
+     * Determine the plot primitives containing the given point.
+     * Can be overridden to achieve better performance.
+     * @return Array of matching primitives.
+     */
+    protected PlotPrimitive[] getPrimitivesContaining(int x, int y){
+        PlotPrimitive buf[] = new PlotPrimitive[pp.length];
+        int i=0;
+        int j=0;
+        while (i<pp.length) {
+            if (pp[i]!=null && pp[i].contains(x,y)) buf[j++]=pp[i];
+            i++;
+        }
+        PlotPrimitive ret[] = new PlotPrimitive[j];
+        System.arraycopy(buf, 0, ret, 0, j);
+        return ret;
+    }
+    
+    /**
+     * Determine the first plot primitive containing the given point.
+     * Can be overridden to achieve better performance.
+     * @return The matching primitive or null if point doesn't belong to any primitive.
+     */
+    protected PlotPrimitive getFirstPrimitiveContaining(int x, int y){
+        int i=0;
+        while (i<pp.length) {
+            if (pp[i]!=null && pp[i].contains(x,y)) return pp[i];
+            i++;
+        }
+        return null;
+    }
+    
+    /**
+     * Determine the plot primitives intersecting the given rectangle.
+     * Can be overridden to achieve better performance.
+     * @return Array of intersecting primitives.
+     */
+    protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec){
+        PlotPrimitive buf[] = new PlotPrimitive[pp.length];
+        int i=0;
+        int j=0;
+        while (i<pp.length) {
+            //System.out.println("pp["+i+"]="+pp[i]);
+            if (pp[i]!=null && pp[i].intersects(rec)) buf[j++]=pp[i];
+            i++;
+        };
+        PlotPrimitive ret[] = new PlotPrimitive[j];
+        System.arraycopy(buf, 0, ret, 0, j);
+        return ret;
     }
 }
