@@ -319,6 +319,7 @@ public class ScatterCanvas extends BaseCanvas {
                 double w=Tools.parseDouble(tw.getText());
                 double h=Tools.parseDouble(th.getText());
                 axis.setValueRange(w,h-w);
+                updateObjects();
                 setUpdateRoot(0);
                 repaint();
             }
