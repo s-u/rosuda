@@ -115,6 +115,7 @@ public class PlotText extends PlotObject {
             String t;
             if(maxw[i]>-1 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
             else t=txt[i];
+            g.setColor("outline");
             g.drawString(t,x[i],y[i],ax[i],ay[i]);
             int w = g.getWidthEstimate(t);
             int h = g.getHeightEstimate(t);
