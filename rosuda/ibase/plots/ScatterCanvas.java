@@ -438,9 +438,29 @@ public class ScatterCanvas extends BaseCanvas {
     
     public String queryObject(PlotPrimitive p) {
         PPrimCircle ppc = (PPrimCircle)p;
-        return v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
-                + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
-                + ppc.ref.length + " case(s)";
+        if(ppc.ref.length==1){
+            return v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+                    + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                    + ppc.ref.length + " case(s)";
+        } else{
+            double[] mM0 = minMax(ppc.ref,0);
+            double[] mM1 = minMax(ppc.ref,1);
+            return v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
+                    + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                    + ppc.ref.length + " case(s)";
+        }
+    }
+    
+    /* TODO: Maybe this can be done faster with the sortedPoints map */
+    private double[] minMax(int[] ref, int var){
+        double mM[] = new double[2];
+        mM[0] = mM[1] = v[var].atD(ref[0]);
+        for(int i=1; i<ref.length; i++){
+            double atD=v[var].atD(ref[i]);
+            if(atD<mM[0]) mM[0]=atD;
+            if(atD>mM[1]) mM[1]=atD;
+        }
+        return mM;
     }
     
     public void paintPost(PoGraSS g) {
@@ -464,7 +484,7 @@ public class ScatterCanvas extends BaseCanvas {
         }
         super.paintPost(g);
     }
-
+    
     /* TODO: at the moment one has to hit the center point exactly which makes
      * things easier and faster here but more difficult for the user, so this
      * should be changed in the future.
@@ -472,12 +492,12 @@ public class ScatterCanvas extends BaseCanvas {
     protected PlotPrimitive getFirstPrimitiveContaining(int x, int y) {
         return (PlotPrimitive)sortedPoints.get(new ComparablePoint(x,y));
     }
-
+    
     /* TODO: see remark above */
     protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
         return new PlotPrimitive[] {getFirstPrimitiveContaining(x,y)};
     }
-
+    
     protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec) {
         Object[] obj = sortedPoints.subMap(new ComparablePoint(rec.x, rec.y), new ComparablePoint(rec.x+rec.width, rec.y+rec.height)).values().toArray();
         PPrimCircle[] plp = new PPrimCircle[obj.length];
