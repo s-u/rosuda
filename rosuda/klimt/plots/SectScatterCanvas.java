@@ -26,6 +26,7 @@ public class SectScatterCanvas extends ScatterCanvas {
     float alpha=0.1f;
     
     boolean paintAllTrees=true;
+    boolean shading=false;
 
     public SectScatterCanvas(PlotComponent ppc, DataRoot dr, Frame f, SVar v1, SVar v2, SMarker mark, NodeMarker nm) {
         super(ppc, f,v1,v2,mark);
@@ -105,10 +106,14 @@ public class SectScatterCanvas extends ScatterCanvas {
         if (e.getKeyChar()=='.') {
             alpha*=2f; if (alpha>1f) alpha=1f; setUpdateRoot(0); repaint();
         }
+	if (e.getKeyChar()=='s') {
+	    shading=!shading; setUpdateRoot(0); repaint();
+	}
     }
     
     public void paintBackground(PoGraSS g) {
         SNode cn=(nm!=null)?nm.getNode():null;
+	int X=mLeft;
         paint_cn=cn;
 
         if (cn!=null) {
