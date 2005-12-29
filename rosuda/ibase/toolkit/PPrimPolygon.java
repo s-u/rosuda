@@ -29,6 +29,11 @@ public class PPrimPolygon extends PPrimBase {
     public boolean selectByCorners=false;
     public boolean drawCorners=false;
     public float[] lineWidth;
+    public boolean[] invisibleLines;
+    public boolean showInvisibleLines=false;
+    public boolean[] gapDots;
+    public boolean[] noDotsAt;
+    public boolean showGapDots=true;
     
     private int nodeSize=2;
     
@@ -57,6 +62,7 @@ public class PPrimPolygon extends PPrimBase {
     /** paint the primitive */
     public void paint(PoGraSS g, int orientation) {
         if (pg==null) return;
+        g.defineColor("red",255,0,0);
         if(fill){
             if (col!=null)
                 g.setColor(col.getRed(),col.getGreen(),col.getBlue());
@@ -68,24 +74,42 @@ public class PPrimPolygon extends PPrimBase {
             g.setColor("outline");
             //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
             for(int i=1; i<pg.npoints; i++){
-                if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
-                g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+                if(!invisibleLines[i-1]){
+                    if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
+                    g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+                }
             }
             if(closed){
                 if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
                 g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
             }
+            if(showInvisibleLines && invisibleLines!=null){
+                g.setColor("red");
+                for(int i=0; i<invisibleLines.length; i++){
+                    if(invisibleLines[i]){
+                        g.drawLine(pg.xpoints[i],pg.ypoints[i],pg.xpoints[i+1],pg.ypoints[i+1]);
+                    }
+                }
+            }
         }
         if(drawCorners){
             g.setColor("outline");
             for(int i=0; i<pg.npoints; i++){
-                g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
+                if(noDotsAt==null || !noDotsAt[i])
+                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
+        }
+        if(showGapDots && gapDots!=null){
+            g.setColor("outline");
+            for(int i=0; i<gapDots.length; i++)
+                if(gapDots[i])
+                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
         }
     }
     
     public void paintSelected(PoGraSS g, int orientation, SMarker m) {
         if (pg==null) return;
+        g.defineColor("red",255,0,0);
         double sa=getMarkedProportion(m,-1);
         //System.out.println("pp["+i+"] sa="+sa+" "+pp);
         if (sa>0d) {
@@ -109,8 +133,10 @@ public class PPrimPolygon extends PPrimBase {
                 } else g.setColor("outline");
                 //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
                 for(int i=1; i<pg.npoints; i++){
-                    if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
-                    g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+                    if(!invisibleLines[i-1]){
+                        if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
+                        g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
+                    }
                 }
                 if(closed){
                     if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
@@ -120,8 +146,15 @@ public class PPrimPolygon extends PPrimBase {
             if(drawCorners){
                 g.setColor("marked");
                 for(int i=0; i<pg.npoints; i++){
-                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
+                    if(noDotsAt==null || !noDotsAt[i])
+                        g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
                 }
+            }
+            if(showGapDots && gapDots!=null){
+                g.setColor("marked");
+                for(int i=0; i<gapDots.length; i++)
+                    if(gapDots[i])
+                        g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
         }
     }
