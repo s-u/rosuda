@@ -25,6 +25,7 @@ public class PCPCanvas extends BaseCanvas {
     boolean drawPoints=false;
     boolean drawAxes=false;
     boolean drawLines=true;
+    boolean drawNAlines=true;
     
     boolean commonScale=true;
     boolean drawHidden=true; // if true then hidden lines are drawn (default because if set to false, one more layer has to be updated all the time; export functions may want to set it to false for output omtimization)
@@ -39,6 +40,7 @@ public class PCPCanvas extends BaseCanvas {
     MenuItem MItrigraph=null;
     MenuItem MInodeSizeUp=null;
     MenuItem MInodeSizeDown=null;
+    MenuItem MIhideNAlines=null;
     
     int nodeSize=2;
     
@@ -79,7 +81,7 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","@LHide labels","labels","@TShorten lables","trigraph","Show dots","togglePts","Increase dot size (up)","nodeSizeUp","Decrease dot size (down)","nodeSizeDown","Show axes","toggleAxes","Hide lines","toggleLines","-","@CIndividual scales","common","-","Set Y Range ...","YrangeDlg","!SShow scale dialog","scaleDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","@LHide labels","labels","@TShorten lables","trigraph","Show dots","togglePts","Increase dot size (up)","nodeSizeUp","Decrease dot size (down)","nodeSizeDown","Show axes","toggleAxes","Hide lines","toggleLines","@NHide NA lines","hideNAlines","-","@CIndividual scales","common","-","Set Y Range ...","YrangeDlg","!SShow scale dialog","scaleDlg","-","More transparent (left)","alphaDown","More opaque (right)","alphaUp","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,"labels");
         MIdots=EzMenu.getItem(f,"togglePts");
@@ -91,6 +93,7 @@ public class PCPCanvas extends BaseCanvas {
         MInodeSizeUp.setEnabled(false);
         MInodeSizeDown=EzMenu.getItem(f, "nodeSizeDown");
         MInodeSizeUp.setEnabled(false);
+        MIhideNAlines=EzMenu.getItem(f,"hideNAlines");
         dontPaint=false;
     }
     
@@ -370,6 +373,14 @@ public class PCPCanvas extends BaseCanvas {
                 setUpdateRoot(0); repaint();
             }
         };
+        if (cmd=="hideNAlines"){
+            drawNAlines=!drawNAlines;
+            for(int i=0; i<pp.length; i++){
+                if(pp[i]!=null) ((PPrimPolygon)pp[i]).showInvisibleLines = drawNAlines;
+            }
+            MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
+            setUpdateRoot(0); repaint();
+        }
         
         return null;
     }
@@ -386,29 +397,56 @@ public class PCPCanvas extends BaseCanvas {
         boolean isZ=false;
         int[][] xs = new int[v[1].size()][v.length-1];
         int[][] ys = new int[v[1].size()][v.length-1];
-        boolean[] na = new boolean[v[1].size()];
+        //boolean[] na = new boolean[v[1].size()];
+        int[][] na = new int[v[1].size()][];
+        int[] naIndices = new int[v.length];
         for (int i=0;i<v[1].size();i++){
+            int numNAs=0;
             for (int j=0;j<v.length-1;j++){
                 if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
                     xs[i][ax.getCatSeqIndex(j)] = ax.getCatCenter(j);
                     ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
                 } else{
-                    na[i] = true;
-                    break;
+                    xs[i][ax.getCatSeqIndex(j)] = ax.getCatCenter(j);
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
+                    naIndices[numNAs++] = j;
                 }
             }
+            if(numNAs>0){
+                na[i] = new int[numNAs];
+                System.arraycopy(naIndices, 0, na[i], 0, numNAs);
+            }
         }
+        
         for(int j=0; j<xs.length; j++){
             pp[j] = new PPrimPolygon();
-            if(!na[j]){
-                ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
-                ((PPrimPolygon)pp[j]).closed=false;
-                ((PPrimPolygon)pp[j]).fill=false;
-                ((PPrimPolygon)pp[j]).selectByCorners=true;
-                ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
-                ((PPrimPolygon)pp[j]).ref = new int[] {j};
-                ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
+            ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            ((PPrimPolygon)pp[j]).closed=false;
+            ((PPrimPolygon)pp[j]).fill=false;
+            ((PPrimPolygon)pp[j]).selectByCorners=true;
+            ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
+            ((PPrimPolygon)pp[j]).ref = new int[] {j};
+            ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
+            ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
+            boolean[] nas = new boolean[xs[j].length];
+            boolean[] gap = new boolean[xs[j].length];
+            
+            if(na[j]!=null){
+                boolean[] nod = new boolean[xs[j].length];
+                for(int i=0; i<na[j].length; i++) {
+                    nas[na[j][i]]=true;
+                    if(na[j][i]>0) nas[na[j][i]-1]=true;
+                    nod[na[j][i]]=true;
+                }
+                ((PPrimPolygon)pp[j]).noDotsAt = nod;
+                for(int i=0; i<na[j].length-1; i++){
+                    if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
+                }
+                if(na[j][0]==1) gap[0]=true;
+                if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
             }
+            ((PPrimPolygon)pp[j]).invisibleLines=nas;
+            ((PPrimPolygon)pp[j]).gapDots=gap;
         }
     }
     
