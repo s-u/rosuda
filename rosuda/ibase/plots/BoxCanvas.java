@@ -270,7 +270,7 @@ public class BoxCanvas extends BaseCanvas {
         };
         if (vertical) {
             ay.setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
-
+            
             /* draw ticks and labels for Y axis */
             {
                 double f=ay.getSensibleTickDistance(30,18);
@@ -324,28 +324,37 @@ public class BoxCanvas extends BaseCanvas {
         };
         for(int i=0; i<pp.length; i++){
             PPrimBox box = ((PPrimBox)pp[i]);
-            box.sx = box.x + box.w*2/5;
-            box.sw = box.w/2;
-            box.smed = ay.getValuePos(markStats[i].med);
-            box.slh = ay.getValuePos(markStats[i].lh);
-            box.suh = ay.getValuePos(markStats[i].uh);
-            box.slh15 = ay.getValuePos(markStats[i].lh15);
-            box.suh15 = ay.getValuePos(markStats[i].uh15);
-            box.slh3 = markStats[i].lh3;
-            box.suh3 = markStats[i].uh3;
-            box.slowEdge = markStats[i].lowEdge;
-            box.slastR = new double[markStats[i].lastR.length];
-            box.svalPos = new int[markStats[i].lastR.length];
-            for(int j=0; j< box.slastR.length; j++){
-                box.slastR[j] = v.atF(markStats[i].lastR[j]);
-                box.svalPos[j] = ay.getValuePos(box.slastR[j]);
+            if(markStats[i].lastTop==0){
+                box.slastR=null;
+            } else{
+                box.sx = box.x + box.w*2/5;
+                box.sw = box.w/2;
+                box.smed = ay.getValuePos(markStats[i].med);
+                box.slh = ay.getValuePos(markStats[i].lh);
+                box.suh = ay.getValuePos(markStats[i].uh);
+                box.slh15 = ay.getValuePos(markStats[i].lh15);
+                box.suh15 = ay.getValuePos(markStats[i].uh15);
+                box.slh3 = markStats[i].lh3;
+                box.suh3 = markStats[i].uh3;
+                box.slowEdge = markStats[i].lowEdge;
+                if(markStats[i].lastR!=null){
+                    box.slastR = new double[markStats[i].lastR.length];
+                    box.svalPos = new int[markStats[i].lastR.length];
+                    for(int j=0; j< box.slastR.length; j++){
+                        box.slastR[j] = v.atF(markStats[i].lastR[j]);
+                        box.svalPos[j] = ay.getValuePos(box.slastR[j]);
+                    }
+                } else{
+                    box.slastR = null;
+                    box.svalPos = null;
+                }
+                box.slastTop = markStats[i].lastTop;
+                box.shighEdge = markStats[i].highEdge;
             }
-            box.slastTop = markStats[i].lastTop;
-            box.shighEdge = markStats[i].highEdge;
         }
         super.paintSelected(g);
     }
-
+    
     public void paintObjects(PoGraSS g) {
         updateObjects();
         super.paintObjects(g);
