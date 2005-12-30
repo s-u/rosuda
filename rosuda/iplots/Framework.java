@@ -605,7 +605,7 @@ public class Framework implements Dependent, ActionListener {
         f.addWindowListener(Common.getDefaultWindowListener());
         BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vl,vs.getMarker()):new BoxCanvas(pc,f,vl[0],catVar,vs.getMarker());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
-        int xdim=(catVar==null)?80:(40+40*catVar.getNumCats());
+        int xdim=(catVar==null)?(40+40*i.length):(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
         bc.pc.setSize(new Dimension(xdim,200));
         f.setSize(new Dimension(bc.pc.getWidth(),bc.pc.getHeight()));
