@@ -75,7 +75,9 @@ class OrdStats { // get ordinal statistics to be used in boxplot
  * @version $Id$
  */
 public class BoxCanvas extends BaseCanvas {
-    /** associated numerical variable */
+    /** associated numerical variables */
+    SVar[] vs;
+    /** associated numerical variable (points to vs[0])*/
     SVar v;
     /** associated categorical variable if {@link #vsCat} is <code>true</code> */
     SVar cv;
@@ -84,6 +86,8 @@ public class BoxCanvas extends BaseCanvas {
     boolean vsCat=false;
     boolean valid=false, dragMode=false;
     boolean vertical=true;
+    
+    double totalMax,totalMin;
     
     // for vsCat version
     int rk[][];
@@ -116,19 +120,41 @@ public class BoxCanvas extends BaseCanvas {
         mLeft=30;
         mBottom=10;
         mTop=10;
+        vs=var;
         v=var[0];
-        setTitle("Boxplot ("+v.getName()+")");
+        String variables = vs[0].getName();
+        for(int i=1; i<vs.length; i++) variables+=", " + vs[i].getName();
+        setTitle("Boxplot ("+ variables + ")");
+        totalMin=vs[0].getMin();
+        totalMax=vs[0].getMax();
+        for(int i=1; i<vs.length; i++){
+            if(vs[i].getMin()<totalMin) totalMin=vs[i].getMin();
+            if(vs[i].getMax()>totalMax) totalMax=vs[i].getMax();
+        }
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
-        ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
-        if (v!=null && !v.isCat() && v.isNum())
-            valid=true; // valid are only numerical vars non-cat'd
-        if (valid) {
-            OSdata=new OrdStats();
-            OSsel=new OrdStats();
-            int dr[]=v.getRanked();
-            OSdata.update(v,dr);
-            //updateObjects();
-        };
+        ay.setValueRange(totalMin-(totalMax-totalMin)/20,(totalMax-totalMin)*1.1);
+        if(var.length==1){
+            if (v!=null && !v.isCat() && v.isNum())
+                valid=true; // valid are only numerical vars non-cat'd
+            if (valid) {
+                OSdata=new OrdStats();
+                OSsel=new OrdStats();
+                int dr[]=v.getRanked();
+                OSdata.update(v,dr);
+                //updateObjects();
+            };
+        } else{
+            oss = new OrdStats[vs.length];
+            for(int i=0; i<vs.length; i++){
+                if (vs[i]!=null && !vs[i].isCat() && vs[i].isNum())
+                    valid=true; // valid are only numerical vars non-cat'd
+                if (valid) {
+                    oss[i]=new OrdStats();
+                    int dr[]=vs[i].getRanked();
+                    oss[i].update(vs[i],dr);
+                };
+            }
+        }
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         objectClipping=true;
@@ -203,12 +229,21 @@ public class BoxCanvas extends BaseCanvas {
         if (!valid) return;
         
         if (!vsCat) {
-            pp = new PlotPrimitive[1];
-            pp[0] = createBox(OSdata,40,20);
-            PPrimBox p = ((PPrimBox)pp[0]);
-            p.ref = v.getRanked();
-            markStats = new OrdStats[1];
-            markStats[0] = OSsel;
+            if(vs.length==1){
+                pp = new PlotPrimitive[1];
+                pp[0] = createBox(OSdata,40,20);
+                PPrimBox p = ((PPrimBox)pp[0]);
+                p.ref = v.getRanked();
+                markStats = new OrdStats[1];
+                markStats[0] = OSsel;
+            } else{
+                pp = new PlotPrimitive[vs.length];
+                for(int i=0; i<pp.length; i++){
+                    pp[i] = createBox(oss[i], 40+40*i,20);
+                    ((PPrimBox)pp[i]).ref = vs[i].getRanked();
+                    //TODO: marked dingens
+                }
+            }
         } else {
             Vector boxes = new Vector();
             int i=0;
