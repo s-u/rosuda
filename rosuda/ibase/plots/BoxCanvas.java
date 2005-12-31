@@ -119,7 +119,7 @@ public class BoxCanvas extends BaseCanvas {
      * @param mark associated marker */
     public BoxCanvas(PlotComponent ppc, Frame f, SVar[] var, SMarker mark) {
         super(ppc,f,mark);
-        mLeft=30;
+        mLeft=20;
         mBottom= (var.length==1)?10:30;
         mTop=10;
         vs=var;
@@ -170,7 +170,7 @@ public class BoxCanvas extends BaseCanvas {
      * @param mark associated marker */
     public BoxCanvas(PlotComponent ppc, Frame f, SVar var, SVar cvar, SMarker mark) { // multiple box vs cat
         super(ppc,f,mark);
-        mLeft=30;
+        mLeft=20;
         mBottom=30;
         mTop=10;
         v=var; m=mark; cv=cvar; setFrame(f);
@@ -233,7 +233,7 @@ public class BoxCanvas extends BaseCanvas {
         if (!vsCat) {
             if(vs.length==1){
                 pp = new PlotPrimitive[1];
-                pp[0] = createBox(OSdata,40,boxwidth);
+                pp[0] = createBox(OSdata,mLeft+20,boxwidth);
                 PPrimBox p = ((PPrimBox)pp[0]);
                 p.ref = v.getRanked();
                 markStats = new OrdStats[1];
@@ -241,7 +241,7 @@ public class BoxCanvas extends BaseCanvas {
             } else{
                 pp = new PlotPrimitive[vs.length];
                 for(int i=0; i<pp.length; i++){
-                    pp[i] = createBox(oss[i], 40+40*i,boxwidth);
+                    pp[i] = createBox(oss[i], mLeft+20 +40*i,boxwidth);
                     ((PPrimBox)pp[i]).ref = vs[i].getRanked();
                     //TODO: marked dingens
                 }
@@ -250,7 +250,7 @@ public class BoxCanvas extends BaseCanvas {
             Vector boxes = new Vector();
             int i=0;
             while(i<cs) {
-                PPrimBox box = createBox(oss[i],40+40*i,boxwidth);
+                PPrimBox box = createBox(oss[i],mLeft+20 +40*i,boxwidth);
                 box.ref = rk[i];
                 boxes.add(box);
                 i++;
@@ -297,7 +297,29 @@ public class BoxCanvas extends BaseCanvas {
         
         int w=r.width, h=r.height;
         
-        int innerW=w-mLeft-10, innerH=h-mBottom-mTop;
+        int innerW=0,innerH=0;
+        double f=0,fi=0,ofi;
+        
+        Vector yLabels = new Vector();
+        
+        f=ay.getSensibleTickDistance(30,18);
+        ofi=fi=ay.getSensibleTickStart(f);
+        int maxLabelLength=0;
+        yLabels.clear();
+        while (fi<ay.vBegin+ay.vLen) {
+            String s = ay.getDisplayableValue(fi);
+            if(s.length()>maxLabelLength) maxLabelLength=s.length();
+            yLabels.add(s);
+            fi+=f;
+        };
+
+        if(maxLabelLength*8>20){
+            mLeft = maxLabelLength*8+2;
+        } else mLeft=20;
+        
+        innerW=w-mLeft-10;
+        innerH=h-mBottom-mTop;
+        fi=ofi;
         
         if (!valid) {
             g.defineColor("red",255,0,0);
@@ -311,14 +333,11 @@ public class BoxCanvas extends BaseCanvas {
             labels.clear();
             /* draw ticks and labels for Y axis */
             {
-                double f=ay.getSensibleTickDistance(30,18);
-                double fi=ay.getSensibleTickStart(f);
-                //if (Common.DEBUG>0)
-                //System.out.println("SP.A[1]:"+A[1].toString()+", distance="+f+", start="+fi);
+                Enumeration en = yLabels.elements();
                 while (fi<ay.vBegin+ay.vLen) {
                     int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
+                    labels.add(mLeft-7,t+5,1,0,(String)en.nextElement());
                     fi+=f;
                 };
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
