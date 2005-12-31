@@ -118,7 +118,7 @@ public class BoxCanvas extends BaseCanvas {
     public BoxCanvas(PlotComponent ppc, Frame f, SVar[] var, SMarker mark) {
         super(ppc,f,mark);
         mLeft=30;
-        mBottom=10;
+        mBottom= (var.length==1)?10:30;
         mTop=10;
         vs=var;
         v=var[0];
@@ -331,7 +331,11 @@ public class BoxCanvas extends BaseCanvas {
                 g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,mTop+H+20,PoGraSS.TA_Center);
                 i++;
             };
-        };
+        } else if (vs.length>1){
+            for (int i=0; i<vs.length; i++){
+                g.drawString(Common.getTriGraph(vs[i].getName()),40+40*i,mTop+H+20,PoGraSS.TA_Left);
+            }
+        }
     };
     
     public void paintSelected(PoGraSS g) {
