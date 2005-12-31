@@ -87,6 +87,8 @@ public class BoxCanvas extends BaseCanvas {
     boolean valid=false, dragMode=false;
     boolean vertical=true;
     
+    int boxwidth=20;
+    
     double totalMax,totalMin;
     
     // for vsCat version
@@ -231,7 +233,7 @@ public class BoxCanvas extends BaseCanvas {
         if (!vsCat) {
             if(vs.length==1){
                 pp = new PlotPrimitive[1];
-                pp[0] = createBox(OSdata,40,20);
+                pp[0] = createBox(OSdata,40,boxwidth);
                 PPrimBox p = ((PPrimBox)pp[0]);
                 p.ref = v.getRanked();
                 markStats = new OrdStats[1];
@@ -239,7 +241,7 @@ public class BoxCanvas extends BaseCanvas {
             } else{
                 pp = new PlotPrimitive[vs.length];
                 for(int i=0; i<pp.length; i++){
-                    pp[i] = createBox(oss[i], 40+40*i,20);
+                    pp[i] = createBox(oss[i], 40+40*i,boxwidth);
                     ((PPrimBox)pp[i]).ref = vs[i].getRanked();
                     //TODO: marked dingens
                 }
@@ -248,7 +250,7 @@ public class BoxCanvas extends BaseCanvas {
             Vector boxes = new Vector();
             int i=0;
             while(i<cs) {
-                PPrimBox box = createBox(oss[i],40+40*i,20);
+                PPrimBox box = createBox(oss[i],40+40*i,boxwidth);
                 box.ref = rk[i];
                 boxes.add(box);
                 i++;
@@ -306,6 +308,7 @@ public class BoxCanvas extends BaseCanvas {
         if (vertical) {
             ay.setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
             
+            labels.clear();
             /* draw ticks and labels for Y axis */
             {
                 double f=ay.getSensibleTickDistance(30,18);
@@ -315,8 +318,7 @@ public class BoxCanvas extends BaseCanvas {
                 while (fi<ay.vBegin+ay.vLen) {
                     int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    //if(showLabels)
-                    g.drawString(ay.getDisplayableValue(fi),mLeft-25,t+5);
+                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
                     fi+=f;
                 };
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
@@ -328,14 +330,15 @@ public class BoxCanvas extends BaseCanvas {
         if (vsCat) {
             int i=0;
             while(i<cs) {
-                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i+10,mTop+H+20,PoGraSS.TA_Center);
+                labels.add(40+40*i+10,mTop+H+20,0.5,0.5,boxwidth,cv.getCatAt(i).toString());
                 i++;
             };
         } else if (vs.length>1){
             for (int i=0; i<vs.length; i++){
-                g.drawString(Common.getTriGraph(vs[i].getName()),40+40*i+10,mTop+H+20,PoGraSS.TA_Center);
+                labels.add(40+40*i+10,mTop+H+20,0.5,0.5,boxwidth,vs[i].getName());
             }
         }
+        labels.finishAdd();
     };
     
     public void paintSelected(PoGraSS g) {
