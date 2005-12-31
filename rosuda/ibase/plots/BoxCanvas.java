@@ -328,12 +328,12 @@ public class BoxCanvas extends BaseCanvas {
         if (vsCat) {
             int i=0;
             while(i<cs) {
-                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i,mTop+H+20,PoGraSS.TA_Center);
+                g.drawString(Common.getTriGraph(cv.getCatAt(i).toString()),40+40*i+10,mTop+H+20,PoGraSS.TA_Center);
                 i++;
             };
         } else if (vs.length>1){
             for (int i=0; i<vs.length; i++){
-                g.drawString(Common.getTriGraph(vs[i].getName()),40+40*i,mTop+H+20,PoGraSS.TA_Left);
+                g.drawString(Common.getTriGraph(vs[i].getName()),40+40*i+10,mTop+H+20,PoGraSS.TA_Center);
             }
         }
     };
