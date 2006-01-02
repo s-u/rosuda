@@ -102,7 +102,6 @@ public class BoxCanvas extends BaseCanvas {
     
     // for plain version
     OrdStats OSdata;
-    OrdStats OSsel;
     
     // Array mapping each PPrimBox to the OrdStats object which contains its selections
     OrdStats markStats[];
@@ -149,7 +148,6 @@ public class BoxCanvas extends BaseCanvas {
                 valid=true; // valid are only numerical vars non-cat'd
             if (valid) {
                 OSdata=new OrdStats();
-                OSsel=new OrdStats();
                 int dr[]=v.getRanked();
                 OSdata.update(v,dr);
                 //updateObjects();
@@ -251,13 +249,14 @@ public class BoxCanvas extends BaseCanvas {
                 PPrimBox p = ((PPrimBox)pp[0]);
                 p.ref = v.getRanked();
                 markStats = new OrdStats[1];
-                markStats[0] = OSsel;
+                markStats[0] = new OrdStats();
             } else{
                 pp = new PlotPrimitive[vs.length];
+                markStats = new OrdStats[vs.length];
                 for(int i=0; i<pp.length; i++){
                     pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth);
                     ((PPrimBox)pp[i]).ref = vs[i].getRanked();
-                    //TODO: marked dingens
+                    markStats[i] = new OrdStats();
                 }
             }
         } else {
@@ -397,7 +396,8 @@ public class BoxCanvas extends BaseCanvas {
                 i++;
             };
         } else {
-            OSsel.update(v,md);
+            for(int i=0; i<vs.length; i++)
+                markStats[i].update(vs[i],md);
         };
         for(int i=0; i<pp.length; i++){
             PPrimBox box = ((PPrimBox)pp[i]);
