@@ -81,6 +81,8 @@ public class BoxCanvas extends BaseCanvas {
     SVar v;
     /** associated categorical variable if {@link #vsCat} is <code>true</code> */
     SVar cv;
+    /** variable managing multiple boxplots */
+    SVar xv;
     /** if <code>true</code> then side-by-side bosplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
@@ -89,7 +91,7 @@ public class BoxCanvas extends BaseCanvas {
     
     int boxwidth=20;
     
-    double totalMax,totalMin;
+    double totMax,totMin;
     
     // for vsCat version
     int rk[][];
@@ -127,14 +129,21 @@ public class BoxCanvas extends BaseCanvas {
         String variables = vs[0].getName();
         for(int i=1; i<vs.length; i++) variables+=", " + vs[i].getName();
         setTitle("Boxplot ("+ variables + ")");
-        totalMin=vs[0].getMin();
-        totalMax=vs[0].getMax();
-        for(int i=1; i<vs.length; i++){
-            if(vs[i].getMin()<totalMin) totalMin=vs[i].getMin();
-            if(vs[i].getMax()>totalMax) totalMax=vs[i].getMax();
-        }
+        xv=new SVarObj("Box.index",true);
+        for(int i=0; i<vs.length; i++){
+            if (vs[i].isNum()) {
+                if (i==0) {
+                    totMin=vs[i].getMin(); totMax=vs[i].getMax();
+                } else {
+                    if (vs[i].getMin()<totMin) totMin=vs[i].getMin();
+                    if (vs[i].getMax()>totMax) totMax=vs[i].getMax();
+                };
+            }
+            xv.add(vs[i].getName());
+        };
+        ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
-        ay.setValueRange(totalMin-(totalMax-totalMin)/20,(totalMax-totalMin)*1.1);
+        ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         if(var.length==1){
             if (v!=null && !v.isCat() && v.isNum())
                 valid=true; // valid are only numerical vars non-cat'd
@@ -175,6 +184,11 @@ public class BoxCanvas extends BaseCanvas {
         mTop=10;
         v=var; m=mark; cv=cvar; setFrame(f);
         setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
+        xv=new SVarObj("Box.index",true);
+        for(int i=0; i<cv.getNumCats(); i++){
+            xv.add(cv.getCatAt(i).toString());
+        };
+        ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         // get some space around (this comes from the scatterplots)
         ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
@@ -241,20 +255,18 @@ public class BoxCanvas extends BaseCanvas {
             } else{
                 pp = new PlotPrimitive[vs.length];
                 for(int i=0; i<pp.length; i++){
-                    pp[i] = createBox(oss[i], mLeft+20 +40*i,boxwidth);
+                    pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth);
                     ((PPrimBox)pp[i]).ref = vs[i].getRanked();
                     //TODO: marked dingens
                 }
             }
         } else {
             Vector boxes = new Vector();
-            int i=0;
-            while(i<cs) {
-                PPrimBox box = createBox(oss[i],mLeft+20 +40*i,boxwidth);
+            for(int i=0; i<cs; i++){
+                PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth);
                 box.ref = rk[i];
                 boxes.add(box);
-                i++;
-            };
+            }
             pp = new PlotPrimitive[boxes.size()];
             boxes.toArray(pp);
             markStats = new OrdStats[boxes.size()];
@@ -312,7 +324,7 @@ public class BoxCanvas extends BaseCanvas {
             yLabels.add(s);
             fi+=f;
         };
-
+        
         if(maxLabelLength*8>20){
             mLeft = maxLabelLength*8+2;
         } else mLeft=20;
@@ -346,17 +358,13 @@ public class BoxCanvas extends BaseCanvas {
             ay.setGeometry(Axis.O_X,40,r.width-50);
         }
         
-        if (vsCat) {
-            int i=0;
-            while(i<cs) {
-                labels.add(40+40*i+10,mTop+H+20,0.5,0.5,boxwidth,cv.getCatAt(i).toString());
-                i++;
-            };
-        } else if (vs.length>1){
-            for (int i=0; i<vs.length; i++){
-                labels.add(40+40*i+10,mTop+H+20,0.5,0.5,boxwidth,vs[i].getName());
+        if (vsCat || vs.length>1) {
+            /* draw labels for X axis */
+            for(int i=0; i<xv.getNumCats(); i++){
+                labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                fi+=f;
             }
-        }
+        };
         labels.finishAdd();
     };
     
