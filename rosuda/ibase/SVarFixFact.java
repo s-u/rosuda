@@ -266,6 +266,6 @@ cases: variable is not numerical or is categorical, no cases matching
     }
 
     public void moveCat(int cat, int newPos) {
-        super.moveCat(cat, newPos, cats);
+        cats=super.moveCat(cat, newPos, cats);
     }
 }

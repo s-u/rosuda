@@ -374,21 +374,22 @@ public abstract class SVar extends Notifier
         }
     }
     
-    protected static void moveCat(int cat, int newPos, String[] cats){
-                if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.length && newPos<cats.length){
+    protected static String[] moveCat(int cat, int newPos, String[] cats){
+            if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.length && newPos<cats.length){
             String[] ocats = cats;
             cats = new String[ocats.length];
             if(newPos>cat){
                 System.arraycopy(ocats, 0, cats, 0, cat);
                 System.arraycopy(ocats, cat+1, cats, cat, newPos-cat);
                 System.arraycopy(ocats, newPos+1, cats, newPos+1, cats.length-newPos-1);
-                cats[newPos]=cats[cat];
+                cats[newPos]=ocats[cat];
             } else{
                 System.arraycopy(ocats, 0, cats, 0, newPos);
                 System.arraycopy(ocats, newPos, cats, newPos+1, cat-newPos);
                 System.arraycopy(ocats, cat+1, cats, cat+1, cats.length-cat-1);
-                cats[newPos]=cats[cat];
+                cats[newPos]=ocats[cat];
             }
         }
+        return cats;
     }
 }
