@@ -269,6 +269,12 @@ public abstract class SVar extends Notifier
 
     /** returns size of the category o. If category does not exist or variable is not categorial, -1 is returned. */
     public abstract int getSizeCat(Object o);
+    
+    /** moves category to new postition */
+    public abstract void moveCat(int cat, int newPos);
+    
+    /** swaps cat1 and cat2 */
+    public abstract void swapCats(int cat1, int cat2);
 
     /** returns name of the variable */
     public String getName() { return name; }
