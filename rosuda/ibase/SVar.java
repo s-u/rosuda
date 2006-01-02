@@ -350,4 +350,45 @@ public abstract class SVar extends Notifier
     public String toString() {
         return "SVar(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
     }
+    
+    protected static void swapCats(int cat1, int cat2, Vector cats) {
+        if(cats!=null && cat1!=cat2 && cat1>=0 && cat2>=0 && cat1<cats.size() && cat2<cats.size()){
+            Object obj1 = cats.elementAt(cat1);
+            cats.setElementAt(cats.elementAt(cat2), cat1);
+            cats.setElementAt(obj1, cat2);
+        }
+    }
+    
+    protected static void swapCats(int cat1, int cat2, String[] cats) {
+                if(cats!=null && cat1!=cat2 && cat1>=0 && cat2>=0 && cat1<cats.length && cat2<cats.length){
+            String obj1 = cats[cat1];
+            cats[cat1]=cats[cat2];
+            cats[cat2]=obj1;
+        }
+    }
+    
+    protected static void moveCat(int cat, int newPos, Vector cats){
+        if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.size() && newPos<cats.size()){
+            Object obj = cats.remove(cat);
+            cats.insertElementAt(obj, newPos);
+        }
+    }
+    
+    protected static void moveCat(int cat, int newPos, String[] cats){
+                if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.length && newPos<cats.length){
+            String[] ocats = cats;
+            cats = new String[ocats.length];
+            if(newPos>cat){
+                System.arraycopy(ocats, 0, cats, 0, cat);
+                System.arraycopy(ocats, cat+1, cats, cat, newPos-cat);
+                System.arraycopy(ocats, newPos+1, cats, newPos+1, cats.length-newPos-1);
+                cats[newPos]=cats[cat];
+            } else{
+                System.arraycopy(ocats, 0, cats, 0, newPos);
+                System.arraycopy(ocats, newPos, cats, newPos+1, cat-newPos);
+                System.arraycopy(ocats, cat+1, cats, cat+1, cats.length-cat-1);
+                cats[newPos]=cats[cat];
+            }
+        }
+    }
 }

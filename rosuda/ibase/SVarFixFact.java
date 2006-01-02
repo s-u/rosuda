@@ -262,28 +262,10 @@ cases: variable is not numerical or is categorical, no cases matching
     }
     
     public void swapCats(int cat1, int cat2) {
-        if(cats!=null && cat1!=cat2 && cat1>=0 && cat2>=0 && cat1<cats.length && cat2<cats.length){
-            String obj1 = cats[cat1];
-            cats[cat1]=cats[cat2];
-            cats[cat2]=obj1;
-        }
+        super.swapCats(cat1, cat2, cats);
     }
 
     public void moveCat(int cat, int newPos) {
-        if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.length && newPos<cats.length){
-            String[] ocats = cats;
-            cats = new String[ocats.length];
-            if(newPos>cat){
-                System.arraycopy(ocats, 0, cats, 0, cat);
-                System.arraycopy(ocats, cat+1, cats, cat, newPos-cat);
-                System.arraycopy(ocats, newPos+1, cats, newPos+1, cats.length-newPos-1);
-                cats[newPos]=cats[cat];
-            } else{
-                System.arraycopy(ocats, 0, cats, 0, newPos);
-                System.arraycopy(ocats, newPos, cats, newPos+1, cat-newPos);
-                System.arraycopy(ocats, cat+1, cats, cat+1, cats.length-cat-1);
-                cats[newPos]=cats[cat];
-            }
-        }
+        super.moveCat(cat, newPos, cats);
     }
 }

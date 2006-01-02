@@ -433,17 +433,10 @@ public class SVarDouble extends SVar {
     }
 
     public void swapCats(int cat1, int cat2) {
-        if(cats!=null && cat1!=cat2 && cat1>=0 && cat2>=0 && cat1<cats.size() && cat2<cats.size()){
-            Object obj1 = cats.elementAt(cat1);
-            cats.setElementAt(cats.elementAt(cat2), cat1);
-            cats.setElementAt(obj1, cat2);
-        }
+        super.swapCats(cat1, cat2, cats);
     }
 
     public void moveCat(int cat, int newPos) {
-        if(cats!=null && cat!=newPos && cat>0 && newPos>0 && cat<cats.size() && newPos<cats.size()){
-            Object obj = cats.remove(cat);
-            cats.insertElementAt(obj, (newPos>cat)?(newPos-1):newPos);
-        }
+        super.moveCat(cat, newPos, cats);
     }
 }
