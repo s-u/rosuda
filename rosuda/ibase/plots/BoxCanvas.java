@@ -301,6 +301,14 @@ public class BoxCanvas extends BaseCanvas {
         return box;
     }
     
+    public void paintInit(PoGraSS g) {
+        super.paintInit(g);
+        
+        if(ax!=null){
+            boxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
+        }
+    }
+    
     protected int X,Y,W,H, TW,TH;
     
     public void paintBack(PoGraSS g) {
