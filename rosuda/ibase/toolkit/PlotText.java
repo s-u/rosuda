@@ -40,7 +40,23 @@ public class PlotText extends PlotObject {
         txt=null;
     }
     
-    /* Adds the specified values. finishAdd needs to be called after the last call of add! */
+    /**
+     * Adds the specified values. {@link #finishAdd()} needs to be called after the last
+     * call of add!
+     * The text specified by <CODE>text</CODE> will be displayed at the point
+     * (<CODE>X</CODE>,<CODE>Y</CODE>) aligned according to <CODE>aX</CODE> and
+     * <CODE>aY</CODE>. If aX/aY is set to 0 the text's left/top border will be
+     * placed at X/Y, if set to 1 the right/bottom border will be placed at X/Y.
+     * If maxW is nonnegative and the text's width exceeds maxW it will be
+     * abbreviated.
+     *
+     * @param X horizontal coordinate of anchor point
+     * @param Y vertical coordinate of anchor point
+     * @param aX horizontal alignment
+     * @param aY vertical alignment
+     * @param maxW maximal width of displayed text
+     * @param text string to be displayed
+     */
     public void add(int X, int Y, double aX, double aY, int maxW, String text){
         addX.add(new Integer(X));
         addY.add(new Integer(Y));
@@ -58,6 +74,10 @@ public class PlotText extends PlotObject {
         add(X, Y, 0.5, 0, -1, text);
     }
     
+    /**
+     * Puts the vectors' contents into arrays. Needs to be called after all
+     * text elements have been added.
+     */
     public void finishAdd(){
         if(!addTxt.isEmpty()){
             int[] dX=x;
@@ -113,7 +133,7 @@ public class PlotText extends PlotObject {
         if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
         for (int i=0; i<txt.length; i++) {
             String t;
-            if(maxw[i]>-1 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
+            if(maxw[i]>=0 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
             else t=txt[i];
             g.setColor("outline");
             g.drawString(t,x[i],y[i],ax[i],ay[i]);
