@@ -431,12 +431,4 @@ public class SVarDouble extends SVar {
     public String toString() {
         return "SVarDouble(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+"/"+cont.length+",miss="+missingCount+")";
     }
-
-    public void swapCats(int cat1, int cat2) {
-        super.swapCats(cat1, cat2, cats);
-    }
-
-    public void moveCat(int cat, int newPos) {
-        super.moveCat(cat, newPos, cats);
-    }
 }
