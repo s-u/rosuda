@@ -75,6 +75,9 @@ public abstract class SVar extends Notifier
     
     /** permutation of categories */
     protected SCatSequence seq=null;
+    
+    /** if <code>true</code> permutation of categories is linked between plots */
+    public boolean linked=true;
 
     /** construct new variable. iscat=<code>true</code> defaults to non-numerical, CT_String, whereas iscat=<code>false</code> defaults to numerical, CT_Number
 	@param Name variable name
@@ -269,12 +272,6 @@ public abstract class SVar extends Notifier
 
     /** returns size of the category o. If category does not exist or variable is not categorial, -1 is returned. */
     public abstract int getSizeCat(Object o);
-    
-    /** moves category to new postition */
-    public abstract void moveCat(int cat, int newPos);
-    
-    /** swaps cat1 and cat2 */
-    public abstract void swapCats(int cat1, int cat2);
 
     /** returns name of the variable */
     public String getName() { return name; }
@@ -349,5 +346,9 @@ public abstract class SVar extends Notifier
 
     public String toString() {
         return "SVar(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
+    }
+    
+    public void setSeq(SCatSequence newSeq){
+        seq=newSeq;
     }
 }
