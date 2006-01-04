@@ -445,13 +445,5 @@ cases: variable is not numerical or is categorical, no cases matching
     public String toString() {
         return "SVarInt(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+"/"+cont.length+",miss="+missingCount+")";
     }
-    
-    public void swapCats(int cat1, int cat2) {
-        super.swapCats(cat1, cat2, cats);
-    }
-
-    public void moveCat(int cat, int newPos) {
-        super.moveCat(cat, newPos, cats);
-    }
 }
 
