@@ -3,6 +3,7 @@ package org.rosuda.ibase.toolkit;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
+import org.rosuda.ibase.SVar;
 
 // what we ought to add to WT are among others:
 // - associated variables
@@ -20,6 +21,7 @@ abstract public class WTentry extends Object
     public String name;
     public int id=0;
     public int wclass=0;
+    public SVar v;
 
     WinTracker wt;
     
