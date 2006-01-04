@@ -41,6 +41,7 @@ public class MosaicCanvas extends BaseCanvas {
         maxLevel = v.length;
         this.vs = v.length;
         for(int i=0; i<vs; i++){
+            v[i].addDepend(this);
             v[i].categorize();
         }
         
@@ -479,4 +480,11 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
+
+    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+        if(!ignoreNotifications && msg.getMessageID()==Common.NM_VarSeqChange){
+            ft=new FrequencyTable(v);
+        }
+        super.Notifying(msg, o, path);
+    }
 }
