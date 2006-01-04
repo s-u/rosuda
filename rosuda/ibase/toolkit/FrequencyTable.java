@@ -33,7 +33,7 @@ public class FrequencyTable {
         while(vc[0]<vars[0].getNumCats()){
             for(vc[vsize-1]=0; vc[vsize-1]<vars[vsize-1].getNumCats(); vc[vsize-1]++){
                 for(int v=0; v<vsize; v++){
-                    ceTable[pos+vc[vsize-1]].addCat(vars[v].getName(), vars[v].getCategories()[vc[v]]);
+                    ceTable[pos+vc[vsize-1]].addCat(vars[v].getName(), vars[v].getCategories()[vars[v].mainSeq().catAtPos(vc[v])]);
                 }
             }
             for(int i=vsize-2; i>=0; i--){
