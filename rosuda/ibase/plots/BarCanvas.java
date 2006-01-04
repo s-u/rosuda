@@ -55,6 +55,7 @@ public class BarCanvas extends BaseCanvas {
         
         v=var; weight=wvar;
         setTitle("Barchart ("+v.getName()+")");
+        v.addDepend(this);
         ax=new Axis(v,Axis.O_X,Axis.T_EqCat);
         ax.addDepend(this);
         ay=new Axis(v,Axis.O_Y,Axis.T_EqSize);
@@ -436,5 +437,4 @@ public class BarCanvas extends BaseCanvas {
         }
         super.rotate(amount);
     }
-    
 }
