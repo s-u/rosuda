@@ -353,8 +353,33 @@ public class ScatterCanvas extends BaseCanvas {
         g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
         g.defineColor("red",255,0,0);
         
+        /* determine maximal y label length */
+        int maxLabelLength=0;
+        {
+            int ori = (orientation==0)?1:0;
+            Axis axis = (orientation==0)?ay:ax;
+            double f=axis.getSensibleTickDistance(30,18);
+            double fi=axis.getSensibleTickStart(f);
+            try {
+                while (fi<axis.vBegin+axis.vLen) {
+                    String s;
+                    if(v[ori].isCat()) s=v[ori].getCatAt((int)(fi+0.5)).toString();
+                    else s=axis.getDisplayableValue(fi);
+                    if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                    fi+=f;
+                }
+            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            }
+        }
+        
+        int omLeft=mLeft;
+        if(maxLabelLength*8>standardMLeft){
+            mLeft = maxLabelLength*8+2;
+        } else mLeft=standardMLeft;
+        if(mLeft!=omLeft) updateObjects();
+        
         Dimension Dsize=pc.getSize();
-        if (Dsize.width!=TW || Dsize.height!=TH)
+        if (Dsize.width!=TW || Dsize.height!=TH || mLeft!=omLeft)
             updateObjects();
         
         if (TW<50||TH<50) {
