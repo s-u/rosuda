@@ -55,6 +55,8 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected boolean zoomRetainsAspect=false;
     
+    private final int standardMLeft=40;
+    
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
      */
@@ -81,7 +83,7 @@ public class ScatterCanvas extends BaseCanvas {
     public ScatterCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark) {
         super(ppc,f,mark);
         
-        mLeft=45;
+        mLeft=standardMLeft;
         mBottom=30;
         mRight=mTop=10;
         
@@ -371,6 +373,7 @@ public class ScatterCanvas extends BaseCanvas {
         g.drawLine(mLeft,Y,mLeft,Y+H);
         g.drawLine(mLeft,Y+H,mLeft+W,Y+H);
         
+        labels.clear();
         /* draw ticks and labels for X axis */
         {
             int ori = (orientation==0)?0:1;
@@ -384,8 +387,9 @@ public class ScatterCanvas extends BaseCanvas {
                     int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
-                        g.drawString(v[ori].isCat()?((useX3)?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):v[ori].getCatAt((int)(fi+0.5)).toString()):
-                            axis.getDisplayableValue(fi),t,Y+H+20,0.5,0);
+                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?((useX3)?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):
+                            v[ori].getCatAt((int)(fi+0.5)).toString()):
+                            axis.getDisplayableValue(fi));
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -404,13 +408,18 @@ public class ScatterCanvas extends BaseCanvas {
                 while (fi<axis.vBegin+axis.vLen) {
                     int t=axis.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    if(showLabels)
-                        g.drawString(v[ori].isCat()?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):axis.getDisplayableValue(fi),mLeft-8,t,1,0.3);
+                    if(showLabels){
+                        if(v[ori].isCat())
+                            labels.add(mLeft-8,t,1,0.3,mLeft,v[ori].getCatAt((int)(fi+0.5)).toString());
+                        else
+                            labels.add(mLeft-8,t,1,0.3,axis.getDisplayableValue(fi));
+                    }
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
             }
         }
+        labels.finishAdd();
         
         //nextLayer(g);
         
