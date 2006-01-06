@@ -317,28 +317,27 @@ public class BoxCanvas extends BaseCanvas {
         int w=r.width, h=r.height;
         
         int innerW=0,innerH=0;
-        double f=0,fi=0,ofi;
-        
-        Vector yLabels = new Vector();
+        double f=0,fi=0;
         
         f=ay.getSensibleTickDistance(30,18);
-        ofi=fi=ay.getSensibleTickStart(f);
+        fi=ay.getSensibleTickStart(f);
         int maxLabelLength=0;
-        yLabels.clear();
         while (fi<ay.vBegin+ay.vLen) {
             String s = ay.getDisplayableValue(fi);
             if(s.length()>maxLabelLength) maxLabelLength=s.length();
-            yLabels.add(s);
             fi+=f;
         };
         
+        int omLeft=mLeft;
         if(maxLabelLength*8>20){
             mLeft = maxLabelLength*8+2;
         } else mLeft=20;
+        if(mLeft!=omLeft) updateObjects();
         
         innerW=w-mLeft-10;
         innerH=h-mBottom-mTop;
-        fi=ofi;
+        f=ay.getSensibleTickDistance(30,18);
+        fi=ay.getSensibleTickStart(f);
         
         if (!valid) {
             g.defineColor("red",255,0,0);
@@ -352,11 +351,10 @@ public class BoxCanvas extends BaseCanvas {
             labels.clear();
             /* draw ticks and labels for Y axis */
             {
-                Enumeration en = yLabels.elements();
                 while (fi<ay.vBegin+ay.vLen) {
                     int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-7,t+5,1,0,(String)en.nextElement());
+                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
                     fi+=f;
                 };
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
