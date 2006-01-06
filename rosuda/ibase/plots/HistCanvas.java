@@ -53,7 +53,7 @@ public class HistCanvas extends BaseCanvas {
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Increase bin width (up)","binUp","Decrease bin width (down)","binDown","Move anchor left (left)","anchorLeft","Move anchor right (right)","anchorRight","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        mLeft=40; mRight=10; mTop=10; mBottom=20;
+        mLeft=20; mRight=10; mTop=10; mBottom=20;
         allow180=true;
         allowDragZoom=false;
         
@@ -144,6 +144,30 @@ public class HistCanvas extends BaseCanvas {
     }
     
     public void paintBack(PoGraSS g) {
+        Vector yLabels = new Vector();
+        int maxLabelLength=0;
+        {
+            Axis axis = (orientation==0 || orientation==2)?ay:ax;
+            double f=axis.getSensibleTickDistance(50,18);
+            double fi=axis.getSensibleTickStart(f);
+            while (fi<axis.vBegin+axis.vLen) {
+                String s=axis.getDisplayableValue(fi);
+                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                yLabels.add(s);
+                fi+=f;
+            }
+        }
+        
+        if(orientation==3){
+            if(maxLabelLength*8>20){
+                mRight = maxLabelLength*8+2;
+            } else mRight=20;
+        } else{
+            if(maxLabelLength*8>20){
+                mLeft = maxLabelLength*8+2;
+            } else mLeft=20;
+        }
+        
         g.setColor("black");
         // draw border lines
         if (orientation!=3)
@@ -158,14 +182,16 @@ public class HistCanvas extends BaseCanvas {
         
         
         labels.clear();
+        Enumeration en;
         // draw y lables and ticks
         if (orientation==0 || orientation==2) {
             double f=ay.getSensibleTickDistance(50,18);
             double fi=ay.getSensibleTickStart(f);
+            en=yLabels.elements();
             while (fi<ay.vBegin+ay.vLen) {
                 int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-5,t,mLeft,t);
-                labels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
+                labels.add(mLeft-8,t+5,1,0,(String)en.nextElement());
                 fi+=f;
             }
         } else {
@@ -207,21 +233,23 @@ public class HistCanvas extends BaseCanvas {
             case 1:
                 f=ax.getSensibleTickDistance(50,18);
                 fi=ax.getSensibleTickStart(f);
+                en=yLabels.elements();
                 while (fi<ax.vBegin+ax.vLen) {
                     int t=ax.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
+                    labels.add(mLeft-8,t+5,1,0,(String)en.nextElement());
                     fi+=f;
                 }
                 break;
             case 3:
                 f=ax.getSensibleTickDistance(50,18);
                 fi=ax.getSensibleTickStart(f);
+                en=yLabels.elements();
                 while (fi<ax.vBegin+ax.vLen) {
                     int t=ax.getValuePos(fi);
                     int rl = pc.getSize().width-mRight;
                     g.drawLine(rl,t,rl+5,t);
-                    labels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
+                    labels.add(rl+8,t+5,0,0,(String)en.nextElement());
                     fi+=f;
                 }
                 break;
