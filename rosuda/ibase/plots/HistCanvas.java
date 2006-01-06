@@ -51,7 +51,7 @@ public class HistCanvas extends BaseCanvas {
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@" + (char)KeyEvent.VK_UP + "Increase bin width","binUp","@" + (char)KeyEvent.VK_DOWN + "Decrease bin width","binDown","@" + (char)KeyEvent.VK_LEFT + "Move anchor left","anchorLeft","@" + (char)KeyEvent.VK_RIGHT + "Move anchor right","anchorRight","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Increase bin width (up)","binUp","Decrease bin width (down)","binDown","Move anchor left (left)","anchorLeft","Move anchor right (right)","anchorRight","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=40; mRight=10; mTop=10; mBottom=20;
         allow180=true;
@@ -322,6 +322,15 @@ public class HistCanvas extends BaseCanvas {
                 break;
         }
         super.rotate(amount);
+    }
+    
+    public void keyPressed(KeyEvent e) {
+        switch(e.getKeyCode()){
+            case (KeyEvent.VK_UP): run(this,"binUp"); break;
+            case (KeyEvent.VK_DOWN): run(this,"binDown"); break;
+            case (KeyEvent.VK_LEFT): run(this,"anchorLeft"); break;
+            case (KeyEvent.VK_RIGHT): run(this,"anchorRight"); break;
+        }
     }
     
     public Object run(Object o, String cmd) {
