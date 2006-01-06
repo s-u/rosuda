@@ -33,6 +33,8 @@ public class MosaicCanvas extends BaseCanvas {
     private FrequencyTable ft;
     private int[] combination; // indicates position of recursion
     
+    private final int standardMLeft=35;
+    
     public MosaicCanvas(PlotComponent ppc, Frame f, SVar[] vars, SMarker mark) {
         super(ppc,f, mark);
         this.frame=f;
@@ -47,7 +49,7 @@ public class MosaicCanvas extends BaseCanvas {
         
         String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Expected","expected","Same bin size","samebinsize","Multiple barcharts","multiplebarcharts","Fluctuation","fluctuation","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        mLeft=40; mRight=5; mTop=20; mBottom=5;
+        mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
         
         ft=new FrequencyTable(v);
         Dirs = new char[vs];
@@ -61,8 +63,12 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void updateObjects() {
-        
-        create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
+        int maxLabelLength=create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
+        int omLeft=mLeft;
+        if(maxLabelLength*8>standardMLeft){
+            mLeft=8*maxLabelLength+2;
+        } else mLeft=standardMLeft;
+        if(mLeft!=omLeft) create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         
@@ -112,11 +118,11 @@ public class MosaicCanvas extends BaseCanvas {
     private char[] Dirs;
     private double residSum;
     private int censor=0;
-    private void create(int x1, int y1, int x2, int y2, String info) {
+    private int create(int x1, int y1, int x2, int y2, String info) {
         
         double[] table = ft.getTable();
         double[] exp = ft.getExp();
-        
+        int maxLabelLength=0;
         int[] levels = ft.getLevels();
         String[][] lnames = ft.getLnames();
         
@@ -202,13 +208,16 @@ public class MosaicCanvas extends BaseCanvas {
         // Create labels for the first 2 dimensions
         labels.clear();
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
-            for(int j=0; j<Math.min(2, maxLevel); j++)
+            for(int j=0; j<Math.min(2, maxLevel); j++){
                 for( int i=0; i<levels[j]; i++) {
-                if( Dirs[j] == 'x' )
-                    labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), 0, 0.5,1, lnames[j][i]);
-                else
-                    labels.add(0, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))),0,0.5,mLeft, lnames[j][i]);
+                    if( Dirs[j] == 'x' ){
+                        labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), 0, 0.5,1, lnames[j][i]);
+                    } else{
+                        labels.add(0, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))),0,0.5,mLeft, lnames[j][i]);
+                        if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
+                    }
                 }
+            }
         }
         labels.finishAdd();
         
@@ -236,6 +245,7 @@ public class MosaicCanvas extends BaseCanvas {
                 r.changeDimension(newW,newH);
             }
         }
+        return maxLabelLength;
     }
     
     private void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
@@ -480,7 +490,7 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
-
+    
     public void Notifying(NotifyMsg msg, Object o, Vector path) {
         if(!ignoreNotifications && msg.getMessageID()==Common.NM_VarSeqChange){
             ft=new FrequencyTable(v);
