@@ -46,6 +46,9 @@ public class PCPCanvas extends BaseCanvas {
     
     int X,Y,W,H, TW,TH;
     double totMin, totMax;
+    
+    private final int standardMLeft=30;
+    
     /** create a new PCP
      * @param f associated frame (or <code>null</code> if none)
      * @param yvs list of variables
@@ -57,7 +60,7 @@ public class PCPCanvas extends BaseCanvas {
         objectClipping=true;
         
         mBottom=30;
-        mLeft=30;
+        mLeft=standardMLeft;
         mRight=mTop=10;
         
         v=new SVar[yvs.length+1];
@@ -134,6 +137,24 @@ public class PCPCanvas extends BaseCanvas {
         g.setBounds(r.width,r.height);
         g.begin();
         g.defineColor("axis",192,192,192);
+        
+        if (commonScale) {
+            /* determine maximal label length */
+            int maxLabelLength=0;
+            double f=ay.getSensibleTickDistance(50,18);
+            double fi=ay.getSensibleTickStart(f);
+            while (fi<ay.vBegin+ay.vLen) {
+                String s=v[1].isCat()?Common.getTriGraph(v[1].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi);
+                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                fi+=f;
+            };
+            
+            int omLeft=mLeft;
+            if(maxLabelLength*8>standardMLeft){
+                mLeft = maxLabelLength*8+2;
+            } else mLeft=standardMLeft;
+            if(mLeft!=omLeft) updateObjects();
+        }
         
         Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH) {
