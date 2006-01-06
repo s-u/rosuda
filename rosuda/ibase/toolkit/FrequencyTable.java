@@ -165,7 +165,7 @@ public class FrequencyTable {
             for(int i=0; i<vars.length; i++){
                 lnames[i] = new String[getLevels()[i]];
                 for(int j=0; j<getLevels()[i]; j++){
-                    lnames[i][j] = vars[i].getCatAt(j).toString();
+                    lnames[i][j] = vars[i].getCatAt(vars[i].mainSeq().catAtPos(j)).toString();
                 }
             }
         }
