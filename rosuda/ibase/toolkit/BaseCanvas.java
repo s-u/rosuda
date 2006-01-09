@@ -338,8 +338,10 @@ public class BaseCanvas
                 }
             }
             if (!effect && actionSelect) {
-                m.selectNone();
-                effect=true;
+                if(m.getList().size()>0){
+                    m.selectNone();
+                    effect=true;
+                }
             }
             if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
             if (hideQI) qi.hide();
