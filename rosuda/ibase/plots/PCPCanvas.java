@@ -541,20 +541,18 @@ public class PCPCanvas extends BaseCanvas {
     public void performZoomIn(int x1, int y1, int x2, int y2) {
         if(commonScale) super.performZoomIn(x1, y1, x2, y2, null,ay);
         else{
-            Axis zay=null;
-            // check if zoom rectangle is around one of the middle axes
-            for(int i=1; i<v.length-1; i++){
-                if(x1>ax.getCatCenter(ax.getCatAtSeqIndex(i-1)) && x1<ax.getCatCenter(ax.getCatAtSeqIndex(i)) && x2 > ax.getCatCenter(ax.getCatAtSeqIndex(i)) && x2 < ax.getCatCenter(ax.getCatAtSeqIndex(i+1))){
-                    zay = opAy[ax.getCatAtSeqIndex(i)-1];
-                    break;
-                }
+            int minZoomAxis=0;
+            int maxZoomAxis=v.length-2;
+            
+            while(ax.getCatCenter(ax.getCatAtSeqIndex(minZoomAxis)) < x1) minZoomAxis++;
+            while(ax.getCatCenter(ax.getCatAtSeqIndex(maxZoomAxis)) > x2) maxZoomAxis--;
+            
+            dontPaint=true;
+            for(int i=minZoomAxis; i<=maxZoomAxis; i++){
+                int csi=ax.getCatAtSeqIndex(i);
+                super.performZoomIn(x1, y1, x2, y2, null, (csi==0)?ay:opAy[csi-1]);
             }
-            // otherwise check if it is around the last axis
-            if(zay==null && x1>ax.getCatCenter(ax.getCatAtSeqIndex(v.length-2-1)) && x1<ax.getCatCenter(ax.getCatAtSeqIndex(v.length-2)) && x2 > ax.getCatCenter(ax.getCatAtSeqIndex(v.length-2))) zay=opAy[ax.getCatAtSeqIndex(opAy.length)-1];
-            // otherwise check if it is around the first axis
-            if(zay==null && x1<ax.getCatCenter(ax.getCatAtSeqIndex(1))) zay=ay;
-            // perform zoom on this axis
-            if(zay!=null) super.performZoomIn(x1, y1, x2, y2, null, zay);
+            dontPaint=false;
         }
     }
     
