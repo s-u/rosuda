@@ -245,6 +245,15 @@ public class Axis extends Notifier {
         return seqgeom.getCenterOfCat(i);
     };
     
+    /** get regular geometry for category of index i (e.g. for parallel coordinates plots)
+     * @param i category index
+     * @param leftGap left gap
+     * @param rightGap right gap
+     * @return regular position of the category */
+    public int getRegularCatPos(int i,int leftGap, int rightGap) {
+        return gBegin + leftGap + (i*(gLen-leftGap-rightGap))/(v.getNumCats()-1);
+    }
+    
     /** get category corresponding to a position on screen (type1 and 2 only)
      * @param pos position
      * @return category ID or -1 on failure (e.g. if not of type 1 or 2) */
