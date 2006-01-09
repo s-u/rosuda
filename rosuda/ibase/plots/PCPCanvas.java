@@ -47,6 +47,8 @@ public class PCPCanvas extends BaseCanvas {
     int X,Y,W,H, TW,TH;
     double totMin, totMax;
     
+    int leftGap=7,rightGap=7;
+    
     private final int standardMLeft=30;
     
     /** create a new PCP
@@ -221,7 +223,7 @@ public class PCPCanvas extends BaseCanvas {
             g.setColor("axis");
             int xx=0;
             while (xx<v[0].getNumCats()) {
-                int t=ax.getCatCenter(xx++);
+                int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
                 g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
             }
         }
@@ -425,10 +427,10 @@ public class PCPCanvas extends BaseCanvas {
             int numNAs=0;
             for (int j=0;j<v.length-1;j++){
                 if ((drawHidden || !m.at(i)) && (v[j+1].at(i)!=null)) {
-                    xs[i][ax.getCatSeqIndex(j)] = ax.getCatCenter(j);
+                    xs[i][ax.getCatSeqIndex(j)] = ax.getRegularCatPos(j, leftGap, rightGap);
                     ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
                 } else{
-                    xs[i][ax.getCatSeqIndex(j)] = ax.getCatCenter(j);
+                    xs[i][ax.getCatSeqIndex(j)] = ax.getRegularCatPos(j, leftGap, rightGap);
                     ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j+1].atD(i));
                     naIndices[numNAs++] = j;
                 }
@@ -493,7 +495,7 @@ public class PCPCanvas extends BaseCanvas {
             int difference;
             int myX1=ax.getCatLow(dragNew);
             int myX2=ax.getCatUp(dragNew);
-            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+            if(Math.abs(difference=pos-ax.getRegularCatPos(dragNew, leftGap, rightGap)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
                 if(dragAxis<newPos) newPos -=1;
@@ -518,7 +520,7 @@ public class PCPCanvas extends BaseCanvas {
             int myX1=ax.getCatLow(dragNew);
             int myX2=ax.getCatUp(dragNew);
             int difference;
-            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
+            if(Math.abs(difference=pos-ax.getRegularCatPos(dragNew, leftGap, rightGap)) > (myX2-myX1)/4){
                 int x,w;
                 if(difference>0){
                     x=ax.getCatCenter(dragNew);
@@ -544,8 +546,8 @@ public class PCPCanvas extends BaseCanvas {
             int minZoomAxis=0;
             int maxZoomAxis=v.length-2;
             
-            while(ax.getCatCenter(ax.getCatAtSeqIndex(minZoomAxis)) < x1) minZoomAxis++;
-            while(ax.getCatCenter(ax.getCatAtSeqIndex(maxZoomAxis)) > x2) maxZoomAxis--;
+            while(ax.getRegularCatPos(ax.getCatAtSeqIndex(minZoomAxis), leftGap, rightGap) < x1) minZoomAxis++;
+            while(ax.getRegularCatPos(ax.getCatAtSeqIndex(maxZoomAxis), leftGap, rightGap) > x2) maxZoomAxis--;
             
             dontPaint=true;
             for(int i=minZoomAxis; i<=maxZoomAxis; i++){
