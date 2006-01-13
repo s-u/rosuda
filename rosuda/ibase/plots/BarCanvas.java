@@ -12,6 +12,16 @@ import org.rosuda.util.*;
  * @version $Id$
  */
 public class BarCanvas extends BaseCanvas {
+    static final String M_PLUS = "+";
+    static final String M_SET1 = "set1";
+    static final String M_SET64 = "set64";
+    static final String M_RESET = "reset";
+    static final String M_SPINE = "spine";
+    static final String M_SORTBYCOUNT = "sortByCount";
+    static final String M_SORTBYMARKED = "sortByMarked";
+    static final String M_LABELS = "labels";
+    static final String M_OUTLINE = "outline";
+    
     /** corresponding variable */
     private SVar v;
     /** weight variable for weighted barcharts */
@@ -44,7 +54,7 @@ public class BarCanvas extends BaseCanvas {
      * @param var associated variable
      * @param mark associated marker
      * @param wvar weight variable for weighted barcharts or null for normal ones; is ignored at the moment */
-    public BarCanvas(PlotComponent ppc, Frame f, SVar var, SMarker mark, SVar wvar) {
+    public BarCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SMarker mark, final SVar wvar) {
         super(ppc,f,mark);
         
         allowDragMove=true;
@@ -66,22 +76,22 @@ public class BarCanvas extends BaseCanvas {
         
         pp = new PPrimRectangle[bars];
         updateObjects();
-        MenuBar mb=null;
-        String myMenu[]={"+","File","~File.Graph","~Edit","-","Set Colors (CB)","set1","Set Colors (rainbow)","set64","Clear Colors","reset","+","View","@SSpineplot","spine","@OSort by count","sortByCount","!OSort by marked","sortByMarked","@LHide Labels","labels","@RRotate","rotate","~Window","0"};
+        
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit","-","Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@SSpineplot",M_SPINE,"@OSort by count",M_SORTBYCOUNT,"!OSort by marked",M_SORTBYMARKED,"@LHide Labels",M_LABELS,"@RRotate","rotate","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        MIspine=EzMenu.getItem(f,"spine");
-        MIlabels=EzMenu.getItem(f,"labels");
+        MIspine=EzMenu.getItem(f,M_SPINE);
+        MIlabels=EzMenu.getItem(f,M_LABELS);
         dontPaint=false;
     };
     
-    public BarCanvas(PlotComponent pc, Frame f, SVar var, SMarker mark) { this(pc,f,var,mark,null); };
+    public BarCanvas(final PlotComponent pc, final Frame f, final SVar var, final SMarker mark) { this(pc,f,var,mark,null); };
     
-    public SVar getData(int id) { return (id==0)?v:((id==1)?weight:null); }
+    public SVar getData(final int id) { return (id==0)?v:((id==1)?weight:null); }
     
     /** rebuilds bars */
     public void updateObjects() {
         countMax=0; c_max=0;
-        Object[] cts=v.getCategories();
+        final Object[] cts=v.getCategories();
         cat_nam=new String[cts.length+1];
         if (bars!=v.getNumCats()) {
             cats=v.getNumCats();
@@ -97,7 +107,7 @@ public class BarCanvas extends BaseCanvas {
             if (m!=null)
                 cols[j]=new int[m.getMaxMark()+1];
             j++;
-        };
+        }
         cat_nam[j]="n/a"; // if you see this category, then somehting's wrong as getCatIndex returns -1
         if (m!=null)
             cols[j]=new int[m.getMaxMark()+1];
@@ -108,32 +118,29 @@ public class BarCanvas extends BaseCanvas {
             int i=v.getCatIndex(j);
             if (i==-1) i=cats;
             if (m!=null) {
-                int[] cl=(int[])cols[i];
-                int k=m.get(j);
+                final int[] cl=(int[])cols[i];
+                final int k=m.get(j);
                 if (k==-1) cl[0]++;
                 else if (k!=0 && k<cl.length) { cl[k]++; hasSec=true; }
             }
             count[i]++;
             if (count[i]>countMax) countMax=count[i];
             j++;
-        };
+        }
         ay.setValueRange(countMax);
         
-        Rectangle r=pc.getBounds();
-        int w=r.width, h=r.height;
-        
         int i=0;
-        int lh=ay.getCasePos(0);
+        final int lh=ay.getCasePos(0);
         while(i<bars) {
             pp[i]=new PPrimRectangle();
             
             int cl=ax.getCatLow(i);
             int cu=ax.getCatUp(i);
-            int cd=cu-cl;
+            final int cd=cu-cl;
             cu-=cd/10;
             cl+=cd/10;
             
-            int ch=0;
+            int ch;
             ch=ay.getCasePos(count[i]);
             if (isSpine) ch=lh+ay.gLen;
             
@@ -141,13 +148,13 @@ public class BarCanvas extends BaseCanvas {
             else ((PPrimRectangle)pp[i]).r = new Rectangle(lh,cl,ch-lh,cu-cl);
             
             i++;
-        };
+        }
         
-        int[] copy_of_count = new int[count.length];
+        final int[] copy_of_count = new int[count.length];
         System.arraycopy(count, 0, copy_of_count, 0, count.length);
         
         for (i=0; i<v.size(); i++){
-            int b=v.getCatIndex(i);
+            final int b=v.getCatIndex(i);
             if (b>=0){
                 if (((PPrimRectangle)pp[b]).ref == null){
                     ((PPrimRectangle)pp[b]).ref = new int[count[b]];
@@ -158,12 +165,13 @@ public class BarCanvas extends BaseCanvas {
         }
     };
     
-    private void sortBars(boolean bySelected) {
-        int ix[]=null;
-        int[] marked = new int[bars];
+    private void sortBars(final boolean bySelected) {
+        
+        final int[] marked = new int[bars];
         for (int i=0; i<bars; i++){
             marked[i] = getMarked(i);
         }
+        final int[] ix;
         ix=Tools.sortIntegersIndex(bySelected?marked:count);
         int i=0;
         while (i<bars-1) {
@@ -176,14 +184,15 @@ public class BarCanvas extends BaseCanvas {
     }
     
     // this should be split into paintInit/Back/Objects/Selected/Post for better performance
-    public void paintBack(PoGraSS g) {
+    public void paintBack(final PoGraSS g) {
         if (bars==0) return;
         
-        Rectangle r=pc.getBounds();
-        int w=r.width, h=r.height;
+        final Rectangle r=pc.getBounds();
+        final int w=r.width;
+        final int h=r.height;
         
         if (orientation==0){
-            int basey=h-mBottom;
+            final int basey=h-mBottom;
             g.drawLine(mLeft,basey,w-mLeft-mRight,basey);
         } else {
             g.drawLine(mLeft,mTop,mLeft,h-mTop-mBottom);
@@ -191,20 +200,16 @@ public class BarCanvas extends BaseCanvas {
         
         if(isShowLabels()){
             labels.clear();
-            String[] text = new String[bars];
-            double[] X = new double[bars];
-            double[] Y = new double[bars];
-            double[] aX = new double[bars];
-            double[] aY = new double[bars];
+            
             double overlap=0; // used to handle overlapping labels
             boolean prevEmpty=true;
             for(int i=0; i<bars; i++){
                 String label=null;
-                Rectangle rec = ((PPrimRectangle)pp[i]).r;
+                final Rectangle rec = ((PPrimRectangle)pp[i]).r;
                 if (orientation==0){
                     if (rec.width<g.getWidthEstimate(cat_nam[i])){ // if there is not enoug space for full category name
                         if(overlap<=0){ // if there is no label overlapping this label's space
-                            String abbrCatName = Common.getTriGraph(cat_nam[i]);
+                            final String abbrCatName = Common.getTriGraph(cat_nam[i]);
                             if(rec.width<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
                                 overlap=g.getWidthEstimate(abbrCatName)-rec.width+10;
                                 if(prevEmpty) label=abbrCatName;
@@ -240,29 +245,30 @@ public class BarCanvas extends BaseCanvas {
         }
     };
     
-    public void paintPost(PoGraSS g){
+    public void paintPost(final PoGraSS g){
         if(baseDrag && moveDrag) {
-            int h=pc.getBounds().height;
-            int basey=h-mBottom;
-            int pos = (orientation==0)?baseDragX2:baseDragY2;
-            int dragNew = ax.getCatByPos(pos);
-            int myX1=ax.getCatLow(dragNew);
-            int myX2=ax.getCatUp(dragNew);
+            final int h=pc.getBounds().height;
+            final int basey=h-mBottom;
+            final int pos = (orientation==0)?baseDragX2:baseDragY2;
+            final int dragNew = ax.getCatByPos(pos);
+            final int myX1=ax.getCatLow(dragNew);
+            final int myX2=ax.getCatUp(dragNew);
             if(orientation==0){
                 g.setColor(192,192,192);
                 g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
-                g.setColor("outline");
+                g.setColor(M_OUTLINE);
                 g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
             } else{
                 g.setColor(192,192,192);
                 g.fillRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
-                g.setColor("outline");
+                g.setColor(M_OUTLINE);
                 g.drawRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
             }
             g.setColor("drag");
-            int difference;
+            final int difference;
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
-                int x,w;
+                final int x;
+                final int w;
                 if(difference>0){
                     x=ax.getCatCenter(dragNew);
                     w=2*(myX2-x);
@@ -277,35 +283,39 @@ public class BarCanvas extends BaseCanvas {
                 if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
                 else g.fillRect(mLeft,myX1,4,myX2-myX1);
             }
-        };
+        }
     }
     
     
-    public void mousePressed(MouseEvent ev) {
+    public void mousePressed(final MouseEvent ev) {
         super.mousePressed(ev);
-        int x=ev.getX(), y=ev.getY();
+        final int x=ev.getX();
+        final int y=ev.getY();
         Common.printEvent(ev);
         
         if (Common.isMoveTrigger(ev)) {
-            int i=0, bars=cats, setTo=0;
+            
+            
+            bars=cats;
+            int i = 0;
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
                     dragW=((PPrimRectangle)pp[i]).r.width; dragH=((PPrimRectangle)pp[i]).r.height;
                     if (!inQuery) pc.setCursor(Common.cur_hand);
                     break;
-                };
+                }
                 i++;
-            };
+            }
         }// no longer testing for Common.isSelectTrigger. is this ok?
     };
     
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         if (baseDrag && moveDrag) {
-            int pos = (orientation==0)?e.getX():e.getY();
-            int dragNew = ax.getCatByPos(pos);
-            int difference;
-            int myX1=ax.getCatLow(dragNew);
-            int myX2=ax.getCatUp(dragNew);
+            final int pos = (orientation==0)?e.getX():e.getY();
+            final int dragNew = ax.getCatByPos(pos);
+            final int difference;
+            final int myX1=ax.getCatLow(dragNew);
+            final int myX2=ax.getCatUp(dragNew);
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
@@ -326,16 +336,16 @@ public class BarCanvas extends BaseCanvas {
         } else super.mouseReleased(e);
     }
     
-    public Object run(Object o, String cmd) {
+    public Object run(final Object o, final String cmd) {
         super.run(o,cmd);
         
-        if(cmd=="sortByCount") {
+        if(M_SORTBYCOUNT.equals(cmd)) {
             sortBars(false);
         }
-        if(cmd=="sortByMarked") {
+        if(M_SORTBYMARKED.equals(cmd)) {
             sortBars(true);
         }
-        if (cmd=="labels") {
+        if (M_LABELS.equals(cmd)) {
             if(isShowLabels()){
                 MIlabels.setLabel("Show Labels");
                 setShowLabels(false);
@@ -346,7 +356,7 @@ public class BarCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-        if (cmd=="spine") {
+        if (M_SPINE.equals(cmd)) {
             if (isSpine) {
                 ax.setType(Axis.T_EqCat);
                 MIspine.setLabel("Spineplot");
@@ -355,16 +365,16 @@ public class BarCanvas extends BaseCanvas {
                 ax.setType(Axis.T_PropCat);
                 MIspine.setLabel("Barchart");
                 isSpine=true;
-            };
+            }
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-        if (cmd=="set1") {
+        if (M_SET1.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
-                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    final int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
                     int j=0;
                     if (cs!=null)
                         while (j<cs.length)
@@ -374,12 +384,12 @@ public class BarCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
             }
         }
-        if (cmd=="set64") {
+        if (M_SET64.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
                     //System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
-                    int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    final int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
                     int j=0;
                     if (cs!=null)
                         while (j<cs.length)
@@ -389,7 +399,7 @@ public class BarCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
             }
         }
-        if (cmd=="reset") {
+        if (M_RESET.equals(cmd)) {
             if (m.getSecCount()>0) {
                 m.resetSec();
                 m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
@@ -398,19 +408,19 @@ public class BarCanvas extends BaseCanvas {
         return null;
     };
     
-    public String queryObject(int i) {
+    public String queryObject(final int i) {
         String qs="Name: "+cat_nam[i]+"\n";
-        boolean actionExtQuery = false; //ExtQueries not implemented
+        final boolean actionExtQuery = false; //ExtQueries not implemented
         if (actionExtQuery) {
             qs+="consists of "+count[i]+" cases ("+
-                    Tools.getDisplayableValue(100.0*((double)count[i])/((double)v.size()),2)+
+                    Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+
                     "% of total)\nSelected "+getMarked(i)+" cases ("+
                     Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+
                     "% of this cat., " +
-                    Tools.getDisplayableValue(100.0*((double)getMarked(i))/((double)v.size()),2)+"% of total)";
+                    Tools.getDisplayableValue(100.0*(getMarked(i))/((double)v.size()),2)+"% of total)";
         } else {
             qs+="Selected "+getMarked(i)+" of "+count[i];
-        };
+        }
         
         return qs;
     }
@@ -418,12 +428,12 @@ public class BarCanvas extends BaseCanvas {
     /*
      * Returns the number of selected cases in bar.
      */
-    private int getMarked(int bar){
-        return (int)(((double) pp[bar].cases())*pp[bar].getMarkedProportion(m,-1)+0.5);
+    private int getMarked(final int bar){
+        return (int)((pp[bar].cases())*pp[bar].getMarkedProportion(m,-1)+0.5);
     }
     
-    public void rotate(int amount) {
-        int puffer;
+    public void rotate(final int amount) {
+        
         if (orientation==0){ // so orientation 1 afterwards
             mBottom = 10;
             mTop = 10;
