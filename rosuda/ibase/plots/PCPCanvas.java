@@ -480,18 +480,19 @@ public class PCPCanvas extends BaseCanvas {
         int x=ev.getX(), y=ev.getY();
         Common.printEvent(ev);
         
-        if (Common.isMoveTrigger(ev)) {
+        /*if (Common.isMoveTrigger(ev)) {
             dragAxis = labels.getTextAt(x,y);
             if(dragAxis>-1){
                 pc.setCursor(Common.cur_move);
             }
-        }
+        }*/
     };
     
     public void mouseReleased(MouseEvent e) {
         if (baseDrag && moveDrag) {
             int pos = (orientation==0)?e.getX():e.getY();
             int dragNew = ax.getCatByPos(pos);
+            int dragAxis = ax.getCatByPos(baseDragY1);
             int difference;
             int myX1=ax.getCatLow(dragNew);
             int myX2=ax.getCatUp(dragNew);
@@ -502,7 +503,7 @@ public class PCPCanvas extends BaseCanvas {
                 ax.moveCat(dragAxis, newPos);
             } else{
                 if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
-                else ax.swapCats(dragNew, ax.getCatByPos(baseDragY1));
+                else ax.swapCats(dragNew, dragAxis);
             }
             
             baseDrag=false;
