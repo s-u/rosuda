@@ -1,10 +1,7 @@
 package org.rosuda.ibase.plots;
-import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.Enumeration;
 import java.util.Vector;
 
 import org.rosuda.ibase.*;
@@ -12,6 +9,18 @@ import org.rosuda.ibase.toolkit.*;
 
 
 public class MosaicCanvas extends BaseCanvas {
+    static final String M_PLUS = "+";
+    static final String M_OBSERVED = "observed";
+    static final String M_EXPECTED = "expected";
+    static final String M_SAMEBINSIZE = "samebinsize";
+    static final String M_MULTIPLEBARCHARTS = "multiplebarcharts";
+    static final String M_FLUCTUATION = "fluctuation";
+    static final String M_MAXLEVELUP = "maxLevelUp";
+    static final String M_MAXLEVELDOWN = "maxLevelDown";
+    static final String M_CENSORUP = "censorUp";
+    static final String M_CENSORDOWN = "censorDown";
+    static final String M_PERMUTELEFT = "permuteLeft";
+    static final String M_PERMUTERIGHT = "permuteRight";
     
     private SVar[] v;
     private int vs;
@@ -35,7 +44,7 @@ public class MosaicCanvas extends BaseCanvas {
     
     private final int standardMLeft=35;
     
-    public MosaicCanvas(PlotComponent ppc, Frame f, SVar[] vars, SMarker mark) {
+    public MosaicCanvas(final PlotComponent ppc, final Frame f, final SVar[] vars, final SMarker mark) {
         super(ppc,f, mark);
         this.frame=f;
         this.v = vars;
@@ -47,7 +56,7 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Expected","expected","Same bin size","samebinsize","Multiple barcharts","multiplebarcharts","Fluctuation","fluctuation","-","Less variables (up)","maxLevelUp","More variables (down)","maxLevelDown","Increase censor (shift+up)","censorUp","Decrease censor (shift+down)","censorDown","Rotate variables left (left)","permuteLeft","Rotate variables right (right)","permuteRight","@RRotate","rotate","~Edit","~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph",M_PLUS,"View","Observed",M_OBSERVED,"Expected",M_EXPECTED,"Same bin size",M_SAMEBINSIZE,"Multiple barcharts",M_MULTIPLEBARCHARTS,"Fluctuation",M_FLUCTUATION,"-","Less variables (up)",M_MAXLEVELUP,"More variables (down)",M_MAXLEVELDOWN,"Increase censor (shift+up)",M_CENSORUP,"Decrease censor (shift+down)",M_CENSORDOWN,"Rotate variables left (left)",M_PERMUTELEFT,"Rotate variables right (right)",M_PERMUTERIGHT,"@RRotate","rotate","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
         
@@ -63,8 +72,8 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void updateObjects() {
-        int maxLabelLength=create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
-        int omLeft=mLeft;
+        final int maxLabelLength=create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
+        final int omLeft=mLeft;
         if(maxLabelLength*8>standardMLeft){
             mLeft=8*maxLabelLength+2;
         } else mLeft=standardMLeft;
@@ -92,70 +101,70 @@ public class MosaicCanvas extends BaseCanvas {
         setUpdateRoot(0);
     }
     
-    public String queryObject(int i) {
+    public String queryObject(final int i) {
         if (pp!=null && pp[i]!=null) {
-            int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+            final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
             return ((PPrimMosaic) pp[i]).toString()+"\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
         }
         return "N/A";
     }
     
-    public Object run(Object o, String cmd) {
+    public Object run(final Object o, final String cmd) {
         super.run(o,cmd);
         
-        if (cmd=="observed") { if(mode!=DISPLAY_MODE_OBSERVED) {mode=DISPLAY_MODE_OBSERVED; setUpdateRoot(0); updateObjects(); repaint();}}
-        if (cmd=="expected") { if(mode!=DISPLAY_MODE_EXPECTED) {mode=DISPLAY_MODE_EXPECTED; setUpdateRoot(0); updateObjects(); repaint();}}
-        if (cmd=="samebinsize") { if(mode!=DISPLAY_MODE_SAMEBINSIZE) {mode=DISPLAY_MODE_SAMEBINSIZE; setUpdateRoot(0); updateObjects(); repaint();}}
-        if (cmd=="multiplebarcharts") { if(mode!=DISPLAY_MODE_MULTIPLEBARCHARTS) {mode=DISPLAY_MODE_MULTIPLEBARCHARTS; setUpdateRoot(0); updateObjects(); repaint();}}
-        if (cmd=="fluctuation") { if(mode!=DISPLAY_MODE_FLUCTUATION) {mode=DISPLAY_MODE_FLUCTUATION; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (M_OBSERVED.equals(cmd)) { if(mode!=DISPLAY_MODE_OBSERVED) {mode=DISPLAY_MODE_OBSERVED; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (M_EXPECTED.equals(cmd)) { if(mode!=DISPLAY_MODE_EXPECTED) {mode=DISPLAY_MODE_EXPECTED; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (M_SAMEBINSIZE.equals(cmd)) { if(mode!=DISPLAY_MODE_SAMEBINSIZE) {mode=DISPLAY_MODE_SAMEBINSIZE; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (M_MULTIPLEBARCHARTS.equals(cmd)) { if(mode!=DISPLAY_MODE_MULTIPLEBARCHARTS) {mode=DISPLAY_MODE_MULTIPLEBARCHARTS; setUpdateRoot(0); updateObjects(); repaint();}}
+        if (M_FLUCTUATION.equals(cmd)) { if(mode!=DISPLAY_MODE_FLUCTUATION) {mode=DISPLAY_MODE_FLUCTUATION; setUpdateRoot(0); updateObjects(); repaint();}}
         
-        if (cmd=="maxLevelUp") {
+        if (M_MAXLEVELUP.equals(cmd)) {
             if( maxLevel > 1 ) {
                 maxLevel -= 1;
                 updateObjects(); setUpdateRoot(0); repaint();
             }
         }
-        if (cmd=="maxLevelDown") {
+        if (M_MAXLEVELDOWN.equals(cmd)) {
             if( maxLevel < vs ) {
                 maxLevel += 1;
                 updateObjects(); setUpdateRoot(0); repaint();
             }
         }
-        if(cmd=="censorUp"){
+        if(M_CENSORUP.equals(cmd)){
             censor++;
             updateObjects(); setUpdateRoot(0); repaint();
         }
-        if(cmd=="censorDown"){
+        if(M_CENSORDOWN.equals(cmd)){
             if( censor > 0 ){
                 censor--;
                 updateObjects(); setUpdateRoot(0); repaint();
             }
         }
-        if(cmd=="permuteLeft"){
+        if(M_PERMUTELEFT.equals(cmd)){
             if( maxLevel != vs ) {
-                    int[] rotation = new int[vs];
-                    for (int i=0; i<maxLevel-1; i++)
-                        rotation[i] = i;
-                    for (int i=maxLevel-1; i<vs ; i++)
-                        rotation[i] = i+1;
-                    rotation[vs-1] = maxLevel-1;
-                    ft.permute(rotation);
-                    v = ft.getVars();
-                    updateObjects(); setUpdateRoot(0); repaint();
-                }
+                final int[] rotation = new int[vs];
+                for (int i=0; i<maxLevel-1; i++)
+                    rotation[i] = i;
+                for (int i=maxLevel-1; i<vs ; i++)
+                    rotation[i] = i+1;
+                rotation[vs-1] = maxLevel-1;
+                ft.permute(rotation);
+                v = ft.getVars();
+                updateObjects(); setUpdateRoot(0); repaint();
+            }
         }
-        if(cmd=="permuteRight"){
+        if(M_PERMUTERIGHT.equals(cmd)){
             if( maxLevel != vs ) {
-                    int[] rotation = new int[vs];
-                    for (int i=0; i<maxLevel-1; i++)
-                        rotation[i] = i;
-                    for (int i=maxLevel; i<vs ; i++)
-                        rotation[i] = i-1;
-                    rotation[maxLevel-1] = vs-1;
-                    ft.permute(rotation);
-                    v = ft.getVars();
-                    updateObjects(); setUpdateRoot(0); repaint();
-                }
+                final int[] rotation = new int[vs];
+                for (int i=0; i<maxLevel-1; i++)
+                    rotation[i] = i;
+                for (int i=maxLevel; i<vs ; i++)
+                    rotation[i] = i-1;
+                rotation[maxLevel-1] = vs-1;
+                ft.permute(rotation);
+                v = ft.getVars();
+                updateObjects(); setUpdateRoot(0); repaint();
+            }
         }
         return null;
     }
@@ -167,13 +176,13 @@ public class MosaicCanvas extends BaseCanvas {
     private char[] Dirs;
     private double residSum;
     private int censor=0;
-    private int create(int x1, int y1, int x2, int y2, String info) {
+    private int create(final int x1, final int y1, final int x2, final int y2, final String info) {
         
-        double[] table = ft.getTable();
-        double[] exp = ft.getExp();
-        int maxLabelLength=0;
-        int[] levels = ft.getLevels();
-        String[][] lnames = ft.getLnames();
+        final double[] table = ft.getTable();
+        final double[] exp = ft.getExp();
+        
+        final int[] levels = ft.getLevels();
+        final String[][] lnames = ft.getLnames();
         
         rects.removeAllElements();
         
@@ -186,12 +195,14 @@ public class MosaicCanvas extends BaseCanvas {
             plevels[i] = plevels[i+1] * levels[i+1];
         }
         
-        int thisGap;
-        int subX=0, subY=0;
-        int mulX=1, mulY=1;
         Gaps = new int[maxLevel+2];
         aGap = new int[maxLevel+2];
         
+        int thisGap;
+        int subY = 0;
+        int subX = 0;
+        int mulY = 1;
+        int mulX = 1;
         for( int j=0; j<maxLevel; j++) {
             thisGap = (maxLevel - j) * 3;
             if( Dirs[j] == 'x' ) {
@@ -204,12 +215,13 @@ public class MosaicCanvas extends BaseCanvas {
             Gaps[j] = thisGap;
         }
         for( int j=0; j<maxLevel; j++) {
-            char dir = Dirs[j];
+            final char dir = Dirs[j];
             int sum = Gaps[j];
             int kk=j+1; // replaced k by kk as variable k already exists
             while(kk<maxLevel) {
-                int prod = 1;
+                
                 if( Dirs[kk] == dir ) {
+                    int prod = 1;
                     int l=j+1;
                     while(l<kk) {
                         if( Dirs[l] == dir ) {
@@ -256,6 +268,7 @@ public class MosaicCanvas extends BaseCanvas {
         
         // Create labels for the first 2 dimensions
         labels.clear();
+        int maxLabelLength = 0;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
             for(int j=0; j<Math.min(2, maxLevel); j++){
                 for( int i=0; i<levels[j]; i++) {
@@ -272,19 +285,19 @@ public class MosaicCanvas extends BaseCanvas {
         
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
-            for (int i=0; i<rects.size(); i++)
+            for (int i=0, rsize = rects.size(); i<rsize; i++)
                 maxCount = Math.max(maxCount, ((PPrimMosaic)(rects.elementAt(i))).getObs());
-            for (int i=0; i<rects.size(); i++) {
-                PPrimMosaic r = (PPrimMosaic)(rects.elementAt(i));
+            for (int i=0, rsize = rects.size(); i<rsize; i++) {
+                final PPrimMosaic r = (PPrimMosaic)(rects.elementAt(i));
                 int newH, newW;
-                int newY=r.r.y;
+                
                 if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS ) {
                     r.setDir('y');
                     newW = r.r.width;
-                    newH = (int)((double)r.r.height * (1.0+(double)censor/5.0) * r.getObs()/maxCount);
+                    newH = (int)(r.r.height * (1.0+(double)censor/5.0) * r.getObs()/maxCount);
                 } else {
-                    newW = (int)((double)r.r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
-                    newH = (int)((double)r.r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
+                    newW = (int)(r.r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
+                    newH = (int)(r.r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.getObs()/maxCount)));
                 }
                 if( (newH >= r.r.height && newW >= r.r.width) && censor > 0){
                     r.setCensored(true);
@@ -297,34 +310,32 @@ public class MosaicCanvas extends BaseCanvas {
         return maxLabelLength;
     }
     
-    private void createMosaic(int start, int levelid, double[] Mtable, int x1, int y1, int x2, int y2, String infop) {
+    private void createMosaic(final int start, final int levelid, final double[] Mtable, final int x1, final int y1, final int x2, final int y2, final String infop) {
         
         //int levels = ft.getLevels()[levelid];
-        int k = vs;
-        String name = v[levelid].getName();
+        final int k = vs;
+        final String name = v[levelid].getName();
         
-        Object[] lnames = v[levelid].getCategories();
-        int levels = lnames.length;
+        final Object[] lnames = v[levelid].getCategories();
+        final int levels = lnames.length;
         
-        double[] exp = ft.getExp();
-        double[] table = ft.getTable();
+        final double[] exp = ft.getExp();
+        final double[] table = ft.getTable();
         
-        double[] counts = new double[levels+1];
-        double[] oCounts = new double[levels+1];
-        double[]   exps = new double[levels];
-        double[]    obs = new double[levels];
-        double total = 0;
+        final double[] counts = new double[levels+1];
+        final double[] oCounts = new double[levels+1];
+        final double[]   exps = new double[levels];
+        final double[]    obs = new double[levels];
         
-        String info;
-        PPrimMosaic tile;
-        int index;
-        Vector[] tileIds = new Vector[levels];
+        final Vector[] tileIds = new Vector[levels];
         for (int j=0; j < levels; j++) {
             tileIds[j] = new Vector(8,8);
         }
         
         // Calculate the absolute counts for each level first
-        if ( levelid < k-1 ) {	        // if we did not reach the lowest level
+        double total = 0;
+        if ( levelid < k-1 ) {
+            int index;	        // if we did not reach the lowest level
             
             for (int j=0; j < levels; j++) {
                 for (int i=0; i < plevels[levelid]; i++) {
@@ -355,7 +366,7 @@ public class MosaicCanvas extends BaseCanvas {
         
 //      int thisGap = 0;
 //      if( !displayMode.equals("Fluctuation") )
-        int thisGap = aGap[levelid];
+        final int thisGap = aGap[levelid];
         
         int emptyBin = 0;
         int emptyWidth = 0;
@@ -369,21 +380,23 @@ public class MosaicCanvas extends BaseCanvas {
             emptyWidth = aGap[levelid-1] - Gaps[levelid-1];
         }
         
-        int sizeX = x2-x1;
-        int sizeY = y2-y1;
+        final int sizeX = x2-x1;
+        final int sizeY = y2-y1;
         
         if( total > 0 ){
+            String info;
+            PPrimMosaic tile;
             for (int j=0; j < levels; j++) {
                 combination[levelid]=j;
                 if(levelid+1<combination.length) combination[levelid+1]=-1;
                 
-                info = infop.toString() + name + ": " + lnames[j] + '\n';// Add the popup information
+                info = infop + name + ": " + lnames[j] + '\n';// Add the popup information
                 
                 boolean stop  = false;
                 int addGapX = 0;
                 int addGapY = 0;
                 
-                if( (mode==DISPLAY_MODE_SAMEBINSIZE) && oCounts[j+1]-oCounts[j] == 0 || levelid == maxLevel-1 ) {
+                if( (mode==DISPLAY_MODE_SAMEBINSIZE) && Math.abs(oCounts[j+1]-oCounts[j]) < 0.0001 || levelid == maxLevel-1 ) {
                     stop = true;
                     for( int i=levelid+1; i<maxLevel; i++ )
                         if( Dirs[i] == 'x' )
@@ -392,8 +405,8 @@ public class MosaicCanvas extends BaseCanvas {
                             addGapY += aGap[i];
                 }
                 
-                int[] ref = ft.getMatchingCases(combination,maxLevel);
-                boolean empty = (ref.length==0);
+                final int[] ref = ft.getMatchingCases(combination,maxLevel);
+                final boolean empty = (ref.length==0);
                 
                 if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
@@ -465,29 +478,30 @@ public class MosaicCanvas extends BaseCanvas {
         }
     }
     
-    public void keyReleased(KeyEvent e) {
-        int code = e.getKeyCode();
-        boolean repaint=false;
+    public void keyReleased(final KeyEvent e) {
+        final int code = e.getKeyCode();
+        
         switch(code){
             case KeyEvent.VK_DOWN:
                 if( e.isShiftDown() )
-                    run(this,"censorDown");
+                    run(this,M_CENSORDOWN);
                 else
-                    run(this,"maxLevelDown");
+                    run(this,M_MAXLEVELDOWN);
                 break;
             case KeyEvent.VK_UP:
                 if( e.isShiftDown() ){
-                    run(this,"censorUp");
+                    run(this,M_CENSORUP);
                 } else
-                    run(this,"maxLevelUp");
+                    run(this,M_MAXLEVELUP);
                 break;
             case KeyEvent.VK_LEFT:
-                run(this,"permuteLeft");
+                run(this,M_PERMUTELEFT);
                 break;
             case KeyEvent.VK_RIGHT:
-                run(this,"permuteRight");
+                run(this,M_PERMUTERIGHT);
                 break;
         }
+        final boolean repaint = false;
         if(repaint){
             updateObjects();
             setUpdateRoot(0);
@@ -497,16 +511,16 @@ public class MosaicCanvas extends BaseCanvas {
         super.keyReleased(e);
     }
     
-    public SVar getData(int id) { return (id>=0 && id<v.length)?v[id]:null; }
+    public SVar getData(final int id) { return (id>=0 && id<v.length)?v[id]:null; }
     
-    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+    public void Notifying(final NotifyMsg msg, final Object o, final Vector path) {
         if(!ignoreNotifications && msg.getMessageID()==Common.NM_VarSeqChange){
             ft=new FrequencyTable(v);
         }
         super.Notifying(msg, o, path);
     }
     
-    public void rotate(int amount) {
+    public void rotate(final int amount) {
         if((amount&1) == 1){
             for( int i=maxLevel-1; i<vs; i++ )
                 if( Dirs[i] == 'x')
