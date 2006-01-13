@@ -31,7 +31,6 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_ALPHAUP = "alphaUp";
     static final String C_OBJECTS = "objects";
     static final String C_RED = "red";
-    static final String C_BLACK = "black";
     /** array of two variables (X and Y) */
     protected SVar v[];
     
