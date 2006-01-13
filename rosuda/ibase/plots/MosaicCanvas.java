@@ -47,7 +47,7 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Expected","expected","Same bin size","samebinsize","Multiple barcharts","multiplebarcharts","Fluctuation","fluctuation","~Edit","~Window","0"};
+        String myMenu[]={"+","File","~File.Graph","+","View","Observed","observed","Expected","expected","Same bin size","samebinsize","Multiple barcharts","multiplebarcharts","Fluctuation","fluctuation","-","Less variables (up)","maxLevelUp","More variables (down)","maxLevelDown","Increase censor (shift+up)","censorUp","Decrease censor (shift+down)","censorDown","Rotate variables left (left)","permuteLeft","Rotate variables right (right)","permuteRight","@RRotate","rotate","~Edit","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
         
@@ -108,6 +108,55 @@ public class MosaicCanvas extends BaseCanvas {
         if (cmd=="samebinsize") { if(mode!=DISPLAY_MODE_SAMEBINSIZE) {mode=DISPLAY_MODE_SAMEBINSIZE; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="multiplebarcharts") { if(mode!=DISPLAY_MODE_MULTIPLEBARCHARTS) {mode=DISPLAY_MODE_MULTIPLEBARCHARTS; setUpdateRoot(0); updateObjects(); repaint();}}
         if (cmd=="fluctuation") { if(mode!=DISPLAY_MODE_FLUCTUATION) {mode=DISPLAY_MODE_FLUCTUATION; setUpdateRoot(0); updateObjects(); repaint();}}
+        
+        if (cmd=="maxLevelUp") {
+            if( maxLevel > 1 ) {
+                maxLevel -= 1;
+                updateObjects(); setUpdateRoot(0); repaint();
+            }
+        }
+        if (cmd=="maxLevelDown") {
+            if( maxLevel < vs ) {
+                maxLevel += 1;
+                updateObjects(); setUpdateRoot(0); repaint();
+            }
+        }
+        if(cmd=="censorUp"){
+            censor++;
+            updateObjects(); setUpdateRoot(0); repaint();
+        }
+        if(cmd=="censorDown"){
+            if( censor > 0 ){
+                censor--;
+                updateObjects(); setUpdateRoot(0); repaint();
+            }
+        }
+        if(cmd=="permuteLeft"){
+            if( maxLevel != vs ) {
+                    int[] rotation = new int[vs];
+                    for (int i=0; i<maxLevel-1; i++)
+                        rotation[i] = i;
+                    for (int i=maxLevel-1; i<vs ; i++)
+                        rotation[i] = i+1;
+                    rotation[vs-1] = maxLevel-1;
+                    ft.permute(rotation);
+                    v = ft.getVars();
+                    updateObjects(); setUpdateRoot(0); repaint();
+                }
+        }
+        if(cmd=="permuteRight"){
+            if( maxLevel != vs ) {
+                    int[] rotation = new int[vs];
+                    for (int i=0; i<maxLevel-1; i++)
+                        rotation[i] = i;
+                    for (int i=maxLevel; i<vs ; i++)
+                        rotation[i] = i-1;
+                    rotation[maxLevel-1] = vs-1;
+                    ft.permute(rotation);
+                    v = ft.getVars();
+                    updateObjects(); setUpdateRoot(0); repaint();
+                }
+        }
         return null;
     }
     
@@ -422,62 +471,21 @@ public class MosaicCanvas extends BaseCanvas {
         switch(code){
             case KeyEvent.VK_DOWN:
                 if( e.isShiftDown() )
-                    if( censor > 0 ){
-                    censor--;
-                    repaint=true;
-                    } else
-                        return;
+                    run(this,"censorDown");
                 else
-                    if( maxLevel < vs ) {
-                    maxLevel += 1;
-                    repaint=true;
-                    }
+                    run(this,"maxLevelDown");
                 break;
             case KeyEvent.VK_UP:
                 if( e.isShiftDown() ){
-                    censor++;
-                    repaint=true;
+                    run(this,"censorUp");
                 } else
-                    if( maxLevel > 1 ) {
-                    maxLevel -= 1;
-                    repaint=true;
-                    }
+                    run(this,"maxLevelUp");
                 break;
             case KeyEvent.VK_LEFT:
-                if( maxLevel != vs ) {
-                    int[] rotation = new int[vs];
-                    for (int i=0; i<maxLevel-1; i++)
-                        rotation[i] = i;
-                    for (int i=maxLevel-1; i<vs ; i++)
-                        rotation[i] = i+1;
-                    rotation[vs-1] = maxLevel-1;
-                    ft.permute(rotation);
-                    v = ft.getVars();
-                    repaint=true;
-                }
+                run(this,"permuteLeft");
                 break;
             case KeyEvent.VK_RIGHT:
-                if( maxLevel != vs ) {
-                    int[] rotation = new int[vs];
-                    for (int i=0; i<maxLevel-1; i++)
-                        rotation[i] = i;
-                    for (int i=maxLevel; i<vs ; i++)
-                        rotation[i] = i-1;
-                    rotation[maxLevel-1] = vs-1;
-                    ft.permute(rotation);
-                    v = ft.getVars();
-                    repaint=true;
-                }
-                break;
-            case KeyEvent.VK_R:
-                if(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()){
-                    for( int i=maxLevel-1; i<vs; i++ )
-                        if( Dirs[i] == 'x')
-                            Dirs[i] = 'y';
-                        else
-                            Dirs[i] = 'x';
-                    repaint=true;
-                }
+                run(this,"permuteRight");
                 break;
         }
         if(repaint){
@@ -497,4 +505,19 @@ public class MosaicCanvas extends BaseCanvas {
         }
         super.Notifying(msg, o, path);
     }
+    
+    public void rotate(int amount) {
+        if((amount&1) == 1){
+            for( int i=maxLevel-1; i<vs; i++ )
+                if( Dirs[i] == 'x')
+                    Dirs[i] = 'y';
+                else
+                    Dirs[i] = 'x';
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
+    }
+    
+    
 }
