@@ -11,8 +11,6 @@ package org.rosuda.ibase.plots;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
-import java.io.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
@@ -23,14 +21,19 @@ import org.rosuda.util.*;
  * @version $Id$
  */
 public class HistCanvas extends BaseCanvas {
+    static final String M_PLUS = "+";
+    static final String M_BINUP = "binUp";
+    static final String M_BINDOWN = "binDown";
+    static final String M_ANCHORLEFT = "anchorLeft";
+    static final String M_ANCHORRIGHT = "anchorRight";
     /** associated variable */
     protected SVar v;
     
     protected double anchor, binw;
     
-    private final static int DRAGMODE_NONE = 0;
-    private final static int DRAGMODE_BINW = 1;
-    private final static int DRAGMODE_ANCHOR = 2;
+    private static final int DRAGMODE_NONE = 0;
+    private static final int DRAGMODE_BINW = 1;
+    private static final int DRAGMODE_ANCHOR = 2;
     
     protected int dragMode;
     protected int dragX;
@@ -44,14 +47,14 @@ public class HistCanvas extends BaseCanvas {
      * @param var source variable
      * @param mark associated marker
      */
-    public HistCanvas(PlotComponent ppc, Frame f, SVar var, SMarker mark) {
+    public HistCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SMarker mark) {
         super(ppc,f,mark);
         v=var; setTitle("Histogram ("+v.getName()+")");
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","Increase bin width (up)","binUp","Decrease bin width (down)","binDown","Move anchor left (left)","anchorLeft","Move anchor right (right)","anchorRight","~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate","rotate","Increase bin width (up)",M_BINUP,"Decrease bin width (down)",M_BINDOWN,"Move anchor left (left)",M_ANCHORLEFT,"Move anchor right (right)",M_ANCHORRIGHT,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         mLeft=20; mRight=10; mTop=10; mBottom=20;
         allow180=true;
@@ -60,15 +63,16 @@ public class HistCanvas extends BaseCanvas {
         dontPaint=false;
     };
     
-    public SVar getData(int id) { return (id==0)?v:null; }
+    public SVar getData(final int id) { return (id==0)?v:null; }
     
     public void updateObjects() {
-        Stopwatch sw=new Stopwatch();
-        boolean recalcBars=true;
+        final Stopwatch sw=new Stopwatch();
+        
         // we should set recalcBar to false if anchor/binw didn't change
         bars=((int)((v.getMax()-anchor)/binw))+1;
         if (dragMode!=DRAGMODE_BINW)
             ax.setValueRange(anchor,bars*binw);
+        boolean recalcBars = true;
         if (pp==null || pp.length!=bars) {
             pp=new PlotPrimitive[bars];
             recalcBars=true;
@@ -76,42 +80,43 @@ public class HistCanvas extends BaseCanvas {
         
         if (recalcBars) {
             int i=0;
-            while(i<bars) { pp[i]=new PPrimRectangle(); i++; };
+            while(i<bars) { pp[i]=new PPrimRectangle(); i++; }
             sw.profile("HistCanvasNew.updateObject reset primitives");
             
-            int countMax=0;
-            int count[]=new int[bars];
-            int es=v.size();
-            int id2bar[]=new int[es];
+            
+            final int count[]=new int[bars];
+            final int es=v.size();
+            final int id2bar[]=new int[es];
             i=0;
+            int countMax = 0;
             while (i<es) {
-                Object o=v.at(i);
+                final Object o=v.at(i);
                 if (o!=null) {
-                    double f=((Number)o).doubleValue();
-                    int box=(int)((f-ax.vBegin)/binw);
+                    final double f=((Number)o).doubleValue();
+                    final int box=(int)((f-ax.vBegin)/binw);
                     id2bar[i]=box+1;
                     if (box>=0 && box<bars) {
                         count[box]++;
                         if (count[box]>countMax) countMax=count[box];
-                    };
-                };
+                    }
+                }
                 i++;
-            };
+            }
             sw.profile("HistCanvasNew.updateObject calculate counts");
             i=0;
             ay.setValueRange(countMax);
-            int bly=ay.getValuePos(0);
+            final int bly=ay.getValuePos(0);
             while(i<es) {
                 int b=id2bar[i];
                 if (b>0) {
                     b--;
-                    PPrimRectangle pr=(PPrimRectangle)pp[b];
+                    final PPrimRectangle pr=(PPrimRectangle)pp[b];
                     if (pr.ref==null) {
                         pr.ref=new int[count[b]];
-                        int ly=bly;
-                        int x1=ax.getValuePos(ax.vBegin+b*binw);
-                        int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
-                        int vy=ay.getValuePos(count[b]);
+                        final int ly=bly;
+                        final int x1=ax.getValuePos(ax.vBegin+b*binw);
+                        final int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
+                        final int vy=ay.getValuePos(count[b]);
                         if (orientation==0)
                             pr.r=new Rectangle(x1,vy,x2-x1,ly-vy);
                         else if (orientation==2)
@@ -130,7 +135,7 @@ public class HistCanvas extends BaseCanvas {
         }
     }
     
-    public void setHistParam(double anchor, double binw) {
+    public void setHistParam(final double anchor, final double binw) {
         this.anchor=anchor; this.binw=binw;
         updateObjects();
         setUpdateRoot(0);
@@ -138,32 +143,32 @@ public class HistCanvas extends BaseCanvas {
     }
     
     public double[] getHistParam() {
-        double[] hp=new double[3];
+        final double[] hp=new double[3];
         hp[0]=anchor; hp[1]=binw; hp[2]=v.getMax();
         return hp;
     }
     
-    public void paintBack(PoGraSS g) {
+    public void paintBack(final PoGraSS g) {
         int maxLabelLength=0;
         {
-            Axis axis = (orientation==0 || orientation==2)?ay:ax;
-            double f=axis.getSensibleTickDistance(50,18);
+            final Axis axis = (orientation==0 || orientation==2)?ay:ax;
+            final double f=axis.getSensibleTickDistance(50,18);
             double fi=axis.getSensibleTickStart(f);
             while (fi<axis.vBegin+axis.vLen) {
-                String s=axis.getDisplayableValue(fi);
+                final String s=axis.getDisplayableValue(fi);
                 if(s.length()>maxLabelLength) maxLabelLength=s.length();
                 fi+=f;
             }
         }
         
         if(orientation==3){
-            int omRight=mRight;
+            final int omRight=mRight;
             if(maxLabelLength*8>20){
                 mRight = maxLabelLength*8+2;
             } else mRight=20;
             if(mRight!=omRight) updateObjects();
         } else{
-            int omLeft=mLeft;
+            final int omLeft=mLeft;
             if(maxLabelLength*8>20){
                 mLeft = maxLabelLength*8+2;
             } else mLeft=20;
@@ -186,20 +191,20 @@ public class HistCanvas extends BaseCanvas {
         labels.clear();
         // draw y lables and ticks
         if (orientation==0 || orientation==2) {
-            double f=ay.getSensibleTickDistance(50,18);
+            final double f=ay.getSensibleTickDistance(50,18);
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
-                int t=ay.getValuePos(fi);
+                final int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-5,t,mLeft,t);
                 labels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
                 fi+=f;
             }
         } else {
-            double f=ay.getSensibleTickDistance(50,35);
+            final double f=ay.getSensibleTickDistance(50,35);
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
-                int t=ay.getValuePos(fi);
-                int bl = pc.getSize().height-mBottom;
+                final int t=ay.getValuePos(fi);
+                final int bl = pc.getSize().height-mBottom;
                 g.drawLine(t,bl,t,bl+5);
                 labels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
                 fi+=f;
@@ -207,14 +212,15 @@ public class HistCanvas extends BaseCanvas {
         }
         
         // draw x lables and ticks
-        double f,fi;
+        final double f;
+        double fi;
         switch (orientation){
             case 0:
                 f=ax.getSensibleTickDistance(50,35);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
-                    int t=ax.getValuePos(fi);
-                    int bl = pc.getSize().height-mBottom;
+                    final int t=ax.getValuePos(fi);
+                    final int bl = pc.getSize().height-mBottom;
                     g.drawLine(t,bl,t,bl+5);
                     labels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -224,7 +230,7 @@ public class HistCanvas extends BaseCanvas {
                 f=ax.getSensibleTickDistance(50,35);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
-                    int t=ax.getValuePos(fi);
+                    final int t=ax.getValuePos(fi);
                     g.drawLine(t,mTop-5,t,mTop);
                     labels.add(t,mTop-7,0.5,0,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -234,7 +240,7 @@ public class HistCanvas extends BaseCanvas {
                 f=ax.getSensibleTickDistance(50,18);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
-                    int t=ax.getValuePos(fi);
+                    final int t=ax.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
                     labels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -244,8 +250,8 @@ public class HistCanvas extends BaseCanvas {
                 f=ax.getSensibleTickDistance(50,18);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
-                    int t=ax.getValuePos(fi);
-                    int rl = pc.getSize().width-mRight;
+                    final int t=ax.getValuePos(fi);
+                    final int rl = pc.getSize().width-mRight;
                     g.drawLine(rl,t,rl+5,t);
                     labels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
                     fi+=f;
@@ -255,12 +261,14 @@ public class HistCanvas extends BaseCanvas {
         labels.finishAdd();
     }
     
-    public void mousePressed(MouseEvent ev) {
-        int x=ev.getX(), y=ev.getY();
+    public void mousePressed(final MouseEvent ev) {
+        final int x=ev.getX();
+        final int y=ev.getY();
         if(orientation==0 || orientation==2){
             if (Common.isMoveTrigger(ev) && (orientation==0 && y<=H-mBottom) || (orientation==2 && y>=mTop)) {
-                double bwp;
+                
                 dragBinwBars=-1;
+                double bwp;
                 while((orientation==0 && x>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3)
                 || (orientation==2 && x<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
                     if (x<bwp+3) dragMode=DRAGMODE_BINW;
@@ -271,8 +279,9 @@ public class HistCanvas extends BaseCanvas {
             } else super.mousePressed(ev);
         } else {
             if (Common.isMoveTrigger(ev) && ((orientation==1 && x>=mLeft) || (orientation==3 && x<=W-mRight))) {
-                double bwp;
+                
                 dragBinwBars=-1;
+                double bwp;
                 while((orientation==1 && y>(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))-3)
                 || (orientation==3 && y<(bwp=ax.getValuePos(ax.vBegin+(dragBinwBars+1)*binw))+3)){
                     if (y<bwp+3) dragMode=DRAGMODE_BINW;
@@ -284,7 +293,7 @@ public class HistCanvas extends BaseCanvas {
         }
     };
     
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         if (dragMode!=DRAGMODE_NONE) {
             dragMode=DRAGMODE_NONE;
             updateObjects();
@@ -293,12 +302,12 @@ public class HistCanvas extends BaseCanvas {
         } else super.mouseReleased(e);
     }
     
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         if (dragMode==DRAGMODE_NONE) {
             super.mouseDragged(e);
             return;
         }
-        int x;
+        final int x;
         if(orientation==0 || orientation==2){
             x=e.getX();
         } else{
@@ -306,35 +315,35 @@ public class HistCanvas extends BaseCanvas {
         }
         if (x!=dragX) {
             if (dragMode==DRAGMODE_BINW) {
-                double nbv=ax.getValueForPos(x);
+                final double nbv=ax.getValueForPos(x);
                 if (nbv-ax.vBegin>0) {
                     binw=(nbv-ax.vBegin)/dragBinwBars;
                     updateObjects();
                     setUpdateRoot(0);
                     repaint();
-                };
-            };
+                }
+            }
             if (dragMode==DRAGMODE_ANCHOR) {
-                double na=ax.getValueForPos(x);
+                final double na=ax.getValueForPos(x);
                 anchor=na; if (anchor>v.getMin()) anchor=v.getMin();
                 if (anchor<v.getMin()-binw) anchor=v.getMin()-binw;
                 updateObjects();
                 setUpdateRoot(0);
                 repaint();
-            };
-        };
+            }
+        }
     };
     
-    public String queryObject(int i) {
+    public String queryObject(final int i) {
         if (pp!=null && pp[i]!=null) {
-            int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-            double la=ax.vBegin+binw*i;
+            final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+            final double la=ax.vBegin+binw*i;
             return "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
         }
         return "N/A";
     }
     
-    public void rotate(int amount) {
+    public void rotate(final int amount) {
         switch((orientation+amount)&3){
             case 0:
             case 1:
@@ -350,26 +359,26 @@ public class HistCanvas extends BaseCanvas {
         super.rotate(amount);
     }
     
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(final KeyEvent e) {
         switch(e.getKeyCode()){
-            case (KeyEvent.VK_UP): run(this,"binUp"); break;
-            case (KeyEvent.VK_DOWN): run(this,"binDown"); break;
-            case (KeyEvent.VK_LEFT): run(this,"anchorLeft"); break;
-            case (KeyEvent.VK_RIGHT): run(this,"anchorRight"); break;
+            case (KeyEvent.VK_UP): run(this,M_BINUP); break;
+            case (KeyEvent.VK_DOWN): run(this,M_BINDOWN); break;
+            case (KeyEvent.VK_LEFT): run(this,M_ANCHORLEFT); break;
+            case (KeyEvent.VK_RIGHT): run(this,M_ANCHORRIGHT); break;
         }
     }
     
-    public Object run(Object o, String cmd) {
+    public Object run(final Object o, final String cmd) {
         super.run(o,cmd);
         
-        if(cmd=="binUp") {
+        if(M_BINUP.equals(cmd)) {
             binw*=1.1;
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-        if(cmd=="binDown"){
-            double newBinw=Math.min(binw/1.1, 1);
+        if(M_BINDOWN.equals(cmd)){
+            final double newBinw=Math.min(binw/1.1, 1);
             if(Math.abs(newBinw-binw)>0.00001){
                 binw=newBinw;
                 updateObjects();
@@ -377,13 +386,13 @@ public class HistCanvas extends BaseCanvas {
                 repaint();
             }
         }
-        if (cmd=="anchorRight") {
+        if (M_ANCHORRIGHT.equals(cmd)) {
             anchor = Math.min(anchor+0.1*binw, v.getMin());
             updateObjects();
             setUpdateRoot(0);
             repaint();
         }
-        if (cmd=="anchorLeft") {
+        if (M_ANCHORLEFT.equals(cmd)) {
             anchor = Math.max(anchor-0.1*binw, v.getMin()-binw);
             updateObjects();
             setUpdateRoot(0);
