@@ -251,7 +251,7 @@ public class Axis extends Notifier {
      * @param rightGap right gap
      * @return regular position of the category */
     public int getRegularCatPos(int i,int leftGap, int rightGap) {
-        return gBegin + leftGap + (i*(gLen-leftGap-rightGap))/(v.getNumCats()-1);
+        return gBegin + leftGap + (getCatSeqIndex(i)*(gLen-leftGap-rightGap))/(v.getNumCats()-1);
     }
     
     /** get category corresponding to a position on screen (type1 and 2 only)
