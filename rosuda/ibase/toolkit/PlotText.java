@@ -31,7 +31,7 @@ public class PlotText extends PlotObject {
             addMaxW=new Vector(),
             addTxt=new Vector();
     
-    public PlotText(PlotManager p) { super(p);}
+    public PlotText(final PlotManager p) { super(p);}
     
     /* Clears all arrays */
     public void clear(){
@@ -57,7 +57,7 @@ public class PlotText extends PlotObject {
      * @param maxW maximal width of displayed text
      * @param text string to be displayed
      */
-    public void add(int X, int Y, double aX, double aY, int maxW, String text){
+    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final String text){
         addX.add(new Integer(X));
         addY.add(new Integer(Y));
         addAx.add(new Double(aX));
@@ -66,11 +66,11 @@ public class PlotText extends PlotObject {
         addTxt.add(text);
     }
     
-    public void add(int X, int Y, double aX, double aY, String text){
+    public void add(final int X, final int Y, final double aX, final double aY, final String text){
         add(X,Y,aX,aY,-1,text);
     }
     
-    public void add(int X, int Y, String text){
+    public void add(final int X, final int Y, final String text){
         add(X, Y, 0.5, 0, -1, text);
     }
     
@@ -80,11 +80,11 @@ public class PlotText extends PlotObject {
      */
     public void finishAdd(){
         if(!addTxt.isEmpty()){
-            int[] dX=x;
-            int[] dY=y;
-            double[] dAx=ax;
-            double[] dAy=ay;
-            String[] dTxt=txt;
+            final int[] dX=x;
+            final int[] dY=y;
+            final double[] dAx=ax;
+            final double[] dAy=ay;
+            final String[] dTxt=txt;
             
             final int oldLen=(dTxt==null)?0:dTxt.length;
             final int newLen=addTxt.size();
@@ -127,7 +127,7 @@ public class PlotText extends PlotObject {
     }
     
     /** The actual draw method. */
-    public void draw(PoGraSS g) {
+    public void draw(final PoGraSS g) {
         if (!show || txt==null || txt.length==0) return;
         if (cold!=null) cold.use(g);
         if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
@@ -137,8 +137,8 @@ public class PlotText extends PlotObject {
             else t=txt[i];
             g.setColor("outline");
             g.drawString(t,x[i],y[i],ax[i],ay[i]);
-            int w = g.getWidthEstimate(t);
-            int h = g.getHeightEstimate(t);
+            final int w = g.getWidthEstimate(t);
+            final int h = g.getHeightEstimate(t);
             txtFields[i] = new Rectangle(x[i]-(int)(ax[i]*w+0.5),y[i]+(int)((-1+ay[i])*h+0.5), w,h);
             //g.drawRect(txtFields[i].x,txtFields[i].y, txtFields[i].x+txtFields[i].width,  txtFields[i].y+txtFields[i].height);
         }
@@ -151,7 +151,7 @@ public class PlotText extends PlotObject {
         return "PlotText(labels="+l+",coord="+coordX+"/"+coordY+",visible="+isVisible()+")";
     }
     
-    public int getTextAt(int x, int y){
+    public int getTextAt(final int x, final int y){
         if(txtFields!=null){
             for (int i=0; i<txtFields.length; i++){
                 if(txtFields[i].contains(x,y)) return i;
