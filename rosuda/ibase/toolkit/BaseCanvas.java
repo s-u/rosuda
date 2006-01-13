@@ -20,6 +20,13 @@ public class BaseCanvas
         extends PGSCanvas
 //#endif
         implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
+    protected static final String C_BLACK = "black";
+    static final String C_MARKED = "marked";
+    static final String C_ASELBG = "aSelBg";
+    static final String C_ADRAGBG = "aDragBg";
+    static final String C_OBJECT = "object";
+    static final String M_PRINT = "print";
+    static final String M_EXPORTCASES = "exportCases";
     /** query popup window */
     protected QueryPopup qi;
     
@@ -105,7 +112,7 @@ public class BaseCanvas
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public BaseCanvas(PlotComponent ppc, Frame f, SMarker mark) {
+    public BaseCanvas(final PlotComponent ppc, final Frame f, final SMarker mark) {
         super(ppc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
         Global.forceAntiAliasing = true;
         m=mark; setFrame(f);
@@ -123,11 +130,11 @@ public class BaseCanvas
     }
     
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
-    public void Notifying(NotifyMsg msg, Object o, Vector path) {
+    public void Notifying(final NotifyMsg msg, final Object o, final Vector path) {
         if (ignoreNotifications) {
             if (Global.DEBUG>0) System.out.println("Warning, BaseCanvas received notification ("+msg+"), with ignoreNotifications set. Ignoring event.");
             return;
-        };
+        }
         if((msg.getMessageID()&Common.NM_MASK)==Common.NM_VarChange ||
                 msg.getMessageID()==Common.NM_AxisDataChange
                 )
@@ -143,11 +150,12 @@ public class BaseCanvas
     public Dimension getMinimumSize() { return new Dimension(mLeft+mRight+20,mTop+mBottom+20); };
     
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
-    public void paintPoGraSS(PoGraSS g) {
+    public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
-        Rectangle r=pc.getBounds();
-        int w=r.width, h=r.height;
+        final Rectangle r=pc.getBounds();
+        final int w=r.width;
+        final int h=r.height;
         if (Global.DEBUG>0)
             System.out.println("BaseCanvas.paint: real bounds ["+w+":"+h+"], existing ["+W+":"+H+"], orientation="+orientation+" mTop="+mTop+",mBottom="+mBottom);
         if (ay!=null && (H!=h || updateGeometry))
@@ -156,28 +164,28 @@ public class BaseCanvas
                 case 1: ay.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                 case 2: ay.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                 case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-            };
+            }
             if(opAy!=null && (H!=h || updateGeometry))
                 switch (orientation) {
                     case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                     case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                     case 2: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                     case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-                };
+                }
                 if (ax!=null && (W!=w || updateGeometry))
                     switch (orientation) {
                         case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                         case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                         case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                         case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                    };
+                    }
                     if(opAx!=null && (W!=w || updateGeometry))
                         switch (orientation) {
                             case 0: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                             case 1: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
                             case 2: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                             case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                        };
+                        }
                         if (H!=h || W!=w || updateGeometry) {
                             W=w; H=h;
                             updateObjects();
@@ -185,15 +193,15 @@ public class BaseCanvas
                         updateGeometry=false;
                         if (Global.DEBUG>0)
                             System.out.println("BarCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
-                        int basey=h-mBottom;
+                        
                         g.setBounds(w,h);
                         g.begin();
                         g.defineColor("white",255,255,255);
-                        g.defineColor("black",0,0,0);
-                        g.defineColor("marked",Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
-                        float[] scc=Common.selectColor.getRGBComponents(null);
-                        g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
-                        g.defineColor("aDragBg",0.0f,0.3f,1.0f,0.25f);
+                        g.defineColor(C_BLACK,0,0,0);
+                        g.defineColor(C_MARKED,Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
+                        final float[] scc=Common.selectColor.getRGBComponents(null);
+                        g.defineColor(C_ASELBG,scc[0],scc[1],scc[2],0.3f);
+                        g.defineColor(C_ADRAGBG,0.0f,0.3f,1.0f,0.25f);
                         paintInit(g);
                         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
                         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintObjects(g);
@@ -206,13 +214,13 @@ public class BaseCanvas
             dx2=A[0].clip(x2),dy2=A[1].clip(y2);
              */
                             int dx1=baseDragX1, dx2=baseDragX2, dy1=baseDragY1, dy2=baseDragY2;
-                            if (dx1>dx2) { int hh=dx1; dx1=dx2; dx2=hh; };
-                            if (dy1>dy2) { int hh=dy1; dy1=dy2; dy2=hh; };
-                            g.setColor((selDrag)?"aSelBg":"aDragBg");
+                            if (dx1>dx2) { final int hh=dx1; dx1=dx2; dx2=hh; }
+                            if (dy1>dy2) { final int hh=dy1; dy1=dy2; dy2=hh; }
+                            g.setColor((selDrag)?C_ASELBG:C_ADRAGBG);
                             g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-                            g.setColor("black");
+                            g.setColor(C_BLACK);
                             g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-                        };
+                        }
                         
                         nextLayer(g);
                         if (dontCache || g.localLayerCache<0 || g.localLayerCache==3) paintPost(g);
@@ -220,24 +228,25 @@ public class BaseCanvas
                         setUpdateRoot(4);
     }
     
-    public void paintInit(PoGraSS g) {
+    public void paintInit(final PoGraSS g) {
         //System.out.println("BaseCanvas.paintInit");
         g.defineColor("outline",0,0,0);
-        g.defineColor("object",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        g.defineColor(C_OBJECT,Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
     }
     
-    public void paintBack(PoGraSS g) {
+    public void paintBack(final PoGraSS g) {
         //System.out.println("BaseCanvas.paintBack");
     }
     
-    public void paintObjects(PoGraSS g) {
+    public void paintObjects(final PoGraSS g) {
         //System.out.println("BaseCanvas.paintObjects, (cache="+g.localLayerCache+") pp="+pp);
-        Stopwatch sw=new Stopwatch();
+        final Stopwatch sw=new Stopwatch();
         if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
-            int i=0;
-            g.setColor("object");
+            
+            g.setColor(C_OBJECT);
             g.setGlobalAlpha(ppAlpha);
+            int i = 0;
             while (i<pp.length) {
                 if (pp[i]!=null) pp[i].paint(g, orientation);
                 i++;
@@ -248,14 +257,15 @@ public class BaseCanvas
         sw.profile("BaseCanvas.paintObjects");
     }
     
-    public void paintSelected(PoGraSS g) {
-        Stopwatch sw=new Stopwatch();
+    public void paintSelected(final PoGraSS g) {
+        final Stopwatch sw=new Stopwatch();
         
         //System.out.println("BaseCanvas.paintSelected, pp="+pp);
         if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
-            int i=0;
-            g.setColor("marked");
+            
+            g.setColor(C_MARKED);
+            int i = 0;
             while (i<pp.length) {
                 if (pp[i]!=null)
                     pp[i].paintSelected(g,orientation,m);
@@ -266,15 +276,16 @@ public class BaseCanvas
         sw.profile("BaseCanvas.paintSelected");
     }
     
-    public void paintPost(PoGraSS g) { }
+    public void paintPost(final PoGraSS g) { }
     
-    public void mouseClicked(MouseEvent ev) {
-        int x=ev.getX(), y=ev.getY();
+    public void mouseClicked(final MouseEvent ev) {
+        final int x=ev.getX();
+        final int y=ev.getY();
         
         if(baseDragX1==x && baseDragY1==y){
-            Point cl=getFrame().getLocation();
-            Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
-            boolean setTo=false;
+            final Point cl=getFrame().getLocation();
+            final Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+            
             
             if (Global.DEBUG>0) {
                 String mods="";
@@ -295,21 +306,24 @@ public class BaseCanvas
                 return;
             }
             
-            boolean effect=false, hideQI=true;
-            boolean actionSelect=Common.isSelectTrigger(ev);
-            boolean actionQuery=Common.isQueryTrigger(ev);
-            boolean actionExtQuery=Common.isExtQuery(ev);
+            
+            final boolean actionSelect=Common.isSelectTrigger(ev);
+            final boolean actionQuery=Common.isQueryTrigger(ev);
+            
             if (Global.DEBUG>0)
                 System.out.println("select="+actionSelect+", query="+actionQuery+", isMac="+Common.isMac());
             
             //System.out.println("BarCanvas.mouseClicked; Alt="+ev.isAltDown()+", Ctrl="+ev.isControlDown()+
             //		   ", Shift="+ev.isShiftDown()+", popup="+ev.isPopupTrigger());
+            boolean effect = false;
+            boolean hideQI = true;
             if (actionQuery || actionSelect) {
-                int selMode=Common.getSelectMode(ev);
+                boolean setTo = false;
+                final int selMode=Common.getSelectMode(ev);
                 if (selMode>1) setTo=true;
                 if (pp!=null) {
                     if (actionQuery) {
-                        PlotPrimitive p = getFirstPrimitiveContaining(x,y);
+                        final PlotPrimitive p = getFirstPrimitiveContaining(x,y);
                         if(p!=null){
                             if (p.cases()>0) {
                                 if (p.getPrimaryCase()!=-1) {
@@ -324,7 +338,7 @@ public class BaseCanvas
                             qi.show(); hideQI=false;
                         }
                     } else {
-                        PlotPrimitive[] pps = getPrimitivesContaining(x,y);
+                        final PlotPrimitive[] pps = getPrimitivesContaining(x,y);
                         int i=0;
                         while (i<pps.length) {
                             if (pps[i]!=null) {
@@ -348,15 +362,15 @@ public class BaseCanvas
         }
     }
     
-    public String queryObject(int i) {
+    public String queryObject(final int i) {
         return "object ID "+i;
     }
     
-    public String queryObject(PlotPrimitive p) {
+    public String queryObject(final PlotPrimitive p) {
         return "object "+p.toString();
     }
     
-    public void rotate(int amount) {
+    public void rotate(final int amount) {
         orientation=(orientation+amount)&3;
         if (!allow180) orientation&=1;
         setUpdateRoot(0);
@@ -380,7 +394,7 @@ public class BaseCanvas
             dummy=true;
         }
         
-        ZoomDescriptorComponent(Axis a) {
+        ZoomDescriptorComponent(final Axis a) {
             vBegin=a.vBegin; vLen=a.vLen; gBegin=a.gBegin; gLen=a.gLen;
             dc=a.datacount;
             axis=a;
@@ -388,28 +402,35 @@ public class BaseCanvas
         }
     }
     
-    public void performZoomIn(int x1, int y1, int x2, int y2) {
+    public void performZoomIn(final int x1, final int y1, final int x2, final int y2) {
         performZoomIn(x1, y1, x2, y2, ax, ay);
     }
     
-    public void performZoomIn(int x1, int y1, int x2, int y2, Axis xAx, Axis xAy) {
+    public void performZoomIn(final int x1, final int y1, final int x2, final int y2, final Axis xAx, final Axis xAy) {
         if (Global.DEBUG>0) System.out.println("performZoomIn("+x1+","+y1+","+x2+","+y2+") [zoomSequence.len="+zoomSequence.size()+"]");
-        boolean ins=ignoreNotifications;
+        final boolean ins=ignoreNotifications;
         ignoreNotifications=true;
-        double ax1=1.0, ax2=1.0, ay1=1.0, ay2=1.0;
-        double xExtent=1.0, yExtent=1.0, xCenter=1.0, yCenter=1.0;
+        
+        double xExtent = 1.0;
+        double xCenter = 1.0;
         if (xAx!=null) {
+            double ax2 = 1.0;
+            double ax1 = 1.0;
             ax1=xAx.getValueForPos(x1); ax2=xAx.getValueForPos(x2);
             if ((ax2-ax1)*xAx.vLen<0.0) { // fix signum - must be same as vLen
-                double ah=ax2; ax2=ax1; ax1=ah;
+                final double ah=ax2; ax2=ax1; ax1=ah;
             }
             xExtent=(x1==x2)?xAx.vLen/2.0:ax2-ax1;
             xCenter=(ax1+ax2)/2.0;
         }
+        double yExtent = 1.0;
+        double yCenter = 1.0;
         if (xAy!=null) {
+            double ay1 = 1.0;
+            double ay2 = 1.0;
             ay1=xAy.getValueForPos(y1); ay2=xAy.getValueForPos(y2);
             if ((ay2-ay1)*xAy.vLen<0.0) { // fix signum - must be same as vLen
-                double ah=ay2; ay2=ay1; ay1=ah;
+                final double ah=ay2; ay2=ay1; ay1=ah;
             }
             yExtent=(y1==y2)?xAy.vLen/2.0:ay2-ay1;
             yCenter=(ay1+ay2)/2;
@@ -438,14 +459,15 @@ public class BaseCanvas
         repaint();
     }
     
-    public void performZoomOut(int x, int y) {
+    public void performZoomOut(final int x, final int y) {
         if (Global.DEBUG>0) System.out.println("performZoomOut("+x+","+y+") [zoomSequence.len="+zoomSequence.size()+"]");
-        int tail=zoomSequence.size()-1;
+        final int tail=zoomSequence.size()-1;
         if (tail<1) return;
-        ZoomDescriptorComponent zx,zy;
+        final ZoomDescriptorComponent zx;
         zx=(ZoomDescriptorComponent)zoomSequence.elementAt(tail-1);
+        final ZoomDescriptorComponent zy;
         zy=(ZoomDescriptorComponent)zoomSequence.elementAt(tail);
-        boolean ins=ignoreNotifications;
+        final boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         if (!zx.dummy && zx.axis!=null)
             zx.axis.setValueRange(zx.vBegin,zx.vLen);
@@ -462,10 +484,11 @@ public class BaseCanvas
     public void resetZoom() {
         if (Global.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
         if (zoomSequence.size()>1) {
-            ZoomDescriptorComponent zx,zy;
+            final ZoomDescriptorComponent zx;
             zx=(ZoomDescriptorComponent)zoomSequence.elementAt(0);
+            final ZoomDescriptorComponent zy;
             zy=(ZoomDescriptorComponent)zoomSequence.elementAt(1);
-            boolean ins=ignoreNotifications;
+            final boolean ins=ignoreNotifications;
             ignoreNotifications=true; // prevent processing of AxisChanged notification for ax
             if (ax!=null && !zx.dummy)
                 ax.setValueRange(zx.vBegin,zx.vLen);
@@ -479,7 +502,7 @@ public class BaseCanvas
         zoomSequence.removeAllElements();
     }
     
-    public void mousePressed(MouseEvent ev) {
+    public void mousePressed(final MouseEvent ev) {
         if (Global.DEBUG>0) System.out.println("Event:"+ev);
         
         baseDragX1=ev.getX(); baseDragY1=ev.getY();
@@ -491,7 +514,7 @@ public class BaseCanvas
             baseDrag=true;
     }
     
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         if (Global.DEBUG>0) System.out.println("Event:"+e);
         
         int X1=baseDragX1, Y1=baseDragY1, X2=baseDragX2, Y2=baseDragY2;
@@ -499,9 +522,9 @@ public class BaseCanvas
             baseDrag=false;
             return;
         }
-        if (baseDragX1>baseDragX2) { X2=baseDragX1; X1=baseDragX2; };
-        if (baseDragY1>baseDragY2) { Y2=baseDragY1; Y1=baseDragY2; };
-        Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
+        if (baseDragX1>baseDragX2) { X2=baseDragX1; X1=baseDragX2; }
+        if (baseDragY1>baseDragY2) { Y2=baseDragY1; Y1=baseDragY2; }
+        final Rectangle sel=new Rectangle(X1,Y1,X2-X1,Y2-Y1);
         baseDrag=false;
         
         //System.out.println("BaseCanvas.mouseReleased");
@@ -511,41 +534,43 @@ public class BaseCanvas
             if (Common.getSelectMode(e)==2) setTo=true;
             if (Common.getSelectMode(e)==0) m.selectNone();
             
-            PlotPrimitive[] pps=getPrimitivesIntersecting(sel);
+            final PlotPrimitive[] pps=getPrimitivesIntersecting(sel);
             int i=0;
             while (i<pps.length) {
                 if (pps[i]!=null) pps[i].setMark(m,setTo);
                 i++;
-            };
+            }
             m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
             setUpdateRoot(1);
-        };
+        }
         if (zoomDrag)
             performZoomIn(X1,Y1,X2,Y2);
         repaint();
     }
     
-    public void mouseEntered(MouseEvent e) {};
-    public void mouseExited(MouseEvent e) {};
-    public void mouseDragged(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {};
+    public void mouseExited(final MouseEvent e) {};
+    public void mouseDragged(final MouseEvent e) {
         if (baseDrag) {
-            int x=e.getX(), y=e.getY();
+            final int x=e.getX();
+            final int y=e.getY();
             if (x!=baseDragX2 || y!=baseDragY2) {
                 baseDragX2=x; baseDragY2=y;
                 setUpdateRoot(2);
                 repaint();
-            };
-        };
+            }
+        }
     };
-    public void mouseMoved(MouseEvent ev) {
-        int x=ev.getX(), y=ev.getY();
+    public void mouseMoved(final MouseEvent ev) {
+        final int x=ev.getX();
+        final int y=ev.getY();
         
-        Point cl=getFrame().getLocation();
-        Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+        final Point cl=getFrame().getLocation();
+        final Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
         
-        boolean effect=false, hideQI=true;
-        boolean actionQuery=Common.isQueryTrigger(ev);
-        boolean actionExtQuery=Common.isExtQuery(ev);
+        boolean hideQI = true;
+        final boolean actionQuery=Common.isQueryTrigger(ev);
+        
         if (actionQuery) {
             if (pp!=null) {
                 int i=0;
@@ -567,18 +592,19 @@ public class BaseCanvas
                 }
             }
         }
+        final boolean effect = false;
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
         if (hideQI) qi.hide();
     };
     
-    public void keyTyped(KeyEvent e) {
-        if (e.getKeyChar()=='P') run(this,"print");
+    public void keyTyped(final KeyEvent e) {
+        if (e.getKeyChar()=='P') run(this,M_PRINT);
         if (e.getKeyChar()=='X') run(this,"exportPGS");
-        if (e.getKeyChar()=='C') run(this,"exportCases");
+        if (e.getKeyChar()=='C') run(this,M_EXPORTCASES);
     };
     
-    public void keyPressed(KeyEvent e) {
-        int kc=e.getKeyCode();
+    public void keyPressed(final KeyEvent e) {
+        final int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_ALT && !inZoom && !inQuery) {
             pc.setCursor(Common.cur_query);
             inQuery=true;
@@ -589,8 +615,8 @@ public class BaseCanvas
         }
     };
     
-    public void keyReleased(KeyEvent e) {
-        int kc=e.getKeyCode();
+    public void keyReleased(final KeyEvent e) {
+        final int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_ALT && !inZoom) {
             pc.setCursor(Common.cur_arrow);
             inQuery=false;
@@ -601,29 +627,29 @@ public class BaseCanvas
         }
     };
     
-    public Object run(Object o, String cmd) {
+    public Object run(final Object o, final String cmd) {
         super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
-        if (cmd=="print") run(o,"exportPS");
-        if (cmd=="rotate") rotate(1);
-        if (cmd=="flip" && allow180) rotate(2);
-        if (cmd=="exit") WinTracker.current.Exit();
-        if (cmd=="exportCases") {
-            Vector vars = new Vector();
+        if (M_PRINT.equals(cmd)) run(o,"exportPS");
+        if ("rotate".equals(cmd)) rotate(1);
+        if ("flip".equals(cmd) && allow180) rotate(2);
+        if ("exit".equals(cmd)) WinTracker.current.Exit();
+        if (M_EXPORTCASES.equals(cmd)) {
+            final Vector vars = new Vector();
             SVar var;
             int i=0;
             while((var=getData(i++))!=null) vars.add(var);
             if(vars.size()>0) {
-                SVar[] v = new SVar[vars.size()];
+                final SVar[] v = new SVar[vars.size()];
                 vars.toArray(v);
                 try {
-                    PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
+                    final PrintStream p=Tools.getNewOutputStreamDlg(myFrame,"Export selected cases to ...","selected.txt");
                     if (p!=null) {
                         String str = v[0].getName();
                         for(int j=1; j<v.length; j++) str += "\t"+v[j].getName();
                         p.println(str);
                         i=0;
-                        int sz=v[0].size();
+                        final int sz=v[0].size();
                         Object oo;
                         while(i<sz) {
                             if (m.at(i)) {
@@ -645,20 +671,20 @@ public class BaseCanvas
         return null;
     };
     
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         if (e==null) return;
         run(e.getSource(),e.getActionCommand());
     };
     
-    public void setQueryText(String s) {
+    public void setQueryText(final String s) {
         qi.setContent(s);
     }
     
-    public void setQueryText(String s, int cid) {
+    public void setQueryText(final String s, final int cid) {
         qi.setContent(s,cid);
     }
     
-    public void setQueryText(String s, int[] cid) {
+    public void setQueryText(final String s, final int[] cid) {
         qi.setContent(s,cid);
     }
     
@@ -666,7 +692,7 @@ public class BaseCanvas
         return showLabels;
     }
     
-    public void setShowLabels(boolean showLabels) {
+    public void setShowLabels(final boolean showLabels) {
         this.showLabels = showLabels;
         labels.show=showLabels;
     }
@@ -676,15 +702,15 @@ public class BaseCanvas
      * Can be overridden to achieve better performance.
      * @return Array of matching primitives.
      */
-    protected PlotPrimitive[] getPrimitivesContaining(int x, int y){
-        PlotPrimitive buf[] = new PlotPrimitive[pp.length];
+    protected PlotPrimitive[] getPrimitivesContaining(final int x, final int y){
+        final PlotPrimitive buf[] = new PlotPrimitive[pp.length];
         int i=0;
         int j=0;
         while (i<pp.length) {
             if (pp[i]!=null && pp[i].contains(x,y)) buf[j++]=pp[i];
             i++;
         }
-        PlotPrimitive ret[] = new PlotPrimitive[j];
+        final PlotPrimitive ret[] = new PlotPrimitive[j];
         System.arraycopy(buf, 0, ret, 0, j);
         return ret;
     }
@@ -694,7 +720,7 @@ public class BaseCanvas
      * Can be overridden to achieve better performance.
      * @return The matching primitive or null if point doesn't belong to any primitive.
      */
-    protected PlotPrimitive getFirstPrimitiveContaining(int x, int y){
+    protected PlotPrimitive getFirstPrimitiveContaining(final int x, final int y){
         int i=0;
         while (i<pp.length) {
             if (pp[i]!=null && pp[i].contains(x,y)) return pp[i];
@@ -708,16 +734,16 @@ public class BaseCanvas
      * Can be overridden to achieve better performance.
      * @return Array of intersecting primitives.
      */
-    protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec){
-        PlotPrimitive buf[] = new PlotPrimitive[pp.length];
+    protected PlotPrimitive[] getPrimitivesIntersecting(final Rectangle rec){
+        final PlotPrimitive buf[] = new PlotPrimitive[pp.length];
         int i=0;
         int j=0;
         while (i<pp.length) {
             //System.out.println("pp["+i+"]="+pp[i]);
             if (pp[i]!=null && pp[i].intersects(rec)) buf[j++]=pp[i];
             i++;
-        };
-        PlotPrimitive ret[] = new PlotPrimitive[j];
+        }
+        final PlotPrimitive ret[] = new PlotPrimitive[j];
         System.arraycopy(buf, 0, ret, 0, j);
         return ret;
     }

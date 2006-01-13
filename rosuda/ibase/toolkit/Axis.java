@@ -10,6 +10,7 @@ import org.rosuda.util.*;
  */
 
 public class Axis extends Notifier {
+    private static final double PRECISION = 0.0001;
     /** Axis orientation: horizontal (X) */
     public static final int O_Horiz = 0;
     /** Axis orientation: vertical (Y) */
@@ -61,11 +62,11 @@ public class Axis extends Notifier {
     
     /** create a new Axis with variable srcv, default orientation (horizontal) and default type guessing and default range
      * @param srcv source variable (cannot be <code>null</code>! for pure numerical axes use {@Axis(SVar,int,int)} constructor!) */
-    public Axis(SVar srcv) {
+    public Axis(final SVar srcv) {
         v=srcv; ticks=null; or=0; gInterSpc=0;
-        type=3; // some default type guessing
-        if (v.isNum()) type=0;
-        if (v.isCat()) type=2;
+        type=T_EqSize; // some default type guessing
+        if (v.isNum()) type=T_Num;
+        if (v.isCat()) type=T_PropCat;
         if(v.linked) seq=v.mainSeq();
         else seq=new SCatSequence(v,this,false);
         seqgeom=new AxisCatSequence(this, seq);
@@ -76,7 +77,7 @@ public class Axis extends Notifier {
      * @param srcv source variable (can be <code>null</code> if axis type is T_Num or T_EqSize resulting in virtual axis)
      * @param orientation orientation
      * @param axisType axis type */
-    public Axis(SVar srcv, int orientation, int axisType) {
+    public Axis(final SVar srcv, final int orientation, final int axisType) {
         v=srcv; type=axisType; or=orientation; ticks=null; gInterSpc=0;
         if(v.linked) seq=v.mainSeq();
         else seq=new SCatSequence(v,this,false);
@@ -92,10 +93,10 @@ public class Axis extends Notifier {
     
     /** change axis type (implicitely calls {@link #setDefaultRange} but preserves
      * cat sequence if switching between "compatible" types, i.e. 1 and 2) */
-    public void setType(int nt) {
+    public void setType(final int nt) {
         if (nt==type) return;
         boolean reset=true;
-        if ((nt==1 && type==2)||(nt==2 && type==1))
+        if ((nt==1 && type==T_PropCat)||(nt==2 && type==T_EqCat))
             reset=false;
         type=nt;
         setDefaultRange(reset); // that one calls NotifyAll already
@@ -106,31 +107,31 @@ public class Axis extends Notifier {
      * @param begin begin/anchor of the axis - i.e. the pixel to correspond to {@link #vBegin}
      * @param length length of the axis (note: may be negative if necessary)
      */
-    public void setGeometry(int orientation, int begin, int len) {
+    public void setGeometry(final int orientation, final int begin, final int len) {
         if(orientation!=or||begin!=gBegin||len!=gLen) { // lazy notification
             gBegin=begin; gLen=len; or=orientation;
             //if (Global.DEBUG>0) System.out.println("Axis.setGeometry("+orientation+","+begin+","+len+") preformed. ["+this+"] notifying all");
             NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
-        };
+        }
     };
     
     /** for numerical variables - set range of the variable's values.
      * @param begin begin/anchor of axis in data domain
      * @param len length of the axis (can be negative if necessary)
      * @return <code>true</code> if this method had any effect on the Axis or <code>false</code> if the values match status quo */
-    public boolean setValueRange(double begin, double len) {
+    public boolean setValueRange(final double begin, final double len) {
         if (Global.DEBUG>0) System.out.println("Axis.setValueRange("+begin+","+len+")");
-        if (vBegin!=begin||vLen!=len) { // lazy notification
+        if (Math.abs(vBegin-begin)>PRECISION || Math.abs(vLen-len)>PRECISION) { // lazy notification
             vBegin=begin; vLen=len;
-            vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
+            vLenLog10=(Math.abs(vLen)<PRECISION)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
             NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
             return true;
-        };
+        }
         return false;
     }
     
     /** same as {@link #setValueRange(double, double)}, but takes an array of two doubles as returned by {@link #getValueRange} */
-    public boolean setValueRange(double[] range) {
+    public boolean setValueRange(final double[] range) {
         if (Global.DEBUG>0) System.out.println("Axis.setValueRange(double[2])");
         if (range==null || range.length!=2) return false;
         return setValueRange(range[0],range[1]);
@@ -145,10 +146,10 @@ public class Axis extends Notifier {
         if (dc!=datacount) { // lazy notification
             datacount=dc;
             vBegin=0; vLen=dc; // this is necessary if get SensibleTick.. functions are used
-            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
+            vLenLog10=(Math.abs(vLen)<PRECISION)?0:(Math.log(vLen)/Math.log(10));
             NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
             return true;
-        };
+        }
         return false;
     };
     
@@ -157,25 +158,25 @@ public class Axis extends Notifier {
     
     /** set default range for the axis (i.e. for numerical variable min, max are used, for all other types the maixmal count is used.)
      * @param reseCseq If <code>true</code> for categorial types this also resets categories sequence to default (ordered by cat ID) */
-    public void setDefaultRange(boolean resetCseq) {
+    public void setDefaultRange(final boolean resetCseq) {
         if (v==null) { vBegin=0; vLen=1; return; } // we allow var=null for pure numerical axes, [0:1] is default
-        if (v.isNum() && type==0) {
+        if (v.isNum() && type==T_Num) {
             vBegin=v.getMin();
             vLen=v.getMax()-vBegin;
-            vLenLog10=(vLen==0)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
+            vLenLog10=(Math.abs(vLen)<PRECISION)?0:(Math.log((vLen<0)?-vLen:vLen)/Math.log(10));
         } else {
             datacount=v.size();
             vBegin=0; vLen=datacount; // this is necessary for getSensibleTick.. functions etc.
-            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
-        };
-        if (v.isCat() && type==1) {
+            vLenLog10=(Math.abs(vLen)<PRECISION)?0:(Math.log(vLen)/Math.log(10));
+        }
+        if (v.isCat() && type==T_EqCat) {
             datacount=v.getNumCats();
             vBegin=0; vLen=datacount; // this is necessary for getSensibleTick.. functions etc.
-            vLenLog10=(vLen==0)?0:(Math.log(vLen)/Math.log(10));
-        };
-        if (type==2||type==1) {
+            vLenLog10=(Math.abs(vLen)<PRECISION)?0:(Math.log(vLen)/Math.log(10));
+        }
+        if (type==T_PropCat||type==T_EqCat) {
             if (resetCseq) seq.reset();
-        };
+        }
         NotifyAll(new NotifyMsg(this,Common.NM_AxisChange));
     };
     
@@ -188,21 +189,21 @@ public class Axis extends Notifier {
      * the same as getCatCenter called for the category of the case)
      * @param i index of the case
      * @return graphical position of the case */
-    public int getCasePos(int i) {
-        if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*((double)i));
-        if (type==0) return gBegin+(int)(((double)gLen)*(v.atF(i)-vBegin)/vLen);
-        if (type==2||type==1) return getCatCenter(v.getCatIndex(i));
+    public int getCasePos(final int i) {
+        if (type==T_EqSize) return gBegin+(int)(((double)gLen)/((double)datacount)*(i));
+        if (type==T_Num) return gBegin+(int)((gLen)*(v.atF(i)-vBegin)/vLen);
+        if (type==T_PropCat||type==T_EqCat) return getCatCenter(v.getCatIndex(i));
         return -1;
     };
     
     /** get graphical position of value <code>val</code> (for type=0 and 3 only)
      * @param val value
      * @return graphical position of the value */
-    public int getValuePos(double val) {
-        if (type==3) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
+    public int getValuePos(final double val) {
+        if (type==T_EqSize) return gBegin+(int)(((double)gLen)/((double)datacount)*(val));
         //System.out.println(""+val+" -[vBegin="+vBegin+",vLen="+vLen+"]-> "+(gBegin+(int)(((double)gLen)*(val-vBegin)/vLen)));
-        if (type==0) return gBegin+(int)(((double)gLen)*(val-vBegin)/vLen);
-        if (type==2||type==1) return getCatCenter((int)(val+0.5)); // we assume that the supplied value is category index
+        if (type==T_Num) return gBegin+(int)((gLen)*(val-vBegin)/vLen);
+        if (type==T_PropCat||type==T_EqCat) return getCatCenter((int)(val+0.5)); // we assume that the supplied value is category index
         return -1;
     };
     
@@ -211,37 +212,37 @@ public class Axis extends Notifier {
      * @param pos position on the screen
      * @return value corresponding to the supplied position
      */
-    public double getValueForPos(int pos) {
-        if (type==3) return ((double)(pos-gBegin))*((double)datacount)/((double)gLen);
-        if (type==0) return vBegin+((double)(pos-gBegin))*vLen/((double)gLen);
+    public double getValueForPos(final int pos) {
+        if (type==T_EqSize) return (pos-gBegin)*(datacount)/((double)gLen);
+        if (type==T_Num) return vBegin+(pos-gBegin)*vLen/((double)gLen);
         return -1;
     };
     
     /** clips supplied graphical value to axis' region
      * @param gv graphical value
      * @return clipped graphical value */
-    public int clip(int gv) {
+    public int clip(final int gv) {
         return (gLen<0)?((gv>gBegin)?gBegin:((gv<gBegin+gLen)?gBegin+gLen:gv)):((gv<gBegin)?gBegin:((gv>gBegin+gLen)?gBegin+gLen:gv));
     };
     
     /** get lower geometry for category of index i (type 1,2 only)
      * @param i category index
      * @return lower position of the category */
-    public int getCatLow(int i) {
+    public int getCatLow(final int i) {
         return seqgeom.getLowerEdgeOfCat(i);
     };
     
     /** get upper geometry for category of index i (type 1,2 only)
      * @param i category index
      * @return upper position of the category */
-    public int getCatUp(int i) {
+    public int getCatUp(final int i) {
         return seqgeom.getUpperEdgeOfCat(i);
     };
     
     /** get central geometry for category of index i (just a faster way to get (Low+Up)/2 )
      * @param i category index
      * @return central position of the category */
-    public int getCatCenter(int i) {
+    public int getCatCenter(final int i) {
         return seqgeom.getCenterOfCat(i);
     };
     
@@ -250,14 +251,14 @@ public class Axis extends Notifier {
      * @param leftGap left gap
      * @param rightGap right gap
      * @return regular position of the category */
-    public int getRegularCatPos(int i,int leftGap, int rightGap) {
+    public int getRegularCatPos(final int i,final int leftGap, final int rightGap) {
         return gBegin + leftGap + (getCatSeqIndex(i)*(gLen-leftGap-rightGap))/(v.getNumCats()-1);
     }
     
     /** get category corresponding to a position on screen (type1 and 2 only)
      * @param pos position
      * @return category ID or -1 on failure (e.g. if not of type 1 or 2) */
-    public int getCatByPos(int pos) {
+    public int getCatByPos(final int pos) {
         return seqgeom.getCatByGeometryPos(pos);
     };
     
@@ -266,7 +267,7 @@ public class Axis extends Notifier {
      * @param c2 category 2
      * @return <code>true</code> on success, <code>false</code> on failure
      * (i.e. some index was out of bounds) */
-    public boolean swapCats(int c1, int c2) {
+    public boolean swapCats(final int c1, final int c2) {
         return seq.swapCats(c1,c2);
     };
     
@@ -278,9 +279,9 @@ public class Axis extends Notifier {
      * i.e. specifying values <0 will move it to the begining and >=cats will
      * move it to the end of the sequence
      * @return <code>true</code> on success, <code>false</code> on failure */
-    public boolean moveCat(int c, int npos) {
+    public boolean moveCat(final int c, int npos) {
         if (npos<0) npos=0;
-        int cats=v.getNumCats();
+        final int cats=v.getNumCats();
         if (npos>=cats) npos=cats-1;
         return seq.moveCatAtPosTo(seq.posOfCat(c),npos);
     };
@@ -292,13 +293,13 @@ public class Axis extends Notifier {
      * @param c category index
      * @return position of the category in the sequence
      */
-    public int getCatSeqIndex(int c) {
+    public int getCatSeqIndex(final int c) {
         return seq.posOfCat(c);
     }
     
     
     /** Inverse of {@link #getCatSeqIndex}. */
-    public int getCatAtSeqIndex(int c) {
+    public int getCatAtSeqIndex(final int c) {
         return seq.catAtPos(c);
     }
     
@@ -310,20 +311,20 @@ public class Axis extends Notifier {
      * @param medDist mean required distance
      * @param mindist minimal required distance (if set to 0 only powers of 10 will be used)
      * @return proposed tick distance */
-    public double getSensibleTickDistance(int medDist, int minDist) {
-        double lgLen=(double)((gLen<0)?-gLen:gLen);
-        double lvLen=(vLen<0)?-vLen:vLen;
-        double preld=(double)Math.pow(10.0,Math.round(Math.log(lvLen*((double)medDist)/lgLen)/Math.log(10.0)));
+    public double getSensibleTickDistance(final int medDist, final int minDist) {
+        final double lgLen=(gLen<0)?-gLen:gLen;
+        final double lvLen=(vLen<0)?-vLen:vLen;
+        double preld=Math.pow(10.0,Math.round(Math.log(lvLen*((double)medDist)/lgLen)/Math.log(10.0)));
         if (minDist<1) return preld;
         // preld (preliminary distance) is the value as returned by previous versions of getSensibleTickDistance
         // some heuristic is used further to try to satisfy the minDist condition, although it's merely a guideline
         // if medDist is too small then values returned can still be bigger than minDist
         int grs=(int)(preld/lvLen*lgLen);
         if (Global.DEBUG>0) System.out.println("Axis.getSensibleTickDistance("+medDist+","+minDist+"): grs="+grs+", preld="+preld);
-        while (grs>2*medDist) { grs/=2; preld/=2; };
+        while (grs>2*medDist) { grs/=2; preld/=2; }
         if (grs<minDist/3) preld*=5; else
             if (grs<minDist) preld*=2;
-        if ((type==1 || type==2) && preld<1.0) return 1.0;
+        if ((type==T_EqCat || type==T_PropCat) && preld<1.0) return 1.0;
         return preld;
     };
     
@@ -332,9 +333,9 @@ public class Axis extends Notifier {
      * @param tickDist tick distance
      * @return first visible tick mark
      */
-    public double getSensibleTickStart(double tickDist) {
-        if (type==1 || type==2) return 0;
-        double ft=tickDist*((double)((int)(vBegin/tickDist)));
+    public double getSensibleTickStart(final double tickDist) {
+        if (type==T_EqCat || type==T_PropCat) return 0;
+        double ft=tickDist*((int)(vBegin/tickDist));
         if (ft<vBegin) ft+=tickDist;
         return ft;
     };
@@ -344,8 +345,8 @@ public class Axis extends Notifier {
      * @param val value to display
      * @return string representation of the value
      */
-    public String getDisplayableValue(double val) {
-        int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
+    public String getDisplayableValue(final double val) {
+        final int dac=((2-((int)vLenLog10))<0)?0:(2-((int)vLenLog10));
         return Tools.getDisplayableValue(val,dac);
     };
     
@@ -360,7 +361,7 @@ public class Axis extends Notifier {
     /** returns value range as an array of two doubles specifying top and bottom end. to ensure reproducibility the orientation is preserved, therefore it is not guaranteed that the second value is greater that the first one.
      */
     public double[] getValueRange() {
-        double rg[]=new double[2];
+        final double rg[]=new double[2];
         rg[0]=vBegin;
         rg[1]=vBegin+vLen;
         return rg;
