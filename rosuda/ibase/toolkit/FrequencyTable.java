@@ -14,7 +14,7 @@ public class FrequencyTable {
     
     private double p;
     
-    public FrequencyTable(SVar[] vvs) {
+    public FrequencyTable(final SVar[] vvs) {
         this.vars = vvs;
         this.vsize = vvs.length;
         
@@ -28,7 +28,7 @@ public class FrequencyTable {
         
         // init frequency table
         for(int i=0; i<ceTable.length; i++) ceTable[i] = new CombinationEntry();
-        int[] vc = new int[vsize];
+        final int[] vc = new int[vsize];
         int pos=0;
         while(vc[0]<vars[0].getNumCats()){
             for(vc[vsize-1]=0; vc[vsize-1]<vars[vsize-1].getNumCats(); vc[vsize-1]++){
@@ -44,12 +44,12 @@ public class FrequencyTable {
         }
         
         for (int i=0; i<ceTable.length; i++) {
-            CombinationEntry ce = ceTable[i];
+            final CombinationEntry ce = ceTable[i];
             for (int cs = 0; cs < vars[0].size(); cs++) {
                 if (ce.CombinationEqualsCase(cs))
                     ce.cases.add(new Integer(cs));
             }
-            table[i] = (double)ce.cases.size();
+            table[i] = ce.cases.size();
         }
         
         // init expected table assuming independence
@@ -58,7 +58,7 @@ public class FrequencyTable {
             if(vars[v].getNumCats() > maxNumCats) maxNumCats=vars[v].getNumCats();
         }
         
-        int[][] counts;
+        final int[][] counts;
         counts = new int[vsize][maxNumCats];
         
         for(int v=0; v<vsize; v++)
@@ -69,7 +69,7 @@ public class FrequencyTable {
             for(int i=0; i<vars[v].size(); i++)
                 counts[v][vars[v].getCatIndex(i)]++;
         
-        double denom = Math.pow(vars[0].size(), -vsize);
+        final double denom = Math.pow(vars[0].size(), -vsize);
         for(int i=0; i<exp.length; i++){
             exp[i]=1;
             int j=i;
@@ -92,8 +92,8 @@ public class FrequencyTable {
         }
         
         public int[] getCases() {
-            int[] cs = new int[cases.size()];
-            for (int i = 0; i < cs.length && i < cases.size(); i++)
+            final int[] cs = new int[cases.size()];
+            for (int i = 0, csize = cases.size(); i < cs.length && i < csize; i++)
                 cs[i] = ((Integer) cases.elementAt(i)).intValue();
             return cs;
         }
@@ -108,26 +108,26 @@ public class FrequencyTable {
         
         public String getCombInfo() {
             String comb = "";
-            Enumeration e = ccs.keys();
+            final Enumeration e = ccs.keys();
             while (e.hasMoreElements()) {
-                Object o = e.nextElement();
+                final Object o = e.nextElement();
                 comb += o+": "+ccs.get(o);
                 if (e.hasMoreElements()) comb +="\n";
             }
             return comb;
         }
         
-        public CombinationEntry(CombinationEntry e) {
+        public CombinationEntry(final CombinationEntry e) {
             this.ccs.putAll(e.ccs);
         }
         
-        protected void addCat(Object n, Object c){
+        protected void addCat(final Object n, final Object c){
             ccs.put(n,c);
         }
         
-        protected boolean CombinationEqualsCase(int c) {
+        protected boolean CombinationEqualsCase(final int c) {
             for (int i = 0; i < vsize; i++) {
-                Comparable str = (Comparable)ccs.get(vars[i].getName());
+                final Comparable str = (Comparable)ccs.get(vars[i].getName());
                 if(str.toString().compareTo(vars[i].at(c).toString())!=0)
                     return false;
             }
@@ -137,9 +137,9 @@ public class FrequencyTable {
         
         public String toString() {
             String comb = "";
-            Enumeration e = ccs.keys();
+            final Enumeration e = ccs.keys();
             while (e.hasMoreElements()) {
-                Object o = e.nextElement();
+                final Object o = e.nextElement();
                 comb += o+": "+ccs.get(o);
                 if (e.hasMoreElements()) comb +=", ";
             }
@@ -180,7 +180,7 @@ public class FrequencyTable {
         return exp;
     }
     
-    public int[] getMatchingCases(int[] com, int maxLevel){
+    public int[] getMatchingCases(final int[] com, int maxLevel){
         
         for(int i=0; i<com.length && i<maxLevel; i++){
             if(com[i]==-1){
@@ -189,7 +189,7 @@ public class FrequencyTable {
             }
         }
         
-        int[] factors = new int[vsize];
+        final int[] factors = new int[vsize];
         factors[vsize-1]=1;
         for(int i=vsize-2; i>=0; i--){
             factors[i] = factors[i+1]*vars[i+1].getNumCats();
@@ -199,36 +199,36 @@ public class FrequencyTable {
         for(int i=0; i<maxLevel; i++){
             n += factors[i]*com[i];
         }
-        Vector cases = new Vector();
+        final Vector cases = new Vector();
         int arraySize=0;
         for(int i=0; i<factors[maxLevel-1]; i++){
-            int[] c = ceTable[n+i].getCases();
+            final int[] c = ceTable[n+i].getCases();
             cases.add(c);
             arraySize += c.length;
         }
-        int[] ret = new int[arraySize];
+        final int[] ret = new int[arraySize];
         int pos=0;
-        for(Enumeration en = cases.elements(); en.hasMoreElements();){
-            int[] c = (int[])en.nextElement();
+        for(final Enumeration en = cases.elements(); en.hasMoreElements();){
+            final int[] c = (int[])en.nextElement();
             System.arraycopy(c, 0, ret, pos, c.length);
             pos += c.length;
         }
         return ret;
     }
     
-    public void permute(int[] perm) {
+    public void permute(final int[] perm) {
         
-        int[]   plevels = new int[vsize];
-        int[][] index;
+        final int[]   plevels = new int[vsize];
+        
         // permuted pendants
-        double[]   p_table  = new double[table.length];
-        CombinationEntry[]   p_cetable  = new CombinationEntry[table.length];
-        double[]   p_exp    = new double[table.length];
-        String[][] p_lnames = new String[vsize][];
-        SVar[] p_vars = new SVar[vsize];
+        final double[]   p_table  = new double[table.length];
+        final CombinationEntry[]   p_cetable  = new CombinationEntry[table.length];
+        final double[]   p_exp    = new double[table.length];
+        final String[][] p_lnames = new String[vsize][];
+        final SVar[] p_vars = new SVar[vsize];
         for (int i=0; i<vsize; i++)
             p_lnames[i] = new String[lnames[perm[i]].length];
-        int[]      p_levels = new int[vsize];
+        final int[]      p_levels = new int[vsize];
         
         plevels[vsize-1] = 0;
         plevels[vsize-2] = levels[vsize-1];		// calculate the number of cells covered by a
@@ -237,6 +237,7 @@ public class FrequencyTable {
             plevels[i] = plevels[i+1] * levels[i+1];
         }
         
+        final int[][] index;
         index = new int[table.length][vsize];
         
         int decompose;
