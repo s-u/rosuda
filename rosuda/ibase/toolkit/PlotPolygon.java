@@ -24,7 +24,7 @@ public class PlotPolygon extends PlotObject {
     int dx[], dy[];
 
     /** create a new polygon object and add it to the specified {@link PlotManager} */
-    public PlotPolygon(PlotManager pm) {
+    public PlotPolygon(final PlotManager pm) {
         super(pm);
         setDrawColor(new PlotColor("black"));
     }
@@ -33,7 +33,7 @@ public class PlotPolygon extends PlotObject {
         @param xx X coordinates of the points
         @param yy Y coordinates of the points
         */
-    public void set(double[] xx, double[] yy) {
+    public void set(final double[] xx, final double[] yy) {
         if (Global.DEBUG>0)
             System.out.println("["+toString()+"] set(x[],y[]): "+xx+"/"+yy);
         x=xx; y=yy; recalc();
@@ -41,12 +41,13 @@ public class PlotPolygon extends PlotObject {
 
     /* recalculate point transformations between coordinate systems */
     public void recalc() {
-        int i=0,l=0;
+        final int l;
         if (x==null || y==null) return;
         l=(x.length>y.length)?y.length:x.length;
         if (dx==null || dy==null || dx.length!=l || dy.length!=l) {
             dx=new int[l]; dy=new int[l];
         }
+        int i = 0;
         while (i<l) {
             dx[i]=getXPos(x[i]);
             dy[i]=getYPos(y[i]);
@@ -55,7 +56,7 @@ public class PlotPolygon extends PlotObject {
     }
 
     /** draw the polygon */
-    public void draw(PoGraSS g) {
+    public void draw(final PoGraSS g) {
         if (dx==null || dy==null || dx.length<1) return;
         recalc(); // we should be more intelligent here and recalc only if necessary ...
         if (colf!=null) {

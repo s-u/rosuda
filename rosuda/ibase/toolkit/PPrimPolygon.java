@@ -9,17 +9,18 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+
 
 /** Plot primitive based on {@link PPrimBase},  using a list of IDs and implementing polygons.
  * @version $Id$
  */
 public class PPrimPolygon extends PPrimBase {
+    static final String COL_RED = "red";
+    static final String COL_OUTLINE = "outline";
+    static final String COL_MARKED = "marked";
     public Polygon pg;
     
     public boolean drawBorder=true;
@@ -38,7 +39,7 @@ public class PPrimPolygon extends PPrimBase {
     private int nodeSize=2;
     
     /** checks whether the PlotPrimitive contains the given point.*/
-    public boolean contains(int x, int y) {
+    public boolean contains(final int x, final int y) {
         if(pg==null) return false;
         if(selectByCorners){
             for(int i=0; i<pg.npoints; i++)
@@ -49,7 +50,7 @@ public class PPrimPolygon extends PPrimBase {
     }
     
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
-    public boolean intersects(Rectangle rt) {
+    public boolean intersects(final Rectangle rt) {
         if(pg==null) return false;
         if(selectByCorners){
             for(int i=0; i<pg.npoints; i++)
@@ -60,9 +61,9 @@ public class PPrimPolygon extends PPrimBase {
     }
     
     /** paint the primitive */
-    public void paint(PoGraSS g, int orientation) {
+    public void paint(final PoGraSS g, final int orientation) {
         if (pg==null) return;
-        g.defineColor("red",255,0,0);
+        g.defineColor(COL_RED,255,0,0);
         if(fill){
             if (col!=null)
                 g.setColor(col.getRed(),col.getGreen(),col.getBlue());
@@ -71,7 +72,7 @@ public class PPrimPolygon extends PPrimBase {
             g.fillPolygon(pg.xpoints,pg.ypoints,pg.npoints);
         }
         if (drawBorder) {
-            g.setColor("outline");
+            g.setColor(COL_OUTLINE);
             //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
             for(int i=1; i<pg.npoints; i++){
                 if(!invisibleLines[i-1]){
@@ -84,7 +85,7 @@ public class PPrimPolygon extends PPrimBase {
                 g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
             }
             if(showInvisibleLines && invisibleLines!=null){
-                g.setColor("red");
+                g.setColor(COL_RED);
                 for(int i=0; i<invisibleLines.length; i++){
                     if(invisibleLines[i]){
                         g.drawLine(pg.xpoints[i],pg.ypoints[i],pg.xpoints[i+1],pg.ypoints[i+1]);
@@ -93,24 +94,24 @@ public class PPrimPolygon extends PPrimBase {
             }
         }
         if(drawCorners){
-            g.setColor("outline");
+            g.setColor(COL_OUTLINE);
             for(int i=0; i<pg.npoints; i++){
                 if(noDotsAt==null || !noDotsAt[i])
                     g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
         }
         if(showGapDots && gapDots!=null){
-            g.setColor("outline");
+            g.setColor(COL_OUTLINE);
             for(int i=0; i<gapDots.length; i++)
                 if(gapDots[i])
                     g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
         }
     }
     
-    public void paintSelected(PoGraSS g, int orientation, SMarker m) {
+    public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
-        g.defineColor("red",255,0,0);
-        double sa=getMarkedProportion(m,-1);
+        g.defineColor(COL_RED,255,0,0);
+        final double sa=getMarkedProportion(m,-1);
         //System.out.println("pp["+i+"] sa="+sa+" "+pp);
         if (sa>0d) {
             if(fill){
@@ -119,7 +120,7 @@ public class PPrimPolygon extends PPrimBase {
                             ((float)Common.selectColor.getGreen())/255.0F,
                             ((float)Common.selectColor.getBlue())/255.0F,(float)sa);
                 else
-                    g.setColor("marked");
+                    g.setColor(COL_MARKED);
                 g.fillPolygon(pg.xpoints,pg.ypoints,pg.npoints);
             }
             if (drawBorder) {
@@ -129,8 +130,8 @@ public class PPrimPolygon extends PPrimBase {
                                 ((float)Common.selectColor.getGreen())/255.0F,
                                 ((float)Common.selectColor.getBlue())/255.0F,(float)sa);
                     else
-                        g.setColor("marked");
-                } else g.setColor("outline");
+                        g.setColor(COL_MARKED);
+                } else g.setColor(COL_OUTLINE);
                 //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
                 for(int i=1; i<pg.npoints; i++){
                     if(!invisibleLines[i-1]){
@@ -144,14 +145,14 @@ public class PPrimPolygon extends PPrimBase {
                 }
             }
             if(drawCorners){
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 for(int i=0; i<pg.npoints; i++){
                     if(noDotsAt==null || !noDotsAt[i])
                         g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
                 }
             }
             if(showGapDots && gapDots!=null){
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 for(int i=0; i<gapDots.length; i++)
                     if(gapDots[i])
                         g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
@@ -167,7 +168,7 @@ public class PPrimPolygon extends PPrimBase {
         return nodeSize;
     }
     
-    public void setNodeSize(int nodeSize) {
+    public void setNodeSize(final int nodeSize) {
         if(nodeSize>0)
             this.nodeSize = nodeSize;
     }

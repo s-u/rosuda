@@ -8,16 +8,16 @@ public class PlotColor {
     boolean RGB;
     boolean alpha;
 
-    public PlotColor(int R, int G, int B) {
+    public PlotColor(final int R, final int G, final int B) {
         r=R; g=G; b=B; RGB=true; alpha=false;
     }
 
-    public PlotColor(String n) {
+    public PlotColor(final String n) {
 	if ((n.length()==7 || n.length()==9) && n.charAt(0)=='#') { // #RRGGBB notation
 	    try {
-		int ir=Integer.parseInt(n.substring(1,3),16);
-		int ig=Integer.parseInt(n.substring(3,5),16);
-		int ib=Integer.parseInt(n.substring(5,7),16);
+		final int ir=Integer.parseInt(n.substring(1,3),16);
+		final int ig=Integer.parseInt(n.substring(3,5),16);
+		final int ib=Integer.parseInt(n.substring(5,7),16);
                 if (n.length()==9) {
                     a=Integer.parseInt(n.substring(7,9),16);
                     alpha=true;
@@ -32,7 +32,7 @@ public class PlotColor {
 	}
     }
 
-    public void use(PoGraSS p) {
+    public void use(final PoGraSS p) {
         if (RGB) {
             if (alpha)
                 p.setColor((float)r/255.0F,(float)g/255.0F,(float)b/255.0F,(float)a/255.0F);

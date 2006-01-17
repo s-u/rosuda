@@ -6,12 +6,8 @@
 //
 
 package org.rosuda.ibase.toolkit;
-
-import java.io.*;
-import java.awt.*;
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.util.*;
+
 
 /** This platform implementation adds a preferences handler for colors and a default about splash screen.
 Use initPlatform("org.rosuda.ibase.toolkit.") in order to enable it.

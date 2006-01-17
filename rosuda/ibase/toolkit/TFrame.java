@@ -36,7 +36,7 @@ public class TFrame extends Frame
 
     public static final int clsUser     = 8192;
     
-    public TFrame(String tit, boolean useCommonBg, int wclass) {
+    public TFrame(final String tit, final boolean useCommonBg, final int wclass) {
         if (useCommonBg) setBackground(Common.backgroundColor);
 	setTitle(tit);
 	// add myself to WinTracker
@@ -46,7 +46,7 @@ public class TFrame extends Frame
     };
 
     //public TFrame(String tit) { this(tit,true,0); }
-    public TFrame(String tit,int wclass) { this(tit,true,wclass); }
+    public TFrame(final String tit,final int wclass) { this(tit,true,wclass); }
     
     public TFrame() { this("<unnamed>",true,0); }
 

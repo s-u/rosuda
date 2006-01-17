@@ -3,7 +3,6 @@ package org.rosuda.ibase.toolkit;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import javax.swing.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
@@ -23,23 +22,23 @@ public class WinTracker implements ActionListener, FocusListener
 	wins=new Vector();
     }
 
-    void newWindowMenu(WTentry we) {
+    void newWindowMenu(final WTentry we) {
         we.addMenuItem("@WClose window","WTMclose"+we.id);
         we.addMenuItem("!WClose same type","WTMcloseClass"+we.wclass);
         we.addMenuItem("Close all","WTMcloseAll");
         we.addMenuSeparator();
-	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-	    WTentry we2=(WTentry)e.nextElement();
+	for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+	    final WTentry we2=(WTentry)e.nextElement();
 	    if (we2!=null && we2!=we)
                 we2.addWindowMenuEntry(we);
 	}
     }
 
-    public void add(WTentry we) {
+    public void add(final WTentry we) {
 	if (we==null) return;
 	wins.addElement(we);
-        for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-            WTentry we2=(WTentry)e.nextElement();
+        for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+            final WTentry we2=(WTentry)e.nextElement();
             if (Global.DEBUG>0)
                 System.out.println("-- updating menu; we2="+we2.toString());
             if (we2!=null) {
@@ -52,15 +51,15 @@ public class WinTracker implements ActionListener, FocusListener
 	    System.out.println(">>new window: \""+we.name+"\" ("+we.w.toString()+")");
     }
 
-    public boolean contains(int wclass) {
-        Enumeration e = wins.elements();
+    public boolean contains(final int wclass) {
+        final Enumeration e = wins.elements();
         while(e.hasMoreElements()) {
-            WTentry we = ((WTentry) e.nextElement());
+            final WTentry we = ((WTentry) e.nextElement());
             if (we.wclass==wclass && we.w!=null) {
                 we.w.requestFocus();
                 we.w.toFront();
                 try {
-                    Frame f = ( (Frame) we.w);
+                    final Frame f = ( (Frame) we.w);
                     f.setState(Frame.NORMAL);
                 }
                 catch(Exception ex) {}
@@ -71,21 +70,21 @@ public class WinTracker implements ActionListener, FocusListener
     }
 
     public void disableAll() {
-        Enumeration e = wins.elements();
+        final Enumeration e = wins.elements();
         while(e.hasMoreElements()) ((WTentry) e.nextElement()).w.setFocusableWindowState(false);
     }
 
     public void enableAll() {
-        Enumeration e = wins.elements();
+        final Enumeration e = wins.elements();
         while(e.hasMoreElements()) ((WTentry) e.nextElement()).w.setFocusableWindowState(true);
     }
 
 
-    public void rm(WTentry we) {
+    public void rm(final WTentry we) {
 	if (we==null) return;
 	wins.removeElement(we);
-        for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-            WTentry we2=(WTentry)e.nextElement();
+        for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+            final WTentry we2=(WTentry)e.nextElement();
             if (we2!=null)
                 we.rmWindowMenuEntry(we2);
 	}
@@ -101,39 +100,39 @@ public class WinTracker implements ActionListener, FocusListener
         }
     }
 
-    public void rm(Window w) {
+    public void rm(final Window w) {
 	if (Global.DEBUG>0)
 	    System.out.println(">>request to remove window \""+w.toString()+"\"");
-	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-	    WTentry we=(WTentry)e.nextElement();
+	for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (Global.DEBUG>0)
 		System.out.println("-- lookup: "+((we==null)?"<null>":we.toString()));
 	    if (we!=null && we.w==w) {
 		if (Global.DEBUG>0) System.out.println("-- matches");
 		rm(we); return;
-	    };
-	};
+	    }
+	}
     };
 
-    public Object getWindowMenu(Window w) {
-        WTentry we=getEntry(w);
+    public Object getWindowMenu(final Window w) {
+        final WTentry we=getEntry(w);
         System.out.println(we.toString());
 	return (we==null)?null:we.getWindowMenu();
     }
 
     public Enumeration elements() { return wins.elements(); };
 
-    public WTentry getEntry(int id) {
-	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-	    WTentry we=(WTentry)e.nextElement();
+    public WTentry getEntry(final int id) {
+	for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.id==id) return we;
 	}
 	return null;
     }
 
-    public WTentry getEntry(Window w) {
-	for(Enumeration e=wins.elements(); e.hasMoreElements();) {
-	    WTentry we=(WTentry)e.nextElement();
+    public WTentry getEntry(final Window w) {
+	for(final Enumeration e=wins.elements(); e.hasMoreElements();) {
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.w==w) return we;
 	}
 	return null;
@@ -142,24 +141,24 @@ public class WinTracker implements ActionListener, FocusListener
     public void disposeAll() {
 	if (Global.DEBUG>0)
 	    System.out.println(">>dispose all requested");
-	for(Enumeration e=wins.elements();e.hasMoreElements();){
-	    WTentry we=(WTentry)e.nextElement();
+	for(final Enumeration e=wins.elements();e.hasMoreElements();){
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.w!=null)
 		we.w.dispose();
-	};
+	}
 	wins.removeAllElements();
     };
 
-    public void actionPerformed(ActionEvent ev) {
+    public void actionPerformed(final ActionEvent ev) {
 	if (ev==null) return;
-	String cmd=ev.getActionCommand();
-	Object o=ev.getSource();
+	final String cmd=ev.getActionCommand();
+	final Object o=ev.getSource();
 	if (Global.DEBUG>0)
 	    System.out.println(">> action: "+cmd+" by "+o.toString());
-	for(Enumeration e=wins.elements();e.hasMoreElements();){
-	    WTentry we=(WTentry)e.nextElement();
+	for(final Enumeration e=wins.elements();e.hasMoreElements();){
+	    final WTentry we=(WTentry)e.nextElement();
             if (we!=null && (cmd.compareTo("WTMclose"+we.id)==0 ||
-                      (cmd=="WTMcloseAll" && we.wclass>TFrame.clsVars) ||
+                      ("WTMcloseAll".equals(cmd) && we.wclass>TFrame.clsVars) ||
                       cmd.equals("WTMcloseClass"+we.wclass)
                       )) {
 		if (Global.DEBUG>0)
@@ -173,7 +172,7 @@ public class WinTracker implements ActionListener, FocusListener
                     we.w.requestFocus();
                     we.w.toFront();
                     try {
-                        Frame f = ( (Frame) we.w);
+                        final Frame f = ( (Frame) we.w);
                         f.setState(Frame.NORMAL);
                     }
                     catch(Exception ex) {}
@@ -182,24 +181,24 @@ public class WinTracker implements ActionListener, FocusListener
 	}
     };
 
-    public void focusGained(FocusEvent ev) {
-	Window w=(Window)ev.getSource();
-	for(Enumeration e=wins.elements();e.hasMoreElements();){
-	    WTentry we=(WTentry)e.nextElement();
+    public void focusGained(final FocusEvent ev) {
+	final Window w=(Window)ev.getSource();
+	for(final Enumeration e=wins.elements();e.hasMoreElements();){
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.w==w) {
 		curFocus=we;
-	    };
-	};
+	    }
+	}
     };
 
-    public void focusLost(FocusEvent ev) {
-	Window w=(Window)ev.getSource();
-	for(Enumeration e=wins.elements();e.hasMoreElements();){
-	    WTentry we=(WTentry)e.nextElement();
+    public void focusLost(final FocusEvent ev) {
+	final Window w=(Window)ev.getSource();
+	for(final Enumeration e=wins.elements();e.hasMoreElements();){
+	    final WTentry we=(WTentry)e.nextElement();
 	    if (we!=null && we.w==w) {
 		if (curFocus==we) curFocus=null;
-	    };
-	};
+	    }
+	}
     };
 
     public void Exit() {

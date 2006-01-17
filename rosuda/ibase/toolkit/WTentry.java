@@ -1,8 +1,6 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
-import java.util.*;
-import javax.swing.*;
 import org.rosuda.ibase.SVar;
 
 // what we ought to add to WT are among others:
@@ -12,7 +10,7 @@ import org.rosuda.ibase.SVar;
 /** a {@link WinTracker} entry
     @version $Id$
 */
-abstract public class WTentry extends Object
+public abstract class WTentry extends Object
 {
     public static int lid=1;
     public static String windowMenuName="Window";
@@ -25,7 +23,7 @@ abstract public class WTentry extends Object
 
     WinTracker wt;
     
-    public WTentry(WinTracker wt, Window win, String nam, int wndclass) {
+    public WTentry(final WinTracker wt, final Window win, final String nam, final int wndclass) {
         this.wt=wt;
         name=nam;
 	w=win; id=lid; lid++;

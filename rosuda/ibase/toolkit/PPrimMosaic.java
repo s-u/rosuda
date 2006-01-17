@@ -5,6 +5,8 @@ import org.rosuda.pograss.PoGraSS;
 
 
 public class PPrimMosaic extends PPrimRectangle {
+    static final String COL_OBJECT = "object";
+    static final String COL_OUTLINE = "outline";
     
     public String info = null;
     private char dir;
@@ -30,7 +32,7 @@ public class PPrimMosaic extends PPrimRectangle {
     }
     
     //if empty paint in red
-    public void paint(PoGraSS g, int orientation) {
+    public void paint(final PoGraSS g, final int orientation) {
         if (r==null) return;
         switch(type){
             case TYPE_OBSERVED:
@@ -38,12 +40,12 @@ public class PPrimMosaic extends PPrimRectangle {
                 if (col!=null)
                     g.setColor(col.getRed(),col.getGreen(),col.getBlue());
                 else
-                    g.setColor("object");
+                    g.setColor(COL_OBJECT);
                 if (isEmpty())
                     g.setColor(Color.red);
                 if (!isEmpty())
                     g.fillRect(r.x,r.y,r.width,r.height);
-                if (!isEmpty()) g.setColor("outline");
+                if (!isEmpty()) g.setColor(COL_OUTLINE);
                 if (drawBorder)
                     g.drawRect(r.x,r.y,r.width,r.height);
                 break;
@@ -54,18 +56,18 @@ public class PPrimMosaic extends PPrimRectangle {
                 g.fillRect(origX,origY, fullW,fullH);
                 g.drawRect(origX,origY, fullW,fullH);
                 if(!isEmpty()){
-                    g.setColor("object");
+                    g.setColor(COL_OBJECT);
                     g.fillRect(r.x,r.y,r.width,r.height);
                     if(censored)
                         g.setColor(Color.red);
                     else
-                        g.setColor("outline");
+                        g.setColor(COL_OUTLINE);
                     g.drawRect(r.x,r.y,r.width,r.height);
                 }
         }
         if( type==TYPE_EXPECTED ) {
-            int high = (int)(192+63*(0.15+pnorm((1-p-0.9)*10)));
-            int low =  (int)(192*(0.85-pnorm((1-p-0.9)*10)));
+            final int high = (int)(192+63*(0.15+pnorm((1-p-0.9)*10)));
+            final int low =  (int)(192*(0.85-pnorm((1-p-0.9)*10)));
             if( obs-exp > 0.00001 )
                 g.setColor(new Color(low, low, high));
             else if( obs-exp < -0.00001 )
@@ -73,14 +75,14 @@ public class PPrimMosaic extends PPrimRectangle {
             else
                 g.setColor(Color.lightGray);
             if( dir == 'x' )
-                g.fillRect(r.x, r.y, (int)((double)r.width*Math.abs((obs-exp)/Math.sqrt(exp)*scale)), r.height);
+                g.fillRect(r.x, r.y, (int)(r.width*Math.abs((obs-exp)/Math.sqrt(exp)*scale)), r.height);
             else if ( dir == 'y' )
-                g.fillRect(r.x, r.y+r.height-(int)((double)r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
-                        r.width, (int)((double)r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
+                g.fillRect(r.x, r.y+r.height-(int)(r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
+                        r.width, (int)(r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
         }
     }
     
-    private double pnorm( double q ) {
+    private double pnorm( final double q ) {
         
         double up=0.9999999;
         double lp=0.0000001;
@@ -92,22 +94,22 @@ public class PPrimMosaic extends PPrimRectangle {
         return up;
     }
     
-    private double qnorm( double p ) {
+    private double qnorm( final double p ) {
         
-        double a0 = 2.515517;
-        double a1 = 0.802853;
-        double a2 = 0.010328;
+        final double a0 = 2.515517;
+        final double a1 = 0.802853;
+        final double a2 = 0.010328;
         
-        double b1 = 1.432788;
-        double b2 = 0.189269;
-        double b3 = 0.001308;
+        final double b1 = 1.432788;
+        final double b2 = 0.189269;
+        final double b3 = 0.001308;
         
-        double  t = Math.pow(-2*Math.log(1-p), 0.5);
+        final double  t = Math.pow(-2*Math.log(1-p), 0.5);
         
         return t - (a0 + a1*t + a2*t*t) / (1 + b1*t + b2*t*t + b3*t*t*t);
     }
     
-    public void setObs(double obs){
+    public void setObs(final double obs){
         this.obs = obs;
     }
     
@@ -119,7 +121,7 @@ public class PPrimMosaic extends PPrimRectangle {
         return dir;
     }
     
-    public void setDir(char dir) {
+    public void setDir(final char dir) {
         this.dir = dir;
     }
     
@@ -127,11 +129,11 @@ public class PPrimMosaic extends PPrimRectangle {
         return censored;
     }
     
-    public void setCensored(boolean censored) {
+    public void setCensored(final boolean censored) {
         this.censored = censored;
     }
     
-    public void setType(int type) {
+    public void setType(final int type) {
         this.type = type;
     }
     
@@ -139,7 +141,7 @@ public class PPrimMosaic extends PPrimRectangle {
         return ref.length==0;
     }
     
-    public void changeDimension(int newWidth, int newHeight){
+    public void changeDimension(final int newWidth, final int newHeight){
         fullW = r.width;
         fullH = r.height;
         origX = r.x;
@@ -149,19 +151,19 @@ public class PPrimMosaic extends PPrimRectangle {
         r.height = newHeight;
     }
     
-    public void setP(double p) {
+    public void setP(final double p) {
         this.p = p;
     }
     
-    public void setExp(double exp) {
+    public void setExp(final double exp) {
         this.exp = exp;
     }
     
-    public void setScale(double scale) {
+    public void setScale(final double scale) {
         this.scale = scale;
     }
     
-    public boolean contains(int x, int y) {
+    public boolean contains(final int x, final int y) {
         if(type == TYPE_MULTIPLEBARCHARTS || type == TYPE_FLUCTUATION)
             return (x >= origX && x <= origX+fullW && y >= origY && y <= origY+fullH);
         else if(type == TYPE_SAMEBINSIZE)

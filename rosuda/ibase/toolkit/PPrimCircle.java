@@ -24,7 +24,7 @@ public class PPrimCircle extends PPrimBase {
      */
     public boolean intersectionByArea = false;
     
-    public boolean intersects(java.awt.Rectangle rt) {
+    public boolean intersects(final java.awt.Rectangle rt) {
         if(intersectionByArea){
             // baaaaaaaaaad!
             return rt.intersects(new Rectangle(x-diam/2,y-diam/2, diam,diam));
@@ -33,15 +33,15 @@ public class PPrimCircle extends PPrimBase {
         }
     }
     
-    public void paint(org.rosuda.pograss.PoGraSS g, int orientation) {
+    public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation) {
         g.setColor("outline");
         g.fillOval(x-diam/2,y-diam/2, diam,diam);
     }
     
-    public void paintSelected(org.rosuda.pograss.PoGraSS g, int orientation, org.rosuda.ibase.SMarker m) {
+    public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
         if(ref!=null){
             for(int i=0; i<ref.length; i++){
-				int mark = m.get(ref[i]);
+				final int mark = m.get(ref[i]);
                 if (mark!=0) {
 					// FIXME: if we represent more that 1 ID then we're screwed ..
 					if (mark==-1)
@@ -55,7 +55,7 @@ public class PPrimCircle extends PPrimBase {
         }
     }
     
-    public boolean contains(int x, int y) {
+    public boolean contains(final int x, final int y) {
         if(intersectionByArea){
             return((x-this.x)*(x-this.x)+(y-this.y)*(y-this.y) <= diam*diam/4);
         } else{

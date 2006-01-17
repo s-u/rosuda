@@ -17,10 +17,10 @@ public class MapSegmentTools {
     @param id which segment entry to transform
     @param axis to be used for transformation
     @return transformed X axis as an array of integers */
-    public static int[] transViaAxisX(MapSegment ms, int id, Axis a) {
-        MapSegmentEntry mse=ms.at(id);
+    public static int[] transViaAxisX(final MapSegment ms, final int id, final Axis a) {
+        final MapSegmentEntry mse=ms.at(id);
         if (mse==null) return null;
-        int[] xs=new int[mse.xp.length];
+        final int[] xs=new int[mse.xp.length];
         int i=0;
         while (i<mse.xp.length) { xs[i]=a.getValuePos(mse.xp[i]); i++; };
         return xs;
@@ -31,10 +31,10 @@ public class MapSegmentTools {
     @param id which segment entry to transform
     @param axis to be used for transformation
     @return transformed Y axis as an array of integers */
-    public static int[] transViaAxisY(MapSegment ms, int id, Axis a) {
-        MapSegmentEntry mse=ms.at(id);
+    public static int[] transViaAxisY(final MapSegment ms, final int id, final Axis a) {
+        final MapSegmentEntry mse=ms.at(id);
         if (mse==null) return null;
-        int[] ys=new int[mse.yp.length];
+        final int[] ys=new int[mse.yp.length];
         int i=0;
         while (i<mse.yp.length) { ys[i]=a.getValuePos(mse.yp[i]); i++; };
         return ys;

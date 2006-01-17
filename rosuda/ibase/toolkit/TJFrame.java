@@ -1,9 +1,6 @@
 package org.rosuda.ibase.toolkit;
-
-import java.awt.*;
 import javax.swing.*;
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
 
 /** enhanced {@link Frame} that uses {@link WinTracker} to keep track of
@@ -36,7 +33,7 @@ public class TJFrame extends JFrame
 
     public static final int clsUser     = 8192;
     
-    public TJFrame(String tit, boolean useCommonBg, int wclass) {
+    public TJFrame(final String tit, final boolean useCommonBg, final int wclass) {
         if (useCommonBg) setBackground(Common.backgroundColor);
 	setTitle(tit);
 	
@@ -47,7 +44,7 @@ public class TJFrame extends JFrame
     };
 
     //public TFrame(String tit) { this(tit,true,0); }
-    public TJFrame(String tit,int wclass) { this(tit,true,wclass); }
+    public TJFrame(final String tit,final int wclass) { this(tit,true,wclass); }
     
     public TJFrame() { this("<unnamed>",true,0); }
 

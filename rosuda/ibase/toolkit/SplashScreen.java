@@ -18,6 +18,15 @@ import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
 public class SplashScreen extends Frame implements ActionListener, WindowListener, Commander {
+    static final String FILE_SPLASH = "splash.jpg";
+    static final String M_PLUS = "+";
+    static final String M_FILE = "File";
+    static final String C_OPENDATA = "openData";
+    static final String M_MINUS = "-";
+    static final String C_EXIT = "exit";
+    static final String M_NULL = "0";
+    static final String M_CLEARLIST = "Clear list";
+    static final String C_RECENTCLEAR = "recent-clear";
     public static SplashScreen main;
     public static RecentList recentOpen;
     
@@ -27,7 +36,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         boolean hasSize=false;
         SplashScreen par;
         
-        SplashImageCanvas(Image img, SplashScreen p) {
+        SplashImageCanvas(final Image img, final SplashScreen p) {
             logo=img; par=p;
 	    if (img!=null) {
 		img.getWidth(this);
@@ -35,11 +44,11 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 	    }
         }
 
-        public void paint(Graphics g) {
+        public void paint(final Graphics g) {
             if (logo!=null) g.drawImage(logo,0,0,this);
         }
         
-        public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height)
+        public boolean imageUpdate(final Image img, final int infoflags, final int x, final int y, final int width, final int height)
         {
             //System.out.println("imageUpdate: "+infoflags+", x="+x+", y="+y+", width="+width+", height="+height);
             
@@ -58,18 +67,19 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 
     Menu recentMenu;
     
-    public SplashScreen(String txt) {
+    public SplashScreen(final String txt) {
         super("About");
 
-        Image splash=null;
+        
         main=this;
 
         addWindowListener(this);
-        byte[] arrayLogo;
+        
 
         // first try platform's "getResourceFile". This should work anywhere except for single .jar files
+        Image splash = null;
         try {
-	    String fn=Platform.getPlatform().getResourceFile("splash.jpg");
+	    final String fn=Platform.getPlatform().getResourceFile(FILE_SPLASH);
 	    if (new File(fn).exists()) {
 		splash=Toolkit.getDefaultToolkit().getImage(fn);
 		if (Global.DEBUG>0 && splash!=null)
@@ -77,13 +87,14 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 	    }
         } catch (Exception ex) {}
 
-        if (splash==null) { // ok, if that failed, try to extract it from the jar file
+        if (splash==null) {
+            byte[] arrayLogo; // ok, if that failed, try to extract it from the jar file
             try {
                 ZipFile MJF=null;
                 String jar=System.getProperty("java.class.path");
                 if (jar!=null) {
                     // if there are more path entries we assume that ours is the last one
-                    int i=jar.lastIndexOf(File.pathSeparatorChar);
+                    final int i=jar.lastIndexOf(File.pathSeparatorChar);
                     if (i>-1)
                         jar=jar.substring(i+1);
                     if (Global.DEBUG>0)
@@ -91,8 +102,8 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
                     MJF = new ZipFile(jar);
                 }
                 if (MJF!=null) {
-                    ZipEntry LE = MJF.getEntry("splash.jpg");
-                    InputStream inputLogo = MJF.getInputStream(LE);
+                    final ZipEntry LE = MJF.getEntry(FILE_SPLASH);
+                    final InputStream inputLogo = MJF.getInputStream(LE);
                     arrayLogo = new byte[(int)LE.getSize()];
                     for( int i=0; i<arrayLogo.length; i++ ) {
                         arrayLogo[i] = (byte)inputLogo.read();
@@ -104,23 +115,24 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
             } catch (Exception e) {
                 if (Global.AppType==Common.AT_Framework) { // try harder if we're iplots
                     try {
-                        String jar=System.getProperty("java.class.path");
+                        final String jar=System.getProperty("java.class.path");
                         if (jar!=null) {
                             // this is the clue - we know our own name
                             int i=jar.indexOf("iplots.jar");
                             if (i>=0) {
-                                int j=jar.indexOf(File.pathSeparatorChar,i);
+                                final int j=jar.indexOf(File.pathSeparatorChar,i);
                                 int k=jar.substring(0,i).lastIndexOf(File.pathSeparatorChar);
-                                String s=null;
+                                
                                 if (k<0) k=-1; // just for safety although not needed
+                                String s = null;
                                 if (j>=0)
                                     s=jar.substring(k+1,j);
                                 else
                                     s=jar.substring(k+1);
-                                ZipFile MJF = new ZipFile(s);
+                                final ZipFile MJF = new ZipFile(s);
                                 if (MJF!=null) {
-                                    ZipEntry LE = MJF.getEntry("splash.jpg");
-                                    InputStream inputLogo = MJF.getInputStream(LE);
+                                    final ZipEntry LE = MJF.getEntry(FILE_SPLASH);
+                                    final InputStream inputLogo = MJF.getInputStream(LE);
                                     arrayLogo = new byte[(int)LE.getSize()];
                                     for( i=0; i<arrayLogo.length; i++ ) {
                                         arrayLogo[i] = (byte)inputLogo.read();
@@ -144,7 +156,7 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         add(p);
         p=new Panel();
         add(p, BorderLayout.SOUTH);
-        Label l=null;
+        final Label l;
         l=new Label(txt);
         /*
          l=new Label("iPlots framework v"+Common.Version+" (release "+Common.Release+")");
@@ -152,29 +164,29 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         l.setFont(new Font("SansSerif",Font.BOLD,14));
         p.add(l);
 
-        String myMenu[]={"+","File","@OOpen dataset ...","openData","#Open Recent","","-",
-            "Preferences ...","prefs","-","@QQuit","exit", "~Window","0"};
-        String macMenu[]={"+","File","@OOpen dataset ...","openData","#Open Recent","","0"};
+        String myMenu[]={M_PLUS,M_FILE,"@OOpen dataset ...",C_OPENDATA,"#Open Recent","",M_MINUS,
+            "Preferences ...","prefs",M_MINUS,"@QQuit",C_EXIT, "~Window",M_NULL};
+        final String macMenu[]={M_PLUS,M_FILE,"@OOpen dataset ...",C_OPENDATA,"#Open Recent","",M_NULL};
         if (Platform.isMac)
             myMenu=macMenu;
         EzMenu.getEzMenu(this,this,myMenu);
-        Menu rm=recentMenu=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
+        final Menu rm=recentMenu=(Menu) EzMenu.getItemByLabel(this,"Open Recent");
         if (rm!=null) {
             if (recentOpen==null)
                 SplashScreen.recentOpen=new RecentList(Common.appName,"RecentOpenFiles",8);
-            String[] shortNames=SplashScreen.recentOpen.getShortEntries();
-            String[] longNames =SplashScreen.recentOpen.getAllEntries();
+            final String[] shortNames=SplashScreen.recentOpen.getShortEntries();
+            final String[] longNames =SplashScreen.recentOpen.getAllEntries();
             int i=0;
             while (i<shortNames.length) {
-                MenuItem mi=new MenuItem(shortNames[i]);
+                final MenuItem mi=new MenuItem(shortNames[i]);
                 mi.setActionCommand("recent:"+longNames[i]);
                 mi.addActionListener(this);
                 rm.add(mi);
                 i++;
             }
             if (i>0) rm.addSeparator();
-            MenuItem ca=new MenuItem("Clear list");
-            ca.setActionCommand("recent-clear");
+            final MenuItem ca=new MenuItem(M_CLEARLIST);
+            ca.setActionCommand(C_RECENTCLEAR);
             ca.addActionListener(this);
             rm.add(ca);
             if (i==0) ca.setEnabled(false);
@@ -184,20 +196,20 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
 	    setVisible(true);
     }
 
-    public Object run(Object o, String cmd) {
-        if (cmd=="exit") {
+    public Object run(final Object o, final String cmd) {
+        if (C_EXIT.equals(cmd)) {
             if (WinTracker.current!=null)
                 WinTracker.current.Exit();
             else
                 exit();
         }
 
-        if (cmd=="recent-clear") {
+        if (C_RECENTCLEAR.equals(cmd)) {
             if (recentOpen!=null && recentMenu!=null) {
                 recentMenu.removeAll();
                 recentMenu.addSeparator();
-                MenuItem ca=new MenuItem("Clear list");
-                ca.setActionCommand("recent-clear");
+                final MenuItem ca=new MenuItem(M_CLEARLIST);
+                ca.setActionCommand(C_RECENTCLEAR);
                 ca.addActionListener(this);
                 ca.setEnabled(false);
                 recentMenu.add(ca);
@@ -218,29 +230,29 @@ public class SplashScreen extends Frame implements ActionListener, WindowListene
         setVisible(true);
     }
 
-    public static void runMainAsAbout(String txt) {
+    public static void runMainAsAbout(final String txt) {
         if (main==null) main=new SplashScreen(txt);
         main.runAsAbout();
     }
     
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         if (e==null) return;
         run(e.getSource(),e.getActionCommand());
     }
 
-    public void windowOpened(WindowEvent e) {}
-    public void windowClosing(WindowEvent e) {
+    public void windowOpened(final WindowEvent e) {}
+    public void windowClosing(final WindowEvent e) {
         if ((aboutMode && WinTracker.current!=null && WinTracker.current.wins.size()>0) || Global.AppType!=Global.AT_standalone) {
             aboutMode=false;
             setVisible(false); return;
         }
         exit();
     }
-    public void windowClosed(WindowEvent e) {
+    public void windowClosed(final WindowEvent e) {
         exit();
     }
-    public void windowIconified(WindowEvent e) {}
-    public void windowDeiconified(WindowEvent e) {}
-    public void windowActivated(WindowEvent e) {}
-    public void windowDeactivated(WindowEvent e) {}
+    public void windowIconified(final WindowEvent e) {}
+    public void windowDeiconified(final WindowEvent e) {}
+    public void windowActivated(final WindowEvent e) {}
+    public void windowDeactivated(final WindowEvent e) {}
 }

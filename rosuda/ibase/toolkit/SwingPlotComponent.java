@@ -5,7 +5,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.*;
 
 public class SwingPlotComponent implements PlotComponent {
 
@@ -23,13 +22,13 @@ public class SwingPlotComponent implements PlotComponent {
 		return comp;
 	}
 	
-	public void initializeGraphics(Window w) {
+	public void initializeGraphics(final Window w) {
 		comp.gc = comp.getGraphics();
 		gc = comp.gc;
 		System.out.println("gc " + gc);
 	}
 	
-	public void initializeLayerCanvas(LayerCanvas l) {
+	public void initializeLayerCanvas(final LayerCanvas l) {
 		comp.lcanv = l;
 		lcanv = comp.lcanv;
 	}
@@ -45,19 +44,19 @@ public class SwingPlotComponent implements PlotComponent {
 	public void repaint() {
 		comp.repaint();
 	}
-	public void setCursor(Cursor cursor) {
+	public void setCursor(final Cursor cursor) {
 		comp.setCursor(cursor);
 	}
-	public void setBackground(Color c) {
+	public void setBackground(final Color c) {
 		comp.setBackground(c);
 	}
-	public void addMouseMotionListener(MouseMotionListener l) {
+	public void addMouseMotionListener(final MouseMotionListener l) {
 		comp.addMouseMotionListener(l);
 	}
-	public void addMouseListener(MouseListener l) {
+	public void addMouseListener(final MouseListener l) {
 		comp.addMouseListener(l);
 	}
-	public void addKeyListener(KeyListener l) {
+	public void addKeyListener(final KeyListener l) {
 		comp.addKeyListener(l);
 	}
 	public Rectangle getBounds(){
@@ -66,10 +65,10 @@ public class SwingPlotComponent implements PlotComponent {
 	public Point getLocation() {
 		return comp.getLocation();
 	}
-	public void setSize(int width, int height) {
+	public void setSize(final int width, final int height) {
 		comp.setSize(width,height);
 	}
-	public void setSize(Dimension d) {
+	public void setSize(final Dimension d) {
 		comp.setSize(d);
 		comp.setPreferredSize(d);
 		comp.setMinimumSize(d);
@@ -77,7 +76,7 @@ public class SwingPlotComponent implements PlotComponent {
 	public Dimension getSize() {
 		return comp.getSize();
 	}
-	public Image createImage(int width, int height) {
+	public Image createImage(final int width, final int height) {
 		return comp.createImage(width,height);
 	}
 	public Color getForeground() {
@@ -103,16 +102,16 @@ public class SwingPlotComponent implements PlotComponent {
 	}
 	
 	// additions to SWING
-	public void setPreferredSize(Dimension d) {
+	public void setPreferredSize(final Dimension d) {
 		comp.setPreferredSize(d);
 	}
-	public void setMinimumSize(Dimension d) {
+	public void setMinimumSize(final Dimension d) {
 		comp.setMinimumSize(d);
 	}
-	public void setMaximumSize(Dimension d) {
+	public void setMaximumSize(final Dimension d) {
 		comp.setMaximumSize(d);
 	}
-	public void setToolTipText(String s) {
+	public void setToolTipText(final String s) {
 		comp.setToolTipText(s);
 	}
 }

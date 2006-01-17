@@ -18,11 +18,11 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     
     SVarSet vs;
 	
-    public SwingQueryPopup(PlotComponent pc, Window ow, SVarSet vs, String ct) {
+    public SwingQueryPopup(final PlotComponent pc, final Window ow, final SVarSet vs, final String ct) {
         this(pc,ow,vs,ct,-1,-1);
     }
 
-    public SwingQueryPopup(PlotComponent pc, Window ow, SVarSet uvs, String ct, int w, int cid)
+    public SwingQueryPopup(final PlotComponent pc, final Window ow, final SVarSet uvs, final String ct, final int w, final int cid)
     {
 		parentcomp = pc;
     	pcomp = new SwingPlotComponent();
@@ -46,15 +46,16 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 	    if (Global.DEBUG>0) System.out.println("hiding win");
 	    ToolTipManager.sharedInstance().setEnabled(false);
 	}
-	public void setContent(String s) {
+	public void setContent(final String s) {
 		setContent(s,-1);
 	}
 	
-	public void setContent(String t, int cid) {
+	public void setContent(final String t, final int cid) {
         String s=t;
         if (vs!=null && cid>=0) {
-            int i=0;
+            
             s+="\n";
+            int i = 0;
             while (i<vs.count()) {
                 if (vs.at(i)!=null && vs.at(i).isSelected()) {
                     s+=vs.at(i).getName()+": "+vs.at(i).atS(cid)+"\n";
@@ -65,19 +66,21 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
         setContentString(s);
 	}
 	
-    public void setContent(String t, int[] cid) {
+    public void setContent(final String t, final int[] cid) {
         String s=t;
         if (vs!=null && cid!=null && cid.length>0) {
-            int i=0;
+            
             s+="\n";
             boolean isFirst=true;
+            int i = 0;
             while (i<vs.count()) {
                 if (vs.at(i)!=null && vs.at(i).isSelected()) {
                     if (isFirst) { isFirst=false; s+=" "; }
                 	s += "\n";
                     if (vs.at(i).isNum()) {
                         int j=0;
-                        double sum=0.0, ct=0.0, sd=0.0;
+                        double sum = 0.0;
+                        double ct = 0.0;
                         while (j<cid.length) {
                             if (vs.at(i).at(cid[j])!=null) {
                                 sum+=vs.at(i).atD(cid[j]);
@@ -86,11 +89,13 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
                             j++;
                         }
                         if (ct>0) {
-                            double mean=sum/ct;
+                            
+                            final double mean=sum/ct;
                             j=0;
+                            double sd = 0.0;
                             while (j<cid.length) {
                                 if (vs.at(i).at(cid[j])!=null) {
-                                    double dif=vs.at(i).atD(cid[j])-mean;
+                                    final double dif=vs.at(i).atD(cid[j])-mean;
                                     sd+=dif*dif;
                                 }
                                 j++;
@@ -108,31 +113,31 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     }
 
 	
-	void setContentString(String s) {
+	void setContentString(final String s) {
 		String t = "<html>";
 //		t+= "<BODY BGCOLOR=\"#"+ Math.abs(Common.popupColor.getRGB()) + "\">";
 		t+= "<BODY BGCOLOR=\"YELLOW\">";
-        StringTokenizer st=new StringTokenizer(s,"\n");
+        final StringTokenizer st=new StringTokenizer(s,"\n");
     	while(st.hasMoreElements()) {
     		t+=st.nextToken();
     		if(st.hasMoreElements()) t+="<br>";
-    	};
+    	}
 		t+="</body></html>";
         parentcomp.setToolTipText(t);
 	}
 
 	
-	public void setLocation(int x, int y) {
+	public void setLocation(final int x, final int y) {
 		hide();show();
 	}
 	
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
     	hide();
     }
-    public void mousePressed(MouseEvent e) {}
-    public void mouseReleased(MouseEvent e) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mousePressed(final MouseEvent e) {}
+    public void mouseReleased(final MouseEvent e) {}
+    public void mouseEntered(final MouseEvent e) {}
+    public void mouseExited(final MouseEvent e) {}
 	
     public Component getQueryComponent() {
     	return win; // returns null, win isn't used in SWING

@@ -1,7 +1,6 @@
 package org.rosuda.ibase.toolkit;
 
 import org.rosuda.pograss.*;
-import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
 /** Plot objects are basic building blocks to add graphical objects to iPlots.
@@ -35,7 +34,7 @@ public class PlotObject {
     /** layer of this object (0=in the back, -1=on the top (last layer), 1,2,3,... specific layer) */
     int layer=-1;
 
-    public PlotObject(PlotManager p) { pm=p; p.add(this); }
+    public PlotObject(final PlotManager p) { pm=p; p.add(this); }
 
     /** all subclasses should override this method.<br>
         Some points to keep in mind when implementing new objects:<ul>
@@ -46,61 +45,61 @@ public class PlotObject {
         </ul>
         @param g graphics context for painting
         */
-    public void draw(PoGraSS g) {
+    public void draw(final PoGraSS g) {
     }
 
     /** set draw color of the object. The interpretation of the color is object-dependent, but simple objects should adhere to the reasoning that this color is used for drawing lines.
         @param c color to use
         */
-    public void setDrawColor(PlotColor c) { cold=c; }
+    public void setDrawColor(final PlotColor c) { cold=c; }
 
     /** set fill color of the object. The interpretation of the color is object-dependent, but simnple objects should adhere to the reasoning that this color is used for area filling.
         @param c color to use
         */
-    public void setFillColor(PlotColor c) { colf=c; }
+    public void setFillColor(final PlotColor c) { colf=c; }
     
     /** visibility
         @ return <code>true</code> if the object is visible */
     public boolean isVisible() { return visible; }
     /** set visibility. if set to <code>false</code> the object won't be painted
         */
-    public void setVisible(boolean vis) {
+    public void setVisible(final boolean vis) {
         if (Global.DEBUG>0)
             System.out.println("Setting visibility to \""+vis+"\", was "+visible+" ["+toString()+"]");
         visible=vis;
     }
     /** set a common coordinate system for both axes (see CS_xxx constants for details)
         @param ct coordinate system specification - one of the CS_xxx constants */
-    public void setCoordinates(int ct) { coordX=coordY=ct; };
+    public void setCoordinates(final int ct) { coordX=coordY=ct; };
     /** set one coordinate system for each axis separately
         @param cx coordinate system specification for the X axis - must be one of the CS_xxx constants
         @param cy coordinate system specification for the Y axis - must be one of the CS_xxx constants
         */
-    public void setCoordinates(int cx, int cy) { coordX=cx; coordY=cy; };
+    public void setCoordinates(final int cx, final int cy) { coordX=cx; coordY=cy; };
 
     /** maps plot object X coordinate to a graphical coordinate which can be used in the {@link #draw} method.
         @param v value to convert
         @return corresponding value of the graphical X coordinate */
-    public int getXPos(double v) {
+    public int getXPos(final double v) {
         if (coordX==0) return (int)v;
-        Axis a=pm.getXAxis();
+        final Axis a=pm.getXAxis();
         if (a==null) return 0;
-        return (coordX==1)?a.getValuePos(v):a.gBegin+(int)(((double)a.gLen)*v);
+        return (coordX==1)?a.getValuePos(v):a.gBegin+(int)((a.gLen)*v);
     }
 
     /** maps plot object Y coordinate to a graphical coordinate which can be used in the {@link #draw} method.
         @param v value to convert
         @return corresponding value of the graphical X coordinate */
-    public int getYPos(double v) {
+    public int getYPos(final double v) {
         if (coordY==0) return (int)v;
-        Axis a=pm.getYAxis();
+        final Axis a=pm.getYAxis();
         if (a==null) return 0;
-        return (coordY==1)?a.getValuePos(v):a.gBegin+(int)(((double)a.gLen)*v);
+        return (coordY==1)?a.getValuePos(v):a.gBegin+(int)((a.gLen)*v);
     }
 
     /** set clipping flag. if set to <code>true</code> then the object shouldn't plot outside the data area.
         @param cl clipping flag */
-    public void setClip(boolean cl) { clip=cl; }
+    public void setClip(final boolean cl) { clip=cl; }
 
     /** get drawing color
         @return drawing color of the object */
@@ -111,7 +110,7 @@ public class PlotObject {
     public PlotColor gerFillColor() { return colf; }
 
     /** move the object to another layer */
-    public void setLayer(int l) {
+    public void setLayer(final int l) {
 	layer=l;
     }
 

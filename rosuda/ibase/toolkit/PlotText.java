@@ -45,8 +45,8 @@ public class PlotText extends PlotObject {
      * call of add!
      * The text specified by <CODE>text</CODE> will be displayed at the point
      * (<CODE>X</CODE>,<CODE>Y</CODE>) aligned according to <CODE>aX</CODE> and
-     * <CODE>aY</CODE>. If aX/aY is set to 0 the text's left/top border will be
-     * placed at X/Y, if set to 1 the right/bottom border will be placed at X/Y.
+     * <CODE>aY</CODE>. If aX/aY is set to 0 the text's left/bottom border will be
+     * placed at X/Y, if set to 1 the right/top border will be placed at X/Y.
      * If maxW is nonnegative and the text's width exceeds maxW it will be
      * abbreviated.
      *

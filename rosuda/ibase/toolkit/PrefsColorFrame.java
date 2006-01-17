@@ -14,12 +14,14 @@ import java.awt.event.*;
 import javax.swing.JColorChooser;
 
 import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
 
 /** This class implements a preference dialog which allows to change default colors (in Common.xxxColor). If saved Common.color.xxx setting properties are used. Use {@link #showPrefsDialog()} to show this dialog.
 */
 public class PrefsColorFrame extends Frame implements WindowListener, MouseListener, ActionListener, ItemListener {
+    static final String M_SAVE = "Save";
+    static final String M_APPLY = "Apply";
+    static final String M_CLOSE = "Close";
     PrefCanvas pc;
     Choice cs;
     String[] schemes = {
@@ -43,11 +45,13 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
         setLayout(new BorderLayout());
         add(pc=new PrefCanvas());
         pc.addMouseListener(this);
-        Panel p=new Panel();
-        Panel pp=new Panel();
+        
+        final Panel pp=new Panel();
         pp.setLayout(new BorderLayout());
-        Panel ppp=new Panel();
+        
+        final Panel p = new Panel();
         pp.add(p,BorderLayout.SOUTH);
+        final Panel ppp = new Panel();
         pp.add(ppp);
         ppp.setLayout(new FlowLayout());
         ppp.add(new Label("Color scheme:"));
@@ -64,10 +68,10 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
         }
         cs.addItemListener(this);
         p.setLayout(new FlowLayout());
-        Button b=null;
-        p.add(b=new Button("Save")); b.addActionListener(this);
-        p.add(b=new Button("Apply")); b.addActionListener(this);
-        p.add(b=new Button("Close")); b.addActionListener(this);
+        Button b;
+        p.add(b=new Button(M_SAVE)); b.addActionListener(this);
+        p.add(b=new Button(M_APPLY)); b.addActionListener(this);
+        p.add(b=new Button(M_CLOSE)); b.addActionListener(this);
         add(pp,BorderLayout.SOUTH);
         pack();
         addWindowListener(this);
@@ -83,7 +87,7 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
             c[2]=Common.selectColor;
         }
 
-        public void paint(Graphics g) {
+        public void paint(final Graphics g) {
             g.setFont(new Font("SansSerif",0,11));
             g.drawString("background color:",30,35);
             g.drawString("objects color:",30,65);
@@ -101,21 +105,21 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
         }
     }
 
-    public void windowClosing(WindowEvent e) {
+    public void windowClosing(final WindowEvent e) {
         setVisible(false);
     }
-    public void windowClosed(WindowEvent e) {}
-    public void windowOpened(WindowEvent e) {}
-    public void windowIconified(WindowEvent e) {}
-    public void windowDeiconified(WindowEvent e) {}
-    public void windowActivated(WindowEvent e) {}
-    public void windowDeactivated(WindowEvent e) {}
+    public void windowClosed(final WindowEvent e) {}
+    public void windowOpened(final WindowEvent e) {}
+    public void windowIconified(final WindowEvent e) {}
+    public void windowDeiconified(final WindowEvent e) {}
+    public void windowActivated(final WindowEvent e) {}
+    public void windowDeactivated(final WindowEvent e) {}
 
-    public void itemStateChanged(ItemEvent e) {
-        String s=cs.getSelectedItem();
+    public void itemStateChanged(final ItemEvent e) {
+        final String s=cs.getSelectedItem();
         int i=0;
         while (schemes[i]!=null) {
-            if (schemes[i]==s) {
+            if (schemes[i].equals(s)) {
                 Color cl=Tools.hrgb2color(schemes[++i]);
                 if (cl!=null) pc.c[0]=cl;
                 cl=Tools.hrgb2color(schemes[++i]);
@@ -129,11 +133,12 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
         }
     }
 
-    public void mouseClicked(MouseEvent ev) {
-        int x=ev.getX(), y=ev.getY();
+    public void mouseClicked(final MouseEvent ev) {
+        final int x=ev.getX();
+        final int y=ev.getY();
         if (x>170 && x<200 && y>20 && y<100) {
-            int a=(y-15)/30;
-            Color cl=null;
+            final int a=(y-15)/30;
+            final Color cl;
             cl=JColorChooser.showDialog(Common.mainFrame,"Choose color",pc.c[a]);
             if (cl!=null) {
                 cs.select("Custom ...");
@@ -142,28 +147,28 @@ public class PrefsColorFrame extends Frame implements WindowListener, MouseListe
             }
         }
     }
-    public void mousePressed(MouseEvent ev) {
+    public void mousePressed(final MouseEvent ev) {
     }
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
     }
-    public void mouseDragged(MouseEvent e) {}
-    public void mouseMoved(MouseEvent ev) {}
-    public void mouseEntered(MouseEvent e) {}
-    public void mouseExited(MouseEvent e) {}
+    public void mouseDragged(final MouseEvent e) {}
+    public void mouseMoved(final MouseEvent ev) {}
+    public void mouseEntered(final MouseEvent e) {}
+    public void mouseExited(final MouseEvent e) {}
 
-    public void actionPerformed(ActionEvent e) {
-        String cmd=e.getActionCommand();
-        if (cmd=="Close") {
+    public void actionPerformed(final ActionEvent e) {
+        final String cmd=e.getActionCommand();
+        if (M_CLOSE.equals(cmd)) {
             setVisible(false);
         }
-        if (cmd=="Apply" || cmd=="Save") {
+        if (M_APPLY.equals(cmd) || M_SAVE.equals(cmd)) {
             Common.backgroundColor=pc.c[0];
             Common.objectsColor=pc.c[1];
             Common.selectColor=pc.c[2];
             PGSCanvas.getGlobalNotifier().NotifyAll(new NotifyMsg(this,Common.NM_PrefsChanged));
         }
-        if (cmd=="Save") {
-            GlobalConfig gc=GlobalConfig.getGlobalConfig();
+        if (M_SAVE.equals(cmd)) {
+            final GlobalConfig gc=GlobalConfig.getGlobalConfig();
             gc.setParS("Common.color.background",Tools.color2hrgb(Common.backgroundColor));
             gc.setParS("Common.color.objects",Tools.color2hrgb(Common.objectsColor));
             gc.setParS("Common.color.select",Tools.color2hrgb(Common.selectColor));

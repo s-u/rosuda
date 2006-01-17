@@ -9,13 +9,13 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
-import java.util.*;
+
 
 public class WTentryAWT extends WTentry {
     /** the "Window" menu */
     Menu winMenu;
     
-    public WTentryAWT(WinTracker wt, Window win, String nam, int wndclass) {
+    public WTentryAWT(final WinTracker wt, final Window win, final String nam, final int wndclass) {
         super(wt, win, nam, wndclass);
     }
     
@@ -34,12 +34,13 @@ public class WTentryAWT extends WTentry {
         winMenu.addSeparator();
     }
 
-    public void addMenuItem(String name, String action) {
-        MenuItem mi;
+    public void addMenuItem(final String name, final String action) {
+        
         chkWinMenu();
+        final MenuItem mi;
         if (name.charAt(0)=='@' || name.charAt(0)=='!')
             mi=new MenuItem(name.substring(2),
-                            new MenuShortcut((int)name.charAt(1),(name.charAt(0)=='!')));
+                            new MenuShortcut(name.charAt(1),(name.charAt(0)=='!')));
         else
             mi=new MenuItem(name);
         mi.setActionCommand(action);
@@ -47,19 +48,19 @@ public class WTentryAWT extends WTentry {
         winMenu.add(mi);
     }
     
-    public void rmMenuItemByAction(String action) {
+    public void rmMenuItemByAction(final String action) {
         chkWinMenu();
-        MenuItem mi=(MenuItem) getMenuItemByAction(action);
+        final MenuItem mi=(MenuItem) getMenuItemByAction(action);
         if (mi!=null)
             winMenu.remove(mi);
     }
 
-    public Object getMenuItemByAction(String action) {
+    public Object getMenuItemByAction(final String action) {
         chkWinMenu();
         int i=0;
-        int ms=winMenu.getItemCount();
+        final int ms=winMenu.getItemCount();
         while (i<ms) {
-            MenuItem mi=winMenu.getItem(i);
+            final MenuItem mi=winMenu.getItem(i);
             if (mi.getActionCommand().equals(action))
                 return mi;
             i++;
@@ -67,13 +68,13 @@ public class WTentryAWT extends WTentry {
         return null;
     }
     
-    public void setNameByAction(String action, String name) {
+    public void setNameByAction(final String action, final String name) {
         chkWinMenu();
-        MenuItem mi=(MenuItem) getMenuItemByAction(action);
+        final MenuItem mi=(MenuItem) getMenuItemByAction(action);
         if (mi!=null) {
             if (name.charAt(0)=='@' || name.charAt(0)=='!') {
                 mi.setLabel(name.substring(2));
-                mi.setShortcut(new MenuShortcut((int)name.charAt(1),(name.charAt(0)=='!')));
+                mi.setShortcut(new MenuShortcut(name.charAt(1),(name.charAt(0)=='!')));
             } else {
                 mi.setLabel(name);
                 mi.deleteShortcut();

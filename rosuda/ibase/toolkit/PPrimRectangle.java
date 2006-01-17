@@ -9,26 +9,25 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+
 
 public class PPrimRectangle extends PPrimBase {
+    static final String COL_OUTLINE = "outline";
     public Rectangle r;
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
 
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
-    public boolean contains(int x, int y) { return (r==null)?false:r.contains(x,y); }
+    public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
 
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
-    public boolean intersects(Rectangle rt) { return (r==null)?false:r.intersects(rt); }
+    public boolean intersects(final Rectangle rt) { return (r==null)?false:r.intersects(rt); }
 
     /** paint the primitive */
-    public void paint(PoGraSS g, int orientation) {
+    public void paint(final PoGraSS g, final int orientation) {
         if (r==null) return;
         if (col!=null)
             g.setColor(col.getRed(),col.getGreen(),col.getBlue());
@@ -36,21 +35,22 @@ public class PPrimRectangle extends PPrimBase {
             g.setColor("object");
         g.fillRect(r.x,r.y,r.width,r.height);
         if (drawBorder) {
-            g.setColor("outline");
+            g.setColor(COL_OUTLINE);
             g.drawRect(r.x,r.y,r.width,r.height);
         }
     }
 
-    public void paintSelected(PoGraSS g, int orientation, SMarker m) {
+    public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
 		int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
-		double totW=(double)rW, totH=(double)rH;
+		final double totW=rW;
+        final double totH=rH;
 		int mark=-1;
 		double shift=0d;
 		boolean hasAny=false;
 		
 		while (mark<=m.getMaxMark()) {
-			double sa=getMarkedProportion(m,mark);
+			final double sa=getMarkedProportion(m,mark);
 			//System.out.println("pp["+i+"] sa="+sa+" "+pp);
 			if (sa>0d) {
 				hasAny=true;
@@ -73,7 +73,7 @@ public class PPrimRectangle extends PPrimBase {
 				else
 					g.setColor(ColorBridge.getMain().getColor(mark));
 				g.fillRect(rX,rY,rW,rH);
-				g.setColor("outline");
+				g.setColor(COL_OUTLINE);
 				if (drawSelectionBorder)
 					g.drawRect(rX,rY,rW,rH);
 			}
@@ -81,7 +81,7 @@ public class PPrimRectangle extends PPrimBase {
 			mark++;			
         }
 		if (hasAny) {
-			g.setColor("outline");
+			g.setColor(COL_OUTLINE);
 			g.drawRect(r.x,r.y,r.width,r.height);
 		}
     }

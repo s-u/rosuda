@@ -14,34 +14,34 @@ public class PlotJPanel extends JPanel {
 		
 	}
 	
-	public void paint(Graphics g) {
+	public void paint(final Graphics g) {
 		if(lcanv==null) super.paint(g);
 		else lcanv.paint(g);
 	}
 	
-	public void update(Graphics g) {
+	public void update(final Graphics g) {
 		if(lcanv==null) super.update(g);
 		else lcanv.update(g);
 	}
-	public void mouseClicked(MouseEvent e) {
+	public void mouseClicked(final MouseEvent e) {
 		
 	}
-	public void mouseEntered(MouseEvent e) {
+	public void mouseEntered(final MouseEvent e) {
 		
 	}
-	public void mouseExited(MouseEvent e) {
+	public void mouseExited(final MouseEvent e) {
 		
 	}
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(final MouseEvent e) {
 		
 	}
-	public void mouseReleased(MouseEvent e) {
+	public void mouseReleased(final MouseEvent e) {
 		
 	}
-	public void mouseMoved(MouseEvent e) {
+	public void mouseMoved(final MouseEvent e) {
 		
 	}
-	public void mouseDragged(MouseEvent e) {
+	public void mouseDragged(final MouseEvent e) {
 		
 	}
 }

@@ -4,16 +4,16 @@ import java.awt.event.*;
 
 public interface PlotComponent {
 	
-	public final int AWT = 0;
-	public final int SWING = 1;
-	public final int OPENGL = 2;
+	int AWT = 0;
+	int SWING = 1;
+	int OPENGL = 2;
 	
-	public Component getComponent();
+	Component getComponent();
 	/* FIME: the two methods below destroy the independence and should be removed */
-	public void initializeLayerCanvas(LayerCanvas l);
-	public void initializeGraphics(Window w);
+	void initializeLayerCanvas(LayerCanvas l);
+	void initializeGraphics(Window w);
 	
-	public int getGraphicsEngine();
+	int getGraphicsEngine();
 	
 	// we redirect only necessary methods to the component
 	void repaint();
