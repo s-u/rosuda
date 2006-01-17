@@ -202,13 +202,21 @@ public class PCPCanvas extends BaseCanvas {
             final double f=ax.getSensibleTickDistance(50,26);
             double fi=ax.getSensibleTickStart(f);
             
+            final int[] valuePoss = new int[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
+            final String[] labs = new String[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
+            int i=0;
             while (fi<ax.vBegin+ax.vLen) {
-                final int t=ax.getValuePos(fi);
-                if (isShowLabels()){
-                    labels.add(t-5, TH-Y-H-10, v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
-                        v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi));
-                }
+                valuePoss[i] = ax.getValuePos(fi);
+                labs[i] = v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
+                        v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
                 fi+=f;
+                i++;
+            }
+            
+            for(i=0; i<valuePoss.length; i++) {
+                if (isShowLabels() && labs[i]!=null){
+                    labels.add(valuePoss[i]-5, H-mBottom+2,0.5,1,(i==0)?(valuePoss[i+1]-valuePoss[i]):(valuePoss[i]-valuePoss[i-1]), labs[i]);
+                }
             }
             final int b = pc.getSize().height-mBottom;
             g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
