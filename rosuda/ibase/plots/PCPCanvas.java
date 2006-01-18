@@ -78,9 +78,9 @@ public class PCPCanvas extends BaseCanvas {
         allowDragMove=true;
         objectClipping=true;
         
-        mBottom=30;
+        mBottom=mTop=20;
         mLeft=standardMLeft;
-        mRight=mTop=10;
+        mRight=10;
         
         v=new SVar[yvs.length+1];
         opAy=new Axis[yvs.length-1];
@@ -215,11 +215,25 @@ public class PCPCanvas extends BaseCanvas {
             
             for(i=0; i<valuePoss.length; i++) {
                 if (isShowLabels() && labs[i]!=null){
-                    labels.add(valuePoss[i]-5, H-mBottom+2,0.5,1,(i==0)?(valuePoss[i+1]-valuePoss[i]):(valuePoss[i]-valuePoss[i-1]), labs[i]);
+                    labels.add(valuePoss[i]-5,
+                            ((i&1)==0)?(H-mBottom+2):(mTop-5),
+                            0.5,
+                            ((i&1)==0)?1:0,
+                            (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
+                            labs[i]);
                 }
             }
             final int b = pc.getSize().height-mBottom;
             g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
+            g.drawLine(mLeft, mTop, pc.getSize().width-mRight, mTop);
+            
+            int xx=0;
+            while (xx<v[0].getNumCats()) {
+                final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
+                if((xx&1)==0) g.drawLine(t,b,t,b+2);
+                else g.drawLine(t,mTop,t,mTop-2);
+                xx++;
+            }
         }
         
         /* draw ticks and labels for Y axis */
