@@ -489,7 +489,7 @@ public class PCPCanvas extends BaseCanvas {
             ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
             ((PPrimPolygon)pp[j]).closed=false;
             ((PPrimPolygon)pp[j]).fill=false;
-            ((PPrimPolygon)pp[j]).selectByCorners=true;
+            //((PPrimPolygon)pp[j]).selectByCorners=true;
             ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
             ((PPrimPolygon)pp[j]).ref = new int[] {j};
             ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
@@ -513,6 +513,7 @@ public class PCPCanvas extends BaseCanvas {
             }
             ((PPrimPolygon)pp[j]).invisibleLines=nas;
             ((PPrimPolygon)pp[j]).gapDots=gap;
+            ((PPrimPolygon)pp[j]).setNoInterior();
         }
     }
     
