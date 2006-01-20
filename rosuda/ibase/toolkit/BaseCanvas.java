@@ -99,6 +99,9 @@ public class BaseCanvas
     /** if set to <code>true</code> don't paint objects on the margins defined by mLeft etc. */
     protected boolean objectClipping=false;
     
+    /** if set to <code>true</code> alpha will be applied to highlighting, too */
+    protected boolean alphaHighlighting=false;
+    
     protected float ppAlpha = 1.0f;
     
     /** arrays of additional axes that are updated upon resize. can be null */
@@ -264,6 +267,8 @@ public class BaseCanvas
         if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
             
+            if(alphaHighlighting) g.setGlobalAlpha(ppAlpha);
+            
             g.setColor(C_MARKED);
             int i = 0;
             while (i<pp.length) {
@@ -271,6 +276,7 @@ public class BaseCanvas
                     pp[i].paintSelected(g,orientation,m);
                 i++;
             }
+            if(alphaHighlighting) g.resetGlobalAlpha();
         }
         if(objectClipping) g.resetClip();
         sw.profile("BaseCanvas.paintSelected");
