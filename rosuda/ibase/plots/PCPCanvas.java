@@ -103,7 +103,7 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"@CIndividual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"Individual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MIdots=EzMenu.getItem(f,M_TOGGLEPTS);
