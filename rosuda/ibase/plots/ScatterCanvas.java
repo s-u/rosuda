@@ -29,6 +29,7 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_POINTSDOWN = "points-";
     static final String M_ALPHADOWN = "alphaDown";
     static final String M_ALPHAUP = "alphaUp";
+    static final String M_TRANSHIGHL = "transparentHighlighting";
     static final String C_OBJECTS = "objects";
     static final String C_RED = "red";
     /** array of two variables (X and Y) */
@@ -63,6 +64,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected MenuItem MIlabels=null;
     protected MenuItem MItrigraph=null;
+    protected MenuItem MItransHighl=null;
     
     protected int Y, TW,TH;
     
@@ -116,10 +118,11 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         
         if (Global.useAquaBg) fieldBg=2;
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate",M_ROTATE,"@0Reset zoom",M_RESETZOOM,"Same scale",M_EQUISCALE,M_MINUS,"@LHide labels",M_LABELS,"@TShorten labels",M_TRIGRAPH,"Change background",M_NEXTBG,"@JToggle jittering",M_JITTER,"!JToggle stacking",M_STACKJITTER,M_MINUS,"Set X Range ...",M_XRANGEDLG,"Set Y Range ...",M_YRANGEDLG,M_MINUS,"Bigger points (up)",M_POINTSUP,"Smaller points (down)",M_POINTSDOWN,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate",M_ROTATE,"@0Reset zoom",M_RESETZOOM,"Same scale",M_EQUISCALE,M_MINUS,"@LHide labels",M_LABELS,"@TShorten labels",M_TRIGRAPH,"Change background",M_NEXTBG,"@JToggle jittering",M_JITTER,"!JToggle stacking",M_STACKJITTER,M_MINUS,"Set X Range ...",M_XRANGEDLG,"Set Y Range ...",M_YRANGEDLG,M_MINUS,"Bigger points (up)",M_POINTSUP,"Smaller points (down)",M_POINTSDOWN,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MItrigraph=EzMenu.getItem(f,M_TRIGRAPH);
+        MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         if (!v1.isCat() && !v2.isCat())
             EzMenu.getItem(f,M_JITTER).setEnabled(false);
         objectClipping=true;
@@ -373,6 +376,11 @@ public class ScatterCanvas extends BaseCanvas {
         if (M_ALPHAUP.equals(cmd)) {
             ppAlpha+=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
+        }
+        if(M_TRANSHIGHL.equals(cmd)) {
+            alphaHighlighting=!alphaHighlighting;
+            MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
+            setUpdateRoot(1); repaint();
         }
         
         return null;

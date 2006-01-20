@@ -35,6 +35,7 @@ public class PCPCanvas extends BaseCanvas {
     static final String M_ALPHADOWN = "alphaDown";
     static final String M_ALPHAUP = "alphaUp";
     static final String M_AXIS = "axis";
+    static final String M_TRANSHIGHL = "transparentHighlighting";
     /** variables; 0=x, 1,2,3...=Y */
     SVar v[];
     
@@ -58,6 +59,7 @@ public class PCPCanvas extends BaseCanvas {
     MenuItem MInodeSizeUp=null;
     MenuItem MInodeSizeDown=null;
     MenuItem MIhideNAlines=null;
+    protected MenuItem MItransHighl=null;
     
     int nodeSize=2;
     
@@ -103,7 +105,7 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"Individual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"Individual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MIdots=EzMenu.getItem(f,M_TOGGLEPTS);
@@ -116,6 +118,7 @@ public class PCPCanvas extends BaseCanvas {
         MInodeSizeDown=EzMenu.getItem(f, M_NODESIZEDOWN);
         MInodeSizeUp.setEnabled(false);
         MIhideNAlines=EzMenu.getItem(f,M_HIDENALINES);
+        MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         dontPaint=false;
     }
     
@@ -438,6 +441,11 @@ public class PCPCanvas extends BaseCanvas {
             }
             MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
             setUpdateRoot(0); repaint();
+        }
+        if(M_TRANSHIGHL.equals(cmd)) {
+            alphaHighlighting=!alphaHighlighting;
+            MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
+            setUpdateRoot(1); repaint();
         }
         
         return null;
