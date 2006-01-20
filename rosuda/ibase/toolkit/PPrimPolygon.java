@@ -22,6 +22,7 @@ public class PPrimPolygon extends PPrimBase {
     static final String COL_OUTLINE = "outline";
     static final String COL_MARKED = "marked";
     public Polygon pg;
+    public Polygon pg_ni=null;
     
     public boolean drawBorder=true;
     public boolean useSelAlpha=true;
@@ -46,7 +47,7 @@ public class PPrimPolygon extends PPrimBase {
                 if(x==pg.xpoints[i] && y==pg.ypoints[i])
                     return true;
             return false;
-        } else return pg.contains(x,y);
+        } else return ((pg_ni==null)?pg:pg_ni).contains(x,y);
     }
     
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
@@ -57,7 +58,7 @@ public class PPrimPolygon extends PPrimBase {
                 if(rt.contains(pg.xpoints[i], pg.ypoints[i]))
                     return true;
             return false;
-        } else return pg.intersects(rt);
+        } else return ((pg_ni==null)?pg:pg_ni).intersects(rt);
     }
     
     /** paint the primitive */
@@ -171,5 +172,21 @@ public class PPrimPolygon extends PPrimBase {
     public void setNodeSize(final int nodeSize) {
         if(nodeSize>0)
             this.nodeSize = nodeSize;
+    }
+    
+    public void setNoInterior(){
+        if(pg==null) return;
+        int npoints = (pg.npoints-1)*2+1;
+        int[] xpoints = new int[npoints];
+        int[] ypoints = new int[npoints];
+        
+        System.arraycopy(pg.xpoints, 0, xpoints, 0, pg.npoints);
+        System.arraycopy(pg.ypoints, 0, ypoints, 0, pg.npoints);
+        for(int i=0; i<pg.npoints-1; i++){
+            xpoints[npoints-1-i] = pg.xpoints[i];
+            ypoints[npoints-1-i] = pg.ypoints[i];
+        }
+        
+        pg_ni = new Polygon(xpoints, ypoints, npoints);
     }
 }
