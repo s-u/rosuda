@@ -50,8 +50,8 @@ public class Common
     /** common background color when aqua-style background is used */
     public static Color aquaBgColor=new Color(230,230,240);
     /** common selection color (so far only BaseCanvas-based plots use this) */
-    //public static Color selectColor=new Color(255,0,0);
-    public static Color selectColor=new Color(128,255,128);
+    public static Color selectColor=new Color(255,0,0);
+    //public static Color selectColor=new Color(128,255,128);
     /** common objects color */
     public static Color objectsColor=new Color(255,255,255);
     /** if <code>true</code> no internal variables are created */
