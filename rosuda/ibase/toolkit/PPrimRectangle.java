@@ -55,17 +55,17 @@ public class PPrimRectangle extends PPrimBase {
 			if (sa>0d) {
 				hasAny=true;
 				if (orientation==0) { // bottom-up
-					rH=(int)(totH*sa);
-					rY=r.y+(int)(totH-totH*shift)-rH;
+					rH=(int)(totH*sa+0.5);
+					rY=r.y+(int)(totH-totH*shift+0.5)-rH;
 				} else if (orientation==2) { // top-down
-					rH=(int)(totH*sa);
-					rY=r.y+(int)(totH*shift);
+					rH=(int)(totH*sa+0.5);
+					rY=r.y+(int)(totH*shift+0.5);
 				} else if (orientation==1) { // left-right
-					rW=(int)(totW*sa);
-					rX=r.x+(int)(totW*shift);					
+					rW=(int)(totW*sa+0.5);
+					rX=r.x+(int)(totW*shift+0.5);					
 				} else if (orientation==3) { // right-left
-					rW=(int)(totW*sa);
-					rX=r.x+(int)(totW-totW*shift)-rW;
+					rW=(int)(totW*sa+0.5);
+					rX=r.x+(int)(totW-totW*shift+0.5)-rW;
 				}
 				shift+=sa;
 				if (mark==-1)
