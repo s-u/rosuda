@@ -385,7 +385,7 @@ public class PCPCanvas extends BaseCanvas {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
-                    final int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    final int cs[] = ((PPrimBase)pp[i]).getCaseIDs();
                     int j=0;
                     if (cs!=null)
                         while (j<cs.length)
@@ -400,7 +400,7 @@ public class PCPCanvas extends BaseCanvas {
                 int i=0;
                 while (i<pp.length) {
                     //System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
-                    final int cs[] = ((PPrimBase)pp[ax.getCatAtSeqIndex(i)]).getCaseIDs();
+                    final int cs[] = ((PPrimBase)pp[i]).getCaseIDs();
                     int j=0;
                     if (cs!=null)
                         while (j<cs.length)
