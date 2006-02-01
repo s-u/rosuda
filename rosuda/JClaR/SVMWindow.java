@@ -98,13 +98,16 @@ public final class SVMWindow extends ClassificationWindow {
         fvd.addSimpleChangeListener(new SimpleChangeListener(){
             public final void stateChanged(final SimpleChangeEvent evt){
                 fvd = (FixVariablesDialog)evt.getSource();
-                plotSVM(evt.getMessage()==SimpleChangeEvent.HARD_CHANGE);
+                if(showClassifiedPlot) plotClassifiedModel(evt.getMessage()==SimpleChangeEvent.HARD_CHANGE);
+                else plotSVM(evt.getMessage()==SimpleChangeEvent.HARD_CHANGE);
             }
         });
     }
     
     void updatePlot(final boolean doSnapshot, final int changeType){
         if(plot!=null){
+            if(showClassifiedPlot) svm.reclassify();
+            
             if (changeType!=CHANGE_TYPE_RESIZE) {
                 plot.createPlotCall(changeType==CHANGE_TYPE_HARD);
             }
@@ -192,6 +195,28 @@ public final class SVMWindow extends ClassificationWindow {
             }
         } else  {
             ErrorDialog.show(this,"SVM not trained yet.");
+        }
+        
+    }
+    
+    void plotClassifiedModel(final boolean hardChange){
+        if(svm.hasClassifiedData()){
+            if (!fvd.isShowing() && svm.getData().getNumberOfVariables()-1>2 && !restoring){
+                fvd.show();
+                return;
+            }
+            SVMClassificationPlot newPlot = new SVMClassificationPlot(svm, this, fvd, true);
+            adjustPlotToCheckBoxMenus(newPlot);
+            setPlot(newPlot);
+            newPlot.createPlotCall();
+            svm.setPlot(newPlot);
+            final java.awt.image.BufferedImage bi = plot.plot(getPreferredPlotSize());
+            if (bi!=null) {
+                setPlotGraphic(new ImageIcon(bi));
+                probablyDoSnapshot();
+            }
+        } else  {
+            ErrorDialog.show(this,"No classified data available.");
         }
         
     }
