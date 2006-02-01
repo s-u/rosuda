@@ -38,8 +38,14 @@ public interface Classifier {
     
     String getRname();
     
-    String classify(Data dataset);
+    void classify(Data dataset);
+    
+    void reclassify();
     
     int getNumber();
+    
+    String getClassifiedDataFrame();
+    
+    boolean hasClassifiedData();
 
 }
