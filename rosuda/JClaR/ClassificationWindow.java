@@ -35,11 +35,12 @@ import org.rosuda.JRclient.RSrvException;
  * @author tobias
  */
 public abstract class ClassificationWindow extends JFrame implements SimpleChangeListener, PreferenceChangeListener {
+    static final String ERM_NOTTRAINED = "Classifier not trained.";
     
     Classifier classifier;
     
     private Plot plot;
-    private RserveConnection rcon;
+    private final RserveConnection rcon;    
     
     private boolean noRecalc=false; //TODO: is this ever used?
     private SnapshotPanel snapPan = new SnapshotPanel();
@@ -58,6 +59,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     
     private SidePanel sidePanel;
     private PreferencesDialog prefd;
+    
+    boolean showClassifiedPlot=false;
     
     /**
      * Contains the subwindows that belong to this ClassificationWindow (e.g. the
@@ -119,25 +122,28 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         updateVisibleAmount();
         (new BorderLayout()).minimumLayoutSize(this);
         pack();
-        Dimension minSize=getMinimumSize();
+        final Dimension minSize=getMinimumSize();
         setSize(Math.max(740,minSize.width), Math.max(550,minSize.height));
         
         lockInMinSize(this);
     }
     
     private final void updateVisibleAmount(){
-        double newHorizontalVisibleAmount, newVerticalVisibleAmount, correction;
         
-        double zoom = ((Integer)spinZoom.getValue()).doubleValue()/100;
-        double d;
+        
+        final double zoom = ((Integer)spinZoom.getValue()).doubleValue()/100;
+        final double d;
         if(zoom<=1) d = 1.0/3;
         else d = 1/(2+1/zoom);
         
+        final double newHorizontalVisibleAmount;
         newHorizontalVisibleAmount = d*(scrPlotHorizontal.getMaximum()-scrPlotHorizontal.getMinimum());
+        double correction;
         correction = (scrPlotHorizontal.getVisibleAmount()-newHorizontalVisibleAmount)/2;
         scrPlotHorizontal.setVisibleAmount((int)Math.floor(newHorizontalVisibleAmount));
         scrPlotHorizontal.setValue((int)Math.floor(scrPlotHorizontal.getValue()+correction+0.5));
         
+        final double newVerticalVisibleAmount;
         newVerticalVisibleAmount = d*(scrPlotVertical.getMaximum()-scrPlotVertical.getMinimum());
         correction = (scrPlotVertical.getVisibleAmount()-newVerticalVisibleAmount)/2;
         scrPlotVertical.setVisibleAmount((int)Math.floor(newVerticalVisibleAmount));
@@ -180,6 +186,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     
     abstract void plotClassifier(boolean hardChange);
     
+    abstract void plotClassifiedModel(boolean hardChange);
+    
     
     
     private final void showConfusionMatrix(){
@@ -196,7 +204,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             }
             confMxDialog.show();
         } else {
-            ErrorDialog.show(this,"Classifier not trained.");
+            ErrorDialog.show(this,ERM_NOTTRAINED);
         }
         
     }
@@ -211,14 +219,14 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         pack();
     }
     
-    void addDisplayMenuItem(Component mitem){
+    void addDisplayMenuItem(final Component mitem){
         m_Display.add(mitem);
     }
     
-    private void classify(Data dataset){
-        String result = classifier.classify(dataset);
-        if(result!=null){
-            DataFileSaveDialog dfsd = new DataFileSaveDialog(this, result, Main.getLast_directory());
+    private void classify(final Data dataset){
+        classifier.classify(dataset);
+        if(classifier.hasClassifiedData()){
+            m_DisplayClassifiedPlot.setEnabled(true);
         }
     }
     
@@ -233,6 +241,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private void initComponents() {
         bgrKernels = new javax.swing.ButtonGroup();
         brgTypes = new javax.swing.ButtonGroup();
+        buttonGroup1 = new javax.swing.ButtonGroup();
         panPlots = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         lblPlot = new javax.swing.JLabel();
@@ -253,6 +262,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_DisplayConfusionMatrix = new javax.swing.JCheckBoxMenuItem();
         m_DisplayDataInPlot = new javax.swing.JCheckBoxMenuItem();
         m_DisplaySnapshots = new javax.swing.JCheckBoxMenuItem();
+        m_DisplayTrainingPlot = new javax.swing.JRadioButtonMenuItem();
+        m_DisplayClassifiedPlot = new javax.swing.JRadioButtonMenuItem();
         m_Snapshots = new javax.swing.JMenu();
         m_SnapshotsDoSnapshots = new javax.swing.JCheckBoxMenuItem();
 
@@ -398,6 +409,28 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
 
         m_Display.add(m_DisplaySnapshots);
 
+        buttonGroup1.add(m_DisplayTrainingPlot);
+        m_DisplayTrainingPlot.setSelected(true);
+        m_DisplayTrainingPlot.setText("plot training data");
+        m_DisplayTrainingPlot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_DisplayTrainingPlotActionPerformed(evt);
+            }
+        });
+
+        m_Display.add(m_DisplayTrainingPlot);
+
+        buttonGroup1.add(m_DisplayClassifiedPlot);
+        m_DisplayClassifiedPlot.setText("plot classified data");
+        m_DisplayClassifiedPlot.setEnabled(false);
+        m_DisplayClassifiedPlot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_DisplayClassifiedPlotActionPerformed(evt);
+            }
+        });
+
+        m_Display.add(m_DisplayClassifiedPlot);
+
         jMenuBar2.add(m_Display);
 
         m_Snapshots.setMnemonic('s');
@@ -415,14 +448,30 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     }
     // </editor-fold>//GEN-END:initComponents
     
+    private void m_DisplayClassifiedPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplayClassifiedPlotActionPerformed
+        if(m_DisplayClassifiedPlot.isSelected() && !showClassifiedPlot){
+            showClassifiedPlot=true;
+            plot=null;
+            plotClassifiedModel(true);
+        }
+    }//GEN-LAST:event_m_DisplayClassifiedPlotActionPerformed
+    
+    private void m_DisplayTrainingPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplayTrainingPlotActionPerformed
+        if(m_DisplayTrainingPlot.isSelected() && showClassifiedPlot){
+            showClassifiedPlot=false;
+            plot=null;
+            plotClassifier(true);
+        }
+    }//GEN-LAST:event_m_DisplayTrainingPlotActionPerformed
+    
     private void m_ClassifyDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_ClassifyDataActionPerformed
         if(!classifier.isReady()){
-            ErrorDialog.show(this, "Classifier not trained.");
+            ErrorDialog.show(this, ERM_NOTTRAINED);
             return;
         }
-        ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
+        final ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
         cdd.show();
-        Data dataset = cdd.getSelectedDataset();
+        final Data dataset = cdd.getSelectedDataset();
         if (dataset!=null){
             classify(dataset);
         }
@@ -495,7 +544,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
                 plot.saveAs(sad.getSelectedFile());
             }
         } else  {
-            ErrorDialog.show(this,"SVM not plotted yet.");
+            ErrorDialog.show(this,"No plot available.");
         }
         
     }//GEN-LAST:event_butSavePlotActionPerformed
@@ -514,7 +563,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     
     private final void butPlotActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butPlotActionPerformed
         //TODO: not always true! not always hardChange!
-        plotClassifier(true);
+        if(showClassifiedPlot) plotClassifiedModel(true);
+        else plotClassifier(true);
     }//GEN-LAST:event_butPlotActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -522,6 +572,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private javax.swing.ButtonGroup brgTypes;
     private javax.swing.JButton butPlot;
     private javax.swing.JButton butSavePlot;
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
@@ -529,9 +580,11 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private javax.swing.JLabel lblZoom;
     private javax.swing.JMenuItem m_ClassifyData;
     private javax.swing.JMenu m_Display;
+    private javax.swing.JRadioButtonMenuItem m_DisplayClassifiedPlot;
     private javax.swing.JCheckBoxMenuItem m_DisplayConfusionMatrix;
     private javax.swing.JCheckBoxMenuItem m_DisplayDataInPlot;
     private javax.swing.JCheckBoxMenuItem m_DisplaySnapshots;
+    private javax.swing.JRadioButtonMenuItem m_DisplayTrainingPlot;
     private javax.swing.JMenu m_File;
     private javax.swing.JMenuItem m_FileClose;
     private javax.swing.JMenuItem m_FileExit;
@@ -589,7 +642,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     /**
      * Sets plot fields according to checkBoxMenus' states.
      */
-    void adjustPlotToCheckBoxMenus(Plot newPlot){
+    void adjustPlotToCheckBoxMenus(final Plot newPlot){
         newPlot.setShowDataInPlot(m_DisplayDataInPlot.getState());
     }
     
@@ -601,7 +654,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         this.prefd = prefd;
     }
     
-    public void preferenceChange(java.util.prefs.PreferenceChangeEvent evt) {
+    public void preferenceChange(final java.util.prefs.PreferenceChangeEvent evt) {
         if(plot!=null && plot instanceof ContourPlot)
             ((ContourPlot)plot).setGrid(prefd.getGrid());
         updatePlot(false, CHANGE_TYPE_HARD);
