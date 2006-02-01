@@ -52,6 +52,13 @@ public final class Data implements Cloneable {
         Rname="d" + this.hashCode();
     }
     
+    /** Creates a java object for the riven R dataset */
+    Data(String rData){
+        rcon=RserveConnection.getRconnection();
+        Rname = rData;
+        update();
+    }
+    
     void removeNAs(){
         // remove rows with NAs as they would be ignored by svm anyway
         try{
