@@ -121,12 +121,12 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
     private void setData(final Data data, final int varPos){
         // estimating default values for FixVariablesDialog
         // uses median and 1/3*standard deviation
-        final int numVars = data.getNumberOfVariables()-1;
+        final int numVars = data.getNumberOfVariables() - ((varPos>=0)?1:0);
         final double[] values = new double[numVars];
         final double[] deviations = new double[numVars];
         for (int i=0; i<numVars;i++){
             int j=i+1;
-            if (i>=varPos)  {
+            if (varPos>=0 && i>=varPos)  {
                 j++;
             }
             
@@ -135,12 +135,12 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
                 values[i] = rcon.eval("as.double(median(" + data.getRname() + "[," + j + "]))").asDouble();
                 deviations[i] = rcon.eval("as.double(sd(" + data.getRname() + "[," + j + "])/3)").asDouble();
             } catch (RSrvException rse){
-                ErrorDialog.show(this,"Rserve exception in SVM.createPlot(Frame): "+rse.getMessage());
+                ErrorDialog.show(this,"Rserve exception in FixVariablesDialog.setData(Data,int): "+rse.getMessage());
             }
         }
         
         final Vector variables = new Vector(data.getVariables());
-        variables.remove(varPos);
+        if(varPos>=0) variables.remove(varPos);
         
         final Vector dataVector = new Vector(variables.size());
         for(int i=0; i<variables.size(); i++){
