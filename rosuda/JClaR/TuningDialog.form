@@ -23,6 +23,14 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butBackActionPerformed"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JButton" name="butSavePlot">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Save plot"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="butSavePlotActionPerformed"/>
+              </Events>
+            </Component>
             <Component class="javax.swing.JButton" name="butOK">
               <Properties>
                 <Property name="text" type="java.lang.String" value="OK"/>

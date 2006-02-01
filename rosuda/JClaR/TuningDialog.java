@@ -34,6 +34,8 @@ public final class TuningDialog extends javax.swing.JDialog {
     private int type;
     private int kernel;
     
+    private Plot plot;
+    
     /**
      * Creates new form TuningDialog
      * @param parent The parent frame of this dialog. If parent is of class MainWindow, the values are transferred.
@@ -50,7 +52,7 @@ public final class TuningDialog extends javax.swing.JDialog {
         initComponents();
         
         this.type=type;
-        this.kernel=kernel;        
+        this.kernel=kernel;
         
         panCost = new DoubleTuneVariablePanel();
         panCost.setVariableName("Cost");
@@ -110,6 +112,7 @@ public final class TuningDialog extends javax.swing.JDialog {
         panMain2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         butBack = new javax.swing.JButton();
+        butSavePlot = new javax.swing.JButton();
         butOK = new javax.swing.JButton();
         jcbSetparam = new javax.swing.JCheckBox();
         jtaResult = new javax.swing.JTextArea();
@@ -131,6 +134,15 @@ public final class TuningDialog extends javax.swing.JDialog {
         });
 
         jPanel3.add(butBack);
+
+        butSavePlot.setText("Save plot");
+        butSavePlot.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                butSavePlotActionPerformed(evt);
+            }
+        });
+
+        jPanel3.add(butSavePlot);
 
         butOK.setText("OK");
         butOK.addActionListener(new java.awt.event.ActionListener() {
@@ -201,6 +213,17 @@ public final class TuningDialog extends javax.swing.JDialog {
     }
     // </editor-fold>//GEN-END:initComponents
     
+    private void butSavePlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butSavePlotActionPerformed
+        if(plot!=null){
+            final SaveAsDialog sad = new SaveAsDialog();
+            if(sad.showSaveAsDialog(SaveAsDialog.EXTENSIONS_PLOT)) {
+                plot.saveAs(sad.getSelectedFile());
+            }
+        } else  {
+            ErrorDialog.show(this,"SVM not plotted yet.");
+        }
+    }//GEN-LAST:event_butSavePlotActionPerformed
+    
     private void butHelpActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butHelpActionPerformed
         HelpDialog.show(this,"fixed: The variable will not be tuned but fixed at the given value.\n" +
                 "tune: The variable will be tuned within the given ranges in steps with size \"by\".");
@@ -267,9 +290,13 @@ public final class TuningDialog extends javax.swing.JDialog {
         getContentPane().add(panMain2);
         
         if(tune.getNumberOfTunedParameters()<=2) {
-            lblPlot.setIcon(new ImageIcon(tune.plot().plot(375,375)));
+            plot=tune.plot();
+            lblPlot.setIcon(new ImageIcon(plot.plot(375,375)));
             lblPlot.setPreferredSize(new Dimension(375,375));
-        } else lblPlot.setPreferredSize(new Dimension(0,0));
+        } else {
+            plot=null;
+            lblPlot.setPreferredSize(new Dimension(0,0));
+        }
         
         jtaResult.setPreferredSize(new Dimension(375,(int)jtaResult.getMinimumSize().getHeight()));
         
@@ -329,6 +356,7 @@ public final class TuningDialog extends javax.swing.JDialog {
     private javax.swing.JButton butCancel;
     private javax.swing.JButton butHelp;
     private javax.swing.JButton butOK;
+    private javax.swing.JButton butSavePlot;
     private javax.swing.JButton butTune;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
