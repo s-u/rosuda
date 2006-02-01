@@ -22,10 +22,28 @@ public abstract class ContourPlot extends Plot {
     private double horizontalShift=0;
     private double verticalShift=0;
     
+    final String GRIDNAME,SLICENAME,FORMULANAME,NAMESNAME,PALETTENAME;
+    String DATANAME,CLASSIFIERNAME,ORIGDATANAME;
+    
     ContourPlot(Classifier cl){
         super();
         setClassifier(cl);
+        if(cl!=null) CLASSIFIERNAME = cl.getRname();
         setGrid(50);
+        
+        if(cl==null) {
+            GRIDNAME="grid"+hashCode();
+            SLICENAME="slice"+hashCode();
+            FORMULANAME="formula"+hashCode();
+            NAMESNAME="names"+hashCode();
+            PALETTENAME="palette"+hashCode();
+        } else {
+            GRIDNAME="grid"+cl.getRname();
+            SLICENAME="slice"+cl.getRname();
+            FORMULANAME="formula"+cl.getRname();
+            NAMESNAME="names"+cl.getRname();
+            PALETTENAME="palette"+cl.getRname();
+        }
     }
     
     int getGrid() {
@@ -36,7 +54,7 @@ public abstract class ContourPlot extends Plot {
         this.grid = grid;
         RserveConnection rcon = RserveConnection.getRconnection();
         try{
-            rcon.voidEval("grid" + getClassifier().getRname() + " <- " + grid);
+            rcon.voidEval(GRIDNAME + " <- " + grid);
         } catch (RSrvException rse){
             ErrorDialog.show(parent,rse, "setGrid(int)");
         }
@@ -65,34 +83,34 @@ public abstract class ContourPlot extends Plot {
      * The R code is based on function plot.svm from R package e1071.
      */
     void calculateBackground(){
-        String clRname = getClassifier().getRname();
+        String clRname = CLASSIFIERNAME;
         try{
-            rcon.voidEval("if (is.null(formula" + clRname + "))\n" +
+            rcon.voidEval("if (is.null(" + FORMULANAME + "))\n" +
                     "stop(\"missing formula.\")");
-            rcon.voidEval("sub" + clRname + " <- model.frame(formula" + clRname + ", data" + clRname + ")");
+            rcon.voidEval("sub" + clRname + " <- model.frame(" + FORMULANAME + ", " + ORIGDATANAME + ")");
             rcon.voidEval("zoom" + clRname + " <- " + zoom);
             rcon.voidEval("horShift" + clRname + " <- " + horizontalShift);
             rcon.voidEval("verShift" + clRname + " <- " + verticalShift);
             if(zoom<=1){
-                rcon.voidEval("xr" + clRname + " <- seq((1/2-horShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), (1/2-horShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), length = grid" + clRname + ")");
-                rcon.voidEval("yr" + clRname + " <- seq((1/2-verShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), (1/2-verShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), length = grid" + clRname + ")");
+                rcon.voidEval("xr" + clRname + " <- seq((1/2-horShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), (1/2-horShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), length = " + GRIDNAME + ")");
+                rcon.voidEval("yr" + clRname + " <- seq((1/2-verShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), (1/2-verShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), length = " + GRIDNAME + ")");
             } else{
-                rcon.voidEval("xr" + clRname + " <- seq((1/2-horShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), (1/2-horShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), length = grid" + clRname + ")");
-                rcon.voidEval("yr" + clRname + " <- seq((1/2-verShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), (1/2-verShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), length = grid" + clRname + ")");
+                rcon.voidEval("xr" + clRname + " <- seq((1/2-horShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), (1/2-horShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 2])+(1/2+horShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 2]), length = " + GRIDNAME + ")");
+                rcon.voidEval("yr" + clRname + " <- seq((1/2-verShift" + clRname + "-1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "+1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), (1/2-verShift" + clRname + "+1/(2*zoom" + clRname + "))*max(sub" + clRname + "[, 1])+(1/2+verShift" + clRname + "-1/(2*zoom" + clRname + "))*min(sub" + clRname + "[, 1]), length = " + GRIDNAME + ")");
             }
-            rcon.voidEval("l" + clRname + " <- length(slice" + clRname + ")");
-            rcon.voidEval("if (l" + clRname + " < ncol(data" + clRname + ") - 3) {\n" +
-                    "slnames" + clRname + " <- names(slice" + clRname + ")\n" +
-                    "slice" + clRname + " <- c(slice" + clRname + ", rep(list(0), ncol(data" + clRname + ") - 3 - \n" +
+            rcon.voidEval("l" + clRname + " <- length(" + SLICENAME + ")");
+            rcon.voidEval("if (l" + clRname + " < ncol(" + DATANAME + ") - 3) {\n" +
+                    "slnames" + clRname + " <- names(" + SLICENAME + ")\n" +
+                    SLICENAME + " <- c(" + SLICENAME + ", rep(list(0), ncol(" + DATANAME + ") - 3 - \n" +
                     "l" + clRname + "))\n" +
-                    "names" + clRname + " <- labels(delete.response(terms(" + clRname + ")))\n" +
-                    "names(slice" + clRname + ") <- c(slnames" + clRname + ", names[!names" + clRname + " %in%\n" +
+                    NAMESNAME + " <- labels(delete.response(terms(" + CLASSIFIERNAME + ")))\n" +
+                    "names(" + SLICENAME + ") <- c(slnames" + clRname + ", names[!" + NAMESNAME + " %in%\n" +
                     " c(colnames(sub" + clRname + "), slnames" + clRname + ")])\n" +
                     "}");
-            rcon.voidEval("lis" + clRname + " <- c(list(yr" + clRname + "), list(xr" + clRname + "), slice" + clRname + ")");
+            rcon.voidEval("lis" + clRname + " <- c(list(yr" + clRname + "), list(xr" + clRname + "), " + SLICENAME + ")");
             rcon.voidEval("names(lis" + clRname + ")[1:2] <- colnames(sub" + clRname + ")");
-            rcon.voidEval("new" + clRname + " <- expand.grid(lis" + clRname + ")[, labels(terms(" + clRname + "))]");
-            rcon.voidEval("preds" + clRname + " <- predict(" + clRname + ", new" + clRname + ")");
+            rcon.voidEval("new" + clRname + " <- expand.grid(lis" + clRname + ")[, labels(terms(" + CLASSIFIERNAME + "))]");
+            rcon.voidEval("preds" + clRname + " <- predict(" + CLASSIFIERNAME + ", new" + clRname + ")");
         } catch (RSrvException rse){
             ErrorDialog.show(parent,rse, "ContourPlot.calculateBackground()");
         }
@@ -103,7 +121,7 @@ public abstract class ContourPlot extends Plot {
             if (!"".equals(sliceOpt)) {
                 rcon.voidEval(sliceOpt);
             } else {
-                rcon.voidEval("slice" + getClassifier().getRname() + " <- list()");
+                rcon.voidEval(SLICENAME + " <- list()");
             }
         } catch (RSrvException rse){
             ErrorDialog.show(parent,rse, "ContourPlot.createSlice()");
@@ -122,19 +140,18 @@ public abstract class ContourPlot extends Plot {
      * The R code is based on function plot.svm from R package e1071.
      */
     void setPlotCall(){
-        String clRname = getClassifier().getRname();
-        setPlotCall("filled.contour(xr" + clRname + ", yr" + clRname + ", matrix(as.numeric(preds" + clRname + "),\n" +
-                "nr = length(xr" + clRname + "), byrow = TRUE), plot.axes = {\n" +
+        setPlotCall("filled.contour(xr" + CLASSIFIERNAME + ", yr" + CLASSIFIERNAME + ", matrix(as.numeric(preds" + CLASSIFIERNAME + "),\n" +
+                "nr = length(xr" + CLASSIFIERNAME + "), byrow = TRUE), plot.axes = {\n" +
                 "axis(1)\n" +
                 "axis(2)\n" +
-                "colind <- as.numeric(model.response(model.frame(" + clRname + ",\n" +
-                "data" + clRname + ")))\n" +
+                "colind <- as.numeric(model.response(model.frame(" + CLASSIFIERNAME + ",\n" +
+                ORIGDATANAME + ")))\n" +
                 getDataOpt() +
-                "}, levels = 1:(length(" + clRname + "$levels)+1), \n" +
-                " key.axes = axis(4, 1:length(" + clRname + "$levels) + 0.5,\n" +
-                "labels = abbreviate(" + clRname + "$levels, minlength=7), las = 3),\n" +
+                "}, levels = 1:(length(" + CLASSIFIERNAME + "$levels)+1), \n" +
+                " key.axes = axis(4, 1:length(" + CLASSIFIERNAME + "$levels) + 0.5,\n" +
+                "labels = abbreviate(" + CLASSIFIERNAME + "$levels, minlength=7), las = 3),\n" +
                 "plot.title = title(main = \"SVM classification plot\",\n" +
-                " xlab = names(lis" + clRname + ")[2], ylab = names(lis" + clRname + ")[1]),color.palette=palette" + clRname + ")");
+                " xlab = names(lis" + CLASSIFIERNAME + ")[2], ylab = names(lis" + CLASSIFIERNAME + ")[1]),color.palette=" + PALETTENAME + ")");
     }
     
     private String getDataOpt() {
