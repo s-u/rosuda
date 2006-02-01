@@ -22,6 +22,7 @@ public final class SVM implements Classifier {
     
     private RserveConnection rcon;
     private Data data;
+    private Data classificationData;
     
     private int number;
     
@@ -56,6 +57,8 @@ public final class SVM implements Classifier {
     private int[] confusionMatrix;
     private Vector classNames;
     
+    private String CLASSIFICATIONRESULTNAME;
+    
     /** Creates a new instance of SVM */
     SVM(final Data data, final int variablePos) {
         if(data!=null){
@@ -70,6 +73,20 @@ public final class SVM implements Classifier {
             Rname = "m" + this.hashCode();
             gamma = 1/(data.getNumberOfVariables()-1.0);
         }
+    }
+    
+    /** Creates a dummy SVM to plot classified data */
+    SVM(final Data data, final String classification, final SVM svm) {
+        rcon=RserveConnection.getRconnection();
+        Rname = "m" + this.hashCode();
+        try{
+            rcon.voidEval("d" + Rname + " <- data.frame(" + data.getRname() + "," + classification + ")");
+            rcon.voidEval(Rname + " <- " + svm.getRname()); //TODO: this creates a copy of the original SVM. not necessary!!!
+        } catch (RSrvException rse){
+            //TODO CATCH
+        }
+        Data nData = new Data("d" + Rname);
+        setData(nData, nData.getNumberOfVariables()-1);
     }
     
     public void setData(final Data newData, final int newVariablePos){
@@ -526,20 +543,35 @@ public final class SVM implements Classifier {
             ErrorDialog.show(parent, rse, "SVM.createSnapshot()");
         }
     }
-
+    
     public boolean isReady() {
         return getTrained();
     }
-
-    public String classify(Data dataset) {
-        String resultsRname = "pred" + dataset.getRname() + getRname();
+    
+    public void classify(Data dataset) {
+        if(dataset==null) return;
+        if (CLASSIFICATIONRESULTNAME==null) CLASSIFICATIONRESULTNAME = "pred" + dataset.getRname() + getRname();
         try{
-            rcon.voidEval(resultsRname +  " <- predict(" + getRname() + "," + dataset.getRname() + ")");
+            rcon.voidEval(CLASSIFICATIONRESULTNAME +  " <- data.frame(" + getVariableName() + "=predict(" + getRname() + "," + dataset.getRname() + "))");
         } catch(RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.classify(Data)");
-            return null;
         }
-        return resultsRname;
+        classificationData=dataset;
+    }
+    
+    public String getClassifiedDataFrame() {
+        if(CLASSIFICATIONRESULTNAME!=null)
+            return "data.frame(" + classificationData.getRname() + "," + CLASSIFICATIONRESULTNAME + ")";
+        else
+            return null;
+    }
+    
+    public boolean hasClassifiedData() {
+        return classificationData!=null;
+    }
+
+    public void reclassify() {
+        classify(classificationData);
     }
     
     private static final class Snapshot implements SVMSnapshotIF {
@@ -551,7 +583,7 @@ public final class SVM implements Classifier {
         public Data data;
         public SVMClassificationPlot plot;
         public String Rname;
-                
+        
         public Snapshot(){
             Rname = "snap" + hashCode();
         }
@@ -600,5 +632,5 @@ public final class SVM implements Classifier {
             return thumbnail;
         }
     }
-
+    
 }
