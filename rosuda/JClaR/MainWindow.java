@@ -75,10 +75,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
     }
     
     private void classify(Data data, Classifier classifier){
-        String result = classifier.classify(data);
-        if(result!=null){
-            DataFileSaveDialog dfsd = new DataFileSaveDialog(this, result, Main.getLast_directory());
-        }
+        classifier.classify(data);
     }
     
     private Data openDataset(){
@@ -131,7 +128,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         
         dataTM.setDataVector(datasets, dataVector, columnNamesData);
     }
-
+    
     public void classifiersChanged() {
         Vector classifiers = ClassifierManager.getClassifiers();
         Vector dataVector = new Vector(classifiers.size());
@@ -277,11 +274,11 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
-
+    
     private void m_FileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileExitActionPerformed
         System.exit(0);
     }//GEN-LAST:event_m_FileExitActionPerformed
-
+    
     private void butClassifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butClassifyActionPerformed
         classify((Data)dataTM.getObjectAt(tblDatasets.getSelectedRow()),
                 (Classifier)classifierTM.getObjectAt(tblClassifiers.getSelectedRow()));
