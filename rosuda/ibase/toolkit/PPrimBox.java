@@ -19,6 +19,9 @@ public class PPrimBox extends PPrimBase {
     static final String COL_SELFILL = "selfill";
     static final String COL_SEL = "sel";
     
+    // radius of outliers
+    static final int RADOUTL = 5;
+    
     Rectangle r;
     
     public int med,uh,lh,uh15,lh15;
@@ -56,8 +59,10 @@ public class PPrimBox extends PPrimBase {
         g.setColor(COL_BLACK);
         g.drawRect(x,uh,
                 w,lh-uh);
+        g.setLineWidth(1.5f);
         g.drawLine(x,med,
                 x+w,med);
+        g.setLineWidth(1.0f);
         g.drawLine(x,uh15,
                 x+w,uh15);
         g.drawLine(x,lh15,
@@ -70,18 +75,18 @@ public class PPrimBox extends PPrimBase {
         while(i>=0) {
             final double val=lastR[i];
             if (val<lh3)
-                g.drawOval(x+w/2-2,valPos[i]-2,3,3);
+                g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(x+w/2-1,valPos[i]-1,2,2);
+                g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i--;
         }
         i=highEdge;
         while(i<lastTop) {
             final double val=lastR[i];
             if (val>uh3)
-                g.drawOval(x+w/2-2,valPos[i]-2,3,3);
+                g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(x+w/2-1,valPos[i]-1,2,2);
+                g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i++;
         }
     }
@@ -97,8 +102,10 @@ public class PPrimBox extends PPrimBase {
         g.setColor(COL_SEL);
         g.drawRect(sx,suh,
                 sw,slh-suh);
+        g.setLineWidth(1.5f);
         g.drawLine(sx,smed,
                 sx+sw,smed);
+        g.setLineWidth(1.0f);
         g.drawLine(sx,suh15,
                 sx+sw,suh15);
         g.drawLine(sx,slh15,
@@ -111,18 +118,18 @@ public class PPrimBox extends PPrimBase {
         while(i>=0) {
             final double val=slastR[i];
             if (val<slh3)
-                g.drawOval(sx+sw/2-2,svalPos[i]-2,3,3);
+                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(sx+sw/2-1,svalPos[i]-1,2,2);
+                g.fillRect(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i--;
         }
         i=shighEdge;
         while(i<slastTop) {
             final double val=slastR[i];
             if (val>suh3)
-                g.drawOval(sx+sw/2-2,svalPos[i]-2,3,3);
+                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(sx+sw/2-1,svalPos[i]-1,2,2);
+                g.fillRect(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i++;
         }
     }
