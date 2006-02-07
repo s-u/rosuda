@@ -66,12 +66,14 @@ public class ScatterCanvas extends BaseCanvas {
     protected MenuItem MItrigraph=null;
     protected MenuItem MItransHighl=null;
     
-    protected int Y, TW,TH;
+    protected int Y,W,H, TW,TH;
     
     protected int []filter=null;
     
     protected boolean querying=false;
     protected int qx,qy;
+    
+    protected boolean zoomRetainsAspect=false;
     
     private final int standardMLeft=40;
     
@@ -83,10 +85,10 @@ public class ScatterCanvas extends BaseCanvas {
     protected class ComparablePoint implements Comparable{
         int x,y;
         
-        public ComparablePoint(final int x,final int y){this.x=x;this.y=y;}
+        public ComparablePoint(int x,int y){this.x=x;this.y=y;}
         
-        public int compareTo(final Object o) {
-            final ComparablePoint p = (ComparablePoint) o;
+        public int compareTo(Object o) {
+            ComparablePoint p = (ComparablePoint) o;
             if(x<p.x || (x==p.x && y<p.y)) return -1;
             if(x==p.x && y==p.y) return 0;
             else return 1;
@@ -98,10 +100,8 @@ public class ScatterCanvas extends BaseCanvas {
      * @param v1 variable 1
      * @param v2 variable 2
      * @param mark associated marker */
-    public ScatterCanvas(final PlotComponent ppc, final Frame f, final SVar v1, final SVar v2, final SMarker mark) {
+    public ScatterCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark) {
         super(ppc,f,mark);
-        
-        zoomRetainsAspect=false;
         
         mLeft=standardMLeft;
         mBottom=30;
@@ -113,10 +113,10 @@ public class ScatterCanvas extends BaseCanvas {
         ay=new Axis(v[1],Axis.O_Y,v[1].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
         if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())/20,(v[1].getMax()-v[1].getMin())*1.1);
-        if (!v[0].isCat() && Math.abs((v[0].getMax()-v[0].getMin())) < 0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
-        if (!v[1].isCat() && Math.abs((v[1].getMax()-v[1].getMin())) < 0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
+        if (!v[0].isCat() && v[0].getMax()-v[0].getMin()==0) ax.setValueRange(v[0].getMin()-0.5,1);
+        if (!v[1].isCat() && v[1].getMax()-v[1].getMin()==0) ay.setValueRange(v[1].getMin()-0.5,1);
         drag=false;
-        
+        MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
         final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate",M_ROTATE,"@0Reset zoom",M_RESETZOOM,"Same scale",M_EQUISCALE,M_MINUS,"@LHide labels",M_LABELS,"@TShorten labels",M_TRIGRAPH,"Change background",M_NEXTBG,"@JToggle jittering",M_JITTER,"!JToggle stacking",M_STACKJITTER,M_MINUS,"Set X Range ...",M_XRANGEDLG,"Set Y Range ...",M_YRANGEDLG,M_MINUS,"Bigger points (up)",M_POINTSUP,"Smaller points (down)",M_POINTSDOWN,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
@@ -124,44 +124,41 @@ public class ScatterCanvas extends BaseCanvas {
         MItrigraph=EzMenu.getItem(f,M_TRIGRAPH);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         if (!v1.isCat() && !v2.isCat())
-            EzMenu.getItem(f,M_JITTER).setEnabled(false);
+            EzMenu.getItem(f,"jitter").setEnabled(false);
         objectClipping=true;
         dontPaint=false;
     }
     
-    public SVar getData(final int id) { return (id<0||id>1)?null:v[id]; }
+    public SVar getData(int id) { return (id<0||id>1)?null:v[id]; }
     
-    public void setFilter(final int[] f) {
+    public void setFilter(int[] f) {
         filter=f;
         setUpdateRoot(1);
         repaint();
     };
     
-    public void setFilter(final Vector v) {
-        if (v==null) { filter=null; return; }
+    public void setFilter(Vector v) {
+        if (v==null) { filter=null; return; };
         filter=new int[v.size()];
-        int j=0; while(j<v.size()) { filter[j]=((Integer)v.elementAt(j)).intValue(); j++; }
+        int j=0; while(j<v.size()) { filter[j]=((Integer)v.elementAt(j)).intValue(); j++; };
     };
     
     public void rotate() {
         try {
             ((Frame) pc.getParent()).setTitle("Scatterplot ("+v[(orientation+1)&1].getName()+" vs "+v[orientation&1].getName()+")");
-        } catch (Exception ee) {}
+        } catch (Exception ee) {};
     };
     
     // clipping warnings
     boolean hasLeft, hasTop, hasRight, hasBot;
     
     public void updateObjects() {
-        final Dimension Dsize=pc.getSize();
-        final int w=Dsize.width;
-        final int h=Dsize.height;
+        Dimension Dsize=pc.getSize();
+        int w=Dsize.width, h=Dsize.height;
         TW=w; TH=h;
-        
-        final int innerW=w-mLeft-mRight;
-        final int innerH=h-mBottom-mTop;
-
-        
+        int lshift=0;
+        int innerW=w-mLeft-mRight, innerH=h-mBottom-mTop;
+        boolean xcat=v[0].isCat(), ycat=v[1].isCat();
         
         ((orientation==0)?ax:ay).setGeometry(Axis.O_X,mLeft,W=innerW);
         ((orientation==0)?ay:ax).setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
@@ -174,22 +171,20 @@ public class ScatterCanvas extends BaseCanvas {
         
         sortedPoints = new TreeMap();
         for (int i=0;i<pts;i++) {
-            int jx = 0;
+            int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jx=(int)(d*(ax.getCatLow(v[0].getCatIndex(i))-ax.getCasePos(i)));
+                jx=(int)(d*((double)(ax.getCatLow(v[0].getCatIndex(i))-ax.getCasePos(i))));
             }
-            int jy = 0;
             if (v[1].isCat() && jitter && !stackjitter) {
                 double d=Math.random()-0.5; d=Math.tan(d*2.5)/4.0;
-                jy=(int)(d*(ay.getCatLow(v[1].getCatIndex(i))-ay.getCasePos(i)));
+                jy=(int)(d*((double)(ay.getCatLow(v[1].getCatIndex(i))-ay.getCasePos(i))));
             }
             if ((!v[0].isMissingAt(i) || v[0].isCat()) && (!v[1].isMissingAt(i) || v[1].isCat())) {
-                final int x=jx+ax.getCasePos(i);
-                final int y=jy+ay.getCasePos(i);
+                int x=jx+ax.getCasePos(i),y=jy+ay.getCasePos(i);
                 //pp[i]=null;
-                final int oX = (orientation==0)?x:y;
-                final int oY = (orientation==0)?y:x;
+                int oX = (orientation==0)?x:y;
+                int oY = (orientation==0)?y:x;
                 if (oX<mLeft) hasLeft=true;
                 else if (oY<mTop) hasTop=true;
                 else if (oX>w-mRight) hasRight=true;
@@ -210,7 +205,7 @@ public class ScatterCanvas extends BaseCanvas {
                     }*/
                     PPrimCircle p;
                     if((p=(PPrimCircle)sortedPoints.get(new ComparablePoint(x,y)))!=null){
-                        final int[] newRef = new int[p.ref.length+1];
+                        int[] newRef = new int[p.ref.length+1];
                         System.arraycopy(p.ref, 0, newRef, 0, p.ref.length);
                         newRef[p.ref.length] = i;
                         p.ref=newRef;
@@ -229,11 +224,10 @@ public class ScatterCanvas extends BaseCanvas {
                     }
                 }
             } else { // place missings on the other side of the axes
-                int x;
+                int x,y;
                 if (v[0].isMissingAt(i)) x=mLeft-4; else x=jx+ax.getCasePos(i);
-                int y;
                 if (v[1].isMissingAt(i)) y=h-mBottom+4; else y=jy+ay.getCasePos(i);
-                final PPrimCircle p=new PPrimCircle();
+                PPrimCircle p=new PPrimCircle();
                 if(orientation==0){
                     p.x = x;
                     p.y = y;
@@ -244,12 +238,12 @@ public class ScatterCanvas extends BaseCanvas {
                 p.diam = ptDiam;
                 p.ref = new int[] {i};
             }
-        }
+        };
         pp = new PlotPrimitive[sortedPoints.values().size()];
         sortedPoints.values().toArray(pp);
     };
     
-    public void keyPressed(final KeyEvent e) {
+    public void keyPressed(KeyEvent e) {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT && !querying) {
@@ -275,14 +269,14 @@ public class ScatterCanvas extends BaseCanvas {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
         }*/
         if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
-            run(this,M_ALPHAUP);
+            run(this,"alphaUp");
         }
         if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-            run(this,M_ALPHADOWN);
+            run(this,"alphaDown");
         }
     };
     
-    public void keyReleased(final KeyEvent e) {
+    public void keyReleased(KeyEvent e) {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_ALT) {
@@ -292,28 +286,25 @@ public class ScatterCanvas extends BaseCanvas {
         }
     };
     
-    public Object run(final Object o, final String cmd) {
+    public Object run(Object o, String cmd) {
         super.run(o,cmd);
-        if (M_LABELS.equals(cmd)) {
+        if (cmd=="labels") {
             showLabels=!showLabels;
             MIlabels.setLabel((showLabels)?"Hide labels":"Show labels");
             setUpdateRoot(0);
             repaint();
-        }
-        if (M_ROTATE.equals(cmd)) rotate();
-        if (M_POINTSUP.equals(cmd)) {
+        };
+        if (cmd=="rotate") rotate();
+        if (cmd=="points+") {
             ptDiam+=2; setUpdateRoot(0); repaint();
         }
-        if (M_POINTSDOWN.equals(cmd) && ptDiam>2) {
+        if (cmd=="points-" && ptDiam>2) {
             ptDiam-=2; setUpdateRoot(0); repaint();
         }
-        if (M_EQUISCALE.equals(cmd)) {
-            final double sfx;
-            sfx=((double)ax.gLen)/ax.vLen; final double usfx;
-            usfx=(sfx<0)?-sfx:sfx;
-            final double sfy;
-            sfy=((double)ay.gLen)/ay.vLen; final double usfy;
-            usfy=(sfy<0)?-sfy:sfy;
+        if (cmd=="equiscale") {
+            double sfx,sfy, usfx,usfy;
+            sfx=((double)ax.gLen)/ax.vLen; usfx=(sfx<0)?-sfx:sfx;
+            sfy=((double)ay.gLen)/ay.vLen; usfy=(sfy<0)?-sfy:sfy;
             if (usfx<usfy) {
                 ay.setValueRange(ay.vBegin,ay.vLen*(usfy/usfx));
             } else {
@@ -323,35 +314,33 @@ public class ScatterCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-        if (M_YRANGEDLG.equals(cmd) || M_XRANGEDLG.equals(cmd)) {
-            final Axis axis=(M_YRANGEDLG.equals(cmd))?ay:ax;
-            final Dialog d=intDlg=new Dialog(myFrame,(M_YRANGEDLG.equals(cmd))?"Y range":"X range",true);
-            
+        if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
+            Axis axis=(cmd=="YrangeDlg")?ay:ax;
+            Dialog d=intDlg=new Dialog(myFrame,(cmd=="YrangeDlg")?"Y range":"X range",true);
+            IDlgCL ic=new IDlgCL(this);
             d.setBackground(Color.white);
             d.setLayout(new BorderLayout());
             d.add(new SpacingPanel(),BorderLayout.WEST);
             d.add(new SpacingPanel(),BorderLayout.EAST);
-            final Panel bp=new Panel(); bp.setLayout(new FlowLayout());
-            final Button b;
-            bp.add(b=new Button("OK"));final Button b2;
-            bp.add(b2=new Button("Cancel"));
+            Panel bp=new Panel(); bp.setLayout(new FlowLayout());
+            Button b,b2;
+            bp.add(b=new Button("OK"));bp.add(b2=new Button("Cancel"));
             d.add(bp,BorderLayout.SOUTH);
             d.add(new Label(" "),BorderLayout.NORTH);
-            final Panel cp=new Panel(); cp.setLayout(new FlowLayout());
+            Panel cp=new Panel(); cp.setLayout(new FlowLayout());
             d.add(cp);
             cp.add(new Label("start: "));
-            final TextField tw=new TextField(""+axis.vBegin,6);
-            final TextField th=new TextField(""+(axis.vBegin+axis.vLen),6);
+            TextField tw=new TextField(""+axis.vBegin,6);
+            TextField th=new TextField(""+(axis.vBegin+axis.vLen),6);
             cp.add(tw);
             cp.add(new Label(", end: "));
             cp.add(th);
             d.pack();
-            final IDlgCL ic = new IDlgCL(this);
             b.addActionListener(ic);b2.addActionListener(ic);
             d.setVisible(true);
             if (!cancel) {
-                final double w=Tools.parseDouble(tw.getText());
-                final double h=Tools.parseDouble(th.getText());
+                double w=Tools.parseDouble(tw.getText());
+                double h=Tools.parseDouble(th.getText());
                 axis.setValueRange(w,h-w);
                 updateObjects();
                 setUpdateRoot(0);
@@ -359,21 +348,21 @@ public class ScatterCanvas extends BaseCanvas {
             }
             d.dispose();
         }
-        if (M_NEXTBG.equals(cmd)) { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); }
-        if (M_RESETZOOM.equals(cmd)) { resetZoom(); repaint(); }
-        if (M_JITTER.equals(cmd)) {
+        if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
+        if (cmd=="resetZoom") { resetZoom(); repaint(); }
+        if (cmd=="jitter") {
             jitter=!jitter; updateObjects(); setUpdateRoot(1); repaint();
         }
-        if (M_STACKJITTER.equals(cmd)) {
+        if (cmd=="stackjitter") {
             if (!jitter) jitter=true;
             stackjitter=!stackjitter; updateObjects(); setUpdateRoot(1); repaint();
         }
-        if (M_TRIGRAPH.equals(cmd)) { useX3=!useX3; MItrigraph.setLabel(useX3?"Expand labels":"Shorten labels"); setUpdateRoot(0); repaint(); }
-        if (M_ALPHADOWN.equals(cmd)) {
+        if (cmd=="trigraph") { useX3=!useX3; MItrigraph.setLabel(useX3?"Expand labels":"Shorten labels"); setUpdateRoot(0); repaint(); }
+        if (cmd=="alphaDown") {
             ppAlpha-=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha<0.005f) ppAlpha=0.005f;
             setUpdateRoot(0); repaint();
         }
-        if (M_ALPHAUP.equals(cmd)) {
+        if (cmd=="alphaUp") {
             ppAlpha+=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha>1f) ppAlpha=1f;
             setUpdateRoot(0); repaint();
         }
@@ -386,16 +375,16 @@ public class ScatterCanvas extends BaseCanvas {
         return null;
     }
     
-    public void paintBack(final PoGraSS g) {
-        g.defineColor(C_OBJECTS,Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
-        g.defineColor(C_RED,255,0,0);
+    public void paintBack(PoGraSS g) {
+        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
+        g.defineColor("red",255,0,0);
         
         /* determine maximal y label length */
         int maxLabelLength=0;
         {
-            final int ori = (orientation==0)?1:0;
-            final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(30,18);
+            int ori = (orientation==0)?1:0;
+            Axis axis = (orientation==0)?ay:ax;
+            double f=axis.getSensibleTickDistance(30,18);
             double fi=axis.getSensibleTickStart(f);
             try {
                 while (fi<axis.vBegin+axis.vLen) {
@@ -409,44 +398,44 @@ public class ScatterCanvas extends BaseCanvas {
             }
         }
         
-        final int omLeft=mLeft;
+        int omLeft=mLeft;
         if(maxLabelLength*8>standardMLeft){
             mLeft = maxLabelLength*8+2;
         } else mLeft=standardMLeft;
         if(mLeft!=omLeft) updateObjects();
         
-        final Dimension Dsize=pc.getSize();
+        Dimension Dsize=pc.getSize();
         if (Dsize.width!=TW || Dsize.height!=TH || mLeft!=omLeft)
             updateObjects();
         
         if (TW<50||TH<50) {
-            g.setColor(C_RED);
+            g.setColor("red");
             g.drawLine(0,0,TW,TH);
             g.drawLine(0,TH,TW,0);
             return;
-        }
+        };
         
         if (fieldBg!=0) {
-            g.setColor((fieldBg==1)?"white":C_OBJECTS);
+            g.setColor((fieldBg==1)?"white":"objects");
             g.fillRect(mLeft,Y,W,H);
         }
         
-        g.setColor(C_BLACK);
+        g.setColor("black");
         g.drawLine(mLeft,Y,mLeft,Y+H);
         g.drawLine(mLeft,Y+H,mLeft+W,Y+H);
         
         labels.clear();
         /* draw ticks and labels for X axis */
         {
-            final int ori = (orientation==0)?0:1;
-            final Axis axis = (orientation==0)?ax:ay;
-            final double f=axis.getSensibleTickDistance(50,26);
+            int ori = (orientation==0)?0:1;
+            Axis axis = (orientation==0)?ax:ay;
+            double f=axis.getSensibleTickDistance(50,26);
             double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
                 System.out.println("SP.A[0]:"+axis.toString()+", distance="+f+", start="+fi);
             try {
                 while (fi<axis.vBegin+axis.vLen) {
-                    final int t=axis.getValuePos(fi);
+                    int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
                         labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?((useX3)?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):
@@ -460,15 +449,15 @@ public class ScatterCanvas extends BaseCanvas {
         
         /* draw ticks and labels for Y axis */
         {
-            final int ori = (orientation==0)?1:0;
-            final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(30,18);
+            int ori = (orientation==0)?1:0;
+            Axis axis = (orientation==0)?ay:ax;
+            double f=axis.getSensibleTickDistance(30,18);
             double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
                 System.out.println("SP.A[1]:"+ay.toString()+", distance="+f+", start="+fi);
             try {
                 while (fi<axis.vBegin+axis.vLen) {
-                    final int t=axis.getValuePos(fi);
+                    int t=axis.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
                     if(showLabels){
                         if(v[ori].isCat())
@@ -490,32 +479,32 @@ public class ScatterCanvas extends BaseCanvas {
             int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
                 dx2=A[0].clip(x2),dy2=A[1].clip(y2);
              */ int dx1=x1, dx2=x2, dy1=y1, dy2=y2;
-             if (dx1>dx2) { final int h=dx1; dx1=dx2; dx2=h; }
-             if (dy1>dy2) { final int h=dy1; dy1=dy2; dy2=h; }
+             if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
+             if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
              if (zoomDrag)
                  g.setColor("aDragBg");
              else
                  g.setColor("aSelBg");
              g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-             g.setColor(C_BLACK);
+             g.setColor("black");
              g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-        }
+        };
         
     }
     
-    public String queryObject(final int i) {
+    public String queryObject(int i) {
         return queryObject(pp[i]);
     }
     
-    public String queryObject(final PlotPrimitive p) {
-        final PPrimCircle ppc = (PPrimCircle)p;
+    public String queryObject(PlotPrimitive p) {
+        PPrimCircle ppc = (PPrimCircle)p;
         if(ppc.ref.length==1){
             return v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
                     + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
                     + ppc.ref.length + " case(s)";
         } else{
-            final double[] mM0 = minMax(ppc.ref,0);
-            final double[] mM1 = minMax(ppc.ref,1);
+            double[] mM0 = minMax(ppc.ref,0);
+            double[] mM1 = minMax(ppc.ref,1);
             return v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
                     + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
                     + ppc.ref.length + " case(s)";
@@ -523,20 +512,20 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     /* TODO: Maybe this can be done faster with the sortedPoints map */
-    private double[] minMax(final int[] ref, final int var){
-        final double mM[] = new double[2];
+    private double[] minMax(int[] ref, int var){
+        double mM[] = new double[2];
         mM[0] = mM[1] = v[var].atD(ref[0]);
         for(int i=1; i<ref.length; i++){
-            final double atD=v[var].atD(ref[i]);
+            double atD=v[var].atD(ref[i]);
             if(atD<mM[0]) mM[0]=atD;
             if(atD>mM[1]) mM[1]=atD;
         }
         return mM;
     }
     
-    public void paintPost(final PoGraSS g) {
+    public void paintPost(PoGraSS g) {
         if (querying) {
-            g.setColor(C_BLACK);
+            g.setColor("black");
             if((orientation&1) == 0){ // no rotation or 180°
                 if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
                     g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
@@ -560,25 +549,25 @@ public class ScatterCanvas extends BaseCanvas {
      * things easier and faster here but more difficult for the user, so this
      * should be changed in the future.
      */
-    protected PlotPrimitive getFirstPrimitiveContaining(final int x, final int y) {
+    protected PlotPrimitive getFirstPrimitiveContaining(int x, int y) {
         return (PlotPrimitive)sortedPoints.get(new ComparablePoint(x,y));
     }
     
     /* TODO: see remark above */
-    protected PlotPrimitive[] getPrimitivesContaining(final int x, final int y) {
+    protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
         return new PlotPrimitive[] {getFirstPrimitiveContaining(x,y)};
     }
     
-    protected PlotPrimitive[] getPrimitivesIntersecting(final Rectangle rec) {
-        final Object[] obj = sortedPoints.subMap(new ComparablePoint(rec.x, rec.y), new ComparablePoint(rec.x+rec.width, rec.y+rec.height)).values().toArray();
-        final PPrimCircle[] plp = new PPrimCircle[obj.length];
+    protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec) {
+        Object[] obj = sortedPoints.subMap(new ComparablePoint(rec.x, rec.y), new ComparablePoint(rec.x+rec.width, rec.y+rec.height)).values().toArray();
+        PPrimCircle[] plp = new PPrimCircle[obj.length];
         int j=0;
         PPrimCircle ppc;
         for(int i=0; i< obj.length; i++) {
             ppc=(PPrimCircle)obj[i];
             if(ppc!=null && ppc.y>=rec.y && ppc.y<=rec.y+rec.height) plp[j++]=ppc;
         }
-        final PlotPrimitive[] ret = new PlotPrimitive[j];
+        PlotPrimitive[] ret = new PlotPrimitive[j];
         System.arraycopy(plp,0, ret,0, j);
         return ret;
     }
