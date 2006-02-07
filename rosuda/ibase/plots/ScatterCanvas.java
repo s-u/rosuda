@@ -553,9 +553,15 @@ public class ScatterCanvas extends BaseCanvas {
         return (PlotPrimitive)sortedPoints.get(new ComparablePoint(x,y));
     }
     
-    /* TODO: see remark above */
     protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
-        return new PlotPrimitive[] {getFirstPrimitiveContaining(x,y)};
+        PlotPrimitive[] pps=getPrimitivesIntersecting(new Rectangle(x-ptDiam/2,y-ptDiam/2, ptDiam,ptDiam));
+        for(int i=0; i<pps.length; i++){
+            final PPrimCircle ppc = (PPrimCircle)pps[i];
+            final int px = ppc.x-x;
+            final int py = ppc.y-y;
+            if(px*px+py*py > ptDiam*ptDiam/4) pps[i]=null;
+        }
+        return pps;
     }
     
     protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec) {
