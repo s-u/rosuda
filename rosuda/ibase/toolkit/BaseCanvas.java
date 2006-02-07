@@ -345,11 +345,12 @@ public class BaseCanvas
                         }
                     } else {
                         final PlotPrimitive[] pps = getPrimitivesContaining(x,y);
+                        if (selMode==0) m.selectNone();
                         int i=0;
                         while (i<pps.length) {
                             if (pps[i]!=null) {
                                 effect=true;
-                                if (selMode==0) m.selectNone();
+                                
                                 pps[i].setMark(m,setTo);
                             }
                             i++;
