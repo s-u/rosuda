@@ -345,7 +345,10 @@ public class BaseCanvas
                         }
                     } else {
                         final PlotPrimitive[] pps = getPrimitivesContaining(x,y);
-                        if (selMode==0) m.selectNone();
+                        if (selMode==0){
+                            m.selectNone();
+                            effect=true;
+                        }
                         int i=0;
                         while (i<pps.length) {
                             if (pps[i]!=null) {
@@ -355,6 +358,7 @@ public class BaseCanvas
                             }
                             i++;
                         }
+                        if(!effect) m.selectNone();
                     }
                 }
             }
