@@ -559,13 +559,22 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     protected PlotPrimitive[] getPrimitivesIntersecting(Rectangle rec) {
-        Object[] obj = sortedPoints.subMap(new ComparablePoint(rec.x, rec.y), new ComparablePoint(rec.x+rec.width, rec.y+rec.height)).values().toArray();
+        int x=(orientation==0)?rec.x:rec.y;
+        int y=(orientation==0)?rec.y:rec.x;
+        int w=(orientation==0)?rec.width:rec.height;
+        int h=(orientation==0)?rec.height:rec.width;
+        Object[] obj = sortedPoints.subMap(new ComparablePoint(x, y), new ComparablePoint(x+w, y+h)).values().toArray();
         PPrimCircle[] plp = new PPrimCircle[obj.length];
         int j=0;
         PPrimCircle ppc;
         for(int i=0; i< obj.length; i++) {
             ppc=(PPrimCircle)obj[i];
-            if(ppc!=null && ppc.y>=rec.y && ppc.y<=rec.y+rec.height) plp[j++]=ppc;
+            if(orientation==0){
+                if(ppc!=null && ppc.y>=rec.y && ppc.y<=rec.y+rec.height) plp[j++]=ppc;
+            } else{
+                if(ppc!=null && ppc.x>=rec.x && ppc.x<=rec.x+rec.width) plp[j++]=ppc;
+            }
+                    
         }
         PlotPrimitive[] ret = new PlotPrimitive[j];
         System.arraycopy(plp,0, ret,0, j);
