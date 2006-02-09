@@ -27,6 +27,7 @@ public class BaseCanvas
     static final String C_OBJECT = "object";
     static final String M_PRINT = "print";
     static final String M_EXPORTCASES = "exportCases";
+    protected static final String M_RESETZOOM = "resetZoom";
     /** query popup window */
     protected QueryPopup qi;
     
@@ -678,6 +679,9 @@ public class BaseCanvas
                     }
                 } catch (Exception eee) {}
             }
+        }
+        if(M_RESETZOOM.equals(cmd)){
+            resetZoom();
         }
         return null;
     };
