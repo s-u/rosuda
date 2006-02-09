@@ -105,7 +105,7 @@ public class PCPCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         pc.setBackground(Common.backgroundColor);
         
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"Individual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
+        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_MINUS,"Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@HReset zoom",M_RESETZOOM,"@LHide labels",M_LABELS,"@TShorten lables",M_TRIGRAPH,M_SHOWDOTS,M_TOGGLEPTS,"Increase dot size (up)",M_NODESIZEUP,"Decrease dot size (down)",M_NODESIZEDOWN,M_SHOWAXES,M_TOGGLEAXES,M_HIDELINES,M_TOGGLELINES,"@NHide NA lines",M_HIDENALINES,M_MINUS,"Individual scales",M_COMMON,M_MINUS,"Set Y Range ...",M_YRANGEDLG,"!SShow scale dialog",M_SCALEDLG,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MIdots=EzMenu.getItem(f,M_TOGGLEPTS);
@@ -123,7 +123,7 @@ public class PCPCanvas extends BaseCanvas {
     }
     
     public void setCommonScale(final boolean cs) {
-        if (cs==commonScale) return;
+        if(cs==commonScale) return;
         commonScale=cs;
         EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
@@ -211,7 +211,7 @@ public class PCPCanvas extends BaseCanvas {
             while (fi<ax.vBegin+ax.vLen) {
                 valuePoss[i] = ax.getValuePos(fi);
                 labs[i] = v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):
-                        v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
+                    v[0].getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
                 fi+=f;
                 i++;
             }
@@ -314,6 +314,7 @@ public class PCPCanvas extends BaseCanvas {
             MIlines.setLabel((drawLines)?M_HIDELINES:"Show lines");
             for(int i=0; i<pp.length; i++){
                 ((PPrimPolygon)pp[i]).drawBorder=drawLines;
+                ((PPrimPolygon)pp[i]).selectByCorners=!drawLines;
             }
             MIdots.setEnabled(!drawPoints||drawLines);
             MIlines.setEnabled(drawPoints||!drawLines);
@@ -489,10 +490,11 @@ public class PCPCanvas extends BaseCanvas {
             ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
             ((PPrimPolygon)pp[j]).closed=false;
             ((PPrimPolygon)pp[j]).fill=false;
-            //((PPrimPolygon)pp[j]).selectByCorners=true;
+            ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
             ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
             ((PPrimPolygon)pp[j]).ref = new int[] {j};
             ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
+            ((PPrimPolygon)pp[j]).drawBorder=drawLines;
             ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
             final boolean[] nas = new boolean[xs[j].length];
             final boolean[] gap = new boolean[xs[j].length];
@@ -605,5 +607,38 @@ public class PCPCanvas extends BaseCanvas {
         }
     }
     
+    public void resetZoom() {
+        if(commonScale) super.resetZoom();
+        else{
+            // this regenerates the y axes instead of resetting the ranges... quick and dirty...
+            int i=0;
+            while (i<opAy.length) {
+                opAy[i]=new Axis(v[i+2],Axis.O_Y,v[i+2].isCat()?Axis.T_EqCat:Axis.T_Num);
+                opAy[i].addDepend(this);
+                i++;
+            }
+            
+            updateGeometry=true;
+            ay.setDefaultRange();
+            updateObjects();
+            setUpdateRoot(0); repaint();
+        }
+    }
     
+    public String queryObject(PlotPrimitive p) {
+        
+        String retValue="";
+        
+        for(int i=1; i<v.length; i++){
+            retValue += v[i].getName() + ": " 
+                    + ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
+            
+        }
+        
+        return retValue;
+    }
+    
+    public String queryObject(int i) {
+        return queryObject(pp[i]);
+    }
 };
