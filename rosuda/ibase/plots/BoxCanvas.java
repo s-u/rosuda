@@ -168,7 +168,7 @@ public class BoxCanvas extends BaseCanvas {
                 }
             }
         }
-        final String myMenu[]={M_PLUS,M_FILE,M_FILE__GRAPH,M_EDIT,M_PLUS,"View","@RRotate","rotate",M_WINDOW,M_0};
+        final String myMenu[]={M_PLUS,M_FILE,M_FILE__GRAPH,M_EDIT,M_PLUS,"View","@RRotate","rotate","@HReset zoom",M_RESETZOOM,M_WINDOW,M_0};
         EzMenu.getEzMenu(f,this,myMenu);
         objectClipping=true;
         dontPaint=false;
