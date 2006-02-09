@@ -42,12 +42,14 @@ public class PPrimPolygon extends PPrimBase {
     /** checks whether the PlotPrimitive contains the given point.*/
     public boolean contains(final int x, final int y) {
         if(pg==null) return false;
-        if(selectByCorners){
+        if(drawCorners){
             for(int i=0; i<pg.npoints; i++)
-                if(x==pg.xpoints[i] && y==pg.ypoints[i])
+                if((x-pg.xpoints[i])*(x-pg.xpoints[i])+(y-pg.ypoints[i])*(y-pg.ypoints[i]) <= nodeSize*nodeSize)
                     return true;
-            return false;
-        } else return ((pg_ni==null)?pg:pg_ni).contains(x,y);
+        }
+        if(drawBorder)
+            return ((pg_ni==null)?pg:pg_ni).contains(x,y);
+        return false;
     }
     
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
