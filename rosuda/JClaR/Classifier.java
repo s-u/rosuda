@@ -1,8 +1,10 @@
 package org.rosuda.JClaR;
+import java.io.File;
+import java.io.Serializable;
 import java.util.Vector;
 
 
-public interface Classifier {
+public interface Classifier extends Serializable {
 
     SVMSnapshotIF createSnapshot();
 
@@ -47,5 +49,7 @@ public interface Classifier {
     String getClassifiedDataFrame();
     
     boolean hasClassifiedData();
+    
+    void saveClassifiedDataAs(File file);
 
 }
