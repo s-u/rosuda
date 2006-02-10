@@ -6,6 +6,8 @@
  */
 
 package org.rosuda.JClaR;
+
+import org.rosuda.JRclient.RFileOutputStream;
 import org.rosuda.JRclient.RFileInputStream;
 import org.rosuda.JRclient.REXP;
 import java.io.BufferedReader;
@@ -214,5 +216,9 @@ public final class RserveConnection {
 
     static String getLastRcall() {
         return lastRcall;
+    }
+
+    public RFileOutputStream createFile(String str) throws IOException {
+        return rcon.createFile(str);
     }
 }
