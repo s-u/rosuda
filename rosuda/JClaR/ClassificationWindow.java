@@ -15,17 +15,20 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.util.Enumeration;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 import java.util.prefs.PreferenceChangeListener;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
-import org.rosuda.JRclient.RSrvException;
+
 
 
 
@@ -40,7 +43,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     Classifier classifier;
     
     private Plot plot;
-    private final RserveConnection rcon;    
+    private final RserveConnection rcon;
     
     private boolean noRecalc=false; //TODO: is this ever used?
     private SnapshotPanel snapPan = new SnapshotPanel();
@@ -227,6 +230,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         classifier.classify(dataset);
         if(classifier.hasClassifiedData()){
             m_DisplayClassifiedPlot.setEnabled(true);
+            m_FileSaveClassifiedData.setEnabled(true);
         }
     }
     
@@ -255,6 +259,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         jMenuBar2 = new javax.swing.JMenuBar();
         m_File = new javax.swing.JMenu();
         m_ClassifyData = new javax.swing.JMenuItem();
+        m_FileSaveModel = new javax.swing.JMenuItem();
+        m_FileSaveClassifiedData = new javax.swing.JMenuItem();
         m_FilePreferences = new javax.swing.JMenuItem();
         m_FileClose = new javax.swing.JMenuItem();
         m_FileExit = new javax.swing.JMenuItem();
@@ -341,6 +347,26 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         });
 
         m_File.add(m_ClassifyData);
+
+        m_FileSaveModel.setText("Save classification model...");
+        m_FileSaveModel.setEnabled(false);
+        m_FileSaveModel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_FileSaveModelActionPerformed(evt);
+            }
+        });
+
+        m_File.add(m_FileSaveModel);
+
+        m_FileSaveClassifiedData.setText("Save classified data");
+        m_FileSaveClassifiedData.setEnabled(false);
+        m_FileSaveClassifiedData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_FileSaveClassifiedDataActionPerformed(evt);
+            }
+        });
+
+        m_File.add(m_FileSaveClassifiedData);
 
         m_FilePreferences.setMnemonic('p');
         m_FilePreferences.setText("Preferences");
@@ -447,6 +473,45 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         pack();
     }
     // </editor-fold>//GEN-END:initComponents
+    
+    private void m_FileSaveClassifiedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileSaveClassifiedDataActionPerformed
+        JFileChooser jfc = new JFileChooser(Main.getLast_directory());
+        int status = jfc.showSaveDialog(this);
+        File file=null;
+        if(status==jfc.ERROR_OPTION){
+            ErrorDialog.show(null, "An error occured with the file save dialog.");
+            return;
+        } else if(status==jfc.CANCEL_OPTION){
+            return;
+        } else {
+            file = jfc.getSelectedFile();
+        }
+        
+        classifier.saveClassifiedDataAs(file);
+    }//GEN-LAST:event_m_FileSaveClassifiedDataActionPerformed
+    
+    private void m_FileSaveModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileSaveModelActionPerformed
+        JFileChooser jfc = new JFileChooser(Main.getLast_directory());
+        int status = jfc.showSaveDialog(this);
+        File file=null;
+        if(status==jfc.ERROR_OPTION){
+            ErrorDialog.show(null, "An error occured with the file save dialog.");
+            return;
+        } else if(status==jfc.CANCEL_OPTION){
+            return;
+        } else {
+            file = jfc.getSelectedFile();
+        }
+        
+        try{
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(classifier);
+        } catch(IOException e){
+            e.printStackTrace();
+            ErrorDialog.show(this, "Error writing model: " + e.getMessage() + ", " + e.getCause());
+        }
+    }//GEN-LAST:event_m_FileSaveModelActionPerformed
     
     private void m_DisplayClassifiedPlotActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplayClassifiedPlotActionPerformed
         if(m_DisplayClassifiedPlot.isSelected() && !showClassifiedPlot){
@@ -589,6 +654,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     private javax.swing.JMenuItem m_FileClose;
     private javax.swing.JMenuItem m_FileExit;
     private javax.swing.JMenuItem m_FilePreferences;
+    private javax.swing.JMenuItem m_FileSaveClassifiedData;
+    private javax.swing.JMenuItem m_FileSaveModel;
     private javax.swing.JMenu m_Snapshots;
     private javax.swing.JCheckBoxMenuItem m_SnapshotsDoSnapshots;
     private javax.swing.JPanel panPlots;
