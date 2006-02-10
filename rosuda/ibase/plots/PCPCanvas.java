@@ -630,8 +630,12 @@ public class PCPCanvas extends BaseCanvas {
         String retValue="";
         
         for(int i=1; i<v.length; i++){
-            retValue += v[i].getName() + ": " 
-                    + ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
+            retValue += v[i].getName() + ": ";
+            if(v[i].isCat()){
+                    retValue += v[i].getCatAt((int)((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1])) + "\n";
+            } else{
+                    retValue += ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
+            }
             
         }
         
