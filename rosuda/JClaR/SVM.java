@@ -619,12 +619,8 @@ public final class SVM implements Classifier {
     }
     
     public void saveClassifiedDataAs(File file) {
-        String path=file.getPath();
-        if (File.separatorChar == '\\')  {
-            path = path.replace('\\', '/');
-        }
         try{
-            rcon.voidEval("write.table(" + getClassifiedDataFrame() + ",file='" + path + "')");
+            rcon.writeTable(getClassifiedDataFrame(),file);
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "saveClassifiedDataAs(File)");
         }

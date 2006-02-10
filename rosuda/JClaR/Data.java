@@ -140,7 +140,7 @@ public final class Data implements Cloneable {
     
     private void saveAs(final File newFile){
         try{
-            rcon.voidEval("write.table(" + Rname + ",file='" + newFile.getAbsolutePath() + "',quote=FALSE,sep=',')");
+            rcon.writeTable(Rname,newFile, ",quote=FALSE,sep=',')");
         } catch(RSrvException rse) {
             switch(rse.getRequestReturnCode()){
                 case RserveConnection.RERROR_OTHER:

@@ -23,7 +23,7 @@ import org.rosuda.JRclient.Rconnection;
  * @author tobias
  */
 public final class RserveConnection {
-   
+    
     private static final int RERROR_SYNTAX = 3;
     static final int RERROR_OTHER = 127;
     
@@ -210,15 +210,27 @@ public final class RserveConnection {
     
     private void syntaxError(String rcall){
         ErrorDialog.show(null,"Syntax error in R command. Please report this to the developer.\n" +
-                "Error occured on evaluating\n\n" + 
+                "Error occured on evaluating\n\n" +
                 rcall);
     }
-
+    
     static String getLastRcall() {
         return lastRcall;
     }
-
+    
     public RFileOutputStream createFile(String str) throws IOException {
         return rcon.createFile(str);
+    }
+    
+    public void writeTable(String data, File file) throws RSrvException {
+        writeTable(data, file, "");
+    }
+    
+    public void writeTable(String data, File file, String options) throws RSrvException {
+        String path=file.getPath();
+        if (File.separatorChar == '\\')  {
+            path = path.replace('\\', '/');
+        }
+        voidEval("write.table(" + data + ",file='" + path + "'" + options + ")");
     }
 }
