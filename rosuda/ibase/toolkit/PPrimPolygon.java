@@ -47,8 +47,18 @@ public class PPrimPolygon extends PPrimBase {
                 if((x-pg.xpoints[i])*(x-pg.xpoints[i])+(y-pg.ypoints[i])*(y-pg.ypoints[i]) <= nodeSize*nodeSize)
                     return true;
         }
-        if(drawBorder)
-            return ((pg_ni==null)?pg:pg_ni).contains(x,y);
+        if(drawBorder){
+            for(int i=1; i<pg.npoints; i++){
+                int my,My;
+                my=Math.min(pg.ypoints[i-1],pg.ypoints[i]);
+                My=Math.max(pg.ypoints[i-1],pg.ypoints[i]);
+                if(x>=pg.xpoints[i-1] && x<=pg.xpoints[i] && y>=my && y<=My){
+                    double t = (double)(x-pg.xpoints[i-1]) / (pg.xpoints[i]-pg.xpoints[i-1]);
+                    double ydiff = Math.abs(pg.ypoints[i-1] + t*(pg.ypoints[i]-pg.ypoints[i-1]) - y);
+                    if(ydiff<=1) return true;
+                }
+            }
+        }
         return false;
     }
     
