@@ -7,8 +7,16 @@
 package org.rosuda.JClaR;
 
 import java.awt.Component;
+import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Enumeration;
 import java.util.Vector;
 import javax.swing.ImageIcon;
+import org.rosuda.JRclient.REXP;
+import org.rosuda.JRclient.RFileInputStream;
+import org.rosuda.JRclient.RFileOutputStream;
 import org.rosuda.JRclient.RSrvException;
 
 
@@ -20,19 +28,19 @@ public final class SVM implements Classifier {
     
     //TODO: Better plots! Noone will know what the crosses and circles in those different colours mean.
     
-    private RserveConnection rcon;
-    private Data data;
-    private Data classificationData;
+    private transient RserveConnection rcon;
+    private transient Data data;
+    private transient Data classificationData;
     
     private int number;
     
     private boolean trained=false;
-    private ClassificationWindow svmwindow;
+    private transient ClassificationWindow svmwindow;
     
-    private SVMClassificationPlot plot;
+    private transient SVMClassificationPlot plot;
     
     //TODO: necesarry?
-    private Component parent;
+    private transient Component parent;
     
     private String Rname;
     private int variablePos; //which data column was selected (starts at 0)
@@ -163,7 +171,11 @@ public final class SVM implements Classifier {
             
             if(!trained){
                 try{
-                    classNames =  rcon.eval(Rname + "$levels").asVector();
+                    Vector classNamesREXP = rcon.eval(Rname + "$levels").asVector();
+                    classNames = new Vector(classNamesREXP.size());
+                    for(Enumeration en = classNamesREXP.elements(); en.hasMoreElements();){
+                        classNames.add(((REXP)en.nextElement()).asString());
+                    }
                 } catch (RSrvException rse) {
                     ErrorDialog.show(parent, rse, "SVM.train()");
                 }
@@ -569,9 +581,53 @@ public final class SVM implements Classifier {
     public boolean hasClassifiedData() {
         return classificationData!=null;
     }
-
+    
     public void reclassify() {
         classify(classificationData);
+    }
+    
+    private void writeObject(ObjectOutputStream s) throws IOException {
+        s.defaultWriteObject();
+        
+        try{
+            rcon.voidEval("save(" + Rname + ",file='model')");
+            RFileInputStream rfis = rcon.openFile("model");
+            byte[] b = new byte[rfis.available()];
+            rfis.read(b);
+            s.writeObject(b);
+        } catch (RSrvException rse){
+            ErrorDialog.show(parent, rse, "writeObject(ObjectOutputStream)");
+        }
+        // private transient SVMClassificationPlot plot;?
+    }
+    
+    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException  {
+        s.defaultReadObject();
+        
+        rcon=RserveConnection.getRconnection();
+        
+        byte[] b = (byte[])s.readObject();
+        RFileOutputStream rfos = rcon.createFile("model");
+        rfos.write(b);
+        try{
+            rcon.voidEval("load('model')");
+        } catch (RSrvException rse){
+            
+        }
+        //TODO: parent is not restored
+        //plot?
+    }
+    
+    public void saveClassifiedDataAs(File file) {
+        String path=file.getPath();
+        if (File.separatorChar == '\\')  {
+            path = path.replace('\\', '/');
+        }
+        try{
+            rcon.voidEval("write.table(" + getClassifiedDataFrame() + ",file='" + path + "')");
+        } catch (RSrvException rse){
+            ErrorDialog.show(parent, rse, "saveClassifiedDataAs(File)");
+        }
     }
     
     private static final class Snapshot implements SVMSnapshotIF {
