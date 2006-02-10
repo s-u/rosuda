@@ -2,6 +2,18 @@
 
 <Form version="1.0" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
+    <Menu class="javax.swing.JPopupMenu" name="popm_classifiers">
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="m_openClassificationWindow">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Item"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_openClassificationWindowActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
+    </Menu>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="m_File">
@@ -20,6 +32,14 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_FileOpenDatasetActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="m_FileOpenModel">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Open classification model..."/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="m_FileOpenModelActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="m_FileExit">
@@ -94,6 +114,10 @@
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
         <Component class="javax.swing.JTable" name="tblClassifiers">
+          <Events>
+            <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblClassifiersMousePressed"/>
+            <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblClassifiersMouseReleased"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
