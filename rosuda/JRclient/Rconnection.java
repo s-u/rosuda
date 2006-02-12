@@ -175,6 +175,21 @@ public class Rconnection {
         throw new RSrvException(this,"voidEval failed",rp);
     }
 
+	/** evaluates the given command, detaches the session (see @link{detach()}) and closes connection while the command is being evaluted (requires Rserve 0.4+).
+		Note that a session cannot be attached again until the commad was successfully processed. Techincally the session is put into listening mode while the command is being evaluated but accept is called only after the command was evaluated. One commonly used techique to monitor detached working sessions is to use second connection to poll the status (e.g. create a temporary file and return the full path before detaching thus allowing new connections to read it).
+		@param cmd command/expression string
+		@return session object that can be use to attach back to the session once the command completed */
+    public RSession voidEvalDetach(String cmd) throws RSrvException {
+		if (!connected || rt==null)
+			throw new RSrvException(this,"Not connected");
+		Rpacket rp=rt.request(Rtalk.CMD_detachedVoidEval,cmd+"\n");
+		if (rp==null || !rp.isOk())
+			throw new RSrvException(this,"detached void eval failed",rp);
+		RSession s = new RSession(this, rp);
+		close();
+		return s;
+    }
+	
     REXP parseEvalResponse(Rpacket rp) throws RSrvException {
 		int rxo=0;
 		byte[] pc=rp.getCont();
@@ -344,7 +359,7 @@ public class Rconnection {
     }
 
     
-    /** detaches the session and closes the connection. The session can be only resumed by calling @link{RSession.attach} */
+    /** detaches the session and closes the connection (requires Rserve 0.4+). The session can be only resumed by calling @link{RSession.attach} */
 	public RSession detach() throws RSrvException {
 		if (!connected || rt==null)
             throw new RSrvException(this,"Not connected");
