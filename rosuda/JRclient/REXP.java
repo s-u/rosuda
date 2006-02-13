@@ -10,7 +10,7 @@ import java.util.*;
 
     @version $Id$
 */
-public class REXP extends Object {
+public class REXP extends Object implements java.io.Serializable {
     /** xpression type: NULL */
     public static final int XT_NULL=0;
     /** xpression type: integer */

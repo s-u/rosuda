@@ -1,6 +1,6 @@
 package org.rosuda.JRclient;
 
-public class RSession {
+public class RSession implements java.io.Serializable {
     String host;
     int port;
     byte[] key;
