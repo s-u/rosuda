@@ -156,6 +156,7 @@ public class BaseCanvas
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;
+        adjustMargin();
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         final Rectangle r=pc.getBounds();
         final int w=r.width;
@@ -762,4 +763,9 @@ public class BaseCanvas
         System.arraycopy(buf, 0, ret, 0, j);
         return ret;
     }
+    
+    /**
+     * Possibly adjust mLeft etc.
+     **/
+    public void adjustMargin(){};
 }
