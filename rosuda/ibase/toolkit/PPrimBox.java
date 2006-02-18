@@ -50,44 +50,92 @@ public class PPrimBox extends PPrimBase {
         g.defineColor(COL_WHITE,255,255,255);
         g.defineColor(COL_BLACK,0,0,0);
         
-        r = new Rectangle(x,uh,w-x, lh-uh-uh);
+        int i;
         
-        g.setColor(COL_WHITE);
-        g.fillRect(x,uh,
-                w,lh-uh);
-        
-        g.setColor(COL_BLACK);
-        g.drawRect(x,uh,
-                w,lh-uh);
-        g.setLineWidth(1.5f);
-        g.drawLine(x,med,
-                x+w,med);
-        g.setLineWidth(1.0f);
-        g.drawLine(x,uh15,
-                x+w,uh15);
-        g.drawLine(x,lh15,
-                x+w,lh15);
-        g.drawLine(x+w/2,uh,
-                x+w/2,uh15);
-        g.drawLine(x+w/2,lh,
-                x+w/2,lh15);
-        int i=lowEdge;
-        while(i>=0) {
-            final double val=lastR[i];
-            if (val<lh3)
-                g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
-            else
-                g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
-            i--;
-        }
-        i=highEdge;
-        while(i<lastTop) {
-            final double val=lastR[i];
-            if (val>uh3)
-                g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
-            else
-                g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
-            i++;
+        switch(orientation){
+            case 0:
+                r = new Rectangle(x,uh,w, lh-uh);
+                System.out.println(r.toString());
+                
+                g.setColor(COL_WHITE);
+                g.fillRect(x,uh,
+                        w,lh-uh);
+                
+                g.setColor(COL_BLACK);
+                g.drawRect(x,uh,
+                        w,lh-uh);
+                g.setLineWidth(1.5f);
+                g.drawLine(x,med,
+                        x+w,med);
+                g.setLineWidth(1.0f);
+                g.drawLine(x,uh15,
+                        x+w,uh15);
+                g.drawLine(x,lh15,
+                        x+w,lh15);
+                g.drawLine(x+w/2,uh,
+                        x+w/2,uh15);
+                g.drawLine(x+w/2,lh,
+                        x+w/2,lh15);
+                i=lowEdge;
+                while(i>=0) {
+                    final double val=lastR[i];
+                    if (val<lh3)
+                        g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    else
+                        g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    i--;
+                }
+                i=highEdge;
+                while(i<lastTop) {
+                    final double val=lastR[i];
+                    if (val>uh3)
+                        g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    else
+                        g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    i++;
+                }
+                break;
+            case 1:
+                r = new Rectangle(uh,x, uh-lh,w);
+                System.out.println(r.toString());
+                
+                g.setColor(COL_WHITE);
+                g.fillRect(lh,x,
+                        uh-lh,w);
+                
+                g.setColor(COL_BLACK);
+                g.drawRect(lh,x,
+                        uh-lh,w);
+                g.setLineWidth(1.5f);
+                g.drawLine(med,x,
+                        med,x+w);
+                g.setLineWidth(1.0f);
+                g.drawLine(uh15,x,
+                        uh15,x+w);
+                g.drawLine(lh15,x,
+                        lh15,x+w);
+                g.drawLine(uh,x+w/2,
+                        uh15,x+w/2);
+                g.drawLine(lh,x+w/2,
+                        lh15,x+w/2);
+                i=lowEdge;
+                while(i>=0) {
+                    final double val=lastR[i];
+                    if (val<lh3)
+                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    else
+                        g.fillRect(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    i--;
+                }
+                i=highEdge;
+                while(i<lastTop) {
+                    final double val=lastR[i];
+                    if (val>uh3)
+                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    else
+                        g.fillRect(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                    i++;
+                }
         }
     }
     
