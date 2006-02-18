@@ -105,8 +105,8 @@ public class PoGraSS
     public void moveTo(int x, int y) {};
     public void lineTo(int x, int y) {};
     public void rect(int x1, int y1, int x2, int y2) {}; // since 0.96
-    public void drawRect(int x1, int y1, int x2, int y2) {};
-    public void fillRect(int x1, int y1, int x2, int y2) {};
+    public void drawRect(int x1, int y1, int w, int h) {};
+    public void fillRect(int x1, int y1, int w, int h) {};
     public void roundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};
     public void fillRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {};

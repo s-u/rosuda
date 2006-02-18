@@ -87,8 +87,8 @@ public class PoGraSSgraphics extends PoGraSS
     public void drawLine(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawLine(x1,y1,x2,y2); };
     public void moveTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer)  { cx=x; cy=y; } };
     public void lineTo(int x, int y) { if (paintLayer==-1 || paintLayer==curLayer) { g.drawLine(cx,cy,x,y); cx=x; cy=y; } };
-    public void drawRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.drawRect(x1,y1,x2,y2); };
-    public void fillRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) g.fillRect(x1,y1,x2,y2); };
+    public void drawRect(int x1, int y1, int w, int h) { if (paintLayer==-1 || paintLayer==curLayer) g.drawRect(x1,y1,w,h); };
+    public void fillRect(int x1, int y1, int w, int h) { if (paintLayer==-1 || paintLayer==curLayer) g.fillRect(x1,y1,w,h); };
     public void drawRoundRect(int x1, int y1, int x2, int y2, int dx, int dy) {
 	if (paintLayer==-1 || paintLayer==curLayer) g.drawRoundRect(x1,y1,x2,y2,dx,dy);
     };
