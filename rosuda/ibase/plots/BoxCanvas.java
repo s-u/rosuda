@@ -147,6 +147,7 @@ public class BoxCanvas extends BaseCanvas {
         ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
+        
         if(var.length==1){
             if (v!=null && !v.isCat() && v.isNum())
                 valid=true; // valid are only numerical vars non-cat'd
@@ -194,6 +195,7 @@ public class BoxCanvas extends BaseCanvas {
         ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         // get some space around (this comes from the scatterplots)
         ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
+        
         pc.setBackground(new Color(255,255,192));
         pc.addMouseListener(this);
         pc.addMouseMotionListener(this);
@@ -249,7 +251,7 @@ public class BoxCanvas extends BaseCanvas {
         if (!vsCat) {
             if(vs.length==1){
                 pp = new PlotPrimitive[1];
-                pp[0] = createBox(OSdata,mLeft+20,boxwidth);
+                pp[0] = createBox(OSdata,(orientation==0)?(mLeft+20):(mTop+20),boxwidth);
                 final PPrimBox p = ((PPrimBox)pp[0]);
                 p.ref = v.getRanked();
                 markStats = new OrdStats[1];
@@ -306,7 +308,6 @@ public class BoxCanvas extends BaseCanvas {
     
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
-        
         if(ax!=null){
             boxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
         }
@@ -318,33 +319,10 @@ public class BoxCanvas extends BaseCanvas {
         final Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
         
-        
-        
-        
         final int h=r.height;
-        
-        double f;
-        
-        f=ay.getSensibleTickDistance(30,18);
-        double fi;
-        fi=ay.getSensibleTickStart(f);
-        int maxLabelLength=0;
-        while (fi<ay.vBegin+ay.vLen) {
-            final String s = ay.getDisplayableValue(fi);
-            if(s.length()>maxLabelLength) maxLabelLength=s.length();
-            fi+=f;
-        }
-        
-        final int omLeft=mLeft;
-        if(maxLabelLength*8>20){
-            mLeft = maxLabelLength*8+2;
-        } else mLeft=20;
-        if(mLeft!=omLeft) updateObjects();
         
         final int innerH;
         innerH=h-mBottom-mTop;
-        f=ay.getSensibleTickDistance(30,18);
-        fi=ay.getSensibleTickStart(f);
         
         if (!valid) {
             g.defineColor("red",255,0,0);
@@ -352,12 +330,14 @@ public class BoxCanvas extends BaseCanvas {
             g.drawLine(0,r.height,r.width,0);
             return;
         }
-        if (vertical) {
+        labels.clear();
+        if (orientation==0) {
             ay.setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
             
-            labels.clear();
             /* draw ticks and labels for Y axis */
             {
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
                 while (fi<ay.vBegin+ay.vLen) {
                     final int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
@@ -366,16 +346,38 @@ public class BoxCanvas extends BaseCanvas {
                 }
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
             }
+            
+            if (vsCat || vs.length>1) {
+                /* draw labels for X axis */
+                for(int i=0; i<xv.getNumCats(); i++){
+                    labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                }
+            }
         } else {
-            ay.setGeometry(Axis.O_X,40,r.width-50);
-        }
-        
-        if (vsCat || vs.length>1) {
-            /* draw labels for X axis */
-            for(int i=0; i<xv.getNumCats(); i++){
-                labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+            
+            /* draw ticks and labels for Y axis */
+            {
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
+                while (fi<ay.vBegin+ay.vLen) {
+                    final int t=ay.getValuePos(fi);
+                    g.drawLine(t,h-mBottom+5,t,h-mBottom);
+                    labels.add(t-5,h-mBottom+7,0,1,ay.getDisplayableValue(fi));
+                    fi+=f;
+                }
+                g.drawLine(ay.gBegin,h-mBottom,ay.gBegin+ay.gLen,h-mBottom);
+            }
+            
+            if (vsCat || vs.length>1) {
+                /* draw labels for X axis */
+                for(int i=0; i<xv.getNumCats(); i++){
+                    labels.add(mLeft-3,ax.getCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
+                }
             }
         }
+        
+        
+        
         labels.finishAdd();
     };
     
@@ -439,6 +441,29 @@ public class BoxCanvas extends BaseCanvas {
     public void paintObjects(final PoGraSS g) {
         updateObjects();
         super.paintObjects(g);
+    }
+    
+    public void adjustMargin(){
+        if(orientation==0){
+            double f=ay.getSensibleTickDistance(30,18);
+            double fi=ay.getSensibleTickStart(f);
+            System.out.println(f + "...." + fi);
+            int maxLabelLength=0;
+            while (fi<ay.vBegin+ay.vLen) {
+                final String s = ay.getDisplayableValue(fi);
+                System.out.println(s);
+                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                fi+=f;
+            }
+            maxLabelLength*=1.5;
+            System.out.println(maxLabelLength);
+            final int omLeft=mLeft;
+            if(maxLabelLength*8>20){
+                mLeft = maxLabelLength*8+2;
+            } else mLeft=20;
+            if(mLeft!=omLeft) updateGeometry=true;
+        }
+        System.out.println(mLeft);
     }
     
 }
