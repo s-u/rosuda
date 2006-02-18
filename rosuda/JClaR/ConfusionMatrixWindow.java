@@ -115,7 +115,7 @@ public final class ConfusionMatrixWindow extends javax.swing.JFrame {
             } else if(row>0 && column>0){
                 return new Integer(data[row-1 + numVariables*(column-1)]);
             } else if(row+column>0){
-                return ((REXP)variables.elementAt(row+column-1)).asString();
+                return variables.elementAt(row+column-1);
             } else  {
                 return new Double(accuracy);
             }
