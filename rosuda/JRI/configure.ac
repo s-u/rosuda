@@ -19,6 +19,18 @@ fi
 # we attempt to use the same compiler as R did
 R_CC=`${R_HOME}/bin/R CMD config CC`
 R_CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
+# pull some important R settings
+RINC=`${R_HOME}/bin/R CMD config --cppflags`
+RLD=`${R_HOME}/bin/R CMD config --ldflags`
+# R_LD_LIBRARY_PATH is not exported
+#: ${R_LD_LIBRARY_PATH=`${R_HOME}/bin/R CMD sh -c 'echo $R_LD_LIBRARY_PATH'`}
+: ${R_SHARE_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_SHARE_DIR'`}
+: ${R_INCLUDE_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_INCLUDE_DIR'`}
+: ${R_DOC_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_DOC_DIR'`}
+# fall-backs in case they don't exist (old R versions)
+if test -z "${R_SHARE_DIR}"; then R_SHARE_DIR=${R_HOME}/share; fi
+if test -z "${R_INCLUDE_DIR}"; then R_INCLUDE_DIR=${R_HOME}/include; fi
+if test -z "${R_DOC_DIR}"; then R_DOC_DIR=${R_HOME}/doc; fi
 
 # if user did not specify CC then we use R's settings.
 # if CC was set then user is responsible for CFLAGS as well!
@@ -202,6 +214,12 @@ AC_SUBST(JNILD)
 AC_SUBST(JNISO)
 AC_SUBST(JNIPREFIX)
 AC_SUBST(CPICF)
+AC_SUBST(RINC)
+AC_SUBST(RLD)
+AC_SUBST(R_SHARE_DIR)
+AC_SUBST(R_INCLUDE_DIR)
+AC_SUBST(R_DOC_DIR)
+#AC_SUBST(R_LD_LIBRARY_PATH)
 
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([Makefile])
