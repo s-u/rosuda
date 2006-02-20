@@ -45,15 +45,6 @@ import javax.swing.SwingUtilities;
 
 public class BufferTokenizer {
 	
-	public static void main(String[] args) {
-//		new BufferTokenizer(100,100,"C:\\jahadost.txt");
-		try {
-			new BufferTokenizer(100,100,"C:\\BowlingAlone.txt");
-		} catch (Throwable e) {
-			System.out.println(e);
-		}
-	}
-
 /** some constants for easy reading */
 	final byte TAB = (byte) '\t';
 	final byte SPACE = (byte) ' ';
@@ -345,8 +336,9 @@ public class BufferTokenizer {
 				System.out.println("" + (x + 1) + ". " + error[x]);
 			}
 			if(hardReadError) {
-				System.out.println(findRegion(buffer,errorposition));
-				throw new ScanException(findRegion(buffer,errorposition).toString());
+              System.out.println(findRegion(buffer,errorposition));
+//              throw new ScanException(findRegion(buffer,errorposition).toString());
+              throw new ScanException(error[0]+"!        \nContext is \n ..."+findRegion(buffer,errorposition).toString()+"... ");
 			}
 			
 			buffer.rewind();
@@ -380,7 +372,7 @@ public class BufferTokenizer {
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
 			item = new double[columns][lines];
 			NA = new boolean[columns][lines];
-			word = new byte[columns][discretLimit][];
+			word = new byte[columns][this.discretLimit][];
 			wordCount = new int[columns][lines];
 			NACount = new int[columns];
 			discretValue = new double[columns][this.discretLimit];
@@ -601,7 +593,7 @@ public class BufferTokenizer {
 */
 		
 /** 	items output **/
-/*
+
 		for(int i=0; i<lines; i++) {
 			System.out.print(i); System.out.print("	");
 			for(int j=0; j<columns; j++) {
@@ -613,7 +605,6 @@ public class BufferTokenizer {
 			}
 			System.out.println();
 		}
-*/
 
 
 		
@@ -1006,8 +997,8 @@ public class BufferTokenizer {
 				}
 			}
 			if(k%2 != 0) {
-				System.out.println("ERROR: Uneven amount of quotes in headLine");
-				throw new ScanException(new String("ERROR: Uneven amount of quotes in headLine"));
+				System.out.println("Error: Uneven amount of quotes in headLine");
+				throw new ScanException(new String("Error: Uneven amount of quotes in headLine"));
 			}
 			buffer.reset();
 			while (buffer.hasRemaining()) {
@@ -1321,9 +1312,9 @@ public class BufferTokenizer {
 				if (j < columns) {
 				}
 				else {
-					System.out.println("Too long line in (i,j) = (" + (i + 2)
+					System.out.println("Error: Line too long at (i,j) = (" + (i + 2)
 							+ "," + (j + 1) + ")");
-					throw new ScanException("Too long line in (i,j) = (" + (i + 2)
+					throw new ScanException("Error: Line too long at (i,j) = (" + (i + 2)
 							+ "," + (j + 1) + ")");
 				}
 
@@ -1426,7 +1417,7 @@ public class BufferTokenizer {
 					// change: 17.08.2005
 					if(j>=columns) {
 						if (k < error.length) {
-							error[k++] = new String("hardError: Too much entries in line "
+							error[k++] = new String("hardError: Too many entries in line "
 									+ (i + 1));
 							errorposition = buffer.position();
 							hardReadError = true;
@@ -1442,11 +1433,11 @@ public class BufferTokenizer {
 							// doubleSEPERATOR
 							if (k < error.length) {
 								if(i == 0){
-									error[k++] = new String("hardError: doubleSEPERATOR in headLine");
+									error[k++] = new String("hardError: double SEPERATOR in headLine");
 									errorposition = buffer.position();
 									return error;
 								}
-								else error[k++] = new String("softError: doubleSEPERATOR in line "
+								else error[k++] = new String("softError: double SEPERATOR in line "
 										+ (i + 1));
 							} else
 								return error;
@@ -1505,7 +1496,7 @@ public class BufferTokenizer {
 							return error;
 					} else if(j >= columns) {
 						if (k < error.length) {
-							error[k++] = new String("hardError: Too much entries in line "
+							error[k++] = new String("hardError: Too many entries in line "
 									+ (i + 1));
 							errorposition = buffer.position();
 							hardReadError = true;
@@ -1536,7 +1527,7 @@ public class BufferTokenizer {
 							return error;
 					} else if(j >= columns) {
 						if (k < error.length) {
-							error[k++] = new String("hardError: Too much entries in line "
+							error[k++] = new String("hardError: Too many entries in line "
 									+ (i + 1));
 							errorposition = buffer.position();
 							hardReadError = true;
@@ -1705,7 +1696,7 @@ public class BufferTokenizer {
 				j++;
 				if(j>=columns) {
 					if (k < error.length) {
-						error[k++] = new String("hardError: Too much entries in line "
+						error[k++] = new String("hardError: Too many entries in line "
 								+ (i + 1));
 						errorposition = buffer.position();
 						hardReadError = true;
@@ -1880,7 +1871,7 @@ public class BufferTokenizer {
 				// change: 17.08.2005
 				if(j>=columns) {
 					if (k < error.length) {
-						error[k++] = new String("hardError: Too much entries in line "
+						error[k++] = new String("hardError: Too many entries in line "
 								+ (i + 1));
 						errorposition = buffer.position();
 						hardReadError = true;
@@ -1905,7 +1896,7 @@ public class BufferTokenizer {
 			} else if(b == RETURN) {
 				if(j > columns - 1) {
 					if (k < error.length) {
-						error[k++] = new String("hardError: Too much entries in line " + (i + 2));
+						error[k++] = new String("hardError: Too many entries in line " + (i + 2));
 						errorposition = buffer.position();
 						hardReadError = true;
 						return error;
@@ -1947,7 +1938,7 @@ public class BufferTokenizer {
 			} else if(b == NEWLINE) {
 				if(j > columns - 1) {
 					if (k < error.length) {
-						error[k++] = new String("hardError: Too much entries in line " + (i + 2));
+						error[k++] = new String("hardError: Too many entries in line " + (i + 2));
 						errorposition = buffer.position();
 						hardReadError = true;
 						return error;
@@ -3329,8 +3320,8 @@ public class BufferTokenizer {
 			} else {
 				if(i == 15+k) break;
 				else i++;
-//				region.append((char)b);
-				region.append(b);
+				region.append((char)b);
+//				region.append(b);
 			}
 			
 		}
