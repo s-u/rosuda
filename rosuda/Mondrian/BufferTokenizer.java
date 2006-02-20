@@ -599,7 +599,11 @@ public class BufferTokenizer {
 			for(int j=0; j<columns; j++) {
 				// System.out.print(item[j][i]); System.out.print("	");
 				// System.out.print(NA[j][i]);
-				if(numericalColumn[j]) System.out.print(((double[])getItem(j,i))[0]);
+				if(numericalColumn[j]) {
+					double item = ((double[])getItem(j,i))[0];
+					if(item==Double.MAX_VALUE) System.out.print("NA");
+					else System.out.print(item);
+				}
 				else System.out.print((char[])getItem(j,i));
 				System.out.print("	");
 			}
@@ -997,8 +1001,8 @@ public class BufferTokenizer {
 				}
 			}
 			if(k%2 != 0) {
-				System.out.println("Error: Uneven amount of quotes in headLine");
-				throw new ScanException(new String("Error: Uneven amount of quotes in headLine"));
+				System.out.println("ERROR: Uneven amount of quotes in headLine");
+				throw new ScanException(new String("ERROR: Uneven amount of quotes in headLine"));
 			}
 			buffer.reset();
 			while (buffer.hasRemaining()) {
@@ -1312,9 +1316,9 @@ public class BufferTokenizer {
 				if (j < columns) {
 				}
 				else {
-					System.out.println("Error: Line too long at (i,j) = (" + (i + 2)
+					System.out.println("Too long line in (i,j) = (" + (i + 2)
 							+ "," + (j + 1) + ")");
-					throw new ScanException("Error: Line too long at (i,j) = (" + (i + 2)
+					throw new ScanException("Too long line in (i,j) = (" + (i + 2)
 							+ "," + (j + 1) + ")");
 				}
 
@@ -1371,12 +1375,14 @@ public class BufferTokenizer {
 		String[] error = new String[maxamountErrors];
 		int k = 0;
 		int i = -1, j = 0;
+		boolean doubleSEPERATOR = false;
 
 		while (buffer.hasRemaining()) {
 			
 			b = buffer.get();
 			j = 0;
 			i++;
+			doubleSEPERATOR = false;
 			if (b == SEPERATOR) {
 				// SEPERATOR at BOL
 				if (k < error.length) {
@@ -1385,12 +1391,15 @@ public class BufferTokenizer {
 						errorposition = buffer.position();
 						return error;
 					}
-					else error[k++] = new String("softError: SEPERATOR at BOL in line " + (i + 1));
+					else {
+						error[k++] = new String("softError: SEPERATOR at BOL in line " + (i + 1));
+						doubleSEPERATOR = true;
+					}
 				} else
 					return error;
 				// go to next line
-				buffer = gotoNextLine(buffer);
-				continue;
+//				buffer = gotoNextLine(buffer);
+//				continue;
 			} else if (b == RETURN) {
 				// RETURN at BOL
 				if (k < error.length) {
@@ -1433,11 +1442,11 @@ public class BufferTokenizer {
 							// doubleSEPERATOR
 							if (k < error.length) {
 								if(i == 0){
-									error[k++] = new String("hardError: double SEPERATOR in headLine");
+									error[k++] = new String("hardError: doubleSEPERATOR in headLine");
 									errorposition = buffer.position();
 									return error;
 								}
-								else error[k++] = new String("softError: double SEPERATOR in line "
+								else error[k++] = new String("softError: doubleSEPERATOR in line "
 										+ (i + 1));
 							} else
 								return error;
@@ -1540,6 +1549,8 @@ public class BufferTokenizer {
 			}
 		}
 		b = buffer.get(buffer.position() - 1);
+
+		if(doubleSEPERATOR) j++;
 		if (j < columns - 1) {
 			if (k < error.length) {
 				error[k++] = new String("hardError: Missing entries in last line");
@@ -1551,7 +1562,7 @@ public class BufferTokenizer {
 
 		} else if(j >= columns) {
 			if (k < error.length) {
-				error[k++] = new String("hardError: Too much entries in last line");
+				error[k++] = new String("hardError: Too many entries in last line");
 				errorposition = buffer.position();
 				hardReadError = true;
 				return error;
@@ -2456,8 +2467,9 @@ public class BufferTokenizer {
 						NA[j][i] = true;
 						item[j][i] = Double.MAX_VALUE;
 //						if(!NA[j][i])NACount[j]++;
-						j++;
-						continue;
+//						j++;
+						buffer.reset();
+//						continue;
 					} else if(b == RETURN) {
 						if(buffer.get(buffer.position()-2) == SEPERATOR) {
 							NA[j][i] = true;
@@ -2486,11 +2498,11 @@ public class BufferTokenizer {
 //						if(!NA[j][i])NACount[j]++;
 						if (buffer.get() == 'A') {
 							NA[j][i] = true;
-							break;
+//							break;
 						} // NA
 						else if (buffer.get() == 'N') {
 							NA[j][i] = true;
-							break;
+//							break;
 						} // NaN
 					} else if (b == MINUS) {
 						while (buffer.hasRemaining()) {
@@ -2591,7 +2603,7 @@ public class BufferTokenizer {
 						item[j][i] = item[j][i] * 10 + (b - 48);
 					}
 				} // end while
-
+				System.out.println("item["+j+"]["+i+"]: " + item[j][i]);
 				// modified
 				if(isDiscret[j]) {
 					for(int m=0; m<wordStackSize[j]; m++) {
@@ -3320,8 +3332,8 @@ public class BufferTokenizer {
 			} else {
 				if(i == 15+k) break;
 				else i++;
-				region.append((char)b);
-//				region.append(b);
+//				region.append((char)b);
+				region.append(b);
 			}
 			
 		}
@@ -3700,7 +3712,15 @@ public class BufferTokenizer {
 		buffer.position(startposition);
 		
 		while(buffer.hasRemaining()) {
-			strbuf.append((char)buffer.get());
+			b = buffer.get();
+			if(b == SEPERATOR) {
+				// ERROR
+				error[0] = "hardError: SEPERATOR in polygon name, maybe more then 1 polygon names available";
+				hardReadError = true;
+				errorposition = buffer.position();
+				return null;
+			}
+			else strbuf.append((char)b);
 		}
 		
 		buffer.position(startposition-1);
