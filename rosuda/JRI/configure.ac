@@ -53,14 +53,15 @@ AC_DEFUN([RUN_JAVA],
 if test -z "${JAVA_HOME}" ; then
   JAVA_PATH=${PATH}
 else
-  JAVA_PATH=${JAVA_HOME}:${JAVA_HOME}/bin:${PATH}
+  ## try JRE first, such that the result can be deployed even if JDK is not there
+  JAVA_PATH=${JAVA_HOME}:${JAVA_HOME}/jre/bin:${JAVA_HOME}/bin:${PATH}
 fi
 
 ## if 'java' is not on the PATH or JAVA_HOME, add some guesses as of
 ## where java could live
 JAVA_PATH=${JAVA_PATH}:/usr/java/bin:/usr/jdk/bin:/usr/lib/java/bin:/usr/lib/jdk/bin:/usr/local/java/bin:/usr/local/jdk/bin:/usr/local/lib/java/bin:/usr/local/lib/jdk/bin
 AC_PATH_PROGS(JAVA_PROG,java,,${JAVA_PATH})
-## FIXME: we may want to check for jikes, kaffe and others...
+## FIXME: we may want to check for jikes, kaffe and others... but we don't even know if that works
 AC_PATH_PROGS(JAVAC,javac,,${JAVA_PATH})
 AC_PATH_PROGS(JAVAH,javah,,${JAVA_PATH})
 AC_PATH_PROGS(JAR,jar,,${JAVA_PATH})
@@ -134,7 +135,7 @@ JAVA_INC="-I${JNI_H}"
 # (well, those are presumably the only platforms supported by Sun's JDK and others don't need this
 # at least as of now - 01/2004)
 jac_found_md=no
-for mddir in . linux solaris ppc irix alpha aix hp-ux genunix cygwin win32; do
+for mddir in . linux solaris ppc irix alpha aix hp-ux genunix cygwin win32 freebsd; do
 AC_CHECK_FILE(${JNI_H}/$mddir/jni_md.h,[JAVA_INC="${JAVA_INC} -I${JNI_H}/$mddir" jac_found_md=yes])
 if test $jac_found_md == yes; then break; fi
 done
