@@ -23,97 +23,8 @@ public class PCPCanvas extends ParallelAxesCanvas {
     }
     
     public void paintBack(final PoGraSS g){
-        final Rectangle r=pc.getBounds();
-        g.setBounds(r.width,r.height);
-        g.begin();
         g.defineColor(M_AXIS,192,192,192);
         
-        if (commonScale) {
-            
-            
-            
-        }
-        
-        final Dimension Dsize=pc.getSize();
-        if (Dsize.width!=TW || Dsize.height!=TH) {
-            final int w=Dsize.width;
-            final int h=Dsize.height;
-            TW=w; TH=h;
-            
-            
-            final int innerH = h-mBottom-mTop;
-            
-            /*int i=1;
-            while (i<A.length) {
-                if (A[i]!=null)
-                    A[i].setGeometry(Axis.O_Y,mBottom+xtraShift,(H=innerH)); //-xtraShift
-                i++;
-            }*/
-            Y=TH-mBottom-innerH;
-        }
-        
-        if (TW<50||TH<50) {
-            g.setColor("red");
-            g.drawLine(0,0,TW,TH);
-            g.drawLine(0,TH,TW,0);
-            return;
-        }
-        
-        labels.clear();
-        /* draw ticks and labels for X axis */
-        {
-            final double f=ax.getSensibleTickDistance(50,26);
-            double fi=ax.getSensibleTickStart(f);
-            
-            final int[] valuePoss = new int[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
-            final String[] labs = new String[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
-            int i=0;
-            while (fi<ax.vBegin+ax.vLen) {
-                valuePoss[i] = ax.getValuePos(fi);
-                labs[i] = xv.isCat()?((useX3)?Common.getTriGraph(xv.getCatAt((int)fi).toString()):
-                    xv.getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
-                fi+=f;
-                i++;
-            }
-            
-            for(i=0; i<valuePoss.length; i++) {
-                if (isShowLabels() && labs[i]!=null){
-                    labels.add(valuePoss[i]-5,
-                            ((i&1)==0)?(H-mBottom+2):(mTop-5),
-                            0.5,
-                            ((i&1)==0)?1:0,
-                            (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
-                            labs[i]);
-                }
-            }
-            final int b = pc.getSize().height-mBottom;
-            g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
-            //g.drawLine(mLeft, mTop, pc.getSize().width-mRight, mTop);
-            
-            int xx=0;
-            while (xx<xv.getNumCats()) {
-                final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
-                if((xx&1)==0) g.drawLine(t,b,t,b+2);
-                else g.drawLine(t,mTop,t,mTop-2);
-                xx++;
-            }
-        }
-        
-        /* draw ticks and labels for Y axis */
-        if (commonScale) {
-            final double f=ay.getSensibleTickDistance(50,18);
-            double fi=ay.getSensibleTickStart(f);
-            while (fi<ay.vBegin+ay.vLen) {
-                final int t=ay.getValuePos(fi);
-                g.drawLine(mLeft-2,t,mLeft,t);
-                if(isShowLabels())
-                    labels.add(mLeft-3,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
-                fi+=f;
-            }
-            g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
-        }
-        
-        labels.finishAdd();
         
         if (drawAxes) {
             g.setColor(M_AXIS);
@@ -123,6 +34,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
             }
         }
+        super.paintBack(g);
     };
     
     public void updateObjects() {
@@ -289,5 +201,65 @@ public class PCPCanvas extends ParallelAxesCanvas {
             if(mLeft!=omLeft) return true;
         }
         return false;
+    }
+    
+    //protected boolean getValid() {
+        //return (TW<50||TH<50);
+    //}
+    
+    protected void addLabelsAndTicks(PoGraSS g) {
+        System.out.println("allo;");
+        /* draw ticks and labels for X axis */
+        {
+            final double f=ax.getSensibleTickDistance(50,26);
+            double fi=ax.getSensibleTickStart(f);
+            
+            final int[] valuePoss = new int[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
+            final String[] labs = new String[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
+            int i=0;
+            while (fi<ax.vBegin+ax.vLen) {
+                valuePoss[i] = ax.getValuePos(fi);
+                labs[i] = xv.isCat()?((useX3)?Common.getTriGraph(xv.getCatAt((int)fi).toString()):
+                    xv.getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
+                fi+=f;
+                i++;
+            }
+            
+            for(i=0; i<valuePoss.length; i++) {
+                if (isShowLabels() && labs[i]!=null){
+                    labels.add(valuePoss[i]-5,
+                            ((i&1)==0)?(H-mBottom+2):(mTop-5),
+                            0.5,
+                            ((i&1)==0)?1:0,
+                            (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
+                            labs[i]);
+                }
+            }
+            final int b = pc.getSize().height-mBottom;
+            g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
+            //g.drawLine(mLeft, mTop, pc.getSize().width-mRight, mTop);
+            
+            int xx=0;
+            while (xx<xv.getNumCats()) {
+                final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
+                if((xx&1)==0) g.drawLine(t,b,t,b+2);
+                else g.drawLine(t,mTop,t,mTop-2);
+                xx++;
+            }
+        }
+        
+        /* draw ticks and labels for Y axis */
+        if (commonScale) {
+            final double f=ay.getSensibleTickDistance(50,18);
+            double fi=ay.getSensibleTickStart(f);
+            while (fi<ay.vBegin+ay.vLen) {
+                final int t=ay.getValuePos(fi);
+                g.drawLine(mLeft-2,t,mLeft,t);
+                if(isShowLabels())
+                    labels.add(mLeft-3,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                fi+=f;
+            }
+            g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
+        }
     }
 };

@@ -3,17 +3,20 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
 import java.awt.MenuItem;
 import java.awt.Panel;
+import java.awt.Rectangle;
 import java.awt.TextField;
 import java.awt.event.KeyEvent;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.toolkit.PGSCanvas.*;
+import org.rosuda.pograss.PoGraSS;
 import org.rosuda.util.*;
 
 
@@ -407,4 +410,32 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return "PA";
     }
     
+    public void paintBack(final PoGraSS g) {
+        final Rectangle r=pc.getBounds();
+        g.setBounds(r.width,r.height);
+        
+        TH=r.height;
+        TW=r.width;
+        
+        final int innerH;
+        innerH=TH-mBottom-mTop;
+        Y=TH-mBottom-innerH;
+        
+        if(!getValid()){
+            g.setColor("red");
+            g.drawLine(0,0,TW,TH);
+            g.drawLine(0,TH,TW,0);
+            return;
+        }
+        
+        labels.clear();
+        addLabelsAndTicks(g);
+        labels.finishAdd();
+    }
+    
+    protected boolean getValid() {
+        return true;
+    }
+
+    protected void addLabelsAndTicks(PoGraSS g) {System.out.println("nein");}
 }

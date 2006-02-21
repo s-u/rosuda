@@ -73,17 +73,17 @@ class OrdStats { // get ordinal statistics to be used in boxplot
  * @version $Id$
  */
 public class BoxCanvas extends ParallelAxesCanvas {
- 
+    
     /** associated categorical variable if {@link #vsCat} is <code>true</code> */
     SVar cv;
-     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
+    /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
     boolean valid=false, dragMode=false;
     boolean vertical=true;
     
     int boxwidth=20;
-     
+    
     // for vsCat version
     int rk[][];
     int rs[];
@@ -119,7 +119,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         for(int i=1; i<v.length; i++) variables+=", " + v[i].getName();
         setTitle("Boxplot ("+ variables + ")");
         
-                
+        
         if(var.length==1){
             if (v[0]!=null && !v[0].isCat() && v[0].isNum())
                 valid=true; // valid are only numerical vars non-cat'd
@@ -141,7 +141,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 }
             }
         }
-
+        
         objectClipping=true;
         dontPaint=false;
     };
@@ -282,73 +282,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         }
     }
     
-     
-    public void paintBack(final PoGraSS g) {
-        final Rectangle r=pc.getBounds();
-        g.setBounds(r.width,r.height);
-        
-        final int h=r.height;
-        
-        final int innerH;
-        innerH=h-mBottom-mTop;
-        
-        if (!valid) {
-            g.defineColor("red",255,0,0);
-            g.drawLine(0,0,r.width,r.height);
-            g.drawLine(0,r.height,r.width,0);
-            return;
-        }
-        labels.clear();
-        if (orientation==0) {
-            ay.setGeometry(Axis.O_Y,h-mBottom,-(H=innerH));
-            
-            /* draw ticks and labels for Y axis */
-            {
-                double f=ay.getSensibleTickDistance(30,18);
-                double fi=ay.getSensibleTickStart(f);
-                while (fi<ay.vBegin+ay.vLen) {
-                    final int t=ay.getValuePos(fi);
-                    g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
-            }
-            
-            if (vsCat || v.length>1) {
-                /* draw labels for X axis */
-                for(int i=0; i<xv.getNumCats(); i++){
-                    labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
-                }
-            }
-        } else {
-            
-            /* draw ticks and labels for Y axis */
-            {
-                double f=ay.getSensibleTickDistance(30,18);
-                double fi=ay.getSensibleTickStart(f);
-                while (fi<ay.vBegin+ay.vLen) {
-                    final int t=ay.getValuePos(fi);
-                    g.drawLine(t,h-mBottom+5,t,h-mBottom);
-                    labels.add(t-5,h-mBottom+7,0,1,ay.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                g.drawLine(ay.gBegin,h-mBottom,ay.gBegin+ay.gLen,h-mBottom);
-            }
-            
-            if (vsCat || v.length>1) {
-                /* draw labels for X axis */
-                for(int i=0; i<xv.getNumCats(); i++){
-                    labels.add(mLeft-3,ax.getCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
-                }
-            }
-        }
-        
-        
-        
-        labels.finishAdd();
-    };
-    
     public void paintSelected(final PoGraSS g) {
         final int md[]=v[0].getRanked(m,-1);
         if(md==null) return;
@@ -430,9 +363,60 @@ public class BoxCanvas extends ParallelAxesCanvas {
         }
         return false;
     }
-
+    
     protected String getShortClassName() {
         return "Box";
+    }
+    
+    protected boolean getValid() {
+        return valid;
+    }
+    
+    protected void addLabelsAndTicks(PoGraSS g) {
+        if (orientation==0) {
+            //ay.setGeometry(Axis.O_Y,TH-mBottom,-(H=innerH));
+            
+            /* draw ticks and labels for Y axis */
+            {
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
+                while (fi<ay.vBegin+ay.vLen) {
+                    final int t=ay.getValuePos(fi);
+                    g.drawLine(mLeft-5,t,mLeft,t);
+                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
+                    fi+=f;
+                }
+                g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
+            }
+            
+            if (vsCat || v.length>1) {
+                /* draw labels for X axis */
+                for(int i=0; i<xv.getNumCats(); i++){
+                    labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                }
+            }
+        } else {
+            
+            /* draw ticks and labels for Y axis */
+            {
+                double f=ay.getSensibleTickDistance(30,18);
+                double fi=ay.getSensibleTickStart(f);
+                while (fi<ay.vBegin+ay.vLen) {
+                    final int t=ay.getValuePos(fi);
+                    g.drawLine(t,TH-mBottom+5,t,TH-mBottom);
+                    labels.add(t-5,TH-mBottom+7,0,1,ay.getDisplayableValue(fi));
+                    fi+=f;
+                }
+                g.drawLine(ay.gBegin,TH-mBottom,ay.gBegin+ay.gLen,TH-mBottom);
+            }
+            
+            if (vsCat || v.length>1) {
+                /* draw labels for X axis */
+                for(int i=0; i<xv.getNumCats(); i++){
+                    labels.add(mLeft-3,ax.getCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
+                }
+            }
+        }
     }
     
 }
