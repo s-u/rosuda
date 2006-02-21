@@ -203,12 +203,11 @@ public class PCPCanvas extends ParallelAxesCanvas {
         return false;
     }
     
-    //protected boolean getValid() {
-        //return (TW<50||TH<50);
-    //}
+    protected boolean getValid() {
+        return (TW>=50&&TH>=50);
+    }
     
     protected void addLabelsAndTicks(PoGraSS g) {
-        System.out.println("allo;");
         /* draw ticks and labels for X axis */
         {
             final double f=ax.getSensibleTickDistance(50,26);
