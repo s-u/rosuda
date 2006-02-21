@@ -72,31 +72,18 @@ class OrdStats { // get ordinal statistics to be used in boxplot
 /** BoxCanvas - implementation of the boxplots
  * @version $Id$
  */
-public class BoxCanvas extends BaseCanvas {
-    static final String M_PLUS = "+";
-    static final String M_FILE = "File";
-    static final String M_FILE__GRAPH = "~File.Graph";
-    static final String M_EDIT = "~Edit";
-    static final String M_WINDOW = "~Window";
-    static final String M_0 = "0";
-    /** associated numerical variables */
-    SVar[] vs;
-    /** associated numerical variable (points to vs[0])*/
-    SVar v;
+public class BoxCanvas extends ParallelAxesCanvas {
+ 
     /** associated categorical variable if {@link #vsCat} is <code>true</code> */
     SVar cv;
-    /** variable managing multiple boxplots */
-    SVar xv;
-    /** if <code>true</code> then side-by-side bosplots grouped by {@link #cv} are drawn,
+     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
     boolean valid=false, dragMode=false;
     boolean vertical=true;
     
     int boxwidth=20;
-    
-    double totMax,totMin;
-    
+     
     // for vsCat version
     int rk[][];
     int rs[];
@@ -123,54 +110,38 @@ public class BoxCanvas extends BaseCanvas {
      * @param var source variables
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar[] var, final SMarker mark) {
-        super(ppc,f,mark);
+        super(ppc,f,var,mark);
         mLeft=20;
         mBottom= (var.length==1)?10:30;
         mTop=10;
-        vs=var;
-        v=var[0];
-        String variables = vs[0].getName();
-        for(int i=1; i<vs.length; i++) variables+=", " + vs[i].getName();
+        v=var;
+        String variables = v[0].getName();
+        for(int i=1; i<v.length; i++) variables+=", " + v[i].getName();
         setTitle("Boxplot ("+ variables + ")");
-        xv=new SVarObj("Box.index",true);
-        for(int i=0; i<vs.length; i++){
-            if (vs[i].isNum()) {
-                if (i==0) {
-                    totMin=vs[i].getMin(); totMax=vs[i].getMax();
-                } else {
-                    if (vs[i].getMin()<totMin) totMin=vs[i].getMin();
-                    if (vs[i].getMax()>totMax) totMax=vs[i].getMax();
-                }
-            }
-            xv.add(vs[i].getName());
-        }
-        ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
-        ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
-        ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         
+                
         if(var.length==1){
-            if (v!=null && !v.isCat() && v.isNum())
+            if (v[0]!=null && !v[0].isCat() && v[0].isNum())
                 valid=true; // valid are only numerical vars non-cat'd
             if (valid) {
                 OSdata=new OrdStats();
-                final int dr[]=v.getRanked();
-                OSdata.update(v,dr);
+                final int dr[]=v[0].getRanked();
+                OSdata.update(v[0],dr);
                 //updateObjects();
             }
         } else{
-            oss = new OrdStats[vs.length];
-            for(int i=0; i<vs.length; i++){
-                if (vs[i]!=null && !vs[i].isCat() && vs[i].isNum())
+            oss = new OrdStats[v.length];
+            for(int i=0; i<v.length; i++){
+                if (v[i]!=null && !v[i].isCat() && v[i].isNum())
                     valid=true; // valid are only numerical vars non-cat'd
                 if (valid) {
                     oss[i]=new OrdStats();
-                    final int dr[]=vs[i].getRanked();
-                    oss[i].update(vs[i],dr);
+                    final int dr[]=v[i].getRanked();
+                    oss[i].update(v[i],dr);
                 }
             }
         }
-        final String myMenu[]={M_PLUS,M_FILE,M_FILE__GRAPH,M_EDIT,M_PLUS,"View","@RRotate","rotate","@HReset zoom",M_RESETZOOM,M_WINDOW,M_0};
-        EzMenu.getEzMenu(f,this,myMenu);
+
         objectClipping=true;
         dontPaint=false;
     };
@@ -185,16 +156,16 @@ public class BoxCanvas extends BaseCanvas {
         mLeft=20;
         mBottom=30;
         mTop=10;
-        v=var; m=mark; cv=cvar; setFrame(f);
-        setTitle("Boxplot ("+v.getName()+" grouped by "+cv.getName()+")");
+        v = new SVar[] {var}; m=mark; cv=cvar; setFrame(f);
+        setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
         xv=new SVarObj("Box.index",true);
         for(int i=0; i<cv.getNumCats(); i++){
             xv.add(cv.getCatAt(i).toString());
         }
         ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
-        ay=new Axis(v,Axis.O_Y,Axis.T_Num); ay.addDepend(this);
+        ay=new Axis(v[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         // get some space around (this comes from the scatterplots)
-        ay.setValueRange(v.getMin()-(v.getMax()-v.getMin())/20,(v.getMax()-v.getMin())*1.1);
+        ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         
         pc.setBackground(new Color(255,255,192));
         pc.addMouseListener(this);
@@ -206,7 +177,7 @@ public class BoxCanvas extends BaseCanvas {
             vsCat=true;
             cs=cv.getNumCats();
             cats=cv.getCategories();
-            final int[] r=v.getRanked();
+            final int[] r=v[0].getRanked();
             oss=new OrdStats[cs*2+2];
             rk=new int[cs*2+2][];
             rs=new int[cs*2+2];
@@ -230,18 +201,16 @@ public class BoxCanvas extends BaseCanvas {
             }
             i=0;
             while(i<cs) {
-                oss[i].update(v,rk[i],rs[i]);
+                oss[i].update(v[0],rk[i],rs[i]);
                 i++;
             }
             updateObjects();
-            final String myMenu[]={M_PLUS,M_FILE,M_FILE__GRAPH,M_EDIT,M_WINDOW,M_0};
-            EzMenu.getEzMenu(f,this,myMenu);
         }
         objectClipping=true;
         dontPaint=false;
     };
     
-    public SVar getData(final int id) { return (id==0)?v:((id==1)?cv:null); }
+    public SVar getData(final int id) { return (id==0)?v[0]:((id==1)?cv:null); }
     
     public Dimension getMinimumSize() { return new Dimension(60,50); };
     
@@ -249,19 +218,19 @@ public class BoxCanvas extends BaseCanvas {
         if (!valid) return;
         
         if (!vsCat) {
-            if(vs.length==1){
+            if(v.length==1){
                 pp = new PlotPrimitive[1];
                 pp[0] = createBox(OSdata,(orientation==0)?(mLeft+20):(mTop+20),boxwidth);
                 final PPrimBox p = ((PPrimBox)pp[0]);
-                p.ref = v.getRanked();
+                p.ref = v[0].getRanked();
                 markStats = new OrdStats[1];
                 markStats[0] = new OrdStats();
             } else{
-                pp = new PlotPrimitive[vs.length];
-                markStats = new OrdStats[vs.length];
+                pp = new PlotPrimitive[v.length];
+                markStats = new OrdStats[v.length];
                 for(int i=0; i<pp.length; i++){
                     pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth);
-                    ((PPrimBox)pp[i]).ref = vs[i].getRanked();
+                    ((PPrimBox)pp[i]).ref = v[i].getRanked();
                     markStats[i] = new OrdStats();
                 }
             }
@@ -295,7 +264,7 @@ public class BoxCanvas extends BaseCanvas {
         box.lastR = new double[os.lastR.length];
         box.valPos = new int[os.lastR.length];
         for(int i=0; i< box.lastR.length; i++){
-            box.lastR[i] = v.atF(os.lastR[i]);
+            box.lastR[i] = v[0].atF(os.lastR[i]);
             box.valPos[i] = ay.getValuePos(box.lastR[i]);
         }
         box.lastTop = os.lastTop;
@@ -313,8 +282,7 @@ public class BoxCanvas extends BaseCanvas {
         }
     }
     
-    protected int X,Y,TW,TH;
-    
+     
     public void paintBack(final PoGraSS g) {
         final Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
@@ -347,7 +315,7 @@ public class BoxCanvas extends BaseCanvas {
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
             }
             
-            if (vsCat || vs.length>1) {
+            if (vsCat || v.length>1) {
                 /* draw labels for X axis */
                 for(int i=0; i<xv.getNumCats(); i++){
                     labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
@@ -368,7 +336,7 @@ public class BoxCanvas extends BaseCanvas {
                 g.drawLine(ay.gBegin,h-mBottom,ay.gBegin+ay.gLen,h-mBottom);
             }
             
-            if (vsCat || vs.length>1) {
+            if (vsCat || v.length>1) {
                 /* draw labels for X axis */
                 for(int i=0; i<xv.getNumCats(); i++){
                     labels.add(mLeft-3,ax.getCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
@@ -382,7 +350,7 @@ public class BoxCanvas extends BaseCanvas {
     };
     
     public void paintSelected(final PoGraSS g) {
-        final int md[]=v.getRanked(m,-1);
+        final int md[]=v[0].getRanked(m,-1);
         if(md==null) return;
         if (vsCat) {
             int i=0;
@@ -398,12 +366,12 @@ public class BoxCanvas extends BaseCanvas {
             }
             i=cs+1;
             while(i<2*cs+1) {
-                oss[i].update(v,rk[i],rs[i]);
+                oss[i].update(v[0],rk[i],rs[i]);
                 i++;
             }
         } else {
-            for(int i=0; i<vs.length; i++)
-                markStats[i].update(vs[i],md);
+            for(int i=0; i<v.length; i++)
+                markStats[i].update(v[i],md);
         }
         for(int i=0; i<pp.length; i++){
             final PPrimBox box = ((PPrimBox)pp[i]);
@@ -424,7 +392,7 @@ public class BoxCanvas extends BaseCanvas {
                     box.slastR = new double[markStats[i].lastR.length];
                     box.svalPos = new int[markStats[i].lastR.length];
                     for(int j=0; j< box.slastR.length; j++){
-                        box.slastR[j] = v.atF(markStats[i].lastR[j]);
+                        box.slastR[j] = v[0].atF(markStats[i].lastR[j]);
                         box.svalPos[j] = ay.getValuePos(box.slastR[j]);
                     }
                 } else{
@@ -447,23 +415,27 @@ public class BoxCanvas extends BaseCanvas {
         if(orientation==0){
             double f=ay.getSensibleTickDistance(30,18);
             double fi=ay.getSensibleTickStart(f);
-            System.out.println(f + "...." + fi);
+            //System.out.println(f + "...." + fi);
             int maxLabelLength=0;
             while (fi<ay.vBegin+ay.vLen) {
                 final String s = ay.getDisplayableValue(fi);
-                System.out.println(s);
+                //System.out.println(s);
                 if(s.length()>maxLabelLength) maxLabelLength=s.length();
                 fi+=f;
             }
             maxLabelLength*=1.5;
-            System.out.println(maxLabelLength);
+            //System.out.println(maxLabelLength);
             final int omLeft=mLeft;
             if(maxLabelLength*8>20){
                 mLeft = maxLabelLength*8+2;
             } else mLeft=20;
             if(mLeft!=omLeft) updateGeometry=true;
         }
-        System.out.println(mLeft);
+        //System.out.println(mLeft);
+    }
+
+    protected String getShortClassName() {
+        return "Box";
     }
     
 }
