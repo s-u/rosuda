@@ -55,7 +55,6 @@ public class PPrimBox extends PPrimBase {
         switch(orientation){
             case 0:
                 r = new Rectangle(x,uh,w, lh-uh);
-                System.out.println(r.toString());
                 
                 g.setColor(COL_WHITE);
                 g.fillRect(x,uh,
@@ -97,7 +96,6 @@ public class PPrimBox extends PPrimBase {
                 break;
             case 1:
                 r = new Rectangle(uh,x, uh-lh,w);
-                System.out.println(r.toString());
                 
                 g.setColor(COL_WHITE);
                 g.fillRect(lh,x,
