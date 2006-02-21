@@ -188,7 +188,7 @@ FocusListener, RMainLoopCallbacks {
      */
     // later i hope it will be possible let R do this
     public boolean isHelpCMD(String cmd) {
-        if (cmd.startsWith("help") || cmd.startsWith("?") ) {
+        if (cmd.startsWith("help(") || cmd.startsWith("?") ) {
             help(cmd);
             return true;
         }
@@ -196,7 +196,8 @@ FocusListener, RMainLoopCallbacks {
     }
     
     private boolean isSupported(String cmd) {
-    	if (cmd.indexOf("fix(") >= 0 || cmd.indexOf("edit(") >= 0 || cmd.indexOf("edit.data.frame(") >= 0) {
+	cmd = cmd.trim();
+    	if (cmd.startsWith("fix(") || cmd.startsWith("edit(") || cmd.startsWith("edit.data.frame(")) {
     		try { outputDoc.insertString(outputDoc.getLength(),cmd+"\n",JGRPrefs.CMD); } catch (Exception e) {}
     		try { outputDoc.insertString(outputDoc.getLength(),"Editing is not supported yet!",JGRPrefs.RESULT); } catch (Exception e) {}
     		try { outputDoc.insertString(outputDoc.getLength(),"\n"+RController.getRPrompt(),JGRPrefs.CMD); } catch (Exception e) {}
