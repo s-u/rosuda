@@ -21,6 +21,7 @@ public class BaseCanvas
 //#endif
         implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
     protected static final String C_BLACK = "black";
+    protected static final String C_WHITE = "white";
     static final String C_MARKED = "marked";
     static final String C_ASELBG = "aSelBg";
     static final String C_ADRAGBG = "aDragBg";
@@ -210,7 +211,7 @@ public class BaseCanvas
         
         g.setBounds(w,h);
         g.begin();
-        g.defineColor("white",255,255,255);
+        g.defineColor(C_WHITE,255,255,255);
         g.defineColor(C_BLACK,0,0,0);
         g.defineColor(C_MARKED,Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
         final float[] scc=Common.selectColor.getRGBComponents(null);
