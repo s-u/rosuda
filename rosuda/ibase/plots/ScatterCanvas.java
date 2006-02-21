@@ -415,7 +415,7 @@ public class ScatterCanvas extends BaseCanvas {
         };
         
         if (fieldBg!=0) {
-            g.setColor((fieldBg==1)?"white":"objects");
+            g.setColor((fieldBg==1)?C_WHITE:"objects");
             g.fillRect(mLeft,Y,W,H);
         }
         
