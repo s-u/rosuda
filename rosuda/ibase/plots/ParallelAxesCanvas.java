@@ -109,7 +109,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     static final String M_SCALEDLG = "scaleDlg";
     static final String M_ALPHADOWN = "alphaDown";
     static final String M_ALPHAUP = "alphaUp";
-    static final String M_AXIS = "axis";
     static final String M_TRANSHIGHL = "transparentHighlighting";
     
     MenuItem MIlabels=null;

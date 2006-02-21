@@ -23,11 +23,8 @@ public class PCPCanvas extends ParallelAxesCanvas {
     }
     
     public void paintBack(final PoGraSS g){
-        g.defineColor(M_AXIS,192,192,192);
-        
-        
         if (drawAxes) {
-            g.setColor(M_AXIS);
+            g.setColor(C_WHITE);
             int xx=0;
             while (xx<xv.getNumCats()) {
                 final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
