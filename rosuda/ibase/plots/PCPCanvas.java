@@ -25,11 +25,13 @@ public class PCPCanvas extends ParallelAxesCanvas {
     public void paintBack(final PoGraSS g){
         if (drawAxes) {
             g.setColor(C_WHITE);
+            g.setLineWidth(1.5f);
             int xx=0;
             while (xx<xv.getNumCats()) {
                 final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
                 g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
             }
+            g.setLineWidth(1.0f);
         }
         super.paintBack(g);
     };
