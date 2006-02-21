@@ -83,6 +83,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
     boolean vertical=true;
     
     int boxwidth=20;
+    final int MAX_BOXWIDTH=32;
     
     // for vsCat version
     int rk[][];
@@ -278,7 +279,9 @@ public class BoxCanvas extends ParallelAxesCanvas {
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
         if(ax!=null){
-            boxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
+            final int newBoxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
+            if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
+            else boxwidth = newBoxwidth;
         }
     }
     
