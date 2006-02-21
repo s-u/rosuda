@@ -29,21 +29,9 @@ public class PCPCanvas extends ParallelAxesCanvas {
         g.defineColor(M_AXIS,192,192,192);
         
         if (commonScale) {
-            /* determine maximal label length */
-            int maxLabelLength=0;
-            final double f=ay.getSensibleTickDistance(50,18);
-            double fi=ay.getSensibleTickStart(f);
-            while (fi<ay.vBegin+ay.vLen) {
-                final String s=v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi);
-                if(s.length()>maxLabelLength) maxLabelLength=s.length();
-                fi+=f;
-            }
             
-            final int omLeft=mLeft;
-            if(maxLabelLength*8>standardMLeft){
-                mLeft = maxLabelLength*8+2;
-            } else mLeft=standardMLeft;
-            if(mLeft!=omLeft) updateObjects();
+            
+            
         }
         
         final Dimension Dsize=pc.getSize();
@@ -204,7 +192,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         }
     }
     
-
+    
     
     public void mouseReleased(final MouseEvent e) {
         if (baseDrag && moveDrag) {
@@ -260,7 +248,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         super.paintPost(g);
     }
     
-
+    
     
     public String queryObject(PlotPrimitive p) {
         
@@ -269,18 +257,37 @@ public class PCPCanvas extends ParallelAxesCanvas {
         for(int i=0; i<v.length; i++){
             retValue += v[i].getName() + ": ";
             if(v[i].isCat()){
-                    retValue += v[i].getCatAt((int)((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1])) + "\n";
+                retValue += v[i].getCatAt((int)((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1])) + "\n";
             } else{
-                    retValue += ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
+                retValue += ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
             }
             
         }
         
         return retValue;
     }
-  
+    
     protected String getShortClassName() {
         return "PCP";
     }
-
+    
+    public boolean adjustMargin() {
+        if(commonScale){
+            /* determine maximal label length */
+            int maxLabelLength=0;
+            final double f=ay.getSensibleTickDistance(50,18);
+            double fi=ay.getSensibleTickStart(f);
+            while (fi<ay.vBegin+ay.vLen) {
+                final String s=v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi);
+                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                fi+=f;
+            }
+            final int omLeft=mLeft;
+            if(maxLabelLength*8>standardMLeft){
+                mLeft = maxLabelLength*8+2;
+            } else mLeft=standardMLeft;
+            if(mLeft!=omLeft) return true;
+        }
+        return false;
+    }
 };
