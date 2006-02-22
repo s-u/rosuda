@@ -188,7 +188,8 @@ FocusListener, RMainLoopCallbacks {
      */
     // later i hope it will be possible let R do this
     public boolean isHelpCMD(String cmd) {
-        if (cmd.startsWith("help(") || cmd.startsWith("?") || cmd.startsWith("help.start(")) {
+	    cmd = cmd.trim();
+        if (cmd.startsWith("help(") || cmd.startsWith("?") || cmd.startsWith("help.start(") || cmd.startsWith("help.search(")) {
             help(cmd);
             return true;
         }
