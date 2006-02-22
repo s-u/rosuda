@@ -214,7 +214,7 @@ public class ConsoleOutput extends JTextPane {
             writer.flush();
             writer.close();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(JGR.MAINRCONSOLE,"Permisson denied","File Errror",JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(JGR.MAINRCONSOLE,"Permisson denied","File Error",JOptionPane.OK_OPTION);
         } finally {
         }
     }
@@ -237,7 +237,11 @@ public class ConsoleOutput extends JTextPane {
     public String getText(int offs, int len) {
         try {
             Document doc = this.getDocument();
-            return doc.getText(0,doc.getLength()).substring(offs,offs+len);
+			try {
+				return doc.getText(0,doc.getLength()).substring(offs,offs+len+1);
+			} catch (Exception e ) {
+				return doc.getText(0,doc.getLength()).substring(offs,offs+len);
+			}
         } catch (BadLocationException e) {
             return null;
         }

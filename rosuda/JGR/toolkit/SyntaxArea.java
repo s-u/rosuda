@@ -88,9 +88,13 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * Get text from offset with supplied length.
      */
     public String getText(int offs, int len) {
-        try {
+		try {
             Document doc = this.getDocument();
-            return doc.getText(offs,len);
+			try {
+				return doc.getText(offs,len+1);
+			} catch (Exception e) {
+				return doc.getText(offs,len);
+			}
         } catch (BadLocationException e) {
             return null;
         }
@@ -122,11 +126,11 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
      * Copy text.
      */
     public void copy() {
-        this.removeCaretListener(this);
-        super.copy();
+		this.removeCaretListener(this);
+		super.copy();
         this.addCaretListener(this);
     }
-
+	
     /**
      * Paste from clipboard.
      */
@@ -137,10 +141,11 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
             if (isEditable() && isEnabled()) {
                 int s = this.getSelectionStart();
                 int e = this.getSelectionEnd();
+				
                 if (s != -1 && e != -1)
                     doc.remove(s,e-s);
-                doc.insertStringWithoutWhiteSpace(this.getCaretPosition(),Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(),null);
-            }
+				doc.insertStringWithoutWhiteSpace(this.getCaretPosition(),Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(),null);
+			}
         } catch (Exception e) {
         }
         this.addCaretListener(this);

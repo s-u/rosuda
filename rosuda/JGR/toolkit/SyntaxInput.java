@@ -249,25 +249,23 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
                 tp++;
             }
             fun = getLastPart();
-            if (fun != null) {
-                String[] result = new String[1];
-                if ((quotes+dquotes)>0) result[0] = RController.completeFile(fun);
-				else result = RController.completeCommand(fun.replaceAll("\\.","\\."));
-                if (result != null && result.length > 1) {
-                    if (funHelpTip != null) funHelpTip.hide();
-                    if (pc == null || !pc.equals(getCaret().getMagicCaretPosition()))
-                        showCompletions(result);
-                    //if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
-                }
-                else {
-                    if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun) ) {
-                        insertAt(pos,result[0].replaceFirst(fun,""));
-                        if (cmdHelp != null) cmdHelp.hide();
-                        if (mComplete != null) mComplete.setVisible(false);
-                    }
-                    else Toolkit.getDefaultToolkit().beep();
-                }
-            }
+			String[] result = null; // = new String[1];
+			if ((quotes+dquotes)>0) result = RController.completeFile(fun==null?"":fun);
+			else if (fun != null) result = RController.completeCommand(fun.replaceAll("\\.","\\."));
+			if (result != null && result.length > 1) {
+				if (funHelpTip != null) funHelpTip.hide();
+				if (pc == null || !pc.equals(getCaret().getMagicCaretPosition()))
+					showCompletions(result);
+				//if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
+			}
+			else {
+				if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun) ) {
+					insertAt(pos,result[0].replaceFirst(fun,""));
+					if (cmdHelp != null) cmdHelp.hide();
+					if (mComplete != null) mComplete.setVisible(false);
+				}
+				else Toolkit.getDefaultToolkit().beep();
+			}
         }
         else if (mComplete != null && mComplete.isVisible()) {
             int k = ke.getKeyCode();
@@ -428,7 +426,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
          * Complete current part.
          */
         public void completeCommand() {
-            parent.insertAt(parent.getCaretPosition(),cmds.getSelectedValue().toString().replaceFirst(fun,""));
+            parent.insertAt(parent.getCaretPosition(),cmds.getSelectedValue().toString().replaceFirst(fun==null?"":fun,""));
             this.setVisible(false);
             if (cmdHelp != null) cmdHelp.hide();
         }

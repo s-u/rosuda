@@ -52,16 +52,18 @@ public class SyntaxDocument extends JGRStyledDocument {
                 str = str.replaceAll("\t", "");
         }
         else if (str.equals("\n")) {
-            int line = rootElement.getElementIndex(offset);
+		
+			int line = rootElement.getElementIndex(offset);
+
 			int off = rootElement.getElement(line).getStartOffset();
+			
 			int i = off;
 			try {
-				while (getText(i++,1).matches("[\\s]"));
+				while (getText(i++,1).matches("[\\t\\x0B\\f]")); //matches("[\\s]"));
 			} catch (Exception ex) {}
 			try {
 				str ="\n"+ getText(off,i-off-1).replaceAll("\n","");
-			}
-			catch (Exception ex2) {}
+			} catch (Exception ex2) {}
         }
         super.insertString(offset, str, a);
         int len = str.length();
