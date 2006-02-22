@@ -40,7 +40,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
     private JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings",JGRPrefs.useEmacsKeyBindings);
     
     
-    private JCheckBox showHiddenFiles = new JCheckBox("Show hidden files",!JGRPrefs.showHiddenFiles);
+    private JCheckBox showHiddenFiles = new JCheckBox("Show hidden files",JGRPrefs.showHiddenFiles);
     
     //private JTextField workinDirectory = new JTextField(JGRPrefs.WorkingDirectory);
 
@@ -193,7 +193,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
         JGRPrefs.useHelpAgentEditor = useHelpAgentEditor.isSelected();
         JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
-        JGRPrefs.showHiddenFiles = !showHiddenFiles.isSelected();
+        JGRPrefs.showHiddenFiles = showHiddenFiles.isSelected();
         //JGRPrefs.WorkingDirectory = workinDirectory.getText().trim().length()==0?System.getProperty("user.home"):workinDirectory.getText().trim();
         JGRPrefs.apply();
     }

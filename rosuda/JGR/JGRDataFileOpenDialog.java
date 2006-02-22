@@ -109,7 +109,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		}
 		
 		
-		this.setFileHidingEnabled(JGRPrefs.showHiddenFiles);
+		this.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
 		this.showOpenDialog(f);
 	}
 	
@@ -183,6 +183,9 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 				if (i > -1 && line2.indexOf(",",i+1) > -1) sepsBox.setSelectedItem(",");
 				i = line2.indexOf("|");
 				if (i > -1 && line2.indexOf("|",i+1) > -1) sepsBox.setSelectedItem("|");
+				i = line2.indexOf("\\w");
+				if (i == line2.indexOf("\n")) sepsBox.setSelectedItem("\\t");
+				
 			}
 			if (line1 != null && line2 != null) {
 				String sep = seps[sepsBox.getSelectedIndex()];
