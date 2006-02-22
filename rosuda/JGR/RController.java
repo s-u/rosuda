@@ -12,7 +12,7 @@ import org.rosuda.ibase.*;
 import org.rosuda.util.Global;
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.robjects.*;
-import org.rosuda.JGR.toolkit.Editor;
+import org.rosuda.JGR.toolkit.*;
 
 
 /**
@@ -117,7 +117,7 @@ public class RController {
      * @param part of file to complete
      * @return file
      */
-    public static String completeFile(String part) {
+    public static String[] completeFile(String part) {
         part = part.replaceFirst("~",System.getProperty("user.home"));
         int tl = part.length();
         int ls = tl - 1, fb = 0;
@@ -129,9 +129,8 @@ public class RController {
         while (ls > 0 && part.charAt(ls) != '/') {
             ls--;
         }
-        if (ls == 0 && (tl == 0 || part.charAt(ls) != '/'))
-            working = true;
-        dir = working ? "." : ( (ls == 0) ? "/" : (part.substring(0, ls)));
+        if (ls == 0 && (tl == 0 || part.charAt(ls) != '/')) working = true;
+        dir = working ? "." : ( (ls == 0) ? "/" : (part.substring(0, ls)));		
         fb = ls;
         if (fb < tl && part.charAt(fb) == '/')
             fb++;
@@ -143,6 +142,9 @@ public class RController {
         if (cont == null)
             return null;
         int firstMatch = -1, matches = 0;
+		
+		Vector matchedFiles = new Vector();
+		
         String common = null;
         for (int i = 0; i < cont.length; i++) {
             String sx = cont[i];
@@ -155,9 +157,12 @@ public class RController {
                     common = commonWithPrefix(common, sx);
                 }
 				matches++;
+				
+				if (JGRPrefs.showHiddenFiles) matchedFiles.add(sx);
+				else if (!sx.trim().startsWith(".")) matchedFiles.add(sx);
             }
         }
-		if (common != null) {
+		if (common != null && matchedFiles.size() == 1) {
             String fnp = common.replace('\\','/');
             File tfile = null;
             boolean isDir = false;
@@ -168,8 +173,13 @@ public class RController {
                 fnp = fnp + "/";
             if (fnp.endsWith("//"))
                 fnp = "";
-            return fnp.replaceFirst(part, "");
+            return new String[]{fnp.replaceFirst(part, "")};
         }
+		else if (matchedFiles.size() > 1) {
+			String[] m = new String[matchedFiles.size()];
+			matchedFiles.copyInto(m);
+			return m;
+		}
         return null;
     }
 
