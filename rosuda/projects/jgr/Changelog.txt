@@ -3,6 +3,7 @@
 - fixed: automatic indentation in editor
 - fixed: guessing sep/quote/header in DataFileDialog
 - fixed: showHiddenFile property
+- fixed: adding to much commands to history
 - added: multiple filecompletion
 
 2005-05-28
