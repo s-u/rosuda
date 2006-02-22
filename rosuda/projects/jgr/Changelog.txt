@@ -1,3 +1,10 @@
+2006-02-22
+- fixed: parsing help/edit commands
+- fixed: automatic indentation in editor
+- fixed: guessing sep/quote/header in DataFileDialog
+- fixed: showHiddenFile property
+- added: multiple filecompletion
+
 2005-05-28
 - added: support for completing conent of data.frames
 - fixed: completing commands on Mac OS X machines
