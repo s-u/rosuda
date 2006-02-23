@@ -1,4 +1,12 @@
+class ScanException extends Exception {
+  ScanException() {
+  }
+  ScanException(String msg) {
+    super(msg);
+  }
+}
 
+/*
 public class ScanException extends Exception {
 	String scanerror = "";
 	
@@ -13,3 +21,4 @@ public class ScanException extends Exception {
 		scanerror = error;
 	}
 }
+*/
