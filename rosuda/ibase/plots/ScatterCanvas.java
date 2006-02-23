@@ -14,7 +14,6 @@ import org.rosuda.util.*;
  */
 public class ScatterCanvas extends BaseCanvas {
     static final String M_PLUS = "+";
-    static final String M_ROTATE = "rotate";
     static final String M_EQUISCALE = "equiscale";
     static final String M_MINUS = "-";
     static final String M_LABELS = "labels";
@@ -117,8 +116,25 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         MenuBar mb=null;
         if (Global.useAquaBg) fieldBg=2;
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate",M_ROTATE,"@HReset zoom",M_RESETZOOM,"Same scale",M_EQUISCALE,M_MINUS,"@LHide labels",M_LABELS,"@TShorten labels",M_TRIGRAPH,"Change background",M_NEXTBG,"@JToggle jittering",M_JITTER,"!JToggle stacking",M_STACKJITTER,M_MINUS,"Set X Range ...",M_XRANGEDLG,"Set Y Range ...",M_YRANGEDLG,M_MINUS,"Bigger points (up)",M_POINTSUP,"Smaller points (down)",M_POINTSDOWN,M_MINUS,"More transparent (left)",M_ALPHADOWN,"More opaque (right)",M_ALPHAUP,"Transparent highlighting",M_TRANSHIGHL,"~Window","0"};
-        EzMenu.getEzMenu(f,this,myMenu);
+        createMenu(f,true,true,new String[]{
+            "Same scale",M_EQUISCALE,
+            M_MINUS,
+            "@LHide labels",M_LABELS,
+            "@TShorten labels",M_TRIGRAPH,
+            "Change background",M_NEXTBG,
+            "@JToggle jittering",M_JITTER,
+            "!JToggle stacking",M_STACKJITTER,
+            M_MINUS,
+            "Set X Range ...",M_XRANGEDLG,
+            "Set Y Range ...",M_YRANGEDLG,
+            M_MINUS,
+            "Bigger points (up)",M_POINTSUP,
+            "Smaller points (down)",M_POINTSDOWN,
+            M_MINUS,
+            "More transparent (left)",M_ALPHADOWN,
+            "More opaque (right)",M_ALPHAUP,
+            "Transparent highlighting",M_TRANSHIGHL
+        });
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MItrigraph=EzMenu.getItem(f,M_TRIGRAPH);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
@@ -579,7 +595,7 @@ public class ScatterCanvas extends BaseCanvas {
             } else{
                 if(ppc!=null && ppc.x>=rec.x && ppc.x<=rec.x+rec.width) plp[j++]=ppc;
             }
-                    
+            
         }
         PlotPrimitive[] ret = new PlotPrimitive[j];
         System.arraycopy(plp,0, ret,0, j);

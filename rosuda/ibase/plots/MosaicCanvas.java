@@ -56,8 +56,21 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        final String myMenu[]={M_PLUS,"File","~File.Graph",M_PLUS,"View","Observed",M_OBSERVED,"Expected",M_EXPECTED,"Same bin size",M_SAMEBINSIZE,"Multiple barcharts",M_MULTIPLEBARCHARTS,"Fluctuation",M_FLUCTUATION,"-","Less variables (up)",M_MAXLEVELUP,"More variables (down)",M_MAXLEVELDOWN,"Increase censor (shift+up)",M_CENSORUP,"Decrease censor (shift+down)",M_CENSORDOWN,"Rotate variables left (left)",M_PERMUTELEFT,"Rotate variables right (right)",M_PERMUTERIGHT,"@RRotate","rotate","~Edit","~Window","0"};
-        EzMenu.getEzMenu(f,this,myMenu);
+        createMenu(f,true,false,new String[]{
+            "Observed",M_OBSERVED,
+            "Expected",M_EXPECTED,
+            "Same bin size",M_SAMEBINSIZE,
+            "Multiple barcharts",M_MULTIPLEBARCHARTS,
+            "Fluctuation",M_FLUCTUATION,
+            "-",
+            "Less variables (up)",M_MAXLEVELUP,
+            "More variables (down)",M_MAXLEVELDOWN,
+            "Increase censor (shift+up)",M_CENSORUP,
+            "Decrease censor (shift+down)",M_CENSORDOWN,
+            "Rotate variables left (left)",M_PERMUTELEFT,
+            "Rotate variables right (right)",M_PERMUTERIGHT
+        });
+
         mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
         
         ft=new FrequencyTable(v);

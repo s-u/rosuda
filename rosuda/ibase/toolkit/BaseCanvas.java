@@ -28,6 +28,7 @@ public class BaseCanvas
     static final String C_OBJECT = "object";
     static final String M_PRINT = "print";
     static final String M_EXPORTCASES = "exportCases";
+    static final String M_ROTATE = "rotate";
     protected static final String M_RESETZOOM = "resetZoom";
     /** query popup window */
     protected QueryPopup qi;
@@ -657,7 +658,7 @@ public class BaseCanvas
         super.run(o,cmd);
         if (m!=null) m.run(o,cmd);
         if (M_PRINT.equals(cmd)) run(o,"exportPS");
-        if ("rotate".equals(cmd)) rotate(1);
+        if (M_ROTATE.equals(cmd)) rotate(1);
         if ("flip".equals(cmd) && allow180) rotate(2);
         if ("exit".equals(cmd)) WinTracker.current.Exit();
         if (M_EXPORTCASES.equals(cmd)) {
@@ -782,4 +783,31 @@ public class BaseCanvas
      * @return Returns <code>true</code> if margins have been changed
      **/
     public boolean adjustMargin(){return false;};
+    
+    protected void createMenu(Frame f, boolean rotate, boolean zoom, String[] view){
+        String myMenu[] = new String[((view==null)?0:(view.length)) + 12];
+        int i=0;
+        myMenu[i++] = "+";
+        myMenu[i++] = "File";
+        myMenu[i++] = "~File.Graph";
+        myMenu[i++] = "~Edit";
+        if(view!=null && view.length>0){
+            myMenu[i++] = "+";
+            myMenu[i++] = "View";
+            if(rotate){
+                myMenu[i++] = "@RRotate";
+                myMenu[i++] = M_ROTATE;
+            }
+            if(zoom){
+                myMenu[i++] = "@HReset zoom";
+                myMenu[i++] = M_RESETZOOM;
+            }
+            for (int j=0; j<view.length; j++){
+                myMenu[i++] = view[j];
+            }
+        }
+        myMenu[i++] = "~Window";
+        myMenu[i++] = "0";
+        EzMenu.getEzMenu(f,this,myMenu);
+    }
 }

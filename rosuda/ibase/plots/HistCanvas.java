@@ -54,8 +54,13 @@ public class HistCanvas extends BaseCanvas {
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit",M_PLUS,"View","@RRotate","rotate","Increase bin width (up)",M_BINUP,"Decrease bin width (down)",M_BINDOWN,"Move anchor left (left)",M_ANCHORLEFT,"Move anchor right (right)",M_ANCHORRIGHT,"~Window","0"};
-        EzMenu.getEzMenu(f,this,myMenu);
+        createMenu(f,true,false,new String[]{
+            "Increase bin width (up)",M_BINUP,
+            "Decrease bin width (down)",M_BINDOWN,
+            "Move anchor left (left)",M_ANCHORLEFT,
+            "Move anchor right (right)",M_ANCHORRIGHT
+        });
+
         mLeft=20; mRight=10; mTop=10; mBottom=20;
         allow180=true;
         allowDragZoom=false;

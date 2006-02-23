@@ -77,8 +77,15 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         
-        final String myMenu[]={M_PLUS,"File","~File.Graph","~Edit","-","Set Colors (CB)",M_SET1,"Set Colors (rainbow)",M_SET64,"Clear Colors",M_RESET,M_PLUS,"View","@SSpineplot",M_SPINE,"@OSort by count",M_SORTBYCOUNT,"!OSort by marked",M_SORTBYMARKED,"@LHide Labels",M_LABELS,"@RRotate","rotate","~Window","0"};
-        EzMenu.getEzMenu(f,this,myMenu);
+        createMenu(f,true,false,new String[]{
+            "@SSpineplot",M_SPINE,
+            "@OSort by count",M_SORTBYCOUNT,
+            "!OSort by marked",M_SORTBYMARKED,
+            "@LHide Labels",M_LABELS,
+            "Set Colors (CB)",M_SET1,
+            "Set Colors (rainbow)",M_SET64,
+            "Clear Colors",M_RESET
+        });
         MIspine=EzMenu.getItem(f,M_SPINE);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         dontPaint=false;
