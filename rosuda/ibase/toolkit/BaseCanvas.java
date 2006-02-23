@@ -29,6 +29,7 @@ public class BaseCanvas
     static final String M_PRINT = "print";
     static final String M_EXPORTCASES = "exportCases";
     static final String M_ROTATE = "rotate";
+    static final String M_SONLYSELECTED = "showOnlySelected";
     protected static final String M_RESETZOOM = "resetZoom";
     /** query popup window */
     protected QueryPopup qi;
@@ -116,6 +117,8 @@ public class BaseCanvas
     
     /** PlotText object containing labels. Can be null. */
     protected PlotText labels;
+    
+    MenuItem MIsonlyselected=null;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -698,6 +701,12 @@ public class BaseCanvas
         if(M_RESETZOOM.equals(cmd)){
             resetZoom();
         }
+        if(M_SONLYSELECTED.equals(cmd)){
+            MIsonlyselected.setLabel(showOnlyHilited?"Show only selected cases":"Show all cases");
+            showOnlyHilited = !showOnlyHilited;
+            setUpdateRoot(0);
+            repaint();
+        }
         return null;
     };
     
@@ -785,7 +794,7 @@ public class BaseCanvas
     public boolean adjustMargin(){return false;};
     
     protected void createMenu(Frame f, boolean rotate, boolean zoom, String[] view){
-        String myMenu[] = new String[((view==null)?0:(view.length)) + 12];
+        String myMenu[] = new String[((view==null)?0:(view.length)) + 14];
         int i=0;
         myMenu[i++] = "+";
         myMenu[i++] = "File";
@@ -802,6 +811,8 @@ public class BaseCanvas
                 myMenu[i++] = "@HReset zoom";
                 myMenu[i++] = M_RESETZOOM;
             }
+            myMenu[i++] = "Show only selected cases";
+            myMenu[i++] = M_SONLYSELECTED;
             for (int j=0; j<view.length; j++){
                 myMenu[i++] = view[j];
             }
@@ -809,5 +820,7 @@ public class BaseCanvas
         myMenu[i++] = "~Window";
         myMenu[i++] = "0";
         EzMenu.getEzMenu(f,this,myMenu);
+        
+        MIsonlyselected = EzMenu.getItem(f,M_SONLYSELECTED);
     }
 }
