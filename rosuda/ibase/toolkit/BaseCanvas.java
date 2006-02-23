@@ -75,6 +75,9 @@ public class BaseCanvas
     /** run-time flag is set to <code>true</code> if zoom mode is on */
     protected boolean inZoom=false;
     
+    /** if set to <code>true</code> only hilighted primitives will be shown */
+    protected boolean showOnlyHilited=false;
+    
     /** if set to <code>true</code> all notifications are rejected. Any subclass is free to use it, BaseCanvas modifies this flag in default zoom processing methods to prevent partial updates when ax and ay are updated sequentially. Any method changing this flag should always restore the state of the flag after it finishes! Also use with care in multi-threaded applications to prevent deadlocks. */
     protected boolean ignoreNotifications=false;
     
@@ -219,7 +222,7 @@ public class BaseCanvas
         g.defineColor(C_ADRAGBG,0.0f,0.3f,1.0f,0.25f);
         paintInit(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
-        if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintObjects(g);
+        if ((dontCache || g.localLayerCache<0 || g.localLayerCache==0) && !showOnlyHilited) paintObjects(g);
         nextLayer(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==1) paintSelected(g);
         nextLayer(g);
