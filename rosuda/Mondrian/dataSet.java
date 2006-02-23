@@ -25,7 +25,9 @@ public class dataSet {
   protected int[] filterGrpSize;
   protected int[] filterSelGrpSize;
   protected boolean groupsSet = false;
+  protected boolean filterON = false;
   public int filterVar = -1;
+  public int target;
   public double filterVal;
   public int filterGrp;
   private String[] columnType={""};
@@ -250,41 +252,54 @@ public class dataSet {
     Runtime.getRuntime().gc();
   }	
 
-  public void turboRead(String fileName, Join joint) {
-    BufferTokenizer BT = new BufferTokenizer(10, 5, fileName, joint);
-    this.n = BT.lines;
-    this.k = BT.columns;
-    
-    NAcount = new int[this.k];
-    alpha = new boolean[this.k];
-    selectionArray = new double[n];
-    filterA = new double[n];
-
-    for(int j=0; j<k; j++) {
-      NAcount[j] = BT.NACount[j];
-      alpha[j] = !BT.numericalColumn[j];
+  public String turboRead(String fileName, Join joint) {
+    try {
+      BufferTokenizer BT = new BufferTokenizer(10, 5, fileName, joint);
+      this.n = BT.lines;
+      this.k = BT.columns;
       
-      Variable Var = new Variable(BT, j);
-      Var.numMiss = NAcount[j];
-      if( Var.numMiss > 0 )
-        hasMissings = true;
-      String varName = Var.getName();
-      if( varName.length() > 1 ) {
-        if( varName.substring(0,2).equals("/T") ) 
-          Var.phoneNumber = true;
-        if( varName.substring(0,2).equals("/P") ) {
-          Var.isPolyID = true;
-          Var.forceCategorical = true;
+      NAcount = new int[this.k];
+      alpha = new boolean[this.k];
+      selectionArray = new double[n];
+      filterA = new double[n];
+      
+      for(int j=0; j<k; j++) {
+        NAcount[j] = BT.NACount[j];
+        alpha[j] = !BT.numericalColumn[j];
+        
+        Variable Var = new Variable(BT, j);
+        Var.numMiss = NAcount[j];
+        if( Var.numMiss > 0 )
+          hasMissings = true;
+        String varName = Var.getName();
+        if( varName.length() > 1 ) {
+          if( varName.substring(0,2).equals("/T") ) 
+            Var.phoneNumber = true;
+          if( varName.substring(0,2).equals("/P") ) {
+            Var.isPolyID = true;
+            Var.forceCategorical = true;
+          }
+          if( varName.substring(0,2).equals("/C") )
+            Var.isCategorical = false;
+          if( varName.substring(0,2).equals("/D") )
+            Var.forceCategorical = true;
         }
-        if( varName.substring(0,2).equals("/C") )
-          Var.isCategorical = false;
-        if( varName.substring(0,2).equals("/D") )
-          Var.forceCategorical = true;
+        data.addElement(Var);
       }
-      data.addElement(Var);
+      if( BT.isPolygonAvailable ) {
+        System.out.println(" Has Polygon: "+BT.polygonName+"<-");
+        return BT.polygonName;
+      } else
+        return "";
     }
+    catch(ScanException e) {
+      return "ERROR"+e.getMessage();
+    }
+    catch(UnacceptableFormatException e) {
+    }
+    return "";
   }
-    
+  
   public void numToCat(int i) {
     Variable Var=((Variable)data.elementAt(i));
     if( alpha[i] && Var.isCategorical )
@@ -372,13 +387,15 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
             int index = (int)((datacopy[sorts[i]]-start)/width);
             bdtable[index]++;
             tableDim[index]++;
-          } else {
-          double[] weights;
-          weights = getRawNumbers(weight);
-
+          }
+        else {
+          double[] weights = getRawNumbers(weight);
+          boolean[] miss = getMissings(weight);
+          
           for( int i=0; i<getN(dvar); i++ ) {
             int index = (int)((datacopy[sorts[i]]-start)/width);
-            bdtable[index] += weights[i];
+            if( !miss[sorts[i]] )
+              bdtable[index]+=weights[sorts[i]];
             tableDim[index]++;
           }
         }
@@ -395,12 +412,12 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
 
       int index=0;
 
-      if( !isDB ) 
-          for( int i=0; i<getN(dvar); i++ ) {
-              index = (int)((datacopy[sorts[i]]-start)/width); 
-              Ids[index][pointers[index]++] = sorts[i]; 
-          }
-       else 
+      if( !isDB ) {
+        for( int i=0; i<getN(dvar); i++ ) {
+          index = (int)((datacopy[sorts[i]]-start)/width); 
+          Ids[index][pointers[index]++] = sorts[i]; 
+        } 
+      } else 
           for( int i=0; i<tablelength; i++ )
               Ids[i][0] = i;
 
@@ -542,7 +559,7 @@ System.out.println(newQ.makeQuery());
         Ids[j] = new int[1];
         Ids[j][0] = j;
       }
-    }	
+    }    // no DB	
     else {
       for( int i=0; i<this.n; i++ ) {
         index = 0;
@@ -555,7 +572,8 @@ System.out.println(newQ.makeQuery());
           bdtable[index]++;
         else {
           dimA[index]++;
-          bdtable[index] += (this.getRawNumbers(count))[i];	
+          if( !(this.getMissings(count))[i] )
+            bdtable[index] += (this.getRawNumbers(count))[i];	
         }
       }
 
@@ -593,23 +611,27 @@ System.out.println(newQ.makeQuery());
     double sumxx = 0;
     double sumxy = 0;
     double sumyy = 0;
+    int count = 0;
 
     double[] x = this.getRawNumbers(k);
     double[] y = this.getRawNumbers(l);
 
     for( int i=0; i<this.n; i++ ) {
-      sumx += x[i];
-      sumy += y[i];
-      sumxx += x[i]*x[i];
-      sumyy += y[i]*y[i];
-      sumxy += x[i]*y[i];
+      if(x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) {
+        count++;
+        sumx += x[i];
+        sumy += y[i];
+        sumxx += x[i]*x[i];
+        sumyy += y[i]*y[i];
+        sumxy += x[i]*y[i];
+      }
     }
 
-    Sxx = sumxx - sumx * sumx / this.n;
-    Sxy = sumxy - sumx * sumy / this.n;
+    Sxx = sumxx - sumx * sumx / count;
+    Sxy = sumxy - sumx * sumy / count;
     b = Sxy/Sxx;
-    a = (sumy - b * sumx) / this.n;
-    r2 = b * (this.n * sumxy - sumx * sumy) / (this.n * sumyy - sumy * sumy);
+    a = (sumy - b * sumx) / count;
+    r2 = b * (count * sumxy - sumx * sumy) / (count * sumyy - sumy * sumy);
 
     //System.out.println("f(x) = "+b+" * x + "+a);
 
@@ -632,7 +654,7 @@ System.out.println(newQ.makeQuery());
     double[] y = this.getRawNumbers(l);
 
     for( int i=0; i<this.n; i++ ) {
-      if(selectionArray[i] > 0 ) {
+      if(selectionArray[i] > 0 && x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) {
         sumx += x[i];
         sumy += y[i];
         sumxx += x[i]*x[i];
@@ -663,7 +685,7 @@ System.out.println(newQ.makeQuery());
   }
 
   public boolean isPolyID(int i) {
-    return ((Variable)data.elementAt(i)).isPolyID;
+    return ((Variable)data.elementAt(i)).isPolyID();
   }
 
   public String getName(int i) {
@@ -780,7 +802,7 @@ System.out.println(newQ.makeQuery());
   }
 
   public void setSelection(int i, double s, int mode) {
-    if( filterVar != -1 && filterA[i] != filterVal )
+    if( filterON && filterA[i] != filterVal )
       s = 0;
 //      if( s == 0 )
 //        selectionArray[i] = 0;
@@ -816,40 +838,77 @@ System.out.println(newQ.makeQuery());
     }
   }
 
-  public void setFilter( int var, String grp ) {
-
-    for( int i=0; i<this.n; i++ ) {
-      filterA[i] = (((Variable)data.elementAt(var)).data)[i];
-    }
-
-    filterGrp = (int)(((Variable)data.elementAt(var)).Level(grp));
-    if( (((Variable)data.elementAt(var)).alpha) )
+  public void setFilter(String grp) {
+        
+//System.out.println(" filterVar: "+filterVar+" Grp: "+grp+ " <-- "+ filterGrp +" --> "+filterVal); 
+    filterON = true;
+    filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
+    if( (((Variable)data.elementAt(filterVar)).alpha) )
       filterVal = filterGrp;
     else
-      filterVal = Util.atod(grp);
-    filterVar = var;
-    filterGrpSize = new int[((Variable)data.elementAt(var)).getNumLevels()];
-    filterSelGrpSize = new int[((Variable)data.elementAt(var)).getNumLevels()];
+      if( !grp.equals("NA") )
+        filterVal = Util.atod(grp);
+    else {
+      filterVal = Util.atod(Double.MAX_VALUE+"");
+      filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(Double.MAX_VALUE+""));
+    }        
+  }    
+      
+  public void updateFilter() {
+    if( filterVar == -1 )
+      return;
     for( int i=0; i<filterGrpSize.length; i++ ) {
-      filterGrpSize[i] = (((Variable)data.elementAt(var)).grpSize)[i];
-      //System.out.println("i: "+i+"GrpSize: "+filterGrpSize[i]+" unsort: "+(((Variable)data.elementAt(var)).grpSize)[i]);
+      filterGrpSize[i] = 0;
+      filterSelGrpSize[i] = 0;
     }
-    if( (((Variable)data.elementAt(var)).alpha) ) { 
+    if( (((Variable)data.elementAt(filterVar)).alpha) ) { 
       for( int i=0; i<n; i++ )
-        if( selectionArray[i] > 0 )
-          filterSelGrpSize[(int)(((Variable)data.elementAt(var)).data[i])]++;
+        if( !getMissings(target)[i] ) {
+          int index = (int)(((Variable)data.elementAt(filterVar)).data[i]);
+          filterGrpSize[index]++;
+          if( selectionArray[i] > 0 )
+            filterSelGrpSize[index]++;
+        }
     } else
       for( int i=0; i<n; i++ )
-        if( selectionArray[i] > 0 )
-          filterSelGrpSize[(int)(((Variable)data.elementAt(var)).Level(""+(((Variable)data.elementAt(var)).data)[i]))]++;
+        if( !getMissings(target)[i] ) {
+          int index = (int)(((Variable)data.elementAt(filterVar)).Level(""+(((Variable)data.elementAt(filterVar)).data)[i]));
+          filterGrpSize[index]++;
+          if( selectionArray[i] > 0 )
+            filterSelGrpSize[index]++;
+        }
+//    for( int i=0; i<filterGrpSize.length; i++ )
+//      System.out.println("i: "+i+" GrpSize: "+filterGrpSize[i]+" Selected: "+filterSelGrpSize[i]+" unsort: "+(((Variable)data.elementAt(filterVar)).grpSize)[i]);
+  } 
+      
+      
+  public void defineFilter( int var,  int target ) {
+
+    filterVar = var;
+    this.target = target;
+    filterON = true;
+    for( int i=0; i<this.n; i++ ) {
+      filterA[i] = (((Variable)data.elementAt(filterVar)).data)[i];
+    }
+    filterGrpSize = new int[((Variable)data.elementAt(var)).getNumLevels()];
+    filterSelGrpSize = new int[((Variable)data.elementAt(var)).getNumLevels()];
+//    for( int i=0; i<filterGrpSize.length; i++ ) 
+//      filterGrpSize[i] = (((Variable)data.elementAt(var)).grpSize)[i];
+    updateFilter();
+    filterON = false;
   }
 
   public void resetFilter() {
-      filterVar = -1;
-      filterVal = 0;
-      filterGrp = -1;
+    filterON = false;
   }
-
+      
+  public void filterOff() {
+    filterON = false;
+    filterVar = -1;
+    filterVal = 0;
+    filterGrp = -1;
+  }
+      
   public void selectAll() {
     for( int i=0; i<this.n; i++ )
       setSelection(i, 1, Selection.MODE_STANDARD );
@@ -894,6 +953,15 @@ System.out.println(newQ.makeQuery());
       }
   }
   
+  public int countSelection(int j) {
+    Variable v = (Variable)data.elementAt(j);
+    counter = 0;
+    for( int i=0; i<getN(j); i++ )
+      if( selectionArray[v.sortI[i]] > 0 )
+        counter++;
+    return counter;
+  }
+      
   public void clearSelection() {
     selectionArray = new double[n];
   }
@@ -989,6 +1057,7 @@ System.out.println(newQ.makeQuery());
       if( !isCategorical )
         sortData();
       else {
+        //System.out.println(" new line is "+BT.newLineBreaker+"<-");
         levelP = BT.wordStackSize[col];
         levelA = new String[levelP];
         grpSize = new int[levelP];
@@ -998,7 +1067,7 @@ System.out.println(newQ.makeQuery());
           else
             levelA[j] = Double.toString( Double.valueOf( BT.discretValue[col][j]+"" ).doubleValue() );
           grpSize[j] = BT.wordCount[col][j];
-//          System.out.println(levelP+" -|- >"+levelA[j]+"< ("+grpSize[j]+")");
+//System.out.println(levelP+" -|- >"+levelA[j]+"< ("+grpSize[j]+")");
         }
         sortLevels();
       }
@@ -1009,6 +1078,10 @@ System.out.println(newQ.makeQuery());
         return name.substring(2);
       else
         return name;
+    }
+    
+    public boolean isPolyID() {
+      return name.substring(0,2).equals("/P");
     }
 
     public double isLevel(String name) {
@@ -1179,8 +1252,13 @@ System.out.println("query: "+query+" ---> "+this.max);
                 }
             } else
               if( !alpha )
-                for ( int i=0; i<data.length - numMiss; i++ ) 
-                  this.max = Math.max(data[sortI[i]], this.max);
+                if( !isCategorical )
+                  this.max = data[sortI[data.length - numMiss - 1]];
+                else
+                  if( numMiss == 0 )
+                    this.max = Double.valueOf(levelA[permA[levelP - 1]]).doubleValue();
+                  else
+                    this.max = Double.valueOf(levelA[permA[levelP - 2]]).doubleValue();
               else
                 for ( int i=0; i<data.length; i++ ) 
                   this.max = Math.max(data[i], this.max);
@@ -1233,41 +1311,42 @@ System.out.println("query: "+query+" ---> "+this.max);
     }
 
     public double getQuantile(double q) {
-      if( filterVar == -1 )
+      if( !filterON )
         if( !isCategorical ) {
-          return data[sortI[(int)((n-1)*q)]];
+          return data[sortI[(int)((n-numMiss-1)*q)]];
         } else
           return 0;
       else {
         int count=0;
         int i=0;
         if( q==0 ) {
-          while( filterA[sortI[i++]] != filterVal ) {
+          while( filterA[sortI[i]] != filterVal ) {i++;
             //System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" i:"+i+" - "+filterA[sortI[i]]);
           }
-            return data[sortI[i-1]];
+          return data[sortI[i]];
         }
         if( q==1 ) {
-          i=n-1;
-          while( filterA[sortI[i--]] != filterVal ) {}
-            return data[sortI[i+1]];
+          i=n-numMiss-1;
+          while( filterA[sortI[i]] != filterVal ) {i--;}
+            return data[sortI[i]];
         }
 //        System.out.println("filterGrp: "+filterGrp+" filterGrps: "+filterGrpSize.length);
+//        System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]+" Group: "+filterGrp);
         int stop = (int)(q * (filterGrpSize[filterGrp]-1));
-//        System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]);
         while( count <= stop )
           if( filterA[sortI[i++]] == filterVal ) {
             count++;
             //System.out.println("i: "+i+" filter Val: "+filterVal+" testVal: "+filterA[sortI[i]]+" GroupSize. "+filterGrpSize[filterGrp]);
           }
-            return data[sortI[i-1]];
+//            System.out.println("q: "+q+" Count: "+count+" Value: "+ data[sortI[i-1]]);
+        return data[sortI[i-1]];
       }
     }
 
     public double getSelQuantile(double q) {
       int count=0;
       int i=0;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         if( q==0 ) {
           while( selectionArray[sortI[i++]] == 0 ) {}
           return data[sortI[i-1]];
@@ -1288,7 +1367,7 @@ System.out.println("query: "+query+" ---> "+this.max);
           return data[sortI[i]];
         }
         if( q==1 ) {
-          i=n-1;
+          i=n-numMiss-1;
           while( selectionArray[sortI[i]] == 0 || filterA[sortI[i]] != filterVal) {i--;/*System.out.println("i: "+i);*/}
           return data[sortI[i]];
         }
@@ -1305,7 +1384,7 @@ System.out.println("query: "+query+" ---> "+this.max);
     
     public double getFirstGreater(double g) {
       int i=0;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         double ret=data[sortI[i]];
         while( (ret=data[sortI[i]]) < g )
           i++;
@@ -1321,7 +1400,7 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double getFirstSelGreater(double g) {
       int i=0;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         while( i<n-1 && (data[sortI[i]]) < g )
           i++;
         while( i<n-1 && selectionArray[sortI[i]] == 0 )
@@ -1338,7 +1417,7 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double getFirstSmaller(double s) {
       int i=n-1;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         double ret=data[sortI[i]];
         while( (ret=data[sortI[i]]) > s )
           i--;
@@ -1354,7 +1433,7 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double getFirstSelSmaller(double s) {
       int i=n-1;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         while( i>0 && (data[sortI[i]]) > s )
           i--;
         while( i>0 && selectionArray[sortI[i]] == 0 )
@@ -1371,7 +1450,7 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double[] getAllSmaller(double s) {
       int i=0;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         while( (data[sortI[i++]]) < s ) {}
         double[] ret = new double[i-1];
         for( int j=0; j<i-1; j++)
@@ -1401,7 +1480,7 @@ System.out.println("query: "+query+" ---> "+this.max);
     public double[] getAllSelSmaller(double s) {
       int i=0;
       int count=0;
-      if( filterVar == -1 ) {
+      if( !filterON ) {
         while( i<n && data[sortI[i]] <= s )
           if( selectionArray[sortI[i++]] > 0 )
             count++;
@@ -1440,7 +1519,7 @@ System.out.println("query: "+query+" ---> "+this.max);
 
   public double[] getAllGreater(double g) {
     int i=n-1;
-    if( filterVar == -1 ) {
+    if( !filterON ) {
       while( (data[sortI[i--]]) > g ) {}
       double[] ret = new double[n-i-2];
       for( int j=n-1; j>i+1; j--)
@@ -1468,7 +1547,7 @@ System.out.println("query: "+query+" ---> "+this.max);
   public double[] getAllSelGreater(double g) {
     int i=n-1;
     int count=0;
-    if( filterVar == -1 ) {
+    if( !filterON ) {
       while( i>=0 && (data[sortI[i]]) >= g )
         if( selectionArray[sortI[i--]] > 0 )
           count++;
