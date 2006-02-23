@@ -794,7 +794,7 @@ public class PC extends DragBox implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
       String command = e.getActionCommand();
-System.out.println("Command: "+command);
+//System.out.println("Command: "+command);
       if( command.equals("Common") || command.equals("Individual") ) {
         if( command.equals("Common") ) 
           Scale = "Individual";
@@ -939,7 +939,11 @@ System.out.println("Command: "+command);
     
     public void paint(Graphics2D g2d) {
 
+      if( paintMode.equals("XbyY") ) 
+        data.defineFilter( yVar, xVar);
+
       Graphics2D g = (Graphics2D)g2d;
+      data.updateFilter();
 
       int pF = 1;
       double[] selection;
@@ -975,7 +979,7 @@ System.out.println("Command: "+command);
         else 
           bg = g;
 
-        if( alignMode.equals("cvalue") ) {          // draw reference axis if values are aligned at a certain value
+        if( alignMode.equals("cvalue") ) {          // draw reference x-axis if values are aligned at a certain value
           bg.setColor(Color.gray);
           bg.drawLine(border-6,
                       (int)(-border + height - (height-2*border) * ((centerAt - Mins[1])/(Maxs[1]-Mins[1]))),
@@ -1041,38 +1045,40 @@ System.out.println("Command: "+command);
               else
                 myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
         }
-        for( int j=0; j<k; j++ ) {	                    	                      	// Draw Axes
-          if( !printing )
-            bg.setColor(new Color(255, 255, 255, 75));
-          else
-            bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.35F));
-          bg.drawLine( poly[1].xpoints[j]-1, border-2, (poly[1].xpoints)[j]-1, size.height-border-1);
-          bg.drawLine( poly[1].xpoints[j]+1, border-2, (poly[1].xpoints)[j]+1, size.height-border-1);
-          if( !printing )
-            bg.setColor(new Color(255, 255, 255, 140));
-          else
-            bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
-          bg.drawLine( poly[1].xpoints[j],   border-3, (poly[1].xpoints)[j],   size.height-border);
-        }	
-        for( int j=0; j<k; j++ ) {													// Arrows at Axes
-          if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
+        if( k> 1 ) {                                                                    // no need to draw a single axis ...
+          for( int j=0; j<k; j++ ) {	                    	                      	// Draw Axes
+            if( !printing )
+              bg.setColor(new Color(255, 255, 255, 75));
+            else
+              bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.35F));
+            bg.drawLine( poly[1].xpoints[j]-1, border-2, (poly[1].xpoints)[j]-1, size.height-border-1);
+            bg.drawLine( poly[1].xpoints[j]+1, border-2, (poly[1].xpoints)[j]+1, size.height-border-1);
             if( !printing )
               bg.setColor(new Color(255, 255, 255, 140));
             else
               bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
-            bg.drawLine( poly[1].xpoints[j]-3,   border,   (poly[1].xpoints)[j]+3,   border);
-            bg.drawLine( poly[1].xpoints[j]-2,   border-1, (poly[1].xpoints)[j]+2,   border-1);
-            bg.drawLine( poly[1].xpoints[j]-1,   border-2, (poly[1].xpoints)[j]+1,   border-2);
-            bg.drawLine( poly[1].xpoints[j],     border-3, (poly[1].xpoints)[j],     border-3);
-          } else {
-            bg.setColor(Color.red);
-            bg.drawLine( poly[1].xpoints[j]-3,   size.height-border-2, (poly[1].xpoints)[j]+3,   size.height-border-2);
-            bg.drawLine( poly[1].xpoints[j]-2,   size.height-border-1, (poly[1].xpoints)[j]+2,   size.height-border-1);
-            bg.drawLine( poly[1].xpoints[j]-1,   size.height-border,   (poly[1].xpoints)[j]+1,   size.height-border);
-            bg.drawLine( poly[1].xpoints[j],     size.height-border+1, (poly[1].xpoints)[j],     size.height-border+1);
+            bg.drawLine( poly[1].xpoints[j],   border-3, (poly[1].xpoints)[j],   size.height-border);
+          }	
+          for( int j=0; j<k; j++ ) {													// Arrows at Axes
+            if( !inverted[permA[j]] || !paintMode.equals("Poly")) {
+              if( !printing )
+                bg.setColor(new Color(255, 255, 255, 140));
+              else
+                bg.setColor(new Color(0.5F, 0.5F, 0.5F, 0.5F));
+              bg.drawLine( poly[1].xpoints[j]-3,   border,   (poly[1].xpoints)[j]+3,   border);
+              bg.drawLine( poly[1].xpoints[j]-2,   border-1, (poly[1].xpoints)[j]+2,   border-1);
+              bg.drawLine( poly[1].xpoints[j]-1,   border-2, (poly[1].xpoints)[j]+1,   border-2);
+              bg.drawLine( poly[1].xpoints[j],     border-3, (poly[1].xpoints)[j],     border-3);
+            } else {
+              bg.setColor(Color.red);
+              bg.drawLine( poly[1].xpoints[j]-3,   size.height-border-2, (poly[1].xpoints)[j]+3,   size.height-border-2);
+              bg.drawLine( poly[1].xpoints[j]-2,   size.height-border-1, (poly[1].xpoints)[j]+2,   size.height-border-1);
+              bg.drawLine( poly[1].xpoints[j]-1,   size.height-border,   (poly[1].xpoints)[j]+1,   size.height-border);
+              bg.drawLine( poly[1].xpoints[j],     size.height-border+1, (poly[1].xpoints)[j],     size.height-border+1);
+            }
           }
+          bg.setColor(Color.black);
         }
-        bg.setColor(Color.black);
         if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY")) {
           if( !hotSelection )
             for( int i=0; i<bPlots.size(); i++ )
@@ -1111,7 +1117,7 @@ System.out.println("Command: "+command);
         if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY") ) {
           for( int i=0; i<bPlots.size(); i++ ) {
             if( paintMode.equals("XbyY") )
-              data.setFilter( yVar, lNames[permA[i]]);
+              data.setFilter(lNames[permA[i]]);
             ((boxPlot)(bPlots.elementAt(i))).drawHighlight(tbg);
             data.resetFilter();
           }
@@ -1202,6 +1208,7 @@ System.out.println("Command: "+command);
 
       long stop = new Date().getTime();
       //System.out.println("Time for polys: "+(stop-start)+"ms");
+      data.filterOff();
     }
 
     public void drawSelections(Graphics g) {
@@ -1234,6 +1241,8 @@ System.out.println("Command: "+command);
 
     public void maintainSelection(Selection S) {
 
+      if( paintMode.equals("XbyY") ) 
+        data.defineFilter( yVar, xVar);
       Graphics g = this.getGraphics();
 
       Rectangle sr = S.r;
@@ -1323,7 +1332,7 @@ System.out.println("Command: "+command);
             if( !sr.contains(p.xpoints[selectCol], p.ypoints[selectCol] ) )
               data.setSelection(i,0,mode);
           }
-          data.setFilter( yVar, lNames[selectCol]);
+          data.setFilter(lNames[selectCol]);
         }
         for( int i=0; i<data.n; i++ ) {
           p = poly[i];
@@ -1335,6 +1344,7 @@ System.out.println("Command: "+command);
         }
         data.resetFilter();
       }		
+      data.filterOff();
     }
 
     void myDrawPolyline(Graphics g, int[] xpoints, int[] ypoints, int caseId) {
@@ -1418,6 +1428,8 @@ System.out.println("Command: "+command);
 //      for(int j=0; j<k; j++)
 //        System.out.print(" "+dSDevs[j]);
 
+      if( paintMode.equals("XbyY") ) 
+        data.defineFilter( yVar, xVar);
       if( bg != null ) {
         bg.dispose();
         bg = null;
@@ -1434,6 +1446,9 @@ System.out.println("Command: "+command);
           addBorder = 25;
         else
           addBorder = 17;
+      
+      addBorder += width/60;
+      width -= width/40;
       
       if( alignMode.equals("ccase") )
         if( data.countSelection() == 1 )
@@ -1488,9 +1503,12 @@ System.out.println("Command: "+command);
       
       if( paintMode.equals("XbyY") ) {
         for( int j=0; j<k; j++ ) {
-          if( lNames[permA[j]].equals("NA") )                        // Set Constant for Missing values
+          if( lNames[permA[j]].equals("NA") &&  false )                        // Set Constant for Missing values
+          {
+            System.out.println(" Setting NA !! ");
             lNames[permA[j]] = "1.7976931348623157E308";
-          data.setFilter( yVar, lNames[permA[j]]);
+          }
+          data.setFilter(lNames[permA[j]]);
 
           dMins[j] = data.getMin(xVar);
           dIQRs[j] = data.getQuantile(xVar, 0.75) - data.getQuantile(xVar, 0.25);
@@ -1521,11 +1539,11 @@ System.out.println("Command: "+command);
         tabs.removeAllElements();
         rects.removeAllElements();
         for( int j=0; j<k; j++ ) {
-          //        System.out.println("Name: "+lNames[j]);
+          //       System.out.println("Name: "+lNames[j]);
           int x = border+(int)(0.5+slotWidth*j);
           if( !data.categorical(vars[permA[j]]) ) {
             if( paintMode.equals("XbyY") )
-              data.setFilter( yVar, lNames[permA[j]]);
+              data.setFilter(lNames[permA[j]]);
             bPlots.addElement(new boxPlot( j, vars[permA[j]] , x + addBorder, (int)(0.5+Math.min(slotWidth/2, slotMax)), border, height-border));
             data.resetFilter();
           }
@@ -1665,6 +1683,7 @@ System.out.println("Command: "+command);
       double[] lsOutlier, usOutlier;
       int var, id;
       int mid, width, low, high;
+      int n;
 
       public boxPlot( int id, int var, int mid, int width, int low, int high) {
         this.id = permA[id];
@@ -1677,20 +1696,25 @@ System.out.println("Command: "+command);
       }
 
       public void init() {
-        min    = data.getQuantile(var, 0);
-        lHinge = data.getQuantile(var, 0.25);
-        median = data.getQuantile(var, 0.5);
-        uHinge = data.getQuantile(var, 0.75);
-        max    = data.getQuantile(var, 1);
-        lWhisker = data.getFirstGreater(var, lHinge-(uHinge-lHinge)*1.5);
-        uWhisker = data.getFirstSmaller(var, uHinge+(uHinge-lHinge)*1.5);
+        if( data.filterVar!=-1 )
+          this.n = data.filterGrpSize[data.filterGrp];
+        else
+          this.n = data.getN(xVar);
+        boolean empty = (this.n == 0);
+        min    = empty?Double.MAX_VALUE:data.getQuantile(var, 0);
+        lHinge = empty?Double.MAX_VALUE:data.getQuantile(var, 0.25);
+        median = empty?Double.MAX_VALUE:data.getQuantile(var, 0.5);
+        uHinge = empty?Double.MAX_VALUE:data.getQuantile(var, 0.75);
+        max    = empty?Double.MAX_VALUE:data.getQuantile(var, 1);
+        lWhisker = empty?Double.MAX_VALUE:data.getFirstGreater(var, lHinge-(uHinge-lHinge)*1.5);
+        uWhisker = empty?Double.MAX_VALUE:data.getFirstSmaller(var, uHinge+(uHinge-lHinge)*1.5);
         lOutlier = data.getAllSmaller(var, lWhisker);
         uOutlier = data.getAllGreater(var, uWhisker);
       }
 
       void draw( Graphics g ) {
 
-        if( (data.filterVar!=-1 && data.filterGrpSize[data.filterGrp] > 3) || (data.filterVar==-1 && data.n > 3) ) {
+        if( this.n > 3 ) {
 
           int  lWP  = low+(int)((Maxs[id]-lWhisker)/(Maxs[id]-Mins[id])*(high-low));
           int  lHP  = low+(int)((Maxs[id]-lHinge)/(Maxs[id]-Mins[id])*(high-low));
@@ -1727,6 +1751,10 @@ System.out.println("Command: "+command);
           g.fillRect(mid-width/2, lHP, width, lWP-lHP);
           g.setColor(Color.black);
           g.drawRect(mid-width/2, lHP, width, lWP-lHP);
+          // bold median line
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F));
+          g.drawRect(mid-width/2-1, medP-1, width+2, 2);
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
 
           int dia = 3;
           if( printing )
@@ -1755,9 +1783,9 @@ System.out.println("Command: "+command);
       void drawHighlight( Graphics g ) {
 
         if( data.filterVar != -1 ) {
-          //        System.out.println("***** Group Size: "+data.filterSelGrpSize[data.filterGrp]);
+          //System.out.println("***** Group Size: "+data.filterSelGrpSize[data.filterGrp]+" Level: "+data.filterGrp);
           if( data.filterSelGrpSize[data.filterGrp] == 0) {
-            //          System.out.println("Skipping: "+data.filterGrp);
+            //System.out.println("Skipping: "+data.filterGrp);
             return;
           }
         }
