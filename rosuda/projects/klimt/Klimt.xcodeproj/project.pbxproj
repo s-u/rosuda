@@ -1,0 +1,1567 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		1601BCDBFEEE210811DB9C8B /* Klimt */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = 689395AB086078BD003E007A /* Build configuration list for PBXApplicationTarget "Klimt" */;
+			buildPhases = (
+				1601BCDCFEEE210811DB9C8B /* Sources */,
+				1601BCDEFEEE210811DB9C8B /* JavaArchive */,
+				1601BCDFFEEE210811DB9C8B /* Resources */,
+				1601BCE2FEEE210811DB9C8B /* Frameworks */,
+				6A88643101E695080CC91562 /* ShellScript */,
+			);
+			buildSettings = {
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.5;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				PRODUCT_NAME = Klimt;
+			};
+			dependencies = (
+			);
+			name = Klimt;
+			productName = Klimt;
+			productReference = F8DEC51106C920160054EA9A /* Klimt.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>txt</string>
+				<string>data</string>
+				<string>x</string>
+				<string>y</string>
+				<string>tsv</string>
+				<string>rds</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Data Files</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>Klimt</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Klimt v0.98-pre4</string>
+	<key>CFBundleIconFile</key>
+	<string>Klimt.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.rosuda.klimt</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Klimt</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.98-pre4</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.98-pre4</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/Klimt.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.3+</string>
+		<key>MainClass</key>
+		<string>org.rosuda.klimt.Klimt</string>
+		<key>Properties</key>
+		<dict>
+			<key>com.apple.macos.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.mrj.application.apple.menu.about.name</key>
+			<string>Klimt</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/Contents/Resources/Java</string>
+	</dict>
+	<key>NSJavaNeeded</key>
+	<string>YES</string>
+	<key>NSJavaPath</key>
+	<array>
+		<string>Klimt.jar</string>
+	</array>
+	<key>NSJavaRoot</key>
+	<string>Contents/Resources/Java</string>
+</dict>
+</plist>
+";
+		};
+		1C5E09560799DC1400A0658F /* Klimt Xtreme */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = 689395AF086078BD003E007A /* Build configuration list for PBXApplicationTarget "Klimt Xtreme" */;
+			buildPhases = (
+				1C5E09520799DC1400A0658F /* Sources */,
+				1C5E09540799DC1400A0658F /* JavaArchive */,
+				1C5E09530799DC1400A0658F /* Resources */,
+				1C5E09550799DC1400A0658F /* Frameworks */,
+				1C5E09E40799DE9100A0658F /* CopyFiles */,
+			);
+			buildSettings = {
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OPTIMIZATION_CFLAGS = "-O";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "Klimt Xtreme";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			name = "Klimt Xtreme";
+			productInstallPath = "$(USER_APPS_DIR)";
+			productName = "Klimt Xtreme";
+			productReference = 1C5E09570799DC1400A0658F /* Klimt Xtreme.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>txt</string>
+				<string>data</string>
+				<string>x</string>
+				<string>y</string>
+				<string>tsv</string>
+				<string>rds</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>DataFiles</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>Klimt Xtreme</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Klimt Xtreme 0.98-X</string>
+	<key>CFBundleIconFile</key>
+	<string>Klimt.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.rosuda.klimt.xtreme</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>Klimt Xtreme</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.98-X</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>098-X</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/Klimt Xtreme.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.4+</string>
+		<key>MainClass</key>
+		<string>org.rosuda.klimt.Klimt</string>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/Contents/Resources/Java</string>
+	</dict>
+	<key>NSJavaNeeded</key>
+	<string>YES</string>
+	<key>NSJavaPath</key>
+	<array>
+		<string>Klimt Xtreme.jar</string>
+	</array>
+	<key>NSJavaRoot</key>
+	<string>Contents/Resources/Java</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		1601BCE0FEEE210811DB9C8B /* Klimt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 10F9BF62FEEDA25E11DB9C8B /* Klimt.icns */; };
+		1C166471058E084200A30C14 /* PPrimHam.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C166470058E084200A30C14 /* PPrimHam.java */; };
+		1C188143058418A0004683DA /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C1881420584189F004683DA /* Platform.java */; };
+		1C18A2EE06BD8A020095E434 /* PluginModelLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C18A2EC06BD686B0095E434 /* PluginModelLoader.java */; };
+		1C37F18004D84ADE00A8030F /* HistCanvasEx.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F17F04D84ADE00A8030F /* HistCanvasEx.java */; };
+		1C37F18404D84C3000A8030F /* NodeMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18304D84C3000A8030F /* NodeMarker.java */; };
+		1C37F18604D85C5F00A8030F /* HistCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18504D85C5F00A8030F /* HistCanvas.java */; };
+		1C37F18804D85FE600A8030F /* splash.jpg in JavaArchive */ = {isa = PBXBuildFile; fileRef = 1C37F18704D85FE600A8030F /* splash.jpg */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		1C37F18A04D8681400A8030F /* SectScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18904D8681400A8030F /* SectScatterCanvas.java */; };
+		1C42D10406D39C9F00B9B7D6 /* MosaicCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10306D39C9F00B9B7D6 /* MosaicCanvas.java */; };
+		1C42D10A06D39CF900B9B7D6 /* FrequencyTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10906D39CF900B9B7D6 /* FrequencyTable.java */; };
+		1C42D10E06D39D3900B9B7D6 /* PPrimMosaic.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10D06D39D3900B9B7D6 /* PPrimMosaic.java */; };
+		1C4A15D304D93C2000A8030F /* Framework.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D204D93C2000A8030F /* Framework.java */; };
+		1C4A15D604D93F5E00A8030F /* PlotPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D404D93F5E00A8030F /* PlotPolygon.java */; };
+		1C4A15D704D93F5E00A8030F /* PlotText.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D504D93F5E00A8030F /* PlotText.java */; };
+		1C4BC7D7052F03BB00A8030F /* RecentList.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4BC7D6052F03BB00A8030F /* RecentList.java */; };
+		1C5E09590799DC3600A0658F /* SVarObj.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C98B803056C1F9000796AE6 /* SVarObj.java */; };
+		1C5E095A0799DC3800A0658F /* SVarFixInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D8066173CC00FA73AE /* SVarFixInt.java */; };
+		1C5E095B0799DC3900A0658F /* SVarFixFact.java in Sources */ = {isa = PBXBuildFile; fileRef = F8D5EAB305C527D300071680 /* SVarFixFact.java */; };
+		1C5E095C0799DC3900A0658F /* SVarFixDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C98B802056C1F9000796AE6 /* SVarFixDouble.java */; };
+		1C5E095D0799DC3A00A0658F /* SVarInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D9066173CC00FA73AE /* SVarInt.java */; };
+		1C5E095E0799DC3A00A0658F /* SVarFact.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D7066173CC00FA73AE /* SVarFact.java */; };
+		1C5E095F0799DC3C00A0658F /* SVarDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D6066173CC00FA73AE /* SVarDouble.java */; };
+		1C5E09600799DC3C00A0658F /* SVarSet.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910004D6A73600FA4796 /* SVarSet.java */; };
+		1C5E09610799DC3D00A0658F /* SVar.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FF04D6A73600FA4796 /* SVar.java */; };
+		1C5E09620799DC3E00A0658F /* SMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FE04D6A73600FA4796 /* SMarker.java */; };
+		1C5E09630799DC3E00A0658F /* SCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914E04D6A9A700FA4796 /* SCatSequence.java */; };
+		1C5E09640799DC3F00A0658F /* NotifyMsg.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914A04D6A8E600FA4796 /* NotifyMsg.java */; };
+		1C5E09650799DC3F00A0658F /* Notifier.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FC04D6A73600FA4796 /* Notifier.java */; };
+		1C5E09660799DC4000A0658F /* MapSegmentEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331F04D81D3700A8030F /* MapSegmentEntry.java */; };
+		1C5E09670799DC4000A0658F /* MapSegment.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331904D8184500A8030F /* MapSegment.java */; };
+		1C5E09680799DC4000A0658F /* Loader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7D04D7ED0900A8030F /* Loader.java */; };
+		1C5E09690799DC4100A0658F /* Dependent.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FB04D6A73600FA4796 /* Dependent.java */; };
+		1C5E096A0799DC4200A0658F /* DBCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9604D8024000A8030F /* DBCanvas.java */; };
+		1C5E096B0799DC4200A0658F /* Common.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5D04D6DBC800A8030F /* Common.java */; };
+		1C5E096C0799DC4300A0658F /* Commander.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914C04D6A94500FA4796 /* Commander.java */; };
+		1C5E096D0799DC5300A0658F /* BarCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330304D814C200A8030F /* BarCanvas.java */; };
+		1C5E096E0799DC5400A0658F /* BoxCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330404D814C200A8030F /* BoxCanvas.java */; };
+		1C5E096F0799DC5400A0658F /* HamCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE0057D961400E3263B /* HamCanvas.java */; };
+		1C5E09700799DC5500A0658F /* HistCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18504D85C5F00A8030F /* HistCanvas.java */; };
+		1C5E09710799DC5500A0658F /* FCCCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330504D814C200A8030F /* FCCCanvas.java */; };
+		1C5E09720799DC5600A0658F /* FluctCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330604D814C200A8030F /* FluctCanvas.java */; };
+		1C5E09730799DC5700A0658F /* KapMeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C993595058F776F0040221D /* KapMeCanvas.java */; };
+		1C5E09740799DC5700A0658F /* LineCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330804D814C200A8030F /* LineCanvas.java */; };
+		1C5E09750799DC5800A0658F /* MapCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330904D814C200A8030F /* MapCanvas.java */; };
+		1C5E09760799DC5800A0658F /* MosaicCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10306D39C9F00B9B7D6 /* MosaicCanvas.java */; };
+		1C5E09770799DC5900A0658F /* PCPCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330A04D814C200A8030F /* PCPCanvas.java */; };
+		1C5E09780799DC5A00A0658F /* ScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330C04D814C200A8030F /* ScatterCanvas.java */; };
+		1C5E09790799DC5D00A0658F /* Axis.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910204D6A73600FA4796 /* Axis.java */; };
+		1C5E097A0799DC5E00A0658F /* AxisCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910304D6A73600FA4796 /* AxisCatSequence.java */; };
+		1C5E097B0799DC5E00A0658F /* BaseCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910404D6A73600FA4796 /* BaseCanvas.java */; };
+		1C5E097C0799DC5F00A0658F /* ColorBridge.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6304D6E13D00A8030F /* ColorBridge.java */; };
+		1C5E097D0799DC5F00A0658F /* EzMenu.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910504D6A73600FA4796 /* EzMenu.java */; };
+		1C5E097E0799DC6000A0658F /* FrequencyTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10906D39CF900B9B7D6 /* FrequencyTable.java */; };
+		1C5E097F0799DC6000A0658F /* LayerCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5104D6D86100A8030F /* LayerCanvas.java */; };
+		1C5E09800799DC6100A0658F /* MapSegmentTools.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332304D820AA00A8030F /* MapSegmentTools.java */; };
+		1C5E09810799DC6100A0658F /* PGSCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5204D6D86100A8030F /* PGSCanvas.java */; };
+		1C5E09820799DC6200A0658F /* PGSJoglCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 68AC23930798656000715278 /* PGSJoglCanvas.java */; };
+		1C5E09830799DC6200A0658F /* PlotColor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5B04D6DA8000A8030F /* PlotColor.java */; };
+		1C5E09840799DC6600A0658F /* PlotLine.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332F04D840DD00A8030F /* PlotLine.java */; };
+		1C5E09850799DC6600A0658F /* PlotManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5704D6D95900A8030F /* PlotManager.java */; };
+		1C5E09860799DC6700A0658F /* PlotObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5804D6D95900A8030F /* PlotObject.java */; };
+		1C5E09870799DC6700A0658F /* PlotPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D404D93F5E00A8030F /* PlotPolygon.java */; };
+		1C5E09880799DC6800A0658F /* PlotPrimitive.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331D04D819B900A8030F /* PlotPrimitive.java */; };
+		1C5E09890799DC6900A0658F /* PPrimBase.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BA055935AE00A8030F /* PPrimBase.java */; };
+		1C5E098A0799DC6900A0658F /* PPrimHam.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C166470058E084200A30C14 /* PPrimHam.java */; };
+		1C5E098B0799DC6A00A0658F /* PPrimMosaic.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C42D10D06D39D3900B9B7D6 /* PPrimMosaic.java */; };
+		1C5E098C0799DC6A00A0658F /* PPrimPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BB055935AE00A8030F /* PPrimPolygon.java */; };
+		1C5E098D0799DC6B00A0658F /* PPrimRectangle.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BC055935AE00A8030F /* PPrimRectangle.java */; };
+		1C5E098E0799DC6B00A0658F /* PrefsColorFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BD055935AE00A8030F /* PrefsColorFrame.java */; };
+		1C5E098F0799DC6C00A0658F /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C1881420584189F004683DA /* Platform.java */; };
+		1C5E09900799DC6C00A0658F /* PlotText.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D504D93F5E00A8030F /* PlotText.java */; };
+		1C5E09910799DC6D00A0658F /* QueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5504D6D8F500A8030F /* QueryPopup.java */; };
+		1C5E09920799DC6D00A0658F /* SplashScreen.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7804D7E7BA00A8030F /* SplashScreen.java */; };
+		1C5E09930799DC6E00A0658F /* TFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910604D6A73600FA4796 /* TFrame.java */; };
+		1C5E09940799DC6F00A0658F /* WinTracker.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910704D6A73600FA4796 /* WinTracker.java */; };
+		1C5E09950799DC6F00A0658F /* WTentry.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910804D6A73600FA4796 /* WTentry.java */; };
+		1C5E09960799DC7000A0658F /* WTentryAWT.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86CE0661736700FA73AE /* WTentryAWT.java */; };
+		1C5E09970799DC7100A0658F /* WTentrySwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86CF0661736700FA73AE /* WTentrySwing.java */; };
+		1C5E09980799DC7100A0658F /* WinListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF004D808CA00A8030F /* WinListener.java */; };
+		1C5E09990799DC7D00A0658F /* DataRoot.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332904D830E500A8030F /* DataRoot.java */; };
+		1C5E099A0799DC7D00A0658F /* HelpFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9A04D8036F00A8030F /* HelpFrame.java */; };
+		1C5E099B0799DC7E00A0658F /* Klimt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8704D8003800A8030F /* Klimt.java */; };
+		1C5E099C0799DC7E00A0658F /* KlimtSplash.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7A04D7E9D300A8030F /* KlimtSplash.java */; };
+		1C5E099D0799DC7F00A0658F /* NodeMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18304D84C3000A8030F /* NodeMarker.java */; };
+		1C5E099E0799DC8000A0658F /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8104D7F47400A8030F /* PlatformMac.java */; };
+		1C5E099F0799DC8000A0658F /* RootInfo.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF404D80DC700A8030F /* RootInfo.java */; };
+		1C5E09A00799DC8100A0658F /* SNode.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4D04D6D71D00A8030F /* SNode.java */; };
+		1C5E09A10799DC8100A0658F /* SplitEditor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332D04D8403200A8030F /* SplitEditor.java */; };
+		1C5E09A20799DC8200A0658F /* TreeEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4B04D6D6B300A8030F /* TreeEntry.java */; };
+		1C5E09A30799DC8200A0658F /* TreeRegistry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4F04D6D75200A8030F /* TreeRegistry.java */; };
+		1C5E09A40799DC8300A0658F /* TreeLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7F04D7EE4B00A8030F /* TreeLoader.java */; };
+		1C5E09A50799DC8300A0658F /* VarFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9804D8026C00A8030F /* VarFrame.java */; };
+		1C5E09A60799DC8900A0658F /* DevCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8A04D8010600A8030F /* DevCanvas.java */; };
+		1C5E09A70799DC8900A0658F /* HistCanvasEx.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F17F04D84ADE00A8030F /* HistCanvasEx.java */; };
+		1C5E09A80799DC8A00A0658F /* MCPCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332504D823AE00A8030F /* MCPCanvas.java */; };
+		1C5E09A90799DC8A00A0658F /* MosaicCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8B04D8010600A8030F /* MosaicCanvas.java */; };
+		1C5E09AA0799DC8B00A0658F /* SectScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C37F18904D8681400A8030F /* SectScatterCanvas.java */; };
+		1C5E09AB0799DC8B00A0658F /* TInfoCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8C04D8010600A8030F /* TInfoCanvas.java */; };
+		1C5E09AC0799DC8C00A0658F /* TNodeListCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8D04D8010600A8030F /* TNodeListCanvas.java */; };
+		1C5E09AD0799DC8C00A0658F /* TreeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8E04D8010600A8030F /* TreeCanvas.java */; };
+		1C5E09AE0799DC8D00A0658F /* TreeFlowCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8F04D8010600A8030F /* TreeFlowCanvas.java */; };
+		1C5E09AF0799DC8E00A0658F /* KapMeNodeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CCDD36E0695E2B500AFAC85 /* KapMeNodeCanvas.java */; };
+		1C5E09B00799DC9300A0658F /* Plugin.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910B04D6A73600FA4796 /* Plugin.java */; };
+		1C5E09B10799DC9400A0658F /* PluginDeriveVar.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910C04D6A73600FA4796 /* PluginDeriveVar.java */; };
+		1C5E09B20799DC9500A0658F /* PluginGetTreeR.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910D04D6A73700FA4796 /* PluginGetTreeR.java */; };
+		1C5E09B30799DC9600A0658F /* PluginManager.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910E04D6A73700FA4796 /* PluginManager.java */; };
+		1C5E09B40799DC9700A0658F /* PluginStartRserve.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910F04D6A73700FA4796 /* PluginStartRserve.java */; };
+		1C5E09B50799DC9700A0658F /* PluginTable.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911004D6A73700FA4796 /* PluginTable.java */; };
+		1C5E09B60799DC9800A0658F /* PluginModelLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C18A2EC06BD686B0095E434 /* PluginModelLoader.java */; };
+		1C5E09B70799DCA200A0658F /* PoGraSS.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911204D6A73700FA4796 /* PoGraSS.java */; };
+		1C5E09B80799DCA200A0658F /* PoGraSSgraphics.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911304D6A73700FA4796 /* PoGraSSgraphics.java */; };
+		1C5E09B90799DCA300A0658F /* PoGraSSjogl.java in Sources */ = {isa = PBXBuildFile; fileRef = 68AC23CC07986B8600715278 /* PoGraSSjogl.java */; };
+		1C5E09BA0799DCA400A0658F /* PoGraSSmeta.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911404D6A73700FA4796 /* PoGraSSmeta.java */; };
+		1C5E09BB0799DCA500A0658F /* PoGraSSPDF.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911504D6A73700FA4796 /* PoGraSSPDF.java */; };
+		1C5E09BC0799DCA500A0658F /* PoGraSSPS.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911604D6A73700FA4796 /* PoGraSSPS.java */; };
+		1C5E09BD0799DCAD00A0658F /* Global.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8304D7F74100A8030F /* Global.java */; };
+		1C5E09BE0799DCAE00A0658F /* GlobalConfig.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332704D8292E00A8030F /* GlobalConfig.java */; };
+		1C5E09BF0799DCAE00A0658F /* JSpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C5F914206C7D86600A23BBC /* JSpacingPanel.java */; };
+		1C5E09C00799DCAF00A0658F /* MsgDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912004D6A73700FA4796 /* MsgDialog.java */; };
+		1C5E09C10799DCAF00A0658F /* Node.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912104D6A73700FA4796 /* Node.java */; };
+		1C5E09C20799DCB000A0658F /* PDFconstructor.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912204D6A73700FA4796 /* PDFconstructor.java */; };
+		1C5E09C30799DCB000A0658F /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912304D6A73700FA4796 /* Platform.java */; };
+		1C5E09C40799DCB100A0658F /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912404D6A73700FA4796 /* PlatformMac.java */; };
+		1C5E09C50799DCB100A0658F /* PlatformWin.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912504D6A73700FA4796 /* PlatformWin.java */; };
+		1C5E09C60799DCB200A0658F /* PngEncoder.java in Sources */ = {isa = PBXBuildFile; fileRef = F80E96F706D4E6B7000F58C0 /* PngEncoder.java */; };
+		1C5E09C70799DCB200A0658F /* ProgressDlg.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF204D80BD100A8030F /* ProgressDlg.java */; };
+		1C5E09C80799DCB300A0658F /* RecentList.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4BC7D6052F03BB00A8030F /* RecentList.java */; };
+		1C5E09C90799DCB300A0658F /* RespDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D20661738000FA73AE /* RespDialog.java */; };
+		1C5E09CA0799DCB400A0658F /* SpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D30661738000FA73AE /* SpacingPanel.java */; };
+		1C5E09CB0799DCB500A0658F /* Stopwatch.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5F04D6DCFA00A8030F /* Stopwatch.java */; };
+		1C5E09CC0799DCB500A0658F /* Tools.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912604D6A73700FA4796 /* Tools.java */; };
+		1C5E09CD0799DCBD00A0658F /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6604D7D99D00A8030F /* jcrypt.java */; };
+		1C5E09CE0799DCBE00A0658F /* RBool.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6704D7D99D00A8030F /* RBool.java */; };
+		1C5E09CF0799DCBE00A0658F /* Rconnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6804D7D99D00A8030F /* Rconnection.java */; };
+		1C5E09D00799DCBF00A0658F /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6904D7D99D00A8030F /* REXP.java */; };
+		1C5E09D10799DCBF00A0658F /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6A04D7D99D00A8030F /* RFactor.java */; };
+		1C5E09D20799DCC000A0658F /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6B04D7D99D00A8030F /* RFileInputStream.java */; };
+		1C5E09D30799DCC000A0658F /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656C2055935FB00A8030F /* RFileOutputStream.java */; };
+		1C5E09D40799DCC000A0658F /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6C04D7D99D00A8030F /* RList.java */; };
+		1C5E09D50799DCC100A0658F /* Rpacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6D04D7D99D00A8030F /* Rpacket.java */; };
+		1C5E09D60799DCC100A0658F /* Rtalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6E04D7D99D00A8030F /* Rtalk.java */; };
+		1C5E09D70799DCC200A0658F /* RSrvException.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8CDCB504F2AF8600A8030F /* RSrvException.java */; };
+		1C5E09D80799DCC600A0658F /* Framework.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C4A15D204D93C2000A8030F /* Framework.java */; };
+		1C5E09D90799DCC600A0658F /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE4057E55D000E3263B /* Platform.java */; };
+		1C5E09DA0799DCC600A0658F /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE6057E58B200E3263B /* PlatformMac.java */; };
+		1C5E09DC0799DE6B00A0658F /* jogl.jar in Frameworks */ = {isa = PBXBuildFile; fileRef = 68AC23A20798669B00715278 /* jogl.jar */; settings = {ATTRIBUTES = (Merge, ); }; };
+		1C5E09DD0799DE6B00A0658F /* Klimt.icns in Resources */ = {isa = PBXBuildFile; fileRef = 10F9BF62FEEDA25E11DB9C8B /* Klimt.icns */; };
+		1C5E09DE0799DE6C00A0658F /* splash.jpg in JavaArchive */ = {isa = PBXBuildFile; fileRef = 1C37F18704D85FE600A8030F /* splash.jpg */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		1C5E09DF0799DE6D00A0658F /* Klimt.mft in JavaArchive */ = {isa = PBXBuildFile; fileRef = 1CC795E1055965C100A8030F /* Klimt.mft */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		1C5E09E50799DEAD00A0658F /* libjogl.jnilib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 68AC2512079893D900715278 /* libjogl.jnilib */; };
+		1C5F914306C7D86600A23BBC /* JSpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C5F914206C7D86600A23BBC /* JSpacingPanel.java */; };
+		1C8656BE055935AE00A8030F /* PPrimBase.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BA055935AE00A8030F /* PPrimBase.java */; };
+		1C8656BF055935AE00A8030F /* PPrimPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BB055935AE00A8030F /* PPrimPolygon.java */; };
+		1C8656C0055935AE00A8030F /* PPrimRectangle.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BC055935AE00A8030F /* PPrimRectangle.java */; };
+		1C8656C1055935AE00A8030F /* PrefsColorFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656BD055935AE00A8030F /* PrefsColorFrame.java */; };
+		1C8656C3055935FB00A8030F /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8656C2055935FB00A8030F /* RFileOutputStream.java */; };
+		1C8CDCB604F2AF8600A8030F /* RSrvException.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C8CDCB504F2AF8600A8030F /* RSrvException.java */; };
+		1C98B804056C1F9000796AE6 /* SVarFixDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C98B802056C1F9000796AE6 /* SVarFixDouble.java */; };
+		1C98B805056C1F9000796AE6 /* SVarObj.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C98B803056C1F9000796AE6 /* SVarObj.java */; };
+		1C993596058F776F0040221D /* KapMeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C993595058F776F0040221D /* KapMeCanvas.java */; };
+		1C9A86D00661736700FA73AE /* WTentryAWT.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86CE0661736700FA73AE /* WTentryAWT.java */; };
+		1C9A86D10661736700FA73AE /* WTentrySwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86CF0661736700FA73AE /* WTentrySwing.java */; };
+		1C9A86D40661738000FA73AE /* RespDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D20661738000FA73AE /* RespDialog.java */; };
+		1C9A86D50661738000FA73AE /* SpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D30661738000FA73AE /* SpacingPanel.java */; };
+		1C9A86DA066173CC00FA73AE /* SVarDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D6066173CC00FA73AE /* SVarDouble.java */; };
+		1C9A86DB066173CC00FA73AE /* SVarFact.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D7066173CC00FA73AE /* SVarFact.java */; };
+		1C9A86DC066173CC00FA73AE /* SVarFixInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D8066173CC00FA73AE /* SVarFixInt.java */; };
+		1C9A86DD066173CC00FA73AE /* SVarInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1C9A86D9066173CC00FA73AE /* SVarInt.java */; };
+		1CA4330D04D814C200A8030F /* BarCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330304D814C200A8030F /* BarCanvas.java */; };
+		1CA4330E04D814C200A8030F /* BoxCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330404D814C200A8030F /* BoxCanvas.java */; };
+		1CA4330F04D814C200A8030F /* FCCCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330504D814C200A8030F /* FCCCanvas.java */; };
+		1CA4331004D814C200A8030F /* FluctCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330604D814C200A8030F /* FluctCanvas.java */; };
+		1CA4331204D814C200A8030F /* LineCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330804D814C200A8030F /* LineCanvas.java */; };
+		1CA4331304D814C200A8030F /* MapCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330904D814C200A8030F /* MapCanvas.java */; };
+		1CA4331404D814C200A8030F /* PCPCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330A04D814C200A8030F /* PCPCanvas.java */; };
+		1CA4331604D814C200A8030F /* ScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4330C04D814C200A8030F /* ScatterCanvas.java */; };
+		1CA4331A04D8184500A8030F /* MapSegment.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331904D8184500A8030F /* MapSegment.java */; };
+		1CA4331E04D819B900A8030F /* PlotPrimitive.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331D04D819B900A8030F /* PlotPrimitive.java */; };
+		1CA4332004D81D3700A8030F /* MapSegmentEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4331F04D81D3700A8030F /* MapSegmentEntry.java */; };
+		1CA4332404D820AA00A8030F /* MapSegmentTools.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332304D820AA00A8030F /* MapSegmentTools.java */; };
+		1CA4332604D823AE00A8030F /* MCPCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332504D823AE00A8030F /* MCPCanvas.java */; };
+		1CA4332804D8292E00A8030F /* GlobalConfig.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332704D8292E00A8030F /* GlobalConfig.java */; };
+		1CA4332A04D830E500A8030F /* DataRoot.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332904D830E500A8030F /* DataRoot.java */; };
+		1CA4332E04D8403200A8030F /* SplitEditor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332D04D8403200A8030F /* SplitEditor.java */; };
+		1CA4333004D840DD00A8030F /* PlotLine.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CA4332F04D840DD00A8030F /* PlotLine.java */; };
+		1CC795E2055965C100A8030F /* Klimt.mft in JavaArchive */ = {isa = PBXBuildFile; fileRef = 1CC795E1055965C100A8030F /* Klimt.mft */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		1CCDD36F0695E2B500AFAC85 /* KapMeNodeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CCDD36E0695E2B500AFAC85 /* KapMeNodeCanvas.java */; };
+		1CD07DE1057D961400E3263B /* HamCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE0057D961400E3263B /* HamCanvas.java */; };
+		1CD07DE5057E55D000E3263B /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE4057E55D000E3263B /* Platform.java */; };
+		1CD07DE7057E58B200E3263B /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CD07DE6057E58B200E3263B /* PlatformMac.java */; };
+		1CE96E4C04D6D6B300A8030F /* TreeEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4B04D6D6B300A8030F /* TreeEntry.java */; };
+		1CE96E4E04D6D71D00A8030F /* SNode.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4D04D6D71D00A8030F /* SNode.java */; };
+		1CE96E5004D6D75200A8030F /* TreeRegistry.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E4F04D6D75200A8030F /* TreeRegistry.java */; };
+		1CE96E5304D6D86100A8030F /* LayerCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5104D6D86100A8030F /* LayerCanvas.java */; };
+		1CE96E5404D6D86100A8030F /* PGSCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5204D6D86100A8030F /* PGSCanvas.java */; };
+		1CE96E5604D6D8F500A8030F /* QueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5504D6D8F500A8030F /* QueryPopup.java */; };
+		1CE96E5904D6D95900A8030F /* PlotManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5704D6D95900A8030F /* PlotManager.java */; };
+		1CE96E5A04D6D95900A8030F /* PlotObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5804D6D95900A8030F /* PlotObject.java */; };
+		1CE96E5C04D6DA8000A8030F /* PlotColor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5B04D6DA8000A8030F /* PlotColor.java */; };
+		1CE96E5E04D6DBC800A8030F /* Common.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5D04D6DBC800A8030F /* Common.java */; };
+		1CE96E6004D6DCFA00A8030F /* Stopwatch.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E5F04D6DCFA00A8030F /* Stopwatch.java */; };
+		1CE96E6404D6E13D00A8030F /* ColorBridge.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6304D6E13D00A8030F /* ColorBridge.java */; };
+		1CE96E6F04D7D99D00A8030F /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6604D7D99D00A8030F /* jcrypt.java */; };
+		1CE96E7004D7D99D00A8030F /* RBool.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6704D7D99D00A8030F /* RBool.java */; };
+		1CE96E7104D7D99D00A8030F /* Rconnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6804D7D99D00A8030F /* Rconnection.java */; };
+		1CE96E7204D7D99D00A8030F /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6904D7D99D00A8030F /* REXP.java */; };
+		1CE96E7304D7D99D00A8030F /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6A04D7D99D00A8030F /* RFactor.java */; };
+		1CE96E7404D7D99D00A8030F /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6B04D7D99D00A8030F /* RFileInputStream.java */; };
+		1CE96E7504D7D99D00A8030F /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6C04D7D99D00A8030F /* RList.java */; };
+		1CE96E7604D7D99D00A8030F /* Rpacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6D04D7D99D00A8030F /* Rpacket.java */; };
+		1CE96E7704D7D99D00A8030F /* Rtalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E6E04D7D99D00A8030F /* Rtalk.java */; };
+		1CE96E7904D7E7BA00A8030F /* SplashScreen.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7804D7E7BA00A8030F /* SplashScreen.java */; };
+		1CE96E7B04D7E9D300A8030F /* KlimtSplash.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7A04D7E9D300A8030F /* KlimtSplash.java */; };
+		1CE96E7E04D7ED0900A8030F /* Loader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7D04D7ED0900A8030F /* Loader.java */; };
+		1CE96E8004D7EE4B00A8030F /* TreeLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E7F04D7EE4B00A8030F /* TreeLoader.java */; };
+		1CE96E8204D7F47400A8030F /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8104D7F47400A8030F /* PlatformMac.java */; };
+		1CE96E8404D7F74100A8030F /* Global.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8304D7F74100A8030F /* Global.java */; };
+		1CE96E8804D8003800A8030F /* Klimt.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8704D8003800A8030F /* Klimt.java */; };
+		1CE96E9004D8010600A8030F /* DevCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8A04D8010600A8030F /* DevCanvas.java */; };
+		1CE96E9104D8010600A8030F /* MosaicCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8B04D8010600A8030F /* MosaicCanvas.java */; };
+		1CE96E9204D8010600A8030F /* TInfoCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8C04D8010600A8030F /* TInfoCanvas.java */; };
+		1CE96E9304D8010600A8030F /* TNodeListCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8D04D8010600A8030F /* TNodeListCanvas.java */; };
+		1CE96E9404D8010600A8030F /* TreeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8E04D8010600A8030F /* TreeCanvas.java */; };
+		1CE96E9504D8010600A8030F /* TreeFlowCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E8F04D8010600A8030F /* TreeFlowCanvas.java */; };
+		1CE96E9704D8024000A8030F /* DBCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9604D8024000A8030F /* DBCanvas.java */; };
+		1CE96E9904D8026C00A8030F /* VarFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9804D8026C00A8030F /* VarFrame.java */; };
+		1CE96E9B04D8036F00A8030F /* HelpFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96E9A04D8036F00A8030F /* HelpFrame.java */; };
+		1CE96FF104D808CA00A8030F /* WinListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF004D808CA00A8030F /* WinListener.java */; };
+		1CE96FF304D80BD100A8030F /* ProgressDlg.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF204D80BD100A8030F /* ProgressDlg.java */; };
+		1CE96FF504D80DC700A8030F /* RootInfo.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF404D80DC700A8030F /* RootInfo.java */; };
+		6845652707CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */; };
+		6845652807CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */; };
+		685F538007A58534004B99BD /* LoaderFLF.java in Sources */ = {isa = PBXBuildFile; fileRef = 685F537F07A58534004B99BD /* LoaderFLF.java */; };
+		685F538107A58534004B99BD /* LoaderFLF.java in Sources */ = {isa = PBXBuildFile; fileRef = 685F537F07A58534004B99BD /* LoaderFLF.java */; };
+		68648ED909A5229300668CBF /* AwtPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ECE09A5229300668CBF /* AwtPlotComponent.java */; };
+		68648EDA09A5229300668CBF /* AwtQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ECF09A5229300668CBF /* AwtQueryPopup.java */; };
+		68648EDB09A5229300668CBF /* PlotCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED009A5229300668CBF /* PlotCanvas.java */; };
+		68648EDC09A5229300668CBF /* PlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED109A5229300668CBF /* PlotComponent.java */; };
+		68648EDD09A5229300668CBF /* PlotComponentFactory.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED209A5229300668CBF /* PlotComponentFactory.java */; };
+		68648EDE09A5229300668CBF /* PlotJPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED309A5229300668CBF /* PlotJPanel.java */; };
+		68648EDF09A5229300668CBF /* PPrimBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED409A5229300668CBF /* PPrimBox.java */; };
+		68648EE009A5229300668CBF /* PPrimCircle.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED509A5229300668CBF /* PPrimCircle.java */; };
+		68648EE109A5229300668CBF /* SwingPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED609A5229300668CBF /* SwingPlotComponent.java */; };
+		68648EE209A5229300668CBF /* SwingQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED709A5229300668CBF /* SwingQueryPopup.java */; };
+		68648EE309A5229300668CBF /* TJFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED809A5229300668CBF /* TJFrame.java */; };
+		68648EE409A5229300668CBF /* AwtPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ECE09A5229300668CBF /* AwtPlotComponent.java */; };
+		68648EE509A5229300668CBF /* AwtQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ECF09A5229300668CBF /* AwtQueryPopup.java */; };
+		68648EE609A5229300668CBF /* PlotCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED009A5229300668CBF /* PlotCanvas.java */; };
+		68648EE709A5229300668CBF /* PlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED109A5229300668CBF /* PlotComponent.java */; };
+		68648EE809A5229300668CBF /* PlotComponentFactory.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED209A5229300668CBF /* PlotComponentFactory.java */; };
+		68648EE909A5229300668CBF /* PlotJPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED309A5229300668CBF /* PlotJPanel.java */; };
+		68648EEA09A5229300668CBF /* PPrimBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED409A5229300668CBF /* PPrimBox.java */; };
+		68648EEB09A5229300668CBF /* PPrimCircle.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED509A5229300668CBF /* PPrimCircle.java */; };
+		68648EEC09A5229300668CBF /* SwingPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED609A5229300668CBF /* SwingPlotComponent.java */; };
+		68648EED09A5229300668CBF /* SwingQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED709A5229300668CBF /* SwingQueryPopup.java */; };
+		68648EEE09A5229300668CBF /* TJFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ED809A5229300668CBF /* TJFrame.java */; };
+		68648EF109A522BE00668CBF /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648EF009A522BE00668CBF /* RSession.java */; };
+		68648EF209A522BE00668CBF /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648EF009A522BE00668CBF /* RSession.java */; };
+		F80E96F806D4E6B7000F58C0 /* PngEncoder.java in Sources */ = {isa = PBXBuildFile; fileRef = F80E96F706D4E6B7000F58C0 /* PngEncoder.java */; };
+		F8D5EAB405C527D300071680 /* SVarFixFact.java in Sources */ = {isa = PBXBuildFile; fileRef = F8D5EAB305C527D300071680 /* SVarFixFact.java */; };
+		F8EE912704D6A73700FA4796 /* Dependent.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FB04D6A73600FA4796 /* Dependent.java */; };
+		F8EE912804D6A73700FA4796 /* Notifier.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FC04D6A73600FA4796 /* Notifier.java */; };
+		F8EE912904D6A73700FA4796 /* SMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FE04D6A73600FA4796 /* SMarker.java */; };
+		F8EE912A04D6A73700FA4796 /* SVar.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE90FF04D6A73600FA4796 /* SVar.java */; };
+		F8EE912B04D6A73700FA4796 /* SVarSet.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910004D6A73600FA4796 /* SVarSet.java */; };
+		F8EE912C04D6A73700FA4796 /* Axis.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910204D6A73600FA4796 /* Axis.java */; };
+		F8EE912D04D6A73700FA4796 /* AxisCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910304D6A73600FA4796 /* AxisCatSequence.java */; };
+		F8EE912E04D6A73700FA4796 /* BaseCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910404D6A73600FA4796 /* BaseCanvas.java */; };
+		F8EE912F04D6A73700FA4796 /* EzMenu.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910504D6A73600FA4796 /* EzMenu.java */; };
+		F8EE913004D6A73700FA4796 /* TFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910604D6A73600FA4796 /* TFrame.java */; };
+		F8EE913104D6A73700FA4796 /* WinTracker.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910704D6A73600FA4796 /* WinTracker.java */; };
+		F8EE913204D6A73700FA4796 /* WTentry.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910804D6A73600FA4796 /* WTentry.java */; };
+		F8EE913304D6A73700FA4796 /* Plugin.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910B04D6A73600FA4796 /* Plugin.java */; };
+		F8EE913404D6A73700FA4796 /* PluginDeriveVar.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910C04D6A73600FA4796 /* PluginDeriveVar.java */; };
+		F8EE913504D6A73700FA4796 /* PluginGetTreeR.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910D04D6A73700FA4796 /* PluginGetTreeR.java */; };
+		F8EE913604D6A73700FA4796 /* PluginManager.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910E04D6A73700FA4796 /* PluginManager.java */; };
+		F8EE913704D6A73700FA4796 /* PluginStartRserve.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE910F04D6A73700FA4796 /* PluginStartRserve.java */; };
+		F8EE913804D6A73700FA4796 /* PluginTable.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911004D6A73700FA4796 /* PluginTable.java */; };
+		F8EE913904D6A73700FA4796 /* PoGraSS.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911204D6A73700FA4796 /* PoGraSS.java */; };
+		F8EE913A04D6A73700FA4796 /* PoGraSSgraphics.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911304D6A73700FA4796 /* PoGraSSgraphics.java */; };
+		F8EE913B04D6A73700FA4796 /* PoGraSSmeta.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911404D6A73700FA4796 /* PoGraSSmeta.java */; };
+		F8EE913C04D6A73700FA4796 /* PoGraSSPDF.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911504D6A73700FA4796 /* PoGraSSPDF.java */; };
+		F8EE913D04D6A73700FA4796 /* PoGraSSPS.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE911604D6A73700FA4796 /* PoGraSSPS.java */; };
+		F8EE914304D6A73700FA4796 /* MsgDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912004D6A73700FA4796 /* MsgDialog.java */; };
+		F8EE914404D6A73700FA4796 /* Node.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912104D6A73700FA4796 /* Node.java */; };
+		F8EE914504D6A73700FA4796 /* PDFconstructor.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912204D6A73700FA4796 /* PDFconstructor.java */; };
+		F8EE914604D6A73700FA4796 /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912304D6A73700FA4796 /* Platform.java */; };
+		F8EE914704D6A73700FA4796 /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912404D6A73700FA4796 /* PlatformMac.java */; };
+		F8EE914804D6A73700FA4796 /* PlatformWin.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912504D6A73700FA4796 /* PlatformWin.java */; };
+		F8EE914904D6A73700FA4796 /* Tools.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE912604D6A73700FA4796 /* Tools.java */; };
+		F8EE914B04D6A8E600FA4796 /* NotifyMsg.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914A04D6A8E600FA4796 /* NotifyMsg.java */; };
+		F8EE914D04D6A94500FA4796 /* Commander.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914C04D6A94500FA4796 /* Commander.java */; };
+		F8EE914F04D6A9A700FA4796 /* SCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = F8EE914E04D6A9A700FA4796 /* SCatSequence.java */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		0E20B662001FAFA711DB9C8B /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		0E20B663001FAFA711DB9C8B /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1C5E09E40799DE9100A0658F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 15;
+			files = (
+				1C5E09E50799DEAD00A0658F /* libjogl.jnilib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		10F9BF62FEEDA25E11DB9C8B /* Klimt.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Klimt.icns; sourceTree = SOURCE_ROOT; };
+		1C166470058E084200A30C14 /* PPrimHam.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PPrimHam.java; sourceTree = "<group>"; };
+		1C1881420584189F004683DA /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Platform.java; sourceTree = "<group>"; };
+		1C18A2EC06BD686B0095E434 /* PluginModelLoader.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PluginModelLoader.java; sourceTree = "<group>"; };
+		1C37F17F04D84ADE00A8030F /* HistCanvasEx.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HistCanvasEx.java; sourceTree = "<group>"; };
+		1C37F18304D84C3000A8030F /* NodeMarker.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = NodeMarker.java; sourceTree = "<group>"; };
+		1C37F18504D85C5F00A8030F /* HistCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = HistCanvas.java; sourceTree = "<group>"; };
+		1C37F18704D85FE600A8030F /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = SOURCE_ROOT; };
+		1C37F18904D8681400A8030F /* SectScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SectScatterCanvas.java; sourceTree = "<group>"; };
+		1C42D10306D39C9F00B9B7D6 /* MosaicCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MosaicCanvas.java; sourceTree = "<group>"; };
+		1C42D10906D39CF900B9B7D6 /* FrequencyTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = FrequencyTable.java; sourceTree = "<group>"; };
+		1C42D10D06D39D3900B9B7D6 /* PPrimMosaic.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PPrimMosaic.java; sourceTree = "<group>"; };
+		1C4A15D204D93C2000A8030F /* Framework.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Framework.java; sourceTree = "<group>"; };
+		1C4A15D404D93F5E00A8030F /* PlotPolygon.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotPolygon.java; sourceTree = "<group>"; };
+		1C4A15D504D93F5E00A8030F /* PlotText.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotText.java; sourceTree = "<group>"; };
+		1C4BC7D6052F03BB00A8030F /* RecentList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RecentList.java; sourceTree = "<group>"; };
+		1C5E09570799DC1400A0658F /* Klimt Xtreme.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Klimt Xtreme.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C5F914206C7D86600A23BBC /* JSpacingPanel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = JSpacingPanel.java; sourceTree = "<group>"; };
+		1C8656BA055935AE00A8030F /* PPrimBase.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PPrimBase.java; sourceTree = "<group>"; };
+		1C8656BB055935AE00A8030F /* PPrimPolygon.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PPrimPolygon.java; sourceTree = "<group>"; };
+		1C8656BC055935AE00A8030F /* PPrimRectangle.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PPrimRectangle.java; sourceTree = "<group>"; };
+		1C8656BD055935AE00A8030F /* PrefsColorFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PrefsColorFrame.java; sourceTree = "<group>"; };
+		1C8656C2055935FB00A8030F /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFileOutputStream.java; sourceTree = "<group>"; };
+		1C8CDCB504F2AF8600A8030F /* RSrvException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RSrvException.java; sourceTree = "<group>"; };
+		1C98B802056C1F9000796AE6 /* SVarFixDouble.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarFixDouble.java; sourceTree = "<group>"; };
+		1C98B803056C1F9000796AE6 /* SVarObj.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarObj.java; sourceTree = "<group>"; };
+		1C993595058F776F0040221D /* KapMeCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; lineEnding = 0; path = KapMeCanvas.java; sourceTree = "<group>"; };
+		1C9A86CE0661736700FA73AE /* WTentryAWT.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = WTentryAWT.java; sourceTree = "<group>"; };
+		1C9A86CF0661736700FA73AE /* WTentrySwing.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = WTentrySwing.java; sourceTree = "<group>"; };
+		1C9A86D20661738000FA73AE /* RespDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RespDialog.java; sourceTree = "<group>"; };
+		1C9A86D30661738000FA73AE /* SpacingPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SpacingPanel.java; sourceTree = "<group>"; };
+		1C9A86D6066173CC00FA73AE /* SVarDouble.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarDouble.java; sourceTree = "<group>"; };
+		1C9A86D7066173CC00FA73AE /* SVarFact.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarFact.java; sourceTree = "<group>"; };
+		1C9A86D8066173CC00FA73AE /* SVarFixInt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarFixInt.java; sourceTree = "<group>"; };
+		1C9A86D9066173CC00FA73AE /* SVarInt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarInt.java; sourceTree = "<group>"; };
+		1CA4330304D814C200A8030F /* BarCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = BarCanvas.java; sourceTree = "<group>"; };
+		1CA4330404D814C200A8030F /* BoxCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = BoxCanvas.java; sourceTree = "<group>"; };
+		1CA4330504D814C200A8030F /* FCCCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = FCCCanvas.java; sourceTree = "<group>"; };
+		1CA4330604D814C200A8030F /* FluctCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = FluctCanvas.java; sourceTree = "<group>"; };
+		1CA4330804D814C200A8030F /* LineCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = LineCanvas.java; sourceTree = "<group>"; };
+		1CA4330904D814C200A8030F /* MapCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MapCanvas.java; sourceTree = "<group>"; };
+		1CA4330A04D814C200A8030F /* PCPCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PCPCanvas.java; sourceTree = "<group>"; };
+		1CA4330C04D814C200A8030F /* ScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ScatterCanvas.java; sourceTree = "<group>"; };
+		1CA4331904D8184500A8030F /* MapSegment.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MapSegment.java; sourceTree = "<group>"; };
+		1CA4331D04D819B900A8030F /* PlotPrimitive.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotPrimitive.java; sourceTree = "<group>"; };
+		1CA4331F04D81D3700A8030F /* MapSegmentEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MapSegmentEntry.java; sourceTree = "<group>"; };
+		1CA4332304D820AA00A8030F /* MapSegmentTools.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MapSegmentTools.java; sourceTree = "<group>"; };
+		1CA4332504D823AE00A8030F /* MCPCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MCPCanvas.java; sourceTree = "<group>"; };
+		1CA4332704D8292E00A8030F /* GlobalConfig.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = GlobalConfig.java; sourceTree = "<group>"; };
+		1CA4332904D830E500A8030F /* DataRoot.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = DataRoot.java; sourceTree = "<group>"; };
+		1CA4332D04D8403200A8030F /* SplitEditor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SplitEditor.java; sourceTree = "<group>"; };
+		1CA4332F04D840DD00A8030F /* PlotLine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotLine.java; sourceTree = "<group>"; };
+		1CC795E1055965C100A8030F /* Klimt.mft */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Klimt.mft; sourceTree = "<group>"; };
+		1CCDD36E0695E2B500AFAC85 /* KapMeNodeCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = KapMeNodeCanvas.java; sourceTree = "<group>"; };
+		1CD07DE0057D961400E3263B /* HamCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = HamCanvas.java; sourceTree = "<group>"; };
+		1CD07DE4057E55D000E3263B /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Platform.java; sourceTree = "<group>"; };
+		1CD07DE6057E58B200E3263B /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlatformMac.java; sourceTree = "<group>"; };
+		1CE96E4B04D6D6B300A8030F /* TreeEntry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = TreeEntry.java; sourceTree = "<group>"; };
+		1CE96E4D04D6D71D00A8030F /* SNode.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SNode.java; sourceTree = "<group>"; };
+		1CE96E4F04D6D75200A8030F /* TreeRegistry.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = TreeRegistry.java; sourceTree = "<group>"; };
+		1CE96E5104D6D86100A8030F /* LayerCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = LayerCanvas.java; sourceTree = "<group>"; };
+		1CE96E5204D6D86100A8030F /* PGSCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PGSCanvas.java; sourceTree = "<group>"; };
+		1CE96E5504D6D8F500A8030F /* QueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = QueryPopup.java; sourceTree = "<group>"; };
+		1CE96E5704D6D95900A8030F /* PlotManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotManager.java; sourceTree = "<group>"; };
+		1CE96E5804D6D95900A8030F /* PlotObject.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotObject.java; sourceTree = "<group>"; };
+		1CE96E5B04D6DA8000A8030F /* PlotColor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlotColor.java; sourceTree = "<group>"; };
+		1CE96E5D04D6DBC800A8030F /* Common.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Common.java; sourceTree = "<group>"; };
+		1CE96E5F04D6DCFA00A8030F /* Stopwatch.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Stopwatch.java; sourceTree = "<group>"; };
+		1CE96E6304D6E13D00A8030F /* ColorBridge.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ColorBridge.java; sourceTree = "<group>"; };
+		1CE96E6604D7D99D00A8030F /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = jcrypt.java; sourceTree = "<group>"; };
+		1CE96E6704D7D99D00A8030F /* RBool.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RBool.java; sourceTree = "<group>"; };
+		1CE96E6804D7D99D00A8030F /* Rconnection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rconnection.java; sourceTree = "<group>"; };
+		1CE96E6904D7D99D00A8030F /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = REXP.java; sourceTree = "<group>"; };
+		1CE96E6A04D7D99D00A8030F /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFactor.java; sourceTree = "<group>"; };
+		1CE96E6B04D7D99D00A8030F /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFileInputStream.java; sourceTree = "<group>"; };
+		1CE96E6C04D7D99D00A8030F /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RList.java; sourceTree = "<group>"; };
+		1CE96E6D04D7D99D00A8030F /* Rpacket.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rpacket.java; sourceTree = "<group>"; };
+		1CE96E6E04D7D99D00A8030F /* Rtalk.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rtalk.java; sourceTree = "<group>"; };
+		1CE96E7804D7E7BA00A8030F /* SplashScreen.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SplashScreen.java; sourceTree = "<group>"; };
+		1CE96E7A04D7E9D300A8030F /* KlimtSplash.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = KlimtSplash.java; sourceTree = "<group>"; };
+		1CE96E7D04D7ED0900A8030F /* Loader.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Loader.java; sourceTree = "<group>"; };
+		1CE96E7F04D7EE4B00A8030F /* TreeLoader.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = TreeLoader.java; sourceTree = "<group>"; };
+		1CE96E8104D7F47400A8030F /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlatformMac.java; sourceTree = "<group>"; };
+		1CE96E8304D7F74100A8030F /* Global.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Global.java; sourceTree = "<group>"; };
+		1CE96E8704D8003800A8030F /* Klimt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Klimt.java; sourceTree = "<group>"; };
+		1CE96E8A04D8010600A8030F /* DevCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = DevCanvas.java; sourceTree = "<group>"; };
+		1CE96E8B04D8010600A8030F /* MosaicCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MosaicCanvas.java; sourceTree = "<group>"; };
+		1CE96E8C04D8010600A8030F /* TInfoCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = TInfoCanvas.java; sourceTree = "<group>"; };
+		1CE96E8D04D8010600A8030F /* TNodeListCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = TNodeListCanvas.java; sourceTree = "<group>"; };
+		1CE96E8E04D8010600A8030F /* TreeCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = TreeCanvas.java; sourceTree = "<group>"; };
+		1CE96E8F04D8010600A8030F /* TreeFlowCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = TreeFlowCanvas.java; sourceTree = "<group>"; };
+		1CE96E9604D8024000A8030F /* DBCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = DBCanvas.java; sourceTree = "<group>"; };
+		1CE96E9804D8026C00A8030F /* VarFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = VarFrame.java; sourceTree = "<group>"; };
+		1CE96E9A04D8036F00A8030F /* HelpFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = HelpFrame.java; sourceTree = "<group>"; };
+		1CE96FF004D808CA00A8030F /* WinListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = WinListener.java; sourceTree = "<group>"; };
+		1CE96FF204D80BD100A8030F /* ProgressDlg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ProgressDlg.java; sourceTree = "<group>"; };
+		1CE96FF404D80DC700A8030F /* RootInfo.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RootInfo.java; sourceTree = "<group>"; };
+		6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MapScatterCanvas.java; sourceTree = "<group>"; };
+		685F537F07A58534004B99BD /* LoaderFLF.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LoaderFLF.java; sourceTree = "<group>"; };
+		68648ECE09A5229300668CBF /* AwtPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AwtPlotComponent.java; sourceTree = "<group>"; };
+		68648ECF09A5229300668CBF /* AwtQueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AwtQueryPopup.java; sourceTree = "<group>"; };
+		68648ED009A5229300668CBF /* PlotCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotCanvas.java; sourceTree = "<group>"; };
+		68648ED109A5229300668CBF /* PlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotComponent.java; sourceTree = "<group>"; };
+		68648ED209A5229300668CBF /* PlotComponentFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotComponentFactory.java; sourceTree = "<group>"; };
+		68648ED309A5229300668CBF /* PlotJPanel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotJPanel.java; sourceTree = "<group>"; };
+		68648ED409A5229300668CBF /* PPrimBox.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PPrimBox.java; sourceTree = "<group>"; };
+		68648ED509A5229300668CBF /* PPrimCircle.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PPrimCircle.java; sourceTree = "<group>"; };
+		68648ED609A5229300668CBF /* SwingPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SwingPlotComponent.java; sourceTree = "<group>"; };
+		68648ED709A5229300668CBF /* SwingQueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = SwingQueryPopup.java; sourceTree = "<group>"; };
+		68648ED809A5229300668CBF /* TJFrame.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = TJFrame.java; sourceTree = "<group>"; };
+		68648EF009A522BE00668CBF /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RSession.java; sourceTree = "<group>"; };
+		68AC23930798656000715278 /* PGSJoglCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PGSJoglCanvas.java; sourceTree = "<group>"; };
+		68AC23A20798669B00715278 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; path = jogl.jar; sourceTree = SOURCE_ROOT; };
+		68AC23CC07986B8600715278 /* PoGraSSjogl.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSjogl.java; sourceTree = "<group>"; };
+		68AC2512079893D900715278 /* libjogl.jnilib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libjogl.jnilib; sourceTree = "<group>"; };
+		F80E96F706D4E6B7000F58C0 /* PngEncoder.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PngEncoder.java; sourceTree = "<group>"; };
+		F8D5EAB305C527D300071680 /* SVarFixFact.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarFixFact.java; sourceTree = "<group>"; };
+		F8DEC51106C920160054EA9A /* Klimt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Klimt.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8EE90FB04D6A73600FA4796 /* Dependent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Dependent.java; sourceTree = "<group>"; };
+		F8EE90FC04D6A73600FA4796 /* Notifier.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Notifier.java; sourceTree = "<group>"; };
+		F8EE90FE04D6A73600FA4796 /* SMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SMarker.java; sourceTree = "<group>"; };
+		F8EE90FF04D6A73600FA4796 /* SVar.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVar.java; sourceTree = "<group>"; };
+		F8EE910004D6A73600FA4796 /* SVarSet.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SVarSet.java; sourceTree = "<group>"; };
+		F8EE910204D6A73600FA4796 /* Axis.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Axis.java; sourceTree = "<group>"; };
+		F8EE910304D6A73600FA4796 /* AxisCatSequence.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = AxisCatSequence.java; sourceTree = "<group>"; };
+		F8EE910404D6A73600FA4796 /* BaseCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = BaseCanvas.java; sourceTree = "<group>"; };
+		F8EE910504D6A73600FA4796 /* EzMenu.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = EzMenu.java; sourceTree = "<group>"; };
+		F8EE910604D6A73600FA4796 /* TFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = TFrame.java; sourceTree = "<group>"; };
+		F8EE910704D6A73600FA4796 /* WinTracker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = WinTracker.java; sourceTree = "<group>"; };
+		F8EE910804D6A73600FA4796 /* WTentry.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = WTentry.java; sourceTree = "<group>"; };
+		F8EE910B04D6A73600FA4796 /* Plugin.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Plugin.java; sourceTree = "<group>"; };
+		F8EE910C04D6A73600FA4796 /* PluginDeriveVar.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PluginDeriveVar.java; sourceTree = "<group>"; };
+		F8EE910D04D6A73700FA4796 /* PluginGetTreeR.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PluginGetTreeR.java; sourceTree = "<group>"; };
+		F8EE910E04D6A73700FA4796 /* PluginManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PluginManager.java; sourceTree = "<group>"; };
+		F8EE910F04D6A73700FA4796 /* PluginStartRserve.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PluginStartRserve.java; sourceTree = "<group>"; };
+		F8EE911004D6A73700FA4796 /* PluginTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PluginTable.java; sourceTree = "<group>"; };
+		F8EE911204D6A73700FA4796 /* PoGraSS.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSS.java; sourceTree = "<group>"; };
+		F8EE911304D6A73700FA4796 /* PoGraSSgraphics.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSgraphics.java; sourceTree = "<group>"; };
+		F8EE911404D6A73700FA4796 /* PoGraSSmeta.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSmeta.java; sourceTree = "<group>"; };
+		F8EE911504D6A73700FA4796 /* PoGraSSPDF.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSPDF.java; sourceTree = "<group>"; };
+		F8EE911604D6A73700FA4796 /* PoGraSSPS.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSPS.java; sourceTree = "<group>"; };
+		F8EE911704D6A73700FA4796 /* PoGraSSSVG.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PoGraSSSVG.java; sourceTree = "<group>"; };
+		F8EE912004D6A73700FA4796 /* MsgDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MsgDialog.java; sourceTree = "<group>"; };
+		F8EE912104D6A73700FA4796 /* Node.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Node.java; sourceTree = "<group>"; };
+		F8EE912204D6A73700FA4796 /* PDFconstructor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PDFconstructor.java; sourceTree = "<group>"; };
+		F8EE912304D6A73700FA4796 /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Platform.java; sourceTree = "<group>"; };
+		F8EE912404D6A73700FA4796 /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlatformMac.java; sourceTree = "<group>"; };
+		F8EE912504D6A73700FA4796 /* PlatformWin.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PlatformWin.java; sourceTree = "<group>"; };
+		F8EE912604D6A73700FA4796 /* Tools.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Tools.java; sourceTree = "<group>"; };
+		F8EE914A04D6A8E600FA4796 /* NotifyMsg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = NotifyMsg.java; sourceTree = "<group>"; };
+		F8EE914C04D6A94500FA4796 /* Commander.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Commander.java; sourceTree = "<group>"; };
+		F8EE914E04D6A9A700FA4796 /* SCatSequence.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SCatSequence.java; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1601BCE2FEEE210811DB9C8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C5E09550799DC1400A0658F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C5E09DC0799DE6B00A0658F /* jogl.jar in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01F12F4DFEC8CE2211DB9C8B = {
+			isa = PBXGroup;
+			children = (
+				6A9C778D023ECD530CC91562 /* Resources */,
+				01F12F4FFEC8CEF111DB9C8B /* Products */,
+				F8EE90F804D6A73600FA4796 /* org */,
+			);
+			sourceTree = "<group>";
+		};
+		01F12F4FFEC8CEF111DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F8DEC51106C920160054EA9A /* Klimt.app */,
+				1C5E09570799DC1400A0658F /* Klimt Xtreme.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1C4A15D104D93C2000A8030F /* iplots */ = {
+			isa = PBXGroup;
+			children = (
+				1C4A15D204D93C2000A8030F /* Framework.java */,
+				1CD07DE4057E55D000E3263B /* Platform.java */,
+				1CD07DE6057E58B200E3263B /* PlatformMac.java */,
+			);
+			path = iplots;
+			sourceTree = "<group>";
+		};
+		1CE96E6504D7D99D00A8030F /* JRclient */ = {
+			isa = PBXGroup;
+			children = (
+				1CE96E6604D7D99D00A8030F /* jcrypt.java */,
+				1CE96E6704D7D99D00A8030F /* RBool.java */,
+				1CE96E6804D7D99D00A8030F /* Rconnection.java */,
+				1CE96E6904D7D99D00A8030F /* REXP.java */,
+				1CE96E6A04D7D99D00A8030F /* RFactor.java */,
+				1CE96E6B04D7D99D00A8030F /* RFileInputStream.java */,
+				1C8656C2055935FB00A8030F /* RFileOutputStream.java */,
+				1CE96E6C04D7D99D00A8030F /* RList.java */,
+				1CE96E6D04D7D99D00A8030F /* Rpacket.java */,
+				68648EF009A522BE00668CBF /* RSession.java */,
+				1CE96E6E04D7D99D00A8030F /* Rtalk.java */,
+				1C8CDCB504F2AF8600A8030F /* RSrvException.java */,
+			);
+			path = JRclient;
+			sourceTree = "<group>";
+		};
+		1CE96E8904D8010600A8030F /* plots */ = {
+			isa = PBXGroup;
+			children = (
+				1CE96E8A04D8010600A8030F /* DevCanvas.java */,
+				1C37F17F04D84ADE00A8030F /* HistCanvasEx.java */,
+				1CA4332504D823AE00A8030F /* MCPCanvas.java */,
+				1CE96E8B04D8010600A8030F /* MosaicCanvas.java */,
+				1C37F18904D8681400A8030F /* SectScatterCanvas.java */,
+				1CE96E8C04D8010600A8030F /* TInfoCanvas.java */,
+				1CE96E8D04D8010600A8030F /* TNodeListCanvas.java */,
+				1CE96E8E04D8010600A8030F /* TreeCanvas.java */,
+				1CE96E8F04D8010600A8030F /* TreeFlowCanvas.java */,
+				1CCDD36E0695E2B500AFAC85 /* KapMeNodeCanvas.java */,
+			);
+			path = plots;
+			sourceTree = "<group>";
+		};
+		6A9C778D023ECD530CC91562 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				68AC2512079893D900715278 /* libjogl.jnilib */,
+				68AC23A20798669B00715278 /* jogl.jar */,
+				10F9BF62FEEDA25E11DB9C8B /* Klimt.icns */,
+				1C37F18704D85FE600A8030F /* splash.jpg */,
+				1CC795E1055965C100A8030F /* Klimt.mft */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		F8EE90F804D6A73600FA4796 /* org */ = {
+			isa = PBXGroup;
+			children = (
+				F8EE90F904D6A73600FA4796 /* rosuda */,
+			);
+			name = org;
+			path = ../../..;
+			sourceTree = SOURCE_ROOT;
+		};
+		F8EE90F904D6A73600FA4796 /* rosuda */ = {
+			isa = PBXGroup;
+			children = (
+				F8EE90FA04D6A73600FA4796 /* ibase */,
+				F8EE910904D6A73600FA4796 /* klimt */,
+				F8EE910A04D6A73600FA4796 /* plugins */,
+				F8EE911104D6A73700FA4796 /* pograss */,
+				F8EE911F04D6A73700FA4796 /* util */,
+				1CE96E6504D7D99D00A8030F /* JRclient */,
+				1C4A15D104D93C2000A8030F /* iplots */,
+			);
+			path = rosuda;
+			sourceTree = "<group>";
+		};
+		F8EE90FA04D6A73600FA4796 /* ibase */ = {
+			isa = PBXGroup;
+			children = (
+				F8EE914C04D6A94500FA4796 /* Commander.java */,
+				1CE96E5D04D6DBC800A8030F /* Common.java */,
+				1CE96E9604D8024000A8030F /* DBCanvas.java */,
+				F8EE90FB04D6A73600FA4796 /* Dependent.java */,
+				1CE96E7D04D7ED0900A8030F /* Loader.java */,
+				685F537F07A58534004B99BD /* LoaderFLF.java */,
+				1CA4331904D8184500A8030F /* MapSegment.java */,
+				1CA4331F04D81D3700A8030F /* MapSegmentEntry.java */,
+				F8EE90FC04D6A73600FA4796 /* Notifier.java */,
+				F8EE914A04D6A8E600FA4796 /* NotifyMsg.java */,
+				F8EE914E04D6A9A700FA4796 /* SCatSequence.java */,
+				F8EE90FE04D6A73600FA4796 /* SMarker.java */,
+				F8EE90FF04D6A73600FA4796 /* SVar.java */,
+				F8EE910004D6A73600FA4796 /* SVarSet.java */,
+				1C9A86D6066173CC00FA73AE /* SVarDouble.java */,
+				1C9A86D7066173CC00FA73AE /* SVarFact.java */,
+				1C9A86D9066173CC00FA73AE /* SVarInt.java */,
+				1C98B802056C1F9000796AE6 /* SVarFixDouble.java */,
+				F8D5EAB305C527D300071680 /* SVarFixFact.java */,
+				1C9A86D8066173CC00FA73AE /* SVarFixInt.java */,
+				1C98B803056C1F9000796AE6 /* SVarObj.java */,
+				F8EE90FD04D6A73600FA4796 /* plots */,
+				F8EE910104D6A73600FA4796 /* toolkit */,
+			);
+			path = ibase;
+			sourceTree = "<group>";
+		};
+		F8EE90FD04D6A73600FA4796 /* plots */ = {
+			isa = PBXGroup;
+			children = (
+				1CA4330304D814C200A8030F /* BarCanvas.java */,
+				1CA4330404D814C200A8030F /* BoxCanvas.java */,
+				1CD07DE0057D961400E3263B /* HamCanvas.java */,
+				1C37F18504D85C5F00A8030F /* HistCanvas.java */,
+				1CA4330504D814C200A8030F /* FCCCanvas.java */,
+				1CA4330604D814C200A8030F /* FluctCanvas.java */,
+				1C993595058F776F0040221D /* KapMeCanvas.java */,
+				1CA4330804D814C200A8030F /* LineCanvas.java */,
+				1CA4330904D814C200A8030F /* MapCanvas.java */,
+				6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */,
+				1C42D10306D39C9F00B9B7D6 /* MosaicCanvas.java */,
+				1CA4330A04D814C200A8030F /* PCPCanvas.java */,
+				1CA4330C04D814C200A8030F /* ScatterCanvas.java */,
+			);
+			path = plots;
+			sourceTree = "<group>";
+		};
+		F8EE910104D6A73600FA4796 /* toolkit */ = {
+			isa = PBXGroup;
+			children = (
+				68648ECE09A5229300668CBF /* AwtPlotComponent.java */,
+				68648ECF09A5229300668CBF /* AwtQueryPopup.java */,
+				68648ED009A5229300668CBF /* PlotCanvas.java */,
+				68648ED109A5229300668CBF /* PlotComponent.java */,
+				68648ED209A5229300668CBF /* PlotComponentFactory.java */,
+				68648ED309A5229300668CBF /* PlotJPanel.java */,
+				68648ED409A5229300668CBF /* PPrimBox.java */,
+				68648ED509A5229300668CBF /* PPrimCircle.java */,
+				68648ED609A5229300668CBF /* SwingPlotComponent.java */,
+				68648ED709A5229300668CBF /* SwingQueryPopup.java */,
+				68648ED809A5229300668CBF /* TJFrame.java */,
+				F8EE910204D6A73600FA4796 /* Axis.java */,
+				F8EE910304D6A73600FA4796 /* AxisCatSequence.java */,
+				F8EE910404D6A73600FA4796 /* BaseCanvas.java */,
+				1CE96E6304D6E13D00A8030F /* ColorBridge.java */,
+				F8EE910504D6A73600FA4796 /* EzMenu.java */,
+				1C42D10906D39CF900B9B7D6 /* FrequencyTable.java */,
+				1CE96E5104D6D86100A8030F /* LayerCanvas.java */,
+				1CA4332304D820AA00A8030F /* MapSegmentTools.java */,
+				1CE96E5204D6D86100A8030F /* PGSCanvas.java */,
+				68AC23930798656000715278 /* PGSJoglCanvas.java */,
+				1CE96E5B04D6DA8000A8030F /* PlotColor.java */,
+				1CA4332F04D840DD00A8030F /* PlotLine.java */,
+				1CE96E5704D6D95900A8030F /* PlotManager.java */,
+				1CE96E5804D6D95900A8030F /* PlotObject.java */,
+				1C4A15D404D93F5E00A8030F /* PlotPolygon.java */,
+				1CA4331D04D819B900A8030F /* PlotPrimitive.java */,
+				1C8656BA055935AE00A8030F /* PPrimBase.java */,
+				1C166470058E084200A30C14 /* PPrimHam.java */,
+				1C42D10D06D39D3900B9B7D6 /* PPrimMosaic.java */,
+				1C8656BB055935AE00A8030F /* PPrimPolygon.java */,
+				1C8656BC055935AE00A8030F /* PPrimRectangle.java */,
+				1C8656BD055935AE00A8030F /* PrefsColorFrame.java */,
+				1C1881420584189F004683DA /* Platform.java */,
+				1C4A15D504D93F5E00A8030F /* PlotText.java */,
+				1CE96E5504D6D8F500A8030F /* QueryPopup.java */,
+				1CE96E7804D7E7BA00A8030F /* SplashScreen.java */,
+				F8EE910604D6A73600FA4796 /* TFrame.java */,
+				F8EE910704D6A73600FA4796 /* WinTracker.java */,
+				F8EE910804D6A73600FA4796 /* WTentry.java */,
+				1C9A86CE0661736700FA73AE /* WTentryAWT.java */,
+				1C9A86CF0661736700FA73AE /* WTentrySwing.java */,
+				1CE96FF004D808CA00A8030F /* WinListener.java */,
+			);
+			path = toolkit;
+			sourceTree = "<group>";
+		};
+		F8EE910904D6A73600FA4796 /* klimt */ = {
+			isa = PBXGroup;
+			children = (
+				1CA4332904D830E500A8030F /* DataRoot.java */,
+				1CE96E9A04D8036F00A8030F /* HelpFrame.java */,
+				1CE96E8704D8003800A8030F /* Klimt.java */,
+				1CE96E7A04D7E9D300A8030F /* KlimtSplash.java */,
+				1C37F18304D84C3000A8030F /* NodeMarker.java */,
+				1CE96E8104D7F47400A8030F /* PlatformMac.java */,
+				1CE96FF404D80DC700A8030F /* RootInfo.java */,
+				1CE96E4D04D6D71D00A8030F /* SNode.java */,
+				1CA4332D04D8403200A8030F /* SplitEditor.java */,
+				1CE96E4B04D6D6B300A8030F /* TreeEntry.java */,
+				1CE96E4F04D6D75200A8030F /* TreeRegistry.java */,
+				1CE96E7F04D7EE4B00A8030F /* TreeLoader.java */,
+				1CE96E9804D8026C00A8030F /* VarFrame.java */,
+				1CE96E8904D8010600A8030F /* plots */,
+			);
+			path = klimt;
+			sourceTree = "<group>";
+		};
+		F8EE910A04D6A73600FA4796 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				F8EE910B04D6A73600FA4796 /* Plugin.java */,
+				F8EE910C04D6A73600FA4796 /* PluginDeriveVar.java */,
+				F8EE910D04D6A73700FA4796 /* PluginGetTreeR.java */,
+				F8EE910E04D6A73700FA4796 /* PluginManager.java */,
+				F8EE910F04D6A73700FA4796 /* PluginStartRserve.java */,
+				F8EE911004D6A73700FA4796 /* PluginTable.java */,
+				1C18A2EC06BD686B0095E434 /* PluginModelLoader.java */,
+			);
+			path = plugins;
+			sourceTree = "<group>";
+		};
+		F8EE911104D6A73700FA4796 /* pograss */ = {
+			isa = PBXGroup;
+			children = (
+				F8EE911204D6A73700FA4796 /* PoGraSS.java */,
+				F8EE911304D6A73700FA4796 /* PoGraSSgraphics.java */,
+				68AC23CC07986B8600715278 /* PoGraSSjogl.java */,
+				F8EE911404D6A73700FA4796 /* PoGraSSmeta.java */,
+				F8EE911504D6A73700FA4796 /* PoGraSSPDF.java */,
+				F8EE911604D6A73700FA4796 /* PoGraSSPS.java */,
+				F8EE911704D6A73700FA4796 /* PoGraSSSVG.java */,
+			);
+			path = pograss;
+			sourceTree = "<group>";
+		};
+		F8EE911F04D6A73700FA4796 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				1CE96E8304D7F74100A8030F /* Global.java */,
+				1CA4332704D8292E00A8030F /* GlobalConfig.java */,
+				1C5F914206C7D86600A23BBC /* JSpacingPanel.java */,
+				F8EE912004D6A73700FA4796 /* MsgDialog.java */,
+				F8EE912104D6A73700FA4796 /* Node.java */,
+				F8EE912204D6A73700FA4796 /* PDFconstructor.java */,
+				F8EE912304D6A73700FA4796 /* Platform.java */,
+				F8EE912404D6A73700FA4796 /* PlatformMac.java */,
+				F8EE912504D6A73700FA4796 /* PlatformWin.java */,
+				F80E96F706D4E6B7000F58C0 /* PngEncoder.java */,
+				1CE96FF204D80BD100A8030F /* ProgressDlg.java */,
+				1C4BC7D6052F03BB00A8030F /* RecentList.java */,
+				1C9A86D20661738000FA73AE /* RespDialog.java */,
+				1C9A86D30661738000FA73AE /* SpacingPanel.java */,
+				1CE96E5F04D6DCFA00A8030F /* Stopwatch.java */,
+				F8EE912604D6A73700FA4796 /* Tools.java */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXJavaArchiveBuildPhase section */
+		1601BCDEFEEE210811DB9C8B /* JavaArchive */ = {
+			isa = PBXJavaArchiveBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C37F18804D85FE600A8030F /* splash.jpg in JavaArchive */,
+				1CC795E2055965C100A8030F /* Klimt.mft in JavaArchive */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C5E09540799DC1400A0658F /* JavaArchive */ = {
+			isa = PBXJavaArchiveBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C5E09DE0799DE6C00A0658F /* splash.jpg in JavaArchive */,
+				1C5E09DF0799DE6D00A0658F /* Klimt.mft in JavaArchive */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXJavaArchiveBuildPhase section */
+
+/* Begin PBXProject section */
+		01F12F4CFEC8CE2211DB9C8B /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 689395B3086078BD003E007A /* Build configuration list for PBXProject "Klimt" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				0E20B662001FAFA711DB9C8B /* Development */,
+				0E20B663001FAFA711DB9C8B /* Deployment */,
+			);
+			hasScannedForEncodings = 1;
+			mainGroup = 01F12F4DFEC8CE2211DB9C8B;
+			productRefGroup = 01F12F4FFEC8CEF111DB9C8B /* Products */;
+			projectDirPath = "";
+			targets = (
+				1601BCDBFEEE210811DB9C8B /* Klimt */,
+				1C5E09560799DC1400A0658F /* Klimt Xtreme */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1601BCDFFEEE210811DB9C8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1601BCE0FEEE210811DB9C8B /* Klimt.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C5E09530799DC1400A0658F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C5E09DD0799DE6B00A0658F /* Klimt.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6A88643101E695080CC91562 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${TARGET_BUILD_DIR}\" = \"\" ]; \nthen\n    TARGET_BUILD_DIR=${BUILD_DIR}\nfi\n\nALERTSTRINGS=\"OldJavaAlert.strings\"\nAPPLAUNCHRESDIR=\"/System/Library/PrivateFrameworks/JavaApplicationLauncher.framework/Resources\";\nLSH=`/bin/ls $APPLAUNCHRESDIR | /usr/bin/grep lproj`;\nRESOURCEDIR=\"${TARGET_BUILD_DIR}/$TARGET_NAME.app/Contents/Resources\"\n\nfor COPYDIR in $LSH\ndo\n        /bin/mkdir -p $RESOURCEDIR/$COPYDIR\n        /bin/cp \"$APPLAUNCHRESDIR/$COPYDIR/$ALERTSTRINGS\" \"$RESOURCEDIR/$COPYDIR\"\ndone";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1601BCDCFEEE210811DB9C8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8EE912704D6A73700FA4796 /* Dependent.java in Sources */,
+				F8EE912804D6A73700FA4796 /* Notifier.java in Sources */,
+				F8EE912904D6A73700FA4796 /* SMarker.java in Sources */,
+				F8EE912A04D6A73700FA4796 /* SVar.java in Sources */,
+				F8EE912B04D6A73700FA4796 /* SVarSet.java in Sources */,
+				F8EE912C04D6A73700FA4796 /* Axis.java in Sources */,
+				F8EE912D04D6A73700FA4796 /* AxisCatSequence.java in Sources */,
+				F8EE912E04D6A73700FA4796 /* BaseCanvas.java in Sources */,
+				F8EE912F04D6A73700FA4796 /* EzMenu.java in Sources */,
+				F8EE913004D6A73700FA4796 /* TFrame.java in Sources */,
+				F8EE913104D6A73700FA4796 /* WinTracker.java in Sources */,
+				F8EE913204D6A73700FA4796 /* WTentry.java in Sources */,
+				F8EE913304D6A73700FA4796 /* Plugin.java in Sources */,
+				F8EE913404D6A73700FA4796 /* PluginDeriveVar.java in Sources */,
+				F8EE913504D6A73700FA4796 /* PluginGetTreeR.java in Sources */,
+				F8EE913604D6A73700FA4796 /* PluginManager.java in Sources */,
+				F8EE913704D6A73700FA4796 /* PluginStartRserve.java in Sources */,
+				F8EE913804D6A73700FA4796 /* PluginTable.java in Sources */,
+				F8EE913904D6A73700FA4796 /* PoGraSS.java in Sources */,
+				F8EE913A04D6A73700FA4796 /* PoGraSSgraphics.java in Sources */,
+				F8EE913B04D6A73700FA4796 /* PoGraSSmeta.java in Sources */,
+				F8EE913C04D6A73700FA4796 /* PoGraSSPDF.java in Sources */,
+				F8EE913D04D6A73700FA4796 /* PoGraSSPS.java in Sources */,
+				F8EE914304D6A73700FA4796 /* MsgDialog.java in Sources */,
+				F8EE914404D6A73700FA4796 /* Node.java in Sources */,
+				F8EE914504D6A73700FA4796 /* PDFconstructor.java in Sources */,
+				F8EE914604D6A73700FA4796 /* Platform.java in Sources */,
+				F8EE914704D6A73700FA4796 /* PlatformMac.java in Sources */,
+				F8EE914804D6A73700FA4796 /* PlatformWin.java in Sources */,
+				F8EE914904D6A73700FA4796 /* Tools.java in Sources */,
+				F8EE914B04D6A8E600FA4796 /* NotifyMsg.java in Sources */,
+				F8EE914D04D6A94500FA4796 /* Commander.java in Sources */,
+				F8EE914F04D6A9A700FA4796 /* SCatSequence.java in Sources */,
+				1CE96E4C04D6D6B300A8030F /* TreeEntry.java in Sources */,
+				1CE96E4E04D6D71D00A8030F /* SNode.java in Sources */,
+				1CE96E5004D6D75200A8030F /* TreeRegistry.java in Sources */,
+				1CE96E5304D6D86100A8030F /* LayerCanvas.java in Sources */,
+				1CE96E5404D6D86100A8030F /* PGSCanvas.java in Sources */,
+				1CE96E5604D6D8F500A8030F /* QueryPopup.java in Sources */,
+				1CE96E5904D6D95900A8030F /* PlotManager.java in Sources */,
+				1CE96E5A04D6D95900A8030F /* PlotObject.java in Sources */,
+				1CE96E5C04D6DA8000A8030F /* PlotColor.java in Sources */,
+				1CE96E5E04D6DBC800A8030F /* Common.java in Sources */,
+				1CE96E6004D6DCFA00A8030F /* Stopwatch.java in Sources */,
+				1CE96E6404D6E13D00A8030F /* ColorBridge.java in Sources */,
+				1CE96E6F04D7D99D00A8030F /* jcrypt.java in Sources */,
+				1CE96E7004D7D99D00A8030F /* RBool.java in Sources */,
+				1CE96E7104D7D99D00A8030F /* Rconnection.java in Sources */,
+				1CE96E7204D7D99D00A8030F /* REXP.java in Sources */,
+				1CE96E7304D7D99D00A8030F /* RFactor.java in Sources */,
+				1CE96E7404D7D99D00A8030F /* RFileInputStream.java in Sources */,
+				1CE96E7504D7D99D00A8030F /* RList.java in Sources */,
+				1CE96E7604D7D99D00A8030F /* Rpacket.java in Sources */,
+				1CE96E7704D7D99D00A8030F /* Rtalk.java in Sources */,
+				1CE96E7904D7E7BA00A8030F /* SplashScreen.java in Sources */,
+				1CE96E7B04D7E9D300A8030F /* KlimtSplash.java in Sources */,
+				1CE96E7E04D7ED0900A8030F /* Loader.java in Sources */,
+				1CE96E8004D7EE4B00A8030F /* TreeLoader.java in Sources */,
+				1CE96E8204D7F47400A8030F /* PlatformMac.java in Sources */,
+				1CE96E8404D7F74100A8030F /* Global.java in Sources */,
+				1CE96E8804D8003800A8030F /* Klimt.java in Sources */,
+				1CE96E9004D8010600A8030F /* DevCanvas.java in Sources */,
+				1CE96E9104D8010600A8030F /* MosaicCanvas.java in Sources */,
+				1CE96E9204D8010600A8030F /* TInfoCanvas.java in Sources */,
+				1CE96E9304D8010600A8030F /* TNodeListCanvas.java in Sources */,
+				1CE96E9404D8010600A8030F /* TreeCanvas.java in Sources */,
+				1CE96E9504D8010600A8030F /* TreeFlowCanvas.java in Sources */,
+				1CE96E9704D8024000A8030F /* DBCanvas.java in Sources */,
+				1CE96E9904D8026C00A8030F /* VarFrame.java in Sources */,
+				1CE96E9B04D8036F00A8030F /* HelpFrame.java in Sources */,
+				1CE96FF104D808CA00A8030F /* WinListener.java in Sources */,
+				1CE96FF304D80BD100A8030F /* ProgressDlg.java in Sources */,
+				1CE96FF504D80DC700A8030F /* RootInfo.java in Sources */,
+				1CA4330D04D814C200A8030F /* BarCanvas.java in Sources */,
+				1CA4330E04D814C200A8030F /* BoxCanvas.java in Sources */,
+				1CA4330F04D814C200A8030F /* FCCCanvas.java in Sources */,
+				1CA4331004D814C200A8030F /* FluctCanvas.java in Sources */,
+				1CA4331204D814C200A8030F /* LineCanvas.java in Sources */,
+				1CA4331304D814C200A8030F /* MapCanvas.java in Sources */,
+				1CA4331404D814C200A8030F /* PCPCanvas.java in Sources */,
+				1CA4331604D814C200A8030F /* ScatterCanvas.java in Sources */,
+				1CA4331A04D8184500A8030F /* MapSegment.java in Sources */,
+				1CA4331E04D819B900A8030F /* PlotPrimitive.java in Sources */,
+				1CA4332004D81D3700A8030F /* MapSegmentEntry.java in Sources */,
+				1CA4332404D820AA00A8030F /* MapSegmentTools.java in Sources */,
+				1CA4332604D823AE00A8030F /* MCPCanvas.java in Sources */,
+				1CA4332804D8292E00A8030F /* GlobalConfig.java in Sources */,
+				1CA4332A04D830E500A8030F /* DataRoot.java in Sources */,
+				1CA4332E04D8403200A8030F /* SplitEditor.java in Sources */,
+				1CA4333004D840DD00A8030F /* PlotLine.java in Sources */,
+				1C37F18004D84ADE00A8030F /* HistCanvasEx.java in Sources */,
+				1C37F18404D84C3000A8030F /* NodeMarker.java in Sources */,
+				1C37F18604D85C5F00A8030F /* HistCanvas.java in Sources */,
+				1C37F18A04D8681400A8030F /* SectScatterCanvas.java in Sources */,
+				1C4A15D304D93C2000A8030F /* Framework.java in Sources */,
+				1C4A15D604D93F5E00A8030F /* PlotPolygon.java in Sources */,
+				1C4A15D704D93F5E00A8030F /* PlotText.java in Sources */,
+				1C8CDCB604F2AF8600A8030F /* RSrvException.java in Sources */,
+				1C4BC7D7052F03BB00A8030F /* RecentList.java in Sources */,
+				1C8656BE055935AE00A8030F /* PPrimBase.java in Sources */,
+				1C8656BF055935AE00A8030F /* PPrimPolygon.java in Sources */,
+				1C8656C0055935AE00A8030F /* PPrimRectangle.java in Sources */,
+				1C8656C1055935AE00A8030F /* PrefsColorFrame.java in Sources */,
+				1C8656C3055935FB00A8030F /* RFileOutputStream.java in Sources */,
+				1C98B804056C1F9000796AE6 /* SVarFixDouble.java in Sources */,
+				1C98B805056C1F9000796AE6 /* SVarObj.java in Sources */,
+				1CD07DE1057D961400E3263B /* HamCanvas.java in Sources */,
+				1CD07DE5057E55D000E3263B /* Platform.java in Sources */,
+				1CD07DE7057E58B200E3263B /* PlatformMac.java in Sources */,
+				1C188143058418A0004683DA /* Platform.java in Sources */,
+				1C166471058E084200A30C14 /* PPrimHam.java in Sources */,
+				1C993596058F776F0040221D /* KapMeCanvas.java in Sources */,
+				F8D5EAB405C527D300071680 /* SVarFixFact.java in Sources */,
+				1C9A86D00661736700FA73AE /* WTentryAWT.java in Sources */,
+				1C9A86D10661736700FA73AE /* WTentrySwing.java in Sources */,
+				1C9A86D40661738000FA73AE /* RespDialog.java in Sources */,
+				1C9A86D50661738000FA73AE /* SpacingPanel.java in Sources */,
+				1C9A86DA066173CC00FA73AE /* SVarDouble.java in Sources */,
+				1C9A86DB066173CC00FA73AE /* SVarFact.java in Sources */,
+				1C9A86DC066173CC00FA73AE /* SVarFixInt.java in Sources */,
+				1C9A86DD066173CC00FA73AE /* SVarInt.java in Sources */,
+				1CCDD36F0695E2B500AFAC85 /* KapMeNodeCanvas.java in Sources */,
+				1C18A2EE06BD8A020095E434 /* PluginModelLoader.java in Sources */,
+				1C5F914306C7D86600A23BBC /* JSpacingPanel.java in Sources */,
+				1C42D10406D39C9F00B9B7D6 /* MosaicCanvas.java in Sources */,
+				1C42D10A06D39CF900B9B7D6 /* FrequencyTable.java in Sources */,
+				1C42D10E06D39D3900B9B7D6 /* PPrimMosaic.java in Sources */,
+				F80E96F806D4E6B7000F58C0 /* PngEncoder.java in Sources */,
+				685F538007A58534004B99BD /* LoaderFLF.java in Sources */,
+				6845652807CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */,
+				68648ED909A5229300668CBF /* AwtPlotComponent.java in Sources */,
+				68648EDA09A5229300668CBF /* AwtQueryPopup.java in Sources */,
+				68648EDB09A5229300668CBF /* PlotCanvas.java in Sources */,
+				68648EDC09A5229300668CBF /* PlotComponent.java in Sources */,
+				68648EDD09A5229300668CBF /* PlotComponentFactory.java in Sources */,
+				68648EDE09A5229300668CBF /* PlotJPanel.java in Sources */,
+				68648EDF09A5229300668CBF /* PPrimBox.java in Sources */,
+				68648EE009A5229300668CBF /* PPrimCircle.java in Sources */,
+				68648EE109A5229300668CBF /* SwingPlotComponent.java in Sources */,
+				68648EE209A5229300668CBF /* SwingQueryPopup.java in Sources */,
+				68648EE309A5229300668CBF /* TJFrame.java in Sources */,
+				68648EF109A522BE00668CBF /* RSession.java in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1C5E09520799DC1400A0658F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1C5E09590799DC3600A0658F /* SVarObj.java in Sources */,
+				1C5E095A0799DC3800A0658F /* SVarFixInt.java in Sources */,
+				1C5E095B0799DC3900A0658F /* SVarFixFact.java in Sources */,
+				1C5E095C0799DC3900A0658F /* SVarFixDouble.java in Sources */,
+				1C5E095D0799DC3A00A0658F /* SVarInt.java in Sources */,
+				1C5E095E0799DC3A00A0658F /* SVarFact.java in Sources */,
+				1C5E095F0799DC3C00A0658F /* SVarDouble.java in Sources */,
+				1C5E09600799DC3C00A0658F /* SVarSet.java in Sources */,
+				1C5E09610799DC3D00A0658F /* SVar.java in Sources */,
+				1C5E09620799DC3E00A0658F /* SMarker.java in Sources */,
+				1C5E09630799DC3E00A0658F /* SCatSequence.java in Sources */,
+				1C5E09640799DC3F00A0658F /* NotifyMsg.java in Sources */,
+				1C5E09650799DC3F00A0658F /* Notifier.java in Sources */,
+				1C5E09660799DC4000A0658F /* MapSegmentEntry.java in Sources */,
+				1C5E09670799DC4000A0658F /* MapSegment.java in Sources */,
+				1C5E09680799DC4000A0658F /* Loader.java in Sources */,
+				1C5E09690799DC4100A0658F /* Dependent.java in Sources */,
+				1C5E096A0799DC4200A0658F /* DBCanvas.java in Sources */,
+				1C5E096B0799DC4200A0658F /* Common.java in Sources */,
+				1C5E096C0799DC4300A0658F /* Commander.java in Sources */,
+				1C5E096D0799DC5300A0658F /* BarCanvas.java in Sources */,
+				1C5E096E0799DC5400A0658F /* BoxCanvas.java in Sources */,
+				1C5E096F0799DC5400A0658F /* HamCanvas.java in Sources */,
+				1C5E09700799DC5500A0658F /* HistCanvas.java in Sources */,
+				1C5E09710799DC5500A0658F /* FCCCanvas.java in Sources */,
+				1C5E09720799DC5600A0658F /* FluctCanvas.java in Sources */,
+				1C5E09730799DC5700A0658F /* KapMeCanvas.java in Sources */,
+				1C5E09740799DC5700A0658F /* LineCanvas.java in Sources */,
+				1C5E09750799DC5800A0658F /* MapCanvas.java in Sources */,
+				1C5E09760799DC5800A0658F /* MosaicCanvas.java in Sources */,
+				1C5E09770799DC5900A0658F /* PCPCanvas.java in Sources */,
+				1C5E09780799DC5A00A0658F /* ScatterCanvas.java in Sources */,
+				1C5E09790799DC5D00A0658F /* Axis.java in Sources */,
+				1C5E097A0799DC5E00A0658F /* AxisCatSequence.java in Sources */,
+				1C5E097B0799DC5E00A0658F /* BaseCanvas.java in Sources */,
+				1C5E097C0799DC5F00A0658F /* ColorBridge.java in Sources */,
+				1C5E097D0799DC5F00A0658F /* EzMenu.java in Sources */,
+				1C5E097E0799DC6000A0658F /* FrequencyTable.java in Sources */,
+				1C5E097F0799DC6000A0658F /* LayerCanvas.java in Sources */,
+				1C5E09800799DC6100A0658F /* MapSegmentTools.java in Sources */,
+				1C5E09810799DC6100A0658F /* PGSCanvas.java in Sources */,
+				1C5E09820799DC6200A0658F /* PGSJoglCanvas.java in Sources */,
+				1C5E09830799DC6200A0658F /* PlotColor.java in Sources */,
+				1C5E09840799DC6600A0658F /* PlotLine.java in Sources */,
+				1C5E09850799DC6600A0658F /* PlotManager.java in Sources */,
+				1C5E09860799DC6700A0658F /* PlotObject.java in Sources */,
+				1C5E09870799DC6700A0658F /* PlotPolygon.java in Sources */,
+				1C5E09880799DC6800A0658F /* PlotPrimitive.java in Sources */,
+				1C5E09890799DC6900A0658F /* PPrimBase.java in Sources */,
+				1C5E098A0799DC6900A0658F /* PPrimHam.java in Sources */,
+				1C5E098B0799DC6A00A0658F /* PPrimMosaic.java in Sources */,
+				1C5E098C0799DC6A00A0658F /* PPrimPolygon.java in Sources */,
+				1C5E098D0799DC6B00A0658F /* PPrimRectangle.java in Sources */,
+				1C5E098E0799DC6B00A0658F /* PrefsColorFrame.java in Sources */,
+				1C5E098F0799DC6C00A0658F /* Platform.java in Sources */,
+				1C5E09900799DC6C00A0658F /* PlotText.java in Sources */,
+				1C5E09910799DC6D00A0658F /* QueryPopup.java in Sources */,
+				1C5E09920799DC6D00A0658F /* SplashScreen.java in Sources */,
+				1C5E09930799DC6E00A0658F /* TFrame.java in Sources */,
+				1C5E09940799DC6F00A0658F /* WinTracker.java in Sources */,
+				1C5E09950799DC6F00A0658F /* WTentry.java in Sources */,
+				1C5E09960799DC7000A0658F /* WTentryAWT.java in Sources */,
+				1C5E09970799DC7100A0658F /* WTentrySwing.java in Sources */,
+				1C5E09980799DC7100A0658F /* WinListener.java in Sources */,
+				1C5E09990799DC7D00A0658F /* DataRoot.java in Sources */,
+				1C5E099A0799DC7D00A0658F /* HelpFrame.java in Sources */,
+				1C5E099B0799DC7E00A0658F /* Klimt.java in Sources */,
+				1C5E099C0799DC7E00A0658F /* KlimtSplash.java in Sources */,
+				1C5E099D0799DC7F00A0658F /* NodeMarker.java in Sources */,
+				1C5E099E0799DC8000A0658F /* PlatformMac.java in Sources */,
+				1C5E099F0799DC8000A0658F /* RootInfo.java in Sources */,
+				1C5E09A00799DC8100A0658F /* SNode.java in Sources */,
+				1C5E09A10799DC8100A0658F /* SplitEditor.java in Sources */,
+				1C5E09A20799DC8200A0658F /* TreeEntry.java in Sources */,
+				1C5E09A30799DC8200A0658F /* TreeRegistry.java in Sources */,
+				1C5E09A40799DC8300A0658F /* TreeLoader.java in Sources */,
+				1C5E09A50799DC8300A0658F /* VarFrame.java in Sources */,
+				1C5E09A60799DC8900A0658F /* DevCanvas.java in Sources */,
+				1C5E09A70799DC8900A0658F /* HistCanvasEx.java in Sources */,
+				1C5E09A80799DC8A00A0658F /* MCPCanvas.java in Sources */,
+				1C5E09A90799DC8A00A0658F /* MosaicCanvas.java in Sources */,
+				1C5E09AA0799DC8B00A0658F /* SectScatterCanvas.java in Sources */,
+				1C5E09AB0799DC8B00A0658F /* TInfoCanvas.java in Sources */,
+				1C5E09AC0799DC8C00A0658F /* TNodeListCanvas.java in Sources */,
+				1C5E09AD0799DC8C00A0658F /* TreeCanvas.java in Sources */,
+				1C5E09AE0799DC8D00A0658F /* TreeFlowCanvas.java in Sources */,
+				1C5E09AF0799DC8E00A0658F /* KapMeNodeCanvas.java in Sources */,
+				1C5E09B00799DC9300A0658F /* Plugin.java in Sources */,
+				1C5E09B10799DC9400A0658F /* PluginDeriveVar.java in Sources */,
+				1C5E09B20799DC9500A0658F /* PluginGetTreeR.java in Sources */,
+				1C5E09B30799DC9600A0658F /* PluginManager.java in Sources */,
+				1C5E09B40799DC9700A0658F /* PluginStartRserve.java in Sources */,
+				1C5E09B50799DC9700A0658F /* PluginTable.java in Sources */,
+				1C5E09B60799DC9800A0658F /* PluginModelLoader.java in Sources */,
+				1C5E09B70799DCA200A0658F /* PoGraSS.java in Sources */,
+				1C5E09B80799DCA200A0658F /* PoGraSSgraphics.java in Sources */,
+				1C5E09B90799DCA300A0658F /* PoGraSSjogl.java in Sources */,
+				1C5E09BA0799DCA400A0658F /* PoGraSSmeta.java in Sources */,
+				1C5E09BB0799DCA500A0658F /* PoGraSSPDF.java in Sources */,
+				1C5E09BC0799DCA500A0658F /* PoGraSSPS.java in Sources */,
+				1C5E09BD0799DCAD00A0658F /* Global.java in Sources */,
+				1C5E09BE0799DCAE00A0658F /* GlobalConfig.java in Sources */,
+				1C5E09BF0799DCAE00A0658F /* JSpacingPanel.java in Sources */,
+				1C5E09C00799DCAF00A0658F /* MsgDialog.java in Sources */,
+				1C5E09C10799DCAF00A0658F /* Node.java in Sources */,
+				1C5E09C20799DCB000A0658F /* PDFconstructor.java in Sources */,
+				1C5E09C30799DCB000A0658F /* Platform.java in Sources */,
+				1C5E09C40799DCB100A0658F /* PlatformMac.java in Sources */,
+				1C5E09C50799DCB100A0658F /* PlatformWin.java in Sources */,
+				1C5E09C60799DCB200A0658F /* PngEncoder.java in Sources */,
+				1C5E09C70799DCB200A0658F /* ProgressDlg.java in Sources */,
+				1C5E09C80799DCB300A0658F /* RecentList.java in Sources */,
+				1C5E09C90799DCB300A0658F /* RespDialog.java in Sources */,
+				1C5E09CA0799DCB400A0658F /* SpacingPanel.java in Sources */,
+				1C5E09CB0799DCB500A0658F /* Stopwatch.java in Sources */,
+				1C5E09CC0799DCB500A0658F /* Tools.java in Sources */,
+				1C5E09CD0799DCBD00A0658F /* jcrypt.java in Sources */,
+				1C5E09CE0799DCBE00A0658F /* RBool.java in Sources */,
+				1C5E09CF0799DCBE00A0658F /* Rconnection.java in Sources */,
+				1C5E09D00799DCBF00A0658F /* REXP.java in Sources */,
+				1C5E09D10799DCBF00A0658F /* RFactor.java in Sources */,
+				1C5E09D20799DCC000A0658F /* RFileInputStream.java in Sources */,
+				1C5E09D30799DCC000A0658F /* RFileOutputStream.java in Sources */,
+				1C5E09D40799DCC000A0658F /* RList.java in Sources */,
+				1C5E09D50799DCC100A0658F /* Rpacket.java in Sources */,
+				1C5E09D60799DCC100A0658F /* Rtalk.java in Sources */,
+				1C5E09D70799DCC200A0658F /* RSrvException.java in Sources */,
+				1C5E09D80799DCC600A0658F /* Framework.java in Sources */,
+				1C5E09D90799DCC600A0658F /* Platform.java in Sources */,
+				1C5E09DA0799DCC600A0658F /* PlatformMac.java in Sources */,
+				685F538107A58534004B99BD /* LoaderFLF.java in Sources */,
+				6845652707CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */,
+				68648EE409A5229300668CBF /* AwtPlotComponent.java in Sources */,
+				68648EE509A5229300668CBF /* AwtQueryPopup.java in Sources */,
+				68648EE609A5229300668CBF /* PlotCanvas.java in Sources */,
+				68648EE709A5229300668CBF /* PlotComponent.java in Sources */,
+				68648EE809A5229300668CBF /* PlotComponentFactory.java in Sources */,
+				68648EE909A5229300668CBF /* PlotJPanel.java in Sources */,
+				68648EEA09A5229300668CBF /* PPrimBox.java in Sources */,
+				68648EEB09A5229300668CBF /* PPrimCircle.java in Sources */,
+				68648EEC09A5229300668CBF /* SwingPlotComponent.java in Sources */,
+				68648EED09A5229300668CBF /* SwingQueryPopup.java in Sources */,
+				68648EEE09A5229300668CBF /* TJFrame.java in Sources */,
+				68648EF209A522BE00668CBF /* RSession.java in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		689395AC086078BD003E007A /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_SOURCE_VERSION = 1.3;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.3;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				PRODUCT_NAME = Klimt;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		689395AD086078BD003E007A /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.5;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				PRODUCT_NAME = Klimt;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		689395AE086078BD003E007A /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.5;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				PRODUCT_NAME = Klimt;
+			};
+			name = Default;
+		};
+		689395B0086078BD003E007A /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OPTIMIZATION_CFLAGS = "-O";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "Klimt Xtreme";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		689395B1086078BD003E007A /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OPTIMIZATION_CFLAGS = "-O";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "Klimt Xtreme";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		689395B2086078BD003E007A /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER = /usr/bin/javac;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Klimt.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OPTIMIZATION_CFLAGS = "-O";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = "Klimt Xtreme";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			name = Default;
+		};
+		689395B4086078BD003E007A /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		689395B5086078BD003E007A /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		689395B6086078BD003E007A /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		689395AB086078BD003E007A /* Build configuration list for PBXApplicationTarget "Klimt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				689395AC086078BD003E007A /* Development */,
+				689395AD086078BD003E007A /* Deployment */,
+				689395AE086078BD003E007A /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		689395AF086078BD003E007A /* Build configuration list for PBXApplicationTarget "Klimt Xtreme" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				689395B0086078BD003E007A /* Development */,
+				689395B1086078BD003E007A /* Deployment */,
+				689395B2086078BD003E007A /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		689395B3086078BD003E007A /* Build configuration list for PBXProject "Klimt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				689395B4086078BD003E007A /* Development */,
+				689395B5086078BD003E007A /* Deployment */,
+				689395B6086078BD003E007A /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 01F12F4CFEC8CE2211DB9C8B /* Project object */;
+}
