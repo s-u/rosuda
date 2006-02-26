@@ -19,18 +19,28 @@ fi
 # we attempt to use the same compiler as R did
 R_CC=`${R_HOME}/bin/R CMD config CC`
 R_CFLAGS=`${R_HOME}/bin/R CMD config CFLAGS`
-# pull some important R settings
-RINC=`${R_HOME}/bin/R CMD config --cppflags`
-RLD=`${R_HOME}/bin/R CMD config --ldflags`
-# R_LD_LIBRARY_PATH is not exported
-#: ${R_LD_LIBRARY_PATH=`${R_HOME}/bin/R CMD sh -c 'echo $R_LD_LIBRARY_PATH'`}
-: ${R_SHARE_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_SHARE_DIR'`}
-: ${R_INCLUDE_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_INCLUDE_DIR'`}
-: ${R_DOC_DIR=`${R_HOME}/bin/R CMD sh -c 'echo $R_DOC_DIR'`}
-# fall-backs in case they don't exist (old R versions)
-if test -z "${R_SHARE_DIR}"; then R_SHARE_DIR=${R_HOME}/share; fi
-if test -z "${R_INCLUDE_DIR}"; then R_INCLUDE_DIR=${R_HOME}/include; fi
-if test -z "${R_DOC_DIR}"; then R_DOC_DIR=${R_HOME}/doc; fi
+
+
+# find R_SHARE_DIR
+: ${R_SHARE_DIR=`R CMD sh -c 'echo $R_SHARE_DIR'`}
+if test -z "${R_SHARE_DIR}"; then
+  echo "could not determine R_SHARE_DIR"
+  exit 1
+fi
+
+# find R_DOC_DIR
+: ${R_DOC_DIR=`R CMD sh -c 'echo $R_DOC_DIR'`}
+if test -z "${R_DOC_DIR}"; then
+  echo "could not determine R_DOC_DIR"
+  exit 1
+fi
+
+# find R_INCLUDE_DIR
+: ${R_INCLUDE_DIR=`R CMD sh -c 'echo $R_INCLUDE_DIR'`}
+if test -z "${R_INCLUDE_DIR}"; then
+  echo "could not determine R_INCLUDE_DIR"
+  exit 1
+fi
 
 # if user did not specify CC then we use R's settings.
 # if CC was set then user is responsible for CFLAGS as well!
@@ -40,6 +50,9 @@ if test -z "${CC}"; then
 fi
 
 AC_SUBST(R_HOME)
+AC_SUBST(R_SHARE_DIR)
+AC_SUBST(R_DOC_DIR)
+AC_SUBST(R_INCLUDE_DIR)
 
 AC_PROG_CC
 AC_HEADER_STDC
@@ -65,15 +78,14 @@ AC_DEFUN([RUN_JAVA],
 if test -z "${JAVA_HOME}" ; then
   JAVA_PATH=${PATH}
 else
-  ## try JRE first, such that the result can be deployed even if JDK is not there
-  JAVA_PATH=${JAVA_HOME}:${JAVA_HOME}/jre/bin:${JAVA_HOME}/bin:${PATH}
+  JAVA_PATH=${JAVA_HOME}:${JAVA_HOME}/bin:${PATH}
 fi
 
 ## if 'java' is not on the PATH or JAVA_HOME, add some guesses as of
 ## where java could live
 JAVA_PATH=${JAVA_PATH}:/usr/java/bin:/usr/jdk/bin:/usr/lib/java/bin:/usr/lib/jdk/bin:/usr/local/java/bin:/usr/local/jdk/bin:/usr/local/lib/java/bin:/usr/local/lib/jdk/bin
 AC_PATH_PROGS(JAVA_PROG,java,,${JAVA_PATH})
-## FIXME: we may want to check for jikes, kaffe and others... but we don't even know if that works
+## FIXME: we may want to check for jikes, kaffe and others...
 AC_PATH_PROGS(JAVAC,javac,,${JAVA_PATH})
 AC_PATH_PROGS(JAVAH,javah,,${JAVA_PATH})
 AC_PATH_PROGS(JAR,jar,,${JAVA_PATH})
@@ -147,7 +159,7 @@ JAVA_INC="-I${JNI_H}"
 # (well, those are presumably the only platforms supported by Sun's JDK and others don't need this
 # at least as of now - 01/2004)
 jac_found_md=no
-for mddir in . linux solaris ppc irix alpha aix hp-ux genunix cygwin win32 freebsd; do
+for mddir in . linux solaris ppc irix alpha aix hp-ux genunix cygwin win32; do
 AC_CHECK_FILE(${JNI_H}/$mddir/jni_md.h,[JAVA_INC="${JAVA_INC} -I${JNI_H}/$mddir" jac_found_md=yes])
 if test $jac_found_md == yes; then break; fi
 done
@@ -214,12 +226,6 @@ AC_SUBST(JNILD)
 AC_SUBST(JNISO)
 AC_SUBST(JNIPREFIX)
 AC_SUBST(CPICF)
-AC_SUBST(RINC)
-AC_SUBST(RLD)
-AC_SUBST(R_SHARE_DIR)
-AC_SUBST(R_INCLUDE_DIR)
-AC_SUBST(R_DOC_DIR)
-#AC_SUBST(R_LD_LIBRARY_PATH)
 
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([Makefile])
