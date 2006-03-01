@@ -231,6 +231,9 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         if(classifier.hasClassifiedData()){
             m_DisplayClassifiedPlot.setEnabled(true);
             m_FileSaveClassifiedData.setEnabled(true);
+            
+            ClassifyingDialog cd = new ClassifyingDialog(this,false,classifier);
+            cd.show();
         }
     }
     
