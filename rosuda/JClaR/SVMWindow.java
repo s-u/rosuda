@@ -129,6 +129,10 @@ public final class SVMWindow extends ClassificationWindow {
     private void retrain(){
         svm.train();
         updateConfusionMatrix();
+        if(cd!=null && cd.autoReclassify()){
+            svm.reclassify();
+            cd.stateChanged(null); //TODO: do this with listeners
+        }
     }
     
     void restore(final SnapshotContainer snapC){
