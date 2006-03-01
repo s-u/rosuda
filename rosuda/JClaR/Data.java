@@ -302,4 +302,8 @@ public final class Data implements Cloneable {
             ErrorDialog.show(parent, rse, "Data.unclass(int)");
         }
     }
+
+    String getVariable(String name) {
+        return Rname + "$" + name;
+    }
 }
