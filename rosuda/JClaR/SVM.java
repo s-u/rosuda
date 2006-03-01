@@ -6,7 +6,6 @@
 
 package org.rosuda.JClaR;
 
-import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,27 +23,12 @@ import org.rosuda.JRclient.RSrvException;
  *
  * @author tobias
  */
-public final class SVM implements Classifier {
-    
+public final class SVM extends DefaultClassifier {
     //TODO: Better plots! Noone will know what the crosses and circles in those different colours mean.
-    
-    private transient RserveConnection rcon;
-    private transient Data data;
-    private transient Data classificationData;
+    private transient Data prediction;
     
     private int number;
-    
-    private boolean trained=false;
     private transient ClassificationWindow svmwindow;
-    
-    private transient SVMClassificationPlot plot;
-    
-    //TODO: necesarry?
-    private transient Component parent;
-    
-    private String Rname;
-    private int variablePos; //which data column was selected (starts at 0)
-    private String variableName;
     
     private int numberOfSupportVectors;
     
@@ -66,6 +50,8 @@ public final class SVM implements Classifier {
     private Vector classNames;
     
     private String CLASSIFICATIONRESULTNAME;
+    
+    private double accuracyOfPrediction=0;
     
     /** Creates a new instance of SVM */
     SVM(final Data data, final int variablePos) {
@@ -196,10 +182,6 @@ public final class SVM implements Classifier {
         }
     }
     
-    public String getVariableName(){
-        return variableName;
-    }
-    
     static final int TYPE_C_CLASS = 0;
     static final int TYPE_NU_CLASS = 1;
     static final int TYPE_ONE_CLASS = 2;
@@ -210,21 +192,6 @@ public final class SVM implements Classifier {
     static final int KERNEL_POLYNOMIAL = 1;
     static final int KERNEL_RADIAL = 2;
     static final int KERNEL_SIGMOID = 3;
-    
-    
-    
-    public String getName() {
-        if(data!=null){
-            if(data.isRestricted()) {
-                return data.getPath() + "(restricted)";
-            }
-            
-            return data.getPath();
-        } else  {
-            return "null";
-        }
-        
-    }
     
     int getType() {
         return type;
@@ -339,29 +306,8 @@ public final class SVM implements Classifier {
         }
     }
     
-    public Data getData(){
-        return data;
-    }
-    
-    private void setParent(final Component parent){
-        this.parent = parent;
-    }
-    
     public int getNumber(){
         return number;
-    }
-    
-    public Data predict(final Data newdata){
-        try{
-            final Data prediction = new Data();
-            rcon.voidEval(prediction.getRname() + " <- predict(" + Rname + "," + newdata.getRname() + ")");
-            prediction.setName("Pred. SVM #" + number + ", dataset " + data.getPath());
-            prediction.update();
-            return prediction;
-        } catch(RSrvException rse) {
-            ErrorDialog.show(parent,"Rserve exception in SVM.predict(Data): "+rse.getMessage());
-            return null;
-        }
     }
     
     void setCross(final int cross){
@@ -383,14 +329,6 @@ public final class SVM implements Classifier {
             return;
         }
         fitted=true;
-    }
-    
-    public String getRname() {
-        return Rname;
-    }
-    
-    public int getVariablePos() {
-        return variablePos;
     }
     
     double getGamma() {
@@ -415,18 +353,6 @@ public final class SVM implements Classifier {
     
     int getNumberOfSupportVectors() {
         return numberOfSupportVectors;
-    }
-    
-    boolean getTrained(){
-        return trained;
-    }
-    
-    public Plot getPlot() {
-        return plot;
-    }
-    
-    public void setPlot(final Plot plot) {
-        this.plot = (SVMClassificationPlot)plot;
     }
     
     public void show() {
@@ -454,20 +380,12 @@ public final class SVM implements Classifier {
         if(!getFitted())  {
             calculateFitted();
         }
-        
-        try{
-            confusionMatrix = rcon.eval("table(fitted(" + Rname + "), " +
-                    data.getRname() + "[," + (variablePos+1) + "])").asIntArray();
-            
-            final int numClasses = rcon.eval("length(" + Rname + "$levels)").asInt();
-            accuracy=0;
-            for (int i=0; i<numClasses; i++){
-                accuracy += confusionMatrix[i*(numClasses+1)];
-            }
-            accuracy /= (double)data.getLength();
-        } catch (RSrvException rse){
-            ErrorDialog.show(parent, rse, "SVM.updateAccuracy()");
-        }
+        accuracy = calculateAccuracyRate("fitted(" + Rname + ")", data.getRname() + "[," + (variablePos+1) + "]",confusionMatrix);
+    }
+    
+    private void updateAccuracyOfPrediction(){
+        if(hasClassifiedData())
+            accuracyOfPrediction =  calculateAccuracyRate(prediction.getRname(),classificationData.getVariable(getVariableName()),new int[0]);
     }
     
     public double getAccuracy(){
@@ -556,34 +474,30 @@ public final class SVM implements Classifier {
         }
     }
     
-    public boolean isReady() {
-        return getTrained();
-    }
-    
     public void classify(Data dataset) {
         if(dataset==null) return;
-        if (CLASSIFICATIONRESULTNAME==null) CLASSIFICATIONRESULTNAME = "pred" + dataset.getRname() + getRname();
+        classificationData = dataset;
+        
+        if(prediction==null){
+            prediction = new Data();
+            CLASSIFICATIONRESULTNAME = prediction.getRname();
+        }
         try{
-            rcon.voidEval(CLASSIFICATIONRESULTNAME +  " <- data.frame(" + getVariableName() + "=predict(" + getRname() + "," + dataset.getRname() + "))");
+            rcon.voidEval(prediction.getRname() + " <- predict(" + Rname + "," + classificationData.getRname() + ")");
+            prediction.setName("Pred. SVM #" + number + ", dataset " + data.getPath());
+            prediction.update();
         } catch(RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.classify(Data)");
         }
         classificationData=dataset;
+        updateAccuracyOfPrediction();
     }
     
     public String getClassifiedDataFrame() {
-        if(CLASSIFICATIONRESULTNAME!=null)
-            return "data.frame(" + classificationData.getRname() + "," + CLASSIFICATIONRESULTNAME + ")";
+        if(hasClassifiedData())
+            return "data.frame(" + getVariableName() + "=" + prediction.getRname() + "," + classificationData.getRname() + ")";
         else
             return null;
-    }
-    
-    public boolean hasClassifiedData() {
-        return classificationData!=null;
-    }
-    
-    public void reclassify() {
-        classify(classificationData);
     }
     
     private void writeObject(ObjectOutputStream s) throws IOException {
@@ -624,6 +538,11 @@ public final class SVM implements Classifier {
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "saveClassifiedDataAs(File)");
         }
+    }
+    
+    public double getAccuracyOfPrediction() {
+        if(hasClassifiedData()) return accuracyOfPrediction;
+        else return -1;
     }
     
     private static final class Snapshot implements SVMSnapshotIF {
