@@ -8,6 +8,8 @@
 package org.rosuda.JClaR;
 
 import java.awt.Frame;
+import java.text.NumberFormat;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 
 /**
@@ -17,7 +19,10 @@ import javax.swing.JEditorPane;
 public class ClassifyingDialog extends ListeningDialog implements SimpleChangeListener {
     
     private JEditorPane jepClassifyingResults;
+    private JCheckBox jcbAutoReclassify;
     private Classifier classifier;
+    
+    private NumberFormat numberFormat;
     
     /** Creates a new instance of ClassifyingDialog */
     public ClassifyingDialog(Frame parent, boolean modal, Classifier classifier) {
@@ -31,6 +36,12 @@ public class ClassifyingDialog extends ListeningDialog implements SimpleChangeLi
         jepClassifyingResults = new JEditorPane();
         jepClassifyingResults.setEditable(false);
         addCenterComponent(jepClassifyingResults);
+        
+        jcbAutoReclassify = new JCheckBox("reclassify automatically",true);
+        addComponent(jcbAutoReclassify);
+        
+        numberFormat = NumberFormat.getNumberInstance();
+        numberFormat.setMaximumFractionDigits(5);
         
         updateInfo();
     }
@@ -49,8 +60,12 @@ public class ClassifyingDialog extends ListeningDialog implements SimpleChangeLi
     private void updateInfo() {
         String info="";
         
-        info += classifier.getAccuracyOfPrediction();
+        info += numberFormat.format(classifier.getAccuracyOfPrediction());
         
         jepClassifyingResults.setText(info);
+    }
+
+    boolean autoReclassify() {
+        return jcbAutoReclassify.isSelected();
     }
 }
