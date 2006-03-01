@@ -72,6 +72,8 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
      */
     private Vector subWindows = new Vector();
     
+    protected ClassifyingDialog cd;
+    
     
     static final int CHANGE_TYPE_HARD=0;
     static final int CHANGE_TYPE_SOFT=1;
@@ -232,7 +234,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             m_DisplayClassifiedPlot.setEnabled(true);
             m_FileSaveClassifiedData.setEnabled(true);
             
-            ClassifyingDialog cd = new ClassifyingDialog(this,false,classifier);
+            cd = new ClassifyingDialog(this,false,classifier);
             cd.show();
         }
     }
