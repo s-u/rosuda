@@ -26,8 +26,6 @@ public interface Classifier extends Serializable {
     
     boolean isReady();
 
-    Data predict(Data newdata);
-
     void remove(boolean removeInData);
 
     void restoreSnapshot(SVMSnapshotIF snapIF);
@@ -50,6 +48,10 @@ public interface Classifier extends Serializable {
     
     boolean hasClassifiedData();
     
+    Data getClassifiedData();
+    
     void saveClassifiedDataAs(File file);
+
+    double getAccuracyOfPrediction();
 
 }
