@@ -331,26 +331,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         super.paintSelected(g);
     }
     
-    public boolean adjustMargin(){
-        if(orientation==0){
-            double f=ay.getSensibleTickDistance(30,18);
-            double fi=ay.getSensibleTickStart(f);
-            int maxLabelLength=0;
-            while (fi<ay.vBegin+ay.vLen) {
-                final String s = ay.getDisplayableValue(fi);
-                if(s.length()>maxLabelLength) maxLabelLength=s.length();
-                fi+=f;
-            }
-            maxLabelLength*=1.5;
-            final int omLeft=mLeft;
-            if(maxLabelLength*8>20){
-                mLeft = maxLabelLength*8+2;
-            } else mLeft=20;
-            if(mLeft!=omLeft) return true;
-        }
-        return false;
-    }
-    
     protected String getShortClassName() {
         return "Box";
     }

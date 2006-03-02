@@ -192,11 +192,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 if(s.length()>maxLabelLength) maxLabelLength=s.length();
                 fi+=f;
             }
-            final int omLeft=mLeft;
-            if(maxLabelLength*8>standardMLeft){
-                mLeft = maxLabelLength*8+2;
-            } else mLeft=standardMLeft;
-            if(mLeft!=omLeft) return true;
+            return adjustMargin(maxLabelLength);
         }
         return false;
     }

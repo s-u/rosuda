@@ -479,5 +479,29 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return true;
     }
     
-    protected void addLabelsAndTicks(PoGraSS g) {System.out.println("nein");}
+    protected void addLabelsAndTicks(PoGraSS g) {}
+    
+    public boolean adjustMargin(){
+        if(orientation==0){
+            double f=ay.getSensibleTickDistance(30,18);
+            double fi=ay.getSensibleTickStart(f);
+            int maxLabelLength=0;
+            while (fi<ay.vBegin+ay.vLen) {
+                final String s = ay.getDisplayableValue(fi);
+                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                fi+=f;
+            }
+            return adjustMargin(maxLabelLength);
+        }
+        return false;
+    }
+    
+    protected boolean adjustMargin(int maxLabelLength){
+        maxLabelLength*=1.5;
+        final int omLeft=mLeft;
+        if(maxLabelLength*8>20){
+            mLeft = maxLabelLength*8+2;
+        } else mLeft=20;
+        return (mLeft!=omLeft);
+    }
 }
