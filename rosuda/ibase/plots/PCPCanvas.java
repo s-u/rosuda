@@ -5,9 +5,7 @@ import java.awt.event.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
-import org.rosuda.ibase.toolkit.PGSCanvas.IDlgCL;
 import org.rosuda.pograss.*;
-import org.rosuda.util.*;
 
 /** implementation of line plot
  * @version $Id$
@@ -20,6 +18,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public PCPCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
         super(ppc,f, yvs,mark);
+        dontPaint=false;
     }
     
     public void paintBack(final PoGraSS g){
