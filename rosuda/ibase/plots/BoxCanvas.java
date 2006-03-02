@@ -211,7 +211,10 @@ public class BoxCanvas extends ParallelAxesCanvas {
         dontPaint=false;
     };
     
-    public SVar getData(final int id) { return (id==0)?v[0]:((id==1)?cv:null); }
+    public SVar getData(final int id) { 
+        if(cv==null) return super.getData(id);
+        else return (id==0)?v[0]:((id==1)?cv:null); 
+    }
     
     public Dimension getMinimumSize() { return new Dimension(60,50); };
     

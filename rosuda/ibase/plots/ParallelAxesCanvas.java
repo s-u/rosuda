@@ -3,7 +3,6 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dialog;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
@@ -355,7 +354,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return null;
     }
     
-    public SVar getData(final int id) { return (id>=0 && id<v.length-1)?v[id+1]:null; }
+    public SVar getData(final int id) { return (id>=0 && id<v.length)?v[id]:null; }
     
     public void performZoomIn(final int x1, final int y1, final int x2, final int y2) {
         if(commonScale) super.performZoomIn(x1, y1, x2, y2, null,ay);
