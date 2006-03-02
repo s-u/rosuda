@@ -74,8 +74,6 @@ class OrdStats { // get ordinal statistics to be used in boxplot
  */
 public class BoxCanvas extends ParallelAxesCanvas {
     
-    /** associated categorical variable if {@link #vsCat} is <code>true</code> */
-    SVar cv;
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
@@ -115,7 +113,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         mLeft=20;
         mBottom= (var.length==1)?10:30;
         mTop=10;
-        v=var;
+        
         String variables = v[0].getName();
         for(int i=1; i<v.length; i++) variables+=", " + v[i].getName();
         setTitle("Boxplot ("+ variables + ")");
@@ -142,8 +140,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 }
             }
         }
-        
-        objectClipping=true;
         dontPaint=false;
     };
     
@@ -153,25 +149,13 @@ public class BoxCanvas extends ParallelAxesCanvas {
      * @param cvar categorical variable for grouping
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) { // multiple box vs cat
-        super(ppc,f,mark);
+        super(ppc,f,var,cvar,mark);
         mLeft=20;
         mBottom=30;
         mTop=10;
-        v = new SVar[] {var}; m=mark; cv=cvar; setFrame(f);
-        setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
-        xv=new SVarObj("Box.index",true);
-        for(int i=0; i<cv.getNumCats(); i++){
-            xv.add(cv.getCatAt(i).toString());
-        }
-        ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
-        ay=new Axis(v[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
-        // get some space around (this comes from the scatterplots)
-        ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         
-        pc.setBackground(new Color(255,255,192));
-        pc.addMouseListener(this);
-        pc.addMouseMotionListener(this);
-        pc.addKeyListener(this); f.addKeyListener(this);
+        setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
+        
         if (var!=null && !var.isCat() && var.isNum() && cvar.isCat())
             valid=true; // valid are only numerical vars non-cat'd, cvar is cat
         if (valid) { // split into ranked chunks by cat.
