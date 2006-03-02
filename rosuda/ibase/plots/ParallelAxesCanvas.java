@@ -22,8 +22,30 @@ import org.rosuda.util.*;
 
 public class ParallelAxesCanvas extends BaseCanvas {
     
-    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SMarker mark) {
+    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
+        
+        allowDragMove=true;
+        objectClipping=true;
+        
+        mBottom=standardMBottom;
+        mTop=standardMTop;
+        mLeft=standardMLeft;
+        mRight=standardMRight;
+        
+        v = new SVar[]{var};
+        cv = cvar;
+        
+        xv=new SVarObj(getShortClassName() + ".index",true);
+        for(int i=0; i<cv.getNumCats(); i++){
+            xv.add(cv.getCatAt(i).toString());
+        }
+        ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
+        ay=new Axis(v[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
+        // get some space around (this comes from the scatterplots)
+        ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
+        
+        createMenu(f);
     }
     
     /** basic constructor. Every subclass must call this constructor
@@ -60,10 +82,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
-        pc.setBackground(Common.backgroundColor);
         
         createMenu(f);
-        dontPaint=false;
     }
     
     /** use trigraph for X axis in case X is categorical */
@@ -83,7 +103,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     /** y variables */
     SVar v[];
+    /** x variable */
     SVar xv;
+    /** categorical variable */
+    SVar cv;
     
     double totMin, totMax;
     
@@ -152,7 +175,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Colors (rainbow)",M_SET64,
             "Clear Colors",M_RESET
         });
-
+        
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MIdots=EzMenu.getItem(f,M_TOGGLEPTS);
         MIaxes=EzMenu.getItem(f,M_TOGGLEAXES);
@@ -455,6 +478,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     protected boolean getValid() {
         return true;
     }
-
+    
     protected void addLabelsAndTicks(PoGraSS g) {System.out.println("nein");}
 }
