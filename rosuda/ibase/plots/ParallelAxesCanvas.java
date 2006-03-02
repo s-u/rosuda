@@ -150,7 +150,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     int nodeSize=2;
     
-    int X,Y, TW,TH;
+    int X,Y;
+
+    protected boolean valid=true;
+
+    int TW, TH;
     
     protected void createMenu(Frame f){
         createMenu(f,true,true,new String[]{
@@ -476,7 +480,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     protected boolean getValid() {
-        return true;
+        return valid;
     }
     
     protected void addLabelsAndTicks(PoGraSS g) {}

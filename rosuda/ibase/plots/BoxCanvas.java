@@ -77,7 +77,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     boolean vsCat=false;
-    boolean valid=false, dragMode=false;
+    boolean dragMode=false;
     boolean vertical=true;
     
     int boxwidth=20;
@@ -122,6 +122,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         if(var.length==1){
             if (v[0]!=null && !v[0].isCat() && v[0].isNum())
                 valid=true; // valid are only numerical vars non-cat'd
+            else valid=false;
             if (valid) {
                 OSdata=new OrdStats();
                 final int dr[]=v[0].getRanked();
@@ -333,10 +334,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
     
     protected String getShortClassName() {
         return "Box";
-    }
-    
-    protected boolean getValid() {
-        return valid;
     }
     
     protected void addLabelsAndTicks(PoGraSS g) {
