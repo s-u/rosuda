@@ -6,11 +6,14 @@ import java.awt.event.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.pograss.*;
+import org.rosuda.util.Tools;
 
 /** implementation of line plot
  * @version $Id$
  */
 public class PCPCanvas extends ParallelAxesCanvas {
+    
+    private int mouseX;
     
     /** create a new PCP
      * @param f associated frame (or <code>null</code> if none)
@@ -164,14 +167,26 @@ public class PCPCanvas extends ParallelAxesCanvas {
         
         String retValue="";
         
-        for(int i=0; i<v.length; i++){
+        /* This will be the extended query
+         for(int i=0; i<v.length; i++){
             retValue += v[i].getName() + ": ";
             if(v[i].isCat()){
-                retValue += v[i].getCatAt((int)((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1])) + "\n";
+                retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
             } else{
-                retValue += ((commonScale||i==1)?ay:opAy[i-2]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i-1]) + "\n";
+                retValue += Tools.getDisplayableValue(
+                        ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
             }
-            
+         
+        }
+         **/
+        
+        int i = ax.getCatByPos(mouseX);
+        retValue += v[i].getName() + ": ";
+        if(v[i].isCat()){
+            retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+        } else{
+            retValue += Tools.getDisplayableValue(
+                    ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
         }
         
         return retValue;
@@ -254,5 +269,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
             }
             g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
         }
+    }
+    
+    public void mouseMoved(final MouseEvent ev) {
+        super.mouseMoved(ev);
+        if (Common.isQueryTrigger(ev)) mouseX=ev.getX();
     }
 };
