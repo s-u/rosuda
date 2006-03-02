@@ -6,6 +6,7 @@ import java.util.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.pograss.*;
+import org.rosuda.util.Tools;
 
 
 /** OrdStats - ordinal statistics of a variable, used internally by {@link BoxCanvas}
@@ -196,9 +197,9 @@ public class BoxCanvas extends ParallelAxesCanvas {
         dontPaint=false;
     };
     
-    public SVar getData(final int id) { 
+    public SVar getData(final int id) {
         if(cv==null) return super.getData(id);
-        else return (id==0)?v[0]:((id==1)?cv:null); 
+        else return (id==0)?v[0]:((id==1)?cv:null);
     }
     
     public Dimension getMinimumSize() { return new Dimension(60,50); };
@@ -381,6 +382,14 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 }
             }
         }
+    }
+    
+    public String queryObject(final PlotPrimitive p) {
+        PPrimBox box = (PPrimBox)p;
+        return "lower hinge: " + Tools.getDisplayableValue(ay.getValueForPos(box.lh)) + "\n" +
+                "median: " + Tools.getDisplayableValue(ay.getValueForPos(box.med)) + "\n" +
+                "upper hinge: " + Tools.getDisplayableValue(ay.getValueForPos(box.uh)) + "\n" +
+                "cases: " + box.cases();
     }
     
 }
