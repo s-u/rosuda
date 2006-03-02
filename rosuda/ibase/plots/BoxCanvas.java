@@ -267,7 +267,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
     
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
-        if(ax!=null){
+        if(ax!=null && v.length>1){
             int oBoxwidth = boxwidth;
             final int newBoxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
             if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
