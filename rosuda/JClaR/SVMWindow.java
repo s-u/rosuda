@@ -34,7 +34,7 @@ public final class SVMWindow extends ClassificationWindow {
     private SVMPreferencesPanel spp;
     
     private SVM svm;
-    private SVMClassificationPlot plot;
+    //private SVMClassificationPlot plot;
     private boolean restoring = false;
     private JCheckBoxMenuItem m_markSupportVectors;
     private JCheckBoxMenuItem m_markMisclassifiedPoints;
@@ -50,8 +50,8 @@ public final class SVMWindow extends ClassificationWindow {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if(plot!=null){
                     final boolean markSupportVectors;
-                    if((markSupportVectors=m_markSupportVectors.getState())!=plot.isMarkSupportVectors()){
-                        plot.setMarkSupportVectors(markSupportVectors);
+                    if((markSupportVectors=m_markSupportVectors.getState())!=((SVMClassificationPlot)plot).isMarkSupportVectors()){
+                        ((SVMClassificationPlot)plot).setMarkSupportVectors(markSupportVectors);
                         updatePlot(false, CHANGE_TYPE_SOFT);
                     }
                 }
@@ -64,8 +64,8 @@ public final class SVMWindow extends ClassificationWindow {
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 if(plot!=null){
                     final boolean markMisclassifiedPoints;
-                    if((markMisclassifiedPoints=m_markMisclassifiedPoints.getState())!=plot.isMarkMisclassifiedPoints()){
-                        plot.setMarkMisclassifiedPoints(markMisclassifiedPoints);
+                    if((markMisclassifiedPoints=m_markMisclassifiedPoints.getState())!=((SVMClassificationPlot)plot).isMarkMisclassifiedPoints()){
+                        ((SVMClassificationPlot)plot).setMarkMisclassifiedPoints(markMisclassifiedPoints);
                         updatePlot(false, CHANGE_TYPE_SOFT);
                     }
                 }
@@ -73,7 +73,7 @@ public final class SVMWindow extends ClassificationWindow {
         });
         addDisplayMenuItem(m_markMisclassifiedPoints);
         
-        plot = (SVMClassificationPlot)getPlot();
+        //plot = (SVMClassificationPlot)getPlot();
         updateCheckBoxMenus();
         
         setTitle("SVM #" + svm.getNumber());
@@ -109,7 +109,7 @@ public final class SVMWindow extends ClassificationWindow {
             if(showClassifiedPlot) svm.reclassify();
             
             if (changeType!=CHANGE_TYPE_RESIZE) {
-                plot.createPlotCall(changeType==CHANGE_TYPE_HARD);
+                ((SVMClassificationPlot)plot).createPlotCall(changeType==CHANGE_TYPE_HARD);
             }
             
             setPlotGraphic(new ImageIcon(plot.plot(getPreferredPlotSize())));
@@ -145,7 +145,7 @@ public final class SVMWindow extends ClassificationWindow {
             SVMClassificationPlot newPlot = (SVMClassificationPlot)svm.getPlot();
             adjustPlotToCheckBoxMenus(newPlot);
             setPlot(newPlot);
-            plot.setFixVariablesDialog(fvd);
+            ((SVMClassificationPlot)plot).setFixVariablesDialog(fvd);
             updatePlot(false, CHANGE_TYPE_HARD);
             
             //Scaled + Tolerance!!
@@ -178,8 +178,8 @@ public final class SVMWindow extends ClassificationWindow {
                         
                         
                         plot.setClassifier(svm);
-                        plot.setFixVariablesDialog(fvd);
-                        plot.createPlotCall(hardChange);
+                        ((SVMClassificationPlot)plot).setFixVariablesDialog(fvd);
+                        ((SVMClassificationPlot)plot).createPlotCall(hardChange);
                     }
                     svm.setPlot(plot);
                     break;
@@ -249,8 +249,8 @@ public final class SVMWindow extends ClassificationWindow {
      */
     void updateCheckBoxMenus(){
         if(plot!=null){
-            m_markMisclassifiedPoints.setState(plot.isMarkMisclassifiedPoints());
-            m_markSupportVectors.setState(plot.isMarkSupportVectors());
+            m_markMisclassifiedPoints.setState(((SVMClassificationPlot)plot).isMarkMisclassifiedPoints());
+            m_markSupportVectors.setState(((SVMClassificationPlot)plot).isMarkSupportVectors());
         }
         super.updateCheckBoxMenus();
     }

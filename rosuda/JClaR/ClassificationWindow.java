@@ -42,7 +42,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     
     Classifier classifier;
     
-    private Plot plot;
+    protected Plot plot;
     private final RserveConnection rcon;
     
     private boolean noRecalc=false; //TODO: is this ever used?
@@ -522,6 +522,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         if(m_DisplayClassifiedPlot.isSelected() && !showClassifiedPlot){
             showClassifiedPlot=true;
             plot=null;
+            classifier.setPlot(null);
             plotClassifiedModel(true);
         }
     }//GEN-LAST:event_m_DisplayClassifiedPlotActionPerformed
@@ -530,6 +531,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         if(m_DisplayTrainingPlot.isSelected() && showClassifiedPlot){
             showClassifiedPlot=false;
             plot=null;
+            classifier.setPlot(null);
             plotClassifier(true);
         }
     }//GEN-LAST:event_m_DisplayTrainingPlotActionPerformed
