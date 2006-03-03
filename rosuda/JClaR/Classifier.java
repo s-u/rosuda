@@ -54,4 +54,6 @@ public interface Classifier extends Serializable {
 
     double getAccuracyOfPrediction();
 
+    boolean hasAccuracyOfPrediction();
+
 }

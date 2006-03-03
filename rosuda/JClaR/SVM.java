@@ -384,7 +384,7 @@ public final class SVM extends DefaultClassifier {
     }
     
     private void updateAccuracyOfPrediction(){
-        if(hasClassifiedData())
+        if(hasAccuracyOfPrediction())
             accuracyOfPrediction =  calculateAccuracyRate(prediction.getRname(),classificationData.getVariable(getVariableName()),new int[0]);
     }
     
@@ -543,6 +543,10 @@ public final class SVM extends DefaultClassifier {
     public double getAccuracyOfPrediction() {
         if(hasClassifiedData()) return accuracyOfPrediction;
         else return -1;
+    }
+
+    public boolean hasAccuracyOfPrediction() {
+        return (hasClassifiedData() && classificationData.getVariables().contains(getVariableName()));
     }
     
     private static final class Snapshot implements SVMSnapshotIF {

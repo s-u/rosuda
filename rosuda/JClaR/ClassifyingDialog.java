@@ -60,11 +60,13 @@ public class ClassifyingDialog extends ListeningDialog implements SimpleChangeLi
     private void updateInfo() {
         String info="";
         
-        info += numberFormat.format(classifier.getAccuracyOfPrediction());
+        if(classifier.hasAccuracyOfPrediction()){
+            info += "Accuracy: " + numberFormat.format(classifier.getAccuracyOfPrediction());
+        }
         
         jepClassifyingResults.setText(info);
     }
-
+    
     boolean autoReclassify() {
         return jcbAutoReclassify.isSelected();
     }
