@@ -43,7 +43,6 @@ public final class SVM extends DefaultClassifier {
     private int cross = 0;
     private double tolerance = 0.001;
     private boolean fitted = true;    //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
-    private int[] confusionMatrix;
     private Vector classNames;
     
     private String CLASSIFICATIONRESULTNAME;
@@ -377,12 +376,18 @@ public final class SVM extends DefaultClassifier {
         if(!getFitted())  {
             calculateFitted();
         }
-        accuracy = calculateAccuracyRate("fitted(" + Rname + ")", data.getRname() + "[," + (variablePos+1) + "]",confusionMatrix);
+        String prediction = "fitted(" + Rname + ")",
+                reality   = data.getRname() + "[," + (variablePos+1) + "]";
+        confusionMatrix = calculateConfusionMatrix(prediction,reality);
+        accuracy = calculateAccuracyRate(prediction,reality,confusionMatrix);
     }
     
     private void updateAccuracyOfPrediction(){
-        if(hasAccuracyOfPrediction())
-            accuracyOfPrediction =  calculateAccuracyRate(prediction.getRname(),classificationData.getVariable(getVariableName()),new int[0]);
+        if(hasAccuracyOfPrediction()){
+            String pred = prediction.getRname(),
+                    reality   = classificationData.getVariable(getVariableName());
+            accuracyOfPrediction =  calculateAccuracyRate(pred,reality,calculateConfusionMatrix(pred,reality));
+        }
     }
     
     public int[] getConfusionMatrix(){

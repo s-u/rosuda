@@ -10,11 +10,21 @@ public abstract class DefaultClassifier implements Classifier {
     
     protected transient Component parent;
     
-    protected double calculateAccuracyRate(String prediction, String reality, int[] matrix) {
-        double ac=0;
+    protected int[] confusionMatrix;
+    
+    protected int[] calculateConfusionMatrix(String prediction, String reality){
+        int[] matrix = null;
         try{
             matrix = rcon.eval("table(" + prediction + "," + reality + ")").asIntArray();
-            
+        } catch (RSrvException rse){
+            ErrorDialog.show(parent, rse, "SVM.calculateConfusionMatrix(String,String)");
+        }
+        return matrix;
+    }
+    
+    protected double calculateAccuracyRate(String prediction, String reality,int[] matrix) {
+        double ac=0;
+        try{
             final int numClassesR = rcon.eval("length(levels(" + reality + "))").asInt();
             final int numClassesP = rcon.eval("length(levels(" + prediction + "))").asInt();
             for (int i=0; i<numClassesR; i++){
@@ -22,7 +32,7 @@ public abstract class DefaultClassifier implements Classifier {
             }
             ac /= (double)rcon.eval("length(" + prediction + ")").asInt();
         } catch (RSrvException rse){
-            ErrorDialog.show(parent, rse, "SVM.calculateAccuracyRate(String,String)");
+            ErrorDialog.show(parent, rse, "SVM.calculateAccuracyRate(String,String,int[])");
         }
         return ac;
     }
