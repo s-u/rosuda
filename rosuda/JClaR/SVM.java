@@ -42,16 +42,13 @@ public final class SVM extends DefaultClassifier {
     private boolean scale = true;
     private int cross = 0;
     private double tolerance = 0.001;
-    private boolean fitted = true;
-    //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
-    
-    private double accuracy=0;
+    private boolean fitted = true;    //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
     private int[] confusionMatrix;
     private Vector classNames;
     
     private String CLASSIFICATIONRESULTNAME;
     
-    private double accuracyOfPrediction=0;
+    
     
     /** Creates a new instance of SVM */
     SVM(final Data data, final int variablePos) {
@@ -388,10 +385,6 @@ public final class SVM extends DefaultClassifier {
             accuracyOfPrediction =  calculateAccuracyRate(prediction.getRname(),classificationData.getVariable(getVariableName()),new int[0]);
     }
     
-    public double getAccuracy(){
-        return accuracy;
-    }
-    
     public int[] getConfusionMatrix(){
         return confusionMatrix;
     }
@@ -540,14 +533,7 @@ public final class SVM extends DefaultClassifier {
         }
     }
     
-    public double getAccuracyOfPrediction() {
-        if(hasClassifiedData()) return accuracyOfPrediction;
-        else return -1;
-    }
 
-    public boolean hasAccuracyOfPrediction() {
-        return (hasClassifiedData() && classificationData.getVariables().contains(getVariableName()));
-    }
     
     private static final class Snapshot implements SVMSnapshotIF {
         
