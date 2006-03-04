@@ -278,17 +278,19 @@ public class BoxCanvas extends ParallelAxesCanvas {
     }
     
     public void paintSelected(final PoGraSS g) {
-        final int md[]=v[0].getRanked(m,-1);
-        if(md==null) return;
+        final int md[][] = new int[v.length][];
+        for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
+        //if(md==null) return;
         if (vsCat) {
+            if(md[0]==null) return;
             int i=0;
             while (i<cs) { rs[cs+1+i]=0; i++; }
             i=0;
-            while(i<md.length) {
-                int x=cv.getCatIndex(cv.at(md[i]));
+            while(i<md[0].length) {
+                int x=cv.getCatIndex(cv.at(md[0][i]));
                 if (x<0) x=cs;
                 x+=cs+1;
-                rk[x][rs[x]]=md[i];
+                rk[x][rs[x]]=md[0][i];
                 rs[x]++;
                 i++;
             }
@@ -298,8 +300,10 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 i++;
             }
         } else {
-            for(int i=0; i<v.length; i++)
-                markStats[i].update(v[i],md);
+            for(int i=0; i<v.length; i++) {
+                if(md[i]!=null) markStats[i].update(v[i],md[i]);
+                else markStats[i].update(v[i],new int[]{});
+            }
         }
         for(int i=0; i<pp.length; i++){
             final PPrimBox box = ((PPrimBox)pp[i]);
