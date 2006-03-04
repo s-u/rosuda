@@ -210,7 +210,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         if (!vsCat) {
             if(v.length==1){
                 pp = new PlotPrimitive[1];
-                pp[0] = createBox(OSdata,(orientation==0)?(mLeft+20):(mTop+20),boxwidth);
+                pp[0] = createBox(OSdata,(orientation==0)?(mLeft+20):(mTop+20),boxwidth,0);
                 final PPrimBox p = ((PPrimBox)pp[0]);
                 p.ref = v[0].getRanked();
                 markStats = new OrdStats[1];
@@ -219,7 +219,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 pp = new PlotPrimitive[v.length];
                 markStats = new OrdStats[v.length];
                 for(int i=0; i<pp.length; i++){
-                    pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth);
+                    pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth,i);
                     ((PPrimBox)pp[i]).ref = v[i].getRanked();
                     markStats[i] = new OrdStats();
                 }
@@ -227,7 +227,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         } else {
             final Vector boxes = new Vector();
             for(int i=0; i<cs; i++){
-                final PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth);
+                final PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth,i);
                 box.ref = rk[i];
                 boxes.add(box);
             }
@@ -239,23 +239,24 @@ public class BoxCanvas extends ParallelAxesCanvas {
         for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
     };
     
-    private PPrimBox createBox(final OrdStats os, final int x, final int w){
+    private PPrimBox createBox(final OrdStats os, final int x, final int w, final int rank){
+        final Axis axis = (commonScale || rank==0)?ay:opAy[rank-1];
         final PPrimBox box = new PPrimBox();
         box.x=x;
         box.w=w;
-        box.med = ay.getValuePos(os.med);
-        box.lh = ay.getValuePos(os.lh);
-        box.uh = ay.getValuePos(os.uh);
-        box.lh15 = ay.getValuePos(os.lh15);
-        box.uh15 = ay.getValuePos(os.uh15);
+        box.med = axis.getValuePos(os.med);
+        box.lh = axis.getValuePos(os.lh);
+        box.uh = axis.getValuePos(os.uh);
+        box.lh15 = axis.getValuePos(os.lh15);
+        box.uh15 = axis.getValuePos(os.uh15);
         box.lh3 = os.lh3;
         box.uh3 = os.uh3;
         box.lowEdge = os.lowEdge;
         box.lastR = new double[os.lastR.length];
         box.valPos = new int[os.lastR.length];
         for(int i=0; i< box.lastR.length; i++){
-            box.lastR[i] = v[0].atF(os.lastR[i]);
-            box.valPos[i] = ay.getValuePos(box.lastR[i]);
+            box.lastR[i] = v[rank].atF(os.lastR[i]);
+            box.valPos[i] = axis.getValuePos(box.lastR[i]);
         }
         box.lastTop = os.lastTop;
         box.highEdge = os.highEdge;
@@ -305,13 +306,14 @@ public class BoxCanvas extends ParallelAxesCanvas {
             if(markStats[i].lastTop==0){
                 box.slastR=null;
             } else{
+                final Axis axis = (commonScale || i==0)?ay:opAy[i-1];
                 box.sx = box.x + box.w*2/5;
                 box.sw = box.w/2;
-                box.smed = ay.getValuePos(markStats[i].med);
-                box.slh = ay.getValuePos(markStats[i].lh);
-                box.suh = ay.getValuePos(markStats[i].uh);
-                box.slh15 = ay.getValuePos(markStats[i].lh15);
-                box.suh15 = ay.getValuePos(markStats[i].uh15);
+                box.smed = axis.getValuePos(markStats[i].med);
+                box.slh = axis.getValuePos(markStats[i].lh);
+                box.suh = axis.getValuePos(markStats[i].uh);
+                box.slh15 = axis.getValuePos(markStats[i].lh15);
+                box.suh15 = axis.getValuePos(markStats[i].uh15);
                 box.slh3 = markStats[i].lh3;
                 box.suh3 = markStats[i].uh3;
                 box.slowEdge = markStats[i].lowEdge;
@@ -320,7 +322,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
                     box.svalPos = new int[markStats[i].lastR.length];
                     for(int j=0; j< box.slastR.length; j++){
                         box.slastR[j] = v[0].atF(markStats[i].lastR[j]);
-                        box.svalPos[j] = ay.getValuePos(box.slastR[j]);
+                        box.svalPos[j] = axis.getValuePos(box.slastR[j]);
                     }
                 } else{
                     box.slastR = null;
