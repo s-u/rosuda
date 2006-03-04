@@ -442,12 +442,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
             while (i<opAy.length) {
                 opAy[i]=new Axis(v[i+1],Axis.O_Y,v[i+1].isCat()?Axis.T_EqCat:Axis.T_Num);
                 opAy[i].addDepend(this);
+                opAy[i].setValueRange(v[i+1].getMin()-(v[i+1].getMax()-v[i+1].getMin())/20,(v[i+1].getMax()-v[i+1].getMin())*1.1);
                 i++;
             }
             
             updateGeometry=true;
         }
-        ay.setDefaultRange();
+        ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         updateObjects();
         setUpdateRoot(0); repaint();
     }
