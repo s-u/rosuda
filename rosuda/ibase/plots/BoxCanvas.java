@@ -227,7 +227,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         } else {
             final Vector boxes = new Vector();
             for(int i=0; i<cs; i++){
-                final PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth,i);
+                final PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth,0);
                 box.ref = rk[i];
                 boxes.add(box);
             }
@@ -321,7 +321,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
                     box.slastR = new double[markStats[i].lastR.length];
                     box.svalPos = new int[markStats[i].lastR.length];
                     for(int j=0; j< box.slastR.length; j++){
-                        box.slastR[j] = v[0].atF(markStats[i].lastR[j]);
+                        box.slastR[j] = v[vsCat?0:i].atF(markStats[i].lastR[j]);
                         box.svalPos[j] = axis.getValuePos(box.slastR[j]);
                     }
                 } else{
