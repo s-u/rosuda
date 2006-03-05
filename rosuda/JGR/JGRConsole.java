@@ -290,10 +290,10 @@ FocusListener, RMainLoopCallbacks {
      */
     public void loadWorkSpace() {
         FileSelector fopen = new FileSelector(this, "Open Workspace",
-                                              FileSelector.LOAD, JGR.directory);
+                                              FileSelector.LOAD, JGRPrefs.workingDirectory);
         fopen.setVisible(true);
         if (fopen.getFile() != null) {
-            wspace = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
+            wspace = (JGRPrefs.workingDirectory = fopen.getDirectory()) + fopen.getFile();
             execute("load(\""+wspace.replace('\\','/')+"\")",false);
         }
     }
@@ -313,10 +313,10 @@ FocusListener, RMainLoopCallbacks {
      */
     public void saveWorkSpaceAs() {
         FileSelector fsave = new FileSelector(this, "Save Workspace as...",
-                                              FileSelector.SAVE, JGR.directory);
+                                              FileSelector.SAVE, JGRPrefs.workingDirectory);
         fsave.setVisible(true);
         if (fsave.getFile() != null) {
-            String file = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
+            String file = (JGRPrefs.workingDirectory = fsave.getDirectory()) + fsave.getFile();
             saveWorkSpace(file);
             JGR.writeHistory();
         }
@@ -408,7 +408,7 @@ FocusListener, RMainLoopCallbacks {
      * @param newFile if it's a new file
      */
 	public String rChooseFile(Rengine re, int newFile) {
-		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,JGR.directory);
+		FileSelector fd = new FileSelector(this, (newFile==0)?"Select a file":"Select a new file", (newFile==0)?FileDialog.LOAD:FileDialog.SAVE,JGRPrefs.workingDirectory);
 		fd.setVisible(true);
 		String res=null;
 		if (fd.getDirectory()!=null && fd.getFile() != null) res=fd.getDirectory();
@@ -490,7 +490,7 @@ FocusListener, RMainLoopCallbacks {
         else if (cmd == "exportOutput") output.startExport();
         else if (cmd == "fontBigger") FontTracker.current.setFontBigger();
         else if (cmd == "fontSmaller") FontTracker.current.setFontSmaller();
-        else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, JGR.directory);
+        else if (cmd == "loaddata") new JGRDataFileOpenDialog(this, JGRPrefs.workingDirectory);
         else if (cmd == "open") new Editor().open();
         else if (cmd == "openwsp") loadWorkSpace();
         else if (cmd == "new") new Editor();
@@ -533,7 +533,7 @@ FocusListener, RMainLoopCallbacks {
             int r = chooser.showOpenDialog(this);
             if (r == JFileChooser.CANCEL_OPTION) return;
             if (chooser.getSelectedFile()!=null)
-                JGR.directory = chooser.getSelectedFile().toString();
+                JGRPrefs.workingDirectory = chooser.getSelectedFile().toString();
                 execute("setwd(\""+chooser.getSelectedFile().toString().replace('\\','/')+"\")",true);
         }
 		else if (cmd == "update") {

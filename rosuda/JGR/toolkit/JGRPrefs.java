@@ -104,9 +104,9 @@ public class JGRPrefs {
 	
 	/** Packages which were installed when JGR was running the last time*/
 	public static String previousPackages = null;
-    
-    ///** Initial working directory */
-    //public static String WorkingDirectory = System.getProperty("user.home");
+	
+    /** Initial working directory */
+	public static String workingDirectory = System.getProperty("user.home");
 
 
     /**
@@ -195,6 +195,7 @@ public class JGRPrefs {
         useEmacsKeyBindings = prefs.getBoolean("UseEmacsKeyBindings", org.rosuda.util.Platform.isMac);
         previousPackages = prefs.get("PreviousPackages",null);
 		showHiddenFiles = prefs.getBoolean("ShowHiddenFiles",false);
+		workingDirectory = prefs.get("WorkingDirectory",System.getProperty("user.home"));
     }
 
      /**
@@ -215,13 +216,14 @@ public class JGRPrefs {
         prefs.putBoolean("UseEmacsKeyBindings", useEmacsKeyBindings);
 		prefs.putBoolean("ShowHiddenFiles",showHiddenFiles);
 		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
+		prefs.put("WorkingDirectory",workingDirectory);
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
             for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)
                 packages += ", "+JGRPackageManager.defaultPackages[i];
             prefs.put("DefaultPackages", packages);
         }
-        if (writeLibs && JGR.RLIBS != null && JGR.RLIBS.length > 1) {
+        if (JGR.RLIBS != null && JGR.RLIBS.length > 1) {
             String libpaths = JGR.RLIBS[0].toString();
             for (int i = 1; i < JGR.RLIBS.length-1; i++) 
 				libpaths +=  (isMac?":":";")+JGR.RLIBS[i];

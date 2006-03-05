@@ -361,6 +361,7 @@ public class ConsoleOutput extends JTextPane {
 		private JButton cancel = new JButton("Cancel");
 
         public ExportOutput(ConsoleOutput co) {
+        	super(JGRPrefs.workingDirectory);
             this.out = co;
             
             ButtonGroup bg = new ButtonGroup();

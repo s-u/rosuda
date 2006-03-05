@@ -63,9 +63,6 @@ public class JGR {
 	/** Filename of the splash-image (used for displaying the splashscreen) */
 	public static final String SPLASH = "splash.jpg";
 
-	/** Path to user's home, globally used for nearly every filechooser */
-	public static String directory = System.getProperty("user.home");
-
 	/** Main-console window */
 	public static JGRConsole MAINRCONSOLE = null;
 

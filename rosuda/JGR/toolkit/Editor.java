@@ -230,7 +230,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
      * Open a file and load it into editor.
      */
     public void open() {
-        FileSelector fopen = new FileSelector(this, "Open...",FileSelector.LOAD, JGR.directory);
+        FileSelector fopen = new FileSelector(this, "Open...",FileSelector.LOAD, JGRPrefs.workingDirectory);
         fopen.setVisible(true);
         
         if (Common.isMac()) openFile(fopen);
@@ -241,7 +241,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
     private void openFile(FileSelector fopen) {
     	String newFile = null;
     	if (fopen.getFile() != null) 
-    		newFile = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
+    		newFile = (JGRPrefs.workingDirectory = fopen.getDirectory()) + fopen.getFile();
     	if (editArea.getText().length()==0 && newFile != null && newFile.trim().length() > 0){ fileName = newFile; loadFile();}
     	else if (newFile != null && newFile.trim().length() > 0) new Editor(newFile);
     }
@@ -355,10 +355,10 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
      */
     public boolean saveFileAs() {
         FileSelector fsave = new FileSelector(this, "Save as...",
-                                              FileSelector.SAVE, JGR.directory);
+                                              FileSelector.SAVE, JGRPrefs.workingDirectory);
         fsave.setVisible(true);
         if (fsave.getFile() != null) {
-            fileName = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
+            fileName = (JGRPrefs.workingDirectory = fsave.getDirectory()) + fsave.getFile();
             return saveFile();
         }
         return false;

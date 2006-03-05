@@ -90,7 +90,7 @@ public class JavaGD extends GDInterface implements ActionListener, WindowListene
     }
 
 	String getFileDlg(boolean newFile,String suffix) {
-		FileSelector fd = new FileSelector(jfr, (!newFile)?"Select a file":"Select a new file", (!newFile)?FileSelector.LOAD:FileSelector.SAVE,org.rosuda.JGR.JGR.directory);
+		FileSelector fd = new FileSelector(jfr, (!newFile)?"Select a file":"Select a new file", (!newFile)?FileSelector.LOAD:FileSelector.SAVE,org.rosuda.JGR.toolkit.JGRPrefs.workingDirectory);
 		fd.setVisible(true);
 		String res=null;
 		if (fd.getDirectory()!=null && fd.getFile() != null) res=fd.getDirectory();

@@ -118,7 +118,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 	 */
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
-			JGR.directory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
+			JGRPrefs.workingDirectory = this.getCurrentDirectory().getAbsolutePath()+File.separator;
 			String file = this.getSelectedFile().toString();
 			
 			String useSep;

@@ -135,14 +135,14 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
      */
     public void actionPerformed(ActionEvent evt) {
         String cmd = evt.getActionCommand();
-        if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGR.directory);
+        if (cmd.startsWith("saveData")) new JGRDataFileSaveDialog(objmgr,cmd.substring(9), JGRPrefs.workingDirectory);
     }
     
     /**
      * Save selected object to a file.
      */
     public void saveData() {
-        new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGR.directory);
+        new JGRDataFileSaveDialog(objmgr,selectedObject.getRName(), JGRPrefs.workingDirectory);
     }
     
     /**
