@@ -1,3 +1,7 @@
+2006-03-05
+- fixed: setting R_LIB
+- adding: support setting InitialWorkingDirectory
+
 2006-02-22
 - fixed: parsing help/edit commands
 - fixed: automatic indentation in editor
@@ -18,7 +22,7 @@
 
 2005-03-25
 - added: checking for previously installed packages, if they're
-  missing tell the user and ask him what to do
+- missing tell the user and ask him what to do
 
 2005-03-16
 - added: row.names checkbox in save datafile dialog
@@ -28,10 +32,9 @@
 2005-03-07
 - added: filtering for the model browser
 - guessing for the right separators, quotes and header when
-  selecting a file in the load datafile dialog
+- selecting a file in the load datafile dialog
 - deleting objects with object browser
-- added: filter commands which invoked an error when saving or
-  copying them
+- added: filter commands which invoked an error when saving or copying them
 - added: menu items for commenting/ shifting selected code
 
 2005-02-12
@@ -41,8 +44,7 @@
 2005-02-04
 - fixed: use always prompt from R (if user specified his own)
 - fixed: save user specified (loaded) workspace when leaving JGR
-- added: warn when using not supported functions
-  (such as edit or fix)
+- added: warn when using not supported functions (such as edit or fix)
 
 2005-01-23
 - fixed: whitespaces in prompt
