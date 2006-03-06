@@ -24,7 +24,10 @@ public class PPrimBox extends PPrimBase {
     
     Rectangle r;
     
+    // variables containing the screen positions
     public int med,uh,lh,uh15,lh15;
+    // variables containing the real values
+    public double medValue,uhValue,lhValue,uh15Value,lh15Value;
     public double uh3,lh3;
     public int x,w,lowEdge,lastTop,highEdge;
     public double[] lastR;
@@ -33,7 +36,11 @@ public class PPrimBox extends PPrimBase {
     // parallel variables for selections
     public int smed,suh,slh,suh15,slh15;
     public double suh3,slh3;
-    public int sx,sw,slowEdge,slastTop,shighEdge;
+    public int sx;
+
+
+
+    public int sw, slowEdge, slastTop, shighEdge;
     public double[] slastR;
     public int[] svalPos;
     

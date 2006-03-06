@@ -249,6 +249,11 @@ public class BoxCanvas extends ParallelAxesCanvas {
         box.uh = axis.getValuePos(os.uh);
         box.lh15 = axis.getValuePos(os.lh15);
         box.uh15 = axis.getValuePos(os.uh15);
+        box.medValue = os.med;
+        box.lhValue = os.lh;
+        box.uhValue = os.uh;
+        box.lh15Value = os.lh15;
+        box.uh15Value = os.uh15;
         box.lh3 = os.lh3;
         box.uh3 = os.uh3;
         box.lowEdge = os.lowEdge;
@@ -399,9 +404,9 @@ public class BoxCanvas extends ParallelAxesCanvas {
             axis = (i==0)?ay:opAy[i-1];
         }
         
-        return "lower hinge: " + Tools.getDisplayableValue(axis.getValueForPos(box.lh)) + "\n" +
-                "median: " + Tools.getDisplayableValue(axis.getValueForPos(box.med)) + "\n" +
-                "upper hinge: " + Tools.getDisplayableValue(axis.getValueForPos(box.uh)) + "\n" +
+        return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
+                "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
                 "cases: " + box.cases();
     }
     
