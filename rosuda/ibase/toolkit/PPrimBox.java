@@ -100,9 +100,9 @@ public class PPrimBox extends PPrimBase {
                     final double val=lastR[i];
                     outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val<lh3)
-                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
+                        g.fillOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(ox,oy,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     i--;
                 }
                 i=highEdge;
@@ -111,9 +111,9 @@ public class PPrimBox extends PPrimBase {
                     final double val=lastR[i];
                     outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val>uh3)
-                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
+                        g.fillOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(ox,oy,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     i++;
                 }
                 break;
@@ -187,18 +187,18 @@ public class PPrimBox extends PPrimBase {
         while(i>=0) {
             final double val=slastR[i];
             if (val<slh3)
-                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                g.fillOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i--;
         }
         i=shighEdge;
         while(i<slastTop) {
             final double val=slastR[i];
             if (val>suh3)
-                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                g.fillOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             else
-                g.fillRect(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                g.drawOval(sx+sw/2-(RADOUTL+1)/2,svalPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
             i++;
         }
     }
