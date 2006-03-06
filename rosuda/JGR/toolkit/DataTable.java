@@ -346,11 +346,11 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
     }
 
     private void loadData() {
-        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.LOAD,JGR.directory);
+        FileSelector fopen = new FileSelector(this,"Open...",FileSelector.LOAD,JGRPrefs.workingDirectory);
         fopen.setVisible(true);
         if (fopen.getFile() != null) {
             this.cursorWait();
-            fileName = (JGR.directory = fopen.getDirectory()) + fopen.getFile();
+            fileName = (JGRPrefs.workingDirectory = fopen.getDirectory()) + fopen.getFile();
             try {
                 vs = new SVarSet();
                 BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -496,10 +496,10 @@ public class DataTable extends iFrame implements ActionListener, MouseListener, 
 
     /** save file as with a new filename*/
     private boolean saveDataAs() {
-        FileSelector fsave = new FileSelector(this,"Save as...",FileSelector.SAVE,JGR.directory);
+        FileSelector fsave = new FileSelector(this,"Save as...",FileSelector.SAVE,JGRPrefs.workingDirectory);
         fsave.setVisible(true);
         if (fsave.getFile() != null) {
-            fileName = (JGR.directory = fsave.getDirectory()) + fsave.getFile();
+            fileName = (JGRPrefs.workingDirectory = fsave.getDirectory()) + fsave.getFile();
             return saveData();
         }
         return false;
