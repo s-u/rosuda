@@ -397,17 +397,13 @@ public class BoxCanvas extends ParallelAxesCanvas {
     
     public String queryObject(final PlotPrimitive p) {
         PPrimBox box = (PPrimBox)p;
-        Axis axis;
-        if(commonScale || vsCat || v.length==1) axis=ay;
-        else{ // determine which axis to apply
-            int i=ax.getCatByPos(box.x);
-            axis = (i==0)?ay:opAy[i-1];
-        }
-        
-        return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
-                "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
-                "cases: " + box.cases();
+        if(box.queriedOutlier!=null)
+            return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
+        else
+            return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                    "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
+                    "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
+                    "cases: " + box.cases();
     }
     
 }

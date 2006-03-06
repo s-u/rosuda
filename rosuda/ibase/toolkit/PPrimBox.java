@@ -8,6 +8,10 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Rectangle;
+import java.util.Enumeration;
+import java.util.Vector;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.pograss.PoGraSS;
 
 /**
  *
@@ -23,6 +27,7 @@ public class PPrimBox extends PPrimBase {
     static final int RADOUTL = 5;
     
     Rectangle r;
+    private Vector outliers = new Vector();
     
     // variables containing the screen positions
     public int med,uh,lh,uh15,lh15;
@@ -37,9 +42,9 @@ public class PPrimBox extends PPrimBase {
     public int smed,suh,slh,suh15,slh15;
     public double suh3,slh3;
     public int sx;
-
-
-
+    
+    public Outlier queriedOutlier;
+    
     public int sw, slowEdge, slastTop, shighEdge;
     public double[] slastR;
     public int[] svalPos;
@@ -50,6 +55,9 @@ public class PPrimBox extends PPrimBase {
     
     public boolean intersects(final java.awt.Rectangle rt) {
         if(r!=null && r.intersects(rt)) return true;
+        for(Enumeration en = outliers.elements(); en.hasMoreElements();){
+            if(((PPrimCircle)en.nextElement()).intersects(rt)) return true;
+        }
         return false;
     }
     
@@ -83,21 +91,29 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(x+w/2,lh,
                         x+w/2,lh15);
                 i=lowEdge;
+                // draw outliers
+                outliers.clear();
+                final int ox=x+w/2-(RADOUTL+1)/2;
+                int oy;
                 while(i>=0) {
+                    oy=valPos[i]-(RADOUTL+1)/2;
                     final double val=lastR[i];
+                    outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val<lh3)
-                        g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillRect(ox,oy,RADOUTL,RADOUTL);
                     i--;
                 }
                 i=highEdge;
                 while(i<lastTop) {
+                    oy=valPos[i]-(RADOUTL+1)/2;
                     final double val=lastR[i];
+                    outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val>uh3)
-                        g.drawOval(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(x+w/2-(RADOUTL+1)/2,valPos[i]-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillRect(ox,oy,RADOUTL,RADOUTL);
                     i++;
                 }
                 break;
@@ -188,8 +204,15 @@ public class PPrimBox extends PPrimBase {
     }
     
     public boolean contains(final int x, final int y) {
+        queriedOutlier=null;
         if(r!=null && r.contains(x,y)) return true;
+        for(Enumeration en = outliers.elements(); en.hasMoreElements();){
+            Outlier o = (Outlier)en.nextElement();
+            if(o.contains(x,y)) {
+                queriedOutlier=o;
+                return true;
+            }
+        }
         return false;
     }
-    
 }
