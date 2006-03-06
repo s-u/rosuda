@@ -60,6 +60,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         allowDragMove=true;
         objectClipping=true;
+        if(yvs.length==1) commonScale=true;
         
         mBottom=standardMBottom;
         mTop=standardMTop;
