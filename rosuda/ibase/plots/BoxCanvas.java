@@ -353,7 +353,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
             //ay.setGeometry(Axis.O_Y,TH-mBottom,-(H=innerH));
             
             /* draw ticks and labels for Y axis */
-            {
+            if(commonScale) {
                 double f=ay.getSensibleTickDistance(30,18);
                 double fi=ay.getSensibleTickStart(f);
                 while (fi<ay.vBegin+ay.vLen) {
@@ -374,7 +374,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         } else {
             
             /* draw ticks and labels for Y axis */
-            {
+            if(commonScale) {
                 double f=ay.getSensibleTickDistance(30,18);
                 double fi=ay.getSensibleTickStart(f);
                 while (fi<ay.vBegin+ay.vLen) {
