@@ -453,6 +453,10 @@
 		1CE96FF504D80DC700A8030F /* RootInfo.java in Sources */ = {isa = PBXBuildFile; fileRef = 1CE96FF404D80DC700A8030F /* RootInfo.java */; };
 		6845652707CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */; };
 		6845652807CBD59D00A48DC9 /* MapScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */; };
+		6858DD6509BCDD77006F9A9B /* ParallelAxesCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6858DD6409BCDD77006F9A9B /* ParallelAxesCanvas.java */; };
+		6858DD6609BCDD77006F9A9B /* ParallelAxesCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 6858DD6409BCDD77006F9A9B /* ParallelAxesCanvas.java */; };
+		6858DD6909BCDDAA006F9A9B /* Outlier.java in Sources */ = {isa = PBXBuildFile; fileRef = 6858DD6809BCDDAA006F9A9B /* Outlier.java */; };
+		6858DD6A09BCDDAA006F9A9B /* Outlier.java in Sources */ = {isa = PBXBuildFile; fileRef = 6858DD6809BCDDAA006F9A9B /* Outlier.java */; };
 		685F538007A58534004B99BD /* LoaderFLF.java in Sources */ = {isa = PBXBuildFile; fileRef = 685F537F07A58534004B99BD /* LoaderFLF.java */; };
 		685F538107A58534004B99BD /* LoaderFLF.java in Sources */ = {isa = PBXBuildFile; fileRef = 685F537F07A58534004B99BD /* LoaderFLF.java */; };
 		68648ED909A5229300668CBF /* AwtPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 68648ECE09A5229300668CBF /* AwtPlotComponent.java */; };
@@ -652,6 +656,8 @@
 		1CE96FF204D80BD100A8030F /* ProgressDlg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ProgressDlg.java; sourceTree = "<group>"; };
 		1CE96FF404D80DC700A8030F /* RootInfo.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = RootInfo.java; sourceTree = "<group>"; };
 		6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = MapScatterCanvas.java; sourceTree = "<group>"; };
+		6858DD6409BCDD77006F9A9B /* ParallelAxesCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ParallelAxesCanvas.java; sourceTree = "<group>"; };
+		6858DD6809BCDDAA006F9A9B /* Outlier.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Outlier.java; sourceTree = "<group>"; };
 		685F537F07A58534004B99BD /* LoaderFLF.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = LoaderFLF.java; sourceTree = "<group>"; };
 		68648ECE09A5229300668CBF /* AwtPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AwtPlotComponent.java; sourceTree = "<group>"; };
 		68648ECF09A5229300668CBF /* AwtQueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = AwtQueryPopup.java; sourceTree = "<group>"; };
@@ -870,6 +876,7 @@
 				1CA4330904D814C200A8030F /* MapCanvas.java */,
 				6845652607CBD59D00A48DC9 /* MapScatterCanvas.java */,
 				1C42D10306D39C9F00B9B7D6 /* MosaicCanvas.java */,
+				6858DD6409BCDD77006F9A9B /* ParallelAxesCanvas.java */,
 				1CA4330A04D814C200A8030F /* PCPCanvas.java */,
 				1CA4330C04D814C200A8030F /* ScatterCanvas.java */,
 			);
@@ -879,6 +886,7 @@
 		F8EE910104D6A73600FA4796 /* toolkit */ = {
 			isa = PBXGroup;
 			children = (
+				6858DD6809BCDDAA006F9A9B /* Outlier.java */,
 				68648ECE09A5229300668CBF /* AwtPlotComponent.java */,
 				68648ECF09A5229300668CBF /* AwtQueryPopup.java */,
 				68648ED009A5229300668CBF /* PlotCanvas.java */,
@@ -1220,6 +1228,8 @@
 				68648EE209A5229300668CBF /* SwingQueryPopup.java in Sources */,
 				68648EE309A5229300668CBF /* TJFrame.java in Sources */,
 				68648EF109A522BE00668CBF /* RSession.java in Sources */,
+				6858DD6509BCDD77006F9A9B /* ParallelAxesCanvas.java in Sources */,
+				6858DD6909BCDDAA006F9A9B /* Outlier.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1371,6 +1381,8 @@
 				68648EED09A5229300668CBF /* SwingQueryPopup.java in Sources */,
 				68648EEE09A5229300668CBF /* TJFrame.java in Sources */,
 				68648EF209A522BE00668CBF /* RSession.java in Sources */,
+				6858DD6609BCDD77006F9A9B /* ParallelAxesCanvas.java in Sources */,
+				6858DD6A09BCDDAA006F9A9B /* Outlier.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
