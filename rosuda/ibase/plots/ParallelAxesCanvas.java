@@ -91,7 +91,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     boolean drawAxes=false;
     
-    boolean commonScale=true;
+    boolean commonScale=false;
     
     
     protected int standardMLeft=30;
@@ -167,7 +167,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             M_HIDELINES,M_TOGGLELINES,
             "@NHide NA lines",M_HIDENALINES,
             M_MINUS,
-            "Individual scales",M_COMMON,
+            "Common scale",M_COMMON,
             M_MINUS,
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
