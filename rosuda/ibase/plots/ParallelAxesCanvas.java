@@ -433,7 +433,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
         if (cs) {
-            ay.setValueRange(totMin,totMax-totMin);
+            ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         } else{
             if (opAy!=null && opAy.length>0 && opAy[0]==null) {
                 
