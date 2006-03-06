@@ -164,7 +164,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     protected void createMenu(Frame f){
         createMenu(f,true,true,new String[]{
             "@LHide labels",M_LABELS,
-            "@TShorten lables",M_TRIGRAPH,
+            "Shorten lables",M_TRIGRAPH,
             M_SHOWDOTS,M_TOGGLEPTS,
             "Increase dot size (up)",M_NODESIZEUP,
             "Decrease dot size (down)",M_NODESIZEDOWN,
@@ -172,7 +172,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             M_HIDELINES,M_TOGGLELINES,
             "@NHide NA lines",M_HIDENALINES,
             M_MINUS,
-            "Common scale",M_COMMON,
+            "@TCommon scale",M_COMMON,
             M_MINUS,
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
