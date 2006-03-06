@@ -368,7 +368,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
             if (vsCat || v.length>1) {
                 /* draw labels for X axis */
                 for(int i=0; i<xv.getNumCats(); i++){
-                    labels.add(ax.getCasePos(i),mTop+H+20,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                    labels.add(ax.getCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
                 }
             }
         } else {
