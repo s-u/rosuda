@@ -27,6 +27,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         allowDragMove=true;
         objectClipping=true;
+        commonScale=false;
         
         mBottom=standardMBottom;
         mTop=standardMTop;
@@ -46,6 +47,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         
         createMenu(f);
+        setCommonScale(commonScale);
+        EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
     }
     
     /** basic constructor. Every subclass must call this constructor
@@ -84,6 +87,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         
         createMenu(f);
+        setCommonScale(commonScale);
     }
     
     /** use trigraph for X axis in case X is categorical */
@@ -151,9 +155,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     int nodeSize=2;
     
     int X,Y;
-
+    
     protected boolean valid=true;
-
+    
     int TW, TH;
     
     protected void createMenu(Frame f){
@@ -219,7 +223,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             setUpdateRoot(0); repaint();
         }
         if ("exit".equals(cmd)) WinTracker.current.Exit();
-        if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); }
+        if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint(); }
         if (M_TRIGRAPH.equals(cmd)) {
             useX3=!useX3;
             MItrigraph.setLabel(useX3?"Extend labels":"Shorten labels");
@@ -423,34 +427,28 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return queryObject(pp[i]);
     }
     
-    
     public void setCommonScale(final boolean cs) {
-        if(cs==commonScale) return;
+        //if(cs==commonScale) return;
         commonScale=cs;
         EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
         if (cs) {
             ay.setValueRange(totMin,totMax-totMin);
-            //TODO: notify!
-            updateObjects();
-            setUpdateRoot(0); repaint();
-            return;
-        }
-        if (opAy[0]==null) {
-            
-            int i=0;
-            while (i<opAy.length) {
-                opAy[i]=new Axis(v[i+1],Axis.O_Y,v[i+1].isCat()?Axis.T_EqCat:Axis.T_Num);
-                opAy[i].addDepend(this);
-                opAy[i].setValueRange(v[i+1].getMin()-(v[i+1].getMax()-v[i+1].getMin())/20,(v[i+1].getMax()-v[i+1].getMin())*1.1);
-                i++;
+        } else{
+            if (opAy!=null && opAy.length>0 && opAy[0]==null) {
+                
+                int i=0;
+                while (i<opAy.length) {
+                    opAy[i]=new Axis(v[i+1],Axis.O_Y,v[i+1].isCat()?Axis.T_EqCat:Axis.T_Num);
+                    opAy[i].addDepend(this);
+                    opAy[i].setValueRange(v[i+1].getMin()-(v[i+1].getMax()-v[i+1].getMin())/20,(v[i+1].getMax()-v[i+1].getMin())*1.1);
+                    i++;
+                }
+                
+                updateGeometry=true;
             }
-            
-            updateGeometry=true;
+            ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         }
-        ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
-        updateObjects();
-        setUpdateRoot(0); repaint();
     }
     
     protected String getShortClassName(){

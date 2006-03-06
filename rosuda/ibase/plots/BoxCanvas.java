@@ -315,7 +315,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
             if(markStats[i].lastTop==0){
                 box.slastR=null;
             } else{
-                final Axis axis = (commonScale || i==0)?ay:opAy[i-1];
+                final Axis axis = (commonScale || i==0 || vsCat)?ay:opAy[i-1];
                 box.sx = box.x + box.w*2/5;
                 box.sw = box.w/2;
                 box.smed = axis.getValuePos(markStats[i].med);
