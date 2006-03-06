@@ -179,17 +179,17 @@ public class PCPCanvas extends ParallelAxesCanvas {
          
         }
          **/
-        
-        int i = ax.getCatByPos(mouseX);
-        retValue += v[i].getName() + ": ";
-        if(v[i].isCat()){
-            retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+        int c = ax.getCatByPos(mouseX);
+        int i = ax.getCatSeqIndex(c);
+        retValue += v[c].getName() + ": ";
+        if(v[c].isCat()){
+            retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
         } else{
             retValue += Tools.getDisplayableValue(
-                    ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                    ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
         }
         
-        return retValue;
+        return retValue + ","  + i;
     }
     
     protected String getShortClassName() {
