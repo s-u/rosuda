@@ -111,7 +111,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         if (baseDrag && moveDrag) {
             final int pos = (orientation==0)?e.getX():e.getY();
             final int dragNew = ax.getCatByPos(pos);
-            final int dragAxis = ax.getCatByPos(baseDragY1);
+            final int dragAxis = ax.getCatByPos(baseDragX1);
             final int difference;
             final int myX1=ax.getCatLow(dragNew);
             final int myX2=ax.getCatUp(dragNew);
@@ -119,6 +119,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
                 if(dragAxis<newPos) newPos -=1;
+                System.out.println("Hier hallo. " + dragAxis + ";" + newPos);
                 ax.moveCat(dragAxis, newPos);
             } else{
                 if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
