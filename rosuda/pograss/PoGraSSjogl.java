@@ -35,13 +35,14 @@ public class PoGraSSjogl extends PoGraSS
 	
 	GLUquadric quad;
 	
-    public PoGraSSjogl(GL gl, GLU glu, GLCanvas canvas) { 
+    public PoGraSSjogl(GL gl, GLU glu, GLCanvas canvas, int layer) { 
 		this.gl=gl;
 		this.glu=glu;
 		this.canvas=canvas;
 		this.glut=new GLUT();
 		c=new Color[128]; cn=new String[128]; cs=0; fillSt=0; lineWidth=1;
-        curFillC=Color.white; curPenC=Color.black; localLayerCache=paintLayer=-1;
+//        curFillC=Color.white; curPenC=Color.black; localLayerCache=paintLayer=-1;
+      curFillC=Color.white; curPenC=Color.black; localLayerCache=paintLayer=layer;
         setFontStyle(lastFontAttr); // implicitly sets the font
         setColor(curPenC);
     }
@@ -141,7 +142,7 @@ public class PoGraSSjogl extends PoGraSS
         gl.glEnd();
 	} }
     public void fillRect(int x1, int y1, int x2, int y2) { if (paintLayer==-1 || paintLayer==curLayer) {
-		gl.glBegin (GL.GL_QUADS);
+    	gl.glBegin (GL.GL_QUADS);
         gl.glVertex2i (x1,y1);
         gl.glVertex2i (x1+x2,y1);
         gl.glVertex2i (x1+x2,y1+y2);
