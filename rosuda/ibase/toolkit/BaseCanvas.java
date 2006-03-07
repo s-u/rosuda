@@ -117,8 +117,13 @@ public class BaseCanvas
     
     /** PlotText object containing labels. Can be null. */
     protected PlotText labels;
-    
+
+    /** if set to <code>true</code> extended query is used */
+    protected boolean isExtQuery = false;
+
     MenuItem MIsonlyselected=null;
+    
+    /** */
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -247,7 +252,8 @@ public class BaseCanvas
         nextLayer(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==3) paintPost(g);
         g.end();
-        setUpdateRoot(4);
+        // TODO: this one makes trouble in opengl
+//        setUpdateRoot(4);
     }
     
     public void paintInit(final PoGraSS g) {
@@ -578,7 +584,11 @@ public class BaseCanvas
         repaint();
     }
     
-    public void mouseEntered(final MouseEvent e) {};
+    public void mouseEntered(final MouseEvent e) {
+        /*	if(!pc.getComponent().contains(e.getX(),e.getY())) {
+         		qi.hide();
+            }*/
+    };
     public void mouseExited(final MouseEvent e) {};
     public void mouseDragged(final MouseEvent e) {
         if (baseDrag) {
@@ -600,8 +610,31 @@ public class BaseCanvas
         
         boolean hideQI = true;
         final boolean actionQuery=Common.isQueryTrigger(ev);
-        
-        if (actionQuery) {
+        final boolean actionExtQuery=Common.isExtQuery(ev);
+        if(actionExtQuery) {
+        	isExtQuery = true;
+        	if (pp!=null) {
+                int i=0;
+                while (i<pp.length) {
+                    if (pp[i]!=null && pp[i].contains(x,y)) {
+                        if (pp[i].cases()>0) {
+                            if (pp[i].getPrimaryCase()!=-1) {
+                                setQueryText(queryObject(i),pp[i].getPrimaryCase());
+                            } else {
+                                setQueryText(queryObject(i),pp[i].getCaseIDs());
+                            }
+                        } else {
+                            setQueryText(queryObject(i));
+                        }
+                        qi.setLocation(cl.x+x,cl.y+y);
+                        qi.show(); hideQI=false;
+                    }
+                    i++;
+                }
+            }
+        	isExtQuery = false;
+        }
+        else if (actionQuery) {
             if (pp!=null) {
                 int i=0;
                 while (i<pp.length) {
