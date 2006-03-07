@@ -49,10 +49,15 @@ if test -z "${CC}"; then
    CFLAGS=$R_CFLAGS
 fi
 
+RINC=`${R_HOME}/bin/R CMD config --cppflags`
+RLD=`${R_HOME}/bin/R CMD config --ldflags`
+
 AC_SUBST(R_HOME)
 AC_SUBST(R_SHARE_DIR)
 AC_SUBST(R_DOC_DIR)
 AC_SUBST(R_INCLUDE_DIR)
+AC_SUBST(RINC)
+AC_SUBST(RLD)
 
 AC_PROG_CC
 AC_HEADER_STDC
