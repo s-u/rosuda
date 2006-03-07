@@ -366,7 +366,8 @@ public class HistCanvas extends BaseCanvas {
     			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
     		} else qs = "N/A";
     	}
-    	return qs;    
+    	return qs;
+    }
     	
     public void rotate(final int amount) {
         switch((orientation+amount)&3){
