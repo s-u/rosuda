@@ -6,6 +6,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 
+import net.java.games.jogl.GLEventListener;
+
 public class SwingPlotComponent implements PlotComponent {
 
 	public PlotJPanel comp;
@@ -82,6 +84,9 @@ public class SwingPlotComponent implements PlotComponent {
 	public Color getForeground() {
 		return comp.getForeground();
 	}
+	public Color getBackground() {
+		return comp.getBackground();
+	}
 	public Graphics getGraphics() {
 		return comp.getGraphics();
 	}
@@ -114,4 +119,7 @@ public class SwingPlotComponent implements PlotComponent {
 	public void setToolTipText(final String s) {
 		comp.setToolTipText(s);
 	}
+	
+	// additions to JOGL:
+	public void addGLEventListener(GLEventListener l) {}
 }
