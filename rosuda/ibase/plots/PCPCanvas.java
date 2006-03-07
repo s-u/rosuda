@@ -196,18 +196,19 @@ public class PCPCanvas extends ParallelAxesCanvas {
         return "PCP";
     }
     
-    public boolean adjustMargin() {
+    public boolean adjustMargin(final PoGraSS g) {
         if(commonScale){
             /* determine maximal label length */
-            int maxLabelLength=0;
+            int maxWidth=0;
             final double f=ay.getSensibleTickDistance(50,18);
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final String s=v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi);
-                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                int wi = g.getWidthEstimate(s);
+                if(wi>maxWidth) maxWidth=wi;
                 fi+=f;
             }
-            return adjustMargin(maxLabelLength);
+            return adjustMargin(maxWidth);
         }
         return false;
     }
@@ -264,7 +265,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 final int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-2,t,mLeft,t);
                 if(isShowLabels())
-                    labels.add(mLeft-3,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                    labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 fi+=f;
             }
             g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);

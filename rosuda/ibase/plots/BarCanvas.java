@@ -239,12 +239,9 @@ public class BarCanvas extends BaseCanvas {
                         labels.add((2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3,label);
                     }
                 } else {
-                    if (mLeft<cat_nam[i].length()*8)
-                        label=Common.getTriGraph(cat_nam[i]);
-                    else
-                        label=cat_nam[i];
+                    label=cat_nam[i];
                     if(label!=null){
-                        labels.add(0,(2*rec.y+rec.height)/2,0,0.5,label);
+                        labels.add(2,(2*rec.y+rec.height)/2,0,0.5,mLeft,label);
                     }
                 }
             }
@@ -453,5 +450,21 @@ public class BarCanvas extends BaseCanvas {
             mRight = 10;
         }
         super.rotate(amount);
+    }
+    
+    public boolean adjustMargin(final PoGraSS g) {
+        if (orientation==0) return false;
+        
+        int maxWidth=0;
+        for(int i=0; i<cat_nam.length; i++){
+            int wi=g.getWidthEstimate(cat_nam[i]);
+            maxWidth = Math.max(wi,maxWidth);
+        }
+        maxWidth+=4;
+        if(maxWidth!=mLeft && maxWidth<=pc.getBounds().width/2){
+            mLeft = maxWidth;
+            return true;
+        }
+        return false;
     }
 }

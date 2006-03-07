@@ -169,7 +169,7 @@ public class BaseCanvas
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;
-        adjustMargin();
+        adjustMargin(g);
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         final Rectangle r=pc.getBounds();
         final int w=r.width;
@@ -210,7 +210,7 @@ public class BaseCanvas
                     case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                 }
             }
-            marginsAdjusted = adjustMargin();
+            marginsAdjusted = adjustMargin(g);
             updateGeometry = updateGeometry || marginsAdjusted;
         } while (marginsAdjusted);
         if (H!=h || W!=w || updateGeometry) {
@@ -824,7 +824,7 @@ public class BaseCanvas
      * Possibly adjust mLeft etc.
      * @return Returns <code>true</code> if margins have been changed
      **/
-    public boolean adjustMargin(){return false;};
+    public boolean adjustMargin(final PoGraSS g){return false;};
     
     protected void createMenu(Frame f, boolean rotate, boolean zoom, String[] view){
         String myMenu[] = new String[((view==null)?0:(view.length)) + 14];
