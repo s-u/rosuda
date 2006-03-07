@@ -34,7 +34,7 @@ public class Framework implements Dependent, ActionListener {
         Common.supportsBREAK=true;
         Common.appName="iplots";
         SVar.int_NA=-2147483648;
-        Global.useAquaBg=true; // use aqua look
+        Global.useAquaBg=false; // use aqua look
         Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         org.rosuda.util.Platform.initPlatform("org.rosuda.iplots.");
         if (Common.breakDispatcher==null) Common.breakDispatcher=new Notifier();
@@ -320,7 +320,7 @@ public class Framework implements Dependent, ActionListener {
         if(graphicsEngine==PlotComponent.SWING)
             return new SwingPlotComponent();
         else if(graphicsEngine==PlotComponent.OPENGL)
-            return new AwtPlotComponent(); // OPENGL not available right now
+            return new JoglPlotComponent();
         else
             return new AwtPlotComponent();
     }
