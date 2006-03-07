@@ -31,7 +31,7 @@ IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
 JGR_SRC:=$(filter-out %PlatformMac.java,$(JGR_SRC))
 endif
 
-TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar
+TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar javaGD.jar
 
 JAVAC=javac $(JFLAGS)
 
