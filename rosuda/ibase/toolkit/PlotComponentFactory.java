@@ -35,6 +35,8 @@ public class PlotComponentFactory {
 			return new AwtQueryPopup(pc, win, vs, ct, w, cid);
 		else if (engine == PlotComponent.SWING)
 			return new SwingQueryPopup(pc, win, vs, ct, w, cid);
+		else if(engine == PlotComponent.OPENGL)
+			return new AwtQueryPopup(pc, win, vs, ct, w, cid);
 		else throw(new RuntimeException("PlotComponentFactory.createQueryPopup: unsupported plot component engine ("+engine+")"));
 	}
 
