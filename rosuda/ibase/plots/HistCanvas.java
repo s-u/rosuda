@@ -339,15 +339,35 @@ public class HistCanvas extends BaseCanvas {
         }
     };
     
-    public String queryObject(final int i) {
-        if (pp!=null && pp[i]!=null) {
-            final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-            final double la=ax.vBegin+binw*i;
-            return "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
-        }
-        return "N/A";
-    }
-    
+    public String queryObject(int i) {
+    	String qs;
+    	boolean actionExtQuery = isExtQuery;
+    	if(actionExtQuery) {
+    		if (pp!=null && pp[i]!=null) {
+    			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+    			double la=ax.vBegin+binw*i;
+    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n";
+    			if(mark>0) {
+    				qs += ""+mark+" of "+pp[i].cases()+" selected ("+
+                    Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+
+                    "% of this cat., " +
+                    Tools.getDisplayableValue(100.0*((double)mark)/((double)v.size()),2)+"% of total)";
+    			} else {
+    				qs += ""+pp[i].cases()+" cases ("+
+                    Tools.getDisplayableValue(100.0*((double)pp[i].cases())/((double)v.size()),2)+
+					"% of total)";
+    			}
+    		} else qs = "N/A";
+    	}
+    	else {
+    		if (pp!=null && pp[i]!=null) {
+    			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+    			double la=ax.vBegin+binw*i;
+    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+" cases"));
+    		} else qs = "N/A";
+    	}
+    	return qs;    
+    	
     public void rotate(final int amount) {
         switch((orientation+amount)&3){
             case 0:

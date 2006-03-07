@@ -417,7 +417,7 @@ public class BarCanvas extends BaseCanvas {
     
     public String queryObject(final int i) {
         String qs="Name: "+cat_nam[i]+"\n";
-        final boolean actionExtQuery = false; //ExtQueries not implemented
+        final boolean actionExtQuery = isExtQuery;
         if (actionExtQuery) {
             qs+="consists of "+count[i]+" cases ("+
                     Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+

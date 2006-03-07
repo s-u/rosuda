@@ -513,17 +513,44 @@ public class ScatterCanvas extends BaseCanvas {
     
     public String queryObject(PlotPrimitive p) {
         PPrimCircle ppc = (PPrimCircle)p;
-        if(ppc.ref.length==1){
-            return v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+        String qs = "";
+        boolean actionExtQuery = isExtQuery;
+        if(actionExtQuery) {
+        	if(ppc.ref.length==1){
+        		qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+                    + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                    + ppc.ref.length + " case(s) ("+
+					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+					"% of var, "+
+					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
+					"% of total)";
+        	} else{
+        		double[] mM0 = minMax(ppc.ref,0);
+        		double[] mM1 = minMax(ppc.ref,1);
+        		qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
+                    + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                    + ppc.ref.length + " case(s) ("+
+					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+					"% of var, "+
+					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
+					"% of total)";
+        	}
+        }
+        else {
+        	if(ppc.ref.length==1){
+        		qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
                     + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
                     + ppc.ref.length + " case(s)";
-        } else{
-            double[] mM0 = minMax(ppc.ref,0);
-            double[] mM1 = minMax(ppc.ref,1);
-            return v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
+        	} else{
+        		double[] mM0 = minMax(ppc.ref,0);
+        		double[] mM1 = minMax(ppc.ref,1);
+        		qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
                     + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
                     + ppc.ref.length + " case(s)";
+        	}
         }
+        
+        return qs;
     }
     
     /* TODO: Maybe this can be done faster with the sortedPoints map */
