@@ -187,7 +187,6 @@ public class Rengine extends Thread {
                 long er=rniEval(pr, 0);
                 if (er>0) {
                     REXP x=new REXP(this, er);
-                    Rsync.unlock();
                     if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
                     return x;
                 }
@@ -213,7 +212,6 @@ public class Rengine extends Thread {
                 long er=rniEval(pr, 0);
                 if (er>0) {
                     REXP x=new REXP(this, er);
-                    Rsync.unlock();
                     return x;
                 }
             }
@@ -249,7 +247,7 @@ public class Rengine extends Thread {
                         System.exit(0);
                     }
                     sleep(100);
-                    rniIdle();
+                    if (runLoop) rniIdle();
                 } catch (InterruptedException ie) {
                     interrupted();
                 }
