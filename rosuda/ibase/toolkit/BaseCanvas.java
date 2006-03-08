@@ -49,7 +49,7 @@ public class BaseCanvas
     protected int mLeft, mRight, mTop, mBottom;
     /** orientation of the plot. Value between 0 and 3. Increasing orientation results in plot rotating by 90 degrees clock-wise. */
     protected int orientation=0;
-    /** if set to <code>true</code> then rotating the canvas also results in flipped size geometry of the canvas and re-packed parent frame. */
+    /** if set to <code>true</code> then rotating the canvas also results in flipped size geometry of the canvas. */
     protected boolean resizeOnRotate=true;
     /** if set to <code>false</code> then rotating is allowed only between orientation values 0 and 1 (ergo rotation over 180 degrees is not allowed) */
     protected boolean allow180=false;
@@ -412,8 +412,9 @@ public class BaseCanvas
         setUpdateRoot(0);
         updateGeometry=true;
         if (resizeOnRotate && (amount==1 || amount==3)) {
-            pc.setSize(H,W);
-            getFrame().pack();
+            final Frame f = getFrame();
+            final Dimension d = f.getSize();
+            f.setSize(d.height,d.width);
         } else
             repaint();
     }
