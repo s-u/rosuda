@@ -78,17 +78,36 @@ public class ScatterCanvas extends BaseCanvas {
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
      */
-    protected TreeMap sortedPoints;
+    protected TreeMap sortedPointsX, sortedPointsY;
     
-    protected class ComparablePoint implements Comparable{
-        int x,y;
+    private class PointComparator implements Comparator{
+        private int type;
         
-        public ComparablePoint(int x,int y){this.x=x;this.y=y;}
+        public static final int TYPE_X=0;
+        public static final int TYPE_Y=1;
         
-        public int compareTo(Object o) {
-            ComparablePoint p = (ComparablePoint) o;
-            if(x<p.x || (x==p.x && y<p.y)) return -1;
-            if(x==p.x && y==p.y) return 0;
+        public PointComparator(int type){
+            this.type=type;
+        }
+        
+        public int compare(Object o1, Object o2) {
+            int c1,c2,d1,d2;
+            switch (type){
+                case TYPE_X:
+                    c1 = ((Point)o1).x;
+                    c2 = ((Point)o2).x;
+                    d1 = ((Point)o1).y;
+                    d2 = ((Point)o2).y;
+                    break;
+                default:
+                    c1 = ((Point)o1).y;
+                    c2 = ((Point)o2).y;
+                    d1 = ((Point)o1).x;
+                    d2 = ((Point)o2).x;
+                    break;
+            }
+            if(c1<c2 || (c1==c2 && d1<d2)) return -1;
+            if(c1==c2 && d1==d2) return 0;
             else return 1;
         }
     }
@@ -184,7 +203,9 @@ public class ScatterCanvas extends BaseCanvas {
         pts=v[0].size();
         if (v[1].size()<pts) pts=v[1].size();
         
-        sortedPoints = new TreeMap();
+        sortedPointsX = new TreeMap(new PointComparator(PointComparator.TYPE_X));
+        sortedPointsY = new TreeMap(new PointComparator(PointComparator.TYPE_Y));
+        
         for (int i=0;i<pts;i++) {
             int jx=0, jy=0;
             if (v[0].isCat() && jitter && !stackjitter) {
@@ -219,7 +240,7 @@ public class ScatterCanvas extends BaseCanvas {
                         }
                     }*/
                     PPrimCircle p;
-                    if((p=(PPrimCircle)sortedPoints.get(new ComparablePoint(x,y)))!=null){
+                    if((p=(PPrimCircle)sortedPointsX.get(new Point(x,y)))!=null){
                         int[] newRef = new int[p.ref.length+1];
                         System.arraycopy(p.ref, 0, newRef, 0, p.ref.length);
                         newRef[p.ref.length] = i;
@@ -235,7 +256,9 @@ public class ScatterCanvas extends BaseCanvas {
                         }
                         p.diam = ptDiam;
                         p.ref = new int[] {i};
-                        sortedPoints.put(new ComparablePoint(x,y), p);
+                        final Point po = new Point(x,y);
+                        sortedPointsX.put(po, p);
+                        sortedPointsY.put(po, p);
                     }
                 }
             } else { // place missings on the other side of the axes
@@ -254,8 +277,9 @@ public class ScatterCanvas extends BaseCanvas {
                 p.ref = new int[] {i};
             }
         };
-        pp = new PlotPrimitive[sortedPoints.values().size()];
-        sortedPoints.values().toArray(pp);
+        final Collection pts = sortedPointsX.values();
+        pp = new PlotPrimitive[pts.size()];
+        pts.toArray(pp);
     };
     
     public void keyPressed(KeyEvent e) {
@@ -516,38 +540,37 @@ public class ScatterCanvas extends BaseCanvas {
         String qs = "";
         boolean actionExtQuery = isExtQuery;
         if(actionExtQuery) {
-        	if(ppc.ref.length==1){
-        		qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
-                    + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
-                    + ppc.ref.length + " case(s) ("+
-					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
-					"% of var, "+
-					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
-					"% of total)";
-        	} else{
-        		double[] mM0 = minMax(ppc.ref,0);
-        		double[] mM1 = minMax(ppc.ref,1);
-        		qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
-                    + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
-                    + ppc.ref.length + " case(s) ("+
-					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
-					"% of var, "+
-					Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
-					"% of total)";
-        	}
-        }
-        else {
-        	if(ppc.ref.length==1){
-        		qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
-                    + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
-                    + ppc.ref.length + " case(s)";
-        	} else{
-        		double[] mM0 = minMax(ppc.ref,0);
-        		double[] mM1 = minMax(ppc.ref,1);
-        		qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
-                    + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
-                    + ppc.ref.length + " case(s)";
-        	}
+            if(ppc.ref.length==1){
+                qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+                        + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                        + ppc.ref.length + " case(s) ("+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+                        "% of var, "+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
+                        "% of total)";
+            } else{
+                double[] mM0 = minMax(ppc.ref,0);
+                double[] mM1 = minMax(ppc.ref,1);
+                qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
+                        + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                        + ppc.ref.length + " case(s) ("+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+                        "% of var, "+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
+                        "% of total)";
+            }
+        } else {
+            if(ppc.ref.length==1){
+                qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
+                        + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                        + ppc.ref.length + " case(s)";
+            } else{
+                double[] mM0 = minMax(ppc.ref,0);
+                double[] mM1 = minMax(ppc.ref,1);
+                qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
+                        + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                        + ppc.ref.length + " case(s)";
+            }
         }
         
         return qs;
@@ -592,7 +615,7 @@ public class ScatterCanvas extends BaseCanvas {
      * should be changed in the future.
      */
     protected PlotPrimitive getFirstPrimitiveContaining(int x, int y) {
-        return (PlotPrimitive)sortedPoints.get(new ComparablePoint(x,y));
+        return (PlotPrimitive)sortedPointsX.get(new Point(x,y));
     }
     
     protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
@@ -611,21 +634,17 @@ public class ScatterCanvas extends BaseCanvas {
         int y=(orientation==0)?rec.y:rec.x;
         int w=(orientation==0)?rec.width:rec.height;
         int h=(orientation==0)?rec.height:rec.width;
-        Object[] obj = sortedPoints.subMap(new ComparablePoint(x, y), new ComparablePoint(x+w, y+h)).values().toArray();
-        PPrimCircle[] plp = new PPrimCircle[obj.length];
-        int j=0;
-        PPrimCircle ppc;
-        for(int i=0; i< obj.length; i++) {
-            ppc=(PPrimCircle)obj[i];
-            if(orientation==0){
-                if(ppc!=null && ppc.y>=rec.y && ppc.y<=rec.y+rec.height) plp[j++]=ppc;
-            } else{
-                if(ppc!=null && ppc.x>=rec.x && ppc.x<=rec.x+rec.width) plp[j++]=ppc;
-            }
-            
-        }
-        PlotPrimitive[] ret = new PlotPrimitive[j];
-        System.arraycopy(plp,0, ret,0, j);
+        Point p1 = new Point(x, y);
+        Point p2 = new Point(x+w, y+h);
+        SortedMap subX = sortedPointsX.subMap(p1, p2);
+        SortedMap subY = sortedPointsY.subMap(p1, p2);
+        
+        TreeMap subXClone = new TreeMap(subX);
+        subXClone.keySet().retainAll(subY.keySet());
+        final Collection col = subXClone.values();
+        PlotPrimitive[] ret = new PlotPrimitive[col.size()];
+        col.toArray(ret);
+
         return ret;
     }
 };
