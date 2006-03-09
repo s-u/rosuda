@@ -10,7 +10,7 @@ public class RSession implements java.io.Serializable {
     int port;
     byte[] key;
 
-    Rpacket attachPacket=null; // response on session attach
+    transient Rpacket attachPacket=null; // response on session attach
     int rsrvVersion;
 
     protected RSession() {

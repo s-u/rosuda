@@ -7,13 +7,9 @@ package org.rosuda.JRclient;
 /** small class encapsulating packets from/to Rserv
     @version $Id$
 */
-public class Rpacket implements java.io.Serializable {
+public class Rpacket {
     int cmd;
     byte[] cont;
-
-    protected Rpacket() {
-        // default protected constructor for deserialization
-    }
 
     /** construct new packet
 	@param Rcmd command
