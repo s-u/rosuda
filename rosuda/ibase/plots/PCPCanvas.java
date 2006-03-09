@@ -105,7 +105,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
             }
             ((PPrimPolygon)pp[j]).invisibleLines=nas;
             ((PPrimPolygon)pp[j]).gapDots=gap;
-            ((PPrimPolygon)pp[j]).setNoInterior();
         }
     }
     
