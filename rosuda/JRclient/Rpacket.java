@@ -11,6 +11,10 @@ public class Rpacket implements java.io.Serializable {
     int cmd;
     byte[] cont;
 
+    protected Rpacket() {
+        // default protected constructor for deserialization
+    }
+
     /** construct new packet
 	@param Rcmd command
 	@param Rcont content */

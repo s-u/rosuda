@@ -8,6 +8,10 @@ public class RSession implements java.io.Serializable {
     Rpacket attachPacket=null; // response on session attach
     int rsrvVersion;
 
+    protected RSession() {
+        // default no-args constructor for serialization
+    }
+
     RSession(Rconnection c, Rpacket p) throws RSrvException {
 	this.host=c.host;
 	this.rsrvVersion=c.rsrvVersion;
