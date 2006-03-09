@@ -31,7 +31,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
             int xx=0;
             while (xx<xv.getNumCats()) {
                 final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
-                g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
+                if(orientation==0)
+                    g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
+                else
+                    g.drawLine(mLeft,t,pc.getSize().width-mRight,t);
             }
             g.setLineWidth(1.0f);
         }
@@ -73,7 +76,8 @@ public class PCPCanvas extends ParallelAxesCanvas {
         
         for(int j=0; j<xs.length; j++){
             pp[j] = new PPrimPolygon();
-            ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            if(orientation==0) ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            else               ((PPrimPolygon)pp[j]).pg = new Polygon(ys[j], xs[j], xs[j].length);
             ((PPrimPolygon)pp[j]).closed=false;
             ((PPrimPolygon)pp[j]).fill=false;
             ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
@@ -220,7 +224,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
     protected void addLabelsAndTicks(PoGraSS g) {
         /* draw ticks and labels for X axis */
         {
-            final double f=ax.getSensibleTickDistance(50,26);
+            final double f=(orientation==0)?(ax.getSensibleTickDistance(50,26)):(ax.getSensibleTickDistance(30,18));
             double fi=ax.getSensibleTickStart(f);
             
             final int[] valuePoss = new int[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
@@ -236,23 +240,34 @@ public class PCPCanvas extends ParallelAxesCanvas {
             
             for(i=0; i<valuePoss.length; i++) {
                 if (isShowLabels() && labs[i]!=null){
-                    labels.add(valuePoss[i]-5,
-                            ((i&1)==0)?(H-mBottom+2):(mTop-5),
-                            0.5,
-                            ((i&1)==0)?1:0,
-                            (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
-                            labs[i]);
+                    if(orientation==0)
+                        labels.add(valuePoss[i]-5,
+                                ((i&1)==0)?(H-mBottom+2):(mTop-5),
+                                0.5,
+                                ((i&1)==0)?1:0,
+                                (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
+                                labs[i]);
+                    else
+                        labels.add(((i&1)==0)?(mLeft-4):(W-mRight+4),
+                                valuePoss[i],
+                                ((i&1)==0)?1:0,
+                                0.5,
+                                (i==0)?mLeft:mRight - 4,
+                                labs[i]);
                 }
             }
-            final int b = pc.getSize().height-mBottom;
-            g.drawLine(mLeft, b, pc.getSize().width-mRight, b);
-            //g.drawLine(mLeft, mTop, pc.getSize().width-mRight, mTop);
+            final int b = (orientation==0)?(pc.getSize().height-mBottom):(pc.getSize().width-mRight);
             
             int xx=0;
             while (xx<xv.getNumCats()) {
                 final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
-                if((xx&1)==0) g.drawLine(t,b,t,b+2);
-                else g.drawLine(t,mTop,t,mTop-2);
+                if(orientation==0){
+                    if((xx&1)==0) g.drawLine(t,b,t,b+2);
+                    else g.drawLine(t,mTop,t,mTop-2);
+                } else{
+                    if((xx&1)==0) g.drawLine(mLeft,t,mLeft-2,t);
+                    else g.drawLine(b,t,b+2,t);
+                }
                 xx++;
             }
         }
@@ -275,5 +290,21 @@ public class PCPCanvas extends ParallelAxesCanvas {
     public void mouseMoved(final MouseEvent ev) {
         super.mouseMoved(ev);
         if (Common.isQueryTrigger(ev)) mouseX=ev.getX();
+    }
+    
+    public void rotate(final int amount) {
+        switch((orientation+amount)&1){
+            case 0:
+                mBottom=standardMBottom;
+                mTop=standardMTop;
+                mLeft=standardMLeft;
+                mRight=standardMRight;
+                break;
+            case 1:
+                mBottom=10;
+                mTop=10;
+                mLeft = mRight = 50;
+        }
+        super.rotate(amount);
     }
 };
