@@ -111,7 +111,7 @@ public class PPrimPolygon extends PPrimBase {
             }
             if(showInvisibleLines && invisibleLines!=null){
                 g.setColor(255,255,0);
-                for(int i=0; i<invisibleLines.length; i++){
+                for(int i=0; i<invisibleLines.length-1; i++){
                     if(invisibleLines[i]){
                         g.drawLine(pg.xpoints[i],pg.ypoints[i],pg.xpoints[i+1],pg.ypoints[i+1]);
                     }
