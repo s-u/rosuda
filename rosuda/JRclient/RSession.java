@@ -1,6 +1,11 @@
 package org.rosuda.JRclient;
 
 public class RSession implements java.io.Serializable {
+    // serial version UID should only change if method signatures change
+    // significantly enough that previous versions cannot be used with
+    // current versions
+    private static final long serialVersionUID = -7048099825974875604l;
+
     String host;
     int port;
     byte[] key;
