@@ -9,6 +9,8 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
@@ -49,13 +51,15 @@ public class PPrimPolygon extends PPrimBase {
         }
         if(drawBorder){
             for(int i=1; i<pg.npoints; i++){
-                int my,My;
-                my=Math.min(pg.ypoints[i-1],pg.ypoints[i]);
-                My=Math.max(pg.ypoints[i-1],pg.ypoints[i]);
-                if(x>=pg.xpoints[i-1] && x<=pg.xpoints[i] && y>=my && y<=My){
-                    double t = (double)(x-pg.xpoints[i-1]) / (pg.xpoints[i]-pg.xpoints[i-1]);
-                    double ydiff = Math.abs(pg.ypoints[i-1] + t*(pg.ypoints[i]-pg.ypoints[i-1]) - y);
-                    if(ydiff<=1) return true;
+                if(!invisibleLines[i-1]){
+                    int my,My;
+                    my=Math.min(pg.ypoints[i-1],pg.ypoints[i]);
+                    My=Math.max(pg.ypoints[i-1],pg.ypoints[i]);
+                    if(x>=pg.xpoints[i-1] && x<=pg.xpoints[i] && y>=my && y<=My){
+                        double t = (double)(x-pg.xpoints[i-1]) / (pg.xpoints[i]-pg.xpoints[i-1]);
+                        double ydiff = Math.abs(pg.ypoints[i-1] + t*(pg.ypoints[i]-pg.ypoints[i-1]) - y);
+                        if(ydiff<=1) return true;
+                    }
                 }
             }
         }
@@ -70,7 +74,16 @@ public class PPrimPolygon extends PPrimBase {
                 if(rt.contains(pg.xpoints[i], pg.ypoints[i]))
                     return true;
             return false;
-        } else return ((pg_ni==null)?pg:pg_ni).intersects(rt);
+        } else{
+            Rectangle2D.Double r2d = new Rectangle2D.Double(rt.x,rt.y,rt.width,rt.height);
+            for(int i=1; i<pg.npoints; i++){
+                if(!invisibleLines[i-1]){
+                    Line2D.Double l = new Line2D.Double(pg.xpoints[i-1],pg.ypoints[i-1],pg.xpoints[i],pg.ypoints[i]);
+                    if (l.intersects(r2d)) return true;
+                }
+            }
+            return false;
+        }
     }
     
     /** paint the primitive */
