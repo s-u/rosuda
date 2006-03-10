@@ -74,10 +74,10 @@ public abstract class Plot {
             }
             
         } catch(RSrvException rse) {
-            ErrorDialog.show(parent,"Rserve exception in Plot.plot(Frame): "+rse.getMessage());
+            ErrorDialog.show(parent,"Rserve exception in Plot.plot(int,int): "+rse.getMessage());
             return null;
         } catch(java.io.IOException e) {
-            ErrorDialog.show(parent,"IOException in Plot.plot(Frame): "+e.getMessage());
+            ErrorDialog.show(parent,"IOException in Plot.plot(int,int): "+e.getMessage());
             return null;
         } catch (java.lang.NullPointerException e){
             ErrorDialog.show(parent,"NullPointerException: " + e.getMessage());
