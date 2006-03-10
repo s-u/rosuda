@@ -74,7 +74,7 @@ public class Map extends DragBox {
       xMax = Math.max(box.x+box.width, xMax);
       yMin = Math.min(box.y, yMin);
       yMax = Math.max(box.y+box.height, yMax);
-      //      System.out.println("Set Corrdinates: "+box.x+", "+box.width+", "+box.y+", "+box.height);
+      //System.out.println("Set Corrdinates: "+box.x+", "+box.width+", "+box.y+", "+box.height+" No: "+i+"");
     }
     setCoordinates(xMin, yMin, xMax, yMax, 1);
 
@@ -85,6 +85,7 @@ public class Map extends DragBox {
     for (int j=0; j<data.k; j++) {
       Varlist.addItem(data.getName(j));
     }
+    Varlist.setSelectedIndex(this.displayVar+1);
     Varlist.setSize(200, (Varlist.getSize()).height);
     JPanel p = new JPanel();
     p.add("West", Varlist);
@@ -185,7 +186,7 @@ public class Map extends DragBox {
     maxField.setActionCommand("text");
     p.add("East", maxField);
     
-    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
+//    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Java 1.4+ Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       Collist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
@@ -193,7 +194,7 @@ public class Map extends DragBox {
 //      cbBorder.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
       cbInvert.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
 //      cbRank.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
-    }
+//    }
     maxField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
     minField.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
 
@@ -613,8 +614,10 @@ public class Map extends DragBox {
         p.setBorderColor(new Color(0, 0, 0, (int)(2.55*alphas[borderAlpha])));
         smallPolys.addElement(p);
         for( int j=0; j<data.k; j++ )
-          if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 )
+          if( match[i] > -1 && data.getName(j).toLowerCase().indexOf("name") >= 0 ) {
             p.setLabel(data.getLevelName(j, (data.getNumbers(j))[match[i]]));
+            j = data.k;
+          }
       }
 
       for( int i=0; i<Selections.size(); i++) {
