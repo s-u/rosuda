@@ -286,6 +286,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         m_File.add(m_FileOpenDataset);
 
         m_FileOpenModel.setText("Open classification model...");
+        m_FileOpenModel.setEnabled(false);
         m_FileOpenModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_FileOpenModelActionPerformed(evt);
@@ -309,8 +310,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         setJMenuBar(jMenuBar1);
 
         pack();
-    }
-    // </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>//GEN-END:initComponents
 
     private void m_openClassificationWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_openClassificationWindowActionPerformed
         int row=tblClassifiers.rowAtPoint(popupMenuPoint);
