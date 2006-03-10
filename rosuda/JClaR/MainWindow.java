@@ -215,6 +215,8 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         m_FileOpenDataset = new javax.swing.JMenuItem();
         m_FileOpenModel = new javax.swing.JMenuItem();
         m_FileExit = new javax.swing.JMenuItem();
+        m_Help = new javax.swing.JMenu();
+        m_HelpAbout = new javax.swing.JMenuItem();
 
         m_openClassificationWindow.setText("Item");
         m_openClassificationWindow.addActionListener(new java.awt.event.ActionListener() {
@@ -307,11 +309,32 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
 
         jMenuBar1.add(m_File);
 
+        m_Help.setMnemonic('H');
+        m_Help.setText("Help");
+        m_HelpAbout.setMnemonic('A');
+        m_HelpAbout.setText("About");
+        m_HelpAbout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                m_HelpAboutActionPerformed(evt);
+            }
+        });
+
+        m_Help.add(m_HelpAbout);
+
+        jMenuBar1.add(m_Help);
+
         setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    private void m_HelpAboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_HelpAboutActionPerformed
+        MessageDialog.show(this,"JClassifieR " + Main.VERSION + "\n" +
+                "Tobias Wichtrey <tobias@tarphos.de>\n" +
+                "http://www.tarphos.de/JClassifieR/",
+                "About");
+    }//GEN-LAST:event_m_HelpAboutActionPerformed
+    
     private void m_openClassificationWindowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_openClassificationWindowActionPerformed
         int row=tblClassifiers.rowAtPoint(popupMenuPoint);
         if(row==-1) return;
@@ -319,14 +342,14 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
         Classifier c = (Classifier)classifierTM.getObjectAt(row);
         if(c!=null) c.show();
     }//GEN-LAST:event_m_openClassificationWindowActionPerformed
-
+    
     private void tblClassifiersMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClassifiersMousePressed
         if(evt.isPopupTrigger()) {
             popupMenuPoint = new Point(evt.getX(),evt.getY());
             popm_classifiers.show(tblClassifiers, popupMenuPoint.x,popupMenuPoint.y);
         }
     }//GEN-LAST:event_tblClassifiersMousePressed
-
+    
     private void tblClassifiersMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClassifiersMouseReleased
         if(evt.isPopupTrigger()) {
             popupMenuPoint = new Point(evt.getX(),evt.getY());
@@ -350,7 +373,7 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
             Classifier c = (Classifier)ois.readObject();
             if(c!=null) ClassifierManager.addClassifier(c);
-
+            
         } catch(IOException e){
             ErrorDialog.show(this, "Error reading model: " + e.getMessage());
         } catch(ClassNotFoundException e){
@@ -386,6 +409,8 @@ public class MainWindow extends javax.swing.JFrame implements DataClassifierList
     private javax.swing.JMenuItem m_FileExit;
     private javax.swing.JMenuItem m_FileOpenDataset;
     private javax.swing.JMenuItem m_FileOpenModel;
+    private javax.swing.JMenu m_Help;
+    private javax.swing.JMenuItem m_HelpAbout;
     private javax.swing.JMenuItem m_openClassificationWindow;
     private javax.swing.JPopupMenu popm_classifiers;
     private javax.swing.JTable tblClassifiers;
