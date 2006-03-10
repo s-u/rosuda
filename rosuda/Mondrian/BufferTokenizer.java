@@ -155,6 +155,7 @@ public class BufferTokenizer {
 	polygonName: name of polygon in DataMatrix */
 	boolean isPolygonAvailable = false;
 	String polygonName = null;
+    int polygonID = -1;
 	
 	
 /** potence: for precisioned calculating of doubles from chars
@@ -593,7 +594,7 @@ public class BufferTokenizer {
 */
 		
 /** 	items output **/
-
+/*
 		for(int i=0; i<lines; i++) {
 			System.out.print(i); System.out.print("	");
 			for(int j=0; j<columns; j++) {
@@ -609,7 +610,7 @@ public class BufferTokenizer {
 			}
 			System.out.println();
 		}
-
+*/
 
 		
 /**		word correctness test **/ 
@@ -930,6 +931,14 @@ public class BufferTokenizer {
 							temp[k] = head[j][k+2];
 						}
 						head[j] = temp;
+					} else if(head[j][1] == 'P') {
+                      isDiscret[j] = true;
+                      temp = new byte[head[j].length - 2];
+                      for(k=0; k<head[j].length - 2; k++) {
+                        temp[k] = head[j][k+2];
+                      }
+                      head[j] = temp;
+                      polygonID = j;
 					}
 				}
 			}
@@ -1362,7 +1371,7 @@ public class BufferTokenizer {
 	}
 
 /**
- * tests unquoted ByteBuffer for errors
+ * tests unquoted ByteBuffer for errors 
  * @param buffer associated ByteBuffer
  * @param SEPERATOR associated seperator of words
  * @param maxamountErrors maximal errors amount. stop if more errors occur
@@ -2603,7 +2612,7 @@ public class BufferTokenizer {
 						item[j][i] = item[j][i] * 10 + (b - 48);
 					}
 				} // end while
-				System.out.println("item["+j+"]["+i+"]: " + item[j][i]);
+//				System.out.println("item["+j+"]["+i+"]: " + item[j][i]);
 				// modified
 				if(isDiscret[j]) {
 					for(int m=0; m<wordStackSize[j]; m++) {
