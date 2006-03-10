@@ -44,6 +44,7 @@ public class ClassifyingDialog extends ListeningDialog implements SimpleChangeLi
         numberFormat.setMaximumFractionDigits(5);
         
         updateInfo();
+        pack();
     }
     
     
