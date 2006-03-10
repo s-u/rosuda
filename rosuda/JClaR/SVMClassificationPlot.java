@@ -42,8 +42,8 @@ public final class SVMClassificationPlot extends ContourPlot {
         else {
             Data cd = svm.getClassifiedData();
             int i = cd.getVariables().indexOf(svm.getVariableName());
-            if (i>=0) cd = cd.getRestrictedData(new int[]{i});
-            ORIGDATANAME = DATANAME = cd.getRname();
+            if (i<0) ORIGDATANAME = DATANAME = svm.getClassifiedDataFrame();
+            else ORIGDATANAME = DATANAME = cd.getRname();
         }
         this.svm=svm;
         dataSubsetOpt="dataSubset" + svm.getRname() + " <- " + DATANAME + "\n"; //TODO: ändern! ist uneffizient
