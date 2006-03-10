@@ -63,6 +63,8 @@ public class ClassifyingDialog extends ListeningDialog implements SimpleChangeLi
         
         if(classifier.hasAccuracyOfPrediction()){
             info += "Accuracy: " + numberFormat.format(classifier.getAccuracyOfPrediction());
+        } else{
+            info += "No information available.";
         }
         
         jepClassifyingResults.setText(info);
