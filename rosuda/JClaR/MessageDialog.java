@@ -19,8 +19,12 @@ public class MessageDialog extends JOptionPane {
     MessageDialog() {
     }
     
-    private static void show(final Component parent,final String message){
+    public static void show(final Component parent,final String message){
         showMessageDialog(parent, message);
+    }
+    
+    public static void show(final Component parent,final String message, final String title){
+        showMessageDialog(parent,message,title,INFORMATION_MESSAGE);
     }
     
     static final void show(final Component parent,final String message, final String title, final int messageType){
