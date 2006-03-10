@@ -16,6 +16,8 @@ public class Main {
     
     private static String last_directory;
     private static int lastGivenNumber=0;
+
+    static String VERSION = "0.5";
     
     /** Creates a new instance of Main */
     private Main() {
