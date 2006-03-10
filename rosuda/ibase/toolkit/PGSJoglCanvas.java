@@ -168,7 +168,12 @@ public class PGSJoglCanvas extends GLCanvas implements Commander, Dependent, Pri
 		
         gl.glColor3f( 0.0f, 0.0f, 0.0f );
 		
-		PoGraSSjogl p=new PoGraSSjogl(gl, glu, this);
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
+                // I added ", 0" here to comply with PoGraSSjogl's //
+                // new constructor. This might be nonsense but now //
+                // it can be compiled, at least.                   //
+                //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!//
+		PoGraSSjogl p=new PoGraSSjogl(gl, glu, this, 0);
 		//PoGraSSgraphics p=new PoGraSSgraphics(new render.jogl.JoglGraphics(gl, glu));
 		p.setTitle(desc);
 		beginPaint(p);
