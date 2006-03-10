@@ -239,17 +239,18 @@ public class PCPCanvas extends ParallelAxesCanvas {
             
             for(i=0; i<valuePoss.length; i++) {
                 if (isShowLabels() && labs[i]!=null){
+                    final boolean lefbot = (ax.getCatSeqIndex(i)&1)==0;
                     if(orientation==0)
                         labels.add(valuePoss[i]-5,
-                                ((i&1)==0)?(H-mBottom+2):(mTop-5),
+                                lefbot?(H-mBottom+2):(mTop-5),
                                 0.5,
-                                ((i&1)==0)?1:0,
+                                lefbot?1:0,
                                 (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
                                 labs[i]);
                     else
-                        labels.add(((i&1)==0)?(mLeft-4):(W-mRight+4),
+                        labels.add(lefbot?(mLeft-4):(W-mRight+4),
                                 valuePoss[i],
-                                ((i&1)==0)?1:0,
+                                lefbot?1:0,
                                 0.5,
                                 (i==0)?mLeft:mRight - 4,
                                 labs[i]);
