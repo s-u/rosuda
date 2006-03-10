@@ -13,6 +13,7 @@ import java.sql.*;
 import java.text.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import java.awt.color.*;
 
 public class dataSet {
 
@@ -21,6 +22,9 @@ public class dataSet {
   protected boolean[] alpha={true};
   protected int[] NAcount={0};
   protected double[] selectionArray;
+  protected byte[] colorArray;
+  protected Color[] brushColors;
+  public boolean colorBrush = false;
   protected double[] filterA;
   protected int[] filterGrpSize;
   protected int[] filterSelGrpSize;
@@ -166,6 +170,9 @@ public class dataSet {
     }
     
     selectionArray = new double[n];
+    colorArray = new byte[n];
+    for(int i=0; i<n; i++)
+      colorArray[i] = 0;
     filterA = new double[n];
     
     return alpha;
@@ -261,6 +268,9 @@ public class dataSet {
       NAcount = new int[this.k];
       alpha = new boolean[this.k];
       selectionArray = new double[n];
+      colorArray = new byte[n];
+      for(int i=0; i<n; i++)
+        colorArray[i] = 0;
       filterA = new double[n];
       
       for(int j=0; j<k; j++) {
@@ -272,19 +282,11 @@ public class dataSet {
         if( Var.numMiss > 0 )
           hasMissings = true;
         String varName = Var.getName();
-        if( varName.length() > 1 ) {
-          if( varName.substring(0,2).equals("/T") ) 
-            Var.phoneNumber = true;
-          if( varName.substring(0,2).equals("/P") ) {
-            Var.isPolyID = true;
-            Var.forceCategorical = true;
-          }
-          if( varName.substring(0,2).equals("/C") )
-            Var.isCategorical = false;
-          if( varName.substring(0,2).equals("/D") )
-            Var.forceCategorical = true;
+        if( BT.polygonID == j ) {
+          Var.isPolyID = true;
+          System.out.println("varName: "+varName+" polygonName: "+BT.polygonName);            
         }
-        data.addElement(Var);
+      data.addElement(Var);
       }
       if( BT.isPolygonAvailable ) {
         System.out.println(" Has Polygon: "+BT.polygonName+"<-");
@@ -793,6 +795,49 @@ System.out.println(newQ.makeQuery());
     return ((Variable)data.elementAt(i)).selSDev();
   }
 
+  public Color getColor(int i) {
+    return brushColors[colorArray[i]];
+  }    
+      
+  public Color getColorByID(int id) {
+    return brushColors[id];
+  }    
+      
+  public void setColor(int i, int c) {
+    colorArray[i] = (byte)c;    
+  }
+      
+  public void setColors(int k) {
+    if( k<256 )
+      colorBrush = true;
+    else
+      return;
+    
+    brushColors = new Color[k];
+    for(int i=0; i<k; i++) {
+      brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.75F, 1.0F);
+      System.out.println("Color: "+brushColors[i]);
+    }
+    int j=0;
+    double step = 0.0;
+    double offset = 0.0;
+    for(int r=0; r<=1.4426950408889634*Math.log(k); r++) {
+      step = 1.0/Math.pow(2,r);
+      offset = step/2;
+      for(int s=0; s<Math.pow(2,r); s++) {
+        System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
+        if( j<k )
+          brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.75F, 1.0F);
+        else
+          return;
+      }
+    }
+  }
+      
+  public void unsetColors() {
+    colorBrush = false;
+  }
+      
   public double[] getSelection() {
     return selectionArray;
   }
@@ -1081,7 +1126,7 @@ System.out.println(newQ.makeQuery());
     }
     
     public boolean isPolyID() {
-      return name.substring(0,2).equals("/P");
+      return isPolyID;
     }
 
     public double isLevel(String name) {
