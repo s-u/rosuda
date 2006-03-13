@@ -143,18 +143,18 @@ public class PPrimBox extends PPrimBase {
                 while(i>=0) {
                     final double val=lastR[i];
                     if (val<lh3)
-                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
                     i--;
                 }
                 i=highEdge;
                 while(i<lastTop) {
                     final double val=lastR[i];
                     if (val>uh3)
-                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
                     else
-                        g.fillRect(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
                     i++;
                 }
         }
