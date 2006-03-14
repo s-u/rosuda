@@ -366,8 +366,8 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 double fi=ay.getSensibleTickStart(f);
                 while (fi<ay.vBegin+ay.vLen) {
                     final int t=ay.getValuePos(fi);
-                    g.drawLine(t,TH-mBottom+5,t,TH-mBottom);
-                    labels.add(t-5,TH-mBottom+7,0,1,ay.getDisplayableValue(fi));
+                    g.drawLine(t,TH-mBottom+4,t,TH-mBottom);
+                    labels.add(t,TH-3,0.5,0,ay.getDisplayableValue(fi));
                     fi+=f;
                 }
                 g.drawLine(ay.gBegin,TH-mBottom,ay.gBegin+ay.gLen,TH-mBottom);
@@ -394,17 +394,49 @@ public class BoxCanvas extends ParallelAxesCanvas {
     }
     
     protected void updateMargins() {
-        if(vsCat){
-            mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
-            mRight=defaultMRight=smallMRight;
-            mBottom=defaultMBottom=bigMBottom;
-            mTop=defaultMTop=smallMTop;
-        } else{
-            mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
-            mRight=defaultMRight=smallMRight;
-            mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
-            mTop=defaultMTop=smallMTop;
+        switch(orientation){
+            case 0:
+                if(vsCat){
+                    mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
+                    mRight=defaultMRight=smallMRight;
+                    mBottom=defaultMBottom=bigMBottom;
+                    mTop=defaultMTop=smallMTop;
+                } else{
+                    mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
+                    mRight=defaultMRight=smallMRight;
+                    mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
+                    mTop=defaultMTop=smallMTop;
+                }
+                break;
+            case 1:
+                if(vsCat){
+                    mLeft=defaultMLeft=bigMLeft;
+                    mRight=defaultMRight=smallMRight;
+                    mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
+                    mTop=defaultMTop=smallMTop;
+                } else{
+                    mLeft=defaultMLeft=(v.length==1)?smallMLeft:bigMLeft;
+                    mRight=defaultMRight=smallMRight;
+                    mBottom=defaultMBottom=(commonScale || v.length==1)?bigMBottom:smallMBottom;
+                    mTop=defaultMTop=smallMTop;
+                }
+                break;
         }
+    }
+    
+    public boolean adjustMargin(final PoGraSS g) {
+        if(orientation==0) return super.adjustMargin(g);
+        
+        if (vsCat || v.length>1) {
+            int maxWidth=0;
+            for(int i=0; i<xv.getNumCats(); i++){
+                int wi=g.getWidthEstimate((String)ax.getVariable().getCatAt(i));
+                if(wi>maxWidth) maxWidth=wi;
+            }
+            return adjustMargin(maxWidth);
+        }
+        
+        return false;
     }
     
 }

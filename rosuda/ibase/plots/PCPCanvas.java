@@ -282,12 +282,21 @@ public class PCPCanvas extends ParallelAxesCanvas {
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
-                g.drawLine(mLeft-2,t,mLeft,t);
-                if(isShowLabels())
-                    labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                if(orientation==0){
+                    g.drawLine(mLeft-2,t,mLeft,t);
+                    if(isShowLabels())
+                        labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                }else{
+                    g.drawLine(t,pc.getHeight()-mBottom,t,pc.getHeight()-mBottom+2);
+                    if(isShowLabels())
+                        labels.add(t,pc.getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                }
                 fi+=f;
             }
-            g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
+            if(orientation==0)
+                g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
+            else
+                g.drawLine(mLeft, pc.getHeight()-mBottom, pc.getWidth()-mRight,pc.getHeight()-mBottom);
         }
     }
     
@@ -305,14 +314,14 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 mRight=smallMRight;
                 break;
             case 1:
-                mBottom=smallMBottom;
+                mBottom=commonScale?bigMBottom:smallMBottom;
                 mTop=smallMBottom;
                 mLeft = bigMLeft;
                 mRight = bigMRight;
         }
         super.rotate(amount);
     }
-
+    
     protected void updateMargins() {
         switch(orientation){
             case 0:
@@ -322,7 +331,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 mRight=defaultMRight=smallMRight;
                 break;
             case 1:
-                mBottom=defaultMBottom=smallMBottom;
+                mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
                 mTop=defaultMTop=smallMTop;
                 mLeft=defaultMLeft=bigMLeft;
                 mRight=defaultMRight=bigMRight;
