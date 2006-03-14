@@ -111,9 +111,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar[] var, final SMarker mark) {
         super(ppc,f,var,mark);
-        mLeft=20;
-        mBottom= (var.length==1)?10:30;
-        mTop=10;
+        updateMargins();
         
         String variables = v[0].getName();
         for(int i=1; i<v.length; i++) variables+=", " + v[i].getName();
@@ -152,16 +150,14 @@ public class BoxCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) { // multiple box vs cat
         super(ppc,f,var,cvar,mark);
-        mLeft=20;
-        mBottom=30;
-        mTop=10;
+        vsCat=true;
+        updateMargins();
         
         setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
         
         if (var!=null && !var.isCat() && var.isNum() && cvar.isCat())
             valid=true; // valid are only numerical vars non-cat'd, cvar is cat
         if (valid) { // split into ranked chunks by cat.
-            vsCat=true;
             cs=cv.getNumCats();
             cats=cv.getCategories();
             final int[] r=v[0].getRanked();
@@ -208,21 +204,12 @@ public class BoxCanvas extends ParallelAxesCanvas {
         if (!valid) return;
         
         if (!vsCat) {
-            if(v.length==1){
-                pp = new PlotPrimitive[1];
-                pp[0] = createBox(OSdata,(orientation==0)?(mLeft+20):(mTop+20),boxwidth,0);
-                final PPrimBox p = ((PPrimBox)pp[0]);
-                p.ref = v[0].getRanked();
-                markStats = new OrdStats[1];
-                markStats[0] = new OrdStats();
-            } else{
-                pp = new PlotPrimitive[v.length];
-                markStats = new OrdStats[v.length];
-                for(int i=0; i<pp.length; i++){
-                    pp[i] = createBox(oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth,i);
-                    ((PPrimBox)pp[i]).ref = v[i].getRanked();
-                    markStats[i] = new OrdStats();
-                }
+            pp = new PlotPrimitive[v.length];
+            markStats = new OrdStats[v.length];
+            for(int i=0; i<pp.length; i++){
+                pp[i] = createBox((pp.length==1)?OSdata:oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth,i);
+                ((PPrimBox)pp[i]).ref = v[i].getRanked();
+                markStats[i] = new OrdStats();
             }
         } else {
             final Vector boxes = new Vector();
@@ -404,6 +391,20 @@ public class BoxCanvas extends ParallelAxesCanvas {
                     "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
                     "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
                     "cases: " + box.cases();
+    }
+    
+    protected void updateMargins() {
+        if(vsCat){
+            mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
+            mRight=defaultMRight=smallMRight;
+            mBottom=defaultMBottom=bigMBottom;
+            mTop=defaultMTop=smallMTop;
+        } else{
+            mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
+            mRight=defaultMRight=smallMRight;
+            mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
+            mTop=defaultMTop=smallMTop;
+        }
     }
     
 }

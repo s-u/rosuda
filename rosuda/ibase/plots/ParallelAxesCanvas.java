@@ -29,10 +29,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
         objectClipping=true;
         commonScale=false;
         
-        mBottom=standardMBottom;
-        mTop=standardMTop;
-        mLeft=standardMLeft;
-        mRight=standardMRight;
+        mBottom=smallMBottom;
+        mTop=smallMTop;
+        mLeft=smallMLeft;
+        mRight=smallMRight;
         
         v = new SVar[]{var};
         cv = cvar;
@@ -62,10 +62,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
         objectClipping=true;
         if(yvs.length==1) commonScale=true;
         
-        mBottom=standardMBottom;
-        mTop=standardMTop;
-        mLeft=standardMLeft;
-        mRight=standardMRight;
+        mBottom=smallMBottom;
+        mTop=smallMTop;
+        mLeft=smallMLeft;
+        mRight=smallMRight;
         
         v=new SVar[yvs.length];
         opAy=new Axis[yvs.length-1];
@@ -98,11 +98,20 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     boolean commonScale=false;
     
+    protected int bigMLeft=30;
+    protected int bigMTop=20;
+    protected int bigMBottom=20;
+    protected int bigMRight=30;
+    protected int smallMLeft=10;
+    protected int smallMTop=10;
+    protected int smallMBottom=10;
+    protected int smallMRight=10;
     
-    protected int standardMLeft=30;
-    protected int standardMTop=20;
-    protected int standardMBottom=20;
-    protected int standardMRight=10;
+    protected int defaultMLeft;
+    protected int defaultMRight;
+    protected int defaultMTop;
+    protected int defaultMBottom;
+    
     int leftGap=7;
     int rightGap=7;
     
@@ -224,7 +233,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             setUpdateRoot(0); repaint();
         }
         if ("exit".equals(cmd)) WinTracker.current.Exit();
-        if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint(); }
+        if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint();}
         if (M_TRIGRAPH.equals(cmd)) {
             useX3=!useX3;
             MItrigraph.setLabel(useX3?"Extend labels":"Shorten labels");
@@ -431,6 +440,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public void setCommonScale(final boolean cs) {
         //if(cs==commonScale) return;
         commonScale=cs;
+        updateGeometry=true;
+        updateMargins();
         EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
         if (cs) {
@@ -446,10 +457,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     i++;
                 }
                 
-                updateGeometry=true;
+                
             }
             ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         }
+        
     }
     
     protected String getShortClassName(){
@@ -503,9 +515,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
     protected boolean adjustMargin(int maxWidth){
         final int omLeft=mLeft;
         maxWidth+=4;
-        if(maxWidth>20){
+        if(maxWidth>defaultMLeft){
             mLeft = maxWidth;
-        } else mLeft=20;
+        } else mLeft=defaultMLeft;
         return (mLeft!=omLeft);
     }
+    
+    protected void updateMargins() {}
 }

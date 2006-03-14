@@ -21,6 +21,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public PCPCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
         super(ppc,f, yvs,mark);
+        
+        bigMLeft=bigMRight=50;
+        updateMargins();
+        
         dontPaint=false;
     }
     
@@ -295,16 +299,33 @@ public class PCPCanvas extends ParallelAxesCanvas {
     public void rotate(final int amount) {
         switch((orientation+amount)&1){
             case 0:
-                mBottom=standardMBottom;
-                mTop=standardMTop;
-                mLeft=standardMLeft;
-                mRight=standardMRight;
+                mBottom=bigMBottom;
+                mTop=bigMTop;
+                mLeft=smallMLeft;
+                mRight=smallMRight;
                 break;
             case 1:
-                mBottom=10;
-                mTop=10;
-                mLeft = mRight = 50;
+                mBottom=smallMBottom;
+                mTop=smallMBottom;
+                mLeft = bigMLeft;
+                mRight = bigMRight;
         }
         super.rotate(amount);
+    }
+
+    protected void updateMargins() {
+        switch(orientation){
+            case 0:
+                mBottom=defaultMBottom=bigMBottom;
+                mTop=defaultMTop=bigMTop;
+                mLeft=defaultMLeft=smallMLeft;
+                mRight=defaultMRight=smallMRight;
+                break;
+            case 1:
+                mBottom=defaultMBottom=smallMBottom;
+                mTop=defaultMTop=smallMTop;
+                mLeft=defaultMLeft=bigMLeft;
+                mRight=defaultMRight=bigMRight;
+        }
     }
 };
