@@ -117,10 +117,10 @@ public class BaseCanvas
     
     /** PlotText object containing labels. Can be null. */
     protected PlotText labels;
-
+    
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
-
+    
     MenuItem MIsonlyselected=null;
     
     /** */
@@ -177,8 +177,10 @@ public class BaseCanvas
         if (Global.DEBUG>0)
             System.out.println("BaseCanvas.paint: real bounds ["+w+":"+h+"], existing ["+W+":"+H+"], orientation="+orientation+" mTop="+mTop+",mBottom="+mBottom);
         boolean marginsAdjusted=false;
+        final boolean ySizeChanged = ((orientation&1)==0)?(H!=h):(W!=w);
+        final boolean xSizeChanged = ((orientation&1)==0)?(W!=w):(H!=h);
         do{
-            if (ay!=null && (H!=h || updateGeometry)){
+            if (ay!=null && (ySizeChanged || updateGeometry)){
                 switch (orientation) {
                     case 0: ay.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                     case 1: ay.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
@@ -186,7 +188,7 @@ public class BaseCanvas
                     case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                 }
             }
-            if(opAy!=null && (H!=h || updateGeometry)){
+            if(opAy!=null && (ySizeChanged || updateGeometry)){
                 switch (orientation) {
                     case 0: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                     case 1: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
@@ -194,7 +196,7 @@ public class BaseCanvas
                     case 3: for(int i=0; i<opAy.length; i++) if(opAy[i]!=null) opAy[i].setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
                 }
             }
-            if (ax!=null && (W!=w || updateGeometry)){
+            if (ax!=null && (xSizeChanged || updateGeometry)){
                 switch (orientation) {
                     case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                     case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
@@ -202,7 +204,7 @@ public class BaseCanvas
                     case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                 }
             }
-            if(opAx!=null && (W!=w || updateGeometry)){
+            if(opAx!=null && (xSizeChanged || updateGeometry)){
                 switch (orientation) {
                     case 0: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
                     case 1: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
@@ -587,7 +589,7 @@ public class BaseCanvas
     
     public void mouseEntered(final MouseEvent e) {
         /*	if(!pc.getComponent().contains(e.getX(),e.getY())) {
-         		qi.hide();
+                        qi.hide();
             }*/
     };
     public void mouseExited(final MouseEvent e) {};
@@ -613,8 +615,8 @@ public class BaseCanvas
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
         if(actionExtQuery) {
-        	isExtQuery = true;
-        	if (pp!=null) {
+            isExtQuery = true;
+            if (pp!=null) {
                 int i=0;
                 while (i<pp.length) {
                     if (pp[i]!=null && pp[i].contains(x,y)) {
@@ -633,9 +635,8 @@ public class BaseCanvas
                     i++;
                 }
             }
-        	isExtQuery = false;
-        }
-        else if (actionQuery) {
+            isExtQuery = false;
+        } else if (actionQuery) {
             if (pp!=null) {
                 int i=0;
                 while (i<pp.length) {
