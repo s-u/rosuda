@@ -174,29 +174,30 @@ public class PCPCanvas extends ParallelAxesCanvas {
         
         String retValue="";
         
-        /* This will be the extended query
-         for(int i=0; i<v.length; i++){
-            retValue += v[i].getName() + ": ";
-            if(v[i].isCat()){
-                retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+        if(isExtQuery){
+            for(int i=0; i<v.length; i++){
+                retValue += v[i].getName() + ": ";
+                if(v[i].isCat()){
+                    retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                } else{
+                    retValue += Tools.getDisplayableValue(
+                            ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                }
+                
+            }
+        } else{
+            int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
+            int i = ax.getCatSeqIndex(c);
+            retValue += v[c].getName() + ": ";
+            if(v[c].isCat()){
+                retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
             } else{
                 retValue += Tools.getDisplayableValue(
-                        ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                        ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i]));
             }
-         
-        }
-         **/
-        int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
-        int i = ax.getCatSeqIndex(c);
-        retValue += v[c].getName() + ": ";
-        if(v[c].isCat()){
-            retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
-        } else{
-            retValue += Tools.getDisplayableValue(
-                    ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
         }
         
-        return retValue + ","  + i;
+        return retValue;
     }
     
     protected String getShortClassName() {
