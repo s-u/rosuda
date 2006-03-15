@@ -244,20 +244,21 @@ public class PCPCanvas extends ParallelAxesCanvas {
             
             for(i=0; i<valuePoss.length; i++) {
                 if (isShowLabels() && labs[i]!=null){
-                    final boolean lefbot = (ax.getCatSeqIndex(i)&1)==0;
-                    if(orientation==0)
+                    
+                    if(orientation==0){
+                        final boolean left = (ax.getCatSeqIndex(i)&1)==0;
                         labels.add(valuePoss[i]-5,
-                                lefbot?(H-mBottom+2):(mTop-5),
+                                left?(H-mBottom+2):(mTop-5),
                                 0.5,
-                                lefbot?1:0,
+                                left?1:0,
                                 (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
                                 labs[i]);
-                    else
-                        labels.add(lefbot?(mLeft-4):(W-mRight+4),
+                    } else
+                        labels.add(mLeft-4,
                                 valuePoss[i],
-                                lefbot?1:0,
+                                1,
                                 0.5,
-                                (i==0)?mLeft:mRight - 4,
+                                mLeft-4,
                                 labs[i]);
                 }
             }
@@ -270,8 +271,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                     if((xx&1)==0) g.drawLine(t,b,t,b+2);
                     else g.drawLine(t,mTop,t,mTop-2);
                 } else{
-                    if((xx&1)==0) g.drawLine(mLeft,t,mLeft-2,t);
-                    else g.drawLine(b,t,b+2,t);
+                    g.drawLine(mLeft,t,mLeft-2,t);
                 }
                 xx++;
             }
@@ -321,7 +321,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 mBottom=commonScale?bigMBottom:smallMBottom;
                 mTop=smallMBottom;
                 mLeft = bigMLeft;
-                mRight = bigMRight;
+                mRight = smallMRight;
         }
         super.rotate(amount);
     }
@@ -338,7 +338,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
                 mTop=defaultMTop=smallMTop;
                 mLeft=defaultMLeft=bigMLeft;
-                mRight=defaultMRight=bigMRight;
+                mRight=defaultMRight=smallMRight;
         }
     }
 };
