@@ -13,7 +13,7 @@ import org.rosuda.util.Tools;
  */
 public class PCPCanvas extends ParallelAxesCanvas {
     
-    private int mouseX;
+    private int mouseX,mouseY;
     
     /** create a new PCP
      * @param f associated frame (or <code>null</code> if none)
@@ -186,7 +186,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
          
         }
          **/
-        int c = ax.getCatByPos(mouseX);
+        int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
         int i = ax.getCatSeqIndex(c);
         retValue += v[c].getName() + ": ";
         if(v[c].isCat()){
@@ -302,7 +302,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
     
     public void mouseMoved(final MouseEvent ev) {
         super.mouseMoved(ev);
-        if (Common.isQueryTrigger(ev)) mouseX=ev.getX();
+        if (Common.isQueryTrigger(ev)) {
+            mouseX=ev.getX();
+            mouseY=ev.getY();
+        }
     }
     
     public void rotate(final int amount) {
