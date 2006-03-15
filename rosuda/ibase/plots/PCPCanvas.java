@@ -205,7 +205,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
     }
     
     public boolean adjustMargin(final PoGraSS g) {
-        if(commonScale){
+        if(orientation==0 && commonScale){
             /* determine maximal label length */
             int maxWidth=0;
             final double f=ay.getSensibleTickDistance(50,18);
@@ -215,6 +215,17 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 int wi = g.getWidthEstimate(s);
                 if(wi>maxWidth) maxWidth=wi;
                 fi+=f;
+            }
+            return adjustMargin(maxWidth);
+        }
+        if(orientation==1){
+            int maxWidth=0;
+            final Object[] categories = xv.getCategories();
+            for(int i=0; i<xv.getNumCats(); i++){
+                final String s = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
+                    categories[i].toString()):categories[i].toString();
+                int wi = g.getWidthEstimate(s);
+                if(wi>maxWidth) maxWidth=wi;
             }
             return adjustMargin(maxWidth);
         }
@@ -231,27 +242,37 @@ public class PCPCanvas extends ParallelAxesCanvas {
             final double f=(orientation==0)?(ax.getSensibleTickDistance(50,26)):(ax.getSensibleTickDistance(30,18));
             double fi=ax.getSensibleTickStart(f);
             
-            final int[] valuePoss = new int[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
-            final String[] labs = new String[(int)((ax.vBegin+ax.vLen-fi)/f)+5];
-            int i=0;
-            while (fi<ax.vBegin+ax.vLen) {
-                valuePoss[i] = ax.getValuePos(fi);
-                labs[i] = xv.isCat()?((useX3)?Common.getTriGraph(xv.getCatAt((int)fi).toString()):
-                    xv.getCatAt((int)fi).toString()):ax.getDisplayableValue(fi);
-                fi+=f;
-                i++;
+            final int numCats=xv.getNumCats();
+            final int[] valuePoss = new int[numCats];
+            final String[] labs = new String[numCats];
+            final Object[] categories = xv.getCategories();
+            for(int i=0; i<numCats; i++){
+                valuePoss[i] = ax.getRegularCatPos(i,leftGap,rightGap);
+                labs[i] = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
+                    categories[i].toString()):categories[i].toString();
             }
             
-            for(i=0; i<valuePoss.length; i++) {
+            for(int i=0; i<valuePoss.length; i++) {
                 if (isShowLabels() && labs[i]!=null){
                     
                     if(orientation==0){
-                        final boolean left = (ax.getCatSeqIndex(i)&1)==0;
-                        labels.add(valuePoss[i]-5,
-                                left?(H-mBottom+2):(mTop-5),
-                                0.5,
-                                left?1:0,
-                                (i==0)?(2*(valuePoss[1]-valuePoss[0])):((i==valuePoss.length-1)?(2+(valuePoss[i]-valuePoss[i-1])):(valuePoss[i+1]-valuePoss[i-1])),
+                        final boolean bottom = (ax.getCatSeqIndex(i)&1)==0;
+                        int maxWidth=-1;
+                        if(i==0){
+                            if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
+                        } else if (i==valuePoss.length-1){
+                            if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1];
+                        } else{
+                            if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                        }
+                        
+                        labels.add(valuePoss[i],
+                                bottom?(H-mBottom+2):(mTop-5),
+                                (i==0)?0:
+                                    ((i==valuePoss.length-1)?1:
+                                        0.5),
+                                bottom?1:0,
+                                maxWidth,
                                 labs[i]);
                     } else
                         labels.add(mLeft-4,
