@@ -247,8 +247,8 @@ public class PCPCanvas extends ParallelAxesCanvas {
             final String[] labs = new String[numCats];
             final Object[] categories = xv.getCategories();
             for(int i=0; i<numCats; i++){
-                valuePoss[i] = ax.getRegularCatPos(i,leftGap,rightGap);
-                labs[i] = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
+                valuePoss[ax.getCatSeqIndex(i)] = ax.getRegularCatPos(i,leftGap,rightGap);
+                labs[ax.getCatSeqIndex(i)] = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
                     categories[i].toString()):categories[i].toString();
             }
             
@@ -256,7 +256,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 if (isShowLabels() && labs[i]!=null){
                     
                     if(orientation==0){
-                        final boolean bottom = (ax.getCatSeqIndex(i)&1)==0;
+                        final boolean bottom = (i&1)==0;
                         int maxWidth=-1;
                         if(i==0){
                             if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
@@ -289,7 +289,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
             while (xx<xv.getNumCats()) {
                 final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
                 if(orientation==0){
-                    if((xx&1)==0) g.drawLine(t,b,t,b+2);
+                    if((ax.getCatSeqIndex(xx)&1)==0) g.drawLine(t,b,t,b+2);
                     else g.drawLine(t,mTop,t,mTop-2);
                 } else{
                     g.drawLine(mLeft,t,mLeft-2,t);
