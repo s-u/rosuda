@@ -256,6 +256,10 @@ public class Framework implements Dependent, ActionListener {
         return addVar(v);
     }
     
+    public int newVar(final String name, final int[] ix, final String d) {
+        return newVar(name,ix, new String[]{d});
+    }
+    
     public static String[] toStringArray(final Object[] o) {
         final String[] s=new String[o.length];
         int i=0; while(i<o.length) { if (o[i]!=null) s[i]=o[i].toString(); i++; }
