@@ -16,13 +16,15 @@ import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.toolkit.PGSCanvas.*;
 import org.rosuda.pograss.PoGraSS;
-import org.rosuda.util.*;
+import org.rosuda.util.RespDialog;
+import org.rosuda.util.SpacingPanel;
+import org.rosuda.util.Tools;
 
 
 
 public class ParallelAxesCanvas extends BaseCanvas {
     
-    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
+    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
         
         allowDragMove=true;
@@ -55,7 +57,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
+    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
         super(ppc, f, mark);
         
         allowDragMove=true;
@@ -69,8 +71,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         v=new SVar[yvs.length];
         opAy=new Axis[yvs.length-1];
-        int i=0;
+        
         xv=new SVarObj(getShortClassName() + ".index",true);
+        int i = 0;
         while(i<yvs.length) {
             if (yvs[i].isNum()) {
                 if (i==0) {
@@ -98,19 +101,19 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     boolean commonScale=false;
     
-    protected int bigMLeft=30;
-    protected int bigMTop=20;
-    protected int bigMBottom=20;
-    protected int bigMRight=30;
-    protected int smallMLeft=10;
-    protected int smallMTop=10;
-    protected int smallMBottom=10;
-    protected int smallMRight=10;
+    int bigMLeft=30;
+    int bigMTop=20;
+    int bigMBottom=20;
+    int bigMRight=30;
+    int smallMLeft=10;
+    int smallMTop=10;
+    int smallMBottom=10;
+    int smallMRight=10;
     
-    protected int defaultMLeft;
-    protected int defaultMRight;
-    protected int defaultMTop;
-    protected int defaultMBottom;
+    int defaultMLeft;
+    int defaultMRight;
+    int defaultMTop;
+    int defaultMBottom;
     
     int leftGap=7;
     int rightGap=7;
@@ -122,40 +125,41 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /** categorical variable */
     SVar cv;
     
-    double totMin, totMax;
+    private double totMin;
+    private double totMax;
     
-    static final String M_PLUS = "+";
-    static final String M_MINUS = "-";
-    static final String M_SET1 = "set1";
-    static final String M_SET64 = "set64";
-    static final String M_RESET = "reset";
-    static final String M_LABELS = "labels";
-    static final String M_TRIGRAPH = "trigraph";
-    static final String M_SHOWDOTS = "Show dots";
-    static final String M_TOGGLEPTS = "togglePts";
-    static final String M_NODESIZEUP = "nodeSizeUp";
-    static final String M_NODESIZEDOWN = "nodeSizeDown";
-    static final String M_SHOWAXES = "Show axes";
-    static final String M_TOGGLEAXES = "toggleAxes";
-    static final String M_HIDELINES = "Hide lines";
-    static final String M_TOGGLELINES = "toggleLines";
-    static final String M_HIDENALINES = "hideNAlines";
-    static final String M_COMMON = "common";
-    static final String M_YRANGEDLG = "YrangeDlg";
-    static final String M_SCALEDLG = "scaleDlg";
-    static final String M_ALPHADOWN = "alphaDown";
-    static final String M_ALPHAUP = "alphaUp";
-    static final String M_TRANSHIGHL = "transparentHighlighting";
+    private static final String M_PLUS = "+";
+    private static final String M_MINUS = "-";
+    private static final String M_SET1 = "set1";
+    private static final String M_SET64 = "set64";
+    private static final String M_RESET = "reset";
+    private static final String M_LABELS = "labels";
+    private static final String M_TRIGRAPH = "trigraph";
+    private static final String M_SHOWDOTS = "Show dots";
+    private static final String M_TOGGLEPTS = "togglePts";
+    private static final String M_NODESIZEUP = "nodeSizeUp";
+    private static final String M_NODESIZEDOWN = "nodeSizeDown";
+    private static final String M_SHOWAXES = "Show axes";
+    private static final String M_TOGGLEAXES = "toggleAxes";
+    private static final String M_HIDELINES = "Hide lines";
+    private static final String M_TOGGLELINES = "toggleLines";
+    private static final String M_HIDENALINES = "hideNAlines";
+    private static final String M_COMMON = "common";
+    private static final String M_YRANGEDLG = "YrangeDlg";
+    private static final String M_SCALEDLG = "scaleDlg";
+    private static final String M_ALPHADOWN = "alphaDown";
+    private static final String M_ALPHAUP = "alphaUp";
+    private static final String M_TRANSHIGHL = "transparentHighlighting";
     
-    MenuItem MIlabels=null;
-    MenuItem MIdots=null;
-    MenuItem MIaxes=null;
-    MenuItem MIlines=null;
-    MenuItem MItrigraph=null;
-    MenuItem MInodeSizeUp=null;
-    MenuItem MInodeSizeDown=null;
-    MenuItem MIhideNAlines=null;
-    protected MenuItem MItransHighl=null;
+    private MenuItem MIlabels=null;
+    private MenuItem MIdots=null;
+    private MenuItem MIaxes=null;
+    private MenuItem MIlines=null;
+    private MenuItem MItrigraph=null;
+    private MenuItem MInodeSizeUp=null;
+    private MenuItem MInodeSizeDown=null;
+    private MenuItem MIhideNAlines=null;
+    private MenuItem MItransHighl=null;
     
     boolean drawPoints=false;
     boolean drawLines=true;
@@ -164,13 +168,14 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     int nodeSize=2;
     
-    int X,Y;
+    private int X;
+    private int Y;
     
-    protected boolean valid=true;
+    boolean valid=true;
     
     int TW, TH;
     
-    protected void createMenu(Frame f){
+    private void createMenu(Frame f){
         createMenu(f,true,true,new String[]{
             "@LHide labels",M_LABELS,
             "Shorten lables",M_TRIGRAPH,
@@ -437,7 +442,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return queryObject(pp[i]);
     }
     
-    public void setCommonScale(final boolean cs) {
+    private void setCommonScale(final boolean cs) {
         //if(cs==commonScale) return;
         commonScale=cs;
         updateGeometry=true;
@@ -464,7 +469,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
     }
     
-    protected String getShortClassName(){
+    String getShortClassName(){
         return "PA";
     }
     
@@ -491,15 +496,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
         labels.finishAdd();
     }
     
-    protected boolean getValid() {
+    boolean getValid() {
         return valid;
     }
     
-    protected void addLabelsAndTicks(PoGraSS g) {}
+    void addLabelsAndTicks(PoGraSS g) {}
     
     public boolean adjustMargin(final PoGraSS g){
         if(orientation==0){
-            double f=ay.getSensibleTickDistance(30,18);
+            final double f=ay.getSensibleTickDistance(30,18);
             double fi=ay.getSensibleTickStart(f);
             int maxLabelLength=0;
             while (fi<ay.vBegin+ay.vLen) {
@@ -512,7 +517,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return false;
     }
     
-    protected boolean adjustMargin(int maxWidth){
+    boolean adjustMargin(int maxWidth){
         final int omLeft=mLeft;
         maxWidth+=4;
         if(maxWidth>defaultMLeft){
@@ -521,5 +526,5 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return (mLeft!=omLeft);
     }
     
-    protected void updateMargins() {}
+    void updateMargins() {}
 }
