@@ -187,6 +187,28 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 oss[i].update(v[0],rk[i],rs[i]);
                 i++;
             }
+            boolean[] validOss = new boolean[cs];
+            int invalid=0;
+            for(i=0; i<cs; i++){
+                if(oss[i].lastR==null){
+                    validOss[i]=false;
+                    invalid++;
+                } else validOss[i]=true;
+            }
+            if(invalid>0){
+                OrdStats[] newOss = new OrdStats[2*(cs-invalid)+2];
+                int j=0;
+                for(i=0;i<cs; i++){
+                    if(validOss[i]) newOss[j++]=oss[i];
+                }
+                newOss[cs]=oss[cs];
+                j=0;
+                for(i=0;i<cs; i++){
+                    if(validOss[i]) newOss[cs-invalid+1+j++]=oss[cs+1+i];
+                }
+                oss=newOss;
+                cs-=invalid;
+            }
             updateObjects();
         }
         objectClipping=true;
