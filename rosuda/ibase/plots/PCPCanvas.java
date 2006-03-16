@@ -118,7 +118,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         if (baseDrag && moveDrag) {
             final int pos = (orientation==0)?e.getX():e.getY();
             final int dragNew = ax.getCatByPos(pos);
-            final int dragAxis = ax.getCatByPos(baseDragX1);
+            final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
             final int difference;
             final int myX1=ax.getCatLow(dragNew);
             final int myX2=ax.getCatUp(dragNew);
@@ -128,8 +128,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 if(dragAxis<newPos) newPos -=1;
                 ax.moveCat(dragAxis, newPos);
             } else{
-                if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
-                else ax.swapCats(dragNew, dragAxis);
+                ax.swapCats(dragNew, dragAxis);
             }
             
             baseDrag=false;
@@ -239,9 +238,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
     protected void addLabelsAndTicks(PoGraSS g) {
         /* draw ticks and labels for X axis */
         {
-            final double f=(orientation==0)?(ax.getSensibleTickDistance(50,26)):(ax.getSensibleTickDistance(30,18));
-            double fi=ax.getSensibleTickStart(f);
-            
             final int numCats=xv.getNumCats();
             final int[] valuePoss = new int[numCats];
             final String[] labs = new String[numCats];
