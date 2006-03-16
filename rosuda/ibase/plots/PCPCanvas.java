@@ -172,15 +172,16 @@ public class PCPCanvas extends ParallelAxesCanvas {
     public String queryObject(PlotPrimitive p) {
         
         String retValue="";
+        final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
         
         if(isExtQuery){
             for(int i=0; i<v.length; i++){
                 retValue += v[i].getName() + ": ";
                 if(v[i].isCat()){
-                    retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                    retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
                 } else{
                     retValue += Tools.getDisplayableValue(
-                            ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                            ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
                 }
                 
             }
@@ -189,10 +190,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
             int i = ax.getCatSeqIndex(c);
             retValue += v[c].getName() + ": ";
             if(v[c].isCat()){
-                retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i])) + "\n";
+                retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
             } else{
                 retValue += Tools.getDisplayableValue(
-                        ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(((PPrimPolygon)p).pg.ypoints[i]));
+                        ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(pts[i]));
             }
         }
         
