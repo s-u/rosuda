@@ -448,17 +448,9 @@ public class BoxCanvas extends ParallelAxesCanvas {
     
     public boolean adjustMargin(final PoGraSS g) {
         if(orientation==0) return super.adjustMargin(g);
-        
-        if (vsCat || v.length>1) {
-            int maxWidth=0;
-            for(int i=0; i<xv.getNumCats(); i++){
-                int wi=g.getWidthEstimate((String)ax.getVariable().getCatAt(i));
-                if(wi>maxWidth) maxWidth=wi;
-            }
-            return adjustMargin(maxWidth);
-        }
-        
-        return false;
+        else if (vsCat || v.length>1) {
+            return super.adjustMargin(g);
+        } else return false;
     }
     
 }

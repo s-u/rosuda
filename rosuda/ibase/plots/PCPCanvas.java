@@ -13,8 +13,6 @@ import org.rosuda.util.Tools;
  */
 public class PCPCanvas extends ParallelAxesCanvas {
     
-    private int mouseX,mouseY;
-    
     /** create a new PCP
      * @param f associated frame (or <code>null</code> if none)
      * @param yvs list of variables
@@ -205,35 +203,11 @@ public class PCPCanvas extends ParallelAxesCanvas {
     }
     
     public boolean adjustMargin(final PoGraSS g) {
-        if(orientation==0 && commonScale){
-            /* determine maximal label length */
-            int maxWidth=0;
-            final double f=ay.getSensibleTickDistance(50,18);
-            double fi=ay.getSensibleTickStart(f);
-            while (fi<ay.vBegin+ay.vLen) {
-                final String s=v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi);
-                int wi = g.getWidthEstimate(s);
-                if(wi>maxWidth) maxWidth=wi;
-                fi+=f;
-            }
-            return adjustMargin(maxWidth);
-        }
-        if(orientation==1){
-            int maxWidth=0;
-            final Object[] categories = xv.getCategories();
-            for(int i=0; i<xv.getNumCats(); i++){
-                final String s = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
-                    categories[i].toString()):categories[i].toString();
-                int wi = g.getWidthEstimate(s);
-                if(wi>maxWidth) maxWidth=wi;
-            }
-            return adjustMargin(maxWidth);
+        if(orientation==0 && commonScale
+                || orientation==1){
+            return super.adjustMargin(g);
         }
         return false;
-    }
-    
-    protected boolean getValid() {
-        return (TW>=50&&TH>=50);
     }
     
     protected void addLabelsAndTicks(PoGraSS g) {
@@ -316,14 +290,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
             else
                 g.drawLine(mLeft, pc.getHeight()-mBottom, pc.getWidth()-mRight,pc.getHeight()-mBottom);
-        }
-    }
-    
-    public void mouseMoved(final MouseEvent ev) {
-        super.mouseMoved(ev);
-        if (Common.isQueryTrigger(ev)) {
-            mouseX=ev.getX();
-            mouseY=ev.getY();
         }
     }
     

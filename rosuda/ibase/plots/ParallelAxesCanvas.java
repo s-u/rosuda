@@ -11,6 +11,7 @@ import java.awt.Panel;
 import java.awt.Rectangle;
 import java.awt.TextField;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
@@ -23,6 +24,12 @@ import org.rosuda.util.Tools;
 
 
 public class ParallelAxesCanvas extends BaseCanvas {
+    
+    protected int mouseX;
+    protected int mouseY;
+    
+    private int MINWIDTH=50;
+    private int MINHEIGHT=50;
     
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
@@ -497,7 +504,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     boolean getValid() {
-        return valid;
+        return valid && pc.getWidth()>=MINWIDTH && pc.getHeight()>=MINHEIGHT;
     }
     
     void addLabelsAndTicks(PoGraSS g) {}
@@ -508,13 +515,21 @@ public class ParallelAxesCanvas extends BaseCanvas {
             double fi=ay.getSensibleTickStart(f);
             int maxLabelLength=0;
             while (fi<ay.vBegin+ay.vLen) {
-                final String s = ay.getDisplayableValue(fi);
-                if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                String s = ay.getDisplayableValue(fi);
+                int wi=g.getWidthEstimate(s);
+                if(wi>maxLabelLength) maxLabelLength=wi;
                 fi+=f;
             }
             return adjustMargin(maxLabelLength);
+        } else{
+            int maxWidth=0;
+            for(int i=0; i<xv.getNumCats(); i++){
+                final String s=(String)ax.getVariable().getCatAt(i);
+                int wi=g.getWidthEstimate(useX3?Common.getTriGraph(s):s);
+                if(wi>maxWidth) maxWidth=wi;
+            }
+            return adjustMargin(maxWidth);
         }
-        return false;
     }
     
     boolean adjustMargin(int maxWidth){
@@ -527,4 +542,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     void updateMargins() {}
+    
+    public void mouseMoved(final MouseEvent ev) {
+        super.mouseMoved(ev);
+        if (Common.isQueryTrigger(ev)) {
+            mouseX=ev.getX();
+            mouseY=ev.getY();
+        }
+    }
 }
