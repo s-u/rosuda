@@ -217,8 +217,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         else return (id==0)?v[0]:((id==1)?cv:null);
     }
     
-    public Dimension getMinimumSize() { return new Dimension(60,50); };
-    
     public void updateObjects() {
         if (!valid) return;
         

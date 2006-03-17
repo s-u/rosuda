@@ -3,6 +3,7 @@ import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.Label;
@@ -28,7 +29,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     protected int mouseX;
     protected int mouseY;
     
-    private int MINWIDTH=50;
+    private int MINWIDTH=60;
     private int MINHEIGHT=50;
     
     protected boolean useRegularPositioning=false;
@@ -623,4 +624,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             repaint();
         } else super.mouseReleased(e);
     }
+    
+    public Dimension getMinimumSize() { return new Dimension(MINWIDTH,MINHEIGHT); };
 }
