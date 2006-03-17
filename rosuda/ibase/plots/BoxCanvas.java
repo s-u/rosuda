@@ -4,71 +4,10 @@ import java.awt.*;
 import java.util.*;
 
 import org.rosuda.ibase.*;
+import org.rosuda.ibase.plots.OrdStats;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.pograss.*;
 import org.rosuda.util.Tools;
-
-
-/** OrdStats - ordinal statistics of a variable, used internally by {@link BoxCanvas}
- * to get necessary information to plot bopxplots */
-class OrdStats { // get ordinal statistics to be used in boxplot
-    double med, uh, lh, uh15, lh15, uh3, lh3;
-    int[] lastR;
-    int lastTop;
-    /** indexes of points just above/below the 1.5 hinge
-     * beware, this is relative to the used r[] so
-     * use with care and only with the corresponding r[] */
-    int lowEdge, highEdge;
-    
-    OrdStats() { med=uh=lh=uh3=lh3=0; };
-    
-    double medFrom(final SVar v,final int[] r,final int min,final int max) {
-        return (((max-min)&1)==0)
-        ?v.atF(r[min+(max-min)/2])
-        :((v.atF(r[min+(max-min)/2])+v.atF(r[min+(max-min)/2+1]))/2);
-    };
-    
-    void update(final SVar v, final int[] r) {
-        update(v,r,r.length);
-    };
-    
-    /* v=variable, r=ranked index as returned by getRanked, n=# of el to use */
-    void update(final SVar v, final int[] r, final int n) {
-        lastTop=n;
-        if (n<1) return;
-        med=medFrom(v,r,0,n-1);
-        uh=medFrom(v,r,n/2,n-1);
-        if (n>1 && (n&1)==1)
-            lh=medFrom(v,r,0,n/2-1);
-        else
-            lh=medFrom(v,r,0,n/2);
-        lh15=lh-1.5*(uh-lh);
-        lh3=lh-3*(uh-lh);
-        double x=lh;
-        int i=n/4; // find lh15 as extreme between lh and lh15
-        while (i>=0) {
-            final double d=v.atF(r[i]);
-            if (d<lh15) break;
-            if (d<x) x=d;
-            i--;
-        }
-        lowEdge=i;
-        lh15=x;
-        uh15=uh+1.5*(uh-lh);
-        uh3=uh+3*(uh-lh);
-        x=uh;
-        i=n*3/4-1; if (i<0) i=0; // find uh15
-        while (i<n) {
-            final double d=v.atF(r[i]);
-            if (d>uh15) break;
-            if (d>x) x=d;
-            i++;
-        }
-        uh15=x;
-        highEdge=i;
-        lastR=r;
-    };
-};
 
 /** BoxCanvas - implementation of the boxplots
  * @version $Id$
@@ -242,38 +181,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         }
         for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
     };
-    
-    private PPrimBox createBox(final OrdStats os, final int x, final int w, final int rank){
-        final Axis axis = (commonScale || rank==0)?ay:opAy[rank-1];
-        final PPrimBox box = new PPrimBox();
-        box.x=x;
-        box.w=w;
-        box.med = axis.getValuePos(os.med);
-        box.lh = axis.getValuePos(os.lh);
-        box.uh = axis.getValuePos(os.uh);
-        box.lh15 = axis.getValuePos(os.lh15);
-        box.uh15 = axis.getValuePos(os.uh15);
-        box.medValue = os.med;
-        box.lhValue = os.lh;
-        box.uhValue = os.uh;
-        box.lh15Value = os.lh15;
-        box.uh15Value = os.uh15;
-        box.lh3 = os.lh3;
-        box.uh3 = os.uh3;
-        box.lowEdge = os.lowEdge;
-        box.lastR = new double[os.lastR.length];
-        box.valPos = new int[os.lastR.length];
-        for(int i=0; i< box.lastR.length; i++){
-            box.lastR[i] = v[rank].atF(os.lastR[i]);
-            box.valPos[i] = axis.getValuePos(box.lastR[i]);
-        }
-        box.lastTop = os.lastTop;
-        box.highEdge = os.highEdge;
-        
-        //System.out.println("x: " + x + ", w: " + w + ", med: " + ay.getValuePos(os.med) + ", lh: " + ay.getValuePos(os.lh) + ", uh: " + ay.getValuePos(os.uh)
-        //+  ", lh15: " + ay.getValuePos(os.lh15) + ", uh15: " + ay.getValuePos(os.uh15) + ", lh3:" +  os.lh3 + ", uh3: " + os.uh3 + ", lowedge: " + os.lowEdge);
-        return box;
-    }
     
     public void paintSelected(final PoGraSS g) {
         final int md[][] = new int[v.length][];
