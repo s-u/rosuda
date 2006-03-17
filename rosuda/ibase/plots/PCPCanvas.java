@@ -26,23 +26,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
         dontPaint=false;
     }
     
-    public void paintBack(final PoGraSS g){
-        if (drawAxes) {
-            g.setColor(C_WHITE);
-            g.setLineWidth(1.5f);
-            int xx=0;
-            while (xx<xv.getNumCats()) {
-                final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
-                if(orientation==0)
-                    g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
-                else
-                    g.drawLine(mLeft,t,pc.getSize().width-mRight,t);
-            }
-            g.setLineWidth(1.0f);
-        }
-        super.paintBack(g);
-    };
-    
     public void updateObjects() {
         
         if (pp==null || pp.length!=v[0].size()) {
@@ -198,7 +181,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         return retValue;
     }
     
-    protected String getShortClassName() {
+    protected static String getShortClassName() {
         return "PCP";
     }
     

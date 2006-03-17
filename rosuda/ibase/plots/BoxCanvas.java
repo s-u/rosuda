@@ -81,9 +81,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
     boolean dragMode=false;
     boolean vertical=true;
     
-    int boxwidth=20;
-    final int MAX_BOXWIDTH=32;
-    
     // for vsCat version
     int rk[][];
     int rs[];
@@ -96,7 +93,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
     
     // Array mapping each PPrimBox to the OrdStats object which contains its selections
     OrdStats markStats[];
-    
+
     /** create a boxplot canvas for a single boxplot
      * @param f associated frame (or <code>null</code> if none)
      * @param var source variable
@@ -280,17 +277,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         return box;
     }
     
-    public void paintInit(final PoGraSS g) {
-        super.paintInit(g);
-        if(ax!=null && v.length>1){
-            int oBoxwidth = boxwidth;
-            final int newBoxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,4);
-            if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
-            else boxwidth = newBoxwidth;
-            if(boxwidth!=oBoxwidth) updateObjects();
-        }
-    }
-    
     public void paintSelected(final PoGraSS g) {
         final int md[][] = new int[v.length][];
         for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
@@ -353,7 +339,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
         super.paintSelected(g);
     }
     
-    protected String getShortClassName() {
+    static protected String getShortClassName() {
         return "Box";
     }
     

@@ -31,6 +31,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int MINWIDTH=50;
     private int MINHEIGHT=50;
     
+    //Box plot specific fields
+    int boxwidth=20;
+    final int MAX_BOXWIDTH=32;
+    final int MIN_BOXWIDTH=4;
+    
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
         
@@ -476,11 +481,25 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
     }
     
-    String getShortClassName(){
+    protected static String getShortClassName(){
         return "PA";
     }
     
     public void paintBack(final PoGraSS g) {
+        if (drawAxes) {
+            g.setColor(C_WHITE);
+            g.setLineWidth(1.5f);
+            int xx=0;
+            while (xx<xv.getNumCats()) {
+                final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
+                if(orientation==0)
+                    g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
+                else
+                    g.drawLine(mLeft,t,pc.getSize().width-mRight,t);
+            }
+            g.setLineWidth(1.0f);
+        }
+        
         final Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
         
@@ -498,6 +517,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             return;
         }
         
+        g.setColor(C_BLACK);
         labels.clear();
         addLabelsAndTicks(g);
         labels.finishAdd();
@@ -548,6 +568,17 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if (Common.isQueryTrigger(ev)) {
             mouseX=ev.getX();
             mouseY=ev.getY();
+        }
+    }
+    
+    public void paintInit(final PoGraSS g) {
+        super.paintInit(g);
+        if(this instanceof BoxCanvas && ax!=null && v.length>1){
+            int oBoxwidth = boxwidth;
+            final int newBoxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,MIN_BOXWIDTH);
+            if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
+            else boxwidth = newBoxwidth;
+            if(boxwidth!=oBoxwidth) updateObjects();
         }
     }
 }
