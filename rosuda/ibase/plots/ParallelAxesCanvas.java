@@ -31,6 +31,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int MINWIDTH=50;
     private int MINHEIGHT=50;
     
+    protected boolean useRegularPositioning=false;
+    
     //Box plot specific fields
     int boxwidth=20;
     final int MAX_BOXWIDTH=32;
@@ -38,6 +40,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
+        
+        initFlagsAndFields();
         
         allowDragMove=true;
         objectClipping=true;
@@ -420,8 +424,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
             int minZoomAxis=0;
             int maxZoomAxis=v.length-1;
             
-            while(ax.getRegularCatPos(ax.getCatAtSeqIndex(minZoomAxis), leftGap, rightGap) < x1) minZoomAxis++;
-            while(ax.getRegularCatPos(ax.getCatAtSeqIndex(maxZoomAxis), leftGap, rightGap) > x2) maxZoomAxis--;
+            while(getAxCatPos(ax.getCatAtSeqIndex(minZoomAxis)) < x1) minZoomAxis++;
+            while(getAxCatPos(ax.getCatAtSeqIndex(maxZoomAxis)) > x2) maxZoomAxis--;
             
             dontPaint=true;
             for(int i=minZoomAxis; i<=maxZoomAxis; i++){
@@ -491,9 +495,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
             g.setLineWidth(1.5f);
             int xx=0;
             while (xx<xv.getNumCats()) {
-                final int t=ax.getRegularCatPos(xx++, leftGap, rightGap);
+                final int t=getAxCatPos(xx++);
                 if(orientation==0)
-                    g.drawLine(t,mTop,t,pc.getSize().height-mTop-mBottom);
+                    g.drawLine(t,mTop,t,pc.getSize().height-mBottom);
                 else
                     g.drawLine(mLeft,t,pc.getSize().width-mRight,t);
             }
@@ -575,10 +579,48 @@ public class ParallelAxesCanvas extends BaseCanvas {
         super.paintInit(g);
         if(this instanceof BoxCanvas && ax!=null && v.length>1){
             int oBoxwidth = boxwidth;
-            final int newBoxwidth = Math.max(((ax.getCasePos(1)-ax.getCasePos(0))*8)/10,MIN_BOXWIDTH);
+            final int newBoxwidth = Math.max(((getAxCatPos(ax.getCatAtSeqIndex(1))-getAxCatPos(ax.getCatAtSeqIndex(0)))*8)/10,MIN_BOXWIDTH);
             if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
             else boxwidth = newBoxwidth;
             if(boxwidth!=oBoxwidth) updateObjects();
         }
+    }
+    
+    protected int getAxCasePos(int i) {
+        return useRegularPositioning?
+            getAxCatPos(ax.getCatByPos(ax.getCasePos(i))):
+            ax.getCasePos(i);
+    }
+    
+    protected int getAxCatPos(int i) {
+        return useRegularPositioning?
+            ax.getRegularCatPos(i,leftGap,rightGap):
+            ax.getCatCenter(i);
+    }
+    
+    protected void initFlagsAndFields(){}
+    
+    public void mouseReleased(final MouseEvent e) {
+        if (baseDrag && moveDrag) {
+            final int pos = (orientation==0)?e.getX():e.getY();
+            final int dragNew = ax.getCatByPos(pos);
+            final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
+            final int difference;
+            final int myX1=ax.getCatLow(dragNew);
+            final int myX2=ax.getCatUp(dragNew);
+            if(Math.abs(difference=pos-getAxCatPos(dragNew)) > (myX2-myX1)/4){
+                int newPos=ax.getCatSeqIndex(dragNew);
+                if(difference>0) newPos += 1;
+                if(dragAxis<newPos) newPos -=1;
+                ax.moveCat(dragAxis, newPos);
+            } else{
+                ax.swapCats(dragNew, dragAxis);
+            }
+            
+            baseDrag=false;
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        } else super.mouseReleased(e);
     }
 }

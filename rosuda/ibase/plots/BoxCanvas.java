@@ -226,14 +226,14 @@ public class BoxCanvas extends ParallelAxesCanvas {
             pp = new PlotPrimitive[v.length];
             markStats = new OrdStats[v.length];
             for(int i=0; i<pp.length; i++){
-                pp[i] = createBox((pp.length==1)?OSdata:oss[i], ax.getCasePos(i)-boxwidth/2,boxwidth,i);
+                pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
                 ((PPrimBox)pp[i]).ref = v[i].getRanked();
                 markStats[i] = new OrdStats();
             }
         } else {
             final Vector boxes = new Vector();
             for(int i=0; i<cs; i++){
-                final PPrimBox box = createBox(oss[i],ax.getCasePos(i)-boxwidth/2,boxwidth,0);
+                final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
                 box.ref = rk[i];
                 boxes.add(box);
             }
@@ -363,7 +363,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
             if (vsCat || v.length>1) {
                 /* draw labels for X axis */
                 for(int i=0; i<xv.getNumCats(); i++){
-                    labels.add(ax.getCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                    labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
                 }
             }
         } else {
@@ -384,7 +384,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
             if (vsCat || v.length>1) {
                 /* draw labels for X axis */
                 for(int i=0; i<xv.getNumCats(); i++){
-                    labels.add(mLeft-3,ax.getCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
+                    labels.add(mLeft-3,getAxCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
                 }
             }
         }
@@ -438,5 +438,4 @@ public class BoxCanvas extends ParallelAxesCanvas {
             return super.adjustMargin(g);
         } else return false;
     }
-    
 }

@@ -19,10 +19,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public PCPCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
         super(ppc,f, yvs,mark);
-        
-        bigMLeft=bigMRight=50;
         updateMargins();
-        
         dontPaint=false;
     }
     
@@ -45,10 +42,10 @@ public class PCPCanvas extends ParallelAxesCanvas {
             int numNAs=0;
             for (int j=0;j<v.length;j++){
                 if ((drawHidden || !m.at(i)) && (v[j].at(i)!=null)) {
-                    xs[i][ax.getCatSeqIndex(j)] = ax.getRegularCatPos(j, leftGap, rightGap);
+                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
                     ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
                 } else{
-                    xs[i][ax.getCatSeqIndex(j)] = ax.getRegularCatPos(j, leftGap, rightGap);
+                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
                     ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
                     naIndices[numNAs++] = j;
                 }
@@ -95,29 +92,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
     
     
     
-    public void mouseReleased(final MouseEvent e) {
-        if (baseDrag && moveDrag) {
-            final int pos = (orientation==0)?e.getX():e.getY();
-            final int dragNew = ax.getCatByPos(pos);
-            final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
-            final int difference;
-            final int myX1=ax.getCatLow(dragNew);
-            final int myX2=ax.getCatUp(dragNew);
-            if(Math.abs(difference=pos-ax.getRegularCatPos(dragNew, leftGap, rightGap)) > (myX2-myX1)/4){
-                int newPos=ax.getCatSeqIndex(dragNew);
-                if(difference>0) newPos += 1;
-                if(dragAxis<newPos) newPos -=1;
-                ax.moveCat(dragAxis, newPos);
-            } else{
-                ax.swapCats(dragNew, dragAxis);
-            }
-            
-            baseDrag=false;
-            updateObjects();
-            setUpdateRoot(0);
-            repaint();
-        } else super.mouseReleased(e);
-    }
+    
     
     public void paintPost(final PoGraSS g) {
         if(baseDrag && moveDrag){
@@ -127,7 +102,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
             final int myX1=ax.getCatLow(dragNew);
             final int myX2=ax.getCatUp(dragNew);
             final int difference;
-            if(Math.abs(difference=pos-ax.getRegularCatPos(dragNew, leftGap, rightGap)) > (myX2-myX1)/4){
+            if(Math.abs(difference=pos-getAxCatPos(dragNew)) > (myX2-myX1)/4){
                 final int x;
                 final int w;
                 if(difference>0){
@@ -201,7 +176,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
             final String[] labs = new String[numCats];
             final Object[] categories = xv.getCategories();
             for(int i=0; i<numCats; i++){
-                valuePoss[ax.getCatSeqIndex(i)] = ax.getRegularCatPos(i,leftGap,rightGap);
+                valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
                 labs[ax.getCatSeqIndex(i)] = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
                     categories[i].toString()):categories[i].toString();
             }
@@ -241,7 +216,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
             
             int xx=0;
             while (xx<xv.getNumCats()) {
-                final int t=ax.getRegularCatPos(xx, leftGap, rightGap);
+                final int t=getAxCatPos(xx);
                 if(orientation==0){
                     if((ax.getCatSeqIndex(xx)&1)==0) g.drawLine(t,b,t,b+2);
                     else g.drawLine(t,mTop,t,mTop-2);
@@ -307,5 +282,12 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 mLeft=defaultMLeft=bigMLeft;
                 mRight=defaultMRight=smallMRight;
         }
+    }
+    
+    protected void initFlagsAndFields() {
+        super.initFlagsAndFields();
+        
+        useRegularPositioning=true;
+        bigMLeft=bigMRight=50;
     }
 };
