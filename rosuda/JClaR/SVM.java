@@ -530,16 +530,6 @@ public final class SVM extends DefaultClassifier {
         //plot?
     }
     
-    public void saveClassifiedDataAs(File file) {
-        try{
-            rcon.writeTable(getClassifiedDataFrame(),file);
-        } catch (RSrvException rse){
-            ErrorDialog.show(parent, rse, "saveClassifiedDataAs(File)");
-        }
-    }
-    
-
-    
     private static final class Snapshot implements SVMSnapshotIF {
         
         public ImageIcon thumbnail;

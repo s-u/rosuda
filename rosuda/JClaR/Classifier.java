@@ -49,8 +49,6 @@ public interface Classifier extends Serializable {
     boolean hasClassifiedData();
     
     Data getClassifiedData();
-    
-    void saveClassifiedDataAs(File file);
 
     double getAccuracyOfPrediction();
 

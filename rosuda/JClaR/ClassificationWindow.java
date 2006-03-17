@@ -480,19 +480,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     // </editor-fold>//GEN-END:initComponents
     
     private void m_FileSaveClassifiedDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileSaveClassifiedDataActionPerformed
-        JFileChooser jfc = new JFileChooser(Main.getLast_directory());
-        int status = jfc.showSaveDialog(this);
-        File file=null;
-        if(status==jfc.ERROR_OPTION){
-            ErrorDialog.show(null, "An error occured with the file save dialog.");
-            return;
-        } else if(status==jfc.CANCEL_OPTION){
-            return;
-        } else {
-            file = jfc.getSelectedFile();
-        }
-        
-        classifier.saveClassifiedDataAs(file);
+        DataFileSaveDialog dfsd = new DataFileSaveDialog(this,classifier.getClassifiedDataFrame(),Main.getLast_directory());
     }//GEN-LAST:event_m_FileSaveClassifiedDataActionPerformed
     
     private void m_FileSaveModelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileSaveModelActionPerformed
