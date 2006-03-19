@@ -90,11 +90,7 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
     public String getText(int offs, int len) {
 		try {
             Document doc = this.getDocument();
-			try {
-				return doc.getText(offs,len+1);
-			} catch (Exception e) {
-				return doc.getText(offs,len);
-			}
+			return doc.getText(offs,len);
         } catch (BadLocationException e) {
             return null;
         }

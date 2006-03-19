@@ -237,11 +237,7 @@ public class ConsoleOutput extends JTextPane {
     public String getText(int offs, int len) {
         try {
             Document doc = this.getDocument();
-			try {
-				return doc.getText(0,doc.getLength()).substring(offs,offs+len+1);
-			} catch (Exception e ) {
-				return doc.getText(0,doc.getLength()).substring(offs,offs+len);
-			}
+			return doc.getText(0,doc.getLength()).substring(offs,offs+len);
         } catch (BadLocationException e) {
             return null;
         }
