@@ -124,22 +124,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
         super.rotate(amount);
     }
     
-    protected void updateMargins() {
-        switch(orientation){
-            case 0:
-                mBottom=defaultMBottom=bigMBottom;
-                mTop=defaultMTop=bigMTop;
-                mLeft=defaultMLeft=smallMLeft;
-                mRight=defaultMRight=smallMRight;
-                break;
-            case 1:
-                mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
-                mTop=defaultMTop=smallMTop;
-                mLeft=defaultMLeft=bigMLeft;
-                mRight=defaultMRight=smallMRight;
-        }
-    }
-    
     protected void initFlagsAndFields() {
         super.initFlagsAndFields();
         

@@ -582,7 +582,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 if(orientation==1 || (!vsCat && v.length<=1)) return false;
                 break;
         }
-                
+        
         if(orientation==0){
             final double f=ay.getSensibleTickDistance(30,18);
             double fi=ay.getSensibleTickStart(f);
@@ -614,7 +614,55 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return (mLeft!=omLeft);
     }
     
-    void updateMargins() {}
+    void updateMargins() {
+        switch(type){
+            case TYPE_BOX:
+                switch(orientation){
+                    case 0:
+                        if(vsCat){
+                            mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
+                            mRight=defaultMRight=smallMRight;
+                            mBottom=defaultMBottom=bigMBottom;
+                            mTop=defaultMTop=smallMTop;
+                        } else{
+                            mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
+                            mRight=defaultMRight=smallMRight;
+                            mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
+                            mTop=defaultMTop=smallMTop;
+                        }
+                        break;
+                    case 1:
+                        if(vsCat){
+                            mLeft=defaultMLeft=bigMLeft;
+                            mRight=defaultMRight=smallMRight;
+                            mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
+                            mTop=defaultMTop=smallMTop;
+                        } else{
+                            mLeft=defaultMLeft=(v.length==1)?smallMLeft:bigMLeft;
+                            mRight=defaultMRight=smallMRight;
+                            mBottom=defaultMBottom=(commonScale || v.length==1)?bigMBottom:smallMBottom;
+                            mTop=defaultMTop=smallMTop;
+                        }
+                        break;
+                }
+                break;
+            case TYPE_PCP:
+                switch(orientation){
+                    case 0:
+                        mBottom=defaultMBottom=bigMBottom;
+                        mTop=defaultMTop=bigMTop;
+                        mLeft=defaultMLeft=smallMLeft;
+                        mRight=defaultMRight=smallMRight;
+                        break;
+                    case 1:
+                        mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
+                        mTop=defaultMTop=smallMTop;
+                        mLeft=defaultMLeft=bigMLeft;
+                        mRight=defaultMRight=smallMRight;
+                }
+                break;
+        }
+    }
     
     public void mouseMoved(final MouseEvent ev) {
         super.mouseMoved(ev);

@@ -247,35 +247,4 @@ public class BoxCanvas extends ParallelAxesCanvas {
             }
         }
     }
-    
-    protected void updateMargins() {
-        switch(orientation){
-            case 0:
-                if(vsCat){
-                    mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
-                    mRight=defaultMRight=smallMRight;
-                    mBottom=defaultMBottom=bigMBottom;
-                    mTop=defaultMTop=smallMTop;
-                } else{
-                    mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
-                    mRight=defaultMRight=smallMRight;
-                    mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
-                    mTop=defaultMTop=smallMTop;
-                }
-                break;
-            case 1:
-                if(vsCat){
-                    mLeft=defaultMLeft=bigMLeft;
-                    mRight=defaultMRight=smallMRight;
-                    mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
-                    mTop=defaultMTop=smallMTop;
-                } else{
-                    mLeft=defaultMLeft=(v.length==1)?smallMLeft:bigMLeft;
-                    mRight=defaultMRight=smallMRight;
-                    mBottom=defaultMBottom=(commonScale || v.length==1)?bigMBottom:smallMBottom;
-                    mTop=defaultMTop=smallMTop;
-                }
-                break;
-        }
-    }
 }
