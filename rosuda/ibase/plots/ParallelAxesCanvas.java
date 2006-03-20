@@ -783,10 +783,41 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
     };
-
+    
     public void updateObjects() {
         if(type == TYPE_PCP) updateObjectsPCP();
         else if (type == TYPE_BOX) updateObjectsBox();
+    }
+    
+    public void paintPost(final PoGraSS g) {
+        if(type==TYPE_PCP){
+            if(baseDrag && moveDrag){
+                final int basey=pc.getBounds().height-mBottom;
+                final int pos = (orientation==0)?baseDragX2:baseDragY2;
+                final int dragNew = ax.getCatByPos(pos);
+                final int myX1=ax.getCatLow(dragNew);
+                final int myX2=ax.getCatUp(dragNew);
+                final int difference;
+                if(Math.abs(difference=pos-getAxCatPos(dragNew)) > (myX2-myX1)/4){
+                    final int x;
+                    final int w;
+                    if(difference>0){
+                        x=ax.getCatCenter(dragNew);
+                        w=2*(myX2-x);
+                    } else{
+                        w=2*(ax.getCatCenter(dragNew)-myX1);
+                        x=ax.getCatCenter(dragNew)-w;
+                        
+                    }
+                    if(orientation==0) g.fillRect(x,basey,w,4);
+                    else g.fillRect(mLeft,x,4,w);
+                } else{
+                    if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
+                    else g.fillRect(mLeft,myX1,4,myX2-myX1);
+                }
+            }
+        }
+        super.paintPost(g);
     }
 }
 
