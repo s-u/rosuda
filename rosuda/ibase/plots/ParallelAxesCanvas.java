@@ -819,6 +819,48 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         super.paintPost(g);
     }
+    
+    public String queryObject(final PlotPrimitive p) {
+        switch(type){
+            case TYPE_BOX:
+                PPrimBox box = (PPrimBox)p;
+                if(box.queriedOutlier!=null)
+                    return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
+                else
+                    return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                            "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
+                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
+                            "cases: " + box.cases();
+            case TYPE_PCP:
+                String retValue="";
+                final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
+                
+                if(isExtQuery){
+                    for(int i=0; i<v.length; i++){
+                        retValue += v[i].getName() + ": ";
+                        if(v[i].isCat()){
+                            retValue += v[i].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
+                        } else{
+                            retValue += Tools.getDisplayableValue(
+                                    ((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
+                        }
+                        
+                    }
+                } else{
+                    int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
+                    int i = ax.getCatSeqIndex(c);
+                    retValue += v[c].getName() + ": ";
+                    if(v[c].isCat()){
+                        retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
+                    } else{
+                        retValue += Tools.getDisplayableValue(
+                                ((commonScale||c==0)?ay:opAy[c-1]).getValueForPos(pts[i]));
+                    }
+                }
+                return retValue;
+        }
+        return super.queryObject(p);
+    }
 }
 
 

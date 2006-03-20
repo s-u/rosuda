@@ -252,17 +252,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         }
     }
     
-    public String queryObject(final PlotPrimitive p) {
-        PPrimBox box = (PPrimBox)p;
-        if(box.queriedOutlier!=null)
-            return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
-        else
-            return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
-                    "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                    "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
-                    "cases: " + box.cases();
-    }
-    
     protected void updateMargins() {
         switch(orientation){
             case 0:
