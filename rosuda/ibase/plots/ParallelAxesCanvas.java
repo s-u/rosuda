@@ -184,6 +184,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
         super(ppc, f, mark);
         
+        initFlagsAndFields();
+        
         allowDragMove=true;
         objectClipping=true;
         if(yvs.length==1) commonScale=true;

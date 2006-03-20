@@ -261,7 +261,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
                 break;
             case 1:
                 mBottom=commonScale?bigMBottom:smallMBottom;
-                mTop=smallMBottom;
+                mTop=smallMTop;
                 mLeft = bigMLeft;
                 mRight = smallMRight;
         }
