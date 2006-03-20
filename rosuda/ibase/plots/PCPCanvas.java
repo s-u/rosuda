@@ -24,22 +24,7 @@ public class PCPCanvas extends ParallelAxesCanvas {
         dontPaint=false;
     }
     
-    public void rotate(final int amount) {
-        switch((orientation+amount)&1){
-            case 0:
-                mBottom=bigMBottom;
-                mTop=bigMTop;
-                mLeft=smallMLeft;
-                mRight=smallMRight;
-                break;
-            case 1:
-                mBottom=commonScale?bigMBottom:smallMBottom;
-                mTop=smallMTop;
-                mLeft = bigMLeft;
-                mRight = smallMRight;
-        }
-        super.rotate(amount);
-    }
+    
     
     protected void initFlagsAndFields() {
         super.initFlagsAndFields();

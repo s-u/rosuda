@@ -1055,6 +1055,25 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         return super.queryObject(p);
     }
+    
+    public void rotate(final int amount) {
+        if(type==TYPE_PCP){
+            switch((orientation+amount)&1){
+                case 0:
+                    mBottom=bigMBottom;
+                    mTop=bigMTop;
+                    mLeft=smallMLeft;
+                    mRight=smallMRight;
+                    break;
+                case 1:
+                    mBottom=commonScale?bigMBottom:smallMBottom;
+                    mTop=smallMTop;
+                    mLeft = bigMLeft;
+                    mRight = smallMRight;
+            }
+        }
+        super.rotate(amount);
+    }
 }
 
 
