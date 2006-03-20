@@ -216,7 +216,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 while (fi<ay.vBegin+ay.vLen) {
                     final int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-7,t+5,1,0,ay.getDisplayableValue(fi));
+                    labels.add(mLeft-4,t+5,1,0,ay.getDisplayableValue(fi));
                     fi+=f;
                 }
                 g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
@@ -281,12 +281,5 @@ public class BoxCanvas extends ParallelAxesCanvas {
                 }
                 break;
         }
-    }
-    
-    public boolean adjustMargin(final PoGraSS g) {
-        if(orientation==0) return super.adjustMargin(g);
-        else if (vsCat || v.length>1) {
-            return super.adjustMargin(g);
-        } else return false;
     }
 }

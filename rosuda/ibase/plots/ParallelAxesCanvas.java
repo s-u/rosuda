@@ -568,6 +568,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
     void addLabelsAndTicks(PoGraSS g) {}
     
     public boolean adjustMargin(final PoGraSS g){
+        switch (type){
+            case TYPE_PCP:
+                if((orientation!=0 || !commonScale) && orientation==0) return false;
+                break;
+            case TYPE_BOX:
+                if(orientation==1 || (!vsCat && v.length<=1)) return false;
+                break;
+        }
+                
         if(orientation==0){
             final double f=ay.getSensibleTickDistance(30,18);
             double fi=ay.getSensibleTickStart(f);
@@ -592,7 +601,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     boolean adjustMargin(int maxWidth){
         final int omLeft=mLeft;
-        maxWidth+=4;
+        maxWidth+=6;
         if(maxWidth>defaultMLeft){
             mLeft = maxWidth;
         } else mLeft=defaultMLeft;

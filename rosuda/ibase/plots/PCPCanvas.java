@@ -28,14 +28,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
         return "PCP";
     }
     
-    public boolean adjustMargin(final PoGraSS g) {
-        if(orientation==0 && commonScale
-                || orientation==1){
-            return super.adjustMargin(g);
-        }
-        return false;
-    }
-    
     protected void addLabelsAndTicks(PoGraSS g) {
         /* draw ticks and labels for X axis */
         {
