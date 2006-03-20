@@ -22,19 +22,98 @@ import org.rosuda.util.RespDialog;
 import org.rosuda.util.SpacingPanel;
 import org.rosuda.util.Tools;
 
-
-
 public class ParallelAxesCanvas extends BaseCanvas {
     
     protected int mouseX;
     protected int mouseY;
     
+    boolean valid=true;
+    
+    /**
+     * width, height and margins fields
+     */
     private int MINWIDTH=60;
     private int MINHEIGHT=50;
     
-    protected boolean useRegularPositioning=false;
+    int bigMLeft=30;
+    int bigMTop=20;
+    int bigMBottom=20;
+    int bigMRight=30;
+    int smallMLeft=10;
+    int smallMTop=10;
+    int smallMBottom=10;
+    int smallMRight=10;
     
-    //Box plot specific fields
+    int defaultMLeft;
+    int defaultMRight;
+    int defaultMTop;
+    int defaultMBottom;
+    
+    int TW, TH;
+    
+    
+    /**
+     * axes and labels fields
+     */
+    boolean useX3=false;
+    boolean drawAxes=false;
+    boolean commonScale=false;
+    protected boolean useRegularPositioning=false;
+    int leftGap=7;
+    int rightGap=7;
+    
+    /**
+     * variables fields
+     */
+    
+    /** y variables */
+    SVar v[];
+    /** x variable */
+    SVar xv;
+    /** categorical variable */
+    SVar cv;
+    private double totMin;
+    private double totMax;
+    
+    /**
+     * menu and command fields
+     */
+    private static final String M_PLUS = "+";
+    private static final String M_MINUS = "-";
+    private static final String M_SET1 = "set1";
+    private static final String M_SET64 = "set64";
+    private static final String M_RESET = "reset";
+    private static final String M_LABELS = "labels";
+    private static final String M_TRIGRAPH = "trigraph";
+    private static final String M_SHOWDOTS = "Show dots";
+    private static final String M_TOGGLEPTS = "togglePts";
+    private static final String M_NODESIZEUP = "nodeSizeUp";
+    private static final String M_NODESIZEDOWN = "nodeSizeDown";
+    private static final String M_SHOWAXES = "Show axes";
+    private static final String M_TOGGLEAXES = "toggleAxes";
+    private static final String M_HIDELINES = "Hide lines";
+    private static final String M_TOGGLELINES = "toggleLines";
+    private static final String M_HIDENALINES = "hideNAlines";
+    private static final String M_COMMON = "common";
+    private static final String M_YRANGEDLG = "YrangeDlg";
+    private static final String M_SCALEDLG = "scaleDlg";
+    private static final String M_ALPHADOWN = "alphaDown";
+    private static final String M_ALPHAUP = "alphaUp";
+    private static final String M_TRANSHIGHL = "transparentHighlighting";
+    
+    private MenuItem MIlabels=null;
+    private MenuItem MIdots=null;
+    private MenuItem MIaxes=null;
+    private MenuItem MIlines=null;
+    private MenuItem MItrigraph=null;
+    private MenuItem MInodeSizeUp=null;
+    private MenuItem MInodeSizeDown=null;
+    private MenuItem MIhideNAlines=null;
+    private MenuItem MItransHighl=null;
+    
+    /**
+     * Box plot specific fields
+     */
     int boxwidth=20;
     final int MAX_BOXWIDTH=32;
     final int MIN_BOXWIDTH=4;
@@ -56,6 +135,16 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     // Array mapping each PPrimBox to the OrdStats object which contains its selections
     OrdStats markStats[];
+    
+    /**
+     * PCP specific fields
+     */
+    boolean drawPoints=false;
+    boolean drawLines=true;
+    boolean drawNAlines=true;
+    boolean drawHidden=true;
+    
+    int nodeSize=2;
     
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
@@ -128,87 +217,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         createMenu(f);
         setCommonScale(commonScale);
     }
-    
-    /** use trigraph for X axis in case X is categorical */
-    boolean useX3=false;
-    
-    boolean drawAxes=false;
-    
-    boolean commonScale=false;
-    
-    int bigMLeft=30;
-    int bigMTop=20;
-    int bigMBottom=20;
-    int bigMRight=30;
-    int smallMLeft=10;
-    int smallMTop=10;
-    int smallMBottom=10;
-    int smallMRight=10;
-    
-    int defaultMLeft;
-    int defaultMRight;
-    int defaultMTop;
-    int defaultMBottom;
-    
-    int leftGap=7;
-    int rightGap=7;
-    
-    /** y variables */
-    SVar v[];
-    /** x variable */
-    SVar xv;
-    /** categorical variable */
-    SVar cv;
-    
-    private double totMin;
-    private double totMax;
-    
-    private static final String M_PLUS = "+";
-    private static final String M_MINUS = "-";
-    private static final String M_SET1 = "set1";
-    private static final String M_SET64 = "set64";
-    private static final String M_RESET = "reset";
-    private static final String M_LABELS = "labels";
-    private static final String M_TRIGRAPH = "trigraph";
-    private static final String M_SHOWDOTS = "Show dots";
-    private static final String M_TOGGLEPTS = "togglePts";
-    private static final String M_NODESIZEUP = "nodeSizeUp";
-    private static final String M_NODESIZEDOWN = "nodeSizeDown";
-    private static final String M_SHOWAXES = "Show axes";
-    private static final String M_TOGGLEAXES = "toggleAxes";
-    private static final String M_HIDELINES = "Hide lines";
-    private static final String M_TOGGLELINES = "toggleLines";
-    private static final String M_HIDENALINES = "hideNAlines";
-    private static final String M_COMMON = "common";
-    private static final String M_YRANGEDLG = "YrangeDlg";
-    private static final String M_SCALEDLG = "scaleDlg";
-    private static final String M_ALPHADOWN = "alphaDown";
-    private static final String M_ALPHAUP = "alphaUp";
-    private static final String M_TRANSHIGHL = "transparentHighlighting";
-    
-    private MenuItem MIlabels=null;
-    private MenuItem MIdots=null;
-    private MenuItem MIaxes=null;
-    private MenuItem MIlines=null;
-    private MenuItem MItrigraph=null;
-    private MenuItem MInodeSizeUp=null;
-    private MenuItem MInodeSizeDown=null;
-    private MenuItem MIhideNAlines=null;
-    private MenuItem MItransHighl=null;
-    
-    boolean drawPoints=false;
-    boolean drawLines=true;
-    boolean drawNAlines=true;
-    boolean drawHidden=true;
-    
-    int nodeSize=2;
-    
-    private int X;
-    private int Y;
-    
-    boolean valid=true;
-    
-    int TW, TH;
     
     private void createMenu(Frame f){
         createMenu(f,true,true,new String[]{
@@ -531,7 +539,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         final int innerH;
         innerH=TH-mBottom-mTop;
-        Y=TH-mBottom-innerH;
         
         if(!getValid()){
             g.setColor("red");
