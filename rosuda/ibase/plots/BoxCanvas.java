@@ -201,10 +201,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         super.paintSelected(g);
     }
     
-    static protected String getShortClassName() {
-        return "Box";
-    }
-    
     protected void addLabelsAndTicks(PoGraSS g) {
         if (orientation==0) {
             //ay.setGeometry(Axis.O_Y,TH-mBottom,-(H=innerH));

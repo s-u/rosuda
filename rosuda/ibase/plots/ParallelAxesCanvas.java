@@ -520,7 +520,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
     }
     
-    protected static String getShortClassName(){
+    protected String getShortClassName(){
+        switch(type){
+            case TYPE_BOX:
+                return "Box";
+            case TYPE_PCP:
+                return "PCP";
+        }
         return "PA";
     }
     

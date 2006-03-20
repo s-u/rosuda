@@ -23,10 +23,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
         updateMargins();
         dontPaint=false;
     }
-        
-    protected static String getShortClassName() {
-        return "PCP";
-    }
     
     protected void addLabelsAndTicks(PoGraSS g) {
         /* draw ticks and labels for X axis */
