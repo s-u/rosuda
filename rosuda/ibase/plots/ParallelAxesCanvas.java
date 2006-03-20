@@ -451,7 +451,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return null;
     }
     
-    public SVar getData(final int id) { return (id>=0 && id<v.length)?v[id]:null; }
+    public SVar getData(final int id) {
+        switch(type){
+            case TYPE_BOX:
+                if(cv!=null) return (id==0)?v[0]:((id==1)?cv:null);
+            case TYPE_PCP:
+                return (id>=0 && id<v.length)?v[id]:null;
+        }
+        return super.getData(id);
+    }
     
     public void performZoomIn(final int x1, final int y1, final int x2, final int y2) {
         if(commonScale) super.performZoomIn(x1, y1, x2, y2, null,ay);

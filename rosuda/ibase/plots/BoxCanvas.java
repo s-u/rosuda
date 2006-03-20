@@ -132,10 +132,5 @@ public class BoxCanvas extends ParallelAxesCanvas {
         }
         objectClipping=true;
         dontPaint=false;
-    };
-    
-    public SVar getData(final int id) {
-        if(cv==null) return super.getData(id);
-        else return (id==0)?v[0]:((id==1)?cv:null);
     }
 }
