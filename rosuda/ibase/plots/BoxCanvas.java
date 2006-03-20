@@ -28,6 +28,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar[] var, final SMarker mark) {
         super(ppc,f,var,mark);
+        type=TYPE_BOX;
         updateMargins();
         
         String variables = v[0].getName();
@@ -67,6 +68,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
      * @param mark associated marker */
     public BoxCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) { // multiple box vs cat
         super(ppc,f,var,cvar,mark);
+        type=TYPE_BOX;
         vsCat=true;
         updateMargins();
         
@@ -136,10 +138,6 @@ public class BoxCanvas extends ParallelAxesCanvas {
         if(cv==null) return super.getData(id);
         else return (id==0)?v[0]:((id==1)?cv:null);
     }
-    
-    public void updateObjects() {
-        updateObjectsBox();
-    };
     
     public void paintSelected(final PoGraSS g) {
         final int md[][] = new int[v.length][];

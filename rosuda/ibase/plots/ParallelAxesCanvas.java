@@ -31,6 +31,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     boolean valid=true;
     
+    public static final int TYPE_PCP=0;
+    public static final int TYPE_BOX=1;
+    protected int type;
+    
     /**
      * width, height and margins fields
      */
@@ -779,6 +783,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
     };
+
+    public void updateObjects() {
+        if(type == TYPE_PCP) updateObjectsPCP();
+        else if (type == TYPE_BOX) updateObjectsBox();
+    }
 }
 
 
