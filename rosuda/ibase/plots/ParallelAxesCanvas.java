@@ -9,10 +9,12 @@ import java.awt.Frame;
 import java.awt.Label;
 import java.awt.MenuItem;
 import java.awt.Panel;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.Vector;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
@@ -685,7 +687,100 @@ public class ParallelAxesCanvas extends BaseCanvas {
         //+  ", lh15: " + ay.getValuePos(os.lh15) + ", uh15: " + ay.getValuePos(os.uh15) + ", lh3:" +  os.lh3 + ", uh3: " + os.uh3 + ", lowedge: " + os.lowEdge);
         return box;
     }
+    
+    protected void updateObjectsPCP(){
+        if (pp==null || pp.length!=v[0].size()) {
+            pp=new PlotPrimitive[v[0].size()];
+        }
+        
+        TW = pc.getSize().width;
+        TH = pc.getSize().height;
+        
+        
+        final int[][] xs = new int[v[0].size()][v.length];
+        final int[][] ys = new int[v[0].size()][v.length];
+        //boolean[] na = new boolean[v[0].size()];
+        final int[][] na = new int[v[0].size()][];
+        final int[] naIndices = new int[v.length+1];
+        for (int i=0;i<v[0].size();i++){
+            int numNAs=0;
+            for (int j=0;j<v.length;j++){
+                if ((drawHidden || !m.at(i)) && (v[j].at(i)!=null)) {
+                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                } else{
+                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                    naIndices[numNAs++] = j;
+                }
+            }
+            if(numNAs>0){
+                na[i] = new int[numNAs];
+                System.arraycopy(naIndices, 0, na[i], 0, numNAs);
+            }
+        }
+        
+        for(int j=0; j<xs.length; j++){
+            pp[j] = new PPrimPolygon();
+            if(orientation==0) ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            else               ((PPrimPolygon)pp[j]).pg = new Polygon(ys[j], xs[j], xs[j].length);
+            ((PPrimPolygon)pp[j]).closed=false;
+            ((PPrimPolygon)pp[j]).fill=false;
+            ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
+            ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
+            ((PPrimPolygon)pp[j]).ref = new int[] {j};
+            ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
+            ((PPrimPolygon)pp[j]).drawBorder=drawLines;
+            ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
+            final boolean[] nas = new boolean[xs[j].length];
+            final boolean[] gap = new boolean[xs[j].length];
+            
+            if(na[j]!=null){
+                final boolean[] nod = new boolean[xs[j].length];
+                for(int i=0; i<na[j].length; i++) {
+                    nas[na[j][i]]=true;
+                    if(na[j][i]>0) nas[na[j][i]-1]=true;
+                    nod[na[j][i]]=true;
+                }
+                ((PPrimPolygon)pp[j]).noDotsAt = nod;
+                for(int i=0; i<na[j].length-1; i++){
+                    if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
+                }
+                if(na[j][0]==1) gap[0]=true;
+                if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
+            }
+            ((PPrimPolygon)pp[j]).invisibleLines=nas;
+            ((PPrimPolygon)pp[j]).gapDots=gap;
+        }
+    }
+    
+    protected void updateObjectsBox() {
+        if (!valid) return;
+        
+        if (!vsCat) {
+            pp = new PlotPrimitive[v.length];
+            markStats = new OrdStats[v.length];
+            for(int i=0; i<pp.length; i++){
+                pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
+                ((PPrimBox)pp[i]).ref = v[i].getRanked();
+                markStats[i] = new OrdStats();
+            }
+        } else {
+            final Vector boxes = new Vector();
+            for(int i=0; i<cs; i++){
+                final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
+                box.ref = rk[i];
+                boxes.add(box);
+            }
+            pp = new PlotPrimitive[boxes.size()];
+            boxes.toArray(pp);
+            markStats = new OrdStats[boxes.size()];
+            System.arraycopy(oss, cs+1, markStats, 0, cs);
+        }
+        for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
+    };
 }
+
 
 
 

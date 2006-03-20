@@ -13,7 +13,7 @@ import org.rosuda.util.Tools;
  * @version $Id$
  */
 public class BoxCanvas extends ParallelAxesCanvas {
-
+    
     /** create a boxplot canvas for a single boxplot
      * @param f associated frame (or <code>null</code> if none)
      * @param var source variable
@@ -138,29 +138,7 @@ public class BoxCanvas extends ParallelAxesCanvas {
     }
     
     public void updateObjects() {
-        if (!valid) return;
-        
-        if (!vsCat) {
-            pp = new PlotPrimitive[v.length];
-            markStats = new OrdStats[v.length];
-            for(int i=0; i<pp.length; i++){
-                pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
-                ((PPrimBox)pp[i]).ref = v[i].getRanked();
-                markStats[i] = new OrdStats();
-            }
-        } else {
-            final Vector boxes = new Vector();
-            for(int i=0; i<cs; i++){
-                final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
-                box.ref = rk[i];
-                boxes.add(box);
-            }
-            pp = new PlotPrimitive[boxes.size()];
-            boxes.toArray(pp);
-            markStats = new OrdStats[boxes.size()];
-            System.arraycopy(oss, cs+1, markStats, 0, cs);
-        }
-        for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
+        updateObjectsBox();
     };
     
     public void paintSelected(final PoGraSS g) {
