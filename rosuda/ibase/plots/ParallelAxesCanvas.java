@@ -38,6 +38,24 @@ public class ParallelAxesCanvas extends BaseCanvas {
     int boxwidth=20;
     final int MAX_BOXWIDTH=32;
     final int MIN_BOXWIDTH=4;
+    /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
+     * otherwise draw just a single boxpolot */
+    boolean vsCat=false;
+    boolean dragMode=false;
+    boolean vertical=true;
+    
+    // for vsCat version
+    int rk[][];
+    int rs[];
+    int cs;
+    Object cats[];
+    OrdStats oss[];
+    
+    // for plain version
+    OrdStats OSdata;
+    
+    // Array mapping each PPrimBox to the OrdStats object which contains its selections
+    OrdStats markStats[];
     
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);

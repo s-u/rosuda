@@ -13,25 +13,6 @@ import org.rosuda.util.Tools;
  * @version $Id$
  */
 public class BoxCanvas extends ParallelAxesCanvas {
-    
-    /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
-     * otherwise draw just a single boxpolot */
-    boolean vsCat=false;
-    boolean dragMode=false;
-    boolean vertical=true;
-    
-    // for vsCat version
-    int rk[][];
-    int rs[];
-    int cs;
-    Object cats[];
-    OrdStats oss[];
-    
-    // for plain version
-    OrdStats OSdata;
-    
-    // Array mapping each PPrimBox to the OrdStats object which contains its selections
-    OrdStats markStats[];
 
     /** create a boxplot canvas for a single boxplot
      * @param f associated frame (or <code>null</code> if none)
