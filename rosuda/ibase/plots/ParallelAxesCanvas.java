@@ -152,8 +152,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     int nodeSize=2;
     
+    /** create a boxplot canvas for a multiple grouped boxplots side-by-side
+     * @param f associated frame (or <code>null</code> if none)
+     * @param var source numerical variable
+     * @param cvar categorical variable for grouping
+     * @param mark associated marker */
     ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
         super(ppc,f,mark);
+        
+        type=TYPE_BOX;
         
         initFlagsAndFields();
         
@@ -181,15 +188,88 @@ public class ParallelAxesCanvas extends BaseCanvas {
         createMenu(f);
         setCommonScale(commonScale);
         EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
+
+        vsCat=true;
+        updateMargins();
+        
+        setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
+        
+        if (var!=null && !var.isCat() && var.isNum() && cvar.isCat())
+            valid=true; // valid are only numerical vars non-cat'd, cvar is cat
+        if (valid) { // split into ranked chunks by cat.
+            cs=cv.getNumCats();
+            cats=cv.getCategories();
+            final int[] r=v[0].getRanked();
+            oss=new OrdStats[cs*2+2];
+            rk=new int[cs*2+2][];
+            rs=new int[cs*2+2];
+            int i=0;
+            while (i<cs) {
+                rs[i]=0;
+                final int j=cv.getSizeCatAt(i);
+                rk[i]=new int[j];
+                rk[cs+1+i]=new int[j];
+                oss[i]=new OrdStats();
+                oss[cs+1+i]=new OrdStats();
+                i++;
+            }
+            i=0;
+            while(i<r.length) {
+                int x=cv.getCatIndex(cv.at(r[i]));
+                if (x<0) x=cs;
+                rk[x][rs[x]]=r[i];
+                rs[x]++;
+                i++;
+            }
+            i=0;
+            while(i<cs) {
+                oss[i].update(v[0],rk[i],rs[i]);
+                i++;
+            }
+            boolean[] validOss = new boolean[cs];
+            int invalid=0;
+            for(i=0; i<cs; i++){
+                if(oss[i].lastR==null){
+                    validOss[i]=false;
+                    invalid++;
+                } else validOss[i]=true;
+            }
+            if(invalid>0){
+                OrdStats[] newOss = new OrdStats[2*(cs-invalid)+2];
+                int j=0;
+                for(i=0;i<cs; i++){
+                    if(validOss[i]) newOss[j++]=oss[i];
+                }
+                newOss[cs]=oss[cs];
+                j=0;
+                for(i=0;i<cs; i++){
+                    if(validOss[i]) newOss[cs-invalid+1+j++]=oss[cs+1+i];
+                }
+                oss=newOss;
+                cs-=invalid;
+            }
+            updateObjects();
+        }
+        objectClipping=true;
+        dontPaint=false;
+    }
+    
+    /**
+     * @param f associated frame (or <code>null</code> if none)
+     * @param var source variable
+     * @param mark associated marker */
+    public ParallelAxesCanvas(final PlotComponent pc, final Frame f, final SVar var, final SMarker mark, final int type) {
+        this(pc,f,new SVar[]{var},mark,type);
     }
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
+    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
         super(ppc, f, mark);
         
+        this.type=type;
         initFlagsAndFields();
         
         allowDragMove=true;
@@ -224,6 +304,45 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         createMenu(f);
         setCommonScale(commonScale);
+        
+        switch(type){
+            case TYPE_BOX:
+                updateMargins();
+                
+                String variables = v[0].getName();
+                for(i=1; i<v.length; i++) variables+=", " + v[i].getName();
+                setTitle("Boxplot ("+ variables + ")");
+                
+                
+                if(yvs.length==1){
+                    if (v[0]!=null && !v[0].isCat() && v[0].isNum())
+                        valid=true; // valid are only numerical vars non-cat'd
+                    else valid=false;
+                    if (valid) {
+                        OSdata=new OrdStats();
+                        final int dr[]=v[0].getRanked();
+                        OSdata.update(v[0],dr);
+                        //updateObjects();
+                    }
+                } else{
+                    oss = new OrdStats[v.length];
+                    for(i=0; i<v.length; i++){
+                        if (v[i]!=null && !v[i].isCat() && v[i].isNum())
+                            valid=true; // valid are only numerical vars non-cat'd
+                        if (valid) {
+                            oss[i]=new OrdStats();
+                            final int dr[]=v[i].getRanked();
+                            oss[i].update(v[i],dr);
+                        }
+                    }
+                }
+                dontPaint=false;
+                break;
+            case TYPE_PCP:
+                updateMargins();
+                dontPaint=false;
+                break;
+        }
     }
     
     private void createMenu(Frame f){

@@ -15,9 +15,6 @@ public class PCPCanvas extends ParallelAxesCanvas {
      * @param yvs list of variables
      * @param mark associated marker */
     public PCPCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark) {
-        super(ppc,f, yvs,mark);
-        type=TYPE_PCP;
-        updateMargins();
-        dontPaint=false;
+        super(ppc,f, yvs,mark,TYPE_PCP);
     }
 };
