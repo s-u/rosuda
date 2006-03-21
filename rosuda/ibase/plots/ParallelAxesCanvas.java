@@ -26,14 +26,14 @@ import org.rosuda.util.Tools;
 
 public class ParallelAxesCanvas extends BaseCanvas {
     
-    protected int mouseX;
-    protected int mouseY;
+    private int mouseX;
+    private int mouseY;
     
-    boolean valid=true;
+    private boolean valid=true;
     
     public static final int TYPE_PCP=0;
     public static final int TYPE_BOX=1;
-    protected int type;
+    private int type;
     
     /**
      * width, height and margins fields
@@ -41,43 +41,44 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int MINWIDTH=60;
     private int MINHEIGHT=50;
     
-    int bigMLeft=30;
-    int bigMTop=20;
-    int bigMBottom=20;
-    int bigMRight=30;
-    int smallMLeft=10;
-    int smallMTop=10;
-    int smallMBottom=10;
-    int smallMRight=10;
+    private int bigMLeft=30;
+    private int bigMTop=20;
+    private int bigMBottom=20;
+    private int bigMRight=30;
+    private int smallMLeft=10;
+    private int smallMTop=10;
+    private int smallMBottom=10;
+    private int smallMRight=10;
     
-    int defaultMLeft;
-    int defaultMRight;
-    int defaultMTop;
-    int defaultMBottom;
+    private int defaultMLeft;
+    private int defaultMRight;
+    private int defaultMTop;
+    private int defaultMBottom;
     
-    int TW, TH;
+    private int TW;
+    private int TH;
     
     
     /**
      * axes and labels fields
      */
-    boolean useX3=false;
-    boolean drawAxes=false;
-    boolean commonScale=false;
-    protected boolean useRegularPositioning=false;
-    int leftGap=7;
-    int rightGap=7;
+    private boolean useX3=false;
+    private boolean drawAxes=false;
+    private boolean commonScale=false;
+    private boolean useRegularPositioning=false;
+    private int leftGap=7;
+    private int rightGap=7;
     
     /**
      * variables fields
      */
     
     /** y variables */
-    SVar v[];
+    private SVar v[];
     /** x variable */
-    SVar xv;
+    private SVar xv;
     /** categorical variable */
-    SVar cv;
+    private SVar cv;
     private double totMin;
     private double totMax;
     
@@ -120,37 +121,37 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /**
      * Box plot specific fields
      */
-    int boxwidth=20;
-    final int MAX_BOXWIDTH=32;
-    final int MIN_BOXWIDTH=4;
+    private int boxwidth=20;
+    private final int MAX_BOXWIDTH=32;
+    private final int MIN_BOXWIDTH=4;
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
-    boolean vsCat=false;
-    boolean dragMode=false;
-    boolean vertical=true;
+    private boolean vsCat=false;
+    private boolean dragMode=false;
+    private boolean vertical=true;
     
     // for vsCat version
-    int rk[][];
-    int rs[];
-    int cs;
-    Object cats[];
-    OrdStats oss[];
+    private int rk[][];
+    private int rs[];
+    private int cs;
+    private Object cats[];
+    private OrdStats oss[];
     
     // for plain version
-    OrdStats OSdata;
+    private OrdStats OSdata;
     
     // Array mapping each PPrimBox to the OrdStats object which contains its selections
-    OrdStats markStats[];
+    private OrdStats markStats[];
     
     /**
      * PCP specific fields
      */
-    boolean drawPoints=false;
-    boolean drawLines=true;
-    boolean drawNAlines=true;
-    boolean drawHidden=true;
+    private boolean drawPoints=false;
+    private boolean drawLines=true;
+    private boolean drawNAlines=true;
+    private boolean drawHidden=true;
     
-    int nodeSize=2;
+    private int nodeSize=2;
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
      * @param f associated frame (or <code>null</code> if none)
@@ -188,7 +189,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         createMenu(f);
         setCommonScale(commonScale);
         EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
-
+        
         vsCat=true;
         updateMargins();
         
@@ -647,7 +648,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
     }
     
-    protected String getShortClassName(){
+    private String getShortClassName(){
         switch(type){
             case TYPE_BOX:
                 return "Box";
@@ -678,9 +679,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         TH=r.height;
         TW=r.width;
         
-        final int innerH;
-        innerH=TH-mBottom-mTop;
-        
         if(!getValid()){
             g.setColor("red");
             g.drawLine(0,0,TW,TH);
@@ -694,11 +692,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
         labels.finishAdd();
     }
     
-    boolean getValid() {
+    private boolean getValid() {
         return valid && pc.getWidth()>=MINWIDTH && pc.getHeight()>=MINHEIGHT;
     }
     
-    void addLabelsAndTicks(PoGraSS g) {
+    private void addLabelsAndTicks(PoGraSS g) {
         switch(type){
             case TYPE_BOX:
                 if (orientation==0) {
@@ -863,7 +861,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    boolean adjustMargin(int maxWidth){
+    private boolean adjustMargin(int maxWidth){
         final int omLeft=mLeft;
         maxWidth+=6;
         if(maxWidth>defaultMLeft){
@@ -872,7 +870,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return (mLeft!=omLeft);
     }
     
-    void updateMargins() {
+    private void updateMargins() {
         switch(type){
             case TYPE_BOX:
                 switch(orientation){
@@ -941,19 +939,19 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    protected int getAxCasePos(int i) {
+    private int getAxCasePos(int i) {
         return useRegularPositioning?
             getAxCatPos(ax.getCatByPos(ax.getCasePos(i))):
             ax.getCasePos(i);
     }
     
-    protected int getAxCatPos(int i) {
+    private int getAxCatPos(int i) {
         return useRegularPositioning?
             ax.getRegularCatPos(i,leftGap,rightGap):
             ax.getCatCenter(i);
     }
     
-    protected void initFlagsAndFields() {
+    private void initFlagsAndFields() {
         if(type==TYPE_PCP){
             useRegularPositioning=true;
             bigMLeft=bigMRight=50;
@@ -986,7 +984,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public Dimension getMinimumSize() { return new Dimension(MINWIDTH,MINHEIGHT); };
     
-    protected PPrimBox createBox(final OrdStats os, final int x, final int w, final int rank){
+    private PPrimBox createBox(final OrdStats os, final int x, final int w, final int rank){
         final Axis axis = (commonScale || rank==0)?ay:opAy[rank-1];
         final PPrimBox box = new PPrimBox();
         box.x=x;
@@ -1018,7 +1016,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return box;
     }
     
-    protected void updateObjectsPCP(){
+    private void updateObjectsPCP(){
         if (pp==null || pp.length!=v[0].size()) {
             pp=new PlotPrimitive[v[0].size()];
         }
@@ -1084,7 +1082,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    protected void updateObjectsBox() {
+    private void updateObjectsBox() {
         if (!valid) return;
         
         if (!vsCat) {
@@ -1288,7 +1286,7 @@ class OrdStats { // get ordinal statistics to be used in boxplot
     
     OrdStats() { med=uh=lh=uh3=lh3=0; };
     
-    double medFrom(final SVar v,final int[] r,final int min,final int max) {
+    private double medFrom(final SVar v,final int[] r,final int min,final int max) {
         return (((max-min)&1)==0)
         ?v.atF(r[min+(max-min)/2])
         :((v.atF(r[min+(max-min)/2])+v.atF(r[min+(max-min)/2+1]))/2);
