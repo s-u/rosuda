@@ -157,10 +157,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param var source numerical variable
      * @param cvar categorical variable for grouping
      * @param mark associated marker */
-    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark) {
+    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark, final int type) {
         super(ppc,f,mark);
         
-        type=TYPE_BOX;
+        this.type=type;
         
         initFlagsAndFields();
         
@@ -266,7 +266,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
+    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
         super(ppc, f, mark);
         
         this.type=type;
@@ -932,7 +932,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
-        if(this instanceof BoxCanvas && ax!=null && v.length>1){
+        if(type==TYPE_BOX && ax!=null && v.length>1){
             int oBoxwidth = boxwidth;
             final int newBoxwidth = Math.max(((getAxCatPos(ax.getCatAtSeqIndex(1))-getAxCatPos(ax.getCatAtSeqIndex(0)))*8)/10,MIN_BOXWIDTH);
             if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);

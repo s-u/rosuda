@@ -509,8 +509,8 @@ public class Framework implements Dependent, ActionListener {
     }
     
     
-    public PCPCanvas newPCP(final int[] v) { return newPCP(cvs,v); }
-    public PCPCanvas newPCP(final SVarSet vs, final int[] v) {
+    public ParallelAxesCanvas newPCP(final int[] v) { return newPCP(cvs,v); }
+    public ParallelAxesCanvas newPCP(final SVarSet vs, final int[] v) {
         final PlotComponent pc = newPlotComponent();
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
@@ -533,7 +533,7 @@ public class Framework implements Dependent, ActionListener {
         final SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; }
-        final PCPCanvas pcpc=new PCPCanvas(pc,f,vl,vs.getMarker());
+        final ParallelAxesCanvas pcpc=new ParallelAxesCanvas(pc,f,vl,vs.getMarker(),ParallelAxesCanvas.TYPE_PCP);
         if (vs.getMarker()!=null) vs.getMarker().addDepend(pcpc);
         pcpc.pc.setSize(new Dimension(400,300));
         f.setSize(new Dimension(pcpc.pc.getWidth(),pcpc.pc.getHeight()));
@@ -577,11 +577,11 @@ public class Framework implements Dependent, ActionListener {
         return hc;
     };
     
-    public BoxCanvas newBoxplot(final int i) { return newBoxplot(cvs,new int[]{i},-1); }
-    public BoxCanvas newBoxplot(final int i, final int ic) { return newBoxplot(cvs,new int[]{i},ic); }
-    public BoxCanvas newBoxplot(final int[] i) { return newBoxplot(cvs,i,-1); }
-    public BoxCanvas newBoxplot(final int[] i, final int ic) { return newBoxplot(cvs,i,ic); }
-    public BoxCanvas newBoxplot(final SVarSet vs, final int i[], final int ic) {
+    public ParallelAxesCanvas newBoxplot(final int i) { return newBoxplot(cvs,new int[]{i},-1); }
+    public ParallelAxesCanvas newBoxplot(final int i, final int ic) { return newBoxplot(cvs,new int[]{i},ic); }
+    public ParallelAxesCanvas newBoxplot(final int[] i) { return newBoxplot(cvs,i,-1); }
+    public ParallelAxesCanvas newBoxplot(final int[] i, final int ic) { return newBoxplot(cvs,i,ic); }
+    public ParallelAxesCanvas newBoxplot(final SVarSet vs, final int i[], final int ic) {
         final PlotComponent pc = newPlotComponent();
         final SVar catVar=(ic<0)?null:vs.at(ic);
         updateMarker(vs,i[0]);
@@ -605,7 +605,7 @@ public class Framework implements Dependent, ActionListener {
         while(j<i.length) { vl[j]=vs.at(i[j]); j++; }
         
         f.addWindowListener(Common.getDefaultWindowListener());
-        final BoxCanvas bc=(catVar==null)?new BoxCanvas(pc,f,vl,vs.getMarker()):new BoxCanvas(pc,f,vl[0],catVar,vs.getMarker());
+        final ParallelAxesCanvas bc=(catVar==null)?new ParallelAxesCanvas(pc,f,vl,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX):new ParallelAxesCanvas(pc,f,vl[0],catVar,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX);
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?(40+40*i.length):(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
