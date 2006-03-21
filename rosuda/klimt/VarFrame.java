@@ -632,7 +632,7 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[bJ]) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.getDefaultWindowListener());
-                            BoxCanvas sc=new BoxCanvas(null,f,vs.at(bJ),vs.getMarker());
+                            ParallelAxesCanvas sc=new ParallelAxesCanvas(null,f,vs.at(bJ),vs.getMarker(),ParallelAxesCanvas.TYPE_BOX);
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.pc.setSize(new Dimension(80,300));
                             f.add(sc.getComponent()); f.pack(); f.show();
@@ -646,7 +646,7 @@ public class VarFrame extends TFrame {
                         if (vc.selMask[bJ] && bJ!=bI) {
                             TFrame f=new TFrame("Boxplot ("+vs.at(bJ).getName()+" grouped by "+catVar.getName()+")",TFrame.clsBox);
                             f.addWindowListener(Common.getDefaultWindowListener());
-                            BoxCanvas sc=new BoxCanvas(null,f,vs.at(bJ),catVar,vs.getMarker());
+                            ParallelAxesCanvas sc=new ParallelAxesCanvas(null,f,vs.at(bJ),catVar,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX);
                             if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                             sc.pc.setSize(new Dimension(40+catVar.getNumCats()*40,300));
                             f.add(sc.getComponent()); f.pack(); f.show();
@@ -691,7 +691,7 @@ public class VarFrame extends TFrame {
                     };
                     TFrame f=new TFrame("Parallel coord. plot",TFrame.clsPCP);
                     f.addWindowListener(Common.getDefaultWindowListener());
-                    PCPCanvas sc=new PCPCanvas(null,f,vl,vs.getMarker());
+                    ParallelAxesCanvas sc=new ParallelAxesCanvas(null,f,vl,vs.getMarker(),ParallelAxesCanvas.TYPE_PCP);
                     if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
                     sc.pc.setSize(new Dimension(400,300));
                     f.add(sc.getComponent()); f.pack(); f.show();
