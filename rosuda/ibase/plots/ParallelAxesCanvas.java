@@ -834,7 +834,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
             ax.getCatCenter(i);
     }
     
-    protected void initFlagsAndFields(){}
+    protected void initFlagsAndFields() {
+        if(type==TYPE_PCP){
+            useRegularPositioning=true;
+            bigMLeft=bigMRight=50;
+        }
+    }
     
     public void mouseReleased(final MouseEvent e) {
         if (baseDrag && moveDrag) {

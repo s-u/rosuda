@@ -1,12 +1,9 @@
 package org.rosuda.ibase.plots;
 
-import java.awt.*;
-import java.awt.event.*;
-
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.Tools;
+import java.awt.Frame;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.toolkit.PlotComponent;
 
 /** implementation of line plot
  * @version $Id$
@@ -22,14 +19,5 @@ public class PCPCanvas extends ParallelAxesCanvas {
         type=TYPE_PCP;
         updateMargins();
         dontPaint=false;
-    }
-    
-    
-    
-    protected void initFlagsAndFields() {
-        super.initFlagsAndFields();
-        
-        useRegularPositioning=true;
-        bigMLeft=bigMRight=50;
     }
 };

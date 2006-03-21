@@ -1,13 +1,10 @@
 package org.rosuda.ibase.plots;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Frame;
+import org.rosuda.ibase.SMarker;
+import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.toolkit.PlotComponent;
 
-import org.rosuda.ibase.*;
-import org.rosuda.ibase.plots.OrdStats;
-import org.rosuda.ibase.toolkit.*;
-import org.rosuda.pograss.*;
-import org.rosuda.util.Tools;
 
 /** BoxCanvas - implementation of the boxplots
  * @version $Id$
