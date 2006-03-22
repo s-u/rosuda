@@ -1187,25 +1187,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     public void rotate(final int amount) {
-        if(type==TYPE_PCP){
-            switch((orientation+amount)&1){
-                case 0:
-                    mBottom=bigMBottom;
-                    mTop=bigMTop;
-                    mLeft=smallMLeft;
-                    mRight=smallMRight;
-                    break;
-                case 1:
-                    mBottom=commonScale?bigMBottom:smallMBottom;
-                    mTop=smallMTop;
-                    mLeft = bigMLeft;
-                    mRight = smallMRight;
-            }
-        }
         super.rotate(amount);
+        updateMargins();
     }
     
     public void paintSelected(final PoGraSS g) {
+        // in boxplots painting of selected primitives is handled by the canvas itself, not by the primitive
         if(type==TYPE_BOX){
             final int md[][] = new int[v.length][];
             for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
