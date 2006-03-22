@@ -310,29 +310,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 for(i=1; i<v.length; i++) variables+=", " + v[i].getName();
                 setTitle("Boxplot ("+ variables + ")");
                 
-                
-                if(yvs.length==1){
-                    if (v[0]!=null && !v[0].isCat() && v[0].isNum())
-                        valid=true; // valid are only numerical vars non-cat'd
-                    else valid=false;
-                    if (valid) {
-                        OSdata=new OrdStats();
-                        final int dr[]=v[0].getRanked();
-                        OSdata.update(v[0],dr);
-                        //updateObjects();
-                    }
-                } else{
-                    oss = new OrdStats[v.length];
-                    for(i=0; i<v.length; i++){
-                        if (v[i]!=null && !v[i].isCat() && v[i].isNum())
-                            valid=true; // valid are only numerical vars non-cat'd
-                        if (valid) {
-                            oss[i]=new OrdStats();
-                            final int dr[]=v[i].getRanked();
-                            oss[i].update(v[i],dr);
-                        }
-                    }
-                }
+                initOss(yvs);
                 dontPaint=false;
                 break;
             case TYPE_PCP:
@@ -363,7 +341,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Transparent highlighting",M_TRANSHIGHL,
             "Set Colors (CB)",M_SET1,
             "Set Colors (rainbow)",M_SET64,
-            "Clear Colors",M_RESET
+            "Clear Colors",M_RESET,
+            "PCP/BOX","toggleType"
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -562,6 +541,14 @@ public class ParallelAxesCanvas extends BaseCanvas {
             alphaHighlighting=!alphaHighlighting;
             MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
             setUpdateRoot(1); repaint();
+        }
+        if("toggleType".equals(cmd)) {
+            type=(type+1)&1;
+            initFlagsAndFields();
+            updateMargins();
+            if(type==TYPE_BOX && oss==null) initOss(v);
+            updateObjects();
+            setUpdateRoot(0); repaint();
         }
         
         return null;
@@ -948,9 +935,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private void initFlagsAndFields() {
-        if(type==TYPE_PCP){
-            useRegularPositioning=true;
-            bigMLeft=bigMRight=50;
+        switch(type){
+            case TYPE_BOX:
+                useRegularPositioning=false;
+                bigMLeft=bigMRight=30;
+                break;
+            case TYPE_PCP:
+                useRegularPositioning=true;
+                bigMLeft=bigMRight=50;
+                break;
         }
     }
     
@@ -1245,6 +1238,31 @@ public class ParallelAxesCanvas extends BaseCanvas {
             }
         }
         super.paintSelected(g);
+    }
+    
+    private void initOss(final SVar[] yvs) {
+        if(yvs.length==1){
+            if (v[0]!=null && !v[0].isCat() && v[0].isNum())
+                valid=true; // valid are only numerical vars non-cat'd
+            else valid=false;
+            if (valid) {
+                OSdata=new OrdStats();
+                final int dr[]=v[0].getRanked();
+                OSdata.update(v[0],dr);
+                //updateObjects();
+            }
+        } else{
+            oss = new OrdStats[v.length];
+            for(int i=0; i<v.length; i++){
+                if (v[i]!=null && !v[i].isCat() && v[i].isNum())
+                    valid=true; // valid are only numerical vars non-cat'd
+                if (valid) {
+                    oss[i]=new OrdStats();
+                    final int dr[]=v[i].getRanked();
+                    oss[i].update(v[i],dr);
+                }
+            }
+        }
     }
 }
 
