@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import org.rosuda.ibase.SVar;
 
-public class FrequencyTable {
+public final class FrequencyTable {
     
     private int vsize;
     private SVar[] vars;
@@ -81,7 +81,7 @@ public class FrequencyTable {
         }
     }
     
-    private class CombinationEntry {
+    private final class CombinationEntry {
         
         Hashtable ccs = new Hashtable();
         
