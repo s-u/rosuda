@@ -809,10 +809,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public boolean adjustMargin(final PoGraSS g){
         switch (type){
             case TYPE_PCP:
-                if((orientation!=0 || !commonScale) && orientation==0) return false;
+                if(orientation==0 && !commonScale) return false;
                 break;
             case TYPE_BOX:
-                if(orientation==1 || (!vsCat && v.length<=1)) return false;
+                if(orientation==0 && (!commonScale && (!vsCat && v.length>1))) return false;
                 break;
         }
         
@@ -1172,62 +1172,64 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public void paintSelected(final PoGraSS g) {
         // in boxplots painting of selected primitives is handled by the canvas itself, not by the primitive
         if(type==TYPE_BOX){
-            final int md[][] = new int[v.length][];
-            for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
-            //if(md==null) return;
-            if (vsCat) {
-                if(md[0]==null) return;
-                int i=0;
-                while (i<cs) { rs[cs+1+i]=0; i++; }
-                i=0;
-                while(i<md[0].length) {
-                    int x=cv.getCatIndex(cv.at(md[0][i]));
-                    if (x<0) x=cs;
-                    x+=cs+1;
-                    rk[x][rs[x]]=md[0][i];
-                    rs[x]++;
-                    i++;
-                }
-                i=cs+1;
-                while(i<2*cs+1) {
-                    oss[i].update(v[0],rk[i],rs[i]);
-                    i++;
-                }
-            } else {
-                for(int i=0; i<v.length; i++) {
-                    if(md[i]!=null) markStats[i].update(v[i],md[i]);
-                    else markStats[i].update(v[i],new int[]{});
-                }
-            }
-            for(int i=0; i<pp.length; i++){
-                final PPrimBox box = ((PPrimBox)pp[i]);
-                if(markStats[i].lastTop==0){
-                    box.slastR=null;
-                } else{
-                    final Axis axis = (commonScale || i==0 || vsCat)?ay:opAy[i-1];
-                    box.sx = box.x + box.w*2/5;
-                    box.sw = box.w/2;
-                    box.smed = axis.getValuePos(markStats[i].med);
-                    box.slh = axis.getValuePos(markStats[i].lh);
-                    box.suh = axis.getValuePos(markStats[i].uh);
-                    box.slh15 = axis.getValuePos(markStats[i].lh15);
-                    box.suh15 = axis.getValuePos(markStats[i].uh15);
-                    box.slh3 = markStats[i].lh3;
-                    box.suh3 = markStats[i].uh3;
-                    box.slowEdge = markStats[i].lowEdge;
-                    if(markStats[i].lastR!=null){
-                        box.slastR = new double[markStats[i].lastR.length];
-                        box.svalPos = new int[markStats[i].lastR.length];
-                        for(int j=0; j< box.slastR.length; j++){
-                            box.slastR[j] = v[vsCat?0:i].atF(markStats[i].lastR[j]);
-                            box.svalPos[j] = axis.getValuePos(box.slastR[j]);
-                        }
-                    } else{
-                        box.slastR = null;
-                        box.svalPos = null;
+            if(markStats!=null){
+                final int md[][] = new int[v.length][];
+                for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
+                //if(md==null) return;
+                if (vsCat) {
+                    if(md[0]==null) return;
+                    int i=0;
+                    while (i<cs) { rs[cs+1+i]=0; i++; }
+                    i=0;
+                    while(i<md[0].length) {
+                        int x=cv.getCatIndex(cv.at(md[0][i]));
+                        if (x<0) x=cs;
+                        x+=cs+1;
+                        rk[x][rs[x]]=md[0][i];
+                        rs[x]++;
+                        i++;
                     }
-                    box.slastTop = markStats[i].lastTop;
-                    box.shighEdge = markStats[i].highEdge;
+                    i=cs+1;
+                    while(i<2*cs+1) {
+                        oss[i].update(v[0],rk[i],rs[i]);
+                        i++;
+                    }
+                } else {
+                    for(int i=0; i<v.length; i++) {
+                        if(md[i]!=null) markStats[i].update(v[i],md[i]);
+                        else markStats[i].update(v[i],new int[]{});
+                    }
+                }
+                for(int i=0; i<pp.length; i++){
+                    final PPrimBox box = ((PPrimBox)pp[i]);
+                    if(markStats[i].lastTop==0){
+                        box.slastR=null;
+                    } else{
+                        final Axis axis = (commonScale || i==0 || vsCat)?ay:opAy[i-1];
+                        box.sx = box.x + box.w*2/5;
+                        box.sw = box.w/2;
+                        box.smed = axis.getValuePos(markStats[i].med);
+                        box.slh = axis.getValuePos(markStats[i].lh);
+                        box.suh = axis.getValuePos(markStats[i].uh);
+                        box.slh15 = axis.getValuePos(markStats[i].lh15);
+                        box.suh15 = axis.getValuePos(markStats[i].uh15);
+                        box.slh3 = markStats[i].lh3;
+                        box.suh3 = markStats[i].uh3;
+                        box.slowEdge = markStats[i].lowEdge;
+                        if(markStats[i].lastR!=null){
+                            box.slastR = new double[markStats[i].lastR.length];
+                            box.svalPos = new int[markStats[i].lastR.length];
+                            for(int j=0; j< box.slastR.length; j++){
+                                box.slastR[j] = v[vsCat?0:i].atF(markStats[i].lastR[j]);
+                                box.svalPos[j] = axis.getValuePos(box.slastR[j]);
+                            }
+                        } else{
+                            box.slastR = null;
+                            box.svalPos = null;
+                        }
+                        box.slastTop = markStats[i].lastTop;
+                        box.shighEdge = markStats[i].highEdge;
+                    }
                 }
             }
         }
