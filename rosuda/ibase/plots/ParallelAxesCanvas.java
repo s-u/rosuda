@@ -301,23 +301,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         createMenu(f);
         setCommonScale(commonScale);
+        updateMargins();
         
-        switch(type){
-            case TYPE_BOX:
-                updateMargins();
-                
-                String variables = v[0].getName();
-                for(i=1; i<v.length; i++) variables+=", " + v[i].getName();
-                setTitle("Boxplot ("+ variables + ")");
-                
-                initOss(yvs);
-                dontPaint=false;
-                break;
-            case TYPE_PCP:
-                updateMargins();
-                dontPaint=false;
-                break;
-        }
+        if(type==TYPE_BOX) initOss(yvs);
+        
+        dontPaint=false;
     }
     
     private void createMenu(Frame f){
