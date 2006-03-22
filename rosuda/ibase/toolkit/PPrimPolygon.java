@@ -21,9 +21,7 @@ import org.rosuda.pograss.*;
  */
 public class PPrimPolygon extends PPrimBase {
     static final String COL_RED = "red";
-    static final String COL_OUTLINE = "outline";
-    static final String COL_MARKED = "marked";
-    public Polygon pg;
+    static final String COL_OUTLINE = "outline";    public Polygon pg;
     
     public boolean drawBorder=true;
     public boolean useSelAlpha=true;

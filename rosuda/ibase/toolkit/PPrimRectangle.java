@@ -69,7 +69,7 @@ public class PPrimRectangle extends PPrimBase {
 				}
 				shift+=sa;
 				if (mark==-1)
-					g.setColor("marked");
+					g.setColor(COL_MARKED);
 				else
 					g.setColor(ColorBridge.getMain().getColor(mark));
 				g.fillRect(rX,rY,rW,rH);

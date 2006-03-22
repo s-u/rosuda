@@ -21,6 +21,8 @@ public abstract class PPrimBase implements PlotPrimitive {
     /** references (IDs) to cases represented by this primitive */
     public int[] ref;
 
+    static final String COL_MARKED = "marked";
+
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
     }

@@ -164,7 +164,7 @@ public class PPrimBox extends PPrimBase {
         
         switch(orientation){
             case 0:
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 g.fillRect(sx,suh,
                         sw,slh-suh);
                 g.setColor(COL_BLACK);
@@ -182,7 +182,7 @@ public class PPrimBox extends PPrimBase {
                         sx+sw/2,suh15);
                 g.drawLine(sx+sw/2,slh,
                         sx+sw/2,slh15);
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
@@ -203,7 +203,7 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 g.fillRect(slh,sx,
                         suh-slh,sw);
                 g.setColor(COL_BLACK);
@@ -221,7 +221,7 @@ public class PPrimBox extends PPrimBase {
                         suh15,sx+sw/2);
                 g.drawLine(slh,sx+sw/2,
                         slh15,sx+sw/2);
-                g.setColor("marked");
+                g.setColor(COL_MARKED);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];

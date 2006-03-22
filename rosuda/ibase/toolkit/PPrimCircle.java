@@ -45,7 +45,7 @@ public class PPrimCircle extends PPrimBase {
                 if (mark!=0) {
 					// FIXME: if we represent more that 1 ID then we're screwed ..
 					if (mark==-1)
-						g.setColor("marked");
+						g.setColor(COL_MARKED);
 					else
 						g.setColor(ColorBridge.getMain().getColor(mark));
                     g.fillOval(x-diam/2,y-diam/2, diam,diam);
