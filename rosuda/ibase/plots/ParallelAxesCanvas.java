@@ -55,10 +55,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int defaultMTop;
     private int defaultMBottom;
     
-    private int TW;
-    private int TH;
-    
-    
     /**
      * axes and labels fields
      */
@@ -676,13 +672,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
         final Rectangle r=pc.getBounds();
         g.setBounds(r.width,r.height);
         
-        TH=r.height;
-        TW=r.width;
-        
         if(!getValid()){
+            final int h=pc.getHeight();
+            final int w=pc.getWidth();
             g.setColor("red");
-            g.drawLine(0,0,TW,TH);
-            g.drawLine(0,TH,TW,0);
+            g.drawLine(0,0,w,h);
+            g.drawLine(0,w,h,0);
             return;
         }
         
@@ -725,15 +720,16 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     
                     /* draw ticks and labels for Y axis */
                     if(commonScale) {
+                        final int h=pc.getHeight();
                         double f=ay.getSensibleTickDistance(30,18);
                         double fi=ay.getSensibleTickStart(f);
                         while (fi<ay.vBegin+ay.vLen) {
                             final int t=ay.getValuePos(fi);
-                            g.drawLine(t,TH-mBottom+4,t,TH-mBottom);
-                            labels.add(t,TH-3,0.5,0,ay.getDisplayableValue(fi));
+                            g.drawLine(t,h-mBottom+4,t,h-mBottom);
+                            labels.add(t,h-3,0.5,0,ay.getDisplayableValue(fi));
                             fi+=f;
                         }
-                        g.drawLine(ay.gBegin,TH-mBottom,ay.gBegin+ay.gLen,TH-mBottom);
+                        g.drawLine(ay.gBegin,h-mBottom,ay.gBegin+ay.gLen,h-mBottom);
                     }
                     
                     if (vsCat || v.length>1) {
@@ -1016,104 +1012,99 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return box;
     }
     
-    private void updateObjectsPCP(){
-        if (pp==null || pp.length!=v[0].size()) {
-            pp=new PlotPrimitive[v[0].size()];
-        }
-        
-        TW = pc.getSize().width;
-        TH = pc.getSize().height;
-        
-        
-        final int[][] xs = new int[v[0].size()][v.length];
-        final int[][] ys = new int[v[0].size()][v.length];
-        //boolean[] na = new boolean[v[0].size()];
-        final int[][] na = new int[v[0].size()][];
-        final int[] naIndices = new int[v.length+1];
-        for (int i=0;i<v[0].size();i++){
-            int numNAs=0;
-            for (int j=0;j<v.length;j++){
-                if ((drawHidden || !m.at(i)) && (v[j].at(i)!=null)) {
-                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
-                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
-                } else{
-                    xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
-                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
-                    naIndices[numNAs++] = j;
-                }
-            }
-            if(numNAs>0){
-                na[i] = new int[numNAs];
-                System.arraycopy(naIndices, 0, na[i], 0, numNAs);
-            }
-        }
-        
-        for(int j=0; j<xs.length; j++){
-            pp[j] = new PPrimPolygon();
-            if(orientation==0) ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
-            else               ((PPrimPolygon)pp[j]).pg = new Polygon(ys[j], xs[j], xs[j].length);
-            ((PPrimPolygon)pp[j]).closed=false;
-            ((PPrimPolygon)pp[j]).fill=false;
-            ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
-            ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
-            ((PPrimPolygon)pp[j]).ref = new int[] {j};
-            ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
-            ((PPrimPolygon)pp[j]).drawBorder=drawLines;
-            ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
-            final boolean[] nas = new boolean[xs[j].length];
-            final boolean[] gap = new boolean[xs[j].length];
-            
-            if(na[j]!=null){
-                final boolean[] nod = new boolean[xs[j].length];
-                for(int i=0; i<na[j].length; i++) {
-                    nas[na[j][i]]=true;
-                    if(na[j][i]>0) nas[na[j][i]-1]=true;
-                    nod[na[j][i]]=true;
-                }
-                ((PPrimPolygon)pp[j]).noDotsAt = nod;
-                for(int i=0; i<na[j].length-1; i++){
-                    if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
-                }
-                if(na[j][0]==1) gap[0]=true;
-                if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
-            }
-            ((PPrimPolygon)pp[j]).invisibleLines=nas;
-            ((PPrimPolygon)pp[j]).gapDots=gap;
-        }
-    }
-    
-    private void updateObjectsBox() {
-        if (!valid) return;
-        
-        if (!vsCat) {
-            pp = new PlotPrimitive[v.length];
-            markStats = new OrdStats[v.length];
-            for(int i=0; i<pp.length; i++){
-                pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
-                ((PPrimBox)pp[i]).ref = v[i].getRanked();
-                markStats[i] = new OrdStats();
-            }
-        } else {
-            final Vector boxes = new Vector();
-            for(int i=0; i<cs; i++){
-                final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
-                box.ref = rk[i];
-                boxes.add(box);
-            }
-            pp = new PlotPrimitive[boxes.size()];
-            boxes.toArray(pp);
-            markStats = new OrdStats[boxes.size()];
-            System.arraycopy(oss, cs+1, markStats, 0, cs);
-        }
-        for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
-    };
-    
     public void updateObjects() {
-        if(type == TYPE_PCP) updateObjectsPCP();
-        else if (type == TYPE_BOX) updateObjectsBox();
+        if(!getValid()) return;
+        
+        switch(type){
+            case TYPE_BOX:
+                if (!vsCat) {
+                    pp = new PlotPrimitive[v.length];
+                    markStats = new OrdStats[v.length];
+                    for(int i=0; i<pp.length; i++){
+                        pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
+                        ((PPrimBox)pp[i]).ref = v[i].getRanked();
+                        markStats[i] = new OrdStats();
+                    }
+                } else {
+                    final Vector boxes = new Vector();
+                    for(int i=0; i<cs; i++){
+                        final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
+                        box.ref = rk[i];
+                        boxes.add(box);
+                    }
+                    pp = new PlotPrimitive[boxes.size()];
+                    boxes.toArray(pp);
+                    markStats = new OrdStats[boxes.size()];
+                    System.arraycopy(oss, cs+1, markStats, 0, cs);
+                }
+                for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
+                break;
+            case TYPE_PCP:
+                if (pp==null || pp.length!=v[0].size()) {
+                    pp=new PlotPrimitive[v[0].size()];
+                }
+                
+                final int[][] xs = new int[v[0].size()][v.length];
+                final int[][] ys = new int[v[0].size()][v.length];
+                //boolean[] na = new boolean[v[0].size()];
+                final int[][] na = new int[v[0].size()][];
+                final int[] naIndices = new int[v.length+1];
+                for (int i=0;i<v[0].size();i++){
+                    int numNAs=0;
+                    for (int j=0;j<v.length;j++){
+                        if ((drawHidden || !m.at(i)) && (v[j].at(i)!=null)) {
+                            xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                        } else{
+                            xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                            naIndices[numNAs++] = j;
+                        }
+                    }
+                    if(numNAs>0){
+                        na[i] = new int[numNAs];
+                        System.arraycopy(naIndices, 0, na[i], 0, numNAs);
+                    }
+                }
+                
+                for(int j=0; j<xs.length; j++){
+                    pp[j] = new PPrimPolygon();
+                    if(orientation==0) ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+                    else               ((PPrimPolygon)pp[j]).pg = new Polygon(ys[j], xs[j], xs[j].length);
+                    ((PPrimPolygon)pp[j]).closed=false;
+                    ((PPrimPolygon)pp[j]).fill=false;
+                    ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
+                    ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
+                    ((PPrimPolygon)pp[j]).ref = new int[] {j};
+                    ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
+                    ((PPrimPolygon)pp[j]).drawBorder=drawLines;
+                    ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
+                    final boolean[] nas = new boolean[xs[j].length];
+                    final boolean[] gap = new boolean[xs[j].length];
+                    
+                    if(na[j]!=null){
+                        final boolean[] nod = new boolean[xs[j].length];
+                        for(int i=0; i<na[j].length; i++) {
+                            nas[na[j][i]]=true;
+                            if(na[j][i]>0) nas[na[j][i]-1]=true;
+                            nod[na[j][i]]=true;
+                        }
+                        ((PPrimPolygon)pp[j]).noDotsAt = nod;
+                        for(int i=0; i<na[j].length-1; i++){
+                            if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
+                        }
+                        if(na[j][0]==1) gap[0]=true;
+                        if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
+                    }
+                    ((PPrimPolygon)pp[j]).invisibleLines=nas;
+                    ((PPrimPolygon)pp[j]).gapDots=gap;
+                }
+                break;
+        }
     }
     
     public void paintPost(final PoGraSS g) {
+        // visualize dragging
         if(type==TYPE_PCP){
             if(baseDrag && moveDrag){
                 final int basey=pc.getBounds().height-mBottom;
