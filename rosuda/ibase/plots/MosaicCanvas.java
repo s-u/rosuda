@@ -85,6 +85,9 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public void updateObjects() {
+        // updateObjects is called when variables are categorized, i.e. before the frequency table is initialized, so:
+        if(dontPaint) return;
+        
         final int maxLabelLength=create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
         final int omLeft=mLeft;
         if(maxLabelLength*8>standardMLeft){
