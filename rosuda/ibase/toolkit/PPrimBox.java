@@ -20,8 +20,6 @@ import org.rosuda.pograss.PoGraSS;
 public class PPrimBox extends PPrimBase {
     static final String COL_WHITE = "white";
     static final String COL_BLACK = "black";
-    static final String COL_SELFILL = "selfill";
-    static final String COL_SEL = "sel";
     
     // radius of outliers
     static final int RADOUTL = 5;
@@ -162,16 +160,14 @@ public class PPrimBox extends PPrimBase {
     
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
         if(slastR==null) return;
-        g.defineColor(COL_SELFILL,0,255,0);
-        g.defineColor(COL_SEL,0,128,0);
         int i;
         
         switch(orientation){
             case 0:
-                g.setColor(COL_SELFILL);
+                g.setColor("marked");
                 g.fillRect(sx,suh,
                         sw,slh-suh);
-                g.setColor(COL_SEL);
+                g.setColor(COL_BLACK);
                 g.drawRect(sx,suh,
                         sw,slh-suh);
                 g.setLineWidth(1.5f);
@@ -186,6 +182,7 @@ public class PPrimBox extends PPrimBase {
                         sx+sw/2,suh15);
                 g.drawLine(sx+sw/2,slh,
                         sx+sw/2,slh15);
+                g.setColor("marked");
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
@@ -206,10 +203,10 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
-                g.setColor(COL_SELFILL);
+                g.setColor("marked");
                 g.fillRect(slh,sx,
                         suh-slh,sw);
-                g.setColor(COL_SEL);
+                g.setColor(COL_BLACK);
                 g.drawRect(slh,sx,
                         suh-slh,sw);
                 g.setLineWidth(1.5f);
@@ -224,6 +221,7 @@ public class PPrimBox extends PPrimBase {
                         suh15,sx+sw/2);
                 g.drawLine(slh,sx+sw/2,
                         slh15,sx+sw/2);
+                g.setColor("marked");
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
