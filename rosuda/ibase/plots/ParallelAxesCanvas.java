@@ -103,6 +103,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_ALPHADOWN = "alphaDown";
     private static final String M_ALPHAUP = "alphaUp";
     private static final String M_TRANSHIGHL = "transparentHighlighting";
+    private static final String M_PCPBOX = "toggleType";
     
     private MenuItem MIlabels=null;
     private MenuItem MIdots=null;
@@ -113,6 +114,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MInodeSizeDown=null;
     private MenuItem MIhideNAlines=null;
     private MenuItem MItransHighl=null;
+    private MenuItem MIPCPBox=null;
     
     /**
      * Box plot specific fields
@@ -183,6 +185,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         
         createMenu(f);
+        MIPCPBox.setEnabled(false);
         setCommonScale(commonScale);
         EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
         
@@ -300,6 +303,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         
         createMenu(f);
+        if(v.length==1) MIPCPBox.setEnabled(false);
         setCommonScale(commonScale);
         updateMargins();
         
@@ -330,7 +334,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Colors (CB)",M_SET1,
             "Set Colors (rainbow)",M_SET64,
             "Clear Colors",M_RESET,
-            "PCP/BOX","toggleType"
+            (type==TYPE_BOX)?"PCP":"BOX",M_PCPBOX
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -345,6 +349,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MInodeSizeUp.setEnabled(false);
         MIhideNAlines=EzMenu.getItem(f,M_HIDENALINES);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
+        MIPCPBox=EzMenu.getItem(f,M_PCPBOX);
     }
     
     public void keyPressed(final KeyEvent e) {
@@ -530,12 +535,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
             MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
             setUpdateRoot(1); repaint();
         }
-        if("toggleType".equals(cmd)) {
+        if(M_PCPBOX.equals(cmd)) {
             type=(type+1)&1;
             initFlagsAndFields();
             updateMargins();
             if(type==TYPE_BOX && oss==null) initOss(v);
             updateObjects();
+            MIPCPBox.setLabel((type==TYPE_BOX)?"PCP":"Box plot");
             setUpdateRoot(0); repaint();
         }
         
