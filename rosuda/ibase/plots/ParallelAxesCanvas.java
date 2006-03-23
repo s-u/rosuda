@@ -334,7 +334,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Colors (CB)",M_SET1,
             "Set Colors (rainbow)",M_SET64,
             "Clear Colors",M_RESET,
-            (type==TYPE_BOX)?"PCP":"BOX",M_PCPBOX
+            (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
