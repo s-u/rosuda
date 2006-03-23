@@ -13,7 +13,7 @@ import java.util.Vector;
  *
  * @author tobias
  */
-public class ClassifierManager {
+public final class ClassifierManager {
     
     private static Vector classifiers;
     private static DataClassifierListenerIF listener;
@@ -27,13 +27,13 @@ public class ClassifierManager {
         return classifiers;
     }
     
-    static void addClassifier(Classifier newClassifier){
+    static void addClassifier(final Classifier newClassifier){
         if(classifiers==null) classifiers=new Vector();
         classifiers.add(newClassifier);
         if(listener!=null) listener.classifiersChanged();
     }
     
-    static void setListener(DataClassifierListenerIF aListener) {
+    static void setListener(final DataClassifierListenerIF aListener) {
         listener = aListener;
     }
     
