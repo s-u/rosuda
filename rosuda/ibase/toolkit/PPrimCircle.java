@@ -17,6 +17,8 @@ public class PPrimCircle extends PPrimBase {
     
     public int x,y,diam;
     
+    public boolean visible = true;
+    
     /**
      * whether {@link #intersects} and {@link #contains} check for intersection
      * with the whole circle area (if true) or just with the center point (if
@@ -34,20 +36,22 @@ public class PPrimCircle extends PPrimBase {
     }
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation) {
-        g.setColor("outline");
-        g.fillOval(x-diam/2,y-diam/2, diam,diam);
+        if(visible){
+            g.setColor("outline");
+            g.fillOval(x-diam/2,y-diam/2, diam,diam);
+        }
     }
     
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
-        if(ref!=null){
+        if(visible && ref!=null){
             for(int i=0; i<ref.length; i++){
-				final int mark = m.get(ref[i]);
+                final int mark = m.get(ref[i]);
                 if (mark!=0) {
-					// FIXME: if we represent more that 1 ID then we're screwed ..
-					if (mark==-1)
-						g.setColor(COL_MARKED);
-					else
-						g.setColor(ColorBridge.getMain().getColor(mark));
+                    // FIXME: if we represent more that 1 ID then we're screwed ..
+                    if (mark==-1)
+                        g.setColor(COL_MARKED);
+                    else
+                        g.setColor(ColorBridge.getMain().getColor(mark));
                     g.fillOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }

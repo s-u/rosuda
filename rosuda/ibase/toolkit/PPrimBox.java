@@ -52,10 +52,10 @@ public class PPrimBox extends PPrimBase {
     }
     
     public boolean intersects(final java.awt.Rectangle rt) {
-        if(r!=null && r.intersects(rt)) return true;
+        /*if(r!=null && r.intersects(rt)) return true;
         for(Enumeration en = outliers.elements(); en.hasMoreElements();){
             if(((Outlier)en.nextElement()).intersects(rt)) return true;
-        }
+        }*/
         return false;
     }
     

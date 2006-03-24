@@ -122,6 +122,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int boxwidth=20;
     private final int MAX_BOXWIDTH=32;
     private final int MIN_BOXWIDTH=4;
+    // invisible Points to allow selection of box plots
+    private Vector invisiblePoints=null;
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     private boolean vsCat=false;
@@ -933,6 +935,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             case TYPE_BOX:
                 useRegularPositioning=false;
                 bigMLeft=bigMRight=30;
+                if(invisiblePoints==null) invisiblePoints = new Vector(250);
                 break;
             case TYPE_PCP:
                 useRegularPositioning=true;
@@ -1004,13 +1007,26 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         switch(type){
             case TYPE_BOX:
+                invisiblePoints.clear();
                 if (!vsCat) {
-                    pp = new PlotPrimitive[v.length];
+                    invisiblePoints.ensureCapacity(v.length*v[0].size());
+                    for(int i=0; i<v.length; i++) {
+                        int x = getAxCatPos(i);
+                        Axis yAxis = commonScale?ay:((i==0)?ay:opAy[i-1]);
+                        for(int j=0; j<v[i].size(); j++){
+                            int y = yAxis.getValuePos(v[i].atD(j));
+                            invisiblePoints.add(createInvisiblePoint(x,y,j));
+                        }
+                    }
+                    pp = new PlotPrimitive[v.length + invisiblePoints.size()];
                     markStats = new OrdStats[v.length];
-                    for(int i=0; i<pp.length; i++){
-                        pp[i] = createBox((pp.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
-                        ((PPrimBox)pp[i]).ref = v[i].getRanked();
+                    for(int i=0; i<v.length; i++){
+                        pp[i] = createBox((v.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
+                        //((PPrimBox)pp[i]).ref = v[i].getRanked();
                         markStats[i] = new OrdStats();
+                    }
+                    for(int i=v.length; i<pp.length; i++){
+                        pp[i] = (PlotPrimitive)invisiblePoints.get(i-v.length);
                     }
                 } else {
                     final Vector boxes = new Vector();
@@ -1019,12 +1035,21 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         box.ref = rk[i];
                         boxes.add(box);
                     }
+                    invisiblePoints.ensureCapacity(v[0].size());
+                    for(int i=0; i<cs; i++){
+                        int x = getAxCasePos(i);
+                        for(int j=0; j<rk[i].length; j++){
+                            int y = ay.getValuePos(v[0].atD(rk[i][j]));
+                            invisiblePoints.add(createInvisiblePoint(x,y,rk[i][j]));
+                        }
+                    }
+                    boxes.addAll(invisiblePoints);
                     pp = new PlotPrimitive[boxes.size()];
                     boxes.toArray(pp);
-                    markStats = new OrdStats[boxes.size()];
+                    markStats = new OrdStats[boxes.size()-invisiblePoints.size()];
                     System.arraycopy(oss, cs+1, markStats, 0, cs);
                 }
-                for(int i=0; i<pp.length; i++) ((PPrimBox)pp[i]).slastR=null;
+                for(int i=0; i<pp.length-invisiblePoints.size(); i++) ((PPrimBox)pp[i]).slastR=null;
                 break;
             case TYPE_PCP:
                 if (pp==null || pp.length!=v[0].size()) {
@@ -1131,8 +1156,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 else
                     return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
                             "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
-                            "cases: " + box.cases();
+                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue);
             case TYPE_PCP:
                 String retValue="";
                 final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
@@ -1200,7 +1224,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         else markStats[i].update(v[i],new int[]{});
                     }
                 }
-                for(int i=0; i<pp.length; i++){
+                for(int i=0; i<pp.length-invisiblePoints.size(); i++){
                     final PPrimBox box = ((PPrimBox)pp[i]);
                     if(markStats[i].lastTop==0){
                         box.slastR=null;
@@ -1259,6 +1283,16 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 }
             }
         }
+    }
+    
+    private PPrimCircle createInvisiblePoint(int x, int y, int caseID) {
+        PPrimCircle ppc = new PPrimCircle();
+        ppc.x=(orientation==0)?x:y;
+        ppc.y=(orientation==0)?y:x;
+        ppc.diam=1;
+        ppc.ref = new int[]{caseID};
+        ppc.visible = false;
+        return ppc;
     }
 }
 
