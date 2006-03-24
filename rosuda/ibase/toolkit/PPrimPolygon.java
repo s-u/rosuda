@@ -9,6 +9,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
@@ -66,13 +67,15 @@ public class PPrimPolygon extends PPrimBase {
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
     public boolean intersects(final Rectangle rt) {
         if(pg==null) return false;
+        Rectangle2D.Double r2d = new Rectangle2D.Double(rt.x,rt.y,rt.width,rt.height);
         if(selectByCorners){
             for(int i=0; i<pg.npoints; i++)
-                if(rt.contains(pg.xpoints[i], pg.ypoints[i]))
+                if(
+                    (new Ellipse2D.Double(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize,2*nodeSize+1,2*nodeSize+1))
+                    .intersects(r2d))
                     return true;
             return false;
         } else{
-            Rectangle2D.Double r2d = new Rectangle2D.Double(rt.x,rt.y,rt.width,rt.height);
             for(int i=1; i<pg.npoints; i++){
                 if(!invisibleLines[i-1]){
                     Line2D.Double l = new Line2D.Double(pg.xpoints[i-1],pg.ypoints[i-1],pg.xpoints[i],pg.ypoints[i]);
