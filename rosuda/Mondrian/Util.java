@@ -86,6 +86,63 @@ public class Util {
     } catch(Exception dce) {};
     return i;
   }
+  
+  public static int[] roundProportions(double[] votes, double total, int pie) {
+
+    int[] rounds = new int[votes.length];
+
+    int start = -1; 
+    int stop  = votes.length;
+    while( votes[++start] == 0 ) {}
+    while( votes[--stop]  == 0 ) {}
+//    System.out.println("Start: "+start+" Stop: "+stop);
+    int k=1;
+    double eps=0;
+    int sum=0;
+    int converge=24;
+    while( sum != pie && k<64) {
+      k++;
+      sum=0;
+      for(int i=start; i<=stop; i++) {
+        if( k>=converge )
+          eps = Math.random() - 0.5;
+        if( votes[i] < 0.0000000001 )
+          rounds[i] = 0;
+        else
+          rounds[i] = (int)Math.round((double)(votes[i])/total*pie + eps);
+        sum += rounds[i];
+      }
+      //System.out.println("k: "+k+" eps: "+eps+" sum: "+sum+" pie: "+pie);
+      if( sum > pie )
+        eps -= 1/Math.pow(2,k);
+      else if( sum < pie )
+        eps += 1/Math.pow(2,k);
+    }
+    if( sum != pie )
+      System.out.println(" Rounding Failed !!!");
+
+    return rounds;
+  }
+  
+  public static boolean isNumber(String s)
+  {
+    String validChars = "-.0123456789";
+    boolean isNumber = true;
+    
+    for (int i = 0; i < s.length() && isNumber; i++) 
+    { 
+      char c = s.charAt(i); 
+      if (validChars.indexOf(c) == -1) 
+      {
+        isNumber = false;
+      }
+      else
+      {
+        isNumber = true;
+      }
+    }
+    return isNumber;
+  }
 
   public static String info2Html(String infoText) {
     
