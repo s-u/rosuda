@@ -1230,7 +1230,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         box.slastR=null;
                     } else{
                         final Axis axis = (commonScale || i==0 || vsCat)?ay:opAy[i-1];
-                        box.sx = box.x + box.w*2/5;
+                        box.sx = box.x + box.w/4;
                         box.sw = box.w/2;
                         box.smed = axis.getValuePos(markStats[i].med);
                         box.slh = axis.getValuePos(markStats[i].lh);

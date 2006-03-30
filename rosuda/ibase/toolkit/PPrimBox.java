@@ -173,15 +173,17 @@ public class PPrimBox extends PPrimBase {
                 g.setLineWidth(1.5f);
                 g.drawLine(sx,smed,
                         sx+sw,smed);
-                g.setLineWidth(1.0f);
+                g.setLineWidth(2.0f);
                 g.drawLine(sx,suh15,
                         sx+sw,suh15);
                 g.drawLine(sx,slh15,
                         sx+sw,slh15);
+                g.setLineWidth(1.5f);
                 g.drawLine(sx+sw/2,suh,
                         sx+sw/2,suh15);
                 g.drawLine(sx+sw/2,slh,
                         sx+sw/2,slh15);
+                g.setLineWidth(1.0f);
                 g.setColor(COL_MARKED);
                 i=slowEdge;
                 while(i>=0) {
@@ -212,15 +214,17 @@ public class PPrimBox extends PPrimBase {
                 g.setLineWidth(1.5f);
                 g.drawLine(smed,sx,
                         smed,sx+sw);
-                g.setLineWidth(1.0f);
+                g.setLineWidth(2.0f);
                 g.drawLine(suh15,sx,
                         suh15,sx+sw);
                 g.drawLine(slh15,sx,
                         slh15,sx+sw);
+                g.setLineWidth(1.5f);
                 g.drawLine(suh,sx+sw/2,
                         suh15,sx+sw/2);
                 g.drawLine(slh,sx+sw/2,
                         slh15,sx+sw/2);
+                g.setLineWidth(1.0f);
                 g.setColor(COL_MARKED);
                 i=slowEdge;
                 while(i>=0) {
