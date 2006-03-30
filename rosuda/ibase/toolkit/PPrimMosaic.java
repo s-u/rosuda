@@ -53,8 +53,10 @@ public class PPrimMosaic extends PPrimRectangle {
             case TYPE_FLUCTUATION:
             case TYPE_MULTIPLEBARCHARTS:
                 g.setColor(Color.lightGray);
+                g.setGlobalAlpha(0.3f);
                 g.fillRect(origX,origY, fullW,fullH);
                 g.drawRect(origX,origY, fullW,fullH);
+                g.resetGlobalAlpha();
                 if(!isEmpty()){
                     g.setColor(COL_OBJECT);
                     g.fillRect(r.x,r.y,r.width,r.height);
