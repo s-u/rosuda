@@ -16,6 +16,7 @@ public class Selection {
   public Rectangle r;
   public Object o;
   public int step;
+  public int total;
   public int mode;
   public int status = VALID;
   DragBox d;
@@ -28,6 +29,7 @@ public class Selection {
     this.r = r;
     this.o = o;
     this.step = step;
+    this.total = step;
     this.mode = mode;
     this.d = d;
     this.status = VALID;
@@ -48,6 +50,10 @@ public class Selection {
               return "Not";
       }
       return null;
+  }
+  
+  public void setMode(int mode) {
+    this.mode = mode;
   }
 
   public static String getSQLModeString(int mode) {
