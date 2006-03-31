@@ -18,6 +18,7 @@ public class Mosaic extends DragBox implements ActionListener {
   private int border = 20;
   private Image bi;
   private Graphics2D bg;
+  private int eventID;
 
   /** This constructor requires a Frame and a desired size */
   public Mosaic(MFrame frame, int width, int height, Table tablep) {
@@ -71,13 +72,20 @@ public class Mosaic extends DragBox implements ActionListener {
   }
 
   public void addModelListener(ModelListener l) {
-    listener = l;
+    mlistener = l;
   }
 
+  public void addDataListener(DataListener l) {
+    dlistener = l;
+  }
+  
   public void processEvent(AWTEvent evt) {
-    if( evt instanceof ModelEvent ) {
-      if( listener != null )
-        listener.updateModel(tablep, tablep.names, maxLevel);
+    if( evt instanceof DataEvent ) {
+      if( dlistener != null )
+        dlistener.dataChanged(eventID);
+    } else if( evt instanceof ModelEvent ) {
+      if( mlistener != null )
+        mlistener.updateModel(tablep, tablep.names, maxLevel);
     }
     else super.processEvent(evt);
   }
@@ -132,7 +140,7 @@ public class Mosaic extends DragBox implements ActionListener {
       //System.out.println("Checking Mosaic caused by: "+var);
       for( int i=0; i<tablep.initialVars.length; i++ ) {
         //System.out.println("Variable "+tablep.initialVars[i]);
-        if( var == tablep.initialVars[i] ) {
+        if( var == tablep.initialVars[i] || var == -1 ) {
           tablep.rebreak();
           paint(this.getGraphics());
         }
@@ -321,6 +329,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                                 ||  e.getKeyCode() == KeyEvent.VK_UP && e.isShiftDown()
                                                 ||  e.getKeyCode() == KeyEvent.VK_DOWN && e.isShiftDown()    
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R
+                                                ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_B
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_ADD
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_SUBTRACT)) {
         if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
@@ -370,6 +379,23 @@ public class Mosaic extends DragBox implements ActionListener {
               Dirs[i] = 'y';
             else
               Dirs[i] = 'x';
+        }
+        if( e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && !e.isShiftDown() ) {
+          // Set colors for color brushing
+          tablep.data.setColors(rects.size(), 2); 
+          for( int i = 0;i < rects.size(); i++) {
+            MyRect r = (MyRect)rects.elementAt(i);
+            for( int j=0; j<r.tileIds.size(); j++ ) {
+              int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
+              for(int l=0; l<(tablep.Ids[id]).length; l++) 
+                tablep.data.setColor(tablep.Ids[id][l], 1+i);
+            }
+          }
+          eventID = -1;
+          dataChanged(eventID);                                 // and is updated first!
+          
+          DataEvent de = new DataEvent(this);              // now the rest is informed ...
+          evtq.postEvent(de);
         }
         if( (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && (e.getKeyCode() == KeyEvent.VK_ADD) || (e.getKeyCode() == KeyEvent.VK_SUBTRACT)) ) {	
           frame.setCursor(Frame.WAIT_CURSOR);
@@ -489,7 +515,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   emptyBin, 
                                   sizeY+emptyWidth,
                                   0,  exps[j], 4 / residSum, tablep.p,
-                                  info, tileIds[j]);
+                                  info, tileIds[j], tablep);
               else
                 tile = new MyRect(true, 'y', displayMode,
                                   x1 + (int)(counts[j] / total * sizeX) + j * thisGap, 
@@ -497,7 +523,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX, 
                                   y2-y1 + addGapY,
                                   obs[j], exps[j], 4 / residSum, tablep.p,
-                                  info, tileIds[j]);
+                                  info, tileIds[j], tablep);
             else {
               if( empty )
                 tile = new MyRect(false, 'x', displayMode,
@@ -506,7 +532,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   sizeX+emptyWidth,
                                   emptyBin,
                                   0, exps[j], 4 / residSum, tablep.p,
-                                  info, tileIds[j]);
+                                  info, tileIds[j], tablep);
               else
                 tile = new MyRect(true, 'x', displayMode,
                                   x1,
@@ -514,7 +540,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   x2-x1 + addGapX,
                                   Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY,
                                   obs[j], exps[j], 4 / residSum, tablep.p,
-                                  info, tileIds[j]);
+                                  info, tileIds[j], tablep);
             }
             rects.addElement(tile);
           }
@@ -702,7 +728,8 @@ public class Mosaic extends DragBox implements ActionListener {
 
       private int maxLevel;	        // How many variables should be drawn
 
-      private ModelListener listener;
+      private ModelListener mlistener;
+      private DataListener  dlistener;
       private static EventQueue evtq;
 
       public void adjustmentValueChanged(AdjustmentEvent e) {
