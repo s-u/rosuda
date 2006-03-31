@@ -143,6 +143,11 @@ public class Scatter2D extends DragBox {
   }
   
   public void dataChanged(int var) {
+    if( var == -1 ) {
+      scaleChanged = true;
+      create();
+      paint(this.getGraphics() );
+    }
   }
 
   public String getToolTipText(MouseEvent e) {
@@ -271,77 +276,6 @@ public class Scatter2D extends DragBox {
           e.getID() == MouseEvent.MOUSE_RELEASED ) {
         if (e.isPopupTrigger() && !e.isShiftDown() ) {
           info = false;
-          if( modeString.equals("points") ) {
-            int minDist = 5000;
-            int minId=0;
-            int minCount=0;
-            int maxOverplot = 25;
-            int restPoints = 0;
-            int minIds[] = new int[maxOverplot];
-
-            for( int i=0; i<data.n; i++ ) {
-              int dist = (int)Math.pow( Math.pow(userToWorldX( xVal[i] )-e.getX(), 2)
-                                        + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
-              if( dist < minDist ) {
-                minDist = dist;
-                minIds[minCount=0] = i;
-                restPoints = 0;
-                minCount++;
-              } else if( dist == minDist ) {
-                if( minCount < maxOverplot )
-                  minIds[minCount++] = i;
-                else
-                  restPoints++;
-              }
-            }
-            if( minDist < 5 ) {
-              //System.out.print("Count: "+minCount);
-              int[] selectedIds = varList.getSelectedIndices();
-              if( selectedIds.length == 0 )
-                selectedIds = Vars;
-              JPopupMenu infoPop = new JPopupMenu();
-              for( int ids=0; ids<minCount; ids++ ) {
-                //System.out.print(" Ids: "+minIds[ids]);
-                JMenu selCase = new JMenu("Case #"+(ids+1));
-                for( int sel=0; sel<selectedIds.length; sel++ ) {
-                  JMenuItem x;
-                  if( data.categorical(selectedIds[sel]) )
-                    if( data.alpha(selectedIds[sel]) )
-                      x = new JMenuItem(data.getName(selectedIds[sel])+": "
-                                        +data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[ids]]));
-                    else
-                      x = new JMenuItem(data.getName(selectedIds[sel])+": "
-                                        +data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[ids]]));
-                  else
-                    x = new JMenuItem(data.getName(selectedIds[sel])+": "
-                                      +(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
-                  if( minCount == 1 )
-                    infoPop.add(x);
-                  else
-                    selCase.add(x);
-                }
-                if( minCount > 1 )
-                  infoPop.add(selCase);
-              }
-              if( restPoints > 0 )
-                infoPop.add(new JMenuItem("and "+restPoints+" more ..."));
-              if( minCount > 1 )
-                infoPop.add(new JMenuItem("Dismiss"));
-              info = true;
-              infoPop.show(e.getComponent(), e.getX(), e.getY());
-            }
-          } else {
-            for( int i = 0;i < rects.size(); i++) {
-              MyRect r = (MyRect)rects.elementAt(i);
-              if ( r.contains( e.getX(), e.getY() )) {
-//                System.out.println(">>>>>>>>> hit at : "+i);
-//                System.out.println("testing: "+i+"  "+e.getX()+"  "+e.getY()+"  "+r.x+"  "+r.y+"  "+r.w+"  "+r.h);
-                info = true;
-                r.pop(this, e.getX(), e.getY());
-                r.draw(this.getGraphics());
-              }
-            }
-          }
           if( !info ) {
             if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
               //System.out.println(data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+coeffs[1]+" + "+coeffs[0]);
@@ -377,8 +311,36 @@ public class Scatter2D extends DragBox {
               axes.setActionCommand("axes");
               axes.addActionListener(this);
 
-              JMenu smoothers = new JMenu("smoothers");
+              JMenu pointSize = new JMenu("point size");
+              mode.add(pointSize);
+              JCheckBoxMenuItem[] radians = new JCheckBoxMenuItem[20];
+              for(int k=0; k<radians.length; k++) {
+                radians[k] =  new JCheckBoxMenuItem(""+(k*2+1));
+                if( radius == (k*2+1) )
+                  radians[k].setState(true);
+                else
+                  radians[k].setState(false);
+                radians[k].setActionCommand(""+(k*2+1));
+                radians[k].addActionListener(this);
+                pointSize.add(radians[k]);
+              }
 
+              JMenu alphaVal = new JMenu("alpha");
+              mode.add(alphaVal);
+              JCheckBoxMenuItem[] alphians = new JCheckBoxMenuItem[20];
+              for(int k=0; k<alphas.length; k++) {
+                alphians[k] =  new JCheckBoxMenuItem(Stat.roundToString((double)alphas[k]/100, 3));
+                if( alpha == alphas[k] )
+                  alphians[k].setState(true);
+                else
+                  alphians[k].setState(false);
+                alphians[k].setActionCommand("-"+k);
+                alphians[k].addActionListener(this);
+                alphaVal.add(alphians[k]);
+              }
+              
+              JMenu smoothers = new JMenu("smoothers");
+              
               JCheckBoxMenuItem nosmooth = new JCheckBoxMenuItem("none");
               smoothers.add(nosmooth);
               nosmooth.setActionCommand("none");
@@ -564,8 +526,26 @@ System.out.println(" ........................ by var "+command.substring(5,comma
         }
       }
       paint(this.getGraphics());
-    }
-    else
+    } 
+    else if ( Util.isNumber(command) ) {
+      System.out.println("Command: "+Double.valueOf(command));
+      boolean hit=false;
+      double dd = Double.parseDouble(command);
+      for(int i=-100; i<=100; i++)
+        if( dd == i ) {
+          hit = true;
+          if( i<=0 ) {
+            alphap = -i;
+            alpha = alphas[alphap];
+          } else
+            radius = i;
+        }
+      if(hit) {
+        alphaChanged = true;
+        paint(this.getGraphics());
+      } else
+        super.actionPerformed(e);
+    } else
       super.actionPerformed(e);
   }
 
@@ -802,7 +782,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       else
         alphaChanged = false;
 
-      bg.setColor(Color.black);
+      bg.setColor(MFrame.lineColor);
       if(invert) {
 //        Properties p = new Properties(System.getProperties());
 //        p.setProperty("com.apple.macosx.AntiAliasedGraphicsOn", "false");
@@ -821,10 +801,22 @@ System.out.println(" ........................ by var "+command.substring(5,comma
           pg = bg;
         pg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha/100)));
         
-        for( int i=0; i<data.n; i++) 
+        Color[] cols = new Color[1];
+        if( data.colorBrush ) {
+          cols = new Color[data.getNumColors()];
+          for(int j=0; j<data.getNumColors(); j++)
+            cols[j] = data.getColorByID(j);
+        }
+        for( int i=0; i<data.n; i++) {
+          if( data.colorBrush )
+            if( data.colorArray[i] > 0 )
+              pg.setColor(cols[data.colorArray[i]]);
+            else
+              pg.setColor(MFrame.lineColor);
           if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
             pg.fillOval( (int)userToWorldX( xVal[i] )-(radius*pF-1)/2, (int)userToWorldY( yVal[i] )-(radius*pF-1)/2, radius*pF, radius*pF);
-
+        }
+        
         if( invert ) {
           media.addImage(bi,0);
           try {
@@ -976,6 +968,9 @@ System.out.println(" ........................ by var "+command.substring(5,comma
           c.assign("x",data.getRawNumbers(Vars[0]));
           c.assign("y",data.getRawNumbers(Vars[1]));
 
+          c.voidEval("ids <- x<1e300&y<1e300");
+          c.voidEval("x<-x[ids]");
+          c.voidEval("y<-y[ids]");
           double[] xForFit = new double[200+1];
           double step = (xMax-xMin)/200;
           for( int f=0; f<200+1; f++ )
@@ -1031,8 +1026,10 @@ System.out.println(" ........................ by var "+command.substring(5,comma
         ttbg.setColor(DragBox.hiliteColor);
         if( smoothF.equals("ls-line" ) ) {
           selCoeffs = data.selRegress(Vars[0], Vars[1]);
-          ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
-                        (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
+          System.out.println("Coeffs: "+selCoeffs[0]+"  "+ selCoeffs[1]);
+          if( !Double.isNaN(selCoeffs[0]) && !Double.isNaN(selCoeffs[1]) )
+            ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * selCoeffs[1] + selCoeffs[0]),
+                           (int)userToWorldX( xMax ), (int)userToWorldY( xMax * selCoeffs[1] + selCoeffs[0]) );
         }
         if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
           try {
@@ -1047,71 +1044,73 @@ System.out.println(" ........................ by var "+command.substring(5,comma
             double[] selection = data.getSelection();
             int k=0;
             for( int i=0; i<data.n; i++ )
-              if( selection[i] > 0 ) {
+              if( selection[i] > 0 && xVal[i]<Double.MAX_VALUE && yVal[i]<Double.MAX_VALUE) {
                 selX[k]   = xVal[i];
                 selY[k++] = yVal[i];
               }
-            c.assign("x",selX);
-            c.assign("y",selY);
-
-            double xSelMin = Double.MAX_VALUE;
-            double xSelMax = Double.MIN_VALUE;
             
-            if( !data.categorical(Vars[0]) ) {
-              xSelMin = data.getSelQuantile(Vars[0], 0.0);
-              xSelMax = data.getSelQuantile(Vars[0], 1.0);
-            } else {
-              xSelMin = data.getSelMin(Vars[0]);
-              xSelMax = data.getSelMax(Vars[0]);
-            }
-                
-            double[] xForFit = new double[200+1];
-            double step = (xSelMax-xSelMin)/200;
-            for( int f=0; f<200+1; f++ )
-              xForFit[f] = xSelMin + step*(double)f;
-            c.assign("xf",xForFit);
+            if( k>0 ) {                           // Not all selected cases are missing in at least one dimension
+              c.assign("x",selX);
+              c.assign("y",selY);
 
-            double[] fitted = {0};
-            double[] CIl = {0};
-            double[] CIu = {0};
-            if( smoothF.equals("loess") ) 
-              fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
-            if( smoothF.equals("locfit") ) {
-              RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
-              fitted = (double[]) sL.at("fit").getContent();
-              CIl    = new double[fitted.length];
-              CIu    = new double[fitted.length];
-              double[] se = (double[]) sL.at("se.fit").getContent();
-              for( int f=0; f<=200; f++ ) {
-                CIl[f] = fitted[f] - se[f];
-                CIu[f] = fitted[f] + se[f];
+              double xSelMin = Double.MAX_VALUE;
+              double xSelMax = Double.MIN_VALUE;
+              
+              if( !data.categorical(Vars[0]) ) {
+                xSelMin = data.getSelQuantile(Vars[0], 0.0);
+                xSelMax = data.getSelQuantile(Vars[0], 1.0);
+              } else {
+                xSelMin = data.getSelMin(Vars[0]);
+                xSelMax = data.getSelMax(Vars[0]);
               }
-            }
-//						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
-            if( smoothF.equals("splines") ) {
-              c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
-              fitted = c.eval("sP[,1]").asDoubleArray();
-              CIl = c.eval("sP[,2]").asDoubleArray();
-              CIu = c.eval("sP[,3]").asDoubleArray();
-            }
-            if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
-              Polygon CI = new Polygon();
-              for( int f=0; f<=200; f++ ) {
-                CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+              
+              double[] xForFit = new double[200+1];
+              double step = (xSelMax-xSelMin)/200;
+              for( int f=0; f<200+1; f++ )
+                xForFit[f] = xSelMin + step*(double)f;
+              c.assign("xf",xForFit);
+              
+              double[] fitted = {0};
+              double[] CIl = {0};
+              double[] CIu = {0};
+              if( smoothF.equals("loess") ) 
+                fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+              if( smoothF.equals("locfit") ) {
+                RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
+                fitted = (double[]) sL.at("fit").getContent();
+                CIl    = new double[fitted.length];
+                CIu    = new double[fitted.length];
+                double[] se = (double[]) sL.at("se.fit").getContent();
+                for( int f=0; f<=200; f++ ) {
+                  CIl[f] = fitted[f] - se[f];
+                  CIu[f] = fitted[f] + se[f];
+                }
               }
-              for( int f=200; f>=0; f-- ) {
-                CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+              //						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
+              if( smoothF.equals("splines") ) {
+                c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
+                fitted = c.eval("sP[,1]").asDoubleArray();
+                CIl = c.eval("sP[,2]").asDoubleArray();
+                CIu = c.eval("sP[,3]").asDoubleArray();
               }
-              ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
-              ttbg.fillPolygon(CI);
-              ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+              if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
+                Polygon CI = new Polygon();
+                for( int f=0; f<=200; f++ ) {
+                  CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+                }
+                for( int f=200; f>=0; f-- ) {
+                  CI.addPoint( (int)userToWorldX( xSelMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+                }
+                ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
+                ttbg.fillPolygon(CI);
+                ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
+              }
+              
+              for( int f=0; f<200; f++ )
+                ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+                               (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
             }
-
-            for( int f=0; f<200; f++ )
-              ttbg.drawLine( (int)userToWorldX( xSelMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
-                            (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
-
-            c.close();
+                c.close();
           } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
         }
       }
@@ -1204,7 +1203,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
             Y = (int)userToWorldY(getLly()+(j+1)*(getUry()-getLly())/(width/radius));
             if( binning.table[index] > 0 )
                 rects.addElement(new MyRect( true, 'f', "Observed", X, Y, nextX - X, lastY - Y, binning.table[index],
-                                             binning.table[index], 1.0, 0.0, binning.names[0]+": "+binning.lnames[0][i]+"\n"+binning.names[1]+": "+binning.lnames[1][j]+'\n', tileIds));
+                                             binning.table[index], 1.0, 0.0, binning.names[0]+": "+binning.lnames[0][i]+"\n"+binning.names[1]+": "+binning.lnames[1][j]+'\n', tileIds, binning));
             lastY = Y;
         }
         X = nextX;
