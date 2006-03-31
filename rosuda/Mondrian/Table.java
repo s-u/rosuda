@@ -437,11 +437,13 @@ public class Table implements Cloneable {
       public double retrieve(int i) {
         double sum=0, total=0;
         if( count !=-1 ) {
-          double[] counts;
-          counts = data.getRawNumbers(count);
+          double[] counts = data.getRawNumbers(count);
+          boolean[] miss = data.getMissings(count);
           for( int j=0; j<Ids[i].length; j++ ) {
-            sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
-            total += counts[Ids[i][j]];
+            if( !miss[Ids[i][j]] ) {
+              sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
+              total += counts[Ids[i][j]];
+            }
           }
           if( Ids[i].length > 0 )
             return sum/total;
