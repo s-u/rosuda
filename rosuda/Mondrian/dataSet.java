@@ -22,7 +22,7 @@ public class dataSet {
   protected boolean[] alpha={true};
   protected int[] NAcount={0};
   protected double[] selectionArray;
-  protected byte[] colorArray;
+  public byte[] colorArray;
   protected Color[] brushColors;
   public boolean colorBrush = false;
   protected double[] filterA;
@@ -48,13 +48,16 @@ public class dataSet {
   public int graphicsPerf=0;
   int counter;
   boolean selChanged;
+  private int[][] RGBs;  
 
   public dataSet(String setName) {
+    defineColors();
     this.isDB = false;
     this.setName = setName;
   }
 
   public dataSet(Driver d, Connection con, String DB, String Table) {
+    defineColors();
     this.isDB = true;
     this.setName = Table;
     this.d = d;
@@ -113,6 +116,22 @@ public class dataSet {
     } catch (Exception ex) {
       System.out.println("DB Exception: get size ... "+ex);
     } 	   
+  }
+  
+  public void defineColors() {
+    RGBs = new int[13][];
+    RGBs[1]  = new int[]{ 50, 106, 157};
+    RGBs[2]  = new int[]{199, 106, 149};
+    RGBs[3]  = new int[]{102, 154, 103};
+    RGBs[4]  = new int[]{255, 122,   0};
+    RGBs[5]  = new int[]{159,  64, 255};
+    RGBs[6]  = new int[]{255,   0, 255};
+    RGBs[7]  = new int[]{159, 255,  64};
+    RGBs[8]  = new int[]{255, 210,   0};
+    RGBs[9]  = new int[]{  0, 255, 255};
+    RGBs[10] = new int[]{210,   0,   0};
+    RGBs[11] = new int[]{  0, 255,   0};
+    RGBs[12] = new int[]{  0,   0, 210};    
   }
   
   public void addVariable(String name, boolean alpha, boolean categorical, double[] data) {
@@ -801,41 +820,80 @@ System.out.println(newQ.makeQuery());
       
   public Color getColorByID(int id) {
     return brushColors[id];
-  }    
+  }
+      
+  public int getNumColors() {
+    return brushColors.length;
+  }
       
   public void setColor(int i, int c) {
     colorArray[i] = (byte)c;    
   }
       
-  public void setColors(int k) {
-    if( k<256 )
+  public void setColors(int k, int mode) {
+    if( k<256 ) {
       colorBrush = true;
-    else
+      brushColors = new Color[k+1];
+      System.out.println("Setting "+k+" Colors");
+      brushColors[0] = MFrame.objectColor;
+    } else
       return;
-    
-    brushColors = new Color[k];
-    for(int i=0; i<k; i++) {
-      brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.75F, 1.0F);
-      System.out.println("Color: "+brushColors[i]);
-    }
-    int j=0;
-    double step = 0.0;
-    double offset = 0.0;
-    for(int r=0; r<=1.4426950408889634*Math.log(k); r++) {
-      step = 1.0/Math.pow(2,r);
-      offset = step/2;
-      for(int s=0; s<Math.pow(2,r); s++) {
-        System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
-        if( j<k )
-          brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.75F, 1.0F);
-        else
-          return;
-      }
+      
+    switch(mode) {
+      case 0:
+        // Linear Colors
+        for(int i=1; i<=k; i++) {
+          brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.75F, 1.0F);
+          System.out.println("Color: "+brushColors[i]);
+        }
+          break;
+      case 1:
+        // Fixed (linear) Colors
+        int j=1;
+        double step = 0.0;
+        double offset = 0.0;
+        for(int r=0; r<=Math.log(k)/Math.log(2); r++) {
+          step = 1.0/Math.pow(2,r);
+          offset = step/2;
+          for(int s=0; s<Math.pow(2,r); s++) {
+            System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
+            if( j<k )
+              brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.75F, 1.0F);
+            else
+              return;
+          }
+        }
+          break;
+      case 2:
+        // Static Colors
+        for(int i=0; i<k; i++)
+          brushColors[i+1] = new Color(RGBs[(i % 12)+1][0], RGBs[(i % 12)+1][1], RGBs[(i % 12)+1][2]);
+          break;
     }
   }
       
-  public void unsetColors() {
+  public int addColor(int c) {
+    Color newColor = new Color(RGBs[c][0], RGBs[c][1], RGBs[c][2]);
+    if( !colorBrush ) {
+      colorBrush = true;
+      brushColors = new Color[2];
+      brushColors[0] = MFrame.objectColor;
+      brushColors[1] = newColor;
+    } else {
+      for(int i=0; i<brushColors.length; i++)
+        if( brushColors[i].equals(newColor) )
+          return i;
+      brushColors = (Color[])Util.resizeArray(brushColors, brushColors.length+1);
+      brushColors[brushColors.length-1] = newColor;
+    }
+    return brushColors.length-1;
+  }
+        
+  public void colorsOff() {
     colorBrush = false;
+    brushColors = null;
+    for(int i=0; i<n; i++)
+      colorArray[i] = 0;
   }
       
   public double[] getSelection() {
@@ -887,7 +945,10 @@ System.out.println(newQ.makeQuery());
         
 //System.out.println(" filterVar: "+filterVar+" Grp: "+grp+ " <-- "+ filterGrp +" --> "+filterVal); 
     filterON = true;
-    filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
+    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+      filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(  Double.toString( Double.valueOf(grp).doubleValue() ) ));
+    else
+      filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
     if( (((Variable)data.elementAt(filterVar)).alpha) )
       filterVal = filterGrp;
     else
@@ -1186,7 +1247,18 @@ System.out.println(newQ.makeQuery());
           returnA[i] = levelA[permA[i]];
         else
           returnA[i] = "NA";
+//System.out.println(name+" <-> "+returnA[i]);
       }
+      
+      boolean allDotNull = true;
+      for(int i=0; i<returnA.length; i++)
+        if( !returnA[i].endsWith(".0") && !returnA[i].equals("NA"))
+          allDotNull = false;
+      if( allDotNull )
+        for(int i=0; i<returnA.length; i++)
+          if( returnA[i].endsWith(".0") )
+            returnA[i] = returnA[i].substring(0, returnA[i].length()-2);
+      
       return returnA;
     }
 
@@ -1366,7 +1438,7 @@ System.out.println("query: "+query+" ---> "+this.max);
         int i=0;
         if( q==0 ) {
           while( filterA[sortI[i]] != filterVal ) {i++;
-            //System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" i:"+i+" - "+filterA[sortI[i]]);
+//System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" i:"+i+" - "+filterA[sortI[i]]);
           }
           return data[sortI[i]];
         }
@@ -1376,7 +1448,7 @@ System.out.println("query: "+query+" ---> "+this.max);
             return data[sortI[i]];
         }
 //        System.out.println("filterGrp: "+filterGrp+" filterGrps: "+filterGrpSize.length);
-//        System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]+" Group: "+filterGrp);
+//System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]+" Group: "+filterGrp);
         int stop = (int)(q * (filterGrpSize[filterGrp]-1));
         while( count <= stop )
           if( filterA[sortI[i++]] == filterVal ) {
