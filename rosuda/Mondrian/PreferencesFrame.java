@@ -76,15 +76,15 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
       setSize(250,160);
       c=new Color[4];
       c[0]=MFrame.backgroundColor;
-      c[1]=Color.lightGray;
-      c[2]=Color.black;
+      c[1]=MFrame.objectColor;
+      c[2]=MFrame.lineColor;
       c[3]=DragBox.hiliteColor;
     }
 
     public void paint(Graphics g) {
       g.setFont(new Font("SansSerif",0,11));
       g.drawString("background color:",30,35);
-      g.setColor(Color.gray);
+//      g.setColor(Color.gray);
       g.drawString("objects color:",30,65);
       g.drawString("text/lines color:",30,95);
       g.setColor(Color.black);
@@ -141,9 +141,11 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     if (cl!=null)
       MFrame.backgroundColor=cl;
     cl=Util.hrgb2color(schemes[++i]);
+    if (cl!=null)
+      MFrame.objectColor=cl;
     cl=Util.hrgb2color(schemes[++i]);
-    //    if (cl!=null)
-    //      pc.c[1]=cl;
+    if (cl!=null)
+      MFrame.lineColor=cl;
     cl=Util.hrgb2color(schemes[++i]);
     if (cl!=null)
       DragBox.hiliteColor=cl;
@@ -154,8 +156,6 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     int x=ev.getX(), y=ev.getY();
     if (x>170 && x<200 && y>20 && y<130) {
       int a=(y-15)/30;
-      if( a == 1 || a== 2 )                 // Disabled fields
-        return;
       Color cl=null;
       cl=JColorChooser.showDialog(this,"Choose color",pc.c[a]);
       if (cl!=null) {
@@ -181,7 +181,8 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     }
     if (cmd=="Apply" || cmd=="Save") {
       MFrame.backgroundColor=pc.c[0];
-      //            Common.objectsColor=pc.c[1];
+      MFrame.objectColor=pc.c[1];
+      MFrame.lineColor=pc.c[2];
       DragBox.hiliteColor=pc.c[3];
       frame.updateSelection();
     }
