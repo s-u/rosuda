@@ -70,7 +70,7 @@ public class MosaicCanvas extends BaseCanvas {
             "Rotate variables left (left)",M_PERMUTELEFT,
             "Rotate variables right (right)",M_PERMUTERIGHT
         });
-
+        
         mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
         
         ft=new FrequencyTable(v);
@@ -424,7 +424,7 @@ public class MosaicCanvas extends BaseCanvas {
                 final int[] ref = ft.getMatchingCases(combination,maxLevel);
                 final boolean empty = (ref.length==0);
                 
-                if( stop || empty ) {	            // Now the rectangles are generated
+                if( stop ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
                     tile.info=info;
                     tile.setType(mode);
