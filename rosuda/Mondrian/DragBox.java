@@ -31,7 +31,6 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
 {
   static Color hiliteColor = new Color(180, 96, 135);
-  //  static Color hiliteColor = Color.green;
 
   protected Color	background = Color.black;
   protected Color	dragboxcolor = Color.red;
@@ -40,6 +39,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public MFrame frame;                               // The frame we are within.
   public JScrollBar sb;                             // We might need a scroll bar
 
+  public int colorSet = -1;                         // The color which as assigned with meta-n
+  
   public boolean selectFlag;                        // True if selection occured in this DragBox
 
   public boolean dataFlag;                          // True if change occured in this DragBox
@@ -373,13 +374,21 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     }  
 
     public void addSelectionListener(SelectionListener l) {
-      listener = l;
+      slistener = l;
     }
-
+    
+    public void addDataListener(DataListener l) {
+      dlistener = l;
+    }
+    
     public void processEvent(AWTEvent evt) {
       if( evt instanceof SelectionEvent ) {
-        if( listener != null )
-          listener.updateSelection();
+        if( slistener != null )
+          slistener.updateSelection();
+      }
+      if( evt instanceof DataEvent ) {
+        if( dlistener != null )
+          dlistener.dataChanged(-1);
       }
       else super.processEvent(evt);
     }
@@ -533,8 +542,10 @@ System.out.println(" dragEnd! ");
             Selections.addElement(S);
           }
           else {
+            //            System.out.println("Painting ............");
             S = ((Selection)Selections.elementAt(movingID));
             S.r = sr;
+            S.setMode(Selection.MODE_OR);
           }
           selectFlag = true;
           se = new SelectionEvent(this);
@@ -754,14 +765,14 @@ System.out.println("Mouse Action to check: "+mouse);
             JMenu mode = new JMenu(S.getModeString(S.mode));
             JMenuItem modeM = new JMenuItem(S.getModeString(S.mode));	    
 
-            if( selStep > 1) {
+            if( selStep > 1 || S.total == 1 ) {
               if( S.mode != Selection.MODE_STANDARD ) {
                 JMenuItem Replace = new JMenuItem(S.getModeString(Selection.MODE_STANDARD));
                 mode.add(Replace);
                 Replace.addActionListener(this);
                 Replace.setActionCommand(S.getModeString(Selection.MODE_STANDARD));
               }
-              if( S.mode != Selection.MODE_AND ) {
+              if( S.mode != Selection.MODE_AND && selStep > 1 ) {
                 JMenuItem And = new JMenuItem("And");
                 mode.add(And);
                 And.addActionListener(this);
@@ -773,7 +784,7 @@ System.out.println("Mouse Action to check: "+mouse);
                 Or.addActionListener(this);
                 Or.setActionCommand(S.getModeString(Selection.MODE_OR));
               }
-              if( S.mode != Selection.MODE_XOR ) {
+              if( S.mode != Selection.MODE_XOR && selStep > 1) {
                 JMenuItem XOr = new JMenuItem("Xor");
                 mode.add(XOr);
                 XOr.addActionListener(this);
@@ -927,9 +938,9 @@ System.out.println("Mouse Action to check: "+mouse);
       }
 
     ///////////////////////////////////////////////////////////////////////////
-
+    
     public void processKeyEvent(KeyEvent e) {
-
+      
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_P)   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
@@ -969,6 +980,39 @@ System.out.println("Mouse Action to check: "+mouse);
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_1) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 1; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_2) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 2; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_3) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 3; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_4) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 4; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_5) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 10; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_6) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 11; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_7) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 12; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_8) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 8; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_9) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 9; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+      }
+      if((e.getID() == KeyEvent.KEY_PRESSED) && e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == (InputEvent.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+        colorSet = 999;
+        DataEvent de = new DataEvent(this);              // now the rest is informed ...
+        evtq.postEvent(de);
+      }
+      
       // Fire up min-max dialog
       if ((e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_J )   &&
@@ -1113,7 +1157,8 @@ System.out.println("Mouse Action to check: "+mouse);
       }
     }
 
-    private SelectionListener listener;
+    private SelectionListener slistener;
+    private DataListener      dlistener;
     private static EventQueue evtq;
 
     class HotRect extends Rectangle {
