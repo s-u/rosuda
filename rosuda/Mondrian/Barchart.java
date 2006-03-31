@@ -26,6 +26,7 @@ public class Barchart extends DragBox implements ActionListener {
   private Image bi;
   private Graphics bg;
   private int k;
+  private int eventID;
   
   public Barchart(MFrame frame, int width, int height, Table tablep) {
     super(frame);
@@ -60,16 +61,9 @@ public class Barchart extends DragBox implements ActionListener {
       titletext = "Barchart("+names[0]+"|"+tablep.data.getName(tablep.count)+")";
     
     frame.setTitle(titletext);
-    
+        
     evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
-    
-    // We use low-level events, so we must specify
-    // which events we are interested in.
-    this.enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-    this.enableEvents(AWTEvent.KEY_EVENT_MASK);
-    this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
-    this.requestFocus();
-    
+
     sb.show();
   }
   
@@ -80,7 +74,7 @@ public class Barchart extends DragBox implements ActionListener {
   public void processEvent(AWTEvent evt) {
     if( evt instanceof DataEvent ) {
       if( listener != null )
-        listener.dataChanged(tablep.initialVars[0]);
+        listener.dataChanged(eventID);
     }
     else super.processEvent(evt);
   }
@@ -144,9 +138,9 @@ public class Barchart extends DragBox implements ActionListener {
     
     public void dataChanged(int var) {
       
-      System.out.println("Changed: "+var);
+      //System.out.println("Changed: "+var);
       
-      if( var == tablep.initialVars[0] ) {
+      if( var == tablep.initialVars[0] || var == -1 ) {
         tablep.rebreak();
         realHeight = create(border, border, width-border, height-border, "");
         paint(this.getGraphics());
@@ -207,6 +201,7 @@ public class Barchart extends DragBox implements ActionListener {
       
       int start = -1, stop = k-1;
       
+      bg.setColor(MFrame.lineColor);
       if( !printing ) {
         for( int i = 0;i < labels.size(); i++) {
           MyText t = (MyText)labels.elementAt(i);
@@ -435,7 +430,8 @@ for( int j=0; j<v.levelP; j++ )
 v.IpermA[v.permA[j]] = j;
 
 this.dataFlag = true;                            // this plot was responsible
-dataChanged(tablep.initialVars[0]);              // and is updated first!
+eventID = tablep.initialVars[0];
+dataChanged(eventID);              // and is updated first!
 
 DataEvent de = new DataEvent(this);              // now the rest is informed ...
 evtq.postEvent(de);
@@ -502,7 +498,17 @@ public void processKeyEvent(KeyEvent e) {
     Graphics g = this.getGraphics();
     paint(g);
     g.dispose();
-  }
+  } else if( e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && !e.isShiftDown() ) {
+    tablep.data.setColors(k, 2);
+    double[] datas = tablep.data.getNumbers(tablep.initialVars[0]);
+    for(int i=0; i<tablep.data.n; i++)
+      tablep.data.setColor(i, 1+(int)datas[i]);
+    eventID = -1;
+    dataChanged(eventID);                                 // and is updated first!
+    
+    DataEvent de = new DataEvent(this);              // now the rest is informed ...
+    evtq.postEvent(de);
+  } 
   super.processKeyEvent(e);  // Pass other event types on.
 }
 
@@ -568,7 +574,8 @@ public void actionPerformed(ActionEvent e) {
       }
     }
     this.dataFlag = true;                            // this plot was responsible
-    dataChanged(tablep.initialVars[0]);              // and is updated first!
+    eventID = tablep.initialVars[0];
+    dataChanged(eventID);              // and is updated first!
     
     DataEvent de = new DataEvent(this);              // now the rest is informed ...
     evtq.postEvent(de);
@@ -593,15 +600,7 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   double sum = 0;
   double max = 0;
   Vector[] tileIds = new Vector[k];
-  
-  //      boolean allDotNull = true;
-  //      for(int i=0; i<lnames[0].length; i++)
-  //        if( !lnames[0][i].endsWith(".0"))
-  //          allDotNull = false;
-  //      if( allDotNull )
-  //        for(int i=0; i<lnames[0].length; i++)
-  //          lnames[0][i] = lnames[0][i].substring(0, lnames[0][i].length()-2);
-  
+    
   for(int i=0; i<k; i++ ) {
     sum += tablep.table[i];
     max = Math.max( max, tablep.table[i] );
@@ -662,10 +661,10 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     if( tablep.data.phoneNumber( tablep.initialVars[0] ) )
       rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h,
                                    tablep.table[i], tablep.table[i], 1, 0,
-                                   Util.toPhoneNumber(Util.atod(lnames[0][i]))+'\n', tileIds[i]));
+                                   Util.toPhoneNumber(Util.atod(lnames[0][i]))+'\n', tileIds[i], tablep));
     else
       rects.addElement(new MyRect( true, 'x', "Observed", x1 + x, y1 + y, w, (int)h,
-                                   tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
+                                   tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i], tablep));
     y += hi+10*pF;
   }
   
