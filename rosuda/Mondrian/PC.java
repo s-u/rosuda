@@ -999,7 +999,7 @@ public class PC extends DragBox implements ActionListener {
                         
         if( ( (alignMode.equals("center") || alignMode.equals("cvalue") ) && Scale.equals("Individual") ) || paintMode.equals("XbyY") ) { // draw y-axis if the scaling options allow
           //
-          bg.setColor(Color.black);
+          bg.setColor(MFrame.lineColor);
           Font SF = new Font("SansSerif", Font.PLAIN, 11);
           bg.setFont(SF);
           FontMetrics fm = bg.getFontMetrics();
@@ -1029,22 +1029,31 @@ public class PC extends DragBox implements ActionListener {
           bg.rotate(Math.PI/2);
         }
 
-        bg.setColor(new Color(0, 0, 0, alpha));
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
+        
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
-          for( int i=0; i<data.n; i++ ) 
+          for( int i=0; i<data.n; i++ ) {
+            if( data.colorBrush )
+              bg.setColor(data.getColor(i));
             if( !data.hasMissings )
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
             else
               myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
+          }
         }
         if( paintMode.equals("Poly") && zoomToSel ) {
-          for( int i=0; i<data.n; i++ )
+          for( int i=0; i<data.n; i++ ) {
+            if( data.colorBrush )
+              bg.setColor(data.getColor(i));
             if( onlyHi[i] )
               if( !data.hasMissings )
                 bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
               else
                 myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
+          }
         }
+        bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1F));
+
         if( k> 1 ) {                                                                    // no need to draw a single axis ...
           for( int j=0; j<k; j++ ) {	                    	                      	// Draw Axes
             if( !printing )
@@ -1574,7 +1583,7 @@ public class PC extends DragBox implements ActionListener {
               rects.addElement(new MyRect( true, 'x', "Observed", 
                                            x-(int)(0.5+slotWidth/4), y, w, h, 
                                            breakdown.table[i], breakdown.table[i], 1, 0, 
-                                           breakdown.lnames[0][i]+'\n', tileIds[i]));	  
+                                           breakdown.lnames[0][i]+'\n', tileIds[i], breakdown));	  
             }
           }
         }
