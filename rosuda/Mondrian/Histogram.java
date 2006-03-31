@@ -36,6 +36,9 @@ public class Histogram extends DragBox implements ActionListener {
   private int round;					// percision for labels ...
   private boolean coordsSet = false;
   private boolean info = false;
+  private int eventID;
+  private Polygon pD;
+
 
   public Histogram(MFrame frame, int width, int height, Table tablep, double bStart, double bWidth, int weight) {
     super(frame);
@@ -93,8 +96,22 @@ public class Histogram extends DragBox implements ActionListener {
     this.enableEvents(AWTEvent.KEY_EVENT_MASK);
     this.enableEvents(AWTEvent.MOUSE_EVENT_MASK);
     this.requestFocus();
+
+    evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
   }
 
+  public void addDataListener(DataListener l) {
+    listener = l;
+  }
+   
+  public void processEvent(AWTEvent evt) {
+    if( evt instanceof DataEvent ) {
+      if( listener != null )
+        listener.dataChanged(eventID);
+    }
+    else super.processEvent(evt);
+  }
+  
   public void maintainSelection(Selection S) {
 
     Rectangle sr = S.r;
@@ -264,25 +281,34 @@ public class Histogram extends DragBox implements ActionListener {
         try {
           Rconnection c = new Rconnection();
           double[] xVal = data.getRawNumbers(tablep.initialVars[0]);
-          c.assign("x", xVal);
+          double[] copyVal = new double[data.getN(dvar)];
+          boolean[] missing = data.getMissings(dvar);
+          if( data.n > data.getN(dvar) ) {
+            int k=0;
+            for( int i=0; i<data.n; i++ )
+              if( !missing[i] )
+                copyVal[k++] = xVal[i];
+            c.assign("x", copyVal);
+          } else
+            c.assign("x", xVal);            
 
           RList l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
           double[] dx = (double[]) l.at("x").getContent();
           double[] dy = (double[]) l.at("y").getContent();
 
-          if( displayMode.equals("Histogram") && !CDPlot )
-            for( int f=0; f<dx.length-1; f++ ) {
-              bg.drawLine( (int)userToWorldX( dx[f] ),   (int)userToWorldY( dy[f] ),
-                           (int)userToWorldX( dx[f+1] ), (int)userToWorldY( dy[f+1] ));
-            }
-              
-          int nSel = data.countSelection();
+          if( displayMode.equals("Histogram") && !CDPlot ) {
+            pD = new Polygon();
+            for( int f=0; f<dx.length; f++ )
+              pD.addPoint( (int)userToWorldX( dx[f] ),   (int)userToWorldY( dy[f] ));
+            bg.drawPolyline(pD.xpoints, pD.ypoints, pD.npoints);
+          }
+          int nSel = data.countSelection(dvar);
           if( nSel > 1 ) {
             double[] selX = new double[nSel];
             double[] selection = data.getSelection();
             int k=0;
             for( int i=0; i<data.n; i++ )
-              if( selection[i] > 0 ) 
+              if( selection[i] > 0 && !missing[i]) 
                 selX[k++]   = xVal[i];
             c.assign("x",selX);
 
@@ -298,26 +324,25 @@ public class Histogram extends DragBox implements ActionListener {
                 totalY += dy[f];
 
             double sumY = 0;
-            double fac = (double)nSel/(double)data.n;
+            double fac = (double)nSel/(double)data.getN(dvar);
+            pD = new Polygon();
             if( displayMode.equals("Histogram") )
               if( !CDPlot )
-                for( int f=0; f<dx.length-1; f++ )
-                  bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( dsy[f]*fac ),
-                               (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( dsy[f+1]*fac ));
+                for( int f=0; f<dx.length; f++ )
+                  pD.addPoint( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( dsy[f]*fac ) );
               else
-                for( int f=0; f<dx.length-1; f++ )
-                  bg.drawLine( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ),
-                               (int)userToWorldX( dsx[f+1] ), (int)userToWorldY( yMax * dsy[f+1]*fac/dy[f+1] ));
+                for( int f=0; f<dx.length; f++ )
+                  pD.addPoint( (int)userToWorldX( dsx[f] ),   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ) );
             else
-              for( int f=0; f<dx.length-1; f++ ) {
-                bg.drawLine( (int)userToWorldX( xMin + sumY/totalY * (xMax-xMin) )        ,   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ),
-                             (int)userToWorldX( xMin + (sumY+dy[f])/totalY * (xMax-xMin) ), (int)userToWorldY( yMax * dsy[f+1]*fac/dy[f+1] ));
+              for( int f=0; f<dx.length; f++ ) {
+                pD.addPoint( (int)userToWorldX( xMin + sumY/totalY * (xMax-xMin) )        ,   (int)userToWorldY( yMax * dsy[f]*fac/dy[f] ) );
                 sumY += dy[f];
               }
+            bg.drawPolyline(pD.xpoints, pD.ypoints, pD.npoints);
             if( CDPlot ) {
               bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.5)));
-              bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax*nSel/data.n ) , 
-                           (int)userToWorldX( xMax ), (int)userToWorldY( yMax*nSel/data.n ) );
+              bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax*nSel/data.getN(dvar) ) , 
+                           (int)userToWorldX( xMax ), (int)userToWorldY( yMax*nSel/data.getN(dvar) ) );
             }                  
           }
 
@@ -364,6 +389,8 @@ public class Histogram extends DragBox implements ActionListener {
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     &&   e.getKeyCode() == KeyEvent.VK_E )
                                                 || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+                                                    &&   e.getKeyCode() == KeyEvent.VK_B )
+                                                || (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
                                                     &&   e.getKeyCode() == KeyEvent.VK_D ))) {
         if( e.getKeyCode() == KeyEvent.VK_DOWN ) {
           if( bWidth > 0 ) {
@@ -395,6 +422,18 @@ public class Histogram extends DragBox implements ActionListener {
             displayMode = "Spinogramm";
           else
             displayMode = "Histogram";
+        }
+        if( e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+          // Set colors for color brushing
+          data.setColors(k, 0); 
+          for(int i=0; i<k; i++)
+            for(int j=0; j<(tablep.Ids[i]).length; j++)
+              data.setColor(tablep.Ids[i][j], 1+i);
+          eventID = -1;
+          dataChanged(eventID);                                 // and is updated first!
+          
+          DataEvent de = new DataEvent(this);              // now the rest is informed ...
+          evtq.postEvent(de);
         }
         if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1 ) {
           if( densityMode )
@@ -679,7 +718,7 @@ public class Histogram extends DragBox implements ActionListener {
             }
             else {
               JMenuItem Barchart  = new JMenuItem("Histogram");
-              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 
               mode.add(Barchart);
               Barchart.setActionCommand("Histogram");
@@ -760,7 +799,7 @@ public class Histogram extends DragBox implements ActionListener {
       double max = 0;
       Vector[] tileIds = new Vector[k];
       add = new double[k];
-
+      
       for(int i=0; i<k; i++ ) {
         add[i] = tablep.table[i];
         totalSum += add[i];
@@ -784,7 +823,7 @@ public class Histogram extends DragBox implements ActionListener {
                                        (int)userToWorldY(add[i]/totalSum/bWidth),
                                        (int)userToWorldX(bStart + (i+1)*bWidth)-(int)userToWorldX(bStart + i*bWidth),
                                        (int)userToWorldY(0)-(int)userToWorldY(add[i]/totalSum/bWidth),
-                                       add[i], add[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
+                                       add[i], add[i], 1, 0, lnames[0][i]+'\n', tileIds[i], tablep));
         }
       }
       else {				// Spinogram
@@ -798,7 +837,7 @@ public class Histogram extends DragBox implements ActionListener {
                                        (int)userToWorldY(yMax),
                                        currX-lastX,
                                        (int)userToWorldY(yMin)-(int)userToWorldY(yMax),
-                                       tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i]));
+                                       tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i], tablep));
           lastX = currX; 
         }
       }
@@ -813,7 +852,7 @@ public class Histogram extends DragBox implements ActionListener {
     }
 
     public void dataChanged(int var) {
-      if( var == tablep.initialVars[0] ) {
+      if( var == tablep.initialVars[0] || var == -1) {
         paint(this.getGraphics());
       }
     }
