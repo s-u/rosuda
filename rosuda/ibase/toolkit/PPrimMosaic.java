@@ -1,6 +1,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Color;
+import org.rosuda.ibase.SMarker;
 import org.rosuda.pograss.PoGraSS;
 
 
@@ -172,5 +173,10 @@ public class PPrimMosaic extends PPrimRectangle {
             return (x >= r.x && x <= r.x+r.width && y >= r.y && y <= r.y+r.height);
         else
             return super.contains(x, y);
+    }
+
+    public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
+        COL_BORDER = (censored?COL_MARKED:COL_OUTLINE);
+        super.paintSelected(g, orientation, m);
     }
 }

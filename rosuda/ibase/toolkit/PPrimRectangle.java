@@ -16,6 +16,7 @@ import org.rosuda.pograss.*;
 
 public class PPrimRectangle extends PPrimBase {
     static final String COL_OUTLINE = "outline";
+    protected String COL_BORDER = COL_OUTLINE;
     public Rectangle r;
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
@@ -81,7 +82,7 @@ public class PPrimRectangle extends PPrimBase {
 			mark++;			
         }
 		if (hasAny) {
-			g.setColor(COL_OUTLINE);
+			g.setColor(COL_BORDER);
 			g.drawRect(r.x,r.y,r.width,r.height);
 		}
     }
