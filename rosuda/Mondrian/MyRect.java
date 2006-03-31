@@ -19,21 +19,24 @@ public class MyRect extends Rectangle implements ActionListener {
   public boolean censored = false;
   public char dir;
   public double obs = 1;
-  private double hilite;
+  private double hilite = 0;
   private double exp;
   private double scale;
   private float p;
   private Color drawColor = Color.black;
   private JPanel panel;
   public Vector tileIds;
+  public Table tablep;
+  public Color rectColor = Color.lightGray;
+  private double[] Colors;
 
   public MyRect(boolean full, char dir, String mode, 
                 int x, int y, int w, int h, 
-                double obs, double exp, double scale, double p, String info, Vector tileIds) {
+                double obs, double exp, double scale, double p, String info, Vector tileIds, Table tablep) {
     super(x, y, w, h);
     this.full = full; this.dir = dir; this.exp = exp; this.scale = scale; this.mode = mode;
     this.x = x; this.y = y; this.w = w; this.h = h; this.obs = obs; this.p = (float)p; this.info = info;
-    this.tileIds = tileIds; this.panel = panel;
+    this.tileIds = tileIds; this.tablep = tablep;
   }
 
   public void moveTo(int x, int y) {
@@ -49,6 +52,13 @@ public class MyRect extends Rectangle implements ActionListener {
 
   public void actionPerformed(ActionEvent e) {
     // Dummy, since we just use it for information display
+  }
+  
+  public void setDirection(String d) {
+    if( d.equals("x") )
+      this.dir = 'x';
+    else
+      this.dir = 'y';
   }
 
   public void setHilite(double hilite) {
@@ -66,17 +76,77 @@ public class MyRect extends Rectangle implements ActionListener {
   public double getAbsHilite() {
     return hilite * obs;
   }
+  
+  public void colorBreakdown() {
+    
+    double[] Selection;
+    int sels=0;
+    Selection = tablep.data.getSelection();
+    Colors = new double[tablep.data.getNumColors()+1];              // we need one more slot (the highest) for the hilite color
+    for(int j=0; j<tileIds.size(); j++ ) {
+      int id = ((Integer)(tileIds.elementAt(j))).intValue();
+      for(int l=0; l<(tablep.Ids[id]).length; l++) 
+        if( Selection[tablep.Ids[id][l]] == 0 ) {
+          if( tablep.count == -1 )
+            Colors[tablep.data.colorArray[tablep.Ids[id][l]]]++;
+          else
+            Colors[tablep.data.colorArray[tablep.Ids[id][l]]] += (tablep.data.getRawNumbers(tablep.count))[tablep.Ids[id][l]];
+        } else
+          if( tablep.count == -1 )
+            sels++;
+          else
+            sels += (tablep.data.getRawNumbers(tablep.count))[tablep.Ids[id][l]];
+    }
+    Colors[0] = sels;                              // number of selected cases
+    Colors[Colors.length-1] = (int)obs;                                        // number of cases WITHOUT any color
+    for( int i=0; i<Colors.length-1; i++)
+      Colors[Colors.length-1] -= Colors[i];
+//    for( int i=0; i<Colors.length; i++)
+//      System.out.println("i: "+i+" Count: "+Colors[i]);
+  }
 
   public void draw(Graphics g) {
 
+    if( tablep!= null && tablep.data.colorBrush )
+      colorBreakdown();
+    
     //System.out.println(residual);
     if( obs > 0 ) {
       if( dir != 'f' ) {
-        if( info.indexOf("¥") == -1 && info.indexOf(": NA\n") == -1 && !(info.substring(0, 2)).equals("NA") )
-          g.setColor(Color.lightGray);
+        if( info.indexOf("¥") == -1 && info.indexOf(": NA\n") == -1 && !(info.length()>2?(info.substring(0, 3)).equals("NA\n"):false) )
+          g.setColor(MFrame.objectColor);
         else
           g.setColor(Color.white);
-        g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
+        if( tablep!= null && tablep.data.colorBrush )  {
+          if( dir == 'x' ) {
+            int[] ws = Util.roundProportions(Colors, obs, Math.min(w, width));
+            int altp=x;
+            for(int i=0; i<Colors.length; i++) {
+              if( i==Colors.length-1 )
+                g.setColor(MFrame.objectColor);
+              else if( i==0 )
+                g.setColor(DragBox.hiliteColor);
+              else
+                g.setColor(tablep.data.getColorByID(i));
+              g.fillRect(altp, y+Math.max(0, h-height), ws[i], Math.min(h, height) + 1);
+              altp += ws[i];
+            } 
+          } else if ( dir == 'y' ) {
+            int[] hs = Util.roundProportions(Colors, obs, Math.min(h, height));
+            int altp=0;
+            for(int i=0; i<Colors.length; i++) {
+              if( i==Colors.length-1 )
+                g.setColor(MFrame.objectColor);
+              else if( i==0 )
+                g.setColor(DragBox.hiliteColor);
+              else
+                g.setColor(tablep.data.getColorByID(i));
+              g.fillRect(x, y+Math.max(0, h-height)+Math.min(h, height)-altp-hs[i], Math.min(w, width), hs[i] );
+              altp += hs[i];
+            }
+          }
+        } else
+          g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
       } else {
         g.setColor(drawColor);
         g.fillRect(x, y, Math.max(1, w), h);
@@ -98,30 +168,35 @@ public class MyRect extends Rectangle implements ActionListener {
         g.fillRect(x, y+h-(int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
                    w, (int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
     }
-    if( obs == 0 || censored )
-      g.setColor(Color.red);
-    else
-      g.setColor(Color.black);
 
-    if( hilite > 0 ) {
+    if( hilite > 0 && (tablep== null || !tablep.data.colorBrush)) {
       Color c = g.getColor();
       g.setColor(DragBox.hiliteColor);
-//System.out.println("wh: "+(int)((double)w*hilite));
+//System.out.println("w: "+w+" hilite:"+hilite+"wh: "+(int)((double)w*hilite));
       if( Math.min(w, width) > 2 && Math.min(h, height) > 2 ) {  // Mit Rahmen
         plusX = 1;
         plusY = 0;
       }	
       if( dir == 'x' )
-        g.fillRect(x+plusX, y+Math.max(0, h-height), (((int)((double)w*hilite) == 0) ? 1: (int)Math.min(width, ((double)w*hilite))), Math.min(h, height));
+        g.fillRect(x+plusX, 
+                   y+Math.max(0, h-height), 
+                   (((int)((double)w*hilite) == 0) ? 1: (((int)((double)w*hilite) == w-1)&& hilite<1 ? w-2 : (int)Math.min(width, ((double)w*hilite)) ) ),
+                   Math.min(h, height));
       else if ( dir == 'y' )
-        g.fillRect(x, y+Math.max(0, h-height)+Math.min(h, height)-(((int)((double)(h+plusY)*hilite) == 0) ? (1-plusY): (int)Math.min(height, ((double)h*hilite))),
-                   Math.min(w, width), (((int)((double)(h+plusY)*hilite) == 0) ? 1: (int)Math.min(height+plusY, ((double)(h+plusY)*hilite))));
+        g.fillRect(x, 
+                   y+Math.max(0, h-height)+Math.min(h, height)-(((int)((double)(h+plusY)*hilite) == 0) ? (1-plusY): (int)Math.min(height, ((double)h*hilite))),
+                   Math.min(w, width), 
+                   (((int)((double)(h+plusY)*hilite) == 0) ? 1: (int)Math.min(height+plusY, ((double)(h+plusY)*hilite))));
       else {
         g.setColor(new Color(255, 0, 0, (int)(255*hilite)));
         g.fillRect(x, y, w, h);
       }
       g.setColor( c );
     }
+    if( obs == 0 || censored )
+       g.setColor(Color.red);
+    else
+       g.setColor(MFrame.lineColor);
     if( dir !='f' && Math.min(w, width) > 2 && Math.min(h, height) > 2 || obs == 0 || censored )
       g.drawRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height));
   }	
