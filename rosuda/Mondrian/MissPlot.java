@@ -549,9 +549,9 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     if( displayMode.equals("y") )
       dir = 'y';
     rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, (int)((width-2*border)*(1.0F-(double)miss[i]/data.n)), (int)hi,
-                                 data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", null));
+                                 data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", null, null));
     rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, (int)((width-2*border)*((double)miss[i]/data.n)), (int)hi,
-                                 miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null));
+                                 miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null, null));
     y += hi+15*pF;
   }
   
