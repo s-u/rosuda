@@ -422,9 +422,9 @@ public class MosaicCanvas extends BaseCanvas {
                 }
                 
                 final int[] ref = ft.getMatchingCases(combination,maxLevel);
-                final boolean empty = (ref.length==0);
+                final boolean empty = (ref.length==0)&& mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE;
                 
-                if( stop ) {	            // Now the rectangles are generated
+                if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
                     tile.info=info;
                     tile.setType(mode);
@@ -434,7 +434,7 @@ public class MosaicCanvas extends BaseCanvas {
                     tile.setP(ft.getP());
                     
                     if( Dirs[levelid] == 'x' ){
-                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE ){
+                        if( empty ){
                             tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     emptyBin,
@@ -450,7 +450,7 @@ public class MosaicCanvas extends BaseCanvas {
                             tile.setDir('y');
                         }
                     } else {
-                        if( empty && mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE ){
+                        if( empty  ){
                             tile.r = new Rectangle(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     sizeX+emptyWidth,
