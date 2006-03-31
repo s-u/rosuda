@@ -59,7 +59,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private JLabel progText;
   private JMenuBar menubar;
   public JMenu windows, help;
-  private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cs, vm, rc, oh, mds;
+  private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cc, cs, vm, rc, oh, mds;
   public  JMenuItem ca;
   private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
@@ -78,7 +78,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     hasR = Srs.checkLocalRserve();
     
     System.out.println("Starting RServe ... "+hasR);
-
+    
     user = System.getProperty("user.name");
     System.out.println(user+" on "+System.getProperty("os.name"));
     
@@ -187,6 +187,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     ts.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     
     options.addSeparator();                     // Put a separator in the menu
+    options.add(cc = new JMenuItem("Clear all Colors"));
+    cc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+
+    options.addSeparator();                     // Put a separator in the menu
     options.add(se = new JCheckBoxMenuItem("Selection Sequences", selseq));
     se.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     
@@ -257,6 +261,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     getContentPane().add("South", progPanel);
     
     // Create and register action listener objects for the menu items.
+    mv.addActionListener(new ActionListener() {     // Open a new missing value plot window
+      public void actionPerformed(ActionEvent e) {
+        missPlot();
+      }
+    });
     n.addActionListener(new ActionListener() {     // Open a new mosaic plot window
       public void actionPerformed(ActionEvent e) {
         mosaicPlot();
@@ -350,6 +359,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     ts.addActionListener(new ActionListener() {     // Toggle Selection via Menu
       public void actionPerformed(ActionEvent e) { toggleSelection(); }
     });
+    cc.addActionListener(new ActionListener() {     // Clear all Colors
+      public void actionPerformed(ActionEvent e) { clearColors(); }
+    });
     ah.addActionListener(new ActionListener() {     // Change the alpha mode for highlighted cases
       public void actionPerformed(ActionEvent e) {
         switchAlpha();
@@ -410,7 +422,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0n", 250, 285);
+    g.drawString("RC1.0o", 250, 285);
 
     mondrianRunning = true;
 
@@ -571,6 +583,13 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     }
   }
   
+  public void clearColors() {
+    if(thisDataSet > -1) { 
+      ((dataSet)dataSets.elementAt(thisDataSet)).colorsOff();
+      dataChanged(-1);
+    }
+  }
+  
   
   public void deleteSelection() {
     if( selList.size() > 0 ) {
@@ -656,13 +675,13 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         } else 
           Plots.removeElementAt(i--);
       
-      if( selList.size() > 0 ) {
+      if( selList.size() > 1 ) {
         ((Selection)(selList.firstElement())).mode = Selection.MODE_STANDARD;
       }
       // Do the update over all selections
       //
       if( oneClick != null ) {
-        //  This is a oneClick selection -> make it visible for Windows ...
+        //  This is a oneClick selection -> make it visible for Java 1.4 ...
         oneClick.r.width += 1;
         oneClick.r.height += 1;
         (oneClick.d).maintainSelection(oneClick);
@@ -672,6 +691,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         for( int i=0; i< selList.size(); i++ ) {
           Selection S = ((Selection)selList.elementAt(i));
           S.step = i + 1;
+          S.total = selList.size();
           (S.d).maintainSelection(S);
           ((MFrame)((S.d).frame)).maintainMenu(S.step);
         }
@@ -721,8 +741,27 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   
   public void dataChanged(int id) {
     
-    System.out.println("Join got the event !!!!");
-    
+    //System.out.println("Join got the event !!!!"+id);
+
+    // First check whether a color has been set individually
+    for( int i=0; i<Plots.size(); i++ ) {
+      int col = ((DragBox)Plots.elementAt(i)).colorSet;
+      if( col > -1 ) {
+        ((DragBox)Plots.elementAt(i)).colorSet = -1;
+        dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
+        id = -1;
+        if( col < 999 ) {
+          System.out.println("Setting Colors !!!!");
+          int retCol = data.addColor( col );
+          double selections[] = data.getSelection();
+          for( int j=0; j<data.n; j++) 
+            if( selections[j] != 0 )
+              data.setColor(j, retCol);
+        } else
+          data.colorsOff();
+      }
+    }    
+    // Then ordinary update loop
     for( int i=0; i<Plots.size(); i++ )
       if( ((DragBox)Plots.elementAt(i)).frame.isVisible() )  // Plotwindow still exists
         if( ((DragBox)Plots.elementAt(i)).dataFlag )         // This window was already updated 
@@ -752,9 +791,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       FileWriter fw = new FileWriter( file );
 
       double[][] dataCopy = new double[k][n];
+      boolean[][] missing = new boolean[k][n];
       dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
       double[] selected = data.getSelection();
       for( int j=0; j<k; j++ ) {
+        missing[j] = data.getMissings(j);
         if( data.categorical(j) && !data.alpha(j) )
           dataCopy[j] = data.getRawNumbers(j);
         else
@@ -780,7 +821,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           first = true;
           for( int j=0; j<k; j++)
             if( (varNames.getSelectedIndices().length == 0) || varNames.isSelectedIndex(j) ) {
-              if( data.categorical(j) )
+              if( missing[j][i] )
+                line += (first?"":"\t") + "NA";
+              else if( data.categorical(j) )
                 line += (first?"":"\t") + data.getLevelName(j,  dataCopy[j][i]);
               else
                 line += (first?"":"\t") + df.format(dataCopy[j][i]);
@@ -1086,17 +1129,17 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     boolean[] alpha;
     dataSet data;
     String filename = "";
+    String path = "";
     
     if( file == null ) {
       FileDialog f = new FileDialog(this, "Load Data", FileDialog.LOAD);
       //      JFileChooser f = new JFileChooser(this, "Load Data", FileDialog.LOAD);
-      if((System.getProperty("os.name")).equals("Irix") )
-        f.setDirectory("~theus/Data");
       f.setFile("");
       f.show();
       //System.out.println("->"+f.getDirectory()+"<-.->" + f.getFile());
       if (f.getFile() != null ) { 
         justFile = f.getFile();
+        path = f.getDirectory();
         filename = f.getDirectory() + justFile;
       } else
         filename = "";
@@ -1109,22 +1152,82 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       
       String line="";
       
-      if( true ) {
+      if( true ) {                                          // new reader
         progBar.setMinimum(0);
         progBar.setMaximum(100);
         data = new dataSet( justFile );
         dataSets.addElement(data);
         progText.setText("Loading ...");
         
-        data.turboRead(filename, this);
-        
+        String mapFile = data.turboRead(filename, this);
+        if( mapFile.indexOf("ERROR") == 0 ) {
+          JOptionPane.showMessageDialog(this, mapFile.substring(mapFile.indexOf(":")+2), "Open File Error", JOptionPane.ERROR_MESSAGE); 
+          progText.setText("");
+          setProgress(0.0);
+          return false;
+        }
         progText.setText(""); 
         progBar.setValue(0);
         progBar.setMaximum(data.n);
+        
+        if( !mapFile.equals("") ) {                          // more lines detected -> read the polygon
+          try {
+            BufferedReader br = new BufferedReader( new FileReader(path + mapFile) );
+            br.mark(1000000);
+            progText.setText("Polygons ..."); 
+            
+            double xMin =  10e10;
+            double xMax = -10e10;
+            double yMin =  10e10;
+            double yMax = -10e10;
+            
+            String tLine = br.readLine();
+            try {
+              StringTokenizer head = new StringTokenizer(tLine, "\t");
+              
+              try{
+                int      Id = Integer.valueOf(head.nextToken()).intValue();
+                String name = head.nextToken();
+                int npoints = Integer.valueOf(head.nextToken()).intValue();
+                double[]  x = new double[npoints];
+                double[]  y = new double[npoints];
+                
+                for( int i=0; i<npoints; i++ ) {
+                  tLine = br.readLine();
+                  StringTokenizer coord = new StringTokenizer(tLine);
+                  x[i] = Float.valueOf(coord.nextToken()).floatValue();
+                  xMin = Math.min(xMin, x[i]);
+                  xMax = Math.max(xMax, x[i]);
+                  y[i] = Float.valueOf(coord.nextToken()).floatValue();
+                  yMin = Math.min(yMin, y[i]);
+                  yMax = Math.max(yMax, y[i]);
+                }
+              }	
+              catch(NoSuchElementException e) {System.out.println("Poly Read Error: "+line);}
+            }
+            catch( IOException e ) {
+              System.out.println("Error: "+e);
+              System.exit(1);
+            }
+            
+            br.reset();
+            int count = 0;
+            while( line != null ) {
+              MyPoly p = new MyPoly();
+              p.read(br, xMin, 100000/Math.min(xMax-xMin, yMax-yMin), yMin, 100000/Math.min(xMax-xMin, yMax-yMin));
+              if( count++ % (int)(Math.max(data.n/20, 1)) == 0 )
+                progBar.setValue(Math.min(count, data.n));
+              polys.addElement(p);
+              line = br.readLine();                          // Read seperator (single blank line)
+            }
+          }
+          catch( IOException e ) {
+            System.out.println("Error: "+e);
+            System.exit(1);
+          }
+        }
         return true;
-        
-      } else {
-        
+      } else {                                               // old reader
         try {
           BufferedReader br = new BufferedReader( new FileReader(filename) );
           data = new dataSet( justFile );
@@ -1342,6 +1445,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           //
           Scatter2D scat = new Scatter2D(scatterMf, 200, 200, (dataSet)dataSets.elementAt(thisDataSet), tmpVars, varNames);
           scat.addSelectionListener(this);
+          scat.addDataListener(this);
           Plots.addElement(scat);
         }
     }
@@ -1372,6 +1476,40 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     pC.show();
   }
   
+  public void missPlot() {
+    final MFrame mV = new MFrame(this);
+    int k=0;
+    for( int i=0;i<(varNames.getSelectedIndices()).length;i++)
+      if( ((dataSet)dataSets.elementAt(thisDataSet)).n > ((dataSet)dataSets.elementAt(thisDataSet)).getN( (varNames.getSelectedIndices())[i] ) )
+        k++;
+    int[] passVars = new int[k];
+    k=0;
+    for( int i=0;i<(varNames.getSelectedIndices()).length;i++)
+      if( ((dataSet)dataSets.elementAt(thisDataSet)).n > ((dataSet)dataSets.elementAt(thisDataSet)).getN( (varNames.getSelectedIndices())[i] ) )
+        passVars[k++] = (varNames.getSelectedIndices())[i];
+    
+    if( k > 0 ) {
+      int totHeight = (Toolkit.getDefaultToolkit().getScreenSize()).height;
+      int tmpHeight = 35 * (1 + k);
+      if( tmpHeight > totHeight)
+        if( 20 * (1 + k) < totHeight )
+          tmpHeight = totHeight;
+        else
+          tmpHeight = 20 * (1 + k);
+      
+      mV.setSize(300, Math.min(tmpHeight, (Toolkit.getDefaultToolkit().getScreenSize()).height-30));
+      mV.setLocation(150, 150);
+      
+      MissPlot plotw = new MissPlot(mV, (dataSet)dataSets.elementAt(thisDataSet), passVars);
+      plotw.setScrollX();
+      plotw.addSelectionListener(this);
+      plotw.addDataListener(this);
+      Plots.addElement(plotw);
+      mV.show();
+    } else 
+      JOptionPane.showMessageDialog(this, "Non of the selected variables\ninclude any missing values"); 
+  }
+  
   public void weightedMosaicPlot() {
     final MFrame mondrian = new MFrame(this);
     mondrian.setSize(400,400);
@@ -1388,6 +1526,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     breakdown.addInteraction( new int[] { passed.length-1 } , true  );
     final Mosaic plotw = new Mosaic(mondrian, 400, 400, breakdown);
     plotw.addSelectionListener(this);
+    plotw.addDataListener(this);
     Plots.addElement(plotw);
     mondrian.getContentPane().add(plotw);                      // Add it
     mondrian.setLocation(300, 0);
@@ -1413,6 +1552,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     final Mosaic plotw = new Mosaic(mondrian, 400, 400, breakdown);
     plotw.addSelectionListener(this);
+    plotw.addDataListener(this);
     Plots.addElement(plotw);
     mondrian.getContentPane().add(plotw);                      // Add it
     mondrian.setLocation(300, 0);
@@ -1560,6 +1700,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       final Histogram plotw = new Histogram(hists, 250, 310, discrete, start, width, weight);
       
       plotw.addSelectionListener(this);
+      plotw.addDataListener(this);
       Plots.addElement(plotw);
       if( lastX + hists.getWidth() > (Toolkit.getDefaultToolkit().getScreenSize()).width +50 ) {   	// new Row
         row += 1;
@@ -1589,6 +1730,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
     Map map = new Map(mapf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), polys, varNames);
     map.addSelectionListener(this);
+    map.addDataListener(this);
     Plots.addElement(map);
 
     if( map.ratio > 1 )
@@ -1606,6 +1748,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), varNames);
     scat.addSelectionListener(this);
+    scat.addDataListener(this);
     Plots.addElement(scat);
     scatterf.setLocation(300, 333);
     scatterf.show();
@@ -1688,6 +1831,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
         mds.setEnabled(false);
+        mv.setEnabled(false);
         break;
       case 1:
         if( numCategorical == (varNames.getSelectedIndices()).length ) {
@@ -1702,6 +1846,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           hiw.setEnabled(true);
           pb.setEnabled(true);
         }
+        mv.setEnabled(true);
         n.setEnabled(false);
         bw.setEnabled(false);
         nw.setEnabled(false);
@@ -1714,6 +1859,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       case 2: 
         pc.setEnabled(true);
         sc2.setEnabled(true);
+        mv.setEnabled(true);
         mds.setEnabled(false);
         pb.setEnabled(true);
         byx.setEnabled(false);
@@ -1767,9 +1913,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           mds.setEnabled(true);   
         pc.setEnabled(true);      
         pb.setEnabled(true);
+        mv.setEnabled(true);
         sc2.setEnabled(false);
         //        sc.setEnabled(false);
     }
+    if( !((dataSet)dataSets.elementAt(thisDataSet)).hasMissings )
+      mv.setEnabled(false);
   }
 
   public void maintainWindowMenu(boolean preserve) {
