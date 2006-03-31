@@ -18,7 +18,8 @@ public class MFrame extends JFrame implements WindowListener {
   public String selString = "";
 
   static Color backgroundColor = new Color(223, 184, 96);
-//  static Color backgroundColor = Color.white;
+  static Color objectColor     = Color.lightGray;
+  static Color lineColor       = Color.black;
   
   public MFrame(Join J) {
     this.J = J;
