@@ -274,7 +274,9 @@ public class Map extends DragBox {
   }
 
   public void dataChanged(int var) {
-    if( var == displayVar ) {
+    if( var == displayVar || var == -1 ) {
+      if( var == -1 )
+        create();
       paint(this.getGraphics());
     }
   }
@@ -560,9 +562,12 @@ public class Map extends DragBox {
         p.transform(shiftx, shifty, scalex, scaley);
         p.translate(border, border);
         if( displayVar < 0 )
-          if( p.Id > -1 )
-            p.setColor(Color.lightGray);
-          else
+          if( p.Id > -1 ) {
+            if( data.colorBrush )
+              p.setColor(data.getColor(match[i]));
+            else
+              p.setColor(MFrame.objectColor);
+          } else
             p.setColor(MFrame.backgroundColor);
         else {
           float intensity=0;
