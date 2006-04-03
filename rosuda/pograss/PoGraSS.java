@@ -206,4 +206,7 @@ public class PoGraSS
     
     public void setClip(int x, int y, int width, int height) {};
     public void resetClip() {};
+
+    public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {};
+    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {};
 }

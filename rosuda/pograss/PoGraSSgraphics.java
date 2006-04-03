@@ -197,4 +197,13 @@ public class PoGraSSgraphics extends PoGraSS
     public void setClip(int x, int y, int width, int height) {
         g.setClip(x, y, width, height);
     }
+
+    public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        g.drawArc(x,y,width,height,startAngle,arcAngle);
+    }
+
+    public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+        g.fillArc(x, y, width, height, startAngle, arcAngle);
+    }
+
 }
