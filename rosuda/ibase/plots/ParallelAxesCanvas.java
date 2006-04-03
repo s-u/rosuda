@@ -120,6 +120,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * Box plot specific fields
      */
     private int boxwidth=20;
+    private int posBoxwidth=20; // possible boxwidth. used to determine maximal label length
     private final int MAX_BOXWIDTH=32;
     private final int MIN_BOXWIDTH=4;
     // invisible Points to allow selection of box plots
@@ -696,7 +697,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     if (vsCat || v.length>1) {
                         /* draw labels for X axis */
                         for(int i=0; i<xv.getNumCats(); i++){
-                            labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,boxwidth,(String)ax.getVariable().getCatAt(i));
+                            labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
                         }
                     }
                 } else {
@@ -909,11 +910,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
-        if(type==TYPE_BOX && ax!=null && v.length>1){
+        if(type==TYPE_BOX && ax!=null && (v.length>1 || vsCat)){
             int oBoxwidth = boxwidth;
             final int newBoxwidth = Math.max(((getAxCatPos(ax.getCatAtSeqIndex(1))-getAxCatPos(ax.getCatAtSeqIndex(0)))*8)/10,MIN_BOXWIDTH);
             if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
             else boxwidth = newBoxwidth;
+            posBoxwidth = newBoxwidth;
             if(boxwidth!=oBoxwidth) updateObjects();
         }
     }
