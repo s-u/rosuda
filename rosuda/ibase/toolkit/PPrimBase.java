@@ -73,4 +73,44 @@ public abstract class PPrimBase implements PlotPrimitive {
 
     /** returns the main color of the primitive */
     public Color getColor() { return col; }
+    
+    /**
+     * Taken from org.rosuda.Mondrian.Util (CVS version 1.5).
+     */
+    int[] roundProportions(double[] votes, double total, int pie) {
+        
+        int[] rounds = new int[votes.length];
+        
+        int start = -1;
+        int stop  = votes.length;
+        while( votes[++start] == 0 ) {}
+        while( votes[--stop]  == 0 ) {}
+    //    System.out.println("Start: "+start+" Stop: "+stop);
+        int k=1;
+        double eps=0;
+        int sum=0;
+        int converge=24;
+        while( sum != pie && k<64) {
+            k++;
+            sum=0;
+            for(int i=start; i<=stop; i++) {
+                if( k>=converge )
+                    eps = Math.random() - 0.5;
+                if( votes[i] < 0.0000000001 )
+                    rounds[i] = 0;
+                else
+                    rounds[i] = (int)Math.round((double)(votes[i])/total*pie + eps);
+                sum += rounds[i];
+            }
+            //System.out.println("k: "+k+" eps: "+eps+" sum: "+sum+" pie: "+pie);
+            if( sum > pie )
+                eps -= 1/Math.pow(2,k);
+            else if( sum < pie )
+                eps += 1/Math.pow(2,k);
+        }
+        if( sum != pie )
+            System.out.println(" Rounding Failed !!!");
+        
+        return rounds;
+    }
 }
