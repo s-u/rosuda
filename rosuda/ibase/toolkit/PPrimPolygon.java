@@ -135,54 +135,63 @@ public class PPrimPolygon extends PPrimBase {
     }
     
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
+        Color col;
         if (pg==null) return;
         g.defineColor(COL_RED,255,0,0);
+        final int mark = m.get(ref[0]);
+        if(mark==-1) {
+            col = Common.selectColor;
+        } else {
+            col = ColorBridge.getMain().getColor(mark);
+        }
+        
         final double sa=getMarkedProportion(m,-1);
         //System.out.println("pp["+i+"] sa="+sa+" "+pp);
-        if (sa>0d) {
+        if (sa>0d || mark>0) {
             if(fill){
                 if (useSelAlpha && sa<1.0)
-                    g.setColor(((float)Common.selectColor.getRed())/255.0F,
-                            ((float)Common.selectColor.getGreen())/255.0F,
-                            ((float)Common.selectColor.getBlue())/255.0F,(float)sa);
+                    g.setColor(((float)col.getRed())/255.0F,
+                            ((float)col.getGreen())/255.0F,
+                            ((float)col.getBlue())/255.0F,(float)sa);
                 else
-                    g.setColor(COL_MARKED);
+                    g.setColor(col);
                 g.fillPolygon(pg.xpoints,pg.ypoints,pg.npoints);
             }
             if (drawBorder) {
-                if(!fill){
-                    if (useSelAlpha && sa<1.0)
-                        g.setColor(((float)Common.selectColor.getRed())/255.0F,
-                                ((float)Common.selectColor.getGreen())/255.0F,
-                                ((float)Common.selectColor.getBlue())/255.0F,(float)sa);
-                    else
-                        g.setColor(COL_MARKED);
-                } else g.setColor(COL_OUTLINE);
-                //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
-                for(int i=1; i<pg.npoints; i++){
-                    if(!invisibleLines[i-1]){
-                        if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
-                        g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
-                    }
-                }
-                if(closed){
-                    if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
-                    g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
+                if (useSelAlpha && sa<1.0)
+                    g.setColor(((float)col.getRed())/255.0F,
+                            ((float)col.getGreen())/255.0F,
+                            ((float)col.getBlue())/255.0F,(float)sa);
+                else
+                    g.setColor(col);
+            } else {
+                g.setColor(COL_OUTLINE);
+            }
+            //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
+            for(int i=1; i<pg.npoints; i++){
+                if(!invisibleLines[i-1]){
+                    if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
+                    g.setColor(col);
+                    g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
                 }
             }
-            if(drawCorners){
-                g.setColor(COL_MARKED);
-                for(int i=0; i<pg.npoints; i++){
-                    if(noDotsAt==null || !noDotsAt[i])
-                        g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
-                }
+            if(closed){
+                if(lineWidth!=null) g.setLineWidth(lineWidth[pg.npoints-1]);
+                g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
             }
-            if(showGapDots && gapDots!=null){
-                g.setColor(COL_MARKED);
-                for(int i=0; i<gapDots.length; i++)
-                    if(gapDots[i])
-                        g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
+        }
+        if(drawCorners){
+            g.setColor(col);
+            for(int i=0; i<pg.npoints; i++){
+                if(noDotsAt==null || !noDotsAt[i])
+                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
+        }
+        if(showGapDots && gapDots!=null){
+            g.setColor(col);
+            for(int i=0; i<gapDots.length; i++)
+                if(gapDots[i])
+                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
         }
     }
     
