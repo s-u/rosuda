@@ -681,7 +681,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     //ay.setGeometry(Axis.O_Y,TH-mBottom,-(H=innerH));
                     
                     /* draw ticks and labels for Y axis */
-                    if(commonScale) {
+                    if(commonScale || vsCat) {
                         double f=ay.getSensibleTickDistance(30,18);
                         double fi=ay.getSensibleTickStart(f);
                         while (fi<ay.vBegin+ay.vLen) {
@@ -702,7 +702,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 } else {
                     
                     /* draw ticks and labels for Y axis */
-                    if(commonScale) {
+                    if(commonScale || vsCat) {
                         final int h=pc.getHeight();
                         double f=ay.getSensibleTickDistance(30,18);
                         double fi=ay.getSensibleTickStart(f);
