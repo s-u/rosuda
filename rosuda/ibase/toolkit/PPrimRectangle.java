@@ -9,6 +9,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
+import java.util.Arrays;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
@@ -20,13 +21,13 @@ public class PPrimRectangle extends PPrimBase {
     public Rectangle r;
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
-
+    
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
-
+    
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
     public boolean intersects(final Rectangle rt) { return (r==null)?false:r.intersects(rt); }
-
+    
     /** paint the primitive */
     public void paint(final PoGraSS g, final int orientation) {
         if (r==null) return;
@@ -40,55 +41,102 @@ public class PPrimRectangle extends PPrimBase {
             g.drawRect(r.x,r.y,r.width,r.height);
         }
     }
-
+    
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
-		int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
-		final double totW=rW;
+        int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
+        final double totW=rW;
         final double totH=rH;
-		int mark=-1;
-		double shift=0d;
-		boolean hasAny=false;
-		
-		while (mark<=m.getMaxMark()) {
-			final double sa=getMarkedProportion(m,mark);
-			//System.out.println("pp["+i+"] sa="+sa+" "+pp);
-			if (sa>0d) {
-				hasAny=true;
-				if (orientation==0) { // bottom-up
-					rH=(int)(totH*sa+0.5);
-					rY=r.y+(int)(totH-totH*shift+0.5)-rH;
-				} else if (orientation==2) { // top-down
-					rH=(int)(totH*sa+0.5);
-					rY=r.y+(int)(totH*shift+0.5);
-				} else if (orientation==1) { // left-right
-					rW=(int)(totW*sa+0.5);
-					rX=r.x+(int)(totW*shift+0.5);					
-				} else if (orientation==3) { // right-left
-					rW=(int)(totW*sa+0.5);
-					rX=r.x+(int)(totW-totW*shift+0.5)-rW;
-				}
-				shift+=sa;
-				if (mark==-1)
-					g.setColor(COL_MARKED);
-				else
-					g.setColor(ColorBridge.getMain().getColor(mark));
-				g.fillRect(rX,rY,rW,rH);
-				g.setColor(COL_OUTLINE);
-				if (drawSelectionBorder)
-					g.drawRect(rX,rY,rW,rH);
-			}
-			if (mark==-1 && m.getSecCount()<1) break;
-			mark++;			
+        int mark=-1;
+        int shift=0;
+        boolean hasAny=false;
+        
+        double totalProp=0;
+        double[] props = new double[m.getMaxMark()+2];
+        for(int i=-1; i<=m.getMaxMark(); i++){
+            props[i+1] = getMarkedProportion(m,i);
+            totalProp += props[i+1];
         }
-		if (hasAny) {
-			g.setColor(COL_BORDER);
-			g.drawRect(r.x,r.y,r.width,r.height);
-		}
+        if(totalProp>=0.0000001){
+            int[] pieces = roundProportions(props,totalProp,((orientation&1)==0)?rH:rW);
+            for(int i=-1; i<=m.getMaxMark(); i++){
+                if (props[i+1]>0d) {
+                    hasAny=true;
+                    if (orientation==0) { // bottom-up
+                        rH=pieces[i+1];
+                        rY=r.y+r.height-shift-pieces[i+1];
+                    } else if (orientation==2) { // top-down
+                        rH=pieces[i+1];
+                        rY=r.y+shift;
+                    } else if (orientation==1) { // left-right
+                        rW=pieces[i+1];
+                        rX=r.x+shift;
+                    } else if (orientation==3) { // right-left
+                        rW=pieces[i+1];
+                        rX=r.x+r.width-shift-pieces[i+1];
+                    }
+                    shift+=pieces[i+1];
+                    if (i==-1)
+                        g.setColor(COL_MARKED);
+                    else
+                        g.setColor(ColorBridge.getMain().getColor(i));
+                    g.fillRect(rX,rY,rW,rH);
+                    g.setColor(COL_OUTLINE);
+                    if (drawSelectionBorder)
+                        g.drawRect(rX,rY,rW,rH);
+                }
+                if (i==-1 && m.getSecCount()<1) break;
+            }
+        }
+        
+        if (hasAny) {
+            g.setColor(COL_BORDER);
+            g.drawRect(r.x,r.y,r.width,r.height);
+        }
     }
-
+    
     public String toString() {
         return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height))
         +", cases="+cases()+", drawBorder="+drawBorder+", drawSelBorder="+drawSelectionBorder+")";
+    }
+    
+    /**
+     * Taken from org.rosuda.Mondrian.Util (CVS version 1.5).
+     */
+    private int[] roundProportions(double[] votes, double total, int pie) {
+        
+        int[] rounds = new int[votes.length];
+        
+        int start = -1;
+        int stop  = votes.length;
+        while( votes[++start] == 0 ) {}
+        while( votes[--stop]  == 0 ) {}
+//    System.out.println("Start: "+start+" Stop: "+stop);
+        int k=1;
+        double eps=0;
+        int sum=0;
+        int converge=24;
+        while( sum != pie && k<64) {
+            k++;
+            sum=0;
+            for(int i=start; i<=stop; i++) {
+                if( k>=converge )
+                    eps = Math.random() - 0.5;
+                if( votes[i] < 0.0000000001 )
+                    rounds[i] = 0;
+                else
+                    rounds[i] = (int)Math.round((double)(votes[i])/total*pie + eps);
+                sum += rounds[i];
+            }
+            //System.out.println("k: "+k+" eps: "+eps+" sum: "+sum+" pie: "+pie);
+            if( sum > pie )
+                eps -= 1/Math.pow(2,k);
+            else if( sum < pie )
+                eps += 1/Math.pow(2,k);
+        }
+        if( sum != pie )
+            System.out.println(" Rounding Failed !!!");
+        
+        return rounds;
     }
 }
