@@ -769,19 +769,19 @@ public class BaseCanvas
             repaint();
         }
         if (M_HALPHADOWN.equals(cmd)) {
-            ppAlphaH-=(ppAlphaH>0.2)?0.10:0.02; if (ppAlphaH<0.05f) ppAlphaH=0.05f;
+            ppAlphaH = alphaDown(ppAlphaH);
             setUpdateRoot(0); repaint();
         }
         if (M_HALPHAUP.equals(cmd)) {
-            ppAlphaH+=(ppAlphaH>0.2)?0.10:0.02; if (ppAlphaH>1f) ppAlphaH=1f;
+            ppAlphaH = alphaUp(ppAlphaH);
             setUpdateRoot(0); repaint();
         }
         if (M_ALPHADOWN.equals(cmd)) {
-            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
+            ppAlpha = alphaDown(ppAlpha);
             setUpdateRoot(0); repaint();
         }
         if (M_ALPHAUP.equals(cmd)) {
-            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
+            ppAlpha = alphaUp(ppAlpha);
             setUpdateRoot(0); repaint();
         }
         if(M_TRANSHIGHL.equals(cmd)) {
@@ -791,6 +791,20 @@ public class BaseCanvas
         }
         return null;
     };
+    
+    private float alphaUp(float alpha){
+        float ret;
+        ret = alpha + ((alpha>0.2f)?0.10f:0.02f);
+        if (ret>1f) ret=1f;
+        return ret;
+    }
+    
+    private float alphaDown(float alpha){
+        float ret;
+        ret = alpha + ((alpha>0.2f)?0.10f:0.02f);
+        if (ret<0.05f) ret=0.05f;
+        return ret;
+    }
     
     public void actionPerformed(final ActionEvent e) {
         if (e==null) return;
