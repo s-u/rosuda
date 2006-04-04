@@ -21,6 +21,9 @@ public class MosaicCanvas extends BaseCanvas {
     static final String M_CENSORDOWN = "censorDown";
     static final String M_PERMUTELEFT = "permuteLeft";
     static final String M_PERMUTERIGHT = "permuteRight";
+    static final String M_SET1 = "set1";
+    static final String M_SET64 = "set64";
+    static final String M_RESET = "reset";
     
     private SVar[] v;
     private int vs;
@@ -68,7 +71,11 @@ public class MosaicCanvas extends BaseCanvas {
             "Increase censor (shift+up)",M_CENSORUP,
             "Decrease censor (shift+down)",M_CENSORDOWN,
             "Rotate variables left (left)",M_PERMUTELEFT,
-            "Rotate variables right (right)",M_PERMUTERIGHT
+            "Rotate variables right (right)",M_PERMUTERIGHT,
+            "-",
+            "Set Colors (CB)",M_SET1,
+            "Set Colors (rainbow)",M_SET64,
+            "Clear Colors",M_RESET
         });
         
         mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
