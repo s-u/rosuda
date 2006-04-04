@@ -100,9 +100,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_COMMON = "common";
     private static final String M_YRANGEDLG = "YrangeDlg";
     private static final String M_SCALEDLG = "scaleDlg";
-    private static final String M_ALPHADOWN = "alphaDown";
-    private static final String M_ALPHAUP = "alphaUp";
-    private static final String M_TRANSHIGHL = "transparentHighlighting";
     private static final String M_PCPBOX = "toggleType";
     
     private MenuItem MIlabels=null;
@@ -112,9 +109,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MItrigraph=null;
     private MenuItem MInodeSizeUp=null;
     private MenuItem MInodeSizeDown=null;
-    private MenuItem MIhideNAlines=null;
-    private MenuItem MItransHighl=null;
-    private MenuItem MIPCPBox=null;
+    private MenuItem MIhideNAlines=null;    private MenuItem MIPCPBox=null;
     
     /**
      * Box plot specific fields
@@ -331,9 +326,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
             M_MINUS,
-            "More transparent (left)",M_ALPHADOWN,
-            "More opaque (right)",M_ALPHAUP,
-            "Transparent highlighting",M_TRANSHIGHL,
             "Set Colors (CB)",M_SET1,
             "Set Colors (rainbow)",M_SET64,
             "Clear Colors",M_RESET,
@@ -356,10 +348,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     public void keyPressed(final KeyEvent e) {
-        if (e.getKeyCode()==KeyEvent.VK_RIGHT) run(this, M_ALPHAUP);
-        if (e.getKeyCode()==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
         if (e.getKeyCode()==KeyEvent.VK_UP) run(this, M_NODESIZEUP);
         if (e.getKeyCode()==KeyEvent.VK_DOWN) run(this,M_NODESIZEDOWN);
+        super.keyPressed(e);
     }
     
     public Object run(final Object o, final String cmd) {
@@ -370,14 +361,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             MIlabels.setLabel((isShowLabels())?"Hide labels":"Show labels");
             setUpdateRoot(0);
             repaint();
-        }
-        if (M_ALPHADOWN.equals(cmd)) {
-            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
-            setUpdateRoot(0); repaint();
-        }
-        if (M_ALPHAUP.equals(cmd)) {
-            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
-            setUpdateRoot(0); repaint();
         }
         if ("exit".equals(cmd)) WinTracker.current.Exit();
         if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint();}
@@ -532,11 +515,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             }
             MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
             setUpdateRoot(0); repaint();
-        }
-        if(M_TRANSHIGHL.equals(cmd)) {
-            alphaHighlighting=!alphaHighlighting;
-            MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
-            setUpdateRoot(1); repaint();
         }
         if(M_PCPBOX.equals(cmd)) {
             type=(type+1)&1;

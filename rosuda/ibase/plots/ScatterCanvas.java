@@ -25,9 +25,6 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_YRANGEDLG = "YrangeDlg";
     static final String M_POINTSUP = "points+";
     static final String M_POINTSDOWN = "points-";
-    static final String M_ALPHADOWN = "alphaDown";
-    static final String M_ALPHAUP = "alphaUp";
-    static final String M_TRANSHIGHL = "transparentHighlighting";
     static final String C_OBJECTS = "objects";
     static final String C_RED = "red";
     /** array of two variables (X and Y) */
@@ -62,7 +59,6 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected MenuItem MIlabels=null;
     protected MenuItem MItrigraph=null;
-    protected MenuItem MItransHighl=null;
     
     protected int Y,W,H, TW,TH;
     
@@ -149,10 +145,6 @@ public class ScatterCanvas extends BaseCanvas {
             M_MINUS,
             "Bigger points (up)",M_POINTSUP,
             "Smaller points (down)",M_POINTSDOWN,
-            M_MINUS,
-            "More transparent (left)",M_ALPHADOWN,
-            "More opaque (right)",M_ALPHAUP,
-            "Transparent highlighting",M_TRANSHIGHL
         });
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MItrigraph=EzMenu.getItem(f,M_TRIGRAPH);
@@ -307,12 +299,7 @@ public class ScatterCanvas extends BaseCanvas {
         if (stackjitter && e.getKeyCode()==KeyEvent.VK_LEFT && stackOff>1) {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
         }*/
-        if (e.getKeyCode()==KeyEvent.VK_RIGHT) {
-            run(this,"alphaUp");
-        }
-        if (e.getKeyCode()==KeyEvent.VK_LEFT) {
-            run(this,"alphaDown");
-        }
+        super.keyPressed(e);
     };
     
     public void keyReleased(KeyEvent e) {
@@ -397,19 +384,6 @@ public class ScatterCanvas extends BaseCanvas {
             stackjitter=!stackjitter; updateObjects(); setUpdateRoot(1); repaint();
         }
         if (cmd=="trigraph") { useX3=!useX3; MItrigraph.setLabel(useX3?"Expand labels":"Shorten labels"); setUpdateRoot(0); repaint(); }
-        if (cmd=="alphaDown") {
-            ppAlpha-=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha<0.005f) ppAlpha=0.005f;
-            setUpdateRoot(0); repaint();
-        }
-        if (cmd=="alphaUp") {
-            ppAlpha+=(ppAlpha>0.2)?0.10:((ppAlpha>0.1)?0.05:((ppAlpha>0.02)?0.01:0.0025)); if (ppAlpha>1f) ppAlpha=1f;
-            setUpdateRoot(0); repaint();
-        }
-        if(M_TRANSHIGHL.equals(cmd)) {
-            alphaHighlighting=!alphaHighlighting;
-            MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
-            setUpdateRoot(1); repaint();
-        }
         
         return null;
     }

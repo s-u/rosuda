@@ -34,6 +34,10 @@ public class BaseCanvas
     static final String M_HALPHADOWN = "halphaDown";
     static final String M_HALPHAUP = "halphaUp";
     protected static final String M_RESETZOOM = "resetZoom";
+    protected static final String M_TRANSHIGHL = "transparentHighlighting";
+    protected static final String M_ALPHADOWN = "alphaDown";
+    protected static final String M_ALPHAUP = "alphaUp";
+    
     /** query popup window */
     protected QueryPopup qi;
     
@@ -126,7 +130,7 @@ public class BaseCanvas
     
     /** PlotText object containing labels. Can be null. */
     protected PlotText labels;
-
+    
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
     
@@ -134,6 +138,7 @@ public class BaseCanvas
     MenuItem MIseperatealphas=null;
     MenuItem MIhalphaup=null;
     MenuItem MIhalphadown=null;
+    protected MenuItem MItransHighl=null;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -305,7 +310,6 @@ public class BaseCanvas
         if (pp!=null) {
             
             if(alphaHighlighting) g.setGlobalAlpha(seperateAlphas?ppAlphaH:ppAlpha);
-            
             g.setColor(C_MARKED);
             int i = 0;
             while (i<pp.length) {
@@ -690,6 +694,8 @@ public class BaseCanvas
             pc.setCursor(Common.cur_zoom);
             inZoom=true;
         }
+        if (kc==KeyEvent.VK_RIGHT) run(this, M_ALPHAUP);
+        if (kc==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
     };
     
     public void keyReleased(final KeyEvent e) {
@@ -769,6 +775,19 @@ public class BaseCanvas
         if (M_HALPHAUP.equals(cmd)) {
             ppAlphaH+=(ppAlphaH>0.2)?0.10:0.02; if (ppAlphaH>1f) ppAlphaH=1f;
             setUpdateRoot(0); repaint();
+        }
+        if (M_ALPHADOWN.equals(cmd)) {
+            ppAlpha-=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha<0.05f) ppAlpha=0.05f;
+            setUpdateRoot(0); repaint();
+        }
+        if (M_ALPHAUP.equals(cmd)) {
+            ppAlpha+=(ppAlpha>0.2)?0.10:0.02; if (ppAlpha>1f) ppAlpha=1f;
+            setUpdateRoot(0); repaint();
+        }
+        if(M_TRANSHIGHL.equals(cmd)) {
+            alphaHighlighting=!alphaHighlighting;
+            MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
+            setUpdateRoot(1); repaint();
         }
         return null;
     };
@@ -857,7 +876,7 @@ public class BaseCanvas
     public boolean adjustMargin(final PoGraSS g){return false;};
     
     protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, String[] view){
-        String myMenu[] = new String[((view==null)?0:(view.length)) + 20];
+        String myMenu[] = new String[((view==null)?0:(view.length)) + 28];
         int i=0;
         myMenu[i++] = "+";
         myMenu[i++] = "File";
@@ -877,12 +896,20 @@ public class BaseCanvas
             myMenu[i++] = "Show only selected cases";
             myMenu[i++] = M_SONLYSELECTED;
             if(transparency){
+                myMenu[i++] = "-";
+                myMenu[i++] = "More transparent (left)";
+                myMenu[i++] = M_ALPHADOWN;
+                myMenu[i++] = "More opaque (right)";
+                myMenu[i++] = M_ALPHAUP;
+                myMenu[i++] = "Transparent highlighting";
+                myMenu[i++] = M_TRANSHIGHL;
                 myMenu[i++] = "Different transparency for hiliting.";
                 myMenu[i++] = M_SEPERATEALPHAS;
                 myMenu[i++] = "Hiliting more transparent.";
                 myMenu[i++] = M_HALPHADOWN;
                 myMenu[i++] = "Hiliting more opaque.";
                 myMenu[i++] = M_HALPHAUP;
+                myMenu[i++] = "-";
             }
             if(view!=null){
                 for (int j=0; j<view.length; j++){
