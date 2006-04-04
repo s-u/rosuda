@@ -30,6 +30,9 @@ public class BaseCanvas
     static final String M_EXPORTCASES = "exportCases";
     static final String M_ROTATE = "rotate";
     static final String M_SONLYSELECTED = "showOnlySelected";
+    static final String M_SEPERATEALPHAS = "seperateAlphas";
+    static final String M_HALPHADOWN = "halphaDown";
+    static final String M_HALPHAUP = "halphaUp";
     protected static final String M_RESETZOOM = "resetZoom";
     /** query popup window */
     protected QueryPopup qi;
@@ -109,7 +112,13 @@ public class BaseCanvas
     /** if set to <code>true</code> alpha will be applied to highlighting, too */
     protected boolean alphaHighlighting=false;
     
+    /** if set to <code>true</code> hilited and normal primitives can have different alphas */
+    protected boolean seperateAlphas=false;
+    
     protected float ppAlpha = 1.0f;
+    
+    /** alpha value for hilited primitives; is only used when {@link #seperateAlphas} is <code>true</code> */
+    protected float ppAlphaH = 1.0f;
     
     /** arrays of additional axes that are updated upon resize. can be null */
     protected Axis[] opAx; // axes parallel to ax
@@ -117,13 +126,14 @@ public class BaseCanvas
     
     /** PlotText object containing labels. Can be null. */
     protected PlotText labels;
-    
+
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
     
     MenuItem MIsonlyselected=null;
-    
-    /** */
+    MenuItem MIseperatealphas=null;
+    MenuItem MIhalphaup=null;
+    MenuItem MIhalphadown=null;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -294,7 +304,7 @@ public class BaseCanvas
         if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
         if (pp!=null) {
             
-            if(alphaHighlighting) g.setGlobalAlpha(ppAlpha);
+            if(alphaHighlighting) g.setGlobalAlpha(seperateAlphas?ppAlphaH:ppAlpha);
             
             g.setColor(C_MARKED);
             int i = 0;
@@ -666,6 +676,8 @@ public class BaseCanvas
         if (e.getKeyChar()=='P') run(this,M_PRINT);
         if (e.getKeyChar()=='X') run(this,"exportPGS");
         if (e.getKeyChar()=='C') run(this,M_EXPORTCASES);
+        if (e.getKeyChar()==',') run(this,M_HALPHADOWN);
+        if (e.getKeyChar()=='.') run(this,M_HALPHAUP);
     };
     
     public void keyPressed(final KeyEvent e) {
@@ -741,6 +753,22 @@ public class BaseCanvas
             showOnlyHilited = !showOnlyHilited;
             setUpdateRoot(0);
             repaint();
+        }
+        if(M_SEPERATEALPHAS.equals(cmd)){
+            MIseperatealphas.setLabel((seperateAlphas?"Different":"Same") + " transparency for hiliting.");
+            seperateAlphas = !seperateAlphas;
+            MIhalphadown.setEnabled(seperateAlphas);
+            MIhalphaup.setEnabled(seperateAlphas);
+            setUpdateRoot(0);
+            repaint();
+        }
+        if (M_HALPHADOWN.equals(cmd)) {
+            ppAlphaH-=(ppAlphaH>0.2)?0.10:0.02; if (ppAlphaH<0.05f) ppAlphaH=0.05f;
+            setUpdateRoot(0); repaint();
+        }
+        if (M_HALPHAUP.equals(cmd)) {
+            ppAlphaH+=(ppAlphaH>0.2)?0.10:0.02; if (ppAlphaH>1f) ppAlphaH=1f;
+            setUpdateRoot(0); repaint();
         }
         return null;
     };
@@ -828,14 +856,14 @@ public class BaseCanvas
      **/
     public boolean adjustMargin(final PoGraSS g){return false;};
     
-    protected void createMenu(Frame f, boolean rotate, boolean zoom, String[] view){
-        String myMenu[] = new String[((view==null)?0:(view.length)) + 14];
+    protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, String[] view){
+        String myMenu[] = new String[((view==null)?0:(view.length)) + 20];
         int i=0;
         myMenu[i++] = "+";
         myMenu[i++] = "File";
         myMenu[i++] = "~File.Graph";
         myMenu[i++] = "~Edit";
-        if(view!=null && view.length>0){
+        if((view!=null && view.length>0) || rotate || zoom || transparency){
             myMenu[i++] = "+";
             myMenu[i++] = "View";
             if(rotate){
@@ -848,8 +876,18 @@ public class BaseCanvas
             }
             myMenu[i++] = "Show only selected cases";
             myMenu[i++] = M_SONLYSELECTED;
-            for (int j=0; j<view.length; j++){
-                myMenu[i++] = view[j];
+            if(transparency){
+                myMenu[i++] = "Different transparency for hiliting.";
+                myMenu[i++] = M_SEPERATEALPHAS;
+                myMenu[i++] = "Hiliting more transparent.";
+                myMenu[i++] = M_HALPHADOWN;
+                myMenu[i++] = "Hiliting more opaque.";
+                myMenu[i++] = M_HALPHAUP;
+            }
+            if(view!=null){
+                for (int j=0; j<view.length; j++){
+                    myMenu[i++] = view[j];
+                }
             }
         }
         myMenu[i++] = "~Window";
@@ -857,5 +895,10 @@ public class BaseCanvas
         EzMenu.getEzMenu(f,this,myMenu);
         
         MIsonlyselected = EzMenu.getItem(f,M_SONLYSELECTED);
+        MIseperatealphas = EzMenu.getItem(f,M_SEPERATEALPHAS);
+        MIhalphadown = EzMenu.getItem(f,M_HALPHADOWN);
+        if(MIhalphadown!=null) MIhalphadown.setEnabled(false);
+        MIhalphaup = EzMenu.getItem(f,M_HALPHAUP);
+        if(MIhalphaup!=null) MIhalphaup.setEnabled(false);
     }
 }

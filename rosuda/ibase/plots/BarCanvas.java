@@ -77,7 +77,7 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         
-        createMenu(f,true,false,new String[]{
+        createMenu(f,true,false,false,new String[]{
             "@SSpineplot",M_SPINE,
             "@OSort by count",M_SORTBYCOUNT,
             "!OSort by marked",M_SORTBYMARKED,

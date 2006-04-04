@@ -59,7 +59,7 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        createMenu(f,true,false,new String[]{
+        createMenu(f,true,false,false,new String[]{
             "Observed",M_OBSERVED,
             "Expected",M_EXPECTED,
             "Same bin size",M_SAMEBINSIZE,

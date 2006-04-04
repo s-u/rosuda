@@ -54,7 +54,7 @@ public class HistCanvas extends BaseCanvas {
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        createMenu(f,true,false,new String[]{
+        createMenu(f,true,false,false,new String[]{
             "Increase bin width (up)",M_BINUP,
             "Decrease bin width (down)",M_BINDOWN,
             "Move anchor left (left)",M_ANCHORLEFT,
