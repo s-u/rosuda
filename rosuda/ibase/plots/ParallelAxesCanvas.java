@@ -1134,9 +1134,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 if(box.queriedOutlier!=null)
                     return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
                 else
-                    return "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                    return "lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" + 
+                            "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
                             "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue);
+                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
+                            "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
             case TYPE_PCP:
                 String retValue="";
                 final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
