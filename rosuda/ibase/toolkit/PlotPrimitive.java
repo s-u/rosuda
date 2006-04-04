@@ -61,5 +61,8 @@ public interface PlotPrimitive {
     /** returns the number of cases this primitive represents
         @return number of cases this primitive represents */
     int cases();
+    
+    /** returns whether this primitive should respond to queries. */
+    boolean isQueryable();
 }
 

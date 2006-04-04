@@ -1274,6 +1274,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ppc.diam=1;
         ppc.ref = new int[]{caseID};
         ppc.visible = false;
+        ppc.queryable = false;
         return ppc;
     }
 }

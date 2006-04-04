@@ -113,4 +113,8 @@ public abstract class PPrimBase implements PlotPrimitive {
         
         return rounds;
     }
+
+    public boolean isQueryable() {
+        return true;
+    }
 }

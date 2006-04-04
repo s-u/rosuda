@@ -18,6 +18,7 @@ public class PPrimCircle extends PPrimBase {
     public int x,y,diam;
     
     public boolean visible = true;
+    public boolean queryable=true;
     
     /**
      * whether {@link #intersects} and {@link #contains} check for intersection
@@ -103,6 +104,10 @@ public class PPrimCircle extends PPrimBase {
     
     public String toString() {
         return("PPrimCircle(x=" + x + ", y=" + y + ", diam="+diam+")");
+    }
+
+    public boolean isQueryable() {
+        return queryable;
     }
     
 }

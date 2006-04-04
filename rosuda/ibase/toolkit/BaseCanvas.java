@@ -371,18 +371,20 @@ public class BaseCanvas
                 if (pp!=null) {
                     if (actionQuery) {
                         final PlotPrimitive p = getFirstPrimitiveContaining(x,y);
-                        if(p!=null){
-                            if (p.cases()>0) {
-                                if (p.getPrimaryCase()!=-1) {
-                                    setQueryText(queryObject(p),p.getPrimaryCase());
+                        if(p!=null && p.isQueryable()){
+                            if(p!=null){
+                                if (p.cases()>0) {
+                                    if (p.getPrimaryCase()!=-1) {
+                                        setQueryText(queryObject(p),p.getPrimaryCase());
+                                    } else {
+                                        setQueryText(queryObject(p),p.getCaseIDs());
+                                    }
                                 } else {
-                                    setQueryText(queryObject(p),p.getCaseIDs());
+                                    setQueryText(queryObject(p));
                                 }
-                            } else {
-                                setQueryText(queryObject(p));
+                                qi.setLocation(cl.x+x,cl.y+y);
+                                qi.show(); hideQI=false;
                             }
-                            qi.setLocation(cl.x+x,cl.y+y);
-                            qi.show(); hideQI=false;
                         }
                     } else {
                         final PlotPrimitive[] pps = getPrimitivesContaining(x,y);
@@ -628,48 +630,25 @@ public class BaseCanvas
         boolean hideQI = true;
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
-        if(actionExtQuery) {
-            isExtQuery = true;
+        if(actionExtQuery || actionQuery) {
+            isExtQuery = actionExtQuery;
             if (pp!=null) {
-                int i=0;
-                while (i<pp.length) {
-                    if (pp[i]!=null && pp[i].contains(x,y)) {
-                        if (pp[i].cases()>0) {
-                            if (pp[i].getPrimaryCase()!=-1) {
-                                setQueryText(queryObject(i),pp[i].getPrimaryCase());
-                            } else {
-                                setQueryText(queryObject(i),pp[i].getCaseIDs());
-                            }
+                PlotPrimitive p = getFirstPrimitiveContaining(x,y);
+                if(p!=null && p.isQueryable()){
+                    if (p.cases()>0) {
+                        if (p.getPrimaryCase()!=-1) {
+                            setQueryText(queryObject(p),p.getPrimaryCase());
                         } else {
-                            setQueryText(queryObject(i));
+                            setQueryText(queryObject(p),p.getCaseIDs());
                         }
-                        qi.setLocation(cl.x+x,cl.y+y);
-                        qi.show(); hideQI=false;
+                    } else {
+                        setQueryText(queryObject(p));
                     }
-                    i++;
+                    qi.setLocation(cl.x+x,cl.y+y);
+                    qi.show(); hideQI=false;
                 }
             }
             isExtQuery = false;
-        } else if (actionQuery) {
-            if (pp!=null) {
-                int i=0;
-                while (i<pp.length) {
-                    if (pp[i]!=null && pp[i].contains(x,y)) {
-                        if (pp[i].cases()>0) {
-                            if (pp[i].getPrimaryCase()!=-1) {
-                                setQueryText(queryObject(i),pp[i].getPrimaryCase());
-                            } else {
-                                setQueryText(queryObject(i),pp[i].getCaseIDs());
-                            }
-                        } else {
-                            setQueryText(queryObject(i));
-                        }
-                        qi.setLocation(cl.x+x,cl.y+y);
-                        qi.show(); hideQI=false;
-                    }
-                    i++;
-                }
-            }
         }
         final boolean effect = false;
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
