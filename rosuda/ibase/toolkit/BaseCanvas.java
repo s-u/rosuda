@@ -801,7 +801,7 @@ public class BaseCanvas
     
     private float alphaDown(float alpha){
         float ret;
-        ret = alpha + ((alpha>0.2f)?0.10f:0.02f);
+        ret = alpha - ((alpha>0.2f)?0.10f:0.02f);
         if (ret<0.05f) ret=0.05f;
         return ret;
     }
