@@ -25,7 +25,7 @@ public class PPrimCircle extends PPrimBase {
      * with the whole circle area (if true) or just with the center point (if
      * false)
      */
-    public boolean intersectionByArea = false;
+    public boolean intersectionByArea = true;
     
     public boolean intersects(final java.awt.Rectangle rt) {
         if(intersectionByArea){

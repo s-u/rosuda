@@ -79,7 +79,7 @@ public class BaseCanvas
     /** run-time flag is set to <code>true</code> if the current baseDrag is a move */
     protected boolean moveDrag;
     
-    /** run-time flag is set to <code>true</code> if query mode is on - (currently it means that <Alt> is held down) */
+    /** run-time flag is set to <code>true</code> if query mode is on - (currently it means that <Ctrl> is held down) */
     protected boolean inQuery=false;
     /** run-time flag is set to <code>true</code> if zoom mode is on */
     protected boolean inZoom=false;
@@ -133,6 +133,9 @@ public class BaseCanvas
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
+    
+    /** x and y coordinate of mouse position when querying */
+    protected int qx,qy;
     
     MenuItem MIsonlyselected=null;
     MenuItem MIseperatealphas=null;
@@ -631,6 +634,8 @@ public class BaseCanvas
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
         if(actionExtQuery || actionQuery) {
+            inQuery=true;
+            qx=x;qy=y;
             isExtQuery = actionExtQuery;
             if (pp!=null) {
                 PlotPrimitive p = getFirstPrimitiveContaining(x,y);
@@ -649,6 +654,10 @@ public class BaseCanvas
                 }
             }
             isExtQuery = false;
+            setUpdateRoot(3); repaint();
+        } else if(inQuery){
+            inQuery=false;
+            setUpdateRoot(3); repaint();
         }
         final boolean effect = false;
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
@@ -665,10 +674,6 @@ public class BaseCanvas
     
     public void keyPressed(final KeyEvent e) {
         final int kc=e.getKeyCode();
-        if (kc==KeyEvent.VK_ALT && !inZoom && !inQuery) {
-            pc.setCursor(Common.cur_query);
-            inQuery=true;
-        }
         if (kc==KeyEvent.VK_META && allowZoom && !inZoom && !inQuery) {
             pc.setCursor(Common.cur_zoom);
             inZoom=true;
@@ -679,10 +684,6 @@ public class BaseCanvas
     
     public void keyReleased(final KeyEvent e) {
         final int kc=e.getKeyCode();
-        if (kc==KeyEvent.VK_ALT && !inZoom) {
-            pc.setCursor(Common.cur_arrow);
-            inQuery=false;
-        }
         if (kc==KeyEvent.VK_META && allowZoom && !inQuery) {
             pc.setCursor(Common.cur_arrow);
             inZoom=false;

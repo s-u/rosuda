@@ -64,9 +64,6 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected int []filter=null;
     
-    protected boolean querying=false;
-    protected int qx,qy;
-    
     protected boolean zoomRetainsAspect=false;
     
     private final int standardMLeft=40;
@@ -277,12 +274,6 @@ public class ScatterCanvas extends BaseCanvas {
     public void keyPressed(KeyEvent e) {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
-        if (e.getKeyCode()==KeyEvent.VK_ALT && !querying) {
-            querying=true;
-            qx=qy=-1;
-            pc.setCursor(Common.cur_aim);
-            setUpdateRoot(3); repaint();
-        }
         if (e.getKeyCode()==KeyEvent.VK_UP) {
             ptDiam+=2; setUpdateRoot(0);
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
@@ -300,16 +291,6 @@ public class ScatterCanvas extends BaseCanvas {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
         }*/
         super.keyPressed(e);
-    };
-    
-    public void keyReleased(KeyEvent e) {
-        if (Global.DEBUG>0)
-            System.out.println("ScatterCanvas: "+e);
-        if (e.getKeyCode()==KeyEvent.VK_ALT) {
-            querying=false;
-            pc.setCursor(Common.cur_arrow);
-            setUpdateRoot(3); repaint();
-        }
     };
     
     public Object run(Object o, String cmd) {
@@ -563,7 +544,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintPost(PoGraSS g) {
-        if (querying) {
+        if (inQuery) {
             g.setColor("black");
             if((orientation&1) == 0){ // no rotation or 180°
                 if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
@@ -584,12 +565,29 @@ public class ScatterCanvas extends BaseCanvas {
         super.paintPost(g);
     }
     
-    /* TODO: at the moment one has to hit the center point exactly which makes
-     * things easier and faster here but more difficult for the user, so this
-     * should be changed in the future.
-     */
     protected PlotPrimitive getFirstPrimitiveContaining(int x, int y) {
-        return (PlotPrimitive)sortedPointsX.get(new Point(x,y));
+        // look if there is a point exactly at (x,y)
+        PlotPrimitive p = (PlotPrimitive)sortedPointsX.get(new Point(x,y));
+        if(p!=null) return p;
+        
+        // find the primitive with shortest distance to (x,y)
+        PlotPrimitive[] pps = getPrimitivesContaining(x,y);
+        PlotPrimitive fpc = null;
+        int shortestDistance = ptDiam*ptDiam;
+        for(int i=0; i<pps.length; i++){
+            if(pps[i]!=null){
+                final PPrimCircle ppc = (PPrimCircle)pps[i];
+                final int px = ppc.x-x;
+                final int py = ppc.y-y;
+                final int d  = px*px+py*py;
+                if(d==1) return ppc;
+                else if(d<shortestDistance){
+                    shortestDistance=d;
+                    fpc = ppc;
+                }
+            }
+        }
+        return fpc;
     }
     
     protected PlotPrimitive[] getPrimitivesContaining(int x, int y) {
@@ -618,7 +616,7 @@ public class ScatterCanvas extends BaseCanvas {
         final Collection col = subXClone.values();
         PlotPrimitive[] ret = new PlotPrimitive[col.size()];
         col.toArray(ret);
-
+        
         return ret;
     }
 };
