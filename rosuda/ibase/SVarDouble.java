@@ -21,10 +21,10 @@ public class SVarDouble extends SVar {
     /** insertion point for add */
     int insertPos=0;
     
-    /** vector of categories if cat. var. */
-    Vector  cats;
-    /** vector if counts per category */
-    Vector  ccnts;
+    /** list of categories if cat. var. */
+    List cats;
+    /** list if counts per category */
+    List ccnts;
     
     int[] ranks=null;
     
@@ -99,7 +99,7 @@ public class SVarDouble extends SVar {
      * @param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
         if (cat && !rebuild) return;
-        cats=new Vector(); ccnts=new Vector();
+        cats=new ArrayList(); ccnts=new ArrayList();
         cat=true;
         if (!isEmpty()) {
             int ci=0;
@@ -107,10 +107,10 @@ public class SVarDouble extends SVar {
                 String oo=Double.isNaN(cont[ci])?missingCat:Double.toString(cont[ci]);
                 int i=cats.indexOf(oo);
                 if (i==-1) {
-                    cats.addElement(oo);
-                    ccnts.addElement(new Integer(1));
+                    cats.add(oo);
+                    ccnts.add(new Integer(1));
                 } else {
-                    ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
+                    ccnts.set(i,new Integer(((Integer)ccnts.get(i)).intValue()+1));
                 }
                 ci++;
             }
@@ -130,8 +130,8 @@ public class SVarDouble extends SVar {
             sw=new Stopwatch();
             System.out.println("Sorting variable \""+name+"\"");
         }
-        Vector ocats=cats; Vector occnts=ccnts;
-        cats=new Vector(); ccnts=new Vector();
+        List ocats=cats; List occnts=ccnts;
+        cats=new ArrayList(ocats.size()); ccnts=new ArrayList(occnts.size());
         boolean found=true;
         int cs=ocats.size();
         while (found) {
@@ -139,7 +139,7 @@ public class SVarDouble extends SVar {
             double min=-0.01; boolean gotmin=false;
             String mino=null;
             while (i<cs) {
-                Object o=ocats.elementAt(i);
+                Object o=ocats.get(i);
                 if (o!=null) {
                     if (method==SM_num) {
                         double val=-0.01;
@@ -166,8 +166,8 @@ public class SVarDouble extends SVar {
                 i++;
             }
             if (found=gotmin) {
-                cats.addElement(ocats.elementAt(p)); ccnts.addElement(occnts.elementAt(p));
-                ocats.setElementAt(null,p);
+                cats.add(ocats.get(p)); ccnts.add(occnts.get(p));
+                ocats.set(p,null);
             }
         }
         if (Global.DEBUG>0) {
@@ -214,10 +214,10 @@ public class SVarDouble extends SVar {
             Object oo=Double.isNaN(d)?missingCat:Double.toString(d);
             int i=cats.indexOf(oo);
             if (i==-1) {
-                cats.addElement(oo);
-                ccnts.addElement(new Integer(1));
+                cats.add(oo);
+                ccnts.add(new Integer(1));
             } else {
-                ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
+                ccnts.set(i,new Integer(((Integer)ccnts.get(i)).intValue()+1));
             }
         }
         if (!Double.isNaN(d)) {
@@ -278,7 +278,7 @@ public class SVarDouble extends SVar {
     public Object getCatAt(int i) {
         if (cats==null) return null;
         try {
-            return cats.elementAt(i);
+            return cats.get(i);
         } catch (Exception e) {
             return null;
         }
@@ -288,7 +288,7 @@ public class SVarDouble extends SVar {
     public int getSizeCatAt(int i) {
         if (cats==null) return -1;
         try { // catch exception if cat ID is out of bounds
-            return ((Integer)ccnts.elementAt(i)).intValue();
+            return ((Integer)ccnts.get(i)).intValue();
         } catch  (Exception e) {
             return -1;
         }
@@ -298,7 +298,7 @@ public class SVarDouble extends SVar {
     public int getSizeCat(Object o) {
         if (cats==null) return -1;
         int i=cats.indexOf(o);
-        return (i==1)?-1:((Integer)ccnts.elementAt(i)).intValue();
+        return (i==1)?-1:((Integer)ccnts.get(i)).intValue();
     }
     
     /** returns the number of categories for this variable or 0 if the variable is not categorial */
@@ -312,7 +312,7 @@ public class SVarDouble extends SVar {
         if (cats==null) return null;
         
         Object c[] = new Object[cats.size()];
-        cats.copyInto(c);
+        cats.toArray(c);
         return c;
     }
     
@@ -393,10 +393,10 @@ public class SVarDouble extends SVar {
                     return 0;
                 }
             }
-            Vector data = new Vector(da.length);
+            List data = new ArrayList(da.length);
             for(int i=0; i<da.length; i++) data.add(new SortDouble(da[i],i));
             Collections.sort(data);
-            for(int i=0; i<da.length; i++) r[i] = ((SortDouble)data.elementAt(i)).index;
+            for(int i=0; i<da.length; i++) r[i] = ((SortDouble)data.get(i)).index;
         } else {
             r=ranks;
         }

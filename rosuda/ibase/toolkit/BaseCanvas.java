@@ -1,13 +1,19 @@
 package org.rosuda.ibase.toolkit;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.MenuItem;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.*;
 import java.io.PrintStream;
 import java.util.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
-import org.rosuda.util.*;
+import org.rosuda.util.Global;
+import org.rosuda.util.Stopwatch;
+import org.rosuda.util.Tools;
 
 /** BaseCanvas - basis for all interactive plots which rely on plot primitives concept. To ensure consistent behavior all plots should be based on this class whenever possible. BaseCanvas includes key and mouse handling, selection and queries.<p>Although BaseCanvas is not abstract, is it not usable on its own (except maybe for testing). Any subclasses should override at least the {@link #updateObjects} method to initialize plot primitives. Displaying and selection of following plot primitives is supported out-of-the-box: points, rectangles and polygons. The subclass constructor should (beside calling super constructor) set any of the control flags to customize the behavior of this class.<p>BaseCanvas implements all key and mouse listeners as well as commander interface (actions are mapped into commands). This implies that a subclass it free to overload any individual methods of those. Just make sure that you provide calls to parent methods to preserve all functionality.
  *
@@ -90,8 +96,8 @@ public class BaseCanvas
     /** if set to <code>true</code> all notifications are rejected. Any subclass is free to use it, BaseCanvas modifies this flag in default zoom processing methods to prevent partial updates when ax and ay are updated sequentially. Any method changing this flag should always restore the state of the flag after it finishes! Also use with care in multi-threaded applications to prevent deadlocks. */
     protected boolean ignoreNotifications=false;
     
-    /** this vector can be used to track the sequence of zooms. Zoom out should return to the state before last zoom in (if sensible in the context of the given plot). Any implementation of {@link #performZoomIn} and {@link #performZoomOut} is free to use this vector in any way which suits the implementation.<p>The current default implementation uses pairs of {@link ZoomDescriptorComponent} objects to store status of {@link #ax} and {@link #ay} axes. The vector is automatically initilized to an empty vector by the base constructor. */
-    protected Vector zoomSequence;
+    /** this list can be used to track the sequence of zooms. Zoom out should return to the state before last zoom in (if sensible in the context of the given plot). Any implementation of {@link #performZoomIn} and {@link #performZoomOut} is free to use this list in any way which suits the implementation.<p>The current default implementation uses pairs of {@link ZoomDescriptorComponent} objects to store status of {@link #ax} and {@link #ay} axes. The list is automatically initilized to an empty list by the base constructor. */
+    protected List zoomSequence;
     
     protected int W,H;
     
@@ -152,7 +158,7 @@ public class BaseCanvas
         Global.forceAntiAliasing = true;
         m=mark; setFrame(f);
         ax=ay=null;
-        zoomSequence=new Vector();
+        zoomSequence=new ArrayList();
         mLeft=mRight=mTop=mBottom=0;
         pc.setBackground(Common.backgroundColor);
         pc.addMouseListener(this);
@@ -504,14 +510,14 @@ public class BaseCanvas
                 xExtent*=ratioPost/ratioPre;
         }
         if (xAx!=null) {
-            zoomSequence.addElement(new ZoomDescriptorComponent(ax));
+            zoomSequence.add(new ZoomDescriptorComponent(ax));
             ax.setValueRange(xCenter-xExtent/2.0,xExtent);
-        } else zoomSequence.addElement(new ZoomDescriptorComponent());
+        } else zoomSequence.add(new ZoomDescriptorComponent());
         ignoreNotifications=ins;
         if (xAy!=null) {
-            zoomSequence.addElement(new ZoomDescriptorComponent(xAy));
+            zoomSequence.add(new ZoomDescriptorComponent(xAy));
             xAy.setValueRange(yCenter-yExtent/2.0,yExtent);
-        } else zoomSequence.addElement(new ZoomDescriptorComponent());
+        } else zoomSequence.add(new ZoomDescriptorComponent());
         updateObjects();
         setUpdateRoot(0);
         repaint();
@@ -522,9 +528,9 @@ public class BaseCanvas
         final int tail=zoomSequence.size()-1;
         if (tail<1) return;
         final ZoomDescriptorComponent zx;
-        zx=(ZoomDescriptorComponent)zoomSequence.elementAt(tail-1);
+        zx=(ZoomDescriptorComponent)zoomSequence.get(tail-1);
         final ZoomDescriptorComponent zy;
-        zy=(ZoomDescriptorComponent)zoomSequence.elementAt(tail);
+        zy=(ZoomDescriptorComponent)zoomSequence.get(tail);
         final boolean ins=ignoreNotifications;
         ignoreNotifications=true;
         if (!zx.dummy && zx.axis!=null)
@@ -532,8 +538,8 @@ public class BaseCanvas
         ignoreNotifications=ins;
         if (!zy.dummy && zy.axis!=null)
             zy.axis.setValueRange(zy.vBegin,zy.vLen);
-        zoomSequence.removeElement(zy);
-        zoomSequence.removeElement(zx);
+        zoomSequence.remove(zy);
+        zoomSequence.remove(zx);
         updateObjects();
         setUpdateRoot(0);
         repaint();
@@ -543,9 +549,9 @@ public class BaseCanvas
         if (Global.DEBUG>0) System.out.println("resetZoom() [zoomSequence.len="+zoomSequence.size()+"]");
         if (zoomSequence.size()>1) {
             final ZoomDescriptorComponent zx;
-            zx=(ZoomDescriptorComponent)zoomSequence.elementAt(0);
+            zx=(ZoomDescriptorComponent)zoomSequence.get(0);
             final ZoomDescriptorComponent zy;
-            zy=(ZoomDescriptorComponent)zoomSequence.elementAt(1);
+            zy=(ZoomDescriptorComponent)zoomSequence.get(1);
             final boolean ins=ignoreNotifications;
             ignoreNotifications=true; // prevent processing of AxisChanged notification for ax
             if (ax!=null && !zx.dummy)
@@ -557,7 +563,7 @@ public class BaseCanvas
             setUpdateRoot(0);
             repaint();
         }
-        zoomSequence.removeAllElements();
+        zoomSequence.clear();
     }
     
     public void mousePressed(final MouseEvent ev) {
@@ -698,7 +704,7 @@ public class BaseCanvas
         if ("flip".equals(cmd) && allow180) rotate(2);
         if ("exit".equals(cmd)) WinTracker.current.Exit();
         if (M_EXPORTCASES.equals(cmd)) {
-            final Vector vars = new Vector();
+            final List vars = new ArrayList();
             SVar var;
             int i=0;
             while((var=getData(i++))!=null) vars.add(var);

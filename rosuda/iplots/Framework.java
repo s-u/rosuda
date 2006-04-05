@@ -6,9 +6,12 @@
 
 package org.rosuda.iplots;
 
-import java.util.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.plots.*;
@@ -18,7 +21,7 @@ import org.rosuda.util.*;
  * statistical programs */
 
 public class Framework implements Dependent, ActionListener {
-    Vector dataset;
+    List dataset;
     SVarSet cvs;
     int tvctr;
     int dtctr;
@@ -41,8 +44,8 @@ public class Framework implements Dependent, ActionListener {
         Common.breakDispatcher.addDepend(this);
         cvs=new SVarSet();
         cvs.setName("default");
-        dataset=new Vector();
-        dataset.addElement(cvs);
+        dataset=new ArrayList();
+        dataset.add(cvs);
     }
     
     public String getNewTmpVar(final String t) {
@@ -68,7 +71,7 @@ public class Framework implements Dependent, ActionListener {
     public SVarSet selectSet(final String name) {
         int i=0;
         while (i<dataset.size()) {
-            final SVarSet s=(SVarSet)dataset.elementAt(i);
+            final SVarSet s=(SVarSet)dataset.get(i);
             if (s.getName().equals(name)) {
                 cvs=s; return s;
             }
@@ -81,11 +84,11 @@ public class Framework implements Dependent, ActionListener {
      * @param i the ID
      * @return selected dataset or <code>null</code> if ID out of range */
     public SVarSet selectSet(final int i) {
-        return (i<0||i>=dataset.size())?null:(cvs=(SVarSet)dataset.elementAt(i));
+        return (i<0||i>=dataset.size())?null:(cvs=(SVarSet)dataset.get(i));
     }
     
     public SVarSet getSet(final int i) {
-        return (i<0||i>=dataset.size())?null:(SVarSet)dataset.elementAt(i);
+        return (i<0||i>=dataset.size())?null:(SVarSet)dataset.get(i);
     }
     
     public int countSets() {
@@ -98,7 +101,7 @@ public class Framework implements Dependent, ActionListener {
     
     public String getSetName(final int i) {
         try {
-            final SVarSet vs=(SVarSet) dataset.elementAt(i);
+            final SVarSet vs=(SVarSet) dataset.get(i);
             return vs.getName();
         } catch (Exception e) {}
         return null;
@@ -120,7 +123,7 @@ public class Framework implements Dependent, ActionListener {
             name="data."+dtctr;
         }
         cvs.setName(name);
-        dataset.addElement(cvs);
+        dataset.add(cvs);
         return dataset.indexOf(cvs);
     }
     

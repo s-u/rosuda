@@ -1,7 +1,9 @@
 package org.rosuda.ibase.toolkit;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.Iterator;
+import java.util.List;
 import org.rosuda.ibase.SVar;
 
 public final class FrequencyTable {
@@ -45,6 +47,7 @@ public final class FrequencyTable {
         
         for (int i=0; i<ceTable.length; i++) {
             final CombinationEntry ce = ceTable[i];
+            ce.cases = new ArrayList(vars[0].size());
             for (int cs = 0; cs < vars[0].size(); cs++) {
                 if (ce.CombinationEqualsCase(cs))
                     ce.cases.add(new Integer(cs));
@@ -85,7 +88,7 @@ public final class FrequencyTable {
         
         Hashtable ccs = new Hashtable();
         
-        Vector cases = new Vector();
+        List cases = new ArrayList(0);
         
         public CombinationEntry() {
             
@@ -94,7 +97,7 @@ public final class FrequencyTable {
         public int[] getCases() {
             final int[] cs = new int[cases.size()];
             for (int i = 0, csize = cases.size(); i < cs.length && i < csize; i++)
-                cs[i] = ((Integer) cases.elementAt(i)).intValue();
+                cs[i] = ((Integer) cases.get(i)).intValue();
             return cs;
         }
         
@@ -199,7 +202,7 @@ public final class FrequencyTable {
         for(int i=0; i<maxLevel; i++){
             n += factors[i]*com[i];
         }
-        final Vector cases = new Vector();
+        final List cases = new ArrayList(factors[maxLevel-1]);
         int arraySize=0;
         for(int i=0; i<factors[maxLevel-1]; i++){
             final int[] c = ceTable[n+i].getCases();
@@ -208,8 +211,8 @@ public final class FrequencyTable {
         }
         final int[] ret = new int[arraySize];
         int pos=0;
-        for(final Enumeration en = cases.elements(); en.hasMoreElements();){
-            final int[] c = (int[])en.nextElement();
+        for(final Iterator it = cases.listIterator(); it.hasNext();){
+            final int[] c = (int[])it.next();
             System.arraycopy(c, 0, ret, pos, c.length);
             pos += c.length;
         }

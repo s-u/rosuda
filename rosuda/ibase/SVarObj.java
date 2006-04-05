@@ -20,12 +20,12 @@ import org.rosuda.util.*;
  */
 public class SVarObj extends SVar
 {
-    /** vector of the actual content */
-    Vector  cont;
-    /** vector of categories if cat. var. */
-    Vector  cats;
-    /** vector of counts per category */
-    Vector  ccnts;
+    /** list of the actual content */
+    List  cont;
+    /** list of categories if cat. var. */
+    List  cats;
+    /** list of counts per category */
+    List  ccnts;
 
     int[] ranks=null;
 
@@ -42,9 +42,9 @@ public class SVarObj extends SVar
         // the defaults are different for SVarObj - due to guessing we must start with string assumption
         isnum=false;
         contentsType=CT_String;
-        cont=new Vector();
+        cont=new ArrayList();
         if (iscat) {
-	    cats=new Vector(); ccnts=new Vector();
+	    cats=new ArrayList(); ccnts=new ArrayList();
 	}
     }
 
@@ -53,9 +53,9 @@ public class SVarObj extends SVar
     {
       super(Name, isnum, iscat);
       guessing = false;
-      cont=new Vector();
+      cont=new ArrayList();
       if (iscat) {
-        cats=new Vector(); ccnts=new Vector();
+        cats=new ArrayList(); ccnts=new ArrayList();
       }
     }
 
@@ -80,8 +80,8 @@ public class SVarObj extends SVar
 	public String[] getContent() {
 		String[] content = new String[cont.size()];
 		int i = 0;
-		for (Enumeration e = cont.elements(); e.hasMoreElements() && i < content.length;i++) {
-			Object o = e.nextElement();
+		for (Iterator e = cont.listIterator(); e.hasNext() && i < content.length;i++) {
+			Object o = e.next();
 			if (o != null) content[i] = o.toString();
 			else content[i] = missingCat;
 		}
@@ -101,18 +101,18 @@ public class SVarObj extends SVar
 	@param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
 	if (cat && !rebuild) return;
-	cats=new Vector(); ccnts=new Vector();
+	cats=new ArrayList(); ccnts=new ArrayList();
 	cat=true;
 	if (!isEmpty()) {
-	    for(Enumeration e=cont.elements();e.hasMoreElements();) {
-		Object oo=e.nextElement();
+	    for(Iterator e=cont.listIterator();e.hasNext();) {
+		Object oo=e.next();
 		if (oo==null) oo=missingCat;
 		int i=cats.indexOf(oo);
 		if (i==-1) {
-		    cats.addElement(oo);
-		    ccnts.addElement(new Integer(1));
+		    cats.add(oo);
+		    ccnts.add(new Integer(1));
 		} else {
-		    ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
+		    ccnts.set(i,new Integer(((Integer)ccnts.get(i)).intValue()+1));
 		}
 	    }
             if (isNum()) { // if numerical and categorical then sort categories for convenience
@@ -131,8 +131,8 @@ public class SVarObj extends SVar
             sw=new Stopwatch();
             System.out.println("Sorting variable \""+name+"\"");
         }
-        Vector ocats=cats; Vector occnts=ccnts;
-        cats=new Vector(); ccnts=new Vector();
+        List ocats=cats; List occnts=ccnts;
+        cats=new ArrayList(ocats.size()); ccnts=new ArrayList(occnts.size());
         boolean found=true;
         int cs=ocats.size();
         while (found) {
@@ -140,7 +140,7 @@ public class SVarObj extends SVar
             double min=-0.01; boolean gotmin=false;
             String mino=null;
             while (i<cs) {
-                Object o=ocats.elementAt(i);
+                Object o=ocats.get(i);
                 if (o!=null) {
                     if (method==SM_num) {
                         double val=-0.01;
@@ -167,8 +167,8 @@ public class SVarObj extends SVar
                 i++;
             }
             if (found=gotmin) {
-                cats.addElement(ocats.elementAt(p)); ccnts.addElement(occnts.elementAt(p));
-                ocats.setElementAt(null,p);
+                cats.add(ocats.get(p)); ccnts.add(occnts.get(p));
+                ocats.set(p,null);
             }
         }
         if (Global.DEBUG>0) {
@@ -211,10 +211,10 @@ public class SVarObj extends SVar
 	    if (o==null) oo=missingCat;
 	    int i=cats.indexOf(oo);
 	    if (i==-1) {
-		cats.addElement(oo);
-		ccnts.addElement(new Integer(1));
+		cats.add(oo);
+		ccnts.add(new Integer(1));
 	    } else {
-		ccnts.setElementAt(new Integer(((Integer)ccnts.elementAt(i)).intValue()+1),i);
+		ccnts.set(i,new Integer(((Integer)ccnts.get(i)).intValue()+1));
 	    }
 	}
 	if (isnum && o!=null) {
@@ -227,7 +227,7 @@ public class SVarObj extends SVar
                 return false;
             }
 	}
-       	cont.addElement(o); // we don't add the element unless we're through all checks etc.
+       	cont.add(o); // we don't add the element unless we're through all checks etc.
         if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
 	return true;
     }
@@ -241,15 +241,15 @@ public class SVarObj extends SVar
             boolean savedMuteNotify=muteNotify;
             muteNotify=true;
             if (!add(o)) { muteNotify=savedMuteNotify; return false; }
-            cont.insertElementAt(o,index);
-            cont.removeElementAt(insp);
+            cont.add(index,o);
+            cont.remove(insp);
             muteNotify=savedMuteNotify;
             if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
             return true;
         }
         if (cacheRanks && ranks!=null) ranks=null; // remove ranks - we don't update them so far...
         missingCount++;
-        cont.insertElementAt(null,index);
+        cont.add(index,null);
         if (!muteNotify) NotifyAll(new NotifyMsg(this,Common.NM_VarContentChange));
         return true;
     }
@@ -259,7 +259,7 @@ public class SVarObj extends SVar
     public boolean remove(int index) {
         Object o=at(index);
         if (o == null && missingCount > -1) missingCount--;
-        cont.removeElementAt(index);
+        cont.remove(index);
         if (cats!=null) this.categorize(true);
         return true;
     }
@@ -288,13 +288,13 @@ public class SVarObj extends SVar
           return false;
         }
       }
-      cont.setElementAt(o, i); // we don't modify the element unless we're through all checks etc.
+      cont.set(i,o); // we don't modify the element unless we're through all checks etc.
       if (!muteNotify) NotifyAll(new NotifyMsg(this, Common.NM_VarContentChange));
       if (cat) this.categorize(true);
       return true;
     }
 
-    public Object at(int i) { return cont.elementAt(i); };
+    public Object at(int i) { return cont.get(i); };
 
     /** returns the ID of the category of the object
         @param object
@@ -319,7 +319,7 @@ public class SVarObj extends SVar
     public Object getCatAt(int i) {
         if (cats==null) return null;
         try {
-            return cats.elementAt(i);
+            return cats.get(i);
         } catch (Exception e) {
             return null;
         }
@@ -329,7 +329,7 @@ public class SVarObj extends SVar
     public int getSizeCatAt(int i) {
 	if (cats==null) return -1;
         try { // catch exception if cat ID is out of bounds
-            return ((Integer)ccnts.elementAt(i)).intValue();
+            return ((Integer)ccnts.get(i)).intValue();
         } catch  (Exception e) {
             return -1;
         }
@@ -339,7 +339,7 @@ public class SVarObj extends SVar
     public int getSizeCat(Object o) {
 	if (cats==null) return -1;
 	int i=cats.indexOf(o);
-	return (i==1)?-1:((Integer)ccnts.elementAt(i)).intValue();
+	return (i==1)?-1:((Integer)ccnts.get(i)).intValue();
     }
 
     /** returns the number of categories for this variable or 0 if the variable is not categorial */
@@ -353,7 +353,7 @@ public class SVarObj extends SVar
 	if (cats==null) return null;
 
 	Object c[] = new Object[cats.size()];
-	cats.copyInto(c);
+	cats.toArray(c);
 	return c;
     }
 

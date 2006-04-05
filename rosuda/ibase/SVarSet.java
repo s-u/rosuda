@@ -10,8 +10,8 @@ import org.rosuda.util.*;
     @version $Id$
 */
 public class SVarSet {
-    /** vector of {@link SVar} objects - the variables */
-    protected Vector vars;
+    /** list of {@link SVar} objects - the variables */
+    protected List vars;
     /** marker associated with this dataset */
     protected SMarker mark;
     /** dataset name */
@@ -25,7 +25,7 @@ public class SVarSet {
     public int regressionCounter=0;
 
     /** default constructor of empty dataset */
-    public SVarSet() { vars=new Vector(); name="<unknown>"; };
+    public SVarSet() { vars=new ArrayList(); name="<unknown>"; };
 
     /** sets the marker for this dataset
 	@param m marker */
@@ -46,7 +46,7 @@ public class SVarSet {
         int len=0;
         int i=0, l=vars.size();
         while (i<l) {
-            int vl=((SVar)vars.elementAt(i)).size();
+            int vl=((SVar)vars.get(i)).size();
             if (vl>len) len=vl;
             i++;
         }
@@ -62,13 +62,13 @@ public class SVarSet {
         if (nn==null) return -1;
 
 	if (!vars.isEmpty()) {
-	    for (Enumeration e=vars.elements(); e.hasMoreElements();) {
-		SVar n=(SVar)e.nextElement();
+	    for (Iterator e=vars.listIterator(); e.hasNext();) {
+		SVar n=(SVar)e.next();
 		if (n.getName().compareTo(nn)==0) return -2;
 	    };
 	};
 
-	vars.addElement(v);
+	vars.add(v);
 	return vars.indexOf(v);
     };
 
@@ -85,7 +85,7 @@ public class SVarSet {
 
     public void insert(String name, int index, SVar v) {  // return position or -1 on error or -2 if name exists
         if (v.getName()==null) v.setName(name);
-        vars.insertElementAt(v,index);
+        vars.add(index,v);
     };
 
 
@@ -94,7 +94,7 @@ public class SVarSet {
        @param to to index
    /* added 24.02.04 MH */
    public void move(int from, int to) {
-       SVar v1 = (SVar) vars.elementAt(from);
+       SVar v1 = (SVar) vars.get(from);
        vars.remove(from);
        vars.add(to,v1);
    }
@@ -106,16 +106,16 @@ public class SVarSet {
 
     /* added 28.12.03 MH */
     public void remove(int index) {  // return position or -1 on error or -2 if name exists
-      vars.removeElementAt(index);
+      vars.remove(index);
     };
 
     /* added 28.12.03 MH */
     /** add an empty case to the set
      *         @param index index*/
     public boolean insertCaseAt(int index) {
-      Enumeration e = vars.elements();
-      while(e.hasMoreElements()) {
-        if (!((SVar) e.nextElement()).insert(null,index)) return false;
+      Iterator e = vars.listIterator();
+      while(e.hasNext()) {
+        if (!((SVar) e.next()).insert(null,index)) return false;
       }
       return true;
     }
@@ -124,9 +124,9 @@ public class SVarSet {
     /** delete a case of the set
      *         @param index index*/
     public boolean removeCaseAt(int index) {
-      Enumeration e = vars.elements();
-      while(e.hasMoreElements()) {
-        SVar v = ((SVar) e.nextElement());
+      Iterator e = vars.listIterator();
+      while(e.hasNext()) {
+        SVar v = ((SVar) e.next());
         if (!v.remove(index))
           return false;
       }
@@ -139,7 +139,7 @@ public class SVarSet {
     public int indexOf(String nam) {
 	int i=0;
 	while (i<vars.size()) {
-	    SVar n=(SVar)vars.elementAt(i);
+	    SVar n=(SVar)vars.get(i);
 	    if (n.getName().compareTo(nam)==0) return i;
 	    i++;
 	};
@@ -151,8 +151,8 @@ public class SVarSet {
 	@return variable object or <code>null</code> if not found. */
     public SVar byName(String nam) {
 	if (vars.isEmpty()) return null;
-	for (Enumeration e=vars.elements(); e.hasMoreElements();) {
-	    SVar n=(SVar)e.nextElement();
+	for (Iterator e=vars.listIterator(); e.hasNext();) {
+	    SVar n=(SVar)e.next();
 	    if (n.getName().compareTo(nam)==0) return n;
 	};
 	return null;
@@ -162,12 +162,12 @@ public class SVarSet {
 	@param i index
 	@return variable object or <code>null</code> if index out of range */
     public SVar at(int i) {
-        return ((i<0)||(i>=vars.size()))?null:(SVar)vars.elementAt(i);
+        return ((i<0)||(i>=vars.size()))?null:(SVar)vars.get(i);
     }
 
     /** repaces a variable at the specified index. Use with extreme care! Should be used only in the loading stage before the variable is ever used, in order to provide optimized version of the same variable once the type is known. */
     public void replace(int i, SVar v) {
-        if (i>=0 && i<vars.size()) vars.setElementAt(v, i);
+        if (i>=0 && i<vars.size()) vars.set(i,v);
     }
 
     /** returns data value of a variable specified by name and row index
@@ -210,7 +210,20 @@ public class SVarSet {
 
     /** returns enumeration of all variable objects in this dataset
 	@return object enumeration (of type {@link SVar}) */
-    public Enumeration elements() { return vars.elements(); };
+    public Enumeration elements() {
+        return new Enumeration(){
+            private Iterator iter = vars.listIterator();
+            
+            public Object nextElement() {
+                return iter.next();
+            }
+
+            public boolean hasMoreElements() {
+                return iter.hasNext();
+            }
+            
+        };
+    }
 
     /** returns number of variables in this dataset
 	@return # of variables */

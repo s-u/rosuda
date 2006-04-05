@@ -8,10 +8,9 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Rectangle;
-import java.util.Enumeration;
-import java.util.Vector;
-import org.rosuda.ibase.SMarker;
-import org.rosuda.pograss.PoGraSS;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -25,7 +24,7 @@ public class PPrimBox extends PPrimBase {
     static final int RADOUTL = 5;
     
     Rectangle r;
-    private Vector outliers = new Vector();
+    private List outliers = new ArrayList();
     
     // variables containing the screen positions
     public int med,uh,lh,uh15,lh15;
@@ -251,8 +250,8 @@ public class PPrimBox extends PPrimBase {
     public boolean contains(final int x, final int y) {
         queriedOutlier=null;
         if(r!=null && r.contains(x,y)) return true;
-        for(Enumeration en = outliers.elements(); en.hasMoreElements();){
-            Outlier o = (Outlier)en.nextElement();
+        for(Iterator it = outliers.listIterator(); it.hasNext();){
+            Outlier o = (Outlier)it.next();
             if(o.contains(x,y)) {
                 queriedOutlier=o;
                 return true;

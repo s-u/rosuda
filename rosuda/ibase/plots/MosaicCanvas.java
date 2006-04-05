@@ -2,6 +2,8 @@ package org.rosuda.ibase.plots;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.rosuda.ibase.*;
@@ -192,7 +194,7 @@ public class MosaicCanvas extends BaseCanvas {
         return null;
     }
     
-    private Vector rects = new Vector();
+    private List rects = new ArrayList();
     private int[] plevels;
     private int[] aGap;
     private int[] Gaps;
@@ -207,7 +209,7 @@ public class MosaicCanvas extends BaseCanvas {
         final int[] levels = ft.getLevels();
         final String[][] lnames = ft.getLnames();
         
-        rects.removeAllElements();
+        rects.clear();
         
         plevels = new int[vs];               // reverse cumulative product of levels
         plevels[vs-1] = 0;
@@ -309,9 +311,9 @@ public class MosaicCanvas extends BaseCanvas {
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
             for (int i=0, rsize = rects.size(); i<rsize; i++)
-                maxCount = Math.max(maxCount, ((PPrimMosaic)(rects.elementAt(i))).getObs());
+                maxCount = Math.max(maxCount, ((PPrimMosaic)(rects.get(i))).getObs());
             for (int i=0, rsize = rects.size(); i<rsize; i++) {
-                final PPrimMosaic r = (PPrimMosaic)(rects.elementAt(i));
+                final PPrimMosaic r = (PPrimMosaic)(rects.get(i));
                 int newH, newW;
                 
                 if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS ) {
@@ -350,11 +352,6 @@ public class MosaicCanvas extends BaseCanvas {
         final double[]   exps = new double[levels];
         final double[]    obs = new double[levels];
         
-        final Vector[] tileIds = new Vector[levels];
-        for (int j=0; j < levels; j++) {
-            tileIds[j] = new Vector(8,8);
-        }
-        
         // Calculate the absolute counts for each level first
         double total = 0;
         if ( levelid < k-1 ) {
@@ -368,8 +365,6 @@ public class MosaicCanvas extends BaseCanvas {
                     oCounts[j+1] += table[index];
                     exps[j] += exp[index];
                     obs[j] += table[index];
-                    if( levelid == maxLevel-1 )
-                        tileIds[j].addElement(new Integer(index));
                 }
                 counts[j+1] += counts[j];
                 oCounts[j+1] += oCounts[j];
@@ -383,7 +378,6 @@ public class MosaicCanvas extends BaseCanvas {
                 oCounts[j+1] += oCounts[j];
                 exps[j] += exp[start + j];
                 obs[j] += table[start + j];
-                tileIds[j].addElement(new Integer(start + j));
             }
         }
         
@@ -473,7 +467,7 @@ public class MosaicCanvas extends BaseCanvas {
                             tile.setDir('x');
                         }
                     }
-                    rects.addElement(tile);
+                    rects.add(tile);
                 } else {						// Still to go in the recursion
                     if( Dirs[levelid] == 'x' ) {
                         createMosaic(start + j*plevels[levelid],

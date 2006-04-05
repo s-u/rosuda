@@ -14,6 +14,7 @@ import java.awt.Rectangle;
 import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import org.rosuda.ibase.*;
@@ -119,7 +120,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private final int MAX_BOXWIDTH=32;
     private final int MIN_BOXWIDTH=4;
     // invisible Points to allow selection of box plots
-    private Vector invisiblePoints=null;
+    private ArrayList invisiblePoints=null;
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     private boolean vsCat=false;
@@ -918,7 +919,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             case TYPE_BOX:
                 useRegularPositioning=false;
                 bigMLeft=bigMRight=30;
-                if(invisiblePoints==null) invisiblePoints = new Vector(250);
+                if(invisiblePoints==null) invisiblePoints = new ArrayList(250);
                 break;
             case TYPE_PCP:
                 useRegularPositioning=true;

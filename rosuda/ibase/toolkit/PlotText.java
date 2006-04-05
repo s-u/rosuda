@@ -13,7 +13,8 @@
 
 package org.rosuda.ibase.toolkit;
 import java.awt.Rectangle;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 import org.rosuda.pograss.*;
 import org.rosuda.ibase.*;
 
@@ -24,12 +25,12 @@ public class PlotText extends PlotObject {
     Rectangle txtFields[]; // the place which each text element occupies, is initialised in draw method
     boolean show=true;
     
-    Vector addX=new Vector(),
-            addY=new Vector(),
-            addAx=new Vector(),
-            addAy=new Vector(),
-            addMaxW=new Vector(),
-            addTxt=new Vector();
+    List addX=new ArrayList(),
+            addY=new ArrayList(),
+            addAx=new ArrayList(),
+            addAy=new ArrayList(),
+            addMaxW=new ArrayList(),
+            addTxt=new ArrayList();
     
     public PlotText(final PlotManager p) { super(p);}
     
@@ -105,24 +106,24 @@ public class PlotText extends PlotObject {
             }
             
             for(int i=0; i<newLen; i++)
-                x[oldLen+i] = ((Integer)addX.elementAt(i)).intValue();
+                x[oldLen+i] = ((Integer)addX.get(i)).intValue();
             for(int i=0; i<newLen; i++)
-                y[oldLen+i] = ((Integer)addY.elementAt(i)).intValue();
+                y[oldLen+i] = ((Integer)addY.get(i)).intValue();
             for(int i=0; i<newLen; i++)
-                ax[oldLen+i] = ((Double)addAx.elementAt(i)).doubleValue();
+                ax[oldLen+i] = ((Double)addAx.get(i)).doubleValue();
             for(int i=0; i<newLen; i++)
-                ay[oldLen+i] = ((Double)addAy.elementAt(i)).doubleValue();
+                ay[oldLen+i] = ((Double)addAy.get(i)).doubleValue();
             for(int i=0; i<newLen; i++)
-                maxw[oldLen+i] = ((Integer)addMaxW.elementAt(i)).intValue();
+                maxw[oldLen+i] = ((Integer)addMaxW.get(i)).intValue();
             for(int i=0; i<newLen; i++)
-                txt[oldLen+i] = (String)addTxt.elementAt(i);
+                txt[oldLen+i] = (String)addTxt.get(i);
             
-            addX.removeAllElements();
-            addY.removeAllElements();
-            addAx.removeAllElements();
-            addAy.removeAllElements();
-            addMaxW.removeAllElements();
-            addTxt.removeAllElements();
+            addX.clear();
+            addY.clear();
+            addAx.clear();
+            addAy.clear();
+            addMaxW.clear();
+            addTxt.clear();
         }
     }
     
