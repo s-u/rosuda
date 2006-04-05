@@ -1,6 +1,5 @@
 package org.rosuda.ibase.toolkit;
 
-import java.util.Vector;
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
@@ -46,8 +45,6 @@ public class Axis extends Notifier {
     int gInterSpc=0;
     /** log(vLen) cached */
     double vLenLog10;
-    /** vector of ticks */
-    Vector ticks;
     /** type (see <code>T_..</code> constants) currently: 0=numerical,
      * 1=equidistant categories, 2=proportional category population, 3=equidistant */
     int type;
@@ -63,7 +60,7 @@ public class Axis extends Notifier {
     /** create a new Axis with variable srcv, default orientation (horizontal) and default type guessing and default range
      * @param srcv source variable (cannot be <code>null</code>! for pure numerical axes use {@Axis(SVar,int,int)} constructor!) */
     public Axis(final SVar srcv) {
-        v=srcv; ticks=null; or=0; gInterSpc=0;
+        v=srcv; or=0; gInterSpc=0;
         type=T_EqSize; // some default type guessing
         if (v.isNum()) type=T_Num;
         if (v.isCat()) type=T_PropCat;
@@ -78,7 +75,7 @@ public class Axis extends Notifier {
      * @param orientation orientation
      * @param axisType axis type */
     public Axis(final SVar srcv, final int orientation, final int axisType) {
-        v=srcv; type=axisType; or=orientation; ticks=null; gInterSpc=0;
+        v=srcv; type=axisType; or=orientation; gInterSpc=0;
         if(v.linked) seq=v.mainSeq();
         else seq=new SCatSequence(v,this,false);
         seqgeom=new AxisCatSequence(this, seq);
