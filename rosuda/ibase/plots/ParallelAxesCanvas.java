@@ -675,7 +675,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     if (vsCat || v.length>1) {
                         /* draw labels for X axis */
                         for(int i=0; i<xv.getNumCats(); i++){
-                            labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
+                            if((ax.getCatSeqIndex(i)&1)==0)
+                                labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
+                            else
+                                labels.add(getAxCasePos(i),mTop,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
                         }
                     }
                 } else {
@@ -1134,7 +1137,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 if(box.queriedOutlier!=null)
                     return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
                 else
-                    return "lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" + 
+                    return "lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" +
                             "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
                             "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
                             "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
