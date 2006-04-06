@@ -38,7 +38,7 @@ public class PPrimCircle extends PPrimBase {
     }
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
-        if(visible && getMarkedProportion(m,-1) == 0d){
+        if(visible){
             g.setColor("outline");
             g.fillOval(x-diam/2,y-diam/2, diam,diam);
         }
