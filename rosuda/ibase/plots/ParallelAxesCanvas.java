@@ -576,10 +576,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    public String queryObject(int i) {
-        return queryObject(pp[i]);
-    }
-    
     private void setCommonScale(final boolean cs) {
         //if(cs==commonScale) return;
         commonScale=cs;

@@ -486,10 +486,6 @@ public class ScatterCanvas extends BaseCanvas {
         
     }
     
-    public String queryObject(int i) {
-        return queryObject(pp[i]);
-    }
-    
     public String queryObject(PlotPrimitive p) {
         PPrimCircle ppc = (PPrimCircle)p;
         String qs = "";

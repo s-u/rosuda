@@ -426,6 +426,7 @@ public class BaseCanvas
     }
     
     public String queryObject(final int i) {
+        if(pp!=null && pp[i]!=null) return queryObject(pp[i]);
         return "object ID "+i;
     }
     
