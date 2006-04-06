@@ -87,8 +87,9 @@ public class PPrimPolygon extends PPrimBase {
     }
     
     /** paint the primitive */
-    public void paint(final PoGraSS g, final int orientation) {
+    public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
+        if(getMarkedProportion(m,-1)>0d) return;
         g.defineColor(COL_RED,255,0,0);
         if(fill){
             if (col!=null)

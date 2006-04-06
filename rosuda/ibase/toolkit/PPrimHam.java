@@ -48,9 +48,9 @@ public class PPrimHam extends PPrimPolygon {
     }
     
     /** paint the primitive */
-    public void paint(final PoGraSS g, final int orientation) {
+    public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (cases()>1) {
-            super.paint(g, orientation);
+            super.paint(g, orientation, m);
             return;
         } else {
             if (col!=null)

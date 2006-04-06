@@ -35,7 +35,7 @@ public class Outlier extends PPrimBase {
         return out.intersects(rt);
     }
     
-    public void paint(PoGraSS g, int orientation) {
+    public void paint(PoGraSS g, int orientation, SMarker m) {
         //....
     }
     

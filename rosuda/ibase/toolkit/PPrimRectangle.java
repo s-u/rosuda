@@ -29,7 +29,7 @@ public class PPrimRectangle extends PPrimBase {
     public boolean intersects(final Rectangle rt) { return (r==null)?false:r.intersects(rt); }
     
     /** paint the primitive */
-    public void paint(final PoGraSS g, final int orientation) {
+    public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
         if (col!=null)
             g.setColor(col.getRed(),col.getGreen(),col.getBlue());

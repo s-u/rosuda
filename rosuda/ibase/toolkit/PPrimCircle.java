@@ -8,6 +8,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Rectangle;
+import org.rosuda.ibase.SMarker;
 
 /**
  *
@@ -36,8 +37,8 @@ public class PPrimCircle extends PPrimBase {
         }
     }
     
-    public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation) {
-        if(visible){
+    public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
+        if(visible && getMarkedProportion(m,-1) == 0d){
             g.setColor("outline");
             g.fillOval(x-diam/2,y-diam/2, diam,diam);
         }

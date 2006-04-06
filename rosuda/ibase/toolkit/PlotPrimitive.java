@@ -30,7 +30,7 @@ public interface PlotPrimitive {
     Color getColor();
 
     /** paint the primitive (w/o selection) */
-    void paint(PoGraSS g, int orientation);
+    void paint(PoGraSS g, int orientation, SMarker m);
 
     /** paint the selection */
     void paintSelected(PoGraSS g, int orientation, SMarker m);

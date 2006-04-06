@@ -302,7 +302,7 @@ public class BaseCanvas
             g.setGlobalAlpha(ppAlpha);
             int i = 0;
             while (i<pp.length) {
-                if (pp[i]!=null) pp[i].paint(g, orientation);
+                if (pp[i]!=null) pp[i].paint(g, orientation,  m);
                 i++;
             }
             g.resetGlobalAlpha();

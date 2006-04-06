@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.rosuda.ibase.SMarker;
 
 /**
  *
@@ -58,7 +59,7 @@ public class PPrimBox extends PPrimBase {
         return false;
     }
     
-    public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation) {
+    public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
         g.defineColor(COL_WHITE,255,255,255);
         g.defineColor(COL_BLACK,0,0,0);
         

@@ -33,7 +33,7 @@ public class PPrimMosaic extends PPrimRectangle {
     }
     
     //if empty paint in red
-    public void paint(final PoGraSS g, final int orientation) {
+    public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
         switch(type){
             case TYPE_OBSERVED:
