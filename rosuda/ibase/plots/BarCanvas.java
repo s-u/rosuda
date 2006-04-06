@@ -49,6 +49,9 @@ public class BarCanvas extends BaseCanvas {
     private MenuItem MIspine=null;
     private MenuItem MIlabels=null;
     
+    private PlotPrimitive lastQueriedPrimitive=null;
+    private int lastQueriedIndex;
+    
     /** creates a (weighted) barchart
      * @param f associated frame (or <code>null</code> if common default frame is to be used)
      * @param var associated variable
@@ -466,5 +469,13 @@ public class BarCanvas extends BaseCanvas {
             return true;
         }
         return false;
+    }
+
+    public String queryObject(final PlotPrimitive p) {
+        if(lastQueriedPrimitive!=null && lastQueriedPrimitive==p) return queryObject(lastQueriedIndex);
+        for(int i=0; i<pp.length; i++){
+            if(pp[i]==p) return queryObject(i);
+        }
+        return super.queryObject(p);
     }
 }
