@@ -89,23 +89,21 @@ public class PPrimPolygon extends PPrimBase {
     /** paint the primitive */
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
-        paintPolygon(g,false,Color.BLACK,col);
+        final int mark = m.get(ref[0]);
+        Color color;
+        if(mark>0) {
+            color = ColorBridge.getMain().getColor(mark);
+        } else{
+            color = Color.BLACK;
+        }
+        paintPolygon(g,false,color,col);
     }
     
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
-        Color color;
         if (pg==null) return;
-        g.defineColor(COL_RED,255,0,0);
         final int mark = m.get(ref[0]);
         if(mark==-1) {
-            color = Common.selectColor;
-        } else {
-            color = ColorBridge.getMain().getColor(mark);
-        }
-        final double sa=getMarkedProportion(m,-1);
-        //System.out.println("pp["+i+"] sa="+sa+" "+pp);
-        if (sa>0d || mark>0) {
-            paintPolygon(g,true,color);
+            paintPolygon(g,true,Common.selectColor);
         }
     }
     
