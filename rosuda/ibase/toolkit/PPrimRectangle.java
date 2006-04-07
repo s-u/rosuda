@@ -197,7 +197,6 @@ public class PPrimRectangle extends PPrimBase {
         int ret = (int)Math.round(totalSize*proportion);
         if(ret==0 && proportion>0) ret=1;
         else if(ret==totalSize && proportion<1) ret=totalSize-1;
-        System.out.println("ret: " + ret + ", totS: " + totalSize + ", prop: " + proportion);
         return ret;
     }
 }
