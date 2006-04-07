@@ -61,7 +61,7 @@ public abstract class PPrimBase implements PlotPrimitive {
             if (pts==0) return 0d;
             int sc=0;
             while (j<pts) {
-                if (m.get(ref[j])==mark) sc++;
+                if ((mark==-1 && m.get(ref[j])==mark) || (mark>-1 && m.getSec(ref[j])==mark)) sc++;
                 j++;
             }
             final Stopwatch sw = new Stopwatch();
