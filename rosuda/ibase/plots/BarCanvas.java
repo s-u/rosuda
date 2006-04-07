@@ -388,7 +388,7 @@ public class BarCanvas extends BaseCanvas {
                             m.setSec(cs[j++],i+16);
                     i++;
                 }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
         if (M_SET64.equals(cmd)) {
@@ -403,13 +403,13 @@ public class BarCanvas extends BaseCanvas {
                             m.setSec(cs[j++],64+(64*i/pp.length));
                     i++;
                 }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
         if (M_RESET.equals(cmd)) {
             if (m.getSecCount()>0) {
                 m.resetSec();
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
+                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
         return null;
