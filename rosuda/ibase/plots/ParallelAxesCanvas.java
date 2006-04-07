@@ -84,9 +84,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
      */
     private static final String M_PLUS = "+";
     private static final String M_MINUS = "-";
-    private static final String M_SET1 = "set1";
-    private static final String M_SET64 = "set64";
-    private static final String M_RESET = "reset";
     private static final String M_LABELS = "labels";
     private static final String M_TRIGRAPH = "trigraph";
     private static final String M_SHOWDOTS = "Show dots";
@@ -327,9 +324,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
             M_MINUS,
-            "Set Colors (CB)",M_SET1,
-            "Set Colors (rainbow)",M_SET64,
-            "Clear Colors",M_RESET,
             (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX
         });
         
@@ -455,41 +449,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
             }
             d.dispose();
             updateGeometry=true;
-        }
-        if (M_SET1.equals(cmd)) {
-            if (pp!=null && pp.length>0) {
-                int i=0;
-                while (i<pp.length) {
-                    final int cs[] = ((PPrimBase)pp[i]).getCaseIDs();
-                    int j=0;
-                    if (cs!=null)
-                        while (j<cs.length)
-                            m.setSec(cs[j++],i+16);
-                    i++;
-                }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-            }
-        }
-        if (M_SET64.equals(cmd)) {
-            if (pp!=null && pp.length>0) {
-                int i=0;
-                while (i<pp.length) {
-                    //System.out.println("set64: "+i+" (of "+pp.length+") mapped to "+ax.getCatAtSeqIndex(i)+", pp="+pp[i]);
-                    final int cs[] = ((PPrimBase)pp[i]).getCaseIDs();
-                    int j=0;
-                    if (cs!=null)
-                        while (j<cs.length)
-                            m.setSec(cs[j++],64+(64*i/pp.length));
-                    i++;
-                }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-            }
-        }
-        if (M_RESET.equals(cmd)) {
-            if (m.getSecCount()>0) {
-                m.resetSec();
-                m.NotifyAll(new NotifyMsg(this,Common.NM_MarkerChange));
-            }
         }
         if (M_NODESIZEUP.equals(cmd)) {
             if(pp[0]!=null){
