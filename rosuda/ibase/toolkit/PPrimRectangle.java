@@ -18,11 +18,15 @@ import org.rosuda.pograss.*;
 public class PPrimRectangle extends PPrimBase {
     static final String COL_OUTLINE = "outline";
     protected String COL_BORDER = COL_OUTLINE;
-    public Rectangle r;
+    // public to avoid calling getter methods. setBounds should be used in combination with MINHEIGHT,MINWIDTH.
+    public Rectangle r=new Rectangle();
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
     
     private int[] pieces;
+    
+    private int MINHEIGHT=1;
+    private int MINWIDTH=1;
     
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
@@ -101,17 +105,17 @@ public class PPrimRectangle extends PPrimBase {
                 hasAny=true;
                 switch (orientation){
                     case 0:
-                        rH = (int)Math.round(rH*sa);
+                        rH = getPropSize(rH,sa);
                         rY += r.height-rH;
                         break;
                     case 1:
-                        rW = (int)Math.round(rW*sa);
+                        rW = getPropSize(rW,sa);
                         break;
                     case 2:
-                        rH = (int)Math.round(rH*sa);
+                        rH = getPropSize(rH,sa);
                         break;
                     case 3:
-                        rW = (int)Math.round(rW*sa);
+                        rW = getPropSize(rW,sa);
                         rX += r.width - rW;
                         break;
                 }
@@ -136,16 +140,16 @@ public class PPrimRectangle extends PPrimBase {
                             if (rmp>0d){
                                 hasAny=true;
                                 if (orientation==0) { // bottom-up
-                                    rH=(int)Math.round(pieces[i]*rmp);
+                                    rH=getPropSize(pieces[i],rmp);
                                     rY=r.y+r.height-shift-rH;
                                 } else if (orientation==2) { // top-down
-                                    rH=(int)Math.round(pieces[i]*rmp);
+                                    rH=getPropSize(pieces[i],rmp);
                                     rY=r.y+shift;
                                 } else if (orientation==1) { // left-right
-                                    rW=(int)Math.round(pieces[i]*rmp);
+                                    rW=getPropSize(pieces[i],rmp);
                                     rX=r.x+shift;
                                 } else if (orientation==3) { // right-left
-                                    rW=(int)Math.round(pieces[i]*rmp);
+                                    rW=getPropSize(pieces[i],rmp);
                                     rX=r.x+r.width-shift-rW;
                                 }
                                 g.setColor(COL_MARKED);
@@ -184,5 +188,16 @@ public class PPrimRectangle extends PPrimBase {
         }
         return ((total==0)?0:selected/total);
     }
-    
+        
+    public void setBounds(int x, int y, int w, int h) {
+        r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
+    }
+
+    private int getPropSize(int totalSize, double proportion) {
+        int ret = (int)Math.round(totalSize*proportion);
+        if(ret==0 && proportion>0) ret=1;
+        else if(ret==totalSize && proportion<1) ret=totalSize-1;
+        System.out.println("ret: " + ret + ", totS: " + totalSize + ", prop: " + proportion);
+        return ret;
+    }
 }

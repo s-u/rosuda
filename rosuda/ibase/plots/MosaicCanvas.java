@@ -436,14 +436,14 @@ public class MosaicCanvas extends BaseCanvas {
                     
                     if( Dirs[levelid] == 'x' ){
                         if( empty ){
-                            tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
+                            tile.setBounds(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     emptyBin,
                                     sizeY+emptyWidth);
                             tile.setObs(0);
                             tile.setDir('y');
                         } else{
-                            tile.r = new Rectangle(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
+                            tile.setBounds(x1 + (int)(counts[j] / total * sizeX) + j * thisGap,
                                     y1,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX,
                                     y2-y1 + addGapY);
@@ -452,14 +452,14 @@ public class MosaicCanvas extends BaseCanvas {
                         }
                     } else {
                         if( empty  ){
-                            tile.r = new Rectangle(x1,
+                            tile.setBounds(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     sizeX+emptyWidth,
                                     emptyBin);
                             tile.setObs(0);
                             tile.setDir('x');
                         } else {
-                            tile.r = new Rectangle(x1,
+                            tile.setBounds(x1,
                                     y1 + (int)(counts[j] / total * sizeY) + j * thisGap,
                                     x2-x1 + addGapX,
                                     Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY);

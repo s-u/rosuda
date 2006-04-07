@@ -123,13 +123,13 @@ public class HistCanvas extends BaseCanvas {
                         final int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
                         final int vy=ay.getValuePos(count[b]);
                         if (orientation==0)
-                            pr.r=new Rectangle(x1,vy,x2-x1,ly-vy);
+                            pr.setBounds(x1,vy,x2-x1,ly-vy);
                         else if (orientation==2)
-                            pr.r=new Rectangle(x2,ly,x1-x2,vy-ly);
+                            pr.setBounds(x2,ly,x1-x2,vy-ly);
                         else if (orientation==1)
-                            pr.r=new Rectangle(ly,x1,vy-ly,x2-x1);
+                            pr.setBounds(ly,x1,vy-ly,x2-x1);
                         else
-                            pr.r=new Rectangle(vy,x2,ly-vy,x1-x2);
+                            pr.setBounds(vy,x2,ly-vy,x1-x2);
                     }
                     count[b]--;
                     pr.ref[count[b]]=i;

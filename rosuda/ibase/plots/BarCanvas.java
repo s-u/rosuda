@@ -154,8 +154,8 @@ public class BarCanvas extends BaseCanvas {
             ch=ay.getCasePos(count[i]);
             if (isSpine) ch=lh+ay.gLen;
             
-            if(orientation==0) ((PPrimRectangle)pp[i]).r = new Rectangle(cl,ch,cu-cl,lh-ch);
-            else ((PPrimRectangle)pp[i]).r = new Rectangle(lh,cl,ch-lh,cu-cl);
+            if(orientation==0) ((PPrimRectangle)pp[i]).setBounds(cl,ch,cu-cl,lh-ch);
+            else ((PPrimRectangle)pp[i]).setBounds(lh,cl,ch-lh,cu-cl);
             
             i++;
         }
