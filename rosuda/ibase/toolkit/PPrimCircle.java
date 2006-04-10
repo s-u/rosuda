@@ -21,6 +21,8 @@ public class PPrimCircle extends PPrimBase {
     
     public boolean visible = true;
     public boolean queryable=true;
+
+    public int startArc;
     
     /**
      * whether {@link #intersects} and {@link #contains} check for intersection
@@ -78,7 +80,7 @@ public class PPrimCircle extends PPrimBase {
                         g.setColor(Common.selectColor);
                     else
                         g.setColor(ColorBridge.getMain().getColor(mark));
-                    g.fillArc(x-diam/2,y-diam/2, diam,diam, shift, props[i]);
+                    g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, props[i]);
                     shift += props[i];
                 }
             } else{

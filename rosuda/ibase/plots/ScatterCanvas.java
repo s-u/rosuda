@@ -292,6 +292,12 @@ public class ScatterCanvas extends BaseCanvas {
         if (stackjitter && e.getKeyCode()==KeyEvent.VK_LEFT && stackOff>1) {
             stackOff--; setUpdateRoot(0); updateObjects(); repaint();
         }*/
+        if(e.getKeyChar()=='#' && e.getModifiersEx() == (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK)){
+            for(int i=0; i< pp.length; i++){
+                ((PPrimCircle)pp[i]).startArc += 5;
+            }
+            setUpdateRoot(0);repaint();
+        }
         super.keyPressed(e);
     };
     
