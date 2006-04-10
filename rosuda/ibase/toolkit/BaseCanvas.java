@@ -756,20 +756,32 @@ public class BaseCanvas
             repaint();
         }
         if (M_HALPHADOWN.equals(cmd)) {
+            final float oppAlphaH = ppAlpha;
             ppAlphaH = alphaDown(ppAlphaH);
-            setUpdateRoot(0); repaint();
+            if(ppAlpha!=oppAlphaH){
+                setUpdateRoot(0); repaint();
+            }
         }
         if (M_HALPHAUP.equals(cmd)) {
+            final float oppAlphaH = ppAlpha;
             ppAlphaH = alphaUp(ppAlphaH);
-            setUpdateRoot(0); repaint();
+            if(ppAlpha!=oppAlphaH){
+                setUpdateRoot(0); repaint();
+            }
         }
         if (M_ALPHADOWN.equals(cmd)) {
+            final float oppAlpha = ppAlpha;
             ppAlpha = alphaDown(ppAlpha);
-            setUpdateRoot(0); repaint();
+            if(ppAlpha!=oppAlpha){
+                setUpdateRoot(0); repaint();
+            }
         }
         if (M_ALPHAUP.equals(cmd)) {
+            final float oppAlpha = ppAlpha;
             ppAlpha = alphaUp(ppAlpha);
-            setUpdateRoot(0); repaint();
+            if(ppAlpha!=oppAlpha){
+                setUpdateRoot(0); repaint();
+            }
         }
         if(M_TRANSHIGHL.equals(cmd)) {
             alphaHighlighting=!alphaHighlighting;
