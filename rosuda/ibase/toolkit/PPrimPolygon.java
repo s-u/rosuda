@@ -21,8 +21,7 @@ import org.rosuda.pograss.*;
  * @version $Id$
  */
 public class PPrimPolygon extends PPrimBase {
-    static final String COL_RED = "red";
-    static final String COL_OUTLINE = "outline";    public Polygon pg;
+    public Polygon pg;
     
     public boolean drawBorder=true;
     public boolean useSelAlpha=true;
@@ -36,6 +35,8 @@ public class PPrimPolygon extends PPrimBase {
     public boolean[] gapDots;
     public boolean[] noDotsAt;
     public boolean showGapDots=true;
+    
+    public Color COL_INVISIBLELINES = new Color(255,255,0);
     
     private int nodeSize=2;
     
@@ -125,12 +126,11 @@ public class PPrimPolygon extends PPrimBase {
     }
     
     private void paintPolygon(final PoGraSS g, boolean paintingSelected, final Color colOutline, final Color colFill) {
-        g.defineColor(COL_RED,255,0,0);
         if(fill){
             if (colFill!=null)
                 g.setColor(colFill);
             else
-                g.setColor("object");
+                g.setColor(Common.objectsColor);
             g.fillPolygon(pg.xpoints,pg.ypoints,pg.npoints);
         }
         if (drawBorder) {
@@ -148,7 +148,7 @@ public class PPrimPolygon extends PPrimBase {
                 g.drawLine(pg.xpoints[pg.npoints-1], pg.ypoints[pg.npoints-1], pg.xpoints[0], pg.ypoints[0]);
             }
             if(!paintingSelected && showInvisibleLines && invisibleLines!=null){
-                g.setColor(255,255,0);
+                g.setColor(COL_INVISIBLELINES);
                 for(int i=0; i<invisibleLines.length-1; i++){
                     if(invisibleLines[i]){
                         g.drawLine(pg.xpoints[i],pg.ypoints[i],pg.xpoints[i+1],pg.ypoints[i+1]);

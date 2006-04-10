@@ -180,7 +180,7 @@ public class HistCanvas extends BaseCanvas {
             if(mLeft!=omLeft) updateObjects();
         }
         
-        g.setColor("black");
+        g.setColor(COL_OUTLINE);
         // draw border lines
         if (orientation!=3)
             g.drawLine(mLeft,H-mBottom,mLeft,mTop);

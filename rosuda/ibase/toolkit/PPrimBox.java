@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.rosuda.ibase.Common;
 import org.rosuda.ibase.SMarker;
 
 /**
@@ -18,8 +19,6 @@ import org.rosuda.ibase.SMarker;
  * @author Tobias Wichtrey
  */
 public class PPrimBox extends PPrimBase {
-    static final String COL_WHITE = "white";
-    static final String COL_BLACK = "black";
     
     // radius of outliers
     static final int RADOUTL = 5;
@@ -42,7 +41,7 @@ public class PPrimBox extends PPrimBase {
     public int sx;
     
     public Outlier queriedOutlier;
-    
+
     public int sw, slowEdge, slastTop, shighEdge;
     public double[] slastR;
     public int[] svalPos;
@@ -60,20 +59,17 @@ public class PPrimBox extends PPrimBase {
     }
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
-        g.defineColor(COL_WHITE,255,255,255);
-        g.defineColor(COL_BLACK,0,0,0);
-        
         int i;
         
         switch(orientation){
             case 0:
                 r = new Rectangle(x,uh,w, lh-uh);
                 
-                g.setColor(COL_WHITE);
+                g.setColor(Common.objectsColor);
                 g.fillRect(x,uh,
                         w,lh-uh);
                 
-                g.setColor(COL_BLACK);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(x,uh,
                         w,lh-uh);
                 g.setLineWidth(1.5f);
@@ -118,11 +114,11 @@ public class PPrimBox extends PPrimBase {
             case 1:
                 r = new Rectangle(uh,x, uh-lh,w);
                 
-                g.setColor(COL_WHITE);
+                g.setColor(Common.objectsColor);
                 g.fillRect(lh,x,
                         uh-lh,w);
                 
-                g.setColor(COL_BLACK);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(lh,x,
                         uh-lh,w);
                 g.setLineWidth(1.5f);
@@ -164,10 +160,10 @@ public class PPrimBox extends PPrimBase {
         
         switch(orientation){
             case 0:
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 g.fillRect(sx,suh,
                         sw,slh-suh);
-                g.setColor(COL_BLACK);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(sx,suh,
                         sw,slh-suh);
                 g.setLineWidth(1.5f);
@@ -184,7 +180,7 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(sx+sw/2,slh,
                         sx+sw/2,slh15);
                 g.setLineWidth(1.0f);
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
@@ -205,10 +201,10 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 g.fillRect(slh,sx,
                         suh-slh,sw);
-                g.setColor(COL_BLACK);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(slh,sx,
                         suh-slh,sw);
                 g.setLineWidth(1.5f);
@@ -225,7 +221,7 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(slh,sx+sw/2,
                         slh15,sx+sw/2);
                 g.setLineWidth(1.0f);
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];

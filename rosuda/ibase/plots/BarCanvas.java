@@ -20,7 +20,8 @@ public class BarCanvas extends BaseCanvas {
     static final String M_SORTBYCOUNT = "sortByCount";
     static final String M_SORTBYMARKED = "sortByMarked";
     static final String M_LABELS = "labels";
-    static final String M_OUTLINE = "outline";
+    
+    public Color COL_GREY = new Color(192,192,192);
     
     /** corresponding variable */
     private SVar v;
@@ -262,17 +263,17 @@ public class BarCanvas extends BaseCanvas {
             final int myX1=ax.getCatLow(dragNew);
             final int myX2=ax.getCatUp(dragNew);
             if(orientation==0){
-                g.setColor(192,192,192);
+                g.setColor(COL_GREY);
                 g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
-                g.setColor(M_OUTLINE);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
             } else{
-                g.setColor(192,192,192);
+                g.setColor(COL_GREY);
                 g.fillRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
-                g.setColor(M_OUTLINE);
+                g.setColor(COL_OUTLINE);
                 g.drawRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
             }
-            g.setColor("drag");
+            g.setColor(Color.BLACK);
             final int difference;
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 final int x;

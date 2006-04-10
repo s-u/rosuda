@@ -1,13 +1,14 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Color;
+import org.rosuda.ibase.Common;
 import org.rosuda.ibase.SMarker;
 import org.rosuda.pograss.PoGraSS;
 
 
 public class PPrimMosaic extends PPrimRectangle {
-    static final String COL_OBJECT = "object";
-    static final String COL_OUTLINE = "outline";
+    public Color COL_EMPTY = Color.RED;
+    public Color COL_CENSORED = Color.RED;
     
     public String info = null;
     private char dir;
@@ -25,6 +26,7 @@ public class PPrimMosaic extends PPrimRectangle {
     
     private double p;
     private double exp;
+    
     private double scale;
     
     //get Information about this mosaic
@@ -39,11 +41,11 @@ public class PPrimMosaic extends PPrimRectangle {
             case TYPE_OBSERVED:
             case TYPE_EXPECTED:
                 if (col!=null)
-                    g.setColor(col.getRed(),col.getGreen(),col.getBlue());
+                    g.setColor(col);
                 else
-                    g.setColor(COL_OBJECT);
+                    g.setColor(Common.objectsColor);
                 if (isEmpty())
-                    g.setColor(Color.red);
+                    g.setColor(COL_EMPTY);
                 if (!isEmpty())
                     g.fillRect(r.x,r.y,r.width,r.height);
                 if (!isEmpty()) g.setColor(COL_OUTLINE);
@@ -59,10 +61,10 @@ public class PPrimMosaic extends PPrimRectangle {
                 g.drawRect(origX,origY, fullW,fullH);
                 g.resetGlobalAlpha();
                 if(!isEmpty()){
-                    g.setColor(COL_OBJECT);
+                    g.setColor(Common.objectsColor);
                     g.fillRect(r.x,r.y,r.width,r.height);
                     if(censored)
-                        g.setColor(Color.red);
+                        g.setColor(COL_CENSORED);
                     else
                         g.setColor(COL_OUTLINE);
                     g.drawRect(r.x,r.y,r.width,r.height);
@@ -174,9 +176,9 @@ public class PPrimMosaic extends PPrimRectangle {
         else
             return super.contains(x, y);
     }
-
+    
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
-        COL_BORDER = (censored?COL_MARKED:COL_OUTLINE);
+        COL_BORDER = (censored?Common.selectColor:COL_OUTLINE);
         super.paintSelected(g, orientation, m);
     }
 }

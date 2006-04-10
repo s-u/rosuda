@@ -8,6 +8,7 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Rectangle;
+import org.rosuda.ibase.Common;
 import org.rosuda.ibase.SMarker;
 
 /**
@@ -39,7 +40,7 @@ public class PPrimCircle extends PPrimBase {
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
         if(visible){
-            g.setColor("outline");
+            g.setColor(COL_OUTLINE);
             g.fillOval(x-diam/2,y-diam/2, diam,diam);
         }
     }
@@ -74,7 +75,7 @@ public class PPrimCircle extends PPrimBase {
                 for(int i=0; i<props.length; i++){
                     int mark = maps[i]-1;
                     if(mark==-1)
-                        g.setColor(COL_MARKED);
+                        g.setColor(Common.selectColor);
                     else
                         g.setColor(ColorBridge.getMain().getColor(mark));
                     g.fillArc(x-diam/2,y-diam/2, diam,diam, shift, props[i]);
@@ -85,7 +86,7 @@ public class PPrimCircle extends PPrimBase {
                 if (mark!=0) {
                     // FIXME: if we represent more that 1 ID then we're screwed ..
                     if (mark==-1)
-                        g.setColor(COL_MARKED);
+                        g.setColor(Common.selectColor);
                     else
                         g.setColor(ColorBridge.getMain().getColor(mark));
                     g.fillOval(x-diam/2,y-diam/2, diam,diam);

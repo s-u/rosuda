@@ -146,6 +146,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private boolean drawHidden=true;
     
     private int nodeSize=2;
+
+    public Color COL_AXES=Color.WHITE;
+
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
      * @param f associated frame (or <code>null</code> if none)
@@ -574,7 +577,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public void paintBack(final PoGraSS g) {
         if (drawAxes) {
-            g.setColor(C_WHITE);
+            g.setColor(COL_AXES);
             g.setLineWidth(1.5f);
             int xx=0;
             while (xx<xv.getNumCats()) {
@@ -593,13 +596,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if(!getValid()){
             final int h=pc.getHeight();
             final int w=pc.getWidth();
-            g.setColor("red");
+            g.setColor(COL_INVALID);
             g.drawLine(0,0,w,h);
             g.drawLine(0,w,h,0);
             return;
         }
         
-        g.setColor(C_BLACK);
+        g.setColor(COL_OUTLINE);
         labels.clear();
         addLabelsAndTicks(g);
         labels.finishAdd();

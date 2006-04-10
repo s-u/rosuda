@@ -17,11 +17,10 @@ import org.rosuda.util.*;
 */
 public abstract class PPrimBase implements PlotPrimitive {
     public Color col;
+    public Color COL_OUTLINE = Color.BLACK;
     
     /** references (IDs) to cases represented by this primitive */
     public int[] ref;
-
-    static final String COL_MARKED = "marked";
 
     public String toString() {
         return "PPrimBase["+cases()+" cases]";

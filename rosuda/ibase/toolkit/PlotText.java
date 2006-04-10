@@ -12,6 +12,7 @@
  */
 
 package org.rosuda.ibase.toolkit;
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
@@ -136,7 +137,7 @@ public class PlotText extends PlotObject {
             String t;
             if(maxw[i]>=0 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
             else t=txt[i];
-            g.setColor("outline");
+            g.setColor(Color.BLACK);
             g.drawString(t,x[i],y[i],ax[i],ay[i]);
             final int w = g.getWidthEstimate(t);
             final int h = g.getHeightEstimate(t);

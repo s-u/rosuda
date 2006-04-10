@@ -1,5 +1,6 @@
 package org.rosuda.ibase.toolkit;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.MenuItem;
@@ -26,8 +27,12 @@ public class BaseCanvas
         extends PGSCanvas
 //#endif
         implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
+    public Color COL_OUTLINE=Color.BLACK;
+    public Color COL_INVALID=Color.RED;
+    public Color COL_ASELBG = new Color(Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue(),76);
+    public Color COL_ADRAGBG = new Color(0.0f,0.3f,1.0f,0.25f);
+    
     protected static final String C_BLACK = "black";
-    protected static final String C_WHITE = "white";
     static final String C_MARKED = "marked";
     static final String C_ASELBG = "aSelBg";
     static final String C_ADRAGBG = "aDragBg";
@@ -249,12 +254,6 @@ public class BaseCanvas
         
         g.setBounds(w,h);
         g.begin();
-        g.defineColor(C_WHITE,255,255,255);
-        g.defineColor(C_BLACK,0,0,0);
-        g.defineColor(C_MARKED,Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue());
-        final float[] scc=Common.selectColor.getRGBComponents(null);
-        g.defineColor(C_ASELBG,scc[0],scc[1],scc[2],0.3f);
-        g.defineColor(C_ADRAGBG,0.0f,0.3f,1.0f,0.25f);
         paintInit(g);
         if (dontCache || g.localLayerCache<0 || g.localLayerCache==0) paintBack(g);
         if ((dontCache || g.localLayerCache<0 || g.localLayerCache==0) && !showOnlyHilited) paintObjects(g);
@@ -269,9 +268,9 @@ public class BaseCanvas
             int dx1=baseDragX1, dx2=baseDragX2, dy1=baseDragY1, dy2=baseDragY2;
             if (dx1>dx2) { final int hh=dx1; dx1=dx2; dx2=hh; }
             if (dy1>dy2) { final int hh=dy1; dy1=dy2; dy2=hh; }
-            g.setColor((selDrag)?C_ASELBG:C_ADRAGBG);
+            g.setColor((selDrag)?COL_ASELBG:COL_ADRAGBG);
             g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-            g.setColor(C_BLACK);
+            g.setColor(COL_OUTLINE);
             g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
         }
         
@@ -284,8 +283,6 @@ public class BaseCanvas
     
     public void paintInit(final PoGraSS g) {
         //System.out.println("BaseCanvas.paintInit");
-        g.defineColor("outline",0,0,0);
-        g.defineColor(C_OBJECT,Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
     }
     
     public void paintBack(final PoGraSS g) {

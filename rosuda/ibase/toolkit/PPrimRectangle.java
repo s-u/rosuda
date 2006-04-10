@@ -16,8 +16,8 @@ import org.rosuda.pograss.*;
 
 
 public class PPrimRectangle extends PPrimBase {
-    static final String COL_OUTLINE = "outline";
-    protected String COL_BORDER = COL_OUTLINE;
+    protected Color COL_BORDER = COL_OUTLINE;
+    
     // public to avoid calling getter methods. setBounds should be used in combination with MINHEIGHT,MINWIDTH.
     public Rectangle r=new Rectangle();
     public boolean drawBorder=true;
@@ -41,9 +41,9 @@ public class PPrimRectangle extends PPrimBase {
         if(m.getSecCount()<1){ // no color brushing
             pieces=null;
             if (col!=null)
-                g.setColor(col.getRed(),col.getGreen(),col.getBlue());
+                g.setColor(col);
             else
-                g.setColor("object");
+                g.setColor(Common.objectsColor);
             g.fillRect(r.x,r.y,r.width,r.height);
             if (drawBorder) {
                 g.setColor(COL_BORDER);
@@ -120,7 +120,7 @@ public class PPrimRectangle extends PPrimBase {
                         break;
                 }
                 
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 g.fillRect(rX,rY,rW,rH);
                 if(drawSelectionBorder){
                     g.setColor(COL_BORDER);
@@ -152,7 +152,7 @@ public class PPrimRectangle extends PPrimBase {
                                     rW=getPropSize(pieces[i],rmp);
                                     rX=r.x+r.width-shift-rW;
                                 }
-                                g.setColor(COL_MARKED);
+                                g.setColor(Common.selectColor);
                                 g.fillRect(rX,rY,rW,rH);
                                 if(drawSelectionBorder){
                                     g.setColor(COL_BORDER);

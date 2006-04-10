@@ -67,6 +67,8 @@ public class ScatterCanvas extends BaseCanvas {
     protected boolean zoomRetainsAspect=false;
     
     private final int standardMLeft=40;
+
+    public Color COL_CUSTOMBG = Color.WHITE;
     
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
@@ -403,18 +405,18 @@ public class ScatterCanvas extends BaseCanvas {
             updateObjects();
         
         if (TW<50||TH<50) {
-            g.setColor("red");
+            g.setColor(COL_INVALID);
             g.drawLine(0,0,TW,TH);
             g.drawLine(0,TH,TW,0);
             return;
         };
         
         if (fieldBg!=0) {
-            g.setColor((fieldBg==1)?C_WHITE:"objects");
+            g.setColor((fieldBg==1)?COL_CUSTOMBG:Common.objectsColor);
             g.fillRect(mLeft,Y,W,H);
         }
         
-        g.setColor("black");
+        g.setColor(COL_OUTLINE);
         g.drawLine(mLeft,Y,mLeft,Y+H);
         g.drawLine(mLeft,Y+H,mLeft+W,Y+H);
         
@@ -465,24 +467,6 @@ public class ScatterCanvas extends BaseCanvas {
             }
         }
         labels.finishAdd();
-        
-        //nextLayer(g);
-        
-        if (drag) {
-            /* no clipping
-            int dx1=A[0].clip(x1),dy1=A[1].clip(y1),
-                dx2=A[0].clip(x2),dy2=A[1].clip(y2);
-             */ int dx1=x1, dx2=x2, dy1=y1, dy2=y2;
-             if (dx1>dx2) { int h=dx1; dx1=dx2; dx2=h; };
-             if (dy1>dy2) { int h=dy1; dy1=dy2; dy2=h; };
-             if (zoomDrag)
-                 g.setColor("aDragBg");
-             else
-                 g.setColor("aSelBg");
-             g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
-             g.setColor("black");
-             g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
-        };
         
     }
     
@@ -541,7 +525,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     public void paintPost(PoGraSS g) {
         if (inQuery) {
-            g.setColor("black");
+            g.setColor(COL_OUTLINE);
             if((orientation&1) == 0){ // no rotation or 180°
                 if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
                     g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
