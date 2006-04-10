@@ -176,18 +176,19 @@ public class BarCanvas extends BaseCanvas {
     };
     
     private void sortBars(final boolean bySelected) {
-        
         final int[] marked = new int[bars];
         for (int i=0; i<bars; i++){
             marked[i] = getMarked(i);
         }
         final int[] ix;
         ix=Tools.sortIntegersIndex(bySelected?marked:count);
+        ignoreNotifications=true;
         int i=0;
         while (i<bars-1) {
             ax.moveCat(ix[i],i);
             i++;
         }
+        ignoreNotifications=false;
         updateObjects();
         setUpdateRoot(0);
         repaint();
@@ -470,7 +471,7 @@ public class BarCanvas extends BaseCanvas {
         }
         return false;
     }
-
+    
     public String queryObject(final PlotPrimitive p) {
         if(lastQueriedPrimitive!=null && lastQueriedPrimitive==p) return queryObject(lastQueriedIndex);
         for(int i=0; i<pp.length; i++){
