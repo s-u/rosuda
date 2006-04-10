@@ -304,11 +304,19 @@ public class ScatterCanvas extends BaseCanvas {
             repaint();
         };
         if (cmd=="rotate") rotate();
-        if (cmd=="points+") {
-            ptDiam+=2; setUpdateRoot(0); repaint();
+        if (cmd==M_POINTSUP) {
+            ptDiam+=2; 
+            for(int i=0; i<pp.length; i++){
+                if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
+            }
+            setUpdateRoot(0); repaint();
         }
-        if (cmd=="points-" && ptDiam>2) {
-            ptDiam-=2; setUpdateRoot(0); repaint();
+        if (cmd==M_POINTSDOWN && ptDiam>2) {
+            ptDiam-=2;
+            for(int i=0; i<pp.length; i++){
+                if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
+            }
+            setUpdateRoot(0); repaint();
         }
         if (cmd=="equiscale") {
             double sfx,sfy, usfx,usfy;
