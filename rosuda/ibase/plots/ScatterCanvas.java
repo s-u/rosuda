@@ -69,6 +69,8 @@ public class ScatterCanvas extends BaseCanvas {
     private final int standardMLeft=40;
 
     public Color COL_CUSTOMBG = Color.WHITE;
+
+    private boolean crosshairs = false;
     
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
@@ -538,7 +540,7 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintPost(PoGraSS g) {
-        if (inQuery) {
+        if (crosshairs) {
             g.setColor(COL_OUTLINE);
             if((orientation&1) == 0){ // no rotation or 180°
                 if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
@@ -612,5 +614,15 @@ public class ScatterCanvas extends BaseCanvas {
         col.toArray(ret);
         
         return ret;
+    }
+
+    public void mouseMoved(final MouseEvent ev) {
+        final boolean ocrosshairs = crosshairs;
+        crosshairs = ev.getModifiersEx()==MouseEvent.SHIFT_DOWN_MASK;
+        if(crosshairs!=ocrosshairs){
+            setUpdateRoot(3); repaint();
+        }
+        
+        super.mouseMoved(ev);
     }
 };
