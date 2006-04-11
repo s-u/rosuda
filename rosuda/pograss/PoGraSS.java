@@ -100,7 +100,7 @@ public class PoGraSS
     public void defineColor(String nam, int R, int G, int B) {};
     public void setColor(int R, int G, int B) {};
     public void setColor(String nam) {};
-    public void setColor(Color c) { if (c!=null) setColor(c.getRed(),c.getGreen(),c.getBlue()); }; // for compatibility only (drops alpha info) since 0.96b
+    public void setColor(Color c) { if (c!=null) setColor(c.getRed()/255f,c.getGreen()/255f,c.getBlue()/255f,c.getAlpha()/255f); };
     public void drawLine(int x1, int y1, int x2, int y2) {};
     public void moveTo(int x, int y) {};
     public void lineTo(int x, int y) {};
