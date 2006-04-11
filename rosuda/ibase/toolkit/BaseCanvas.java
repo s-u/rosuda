@@ -144,10 +144,7 @@ public class BaseCanvas
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
-    
-    /** x and y coordinate of mouse position when querying */
-    protected int qx,qy;
-    
+        
     MenuItem MIsonlyselected=null;
     MenuItem MIseperatealphas=null;
     MenuItem MIhalphaup=null;
@@ -637,9 +634,8 @@ public class BaseCanvas
         boolean hideQI = true;
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
-        if(actionExtQuery || actionQuery) {
+        if(actionQuery) {
             inQuery=true;
-            qx=x;qy=y;
             isExtQuery = actionExtQuery;
             if (pp!=null) {
                 PlotPrimitive p = getFirstPrimitiveContaining(x,y);

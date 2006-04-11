@@ -71,6 +71,8 @@ public class ScatterCanvas extends BaseCanvas {
     public Color COL_CUSTOMBG = Color.WHITE;
 
     private boolean crosshairs = false;
+
+    private int qx,qy;
     
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
@@ -617,12 +619,13 @@ public class ScatterCanvas extends BaseCanvas {
     }
 
     public void mouseMoved(final MouseEvent ev) {
+        super.mouseMoved(ev);
         final boolean ocrosshairs = crosshairs;
         crosshairs = ev.getModifiersEx()==MouseEvent.SHIFT_DOWN_MASK;
-        if(crosshairs!=ocrosshairs){
+        qx=ev.getX();
+        qy=ev.getY();
+        if(crosshairs || crosshairs!=ocrosshairs){
             setUpdateRoot(3); repaint();
         }
-        
-        super.mouseMoved(ev);
     }
 };
