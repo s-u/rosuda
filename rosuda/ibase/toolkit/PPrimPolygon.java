@@ -90,7 +90,7 @@ public class PPrimPolygon extends PPrimBase {
     /** paint the primitive */
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
-        final int mark = m.get(ref[0]);
+        final int mark = m.getSec(ref[0]);
         Color color;
         if(mark>0) {
             color = ColorBridge.getMain().getColor(mark);
