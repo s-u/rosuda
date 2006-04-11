@@ -99,6 +99,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_YRANGEDLG = "YrangeDlg";
     private static final String M_SCALEDLG = "scaleDlg";
     private static final String M_PCPBOX = "toggleType";
+    private static final String M_SORTBYCOUNT = "sortByCount";
+    private static final String M_SORTBYMARKED = "sortByMarked";
     
     private MenuItem MIlabels=null;
     private MenuItem MIdots=null;
@@ -107,7 +109,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MItrigraph=null;
     private MenuItem MInodeSizeUp=null;
     private MenuItem MInodeSizeDown=null;
-    private MenuItem MIhideNAlines=null;    private MenuItem MIPCPBox=null;
+    private MenuItem MIhideNAlines=null;
+    private MenuItem MIPCPBox=null;
+    private MenuItem MIsortByCount=null;
+    private MenuItem MIsortByMarked=null;
     
     /**
      * Box plot specific fields
@@ -146,9 +151,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private boolean drawHidden=true;
     
     private int nodeSize=2;
-
+    
     public Color COL_AXES=Color.WHITE;
-
+    
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
      * @param f associated frame (or <code>null</code> if none)
@@ -183,12 +188,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
         // get some space around (this comes from the scatterplots)
         ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         
+        vsCat=true;
         createMenu(f);
         MIPCPBox.setEnabled(false);
         setCommonScale(commonScale);
         EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
         
-        vsCat=true;
         updateMargins();
         
         setTitle("Boxplot ("+v[0].getName()+" grouped by "+cv.getName()+")");
@@ -327,7 +332,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
             M_MINUS,
-            (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX
+            (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX,
+            M_MINUS,
+            "@OSort by count",M_SORTBYCOUNT,
+            "!OSort by marked",M_SORTBYMARKED
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -343,6 +351,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MIhideNAlines=EzMenu.getItem(f,M_HIDENALINES);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         MIPCPBox=EzMenu.getItem(f,M_PCPBOX);
+        MIsortByCount=EzMenu.getItem(f,M_SORTBYCOUNT);
+        MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
+        MIsortByMarked=EzMenu.getItem(f,M_SORTBYMARKED);
+        MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
     }
     
     public void keyPressed(final KeyEvent e) {
@@ -486,7 +498,15 @@ public class ParallelAxesCanvas extends BaseCanvas {
             if(type==TYPE_BOX && oss==null) initOss(v);
             updateObjects();
             MIPCPBox.setLabel((type==TYPE_BOX)?"PCP":"Box plot");
+            MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
+            MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
             setUpdateRoot(0); repaint();
+        }
+        if(M_SORTBYCOUNT.equals(cmd)) {
+            sortAxes(false);
+        }
+        if(M_SORTBYMARKED.equals(cmd)) {
+            sortAxes(true);
         }
         
         return null;
@@ -964,7 +984,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     markStats = new OrdStats[v.length];
                     for(int i=0; i<v.length; i++){
                         pp[i] = createBox((v.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
-                        //((PPrimBox)pp[i]).ref = v[i].getRanked();
+                        ((PPrimBase)pp[i]).ref = v[i].getRanked();
                         markStats[i] = new OrdStats();
                     }
                     for(int i=v.length; i<pp.length; i++){
@@ -1238,6 +1258,44 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ppc.visible = false;
         ppc.queryable = false;
         return ppc;
+    }
+    
+    private void sortAxes(final boolean bySelected) {
+        // works only for box plots
+        int axes = pp.length - invisiblePoints.size();
+        
+        final int[] coumar = new int[axes];
+        final int[] ix;
+        if(bySelected){
+            for (int i=0; i<axes; i++){
+                coumar[i] = getMarked(i);
+            }
+        } else{
+            for (int i=0; i<axes; i++){
+                coumar[i] = getCount(i);
+            }
+        }
+        ix=Tools.sortIntegersIndex(coumar);
+        ignoreNotifications=true;
+        int i=0;
+        while (i<axes-1) {
+            ax.moveCat(ix[i],i);
+            i++;
+        }
+        ignoreNotifications=false;
+        updateObjects();
+        setUpdateRoot(0);
+        repaint();
+    }
+    
+    private int getMarked(final int axis){
+        // works only for box plots
+        return (int)Math.round(pp[axis].cases()*pp[axis].getMarkedProportion(m,-1));
+    }
+    
+    private int getCount(final int axis) {
+        // works only for box plots
+        return pp[axis].cases();
     }
 }
 
