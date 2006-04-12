@@ -60,7 +60,7 @@ public class PPrimBox extends PPrimBase {
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
         int i;
-        
+        int ox,oy;
         switch(orientation){
             case 0:
                 r = new Rectangle(x,uh,w, lh-uh);
@@ -87,8 +87,7 @@ public class PPrimBox extends PPrimBase {
                 i=lowEdge;
                 // draw outliers
                 outliers.clear();
-                final int ox=x+w/2-(RADOUTL+1)/2;
-                int oy;
+                ox=x+w/2-(RADOUTL+1)/2;
                 while(i>=0) {
                     oy=valPos[i]-(RADOUTL+1)/2;
                     final double val=lastR[i];
@@ -112,7 +111,7 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
-                r = new Rectangle(uh,x, uh-lh,w);
+                r = new Rectangle(lh,x, uh-lh,w);
                 
                 g.setColor(Common.objectsColor);
                 g.fillRect(lh,x,
@@ -134,21 +133,28 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(lh,x+w/2,
                         lh15,x+w/2);
                 i=lowEdge;
+                // draw outliers
+                outliers.clear();
+                oy=x+w/2-(RADOUTL+1)/2;
                 while(i>=0) {
+                    ox=valPos[i]-(RADOUTL+1)/2;
                     final double val=lastR[i];
+                    outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val<lh3)
-                        g.fillOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     i--;
                 }
                 i=highEdge;
                 while(i<lastTop) {
+                    ox=valPos[i]-(RADOUTL+1)/2;
                     final double val=lastR[i];
+                    outliers.add(new Outlier(ox,oy,RADOUTL,val));
                     if (val>uh3)
-                        g.fillOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.fillOval(ox,oy,RADOUTL,RADOUTL);
                     else
-                        g.drawOval(valPos[i]-(RADOUTL+1)/2,x+w/2-(RADOUTL+1)/2,RADOUTL,RADOUTL);
+                        g.drawOval(ox,oy,RADOUTL,RADOUTL);
                     i++;
                 }
         }
