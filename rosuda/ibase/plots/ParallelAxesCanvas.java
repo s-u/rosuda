@@ -516,10 +516,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         switch(type){
             case TYPE_BOX:
                 if(cv!=null) return (id==0)?v[0]:((id==1)?cv:null);
-            case TYPE_PCP:
+            default:
                 return (id>=0 && id<v.length)?v[id]:null;
         }
-        return super.getData(id);
     }
     
     public void performZoomIn(final int x1, final int y1, final int x2, final int y2) {
@@ -633,101 +632,69 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private void addLabelsAndTicks(PoGraSS g) {
-        switch(type){
-            case TYPE_BOX:
-                if (orientation==0) {
-                    //ay.setGeometry(Axis.O_Y,TH-mBottom,-(H=innerH));
+        /* draw labels for X axis */
+        if(type==TYPE_PCP || (vsCat || v.length>1)){
+            final int numCats=xv.getNumCats();
+            final int[] valuePoss = new int[numCats];
+            final String[] labs = new String[numCats];
+            for(int i=0; i<numCats; i++){
+                valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
+                labs[ax.getCatSeqIndex(i)] = (String)ax.getVariable().getCatAt(i);
+            }
+            
+            for(int i=0; i<numCats; i++) {
+                if (isShowLabels() && labs[i]!=null){
                     
-                    /* draw ticks and labels for Y axis */
-                    if(commonScale || vsCat) {
-                        double f=ay.getSensibleTickDistance(30,18);
-                        double fi=ay.getSensibleTickStart(f);
-                        while (fi<ay.vBegin+ay.vLen) {
-                            final int t=ay.getValuePos(fi);
-                            g.drawLine(mLeft-5,t,mLeft,t);
-                            labels.add(mLeft-4,t+5,1,0,ay.getDisplayableValue(fi));
-                            fi+=f;
-                        }
-                        g.drawLine(mLeft,ay.gBegin,mLeft,ay.gBegin+ay.gLen);
-                    }
-                    
-                    if (vsCat || v.length>1) {
-                        /* draw labels for X axis */
-                        for(int i=0; i<xv.getNumCats(); i++){
-                            if((ax.getCatSeqIndex(i)&1)==0)
-                                labels.add(getAxCasePos(i),pc.getBounds().height-mBottom,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
-                            else
-                                labels.add(getAxCasePos(i),mTop,0.5,0.5,posBoxwidth,(String)ax.getVariable().getCatAt(i));
-                        }
-                    }
-                } else {
-                    
-                    /* draw ticks and labels for Y axis */
-                    if(commonScale || vsCat) {
-                        final int h=pc.getHeight();
-                        double f=ay.getSensibleTickDistance(30,18);
-                        double fi=ay.getSensibleTickStart(f);
-                        while (fi<ay.vBegin+ay.vLen) {
-                            final int t=ay.getValuePos(fi);
-                            g.drawLine(t,h-mBottom+4,t,h-mBottom);
-                            labels.add(t,h-3,0.5,0,ay.getDisplayableValue(fi));
-                            fi+=f;
-                        }
-                        g.drawLine(ay.gBegin,h-mBottom,ay.gBegin+ay.gLen,h-mBottom);
-                    }
-                    
-                    if (vsCat || v.length>1) {
-                        /* draw labels for X axis */
-                        for(int i=0; i<xv.getNumCats(); i++){
-                            labels.add(mLeft-3,getAxCasePos(i),1,0,mLeft-3,(String)ax.getVariable().getCatAt(i));
-                        }
-                    }
-                }
-                break;
-            case TYPE_PCP:
-                /* draw ticks and labels for X axis */
-            {
-                final int numCats=xv.getNumCats();
-                final int[] valuePoss = new int[numCats];
-                final String[] labs = new String[numCats];
-                final Object[] categories = xv.getCategories();
-                for(int i=0; i<numCats; i++){
-                    valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
-                    labs[ax.getCatSeqIndex(i)] = xv.isCat()?((useX3)?Common.getTriGraph(categories[i].toString()):
-                        categories[i].toString()):categories[i].toString();
-                }
-                
-                for(int i=0; i<valuePoss.length; i++) {
-                    if (isShowLabels() && labs[i]!=null){
+                    if(orientation==0){
+                        final boolean bottom = (i&1)==0;
+                        int maxWidth=-1;
+                        double xAlign=0.5;
+                        double yAlign=0.5;
                         
-                        if(orientation==0){
-                            final boolean bottom = (i&1)==0;
-                            int maxWidth=-1;
-                            if(i==0){
-                                if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
-                            } else if (i==valuePoss.length-1){
-                                if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1];
-                            } else{
-                                if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
-                            }
-                            
-                            labels.add(valuePoss[i],
-                                    bottom?(H-mBottom+2):(mTop-5),
-                                    (i==0)?0:
-                                        ((i==valuePoss.length-1)?1:
-                                            0.5),
-                                    bottom?1:0,
-                                    maxWidth,
-                                    labs[i]);
-                        } else
-                            labels.add(mLeft-4,
-                                    valuePoss[i],
-                                    1,
-                                    0.5,
-                                    mLeft-4,
-                                    labs[i]);
-                    }
+                        switch(type){
+                            case TYPE_BOX:
+                                if(i==0){
+                                    if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0]+posBoxwidth/2;
+                                } else if (i==valuePoss.length-1){
+                                    if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1]+posBoxwidth/2;
+                                } else{
+                                    if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                                }
+                                break;
+                            case TYPE_PCP:
+                                if(i==0){
+                                    if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
+                                } else if (i==valuePoss.length-1){
+                                    if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1];
+                                } else{
+                                    if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                                }
+                                
+                                xAlign=(i==0)?0:
+                                    ((i==valuePoss.length-1)?1:
+                                        0.5);
+                                yAlign=bottom?1:0;
+                                break;
+                        }
+                        
+                        labels.add(valuePoss[i],
+                                bottom?(H-mBottom+2):(mTop-5),
+                                xAlign,
+                                yAlign,
+                                maxWidth,
+                                labs[i]);
+                    } else
+                        labels.add(mLeft-4,
+                                valuePoss[i],
+                                1,
+                                0.5,
+                                mLeft-4,
+                                labs[i]);
                 }
+            }
+            
+            // draw ticks for x axis
+            if(type==TYPE_PCP){
                 final int b = (orientation==0)?(pc.getSize().height-mBottom):(pc.getSize().width-mRight);
                 
                 int xx=0;
@@ -742,30 +709,29 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     xx++;
                 }
             }
-            
-            /* draw ticks and labels for Y axis */
-            if (commonScale) {
-                final double f=ay.getSensibleTickDistance(50,18);
-                double fi=ay.getSensibleTickStart(f);
-                while (fi<ay.vBegin+ay.vLen) {
-                    final int t=ay.getValuePos(fi);
-                    if(orientation==0){
-                        g.drawLine(mLeft-2,t,mLeft,t);
-                        if(isShowLabels())
-                            labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
-                    }else{
-                        g.drawLine(t,pc.getHeight()-mBottom,t,pc.getHeight()-mBottom+2);
-                        if(isShowLabels())
-                            labels.add(t,pc.getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
-                    }
-                    fi+=f;
+        }
+        
+        /* draw ticks and labels for Y axis */
+        if (commonScale || (type==TYPE_BOX && vsCat)) {
+            final double f=((orientation==0)?ay.getSensibleTickDistance(30,18):ay.getSensibleTickDistance(50,26));
+            double fi=ay.getSensibleTickStart(f);
+            while (fi<ay.vBegin+ay.vLen) {
+                final int t=ay.getValuePos(fi);
+                if(orientation==0){
+                    g.drawLine(mLeft-2,t,mLeft,t);
+                    if(isShowLabels())
+                        labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                }else{
+                    g.drawLine(t,pc.getHeight()-mBottom,t,pc.getHeight()-mBottom+2);
+                    if(isShowLabels())
+                        labels.add(t,pc.getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 }
-                if(orientation==0)
-                    g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
-                else
-                    g.drawLine(mLeft, pc.getHeight()-mBottom, pc.getWidth()-mRight,pc.getHeight()-mBottom);
+                fi+=f;
             }
-            break;
+            if(orientation==0)
+                g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
+            else
+                g.drawLine(mLeft, pc.getHeight()-mBottom, pc.getWidth()-mRight,pc.getHeight()-mBottom);
         }
     }
     
