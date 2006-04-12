@@ -21,8 +21,10 @@ public class PPrimCircle extends PPrimBase {
     
     public boolean visible = true;
     public boolean queryable=true;
-
+    
     public int startArc;
+    
+    private int[] pieces;
     
     /**
      * whether {@link #intersects} and {@link #contains} check for intersection
@@ -42,8 +44,31 @@ public class PPrimCircle extends PPrimBase {
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
         if(visible){
-            g.setColor(COL_OUTLINE);
-            g.fillOval(x-diam/2,y-diam/2, diam,diam);
+            if(m.getSecCount()<1){ // no color brushing
+                pieces=null;
+                g.setColor(COL_OUTLINE);
+                g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                
+            } else if(ref!=null && ref.length==1){ // color brushing for one case
+                pieces=null;
+                g.setColor(ColorBridge.getMain().getColor(m.getSec(ref[0])));
+                g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                
+            } else{ // color brushing for multiple cases
+                double totalProp=0;
+                double[] props = new double[m.getMaxMark()+1];
+                for(int i=0; i<=m.getMaxMark(); i++){
+                    props[i] = getMarkedProportion(m,i);
+                    totalProp += props[i];
+                }
+                pieces = roundProportions(props,totalProp,360);
+                int shift=0;
+                for(int i=0; i<=m.getMaxMark(); i++){
+                    g.setColor(ColorBridge.getMain().getColor(i));
+                    g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
+                    shift += pieces[i];
+                }
+            }
         }
     }
     
@@ -51,37 +76,18 @@ public class PPrimCircle extends PPrimBase {
         if(visible && ref!=null){
             int[] accMarks;
             if(ref.length>1){ // color brushing pie
-                accMarks = new int[m.getMaxMark()+2];
-                for(int i=0; i<ref.length; i++){
-                    accMarks[m.get(ref[i])+1]++;
-                }
-                int numUsedMarks=0; //not counting mark 0
-                for(int i=0; i<accMarks.length; i++){
-                    if(i!=1 && accMarks[i]>0) numUsedMarks++;
-                }
-                if(numUsedMarks==0) return;
-                double[] votes = new double[numUsedMarks];
-                int[] maps = new int[numUsedMarks];
-                int j=0;
-                int total=0;
-                for(int i=0; i<accMarks.length; i++){
-                    if(i!=1 && accMarks[i]>0){
-                        votes[j] = accMarks[i];
-                        maps[j] = i;
-                        total += votes[j];
-                        j++;
+                if(pieces!=null){
+                    int shift=0;
+                    for(int i=0; i<pieces.length; i++){
+                        if (pieces[i]>0) {
+                            double rmp = getRelativeMarkedProportion(m,i);
+                            if (rmp>0d){
+                                g.setColor(Common.selectColor);
+                                g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
+                            }
+                            shift+=pieces[i];
+                        }
                     }
-                }
-                int[] props = roundProportions(votes,total,360);
-                int shift=0;
-                for(int i=0; i<props.length; i++){
-                    int mark = maps[i]-1;
-                    if(mark==-1)
-                        g.setColor(Common.selectColor);
-                    else
-                        g.setColor(ColorBridge.getMain().getColor(mark));
-                    g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, props[i]);
-                    shift += props[i];
                 }
             } else{
                 final int mark = m.get(ref[0]);
@@ -109,7 +115,7 @@ public class PPrimCircle extends PPrimBase {
     public String toString() {
         return("PPrimCircle(x=" + x + ", y=" + y + ", diam="+diam+")");
     }
-
+    
     public boolean isQueryable() {
         return queryable;
     }
