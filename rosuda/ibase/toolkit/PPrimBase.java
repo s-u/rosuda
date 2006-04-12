@@ -116,4 +116,24 @@ public abstract class PPrimBase implements PlotPrimitive {
     public boolean isQueryable() {
         return true;
     }
+    
+    protected double getRelativeMarkedProportion(SMarker m, int mark) {
+        double total=0;
+        double selected=0;
+        
+        for(int i=0; i<ref.length; i++){
+            if(m.getSec(ref[i])==mark){
+                total++;
+                if(m.get(ref[i])==-1) selected++;
+            }
+        }
+        return ((total==0)?0:selected/total);
+    }
+    
+    protected int getPropSize(int totalSize, double proportion) {
+        int ret = (int)Math.round(totalSize*proportion);
+        if(ret==0 && proportion>0) ret=1;
+        else if(ret==totalSize && proportion<1) ret=totalSize-1;
+        return ret;
+    }
 }

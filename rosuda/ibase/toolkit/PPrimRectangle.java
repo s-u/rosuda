@@ -175,28 +175,8 @@ public class PPrimRectangle extends PPrimBase {
         return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height))
         +", cases="+cases()+", drawBorder="+drawBorder+")";
     }
-    
-    private double getRelativeMarkedProportion(SMarker m, int mark) {
-        double total=0;
-        double selected=0;
-        
-        for(int i=0; i<ref.length; i++){
-            if(m.getSec(ref[i])==mark){
-                total++;
-                if(m.get(ref[i])==-1) selected++;
-            }
-        }
-        return ((total==0)?0:selected/total);
-    }
         
     public void setBounds(int x, int y, int w, int h) {
         r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
-    }
-
-    private int getPropSize(int totalSize, double proportion) {
-        int ret = (int)Math.round(totalSize*proportion);
-        if(ret==0 && proportion>0) ret=1;
-        else if(ret==totalSize && proportion<1) ret=totalSize-1;
-        return ret;
     }
 }
