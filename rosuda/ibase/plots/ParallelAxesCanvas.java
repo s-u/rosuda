@@ -27,9 +27,6 @@ import org.rosuda.util.Tools;
 
 public class ParallelAxesCanvas extends BaseCanvas {
     
-    private int mouseX;
-    private int mouseY;
-    
     private boolean valid=true;
     
     public static final int TYPE_PCP=0;
@@ -634,62 +631,64 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private void addLabelsAndTicks(PoGraSS g) {
         /* draw labels for X axis */
         if(type==TYPE_PCP || (vsCat || v.length>1)){
-            final int numCats=xv.getNumCats();
-            final int[] valuePoss = new int[numCats];
-            final String[] labs = new String[numCats];
-            for(int i=0; i<numCats; i++){
-                valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
-                labs[ax.getCatSeqIndex(i)] = (String)ax.getVariable().getCatAt(i);
-            }
-            
-            for(int i=0; i<numCats; i++) {
-                if (isShowLabels() && labs[i]!=null){
-                    
-                    if(orientation==0){
-                        final boolean bottom = (i&1)==0;
-                        int maxWidth=-1;
-                        double xAlign=0.5;
-                        double yAlign=0.5;
+            if(isShowLabels()){
+                final int numCats=xv.getNumCats();
+                final int[] valuePoss = new int[numCats];
+                final String[] labs = new String[numCats];
+                for(int i=0; i<numCats; i++){
+                    valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
+                    labs[ax.getCatSeqIndex(i)] = (String)ax.getVariable().getCatAt(i);
+                }
+                
+                for(int i=0; i<numCats; i++) {
+                    if (labs[i]!=null){
                         
-                        switch(type){
-                            case TYPE_BOX:
-                                if(i==0){
-                                    if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0]+posBoxwidth/2;
-                                } else if (i==valuePoss.length-1){
-                                    if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1]+posBoxwidth/2;
-                                } else{
-                                    if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
-                                }
-                                break;
-                            case TYPE_PCP:
-                                if(i==0){
-                                    if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
-                                } else if (i==valuePoss.length-1){
-                                    if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1];
-                                } else{
-                                    if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
-                                }
-                                
-                                xAlign=(i==0)?0:
-                                    ((i==valuePoss.length-1)?1:
-                                        0.5);
-                                yAlign=bottom?1:0;
-                                break;
-                        }
-                        
-                        labels.add(valuePoss[i],
-                                bottom?(H-mBottom+2):(mTop-5),
-                                xAlign,
-                                yAlign,
-                                maxWidth,
-                                labs[i]);
-                    } else
-                        labels.add(mLeft-4,
-                                valuePoss[i],
-                                1,
-                                0.5,
-                                mLeft-4,
-                                labs[i]);
+                        if(orientation==0){
+                            final boolean bottom = (i&1)==0;
+                            int maxWidth=-1;
+                            double xAlign=0.5;
+                            double yAlign=0.5;
+                            
+                            switch(type){
+                                case TYPE_BOX:
+                                    if(i==0){
+                                        if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0]+posBoxwidth/2;
+                                    } else if (i==valuePoss.length-1){
+                                        if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1]+posBoxwidth/2;
+                                    } else{
+                                        if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                                    }
+                                    break;
+                                case TYPE_PCP:
+                                    if(i==0){
+                                        if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0];
+                                    } else if (i==valuePoss.length-1){
+                                        if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1];
+                                    } else{
+                                        if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                                    }
+                                    
+                                    xAlign=(i==0)?0:
+                                        ((i==valuePoss.length-1)?1:
+                                            0.5);
+                                    yAlign=bottom?1:0;
+                                    break;
+                            }
+                            
+                            labels.add(valuePoss[i],
+                                    bottom?(H-mBottom+2):(mTop-5),
+                                    xAlign,
+                                    yAlign,
+                                    maxWidth,
+                                    labs[i]);
+                        } else
+                            labels.add(mLeft-4,
+                                    valuePoss[i],
+                                    1,
+                                    0.5,
+                                    mLeft-4,
+                                    labs[i]);
+                    }
                 }
             }
             
@@ -823,14 +822,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         mRight=defaultMRight=smallMRight;
                 }
                 break;
-        }
-    }
-    
-    public void mouseMoved(final MouseEvent ev) {
-        super.mouseMoved(ev);
-        if (Common.isQueryTrigger(ev)) {
-            mouseX=ev.getX();
-            mouseY=ev.getY();
         }
     }
     

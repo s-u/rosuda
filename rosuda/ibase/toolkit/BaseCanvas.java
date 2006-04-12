@@ -151,6 +151,9 @@ public class BaseCanvas
     MenuItem MIhalphadown=null;
     protected MenuItem MItransHighl=null;
     
+    protected int mouseX;
+    protected int mouseY;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -625,8 +628,8 @@ public class BaseCanvas
         }
     };
     public void mouseMoved(final MouseEvent ev) {
-        final int x=ev.getX();
-        final int y=ev.getY();
+        mouseX=ev.getX();
+        mouseY=ev.getY();
         
         final Point cl=getFrame().getLocation();
         final Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
@@ -638,7 +641,7 @@ public class BaseCanvas
             inQuery=true;
             isExtQuery = actionExtQuery;
             if (pp!=null) {
-                PlotPrimitive p = getFirstPrimitiveContaining(x,y);
+                PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
                 if(p!=null && p.isQueryable()){
                     if (p.cases()>0) {
                         if (p.getPrimaryCase()!=-1) {
@@ -649,7 +652,7 @@ public class BaseCanvas
                     } else {
                         setQueryText(queryObject(p));
                     }
-                    qi.setLocation(cl.x+x,cl.y+y);
+                    qi.setLocation(cl.x+mouseX,cl.y+mouseY);
                     qi.show(); hideQI=false;
                 }
             }
