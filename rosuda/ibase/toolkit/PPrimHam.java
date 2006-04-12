@@ -92,7 +92,7 @@ public class PPrimHam extends PPrimPolygon {
             // want do we do??            
             final double sa=getMarkedProportion(m,-1);
             if (sa>0) {
-                g.setColor(COL_MARKED);
+                g.setColor(Common.selectColor);
                 g.drawLine(x1,y1,x2,y2);
 
             }
