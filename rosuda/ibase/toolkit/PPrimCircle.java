@@ -56,7 +56,7 @@ public class PPrimCircle extends PPrimBase {
                 
             } else{ // color brushing for multiple cases
                 double totalProp=0;
-                double[] props = new double[m.getMaxMark()+1];
+                final double[] props = new double[m.getMaxMark()+1];
                 for(int i=0; i<=m.getMaxMark(); i++){
                     props[i] = getMarkedProportion(m,i);
                     totalProp += props[i];
@@ -74,13 +74,13 @@ public class PPrimCircle extends PPrimBase {
     
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
         if(visible && ref!=null){
-            int[] accMarks;
+            
             if(ref.length>1){ // color brushing pie
                 if(pieces!=null){
                     int shift=0;
                     for(int i=0; i<pieces.length; i++){
                         if (pieces[i]>0) {
-                            double rmp = getRelativeMarkedProportion(m,i);
+                            final double rmp = getRelativeMarkedProportion(m,i);
                             if (rmp>0d){
                                 g.setColor(Common.selectColor);
                                 g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
@@ -92,7 +92,6 @@ public class PPrimCircle extends PPrimBase {
             } else{
                 final int mark = m.get(ref[0]);
                 if (mark!=0) {
-                    // FIXME: if we represent more that 1 ID then we're screwed ..
                     if (mark==-1)
                         g.setColor(Common.selectColor);
                     else
