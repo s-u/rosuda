@@ -17,7 +17,6 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_EQUISCALE = "equiscale";
     static final String M_MINUS = "-";
     static final String M_LABELS = "labels";
-    static final String M_TRIGRAPH = "trigraph";
     static final String M_NEXTBG = "nextBg";
     static final String M_JITTER = "jitter";
     static final String M_STACKJITTER = "stackjitter";
@@ -38,10 +37,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     /** in conjunction with jitter this flag determines whether random jittering or stack-plotting is to be used */
     protected boolean stackjitter=false;
-    
-    /** use trigraph for X axis in case X is categorical */
-    protected boolean useX3=false;
-    
+        
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
     
@@ -58,7 +54,6 @@ public class ScatterCanvas extends BaseCanvas {
     protected boolean drag;
     
     protected MenuItem MIlabels=null;
-    protected MenuItem MItrigraph=null;
     
     protected int Y,W,H, TW,TH;
     
@@ -138,7 +133,6 @@ public class ScatterCanvas extends BaseCanvas {
             "Same scale",M_EQUISCALE,
             M_MINUS,
             "@LHide labels",M_LABELS,
-            "@TShorten labels",M_TRIGRAPH,
             "Change background",M_NEXTBG,
             "@JToggle jittering",M_JITTER,
             "!JToggle stacking",M_STACKJITTER,
@@ -150,7 +144,6 @@ public class ScatterCanvas extends BaseCanvas {
             "Smaller points (down)",M_POINTSDOWN,
         });
         MIlabels=EzMenu.getItem(f,M_LABELS);
-        MItrigraph=EzMenu.getItem(f,M_TRIGRAPH);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         if (!v1.isCat() && !v2.isCat())
             EzMenu.getItem(f,"jitter").setEnabled(false);
@@ -384,7 +377,6 @@ public class ScatterCanvas extends BaseCanvas {
             if (!jitter) jitter=true;
             stackjitter=!stackjitter; updateObjects(); setUpdateRoot(1); repaint();
         }
-        if (cmd=="trigraph") { useX3=!useX3; MItrigraph.setLabel(useX3?"Expand labels":"Shorten labels"); setUpdateRoot(0); repaint(); }
         
         return null;
     }
@@ -452,8 +444,7 @@ public class ScatterCanvas extends BaseCanvas {
                     int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
-                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?((useX3)?Common.getTriGraph(v[ori].getCatAt((int)(fi+0.5)).toString()):
-                            v[ori].getCatAt((int)(fi+0.5)).toString()):
+                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?v[ori].getCatAt((int)(fi+0.5)).toString():
                             axis.getDisplayableValue(fi));
                     fi+=f;
                 }

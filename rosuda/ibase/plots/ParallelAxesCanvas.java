@@ -56,7 +56,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /**
      * axes and labels fields
      */
-    private boolean useX3=false;
     private boolean drawAxes=false;
     private boolean commonScale=false;
     private boolean useRegularPositioning=false;
@@ -82,7 +81,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_PLUS = "+";
     private static final String M_MINUS = "-";
     private static final String M_LABELS = "labels";
-    private static final String M_TRIGRAPH = "trigraph";
     private static final String M_SHOWDOTS = "Show dots";
     private static final String M_TOGGLEPTS = "togglePts";
     private static final String M_NODESIZEUP = "nodeSizeUp";
@@ -103,7 +101,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MIdots=null;
     private MenuItem MIaxes=null;
     private MenuItem MIlines=null;
-    private MenuItem MItrigraph=null;
     private MenuItem MInodeSizeUp=null;
     private MenuItem MInodeSizeDown=null;
     private MenuItem MIhideNAlines=null;
@@ -316,7 +313,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private void createMenu(Frame f){
         createMenu(f,true,true,true,new String[]{
             "@LHide labels",M_LABELS,
-            "Shorten lables",M_TRIGRAPH,
             M_SHOWDOTS,M_TOGGLEPTS,
             "Increase dot size (up)",M_NODESIZEUP,
             "Decrease dot size (down)",M_NODESIZEDOWN,
@@ -340,7 +336,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MIaxes=EzMenu.getItem(f,M_TOGGLEAXES);
         MIlines=EzMenu.getItem(f,M_TOGGLELINES);
         MIlines.setEnabled(false);
-        MItrigraph=EzMenu.getItem(f, M_TRIGRAPH);
         MInodeSizeUp=EzMenu.getItem(f, M_NODESIZEUP);
         MInodeSizeUp.setEnabled(false);
         MInodeSizeDown=EzMenu.getItem(f, M_NODESIZEDOWN);
@@ -371,11 +366,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         if ("exit".equals(cmd)) WinTracker.current.Exit();
         if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint();}
-        if (M_TRIGRAPH.equals(cmd)) {
-            useX3=!useX3;
-            MItrigraph.setLabel(useX3?"Extend labels":"Shorten labels");
-            setUpdateRoot(0); repaint();
-        }
         if (M_TOGGLEPTS.equals(cmd)) {
             drawPoints=!drawPoints;
             MIdots.setLabel((drawPoints)?"Hide dots":M_SHOWDOTS);
@@ -759,7 +749,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             int maxWidth=0;
             for(int i=0; i<xv.getNumCats(); i++){
                 final String s=(String)ax.getVariable().getCatAt(i);
-                int wi=g.getWidthEstimate(useX3?Common.getTriGraph(s):s);
+                int wi=g.getWidthEstimate(s);
                 if(wi>maxWidth) maxWidth=wi;
             }
             return adjustMargin(maxWidth);

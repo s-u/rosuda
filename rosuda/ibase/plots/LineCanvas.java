@@ -37,10 +37,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 
     /** falg to allow lines to be drawn from right to left */
     boolean drawBackline=false;
-    
-    /** use trigraph for X axis in case X is categorical */
-    boolean useX3=false; 
-    
+        
     /** array of axes */
     Axis A[];
 
@@ -186,7 +183,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 int t=A[0].getValuePos(fi);
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
-                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
+                    g.drawString(v[0].isCat()?v[0].getCatAt((int)fi).toString():
                                  A[0].getDisplayableValue(fi),t-5,Y+H+20);
                 fi+=f;
             };
@@ -329,7 +326,6 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='e') run(this,"selRed");
 	if (e.getKeyChar()=='j') run(this,"jitter");
-	if (e.getKeyChar()=='t') run(this,"trigraph");
     };
     public void keyPressed(KeyEvent e) {};
     public void keyReleased(KeyEvent e) {};
@@ -352,7 +348,6 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
         if (cmd=="jitter") {
             jitter=!jitter; setUpdateRoot(0); repaint();
         }
-        if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
         if (cmd=="backlines") {  drawBackline=!drawBackline; setUpdateRoot(0); repaint(); }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
             int rt=(cmd=="YrangeDlg")?1:0;

@@ -25,8 +25,6 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     boolean showLabels=true;
     protected QueryPopup qi;
 
-    /** use trigraph for X axis in case X is categorical */
-    boolean useX3=true;
     /** array of two axes (X and Y) */
     Axis A[];
 
@@ -137,7 +135,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                 if (v[0].isCat()) fi-=0.2;
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
-                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
+                    g.drawString(v[0].isCat()?v[0].getCatAt((int)fi).toString():
                                  A[0].getDisplayableValue(fi),t,Y+H+20,PoGraSS.TA_Center);
                 fi+=f;
             };
@@ -451,7 +449,6 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	if (e.getKeyChar()=='X') run(this,"exportPGS");
 	if (e.getKeyChar()=='C') run(this,"exportCases");
 	if (e.getKeyChar()=='c') run(this,"center");
- 	if (e.getKeyChar()=='t') run(this,"trigraph");
     }
     
     public void keyPressed(KeyEvent e) {}
@@ -475,7 +472,6 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	    repaint();
 	};
 	if (cmd=="print") run(o,"exportPS");
-        if (cmd=="trigraph") { useX3=!useX3; setUpdateRoot(0); repaint(); }
 	if (cmd=="exit") WinTracker.current.Exit();
         if (cmd=="exportCases") {
 	    try {

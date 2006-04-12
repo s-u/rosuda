@@ -18,7 +18,6 @@ public class HamCanvas extends BaseCanvas {
     SVar vx;
     
     boolean showLabels=true;
-    boolean useX3=false;
     int gap=0;
     
     Axis[] ai;
@@ -169,7 +168,7 @@ public class HamCanvas extends BaseCanvas {
         while (fi<ax.vBegin+ax.vLen) {
             int t=ax.getValuePos(fi);
             if (showLabels)
-                labels.add(t,H-mLeft,0.5,0.5,vx.isCat()?((useX3)?Common.getTriGraph(vx.getCatAt((int)fi).toString()):vx.getCatAt((int)fi).toString()):
+                labels.add(t,H-mLeft,0.5,0.5,vx.isCat()?vx.getCatAt((int)fi).toString():
                     ax.getDisplayableValue(fi));
             fi+=f;
         }
@@ -189,7 +188,6 @@ public class HamCanvas extends BaseCanvas {
     public void keyTyped(KeyEvent e) {
         super.keyTyped(e);
         if (e.getKeyChar()=='l') run(this,"labels");
-        if (e.getKeyChar()=='t') run(this,"tri");
         if (e.getKeyChar()=='a') run(this,"alpha");
         if (e.getKeyChar()=='.') { gap+=3; setUpdateRoot(0); updateObjects(); repaint(); }
         if (e.getKeyChar()==',') { gap-=3; setUpdateRoot(0); updateObjects(); repaint(); }
@@ -198,7 +196,6 @@ public class HamCanvas extends BaseCanvas {
     public Object run(Object o, String cmd) {
         super.run(o,cmd);
         
-        if (cmd=="tri") { useX3=!useX3; setUpdateRoot(0); repaint(); };
         if (cmd=="labels") { showLabels=!showLabels; setUpdateRoot(0); repaint(); };
         if (cmd=="alpha" && pp!=null && pp.length>0) {
             boolean a=!((PPrimHam)pp[0]).alwaysAlpha;
