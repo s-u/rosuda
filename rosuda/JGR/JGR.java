@@ -34,7 +34,12 @@ import org.rosuda.JGR.util.*;
 
 public class JGR {
 
-	/* Copyright information and other stuff */
+	/* Copyright information and other stuff 
+	
+	//Version for build scripts
+	JGR_VERSION 1.4
+	
+	*/
 
 	/** Version number of JGR */
 	public static final String VERSION = "1.4";
