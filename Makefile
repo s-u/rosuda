@@ -49,7 +49,7 @@ Mondrian.jar:
 
 JGR.jar: $(IBASE_SRC) $(IBASE_SRC_XTREME) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(POGRASS_SRC_XTREME)
 	rm -rf org
-	$(JAVAC) -d . -cp $(CLASSPATH_XTREME) $^
+	$(JAVAC) -d . -classpath $(CLASSPATH_XTREME) $^
 	cp rosuda/projects/jgr/splash.jpg .
 	cp -r rosuda/projects/jgr/icons .
 	jar xf $(CLASSPATH_XTREME)
