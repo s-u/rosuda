@@ -30,18 +30,6 @@ import org.rosuda.JGR.util.*;
 
 public class Editor extends iFrame implements ActionListener, KeyListener {
 	
-    private IconButton newButton;
-    private IconButton openButton;
-    private IconButton saveButton;
-    private IconButton undoButton;
-    private IconButton redoButton;
-    private IconButton cutButton;
-    private IconButton copyButton;
-    private IconButton pasteButton;
-    private IconButton findButton;
-    private IconButton helpButton;
-	
-    private GridBagLayout layout = new GridBagLayout();
     private CaretListenerLabel caretStatus = new CaretListenerLabel();
     private JLabel modifiedStatus = new JLabel();
     private SyntaxInput editArea = new SyntaxInput("editor",true);
@@ -49,10 +37,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 	
     private ToolBar toolBar;
 	
-    private String fileName = null;
+    String fileName = null;
     
-    private String keyWord = null;
-	
     private boolean modified = false;
 	
     private TextFinder textFinder = new TextFinder(editArea);
@@ -129,7 +115,7 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.getContentPane().setLayout(new BorderLayout());
         this.getContentPane().add(toolBar,BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(editArea);
-        sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         this.getContentPane().add(sp,BorderLayout.CENTER);
         this.getContentPane().add(status,BorderLayout.SOUTH);
 		
@@ -220,10 +206,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
             }
             else return false;
         }
-        else {
-            dispose();
-            return true;
-        }
+        dispose();
+        return true;
     }
 	
     /**
@@ -338,15 +322,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
      * @return if saved true else false
      */
     public boolean saveFile() {
-        if (fileName == null || fileName.equals("")) {
-            return saveFileAs();
-        } else {
-            setWorking(true);
-            new FileSave(this);
-            this.setTitle(fileName == null ? "Editor" : fileName);
-            setModified(modified = false);
-            return true;
-        }
+        if (fileName == null || fileName.equals("")) return saveFileAs();
+        setWorking(true);
+        new FileSave(this);
+        this.setTitle(fileName == null ? "Editor" : fileName);
+        setModified(modified = false);
+        return true;
     }
 	
     /**

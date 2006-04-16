@@ -107,6 +107,9 @@ public class JGRPrefs {
 	
     /** Initial working directory */
 	public static String workingDirectory = System.getProperty("user.home");
+	
+	/** Tab width*/
+	public static int tabWidth = 4;
 
 
     /**
@@ -196,6 +199,7 @@ public class JGRPrefs {
         previousPackages = prefs.get("PreviousPackages",null);
 		showHiddenFiles = prefs.getBoolean("ShowHiddenFiles",false);
 		workingDirectory = prefs.get("WorkingDirectory",System.getProperty("user.home"));
+		tabWidth = prefs.getInt("tabWidth",4);
     }
 
      /**
@@ -217,6 +221,7 @@ public class JGRPrefs {
 		prefs.putBoolean("ShowHiddenFiles",showHiddenFiles);
 		prefs.put("PreviousPackages",RController.getCurrentPackages()+(JGRPackageManager.remindPackages==null?"":(","+JGRPackageManager.remindPackages)));
 		prefs.put("WorkingDirectory",workingDirectory);
+		prefs.putInt("tabWidth",tabWidth);
         if (JGRPackageManager.defaultPackages != null && JGRPackageManager.defaultPackages.length > 0) {
             String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length-1].toString();
             for (int i = JGRPackageManager.defaultPackages.length-2; i >= 0; i--)

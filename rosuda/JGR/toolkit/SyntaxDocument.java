@@ -21,9 +21,6 @@ public class SyntaxDocument extends JGRStyledDocument {
 
     private DefaultStyledDocument doc;
     private Element rootElement;
-    private boolean multiLineComment;
-    
-    private static int startLine = 0;
 
     private static MutableAttributeSet BOLD = new SimpleAttributeSet();
 
@@ -47,9 +44,17 @@ public class SyntaxDocument extends JGRStyledDocument {
             try {
                 whitespace = getText(offset - 1, 1).matches("[\\s|#]");
             }
-            catch (Exception e) {}
+            catch (Exception e) {
+            	/***/
+            }
             if (!whitespace && offset != 0)
                 str = str.replaceAll("\t", "");
+            else {
+            	String tab = "";
+            	for (int i = 0; i < JGRPrefs.tabWidth; i++)
+            		tab += " ";
+            	str = tab;
+            }
         }
         else if (str.equals("\n")) {
 		
@@ -60,10 +65,14 @@ public class SyntaxDocument extends JGRStyledDocument {
 			int i = off;
 			try {
 				while (getText(i++,1).matches("[\\t\\x0B\\f]")); //matches("[\\s]"));
-			} catch (Exception ex) {}
+			} catch (Exception ex) {
+				/***/
+			}
 			try {
 				str ="\n"+ getText(off,i-off-1).replaceAll("\n","");
-			} catch (Exception ex2) {}
+			} catch (Exception ex2) {
+				/***/
+			}
         }
         super.insertString(offset, str, a);
         int len = str.length();
@@ -99,7 +108,7 @@ public class SyntaxDocument extends JGRStyledDocument {
         int startLine = rootElement.getElementIndex(offset);
         int endLine = rootElement.getElementIndex(offset + length);
         // Do the actual highlighting
-         for (int i = startLine; i <= endLine; i++)
+        for (int i = startLine; i <= endLine; i++)
              applyHighlighting(content, i);
     }
 
@@ -108,8 +117,7 @@ public class SyntaxDocument extends JGRStyledDocument {
     /**
      * Parse the line to determine the appropriate highlighting.
      */
-    private synchronized void applyHighlighting(String content, int line) throws
-        BadLocationException {
+    private synchronized void applyHighlighting(String content, int line) {
         int startOffset = rootElement.getElement(line).getStartOffset();
         int endOffset = rootElement.getElement(line).getEndOffset() - 1;
         int lineLength = endOffset - startOffset;
@@ -199,7 +207,7 @@ public class SyntaxDocument extends JGRStyledDocument {
     /*
      * Assume the needle will the found at the start/end of the line
      */
-    private synchronized int indexOf(String content, String needle, int offset) {
+    /*private synchronized int indexOf(String content, String needle, int offset) {
         int index;
         while ( (index = content.indexOf(needle, offset)) != -1) {
             String text = getLine(content, index).trim();
@@ -214,7 +222,7 @@ public class SyntaxDocument extends JGRStyledDocument {
     /*
      * Assume the needle will the found at the start/end of the line
      */
-    private synchronized int lastIndexOf(String content, String needle, int offset) {
+    /*private synchronized int lastIndexOf(String content, String needle, int offset) {
         int index;
         while ( (index = content.lastIndexOf(needle, offset)) != -1) {
             String text = getLine(content, index).trim();
@@ -224,15 +232,15 @@ public class SyntaxDocument extends JGRStyledDocument {
                 offset = index - 1;
         }
         return index;
-    }
+    }*/
 
-    private String getLine(String content, int offset) {
+    /*private String getLine(String content, int offset) {
         int line = rootElement.getElementIndex(offset);
         Element lineElement = rootElement.getElement(line);
         int start = lineElement.getStartOffset();
         int end = lineElement.getEndOffset();
         return content.substring(start, end - 1);
-    }
+    }*/
 
     /**
      * Is character a delimiter (,;:{}()[]+-/%<=>!&|^~*$).
@@ -242,8 +250,7 @@ public class SyntaxDocument extends JGRStyledDocument {
         if (Character.isWhitespace(character.charAt(0)) ||
             operands.indexOf(character) != -1)
             return true;
-        else
-            return false;
+        return false;
     }
 
     /**
@@ -253,8 +260,7 @@ public class SyntaxDocument extends JGRStyledDocument {
         String quoteDelimiters = "\"'";
         if (quoteDelimiters.indexOf(character) < 0)
             return false;
-        else
-            return true;
+        return true;
     }
 
     /**

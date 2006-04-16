@@ -34,6 +34,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
     private DefaultComboBoxModel ms;
 
     private JSpinner helptabs = new JSpinner();
+    private JSpinner tabWidth = new JSpinner();
     private JCheckBox useHelpAgent = new JCheckBox("Use Help Agent",JGRPrefs.useHelpAgent);
     private JCheckBox useHelpAgentConsole = new JCheckBox("in Console",JGRPrefs.useHelpAgentConsole);
     private JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",JGRPrefs.useHelpAgentEditor);
@@ -61,6 +62,12 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         helptabs.setPreferredSize(new Dimension(40,24));
         helptabs.setMaximumSize(new Dimension(40,24));
         helptabs.setValue(new Integer(JGRPrefs.maxHelpTabs));
+        
+        tabWidth.setMinimumSize(new Dimension(40,24));
+        tabWidth.setPreferredSize(new Dimension(40,24));
+        tabWidth.setMaximumSize(new Dimension(40,24));
+        tabWidth.setValue(new Integer(JGRPrefs.tabWidth));
+
                 
         fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
         font.setModel(mf = new DefaultComboBoxModel(fonts));
@@ -92,6 +99,10 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         JPanel helpPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         helpPanel.add(new JLabel("#Help Pages: "));
         helpPanel.add(helptabs);
+        
+        JPanel tabPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        tabPanel.add(new JLabel("Tabwidth:"));
+        tabPanel.add(tabWidth);
         
         useHelpAgentConsole.setEnabled(useHelpAgent.isSelected());
         useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
@@ -126,11 +137,15 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         gbc.gridy = 7;
         prefs.add(showHiddenFiles,gbc);
         
-        gbc.gridy = 7;
-        prefs.add(new JLabel(" "),gbc);
+        //gbc.gridy = 7;
+        //prefs.add(new JLabel(" "),gbc);
         gbc.gridy = 8;
-        prefs.add(new JLabel("Default working directory:"),gbc);
+        prefs.add(tabPanel,gbc);
+        
         gbc.gridy = 9;
+        prefs.add(new JLabel(" Default working directory:"),gbc);
+        gbc.gridy = 10;
+        
         
         JButton choose = new JButton("...");
         choose.setMinimumSize(new Dimension(40,22));
@@ -172,7 +187,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         
         this.getRootPane().setDefaultButton(save);
         this.setResizable(false);
-        this.setSize(new Dimension(420, 400));
+        this.setSize(new Dimension(420, 470));
         this.setLocation((screenSize.width-this.getSize().width)/2,(screenSize.height-this.getSize().height)/2);
         this.addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -195,6 +210,7 @@ public class PrefsDialog extends JDialog implements ActionListener, ItemListener
         JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
         JGRPrefs.showHiddenFiles = showHiddenFiles.isSelected();
         JGRPrefs.workingDirectory = workinDirectory.getText().trim().length()==0?System.getProperty("user.home"):workinDirectory.getText().trim();
+        JGRPrefs.tabWidth = ((Integer)tabWidth.getValue()).intValue();
         JGRPrefs.apply();
     }
 
