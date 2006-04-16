@@ -19,7 +19,6 @@ IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
 JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) 
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
-JGR_INSTALLER_SRC:=$(wildcard rosuda/JGR/JGRinstaller.java)
 CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
 
 ifneq ($(shell uname),Darwin)
@@ -48,18 +47,23 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: $(IBASE_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC) $(JAVAGD_SRC)
+JGR.jar: $(IBASE_SRC) $(IBASE_SRC_XTREME) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRCLIENT_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(POGRASS_SRC_XTREME)
 	rm -rf org
-	$(JAVAC) -d . $^
+	$(JAVAC) -d . -cp $(CLASSPATH_XTREME) $^
 	cp rosuda/projects/jgr/splash.jpg .
 	cp -r rosuda/projects/jgr/icons .
-	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org rosuda/JGR/LICENSE
+	jar xf $(CLASSPATH_XTREME)
+	rm -rf META-INF
+	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org net rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
 	rm -rf org splash.jpg icons
 
-JGRinst.jar: $(JRI_SRC) $(JGR_INSTALLER_SRC)
+JGRsrc: 
 	rm -rf org
-	$(JAVAC) -d . $^
-	jar fcm $@ rosuda/projects/jgr/JGRinst.mft org rosuda/JGR/LICENSE
+	mkdir org org/rosuda
+	cp -R rosuda/JGR org/rosuda
+	find org -name CVS | xargs rm -rf
+	find org -name \*~ | xargs rm -f
+	tar czf JGRsrc.tar.gz org
 	rm -rf org
 
 jgr-docs: $(JGR_SRC) 
@@ -106,7 +110,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
 
 clean:
-	rm -rf $(TARGETS) org JavaDoc *~ rtest.class TextConsole.class
+	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java JGRsrc*
 	$(MAKE) -C rosuda/Mondrian clean
 
 .PHONY: clean all doc docs
