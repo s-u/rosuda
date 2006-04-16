@@ -1,0 +1,1382 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		28DBF1FD05E20005009B4706 /* JGR */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = 2837E04109AB397B00D841D5 /* Build configuration list for PBXApplicationTarget "JGR" */;
+			buildPhases = (
+				28DBF1F905E20005009B4706 /* Sources */,
+				28DBF1FA05E20005009B4706 /* Resources */,
+				28DBF1FB05E20005009B4706 /* JavaArchive */,
+				28DBF1FC05E20005009B4706 /* Frameworks */,
+			);
+			buildSettings = {
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = JGR.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = JGR;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			name = JGR;
+			productInstallPath = "$(USER_APPS_DIR)";
+			productName = RGui;
+			productReference = A426002607780DC300DD0B12 /* JGR.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>JGR</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>JGR.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>org.rosuda.JGR</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/JGR.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.4*</string>
+		<key>MainClass</key>
+		<string>org.rosuda.JGR.JGR</string>
+		<key>Properties</key>
+		<dict>
+			<key>com.apple.macos.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.mrj.application.apple.menu.about.name</key>
+			<string>JGR</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx512m</string>
+		<key>WorkingDirectory</key>
+		<string>$APP_PACKAGE/Contents/Resources/Java</string>
+	</dict>
+	<key>NSJavaNeeded</key>
+	<string>YES</string>
+	<key>NSJavaPath</key>
+	<array>
+		<string>JGR.jar</string>
+	</array>
+	<key>NSJavaRoot</key>
+	<string>Contents/Resources/Java</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		284DA11406105C86003B4450 /* close.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 284DA11306105C85003B4450 /* close.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28699F1006BC5894002BEFFC /* JGR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0E06BC5894002BEFFC /* JGR.icns */; };
+		28699F1106BC5894002BEFFC /* JGR.mft in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0F06BC5894002BEFFC /* JGR.mft */; };
+		289DF51409F268AB00C34B0B /* PluginManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51309F268AB00C34B0B /* PluginManager.java */; };
+		289DF51709F268D200C34B0B /* Plugin.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51609F268D100C34B0B /* Plugin.java */; };
+		289DF52D09F2694700C34B0B /* Global.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51C09F2694500C34B0B /* Global.java */; };
+		289DF52E09F2694700C34B0B /* GlobalConfig.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51D09F2694500C34B0B /* GlobalConfig.java */; };
+		289DF52F09F2694700C34B0B /* ImageSelection.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51E09F2694500C34B0B /* ImageSelection.java */; };
+		289DF53009F2694700C34B0B /* JSpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51F09F2694500C34B0B /* JSpacingPanel.java */; };
+		289DF53109F2694700C34B0B /* MsgDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52009F2694500C34B0B /* MsgDialog.java */; };
+		289DF53209F2694700C34B0B /* Node.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52109F2694600C34B0B /* Node.java */; };
+		289DF53309F2694700C34B0B /* PDFconstructor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52209F2694600C34B0B /* PDFconstructor.java */; };
+		289DF53409F2694700C34B0B /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52309F2694600C34B0B /* Platform.java */; };
+		289DF53509F2694700C34B0B /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52409F2694600C34B0B /* PlatformMac.java */; };
+		289DF53609F2694700C34B0B /* PlatformWin.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52509F2694600C34B0B /* PlatformWin.java */; };
+		289DF53709F2694700C34B0B /* PngEncoder.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52609F2694600C34B0B /* PngEncoder.java */; };
+		289DF53809F2694700C34B0B /* ProgressDlg.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52709F2694600C34B0B /* ProgressDlg.java */; };
+		289DF53909F2694800C34B0B /* RecentList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52809F2694600C34B0B /* RecentList.java */; };
+		289DF53A09F2694800C34B0B /* RespDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52909F2694600C34B0B /* RespDialog.java */; };
+		289DF53B09F2694800C34B0B /* SpacingPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52A09F2694600C34B0B /* SpacingPanel.java */; };
+		289DF53C09F2694800C34B0B /* Stopwatch.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52B09F2694600C34B0B /* Stopwatch.java */; };
+		289DF53D09F2694800C34B0B /* Tools.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF52C09F2694600C34B0B /* Tools.java */; };
+		289DF54609F26A0B00C34B0B /* PoGraSS.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF53F09F26A0A00C34B0B /* PoGraSS.java */; };
+		289DF54709F26A0B00C34B0B /* PoGraSSgraphics.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54009F26A0A00C34B0B /* PoGraSSgraphics.java */; };
+		289DF54809F26A0B00C34B0B /* PoGraSSjogl.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54109F26A0A00C34B0B /* PoGraSSjogl.java */; };
+		289DF54909F26A0B00C34B0B /* PoGraSSmeta.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54209F26A0A00C34B0B /* PoGraSSmeta.java */; };
+		289DF54A09F26A0B00C34B0B /* PoGraSSPDF.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54309F26A0A00C34B0B /* PoGraSSPDF.java */; };
+		289DF54B09F26A0B00C34B0B /* PoGraSSPS.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54409F26A0A00C34B0B /* PoGraSSPS.java */; };
+		289DF55609F26A2600C34B0B /* GDCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54D09F26A2500C34B0B /* GDCanvas.java */; };
+		289DF55709F26A2600C34B0B /* GDContainer.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54E09F26A2500C34B0B /* GDContainer.java */; };
+		289DF55809F26A2600C34B0B /* GDInterface.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF54F09F26A2500C34B0B /* GDInterface.java */; };
+		289DF55909F26A2600C34B0B /* GDObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55009F26A2500C34B0B /* GDObject.java */; };
+		289DF55A09F26A2600C34B0B /* JavaGD.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55109F26A2500C34B0B /* JavaGD.java */; };
+		289DF55B09F26A2600C34B0B /* JGDBufferedPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55209F26A2600C34B0B /* JGDBufferedPanel.java */; };
+		289DF55C09F26A2600C34B0B /* JGDPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55309F26A2600C34B0B /* JGDPanel.java */; };
+		289DF55D09F26A2600C34B0B /* LocatorSync.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55409F26A2600C34B0B /* LocatorSync.java */; };
+		289DF55E09F26A2600C34B0B /* XGDserver.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55509F26A2600C34B0B /* XGDserver.java */; };
+		289DF56209F26A3E00C34B0B /* Framework.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF55F09F26A3E00C34B0B /* Framework.java */; };
+		289DF56309F26A3E00C34B0B /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56009F26A3E00C34B0B /* Platform.java */; };
+		289DF56409F26A3E00C34B0B /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56109F26A3E00C34B0B /* PlatformMac.java */; };
+		289DF5B609F26A7000C34B0B /* Commander.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56509F26A6500C34B0B /* Commander.java */; };
+		289DF5B709F26A7000C34B0B /* Common.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56609F26A6500C34B0B /* Common.java */; };
+		289DF5B809F26A7000C34B0B /* DBCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56709F26A6500C34B0B /* DBCanvas.java */; };
+		289DF5B909F26A7000C34B0B /* Dependent.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56809F26A6500C34B0B /* Dependent.java */; };
+		289DF5BA09F26A7000C34B0B /* Loader.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56909F26A6500C34B0B /* Loader.java */; };
+		289DF5BB09F26A7000C34B0B /* LoaderFLF.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56A09F26A6500C34B0B /* LoaderFLF.java */; };
+		289DF5BC09F26A7000C34B0B /* MapSegment.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56B09F26A6500C34B0B /* MapSegment.java */; };
+		289DF5BD09F26A7000C34B0B /* MapSegmentEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56C09F26A6500C34B0B /* MapSegmentEntry.java */; };
+		289DF5BE09F26A7000C34B0B /* Notifier.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56D09F26A6500C34B0B /* Notifier.java */; };
+		289DF5BF09F26A7000C34B0B /* NotifyMsg.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF56E09F26A6500C34B0B /* NotifyMsg.java */; };
+		289DF5C009F26A7000C34B0B /* BarCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57009F26A6500C34B0B /* BarCanvas.java */; };
+		289DF5C109F26A7000C34B0B /* FCCCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57109F26A6600C34B0B /* FCCCanvas.java */; };
+		289DF5C209F26A7000C34B0B /* FluctCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57209F26A6600C34B0B /* FluctCanvas.java */; };
+		289DF5C309F26A7000C34B0B /* HamCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57309F26A6600C34B0B /* HamCanvas.java */; };
+		289DF5C409F26A7000C34B0B /* HistCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57409F26A6600C34B0B /* HistCanvas.java */; };
+		289DF5C509F26A7000C34B0B /* KapMeCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57509F26A6600C34B0B /* KapMeCanvas.java */; };
+		289DF5C609F26A7000C34B0B /* LineCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57609F26A6600C34B0B /* LineCanvas.java */; };
+		289DF5C709F26A7000C34B0B /* MapCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57709F26A6600C34B0B /* MapCanvas.java */; };
+		289DF5C809F26A7000C34B0B /* MapScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57809F26A6600C34B0B /* MapScatterCanvas.java */; };
+		289DF5C909F26A7000C34B0B /* MosaicCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57909F26A6600C34B0B /* MosaicCanvas.java */; };
+		289DF5CA09F26A7000C34B0B /* ParallelAxesCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57A09F26A6600C34B0B /* ParallelAxesCanvas.java */; };
+		289DF5CB09F26A7000C34B0B /* ScatterCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57B09F26A6600C34B0B /* ScatterCanvas.java */; };
+		289DF5CC09F26A7000C34B0B /* SCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57C09F26A6600C34B0B /* SCatSequence.java */; };
+		289DF5CD09F26A7000C34B0B /* SMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57D09F26A6700C34B0B /* SMarker.java */; };
+		289DF5CE09F26A7000C34B0B /* SVar.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57E09F26A6700C34B0B /* SVar.java */; };
+		289DF5CF09F26A7000C34B0B /* SVarDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF57F09F26A6700C34B0B /* SVarDouble.java */; };
+		289DF5D009F26A7000C34B0B /* SVarFact.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58009F26A6700C34B0B /* SVarFact.java */; };
+		289DF5D109F26A7000C34B0B /* SVarFixDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58109F26A6700C34B0B /* SVarFixDouble.java */; };
+		289DF5D209F26A7000C34B0B /* SVarFixFact.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58209F26A6700C34B0B /* SVarFixFact.java */; };
+		289DF5D309F26A7000C34B0B /* SVarFixInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58309F26A6700C34B0B /* SVarFixInt.java */; };
+		289DF5D409F26A7000C34B0B /* SVarInt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58409F26A6700C34B0B /* SVarInt.java */; };
+		289DF5D509F26A7000C34B0B /* SVarObj.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58509F26A6700C34B0B /* SVarObj.java */; };
+		289DF5D609F26A7000C34B0B /* SVarSet.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58609F26A6700C34B0B /* SVarSet.java */; };
+		289DF5D709F26A7000C34B0B /* AwtPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58809F26A6700C34B0B /* AwtPlotComponent.java */; };
+		289DF5D809F26A7000C34B0B /* AwtQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58909F26A6800C34B0B /* AwtQueryPopup.java */; };
+		289DF5D909F26A7000C34B0B /* Axis.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58A09F26A6800C34B0B /* Axis.java */; };
+		289DF5DA09F26A7000C34B0B /* AxisCatSequence.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58B09F26A6800C34B0B /* AxisCatSequence.java */; };
+		289DF5DB09F26A7000C34B0B /* BaseCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58C09F26A6800C34B0B /* BaseCanvas.java */; };
+		289DF5DC09F26A7000C34B0B /* ColorBridge.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58D09F26A6800C34B0B /* ColorBridge.java */; };
+		289DF5DD09F26A7000C34B0B /* EzMenu.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58E09F26A6800C34B0B /* EzMenu.java */; };
+		289DF5DE09F26A7000C34B0B /* FrequencyTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF58F09F26A6800C34B0B /* FrequencyTable.java */; };
+		289DF5DF09F26A7000C34B0B /* JoglPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59009F26A6800C34B0B /* JoglPlotComponent.java */; };
+		289DF5E009F26A7000C34B0B /* LayerCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59109F26A6800C34B0B /* LayerCanvas.java */; };
+		289DF5E109F26A7000C34B0B /* MapSegmentTools.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59209F26A6800C34B0B /* MapSegmentTools.java */; };
+		289DF5E209F26A7000C34B0B /* Outlier.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59309F26A6800C34B0B /* Outlier.java */; };
+		289DF5E309F26A7000C34B0B /* PGSCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59409F26A6800C34B0B /* PGSCanvas.java */; };
+		289DF5E409F26A7000C34B0B /* PGSJoglCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59509F26A6900C34B0B /* PGSJoglCanvas.java */; };
+		289DF5E509F26A7000C34B0B /* Platform.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59609F26A6900C34B0B /* Platform.java */; };
+		289DF5E609F26A7000C34B0B /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59709F26A6900C34B0B /* PlatformMac.java */; };
+		289DF5E709F26A7000C34B0B /* PlotCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59809F26A6900C34B0B /* PlotCanvas.java */; };
+		289DF5E809F26A7000C34B0B /* PlotColor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59909F26A6900C34B0B /* PlotColor.java */; };
+		289DF5E909F26A7000C34B0B /* PlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59A09F26A6900C34B0B /* PlotComponent.java */; };
+		289DF5EA09F26A7000C34B0B /* PlotComponentFactory.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59B09F26A6900C34B0B /* PlotComponentFactory.java */; };
+		289DF5EB09F26A7000C34B0B /* PlotJPanel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59C09F26A6900C34B0B /* PlotJPanel.java */; };
+		289DF5EC09F26A7000C34B0B /* PlotLine.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59D09F26A6900C34B0B /* PlotLine.java */; };
+		289DF5ED09F26A7000C34B0B /* PlotManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59E09F26A6900C34B0B /* PlotManager.java */; };
+		289DF5EE09F26A7000C34B0B /* PlotObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF59F09F26A6900C34B0B /* PlotObject.java */; };
+		289DF5EF09F26A7000C34B0B /* PlotPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A009F26A6900C34B0B /* PlotPolygon.java */; };
+		289DF5F009F26A7000C34B0B /* PlotPrimitive.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A109F26A6900C34B0B /* PlotPrimitive.java */; };
+		289DF5F109F26A7000C34B0B /* PlotText.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A209F26A6A00C34B0B /* PlotText.java */; };
+		289DF5F209F26A7000C34B0B /* PPrimBase.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A309F26A6A00C34B0B /* PPrimBase.java */; };
+		289DF5F309F26A7000C34B0B /* PPrimBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A409F26A6A00C34B0B /* PPrimBox.java */; };
+		289DF5F409F26A7000C34B0B /* PPrimCircle.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A509F26A6A00C34B0B /* PPrimCircle.java */; };
+		289DF5F509F26A7000C34B0B /* PPrimHam.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A609F26A6A00C34B0B /* PPrimHam.java */; };
+		289DF5F609F26A7000C34B0B /* PPrimMosaic.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A709F26A6A00C34B0B /* PPrimMosaic.java */; };
+		289DF5F709F26A7000C34B0B /* PPrimPolygon.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A809F26A6A00C34B0B /* PPrimPolygon.java */; };
+		289DF5F809F26A7000C34B0B /* PPrimRectangle.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5A909F26A6A00C34B0B /* PPrimRectangle.java */; };
+		289DF5F909F26A7000C34B0B /* PrefsColorFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AA09F26A6A00C34B0B /* PrefsColorFrame.java */; };
+		289DF5FA09F26A7000C34B0B /* QueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AB09F26A6A00C34B0B /* QueryPopup.java */; };
+		289DF5FB09F26A7000C34B0B /* SplashScreen.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AC09F26A6A00C34B0B /* SplashScreen.java */; };
+		289DF5FC09F26A7000C34B0B /* SwingPlotComponent.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AD09F26A6A00C34B0B /* SwingPlotComponent.java */; };
+		289DF5FD09F26A7000C34B0B /* SwingQueryPopup.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AE09F26A6B00C34B0B /* SwingQueryPopup.java */; };
+		289DF5FE09F26A7000C34B0B /* TFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5AF09F26A6B00C34B0B /* TFrame.java */; };
+		289DF5FF09F26A7000C34B0B /* TJFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B009F26A6B00C34B0B /* TJFrame.java */; };
+		289DF60009F26A7000C34B0B /* WinListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B109F26A6B00C34B0B /* WinListener.java */; };
+		289DF60109F26A7000C34B0B /* WinTracker.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B209F26A6B00C34B0B /* WinTracker.java */; };
+		289DF60209F26A7000C34B0B /* WTentry.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B309F26A6B00C34B0B /* WTentry.java */; };
+		289DF60309F26A7000C34B0B /* WTentryAWT.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B409F26A6B00C34B0B /* WTentryAWT.java */; };
+		289DF60409F26A7000C34B0B /* WTentrySwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF5B509F26A6B00C34B0B /* WTentrySwing.java */; };
+		289DF61209F26A9F00C34B0B /* ActionDispatcher.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60509F26A9D00C34B0B /* ActionDispatcher.java */; };
+		289DF61309F26A9F00C34B0B /* Common.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60609F26A9D00C34B0B /* Common.java */; };
+		289DF61409F26A9F00C34B0B /* iButton.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60709F26A9D00C34B0B /* iButton.java */; };
+		289DF61509F26A9F00C34B0B /* iCheckbox.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60809F26A9D00C34B0B /* iCheckbox.java */; };
+		289DF61609F26A9F00C34B0B /* iComboBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60909F26A9D00C34B0B /* iComboBox.java */; };
+		289DF61709F26A9F00C34B0B /* iEdit.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60A09F26A9D00C34B0B /* iEdit.java */; };
+		289DF61809F26A9F00C34B0B /* iGD.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60B09F26A9D00C34B0B /* iGD.java */; };
+		289DF61909F26A9F00C34B0B /* iGroup.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60C09F26A9D00C34B0B /* iGroup.java */; };
+		289DF61A09F26A9F00C34B0B /* iLabel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60D09F26A9D00C34B0B /* iLabel.java */; };
+		289DF61B09F26A9F00C34B0B /* iList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60E09F26A9E00C34B0B /* iList.java */; };
+		289DF61C09F26A9F00C34B0B /* iRadio.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60F09F26A9E00C34B0B /* iRadio.java */; };
+		289DF61D09F26A9F00C34B0B /* iSlider.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61009F26A9E00C34B0B /* iSlider.java */; };
+		289DF61E09F26A9F00C34B0B /* iWindow.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61109F26A9E00C34B0B /* iWindow.java */; };
+		289DF62B09F26ABD00C34B0B /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61F09F26ABC00C34B0B /* jcrypt.java */; };
+		289DF62C09F26ABD00C34B0B /* RBool.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62009F26ABC00C34B0B /* RBool.java */; };
+		289DF62D09F26ABD00C34B0B /* Rconnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62109F26ABC00C34B0B /* Rconnection.java */; };
+		289DF62E09F26ABD00C34B0B /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62209F26ABC00C34B0B /* REXP.java */; };
+		289DF62F09F26ABD00C34B0B /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62309F26ABC00C34B0B /* RFactor.java */; };
+		289DF63009F26ABD00C34B0B /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62409F26ABC00C34B0B /* RFileInputStream.java */; };
+		289DF63109F26ABD00C34B0B /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62509F26ABC00C34B0B /* RFileOutputStream.java */; };
+		289DF63209F26ABE00C34B0B /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62609F26ABC00C34B0B /* RList.java */; };
+		289DF63309F26ABE00C34B0B /* Rpacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62709F26ABC00C34B0B /* Rpacket.java */; };
+		289DF63409F26ABE00C34B0B /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62809F26ABD00C34B0B /* RSession.java */; };
+		289DF63509F26ABE00C34B0B /* RSrvException.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62909F26ABD00C34B0B /* RSrvException.java */; };
+		289DF63609F26ABE00C34B0B /* Rtalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62A09F26ABD00C34B0B /* Rtalk.java */; };
+		289DF63B09F26AD800C34B0B /* Mutex.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63709F26AD800C34B0B /* Mutex.java */; };
+		289DF63C09F26AD800C34B0B /* Rengine.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63809F26AD800C34B0B /* Rengine.java */; };
+		289DF63D09F26AD800C34B0B /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63909F26AD800C34B0B /* REXP.java */; };
+		289DF63E09F26AD800C34B0B /* RMainLoopCallbacks.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63A09F26AD800C34B0B /* RMainLoopCallbacks.java */; };
+		289DF67C09F26AFE00C34B0B /* Entries in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64009F26AF700C34B0B /* Entries */; };
+		289DF67D09F26AFE00C34B0B /* Repository in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64109F26AF700C34B0B /* Repository */; };
+		289DF67E09F26AFE00C34B0B /* Root in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64209F26AF700C34B0B /* Root */; };
+		289DF67F09F26AFE00C34B0B /* JGR.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64309F26AF700C34B0B /* JGR.java */; };
+		289DF68009F26AFE00C34B0B /* JGRConsole.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64409F26AF700C34B0B /* JGRConsole.java */; };
+		289DF68109F26AFE00C34B0B /* JGRDataFileDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */; };
+		289DF68209F26AFE00C34B0B /* JGRDataFileOpenDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */; };
+		289DF68309F26AFE00C34B0B /* JGRDataFileSaveDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */; };
+		289DF68409F26AFE00C34B0B /* JGRHelp.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64809F26AF700C34B0B /* JGRHelp.java */; };
+		289DF68509F26AFE00C34B0B /* JGRObjectManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64909F26AF700C34B0B /* JGRObjectManager.java */; };
+		289DF68609F26AFE00C34B0B /* JGRPackageInstaller.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */; };
+		289DF68709F26AFE00C34B0B /* JGRPackageManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64B09F26AF700C34B0B /* JGRPackageManager.java */; };
+		289DF68809F26AFE00C34B0B /* RController.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64C09F26AF800C34B0B /* RController.java */; };
+		289DF68909F26AFE00C34B0B /* IndexEntry.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64E09F26AF800C34B0B /* IndexEntry.java */; };
+		289DF68A09F26AFE00C34B0B /* IndexStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64F09F26AF800C34B0B /* IndexStream.java */; };
+		289DF68B09F26AFE00C34B0B /* IndexTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65009F26AF800C34B0B /* IndexTable.java */; };
+		289DF68C09F26AFE00C34B0B /* SearchEngine.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65109F26AF800C34B0B /* SearchEngine.java */; };
+		289DF68D09F26AFE00C34B0B /* Tracer.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65209F26AF800C34B0B /* Tracer.java */; };
+		289DF68E09F26AFE00C34B0B /* Value.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65309F26AF800C34B0B /* Value.java */; };
+		289DF68F09F26AFE00C34B0B /* RModel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65509F26AF800C34B0B /* RModel.java */; };
+		289DF69009F26AFE00C34B0B /* RObject.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65609F26AF800C34B0B /* RObject.java */; };
+		289DF69109F26AFE00C34B0B /* AboutDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65809F26AF800C34B0B /* AboutDialog.java */; };
+		289DF69209F26AFE00C34B0B /* ConsoleOutput.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65909F26AF800C34B0B /* ConsoleOutput.java */; };
+		289DF69309F26AFE00C34B0B /* ConsoleSync.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65A09F26AF900C34B0B /* ConsoleSync.java */; };
+		289DF69409F26AFE00C34B0B /* DataTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65B09F26AF900C34B0B /* DataTable.java */; };
+		289DF69509F26AFE00C34B0B /* Editor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65C09F26AF900C34B0B /* Editor.java */; };
+		289DF69609F26AFE00C34B0B /* FileSelector.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65D09F26AF900C34B0B /* FileSelector.java */; };
+		289DF69709F26AFE00C34B0B /* FontTracker.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65E09F26AF900C34B0B /* FontTracker.java */; };
+		289DF69809F26AFE00C34B0B /* FunctionList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65F09F26AF900C34B0B /* FunctionList.java */; };
+		289DF69909F26AFE00C34B0B /* IconButton.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66009F26AF900C34B0B /* IconButton.java */; };
+		289DF69A09F26AFE00C34B0B /* iFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66109F26AF900C34B0B /* iFrame.java */; };
+		289DF69B09F26AFE00C34B0B /* iMenu.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66209F26AF900C34B0B /* iMenu.java */; };
+		289DF69C09F26AFE00C34B0B /* InsertRemoveUndoManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */; };
+		289DF69D09F26AFE00C34B0B /* JavaGD.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66409F26AF900C34B0B /* JavaGD.java */; };
+		289DF69E09F26AFE00C34B0B /* JComboBoxExt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66509F26AF900C34B0B /* JComboBoxExt.java */; };
+		289DF69F09F26AFE00C34B0B /* JGRListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66609F26AFA00C34B0B /* JGRListener.java */; };
+		289DF6A009F26AFE00C34B0B /* JGRPrefs.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66709F26AFA00C34B0B /* JGRPrefs.java */; };
+		289DF6A109F26AFE00C34B0B /* JGRStyledDocument.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66809F26AFA00C34B0B /* JGRStyledDocument.java */; };
+		289DF6A209F26AFE00C34B0B /* ModelBrowserTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66909F26AFA00C34B0B /* ModelBrowserTable.java */; };
+		289DF6A309F26AFE00C34B0B /* ObjectBrowserTree.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66A09F26AFA00C34B0B /* ObjectBrowserTree.java */; };
+		289DF6A409F26AFE00C34B0B /* PlatformMac.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66B09F26AFA00C34B0B /* PlatformMac.java */; };
+		289DF6A509F26AFE00C34B0B /* PrefsDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66C09F26AFA00C34B0B /* PrefsDialog.java */; };
+		289DF6A609F26AFE00C34B0B /* ProgressLabel.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66D09F26AFA00C34B0B /* ProgressLabel.java */; };
+		289DF6A709F26AFE00C34B0B /* SelectionPreservingCaret.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66E09F26AFA00C34B0B /* SelectionPreservingCaret.java */; };
+		289DF6A809F26AFE00C34B0B /* SplashScreen.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66F09F26AFA00C34B0B /* SplashScreen.java */; };
+		289DF6A909F26AFE00C34B0B /* SyntaxArea.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67009F26AFA00C34B0B /* SyntaxArea.java */; };
+		289DF6AA09F26AFE00C34B0B /* SyntaxDocument.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67109F26AFA00C34B0B /* SyntaxDocument.java */; };
+		289DF6AB09F26AFE00C34B0B /* SyntaxInput.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67209F26AFB00C34B0B /* SyntaxInput.java */; };
+		289DF6AC09F26AFE00C34B0B /* TextFinder.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67309F26AFB00C34B0B /* TextFinder.java */; };
+		289DF6AD09F26AFE00C34B0B /* TextPager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67409F26AFB00C34B0B /* TextPager.java */; };
+		289DF6AE09F26AFE00C34B0B /* TextTransferHandler.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67509F26AFB00C34B0B /* TextTransferHandler.java */; };
+		289DF6AF09F26AFE00C34B0B /* ToolBar.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67609F26AFB00C34B0B /* ToolBar.java */; };
+		289DF6B009F26AFE00C34B0B /* WinListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67709F26AFB00C34B0B /* WinListener.java */; };
+		289DF6B109F26AFE00C34B0B /* DocumentRenderer.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67909F26AFB00C34B0B /* DocumentRenderer.java */; };
+		289DF6B209F26AFE00C34B0B /* ErrorMsg.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67A09F26AFB00C34B0B /* ErrorMsg.java */; };
+		289DF6B309F26AFF00C34B0B /* TableSorter.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67B09F26AFB00C34B0B /* TableSorter.java */; };
+		28D5F2E9060F29C3008CA291 /* splash.jpg in JavaArchive */ = {isa = PBXBuildFile; fileRef = 281185DE05E7D8E000C16F9F /* splash.jpg */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		28D5F2EB060F29C6008CA291 /* sort-up.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = 28F902980607540C005E782D /* sort-up.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EC060F29C8008CA291 /* home.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 285E22AF05FB9A8400F09D05 /* home.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2ED060F29C9008CA291 /* sort-down.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = 28F902970607540C005E782D /* sort-down.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EE060F29CA008CA291 /* undo.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565705EA8E0D00AF1045 /* undo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EF060F29CB008CA291 /* save.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565605EA8E0D00AF1045 /* save.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F0060F29CB008CA291 /* redo.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565505EA8E0D00AF1045 /* redo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F1060F29CC008CA291 /* print.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565405EA8E0D00AF1045 /* print.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F2060F29CD008CA291 /* paste.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565305EA8E0D00AF1045 /* paste.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F3060F29CE008CA291 /* open.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565205EA8E0D00AF1045 /* open.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F4060F29CF008CA291 /* new.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565105EA8E0D00AF1045 /* new.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F5060F29D0008CA291 /* help.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565005EA8E0D00AF1045 /* help.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F6060F29D2008CA291 /* forward.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564F05EA8E0D00AF1045 /* forward.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F7060F29D2008CA291 /* find.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564E05EA8E0D00AF1045 /* find.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F8060F29D3008CA291 /* delete.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564D05EA8E0D00AF1045 /* delete.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F9060F29D5008CA291 /* cut.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564C05EA8E0D00AF1045 /* cut.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2FA060F29D5008CA291 /* copy.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564B05EA8E0D00AF1045 /* copy.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2FB060F29D6008CA291 /* back.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564A05EA8E0D00AF1045 /* back.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28FB0CBF09F231BA0088CD59 /* jogl.jar in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FB0CA909F231700088CD59 /* jogl.jar */; settings = {ATTRIBUTES = (Merge, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXBuildStyle section */
+		0E20B662001FAFA711DB9C8B /* Development */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		0E20B663001FAFA711DB9C8B /* Deployment */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXFileReference section */
+		281185DE05E7D8E000C16F9F /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
+		284DA11306105C85003B4450 /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = close.png; path = icons/close.png; sourceTree = SOURCE_ROOT; };
+		2858B25F064E5FAA00C9BFA7 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop.png; path = icons/stop.png; sourceTree = SOURCE_ROOT; };
+		285E22AF05FB9A8400F09D05 /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
+		28699F0E06BC5894002BEFFC /* JGR.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = JGR.icns; sourceTree = SOURCE_ROOT; };
+		28699F0F06BC5894002BEFFC /* JGR.mft */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = JGR.mft; sourceTree = SOURCE_ROOT; };
+		287F564A05EA8E0D00AF1045 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
+		287F564B05EA8E0D00AF1045 /* copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copy.png; sourceTree = "<group>"; };
+		287F564C05EA8E0D00AF1045 /* cut.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cut.png; sourceTree = "<group>"; };
+		287F564D05EA8E0D00AF1045 /* delete.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = delete.png; sourceTree = "<group>"; };
+		287F564E05EA8E0D00AF1045 /* find.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = find.png; sourceTree = "<group>"; };
+		287F564F05EA8E0D00AF1045 /* forward.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward.png; sourceTree = "<group>"; };
+		287F565005EA8E0D00AF1045 /* help.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = help.png; sourceTree = "<group>"; };
+		287F565105EA8E0D00AF1045 /* new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = new.png; sourceTree = "<group>"; };
+		287F565205EA8E0D00AF1045 /* open.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = open.png; sourceTree = "<group>"; };
+		287F565305EA8E0D00AF1045 /* paste.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = paste.png; sourceTree = "<group>"; };
+		287F565405EA8E0D00AF1045 /* print.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = print.png; sourceTree = "<group>"; };
+		287F565505EA8E0D00AF1045 /* redo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redo.png; sourceTree = "<group>"; };
+		287F565605EA8E0D00AF1045 /* save.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = save.png; sourceTree = "<group>"; };
+		287F565705EA8E0D00AF1045 /* undo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = undo.png; sourceTree = "<group>"; };
+		289DF51309F268AB00C34B0B /* PluginManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PluginManager.java; path = ../../plugins/PluginManager.java; sourceTree = SOURCE_ROOT; };
+		289DF51609F268D100C34B0B /* Plugin.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Plugin.java; path = ../../plugins/Plugin.java; sourceTree = SOURCE_ROOT; };
+		289DF51C09F2694500C34B0B /* Global.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Global.java; path = ../../util/Global.java; sourceTree = SOURCE_ROOT; };
+		289DF51D09F2694500C34B0B /* GlobalConfig.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GlobalConfig.java; path = ../../util/GlobalConfig.java; sourceTree = SOURCE_ROOT; };
+		289DF51E09F2694500C34B0B /* ImageSelection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ImageSelection.java; path = ../../util/ImageSelection.java; sourceTree = SOURCE_ROOT; };
+		289DF51F09F2694500C34B0B /* JSpacingPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JSpacingPanel.java; path = ../../util/JSpacingPanel.java; sourceTree = SOURCE_ROOT; };
+		289DF52009F2694500C34B0B /* MsgDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MsgDialog.java; path = ../../util/MsgDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF52109F2694600C34B0B /* Node.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Node.java; path = ../../util/Node.java; sourceTree = SOURCE_ROOT; };
+		289DF52209F2694600C34B0B /* PDFconstructor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PDFconstructor.java; path = ../../util/PDFconstructor.java; sourceTree = SOURCE_ROOT; };
+		289DF52309F2694600C34B0B /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Platform.java; path = ../../util/Platform.java; sourceTree = SOURCE_ROOT; };
+		289DF52409F2694600C34B0B /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlatformMac.java; path = ../../util/PlatformMac.java; sourceTree = SOURCE_ROOT; };
+		289DF52509F2694600C34B0B /* PlatformWin.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlatformWin.java; path = ../../util/PlatformWin.java; sourceTree = SOURCE_ROOT; };
+		289DF52609F2694600C34B0B /* PngEncoder.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PngEncoder.java; path = ../../util/PngEncoder.java; sourceTree = SOURCE_ROOT; };
+		289DF52709F2694600C34B0B /* ProgressDlg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ProgressDlg.java; path = ../../util/ProgressDlg.java; sourceTree = SOURCE_ROOT; };
+		289DF52809F2694600C34B0B /* RecentList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RecentList.java; path = ../../util/RecentList.java; sourceTree = SOURCE_ROOT; };
+		289DF52909F2694600C34B0B /* RespDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RespDialog.java; path = ../../util/RespDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF52A09F2694600C34B0B /* SpacingPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SpacingPanel.java; path = ../../util/SpacingPanel.java; sourceTree = SOURCE_ROOT; };
+		289DF52B09F2694600C34B0B /* Stopwatch.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Stopwatch.java; path = ../../util/Stopwatch.java; sourceTree = SOURCE_ROOT; };
+		289DF52C09F2694600C34B0B /* Tools.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Tools.java; path = ../../util/Tools.java; sourceTree = SOURCE_ROOT; };
+		289DF53F09F26A0A00C34B0B /* PoGraSS.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSS.java; path = ../../pograss/PoGraSS.java; sourceTree = SOURCE_ROOT; };
+		289DF54009F26A0A00C34B0B /* PoGraSSgraphics.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSSgraphics.java; path = ../../pograss/PoGraSSgraphics.java; sourceTree = SOURCE_ROOT; };
+		289DF54109F26A0A00C34B0B /* PoGraSSjogl.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSSjogl.java; path = ../../pograss/PoGraSSjogl.java; sourceTree = SOURCE_ROOT; };
+		289DF54209F26A0A00C34B0B /* PoGraSSmeta.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSSmeta.java; path = ../../pograss/PoGraSSmeta.java; sourceTree = SOURCE_ROOT; };
+		289DF54309F26A0A00C34B0B /* PoGraSSPDF.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSSPDF.java; path = ../../pograss/PoGraSSPDF.java; sourceTree = SOURCE_ROOT; };
+		289DF54409F26A0A00C34B0B /* PoGraSSPS.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PoGraSSPS.java; path = ../../pograss/PoGraSSPS.java; sourceTree = SOURCE_ROOT; };
+		289DF54D09F26A2500C34B0B /* GDCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GDCanvas.java; path = ../../javaGD/GDCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF54E09F26A2500C34B0B /* GDContainer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GDContainer.java; path = ../../javaGD/GDContainer.java; sourceTree = SOURCE_ROOT; };
+		289DF54F09F26A2500C34B0B /* GDInterface.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GDInterface.java; path = ../../javaGD/GDInterface.java; sourceTree = SOURCE_ROOT; };
+		289DF55009F26A2500C34B0B /* GDObject.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GDObject.java; path = ../../javaGD/GDObject.java; sourceTree = SOURCE_ROOT; };
+		289DF55109F26A2500C34B0B /* JavaGD.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JavaGD.java; path = ../../javaGD/JavaGD.java; sourceTree = SOURCE_ROOT; };
+		289DF55209F26A2600C34B0B /* JGDBufferedPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGDBufferedPanel.java; path = ../../javaGD/JGDBufferedPanel.java; sourceTree = SOURCE_ROOT; };
+		289DF55309F26A2600C34B0B /* JGDPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGDPanel.java; path = ../../javaGD/JGDPanel.java; sourceTree = SOURCE_ROOT; };
+		289DF55409F26A2600C34B0B /* LocatorSync.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = LocatorSync.java; path = ../../javaGD/LocatorSync.java; sourceTree = SOURCE_ROOT; };
+		289DF55509F26A2600C34B0B /* XGDserver.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = XGDserver.java; path = ../../javaGD/XGDserver.java; sourceTree = SOURCE_ROOT; };
+		289DF55F09F26A3E00C34B0B /* Framework.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Framework.java; path = ../../iplots/Framework.java; sourceTree = SOURCE_ROOT; };
+		289DF56009F26A3E00C34B0B /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Platform.java; path = ../../iplots/Platform.java; sourceTree = SOURCE_ROOT; };
+		289DF56109F26A3E00C34B0B /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlatformMac.java; path = ../../iplots/PlatformMac.java; sourceTree = SOURCE_ROOT; };
+		289DF56509F26A6500C34B0B /* Commander.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Commander.java; path = ../../ibase/Commander.java; sourceTree = SOURCE_ROOT; };
+		289DF56609F26A6500C34B0B /* Common.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Common.java; path = ../../ibase/Common.java; sourceTree = SOURCE_ROOT; };
+		289DF56709F26A6500C34B0B /* DBCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DBCanvas.java; path = ../../ibase/DBCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF56809F26A6500C34B0B /* Dependent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Dependent.java; path = ../../ibase/Dependent.java; sourceTree = SOURCE_ROOT; };
+		289DF56909F26A6500C34B0B /* Loader.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Loader.java; path = ../../ibase/Loader.java; sourceTree = SOURCE_ROOT; };
+		289DF56A09F26A6500C34B0B /* LoaderFLF.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = LoaderFLF.java; path = ../../ibase/LoaderFLF.java; sourceTree = SOURCE_ROOT; };
+		289DF56B09F26A6500C34B0B /* MapSegment.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MapSegment.java; path = ../../ibase/MapSegment.java; sourceTree = SOURCE_ROOT; };
+		289DF56C09F26A6500C34B0B /* MapSegmentEntry.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MapSegmentEntry.java; path = ../../ibase/MapSegmentEntry.java; sourceTree = SOURCE_ROOT; };
+		289DF56D09F26A6500C34B0B /* Notifier.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Notifier.java; path = ../../ibase/Notifier.java; sourceTree = SOURCE_ROOT; };
+		289DF56E09F26A6500C34B0B /* NotifyMsg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = NotifyMsg.java; path = ../../ibase/NotifyMsg.java; sourceTree = SOURCE_ROOT; };
+		289DF57009F26A6500C34B0B /* BarCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = BarCanvas.java; path = ../../ibase/plots/BarCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57109F26A6600C34B0B /* FCCCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FCCCanvas.java; path = ../../ibase/plots/FCCCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57209F26A6600C34B0B /* FluctCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FluctCanvas.java; path = ../../ibase/plots/FluctCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57309F26A6600C34B0B /* HamCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = HamCanvas.java; path = ../../ibase/plots/HamCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57409F26A6600C34B0B /* HistCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = HistCanvas.java; path = ../../ibase/plots/HistCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57509F26A6600C34B0B /* KapMeCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = KapMeCanvas.java; path = ../../ibase/plots/KapMeCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57609F26A6600C34B0B /* LineCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = LineCanvas.java; path = ../../ibase/plots/LineCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57709F26A6600C34B0B /* MapCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MapCanvas.java; path = ../../ibase/plots/MapCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57809F26A6600C34B0B /* MapScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MapScatterCanvas.java; path = ../../ibase/plots/MapScatterCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57909F26A6600C34B0B /* MosaicCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MosaicCanvas.java; path = ../../ibase/plots/MosaicCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57A09F26A6600C34B0B /* ParallelAxesCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ParallelAxesCanvas.java; path = ../../ibase/plots/ParallelAxesCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57B09F26A6600C34B0B /* ScatterCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ScatterCanvas.java; path = ../../ibase/plots/ScatterCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF57C09F26A6600C34B0B /* SCatSequence.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SCatSequence.java; path = ../../ibase/SCatSequence.java; sourceTree = SOURCE_ROOT; };
+		289DF57D09F26A6700C34B0B /* SMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SMarker.java; path = ../../ibase/SMarker.java; sourceTree = SOURCE_ROOT; };
+		289DF57E09F26A6700C34B0B /* SVar.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVar.java; path = ../../ibase/SVar.java; sourceTree = SOURCE_ROOT; };
+		289DF57F09F26A6700C34B0B /* SVarDouble.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarDouble.java; path = ../../ibase/SVarDouble.java; sourceTree = SOURCE_ROOT; };
+		289DF58009F26A6700C34B0B /* SVarFact.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarFact.java; path = ../../ibase/SVarFact.java; sourceTree = SOURCE_ROOT; };
+		289DF58109F26A6700C34B0B /* SVarFixDouble.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarFixDouble.java; path = ../../ibase/SVarFixDouble.java; sourceTree = SOURCE_ROOT; };
+		289DF58209F26A6700C34B0B /* SVarFixFact.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarFixFact.java; path = ../../ibase/SVarFixFact.java; sourceTree = SOURCE_ROOT; };
+		289DF58309F26A6700C34B0B /* SVarFixInt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarFixInt.java; path = ../../ibase/SVarFixInt.java; sourceTree = SOURCE_ROOT; };
+		289DF58409F26A6700C34B0B /* SVarInt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarInt.java; path = ../../ibase/SVarInt.java; sourceTree = SOURCE_ROOT; };
+		289DF58509F26A6700C34B0B /* SVarObj.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarObj.java; path = ../../ibase/SVarObj.java; sourceTree = SOURCE_ROOT; };
+		289DF58609F26A6700C34B0B /* SVarSet.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SVarSet.java; path = ../../ibase/SVarSet.java; sourceTree = SOURCE_ROOT; };
+		289DF58809F26A6700C34B0B /* AwtPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AwtPlotComponent.java; path = ../../ibase/toolkit/AwtPlotComponent.java; sourceTree = SOURCE_ROOT; };
+		289DF58909F26A6800C34B0B /* AwtQueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AwtQueryPopup.java; path = ../../ibase/toolkit/AwtQueryPopup.java; sourceTree = SOURCE_ROOT; };
+		289DF58A09F26A6800C34B0B /* Axis.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Axis.java; path = ../../ibase/toolkit/Axis.java; sourceTree = SOURCE_ROOT; };
+		289DF58B09F26A6800C34B0B /* AxisCatSequence.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AxisCatSequence.java; path = ../../ibase/toolkit/AxisCatSequence.java; sourceTree = SOURCE_ROOT; };
+		289DF58C09F26A6800C34B0B /* BaseCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = BaseCanvas.java; path = ../../ibase/toolkit/BaseCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF58D09F26A6800C34B0B /* ColorBridge.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ColorBridge.java; path = ../../ibase/toolkit/ColorBridge.java; sourceTree = SOURCE_ROOT; };
+		289DF58E09F26A6800C34B0B /* EzMenu.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = EzMenu.java; path = ../../ibase/toolkit/EzMenu.java; sourceTree = SOURCE_ROOT; };
+		289DF58F09F26A6800C34B0B /* FrequencyTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FrequencyTable.java; path = ../../ibase/toolkit/FrequencyTable.java; sourceTree = SOURCE_ROOT; };
+		289DF59009F26A6800C34B0B /* JoglPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JoglPlotComponent.java; path = ../../ibase/toolkit/JoglPlotComponent.java; sourceTree = SOURCE_ROOT; };
+		289DF59109F26A6800C34B0B /* LayerCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = LayerCanvas.java; path = ../../ibase/toolkit/LayerCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF59209F26A6800C34B0B /* MapSegmentTools.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MapSegmentTools.java; path = ../../ibase/toolkit/MapSegmentTools.java; sourceTree = SOURCE_ROOT; };
+		289DF59309F26A6800C34B0B /* Outlier.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Outlier.java; path = ../../ibase/toolkit/Outlier.java; sourceTree = SOURCE_ROOT; };
+		289DF59409F26A6800C34B0B /* PGSCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PGSCanvas.java; path = ../../ibase/toolkit/PGSCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF59509F26A6900C34B0B /* PGSJoglCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PGSJoglCanvas.java; path = ../../ibase/toolkit/PGSJoglCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF59609F26A6900C34B0B /* Platform.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Platform.java; path = ../../ibase/toolkit/Platform.java; sourceTree = SOURCE_ROOT; };
+		289DF59709F26A6900C34B0B /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlatformMac.java; path = ../../ibase/toolkit/PlatformMac.java; sourceTree = SOURCE_ROOT; };
+		289DF59809F26A6900C34B0B /* PlotCanvas.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotCanvas.java; path = ../../ibase/toolkit/PlotCanvas.java; sourceTree = SOURCE_ROOT; };
+		289DF59909F26A6900C34B0B /* PlotColor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotColor.java; path = ../../ibase/toolkit/PlotColor.java; sourceTree = SOURCE_ROOT; };
+		289DF59A09F26A6900C34B0B /* PlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotComponent.java; path = ../../ibase/toolkit/PlotComponent.java; sourceTree = SOURCE_ROOT; };
+		289DF59B09F26A6900C34B0B /* PlotComponentFactory.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotComponentFactory.java; path = ../../ibase/toolkit/PlotComponentFactory.java; sourceTree = SOURCE_ROOT; };
+		289DF59C09F26A6900C34B0B /* PlotJPanel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotJPanel.java; path = ../../ibase/toolkit/PlotJPanel.java; sourceTree = SOURCE_ROOT; };
+		289DF59D09F26A6900C34B0B /* PlotLine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotLine.java; path = ../../ibase/toolkit/PlotLine.java; sourceTree = SOURCE_ROOT; };
+		289DF59E09F26A6900C34B0B /* PlotManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotManager.java; path = ../../ibase/toolkit/PlotManager.java; sourceTree = SOURCE_ROOT; };
+		289DF59F09F26A6900C34B0B /* PlotObject.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotObject.java; path = ../../ibase/toolkit/PlotObject.java; sourceTree = SOURCE_ROOT; };
+		289DF5A009F26A6900C34B0B /* PlotPolygon.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotPolygon.java; path = ../../ibase/toolkit/PlotPolygon.java; sourceTree = SOURCE_ROOT; };
+		289DF5A109F26A6900C34B0B /* PlotPrimitive.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotPrimitive.java; path = ../../ibase/toolkit/PlotPrimitive.java; sourceTree = SOURCE_ROOT; };
+		289DF5A209F26A6A00C34B0B /* PlotText.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlotText.java; path = ../../ibase/toolkit/PlotText.java; sourceTree = SOURCE_ROOT; };
+		289DF5A309F26A6A00C34B0B /* PPrimBase.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimBase.java; path = ../../ibase/toolkit/PPrimBase.java; sourceTree = SOURCE_ROOT; };
+		289DF5A409F26A6A00C34B0B /* PPrimBox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimBox.java; path = ../../ibase/toolkit/PPrimBox.java; sourceTree = SOURCE_ROOT; };
+		289DF5A509F26A6A00C34B0B /* PPrimCircle.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimCircle.java; path = ../../ibase/toolkit/PPrimCircle.java; sourceTree = SOURCE_ROOT; };
+		289DF5A609F26A6A00C34B0B /* PPrimHam.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimHam.java; path = ../../ibase/toolkit/PPrimHam.java; sourceTree = SOURCE_ROOT; };
+		289DF5A709F26A6A00C34B0B /* PPrimMosaic.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimMosaic.java; path = ../../ibase/toolkit/PPrimMosaic.java; sourceTree = SOURCE_ROOT; };
+		289DF5A809F26A6A00C34B0B /* PPrimPolygon.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimPolygon.java; path = ../../ibase/toolkit/PPrimPolygon.java; sourceTree = SOURCE_ROOT; };
+		289DF5A909F26A6A00C34B0B /* PPrimRectangle.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PPrimRectangle.java; path = ../../ibase/toolkit/PPrimRectangle.java; sourceTree = SOURCE_ROOT; };
+		289DF5AA09F26A6A00C34B0B /* PrefsColorFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PrefsColorFrame.java; path = ../../ibase/toolkit/PrefsColorFrame.java; sourceTree = SOURCE_ROOT; };
+		289DF5AB09F26A6A00C34B0B /* QueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = QueryPopup.java; path = ../../ibase/toolkit/QueryPopup.java; sourceTree = SOURCE_ROOT; };
+		289DF5AC09F26A6A00C34B0B /* SplashScreen.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SplashScreen.java; path = ../../ibase/toolkit/SplashScreen.java; sourceTree = SOURCE_ROOT; };
+		289DF5AD09F26A6A00C34B0B /* SwingPlotComponent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SwingPlotComponent.java; path = ../../ibase/toolkit/SwingPlotComponent.java; sourceTree = SOURCE_ROOT; };
+		289DF5AE09F26A6B00C34B0B /* SwingQueryPopup.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SwingQueryPopup.java; path = ../../ibase/toolkit/SwingQueryPopup.java; sourceTree = SOURCE_ROOT; };
+		289DF5AF09F26A6B00C34B0B /* TFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TFrame.java; path = ../../ibase/toolkit/TFrame.java; sourceTree = SOURCE_ROOT; };
+		289DF5B009F26A6B00C34B0B /* TJFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TJFrame.java; path = ../../ibase/toolkit/TJFrame.java; sourceTree = SOURCE_ROOT; };
+		289DF5B109F26A6B00C34B0B /* WinListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WinListener.java; path = ../../ibase/toolkit/WinListener.java; sourceTree = SOURCE_ROOT; };
+		289DF5B209F26A6B00C34B0B /* WinTracker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WinTracker.java; path = ../../ibase/toolkit/WinTracker.java; sourceTree = SOURCE_ROOT; };
+		289DF5B309F26A6B00C34B0B /* WTentry.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WTentry.java; path = ../../ibase/toolkit/WTentry.java; sourceTree = SOURCE_ROOT; };
+		289DF5B409F26A6B00C34B0B /* WTentryAWT.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WTentryAWT.java; path = ../../ibase/toolkit/WTentryAWT.java; sourceTree = SOURCE_ROOT; };
+		289DF5B509F26A6B00C34B0B /* WTentrySwing.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WTentrySwing.java; path = ../../ibase/toolkit/WTentrySwing.java; sourceTree = SOURCE_ROOT; };
+		289DF60509F26A9D00C34B0B /* ActionDispatcher.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ActionDispatcher.java; path = ../../iWidgets/ActionDispatcher.java; sourceTree = SOURCE_ROOT; };
+		289DF60609F26A9D00C34B0B /* Common.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Common.java; path = ../../iWidgets/Common.java; sourceTree = SOURCE_ROOT; };
+		289DF60709F26A9D00C34B0B /* iButton.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iButton.java; path = ../../iWidgets/iButton.java; sourceTree = SOURCE_ROOT; };
+		289DF60809F26A9D00C34B0B /* iCheckbox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iCheckbox.java; path = ../../iWidgets/iCheckbox.java; sourceTree = SOURCE_ROOT; };
+		289DF60909F26A9D00C34B0B /* iComboBox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iComboBox.java; path = ../../iWidgets/iComboBox.java; sourceTree = SOURCE_ROOT; };
+		289DF60A09F26A9D00C34B0B /* iEdit.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iEdit.java; path = ../../iWidgets/iEdit.java; sourceTree = SOURCE_ROOT; };
+		289DF60B09F26A9D00C34B0B /* iGD.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iGD.java; path = ../../iWidgets/iGD.java; sourceTree = SOURCE_ROOT; };
+		289DF60C09F26A9D00C34B0B /* iGroup.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iGroup.java; path = ../../iWidgets/iGroup.java; sourceTree = SOURCE_ROOT; };
+		289DF60D09F26A9D00C34B0B /* iLabel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iLabel.java; path = ../../iWidgets/iLabel.java; sourceTree = SOURCE_ROOT; };
+		289DF60E09F26A9E00C34B0B /* iList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iList.java; path = ../../iWidgets/iList.java; sourceTree = SOURCE_ROOT; };
+		289DF60F09F26A9E00C34B0B /* iRadio.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iRadio.java; path = ../../iWidgets/iRadio.java; sourceTree = SOURCE_ROOT; };
+		289DF61009F26A9E00C34B0B /* iSlider.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iSlider.java; path = ../../iWidgets/iSlider.java; sourceTree = SOURCE_ROOT; };
+		289DF61109F26A9E00C34B0B /* iWindow.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iWindow.java; path = ../../iWidgets/iWindow.java; sourceTree = SOURCE_ROOT; };
+		289DF61F09F26ABC00C34B0B /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = jcrypt.java; path = ../../JRclient/jcrypt.java; sourceTree = SOURCE_ROOT; };
+		289DF62009F26ABC00C34B0B /* RBool.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RBool.java; path = ../../JRclient/RBool.java; sourceTree = SOURCE_ROOT; };
+		289DF62109F26ABC00C34B0B /* Rconnection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rconnection.java; path = ../../JRclient/Rconnection.java; sourceTree = SOURCE_ROOT; };
+		289DF62209F26ABC00C34B0B /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../JRclient/REXP.java; sourceTree = SOURCE_ROOT; };
+		289DF62309F26ABC00C34B0B /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFactor.java; path = ../../JRclient/RFactor.java; sourceTree = SOURCE_ROOT; };
+		289DF62409F26ABC00C34B0B /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFileInputStream.java; path = ../../JRclient/RFileInputStream.java; sourceTree = SOURCE_ROOT; };
+		289DF62509F26ABC00C34B0B /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFileOutputStream.java; path = ../../JRclient/RFileOutputStream.java; sourceTree = SOURCE_ROOT; };
+		289DF62609F26ABC00C34B0B /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RList.java; path = ../../JRclient/RList.java; sourceTree = SOURCE_ROOT; };
+		289DF62709F26ABC00C34B0B /* Rpacket.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rpacket.java; path = ../../JRclient/Rpacket.java; sourceTree = SOURCE_ROOT; };
+		289DF62809F26ABD00C34B0B /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RSession.java; path = ../../JRclient/RSession.java; sourceTree = SOURCE_ROOT; };
+		289DF62909F26ABD00C34B0B /* RSrvException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RSrvException.java; path = ../../JRclient/RSrvException.java; sourceTree = SOURCE_ROOT; };
+		289DF62A09F26ABD00C34B0B /* Rtalk.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rtalk.java; path = ../../JRclient/Rtalk.java; sourceTree = SOURCE_ROOT; };
+		289DF63709F26AD800C34B0B /* Mutex.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Mutex.java; path = ../../JRI/Mutex.java; sourceTree = SOURCE_ROOT; };
+		289DF63809F26AD800C34B0B /* Rengine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rengine.java; path = ../../JRI/Rengine.java; sourceTree = SOURCE_ROOT; };
+		289DF63909F26AD800C34B0B /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../JRI/REXP.java; sourceTree = SOURCE_ROOT; };
+		289DF63A09F26AD800C34B0B /* RMainLoopCallbacks.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RMainLoopCallbacks.java; path = ../../JRI/RMainLoopCallbacks.java; sourceTree = SOURCE_ROOT; };
+		289DF64009F26AF700C34B0B /* Entries */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Entries; path = ../../JGR/CVS/Entries; sourceTree = SOURCE_ROOT; };
+		289DF64109F26AF700C34B0B /* Repository */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Repository; path = ../../JGR/CVS/Repository; sourceTree = SOURCE_ROOT; };
+		289DF64209F26AF700C34B0B /* Root */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Root; path = ../../JGR/CVS/Root; sourceTree = SOURCE_ROOT; };
+		289DF64309F26AF700C34B0B /* JGR.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGR.java; path = ../../JGR/JGR.java; sourceTree = SOURCE_ROOT; };
+		289DF64409F26AF700C34B0B /* JGRConsole.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRConsole.java; path = ../../JGR/JGRConsole.java; sourceTree = SOURCE_ROOT; };
+		289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileDialog.java; path = ../../JGR/JGRDataFileDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileOpenDialog.java; path = ../../JGR/JGRDataFileOpenDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileSaveDialog.java; path = ../../JGR/JGRDataFileSaveDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF64809F26AF700C34B0B /* JGRHelp.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRHelp.java; path = ../../JGR/JGRHelp.java; sourceTree = SOURCE_ROOT; };
+		289DF64909F26AF700C34B0B /* JGRObjectManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRObjectManager.java; path = ../../JGR/JGRObjectManager.java; sourceTree = SOURCE_ROOT; };
+		289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRPackageInstaller.java; path = ../../JGR/JGRPackageInstaller.java; sourceTree = SOURCE_ROOT; };
+		289DF64B09F26AF700C34B0B /* JGRPackageManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRPackageManager.java; path = ../../JGR/JGRPackageManager.java; sourceTree = SOURCE_ROOT; };
+		289DF64C09F26AF800C34B0B /* RController.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RController.java; path = ../../JGR/RController.java; sourceTree = SOURCE_ROOT; };
+		289DF64E09F26AF800C34B0B /* IndexEntry.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IndexEntry.java; path = ../../JGR/rhelp/IndexEntry.java; sourceTree = SOURCE_ROOT; };
+		289DF64F09F26AF800C34B0B /* IndexStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IndexStream.java; path = ../../JGR/rhelp/IndexStream.java; sourceTree = SOURCE_ROOT; };
+		289DF65009F26AF800C34B0B /* IndexTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IndexTable.java; path = ../../JGR/rhelp/IndexTable.java; sourceTree = SOURCE_ROOT; };
+		289DF65109F26AF800C34B0B /* SearchEngine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SearchEngine.java; path = ../../JGR/rhelp/SearchEngine.java; sourceTree = SOURCE_ROOT; };
+		289DF65209F26AF800C34B0B /* Tracer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Tracer.java; path = ../../JGR/rhelp/Tracer.java; sourceTree = SOURCE_ROOT; };
+		289DF65309F26AF800C34B0B /* Value.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Value.java; path = ../../JGR/rhelp/Value.java; sourceTree = SOURCE_ROOT; };
+		289DF65509F26AF800C34B0B /* RModel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RModel.java; path = ../../JGR/robjects/RModel.java; sourceTree = SOURCE_ROOT; };
+		289DF65609F26AF800C34B0B /* RObject.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RObject.java; path = ../../JGR/robjects/RObject.java; sourceTree = SOURCE_ROOT; };
+		289DF65809F26AF800C34B0B /* AboutDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AboutDialog.java; path = ../../JGR/toolkit/AboutDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF65909F26AF800C34B0B /* ConsoleOutput.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ConsoleOutput.java; path = ../../JGR/toolkit/ConsoleOutput.java; sourceTree = SOURCE_ROOT; };
+		289DF65A09F26AF900C34B0B /* ConsoleSync.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ConsoleSync.java; path = ../../JGR/toolkit/ConsoleSync.java; sourceTree = SOURCE_ROOT; };
+		289DF65B09F26AF900C34B0B /* DataTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DataTable.java; path = ../../JGR/toolkit/DataTable.java; sourceTree = SOURCE_ROOT; };
+		289DF65C09F26AF900C34B0B /* Editor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Editor.java; path = ../../JGR/toolkit/Editor.java; sourceTree = SOURCE_ROOT; };
+		289DF65D09F26AF900C34B0B /* FileSelector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FileSelector.java; path = ../../JGR/toolkit/FileSelector.java; sourceTree = SOURCE_ROOT; };
+		289DF65E09F26AF900C34B0B /* FontTracker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FontTracker.java; path = ../../JGR/toolkit/FontTracker.java; sourceTree = SOURCE_ROOT; };
+		289DF65F09F26AF900C34B0B /* FunctionList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FunctionList.java; path = ../../JGR/toolkit/FunctionList.java; sourceTree = SOURCE_ROOT; };
+		289DF66009F26AF900C34B0B /* IconButton.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IconButton.java; path = ../../JGR/toolkit/IconButton.java; sourceTree = SOURCE_ROOT; };
+		289DF66109F26AF900C34B0B /* iFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iFrame.java; path = ../../JGR/toolkit/iFrame.java; sourceTree = SOURCE_ROOT; };
+		289DF66209F26AF900C34B0B /* iMenu.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iMenu.java; path = ../../JGR/toolkit/iMenu.java; sourceTree = SOURCE_ROOT; };
+		289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = InsertRemoveUndoManager.java; path = ../../JGR/toolkit/InsertRemoveUndoManager.java; sourceTree = SOURCE_ROOT; };
+		289DF66409F26AF900C34B0B /* JavaGD.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JavaGD.java; path = ../../JGR/toolkit/JavaGD.java; sourceTree = SOURCE_ROOT; };
+		289DF66509F26AF900C34B0B /* JComboBoxExt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JComboBoxExt.java; path = ../../JGR/toolkit/JComboBoxExt.java; sourceTree = SOURCE_ROOT; };
+		289DF66609F26AFA00C34B0B /* JGRListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRListener.java; path = ../../JGR/toolkit/JGRListener.java; sourceTree = SOURCE_ROOT; };
+		289DF66709F26AFA00C34B0B /* JGRPrefs.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRPrefs.java; path = ../../JGR/toolkit/JGRPrefs.java; sourceTree = SOURCE_ROOT; };
+		289DF66809F26AFA00C34B0B /* JGRStyledDocument.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRStyledDocument.java; path = ../../JGR/toolkit/JGRStyledDocument.java; sourceTree = SOURCE_ROOT; };
+		289DF66909F26AFA00C34B0B /* ModelBrowserTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ModelBrowserTable.java; path = ../../JGR/toolkit/ModelBrowserTable.java; sourceTree = SOURCE_ROOT; };
+		289DF66A09F26AFA00C34B0B /* ObjectBrowserTree.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ObjectBrowserTree.java; path = ../../JGR/toolkit/ObjectBrowserTree.java; sourceTree = SOURCE_ROOT; };
+		289DF66B09F26AFA00C34B0B /* PlatformMac.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PlatformMac.java; path = ../../JGR/toolkit/PlatformMac.java; sourceTree = SOURCE_ROOT; };
+		289DF66C09F26AFA00C34B0B /* PrefsDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PrefsDialog.java; path = ../../JGR/toolkit/PrefsDialog.java; sourceTree = SOURCE_ROOT; };
+		289DF66D09F26AFA00C34B0B /* ProgressLabel.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ProgressLabel.java; path = ../../JGR/toolkit/ProgressLabel.java; sourceTree = SOURCE_ROOT; };
+		289DF66E09F26AFA00C34B0B /* SelectionPreservingCaret.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SelectionPreservingCaret.java; path = ../../JGR/toolkit/SelectionPreservingCaret.java; sourceTree = SOURCE_ROOT; };
+		289DF66F09F26AFA00C34B0B /* SplashScreen.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SplashScreen.java; path = ../../JGR/toolkit/SplashScreen.java; sourceTree = SOURCE_ROOT; };
+		289DF67009F26AFA00C34B0B /* SyntaxArea.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxArea.java; path = ../../JGR/toolkit/SyntaxArea.java; sourceTree = SOURCE_ROOT; };
+		289DF67109F26AFA00C34B0B /* SyntaxDocument.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxDocument.java; path = ../../JGR/toolkit/SyntaxDocument.java; sourceTree = SOURCE_ROOT; };
+		289DF67209F26AFB00C34B0B /* SyntaxInput.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxInput.java; path = ../../JGR/toolkit/SyntaxInput.java; sourceTree = SOURCE_ROOT; };
+		289DF67309F26AFB00C34B0B /* TextFinder.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextFinder.java; path = ../../JGR/toolkit/TextFinder.java; sourceTree = SOURCE_ROOT; };
+		289DF67409F26AFB00C34B0B /* TextPager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextPager.java; path = ../../JGR/toolkit/TextPager.java; sourceTree = SOURCE_ROOT; };
+		289DF67509F26AFB00C34B0B /* TextTransferHandler.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextTransferHandler.java; path = ../../JGR/toolkit/TextTransferHandler.java; sourceTree = SOURCE_ROOT; };
+		289DF67609F26AFB00C34B0B /* ToolBar.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ToolBar.java; path = ../../JGR/toolkit/ToolBar.java; sourceTree = SOURCE_ROOT; };
+		289DF67709F26AFB00C34B0B /* WinListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = WinListener.java; path = ../../JGR/toolkit/WinListener.java; sourceTree = SOURCE_ROOT; };
+		289DF67909F26AFB00C34B0B /* DocumentRenderer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DocumentRenderer.java; path = ../../JGR/util/DocumentRenderer.java; sourceTree = SOURCE_ROOT; };
+		289DF67A09F26AFB00C34B0B /* ErrorMsg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ErrorMsg.java; path = ../../JGR/util/ErrorMsg.java; sourceTree = SOURCE_ROOT; };
+		289DF67B09F26AFB00C34B0B /* TableSorter.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TableSorter.java; path = ../../JGR/util/TableSorter.java; sourceTree = SOURCE_ROOT; };
+		28F902970607540C005E782D /* sort-down.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-down.gif"; sourceTree = "<group>"; };
+		28F902980607540C005E782D /* sort-up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-up.gif"; sourceTree = "<group>"; };
+		28FB0CA909F231700088CD59 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = jogl.jar; path = ../klimt/jogl.jar; sourceTree = SOURCE_ROOT; };
+		28FB0CAA09F231700088CD59 /* libjogl.jnilib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjogl.jnilib; path = ../klimt/libjogl.jnilib; sourceTree = SOURCE_ROOT; };
+		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		28DBF1FC05E20005009B4706 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28FB0CBF09F231BA0088CD59 /* jogl.jar in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01F12F4DFEC8CE2211DB9C8B = {
+			isa = PBXGroup;
+			children = (
+				6AAAF050023EA31A0CC91562 /* Resources */,
+				01F12F4FFEC8CEF111DB9C8B /* Products */,
+				28D5F0EA060F28CB008CA291 /* org */,
+			);
+			sourceTree = "<group>";
+		};
+		01F12F4FFEC8CEF111DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A426002607780DC300DD0B12 /* JGR.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		280F8E1F063A92B40043AC9D /* javaGD */ = {
+			isa = PBXGroup;
+			children = (
+				289DF54D09F26A2500C34B0B /* GDCanvas.java */,
+				289DF54E09F26A2500C34B0B /* GDContainer.java */,
+				289DF54F09F26A2500C34B0B /* GDInterface.java */,
+				289DF55009F26A2500C34B0B /* GDObject.java */,
+				289DF55109F26A2500C34B0B /* JavaGD.java */,
+				289DF55209F26A2600C34B0B /* JGDBufferedPanel.java */,
+				289DF55309F26A2600C34B0B /* JGDPanel.java */,
+				289DF55409F26A2600C34B0B /* LocatorSync.java */,
+				289DF55509F26A2600C34B0B /* XGDserver.java */,
+			);
+			name = javaGD;
+			path = ../../javaGD;
+			sourceTree = SOURCE_ROOT;
+		};
+		282E9E7D064E848E0002BD94 /* JRclient */ = {
+			isa = PBXGroup;
+			children = (
+				289DF61F09F26ABC00C34B0B /* jcrypt.java */,
+				289DF62009F26ABC00C34B0B /* RBool.java */,
+				289DF62109F26ABC00C34B0B /* Rconnection.java */,
+				289DF62209F26ABC00C34B0B /* REXP.java */,
+				289DF62309F26ABC00C34B0B /* RFactor.java */,
+				289DF62409F26ABC00C34B0B /* RFileInputStream.java */,
+				289DF62509F26ABC00C34B0B /* RFileOutputStream.java */,
+				289DF62609F26ABC00C34B0B /* RList.java */,
+				289DF62709F26ABC00C34B0B /* Rpacket.java */,
+				289DF62809F26ABD00C34B0B /* RSession.java */,
+				289DF62909F26ABD00C34B0B /* RSrvException.java */,
+				289DF62A09F26ABD00C34B0B /* Rtalk.java */,
+			);
+			name = JRclient;
+			path = ../../JRclient;
+			sourceTree = SOURCE_ROOT;
+		};
+		284899CE063C1F3B00E88567 /* JGR */ = {
+			isa = PBXGroup;
+			children = (
+				289DF63F09F26AF700C34B0B /* CVS */,
+				289DF64309F26AF700C34B0B /* JGR.java */,
+				289DF64409F26AF700C34B0B /* JGRConsole.java */,
+				289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */,
+				289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */,
+				289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */,
+				289DF64809F26AF700C34B0B /* JGRHelp.java */,
+				289DF64909F26AF700C34B0B /* JGRObjectManager.java */,
+				289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */,
+				289DF64B09F26AF700C34B0B /* JGRPackageManager.java */,
+				289DF64C09F26AF800C34B0B /* RController.java */,
+				289DF64D09F26AF800C34B0B /* rhelp */,
+				289DF65409F26AF800C34B0B /* robjects */,
+				289DF65709F26AF800C34B0B /* toolkit */,
+				289DF67809F26AFB00C34B0B /* util */,
+			);
+			name = JGR;
+			path = ../../JGR;
+			sourceTree = SOURCE_ROOT;
+		};
+		2866F03D06C2AA6F0023027C /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				289DF51609F268D100C34B0B /* Plugin.java */,
+				289DF51309F268AB00C34B0B /* PluginManager.java */,
+			);
+			name = plugins;
+			path = ../../plugins;
+			sourceTree = SOURCE_ROOT;
+		};
+		287F564905EA8E0D00AF1045 /* icons */ = {
+			isa = PBXGroup;
+			children = (
+				287F564A05EA8E0D00AF1045 /* back.png */,
+				284DA11306105C85003B4450 /* close.png */,
+				287F564B05EA8E0D00AF1045 /* copy.png */,
+				287F564C05EA8E0D00AF1045 /* cut.png */,
+				287F564D05EA8E0D00AF1045 /* delete.png */,
+				287F564E05EA8E0D00AF1045 /* find.png */,
+				287F564F05EA8E0D00AF1045 /* forward.png */,
+				287F565005EA8E0D00AF1045 /* help.png */,
+				285E22AF05FB9A8400F09D05 /* home.png */,
+				287F565105EA8E0D00AF1045 /* new.png */,
+				287F565205EA8E0D00AF1045 /* open.png */,
+				287F565305EA8E0D00AF1045 /* paste.png */,
+				287F565405EA8E0D00AF1045 /* print.png */,
+				287F565505EA8E0D00AF1045 /* redo.png */,
+				287F565605EA8E0D00AF1045 /* save.png */,
+				28F902970607540C005E782D /* sort-down.gif */,
+				28F902980607540C005E782D /* sort-up.gif */,
+				2858B25F064E5FAA00C9BFA7 /* stop.png */,
+				287F565705EA8E0D00AF1045 /* undo.png */,
+			);
+			path = icons;
+			sourceTree = "<group>";
+		};
+		289DF56F09F26A6500C34B0B /* plots */ = {
+			isa = PBXGroup;
+			children = (
+				289DF57009F26A6500C34B0B /* BarCanvas.java */,
+				289DF57109F26A6600C34B0B /* FCCCanvas.java */,
+				289DF57209F26A6600C34B0B /* FluctCanvas.java */,
+				289DF57309F26A6600C34B0B /* HamCanvas.java */,
+				289DF57409F26A6600C34B0B /* HistCanvas.java */,
+				289DF57509F26A6600C34B0B /* KapMeCanvas.java */,
+				289DF57609F26A6600C34B0B /* LineCanvas.java */,
+				289DF57709F26A6600C34B0B /* MapCanvas.java */,
+				289DF57809F26A6600C34B0B /* MapScatterCanvas.java */,
+				289DF57909F26A6600C34B0B /* MosaicCanvas.java */,
+				289DF57A09F26A6600C34B0B /* ParallelAxesCanvas.java */,
+				289DF57B09F26A6600C34B0B /* ScatterCanvas.java */,
+			);
+			name = plots;
+			path = ../../ibase/plots;
+			sourceTree = SOURCE_ROOT;
+		};
+		289DF58709F26A6700C34B0B /* toolkit */ = {
+			isa = PBXGroup;
+			children = (
+				289DF58809F26A6700C34B0B /* AwtPlotComponent.java */,
+				289DF58909F26A6800C34B0B /* AwtQueryPopup.java */,
+				289DF58A09F26A6800C34B0B /* Axis.java */,
+				289DF58B09F26A6800C34B0B /* AxisCatSequence.java */,
+				289DF58C09F26A6800C34B0B /* BaseCanvas.java */,
+				289DF58D09F26A6800C34B0B /* ColorBridge.java */,
+				289DF58E09F26A6800C34B0B /* EzMenu.java */,
+				289DF58F09F26A6800C34B0B /* FrequencyTable.java */,
+				289DF59009F26A6800C34B0B /* JoglPlotComponent.java */,
+				289DF59109F26A6800C34B0B /* LayerCanvas.java */,
+				289DF59209F26A6800C34B0B /* MapSegmentTools.java */,
+				289DF59309F26A6800C34B0B /* Outlier.java */,
+				289DF59409F26A6800C34B0B /* PGSCanvas.java */,
+				289DF59509F26A6900C34B0B /* PGSJoglCanvas.java */,
+				289DF59609F26A6900C34B0B /* Platform.java */,
+				289DF59709F26A6900C34B0B /* PlatformMac.java */,
+				289DF59809F26A6900C34B0B /* PlotCanvas.java */,
+				289DF59909F26A6900C34B0B /* PlotColor.java */,
+				289DF59A09F26A6900C34B0B /* PlotComponent.java */,
+				289DF59B09F26A6900C34B0B /* PlotComponentFactory.java */,
+				289DF59C09F26A6900C34B0B /* PlotJPanel.java */,
+				289DF59D09F26A6900C34B0B /* PlotLine.java */,
+				289DF59E09F26A6900C34B0B /* PlotManager.java */,
+				289DF59F09F26A6900C34B0B /* PlotObject.java */,
+				289DF5A009F26A6900C34B0B /* PlotPolygon.java */,
+				289DF5A109F26A6900C34B0B /* PlotPrimitive.java */,
+				289DF5A209F26A6A00C34B0B /* PlotText.java */,
+				289DF5A309F26A6A00C34B0B /* PPrimBase.java */,
+				289DF5A409F26A6A00C34B0B /* PPrimBox.java */,
+				289DF5A509F26A6A00C34B0B /* PPrimCircle.java */,
+				289DF5A609F26A6A00C34B0B /* PPrimHam.java */,
+				289DF5A709F26A6A00C34B0B /* PPrimMosaic.java */,
+				289DF5A809F26A6A00C34B0B /* PPrimPolygon.java */,
+				289DF5A909F26A6A00C34B0B /* PPrimRectangle.java */,
+				289DF5AA09F26A6A00C34B0B /* PrefsColorFrame.java */,
+				289DF5AB09F26A6A00C34B0B /* QueryPopup.java */,
+				289DF5AC09F26A6A00C34B0B /* SplashScreen.java */,
+				289DF5AD09F26A6A00C34B0B /* SwingPlotComponent.java */,
+				289DF5AE09F26A6B00C34B0B /* SwingQueryPopup.java */,
+				289DF5AF09F26A6B00C34B0B /* TFrame.java */,
+				289DF5B009F26A6B00C34B0B /* TJFrame.java */,
+				289DF5B109F26A6B00C34B0B /* WinListener.java */,
+				289DF5B209F26A6B00C34B0B /* WinTracker.java */,
+				289DF5B309F26A6B00C34B0B /* WTentry.java */,
+				289DF5B409F26A6B00C34B0B /* WTentryAWT.java */,
+				289DF5B509F26A6B00C34B0B /* WTentrySwing.java */,
+			);
+			path = toolkit;
+			sourceTree = "<group>";
+		};
+		289DF63F09F26AF700C34B0B /* CVS */ = {
+			isa = PBXGroup;
+			children = (
+				289DF64009F26AF700C34B0B /* Entries */,
+				289DF64109F26AF700C34B0B /* Repository */,
+				289DF64209F26AF700C34B0B /* Root */,
+			);
+			name = CVS;
+			path = ../../JGR/CVS;
+			sourceTree = SOURCE_ROOT;
+		};
+		289DF64D09F26AF800C34B0B /* rhelp */ = {
+			isa = PBXGroup;
+			children = (
+				289DF64E09F26AF800C34B0B /* IndexEntry.java */,
+				289DF64F09F26AF800C34B0B /* IndexStream.java */,
+				289DF65009F26AF800C34B0B /* IndexTable.java */,
+				289DF65109F26AF800C34B0B /* SearchEngine.java */,
+				289DF65209F26AF800C34B0B /* Tracer.java */,
+				289DF65309F26AF800C34B0B /* Value.java */,
+			);
+			name = rhelp;
+			path = ../../JGR/rhelp;
+			sourceTree = SOURCE_ROOT;
+		};
+		289DF65409F26AF800C34B0B /* robjects */ = {
+			isa = PBXGroup;
+			children = (
+				289DF65509F26AF800C34B0B /* RModel.java */,
+				289DF65609F26AF800C34B0B /* RObject.java */,
+			);
+			name = robjects;
+			path = ../../JGR/robjects;
+			sourceTree = SOURCE_ROOT;
+		};
+		289DF65709F26AF800C34B0B /* toolkit */ = {
+			isa = PBXGroup;
+			children = (
+				289DF65809F26AF800C34B0B /* AboutDialog.java */,
+				289DF65909F26AF800C34B0B /* ConsoleOutput.java */,
+				289DF65A09F26AF900C34B0B /* ConsoleSync.java */,
+				289DF65B09F26AF900C34B0B /* DataTable.java */,
+				289DF65C09F26AF900C34B0B /* Editor.java */,
+				289DF65D09F26AF900C34B0B /* FileSelector.java */,
+				289DF65E09F26AF900C34B0B /* FontTracker.java */,
+				289DF65F09F26AF900C34B0B /* FunctionList.java */,
+				289DF66009F26AF900C34B0B /* IconButton.java */,
+				289DF66109F26AF900C34B0B /* iFrame.java */,
+				289DF66209F26AF900C34B0B /* iMenu.java */,
+				289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */,
+				289DF66409F26AF900C34B0B /* JavaGD.java */,
+				289DF66509F26AF900C34B0B /* JComboBoxExt.java */,
+				289DF66609F26AFA00C34B0B /* JGRListener.java */,
+				289DF66709F26AFA00C34B0B /* JGRPrefs.java */,
+				289DF66809F26AFA00C34B0B /* JGRStyledDocument.java */,
+				289DF66909F26AFA00C34B0B /* ModelBrowserTable.java */,
+				289DF66A09F26AFA00C34B0B /* ObjectBrowserTree.java */,
+				289DF66B09F26AFA00C34B0B /* PlatformMac.java */,
+				289DF66C09F26AFA00C34B0B /* PrefsDialog.java */,
+				289DF66D09F26AFA00C34B0B /* ProgressLabel.java */,
+				289DF66E09F26AFA00C34B0B /* SelectionPreservingCaret.java */,
+				289DF66F09F26AFA00C34B0B /* SplashScreen.java */,
+				289DF67009F26AFA00C34B0B /* SyntaxArea.java */,
+				289DF67109F26AFA00C34B0B /* SyntaxDocument.java */,
+				289DF67209F26AFB00C34B0B /* SyntaxInput.java */,
+				289DF67309F26AFB00C34B0B /* TextFinder.java */,
+				289DF67409F26AFB00C34B0B /* TextPager.java */,
+				289DF67509F26AFB00C34B0B /* TextTransferHandler.java */,
+				289DF67609F26AFB00C34B0B /* ToolBar.java */,
+				289DF67709F26AFB00C34B0B /* WinListener.java */,
+			);
+			name = toolkit;
+			path = ../../JGR/toolkit;
+			sourceTree = SOURCE_ROOT;
+		};
+		289DF67809F26AFB00C34B0B /* util */ = {
+			isa = PBXGroup;
+			children = (
+				289DF67909F26AFB00C34B0B /* DocumentRenderer.java */,
+				289DF67A09F26AFB00C34B0B /* ErrorMsg.java */,
+				289DF67B09F26AFB00C34B0B /* TableSorter.java */,
+			);
+			name = util;
+			path = ../../JGR/util;
+			sourceTree = SOURCE_ROOT;
+		};
+		28ABA9BB06301D0600125F2A /* iWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				289DF60509F26A9D00C34B0B /* ActionDispatcher.java */,
+				289DF60609F26A9D00C34B0B /* Common.java */,
+				289DF60709F26A9D00C34B0B /* iButton.java */,
+				289DF60809F26A9D00C34B0B /* iCheckbox.java */,
+				289DF60909F26A9D00C34B0B /* iComboBox.java */,
+				289DF60A09F26A9D00C34B0B /* iEdit.java */,
+				289DF60B09F26A9D00C34B0B /* iGD.java */,
+				289DF60C09F26A9D00C34B0B /* iGroup.java */,
+				289DF60D09F26A9D00C34B0B /* iLabel.java */,
+				289DF60E09F26A9E00C34B0B /* iList.java */,
+				289DF60F09F26A9E00C34B0B /* iRadio.java */,
+				289DF61009F26A9E00C34B0B /* iSlider.java */,
+				289DF61109F26A9E00C34B0B /* iWindow.java */,
+			);
+			name = iWidgets;
+			path = ../../iWidgets;
+			sourceTree = SOURCE_ROOT;
+		};
+		28D5F0EA060F28CB008CA291 /* org */ = {
+			isa = PBXGroup;
+			children = (
+				28D5F0EC060F28CB008CA291 /* rosuda */,
+			);
+			name = org;
+			path = ../../..;
+			sourceTree = SOURCE_ROOT;
+		};
+		28D5F0EC060F28CB008CA291 /* rosuda */ = {
+			isa = PBXGroup;
+			children = (
+				284899CE063C1F3B00E88567 /* JGR */,
+				28D5F15F060F28CB008CA291 /* JRI */,
+				282E9E7D064E848E0002BD94 /* JRclient */,
+				28ABA9BB06301D0600125F2A /* iWidgets */,
+				28D5F0EE060F28CB008CA291 /* ibase */,
+				28F0CC860621F3AF0095E210 /* iplots */,
+				280F8E1F063A92B40043AC9D /* javaGD */,
+				2866F03D06C2AA6F0023027C /* plugins */,
+				28D5F187060F28CB008CA291 /* pograss */,
+				28D5F1EC060F28CC008CA291 /* util */,
+			);
+			path = rosuda;
+			sourceTree = "<group>";
+		};
+		28D5F0EE060F28CB008CA291 /* ibase */ = {
+			isa = PBXGroup;
+			children = (
+				289DF56F09F26A6500C34B0B /* plots */,
+				289DF58709F26A6700C34B0B /* toolkit */,
+				289DF56509F26A6500C34B0B /* Commander.java */,
+				289DF56609F26A6500C34B0B /* Common.java */,
+				289DF56709F26A6500C34B0B /* DBCanvas.java */,
+				289DF56809F26A6500C34B0B /* Dependent.java */,
+				289DF56909F26A6500C34B0B /* Loader.java */,
+				289DF56A09F26A6500C34B0B /* LoaderFLF.java */,
+				289DF56B09F26A6500C34B0B /* MapSegment.java */,
+				289DF56C09F26A6500C34B0B /* MapSegmentEntry.java */,
+				289DF56D09F26A6500C34B0B /* Notifier.java */,
+				289DF56E09F26A6500C34B0B /* NotifyMsg.java */,
+				289DF57C09F26A6600C34B0B /* SCatSequence.java */,
+				289DF57D09F26A6700C34B0B /* SMarker.java */,
+				289DF57E09F26A6700C34B0B /* SVar.java */,
+				289DF57F09F26A6700C34B0B /* SVarDouble.java */,
+				289DF58009F26A6700C34B0B /* SVarFact.java */,
+				289DF58109F26A6700C34B0B /* SVarFixDouble.java */,
+				289DF58209F26A6700C34B0B /* SVarFixFact.java */,
+				289DF58309F26A6700C34B0B /* SVarFixInt.java */,
+				289DF58409F26A6700C34B0B /* SVarInt.java */,
+				289DF58509F26A6700C34B0B /* SVarObj.java */,
+				289DF58609F26A6700C34B0B /* SVarSet.java */,
+			);
+			path = ibase;
+			sourceTree = "<group>";
+		};
+		28D5F15F060F28CB008CA291 /* JRI */ = {
+			isa = PBXGroup;
+			children = (
+				289DF63709F26AD800C34B0B /* Mutex.java */,
+				289DF63809F26AD800C34B0B /* Rengine.java */,
+				289DF63909F26AD800C34B0B /* REXP.java */,
+				289DF63A09F26AD800C34B0B /* RMainLoopCallbacks.java */,
+			);
+			path = JRI;
+			sourceTree = "<group>";
+		};
+		28D5F187060F28CB008CA291 /* pograss */ = {
+			isa = PBXGroup;
+			children = (
+				289DF53F09F26A0A00C34B0B /* PoGraSS.java */,
+				289DF54009F26A0A00C34B0B /* PoGraSSgraphics.java */,
+				289DF54109F26A0A00C34B0B /* PoGraSSjogl.java */,
+				289DF54209F26A0A00C34B0B /* PoGraSSmeta.java */,
+				289DF54309F26A0A00C34B0B /* PoGraSSPDF.java */,
+				289DF54409F26A0A00C34B0B /* PoGraSSPS.java */,
+			);
+			path = pograss;
+			sourceTree = "<group>";
+		};
+		28D5F1EC060F28CC008CA291 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				289DF51C09F2694500C34B0B /* Global.java */,
+				289DF51D09F2694500C34B0B /* GlobalConfig.java */,
+				289DF51E09F2694500C34B0B /* ImageSelection.java */,
+				289DF51F09F2694500C34B0B /* JSpacingPanel.java */,
+				289DF52009F2694500C34B0B /* MsgDialog.java */,
+				289DF52109F2694600C34B0B /* Node.java */,
+				289DF52209F2694600C34B0B /* PDFconstructor.java */,
+				289DF52309F2694600C34B0B /* Platform.java */,
+				289DF52409F2694600C34B0B /* PlatformMac.java */,
+				289DF52509F2694600C34B0B /* PlatformWin.java */,
+				289DF52609F2694600C34B0B /* PngEncoder.java */,
+				289DF52709F2694600C34B0B /* ProgressDlg.java */,
+				289DF52809F2694600C34B0B /* RecentList.java */,
+				289DF52909F2694600C34B0B /* RespDialog.java */,
+				289DF52A09F2694600C34B0B /* SpacingPanel.java */,
+				289DF52B09F2694600C34B0B /* Stopwatch.java */,
+				289DF52C09F2694600C34B0B /* Tools.java */,
+			);
+			path = util;
+			sourceTree = "<group>";
+		};
+		28F0CC860621F3AF0095E210 /* iplots */ = {
+			isa = PBXGroup;
+			children = (
+				289DF55F09F26A3E00C34B0B /* Framework.java */,
+				289DF56009F26A3E00C34B0B /* Platform.java */,
+				289DF56109F26A3E00C34B0B /* PlatformMac.java */,
+			);
+			name = iplots;
+			path = ../../iplots;
+			sourceTree = SOURCE_ROOT;
+		};
+		6AAAF050023EA31A0CC91562 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				28FB0CA909F231700088CD59 /* jogl.jar */,
+				28FB0CAA09F231700088CD59 /* libjogl.jnilib */,
+				287F564905EA8E0D00AF1045 /* icons */,
+				281185DE05E7D8E000C16F9F /* splash.jpg */,
+				28699F0E06BC5894002BEFFC /* JGR.icns */,
+				28699F0F06BC5894002BEFFC /* JGR.mft */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXJavaArchiveBuildPhase section */
+		28DBF1FB05E20005009B4706 /* JavaArchive */ = {
+			isa = PBXJavaArchiveBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28D5F2E9060F29C3008CA291 /* splash.jpg in JavaArchive */,
+				28D5F2EB060F29C6008CA291 /* sort-up.gif in JavaArchive */,
+				28D5F2EC060F29C8008CA291 /* home.png in JavaArchive */,
+				28D5F2ED060F29C9008CA291 /* sort-down.gif in JavaArchive */,
+				28D5F2EE060F29CA008CA291 /* undo.png in JavaArchive */,
+				28D5F2EF060F29CB008CA291 /* save.png in JavaArchive */,
+				28D5F2F0060F29CB008CA291 /* redo.png in JavaArchive */,
+				28D5F2F1060F29CC008CA291 /* print.png in JavaArchive */,
+				28D5F2F2060F29CD008CA291 /* paste.png in JavaArchive */,
+				28D5F2F3060F29CE008CA291 /* open.png in JavaArchive */,
+				28D5F2F4060F29CF008CA291 /* new.png in JavaArchive */,
+				28D5F2F5060F29D0008CA291 /* help.png in JavaArchive */,
+				28D5F2F6060F29D2008CA291 /* forward.png in JavaArchive */,
+				28D5F2F7060F29D2008CA291 /* find.png in JavaArchive */,
+				28D5F2F8060F29D3008CA291 /* delete.png in JavaArchive */,
+				28D5F2F9060F29D5008CA291 /* cut.png in JavaArchive */,
+				28D5F2FA060F29D5008CA291 /* copy.png in JavaArchive */,
+				28D5F2FB060F29D6008CA291 /* back.png in JavaArchive */,
+				284DA11406105C86003B4450 /* close.png in JavaArchive */,
+				2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXJavaArchiveBuildPhase section */
+
+/* Begin PBXProject section */
+		01F12F4CFEC8CE2211DB9C8B /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 2837E04509AB397B00D841D5 /* Build configuration list for PBXProject "JGR" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				0E20B662001FAFA711DB9C8B /* Development */,
+				0E20B663001FAFA711DB9C8B /* Deployment */,
+			);
+			hasScannedForEncodings = 1;
+			mainGroup = 01F12F4DFEC8CE2211DB9C8B;
+			productRefGroup = 01F12F4FFEC8CEF111DB9C8B /* Products */;
+			projectDirPath = "";
+			targets = (
+				28DBF1FD05E20005009B4706 /* JGR */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		28DBF1FA05E20005009B4706 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28699F1006BC5894002BEFFC /* JGR.icns in Resources */,
+				28699F1106BC5894002BEFFC /* JGR.mft in Resources */,
+				289DF67C09F26AFE00C34B0B /* Entries in Resources */,
+				289DF67D09F26AFE00C34B0B /* Repository in Resources */,
+				289DF67E09F26AFE00C34B0B /* Root in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		28DBF1F905E20005009B4706 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				289DF51409F268AB00C34B0B /* PluginManager.java in Sources */,
+				289DF51709F268D200C34B0B /* Plugin.java in Sources */,
+				289DF52D09F2694700C34B0B /* Global.java in Sources */,
+				289DF52E09F2694700C34B0B /* GlobalConfig.java in Sources */,
+				289DF52F09F2694700C34B0B /* ImageSelection.java in Sources */,
+				289DF53009F2694700C34B0B /* JSpacingPanel.java in Sources */,
+				289DF53109F2694700C34B0B /* MsgDialog.java in Sources */,
+				289DF53209F2694700C34B0B /* Node.java in Sources */,
+				289DF53309F2694700C34B0B /* PDFconstructor.java in Sources */,
+				289DF53409F2694700C34B0B /* Platform.java in Sources */,
+				289DF53509F2694700C34B0B /* PlatformMac.java in Sources */,
+				289DF53609F2694700C34B0B /* PlatformWin.java in Sources */,
+				289DF53709F2694700C34B0B /* PngEncoder.java in Sources */,
+				289DF53809F2694700C34B0B /* ProgressDlg.java in Sources */,
+				289DF53909F2694800C34B0B /* RecentList.java in Sources */,
+				289DF53A09F2694800C34B0B /* RespDialog.java in Sources */,
+				289DF53B09F2694800C34B0B /* SpacingPanel.java in Sources */,
+				289DF53C09F2694800C34B0B /* Stopwatch.java in Sources */,
+				289DF53D09F2694800C34B0B /* Tools.java in Sources */,
+				289DF54609F26A0B00C34B0B /* PoGraSS.java in Sources */,
+				289DF54709F26A0B00C34B0B /* PoGraSSgraphics.java in Sources */,
+				289DF54809F26A0B00C34B0B /* PoGraSSjogl.java in Sources */,
+				289DF54909F26A0B00C34B0B /* PoGraSSmeta.java in Sources */,
+				289DF54A09F26A0B00C34B0B /* PoGraSSPDF.java in Sources */,
+				289DF54B09F26A0B00C34B0B /* PoGraSSPS.java in Sources */,
+				289DF55609F26A2600C34B0B /* GDCanvas.java in Sources */,
+				289DF55709F26A2600C34B0B /* GDContainer.java in Sources */,
+				289DF55809F26A2600C34B0B /* GDInterface.java in Sources */,
+				289DF55909F26A2600C34B0B /* GDObject.java in Sources */,
+				289DF55A09F26A2600C34B0B /* JavaGD.java in Sources */,
+				289DF55B09F26A2600C34B0B /* JGDBufferedPanel.java in Sources */,
+				289DF55C09F26A2600C34B0B /* JGDPanel.java in Sources */,
+				289DF55D09F26A2600C34B0B /* LocatorSync.java in Sources */,
+				289DF55E09F26A2600C34B0B /* XGDserver.java in Sources */,
+				289DF56209F26A3E00C34B0B /* Framework.java in Sources */,
+				289DF56309F26A3E00C34B0B /* Platform.java in Sources */,
+				289DF56409F26A3E00C34B0B /* PlatformMac.java in Sources */,
+				289DF5B609F26A7000C34B0B /* Commander.java in Sources */,
+				289DF5B709F26A7000C34B0B /* Common.java in Sources */,
+				289DF5B809F26A7000C34B0B /* DBCanvas.java in Sources */,
+				289DF5B909F26A7000C34B0B /* Dependent.java in Sources */,
+				289DF5BA09F26A7000C34B0B /* Loader.java in Sources */,
+				289DF5BB09F26A7000C34B0B /* LoaderFLF.java in Sources */,
+				289DF5BC09F26A7000C34B0B /* MapSegment.java in Sources */,
+				289DF5BD09F26A7000C34B0B /* MapSegmentEntry.java in Sources */,
+				289DF5BE09F26A7000C34B0B /* Notifier.java in Sources */,
+				289DF5BF09F26A7000C34B0B /* NotifyMsg.java in Sources */,
+				289DF5C009F26A7000C34B0B /* BarCanvas.java in Sources */,
+				289DF5C109F26A7000C34B0B /* FCCCanvas.java in Sources */,
+				289DF5C209F26A7000C34B0B /* FluctCanvas.java in Sources */,
+				289DF5C309F26A7000C34B0B /* HamCanvas.java in Sources */,
+				289DF5C409F26A7000C34B0B /* HistCanvas.java in Sources */,
+				289DF5C509F26A7000C34B0B /* KapMeCanvas.java in Sources */,
+				289DF5C609F26A7000C34B0B /* LineCanvas.java in Sources */,
+				289DF5C709F26A7000C34B0B /* MapCanvas.java in Sources */,
+				289DF5C809F26A7000C34B0B /* MapScatterCanvas.java in Sources */,
+				289DF5C909F26A7000C34B0B /* MosaicCanvas.java in Sources */,
+				289DF5CA09F26A7000C34B0B /* ParallelAxesCanvas.java in Sources */,
+				289DF5CB09F26A7000C34B0B /* ScatterCanvas.java in Sources */,
+				289DF5CC09F26A7000C34B0B /* SCatSequence.java in Sources */,
+				289DF5CD09F26A7000C34B0B /* SMarker.java in Sources */,
+				289DF5CE09F26A7000C34B0B /* SVar.java in Sources */,
+				289DF5CF09F26A7000C34B0B /* SVarDouble.java in Sources */,
+				289DF5D009F26A7000C34B0B /* SVarFact.java in Sources */,
+				289DF5D109F26A7000C34B0B /* SVarFixDouble.java in Sources */,
+				289DF5D209F26A7000C34B0B /* SVarFixFact.java in Sources */,
+				289DF5D309F26A7000C34B0B /* SVarFixInt.java in Sources */,
+				289DF5D409F26A7000C34B0B /* SVarInt.java in Sources */,
+				289DF5D509F26A7000C34B0B /* SVarObj.java in Sources */,
+				289DF5D609F26A7000C34B0B /* SVarSet.java in Sources */,
+				289DF5D709F26A7000C34B0B /* AwtPlotComponent.java in Sources */,
+				289DF5D809F26A7000C34B0B /* AwtQueryPopup.java in Sources */,
+				289DF5D909F26A7000C34B0B /* Axis.java in Sources */,
+				289DF5DA09F26A7000C34B0B /* AxisCatSequence.java in Sources */,
+				289DF5DB09F26A7000C34B0B /* BaseCanvas.java in Sources */,
+				289DF5DC09F26A7000C34B0B /* ColorBridge.java in Sources */,
+				289DF5DD09F26A7000C34B0B /* EzMenu.java in Sources */,
+				289DF5DE09F26A7000C34B0B /* FrequencyTable.java in Sources */,
+				289DF5DF09F26A7000C34B0B /* JoglPlotComponent.java in Sources */,
+				289DF5E009F26A7000C34B0B /* LayerCanvas.java in Sources */,
+				289DF5E109F26A7000C34B0B /* MapSegmentTools.java in Sources */,
+				289DF5E209F26A7000C34B0B /* Outlier.java in Sources */,
+				289DF5E309F26A7000C34B0B /* PGSCanvas.java in Sources */,
+				289DF5E409F26A7000C34B0B /* PGSJoglCanvas.java in Sources */,
+				289DF5E509F26A7000C34B0B /* Platform.java in Sources */,
+				289DF5E609F26A7000C34B0B /* PlatformMac.java in Sources */,
+				289DF5E709F26A7000C34B0B /* PlotCanvas.java in Sources */,
+				289DF5E809F26A7000C34B0B /* PlotColor.java in Sources */,
+				289DF5E909F26A7000C34B0B /* PlotComponent.java in Sources */,
+				289DF5EA09F26A7000C34B0B /* PlotComponentFactory.java in Sources */,
+				289DF5EB09F26A7000C34B0B /* PlotJPanel.java in Sources */,
+				289DF5EC09F26A7000C34B0B /* PlotLine.java in Sources */,
+				289DF5ED09F26A7000C34B0B /* PlotManager.java in Sources */,
+				289DF5EE09F26A7000C34B0B /* PlotObject.java in Sources */,
+				289DF5EF09F26A7000C34B0B /* PlotPolygon.java in Sources */,
+				289DF5F009F26A7000C34B0B /* PlotPrimitive.java in Sources */,
+				289DF5F109F26A7000C34B0B /* PlotText.java in Sources */,
+				289DF5F209F26A7000C34B0B /* PPrimBase.java in Sources */,
+				289DF5F309F26A7000C34B0B /* PPrimBox.java in Sources */,
+				289DF5F409F26A7000C34B0B /* PPrimCircle.java in Sources */,
+				289DF5F509F26A7000C34B0B /* PPrimHam.java in Sources */,
+				289DF5F609F26A7000C34B0B /* PPrimMosaic.java in Sources */,
+				289DF5F709F26A7000C34B0B /* PPrimPolygon.java in Sources */,
+				289DF5F809F26A7000C34B0B /* PPrimRectangle.java in Sources */,
+				289DF5F909F26A7000C34B0B /* PrefsColorFrame.java in Sources */,
+				289DF5FA09F26A7000C34B0B /* QueryPopup.java in Sources */,
+				289DF5FB09F26A7000C34B0B /* SplashScreen.java in Sources */,
+				289DF5FC09F26A7000C34B0B /* SwingPlotComponent.java in Sources */,
+				289DF5FD09F26A7000C34B0B /* SwingQueryPopup.java in Sources */,
+				289DF5FE09F26A7000C34B0B /* TFrame.java in Sources */,
+				289DF5FF09F26A7000C34B0B /* TJFrame.java in Sources */,
+				289DF60009F26A7000C34B0B /* WinListener.java in Sources */,
+				289DF60109F26A7000C34B0B /* WinTracker.java in Sources */,
+				289DF60209F26A7000C34B0B /* WTentry.java in Sources */,
+				289DF60309F26A7000C34B0B /* WTentryAWT.java in Sources */,
+				289DF60409F26A7000C34B0B /* WTentrySwing.java in Sources */,
+				289DF61209F26A9F00C34B0B /* ActionDispatcher.java in Sources */,
+				289DF61309F26A9F00C34B0B /* Common.java in Sources */,
+				289DF61409F26A9F00C34B0B /* iButton.java in Sources */,
+				289DF61509F26A9F00C34B0B /* iCheckbox.java in Sources */,
+				289DF61609F26A9F00C34B0B /* iComboBox.java in Sources */,
+				289DF61709F26A9F00C34B0B /* iEdit.java in Sources */,
+				289DF61809F26A9F00C34B0B /* iGD.java in Sources */,
+				289DF61909F26A9F00C34B0B /* iGroup.java in Sources */,
+				289DF61A09F26A9F00C34B0B /* iLabel.java in Sources */,
+				289DF61B09F26A9F00C34B0B /* iList.java in Sources */,
+				289DF61C09F26A9F00C34B0B /* iRadio.java in Sources */,
+				289DF61D09F26A9F00C34B0B /* iSlider.java in Sources */,
+				289DF61E09F26A9F00C34B0B /* iWindow.java in Sources */,
+				289DF62B09F26ABD00C34B0B /* jcrypt.java in Sources */,
+				289DF62C09F26ABD00C34B0B /* RBool.java in Sources */,
+				289DF62D09F26ABD00C34B0B /* Rconnection.java in Sources */,
+				289DF62E09F26ABD00C34B0B /* REXP.java in Sources */,
+				289DF62F09F26ABD00C34B0B /* RFactor.java in Sources */,
+				289DF63009F26ABD00C34B0B /* RFileInputStream.java in Sources */,
+				289DF63109F26ABD00C34B0B /* RFileOutputStream.java in Sources */,
+				289DF63209F26ABE00C34B0B /* RList.java in Sources */,
+				289DF63309F26ABE00C34B0B /* Rpacket.java in Sources */,
+				289DF63409F26ABE00C34B0B /* RSession.java in Sources */,
+				289DF63509F26ABE00C34B0B /* RSrvException.java in Sources */,
+				289DF63609F26ABE00C34B0B /* Rtalk.java in Sources */,
+				289DF63B09F26AD800C34B0B /* Mutex.java in Sources */,
+				289DF63C09F26AD800C34B0B /* Rengine.java in Sources */,
+				289DF63D09F26AD800C34B0B /* REXP.java in Sources */,
+				289DF63E09F26AD800C34B0B /* RMainLoopCallbacks.java in Sources */,
+				289DF67F09F26AFE00C34B0B /* JGR.java in Sources */,
+				289DF68009F26AFE00C34B0B /* JGRConsole.java in Sources */,
+				289DF68109F26AFE00C34B0B /* JGRDataFileDialog.java in Sources */,
+				289DF68209F26AFE00C34B0B /* JGRDataFileOpenDialog.java in Sources */,
+				289DF68309F26AFE00C34B0B /* JGRDataFileSaveDialog.java in Sources */,
+				289DF68409F26AFE00C34B0B /* JGRHelp.java in Sources */,
+				289DF68509F26AFE00C34B0B /* JGRObjectManager.java in Sources */,
+				289DF68609F26AFE00C34B0B /* JGRPackageInstaller.java in Sources */,
+				289DF68709F26AFE00C34B0B /* JGRPackageManager.java in Sources */,
+				289DF68809F26AFE00C34B0B /* RController.java in Sources */,
+				289DF68909F26AFE00C34B0B /* IndexEntry.java in Sources */,
+				289DF68A09F26AFE00C34B0B /* IndexStream.java in Sources */,
+				289DF68B09F26AFE00C34B0B /* IndexTable.java in Sources */,
+				289DF68C09F26AFE00C34B0B /* SearchEngine.java in Sources */,
+				289DF68D09F26AFE00C34B0B /* Tracer.java in Sources */,
+				289DF68E09F26AFE00C34B0B /* Value.java in Sources */,
+				289DF68F09F26AFE00C34B0B /* RModel.java in Sources */,
+				289DF69009F26AFE00C34B0B /* RObject.java in Sources */,
+				289DF69109F26AFE00C34B0B /* AboutDialog.java in Sources */,
+				289DF69209F26AFE00C34B0B /* ConsoleOutput.java in Sources */,
+				289DF69309F26AFE00C34B0B /* ConsoleSync.java in Sources */,
+				289DF69409F26AFE00C34B0B /* DataTable.java in Sources */,
+				289DF69509F26AFE00C34B0B /* Editor.java in Sources */,
+				289DF69609F26AFE00C34B0B /* FileSelector.java in Sources */,
+				289DF69709F26AFE00C34B0B /* FontTracker.java in Sources */,
+				289DF69809F26AFE00C34B0B /* FunctionList.java in Sources */,
+				289DF69909F26AFE00C34B0B /* IconButton.java in Sources */,
+				289DF69A09F26AFE00C34B0B /* iFrame.java in Sources */,
+				289DF69B09F26AFE00C34B0B /* iMenu.java in Sources */,
+				289DF69C09F26AFE00C34B0B /* InsertRemoveUndoManager.java in Sources */,
+				289DF69D09F26AFE00C34B0B /* JavaGD.java in Sources */,
+				289DF69E09F26AFE00C34B0B /* JComboBoxExt.java in Sources */,
+				289DF69F09F26AFE00C34B0B /* JGRListener.java in Sources */,
+				289DF6A009F26AFE00C34B0B /* JGRPrefs.java in Sources */,
+				289DF6A109F26AFE00C34B0B /* JGRStyledDocument.java in Sources */,
+				289DF6A209F26AFE00C34B0B /* ModelBrowserTable.java in Sources */,
+				289DF6A309F26AFE00C34B0B /* ObjectBrowserTree.java in Sources */,
+				289DF6A409F26AFE00C34B0B /* PlatformMac.java in Sources */,
+				289DF6A509F26AFE00C34B0B /* PrefsDialog.java in Sources */,
+				289DF6A609F26AFE00C34B0B /* ProgressLabel.java in Sources */,
+				289DF6A709F26AFE00C34B0B /* SelectionPreservingCaret.java in Sources */,
+				289DF6A809F26AFE00C34B0B /* SplashScreen.java in Sources */,
+				289DF6A909F26AFE00C34B0B /* SyntaxArea.java in Sources */,
+				289DF6AA09F26AFE00C34B0B /* SyntaxDocument.java in Sources */,
+				289DF6AB09F26AFE00C34B0B /* SyntaxInput.java in Sources */,
+				289DF6AC09F26AFE00C34B0B /* TextFinder.java in Sources */,
+				289DF6AD09F26AFE00C34B0B /* TextPager.java in Sources */,
+				289DF6AE09F26AFE00C34B0B /* TextTransferHandler.java in Sources */,
+				289DF6AF09F26AFE00C34B0B /* ToolBar.java in Sources */,
+				289DF6B009F26AFE00C34B0B /* WinListener.java in Sources */,
+				289DF6B109F26AFE00C34B0B /* DocumentRenderer.java in Sources */,
+				289DF6B209F26AFE00C34B0B /* ErrorMsg.java in Sources */,
+				289DF6B309F26AFF00C34B0B /* TableSorter.java in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2837E04209AB397B00D841D5 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = JGR.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = JGR;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		2837E04309AB397B00D841D5 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = JGR.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = JGR;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		2837E04609AB397B00D841D5 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		2837E04709AB397B00D841D5 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2837E04109AB397B00D841D5 /* Build configuration list for PBXApplicationTarget "JGR" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2837E04209AB397B00D841D5 /* Development */,
+				2837E04309AB397B00D841D5 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
+		};
+		2837E04509AB397B00D841D5 /* Build configuration list for PBXProject "JGR" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2837E04609AB397B00D841D5 /* Development */,
+				2837E04709AB397B00D841D5 /* Deployment */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Deployment;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 01F12F4CFEC8CE2211DB9C8B /* Project object */;
+}
