@@ -144,7 +144,9 @@ public class BaseCanvas
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
-        
+    private boolean useExtQuery = false; // for manually generated extended query 
+    private String extQueryString = "";
+    
     MenuItem MIsonlyselected=null;
     MenuItem MIseperatealphas=null;
     MenuItem MIhalphaup=null;
@@ -158,19 +160,19 @@ public class BaseCanvas
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public BaseCanvas(final PlotComponent ppc, final Frame f, final SMarker mark) {
-        super(ppc,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
+    public BaseCanvas(final int gd, final Frame f, final SMarker mark) {
+        super(gd,4); // 4 layers; 0=bg, 1=sel, 2=baseDrag, 3=pm
         Global.forceAntiAliasing = true;
         m=mark; setFrame(f);
         ax=ay=null;
         zoomSequence=new ArrayList();
         mLeft=mRight=mTop=mBottom=0;
-        pc.setBackground(Common.backgroundColor);
-        pc.addMouseListener(this);
-        pc.addMouseMotionListener(this);
-        pc.addKeyListener(this);
+        setBackground(Common.backgroundColor);
+        addMouseListener(this);
+        addMouseMotionListener(this);
+        addKeyListener(this);
         f.addKeyListener(this);
-        qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
+        qi=newQueryPopup(f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
         labels=new PlotText(getPlotManager());
         labels.setLayer(0);
     }
@@ -200,7 +202,7 @@ public class BaseCanvas
         if(dontPaint) return;
         adjustMargin(g);
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
-        final Rectangle r=pc.getBounds();
+        final Rectangle r=getBounds();
         final int w=r.width;
         final int h=r.height;
         if (Global.DEBUG>0)
@@ -292,7 +294,7 @@ public class BaseCanvas
     public void paintObjects(final PoGraSS g) {
         //System.out.println("BaseCanvas.paintObjects, (cache="+g.localLayerCache+") pp="+pp);
         final Stopwatch sw=new Stopwatch();
-        if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
+        if(objectClipping) g.setClip(mLeft, mTop, getBounds().width-mLeft-mRight, getBounds().height-mTop-mBottom);
         if (pp!=null) {
             
             g.setColor(C_OBJECT);
@@ -312,7 +314,7 @@ public class BaseCanvas
         final Stopwatch sw=new Stopwatch();
         
         //System.out.println("BaseCanvas.paintSelected, pp="+pp);
-        if(objectClipping) g.setClip(mLeft, mTop, pc.getBounds().width-mLeft-mRight, pc.getBounds().height-mTop-mBottom);
+        if(objectClipping) g.setClip(mLeft, mTop, getBounds().width-mLeft-mRight, getBounds().height-mTop-mBottom);
         if (pp!=null) {
             
             if(alphaHighlighting) g.setGlobalAlpha(seperateAlphas?ppAlphaH:ppAlpha);
@@ -337,7 +339,7 @@ public class BaseCanvas
         
         if(baseDragX1==x && baseDragY1==y){
             final Point cl=getFrame().getLocation();
-            final Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+            final Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
             
             
             if (Global.DEBUG>0) {
@@ -429,6 +431,10 @@ public class BaseCanvas
     
     public String queryObject(final PlotPrimitive p) {
         return "object "+p.toString();
+    }
+    
+    public String queryPlotSpace() {
+    	return "plot space query";
     }
     
     public void rotate(final int amount) {
@@ -612,7 +618,7 @@ public class BaseCanvas
     
     public void mouseEntered(final MouseEvent e) {
         /*	if(!pc.getComponent().contains(e.getX(),e.getY())) {
-                        qi.hide();
+         		qi.hide();
             }*/
     };
     public void mouseExited(final MouseEvent e) {};
@@ -632,15 +638,37 @@ public class BaseCanvas
         mouseY=ev.getY();
         
         final Point cl=getFrame().getLocation();
-        final Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+        final Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
         
         boolean hideQI = true;
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
-        if(actionQuery) {
-            inQuery=true;
-            isExtQuery = actionExtQuery;
-            if (pp!=null) {
+        if(actionExtQuery) {
+        	inQuery = true;
+        	isExtQuery = true;
+        	if (pp!=null) {
+                PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
+                if(p!=null && p.isQueryable()){
+                	if(useExtQuery) setQueryText(extQueryString);
+                    if (p.cases()>0) {
+                        if (p.getPrimaryCase()!=-1) {
+                        	setQueryText(queryObject(p),p.getPrimaryCase());
+                        } else {
+                            setQueryText(queryObject(p),p.getCaseIDs());
+                        }
+                    } else {
+                        setQueryText(queryObject(p));
+                    }
+                    qi.setLocation(cl.x+mouseX,cl.y+mouseY);
+                    qi.show(); hideQI=false;
+                }
+            }
+        	isExtQuery = false;
+        	setUpdateRoot(3); repaint();
+        }
+        else if (actionQuery) {
+        	inQuery=true;
+           	if (pp!=null) {
                 PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
                 if(p!=null && p.isQueryable()){
                     if (p.cases()>0) {
@@ -652,21 +680,31 @@ public class BaseCanvas
                     } else {
                         setQueryText(queryObject(p));
                     }
-                    qi.setLocation(cl.x+mouseX,cl.y+mouseY);
-                    qi.show(); hideQI=false;
+                } else {
+                 	String s=getAxisQuery(mouseX,mouseY);
+                   	if(s!=null) {
+                   		setQueryText(s);
+                   	} else {
+                   		setQueryText(queryPlotSpace());
+                   	}
                 }
+                qi.setLocation(cl.x+mouseX,cl.y+mouseY);
+                qi.show(); hideQI=false;
             }
-            isExtQuery = false;
-            setUpdateRoot(3); repaint();
-        } else if(inQuery){
-            inQuery=false;
-            setUpdateRoot(3); repaint();
+        	setUpdateRoot(3); repaint();
+        } else if(inQuery) {
+        	inQuery=false;
+        	setUpdateRoot(3); repaint();
         }
         final boolean effect = false;
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
         if (hideQI) qi.hide();
     };
     
+    // should be overriden by subclasses: they know axis coordinates
+    protected String getAxisQuery(int x, int y) {
+    	return "mouse coords. ("+x+","+y+")";
+    }
     public void keyTyped(final KeyEvent e) {
         if (e.getKeyChar()=='P') run(this,M_PRINT);
         if (e.getKeyChar()=='X') run(this,"exportPGS");
@@ -678,17 +716,18 @@ public class BaseCanvas
     public void keyPressed(final KeyEvent e) {
         final int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_META && allowZoom && !inZoom && !inQuery) {
-            pc.setCursor(Common.cur_zoom);
+        	setCursor(Common.cur_zoom);
             inZoom=true;
         }
         if (kc==KeyEvent.VK_RIGHT) run(this, M_ALPHAUP);
         if (kc==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
     };
+
     
     public void keyReleased(final KeyEvent e) {
         final int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_META && allowZoom && !inQuery) {
-            pc.setCursor(Common.cur_arrow);
+            setCursor(Common.cur_arrow);
             inZoom=false;
         }
     };
@@ -807,14 +846,17 @@ public class BaseCanvas
     };
     
     public void setQueryText(final String s) {
+    	if(s==null) return;
         qi.setContent(s);
     }
     
     public void setQueryText(final String s, final int cid) {
+    	if(s==null) return;
         qi.setContent(s,cid);
     }
     
     public void setQueryText(final String s, final int[] cid) {
+    	if(s==null) return;
         qi.setContent(s,cid);
     }
     
@@ -879,6 +921,21 @@ public class BaseCanvas
     }
     
     /**
+     * @return min and max values (first=min,second=max)
+     */
+    public double[] getBoundValues() {
+    	if(pp==null) return new double[]{Double.NaN,Double.NaN};
+    	double max=0,min=0,temp=0;
+    	for(int i=0;i<pp.length;i++) {
+    		temp=pp[i].cases();
+    		if(max<temp) max=temp;
+    		if(min>temp) min=temp;
+    	}
+    	return new double[]{min,max};
+    }
+
+    
+    /**
      * Possibly adjust mLeft etc.
      * @return Returns <code>true</code> if margins have been changed
      **/
@@ -937,4 +994,15 @@ public class BaseCanvas
         MIhalphaup = EzMenu.getItem(f,M_HALPHAUP);
         if(MIhalphaup!=null) MIhalphaup.setEnabled(false);
     }
+
+    /** needed for setting manually extended query string */
+    public void setExtQueryString(String str) {
+    	extQueryString = str;
+    	useExtQuery = true;
+    }
+    
+    public void useExtQuery(boolean b) {
+    	useExtQuery = b;
+    }
+    
 }
