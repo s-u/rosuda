@@ -52,28 +52,29 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	@param v2 variable 2
 	@param mark associated marker
         @param wght weight variable or null for counts */
-    public FluctCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark, SVar wght) {
-        super(ppc,2); // 2 layers; 0=base, 1=drag
+    public FluctCanvas(int gd, Frame f, SVar v1, SVar v2, SMarker mark, SVar wght) {
+        super(gd,2); // 2 layers; 0=base, 1=drag
         weight=wght;
         setFrame(f); setTitle(((weight==null)?"FD":"WFD")+" ("+v1.getName()+" : "+v2.getName()+")"+((weight==null)?"":"*"+weight.getName()));
 	v=new SVar[2]; A=new Axis[2];
 	v[0]=v1; v[1]=v2; m=mark;
         A[0]=new Axis(v1,Axis.O_X,Axis.T_EqCat); A[0].addDepend(this);
         A[1]=new Axis(v2,Axis.O_Y,Axis.T_EqCat); A[1].addDepend(this);
-        pc.setBackground(Common.backgroundColor);
+        setBackground(Common.backgroundColor);
 	drag=false;
 	updatePoints();
-	pc.addMouseListener(this);
-	pc.addMouseMotionListener(this);
-	pc.addKeyListener(this); f.addKeyListener(this);
+	addMouseListener(this);
+	addMouseMotionListener(this);
+	addKeyListener(this); f.addKeyListener(this);
 	MenuBar mb=null;
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","Toggle alignment","center","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");
-    qi=PlotComponentFactory.createQueryPopup(pc,f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
+	/** TODO: if this class will be used, then make it BaseCanvas */
+//    qi=PlotComponentFactory.createQueryPopup(gd,f,mark==null?null:mark.getMasterSet(),"FluctCanvas");
     }
 
-    public FluctCanvas(PlotComponent pc, Frame f, SVar v1, SVar v2, SMarker mark) { this(pc,f,v1,v2,mark,null); }
+    public FluctCanvas(int gd, Frame f, SVar v1, SVar v2, SMarker mark) { this(gd,f,v1,v2,mark,null); }
 
     public Dimension getMinimumSize() { return new Dimension(60,50); }
 
@@ -81,7 +82,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	SVar h=v[0]; v[0]=v[1]; v[1]=h;
 	Axis ha=A[0]; A[0]=A[1]; A[1]=ha;
 	try {
-	    ((Frame) pc.getParent()).setTitle("FD ("+v[1].getName()+" vs "+v[0].getName()+")");
+	    ((Frame) getParent()).setTitle("FD ("+v[1].getName()+" vs "+v[0].getName()+")");
 	} catch (Exception ee) {};
 	updatePoints();
         setUpdateRoot(0);
@@ -95,7 +96,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
     }
 
     public void paintPoGraSS(PoGraSS g) {
-	Rectangle r=pc.getBounds();
+	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
 	g.begin();
 	g.defineColor("white",255,255,255);
@@ -106,7 +107,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
         g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
         float[] scc=Common.selectColor.getRGBComponents(null); g.defineColor("aSelBg",scc[0],scc[1],scc[2],0.3f);
         
-	Dimension Dsize=pc.getSize();
+	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
 	    updatePoints();
 
@@ -135,7 +136,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                 if (v[0].isCat()) fi-=0.2;
                 g.drawLine(t,Y+H,t,Y+H+5);
                 if (showLabels)
-                    g.drawString(v[0].isCat()?v[0].getCatAt((int)fi).toString():
+                    g.drawString(v[0].isCat()?((useX3)?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):v[0].getCatAt((int)fi).toString()):
                                  A[0].getDisplayableValue(fi),t,Y+H+20,PoGraSS.TA_Center);
                 fi+=f;
             };
@@ -226,7 +227,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 
     public void updatePoints() {
         if (qi!=null) qi.hide(); // this may invalidate any query
-	Dimension Dsize=pc.getSize();
+	Dimension Dsize=getSize();
 	int w=Dsize.width, h=Dsize.height;
 	TW=w; TH=h;
 	int innerL=30, innerB=30, lshift=0;
@@ -290,7 +291,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                 }
             
             Point cl=getFrame().getLocation();
-            Point tl=pc.getLocation(); cl.x+=tl.x; cl.y+=tl.y;
+            Point tl=getLocation(); cl.x+=tl.x; cl.y+=tl.y;
             
             // we need extension to BaseCanvas for queries here, so they are off here now
 //            qi.setContent(v[0].getName()+": "+xname+"\n"+v[1].getName()+": "+yname+"\n"+q_mark+" of "+q_all+" selected");
@@ -337,7 +338,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                     int dy=A[1].getCatUp(yp);
 		    if (ly>dy) { int h=ly; ly=dy; dy=h; };
 		    if (y>ly && y<dy) {
-			pc.setCursor(new Cursor(Cursor.HAND_CURSOR));		
+			setCursor(new Cursor(Cursor.HAND_CURSOR));		
 			mvY=true; mvYstart=yp; return;
 		    }
 		}
@@ -347,7 +348,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
                     int dx=A[0].getCatUp(xp);
 		    if (lx>dx) { int h=lx; lx=dx; dx=h; };
 		    if (x>lx && x<dx) {
-			pc.setCursor(new Cursor(Cursor.HAND_CURSOR));		
+			setCursor(new Cursor(Cursor.HAND_CURSOR));		
 			mvX=true; mvXstart=xp; return;
 		    }
 		}
@@ -362,7 +363,7 @@ public class FluctCanvas extends PGSCanvas implements Dependent, MouseListener, 
 	if (mvX || mvY) {
 	    mvX=false; mvY=false;
 	    setUpdateRoot(0);
-	    pc.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+	    setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	    repaint();
 	} else {
 	    int X1=x1, Y1=y1, X2=x2, Y2=y2;
