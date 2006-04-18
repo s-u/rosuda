@@ -502,7 +502,7 @@ public class Framework implements Dependent, ActionListener {
         final SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; }
-        final ParallelAxesCanvas pcpc=new ParallelAxesCanvas(pc,f,vl,vs.getMarker(),ParallelAxesCanvas.TYPE_PCP);
+        final ParallelAxesCanvas pcpc=new ParallelAxesCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),ParallelAxesCanvas.TYPE_PCP);
         frdev.add(pcpc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(pcpc);
         pcpc.setSize(new Dimension(400,300));
@@ -555,7 +555,7 @@ public class Framework implements Dependent, ActionListener {
         final SVar[] vl=new SVar[i.length];
         int j=0;
         while(j<i.length) { vl[j]=vs.at(i[j]); j++; }
-        final ParallelAxesCanvas bc=(catVar==null)?new ParallelAxesCanvas(pc,f,vl,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX):new ParallelAxesCanvas(pc,f,vl[0],catVar,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX);
+        final ParallelAxesCanvas bc=(catVar==null)?new ParallelAxesCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX):new ParallelAxesCanvas(graphicsEngine,frdev.getFrame(),vl[0],catVar,vs.getMarker(),ParallelAxesCanvas.TYPE_BOX);
         frdev.add(bc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
         int xdim=(catVar==null)?(40+40*i.length):(40+40*catVar.getNumCats());
