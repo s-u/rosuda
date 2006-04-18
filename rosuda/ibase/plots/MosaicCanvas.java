@@ -49,8 +49,8 @@ public class MosaicCanvas extends BaseCanvas {
     
     private final int standardMLeft=35;
     
-    public MosaicCanvas(final PlotComponent ppc, final Frame f, final SVar[] vars, final SMarker mark) {
-        super(ppc,f, mark);
+    public MosaicCanvas(final int gd, final Frame f, final SVar[] vars, final SMarker mark) {
+        super(gd,f, mark);
         this.frame=f;
         this.v = vars;
         
@@ -97,12 +97,12 @@ public class MosaicCanvas extends BaseCanvas {
         // updateObjects is called when variables are categorized, i.e. before the frequency table is initialized, so:
         if(dontPaint) return;
         
-        final int maxLabelLength=create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
+        final int maxLabelLength=create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
         final int omLeft=mLeft;
         if(maxLabelLength*8>standardMLeft){
             mLeft=8*maxLabelLength+2;
         } else mLeft=standardMLeft;
-        if(mLeft!=omLeft) create(mLeft,mTop, pc.getWidth()-mRight, pc.getHeight()-mBottom, "");
+        if(mLeft!=omLeft) create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         
