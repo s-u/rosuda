@@ -219,6 +219,7 @@ public class HistCanvas extends BaseCanvas {
         } else if(orientation==3) {
         	setAxCoord(W-mRight,H-mBottom,W-mRight,mTop);
         	setAyCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
+        }
 
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
