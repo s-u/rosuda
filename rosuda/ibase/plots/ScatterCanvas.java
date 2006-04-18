@@ -57,12 +57,16 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected int Y,W,H, TW,TH;
     
+    // needed for axis-query
+    private int[] axcoordX, axcoordY;
+    private int[] aycoordX, aycoordY;
+    
     protected int []filter=null;
     
     protected boolean zoomRetainsAspect=false;
     
     private final int standardMLeft=40;
-
+    
     public Color COL_CUSTOMBG = Color.WHITE;
 
     private boolean crosshairs = false;
@@ -111,12 +115,15 @@ public class ScatterCanvas extends BaseCanvas {
      * @param v1 variable 1
      * @param v2 variable 2
      * @param mark associated marker */
-    public ScatterCanvas(PlotComponent ppc, Frame f, SVar v1, SVar v2, SMarker mark) {
-        super(ppc,f,mark);
+    public ScatterCanvas(final int gd, Frame f, SVar v1, SVar v2, SMarker mark) {
+        super(gd,f,mark);
         
         mLeft=standardMLeft;
         mBottom=30;
         mRight=mTop=10;
+        
+        axcoordX=new int[2]; axcoordY=new int[2];
+        aycoordX=new int[2]; aycoordY=new int[2];
         
         v=new SVar[2];
         v[0]=v1; v[1]=v2; m=mark;
@@ -167,7 +174,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     public void rotate() {
         try {
-            ((Frame) pc.getParent()).setTitle("Scatterplot ("+v[(orientation+1)&1].getName()+" vs "+v[orientation&1].getName()+")");
+            ((Frame) getParent()).setTitle("Scatterplot ("+v[(orientation+1)&1].getName()+" vs "+v[orientation&1].getName()+")");
         } catch (Exception ee) {};
     };
     
@@ -175,7 +182,7 @@ public class ScatterCanvas extends BaseCanvas {
     boolean hasLeft, hasTop, hasRight, hasBot;
     
     public void updateObjects() {
-        Dimension Dsize=pc.getSize();
+        Dimension Dsize=getSize();
         int w=Dsize.width, h=Dsize.height;
         TW=w; TH=h;
         int lshift=0;
@@ -268,6 +275,7 @@ public class ScatterCanvas extends BaseCanvas {
         final Collection pts = sortedPointsX.values();
         pp = new PlotPrimitive[pts.size()];
         pts.toArray(pp);
+        setBoundValues();
     };
     
     public void keyPressed(KeyEvent e) {
@@ -377,7 +385,7 @@ public class ScatterCanvas extends BaseCanvas {
             if (!jitter) jitter=true;
             stackjitter=!stackjitter; updateObjects(); setUpdateRoot(1); repaint();
         }
-        
+
         return null;
     }
     
@@ -410,7 +418,7 @@ public class ScatterCanvas extends BaseCanvas {
         } else mLeft=standardMLeft;
         if(mLeft!=omLeft) updateObjects();
         
-        Dimension Dsize=pc.getSize();
+        Dimension Dsize=getSize();
         if (Dsize.width!=TW || Dsize.height!=TH || mLeft!=omLeft)
             updateObjects();
         
@@ -427,8 +435,15 @@ public class ScatterCanvas extends BaseCanvas {
         }
         
         g.setColor(COL_OUTLINE);
-        g.drawLine(mLeft,Y,mLeft,Y+H);
-        g.drawLine(mLeft,Y+H,mLeft+W,Y+H);
+        if(orientation==0) {
+        	setAyCoord(mLeft,Y,mLeft,Y+H);
+        	setAxCoord(mLeft,Y+H,mLeft+W,Y+H);
+        } else {
+        	setAxCoord(mLeft,Y,mLeft,Y+H);
+        	setAyCoord(mLeft,Y+H,mLeft+W,Y+H);
+        }
+        g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
+        g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
         
         labels.clear();
         /* draw ticks and labels for X axis */
@@ -444,8 +459,7 @@ public class ScatterCanvas extends BaseCanvas {
                     int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
-                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?v[ori].getCatAt((int)(fi+0.5)).toString():
-                            axis.getDisplayableValue(fi));
+                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?v[ori].getCatAt((int)(fi+0.5)).toString():                            axis.getDisplayableValue(fi));
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -487,21 +501,23 @@ public class ScatterCanvas extends BaseCanvas {
             if(ppc.ref.length==1){
                 qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
                         + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
-                        + ppc.ref.length + " case(s) ("+
-                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+                        + ppc.ref.length + " case(s) "+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),2)+
                         "% of var, "+
-                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
-                        "% of total)";
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),2)+
+                        "% of total)\n"+
+                        (m.marked()>0?"\n"+getMarked(p)+" selected ("+Tools.getDisplayableValue(100.0*((double)getMarked(p)) / (double)m.marked(),2)+"% of total selected)":"");
             } else{
                 double[] mM0 = minMax(ppc.ref,0);
                 double[] mM1 = minMax(ppc.ref,1);
-                qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
-                        + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                qs =  v[0].getName() + ": [" + mM0[0] + ", " + mM0[1] + "]\n"
+                        + v[1].getName() + ": [" + mM1[0] + ", " + mM1[1] + "]\n"
                         + ppc.ref.length + " case(s) ("+
-                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),3)+
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),2)+
                         "% of var, "+
-                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),3)+
-                        "% of total)";
+                        Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),2)+
+                        "% of total)"+
+                        (m.marked()>0?"\n"+getMarked(p)+" selected ("+Tools.getDisplayableValue(100.0*((double)getMarked(p)) / (double)m.marked(),2)+"% of total selected)":"");
             }
         } else {
             if(ppc.ref.length==1){
@@ -511,8 +527,8 @@ public class ScatterCanvas extends BaseCanvas {
             } else{
                 double[] mM0 = minMax(ppc.ref,0);
                 double[] mM1 = minMax(ppc.ref,1);
-                qs =  v[0].getName() + ": min " + mM0[0] + ", max " + mM0[1] + "\n"
-                        + v[1].getName() + ": min " + mM1[0] + ", max " + mM1[1] + "\n"
+                qs =  v[0].getName() + ": [" + mM0[0] + ", " + mM0[1] + "]\n"
+                        + v[1].getName() + ": [" + mM1[0] + ", " + mM1[1] + "]\n"
                         + ppc.ref.length + " case(s)";
             }
         }
@@ -520,6 +536,37 @@ public class ScatterCanvas extends BaseCanvas {
         return qs;
     }
     
+    public String queryPlotSpace() {
+    	return "Scatterplot\n"+"values range: ["+minVal+", "+maxVal+ "]\n"+
+    			"max at ("+maxValFirstIndex[0]+", "+maxValFirstIndex[1]+")\nmin at ("+minValFirstIndex[0]+", "+minValFirstIndex[1]+")";
+    }
+    
+    private double maxVal=Double.NaN,minVal=Double.NaN;
+    private double[] maxValFirstIndex,minValFirstIndex;
+    
+    private void setBoundValues() {
+    	if(pp==null || v==null || v.length<2) return;
+    	if(maxValFirstIndex==null) maxValFirstIndex=new double[2];
+    	if(minValFirstIndex==null) minValFirstIndex=new double[2];
+    	double temp=0;
+    	for(int i=0;i<pp.length;i++) {
+    		temp=pp[i].cases();
+    		if(maxVal<temp || Double.isNaN(maxVal)) {
+    			maxVal=temp;
+   				if(pp[i] instanceof PPrimCircle)
+   					maxValFirstIndex=new double[]{Integer.parseInt(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+					   Integer.parseInt(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+    		}
+    		if(minVal>temp || Double.isNaN(minVal)) {
+    			minVal=temp;
+   				if(pp[i] instanceof PPrimCircle)
+   					minValFirstIndex=new double[]{Integer.parseInt(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+						Integer.parseInt(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+    		}
+    	}
+    }
+    	
+
     /* TODO: Maybe this can be done faster with the sortedPoints map */
     private double[] minMax(int[] ref, int var){
         double mM[] = new double[2];
@@ -618,5 +665,38 @@ public class ScatterCanvas extends BaseCanvas {
         if(crosshairs || crosshairs!=ocrosshairs){
             setUpdateRoot(3); repaint();
         }
+    }
+    
+    private int getMarked(PlotPrimitive p){
+        return (int)((p.cases())*p.getMarkedProportion(m,-1)+0.5);
+    }
+    
+    private void setAxCoord(int x1,int y1,int x2,int y2) {
+    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
+    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
+        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+    }
+    
+    private void setAyCoord(int x1,int y1,int x2,int y2) {
+    	if(x1<x2) {aycoordX[0]=x1; aycoordX[1]=x2;}
+    	else {aycoordX[0]=x2; aycoordX[1]=x1;}
+        if(y1<y2) {aycoordY[0]=y1; aycoordY[1]=y2;}
+        else {aycoordY[0]=y2; aycoordY[1]=y1;}
+    }
+    
+    protected Axis getMouseOverAxis(int x, int y) {
+    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
+        else if(x>=aycoordX[0]-2 && x<= aycoordX[1]+2 && y>=aycoordY[0]-2 && y<=aycoordY[1]+2) return ay;
+    	else return null;
+    }
+    
+    protected String getAxisQuery(int x, int y) {
+//    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0] + ", ayX: " + aycoordX[0] + ", ayY: " + aycoordY[0]);
+    	Axis a=getMouseOverAxis(x,y);
+    	if(a==null) return null;
+    	else return "axis name: " + a.getVariable().getName()+
+    			"\nrange: "+Tools.getDisplayableValue(a.vBegin,2)+" ... "+Tools.getDisplayableValue(a.vBegin+a.vLen,2);
+
     }
 };
