@@ -55,8 +55,8 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	@param v1 variable 1
 	@param v2 variable 2
 	@param mark associated marker */
-    public LineCanvas(PlotComponent ppc, Frame f, SVar xv, SVar[] yvs, SMarker mark) {
-        super(ppc,3); // 3 layers; 0=base+points, 1=selected, 2=drag
+    public LineCanvas(final int gd, Frame f, SVar xv, SVar[] yvs, SMarker mark) {
+        super(gd,3); // 3 layers; 0=base+points, 1=selected, 2=drag
 		setFrame(f);
 		v=new SVar[yvs.length+1];
 		A=new Axis[2];
@@ -87,11 +87,11 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	v[0]=xv; A[0]=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); A[0].addDepend(this);
 	A[0].setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
 
-	pc.setBackground(Common.backgroundColor);
+	setBackground(Common.backgroundColor);
 	drag=false;
-	pc.addMouseListener(this);
-	pc.addMouseMotionListener(this);
-	pc.addKeyListener(this); f.addKeyListener(this);
+	addMouseListener(this);
+	addMouseMotionListener(this);
+	addKeyListener(this); f.addKeyListener(this);
 	String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@LHide labels","labels","!HToggle hilight. style","selRed","@JToggle jittering","jitter","@BToggle back-lines","backlines","-","Set X Range ...","XrangeDlg","Set Y Range ...","YrangeDlg","~Window","0"};
 	EzMenu.getEzMenu(f,this,myMenu);
 	MIlabels=EzMenu.getItem(f,"labels");
@@ -100,7 +100,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
     };
 
     public LineCanvas(Frame f, SVar xv, SVar[] yvs, SMarker mark) {
-		this(null, f, xv, yvs, mark);
+		this(0, f, xv, yvs, mark);
 	}
 
     public Axis getXAxis() { return A[0]; }
@@ -130,7 +130,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
     };
 
     public void paintPoGraSS(PoGraSS g) {
-	Rectangle r=pc.getBounds();
+	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
 	g.begin();
 	g.defineColor("white",255,255,255);
@@ -148,7 +148,7 @@ public class LineCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	g.defineColor("selBg",255,255,192);
 	g.defineColor("splitRects",128,128,255);
 
-	Dimension Dsize=pc.getSize();
+	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH) {
 	    int w=Dsize.width, h=Dsize.height;
 	    TW=w; TH=h;
