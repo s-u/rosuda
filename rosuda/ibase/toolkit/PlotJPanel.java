@@ -1,28 +1,31 @@
 package org.rosuda.ibase.toolkit;
 
-import java.awt.Graphics;
-import java.awt.event.MouseEvent;
-
+import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
-public class PlotJPanel extends JPanel {
+public class PlotJPanel extends JPanel implements MouseListener, MouseMotionListener {
 
-	LayerCanvas lcanv;
-	Graphics gc;
+	GraphicsDevice grdev;
 	
-	public PlotJPanel() {
-		
+	public PlotJPanel(GraphicsDevice gd) {
+		grdev=gd;
+	}
+
+	public void update(Graphics g) {
+		if(grdev.getGrDevID()==0) ((AWTGraphicsDevice)grdev).update(g);
+		else if(grdev.getGrDevID()==1) ((SWINGGraphicsDevice)grdev).update(g);
+//		else if(grdev.getGrDevID()==2) ((JOGLGraphicsDevice)grdev).update(g);
+		//default is Canvas.update(g);
 	}
 	
-	public void paint(final Graphics g) {
-		if(lcanv==null) super.paint(g);
-		else lcanv.paint(g);
+	public void paint(Graphics g) {
+		if(grdev.getGrDevID()==0) ((AWTGraphicsDevice)grdev).paint(g);
+		else if(grdev.getGrDevID()==1) ((SWINGGraphicsDevice)grdev).paint(g);
+//		else if(grdev.getGrDevID()==2) ((JOGLGraphicsDevice)grdev).paint(g);
+		//default is Canvas.paint(g);
 	}
 	
-	public void update(final Graphics g) {
-		if(lcanv==null) super.update(g);
-		else lcanv.update(g);
-	}
 	public void mouseClicked(final MouseEvent e) {
 		
 	}
