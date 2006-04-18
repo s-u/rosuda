@@ -7,14 +7,15 @@ import java.util.*;
 
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
+import org.rosuda.pograss.*;
 
 
 /** query popup
  * @version $Id$
  */
 // TODO: maybe implement MouseMotionListener to see items through popup window
-public class AwtQueryPopup implements MouseListener, QueryPopup {
-    class QPCanvas extends LayerCanvas {
+public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, QueryPopup {
+    class QPCanvas extends AWTGraphicsDevice {
         String[] content;
         int width;
         
@@ -28,8 +29,13 @@ public class AwtQueryPopup implements MouseListener, QueryPopup {
         
         public boolean doUpdate=true;
         
-        QPCanvas(final PlotComponent ppc, final Window wn, final SVarSet uvs, final String ct, final int w, final int cid) {
-            super(ppc);
+        // these are only temporary, QPCanvas is not a PlotComponent
+        public void paintPoGraSS(PoGraSS p) {}
+        public void beginPaint(PoGraSS p) {}
+        public void endPaint(PoGraSS p) {}
+                
+        
+        QPCanvas(final Window wn, final SVarSet uvs, final String ct, final int w, final int cid) {
             width=w; win=wn; vs=uvs;
             //		 setContent(ct,cid);
         }
@@ -132,9 +138,9 @@ public class AwtQueryPopup implements MouseListener, QueryPopup {
             
             if (rw<30) rw=leftMargin+rightMargin+xw;
             doUpdate=false;
-            final Dimension csz=pc.getComponent().getSize();
+            final Dimension csz=getSize();
             if (csz.width!=rw || csz.height!=rh) {
-                pc.getComponent().setSize(rw,rh);
+                setSize(rw,rh);
                 win.setSize(rw,rh);
                 win.pack();
             }
@@ -142,7 +148,7 @@ public class AwtQueryPopup implements MouseListener, QueryPopup {
         
         public void paintLayer(final Graphics g, final int layer) {
             if (doUpdate) updateGeometry(g);
-            final Dimension s=pc.getComponent().getSize();
+            final Dimension s=getSize();
             g.setColor(Color.black);
             g.drawRect(0,0,s.width-1,s.height-1);
             int y=topMargin+xh*3/4;
@@ -153,30 +159,42 @@ public class AwtQueryPopup implements MouseListener, QueryPopup {
                 i++;
             }
         }
+        
     }
     
     QPCanvas cvs;
     Window win;
     Window owner;
-    PlotComponent pcomp;
+    PlotComponent pc;
     
-    public AwtQueryPopup(final PlotComponent pc, final Window ow, final SVarSet vs, final String ct, final int w, final int cid) {
-        pcomp = new AwtPlotComponent();
-        owner = ow; if (owner==null) owner=pc.getParentWindow();
+    public AwtQueryPopup(final Window ow, final SVarSet vs, final String ct, final int w, final int cid) {
+        owner = ow; if (owner==null) owner=getParentWindow();
         win=new Window(owner);
-        cvs=new QPCanvas(pcomp,win,vs,ct,w,cid);
-        win.add(cvs.pc.getComponent());
+        cvs=new QPCanvas(win,vs,ct,w,cid);
+        win.add(cvs.getComponent());
         //	cvs.setContent(ct,cid);
-        cvs.pc.setSize(100,50);
+        cvs.setSize(100,50);
         win.setBackground(Common.popupColor);
         win.addMouseListener(this);
-        cvs.pc.getComponent().addMouseListener(this);
+        cvs.addMouseListener(this);
         win.pack();
     }
     
-    public AwtQueryPopup(final PlotComponent pc, final Window ow, final SVarSet vs, final String ct) {
-        this(pc,ow,vs,ct,-1,-1);
+    public AwtQueryPopup(final Window ow, final SVarSet vs, final String ct) {
+        this(ow,vs,ct,-1,-1);
     }
+
+	public Window getParentWindow() {
+		//System.out.println("AwtPlotComponent["+this+"].getParentWindow().comp="+comp);
+		Container p = cvs.getParent();
+		//System.out.println("  container: "+p);
+		while (p!=null && !(p instanceof Window)) {
+			//System.out.println("  container: "+p);
+			p=p.getParent();
+		}
+//		System.out.println("-->"+p);
+		return (Window)p;
+	}
     
     public void setContent(final String s, final int[] cid) {
         // so far we ignore multi-case queries
@@ -230,15 +248,5 @@ public class AwtQueryPopup implements MouseListener, QueryPopup {
     public Component getQueryComponent() {
         return win;
     }
-        /*
-                public Window getOwnerWindow() {
-                        return owner;
-                }
-         */
-        /*
-         public Component getOwnerComponent() {
-                 return pcomp.getComponent();
-         }
-         */
 }
 

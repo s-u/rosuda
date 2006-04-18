@@ -14,19 +14,18 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 
 	JToolTip win;
     Window owner;
-    PlotComponent parentcomp, pcomp;
-    
+      
     SVarSet vs;
+    
+    SWINGGraphicsDevice grdev;
 	
-    public SwingQueryPopup(final PlotComponent pc, final Window ow, final SVarSet vs, final String ct) {
-        this(pc,ow,vs,ct,-1,-1);
+    public SwingQueryPopup(SWINGGraphicsDevice gd, final Window ow, final SVarSet vs, final String ct) {
+        this(gd, ow,vs,ct,-1,-1);
     }
 
-    public SwingQueryPopup(final PlotComponent pc, final Window ow, final SVarSet uvs, final String ct, final int w, final int cid)
+    public SwingQueryPopup(SWINGGraphicsDevice gd, final Window ow, final SVarSet uvs, final String ct, final int w, final int cid)
     {
-		parentcomp = pc;
-    	pcomp = new SwingPlotComponent();
-		owner = ow; if (owner==null) owner=pc.getParentWindow();
+    	grdev=gd;
     	vs = uvs;
     	
     	ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
@@ -123,7 +122,7 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     		if(st.hasMoreElements()) t+="<br>";
     	}
 		t+="</body></html>";
-        parentcomp.setToolTipText(t);
+        grdev.setToolTipText(t);
 	}
 
 	
@@ -142,14 +141,5 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     public Component getQueryComponent() {
     	return win; // returns null, win isn't used in SWING
     }
-/*   
-    public Window getOwnerWindow() {
-    	return owner;
-    }
-    */
-/*    
-    public Component getOwnerComponent() {
-    	return pcomp.getComponent();
-    }
-    */
+    
 }
