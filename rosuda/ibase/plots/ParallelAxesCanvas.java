@@ -154,8 +154,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param var source numerical variable
      * @param cvar categorical variable for grouping
      * @param mark associated marker */
-    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar var, final SVar cvar, final SMarker mark, final int type) {
-        super(ppc,f,mark);
+    public ParallelAxesCanvas(int gd, final Frame f, final SVar var, final SVar cvar, final SMarker mark, final int type) {
+        super(gd,f,mark);
         
         this.type=type;
         
@@ -172,6 +172,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         v = new SVar[]{var};
         cv = cvar;
+        
+        resetAxesCoord();
         
         xv=new SVarObj(getShortClassName() + ".index",true);
         for(int i=0; i<cv.getNumCats(); i++){
@@ -256,16 +258,16 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param f associated frame (or <code>null</code> if none)
      * @param var source variable
      * @param mark associated marker */
-    public ParallelAxesCanvas(final PlotComponent pc, final Frame f, final SVar var, final SMarker mark, final int type) {
-        this(pc,f,new SVar[]{var},mark,type);
+    public ParallelAxesCanvas(int gd, final Frame f, final SVar var, final SMarker mark, final int type) {
+        this(gd,f,new SVar[]{var},mark,type);
     }
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public ParallelAxesCanvas(final PlotComponent ppc, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
-        super(ppc, f, mark);
+    public ParallelAxesCanvas(int gd, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
+        super(gd, f, mark);
         
         this.type=type;
         initFlagsAndFields();
@@ -589,19 +591,19 @@ public class ParallelAxesCanvas extends BaseCanvas {
             while (xx<xv.getNumCats()) {
                 final int t=getAxCatPos(xx++);
                 if(orientation==0)
-                    g.drawLine(t,mTop,t,pc.getSize().height-mBottom);
+                    g.drawLine(t,mTop,t,getSize().height-mBottom);
                 else
-                    g.drawLine(mLeft,t,pc.getSize().width-mRight,t);
+                    g.drawLine(mLeft,t,getSize().width-mRight,t);
             }
             g.setLineWidth(1.0f);
         }
         
-        final Rectangle r=pc.getBounds();
+        final Rectangle r=getBounds();
         g.setBounds(r.width,r.height);
         
         if(!getValid()){
-            final int h=pc.getHeight();
-            final int w=pc.getWidth();
+            final int h=getHeight();
+            final int w=getWidth();
             g.setColor(COL_INVALID);
             g.drawLine(0,0,w,h);
             g.drawLine(0,w,h,0);
@@ -615,7 +617,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private boolean getValid() {
-        return valid && pc.getWidth()>=MINWIDTH && pc.getHeight()>=MINHEIGHT;
+        return valid && getWidth()>=MINWIDTH && getHeight()>=MINHEIGHT;
     }
     
     private void addLabelsAndTicks(PoGraSS g) {
@@ -684,7 +686,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             
             // draw ticks for x axis
             if(type==TYPE_PCP){
-                final int b = (orientation==0)?(pc.getSize().height-mBottom):(pc.getSize().width-mRight);
+                final int b = (orientation==0)?(getSize().height-mBottom):(getSize().width-mRight);
                 
                 int xx=0;
                 while (xx<xv.getNumCats()) {
@@ -711,16 +713,16 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     if(isShowLabels())
                         labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 }else{
-                    g.drawLine(t,pc.getHeight()-mBottom,t,pc.getHeight()-mBottom+2);
+                    g.drawLine(t,getHeight()-mBottom,t,getHeight()-mBottom+2);
                     if(isShowLabels())
-                        labels.add(t,pc.getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                        labels.add(t,getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
                 }
                 fi+=f;
             }
             if(orientation==0)
-                g.drawLine(mLeft, mTop, mLeft, pc.getSize().height-mBottom);
+                g.drawLine(mLeft, mTop, mLeft, getSize().height-mBottom);
             else
-                g.drawLine(mLeft, pc.getHeight()-mBottom, pc.getWidth()-mRight,pc.getHeight()-mBottom);
+                g.drawLine(mLeft, getHeight()-mBottom, getWidth()-mRight,getHeight()-mBottom);
         }
     }
     
@@ -1028,7 +1030,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         // visualize dragging
         if(type==TYPE_PCP){
             if(baseDrag && moveDrag){
-                final int basey=pc.getBounds().height-mBottom;
+                final int basey=getBounds().height-mBottom;
                 final int pos = (orientation==0)?baseDragX2:baseDragY2;
                 final int dragNew = ax.getCatByPos(pos);
                 final int myX1=ax.getCatLow(dragNew);
@@ -1244,6 +1246,55 @@ public class ParallelAxesCanvas extends BaseCanvas {
         // works only for box plots
         return pp[axis].cases();
     }
+    
+    private void setAxCoord(int x1,int y1,int x2,int y2) {
+    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
+    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
+        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+    }
+    
+    protected void setAyCoord(int x1,int y1,int x2,int y2,int index) {
+    	if(index<0 || index>=v.length) return;
+    	if(x1<x2) {aycoordX[index][0]=x1; aycoordX[index][1]=x2;}
+    	else {aycoordX[index][0]=x2; aycoordX[index][1]=x1;}
+        if(y1<y2) {aycoordY[index][0]=y1; aycoordY[index][1]=y2;}
+        else {aycoordY[index][0]=y2; aycoordY[index][1]=y1;}
+    }
+    
+    protected Axis getMouseOverAxis(int x, int y) {
+    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
+        else {
+        	for(int i=0;i<v.length;i++) {
+            	if(x>=aycoordX[i][0]-2 && x<= aycoordX[i][1]+2 && y>=aycoordY[i][0]-2 && y<=aycoordY[i][1]+2) return i==0?ay:opAy[i-1];
+        	}
+        	return null;
+        }
+    }
+    
+    protected String getAxisQuery(int x, int y) {
+//    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0] + ", ayX: " + aycoordX[0] + ", ayY: " + aycoordY[0]);
+    	Axis a=getMouseOverAxis(x,y);
+    	if(a==null) return null;
+    	else return "axis name: " + a.getVariable().getName();
+    }
+    
+    protected void resetAxesCoord() {
+        axcoordY=new int[2]; axcoordX=new int[2];
+        aycoordY=new int[v.length][2]; aycoordX=new int[v.length][2];
+        // just setting some maybe graphically impossible values to reach
+        for(int i=0; i<axcoordY.length; i++) {axcoordY[i]=-256;axcoordX[i]=-256;}
+        for(int i=0; i<aycoordY.length; i++) {
+        	for(int j=0; j<aycoordY[i].length; j++) {
+        		aycoordY[i][j]=-256; aycoordX[i][j]=-256;
+        	}
+        }
+    }
+    
+    // needed for axis-query
+    protected int[] axcoordX, axcoordY;
+    protected int[][] aycoordX, aycoordY;
+    
 }
 
 
