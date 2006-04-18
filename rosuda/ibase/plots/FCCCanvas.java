@@ -21,7 +21,7 @@ public class FCCCanvas extends FluctCanvas {
     };
 
     public void paintPoGraSS(PoGraSS g) {
-	Rectangle r=pc.getBounds();
+	Rectangle r=getBounds();
 	g.setBounds(r.width,r.height);
 	g.begin();
 	g.defineColor("white",255,255,255);
@@ -46,7 +46,7 @@ public class FCCCanvas extends FluctCanvas {
 		g.defineColor("class"+cc,rr,gg,bb);
 	    };
  
-	Dimension Dsize=pc.getSize();
+	Dimension Dsize=getSize();
 	if (Dsize.width!=TW || Dsize.height!=TH)
 	    updatePoints();
 
