@@ -1,50 +1,107 @@
 package org.rosuda.ibase.toolkit;
+
 import java.awt.*;
-import java.awt.event.*;
-import net.java.games.jogl.*;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
-public interface PlotComponent {
-	
-	int AWT = 0;
-	int SWING = 1;
-	int OPENGL = 2;
-	
-	Component getComponent();
-	/* FIXME: the two methods below destroy the independence and should be removed */
-	void initializeLayerCanvas(LayerCanvas l);
-	void initializeGraphics(Window w);
-	
-	int getGraphicsEngine();
-	
-	// we redirect only necessary methods to the component
-	void repaint();
-	void setCursor(Cursor cursor);
-	void setBackground(Color c);
-	void addMouseMotionListener(MouseMotionListener l);
-	void addMouseListener(MouseListener l);
-	void addKeyListener(KeyListener l);
-	Rectangle getBounds();
-	Point getLocation();
-	void setSize(int width, int height);
-	void setSize(Dimension d);
-	Dimension getSize();
-	Image createImage(int width, int height);
-	Color getForeground();
-	Color getBackground();
-	/* this should be removed! a PC doesn't have to be Graphics based (e.g. OpenGL is not) */
-	Graphics getGraphics();
-	Container getParent();
-	Window getParentWindow();
-	int getWidth();
-	int getHeight();
-	
-	// additions to SWING
-	void setPreferredSize(Dimension d);
-	void setMinimumSize(Dimension d);
-	void setMaximumSize(Dimension d);
-	void setToolTipText(String s);
-	
-	// additions to JOGL:
-	public void addGLEventListener(GLEventListener l);
+import org.rosuda.ibase.SVarSet;
+import org.rosuda.pograss.*;
 
+/** PlotComponent units graphic-, mouse- and keyboard interactivity
+ * @version $Id$
+ */
+
+public abstract class PlotComponent {
+	
+	public final static int AWTGrDevID = 0;
+	public final static int SWINGGrDevID = 1;
+	public final static int JOGLGrDevID = 2;
+	
+	public final int GrDevID;
+	
+	private GraphicsDevice grdev;
+	public int layers;
+	
+	/**
+	 * @param gd 0 == AWT, 1 == SWING, 2 == JOGL
+	 * @param layers
+	 */
+	public PlotComponent(int gd, int _layers) {
+		GrDevID=gd;
+		layers=_layers;
+		if(gd==0) {
+			grdev = new AWTGraphicsDevice(layers);
+		} else if(gd==1) {
+			grdev = new SWINGGraphicsDevice(layers);
+		} else if(gd==2) {
+			grdev = new JOGLGraphicsDevice(layers, true);
+		} else { // AWT is default
+			grdev = new AWTGraphicsDevice(layers);
+		}
+		grdev.setPCOwner(this);
+	}
+	
+	public PlotComponent(int gd) {
+		this(gd,1);
+	}
+	
+	// don't really need this for grdev
+	public void paintLayer(int layers) {
+		grdev.paintLayer(layers);
+	}
+	
+	public abstract void paintPoGraSS(PoGraSS p);
+	
+	protected abstract void beginPaint(PoGraSS p);
+	
+	protected abstract void endPaint(PoGraSS p);
+	
+	public void repaint() {
+//		System.out.println("PlotComponent: repaint()");
+		grdev.repaint();
+	}
+	
+	public void setUpdateRoot(int root) {
+		grdev.setUpdateRoot(root);
+	}
+	
+	public QueryPopup newQueryPopup(final Window win, final SVarSet vs, final String ct, final int w, final int cid) {
+		if(GrDevID==SWINGGrDevID) {
+			return new SwingQueryPopup((SWINGGraphicsDevice)grdev,win,vs,ct,w,cid);
+		} else if(GrDevID==JOGLGrDevID) {
+			return new AwtQueryPopup(win,vs,ct,w,cid);
+		} else { // AWTGrDevID is default
+			return new AwtQueryPopup(win,vs,ct,w,cid);
+		}
+	}
+	
+	public QueryPopup newQueryPopup(final Window win, final SVarSet vs, final String ct) {
+		return newQueryPopup(win, vs, ct, -1, -1);
+	}
+	
+	// for SWING, make it accessable for every GraphicsDevice
+	public void setToolTipText(String s) {
+		if(GrDevID==SWINGGrDevID) {
+			((PlotJPanel)(grdev.getComponent())).setToolTipText(s);
+		}
+	}
+
+		
+	// following lines are references to component to draw on
+	public Component getComponent() {return grdev.getComponent();} // try to make it not public
+	public Rectangle getBounds() {return grdev.getBounds();}
+	public void setSize(int w, int h) {grdev.setSize(w,h);}
+	public Dimension getSize() {return grdev.getSize();}
+	public void setBackground(Color c) {grdev.setBackground(c);}
+	public void addMouseListener(MouseListener l) {grdev.addMouseListener(l);}
+	public void addMouseMotionListener(MouseMotionListener l) {grdev.addMouseMotionListener(l);}
+	public void addKeyListener(KeyListener l) {grdev.addKeyListener(l);}
+	public Point getLocation() {return grdev.getLocation();}
+	public void setCursor(Cursor c) {grdev.setCursor(c);}
+	public void setSize(Dimension d) {grdev.setSize(d);}
+	public int getWidth() {return grdev.getWidth();}
+	public int getHeight() {return grdev.getHeight();}
+	public Container getParent() {return grdev.getParent();}
+	
 }
