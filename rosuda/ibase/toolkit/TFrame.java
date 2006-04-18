@@ -9,7 +9,7 @@ import org.rosuda.util.*;
     open frames.
     @version $Id$
 */
-public class TFrame extends Frame
+public class TFrame extends Frame implements FrameDevice
 {
     WTentry WTmyself;
 
@@ -79,4 +79,11 @@ public class TFrame extends Frame
             }
         }
     };
+    
+    public Frame getFrame() {
+    	return this;
+    }
+    
+    // other FrameDevice methods are redirected to superclass
+
 };

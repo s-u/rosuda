@@ -1,13 +1,14 @@
 package org.rosuda.ibase.toolkit;
+import java.awt.*;
 import javax.swing.*;
 import org.rosuda.ibase.*;
 import org.rosuda.util.*;
 
-/** enhanced {@link Frame} that uses {@link WinTracker} to keep track of
+/** enhanced {@link JFrame} that uses {@link WinTracker} to keep track of
     open frames.
     @version $Id$
 */
-public class TJFrame extends JFrame
+public class TJFrame extends JFrame implements FrameDevice
 {
     WTentry WTmyself;
 
@@ -77,4 +78,15 @@ public class TJFrame extends JFrame
             }
         }
     };
+    
+    public Frame getFrame() {
+    	return this;
+    }
+    
+    public Component add(Component c) {
+    	return getContentPane().add(c);
+    }
+    
+    // other FrameDevice methods are redirected to superclass
+    
 };
