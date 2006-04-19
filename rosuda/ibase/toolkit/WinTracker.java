@@ -91,9 +91,9 @@ public class WinTracker implements ActionListener, FocusListener
 	if (Global.DEBUG>0)
 	    System.out.println(">>window removed: \""+we.name+"\"");
         if (wins.size()==0) {
-            if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
+            /*if (SplashScreen.main!=null && Global.AppType!=Common.AT_Framework)
                 SplashScreen.main.setVisible(true);
-            else if(Global.AppType==Global.AT_standalone) {
+            else*/ if(Global.AppType==Global.AT_standalone) {
                 System.out.println("FATAL: Stand-alone mode, last window closed, but no splash screen present. Assuming exit request.");
                 System.exit(0);
             }
