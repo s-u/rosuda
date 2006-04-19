@@ -158,7 +158,7 @@ public class WinTracker implements ActionListener, FocusListener
 	for(final Enumeration e=wins.elements();e.hasMoreElements();){
 	    final WTentry we=(WTentry)e.nextElement();
             if (we!=null && (cmd.compareTo("WTMclose"+we.id)==0 ||
-                      ("WTMcloseAll".equals(cmd) && we.wclass>TFrame.clsVars) ||
+                      ("WTMcloseAll".equals(cmd) && we.wclass>FrameDevice.clsVars) ||
                       cmd.equals("WTMcloseClass"+we.wclass)
                       )) {
 		if (Global.DEBUG>0)
