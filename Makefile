@@ -61,15 +61,6 @@ JGR.jar: $(IBASE_SRC_JGR) $(JGR_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC)
 	mv rosuda/ibase/Common.java_ rosuda/ibase/Common.java
 	rm -rf org splash.jpg icons
 
-JGRsrc: 
-	rm -rf org
-	mkdir org org/rosuda
-	cp -R rosuda/JGR org/rosuda
-	find org -name CVS | xargs rm -rf
-	find org -name \*~ | xargs rm -f
-	tar czf JGRsrc.tar.gz org
-	rm -rf org
-
 jgr-docs: $(JGR_SRC) 
 	rm -rf JavaDoc
 	mkdir JavaDoc
@@ -114,7 +105,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
 
 clean:
-	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java JGRsrc*
+	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JGRlinux* rosuda/JGRsrc*
 	$(MAKE) -C rosuda/Mondrian clean
 
 .PHONY: clean all doc docs
