@@ -105,7 +105,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
 
 clean:
-	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JGRlinux* rosuda/JGRsrc*
+	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz
 	$(MAKE) -C rosuda/Mondrian clean
 
 .PHONY: clean all doc docs
