@@ -8,16 +8,17 @@
 
 /* the viewpoint is from R, i.e. "get" means "Java->R" whereas "put" means "R->Java" */
 
-#define JRI_VERSION 0x0202 /* JRI v0.2-2 */
+#define JRI_VERSION 0x0203 /* JRI v0.2-3 */
 #define JRI_API     0x0103 /* API-version 1.3 */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
-  /* jlong can always hold a pointer */
-#define SEXP2L(s) ((jlong)(s))
-#define L2SEXP(s) ((SEXP)((jlong)(s)))
+  /* jlong can always hold a pointer 
+     to avoid warnings we go ptr->ulong->jlong */
+#define SEXP2L(s) ((jlong)((unsigned long)(s)))
+#define L2SEXP(s) ((SEXP)((unsigned long)(jlong)(s)))
         
 jstring jri_callToString(JNIEnv *env, jobject o);
 

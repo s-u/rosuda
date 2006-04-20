@@ -100,7 +100,7 @@ int Re_ReadConsole(char *prompt, unsigned char *buf, int len, int addtohistory)
 		if (!c) return -1;
 		{
 			int l=strlen(c);
-			strncpy(buf, c, (l>len-1)?len-1:l);
+			strncpy((char*)buf, c, (l>len-1)?len-1:l);
 			buf[(l>len-1)?len-1:l]=0;
 #ifdef JRI_DEBUG
 			printf("Re_ReadConsole succeeded: \"%s\"\n",buf);
