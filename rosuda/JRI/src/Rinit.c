@@ -1,6 +1,6 @@
+#include <Rversion.h>
 #include <R.h>
 #include <Rinternals.h>
-#include <Rversion.h>
 #include "Rinit.h"
 #include "Rcallbacks.h"
 
@@ -9,6 +9,21 @@
  *-------------------------------------------------------------------*/
 
 #ifndef Win32
+
+/* more recent R versions have Rinterface */
+#if (R_VERSION >= R_Version(2,3,0))
+#define R_INTERFACE_PTRS 1
+#include <Rinterface.h>
+/* unfortunately 2.3.0 doesn't export R_CStackLimit */
+#if (R_VERSION < R_Version(2,4,0))
+extern uintptr_t R_CStackLimit; /* C stack limit */
+extern uintptr_t R_CStackStart; /* Initial stack address */
+#endif
+/* and SaveAction is not officially exported */
+extern SA_TYPE SaveAction;
+#else
+/*---------------------------------------------------- old R init --*/
+/* for older version we need to copy/paste it */
 /* from Defn.h */
 extern Rboolean R_Interactive;   /* TRUE during interactive use*/
 
@@ -43,6 +58,9 @@ extern int  (*ptr_R_ShowFiles)(int, char **, char **, char *, Rboolean, char *);
 extern int  (*ptr_R_ChooseFile)(int, char *, int);
 extern void (*ptr_R_loadhistory)(SEXP, SEXP, SEXP, SEXP);
 extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
+#endif
+/*-------------------------------------- end of old definitions ----*/
+
 
 int initR(int argc, char **argv) {
     //getenv("R_HOME","/Library/Frameworks/R.framework/Resources",1);
@@ -56,6 +74,11 @@ int initR(int argc, char **argv) {
         printf("Failed to initialize embedded R! (stat=%d)\n",stat);
         return -1;
     };
+
+#if (R_VERSION >= R_Version(2,3,0))
+    /* disable stack checking, because threads will thow it off */
+    R_CStackLimit = (uintptr_t) -1;
+#endif
 
 #ifdef JGR_DEBUG
     printf("R primary initialization done. Setting up parameters.\n");
@@ -110,6 +133,12 @@ int initR(int argc, char **argv) {
 #else
 /* since 2.1.0 we don't need R sources */
 #include "R_ext/RStartup.h"
+#endif
+
+#if (R_VERSION >= R_Version(2,3,0))
+/* according to fixed/config.h Windows has uintptr_t */
+extern uintptr_t R_CStackLimit; /* C stack limit */
+extern uintptr_t R_CStackStart; /* Initial stack address */
 #endif
 
 /* for signal-handling code */
@@ -257,6 +286,12 @@ int initR(int argc, char **argv)
     R_SetParams(Rp); /* so R_ShowMessage is set */
     R_SizeFromEnv(Rp);
     R_SetParams(Rp);
+
+#if (R_VERSION >= R_Version(2,3,0))
+    /* R_SetParams implicitly calls R_SetWin32 which sets the
+       stack start/limit which we need to override */
+    R_CStackLimit = (uintptr_t) -1;
+#endif
 
     FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
