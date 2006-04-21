@@ -13,9 +13,13 @@
 /* more recent R versions have Rinterface */
 #if (R_VERSION >= R_Version(2,3,0))
 #define R_INTERFACE_PTRS 1
+#define CSTACK_DEFNS 1
 #include <Rinterface.h>
 /* unfortunately 2.3.0 doesn't export R_CStackLimit */
 #if (R_VERSION < R_Version(2,4,0))
+#if !defined(HAVE_UINTPTR_T) && !defined(uintptr_t)
+typedef unsigned long uintptr_t;
+#endif
 extern uintptr_t R_CStackLimit; /* C stack limit */
 extern uintptr_t R_CStackStart; /* Initial stack address */
 #endif
