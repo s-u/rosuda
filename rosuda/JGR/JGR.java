@@ -401,7 +401,7 @@ public class JGR {
 		previous = "";
 		while (st.hasMoreTokens()) {
 			String prev = st.nextToken().trim();
-			if (prev != null && prev != "null") previous += st.nextToken()+(st.hasMoreTokens()?",":"");
+			if (prev != null && prev != "null" && st.hasMoreTokens()) previous += st.nextToken()+(st.hasMoreTokens()?",":"");
 		}
 		if (previous.trim().length() > 0) new JGRPackageManager(previous);
 	}
