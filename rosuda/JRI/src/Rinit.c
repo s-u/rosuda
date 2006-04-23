@@ -140,7 +140,10 @@ int initR(int argc, char **argv) {
 #endif
 
 #if (R_VERSION >= R_Version(2,3,0))
-/* according to fixed/config.h Windows has uintptr_t */
+/* according to fixed/config.h Windows has uintptr_t, my windows hasn't */
+#if !defined(HAVE_UINTPTR_T) && !defined(uintptr_t)
+typedef unsigned long uintptr_t;
+#endif
 extern uintptr_t R_CStackLimit; /* C stack limit */
 extern uintptr_t R_CStackStart; /* Initial stack address */
 #endif
