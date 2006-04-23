@@ -1,0 +1,32 @@
+#!/bin/sh
+
+PNAME=JGRsrc
+SWD=`pwd`
+echo "Removing previous dist ..."
+rm -rf /tmp/${PNAME}
+echo "Copying package base ..."
+mkdir /tmp/org
+mkdir /tmp/org/rosuda
+cp -r ../../../org/rosuda/JGR /tmp/org/rosuda
+
+rm -f /tmp/org/rosuda/JGR/mkdist
+
+cd /tmp/org/
+
+
+echo "Removing CVS and backup stuff ..."
+find . -name CVS | xargs rm -rf
+find . -name \*~ | xargs rm -f
+
+echo "Updating version ..."
+VER=`awk -v ORS= '/JGR_VERSION / { print $2 }' ../JGR/JGR.java`
+echo "$PNAME version ${VER}"
+
+echo "Creating package ..."
+cd ..
+tar fcz ${PNAME}-${VER}.tar.gz org
+cd ${SWD}
+cp /tmp/${PNAME}-${VER}.tar.gz ..
+rm -rf /tmp/org
+echo "Done."
+ls -l ../${PNAME}-${VER}.tar.gz
