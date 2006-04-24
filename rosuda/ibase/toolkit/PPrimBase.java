@@ -24,6 +24,8 @@ public abstract class PPrimBase implements PlotPrimitive {
 
     protected boolean visible=true;
 
+    protected boolean dragging = false;
+
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
     }
@@ -146,4 +148,14 @@ public abstract class PPrimBase implements PlotPrimitive {
     public boolean isVisible() {
         return visible;
     }
+    
+    public void setDragging(final boolean b){
+        dragging=b;
+    }
+    
+    // move methods. not abstract as PPrimPolygon has no anchor point to move
+    public void move(final int x, final int y){};
+    public void moveX(final int x){};
+    public void moveY(final int y){};
+    
 }
