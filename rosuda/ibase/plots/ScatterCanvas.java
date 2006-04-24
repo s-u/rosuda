@@ -593,8 +593,8 @@ public class ScatterCanvas extends BaseCanvas {
                 if (qx==ay.clip(qx) && qy==ax.clip(qy)) {
                     g.drawLine(qx,ax.gBegin,qx,ax.gBegin+ax.gLen);
                     g.drawLine(ay.gBegin,qy,ay.gBegin+ay.gLen,qy);
-                    g.drawString(ax.getDisplayableValue(ay.getValueForPos(qx)),qx+2,qy-2);
-                    g.drawString(ax.getDisplayableValue(ax.getValueForPos(qy)),qx+2,qy+11);
+                    g.drawString(ax.getDisplayableValue(ay.getValueForPos(qx)),qx+2,getHeight()-mBottom-2);
+                    g.drawString(ax.getDisplayableValue(ax.getValueForPos(qy)),mLeft+2,qy+11);
                 }
             }
         }
