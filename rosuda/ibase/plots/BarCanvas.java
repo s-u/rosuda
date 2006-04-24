@@ -317,12 +317,16 @@ public class BarCanvas extends BaseCanvas {
             int i = 0;
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
+                    pp[i].setVisible(false);
+                    dragBar=i;
                     dragW=((PPrimRectangle)pp[i]).r.width; dragH=((PPrimRectangle)pp[i]).r.height;
                     if (!inQuery) setCursor(Common.cur_hand);
                     break;
                 }
                 i++;
             }
+            setUpdateRoot(0);
+            repaint();
         }// no longer testing for Common.isSelectTrigger. is this ok?
     };
     
@@ -336,14 +340,11 @@ public class BarCanvas extends BaseCanvas {
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
-                for(dragBar=0; dragBar<bars; dragBar++){
-                    if(pp[dragBar]!=null && pp[dragBar].contains(baseDragX1,baseDragY1)) break;
-                }
                 if(dragBar<newPos) newPos -=1;
                 ax.moveCat(dragBar, newPos);
             } else{
-                if(orientation==0) ax.swapCats(dragNew, ax.getCatByPos(baseDragX1));
-                else ax.swapCats(dragNew, ax.getCatByPos(baseDragY1));
+                if(orientation==0) ax.swapCats(dragNew, dragBar);
+                else ax.swapCats(dragNew, dragBar);
             }
             
             baseDrag=false;
