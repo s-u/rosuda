@@ -156,6 +156,8 @@ public class BaseCanvas
     protected int mouseX;
     protected int mouseY;
     
+    private boolean useObjectTranparency = true;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -719,8 +721,10 @@ public class BaseCanvas
         	setCursor(Common.cur_zoom);
             inZoom=true;
         }
-        if (kc==KeyEvent.VK_RIGHT) run(this, M_ALPHAUP);
-        if (kc==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
+        if(useObjectTranparency){
+            if (kc==KeyEvent.VK_RIGHT) run(this, M_ALPHAUP);
+            if (kc==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
+        }
     };
 
     
@@ -961,6 +965,7 @@ public class BaseCanvas
             }
             myMenu[i++] = "Show only selected cases";
             myMenu[i++] = M_SONLYSELECTED;
+            useObjectTranparency = transparency;
             if(transparency){
                 myMenu[i++] = "-";
                 myMenu[i++] = "More transparent (left)";
