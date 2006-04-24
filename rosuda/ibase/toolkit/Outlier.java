@@ -46,4 +46,16 @@ public class Outlier extends PPrimBase {
     public double getValue() {
         return value;
     }
+
+    public void move(final int x, final int y) {
+        out.move(x,y);
+    }
+
+    public void moveX(final int x) {
+        out.moveX(x);
+    }
+
+    public void moveY(final int y) {
+        out.moveY(y);
+    }
 }

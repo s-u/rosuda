@@ -116,5 +116,18 @@ public class PPrimCircle extends PPrimBase {
     public boolean isQueryable() {
         return queryable;
     }
+
+    public void move(final int x, final int y) {
+        this.x=x;
+        this.y=y;
+    }
+
+    public void moveX(final int x) {
+        move(x,y);
+    }
+
+    public void moveY(final int y) {
+        move(x,y);
+    }
     
 }

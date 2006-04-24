@@ -262,4 +262,18 @@ public class PPrimBox extends PPrimBase {
         }
         return false;
     }
+
+    public void move(final int x, final int y) {
+        //TODO: this only moves parts of the box and ignores y part!
+        // won`t work with rotated boxes
+        this.x=x;
+    }
+
+    public void moveX(final int x) {
+        move(x,0);
+    }
+
+    public void moveY(final int y) {
+        move(0,y);
+    }
 }
