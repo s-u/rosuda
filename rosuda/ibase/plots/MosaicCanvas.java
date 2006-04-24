@@ -298,7 +298,7 @@ public class MosaicCanvas extends BaseCanvas {
             for(int j=0; j<Math.min(2, maxLevel); j++){
                 for( int i=0; i<levels[j]; i++) {
                     if( Dirs[j] == 'x' ){
-                        labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0, lnames[j][i]);
+                        labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
                     } else{
                         labels.add(mLeft-5, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))),1,0.5,mLeft-5, lnames[j][i]);
                         if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
