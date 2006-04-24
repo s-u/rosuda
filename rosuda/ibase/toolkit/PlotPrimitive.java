@@ -64,5 +64,11 @@ public interface PlotPrimitive {
     
     /** returns whether this primitive should respond to queries. */
     boolean isQueryable();
+
+    /** sets visibility of this primitive */
+    void setVisible(boolean b);
+
+    /** returns whether this primitive is visible */
+    boolean isVisible();
 }
 
