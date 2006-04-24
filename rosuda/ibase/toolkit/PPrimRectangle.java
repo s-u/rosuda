@@ -38,12 +38,14 @@ public class PPrimRectangle extends PPrimBase {
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
         
-        if(!isBrushed(m)){ // no color brushing
+        if(dragging || !isBrushed(m)){ // dragging or no color brushing
             pieces=null;
             Color fillColor, borderColor;
             
-            if (col!=null) fillColor = col;
+            if(dragging) fillColor = Color.GRAY;
+            else if (col!=null) fillColor = col;
             else fillColor = Common.objectsColor;
+            
             if (drawBorder) borderColor = COL_BORDER;
             else borderColor = null;
             
@@ -193,5 +195,17 @@ public class PPrimRectangle extends PPrimBase {
     
     protected boolean isBrushed(final SMarker m){
         return m.getSecCount()>=1;
+    }
+
+    public void move(final int x, final int y) {
+        r.setLocation(x,y);
+    }
+
+    public void moveX(final int x) {
+        move(x,r.y);
+    }
+
+    public void moveY(final int y) {
+        move(r.x,y);
     }
 }
