@@ -161,6 +161,22 @@ public class PoGraSSjogl extends PoGraSS
 		//if (paintLayer==-1 || paintLayer==curLayer) g.fillRoundRect(x1,y1,x2,y2,dx,dy);
     }
     public void drawOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) {
+		if (x<0) rx=-rx; if (ry<0) ry=-ry;
+		if (rx==0 || ry==0) return;
+    	double phi, angleIncr;
+        int n=20; // amount of lines
+        double PI2=2*Math.PI;
+        if (n<=0) n=1;
+        angleIncr=PI2/n;
+
+        gl.glPushMatrix ();
+        gl.glTranslatef ((float)(x+rx/2), (float)(y+ry/2), 0f);
+        gl.glBegin(GL.GL_LINE_LOOP);
+        for (phi=0;phi<PI2;phi+=angleIncr) {
+            gl.glVertex2f((float)(rx/2*Math.cos(phi)),(float)(ry/2*Math.sin(phi)));
+        }
+        gl.glEnd();
+        gl.glPopMatrix();
 	} }
     public void fillOval(int x, int y, int rx, int ry) { if (paintLayer==-1 || paintLayer==curLayer) {
 		if (x<0) rx=-rx; if (ry<0) ry=-ry;
@@ -283,4 +299,80 @@ public class PoGraSSjogl extends PoGraSS
 		globalAlpha=1f;
         //((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
+    
+    public void drawArc(int x, int y, int rx, int ry, int startAngle, int arcAngle) { if (paintLayer==-1 || paintLayer==curLayer) {
+		if (x<0) rx=-rx; if (ry<0) ry=-ry;
+		if (rx==0 || ry==0) return;
+    	if(startAngle>arcAngle) return;
+    	double start=Math.toRadians(startAngle);
+    	double arc=Math.toRadians(arcAngle);
+    	double phi, angleIncr;
+        int n=20; // amount of lines
+        if (n<=0) n=1;
+        angleIncr=(arc-start)/n;
+        
+        gl.glPushMatrix ();
+        gl.glTranslatef ((float)(x+rx/2), (float)(y+ry/2), 0f);
+        gl.glBegin(GL.GL_LINE_LOOP);
+        double end=start+arc+0.01;
+        for (phi=start;phi<end;phi+=angleIncr) {
+            gl.glVertex2f((float)(rx/2*Math.cos(phi)),-(float)(ry/2*Math.sin(phi)));
+            System.out.println(ry/2*Math.sin(phi));
+        }
+        gl.glEnd();
+        gl.glPopMatrix();
+	} }
+    public void fillArc(int x, int y, int rx, int ry, int startAngle, int arcAngle) { if (paintLayer==-1 || paintLayer==curLayer) {
+		if (x<0) rx=-rx; if (ry<0) ry=-ry;
+		if (rx==0 || ry==0) return;
+    	if(startAngle>arcAngle) return;
+    	double start=Math.toRadians(startAngle);
+    	double arc=Math.toRadians(arcAngle);
+    	double phi, angleIncr;
+        int n=20; // amount of lines
+        if (n<=0) n=1;
+        angleIncr=(arc-start)/n;
+        
+        gl.glPushMatrix ();
+        gl.glTranslatef ((float)(x+rx/2), (float)(y+ry/2), 0f);
+        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glVertex2f(0f,0f);
+        double end=start+arc+0.01;
+        for (phi=start;phi<end;phi+=angleIncr) {
+            gl.glVertex2f((float)(rx/2*Math.cos(phi)),-(float)(ry/2*Math.sin(phi)));
+            System.out.println(ry/2*Math.sin(phi));
+        }
+        gl.glEnd();
+        gl.glPopMatrix();
+	} }
+    
+    public void setClip(int x, int y, int width, int height) {
+        // upper clip
+        gl.glClipPlane(GL.GL_CLIP_PLANE0, new double[]{0,1,0,-y});
+        // left clip
+        gl.glClipPlane(GL.GL_CLIP_PLANE1, new double[]{1,0,0,-x});
+        // lower clip - (front side reversed)
+        gl.glPushMatrix();
+        gl.glRotatef(180,1,0,0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE2, new double[]{0,1,0,y+height});
+        gl.glPopMatrix();
+        // right clip - (front side reversed)
+        gl.glPushMatrix();
+        gl.glRotatef(180,0,1,0);
+        gl.glClipPlane(GL.GL_CLIP_PLANE3, new double[]{1,0,0,x+width});
+        gl.glPopMatrix();
+        
+        gl.glEnable(GL.GL_CLIP_PLANE0);
+        gl.glEnable(GL.GL_CLIP_PLANE1);
+        gl.glEnable(GL.GL_CLIP_PLANE2);
+        gl.glEnable(GL.GL_CLIP_PLANE3);
+    }
+
+    public void resetClip() {
+    	gl.glDisable(GL.GL_CLIP_PLANE0);
+    	gl.glDisable(GL.GL_CLIP_PLANE1);
+    	gl.glDisable(GL.GL_CLIP_PLANE2);
+    	gl.glDisable(GL.GL_CLIP_PLANE3);
+    };
+    
 }
