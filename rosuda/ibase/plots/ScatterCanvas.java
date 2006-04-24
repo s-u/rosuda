@@ -554,14 +554,14 @@ public class ScatterCanvas extends BaseCanvas {
     		if(maxVal<temp || Double.isNaN(maxVal)) {
     			maxVal=temp;
    				if(pp[i] instanceof PPrimCircle)
-   					maxValFirstIndex=new double[]{Integer.parseInt(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
-					   Integer.parseInt(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+   					maxValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+   						Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
     		}
     		if(minVal>temp || Double.isNaN(minVal)) {
     			minVal=temp;
    				if(pp[i] instanceof PPrimCircle)
-   					minValFirstIndex=new double[]{Integer.parseInt(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
-						Integer.parseInt(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+   					minValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+   						Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
     		}
     	}
     }
@@ -586,8 +586,8 @@ public class ScatterCanvas extends BaseCanvas {
                 if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
                     g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
                     g.drawLine(qx,ay.gBegin,qx,ay.gBegin+ay.gLen);
-                    g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,qy-2);
-                    g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),qx+2,qy+11);
+                    g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,getHeight()-mBottom-2);
+                    g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),mLeft+2,qy+11);
                 }
             } else {
                 if (qx==ay.clip(qx) && qy==ax.clip(qy)) {
