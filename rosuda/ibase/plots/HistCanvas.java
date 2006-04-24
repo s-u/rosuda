@@ -48,8 +48,10 @@ public class HistCanvas extends BaseCanvas {
     
     private int paintpp;
     
-    private double maxVal=Double.NaN,minVal=Double.NaN;
-    private double maxValFirstIndex=Double.NaN,minValFirstIndex=Double.NaN;
+    private double maxVal=Double.NEGATIVE_INFINITY,minVal=Double.POSITIVE_INFINITY;
+    
+    private boolean crosshairs = false;
+    private int qx,qy;
     
     /** creates a new histogram canvas
      * @param f frame owning this canvas or <code>null</code> if none
@@ -84,8 +86,8 @@ public class HistCanvas extends BaseCanvas {
     	double temp=0;
     	for(int i=0;i<pp.length;i++) {
     		temp=pp[i].cases();
-    		if(maxVal<temp) {maxVal=temp;maxValFirstIndex=i;}
-    		if(minVal>temp) {minVal=temp;minValFirstIndex=i;}
+    		if(maxVal<temp) maxVal=temp;
+    		if(minVal>temp) minVal=temp;
     	}
     }
     
@@ -297,6 +299,28 @@ public class HistCanvas extends BaseCanvas {
         labels.finishAdd();
     }
     
+    public void paintPost(PoGraSS g) {
+        if (crosshairs) {
+            g.setColor(COL_OUTLINE);
+            if((orientation&1) == 0){ // no rotation or 180°
+                if (qx==ax.clip(qx) && qy==ay.clip(qy)) {
+                    g.drawLine(ax.gBegin,qy,ax.gBegin+ax.gLen,qy);
+                    g.drawLine(qx,ay.gBegin,qx,ay.gBegin+ay.gLen);
+                    g.drawString(ay.getDisplayableValue(ax.getValueForPos(qx)),qx+2,getHeight()-mBottom-2);
+                    g.drawString(ay.getDisplayableValue(ay.getValueForPos(qy)),mLeft+2,qy+11);
+                }
+            } else {
+                if (qx==ay.clip(qx) && qy==ax.clip(qy)) {
+                    g.drawLine(qx,ax.gBegin,qx,ax.gBegin+ax.gLen);
+                    g.drawLine(ay.gBegin,qy,ay.gBegin+ay.gLen,qy);
+                    g.drawString(ax.getDisplayableValue(ay.getValueForPos(qx)),qx+2,getHeight()-mBottom-2);
+                    g.drawString(ax.getDisplayableValue(ax.getValueForPos(qy)),mLeft+2,qy+11);
+                }
+            }
+        }
+        super.paintPost(g);
+    }
+    
     public void mousePressed(final MouseEvent ev) {
         final int x=ev.getX();
         final int y=ev.getY();
@@ -328,6 +352,17 @@ public class HistCanvas extends BaseCanvas {
             } else super.mousePressed(ev);
         }
     };
+    
+    public void mouseMoved(final MouseEvent ev) {
+        super.mouseMoved(ev);
+        final boolean ocrosshairs = crosshairs;
+        crosshairs = ev.getModifiersEx()==MouseEvent.SHIFT_DOWN_MASK;
+        qx=ev.getX();
+        qy=ev.getY();
+        if(crosshairs || crosshairs!=ocrosshairs){
+            setUpdateRoot(3); repaint();
+        }
+    }
     
     public void mouseReleased(final MouseEvent e) {
         if (dragMode!=DRAGMODE_NONE) {
@@ -371,7 +406,7 @@ public class HistCanvas extends BaseCanvas {
     };
     
     public String queryObject(int i) {
-    	String qs;
+    	String qs="";
     	boolean actionExtQuery = isExtQuery;
     	if(actionExtQuery) {
     		if (pp!=null && pp[i]!=null) {
@@ -379,11 +414,12 @@ public class HistCanvas extends BaseCanvas {
     			double la=ax.vBegin+binw*i;
     			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n";
     			if(mark>0) {
-    	      		qs+="cases: "+pp[i].cases()+" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v.size()),2)+"% of total)\n"+
-					"selected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat."+
-					Tools.getDisplayableValue(100.0*(mark)/((double)v.size()),2)+"% of total)";
+    	      		qs+="count: "+pp[i].cases()+" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v.size()),2)+"% of total)\n"+
+					"selected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
+					Tools.getDisplayableValue(100.0*(mark)/((double)v.size()),2)+"% of total, "+
+					Tools.getDisplayableValue(100.0*(mark)/((double)m.marked()),2)+"% of total selection)";
     			} else {
-    				qs += ""+pp[i].cases()+" cases ("+
+    				qs += "count: "+pp[i].cases()+" ("+
                     Tools.getDisplayableValue(100.0*((double)pp[i].cases())/((double)v.size()),2)+
 					"% of total)";
     			}
@@ -393,7 +429,8 @@ public class HistCanvas extends BaseCanvas {
     		if (pp!=null && pp[i]!=null) {
     			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
     			double la=ax.vBegin+binw*i;
-    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+((mark>0)?(""+mark+" of "+pp[i].cases()+" selected"):(""+pp[i].cases()+(pp[i].cases()==1?" case":" cases")));
+    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+
+    			"count: "+pp[i].cases()+(mark>0?"\nselected: "+mark:"");
     		} else qs = "N/A";
     	}
     	return qs;
@@ -488,6 +525,7 @@ public class HistCanvas extends BaseCanvas {
     	if(a==null) return null;
     	return "axis name: " + a.getVariable().getName()+
     		"\nbin width: " + Tools.getDisplayableValue(binw,2)+
-    		"\nanchor: "  + Tools.getDisplayableValue(anchor,2);
+    		"\nanchor: "  + Tools.getDisplayableValue(anchor,2)+
+    		(v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
     }
 }
