@@ -22,6 +22,8 @@ public abstract class PPrimBase implements PlotPrimitive {
     /** references (IDs) to cases represented by this primitive */
     public int[] ref;
 
+    protected boolean visible=true;
+
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
     }
@@ -135,5 +137,13 @@ public abstract class PPrimBase implements PlotPrimitive {
         if(ret==0 && proportion>0) ret=1;
         else if(ret==totalSize && proportion<1) ret=totalSize-1;
         return ret;
+    }
+
+    public void setVisible(boolean b) {
+        visible=b;
+    }
+
+    public boolean isVisible() {
+        return visible;
     }
 }
