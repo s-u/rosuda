@@ -61,7 +61,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private boolean useRegularPositioning=false;
     private int leftGap=7;
     private int rightGap=7;
-    public boolean alterningLabels = false;
+    public boolean alterningLabels = true;
     
     /**
      * variables fields
@@ -97,6 +97,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_PCPBOX = "toggleType";
     private static final String M_SORTBYCOUNT = "sortByCount";
     private static final String M_SORTBYMARKED = "sortByMarked";
+    private static final String M_ALTERNINGLABELS = "alterningLabels";
     
     private MenuItem MIlabels=null;
     private MenuItem MIdots=null;
@@ -108,6 +109,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MIPCPBox=null;
     private MenuItem MIsortByCount=null;
     private MenuItem MIsortByMarked=null;
+    private MenuItem MIAlterningLabels=null;
     
     /**
      * Box plot specific fields
@@ -316,6 +318,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private void createMenu(Frame f){
         createMenu(f,true,true,true,new String[]{
             "@LHide labels",M_LABELS,
+            "Alterning labels",M_ALTERNINGLABELS,
             M_SHOWDOTS,M_TOGGLEPTS,
             "Increase dot size (up)",M_NODESIZEUP,
             "Decrease dot size (down)",M_NODESIZEDOWN,
@@ -350,6 +353,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
         MIsortByMarked=EzMenu.getItem(f,M_SORTBYMARKED);
         MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
+        MIAlterningLabels=EzMenu.getItem(f,M_ALTERNINGLABELS);
     }
     
     public void keyPressed(final KeyEvent e) {
@@ -497,6 +501,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         if(M_SORTBYMARKED.equals(cmd)) {
             sortAxes(true);
+        }
+        if(M_ALTERNINGLABELS.equals(cmd)){
+            MIAlterningLabels.setLabel(alterningLabels?"Alterning labels":"No alterning labels");
+            alterningLabels = !alterningLabels;
+            repaint();
         }
         
         return null;
@@ -1265,35 +1274,31 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private void setAxCoord(int x1,int y1,int x2,int y2) {
-    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
-    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
-        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
-        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+        if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
     }
     
     protected void setAyCoord(int x1,int y1,int x2,int y2,int index) {
-    	if(index<0 || index>=v.length) return;
-    	if(x1<x2) {aycoordX[index][0]=x1; aycoordX[index][1]=x2;}
-    	else {aycoordX[index][0]=x2; aycoordX[index][1]=x1;}
-        if(y1<y2) {aycoordY[index][0]=y1; aycoordY[index][1]=y2;}
-        else {aycoordY[index][0]=y2; aycoordY[index][1]=y1;}
+        if(index<0 || index>=v.length) return;
+        if(x1<x2) {aycoordX[index][0]=x1; aycoordX[index][1]=x2;} else {aycoordX[index][0]=x2; aycoordX[index][1]=x1;}
+        if(y1<y2) {aycoordY[index][0]=y1; aycoordY[index][1]=y2;} else {aycoordY[index][0]=y2; aycoordY[index][1]=y1;}
     }
     
     protected Axis getMouseOverAxis(int x, int y) {
-    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
+        if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
         else {
-        	for(int i=0;i<v.length;i++) {
-            	if(x>=aycoordX[i][0]-2 && x<= aycoordX[i][1]+2 && y>=aycoordY[i][0]-2 && y<=aycoordY[i][1]+2) return i==0?ay:opAy[i-1];
-        	}
-        	return null;
+            for(int i=0;i<v.length;i++) {
+                if(x>=aycoordX[i][0]-2 && x<= aycoordX[i][1]+2 && y>=aycoordY[i][0]-2 && y<=aycoordY[i][1]+2) return i==0?ay:opAy[i-1];
+            }
+            return null;
         }
     }
     
     protected String getAxisQuery(int x, int y) {
 //    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0] + ", ayX: " + aycoordX[0] + ", ayY: " + aycoordY[0]);
-    	Axis a=getMouseOverAxis(x,y);
-    	if(a==null) return null;
-    	else return "axis name: " + a.getVariable().getName();
+        Axis a=getMouseOverAxis(x,y);
+        if(a==null) return null;
+        else return "axis name: " + a.getVariable().getName();
     }
     
     protected void resetAxesCoord() {
@@ -1302,9 +1307,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         // just setting some maybe graphically impossible values to reach
         for(int i=0; i<axcoordY.length; i++) {axcoordY[i]=-256;axcoordX[i]=-256;}
         for(int i=0; i<aycoordY.length; i++) {
-        	for(int j=0; j<aycoordY[i].length; j++) {
-        		aycoordY[i][j]=-256; aycoordX[i][j]=-256;
-        	}
+            for(int j=0; j<aycoordY[i].length; j++) {
+                aycoordY[i][j]=-256; aycoordX[i][j]=-256;
+            }
         }
     }
     
