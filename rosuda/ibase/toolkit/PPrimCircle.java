@@ -18,8 +18,6 @@ import org.rosuda.ibase.SMarker;
 public class PPrimCircle extends PPrimBase {
     
     public int x,y,diam;
-    
-    public boolean visible = true;
     public boolean queryable=true;
     
     public int startArc;
