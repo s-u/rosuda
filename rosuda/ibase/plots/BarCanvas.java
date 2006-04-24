@@ -72,7 +72,7 @@ public class BarCanvas extends BaseCanvas {
         mLeft = mRight = 10;
         
         axcoordX=new int[2]; axcoordY=new int[2];
-
+        
         v=var; weight=wvar;
         setTitle("Barchart ("+v.getName()+")");
         v.addDepend(this);
@@ -263,43 +263,10 @@ public class BarCanvas extends BaseCanvas {
     };
     
     public void paintPost(final PoGraSS g){
-        if(baseDrag && moveDrag) {
-            final int h=getBounds().height;
-            final int basey=h-mBottom;
-            final int pos = (orientation==0)?baseDragX2:baseDragY2;
-            final int dragNew = ax.getCatByPos(pos);
-            final int myX1=ax.getCatLow(dragNew);
-            final int myX2=ax.getCatUp(dragNew);
-            if(orientation==0){
-                g.setColor(COL_GREY);
-                g.fillRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
-                g.setColor(COL_OUTLINE);
-                g.drawRect(baseDragX2-dragW/2,basey-dragH,dragW,dragH);
-            } else{
-                g.setColor(COL_GREY);
-                g.fillRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
-                g.setColor(COL_OUTLINE);
-                g.drawRect(mLeft,baseDragY2-dragH/2,dragW,dragH);
-            }
-            g.setColor(Color.BLACK);
-            final int difference;
-            if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
-                final int x;
-                final int w;
-                if(difference>0){
-                    x=ax.getCatCenter(dragNew);
-                    w=2*(myX2-x);
-                } else{
-                    w=2*(ax.getCatCenter(dragNew)-myX1);
-                    x=ax.getCatCenter(dragNew)-w;
-                    
-                }
-                if(orientation==0) g.fillRect(x,basey,w,4);
-                else g.fillRect(mLeft,x,4,w);
-            } else{
-                if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
-                else g.fillRect(mLeft,myX1,4,myX2-myX1);
-            }
+        if(baseDrag && moveDrag && dragBar>-1) {
+            pp[dragBar].setVisible(true);
+            ((PPrimBase)pp[dragBar]).setDragging(true);
+            pp[dragBar].paint(g,orientation,m);
         }
     }
     
@@ -314,6 +281,7 @@ public class BarCanvas extends BaseCanvas {
             
             
             bars=cats;
+            dragBar=-1;
             int i = 0;
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
@@ -427,39 +395,38 @@ public class BarCanvas extends BaseCanvas {
     };
     
     public String queryObject(final int i) {
-    	int marked = getMarked(i);
+        int marked = getMarked(i);
         String qs="name: "+cat_nam[i]+"\n";
         final boolean actionExtQuery = isExtQuery;
         if (actionExtQuery) {
-        	if(marked>0) {
-        		qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)\n"+
-				"selected: "+marked+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat."+
-				Tools.getDisplayableValue(100.0*(marked)/((double)v.size()),2)+"% of total)";
-        	} else {
-        		qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)";
-        	}
+            if(marked>0) {
+                qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)\n"+
+                        "selected: "+marked+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat."+
+                        Tools.getDisplayableValue(100.0*(marked)/((double)v.size()),2)+"% of total)";
+            } else {
+                qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)";
+            }
         } else {
-        	if(isSpine) {
-        		if(marked>0) 
-        			qs+=Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total\n"+
-        				Tools.getDisplayableValue(100.0*(marked)/((double)count[i]),2)+"% selected";
-        		else qs+=Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total";
-        	} else {
-        		if(marked>0) qs+=marked+" of "+count[i]+" selected";
-        		else qs+=count[i]+(count[i]==1?" case":" cases");
-        	}
+            if(isSpine) {
+                if(marked>0)
+                    qs+=Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total\n"+
+                            Tools.getDisplayableValue(100.0*(marked)/((double)count[i]),2)+"% selected";
+                else qs+=Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total";
+            } else {
+                if(marked>0) qs+=marked+" of "+count[i]+" selected";
+                else qs+=count[i]+(count[i]==1?" case":" cases");
+            }
         }
         return qs;
     }
     
     public String queryPlotSpace() {
-    	if(v!=null) {
-    		if(isSpine) return "Barchart\nconsists of "+bars+" bar(s)\n"+(m.marked()>0?Tools.getDisplayableValue(100.0*(m.marked())/((double)v.size()),2)+"% selected":""); 
-    		else return "Barchart\nconsists of "+bars+" bar(s)"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
-    	}
-    	else return null;
+        if(v!=null) {
+            if(isSpine) return "Barchart\nconsists of "+bars+" bar(s)\n"+(m.marked()>0?Tools.getDisplayableValue(100.0*(m.marked())/((double)v.size()),2)+"% selected":"");
+            else return "Barchart\nconsists of "+bars+" bar(s)"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
+        } else return null;
     }
-
+    
     
     /*
      * Returns the number of selected cases in bar.
@@ -509,27 +476,38 @@ public class BarCanvas extends BaseCanvas {
     }
     
     private void setAxCoord(int x1,int y1,int x2,int y2) {
-    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
-    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
-        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
-        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+        if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
     }
     
     protected boolean isMouseOverAxis(int x, int y) {
-    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return true;
-		else return false;
+        if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return true;
+        else return false;
     }
     
     protected Axis getMouseOverAxis(int x, int y) {
-    	if(isMouseOverAxis(x,y)) return ax;
-    	else return null;
+        if(isMouseOverAxis(x,y)) return ax;
+        else return null;
     }
     
     protected String getAxisQuery(int x, int y) {
 //    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0]);
-    	if(!isMouseOverAxis(x,y)) return null;
-    	else return "axis name: " + getMouseOverAxis(x,y).getVariable().getName()+
-    				"\nbars: " + bars;
+        if(!isMouseOverAxis(x,y)) return null;
+        else return "axis name: " + getMouseOverAxis(x,y).getVariable().getName()+
+                "\nbars: " + bars;
     }
-
+    
+    public void mouseDragged(final MouseEvent e) {
+        super.mouseDragged(e);
+        if(baseDrag && moveDrag && dragBar>-1){
+            if(orientation==0){
+                ((PPrimBase)pp[dragBar]).moveX(e.getX()-((PPrimRectangle)pp[dragBar]).r.width/2);
+            } else{
+                ((PPrimBase)pp[dragBar]).moveY(e.getY()-((PPrimRectangle)pp[dragBar]).r.height/2);
+            }
+            
+            setUpdateRoot(0);repaint();
+        }
+    }
+    
 }
