@@ -144,7 +144,7 @@ public class BaseCanvas
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
-    private boolean useExtQuery = false; // for manually generated extended query 
+    private boolean useExtQuery = false; // for manually generated extended query
     private String extQueryString = "";
     
     MenuItem MIsonlyselected=null;
@@ -303,7 +303,7 @@ public class BaseCanvas
             g.setGlobalAlpha(ppAlpha);
             int i = 0;
             while (i<pp.length) {
-                if (pp[i]!=null) pp[i].paint(g, orientation,  m);
+                if (pp[i]!=null && pp[i].isVisible()) pp[i].paint(g, orientation,  m);
                 i++;
             }
             g.resetGlobalAlpha();
@@ -323,7 +323,7 @@ public class BaseCanvas
             g.setColor(C_MARKED);
             int i = 0;
             while (i<pp.length) {
-                if (pp[i]!=null)
+                if (pp[i]!=null && pp[i].isVisible())
                     pp[i].paintSelected(g,orientation,m);
                 i++;
             }
@@ -436,7 +436,7 @@ public class BaseCanvas
     }
     
     public String queryPlotSpace() {
-    	return "plot space query";
+        return "plot space query";
     }
     
     public void rotate(final int amount) {
@@ -575,7 +575,7 @@ public class BaseCanvas
     public void mousePressed(final MouseEvent ev) {
         if (Global.DEBUG>0) System.out.println("Event:"+ev);
         
-        baseDragX1=ev.getX(); baseDragY1=ev.getY();
+        baseDragX1=baseDragX2=ev.getX(); baseDragY1=baseDragY2=ev.getY();
         qi.hide();
         selDrag=Common.isSelectTrigger(ev);
         zoomDrag=Common.isZoomTrigger(ev);
@@ -620,7 +620,7 @@ public class BaseCanvas
     
     public void mouseEntered(final MouseEvent e) {
         /*	if(!pc.getComponent().contains(e.getX(),e.getY())) {
-         		qi.hide();
+                        qi.hide();
             }*/
     };
     public void mouseExited(final MouseEvent e) {};
@@ -646,15 +646,15 @@ public class BaseCanvas
         final boolean actionQuery=Common.isQueryTrigger(ev);
         final boolean actionExtQuery=Common.isExtQuery(ev);
         if(actionExtQuery) {
-        	inQuery = true;
-        	isExtQuery = true;
-        	if (pp!=null) {
+            inQuery = true;
+            isExtQuery = true;
+            if (pp!=null) {
                 PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
                 if(p!=null && p.isQueryable()){
-                	if(useExtQuery) setQueryText(extQueryString);
+                    if(useExtQuery) setQueryText(extQueryString);
                     if (p.cases()>0) {
                         if (p.getPrimaryCase()!=-1) {
-                        	setQueryText(queryObject(p),p.getPrimaryCase());
+                            setQueryText(queryObject(p),p.getPrimaryCase());
                         } else {
                             setQueryText(queryObject(p),p.getCaseIDs());
                         }
@@ -665,12 +665,11 @@ public class BaseCanvas
                     qi.show(); hideQI=false;
                 }
             }
-        	isExtQuery = false;
-        	setUpdateRoot(3); repaint();
-        }
-        else if (actionQuery) {
-        	inQuery=true;
-           	if (pp!=null) {
+            isExtQuery = false;
+            setUpdateRoot(3); repaint();
+        } else if (actionQuery) {
+            inQuery=true;
+            if (pp!=null) {
                 PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
                 if(p!=null && p.isQueryable()){
                     if (p.cases()>0) {
@@ -683,20 +682,20 @@ public class BaseCanvas
                         setQueryText(queryObject(p));
                     }
                 } else {
-                 	String s=getAxisQuery(mouseX,mouseY);
-                   	if(s!=null) {
-                   		setQueryText(s);
-                   	} else {
-                   		setQueryText(queryPlotSpace());
-                   	}
+                    String s=getAxisQuery(mouseX,mouseY);
+                    if(s!=null) {
+                        setQueryText(s);
+                    } else {
+                        setQueryText(queryPlotSpace());
+                    }
                 }
                 qi.setLocation(cl.x+mouseX,cl.y+mouseY);
                 qi.show(); hideQI=false;
             }
-        	setUpdateRoot(3); repaint();
+            setUpdateRoot(3); repaint();
         } else if(inQuery) {
-        	inQuery=false;
-        	setUpdateRoot(3); repaint();
+            inQuery=false;
+            setUpdateRoot(3); repaint();
         }
         final boolean effect = false;
         if (effect) m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
@@ -705,7 +704,7 @@ public class BaseCanvas
     
     // should be overriden by subclasses: they know axis coordinates
     protected String getAxisQuery(int x, int y) {
-    	return "mouse coords. ("+x+","+y+")";
+        return "mouse coords. ("+x+","+y+")";
     }
     public void keyTyped(final KeyEvent e) {
         if (e.getKeyChar()=='P') run(this,M_PRINT);
@@ -718,7 +717,7 @@ public class BaseCanvas
     public void keyPressed(final KeyEvent e) {
         final int kc=e.getKeyCode();
         if (kc==KeyEvent.VK_META && allowZoom && !inZoom && !inQuery) {
-        	setCursor(Common.cur_zoom);
+            setCursor(Common.cur_zoom);
             inZoom=true;
         }
         if(useObjectTranparency){
@@ -726,7 +725,7 @@ public class BaseCanvas
             if (kc==KeyEvent.VK_LEFT) run(this, M_ALPHADOWN);
         }
     };
-
+    
     
     public void keyReleased(final KeyEvent e) {
         final int kc=e.getKeyCode();
@@ -850,17 +849,17 @@ public class BaseCanvas
     };
     
     public void setQueryText(final String s) {
-    	if(s==null) return;
+        if(s==null) return;
         qi.setContent(s);
     }
     
     public void setQueryText(final String s, final int cid) {
-    	if(s==null) return;
+        if(s==null) return;
         qi.setContent(s,cid);
     }
     
     public void setQueryText(final String s, final int[] cid) {
-    	if(s==null) return;
+        if(s==null) return;
         qi.setContent(s,cid);
     }
     
@@ -928,16 +927,16 @@ public class BaseCanvas
      * @return min and max values (first=min,second=max)
      */
     public double[] getBoundValues() {
-    	if(pp==null) return new double[]{Double.NaN,Double.NaN};
-    	double max=0,min=0,temp=0;
-    	for(int i=0;i<pp.length;i++) {
-    		temp=pp[i].cases();
-    		if(max<temp) max=temp;
-    		if(min>temp) min=temp;
-    	}
-    	return new double[]{min,max};
+        if(pp==null) return new double[]{Double.NaN,Double.NaN};
+        double max=0,min=0,temp=0;
+        for(int i=0;i<pp.length;i++) {
+            temp=pp[i].cases();
+            if(max<temp) max=temp;
+            if(min>temp) min=temp;
+        }
+        return new double[]{min,max};
     }
-
+    
     
     /**
      * Possibly adjust mLeft etc.
@@ -999,15 +998,15 @@ public class BaseCanvas
         MIhalphaup = EzMenu.getItem(f,M_HALPHAUP);
         if(MIhalphaup!=null) MIhalphaup.setEnabled(false);
     }
-
+    
     /** needed for setting manually extended query string */
     public void setExtQueryString(String str) {
-    	extQueryString = str;
-    	useExtQuery = true;
+        extQueryString = str;
+        useExtQuery = true;
     }
     
     public void useExtQuery(boolean b) {
-    	useExtQuery = b;
+        useExtQuery = b;
     }
     
 }
