@@ -38,60 +38,18 @@ public class PPrimRectangle extends PPrimBase {
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
         
-        if(m.getSecCount()<1){ // no color brushing
+        if(!isBrushed(m)){ // no color brushing
             pieces=null;
-            if (col!=null)
-                g.setColor(col);
-            else
-                g.setColor(Common.objectsColor);
-            g.fillRect(r.x,r.y,r.width,r.height);
-            if (drawBorder) {
-                g.setColor(COL_BORDER);
-                g.drawRect(r.x,r.y,r.width,r.height);
-            }
+            Color fillColor, borderColor;
+            
+            if (col!=null) fillColor = col;
+            else fillColor = Common.objectsColor;
+            if (drawBorder) borderColor = COL_BORDER;
+            else borderColor = null;
+            
+            drawRect(g,r,fillColor,borderColor);
         } else{ // color brushing
-            int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
-            final double totW=rW;
-            final double totH=rH;
-            int mark=-1;
-            int shift=0;
-            boolean hasAny=false;
-            
-            double totalProp=0;
-            double[] props = new double[m.getMaxMark()+1];
-            for(int i=0; i<=m.getMaxMark(); i++){
-                props[i] = getMarkedProportion(m,i);
-                totalProp += props[i];
-            }
-            if(totalProp>=0.0000001){
-                pieces = roundProportions(props,totalProp,((orientation&1)==0)?rH:rW);
-                for(int i=0; i<=m.getMaxMark(); i++){
-                    if (props[i]>0d) {
-                        hasAny=true;
-                        if (orientation==0) { // bottom-up
-                            rH=pieces[i];
-                            rY=r.y+r.height-shift-pieces[i];
-                        } else if (orientation==2) { // top-down
-                            rH=pieces[i];
-                            rY=r.y+shift;
-                        } else if (orientation==1) { // left-right
-                            rW=pieces[i];
-                            rX=r.x+shift;
-                        } else if (orientation==3) { // right-left
-                            rW=pieces[i];
-                            rX=r.x+r.width-shift-pieces[i];
-                        }
-                        shift+=pieces[i];
-                        g.setColor(ColorBridge.getMain().getColor(i));
-                        g.fillRect(rX,rY,rW,rH);
-                    }
-                }
-            }
-            
-            if (hasAny) {
-                g.setColor(COL_BORDER);
-                g.drawRect(r.x,r.y,r.width,r.height);
-            }
+            brushRect(g,m,orientation,r,COL_BORDER);
         }
     }
     
@@ -100,7 +58,7 @@ public class PPrimRectangle extends PPrimBase {
         final double sa = getMarkedProportion(m,-1);
         if(sa>0d){
             boolean hasAny=false;
-            if(m.getSecCount()<1){ // no color brushing
+            if(!isBrushed(m)){ // no color brushing
                 int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
                 hasAny=true;
                 switch (orientation){
@@ -120,12 +78,7 @@ public class PPrimRectangle extends PPrimBase {
                         break;
                 }
                 
-                g.setColor(Common.selectColor);
-                g.fillRect(rX,rY,rW,rH);
-                if(drawSelectionBorder){
-                    g.setColor(COL_BORDER);
-                    g.drawRect(rX,rY,rW,rH);
-                }
+                drawRect(g,rX,rY,rW,rH,Common.selectColor,drawSelectionBorder?COL_BORDER:null);
             } else { // color brushing
                 int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
                 final double totW=rW;
@@ -175,8 +128,70 @@ public class PPrimRectangle extends PPrimBase {
         return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height))
         +", cases="+cases()+", drawBorder="+drawBorder+")";
     }
-        
+    
     public void setBounds(int x, int y, int w, int h) {
         r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
+    }
+       
+    protected void brushRect(PoGraSS g, SMarker m, int orientation, Rectangle r, Color borderColor) {
+        int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
+        final double totW=rW;
+        final double totH=rH;
+        int mark=-1;
+        int shift=0;
+        boolean hasAny=false;
+        
+        double totalProp=0;
+        double[] props = new double[m.getMaxMark()+1];
+        for(int i=0; i<=m.getMaxMark(); i++){
+            props[i] = getMarkedProportion(m,i);
+            totalProp += props[i];
+        }
+        if(totalProp>=0.0000001){
+            pieces = roundProportions(props,totalProp,((orientation&1)==0)?rH:rW);
+            for(int i=0; i<=m.getMaxMark(); i++){
+                if (props[i]>0d) {
+                    hasAny=true;
+                    if (orientation==0) { // bottom-up
+                        rH=pieces[i];
+                        rY=r.y+r.height-shift-pieces[i];
+                    } else if (orientation==2) { // top-down
+                        rH=pieces[i];
+                        rY=r.y+shift;
+                    } else if (orientation==1) { // left-right
+                        rW=pieces[i];
+                        rX=r.x+shift;
+                    } else if (orientation==3) { // right-left
+                        rW=pieces[i];
+                        rX=r.x+r.width-shift-pieces[i];
+                    }
+                    shift+=pieces[i];
+                    g.setColor(ColorBridge.getMain().getColor(i));
+                    g.fillRect(rX,rY,rW,rH);
+                }
+            }
+        }
+        
+        if (hasAny) drawRect(g,r,null,borderColor);
+    }
+    
+    
+    protected static void drawRect(PoGraSS g, Rectangle r, Color fillColor, Color borderColor) {
+        drawRect(g,r.x,r.y,r.width,r.height,fillColor,borderColor);
+    }
+
+    protected static void drawRect(PoGraSS g, int rX, int rY, int rW, int rH, Color fillColor, Color borderColor) {
+        if(fillColor!=null){
+            g.setColor(fillColor);
+            g.fillRect(rX,rY,rW,rH);
+        }
+        if(borderColor!=null){
+            g.setColor(borderColor);
+            g.drawRect(rX,rY,rW,rH);
+        }
+    }
+    
+    protected boolean isBrushed(final SMarker m){
+        return m.getSecCount()>=1;
     }
 }

@@ -40,34 +40,35 @@ public class PPrimMosaic extends PPrimRectangle {
         switch(type){
             case TYPE_OBSERVED:
             case TYPE_EXPECTED:
-                if (col!=null)
-                    g.setColor(col);
-                else
-                    g.setColor(Common.objectsColor);
-                if (isEmpty())
-                    g.setColor(COL_EMPTY);
-                if (!isEmpty())
-                    g.fillRect(r.x,r.y,r.width,r.height);
-                if (!isEmpty()) g.setColor(COL_OUTLINE);
-                if (drawBorder)
-                    g.drawRect(r.x,r.y,r.width,r.height);
+                Color fillColor,borderColor;
+                
+                if (isEmpty()){
+                    fillColor = COL_EMPTY;
+                    borderColor = null;
+                } else if (col!=null) fillColor = col;
+                else fillColor = Common.objectsColor;
+                
+                if (drawBorder && !isEmpty()) borderColor = COL_OUTLINE;
+                else borderColor = null;
+                
+                if(!isBrushed(m) || isEmpty() || type==TYPE_EXPECTED){
+                    drawRect(g,r,fillColor,borderColor);
+                } else{
+                    brushRect(g,m,orientation,r,borderColor);
+                }
                 break;
             case TYPE_SAMEBINSIZE:
             case TYPE_FLUCTUATION:
             case TYPE_MULTIPLEBARCHARTS:
-                g.setColor(Color.lightGray);
                 g.setGlobalAlpha(0.3f);
-                g.fillRect(origX,origY, fullW,fullH);
-                g.drawRect(origX,origY, fullW,fullH);
+                drawRect(g,origX,origY,fullW,fullH,Color.lightGray,Color.lightGray);
                 g.resetGlobalAlpha();
                 if(!isEmpty()){
-                    g.setColor(Common.objectsColor);
-                    g.fillRect(r.x,r.y,r.width,r.height);
-                    if(censored)
-                        g.setColor(COL_CENSORED);
-                    else
-                        g.setColor(COL_OUTLINE);
-                    g.drawRect(r.x,r.y,r.width,r.height);
+                    if(isBrushed(m)){
+                        brushRect(g,m,orientation,r,censored?COL_CENSORED:COL_OUTLINE);
+                    } else{
+                        drawRect(g,r,Common.objectsColor,censored?COL_CENSORED:COL_OUTLINE);
+                    }
                 }
         }
         if( type==TYPE_EXPECTED ) {
