@@ -301,6 +301,7 @@ public class BarCanvas extends BaseCanvas {
     public void mouseReleased(final MouseEvent e) {
         if (baseDrag && moveDrag) {
             final int pos = (orientation==0)?e.getX():e.getY();
+            final int oldPos = ax.getCatSeqIndex(dragBar);
             final int dragNew = ax.getCatByPos(pos);
             final int difference;
             final int myX1=ax.getCatLow(dragNew);
@@ -308,7 +309,7 @@ public class BarCanvas extends BaseCanvas {
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
-                if(dragBar<newPos) newPos -=1;
+                if(oldPos<newPos) newPos -=1;
                 ax.moveCat(dragBar, newPos);
             } else{
                 if(orientation==0) ax.swapCats(dragNew, dragBar);
