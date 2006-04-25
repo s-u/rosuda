@@ -5,20 +5,43 @@ package org.rosuda.JGR.toolkit;
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.StringTokenizer;
 
-import org.rosuda.ibase.*;
-import org.rosuda.util.*;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.undo.CannotUndoException;
 
-import org.rosuda.JGR.*;
-import org.rosuda.JGR.util.*;
+import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.ibase.Common;
+import org.rosuda.util.RecentList;
 
 /**
  *  Editor - simple implementation of an editor with syntaxhighlighting.
@@ -116,6 +139,10 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         this.getContentPane().add(toolBar,BorderLayout.NORTH);
         JScrollPane sp = new JScrollPane(editArea);
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        
+        LineNumbers ln = new LineNumbers(editArea, sp);
+		sp.setRowHeaderView(ln);
+        
         this.getContentPane().add(sp,BorderLayout.CENTER);
         this.getContentPane().add(status,BorderLayout.SOUTH);
 		
