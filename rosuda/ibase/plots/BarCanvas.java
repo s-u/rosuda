@@ -264,7 +264,6 @@ public class BarCanvas extends BaseCanvas {
     
     public void paintPost(final PoGraSS g){
         if(baseDrag && moveDrag && dragBar>-1) {
-            pp[dragBar].setVisible(true);
             ((PPrimBase)pp[dragBar]).setDragging(true);
             pp[dragBar].paint(g,orientation,m);
         }
@@ -285,7 +284,6 @@ public class BarCanvas extends BaseCanvas {
             int i = 0;
             while (i<bars) {
                 if (pp[i]!=null && pp[i].contains(x,y)) {
-                    pp[i].setVisible(false);
                     dragBar=i;
                     dragW=((PPrimRectangle)pp[i]).r.width; dragH=((PPrimRectangle)pp[i]).r.height;
                     if (!inQuery) setCursor(Common.cur_hand);
