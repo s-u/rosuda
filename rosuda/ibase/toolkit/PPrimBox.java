@@ -114,7 +114,7 @@ public class PPrimBox extends PPrimBase {
             case 1:
                 r = new Rectangle(lh,x, uh-lh,w);
                 
-                g.setColor(Common.objectsColor);
+                g.setColor(dragging?Color.GRAY:Common.objectsColor);
                 g.fillRect(lh,x,
                         uh-lh,w);
                 
@@ -275,6 +275,6 @@ public class PPrimBox extends PPrimBase {
     }
 
     public void moveY(final int y) {
-        move(0,y);
+        move(y,0);
     }
 }
