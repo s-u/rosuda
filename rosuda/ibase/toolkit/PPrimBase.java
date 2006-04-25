@@ -153,6 +153,10 @@ public abstract class PPrimBase implements PlotPrimitive {
         dragging=b;
     }
     
+    public boolean isDragging(){
+        return dragging;
+    }
+    
     // move methods. not abstract as PPrimPolygon has no anchor point to move
     public void move(final int x, final int y){};
     public void moveX(final int x){};
