@@ -7,6 +7,7 @@
 
 package org.rosuda.ibase.toolkit;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -65,7 +66,7 @@ public class PPrimBox extends PPrimBase {
             case 0:
                 r = new Rectangle(x,uh,w, lh-uh);
                 
-                g.setColor(Common.objectsColor);
+                g.setColor(dragging?Color.GRAY:Common.objectsColor);
                 g.fillRect(x,uh,
                         w,lh-uh);
                 

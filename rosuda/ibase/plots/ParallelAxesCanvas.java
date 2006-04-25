@@ -1053,9 +1053,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     public void paintPost(final PoGraSS g) {
-        // visualize dragging
-        if(type==TYPE_PCP){
-            if(baseDrag && moveDrag){
+        if(baseDrag && moveDrag){
+            if(type==TYPE_PCP){
                 final int basey=getBounds().height-mBottom;
                 final int pos = (orientation==0)?baseDragX2:baseDragY2;
                 final int dragNew = ax.getCatByPos(pos);
@@ -1078,6 +1077,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 } else{
                     if(orientation==0) g.fillRect(myX1,basey,myX2-myX1,4);
                     else g.fillRect(mLeft,myX1,4,myX2-myX1);
+                }
+            } else{
+                final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
+                if(dragAxis>-1) {
+                    pp[dragAxis].setVisible(true);
+                    ((PPrimBase)pp[dragAxis]).setDragging(true);
+                    pp[dragAxis].paint(g,orientation,m);
                 }
             }
         }
@@ -1230,7 +1236,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ppc.y=(orientation==0)?y:x;
         ppc.diam=1;
         ppc.ref = new int[]{caseID};
-        ppc.visible = false;
+        ppc.setVisible(false);
         ppc.queryable = false;
         return ppc;
     }
@@ -1317,6 +1323,21 @@ public class ParallelAxesCanvas extends BaseCanvas {
     protected int[] axcoordX, axcoordY;
     protected int[][] aycoordX, aycoordY;
     
+    public void mouseDragged(final MouseEvent e) {
+        super.mouseDragged(e);
+        if(type==TYPE_BOX){
+            final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
+            if(baseDrag && moveDrag && dragAxis>-1){
+                if(orientation==0){
+                    ((PPrimBase)pp[dragAxis]).moveX(e.getX());
+                } else{
+                    ((PPrimBase)pp[dragAxis]).moveY(e.getY());//-((PPrimRectangle)pp[dragBar]).r.height/2);
+                }
+                
+                setUpdateRoot(0);repaint();
+            }
+        }
+    }
 }
 
 
