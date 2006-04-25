@@ -886,13 +886,14 @@ public class ParallelAxesCanvas extends BaseCanvas {
             final int pos = (orientation==0)?e.getX():e.getY();
             final int dragNew = ax.getCatByPos(pos);
             final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
+            final int oldPos = ax.getCatSeqIndex(dragAxis);
             final int difference;
             final int myX1=ax.getCatLow(dragNew);
             final int myX2=ax.getCatUp(dragNew);
             if(Math.abs(difference=pos-getAxCatPos(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
                 if(difference>0) newPos += 1;
-                if(dragAxis<newPos) newPos -=1;
+                if(oldPos<newPos) newPos -=1;
                 ax.moveCat(dragAxis, newPos);
             } else{
                 ax.swapCats(dragNew, dragAxis);
@@ -1329,9 +1330,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
             final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
             if(baseDrag && moveDrag && dragAxis>-1){
                 if(orientation==0){
-                    ((PPrimBase)pp[dragAxis]).moveX(e.getX());
+                    ((PPrimBase)pp[dragAxis]).moveX(e.getX()-boxwidth/2);
                 } else{
-                    ((PPrimBase)pp[dragAxis]).moveY(e.getY());//-((PPrimRectangle)pp[dragBar]).r.height/2);
+                    ((PPrimBase)pp[dragAxis]).moveY(e.getY()-boxwidth/2);
                 }
                 
                 setUpdateRoot(0);repaint();
