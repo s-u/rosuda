@@ -638,7 +638,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 final int[] valuePoss = new int[numCats];
                 final String[] labs = new String[numCats];
                 for(int i=0; i<numCats; i++){
-                    valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
+                    if(type==TYPE_BOX && ((PPrimBase)pp[i]).isDragging())
+                        valuePoss[ax.getCatSeqIndex(i)] = ((PPrimBox)pp[i]).x + boxwidth/2;
+                    else
+                        valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
                     labs[ax.getCatSeqIndex(i)] = (String)ax.getVariable().getCatAt(i);
                 }
                 
