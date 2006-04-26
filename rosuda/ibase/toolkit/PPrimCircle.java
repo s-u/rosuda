@@ -20,6 +20,10 @@ public class PPrimCircle extends PPrimBase {
     public int x,y,diam;
     public boolean queryable=true;
     
+    public boolean filled = true;
+    public boolean drawBorder = false;
+    public boolean allowColorBrushing = true;
+    
     public int startArc;
     
     private int[] pieces;
@@ -42,15 +46,17 @@ public class PPrimCircle extends PPrimBase {
     
     public void paint(final org.rosuda.pograss.PoGraSS g, final int orientation, final SMarker m) {
         if(visible){
-            if(m.getSecCount()<1){ // no color brushing
+            if(!allowColorBrushing || m.getSecCount()<1){ // no color brushing
                 pieces=null;
                 g.setColor(COL_OUTLINE);
-                g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                 
             } else if(ref!=null && ref.length==1){ // color brushing for one case
                 pieces=null;
                 g.setColor(ColorBridge.getMain().getColor(m.getSec(ref[0])));
-                g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                 
             } else{ // color brushing for multiple cases
                 double totalProp=0;
@@ -63,7 +69,8 @@ public class PPrimCircle extends PPrimBase {
                 int shift=0;
                 for(int i=0; i<=m.getMaxMark(); i++){
                     g.setColor(ColorBridge.getMain().getColor(i));
-                    g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
+                    if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
+                    if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
                     shift += pieces[i];
                 }
             }
@@ -73,7 +80,7 @@ public class PPrimCircle extends PPrimBase {
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
         if(visible && ref!=null){
             
-            if(ref.length>1){ // color brushing pie
+            if(allowColorBrushing && ref.length>1){ // color brushing pie
                 if(pieces!=null){
                     int shift=0;
                     for(int i=0; i<pieces.length; i++){
@@ -81,7 +88,8 @@ public class PPrimCircle extends PPrimBase {
                             final double rmp = getRelativeMarkedProportion(m,i);
                             if (rmp>0d){
                                 g.setColor(Common.selectColor);
-                                g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
+                                if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
+                                if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
                             }
                             shift+=pieces[i];
                         }
@@ -94,7 +102,8 @@ public class PPrimCircle extends PPrimBase {
                         g.setColor(Common.selectColor);
                     else
                         g.setColor(ColorBridge.getMain().getColor(mark));
-                    g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                    if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                    if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }
             }
