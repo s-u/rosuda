@@ -22,7 +22,18 @@ import org.rosuda.ibase.SMarker;
 public class PPrimBox extends PPrimBase {
     
     // radius of outliers
-    static final int RADOUTL = 5;
+    public int RADOUTL = 5;
+    
+    // line widths
+    public float LWRECT = 1.0f;
+    public float LWMEDIAN = 1.5f;
+    public float LWWHISKER = 1.0f;
+    public float LWWHISKEREND = 1.0f;
+    
+    public float LWRECTSEL = 1.0f;
+    public float LWMEDIANSEL = 1.5f;
+    public float LWWHISKERSEL = 2.0f;
+    public float LWWHISKERENDSEL = 1.0f;
     
     Rectangle r;
     private List outliers = new ArrayList();
@@ -71,20 +82,23 @@ public class PPrimBox extends PPrimBase {
                         w,lh-uh);
                 
                 g.setColor(COL_OUTLINE);
+                g.setLineWidth(LWRECT);
                 g.drawRect(x,uh,
                         w,lh-uh);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWMEDIAN);
                 g.drawLine(x,med,
                         x+w,med);
-                g.setLineWidth(1.0f);
+                g.setLineWidth(LWWHISKEREND);
                 g.drawLine(x,uh15,
                         x+w,uh15);
                 g.drawLine(x,lh15,
                         x+w,lh15);
+                g.setLineWidth(LWWHISKER);
                 g.drawLine(x+w/2,uh,
                         x+w/2,uh15);
                 g.drawLine(x+w/2,lh,
                         x+w/2,lh15);
+                g.setLineWidth(1.0f);
                 i=lowEdge;
                 // draw outliers
                 outliers.clear();
@@ -119,20 +133,23 @@ public class PPrimBox extends PPrimBase {
                         uh-lh,w);
                 
                 g.setColor(COL_OUTLINE);
+                g.setLineWidth(LWRECT);
                 g.drawRect(lh,x,
                         uh-lh,w);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWMEDIAN);
                 g.drawLine(med,x,
                         med,x+w);
-                g.setLineWidth(1.0f);
+                g.setLineWidth(LWWHISKER);
                 g.drawLine(uh15,x,
                         uh15,x+w);
                 g.drawLine(lh15,x,
                         lh15,x+w);
+                g.setLineWidth(LWWHISKEREND);
                 g.drawLine(uh,x+w/2,
                         uh15,x+w/2);
                 g.drawLine(lh,x+w/2,
                         lh15,x+w/2);
+                g.setLineWidth(1.0f);
                 i=lowEdge;
                 // draw outliers
                 outliers.clear();
@@ -171,17 +188,18 @@ public class PPrimBox extends PPrimBase {
                 g.fillRect(sx,suh,
                         sw,slh-suh);
                 g.setColor(COL_OUTLINE);
+                g.setLineWidth(LWRECTSEL);
                 g.drawRect(sx,suh,
                         sw,slh-suh);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWMEDIANSEL);
                 g.drawLine(sx,smed,
                         sx+sw,smed);
-                g.setLineWidth(2.0f);
+                g.setLineWidth(LWWHISKERSEL);
                 g.drawLine(sx,suh15,
                         sx+sw,suh15);
                 g.drawLine(sx,slh15,
                         sx+sw,slh15);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWWHISKERENDSEL);
                 g.drawLine(sx+sw/2,suh,
                         sx+sw/2,suh15);
                 g.drawLine(sx+sw/2,slh,
@@ -212,17 +230,18 @@ public class PPrimBox extends PPrimBase {
                 g.fillRect(slh,sx,
                         suh-slh,sw);
                 g.setColor(COL_OUTLINE);
+                g.setLineWidth(LWRECTSEL);
                 g.drawRect(slh,sx,
                         suh-slh,sw);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWMEDIANSEL);
                 g.drawLine(smed,sx,
                         smed,sx+sw);
-                g.setLineWidth(2.0f);
+                g.setLineWidth(LWWHISKERSEL);
                 g.drawLine(suh15,sx,
                         suh15,sx+sw);
                 g.drawLine(slh15,sx,
                         slh15,sx+sw);
-                g.setLineWidth(1.5f);
+                g.setLineWidth(LWWHISKERENDSEL);
                 g.drawLine(suh,sx+sw/2,
                         suh15,sx+sw/2);
                 g.drawLine(slh,sx+sw/2,
