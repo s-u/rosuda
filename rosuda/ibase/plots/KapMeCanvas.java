@@ -87,9 +87,8 @@ public class KapMeCanvas extends BaseCanvas {
         
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","Hide counts","counts","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        mRight=mTop=10;
-        mBottom=25;
-        mLeft=35;
+        setDefaultMargins(new int[] {35,10,10,25});
+
         pp=null;
         
         dontPaint=false;

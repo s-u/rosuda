@@ -158,6 +158,24 @@ public class BaseCanvas
     
     private boolean useObjectTranparency = true;
     
+    // default values for margins; 1..3 indicates orientation
+    protected int defaultMLeft;
+    protected int defaultMRight;
+    protected int defaultMTop;
+    protected int defaultMBottom;
+    protected int defaultMLeft1;
+    protected int defaultMRight1;
+    protected int defaultMTop1;
+    protected int defaultMBottom1;
+    protected int defaultMLeft2;
+    protected int defaultMRight2;
+    protected int defaultMTop2;
+    protected int defaultMBottom2;
+    protected int defaultMLeft3;
+    protected int defaultMRight3;
+    protected int defaultMTop3;
+    protected int defaultMBottom3;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -442,6 +460,34 @@ public class BaseCanvas
     public void rotate(final int amount) {
         orientation=(orientation+amount)&3;
         if (!allow180) orientation&=1;
+        
+        switch(orientation){
+            case 0:
+                mLeft=defaultMLeft;
+                mRight=defaultMRight;
+                mTop=defaultMTop;
+                mBottom=defaultMBottom;
+                break;
+            case 1:
+                mLeft=defaultMLeft1;
+                mRight=defaultMRight1;
+                mTop=defaultMTop1;
+                mBottom=defaultMBottom1;
+                break;
+            case 2:
+                mLeft=defaultMLeft2;
+                mRight=defaultMRight2;
+                mTop=defaultMTop2;
+                mBottom=defaultMBottom2;
+                break;
+            case 3:
+                mLeft=defaultMLeft3;
+                mRight=defaultMRight3;
+                mTop=defaultMTop3;
+                mBottom=defaultMBottom3;
+                break;
+        }
+        
         setUpdateRoot(0);
         updateGeometry=true;
         if (resizeOnRotate && (amount==1 || amount==3)) {
@@ -1007,6 +1053,64 @@ public class BaseCanvas
     
     public void useExtQuery(boolean b) {
         useExtQuery = b;
+    }
+    
+    /** sets the default margins. order: left, right, top, bottom */
+    public void setDefaultMargins(int[] margins){
+        if(margins!=null || margins.length>=4){
+            defaultMLeft=margins[0];
+            defaultMRight=margins[1];
+            defaultMTop=margins[2];
+            defaultMBottom=margins[3];
+            
+            int shift=0;
+            
+            if(margins.length>=8) shift=4;
+            defaultMLeft1=margins[shift+0];
+            defaultMRight1=margins[shift+1];
+            defaultMTop1=margins[shift+2];
+            defaultMBottom1=margins[shift+3];
+            
+            if(margins.length>=12) shift=8;
+            defaultMLeft2=margins[shift+0];
+            defaultMRight2=margins[shift+1];
+            defaultMTop2=margins[shift+2];
+            defaultMBottom2=margins[shift+3];
+            
+            if(margins.length>=16) shift=12;
+            else if(margins.length>=16) shift=4;
+            defaultMLeft3=margins[shift+0];
+            defaultMRight3=margins[shift+1];
+            defaultMTop3=margins[shift+2];
+            defaultMBottom3=margins[shift+3];
+        }
+        
+        switch(orientation){
+            case 0:
+                mLeft=defaultMLeft;
+                mRight=defaultMRight;
+                mTop=defaultMTop;
+                mBottom=defaultMBottom;
+                break;
+            case 1:
+                mLeft=defaultMLeft1;
+                mRight=defaultMRight1;
+                mTop=defaultMTop1;
+                mBottom=defaultMBottom1;
+                break;
+            case 2:
+                mLeft=defaultMLeft2;
+                mRight=defaultMRight2;
+                mTop=defaultMTop2;
+                mBottom=defaultMBottom2;
+                break;
+            case 3:
+                mLeft=defaultMLeft3;
+                mRight=defaultMRight3;
+                mTop=defaultMTop3;
+                mBottom=defaultMBottom3;
+                break;
+        }
     }
     
 }

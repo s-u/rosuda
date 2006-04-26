@@ -117,10 +117,8 @@ public class ScatterCanvas extends BaseCanvas {
      * @param mark associated marker */
     public ScatterCanvas(final int gd, Frame f, SVar v1, SVar v2, SMarker mark) {
         super(gd,f,mark);
-        
-        mLeft=standardMLeft;
-        mBottom=30;
-        mRight=mTop=10;
+
+        setDefaultMargins(new int[] {standardMLeft,10,10,30});
         
         axcoordX=new int[2]; axcoordY=new int[2];
         aycoordX=new int[2]; aycoordY=new int[2];

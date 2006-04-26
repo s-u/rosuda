@@ -167,6 +167,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         allowDragMove=true;
         objectClipping=true;
         commonScale=false;
+
+        setDefaultMargins(new int[] {smallMLeft,smallMRight,smallMTop,bigMBottom, bigMLeft,smallMRight,smallMTop,smallMBottom});
         
         mBottom=smallMBottom;
         mTop=smallMTop;
@@ -279,10 +281,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         objectClipping=true;
         if(yvs.length==1) commonScale=true;
         
-        mBottom=smallMBottom;
-        mTop=smallMTop;
-        mLeft=smallMLeft;
-        mRight=smallMRight;
+        if(type==TYPE_BOX) setDefaultMargins(new int[] {smallMLeft,smallMRight,smallMTop,smallMBottom});
+        else setDefaultMargins(new int[] {smallMLeft,smallMRight,bigMTop,bigMBottom, bigMLeft,smallMRight,smallMTop,smallMBottom});
         
         v=new SVar[yvs.length];
         opAy=new Axis[yvs.length-1];
@@ -803,27 +803,17 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     case 0:
                         if(vsCat){
                             mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
-                            mRight=defaultMRight=smallMRight;
-                            mBottom=defaultMBottom=bigMBottom;
-                            mTop=defaultMTop=smallMTop;
                         } else{
                             mLeft=defaultMLeft=(commonScale || v.length==1)?bigMLeft:smallMLeft;
-                            mRight=defaultMRight=smallMRight;
                             mBottom=defaultMBottom=(v.length==1)?smallMBottom:bigMBottom;
-                            mTop=defaultMTop=smallMTop;
                         }
                         break;
                     case 1:
                         if(vsCat){
-                            mLeft=defaultMLeft=bigMLeft;
-                            mRight=defaultMRight=smallMRight;
                             mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
-                            mTop=defaultMTop=smallMTop;
                         } else{
                             mLeft=defaultMLeft=(v.length==1)?smallMLeft:bigMLeft;
-                            mRight=defaultMRight=smallMRight;
                             mBottom=defaultMBottom=(commonScale || v.length==1)?bigMBottom:smallMBottom;
-                            mTop=defaultMTop=smallMTop;
                         }
                         break;
                 }
@@ -831,16 +821,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
             case TYPE_PCP:
                 switch(orientation){
                     case 0:
-                        mBottom=defaultMBottom=bigMBottom;
-                        mTop=defaultMTop=bigMTop;
-                        mLeft=defaultMLeft=smallMLeft;
-                        mRight=defaultMRight=smallMRight;
                         break;
                     case 1:
                         mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
-                        mTop=defaultMTop=smallMTop;
-                        mLeft=defaultMLeft=bigMLeft;
-                        mRight=defaultMRight=smallMRight;
                 }
                 break;
         }

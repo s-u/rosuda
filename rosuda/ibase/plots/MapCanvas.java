@@ -32,7 +32,7 @@ public class MapCanvas extends BaseCanvas
 
         String myMenu[]={"+","File","~File.Graph","~Edit","+","View","@RRotate","rotate","@BToggle border lines","bounds","~Window","0"};
         EzMenu.getEzMenu(f,this,myMenu);
-        mLeft=mRight=mTop=mBottom=10;
+        setDefaultMargins(new int[] {10,10,10,10});
         // note: Map's updateObjects relies on equality of all margins!
         pp=null;
         

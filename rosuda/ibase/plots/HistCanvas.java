@@ -71,8 +71,9 @@ public class HistCanvas extends BaseCanvas {
             "Move anchor left (left)",M_ANCHORLEFT,
             "Move anchor right (right)",M_ANCHORRIGHT
         });
-
-        mLeft=20; mRight=10; mTop=10; mBottom=20;
+        
+        setDefaultMargins(new int[] {20,10,10,20, 40,10,10,20, 40,10,20,10, 10,40,10,20});
+        
         axcoordX=new int[2]; axcoordY=new int[2];
         aycoordX=new int[2]; aycoordY=new int[2];
         allow180=true;
@@ -82,13 +83,13 @@ public class HistCanvas extends BaseCanvas {
     };
     
     private void setBoundValues() {
-    	if(pp==null) return;
-    	double temp=0;
-    	for(int i=0;i<pp.length;i++) {
-    		temp=pp[i].cases();
-    		if(maxVal<temp) maxVal=temp;
-    		if(minVal>temp) minVal=temp;
-    	}
+        if(pp==null) return;
+        double temp=0;
+        for(int i=0;i<pp.length;i++) {
+            temp=pp[i].cases();
+            if(maxVal<temp) maxVal=temp;
+            if(minVal>temp) minVal=temp;
+        }
     }
     
     public SVar getData(final int id) { return (id==0)?v:null; }
@@ -107,7 +108,7 @@ public class HistCanvas extends BaseCanvas {
         }
         
         if (recalcBars) {
-        	paintpp=0;
+            paintpp=0;
             int i=0;
             while(i<bars) { pp[i]=new PPrimRectangle(); i++; }
             sw.profile("HistCanvasNew.updateObject reset primitives");
@@ -207,22 +208,22 @@ public class HistCanvas extends BaseCanvas {
         }
         
         g.setColor(COL_OUTLINE);
-       
+        
         // draw axes
         if(orientation==0) {
-        	setAxCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
-        	setAyCoord(mLeft,H-mBottom,mLeft,mTop);
+            setAxCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
+            setAyCoord(mLeft,H-mBottom,mLeft,mTop);
         } else if(orientation==1) {
-        	setAxCoord(mLeft,H-mBottom-100,mLeft,mTop);
-        	setAyCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
+            setAxCoord(mLeft,H-mBottom-100,mLeft,mTop);
+            setAyCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
         } else if(orientation==2) {
-        	setAxCoord(mLeft,mTop,W-mRight,mTop);
-        	setAyCoord(mLeft,H-mBottom,mLeft,mTop);
+            setAxCoord(mLeft,mTop,W-mRight,mTop);
+            setAyCoord(mLeft,H-mBottom,mLeft,mTop);
         } else if(orientation==3) {
-        	setAxCoord(W-mRight,H-mBottom,W-mRight,mTop);
-        	setAyCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
+            setAxCoord(W-mRight,H-mBottom,W-mRight,mTop);
+            setAyCoord(mLeft,H-mBottom,W-mRight,H-mBottom);
         }
-
+        
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
         
@@ -406,55 +407,38 @@ public class HistCanvas extends BaseCanvas {
     };
     
     public String queryObject(int i) {
-    	String qs="";
-    	boolean actionExtQuery = isExtQuery;
-    	if(actionExtQuery) {
-    		if (pp!=null && pp[i]!=null) {
-    			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-    			double la=ax.vBegin+binw*i;
-    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n";
-    			if(mark>0) {
-    	      		qs+="count: "+pp[i].cases()+" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v.size()),2)+"% of total)\n"+
-					"selected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
-					Tools.getDisplayableValue(100.0*(mark)/((double)v.size()),2)+"% of total, "+
-					Tools.getDisplayableValue(100.0*(mark)/((double)m.marked()),2)+"% of total selection)";
-    			} else {
-    				qs += "count: "+pp[i].cases()+" ("+
-                    Tools.getDisplayableValue(100.0*((double)pp[i].cases())/((double)v.size()),2)+
-					"% of total)";
-    			}
-    		} else qs = "N/A";
-    	}
-    	else {
-    		if (pp!=null && pp[i]!=null) {
-    			int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-    			double la=ax.vBegin+binw*i;
-    			qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+
-    			"count: "+pp[i].cases()+(mark>0?"\nselected: "+mark:"");
-    		} else qs = "N/A";
-    	}
-    	return qs;
+        String qs="";
+        boolean actionExtQuery = isExtQuery;
+        if(actionExtQuery) {
+            if (pp!=null && pp[i]!=null) {
+                int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+                double la=ax.vBegin+binw*i;
+                qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n";
+                if(mark>0) {
+                    qs+="count: "+pp[i].cases()+" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v.size()),2)+"% of total)\n"+
+                            "selected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
+                            Tools.getDisplayableValue(100.0*(mark)/((double)v.size()),2)+"% of total, "+
+                            Tools.getDisplayableValue(100.0*(mark)/((double)m.marked()),2)+"% of total selection)";
+                } else {
+                    qs += "count: "+pp[i].cases()+" ("+
+                            Tools.getDisplayableValue(100.0*((double)pp[i].cases())/((double)v.size()),2)+
+                            "% of total)";
+                }
+            } else qs = "N/A";
+        } else {
+            if (pp!=null && pp[i]!=null) {
+                int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+                double la=ax.vBegin+binw*i;
+                qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+
+                        "count: "+pp[i].cases()+(mark>0?"\nselected: "+mark:"");
+            } else qs = "N/A";
+        }
+        return qs;
     }
     
     public String queryPlotSpace() {
-    	if(v==null) return null;
-    	else return "Histogram\nmin: "+minVal+"\nmax: "+maxVal+"\nconsist of "+paintpp+" bins"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
-    }
-    	
-    public void rotate(final int amount) {
-        switch((orientation+amount)&3){
-            case 0:
-            case 1:
-                mLeft=40; mRight=10; mTop=10; mBottom=20;
-                break;
-            case 2:
-                mLeft=40; mRight=10; mTop=20; mBottom=10;
-                break;
-            case 3:
-                mLeft=10; mRight=40; mTop=10; mBottom=20;
-                break;
-        }
-        super.rotate(amount);
+        if(v==null) return null;
+        else return "Histogram\nmin: "+minVal+"\nmax: "+maxVal+"\nconsist of "+paintpp+" bins"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
     }
     
     public void keyPressed(final KeyEvent e) {
@@ -500,32 +484,28 @@ public class HistCanvas extends BaseCanvas {
     }
     
     private void setAxCoord(int x1,int y1,int x2,int y2) {
-    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
-    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
-        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
-        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+        if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
     }
     
     private void setAyCoord(int x1,int y1,int x2,int y2) {
-    	if(x1<x2) {aycoordX[0]=x1; aycoordX[1]=x2;}
-    	else {aycoordX[0]=x2; aycoordX[1]=x1;}
-        if(y1<y2) {aycoordY[0]=y1; aycoordY[1]=y2;}
-        else {aycoordY[0]=y2; aycoordY[1]=y1;}
+        if(x1<x2) {aycoordX[0]=x1; aycoordX[1]=x2;} else {aycoordX[0]=x2; aycoordX[1]=x1;}
+        if(y1<y2) {aycoordY[0]=y1; aycoordY[1]=y2;} else {aycoordY[0]=y2; aycoordY[1]=y1;}
     }
     
     protected Axis getMouseOverAxis(int x, int y) {
-    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
-    	else if(x>=aycoordX[0]-2 && x<= aycoordX[1]+2 && y>=aycoordY[0]-2 && y<=aycoordY[1]+2) return ay;
-    	else return null;
+        if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
+        else if(x>=aycoordX[0]-2 && x<= aycoordX[1]+2 && y>=aycoordY[0]-2 && y<=aycoordY[1]+2) return ay;
+        else return null;
     }
     
     protected String getAxisQuery(int x, int y) {
 //    	System.out.println("x: " + x + ", y: " + y + ", axX[0]: " + axcoordX[0] + ", axX[1]: " + axcoordX[1] + ", axY[0]: " + axcoordY[0] + ", axY[1]: " + axcoordY[1]);
-    	Axis a=getMouseOverAxis(x,y);
-    	if(a==null) return null;
-    	return "axis name: " + a.getVariable().getName()+
-    		"\nbin width: " + Tools.getDisplayableValue(binw,2)+
-    		"\nanchor: "  + Tools.getDisplayableValue(anchor,2)+
-    		(v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
+        Axis a=getMouseOverAxis(x,y);
+        if(a==null) return null;
+        return "axis name: " + a.getVariable().getName()+
+                "\nbin width: " + Tools.getDisplayableValue(binw,2)+
+                "\nanchor: "  + Tools.getDisplayableValue(anchor,2)+
+                (v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
     }
 }

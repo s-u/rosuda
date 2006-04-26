@@ -67,10 +67,8 @@ public class BarCanvas extends BaseCanvas {
         
         allowDragMove=true;
         
-        mBottom = 20;
-        mTop = 10;
-        mLeft = mRight = 10;
-        
+        setDefaultMargins(new int[] {10,10,10,20,40,10,10,10});
+
         axcoordX=new int[2]; axcoordY=new int[2];
         
         v=var; weight=wvar;
@@ -432,22 +430,6 @@ public class BarCanvas extends BaseCanvas {
      */
     private int getMarked(final int bar){
         return (int)((pp[bar].cases())*pp[bar].getMarkedProportion(m,-1)+0.5);
-    }
-    
-    public void rotate(final int amount) {
-        
-        if (orientation==0){ // so orientation 1 afterwards
-            mBottom = 10;
-            mTop = 10;
-            mLeft = 40;
-            mRight = 10;
-        } else{
-            mBottom = 20;
-            mTop = 10;
-            mLeft = 10;
-            mRight = 10;
-        }
-        super.rotate(amount);
     }
     
     public boolean adjustMargin(final PoGraSS g) {

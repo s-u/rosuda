@@ -80,7 +80,7 @@ public class MosaicCanvas extends BaseCanvas {
             "Clear Colors",M_RESET
         });
         
-        mLeft=standardMLeft; mRight=5; mTop=20; mBottom=5;
+        setDefaultMargins(new int[] {standardMLeft,5,20,5});
         
         ft=new FrequencyTable(v);
         Dirs = new char[vs];
