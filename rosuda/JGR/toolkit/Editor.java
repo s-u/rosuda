@@ -140,8 +140,8 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
         JScrollPane sp = new JScrollPane(editArea);
         sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         
-        LineNumbers ln = new LineNumbers(editArea, sp);
-		sp.setRowHeaderView(ln);
+        //LineNumbers ln = new LineNumbers(editArea, sp);
+	//sp.setRowHeaderView(ln);
         
         this.getContentPane().add(sp,BorderLayout.CENTER);
         this.getContentPane().add(status,BorderLayout.SOUTH);
