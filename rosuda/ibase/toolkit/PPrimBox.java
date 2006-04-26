@@ -33,7 +33,7 @@ public class PPrimBox extends PPrimBase {
     public float LWRECTSEL = 1.0f;
     public float LWMEDIANSEL = 1.5f;
     public float LWWHISKERSEL = 2.0f;
-    public float LWWHISKERENDSEL = 1.0f;
+    public float LWWHISKERENDSEL = 1.5f;
     
     Rectangle r;
     private List outliers = new ArrayList();
