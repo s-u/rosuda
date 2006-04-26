@@ -1278,6 +1278,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     protected Axis getMouseOverAxis(int x, int y) {
+        if(axcoordX==null || axcoordY==null) return null;
         if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
         else {
             for(int i=0;i<v.length;i++) {
