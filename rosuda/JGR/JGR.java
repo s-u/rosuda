@@ -389,21 +389,23 @@ public class JGR {
 	}
 	
 	private void checkForMissingPkg() {
-		String previous = JGRPrefs.previousPackages;
-		if (previous == null)  return;
-		String current = RController.getCurrentPackages();
-		if (current == null) return;
-		StringTokenizer st = new StringTokenizer(current,",");
-		while (st.hasMoreTokens()) {
-			previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
-		}
-		st = new StringTokenizer(previous,",");
-		previous = "";
-		while (st.hasMoreTokens()) {
-			String prev = st.nextToken().trim();
-			if (prev != null && prev != "null" && st.hasMoreTokens()) previous += st.nextToken()+(st.hasMoreTokens()?",":"");
-		}
-		if (previous.trim().length() > 0) new JGRPackageManager(previous);
+		try {
+			String previous = JGRPrefs.previousPackages;
+			if (previous == null)  return;
+			String current = RController.getCurrentPackages();
+			if (current == null) return;
+			StringTokenizer st = new StringTokenizer(current,",");
+			while (st.hasMoreTokens()) {
+				previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
+			}
+			st = new StringTokenizer(previous,",");
+			previous = "";
+			while (st.hasMoreTokens()) {
+				String prev = st.nextToken().trim();
+				if (prev != null && prev != "null" && st.hasMoreTokens()) previous += st.nextToken()+(st.hasMoreTokens()?",":"");
+			}
+			if (previous.trim().length() > 0) new JGRPackageManager(previous);
+		} catch (Exception e) {}
 	}
 
 	/**
