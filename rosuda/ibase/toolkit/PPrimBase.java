@@ -16,6 +16,10 @@ import org.rosuda.util.*;
 /** Very basic plot primitive without any graphical representation, but with case handling. This abstract class can be used as a base for any plot primitives that use ID reference lists. Methods concerning graphical representation (paint..., contains, intersects) are left abstract.
 */
 public abstract class PPrimBase implements PlotPrimitive {
+    /**
+     * @deprecated Should be removed as it isn't used anymore.
+     * Left here for compatibility reasons.
+     */
     public Color col;
     public Color COL_OUTLINE = Color.BLACK;
     
