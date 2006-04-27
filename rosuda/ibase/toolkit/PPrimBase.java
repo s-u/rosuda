@@ -25,6 +25,11 @@ public abstract class PPrimBase implements PlotPrimitive {
     protected boolean visible=true;
 
     protected boolean dragging = false;
+    
+    /**
+     * whether this primitive can be queried
+     */
+    public boolean queryable=true;
 
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
@@ -118,7 +123,7 @@ public abstract class PPrimBase implements PlotPrimitive {
     }
 
     public boolean isQueryable() {
-        return true;
+        return queryable;
     }
     
     protected double getRelativeMarkedProportion(SMarker m, int mark) {

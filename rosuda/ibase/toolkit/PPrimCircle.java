@@ -29,10 +29,6 @@ public class PPrimCircle extends PPrimBase {
      */
     public int diam;
     /**
-     * whether this primitive can be queried
-     */
-    public boolean queryable=true;
-    /**
      * whether the circle should be filled
      */
     public boolean filled = true;
@@ -147,10 +143,6 @@ public class PPrimCircle extends PPrimBase {
     
     public String toString() {
         return("PPrimCircle(x=" + x + ", y=" + y + ", diam="+diam+")");
-    }
-    
-    public boolean isQueryable() {
-        return queryable;
     }
     
     public void move(final int x, final int y) {
