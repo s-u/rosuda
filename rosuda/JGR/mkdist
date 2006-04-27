@@ -11,6 +11,7 @@ mkdir /tmp/org/rosuda
 cp -r ../../../org/rosuda/JGR /tmp/org/rosuda
 
 rm -f /tmp/org/rosuda/JGR/mkdist
+rm -r /tmp/org/rosuda/JGR/editor
 
 cd /tmp/org/
 
