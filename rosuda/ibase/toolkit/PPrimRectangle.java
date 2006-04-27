@@ -23,6 +23,11 @@ public class PPrimRectangle extends PPrimBase {
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
     
+    /**
+     * allow color brushing?
+     */
+    public boolean allowColorBrushing = true;
+    
     private int[] pieces;
     
     private int MINHEIGHT=1;
@@ -38,7 +43,7 @@ public class PPrimRectangle extends PPrimBase {
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (r==null) return;
         
-        if(dragging || !isBrushed(m)){ // dragging or no color brushing
+        if(dragging || !allowColorBrushing || !isBrushed(m)){ // dragging or no color brushing
             pieces=null;
             Color fillColor, borderColor;
             
@@ -60,7 +65,7 @@ public class PPrimRectangle extends PPrimBase {
         final double sa = getMarkedProportion(m,-1);
         if(sa>0d){
             boolean hasAny=false;
-            if(!isBrushed(m)){ // no color brushing
+            if(!allowColorBrushing || !isBrushed(m)){ // no color brushing
                 int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
                 hasAny=true;
                 switch (orientation){
