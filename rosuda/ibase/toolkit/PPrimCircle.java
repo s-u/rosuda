@@ -23,6 +23,7 @@ public class PPrimCircle extends PPrimBase {
     public boolean filled = true;
     public boolean drawBorder = false;
     public boolean allowColorBrushing = true;
+    public boolean brushClockwise = false;
     
     public int startArc;
     
@@ -69,9 +70,10 @@ public class PPrimCircle extends PPrimBase {
                 int shift=0;
                 for(int i=0; i<=m.getMaxMark(); i++){
                     g.setColor(ColorBridge.getMain().getColor(i));
-                    if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
-                    if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, pieces[i]);
-                    shift += pieces[i];
+                    final int startAngle = (brushClockwise?(shift + startArc - pieces[i]):(shift + startArc));
+                    if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, startAngle, pieces[i]);
+                    if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, startAngle, pieces[i]);
+                    shift += (brushClockwise?-1:1) * pieces[i];
                 }
             }
         }
