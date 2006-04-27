@@ -1,5 +1,6 @@
 package org.rosuda.ibase.toolkit;
 
+import java.lang.reflect.*;
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
@@ -30,13 +31,24 @@ public abstract class PlotComponent {
 	public PlotComponent(int gd, int _layers) {
 		GrDevID=gd;
 		layers=_layers;
+		grdev=null;
 		if(gd==0) {
 			grdev = new AWTGraphicsDevice(layers);
 		} else if(gd==1) {
 			grdev = new SWINGGraphicsDevice(layers);
 		} else if(gd==2) {
-			grdev = new JOGLGraphicsDevice(layers, true);
-		} else { // AWT is default
+			/* this is a rather generic approach and we should probably use it instead of the silly fixed integers - that would allow arbitrary graphics devices loaded even at run time by class name */
+			try {
+				Class cl = Class.forName("org.rosuda.ibase.toolkit.JOGLGraphicsDevice");
+				if (cl!=null) {
+					Constructor con = cl.getConstructor(new Class[] { Integer.TYPE, Boolean.TYPE });
+					if (con != null) {
+						grdev = (GraphicsDevice) con.newInstance(new Object[] { new Integer(_layers), new Boolean(true) });
+					}
+				}
+			} catch (Exception e) {};
+		}
+		if (grdev==null) { // AWT is the fall-back
 			grdev = new AWTGraphicsDevice(layers);
 		}
 		grdev.setPCOwner(this);
