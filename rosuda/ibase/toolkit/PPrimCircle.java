@@ -7,6 +7,7 @@
 
 package org.rosuda.ibase.toolkit;
 
+import java.awt.Color;
 import java.awt.Rectangle;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.SMarker;
@@ -54,6 +55,10 @@ public class PPrimCircle extends PPrimBase {
      * false)
      */
     public boolean intersectionByArea = true;
+    public Color fillColor = COL_OUTLINE,
+            borderColor = COL_OUTLINE,
+            fillColorSel = Common.selectColor,
+            borderColorSel = Common.selectColor;
     
     private int[] pieces;
     
@@ -70,8 +75,9 @@ public class PPrimCircle extends PPrimBase {
         if(visible){
             if(!allowColorBrushing || m.getSecCount()<1){ // no color brushing
                 pieces=null;
-                g.setColor(COL_OUTLINE);
+                g.setColor(fillColor);
                 if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                g.setColor(borderColor);
                 if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                 
             } else if(ref!=null && ref.length==1){ // color brushing for one case
@@ -110,8 +116,9 @@ public class PPrimCircle extends PPrimBase {
                         if (pieces[i]>0) {
                             final double rmp = getRelativeMarkedProportion(m,i);
                             if (rmp>0d){
-                                g.setColor(Common.selectColor);
+                                g.setColor(fillColorSel);
                                 if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
+                                g.setColor(borderColorSel);
                                 if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
                             }
                             shift+=pieces[i];
@@ -122,10 +129,12 @@ public class PPrimCircle extends PPrimBase {
                 final int mark = m.get(ref[0]);
                 if (mark!=0) {
                     if (mark==-1)
-                        g.setColor(Common.selectColor);
+                        g.setColor(fillColorSel);
                     else
                         g.setColor(ColorBridge.getMain().getColor(mark));
                     if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
+                    if (mark==-1)
+                        g.setColor(borderColorSel);
                     if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }
