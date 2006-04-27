@@ -27,6 +27,10 @@ public class PPrimRectangle extends PPrimBase {
      * allow color brushing?
      */
     public boolean allowColorBrushing = true;
+    /**
+     * whether the rectangle should be filled
+     */
+    public boolean filled = true;
     
     private int[] pieces;
     
@@ -183,12 +187,12 @@ public class PPrimRectangle extends PPrimBase {
     }
     
     
-    protected static void drawRect(PoGraSS g, Rectangle r, Color fillColor, Color borderColor) {
+    protected void drawRect(PoGraSS g, Rectangle r, Color fillColor, Color borderColor) {
         drawRect(g,r.x,r.y,r.width,r.height,fillColor,borderColor);
     }
 
-    protected static void drawRect(PoGraSS g, int rX, int rY, int rW, int rH, Color fillColor, Color borderColor) {
-        if(fillColor!=null){
+    protected void drawRect(PoGraSS g, int rX, int rY, int rW, int rH, Color fillColor, Color borderColor) {
+        if(filled && fillColor!=null){
             g.setColor(fillColor);
             g.fillRect(rX,rY,rW,rH);
         }
