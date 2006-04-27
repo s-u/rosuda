@@ -5,6 +5,7 @@ SWD=`pwd`
 echo "Removing previous dist ..."
 rm -rf /tmp/${PNAME}
 echo "Copying package base ..."
+rm -rf /tmp/org
 mkdir /tmp/org
 mkdir /tmp/org/rosuda
 cp -r ../../../org/rosuda/JGR /tmp/org/rosuda
@@ -19,7 +20,7 @@ find . -name CVS | xargs rm -rf
 find . -name \*~ | xargs rm -f
 
 echo "Updating version ..."
-VER=`awk -v ORS= '/JGR_VERSION / { print $2 }' ../JGR/JGR.java`
+VER=`awk -v ORS= '/JGR_VERSION / { print $2 }' rosuda/JGR/JGR.java`
 echo "$PNAME version ${VER}"
 
 echo "Creating package ..."
