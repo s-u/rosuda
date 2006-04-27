@@ -208,4 +208,22 @@ public class PPrimRectangle extends PPrimBase {
     public void moveY(final int y) {
         move(r.x,y);
     }
+
+    public int getMINHEIGHT() {
+        return this.MINHEIGHT;
+    }
+
+    public void setMINHEIGHT(final int MINHEIGHT) {
+        this.MINHEIGHT = MINHEIGHT;
+        if(r!=null && r.height < MINHEIGHT) r.height = MINHEIGHT;
+    }
+
+    public int getMINWIDTH() {
+        return this.MINWIDTH;
+    }
+
+    public void setMINWIDTH(final int MINWIDTH) {
+        this.MINWIDTH = MINWIDTH;
+        if(r!=null && r.width < MINWIDTH) r.width = MINWIDTH;
+    }
 }
