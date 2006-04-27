@@ -16,25 +16,50 @@ import org.rosuda.ibase.SMarker;
  * @author Tobias Wichtrey
  */
 public class PPrimCircle extends PPrimBase {
-    
-    public int x,y,diam;
+    /**
+     * x coordinate
+     */
+    public int x;
+    /**
+     * y coordinate
+     */
+    public int y;
+    /**
+     * diameter
+     */
+    public int diam;
+    /**
+     * whether this primitive can be queried
+     */
     public boolean queryable=true;
-    
+    /**
+     * whether the circle should be filled
+     */
     public boolean filled = true;
+    /**
+     * whether a border should be drawn
+     */
     public boolean drawBorder = false;
+    /**
+     * allow color brushing?
+     */
     public boolean allowColorBrushing = true;
+    /**
+     * color brush the circle clockwise?
+     */
     public boolean brushClockwise = false;
-    
+    /**
+     * the angle to start brushing
+     */
     public int startArc;
-    
-    private int[] pieces;
-    
     /**
      * whether {@link #intersects} and {@link #contains} check for intersection
      * with the whole circle area (if true) or just with the center point (if
      * false)
      */
     public boolean intersectionByArea = true;
+    
+    private int[] pieces;
     
     public boolean intersects(final java.awt.Rectangle rt) {
         if(intersectionByArea){
@@ -127,16 +152,16 @@ public class PPrimCircle extends PPrimBase {
     public boolean isQueryable() {
         return queryable;
     }
-
+    
     public void move(final int x, final int y) {
         this.x=x;
         this.y=y;
     }
-
+    
     public void moveX(final int x) {
         move(x,y);
     }
-
+    
     public void moveY(final int y) {
         move(x,y);
     }
