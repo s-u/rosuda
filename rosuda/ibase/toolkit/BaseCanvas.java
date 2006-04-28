@@ -20,13 +20,7 @@ import org.rosuda.util.Tools;
  *
  * @version $Id$
  */
-public class BaseCanvas
-//#ifdef XTREME
-//extends PGSJoglCanvas
-//#else
-        extends PGSCanvas
-//#endif
-        implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
+public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
     public Color COL_OUTLINE=Color.BLACK;
     public Color COL_INVALID=Color.RED;
     public Color COL_ASELBG = new Color(Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue(),76);
@@ -156,6 +150,9 @@ public class BaseCanvas
     protected int mouseX;
     protected int mouseY;
     
+    protected PlotPrimitive lastQueriedPrimitive=null;
+    protected int lastQueriedIndex;
+
     private boolean useObjectTranparency = true;
     
     // default values for margins; 1..3 indicates orientation
@@ -449,7 +446,13 @@ public class BaseCanvas
         return "object ID "+i;
     }
     
+    // TODO: choose queryobject(int i) xor queryobject(PlotPrimitive p)
     public String queryObject(final PlotPrimitive p) {
+        if(lastQueriedPrimitive!=null && lastQueriedPrimitive==p) return queryObject(lastQueriedIndex);
+        for(int i=0; i<pp.length; i++){
+            if(pp[i]==p) return queryObject(i);
+        }
+
         return "object "+p.toString();
     }
     
@@ -698,14 +701,16 @@ public class BaseCanvas
                 PlotPrimitive p = getFirstPrimitiveContaining(mouseX,mouseY);
                 if(p!=null && p.isQueryable()){
                     if(useExtQuery) setQueryText(extQueryString);
-                    if (p.cases()>0) {
-                        if (p.getPrimaryCase()!=-1) {
-                            setQueryText(queryObject(p),p.getPrimaryCase());
-                        } else {
-                            setQueryText(queryObject(p),p.getCaseIDs());
-                        }
-                    } else {
-                        setQueryText(queryObject(p));
+                    else {
+                    	if (p.cases()>0) {
+                    		if (p.getPrimaryCase()!=-1) {
+                    			setQueryText(queryObject(p),p.getPrimaryCase());
+                    		} else {
+                    			setQueryText(queryObject(p),p.getCaseIDs());
+                    		}
+                    	} else {
+                    		setQueryText(queryObject(p));
+                    	}
                     }
                     qi.setLocation(cl.x+mouseX,cl.y+mouseY);
                     qi.show(); hideQI=false;
