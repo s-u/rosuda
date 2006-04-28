@@ -38,7 +38,7 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
 		offscreen=new Image[layers];
         for(int i=0;i<layers;i++) offscreen[i]=null;
         updateRoot=0;
-        if (Global.DEBUG>0) System.out.println("LayerCanvas: layers="+layers);
+        if (Global.DEBUG>0) System.out.println("SWINGGraphicsDevice: layers="+layers);
 	}
 	
 	public SWINGGraphicsDevice() {
@@ -99,7 +99,7 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         
-        if (Global.DEBUG>0) System.out.println("LayerCanvas: update, layers="+layers+", root="+updateRoot);
+        if (Global.DEBUG>0) System.out.println("SWINGGraphicsDevice: update, layers="+layers+", root="+updateRoot);
         
         // sanity check (sounds wierd, but JDK really delivers negative sizes sometimes)
         if (d.width<1 || d.height<1) return;
@@ -113,7 +113,7 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
         final Stopwatch sw=new Stopwatch();
         // we will re-create the off-screen object only if the canvas was resized
         if ((offsd==null)||(offsd.width!=d.width)||(offsd.height!=d.height)) {
-            if (Global.DEBUG>0) System.out.println("LayerCanvas: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
+            if (Global.DEBUG>0) System.out.println("SWINGGraphicsDevice: update, need to re-create offscreen buffers ("+d.width+":"+d.height+")");
             // draw the old image - after resize the background is cleared automatically
             // so in order to reduce flickering draw the old image until the new one is generated
             if (offscreen[layers-1]!=null) g.drawImage(offscreen[layers-1], 0, 0, comp);
@@ -122,7 +122,7 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
             offsd=d;
             firstPaintLayer=0; // after resize we need to repaint them all
             setUpdateRoot(0);
-            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.recreateOffscreen");
+            if (Global.PROFILE>0) sw.profile("SWINGGraphicsDevice.update.recreateOffscreen");
         };
         
         // clear the image
@@ -156,7 +156,7 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
                 final Color fg=comp.getForeground();
                 if (offgc!=null) offgc.setColor(fg==null?Color.black:fg);
             }
-            if (Global.PROFILE>0) sw.profile("LayerCanvas.update.clearLayer0");
+            if (Global.PROFILE>0) sw.profile("SWINGGraphicsDevice.update.clearLayer0");
         }
         
         int l=firstPaintLayer;
@@ -166,12 +166,12 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
             paintLayer(offgc,l);
             l++;
         }
-        if (Global.PROFILE>0) sw.profile("LayerCanvas.update.constructLayers");
+        if (Global.PROFILE>0) sw.profile("SWINGGraphicsDevice.update.constructLayers");
         
         // do normal redraw
         // transfer offscreen to window, last layer should have the correct image
         g.drawImage(offscreen[l-1],0,0,comp);
-        if (Global.PROFILE>0) sw.profile("LayerCanvas.update.paintLayers");
+        if (Global.PROFILE>0) sw.profile("SWINGGraphicsDevice.update.paintLayers");
     }
 	
 	

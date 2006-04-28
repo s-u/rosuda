@@ -44,7 +44,7 @@ public class JOGLGraphicsDevice implements GraphicsDevice, GLEventListener {
 			layerDisplayed = new boolean[layers];
 		}
         updateRoot=0;
-        if (Global.DEBUG>0) System.out.println("LayerCanvas: layers="+layers);
+        if (Global.DEBUG>0) System.out.println("JOGLGraphicsDevice: layers="+layers);
 	}
 	
 	public JOGLGraphicsDevice(int _layers) {
