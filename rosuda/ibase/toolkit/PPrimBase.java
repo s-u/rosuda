@@ -35,8 +35,8 @@ public abstract class PPrimBase implements PlotPrimitive {
      */
     public boolean queryable=true;
 
-    public Color fillColor = COL_OUTLINE;
-    public Color borderColor = COL_OUTLINE;
+    public Color fillColor = Common.objectsColor;
+    public Color borderColor = Color.BLACK;
     public Color fillColorSel = Common.selectColor;
     public Color borderColorSel = Common.selectColor;
 
