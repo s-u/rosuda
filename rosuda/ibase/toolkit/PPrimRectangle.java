@@ -37,11 +37,7 @@ public class PPrimRectangle extends PPrimBase {
     
     private int MINHEIGHT=1;
     private int MINWIDTH=1;
-    
-    public PPrimRectangle(){
-        fillColor = Common.objectsColor;
-    }
-    
+        
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
     
