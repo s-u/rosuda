@@ -50,8 +50,7 @@ public class BarCanvas extends BaseCanvas {
     private MenuItem MIspine=null;
     private MenuItem MIlabels=null;
     
-    private PlotPrimitive lastQueriedPrimitive=null;
-    private int lastQueriedIndex;
+
     
     // needed for axis-query
     private int[] axcoordX;
@@ -393,15 +392,16 @@ public class BarCanvas extends BaseCanvas {
     
     public String queryObject(final int i) {
         int marked = getMarked(i);
-        String qs="name: "+cat_nam[i]+"\n";
+        String qs=cat_nam[i]+"\n";
         final boolean actionExtQuery = isExtQuery;
         if (actionExtQuery) {
             if(marked>0) {
-                qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)\n"+
-                        "selected: "+marked+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat."+
-                        Tools.getDisplayableValue(100.0*(marked)/((double)v.size()),2)+"% of total)";
+                qs+="count: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)\n"+
+                        "selected: "+marked+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
+                        Tools.getDisplayableValue(100.0*(marked)/((double)v.size()),2)+"% of total, "+
+                        Tools.getDisplayableValue(100.0*(marked)/((double)m.marked()),2)+"% of total selection)";
             } else {
-                qs+="cases: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)";
+                qs+="count: "+count[i]+" ("+Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total)";
             }
         } else {
             if(isSpine) {
@@ -410,8 +410,8 @@ public class BarCanvas extends BaseCanvas {
                             Tools.getDisplayableValue(100.0*(marked)/((double)count[i]),2)+"% selected";
                 else qs+=Tools.getDisplayableValue(100.0*(count[i])/((double)v.size()),2)+"% of total";
             } else {
-                if(marked>0) qs+=marked+" of "+count[i]+" selected";
-                else qs+=count[i]+(count[i]==1?" case":" cases");
+                qs+="count: "+count[i];
+                if(marked>0) qs+="\nselected: "+marked+" ("+Tools.getDisplayableValue(100.0*(marked)/((double)count[i]),2)+"%)";
             }
         }
         return qs;
@@ -419,8 +419,8 @@ public class BarCanvas extends BaseCanvas {
     
     public String queryPlotSpace() {
         if(v!=null) {
-            if(isSpine) return "Barchart\nconsists of "+bars+" bar(s)\n"+(m.marked()>0?Tools.getDisplayableValue(100.0*(m.marked())/((double)v.size()),2)+"% selected":"");
-            else return "Barchart\nconsists of "+bars+" bar(s)"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
+            if(isSpine) return "Barchart ("+v.getName()+")\nconsists of "+bars+" bar(s)\n"+(m.marked()>0?Tools.getDisplayableValue(100.0*(m.marked())/((double)v.size()),2)+"% selected":"");
+            else return "Barchart ("+v.getName()+"\nconsists of "+bars+" bar(s)"+(m.marked()>0?"\n"+m.marked()+" selected case(s)":"");
         } else return null;
     }
     
@@ -448,14 +448,6 @@ public class BarCanvas extends BaseCanvas {
         return false;
     }
     
-    public String queryObject(final PlotPrimitive p) {
-        if(lastQueriedPrimitive!=null && lastQueriedPrimitive==p) return queryObject(lastQueriedIndex);
-        for(int i=0; i<pp.length; i++){
-            if(pp[i]==p) return queryObject(i);
-        }
-        return super.queryObject(p);
-    }
-    
     private void setAxCoord(int x1,int y1,int x2,int y2) {
         if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
         if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
@@ -472,10 +464,9 @@ public class BarCanvas extends BaseCanvas {
     }
     
     protected String getAxisQuery(int x, int y) {
-//    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0]);
         if(!isMouseOverAxis(x,y)) return null;
         else return "axis name: " + getMouseOverAxis(x,y).getVariable().getName()+
-                "\nbars: " + bars;
+                "\nbars: " + bars+(v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
     }
     
     public void mouseDragged(final MouseEvent e) {
