@@ -95,16 +95,16 @@ public class PPrimPolygon extends PPrimBase {
         if(mark>0) {
             color = ColorBridge.getMain().getColor(mark);
         } else{
-            color = Color.BLACK;
+            color = borderColor;
         }
-        paintPolygon(g,false,color,col);
+        paintPolygon(g,false,color,fillColor);
     }
     
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
         final int mark = m.get(ref[0]);
         if(mark==-1) {
-            paintPolygon(g,true,Common.selectColor);
+            paintPolygon(g,true,borderColorSel,fillColorSel);
         }
     }
     
@@ -119,10 +119,6 @@ public class PPrimPolygon extends PPrimBase {
     public void setNodeSize(final int nodeSize) {
         if(nodeSize>0)
             this.nodeSize = nodeSize;
-    }
-    
-    private void paintPolygon(final PoGraSS g, boolean paintingSelected, final Color colOutline){
-        paintPolygon(g,paintingSelected,colOutline,null);
     }
     
     private void paintPolygon(final PoGraSS g, boolean paintingSelected, final Color colOutline, final Color colFill) {

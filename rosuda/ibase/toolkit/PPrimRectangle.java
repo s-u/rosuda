@@ -1,6 +1,6 @@
 //
 //  PPrimRectangle.java
-//  Klimt
+//  Kplimt
 //
 //  Created by Simon Urbanek on Wed Oct 29 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
@@ -16,12 +16,13 @@ import org.rosuda.pograss.*;
 
 
 public class PPrimRectangle extends PPrimBase {
-    protected Color COL_BORDER = COL_OUTLINE;
     
     // public to avoid calling getter methods. setBounds should be used in combination with MINHEIGHT,MINWIDTH.
     public Rectangle r=new Rectangle();
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
+    
+    public Color fillColorDrag = Color.GRAY;
     
     /**
      * allow color brushing?
@@ -49,18 +50,17 @@ public class PPrimRectangle extends PPrimBase {
         
         if(dragging || !allowColorBrushing || !isBrushed(m)){ // dragging or no color brushing
             pieces=null;
-            Color fillColor, borderColor;
+            Color fillCol, borderCol;
             
-            if(dragging) fillColor = Color.GRAY;
-            else if (col!=null) fillColor = col;
-            else fillColor = Common.objectsColor;
+            if(dragging && fillColorDrag!=null) fillCol = fillColorDrag;
+            else fillCol = fillColor;
             
-            if (drawBorder) borderColor = COL_BORDER;
-            else borderColor = null;
+            if (drawBorder) borderCol = borderColor;
+            else borderCol = null;
             
-            drawRect(g,r,fillColor,borderColor);
+            drawRect(g,r,fillCol,borderCol);
         } else{ // color brushing
-            brushRect(g,m,orientation,r,COL_BORDER);
+            brushRect(g,m,orientation,r,borderColor);
         }
     }
     
@@ -89,7 +89,7 @@ public class PPrimRectangle extends PPrimBase {
                         break;
                 }
                 
-                drawRect(g,rX,rY,rW,rH,Common.selectColor,drawSelectionBorder?COL_BORDER:null);
+                drawRect(g,rX,rY,rW,rH,fillColorSel,drawSelectionBorder?borderColorSel:null);
             } else { // color brushing
                 int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
                 final double totW=rW;
@@ -116,10 +116,10 @@ public class PPrimRectangle extends PPrimBase {
                                     rW=getPropSize(pieces[i],rmp);
                                     rX=r.x+r.width-shift-rW;
                                 }
-                                g.setColor(Common.selectColor);
+                                g.setColor(fillColorSel);
                                 g.fillRect(rX,rY,rW,rH);
                                 if(drawSelectionBorder){
-                                    g.setColor(COL_BORDER);
+                                    g.setColor(borderColorSel);
                                     g.drawRect(rX,rY,rW,rH);
                                 }
                             }
@@ -129,7 +129,7 @@ public class PPrimRectangle extends PPrimBase {
                 }
             }
             if (hasAny && !drawSelectionBorder) {
-                g.setColor(COL_BORDER);
+                g.setColor(borderColorSel);
                 g.drawRect(r.x,r.y,r.width,r.height);
             }
         }
