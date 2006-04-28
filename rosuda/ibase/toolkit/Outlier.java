@@ -24,6 +24,7 @@ public class Outlier extends PPrimBase {
         out.x=x;
         out.y=y;
         out.diam=2*r-1;
+        out.fillColor = out.borderColor;
         value=v;
     }
     

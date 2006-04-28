@@ -1225,6 +1225,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ppc.ref = new int[]{caseID};
         ppc.setVisible(false);
         ppc.queryable = false;
+        ppc.fillColor = ppc.borderColor;
         return ppc;
     }
     

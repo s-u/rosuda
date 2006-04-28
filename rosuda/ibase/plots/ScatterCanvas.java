@@ -249,6 +249,7 @@ public class ScatterCanvas extends BaseCanvas {
                         }
                         p.diam = ptDiam;
                         p.ref = new int[] {i};
+                        p.fillColor = p.borderColor;
                         final Point po = new Point(x,y);
                         sortedPointsX.put(po, p);
                         sortedPointsY.put(po, p);
