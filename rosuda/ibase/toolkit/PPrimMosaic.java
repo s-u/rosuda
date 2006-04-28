@@ -7,8 +7,13 @@ import org.rosuda.pograss.PoGraSS;
 
 
 public class PPrimMosaic extends PPrimRectangle {
-    public Color COL_EMPTY = Color.RED;
-    public Color COL_CENSORED = Color.RED;
+    public Color fillColorEmpty = Color.RED;
+    public Color borderColorEmpty = null;
+    public Color binbgColor = new Color(Color.lightGray.getRed(),Color.lightGray.getGreen(),Color.lightGray.getBlue(),76);
+    public Color borderColorSelCensored = Color.RED;
+    public Color borderColorSelUncensored = COL_OUTLINE;
+    public Color borderColorCensored = Color.RED;
+    public Color fillColorCensored = Color.RED;
     
     public String info = null;
     private char dir;
@@ -40,34 +45,31 @@ public class PPrimMosaic extends PPrimRectangle {
         switch(type){
             case TYPE_OBSERVED:
             case TYPE_EXPECTED:
-                Color fillColor,borderColor;
+                Color fillCol,borderCol;
                 
                 if (isEmpty()){
-                    fillColor = COL_EMPTY;
-                    borderColor = null;
-                } else if (col!=null) fillColor = col;
-                else fillColor = Common.objectsColor;
-                
-                if (drawBorder && !isEmpty()) borderColor = COL_OUTLINE;
-                else borderColor = null;
+                    fillCol = fillColorEmpty;
+                    borderCol = (drawBorder?borderColorEmpty:null);
+                } else {
+                    fillCol = fillColor;
+                    borderCol = (drawBorder?borderColor:null);
+                }
                 
                 if(!isBrushed(m) || isEmpty() || type==TYPE_EXPECTED){
-                    drawRect(g,r,fillColor,borderColor);
+                    drawRect(g,r,fillCol,borderCol);
                 } else{
-                    brushRect(g,m,orientation,r,borderColor);
+                    brushRect(g,m,orientation,r,borderCol);
                 }
                 break;
             case TYPE_SAMEBINSIZE:
             case TYPE_FLUCTUATION:
             case TYPE_MULTIPLEBARCHARTS:
-                g.setGlobalAlpha(0.3f);
-                drawRect(g,origX,origY,fullW,fullH,Color.lightGray,Color.lightGray);
-                g.resetGlobalAlpha();
+                drawRect(g,origX,origY,fullW,fullH,binbgColor,binbgColor);
                 if(!isEmpty()){
                     if(isBrushed(m)){
-                        brushRect(g,m,orientation,r,censored?COL_CENSORED:COL_OUTLINE);
+                        brushRect(g,m,orientation,r,censored?borderColorCensored:borderColor);
                     } else{
-                        drawRect(g,r,Common.objectsColor,censored?COL_CENSORED:COL_OUTLINE);
+                        drawRect(g,r,fillColor,censored?borderColorCensored:borderColor);
                     }
                 }
         }
@@ -179,7 +181,7 @@ public class PPrimMosaic extends PPrimRectangle {
     }
     
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
-        COL_BORDER = (censored?Common.selectColor:COL_OUTLINE);
+        borderColorSel = (censored?borderColorSelCensored:borderColorSelUncensored);
         super.paintSelected(g, orientation, m);
     }
 }
