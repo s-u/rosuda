@@ -55,10 +55,6 @@ public class PPrimCircle extends PPrimBase {
      * false)
      */
     public boolean intersectionByArea = true;
-    public Color fillColor = COL_OUTLINE,
-            borderColor = COL_OUTLINE,
-            fillColorSel = Common.selectColor,
-            borderColorSel = Common.selectColor;
     
     private int[] pieces;
     

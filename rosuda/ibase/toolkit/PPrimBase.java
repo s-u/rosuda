@@ -35,6 +35,11 @@ public abstract class PPrimBase implements PlotPrimitive {
      */
     public boolean queryable=true;
 
+    public Color fillColor = COL_OUTLINE;
+    public Color borderColor = COL_OUTLINE;
+    public Color fillColorSel = Common.selectColor;
+    public Color borderColorSel = Common.selectColor;
+
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
     }
