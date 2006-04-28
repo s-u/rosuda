@@ -35,6 +35,8 @@ public class PPrimBox extends PPrimBase {
     public float LWWHISKERSEL = 2.0f;
     public float LWWHISKERENDSEL = 1.5f;
     
+    public Color fillColorDrag = Color.GRAY;
+    
     Rectangle r;
     private List outliers = new ArrayList();
     
@@ -77,11 +79,11 @@ public class PPrimBox extends PPrimBase {
             case 0:
                 r = new Rectangle(x,uh,w, lh-uh);
                 
-                g.setColor(dragging?Color.GRAY:Common.objectsColor);
+                g.setColor(dragging?fillColorDrag:fillColor);
                 g.fillRect(x,uh,
                         w,lh-uh);
                 
-                g.setColor(COL_OUTLINE);
+                g.setColor(borderColor);
                 g.setLineWidth(LWRECT);
                 g.drawRect(x,uh,
                         w,lh-uh);
@@ -128,11 +130,11 @@ public class PPrimBox extends PPrimBase {
             case 1:
                 r = new Rectangle(lh,x, uh-lh,w);
                 
-                g.setColor(dragging?Color.GRAY:Common.objectsColor);
+                g.setColor(dragging?fillColorDrag:fillColor);
                 g.fillRect(lh,x,
                         uh-lh,w);
                 
-                g.setColor(COL_OUTLINE);
+                g.setColor(borderColor);
                 g.setLineWidth(LWRECT);
                 g.drawRect(lh,x,
                         uh-lh,w);
@@ -184,10 +186,10 @@ public class PPrimBox extends PPrimBase {
         
         switch(orientation){
             case 0:
-                g.setColor(Common.selectColor);
+                g.setColor(fillColorSel);
                 g.fillRect(sx,suh,
                         sw,slh-suh);
-                g.setColor(COL_OUTLINE);
+                g.setColor(borderColorSel);
                 g.setLineWidth(LWRECTSEL);
                 g.drawRect(sx,suh,
                         sw,slh-suh);
@@ -205,7 +207,6 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(sx+sw/2,slh,
                         sx+sw/2,slh15);
                 g.setLineWidth(1.0f);
-                g.setColor(Common.selectColor);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
@@ -226,10 +227,10 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
-                g.setColor(Common.selectColor);
+                g.setColor(fillColorSel);
                 g.fillRect(slh,sx,
                         suh-slh,sw);
-                g.setColor(COL_OUTLINE);
+                g.setColor(borderColorSel);
                 g.setLineWidth(LWRECTSEL);
                 g.drawRect(slh,sx,
                         suh-slh,sw);
@@ -247,7 +248,6 @@ public class PPrimBox extends PPrimBase {
                 g.drawLine(slh,sx+sw/2,
                         slh15,sx+sw/2);
                 g.setLineWidth(1.0f);
-                g.setColor(Common.selectColor);
                 i=slowEdge;
                 while(i>=0) {
                     final double val=slastR[i];
