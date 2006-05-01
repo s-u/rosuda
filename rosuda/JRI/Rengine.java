@@ -15,11 +15,12 @@ public class Rengine extends Thread {
 
 	/**	version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match	*/
     public static long getVersion() {
-        return 0x0104;
+        return 0x0103;
     }
 
 	public static boolean versionCheck() {
-		return (getVersion()>rniGetVersion());
+	    System.out.println("Rengine version "+getVersion()+"\nRNI version "+rniGetVersion());
+		return (getVersion()==rniGetVersion());
 	}
 	
     public static int DEBUG=0;
