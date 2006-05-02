@@ -35,7 +35,6 @@ public class ScatterCanvas extends BaseCanvas {
     
     /** diameter of a point */
     public int ptDiam=3;
-    public int stackOff=3;
     
     public int fieldBg=0; // 0=none, 1=objects, 2=white
     
