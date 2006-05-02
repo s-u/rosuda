@@ -1,10 +1,14 @@
 #!/bin/sh
 
-echo "Generate Windows-specific files (src/jvm-w32) ..."
-make -C src/win32
+# if CONFIGURED is set, then we don't attempt to run findjava
+# (useful when building inside rJava)
+if [ -z "$CONFIGURED" ]; then
+    echo "Generate Windows-specific files (src/jvm-w32) ..."
+    make -C src/win32
 
-if [ $? != 0 ]; then
-  exit 1
+    if [ $? != 0 ]; then
+	exit 1
+    fi
 fi
 
 echo "Find Java..."
