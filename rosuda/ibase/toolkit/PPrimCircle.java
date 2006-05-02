@@ -145,7 +145,7 @@ public class PPrimCircle extends PPrimBase {
         if(intersectionByArea){
             return((x-this.x)*(x-this.x)+(y-this.y)*(y-this.y) <= diam*diam/4);
         } else{
-            return(Math.max(Math.abs(x-this.x),Math.abs(y-this.y))<=Math.min(4,diam/2));
+            return(x==this.x && y==this.y);
         }
     }
     
