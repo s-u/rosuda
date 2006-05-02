@@ -60,6 +60,9 @@ public class ScatterCanvas extends BaseCanvas {
     
     private final int standardMLeft=40;
     
+    /**
+     * Custom background color. Defaults to white.
+     */
     public Color COL_CUSTOMBG = Color.WHITE;
     
     private boolean crosshairs = false;
@@ -661,6 +664,11 @@ public class ScatterCanvas extends BaseCanvas {
         
     }
     
+    /**
+     * Get the amount of space around the data points.
+     * @return amount of space
+     * @see #setSPACEPROP(double)
+     */
     public double getSPACEPROP() {
         return SPACEPROP;
     }
