@@ -152,7 +152,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     protected PlotPrimitive lastQueriedPrimitive=null;
     protected int lastQueriedIndex;
-
+    
     private boolean useObjectTranparency = true;
     
     // default values for margins; 1..3 indicates orientation
@@ -172,6 +172,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected int defaultMRight3;
     protected int defaultMTop3;
     protected int defaultMBottom3;
+    
+
+    public int horizontalMedDist=50;
+    public int horizontalMinDist=35;
+    public int verticalMedDist=30;
+    public int verticalMinDist=18;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -452,7 +458,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         for(int i=0; i<pp.length; i++){
             if(pp[i]==p) return queryObject(i);
         }
-
+        
         return "object "+p.toString();
     }
     
@@ -702,15 +708,15 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 if(p!=null && p.isQueryable()){
                     if(useExtQuery) setQueryText(extQueryString);
                     else {
-                    	if (p.cases()>0) {
-                    		if (p.getPrimaryCase()!=-1) {
-                    			setQueryText(queryObject(p),p.getPrimaryCase());
-                    		} else {
-                    			setQueryText(queryObject(p),p.getCaseIDs());
-                    		}
-                    	} else {
-                    		setQueryText(queryObject(p));
-                    	}
+                        if (p.cases()>0) {
+                            if (p.getPrimaryCase()!=-1) {
+                                setQueryText(queryObject(p),p.getPrimaryCase());
+                            } else {
+                                setQueryText(queryObject(p),p.getCaseIDs());
+                            }
+                        } else {
+                            setQueryText(queryObject(p));
+                        }
                     }
                     qi.setLocation(cl.x+mouseX,cl.y+mouseY);
                     qi.show(); hideQI=false;
