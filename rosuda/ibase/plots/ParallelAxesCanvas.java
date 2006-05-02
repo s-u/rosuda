@@ -733,7 +733,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         /* draw ticks and labels for Y axis */
         if (commonScale || (type==TYPE_BOX && vsCat)) {
-            final double f=((orientation==0)?ay.getSensibleTickDistance(30,18):ay.getSensibleTickDistance(50,26));
+            final double f=((orientation==0)?ay.getSensibleTickDistance(verticalMedDist,verticalMinDist):ay.getSensibleTickDistance(horizontalMedDist,horizontalMinDist));
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
@@ -766,7 +766,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         
         if(orientation==0){
-            final double f=ay.getSensibleTickDistance(30,18);
+            final double f=ay.getSensibleTickDistance(verticalMedDist,verticalMinDist);
             double fi=ay.getSensibleTickStart(f);
             int maxLabelLength=0;
             while (fi<ay.vBegin+ay.vLen) {

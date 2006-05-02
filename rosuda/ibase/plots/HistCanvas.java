@@ -184,7 +184,7 @@ public class HistCanvas extends BaseCanvas {
         int maxLabelLength=0;
         {
             final Axis axis = (orientation==0 || orientation==2)?ay:ax;
-            final double f=axis.getSensibleTickDistance(50,18);
+            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
             double fi=axis.getSensibleTickStart(f);
             while (fi<axis.vBegin+axis.vLen) {
                 final String s=axis.getDisplayableValue(fi);
@@ -230,7 +230,7 @@ public class HistCanvas extends BaseCanvas {
         labels.clear();
         // draw y lables and ticks
         if (orientation==0 || orientation==2) {
-            final double f=ay.getSensibleTickDistance(50,18);
+            final double f=ay.getSensibleTickDistance(verticalMedDist,verticalMinDist);
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
@@ -239,7 +239,7 @@ public class HistCanvas extends BaseCanvas {
                 fi+=f;
             }
         } else {
-            final double f=ay.getSensibleTickDistance(50,35);
+            final double f=ay.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
@@ -255,7 +255,7 @@ public class HistCanvas extends BaseCanvas {
         double fi;
         switch (orientation){
             case 0:
-                f=ax.getSensibleTickDistance(50,35);
+                f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);
@@ -266,7 +266,7 @@ public class HistCanvas extends BaseCanvas {
                 }
                 break;
             case 2:
-                f=ax.getSensibleTickDistance(50,35);
+                f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);
@@ -276,7 +276,7 @@ public class HistCanvas extends BaseCanvas {
                 }
                 break;
             case 1:
-                f=ax.getSensibleTickDistance(50,18);
+                f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);
@@ -286,7 +286,7 @@ public class HistCanvas extends BaseCanvas {
                 }
                 break;
             case 3:
-                f=ax.getSensibleTickDistance(50,18);
+                f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
                 fi=ax.getSensibleTickStart(f);
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);

@@ -386,7 +386,7 @@ public class ScatterCanvas extends BaseCanvas {
         {
             final int ori = (orientation==0)?1:0;
             final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(30,18);
+            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
             double fi=axis.getSensibleTickStart(f);
             try {
                 while (fi<axis.vBegin+axis.vLen) {
@@ -438,7 +438,7 @@ public class ScatterCanvas extends BaseCanvas {
         {
             final int ori = (orientation==0)?0:1;
             final Axis axis = (orientation==0)?ax:ay;
-            final double f=axis.getSensibleTickDistance(50,26);
+            final double f=axis.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
             double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
                 System.out.println("SP.A[0]:"+axis.toString()+", distance="+f+", start="+fi);
@@ -458,7 +458,7 @@ public class ScatterCanvas extends BaseCanvas {
         {
             final int ori = (orientation==0)?1:0;
             final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(30,18);
+            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
             double fi=axis.getSensibleTickStart(f);
             if (Global.DEBUG>1)
                 System.out.println("SP.A[1]:"+ay.toString()+", distance="+f+", start="+fi);
