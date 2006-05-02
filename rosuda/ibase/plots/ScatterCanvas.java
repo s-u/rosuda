@@ -242,7 +242,13 @@ public class ScatterCanvas extends BaseCanvas {
                         sortedPointsY.put(po, p);
                     }
                 }
-            } else { // place missings on the other side of the axes
+            } else { 
+                
+                //do nothing
+                
+                // old code, that doesn't work with object clipping
+                /*
+                // place missings on the other side of the axes
                 int x,y;
                 if (v[0].isMissingAt(i)) x=mLeft-4; else x=jx+ax.getCasePos(i);
                 if (v[1].isMissingAt(i)) y=h-mBottom+4; else y=jy+ay.getCasePos(i);
@@ -255,7 +261,7 @@ public class ScatterCanvas extends BaseCanvas {
                     p.y = x;
                 }
                 p.diam = ptDiam;
-                p.ref = new int[] {i};
+                p.ref = new int[] {i};*/
             }
         };
         final Collection pts = sortedPointsX.values();
