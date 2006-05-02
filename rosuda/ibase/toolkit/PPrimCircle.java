@@ -9,6 +9,8 @@ package org.rosuda.ibase.toolkit;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.SMarker;
 
@@ -60,8 +62,9 @@ public class PPrimCircle extends PPrimBase {
     
     public boolean intersects(final java.awt.Rectangle rt) {
         if(intersectionByArea){
-            // baaaaaaaaaad!
-            return rt.intersects(new Rectangle(x-diam/2,y-diam/2, diam,diam));
+            final Rectangle2D r2 = new Rectangle2D.Double(rt.x,rt.y,rt.width,rt.height);
+            final Ellipse2D e2 = new Ellipse2D.Double(x-diam/2,y-diam/2, diam,diam);
+            return e2.intersects(r2);
         } else{
             return rt.contains(x,y);
         }
