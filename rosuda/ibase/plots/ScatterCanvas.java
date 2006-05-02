@@ -29,7 +29,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     /** flag whether axis labels should be shown */
     protected boolean showLabels=true;
-
+    
     /** if true partition nodes above current node only */
     public boolean bgTopOnly=false;
     
@@ -51,9 +51,9 @@ public class ScatterCanvas extends BaseCanvas {
     
     // needed for axis-query
     private final int[] axcoordX;
-    private final int[] axcoordY;    
+    private final int[] axcoordY;
     private final int[] aycoordX;
-    private final int[] aycoordY;    
+    private final int[] aycoordY;
     
     protected int []filter=null;
     
@@ -62,10 +62,12 @@ public class ScatterCanvas extends BaseCanvas {
     private final int standardMLeft=40;
     
     public Color COL_CUSTOMBG = Color.WHITE;
-
+    
     private boolean crosshairs = false;
-
+    
     private int qx,qy;
+    
+    private double SPACEPROP=1.1;
     
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
@@ -114,7 +116,7 @@ public class ScatterCanvas extends BaseCanvas {
      * @param mark associated marker */
     public ScatterCanvas(final int gd, final Frame f, final SVar v1, final SVar v2, final SMarker mark) {
         super(gd,f,mark);
-
+        
         setDefaultMargins(new int[] {standardMLeft,10,10,30});
         
         axcoordX=new int[2]; axcoordY=new int[2];
@@ -124,10 +126,7 @@ public class ScatterCanvas extends BaseCanvas {
         v[0]=v1; v[1]=v2; m=mark;
         ax=new Axis(v[0],Axis.O_X,v[0].isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(v[1],Axis.O_Y,v[1].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
-        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
-        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())/20,(v[1].getMax()-v[1].getMin())*1.1);
-        if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
-        if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
+        setValueRange();
         drag=false;
         
         if (Global.useAquaBg) fieldBg=2;
@@ -180,7 +179,7 @@ public class ScatterCanvas extends BaseCanvas {
         
         final int innerW=w-mLeft-mRight;
         final int innerH=h-mBottom-mTop;
-
+        
         
         
         ((orientation==0)?ax:ay).setGeometry(Axis.O_X,mLeft,W=innerW);
@@ -286,7 +285,7 @@ public class ScatterCanvas extends BaseCanvas {
         };
         if (cmd=="rotate") rotate();
         if (cmd==M_POINTSUP) {
-            ptDiam+=2; 
+            ptDiam+=2;
             for(int i=0; i<pp.length; i++){
                 if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             }
@@ -352,7 +351,7 @@ public class ScatterCanvas extends BaseCanvas {
         }
         if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
         if (cmd=="resetZoom") { resetZoom(); repaint(); }
-
+        
         return null;
     }
     
@@ -403,11 +402,11 @@ public class ScatterCanvas extends BaseCanvas {
         
         g.setColor(COL_OUTLINE);
         if(orientation==0) {
-        	setAyCoord(mLeft,Y,mLeft,Y+H);
-        	setAxCoord(mLeft,Y+H,mLeft+W,Y+H);
+            setAyCoord(mLeft,Y,mLeft,Y+H);
+            setAxCoord(mLeft,Y+H,mLeft+W,Y+H);
         } else {
-        	setAxCoord(mLeft,Y,mLeft,Y+H);
-        	setAyCoord(mLeft,Y+H,mLeft+W,Y+H);
+            setAxCoord(mLeft,Y,mLeft,Y+H);
+            setAyCoord(mLeft,Y+H,mLeft+W,Y+H);
         }
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
@@ -504,36 +503,36 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public String queryPlotSpace() {
-    	return "Scatterplot\n"+"values range: ["+minVal+", "+maxVal+ "]\n"+
-    			"max at ("+maxValFirstIndex[0]+", "+maxValFirstIndex[1]+")\nmin at ("+minValFirstIndex[0]+", "+minValFirstIndex[1]+")";
+        return "Scatterplot\n"+"values range: ["+minVal+", "+maxVal+ "]\n"+
+                "max at ("+maxValFirstIndex[0]+", "+maxValFirstIndex[1]+")\nmin at ("+minValFirstIndex[0]+", "+minValFirstIndex[1]+")";
     }
     
     private double maxVal=Double.NaN,minVal=Double.NaN;
     private double[] maxValFirstIndex,minValFirstIndex;
     
     private void setBoundValues() {
-    	if(pp==null || v==null || v.length<2) return;
-    	if(maxValFirstIndex==null) maxValFirstIndex=new double[2];
-    	if(minValFirstIndex==null) minValFirstIndex=new double[2];
-    	double temp=0;
-    	for(int i=0;i<pp.length;i++) {
-    		temp=pp[i].cases();
-    		if(maxVal<temp || Double.isNaN(maxVal)) {
-    			maxVal=temp;
-   				if(pp[i] instanceof PPrimCircle)
-   					maxValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
-   						Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
-    		}
-    		if(minVal>temp || Double.isNaN(minVal)) {
-    			minVal=temp;
-   				if(pp[i] instanceof PPrimCircle)
-   					minValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
-   						Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
-    		}
-    	}
+        if(pp==null || v==null || v.length<2) return;
+        if(maxValFirstIndex==null) maxValFirstIndex=new double[2];
+        if(minValFirstIndex==null) minValFirstIndex=new double[2];
+        double temp=0;
+        for(int i=0;i<pp.length;i++) {
+            temp=pp[i].cases();
+            if(maxVal<temp || Double.isNaN(maxVal)) {
+                maxVal=temp;
+                if(pp[i] instanceof PPrimCircle)
+                    maxValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+                    Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+            }
+            if(minVal>temp || Double.isNaN(minVal)) {
+                minVal=temp;
+                if(pp[i] instanceof PPrimCircle)
+                    minValFirstIndex=new double[]{Double.parseDouble(Tools.getDisplayableValue(ax.getValueForPos(((PPrimCircle)pp[i]).x),1)),
+                    Double.parseDouble(Tools.getDisplayableValue(ay.getValueForPos(((PPrimCircle)pp[i]).y),1))};
+            }
+        }
     }
-    	
-
+    
+    
     /* TODO: Maybe this can be done faster with the sortedPoints map */
     private double[] minMax(final int[] ref, final int var){
         final double mM[] = new double[2];
@@ -622,7 +621,7 @@ public class ScatterCanvas extends BaseCanvas {
         
         return ret;
     }
-
+    
     public void mouseMoved(final MouseEvent ev) {
         super.mouseMoved(ev);
         final boolean ocrosshairs = crosshairs;
@@ -639,31 +638,49 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     private void setAxCoord(final int x1,final int y1,final int x2,final int y2) {
-    	if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;}
-    	else {axcoordX[0]=x2; axcoordX[1]=x1;}
-        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;}
-        else {axcoordY[0]=y2; axcoordY[1]=y1;}
+        if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
+        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
     }
     
     private void setAyCoord(final int x1,final int y1,final int x2,final int y2) {
-    	if(x1<x2) {aycoordX[0]=x1; aycoordX[1]=x2;}
-    	else {aycoordX[0]=x2; aycoordX[1]=x1;}
-        if(y1<y2) {aycoordY[0]=y1; aycoordY[1]=y2;}
-        else {aycoordY[0]=y2; aycoordY[1]=y1;}
+        if(x1<x2) {aycoordX[0]=x1; aycoordX[1]=x2;} else {aycoordX[0]=x2; aycoordX[1]=x1;}
+        if(y1<y2) {aycoordY[0]=y1; aycoordY[1]=y2;} else {aycoordY[0]=y2; aycoordY[1]=y1;}
     }
     
     protected Axis getMouseOverAxis(final int x, final int y) {
-    	if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
+        if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
         else if(x>=aycoordX[0]-2 && x<= aycoordX[1]+2 && y>=aycoordY[0]-2 && y<=aycoordY[1]+2) return ay;
-    	else return null;
+        else return null;
     }
     
     protected String getAxisQuery(final int x, final int y) {
 //    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0] + ", ayX: " + aycoordX[0] + ", ayY: " + aycoordY[0]);
-    	final Axis a=getMouseOverAxis(x,y);
-    	if(a==null) return null;
-    	else return "axis name: " + a.getVariable().getName()+
-    			"\nrange: "+Tools.getDisplayableValue(a.vBegin,2)+" ... "+Tools.getDisplayableValue(a.vBegin+a.vLen,2);
-
+        final Axis a=getMouseOverAxis(x,y);
+        if(a==null) return null;
+        else return "axis name: " + a.getVariable().getName()+
+                "\nrange: "+Tools.getDisplayableValue(a.vBegin,2)+" ... "+Tools.getDisplayableValue(a.vBegin+a.vLen,2);
+        
+    }
+    
+    public double getSPACEPROP() {
+        return SPACEPROP;
+    }
+    
+    /**
+     * Sets the amount of space around the data points.
+     * 1.0 means no space, 1.5 means half as much space around the data as is used for the data itself.
+     * {@link #updateObjects()} needs to be called afterwards.
+     * @param SPACEPROP New amount of space. Defaults to 1.1.
+     */
+    public void setSPACEPROP(double SPACEPROP) {
+        this.SPACEPROP = SPACEPROP;
+        setValueRange();
+    }
+    
+    private void setValueRange() {
+        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())*(SPACEPROP-1)/2,(v[0].getMax()-v[0].getMin())*SPACEPROP);
+        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(SPACEPROP-1)/2,(v[1].getMax()-v[1].getMin())*SPACEPROP);
+        if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
+        if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
     }
 };
