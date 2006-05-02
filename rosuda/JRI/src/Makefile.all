@@ -29,7 +29,7 @@ jri.o: jri.c
 	$(CC) -c -o $@ jri.c $(CFLAGS) $(CPICF) $(JAVAINC) $(RINC)
 
 $(JNIPREFIX)jri$(JNISO): Rengine.o jri.o Rcallbacks.o Rinit.o globals.o $(JRIDEPS)
-	$(CC) -o $@ $^ $(JNILD) $(RLD)
+	$(CC) -o $@ $^ $(LDFLAGS) $(JNILD) $(RLD)
 
 win32/libjvm.dll.a:
 	make -C win32 libjvm.dll.a

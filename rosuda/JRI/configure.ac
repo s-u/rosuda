@@ -56,8 +56,6 @@ AC_SUBST(R_HOME)
 AC_SUBST(R_SHARE_DIR)
 AC_SUBST(R_DOC_DIR)
 AC_SUBST(R_INCLUDE_DIR)
-AC_SUBST(RINC)
-AC_SUBST(RLD)
 
 AC_PROG_CC
 AC_HEADER_STDC
@@ -214,6 +212,19 @@ case "${host_os}" in
     JNISO=.jnilib
     JNILD="-dynamiclib -framework JavaVM"
     CPICF=-fno-common
+
+    if test -e "${R_HOME}/lib/i386" -a -e "${R_HOME}/lib/ppc" -a -e "${R_HOME}/lib/libR.dylib"; then
+       # we have an universal framework, so we will use stubs and fat lib
+       RLD="-framework R"
+       RINC="-I${R_HOME}/include"
+       # we can even cross-compile, maybe
+       if test `arch` = i386 -a -z "${FORCE_NATIVE}"; then
+          CFLAGS=""
+	  LDFLAGS=""
+	  CC="gcc -arch i386 -arch ppc"
+	  echo "=== building universal JNI library - use FORCE_NATIVE=yes to avoid this ==="
+       fi
+    fi
     ;;
   *)
     ;;
@@ -231,6 +242,11 @@ AC_SUBST(JNILD)
 AC_SUBST(JNISO)
 AC_SUBST(JNIPREFIX)
 AC_SUBST(CPICF)
+AC_SUBST(CFLAGS)
+AC_SUBST(LDFLAGS)
+AC_SUBST(RINC)
+AC_SUBST(RLD)
+AC_SUBST(CC)
 
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([Makefile])
