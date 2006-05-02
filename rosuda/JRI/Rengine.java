@@ -19,7 +19,6 @@ public class Rengine extends Thread {
     }
 
 	public static boolean versionCheck() {
-	    System.out.println("Rengine version "+getVersion()+"\nRNI version "+rniGetVersion());
 		return (getVersion()==rniGetVersion());
 	}
 	
