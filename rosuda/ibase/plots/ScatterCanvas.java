@@ -152,12 +152,20 @@ public class ScatterCanvas extends BaseCanvas {
     
     public SVar getData(final int id) { return (id<0||id>1)?null:v[id]; }
     
+    /**
+     * 
+     * @deprecated 
+     */
     public void setFilter(final int[] f) {
         filter=f;
         setUpdateRoot(1);
         repaint();
     };
     
+    /**
+     * 
+     * @deprecated 
+     */
     public void setFilter(final Vector v) {
         if (v==null) { filter=null; return; };
         filter=new int[v.size()];
