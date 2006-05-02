@@ -22,8 +22,7 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_YRANGEDLG = "YrangeDlg";
     static final String M_POINTSUP = "points+";
     static final String M_POINTSDOWN = "points-";
-    static final String C_OBJECTS = "objects";
-    static final String C_RED = "red";
+    
     /** array of two variables (X and Y) */
     protected SVar v[];
     
@@ -310,14 +309,14 @@ public class ScatterCanvas extends BaseCanvas {
         };
         if (cmd=="rotate") rotate();
         if (cmd==M_POINTSUP) {
-            ptDiam+=2;
+            ptDiam+=changePtDiamBy;
             for(int i=0; i<pp.length; i++){
                 if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             }
             setUpdateRoot(0); repaint();
         }
-        if (cmd==M_POINTSDOWN && ptDiam>2) {
-            ptDiam-=2;
+        if (cmd==M_POINTSDOWN && ptDiam>minimalDiam+changePtDiamBy) {
+            ptDiam-=changePtDiamBy;
             for(int i=0; i<pp.length; i++){
                 if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             }
@@ -381,8 +380,6 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     public void paintBack(final PoGraSS g) {
-        g.defineColor("objects",Common.objectsColor.getRed(),Common.objectsColor.getGreen(),Common.objectsColor.getBlue());
-        g.defineColor("red",255,0,0);
         
         /* determine maximal y label length */
         int maxLabelLength=0;
