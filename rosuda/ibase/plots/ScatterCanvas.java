@@ -36,6 +36,9 @@ public class ScatterCanvas extends BaseCanvas {
     /** diameter of a point */
     public int ptDiam=3;
     
+    /** minimal point diameter */
+    public int minimalDiam=1;
+    
     public int fieldBg=0; // 0=none, 1=objects, 2=white
     
     /** # of points */
@@ -68,6 +71,11 @@ public class ScatterCanvas extends BaseCanvas {
     private boolean crosshairs = false;
     
     private int qx,qy;
+
+    /**
+     * The number of pixels the point diameter should be changed when in-/decreasing it.
+     */
+    public int changePtDiamBy=2;
     
     private double SPACEPROP=1.1;
     
@@ -274,12 +282,12 @@ public class ScatterCanvas extends BaseCanvas {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
         if (e.getKeyCode()==KeyEvent.VK_UP) {
-            ptDiam+=2; setUpdateRoot(0);
+            ptDiam+=changePtDiamBy; setUpdateRoot(0);
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             repaint();
         }
-        if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>2) {
-            ptDiam-=2; setUpdateRoot(0);
+        if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>=minimalDiam+changePtDiamBy) {
+            ptDiam-=changePtDiamBy; setUpdateRoot(0);
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             repaint();
         }
