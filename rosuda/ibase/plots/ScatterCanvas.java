@@ -173,6 +173,7 @@ public class ScatterCanvas extends BaseCanvas {
     };
     
     public void rotate() {
+        // no super call because super.rotate is called by super.run
         try {
             ((Frame) getParent()).setTitle("Scatterplot ("+v[(orientation+1)&1].getName()+" vs "+v[orientation&1].getName()+")");
         } catch (Exception ee) {};
