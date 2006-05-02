@@ -504,7 +504,7 @@ public class ScatterCanvas extends BaseCanvas {
                         Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),2)+
                         "% of var, "+
                         Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)(v[0].size()+v[1].size()),2)+
-                        "% of total)\n"+
+                        "% of total)"+
                         (m.marked()>0?"\n"+getMarked(p)+" selected ("+Tools.getDisplayableValue(100.0*((double)getMarked(p)) / (double)m.marked(),2)+"% of total selected)":"");
             } else{
                 double[] mM0 = minMax(ppc.ref,0);
