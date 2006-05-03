@@ -70,7 +70,7 @@ public class ScatterCanvas extends BaseCanvas {
     private boolean crosshairs = false;
     
     private int qx,qy;
-
+    
     /**
      * The number of pixels the point diameter should be changed when in-/decreasing it.
      */
@@ -160,8 +160,8 @@ public class ScatterCanvas extends BaseCanvas {
     public SVar getData(final int id) { return (id<0||id>1)?null:v[id]; }
     
     /**
-     * 
-     * @deprecated 
+     *
+     * @deprecated
      */
     public void setFilter(final int[] f) {
         filter=f;
@@ -170,8 +170,8 @@ public class ScatterCanvas extends BaseCanvas {
     };
     
     /**
-     * 
-     * @deprecated 
+     *
+     * @deprecated
      */
     public void setFilter(final Vector v) {
         if (v==null) { filter=null; return; };
@@ -249,7 +249,7 @@ public class ScatterCanvas extends BaseCanvas {
                         sortedPointsY.put(po, p);
                     }
                 }
-            } else { 
+            } else {
                 
                 //do nothing
                 
@@ -458,23 +458,12 @@ public class ScatterCanvas extends BaseCanvas {
         {
             final int ori = (orientation==0)?1:0;
             final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-            double fi=axis.getSensibleTickStart(f);
-            if (Global.DEBUG>1)
-                System.out.println("SP.A[1]:"+ay.toString()+", distance="+f+", start="+fi);
-            try {
-                while (fi<axis.vBegin+axis.vLen) {
-                    final int t=axis.getValuePos(fi);
-                    g.drawLine(mLeft-5,t,mLeft,t);
-                    if(showLabels){
-                        if(v[ori].isCat())
-                            labels.add(mLeft-8,t,1,0.3,mLeft,v[ori].getCatAt((int)(fi+0.5)).toString());
-                        else
-                            labels.add(mLeft-8,t,1,0.3,axis.getDisplayableValue(fi));
-                    }
-                    fi+=f;
-                }
-            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+            
+            if(showLabels){
+                if(v[ori].isCat())
+                    addYLabels(g,axis,v[ori],true);
+                else
+                    addYLabels(g,axis,true);
             }
         }
         labels.finishAdd();

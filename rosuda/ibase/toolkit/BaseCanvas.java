@@ -173,7 +173,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected int defaultMTop3;
     protected int defaultMBottom3;
     
-
+    
     public int horizontalMedDist=50;
     public int horizontalMinDist=35;
     public int verticalMedDist=30;
@@ -1121,6 +1121,29 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 mTop=defaultMTop3;
                 mBottom=defaultMBottom3;
                 break;
+        }
+    }
+    
+    public void addYLabels(PoGraSS g, Axis axis, boolean ticks) {
+        addYLabels_internal(g,axis,null,ticks);
+    }
+
+    public void addYLabels(PoGraSS g, Axis axis, SVar sVar, boolean ticks) {
+        addYLabels_internal(g,axis,sVar,ticks);
+    }
+
+    private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks) {
+        final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+        double fi=axis.getSensibleTickStart(f);
+        try {
+            while (fi<axis.vBegin+axis.vLen) {
+                final int t=axis.getValuePos(fi);
+                if(ticks) g.drawLine(mLeft-5,t,mLeft,t);
+                if(sVar==null) labels.add(mLeft-8,t,1,0.3,mLeft-8,axis.getDisplayableValue(fi));
+                else labels.add(mLeft-8,t,1,0.3,mLeft-8,sVar.getCatAt((int)(fi+0.5)).toString());
+                fi+=f;
+            }
+        } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
         }
     }
     
