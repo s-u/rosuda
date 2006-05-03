@@ -628,7 +628,7 @@ public class RController {
     /**
      * Export an SVarSet to R.
      * @param vs dataset
-     * @þaram type R-class of {@see RObject} behind vs
+     * @param type R-class of {@see RObject} behind vs
      * @return true if successful, false if not
      */
     public static boolean export(SVarSet vs,String type) {
