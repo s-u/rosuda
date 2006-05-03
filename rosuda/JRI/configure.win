@@ -9,14 +9,15 @@ if [ -z "$CONFIGURED" ]; then
     if [ $? != 0 ]; then
 	exit 1
     fi
+
+    echo "Find Java..."
+# findjava honors JAVA_HOME environment variable, so we can safely overwite it 
+    if [ -e src/win32/findjava.exe ]; then
+	JAVA_HOME=`src/win32/findjava -s -f`
+	R_HOME=`src/win32/findjava -R -s -f`
+    fi
 fi
 
-echo "Find Java..."
-# findjava honors JAVA_HOME environment variable, so we can safely overwite it 
-if [ -e src/win32/findjava.exe ]; then
-    JAVA_HOME=`src/win32/findjava -s -f`
-    R_HOME=`src/win32/findjava -R -s -f`
-fi
 if [ x$JAVA_HOME = x ]; then
     echo "ERROR: cannot find Java Development Kit." >&2
     echo "       Please set JAVA_HOME to specify its location manually" >&2
