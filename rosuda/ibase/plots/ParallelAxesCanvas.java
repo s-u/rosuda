@@ -303,7 +303,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
         ay=new Axis(yvs[0],Axis.O_Y,yvs[0].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
-        ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         
         createMenu(f);
         if(v.length==1) MIPCPBox.setEnabled(false);
@@ -564,6 +563,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
         if (cs) {
+            ay.setType(Axis.T_Num);
             ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         } else{
             if (opAy!=null && opAy.length>0 && opAy[0]==null) {
@@ -578,6 +578,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 
                 
             }
+            ay.setType(v[0].isCat()?Axis.T_EqCat:Axis.T_Num);
             ay.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())/20,(v[0].getMax()-v[0].getMin())*1.1);
         }
         
@@ -740,11 +741,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 if(orientation==0){
                     g.drawLine(mLeft-2,t,mLeft,t);
                     if(isShowLabels())
-                        labels.add(mLeft-2,(t+5),1,0, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                        labels.add(mLeft-2,(t+5),1,0, ay.getDisplayableValue(fi));
                 }else{
                     g.drawLine(t,getHeight()-mBottom,t,getHeight()-mBottom+2);
                     if(isShowLabels())
-                        labels.add(t,getHeight()-mBottom+2,0.5,1, v[0].isCat()?Common.getTriGraph(v[0].getCatAt((int)fi).toString()):ay.getDisplayableValue(fi));
+                        labels.add(t,getHeight()-mBottom+2,0.5,1, ay.getDisplayableValue(fi));
                 }
                 fi+=f;
             }
