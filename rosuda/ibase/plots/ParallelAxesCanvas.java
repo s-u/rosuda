@@ -820,6 +820,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             case TYPE_PCP:
                 switch(orientation){
                     case 0:
+                        mLeft=defaultMLeft=commonScale?bigMLeft:smallMLeft;
                         break;
                     case 1:
                         mBottom=defaultMBottom=commonScale?bigMBottom:smallMBottom;
@@ -861,7 +862,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 break;
             case TYPE_PCP:
                 useRegularPositioning=true;
-                bigMLeft=bigMRight=50;
+                bigMLeft=bigMRight=15;
                 break;
         }
     }
