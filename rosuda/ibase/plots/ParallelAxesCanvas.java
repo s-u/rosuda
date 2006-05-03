@@ -744,8 +744,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     g.drawLine(t,getHeight()-mBottom,t,getHeight()-mBottom+2);
                     if(isShowLabels())
                         labels.add(t,getHeight()-mBottom+2,0.5,1, ay.getDisplayableValue(fi));
+                    fi+=f;
                 }
-                fi+=f;
             }
             if(orientation==0)
                 g.drawLine(mLeft, mTop, mLeft, getSize().height-mBottom);
