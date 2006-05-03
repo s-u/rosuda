@@ -1136,12 +1136,16 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
         double fi=axis.getSensibleTickStart(f);
         try {
-            final int maxW = abbreviate?(mLeft-8):(-1);
+            final int maxW = abbreviate?(mLeft-2):(-1);
+            final int xPos = mLeft-3;
+            final double xAlign = 1;
+            final double yALign = 0.4;
+            
             while (fi<axis.vBegin+axis.vLen) {
                 final int t=axis.getValuePos(fi);
-                if(ticks) g.drawLine(mLeft-5,t,mLeft,t);
-                if(sVar==null) labels.add(mLeft-8,t,1,0.3,maxW,axis.getDisplayableValue(fi));
-                else labels.add(mLeft-8,t,1,0.3,maxW,sVar.getCatAt((int)(fi+0.5)).toString());
+                if(ticks) g.drawLine(mLeft-2,t,mLeft,t);
+                if(sVar==null) labels.add(xPos,t,xAlign,yALign,maxW,axis.getDisplayableValue(fi));
+                else labels.add(xPos,t,xAlign,yALign,maxW,sVar.getCatAt((int)(fi+0.5)).toString());
                 fi+=f;
             }
         } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
