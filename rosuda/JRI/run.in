@@ -30,5 +30,5 @@ if [ -z "$1" ]; then
     echo " Set CLASSPATH variable if other than .:examples is desired"
     echo ""
 else
-    ${JAVA} -Djava.library.path=.:@JAVA_LD_PATH@ -cp ${CLASSPATH}:src/JRI.jar $*
+    ${JAVA} -Djava.library.path=.:@JAVA_LD_PATH@ -cp ${CLASSPATH}:src/JRI.jar:JRI.jar $*
 fi
