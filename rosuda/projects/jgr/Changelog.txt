@@ -1,3 +1,7 @@
+
+2006-04-18
+- adding: setting tab-width
+
 2006-03-05
 - fixed: setting R_LIB
 - adding: support setting InitialWorkingDirectory
