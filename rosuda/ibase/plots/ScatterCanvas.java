@@ -461,9 +461,9 @@ public class ScatterCanvas extends BaseCanvas {
             
             if(showLabels){
                 if(v[ori].isCat())
-                    addYLabels(g,axis,v[ori],true);
+                    addYLabels(g,axis,v[ori],true,true);
                 else
-                    addYLabels(g,axis,true);
+                    addYLabels(g,axis,true,false);
             }
         }
         labels.finishAdd();

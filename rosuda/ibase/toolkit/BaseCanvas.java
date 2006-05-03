@@ -1124,23 +1124,24 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
     }
     
-    public void addYLabels(PoGraSS g, Axis axis, boolean ticks) {
-        addYLabels_internal(g,axis,null,ticks);
+    public void addYLabels(PoGraSS g, Axis axis, boolean ticks, boolean abbreviate) {
+        addYLabels_internal(g,axis,null,ticks,abbreviate);
     }
 
-    public void addYLabels(PoGraSS g, Axis axis, SVar sVar, boolean ticks) {
-        addYLabels_internal(g,axis,sVar,ticks);
+    public void addYLabels(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
+        addYLabels_internal(g,axis,sVar,ticks,abbreviate);
     }
 
-    private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks) {
+    private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
         final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
         double fi=axis.getSensibleTickStart(f);
         try {
+            final int maxW = abbreviate?(mLeft-8):(-1);
             while (fi<axis.vBegin+axis.vLen) {
                 final int t=axis.getValuePos(fi);
                 if(ticks) g.drawLine(mLeft-5,t,mLeft,t);
-                if(sVar==null) labels.add(mLeft-8,t,1,0.3,mLeft-8,axis.getDisplayableValue(fi));
-                else labels.add(mLeft-8,t,1,0.3,mLeft-8,sVar.getCatAt((int)(fi+0.5)).toString());
+                if(sVar==null) labels.add(mLeft-8,t,1,0.3,maxW,axis.getDisplayableValue(fi));
+                else labels.add(mLeft-8,t,1,0.3,maxW,sVar.getCatAt((int)(fi+0.5)).toString());
                 fi+=f;
             }
         } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
