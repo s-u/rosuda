@@ -761,7 +761,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     // should be overriden by subclasses: they know axis coordinates
     protected String getAxisQuery(int x, int y) {
-        return "mouse coords. ("+x+","+y+")";
+        return null;
     }
     public void keyTyped(final KeyEvent e) {
         if (e.getKeyChar()=='P') run(this,M_PRINT);
