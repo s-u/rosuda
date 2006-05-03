@@ -167,7 +167,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         allowDragMove=true;
         objectClipping=true;
         commonScale=false;
-
+        
         setDefaultMargins(new int[] {smallMLeft,smallMRight,smallMTop,bigMBottom, bigMLeft,smallMRight,smallMTop,smallMBottom});
         
         mBottom=smallMBottom;
@@ -302,7 +302,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             v[i]=yvs[i]; i++;
         }
         ax=new Axis(xv,Axis.O_X,xv.isCat()?Axis.T_EqCat:Axis.T_Num); ax.addDepend(this);
-        ay=new Axis(yvs[0],Axis.O_Y,Axis.T_Num); ay.addDepend(this);
+        ay=new Axis(yvs[0],Axis.O_Y,yvs[0].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
         ay.setValueRange(totMin-(totMax-totMin)/20,(totMax-totMin)*1.1);
         
         createMenu(f);
@@ -988,12 +988,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 for (int i=0;i<v[0].size();i++){
                     int numNAs=0;
                     for (int j=0;j<v.length;j++){
-                        if ((drawHidden || !m.at(i)) && (v[j].at(i)!=null)) {
-                            xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                        xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                        if(v[j].isCat()){
+                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].getCatIndex(i));
+                        } else {
                             ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
-                        } else{
-                            xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
-                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                        }
+                        if ((!drawHidden && m.at(i)) || v[j].at(i)==null) {
                             naIndices[numNAs++] = j;
                         }
                     }
