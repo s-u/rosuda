@@ -108,20 +108,18 @@ public class PPrimCircle extends PPrimBase {
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
         if(visible && ref!=null){
             
-            if(allowColorBrushing && ref.length>1){ // color brushing pie
-                if(pieces!=null){
-                    int shift=0;
-                    for(int i=0; i<pieces.length; i++){
-                        if (pieces[i]>0) {
-                            final double rmp = getRelativeMarkedProportion(m,i);
-                            if (rmp>0d){
-                                g.setColor(fillColorSel);
-                                if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
-                                g.setColor(borderColorSel);
-                                if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
-                            }
-                            shift+=pieces[i];
+            if(allowColorBrushing && ref.length>1 && pieces!=null){ // color brushing pie
+                int shift=0;
+                for(int i=0; i<pieces.length; i++){
+                    if (pieces[i]>0) {
+                        final double rmp = getRelativeMarkedProportion(m,i);
+                        if (rmp>0d){
+                            g.setColor(fillColorSel);
+                            if(filled) g.fillArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
+                            g.setColor(borderColorSel);
+                            if(drawBorder) g.drawArc(x-diam/2,y-diam/2, diam,diam, shift + startArc, getPropSize(pieces[i],rmp));
                         }
+                        shift+=pieces[i];
                     }
                 }
             } else{
