@@ -34,6 +34,7 @@ endif
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar javaGD.jar
 
+JFLAGS+=-encoding UTF-8
 JAVAC=javac $(JFLAGS)
 
 all: $(TARGETS)
