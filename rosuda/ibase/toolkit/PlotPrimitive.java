@@ -19,7 +19,7 @@ import org.rosuda.pograss.*;
 
 @version $Id$
 */
-public interface PlotPrimitive extends Queryable {
+public interface PlotPrimitive {
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     boolean contains(int x, int y);
 
@@ -62,6 +62,9 @@ public interface PlotPrimitive extends Queryable {
         @return number of cases this primitive represents */
     int cases();
     
+    /** returns whether this primitive should respond to queries. */
+    boolean isQueryable();
+
     /** sets visibility of this primitive */
     void setVisible(boolean b);
 
