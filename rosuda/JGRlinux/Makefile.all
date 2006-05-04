@@ -1,0 +1,25 @@
+# JGR for Linux 0.1   (C) Markus Helbig
+# This is the actual Makefile - all autconf'ed values should
+# be passed as vars, because we also want to use this for
+# the Windows build that has no autoconf
+#
+# Note: the dependencies are often across directories mainly
+# for historical reasons. The Java sources are actually compiled
+# by the Makefile in the src directory, although they are here,
+# because they originally belonged to src.
+
+
+TARGETS=JGRpkg
+
+all: $(TARGETS)
+
+JGRpkg:
+	echo "Install needed R Packages, I need a sudoers password\n"
+	sudo R --vanilla --quiet < pkg-install
+
+clean:
+	$(MAKE) -C src clean
+	rm -rf $(TARGETS) *~  run Makefile config.log
+
+.PHONY: clean all examples
+

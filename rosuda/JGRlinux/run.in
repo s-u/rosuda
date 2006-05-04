@@ -1,0 +1,45 @@
+#!/bin/sh
+
+
+R_SHARE_DIR=@R_SHARE_DIR@
+export R_SHARE_DIR
+R_INCLUDE_DIR=@R_INCLUDE_DIR@
+export R_INCLUDE_DIR
+R_DOC_DIR=@R_DOC_DIR@
+export R_DOC_DIR
+
+R_HOME=@R_HOME@
+
+JRI_LD_PATH=${R_HOME}/library/rJava/jri:${R_HOME}/lib:${R_HOME}/bin:@JAVA_LD_PATH@
+if test -z "$LD_LIBRARY_PATH"; then
+  LD_LIBRARY_PATH=$JRI_LD_PATH
+else
+  LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$JRI_LD_PATH
+fi
+JAVA=@JAVA_PROG@
+
+if [ -r $HOME/.JGRprefsrc ]; then
+    packages=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep DefaultPackages | sed -e s/.*DefaultPackages.*value=\"// -e s/\"..$//g`
+    libs=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRLibraryPath | sed -e s/.*InitialRLibraryPath.*value=\"// -e s/\"..$//g`
+    home=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRHome | sed -e s/.*InitialRHome.*value=\"// -e s/\"..$//g`
+
+    if [ "$home" ]; then
+        export R_HOME=$home
+    else
+        export R_HOME
+    fi
+    if [ "$libs" ]; then
+        export R_LIBS=$libs
+    fi
+    if [ "$packages" ]; then
+        export R_DEFAULT_PACKAGES=$packages
+    fi
+
+else
+    export R_HOME
+    export R_DEFAULT_PACKAGES="utils, stats, rJava, methods, JGR, JavaGD, graphics, datasets"
+fi
+
+export LD_LIBRARY_PATH
+
+${JAVA} -Djava.library.path=.:${LD_LIBRARY_PATH} -jar ${R_HOME}/library/JGR/cont/JGR.jar $*
