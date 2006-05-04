@@ -1,1 +1,1 @@
-install.packages(c("JGR","JavaGD","rJava","iWidgets","iplots"),contriburl="http://www.rosuda.org/R/nightly")
+install.packages(c("JGR","JavaGD","rJava","iWidgets","iplots"),,c("http://cran.r-project.org","http://www.rosuda.org/R/nightly"))

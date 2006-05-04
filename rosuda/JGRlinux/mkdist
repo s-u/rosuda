@@ -5,11 +5,13 @@ SWD=`pwd`
 echo "Removing previous dist ..."
 rm -rf /tmp/${PNAME}
 echo "Copying package base ..."
-cp -r ../../../org /tmp
+mkdir /tmp/${PNAME}
+cp -r ../../../org /tmp/${PNAME}
 
-rm -f /tmp/org/rosuda/${PNAME}/mkdist
+rm -f /tmp/${PNAME}/org/rosuda/${PNAME}/mkdist
+rm -f /tmp/${PNAME}/org/rosuda/*.tar.gz
 
-cd /tmp/org/rosuda/${PNAME}
+cd /tmp/${PNAME}/org/rosuda/${PNAME}
 
 echo "Running autoconf ..."
 rm -rf autom4te*
@@ -37,7 +39,7 @@ echo "Creating package ..."
 cd ..
 tar fcz ${PNAME}-${VER}.tar.gz ${PNAME}
 cd ${SWD}
-cp /tmp/org/rosuda/${PNAME}-${VER}.tar.gz ..
+cp /tmp/${PNAME}/org/rosuda/${PNAME}-${VER}.tar.gz ..
 rm -rf /tmp/${PNAME}
 echo "Done."
 ls -l ../${PNAME}-${VER}.tar.gz
