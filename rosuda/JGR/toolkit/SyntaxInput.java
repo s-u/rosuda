@@ -264,7 +264,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 					if (cmdHelp != null) cmdHelp.hide();
 					if (mComplete != null) mComplete.setVisible(false);
 				}
-				else Toolkit.getDefaultToolkit().beep();
+				else if (fun != null && fun.length() > 0) Toolkit.getDefaultToolkit().beep();
 			}
         }
         else if (mComplete != null && mComplete.isVisible()) {
