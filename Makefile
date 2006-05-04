@@ -32,6 +32,11 @@ IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
 JGR_SRC:=$(filter-out %PlatformMac.java,$(JGR_SRC))
 endif
 
+#ifneq ($(JOGL),yes)
+#IBASE_SRC:=$(filter-out %Jogl% %JOGL%,$(IBASE_SRC))
+IBASE_SRC:=$(filter-out %JOGLGraphicsDevice.java,$(IBASE_SRC))
+#endif
+
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar javaGD.jar
 
 JFLAGS+=-encoding UTF-8
@@ -92,9 +97,10 @@ iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC)
 javaGD.jar: $(JAVAGD_SRC)
 	$(can-with-jar)
 
-iwidgets.jar: iplots.jar JGR.jar $(IWIDGETS_SRC)
+iwidgets.jar: javaGD.jar JGR.jar $(IWIDGETS_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar:JGR.jar $(IWIDGETS_SRC)
+#	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
 
