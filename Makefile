@@ -55,16 +55,12 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: $(IBASE_SRC_JGR) $(JGR_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) 
+JGR.jar: javaGD.jar $(IBASE_SRC_JGR) $(JGR_SRC) $(JRI_SRC) 
 	rm -rf org
-	cp rosuda/ibase/Common.java rosuda/ibase/Common.java_
-	sed -e s/.*PlotComponent.*//g rosuda/ibase/Common.java  > Common.java
-	mv Common.java rosuda/ibase/Common.java
-	$(JAVAC) -d . $^
+	$(JAVAC) -d . -classpath javaGD.jar $(IBASE_SRC_JGR) $(JGR_SRC) $(JRI_SRC)
 	cp rosuda/projects/jgr/splash.jpg .
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
-	mv rosuda/ibase/Common.java_ rosuda/ibase/Common.java
 	rm -rf org splash.jpg icons
 
 jgr-docs: $(JGR_SRC) 
