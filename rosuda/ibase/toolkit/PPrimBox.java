@@ -50,15 +50,23 @@ public class PPrimBox extends PPrimBase {
     public int[] valPos;
     
     // parallel variables for selections
+    public Rectangle sr;
     public int smed,suh,slh,suh15,slh15;
     public double suh3,slh3;
     public int sx;
     
     public Outlier queriedOutlier;
 
-    public int sw, slowEdge, slastTop, shighEdge;
+    public int sw;
+
+    public boolean queriedSelection=false;
+
+    public int slowEdge, slastTop, shighEdge;
     public double[] slastR;
     public int[] svalPos;
+    
+    /** whether contains returns true if the queried point lies in hiliting box */
+    public boolean containsInSelection = true;
     
     /** Creates a new instance of PPrimBox */
     public PPrimBox() {
@@ -186,6 +194,7 @@ public class PPrimBox extends PPrimBase {
         
         switch(orientation){
             case 0:
+                sr = new Rectangle(sx,suh,sw, slh-suh);
                 g.setColor(fillColorSel);
                 g.fillRect(sx,suh,
                         sw,slh-suh);
@@ -227,6 +236,7 @@ public class PPrimBox extends PPrimBase {
                 }
                 break;
             case 1:
+                sr = new Rectangle(slh,sx, suh-slh,sw);
                 g.setColor(fillColorSel);
                 g.fillRect(slh,sx,
                         suh-slh,sw);
@@ -272,7 +282,14 @@ public class PPrimBox extends PPrimBase {
     
     public boolean contains(final int x, final int y) {
         queriedOutlier=null;
-        if(r!=null && r.contains(x,y)) return true;
+        if(r!=null && r.contains(x,y)) {
+            queriedSelection = false;
+            return true;
+        }
+        if(containsInSelection && sr!=null && sr.contains(x,y)){
+            queriedSelection = true;
+            return true;
+        }
         for(Iterator it = outliers.listIterator(); it.hasNext();){
             Outlier o = (Outlier)it.next();
             if(o.contains(x,y)) {
