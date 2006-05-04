@@ -49,7 +49,11 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** plot primitives which form the basis for data display and selection */
     protected PlotPrimitive[] pp;
     
-    /** optional axis. Axis is not initialized by BaseCanvas (since BaseCanvas knows nothing of variables). They are provided to support some degree of consistence among plots which use one or two axes. If used, axis geometry is updated upon resize by the default paint routine and value range is changed by default zooming methods (atm for axes of type T_Num only). The axes are defined with respect to the data, NOT to the geometry. Calling the default {@link #rotate} method results in updated geometry of the axes, meaning that ax does not necessarily have the orientation O_X (unless rotation is prohibited). */
+    /** 
+     * List of objects that respond to queries not including those contained in {@link #pp}.
+     * Should contain only objects which implement the interface Queryable.
+     */
+    protected List queryables = new ArrayList();
     
     /** by default BaseCanvas caches layers whenever possible, that is only {@link #paintInit} is guaranteed        to be run before {@link #paintBack}, {@link #paintObjects} and {@link #paintSelected}. This implies that none of the later three can rely on anything happening in the preceeding paint methods. This is not the usual behavior of PoGraSS. Setting this dontCache flag to <code>true</code> will enforce the defined PoGraSS behavior which means that all paint.. parts are called in the specified order, no matter which layer is being updated. */
     protected boolean dontCache=false;
