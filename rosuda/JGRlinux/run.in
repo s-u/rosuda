@@ -40,6 +40,9 @@ else
     export R_DEFAULT_PACKAGES="utils, stats, rJava, methods, JGR, JavaGD, graphics, datasets"
 fi
 
+NO_SIG=1
+export NO_SIG
+
 export LD_LIBRARY_PATH
 
 ${JAVA} -Djava.library.path=.:${LD_LIBRARY_PATH} -jar ${R_HOME}/library/JGR/cont/JGR.jar $*
