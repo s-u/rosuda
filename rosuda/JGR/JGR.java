@@ -125,6 +125,10 @@ public class JGR {
 	/** arguments for Rengine*/
 	private static String[] rargs = {"--save"};
 
+	/** Set to <code>true</code> when JGR is running as the main program
+	    and <code>false</code> if the classes are loaded, but not run via main. */
+	private static boolean JGRmain = false;
+
 	/**
 	 * Starting the JGR Application (javaside)
 	 */
@@ -235,6 +239,7 @@ public class JGR {
 	 * @param name MenuName
 	 */
 	public static void addMenu(String name) {
+		if (MAINRCONSOLE == null) return;
 		iMenu.addMenu(MAINRCONSOLE, name);
 	}
 
@@ -246,6 +251,7 @@ public class JGR {
 	 * @param cmd Command
 	 */
 	public static void addMenuItem(String menu, String name, String cmd) {
+		if (MAINRCONSOLE == null) return;
 		if (jgrlistener == null)
 			jgrlistener = new JGRListener();
 		iMenu.addMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
@@ -257,6 +263,7 @@ public class JGR {
 	 * @param menu MenuName
 	 */
 	public static void addMenuSeparator(String menu) {
+		if (MAINRCONSOLE == null) return;
 		iMenu.addMenuSeparator(MAINRCONSOLE, menu);
 	}
 
@@ -388,6 +395,11 @@ public class JGR {
 		}
 	}
 	
+	/** return the value of the {@link #JGRmain} flag */
+	public static boolean isJGRmain() {
+		return JGRmain;
+	}
+	
 	private void checkForMissingPkg() {
 		try {
 			String previous = JGRPrefs.previousPackages;
@@ -417,6 +429,7 @@ public class JGR {
 	 * or any other option supported by R.
 	 */
 	public static void main(String[] args) {
+		JGRmain = true;
 		if (args.length > 0) {
 			Vector args2 = new Vector();
 			for (int i = 0; i < args.length; i++) {
