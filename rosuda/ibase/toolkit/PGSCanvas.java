@@ -369,4 +369,61 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
         setUpdateRoot(0);
         repaint();
     }
+    
+    public void setOption(final String variable, final boolean value){
+        try {
+            this.getClass().getField(variable).setBoolean(this,value);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void setOption(final String variable, final int value){
+        try {
+            this.getClass().getField(variable).setInt(this,value);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void setOption(final String variable, final double value){
+        try {
+            this.getClass().getField(variable).setDouble(this,value);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    public void setOption(final String variable, final String value){
+        try {
+            this.getClass().getField(variable).set(this,value);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
 }
