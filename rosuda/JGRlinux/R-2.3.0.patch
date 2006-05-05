@@ -1,0 +1,13 @@
+Index: src/main/main.c
+===================================================================
+--- src/main/main.c     (revision 37725)
++++ src/main/main.c     (working copy)
+@@ -786,7 +786,7 @@
+     doneit = 0;
+     SETJMP(R_Toplevel.cjmpbuf);
+     R_GlobalContext = R_ToplevelContext = &R_Toplevel;
+-    init_signal_handlers();
++    if (!getenv("NO_SIG")) init_signal_handlers();
+     if (!doneit) {
+        doneit = 1;
+        R_ReplFile(fp, baseEnv, 0, 0);
