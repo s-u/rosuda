@@ -39,7 +39,10 @@ IBASE_SRC:=$(filter-out %JOGLGraphicsDevice.java,$(IBASE_SRC))
 
 TARGETS=JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JGRinst.jar Mondrian.jar javaGD.jar
 
-JFLAGS+=-encoding UTF-8
+ifeq ($(JDKVER),)
+JDKVER:=1.4
+endif
+JFLAGS+=-encoding UTF-8 -target $(JDKVER) -source $(JDKVER)
 JAVAC=javac $(JFLAGS)
 
 all: $(TARGETS)
