@@ -28,10 +28,6 @@ As of JGR 1.4 everything is 'autoconf'igured.
 2) ./configure
 3) make
 
-Note for Windows users: you will need the same tools
-that are necessary to build R, i.e. the /bin tools
-and MinGW. See R for details.
-
  How to start JGR
 ----------------
 
