@@ -99,11 +99,13 @@ public class MosaicCanvas extends BaseCanvas {
         if(dontPaint) return;
         
         final int maxLabelLength=create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
-        final int omLeft=mLeft;
-        if(maxLabelLength*8>standardMLeft){
-            mLeft=8*maxLabelLength+2;
-        } else mLeft=standardMLeft;
-        if(mLeft!=omLeft) create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
+        if(autoAdjustMargins){
+            final int omLeft=mLeft;
+            if(maxLabelLength*8>standardMLeft){
+                mLeft=8*maxLabelLength+2;
+            } else mLeft=standardMLeft;
+            if(mLeft!=omLeft) create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
+        }
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         
@@ -128,37 +130,37 @@ public class MosaicCanvas extends BaseCanvas {
     }
     
     public String queryObject(final int i) {
-    	String qs="";
-    	final boolean actionExtQuery=isExtQuery;
-    	if(actionExtQuery) {
-    		if(pp!=null && pp[i]!= null) {
-    			final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-    			qs+=((PPrimMosaic) pp[i]).toString()+
-    			"\ncount: "+pp[i].cases();
-    			if(v!=null && v[0]!=null) qs+=" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v[0].size()),2)+"% of total)";
-    			if(mark>0) {
-    				qs+="\nselected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
-                    ((v!=null&&v[0]!=null)?Tools.getDisplayableValue(100.0*mark/((double)v[0].size()),2)+"% of total, ":"")+
-                    Tools.getDisplayableValue(100.0*mark/((double)m.marked()),2)+"% of total selection)";
-    			}
-    		} else qs="N/A";
-    	} else {
-    		if (pp!=null && pp[i]!=null) {
-    			final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-    			qs+=((PPrimMosaic) pp[i]).toString()+
-    			"\ncount: "+pp[i].cases()+((mark>0)?"\nselected: "+mark:"");
-    		} else qs="N/A";
-    	}
+        String qs="";
+        final boolean actionExtQuery=isExtQuery;
+        if(actionExtQuery) {
+            if(pp!=null && pp[i]!= null) {
+                final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+                qs+=((PPrimMosaic) pp[i]).toString()+
+                        "\ncount: "+pp[i].cases();
+                if(v!=null && v[0]!=null) qs+=" ("+Tools.getDisplayableValue(100.0*(pp[i].cases())/((double)v[0].size()),2)+"% of total)";
+                if(mark>0) {
+                    qs+="\nselected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
+                            ((v!=null&&v[0]!=null)?Tools.getDisplayableValue(100.0*mark/((double)v[0].size()),2)+"% of total, ":"")+
+                            Tools.getDisplayableValue(100.0*mark/((double)m.marked()),2)+"% of total selection)";
+                }
+            } else qs="N/A";
+        } else {
+            if (pp!=null && pp[i]!=null) {
+                final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+                qs+=((PPrimMosaic) pp[i]).toString()+
+                        "\ncount: "+pp[i].cases()+((mark>0)?"\nselected: "+mark:"");
+            } else qs="N/A";
+        }
         return qs;
     }
     
     public String queryPlotSpace() {
         if(v==null) return null;
         else {
-        	String qps="Mosaicplot (";
-        	for(int i=0;i<v.length-1;i++) qps+=v[i].getName()+", ";
-        	qps+=v[v.length-1].getName()+")";
-        	return qps+((m.marked()>0)?"\n"+m.marked()+" selected case(s)":"");
+            String qps="Mosaicplot (";
+            for(int i=0;i<v.length-1;i++) qps+=v[i].getName()+", ";
+            qps+=v[v.length-1].getName()+")";
+            return qps+((m.marked()>0)?"\n"+m.marked()+" selected case(s)":"");
         }
     }
     
