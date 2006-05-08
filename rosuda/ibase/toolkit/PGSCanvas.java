@@ -1,5 +1,7 @@
 package org.rosuda.ibase.toolkit;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -371,59 +373,138 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     }
     
     public void setOption(final String variable, final boolean value){
+        Field field = null;
         try {
-            this.getClass().getField(variable).setBoolean(this,value);
-        } catch (IllegalArgumentException ex) {
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
             ex.printStackTrace();
-        } catch (SecurityException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchFieldException ex) {
-            ex.printStackTrace();
+        }
+        
+        if(field!=null){
+            try {
+                field.setBoolean(this,value);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,Boolean.TYPE,Boolean.valueOf(value));
+            } catch (NoSuchMethodException ex) {
+                System.err.println("Variable " + variable + " does not exist or cannot be set.");
+            }
         }
     }
     
     public void setOption(final String variable, final int value){
-        try {
-            this.getClass().getField(variable).setInt(this,value);
-        } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
-        } catch (SecurityException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchFieldException ex) {
-            ex.printStackTrace();
-        }
+        if(!setOptionInt(variable,value))
+            System.err.println("Variable " + variable + " does not exist or cannot be set.");
     }
     
     public void setOption(final String variable, final double value){
+        Field field = null;
         try {
-            this.getClass().getField(variable).setDouble(this,value);
-        } catch (IllegalArgumentException ex) {
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
             ex.printStackTrace();
-        } catch (SecurityException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchFieldException ex) {
-            ex.printStackTrace();
+        }
+        
+        if(field!=null){
+            try {
+                field.setDouble(this,value);
+            } catch (IllegalArgumentException ex) {
+                if(value-(int)value == 0){
+                    if(setOptionInt(variable,(int)value)) return;
+                }
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,Double.TYPE,new Double(value));
+            } catch (NoSuchMethodException ex) {
+                if(value-(int)value == 0) 
+                    try {
+                        invokeSetterMethod(variable,Integer.TYPE,new Integer((int)value));
+                        return;
+                    } catch (NoSuchMethodException exx) {
+                        System.err.println("Variable " + variable + " does not exist or cannot be set.");
+                    }
+                System.err.println("Variable " + variable + " does not exist or cannot be set.");
+            }
         }
     }
     
     public void setOption(final String variable, final String value){
+        Field field = null;
         try {
-            this.getClass().getField(variable).set(this,value);
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
+            ex.printStackTrace();
+        }
+        
+        if(field!=null){
+            try {
+                field.set(this,value);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,String.class,value);
+            } catch (NoSuchMethodException ex) {
+                System.err.println("Variable " + variable + " does not exist or cannot be set.");
+            }
+        }
+    }
+    
+    private void invokeSetterMethod(String variable,Class paramType,Object newValue) throws NoSuchMethodException {
+        try {
+            this.getClass().getMethod("set" + variable.substring(0,1).toUpperCase() + variable.substring(1),
+                    new Class[] {paramType}).invoke(this,new Object[] {newValue});
+        } catch (SecurityException ex) {
+            ex.printStackTrace();
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
-        } catch (SecurityException ex) {
+        } catch (InvocationTargetException ex) {
             ex.printStackTrace();
         } catch (IllegalAccessException ex) {
             ex.printStackTrace();
-        } catch (NoSuchFieldException ex) {
-            ex.printStackTrace();
         }
+    }
+    
+    private boolean setOptionInt(String variable, int value) {
+        Field field = null;
+        try {
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        
+        if(field!=null){
+            try {
+                field.setInt(this,value);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return false;
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,Integer.TYPE,new Integer(value));
+            } catch (NoSuchMethodException ex) {
+                System.err.println("Variable " + variable + " does not exist or cannot be set.");
+                return false;
+            }
+        }
+        return true;
     }
     
 }
