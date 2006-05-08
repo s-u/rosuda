@@ -181,30 +181,32 @@ public class HistCanvas extends BaseCanvas {
     }
     
     public void paintBack(final PoGraSS g) {
-        int maxLabelLength=0;
-        {
-            final Axis axis = (orientation==0 || orientation==2)?ay:ax;
-            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-            double fi=axis.getSensibleTickStart(f);
-            while (fi<axis.vBegin+axis.vLen) {
-                final String s=axis.getDisplayableValue(fi);
-                if(s.length()>maxLabelLength) maxLabelLength=s.length();
-                fi+=f;
+        if(autoAdjustMargins){
+            int maxLabelLength=0;
+            {
+                final Axis axis = (orientation==0 || orientation==2)?ay:ax;
+                final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+                double fi=axis.getSensibleTickStart(f);
+                while (fi<axis.vBegin+axis.vLen) {
+                    final String s=axis.getDisplayableValue(fi);
+                    if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                    fi+=f;
+                }
             }
-        }
-        
-        if(orientation==3){
-            final int omRight=mRight;
-            if(maxLabelLength*8>20){
-                mRight = maxLabelLength*8+2;
-            } else mRight=20;
-            if(mRight!=omRight) updateObjects();
-        } else{
-            final int omLeft=mLeft;
-            if(maxLabelLength*8>20){
-                mLeft = maxLabelLength*8+2;
-            } else mLeft=20;
-            if(mLeft!=omLeft) updateObjects();
+            
+            if(orientation==3){
+                final int omRight=mRight;
+                if(maxLabelLength*8>20){
+                    mRight = maxLabelLength*8+2;
+                } else mRight=20;
+                if(mRight!=omRight) updateObjects();
+            } else{
+                final int omLeft=mLeft;
+                if(maxLabelLength*8>20){
+                    mLeft = maxLabelLength*8+2;
+                } else mLeft=20;
+                if(mLeft!=omLeft) updateObjects();
+            }
         }
         
         g.setColor(COL_OUTLINE);
