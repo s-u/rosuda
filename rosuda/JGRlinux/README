@@ -1,37 +1,39 @@
  JGR - Java GUI for R - start script for unix systems
 ------------------------------------------------------
 
-This package contains code that is necessary to run JGR.
+This package contains a script that starts JGR.
+In contrary to previous versions, for JGR 1.4
+all code is now in R packages such that only a single
+shell script is needed.
 
  How to compile
 ----------------
 
 As of JGR 1.4 everything is 'autoconf'igured.
 
-0) If you want to use R 2.3.0, you need to compile a
-   patched version of R. Get the sources for R 2.3.0
-   and apply the supplied R-2.3.0.patch - e.g.:
-   cd R-2.3.0
-   patch -p0 < ~/JGRlinux/R-2.3.0.patch
-   Compile and install such patched R.
+1) Make sure you have
+   - R 2.3.0 patched 2006-05-08 or later
+     (2.3.0 release version will NOT work!)
+   - JDK 1.5 (aka J2SE 1.5) with java command
+     on the PATH. Alternatively you can set
+     JAVA_HOME to point to the JDK root directory.
 
-   Background: R 2.3.0 installs special signal handlers
-   that (by definition) don't work in multi-threaded
-   environments such as Java. Unfortunately there is no
-   way to disable this "feature" in R 2.3.0. The patch
-   allows us to disable it by setting NO_SIG env var.
-
-1) Make sure JDK 1.4 or higher is installed (on Linux
-   1.5 or later must be installed) and all java
-   commands are ont the PATH. Alternatively you can
-   set JAVA_HOME instead.
 2) ./configure
+   # this step will create the run script
+
 3) make
+   # this step will install necessay R packages
+   # (if you are in the sudoers file and sudo is installed)
+   # you can do this manually is necessary, install:
+     - rJava 0.4-2 or later
+     - JGR 1.4-0 or later
+     - JavaGD 0.3-3 or later
 
  How to start JGR
 ----------------
 
-run
+./run
 
 ---
-04/2006 M.H.
+Last change: 2006/05/08 SU
+
