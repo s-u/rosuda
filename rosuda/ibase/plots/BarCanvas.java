@@ -50,7 +50,7 @@ public class BarCanvas extends BaseCanvas {
     private MenuItem MIspine=null;
     private MenuItem MIlabels=null;
     
-
+    
     
     // needed for axis-query
     private int[] axcoordX;
@@ -67,7 +67,7 @@ public class BarCanvas extends BaseCanvas {
         allowDragMove=true;
         
         setDefaultMargins(new int[] {10,10,10,20,40,10,10,10});
-
+        
         axcoordX=new int[2]; axcoordY=new int[2];
         
         v=var; weight=wvar;
@@ -339,15 +339,7 @@ public class BarCanvas extends BaseCanvas {
             repaint();
         }
         if (M_SPINE.equals(cmd)) {
-            if (isSpine) {
-                ax.setType(Axis.T_EqCat);
-                MIspine.setLabel("Spineplot");
-                isSpine=false;
-            } else {
-                ax.setType(Axis.T_PropCat);
-                MIspine.setLabel("Barchart");
-                isSpine=true;
-            }
+            setIsSpine(!isSpine);
             updateObjects();
             setUpdateRoot(0);
             repaint();
@@ -482,4 +474,19 @@ public class BarCanvas extends BaseCanvas {
         }
     }
     
+    
+    public boolean isIsSpine() {
+        return this.isSpine;
+    }
+    
+    public void setIsSpine(final boolean isSpine) {
+        if(isSpine){
+            ax.setType(Axis.T_PropCat);
+            MIspine.setLabel("Barchart");
+        } else{
+            ax.setType(Axis.T_EqCat);
+            MIspine.setLabel("Spineplot");
+        }
+        this.isSpine = isSpine;
+    }
 }
