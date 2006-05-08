@@ -61,8 +61,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** marker of the plot. This marker is used for linked highlighting. */
     protected SMarker m;
     
+    /** if set to <code>true</code> then the margins can be adjusted automatically */
+    public boolean autoAdjustMargins=true;
     /** plot area margins. Axes are set in a way to always respect those margins. They default to 0 for BaseCanvas. */
-    protected int mLeft, mRight, mTop, mBottom;
+    public int mLeft, mRight, mTop, mBottom;
     /** orientation of the plot. Value between 0 and 3. Increasing orientation results in plot rotating by 90 degrees clock-wise. */
     protected int orientation=0;
     /** if set to <code>true</code> then rotating the canvas also results in flipped size geometry of the canvas. */
@@ -227,7 +229,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;
-        adjustMargin(g);
+        if(autoAdjustMargins) adjustMargin(g);
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         final Rectangle r=getBounds();
         final int w=r.width;
@@ -270,7 +272,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                     case 3: for(int i=0; i<opAx.length; i++) if(opAx[i]!=null) opAx[i].setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
                 }
             }
-            marginsAdjusted = adjustMargin(g);
+            marginsAdjusted = (autoAdjustMargins && adjustMargin(g));
             updateGeometry = updateGeometry || marginsAdjusted;
         } while (marginsAdjusted);
         if (H!=h || W!=w || updateGeometry) {
