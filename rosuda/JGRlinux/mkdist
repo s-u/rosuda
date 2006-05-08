@@ -23,7 +23,7 @@ rm -rf autom4te*
 echo "Compiling getsp ..."
 if [ ! -e tools/getsp.class ]; then
     cd tools
-    javac getsp.java
+    javac -source 1.2 -target 1.2 getsp.java
     cd ..
 fi
 
