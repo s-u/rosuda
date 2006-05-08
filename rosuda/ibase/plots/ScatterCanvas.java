@@ -381,33 +381,35 @@ public class ScatterCanvas extends BaseCanvas {
     
     public void paintBack(final PoGraSS g) {
         
-        /* determine maximal y label length */
-        int maxLabelLength=0;
-        {
-            final int ori = (orientation==0)?1:0;
-            final Axis axis = (orientation==0)?ay:ax;
-            final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-            double fi=axis.getSensibleTickStart(f);
-            try {
-                while (fi<axis.vBegin+axis.vLen) {
-                    String s;
-                    if(v[ori].isCat()) s=v[ori].getCatAt((int)(fi+0.5)).toString();
-                    else s=axis.getDisplayableValue(fi);
-                    if(s.length()>maxLabelLength) maxLabelLength=s.length();
-                    fi+=f;
+        if(autoAdjustMargins){
+            /* determine maximal y label length */
+            int maxLabelLength=0;
+            {
+                final int ori = (orientation==0)?1:0;
+                final Axis axis = (orientation==0)?ay:ax;
+                final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+                double fi=axis.getSensibleTickStart(f);
+                try {
+                    while (fi<axis.vBegin+axis.vLen) {
+                        String s;
+                        if(v[ori].isCat()) s=v[ori].getCatAt((int)(fi+0.5)).toString();
+                        else s=axis.getDisplayableValue(fi);
+                        if(s.length()>maxLabelLength) maxLabelLength=s.length();
+                        fi+=f;
+                    }
+                } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
                 }
-            } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
             }
+            
+            final int omLeft=mLeft;
+            if(maxLabelLength*8>standardMLeft){
+                mLeft = maxLabelLength*8+2;
+            } else mLeft=standardMLeft;
+            if(mLeft!=omLeft) updateObjects();
         }
         
-        final int omLeft=mLeft;
-        if(maxLabelLength*8>standardMLeft){
-            mLeft = maxLabelLength*8+2;
-        } else mLeft=standardMLeft;
-        if(mLeft!=omLeft) updateObjects();
-        
         final Dimension Dsize=getSize();
-        if (Dsize.width!=TW || Dsize.height!=TH || mLeft!=omLeft)
+        if (Dsize.width!=TW || Dsize.height!=TH)
             updateObjects();
         
         if (TW<50||TH<50) {
