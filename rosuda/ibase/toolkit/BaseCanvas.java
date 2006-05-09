@@ -64,7 +64,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** if set to <code>true</code> then the margins can be adjusted automatically */
     public boolean autoAdjustMargins=true;
     /** plot area margins. Axes are set in a way to always respect those margins. They default to 0 for BaseCanvas. */
-    public int mLeft, mRight, mTop, mBottom;
+    protected int mLeft, mRight, mTop, mBottom;
     /** orientation of the plot. Value between 0 and 3. Increasing orientation results in plot rotating by 90 degrees clock-wise. */
     protected int orientation=0;
     /** if set to <code>true</code> then rotating the canvas also results in flipped size geometry of the canvas. */
@@ -1158,4 +1158,40 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
     }
     
+
+    public int getMBottom() {
+        return this.mBottom;
+    }
+
+    public void setMBottom(final int mBottom) {
+        this.mBottom = mBottom;
+        updateGeometry=true;
+    }
+
+    public int getMLeft() {
+        return this.mLeft;
+    }
+
+    public void setMLeft(final int mLeft) {
+        this.mLeft = mLeft;
+        updateGeometry=true;
+    }
+
+    public int getMRight() {
+        return this.mRight;
+    }
+
+    public void setMRight(final int mRight) {
+        this.mRight = mRight;
+        updateGeometry=true;
+    }
+
+    public int getMTop() {
+        return this.mTop;
+    }
+
+    public void setMTop(final int mTop) {
+        this.mTop = mTop;
+        updateGeometry=true;
+    }
 }
