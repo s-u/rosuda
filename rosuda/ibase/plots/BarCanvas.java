@@ -218,43 +218,27 @@ public class BarCanvas extends BaseCanvas {
         if(isShowLabels()){
             labels.clear();
             
-            double overlap=0; // used to handle overlapping labels
-            boolean prevEmpty=true;
-            for(int i=0; i<bars; i++){
-                String label=null;
-                final Rectangle rec = ((PPrimRectangle)pp[i]).r;
-                if (orientation==0){
-                    if (rec.width<g.getWidthEstimate(cat_nam[i])){ // if there is not enoug space for full category name
-                        if(overlap<=0){ // if there is no label overlapping this label's space
-                            final String abbrCatName = Common.getTriGraph(cat_nam[i]);
-                            if(rec.width<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
-                                overlap=g.getWidthEstimate(abbrCatName)-rec.width+10;
-                                if(prevEmpty) label=abbrCatName;
-                            } else{
-                                label=abbrCatName;
-                                prevEmpty=false;
-                            }
-                        } else{
-                            overlap-=rec.width;
-                            prevEmpty=true;
-                        }
-                    } else{
-                        label=cat_nam[i];
-                        prevEmpty=false;
-                        if(overlap>0){ // if there is a label overlapping this label's space
-                            overlap-=rec.width;
-                        }
-                    }
-                    if(label!=null){
-                        labels.add((2*rec.x+rec.width)/2,h-mBottom/2,0.5,0.3,label);
-                    }
-                } else {
+            if(orientation==0){
+                int[] bar_widths = new int[pp.length];
+                int[] bar_poss = new int[pp.length];
+                for(int i=0; i<pp.length; i++){
+                    bar_widths[i] = ((PPrimRectangle)pp[i]).r.width;
+                    bar_poss[i] = (2*((PPrimRectangle)pp[i]).r.x + bar_widths[i])/2;
+                }
+                final boolean abbreviate = !Character.isDigit(cat_nam[0].charAt(0));
+                addXLabels(g,ax,cat_nam,bar_widths,bar_poss,false,abbreviate);
+            } else{
+                for(int i=0; i<bars; i++){
+                    String label=null;
                     label=cat_nam[i];
                     if(label!=null){
+                        Rectangle rec = ((PPrimRectangle)pp[i]).r;
                         labels.add(2,(2*rec.y+rec.height)/2,0,0.5,mLeft,label);
                     }
                 }
             }
+            
+            
             labels.finishAdd();
         }
     };

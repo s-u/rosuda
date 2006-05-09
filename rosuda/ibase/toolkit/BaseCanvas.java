@@ -49,7 +49,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** plot primitives which form the basis for data display and selection */
     protected PlotPrimitive[] pp;
     
-    /** 
+    /**
      * List of objects that respond to queries not including those contained in {@link #pp}.
      * Should contain only objects which implement the interface Queryable.
      */
@@ -1130,14 +1130,54 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
     }
     
+    public void addXLabels(PoGraSS g, Axis axis, String[] names, int[] maxWidths, int[] xPositions, boolean ticks, boolean abbreviate) {
+        double overlap=0; // used to handle overlapping labels
+        boolean prevEmpty=true;
+        for(int i=0; i<xPositions.length; i++){
+            String label=null;
+            if (orientation==0){
+                if (maxWidths[i]<g.getWidthEstimate(names[i])){ // if there is not enoug space for full category name
+                    if(overlap<=0){ // if there is no label overlapping this label's space
+                        final String abbrCatName = Common.getTriGraph(names[i]);
+                        if(!abbreviate || maxWidths[i]<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
+                            overlap=g.getWidthEstimate(abbrCatName)-maxWidths[i]+10;
+                            if(prevEmpty && abbreviate) label=abbrCatName;
+                        } else{
+                            label=abbrCatName;
+                            prevEmpty=false;
+                        }
+                    } else{
+                        overlap-=maxWidths[i];
+                        prevEmpty=true;
+                    }
+                } else{
+                    label=names[i];
+                    prevEmpty=false;
+                    if(overlap>0){ // if there is a label overlapping this label's space
+                        overlap-=maxWidths[i];
+                    }
+                }
+                if(label!=null){
+                    labels.add(xPositions[i],getBounds().height-mBottom/2,0.5,0.3,label);
+                }
+                if(ticks){
+                    final int baseYPos = getBounds().height - mBottom;
+                    g.drawLine(xPositions[i],baseYPos,xPositions[i],baseYPos+3);
+                }
+            } else {
+                // this method is currently only used with ori=0
+            }
+        }
+    }
+    
     public void addYLabels(PoGraSS g, Axis axis, boolean ticks, boolean abbreviate) {
         addYLabels_internal(g,axis,null,ticks,abbreviate);
     }
-
+    
     public void addYLabels(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
         addYLabels_internal(g,axis,sVar,ticks,abbreviate);
     }
-
+    
     private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
         final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
         double fi=axis.getSensibleTickStart(f);
@@ -1158,38 +1198,38 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
     }
     
-
+    
     public int getMBottom() {
         return this.mBottom;
     }
-
+    
     public void setMBottom(final int mBottom) {
         this.mBottom = mBottom;
         updateGeometry=true;
     }
-
+    
     public int getMLeft() {
         return this.mLeft;
     }
-
+    
     public void setMLeft(final int mLeft) {
         this.mLeft = mLeft;
         updateGeometry=true;
     }
-
+    
     public int getMRight() {
         return this.mRight;
     }
-
+    
     public void setMRight(final int mRight) {
         this.mRight = mRight;
         updateGeometry=true;
     }
-
+    
     public int getMTop() {
         return this.mTop;
     }
-
+    
     public void setMTop(final int mTop) {
         this.mTop = mTop;
         updateGeometry=true;
