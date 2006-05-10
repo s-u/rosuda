@@ -1130,42 +1130,51 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
     }
     
-    public void addXLabels(PoGraSS g, Axis axis, String[] names, int[] maxWidths, int[] xPositions, boolean ticks, boolean abbreviate) {
+    public void addXLabels(PoGraSS g, Axis axis, String[] names, int maxWidth, int[] positions, boolean ticks, boolean abbreviate) {
+        addXLabels(g,axis,names,new int[]{maxWidth},positions,ticks,abbreviate);
+    }
+    
+    public void addXLabels(PoGraSS g, Axis axis, String[] names, int[] maxWidths, int[] positions, boolean ticks, boolean abbreviate) {
         double overlap=0; // used to handle overlapping labels
         boolean prevEmpty=true;
-        for(int i=0; i<xPositions.length; i++){
-            String label=null;
+        for(int i=0; i<positions.length; i++){
+            final int maxW = maxWidths[Math.min(maxWidths.length-1,i)];
             if (orientation==0){
-                if (maxWidths[i]<g.getWidthEstimate(names[i])){ // if there is not enoug space for full category name
+                String label=null;
+                if (maxW<g.getWidthEstimate(names[i])){ // if there is not enoug space for full category name
                     if(overlap<=0){ // if there is no label overlapping this label's space
                         final String abbrCatName = Common.getTriGraph(names[i]);
-                        if(!abbreviate || maxWidths[i]<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
-                            overlap=g.getWidthEstimate(abbrCatName)-maxWidths[i]+10;
+                        if(!abbreviate || maxW<g.getWidthEstimate(abbrCatName)+10){ // if there is not enough space for TriGraph
+                            overlap=g.getWidthEstimate(abbrCatName)-maxW+10;
                             if(prevEmpty && abbreviate) label=abbrCatName;
                         } else{
                             label=abbrCatName;
                             prevEmpty=false;
                         }
                     } else{
-                        overlap-=maxWidths[i];
+                        overlap-=maxW;
                         prevEmpty=true;
                     }
                 } else{
                     label=names[i];
                     prevEmpty=false;
                     if(overlap>0){ // if there is a label overlapping this label's space
-                        overlap-=maxWidths[i];
+                        overlap-=maxW;
                     }
                 }
                 if(label!=null){
-                    labels.add(xPositions[i],getBounds().height-mBottom/2,0.5,0.3,label);
+                    labels.add(positions[i],getBounds().height-mBottom/2,0.5,0.3,label);
                 }
                 if(ticks){
                     final int baseYPos = getBounds().height - mBottom;
-                    g.drawLine(xPositions[i],baseYPos,xPositions[i],baseYPos+3);
+                    g.drawLine(positions[i],baseYPos,positions[i],baseYPos+3);
                 }
             } else {
-                // this method is currently only used with ori=0
+                final int xPos = mLeft-3;
+                labels.add(xPos,positions[i],1,0.5,maxW,names[i]);
+                if(ticks){
+                    g.drawLine(mLeft-3,positions[i],mLeft,positions[i]);
+                }
             }
         }
     }

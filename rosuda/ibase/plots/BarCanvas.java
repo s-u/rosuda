@@ -54,6 +54,8 @@ public class BarCanvas extends BaseCanvas {
     
     // needed for axis-query
     private int[] axcoordX;
+    
+    public boolean drawTicks = false;
     private int[] axcoordY;
     
     /** creates a (weighted) barchart
@@ -218,6 +220,7 @@ public class BarCanvas extends BaseCanvas {
         if(isShowLabels()){
             labels.clear();
             
+            final boolean abbreviate = !Character.isDigit(cat_nam[0].charAt(0));
             if(orientation==0){
                 int[] bar_widths = new int[pp.length];
                 int[] bar_poss = new int[pp.length];
@@ -225,19 +228,15 @@ public class BarCanvas extends BaseCanvas {
                     bar_widths[i] = ((PPrimRectangle)pp[i]).r.width;
                     bar_poss[i] = (2*((PPrimRectangle)pp[i]).r.x + bar_widths[i])/2;
                 }
-                final boolean abbreviate = !Character.isDigit(cat_nam[0].charAt(0));
-                addXLabels(g,ax,cat_nam,bar_widths,bar_poss,false,abbreviate);
+                addXLabels(g,ax,cat_nam,bar_widths,bar_poss,drawTicks,abbreviate);
             } else{
-                for(int i=0; i<bars; i++){
-                    String label=null;
-                    label=cat_nam[i];
-                    if(label!=null){
-                        Rectangle rec = ((PPrimRectangle)pp[i]).r;
-                        labels.add(2,(2*rec.y+rec.height)/2,0,0.5,mLeft,label);
-                    }
+                int[] bar_poss = new int[pp.length];
+                for(int i=0; i<pp.length; i++){
+                    final Rectangle rec = ((PPrimRectangle)pp[i]).r;
+                    bar_poss[i] = (2*rec.y+rec.height)/2;
                 }
+                addXLabels(g,ax,cat_nam,mLeft,bar_poss,drawTicks,abbreviate);
             }
-            
             
             labels.finishAdd();
         }
