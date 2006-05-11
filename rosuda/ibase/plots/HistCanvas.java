@@ -29,7 +29,7 @@ public class HistCanvas extends BaseCanvas {
     /** associated variable */
     protected SVar v;
     
-    protected double anchor, binw;
+    public double anchor, binw;
     
     private static final int DRAGMODE_NONE = 0;
     private static final int DRAGMODE_BINW = 1;
@@ -165,19 +165,6 @@ public class HistCanvas extends BaseCanvas {
             setBoundValues();
             sw.profile("HistCanvasNew.updateObject create primitives");
         }
-    }
-    
-    public void setHistParam(final double anchor, final double binw) {
-        this.anchor=anchor; this.binw=binw;
-        updateObjects();
-        setUpdateRoot(0);
-        repaint();
-    }
-    
-    public double[] getHistParam() {
-        final double[] hp=new double[3];
-        hp[0]=anchor; hp[1]=binw; hp[2]=v.getMax();
-        return hp;
     }
     
     public void paintBack(final PoGraSS g) {
