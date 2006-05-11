@@ -17,7 +17,7 @@ public class ScatterCanvas extends BaseCanvas {
     static final String M_EQUISCALE = "equiscale";
     static final String M_MINUS = "-";
     static final String M_LABELS = "labels";
-    static final String M_NEXTBG = "nextBg";
+    static final String M_FIELDBG = "customFieldBg";
     static final String M_XRANGEDLG = "XrangeDlg";
     static final String M_YRANGEDLG = "YrangeDlg";
     static final String M_POINTSUP = "points+";
@@ -29,7 +29,10 @@ public class ScatterCanvas extends BaseCanvas {
     /** flag whether axis labels should be shown */
     protected boolean showLabels=true;
     
-    /** if true partition nodes above current node only */
+    /**
+     * if true partition nodes above current node only
+     * @deprecated only used by klimt
+     */
     public boolean bgTopOnly=false;
     
     /** diameter of a point */
@@ -38,7 +41,7 @@ public class ScatterCanvas extends BaseCanvas {
     /** minimal point diameter */
     public int minimalDiam=1;
     
-    public int fieldBg=0; // 0=none, 1=objects, 2=white
+    public boolean customFieldBg=false;
     
     /** # of points */
     protected int pts;
@@ -76,7 +79,7 @@ public class ScatterCanvas extends BaseCanvas {
      */
     public int changePtDiamBy=2;
     
-    private double SPACEPROP=1.1;
+    private double spaceprop=1.1;
     
     /** sorted set of the points, used to check with log(n) time cost if a point
      *  belongs to an existing primitive
@@ -138,12 +141,12 @@ public class ScatterCanvas extends BaseCanvas {
         setValueRange();
         drag=false;
         
-        if (Global.useAquaBg) fieldBg=2;
+        //if (Global.useAquaBg) fieldBg=2;
         createMenu(f,true,true,true,new String[]{
             "Same scale",M_EQUISCALE,
             M_MINUS,
             "@LHide labels",M_LABELS,
-            "Change background",M_NEXTBG,
+            "Change background",M_FIELDBG,
             M_MINUS,
             "Set X Range ...",M_XRANGEDLG,
             "Set Y Range ...",M_YRANGEDLG,
@@ -373,7 +376,7 @@ public class ScatterCanvas extends BaseCanvas {
             }
             d.dispose();
         }
-        if (cmd=="nextBg") { fieldBg++; if (fieldBg>2) fieldBg=0; setUpdateRoot(0); repaint(); };
+        if (cmd==M_FIELDBG) { customFieldBg=!customFieldBg; setUpdateRoot(0); repaint(); };
         if (cmd=="resetZoom") { resetZoom(); repaint(); }
         
         return null;
@@ -419,8 +422,8 @@ public class ScatterCanvas extends BaseCanvas {
             return;
         };
         
-        if (fieldBg!=0) {
-            g.setColor((fieldBg==1)?COL_CUSTOMBG:Common.objectsColor);
+        if (customFieldBg) {
+            g.setColor(COL_CUSTOMBG);
             g.fillRect(mLeft,Y,W,H);
         }
         
@@ -678,10 +681,10 @@ public class ScatterCanvas extends BaseCanvas {
     /**
      * Get the amount of space around the data points.
      * @return amount of space
-     * @see #setSPACEPROP(double)
+     * @see #setSpaceprop(double)
      */
-    public double getSPACEPROP() {
-        return SPACEPROP;
+    public double getSpaceprop() {
+        return spaceprop;
     }
     
     /**
@@ -690,14 +693,14 @@ public class ScatterCanvas extends BaseCanvas {
      * {@link #updateObjects()} needs to be called afterwards.
      * @param SPACEPROP New amount of space. Defaults to 1.1.
      */
-    public void setSPACEPROP(double SPACEPROP) {
-        this.SPACEPROP = SPACEPROP;
+    public void setSpaceprop(double SPACEPROP) {
+        this.spaceprop = SPACEPROP;
         setValueRange();
     }
     
     private void setValueRange() {
-        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())*(SPACEPROP-1)/2,(v[0].getMax()-v[0].getMin())*SPACEPROP);
-        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(SPACEPROP-1)/2,(v[1].getMax()-v[1].getMin())*SPACEPROP);
+        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())*(spaceprop-1)/2,(v[0].getMax()-v[0].getMin())*spaceprop);
+        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(spaceprop-1)/2,(v[1].getMax()-v[1].getMin())*spaceprop);
         if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
         if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
     }
