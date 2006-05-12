@@ -48,7 +48,7 @@ public class BarCanvas extends BaseCanvas {
     private MenuItem MIspine=null;
     private MenuItem MIlabels=null;
     
-    
+    public Color fillColorDrag=null;
     
     // needed for axis-query
     private int[] axcoordX;
@@ -160,6 +160,8 @@ public class BarCanvas extends BaseCanvas {
             
             if(orientation==0) ((PPrimRectangle)pp[i]).setBounds(cl,ch,cu-cl,lh-ch);
             else ((PPrimRectangle)pp[i]).setBounds(lh,cl,ch-lh,cu-cl);
+            
+            if(fillColorDrag!=null) ((PPrimRectangle)pp[i]).fillColorDrag = fillColorDrag;
             
             i++;
         }
