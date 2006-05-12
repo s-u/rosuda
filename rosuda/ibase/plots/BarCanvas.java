@@ -21,8 +21,6 @@ public class BarCanvas extends BaseCanvas {
     static final String M_SORTBYMARKED = "sortByMarked";
     static final String M_LABELS = "labels";
     
-    public Color COL_GREY = new Color(192,192,192);
-    
     /** corresponding variable */
     private SVar v;
     /** weight variable for weighted barcharts */
