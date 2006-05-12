@@ -2,6 +2,7 @@ package org.rosuda.ibase.toolkit;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Vector;
 import java.awt.Frame;
 import java.awt.Graphics;
@@ -426,7 +427,7 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
                 // try to use setter method
                 invokeSetterMethod(variable,Double.TYPE,new Double(value));
             } catch (NoSuchMethodException ex) {
-                if(value-(int)value == 0) 
+                if(value-(int)value == 0)
                     try {
                         invokeSetterMethod(variable,Integer.TYPE,new Integer((int)value));
                         return;
@@ -448,15 +449,19 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
         }
         
         if(field!=null){
-            try {
-                field.set(this,value);
+            Object val = value;
+            if(Color.class.isAssignableFrom(field.getType())){ // if variable is of type Color
+                val = getColorForString(value);
+            }
+            if(val!=null) try {
+                field.set(this,val);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else{
             try {
                 // try to use setter method
-                invokeSetterMethod(variable,String.class,value);
+                invokeSetterMethod(variable,value.getClass(),value);
             } catch (NoSuchMethodException ex) {
                 System.err.println("Variable " + variable + " does not exist or cannot be set.");
             }
@@ -464,16 +469,26 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     }
     
     private void invokeSetterMethod(String variable,Class paramType,Object newValue) throws NoSuchMethodException {
+        Method setter = null;
+        Object parameter = newValue;
+        final String methodName = "set" + variable.substring(0,1).toUpperCase() + variable.substring(1);
         try {
-            this.getClass().getMethod("set" + variable.substring(0,1).toUpperCase() + variable.substring(1),
-                    new Class[] {paramType}).invoke(this,new Object[] {newValue});
+            setter = this.getClass().getMethod(methodName, new Class[] {paramType});
+        } catch (NoSuchMethodException ex){
+            if(String.class.isAssignableFrom(paramType)){ // so maybe this is actually of type Color
+                setter = this.getClass().getMethod(methodName, new Class[] {Color.class});
+                parameter = getColorForString((String)newValue);
+                if(parameter==null) return;
+            } else throw ex;
         } catch (SecurityException ex) {
             ex.printStackTrace();
         } catch (IllegalArgumentException ex) {
             ex.printStackTrace();
-        } catch (InvocationTargetException ex) {
-            ex.printStackTrace();
-        } catch (IllegalAccessException ex) {
+        }
+        if(setter == null) throw new NoSuchMethodException("There is no setter method for " + variable);
+        else try {
+            setter.invoke(this,new Object[] {parameter});
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -505,6 +520,20 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
             }
         }
         return true;
+    }
+    
+    private Color getColorForString(String value) {
+        Field col;
+        Color ret=null;
+        try {
+            col = Color.class.getField(value);
+            ret = (Color)col.get(null);
+        } catch (NoSuchFieldException ex) {
+            System.err.println("There is no predefined color named " + value + ".");
+        } catch (IllegalAccessException ex) {
+            ex.printStackTrace();
+        }
+        return ret;
     }
     
 }
