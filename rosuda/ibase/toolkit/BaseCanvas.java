@@ -23,8 +23,8 @@ import org.rosuda.util.Tools;
 public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, MouseMotionListener, KeyListener, ActionListener {
     public Color COL_OUTLINE=Color.BLACK;
     public Color COL_INVALID=Color.RED;
-    public Color COL_ASELBG = new Color(Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue(),76);
-    public Color COL_ADRAGBG = new Color(0.0f,0.3f,1.0f,0.25f);
+    public Color COL_SELBG = new Color(Common.selectColor.getRed(),Common.selectColor.getGreen(),Common.selectColor.getBlue(),76);
+    public Color COL_ZOOMBG = new Color(0.0f,0.3f,1.0f,0.25f);
     
     protected static final String C_BLACK = "black";
     static final String C_MARKED = "marked";
@@ -304,7 +304,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             int dx1=baseDragX1, dx2=baseDragX2, dy1=baseDragY1, dy2=baseDragY2;
             if (dx1>dx2) { final int hh=dx1; dx1=dx2; dx2=hh; }
             if (dy1>dy2) { final int hh=dy1; dy1=dy2; dy2=hh; }
-            g.setColor((selDrag)?COL_ASELBG:COL_ADRAGBG);
+            g.setColor((selDrag)?COL_SELBG:COL_ZOOMBG);
             g.fillRect(dx1,dy1,dx2-dx1,dy2-dy1);
             g.setColor(COL_OUTLINE);
             g.drawRect(dx1,dy1,dx2-dx1,dy2-dy1);
