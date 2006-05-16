@@ -43,6 +43,11 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected static final String M_ALPHADOWN = "alphaDown";
     protected static final String M_ALPHAUP = "alphaUp";
     
+    public Color fillColor = null;
+    public Color borderColor = null;
+    public Color fillColorSel = null;
+    public Color borderColorSel = null;
+    
     /** query popup window */
     protected QueryPopup qi;
     
@@ -1242,5 +1247,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public void setMTop(final int mTop) {
         this.mTop = mTop;
         updateGeometry=true;
+    }
+    
+    protected void setColors(PPrimBase ppb) {
+        if(fillColor!=null) ppb.fillColor = fillColor;
+        if(fillColorSel!=null) ppb.fillColorSel = fillColorSel;
+        if(borderColor!=null) ppb.borderColor = borderColor;
+        if(borderColorSel!=null) ppb.borderColorSel = borderColorSel;
     }
 }
