@@ -1,7 +1,6 @@
 package org.rosuda.ibase.toolkit;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Vector;
 import java.awt.Frame;
@@ -403,6 +402,51 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
             System.err.println("Variable " + variable + " does not exist or cannot be set.");
     }
     
+    public void setOption(final String variable, final int[] values){
+        if(!setOptionInts(variable,values))
+            System.err.println("Variable " + variable + " does not exist or cannot be set.");
+    }
+    
+    public void setOption(final String variable, final double[] values){
+        Field field = null;
+        try {
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
+            ex.printStackTrace();
+        }
+        
+        if(field!=null){
+            try {
+                field.set(this,values);
+            } catch (IllegalArgumentException ex) {
+                final int[] iValues = new int[values.length];
+                for(int i=0; i<iValues.length; i++) iValues[i] = (int)(values[i]+0.5);
+                if(setOptionInts(variable,iValues)) return;
+            } catch (Exception ex){
+                ex.printStackTrace();
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,Class.forName("[D"),values);
+            } catch (NoSuchMethodException ex) {
+                try {
+                    final int[] iValues = new int[values.length];
+                    for(int i=0; i<iValues.length; i++) iValues[i] = (int)(values[i]+0.5);
+                    invokeSetterMethod(variable,Class.forName("[I"),iValues);
+                    return;
+                } catch (NoSuchMethodException exx) {
+                    System.err.println("Variable " + variable + " does not exist or cannot be set.");
+                } catch (ClassNotFoundException exx) {
+                    exx.printStackTrace();
+                }
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    
     public void setOption(final String variable, final double value){
         Field field = null;
         try {
@@ -534,6 +578,37 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
             ex.printStackTrace();
         }
         return ret;
+    }
+    
+    private boolean setOptionInts(String variable, int[] values) {
+        Field field = null;
+        try {
+            field = this.getClass().getField(variable);
+        } catch (NoSuchFieldException ex) {} // proceed and try to invoke setter method later
+        catch (SecurityException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+        
+        if(field!=null){
+            try {
+                field.set(this,values);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return false;
+            }
+        } else{
+            try {
+                // try to use setter method
+                invokeSetterMethod(variable,Class.forName("[I"),values);
+            } catch (NoSuchMethodException ex) {
+                System.err.println("Variable " + variable + " does not exist or cannot be set.");
+                return false;
+            } catch (ClassNotFoundException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return true;
     }
     
 }
