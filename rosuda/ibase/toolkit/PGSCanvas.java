@@ -137,7 +137,7 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
      * @return associated frame */
     public Frame getFrame() { return myFrame; };
     /** set canvas title */
-    public void setTitle(final String t) { desc=t; };
+    public void setTitle(final String t) { desc=t;myFrame.setTitle(desc); };
     /** return canvas title
      * @return canvas title */
     public String getTitle() { return desc; };
