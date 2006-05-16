@@ -48,7 +48,7 @@ public class BarCanvas extends BaseCanvas {
     private MenuItem MIspine=null;
     private MenuItem MIlabels=null;
     
-    public Color fillColorDrag=null;
+    public Color fillColorDrag = null;
     
     // needed for axis-query
     private int[] axcoordX;
@@ -146,7 +146,8 @@ public class BarCanvas extends BaseCanvas {
         int i=0;
         final int lh=ay.getCasePos(0);
         while(i<bars) {
-            pp[i]=new PPrimRectangle();
+            final PPrimRectangle ppr = new PPrimRectangle();
+            pp[i]=ppr;
             
             int cl=ax.getCatLow(i);
             int cu=ax.getCatUp(i);
@@ -158,10 +159,11 @@ public class BarCanvas extends BaseCanvas {
             ch=ay.getCasePos(count[i]);
             if (isSpine) ch=lh+ay.gLen;
             
-            if(orientation==0) ((PPrimRectangle)pp[i]).setBounds(cl,ch,cu-cl,lh-ch);
-            else ((PPrimRectangle)pp[i]).setBounds(lh,cl,ch-lh,cu-cl);
+            if(orientation==0) ppr.setBounds(cl,ch,cu-cl,lh-ch);
+            else ppr.setBounds(lh,cl,ch-lh,cu-cl);
             
-            if(fillColorDrag!=null) ((PPrimRectangle)pp[i]).fillColorDrag = fillColorDrag;
+            if(fillColorDrag!=null) ppr.fillColorDrag = fillColorDrag;
+            setColors(ppr);
             
             i++;
         }

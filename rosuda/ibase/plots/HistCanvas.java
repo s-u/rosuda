@@ -110,7 +110,7 @@ public class HistCanvas extends BaseCanvas {
         if (recalcBars) {
             paintpp=0;
             int i=0;
-            while(i<bars) { pp[i]=new PPrimRectangle(); i++; }
+            while(i<bars) { pp[i]=new PPrimRectangle(); setColors((PPrimBase)pp[i]); i++; }
             sw.profile("HistCanvasNew.updateObject reset primitives");
             
             

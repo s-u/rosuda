@@ -108,6 +108,7 @@ public class MosaicCanvas extends BaseCanvas {
         }
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
+        for(int i=0; i<pp.length; i++) setColors((PPrimBase)pp[i]);
         
         String titletext = "Mosaic Plot (";
         

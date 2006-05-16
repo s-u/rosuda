@@ -277,6 +277,7 @@ public class ScatterCanvas extends BaseCanvas {
         final Collection pts = sortedPointsX.values();
         pp = new PlotPrimitive[pts.size()];
         pts.toArray(pp);
+        for(int i=0; i<pp.length; i++) setColors((PPrimBase)pp[i]);
         setBoundValues();
     };
     

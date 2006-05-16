@@ -973,7 +973,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     markStats = new OrdStats[boxes.size()-invisiblePoints.size()];
                     System.arraycopy(oss, cs+1, markStats, 0, cs);
                 }
-                for(int i=0; i<pp.length-invisiblePoints.size(); i++) ((PPrimBox)pp[i]).slastR=null;
+                for(int i=0; i<pp.length-invisiblePoints.size(); i++){
+                    ((PPrimBox)pp[i]).slastR=null;
+                    setColors((PPrimBase)pp[i]);
+                }
                 break;
             case TYPE_PCP:
                 if (pp==null || pp.length!=v[0].size()) {
@@ -1016,6 +1019,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
                     ((PPrimPolygon)pp[j]).drawBorder=drawLines;
                     ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
+                    setColors((PPrimBase)pp[j]);
                     final boolean[] nas = new boolean[xs[j].length];
                     final boolean[] gap = new boolean[xs[j].length];
                     
