@@ -147,10 +147,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
     	while ( a <= b) {
     		int ls = this.getLineStartOffset(a);
     		int le = this.getLineEndOffset(a);
-		String tab = "";
-                for (int i = 0; i < JGRPrefs.tabWidth; i++) tab+=" ";
+    		String tab = "";
+    		for (int i = 0; i < JGRPrefs.tabWidth; i++) tab += " ";
     		if (direction == -1 && (this.getText(ls,le-ls).startsWith("\t") || this.getText(ls,le-ls).startsWith(tab))) {
-    			this.getDocument().remove(ls,1);
+    			this.getDocument().remove(ls,this.getText(ls,le-ls).startsWith("\t")?1:JGRPrefs.tabWidth);
     		}
     		else if (direction == 1) {
     			this.insertAt(ls,"\t");
