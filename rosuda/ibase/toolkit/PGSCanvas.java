@@ -569,7 +569,11 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     private Color getColorForString(String value) {
         Field col;
         Color ret=null;
-        try {
+        if(value.startsWith("#")){
+            final Color dum = Color.decode(value.substring(0,7));
+            if(value.length()>7) ret = new Color(dum.getRed(),dum.getGreen(),dum.getBlue(),Integer.parseInt(value.substring(7,9),16));
+            else ret=dum;
+        } else try {
             col = Color.class.getField(value);
             ret = (Color)col.get(null);
         } catch (NoSuchFieldException ex) {
