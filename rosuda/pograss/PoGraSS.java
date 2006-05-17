@@ -139,11 +139,6 @@ public class PoGraSS
 
     /** addition: rot specifies rotation angle around the anchor. negative values additionally
         flip the text on the horizontal axis of the text.
-	Note that there are implementation of PoGraSS that don't support this function, so it should
-	never be used for rot=0.
-	In fact we're currently evaluating the possibility of removing this function for compatibility
-	reasons (e.g. AWT 1.1 has no support for text rotation at all). This function is classified
-	as experimental for now.
     */
     public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
 	if(rot==0) drawString(txt,x,y,ax,ay);

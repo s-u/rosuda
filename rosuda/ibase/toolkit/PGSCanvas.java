@@ -102,11 +102,11 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     public void paintLayer(final Graphics g, final int layer) {
         if (inProgress) return; /* avoid recursions */
         inProgress=true;
+        final Graphics2D g2=(Graphics2D) g;
         if (Global.forceAntiAliasing) {
-            final Graphics2D g2=(Graphics2D) g;
             g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
-        final PoGraSSgraphics p=new PoGraSSgraphics(g,layer);
+        final PoGraSSgraphics p=new PoGraSSgraphics(g2,layer);
         beginPaint(p);
         paintPoGraSS(p);
         endPaint(p);
