@@ -129,7 +129,7 @@ public class Tools {
             if (front>=0) front++; else front--;
         }
         String spost=""+ipost; while (spost.length()<dac) { spost="0"+spost; };
-        return sig+front+((ipost==0)?"":"."+spost);
+        return sig+front+"."+spost;
     };
 
     public static double parseDouble(String s) {
