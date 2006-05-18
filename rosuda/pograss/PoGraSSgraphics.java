@@ -216,7 +216,7 @@ public class PoGraSSgraphics extends PoGraSS {
                 dx=(int)(((double)dx)*ax);
                 dy=(int)(((double)dy)*ay);
                 
-                final AffineTransform at = AffineTransform.getRotateInstance(rot);
+                final AffineTransform at = AffineTransform.getRotateInstance(rot*Math.PI/180);
                 TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
                 tl.draw(g,x-dx,y+dy);
             }
