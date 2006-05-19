@@ -219,8 +219,36 @@ public class PoGraSSgraphics extends PoGraSS {
             final AffineTransform at = AffineTransform.getRotateInstance(-rotRad);
             final TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
             
-            final int xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
-            final int yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
+            final int xshift,yshift;
+            
+            /* alignment relative to text
+            xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
+            yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
+             **/
+            
+            // alignment relative to bounding box
+            final double normalizedRot,bbw,bbh;
+            if(rot<0) normalizedRot = rot-((int)(rot/360+1))*360;
+            else normalizedRot = rot-((int)(rot/360))*360;
+            
+            bbw = dy*Math.abs(s) + dx*Math.abs(c);
+            bbh = dx*Math.abs(s) + dy*Math.abs(c);
+            
+            if(normalizedRot<90){
+                xshift = (int)(ax*bbw-dy*s);
+                yshift = (int)(ay*bbh);
+            } else if (normalizedRot<180){
+                xshift = (int)(ax*bbw-bbw);
+                yshift = (int)(ay*bbh+dy*c);
+            } else if (normalizedRot<270){
+                xshift = (int)(ax*bbw+dx*c);
+                yshift = (int)(ay*bbh-bbh);
+            } else{
+                xshift = (int)(ax*bbw);
+                yshift = (int)(ay*bbh+dx*s);
+            }
+            
+            
             tl.draw(g,x-xshift,y+yshift);
         };
     }

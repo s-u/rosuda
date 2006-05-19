@@ -1201,8 +1201,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         try {
             final int maxW = abbreviate?(rotateYLabels?verticalMedDist:(mLeft-2)):(-1);
             final int xPos = mLeft-3;
-            final double xAlign = 0.5;
-            final double yALign = 1;
+            final double xAlign = 1;
+            final double yALign = 0.5;
             
             while (fi<axis.vBegin+axis.vLen) {
                 final String text;
