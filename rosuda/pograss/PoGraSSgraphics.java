@@ -208,18 +208,20 @@ public class PoGraSSgraphics extends PoGraSS {
     
     public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
         if (paintLayer==-1 || paintLayer==curLayer) {
-            if(rot==0) drawString(txt,x,y,ax,ay);
-            else{
-                FontMetrics fm=g.getFontMetrics();
-                int dx=fm.stringWidth(txt);
-                int dy=fm.getHeight();
-                dx=(int)(((double)dx)*ax);
-                dy=(int)(((double)dy)*ay);
-                
-                final AffineTransform at = AffineTransform.getRotateInstance(rot*Math.PI/180);
-                TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
-                tl.draw(g,x-dx,y+dy);
-            }
+            FontMetrics fm=g.getFontMetrics();
+            double dx=fm.stringWidth(txt);
+            double dy=fm.getHeight();
+            
+            final double rotRad = rot*Math.PI/180;
+            final double s = Math.sin(rotRad);
+            final double c = Math.cos(rotRad);
+            
+            final AffineTransform at = AffineTransform.getRotateInstance(rotRad);
+            final TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
+            
+            final int xshift = ((int)(c*dx*ax+s*dy*ay+0.5));
+            final int yshift = ((int)(c*dy*ay-s*dx*ax+0.5));
+            tl.draw(g,x+xshift,y-yshift);
         };
     }
     
