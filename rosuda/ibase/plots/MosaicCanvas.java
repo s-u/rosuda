@@ -55,6 +55,8 @@ public class MosaicCanvas extends BaseCanvas {
         this.frame=f;
         this.v = vars;
         
+        rotateYLabelsBy=90;
+        
         maxLevel = v.length;
         this.vs = v.length;
         for(int i=0; i<vs; i++){
@@ -331,7 +333,20 @@ public class MosaicCanvas extends BaseCanvas {
                     if( Dirs[j] == 'x' ){
                         labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
                     } else{
-                        labels.add(mLeft-5, (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5))),1,0.5,mLeft-5, lnames[j][i]);
+                        final int y=(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
+                        final int maxW;
+                        if(rotateYLabels){
+                            final int sup,sub;
+                            if(i==0) sup=mTop;
+                            else sup = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i-1+0.5));
+                            
+                            if(i==levels[j]-1) sub=getBounds().height-mBottom;
+                            else sub = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i+1+0.5));
+                            
+                            maxW=2*Math.min(sub-y,y-sup);
+                        } else maxW=(mLeft-5);
+                        
+                        labels.add(mLeft-5,y,1,0.5,maxW,(rotateYLabels?rotateYLabelsBy:0), lnames[j][i]);
                         if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
                     }
                 }
