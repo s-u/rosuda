@@ -187,8 +187,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     public int horizontalMedDist=50;
     public int horizontalMinDist=35;
-    public int verticalMedDist=30;
-    public int verticalMinDist=18;
+    public int verticalMedDist=50;
+    public int verticalMinDist=35;
     
     public boolean rotateYLabels=true;
     public double rotateYLabelsBy=270;
@@ -1199,7 +1199,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
         double fi=axis.getSensibleTickStart(f);
         try {
-            final int maxW = abbreviate?(mLeft-2):(-1);
+            final int maxW = abbreviate?(rotateYLabels?verticalMedDist:(mLeft-2)):(-1);
             final int xPos = mLeft-3;
             final double xAlign = 0.5;
             final double yALign = 1;
