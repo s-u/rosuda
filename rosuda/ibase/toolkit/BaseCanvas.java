@@ -190,6 +190,9 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public int verticalMedDist=30;
     public int verticalMinDist=18;
     
+    public boolean rotateYLabels=true;
+    public double rotateYLabelsBy=270;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -1207,7 +1210,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 else text=sVar.getCatAt((int)(fi+0.5)).toString();
                 
                 final int t=axis.getValuePos(fi);
-                labels.add(xPos,t,xAlign,yALign,maxW,90,text);
+                labels.add(xPos,t,xAlign,yALign,maxW,rotateYLabels?rotateYLabelsBy:0,text);
                 if(ticks) g.drawLine(mLeft-2,t,mLeft,t);
                 fi+=f;
             }
