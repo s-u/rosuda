@@ -216,12 +216,12 @@ public class PoGraSSgraphics extends PoGraSS {
             final double s = Math.sin(rotRad);
             final double c = Math.cos(rotRad);
             
-            final AffineTransform at = AffineTransform.getRotateInstance(rotRad);
+            final AffineTransform at = AffineTransform.getRotateInstance(-rotRad);
             final TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
             
-            final int xshift = ((int)(c*dx*ax+s*dy*ay+0.5));
-            final int yshift = ((int)(c*dy*ay-s*dx*ax+0.5));
-            tl.draw(g,x+xshift,y-yshift);
+            final int xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
+            final int yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
+            tl.draw(g,x-xshift,y+yshift);
         };
     }
     
