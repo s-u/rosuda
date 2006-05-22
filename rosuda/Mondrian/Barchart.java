@@ -109,7 +109,10 @@ public class Barchart extends DragBox implements ActionListener {
     for( int i = 0;i < rects.size(); i++) {
       MyRect r = (MyRect)rects.elementAt(i);
       if ( r.intersects( sr )) {
-        S.condition.addCondition("OR", tablep.names[0]+" = '"+tablep.lnames[0][i]+"'");
+        if( !(tablep.lnames[0][i]).equals("NA") )
+          S.condition.addCondition("OR", tablep.names[0]+" = '"+tablep.lnames[0][i]+"'");
+        else
+          S.condition.addCondition("OR", tablep.names[0]+" is null");
         if( tablep.data.isDB )
           tablep.getSelection();
         else {
