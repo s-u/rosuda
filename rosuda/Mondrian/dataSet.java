@@ -87,12 +87,14 @@ public class dataSet {
           String varName = rs.getString(1);
 //          name.addElement(varName);
           columnType[j] = rs.getString(2);
-          if( columnType[j].startsWith("varchar") ) {
+          if( columnType[j].startsWith("varchar") || columnType[j].startsWith("enum") || columnType[j].startsWith("char") ) {
             alpha[j] = true;
           }
           else
             alpha[j] = false;
           Variable Var = new Variable(alpha[j], varName);
+          if( !alpha[j] )
+            Var.isCategorical = false;
           data.addElement(Var);
         }
       }
@@ -136,12 +138,25 @@ public class dataSet {
   
   public void addVariable(String name, boolean alpha, boolean categorical, double[] data) {
     Variable Var = new Variable(this.n, alpha, name);
-    System.arraycopy(data, 0, Var.data, 0, this.n);
+    System.arraycopy(data, 0, Var.data, 0, data.length);
     Var.forceCategorical = false;
     Var.isCategorical = categorical;
+    Var.missing = new boolean[data.length];
+    for( int i=0; i<data.length; i++)
+      Var.missing[i] = false;
     this.alpha = (boolean [])Util.resizeArray(this.alpha, ++this.k);
+    this.NAcount = (int [])Util.resizeArray(this.NAcount, this.k);
     this.alpha[k-1] = alpha;
-    Var.sortData();    
+    if( Var.isCategorical ) {
+      for( int l=0; l<Var.grpSize.length; l++ )
+        Var.grpSize[l] = 0;
+      Var.forceCategorical = true;
+      Var.isCategorical = true;
+      for( int j=0; j<this.n; j++ )
+        Var.isLevel( Double.toString(Var.data[j]) );
+      Var.sortLevels();
+    } else
+      Var.sortData();    
     this.data.addElement(Var);
   }
   
@@ -405,7 +420,9 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
       } else {
         if( weight == -1 )
           for( int i=0; i<getN(dvar); i++ ) {
-            int index = (int)((datacopy[sorts[i]]-start)/width);
+            int index = (int)((float)((datacopy[sorts[i]]-start)/width));
+//            System.out.println("value: "+datacopy[sorts[i]]+"  index: "+(datacopy[sorts[i]]-start)/width+"  INDEX: "+index);
+
             bdtable[index]++;
             tableDim[index]++;
           }
@@ -435,7 +452,7 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
 
       if( !isDB ) {
         for( int i=0; i<getN(dvar); i++ ) {
-          index = (int)((datacopy[sorts[i]]-start)/width); 
+          index = (int)((float)((datacopy[sorts[i]]-start)/width));
           Ids[index][pointers[index]++] = sorts[i]; 
         } 
       } else 
@@ -567,8 +584,12 @@ System.out.println(newQ.makeQuery());
 	
         while( rs.next() ) {
           index = 0;
-          for( int j=0; j<vars.length; j++ )
-            index += plevels[j] * ((Variable)data.elementAt(vars[j])).Level((rs.getString(j+1)).trim());
+          for( int j=0; j<vars.length; j++ ) {
+            String LString = rs.getString(j+1);
+            if( LString == null )
+              LString = "NA";
+            index += plevels[j] * ((Variable)data.elementAt(vars[j])).Level((LString).trim());
+          }
           bdtable[index] = rs.getInt(vars.length+1);
         }
         rs.close();
@@ -1077,7 +1098,7 @@ System.out.println(newQ.makeQuery());
   }
   
   public double getSelQuantile(int i, double q) {
-    return ((Variable)data.elementAt(i)).getSelQuantile(q);   
+    return ((Variable)data.elementAt(i)).getSelQuantile(i, q);   
   }
   
   public double getFirstGreater(int i, double q) {
@@ -1346,7 +1367,7 @@ System.out.println("query: "+query+" ---> "+this.min);
     public double SelMin() {
       double SM = Double.MAX_VALUE;
       for ( int i=0; i<data.length; i++ )
-        if( selectionArray[i] > 0 )
+        if( selectionArray[i] > 0 && !missing[i] )
           SM = Math.min(SM, data[i]);
       return SM;
     }
@@ -1386,8 +1407,9 @@ System.out.println("query: "+query+" ---> "+this.max);
     public double SelMax() {
       double SM = Double.MIN_VALUE;
       for ( int i=0; i<data.length; i++ )
-        if( selectionArray[i] > 0 )
+        if( selectionArray[i] > 0 && !missing[i] )
           SM = Math.max(SM, data[i]);
+//System.out.println("Return Max: "+SM);  
       return SM;
     }
 
@@ -1430,7 +1452,13 @@ System.out.println("query: "+query+" ---> "+this.max);
     public double getQuantile(double q) {
       if( !filterON )
         if( !isCategorical ) {
-          return data[sortI[(int)((n-numMiss-1)*q)]];
+          int ind = (int)((n-numMiss-1)*q);
+          double remainder = ((n-numMiss-1)*q) - ind ;
+//System.out.println(" Q: "+q+" INDEX:"+ind);
+          if( ind < n-1 )
+            return data[sortI[ind]] * (1-remainder) + data[sortI[ind+1]] * remainder;
+          else
+            return data[sortI[ind]];
         } else
           return 0;
       else {
@@ -1450,17 +1478,28 @@ System.out.println("query: "+query+" ---> "+this.max);
 //        System.out.println("filterGrp: "+filterGrp+" filterGrps: "+filterGrpSize.length);
 //System.out.println("filter Val: "+filterVal+" filterVar: "+filterVar+" GroupSize. "+filterGrpSize[filterGrp]+" Group: "+filterGrp);
         int stop = (int)(q * (filterGrpSize[filterGrp]-1));
-        while( count <= stop )
-          if( filterA[sortI[i++]] == filterVal ) {
+        while( count <= stop && i<n ) {
+          if( filterA[sortI[i]] == filterVal && !missing[sortI[i]]) {
             count++;
-            //System.out.println("i: "+i+" filter Val: "+filterVal+" testVal: "+filterA[sortI[i]]+" GroupSize. "+filterGrpSize[filterGrp]);
+//System.out.println("i: "+i+" filter Val: "+filterVal+" testVal: "+filterA[sortI[i]]+" GroupSize. "+filterGrpSize[filterGrp]);
           }
+          i++;
+        }
+        i--;
 //            System.out.println("q: "+q+" Count: "+count+" Value: "+ data[sortI[i-1]]);
-        return data[sortI[i-1]];
+        if( count < filterGrpSize[filterGrp] && stop+0.000001 < (q * (filterGrpSize[filterGrp]-1)) ) {   // get next for linear combi of two values ...
+          int j=i+1;
+          while( filterA[sortI[j]] != filterVal || missing[sortI[j]] ) {j++;}
+          j--;
+          double remainder = (q * (filterGrpSize[filterGrp]-1)) - stop;
+          System.out.println(" GET NEXT :"+i+" <-> "+j);
+          return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
+        } else
+          return data[sortI[i]];
       }
     }
 
-    public double getSelQuantile(double q) {
+    public double getSelQuantile(int var, double q) {
       int count=0;
       int i=0;
       if( !filterON ) {
@@ -1469,33 +1508,57 @@ System.out.println("query: "+query+" ---> "+this.max);
           return data[sortI[i-1]];
         }
         if( q==1 ) {
-          i=n-1;
-          while( selectionArray[sortI[i--]] == 0 ) {}
-          return data[sortI[i+1]];
+          i=n-numMiss-1;
+          while( i>=0 && selectionArray[sortI[i]] == 0 ) {i--;}
+          return data[sortI[i]];
         }
-        int stop = (int)(q * (countSelection()-1));
-        while( count <= stop )
-          if( selectionArray[sortI[i++]] > 0 )
+        int stop = (int)(q * (countSelection(var)-1));
+        while( count <= stop && i<n ) {
+          if( selectionArray[sortI[i]] > 0 && !missing[sortI[i]] )
             count++;
-        return data[sortI[i-1]];
+          i++;
+        }
+        i--;
+//System.out.println(" Sel: "+countSelection(var)+" q: "+q+" i: "+i+" Stop: "+stop+" Count: "+count);
+        if( count < countSelection(var) && stop+0.000001 < (q * (countSelection(var)-1)) ) {   // get next for linear combi of two values ...
+          int j=i+1;
+          while( selectionArray[sortI[j]] == 0 || missing[sortI[j]] ) {j++;}
+          if( j != i+1 )
+            j--;
+          double remainder = (q * (countSelection(var)-1)) - stop;
+          System.out.println(" GET NEXT :"+i+" <-> "+j);
+          return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
+        } else
+          return data[sortI[i]];
       } else {
         if( q==0 ) {
-          while( (selectionArray[sortI[i]] == 0) || (filterA[sortI[i]] != filterVal) ) {i++;/*System.out.println("i: "+i+" "+selectionArray[sortI[i]]+" "+filterA[sortI[i]]+" "+filterVal);*/}
+          while( (selectionArray[sortI[i]] == 0) || (filterA[sortI[i]] != filterVal) || missing[sortI[i]] ) {i++;/*System.out.println("i: "+i+" "+selectionArray[sortI[i]]+" "+filterA[sortI[i]]+" "+filterVal);*/}
           return data[sortI[i]];
         }
         if( q==1 ) {
           i=n-numMiss-1;
-          while( selectionArray[sortI[i]] == 0 || filterA[sortI[i]] != filterVal) {i--;/*System.out.println("i: "+i);*/}
+          while( selectionArray[sortI[i]] == 0 || filterA[sortI[i]] != filterVal  || missing[sortI[i]] ) {i--;/*System.out.println("i: "+i);*/}
           return data[sortI[i]];
         }
         int stop = (int)(q * (filterSelGrpSize[filterGrp]-1));
 //System.out.println("in q grpSize: "+filterSelGrpSize[filterGrp]);
         while( count <= stop ) {
-          if( selectionArray[sortI[i]] > 0 && filterA[sortI[i]] == filterVal) 
+          if( selectionArray[sortI[i]] > 0 && filterA[sortI[i]] == filterVal && !missing[sortI[i]] ) 
             count++;
           i++;
         }
-        return data[sortI[i-1]];
+        i--;
+//System.out.println(" Sel: "+filterSelGrpSize[filterGrp]+" q: "+q+" i: "+i+" Stop: "+stop+" Count: "+count+" filterVal: "+filterVal);
+        if( count < filterSelGrpSize[filterGrp] && stop+0.000001 < (q * (filterSelGrpSize[filterGrp]-1)) ) {   // get next for linear combi of two values ...
+          int j=i+1;
+          while( (selectionArray[sortI[j]] == 0) || (filterA[sortI[j]] != filterVal) || missing[sortI[j]] ) {j++;}
+            //          {System.out.println(" j: "+j+" Filter: "+filterA[sortI[j]]+" Sel: "+selectionArray[sortI[j]]+" miss: "+missing[sortI[j]]);j++;}
+          j--;
+          double remainder = (q * (filterSelGrpSize[filterGrp]-1)) - stop;
+          System.out.println(" GET NEXT :"+i+" <-> "+j+" ("+remainder+" - "+(1-remainder)+")");
+          return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
+        } else
+          return data[sortI[i]];
       }
     }
     
@@ -1598,16 +1661,16 @@ System.out.println("query: "+query+" ---> "+this.max);
       int i=0;
       int count=0;
       if( !filterON ) {
-        while( i<n && data[sortI[i]] <= s )
-          if( selectionArray[sortI[i++]] > 0 )
+        while( i<n && data[sortI[i]] < s )
+          if( selectionArray[sortI[i++]] > 0 && !missing[sortI[i]] )
             count++;
-        while( i<n && selectionArray[sortI[i++]] == 0 ) {}
-        count++;
+//        while( i<n && selectionArray[sortI[i++]] == 0 && !missing[sortI[i]] ) {}
+//        count++;
         if( count > 0 ) {
           double[] ret = new double[count];
           count=0;
           for( int j=0; j<i; j++)
-            if( selectionArray[sortI[j]] > 0 )
+            if( selectionArray[sortI[j]] > 0 && !missing[sortI[j]] )
               ret[count++] = data[sortI[j]];
           return ret;
         } 
@@ -1635,12 +1698,12 @@ System.out.println("query: "+query+" ---> "+this.max);
     }
 
   public double[] getAllGreater(double g) {
-    int i=n-1;
+    int i=n-numMiss-1;
     if( !filterON ) {
       while( (data[sortI[i--]]) > g ) {}
-      double[] ret = new double[n-i-2];
-      for( int j=n-1; j>i+1; j--)
-        ret[n-j-1] = data[sortI[j]];
+      double[] ret = new double[n-numMiss-i-2];
+      for( int j=n-numMiss-1; j>i+1; j--)
+        ret[n-numMiss-j-1] = data[sortI[j]];
       return ret;
     } else {
       int count=0;
@@ -1650,8 +1713,8 @@ System.out.println("query: "+query+" ---> "+this.max);
       if( count > 0 ) {
         double[] ret = new double[count];
         count=0;
-        for( int j=n-1; j>i; j--)
-          if( filterA[sortI[j]] == filterVal )
+        for( int j=n-numMiss-1; j>i; j--)
+          if( filterA[sortI[j]] == filterVal && count<ret.length )
             ret[count++] = data[sortI[j]];
         return ret;
       } 
@@ -1662,19 +1725,21 @@ System.out.println("query: "+query+" ---> "+this.max);
   }
 
   public double[] getAllSelGreater(double g) {
-    int i=n-1;
+    int i=n-numMiss-1;
     int count=0;
     if( !filterON ) {
-      while( i>=0 && (data[sortI[i]]) >= g )
-        if( selectionArray[sortI[i--]] > 0 )
+      while( i>=0 && (data[sortI[i]]) >= g ) {
+        if( selectionArray[sortI[i]] > 0 && !missing[sortI[i]] )
           count++;
-      while( i>=0 && selectionArray[sortI[i--]] == 0 ) {}
-      count++;
+        i--;
+      }
+//      while( i>=0 && selectionArray[sortI[i--]] == 0 ) {}
+//      count++;
       if( count > 0 ) {
         double[] ret = new double[count];
         count=0;
-        for( int j=n-1; j>i; j--)
-          if( selectionArray[sortI[j]] > 0 )
+        for( int j=n-numMiss-1; j>i; j--)
+          if( selectionArray[sortI[j]] > 0 && !missing[sortI[j]] )
             ret[count++] = data[sortI[j]];
         return ret;
       } 
@@ -1690,7 +1755,7 @@ System.out.println("query: "+query+" ---> "+this.max);
       if( count > 0 ) {
         double[] ret = new double[count];
         count=0;
-        for( int j=n-1; j>i; j--)
+        for( int j=n-numMiss-1; j>i; j--)
           if( filterA[sortI[j]] == filterVal && selectionArray[sortI[j]] > 0)
             ret[count++] = data[sortI[j]];
         return ret;
@@ -1705,13 +1770,19 @@ System.out.println("query: "+query+" ---> "+this.max);
       try {
         levelP = 0;
         Statement stmt = con.createStatement();    
-        String query = "select "+name+" from "+Table+" where "+name+" is not null group by "+name+ " order by trim(" + name +")";    
+//        String query = "select "+name+" from "+Table+" where "+name+" is not null group by trim("+name+ ") order by trim(" + name +")";    
+        String query = "select "+name+" from "+Table+" group by trim("+name+ ") order by trim(" + name +")";    
         System.out.println("Processing: "+name+" "+query);
         ResultSet rs = stmt.executeQuery(query);
 	
         while( rs.next() ) {
-          System.out.println("Level: "+(rs.getString(1)).trim());
-          levelA[ levelP++ ] = (rs.getString(1)).trim();
+          if( rs.getString(1) != null ) {
+//            System.out.println("Level: "+(rs.getString(1)).trim());
+            levelA[ levelP++ ] = (rs.getString(1)).trim();
+          } else {
+//            System.out.println("Level: NA");
+            levelA[ levelP++ ] = "NA";
+          }
         }
         permA = new int[levelP];
         IpermA = new int[levelP];
