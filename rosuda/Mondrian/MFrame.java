@@ -5,9 +5,12 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import java.util.Vector;
 import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -16,7 +19,12 @@ public class MFrame extends JFrame implements WindowListener {
   private Join J;
   private JMenuItem m;
   public String selString = "";
+  private int counter = 0;
 
+  private Timer resizePlotTimer    = new Timer();
+  private TimerTask resizePlotTask;
+  private boolean firstTime = true;
+  
   static Color backgroundColor = new Color(223, 184, 96);
   static Color objectColor     = Color.lightGray;
   static Color lineColor       = Color.black;
@@ -25,6 +33,15 @@ public class MFrame extends JFrame implements WindowListener {
     this.J = J;
     this.setBackground(backgroundColor);
     addWindowListener(this);
+  }
+  
+  public final void initComponents(final DragBox DB) {
+    resizePlotTask = new ResizePlotTask(DB);
+    this.addComponentListener(new java.awt.event.ComponentAdapter() {
+      public final void componentResized(final java.awt.event.ComponentEvent evt) {
+        lblPlotComponentResized(DB, evt);
+      }
+    });
   }
   
   public void windowClosing(WindowEvent e) {
@@ -81,7 +98,7 @@ public class MFrame extends JFrame implements WindowListener {
     if( !added )
       J.windows.add(m);
     
-    m.addActionListener(new ActionListener() {     // Open a new mosaic plot window
+    m.addActionListener(new ActionListener() {     
       public void actionPerformed(ActionEvent e) {
         toFront();
       }
@@ -96,4 +113,19 @@ public class MFrame extends JFrame implements WindowListener {
   public void windowDeiconified(WindowEvent e) {}
   public void windowActivated(WindowEvent e) {}
   public void windowDeactivated(WindowEvent e) {}
+
+  private final void lblPlotComponentResized(DragBox DB, final java.awt.event.ComponentEvent evt) {      
+    if( resizePlotTask != null && !firstTime ) {
+//      System.out.println("+++++++++++ Canceled "+resizePlotTask);
+      resizePlotTask.cancel();
+      System.out.println(" Cancled timer!: "+(--counter));
+    }
+    if( !firstTime ) {
+      DB.resizeReady = false;
+      resizePlotTask = new ResizePlotTask(DB);
+    System.out.println("+++++++++++ Created "+(++counter));
+      resizePlotTimer.schedule(resizePlotTask, 200);
+    }
+    firstTime = false;
+  }
 }
