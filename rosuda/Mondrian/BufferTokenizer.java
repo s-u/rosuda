@@ -3573,7 +3573,7 @@ public class BufferTokenizer {
 
 /**
  * checks if a polygon-token ("/P") is available in headline
- * additionally remarks hard reading error, if more then 1 polygon is available
+ * additionally remarks hard reading error, if more than 1 polygon is available
  * @param buffer associated ByteBuffer
  * @param format format of text
  * @return true if check was successfull (that means: exactly 1 token in head)
@@ -3724,7 +3724,7 @@ public class BufferTokenizer {
 			b = buffer.get();
 			if(b == SEPERATOR) {
 				// ERROR
-				error[0] = "hardError: SEPERATOR in polygon name, maybe more then 1 polygon names available";
+				error[0] = "hardError: SEPERATOR in polygon name, maybe more than 1 polygon name available";
 				hardReadError = true;
 				errorposition = buffer.position();
 				return null;
