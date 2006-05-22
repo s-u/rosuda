@@ -354,9 +354,12 @@ public class Table implements Cloneable {
                           int index = 0;
                           for( int j=0; j<initialVars.length; j++ ) {
 //System.out.println((rs.getString(j+1)+" -> "+((dataSet.Variable)data.data.elementAt(initialVars[j])).isLevel((rs.getString(j+1)).trim())));
-                              if( initialQuery.getItems().indexOf("category42") == -1 )
-                                  index += plevels[j] * ((dataSet.Variable)data.data.elementAt(initialVars[j])).Level((rs.getString(j+1)).trim());
-                              else
+                            if( initialQuery.getItems().indexOf("category42") == -1 ) {  // classical Table 
+                              String tmp = rs.getString(j+1);
+                              if( tmp == null )
+                                tmp = "NA";
+                              index += plevels[j] * ((dataSet.Variable)data.data.elementAt(initialVars[j])).Level((tmp).trim());
+                            } else // table for histogram !!!
                                   for(int i=0; i<table.length; i++) {
 //System.out.println(lnames[0][i]+" <-> "+rs.getString(j+1).trim());
                                       String tmp = rs.getString(j+1).trim();
