@@ -203,6 +203,7 @@ public class MissPlot extends DragBox implements ActionListener {
       for( int j = stop; j >= start; j--) {
         MyRect rO = (MyRect)rects.elementAt(2*j);
         MyRect rM = (MyRect)rects.elementAt(2*j+1);
+        rM.setHiliteAlign(true);
         double sumO=0, sumM=0;
         missings = data.getMissings(vars[permA[j]]);
         for( int i=0; i<data.n; i++ )
