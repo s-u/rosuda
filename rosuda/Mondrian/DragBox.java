@@ -60,6 +60,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public boolean scaleChanged = false;              // To indicate paint the new scale (without using events)
 
   public boolean printing;                               // flag to avoid double buffering while printing ...
+  
+  public boolean painting = false;   
 
   public PrinterJob pj;
 
@@ -68,6 +70,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public Dimension printerPage;                               // must be accessible in different paints ...
   
   public LimitDialog LD;
+  
+  public boolean resizeReady = true;
 
   //
   // The PC implementation may need two minor changes:
@@ -199,6 +203,9 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     this.urx = urx;
     this.ury = ury;
 
+    if( this instanceof Histogram )
+      this.lly = 0;
+    
     zooms.addElement( new double[]{llx, lly, urx, ury});
     updateScale();
   }
@@ -285,6 +292,9 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
       this.frame = frame;
 
+//      if( this instanceof PC )                     // Was thought to "unlive" the resize, but sync problems killed it!
+//        frame.initComponents(this);
+
       ToolTipManager.sharedInstance().registerComponent(this);
       ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
       ToolTipManager.sharedInstance().setInitialDelay(0);
@@ -293,30 +303,30 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
       this.setToolTipText("<HTML>hold CTRL to query objects<br>hold SHIRT+CTRL for extended query</HTML>");      
 
       addMouseListener(this);
-        addMouseMotionListener(this);
-
-        evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
-        enableEvents(0);
-
-        sb = new JScrollBar(Scrollbar.VERTICAL, 0, 300, 0, 300);
-        sb.addAdjustmentListener(this);
-        sb.setVisible(false);
-
-        this.enableEvents(AWTEvent.KEY_EVENT_MASK);
-        this.requestFocus();
-
-        frame.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);} });
-
-        if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
-          SYSTEM = MAC;
-        else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 )
-          SYSTEM = WIN;
-        else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("linux") > -1 )
-          SYSTEM = LNX;
-        else
-          SYSTEM = NN;
-      }
-
+      addMouseMotionListener(this);
+      
+      evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
+      enableEvents(0);
+      
+      sb = new JScrollBar(Scrollbar.VERTICAL, 0, 300, 0, 300);
+      sb.addAdjustmentListener(this);
+      sb.setVisible(false);
+      
+      this.enableEvents(AWTEvent.KEY_EVENT_MASK);
+      this.requestFocus();
+      
+      frame.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);} });
+      
+      if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
+        SYSTEM = MAC;
+      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 )
+        SYSTEM = WIN;
+      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("linux") > -1 )
+        SYSTEM = LNX;
+      else
+        SYSTEM = NN;
+    }
+    
     public void setScrollX() {
       frame.getContentPane().add(sb,"East");
     }
