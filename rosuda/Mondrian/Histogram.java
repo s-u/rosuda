@@ -27,6 +27,7 @@ public class Histogram extends DragBox implements ActionListener {
   private int k;
   public String displayMode = "Histogram";
   public boolean densityMode = false;
+  public boolean scaleSelD = true;
   public boolean CDPlot = false;
   private dataSet data;
   private double[] add;
@@ -324,7 +325,9 @@ public class Histogram extends DragBox implements ActionListener {
                 totalY += dy[f];
 
             double sumY = 0;
-            double fac = (double)nSel/(double)data.getN(dvar);
+            double fac = 1; 
+            if( scaleSelD )
+              fac = (double)nSel/(double)data.getN(dvar);
             pD = new Polygon();
             if( displayMode.equals("Histogram") )
               if( !CDPlot )
@@ -607,6 +610,22 @@ public class Histogram extends DragBox implements ActionListener {
               if( weight > -1 )
                 Density.setEnabled(false);
 
+              if( densityMode ) {
+                JCheckBoxMenuItem scaleD = new JCheckBoxMenuItem("scale Density");
+                mode.add(scaleD);
+                if( scaleSelD )
+                  scaleD.setSelected(true);
+                else
+                  scaleD.setSelected(false);
+                
+                scaleD.addItemListener(new ItemListener() {
+                  public void itemStateChanged(ItemEvent e) {
+                    scaleSelD = !scaleSelD;
+                    Update();
+                  }
+                });
+              }                
+
               final Axis axisW = new Axis(xMin, xMax);
 
               JMenu menuWidth = new JMenu("Width");
@@ -759,6 +778,8 @@ public class Histogram extends DragBox implements ActionListener {
       } else if( command.equals("Density") ) {
         if( ((MFrame)frame).hasR() ) {
           densityMode = !densityMode;
+          if( densityMode )
+            scaleSelD = true;
           Update();
         } else
           return;          
