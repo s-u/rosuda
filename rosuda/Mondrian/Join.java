@@ -32,17 +32,19 @@ import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.border.*;
 import org.rosuda.JRclient.*;
+//import com.apple.eawt.*;
 import com.apple.mrj.*;
 import java.text.*;
 
 /**
 */
 
-class Join extends JFrame implements ProgressIndicator, SelectionListener, DataListener, MRJOpenDocumentHandler, MRJQuitHandler {  
+class Join extends JFrame implements ProgressIndicator, SelectionListener, DataListener, MRJQuitHandler, MRJOpenDocumentHandler {  
   
   /** Remember # of open windows so we can quit when last one is closed */
   protected static int num_windows = 0;
   protected static Vector dataSets;
+  protected static Vector Mondrians;
   public Vector Plots = new Vector(10,0);
   public Vector selList = new Vector(10,0);
   public Query sqlConditions;
@@ -58,21 +60,33 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private JPanel progPanel;
   private JLabel progText;
   private JMenuBar menubar;
-  public JMenu windows, help;
+  public JMenu windows, help, dv;
   private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cc, cs, vm, rc, oh, mds;
-  public  JMenuItem ca;
+  public  JMenuItem ca, fc, fs;
   private JCheckBoxMenuItem se, ah, ih;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
   private int thisDataSet  = -1;
+  private int dCol=1, dSel=1;
   private int graphicsPerf;
   static String user;
-  private boolean mondrianRunning = false;
+  public boolean mondrianRunning = false;
   private String justFile = "";
+  private boolean load = false;
+  private boolean killed = false;
   
-  public Join(Vector dataSets, boolean load, boolean loadDB, File loadFile) {
-
+  public Join(Vector Mondrians, Vector dataSets, boolean load, boolean loadDB, File loadFile) {
+    
+    Mondrians.addElement(this);
+    
     MRJApplicationUtils.registerOpenDocumentHandler ( this );
+
+    System.out.println("........... Creating new Instance of Join .........");
+    
+    this.load = load;
+    
+    Toolkit.getDefaultToolkit().setDynamicLayout(false);
+    
     MRJApplicationUtils.registerQuitHandler(this);
     
     hasR = Srs.checkLocalRserve();
@@ -93,6 +107,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     Font SF = new Font("SansSerif", Font.BOLD, 12);
     this.setFont(SF);
     this.dataSets = dataSets;
+    this.Mondrians = Mondrians;
     this.setTitle("Mondrian");               // Create the window.
     num_windows++;                           // Count it.
     
@@ -105,7 +120,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     o.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     file.add(od = new JMenuItem("Open Database"));
     od.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    if( user.indexOf("theus") > -1 )
+    if( user.indexOf("theus") > -1)
       od.setEnabled(true);
     else
       od.setEnabled(false);
@@ -158,12 +173,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     plot.addSeparator();        
     plot.add(pc = new JMenuItem("Parallel Coordinates"));
     pc.setEnabled(false);
-    plot.add(pb = new JMenuItem("Parallel Boxplots"));
+    plot.add(pb = new JMenuItem("Parallel Boxplot"));
     pb.setEnabled(false);
-    plot.add(byx = new JMenuItem("Boxplots y by x"));
+    plot.add(byx = new JMenuItem("Boxplot y by x"));
     byx.setEnabled(false);
     plot.addSeparator();        
-    plot.add(sc2 = new JMenuItem("Scatterplots"));
+    plot.add(sc2 = new JMenuItem("Scatterplot"));
     sc2.setEnabled(false);
     plot.addSeparator();        
     plot.add(m = new JMenuItem("Map"));
@@ -204,7 +219,13 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     options.addSeparator();                     // Put a separator in the menu
     options.add(vm = new JMenuItem("Switch Variable Mode"));
     vm.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
+    
+    options.add(dv = new JMenu("Derive Variable from"));
+    dv.add(fs = new JMenuItem("Selection"));
+    fs.setEnabled(false);
+    dv.add(fc = new JMenuItem("Colors"));
+    fc.setEnabled(false);
+    
     options.addSeparator();                     // Put a separator in the menu
     options.add(mn = new JMenuItem("Model Navigator", KeyEvent.VK_J));
     mn.setEnabled(false);
@@ -320,6 +341,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       });
     o.addActionListener(new ActionListener() {     // Load a dataset
       public void actionPerformed(ActionEvent e) {
+        System.out.println(".......... CALL loadDataSet() FROM Open .........");
         loadDataSet(false, null);
       }
     });
@@ -351,6 +373,16 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     se.addActionListener(new ActionListener() {     // Change the selection mode
       public void actionPerformed(ActionEvent e) {
         switchSelection();
+      }
+    });
+    fs.addActionListener(new ActionListener() {     // Derive variable from selection (false) or color (true)
+      public void actionPerformed(ActionEvent e) {
+        deriveVariable(false);
+      }
+    });
+    fc.addActionListener(new ActionListener() {     // Derive variable from selection (false) or color (true)
+      public void actionPerformed(ActionEvent e) {
+        deriveVariable(true);
       }
     });
     sa.addActionListener(new ActionListener() {     // Select All via Menu
@@ -422,7 +454,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("RC1.0o", 250, 285);
+    g.drawString("beta 1", 250, 285);
 
     mondrianRunning = true;
 
@@ -433,12 +465,14 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       g.setColor(Color.red);
       g.drawString("Connection to R failed: Please check Rserve", 9, 285);
     }
-    
+
     if( load )
       if( loadDB )
         loadDataSet(true, null);  
-      else
+      else {
+//        System.out.println(".......... CALL loadDataSet() FROM Join .........");
         loadDataSet(false, loadFile); 
+      }
   }
 
   public void handleQuit()
@@ -507,9 +541,14 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       num_windows--;
       for( int i=Plots.size()-1; i>=0; i-- )
         ((MFrame)((DragBox)Plots.elementAt(i)).frame).close();
+      dataSets.setElementAt(new dataSet("nullinger"), thisDataSet);
       this.dispose();
-      if (num_windows == 0)
-        new Join( dataSets, false , false, null);
+      if (num_windows == 0) {
+        new Join(Mondrians, dataSets, false , false, null);
+        System.out.println(" -----------------------> disposing Join !!!!!!!!!!!!!!!!");
+        this.dispose();
+        this.killed = true;
+      }
     } 
   }
 
@@ -559,10 +598,15 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   }
 
   public void switchSelection() {
-    selseq = se.isSelected();
+    if( ((dataSet)dataSets.elementAt(thisDataSet)).isDB )
+      selseq = true;
+    else {
+      se.setSelected(!se.isSelected());
+      selseq = se.isSelected();
 //System.out.println("Selection Sequences : "+selseq);
-    if( !selseq )
-      deleteSelection();
+      if( !selseq )
+        deleteSelection();
+    }
   }
 
   public void switchAlpha() {
@@ -589,6 +633,29 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       dataChanged(-1);
     }
   }
+    
+  public void deriveVariable(boolean color) {
+    
+    String name;
+    dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
+    if( color )
+      name = "Colors "+dCol++;
+    else
+      name = "Selection "+dSel++;
+    name = JOptionPane.showInputDialog(this, "Please name the new variable:", name);
+
+    double[] dData;
+    if( color ) {
+      dData = new double[data.n];
+      for( int i=0; i<data.n; i++ )
+        dData[i] = (double)data.colorArray[i];
+    } else {
+      dData = data.getSelection();
+    }
+    data.addVariable(name, false, true, dData);
+    varNames = null;
+    setVarList();
+  }
   
   
   public void deleteSelection() {
@@ -609,7 +676,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     boolean toggleSelection = false;
     boolean deleteAll = false;
     boolean switchSel = false;
-    
+        
     for( int i=0; i<Plots.size(); i++ ) {
       if( ((DragBox)Plots.elementAt(i)).selectAll ) {    // This window has caused the select all event 
         ((DragBox)Plots.elementAt(i)).selectAll = false;
@@ -626,7 +693,6 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       }
       if( ((DragBox)Plots.elementAt(i)).switchSel ) {    // This window has caused the switch event 
         ((DragBox)Plots.elementAt(i)).switchSel = false;
-        se.setSelected(!se.isSelected());
         switchSelection();
         return;
       }
@@ -733,6 +799,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     String Display = nom+"/"+denom+" ("+Stat.roundToString(100F*nom/denom,2)+"%)";
     progText.setText(Display);
     progBar.setValue(nom);
+
+    maintainOptionMenu();
+    
     if( nom > 0 )
       ss.setEnabled(true);
     else
@@ -743,6 +812,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     //System.out.println("Join got the event !!!!"+id);
 
+    maintainOptionMenu();
+    
     // First check whether a color has been set individually
     for( int i=0; i<Plots.size(); i++ ) {
       int col = ((DragBox)Plots.elementAt(i)).colorSet;
@@ -842,27 +913,29 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   }
   
   public void loadDataSet(boolean isDB, File file) {
-    if( thisDataSet == -1 ) {
-      if( isDB ) {
-        loadDataBase();
-      } 
-      else {
-        if( loadAsciiFile(file) ) {
-          setVarList();
-          this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
-          c.setEnabled(true);
-          s.setEnabled(true);
 
-          int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
-          int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
-          String Display = nom+"/"+denom+" ("+Stat.roundToString(100*nom/denom,2)+"%)";
-          progText.setText(Display);
-          progBar.setValue(nom);          
-        }
+    System.out.println(".......... IN loadDataSet("+thisDataSet+") IN .........");
+
+    if( isDB ) {
+      loadDataBase();
+    } else if( thisDataSet == -1 ) {
+      if( loadAsciiFile(file) ) {
+        setVarList();
+        this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
+        c.setEnabled(true);
+        s.setEnabled(true);
+        
+        int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
+        int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
+        String Display = nom+"/"+denom+" ("+Stat.roundToString(100*nom/denom,2)+"%)";
+        progText.setText(Display);
+        progBar.setValue(nom);          
+        
+        load = false;
       }
     }
     else {
-      new Join( dataSets, true , isDB, file);
+      new Join(Mondrians, dataSets, true , isDB, file);
     }
     if( thisDataSet != -1 )
       ((dataSet)dataSets.elementAt(thisDataSet)).graphicsPerf = graphicsPerf;	
@@ -877,8 +950,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       thisDataSet = dataSets.size() - 1;
     final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
     String listNames[] = new String[data.k];
-    for( int j=0; j<data.k; j++)
+    for( int j=0; j<data.k; j++) {
       listNames[j] = " "+data.getName(j);
+      System.out.println("Adding:"+listNames[j]);
+    }
     
     varNames = new JList(listNames);
     scrollPane.setViewportView(varNames);
@@ -1119,6 +1194,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           dataSets.addElement( data );
           setVarList();
           DBFrame.dispose();
+          selseq = true;
+          se.setSelected(true);
+          se.setEnabled(false);
         }
       });
     }
@@ -1322,13 +1400,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     progBar.setValue((int)(100*progress));
   }
   
+/*  public void handleReOpenApplication(ApplicationEvent event) {}
   
-  public void handleOpenFile( File inFile )
-  {
-    while( !mondrianRunning ) {}   // Wait until Mondrian initialized
-
-    loadDataSet( false, inFile );
-  }
+  public void handleQuit(ApplicationEvent event) {}
+  
+  public void handlePrintFile(ApplicationEvent event) {} */
 
   public int[] getWeightVariable(int[] vars, dataSet data) {
 
@@ -1766,7 +1842,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         c.assign("x",dataT.getRawNumbers(varsT[i]));
         c.voidEval("tempData <- cbind(tempData, x)");
       }
-      RList mdsL = c.eval("sMds <- sammon(dist(scale(tempData))+0.001, k=2)").asList();
+      c.voidEval("tempD <- dist(scale(tempData))");
+      c.voidEval("is.na(tempD)[tempD==0] <- T");
+      RList mdsL = c.eval("sMds <- sammon(tempD, y=cmdscale(dist(scale(tempData)), k=2), k=2)").asList();
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
 
@@ -1921,10 +1999,42 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       mv.setEnabled(false);
   }
 
+  
+  public void maintainOptionMenu() {
+    dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
+
+    // Selection
+    if( data.countSelection() == 0 )
+      fs.setEnabled(false);
+    else
+      fs.setEnabled(true);
+    // Colors
+    if( data.colorBrush )
+      fc.setEnabled(true);
+    else
+      fc.setEnabled(false);
+    
+  }
+  
   public void maintainWindowMenu(boolean preserve) {
     for( int i=0; i<Plots.size(); i++ ) 
         ((MFrame)(((DragBox)Plots.elementAt(i)).frame)).maintainMenu(preserve);
   }
+  
+  public void handleOpenFile( File inFile )
+  {
+    //  handleOpenFile does not get an Event if a file is dropped on a non-running Mondrian.app, so we need to get it here, but only in this singular situation!
+    //
+    System.out.println(".......... CALL loadDataSet("+inFile+") FROM handleOpenFile IN Join .........");
+    if( mondrianRunning )
+      return;
+    while( !mondrianRunning ) 
+      System.out.println(" wait for Mondrian to initialize ...");   // Wait until Mondrian initialized
+    if( !dataSets.isEmpty() )
+      return;
+    loadDataSet( false, inFile );
+  }
+  
   
   class MCellRenderer extends JLabel implements ListCellRenderer {
 
