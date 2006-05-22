@@ -939,15 +939,15 @@ public class PC extends DragBox implements ActionListener {
     
     public void paint(Graphics2D g2d) {
 
+      Graphics2D g = (Graphics2D)g2d;
+      Dimension size = this.getSize();
+      data.updateFilter();
+
       if( paintMode.equals("XbyY") ) 
         data.defineFilter( yVar, xVar);
 
-      Graphics2D g = (Graphics2D)g2d;
-      data.updateFilter();
-
       int pF = 1;
       double[] selection;
-      Dimension size = this.getSize();
 
       if( printing )
         slotMax = 1000000;
@@ -1035,7 +1035,7 @@ public class PC extends DragBox implements ActionListener {
           for( int i=0; i<data.n; i++ ) {
             if( data.colorBrush )
               bg.setColor(data.getColor(i));
-            if( !data.hasMissings )
+            if( !data.hasMissings )  
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
             else
               myDrawPolyline(bg, poly[i].xpoints, poly[i].ypoints, i);
@@ -1218,6 +1218,8 @@ public class PC extends DragBox implements ActionListener {
       long stop = new Date().getTime();
       //System.out.println("Time for polys: "+(stop-start)+"ms");
       data.filterOff();
+      
+      super.painting = false;
     }
 
     public void drawSelections(Graphics g) {
@@ -1540,7 +1542,8 @@ public class PC extends DragBox implements ActionListener {
             y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Mins[permA[j]])/(Maxs[permA[j]]-Mins[permA[j]])));
           else
             y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Maxs[permA[j]])/(Mins[permA[j]]-Maxs[permA[j]])));
-          poly[i].addPoint(x, y);
+          if( poly[i] != null )
+            poly[i].addPoint(x, y);
         }
       }
       if( paintMode.equals("Box") || paintMode.equals("Both") || paintMode.equals("XbyY") ) {
@@ -1799,7 +1802,9 @@ public class PC extends DragBox implements ActionListener {
           }
         }
 
-        int count = data.countSelection();
+        int count = data.countSelection(var);
+        if(count == 0)
+          return;
 
         sMin    = data.getSelQuantile(var, 0);
         lSHinge = data.getSelQuantile(var, 0.25);
@@ -1818,6 +1823,8 @@ public class PC extends DragBox implements ActionListener {
             uSWhisker = sMax;
           else
             uSWhisker = uOutlier[uOutlier.length-1]; */
+          
+System.out.println("sMin: "+sMin+" lSHinge "+lSHinge+" sMedian "+sMedian+" uSHinge "+uSHinge+" sMax "+sMax+" lsOutlier "+lsOutlier+" usOutlier "+usOutlier);          
 
           lSWhisker = data.getFirstSelGreater(var, lSHinge-(uSHinge-lSHinge)*1.5);
           uSWhisker = data.getFirstSelSmaller(var, uSHinge+(uSHinge-lSHinge)*1.5);
