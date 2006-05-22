@@ -1,5 +1,6 @@
 package org.rosuda.JRI;
 
+/** This class encapsulates and caches R objects as returned from R. Currently it only converts certain SEXPs references from R into Java obejcts, but eventually bi-directional support should be added. The currently supported objects are string, integer and numeric vectors. All other types can be accessed only using {@link #xp} reference and RNI methods. */
 public class REXP
 {
     public static final int XT_STR         = 1;

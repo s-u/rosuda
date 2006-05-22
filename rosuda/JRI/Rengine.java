@@ -2,7 +2,7 @@ package org.rosuda.JRI;
 
 import java.lang.*;
 
-/** Rengine class is the interface between an instance of R and the Java VM. Due to the fact that R has no threading support, you can run only one instance of R withing a multi-threaded application. There are two ways to use R from Java: individual call and full event loop. See the Rengine @{link #Rengine constructor} for details. <p> <u>Important note:</u> All methods starting with <code>rni</code> (R Native Interface) are low-level native methods that should be avoided if a high-level methods exists. At some point in the future when the high-level API is complete they should become private. However, currently this high-level layer is still missing, so they are available for now.<p>All <code>rni</code> methods use <code>long</code> type to reference <code>SEXP</code>s on R side. Those reference should never be modified or used in arithmetics - the only reason for not using an extra interface class to wrap those references is that <code>rni</code> methods are all <i>ative</i> methods and therefore it would be too expensive to handle the unwrapping on the C side.<p><code>JRI</code> (Java/R Interface) methods are called internally by R and invoke the corresponding method from the even loop handler. Those methods should usualy not be called directly. */
+/** Rengine class is the interface between an instance of R and the Java VM. Due to the fact that R has no threading support, you can run only one instance of R withing a multi-threaded application. There are two ways to use R from Java: individual call and full event loop. See the Rengine {@link #Rengine constructor} for details. <p> <u>Important note:</u> All methods starting with <code>rni</code> (R Native Interface) are low-level native methods that should be avoided if a high-level methods exists. They do NOT attempt any synchronization, so it is the duty of the calling program to ensure that the invokation is safe (see implementation of {@link #eval} for example). At some point in the future when the high-level API is complete they should become private. However, currently this high-level layer is still missing, so they are available for now.<p>All <code>rni</code> methods use <code>long</code> type to reference <code>SEXP</code>s on R side. Those reference should never be modified or used in arithmetics - the only reason for not using an extra interface class to wrap those references is that <code>rni</code> methods are all <i>native</i> methods and therefore it would be too expensive to handle the unwrapping on the C side.<p><code>jri</code> methods are called internally by R and invoke the corresponding method from the even loop handler. Those methods should usualy not be called directly. */
 public class Rengine extends Thread {
     static {
         try {
@@ -14,7 +14,7 @@ public class Rengine extends Thread {
         }
     }
 
-	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using @link{#versionCheck}
+	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using {@link #versionCheck}
 		@return version number as <code>long</code> in the form <code>0xMMmm</code> */
     public static long getVersion() {
         return 0x0103;
@@ -80,12 +80,12 @@ public class Rengine extends Thread {
         return r;
     }
     
-    /** RNI: parses a string into R expressions (do NOT use directly unless you know exactly what you're doing, where possible use @{link #eval} instead)
+    /** RNI: parses a string into R expressions (do NOT use directly unless you know exactly what you're doing, where possible use {@link #eval} instead). Note that no synchronization is performed!
 	@param s string to parse
 	@param parts number of expressions contained in the string
 	@return reference to the resulting list of expressions */
     public synchronized native long rniParse(String s, int parts);
-    /** RNI: evaluate R expression (do NOT use directly unless you know exactly what you're doing, where possible use @{link #eval} instead)
+    /** RNI: evaluate R expression (do NOT use directly unless you know exactly what you're doing, where possible use {@link #eval} instead). Note that no synchronization is performed!
 	@param exp reference to the expression to evaluate
 	@param rho environment to use for evaluation (or 0 for global environemnt)
 	@return result of the evaluation */
@@ -96,40 +96,40 @@ public class Rengine extends Thread {
 	@return contents or <code>null</code> if the reference is not STRSXP */
     public synchronized native String rniGetString(long exp);
     /** RNI: get the contents of a character vector
-	@param reference to STRSXP
+	@param exp reference to STRSXP
 	@return contents or <code>null</code> if the reference is not STRSXP */
     public synchronized native String[] rniGetStringArray(long exp);
     /** RNI: get the contents of an integer vector
-	@param reference to INTSXP
+	@param exp reference to INTSXP
 	@return contents or <code>null</code> if the reference is not INTSXP */
     public synchronized native int[] rniGetIntArray(long exp);
     /** RNI: get the contents of a numeric vector
-	@param reference to REALSXP
+	@param exp reference to REALSXP
 	@return contents or <code>null</code> if the reference is not REALSXP */
     public synchronized native double[] rniGetDoubleArray(long exp);
     /** RNI: get the contents of a generic vector (aka list)
-	@param reference to VECSXP
+	@param exp reference to VECSXP
 	@return contents as an array of references or <code>null</code> if the reference is not VECSXP */
     public synchronized native long[] rniGetVector(long exp);
 
     /** RNI: create a character vector of the length 1
-	@param initial contents of the first entry
+	@param exp initial contents of the first entry
 	@return reference to the resulting STRSXP */
     public synchronized native long rniPutString(String s);
     /** RNI: create a character vector
-	@param initial contents of vector
+	@param s initial contents of the vector
 	@return reference to the resulting STRSXP */
     public synchronized native long rniPutStringArray(String[] a);
     /** RNI: create an integer vector
-	@param initial contents of vector
+	@param a initial contents of the vector
 	@return reference to the resulting INTSXP */
     public synchronized native long rniPutIntArray(int [] a);
     /** RNI: create a numeric vector
-	@param initial contents of vector
+	@param a initial contents of the vector
 	@return reference to the resulting REALSXP */
     public synchronized native long rniPutDoubleArray(double[] a);
     /** RNI: create a generic vector (aka a list)
-	@param initial contents of vector consisiting of an array of references
+	@param a initial contents of the vector consisiting of an array of references
 	@return reference to the resulting VECSXP */
     public synchronized native long rniPutVector(long[] exps);
     
@@ -151,11 +151,11 @@ public class Rengine extends Thread {
     public synchronized native long rniCons(long head, long tail);
     /** RNI: get CAR of a dotted-pair list (LISTSXP)
 	@param exp reference to the list
-	@return reference to CAR if the list (head) */
+	@return reference to CAR of the list (head) */
     public synchronized native long rniCAR(long exp);
     /** RNI: get CDR of a dotted-pair list (LISTSXP)
 	@param exp reference to the list
-	@return reference to CDR if the list (tail) */
+	@return reference to CDR of the list (tail) */
     public synchronized native long rniCDR(long exp);
     /** RNI: create a dotted-pair list (LISTSXP)
 	@param cont contents as an array of references
@@ -174,7 +174,7 @@ public class Rengine extends Thread {
     public static native long rniGetVersion();
     
     /** RNI: interrupt the R process (if possible)
-	@param flag currently ignored, set to 0
+	@param flag currently ignored, must be set to 0
 	@return result code (currently unspecified) */
     public native int rniStop(int flag);
     
@@ -188,7 +188,7 @@ public class Rengine extends Thread {
 	@param exp reference to a SEXP
 	@return type of the expression (see xxxSEXP constants) */
     public synchronized native int rniExpType(long exp);
-    /** RNI: run the main loop.<br> <i>Note:</i> this is an internal method and ot doesn't return until the loop exits. Don't use directly! */
+    /** RNI: run the main loop.<br> <i>Note:</i> this is an internal method and it doesn't return until the loop exits. Don't use directly! */
     public native void rniRunMainLoop();
     
     /** RNI: run other event handlers in R */
@@ -223,9 +223,9 @@ public class Rengine extends Thread {
     }
 
     /** JRI: R_ReadConsole call-back from R.
-	@param prompt prompt to display before waiting for the input
+	@param prompt prompt to display before waiting for the input.<br><i>Note:</i> implementations should block for input. Returning immediately is usually a bad idea, because the loop will be cycling.
 	@param addToHistory flag specifying whether the entered contents should be added to history
-	@return content entered by the user. Returning <code>null</code> corresponds to an EOF attempt. */
+	@return content entered by the user. Returning <code>null</code> corresponds to an EOF and usually causes R to exit (as in <code>q()</doce>). */
     public String jriReadConsole(String prompt, int addToHistory)
     {
 		if (DEBUG>0)
@@ -282,7 +282,7 @@ public class Rengine extends Thread {
     //============ "official" API =============
 
 
-    /** Parses and evaluates an R expression and returns the result
+    /** Parses and evaluates an R expression and returns the result.
 	@param s expression (as string) to parse and evaluate
 	@return resulting expression or <code>null</code> if something wnet wrong */
     public synchronized REXP eval(String s) {
