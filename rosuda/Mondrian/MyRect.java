@@ -28,6 +28,7 @@ public class MyRect extends Rectangle implements ActionListener {
   public Vector tileIds;
   public Table tablep;
   public Color rectColor = Color.lightGray;
+  private boolean flip = false;
   private double[] Colors;
 
   public MyRect(boolean full, char dir, String mode, 
@@ -65,6 +66,10 @@ public class MyRect extends Rectangle implements ActionListener {
     this.hilite = hilite;
   }
 
+  public void setHiliteAlign(boolean flipper) {
+    this.flip = flipper;
+  }
+  
   public void setColor(Color color) {
     this.drawColor = color;
   }
@@ -169,7 +174,7 @@ public class MyRect extends Rectangle implements ActionListener {
                    w, (int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
     }
 
-    if( hilite > 0 && (tablep== null || !tablep.data.colorBrush)) {
+    if( hilite > 0 && (tablep== null || !tablep.data.colorBrush)) {   // draw hilite on none color-brushing ...
       Color c = g.getColor();
       g.setColor(DragBox.hiliteColor);
 //System.out.println("w: "+w+" hilite:"+hilite+"wh: "+(int)((double)w*hilite));
@@ -177,12 +182,14 @@ public class MyRect extends Rectangle implements ActionListener {
         plusX = 1;
         plusY = 0;
       }	
-      if( dir == 'x' )
-        g.fillRect(x+plusX, 
+      if( dir == 'x' ) {
+        int dw = (((int)((double)w*hilite) == 0) ? 1: (((int)((double)w*hilite) == w-1)&& hilite<1 ? w-2 : (int)Math.min(width, ((double)w*hilite)) ) );
+        int dh = 1+Math.min(h, height);
+        g.fillRect(flip ? x+plusX+w-dw : x+plusX, 
                    y+Math.max(0, h-height), 
-                   (((int)((double)w*hilite) == 0) ? 1: (((int)((double)w*hilite) == w-1)&& hilite<1 ? w-2 : (int)Math.min(width, ((double)w*hilite)) ) ),
-                   Math.min(h, height));
-      else if ( dir == 'y' )
+                   dw,
+                   dh);
+      } else if ( dir == 'y' )
         g.fillRect(x, 
                    y+Math.max(0, h-height)+Math.min(h, height)-(((int)((double)(h+plusY)*hilite) == 0) ? (1-plusY): (int)Math.min(height, ((double)h*hilite))),
                    Math.min(w, width), 
