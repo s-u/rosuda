@@ -23,7 +23,7 @@ public class Scatter2D extends DragBox {
   private int displayVar = -1;
   private Image bi, tbi, ttbi, tttbi, fi;			// four buffer: 1. double, 2. hilite, 3. labels, 4. filtered
   private MediaTracker media = new MediaTracker(this);
-  private Graphics2D fg, bg, tbg, ttbg, tttbg;
+  private Graphics2D fg, bg, ttbg, tttbg;
   private int[] Vars;
   private JList varList;
   private double[] xVal;
@@ -33,7 +33,7 @@ public class Scatter2D extends DragBox {
   private double[] selCoeffs = {-10000, -10000, 0};
   private int radius = 3;			// radius of points
   private int[] alphas = {1, 2, 4, 8, 16, 32, 50, 68, 84, 92, 96, 98, 99};
-  private int alphap = 6;
+  private int alphap;
   private int alpha = alphas[alphap];			// transparency of points
   private String displayMode = "Free";
   private String modeString = "bins";
@@ -42,6 +42,7 @@ public class Scatter2D extends DragBox {
   private boolean connectLines = false;
   private int lastPointId = -1;
   private int byVar = -1;
+  private int weightVar = -1;
   private int outside = 5;
   private int tick    = 5;
   private boolean info = false;
@@ -72,6 +73,20 @@ public class Scatter2D extends DragBox {
     this.enableEvents(AWTEvent.ITEM_EVENT_MASK);
     this.requestFocus();
 
+    if( data.n < 50 )
+      alphap = 12;
+    else if ( data.n < 100 )
+      alphap = 10;
+    else if ( data.n < 500 )
+      alphap = 9;
+    else if ( data.n < 1000 )
+      alphap = 8;
+    else if ( data.n < 2000 )
+      alphap = 6;
+    else
+      alphap = 5;
+    alpha = alphas[alphap];
+    
     create();
 
     roundX = (int)Math.max(0, 2 - Math.round((Math.log(xMax-xMin)/Math.log(10))));
@@ -429,6 +444,19 @@ public class Scatter2D extends DragBox {
               }
               mode.add(disMode);
 
+/*              JMenu weight = new JMenu("weight by");
+              for(int i=0; i<data.k; i++) {
+                if( !data.categorical(i) ) {
+                  JCheckBoxMenuItem item = new JCheckBoxMenuItem(data.getName(i));
+                  weight.add(item);
+                  item.setActionCommand("weight"+i);
+                  item.addActionListener(this);
+                  if( i == weightVar )
+                    item.setSelected(true);
+                }
+              }
+              mode.add(weight);            */
+
               JMenuItem invert  = new JMenuItem("invert plot");
               mode.add(invert);
               invert.setActionCommand("invert");
@@ -487,7 +515,7 @@ public class Scatter2D extends DragBox {
         byVar = -1;
       } else if( command.substring(0,Math.min(5, command.length())).equals("byvar") ) {
         connectLines = true;
-System.out.println(" ........................ by var "+command.substring(5,command.length()));
+//System.out.println(" ........................ by var "+command.substring(5,command.length()));
         byVar = (int)Util.atod( command.substring(5,command.length()) );
       } else if( command.equals("axes") ) {
         int tmp = Vars[1];
@@ -755,19 +783,17 @@ System.out.println(" ........................ by var "+command.substring(5,comma
 //        System.out.println("Setting Graphics for Printing");
         bg = g;
         fg = g;
-        tbg = g;
         ttbg = g;
         tttbg = g;
       }
       else {
-        bi = createImage(size.width, size.height);	
         fi = createImage(size.width, size.height);	
+        bi = createImage(size.width, size.height);	
         tbi = createImage(size.width, size.height);	
         ttbi = createImage(size.width, size.height);	
         tttbi = createImage(size.width, size.height);	
         fg = (Graphics2D)fi.getGraphics();
         bg = (Graphics2D)bi.getGraphics();
-        tbg = (Graphics2D)tbi.getGraphics();
         ttbg = (Graphics2D)ttbi.getGraphics();
         tttbg = (Graphics2D)tttbi.getGraphics();
       }
@@ -886,8 +912,13 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       bg.rotate(Math.PI/2);
     } // end, new background graphics	
 
-    if( !printing )
+    Graphics tbg;
+    if( !printing ) {
+      tbg = (Graphics2D)tbi.getGraphics();
       tbg.drawImage(bi, 0, 0, Color.black, null);
+    } else
+      tbg = g;
+  
 
     tbg.setColor(DragBox.hiliteColor);
     
@@ -923,7 +954,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       }*/
       tbg.setColor(DragBox.hiliteColor);
       if( ((MFrame)frame).getAlphaHi() )
-        tbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
+        ((Graphics2D)tbg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)Math.pow((float)alpha/100,0.75))));
+
       for( int i=0; i<data.n; i++) {
         if( xVal[i]>=getLlx() && xVal[i]<=getUrx() && yVal[i]>=getLly() && yVal[i]<=getUry() )
           if( selection[i] > 0 ) {
@@ -948,6 +980,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
 
     if( smoothChanged || true ) { // add regression lines
       smoothChanged = false;
+      ttbg.setColor(Color.black);
+
       if( smoothF.equals("ls-line" ) ) {
         coeffs = data.regress(Vars[0], Vars[1]);
         ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * coeffs[1] + coeffs[0]),
@@ -955,8 +989,6 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       }
 
       if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
-
-        ttbg.setColor(Color.black);
 
         try {
           Rconnection c = new Rconnection();
@@ -981,7 +1013,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
           double[] CIl = {0};
           double[] CIu = {0};
           if( smoothF.equals("loess") ) 
-            fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+//            fitted = c.eval("predict(lowess(x, y, f=1/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+            fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
           if( smoothF.equals("locfit") ) {
             RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
             fitted = (double[]) sL.at("fit").getContent();
@@ -1044,14 +1077,19 @@ System.out.println(" ........................ by var "+command.substring(5,comma
             double[] selection = data.getSelection();
             int k=0;
             for( int i=0; i<data.n; i++ )
-              if( selection[i] > 0 && xVal[i]<Double.MAX_VALUE && yVal[i]<Double.MAX_VALUE) {
+              if( selection[i] > 0 ) {           // && xVal[i]<Double.MAX_VALUE && yVal[i]<Double.MAX_VALUE
                 selX[k]   = xVal[i];
-                selY[k++] = yVal[i];
+                selY[k] = yVal[i];
+                k++;
               }
             
             if( k>0 ) {                           // Not all selected cases are missing in at least one dimension
               c.assign("x",selX);
               c.assign("y",selY);
+
+              c.voidEval("ids <- x<1e300&y<1e300");
+              c.voidEval("x<-x[ids]");
+              c.voidEval("y<-y[ids]");
 
               double xSelMin = Double.MAX_VALUE;
               double xSelMax = Double.MIN_VALUE;
@@ -1063,7 +1101,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
                 xSelMin = data.getSelMin(Vars[0]);
                 xSelMax = data.getSelMax(Vars[0]);
               }
-              
+                            
               double[] xForFit = new double[200+1];
               double step = (xSelMax-xSelMin)/200;
               for( int f=0; f<200+1; f++ )
@@ -1074,7 +1112,7 @@ System.out.println(" ........................ by var "+command.substring(5,comma
               double[] CIl = {0};
               double[] CIu = {0};
               if( smoothF.equals("loess") ) 
-                fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+"), data.frame(x=xf))").asDoubleArray();
+                fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
               if( smoothF.equals("locfit") ) {
                 RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
                 fitted = (double[]) sL.at("fit").getContent();
@@ -1124,6 +1162,8 @@ System.out.println(" ........................ by var "+command.substring(5,comma
       g.setColor(Color.black);
       g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
       g.drawImage(ttbi, 0, 0, Color.black, null);
+      tbg.dispose();
+//      ttbg.dispose();
     }
 
     long stop = new Date().getTime();
@@ -1164,15 +1204,6 @@ System.out.println(" ........................ by var "+command.substring(5,comma
           yMin=data.getMin(Vars[1]); 
           yMax=data.getMax(Vars[1]);
 
-          if( data.n < 100 )
-              alpha = 100;
-          else if ( data.n < 500 )
-              alpha = 70;
-          else if ( data.n < 2000 )
-              alpha = 50;
-          else
-              alpha = 30;
-    
           setCoordinates(xMin, yMin, xMax, yMax, -1);
 
           xVal = data.getRawNumbers(Vars[0]);
