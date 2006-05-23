@@ -206,4 +206,21 @@ public class PlotText extends PlotObject {
         }
         return -1;
     }*/
+    
+    int getMaxBoundingBoxWidth(PoGraSS g) {
+        int maxBbw = 0;
+        if(txt != null) for (int i=0; i<txt.length; i++) {
+            final double rotRad = rot[i]*Math.PI/180;
+            final double s = Math.sin(rotRad);
+            final double c = Math.cos(rotRad);
+            String t;
+            
+            final int w = g.getWidthEstimate(txt[i]);
+            final int h = g.getHeightEstimate(txt[i]);
+            final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
+            
+            maxBbw = Math.max(maxBbw,bbw);
+        }
+        return maxBbw;
+    }
 }

@@ -1017,7 +1017,24 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
      * Possibly adjust mLeft etc.
      * @return Returns <code>true</code> if margins have been changed
      **/
-    public boolean adjustMargin(final PoGraSS g){return false;};
+    public boolean adjustMargin(final PoGraSS g){
+        final int maxBbw = yLabels.getMaxBoundingBoxWidth(g)+5;
+        if(maxBbw>0){
+            final int dml;
+            switch(orientation){
+                case 0: dml=defaultMLeft; break;
+                case 1: dml=defaultMLeft1; break;
+                case 2: dml=defaultMLeft2; break;
+                default: dml=defaultMLeft3; break;
+            }
+            
+            if(maxBbw<dml && mLeft!=maxBbw){
+                mLeft=maxBbw;
+                return true;
+            }
+        }
+        return false;
+    };
     
     protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, String[] view){
         String myMenu[] = new String[((view==null)?0:(view.length)) + 28];
@@ -1226,7 +1243,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
         maxH.add(new Integer(2*Math.min(Math.abs(getBounds().height-mBottom-valuePosA[valuePosA.length-1]),Math.abs(valuePosA[valuePosA.length-1]-valuePosA[valuePosA.length-2])/2)));
         
-        final int maxW = abbreviate?(mLeft-2):(-1);
+        final int maxW = abbreviate?(getDefaultMLeft()-2):(-1);
         final int xPos = mLeft-3;
         final double xAlign = 1;
         final double yALign = 0.5;
@@ -1280,14 +1297,25 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         if(borderColor!=null) ppb.borderColor = borderColor;
         if(borderColorSel!=null) ppb.borderColorSel = borderColorSel;
     }
-
+    
     protected void endAddingLabels() {
         xLabels.finishAdd();
         yLabels.finishAdd();
     }
-
+    
     protected void startAddingLabels() {
         xLabels.clear();
         yLabels.clear();
+    }
+    
+    protected int getDefaultMLeft() {
+        final int dml;
+        switch(orientation){
+            case 0: dml=defaultMLeft; break;
+            case 1: dml=defaultMLeft1; break;
+            case 2: dml=defaultMLeft2; break;
+            default: dml=defaultMLeft3; break;
+        }
+        return dml;
     }
 }
