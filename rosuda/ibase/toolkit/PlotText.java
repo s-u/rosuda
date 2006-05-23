@@ -20,11 +20,11 @@ import org.rosuda.pograss.*;
 import org.rosuda.ibase.*;
 
 public class PlotText extends PlotObject {
-    int x[], y[], maxw[];
+    int x[], y[], maxw[], maxh[];
     double ax[], ay[];
     double rot[];
     String txt[];
-    Rectangle txtFields[]; // the place which each text element occupies, is initialised in draw method
+    //Rectangle txtFields[]; // the place which each text element occupies, is initialised in draw method
     boolean show=true;
     
     List addX=new ArrayList(),
@@ -32,6 +32,7 @@ public class PlotText extends PlotObject {
             addAx=new ArrayList(),
             addAy=new ArrayList(),
             addMaxW=new ArrayList(),
+            addMaxH=new ArrayList(),
             addRot=new ArrayList(),
             addTxt=new ArrayList();
     
@@ -43,6 +44,7 @@ public class PlotText extends PlotObject {
         ax=ay=null;
         rot=null;
         maxw=null;
+        maxh=null;
         txt=null;
     }
     
@@ -64,22 +66,27 @@ public class PlotText extends PlotObject {
      * @param rotation angle to rotate text
      * @param text string to be displayed
      */
-    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final double rotation, final String text){
+    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final int maxH, final double rotation, final String text){
         addX.add(new Integer(X));
         addY.add(new Integer(Y));
         addAx.add(new Double(aX));
         addAy.add(new Double(aY));
         addMaxW.add(new Integer(maxW));
+        addMaxH.add(new Integer(maxH));
         addRot.add(new Double(rotation));
         addTxt.add(text);
     }
     
+    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final double rotation, final String text){
+        add(X,Y,aX,aY,maxW,-1,rotation,text);
+    }
+    
     public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final String text){
-        add(X,Y,aX,aY,maxW,0,text);
+        add(X,Y,aX,aY,maxW,0,-1,text);
     }
     
     public void add(final int X, final int Y, final double aX, final double aY, final String text){
-        add(X,Y,aX,aY,-1,text);
+        add(X,Y,aX,aY,-1,-1,text);
     }
     
     public void add(final int X, final int Y, final double aX, final double aY, final double rotation, final String text){
@@ -101,6 +108,7 @@ public class PlotText extends PlotObject {
             final double[] dAx=ax;
             final double[] dAy=ay;
             final int[] dMaxw=maxw;
+            final int[] dMaxh=maxh;
             final double[] dRot=rot;
             final String[] dTxt=txt;
             
@@ -112,6 +120,7 @@ public class PlotText extends PlotObject {
             ax=new double[oldLen+newLen];
             ay=new double[oldLen+newLen];
             maxw=new int[oldLen+newLen];
+            maxh=new int[oldLen+newLen];
             rot=new double[oldLen+newLen];
             txt=new String[oldLen+newLen];
             
@@ -121,6 +130,7 @@ public class PlotText extends PlotObject {
                 System.arraycopy(dAx, 0, ax, 0, dAx.length);
                 System.arraycopy(dAy, 0, ay, 0, dAy.length);
                 System.arraycopy(dMaxw, 0, maxw, 0, dMaxw.length);
+                System.arraycopy(dMaxh, 0, maxh, 0, dMaxh.length);
                 System.arraycopy(dRot, 0, rot, 0, dRot.length);
                 System.arraycopy(dTxt, 0, txt, 0, dTxt.length);
             }
@@ -131,6 +141,7 @@ public class PlotText extends PlotObject {
                 ax[oldLen+i] = ((Double)addAx.get(i)).doubleValue();
                 ay[oldLen+i] = ((Double)addAy.get(i)).doubleValue();
                 maxw[oldLen+i] = ((Integer)addMaxW.get(i)).intValue();
+                maxh[oldLen+i] = ((Integer)addMaxH.get(i)).intValue();
                 rot[oldLen+i] = ((Double)addRot.get(i)).intValue();
                 txt[oldLen+i] = (String)addTxt.get(i);
             }
@@ -140,6 +151,7 @@ public class PlotText extends PlotObject {
             addAx.clear();
             addAy.clear();
             addMaxW.clear();
+            addMaxH.clear();
             addRot.clear();
             addTxt.clear();
         }
@@ -149,16 +161,32 @@ public class PlotText extends PlotObject {
     public void draw(final PoGraSS g) {
         if (!show || txt==null || txt.length==0) return;
         if (cold!=null) cold.use(g);
-        if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
+        //if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
         for (int i=0; i<txt.length; i++) {
+            final double rotRad = rot[i]*Math.PI/180;
+            final double s = Math.sin(rotRad);
+            final double c = Math.cos(rotRad);
             String t;
-            if(maxw[i]>=0 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
+            
+            final int w = g.getWidthEstimate(txt[i]);
+            final int h = g.getHeightEstimate(txt[i]);
+            final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
+            final int bbh = (int)Math.ceil(w*Math.abs(s) + h*Math.abs(c));
+            
+            boolean abbreviate= (maxw[i]>=0 && bbw>maxw[i]);
+            
+            final double normalizedRot;
+            if(rot[i]<0) normalizedRot = rot[i]-((int)(rot[i]/360+1))*360;
+            else normalizedRot = rot[i]-((int)(rot[i]/360))*360;
+            if(!abbreviate && normalizedRot>=0.000001 && normalizedRot<=359.999999 && maxh[i]>=0 && bbh>maxh[i])
+                abbreviate=true;
+            
+            if(abbreviate) t=Common.getTriGraph(txt[i]);
             else t=txt[i];
             g.setColor(Color.BLACK);
             g.drawString(t,x[i],y[i],ax[i],ay[i],rot[i]);
-            final int w = g.getWidthEstimate(t);
-            final int h = g.getHeightEstimate(t);
-            txtFields[i] = new Rectangle(x[i]-(int)(ax[i]*w+0.5),y[i]+(int)((-1+ay[i])*h+0.5), w,h);
+            
+            //txtFields[i] = new Rectangle(x[i]-(int)(ax[i]*bbw+0.5),y[i]+(int)((-1+ay[i])*bbh+0.5), bbw,bbh);
             //g.drawRect(txtFields[i].x,txtFields[i].y, txtFields[i].x+txtFields[i].width,  txtFields[i].y+txtFields[i].height);
         }
     }
@@ -170,12 +198,12 @@ public class PlotText extends PlotObject {
         return "PlotText(labels="+l+",coord="+coordX+"/"+coordY+",visible="+isVisible()+")";
     }
     
-    public int getTextAt(final int x, final int y){
+    /*public int getTextAt(final int x, final int y){
         if(txtFields!=null){
             for (int i=0; i<txtFields.length; i++){
                 if(txtFields[i].contains(x,y)) return i;
             }
         }
         return -1;
-    }
+    }*/
 }

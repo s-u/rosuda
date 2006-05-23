@@ -1196,25 +1196,40 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     }
     
     private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
+        ArrayList text = new ArrayList();
+        ArrayList valuePos = new ArrayList();
+        ArrayList maxH = new ArrayList();
+        
         final double f=axis.getSensibleTickDistance(verticalMedDist,verticalMinDist);
         double fi=axis.getSensibleTickStart(f);
-        try {
-            final int maxW = abbreviate?(rotateYLabels?verticalMedDist:(mLeft-2)):(-1);
-            final int xPos = mLeft-3;
-            final double xAlign = 1;
-            final double yALign = 0.5;
-            
-            while (fi<axis.vBegin+axis.vLen) {
-                final String text;
-                if(sVar==null) text = axis.getDisplayableValue(fi);
-                else text=sVar.getCatAt((int)(fi+0.5)).toString();
-                
-                final int t=axis.getValuePos(fi);
-                labels.add(xPos,t,xAlign,yALign,maxW,rotateYLabels?rotateYLabelsBy:0,text);
-                if(ticks) g.drawLine(mLeft-2,t,mLeft,t);
-                fi+=f;
-            }
-        } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
+        int i=0;
+        while (fi<axis.vBegin+axis.vLen) {
+            if(sVar==null) text.add(axis.getDisplayableValue(fi));
+            else text.add(sVar.getCatAt((int)(fi+0.5)).toString());
+            valuePos.add(new Integer(axis.getValuePos(fi)));
+            i++;
+            fi+=f;
+        }
+        int[] valuePosA = new int[valuePos.size()];
+        i=0;
+        for(Iterator it = valuePos.listIterator(); it.hasNext();){
+            valuePosA[i++] = ((Integer)it.next()).intValue();
+        }
+        if(valuePosA.length>1) maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[0]-mTop),Math.abs(valuePosA[1]-valuePosA[0])/2)));
+        else maxH.add(new Integer(Math.abs(getBounds().height-mBottom-mTop)));
+        for(i=1;i<valuePosA.length-1;i++){
+            maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[i]-valuePosA[i-1])/2,Math.abs(valuePosA[i+1]-valuePosA[i])/2)));
+        }
+        maxH.add(new Integer(2*Math.min(Math.abs(getBounds().height-mBottom-valuePosA[valuePosA.length-1]),Math.abs(valuePosA[valuePosA.length-1]-valuePosA[valuePosA.length-2])/2)));
+        
+        final int maxW = abbreviate?(mLeft-2):(-1);
+        final int xPos = mLeft-3;
+        final double xAlign = 1;
+        final double yALign = 0.5;
+        
+        for(i=0; i<valuePosA.length;i++){
+            labels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),rotateYLabels?rotateYLabelsBy:0,(String)text.get(i));
+            if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
         }
     }
     
