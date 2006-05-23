@@ -216,7 +216,7 @@ public class HistCanvas extends BaseCanvas {
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
         
-        labels.clear();
+        startAddingLabels();
         // draw y lables and ticks
         if (orientation==0 || orientation==2) {
             final double f=ay.getSensibleTickDistance(verticalMedDist,verticalMinDist);
@@ -224,7 +224,7 @@ public class HistCanvas extends BaseCanvas {
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
                 g.drawLine(mLeft-5,t,mLeft,t);
-                labels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
+                yLabels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
                 fi+=f;
             }
         } else {
@@ -234,7 +234,7 @@ public class HistCanvas extends BaseCanvas {
                 final int t=ay.getValuePos(fi);
                 final int bl = getSize().height-mBottom;
                 g.drawLine(t,bl,t,bl+5);
-                labels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
+                xLabels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
                 fi+=f;
             }
         }
@@ -250,7 +250,7 @@ public class HistCanvas extends BaseCanvas {
                     final int t=ax.getValuePos(fi);
                     final int bl = getSize().height-mBottom;
                     g.drawLine(t,bl,t,bl+5);
-                    labels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
+                    xLabels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
                 break;
@@ -260,7 +260,7 @@ public class HistCanvas extends BaseCanvas {
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);
                     g.drawLine(t,mTop-5,t,mTop);
-                    labels.add(t,mTop-7,0.5,0,ax.getDisplayableValue(fi));
+                    xLabels.add(t,mTop-7,0.5,0,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
                 break;
@@ -270,7 +270,7 @@ public class HistCanvas extends BaseCanvas {
                 while (fi<ax.vBegin+ax.vLen) {
                     final int t=ax.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
-                    labels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
+                    yLabels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
                 break;
@@ -281,12 +281,12 @@ public class HistCanvas extends BaseCanvas {
                     final int t=ax.getValuePos(fi);
                     final int rl = getSize().width-mRight;
                     g.drawLine(rl,t,rl+5,t);
-                    labels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
+                    yLabels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
                 break;
         }
-        labels.finishAdd();
+        endAddingLabels();
     }
     
     public void paintPost(PoGraSS g) {

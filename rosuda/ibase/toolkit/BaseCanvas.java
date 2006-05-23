@@ -145,7 +145,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected Axis[] opAy; // axes parallel to ay
     
     /** PlotText object containing labels. Can be null. */
-    protected PlotText labels;
+    protected PlotText xLabels;
+    protected PlotText yLabels;
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
@@ -210,8 +211,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         addKeyListener(this);
         f.addKeyListener(this);
         qi=newQueryPopup(f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
-        labels=new PlotText(getPlotManager());
-        labels.setLayer(0);
+        xLabels=new PlotText(getPlotManager());
+        yLabels=new PlotText(getPlotManager());
+        xLabels.setLayer(0);
+        yLabels.setLayer(0);
     }
     
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
@@ -940,7 +943,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     public void setShowLabels(final boolean showLabels) {
         this.showLabels = showLabels;
-        labels.show=showLabels;
+        xLabels.show=showLabels;
+        yLabels.show=showLabels;
     }
     
     /**
@@ -1171,7 +1175,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                     }
                 }
                 if(label!=null){
-                    labels.add(positions[i],getBounds().height-mBottom/2,0.5,0.3,label);
+                    xLabels.add(positions[i],getBounds().height-mBottom/2,0.5,0.3,label);
                 }
                 if(ticks){
                     final int baseYPos = getBounds().height - mBottom;
@@ -1179,7 +1183,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 }
             } else {
                 final int xPos = mLeft-3;
-                labels.add(xPos,positions[i],1,0.5,maxW,names[i]);
+                yLabels.add(xPos,positions[i],1,0.5,maxW,names[i]);
                 if(ticks){
                     g.drawLine(mLeft-3,positions[i],mLeft,positions[i]);
                 }
@@ -1228,7 +1232,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         final double yALign = 0.5;
         
         for(i=0; i<valuePosA.length;i++){
-            labels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),rotateYLabels?rotateYLabelsBy:0,(String)text.get(i));
+            yLabels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),rotateYLabels?rotateYLabelsBy:0,(String)text.get(i));
             if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
         }
     }
@@ -1275,5 +1279,15 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         if(fillColorSel!=null) ppb.fillColorSel = fillColorSel;
         if(borderColor!=null) ppb.borderColor = borderColor;
         if(borderColorSel!=null) ppb.borderColorSel = borderColorSel;
+    }
+
+    protected void endAddingLabels() {
+        xLabels.finishAdd();
+        yLabels.finishAdd();
+    }
+
+    protected void startAddingLabels() {
+        xLabels.clear();
+        yLabels.clear();
     }
 }

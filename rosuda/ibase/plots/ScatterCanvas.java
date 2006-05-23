@@ -439,7 +439,7 @@ public class ScatterCanvas extends BaseCanvas {
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
         
-        labels.clear();
+        startAddingLabels();
         /* draw ticks and labels for X axis */
         {
             final int ori = (orientation==0)?0:1;
@@ -453,7 +453,7 @@ public class ScatterCanvas extends BaseCanvas {
                     final int t=axis.getValuePos(fi);
                     g.drawLine(t,Y+H,t,Y+H+5);
                     if (showLabels)
-                        labels.add(t,Y+H+20,0.5,0,v[ori].isCat()?v[ori].getCatAt((int)(fi+0.5)).toString():                            axis.getDisplayableValue(fi));
+                        xLabels.add(t,Y+H+20,0.5,0,v[ori].isCat()?v[ori].getCatAt((int)(fi+0.5)).toString():                            axis.getDisplayableValue(fi));
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -472,7 +472,7 @@ public class ScatterCanvas extends BaseCanvas {
                     addYLabels(g,axis,true,false);
             }
         }
-        labels.finishAdd();
+        endAddingLabels();
         
     }
     

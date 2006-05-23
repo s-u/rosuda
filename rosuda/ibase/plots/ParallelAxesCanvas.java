@@ -622,9 +622,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         
         g.setColor(COL_OUTLINE);
-        labels.clear();
+        startAddingLabels();
         addLabelsAndTicks(g);
-        labels.finishAdd();
+        endAddingLabels();
     }
     
     private boolean getValid() {
@@ -697,14 +697,14 @@ public class ParallelAxesCanvas extends BaseCanvas {
                                     break;
                             }
                             
-                            labels.add(valuePoss[i],
+                            xLabels.add(valuePoss[i],
                                     (bottom||!alterningLabels)?(H-mBottom+2):(mTop-5),
                                     xAlign,
                                     yAlign,
                                     maxWidth,
                                     labs[i]);
                         } else
-                            labels.add(mLeft-4,
+                            yLabels.add(mLeft-4,
                                     valuePoss[i],
                                     1,
                                     0.5,
@@ -743,7 +743,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     final int t=ay.getValuePos(fi);
                     g.drawLine(t,getHeight()-mBottom,t,getHeight()-mBottom+2);
                     if(isShowLabels())
-                        labels.add(t,getHeight()-mBottom+2,0.5,1, ay.getDisplayableValue(fi));
+                        xLabels.add(t,getHeight()-mBottom+2,0.5,1, ay.getDisplayableValue(fi));
                     fi+=f;
                 }
             }

@@ -164,15 +164,15 @@ public class HamCanvas extends BaseCanvas {
         /* draw labels for X axis */
         double f=ax.getSensibleTickDistance(50,26);
         double fi=ax.getSensibleTickStart(f);
-        labels.clear();
+        startAddingLabels();
         while (fi<ax.vBegin+ax.vLen) {
             int t=ax.getValuePos(fi);
             if (showLabels)
-                labels.add(t,H-mLeft,0.5,0.5,vx.isCat()?vx.getCatAt((int)fi).toString():
+                xLabels.add(t,H-mLeft,0.5,0.5,vx.isCat()?vx.getCatAt((int)fi).toString():
                     ax.getDisplayableValue(fi));
             fi+=f;
         }
-        labels.finishAdd();
+        endAddingLabels();
     }
     
     public String queryObject(int i) {

@@ -220,7 +220,7 @@ public class BarCanvas extends BaseCanvas {
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         
         if(isShowLabels()){
-            labels.clear();
+            startAddingLabels();
             
             final boolean abbreviate = !Character.isDigit(cat_nam[0].charAt(0));
             if(orientation==0){
@@ -240,7 +240,7 @@ public class BarCanvas extends BaseCanvas {
                 addXLabels(g,ax,cat_nam,mLeft,bar_poss,drawTicks,abbreviate);
             }
             
-            labels.finishAdd();
+            endAddingLabels();
         }
     };
     
@@ -474,4 +474,5 @@ public class BarCanvas extends BaseCanvas {
         }
         this.isSpine = isSpine;
     }
+
 }

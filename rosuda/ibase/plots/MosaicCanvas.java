@@ -325,13 +325,13 @@ public class MosaicCanvas extends BaseCanvas {
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info);
         
         // Create labels for the first 2 dimensions
-        labels.clear();
+        startAddingLabels();
         int maxLabelLength = 0;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
             for(int j=0; j<Math.min(2, maxLevel); j++){
                 for( int i=0; i<levels[j]; i++) {
                     if( Dirs[j] == 'x' ){
-                        labels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
+                        xLabels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
                     } else{
                         final int y=(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
                         final int maxW;
@@ -346,13 +346,13 @@ public class MosaicCanvas extends BaseCanvas {
                             maxW=2*Math.min(sub-y,y-sup);
                         } else maxW=(mLeft-5);
                         
-                        labels.add(mLeft-5,y,1,0.5,maxW,(rotateYLabels?rotateYLabelsBy:0), lnames[j][i]);
+                        yLabels.add(mLeft-5,y,1,0.5,maxW,(rotateYLabels?rotateYLabelsBy:0), lnames[j][i]);
                         if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
                     }
                 }
             }
         }
-        labels.finishAdd();
+        endAddingLabels();
         
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;

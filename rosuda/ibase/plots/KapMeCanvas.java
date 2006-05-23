@@ -147,7 +147,7 @@ public class KapMeCanvas extends BaseCanvas {
         g.drawLine(mLeft,mTop,mLeft,H-mBottom);
         g.drawLine(mLeft,H-mBottom,W-mRight,H-mBottom);
         
-        labels.clear();
+        startAddingLabels();
         /* draw ticks and labels for X axis */
         {
             double f=ax.getSensibleTickDistance(50,26);
@@ -159,7 +159,7 @@ public class KapMeCanvas extends BaseCanvas {
                     int t=ax.getValuePos(fi);
                     g.drawLine(t,H-mBottom,t,H-mBottom+5);
                     if (isShowLabels())
-                        labels.add(t,H-mBottom+20,0.5,0,ax.getDisplayableValue(fi));
+                        xLabels.add(t,H-mBottom+20,0.5,0,ax.getDisplayableValue(fi));
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
@@ -177,13 +177,13 @@ public class KapMeCanvas extends BaseCanvas {
                     int t=ay.getValuePos(fi);
                     g.drawLine(mLeft-5,t,mLeft,t);
                     if(isShowLabels())
-                        labels.add(mLeft-8,t,1,0.3,ay.getDisplayableValue(fi));
+                        yLabels.add(mLeft-8,t,1,0.3,ay.getDisplayableValue(fi));
                     fi+=f;
                 }
             } catch (Exception pae) { // catch problems (especially in getCatAt being 0)
             }
         }
-        labels.finishAdd();
+        endAddingLabels();
         
         
         if (filter==null) { // no filter=everything is cached
