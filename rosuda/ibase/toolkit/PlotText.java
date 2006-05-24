@@ -66,7 +66,7 @@ public class PlotText extends PlotObject {
      * @param rotation angle to rotate text
      * @param text string to be displayed
      */
-    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final int maxH, final double rotation, final String text){
+    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final int maxH, final String text, final double rotation){
         addX.add(new Integer(X));
         addY.add(new Integer(Y));
         addAx.add(new Double(aX));
@@ -77,20 +77,20 @@ public class PlotText extends PlotObject {
         addTxt.add(text);
     }
     
-    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final double rotation, final String text){
-        add(X,Y,aX,aY,maxW,-1,rotation,text);
+    public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final String text, final double rotation){
+        add(X,Y,aX,aY,maxW,-1,text,rotation);
     }
     
     public void add(final int X, final int Y, final double aX, final double aY, final int maxW, final String text){
-        add(X,Y,aX,aY,maxW,0,-1,text);
+        add(X,Y,aX,aY,maxW,-1,text,0);
     }
     
     public void add(final int X, final int Y, final double aX, final double aY, final String text){
-        add(X,Y,aX,aY,-1,-1,text);
+        add(X,Y,aX,aY,-1,-1,text,0);
     }
     
-    public void add(final int X, final int Y, final double aX, final double aY, final double rotation, final String text){
-        add(X,Y,aX,aY,-1,rotation,text);
+    public void add(final int X, final int Y, final double aX, final double aY, final String text, final double rotation){
+        add(X,Y,aX,aY,-1,-1,text,rotation);
     }
     
     public void add(final int X, final int Y, final String text){
@@ -163,31 +163,42 @@ public class PlotText extends PlotObject {
         if (cold!=null) cold.use(g);
         //if(txtFields==null || txtFields.length!=txt.length) txtFields=new Rectangle[txt.length];
         for (int i=0; i<txt.length; i++) {
-            final double rotRad = rot[i]*Math.PI/180;
-            final double s = Math.sin(rotRad);
-            final double c = Math.cos(rotRad);
-            String t;
-            
-            final int w = g.getWidthEstimate(txt[i]);
-            final int h = g.getHeightEstimate(txt[i]);
-            final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
-            final int bbh = (int)Math.ceil(w*Math.abs(s) + h*Math.abs(c));
-            
-            boolean abbreviate= (maxw[i]>=0 && bbw>maxw[i]);
-            
-            final double normalizedRot;
-            if(rot[i]<0) normalizedRot = rot[i]-((int)(rot[i]/360+1))*360;
-            else normalizedRot = rot[i]-((int)(rot[i]/360))*360;
-            if(!abbreviate && normalizedRot>=0.000001 && normalizedRot<=359.999999 && maxh[i]>=0 && bbh>maxh[i])
-                abbreviate=true;
-            
-            if(abbreviate) t=Common.getTriGraph(txt[i]);
-            else t=txt[i];
-            g.setColor(Color.BLACK);
-            g.drawString(t,x[i],y[i],ax[i],ay[i],rot[i]);
-            
-            //txtFields[i] = new Rectangle(x[i]-(int)(ax[i]*bbw+0.5),y[i]+(int)((-1+ay[i])*bbh+0.5), bbw,bbh);
-            //g.drawRect(txtFields[i].x,txtFields[i].y, txtFields[i].x+txtFields[i].width,  txtFields[i].y+txtFields[i].height);
+            if(txt[i]!=null){
+                final double normalizedRot;
+                if(rot[i]<0) normalizedRot = rot[i]-((int)(rot[i]/360+1))*360;
+                else normalizedRot = rot[i]-((int)(rot[i]/360))*360;
+                
+                if(normalizedRot<0.000001 && normalizedRot>359.999999){
+                    final String t;
+                    
+                    if(maxw[i]>=0 && g.getWidthEstimate(txt[i])>maxw[i]) t=Common.getTriGraph(txt[i]);
+                    else t=txt[i];
+                    
+                    g.setColor(Color.BLACK);
+                    g.drawString(t,x[i],y[i],ax[i],ay[i]);
+                } else{
+                    final double rotRad = normalizedRot*Math.PI/180;
+                    final double s = Math.sin(rotRad);
+                    final double c = Math.cos(rotRad);
+                    String t;
+                    
+                    final int w = g.getWidthEstimate(txt[i]);
+                    final int h = g.getHeightEstimate(txt[i]);
+                    final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
+                    final int bbh = (int)Math.ceil(w*Math.abs(s) + h*Math.abs(c));
+                    
+                    boolean abbreviate= (maxw[i]>=0 && bbw>maxw[i]);
+                    
+                    
+                    if(!abbreviate && maxh[i]>=0 && bbh>maxh[i])
+                        abbreviate=true;
+                    
+                    if(abbreviate) t=Common.getTriGraph(txt[i]);
+                    else t=txt[i];
+                    g.setColor(Color.BLACK);
+                    g.drawString(t,x[i],y[i],ax[i],ay[i],rot[i]);
+                }
+            }
         }
     }
     
@@ -210,16 +221,18 @@ public class PlotText extends PlotObject {
     int getMaxBoundingBoxWidth(PoGraSS g) {
         int maxBbw = 0;
         if(txt != null) for (int i=0; i<txt.length; i++) {
-            final double rotRad = rot[i]*Math.PI/180;
-            final double s = Math.sin(rotRad);
-            final double c = Math.cos(rotRad);
-            String t;
-            
-            final int w = g.getWidthEstimate(txt[i]);
-            final int h = g.getHeightEstimate(txt[i]);
-            final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
-            
-            maxBbw = Math.max(maxBbw,bbw);
+            if(txt[i]!=null){
+                final double rotRad = rot[i]*Math.PI/180;
+                final double s = Math.sin(rotRad);
+                final double c = Math.cos(rotRad);
+                String t;
+                
+                final int w = g.getWidthEstimate(txt[i]);
+                final int h = g.getHeightEstimate(txt[i]);
+                final int bbw = (int)Math.ceil(h*Math.abs(s) + w*Math.abs(c));
+                
+                maxBbw = Math.max(maxBbw,bbw);
+            }
         }
         return maxBbw;
     }
