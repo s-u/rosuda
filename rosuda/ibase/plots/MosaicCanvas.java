@@ -55,8 +55,6 @@ public class MosaicCanvas extends BaseCanvas {
         this.frame=f;
         this.v = vars;
         
-        rotateYLabelsBy=90;
-        
         maxLevel = v.length;
         this.vs = v.length;
         for(int i=0; i<vs; i++){
@@ -346,7 +344,7 @@ public class MosaicCanvas extends BaseCanvas {
                             maxW=2*Math.min(sub-y,y-sup);
                         } else maxW=(mLeft-5);
                         
-                        yLabels.add(mLeft-5,y,1,0.5,maxW,(rotateYLabels?rotateYLabelsBy:0), lnames[j][i]);
+                        yLabels.add(mLeft-5,y,1,0.5,maxW, lnames[j][i],(rotateYLabels?rotateYLabelsBy:0));
                         if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
                     }
                 }
