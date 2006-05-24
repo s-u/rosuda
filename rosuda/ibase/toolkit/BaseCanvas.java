@@ -189,10 +189,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public int horizontalMedDist=50;
     public int horizontalMinDist=35;
     public int verticalMedDist=50;
+
+    private int maxMLeft = 60;
     public int verticalMinDist=35;
     
     public boolean rotateYLabels=true;
-    public double rotateYLabelsBy=270;
+    public double rotateYLabelsBy=90;
     
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
@@ -1019,19 +1021,9 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
      **/
     public boolean adjustMargin(final PoGraSS g){
         final int maxBbw = yLabels.getMaxBoundingBoxWidth(g)+5;
-        if(maxBbw>0){
-            final int dml;
-            switch(orientation){
-                case 0: dml=defaultMLeft; break;
-                case 1: dml=defaultMLeft1; break;
-                case 2: dml=defaultMLeft2; break;
-                default: dml=defaultMLeft3; break;
-            }
-            
-            if(maxBbw<dml && mLeft!=maxBbw){
-                mLeft=maxBbw;
-                return true;
-            }
+        if(maxBbw>0 && maxBbw<maxMLeft && mLeft!=maxBbw){
+            mLeft=maxBbw;
+            return true;
         }
         return false;
     };
@@ -1243,13 +1235,13 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
         maxH.add(new Integer(2*Math.min(Math.abs(getBounds().height-mBottom-valuePosA[valuePosA.length-1]),Math.abs(valuePosA[valuePosA.length-1]-valuePosA[valuePosA.length-2])/2)));
         
-        final int maxW = abbreviate?(getDefaultMLeft()-2):(-1);
-        final int xPos = mLeft-3;
+        final int maxW = abbreviate?(getDefaultMLeft()-5):(-1);
+        final int xPos = mLeft-5;
         final double xAlign = 1;
         final double yALign = 0.5;
         
         for(i=0; i<valuePosA.length;i++){
-            yLabels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),rotateYLabels?rotateYLabelsBy:0,(String)text.get(i));
+            yLabels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),(String)text.get(i),rotateYLabels?rotateYLabelsBy:0);
             if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
         }
     }
