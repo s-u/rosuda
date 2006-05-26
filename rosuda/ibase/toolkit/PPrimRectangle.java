@@ -22,8 +22,6 @@ public class PPrimRectangle extends PPrimBase {
     public boolean drawBorder=true;
     public boolean drawSelectionBorder=false;
     
-    public Color fillColorDrag = new Color(128,128,128,70);
-    
     /**
      * allow color brushing?
      */

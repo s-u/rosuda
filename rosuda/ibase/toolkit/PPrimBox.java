@@ -35,7 +35,6 @@ public class PPrimBox extends PPrimBase {
     public float LWWHISKERSEL = 2.0f;
     public float LWWHISKERENDSEL = 1.5f;
     
-    public Color fillColorDrag = Color.GRAY;
     
     Rectangle r;
     private List outliers = new ArrayList();

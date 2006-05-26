@@ -39,6 +39,8 @@ public abstract class PPrimBase implements PlotPrimitive {
     public Color borderColor = Color.BLACK;
     public Color fillColorSel = Common.selectColor;
     public Color borderColorSel = Common.selectColor;
+    
+    public Color fillColorDrag = new Color(128,128,128,70);
 
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
