@@ -557,7 +557,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         
         double xExtent = 1.0;
         double xCenter = 1.0;
-        if (xAx!=null) {
+        if (xAx!=null && !xAx.getVariable().isCat()) {
             double ax2 = 1.0;
             double ax1 = 1.0;
             ax1=xAx.getValueForPos(x1); ax2=xAx.getValueForPos(x2);
@@ -569,7 +569,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
         double yExtent = 1.0;
         double yCenter = 1.0;
-        if (xAy!=null) {
+        if (xAy!=null && !xAy.getVariable().isCat()) {
             double ay1 = 1.0;
             double ay2 = 1.0;
             ay1=xAy.getValueForPos(y1); ay2=xAy.getValueForPos(y2);
@@ -589,12 +589,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             else // otherwise inflate x
                 xExtent*=ratioPost/ratioPre;
         }
-        if (xAx!=null) {
+        if (xAx!=null && !xAx.getVariable().isCat()) {
             zoomSequence.add(new ZoomDescriptorComponent(ax));
             ax.setValueRange(xCenter-xExtent/2.0,xExtent);
         } else zoomSequence.add(new ZoomDescriptorComponent());
         ignoreNotifications=ins;
-        if (xAy!=null) {
+        if (xAy!=null && !xAy.getVariable().isCat()) {
             zoomSequence.add(new ZoomDescriptorComponent(xAy));
             xAy.setValueRange(yCenter-yExtent/2.0,yExtent);
         } else zoomSequence.add(new ZoomDescriptorComponent());
