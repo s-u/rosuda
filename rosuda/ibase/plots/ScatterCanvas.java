@@ -78,6 +78,11 @@ public class ScatterCanvas extends BaseCanvas {
      * The number of pixels the point diameter should be changed when in-/decreasing it.
      */
     public int changePtDiamBy=2;
+
+    /**
+     * Whether axes shoud be drawn.
+     */
+    public boolean drawAxes = true;
     
     private double spaceprop=1.1;
     
@@ -410,8 +415,10 @@ public class ScatterCanvas extends BaseCanvas {
             setAxCoord(mLeft,Y,mLeft,Y+H);
             setAyCoord(mLeft,Y+H,mLeft+W,Y+H);
         }
-        g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
-        g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
+        if(drawAxes){
+            g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
+            g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
+        }
         
         startAddingLabels();
         /* draw ticks and labels for X axis */
@@ -457,22 +464,22 @@ public class ScatterCanvas extends BaseCanvas {
         final String v0text,v1text;
         if(ppc.ref.length==1){
             v0text = (v[0].isCat()?v[0].atS(ppc.ref[0]):(""+v[0].atD(ppc.ref[0])));
-                v1text = (v[1].isCat()?v[1].atS(ppc.ref[0]):(""+v[1].atD(ppc.ref[0])));
+            v1text = (v[1].isCat()?v[1].atS(ppc.ref[0]):(""+v[1].atD(ppc.ref[0])));
         } else{
             if(v[0].isCat()){
-                    final SortedSet names = catsIn(ppc.ref,0);
-                    v0text = names.toString();
-                } else{
-                    final double[] mM0 = minMax(ppc.ref,0);
-                    v0text="[" + mM0[0] + ", " + mM0[1] + "]";
-                }
-                if(v[1].isCat()){
-                    final SortedSet names = catsIn(ppc.ref,1);
-                    v1text = names.toString();
-                } else{
-                    final double[] mM1 = minMax(ppc.ref,1);
-                    v1text="[" + mM1[0] + ", " + mM1[1] + "]";
-                }
+                final SortedSet names = catsIn(ppc.ref,0);
+                v0text = names.toString();
+            } else{
+                final double[] mM0 = minMax(ppc.ref,0);
+                v0text="[" + mM0[0] + ", " + mM0[1] + "]";
+            }
+            if(v[1].isCat()){
+                final SortedSet names = catsIn(ppc.ref,1);
+                v1text = names.toString();
+            } else{
+                final double[] mM1 = minMax(ppc.ref,1);
+                v1text="[" + mM1[0] + ", " + mM1[1] + "]";
+            }
         }
         if(actionExtQuery) {
             if(ppc.ref.length==1){
