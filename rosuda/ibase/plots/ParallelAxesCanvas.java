@@ -659,12 +659,39 @@ public class ParallelAxesCanvas extends BaseCanvas {
                             switch(type){
                                 case TYPE_BOX:
                                     if(alterningLabels){
-                                        if(i==0){
-                                            if(valuePoss.length>1) maxWidth=valuePoss[1]-valuePoss[0]+posBoxwidth/2;
-                                        } else if (i==valuePoss.length-1){
-                                            if(i>0) maxWidth=valuePoss[i]-valuePoss[i-1]+posBoxwidth/2;
-                                        } else{
-                                            if(i+1<valuePoss.length && i-1>=0) maxWidth=valuePoss[i+1]-valuePoss[i-1];
+                                        if(valuePoss.length>1){
+                                            final int sup,sub;
+                                            if(i==0){
+                                                if(type==TYPE_BOX && ((PPrimBase)pp[1]).isDragging()){
+                                                    if(valuePoss.length>2) sup = (valuePoss[2]-valuePoss[0])/2;
+                                                    else sup = getBounds().width-mRight;
+                                                } else{
+                                                    sup = valuePoss[1];
+                                                }
+                                                sub = valuePoss[0]-posBoxwidth/2;
+                                            } else if (i==valuePoss.length-1){
+                                                sup = valuePoss[i]+posBoxwidth/2;
+                                                if(type==TYPE_BOX && ((PPrimBase)pp[i-1]).isDragging()){
+                                                    if(i>1) sub = (valuePoss[i]-valuePoss[i-2])/2;
+                                                    else sub = mLeft;
+                                                } else{
+                                                    sub = valuePoss[i-1];
+                                                }
+                                            } else{
+                                                if(type==TYPE_BOX && ((PPrimBase)pp[i+1]).isDragging()){
+                                                    if(valuePoss.length>i+2) sup = (valuePoss[i+2]-valuePoss[i])/2;
+                                                    else sup = getBounds().width-mRight;
+                                                } else{
+                                                    sup = valuePoss[i+1];
+                                                }
+                                                if(type==TYPE_BOX && ((PPrimBase)pp[i-1]).isDragging()){
+                                                    if(i>1) sub = (valuePoss[i]-valuePoss[i-2])/2;
+                                                    else sub = mLeft;
+                                                } else{
+                                                    sub = valuePoss[i-1];
+                                                }
+                                            }
+                                            maxWidth = sup-sub;
                                         }
                                     } else{
                                         maxWidth = posBoxwidth;
