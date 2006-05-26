@@ -454,10 +454,30 @@ public class ScatterCanvas extends BaseCanvas {
         final PPrimCircle ppc = (PPrimCircle)p;
         String qs = "";
         final boolean actionExtQuery = isExtQuery;
+        final String v0text,v1text;
+        if(ppc.ref.length==1){
+            v0text = (v[0].isCat()?v[0].atS(ppc.ref[0]):(""+v[0].atD(ppc.ref[0])));
+                v1text = (v[1].isCat()?v[1].atS(ppc.ref[0]):(""+v[1].atD(ppc.ref[0])));
+        } else{
+            if(v[0].isCat()){
+                    final SortedSet names = catsIn(ppc.ref,0);
+                    v0text = names.toString();
+                } else{
+                    final double[] mM0 = minMax(ppc.ref,0);
+                    v0text="[" + mM0[0] + ", " + mM0[1] + "]";
+                }
+                if(v[1].isCat()){
+                    final SortedSet names = catsIn(ppc.ref,1);
+                    v1text = names.toString();
+                } else{
+                    final double[] mM1 = minMax(ppc.ref,1);
+                    v1text="[" + mM1[0] + ", " + mM1[1] + "]";
+                }
+        }
         if(actionExtQuery) {
             if(ppc.ref.length==1){
-                qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
-                        + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                qs = v[0].getName() + ": " + v0text + "\n"
+                        + v[1].getName() + ": " + v1text + "\n"
                         + ppc.ref.length + " case(s) "+
                         Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),2)+
                         "% of var, "+
@@ -465,10 +485,8 @@ public class ScatterCanvas extends BaseCanvas {
                         "% of total)"+
                         (m.marked()>0?"\n"+getMarked(p)+" selected ("+Tools.getDisplayableValue(100.0*((double)getMarked(p)) / (double)m.marked(),2)+"% of total selected)":"");
             } else{
-                final double[] mM0 = minMax(ppc.ref,0);
-                final double[] mM1 = minMax(ppc.ref,1);
-                qs =  v[0].getName() + ": [" + mM0[0] + ", " + mM0[1] + "]\n"
-                        + v[1].getName() + ": [" + mM1[0] + ", " + mM1[1] + "]\n"
+                qs =  v[0].getName() + ": " + v0text + "\n"
+                        + v[1].getName() + ": " + v1text + "\n"
                         + ppc.ref.length + " case(s) ("+
                         Tools.getDisplayableValue(100.0*((double)ppc.ref.length) / (double)v[0].size(),2)+
                         "% of var, "+
@@ -478,14 +496,12 @@ public class ScatterCanvas extends BaseCanvas {
             }
         } else {
             if(ppc.ref.length==1){
-                qs = v[0].getName() + ": " + v[0].atD(ppc.ref[0]) + "\n"
-                        + v[1].getName() + ": " + v[1].atD(ppc.ref[0]) + "\n"
+                qs = v[0].getName() + ": " + v0text + "\n"
+                        + v[1].getName() + ": " + v1text + "\n"
                         + ppc.ref.length + " case(s)";
             } else{
-                final double[] mM0 = minMax(ppc.ref,0);
-                final double[] mM1 = minMax(ppc.ref,1);
-                qs =  v[0].getName() + ": [" + mM0[0] + ", " + mM0[1] + "]\n"
-                        + v[1].getName() + ": [" + mM1[0] + ", " + mM1[1] + "]\n"
+                qs =  v[0].getName() + ": " + v0text + "\n"
+                        + v[1].getName() + ": " + v1text + "\n"
                         + ppc.ref.length + " case(s)";
             }
         }
@@ -678,5 +694,13 @@ public class ScatterCanvas extends BaseCanvas {
         if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(spaceprop-1)/2,(v[1].getMax()-v[1].getMin())*spaceprop);
         if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
         if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
+    }
+    
+    private SortedSet catsIn(int[] ref, int var) {
+        final SortedSet sos = new TreeSet();
+        for(int i=0;i<ref.length;i++){
+            sos.add(v[var].atS(ref[i]));
+        }
+        return sos;
     }
 };
