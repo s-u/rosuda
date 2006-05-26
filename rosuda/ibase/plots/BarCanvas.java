@@ -65,6 +65,7 @@ public class BarCanvas extends BaseCanvas {
         super(gd,f,mark);
         
         allowDragMove=true;
+        borderColorSel=Color.black;
         
         setDefaultMargins(new int[] {10,10,10,20,40,10,10,10});
         
