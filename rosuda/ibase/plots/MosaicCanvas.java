@@ -1,6 +1,5 @@
 package org.rosuda.ibase.plots;
 import java.awt.Frame;
-import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Vector;
 
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.pograss.PoGraSS;
 import org.rosuda.util.Tools;
 
 
@@ -47,6 +47,13 @@ public class MosaicCanvas extends BaseCanvas {
     
     private FrequencyTable ft;
     private int[] combination; // indicates position of recursion
+    
+    private int[] x1x2 = new int[2];
+    private int[] y1y2 = new int[2];
+    
+    private int subX;
+    
+    
     
     private final int standardMLeft=35;
     
@@ -98,14 +105,7 @@ public class MosaicCanvas extends BaseCanvas {
         // updateObjects is called when variables are categorized, i.e. before the frequency table is initialized, so:
         if(dontPaint) return;
         
-        final int maxLabelLength=create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
-        if(autoAdjustMargins){
-            final int omLeft=mLeft;
-            if(maxLabelLength*8>standardMLeft){
-                mLeft=8*maxLabelLength+2;
-            } else mLeft=standardMLeft;
-            if(mLeft!=omLeft) create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
-        }
+        create(mLeft,mTop, getWidth()-mRight, getHeight()-mBottom, "");
         if(pp==null || pp.length!=rects.size()) pp = new PlotPrimitive[rects.size()];
         rects.toArray(pp);
         for(int i=0; i<pp.length; i++) setColors((PPrimBase)pp[i]);
@@ -232,13 +232,13 @@ public class MosaicCanvas extends BaseCanvas {
     private char[] Dirs;
     private double residSum;
     private int censor=0;
-    private int create(final int x1, final int y1, final int x2, final int y2, final String info) {
+    private void create(final int x1, final int y1, final int x2, final int y2, final String info) {
         
         final double[] table = ft.getTable();
         final double[] exp = ft.getExp();
         
         final int[] levels = ft.getLevels();
-        final String[][] lnames = ft.getLnames();
+        
         
         rects.clear();
         
@@ -256,7 +256,7 @@ public class MosaicCanvas extends BaseCanvas {
         
         int thisGap;
         int subY = 0;
-        int subX = 0;
+        subX = 0;
         int mulY = 1;
         int mulX = 1;
         for( int j=0; j<maxLevel; j++) {
@@ -322,35 +322,12 @@ public class MosaicCanvas extends BaseCanvas {
         // start the recursion ////////////
         createMosaic(0, 0, startTable, x1, y1, Math.max(x2-subX,1), Math.max(y2-subY,1), info);
         
-        // Create labels for the first 2 dimensions
-        startAddingLabels();
-        int maxLabelLength = 0;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
-            for(int j=0; j<Math.min(2, maxLevel); j++){
-                for( int i=0; i<levels[j]; i++) {
-                    if( Dirs[j] == 'x' ){
-                        xLabels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
-                    } else{
-                        final int y=(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
-                        final int maxW;
-                        if(rotateYLabels){
-                            final int sup,sub;
-                            if(i==0) sup=mTop;
-                            else sup = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i-1+0.5));
-                            
-                            if(i==levels[j]-1) sub=getBounds().height-mBottom;
-                            else sub = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i+1+0.5));
-                            
-                            maxW=2*Math.min(sub-y,y-sup);
-                        } else maxW=(mLeft-5);
-                        
-                        yLabels.add(mLeft-5,y,1,0.5,maxW, lnames[j][i],(rotateYLabels?rotateYLabelsBy:0));
-                        if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
-                    }
-                }
-            }
+            x1x2[0] = x1;
+            x1x2[1] = x2;
+            y1y2[0] = y1;
+            y1y2[1] = y2;
         }
-        endAddingLabels();
         
         if( mode==DISPLAY_MODE_MULTIPLEBARCHARTS || mode==DISPLAY_MODE_FLUCTUATION ) {
             double maxCount=0;
@@ -376,7 +353,6 @@ public class MosaicCanvas extends BaseCanvas {
                 r.changeDimension(newW,newH);
             }
         }
-        return maxLabelLength;
     }
     
     private void createMosaic(final int start, final int levelid, final double[] Mtable, final int x1, final int y1, final int x2, final int y2, final String infop) {
@@ -594,5 +570,43 @@ public class MosaicCanvas extends BaseCanvas {
         }
     }
     
-    
+    public void paintBack(final PoGraSS g) {
+        
+        final int[] levels = ft.getLevels();
+        
+        final String[][] lnames = ft.getLnames();
+        final int x1=x1x2[0];
+        final int x2=x1x2[1];
+        final int y1=y1y2[0];
+        final int y2=y1y2[1];
+        
+        startAddingLabels();
+        int maxLabelLength = 0;
+        if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
+            for(int j=0; j<Math.min(2, maxLevel); j++){
+                for( int i=0; i<levels[j]; i++) {
+                    if( Dirs[j] == 'x' ){
+                        xLabels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
+                    } else{
+                        final int y=(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
+                        final int maxW;
+                        if(rotateYLabels){
+                            final int sup,sub;
+                            if(i==0) sup=mTop;
+                            else sup = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i-1+0.5));
+                            
+                            if(i==levels[j]-1) sub=getBounds().height-mBottom;
+                            else sub = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i+1+0.5));
+                            
+                            maxW=2*Math.min(sub-y,y-sup);
+                        } else maxW=(mLeft-5);
+                        
+                        yLabels.add(mLeft-5,y,1,0.5,maxW, lnames[j][i],(rotateYLabels?rotateYLabelsBy:0));
+                        if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
+                    }
+                }
+            }
+        }
+        endAddingLabels();
+    }
 }
