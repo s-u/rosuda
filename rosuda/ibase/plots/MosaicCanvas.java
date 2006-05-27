@@ -591,7 +591,7 @@ public class MosaicCanvas extends BaseCanvas {
                 if( Dirs[j] == 'x' ){
                     final int[] positions = new int[levels[j]];
                     for(int i=0; i<levels[j]; i++) positions[i] = (int)(x1+(double)(x2-x1)/(double)levels[j]*(i+0.5));
-                    addXLabels(g,ax,lnames[j],(Math.max(x2-subX,1))/levels[j],positions,false,true);
+                    addXLabels(g,ax,lnames[j],(Math.max(x2-subX,1))/levels[j],positions,false,true,true);
                 } else{
                     final int[] positions = new int[levels[j]];
                     final int[] maxH = new int[levels[j]];

@@ -1152,10 +1152,18 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     }
     
     public void addXLabels(PoGraSS g, Axis axis, String[] names, int maxWidth, int[] positions, boolean ticks, boolean abbreviate) {
-        addXLabels(g,axis,names,new int[]{maxWidth},positions,ticks,abbreviate);
+        addXLabels(g,axis,names,new int[]{maxWidth},positions,ticks,abbreviate,false);
+    }
+    
+    public void addXLabels(PoGraSS g, Axis axis, String[] names, int maxWidth, int[] positions, boolean ticks, boolean abbreviate, boolean top) {
+        addXLabels(g,axis,names,new int[]{maxWidth},positions,ticks,abbreviate,top);
     }
     
     public void addXLabels(PoGraSS g, Axis axis, String[] names, int[] maxWidths, int[] positions, boolean ticks, boolean abbreviate) {
+        addXLabels(g,axis,names,maxWidths,positions,ticks,abbreviate,false);
+    }
+    
+    public void addXLabels(PoGraSS g, Axis axis, String[] names, int[] maxWidths, int[] positions, boolean ticks, boolean abbreviate, boolean top) {
         double overlap=0; // used to handle overlapping labels
         boolean prevEmpty=true;
         for(int i=0; i<positions.length; i++){
@@ -1184,10 +1192,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                     }
                 }
                 if(label!=null){
-                    xLabels.add(positions[i],getBounds().height-mBottom/2,0.5,0.3,label);
+                    xLabels.add(positions[i],top?(mTop/2):(getBounds().height-mBottom/2),0.5,0.3,label);
                 }
                 if(ticks){
-                    final int baseYPos = getBounds().height - mBottom;
+                    final int baseYPos = top?(mTop-3):(getBounds().height - mBottom);
                     g.drawLine(positions[i],baseYPos,positions[i],baseYPos+3);
                 }
             } else {
