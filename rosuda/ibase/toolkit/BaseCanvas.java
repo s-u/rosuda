@@ -189,7 +189,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public int horizontalMedDist=50;
     public int horizontalMinDist=35;
     public int verticalMedDist=50;
-
+    
     private int maxMLeft = 60;
     public int verticalMinDist=35;
     
@@ -1206,6 +1206,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     public void addYLabels(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {
         addYLabels_internal(g,axis,sVar,ticks,abbreviate);
+    }
+    
+    public void addYLabels(PoGraSS g, Axis axis, String[] names, int[] maxH, int[] positions, boolean ticks, boolean abbreviate) {
+        for(int i=0; i<positions.length; i++){
+            yLabels.add(2,positions[i],0,0.5,mLeft-4,maxH[i],names[i],rotateYLabels?rotateYLabelsBy:0);
+        }
     }
     
     private void addYLabels_internal(PoGraSS g, Axis axis, SVar sVar, boolean ticks, boolean abbreviate) {

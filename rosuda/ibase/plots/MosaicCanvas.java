@@ -584,12 +584,19 @@ public class MosaicCanvas extends BaseCanvas {
         int maxLabelLength = 0;
         if( Dirs[0] == 'x' && Dirs[1] == 'y' || Dirs[0] == 'y' && Dirs[1] == 'x') {
             for(int j=0; j<Math.min(2, maxLevel); j++){
-                for( int i=0; i<levels[j]; i++) {
-                    if( Dirs[j] == 'x' ){
-                        xLabels.add((int)((x1+(double)(x2-x1)/(double)levels[j]*(i+0.5))), mTop-5, 0.5,0,(Math.max(x2-subX,1))/levels[j] , lnames[j][i]);
-                    } else{
-                        final int y=(int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
-                        final int maxW;
+                
+                
+                
+                
+                if( Dirs[j] == 'x' ){
+                    final int[] positions = new int[levels[j]];
+                    for(int i=0; i<levels[j]; i++) positions[i] = (int)(x1+(double)(x2-x1)/(double)levels[j]*(i+0.5));
+                    addXLabels(g,ax,lnames[j],(Math.max(x2-subX,1))/levels[j],positions,false,true);
+                } else{
+                    final int[] positions = new int[levels[j]];
+                    final int[] maxH = new int[levels[j]];
+                    for(int i=0; i<levels[j]; i++) {
+                        positions[i] = (int)((y1+(double)(y2-y1)/(double)levels[j]*(i+0.5)));
                         if(rotateYLabels){
                             final int sup,sub;
                             if(i==0) sup=mTop;
@@ -598,15 +605,18 @@ public class MosaicCanvas extends BaseCanvas {
                             if(i==levels[j]-1) sub=getBounds().height-mBottom;
                             else sub = (int)(y1+(double)(y2-y1)/(double)levels[j]*(i+1+0.5));
                             
-                            maxW=2*Math.min(sub-y,y-sup);
-                        } else maxW=(mLeft-5);
-                        
-                        yLabels.add(mLeft-5,y,1,0.5,maxW, lnames[j][i],(rotateYLabels?rotateYLabelsBy:0));
-                        if(lnames[j][i].length()>maxLabelLength) maxLabelLength=lnames[j][i].length();
+                            maxH[i]=2*Math.min(sub-positions[i],positions[i]-sup);
+                        } else maxH[i]=(mLeft-5);
                     }
+                    
+                    addYLabels(g,ay,lnames[j],maxH,positions,false,true);
                 }
+                
             }
+            
+            
         }
         endAddingLabels();
     }
+
 }
