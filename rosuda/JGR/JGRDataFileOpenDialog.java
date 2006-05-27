@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.*;
 import java.io.*;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import javax.swing.*;
@@ -16,6 +17,7 @@ import javax.swing.*;
 import org.rosuda.ibase.*;
 
 import org.rosuda.JGR.toolkit.*;
+import org.rosuda.JRI.REXP;
 
 /**
  *  JGRDataFileOpenDialog - implementation of a file-dialog which allows loading datasets into R by choosing several options.
@@ -216,7 +218,11 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		if(file!=null && !file.isDirectory()) {
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
-			JGR.MAINRCONSOLE.execute(".refreshObjects()",false);
+			
+			REXP x = JGR.R.idleEval("try(.refreshObjects(),silent=TRUE)");
+			String[] r = null;
+			if (x != null && (r = x.asStringArray()) != null)
+				JGR.setObjects(r);
 			if (JGR.OBJECTS.contains(name)) {
 				 String val = (String) JOptionPane.showInputDialog(new JTextField(),"Object name already used!", "Object "+name+" exists!", JOptionPane.PLAIN_MESSAGE, null, null,name);
 			     if (val != null) name = val;
