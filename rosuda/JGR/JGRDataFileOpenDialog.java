@@ -209,13 +209,15 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			
 		} catch (Exception e) { e.printStackTrace();}
 	}
+	
+	private boolean nameAccepted = false;
 
 	/**
 	 * propertyChange: handle propertyChange, used for setting the name where the file should be assigned to.
 	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		File file = this.getSelectedFile();
-		if(file!=null && !file.isDirectory()) {
+		if(file!=null && !file.isDirectory() && !nameAccepted) {
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
 			
@@ -223,9 +225,12 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 			String[] r = null;
 			if (x != null && (r = x.asStringArray()) != null)
 				JGR.setObjects(r);
-			if (JGR.OBJECTS.contains(name)) {
+			while (JGR.OBJECTS.contains(name)) {
 				 String val = (String) JOptionPane.showInputDialog(new JTextField(),"Object name already used!", "Object "+name+" exists!", JOptionPane.PLAIN_MESSAGE, null, null,name);
-			     if (val != null) name = val;
+			     if (val != null) {
+			    	 name = val;
+			     }
+		    	 nameAccepted = true;
 			}
 			dataName.setText(name);
 			checkFile(file);
