@@ -216,6 +216,11 @@ public class JGRDataFileOpenDialog extends JFileChooser implements ActionListene
 		if(file!=null && !file.isDirectory()) {
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]",".");
+			JGR.MAINRCONSOLE.execute(".refreshObjects()",false);
+			if (JGR.OBJECTS.contains(name)) {
+				 String val = (String) JOptionPane.showInputDialog(new JTextField(),"Object name already used!", "Object "+name+" exists!", JOptionPane.PLAIN_MESSAGE, null, null,name);
+			     if (val != null) name = val;
+			}
 			dataName.setText(name);
 			checkFile(file);
 		}
