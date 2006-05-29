@@ -385,8 +385,8 @@ public class Rengine extends Thread {
         @return <code>true</code> on success, otherwise <code>false</code>
         */
     public void assign(String sym, String ct) {
-       		
-		//TODO assign ....
+       	long x1 = rniPutString(ct);
+       	rniAssign(sym,x1,0);
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
@@ -395,10 +395,16 @@ public class Rengine extends Thread {
         @return <code>true</code> on success, otherwise <code>false</code>
         */
     public void assign(String sym, REXP r) {
-
-		
-		
-		//TODO assign ....
+    	if (r.rtype == REXP.XT_INT || r.rtype == REXP.XT_ARRAY_INT) {
+    		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
+    		long x1 = rniPutIntArray(cont);
+    		rniAssign(sym,x1,0);
+    	}
+    	if (r.rtype == REXP.XT_DOUBLE || r.rtype == REXP.XT_ARRAY_DOUBLE) {
+    		double[] cont = r.rtype == REXP.XT_DOUBLE?new double[]{((Double)r.cont).intValue()}:(double[])r.cont;
+    		long x1 = rniPutDoubleArray(cont);
+    		rniAssign(sym,x1,0);
+    	}
     }
 
     /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
