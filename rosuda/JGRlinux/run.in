@@ -19,9 +19,9 @@ fi
 JAVA=@JAVA_PROG@
 
 if [ -r $HOME/.JGRprefsrc ]; then
-    packages=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep DefaultPackages | sed -e s/.*DefaultPackages.*value=\"// -e s/\"..$//g`
-    libs=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRLibraryPath | sed -e s/.*InitialRLibraryPath.*value=\"// -e s/\"..$//g`
-    home=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRHome | sed -e s/.*InitialRHome.*value=\"// -e s/\"..$//g`
+    packages=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep DefaultPackages | sed -e s/.*DefaultPackages.*value=\"// -e s/\".*$//g`
+    libs=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRLibraryPath | sed -e s/.*InitialRLibraryPath.*value=\"// -e s/\".*$//g`
+    home=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRHome | sed -e s/.*InitialRHome.*value=\"// -e s/\".*$//g`
 
     if [ "$home" ]; then
         export R_HOME=$home
