@@ -378,4 +378,38 @@ public class Rengine extends Thread {
 			System.err.println("Unable to start R");
         }
     }
+	
+	    /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
+        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
+        @param ct contents
+        @return <code>true</code> on success, otherwise <code>false</code>
+        */
+    public void assign(String sym, String ct) {
+       		
+		//TODO assign ....
+    }
+
+    /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
+        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
+        @param ct contents. currently only basic types (int, double, int[], double[]) are supported.
+        @return <code>true</code> on success, otherwise <code>false</code>
+        */
+    public void assign(String sym, REXP r) {
+
+		
+		
+		//TODO assign ....
+    }
+
+    /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
+        equals to calling {@link #assign(String, REXP)} */        
+    public void assign(String sym, double[] val)  {
+        assign(sym,new REXP(val));
+    }
+
+    /** assign values of an array of integers to a symbol in R (creating as vector of numbers).<br>
+        equals to calling {@link #assign(String, REXP)} */        
+    public void assign(String sym, int[] val) {
+        assign(sym,new REXP(val));
+    }
 }
