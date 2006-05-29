@@ -20,7 +20,6 @@ public class PPrimRectangle extends PPrimBase {
     // public to avoid calling getter methods. setBounds should be used in combination with MINHEIGHT,MINWIDTH.
     public Rectangle r=new Rectangle();
     public boolean drawBorder=true;
-    public boolean drawSelectionBorder=false;
     
     /**
      * allow color brushing?
@@ -68,26 +67,33 @@ public class PPrimRectangle extends PPrimBase {
         if(sa>0d){
             boolean hasAny=false;
             if(!allowColorBrushing || !isBrushed(m)){ // no color brushing
-                int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
+                int rX=r.x,rY=r.y,rW=r.width-1,rH=r.height-1;
+                
                 hasAny=true;
                 switch (orientation){
                     case 0:
                         rH = getPropSize(rH,sa);
                         rY += r.height-rH;
+                        rX++;
                         break;
                     case 1:
                         rW = getPropSize(rW,sa);
+                        rX++;
+                        rY++;
                         break;
                     case 2:
                         rH = getPropSize(rH,sa);
+                        rX++;
+                        rY++;
                         break;
                     case 3:
                         rW = getPropSize(rW,sa);
                         rX += r.width - rW;
+                        rY++;
                         break;
                 }
                 
-                drawRect(g,rX,rY,rW,rH,fillColorSel,drawSelectionBorder?borderColorSel:null);
+                drawRect(g,rX,rY,rW,rH,fillColorSel,null);
             } else { // color brushing
                 int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
                 final double totW=rW;
@@ -116,17 +122,13 @@ public class PPrimRectangle extends PPrimBase {
                                 }
                                 g.setColor(fillColorSel);
                                 g.fillRect(rX,rY,rW,rH);
-                                if(drawSelectionBorder){
-                                    g.setColor(borderColorSel);
-                                    g.drawRect(rX,rY,rW,rH);
-                                }
                             }
                             shift+=pieces[i];
                         }
                     }
                 }
             }
-            if (hasAny && !drawSelectionBorder) {
+            if (hasAny) {
                 g.setColor(borderColorSel);
                 g.drawRect(r.x,r.y,r.width,r.height);
             }
