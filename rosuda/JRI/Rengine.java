@@ -27,7 +27,7 @@ public class Rengine extends Thread {
 	}
 	
     /** debug flag. Set to value &gt;0 to enable debugging messages. The verbosity increases with increasing number */
-    public static int DEBUG=0;
+    public static int DEBUG=1;
 	
     /** main engine. Since there can be only one instance of R, this is also the only instance. */
     static Rengine mainEngine=null;
@@ -228,7 +228,7 @@ public class Rengine extends Thread {
 	@return content entered by the user. Returning <code>null</code> corresponds to an EOF and usually causes R to exit (as in <code>q()</doce>). */
     public String jriReadConsole(String prompt, int addToHistory)
     {
-		if (DEBUG>0)
+		if (DEBUG>1)
 			System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
         Rsync.unlock();
         String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
@@ -237,7 +237,7 @@ public class Rengine extends Thread {
             jriWriteConsole(es);
             System.err.print(es);
         }
-		if (DEBUG>0)
+		if (DEBUG>1)
 			System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
         return s;
     }
@@ -395,12 +395,12 @@ public class Rengine extends Thread {
         @return <code>true</code> on success, otherwise <code>false</code>
         */
     public void assign(String sym, REXP r) {
-    	if (r.rtype == REXP.XT_INT || r.rtype == REXP.XT_ARRAY_INT) {
+    	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
     		rniAssign(sym,x1,0);
     	}
-    	if (r.rtype == REXP.XT_DOUBLE || r.rtype == REXP.XT_ARRAY_DOUBLE) {
+    	if (r.Xt == REXP.XT_DOUBLE || r.Xt == REXP.XT_ARRAY_DOUBLE) {
     		double[] cont = r.rtype == REXP.XT_DOUBLE?new double[]{((Double)r.cont).intValue()}:(double[])r.cont;
     		long x1 = rniPutDoubleArray(cont);
     		rniAssign(sym,x1,0);

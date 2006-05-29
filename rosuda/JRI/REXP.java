@@ -149,9 +149,6 @@ public class REXP {
 	 */
 	public int rtype;
 
-	/** local expression type (see XT_... constants). */
-	int xt;
-
 	/**
 	 * create a REXP directly from a R SEXP reference. SEXP types STRSXP, INTSXP
 	 * and REALSXP are automatically converted. All others are represented as
@@ -161,23 +158,32 @@ public class REXP {
 		eng = re;
 		xp = exp;
 		rtype = re.rniExpType(xp);
+		
+		
 		if (rtype == STRSXP) {
 			String[] s = re.rniGetStringArray(xp);
 			if (s != null && s.length == 1) {
 				cont = s[0];
-				xt = XT_STR;
+				Xt = XT_STR;
 			} else {
 				cont = s;
-				xt = XT_ARRAY_STR;
+				Xt = XT_ARRAY_STR;
 			}
 		} else if (rtype == INTSXP) {
 			cont = re.rniGetIntArray(xp);
-			xt = XT_ARRAY_INT;
+			Xt = XT_ARRAY_INT;
 		} else if (rtype == REALSXP) {
 			cont = re.rniGetDoubleArray(xp);
-			xt = XT_ARRAY_DOUBLE;
+			Xt = XT_ARRAY_DOUBLE;
+		} else if (rtype == VECSXP) {
+			// next line crahses ... ??? 
+			System.out.println(re.rniExpType(re.rniCAR(xp)));
+			System.out.println(re.rniCDR(xp));
+			//TODO .... this is getting worse currently 
+			//cont = new RList(new REXP(re,re.rniCAR(xp)),new REXP(re,re.rniCDR(xp)));
+			Xt = XT_LIST;
 		} else
-			xt = 0;
+			Xt = 0;
 	}
 
 	/** xpression type */
@@ -302,9 +308,9 @@ public class REXP {
 	public String asString() {
 		if (cont == null)
 			return null;
-		if (xt == XT_STR)
+		if (Xt == XT_STR)
 			return (String) cont;
-		if (xt == XT_ARRAY_STR) {
+		if (Xt == XT_ARRAY_STR) {
 			String[] sa = (String[]) cont;
 			return (sa.length > 0) ? sa[0] : null;
 		}
@@ -314,12 +320,12 @@ public class REXP {
 	public String[] asStringArray() {
 		if (cont == null)
 			return null;
-		if (xt == XT_STR) {
+		if (Xt == XT_STR) {
 			String[] sa = new String[1];
 			sa[0] = (String) cont;
 			return sa;
 		}
-		if (xt == XT_ARRAY_STR)
+		if (Xt == XT_ARRAY_STR)
 			return (String[]) cont;
 		return null;
 	}
