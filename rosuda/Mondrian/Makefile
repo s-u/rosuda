@@ -9,7 +9,7 @@ all: $(TARGETS)
 Mondrian.jar: $(MONDRIAN_SRC)
 	rm -f *.class
 	$(JAVAC) $^
-	jar fcm $@ Mondrian.mft *.class Logo.gif
+	jar fcm $@ Mondrian.mft *.class *.gif com
 
 docs: $(MONDRIAN_SRC)
 	mkdir -p JavaDoc
