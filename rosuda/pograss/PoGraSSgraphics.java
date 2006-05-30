@@ -207,6 +207,7 @@ public class PoGraSSgraphics extends PoGraSS {
     }
     
     public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
+        if(txt==null || txt.length()==0) return;
         if (paintLayer==-1 || paintLayer==curLayer) {
             FontMetrics fm=g.getFontMetrics();
             double dx=fm.stringWidth(txt);
