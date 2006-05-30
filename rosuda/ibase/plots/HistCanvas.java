@@ -26,8 +26,11 @@ public class HistCanvas extends BaseCanvas {
     static final String M_BINDOWN = "binDown";
     static final String M_ANCHORLEFT = "anchorLeft";
     static final String M_ANCHORRIGHT = "anchorRight";
+    static final String M_SPINE = "spine";
     /** associated variable */
     protected SVar v;
+    /** variable for spinograms */
+    protected SVar spinovar;
     
     public double anchor, binw;
     
@@ -48,10 +51,16 @@ public class HistCanvas extends BaseCanvas {
     
     private int paintpp;
     
-    private double maxVal=Double.NEGATIVE_INFINITY,minVal=Double.POSITIVE_INFINITY;
+    private double maxVal=Double.NEGATIVE_INFINITY;
+    
+    private boolean isSpine;
+    
+    private double minVal=Double.POSITIVE_INFINITY;
     
     private boolean crosshairs = false;
     private int qx,qy;
+    
+    private MenuItem MIspine=null;
     
     /** creates a new histogram canvas
      * @param f frame owning this canvas or <code>null</code> if none
@@ -61,16 +70,19 @@ public class HistCanvas extends BaseCanvas {
     public HistCanvas(final int gd, final Frame f, final SVar var, final SMarker mark) {
         super(gd,f,mark);
         v=var; setTitle("Histogram ("+v.getName()+")");
+        v.addDepend(this);
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
         createMenu(f,true,false,false,new String[]{
+            "@SSpinogram",M_SPINE,
             "Increase bin width (up)",M_BINUP,
             "Decrease bin width (down)",M_BINDOWN,
             "Move anchor left (left)",M_ANCHORLEFT,
             "Move anchor right (right)",M_ANCHORRIGHT
         });
+        MIspine=EzMenu.getItem(f,M_SPINE);
         
         setDefaultMargins(new int[] {20,10,10,20, 40,10,10,20, 40,10,20,10, 10,40,10,20});
         
@@ -95,76 +107,95 @@ public class HistCanvas extends BaseCanvas {
     public SVar getData(final int id) { return (id==0)?v:null; }
     
     public void updateObjects() {
-        final Stopwatch sw=new Stopwatch();
+        // we should set recalcBar to false if anchor/binw didn't change (re-introduce recalcBar)
         
-        // we should set recalcBar to false if anchor/binw didn't change
         bars=((int)((v.getMax()-anchor)/binw))+1;
         if (dragMode!=DRAGMODE_BINW)
             ax.setValueRange(anchor,bars*binw);
-        boolean recalcBars = true;
-        if (pp==null || pp.length!=bars) {
-            pp=new PlotPrimitive[bars];
-            recalcBars=true;
+        if(pp==null || pp.length!=bars) pp = new PPrimRectangle[bars];
+        paintpp=0;
+        int i=0;
+        while(i<bars) { pp[i]=new PPrimRectangle(); setColors((PPrimBase)pp[i]); i++; }
+        
+        final int count[]=new int[bars];
+        final int es=v.size();
+        final int id2bar[]=new int[es];
+        i=0;
+        int countMax = 0;
+        while (i<es) {
+            final Object o=v.at(i);
+            if (o!=null) {
+                final double f=((Number)o).doubleValue();
+                final int box=(int)((f-ax.vBegin)/binw);
+                id2bar[i]=box+1;
+                if (box>=0 && box<bars) {
+                    count[box]++;
+                    if (count[box]>countMax) countMax=count[box];
+                }
+            }
+            i++;
         }
         
-        if (recalcBars) {
-            paintpp=0;
-            int i=0;
-            while(i<bars) { pp[i]=new PPrimRectangle(); setColors((PPrimBase)pp[i]); i++; }
-            sw.profile("HistCanvasNew.updateObject reset primitives");
-            
-            
-            final int count[]=new int[bars];
-            final int es=v.size();
-            final int id2bar[]=new int[es];
-            i=0;
-            int countMax = 0;
-            while (i<es) {
-                final Object o=v.at(i);
-                if (o!=null) {
-                    final double f=((Number)o).doubleValue();
-                    final int box=(int)((f-ax.vBegin)/binw);
-                    id2bar[i]=box+1;
-                    if (box>=0 && box<bars) {
-                        count[box]++;
-                        if (count[box]>countMax) countMax=count[box];
-                    }
+        i=0;
+        // calculate counts
+        while(i<es) {
+            int b=id2bar[i];
+            if (b>0) {
+                b--;
+                final PPrimRectangle pr=(PPrimRectangle)pp[b];
+                if (pr.ref==null) {
+                    pr.ref=new int[count[b]];
+                    paintpp++;
                 }
+                count[b]--;
+                pr.ref[count[b]]=i;
+            }
+            i++;
+        }
+        i=0;
+        ay.setValueRange(countMax);
+        if(isSpine){
+            final int lh=ay.getCasePos(0);
+            while(i<bars) {
+                final PPrimRectangle ppr=(PPrimRectangle)pp[i];
+                
+                int cl=ax.getCatLow(i);
+                int cu=ax.getCatUp(i);
+                final int cd=cu-cl;
+                cu-=cd/10;
+                cl+=cd/10;
+                
+                int ch=lh+ay.gLen;
+                
+                if(orientation==0) ppr.setBounds(cl,ch,cu-cl,lh-ch);
+                else ppr.setBounds(lh,cl,ch-lh,cu-cl);
+                
                 i++;
             }
-            sw.profile("HistCanvasNew.updateObject calculate counts");
-            i=0;
-            ay.setValueRange(countMax);
+        } else{
             final int bly=ay.getValuePos(0);
             while(i<es) {
                 int b=id2bar[i];
                 if (b>0) {
                     b--;
                     final PPrimRectangle pr=(PPrimRectangle)pp[b];
-                    if (pr.ref==null) {
-                        pr.ref=new int[count[b]];
-                        final int ly=bly;
-                        final int x1=ax.getValuePos(ax.vBegin+b*binw);
-                        final int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
-                        final int vy=ay.getValuePos(count[b]);
-                        if (orientation==0)
-                            pr.setBounds(x1,vy,x2-x1,ly-vy);
-                        else if (orientation==2)
-                            pr.setBounds(x2,ly,x1-x2,vy-ly);
-                        else if (orientation==1)
-                            pr.setBounds(ly,x1,vy-ly,x2-x1);
-                        else
-                            pr.setBounds(vy,x2,ly-vy,x1-x2);
-                        paintpp++;
-                    }
-                    count[b]--;
-                    pr.ref[count[b]]=i;
+                    final int ly=bly;
+                    final int x1=ax.getValuePos(ax.vBegin+b*binw);
+                    final int x2=ax.getValuePos(ax.vBegin+(b+1)*binw);
+                    final int vy=ay.getValuePos(pr.ref.length);
+                    if (orientation==0)
+                        pr.setBounds(x1,vy,x2-x1,ly-vy);
+                    else if (orientation==2)
+                        pr.setBounds(x2,ly,x1-x2,vy-ly);
+                    else if (orientation==1)
+                        pr.setBounds(ly,x1,vy-ly,x2-x1);
+                    else
+                        pr.setBounds(vy,x2,ly-vy,x1-x2);
                 }
                 i++;
             }
-            setBoundValues();
-            sw.profile("HistCanvasNew.updateObject create primitives");
         }
+        setBoundValues();
     }
     
     public void paintBack(final PoGraSS g) {
@@ -469,6 +500,12 @@ public class HistCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
+        if(M_SPINE.equals(cmd)) {
+            setIsSpine(!isSpine);
+            updateObjects();
+            setUpdateRoot(0);
+            repaint();
+        }
         return null;
     }
     
@@ -496,5 +533,33 @@ public class HistCanvas extends BaseCanvas {
                 "\nbin width: " + Tools.getDisplayableValue(binw,2)+
                 "\nanchor: "  + Tools.getDisplayableValue(anchor,2)+
                 (v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
+    }
+    
+    public void setIsSpine(boolean isSpine) {
+        this.isSpine = isSpine;
+        if(isSpine){
+            int[] ids = new int[v.size()];
+            String[] levels = new String[bars];
+            
+            for (int i=0; i<bars; i++){
+                final PPrimRectangle ppr = (PPrimRectangle)pp[i];
+                if(ppr.ref!=null){
+                    for (int j=0; j<ppr.ref.length; j++){
+                        ids[ppr.ref[j]] = i;
+                    }
+                }
+            }
+            for(int i=0; i<levels.length; i++) levels[i] = "" + i;
+            
+            spinovar = new SVarFact("spinovar" + v.getName(),ids,levels);
+            ax=new Axis(spinovar,Axis.O_X,Axis.T_PropCat);
+            MIspine.setLabel("Histogram");
+            updateGeometry=true;
+            
+        } else{
+            ax=new Axis(v,Axis.O_X,Axis.T_Num);
+            MIspine.setLabel("Spinogram");
+            updateGeometry=true;
+        }
     }
 }
