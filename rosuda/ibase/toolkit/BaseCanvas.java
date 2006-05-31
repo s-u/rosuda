@@ -254,12 +254,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         final boolean xSizeChanged = ((orientation&1)==0)?(W!=w):(H!=h);
         do{
             if (ay!=null && (ySizeChanged || updateGeometry)){
-                switch (orientation) {
-                    case 0: ay.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                    case 1: ay.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
-                    case 2: ay.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
-                    case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-                }
+                setAyDefaultGeometry();
             }
             if(opAy!=null && (ySizeChanged || updateGeometry)){
                 switch (orientation) {
@@ -270,12 +265,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 }
             }
             if (ax!=null && (xSizeChanged || updateGeometry)){
-                switch (orientation) {
-                    case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
-                    case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
-                    case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
-                    case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
-                }
+                setAxDefaultGeometry();
             }
             if(opAx!=null && (xSizeChanged || updateGeometry)){
                 switch (orientation) {
@@ -1323,5 +1313,29 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             default: dml=defaultMLeft3; break;
         }
         return dml;
+    }
+    
+    protected void setAyDefaultGeometry() {
+        final Rectangle r=getBounds();
+        final int w=r.width;
+        final int h=r.height;
+        switch (orientation) {
+            case 0: ay.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+            case 1: ay.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+            case 2: ay.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+            case 3: ay.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+        }
+    }
+    
+    protected void setAxDefaultGeometry() {
+        final Rectangle r=getBounds();
+        final int w=r.width;
+        final int h=r.height;
+        switch (orientation) {
+            case 0: ax.setGeometry(Axis.O_X,mLeft,w-mLeft-mRight); break;
+            case 1: ax.setGeometry(Axis.O_Y,mTop,h-mTop-mBottom); break;
+            case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
+            case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
+        }
     }
 }
