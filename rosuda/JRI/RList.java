@@ -35,6 +35,19 @@ public class RList extends Object {
     /** constructs an empty list */
     public RList() { head=body=tag=null; }
     
+	/** fake constructor to keep compatibility with Rserve (for now, will be gone soon) */
+	public RList(RVector v) {
+		Vector n = v.getNames();
+		if (n != null) {
+			keys = new String[n.size()];
+			n.copyInto(keys);
+		}
+		values=new REXP[v.size()];
+		v.copyInto(values);
+		dirtyCache=false;
+		// head,tail,tag are all invalid!
+	}	
+
     /** constructs an initialized list
 	@param h head xpression
 	@param b body xpression */
@@ -88,9 +101,9 @@ public class RList extends Object {
     }
 
     /** get xpression given a key
-	@param v key
-	@return xpression which corresponds to the given key or
-	        <code>null</code> if list is not standartized or key not found */
+		@param v key
+		@return xpression which corresponds to the given key or
+		<code>null</code> if list is not standartized or key not found */
     public REXP at(String v) {
 		if (!updateVec() || keys==null || values==null) return null;
 		int i=0;

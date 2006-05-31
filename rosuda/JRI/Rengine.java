@@ -38,12 +38,14 @@ public class Rengine extends Thread {
 
     boolean died, alive, runLoop, loopRunning;
     String[] args;
-    Mutex Rsync;
+	/** synchronization mutex */
+	Mutex Rsync;
+	/** callback handler */
     RMainLoopCallbacks callback;
-    
+	
     /** create and start a new instance of R. 
 	@param args arguments to be passed to R. Please note that R requires the presence of certain arguments, so passing an empty list usually doesn't work.
-	@param runMainLoop if set to <code>true</code> the the event loop will be started as soon as possible. This requires <code>initialCallbacks</code> to be set correspondingly as well.
+	@param runMainLoop if set to <code>true</code> the the event loop will be started as soon as possible, otherwise no event loop is started. Running loop requires <code>initialCallbacks</code> to be set correspondingly as well.
 	@param initialCallbacks an instance implementing the {@link org.rosuda.JRI.RMainLoopCallbacks RMainLoopCallbacks} interface that provides methods to be called by R
     */
     public Rengine(String[] args, boolean runMainLoop, RMainLoopCallbacks initialCallbacks) {
@@ -64,7 +66,7 @@ public class Rengine extends Thread {
 	@param args arguments
 	@return result code
      */
-    public native int rniSetupR(String[] args);
+    native int rniSetupR(String[] args);
     
     synchronized int setupR() {
         return setupR(null);
@@ -90,7 +92,16 @@ public class Rengine extends Thread {
 	@param rho environment to use for evaluation (or 0 for global environemnt)
 	@return result of the evaluation */
     public synchronized native long rniEval(long exp, long rho);
-    
+
+	/** RNI: protect an R object (c.f. PROTECT macro in C)
+		@since API 1.5, JRI 0.3
+		@param exp reference to protect */
+	public synchronized native void rniProtect(long exp);
+	/** RNI: unprotect last <code>count></code> references (c.f. UNPROTECT in C)
+		@since API 1.5, JRI 0.3
+		@param count number of references to unprotect */
+	public synchronized native void rniUnprotect(int count);
+
     /** RNI: get the contents of the first entry of a character vector
 	@param reference to STRSXP
 	@return contents or <code>null</code> if the reference is not STRSXP */
@@ -145,6 +156,7 @@ public class Rengine extends Thread {
     public synchronized native void rniSetAttr(long exp, String name, long attr);
 
 	/** RNI: determines whether an R object instance inherits from a specific class (S3 for now)
+		@since API 1.5, JRI 0.3
 		@param exp reference to an object
 		@param cName name of the class to check
 		@return <code>true</code> if <code>cName</code> inherits from class <code>cName</code> (see <code>inherits</code> in R) */ 
@@ -168,6 +180,7 @@ public class Rengine extends Thread {
 		@return reference to TAG of the list (tail) */
     public synchronized native long rniTAG(long exp);
     /** RNI: create a dotted-pair list (LISTSXP)
+		@since API 1.5, JRI 0.3
 		@param cont contents as an array of references
 		@return reference to the newly created LISTSXP */
     public synchronized native long rniPutList(long[] cont);
@@ -176,19 +189,36 @@ public class Rengine extends Thread {
 	@return contents of the list as an array of references */
     public synchronized native long[] rniGetList(long exp);
 	/** RNI: retrieve name of a symbol (c.f. PRINTNAME)
+		@since API 1.5, JRI 0.3
 		@param sym reference to a symbol
 		@return name of the symbol or <code>null</code> on error or if exp is no symbol */
 	public synchronized native String rniGetSymbolName(long sym);
 	/** RNI: install a symbol name
+		@since API 1.5, JRI 0.3
 		@param sym symbol name
 		@return reference to SYMSXP referencing the symbol */
 	public synchronized native long rniInstallSymbol(String sym);
 
+	//--- was API 1.4 but it only caused portability problems, so we got rid of it
     //public static native void rniSetEnv(String key, String val);
     //public static native String rniGetEnv(String key);
+	//--- end API 1.4
+
+	/** RNI: convert Java object to EXTPTRSEXP
+		@param o arbitrary Java object
+		@return new EXTPTRSEXP pointing to the Java object
+		@since API 1.5, JRI 0.3
+		*/
+	synchronized native long rniJavaToXref(Object o);
+	/** RNI: convert EXTPTRSEXP to Java object - make sure the pointer is really what you expect, otherwise you'll crash the JVM!
+		@param exp reference to EXTPTRSEXP pointing to a Java object
+		@return resulting Java object
+		@since API 1.5, JRI 0.3
+		*/
+	synchronized native Object rniXrefToJava(long exp);
 	
     /** RNI: return the API version of the native library
-	@return API version of the native library */
+		@return API version of the native library */
     public static native long rniGetVersion();
     
     /** RNI: interrupt the R process (if possible)
@@ -306,8 +336,9 @@ public class Rengine extends Thread {
     public synchronized REXP eval(String s) {
 		return eval(s, true);
 	}
-
+	
     /** Parses and evaluates an R expression and returns the result.
+		@since JRI 0.3
 		@param s expression (as string) to parse and evaluate
 		@param convert if set to <code>true</code> the resulting REXP will contain native representation of the contents, otherwise an empty REXP will be returned. Depending on the back-end an empty REXP may or may not be used to convert the result at a later point.
 		@return resulting expression or <code>null</code> if something wnet wrong */
@@ -348,6 +379,7 @@ public class Rengine extends Thread {
 	}
 
     /** This method is very much like {@link #eval(String,boolean)}, except that it is non-blocking and returns <code>null</code> if the engine is busy.
+		@since JRI 0.3
         @param s string to evaluate
 		@param convert flag denoting whether an empty or fully-converted REXP should be returned (see {@link #eval(String,boolean)} for details)
         @return result of the evaluation or <code>null</code> if the engine is busy
@@ -371,8 +403,23 @@ public class Rengine extends Thread {
         return null;
     }
     
+	/** returns the synchronization mutex for this engine. If an external code needs to use RNI calls, it should do so only in properly protected environment secured by this mutex. Usually the procedure should be as follows:<pre>
+	boolean obtainedLock = e.getRsync().safeLock();
+	try {
+		// use RNI here ...
+	} finally {
+		if (obtainedLock) e.getRsync().unlock();
+	}
+	</pre>
+		@return synchronization mutex
+		@since JRI 0.3
+		*/
+	public Mutex getRsync() {
+		return Rsync;
+	}
+	
     /** check the state of R
-	@return <code>true</code> if R is alive and <code>false</code> if R died or exitted */
+		@return <code>true</code> if R is alive and <code>false</code> if R died or exitted */
     public synchronized boolean waitForR() {
         return alive;
     }

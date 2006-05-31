@@ -1,10 +1,13 @@
 import java.io.*;
+import java.awt.Frame;
+import java.awt.FileDialog;
 
-import java.awt.*;
+import java.util.Enumeration;
 
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RList;
+import org.rosuda.JRI.RVector;
 import org.rosuda.JRI.RMainLoopCallbacks;
 
 class TextConsole implements RMainLoopCallbacks
@@ -72,7 +75,24 @@ public class rtest {
 		try {
 			REXP x;
 			re.eval("data(iris)",false);
-			System.out.println(re.eval("iris"));
+			System.out.println(x=re.eval("iris"));
+			// generic vectors are RVector to accomodate names
+			RVector v = x.asVector();
+			if (v.getNames()!=null) {
+				System.out.println("has names:");
+				for (Enumeration e = v.getNames().elements() ; e.hasMoreElements() ;) {
+					System.out.println(e.nextElement());
+				}
+			}
+			// for compatibility with Rserve we allow casting of vectors to lists
+			RList vl = x.asList();
+			String[] k = vl.keys();
+			if (k!=null) {
+				System.out.println("and once again from the list:");
+				int i=0; while (i<k.length) System.out.println(k[i++]);
+			}			
+			
+			// now for a real dotted-pair list:
 			System.out.println(x=re.eval("pairlist(a=1,b='foo',c=1:5)"));
 			RList l = x.asList();
 			if (l!=null) {

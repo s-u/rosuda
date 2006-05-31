@@ -207,12 +207,15 @@ public class REXP {
 			Xt = XT_ARRAY_DOUBLE;
 		} else if (rtype == VECSXP) {
 			long[] l = re.rniGetVector(xp);
-			cont = new Vector();
+			cont = new RVector();
 			int i = 0;
 			//System.out.println("VECSXP, length="+l.length);
 			Xt = XT_VECTOR;
 			while (i < l.length)
-				((Vector)cont).addElement(new REXP(re, l[i++]));
+				((RVector)cont).addElement(new REXP(re, l[i++]));
+			long na = re.rniGetAttr(xp, "names");
+			if (na!=0 && re.rniExpType(na)==STRSXP)
+				((RVector)cont).setNames(re.rniGetStringArray(na));
 		} else if (rtype == LISTSXP) {
 			long car = re.rniCAR(xp);
 			long cdr = re.rniCDR(xp);
@@ -411,8 +414,8 @@ public class REXP {
 	 * 
 	 * @return Vector content or <code>null</code> if the REXP is no Vector
 	 */
-	public Vector asVector() {
-		return (Xt == XT_VECTOR) ? (Vector) cont : null;
+	public RVector asVector() {
+		return (Xt == XT_VECTOR) ? (RVector) cont : null;
 	}
 
 	/**
@@ -432,7 +435,11 @@ public class REXP {
 	 *         list
 	 */
 	public RList asList() {
-		return (Xt == XT_LIST) ? (RList) cont : null;
+		return (Xt == XT_LIST) ?
+		(RList) cont :
+		( // for compatibility with Rserve we convert vectors to lists
+		  (Xt == XT_VECTOR) ? new RList((RVector)cont) : null
+		  );
 	}
 
 	/**
