@@ -209,7 +209,7 @@ public class REXP {
 			long[] l = re.rniGetVector(xp);
 			cont = new Vector();
 			int i = 0;
-			System.out.println("VECSXP, length="+l.length);
+			//System.out.println("VECSXP, length="+l.length);
 			Xt = XT_VECTOR;
 			while (i < l.length)
 				((Vector)cont).addElement(new REXP(re, l[i++]));
