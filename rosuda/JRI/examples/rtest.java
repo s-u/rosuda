@@ -55,17 +55,20 @@ class TextConsole implements RMainLoopCallbacks
 public class rtest {
     public static void main(String[] args) {
         System.out.println("Creating Rengine (with arguments)");
-	// 1) we pass the arguments from the command line
-	// 2) we won't use the main loop at first, we'll start it later
-	// 3) the callbacks are implemented by the TextConsole class above
-	Rengine re=new Rengine(args, false, null);
+		// 1) we pass the arguments from the command line
+		// 2) we won't use the main loop at first, we'll start it later
+		//    (that's the "false" as second argument)
+		// 3) the callbacks are implemented by the TextConsole class above
+		Rengine re=new Rengine(args, false, new TextConsole());
         System.out.println("Rengine created, waiting for R");
-	// the engine creates R is a new thread, so we should wait until it's ready
+		// the engine creates R is a new thread, so we should wait until it's ready
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
             return;
         }
-		
+
+		/* High-level API - do not use RNI methods unless there is no other way
+			to accomplish what you want */
 		try {
 			REXP x;
 			re.eval("data(iris)",false);
@@ -86,8 +89,9 @@ public class rtest {
 			System.out.println("EX:"+e);
 			e.printStackTrace();
 		}
-
-		System.exit(0);
+		
+		// Part 2 - low-level API - for illustration purposes only!
+		//System.exit(0);
 		
         // simple assignment like a<-"hello" (env=0 means use R_GlobalEnv)
         long xp1 = re.rniPutString("hello");
