@@ -103,7 +103,7 @@ public class Rengine extends Thread {
 	public synchronized native void rniUnprotect(int count);
 
     /** RNI: get the contents of the first entry of a character vector
-	@param reference to STRSXP
+	@param exp reference to STRSXP
 	@return contents or <code>null</code> if the reference is not STRSXP */
     public synchronized native String rniGetString(long exp);
     /** RNI: get the contents of a character vector
@@ -124,11 +124,11 @@ public class Rengine extends Thread {
     public synchronized native long[] rniGetVector(long exp);
 
     /** RNI: create a character vector of the length 1
-	@param exp initial contents of the first entry
+	@param s initial contents of the first entry
 	@return reference to the resulting STRSXP */
     public synchronized native long rniPutString(String s);
     /** RNI: create a character vector
-	@param s initial contents of the vector
+	@param a initial contents of the vector
 	@return reference to the resulting STRSXP */
     public synchronized native long rniPutStringArray(String[] a);
     /** RNI: create an integer vector
@@ -140,7 +140,7 @@ public class Rengine extends Thread {
 	@return reference to the resulting REALSXP */
     public synchronized native long rniPutDoubleArray(double[] a);
     /** RNI: create a generic vector (aka a list)
-	@param a initial contents of the vector consisiting of an array of references
+	@param exps initial contents of the vector consisiting of an array of references
 	@return reference to the resulting VECSXP */
     public synchronized native long rniPutVector(long[] exps);
     
@@ -464,7 +464,6 @@ public class Rengine extends Thread {
 	    /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
         @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
         @param ct contents
-        @return <code>true</code> on success, otherwise <code>false</code>
         */
     public void assign(String sym, String ct) {
        	long x1 = rniPutString(ct);
@@ -473,8 +472,7 @@ public class Rengine extends Thread {
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
         @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
-        @param ct contents. currently only basic types (int, double, int[], double[]) are supported.
-        @return <code>true</code> on success, otherwise <code>false</code>
+        @param r contents as <code>REXP</code>. currently only basic types (int, double, int[], double[]) are supported.
         */
     public void assign(String sym, REXP r) {
     	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
