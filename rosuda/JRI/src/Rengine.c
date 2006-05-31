@@ -236,6 +236,31 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
     
 }
 
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniInstallSymbol
+(JNIEnv *env, jobject this, jstring s)
+{
+    return SEXP2L(jri_installString(env, s));
+}
+
+JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetSymbolName
+(JNIEnv *env, jobject this, jlong exp)
+{
+	return jri_putSymbolName(env, L2SEXP(exp));
+}
+
+JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniInherits
+(JNIEnv *env, jobject this, jlong exp, jstring s)
+{
+	jboolean res = 0;
+	const char *c;
+	c=(*env)->GetStringUTFChars(env, s, 0);
+	if (c) {
+		if (inherits(L2SEXP(exp), c)) res = 1;
+		(*env)->ReleaseStringUTFChars(env, s, c);
+	}
+	return res;
+}
+
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCons
 (JNIEnv *env, jobject this, jlong head, jlong tail)
 {
@@ -257,6 +282,16 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCDR
 {
     if (exp) {
         SEXP r = CDR(L2SEXP(exp));
+        return (r==R_NilValue)?0:SEXP2L(r);
+    }
+    return 0;
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniTAG
+(JNIEnv *env, jobject this, jlong exp)
+{
+    if (exp) {
+        SEXP r = TAG(L2SEXP(exp));
         return (r==R_NilValue)?0:SEXP2L(r);
     }
     return 0;

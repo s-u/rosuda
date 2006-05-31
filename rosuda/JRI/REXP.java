@@ -37,7 +37,7 @@ public class REXP {
 
 	/** xpression type: RList */
 	public static final int XT_LIST = 17;
-
+	
 	/**
 	 * xpression type: closure (there is no java class for that type (yet?).
 	 * currently the body of the closure is stored in the content part of the
@@ -62,6 +62,9 @@ public class REXP {
 
 	/** xpression type: unknown; no assumptions can be made about the content */
 	public static final int XT_UNKNOWN = 48;
+
+	/** xpression type: pure reference, no internal type conversion performed */
+	public static final int XT_NONE = -1;
 
 	/**
 	 * xpression type: RFactor; this XT is internally generated (ergo is does
@@ -155,11 +158,20 @@ public class REXP {
 	 * SEXP references only.
 	 */
 	public REXP(Rengine re, long exp) {
+		this(re, exp, true);
+	}
+	
+	public REXP(Rengine re, long exp, boolean convert) {
 		eng = re;
 		xp = exp;
 		rtype = re.rniExpType(xp);
-		
-		
+		//System.out.println("["+rtype+"@"+exp+","+convert+"]");
+
+		if (!convert) {
+			Xt = XT_NONE;
+			return;
+		}
+				
 		if (rtype == STRSXP) {
 			String[] s = re.rniGetStringArray(xp);
 			if (s != null && s.length == 1) {
@@ -170,20 +182,52 @@ public class REXP {
 				Xt = XT_ARRAY_STR;
 			}
 		} else if (rtype == INTSXP) {
-			cont = re.rniGetIntArray(xp);
-			Xt = XT_ARRAY_INT;
+			cont = null;
+			if (re.rniInherits(xp, "factor")) {
+				long levx = re.rniGetAttr(xp, "levels");
+				if (levx != 0) {
+					String[] levels = null;
+					// we're using low-lever calls here (FIXME?)
+					int rlt = re.rniExpType(levx);
+					if (rlt == STRSXP) {
+						levels = re.rniGetStringArray(levx);
+						int[] ids = re.rniGetIntArray(xp);
+						cont = new RFactor(ids, levels, 1);
+						Xt = XT_FACTOR;
+					}
+				}
+			}
+			// if it's not a factor, then we use int[] instead
+			if (cont == null ) {
+				cont = re.rniGetIntArray(xp);
+				Xt = XT_ARRAY_INT;
+			}
 		} else if (rtype == REALSXP) {
 			cont = re.rniGetDoubleArray(xp);
 			Xt = XT_ARRAY_DOUBLE;
 		} else if (rtype == VECSXP) {
-			// next line crahses ... ??? 
-			System.out.println(re.rniExpType(re.rniCAR(xp)));
-			System.out.println(re.rniCDR(xp));
-			//TODO .... this is getting worse currently 
-			//cont = new RList(new REXP(re,re.rniCAR(xp)),new REXP(re,re.rniCDR(xp)));
+			long[] l = re.rniGetVector(xp);
+			cont = new Vector();
+			int i = 0;
+			System.out.println("VECSXP, length="+l.length);
+			Xt = XT_VECTOR;
+			while (i < l.length)
+				((Vector)cont).addElement(new REXP(re, l[i++]));
+		} else if (rtype == LISTSXP) {
+			long car = re.rniCAR(xp);
+			long cdr = re.rniCDR(xp);
+			long tag = re.rniTAG(xp);
+
+			REXP cdrx = (cdr==0 || re.rniExpType(cdr)!=LISTSXP)?null:new REXP(re,re.rniCDR(xp));
+			cont = new RList(new REXP(re,car), (tag==0)?null:new REXP(re,tag), cdrx);
 			Xt = XT_LIST;
+		} else if (rtype == SYMSXP) {
+			cont = re.rniGetSymbolName(xp);
+			Xt = XT_SYM;
 		} else
 			Xt = 0;
+		
+		//System.out.println("new REXP: "+toString());
 	}
 
 	/** xpression type */
@@ -317,6 +361,10 @@ public class REXP {
 		return null;
 	}
 
+	public String asSymbolName() {
+		return (Xt == XT_SYM)?((String) cont):null;
+	}
+	
 	public String[] asStringArray() {
 		if (cont == null)
 			return null;
@@ -505,6 +553,7 @@ public class REXP {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer("[" + xtName(Xt) + " ");
+
 		if (attr != null)
 			sb.append("\nattr=" + attr + "\n ");
 		if (Xt == XT_DOUBLE)
@@ -586,8 +635,15 @@ public class REXP {
 		if (Xt == XT_LIST || Xt == XT_LANG) {
 			RList l = (RList) cont;
 			sb.append(l.head);
-			sb.append(" <-> ");
-			sb.append(l.body);
+			sb.append(":");
+			sb.append(l.tag);
+			sb.append(",(");
+			sb.append(l.body); 
+			sb.append(")");
+		}
+		;
+		if (Xt == XT_NONE) {
+			sb.append("{"+rtype+"}");
 		}
 		;
 		if (Xt == XT_UNKNOWN)
@@ -626,6 +682,7 @@ public class REXP {
 		if (xt==XT_VECTOR) return "VECTOR";
 		if (xt==XT_FACTOR) return "FACTOR";
 		if (xt==XT_UNKNOWN) return "UNKNOWN";
+		if (xt==XT_NONE) return "(SEXP)";
 		return "<unknown "+xt+">";
     }	
 }

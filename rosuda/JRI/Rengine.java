@@ -17,7 +17,7 @@ public class Rengine extends Thread {
 	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using {@link #versionCheck}
 		@return version number as <code>long</code> in the form <code>0xMMmm</code> */
     public static long getVersion() {
-        return 0x0103;
+        return 0x0105;
     }
 
     /** check API version of this class and the native binary. This is usually a good idea to ensure consistency.
@@ -27,7 +27,7 @@ public class Rengine extends Thread {
 	}
 	
     /** debug flag. Set to value &gt;0 to enable debugging messages. The verbosity increases with increasing number */
-    public static int DEBUG=1;
+    public static int DEBUG=0;
 	
     /** main engine. Since there can be only one instance of R, this is also the only instance. */
     static Rengine mainEngine=null;
@@ -144,6 +144,12 @@ public class Rengine extends Thread {
 	@param attr reference to the object to be used as teh contents of the attribute */
     public synchronized native void rniSetAttr(long exp, String name, long attr);
 
+	/** RNI: determines whether an R object instance inherits from a specific class (S3 for now)
+		@param exp reference to an object
+		@param cName name of the class to check
+		@return <code>true</code> if <code>cName</code> inherits from class <code>cName</code> (see <code>inherits</code> in R) */ 
+	public synchronized native boolean rniInherits(long exp, String cName);
+
     /** RNI: create a dotted-pair list (LISTSXP)
 	@param head CAR
 	@param tail CDR (must be a reference to LISTSXP or 0)
@@ -157,14 +163,26 @@ public class Rengine extends Thread {
 	@param exp reference to the list
 	@return reference to CDR of the list (tail) */
     public synchronized native long rniCDR(long exp);
+    /** RNI: get TAG of a dotted-pair list (LISTSXP)
+		@param exp reference to the list
+		@return reference to TAG of the list (tail) */
+    public synchronized native long rniTAG(long exp);
     /** RNI: create a dotted-pair list (LISTSXP)
-	@param cont contents as an array of references
-	@return reference to the newly created LISTSXP */
+		@param cont contents as an array of references
+		@return reference to the newly created LISTSXP */
     public synchronized native long rniPutList(long[] cont);
     /** RNI: retrieve CAR part of a dotted-part list recursively as an array of references
 	@param exp reference to a dotted-pair list (LISTSXP)
 	@return contents of the list as an array of references */
     public synchronized native long[] rniGetList(long exp);
+	/** RNI: retrieve name of a symbol (c.f. PRINTNAME)
+		@param sym reference to a symbol
+		@return name of the symbol or <code>null</code> on error or if exp is no symbol */
+	public synchronized native String rniGetSymbolName(long sym);
+	/** RNI: install a symbol name
+		@param sym symbol name
+		@return reference to SYMSXP referencing the symbol */
+	public synchronized native long rniInstallSymbol(String sym);
 
     //public static native void rniSetEnv(String key, String val);
     //public static native String rniGetEnv(String key);
@@ -282,10 +300,18 @@ public class Rengine extends Thread {
     //============ "official" API =============
 
 
-    /** Parses and evaluates an R expression and returns the result.
+    /** Parses and evaluates an R expression and returns the result. Has the same effect as calling <code>eval(s, true)</code>.
 	@param s expression (as string) to parse and evaluate
 	@return resulting expression or <code>null</code> if something wnet wrong */
     public synchronized REXP eval(String s) {
+		return eval(s, true);
+	}
+
+    /** Parses and evaluates an R expression and returns the result.
+		@param s expression (as string) to parse and evaluate
+		@param convert if set to <code>true</code> the resulting REXP will contain native representation of the contents, otherwise an empty REXP will be returned. Depending on the back-end an empty REXP may or may not be used to convert the result at a later point.
+		@return resulting expression or <code>null</code> if something wnet wrong */
+    public synchronized REXP eval(String s, boolean convert) {
 		if (DEBUG>0)
 			System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
         boolean obtainedLock=Rsync.safeLock();
@@ -301,7 +327,7 @@ public class Rengine extends Thread {
             if (pr>0) {
                 long er=rniEval(pr, 0);
                 if (er>0) {
-                    REXP x=new REXP(this, er);
+                    REXP x=new REXP(this, er, convert);
                     if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
                     return x;
                 }
@@ -318,6 +344,15 @@ public class Rengine extends Thread {
         @return result of the evaluation or <code>null</code> if the engine is busy
         */
     public synchronized REXP idleEval(String s) {
+		return idleEval(s, true);
+	}
+
+    /** This method is very much like {@link #eval(String,boolean)}, except that it is non-blocking and returns <code>null</code> if the engine is busy.
+        @param s string to evaluate
+		@param convert flag denoting whether an empty or fully-converted REXP should be returned (see {@link #eval(String,boolean)} for details)
+        @return result of the evaluation or <code>null</code> if the engine is busy
+        */
+    public synchronized REXP idleEval(String s, boolean convert) {
         int lockStatus=Rsync.tryLock();
         if (lockStatus==1) return null; // 1=locked by someone else
         boolean obtainedLock=(lockStatus==0);
@@ -326,7 +361,7 @@ public class Rengine extends Thread {
             if (pr>0) {
                 long er=rniEval(pr, 0);
                 if (er>0) {
-                    REXP x=new REXP(this, er);
+                    REXP x=new REXP(this, er, convert);
                     return x;
                 }
             }

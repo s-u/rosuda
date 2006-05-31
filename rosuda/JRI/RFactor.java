@@ -23,36 +23,28 @@ public class RFactor extends Object {
     public RFactor() { id=new Vector(); val=new Vector(); }
     
     /** create a new factor variable, based on the supplied arrays.
-	@param i array if IDs (0..v.length-1)
-	@param v values - cotegory names */
+		@param i array of IDs (0..v.length-1)
+		@param v values - category names */		
     public RFactor(int[] i, String[] v) {
-	id=new Vector(); val=new Vector();
-	int j;
-	if (i!=null && i.length>0)
-	    for(j=0;j<i.length;j++)
-		id.addElement(new Integer(i[j]));
-	if (v!=null && v.length>0)
-	    for(j=0;j<v.length;j++)
-		val.addElement(new Integer(v[j]));
-    }
+		this(i, v, 0);
+	}
 
-    /** special constructor used by REXP parser to save some re-indexing
-	and performing automatic index conversion
-        @param i index array
-        @param v vector of xpressions which should be all strings */
-    public RFactor(int[] i, Vector v) {
-	id=new Vector(); val=new Vector();
-	int j;
-	if (i!=null && i.length>0)
-	    for(j=0;j<i.length;j++)
-		id.addElement(new Integer(i[j]-1));
-	if (v!=null && v.size()>0)
-	    for(j=0;j<v.size();j++) {
-		REXP x=(REXP)v.elementAt(j);
-		val.addElement((x==null||x.Xt!=REXP.XT_STR)?null:(String)x.cont);
-	    };
-    };
-    
+    /** create a new factor variable, based on the supplied arrays.
+		@param i array of IDs (base .. v.length-1+base)
+		@param v values - cotegory names
+		@param base of the indexing
+		*/
+    RFactor(int[] i, String[] v, int base) {
+		id=new Vector(); val=new Vector();
+		int j;
+		if (i!=null && i.length>0)
+			for(j=0;j<i.length;j++)
+				id.addElement(new Integer(i[j]-base));
+		if (v!=null && v.length>0)
+			for(j=0;j<v.length;j++)
+				val.addElement(v[j]);
+    }
+   
     /** add a new element (by name)
 	@param v value */
     public void add(String v) {

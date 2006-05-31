@@ -21,13 +21,17 @@ import java.util.*;
     @version $Id$
 */
 public class RList extends Object {
-    /** xpressions containing head and body. 
-	The terminology is a bit misleading - head corresponds to CAR, body to CDR and finally tag is TAG. */
+    /** xpressions containing head, body and tag. 
+	The terminology is a bit misleading (for historical reasons) - head corresponds to CAR, body to CDR and finally tag is TAG. */
     public REXP head, body, tag;
-    /** usual assumption is that both head and body are xpressions containing vectors.
-	In such case the actual content objects (Vectors) are cached for key/value access. */
-    Vector h,b;
 
+	/** cached keys (from TAG) */
+    String[] keys = null;
+	/** cached values(from CAR) */
+	REXP[] values = null;
+	/** flag denoting whether we need to re-fetch the cached values.<p><b.Note:</b> the current assumption is that the contents don't change after first retrieval - there is currently no recursive check! */
+	boolean dirtyCache = true;
+	
     /** constructs an empty list */
     public RList() { head=body=tag=null; }
     
@@ -35,7 +39,14 @@ public class RList extends Object {
 	@param h head xpression
 	@param b body xpression */
     public RList(REXP h, REXP b) { head=h; body=b; tag=null; }
-    
+
+	/** constructs an initialized list
+		@param h head xpression (CAR)
+		@param t tag xpression (TAG)
+		@param b body/tail xpression (CDR)
+		*/
+    public RList(REXP h, REXP t, REXP b) { head=h; body=b; tag=t; }
+	
     /** get head xpression (CAR)
 	@return head xpression */
     public REXP getHead() { return head; }
@@ -49,14 +60,31 @@ public class RList extends Object {
     public REXP getTag() { return tag; }
 
     /** internal function that updates cached vectors
-        @return <code>true</code> if both expressions are vectors and of the same length */
+        @return <code>true</code> if the conversion was successful */
     boolean updateVec() {
-	if (head==null||body==null||
-	    head.Xt!=REXP.XT_VECTOR||body.Xt!=REXP.XT_VECTOR)
-	    return false;
-	h=(Vector)head.cont;
-	b=(Vector)body.cont;
-	return (h.size()==b.size());
+		if (!dirtyCache) return true;
+		// we do NOT run it recursively, because in most cases only once instance is asked
+		RList cur = this;
+		int l = 0;
+		while (cur!=null) {
+			l++;
+			REXP bd = cur.getBody();
+			cur = (bd==null)?null:bd.asList();
+		}
+		keys=new String[l];
+		values=new REXP[l];
+		cur = this;
+		l=0;
+		while (cur != null) {
+			REXP x = cur.getTag();
+			if (x!=null) keys[l]=x.asSymbolName();
+			values[l] = cur.getHead();
+			REXP bd = cur.getBody();
+			cur = (bd==null)?null:bd.asList();
+			l++;
+		}
+		dirtyCache=false;
+		return true;
     }
 
     /** get xpression given a key
@@ -64,13 +92,13 @@ public class RList extends Object {
 	@return xpression which corresponds to the given key or
 	        <code>null</code> if list is not standartized or key not found */
     public REXP at(String v) {
-	if (!updateVec()) return null;
-	for (int i=0;i<h.size();i++) {
-	    REXP r=(REXP)h.elementAt(i);
-	    if (r!=null && r.Xt==REXP.XT_STR && ((String)r.cont).compareTo(v)==0)
-		return (REXP)b.elementAt(i);
-	}
-	return null;
+		if (!updateVec() || keys==null || values==null) return null;
+		int i=0;
+		while (i<keys.length) {
+			if (keys[i].compareTo(v)==0) return values[i];
+			i++;
+		}
+		return null;
     }
 
     /** get element at the specified position
@@ -78,19 +106,12 @@ public class RList extends Object {
 	@return xpression at the index or <code>null</code> if list is not standartized or
 	        if index out of bounds */
     public REXP at(int i) {
-	if (!updateVec()) return null;
-	return (i>=0 && i<b.size())?(REXP)b.elementAt(i):null;
+		return (!updateVec() || values==null || i<0 || i>=values.length)?null:values[i];
     }
 
     /** returns all keys of the list
 	@return array containing all keys or <code>null</code> if list is not standartized */
     public String[] keys() {
-	if (!updateVec()) return null;
-	String[] k=new String[h.size()];
-	for(int i=0;i<h.size();i++) {
-	    REXP r=(REXP)h.elementAt(i);
-	    k[i]=(r==null||r.Xt!=REXP.XT_STR)?null:(String)r.cont;
-	};
-	return k;
+		return (!updateVec())?null:this.keys;
     }
 }

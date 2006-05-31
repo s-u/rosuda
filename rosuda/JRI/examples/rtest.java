@@ -4,6 +4,7 @@ import java.awt.*;
 
 import org.rosuda.JRI.Rengine;
 import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RList;
 import org.rosuda.JRI.RMainLoopCallbacks;
 
 class TextConsole implements RMainLoopCallbacks
@@ -64,10 +65,27 @@ public class rtest {
             System.out.println("Cannot load R");
             return;
         }
-
-		re.eval("data(iris)");
-		System.out.println(re.eval("objects()"));
-		System.out.println(re.eval("sqrt(36)"));
+		
+		try {
+			REXP x;
+			re.eval("data(iris)",false);
+			System.out.println(re.eval("iris"));
+			System.out.println(x=re.eval("pairlist(a=1,b='foo',c=1:5)"));
+			RList l = x.asList();
+			if (l!=null) {
+				int i=0;
+				String [] a = l.keys();
+				System.out.println("Keys:");
+				while (i<a.length) System.out.println(a[i++]);
+				System.out.println("Contents:");
+				i=0;
+				while (i<a.length) System.out.println(l.at(i++));
+			}
+			System.out.println(re.eval("sqrt(36)"));
+		} catch (Exception e) {
+			System.out.println("EX:"+e);
+			e.printStackTrace();
+		}
 
 		System.exit(0);
 		
