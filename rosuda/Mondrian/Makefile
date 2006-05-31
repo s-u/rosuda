@@ -27,6 +27,6 @@ docs: $(MONDRIAN_SRC)
 
 clean:
 	rm -rf JavaDoc org
-	rm -f $(TARGETS) *.class *~ ../../rosuda/JRclient/*.class MRJ.jar
+	rm -f $(TARGETS) *.class *~ ../../rosuda/JRclient/*.class ../../rosuda/util/*.class MRJ.jar
 
 .PHONY: clean all
