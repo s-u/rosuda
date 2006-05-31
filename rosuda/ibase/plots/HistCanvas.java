@@ -60,6 +60,8 @@ public class HistCanvas extends BaseCanvas {
     private boolean crosshairs = false;
     private int qx,qy;
     
+    private Axis normalAx;
+    
     private MenuItem MIspine=null;
     
     /** creates a new histogram canvas
@@ -72,6 +74,7 @@ public class HistCanvas extends BaseCanvas {
         v=var; setTitle("Histogram ("+v.getName()+")");
         v.addDepend(this);
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);
+        normalAx = ax;
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
@@ -111,7 +114,7 @@ public class HistCanvas extends BaseCanvas {
         
         bars=((int)((v.getMax()-anchor)/binw))+1;
         if (dragMode!=DRAGMODE_BINW)
-            ax.setValueRange(anchor,bars*binw);
+            normalAx.setValueRange(anchor,bars*binw);
         if(pp==null || pp.length!=bars) pp = new PPrimRectangle[bars];
         paintpp=0;
         int i=0;
@@ -126,7 +129,7 @@ public class HistCanvas extends BaseCanvas {
             final Object o=v.at(i);
             if (o!=null) {
                 final double f=((Number)o).doubleValue();
-                final int box=(int)((f-ax.vBegin)/binw);
+                final int box=(int)((f-normalAx.vBegin)/binw);
                 id2bar[i]=box+1;
                 if (box>=0 && box<bars) {
                     count[box]++;
@@ -154,7 +157,11 @@ public class HistCanvas extends BaseCanvas {
         }
         i=0;
         ay.setValueRange(countMax);
+        
         if(isSpine){
+            createSpinovar();
+            ax=new Axis(spinovar,Axis.O_X,Axis.T_PropCat);
+            setAxDefaultGeometry();
             final int lh=ay.getCasePos(0);
             while(i<bars) {
                 final PPrimRectangle ppr=(PPrimRectangle)pp[i];
@@ -162,8 +169,6 @@ public class HistCanvas extends BaseCanvas {
                 int cl=ax.getCatLow(i);
                 int cu=ax.getCatUp(i);
                 final int cd=cu-cl;
-                cu-=cd/10;
-                cl+=cd/10;
                 
                 int ch=lh+ay.gLen;
                 
@@ -254,7 +259,7 @@ public class HistCanvas extends BaseCanvas {
             double fi=ay.getSensibleTickStart(f);
             while (fi<ay.vBegin+ay.vLen) {
                 final int t=ay.getValuePos(fi);
-                g.drawLine(mLeft-5,t,mLeft,t);
+                //g.drawLine(mLeft-5,t,mLeft,t);
                 yLabels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
                 fi+=f;
             }
@@ -270,52 +275,54 @@ public class HistCanvas extends BaseCanvas {
             }
         }
         
-        // draw x lables and ticks
-        final double f;
-        double fi;
-        switch (orientation){
-            case 0:
-                f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
-                fi=ax.getSensibleTickStart(f);
-                while (fi<ax.vBegin+ax.vLen) {
-                    final int t=ax.getValuePos(fi);
-                    final int bl = getSize().height-mBottom;
-                    g.drawLine(t,bl,t,bl+5);
-                    xLabels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                break;
-            case 2:
-                f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
-                fi=ax.getSensibleTickStart(f);
-                while (fi<ax.vBegin+ax.vLen) {
-                    final int t=ax.getValuePos(fi);
-                    g.drawLine(t,mTop-5,t,mTop);
-                    xLabels.add(t,mTop-7,0.5,0,ax.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                break;
-            case 1:
-                f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-                fi=ax.getSensibleTickStart(f);
-                while (fi<ax.vBegin+ax.vLen) {
-                    final int t=ax.getValuePos(fi);
-                    g.drawLine(mLeft-5,t,mLeft,t);
-                    yLabels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                break;
-            case 3:
-                f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-                fi=ax.getSensibleTickStart(f);
-                while (fi<ax.vBegin+ax.vLen) {
-                    final int t=ax.getValuePos(fi);
-                    final int rl = getSize().width-mRight;
-                    g.drawLine(rl,t,rl+5,t);
-                    yLabels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
-                    fi+=f;
-                }
-                break;
+        if(!isSpine){
+            // draw x lables and ticks
+            final double f;
+            double fi;
+            switch (orientation){
+                case 0:
+                    f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
+                    fi=ax.getSensibleTickStart(f);
+                    while (fi<ax.vBegin+ax.vLen) {
+                        final int t=ax.getValuePos(fi);
+                        final int bl = getSize().height-mBottom;
+                        g.drawLine(t,bl,t,bl+5);
+                        xLabels.add(t,bl+5,0.5,1,ax.getDisplayableValue(fi));
+                        fi+=f;
+                    }
+                    break;
+                case 2:
+                    f=ax.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
+                    fi=ax.getSensibleTickStart(f);
+                    while (fi<ax.vBegin+ax.vLen) {
+                        final int t=ax.getValuePos(fi);
+                        g.drawLine(t,mTop-5,t,mTop);
+                        xLabels.add(t,mTop-7,0.5,0,ax.getDisplayableValue(fi));
+                        fi+=f;
+                    }
+                    break;
+                case 1:
+                    f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+                    fi=ax.getSensibleTickStart(f);
+                    while (fi<ax.vBegin+ax.vLen) {
+                        final int t=ax.getValuePos(fi);
+                        g.drawLine(mLeft-5,t,mLeft,t);
+                        yLabels.add(mLeft-8,t+5,1,0,ax.getDisplayableValue(fi));
+                        fi+=f;
+                    }
+                    break;
+                case 3:
+                    f=ax.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+                    fi=ax.getSensibleTickStart(f);
+                    while (fi<ax.vBegin+ax.vLen) {
+                        final int t=ax.getValuePos(fi);
+                        final int rl = getSize().width-mRight;
+                        g.drawLine(rl,t,rl+5,t);
+                        yLabels.add(rl+8,t+5,0,0,ax.getDisplayableValue(fi));
+                        fi+=f;
+                    }
+                    break;
+            }
         }
         endAddingLabels();
     }
@@ -448,8 +455,7 @@ public class HistCanvas extends BaseCanvas {
         } else {
             if (pp!=null && pp[i]!=null) {
                 int mark=(int)(((double) pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
-                double la=ax.vBegin+binw*i;
-                qs =  "["+ax.getDisplayableValue(la)+", "+ax.getDisplayableValue(la+binw)+")\n"+
+                qs =  getIntervalForBox(i) + "\n"+
                         "count: "+pp[i].cases()+(mark>0?"\nselected: "+mark:"");
             } else qs = "N/A";
         }
@@ -538,28 +544,38 @@ public class HistCanvas extends BaseCanvas {
     public void setIsSpine(boolean isSpine) {
         this.isSpine = isSpine;
         if(isSpine){
-            int[] ids = new int[v.size()];
-            String[] levels = new String[bars];
-            
-            for (int i=0; i<bars; i++){
-                final PPrimRectangle ppr = (PPrimRectangle)pp[i];
-                if(ppr.ref!=null){
-                    for (int j=0; j<ppr.ref.length; j++){
-                        ids[ppr.ref[j]] = i;
-                    }
-                }
-            }
-            for(int i=0; i<levels.length; i++) levels[i] = "" + i;
-            
-            spinovar = new SVarFact("spinovar" + v.getName(),ids,levels);
+            createSpinovar();
+            normalAx = ax;
             ax=new Axis(spinovar,Axis.O_X,Axis.T_PropCat);
             MIspine.setLabel("Histogram");
             updateGeometry=true;
             
         } else{
-            ax=new Axis(v,Axis.O_X,Axis.T_Num);
+            ax=normalAx;
             MIspine.setLabel("Spinogram");
             updateGeometry=true;
         }
+    }
+    
+    private String getIntervalForBox(int i) {
+        final double la=normalAx.vBegin+binw*i;
+        return "["+normalAx.getDisplayableValue(la)+", "+normalAx.getDisplayableValue(la+binw)+")";
+    }
+    
+    private void createSpinovar() {
+        int[] ids = new int[v.size()];
+        String[] levels = new String[bars];
+        
+        for (int i=0; i<bars; i++){
+            final PPrimRectangle ppr = (PPrimRectangle)pp[i];
+            if(ppr.ref!=null){
+                for (int j=0; j<ppr.ref.length; j++){
+                    ids[ppr.ref[j]] = i;
+                }
+            }
+        }
+        for(int i=0; i<levels.length; i++) levels[i] = getIntervalForBox(i);
+        
+        spinovar = new SVarFact("spinovar" + v.getName(),ids,levels);
     }
 }
