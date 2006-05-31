@@ -18,8 +18,10 @@ __declspec(dllimport) int UserBreak;
 extern int UserBreak;
 #endif
 #else
+/* for R_runHandlers */
 #include <R_ext/eventloop.h>
 #include <signal.h>
+#include <unistd.h>
 #endif
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetVersion
@@ -282,7 +284,7 @@ JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniInherits
 	const char *c;
 	c=(*env)->GetStringUTFChars(env, s, 0);
 	if (c) {
-		if (inherits(L2SEXP(exp), c)) res = 1;
+		if (inherits(L2SEXP(exp), (char*)c)) res = 1;
 		(*env)->ReleaseStringUTFChars(env, s, c);
 	}
 	return res;

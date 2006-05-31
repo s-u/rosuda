@@ -41,6 +41,8 @@ jstring jri_putSymbolName(JNIEnv *env, SEXP e);
 
 void jri_checkExceptions(JNIEnv *env, int describe);
 
+void jri_error(char *fmt, ...);
+
 #ifdef __cplusplus
 }
 #endif
