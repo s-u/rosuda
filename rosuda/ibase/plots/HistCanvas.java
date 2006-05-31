@@ -252,30 +252,32 @@ public class HistCanvas extends BaseCanvas {
         g.drawLine(axcoordX[0],axcoordY[0],axcoordX[1],axcoordY[1]);
         g.drawLine(aycoordX[0],aycoordY[0],aycoordX[1],aycoordY[1]);
         
-        startAddingLabels();
-        // draw y lables and ticks
-        if (orientation==0 || orientation==2) {
-            final double f=ay.getSensibleTickDistance(verticalMedDist,verticalMinDist);
-            double fi=ay.getSensibleTickStart(f);
-            while (fi<ay.vBegin+ay.vLen) {
-                final int t=ay.getValuePos(fi);
-                //g.drawLine(mLeft-5,t,mLeft,t);
-                yLabels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
-                fi+=f;
-            }
-        } else {
-            final double f=ay.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
-            double fi=ay.getSensibleTickStart(f);
-            while (fi<ay.vBegin+ay.vLen) {
-                final int t=ay.getValuePos(fi);
-                final int bl = getSize().height-mBottom;
-                g.drawLine(t,bl,t,bl+5);
-                xLabels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
-                fi+=f;
-            }
-        }
         
+        startAddingLabels();
         if(!isSpine){
+            // draw y lables and ticks
+            if (orientation==0 || orientation==2) {
+                final double f=ay.getSensibleTickDistance(verticalMedDist,verticalMinDist);
+                double fi=ay.getSensibleTickStart(f);
+                while (fi<ay.vBegin+ay.vLen) {
+                    final int t=ay.getValuePos(fi);
+                    //g.drawLine(mLeft-5,t,mLeft,t);
+                    yLabels.add(mLeft-8,t+5,1,0,ay.getDisplayableValue(fi));
+                    fi+=f;
+                }
+            } else {
+                final double f=ay.getSensibleTickDistance(horizontalMedDist,horizontalMinDist);
+                double fi=ay.getSensibleTickStart(f);
+                while (fi<ay.vBegin+ay.vLen) {
+                    final int t=ay.getValuePos(fi);
+                    final int bl = getSize().height-mBottom;
+                    g.drawLine(t,bl,t,bl+5);
+                    xLabels.add(t,bl+5,0.5,1,ay.getDisplayableValue(fi));
+                    fi+=f;
+                }
+            }
+            
+            
             // draw x lables and ticks
             final double f;
             double fi;
