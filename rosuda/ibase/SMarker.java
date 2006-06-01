@@ -210,4 +210,16 @@ public class SMarker extends Notifier implements Commander {
         }
         return null;
     }
+
+    public void setSecBySelection(int markSel, int markNonsel) {
+        boolean[] ids = new boolean[mask.length];
+        int[] selIds = getSelectedIDs();
+        
+        for(int i=0; i<selIds.length; i++) {
+            setSec(selIds[i],markSel);
+            ids[selIds[i]] = true;
+        }
+        
+        for(int i=0; i<ids.length; i++) if(!ids[i]) setSec(i,markNonsel);
+    }
 }
