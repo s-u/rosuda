@@ -122,7 +122,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     private boolean vsCat=false;
-     
+    
     // for vsCat version
     private int rk[][];
     private int rs[];
@@ -953,7 +953,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public void updateObjects() {
         if(!getValid()) return;
         
-        final int iPsize = invisiblePoints.size();
         switch(type){
             case TYPE_BOX:
                 invisiblePoints.clear();
@@ -998,8 +997,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     markStats = new OrdStats[boxes.size()-invisiblePoints.size()];
                     System.arraycopy(oss, cs+1, markStats, 0, cs);
                 }
+                final int iPsize = invisiblePoints.size();
                 for(int i=0; i<pp.length-iPsize; i++){
-                    ((PPrimBox)pp[i]).slastR=null;
+                    if(pp[i] instanceof PPrimBox) ((PPrimBox)pp[i]).slastR=null;
                     setColors((PPrimBase)pp[i]);
                 }
                 break;
