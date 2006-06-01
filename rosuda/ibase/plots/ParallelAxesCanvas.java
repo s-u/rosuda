@@ -154,7 +154,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param var source numerical variable
      * @param cvar categorical variable for grouping
      * @param mark associated marker */
-    public ParallelAxesCanvas(int gd, final Frame f, final SVar var, final SVar cvar, final SMarker mark, final int type) {
+    public ParallelAxesCanvas(final int gd, final Frame f, final SVar var, final SVar cvar, final SMarker mark, final int type) {
         super(gd,f,mark);
         
         this.type=type;
@@ -228,7 +228,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 oss[i].update(v[0],rk[i],rs[i]);
                 i++;
             }
-            boolean[] validOss = new boolean[cs];
+            final boolean[] validOss = new boolean[cs];
             int invalid=0;
             for(i=0; i<cs; i++){
                 if(oss[i].lastR==null){
@@ -237,7 +237,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 } else validOss[i]=true;
             }
             if(invalid>0){
-                OrdStats[] newOss = new OrdStats[2*(cs-invalid)+2];
+                final OrdStats[] newOss = new OrdStats[2*(cs-invalid)+2];
                 int j=0;
                 for(i=0;i<cs; i++){
                     if(validOss[i]) newOss[j++]=oss[i];
@@ -260,7 +260,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param f associated frame (or <code>null</code> if none)
      * @param var source variable
      * @param mark associated marker */
-    public ParallelAxesCanvas(int gd, final Frame f, final SVar var, final SMarker mark, final int type) {
+    public ParallelAxesCanvas(final int gd, final Frame f, final SVar var, final SMarker mark, final int type) {
         this(gd,f,new SVar[]{var},mark,type);
     }
     
@@ -268,7 +268,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
      */
-    public ParallelAxesCanvas(int gd, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
+    public ParallelAxesCanvas(final int gd, final Frame f, final SVar[] yvs, final SMarker mark, final int type) {
         super(gd, f, mark);
         
         this.type=type;
@@ -311,7 +311,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         dontPaint=false;
     }
     
-    private void createMenu(Frame f){
+    private void createMenu(final Frame f){
         createMenu(f,true,true,true,false,new String[]{
             "@LHide labels",M_LABELS,
             "Alterning labels",M_ALTERNINGLABELS,
@@ -628,7 +628,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return valid && getWidth()>=MINWIDTH && getHeight()>=MINHEIGHT;
     }
     
-    private void addLabelsAndTicks(PoGraSS g) {
+    private void addLabelsAndTicks(final PoGraSS g) {
         /* draw labels for X axis */
         if(type==TYPE_PCP || (vsCat || v.length>1)){
             if(isShowLabels()){
@@ -793,8 +793,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
             double fi=ay.getSensibleTickStart(f);
             int maxLabelLength=0;
             while (fi<ay.vBegin+ay.vLen) {
-                String s = ay.getDisplayableValue(fi);
-                int wi=g.getWidthEstimate(s);
+                final String s = ay.getDisplayableValue(fi);
+                final int wi=g.getWidthEstimate(s);
                 if(wi>maxLabelLength) maxLabelLength=wi;
                 fi+=f;
             }
@@ -803,7 +803,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             int maxWidth=0;
             for(int i=0; i<xv.getNumCats(); i++){
                 final String s=(String)ax.getVariable().getCatAt(i);
-                int wi=g.getWidthEstimate(s);
+                final int wi=g.getWidthEstimate(s);
                 if(wi>maxWidth) maxWidth=wi;
             }
             return adjustMargin(maxWidth);
@@ -856,7 +856,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public void paintInit(final PoGraSS g) {
         super.paintInit(g);
         if(type==TYPE_BOX && ax!=null && (v.length>1 || vsCat)){
-            int oBoxwidth = boxwidth;
+            final int oBoxwidth = boxwidth;
             final int newBoxwidth = Math.max(((getAxCatPos(ax.getCatAtSeqIndex(1))-getAxCatPos(ax.getCatAtSeqIndex(0)))*8)/10,MIN_BOXWIDTH);
             if(MAX_BOXWIDTH>0) boxwidth = Math.min(newBoxwidth,MAX_BOXWIDTH);
             else boxwidth = newBoxwidth;
@@ -865,13 +865,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    private int getAxCasePos(int i) {
+    private int getAxCasePos(final int i) {
         return useRegularPositioning?
             getAxCatPos(ax.getCatByPos(ax.getCasePos(i))):
             ax.getCasePos(i);
     }
     
-    private int getAxCatPos(int i) {
+    private int getAxCatPos(final int i) {
         return useRegularPositioning?
             ax.getRegularCatPos(i,leftGap,rightGap):
             ax.getCatCenter(i);
@@ -953,16 +953,17 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public void updateObjects() {
         if(!getValid()) return;
         
+        final int iPsize = invisiblePoints.size();
         switch(type){
             case TYPE_BOX:
                 invisiblePoints.clear();
                 if (!vsCat) {
                     invisiblePoints.ensureCapacity(v.length*v[0].size());
                     for(int i=0; i<v.length; i++) {
-                        int x = getAxCatPos(i);
-                        Axis yAxis = commonScale?ay:((i==0)?ay:opAy[i-1]);
+                        final int x = getAxCatPos(i);
+                        final Axis yAxis = commonScale?ay:((i==0)?ay:opAy[i-1]);
                         for(int j=0; j<v[i].size(); j++){
-                            int y = yAxis.getValuePos(v[i].atD(j));
+                            final int y = yAxis.getValuePos(v[i].atD(j));
                             invisiblePoints.add(createInvisiblePoint(x,y,j));
                         }
                     }
@@ -985,9 +986,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     }
                     invisiblePoints.ensureCapacity(v[0].size());
                     for(int i=0; i<cs; i++){
-                        int x = getAxCasePos(i);
+                        final int x = getAxCasePos(i);
                         for(int j=0; j<rk[i].length; j++){
-                            int y = ay.getValuePos(v[0].atD(rk[i][j]));
+                            final int y = ay.getValuePos(v[0].atD(rk[i][j]));
                             invisiblePoints.add(createInvisiblePoint(x,y,rk[i][j]));
                         }
                     }
@@ -997,7 +998,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     markStats = new OrdStats[boxes.size()-invisiblePoints.size()];
                     System.arraycopy(oss, cs+1, markStats, 0, cs);
                 }
-                for(int i=0; i<pp.length-invisiblePoints.size(); i++){
+                for(int i=0; i<pp.length-iPsize; i++){
                     ((PPrimBox)pp[i]).slastR=null;
                     setColors((PPrimBase)pp[i]);
                 }
@@ -1109,7 +1110,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     public String queryObject(final PlotPrimitive p) {
         switch(type){
             case TYPE_BOX:
-                PPrimBox box = (PPrimBox)p;
+                final PPrimBox box = (PPrimBox)p;
                 if(box.queriedOutlier!=null)
                     return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
                 else
@@ -1134,8 +1135,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         
                     }
                 } else{
-                    int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
-                    int i = ax.getCatSeqIndex(c);
+                    final int c = ax.getCatByPos((orientation==0)?mouseX:mouseY);
+                    final int i = ax.getCatSeqIndex(c);
                     retValue += v[c].getName() + ": ";
                     if(v[c].isCat()){
                         retValue += v[c].getCatAt((int)((commonScale||i==0)?ay:opAy[i-1]).getValueForPos(pts[i])) + "\n";
@@ -1185,7 +1186,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         else markStats[i].update(v[i],new int[]{});
                     }
                 }
-                for(int i=0; i<pp.length-invisiblePoints.size(); i++){
+                final int iPsize = invisiblePoints.size();
+                for(int i=0; i<pp.length-iPsize; i++){
                     final PPrimBox box = ((PPrimBox)pp[i]);
                     if(markStats[i].lastTop==0){
                         box.slastR=null;
@@ -1246,8 +1248,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    private PPrimCircle createInvisiblePoint(int x, int y, int caseID) {
-        PPrimCircle ppc = new PPrimCircle();
+    private PPrimCircle createInvisiblePoint(final int x, final int y, final int caseID) {
+        final PPrimCircle ppc = new PPrimCircle();
         ppc.x=(orientation==0)?x:y;
         ppc.y=(orientation==0)?y:x;
         ppc.diam=1;
@@ -1260,10 +1262,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     private void sortAxes(final boolean bySelected) {
         // works only for box plots
-        int axes = pp.length - invisiblePoints.size();
+        final int axes = pp.length - invisiblePoints.size();
         
         final int[] coumar = new int[axes];
-        final int[] ix;
+        
         if(bySelected){
             for (int i=0; i<axes; i++){
                 coumar[i] = getMarked(i);
@@ -1273,6 +1275,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 coumar[i] = getCount(i);
             }
         }
+        final int[] ix;
         ix=Tools.sortIntegersIndex(coumar);
         ignoreNotifications=true;
         int i=0;
@@ -1296,7 +1299,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return pp[axis].cases();
     }
     
-    protected Axis getMouseOverAxis(int x, int y) {
+    protected Axis getMouseOverAxis(final int x, final int y) {
         if(axcoordX==null || axcoordY==null) return null;
         if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return ax;
         else {
@@ -1307,9 +1310,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
-    protected String getAxisQuery(int x, int y) {
+    protected String getAxisQuery(final int x, final int y) {
 //    	System.out.println("x: " + x + ", y: " + y + ", axX: " + axcoordX[0] + ", axY: " + axcoordY[0] + ", ayX: " + aycoordX[0] + ", ayY: " + aycoordY[0]);
-        Axis a=getMouseOverAxis(x,y);
+        final Axis a=getMouseOverAxis(x,y);
         if(a==null) return null;
         else return "axis name: " + a.getVariable().getName();
     }
