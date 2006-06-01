@@ -79,7 +79,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /**
      * menu and command fields
      */
-    private static final String M_PLUS = "+";
     private static final String M_MINUS = "-";
     private static final String M_LABELS = "labels";
     private static final String M_SHOWDOTS = "Show dots";
@@ -123,9 +122,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     private boolean vsCat=false;
-    private boolean dragMode=false;
-    private boolean vertical=true;
-    
+     
     // for vsCat version
     private int rk[][];
     private int rs[];
@@ -1297,17 +1294,6 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int getCount(final int axis) {
         // works only for box plots
         return pp[axis].cases();
-    }
-    
-    private void setAxCoord(int x1,int y1,int x2,int y2) {
-        if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
-        if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
-    }
-    
-    protected void setAyCoord(int x1,int y1,int x2,int y2,int index) {
-        if(index<0 || index>=v.length) return;
-        if(x1<x2) {aycoordX[index][0]=x1; aycoordX[index][1]=x2;} else {aycoordX[index][0]=x2; aycoordX[index][1]=x1;}
-        if(y1<y2) {aycoordY[index][0]=y1; aycoordY[index][1]=y2;} else {aycoordY[index][0]=y2; aycoordY[index][1]=y1;}
     }
     
     protected Axis getMouseOverAxis(int x, int y) {
