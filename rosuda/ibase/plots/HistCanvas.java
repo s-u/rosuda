@@ -27,9 +27,6 @@ public class HistCanvas extends BaseCanvas {
     static final String M_ANCHORLEFT = "anchorLeft";
     static final String M_ANCHORRIGHT = "anchorRight";
     static final String M_SPINE = "spine";
-    static final String M_SET1 = "set1";
-    static final String M_SET64 = "set64";
-    static final String M_RESET = "reset";
     /** associated variable */
     protected SVar v;
     /** variable for spinograms */
@@ -81,15 +78,12 @@ public class HistCanvas extends BaseCanvas {
         binw=ax.vLen/bars;
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
-        createMenu(f,true,false,false,new String[]{
+        createMenu(f,true,false,false,true,new String[]{
             "@SSpinogram",M_SPINE,
             "Increase bin width (up)",M_BINUP,
             "Decrease bin width (down)",M_BINDOWN,
             "Move anchor left (left)",M_ANCHORLEFT,
-            "Move anchor right (right)",M_ANCHORRIGHT,
-            "Set Colors (CB)",M_SET1,
-            "Set Colors (rainbow)",M_SET64,
-            "Clear Colors",M_RESET
+            "Move anchor right (right)",M_ANCHORRIGHT
         });
         MIspine=EzMenu.getItem(f,M_SPINE);
         
@@ -520,7 +514,7 @@ public class HistCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-        if (M_SET1.equals(cmd)) {
+        if (M_SETCB1.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -534,7 +528,7 @@ public class HistCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
-        if (M_SET64.equals(cmd)) {
+        if (M_SETCB64.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -546,12 +540,6 @@ public class HistCanvas extends BaseCanvas {
                             m.setSec(cs[j++],64+(64*i/pp.length));
                     i++;
                 }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
-            }
-        }
-        if (M_RESET.equals(cmd)) {
-            if (m.getSecCount()>0) {
-                m.resetSec();
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }

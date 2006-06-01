@@ -24,9 +24,6 @@ public class MosaicCanvas extends BaseCanvas {
     static final String M_CENSORDOWN = "censorDown";
     static final String M_PERMUTELEFT = "permuteLeft";
     static final String M_PERMUTERIGHT = "permuteRight";
-    static final String M_SET1 = "set1";
-    static final String M_SET64 = "set64";
-    static final String M_RESET = "reset";
     
     private SVar[] v;
     private int vs;
@@ -69,7 +66,7 @@ public class MosaicCanvas extends BaseCanvas {
             v[i].categorize();
         }
         
-        createMenu(f,true,false,false,new String[]{
+        createMenu(f,true,false,false,true,new String[]{
             "Observed",M_OBSERVED,
             "Expected",M_EXPECTED,
             "Same bin size",M_SAMEBINSIZE,
@@ -82,10 +79,6 @@ public class MosaicCanvas extends BaseCanvas {
             "Decrease censor (shift+down)",M_CENSORDOWN,
             "Rotate variables left (left)",M_PERMUTELEFT,
             "Rotate variables right (right)",M_PERMUTERIGHT,
-            "-",
-            "Set Colors (CB)",M_SET1,
-            "Set Colors (rainbow)",M_SET64,
-            "Clear Colors",M_RESET
         });
         
         setDefaultMargins(new int[] {standardMLeft,5,20,5});
@@ -222,7 +215,7 @@ public class MosaicCanvas extends BaseCanvas {
                 updateObjects(); setUpdateRoot(0); repaint();
             }
         }
-        if (M_SET1.equals(cmd)) {
+        if (M_SETCB1.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -236,7 +229,7 @@ public class MosaicCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
-        if (M_SET64.equals(cmd)) {
+        if (M_SETCB64.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -248,12 +241,6 @@ public class MosaicCanvas extends BaseCanvas {
                             m.setSec(cs[j++],64+(64*i/pp.length));
                     i++;
                 }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
-            }
-        }
-        if (M_RESET.equals(cmd)) {
-            if (m.getSecCount()>0) {
-                m.resetSec();
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }

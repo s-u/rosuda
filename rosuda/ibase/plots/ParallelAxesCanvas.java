@@ -315,7 +315,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private void createMenu(Frame f){
-        createMenu(f,true,true,true,new String[]{
+        createMenu(f,true,true,true,false,new String[]{
             "@LHide labels",M_LABELS,
             "Alterning labels",M_ALTERNINGLABELS,
             M_SHOWDOTS,M_TOGGLEPTS,

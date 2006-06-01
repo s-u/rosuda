@@ -147,7 +147,7 @@ public class ScatterCanvas extends BaseCanvas {
         drag=false;
         
         //if (Global.useAquaBg) fieldBg=2;
-        createMenu(f,true,true,true,new String[]{
+        createMenu(f,true,true,true,false,new String[]{
             "Same scale",M_EQUISCALE,
             M_MINUS,
             "@LHide labels",M_LABELS,

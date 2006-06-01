@@ -13,9 +13,6 @@ import org.rosuda.util.*;
  */
 public class BarCanvas extends BaseCanvas {
     static final String M_PLUS = "+";
-    static final String M_SET1 = "set1";
-    static final String M_SET64 = "set64";
-    static final String M_RESET = "reset";
     static final String M_SPINE = "spine";
     static final String M_SORTBYCOUNT = "sortByCount";
     static final String M_SORTBYMARKED = "sortByMarked";
@@ -85,14 +82,11 @@ public class BarCanvas extends BaseCanvas {
         pp = new PPrimRectangle[bars];
         updateObjects();
         
-        createMenu(f,true,false,false,new String[]{
+        createMenu(f,true,false,false,true,new String[]{
             "@SSpineplot",M_SPINE,
             "@OSort by count",M_SORTBYCOUNT,
             "!OSort by marked",M_SORTBYMARKED,
-            "@LHide Labels",M_LABELS,
-            "Set Colors (CB)",M_SET1,
-            "Set Colors (rainbow)",M_SET64,
-            "Clear Colors",M_RESET
+            "@LHide Labels",M_LABELS
         });
         MIspine=EzMenu.getItem(f,M_SPINE);
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -330,7 +324,7 @@ public class BarCanvas extends BaseCanvas {
             setUpdateRoot(0);
             repaint();
         }
-        if (M_SET1.equals(cmd)) {
+        if (M_SETCB1.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -344,7 +338,7 @@ public class BarCanvas extends BaseCanvas {
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }
-        if (M_SET64.equals(cmd)) {
+        if (M_SETCB64.equals(cmd)) {
             if (pp!=null && pp.length>0) {
                 int i=0;
                 while (i<pp.length) {
@@ -356,12 +350,6 @@ public class BarCanvas extends BaseCanvas {
                             m.setSec(cs[j++],64+(64*i/pp.length));
                     i++;
                 }
-                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
-            }
-        }
-        if (M_RESET.equals(cmd)) {
-            if (m.getSecCount()>0) {
-                m.resetSec();
                 m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
             }
         }

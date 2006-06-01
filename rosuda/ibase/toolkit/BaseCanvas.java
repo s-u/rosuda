@@ -42,6 +42,9 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected static final String M_TRANSHIGHL = "transparentHighlighting";
     protected static final String M_ALPHADOWN = "alphaDown";
     protected static final String M_ALPHAUP = "alphaUp";
+    protected static final String M_SETCB1 = "setCB1";
+    protected static final String M_SETCB64 = "setCB64";
+    static final String M_RESETCB = "resetCB";
     
     public Color fillColor = null;
     public Color borderColor = null;
@@ -892,6 +895,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             MItransHighl.setLabel(alphaHighlighting?"Opaque highlighting":"Transparent highlighting");
             setUpdateRoot(1); repaint();
         }
+        if (M_RESETCB.equals(cmd)) {
+            if (m.getSecCount()>0) {
+                m.resetSec();
+                m.NotifyAll(new NotifyMsg(this,Common.NM_SecMarkerChange));
+            }
+        }
         return null;
     };
     
@@ -1018,8 +1027,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         return false;
     };
     
-    protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, String[] view){
-        String myMenu[] = new String[((view==null)?0:(view.length)) + 28];
+    protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, boolean activeCB, String[] view){
+        String myMenu[] = new String[((view==null)?0:(view.length)) + 35];
         int i=0;
         myMenu[i++] = "+";
         myMenu[i++] = "File";
@@ -1053,6 +1062,15 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 myMenu[i++] = M_HALPHADOWN;
                 myMenu[i++] = "Hiliting more opaque.";
                 myMenu[i++] = M_HALPHAUP;
+                myMenu[i++] = "-";
+            }
+            if(activeCB){
+                myMenu[i++] = "Set Colors (CB)";
+                myMenu[i++] = M_SETCB1;
+                myMenu[i++] = "Set Colors (rainbow)";
+                myMenu[i++] = M_SETCB64;
+                myMenu[i++] = "Clear Colors";
+                myMenu[i++] = M_RESETCB;
                 myMenu[i++] = "-";
             }
             if(view!=null){
