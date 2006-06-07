@@ -1,0 +1,566 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXApplicationTarget section */
+		1601BCDBFEEE210811DB9C8B /* Mondrian */ = {
+			isa = PBXApplicationTarget;
+			buildConfigurationList = D02B745E0948569F0019B5C8 /* Build configuration list for PBXApplicationTarget "Mondrian" */;
+			buildPhases = (
+				1601BCDCFEEE210811DB9C8B /* Sources */,
+				1601BCDEFEEE210811DB9C8B /* JavaArchive */,
+				1601BCDFFEEE210811DB9C8B /* Resources */,
+				1601BCE2FEEE210811DB9C8B /* Frameworks */,
+			);
+			dependencies = (
+			);
+			name = Mondrian;
+			productName = Mondrian;
+			productReference = 06D05853FF24F2DB11DB9C8B /* Mondrian.app */;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>x</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Text</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>txt</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Text</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Text</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+		</dict>
+	</array>
+	<key>CFBundleExecutable</key>
+	<string>Mondrian</string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+	<key>CFBundleIconFile</key>
+	<string>Mondrian.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1.0 beta 2</string>
+	<key>Java</key>
+	<dict>
+		<key>ClassPath</key>
+		<array>
+			<string>$JAVAROOT/Mondrian.jar</string>
+			<string>/usr/local/mysql/mysql-connector-java-3.1.8/mysql-connector-java-3.1.8-bin.jar</string>
+		</array>
+		<key>JVMVersion</key>
+		<string>1.4*</string>
+		<key>MainClass</key>
+		<string>Mondrian</string>
+		<key>Properties</key>
+		<dict>
+			<key>apple.awt.antialiasing</key>
+			<string>on</string>
+			<key>apple.awt.graphics.EnableQ2DX</key>
+			<string>true</string>
+			<key>apple.awt.rendering</key>
+			<string>VALUE_RENDER_SPEED</string>
+			<key>apple.awt.textantialiasing</key>
+			<string>on</string>
+			<key>apple.laf.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.macos.useScreenMenuBar</key>
+			<string>true</string>
+			<key>com.apple.mrj.application.apple.menu.about.name</key>
+			<string>Mondrian</string>
+			<key>com.apple.mrj.application.growbox.intrudes</key>
+			<string>true</string>
+			<key>com.apple.mrj.application.live-resize</key>
+			<string>false</string>
+		</dict>
+		<key>VMOptions</key>
+		<string>-Xmx610m -Xmx610m -Xverify:none</string>
+	</dict>
+	<key>NSJavaNeeded</key>
+	<string>YES</string>
+	<key>NSJavaPath</key>
+	<array>
+		<string>Mondrian.jar</string>
+	</array>
+	<key>NSJavaRoot</key>
+	<string>Contents/Resources/Java</string>
+	<key>NSPrincipalClass</key>
+	<string>Mondrian</string>
+</dict>
+</plist>
+";
+		};
+/* End PBXApplicationTarget section */
+
+/* Begin PBXBuildFile section */
+		0111F2C700819D1A7F000001 /* AboutBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 0111F2C600819D1A7F000001 /* AboutBox.java */; };
+		1601BCDDFEEE210811DB9C8B /* Mondrian.java in Sources */ = {isa = PBXBuildFile; fileRef = 01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */; settings = {ATTRIBUTES = (); }; };
+		1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */ = {isa = PBXBuildFile; fileRef = 10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */; };
+		D021F47909925F7A00EFF582 /* ScanException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47809925F7A00EFF582 /* ScanException.java */; };
+		D021F47B09925F8700EFF582 /* UnacceptableFormatException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */; };
+		D04E14C308BDD855001A39DA /* BufferTokenizer.java in Sources */ = {isa = PBXBuildFile; fileRef = D04E14C208BDD855001A39DA /* BufferTokenizer.java */; };
+		D04E14F708BDF4AD001A39DA /* SelectionEvent.java in Sources */ = {isa = PBXBuildFile; fileRef = D04E14F608BDF4AD001A39DA /* SelectionEvent.java */; };
+		D050126B09E55DB100A14315 /* ResizePlotTask.java in Sources */ = {isa = PBXBuildFile; fileRef = D050126A09E55DB100A14315 /* ResizePlotTask.java */; };
+		D050937F08EC9664005A5A79 /* ProgressIndicator.java in Sources */ = {isa = PBXBuildFile; fileRef = D050937E08EC9664005A5A79 /* ProgressIndicator.java */; };
+		D07E9E1F057F1DA800C2084A /* Join.java in Sources */ = {isa = PBXBuildFile; fileRef = D07E9E1E057F1DA800C2084A /* Join.java */; };
+		D08C744204B997AB00FA48CA /* PreferencesFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = D08C744104B997AB00FA48CA /* PreferencesFrame.java */; };
+		D097A9DB06F9B94100684C11 /* alpha.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = D097A9DA06F9B94100684C11 /* alpha.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		D097A9DE06F9BAF900684C11 /* cat.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = D097A9DC06F9BAF900684C11 /* cat.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		D097A9DF06F9BAF900684C11 /* num.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = D097A9DD06F9BAF900684C11 /* num.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		D09999EA08E9F3C7003E49CE /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = D09999E908E9F3C7003E49CE /* RSession.java */; };
+		D0AD8141080A731000E77F89 /* ReferenceCard.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = D0AD8140080A731000E77F89 /* ReferenceCard.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		D0BF0A100792C180007E65A3 /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A040792C180007E65A3 /* jcrypt.java */; };
+		D0BF0A110792C180007E65A3 /* RBool.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A050792C180007E65A3 /* RBool.java */; };
+		D0BF0A120792C180007E65A3 /* Rconnection.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A060792C180007E65A3 /* Rconnection.java */; };
+		D0BF0A130792C180007E65A3 /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A070792C180007E65A3 /* REXP.java */; };
+		D0BF0A140792C180007E65A3 /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A080792C180007E65A3 /* RFactor.java */; };
+		D0BF0A150792C180007E65A3 /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A090792C180007E65A3 /* RFileInputStream.java */; };
+		D0BF0A160792C180007E65A3 /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A0A0792C180007E65A3 /* RFileOutputStream.java */; };
+		D0BF0A170792C180007E65A3 /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A0B0792C180007E65A3 /* RList.java */; };
+		D0BF0A180792C180007E65A3 /* Rpacket.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A0C0792C180007E65A3 /* Rpacket.java */; };
+		D0BF0A190792C180007E65A3 /* RSrvException.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A0D0792C180007E65A3 /* RSrvException.java */; };
+		D0BF0A1A0792C180007E65A3 /* Rtalk.java in Sources */ = {isa = PBXBuildFile; fileRef = D0BF0A0E0792C180007E65A3 /* Rtalk.java */; };
+		D0C7E78B076EDB9F00B94ACD /* Srs.java in Sources */ = {isa = PBXBuildFile; fileRef = D0C7E78A076EDB9F00B94ACD /* Srs.java */; };
+		D0D4C0C9089F99F000579679 /* DataEvent.java in Sources */ = {isa = PBXBuildFile; fileRef = D0D4C0C8089F99F000579679 /* DataEvent.java */; };
+		D0E375C0081302D8004B4DF3 /* ImageSelection.java in Sources */ = {isa = PBXBuildFile; fileRef = D0E375BF081302D8004B4DF3 /* ImageSelection.java */; };
+		D0F331A50A37226E00DF87E5 /* Mondrian.cfg.xml in Resources */ = {isa = PBXBuildFile; fileRef = D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */; };
+		D0F37951094093180086031F /* MissPlot.java in Sources */ = {isa = PBXBuildFile; fileRef = D0F37950094093180086031F /* MissPlot.java */; };
+		F510801303B3247801FA48CB /* Mondrian.mft in JavaArchive */ = {isa = PBXBuildFile; fileRef = F510801203B3247801FA48CB /* Mondrian.mft */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		F52CCF8C0237C0F701FA478D /* Logo.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = F52CCF8B0237C0F701FA478D /* Logo.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		F539378D01F5CC7401FA4797 /* Barchart.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377301F5CC7401FA4797 /* Barchart.java */; };
+		F539378E01F5CC7401FA4797 /* DataListener.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377401F5CC7401FA4797 /* DataListener.java */; };
+		F539379001F5CC7401FA4797 /* DragBox.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377601F5CC7401FA4797 /* DragBox.java */; };
+		F539379101F5CC7401FA4797 /* InteractionSet.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377701F5CC7401FA4797 /* InteractionSet.java */; };
+		F539379201F5CC7401FA4797 /* Map.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377801F5CC7401FA4797 /* Map.java */; };
+		F539379301F5CC7401FA4797 /* MFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377901F5CC7401FA4797 /* MFrame.java */; };
+		F539379401F5CC7401FA4797 /* ModelListener.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377A01F5CC7401FA4797 /* ModelListener.java */; };
+		F539379501F5CC7401FA4797 /* ModelNavigator.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377B01F5CC7401FA4797 /* ModelNavigator.java */; };
+		F539379601F5CC7401FA4797 /* Mosaic.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377D01F5CC7401FA4797 /* Mosaic.java */; };
+		F539379701F5CC7401FA4797 /* MyPoly.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377E01F5CC7401FA4797 /* MyPoly.java */; };
+		F539379801F5CC7401FA4797 /* MyRect.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377F01F5CC7401FA4797 /* MyRect.java */; };
+		F539379901F5CC7401FA4797 /* MyText.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378001F5CC7401FA4797 /* MyText.java */; };
+		F539379A01F5CC7401FA4797 /* PC.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378101F5CC7401FA4797 /* PC.java */; };
+		F539379B01F5CC7401FA4797 /* PixelConsumer.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378201F5CC7401FA4797 /* PixelConsumer.java */; };
+		F539379D01F5CC7401FA4797 /* Qsort.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378401F5CC7401FA4797 /* Qsort.java */; };
+		F539379F01F5CC7401FA4797 /* Selection.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378601F5CC7401FA4797 /* Selection.java */; };
+		F53937A001F5CC7401FA4797 /* SelectionListener.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378701F5CC7401FA4797 /* SelectionListener.java */; };
+		F53937A101F5CC7401FA4797 /* Stat.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378801F5CC7401FA4797 /* Stat.java */; };
+		F53937A201F5CC7401FA4797 /* Table.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378901F5CC7401FA4797 /* Table.java */; };
+		F53937A401F5CC7401FA4797 /* Util.java in Sources */ = {isa = PBXBuildFile; fileRef = F539378B01F5CC7401FA4797 /* Util.java */; };
+		F54802D5026ED61501FA478D /* Query.java in Sources */ = {isa = PBXBuildFile; fileRef = F54802D4026ED61401FA478D /* Query.java */; };
+		F59B7531022FE93101B238D8 /* Histogram.java in Sources */ = {isa = PBXBuildFile; fileRef = F59B7530022FE93101B238D8 /* Histogram.java */; };
+		F5A4C09003BE533601FEB7DC /* dataSet.java in Sources */ = {isa = PBXBuildFile; fileRef = F539377501F5CC7401FA4797 /* dataSet.java */; };
+		F5FBD733027EE38A01FA478D /* Scatter2D.java in Sources */ = {isa = PBXBuildFile; fileRef = F5FBD732027EE38A01FA478D /* Scatter2D.java */; };
+		F5FCD7B5023CC352015B9A6A /* Axis.java in Sources */ = {isa = PBXBuildFile; fileRef = F5FCD7B4023CC352015B9A6A /* Axis.java */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0111F2C600819D1A7F000001 /* AboutBox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = AboutBox.java; sourceTree = "<group>"; };
+		01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Mondrian.java; sourceTree = "<group>"; tabWidth = 8; };
+		06D05853FF24F2DB11DB9C8B /* Mondrian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Mondrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Mondrian.icns; sourceTree = "<group>"; };
+		D021F47809925F7A00EFF582 /* ScanException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ScanException.java; sourceTree = "<group>"; };
+		D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = UnacceptableFormatException.java; sourceTree = "<group>"; };
+		D04E14C208BDD855001A39DA /* BufferTokenizer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = BufferTokenizer.java; sourceTree = "<group>"; };
+		D04E14F608BDF4AD001A39DA /* SelectionEvent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SelectionEvent.java; sourceTree = "<group>"; };
+		D050126A09E55DB100A14315 /* ResizePlotTask.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ResizePlotTask.java; sourceTree = "<group>"; };
+		D050937E08EC9664005A5A79 /* ProgressIndicator.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = ProgressIndicator.java; sourceTree = "<group>"; };
+		D07E9E1E057F1DA800C2084A /* Join.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Join.java; sourceTree = "<group>"; };
+		D08C744104B997AB00FA48CA /* PreferencesFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PreferencesFrame.java; sourceTree = "<group>"; };
+		D097A9DA06F9B94100684C11 /* alpha.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = alpha.gif; sourceTree = "<group>"; };
+		D097A9DC06F9BAF900684C11 /* cat.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = cat.gif; sourceTree = "<group>"; };
+		D097A9DD06F9BAF900684C11 /* num.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = num.gif; sourceTree = "<group>"; };
+		D09999E908E9F3C7003E49CE /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RSession.java; sourceTree = "<group>"; };
+		D0AD8140080A731000E77F89 /* ReferenceCard.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = ReferenceCard.gif; sourceTree = "<group>"; };
+		D0BF0A040792C180007E65A3 /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = jcrypt.java; sourceTree = "<group>"; };
+		D0BF0A050792C180007E65A3 /* RBool.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RBool.java; sourceTree = "<group>"; };
+		D0BF0A060792C180007E65A3 /* Rconnection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rconnection.java; sourceTree = "<group>"; };
+		D0BF0A070792C180007E65A3 /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = REXP.java; sourceTree = "<group>"; };
+		D0BF0A080792C180007E65A3 /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFactor.java; sourceTree = "<group>"; };
+		D0BF0A090792C180007E65A3 /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFileInputStream.java; sourceTree = "<group>"; };
+		D0BF0A0A0792C180007E65A3 /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RFileOutputStream.java; sourceTree = "<group>"; };
+		D0BF0A0B0792C180007E65A3 /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RList.java; sourceTree = "<group>"; };
+		D0BF0A0C0792C180007E65A3 /* Rpacket.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rpacket.java; sourceTree = "<group>"; };
+		D0BF0A0D0792C180007E65A3 /* RSrvException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = RSrvException.java; sourceTree = "<group>"; };
+		D0BF0A0E0792C180007E65A3 /* Rtalk.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Rtalk.java; sourceTree = "<group>"; };
+		D0C7E78A076EDB9F00B94ACD /* Srs.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Srs.java; sourceTree = "<group>"; };
+		D0D4C0C8089F99F000579679 /* DataEvent.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = DataEvent.java; sourceTree = "<group>"; };
+		D0E375BF081302D8004B4DF3 /* ImageSelection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ImageSelection.java; path = ../util/ImageSelection.java; sourceTree = SOURCE_ROOT; };
+		D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = Mondrian.cfg.xml; sourceTree = "<group>"; };
+		D0F37950094093180086031F /* MissPlot.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MissPlot.java; sourceTree = "<group>"; };
+		F510801203B3247801FA48CB /* Mondrian.mft */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Mondrian.mft; sourceTree = "<group>"; };
+		F52CCF8B0237C0F701FA478D /* Logo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Logo.gif; sourceTree = "<group>"; };
+		F539377301F5CC7401FA4797 /* Barchart.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Barchart.java; sourceTree = "<group>"; };
+		F539377401F5CC7401FA4797 /* DataListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = DataListener.java; sourceTree = "<group>"; };
+		F539377501F5CC7401FA4797 /* dataSet.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = dataSet.java; sourceTree = "<group>"; };
+		F539377601F5CC7401FA4797 /* DragBox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = DragBox.java; sourceTree = "<group>"; };
+		F539377701F5CC7401FA4797 /* InteractionSet.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = InteractionSet.java; sourceTree = "<group>"; };
+		F539377801F5CC7401FA4797 /* Map.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Map.java; sourceTree = "<group>"; };
+		F539377901F5CC7401FA4797 /* MFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MFrame.java; sourceTree = "<group>"; };
+		F539377A01F5CC7401FA4797 /* ModelListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ModelListener.java; sourceTree = "<group>"; };
+		F539377B01F5CC7401FA4797 /* ModelNavigator.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ModelNavigator.java; sourceTree = "<group>"; };
+		F539377D01F5CC7401FA4797 /* Mosaic.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Mosaic.java; sourceTree = "<group>"; };
+		F539377E01F5CC7401FA4797 /* MyPoly.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MyPoly.java; sourceTree = "<group>"; };
+		F539377F01F5CC7401FA4797 /* MyRect.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MyRect.java; sourceTree = "<group>"; };
+		F539378001F5CC7401FA4797 /* MyText.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = MyText.java; sourceTree = "<group>"; };
+		F539378101F5CC7401FA4797 /* PC.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PC.java; sourceTree = "<group>"; };
+		F539378201F5CC7401FA4797 /* PixelConsumer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = PixelConsumer.java; sourceTree = "<group>"; };
+		F539378401F5CC7401FA4797 /* Qsort.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Qsort.java; sourceTree = "<group>"; };
+		F539378601F5CC7401FA4797 /* Selection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Selection.java; sourceTree = "<group>"; };
+		F539378701F5CC7401FA4797 /* SelectionListener.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = SelectionListener.java; sourceTree = "<group>"; };
+		F539378801F5CC7401FA4797 /* Stat.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Stat.java; sourceTree = "<group>"; };
+		F539378901F5CC7401FA4797 /* Table.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Table.java; sourceTree = "<group>"; };
+		F539378B01F5CC7401FA4797 /* Util.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Util.java; sourceTree = "<group>"; };
+		F54802D4026ED61401FA478D /* Query.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Query.java; sourceTree = "<group>"; };
+		F59B7530022FE93101B238D8 /* Histogram.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Histogram.java; sourceTree = "<group>"; };
+		F5FBD732027EE38A01FA478D /* Scatter2D.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Scatter2D.java; sourceTree = "<group>"; };
+		F5FCD7B4023CC352015B9A6A /* Axis.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Axis.java; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1601BCE2FEEE210811DB9C8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		01F12F4DFEC8CE2211DB9C8B = {
+			isa = PBXGroup;
+			children = (
+				F5FCD7B4023CC352015B9A6A /* Axis.java */,
+				F539377301F5CC7401FA4797 /* Barchart.java */,
+				D04E14C208BDD855001A39DA /* BufferTokenizer.java */,
+				D0D4C0C8089F99F000579679 /* DataEvent.java */,
+				F539377401F5CC7401FA4797 /* DataListener.java */,
+				F539377501F5CC7401FA4797 /* dataSet.java */,
+				F539377601F5CC7401FA4797 /* DragBox.java */,
+				F539377701F5CC7401FA4797 /* InteractionSet.java */,
+				D07E9E1E057F1DA800C2084A /* Join.java */,
+				F59B7530022FE93101B238D8 /* Histogram.java */,
+				F539377801F5CC7401FA4797 /* Map.java */,
+				F539377901F5CC7401FA4797 /* MFrame.java */,
+				D0F37950094093180086031F /* MissPlot.java */,
+				F539377A01F5CC7401FA4797 /* ModelListener.java */,
+				F539377B01F5CC7401FA4797 /* ModelNavigator.java */,
+				01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */,
+				F539377D01F5CC7401FA4797 /* Mosaic.java */,
+				F539377E01F5CC7401FA4797 /* MyPoly.java */,
+				F539377F01F5CC7401FA4797 /* MyRect.java */,
+				F539378001F5CC7401FA4797 /* MyText.java */,
+				F539378101F5CC7401FA4797 /* PC.java */,
+				F539378201F5CC7401FA4797 /* PixelConsumer.java */,
+				D08C744104B997AB00FA48CA /* PreferencesFrame.java */,
+				D050937E08EC9664005A5A79 /* ProgressIndicator.java */,
+				F539378401F5CC7401FA4797 /* Qsort.java */,
+				F54802D4026ED61401FA478D /* Query.java */,
+				D050126A09E55DB100A14315 /* ResizePlotTask.java */,
+				D021F47809925F7A00EFF582 /* ScanException.java */,
+				F5FBD732027EE38A01FA478D /* Scatter2D.java */,
+				F539378601F5CC7401FA4797 /* Selection.java */,
+				D04E14F608BDF4AD001A39DA /* SelectionEvent.java */,
+				F539378701F5CC7401FA4797 /* SelectionListener.java */,
+				D0C7E78A076EDB9F00B94ACD /* Srs.java */,
+				F539378801F5CC7401FA4797 /* Stat.java */,
+				F539378901F5CC7401FA4797 /* Table.java */,
+				D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */,
+				F539378B01F5CC7401FA4797 /* Util.java */,
+				0111F2C600819D1A7F000001 /* AboutBox.java */,
+				D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */,
+				F510801203B3247801FA48CB /* Mondrian.mft */,
+				10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */,
+				F52CCF8B0237C0F701FA478D /* Logo.gif */,
+				D097A9DA06F9B94100684C11 /* alpha.gif */,
+				D097A9DC06F9BAF900684C11 /* cat.gif */,
+				D097A9DD06F9BAF900684C11 /* num.gif */,
+				D0AD8140080A731000E77F89 /* ReferenceCard.gif */,
+				D0BF0A020792C180007E65A3 /* JRclient */,
+				D0E375BE081302D8004B4DF3 /* util */,
+				01F12F4FFEC8CEF111DB9C8B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		01F12F4FFEC8CEF111DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				06D05853FF24F2DB11DB9C8B /* Mondrian.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D0BF0A020792C180007E65A3 /* JRclient */ = {
+			isa = PBXGroup;
+			children = (
+				D0BF0A040792C180007E65A3 /* jcrypt.java */,
+				D0BF0A050792C180007E65A3 /* RBool.java */,
+				D0BF0A060792C180007E65A3 /* Rconnection.java */,
+				D0BF0A070792C180007E65A3 /* REXP.java */,
+				D0BF0A080792C180007E65A3 /* RFactor.java */,
+				D0BF0A090792C180007E65A3 /* RFileInputStream.java */,
+				D0BF0A0A0792C180007E65A3 /* RFileOutputStream.java */,
+				D0BF0A0B0792C180007E65A3 /* RList.java */,
+				D0BF0A0C0792C180007E65A3 /* Rpacket.java */,
+				D09999E908E9F3C7003E49CE /* RSession.java */,
+				D0BF0A0D0792C180007E65A3 /* RSrvException.java */,
+				D0BF0A0E0792C180007E65A3 /* Rtalk.java */,
+			);
+			name = JRclient;
+			path = ../JRclient;
+			sourceTree = SOURCE_ROOT;
+		};
+		D0E375BE081302D8004B4DF3 /* util */ = {
+			isa = PBXGroup;
+			children = (
+				D0E375BF081302D8004B4DF3 /* ImageSelection.java */,
+			);
+			name = util;
+			path = ../util;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXJavaArchiveBuildPhase section */
+		1601BCDEFEEE210811DB9C8B /* JavaArchive */ = {
+			isa = PBXJavaArchiveBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F52CCF8C0237C0F701FA478D /* Logo.gif in JavaArchive */,
+				F510801303B3247801FA48CB /* Mondrian.mft in JavaArchive */,
+				D097A9DB06F9B94100684C11 /* alpha.gif in JavaArchive */,
+				D097A9DE06F9BAF900684C11 /* cat.gif in JavaArchive */,
+				D097A9DF06F9BAF900684C11 /* num.gif in JavaArchive */,
+				D0AD8141080A731000E77F89 /* ReferenceCard.gif in JavaArchive */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXJavaArchiveBuildPhase section */
+
+/* Begin PBXProject section */
+		01F12F4CFEC8CE2211DB9C8B /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = D02B74620948569F0019B5C8 /* Build configuration list for PBXProject "Mondrian" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 01F12F4DFEC8CE2211DB9C8B;
+			productRefGroup = 01F12F4FFEC8CEF111DB9C8B /* Products */;
+			projectDirPath = "";
+			targets = (
+				1601BCDBFEEE210811DB9C8B /* Mondrian */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1601BCDFFEEE210811DB9C8B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */,
+				D0F331A50A37226E00DF87E5 /* Mondrian.cfg.xml in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1601BCDCFEEE210811DB9C8B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1601BCDDFEEE210811DB9C8B /* Mondrian.java in Sources */,
+				0111F2C700819D1A7F000001 /* AboutBox.java in Sources */,
+				F539378D01F5CC7401FA4797 /* Barchart.java in Sources */,
+				F539378E01F5CC7401FA4797 /* DataListener.java in Sources */,
+				F539379001F5CC7401FA4797 /* DragBox.java in Sources */,
+				F539379101F5CC7401FA4797 /* InteractionSet.java in Sources */,
+				F539379201F5CC7401FA4797 /* Map.java in Sources */,
+				F539379301F5CC7401FA4797 /* MFrame.java in Sources */,
+				F539379401F5CC7401FA4797 /* ModelListener.java in Sources */,
+				F539379501F5CC7401FA4797 /* ModelNavigator.java in Sources */,
+				F539379601F5CC7401FA4797 /* Mosaic.java in Sources */,
+				F539379701F5CC7401FA4797 /* MyPoly.java in Sources */,
+				F539379801F5CC7401FA4797 /* MyRect.java in Sources */,
+				F539379901F5CC7401FA4797 /* MyText.java in Sources */,
+				F539379A01F5CC7401FA4797 /* PC.java in Sources */,
+				F539379B01F5CC7401FA4797 /* PixelConsumer.java in Sources */,
+				F539379D01F5CC7401FA4797 /* Qsort.java in Sources */,
+				F539379F01F5CC7401FA4797 /* Selection.java in Sources */,
+				F53937A001F5CC7401FA4797 /* SelectionListener.java in Sources */,
+				F53937A101F5CC7401FA4797 /* Stat.java in Sources */,
+				F53937A201F5CC7401FA4797 /* Table.java in Sources */,
+				F53937A401F5CC7401FA4797 /* Util.java in Sources */,
+				F59B7531022FE93101B238D8 /* Histogram.java in Sources */,
+				F5FCD7B5023CC352015B9A6A /* Axis.java in Sources */,
+				F54802D5026ED61501FA478D /* Query.java in Sources */,
+				F5FBD733027EE38A01FA478D /* Scatter2D.java in Sources */,
+				F5A4C09003BE533601FEB7DC /* dataSet.java in Sources */,
+				D08C744204B997AB00FA48CA /* PreferencesFrame.java in Sources */,
+				D07E9E1F057F1DA800C2084A /* Join.java in Sources */,
+				D0C7E78B076EDB9F00B94ACD /* Srs.java in Sources */,
+				D0BF0A100792C180007E65A3 /* jcrypt.java in Sources */,
+				D0BF0A110792C180007E65A3 /* RBool.java in Sources */,
+				D0BF0A120792C180007E65A3 /* Rconnection.java in Sources */,
+				D0BF0A130792C180007E65A3 /* REXP.java in Sources */,
+				D0BF0A140792C180007E65A3 /* RFactor.java in Sources */,
+				D0BF0A150792C180007E65A3 /* RFileInputStream.java in Sources */,
+				D0BF0A160792C180007E65A3 /* RFileOutputStream.java in Sources */,
+				D0BF0A170792C180007E65A3 /* RList.java in Sources */,
+				D0BF0A180792C180007E65A3 /* Rpacket.java in Sources */,
+				D0BF0A190792C180007E65A3 /* RSrvException.java in Sources */,
+				D0BF0A1A0792C180007E65A3 /* Rtalk.java in Sources */,
+				D0E375C0081302D8004B4DF3 /* ImageSelection.java in Sources */,
+				D0D4C0C9089F99F000579679 /* DataEvent.java in Sources */,
+				D04E14C308BDD855001A39DA /* BufferTokenizer.java in Sources */,
+				D04E14F708BDF4AD001A39DA /* SelectionEvent.java in Sources */,
+				D09999EA08E9F3C7003E49CE /* RSession.java in Sources */,
+				D050937F08EC9664005A5A79 /* ProgressIndicator.java in Sources */,
+				D0F37951094093180086031F /* MissPlot.java in Sources */,
+				D021F47909925F7A00EFF582 /* ScanException.java in Sources */,
+				D021F47B09925F8700EFF582 /* UnacceptableFormatException.java in Sources */,
+				D050126B09E55DB100A14315 /* ResizePlotTask.java in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D02B745F0948569F0019B5C8 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				HEADER_SEARCH_PATHS = "";
+				JAVA_CLASS_SEARCH_PATHS = .;
+				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Mondrian.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				PRODUCT_NAME = Mondrian;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		D02B74600948569F0019B5C8 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				HEADER_SEARCH_PATHS = "";
+				JAVA_CLASS_SEARCH_PATHS = .;
+				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Mondrian.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				PRODUCT_NAME = Mondrian;
+				ZERO_LINK = NO;
+			};
+			name = Deployment;
+		};
+		D02B74610948569F0019B5C8 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "";
+				JAVA_CLASS_SEARCH_PATHS = .;
+				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
+				JAVA_MANIFEST_FILE = Mondrian.mft;
+				JAVA_ONLY = YES;
+				JAVA_SOURCE_SUBDIR = .;
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				PRODUCT_NAME = Mondrian;
+			};
+			name = Default;
+		};
+		D02B74630948569F0019B5C8 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Development;
+		};
+		D02B74640948569F0019B5C8 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Deployment;
+		};
+		D02B74650948569F0019B5C8 /* Default */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Default;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D02B745E0948569F0019B5C8 /* Build configuration list for PBXApplicationTarget "Mondrian" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D02B745F0948569F0019B5C8 /* Development */,
+				D02B74600948569F0019B5C8 /* Deployment */,
+				D02B74610948569F0019B5C8 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+		D02B74620948569F0019B5C8 /* Build configuration list for PBXProject "Mondrian" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D02B74630948569F0019B5C8 /* Development */,
+				D02B74640948569F0019B5C8 /* Deployment */,
+				D02B74650948569F0019B5C8 /* Default */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Default;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 01F12F4CFEC8CE2211DB9C8B /* Project object */;
+}
