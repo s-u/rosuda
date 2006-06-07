@@ -13,7 +13,7 @@ public class Mosaic extends DragBox implements ActionListener {
   private int width, height;                   // The preferred size.
   private Table tablep;                        // The datatable to deal with.
   public String displayMode = "Observed";
-  private double residSum;
+  private double residSum, residMax;
   private int censor = 0;
   private int border = 20;
   private Image bi;
@@ -195,6 +195,7 @@ public class Mosaic extends DragBox implements ActionListener {
       
       for( int i = 0;i < rects.size(); i++) {
         MyRect r = (MyRect)rects.elementAt(i);
+        r.setMax(residMax);
         double sum=0, sumh=0;
         for( int j=0; j<r.tileIds.size(); j++ ) {
           int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
@@ -329,6 +330,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                                 ||  e.getKeyCode() == KeyEvent.VK_UP && e.isShiftDown()
                                                 ||  e.getKeyCode() == KeyEvent.VK_DOWN && e.isShiftDown()    
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R
+                                                ||  e.getModifiers() == (Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_B
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_ADD
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_SUBTRACT)) {
@@ -375,6 +377,14 @@ public class Mosaic extends DragBox implements ActionListener {
         }
         if(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R) {
           for( int i=maxLevel-1; i<tablep.k; i++ )
+            if( Dirs[i] == 'x')
+              Dirs[i] = 'y';
+            else
+              Dirs[i] = 'x';
+        }
+        if( e.getModifiers() == (Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R )
+        {
+          for( int i=0; i<tablep.k; i++ )
             if( Dirs[i] == 'x')
               Dirs[i] = 'y';
             else
@@ -514,7 +524,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   y1,
                                   emptyBin, 
                                   sizeY+emptyWidth,
-                                  0,  exps[j], 4 / residSum, tablep.p,
+                                  0,  exps[j], 1/ residSum, tablep.p,
                                   info, tileIds[j], tablep);
               else
                 tile = new MyRect(true, 'y', displayMode,
@@ -522,7 +532,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   y1,
                                   Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeX)) + addGapX, 
                                   y2-y1 + addGapY,
-                                  obs[j], exps[j], 4 / residSum, tablep.p,
+                                  obs[j], exps[j], 1 / residSum, tablep.p,
                                   info, tileIds[j], tablep);
             else {
               if( empty )
@@ -531,7 +541,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   y1 + (int)(counts[j] / total * sizeY) + j * thisGap, 
                                   sizeX+emptyWidth,
                                   emptyBin,
-                                  0, exps[j], 4 / residSum, tablep.p,
+                                  0, exps[j], 1 / residSum, tablep.p,
                                   info, tileIds[j], tablep);
               else
                 tile = new MyRect(true, 'x', displayMode,
@@ -539,7 +549,7 @@ public class Mosaic extends DragBox implements ActionListener {
                                   y1 + (int)(counts[j] / total * sizeY) + j * thisGap, 
                                   x2-x1 + addGapX,
                                   Math.max(1, (int)((counts[j+1] - counts[j]) / total * sizeY)) + addGapY,
-                                  obs[j], exps[j], 4 / residSum, tablep.p,
+                                  obs[j], exps[j], 1 / residSum, tablep.p,
                                   info, tileIds[j], tablep);
             }
             rects.addElement(tile);
@@ -653,9 +663,14 @@ public class Mosaic extends DragBox implements ActionListener {
           //      System.out.println("j: "+j+"  aGap[j]: "+aGap[j]+"  Gaps[j]: "+Gaps[j]);
         }
         residSum = 0;
-        for( int i=0; i<tablep.table.length; i++ )
+        residMax = 0;
+        for( int i=0; i<tablep.table.length; i++ ) {
 //          residSum += Math.abs( tablep.table[i] - tablep.exp[i] );
-          residSum += Math.abs( tablep.table[i] - tablep.exp[i] ) / Math.sqrt(tablep.exp[i]);
+          double resid = Math.abs( tablep.table[i] - tablep.exp[i] ) / Math.sqrt(tablep.exp[i]);
+          residSum += resid;
+          residMax = Math.max( residMax, resid );
+//          System.out.println(" resid: "+resid+" Sum: "+residSum+" residMax: "+residMax);
+        }
         if( Math.abs(residSum) < 0.0000001 ) {
           residSum =  1;
           for( int i=0; i<tablep.table.length; i++ )

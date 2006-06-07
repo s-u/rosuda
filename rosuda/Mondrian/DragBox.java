@@ -31,6 +31,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
 {
   static Color hiliteColor = new Color(180, 96, 135);
+  
+  static boolean extSelMode = false;  // AND selction via <SHIFT><ALT>
 
   protected Color	background = Color.black;
   protected Color	dragboxcolor = Color.red;
@@ -416,9 +418,10 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
     public void mousePressed(MouseEvent e) {
 
-System.out.println("SYSTEM = "+SYSTEM);
-System.out.println("mouse = "+mouse);
+//System.out.println("SYSTEM = "+SYSTEM);
+//System.out.println("mouse = "+mouse);
 System.out.println("Mouse press: ... "+e.getModifiers()+" "+BUTTON1_DOWN +" "+ SHIFT_DOWN +" "+ ALT_DOWN+" "+CTRL_DOWN);
+System.out.println("getButton() = "+e.getButton());
 
       if (mouse == AVAILABLE) {
         if (e.getModifiers() == BUTTON1_DOWN ||
@@ -563,7 +566,10 @@ System.out.println(" dragEnd! ");
       }
       if( modifiers == BUTTON1_UP + SHIFT_DOWN + ALT_DOWN || modifiers == SHIFT_DOWN + ALT_DOWN && SYSTEM == MAC ) {
         if( mouse == DRAGGING ) {
-          S = new Selection(sr, null, 0, Selection.MODE_OR, this);
+          if( extSelMode )               // Choose right extended selction via <SHIFT><ALT>
+            S = new Selection(sr, null, 0, Selection.MODE_OR, this);
+          else
+            S = new Selection(sr, null, 0, Selection.MODE_AND, this);
           activeS = S;
           Selections.addElement(S);
         }
@@ -974,7 +980,8 @@ System.out.println("Mouse Action to check: "+mouse);
           }
         }
       }
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (SYSTEM != MAC &&
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_A)   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         
@@ -982,7 +989,8 @@ System.out.println("Mouse Action to check: "+mouse);
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (SYSTEM != MAC &&
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_K)   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         
@@ -1017,7 +1025,8 @@ System.out.println("Mouse Action to check: "+mouse);
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_9) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 9; DataEvent de = new DataEvent(this); evtq.postEvent(de);
       }
-      if((e.getID() == KeyEvent.KEY_PRESSED) && e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == (InputEvent.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
+      if(SYSTEM != MAC &&
+         (e.getID() == KeyEvent.KEY_PRESSED) && e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == (InputEvent.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 999;
         DataEvent de = new DataEvent(this);              // now the rest is informed ...
         evtq.postEvent(de);
@@ -1045,7 +1054,8 @@ System.out.println("Mouse Action to check: "+mouse);
           evtq.postEvent(se);
         }
       }
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (SYSTEM != MAC &&
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == Event.BACK_SPACE) &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))  {
         System.out.println("Delete All Selections");
@@ -1053,7 +1063,8 @@ System.out.println("Mouse Action to check: "+mouse);
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (SYSTEM != MAC &&
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_M) &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))  {
         System.out.println("Switch Selection Mode");
@@ -1061,7 +1072,8 @@ System.out.println("Mouse Action to check: "+mouse);
         SelectionEvent se = new SelectionEvent(this);
         evtq.postEvent(se);
       }
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (SYSTEM != MAC &&                        // Global Shortcuts are handled by the menu on the Mac!!!
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_L) &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()))  {
         System.out.println("Switch Alpha Mode");
@@ -1209,11 +1221,13 @@ System.out.println("Mouse Action to check: "+mouse);
         JButton btHome;
         JButton btApply;
         
+        this.setTitle("Set Coordinates");
+                
         pnAllPanel = new JPanel();
-        pnAllPanel.setBorder( BorderFactory.createTitledBorder( "Set Coordinates" ) );
+//        pnAllPanel.setBorder( BorderFactory.createTitledBorder( "Set Coordinates" ) );
         GridBagLayout gbAllPanel = new GridBagLayout();
         GridBagConstraints gbcAllPanel = new GridBagConstraints();
-        pnAllPanel.setLayout( gbAllPanel );
+        pnAllPanel.setLayout( gbAllPanel ); 
         
         pnXPanel = new JPanel();
         pnXPanel.setBorder( BorderFactory.createTitledBorder( "x limits" ) );
@@ -1247,6 +1261,22 @@ System.out.println("Mouse Action to check: "+mouse);
         
         tfXMinI = new JTextField(10);
         tfXMinI.setText(Stat.roundToString(llx,5));
+        tfXMinI.selectAll();
+        tfXMinI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfXMinI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
         gbcXPanel.gridx = 1;
         gbcXPanel.gridy = 0;
         gbcXPanel.gridwidth = 1;
@@ -1260,6 +1290,21 @@ System.out.println("Mouse Action to check: "+mouse);
         
         tfXMaxI = new JTextField(10);
         tfXMaxI.setText(Stat.roundToString(urx,5));
+        tfXMaxI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfXMaxI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
         gbcXPanel.gridx = 1;
         gbcXPanel.gridy = 1;
         gbcXPanel.gridwidth = 1;
@@ -1324,6 +1369,21 @@ System.out.println("Mouse Action to check: "+mouse);
         
         tfYMinI = new JTextField(10);
         tfYMinI.setText(Stat.roundToString(lly,5));
+        tfYMinI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfYMinI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
         gbcYPanel.gridx = 1;
         gbcYPanel.gridy = 0;
         gbcYPanel.gridwidth = 1;
@@ -1337,6 +1397,22 @@ System.out.println("Mouse Action to check: "+mouse);
         
         tfYMaxI = new JTextField(10);
         tfYMaxI.setText(Stat.roundToString(ury,5));
+        tfYMaxI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfYMaxI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
+        tfYMaxI.setNextFocusableComponent(tfXMinI);
         gbcYPanel.gridx = 1;
         gbcYPanel.gridy = 1;
         gbcYPanel.gridwidth = 1;
@@ -1411,6 +1487,24 @@ System.out.println("Mouse Action to check: "+mouse);
         setSize(360, 155);
         setResizable(false);
         pack();
+        
+        // Center the baby ...
+        int x, y;
+        
+        Point topLeft = frame.getLocationOnScreen();
+        Dimension parentSize = frame.getSize();
+        
+        Dimension mySize = this.getSize();
+        
+        x = ((parentSize.width - mySize.width)/2) + topLeft.x;
+        
+        if (parentSize.height > mySize.height) 
+          y = ((parentSize.height - mySize.height)/2) + topLeft.y;
+        else 
+          y = topLeft.y;
+        
+        setLocation (x, y);
+        
         setVisible( true );
 
       }

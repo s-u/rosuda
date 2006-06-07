@@ -855,7 +855,7 @@ System.out.println(newQ.makeQuery());
     if( k<256 ) {
       colorBrush = true;
       brushColors = new Color[k+1];
-      System.out.println("Setting "+k+" Colors");
+//      System.out.println("Setting "+k+" Colors");
       brushColors[0] = MFrame.objectColor;
     } else
       return;
@@ -865,7 +865,7 @@ System.out.println(newQ.makeQuery());
         // Linear Colors
         for(int i=1; i<=k; i++) {
           brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.75F, 1.0F);
-          System.out.println("Color: "+brushColors[i]);
+//          System.out.println("Color: "+brushColors[i]);
         }
           break;
       case 1:
@@ -877,7 +877,7 @@ System.out.println(newQ.makeQuery());
           step = 1.0/Math.pow(2,r);
           offset = step/2;
           for(int s=0; s<Math.pow(2,r); s++) {
-            System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
+//            System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
             if( j<k )
               brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.75F, 1.0F);
             else
@@ -934,7 +934,7 @@ System.out.println(newQ.makeQuery());
 //        return;
 //    else {	
 //    if( (filterVar != -1 && filterA[i] == filterVal) || filterVar == -1 ) {
-      selChanged = true;
+    selChanged = true;
       switch( mode ) {
         case Selection.MODE_STANDARD:
           selectionArray[i] = s;
@@ -1043,6 +1043,7 @@ System.out.println(newQ.makeQuery());
       
   public void toggleSelection() {
     for( int i=0; i<this.n; i++ )
+//      setSelection(i, 1, Selection.MODE_STANDARD );
       setSelection(i, 1, Selection.MODE_XOR );
   }
       
@@ -1398,7 +1399,7 @@ System.out.println("query: "+query+" ---> "+this.max);
                   else
                     this.max = Double.valueOf(levelA[permA[levelP - 2]]).doubleValue();
               else
-                for ( int i=0; i<data.length; i++ ) 
+                for ( int i=0; i<n-numMiss; i++ ) 
                   this.max = Math.max(data[i], this.max);
         maxSet = true;
         return this.max;
@@ -1415,17 +1416,17 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double Mean() {
       double sum=0;
-      for ( int i=0; i<data.length; i++ ) 
-        sum += data[i];
-      return sum/data.length;
+      for ( int i=0; i<n-numMiss; i++ ) 
+        sum += data[sortI[i]];
+      return sum/(n-numMiss);
     }
 
     public double selMean() {
       double sum=0;
       int counter=0;
-      for ( int i=0; i<data.length; i++ )
+      for ( int i=0; i<n-numMiss; i++ )
         if( selectionArray[i] > 0 ) {
-          sum += data[i];
+          sum += data[sortI[i]];
           counter++;
         }
       return sum/counter;
@@ -1433,17 +1434,17 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double SDev() {
       double sum2=0;
-      for ( int i=0; i<data.length; i++ ) 
-        sum2 += data[i] * data[i];
-      return Math.pow((sum2 - Math.pow(Mean(),2) * data.length) / (data.length - 1), 0.5);
+      for ( int i=0; i<n-numMiss; i++ ) 
+        sum2 += data[sortI[i]] * data[sortI[i]];
+      return Math.pow((sum2 - Math.pow(Mean(),2) * (n-numMiss)) / ((n-numMiss) - 1), 0.5);
     }
 
     public double selSDev() {
       double sum2=0;
       int counter=0;
-      for ( int i=0; i<data.length; i++ )
+      for ( int i=0; i<n-numMiss; i++ )
         if( selectionArray[i] > 0 ) {
-          sum2 += data[i] * data[i];
+          sum2 += data[sortI[i]] * data[sortI[i]];
           counter++;
         }
       return Math.pow((sum2 - Math.pow(selMean(),2) * counter) / (counter - 1), 0.5);
@@ -1492,7 +1493,7 @@ System.out.println("query: "+query+" ---> "+this.max);
           while( filterA[sortI[j]] != filterVal || missing[sortI[j]] ) {j++;}
           j--;
           double remainder = (q * (filterGrpSize[filterGrp]-1)) - stop;
-          System.out.println(" GET NEXT :"+i+" <-> "+j);
+//          System.out.println(" GET NEXT :"+i+" <-> "+j);
           return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
         } else
           return data[sortI[i]];
@@ -1526,7 +1527,7 @@ System.out.println("query: "+query+" ---> "+this.max);
           if( j != i+1 )
             j--;
           double remainder = (q * (countSelection(var)-1)) - stop;
-          System.out.println(" GET NEXT :"+i+" <-> "+j);
+//          System.out.println(" GET NEXT :"+i+" <-> "+j);
           return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
         } else
           return data[sortI[i]];
@@ -1555,7 +1556,7 @@ System.out.println("query: "+query+" ---> "+this.max);
             //          {System.out.println(" j: "+j+" Filter: "+filterA[sortI[j]]+" Sel: "+selectionArray[sortI[j]]+" miss: "+missing[sortI[j]]);j++;}
           j--;
           double remainder = (q * (filterSelGrpSize[filterGrp]-1)) - stop;
-          System.out.println(" GET NEXT :"+i+" <-> "+j+" ("+remainder+" - "+(1-remainder)+")");
+//          System.out.println(" GET NEXT :"+i+" <-> "+j+" ("+remainder+" - "+(1-remainder)+")");
           return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
         } else
           return data[sortI[i]];

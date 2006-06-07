@@ -337,8 +337,11 @@ public class PC extends DragBox implements ActionListener {
             
             scaleType.add(alignM);
             
-            
-            JMenu sortM = new JMenu("Sort Axes by");
+            JMenu sortM;
+            if( data.countSelection() == 0 ) 
+              sortM   = new JMenu("Sort Axes by");
+            else
+              sortM = new JMenu("Sort Axes by selected");
             JCheckBoxMenuItem minM = new JCheckBoxMenuItem("Minimum");
             JCheckBoxMenuItem quarM  = new JCheckBoxMenuItem("IQ-Range");
             JCheckBoxMenuItem medianM  = new JCheckBoxMenuItem("Median");            
@@ -847,24 +850,46 @@ public class PC extends DragBox implements ActionListener {
             }
           }          
         } else {
+          boolean sel=false;
+          if( data.countSelection() > 0 ) 
+            sel = true;
           if( command.equals("min") )
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dMins[i];
+              if( !sel )
+                sortA[i] = dMins[i];
+              else
+                sortA[i] = data.getSelQuantile(vars[i], 0);
           if( command.equals("quar") ) 
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dIQRs[i];
+              if( !sel )
+                sortA[i] = dIQRs[i];
+              else
+                sortA[i] = data.getSelQuantile(vars[i], 0.75) - data.getSelQuantile(vars[i], 0.25);
           if( command.equals("median") ) 
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dMedians[i];
+              if( !sel )
+                sortA[i] = dMedians[i];
+              else
+                sortA[i] = data.getSelQuantile(vars[i], 0.5);
           if( command.equals("mean") ) 
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dMeans[i];
+              if( !sel )
+                sortA[i] = dMeans[i];
+              else
+                sortA[i] = data.getSelMean(vars[i]);
           if( command.equals("sdev") ) 
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dSDevs[i];
+              if( !sel )
+                sortA[i] = dSDevs[i];
+              else
+                sortA[i] = data.getSelSDev(vars[i]);
           if( command.equals("max") )
             for( int i=0; i<sortA.length; i++ ) 
-              sortA[i] = dMaxs[i];
+              if( !sel )
+                sortA[i] = dMaxs[i];
+              else
+                sortA[i] = data.getSelQuantile(vars[i], 1);
+          
           int[] perm = Qsort.qsort(sortA, 0, sortA.length-1);
 
           if( paintMode.equals("XbyY") ) {
@@ -1516,7 +1541,7 @@ public class PC extends DragBox implements ActionListener {
         for( int j=0; j<k; j++ ) {
           if( lNames[permA[j]].equals("NA") &&  false )                        // Set Constant for Missing values
           {
-            System.out.println(" Setting NA !! ");
+//            System.out.println(" Setting NA !! ");
             lNames[permA[j]] = "1.7976931348623157E308";
           }
           data.setFilter(lNames[permA[j]]);
@@ -1824,10 +1849,10 @@ public class PC extends DragBox implements ActionListener {
           else
             uSWhisker = uOutlier[uOutlier.length-1]; */
           
-System.out.println("sMin: "+sMin+" lSHinge "+lSHinge+" sMedian "+sMedian+" uSHinge "+uSHinge+" sMax "+sMax+" lsOutlier "+lsOutlier+" usOutlier "+usOutlier);          
+//System.out.println("sMin: "+sMin+" lSHinge "+lSHinge+" sMedian "+sMedian+" uSHinge "+uSHinge+" sMax "+sMax+" lsOutlier "+lsOutlier+" usOutlier "+usOutlier);          
 
-          lSWhisker = data.getFirstSelGreater(var, lSHinge-(uSHinge-lSHinge)*1.5);
-          uSWhisker = data.getFirstSelSmaller(var, uSHinge+(uSHinge-lSHinge)*1.5);
+          lSWhisker = Math.min(data.getFirstSelGreater(var, lSHinge-(uSHinge-lSHinge)*1.5), lSHinge);  // with "exact" quantiles we need to make sure!
+          uSWhisker = Math.max(data.getFirstSelSmaller(var, uSHinge+(uSHinge-lSHinge)*1.5), uSHinge);  // ... same!
 
           int  lSWP  = low+(int)((Maxs[id]-lSWhisker)/(Maxs[id]-Mins[id])*(high-low));
           int  lSHP  = low+(int)((Maxs[id]-lSHinge)/(Maxs[id]-Mins[id])*(high-low));
@@ -1883,7 +1908,8 @@ System.out.println("sMin: "+sMin+" lSHinge "+lSHinge+" sMedian "+sMedian+" uSHin
           int  sMaxP = low+(int)((Maxs[id]-sMax)/(Maxs[id]-Mins[id])*(high-low));
           g.setColor(getHiliteColor());
           g.drawRect(mid-width/2+4, sMinP, width-8, 1);
-          g.drawRect(mid-width/2+4, sMedP, width-8, 1);
+          if( count != 2 )
+            g.drawRect(mid-width/2+4, sMedP, width-8, 1);
           g.drawRect(mid-width/2+4, sMaxP, width-8, 1);
         }
       }

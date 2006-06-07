@@ -30,6 +30,8 @@ public class MFrame extends JFrame implements WindowListener {
   static Color lineColor       = Color.black;
   
   public MFrame(Join J) {
+    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
+      this.setJMenuBar(J.menubar);              
     this.J = J;
     this.setBackground(backgroundColor);
     addWindowListener(this);
@@ -111,7 +113,10 @@ public class MFrame extends JFrame implements WindowListener {
   public void windowIconified(WindowEvent e) {}
   public void windowOpened(WindowEvent e) {}
   public void windowDeiconified(WindowEvent e) {}
-  public void windowActivated(WindowEvent e) {}
+  public void windowActivated(WindowEvent e) {
+    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
+      this.setJMenuBar(J.menubar);                 // Add it to the frame.
+  }
   public void windowDeactivated(WindowEvent e) {}
 
   private final void lblPlotComponentResized(DragBox DB, final java.awt.event.ComponentEvent evt) {      

@@ -23,6 +23,8 @@ public class Barchart extends DragBox implements ActionListener {
   private MyText movingText;
   private int    movingId;
   private int oldY;
+  private double max = 0;
+  private boolean scaleFixed = false;
   private Image bi;
   private Graphics bg;
   private int k;
@@ -41,12 +43,12 @@ public class Barchart extends DragBox implements ActionListener {
     sb.setUnitIncrement(22);
     sb.setBlockIncrement(22);
     
-    /*   ToolTipManager.sharedInstance().setDismissDelay(300000);
-    ToolTipManager.sharedInstance().setInitialDelay(0);
-    ToolTipManager.sharedInstance().setReshowDelay(0);
+    this.k = levels[0];
+    for(int i=0; i<k; i++ ) 
+      max = Math.max( max, tablep.table[i] );
     
-    this.setToolTipText(" This is it\n is this it?"); */
-    
+    setCoordinates(0,0,max,1,-1);
+        
     frame.getContentPane().add(this);
     
     Font SF = new Font("SansSerif", Font.PLAIN, 11);
@@ -172,7 +174,7 @@ public class Barchart extends DragBox implements ActionListener {
       else
         size = this.getSize();
       
-      if( oldWidth != size.width || oldHeight != size.height ) {
+      if( oldWidth != size.width || oldHeight != size.height || scaleChanged ) {
         this.width = size.width;
         this.height = size.height;
         realHeight = create(border, border, size.width-border, size.height-border, "");
@@ -180,6 +182,10 @@ public class Barchart extends DragBox implements ActionListener {
         size = this.getSize();
         oldWidth = size.width;
         oldHeight = size.height;
+        if( scaleChanged ) {
+          scaleFixed = true;
+          scaleChanged = false;
+        }
       }
       
       if( printing )
@@ -599,9 +605,7 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   this.names = tablep.names;
   this.lnames = tablep.lnames;
   
-  this.k = levels[0];
   double sum = 0;
-  double max = 0;
   Vector[] tileIds = new Vector[k];
     
   for(int i=0; i<k; i++ ) {
@@ -611,6 +615,8 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     tileIds[i].addElement(new Integer(i));
   }
   
+  max = getUrx();
+    
   int pF=1;
   if( printing )
     pF = printFactor;
@@ -630,6 +636,9 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   
   x = Math.min(x*pF, 100*pF);
   
+  if( scaleFixed )
+    x = 100*pF;
+
   startX= x1 + x;
   int y = 0;
   

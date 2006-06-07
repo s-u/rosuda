@@ -21,7 +21,7 @@ public class MyRect extends Rectangle implements ActionListener {
   public double obs = 1;
   private double hilite = 0;
   private double exp;
-  private double scale;
+  private double scale, max;
   private float p;
   private Color drawColor = Color.black;
   private JPanel panel;
@@ -68,6 +68,10 @@ public class MyRect extends Rectangle implements ActionListener {
 
   public void setHiliteAlign(boolean flipper) {
     this.flip = flipper;
+  }
+  
+  public void setMax(double max) {
+    this.max = max;
   }
   
   public void setColor(Color color) {
@@ -167,11 +171,13 @@ public class MyRect extends Rectangle implements ActionListener {
         g.setColor(new Color(high, low, low));
       else
         g.setColor(Color.lightGray);	
+      double resid = Math.abs((obs-exp)/Math.sqrt(exp));
+//System.out.println("Cell: "+getLabel()+" resid: "+resid+" max "+max+ " scale "+scale);
       if( dir == 'x' )
-        g.fillRect(x, y, (int)((double)w*Math.abs((obs-exp)/Math.sqrt(exp)*scale)), h);
+        g.fillRect(x, y, (int)((double)w*resid/max), h);
       else if ( dir == 'y' )
-        g.fillRect(x, y+h-(int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
-                   w, (int)((double)h*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
+        g.fillRect(x, y+h-(int)((double)h*resid/max),
+                   w, (int)((double)h*resid/max));
     }
 
     if( hilite > 0 && (tablep== null || !tablep.data.colorBrush)) {   // draw hilite on none color-brushing ...
@@ -236,7 +242,7 @@ public class MyRect extends Rectangle implements ActionListener {
     if( mode.equals("Expected") ) {
       pinfo += "\n" + "Expected: "+Stat.round(exp,2);
       pinfo += "\n" + "Residual: "+Stat.round(obs-exp,3);
-      pinfo += "\n" + "Scaled Res.:"+Stat.round(Math.abs((obs-exp)/Math.sqrt(exp)*scale/4*100),1)+"%";
+      pinfo += "\n" + "Scaled Res.:"+Stat.round(Math.abs((obs-exp)/Math.sqrt(exp)*scale*100),1)+"%";
     }
 
     return pinfo;
