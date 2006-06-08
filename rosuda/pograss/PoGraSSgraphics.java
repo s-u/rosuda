@@ -121,6 +121,23 @@ public class PoGraSSgraphics extends PoGraSS {
             g.drawString(txt,x-dx,y+dy);
         };
     }
+    public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
+        if (paintLayer==-1 || paintLayer==curLayer) {
+            FontMetrics fm=g.getFontMetrics();
+            int dx=fm.stringWidth(txt);
+            int dy=fm.getHeight();
+            dx=(int)(((double)dx)*ax);
+            dy=(int)(((double)dy)*ay);
+			Graphics2D g2 = (Graphics2D) g;
+			AffineTransform saveAT = g2.getTransform();
+			// Perform transformation
+			g2.translate(x,y);
+			g2.rotate(rot*Math.PI/180.0);
+            g2.drawString(txt,-dx,dy);
+			// Restore original transform
+			g2.setTransform(saveAT);
+        };
+    }
     
     public void drawPolygon(int[] x, int[] y, int pts, boolean closed) {
         if (paintLayer==-1 || paintLayer==curLayer) {
@@ -206,6 +223,7 @@ public class PoGraSSgraphics extends PoGraSS {
         g.fillArc(x, y, width, height, startAngle, arcAngle);
     }
     
+	/* -- this doesn't really work -- we use G2D instead --
     public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
         if(txt==null || txt.length()==0) return;
         if (paintLayer==-1 || paintLayer==curLayer) {
@@ -222,10 +240,8 @@ public class PoGraSSgraphics extends PoGraSS {
             
             final int xshift,yshift;
             
-            /* alignment relative to text
-            xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
-            yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
-             **/
+            //xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
+            //yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
             
             // alignment relative to bounding box
             final double normalizedRot,bbw,bbh;
@@ -252,6 +268,6 @@ public class PoGraSSgraphics extends PoGraSS {
             
             tl.draw(g,x-xshift,y+yshift);
         };
-    }
+    } */
     
 }
