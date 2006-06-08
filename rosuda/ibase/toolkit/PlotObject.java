@@ -17,6 +17,9 @@ public class PlotObject {
     /** coordinates system: relative. 0 corresponds to the left/top edge of the data space and 1 corresponds to the right/bottom edge. */
     public static final int CS_REL = 2;
     
+	/** internal flag for NaN in integer context */
+	static final int INaN = -2147483648;
+	
     /** plot manager - the container containing this object. Any object can be owned by one plot manager only. */
     PlotManager pm;
     /** visibility flag. if set to <code>false</code> then this object is not painted */

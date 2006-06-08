@@ -12,6 +12,9 @@ package org.rosuda.ibase.toolkit;
 import org.rosuda.pograss.*;
 import org.rosuda.util.*;
 
+import java.util.Vector;
+import java.util.Enumeration;
+
 /**
 Polygon object to be used in plots
  
@@ -22,10 +25,15 @@ public class PlotPolygon extends PlotObject {
     double x[], y[];
     /** geometrical coordinates of the points. this field is updated/created by {@link #recalc} */
     int dx[], dy[];
-
+	/** set to <code>true</code> if there are NaN coordinates (non-contiguous lines) */
+	boolean hasNaNs;
+	/** vector holding polygons if there is more than one */
+	Vector polys;
+	
     /** create a new polygon object and add it to the specified {@link PlotManager} */
     public PlotPolygon(final PlotManager pm) {
         super(pm);
+		polys=new Vector();
         setDrawColor(new PlotColor("black"));
     }
 
@@ -47,12 +55,37 @@ public class PlotPolygon extends PlotObject {
         if (dx==null || dy==null || dx.length!=l || dy.length!=l) {
             dx=new int[l]; dy=new int[l];
         }
-        int i = 0;
+		polys.removeAllElements();
+		hasNaNs=false;
+        int i = 0, lb = 0;
         while (i<l) {
-            dx[i]=getXPos(x[i]);
-            dy[i]=getYPos(y[i]);
+			if (Double.isNaN(x[i]) || Double.isNaN(y[i])) {
+				if (i-lb>1) {
+					int rdx[] = new int[i-lb];
+					int rdy[] = new int[i-lb];
+					System.arraycopy(dx,lb,rdx,0,i-lb);
+					System.arraycopy(dy,lb,rdy,0,i-lb);
+					polys.addElement(rdx);
+					polys.addElement(rdy);
+					lb=i+1;
+				}
+				dx[i]=INaN;
+				dy[i]=INaN;
+				hasNaNs=true;
+			} else {
+				dx[i]=getXPos(x[i]);
+				dy[i]=getYPos(y[i]);
+			}
             i++;
         }
+		if (hasNaNs && i-lb>0) {
+			int rdx[] = new int[i-lb];
+			int rdy[] = new int[i-lb];
+			System.arraycopy(dx,lb,rdx,0,i-lb);
+			System.arraycopy(dy,lb,rdy,0,i-lb);
+			polys.addElement(rdx);
+			polys.addElement(rdy);
+		}			
     }
 
     /** draw the polygon */
@@ -61,11 +94,25 @@ public class PlotPolygon extends PlotObject {
         recalc(); // we should be more intelligent here and recalc only if necessary ...
         if (colf!=null) {
             colf.use(g);
-            g.fillPolygon(dx,dy,dx.length);
+			if (hasNaNs) {
+				for (Enumeration e = polys.elements() ; e.hasMoreElements() ;) {
+					int cx[] = (int[])e.nextElement();
+					int cy[] = (int[])e.nextElement();					
+					g.fillPolygon(cx,cy,cx.length);
+				}
+			} else
+				g.fillPolygon(dx,dy,dx.length);
         }
         if (cold!=null) {
             cold.use(g);
-            g.drawPolyline(dx,dy,dx.length);
+			if (hasNaNs) {
+				for (Enumeration e = polys.elements() ; e.hasMoreElements() ;) {
+					int cx[] = (int[])e.nextElement();
+					int cy[] = (int[])e.nextElement();					
+					g.drawPolyline(cx,cy,cx.length);
+				}
+			} else
+				g.drawPolyline(dx,dy,dx.length);
         }
     }
 
