@@ -62,11 +62,13 @@ public class Axis extends Notifier {
     public Axis(final SVar srcv) {
         v=srcv; or=0; gInterSpc=0;
         type=T_EqSize; // some default type guessing
-        if (v.isNum()) type=T_Num;
-        if (v.isCat()) type=T_PropCat;
-        if(v.linked) seq=v.mainSeq();
-        else seq=new SCatSequence(v,this,false);
-        seqgeom=new AxisCatSequence(this, seq);
+        if(v!=null) { 
+        	if (v.isNum()) type=T_Num;
+        	if (v.isCat()) type=T_PropCat;
+        	if(v.linked) seq=v.mainSeq();
+        	else seq=new SCatSequence(v,this,false);
+        	seqgeom=new AxisCatSequence(this, seq);
+        }
         setDefaultRange();
     };
     
@@ -76,9 +78,11 @@ public class Axis extends Notifier {
      * @param axisType axis type */
     public Axis(final SVar srcv, final int orientation, final int axisType) {
         v=srcv; type=axisType; or=orientation; gInterSpc=0;
-        if(v.linked) seq=v.mainSeq();
-        else seq=new SCatSequence(v,this,false);
-        seqgeom=new AxisCatSequence(this, seq);
+        if(v!=null) {
+        	if(v.linked) seq=v.mainSeq();
+        	else seq=new SCatSequence(v,this,false);
+        	seqgeom=new AxisCatSequence(this, seq);
+        }
         setDefaultRange();
     };
     
