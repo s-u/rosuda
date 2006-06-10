@@ -143,6 +143,10 @@ public class PPrimRectangle extends PPrimBase {
     public void setBounds(int x, int y, int w, int h) {
         r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
     }
+    
+    public void setBounds(double x, double y, double w, double h) {
+    	setBounds((int)x,(int)y,(int)(w),(int)h);
+    }
        
     protected void brushRect(PoGraSS g, SMarker m, int orientation, Rectangle r, Color borderColor) {
         int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
