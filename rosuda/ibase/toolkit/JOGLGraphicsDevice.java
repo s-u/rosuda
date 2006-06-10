@@ -5,6 +5,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.JFrame;
+
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
 import org.rosuda.util.*;
@@ -59,8 +61,6 @@ public class JOGLGraphicsDevice implements GraphicsDevice, GLEventListener {
 		this(1,false);
 	}
 	
-	
-	// do we need this methods any more?
     /** set update root layer, i.e. the first layer that has to be updated via {@link #paintLayer}.
      * Note that after resize full repaint of all layers is done but updateRoot is not changed.
      * It is safe (and sensible) to set the update root higher than the last layer; this will cause full repaint only
@@ -172,9 +172,6 @@ public class JOGLGraphicsDevice implements GraphicsDevice, GLEventListener {
 	    System.out.println ("init()");
 	    GL gl = drawable.getGL(); 
 
-	    System.out.println("isFunctionAvailable: " + gl.isFunctionAvailable("glCheckFramebufferStatusEXT"));
-	    System.out.println("isExtensionAvailable: " + gl.isExtensionAvailable("GL_EXT_framebuffer_object"));
-	    
 //	    int status;
 //	    String str;
 //	    status = gl.glCheckFramebufferStatusEXT(GL.GL_FRAMEBUFFER_EXT);
