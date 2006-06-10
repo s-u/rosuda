@@ -96,6 +96,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_PCPBOX = "toggleType";
     private static final String M_SORTBYCOUNT = "sortByCount";
     private static final String M_SORTBYMARKED = "sortByMarked";
+    private static final String M_SORTBYMEDIAN = "sortByMedian";
+    private static final String M_SORTBYMAX = "sortByMax";
+    private static final String M_SORTBYMIN = "sortByMin";
     private static final String M_ALTERNINGLABELS = "alterningLabels";
     
     private MenuItem MIlabels=null;
@@ -330,7 +333,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
             (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX,
             M_MINUS,
             "@OSort by count",M_SORTBYCOUNT,
-            "!OSort by marked",M_SORTBYMARKED
+            "!OSort by marked",M_SORTBYMARKED,
+            "@ESort by median",M_SORTBYMEDIAN,
+            "@MSort by minimum",M_SORTBYMIN,
+            "!MSort by maximum",M_SORTBYMAX
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -343,12 +349,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MInodeSizeDown=EzMenu.getItem(f, M_NODESIZEDOWN);
         MInodeSizeUp.setEnabled(false);
         MIhideNAlines=EzMenu.getItem(f,M_HIDENALINES);
+        MIhideNAlines.setEnabled(type==TYPE_PCP);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         MIPCPBox=EzMenu.getItem(f,M_PCPBOX);
         MIsortByCount=EzMenu.getItem(f,M_SORTBYCOUNT);
-        MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
+        //MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
         MIsortByMarked=EzMenu.getItem(f,M_SORTBYMARKED);
-        MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
+        //MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
         MIAlterningLabels=EzMenu.getItem(f,M_ALTERNINGLABELS);
     }
     
@@ -497,6 +504,33 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         if(M_SORTBYMARKED.equals(cmd)) {
             sortAxes(true);
+        }
+        if(M_SORTBYMEDIAN.equals(cmd)) {
+            double[] medians = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<medians.length; i++){
+                medians[i] = ((PPrimBox)pp[i]).medValue;
+            }
+            
+            sortAxesBy(medians);
+        }
+        if(M_SORTBYMIN.equals(cmd)) {
+            double[] mins = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<mins.length; i++){
+                mins[i] = v[i].getMin();
+            }
+            
+            sortAxesBy(mins);
+        }
+        if(M_SORTBYMAX.equals(cmd)) {
+            double[] maxs = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<maxs.length; i++){
+                maxs[i] = v[i].getMax();
+            }
+            
+            sortAxesBy(maxs);
         }
         if(M_ALTERNINGLABELS.equals(cmd)){
             MIAlterningLabels.setLabel(alterningLabels?"Alterning labels":"No alterning labels");
@@ -1260,12 +1294,42 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return ppc;
     }
     
+    private void sortAxesBy(final double[] ranks){
+        final int[] ix;
+        ix=Tools.sortDoublesIndex(ranks);
+        ignoreNotifications=true;
+        int i=ix.length-1;
+        while (i>=0) {
+            ax.moveCat(ix[i],ix.length-i);
+            i--;
+        }
+        updateObjects();
+        ignoreNotifications=false;
+        setUpdateRoot(0);
+        repaint();
+    }
+    
+    private void sortAxesBy(final int[] ranks){
+        final int[] ix;
+        ix=Tools.sortIntegersIndex(ranks);
+        ignoreNotifications=true;
+        int i=ix.length-1;
+        while (i>=0) {
+            ax.moveCat(ix[i],ix.length-i);
+            i--;
+        }
+        updateObjects();
+        ignoreNotifications=false;
+        setUpdateRoot(0);
+        repaint();
+    }
+    
     private void sortAxes(final boolean bySelected) {
         // works only for box plots
+        if(type!=TYPE_BOX) return;
+        
         final int axes = pp.length - invisiblePoints.size();
-        
         final int[] coumar = new int[axes];
-        
         if(bySelected){
             for (int i=0; i<axes; i++){
                 coumar[i] = getMarked(i);
@@ -1275,18 +1339,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 coumar[i] = getCount(i);
             }
         }
-        final int[] ix;
-        ix=Tools.sortIntegersIndex(coumar);
-        ignoreNotifications=true;
-        int i=0;
-        while (i<axes-1) {
-            ax.moveCat(ix[i],i);
-            i++;
-        }
-        ignoreNotifications=false;
-        updateObjects();
-        setUpdateRoot(0);
-        repaint();
+        
+        sortAxesBy(coumar);
     }
     
     private int getMarked(final int axis){
