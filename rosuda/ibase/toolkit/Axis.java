@@ -186,6 +186,10 @@ public class Axis extends Notifier {
         return v;
     }
     
+    public void setVariable(SVar var) {
+    	v=var;
+    }
+    
     /** get graphical position of case with index i (for categorial vars returns
      * the same as getCatCenter called for the category of the case)
      * @param i index of the case
@@ -370,6 +374,6 @@ public class Axis extends Notifier {
     
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
-        return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+",seq="+seq.toString()+")";
+        return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+(seq!=null?",seq="+seq.toString()+")":")");
     };
 };
