@@ -37,6 +37,8 @@ public class CustomCanvas extends BaseCanvas {
 		super.updateObjects();
 		dontPaint=true;
 //		re.eval(rcall);
+//		ax.setVariable(v[0]);
+//		ay.setVariable(v[1]);
 		System.out.println("davor");
 		re.eval("iagepyr.definition$construct(.iplots[[iplot.cur()]],300,300,dat)");
 		System.out.println("dahinter");
@@ -60,7 +62,7 @@ public class CustomCanvas extends BaseCanvas {
 				}
 			}
 		} else if(or==Axis.O_Y) {
-			if(ay==null) ax=a;
+			if(ay==null) ay=a;
 			else {
 				if(opAy==null) opAy=new Axis[]{a};
 				else {
@@ -76,10 +78,9 @@ public class CustomCanvas extends BaseCanvas {
     	if(pp!=null) {
     		for(int i=0;i<pp.length;i++) {
     			pp[i].paint(g,orientation,m);
-    			frame.setTitle((new Integer(i)).toString());
     		}
     	} else {
-    		javax.swing.JFrame fr=new javax.swing.JFrame("haha");
+    		javax.swing.JFrame fr=new javax.swing.JFrame("kein pp vorhanden");
     		fr.setSize(300,300);
     		fr.setVisible(true);
     	}
@@ -91,12 +92,12 @@ public class CustomCanvas extends BaseCanvas {
     // the following two methods are only experimental and should be replaced by better ones
     public void addPP(PPrimRectangle p) {
     	String str;
-    	if(p==null) str=p.toString(); else str="dumm gelaufen";
-    	re.eval("print("+str+")");
+    	if(p==null) System.out.println("P IS NULL");
     	if(pp==null) pp=new PlotPrimitive[]{p};
     	PlotPrimitive[] temp=pp;
     	pp=new PlotPrimitive[temp.length+1];
     	System.arraycopy(temp,0,pp,0,temp.length);
+    	pp[pp.length-1]=p;
     	temp=null;
     }
     
