@@ -12,6 +12,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
+
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.plots.*;
@@ -324,15 +325,19 @@ public class Framework implements Dependent, ActionListener {
         }
     }
     
-    private FrameDevice newFrame() {
+    public FrameDevice newFrame() {
     	return newFrame("<unnamed>",true,0);
     }
     
-    private FrameDevice newFrame(String tit, int wclass) {
+    public FrameDevice newFrame(String tit) {
+    	return newFrame(tit,true,FrameDevice.clsCustom);
+    }
+    
+    public FrameDevice newFrame(String tit, int wclass) {
     	return newFrame(tit,true,wclass);
     }
     
-    private FrameDevice newFrame(String tit, boolean useCommonBg, int wclass) {
+    public FrameDevice newFrame(String tit, boolean useCommonBg, int wclass) {
     	if(graphicsEngine==PlotComponent.AWTGrDevID) return new TFrame(tit,useCommonBg,wclass);
     	else if(graphicsEngine==PlotComponent.SWINGGrDevID) return new TJFrame(tit,useCommonBg,wclass);
     	else if(graphicsEngine==PlotComponent.JOGLGrDevID) return new TFrame(tit,useCommonBg,wclass);
@@ -366,7 +371,7 @@ public class Framework implements Dependent, ActionListener {
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
         final ScatterCanvas sc=new ScatterCanvas(graphicsEngine,frdev.getFrame(),vs.at(v1),vs.at(v2),vs.getMarker());
-        frdev.add(sc.getComponent());
+		frdev.add(sc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(400,300));
         frdev.setSize(new Dimension(sc.getWidth(),sc.getHeight()));
@@ -538,6 +543,34 @@ public class Framework implements Dependent, ActionListener {
         addNewPlot(hc);
         return hc;
     };
+    
+    public CustomCanvas newCustomplot(final int v, String rcall) {return newCustomplot("Custom Plot",new int[]{v},rcall);}
+    public CustomCanvas newCustomplot(final int v[], String rcall) {return newCustomplot("Custom Plot",v,rcall);}
+    public CustomCanvas newCustomplot(String name, final int[] v, String rcall) { return newCustomplot(name,cvs,v,rcall); }
+    public CustomCanvas newCustomplot(String name, final SVarSet vs, int[] v, String rcall) {
+        if (v.length==0) return null;
+        updateMarker(vs,v[0]);
+        
+        FrameDevice frdev;
+        frdev = newFrame(name+" ("+vs.getName()+")",TFrame.clsCustom);
+		frdev.initPlacement();
+        frdev.setVisible(true);
+        frdev.addWindowListener(Common.getDefaultWindowListener());
+        final SVar[] vl=new SVar[v.length];
+        int i=0;
+        while(i<v.length) { vl[i]=vs.at(v[i]); i++; }
+        final CustomCanvas cc=new CustomCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),rcall);
+        frdev.add(cc.getComponent());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(cc);
+        cc.setSize(new Dimension(400,300));
+        frdev.setSize(new Dimension(cc.getWidth(),cc.getHeight()));
+        frdev.pack();
+        cc.repaint();
+        
+        addNewPlot(cc);
+        return cc;
+
+    }
     
     public ParallelAxesCanvas newBoxplot(final int i) { return newBoxplot(cvs,new int[]{i},-1); }
     public ParallelAxesCanvas newBoxplot(final int i, final int ic) { return newBoxplot(cvs,new int[]{i},ic); }
