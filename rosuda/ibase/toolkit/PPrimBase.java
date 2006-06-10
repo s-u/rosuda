@@ -47,6 +47,13 @@ public abstract class PPrimBase implements PlotPrimitive {
     }
 
     public int[] getCaseIDs() { return ref; }
+    public void setCaseIDs(int[] r) { ref=r; }
+    public void setCaseIDs(double[] r) {
+    	if(r==null) return;
+    	int[] ri=new int[r.length];
+    	for(int i=0;i<ri.length;i++) ri[i]=(int)r[i];
+    	ref=ri;
+    }
     public int getPrimaryCase() { return (ref==null||ref.length!=1)?-1:ref[0]; }
     public boolean representsCase(final int cid) {
         if (ref==null || ref.length<1) return false;
