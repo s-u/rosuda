@@ -1258,12 +1258,13 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         for(Iterator it = valuePos.listIterator(); it.hasNext();){
             valuePosA[i++] = ((Integer)it.next()).intValue();
         }
-        if(valuePosA.length>1) maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[0]-mTop),Math.abs(valuePosA[1]-valuePosA[0])/2)));
-        else maxH.add(new Integer(Math.abs(getBounds().height-mBottom-mTop)));
-        for(i=1;i<valuePosA.length-1;i++){
-            maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[i]-valuePosA[i-1])/2,Math.abs(valuePosA[i+1]-valuePosA[i])/2)));
-        }
-        maxH.add(new Integer(2*Math.min(Math.abs(getBounds().height-mBottom-valuePosA[valuePosA.length-1]),Math.abs(valuePosA[valuePosA.length-1]-valuePosA[valuePosA.length-2])/2)));
+        if(valuePosA.length>1){
+            maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[0]-mTop),Math.abs(valuePosA[1]-valuePosA[0])/2)));
+            for(i=1;i<valuePosA.length-1;i++){
+                maxH.add(new Integer(2*Math.min(Math.abs(valuePosA[i]-valuePosA[i-1])/2,Math.abs(valuePosA[i+1]-valuePosA[i])/2)));
+            }
+            maxH.add(new Integer(2*Math.min(Math.abs(getBounds().height-mBottom-valuePosA[valuePosA.length-1]),Math.abs(valuePosA[valuePosA.length-1]-valuePosA[valuePosA.length-2])/2)));
+        } else maxH.add(new Integer(Math.abs(getBounds().height-mBottom-mTop)));
         
         final int maxW = abbreviate?(getDefaultMLeft()-5):(-1);
         final int xPos = mLeft-5;
