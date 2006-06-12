@@ -34,7 +34,7 @@ public class PPrimRectangle extends PPrimBase {
     
     private int MINHEIGHT=1;
     private int MINWIDTH=1;
-        
+    
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
     
@@ -102,6 +102,7 @@ public class PPrimRectangle extends PPrimBase {
                 int shift=0;
                 
                 if(pieces!=null){
+                    /* old code for "zebra hiliting"
                     for(int i=0; i<=m.getMaxMark(); i++){
                         if (pieces[i]>0) {
                             double rmp = getRelativeMarkedProportion(m,i);
@@ -126,6 +127,7 @@ public class PPrimRectangle extends PPrimBase {
                             shift+=pieces[i];
                         }
                     }
+                     */
                 }
             }
             if (hasAny) {
@@ -145,9 +147,9 @@ public class PPrimRectangle extends PPrimBase {
     }
     
     public void setBounds(double x, double y, double w, double h) {
-    	setBounds((int)x,(int)y,(int)(w),(int)h);
+        setBounds((int)x,(int)y,(int)(w),(int)h);
     }
-       
+    
     protected void brushRect(PoGraSS g, SMarker m, int orientation, Rectangle r, Color borderColor) {
         int rX=r.x,rY=r.y,rW=r.width,rH=r.height;
         final double totW=rW;
@@ -157,31 +159,33 @@ public class PPrimRectangle extends PPrimBase {
         boolean hasAny=false;
         
         double totalProp=0;
-        double[] props = new double[m.getMaxMark()+1];
-        for(int i=0; i<=m.getMaxMark(); i++){
-            props[i] = getMarkedProportion(m,i);
-            totalProp += props[i];
+        double[] props = new double[m.getMaxMark()+2];
+        for(int i=-1; i<=m.getMaxMark(); i++){
+            props[i+1] = getMarkedProportion(m,i,true);
+            totalProp += props[i+1];
         }
         if(totalProp>=0.0000001){
-            pieces = roundProportions(props,totalProp,((orientation&1)==0)?rH:rW);
-            for(int i=0; i<=m.getMaxMark(); i++){
-                if (props[i]>0d) {
+            final int hw = (((orientation&1)==0)?rH:rW);
+            
+            pieces = roundProportions(props,totalProp,hw);
+            for(int i=-1; i<=m.getMaxMark(); i++){
+                if (props[i+1]>0d) {
                     hasAny=true;
                     if (orientation==0) { // bottom-up
-                        rH=pieces[i];
-                        rY=r.y+r.height-shift-pieces[i];
+                        rH=pieces[i+1];
+                        rY=r.y+r.height-shift-pieces[i+1];
                     } else if (orientation==2) { // top-down
-                        rH=pieces[i];
+                        rH=pieces[i+1];
                         rY=r.y+shift;
                     } else if (orientation==1) { // left-right
-                        rW=pieces[i];
+                        rW=pieces[i+1];
                         rX=r.x+shift;
                     } else if (orientation==3) { // right-left
-                        rW=pieces[i];
-                        rX=r.x+r.width-shift-pieces[i];
+                        rW=pieces[i+1];
+                        rX=r.x+r.width-shift-pieces[i+1];
                     }
-                    shift+=pieces[i];
-                    g.setColor(ColorBridge.getMain().getColor(i));
+                    shift+=pieces[i+1];
+                    g.setColor((i==-1)?fillColorSel:ColorBridge.getMain().getColor(i));
                     g.fillRect(rX,rY,rW,rH);
                 }
             }
@@ -194,7 +198,7 @@ public class PPrimRectangle extends PPrimBase {
     protected void drawRect(PoGraSS g, Rectangle r, Color fillColor, Color borderColor) {
         drawRect(g,r.x,r.y,r.width,r.height,fillColor,borderColor);
     }
-
+    
     protected void drawRect(PoGraSS g, int rX, int rY, int rW, int rH, Color fillColor, Color borderColor) {
         if(filled && fillColor!=null){
             g.setColor(fillColor);
@@ -209,32 +213,32 @@ public class PPrimRectangle extends PPrimBase {
     protected boolean isBrushed(final SMarker m){
         return m.getSecCount()>=1;
     }
-
+    
     public void move(final int x, final int y) {
         r.setLocation(x,y);
     }
-
+    
     public void moveX(final int x) {
         move(x,r.y);
     }
-
+    
     public void moveY(final int y) {
         move(r.x,y);
     }
-
+    
     public int getMINHEIGHT() {
         return this.MINHEIGHT;
     }
-
+    
     public void setMINHEIGHT(final int MINHEIGHT) {
         this.MINHEIGHT = MINHEIGHT;
         if(r!=null && r.height < MINHEIGHT) r.height = MINHEIGHT;
     }
-
+    
     public int getMINWIDTH() {
         return this.MINWIDTH;
     }
-
+    
     public void setMINWIDTH(final int MINWIDTH) {
         this.MINWIDTH = MINWIDTH;
         if(r!=null && r.width < MINWIDTH) r.width = MINWIDTH;
