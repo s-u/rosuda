@@ -45,15 +45,35 @@ public final class FrequencyTable {
             pos += vars[vsize-1].getNumCats();
         }
         
+        // this is the part which takes the most time and probably can be omtimized
         for (int i=0; i<ceTable.length; i++) {
-            final CombinationEntry ce = ceTable[i];
-            ce.cases = new ArrayList(vars[0].size());
-            for (int cs = 0; cs < vars[0].size(); cs++) {
-                if (ce.CombinationEqualsCase(cs))
-                    ce.cases.add(new Integer(cs));
-            }
-            table[i] = ce.cases.size();
+            ceTable[i].cases = new ArrayList((int)(vars[0].size()/Math.pow(vars[0].getNumCats(),vars.length)));
         }
+        final int[] chunks = new int[vars.length];
+        chunks[0]=1;
+        for(int i=1; i<vars.length; i++){
+            chunks[i] = chunks[i-1]*vars[i].getNumCats();
+        }
+        for (int cs=0; cs < vars[0].size(); cs++){
+            final int[] numOfCat = new int[vars.length];
+            for(int i=vars.length-1; i>=0; i--){
+                numOfCat[i]=-1;
+                for(int j=0; j<vars[i].getNumCats(); j++){
+                    if(vars[i].at(cs).toString().equals(vars[i].getCategories()[j].toString())){
+                        numOfCat[i]=j;
+                        break;
+                    }
+                }
+            }
+            int ind=0;
+            for(int j=0; j<vars.length; j++) ind += chunks[chunks.length-j-1]*numOfCat[j];
+            final CombinationEntry ce = ceTable[ind];
+            ce.cases.add(new Integer(cs));
+        }
+        for (int i=0; i<ceTable.length; i++) {
+            table[i] = ceTable[i].cases.size();
+        }
+        // here it ends
         
         // init expected table assuming independence
         int maxNumCats=0;
