@@ -71,6 +71,8 @@ public class HistCanvas extends BaseCanvas {
      */
     public HistCanvas(final int gd, final Frame f, final SVar var, final SMarker mark) {
         super(gd,f,mark);
+        borderColorSel=Color.black;
+        changingHilitingNeedsUpdateRoot=0;
         v=var; setTitle("Histogram ("+v.getName()+")");
         v.addDepend(this);
         ax=new Axis(var,Axis.O_X,Axis.T_Num); ax.addDepend(this);

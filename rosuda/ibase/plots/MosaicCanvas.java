@@ -58,6 +58,7 @@ public class MosaicCanvas extends BaseCanvas {
         super(gd,f, mark);
         this.frame=f;
         this.v = vars;
+        changingHilitingNeedsUpdateRoot=0;
         
         maxLevel = v.length;
         this.vs = v.length;
