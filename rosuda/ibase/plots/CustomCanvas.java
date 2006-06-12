@@ -3,6 +3,7 @@ package org.rosuda.ibase.plots;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
+import org.rosuda.util.Tools;
 
 import java.awt.*;
 
@@ -14,8 +15,7 @@ public class CustomCanvas extends BaseCanvas {
 	Rengine re;
 	String rcall;
 	SVar[] v;
-	javax.swing.JFrame frame;
-
+	
 	public CustomCanvas(int gd, Frame f, SVar[] v, SMarker mark, String rcall) {
 		super(gd,f,mark);
 		
@@ -24,25 +24,25 @@ public class CustomCanvas extends BaseCanvas {
 		
 		this.v=v;
 		this.rcall=rcall;
+		Mutex.verbose=true;
 		re=Rengine.getMainEngine();
 		if(re==null) return;
 		if (!re.waitForR()) {
             System.out.println("Cannot load R");
             return;
         }
+		
+        createMenu(f,true,false,false,true,null);
+
 		dontPaint=false;
 	}
 	
-	public void updateObjects() {
+	public synchronized void updateObjects() {
 		super.updateObjects();
-		dontPaint=true;
 //		re.eval(rcall);
-//		ax.setVariable(v[0]);
-//		ay.setVariable(v[1]);
 		System.out.println("davor");
 		re.eval("iagepyr.definition$construct(.iplots[[iplot.cur()]],300,300,dat)");
 		System.out.println("dahinter");
-		dontPaint=false;
 		setUpdateRoot(0);
 		repaint();
 	}
@@ -77,21 +77,49 @@ public class CustomCanvas extends BaseCanvas {
     public void paintBack(final PoGraSS g) {
     	if(pp!=null) {
     		for(int i=0;i<pp.length;i++) {
-    			pp[i].paint(g,orientation,m);
+    			if(pp[i] instanceof PPrimRectangle)
+    				pp[i].paint(g,((PPrimRectangle)pp[i]).getOrientation(),m);
+    			else
+    				pp[i].paint(g,orientation,m);
     		}
-    	} else {
-    		javax.swing.JFrame fr=new javax.swing.JFrame("kein pp vorhanden");
-    		fr.setSize(300,300);
-    		fr.setVisible(true);
     	}
+    	if(ax!=null) drawAxes(g,ax);
+    	if(ay!=null) drawAxes(g,ay);
+//    	if(opAx!=null) for(int i=0;i<opAx.length;i++) drawAxes(g,opAx[i]);
+//    	if(opAy!=null) for(int i=0;i<opAy.length;i++) drawAxes(g,opAy[i]);
     }
     
-    public void drawAxes(Axis a) {}
+    protected void drawAxes(PoGraSS g, Axis a) {
+        final Rectangle r=getBounds();
+        final int w=r.width;
+        final int h=r.height;
+
+    	if(a.getOrientation()==Axis.O_X) g.drawLine(a.gBegin,h-mBottom,a.gBegin+a.gLen,h-mBottom);
+    	else if(a.getOrientation()==Axis.O_Y) g.drawLine(w/2,a.gBegin,w/2,a.gBegin+a.gLen); // nur für age pyramide
+    }
+    
+    public String queryObject(final int i) {
+    	String qs="";
+    	final boolean actionExtQuery=isExtQuery;
+    	if(actionExtQuery) {
+    		if(pp!=null && pp[i]!=null) {
+    			qs="extended query";
+    		}
+    	} else {
+    		if(pp!=null && pp[i]!=null) {
+                final int mark=(int)((pp[i].cases())*pp[i].getMarkedProportion(m,-1)+0.5);
+                qs+="count: "+pp[i].cases();
+                qs+="\nselected: "+mark+" ("+Tools.getDisplayableValue(100.0*pp[i].getMarkedProportion(m, -1)  ,2)+"% of this cat., "+
+                ((v!=null&&v[0]!=null)?Tools.getDisplayableValue(100.0*mark/((double)v[0].size()),2)+"% of total, ":"")+
+                Tools.getDisplayableValue(100.0*mark/((double)m.marked()),2)+"% of total selection)";
+    		}
+    	}
+    	return qs;
+    }
     
     
     // the following two methods are only experimental and should be replaced by better ones
     public void addPP(PPrimRectangle p) {
-    	String str;
     	if(p==null) System.out.println("P IS NULL");
     	if(pp==null) pp=new PlotPrimitive[]{p};
     	PlotPrimitive[] temp=pp;
