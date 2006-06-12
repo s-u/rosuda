@@ -200,6 +200,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public boolean rotateYLabels=true;
     public double rotateYLabelsBy=90;
     
+    protected int changingHilitingNeedsUpdateRoot = 1;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -233,7 +235,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 msg.getMessageID()==Common.NM_AxisDataChange
                 )
             updateObjects();
-        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?1:0);
+        setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?changingHilitingNeedsUpdateRoot:0);
         repaint();
     };
     
@@ -679,7 +681,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 i++;
             }
             m.NotifyAll(new NotifyMsg(m,Common.NM_MarkerChange));
-            setUpdateRoot(1);
+            return;
         }
         if (zoomDrag)
             performZoomIn(X1,Y1,X2,Y2);
