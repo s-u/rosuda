@@ -124,14 +124,10 @@ public class PPrimCircle extends PPrimBase {
                 }
             } else{
                 final int mark = m.get(ref[0]);
-                if (mark!=0) {
-                    if (mark==-1)
-                        g.setColor(fillColorSel);
-                    else
-                        g.setColor(ColorBridge.getMain().getColor(mark));
+                if (mark==-1) {
+                    g.setColor(fillColorSel);
                     if(filled) g.fillOval(x-diam/2,y-diam/2, diam,diam);
-                    if (mark==-1)
-                        g.setColor(borderColorSel);
+                    g.setColor(borderColorSel);
                     if(drawBorder) g.drawOval(x-diam/2,y-diam/2, diam,diam);
                     return;
                 }
