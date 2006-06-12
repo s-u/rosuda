@@ -34,6 +34,20 @@ public class PPrimRectangle extends PPrimBase {
     
     private int MINHEIGHT=1;
     private int MINWIDTH=1;
+	
+    protected int orientation=0;
+    
+    public PPrimRectangle() {
+		this(1);
+    }
+    
+    public PPrimRectangle(int or) {
+    	super();
+    	orientation=or;
+    }
+    
+    public int getOrientation() {return orientation;}
+    
     
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     public boolean contains(final int x, final int y) { return (r==null)?false:r.contains(x,y); }
@@ -143,7 +157,15 @@ public class PPrimRectangle extends PPrimBase {
     }
     
     public void setBounds(int x, int y, int w, int h) {
-        r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
+    	if(orientation==1)
+    		r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
+    	else if(orientation==4)
+    		r.setBounds(x-w, y, Math.max(h,MINWIDTH), Math.max(w,MINHEIGHT));
+    	else if(orientation==3)
+    		r.setBounds(x-w, y-h, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
+    	else
+    		r.setBounds(x, y-h, Math.max(h,MINWIDTH), Math.max(w,MINHEIGHT));
+
     }
     
     public void setBounds(double x, double y, double w, double h) {
@@ -198,7 +220,7 @@ public class PPrimRectangle extends PPrimBase {
     protected void drawRect(PoGraSS g, Rectangle r, Color fillColor, Color borderColor) {
         drawRect(g,r.x,r.y,r.width,r.height,fillColor,borderColor);
     }
-    
+
     protected void drawRect(PoGraSS g, int rX, int rY, int rW, int rH, Color fillColor, Color borderColor) {
         if(filled && fillColor!=null){
             g.setColor(fillColor);
@@ -213,32 +235,32 @@ public class PPrimRectangle extends PPrimBase {
     protected boolean isBrushed(final SMarker m){
         return m.getSecCount()>=1;
     }
-    
+
     public void move(final int x, final int y) {
         r.setLocation(x,y);
     }
-    
+
     public void moveX(final int x) {
         move(x,r.y);
     }
-    
+
     public void moveY(final int y) {
         move(r.x,y);
     }
-    
+
     public int getMINHEIGHT() {
         return this.MINHEIGHT;
     }
-    
+
     public void setMINHEIGHT(final int MINHEIGHT) {
         this.MINHEIGHT = MINHEIGHT;
         if(r!=null && r.height < MINHEIGHT) r.height = MINHEIGHT;
     }
-    
+
     public int getMINWIDTH() {
         return this.MINWIDTH;
     }
-    
+
     public void setMINWIDTH(final int MINWIDTH) {
         this.MINWIDTH = MINWIDTH;
         if(r!=null && r.width < MINWIDTH) r.width = MINWIDTH;
