@@ -132,7 +132,7 @@ public class PoGraSSgraphics extends PoGraSS {
 			AffineTransform saveAT = g2.getTransform();
 			// Perform transformation
 			g2.translate(x,y);
-			g2.rotate(rot*Math.PI/180.0);
+			g2.rotate(-rot*Math.PI/180.0);
             g2.drawString(txt,-dx,dy);
 			// Restore original transform
 			g2.setTransform(saveAT);
@@ -221,53 +221,5 @@ public class PoGraSSgraphics extends PoGraSS {
     
     public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
         g.fillArc(x, y, width, height, startAngle, arcAngle);
-    }
-    
-	/* -- this doesn't really work -- we use G2D instead --
-    public void drawString(String txt, int x, int y, double ax, double ay, double rot) {
-        if(txt==null || txt.length()==0) return;
-        if (paintLayer==-1 || paintLayer==curLayer) {
-            FontMetrics fm=g.getFontMetrics();
-            double dx=fm.stringWidth(txt);
-            double dy=fm.getHeight();
-            
-            final double rotRad = rot*Math.PI/180;
-            final double s = Math.sin(rotRad);
-            final double c = Math.cos(rotRad);
-            
-            final AffineTransform at = AffineTransform.getRotateInstance(-rotRad);
-            final TextLayout tl = new TextLayout(txt, currentFont.deriveFont(at), g.getFontRenderContext());
-            
-            final int xshift,yshift;
-            
-            //xshift = ((int)(c*dx*ax-s*dy*ay+0.5));
-            //yshift = ((int)(c*dy*ay+s*dx*ax+0.5));
-            
-            // alignment relative to bounding box
-            final double normalizedRot,bbw,bbh;
-            if(rot<0) normalizedRot = rot-((int)(rot/360+1))*360;
-            else normalizedRot = rot-((int)(rot/360))*360;
-            
-            bbw = dy*Math.abs(s) + dx*Math.abs(c);
-            bbh = dx*Math.abs(s) + dy*Math.abs(c);
-            
-            if(normalizedRot<90){
-                xshift = (int)(ax*bbw-dy*s);
-                yshift = (int)(ay*bbh);
-            } else if (normalizedRot<180){
-                xshift = (int)(ax*bbw-bbw);
-                yshift = (int)(ay*bbh+dy*c);
-            } else if (normalizedRot<270){
-                xshift = (int)(ax*bbw+dx*c);
-                yshift = (int)(ay*bbh-bbh);
-            } else{
-                xshift = (int)(ax*bbw);
-                yshift = (int)(ay*bbh+dx*s);
-            }
-            
-            
-            tl.draw(g,x-xshift,y+yshift);
-        };
-    } */
-    
+    }   
 }
