@@ -1270,11 +1270,41 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         
         final int maxW = abbreviate?(getDefaultMLeft()-5):(-1);
         final int xPos = mLeft-5;
-        final double xAlign = 1;
-        final double yALign = 0.5;
         
+        final double rotRad = rotateYLabelsBy*Math.PI/180;
+        final double s = Math.sin(rotRad);
+        final double c = Math.cos(rotRad);
         for(i=0; i<valuePosA.length;i++){
-            yLabels.add(xPos,valuePosA[i],xAlign,yALign,maxW,((Integer)maxH.get(i)).intValue(),(String)text.get(i),rotateYLabels?rotateYLabelsBy:0);
+            double xAlign,yAlign;
+            if(rotateYLabels){
+                final double w = g.getWidthEstimate((String)text.get(i));
+                final double h = g.getHeightEstimate((String)text.get(i));
+                
+                final double normalizedRot;
+                if(rotateYLabelsBy<0) normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360+1))*360;
+                else normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360))*360;
+                if(normalizedRot < 90){
+                    final double hcws = (h*c-w*s)/2;
+                    xAlign = 1+s*hcws/w;
+                    yAlign = c*hcws/h;
+                } else if(normalizedRot < 180){
+                    final double hcws = (h*c+w*s)/2;
+                    xAlign = s*hcws/w;
+                    yAlign = c*hcws/h;
+                } else if(normalizedRot < 270){
+                    final double hcws = (h*c-w*s)/2;
+                    xAlign = -s*hcws/w;
+                    yAlign = 1-c*hcws/h;
+                } else{
+                    final double hcws = (h*c+w*s)/2;
+                    xAlign = 1-s*hcws/w;
+                    yAlign = 1-c*hcws/h;
+                }
+            } else{
+                xAlign = 1;
+                yAlign = 0.5;
+            }
+            yLabels.add(xPos,valuePosA[i],xAlign,yAlign,maxW,((Integer)maxH.get(i)).intValue(),(String)text.get(i),rotateYLabels?rotateYLabelsBy:0);
             if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
         }
     }
