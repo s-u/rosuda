@@ -63,7 +63,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected boolean zoomRetainsAspect=false;
     
-    private final int standardMLeft=40;
+    private final int standardMLeft=18;
     
     /**
      * Custom background color. Defaults to white.

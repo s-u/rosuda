@@ -52,7 +52,7 @@ public class MosaicCanvas extends BaseCanvas {
     
     
     
-    private final int standardMLeft=35;
+    private final int standardMLeft=20;
     
     public MosaicCanvas(final int gd, final Frame f, final SVar[] vars, final SMarker mark) {
         super(gd,f, mark);
