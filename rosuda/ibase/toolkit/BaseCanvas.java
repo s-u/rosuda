@@ -1077,11 +1077,11 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                 myMenu[i++] = M_SETCB1;
                 myMenu[i++] = "Set Colors (rainbow)";
                 myMenu[i++] = M_SETCB64;
-                myMenu[i++] = "Clear Colors";
-                myMenu[i++] = M_RESETCB;
             }
             myMenu[i++] = "Brush selection";
             myMenu[i++] = M_SETCBBYSEL;
+            myMenu[i++] = "Clear Colors";
+            myMenu[i++] = M_RESETCB;
             if(view!=null){
                 myMenu[i++] = "-";
                 for (int j=0; j<view.length; j++){
