@@ -149,8 +149,14 @@ public class BarCanvas extends BaseCanvas {
             int cl=ax.getCatLow(i);
             int cu=ax.getCatUp(i);
             final int cd=cu-cl;
-            cu-=cd/10;
-            cl+=cd/10;
+            if(isSpine){
+                final int gap = Math.max(0,Math.min(3,cd/2-1));
+                cu-=gap;
+                cl+=gap;
+            } else {
+                cu-=cd/10;
+                cl+=cd/10;
+            }
             
             int ch;
             ch=ay.getCasePos(count[i]);
