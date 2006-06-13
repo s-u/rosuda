@@ -99,6 +99,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_SORTBYMEDIAN = "sortByMedian";
     private static final String M_SORTBYMAX = "sortByMax";
     private static final String M_SORTBYMIN = "sortByMin";
+    private static final String M_SORTBYMARKEDMEDIAN = "sortByMarkedMedian";
+    private static final String M_SORTBYMARKEDMAX = "sortByMarkedMax";
+    private static final String M_SORTBYMARKEDMIN = "sortByMarkedMin";
     private static final String M_ALTERNINGLABELS = "alterningLabels";
     
     private MenuItem MIlabels=null;
@@ -336,7 +339,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "!OSort by marked",M_SORTBYMARKED,
             "@ESort by median",M_SORTBYMEDIAN,
             "@MSort by minimum",M_SORTBYMIN,
-            "!MSort by maximum",M_SORTBYMAX
+            "!MSort by maximum",M_SORTBYMAX,
+            "Sort by median (marked)",M_SORTBYMARKEDMEDIAN,
+            "Sort by minimum (marked)",M_SORTBYMARKEDMIN,
+            "Sort by maximum (marked)",M_SORTBYMARKEDMAX
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -528,6 +534,33 @@ public class ParallelAxesCanvas extends BaseCanvas {
             
             for(int i=0; i<maxs.length; i++){
                 maxs[i] = v[i].getMax();
+            }
+            
+            sortAxesBy(maxs);
+        }
+        if(M_SORTBYMARKEDMEDIAN.equals(cmd)) {
+            double[] medians = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<medians.length; i++){
+                medians[i] = markStats[i].med;
+            }
+            
+            sortAxesBy(medians);
+        }
+        if(M_SORTBYMARKEDMIN.equals(cmd)) {
+            double[] mins = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<mins.length; i++){
+                mins[i] = ((PPrimBox)pp[i]).sminValue;
+            }
+            
+            sortAxesBy(mins);
+        }
+        if(M_SORTBYMARKEDMAX.equals(cmd)) {
+            double[] maxs = new double[pp.length - invisiblePoints.size()];
+            
+            for(int i=0; i<maxs.length; i++){
+                maxs[i] = ((PPrimBox)pp[i]).smaxValue;
             }
             
             sortAxesBy(maxs);
@@ -852,7 +885,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         } else mLeft=defaultMLeft;
         if(mLeft>omLeft) return true;
         else mLeft=omLeft;
-		return false;
+        return false;
     }
     
     private void updateMargins() {
@@ -1239,6 +1272,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         box.slh3 = markStats[i].lh3;
                         box.suh3 = markStats[i].uh3;
                         box.slowEdge = markStats[i].lowEdge;
+                        box.sminValue = v[i].atD(md[i][0]);
+                        box.smaxValue = v[i].atD(md[i][md[i].length-1]);
                         if(markStats[i].lastR!=null){
                             box.slastR = new double[markStats[i].lastR.length];
                             box.svalPos = new int[markStats[i].lastR.length];

@@ -60,6 +60,9 @@ public class PPrimBox extends PPrimBase {
 
     public boolean queriedSelection=false;
 
+    public double sminValue;
+    public double smaxValue;
+
     public int slowEdge, slastTop, shighEdge;
     public double[] slastR;
     public int[] svalPos;
