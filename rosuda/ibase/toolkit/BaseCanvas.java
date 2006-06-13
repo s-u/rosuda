@@ -1027,7 +1027,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
      **/
     public boolean adjustMargin(final PoGraSS g){
         final int maxBbw = yLabels.getMaxBoundingBoxWidth(g)+5;
-        if(maxBbw>0 && maxBbw<maxMLeft && mLeft!=maxBbw){
+        if(maxBbw>0 && maxBbw<maxMLeft && mLeft<maxBbw){
             mLeft=maxBbw;
             return true;
         }

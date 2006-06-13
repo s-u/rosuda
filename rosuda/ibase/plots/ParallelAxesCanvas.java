@@ -850,7 +850,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if(maxWidth>defaultMLeft-3){
             mLeft = maxWidth+3;
         } else mLeft=defaultMLeft;
-        return (mLeft!=omLeft);
+        if(mLeft>omLeft) return true;
+        else mLeft=omLeft;
     }
     
     private void updateMargins() {

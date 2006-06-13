@@ -409,7 +409,7 @@ public class BarCanvas extends BaseCanvas {
             maxWidth = Math.max(wi,maxWidth);
         }
         maxWidth+=4;
-        if(maxWidth!=mLeft && maxWidth<=getBounds().width/2){
+        if(maxWidth>mLeft && maxWidth<=getBounds().width/2){
             mLeft = maxWidth;
             return true;
         }
