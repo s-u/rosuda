@@ -90,7 +90,7 @@ klimt-docs: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC)
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
 
-iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC)
+iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC) $(JRI_SRC)
 	$(can-with-jar)
 
 javaGD.jar: $(JAVAGD_SRC)
