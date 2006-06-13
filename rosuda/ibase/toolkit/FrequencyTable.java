@@ -4,6 +4,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeMap;
 import org.rosuda.ibase.SVar;
 
 public final class FrequencyTable {
@@ -45,7 +46,6 @@ public final class FrequencyTable {
             pos += vars[vsize-1].getNumCats();
         }
         
-        // this is the part which takes the most time and probably can be omtimized
         for (int i=0; i<ceTable.length; i++) {
             ceTable[i].cases = new ArrayList((int)(vars[0].size()/Math.pow(vars[0].getNumCats(),vars.length)));
         }
@@ -54,15 +54,24 @@ public final class FrequencyTable {
         for(int i=1; i<vars.length; i++){
             chunks[i] = chunks[i-1]*vars[i].getNumCats();
         }
+        TreeMap[] tm = new TreeMap[vars.length];
+        for(int i=0; i<tm.length; i++) tm[i]=new TreeMap();
         for (int cs=0; cs < vars[0].size(); cs++){
             final int[] numOfCat = new int[vars.length];
             for(int i=vars.length-1; i>=0; i--){
-                numOfCat[i]=-1;
-                for(int j=0; j<vars[i].getNumCats(); j++){
-                    if(vars[i].at(cs).toString().equals(vars[i].getCategories()[j].toString())){
-                        numOfCat[i]=j;
-                        break;
+                final String str = vars[i].at(cs).toString();
+                final Object num = tm[i].get(str);
+                if(num==null){
+                    numOfCat[i]=-1;
+                    for(int j=0; j<vars[i].getNumCats(); j++){
+                        if(vars[i].at(cs).toString().equals(vars[i].getCategories()[j].toString())){
+                            numOfCat[i]=j;
+                            break;
+                        }
                     }
+                    tm[i].put(str,new Integer(numOfCat[i]));
+                } else{
+                    numOfCat[i] = ((Integer)num).intValue();
                 }
             }
             int ind=0;
@@ -73,25 +82,24 @@ public final class FrequencyTable {
         for (int i=0; i<ceTable.length; i++) {
             table[i] = ceTable[i].cases.size();
         }
-        // here it ends
-        
+
         // init expected table assuming independence
         int maxNumCats=0;
         for(int v=0; v<vsize; v++){
             if(vars[v].getNumCats() > maxNumCats) maxNumCats=vars[v].getNumCats();
         }
-        
+         
         final int[][] counts;
         counts = new int[vsize][maxNumCats];
-        
+         
         for(int v=0; v<vsize; v++)
             for(int i=0; i<vars[v].getNumCats(); i++)
                 counts[v][i]=0;
-        
+         
         for(int v=0; v<vsize; v++)
             for(int i=0; i<vars[v].size(); i++)
                 counts[v][vars[v].getCatIndex(i)]++;
-        
+         
         final double denom = Math.pow(vars[0].size(), -vsize);
         for(int i=0; i<exp.length; i++){
             exp[i]=1;
