@@ -1235,8 +1235,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     }
     
     public void addYLabels(PoGraSS g, Axis axis, String[] names, int[] maxH, int[] positions, boolean ticks, boolean abbreviate) {
+        final double rotRad = rotateYLabelsBy*Math.PI/180;
+        final double s = Math.sin(rotRad);
+        final double c = Math.cos(rotRad);
         for(int i=0; i<positions.length; i++){
-            yLabels.add(2,positions[i],0,0.5,mLeft-4,maxH[i],names[i],rotateYLabels?rotateYLabelsBy:0);
+            final double[] ra = rotateAlignment(g.getWidthEstimate(names[i]),g.getHeightEstimate(names[i]),s,c);
+            yLabels.add(mLeft-4,positions[i],ra[0],ra[1],mLeft-4,maxH[i],names[i],rotateYLabels?rotateYLabelsBy:0);
         }
     }
     
@@ -1277,29 +1281,9 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         for(i=0; i<valuePosA.length;i++){
             double xAlign,yAlign;
             if(rotateYLabels){
-                final double w = g.getWidthEstimate((String)text.get(i));
-                final double h = g.getHeightEstimate((String)text.get(i));
-                
-                final double normalizedRot;
-                if(rotateYLabelsBy<0) normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360+1))*360;
-                else normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360))*360;
-                if(normalizedRot < 90){
-                    final double hcws = (h*c-w*s)/2;
-                    xAlign = 1+s*hcws/w;
-                    yAlign = c*hcws/h;
-                } else if(normalizedRot < 180){
-                    final double hcws = (h*c+w*s)/2;
-                    xAlign = s*hcws/w;
-                    yAlign = c*hcws/h;
-                } else if(normalizedRot < 270){
-                    final double hcws = (h*c-w*s)/2;
-                    xAlign = -s*hcws/w;
-                    yAlign = 1-c*hcws/h;
-                } else{
-                    final double hcws = (h*c+w*s)/2;
-                    xAlign = 1-s*hcws/w;
-                    yAlign = 1-c*hcws/h;
-                }
+                final double[] ra = rotateAlignment(g.getWidthEstimate((String)text.get(i)),g.getHeightEstimate((String)text.get(i)),s,c);
+                xAlign = ra[0];
+                yAlign = ra[1];
             } else{
                 xAlign = 1;
                 yAlign = 0.5;
@@ -1396,5 +1380,30 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             case 2: ax.setGeometry(Axis.O_X,w-mRight,mLeft+mRight-w); break;
             case 3: ax.setGeometry(Axis.O_Y,h-mBottom,mTop+mBottom-h); break;
         }
+    }
+    
+    private double[] rotateAlignment(final double w, final double h, final double s, final double c) {
+        final double[] ret = new double[2];
+        final double normalizedRot;
+        if(rotateYLabelsBy<0) normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360+1))*360;
+        else normalizedRot = rotateYLabelsBy-((int)(rotateYLabelsBy/360))*360;
+        if(normalizedRot < 90){
+            final double hcws = (h*c-w*s)/2;
+            ret[0] = 1+s*hcws/w;
+            ret[1] = c*hcws/h;
+        } else if(normalizedRot < 180){
+            final double hcws = (h*c+w*s)/2;
+            ret[0] = s*hcws/w;
+            ret[1] = c*hcws/h;
+        } else if(normalizedRot < 270){
+            final double hcws = (h*c-w*s)/2;
+            ret[0] = -s*hcws/w;
+            ret[1] = 1-c*hcws/h;
+        } else{
+            final double hcws = (h*c+w*s)/2;
+            ret[0] = 1-s*hcws/w;
+            ret[1] = 1-c*hcws/h;
+        }
+        return ret;
     }
 }
