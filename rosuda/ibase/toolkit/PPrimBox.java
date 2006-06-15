@@ -72,6 +72,8 @@ public class PPrimBox extends PPrimBase {
     
     /** Creates a new instance of PPrimBox */
     public PPrimBox() {
+        super();
+        borderColorSel = COL_OUTLINE;
     }
     
     public boolean intersects(final java.awt.Rectangle rt) {
@@ -188,6 +190,11 @@ public class PPrimBox extends PPrimBase {
                     i++;
                 }
         }
+    }
+    
+    public boolean hilitcontains(int x, int y) {
+    	if(sr!=null) return sr.contains(x,y);
+    	else return false;
     }
     
     public void paintSelected(final org.rosuda.pograss.PoGraSS g, final int orientation, final org.rosuda.ibase.SMarker m) {
