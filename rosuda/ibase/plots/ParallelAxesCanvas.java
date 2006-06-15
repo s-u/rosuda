@@ -96,6 +96,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_PCPBOX = "toggleType";
     private static final String M_SORTBYCOUNT = "sortByCount";
     private static final String M_SORTBYMARKED = "sortByMarked";
+    private static final String M_SORTBYMARKEDREL = "sortByMarkedRelative";
     private static final String M_SORTBYMEDIAN = "sortByMedian";
     private static final String M_SORTBYMAX = "sortByMax";
     private static final String M_SORTBYMIN = "sortByMin";
@@ -114,6 +115,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MIPCPBox=null;
     private MenuItem MIsortByCount=null;
     private MenuItem MIsortByMarked=null;
+    private MenuItem MIsortByMarkedRel=null;
+    private MenuItem MIsortByMedian=null;
+    private MenuItem MIsortByMax=null;
+    private MenuItem MIsortByMin=null;
+    private MenuItem MIsortByMarkedMedian=null;
+    private MenuItem MIsortByMarkedMax=null;
+    private MenuItem MIsortByMarkedMin=null;
     private MenuItem MIAlterningLabels=null;
     
     /**
@@ -153,7 +161,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private int nodeSize=2;
     
     public Color COL_AXES=Color.WHITE;
-    
+
+    public boolean isMouseOnHilite=false;
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
      * @param f associated frame (or <code>null</code> if none)
@@ -336,7 +345,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
             (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX,
             M_MINUS,
             "@OSort by count",M_SORTBYCOUNT,
-            "!OSort by marked",M_SORTBYMARKED,
+            "!OSort by marked (absolute)",M_SORTBYMARKED,
+            "Sort by marked (relative)",M_SORTBYMARKEDREL,
             "@ESort by median",M_SORTBYMEDIAN,
             "@MSort by minimum",M_SORTBYMIN,
             "!MSort by maximum",M_SORTBYMAX,
@@ -359,10 +369,17 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         MIPCPBox=EzMenu.getItem(f,M_PCPBOX);
         MIsortByCount=EzMenu.getItem(f,M_SORTBYCOUNT);
-        //MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
         MIsortByMarked=EzMenu.getItem(f,M_SORTBYMARKED);
-        //MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
+        MIsortByMarkedRel=EzMenu.getItem(f,M_SORTBYMARKEDREL);
+        MIsortByMedian=EzMenu.getItem(f,M_SORTBYMEDIAN);
+        MIsortByMax=EzMenu.getItem(f,M_SORTBYMAX);
+        MIsortByMin=EzMenu.getItem(f,M_SORTBYMIN);
+        MIsortByMarkedMedian=EzMenu.getItem(f,M_SORTBYMARKEDMEDIAN);
+        MIsortByMarkedMax=EzMenu.getItem(f,M_SORTBYMARKEDMAX);
+        MIsortByMarkedMin=EzMenu.getItem(f,M_SORTBYMARKEDMIN);
         MIAlterningLabels=EzMenu.getItem(f,M_ALTERNINGLABELS);
+        
+        updateSortingMenus();
     }
     
     public void keyPressed(final KeyEvent e) {
@@ -501,15 +518,32 @@ public class ParallelAxesCanvas extends BaseCanvas {
             if(type==TYPE_BOX && oss==null) initOss(v);
             updateObjects();
             MIPCPBox.setLabel((type==TYPE_BOX)?"PCP":"Box plot");
-            MIsortByCount.setEnabled(type==TYPE_BOX && vsCat);
-            MIsortByMarked.setEnabled(type==TYPE_BOX && vsCat);
+            updateSortingMenus();
             setUpdateRoot(0); repaint();
         }
         if(M_SORTBYCOUNT.equals(cmd)) {
-            sortAxes(false);
+            final int axes = pp.length - invisiblePoints.size();
+            final int[] count = new int[axes];
+            for (int i=0; i<axes; i++){
+                count[i] = getCount(i);
+            }
+            sortAxesBy(count);
         }
         if(M_SORTBYMARKED.equals(cmd)) {
-            sortAxes(true);
+            final int axes = pp.length - invisiblePoints.size();
+            final int[] marked = new int[axes];
+            for (int i=0; i<axes; i++){
+                marked[i] = getMarked(i);
+            }
+            sortAxesBy(marked);
+        }
+        if(M_SORTBYMARKEDREL.equals(cmd)) {
+            final int axes = pp.length - invisiblePoints.size();
+            final int[] markedrel = new int[axes];
+            for (int i=0; i<axes; i++){
+                markedrel[i] = getMarked(i)/getCount(i);
+            }
+            sortAxesBy(markedrel);
         }
         if(M_SORTBYMEDIAN.equals(cmd)) {
             double[] medians = new double[pp.length - invisiblePoints.size()];
@@ -960,6 +994,13 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
     }
     
+    public void mouseMoved(final MouseEvent e) {
+    	int x=e.getX(); int y=e.getY();
+    	PlotPrimitive p=getFirstPrimitiveContaining(x,y);
+    	if(p!=null) isMouseOnHilite=p.hilitcontains(x,y);
+    	super.mouseMoved(e);
+    }
+    
     public void mouseReleased(final MouseEvent e) {
         if (baseDrag && moveDrag) {
             final int pos = (orientation==0)?e.getX():e.getY();
@@ -1132,7 +1173,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
                     }
                     ((PPrimPolygon)pp[j]).invisibleLines=nas;
-                    ((PPrimPolygon)pp[j]).gapDots=gap;
+                    ((PPrimPolygon)pp[j]).setGapDots(gap);
                 }
                 break;
         }
@@ -1177,17 +1218,28 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     public String queryObject(final PlotPrimitive p) {
+    	int mark=getMarked(p);
         switch(type){
             case TYPE_BOX:
-                final PPrimBox box = (PPrimBox)p;
-                if(box.queriedOutlier!=null)
-                    return "Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
-                else
-                    return "lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" +
-                            "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
-                            "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
-                            "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
+            	String qs="";
+           		final PPrimBox box = (PPrimBox)p;
+           		if(box.queriedOutlier!=null)
+           			qs+="Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
+           		else
+           			qs+="lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" +
+                        "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                        "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
+                        "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
+                        "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
+           		if(isExtQuery) {
+           			qs+="\ncases: "+p.cases();
+           			if(isMouseOnHilite || mark>0) qs+="\nmarked: "+mark+" ("+Tools.getDisplayableValue(100*mark/p.cases(),2)+"%)";
+           		}
+           		if(!isExtQuery)
+           		if(isMouseOnHilite || mark>0) {
+           			qs+="\n\nmarked: "+Tools.getDisplayableValue(100*mark/p.cases(),2)+"%";
+           		}
+           		return qs;
             case TYPE_PCP:
                 String retValue="";
                 final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
@@ -1217,6 +1269,22 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 return retValue;
         }
         return super.queryObject(p);
+    }
+    
+    
+    public String queryPlotSpace() {
+    	switch(type) {
+    		case TYPE_BOX:
+    			return "Boxplot"+(cv!=null?"("+cv.getName()+")":"")
+    			+(v!=null?"\nvariables: "+v.length:"");
+    		case TYPE_PCP:
+    			int size=(v!=null&&v[0]!=null)?v[0].size():-1;
+    			return "PCP"+(cv!=null?"("+cv.getName()+")":"")
+    			+(size!=-1?"\nsize: "+v[0].size():"")
+    			+"\nselected: "+m.marked()+(size>0?" ("+Tools.getDisplayableValue(100*((double)m.marked()/(double)size),2)+" %)":"")
+    			+(v!=null?"\nvariables: "+v.length:"");
+    	}
+    	return super.queryPlotSpace();
     }
     
     public void rotate(final int amount) {
@@ -1272,8 +1340,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         box.slh3 = markStats[i].lh3;
                         box.suh3 = markStats[i].uh3;
                         box.slowEdge = markStats[i].lowEdge;
-                        box.sminValue = v[i].atD(md[i][0]);
-                        box.smaxValue = v[i].atD(md[i][md[i].length-1]);
+                        final int vind = (vsCat?0:i);
+                        box.sminValue = v[vind].atD(md[vind][0]);
+                        box.smaxValue = v[vind].atD(md[vind][md[vind].length-1]);
                         if(markStats[i].lastR!=null){
                             box.slastR = new double[markStats[i].lastR.length];
                             box.svalPos = new int[markStats[i].lastR.length];
@@ -1385,6 +1454,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
         return (int)Math.round(pp[axis].cases()*pp[axis].getMarkedProportion(m,-1));
     }
     
+    private int getMarked(final PlotPrimitive p) {
+    	if(p!=null)
+    	return (int)Math.round(p.cases()*p.getMarkedProportion(m,-1));
+    	else return -1;
+    }
+    
     private int getCount(final int axis) {
         // works only for box plots
         return pp[axis].cases();
@@ -1438,6 +1513,19 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 setUpdateRoot(0);repaint();
             }
         }
+    }
+    
+    private void updateSortingMenus() {
+        final boolean enable = type==TYPE_BOX && vsCat;
+        MIsortByCount.setEnabled(enable);
+        MIsortByMarked.setEnabled(enable);
+        MIsortByMarkedRel.setEnabled(enable);
+        MIsortByMedian.setEnabled(enable);
+        MIsortByMax.setEnabled(enable);
+        MIsortByMin.setEnabled(enable);
+        MIsortByMarkedMedian.setEnabled(enable);
+        MIsortByMarkedMax.setEnabled(enable);
+        MIsortByMarkedMin.setEnabled(enable);
     }
 }
 
