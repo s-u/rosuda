@@ -9,9 +9,12 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.*;
+import java.awt.event.ItemEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.rosuda.ibase.*;
 import org.rosuda.pograss.*;
@@ -32,9 +35,10 @@ public class PPrimPolygon extends PPrimBase {
     public float[] lineWidth;
     public boolean[] invisibleLines;
     public boolean showInvisibleLines=false;
-    public boolean[] gapDots;
+    private boolean[] gapDots;
     public boolean[] noDotsAt;
     public boolean showGapDots=true;
+    private java.util.List gapDotPs;
     
     public Color COL_INVISIBLELINES = new Color(255,255,0);
     
@@ -62,6 +66,10 @@ public class PPrimPolygon extends PPrimBase {
                 }
             }
         }
+        if(gapDotPs!=null)
+            for (Iterator it = gapDotPs.iterator(); it.hasNext();)
+                if(((PPrimCircle)it.next()).contains(x,y))
+                    return true;
         return false;
     }
     
@@ -75,7 +83,6 @@ public class PPrimPolygon extends PPrimBase {
                     (new Ellipse2D.Double(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize,2*nodeSize+1,2*nodeSize+1))
                     .intersects(r2d))
                     return true;
-            return false;
         } else{
             for(int i=1; i<pg.npoints; i++){
                 if(!invisibleLines[i-1]){
@@ -83,8 +90,11 @@ public class PPrimPolygon extends PPrimBase {
                     if (l.intersects(r2d)) return true;
                 }
             }
-            return false;
         }
+        for(Iterator it = gapDotPs.iterator(); it.hasNext();)
+            if(((PPrimCircle)it.next()).intersects(rt))
+                return true;
+        return false;
     }
     
     /** paint the primitive */
@@ -97,14 +107,20 @@ public class PPrimPolygon extends PPrimBase {
         } else{
             color = borderColor;
         }
-        paintPolygon(g,false,color,fillColor);
+        paintPolygon(g,orientation,m,false,color,fillColor);
+        if(showGapDots && gapDots!=null){
+            for(Iterator it = gapDotPs.iterator(); it.hasNext();) ((PPrimCircle)it.next()).paint(g,orientation,m);
+        }
     }
     
     public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
         final int mark = m.get(ref[0]);
         if(mark==-1) {
-            paintPolygon(g,true,borderColorSel,fillColorSel);
+            paintPolygon(g,orientation,m,true,borderColorSel,fillColorSel);
+        }
+        if(showGapDots && gapDots!=null){
+            for(Iterator it = gapDotPs.iterator(); it.hasNext();) ((PPrimCircle)it.next()).paintSelected(g,orientation,m);
         }
     }
     
@@ -121,7 +137,7 @@ public class PPrimPolygon extends PPrimBase {
             this.nodeSize = nodeSize;
     }
     
-    private void paintPolygon(final PoGraSS g, boolean paintingSelected, final Color colOutline, final Color colFill) {
+    private void paintPolygon(final PoGraSS g, final int orientation, final SMarker m, boolean paintingSelected, final Color colOutline, final Color colFill) {
         if(fill){
             if (colFill!=null)
                 g.setColor(colFill);
@@ -159,11 +175,26 @@ public class PPrimPolygon extends PPrimBase {
                     g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
             }
         }
-        if(showGapDots && gapDots!=null){
-            g.setColor(colOutline);
-            for(int i=0; i<gapDots.length; i++)
-                if(gapDots[i])
-                    g.fillOval(pg.xpoints[i]-nodeSize, pg.ypoints[i]-nodeSize, 2*nodeSize+1,2*nodeSize+1);
+    }
+    
+    public void setGapDots(final boolean[] gapDots) {
+        this.gapDots = gapDots;
+        if(gapDots!=null){
+            if(gapDotPs==null) gapDotPs = new ArrayList(gapDots.length/2);
+            else gapDotPs.clear();
+            
+            for(int i=0; i<gapDots.length; i++){
+                if(gapDots[i]){
+                    final PPrimCircle gd = new PPrimCircle();
+                    gd.x = pg.xpoints[i];
+                    gd.y = pg.ypoints[i];
+                    gd.diam = 2*nodeSize+1;
+                    gd.ref = ref;
+                    gd.fillColor = COL_OUTLINE;
+                    
+                    gapDotPs.add(gd);
+                }
+            }
         }
     }
 }
