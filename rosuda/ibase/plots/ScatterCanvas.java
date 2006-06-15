@@ -63,7 +63,7 @@ public class ScatterCanvas extends BaseCanvas {
     
     protected boolean zoomRetainsAspect=false;
     
-    private final int standardMLeft=18;
+    private final int standardMLeft=40;
     
     /**
      * Custom background color. Defaults to white.
@@ -299,7 +299,7 @@ public class ScatterCanvas extends BaseCanvas {
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             repaint();
         }
-        if(e.getKeyChar()=='#' && e.getModifiersEx() == (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK)){
+        if(e.getKeyCode()==520 && e.getModifiersEx() == (KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK)){
             for(int i=0; i< pp.length; i++){
                 ((PPrimCircle)pp[i]).startArc += 5;
             }

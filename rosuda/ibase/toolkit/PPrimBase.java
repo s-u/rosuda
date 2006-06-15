@@ -188,4 +188,7 @@ public abstract class PPrimBase implements PlotPrimitive {
     public void moveX(final int x){};
     public void moveY(final int y){};
     
+    public boolean hilitcontains(int x, int y) {
+    	return false;
+    }
 }

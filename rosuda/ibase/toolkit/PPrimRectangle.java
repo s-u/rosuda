@@ -36,14 +36,17 @@ public class PPrimRectangle extends PPrimBase {
     private int MINWIDTH=1;
 	
     protected int orientation=0;
+    private boolean useCanvasOrientation=true; // TODO: das ist nur vorübergehend
     
     public PPrimRectangle() {
-		this(1);
+		super();
+		useCanvasOrientation=true;
     }
     
     public PPrimRectangle(int or) {
     	super();
     	orientation=or;
+    	useCanvasOrientation=false;
     }
     
     public int getOrientation() {return orientation;}
@@ -75,8 +78,12 @@ public class PPrimRectangle extends PPrimBase {
         }
     }
     
-    public void paintSelected(final PoGraSS g, final int orientation, final SMarker m) {
+    public void paintSelected(final PoGraSS g, int orientation, final SMarker m) {
         if (r==null) return;
+        // TODO: this is really ugly and should be done better
+        // so orientation has to be moved to plotprimitives
+        if(!useCanvasOrientation) orientation=this.orientation;
+        
         final double sa = getMarkedProportion(m,-1);
         if(sa>0d){
             boolean hasAny=false;
@@ -152,20 +159,12 @@ public class PPrimRectangle extends PPrimBase {
     }
     
     public String toString() {
-        return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height))
+        return "PPrimRectangle("+((r==null)?"<null rectangle>":(""+r.x+":"+r.y+","+r.width+":"+r.height+","+orientation))
         +", cases="+cases()+", drawBorder="+drawBorder+")";
     }
     
     public void setBounds(int x, int y, int w, int h) {
-    	if(orientation==1)
-    		r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
-    	else if(orientation==4)
-    		r.setBounds(x-w, y, Math.max(h,MINWIDTH), Math.max(w,MINHEIGHT));
-    	else if(orientation==3)
-    		r.setBounds(x-w, y-h, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
-    	else
-    		r.setBounds(x, y-h, Math.max(h,MINWIDTH), Math.max(w,MINHEIGHT));
-
+		r.setBounds(x, y, Math.max(w,MINWIDTH), Math.max(h,MINHEIGHT));
     }
     
     public void setBounds(double x, double y, double w, double h) {

@@ -39,9 +39,8 @@ public class CustomCanvas extends BaseCanvas {
 	
 	public synchronized void updateObjects() {
 		super.updateObjects();
-//		re.eval(rcall);
 		System.out.println("davor");
-		re.eval("iagepyr.definition$construct(.iplots[[iplot.cur()]],300,300,dat)");
+		re.eval("iagepyr.definition$construct(.iplots[[iplot.cur()]],"+getWidth()+","+getHeight()+",dat)");
 		System.out.println("dahinter");
 		setUpdateRoot(0);
 		repaint();
@@ -85,8 +84,8 @@ public class CustomCanvas extends BaseCanvas {
     	}
     	if(ax!=null) drawAxes(g,ax);
     	if(ay!=null) drawAxes(g,ay);
-//    	if(opAx!=null) for(int i=0;i<opAx.length;i++) drawAxes(g,opAx[i]);
-//    	if(opAy!=null) for(int i=0;i<opAy.length;i++) drawAxes(g,opAy[i]);
+    	if(opAx!=null) for(int i=0;i<opAx.length;i++) drawAxes(g,opAx[i]);
+    	if(opAy!=null) for(int i=0;i<opAy.length;i++) drawAxes(g,opAy[i]);
     }
     
     protected void drawAxes(PoGraSS g, Axis a) {
@@ -117,10 +116,16 @@ public class CustomCanvas extends BaseCanvas {
     	return qs;
     }
     
+    public String queryPlotSpace() {
+        if(v==null) return null;
+        else return (m.marked()>0?"Custom plot: "+m.marked()+" selected case(s)":"");
+    }
+
+    
     
     // the following two methods are only experimental and should be replaced by better ones
     public void addPP(PPrimRectangle p) {
-    	if(p==null) System.out.println("P IS NULL");
+    	if(p==null) {System.out.println("P IS NULL"); return;}
     	if(pp==null) pp=new PlotPrimitive[]{p};
     	PlotPrimitive[] temp=pp;
     	pp=new PlotPrimitive[temp.length+1];

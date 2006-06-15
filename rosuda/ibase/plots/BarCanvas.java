@@ -79,7 +79,7 @@ public class BarCanvas extends BaseCanvas {
         ay.addDepend(this);
         cats=v.getNumCats();
         bars=cats;
-        if (v.hasMissing()) bars++;
+        //if (v.hasMissing()) bars++;
         
         pp = new PPrimRectangle[bars];
         updateObjects();
@@ -107,7 +107,7 @@ public class BarCanvas extends BaseCanvas {
         if (bars!=v.getNumCats()) {
             cats=v.getNumCats();
             bars=cats;
-            if (v.hasMissing()) bars++;
+            //if (v.hasMissing()) bars++;
             
             pp=new PPrimRectangle[bars];
         }
@@ -227,15 +227,15 @@ public class BarCanvas extends BaseCanvas {
             
             final boolean abbreviate = !Character.isDigit(cat_nam[0].charAt(0));
             if(orientation==0){
-                int[] bar_widths = new int[pp.length];
-                int[] bar_poss = new int[pp.length];
+                final int[] bar_widths = new int[pp.length];
+                final int[] bar_poss = new int[pp.length];
                 for(int i=0; i<pp.length; i++){
                     bar_widths[i] = ((PPrimRectangle)pp[i]).r.width;
                     bar_poss[i] = (2*((PPrimRectangle)pp[i]).r.x + bar_widths[i])/2;
                 }
                 addXLabels(g,ax,cat_nam,bar_widths,bar_poss,drawTicks,abbreviate);
             } else{
-                int[] bar_poss = new int[pp.length];
+                final int[] bar_poss = new int[pp.length];
                 for(int i=0; i<pp.length; i++){
                     final Rectangle rec = ((PPrimRectangle)pp[i]).r;
                     bar_poss[i] = (2*rec.y+rec.height)/2;
@@ -291,7 +291,10 @@ public class BarCanvas extends BaseCanvas {
             final int myX2=ax.getCatUp(dragNew);
             if(Math.abs(difference=pos-ax.getCatCenter(dragNew)) > (myX2-myX1)/4){
                 int newPos=ax.getCatSeqIndex(dragNew);
-                if(difference>0) newPos += 1;
+                if(newPos==-1 && pos > ax.getCatCenter(ax.getCatAtSeqIndex(v.getNumCats()-1))) newPos = v.getNumCats();
+                if(difference>0){
+                    newPos += 1;
+                }
                 if(oldPos<newPos) newPos -=1;
                 ax.moveCat(dragBar, newPos);
             } else{
@@ -365,7 +368,7 @@ public class BarCanvas extends BaseCanvas {
     };
     
     public String queryObject(final int i) {
-        int marked = getMarked(i);
+        final int marked = getMarked(i);
         String qs=cat_nam[i]+"\n";
         final boolean actionExtQuery = isExtQuery;
         if (actionExtQuery) {
@@ -411,7 +414,7 @@ public class BarCanvas extends BaseCanvas {
         
         int maxWidth=0;
         for(int i=0; i<cat_nam.length; i++){
-            int wi=g.getWidthEstimate(cat_nam[i]);
+            final int wi=g.getWidthEstimate(cat_nam[i]);
             maxWidth = Math.max(wi,maxWidth);
         }
         maxWidth+=4;
@@ -422,22 +425,22 @@ public class BarCanvas extends BaseCanvas {
         return false;
     }
     
-    private void setAxCoord(int x1,int y1,int x2,int y2) {
+    private void setAxCoord(final int x1,final int y1,final int x2,final int y2) {
         if(x1<x2) {axcoordX[0]=x1; axcoordX[1]=x2;} else {axcoordX[0]=x2; axcoordX[1]=x1;}
         if(y1<y2) {axcoordY[0]=y1; axcoordY[1]=y2;} else {axcoordY[0]=y2; axcoordY[1]=y1;}
     }
     
-    protected boolean isMouseOverAxis(int x, int y) {
+    protected boolean isMouseOverAxis(final int x, final int y) {
         if(x>=axcoordX[0]-2 && x<= axcoordX[1]+2 && y>=axcoordY[0]-2 && y<=axcoordY[1]+2) return true;
         else return false;
     }
     
-    protected Axis getMouseOverAxis(int x, int y) {
+    protected Axis getMouseOverAxis(final int x, final int y) {
         if(isMouseOverAxis(x,y)) return ax;
         else return null;
     }
     
-    protected String getAxisQuery(int x, int y) {
+    protected String getAxisQuery(final int x, final int y) {
         if(!isMouseOverAxis(x,y)) return null;
         else return "axis name: " + getMouseOverAxis(x,y).getVariable().getName()+
                 "\nbars: " + bars+(v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
@@ -471,5 +474,5 @@ public class BarCanvas extends BaseCanvas {
         }
         this.isSpine = isSpine;
     }
-
+    
 }

@@ -247,7 +247,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
-        if(dontPaint) return;
+//        if(dontPaint) return;
         if(autoAdjustMargins) adjustMargin(g);
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         final Rectangle r=getBounds();
@@ -290,7 +290,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         }
         updateGeometry=false;
         if (Global.DEBUG>0)
-            System.out.println("BarCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
+            System.out.println("BaseCanvas.paint: [w="+w+"/h="+h+"] ax="+ax+" ay="+ay);
         
         g.setBounds(w,h);
         g.begin();
@@ -1292,7 +1292,6 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
         }
     }
-    
     
     public int getMBottom() {
         return this.mBottom;

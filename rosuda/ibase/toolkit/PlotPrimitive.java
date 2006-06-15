@@ -22,6 +22,8 @@ import org.rosuda.pograss.*;
 public interface PlotPrimitive {
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     boolean contains(int x, int y);
+    
+    boolean hilitcontains(int x, int y);
 
     /** checks whether the PlotPrimitive intersects (or is contained) in the given rectangle. */
     boolean intersects(Rectangle rt);
