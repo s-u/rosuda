@@ -117,6 +117,7 @@ public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, Q
             //	    win.setVisible(true);
             //	    pcomp.initializeGraphics(win);
             doUpdate=true;
+            setBackground(Common.popupColor);
             repaint();
         }
         
@@ -168,6 +169,7 @@ public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, Q
     PlotComponent pc;
     
     public AwtQueryPopup(final Window ow, final SVarSet vs, final String ct, final int w, final int cid) {
+    	if(ct==null) return;
         owner = ow; if (owner==null) owner=getParentWindow();
         win=new Window(owner);
         cvs=new QPCanvas(win,vs,ct,w,cid);
