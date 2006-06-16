@@ -13,18 +13,20 @@ import org.rosuda.JRI.*;
 public class CustomCanvas extends BaseCanvas {
 	
 	Rengine re;
-	String rcall;
+	String rcall, rid;
 	SVar[] v;
 	
-	public CustomCanvas(int gd, Frame f, SVar[] v, SMarker mark, String rcall) {
+	public CustomCanvas(int gd, Frame f, SVar[] v, SMarker mark, String rcall, String rid) {
 		super(gd,f,mark);
 		
 		allowDragMove=false;
 		setDefaultMargins(new int[] {10,10,10,20,40,10,10,10});
 		
+        borderColorSel=Color.black;
 		this.v=v;
 		this.rcall=rcall;
-		Mutex.verbose=true;
+		this.rid=rid;
+		//Mutex.verbose=true;
 		re=Rengine.getMainEngine();
 		if(re==null) return;
 		if (!re.waitForR()) {
@@ -39,16 +41,17 @@ public class CustomCanvas extends BaseCanvas {
 	
 	public synchronized void updateObjects() {
 		super.updateObjects();
-		System.out.println("davor");
-		re.eval("iagepyr.definition$construct(.iplots[[iplot.cur()]],"+getWidth()+","+getHeight()+",dat)");
-		System.out.println("dahinter");
+		re.eval("{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];local(.ic.e$construct("
+				+getWidth()+","+getHeight()+"),.ic.e);rm(.ic.e)}");
+		if(pp!=null) for(int i=0;i<pp.length;i++) setColors((PPrimBase)pp[i]);
 		setUpdateRoot(0);
 		repaint();
 	}
 	
-	public void setAxis(Axis a) {
+	public void setAxis(Axis a, int trl, boolean drawAxis) {
 		if(a==null) return;
-		
+		a.setOrthTrans(trl);
+		a.drawAxis=drawAxis;
 		int or=a.getOrientation();
 		if(or==Axis.O_X) {
 			if(ax==null) ax=a;
@@ -70,7 +73,7 @@ public class CustomCanvas extends BaseCanvas {
 					opAy[opAy.length-1]=a; temp=null;
 				}
 			}
-		} else {}
+		}
 	}
 	
     public void paintBack(final PoGraSS g) {
@@ -82,21 +85,19 @@ public class CustomCanvas extends BaseCanvas {
     				pp[i].paint(g,orientation,m);
     		}
     	}
-    	if(ax!=null) drawAxes(g,ax);
-    	if(ay!=null) drawAxes(g,ay);
-    	if(opAx!=null) for(int i=0;i<opAx.length;i++) drawAxes(g,opAx[i]);
-    	if(opAy!=null) for(int i=0;i<opAy.length;i++) drawAxes(g,opAy[i]);
+    	drawAxis(g,ax); drawAxis(g,ay);
+    	if(opAx!=null) for(int i=0;i<opAx.length;i++) drawAxis(g,opAx[i]);
+    	if(opAy!=null) for(int i=0;i<opAy.length;i++) drawAxis(g,opAy[i]);
     }
-    
-    protected void drawAxes(PoGraSS g, Axis a) {
-        final Rectangle r=getBounds();
-        final int w=r.width;
-        final int h=r.height;
 
-    	if(a.getOrientation()==Axis.O_X) g.drawLine(a.gBegin,h-mBottom,a.gBegin+a.gLen,h-mBottom);
-    	else if(a.getOrientation()==Axis.O_Y) g.drawLine(w/2,a.gBegin,w/2,a.gBegin+a.gLen); // nur für age pyramide
+    void drawAxis(PoGraSS g, Axis a) {
+    	if(a==null) return;
+    	if(!a.drawAxis) return;
+    	if(a.getOrientation()==Axis.O_X) { g.drawLine(a.gBegin,a.trl,a.gBegin+a.gLen,a.trl); }
+    	if(a.getOrientation()==Axis.O_Y) { g.drawLine(a.trl,a.gBegin,a.trl,a.gBegin+a.gLen); }
     }
-    
+
+   
     public String queryObject(final int i) {
     	String qs="";
     	final boolean actionExtQuery=isExtQuery;
@@ -126,7 +127,7 @@ public class CustomCanvas extends BaseCanvas {
     // the following two methods are only experimental and should be replaced by better ones
     public void addPP(PPrimRectangle p) {
     	if(p==null) {System.out.println("P IS NULL"); return;}
-    	if(pp==null) pp=new PlotPrimitive[]{p};
+    	if(pp==null) {pp=new PlotPrimitive[]{p}; return;}
     	PlotPrimitive[] temp=pp;
     	pp=new PlotPrimitive[temp.length+1];
     	System.arraycopy(temp,0,pp,0,temp.length);
@@ -136,6 +137,13 @@ public class CustomCanvas extends BaseCanvas {
     
     public void resetPP() {
     	pp=null;
+    }
+    
+    public void resetAxes() {
+    	ax=null;
+    	ay=null;
+    	opAx=null;
+    	opAy=null;
     }
 	
 }
