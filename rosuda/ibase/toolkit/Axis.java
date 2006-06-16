@@ -56,6 +56,9 @@ public class Axis extends Notifier {
     SCatSequence seq;
     /** geometry caching sequence */
     AxisCatSequence seqgeom;
+    /** orthogonal translation in percent */
+    public int trl=0;
+    public boolean drawAxis=false;
     
     /** create a new Axis with variable srcv, default orientation (horizontal) and default type guessing and default range
      * @param srcv source variable (cannot be <code>null</code>! for pure numerical axes use {@Axis(SVar,int,int)} constructor!) */
@@ -372,8 +375,13 @@ public class Axis extends Notifier {
         return rg;
     }
     
+    /** moves the axis along the orthogonal direction */
+    public void setOrthTrans(int trl) {
+    	this.trl=trl;
+    }
+    
     /** somewhat simple toString implementation, basically for debugging purposes */
     public String toString() {
-        return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],dc="+datacount+(seq!=null?",seq="+seq.toString()+")":")");
+        return "Axis(type="+type+",or="+or+",g["+gBegin+":"+gLen+"],v["+vBegin+":"+vLen+"],trl="+trl+",draw="+drawAxis+",dc="+datacount+(seq!=null?",seq="+seq.toString()+")":")");
     };
 };
