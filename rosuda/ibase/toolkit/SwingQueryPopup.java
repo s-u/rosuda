@@ -114,8 +114,8 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
 	
 	void setContentString(final String s) {
 		String t = "<html>";
-//		t+= "<BODY BGCOLOR=\"#"+ Math.abs(Common.popupColor.getRGB()) + "\">";
-		t+= "<BODY BGCOLOR=\"YELLOW\">";
+		t+= "<BODY BGCOLOR=\"rgb("+Math.abs(Common.popupColor.getRed())+","+Math.abs(Common.popupColor.getGreen())+","+Math.abs(Common.popupColor.getBlue())+")\">";
+//		t+= "<BODY BGCOLOR=\"YELLOW\">";
         final StringTokenizer st=new StringTokenizer(s,"\n");
     	while(st.hasMoreElements()) {
     		t+=st.nextToken();

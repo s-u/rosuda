@@ -30,6 +30,8 @@ public class AWTGraphicsDevice implements GraphicsDevice {
 	
 	boolean inProgress=false;
 	
+	Color bgColor=Common.backgroundColor;
+	
 	public AWTGraphicsDevice(int _layers) {
 		comp = new PlotCanvas(this);
 		layers=_layers;
@@ -146,7 +148,7 @@ public class AWTGraphicsDevice implements GraphicsDevice {
                         offgc.fillRect(0,y,d.width,2); y+=4;
                     }
                 } else {
-                    final Color bg=Common.backgroundColor;
+                    final Color bg=bgColor;
                     //Color bg=getBackground();
                     offgc.setColor(bg==null?Color.white:bg);
                     offgc.fillRect(0, 0, d.width, d.height);
@@ -183,7 +185,7 @@ public class AWTGraphicsDevice implements GraphicsDevice {
 	public Rectangle getBounds() {return comp.getBounds();}
 	public void setSize(int w, int h) {comp.setSize(w,h);}
 	public Dimension getSize() {return comp.getSize();}
-	public void setBackground(Color c) {comp.setBackground(c);}
+	public void setBackground(Color c) {bgColor=c; comp.setBackground(c);}
 	public void addMouseListener(MouseListener l) {comp.addMouseListener(l);}
 	public void addMouseMotionListener(MouseMotionListener l) {comp.addMouseMotionListener(l);}
 	public void addKeyListener(KeyListener l) {comp.addKeyListener(l);}
