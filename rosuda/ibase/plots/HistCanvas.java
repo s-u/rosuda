@@ -64,6 +64,9 @@ public class HistCanvas extends BaseCanvas {
     
     private MenuItem MIspine=null;
     
+    public boolean autoScaleXAxis=true;
+    public boolean autoScaleYAxis=true;
+    
     /** creates a new histogram canvas
      * @param f frame owning this canvas or <code>null</code> if none
      * @param var source variable
@@ -115,7 +118,7 @@ public class HistCanvas extends BaseCanvas {
         // we should set recalcBar to false if anchor/binw didn't change (re-introduce recalcBar)
         
         bars=((int)((v.getMax()-anchor)/binw))+1;
-        if (dragMode!=DRAGMODE_BINW)
+        if (dragMode!=DRAGMODE_BINW && autoScaleXAxis)
             normalAx.setValueRange(anchor,bars*binw);
         if(pp==null || pp.length!=bars) pp = new PPrimRectangle[bars];
         paintpp=0;
@@ -158,7 +161,7 @@ public class HistCanvas extends BaseCanvas {
             i++;
         }
         i=0;
-        ay.setValueRange(countMax);
+        if(autoScaleYAxis) ay.setValueRange(countMax);
         
         if(isSpine){
             createSpinovar();
