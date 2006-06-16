@@ -15,6 +15,7 @@ import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.rosuda.ibase.*;
@@ -31,6 +32,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public static final int TYPE_PCP=0;
     public static final int TYPE_BOX=1;
+    public static final int TYPE_PCPBOX=2;
     private int type;
     
     /**
@@ -93,7 +95,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private static final String M_COMMON = "common";
     private static final String M_YRANGEDLG = "YrangeDlg";
     private static final String M_SCALEDLG = "scaleDlg";
-    private static final String M_PCPBOX = "toggleType";
+    private static final String M_PCP = "only pcp";
+    private static final String M_BOX = "only box";
+    private static final String M_BOTHPCPBOX = "both pcp and box";
     private static final String M_SORTBYCOUNT = "sortByCount";
     private static final String M_SORTBYMARKED = "sortByMarked";
     private static final String M_SORTBYMARKEDREL = "sortByMarkedRelative";
@@ -112,6 +116,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private MenuItem MInodeSizeUp=null;
     private MenuItem MInodeSizeDown=null;
     private MenuItem MIhideNAlines=null;
+    private MenuItem MIPCP=null;
+    private MenuItem MIBox=null;
     private MenuItem MIPCPBox=null;
     private MenuItem MIsortByCount=null;
     private MenuItem MIsortByMarked=null;
@@ -133,6 +139,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private final int MIN_BOXWIDTH=4;
     // invisible Points to allow selection of box plots
     private ArrayList invisiblePoints=null;
+    // list of boxes
+    private ArrayList boxes=null;
     /** if <code>true</code> then side-by-side boxplots grouped by {@link #cv} are drawn,
      * otherwise draw just a single boxpolot */
     private boolean vsCat=false;
@@ -158,10 +166,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
     private boolean drawNAlines=true;
     private boolean drawHidden=true;
     
+    private ArrayList polylines=null;
+    
     private int nodeSize=2;
     
     public Color COL_AXES=Color.WHITE;
-
+    
     public boolean isMouseOnHilite=false;
     
     /** create a boxplot canvas for a multiple grouped boxplots side-by-side
@@ -203,6 +213,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         vsCat=true;
         createMenu(f);
+        MIPCP.setEnabled(false);
         MIPCPBox.setEnabled(false);
         setCommonScale(commonScale);
         EzMenu.getItem(getFrame(),M_COMMON).setEnabled(false);
@@ -293,7 +304,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         objectClipping=true;
         if(yvs.length==1) commonScale=true;
         
-        if(type==TYPE_BOX) setDefaultMargins(new int[] {smallMLeft,smallMRight,smallMTop,smallMBottom});
+        if(type==TYPE_BOX || type==TYPE_PCPBOX) setDefaultMargins(new int[] {smallMLeft,smallMRight,smallMTop,smallMBottom});
         else setDefaultMargins(new int[] {smallMLeft,smallMRight,bigMTop,bigMBottom, bigMLeft,smallMRight,smallMTop,smallMBottom});
         
         v=new SVar[yvs.length];
@@ -317,11 +328,14 @@ public class ParallelAxesCanvas extends BaseCanvas {
         ay=new Axis(yvs[0],Axis.O_Y,yvs[0].isCat()?Axis.T_EqCat:Axis.T_Num); ay.addDepend(this);
         
         createMenu(f);
-        if(v.length==1) MIPCPBox.setEnabled(false);
+        if(v.length==1) {
+            MIPCPBox.setEnabled(false);
+            MIPCP.setEnabled(false);
+        }
         setCommonScale(commonScale);
         updateMargins();
         
-        if(type==TYPE_BOX) initOss(yvs);
+        if(type==TYPE_BOX || type==TYPE_PCPBOX) initOss(yvs);
         
         dontPaint=false;
     }
@@ -342,7 +356,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
             "Set Y Range ...",M_YRANGEDLG,
             "!SShow scale dialog",M_SCALEDLG,
             M_MINUS,
-            (type==TYPE_BOX)?"PCP":"Box plot",M_PCPBOX,
+            "PCP",M_PCP,
+            "Box plot",M_BOX,
+            "PCP over boxes",M_BOTHPCPBOX,
             M_MINUS,
             "@OSort by count",M_SORTBYCOUNT,
             "!OSort by marked (absolute)",M_SORTBYMARKED,
@@ -367,7 +383,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MIhideNAlines=EzMenu.getItem(f,M_HIDENALINES);
         MIhideNAlines.setEnabled(type==TYPE_PCP);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
-        MIPCPBox=EzMenu.getItem(f,M_PCPBOX);
+        MIPCP=EzMenu.getItem(f,M_PCP);
+        MIBox=EzMenu.getItem(f,M_BOX);
+        MIPCPBox=EzMenu.getItem(f,M_BOTHPCPBOX);
         MIsortByCount=EzMenu.getItem(f,M_SORTBYCOUNT);
         MIsortByMarked=EzMenu.getItem(f,M_SORTBYMARKED);
         MIsortByMarkedRel=EzMenu.getItem(f,M_SORTBYMARKEDREL);
@@ -511,13 +529,29 @@ public class ParallelAxesCanvas extends BaseCanvas {
             MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
             setUpdateRoot(0); repaint();
         }
-        if(M_PCPBOX.equals(cmd)) {
-            type=(type+1)&1;
+        if(M_PCP.equals(cmd)) {
+            type=TYPE_PCP;
             initFlagsAndFields();
             updateMargins();
-            if(type==TYPE_BOX && oss==null) initOss(v);
             updateObjects();
-            MIPCPBox.setLabel((type==TYPE_BOX)?"PCP":"Box plot");
+            updateSortingMenus();
+            setUpdateRoot(0); repaint();
+        }
+        if(M_BOX.equals(cmd)) {
+            type=TYPE_BOX;
+            initFlagsAndFields();
+            updateMargins();
+            if(oss==null) initOss(v);
+            updateObjects();
+            updateSortingMenus();
+            setUpdateRoot(0); repaint();
+        }
+        if(M_BOTHPCPBOX.equals(cmd)) {
+            type=TYPE_PCPBOX;
+            initFlagsAndFields();
+            updateMargins();
+            if(oss==null) initOss(v);
+            updateObjects();
             updateSortingMenus();
             setUpdateRoot(0); repaint();
         }
@@ -986,19 +1020,28 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 useRegularPositioning=false;
                 bigMLeft=bigMRight=30;
                 if(invisiblePoints==null) invisiblePoints = new ArrayList(250);
+                if(boxes==null) boxes = new ArrayList(8);
                 break;
             case TYPE_PCP:
                 useRegularPositioning=true;
                 bigMLeft=bigMRight=15;
+                if(polylines==null) polylines = new ArrayList(500);
+                break;
+            case TYPE_PCPBOX:
+                useRegularPositioning=false;
+                bigMLeft=bigMRight=30;
+                if(invisiblePoints==null) invisiblePoints = new ArrayList(250);
+                if(boxes==null) boxes = new ArrayList(8);
+                if(polylines==null) polylines = new ArrayList(500);
                 break;
         }
     }
     
     public void mouseMoved(final MouseEvent e) {
-    	int x=e.getX(); int y=e.getY();
-    	PlotPrimitive p=getFirstPrimitiveContaining(x,y);
-    	if(p!=null) isMouseOnHilite=p.hilitcontains(x,y);
-    	super.mouseMoved(e);
+        int x=e.getX(); int y=e.getY();
+        PlotPrimitive p=getFirstPrimitiveContaining(x,y);
+        if(p!=null) isMouseOnHilite=p.hilitcontains(x,y);
+        super.mouseMoved(e);
     }
     
     public void mouseReleased(final MouseEvent e) {
@@ -1065,117 +1108,18 @@ public class ParallelAxesCanvas extends BaseCanvas {
         
         switch(type){
             case TYPE_BOX:
-                invisiblePoints.clear();
-                if (!vsCat) {
-                    invisiblePoints.ensureCapacity(v.length*v[0].size());
-                    for(int i=0; i<v.length; i++) {
-                        final int x = getAxCatPos(i);
-                        final Axis yAxis = commonScale?ay:((i==0)?ay:opAy[i-1]);
-                        for(int j=0; j<v[i].size(); j++){
-                            final int y = yAxis.getValuePos(v[i].atD(j));
-                            invisiblePoints.add(createInvisiblePoint(x,y,j));
-                        }
-                    }
-                    pp = new PlotPrimitive[v.length + invisiblePoints.size()];
-                    markStats = new OrdStats[v.length];
-                    for(int i=0; i<v.length; i++){
-                        pp[i] = createBox((v.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
-                        ((PPrimBase)pp[i]).ref = v[i].getRanked();
-                        markStats[i] = new OrdStats();
-                    }
-                    for(int i=v.length; i<pp.length; i++){
-                        pp[i] = (PlotPrimitive)invisiblePoints.get(i-v.length);
-                    }
-                } else {
-                    final Vector boxes = new Vector();
-                    for(int i=0; i<cs; i++){
-                        final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
-                        box.ref = rk[i];
-                        boxes.add(box);
-                    }
-                    invisiblePoints.ensureCapacity(v[0].size());
-                    for(int i=0; i<cs; i++){
-                        final int x = getAxCasePos(i);
-                        for(int j=0; j<rk[i].length; j++){
-                            final int y = ay.getValuePos(v[0].atD(rk[i][j]));
-                            invisiblePoints.add(createInvisiblePoint(x,y,rk[i][j]));
-                        }
-                    }
-                    boxes.addAll(invisiblePoints);
-                    pp = new PlotPrimitive[boxes.size()];
-                    boxes.toArray(pp);
-                    markStats = new OrdStats[boxes.size()-invisiblePoints.size()];
-                    System.arraycopy(oss, cs+1, markStats, 0, cs);
-                }
-                final int iPsize = invisiblePoints.size();
-                for(int i=0; i<pp.length-iPsize; i++){
-                    if(pp[i] instanceof PPrimBox) ((PPrimBox)pp[i]).slastR=null;
-                    setColors((PPrimBase)pp[i]);
-                }
+                initBoxes(0);
                 break;
             case TYPE_PCP:
                 if (pp==null || pp.length!=v[0].size()) {
                     pp=new PlotPrimitive[v[0].size()];
                 }
                 
-                final int[][] xs = new int[v[0].size()][v.length];
-                final int[][] ys = new int[v[0].size()][v.length];
-                //boolean[] na = new boolean[v[0].size()];
-                final int[][] na = new int[v[0].size()][];
-                final int[] naIndices = new int[v.length+1];
-                for (int i=0;i<v[0].size();i++){
-                    int numNAs=0;
-                    for (int j=0;j<v.length;j++){
-                        xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
-                        if(v[j].isCat()){
-                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].getCatIndex(i));
-                        } else {
-                            ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
-                        }
-                        if ((!drawHidden && m.at(i)) || v[j].at(i)==null) {
-                            naIndices[numNAs++] = j;
-                        }
-                    }
-                    if(numNAs>0){
-                        na[i] = new int[numNAs];
-                        System.arraycopy(naIndices, 0, na[i], 0, numNAs);
-                    }
-                }
-                
-                for(int j=0; j<xs.length; j++){
-                    pp[j] = new PPrimPolygon();
-                    if(orientation==0) ((PPrimPolygon)pp[j]).pg = new Polygon(xs[j], ys[j], xs[j].length);
-                    else               ((PPrimPolygon)pp[j]).pg = new Polygon(ys[j], xs[j], xs[j].length);
-                    ((PPrimPolygon)pp[j]).closed=false;
-                    ((PPrimPolygon)pp[j]).fill=false;
-                    ((PPrimPolygon)pp[j]).selectByCorners=!drawLines;
-                    ((PPrimPolygon)pp[j]).drawCorners = drawPoints;
-                    ((PPrimPolygon)pp[j]).ref = new int[] {j};
-                    ((PPrimPolygon)pp[j]).setNodeSize(nodeSize);
-                    ((PPrimPolygon)pp[j]).drawBorder=drawLines;
-                    ((PPrimPolygon)pp[j]).showInvisibleLines=drawNAlines;
-                    setColors((PPrimBase)pp[j]);
-                    final boolean[] nas = new boolean[xs[j].length];
-                    final boolean[] gap = new boolean[xs[j].length];
-                    
-                    if(na[j]!=null){
-                        final boolean[] nod = new boolean[xs[j].length];
-                        for(int i=0; i<na[j].length; i++) {
-                            nas[na[j][i]]=true;
-                            if(na[j][i]>0) nas[na[j][i]-1]=true;
-                            nod[na[j][i]]=true;
-                        }
-                        ((PPrimPolygon)pp[j]).noDotsAt = nod;
-                        for(int i=0; i<na[j].length-1; i++){
-                            if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
-                        }
-                        if(na[j][0]==1) gap[0]=true;
-                        if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
-                    }
-                    ((PPrimPolygon)pp[j]).invisibleLines=nas;
-                    ((PPrimPolygon)pp[j]).setGapDots(gap);
-                }
+                initPolylines(0);
                 break;
+            case TYPE_PCPBOX:
+                initBoxes(v[0].size());
+                initPolylines(v.length);
         }
     }
     
@@ -1218,28 +1162,28 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     public String queryObject(final PlotPrimitive p) {
-    	int mark=getMarked(p);
+        int mark=getMarked(p);
         switch(type){
             case TYPE_BOX:
-            	String qs="";
-           		final PPrimBox box = (PPrimBox)p;
-           		if(box.queriedOutlier!=null)
-           			qs+="Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
-           		else
-           			qs+="lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" +
-                        "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
-                        "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
-                        "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
-                        "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
-           		if(isExtQuery) {
-           			qs+="\ncases: "+p.cases();
-           			if(isMouseOnHilite || mark>0) qs+="\nmarked: "+mark+" ("+Tools.getDisplayableValue(100*mark/p.cases(),2)+"%)";
-           		}
-           		if(!isExtQuery)
-           		if(isMouseOnHilite || mark>0) {
-           			qs+="\n\nmarked: "+Tools.getDisplayableValue(100*mark/p.cases(),2)+"%";
-           		}
-           		return qs;
+                String qs="";
+                final PPrimBox box = (PPrimBox)p;
+                if(box.queriedOutlier!=null)
+                    qs+="Outlier: " + Tools.getDisplayableValue(box.queriedOutlier.getValue());
+                else
+                    qs+="lower whisker: " + Tools.getDisplayableValue(box.lh15Value) + "\n" +
+                            "lower hinge: " + Tools.getDisplayableValue(box.lhValue) + "\n" +
+                            "median: " + Tools.getDisplayableValue(box.medValue) + "\n" +
+                            "upper hinge: " + Tools.getDisplayableValue(box.uhValue) + "\n" +
+                            "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
+                if(isExtQuery) {
+                    qs+="\ncases: "+p.cases();
+                    if(isMouseOnHilite || mark>0) qs+="\nmarked: "+mark+" ("+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%)";
+                }
+                if(!isExtQuery)
+                    if(isMouseOnHilite || mark>0) {
+                    qs+="\n\nmarked: "+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%";
+                    }
+                return qs;
             case TYPE_PCP:
                 String retValue="";
                 final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
@@ -1273,18 +1217,18 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     
     public String queryPlotSpace() {
-    	switch(type) {
-    		case TYPE_BOX:
-    			return "Boxplot"+(cv!=null?"("+cv.getName()+")":"")
-    			+(v!=null?"\nvariables: "+v.length:"");
-    		case TYPE_PCP:
-    			int size=(v!=null&&v[0]!=null)?v[0].size():-1;
-    			return "PCP"+(cv!=null?"("+cv.getName()+")":"")
-    			+(size!=-1?"\nsize: "+v[0].size():"")
-    			+"\nselected: "+m.marked()+(size>0?" ("+Tools.getDisplayableValue(100*((double)m.marked()/(double)size),2)+" %)":"")
-    			+(v!=null?"\nvariables: "+v.length:"");
-    	}
-    	return super.queryPlotSpace();
+        switch(type) {
+            case TYPE_BOX:
+                return "Boxplot"+(cv!=null?"("+cv.getName()+")":"")
+                +(v!=null?"\nvariables: "+v.length:"");
+            case TYPE_PCP:
+                int size=(v!=null&&v[0]!=null)?v[0].size():-1;
+                return "PCP"+(cv!=null?"("+cv.getName()+")":"")
+                +(size!=-1?"\nsize: "+v[0].size():"")
+                +"\nselected: "+m.marked()+(size>0?" ("+Tools.getDisplayableValue(100*((double)m.marked()/(double)size),2)+" %)":"")
+                +(v!=null?"\nvariables: "+v.length:"");
+        }
+        return super.queryPlotSpace();
     }
     
     public void rotate(final int amount) {
@@ -1294,7 +1238,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public void paintSelected(final PoGraSS g) {
         // in boxplots painting of selected primitives is handled by the canvas itself, not by the primitive
-        if(type==TYPE_BOX){
+        if(type==TYPE_BOX || type==TYPE_PCPBOX){
             if(markStats!=null){
                 final int md[][] = new int[v.length][];
                 for(int i=0; i<v.length; i++) md[i] = v[i].getRanked(m,-1);
@@ -1323,9 +1267,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         else markStats[i].update(v[i],new int[]{});
                     }
                 }
-                final int iPsize = invisiblePoints.size();
-                for(int i=0; i<pp.length-iPsize; i++){
-                    final PPrimBox box = ((PPrimBox)pp[i]);
+                 for(int i=0; i<boxes.size(); i++){
+                    final PPrimBox box = (PPrimBox)boxes.get(i);
                     if(markStats[i].lastTop==0){
                         box.slastR=null;
                     } else{
@@ -1455,9 +1398,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
     }
     
     private int getMarked(final PlotPrimitive p) {
-    	if(p!=null)
-    	return (int)Math.round(p.cases()*p.getMarkedProportion(m,-1));
-    	else return -1;
+        if(p!=null)
+            return (int)Math.round(p.cases()*p.getMarkedProportion(m,-1));
+        else return -1;
     }
     
     private int getCount(final int axis) {
@@ -1526,6 +1469,121 @@ public class ParallelAxesCanvas extends BaseCanvas {
         MIsortByMarkedMedian.setEnabled(enable);
         MIsortByMarkedMax.setEnabled(enable);
         MIsortByMarkedMin.setEnabled(enable);
+    }
+    
+    private void initBoxes(int additionalSpace) {
+        boxes.clear();
+        invisiblePoints.clear();
+        if (!vsCat) {
+            invisiblePoints.ensureCapacity(v.length*v[0].size());
+            for(int i=0; i<v.length; i++) {
+                final int x = getAxCatPos(i);
+                final Axis yAxis = commonScale?ay:((i==0)?ay:opAy[i-1]);
+                for(int j=0; j<v[i].size(); j++){
+                    final int y = yAxis.getValuePos(v[i].atD(j));
+                    invisiblePoints.add(createInvisiblePoint(x,y,j));
+                }
+            }
+            pp = new PlotPrimitive[v.length + invisiblePoints.size() + additionalSpace];
+            markStats = new OrdStats[v.length];
+            for(int i=0; i<v.length; i++){
+                pp[i] = createBox((v.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
+                boxes.add(pp[i]);
+                ((PPrimBase)pp[i]).ref = v[i].getRanked();
+                markStats[i] = new OrdStats();
+            }
+            for(int i=v.length; i<pp.length-additionalSpace; i++){
+                pp[i] = (PlotPrimitive)invisiblePoints.get(i-v.length);
+            }
+        } else {
+            ArrayList pplist = new ArrayList(v[0].size()+10);
+            for(int i=0; i<cs; i++){
+                final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
+                box.ref = rk[i];
+                boxes.add(box);
+            }
+            invisiblePoints.ensureCapacity(v[0].size());
+            for(int i=0; i<cs; i++){
+                final int x = getAxCasePos(i);
+                for(int j=0; j<rk[i].length; j++){
+                    final int y = ay.getValuePos(v[0].atD(rk[i][j]));
+                    invisiblePoints.add(createInvisiblePoint(x,y,rk[i][j]));
+                }
+            }
+            pplist.addAll(boxes);
+            pplist.addAll(invisiblePoints);
+            pp = new PlotPrimitive[pplist.size()];
+            pplist.toArray(pp);
+            markStats = new OrdStats[boxes.size()];
+            System.arraycopy(oss, cs+1, markStats, 0, cs);
+        }
+        final int iPsize = invisiblePoints.size();
+        for(int i=0; i<pp.length-iPsize; i++){
+            if(pp[i] instanceof PPrimBox) ((PPrimBox)pp[i]).slastR=null;
+            setColors((PPrimBase)pp[i]);
+        }
+    }
+    
+    private void initPolylines(int offset) {
+        polylines.clear();
+        final int[][] xs = new int[v[0].size()][v.length];
+        final int[][] ys = new int[v[0].size()][v.length];
+        //boolean[] na = new boolean[v[0].size()];
+        final int[][] na = new int[v[0].size()][];
+        final int[] naIndices = new int[v.length+1];
+        for (int i=0;i<v[0].size();i++){
+            int numNAs=0;
+            for (int j=0;j<v.length;j++){
+                xs[i][ax.getCatSeqIndex(j)] = getAxCatPos(j);
+                if(v[j].isCat()){
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].getCatIndex(i));
+                } else {
+                    ys[i][ax.getCatSeqIndex(j)] = ((commonScale||j==0)?ay:opAy[j-1]).getValuePos(v[j].atD(i));
+                }
+                if ((!drawHidden && m.at(i)) || v[j].at(i)==null) {
+                    naIndices[numNAs++] = j;
+                }
+            }
+            if(numNAs>0){
+                na[i] = new int[numNAs];
+                System.arraycopy(naIndices, 0, na[i], 0, numNAs);
+            }
+        }
+        
+        for(int j=0; j<xs.length; j++){
+            pp[j+offset] = new PPrimPolygon();
+            polylines.add(pp[j+offset]);
+            if(orientation==0) ((PPrimPolygon)pp[j+offset]).pg = new Polygon(xs[j], ys[j], xs[j].length);
+            else               ((PPrimPolygon)pp[j+offset]).pg = new Polygon(ys[j], xs[j], xs[j].length);
+            ((PPrimPolygon)pp[j+offset]).closed=false;
+            ((PPrimPolygon)pp[j+offset]).fill=false;
+            ((PPrimPolygon)pp[j+offset]).selectByCorners=!drawLines;
+            ((PPrimPolygon)pp[j+offset]).drawCorners = drawPoints;
+            ((PPrimPolygon)pp[j+offset]).ref = new int[] {j};
+            ((PPrimPolygon)pp[j+offset]).setNodeSize(nodeSize);
+            ((PPrimPolygon)pp[j+offset]).drawBorder=drawLines;
+            ((PPrimPolygon)pp[j+offset]).showInvisibleLines=drawNAlines;
+            setColors((PPrimBase)pp[j+offset]);
+            final boolean[] nas = new boolean[xs[j].length];
+            final boolean[] gap = new boolean[xs[j].length];
+            
+            if(na[j]!=null){
+                final boolean[] nod = new boolean[xs[j].length];
+                for(int i=0; i<na[j].length; i++) {
+                    nas[na[j][i]]=true;
+                    if(na[j][i]>0) nas[na[j][i]-1]=true;
+                    nod[na[j][i]]=true;
+                }
+                ((PPrimPolygon)pp[j+offset]).noDotsAt = nod;
+                for(int i=0; i<na[j+offset].length-1; i++){
+                    if(na[j][i+1]-na[j][i]==2) gap[na[j][i]+1]=true;
+                }
+                if(na[j][0]==1) gap[0]=true;
+                if(na[j][na[j].length-1]==gap.length-2) gap[gap.length-1]=true;
+            }
+            ((PPrimPolygon)pp[j+offset]).invisibleLines=nas;
+            ((PPrimPolygon)pp[j+offset]).setGapDots(gap);
+        }
     }
 }
 
