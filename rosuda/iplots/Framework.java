@@ -544,10 +544,10 @@ public class Framework implements Dependent, ActionListener {
         return hc;
     };
     
-    public CustomCanvas newCustomplot(final int v, String rcall) {return newCustomplot("Custom Plot",new int[]{v},rcall);}
-    public CustomCanvas newCustomplot(final int v[], String rcall) {return newCustomplot("Custom Plot",v,rcall);}
-    public CustomCanvas newCustomplot(String name, final int[] v, String rcall) { return newCustomplot(name,cvs,v,rcall); }
-    public CustomCanvas newCustomplot(String name, final SVarSet vs, int[] v, String rcall) {
+    public CustomCanvas newCustomplot(final int v, String rcall, String rid) {return newCustomplot("Custom Plot",new int[]{v},rcall,rid);}
+    public CustomCanvas newCustomplot(final int v[], String rcall, String rid) {return newCustomplot("Custom Plot",v,rcall,rid);}
+    public CustomCanvas newCustomplot(String name, final int[] v, String rcall, String rid) { return newCustomplot(name,cvs,v,rcall,rid); }
+    public CustomCanvas newCustomplot(String name, final SVarSet vs, int[] v, String rcall, String rid) {
         if (v.length==0) return null;
         updateMarker(vs,v[0]);
         
@@ -559,7 +559,7 @@ public class Framework implements Dependent, ActionListener {
         final SVar[] vl=new SVar[v.length];
         int i=0;
         while(i<v.length) { vl[i]=vs.at(v[i]); i++; }
-        final CustomCanvas cc=new CustomCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),rcall);
+        final CustomCanvas cc=new CustomCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),rcall,rid);
         frdev.add(cc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(cc);
         cc.setSize(new Dimension(400,300));
