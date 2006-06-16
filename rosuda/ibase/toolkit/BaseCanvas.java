@@ -478,7 +478,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     }
     
     public String queryPlotSpace() {
-        return "plot space query";
+        return null;
     }
     
     public void rotate(final int amount) {
@@ -733,7 +733,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                             setQueryText(queryObject(p));
                         }
                     }
-                    qi.setLocation(cl.x+mouseX,cl.y+mouseY);
+                    qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
                     qi.show(); hideQI=false;
                 }
             }
@@ -761,7 +761,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                         setQueryText(queryPlotSpace());
                     }
                 }
-                qi.setLocation(cl.x+mouseX,cl.y+mouseY);
+                qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
                 qi.show(); hideQI=false;
             }
             setUpdateRoot(3); repaint();
