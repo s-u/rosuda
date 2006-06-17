@@ -420,8 +420,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if (M_TOGGLEPTS.equals(cmd)) {
             drawPoints=!drawPoints;
             MIdots.setLabel((drawPoints)?"Hide dots":M_SHOWDOTS);
-            for(int i=0; i<pp.length; i++){
-                ((PPrimPolygon)pp[i]).drawCorners=drawPoints;
+            for(Iterator it = polylines.iterator(); it.hasNext();){
+                ((PPrimPolygon)it.next()).drawCorners=drawPoints;
             }
             MIdots.setEnabled(!drawPoints||drawLines);
             MIlines.setEnabled(drawPoints||!drawLines);
@@ -433,9 +433,10 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if (M_TOGGLELINES.equals(cmd)) {
             drawLines=!drawLines;
             MIlines.setLabel((drawLines)?M_HIDELINES:"Show lines");
-            for(int i=0; i<pp.length; i++){
-                ((PPrimPolygon)pp[i]).drawBorder=drawLines;
-                ((PPrimPolygon)pp[i]).selectByCorners=!drawLines;
+            for(Iterator it = polylines.iterator(); it.hasNext();){
+                final PPrimPolygon ppp = ((PPrimPolygon)it.next());
+                ppp.drawBorder=drawLines;
+                ppp.selectByCorners=!drawLines;
             }
             MIdots.setEnabled(!drawPoints||drawLines);
             MIlines.setEnabled(drawPoints||!drawLines);
@@ -504,30 +505,32 @@ public class ParallelAxesCanvas extends BaseCanvas {
             updateGeometry=true;
         }
         if (M_NODESIZEUP.equals(cmd)) {
-            if(pp[0]!=null){
-                nodeSize++;
-                for(int i=0; i<pp.length; i++)
-                    if(pp[i]!=null)
-                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+            nodeSize++;
+            if(polylines!=null && polylines.size()>0){
+                for(Iterator it = polylines.iterator(); it.hasNext();){
+                    ((PPrimPolygon)it.next()).setNodeSize(nodeSize);
+                }
                 setUpdateRoot(0); repaint();
             }
         }
         if (M_NODESIZEDOWN.equals(cmd)) {
-            if(pp[0]!=null){
-                nodeSize--;
-                for(int i=0; i<pp.length; i++)
-                    if(pp[i]!=null)
-                        ((PPrimPolygon)pp[i]).setNodeSize(nodeSize);
+            nodeSize--;
+            if(polylines!=null && polylines.size()>0){
+                for(Iterator it = polylines.iterator(); it.hasNext();){
+                    ((PPrimPolygon)it.next()).setNodeSize(nodeSize);
+                }
                 setUpdateRoot(0); repaint();
             }
         }
         if (M_HIDENALINES.equals(cmd)){
             drawNAlines=!drawNAlines;
-            for(int i=0; i<pp.length; i++){
-                if(pp[i]!=null) ((PPrimPolygon)pp[i]).showInvisibleLines = drawNAlines;
+            if(polylines!=null && polylines.size()>0){
+                for(Iterator it = polylines.iterator(); it.hasNext();){
+                    ((PPrimPolygon)it.next()).showInvisibleLines = drawNAlines;
+                }
+                setUpdateRoot(0); repaint();
             }
             MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
-            setUpdateRoot(0); repaint();
         }
         if(M_PCP.equals(cmd)) {
             type=TYPE_PCP;
@@ -1163,8 +1166,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public String queryObject(final PlotPrimitive p) {
         int mark=getMarked(p);
-        switch(type){
-            case TYPE_BOX:
+        if(p!=null){
+            if(p instanceof PPrimBox){
                 String qs="";
                 final PPrimBox box = (PPrimBox)p;
                 if(box.queriedOutlier!=null)
@@ -1184,7 +1187,8 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     qs+="\n\nmarked: "+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%";
                     }
                 return qs;
-            case TYPE_PCP:
+            }
+            if(p instanceof PPrimPolygon){
                 String retValue="";
                 final int[] pts = (orientation==0)?(((PPrimPolygon)p).pg.ypoints):(((PPrimPolygon)p).pg.xpoints);
                 
@@ -1211,8 +1215,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
                     }
                 }
                 return retValue;
+            }
         }
-        return super.queryObject(p);
+        return null;
     }
     
     
@@ -1267,7 +1272,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                         else markStats[i].update(v[i],new int[]{});
                     }
                 }
-                 for(int i=0; i<boxes.size(); i++){
+                for(int i=0; i<boxes.size(); i++){
                     final PPrimBox box = (PPrimBox)boxes.get(i);
                     if(markStats[i].lastTop==0){
                         box.slastR=null;
