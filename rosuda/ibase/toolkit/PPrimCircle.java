@@ -160,4 +160,8 @@ public class PPrimCircle extends PPrimBase {
         move(x,y);
     }
     
+    public void setDiam(int d) {
+    	diam=d;
+    }
+    
 }
