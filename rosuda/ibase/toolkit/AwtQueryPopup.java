@@ -154,6 +154,7 @@ public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, Q
             g.setColor(Color.black);
             g.drawRect(0,0,s.width-1,s.height-1);
             int y=topMargin+xh*3/4;
+            if(content==null) return;
             int i=0;
             while (i<content.length) {
                 g.drawString(content[i],leftMargin,y);
