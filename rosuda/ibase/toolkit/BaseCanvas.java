@@ -703,8 +703,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         //System.out.println("BaseCanvas.mouseReleased");
         setUpdateRoot(2);
         if (selDrag && pp!=null) {
-            boolean setTo=false;
-            if (Common.getSelectMode(e)==2) setTo=true;
+            boolean setTo=true;
+            if (Common.getSelectMode(e)==1) setTo=false;
             if (Common.getSelectMode(e)==0) m.selectNone();
             
             final PlotPrimitive[] pps=getPrimitivesIntersecting(sel);
