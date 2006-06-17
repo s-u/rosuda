@@ -249,7 +249,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
-//        if(dontPaint) return;
+        if(dontPaint) return;
         if(autoAdjustMargins) adjustMargin(g);
         //System.out.println("BaseCanvas.paintPoGraSS(): "+g.localLayerCache);
         final Rectangle r=getBounds();
