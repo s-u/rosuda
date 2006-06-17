@@ -124,6 +124,7 @@ public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, Q
         int xh;
         
         void updateGeometry(final Graphics g) {
+            if(content==null) return;
             int rw=width;
             final FontMetrics fm=g.getFontMetrics();
             
