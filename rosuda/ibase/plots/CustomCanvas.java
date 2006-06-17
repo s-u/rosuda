@@ -22,7 +22,7 @@ public class CustomCanvas extends BaseCanvas {
 		allowDragMove=false;
 		setDefaultMargins(new int[] {10,10,10,20,40,10,10,10});
 		
-        borderColorSel=Color.black;
+//        borderColorSel=Color.black;
 		this.v=v;
 		this.rcall=rcall;
 		this.rid=rid;
@@ -119,7 +119,7 @@ public class CustomCanvas extends BaseCanvas {
     
     public String queryPlotSpace() {
         if(v==null) return null;
-        else return (m.marked()>0?"Custom plot: "+m.marked()+" selected case(s)":"");
+        else return (m.marked()>0?"Custom plot: "+m.marked()+" selected case(s)":null);
     }
 
     
