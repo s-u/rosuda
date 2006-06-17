@@ -202,6 +202,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     protected int changingHilitingNeedsUpdateRoot = 1;
     
+    protected boolean showQuery=false;
+    
     /** basic constructor. Every subclass must call this constructor
      * @param f frame owning this canvas. since BaseCanvas itself doesn't modify any attribute of the frame except for title it is possible to put more canvases into one frame. This doesn't have to hold for subclasses, especially those providing their own menus.
      * @param mark marker which will be used for selection/linked highlighting
@@ -457,8 +459,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                                 } else {
                                     setQueryText(queryObject(p));
                                 }
-                                qi.setLocation(cl.x+x,cl.y+y);
-                                qi.show(); hideQI=false;
+                                if(showQuery) {
+                                	qi.setLocation(cl.x+x,cl.y+y);
+                                	qi.show(); hideQI=false;
+                            	}
                             }
                         }
                     } else {
@@ -762,8 +766,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                             setQueryText(queryObject(p));
                         }
                     }
-                    qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
-                    qi.show(); hideQI=false;
+                    if(!showQuery) {
+                    	qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
+                    	qi.show(); hideQI=false;
+                }
                 }
             }
             isExtQuery = false;
@@ -790,8 +796,10 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
                         setQueryText(queryPlotSpace());
                     }
                 }
-                qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
-                qi.show(); hideQI=false;
+                if(showQuery) {
+                	qi.setLocation(cl.x+mouseX+10,cl.y+mouseY+20);
+                	qi.show(); hideQI=false;
+                }
             }
             setUpdateRoot(3); repaint();
         } else if(inQuery) {
@@ -960,18 +968,18 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     };
     
     public void setQueryText(final String s) {
-        if(s==null) return;
-        qi.setContent(s);
+        if(s==null) { showQuery=false; return; }
+        else { showQuery=true; qi.setContent(s); }
     }
     
     public void setQueryText(final String s, final int cid) {
-        if(s==null) return;
-        qi.setContent(s,cid);
+        if(s==null) { showQuery=false; return; }
+        else {showQuery=true; qi.setContent(s,cid); }
     }
     
     public void setQueryText(final String s, final int[] cid) {
-        if(s==null) return;
-        qi.setContent(s,cid);
+        if(s==null) { showQuery= false; return; }
+        else {showQuery=true; qi.setContent(s,cid); }
     }
     
     public boolean isShowLabels() {
