@@ -774,7 +774,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 final int[] valuePoss = new int[numCats];
                 final String[] labs = new String[numCats];
                 for(int i=0; i<numCats; i++){
-                    if(type==TYPE_BOX && ((PPrimBase)pp[i]).isDragging())
+                    if((type==TYPE_BOX || type==TYPE_PCPBOX) && ((PPrimBase)pp[i]).isDragging())
                         valuePoss[ax.getCatSeqIndex(i)] = ((PPrimBox)pp[i]).x + boxwidth/2;
                     else
                         valuePoss[ax.getCatSeqIndex(i)] = getAxCatPos(i);
@@ -1449,7 +1449,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     public void mouseDragged(final MouseEvent e) {
         super.mouseDragged(e);
-        if(type==TYPE_BOX){
+        if(type==TYPE_BOX || type==TYPE_PCPBOX){
             final int dragAxis = ax.getCatByPos((orientation==0)?baseDragX1:baseDragY1);
             if(baseDrag && moveDrag && dragAxis>-1){
                 if(orientation==0){
