@@ -20,6 +20,7 @@ import org.rosuda.pograss.*;
 @version $Id$
 */
 public interface PlotPrimitive {
+
     /** checks whether the PlotPrimitive contains (or in case of a point primitive equals to) the given point.*/
     boolean contains(int x, int y);
     
@@ -72,5 +73,7 @@ public interface PlotPrimitive {
 
     /** returns whether this primitive is visible */
     boolean isVisible();
+    
+    boolean isPerformingAlphaBlending();
 }
 
