@@ -197,4 +197,8 @@ public class PPrimPolygon extends PPrimBase {
             }
         }
     }
+    
+    public void setPolygon(Polygon p) {
+    	pg=p;
+    }
 }
