@@ -42,6 +42,8 @@ public abstract class PPrimBase implements PlotPrimitive {
     
     public Color fillColorDrag = new Color(128,128,128,70);
 
+    public boolean performAlphaBlending = true;
+
     public String toString() {
         return "PPrimBase["+cases()+" cases]";
     }
@@ -190,5 +192,9 @@ public abstract class PPrimBase implements PlotPrimitive {
     
     public boolean hilitcontains(int x, int y) {
     	return false;
+    }
+
+    public boolean isPerformingAlphaBlending() {
+        return performAlphaBlending;
     }
 }

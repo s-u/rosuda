@@ -330,25 +330,40 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     }
     
     public void paintObjects(final PoGraSS g) {
+        boolean performingAlphaBlending = false;
         //System.out.println("BaseCanvas.paintObjects, (cache="+g.localLayerCache+") pp="+pp);
         final Stopwatch sw=new Stopwatch();
         if(objectClipping) g.setClip(mLeft, mTop, getBounds().width-mLeft-mRight, getBounds().height-mTop-mBottom);
         if (pp!=null) {
             
             g.setColor(C_OBJECT);
-            g.setGlobalAlpha(ppAlpha);
             int i = 0;
             while (i<pp.length) {
-                if (pp[i]!=null && pp[i].isVisible()) pp[i].paint(g, orientation,  m);
+                if (pp[i]!=null && pp[i].isVisible()){
+                    if(pp[i].isPerformingAlphaBlending()){
+                        if(!performingAlphaBlending){
+                            g.setGlobalAlpha(ppAlpha);
+                            performingAlphaBlending=true;
+                        }
+                    } else{
+                        if(performingAlphaBlending){
+                            g.resetGlobalAlpha();
+                            performingAlphaBlending=false;
+                        }
+                    }
+                    
+                    pp[i].paint(g, orientation,  m);
+                }
                 i++;
             }
-            g.resetGlobalAlpha();
+            if(performingAlphaBlending) g.resetGlobalAlpha();
         }
         if(objectClipping) g.resetClip();
         sw.profile("BaseCanvas.paintObjects");
     }
     
     public void paintSelected(final PoGraSS g) {
+        boolean performingAlphaBlending = alphaHighlighting;
         final Stopwatch sw=new Stopwatch();
         
         //System.out.println("BaseCanvas.paintSelected, pp="+pp);
@@ -359,8 +374,22 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
             g.setColor(C_MARKED);
             int i = 0;
             while (i<pp.length) {
-                if (pp[i]!=null && pp[i].isVisible())
+                if (pp[i]!=null && pp[i].isVisible()){
+                    if(pp[i].isPerformingAlphaBlending()){
+                        if(alphaHighlighting){
+                            if(!performingAlphaBlending){
+                                g.setGlobalAlpha(ppAlpha);
+                                performingAlphaBlending=true;
+                            }
+                        } else{
+                            if(performingAlphaBlending){
+                                g.resetGlobalAlpha();
+                                performingAlphaBlending=false;
+                            }
+                        }
+                    }
                     pp[i].paintSelected(g,orientation,m);
+                }
                 i++;
             }
             if(alphaHighlighting) g.resetGlobalAlpha();

@@ -1489,7 +1489,9 @@ public class ParallelAxesCanvas extends BaseCanvas {
             for(int i=0; i<v.length; i++){
                 pp[i] = createBox((v.length==1)?OSdata:oss[i], getAxCasePos(i)-boxwidth/2,boxwidth,i);
                 boxes.add(pp[i]);
-                ((PPrimBase)pp[i]).ref = v[i].getRanked();
+                final PPrimBase ppb = (PPrimBase)pp[i];
+                ppb.ref = v[i].getRanked();
+                ppb.performAlphaBlending = false;
                 markStats[i] = new OrdStats();
             }
             for(int i=v.length; i<pp.length-additionalSpace; i++){
@@ -1500,6 +1502,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             for(int i=0; i<cs; i++){
                 final PPrimBox box = createBox(oss[i],getAxCasePos(i)-boxwidth/2,boxwidth,0);
                 box.ref = rk[i];
+                box.performAlphaBlending = false;
                 boxes.add(box);
             }
             invisiblePoints.ensureCapacity(v[0].size());
