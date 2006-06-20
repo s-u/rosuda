@@ -149,8 +149,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     protected Axis[] opAy; // axes parallel to ay
     
     /** PlotText object containing labels. Can be null. */
-    protected PlotText xLabels;
-    protected PlotText yLabels;
+    protected PlotTextVector xLabels;
+    protected PlotTextVector yLabels;
     
     /** if set to <code>true</code> extended query is used */
     protected boolean isExtQuery = false;
@@ -221,8 +221,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         addKeyListener(this);
         f.addKeyListener(this);
         qi=newQueryPopup(f,mark==null?null:mark.getMasterSet(),"BaseCanvas");
-        xLabels=new PlotText(getPlotManager());
-        yLabels=new PlotText(getPlotManager());
+        xLabels=new PlotTextVector(getPlotManager(),PlotObject.CS_ABS,PlotObject.CS_ABS);
+        yLabels=new PlotTextVector(getPlotManager(),PlotObject.CS_ABS,PlotObject.CS_ABS);
         xLabels.setLayer(0);
         yLabels.setLayer(0);
     }
