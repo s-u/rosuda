@@ -156,8 +156,8 @@ public class Platform {
             arg[0]=p1; arg[1]=p2;
             f=(File)m.invoke(null,arg);
             if (f!=null) {
-                m=c.getMethod("deleteOnExit",null);
-                m.invoke(f,null);
+                m=c.getMethod("deleteOnExit",(Class[])null);
+                m.invoke(f,(Object[])null);
             }
         } catch(Throwable e) {
             if (Global.DEBUG>0)
