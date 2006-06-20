@@ -1,10 +1,11 @@
 //
 //  PPrimRectangle.java
-//  Kplimt
+//  Klimt
 //
 //  Created by Simon Urbanek on Wed Oct 29 2003.
 //  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
 //
+//  $Id$
 
 package org.rosuda.ibase.toolkit;
 
@@ -36,7 +37,7 @@ public class PPrimRectangle extends PPrimBase {
     private int MINWIDTH=1;
 	
     protected int orientation=0;
-    private boolean useCanvasOrientation=true; // TODO: das ist nur vorübergehend
+    private boolean useCanvasOrientation=true; // TODO: das ist nur vorÃ¼bergehend
     
     public PPrimRectangle() {
 		super();
