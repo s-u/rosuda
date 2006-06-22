@@ -24,7 +24,7 @@ public final class ErrorDialog extends MessageDialog {
     private ErrorDialog() {
     }
     
-    static void show(Component parent, final String message){
+    public static void show(Component parent, final String message){
         show(parent,message,DEBUG);
     }
     

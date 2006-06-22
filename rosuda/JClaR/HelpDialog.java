@@ -18,7 +18,7 @@ public final class HelpDialog extends MessageDialog {
     private HelpDialog() {
     }
     
-    static void show(final Component parent, final String text){
+    public static void show(final Component parent, final String text){
         show(parent, text, "Help", INFORMATION_MESSAGE);
     }
     
