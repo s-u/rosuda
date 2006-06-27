@@ -63,6 +63,7 @@ public class EzMenu {
                 if (!Common.isMac()) {
                     m.addSeparator();
                     m.add(mi=new MenuItem("Preferences ...")).setActionCommand("prefs"); mi.addActionListener(al);
+                    mi.setEnabled(false); // not implemented now
                 }
                 m.addSeparator();
                 m.add(mi=new MenuItem("Save selected as ...")).setActionCommand("exportCases"); mi.addActionListener(al);
