@@ -50,6 +50,7 @@ public class ScatterCanvas extends BaseCanvas {
     protected boolean drag;
     
     protected MenuItem MIlabels=null;
+    private MenuItem MIequiscale=null;
     
     protected int Y,W,H, TW,TH;
     
@@ -78,11 +79,13 @@ public class ScatterCanvas extends BaseCanvas {
      * The number of pixels the point diameter should be changed when in-/decreasing it.
      */
     public int changePtDiamBy=2;
-
+    
     /**
      * Whether axes shoud be drawn.
      */
     public boolean drawAxes = true;
+    
+    private boolean equiscale = false;
     
     private double spaceprop=1.1;
     
@@ -159,6 +162,7 @@ public class ScatterCanvas extends BaseCanvas {
             "Bigger points (up)",M_POINTSUP,
             "Smaller points (down)",M_POINTSDOWN,
         });
+        MIequiscale=EzMenu.getItem(f,M_EQUISCALE);
         MIlabels=EzMenu.getItem(f,M_LABELS);
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         objectClipping=true;
@@ -331,21 +335,8 @@ public class ScatterCanvas extends BaseCanvas {
             }
             setUpdateRoot(0); repaint();
         }
-        if (cmd=="equiscale") {
-            final double sfx;
-            final double sfy;
-            final double usfx;
-            final double usfy;
-            sfx=((double)ax.gLen)/ax.vLen; usfx=(sfx<0)?-sfx:sfx;
-            sfy=((double)ay.gLen)/ay.vLen; usfy=(sfy<0)?-sfy:sfy;
-            if (usfx<usfy) {
-                ay.setValueRange(ay.vBegin,ay.vLen*(usfy/usfx));
-            } else {
-                ax.setValueRange(ax.vBegin,ax.vLen*(usfx/usfy));
-            }
-            updateObjects();
-            setUpdateRoot(0);
-            repaint();
+        if (cmd==M_EQUISCALE) {
+            setEquiscale(!equiscale);
         }
         if (cmd=="YrangeDlg" || cmd=="XrangeDlg") {
             final Axis axis=(cmd=="YrangeDlg")?ay:ax;
@@ -697,10 +688,24 @@ public class ScatterCanvas extends BaseCanvas {
     }
     
     private void setValueRange() {
-        if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())*(spaceprop-1)/2,(v[0].getMax()-v[0].getMin())*spaceprop);
-        if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(spaceprop-1)/2,(v[1].getMax()-v[1].getMin())*spaceprop);
-        if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
-        if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
+        if(equiscale){
+            final double sfx;
+            final double sfy;
+            final double usfx;
+            final double usfy;
+            sfx=((double)ax.gLen)/ax.vLen; usfx=(sfx<0)?-sfx:sfx;
+            sfy=((double)ay.gLen)/ay.vLen; usfy=(sfy<0)?-sfy:sfy;
+            if (usfx<usfy) {
+                ay.setValueRange(ay.vBegin,ay.vLen*(usfy/usfx));
+            } else {
+                ax.setValueRange(ax.vBegin,ax.vLen*(usfx/usfy));
+            }
+        } else{
+            if (!v[0].isCat()) ax.setValueRange(v[0].getMin()-(v[0].getMax()-v[0].getMin())*(spaceprop-1)/2,(v[0].getMax()-v[0].getMin())*spaceprop);
+            if (!v[1].isCat()) ay.setValueRange(v[1].getMin()-(v[1].getMax()-v[1].getMin())*(spaceprop-1)/2,(v[1].getMax()-v[1].getMin())*spaceprop);
+            if (!v[0].isCat() && Math.abs(v[0].getMax()-v[0].getMin())<0.0001) ax.setValueRange(v[0].getMin()-0.5,1);
+            if (!v[1].isCat() && Math.abs(v[1].getMax()-v[1].getMin())<0.0001) ay.setValueRange(v[1].getMin()-0.5,1);
+        }
     }
     
     private SortedSet catsIn(int[] ref, int var) {
@@ -709,5 +714,15 @@ public class ScatterCanvas extends BaseCanvas {
             sos.add(v[var].atS(ref[i]));
         }
         return sos;
+    }
+    
+    public void setEquiscale(final boolean equiscale) {
+        this.equiscale = equiscale;
+        MIequiscale.setLabel(equiscale?"Individual scale":"Same scale");
+        
+        setValueRange();
+        updateObjects();
+        setUpdateRoot(0);
+        repaint();
     }
 };
