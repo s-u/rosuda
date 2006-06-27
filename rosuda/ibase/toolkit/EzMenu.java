@@ -54,7 +54,9 @@ public class EzMenu {
                 i++; isNext=true;
                 m.add(mi=new MenuItem("Save as PGS ...")).setActionCommand("exportPGS"); mi.addActionListener(al);
                 m.add(mi=new MenuItem("Save as PostScript ...")).setActionCommand("exportPS"); mi.addActionListener(al);
+                mi.setEnabled(false); // until ps export works
                 m.add(mi=new MenuItem("Save as PDF ...")).setActionCommand("exportPDF"); mi.addActionListener(al);
+                mi.setEnabled(false); // until pdf export works
                 m.add(mi=new MenuItem("Save as SVG ...")).setActionCommand("exportSVG"); mi.addActionListener(al);
                 if (!hasSVG) mi.setEnabled(false);
                 m.add(mi=new MenuItem("Save as PNG ...")).setActionCommand("exportBitmapDlg"); mi.addActionListener(al);
