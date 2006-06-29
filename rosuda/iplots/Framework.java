@@ -348,7 +348,7 @@ public class Framework implements Dependent, ActionListener {
         graphicsEngine = greng;
     }
     
-    private void addNewPlot(BaseCanvas bc) {
+    public void addNewPlot(BaseCanvas bc) {
         if(plots==null) plots=new BaseCanvas[1];
         else { BaseCanvas[] temp=plots;
         	   plots = new BaseCanvas[temp.length+1];
@@ -543,34 +543,6 @@ public class Framework implements Dependent, ActionListener {
         addNewPlot(hc);
         return hc;
     };
-    
-    public CustomCanvas newCustomplot(final int v, String rcall, String rid) {return newCustomplot("Custom Plot",new int[]{v},rcall,rid);}
-    public CustomCanvas newCustomplot(final int v[], String rcall, String rid) {return newCustomplot("Custom Plot",v,rcall,rid);}
-    public CustomCanvas newCustomplot(String name, final int[] v, String rcall, String rid) { return newCustomplot(name,cvs,v,rcall,rid); }
-    public CustomCanvas newCustomplot(String name, final SVarSet vs, int[] v, String rcall, String rid) {
-        if (v.length==0) return null;
-        updateMarker(vs,v[0]);
-        
-        FrameDevice frdev;
-        frdev = newFrame(name+" ("+vs.getName()+")",TFrame.clsCustom);
-		frdev.initPlacement();
-        frdev.setVisible(true);
-        frdev.addWindowListener(Common.getDefaultWindowListener());
-        final SVar[] vl=new SVar[v.length];
-        int i=0;
-        while(i<v.length) { vl[i]=vs.at(v[i]); i++; }
-        final CustomCanvas cc=new CustomCanvas(graphicsEngine,frdev.getFrame(),vl,vs.getMarker(),rcall,rid);
-        frdev.add(cc.getComponent());
-        if (vs.getMarker()!=null) vs.getMarker().addDepend(cc);
-        cc.setSize(new Dimension(400,300));
-        frdev.setSize(new Dimension(cc.getWidth(),cc.getHeight()));
-        frdev.pack();
-        cc.repaint();
-        
-        addNewPlot(cc);
-        return cc;
-
-    }
     
     public ParallelAxesCanvas newBoxplot(final int i) { return newBoxplot(cvs,new int[]{i},-1); }
     public ParallelAxesCanvas newBoxplot(final int i, final int ic) { return newBoxplot(cvs,new int[]{i},ic); }
