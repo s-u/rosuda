@@ -1,4 +1,4 @@
-package org.rosuda.ibase.plots;
+package org.rosuda.icustom;
 
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.ibase.*;
