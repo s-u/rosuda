@@ -27,6 +27,9 @@ public class Framework implements Dependent, ActionListener {
     int tvctr;
     int dtctr;
     
+    /** when this flag is set to <code>true</code> then user-interaction is not desired. Most common use is to set this flag to <code>true</code> when <code>make check</code> is being run. */
+    boolean noInteraction = false;
+
     public int graphicsEngine = PlotComponent.AWTGrDevID; // default
     
     private BaseCanvas[] plots;
@@ -114,6 +117,14 @@ public class Framework implements Dependent, ActionListener {
         return cvs.getName();
     }
     
+    public void setNoInteractionFlag(boolean flag) {
+	noInteraction=flag;
+    }
+
+    public boolean getNoInteractionFlag() {
+	return noInteraction;
+    }
+
     /** create and select a new dataset with the specified name. please note that it is possible to create
      * multiple datasets of the same name but then only the first of these will be retrieved by name, others
      * have to be selected by ID
@@ -183,13 +194,14 @@ public class Framework implements Dependent, ActionListener {
      * the same name within a dataset.
      * @param name variable name
      * @param d array of doubles
-     * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
+     * @return ID of the new variable, -1 if an error occured (variable name already exists or user declined to create a new iSet), -2 if the user cancelled the operation and -3 if the user opted to create a new iSet
      */
     public int newVar(final String name, final double[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
             System.out.println("newVar: double["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
@@ -208,6 +220,7 @@ public class Framework implements Dependent, ActionListener {
         if (Global.DEBUG>0)
             System.out.println("newVar: int["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
@@ -233,6 +246,7 @@ public class Framework implements Dependent, ActionListener {
         if (Global.DEBUG>0)
             System.out.println("newVar: String[]");
         if (cvs.count()>0 && cvs.at(0).size()!=d.length) {
+	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,d.length);
             if (i<0) return i;
         }
@@ -253,6 +267,7 @@ public class Framework implements Dependent, ActionListener {
         if (Global.DEBUG>0)
             System.out.println("newVar: int["+ix.length+"] + levels["+d.length+"]");
         if (cvs.count()>0 && cvs.at(0).size()!=ix.length) {
+	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,ix.length);
             if (i<0) return i;
         }
