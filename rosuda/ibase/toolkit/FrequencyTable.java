@@ -50,9 +50,9 @@ public final class FrequencyTable {
             ceTable[i].cases = new ArrayList((int)(vars[0].size()/Math.pow(vars[0].getNumCats(),vars.length)));
         }
         final int[] chunks = new int[vars.length];
-        chunks[0]=1;
-        for(int i=1; i<vars.length; i++){
-            chunks[i] = chunks[i-1]*vars[i].getNumCats();
+        chunks[chunks.length-1]=1;
+        for(int i=chunks.length-2; i>=0; i--){
+            chunks[i] = chunks[i+1]*vars[i+1].getNumCats();
         }
         TreeMap[] tm = new TreeMap[vars.length];
         for(int i=0; i<tm.length; i++) tm[i]=new TreeMap();
@@ -74,8 +74,12 @@ public final class FrequencyTable {
                     numOfCat[i] = ((Integer)num).intValue();
                 }
             }
+            for(int i=0; i<chunks.length; i++) System.out.println("chunks " + i + " " + chunks[i]);
+            for(int i=0; i<numOfCat.length; i++) System.out.println("nOc " + i + " " + numOfCat[i]);
+            
             int ind=0;
-            for(int j=0; j<vars.length; j++) ind += chunks[chunks.length-j-1]*numOfCat[j];
+            for(int j=0; j<vars.length; j++) ind += chunks[j]*numOfCat[j];
+            System.out.println("ind: " + ind + ", len: " + ceTable.length);
             final CombinationEntry ce = ceTable[ind];
             ce.cases.add(new Integer(cs));
         }
@@ -212,7 +216,7 @@ public final class FrequencyTable {
     }
     
     public int[] getMatchingCases(final int[] com, int maxLevel){
-        
+        //TODO make this faster
         for(int i=0; i<com.length && i<maxLevel; i++){
             if(com[i]==-1){
                 maxLevel=i;
