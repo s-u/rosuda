@@ -6,6 +6,7 @@ import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.PopupMenu;
 import java.awt.event.*;
 import java.io.PrintStream;
 import java.util.*;
@@ -162,6 +163,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     MenuItem MIhalphaup=null;
     MenuItem MIhalphadown=null;
     protected MenuItem MItransHighl=null;
+    
+    protected PopupMenu pop=new PopupMenu();
     
     protected int mouseX;
     protected int mouseY;
@@ -405,6 +408,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     public void mouseClicked(final MouseEvent ev) {
         final int x=ev.getX();
         final int y=ev.getY();
+        
+        final int button=ev.getButton();
+        if(button==MouseEvent.BUTTON3) {
+        	if(pop!=null) pop.show(getFrame(),x,y+40);
+        	return;
+        }
         
         if(baseDragX1==x && baseDragY1==y){
             final Point cl=getFrame().getLocation();
@@ -1071,6 +1080,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         return false;
     };
     
+    
     protected void createMenu(Frame f, boolean rotate, boolean zoom, boolean transparency, boolean activeCB, String[] view){
         String myMenu[] = new String[((view==null)?0:(view.length)) + 37];
         int i=0;
@@ -1129,6 +1139,13 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         myMenu[i++] = "~Window";
         myMenu[i++] = "0";
         EzMenu.getEzMenu(f,this,myMenu);
+        
+        if(view!=null) {
+        	String[] temp=view; String[] view2=new String[temp.length+1];
+        	System.arraycopy(temp,0,view2,0,temp.length);
+        	view2[view2.length-1]="0"; temp=null;
+        	pop=EzMenu.getEzPopup(f,this,view2);
+    	} else pop=null;
         
         MIsonlyselected = EzMenu.getItem(f,M_SONLYSELECTED);
         MIseperatealphas = EzMenu.getItem(f,M_SEPERATEALPHAS);

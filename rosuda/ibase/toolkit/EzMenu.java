@@ -21,6 +21,49 @@ public class EzMenu {
     public static boolean staticInitDone=false;
     public static boolean hasSVG=false;
     
+    public static PopupMenu getEzPopup(final Frame f, final ActionListener al, final String[] popDef) {
+        if (!staticInitDone) {
+            try { Class.forName("PoGraSSSVG"); hasSVG=true; } catch (Throwable ee) {};
+            staticInitDone=true;
+        };
+        final WinTracker wt=WinTracker.current;
+
+        PopupMenu m=new PopupMenu();
+        int i=0;
+        boolean lastSep=false;
+        while (!"0".equals(popDef[i])) {
+            MenuItem mi;
+            boolean isNext=false;
+            if ("0".equals(popDef[i])) break;
+
+            if (isNext) lastSep=false;
+            if ("-".equals(popDef[i])) {
+                if (!lastSep) m.addSeparator();
+                lastSep=true;
+                i++; isNext=true;
+            };
+            if (!isNext) {
+                String rac=popDef[i+1];
+
+                if (popDef[i].charAt(0)=='#') {
+                    m.add(mi=new Menu(popDef[i].substring(1)));
+                } else {
+                    if (popDef[i].charAt(0)=='@' || popDef[i].charAt(0)=='!') {
+                        m.add(mi=new MenuItem(popDef[i].substring(2),new MenuShortcut(popDef[i].charAt(1),(popDef[i].charAt(0)=='!')))).setActionCommand(rac);
+                    } else
+                        m.add(mi=new MenuItem(popDef[i])).setActionCommand(rac);
+                    mi.addActionListener(al);
+                }
+                if (AC_WTMCLOSE.equals(popDef[i+1])) mi.addActionListener(wt);
+                lastSep=false;
+                i+=2;
+            };
+        };
+        
+        f.add(m);
+        return m;
+    }
+    
     public static MenuBar getEzMenu(final Frame f, final ActionListener al, final String[] menuDef) {
         if (!staticInitDone) {
             try { Class.forName("PoGraSSSVG"); hasSVG=true; } catch (Throwable ee) {};
