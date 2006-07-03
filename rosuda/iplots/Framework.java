@@ -362,6 +362,10 @@ public class Framework implements Dependent, ActionListener {
     public void setGraphicsEngine(final int greng) {
         graphicsEngine = greng;
     }
+	
+	public int getGraphicsEngine() {
+		return graphicsEngine;
+	}
     
     public void addNewPlot(BaseCanvas bc) {
         if(plots==null) plots=new BaseCanvas[1];
