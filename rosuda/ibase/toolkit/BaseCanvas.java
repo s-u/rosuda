@@ -131,7 +131,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     /** if set to <code>true</code> then next repaint will force update of geometry, that is it will behave as if the canvas size was changed resulting in updated axes and objects. {@link #paintPoGraSS} resets this flag to <code>false</code> after calling {@link #updateObjects} and setting everything up. */
     protected boolean updateGeometry=false;
     
-    /** if set to <code>true</code> don't paint objects on the margins defined by mLeft etc. */
+    /** if set to <code>true</code> don't paint objects outside the margins defined by mLeft etc. */
     protected boolean objectClipping=false;
     
     /** if set to <code>true</code> alpha will be applied to highlighting, too */
@@ -250,7 +250,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     public Dimension getMinimumSize() { return new Dimension(mLeft+mRight+20,mTop+mBottom+20); };
     
-    /** actual paint method - subclasses shound NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
+    /** actual paint method - subclasses should NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;
         if(autoAdjustMargins) adjustMargin(g);
@@ -692,6 +692,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         selDrag=Common.isSelectTrigger(ev);
         zoomDrag=Common.isZoomTrigger(ev);
         moveDrag=Common.isMoveTrigger(ev);
+		if (Global.DEBUG>0) System.out.println("BaseCanvas:mousePressed selection:"+selDrag+" zoom:"+zoomDrag+" move:"+moveDrag);
         if (selDrag || (allowDragZoom && zoomDrag) || (allowDragMove && moveDrag))
             baseDrag=true;
     }
