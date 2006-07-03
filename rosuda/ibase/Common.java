@@ -165,14 +165,33 @@ public class Common
         return Platform.isMac;
     }
 
+	/*====== Platforms and modifiers ========*\
+		
+        *** Mac *** (tested on jdk 1.5, osx 10.4)
+		
+		Left button   = Mouse1
+		Middle button = Mouse2 + Alt
+		Right button  = Mouse3 + Cmd
+		
+		** Warning, special attention must be paid to synthesized events:
+		left button + Cmd = Mouse1 + Mouse3 + Cmd
+		left button + Alt = Mouse1 + Mouse2 + Alt
+		
+	\*======================================*/
+		
     /** given mouse event this method determines whether pop-up sequence was triggered */ 
     public static boolean isPopupTrigger(MouseEvent ev) {
         return Platform.isMac?(ev.isControlDown() && !ev.isShiftDown() && !ev.isAltDown() && !ev.isMetaDown()):ev.isPopupTrigger();
     }
 
-    /** given mouse event this method determines whether zoom sequence was triggered (mouse button 3 or META on a Mac) */ 
+    /** given mouse event this method determines whether zoom sequence was triggered (middle mouse button or META on a Mac) */ 
     public static boolean isZoomTrigger(MouseEvent ev) {
-        return ev.getButton()==MouseEvent.BUTTON3;
+		// warning: on a Mac buttons and modifiers are synthesized, see table above! 
+		System.out.println("isMac="+Platform.isMac+", "+ev);
+        return Platform.isMac?(
+		 (ev.getButton()==MouseEvent.BUTTON1 && ev.isMetaDown())   // Cmd+Button1 (any other Cmd combination is not valid!)
+		 || (ev.getButton()==MouseEvent.BUTTON2)                   // Button2
+		):(ev.getButton()==MouseEvent.BUTTON2 || ev.isMetaDown()); // Button2 or Cmd
     }
     
     /** returns true if the supplied event corresponds to popup query trigger. */
@@ -183,7 +202,10 @@ public class Common
 
     /** returns true if the supplied event corresponds to object-move trigger */
     public static boolean isMoveTrigger(MouseEvent ev) {
-        return ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown() && ev.getButton()==MouseEvent.BUTTON1;
+        return Platform.isMac?
+		(ev.isAltDown() && ev.getButton()==MouseEvent.BUTTON1) || // mouse1+alt
+		(ev.getButton()==MouseEvent.BUTTON3)                      // mouse2
+		:ev.isAltDown() && !ev.isControlDown() && !ev.isShiftDown() && ev.getButton()==MouseEvent.BUTTON1;
     }
     
     public static boolean isExtQuery(MouseEvent ev) {
@@ -194,13 +216,22 @@ public class Common
         the only optional ones are Shift (XOR) and Shift+Ctrl (OR) (see {@link #getSelectMode})
         @return <code>true</code> if supplied event triggers selection trigger */
     public static boolean isSelectTrigger(MouseEvent ev) {
-        return Platform.isMac?(!ev.isMetaDown() && ((!ev.isControlDown() && !ev.isAltDown()) || (ev.isShiftDown() && ev.isAltDown() && ev.isControlDown()))):(!ev.isAltDown() && !ev.isMetaDown() && (!ev.isControlDown() || ev.isShiftDown()) && ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)!=MouseEvent.BUTTON3_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)!=MouseEvent.BUTTON2_MASK) && ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK));
+        return Platform.isMac?
+		((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK) && // Mouse1 or Mouse1+Shift+* is ok
+		 (ev.isShiftDown() || (!ev.isControlDown() && !ev.isAltDown() && !ev.isMetaDown())):
+		(!ev.isAltDown() && !ev.isMetaDown() &&          // Alt/Meta not on
+		 (!ev.isControlDown() || ev.isShiftDown()) &&    // nothing, shift or shift+ctrl
+		 ((ev.getModifiers()&MouseEvent.BUTTON3_MASK)!=MouseEvent.BUTTON3_MASK) &&
+		 ((ev.getModifiers()&MouseEvent.BUTTON2_MASK)!=MouseEvent.BUTTON2_MASK) &&
+		 ((ev.getModifiers()&MouseEvent.BUTTON1_MASK)==MouseEvent.BUTTON1_MASK)); // only button 1
     }
 
     /** get selection mode according to the modifiers. Make sure {@link #isSelectTrigger} returns <code>true</code> otherwise the result of this function is invalid.
         @return 0=replace, 1=XOR, 2=union */
     public static int getSelectMode(MouseEvent ev) {
-        return ev.isShiftDown()?(ev.isControlDown()?2:1):0;
+		// we allow both, Alt and Ctrl - but it's really platform-specific (Mac=Alt, others=Ctrl)
+		// there is still a problem on non-Mac platforms as Ctrl appears to be the query trigger ...
+        return ev.isShiftDown()?(ev.isControlDown()||ev.isAltDown()?2:1):0;
     }
 
     public static void printEvent(MouseEvent ev) {
