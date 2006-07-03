@@ -36,13 +36,13 @@ public class SwingQueryPopup implements MouseListener, QueryPopup {
     
     
 	public void show() {
-		if (Global.DEBUG>0) System.out.println("QueryPopup.show");
-	    if (Global.DEBUG>0) System.out.println("rendering win visible");
+		if (Global.DEBUG>0) System.out.println("SwingQueryPopup.show");
+	    //if (Global.DEBUG>0) System.out.println("rendering win visible");
 	    ToolTipManager.sharedInstance().setEnabled(true);
 	}
 	public void hide() {
-		if (Global.DEBUG>0) System.out.println("QueryPopup.hide");
-	    if (Global.DEBUG>0) System.out.println("hiding win");
+		if (Global.DEBUG>0) System.out.println("SwingQueryPopup.hide");
+	    //if (Global.DEBUG>0) System.out.println("hiding win");
 	    ToolTipManager.sharedInstance().setEnabled(false);
 	}
 	public void setContent(final String s) {

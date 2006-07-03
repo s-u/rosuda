@@ -216,15 +216,15 @@ public class AwtQueryPopup extends AWTGraphicsDevice implements MouseListener, Q
     public void show() {
         if (Global.DEBUG>0) System.out.println("QueryPopup.show");
         if (!win.isVisible()) {
-            if (Global.DEBUG>0) System.out.println("rendering win visible");
+            if (Global.DEBUG>0) System.out.println("AwtQueryPopup.show: rendering win visible");
             (win).pack(); win.setVisible(true);
         }
     }
     
     public void hide() {
-        if (Global.DEBUG>0) System.out.println("QueryPopup.hide");
+        //if (Global.DEBUG>0) System.out.println("QueryPopup.hide");
         if (win.isVisible()) {
-            if (Global.DEBUG>0) System.out.println("hiding win");
+            if (Global.DEBUG>0) System.out.println("AwtQueryPopup.show: hiding win");
             (win).setVisible(false);
             // old: ((Window)win).dispose();
         }
