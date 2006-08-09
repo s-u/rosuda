@@ -2,11 +2,11 @@ package org.rosuda.JGR.rhelp;
 
 /*============================================================================
 
-  Project: Simple JAVA Search Engine for Keyword Search
+ Project: Simple JAVA Search Engine for Keyword Search
 
-  JAVA Source file for the class IndexEntry
+ JAVA Source file for the class IndexEntry
 
-  COPYRIGHT (C), 1998-2000, Thomas Baier, R Core Development Team
+ COPYRIGHT (C), 1998-2000, Thomas Baier, R Core Development Team
 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,88 +22,71 @@ package org.rosuda.JGR.rhelp;
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-============================================================================*/
-
-
-import java.lang.Object;
-import java.lang.String;
+ ============================================================================*/
 
 /**
  * IndexEntry.java from R-project
  * 
- * modified version for being able to use it with JGR 
+ * modified version for being able to use it with JGR
  */
 
-public class IndexEntry extends Object
-{
-  public IndexEntry (String entry, String keywords, String aliases,
-		     String desc, String url)
-  {
-    iEntry = entry;
-    iKey = " " + keywords + " ";
-    iAliases = " " + entry + " " + aliases + " ";
-    iDescription = desc;
-    iURL = url;
+public class IndexEntry extends Object {
+	public IndexEntry(String entry, String keywords, String aliases,
+			String desc, String url) {
+		iEntry = entry;
+		iKey = " " + keywords + " ";
+		iAliases = " " + entry + " " + aliases + " ";
+		iDescription = desc;
+		iURL = url;
 
-    // trace here
-    Tracer.write ("Created IndexEntry. Entry = \"" +
-		  entry + "\", Keywords = \"" + keywords + "\"\n");
-    return;
-  }
+		// trace here
+		Tracer.write("Created IndexEntry. Entry = \"" + entry
+				+ "\", Keywords = \"" + keywords + "\"\n");
+		return;
+	}
 
+	public boolean matches(String aString, boolean searchDesc,
+			boolean searchKeywords, boolean searchAliases) {
+		if (searchAliases
+				&& (iAliases.toUpperCase().indexOf(aString.toUpperCase()) > -1))
+			return true;
 
-  public boolean matches (String aString, boolean searchDesc,
-			  boolean searchKeywords, boolean searchAliases)
-  {
-    if (searchAliases &&
-	(iAliases.toUpperCase ().indexOf (aString.toUpperCase ()) > -1))
-      {
-	return true;
-      }
+		if (searchDesc
+				&& (iDescription.toUpperCase().indexOf(aString.toUpperCase()) > -1))
+			return true;
 
-    if (searchDesc &&
-	(iDescription.toUpperCase ().indexOf (aString.toUpperCase ()) > -1))
-      {
-	return true;
-      }
+		if (searchKeywords
+				&& (iKey.toUpperCase().indexOf(aString.toUpperCase()) > -1))
+			return true;
 
-    if (searchKeywords &&
-	(iKey.toUpperCase ().indexOf (aString.toUpperCase ()) > -1))
-      {
-	return true;
-      }
+		return false;
+	}
 
-    return false;
-  }
+	public String getDescription() {
+		return iDescription;
+	}
 
+	public String getEntry() {
+		return iEntry;
+	}
 
-  public String getDescription ()
-  {
-    return iDescription;
-  }
+	public String getAliases() {
+		return iAliases;
+	}
 
-  public String getEntry ()
-  {
-    return iEntry;
-  }
+	public String getURL() {
+		return iURL.substring(8).replaceFirst("library", "");
+	}
 
-  public String getAliases ()
-  {
-    return iAliases;
-  }
+	private String iEntry;
 
-  public String getURL ()
-  {
-    return iURL.substring(8).replaceFirst("library","");
-  }
+	private String iKey;
 
+	private String iAliases;
 
-  private String iEntry;
-  private String iKey;
-  private String iAliases;
-  private String iDescription;
-  private String iURL;
+	private String iDescription;
 
+	private String iURL;
 
 }
 

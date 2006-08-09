@@ -4,27 +4,27 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import java.awt.event.*;
-
-import org.rosuda.JGR.*;
+import org.rosuda.JGR.JGR;
 
 /**
- *  JGRListener - an actionlistener listening menuitems which the user added to the console on-the-fly.
+ * JGRListener - an actionlistener listening menuitems which the user added to
+ * the console on-the-fly.
  * 
- *	@author Markus Helbig
- *  
- * 	RoSuDa 2003 - 2004 
+ * @author Markus Helbig
+ * 
+ * RoSuDa 2003 - 2004
  */
 
 public class JGRListener implements ActionListener {
 
-    
-    /**
-     * actionPerformed: handle action event: on-the-fly added menuitems.
-     */
-    public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand();
-        JGR.MAINRCONSOLE.execute(cmd,true);
-    }
+	/**
+	 * actionPerformed: handle action event: on-the-fly added menuitems.
+	 */
+	public void actionPerformed(ActionEvent e) {
+		String cmd = e.getActionCommand();
+		JGR.MAINRCONSOLE.execute(cmd, true);
+	}
 }

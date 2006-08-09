@@ -4,17 +4,27 @@ package org.rosuda.JGR;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
-import org.rosuda.ibase.*;
+import org.rosuda.JGR.toolkit.ConsoleSync;
+import org.rosuda.JGR.toolkit.JGRListener;
+import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.toolkit.iMenu;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.Rengine;
+import org.rosuda.ibase.SVar;
 import org.rosuda.util.Global;
-
-import org.rosuda.JRI.*;
-import org.rosuda.JGR.toolkit.*;
-import org.rosuda.JGR.util.*;
 
 /**
  * JGR, Java Gui for R JGR is just a new Gui for R <a
@@ -23,9 +33,9 @@ import org.rosuda.JGR.util.*;
  * Thus it is (should) be platform-indepent. Currently we have several problems
  * on *nix machines. <br>
  * <br>
- * <a href="http://www.rosuda.org/JGR">JGR </a> uses JRI and rJava for talking with R, and
- * the <a href="http://www.rosuda.org/R/JavaGD">JavaGD- Device </a> all written
- * by Simon Urbanek. <br>
+ * <a href="http://www.rosuda.org/JGR">JGR </a> uses JRI and rJava for talking
+ * with R, and the <a href="http://www.rosuda.org/R/JavaGD">JavaGD- Device </a>
+ * all written by Simon Urbanek. <br>
  * <br>
  * <a href="http://www.rosuda.org">RoSuDa </a> 2003 - 2005
  * 
@@ -34,13 +44,8 @@ import org.rosuda.JGR.util.*;
 
 public class JGR {
 
-	/* Copyright information and other stuff 
+	//JGR_VERSION 1.4
 	
-	//Version for build scripts
-	JGR_VERSION 1.4
-	
-	*/
-
 	/** Version number of JGR */
 	public static final String VERSION = "1.4";
 
@@ -121,12 +126,14 @@ public class JGR {
 
 	/** Splashscreen */
 	public static org.rosuda.JGR.toolkit.SplashScreen splash;
-	
-	/** arguments for Rengine*/
-	private static String[] rargs = {"--save"};
 
-	/** Set to <code>true</code> when JGR is running as the main program
-	    and <code>false</code> if the classes are loaded, but not run via main. */
+	/** arguments for Rengine */
+	private static String[] rargs = { "--save" };
+
+	/**
+	 * Set to <code>true</code> when JGR is running as the main program and
+	 * <code>false</code> if the classes are loaded, but not run via main.
+	 */
 	private static boolean JGRmain = false;
 
 	/**
@@ -228,30 +235,35 @@ public class JGR {
 		} else if (exit == 1) {
 			JGRPrefs.writeCurrentPackagesWhenExit();
 			return "n\n";
-		}
-		else
+		} else
 			return "c\n";
 	}
 
 	/**
 	 * Add new Menu at runtime to Console.
 	 * 
-	 * @param name MenuName
+	 * @param name
+	 *            MenuName
 	 */
 	public static void addMenu(String name) {
-		if (MAINRCONSOLE == null) return;
+		if (MAINRCONSOLE == null)
+			return;
 		iMenu.addMenu(MAINRCONSOLE, name);
 	}
 
 	/**
 	 * Add MenuItem at runtime to ConsoleMenu.
 	 * 
-	 * @param menu MenuName
-	 * @param name ItemName
-	 * @param cmd Command
+	 * @param menu
+	 *            MenuName
+	 * @param name
+	 *            ItemName
+	 * @param cmd
+	 *            Command
 	 */
 	public static void addMenuItem(String menu, String name, String cmd) {
-		if (MAINRCONSOLE == null) return;
+		if (MAINRCONSOLE == null)
+			return;
 		if (jgrlistener == null)
 			jgrlistener = new JGRListener();
 		iMenu.addMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
@@ -260,17 +272,20 @@ public class JGR {
 	/**
 	 * Add MenuSeparator at runtime.
 	 * 
-	 * @param menu MenuName
+	 * @param menu
+	 *            MenuName
 	 */
 	public static void addMenuSeparator(String menu) {
-		if (MAINRCONSOLE == null) return;
+		if (MAINRCONSOLE == null)
+			return;
 		iMenu.addMenuSeparator(MAINRCONSOLE, menu);
 	}
 
 	/**
 	 * Set R_HOME (in java app).
 	 * 
-	 * @param rhome RHOME path
+	 * @param rhome
+	 *            RHOME path
 	 */
 	public static void setRHome(String rhome) {
 		RHOME = rhome;
@@ -279,7 +294,8 @@ public class JGR {
 	/**
 	 * Set R_LIBS (in java app).
 	 * 
-	 * @param lib Library path
+	 * @param lib
+	 *            Library path
 	 */
 	public static void setRLibs(String lib) {
 		setRLibs(new String[] { lib });
@@ -288,21 +304,22 @@ public class JGR {
 	/**
 	 * Set R_LIBS (in java app).
 	 * 
-	 * @param libs Library pathes
+	 * @param libs
+	 *            Library pathes
 	 */
 	public static void setRLibs(String[] libs) {
 		RLIBS = libs;
-		for (int i = 0; i < RLIBS.length; i++) {
+		for (int i = 0; i < RLIBS.length; i++)
 			if (RLIBS[i].startsWith("~"))
 				RLIBS[i] = RLIBS[i].replaceFirst("~", System
 						.getProperty("user.home"));
-		}
 	}
 
 	/**
 	 * Set keywords for highlighting.
 	 * 
-	 * @param word This word will be highlighted
+	 * @param word
+	 *            This word will be highlighted
 	 */
 	public static void setKeyWords(String word) {
 		setKeyWords(new String[] { word });
@@ -311,14 +328,14 @@ public class JGR {
 	/**
 	 * Set keywords for highlighting.
 	 * 
-	 * @param words These words will be highlighted
+	 * @param words
+	 *            These words will be highlighted
 	 */
 	public static void setKeyWords(String[] words) {
 		KEYWORDS.clear();
 		Object dummy = new Object();
-		for (int i = 0; i < words.length; i++) {
+		for (int i = 0; i < words.length; i++)
 			KEYWORDS.put(words[i], dummy);
-		}
 	}
 
 	/**
@@ -385,7 +402,7 @@ public class JGR {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
 			Enumeration e = JGR.RHISTORY.elements();
 			while (e.hasMoreElements()) {
-				writer.write(e.nextElement().toString()+"#\n");
+				writer.write(e.nextElement().toString() + "#\n");
 				writer.flush();
 			}
 			writer.close();
@@ -394,30 +411,35 @@ public class JGR {
 			new ErrorMsg(e);
 		}
 	}
-	
+
 	/** return the value of the {@link #JGRmain} flag */
 	public static boolean isJGRmain() {
 		return JGRmain;
 	}
-	
+
 	private void checkForMissingPkg() {
 		try {
 			String previous = JGRPrefs.previousPackages;
-			if (previous == null)  return;
+			if (previous == null)
+				return;
 			String current = RController.getCurrentPackages();
-			if (current == null) return;
-			StringTokenizer st = new StringTokenizer(current,",");
-			while (st.hasMoreTokens()) {
-				previous = previous.replaceFirst(st.nextToken()+",{0,1}","");
-			}
-			st = new StringTokenizer(previous,",");
+			if (current == null)
+				return;
+			StringTokenizer st = new StringTokenizer(current, ",");
+			while (st.hasMoreTokens())
+				previous = previous.replaceFirst(st.nextToken() + ",{0,1}", "");
+			st = new StringTokenizer(previous, ",");
 			previous = "";
 			while (st.hasMoreTokens()) {
 				String prev = st.nextToken().trim();
-				if (prev != null && prev != "null" && st.hasMoreTokens()) previous += st.nextToken()+(st.hasMoreTokens()?",":"");
+				if (prev != null && prev != "null" && st.hasMoreTokens())
+					previous += st.nextToken()
+							+ (st.hasMoreTokens() ? "," : "");
 			}
-			if (previous.trim().length() > 0) new JGRPackageManager(previous);
-		} catch (Exception e) {}
+			if (previous.trim().length() > 0)
+				new JGRPackageManager(previous);
+		} catch (Exception e) {
+		}
 	}
 
 	/**
@@ -437,8 +459,8 @@ public class JGR {
 					org.rosuda.util.Global.DEBUG = 1;
 					org.rosuda.JRI.Rengine.DEBUG = 1;
 					System.out.println("JGR version " + VERSION);
-				}
-				else args2.add(args[i]);
+				} else
+					args2.add(args[i]);
 				if (args[i].equals("--version")) {
 					System.out.println("JGR version " + VERSION);
 					System.exit(0);
@@ -446,22 +468,25 @@ public class JGR {
 				if (args[i].equals("--help") || args[i].equals("-h")) {
 					System.out.println("JGR version " + VERSION);
 					System.out.println("\nOptions:");
-					System.out.println("\n\t-h, --help\t Print short helpmessage and exit");
+					System.out
+							.println("\n\t-h, --help\t Print short helpmessage and exit");
 					System.out.println("\t--version\t Print version end exit");
-					System.out.println("\t--debug\t Print more information about JGR's process");
-					System.out.println("\nMost other R options are supported too");
+					System.out
+							.println("\t--debug\t Print more information about JGR's process");
+					System.out
+							.println("\nMost other R options are supported too");
 					System.exit(0);
 				}
 			}
 			Object[] arguments = args2.toArray();
 			if (arguments.length > 0) {
-				rargs = new String[arguments.length+1];
-				for (int i = 0; i < rargs.length-1; i++)
+				rargs = new String[arguments.length + 1];
+				for (int i = 0; i < rargs.length - 1; i++)
 					rargs[i] = arguments[i].toString();
-				rargs[rargs.length-1] = "--save";
+				rargs[rargs.length - 1] = "--save";
 			}
 		}
-		
+
 		if (Global.DEBUG > 0)
 			for (int i = 0; i < rargs.length; i++)
 				System.out.println(rargs[i]);
@@ -474,16 +499,17 @@ public class JGR {
 	}
 
 	/**
-	 * Refresher, which is looking for new keywords and objects in workspace and refreshes highlight and autocompletion information.
+	 * Refresher, which is looking for new keywords and objects in workspace and
+	 * refreshes highlight and autocompletion information.
 	 */
 	class Refresher implements Runnable {
-		
+
 		public Refresher() {
 			checkForMissingPkg();
 		}
-		
+
 		public void run() {
-			while (true) {
+			while (true)
 				try {
 					Thread.sleep(60000);
 					REXP x = R.idleEval("try(.refreshKeyWords(),silent=TRUE)");
@@ -497,7 +523,6 @@ public class JGR {
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}
-			}
 		}
 	}
 }

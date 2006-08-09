@@ -4,13 +4,20 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 
-import org.rosuda.ibase.*;
-/** 
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+import org.rosuda.ibase.Common;
+
+/**
  * Simple text pager that displays a specified file.
  * 
  * @author Simon Urbanek and Markus Helbig
@@ -19,17 +26,18 @@ import org.rosuda.ibase.*;
  * 
  */
 public class TextPager extends iFrame implements ActionListener {
-    JTextArea t = new JTextArea();;
-    
-    TextFinder textFinder = new TextFinder(t);
-    
-    public TextPager(String file, String header, String title, boolean deleteFile) {
+	JTextArea t = new JTextArea();;
+
+	TextFinder textFinder = new TextFinder(t);
+
+	public TextPager(String file, String header, String title,
+			boolean deleteFile) {
 		super(title, clsHelp);
-		
-		String myMenu[] = {
-	            "+", "Edit", "@CCopy", "copy","-", "@FFind", "search","@GFind next","searchnext","~Window","0"};
-	    iMenu.getMenu(this, this, myMenu);
-	    
+
+		String myMenu[] = { "+", "Edit", "@CCopy", "copy", "-", "@FFind",
+				"search", "@GFind next", "searchnext", "~Window", "0" };
+		iMenu.getMenu(this, this, myMenu);
+
 		getContentPane().add(new JScrollPane(t));
 		t.setEditable(false);
 		t.setFont(new Font("Monospaced", Font.PLAIN, 10));
@@ -53,26 +61,35 @@ public class TextPager extends iFrame implements ActionListener {
 		addWindowListener(Common.getDefaultWindowListener());
 		setVisible(true);
 	}
-    
-    /**
-     * actionPeformed: handle action events: menu;
-     */
+
+	/**
+	 * actionPeformed: handle action events: menu;
+	 */
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
-		if (cmd=="copy") t.copy();
-		else if (cmd == "search") textFinder.showFind(false);
-        else if (cmd == "searchnext") textFinder.showFind(true);
-		
-	}    
-    /**
+		if (cmd == "copy")
+			t.copy();
+		else if (cmd == "search")
+			textFinder.showFind(false);
+		else if (cmd == "searchnext")
+			textFinder.showFind(true);
+
+	}
+
+	/**
 	 * Launch textpager.
 	 * 
-	 * @param file file to show
-	 * @param header header
-	 * @param title title for pager
-	 * @param deleteFile delete file after displaying it
+	 * @param file
+	 *            file to show
+	 * @param header
+	 *            header
+	 * @param title
+	 *            title for pager
+	 * @param deleteFile
+	 *            delete file after displaying it
 	 */
-    public static void launchPager(String file, String header, String title, boolean deleteFile) {
-        new TextPager(file, header, title, deleteFile);
-    }
+	public static void launchPager(String file, String header, String title,
+			boolean deleteFile) {
+		new TextPager(file, header, title, deleteFile);
+	}
 }

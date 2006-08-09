@@ -1,11 +1,12 @@
 package org.rosuda.JGR.rhelp;
+
 /*============================================================================
 
-  Project:
+ Project:
 
-  JAVA Source file for the class Tracer
+ JAVA Source file for the class Tracer
 
-  COPYRIGHT (C), 1998-2000, Thomas Baier, R Core development Team
+ COPYRIGHT (C), 1998-2000, Thomas Baier, R Core development Team
 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,84 +22,68 @@ package org.rosuda.JGR.rhelp;
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-============================================================================*/
+ ============================================================================*/
 
-
-import java.awt.*;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.TextArea;
 
 /**
- *	Tracer.java from R-project 
+ * Tracer.java from R-project
  */
 
-public class Tracer extends Frame
-{
-  public static void write (String string)
-  {
-    //create a trace window
-    /*
-    if (cTracer == null) {
-      cTracer = new Tracer ();
-    }
+public class Tracer extends Frame {
+	public static void write(String string) {
+		// create a trace window
+		/*
+		 * if (cTracer == null) { cTracer = new Tracer (); }
+		 * 
+		 * cTracer._write (string);
+		 */
+		return;
+	}
 
-    cTracer._write (string);
-    */
-    return;
-  }
+	public static void start() {
+		/*
+		 * if (cTracer != null) { cTracer.show (); }
+		 */
+		return;
+	}
 
-  public static void start ()
-  {
-    /*
-    if (cTracer != null) {
-      cTracer.show ();
-    }
-    */
-    return;
-  }
+	public static void stop() {
+		// if (cTracer != null) {
+		// cTracer.setVisible (false);
+		// }
 
-  public static void stop ()
-  {
-    //    if (cTracer != null) {
-    //  cTracer.setVisible (false);
-    //}
+		return;
+	}
 
-    return;
-  }
+	private Tracer() {
+		super("Java Applet Tracer");
 
-  private Tracer ()
-  {
-    super ("Java Applet Tracer");
+		// construct a layout manager
+		GridBagLayout gridbag = new GridBagLayout();
+		GridBagConstraints constraints = new GridBagConstraints();
+		setLayout(gridbag);
+		constraints.fill = GridBagConstraints.BOTH;
+		constraints.weighty = 1.0;
+		constraints.weightx = 1.0;
+		constraints.gridwidth = GridBagConstraints.REMAINDER;
+		constraints.gridheight = GridBagConstraints.REMAINDER;
 
-    // construct a layout manager
-    GridBagLayout gridbag = new GridBagLayout ();
-    GridBagConstraints constraints = new GridBagConstraints ();
-    setLayout (gridbag);
-    constraints.fill = GridBagConstraints.BOTH;
-    constraints.weighty = 1.0;
-    constraints.weightx = 1.0;
-    constraints.gridwidth = GridBagConstraints.REMAINDER;
-    constraints.gridheight = GridBagConstraints.REMAINDER;
+		iOutput = new TextArea();
 
-    iOutput = new TextArea ();
+		gridbag.setConstraints(iOutput, constraints);
+		add(iOutput);
 
-    gridbag.setConstraints (iOutput,constraints);
-    add (iOutput);
+		show();
+		pack();
 
-    show ();
-    pack ();
+		return;
+	}
 
-    return;
-  }
-
-
-  private void _write (String string)
-  {
-    iOutput.append (string);
-
-    return;
-  }
-
-  private TextArea iOutput;
-  private static Tracer cTracer = null;
+	private TextArea iOutput;
 }
 
 // Local Variables:

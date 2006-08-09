@@ -1,11 +1,12 @@
 package org.rosuda.JGR.rhelp;
+
 /*============================================================================
 
-  Project: Simple JAVA Search Engine for Keyword Search
+ Project: Simple JAVA Search Engine for Keyword Search
 
-  JAVA Source file for the class IndexTable
+ JAVA Source file for the class IndexTable
 
-  COPYRIGHT (C), 1998-2000, Thomas Baier, R Core Development Team
+ COPYRIGHT (C), 1998-2000, Thomas Baier, R Core Development Team
 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,42 +22,34 @@ package org.rosuda.JGR.rhelp;
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-============================================================================*/
+ ============================================================================*/
 
-
-import java.util.Vector;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * IndexTable.java from R-project
  */
 
+public class IndexTable extends Vector {
 
-public class IndexTable extends Vector
-{
+	public Vector search(String key, boolean searchDesc,
+			boolean searchKeywords, boolean searchAliases) {
+		Vector returnValue = new Vector();
+		Enumeration cursor = elements();
 
-  public Vector search (String key, boolean searchDesc,
-			boolean searchKeywords, boolean searchAliases)
-  {
-    Vector returnValue = new Vector ();
-    Enumeration cursor = elements ();
+		while (cursor.hasMoreElements()) {
+			IndexEntry entry = (IndexEntry) cursor.nextElement();
 
-    while (cursor.hasMoreElements ()) {
-      IndexEntry entry = (IndexEntry) cursor.nextElement ();
+			if (entry.matches(key, searchDesc, searchKeywords, searchAliases))
+				returnValue.addElement(entry);
+		}
+		if (!returnValue.isEmpty())
+			return returnValue;
 
-      if (entry.matches (key, searchDesc,
-			 searchKeywords, searchAliases)){
-	returnValue.addElement (entry);
-      }
-    }
-    if (!returnValue.isEmpty ()) {
-      return returnValue;
-    }
-
-    return null;
-  }
+		return null;
+	}
 }
-
 
 // Local Variables:
 // mode: Java

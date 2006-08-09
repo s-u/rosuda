@@ -19,19 +19,19 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 
 public class LineNumbers extends JComponent implements AdjustmentListener {
-	private Dimension d = new Dimension();
+	private final Dimension d = new Dimension();
 
 	private boolean showing = true;
 
-	private int BAR = 4;
+	private final int BAR = 4;
 
 	private JTextComponent src;
 
 	private JScrollPane scroller;
 
-	private Dimension sizeCache = new Dimension();
+	private final Dimension sizeCache = new Dimension();
 
-	private Point locCache = new Point();
+	private final Point locCache = new Point();
 
 	public LineNumbers(JTextComponent src, JScrollPane scroller) {
 		super();
@@ -100,24 +100,11 @@ public class LineNumbers extends JComponent implements AdjustmentListener {
 		return d;
 	}
 
-	private int getLineCount() {
-		Element map = src.getDocument().getDefaultRootElement();
-		return map.getElementCount();
-	}
-
 	private int getMyWidth() {
 		FontMetrics fm = src.getFontMetrics(src.getFont());
 		int cnt = src.getHeight() / fm.getHeight();
 		return showing ? fm.stringWidth(getVisibleEndLine() + "") + 4 + BAR
 				: BAR;
-	}
-
-	private int getVisibleStartLine() {
-		scroller.getViewport().getView().getLocation(locCache);
-		int ascent = getFontMetrics(getFont()).getAscent();
-		int h = getFontMetrics(getFont()).getHeight();
-		int y = (int) (locCache.getY() / h) * h;
-		return (int) Math.floor(y / h) + 1;
 	}
 
 	private int getVisibleEndLine() {

@@ -4,53 +4,61 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
-
-import org.rosuda.JGR.*;
 import java.util.Vector;
 
+import org.rosuda.JGR.JGR;
+
 /**
- *  ConsoleSync - notifys when commands are in the queue and send them.
+ * ConsoleSync - notifys when commands are in the queue and send them.
  * 
- *	@author Markus Helbig/ Simon Urbanek
- *  
- * 	RoSuDa 2003 - 2005
+ * @author Markus Helbig/ Simon Urbanek
+ * 
+ * RoSuDa 2003 - 2005
  */
 
 public class ConsoleSync {
-    Vector msgs;
-    
-    public ConsoleSync() {
-        msgs=new Vector();
-    }
+	Vector msgs;
 
-    private boolean notificationArrived=false;
+	public ConsoleSync() {
+		msgs = new Vector();
+	}
 
-    /** this internal method waits until {@link #triggerNotification} is called by another thread. It is implemented by using {@link wait()} and checking {@link notificationArrived}. */
-    public synchronized String waitForNotification() {
-        while (!notificationArrived) {
-            try {
-                //wait();
-                wait(100);
-				if (JGR.R!=null)
+	private boolean notificationArrived = false;
+
+	/**
+	 * this internal method waits until {@link #triggerNotification} is called
+	 * by another thread. It is implemented by using {@link wait()} and checking
+	 * {@link notificationArrived}.
+	 */
+	public synchronized String waitForNotification() {
+		while (!notificationArrived)
+			try {
+				// wait();
+				wait(100);
+				if (JGR.R != null)
 					JGR.R.rniIdle();
-            } catch (InterruptedException e) {
-            }
-        }
-        String s=null;
-        if (msgs.size()>0) {
-            s=(String)msgs.elementAt(0);
-            msgs.removeElementAt(0);
-        }
-        if (msgs.size()==0)
-            notificationArrived=false;
-        return s;
-    }
+			} catch (InterruptedException e) {
+			}
+		String s = null;
+		if (msgs.size() > 0) {
+			s = (String) msgs.elementAt(0);
+			msgs.removeElementAt(0);
+		}
+		if (msgs.size() == 0)
+			notificationArrived = false;
+		return s;
+	}
 
-    /** this methods awakens {@link #waitForNotification}. It is implemented by setting {@link #notificationArrived} to <code>true</code>, setting {@link #lastNotificationMessage} to the passed message and finally calling {@link notifyAll()}. */
-    public synchronized void triggerNotification(String msg) {
-        //System.out.println("lastmsg "+lastNotificationMessage);
-        notificationArrived=true;
-        msgs.addElement(msg);
-        notifyAll();
-    }
+	/**
+	 * this methods awakens {@link #waitForNotification}. It is implemented by
+	 * setting {@link #notificationArrived} to <code>true</code>, setting
+	 * {@link #lastNotificationMessage} to the passed message and finally
+	 * calling {@link notifyAll()}.
+	 */
+	public synchronized void triggerNotification(String msg) {
+		// System.out.println("lastmsg "+lastNotificationMessage);
+		notificationArrived = true;
+		msgs.addElement(msg);
+		notifyAll();
+	}
 }

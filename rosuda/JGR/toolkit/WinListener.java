@@ -4,8 +4,7 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
-
-import java.awt.event.*;
+import java.awt.event.WindowEvent;
 
 /**
  * 
@@ -14,13 +13,14 @@ import java.awt.event.*;
  * @author Markus Helbig
  * 
  * RoSuDa 2003 - 2005
- *
+ * 
  */
 
 public class WinListener extends org.rosuda.ibase.toolkit.WinListener {
-    public WinListener() {}
+	public WinListener() {
+	}
 
-    public void windowClosing(WindowEvent e) {
-    }
+	public void windowClosing(WindowEvent e) {
+	}
 
 }

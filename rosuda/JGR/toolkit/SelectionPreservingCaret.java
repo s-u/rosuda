@@ -4,9 +4,10 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
+import java.awt.event.FocusEvent;
+
 import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
-import java.awt.event.FocusEvent;
 
 /**
  * Caret implementation that doesn't blow away the selection when we lose focus.
@@ -32,9 +33,8 @@ public class SelectionPreservingCaret extends DefaultCaret {
 	 */
 	public void focusGained(FocusEvent evt) {
 		super.focusGained(evt);
-		if ((last != null) && (last != this)) {
+		if ((last != null) && (last != this))
 			last.hide();
-		}
 	}
 
 	/**
