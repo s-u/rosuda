@@ -19,7 +19,7 @@ POGRASS_SRC_XTREME:=$(POGRASS_SRC) rosuda/pograss/PoGraSSjogl.java
 IBASE_SRC_RAW:= $(IGLOBAL_SRC) $(wildcard rosuda/ibase/*.java) $(wildcard rosuda/ibase/plots/*.java) $(wildcard rosuda/ibase/toolkit/*.java) $(POGRASS_SRC) rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java
 IBASE_SRC_XTREME:=rosuda/ibase/toolkit/PGSJoglCanvas.java
 IBASE_SRC:=$(filter-out $(IBASE_SRC_XTREME),$(IBASE_SRC_RAW))
-IBASE_SRC_JGR:=rosuda/ibase/toolkit/FrameDevice.java rosuda/ibase/toolkit/TJFrame.java $(wildcard rosuda/ibase/toolkit/Win*.java) $(wildcard rosuda/ibase/toolkit/WTentry*.java) rosuda/ibase/SCatSequence.java rosuda/ibase/SMarker.java $(wildcard rosuda/ibase/SVar*.java) rosuda/ibase/Commander.java rosuda/ibase/Common.java rosuda/ibase/Dependent.java $(wildcard rosuda/ibase/Map*.java) $(wildcard rosuda/ibase/Notif*.java) rosuda/ibase/Loader.java rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java $(wildcard rosuda/util/Global*.java) rosuda/util/ImageSelection.java rosuda/util/JSpacingPanel.java rosuda/util/ProgressDlg.java $(wildcard rosuda/util/Platform*.java) rosuda/util/RecentList.java rosuda/util/Stopwatch.java rosuda/util/Tools.java
+#IBASE_SRC_JGR:=rosuda/ibase/toolkit/FrameDevice.java rosuda/ibase/toolkit/TJFrame.java $(wildcard rosuda/ibase/toolkit/Win*.java) $(wildcard rosuda/ibase/toolkit/WTentry*.java) rosuda/ibase/SCatSequence.java rosuda/ibase/SMarker.java $(wildcard rosuda/ibase/SVar*.java) rosuda/ibase/Commander.java rosuda/ibase/Common.java rosuda/ibase/Dependent.java $(wildcard rosuda/ibase/Map*.java) $(wildcard rosuda/ibase/Notif*.java) rosuda/ibase/Loader.java rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java $(wildcard rosuda/util/Global*.java) rosuda/util/ImageSelection.java rosuda/util/JSpacingPanel.java rosuda/util/ProgressDlg.java $(wildcard rosuda/util/Platform*.java) rosuda/util/RecentList.java rosuda/util/Stopwatch.java rosuda/util/Tools.java
 KLIMT_SRC:=$(wildcard rosuda/klimt/*.java) $(wildcard rosuda/klimt/plots/*.java)
 PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
@@ -35,7 +35,7 @@ ICUSTOM_SRC:=$(wildcard rosuda/icustom/*.java)
 ifneq ($(shell uname),Darwin)
 # remove all references to Mac platform as those classes can be compiled on a Mac only
 IBASE_SRC:=$(filter-out %PlatformMac.java,$(IBASE_SRC))
-IBASE_SRC_JGR:=$(filter-out %PlatformMac.java,$(IBASE_SRC_JGR))
+#IBASE_SRC_JGR:=$(filter-out %PlatformMac.java,$(IBASE_SRC_JGR))
 KLIMT_SRC:=$(filter-out %PlatformMac.java,$(KLIMT_SRC))
 IGLOBAL_SRC:=$(filter-out %PlatformMac.java,$(IGLOBAL_SRC))
 IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
@@ -66,13 +66,13 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: javaGD.jar $(IBASE_SRC_JGR) $(JGR_SRC) $(JRI_SRC)  $(RENGINE_SRC)
+JGR.jar: javaGD.jar ibase.jar JRI.jar $(JGR_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar $(IBASE_SRC_JGR) $(JGR_SRC) $(JRI_SRC) $(RENGINE_SRC)
-	cp rosuda/projects/jgr/splash.jpg .
+	$(JAVAC) -d . -classpath javaGD.jar:ibase.jar:JRI.jar $(JGR_SRC)
+	cp rosuda/projects/jgr/splash.jpg jgrsplash.jpg
 	cp -r rosuda/projects/jgr/icons .
-	jar fcm $@ rosuda/projects/jgr/JGR.mft splash.jpg icons org rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
-	rm -rf org splash.jpg icons
+	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
+	rm -rf org jgrsplash.jpg icons
 
 jgr-docs: $(JGR_SRC) 
 	rm -rf JavaDoc
@@ -119,6 +119,9 @@ iwidgets.jar: javaGD.jar JGR.jar $(IWIDGETS_SRC)
 #	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
+
+JRI.jar: $(JRI_SRC)
+	$(can-with-jar)
 
 docs: doc
 

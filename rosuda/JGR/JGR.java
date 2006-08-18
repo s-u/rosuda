@@ -71,7 +71,7 @@ public class JGR {
 	public static final String WEBSITE = "http://www.rosuda.org";
 
 	/** Filename of the splash-image (used for displaying the splashscreen) */
-	public static final String SPLASH = "splash.jpg";
+	public static final String SPLASH = "jgrsplash.jpg";
 
 	/** Main-console window */
 	public static JGRConsole MAINRCONSOLE = null;
