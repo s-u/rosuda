@@ -2,13 +2,13 @@ package org.rosuda.JRI;
 
 import java.lang.*;
 
-/** Rengine class is the interface between an instance of R and the Java VM. Due to the fact that R has no threading support, you can run only one instance of R withing a multi-threaded application. There are two ways to use R from Java: individual call and full event loop. See the Rengine {@link #Rengine constructor} for details. <p> <u>Important note:</u> All methods starting with <code>rni</code> (R Native Interface) are low-level native methods that should be avoided if a high-level methods exists. They do NOT attempt any synchronization, so it is the duty of the calling program to ensure that the invokation is safe (see implementation of {@link #eval} for example). At some point in the future when the high-level API is complete they should become private. However, currently this high-level layer is still missing, so they are available for now.<p>All <code>rni</code> methods use <code>long</code> type to reference <code>SEXP</code>s on R side. Those reference should never be modified or used in arithmetics - the only reason for not using an extra interface class to wrap those references is that <code>rni</code> methods are all <i>native</i> methods and therefore it would be too expensive to handle the unwrapping on the C side.<p><code>jri</code> methods are called internally by R and invoke the corresponding method from the even loop handler. Those methods should usualy not be called directly. */
+/** Rengine class is the interface between an instance of R and the Java VM. Due to the fact that R has no threading support, you can run only one instance of R withing a multi-threaded application. There are two ways to use R from Java: individual call and full event loop. See the Rengine {@link #Rengine constructor} for details. <p> <u>Important note:</u> All methods starting with <code>rni</code> (R Native Interface) are low-level native methods that should be avoided if a high-level methods exists. They do NOT attempt any synchronization, so it is the duty of the calling program to ensure that the invocation is safe (see {@link getRsync()} for details). At some point in the future when the high-level API is complete they should become private. However, currently this high-level layer is not complete, so they are available for now.<p>All <code>rni</code> methods use <code>long</code> type to reference <code>SEXP</code>s on R side. Those reference should never be modified or used in arithmetics - the only reason for not using an extra interface class to wrap those references is that <code>rni</code> methods are all <i>native</i> methods and therefore it would be too expensive to handle the unwrapping on the C side.<p><code>jri</code> methods are called internally by R and invoke the corresponding method from the even loop handler. Those methods should usualy not be called directly. */
 public class Rengine extends Thread {
     static {
         try {
             System.loadLibrary("jri");
         } catch (UnsatisfiedLinkError e) {
-			System.err.println("Cannot find JRI native library!\n");
+			System.err.println("Cannot find JRI native library!\nPlease make sure that the JRI native library is in a directory listed in java.library.path.\n");
             e.printStackTrace();
             System.exit(1);
         }
@@ -29,22 +29,28 @@ public class Rengine extends Thread {
     /** debug flag. Set to value &gt;0 to enable debugging messages. The verbosity increases with increasing number */
     public static int DEBUG=0;
 	
+	/** this value specifies the time (in ms) to spend sleeping between checks for R shutdown requests if R event loop is not used. The default is 200ms. Higher values lower the CPU usage but may make R less responsive to shutdown attempts (in theory it should not matter because {@link #stop()} uses interrupt to awake from the idle sleep immediately, but some implementation may not honor that).
+	@since JRI 0.3
+	*/
+	public int idleDelay = 200;
+	
     /** main engine. Since there can be only one instance of R, this is also the only instance. */
     static Rengine mainEngine=null;
     
-    /** return the current main R engine instance. Since there can be only one tru eR instance at a time, this is also the only instance. This may not be true for future versions, though.
+    /** return the current main R engine instance. Since there can be only one true R instance at a time, this is also the only instance. This may not be true for future versions, though.
 	@return current instance of the R engine or <code>null</code> if no R engine was started yet. */
     public static Rengine getMainEngine() { return mainEngine; }
 
     boolean died, alive, runLoop, loopRunning;
-    String[] args;
+    /** arguments used to initialize R, set by the constructor */
+	String[] args;
 	/** synchronization mutex */
 	Mutex Rsync;
 	/** callback handler */
     RMainLoopCallbacks callback;
 	
     /** create and start a new instance of R. 
-	@param args arguments to be passed to R. Please note that R requires the presence of certain arguments, so passing an empty list usually doesn't work.
+	@param args arguments to be passed to R. Please note that R requires the presence of certain arguments (e.g. <code>--save</code> or <code>--no-save</code> or equivalents), so passing an empty list usually doesn't work.
 	@param runMainLoop if set to <code>true</code> the the event loop will be started as soon as possible, otherwise no event loop is started. Running loop requires <code>initialCallbacks</code> to be set correspondingly as well.
 	@param initialCallbacks an instance implementing the {@link org.rosuda.JRI.RMainLoopCallbacks RMainLoopCallbacks} interface that provides methods to be called by R
     */
@@ -249,9 +255,9 @@ public class Rengine extends Thread {
         callback = c;
     }
 
-    /** if Rengine was initialized with <code>runMainLoop=false</code> then this method can be used to start the main loop at a later point. It has no effect if the loop is running already. This method returns immediately but the loop will be started once the engine is ready. */
+    /** if Rengine was initialized with <code>runMainLoop=false</code> then this method can be used to start the main loop at a later point. It has no effect if the loop is running already. This method returns immediately but the loop will be started once the engine is ready. Please note that there is currently no way of stopping the R thread if the R event loop is running other than using <code>quit</code> command in R which closes the entire application. */
     public void startMainLoop() {
-	runLoop=true;
+		runLoop=true;
     }
     
     //============ R callback methods =========
@@ -442,12 +448,15 @@ public class Rengine extends Thread {
 							System.out.println("***> launching main loop:");
                         loopRunning=true;
                         rniRunMainLoop();
+						// actually R never returns from runMainLoop ...
                         loopRunning=false;
 						if (DEBUG>0)
 							System.out.println("***> main loop finished:");
-                        System.exit(0);
+                        runLoop=false;
+						died=true;
+						return;
                     }
-                    sleep(100);
+                    sleep(idleDelay);
                     if (runLoop) rniIdle();
                 } catch (InterruptedException ie) {
                     interrupted();
@@ -461,9 +470,10 @@ public class Rengine extends Thread {
         }
     }
 	
-	    /** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
-        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
-        @param ct contents
+	/** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
+        @param sym symbol name.  The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
+		@param ct contents
+		@since JRI 0.3
         */
     public void assign(String sym, String ct) {
        	long x1 = rniPutString(ct);
@@ -471,8 +481,9 @@ public class Rengine extends Thread {
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
-        @param sym symbol name. Currently assign uses CMD_setSEXP command of Rserve, i.e. the symbol value is NOT parsed. It is the responsibility of the user to make sure that the symbol name is valid in R (recall the difference between a symbol and an expression!). In fact R will always create the symbol, but it may not be accessible (examples: "bar\nfoo" or "bar$foo").
-        @param r contents as <code>REXP</code>. currently only basic types (int, double, int[], double[]) are supported.
+        @param sym symbol name. The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
+        @param r contents as <code>REXP</code>. currently only raw references and basic types (int, double, int[], double[]) are supported.
+		@since JRI 0.3
         */
     public void assign(String sym, REXP r) {
     	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
@@ -487,15 +498,33 @@ public class Rengine extends Thread {
     	}
     }
 
-    /** assign values of an array of doubles to a symbol in R (creating as vector of numbers).<br>
-        equals to calling {@link #assign(String, REXP)} */        
+    /** assign values of an array of doubles to a symbol in R (creating an integer vector).<br>
+        equals to calling {@link #assign(String, REXP)}.
+		@param sym symbol name
+		@param val double array to assign
+		@since JRI 0.3
+	*/
     public void assign(String sym, double[] val)  {
         assign(sym,new REXP(val));
     }
 
-    /** assign values of an array of integers to a symbol in R (creating as vector of numbers).<br>
-        equals to calling {@link #assign(String, REXP)} */        
-    public void assign(String sym, int[] val) {
+    /** assign values of an array of integers to a symbol in R (creating a numeric vector).<br>
+        equals to calling {@link #assign(String, REXP)}.
+		@param sym symbol name
+		@param val integer array to assign
+		@since JRI 0.3
+		*/
+	public void assign(String sym, int[] val) {
+        assign(sym,new REXP(val));
+    }
+
+    /** assign values of an array of strings to a symbol in R (creating a character vector).<br>
+        equals to calling {@link #assign(String, REXP)}.
+		@param sym symbol name
+		@param val string array to assign
+		@since JRI 0.3
+		*/
+	public void assign(String sym, String[] val) {
         assign(sym,new REXP(val));
     }
 }

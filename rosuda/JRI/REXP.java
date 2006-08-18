@@ -127,6 +127,10 @@ public class REXP {
 
 	public static final int WEAKREFSXP = 23; /* weak reference */
 
+	public static final int RAWSXP = 24; /* raw bytes */
+
+	public static final int S4SXP = 25; /* S4 object */
+
 	public static final int FUNSXP = 99; /* Closure or Builtin */
 
 	/**
@@ -312,18 +316,29 @@ public class REXP {
 		this(XT_ARRAY_STR, val);
 	}
 
-	/**
-	 * get attribute of the REXP. In R every object can have attached attribute
-	 * xpression. Some more complex structures such as classes are built that
-	 * way.
-	 * 
-	 * @return attribute xpression or <code>null</code> if there is none
-	 *         associated
-	 */
-	public REXP getAttribute() {
+	/**	get attributes of the REXP. In R every object can have attached attribute
+		xpression. Some more complex structures such as classes are built that
+		way.
+		@return attribute xpression or <code>null</code> if there is none associated
+		@ since JRI 0.3, replaces <code>getAttribute()</code>
+		*/
+	public REXP getAttributes() {
 		return attr;
 	}
 
+	/** retrieve a specific attribute.<br>
+		<b>Note:</b> the current representation fetches the attribute ad-hoc, so it breaks the assumption that the expression is no longer accessed after the constructor was called. This should change in the future.
+		@param name name of the attribute
+		@return REXP containing the attribute or <code>null</code> if the attribute doesn't exist. The conversion flag is inherited from this REXP.
+		@since JRI 0.3
+		*/
+	public REXP getAttribute(String name) {
+		// FIXME: we could do some caching if attr is not null ...
+		long aref = eng.rniGetAttr(xp, name);
+		if (aref==0) return null;
+		return new REXP(eng, aref, (Xt != XT_NONE));
+	}
+	
 	/**
 	 * get raw content. Use as... methods to retrieve contents of known type.
 	 * 
@@ -352,6 +367,7 @@ public class REXP {
 		return eng;
 	};
 
+	/** return the first element of a character vector if this REXP is a character vector of length 1 or more, return <code>null</code> otherwise */
 	public String asString() {
 		if (cont == null)
 			return null;
@@ -364,10 +380,12 @@ public class REXP {
 		return null;
 	}
 
+	/** return the name of the symbol represented by this REXP if is it a symbol or <code>null</code> otherwise */
 	public String asSymbolName() {
 		return (Xt == XT_SYM)?((String) cont):null;
 	}
 	
+	/** return the contents of this REXP as an array of strings if this REXP is a character vector, return <code>null</code> otherwise */
 	public String[] asStringArray() {
 		if (cont == null)
 			return null;
@@ -429,10 +447,9 @@ public class REXP {
 	}
 
 	/**
-	 * get content of the REXP as {@link RList} (if it is one)
+	 * get content of the REXP as {@link RList} if the contents is a list or a generic vector
 	 * 
-	 * @return {@link RList} content or <code>null</code> if the REXP is no
-	 *         list
+	 * @return {@link RList} content or <code>null</code> if the REXP is neither a list nor a generic vector
 	 */
 	public RList asList() {
 		return (Xt == XT_LIST) ?
@@ -521,9 +538,9 @@ public class REXP {
 	 *         doubles
 	 */
 	public double[][] asDoubleMatrix() {
-		if (Xt != XT_ARRAY_DOUBLE || attr == null || attr.Xt != XT_LIST)
-			return null;
-		REXP dim = attr.asList().getHead();
+		double[] ct = asDoubleArray();
+		if (ct==null) return null;
+		REXP dim = getAttribute("dim");
 		if (dim == null || dim.Xt != XT_ARRAY_INT)
 			return null; // we need dimension attr
 		int[] ds = dim.asIntArray();
@@ -531,7 +548,6 @@ public class REXP {
 			return null; // matrix must be 2-dimensional
 		int m = ds[0], n = ds[1];
 		double[][] r = new double[m][n];
-		double[] ct = asDoubleArray();
 		if (ct == null)
 			return null;
 		// R stores matrices as matrix(c(1,2,3,4),2,2) = col1:(1,2), col2:(3,4)
