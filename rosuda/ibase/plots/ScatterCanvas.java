@@ -630,7 +630,7 @@ public class ScatterCanvas extends BaseCanvas {
     public void mouseMoved(final MouseEvent ev) {
         super.mouseMoved(ev);
         final boolean ocrosshairs = crosshairs;
-        crosshairs = ev.getModifiersEx()==MouseEvent.SHIFT_DOWN_MASK;
+        crosshairs = Common.isMoveTrigger(ev);
         qx=ev.getX();
         qy=ev.getY();
         if(crosshairs || crosshairs!=ocrosshairs){
