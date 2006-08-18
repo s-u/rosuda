@@ -113,7 +113,6 @@
 		6897FBCD0A0170C7004241FC /* Plugin.java in Sources */ = {isa = PBXBuildFile; fileRef = 6897FBC60A0170C7004241FC /* Plugin.java */; };
 		6897FBD50A0170DD004241FC /* PluginManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 6897FBD40A0170DD004241FC /* PluginManager.java */; };
 		68C342250A48733700F97264 /* PlotTextVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 68C342240A48733700F97264 /* PlotTextVector.java */; };
-		68C342270A48738B00F97264 /* CustomCanvas.java in Sources */ = {isa = PBXBuildFile; fileRef = 68C342260A48738B00F97264 /* CustomCanvas.java */; };
 		6A0644BD02C7C4400CC91562 /* iPlots.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 6A0644AC02C7C26E0CC91562 /* iPlots.1 */; };
 /* End PBXBuildFile section */
 
@@ -237,7 +236,6 @@
 		6897FBC60A0170C7004241FC /* Plugin.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = Plugin.java; sourceTree = "<group>"; };
 		6897FBD40A0170DD004241FC /* PluginManager.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PluginManager.java; sourceTree = "<group>"; };
 		68C342240A48733700F97264 /* PlotTextVector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PlotTextVector.java; sourceTree = "<group>"; };
-		68C342260A48738B00F97264 /* CustomCanvas.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = CustomCanvas.java; sourceTree = "<group>"; };
 		6A0644AC02C7C26E0CC91562 /* iPlots.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = iPlots.1; sourceTree = "<group>"; };
 		6A9ED92C02B0286D0CC91562 /* iPlots.jar */ = {isa = PBXFileReference; explicitFileType = archive.jar; includeInIndex = 0; path = iPlots.jar; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -317,7 +315,6 @@
 		6897F6620A01702E004241FC /* plots */ = {
 			isa = PBXGroup;
 			children = (
-				68C342260A48738B00F97264 /* CustomCanvas.java */,
 				6897F6630A01702E004241FC /* BarCanvas.java */,
 				6897F6640A01702E004241FC /* FCCCanvas.java */,
 				6897F6650A01702F004241FC /* FluctCanvas.java */,
@@ -338,7 +335,6 @@
 		6897F67A0A01702F004241FC /* toolkit */ = {
 			isa = PBXGroup;
 			children = (
-				68C342240A48733700F97264 /* PlotTextVector.java */,
 				6897F67B0A01702F004241FC /* AWTGraphicsDevice.java */,
 				6897F67C0A01702F004241FC /* AwtQueryPopup.java */,
 				6897F67D0A01702F004241FC /* Axis.java */,
@@ -364,6 +360,7 @@
 				6897F6960A017030004241FC /* PlotPolygon.java */,
 				6897F6970A017030004241FC /* PlotPrimitive.java */,
 				6897F6980A017030004241FC /* PlotText.java */,
+				68C342240A48733700F97264 /* PlotTextVector.java */,
 				6897F6990A017030004241FC /* PPrimBase.java */,
 				6897F69A0A017030004241FC /* PPrimBox.java */,
 				6897F69B0A017030004241FC /* PPrimCircle.java */,
@@ -592,7 +589,6 @@
 				6897FBCD0A0170C7004241FC /* Plugin.java in Sources */,
 				6897FBD50A0170DD004241FC /* PluginManager.java in Sources */,
 				68C342250A48733700F97264 /* PlotTextVector.java in Sources */,
-				68C342270A48738B00F97264 /* CustomCanvas.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
