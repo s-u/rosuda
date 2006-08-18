@@ -20,7 +20,7 @@ import org.rosuda.plugins.PluginManager;
 public class Common
 {
     /** ibase version */
-    public static String Version="0.97";
+    public static String Version="1.00";
     /** ibase release */
     public static String Release="D729";
     /** application identifier (the first thing to do in main is to modify this) */
@@ -321,7 +321,7 @@ public class Common
 	    return cp.append(lc).toString();
 	i=1;
 	char mid=' ';
-	String ignore="aeiouAEIOU ._\t\n\r������";
+	String ignore="aeiouAEIOU ._\t\n\räöüÄÖÜ";
 	while (i<s.length()-1) {
 	    char c=s.charAt(i);
 	    if (ignore.indexOf(c)==-1) {
