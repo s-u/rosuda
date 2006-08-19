@@ -113,9 +113,9 @@ icustom.jar: iplots.jar REngine.jar $(ICUSTOM_SRC)
 	jar fc $@ org
 	rm -rf org
 
-iwidgets.jar: javaGD.jar JGR.jar $(IWIDGETS_SRC)
+iwidgets.jar: javaGD.jar JGR.jar ibase.jar JRI.jar $(IWIDGETS_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar:JGR.jar $(IWIDGETS_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar:JGR.jar:ibase.jar:JRI.jar $(IWIDGETS_SRC)
 #	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
