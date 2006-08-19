@@ -18,6 +18,8 @@ else
 fi
 JAVA=@JAVA_PROG@
 
+CLASSPATH=@R_HOME@/library/rJava/jri/JRI.jar:@R_HOME@/library/iplots/cont/iplots.jar:@R_HOME@/library/JGR/cont/JGR.jar
+
 if [ -r $HOME/.JGRprefsrc ]; then
     packages=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep DefaultPackages | sed -e s/.*DefaultPackages.*value=\"// -e s/\".*$//g`
     libs=`sed -e s/'><'/'>\n<'/g < $HOME/.JGRprefsrc  | grep entry |  grep InitialRLibraryPath | sed -e s/.*InitialRLibraryPath.*value=\"// -e s/\".*$//g`
@@ -45,4 +47,4 @@ export NO_SIG
 
 export LD_LIBRARY_PATH
 
-${JAVA} -Djava.library.path=.:${LD_LIBRARY_PATH} -jar ${R_HOME}/library/JGR/cont/JGR.jar $*
+${JAVA} -Djava.library.path=.:${LD_LIBRARY_PATH} -cp ${CLASSPATH} org.rosuda.JGR.JGR $*
