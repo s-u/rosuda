@@ -44,7 +44,7 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	//JGR_VERSION 1.4
+	//JGR_VERSION 1.4-6
 	
 	/** Version number of JGR */
 	public static final String VERSION = "1.4-6";
