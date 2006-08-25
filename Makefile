@@ -107,9 +107,11 @@ iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC)
 javaGD.jar: $(JAVAGD_SRC)
 	$(can-with-jar)
 
-icustom.jar: iplots.jar REngine.jar $(ICUSTOM_SRC)
+#icustom.jar: iplots.jar REngine.jar $(ICUSTOM_SRC)
+icustom.jar: iplots.jar JRI.jar $(ICUSTOM_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath iplots.jar:REngine.jar $(ICUSTOM_SRC)
+#	$(JAVAC) -d . -classpath iplots.jar:REngine.jar $(ICUSTOM_SRC)
+	$(JAVAC) -d . -classpath iplots.jar:JRI.jar $(ICUSTOM_SRC)
 	jar fc $@ org
 	rm -rf org
 

@@ -7,12 +7,14 @@ import org.rosuda.util.Tools;
 
 import java.awt.*;
 
-import org.rosuda.REngine.*;
+import org.rosuda.JRI.*;
 
 
 public class CustomCanvas extends BaseCanvas {
 	
-	REngine re;
+    //RE:REngine re;
+    Rengine re;
+
 	String rcall, rid;
 	SVar[] v;
 	
@@ -27,12 +29,13 @@ public class CustomCanvas extends BaseCanvas {
 		this.rcall=rcall;
 		this.rid=rid;
 		//Mutex.verbose=true;
-		re = REngine.getLastEngine();
+		/*RE:re = REngine.getLastEngine();
 		if (re == null) {
 			try {
 				re = REngine.engineForClass("org.rosuda.JRI.JRIEngine");
 			} catch (Exception e) {}
-		}
+		} */
+		re = Rengine.getMainEngine();
 		if (re == null) {
             System.out.println("Cannot load R");
             return;
@@ -46,12 +49,16 @@ public class CustomCanvas extends BaseCanvas {
 	public synchronized void updateObjects() {
 		super.updateObjects();
 		try {
-			re.voidEval("{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];local(.ic.e$construct("
-						+getWidth()+","+getHeight()+"),.ic.e);rm(.ic.e)}");
+		    //RE:re.voidEval(
+			re.eval(
+				    "{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];local(.ic.e$construct("
+						+getWidth()+","+getHeight()+"),.ic.e);rm(.ic.e)}"
+				    , false);
 			if(pp!=null) for(int i=0;i<pp.length;i++) setColors((PPrimBase)pp[i]);
 			setUpdateRoot(0);
 			repaint();
-		} catch (REngineException ee) {
+		} //RE:catch (REngineException ee) {
+		    catch (Exception ee) {
 			System.err.println("CustomCanvas.updateObject: failed callback, " + ee.getMessage());
 			ee.printStackTrace();
 		}
