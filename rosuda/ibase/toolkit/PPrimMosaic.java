@@ -7,8 +7,8 @@ import org.rosuda.pograss.PoGraSS;
 
 
 public class PPrimMosaic extends PPrimRectangle {
-    public Color fillColorEmpty = Color.RED;
-    public Color borderColorEmpty = null;
+    public Color fillColorEmpty = null;
+    public Color borderColorEmpty = Color.RED;
     public Color binbgColor = new Color(Color.lightGray.getRed(),Color.lightGray.getGreen(),Color.lightGray.getBlue(),76);
     public Color borderColorSelCensored = Color.RED;
     public Color borderColorSelUncensored = COL_OUTLINE;
@@ -45,6 +45,7 @@ public class PPrimMosaic extends PPrimRectangle {
         switch(type){
             case TYPE_OBSERVED:
             case TYPE_EXPECTED:
+            case TYPE_SAMEBINSIZE:
                 Color fillCol,borderCol;
                 
                 if (isEmpty()){
@@ -61,7 +62,6 @@ public class PPrimMosaic extends PPrimRectangle {
                     brushRect(g,m,orientation,r,borderCol);
                 }
                 break;
-            case TYPE_SAMEBINSIZE:
             case TYPE_FLUCTUATION:
             case TYPE_MULTIPLEBARCHARTS:
                 drawRect(g,origX,origY,fullW,fullH,binbgColor,binbgColor);
@@ -73,6 +73,7 @@ public class PPrimMosaic extends PPrimRectangle {
                     }
                 }
         }
+		/*
         if( type==TYPE_EXPECTED ) {
             final int high = (int)(192+63*(0.15+pnorm((1-p-0.9)*10)));
             final int low =  (int)(192*(0.85-pnorm((1-p-0.9)*10)));
@@ -87,7 +88,7 @@ public class PPrimMosaic extends PPrimRectangle {
             else if ( dir == 'y' )
                 g.fillRect(r.x, r.y+r.height-(int)(r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)),
                         r.width, (int)(r.height*Math.abs((obs-exp)/Math.sqrt(exp)*scale)));
-        }
+        }*/
     }
     
     private double pnorm( final double q ) {

@@ -466,7 +466,7 @@ public class MosaicCanvas extends BaseCanvas {
                 }
                 
                 final int[] ref = ft.getMatchingCases(combination,maxLevel);
-                final boolean empty = (ref.length==0)&& mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_SAMEBINSIZE;
+                final boolean empty = (ref.length==0)&& mode!=DISPLAY_MODE_MULTIPLEBARCHARTS && mode!=DISPLAY_MODE_FLUCTUATION && mode!=DISPLAY_MODE_EXPECTED && mode!=DISPLAY_MODE_SAMEBINSIZE;
                 
                 if( stop || empty ) {	            // Now the rectangles are generated
                     tile = new PPrimMosaic();
