@@ -187,7 +187,7 @@ public class Common
     /** given mouse event this method determines whether zoom sequence was triggered (middle mouse button or META on a Mac) */ 
     public static boolean isZoomTrigger(MouseEvent ev) {
 		// warning: on a Mac buttons and modifiers are synthesized, see table above! 
-		System.out.println("isMac="+Platform.isMac+", "+ev);
+	// System.out.println("isMac="+Platform.isMac+", "+ev);
         return Platform.isMac?(
 		 (ev.getButton()==MouseEvent.BUTTON1 && ev.isMetaDown())   // Cmd+Button1 (any other Cmd combination is not valid!)
 		 || (ev.getButton()==MouseEvent.BUTTON2)                   // Button2
