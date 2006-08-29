@@ -6,6 +6,7 @@ import org.rosuda.pograss.*;
 import org.rosuda.util.Tools;
 
 import java.awt.*;
+import java.util.Vector;
 
 import org.rosuda.JRI.*;
 
@@ -17,6 +18,8 @@ public class CustomCanvas extends BaseCanvas {
 
 	String rcall, rid;
 	SVar[] v;
+	Vector mutablePP;
+	boolean cacheChanged = true;
 	
 	public CustomCanvas(int gd, Frame f, SVar[] v, SMarker mark, String rcall, String rid) {
 		super(gd,f,mark);
@@ -54,6 +57,7 @@ public class CustomCanvas extends BaseCanvas {
 				    "{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];local(.ic.e$construct("
 						+getWidth()+","+getHeight()+"),.ic.e);rm(.ic.e)}"
 				    , false);
+			fixupPP();
 			if(pp!=null) for(int i=0;i<pp.length;i++) setColors((PPrimBase)pp[i]);
 			setUpdateRoot(0);
 			repaint();
@@ -137,22 +141,36 @@ public class CustomCanvas extends BaseCanvas {
         if(v==null) return null;
         else return (m.marked()>0?"Custom plot: "+m.marked()+" selected case(s)":null);
     }
-
-    
     
     // the following two methods are only experimental and should be replaced by better ones
-    public void addPP(PPrimRectangle p) {
-    	if(p==null) {System.out.println("P IS NULL"); return;}
+    public void addPP(PlotPrimitive p) {
+    	if (p==null) return;
+		if (mutablePP==null) mutablePP=new Vector();
+		mutablePP.addElement(p);
+		cacheChanged=true;
+		/*
     	if(pp==null) {pp=new PlotPrimitive[]{p}; return;}
     	PlotPrimitive[] temp=pp;
     	pp=new PlotPrimitive[temp.length+1];
     	System.arraycopy(temp,0,pp,0,temp.length);
     	pp[pp.length-1]=p;
-    	temp=null;
+    	temp=null; */
     }
     
+	private void fixupPP() {
+		if (!cacheChanged) return;
+		if (mutablePP==null) pp=null;
+		else {
+			int i = 0, j = mutablePP.size();
+			pp = new PlotPrimitive[j];
+			while (i < j) { pp[i]=(PlotPrimitive)mutablePP.elementAt(i); i++; }
+		}
+	}
+	
     public void resetPP() {
     	pp=null;
+		mutablePP=null;
+		cacheChanged=false; // a lie, but we've updated pp already
     }
     
     public void resetAxes() {
