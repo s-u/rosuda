@@ -54,7 +54,7 @@ public class PPrimPolygon extends PPrimBase {
         }
         if(drawBorder){
             for(int i=1; i<pg.npoints; i++){
-                if(!invisibleLines[i-1]){
+                if(invisibleLines==null || !invisibleLines[i-1]){
                     int my,My;
                     my=Math.min(pg.ypoints[i-1],pg.ypoints[i]);
                     My=Math.max(pg.ypoints[i-1],pg.ypoints[i]);
@@ -85,13 +85,13 @@ public class PPrimPolygon extends PPrimBase {
                     return true;
         } else{
             for(int i=1; i<pg.npoints; i++){
-                if(!invisibleLines[i-1]){
+                if(invisibleLines==null || !invisibleLines[i-1]){
                     Line2D.Double l = new Line2D.Double(pg.xpoints[i-1],pg.ypoints[i-1],pg.xpoints[i],pg.ypoints[i]);
                     if (l.intersects(r2d)) return true;
                 }
             }
         }
-        for(Iterator it = gapDotPs.iterator(); it.hasNext();)
+        if (gapDotPs!=null) for(Iterator it = gapDotPs.iterator(); it.hasNext();)
             if(((PPrimCircle)it.next()).intersects(rt))
                 return true;
         return false;
@@ -149,7 +149,7 @@ public class PPrimPolygon extends PPrimBase {
             g.setColor(colOutline);
             //g.drawPolygon(pg.xpoints,pg.ypoints,pg.npoints,closed);
             for(int i=1; i<pg.npoints; i++){
-                if(!invisibleLines[i-1]){
+                if(invisibleLines==null || !invisibleLines[i-1]){
                     if(lineWidth!=null) g.setLineWidth(lineWidth[i-1]);
                     // ??g.setColor(colOutline);
                     g.drawLine(pg.xpoints[i-1], pg.ypoints[i-1], pg.xpoints[i], pg.ypoints[i]);
