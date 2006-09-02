@@ -131,6 +131,7 @@
 		0111F2C700819D1A7F000001 /* AboutBox.java in Sources */ = {isa = PBXBuildFile; fileRef = 0111F2C600819D1A7F000001 /* AboutBox.java */; };
 		1601BCDDFEEE210811DB9C8B /* Mondrian.java in Sources */ = {isa = PBXBuildFile; fileRef = 01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */; settings = {ATTRIBUTES = (); }; };
 		1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */ = {isa = PBXBuildFile; fileRef = 10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */; };
+		2844EF9B0AA9F2C1003B1B97 /* Mondrian.cfg.xml in Resources */ = {isa = PBXBuildFile; fileRef = D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */; };
 		D021F47909925F7A00EFF582 /* ScanException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47809925F7A00EFF582 /* ScanException.java */; };
 		D021F47B09925F8700EFF582 /* UnacceptableFormatException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */; };
 		D04E14C308BDD855001A39DA /* BufferTokenizer.java in Sources */ = {isa = PBXBuildFile; fileRef = D04E14C208BDD855001A39DA /* BufferTokenizer.java */; };
@@ -158,7 +159,6 @@
 		D0C7E78B076EDB9F00B94ACD /* Srs.java in Sources */ = {isa = PBXBuildFile; fileRef = D0C7E78A076EDB9F00B94ACD /* Srs.java */; };
 		D0D4C0C9089F99F000579679 /* DataEvent.java in Sources */ = {isa = PBXBuildFile; fileRef = D0D4C0C8089F99F000579679 /* DataEvent.java */; };
 		D0E375C0081302D8004B4DF3 /* ImageSelection.java in Sources */ = {isa = PBXBuildFile; fileRef = D0E375BF081302D8004B4DF3 /* ImageSelection.java */; };
-		D0F331A50A37226E00DF87E5 /* Mondrian.cfg.xml in Resources */ = {isa = PBXBuildFile; fileRef = D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */; };
 		D0F37951094093180086031F /* MissPlot.java in Sources */ = {isa = PBXBuildFile; fileRef = D0F37950094093180086031F /* MissPlot.java */; };
 		F510801303B3247801FA48CB /* Mondrian.mft in JavaArchive */ = {isa = PBXBuildFile; fileRef = F510801203B3247801FA48CB /* Mondrian.mft */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
 		F52CCF8C0237C0F701FA478D /* Logo.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = F52CCF8B0237C0F701FA478D /* Logo.gif */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
@@ -304,8 +304,8 @@
 				D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */,
 				F539378B01F5CC7401FA4797 /* Util.java */,
 				0111F2C600819D1A7F000001 /* AboutBox.java */,
-				D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */,
 				F510801203B3247801FA48CB /* Mondrian.mft */,
+				D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */,
 				10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */,
 				F52CCF8B0237C0F701FA478D /* Logo.gif */,
 				D097A9DA06F9B94100684C11 /* alpha.gif */,
@@ -392,8 +392,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2844EF9B0AA9F2C1003B1B97 /* Mondrian.cfg.xml in Resources */,
 				1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */,
-				D0F331A50A37226E00DF87E5 /* Mondrian.cfg.xml in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -492,6 +492,7 @@
 				HEADER_SEARCH_PATHS = "";
 				JAVA_CLASS_SEARCH_PATHS = .;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
 				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
 				JAVA_MANIFEST_FILE = Mondrian.mft;
 				JAVA_ONLY = YES;
@@ -522,18 +523,21 @@
 		D02B74630948569F0019B5C8 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
 		};
 		D02B74640948569F0019B5C8 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
 		};
 		D02B74650948569F0019B5C8 /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
 		};
