@@ -26,7 +26,7 @@ docs: $(MONDRIAN_SRC)
 	javadoc -d JavaDoc -author -version -breakiterator -link http://java.sun.com/j2se/1.4.2/docs/api $^
 
 clean:
-	rm -rf JavaDoc org
+	rm -rf JavaDoc org build
 	rm -f $(TARGETS) *.class *~ ../../rosuda/JRclient/*.class ../../rosuda/util/*.class MRJ.jar
 
 .PHONY: clean all
