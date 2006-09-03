@@ -1,10 +1,14 @@
 
+2006-08-26
+- fixed: special copy commands
+- fixed: multiple file completion
+
 2006-04-18
-- adding: setting tab-width
+- added: setting tab-width
 
 2006-03-05
 - fixed: setting R_LIB
-- adding: support setting InitialWorkingDirectory
+- added: support setting InitialWorkingDirectory
 
 2006-02-22
 - fixed: parsing help/edit commands
