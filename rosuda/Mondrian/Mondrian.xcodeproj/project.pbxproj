@@ -67,7 +67,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string></string>
+	<string>Mondrian</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -192,7 +192,7 @@
 /* Begin PBXFileReference section */
 		0111F2C600819D1A7F000001 /* AboutBox.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = AboutBox.java; sourceTree = "<group>"; };
 		01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Mondrian.java; sourceTree = "<group>"; tabWidth = 8; };
-		06D05853FF24F2DB11DB9C8B /* Mondrian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Mondrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		06D05853FF24F2DB11DB9C8B /* Mondrian.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = Mondrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Mondrian.icns; sourceTree = "<group>"; };
 		D021F47809925F7A00EFF582 /* ScanException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ScanException.java; sourceTree = "<group>"; };
 		D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = UnacceptableFormatException.java; sourceTree = "<group>"; };
@@ -510,6 +510,7 @@
 				HEADER_SEARCH_PATHS = "";
 				JAVA_CLASS_SEARCH_PATHS = .;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				JAVA_COMPILER_SOURCE_VERSION = 1.4;
 				JAVA_COMPILER_TARGET_VM_VERSION = 1.4;
 				JAVA_MANIFEST_FILE = Mondrian.mft;
 				JAVA_ONLY = YES;
