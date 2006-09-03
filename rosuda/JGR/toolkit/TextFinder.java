@@ -138,7 +138,7 @@ public class TextFinder extends JDialog implements ActionListener {
 		keyWord = keyWordField.getText().toLowerCase().trim();
 		searchArea.selectAll();
 		String cleanDoc = searchArea.getSelectedText();
-		System.out.println(cleanDoc);
+		//System.out.println(cleanDoc);
 		if (!keyWord.equals("")) {
 			position = cleanDoc.toLowerCase().indexOf(keyWord, position + 1);
 			if (position == -1) {

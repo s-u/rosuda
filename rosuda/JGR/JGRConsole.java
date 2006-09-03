@@ -33,6 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
 
+import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.ConsoleOutput;
 import org.rosuda.JGR.toolkit.DataTable;
@@ -78,6 +79,8 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 	private final Document outputDoc = output.getDocument();
 
 	private final TextFinder textFinder = new TextFinder(output);
+	
+	//private FindReplaceDialog findReplace = new FindReplaceDialog(this,output);
 
 	private ToolBar toolBar;
 
@@ -661,9 +664,11 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 		else if (cmd == "saveaswsp")
 			saveWorkSpaceAs();
 		else if (cmd == "search")
-			textFinder.showFind(false);
+			//textFinder.showFind(false);
+			FindReplaceDialog.findExt(this,output);
 		else if (cmd == "searchnext")
-			textFinder.showFind(true);
+			FindReplaceDialog.findNextExt(this,output);
+			//textFinder.showFind(true);
 		else if (cmd == "source")
 			execute("source(file.choose())", false);
 		else if (cmd == "stop")

@@ -37,6 +37,7 @@ import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.Common;
@@ -518,10 +519,12 @@ public class Editor extends iFrame implements ActionListener, KeyListener {
 			saveFile();
 		else if (cmd == "saveas")
 			saveFileAs();
-		else if (cmd == "search")
-			textFinder.showFind(false);
+		else if (cmd == "search") 
+			//textFinder.showFind(false);
+			FindReplaceDialog.findExt(this,editArea);
 		else if (cmd == "searchnext")
-			textFinder.showFind(true);
+			//textFinder.showFind(true);
+			FindReplaceDialog.findNextExt(this,editArea);
 		else if (cmd == "selAll")
 			editArea.selectAll();
 		else if (cmd == "shiftleft")

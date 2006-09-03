@@ -94,6 +94,7 @@
 		2835E1BA0AAAC0C000012BE8 /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1B60AAAC0C000012BE8 /* RFactor.java */; };
 		2835E1BB0AAAC0C000012BE8 /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1B70AAAC0C000012BE8 /* RList.java */; };
 		2835E1BC0AAAC0C000012BE8 /* RVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1B80AAAC0C000012BE8 /* RVector.java */; };
+		2835E2270AAB354000012BE8 /* FindReplaceDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E2260AAB354000012BE8 /* FindReplaceDialog.java */; };
 		284DA11406105C86003B4450 /* close.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 284DA11306105C85003B4450 /* close.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28699F1006BC5894002BEFFC /* JGR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0E06BC5894002BEFFC /* JGR.icns */; };
@@ -327,6 +328,7 @@
 		2835E1B60AAAC0C000012BE8 /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFactor.java; path = ../../JRI/RFactor.java; sourceTree = SOURCE_ROOT; };
 		2835E1B70AAAC0C000012BE8 /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RList.java; path = ../../JRI/RList.java; sourceTree = SOURCE_ROOT; };
 		2835E1B80AAAC0C000012BE8 /* RVector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RVector.java; path = ../../JRI/RVector.java; sourceTree = SOURCE_ROOT; };
+		2835E2260AAB354000012BE8 /* FindReplaceDialog.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = FindReplaceDialog.java; sourceTree = "<group>"; };
 		284DA11306105C85003B4450 /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = close.png; path = icons/close.png; sourceTree = SOURCE_ROOT; };
 		2858B25F064E5FAA00C9BFA7 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop.png; path = icons/stop.png; sourceTree = SOURCE_ROOT; };
 		285E22AF05FB9A8400F09D05 /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
@@ -545,7 +547,7 @@
 		28F902980607540C005E782D /* sort-up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-up.gif"; sourceTree = "<group>"; };
 		28FB0CA909F231700088CD59 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = jogl.jar; path = ../klimt/jogl.jar; sourceTree = SOURCE_ROOT; };
 		28FB0CAA09F231700088CD59 /* libjogl.jnilib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjogl.jnilib; path = ../klimt/libjogl.jnilib; sourceTree = SOURCE_ROOT; };
-		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -614,9 +616,19 @@
 			path = ../../JRclient;
 			sourceTree = SOURCE_ROOT;
 		};
+		2835E2150AAB352A00012BE8 /* editor */ = {
+			isa = PBXGroup;
+			children = (
+				2835E2260AAB354000012BE8 /* FindReplaceDialog.java */,
+			);
+			name = editor;
+			path = ../../JGR/editor;
+			sourceTree = SOURCE_ROOT;
+		};
 		284899CE063C1F3B00E88567 /* JGR */ = {
 			isa = PBXGroup;
 			children = (
+				2835E2150AAB352A00012BE8 /* editor */,
 				289DF63F09F26AF700C34B0B /* CVS */,
 				289DF64309F26AF700C34B0B /* JGR.java */,
 				289DF64409F26AF700C34B0B /* JGRConsole.java */,
@@ -1255,6 +1267,7 @@
 				2835E1BA0AAAC0C000012BE8 /* RFactor.java in Sources */,
 				2835E1BB0AAAC0C000012BE8 /* RList.java in Sources */,
 				2835E1BC0AAAC0C000012BE8 /* RVector.java in Sources */,
+				2835E2270AAB354000012BE8 /* FindReplaceDialog.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
