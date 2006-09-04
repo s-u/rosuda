@@ -176,7 +176,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		}
 		this.addCaretListener(this);
 	}
-
+	
 	/**
 	 * Get amount of lines.
 	 */

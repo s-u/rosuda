@@ -139,13 +139,12 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		findField.setText("");
 		replaceField.setText("");
 		haveFound = false;
+		removeHighlights(comp);
 	}
 	
 	public static void findNextExt(Frame parent, JTextComponent comp) {
-		if (instance == null) {
+		if (instance == null)
 			instance = new FindReplaceDialog(parent, comp);
-			//instance.setVisible(true);
-		}
 		
 		instance.comp = comp;
 		instance.parent = parent;
@@ -157,16 +156,10 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 			instance.findNext();
 	}
 
-	private void findNext(/*boolean isNext*/) {
+	private boolean startLoop = false;
 	
-		/*if (!isNext) this.setVisible(true);
-		if (isNext && (currentPattern == null || currentPattern.length <=0) {
-			this.clean();
-			this.setVisible(true);
-		}*/
-		
-		//comp.requestFocus();
-		
+	private void findNext() {
+	
 		currentPattern = findField.getText().toLowerCase().trim();
 		
 		if (currentPattern == null || currentPattern.length() <= 0) return;
@@ -174,15 +167,27 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		currentPosition = comp.getText().toLowerCase().indexOf(currentPattern, currentPosition + 1);
 		
 		if (currentPosition == -1) {
+			if (startLoop) {
+				if (replaceing)
+					JOptionPane.showMessageDialog(this,"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
+				startLoop = false;
+				haveFound = false;
+				return;
+			}
+			removeHighlights(comp);
 			if (!haveFound) 
 				JOptionPane.showMessageDialog(this,"Couldn't find: "+currentPattern,"Not found!",JOptionPane.INFORMATION_MESSAGE);
-			else
-				JOptionPane.showMessageDialog(this,"Couldn't find anymore: "+currentPattern,"No more results!",JOptionPane.INFORMATION_MESSAGE);
+			else {
+				startLoop = true;
+				findNext();
+			}
+				//JOptionPane.showMessageDialog(this,"Couldn't find anymore: "+currentPattern,"No more results!",JOptionPane.INFORMATION_MESSAGE);
 			haveFound = false;
 		} else {
 			highlight(comp,currentPosition, currentPosition + currentPattern.length());
-			comp.select(currentPosition, currentPosition);
+			comp.select(currentPosition, currentPosition + currentPattern.length());
 			haveFound = true;
+			startLoop = false;
 		}
 	
 	}
@@ -203,47 +208,56 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		}
 		
 		if (currentPosition == -1) {
+			if (startLoop) {
+				if (replaceing)
+					JOptionPane.showMessageDialog(this,"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
+				startLoop = false;
+				haveFound = false;
+				return;
+			}
+			removeHighlights(comp);
 			if (!haveFound) 
 				JOptionPane.showMessageDialog(this,"Couldn't find: "+currentPattern,"Not found!",JOptionPane.INFORMATION_MESSAGE);
-			else
-				JOptionPane.showMessageDialog(this,"Couldn't find anymore: "+currentPattern,"No more results!",JOptionPane.INFORMATION_MESSAGE);
+			else 
+				findPrevious();
+				//JOptionPane.showMessageDialog(this,"Couldn't find anymore: "+currentPattern,"No more results!",JOptionPane.INFORMATION_MESSAGE);
 			haveFound = false;
 		} else {
 			highlight(comp,currentPosition, currentPosition + currentPattern.length());
-			comp.select(currentPosition, currentPosition);
+			comp.select(currentPosition, currentPosition + currentPattern.length());
 			haveFound = true;
+			startLoop = false;
 		}
 
 	}
+	
+	boolean replaceing = false;
 
-	private void replace() {
+	private boolean replace() {
 		currentReplaceStr = replaceField.getText().trim();
 		
-		if (currentReplaceStr == null || currentReplaceStr.length() <= 0) return;
+		if (currentReplaceStr == null || currentReplaceStr.length() <= 0) return false;
 		
-		if (!haveFound)
+		replaceing = true;
+		
+		if (comp.getSelectedText() != null && comp.getSelectedText().equalsIgnoreCase(currentPattern));
+		else
 			findNext();
+		replaceing = false;
+
 		if (currentPosition != -1) {
 			comp.replaceSelection(currentReplaceStr);
+			return true;
 		}
+		else return false;
 	}
-
+	
 	private void replaceAll() {
 		currentReplaceStr = replaceField.getText().trim();
 		
 		if (currentReplaceStr == null || currentReplaceStr.length() <= 0) return;
 		
-		//if (!haveFound)
-		//	findNext();
-		//if (currentPosition != -1)	
-		//	comp.replaceSelection(currentReplaceStr);
-			
-		while(currentPosition != -1) {
-			System.out.println(currentPosition);
-			findNext();
-			//if (currentPosition != -1)
-			//	comp.replaceSelection(currentReplaceStr);		
-		}
+		while(replace());
 	}
 	
 	private void highlight(JTextComponent textComp, int off, int end) {
