@@ -114,19 +114,18 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		this.getRootPane().setDefaultButton(findNextButton);
 	}
 	
-	/*public static FindReplaceDialog getInstance() {
-		if (parent == null || comp == null) return;
-		if (instance ==  null) instance = new FindReplaceDialog(parent, comp);
-		//else instance.clean();
-		//instance.setVisible(true);
-	}*/
-	
 	public static void findExt(Frame parent, JTextComponent comp) {
 		if (parent == null || comp == null) return;
 		if (instance ==  null) instance = new FindReplaceDialog(parent, comp);
+		else if (instance.comp != null && instance.comp.equals(comp))
+			instance.findField.selectAll();
 		else instance.clean();
 				
 		instance.comp = comp;
+		
+		instance.replaceField.setEditable(comp.isEditable());
+		instance.replaceField.setEnabled(comp.isEditable());
+				
 		instance.parent = parent;
 		instance.setLocation((int) (parent.getLocation().getX()+parent.getSize().getWidth()/2 + 200), (int) (parent.getLocation().getY() + parent.getSize().getHeight()/2 + 70));
 		instance.setVisible(true);
@@ -147,6 +146,10 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 			instance = new FindReplaceDialog(parent, comp);
 		
 		instance.comp = comp;
+		
+		instance.replaceField.setEditable(comp.isEditable());
+		instance.replaceField.setEnabled(comp.isEditable());
+		
 		instance.parent = parent;
 		instance.setLocation((int) (parent.getLocation().getX()+parent.getSize().getWidth()/2 + 200), (int) (parent.getLocation().getY() + parent.getSize().getHeight()/2 + 70));
 		
@@ -169,7 +172,7 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		if (currentPosition == -1) {
 			if (startLoop) {
 				if (replaceing)
-					JOptionPane.showMessageDialog(this,"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(this,replaceingall?(replacements+ " replacements done."):"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
 				startLoop = false;
 				haveFound = false;
 				return;
@@ -188,6 +191,8 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 			comp.select(currentPosition, currentPosition + currentPattern.length());
 			haveFound = true;
 			startLoop = false;
+			if (!replaceing)
+				this.setVisible(false);
 		}
 	
 	}
@@ -210,7 +215,7 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		if (currentPosition == -1) {
 			if (startLoop) {
 				if (replaceing)
-					JOptionPane.showMessageDialog(this,"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(this,replaceingall?(replacements+ " replacements done."):"No more replacements possible.","Not found!",JOptionPane.INFORMATION_MESSAGE);
 				startLoop = false;
 				haveFound = false;
 				return;
@@ -227,6 +232,8 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 			comp.select(currentPosition, currentPosition + currentPattern.length());
 			haveFound = true;
 			startLoop = false;
+			if (!replaceing)
+				this.setVisible(false);
 		}
 
 	}
@@ -252,12 +259,23 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		else return false;
 	}
 	
+	private boolean replaceingall = false;
+	private int replacements = 0;
+	
+	
 	private void replaceAll() {
 		currentReplaceStr = replaceField.getText().trim();
 		
 		if (currentReplaceStr == null || currentReplaceStr.length() <= 0) return;
 		
-		while(replace());
+		replacements = 0;
+		
+		replaceingall = true;
+		
+		while(replace())
+			replacements++;
+	
+		replaceingall = false;
 	}
 	
 	private void highlight(JTextComponent textComp, int off, int end) {
