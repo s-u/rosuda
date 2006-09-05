@@ -99,6 +99,9 @@
 		2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28699F1006BC5894002BEFFC /* JGR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0E06BC5894002BEFFC /* JGR.icns */; };
 		28699F1106BC5894002BEFFC /* JGR.mft in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0F06BC5894002BEFFC /* JGR.mft */; };
+		288DEBFC0AAC7AAB00EBA4E2 /* REngine.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBF90AAC7AAB00EBA4E2 /* REngine.java */; };
+		288DEBFD0AAC7AAB00EBA4E2 /* REngineException.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBFA0AAC7AAB00EBA4E2 /* REngineException.java */; };
+		288DEBFE0AAC7AAB00EBA4E2 /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBFB0AAC7AAB00EBA4E2 /* REXP.java */; };
 		289DF51409F268AB00C34B0B /* PluginManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51309F268AB00C34B0B /* PluginManager.java */; };
 		289DF51709F268D200C34B0B /* Plugin.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51609F268D100C34B0B /* Plugin.java */; };
 		289DF52D09F2694700C34B0B /* Global.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF51C09F2694500C34B0B /* Global.java */; };
@@ -348,6 +351,9 @@
 		287F565505EA8E0D00AF1045 /* redo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redo.png; sourceTree = "<group>"; };
 		287F565605EA8E0D00AF1045 /* save.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = save.png; sourceTree = "<group>"; };
 		287F565705EA8E0D00AF1045 /* undo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = undo.png; sourceTree = "<group>"; };
+		288DEBF90AAC7AAB00EBA4E2 /* REngine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REngine.java; path = ../../REngine/REngine.java; sourceTree = SOURCE_ROOT; };
+		288DEBFA0AAC7AAB00EBA4E2 /* REngineException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REngineException.java; path = ../../REngine/REngineException.java; sourceTree = SOURCE_ROOT; };
+		288DEBFB0AAC7AAB00EBA4E2 /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../REngine/REXP.java; sourceTree = SOURCE_ROOT; };
 		289DF51309F268AB00C34B0B /* PluginManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PluginManager.java; path = ../../plugins/PluginManager.java; sourceTree = SOURCE_ROOT; };
 		289DF51609F268D100C34B0B /* Plugin.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Plugin.java; path = ../../plugins/Plugin.java; sourceTree = SOURCE_ROOT; };
 		289DF51C09F2694500C34B0B /* Global.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Global.java; path = ../../util/Global.java; sourceTree = SOURCE_ROOT; };
@@ -685,6 +691,17 @@
 			path = icons;
 			sourceTree = "<group>";
 		};
+		288DEBF80AAC7AAB00EBA4E2 /* REngine */ = {
+			isa = PBXGroup;
+			children = (
+				288DEBF90AAC7AAB00EBA4E2 /* REngine.java */,
+				288DEBFA0AAC7AAB00EBA4E2 /* REngineException.java */,
+				288DEBFB0AAC7AAB00EBA4E2 /* REXP.java */,
+			);
+			name = REngine;
+			path = ../../REngine;
+			sourceTree = SOURCE_ROOT;
+		};
 		289DF56F09F26A6500C34B0B /* plots */ = {
 			isa = PBXGroup;
 			children = (
@@ -878,6 +895,7 @@
 		28D5F0EC060F28CB008CA291 /* rosuda */ = {
 			isa = PBXGroup;
 			children = (
+				288DEBF80AAC7AAB00EBA4E2 /* REngine */,
 				284899CE063C1F3B00E88567 /* JGR */,
 				28D5F15F060F28CB008CA291 /* JRI */,
 				282E9E7D064E848E0002BD94 /* JRclient */,
@@ -1268,6 +1286,9 @@
 				2835E1BB0AAAC0C000012BE8 /* RList.java in Sources */,
 				2835E1BC0AAAC0C000012BE8 /* RVector.java in Sources */,
 				2835E2270AAB354000012BE8 /* FindReplaceDialog.java in Sources */,
+				288DEBFC0AAC7AAB00EBA4E2 /* REngine.java in Sources */,
+				288DEBFD0AAC7AAB00EBA4E2 /* REngineException.java in Sources */,
+				288DEBFE0AAC7AAB00EBA4E2 /* REXP.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
