@@ -166,8 +166,15 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		currentPattern = findField.getText().toLowerCase().trim();
 		
 		if (currentPattern == null || currentPattern.length() <= 0) return;
-		
-		currentPosition = comp.getText().toLowerCase().indexOf(currentPattern, currentPosition + 1);
+
+		if (parent instanceof org.rosuda.JGR.JGRHelp) {
+			int pos = comp.getCaretPosition();
+			comp.selectAll();
+			currentPosition = comp.getSelectedText().toLowerCase().indexOf(currentPattern, currentPosition + 1);
+			comp.select(pos,pos);
+		}
+		else
+			currentPosition = comp.getText().toLowerCase().indexOf(currentPattern, currentPosition + 1);
 		
 		if (currentPosition == -1) {
 			if (startLoop) {
@@ -203,7 +210,14 @@ public class FindReplaceDialog extends JDialog implements ActionListener {
 		if (currentPattern == null || currentPattern.length() <= 0) return;
 		
 		try {
-			currentPosition = comp.getText(0,currentPosition==-1?comp.getText().length():currentPosition).toLowerCase().lastIndexOf(currentPattern);
+			if (parent instanceof org.rosuda.JGR.JGRHelp) {
+				int pos = comp.getCaretPosition();
+				comp.select(0,currentPosition==-1?comp.getText().length():currentPosition);
+				currentPosition = comp.getSelectedText().toLowerCase().indexOf(currentPattern, currentPosition + 1);
+				comp.select(pos,pos);
+			}
+			else
+				currentPosition = comp.getText(0,currentPosition==-1?comp.getText().length():currentPosition).toLowerCase().lastIndexOf(currentPattern);
 		} catch (BadLocationException e) {
 			if (!haveFound) 
 				JOptionPane.showMessageDialog(this,"Couldn't find: "+currentPattern,"Not found!",JOptionPane.INFORMATION_MESSAGE);

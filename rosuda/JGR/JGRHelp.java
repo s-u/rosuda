@@ -45,6 +45,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 
+import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.rhelp.SearchEngine;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.IconButton;
@@ -331,13 +332,15 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 		else if (cmd == "searchHelp")
 			search();
 		else if (cmd == "search") {
-			textFinder
-					.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
-			textFinder.showFind(false);
+			FindReplaceDialog.findExt(this,((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			//textFinder
+					//.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			//textFinder.showFind(false);
 		} else if (cmd == "searchnext") {
-			textFinder
-					.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
-			textFinder.showFind(true);
+			FindReplaceDialog.findNextExt(this,((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			//textFinder
+					//.setSearchArea(((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			//textFinder.showFind(true);
 		} else if (cmd == "tab_close")
 			tabArea.remove(tabArea.getSelectedIndex());
 	}
@@ -419,7 +422,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 	 * 
 	 * navigating and showing selected pages is implemented here.
 	 */
-	class HelpArea extends JScrollPane {
+	public class HelpArea extends JScrollPane {
 
 		public JEditorPane helpPane = new JEditorPane();
 
