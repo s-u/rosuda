@@ -330,13 +330,13 @@ public class RController {
 	}
 
 	/**
-	 * Get the content of an {@seeRObjects} (list, data.frame, table, matrix).
+	 * Get the content of an {@see RObject} (list, data.frame, table, matrix).
 	 * 
 	 * @param o
-	 *            {@seeRObjects}
+	 *            {@see RObject}
 	 * @param c
 	 *            all found objects are collected in c (currently disabled)
-	 * @return vector of {@seeRObjects}
+	 * @return vector of {@see RObject}
 	 */
 	public static Vector createContent(RObject o, Collection c) {
 		Vector cont = new Vector();
@@ -352,7 +352,10 @@ public class RController {
 			for (int i = 0; i < res.length; i++) {
 				boolean b = (res[i].equals("null") || res[i].trim().length() == 0);
 				String name = b ? a + "" : res[i];
+							
 				RObject ro = createRObject(name, res[++i], o, (!b));
+				
+			
 				// if (c != null) c.add(ro);
 				if (ro != null)
 					cont.add(ro);
@@ -595,6 +598,7 @@ public class RController {
 				cvs.add(createSVar(cvs, o2));
 			}
 		}
+		
 		return cvs;
 	}
 
@@ -608,19 +612,30 @@ public class RController {
 	 * @return new SVar
 	 */
 	private static SVar createSVar(SVarSet cvs, RObject o) {
+
 		REXP x = JGR.R.eval("suppressWarnings(try(" + o.getRName()
 				+ ",silent=TRUE))");
+				
+								
 		if (x != null && x.asStringArray() != null
 				&& x.asStringArray().length > 0
 				&& x.asStringArray()[0].startsWith("Error"))
 			return null;
 		SVar v = null;
 		if (o.getType().equals("factor")) {
-			REXP y = JGR.R.eval("suppressWarnings(try(levels(" + o.getRName()
-					+ "),silent=TRUE))");
-			if (y != null && x != null && y.asStringArray() != null
-					&& x.asIntArray() != null)
-				v = newVar(cvs, o.getName(), x.asIntArray(), y.asStringArray());
+			
+			REXP y = JGR.R.eval("suppressWarnings(try(levels(" + o.getRName()+ "),silent=TRUE))");
+			
+			x = JGR.R.eval("suppressWarnings(try(as.integer(" + o.getRName()
+				+ "),silent=TRUE))");
+		
+			if (y != null && x != null && y.asStringArray() != null	&& x.asIntArray() != null) {
+					int id[] = new int[x.asIntArray().length];
+					for (int i = 0; i < id.length; i++)
+						id[i] = x.asIntArray()[i];
+					v = newVar(cvs, o.getName(), id , y.asStringArray());
+			}
+					
 		} else if (o.getType().equals("character")) {
 			if (x != null && x.asStringArray() != null)
 				v = newVar(cvs, o.getName(), x.asStringArray());
@@ -713,6 +728,7 @@ public class RController {
 	 * @param d levels (d[0]=ID 1, d[1]=ID 2, ...) @return SVar
 	 */
 	public static SVar newVar(SVarSet cvs, String name, int[] ix, String[] d) {
+	
 		if (ix == null)
 			return null;
 		if (d == null)
@@ -785,7 +801,6 @@ public class RController {
 			if (vs.count() > 1)
 				return false;
 			long v = JGR.R.rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
-			System.out.println(vs.getName());
 			JGR.R.rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
@@ -899,8 +914,7 @@ public class RController {
 					break;
 				}
 
-			System.out.println("Export data.frame with length: " + vs.count());
-
+			
 			long contlist[] = new long[vs.count()];
 			String[] names = new String[vs.count()];
 			for (int i = 0; i < vs.count(); i++) {
