@@ -44,10 +44,10 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	//JGR_VERSION 1.4-9
+	//JGR_VERSION 1.4-10
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.4-9";
+	public static final String VERSION = "1.4-10";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -205,6 +205,11 @@ public class JGR {
 			System.exit(1);
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
+		
+		System.out.println(JGRPrefs.workingDirectory);
+		
+		R.eval("setwd(\""+JGRPrefs.workingDirectory+"\")");
+		
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
