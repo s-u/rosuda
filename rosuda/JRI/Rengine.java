@@ -103,7 +103,7 @@ public class Rengine extends Thread {
 		@since API 1.5, JRI 0.3
 		@param exp reference to protect */
 	public synchronized native void rniProtect(long exp);
-	/** RNI: unprotect last <code>count></code> references (c.f. UNPROTECT in C)
+	/** RNI: unprotect last <code>count</code> references (c.f. UNPROTECT in C)
 		@since API 1.5, JRI 0.3
 		@param count number of references to unprotect */
 	public synchronized native void rniUnprotect(int count);
@@ -120,6 +120,11 @@ public class Rengine extends Thread {
 	@param exp reference to INTSXP
 	@return contents or <code>null</code> if the reference is not INTSXP */
     public synchronized native int[] rniGetIntArray(long exp);
+    /** RNI: get the contents of a logical vector in its integer array form
+	@since API 1.6, JRI 0.3-2
+	@param exp reference to LGLSXP
+	@return contents or <code>null</code> if the reference is not LGLSXP */
+    public synchronized native int[] rniGetBoolArrayI(long exp);
     /** RNI: get the contents of a numeric vector
 	@param exp reference to REALSXP
 	@return contents or <code>null</code> if the reference is not REALSXP */
@@ -141,6 +146,16 @@ public class Rengine extends Thread {
 	@param a initial contents of the vector
 	@return reference to the resulting INTSXP */
     public synchronized native long rniPutIntArray(int [] a);
+    /** RNI: create a boolean vector from an integer vector
+	@since API 1.6, JRI 0.3-2
+	@param a initial contents of the vector
+	@return reference to the resulting LGLSXP */
+    public synchronized native long rniPutBoolArrayI(int [] a);
+    /** RNI: create a boolean vector
+	@since API 1.6, JRI 0.3-2
+	@param a initial contents of the vector
+	@return reference to the resulting LGLSXP */
+    public synchronized native long rniPutBoolArray(boolean [] a);
     /** RNI: create a numeric vector
 	@param a initial contents of the vector
 	@return reference to the resulting REALSXP */
