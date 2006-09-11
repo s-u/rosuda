@@ -497,7 +497,7 @@ public class Rengine extends Thread {
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
         @param sym symbol name. The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
-        @param r contents as <code>REXP</code>. currently only raw references and basic types (int, double, int[], double[]) are supported.
+        @param r contents as <code>REXP</code>. currently only raw references and basic types (int, double, int[], double[], boolean[]) are supported.
 		@since JRI 0.3
         */
     public void assign(String sym, REXP r) {
@@ -505,16 +505,24 @@ public class Rengine extends Thread {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
     		rniAssign(sym,x1,0);
+		return;
     	}
     	if (r.Xt == REXP.XT_DOUBLE || r.Xt == REXP.XT_ARRAY_DOUBLE) {
     		double[] cont = r.rtype == REXP.XT_DOUBLE?new double[]{((Double)r.cont).intValue()}:(double[])r.cont;
     		long x1 = rniPutDoubleArray(cont);
     		rniAssign(sym,x1,0);
+		return;
     	}
+	if (r.Xt == REXP.XT_ARRAY_BOOL_INT) {
+	    long x1 = rniPutBoolArrayI((int[])r.cont);
+	    rniAssign(sym,x1,0);
+	    return;
+	}
 		if (r.Xt == REXP.XT_STR || r.Xt == REXP.XT_ARRAY_STR) {
 			String[] cont = r.rtype == REXP.XT_STR?new String[]{(String)r.cont}:(String[])r.cont;
 			long x1 = rniPutStringArray(cont);
 			rniAssign(sym,x1,0);
+			return;
 		}
     }
 
@@ -535,6 +543,16 @@ public class Rengine extends Thread {
 		@since JRI 0.3
 		*/
 	public void assign(String sym, int[] val) {
+        assign(sym,new REXP(val));
+    }
+
+    /** assign values of an array of booleans to a symbol in R (creating a logical vector).<br>
+        equals to calling {@link #assign(String, REXP)}.
+		@param sym symbol name
+		@param val boolean array to assign
+		@since JRI 0.3-2
+		*/
+    public void assign(String sym, boolean[] val) {
         assign(sym,new REXP(val));
     }
 

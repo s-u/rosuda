@@ -322,11 +322,25 @@ public class REXP {
 		this(XT_ARRAY_STR, val);
 	}
 
+    /** construct new expression with the contents of a boolean vector
+	@since JRI 0.3-2
+	@param val contents */
+	public REXP(boolean[] val) {
+	    Xt = XT_ARRAY_BOOL_INT;
+	    if (val==null) { cont = new int[0]; } else {
+		int [] ic = new int[val.length];
+		int i=0;
+		while (i<val.length) { ic[i]=val[i]?1:0; i++; }
+		cont = ic;
+	    }
+	    attr = null;
+	}
+
 	/**	get attributes of the REXP. In R every object can have attached attribute
 		xpression. Some more complex structures such as classes are built that
 		way.
 		@return attribute xpression or <code>null</code> if there is none associated
-		@ since JRI 0.3, replaces <code>getAttribute()</code>
+		@since JRI 0.3, replaces <code>getAttribute()</code> but should be avoided if possible - use {@link #getAttribute(name)} instead.
 		*/
 	public REXP getAttributes() {
 		return attr;
