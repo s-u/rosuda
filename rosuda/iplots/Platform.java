@@ -8,8 +8,6 @@
 
 package org.rosuda.iplots;
 
-import java.io.*;
-import java.awt.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.util.*;
