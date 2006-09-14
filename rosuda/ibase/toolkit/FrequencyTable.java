@@ -74,12 +74,12 @@ public final class FrequencyTable {
                     numOfCat[i] = ((Integer)num).intValue();
                 }
             }
-            for(int i=0; i<chunks.length; i++) System.out.println("chunks " + i + " " + chunks[i]);
-            for(int i=0; i<numOfCat.length; i++) System.out.println("nOc " + i + " " + numOfCat[i]);
+            //for(int i=0; i<chunks.length; i++) System.out.println("chunks " + i + " " + chunks[i]);
+            //for(int i=0; i<numOfCat.length; i++) System.out.println("nOc " + i + " " + numOfCat[i]);
             
             int ind=0;
             for(int j=0; j<vars.length; j++) ind += chunks[j]*numOfCat[j];
-            System.out.println("ind: " + ind + ", len: " + ceTable.length);
+            //System.out.println("ind: " + ind + ", len: " + ceTable.length);
             final CombinationEntry ce = ceTable[ind];
             ce.cases.add(new Integer(cs));
         }
