@@ -95,7 +95,8 @@ public class RController {
 	 */
 	public static String getCurrentPackages() {
 		REXP x = JGR.R
-				.eval(".allpkg <- (.packages(all=T));.p <- NULL;for (i in 1:length(.allpkg)) .p <- paste(.p,as.character(.allpkg[i]),sep=\",\");substring(.p,2)");
+				.eval(".packages(TRUE)");//.allpkg <- (.packages(all=T));.p <- NULL;for (i in 1:length(.allpkg)) .p <- paste(.p,as.character(.allpkg[i]),sep=\",\");substring(.p,2)");
+		
 		if (x != null && x.asStringArray() != null) {
 			String p = "";
 			for (int i = 0; i < x.asStringArray().length - 1; i++)

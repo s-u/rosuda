@@ -206,8 +206,6 @@ public class JGR {
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
 		
-		System.out.println(JGRPrefs.workingDirectory);
-		
 		R.eval("setwd(\""+JGRPrefs.workingDirectory+"\")");
 		
 		STARTED = true;
@@ -425,24 +423,36 @@ public class JGR {
 	private void checkForMissingPkg() {
 		try {
 			String previous = JGRPrefs.previousPackages;
+			
+			System.out.println("previous "+previous);
+			
 			if (previous == null)
 				return;
 			String current = RController.getCurrentPackages();
+			
+			System.out.println("current: "+current);
+			
 			if (current == null)
 				return;
-			StringTokenizer st = new StringTokenizer(current, ",");
+				
+			Vector missing = new Vector();
+			
+			Vector currentPkg = new Vector();
+			Vector previousPkg = new Vector();
+			
+			StringTokenizer st = new StringTokenizer(current,",");
 			while (st.hasMoreTokens())
-				previous = previous.replaceFirst(st.nextToken() + ",{0,1}", "");
-			st = new StringTokenizer(previous, ",");
-			previous = "";
-			while (st.hasMoreTokens()) {
-				String prev = st.nextToken().trim();
-				if (prev != null && prev != "null" && st.hasMoreTokens())
-					previous += st.nextToken()
-							+ (st.hasMoreTokens() ? "," : "");
-			}
-			if (previous.trim().length() > 0)
-				new JGRPackageManager(previous);
+				currentPkg.add(st.nextToken().toString().replaceFirst(",",""));
+				
+			st = new StringTokenizer(previous,",");
+			while (st.hasMoreTokens())
+				previousPkg.add(st.nextToken().toString().replaceFirst(",",""));
+			
+			for (int i = 0; i < currentPkg.size(); i++)
+				previousPkg.remove(currentPkg.elementAt(i));
+			
+			if (previousPkg.size() > 0)
+				new JGRPackageManager(previousPkg);
 		} catch (Exception e) {
 		}
 	}
@@ -510,7 +520,7 @@ public class JGR {
 	class Refresher implements Runnable {
 
 		public Refresher() {
-			checkForMissingPkg();
+			//checkForMissingPkg();
 		}
 
 		public void run() {

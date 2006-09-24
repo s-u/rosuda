@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 import java.util.StringTokenizer;
 
 import javax.swing.JButton;
@@ -77,9 +78,16 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 
 	private final JTable pkgTable = new JTable();
 
-	public JGRPackageManager(String missingpkgs) {
+	public JGRPackageManager(Vector missingpkgs) {
 		super("Deleted Packages after last session:", iFrame.clsPackageUtil);
-		remindPackages = missingpkgs;
+		
+		String pkgs = "";
+		
+		for (int i = 0; i < missingpkgs.size() - 1; i++)
+			pkgs += missingpkgs.elementAt(i) + ",";
+		pkgs = missingpkgs.elementAt(missingpkgs.size()-1) + "";
+		
+		remindPackages =pkgs;
 		System.out.println("missing packages: " + remindPackages);
 		StringTokenizer st = new StringTokenizer(remindPackages, ",");
 		MPackages = new Object[st.countTokens()][2];
