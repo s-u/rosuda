@@ -520,7 +520,7 @@ public class JGR {
 	class Refresher implements Runnable {
 
 		public Refresher() {
-			//checkForMissingPkg();
+			checkForMissingPkg();
 		}
 
 		public void run() {
