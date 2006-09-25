@@ -44,10 +44,10 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	//JGR_VERSION 1.4-10
+	//JGR_VERSION 1.4-11
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.4-10";
+	public static final String VERSION = "1.4-11";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -162,8 +162,10 @@ public class JGR {
 		MAINRCONSOLE = new JGRConsole();
 		MAINRCONSOLE.setWorking(true);
 		splash.toFront();
-		if (System.getProperty("os.name").startsWith("Window"))
+		if (System.getProperty("os.name").startsWith("Window")) {
 			splash.stop();
+			JGRPrefs.isWindows = true;
+		}
 
 		// let's preemptively load JRI - if we do it here, we can show an error
 		// message
@@ -206,7 +208,7 @@ public class JGR {
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
 		
-		R.eval("setwd(\""+JGRPrefs.workingDirectory+"\")");
+		R.eval("try(setwd(\""+JGRPrefs.workingDirectory+"\"),silent=T)");
 		
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
@@ -424,13 +426,13 @@ public class JGR {
 		try {
 			String previous = JGRPrefs.previousPackages;
 			
-			System.out.println("previous "+previous);
+			//System.out.println("previous "+previous);
 			
 			if (previous == null)
 				return;
 			String current = RController.getCurrentPackages();
 			
-			System.out.println("current: "+current);
+			//System.out.println("current: "+current);
 			
 			if (current == null)
 				return;

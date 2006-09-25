@@ -43,6 +43,8 @@ public class JGRPrefs {
 
 	/** Is JGR running on a Mac? */
 	public static boolean isMac = false;
+	
+	public static boolean isWindows = false;
 
 	/** DefaultFontName */
 	public static String FontName = "Monospaced";
@@ -292,7 +294,7 @@ public class JGRPrefs {
 		if (JGR.RLIBS != null && JGR.RLIBS.length > 1) {
 			String libpaths = JGR.RLIBS[0].toString();
 			for (int i = 1; i < JGR.RLIBS.length - 1; i++)
-				libpaths += (isMac ? ":" : ";") + JGR.RLIBS[i];
+				libpaths += (isWindows ? ";" : ":") + JGR.RLIBS[i];
 			prefs.put("InitialRLibraryPath", libpaths);
 		}
 		try {
