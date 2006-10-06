@@ -70,7 +70,7 @@ extern void (*ptr_R_savehistory)(SEXP, SEXP, SEXP, SEXP);
 int initR(int argc, char **argv) {
     structRstart rp;
     Rstart Rp = &rp;
-    //getenv("R_HOME","/Library/Frameworks/R.framework/Resources",1);
+    /* getenv("R_HOME","/Library/Frameworks/R.framework/Resources",1); */
     if (!getenv("R_HOME")) {
         fprintf(stderr, "R_HOME is not set. Please set all required environment variables before running this program.\n");
         return -1;
