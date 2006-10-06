@@ -76,6 +76,7 @@ int initR(int argc, char **argv) {
         return -1;
     }
 
+    /* this is probably unnecessary, but we could set any other parameters here */
     R_DefParams(Rp);
     Rp->NoRenviron = 0;
     R_SetParams(Rp);
@@ -83,11 +84,13 @@ int initR(int argc, char **argv) {
 #ifdef RIF_HAS_RSIGHAND
     R_SignalHandlers=0;
 #endif
-    int stat=Rf_initialize_R(argc, argv);
-    if (stat<0) {
+    {
+      int stat=Rf_initialize_R(argc, argv);
+      if (stat<0) {
         printf("Failed to initialize embedded R! (stat=%d)\n",stat);
         return -1;
-    };
+      }
+    }
 
 #ifdef RIF_HAS_RSIGHAND
     R_SignalHandlers=0;

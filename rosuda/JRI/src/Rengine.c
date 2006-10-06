@@ -459,6 +459,7 @@ JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
     /* not really a perfect solution ... need to clarify what's the best ... */
     kill(getpid(), SIGINT);
 #endif
+    return 0;
 }
 
 
