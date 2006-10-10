@@ -384,8 +384,9 @@ public class Framework implements Dependent, ActionListener {
     public ScatterCanvas newScatterplot(final SVarSet vs, final int v1, final int v2) {
         updateMarker(vs,v1);
         
+	String title="Scatterplot ("+vs.at(v2).getName()+" vs "+vs.at(v1).getName()+")";
         FrameDevice frdev;
-        frdev=newFrame("Scatterplot ("+vs.at(v2).getName()+" vs "+vs.at(v1).getName()+")",TFrame.clsScatter);
+        frdev=newFrame(title,TFrame.clsScatter);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -393,6 +394,7 @@ public class Framework implements Dependent, ActionListener {
 		frdev.add(sc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(sc);
         sc.setSize(new Dimension(400,300));
+	sc.setTitle(title);
         frdev.setSize(new Dimension(sc.getWidth(),sc.getHeight()));
         frdev.pack();
         sc.repaint();
@@ -411,7 +413,8 @@ public class Framework implements Dependent, ActionListener {
         if (!theCat.isCat()) theCat.categorize();
         
         FrameDevice frdev;
-        frdev = newFrame((theNum!=null)?"w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":"Barchart ("+theCat.getName()+")",TFrame.clsBar);
+	String title=(theNum!=null)?"w.Barchart ("+theCat.getName()+"*"+theNum.getName()+")":"Barchart ("+theCat.getName()+")";
+        frdev = newFrame(title,TFrame.clsBar);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -421,6 +424,7 @@ public class Framework implements Dependent, ActionListener {
         int xdim=100+40*theCat.getNumCats();
         if (xdim>800) xdim=800;
         bc.setSize(new Dimension(xdim,200));
+	bc.setTitle(title);
         frdev.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
         frdev.pack();
         bc.repaint();
@@ -437,7 +441,8 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,v[0]);
         
         FrameDevice frdev;
-        frdev = newFrame("Lineplot",TFrame.clsLine);
+	String title="Lineplot";
+        frdev = newFrame(title,TFrame.clsLine);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -448,6 +453,7 @@ public class Framework implements Dependent, ActionListener {
         frdev.add(lc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(lc);
         lc.setSize(new Dimension(400,300));
+	lc.setTitle(title);
         frdev.setSize(new Dimension(lc.getWidth(),lc.getHeight()));
         frdev.pack();
         lc.repaint();
@@ -463,7 +469,8 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,v[0]);
         
         FrameDevice frdev;
-        frdev = newFrame("Hammock plot",TFrame.clsPCP);
+	String title="Hammock plot";
+        frdev = newFrame(title,TFrame.clsPCP);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -474,6 +481,7 @@ public class Framework implements Dependent, ActionListener {
         frdev.add(hc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
         hc.setSize(new Dimension(400,300));
+	hc.setTitle(title);
         frdev.setSize(new Dimension(hc.getWidth(),hc.getHeight()));
         frdev.pack();
         hc.repaint();
@@ -504,6 +512,7 @@ public class Framework implements Dependent, ActionListener {
         frdev.add(mc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(mc);
         mc.setSize(new Dimension(400,300));
+	mc.setTitle("Mosaic plot "+title);
         frdev.setSize(new Dimension(mc.getWidth(),mc.getHeight()));
         frdev.pack();
         mc.repaint();
@@ -519,8 +528,9 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,v[0]);
         
         FrameDevice frdev;
-        frdev = newFrame("Parallel coord. plot ("+vs.getName()+")",TFrame.clsPCP);
-		frdev.initPlacement();
+	String title="Parallel coord. plot ("+vs.getName()+")";
+        frdev = newFrame(title,TFrame.clsPCP);
+	frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
         final SVar[] vl=new SVar[v.length];
@@ -530,6 +540,7 @@ public class Framework implements Dependent, ActionListener {
         frdev.add(pcpc.getComponent());
         if (vs.getMarker()!=null) vs.getMarker().addDepend(pcpc);
         pcpc.setSize(new Dimension(400,300));
+	pcpc.setTitle(title);
         frdev.setSize(new Dimension(pcpc.getWidth(),pcpc.getHeight()));
         frdev.pack();
         pcpc.repaint();
@@ -546,7 +557,8 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,i);
 
         FrameDevice frdev;
-        frdev = newFrame("Histogram ("+vs.at(i).getName()+")",TFrame.clsHist);
+	String title="Histogram ("+vs.at(i).getName()+")";
+        frdev = newFrame(title, TFrame.clsHist);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -555,6 +567,7 @@ public class Framework implements Dependent, ActionListener {
         hc.updateObjects();
         if (vs.getMarker()!=null) vs.getMarker().addDepend(hc);
         hc.setSize(new Dimension(400,300));
+	hc.setTitle(title);
         frdev.setSize(new Dimension(hc.getWidth(), hc.getHeight()));
         frdev.pack();
         hc.repaint();
@@ -572,7 +585,8 @@ public class Framework implements Dependent, ActionListener {
         updateMarker(vs,i[0]);
         
         FrameDevice frdev;
-        frdev = newFrame("Boxplot ("+vs.at(i[0]).getName()+")"+((catVar!=null)?" by "+catVar.getName():""),TFrame.clsBox);
+	String title="Boxplot ("+vs.at(i[0]).getName()+")"+((catVar!=null)?" by "+catVar.getName():"");
+        frdev = newFrame(title,TFrame.clsBox);
         frdev.initPlacement();
         frdev.setVisible(true);
         frdev.addWindowListener(Common.getDefaultWindowListener());
@@ -585,6 +599,7 @@ public class Framework implements Dependent, ActionListener {
         int xdim=(catVar==null)?(40+40*i.length):(40+40*catVar.getNumCats());
         if (xdim>800) xdim=800;
         bc.setSize(new Dimension(xdim,200));
+	bc.setTitle(title);
         frdev.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
         frdev.pack();
         bc.repaint();
