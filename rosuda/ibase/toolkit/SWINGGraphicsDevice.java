@@ -87,11 +87,11 @@ public class SWINGGraphicsDevice implements GraphicsDevice {
         update(comp.getGraphics());
 	}
 	
-	protected void paint(Graphics g) {
-		update(g);
-	}
+    public void paint(Graphics g) {
+	update(g);
+    }
 	
-	protected void update(Graphics g) {
+    public void update(Graphics g) {
         if(g==null) return;
         final Dimension d = comp.getSize();
         

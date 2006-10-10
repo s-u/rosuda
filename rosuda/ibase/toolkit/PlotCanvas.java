@@ -12,17 +12,11 @@ public class PlotCanvas extends Canvas implements MouseListener, MouseMotionList
 	}
 
 	public void update(Graphics g) {
-		if(grdev.getGrDevID()==0) ((AWTGraphicsDevice)grdev).update(g);
-		else if(grdev.getGrDevID()==1) ((SWINGGraphicsDevice)grdev).update(g);
-//		else if(grdev.getGrDevID()==2) ((JOGLGraphicsDevice)grdev).update(g);
-		//default is Canvas.update(g);
+	    grdev.update(g);
 	}
 	
 	public void paint(Graphics g) {
-		if(grdev.getGrDevID()==0) ((AWTGraphicsDevice)grdev).paint(g);
-		else if(grdev.getGrDevID()==1) ((SWINGGraphicsDevice)grdev).paint(g);
-//		else if(grdev.getGrDevID()==2) ((JOGLGraphicsDevice)grdev).paint(g);
-		//default is Canvas.paint(g);
+	    grdev.paint(g);
 	}
 	
 	public void mouseClicked(final MouseEvent e) {

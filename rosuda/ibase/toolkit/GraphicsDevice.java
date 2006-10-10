@@ -35,6 +35,10 @@ public interface GraphicsDevice {
 	int getWidth();
 	int getHeight();
 	Container getParent();
+
+    // pass-through paint/update (?)
+    void paint(Graphics g);
+    void update(Graphics g);
 	
 	void addMouseListener(MouseListener l);
 	void addMouseMotionListener(MouseMotionListener l);

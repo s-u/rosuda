@@ -102,6 +102,14 @@ public class JOGLGraphicsDevice implements GraphicsDevice, GLEventListener {
 		comp.repaint();
 	}
 	
+    public void paint(Graphics g) {
+	// what should we do here?
+    }
+
+    public void update(Graphics g) {
+	// what should we do here?
+    }
+
 	public int createTexture(int w, int h, GL gl) {
 		int[] textureHandles = new int[1];
 		gl.glGenTextures(1,textureHandles);
