@@ -78,8 +78,8 @@ public class MosaicCanvas extends BaseCanvas {
             "More variables (down)",M_MAXLEVELDOWN,
             "Increase censor (shift+up)",M_CENSORUP,
             "Decrease censor (shift+down)",M_CENSORDOWN,
-            "Rotate variables left (left)",M_PERMUTELEFT,
-            "Rotate variables right (right)",M_PERMUTERIGHT,
+            "Reorder variables left (left)",M_PERMUTELEFT,
+            "Reorder variables right (right)",M_PERMUTERIGHT,
         });
         
         setDefaultMargins(new int[] {standardMLeft,5,20,5});

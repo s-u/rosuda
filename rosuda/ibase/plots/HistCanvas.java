@@ -84,11 +84,11 @@ public class HistCanvas extends BaseCanvas {
         anchor=v.getMin()-binw;
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
         createMenu(f,true,false,false,true,new String[]{
-            "@SSpinogram",M_SPINE,
-            "Increase bin width (up)",M_BINUP,
-            "Decrease bin width (down)",M_BINDOWN,
-            "Move anchor left (left)",M_ANCHORLEFT,
-            "Move anchor right (right)",M_ANCHORRIGHT
+            "@MSpinogram",M_SPINE,
+            "Increase Bin Width (up)",M_BINUP,
+            "Decrease Bin Width (down)",M_BINDOWN,
+            "Move Anchor Left (left)",M_ANCHORLEFT,
+            "Move Anchor Right (right)",M_ANCHORRIGHT
         });
         MIspine=EzMenu.getItem(f,M_SPINE);
         

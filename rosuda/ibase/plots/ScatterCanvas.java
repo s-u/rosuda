@@ -151,16 +151,16 @@ public class ScatterCanvas extends BaseCanvas {
         
         //if (Global.useAquaBg) fieldBg=2;
         createMenu(f,true,true,true,false,new String[]{
-            "Same scale",M_EQUISCALE,
+            "Same Scale",M_EQUISCALE,
             M_MINUS,
-            "@LHide labels",M_LABELS,
-            "Change background",M_FIELDBG,
+            "@LHide Labels",M_LABELS,
+            "Change Background",M_FIELDBG,
             M_MINUS,
             "Set X Range ...",M_XRANGEDLG,
             "Set Y Range ...",M_YRANGEDLG,
             M_MINUS,
-            "Bigger points (up)",M_POINTSUP,
-            "Smaller points (down)",M_POINTSDOWN,
+            "Larger Points (up)",M_POINTSUP,
+            "Smaller Points (down)",M_POINTSDOWN,
         });
         MIequiscale=EzMenu.getItem(f,M_EQUISCALE);
         MIlabels=EzMenu.getItem(f,M_LABELS);

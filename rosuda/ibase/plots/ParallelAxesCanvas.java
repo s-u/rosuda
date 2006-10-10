@@ -342,33 +342,33 @@ public class ParallelAxesCanvas extends BaseCanvas {
     
     private void createMenu(final Frame f){
         createMenu(f,true,true,true,false,new String[]{
-            "@LHide labels",M_LABELS,
-            "Alterning labels",M_ALTERNINGLABELS,
+            "@LHide Labels",M_LABELS,
+            "Alternating Labels",M_ALTERNINGLABELS,
             M_SHOWDOTS,M_TOGGLEPTS,
-            "Increase dot size (up)",M_NODESIZEUP,
-            "Decrease dot size (down)",M_NODESIZEDOWN,
+            "Increase Dot Size (up)",M_NODESIZEUP,
+            "Decrease Dot Size (down)",M_NODESIZEDOWN,
             M_SHOWAXES,M_TOGGLEAXES,
             M_HIDELINES,M_TOGGLELINES,
-            "@NHide NA lines",M_HIDENALINES,
+            "@NHide NA Lines",M_HIDENALINES,
             M_MINUS,
-            "@TCommon scale",M_COMMON,
+            "@TCommon Scale",M_COMMON,
             M_MINUS,
             "Set Y Range ...",M_YRANGEDLG,
-            "!SShow scale dialog",M_SCALEDLG,
+            "!SShow Scale Dialog",M_SCALEDLG,
             M_MINUS,
             "PCP",M_PCP,
-            "Box plot",M_BOX,
-            "PCP over boxes",M_BOTHPCPBOX,
+            "Box Plot",M_BOX,
+            "PCP Over Boxes",M_BOTHPCPBOX,
             M_MINUS,
-            "@OSort by count",M_SORTBYCOUNT,
-            "!OSort by marked (absolute)",M_SORTBYMARKED,
-            "Sort by marked (relative)",M_SORTBYMARKEDREL,
-            "@ESort by median",M_SORTBYMEDIAN,
-            "@MSort by minimum",M_SORTBYMIN,
+            "@OSort by Count",M_SORTBYCOUNT,
+            "!OSort by Highlighted",M_SORTBYMARKED,
+            "Sort by Highlighted Proportion",M_SORTBYMARKEDREL,
+            "@ESort by Median",M_SORTBYMEDIAN,
+            "@MSort by Minimum",M_SORTBYMIN,
             "!MSort by maximum",M_SORTBYMAX,
-            "Sort by median (marked)",M_SORTBYMARKEDMEDIAN,
-            "Sort by minimum (marked)",M_SORTBYMARKEDMIN,
-            "Sort by maximum (marked)",M_SORTBYMARKEDMAX
+            "Sort by Median of Highlighted",M_SORTBYMARKEDMEDIAN,
+            "Sort by Minimum of Highlighted",M_SORTBYMARKEDMIN,
+            "Sort by Maximum of Highlighted",M_SORTBYMARKEDMAX
         });
         
         MIlabels=EzMenu.getItem(f,M_LABELS);
@@ -411,7 +411,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         super.run(o,cmd);
         if (M_LABELS.equals(cmd)) {
             setShowLabels(!isShowLabels());
-            MIlabels.setLabel((isShowLabels())?"Hide labels":"Show labels");
+            MIlabels.setLabel((isShowLabels())?"Hide Labels":"Show Labels");
             setUpdateRoot(0);
             repaint();
         }
@@ -419,7 +419,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         if (M_COMMON.equals(cmd)) { setCommonScale(!commonScale); updateObjects(); setUpdateRoot(0); repaint();}
         if (M_TOGGLEPTS.equals(cmd)) {
             drawPoints=!drawPoints;
-            MIdots.setLabel((drawPoints)?"Hide dots":M_SHOWDOTS);
+            MIdots.setLabel((drawPoints)?"Hide Dots":M_SHOWDOTS);
             for(Iterator it = polylines.iterator(); it.hasNext();){
                 ((PPrimPolygon)it.next()).drawCorners=drawPoints;
             }
@@ -432,7 +432,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         if (M_TOGGLELINES.equals(cmd)) {
             drawLines=!drawLines;
-            MIlines.setLabel((drawLines)?M_HIDELINES:"Show lines");
+            MIlines.setLabel((drawLines)?M_HIDELINES:"Show Lines");
             for(Iterator it = polylines.iterator(); it.hasNext();){
                 final PPrimPolygon ppp = ((PPrimPolygon)it.next());
                 ppp.drawBorder=drawLines;
@@ -445,12 +445,12 @@ public class ParallelAxesCanvas extends BaseCanvas {
         }
         if (M_TOGGLEAXES.equals(cmd)) {
             drawAxes=!drawAxes;
-            MIaxes.setLabel((drawAxes)?"Hide axes":M_SHOWAXES);
+            MIaxes.setLabel((drawAxes)?"Hide Axes":M_SHOWAXES);
             setUpdateRoot(0); repaint();
         }
         if (M_YRANGEDLG.equals(cmd) || "XrangeDlg".equals(cmd)) {
             final Axis rt=(M_YRANGEDLG.equals(cmd))?ay:ax;
-            final Dialog d=intDlg=new Dialog(myFrame,(rt==ay)?"Y range":"X range",true);
+            final Dialog d=intDlg=new Dialog(myFrame,(rt==ay)?"Y Range":"X Range",true);
             
             d.setBackground(Color.white);
             d.setLayout(new BorderLayout());
@@ -485,7 +485,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             updateGeometry=true;
         }
         if (M_SCALEDLG.equals(cmd) && commonScale) {
-            final RespDialog d=new RespDialog(myFrame,"Set y scale",true,RespDialog.okCancel);
+            final RespDialog d=new RespDialog(myFrame,"Set Y Scale",true,RespDialog.okCancel);
             final Panel cp=d.getContentPanel();
             cp.add(new Label("begin: "));
             final TextField tw=new TextField(""+ay.vBegin,6);
@@ -530,7 +530,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
                 }
                 setUpdateRoot(0); repaint();
             }
-            MIhideNAlines.setLabel(drawNAlines?"Hide NA lines":"Show NA lines");
+            MIhideNAlines.setLabel(drawNAlines?"Hide NA Lines":"Show NA Lines");
         }
         if(M_PCP.equals(cmd)) {
             type=TYPE_PCP;
@@ -637,7 +637,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
             sortAxesBy(maxs);
         }
         if(M_ALTERNINGLABELS.equals(cmd)){
-            MIAlterningLabels.setLabel(alterningLabels?"Alterning labels":"No alterning labels");
+            MIAlterningLabels.setLabel(alterningLabels?"Alternating Labels":"Bottom Labels");
             alterningLabels = !alterningLabels;
             repaint();
         }
@@ -695,7 +695,7 @@ public class ParallelAxesCanvas extends BaseCanvas {
         commonScale=cs;
         updateGeometry=true;
         updateMargins();
-        EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual scales":"Common scale");
+        EzMenu.getItem(getFrame(),M_COMMON).setLabel(cs?"Individual Scales":"Common Scale");
         EzMenu.getItem(getFrame(),M_YRANGEDLG).setEnabled(cs);
         if (cs) {
             ay.setType(Axis.T_Num);
@@ -1180,11 +1180,11 @@ public class ParallelAxesCanvas extends BaseCanvas {
                             "upper whisker: " + Tools.getDisplayableValue(box.uh15Value);
                 if(isExtQuery) {
                     qs+="\ncases: "+p.cases();
-                    if(isMouseOnHilite || mark>0) qs+="\nmarked: "+mark+" ("+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%)";
+                    if(isMouseOnHilite || mark>0) qs+="\nhighlighted: "+mark+" ("+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%)";
                 }
                 if(!isExtQuery)
                     if(isMouseOnHilite || mark>0) {
-                    qs+="\n\nmarked: "+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%";
+                    qs+="\n\nhighlighted: "+Tools.getDisplayableValue(100*(double)mark/p.cases(),2)+"%";
                     }
                 return qs;
             }

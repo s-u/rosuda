@@ -85,9 +85,9 @@ public class BarCanvas extends BaseCanvas {
         updateObjects();
         
         createMenu(f,true,false,false,true,new String[]{
-            "@SSpineplot",M_SPINE,
-            "@OSort by count",M_SORTBYCOUNT,
-            "!OSort by marked",M_SORTBYMARKED,
+            "@ESpineplot",M_SPINE,
+            "@OSort by Count",M_SORTBYCOUNT,
+            "!OSort by Highlighted",M_SORTBYMARKED,
             "@LHide Labels",M_LABELS
         });
         MIspine=EzMenu.getItem(f,M_SPINE);
