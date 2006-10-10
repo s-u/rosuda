@@ -96,6 +96,16 @@ public class Framework implements Dependent, ActionListener {
     public SVarSet getSet(final int i) {
         return (i<0||i>=dataset.size())?null:(SVarSet)dataset.get(i);
     }
+
+    public int getSetIdByName(String name) {
+	int i=0;
+        while (i<dataset.size()) {
+            final SVarSet s=(SVarSet)dataset.get(i);
+            if (s.getName().equals(name)) return i;
+	    i++;
+        }
+        return -1;
+    }
     
     public int countSets() {
         return dataset.size();
@@ -196,7 +206,7 @@ public class Framework implements Dependent, ActionListener {
      * @param d array of doubles
      * @return ID of the new variable, -1 if an error occured (variable name already exists or user declined to create a new iSet), -2 if the user cancelled the operation and -3 if the user opted to create a new iSet
      */
-    public int newVar(final String name, final double[] d) {
+    public int newVar(String name, final double[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
             System.out.println("newVar: double["+d.length+"]");
@@ -204,7 +214,16 @@ public class Framework implements Dependent, ActionListener {
 	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,d.length);
             if (i<0) return i;
-        }
+	    name=getNewTmpVar(name);
+        } else {
+	    SVar ci = cvs.byName(name);
+	    if (ci!=null) {
+		if (ci instanceof SVarDouble && ((SVarDouble)ci).hasEqualContents(d)) return cvs.indexOf(name); // re-use
+		// not equal, thus we need to re-name it
+		name=getNewTmpVar(name);
+	    }
+	}
+	    
         final SVar v=new SVarDouble(name,d);
         return addVar(v);
     }
@@ -215,7 +234,7 @@ public class Framework implements Dependent, ActionListener {
      * @param d array of integers
      * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
      */
-    public int newVar(final String name, final int[] d) {
+    public int newVar(String name, final int[] d) {
         if (d==null) return -1;
         if (Global.DEBUG>0)
             System.out.println("newVar: int["+d.length+"]");
@@ -223,17 +242,18 @@ public class Framework implements Dependent, ActionListener {
 	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,d.length);
             if (i<0) return i;
-        }
-        final SVar v=new SVarObj(name);
-        int i=0; while(i<d.length) {
-            if (d[i]==SVar.int_NA)
-                v.add(null);
-            else
-                v.add(new Integer(d[i]));
-            i++;
-        }
+	    name=getNewTmpVar(name);
+        } else {
+	    SVar ci = cvs.byName(name);
+	    if (ci!=null) {
+		if (ci instanceof SVarInt && ((SVarInt)ci).hasEqualContents(d)) return cvs.indexOf(name); // re-use
+		// not equal, thus we need to re-name it
+		name=getNewTmpVar(name);
+	    }
+	}
+        final SVar v=new SVarInt(name, d);
         return addVar(v);
-    };
+    }
     
     /** construct a new categorical variable from supplied array of strings. Unlike datasets variables cannot have
      * the same name within a dataset.
@@ -261,18 +281,26 @@ public class Framework implements Dependent, ActionListener {
      * @param d levels (d[0]=ID 1, d[1]=ID 2, ...)
      * @return ID of the new variable or -1 if error occured (variable name already exists etc.)
      */
-    public int newVar(final String name, final int[] ix, final String[] d) {
+    public int newVar(String name, final int[] ix, final String[] d) {
         if (ix==null) return -1;
         if (d==null) return newVar(name,ix);
         if (Global.DEBUG>0)
             System.out.println("newVar: int["+ix.length+"] + levels["+d.length+"]");
+        int j=0;
+        while (j<ix.length) { ix[j++]--; } // reduce index by 1 since R is 1-based
         if (cvs.count()>0 && cvs.at(0).size()!=ix.length) {
 	    if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
             final int i=mmDlg(name,ix.length);
             if (i<0) return i;
-        }
-        int j=0;
-        while (j<ix.length) { ix[j++]--; } // reduce index by 1 since R is 1-based
+	    name=getNewTmpVar(name);
+        } else {
+	    SVar ci = cvs.byName(name);
+	    if (ci!=null) {
+		if (ci instanceof SVarFact && ((SVarFact)ci).hasEqualContents(ix,d)) return cvs.indexOf(name); // re-use
+		// not equal, thus we need to re-name it
+		name=getNewTmpVar(name);
+	    }
+	}
         final SVar v=new SVarFact(name, ix, d);
         return addVar(v);
     }
@@ -295,11 +323,17 @@ public class Framework implements Dependent, ActionListener {
     public int replaceVar(final int vi, final double[] d) {
         final SVar v=cvs.at(vi);
         if (v==null) return -1;
-        v.getNotifier().beginBatch();
-        int i=0; while(i<d.length) { v.replace(i,new Double(d[i])); i++; }
-        v.getNotifier().endBatch();
+	if (v instanceof SVarDouble) {
+	    ((SVarDouble)v).replaceAll(d);
+	} else {
+	    /*
+	    v.getNotifier().beginBatch();
+	    int i=0; while(i<d.length) { v.replace(i,new Double(d[i])); i++; }
+	    v.getNotifier().endBatch(); */
+	    return -1;
+	}
         return vi;
-    };
+    }
     
     /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
      * the new content cannot exceed the original size of the variable, no cases are added.
@@ -309,17 +343,46 @@ public class Framework implements Dependent, ActionListener {
     public int replaceVar(final int vi, final int[] d) {
         final SVar v=cvs.at(vi);
         if (v==null) return -1;
-        v.getNotifier().beginBatch();
-        int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; }
-        v.getNotifier().endBatch();
+	if (v instanceof SVarInt) {
+	    ((SVarInt)v).replaceAll(d);
+	} else	if (v instanceof SVarDouble) {
+	    ((SVarDouble)v).replaceAll(d);
+	} else {
+	    /*
+	      v.getNotifier().beginBatch();
+	      int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; }
+	      v.getNotifier().endBatch();
+	    */
+	    return -1;
+	}
         return vi;
-    };
+    }
+    
+    /** replaces the content of a variable. it is meant for modification ONLY. note that the length of
+     * the new content cannot exceed the original size of the variable, no cases are added.
+     * @param vi ID of the variable
+     * @param d new content
+     * @return variable ID (same as vi) */
+    public int replaceVar(final int vi, final int[] ids, final String[] levels) {
+        final SVar v=cvs.at(vi);
+        if (v==null) return -1;
+	if (v instanceof SVarFact) {
+	    ((SVarFact)v).replaceAll(ids, levels);
+	} else {
+	/*
+	  v.getNotifier().beginBatch();
+	  int i=0; while(i<d.length) { v.replace(i,new Integer(d[i])); i++; }
+	  v.getNotifier().endBatch(); */
+	    return -1;
+	}
+        return vi;
+    }
     
     /** updates any plots associated with the current dataset by sending NM_VarContentChange message */
     public void update() {
         final SMarker m=cvs.getMarker();
         if (m!=null) m.NotifyAll(new NotifyMsg(m,Common.NM_VarContentChange));
-    };
+    }
     
     /** get variable object associated with an ID in current dataset
      * @param i variable ID
