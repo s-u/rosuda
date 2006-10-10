@@ -51,50 +51,38 @@ public class SVarDouble extends SVar {
     
     public SVarDouble(String Name, double[] d, boolean copyContents) {
         super(Name, false);
-        boolean firstValid=true;
-        min=max=0;
         if (copyContents) {
             cont=new double[d.length];
-            int i=0;
-            while (i<d.length) {
-                cont[i]=d[i];
-                if (Double.isNaN(cont[i])) missingCount++;
-                else {
-                    if (firstValid) {
-                        min=max=cont[i];
-                        firstValid=false;
-                    } else {
-                        if (cont[i]>max) max=cont[i]; else
-                            if (cont[i]<min) min=cont[i];
-                    }
-                }
-                i++;
-            }
-        } else {
-            cont=d;
-            int i=0;
-            while (i<d.length) {
-                if (Double.isNaN(cont[i])) missingCount++;
-                else {
-                    if (firstValid) {
-                        min=max=cont[i];
-                        firstValid=false;
-                    } else {
-                        if (cont[i]>max) max=cont[i]; else
-                            if (cont[i]<min) min=cont[i];
-                    }
-                }
-                i++;
-            }
-        }
+	    System.arraycopy(d, 0, cont, 0, d.length);
+	} else cont=d;
+	updateCache();
         insertPos=d.length;
         guessing=false;
         contentsType=CT_Number;
         isnum=true;
     }
+
+    private void updateCache() {
+        boolean firstValid=true;
+        min=max=0;
+	int i=0;
+	while (i<cont.length) {
+	    if (Double.isNaN(cont[i])) missingCount++;
+	    else {
+		if (firstValid) {
+		    min=max=cont[i];
+		    firstValid=false;
+		} else {
+		    if (cont[i]>max) max=cont[i]; else
+			if (cont[i]<min) min=cont[i];
+		}
+	    }
+	    i++;
+	}
+    }
     
     public int size() { return cont.length; }
-    
+
     /** define the variable explicitely as categorical
      * @param rebuild if set to <code>true</code> force rebuild even if the variable is already categorial. */
     public void categorize(boolean rebuild) {
@@ -248,10 +236,31 @@ public class SVarDouble extends SVar {
         return true;
     }
     
+    
+    public boolean replaceAll(double d[]) {
+	if (cont.length != d.length) return false;
+	System.arraycopy(d, 0, cont, 0, d.length);
+	updateCache();
+	return true;
+    }
+
+    public boolean replaceAll(int i[]) {
+	if (cont.length != i.length) return false;
+	int j=0;
+	while (j<i.length) {
+	    cont[j]=(i[j]==int_NA)?double_NA:i[j];
+	    j++;
+	}
+	updateCache();
+	return true;
+    }
+
     public Object at(int i) {
         return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:new Double(cont[i]);
-    };
+    }
+
     public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
+    public double atF(int i) { return (i<0||i>=insertPos)?0:cont[i]; }
     public int atI(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?int_NA:((int)(cont[i]+0.5)); }
     public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Double.toString(cont[i]); }
     
@@ -426,6 +435,16 @@ public class SVarDouble extends SVar {
         
         // return the resulting list
         return r;
+    }
+
+    public boolean hasEqualContents(double d2[]) {
+	if (cont.length!=d2.length) return false;
+	int i=0;
+	while (i<cont.length) {
+	    if (cont[i]!=d2[i]) return false;
+	    i++;
+	}
+	return true;
     }
     
     public String toString() {

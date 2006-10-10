@@ -54,46 +54,32 @@ public class SVarInt extends SVar
     public SVarInt(String Name, int[] d, boolean copyContents)
     {
         super(Name, false);
-        boolean firstValid=true;
-        min=max=0;
-        if (copyContents) {
-            cont=new int[d.length];
-            int i=0;
-            while (i<d.length) {
-                cont[i]=d[i];
-                if (cont[i]==int_NA) missingCount++;
-                else {
-                    if (firstValid) {
-                        min=max=cont[i];
-                        firstValid=false;
-                    } else {
-                        if (cont[i]>max) max=cont[i]; else
-                            if (cont[i]<min) min=cont[i];
-                    }
-                }
-                i++;
-            }
-        } else {
-            cont=d;
-            int i=0;
-            while (i<d.length) {
-                if (cont[i]==int_NA) missingCount++;
-                else {
-                    if (firstValid) {
-                        min=max=cont[i];
-                        firstValid=false;
-                    } else {
-                        if (cont[i]>max) max=cont[i]; else
-                            if (cont[i]<min) min=cont[i];
-                    }
-                }
-                i++;
-            }
-        }
         insertPos=d.length;
         guessing=false;
         contentsType=CT_Number;
         isnum=true;
+	if (!copyContents) cont=d;
+	else { cont=new int[d.length]; System.arraycopy(d, 0, cont, 0, d.length); }
+	updateCache();
+    }
+
+    private void updateCache() {
+        boolean firstValid=true;
+        min=max=0;
+	int i=0;
+	while (i<cont.length) {
+	    if (cont[i]==int_NA) missingCount++;
+	    else {
+		if (firstValid) {
+		    min=max=cont[i];
+		    firstValid=false;
+		} else {
+		    if (cont[i]>max) max=cont[i]; else
+			if (cont[i]<min) min=cont[i];
+		}
+	    }
+	    i++;
+	}
     }
 
     public int size() { return cont.length; }
@@ -248,9 +234,18 @@ public class SVarInt extends SVar
         return true;
     }
 
+    
+    public boolean replaceAll(int d[]) {
+	if (cont.length != d.length) return false;
+	System.arraycopy(d, 0, cont, 0, d.length);
+	updateCache();
+	return true;
+    }
+
     public Object at(int i) { return (i<0||i>=insertPos||cont[i]==SVar.int_NA)?null:new Integer(cont[i]); };
-    public double atD(int i) { return (i<0||i>=insertPos)?int_NA:cont[i]; }
-    public int atI(int i) { return (i<0||i>=insertPos)?int_NA:((int)(cont[i]+0.5)); }
+    public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
+    public double atF(int i) { return (i<0||i>=insertPos)?0:cont[i]; }
+    public int atI(int i) { return (i<0||i>=insertPos)?int_NA:cont[i]; }
     public String asS(int i) { return (i<0||i>=insertPos)?null:Integer.toString(cont[i]); }
 
     /** returns the ID of the category of the object
@@ -440,6 +435,16 @@ cases: variable is not numerical or is categorical, no cases matching
 
         // return the resulting list
         return r;
+    }
+
+    public boolean hasEqualContents(int c2[]) {
+        if (cont.length!=c2.length) return false;
+        int i=0;
+        while (i<cont.length) {
+            if (cont[i]!=c2[i]) return false;
+            i++;
+        }
+        return true;
     }
 
     public String toString() {

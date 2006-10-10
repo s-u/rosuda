@@ -73,6 +73,25 @@ public class SVarFact extends SVar
         }
     }
 
+    public boolean replaceAll(int[] ids, String[] cnames) {
+        cont=ids;
+        cats=cnames;
+        ccnts=new int[cnames.length+1];
+	missingCount=0;
+        int i=0;
+        while (i<ids.length) {
+            if (ids[i]>=0 && ids[i]<cats.length) {
+                ccnts[ids[i]]++;
+                //maxID = maxID < ids[i]?ids[i]:maxID;
+            }
+            else {
+                cont[i]=-1; missingCount++;
+            }
+            i++;
+        }
+	return true;
+    }
+
     public void createMissingsCat() {
         if (!cat || cont==null || cont.length<1 || missingCount==0 || isLastMissing()) return;
         int j=0;
@@ -325,6 +344,17 @@ cases: variable is not numerical or is categorical, no cases matching
         return r;
     }
 
+    public boolean hasEqualContents(int i2[], String s2[]) {
+	if (i2.length!=cont.length || s2.length!=cats.length) return false;
+	int i = 0;
+	while (i<i2.length) { if (i2[i]!=cont[i]) return false; i++; }
+	i = 0;
+	while (i<s2.length) { if ((s2[i]==null && cats[i]!=null) ||
+				  (s2[i]!=null && cats[i]==null) ||
+				  (s2[i]!=null && cats[i]!=null && !s2[i].equals(cats[i]))) return false; i++; }
+	return true;
+    }
+    
     public String toString() {
         return "SVarFact(\""+name+"\","+(cat?"cat,":"cont,")+(isnum?"num,":"txt,")+"n="+size()+",miss="+missingCount+")";
     }
