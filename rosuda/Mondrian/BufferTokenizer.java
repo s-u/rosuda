@@ -1,4 +1,5 @@
-//package org.rosuda.Mondrian;
+package org.rosuda.Mondrian;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -269,6 +270,7 @@ public class BufferTokenizer {
 	}
 
 
+	
 /** BufferTokenizer:
  * 
  * @param discretLimit discretLimit setting. for good speed use small discretLimit
@@ -276,7 +278,6 @@ public class BufferTokenizer {
  */
 
 	public BufferTokenizer(int discretLimit, int acceptedErrors, String file, ProgressIndicator pi) throws UnacceptableFormatException, ScanException, OutOfMemoryError {
-		
 		long start, stop;
 		long startfull, stopfull;
 		error = new String[acceptedErrors];
@@ -296,7 +297,7 @@ public class BufferTokenizer {
 		}
 		stop = System.currentTimeMillis();
 		System.out.println("Harddrive to RAM: " + (stop - start));
-        prId.setProgress(.05);
+		prId.setProgress(.05);
 
         newLineBreaker = getNewLineBreaker(buffer);
         
@@ -1086,7 +1087,6 @@ public class BufferTokenizer {
 					expAvailable = false;
 					while (buffer.hasRemaining()) {
 						b = buffer.get();
-
 						if (b == MINUS) {
 							buffer.position(buffer.position()-2);
 							b = buffer.get();
@@ -1131,6 +1131,34 @@ public class BufferTokenizer {
 							continue;
 						} else if (b == DOT) {
 							minusAvailable = true;
+							if(expAvailable) {
+								numericalColumn[j]=false;
+								while (buffer.hasRemaining()) {
+									b = buffer.get();
+									if (b == SEPERATOR) {
+										j++;
+										break;
+									} else if (b == RETURN) {
+										buffer.mark();
+										i++;
+										j = 0;
+										if (buffer.hasRemaining()) {
+											if (buffer.get() == NEWLINE)
+												break;
+											else {
+												buffer.reset();
+												break;
+											}
+										}
+									} else if (b == NEWLINE) {
+										i++;
+										j = 0;
+										break;
+									}
+								}
+								break;
+
+							}
 							if (dotAvailable) {
 								numericalColumn[j] = false;
 								while (buffer.hasRemaining()) {
@@ -1245,8 +1273,7 @@ public class BufferTokenizer {
 														buffer.mark();
 														i++;
 														j = 0;
-														if (buffer
-																.hasRemaining()) {
+														if (buffer.hasRemaining()) {
 															if (buffer.get() == NEWLINE)
 																break;
 															else {
@@ -1269,6 +1296,20 @@ public class BufferTokenizer {
 										}
 									} else {
 										numericalColumn[j] = false;
+										buffer.position(buffer.position()-2);
+										while(buffer.hasRemaining()) {
+											b=buffer.get();
+											if(b==SEPERATOR) {j++; break;}
+											else if(b==RETURN) {
+												buffer.mark(); i++; j=0;
+												if(buffer.hasRemaining()) {
+													if(buffer.get()==NEWLINE) break;
+													else {buffer.reset(); break;}
+													
+												}
+											} else if(b==NEWLINE) {i++; j=0; break;}
+										}
+										
 										break;
 									}
 								} else {
@@ -1276,18 +1317,19 @@ public class BufferTokenizer {
 									break;
 								}
 							} else if(b==(byte)'e' || b ==(byte)'E') {
-								if(!expAvailable) {
-									if(buffer.hasRemaining()) {
-										b = buffer.get();
-										if(!isNumber(b) && b!=(byte)MINUS) {
-											numericalColumn[j] = false; break;
-										} else {
-											expAvailable = true;	
-											continue;
-										}
+								if(buffer.hasRemaining()) if(isNumber(buffer.get(buffer.position())) || buffer.get(buffer.position())==MINUS) {
+									if(!expAvailable) {
+										if(buffer.hasRemaining()) {
+											b = buffer.get();
+											if(!isNumber(b) && b!=(byte)MINUS) {
+												numericalColumn[j] = false; break;
+											} else {
+												expAvailable = true;	
+												continue;
+											}
+										} else {numericalColumn[j] = false; break;}
 									} else {numericalColumn[j] = false; break;}
-								}
-								else {numericalColumn[j] = false; break;}
+								} else {numericalColumn[j]=false; break;}
 							} else {
 								numericalColumn[j] = false;
 								break;
@@ -1321,7 +1363,6 @@ public class BufferTokenizer {
 						}
 					}
 				}
-
 				if (j < columns) {
 				}
 				else {
@@ -1727,6 +1768,7 @@ public class BufferTokenizer {
 			} else if(b == RETURN || b == NEWLINE) {
 				break;
 			} else if(b == (byte)'e' || b == (byte)'E') {
+				numericalColumn[j]=true;
 				 // EXPONENT, allowing no number before e/E. reading as 1E...
 				while(buffer.hasRemaining()) {
 					b = buffer.get();
@@ -1789,7 +1831,7 @@ public class BufferTokenizer {
 						continue;
 					}
 				}
-			} else if(isNumber(b) || b == MINUS || b == DOT) {
+			} else if(isNumber(b) || b == MINUS || b == DOT || b == (byte)'e' || b == (byte)'E') {
 				if(!numericalColumn[j]) {
 					// Fehler
 					if (k < error.length) {
@@ -1800,8 +1842,8 @@ public class BufferTokenizer {
 					} else
 						return error;
 				}
-				
-				expAvailable = false;
+				if(b=='e'||b=='E') expAvailable = true;
+					else expAvailable = false;
 				minusexpAvailable = false;
 				if(b == MINUS) minusAvailable = true;
 					else minusAvailable = false;
@@ -1847,6 +1889,16 @@ public class BufferTokenizer {
 								buffer.reset();
 							}
 						}
+						if(expAvailable) {
+							// Fehler: dot in exponent
+							if (k < error.length) {
+								error[k++] = new String("hardError:  dot in exponent (i,j) = (" + (i + 1) + "," + (j + 1) + ")");
+								errorposition = buffer.position();
+								hardReadError = true;
+								return error;
+							} else
+								return error;
+						}
 						if(dotAvailable) {
 							// Fehler: >2 dots
 							if (k < error.length) {
@@ -1861,6 +1913,15 @@ public class BufferTokenizer {
 							// alles in Ordnung
 						}
 					} else if(b == SEPERATOR || b == RETURN || b == NEWLINE) {
+						if(buffer.get(buffer.position()-2)=='e' || buffer.get(buffer.position()-2)=='E') // das exp-'e'/'E' steht ohne Exponenten
+							if (k < error.length) {
+								error[k++] = new String("hardError: no exponent found in (i,j) = (" + (i + 1) + "," + (j + 1) + ")");
+								errorposition = buffer.position();
+								hardReadError = true;
+								return error;
+							} else
+								return error;
+
 						// alles in Ordnung
 						buffer.position(buffer.position()-1);
 						break;
@@ -2080,20 +2141,6 @@ public class BufferTokenizer {
 					} else
 						return error;
 				}
-			} else if(b == (byte)'e' || b == (byte)'E') {
-				if(!numericalColumn[j]) {
-					// Fehler
-					if (k < error.length) {
-						error[k++] = new String("hardError: word not quoted (i,j) = (" + (i + 1) + "," + (j + 1) + ")");
-						errorposition = buffer.position();
-						hardReadError = true;
-						return error;
-					} else
-						return error;
-				}
-				while(buffer.hasRemaining()) {
-					
-				}
 			} else {
 				// Fehler
 				if (k < error.length) {
@@ -2144,7 +2191,6 @@ public class BufferTokenizer {
 			k = 0;
 			
 			if (numericalColumn[j] == false) {
-
 				
 				if(buffer.hasRemaining()) {
 					buffer.mark();
@@ -2344,9 +2390,9 @@ public class BufferTokenizer {
 				temp = new byte[k]; // geht schnell
 				for (int l = 0; l < k; l++) {
 					b = buffer.get();
-					
 					temp[l] = b;
 				}
+				temp=cutSpacesInItem(temp);
 				
 				// System.out.println("temp " + new String(temp));
 				
@@ -2538,6 +2584,7 @@ public class BufferTokenizer {
 											if(exp>=-323) item[j][i] = item[j][i]*negpotence[-exp];
 											else item[j][i] = item[j][i]/10*1e-323;
 										}
+										if(buffer.hasRemaining()) buffer.position(buffer.position()+1);
 										break;
 									} else {
 //										item[j][i] += (b - 48) * Math.pow(10, -(++k));
@@ -2559,6 +2606,8 @@ public class BufferTokenizer {
 									if(exp>=-323) item[j][i] = item[j][i]*negpotence[-exp];
 									else item[j][i] = item[j][i]/10*1e-323;
 								}
+								if(buffer.hasRemaining()) buffer.position(buffer.position()+1);
+								break;
 							} else
 								item[j][i] = item[j][i] * 10 + (b - 48);
 						}
@@ -2586,14 +2635,19 @@ public class BufferTokenizer {
 									if(exp>=-323) item[j][i] = item[j][i]*negpotence[-exp];
 									else item[j][i] = item[j][i]/10*1e-323;
 								}
+								// TODO: is the following a good solution?
+								// here's the problem with positioning.
+								System.out.println(item[j][i]);
+								if(buffer.hasRemaining()) buffer.position(buffer.position()+1);
 								break;
-
 							} else {
 //                              item[j][i] += (b - 48) * Math.pow(10, -(++k));
 								item[j][i] = item[j][i] * 10 + (b - 48);
+								System.out.println(item[j][i]);
 								k++;
 							}
 						}
+						// XXX: TESTE OB DIESES BREAK HIER NICHT DOCH STEHEN MUSS
 						break;
 					} else if(b == SEPERATOR || b == RETURN || b == NEWLINE) {
 						break;
@@ -2601,15 +2655,16 @@ public class BufferTokenizer {
 						// attention: returns infinity in not-acceptable exponents
 						int exp = getExponent(buffer);
 						if(exp>=0) {
-							if(exp<=308) item[j][i] = potence[exp];
-							else item[j][i] = 10*1e308;
+							if(exp<=308) item[j][i] = item[j][i]*potence[exp];
+							else item[j][i] = item[j][i]*10*1e308;
 						}
 						else {
-							if(exp>=-323) item[j][i] = negpotence[-exp];
-							else item[j][i] = 1/10*1e-323;
+							if(exp>=-323) item[j][i] = item[j][i]*negpotence[-exp];
+							else item[j][i] = item[j][i]/10*1e-323;
 						}
 					} else {
 						item[j][i] = item[j][i] * 10 + (b - 48);
+						System.out.println(item[j][i]);
 					}
 				} // end while
 //				System.out.println("item["+j+"]["+i+"]: " + item[j][i]);
@@ -2636,7 +2691,6 @@ public class BufferTokenizer {
 				}
 				
 				// end modified
-
 				buffer.position(buffer.position() - 1);
 				if (buffer.hasRemaining()) {
 					b = buffer.get();
@@ -2906,9 +2960,8 @@ public class BufferTokenizer {
 					b = buffer.get();
 					
 					temp[l] = b;
-					
 				}
-
+				temp=cutSpacesInItem(temp);
 
 				// modified
 				
@@ -3163,12 +3216,12 @@ public class BufferTokenizer {
 						// attention: returns infinity in not-acceptable exponents
 						int exp = getExponent(buffer);
 						if(exp>=0) {
-							if(exp<=308) item[j][i] = potence[exp];
-							else item[j][i] = 10*1e308;
+							if(exp<=308) item[j][i] = item[j][i]*potence[exp];
+							else item[j][i] = item[j][i]*10*1e308;
 						}
 						else {
-							if(exp>=-323) item[j][i] = negpotence[-exp];
-							else item[j][i] = 1/10*1e-323;
+							if(exp>=-323) item[j][i] = item[j][i]*negpotence[-exp];
+							else item[j][i] = item[j][i]/10*1e-323;
 						}
 					} else {
 						item[j][i] = item[j][i] * 10 + (b - 48);
@@ -3410,6 +3463,8 @@ public class BufferTokenizer {
 
         if( prId != null && lines > 0 )
           prId.setProgress((double)i/(double)lines*0.85+.1);
+
+
       }
 	}
 
@@ -3901,7 +3956,7 @@ public class BufferTokenizer {
 	public int getExponent(ByteBuffer buffer) {
 		
 		int exponent=0; // -323 .. 308
-		byte b;
+		byte b=0;
 		// gerade wurde ein "e" oder ein "E" eingelesen
 		buffer.mark();
 		if(buffer.hasRemaining()) {
@@ -3971,5 +4026,36 @@ public class BufferTokenizer {
             }
         } );
     }
+	
+	public byte[] cutSpacesInItem(final byte[] temp) {
+		if(temp[0]!=SPACE && temp[temp.length-1]!=SPACE) return temp;
+		
+		int beginSpaceCount=0, endSpaceCount=0;
+		
+		// begin space handling
+		for(int i=0;i<temp.length;i++) {
+			if(temp[i]==SPACE) beginSpaceCount++;
+			else break;
+		}
+		for(int i=0;i<temp.length;i++) {
+			if(temp[temp.length-i-1]==SPACE) endSpaceCount++;
+			else break;
+		}
+		
+		byte[] ret = new byte[temp.length-beginSpaceCount-endSpaceCount];
+		System.arraycopy(temp,beginSpaceCount,ret,0,ret.length);
+		return ret;
+		
+	}
+	
+	public static void main(String args[]) {
+		try {
+//		new BufferTokenizer(10,10,"C:\\work files\\Families '95(3).txt");
+		new BufferTokenizer(10,10,"D:\\Test2.txt");
+		} catch (Exception e) {
+			System.err.println(e);
+		}
+	}
+	
 	
 }
