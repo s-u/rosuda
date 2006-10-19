@@ -7,15 +7,16 @@
 
 package org.rosuda.JClaR;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 /**
  *
  * @author tobias
  */
-public class DatasetManager {
+public final class DatasetManager {
     
     // TODO: check if dataset on disc has changed
     
@@ -33,7 +34,7 @@ public class DatasetManager {
     /**
      * Adds data to hashtable with file name as key.
      */
-    static void addDataset(Data data){
+    static void addDataset(final Data data){
         datasets.put(data.getPath(), data);
         if(listener!=null) listener.datasetsChanged();
     }
@@ -42,7 +43,7 @@ public class DatasetManager {
      * Get dataset to given file
      * @return Corresponding data object. Returns null if file hasn't been opened.
      */
-    static Data getDataset(String file){
+    static Data getDataset(final String file){
         return (Data)datasets.get(file);
     }
     
@@ -54,11 +55,11 @@ public class DatasetManager {
         return datasets.elements();
     }
     
-    static Vector getDataVector(){
-        return new Vector(datasets.values());
+    static List getDataVector(){
+        return new ArrayList(datasets.values());
     }
 
-    static void setListener(DataClassifierListenerIF aListener) {
+    static void setListener(final DataClassifierListenerIF aListener) {
         listener = aListener;
     }
 }
