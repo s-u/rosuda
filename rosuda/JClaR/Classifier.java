@@ -1,6 +1,6 @@
 package org.rosuda.JClaR;
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.List;
 
 
 public interface Classifier extends Serializable {
@@ -9,7 +9,7 @@ public interface Classifier extends Serializable {
 
     double getAccuracy();
     
-    Vector getClassNames();
+    List getClassNames();
 
     int[] getConfusionMatrix();
 
