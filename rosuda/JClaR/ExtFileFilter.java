@@ -7,8 +7,10 @@
 package org.rosuda.JClaR;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -16,7 +18,7 @@ import java.util.Vector;
  */
 public final class ExtFileFilter extends javax.swing.filechooser.FileFilter {
     private String description="";
-    private Vector extensions=new Vector();
+    private List extensions=new ArrayList();
     private String stdExtension=null;
     
     public String getDescription() {
@@ -32,8 +34,8 @@ public final class ExtFileFilter extends javax.swing.filechooser.FileFilter {
             return true;
         }
         
-        for(final Enumeration e = extensions.elements(); e.hasMoreElements();){
-            if(f.getName().toLowerCase().endsWith(((String)e.nextElement()))) {
+        for(final ListIterator e = extensions.listIterator(); e.hasNext();){
+            if(f.getName().toLowerCase().endsWith(((String)e.next()))) {
                 return true;
             }
             
