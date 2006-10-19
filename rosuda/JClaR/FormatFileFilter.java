@@ -1,3 +1,4 @@
+
 /*
  * FormatFileFilter.java
  *
@@ -16,7 +17,6 @@ import java.util.Vector;
  */
 public final  class FormatFileFilter extends javax.swing.filechooser.FileFilter {
     private String description="";
-    private Vector extensions=new Vector();
     private static final String STD_EXTENSION=null;
     
     public String getDescription() {
