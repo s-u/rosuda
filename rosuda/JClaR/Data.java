@@ -7,9 +7,12 @@
 package org.rosuda.JClaR;
 
 import java.io.File;
+import java.util.ListIterator;
 import java.util.Vector;
 import java.util.Enumeration;
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 import org.rosuda.JRclient.REXP;
 import org.rosuda.JRclient.RSrvException;
 
@@ -23,11 +26,10 @@ public final class Data implements Cloneable {
     
     // If new fields are added the clone method probably has to be changed!
     private File file;
-    private Vector variables = new Vector();
-    private RserveConnection rcon;
+    private ArrayList variables = new ArrayList();
     private String Rname;
     private int length;
-    private Vector svms = new Vector();
+    private ArrayList svms = new ArrayList();
     private String name;
     private boolean restricted=false;
     private int format;
@@ -36,7 +38,6 @@ public final class Data implements Cloneable {
     
     private Data(final File f) {
         file=f;
-        rcon=RserveConnection.getRconnection();
         Rname="d" + this.hashCode();
         this.format=format;
         
@@ -48,13 +49,11 @@ public final class Data implements Cloneable {
     
     /** Creates a new instance of Data */
     Data(){
-        rcon=RserveConnection.getRconnection();
         Rname="d" + this.hashCode();
     }
     
     /** Creates a java object for the riven R dataset */
-    Data(String rData){
-        rcon=RserveConnection.getRconnection();
+    Data(final String rData){
         Rname = rData;
         update();
     }
@@ -62,7 +61,7 @@ public final class Data implements Cloneable {
     void removeNAs(){
         // remove rows with NAs as they would be ignored by svm anyway
         try{
-            rcon.voidEval(Rname + " <- " + Rname + "[!apply(is.na(" + Rname + "),1,any),]");
+            RserveConnection.voidEval(Rname + " <- " + Rname + "[!apply(is.na(" + Rname + "),1,any),]");
         } catch (RSrvException rse){
             ErrorDialog.show(parent,"Rserve exception in Data(File,int) while removing rows with NAs: "+rse.getMessage());
         }
@@ -103,7 +102,7 @@ public final class Data implements Cloneable {
         return length;
     }
     
-    Vector getVariables(){
+    List getVariables(){
         return variables;
     }
     
@@ -113,7 +112,7 @@ public final class Data implements Cloneable {
     
     private void remove(){
         try{
-            rcon.voidEval("rm(" + Rname + ")");
+            RserveConnection.voidEval("rm(" + Rname + ")");
         } catch(RSrvException rse) {
             switch(rse.getRequestReturnCode()){
                 case RserveConnection.RERROR_OTHER:
@@ -134,13 +133,13 @@ public final class Data implements Cloneable {
         svms.remove(svm);
     }
     
-    private Vector getSVMs(){
+    private List getSVMs(){
         return svms;
     }
     
     private void saveAs(final File newFile){
         try{
-            rcon.writeTable(Rname,newFile, ",quote=FALSE,sep=',')");
+            RserveConnection.writeTable(Rname,newFile, ",quote=FALSE,sep=',')");
         } catch(RSrvException rse) {
             switch(rse.getRequestReturnCode()){
                 case RserveConnection.RERROR_OTHER:
@@ -174,10 +173,10 @@ public final class Data implements Cloneable {
     
     void refactor(final int variablePos){
         try{
-            rcon.voidEval("if(!is.factor(" + Rname + "[," + (variablePos+1) +  "])) " +
+            RserveConnection.voidEval("if(!is.factor(" + Rname + "[," + (variablePos+1) +  "])) " +
                     Rname + " <- data.frame(" + 
                     ((variablePos>0)?(Rname+"[1:"+variablePos+"],"):"") + 
-                    (String)variables.elementAt(variablePos)+"=factor("+Rname +"[,"+(variablePos+1)+"])"+
+                    (String)variables.get(variablePos)+"=factor("+Rname +"[,"+(variablePos+1)+"])"+
                     ((variablePos+1<variables.size())?(","+Rname+"["+(variablePos+2)+":"+variables.size()+"]"):"") +
                     ")");
         } catch(RSrvException rse){
@@ -193,7 +192,7 @@ public final class Data implements Cloneable {
         //TODO: name, successfullyReadData, parent
         
         try{
-            rcon.voidEval(newData.getRname() + " <- " + Rname);
+            RserveConnection.voidEval(newData.getRname() + " <- " + Rname);
         } catch(RSrvException rse) {
             ErrorDialog.show(parent,"Rserve exception in Data.clone(): "+rse.getMessage());
         }
@@ -209,22 +208,22 @@ public final class Data implements Cloneable {
     void update() throws NullPointerException {
         try{
             //get variables
-            Vector vars = rcon.eval("names(" + Rname + ")").asVector();
+            List vars = RserveConnection.evalL("names(" + Rname + ")");
             if (vars==null){
-                vars = new Vector();
-                vars.add(rcon.eval("names(" + Rname + ")"));
+                vars = new ArrayList();
+                vars.add(RserveConnection.eval("names(" + Rname + ")"));
             }
-            for (final Enumeration e = vars.elements() ; e.hasMoreElements() ;){
-                String name = ((REXP)e.nextElement()).asString();
+            for (final ListIterator e = vars.listIterator() ; e.hasNext() ;){
+                String name = ((REXP)e.next()).asString();
                 // variable mustn't have the same name as a parameter of data.frame()
-                if (name.equals("row.names") || name.equals("check.rows") || name.equals("check.names")){
+                if ("row.names".equals(name) || "check.rows".equals(name) || "check.names".equals(name)){
                     name += ".v";
                 }
                 variables.add(name);
             }
             
             //get length
-            length = rcon.eval("length(data.frame(" + Rname + ")[,1])").asInt();
+            length = RserveConnection.evalI("length(data.frame(" + Rname + ")[,1])");
         } catch (RSrvException rse) {
             ErrorDialog.show(parent,"Rserve exception in Data(File,Rconnection): "+rse.getMessage());
         }
@@ -240,14 +239,15 @@ public final class Data implements Cloneable {
     }
     
     private void restrict(final int[] hiddenVariables){
-        String varsString="";
+        StringBuffer varsString=new StringBuffer();
         for(int i=hiddenVariables.length-1; i>=0; i--){
-            varsString += (hiddenVariables[i]+1) + ",";
-            variables.removeElementAt(hiddenVariables[i]);
+            varsString.append(hiddenVariables[i]+1).append(",");
+            variables.remove(hiddenVariables[i]);
         }
         try{
-            if(!"".equals(varsString)) {
-                rcon.voidEval(Rname + " <- " + Rname + "[,-c(" + varsString + ")]");
+            final String varsS = varsString.toString();
+            if(!"".equals(varsS)) {
+                RserveConnection.voidEval(Rname + " <- " + Rname + "[,-c(" + varsS + ")]");
             }
             
         } catch(RSrvException rse) {
@@ -277,7 +277,7 @@ public final class Data implements Cloneable {
     
     void unclass(final int columnNotToUnclass){
         try{
-            String columns="";
+            StringBuffer columns=new StringBuffer();
             boolean comma=false;
             for (int i=0, size = variables.size(); i<size; i++){
                 if(!comma)  {
@@ -285,25 +285,35 @@ public final class Data implements Cloneable {
                 }
                 
                 else  {
-                    columns += ",";
+                    columns.append(",");
                 }
                 
                 if (i!=columnNotToUnclass) {
-                    columns += (String)variables.elementAt(i) + "=unclass(" + Rname + "[," + (i+1) + "])";
+                    columns.append((String)variables.get(i))
+                    .append("=unclass(")
+                    .append(Rname)
+                    .append("[,")
+                    .append(i+1)
+                    .append("])");
                 }
                 
                 else {
-                    columns += (String)variables.elementAt(i) + "=" + Rname + "[," + (i+1) + "]";
+                    columns.append((String)variables.get(i))
+                    .append("=")
+                    .append(Rname)
+                    .append("[,")
+                    .append(i+1)
+                    .append("]");
                 }
                 
             }
-            rcon.voidEval(Rname + "<- data.frame(" + columns + ")");
+            RserveConnection.voidEval(Rname + "<- data.frame(" + columns + ")");
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "Data.unclass(int)");
         }
     }
 
-    String getVariable(String name) {
+    String getVariable(final String name) {
         return Rname + "$" + name;
     }
 }
