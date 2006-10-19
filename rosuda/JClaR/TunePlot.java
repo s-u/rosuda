@@ -22,11 +22,11 @@ public final class TunePlot extends Plot {
         setPlotCall("plot(" + tune.getRname() + ")");
     }
 
-    protected void setVerticalShift(final double shift) {        /* CAUTION: empty block! */
+    void setVerticalShift(final double shift) {        /* CAUTION: empty block! */
 
     }
 
-    protected void setHorizontalShift(final double shift) {        /* CAUTION: empty block! */
+    void setHorizontalShift(final double shift) {        /* CAUTION: empty block! */
 
     }
 

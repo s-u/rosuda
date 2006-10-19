@@ -18,18 +18,18 @@ import java.awt.image.RGBImageFilter;
  *
  * @author tobias
  */
-public class SelectImageFilter extends RGBImageFilter {
+public final class SelectImageFilter extends RGBImageFilter {
     
-    static Image createSelectedImage(Image image){
-        SelectImageFilter filter = new SelectImageFilter();
-        ImageProducer prod = new FilteredImageSource(image.getSource(), filter);
-	Image selectedImage = Toolkit.getDefaultToolkit().createImage(prod);
+    static Image createSelectedImage(final Image image){
+        final SelectImageFilter filter = new SelectImageFilter();
+        final ImageProducer prod = new FilteredImageSource(image.getSource(), filter);
+	final Image selectedImage = Toolkit.getDefaultToolkit().createImage(prod);
 	return selectedImage;
     }
 
-    public int filterRGB(int x, int y, int rgb) {
-        Color c = (new Color(rgb)).darker();
-        float[] hsb = Color.RGBtoHSB(c.getRed(),c.getGreen(), c.getBlue(),null);
+    public int filterRGB(final int x, final int y, final int rgb) {
+        final Color c = (new Color(rgb)).darker();
+        final float[] hsb = Color.RGBtoHSB(c.getRed(),c.getGreen(), c.getBlue(),null);
         return (new Color(Color.HSBtoRGB(240, hsb[1], hsb[2]))).getRGB();
     }
     

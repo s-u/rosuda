@@ -17,7 +17,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public final class RadioButtonRenderer implements TableCellRenderer {
     
-    private JRadioButton jrb;
+    private final JRadioButton jrb;    
     
     /** Creates a new instance of RadioButtonRenderer */
     RadioButtonRenderer() {
