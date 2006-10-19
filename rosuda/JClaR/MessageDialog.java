@@ -20,7 +20,7 @@ public class MessageDialog extends JOptionPane {
     protected static final long serialVersionUID = 200602271310L;
     
     /** Creates a new instance of MessageDialog */
-    private MessageDialog() {
+    protected MessageDialog() {
     }
     
     private static final void show(final Component parent,final String message){
