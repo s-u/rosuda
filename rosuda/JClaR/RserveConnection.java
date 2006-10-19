@@ -7,6 +7,7 @@
 
 package org.rosuda.JClaR;
 
+import java.util.Vector;
 import org.rosuda.JRclient.RFileOutputStream;
 import org.rosuda.JRclient.RFileInputStream;
 import org.rosuda.JRclient.REXP;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import org.rosuda.JRclient.RSrvException;
 import org.rosuda.JRclient.Rconnection;
 
@@ -41,7 +43,7 @@ public final class RserveConnection {
      * Opens a connection to Rserve if not done so already.
      * @return the Rconnection
      */
-    static RserveConnection getRconnection() {
+    private static RserveConnection getRconnection() {
         if(instance==null) {
             instance = new RserveConnection();
             if(System.getProperty("os.name").toLowerCase().indexOf("windows")!=-1)  {
@@ -104,8 +106,9 @@ public final class RserveConnection {
             return false;
         }
         try {
-            final Rconnection c = new Rconnection();
+            
             System.out.println("Rserve is running.");
+            final Rconnection c = new Rconnection();
             c.close();
             return true;
         } catch (Exception e2) {
@@ -120,8 +123,9 @@ public final class RserveConnection {
      */
     private static boolean checkLocalRserve() {
         try {
-            final Rconnection c = new Rconnection();
+            
             System.out.println("Rserve is running.");
+            final Rconnection c = new Rconnection();
             c.close();
             return true;
         } catch (Exception e) {
@@ -147,7 +151,8 @@ public final class RserveConnection {
      * @throws org.rosuda.JRclient.RSrvException The RSrvException thrown by the delegated method.
      * @return The object returned by R.
      */
-    REXP eval(final String str) throws RSrvException {
+    static REXP eval(final String str) throws RSrvException {
+        if(rcon==null) getRconnection();
         lastRcall=str;
         if("".equals(str) || str==null)  {
             return null;
@@ -178,7 +183,8 @@ public final class RserveConnection {
      * semicolons or line breaks.
      * @throws org.rosuda.JRclient.RSrvException The RSrvException thrown by the delegated method.
      */
-    void voidEval(final String str) throws RSrvException {
+    static void voidEval(final String str) throws RSrvException {
+        if(rcon==null) getRconnection();
         lastRcall=str;
         if("".equals(str) || str==null)  {
             return;
@@ -204,11 +210,11 @@ public final class RserveConnection {
     /**
      * Delegate method for org.rosuda.JRclient.Rconnection.Rserve.openFile(String str).
      */
-    RFileInputStream openFile(final String str) throws IOException {
+    public static RFileInputStream openFile(final String str) throws IOException {
         return rcon.openFile(str);
     }
     
-    private void syntaxError(String rcall){
+    private static void syntaxError(final String rcall){
         ErrorDialog.show(null,"Syntax error in R command. Please report this to the developer.\n" +
                 "Error occured on evaluating\n\n" +
                 rcall);
@@ -218,19 +224,49 @@ public final class RserveConnection {
         return lastRcall;
     }
     
-    public RFileOutputStream createFile(String str) throws IOException {
+    static RFileOutputStream createFile(final String str) throws IOException {
         return rcon.createFile(str);
     }
     
-    public void writeTable(String data, File file) throws RSrvException {
+    private static void writeTable(final String data, final File file) throws RSrvException {
         writeTable(data, file, "");
     }
     
-    public void writeTable(String data, File file, String options) throws RSrvException {
+    static void writeTable(final String data, final File file, final String options) throws RSrvException {
         String path=file.getPath();
         if (File.separatorChar == '\\')  {
             path = path.replace('\\', '/');
         }
         voidEval("write.table(" + data + ",file='" + path + "'" + options + ")");
+    }
+    
+    static List evalL(final String string) throws RSrvException {
+        final REXP rex = eval(string);
+        if(rex==null) return null;
+        else return rex.asVector();
+    }
+
+    static int evalI(final String string) throws RSrvException {
+        final REXP rex = eval(string);
+        if(rex==null) throw new RSrvException(rcon,"Eval returned null.");
+        else return rex.asInt();
+    }
+
+    static int[] evalIA(final String string) throws RSrvException {
+        final REXP rex = eval(string);
+        if(rex==null) return null;
+        else return rex.asIntArray();
+    }
+
+    static double evalD(final String string) throws RSrvException {
+        final REXP rex = eval(string);
+        if(rex==null) throw new RSrvException(rcon,"Eval returned null.");
+        else return rex.asDouble();
+    }
+
+    static boolean evalB(final String string) throws RSrvException {
+        final REXP rex = eval(string);
+        if(rex==null) throw new RSrvException(rcon,"Eval returned null.");
+        else return rex.asBool().isTRUE();
     }
 }
