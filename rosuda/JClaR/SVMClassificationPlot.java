@@ -36,12 +36,12 @@ public final class SVMClassificationPlot extends ContourPlot {
         this(svm,parent,fvd,false);
     }
     
-    SVMClassificationPlot(final SVM svm, final Frame parent, final FixVariablesDialog fvd, boolean useClassifiedData) {
+    SVMClassificationPlot(final SVM svm, final Frame parent, final FixVariablesDialog fvd, final boolean useClassifiedData) {
         super(svm);
         if(!useClassifiedData) ORIGDATANAME = DATANAME = svm.getData().getRname();
         else {
-            Data cd = svm.getClassifiedData();
-            int i = cd.getVariables().indexOf(svm.getVariableName());
+            final Data cd = svm.getClassifiedData();
+            final int i = cd.getVariables().indexOf(svm.getVariableName());
             if (i<0) ORIGDATANAME = DATANAME = svm.getClassifiedDataFrame();
             else ORIGDATANAME = DATANAME = cd.getRname();
         }
@@ -54,11 +54,11 @@ public final class SVMClassificationPlot extends ContourPlot {
         }
         
         try{
-            rcon.voidEval("svSymbol" + svm.getRname() + " <- \"x\""); // default: \"x\"
-            rcon.voidEval("dataSymbol" + svm.getRname() + " <- \"o\""); // default: \"o\"
-            //rcon.voidEval("fill" + svm.getRname() + " <- TRUE");
-            rcon.voidEval(GRIDNAME + " <- " + getGrid());
-            rcon.voidEval(PALETTENAME + " <- terrain.colors");
+            RserveConnection.voidEval("svSymbol" + svm.getRname() + " <- \"x\""); // default: \"x\"
+            RserveConnection.voidEval("dataSymbol" + svm.getRname() + " <- \"o\""); // default: \"o\"
+            //RserveConnection.voidEval("fill" + svm.getRname() + " <- TRUE");
+            RserveConnection.voidEval(GRIDNAME + " <- " + getGrid());
+            RserveConnection.voidEval(PALETTENAME + " <- terrain.colors");
         } catch (RSrvException rse){
             ErrorDialog.show(parent,rse, "SVMClassificationPlot(SVM, Frame, FixVariablesDialog)");
         }
@@ -97,35 +97,34 @@ public final class SVMClassificationPlot extends ContourPlot {
         
         try{
             // create formula
-            //rcon.voidEval("" + DATANAME + " <- " + svm.getData().getRname());
+            //RserveConnection.voidEval("" + DATANAME + " <- " + svm.getData().getRname());
             if (!"".equals(formulaOpt)) {
-                rcon.voidEval(FORMULANAME + " <- " + formulaOpt);
+                RserveConnection.voidEval(FORMULANAME + " <- " + formulaOpt);
             } else{
-                System.out.println(rcon + ".." + FORMULANAME + " <- formula(delete.response(terms(" + svm.getRname() + ")))");
-                rcon.voidEval(FORMULANAME + " <- formula(delete.response(terms(" + svm.getRname() + ")))");
-                rcon.voidEval(FORMULANAME + "[2:3] <- " + FORMULANAME + "[[2]][2:3]");
+                RserveConnection.voidEval(FORMULANAME + " <- formula(delete.response(terms(" + svm.getRname() + ")))");
+                RserveConnection.voidEval(FORMULANAME + "[2:3] <- " + FORMULANAME + "[[2]][2:3]");
             }
             
             createSlice();
             
-            rcon.voidEval(dataSubsetOpt);
+            RserveConnection.voidEval(dataSubsetOpt);
             
             //TODO: make this modular, put it into ContourPlot
             if(showDataInPlot){
                 // calculate subsets of the data to mark support vectors and/or misclassified points
-                rcon.voidEval("subsetIndex" + svm.getRname() + " <- as.numeric(attr(dataSubset" + svm.getRname() + ",\"row.names\"))");
+                RserveConnection.voidEval("subsetIndex" + svm.getRname() + " <- as.numeric(attr(dataSubset" + svm.getRname() + ",\"row.names\"))");
                 if(markSupportVectors){
-                    rcon.voidEval("svIndex" + svm.getRname() + " <- intersect(" + svm.getRname() + "$index,subsetIndex" + svm.getRname() + ")");
-                    rcon.voidEval("nosvIndex" + svm.getRname() + " <- setdiff(subsetIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
+                    RserveConnection.voidEval("svIndex" + svm.getRname() + " <- intersect(" + svm.getRname() + "$index,subsetIndex" + svm.getRname() + ")");
+                    RserveConnection.voidEval("nosvIndex" + svm.getRname() + " <- setdiff(subsetIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
                 }
                 if(markMisclassifiedPoints){
-                    rcon.voidEval("classifiedIndex" + svm.getRname() + " <- intersect((1:length(" + DATANAME + "[,1]))[(fitted(" + svm.getRname() + ")==" + DATANAME + "[," + (svm.getVariablePos()+1) + "])],subsetIndex" + svm.getRname() + ")");
-                    rcon.voidEval("misclassifiedIndex" + svm.getRname() + " <- setdiff(subsetIndex" + svm.getRname() + ",classifiedIndex" + svm.getRname() + ")");
+                    RserveConnection.voidEval("classifiedIndex" + svm.getRname() + " <- intersect((1:length(" + DATANAME + "[,1]))[(fitted(" + svm.getRname() + ")==" + DATANAME + "[," + (svm.getVariablePos()+1) + "])],subsetIndex" + svm.getRname() + ")");
+                    RserveConnection.voidEval("misclassifiedIndex" + svm.getRname() + " <- setdiff(subsetIndex" + svm.getRname() + ",classifiedIndex" + svm.getRname() + ")");
                     if(markSupportVectors){
-                        rcon.voidEval("misclassifiedsvIndex" + svm.getRname() + " <- intersect(misclassifiedIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
-                        rcon.voidEval("classifiedsvIndex" + svm.getRname() + " <- intersect(classifiedIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
-                        rcon.voidEval("misclassifiednosvIndex" + svm.getRname() + " <- intersect(misclassifiedIndex" + svm.getRname() + ",nosvIndex" + svm.getRname() + ")");
-                        rcon.voidEval("classifiednosvIndex" + svm.getRname() + " <- intersect(classifiedIndex" + svm.getRname() + ",nosvIndex" + svm.getRname() + ")");
+                        RserveConnection.voidEval("misclassifiedsvIndex" + svm.getRname() + " <- intersect(misclassifiedIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
+                        RserveConnection.voidEval("classifiedsvIndex" + svm.getRname() + " <- intersect(classifiedIndex" + svm.getRname() + ",svIndex" + svm.getRname() + ")");
+                        RserveConnection.voidEval("misclassifiednosvIndex" + svm.getRname() + " <- intersect(misclassifiedIndex" + svm.getRname() + ",nosvIndex" + svm.getRname() + ")");
+                        RserveConnection.voidEval("classifiednosvIndex" + svm.getRname() + " <- intersect(classifiedIndex" + svm.getRname() + ",nosvIndex" + svm.getRname() + ")");
                     }
                 }
             }
@@ -138,8 +137,8 @@ public final class SVMClassificationPlot extends ContourPlot {
         } catch (RSrvException rse){
             ErrorDialog.show(parent,rse, "SVMClassificationPlot.createPlotCall()");
         }
-        String bgOpt1 = ",bg = " + PALETTENAME + "(length(" + svm.getRname() + "$levels))[colind[";
-        String bgOpt2 = svm.getRname() + "]]";
+        final String bgOpt1 = ",bg = " + PALETTENAME + "(length(" + svm.getRname() + "$levels))[colind[";
+        final String bgOpt2 = svm.getRname() + "]]";
         
         //TODO: make this modular
         // draw data points
@@ -187,15 +186,15 @@ public final class SVMClassificationPlot extends ContourPlot {
         createPlotCall();
     }
     
-    final boolean getShowDataInPlot(){
+    boolean getShowDataInPlot(){
         return showDataInPlot;
     }
     
-    private final FixVariablesDialog getFixVariablesDialog() {
+    private FixVariablesDialog getFixVariablesDialog() {
         return fixVariablesDialog;
     }
     
-    final void setFixVariablesDialog(final FixVariablesDialog fixVariablesDialog) {
+    void setFixVariablesDialog(final FixVariablesDialog fixVariablesDialog) {
         this.fixVariablesDialog = fixVariablesDialog;
     }
     
