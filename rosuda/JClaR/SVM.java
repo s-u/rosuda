@@ -6,18 +6,19 @@
 
 package org.rosuda.JClaR;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import org.rosuda.JRclient.REXP;
 import org.rosuda.JRclient.RFileInputStream;
 import org.rosuda.JRclient.RFileOutputStream;
 import org.rosuda.JRclient.RSrvException;
-
 
 /**
  *
@@ -43,7 +44,7 @@ public final class SVM extends DefaultClassifier {
     private int cross = 0;
     private double tolerance = 0.001;
     private boolean fitted = true;    //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
-    private Vector classNames;
+    private List classNames;
     
     private String CLASSIFICATIONRESULTNAME;
     
@@ -53,7 +54,6 @@ public final class SVM extends DefaultClassifier {
     SVM(final Data data, final int variablePos) {
         if(data!=null){
             number = Main.getNewClassifierNumber();
-            rcon=RserveConnection.getRconnection();
             
             setData(data,variablePos);
             
@@ -66,23 +66,22 @@ public final class SVM extends DefaultClassifier {
     }
     
     /** Creates a dummy SVM to plot classified data */
-    SVM(final Data data, final String classification, final SVM svm) {
-        rcon=RserveConnection.getRconnection();
+    private SVM(final Data data, final String classification, final SVM svm) {
         Rname = "m" + this.hashCode();
         try{
-            rcon.voidEval("d" + Rname + " <- data.frame(" + data.getRname() + "," + classification + ")");
-            rcon.voidEval(Rname + " <- " + svm.getRname()); //TODO: this creates a copy of the original SVM. not necessary!!!
+            RserveConnection.voidEval("d" + Rname + " <- data.frame(" + data.getRname() + "," + classification + ")");
+            RserveConnection.voidEval(Rname + " <- " + svm.getRname()); //TODO: this creates a copy of the original SVM. not necessary!!!
         } catch (RSrvException rse){
             //TODO CATCH
         }
-        Data nData = new Data("d" + Rname);
+        final Data nData = new Data("d" + Rname);
         setData(nData, nData.getNumberOfVariables()-1);
     }
     
     public void setData(final Data newData, final int newVariablePos){
         this.data=newData;
         this.variablePos=newVariablePos;
-        this.variableName=(String)newData.getVariables().elementAt(newVariablePos);
+        this.variableName=(String)newData.getVariables().get(newVariablePos);
         trained=false;
         //TODO: don't set it to null. save the data in some way.
         if(plot!=null) {
@@ -146,17 +145,17 @@ public final class SVM extends DefaultClassifier {
             
             final String crossOpt=",cross=" + cross;
             final String toleranceOpt=",tolerance="+tolerance;
-            rcon.voidEval(Rname + " <- svm(" + formulaOpt + dataOpt +  costOpt + gammaOpt + nuOpt
+            RserveConnection.voidEval(Rname + " <- svm(" + formulaOpt + dataOpt +  costOpt + gammaOpt + nuOpt
                     + degreeOpt + coef0Opt + typeOpt + scaleOpt + crossOpt + kernelOpt + toleranceOpt + fittedOpt + ")");
             
-            numberOfSupportVectors = rcon.eval(Rname + "$tot.nSV").asInt();
+            numberOfSupportVectors = RserveConnection.evalI(Rname + "$tot.nSV");
             
             if(!trained){
                 try{
-                    Vector classNamesREXP = rcon.eval(Rname + "$levels").asVector();
-                    classNames = new Vector(classNamesREXP.size());
-                    for(Enumeration en = classNamesREXP.elements(); en.hasMoreElements();){
-                        classNames.add(((REXP)en.nextElement()).asString());
+                    final List classNamesREXP = RserveConnection.evalL(Rname + "$levels");
+                    classNames = new ArrayList(classNamesREXP.size());
+                    for(final ListIterator en = classNamesREXP.listIterator(); en.hasNext();){
+                        classNames.add(((REXP)en.next()).asString());
                     }
                 } catch (RSrvException rse) {
                     ErrorDialog.show(parent, rse, "SVM.train()");
@@ -285,7 +284,7 @@ public final class SVM extends DefaultClassifier {
     
     public void remove(final boolean removeInData){
         try{
-            rcon.voidEval("rm(" + Rname + ")");
+            RserveConnection.voidEval("rm(" + Rname + ")");
             if (removeInData)  {
                 data.removeSVM(this);
             }
@@ -319,7 +318,7 @@ public final class SVM extends DefaultClassifier {
     
     private void calculateFitted() {
         try{
-            rcon.voidEval(Rname + "$fitted <- predict(" + Rname + "," + data.getRname() + ")");
+            RserveConnection.voidEval(Rname + "$fitted <- predict(" + Rname + "," + data.getRname() + ")");
         } catch(RSrvException rse) {
             ErrorDialog.show(parent,"Rserve exception in SVM.calculateFitted(): "+rse.getMessage());
             return;
@@ -376,16 +375,16 @@ public final class SVM extends DefaultClassifier {
         if(!getFitted())  {
             calculateFitted();
         }
-        String prediction = "fitted(" + Rname + ")",
-                reality   = data.getRname() + "[," + (variablePos+1) + "]";
+        final String prediction = "fitted(" + Rname + ")";
+        final String         reality   = data.getRname() + "[," + (variablePos+1) + "]";
         confusionMatrix = calculateConfusionMatrix(prediction,reality);
         accuracy = calculateAccuracyRate(prediction,reality,confusionMatrix);
     }
     
     private void updateAccuracyOfPrediction(){
         if(hasAccuracyOfPrediction()){
-            String pred = prediction.getRname(),
-                    reality   = classificationData.getVariable(getVariableName());
+            final String pred = prediction.getRname();
+            final String         reality   = classificationData.getVariable(getVariableName());
             accuracyOfPrediction =  calculateAccuracyRate(pred,reality,calculateConfusionMatrix(pred,reality));
         }
     }
@@ -394,14 +393,14 @@ public final class SVM extends DefaultClassifier {
         return confusionMatrix;
     }
     
-    public Vector getClassNames(){
+    public List getClassNames(){
         return classNames;
     }
     
     int getMinGroupSize(){
         int ret=-1;
         try{
-            ret = rcon.eval("min(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))").asInt();
+            ret = RserveConnection.evalI("min(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))");
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.getMinGroupSize()");
         }
@@ -411,7 +410,7 @@ public final class SVM extends DefaultClassifier {
     int getMaxGroupSize(){
         int ret=-1;
         try{
-            ret = rcon.eval("max(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))").asInt();
+            ret = RserveConnection.evalI("max(summary(factor(" + data.getRname() + "[," + (variablePos+1) + "])))");
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.getMaxGroupSize()");
         }
@@ -438,7 +437,7 @@ public final class SVM extends DefaultClassifier {
         snapshot.thumbnail = new ImageIcon(plot.getImage().getScaledInstance(100, 100,
                 java.awt.Image.SCALE_SMOOTH));
         try{
-            rcon.voidEval(snapshot.Rname + " <- " + Rname);
+            RserveConnection.voidEval(snapshot.Rname + " <- " + Rname);
         } catch(RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.createSnapshot()");
         }
@@ -464,15 +463,15 @@ public final class SVM extends DefaultClassifier {
         data = snap.data;
         plot = snap.plot;
         
-        variableName = (String)data.getVariables().elementAt(variablePos);
+        variableName = (String)data.getVariables().get(variablePos);
         try{
-            rcon.voidEval(Rname + " <- " + snap.Rname);
+            RserveConnection.voidEval(Rname + " <- " + snap.Rname);
         } catch(RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.createSnapshot()");
         }
     }
     
-    public void classify(Data dataset) {
+    public void classify(final Data dataset) {
         if(dataset==null) return;
         classificationData = dataset;
         
@@ -481,7 +480,7 @@ public final class SVM extends DefaultClassifier {
             CLASSIFICATIONRESULTNAME = prediction.getRname();
         }
         try{
-            rcon.voidEval(prediction.getRname() + " <- predict(" + Rname + "," + classificationData.getRname() + ")");
+            RserveConnection.voidEval(prediction.getRname() + " <- predict(" + Rname + "," + classificationData.getRname() + ")");
             prediction.setName("Pred. SVM #" + number + ", dataset " + data.getPath());
             prediction.update();
         } catch(RSrvException rse){
@@ -498,13 +497,13 @@ public final class SVM extends DefaultClassifier {
             return null;
     }
     
-    private void writeObject(ObjectOutputStream s) throws IOException {
+    private void writeObject(final ObjectOutputStream s) throws IOException {
         s.defaultWriteObject();
         
         try{
-            rcon.voidEval("save(" + Rname + ",file='model')");
-            RFileInputStream rfis = rcon.openFile("model");
-            byte[] b = new byte[rfis.available()];
+            RserveConnection.voidEval("save(" + Rname + ",file='model')");
+            final RFileInputStream rfis = RserveConnection.openFile("model");
+            final byte[] b = new byte[rfis.available()];
             rfis.read(b);
             s.writeObject(b);
         } catch (RSrvException rse){
@@ -513,16 +512,14 @@ public final class SVM extends DefaultClassifier {
         // private transient SVMClassificationPlot plot;?
     }
     
-    private void readObject(ObjectInputStream s) throws IOException, ClassNotFoundException  {
+    private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException  {
         s.defaultReadObject();
         
-        rcon=RserveConnection.getRconnection();
-        
-        byte[] b = (byte[])s.readObject();
-        RFileOutputStream rfos = rcon.createFile("model");
+        final byte[] b = (byte[])s.readObject();
+        final RFileOutputStream rfos = RserveConnection.createFile("model");
         rfos.write(b);
         try{
-            rcon.voidEval("load('model')");
+            RserveConnection.voidEval("load('model')");
         } catch (RSrvException rse){
             
         }
@@ -545,11 +542,16 @@ public final class SVM extends DefaultClassifier {
         }
         
         public String getToolTipText() {
-            String ttt;
+            StringBuffer ttt = new StringBuffer();
             
-            ttt = "#Support vectors: " + numberOfSupportVectors + "<br>" +
-                    "Type: " + typeToString(type) + "<br>" +
-                    "Kernel: " + kernelToString(kernel);
+            ttt.append("#Support vectors: ")
+            .append(numberOfSupportVectors)
+            .append("<br>")
+            .append("Type: ")
+            .append(typeToString(type))
+            .append("<br>")
+            .append("Kernel: ")
+            .append(kernelToString(kernel));
             
             final String gammaInf = "<br>Gamma: " + gamma;
             final String degreeInf = "<br>Degree: " + degree;
@@ -559,29 +561,35 @@ public final class SVM extends DefaultClassifier {
             
             switch(kernel){
                 case KERNEL_LINEAR:
-                    ttt += costInf;
+                    ttt.append(costInf);
                     break;
                 case KERNEL_POLYNOMIAL:
-                    ttt += gammaInf + degreeInf + coef0Inf + costInf;
+                    ttt.append(gammaInf)
+                    .append(degreeInf)
+                    .append(coef0Inf)
+                    .append(costInf);
                     break;
                 case KERNEL_RADIAL:
-                    ttt += gammaInf + costInf;
+                    ttt.append(gammaInf)
+                    .append(costInf);
                     break;
                 default: //SIGMOID
-                    ttt += gammaInf + coef0Inf + costInf;
+                    ttt.append(gammaInf)
+                    .append(coef0Inf)
+                    .append(costInf);
                     break;
             }
             switch(type){
                 case TYPE_C_CLASS:
                     break;
                 case TYPE_NU_CLASS:
-                    ttt += nuInf;
+                    ttt.append(nuInf);
                     break;
                 default:
                     break;
                     //not implemented
             }
-            return "<html>" + ttt + "</html>";
+            return "<html>" + ttt.toString() + "</html>";
         }
         
         public ImageIcon getThumbnail() {
