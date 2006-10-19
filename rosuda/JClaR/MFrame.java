@@ -15,18 +15,18 @@ import javax.swing.JFrame;
  * See {@link http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4320050}.
  * @author tobias
  */
-public class MFrame {
+public final class MFrame {
     
     /**
      * Taken from {@link http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4320050}.
      */
     private static void lockInMinSize(final JFrame frame) {
         //Ensures user cannot resize frame to be smaller than frame is right now.
-        final int origX = frame.getSize().width;
-        final int origY = frame.getSize().height;
+        final int origX = frame.getWidth();
+        final int origY = frame.getHeight();
         frame.addComponentListener(new
                 java.awt.event.ComponentAdapter() {
-            public void componentResized(ComponentEvent event) {
+            public final void componentResized(final ComponentEvent event) {
                 frame.setSize(
                         (frame.getWidth() < origX) ? origX :
                             frame.getWidth(),

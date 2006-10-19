@@ -6,31 +6,29 @@ import org.rosuda.JRclient.RSrvException;
 
 public abstract class DefaultClassifier implements Classifier {
     
-    protected transient RserveConnection rcon;
+    transient Component parent;
     
-    protected transient Component parent;
+    int[] confusionMatrix;
     
-    protected int[] confusionMatrix;
-    
-    protected int[] calculateConfusionMatrix(String prediction, String reality){
+    final int[] calculateConfusionMatrix(final String prediction, final String reality){
         int[] matrix = null;
         try{
-            matrix = rcon.eval("table(" + prediction + "," + reality + ")").asIntArray();
+            matrix = RserveConnection.evalIA("table(" + prediction + "," + reality + ")");
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.calculateConfusionMatrix(String,String)");
         }
         return matrix;
     }
     
-    protected double calculateAccuracyRate(String prediction, String reality,int[] matrix) {
+    final double calculateAccuracyRate(final String prediction, final String reality,final int[] matrix) {
         double ac=0;
         try{
-            final int numClassesR = rcon.eval("length(levels(" + reality + "))").asInt();
-            final int numClassesP = rcon.eval("length(levels(" + prediction + "))").asInt();
+            final int numClassesR = RserveConnection.evalI("length(levels(" + reality + "))");
+            final int numClassesP = RserveConnection.evalI("length(levels(" + prediction + "))");
             for (int i=0; i<numClassesR; i++){
                 ac += matrix[i*(numClassesP+1)];
             }
-            ac /= (double)rcon.eval("length(" + prediction + ")").asInt();
+            ac /= RserveConnection.evalI("length(" + prediction + ")");
         } catch (RSrvException rse){
             ErrorDialog.show(parent, rse, "SVM.calculateAccuracyRate(String,String,int[])");
         }
@@ -38,27 +36,27 @@ public abstract class DefaultClassifier implements Classifier {
     }
     
     
-    public String getVariableName(){
+    public final String getVariableName(){
         return variableName;
     }
     
-    protected String variableName;
+    String variableName;
     
     
-    protected String Rname;
+    String Rname;
     
     
-    protected transient Data data;
+    transient Data data;
     
     
-    public Data getData(){
+    public final Data getData(){
         return data;
     }
     
     
     
     
-    public String getName() {
+    public final String getName() {
         if(data!=null){
             if(data.isRestricted()) {
                 return data.getPath() + "(restricted)";
@@ -72,77 +70,77 @@ public abstract class DefaultClassifier implements Classifier {
     }
     
     
-    public String getRname() {
+    public final String getRname() {
         return Rname;
     }
     
     
-    protected final void setParent(final Component parent){
+    private final void setParent(final Component parent){
         this.parent = parent;
     }
     
     
-    protected transient SVMClassificationPlot plot;
+    transient SVMClassificationPlot plot;
     
     
-    protected boolean trained = false;
+    boolean trained = false;
     
-    protected int variablePos; //which data column was selected (starts at 0)
+    int variablePos; //which data column was selected (starts at 0)
     
     
-    public Data getClassifiedData() {
+    public final Data getClassifiedData() {
         return classificationData;
     }
     
     
-    public Plot getPlot() {
+    public final Plot getPlot() {
         return plot;
     }
     
     
-    protected final boolean getTrained(){
+    final boolean getTrained(){
         return trained;
     }
     
     
-    public int getVariablePos() {
+    public final int getVariablePos() {
         return variablePos;
     }
     
     
-    public boolean hasClassifiedData() {
+    public final boolean hasClassifiedData() {
         return classificationData != null;
     }
     
     
-    public boolean isReady() {
+    public final boolean isReady() {
         return getTrained();
     }
     
     
-    public void reclassify() {
+    public final void reclassify() {
         classify(classificationData);
     }
     
     
-    public void setPlot(final Plot plot) {
+    public final void setPlot(final Plot plot) {
         this.plot = (SVMClassificationPlot) plot;
     }
     
-    public boolean hasAccuracyOfPrediction() {
+    public final boolean hasAccuracyOfPrediction() {
         return (hasClassifiedData() && classificationData.getVariables().contains(getVariableName()));
     }
     
-    public double getAccuracy(){
+    public final double getAccuracy(){
         return accuracy;
     }
     
-    protected transient Data classificationData;
+    transient Data classificationData;
     
     
     double accuracy=0;
     
-    public double getAccuracyOfPrediction() {
+    public final double getAccuracyOfPrediction() {
         if(hasAccuracyOfPrediction()) return accuracyOfPrediction;
         else return -1;
     }
