@@ -6,8 +6,6 @@
 
 package org.rosuda.JClaR;
 
-import org.rosuda.JRclient.REXP;
-import org.rosuda.JRclient.RList;
 import org.rosuda.JRclient.RSrvException;
 
 
@@ -21,7 +19,6 @@ public final class Tune {
     
     private Data data;
     private String Rname;
-    private RserveConnection rcon;
     
     private double bestCost;
     private double bestGamma;
@@ -31,7 +28,6 @@ public final class Tune {
     
     /** Creates a new instance of Tune */
     Tune(final Data data) {
-        rcon=RserveConnection.getRconnection();
         this.data=data;
         Rname = "t" + this.hashCode();
     }
@@ -92,24 +88,24 @@ public final class Tune {
     void tune() {
         try{
             final String gammaRange;
-            final String costRange;
-            final String degreeRange;
-            final String nuRange;
-            final String coef0Range;
+            
+            
+            
+            
             
             final String fixGammaOpt;
-            final String fixCostOpt;
-            final String fixDegreeOpt;
-            final String fixNuOpt;
-            final String fixCoef0Opt;
             
-            final String kernelOpt;
-            final String typeOpt;
+            
+            
+            
+            
+            
+            
             
             final double zeroFactor = 0.3;
             
             if(tuneGamma) {
-                if(fromGamma==0) {
+                if(Math.abs(fromGamma - 0) < 0.0001) {
                     gammaRange="gamma=c(0,2^seq(log2(" + (zeroFactor*toGamma/byGamma) + ")," +
                             "log2(" + toGamma + "),length=" + (byGamma-1) + "))";
                 }
@@ -123,8 +119,10 @@ public final class Tune {
                 gammaRange="";
                 fixGammaOpt=",gamma=" + fixGamma;
             }
+            final String costRange;
+            final String fixCostOpt;
             if(tuneCost) {
-                if(fromCost==0) {
+                if(Math.abs(fromCost - 0) < 0.0001) {
                     costRange="cost=c(0,2^seq(log2(" + (zeroFactor*toCost/byCost) + ")," +
                             "log2(" + toCost + "),length=" + (byCost-1) + "))";
                 }
@@ -138,6 +136,8 @@ public final class Tune {
                 costRange="";
                 fixCostOpt=",cost=" + fixCost;
             }
+            final String degreeRange;
+            final String fixDegreeOpt;
             if(tuneDegree) {
                 degreeRange="degree=seq(" + fromDegree + "," + toDegree + ",length=" + byDegree + ")";
                 fixDegreeOpt="";
@@ -145,8 +145,10 @@ public final class Tune {
                 degreeRange="";
                 fixDegreeOpt=",degree=" + fixDegree;
             }
+            final String nuRange;
+            final String fixNuOpt;
             if(tuneNu) {
-                if(fromNu==0) {
+                if(Math.abs(fromNu - 0) < 0.0001) {
                     nuRange="nu=c(0,2^seq(log2(" + (zeroFactor*toNu/byNu) + ")," +
                             "log2(" + toNu + "),length=" + byNu + "))";
                 }
@@ -160,6 +162,8 @@ public final class Tune {
                 nuRange="";
                 fixNuOpt=",nu=" + fixNu;
             }
+            final String fixCoef0Opt;
+            final String coef0Range;
             if(tuneCoef0) {
                 if(fromCoef0<0){
                     if(toCoef0<0) {
@@ -167,7 +171,7 @@ public final class Tune {
                                 "log2(" + (-toCoef0) + "),length=" + byCoef0 + ")";
                     }
                     
-                    else if(toCoef0==0) {
+                    else if(Math.abs(toCoef0 - 0) < 0.0001) {
                         coef0Range="coef0=c(-2^seq(log2(" + (-fromCoef0) + ")," +
                                 "log2(" + (-zeroFactor*fromCoef0/byCoef0) + "),length=" + (byCoef0-1) + "),0)";
                     }
@@ -181,7 +185,7 @@ public final class Tune {
                                 "length=round(" + (toCoef0*(byCoef0-1)/(toCoef0-fromCoef0)) + ")))";
                     }
                     
-                } else if(fromCoef0==0) {
+                } else if(Math.abs(fromCoef0 - 0) < 0.0001) {
                     coef0Range="coef0=c(0,2^seq(log2(" + (zeroFactor*toCoef0/byCoef0) + ")," +
                             "log2(" + toCoef0 + "),length=" + byCoef0 + "))";
                 }
@@ -196,12 +200,14 @@ public final class Tune {
                 fixCoef0Opt = ",coef0=" + fixCoef0;
             }
             
+            final String kernelOpt;
             kernelOpt = ",kernel='" + SVM.kernelToString(kernel) + "'";
+            final String typeOpt;
             typeOpt = ",type='" + SVM.typeToString(type) + "'";
             
             //#T#O#D#O#: use other tune.control?
             //XXX: what effect has setting the cross variable here?
-            rcon.voidEval(Rname + " <- tune(svm," + variable + "~.,data=" + data.getRname() + ","
+            RserveConnection.voidEval(Rname + " <- tune(svm," + variable + "~.,data=" + data.getRname() + ","
                     + "ranges=list("
                     + gammaRange + ","
                     + costRange + ","
@@ -219,10 +225,10 @@ public final class Tune {
                     + typeOpt
                     + ")");
             
-            rcon.voidEval("print(" + Rname + "$best.parameters)");
+            RserveConnection.voidEval("print(" + Rname + "$best.parameters)");
             
             if(tuneGamma)  {
-                bestGamma = rcon.eval(Rname + "$best.parameters").asList().at("gamma").asDouble();
+                bestGamma = RserveConnection.eval(Rname + "$best.parameters").asList().at("gamma").asDouble();
             }
             
             else  {
@@ -230,7 +236,7 @@ public final class Tune {
             }
             
             if(tuneCost)  {
-                bestCost = rcon.eval(Rname + "$best.parameters").asList().at("cost").asDouble();
+                bestCost = RserveConnection.eval(Rname + "$best.parameters").asList().at("cost").asDouble();
             }
             
             else  {
@@ -238,7 +244,7 @@ public final class Tune {
             }
             
             if(tuneDegree)  {
-                bestDegree = (int)Math.round(rcon.eval(Rname + "$best.parameters").asList().at("degree").asDouble());
+                bestDegree = (int)Math.round(RserveConnection.eval(Rname + "$best.parameters").asList().at("degree").asDouble());
             }
             
             else  {
@@ -246,7 +252,7 @@ public final class Tune {
             }
             
             if(tuneNu)  {
-                bestNu = rcon.eval(Rname + "$best.parameters").asList().at("nu").asDouble();
+                bestNu = RserveConnection.eval(Rname + "$best.parameters").asList().at("nu").asDouble();
             }
             
             else  {
@@ -254,7 +260,7 @@ public final class Tune {
             }
             
             if(tuneCoef0)  {
-                bestCoef0 = rcon.eval(Rname + "$best.parameters").asList().at("coef0").asDouble();
+                bestCoef0 = RserveConnection.eval(Rname + "$best.parameters").asList().at("coef0").asDouble();
             }
             
             else  {
@@ -267,28 +273,38 @@ public final class Tune {
     }
     
     public String toString(){
-        String ret="";
+        StringBuffer ret = new StringBuffer();
         if(tuneGamma)  {
-            ret += "Gamma: " + bestGamma + "\n";
+            ret.append("Gamma: ")
+            .append(bestGamma)
+            .append("\n");
         }
         
         if(tuneCost)  {
-            ret += "Cost: " + bestCost + "\n";
+            ret.append("Cost: ")
+            .append(bestCost)
+            .append("\n");
         }
         
         if(tuneDegree)  {
-            ret += "Degree: " + bestDegree + "\n";
+            ret.append("Degree: ")
+            .append(bestDegree)
+            .append("\n");
         }
         
         if(tuneNu)  {
-            ret += "Nu: " + bestNu + "\n";
+            ret.append("Nu: ")
+            .append(bestNu)
+            .append("\n");
         }
         
         if(tuneCoef0)  {
-            ret += "Coef0: " + bestCoef0 + "\n";
+            ret.append("Coef0: ")
+            .append(bestCoef0)
+            .append("\n");
         }
         
-        return ret;
+        return ret.toString();
     }
     
     double getBestCost() {
@@ -463,11 +479,11 @@ public final class Tune {
         return plot();
     }
     
-    void setKernel(int kernel) {
+    void setKernel(final int kernel) {
         this.kernel = kernel;
     }
     
-    void setType(int type) {
+    void setType(final int type) {
         this.type = type;
     }
     
