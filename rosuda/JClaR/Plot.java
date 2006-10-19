@@ -20,13 +20,13 @@ import org.rosuda.JRclient.RSrvException;
  * @author tobias
  */
 public abstract class Plot {
+    private static final String PLOTFILE_PNG = "plot.png";
     
-    RserveConnection rcon;
     private Classifier classifier;
     private String plotCall;
     double zoom = 1;
     private BufferedImage image;
-    private static String plotFile = "plot.png";
+    private static String plotFile = PLOTFILE_PNG;
     
     static final int DEVICE_NO = -1;
     static final int DEVICE_GDD = 0;
@@ -38,9 +38,7 @@ public abstract class Plot {
     
     Component parent;
     
-    Plot(){
-        rcon=RserveConnection.getRconnection();
-    }
+    Plot(){}
     
     final BufferedImage plot(final Dimension dim){
         return plot(dim.width, dim.height);
@@ -54,20 +52,20 @@ public abstract class Plot {
             
             switch(device){
                 case DEVICE_GDD:
-                    rcon.voidEval("GDD(file='" + plotFile + "',type='png'" + widthOpt + heightOpt + ")");
+                    RserveConnection.voidEval("GDD(file='" + plotFile + "',type='png'" + widthOpt + heightOpt + ")");
                     break;
                 case DEVICE_JPG:
-                    rcon.voidEval("jpeg(filename='" + plotFile + "', quality=100" + widthOpt + heightOpt + ")");
+                    RserveConnection.voidEval("jpeg(filename='" + plotFile + "', quality=100" + widthOpt + heightOpt + ")");
                     break;
                 case DEVICE_PNG:
-                    rcon.voidEval("png(filename='" + plotFile + "'" + widthOpt + heightOpt + ")");
+                    RserveConnection.voidEval("png(filename='" + plotFile + "'" + widthOpt + heightOpt + ")");
                     break;
             }
             
             if(plotCall!=null){
-                rcon.voidEval(plotCall);
-                rcon.voidEval("dev.off()");
-                final RFileInputStream rfis = rcon.openFile(plotFile);
+                RserveConnection.voidEval(plotCall);
+                RserveConnection.voidEval("dev.off()");
+                final RFileInputStream rfis = RserveConnection.openFile(plotFile);
                 return (image=ImageIO.read(rfis));
             } else  {
                 return null;
@@ -122,23 +120,23 @@ public abstract class Plot {
     
     abstract void setShowDataInPlot(boolean showDataInPlot);
     abstract boolean getShowDataInPlot();
-    protected abstract void setVerticalShift(double shift);
-    protected abstract void setHorizontalShift(double shift);
+    abstract void setVerticalShift(double shift);
+    abstract void setHorizontalShift(double shift);
     
-    Classifier getClassifier() {
+    private final Classifier getClassifier() {
         return classifier;
     }
     
-    private static int getDevice() {
+    private static final int getDevice() {
         return device;
     }
     
-    static void setDevice(int aDevice) {
+    static final void setDevice(final int aDevice) {
         device = aDevice;
         switch(device){
             case DEVICE_GDD:
             case DEVICE_PNG:
-                plotFile = "plot.png";
+                plotFile = PLOTFILE_PNG;
                 break;
             case DEVICE_JPG:
                 plotFile = "plot.jpg";

@@ -17,7 +17,7 @@ public class Main {
     private static String last_directory;
     private static int lastGivenNumber=0;
 
-    static String VERSION = "0.5.1";
+    static final String VERSION = "0.5.1";
     
     /** Creates a new instance of Main */
     private Main() {
@@ -27,16 +27,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(final String[] args) {
-        final RserveConnection rcon = RserveConnection.getRconnection();
         last_directory=System.getProperty("user.dir");
         
         try{
-            if(rcon.eval("require(e1071)").asBool().isFALSE()){
+            if(!RserveConnection.evalB("require(e1071)")){
                 ErrorDialog.show(null,"R package e1071 not found.");
                 System.exit(-1);
             }
-            if(rcon.eval("require(GDD)").asBool().isFALSE()){
-                if(rcon.eval("capabilities('jpeg')").asBool().isFALSE()){
+            if(!RserveConnection.evalB("require(GDD)")){
+                if(!RserveConnection.evalB("capabilities('jpeg')")){
                     ErrorDialog.show(null,"R package GDD not found. Neither png nor jpeg device available. " +
                             "Plotting will be disabled");
                     Plot.setDevice(Plot.DEVICE_NO);
@@ -47,22 +46,22 @@ public class Main {
             System.exit(-1);
         }
         
-        MainWindow mw = new MainWindow();
+        final MainWindow mw = new MainWindow();
         mw.show();
         
         //WindowManager.newWindow();
     }
     
     
-    static String getLast_directory() {
+    static final String getLast_directory() {
         return last_directory;
     }
     
-    static void setLast_directory(String aLast_directory) {
+    static final void setLast_directory(final String aLast_directory) {
         last_directory = aLast_directory;
     }
     
-    static int getNewClassifierNumber(){
+    static final int getNewClassifierNumber(){
         return ++lastGivenNumber;
     }
     
