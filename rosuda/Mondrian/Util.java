@@ -126,22 +126,24 @@ public class Util {
   
   public static boolean isNumber(String s)
   {
-    String validChars = "-.0123456789";
-    boolean isNumber = true;
+/*    String validChars = "-.0123456789";
     
-    for (int i = 0; i < s.length() && isNumber; i++) 
+    for (int i = 0; i < s.length(); i++) 
     { 
-      char c = s.charAt(i); 
+      char c = s.charAt(i);
       if (validChars.indexOf(c) == -1) 
-      {
-        isNumber = false;
-      }
-      else
-      {
-        isNumber = true;
-      }
+        return false;
+      if(c == '-' && i>0)
+        return false;
     }
-    return isNumber;
+    return true;*/
+    try {
+      Double dummy = Double.valueOf(s);
+    }
+    catch( NumberFormatException e) {		
+      return false;
+    }
+    return true;
   }
 
   public static String info2Html(String infoText) {
