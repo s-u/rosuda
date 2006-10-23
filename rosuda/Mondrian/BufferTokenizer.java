@@ -1,4 +1,4 @@
-package org.rosuda.Mondrian;
+//package org.rosuda.Mondrian;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -2637,13 +2637,13 @@ public class BufferTokenizer {
 								}
 								// TODO: is the following a good solution?
 								// here's the problem with positioning.
-								System.out.println(item[j][i]);
+//								System.out.println(item[j][i]);
 								if(buffer.hasRemaining()) buffer.position(buffer.position()+1);
 								break;
 							} else {
 //                              item[j][i] += (b - 48) * Math.pow(10, -(++k));
 								item[j][i] = item[j][i] * 10 + (b - 48);
-								System.out.println(item[j][i]);
+//								System.out.println(item[j][i]);
 								k++;
 							}
 						}
@@ -2664,7 +2664,7 @@ public class BufferTokenizer {
 						}
 					} else {
 						item[j][i] = item[j][i] * 10 + (b - 48);
-						System.out.println(item[j][i]);
+//						System.out.println(item[j][i]);
 					}
 				} // end while
 //				System.out.println("item["+j+"]["+i+"]: " + item[j][i]);
@@ -4048,14 +4048,14 @@ public class BufferTokenizer {
 		
 	}
 	
-	public static void main(String args[]) {
+/*	public static void main(String args[]) {
 		try {
 //		new BufferTokenizer(10,10,"C:\\work files\\Families '95(3).txt");
 		new BufferTokenizer(10,10,"D:\\Test2.txt");
 		} catch (Exception e) {
 			System.err.println(e);
 		}
-	}
-	
+	} */
+ 	
 	
 }
