@@ -47,6 +47,8 @@ public class PPrimPolygon extends PPrimBase {
     /** checks whether the PlotPrimitive contains the given point.*/
     public boolean contains(final int x, final int y) {
         if(pg==null) return false;
+		if (fill)
+			return pg.contains((double)x,(double)y);
         if(drawCorners){
             for(int i=0; i<pg.npoints; i++)
                 if((x-pg.xpoints[i])*(x-pg.xpoints[i])+(y-pg.ypoints[i])*(y-pg.ypoints[i]) <= nodeSize*nodeSize)
@@ -77,6 +79,8 @@ public class PPrimPolygon extends PPrimBase {
     public boolean intersects(final Rectangle rt) {
         if(pg==null) return false;
         Rectangle2D.Double r2d = new Rectangle2D.Double(rt.x,rt.y,rt.width,rt.height);
+		if (fill)
+			return pg.intersects(r2d);
         if(selectByCorners){
             for(int i=0; i<pg.npoints; i++)
                 if(
@@ -101,13 +105,18 @@ public class PPrimPolygon extends PPrimBase {
     public void paint(final PoGraSS g, final int orientation, final SMarker m) {
         if (pg==null) return;
         final int mark = m.getSec(ref[0]);
-        Color color;
-        if(mark>0) {
-            color = ColorBridge.getMain().getColor(mark);
-        } else{
-            color = borderColor;
-        }
-        paintPolygon(g,orientation,m,false,color,fillColor);
+		if (fill) {
+			final Color fc = (mark>0)?ColorBridge.getMain().getColor(mark):null;
+			paintPolygon(g, orientation, m, false, borderColor, fc);
+		} else {
+			Color color;
+			if(mark>0) {
+				color = ColorBridge.getMain().getColor(mark);
+			} else{
+				color = borderColor;
+			}
+			paintPolygon(g,orientation,m,false,color,fillColor);
+		}
         if(showGapDots && gapDots!=null){
             for(Iterator it = gapDotPs.iterator(); it.hasNext();) ((PPrimCircle)it.next()).paint(g,orientation,m);
         }
