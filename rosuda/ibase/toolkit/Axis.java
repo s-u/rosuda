@@ -104,7 +104,11 @@ public class Axis extends Notifier {
             reset=false;
         type=nt;
         setDefaultRange(reset); // that one calls NotifyAll already
-    };
+    }
+	
+	public int getType() {
+		return type;
+	}
     
     /** set geomery of the axis and notifies dependents upon change
      * @param orientation orientation of the axis (horiz/vert)
