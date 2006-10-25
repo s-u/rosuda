@@ -32,7 +32,7 @@ public class MapSegmentEntry {
         @param ypt y-coordinates of the points (padded with 0 if too short)
         @param lake flag specifying whether this polygon is a lake
         @param border border flag of this segment entry */
-    public MapSegmentEntry(double[] xpt, double[] ypt, boolean lake, boolean border) {
+    public MapSegmentEntry(final double[] xpt, final double[] ypt, boolean lake, boolean border) {
         isLake=lake; hasBorder=border;
         xp=new double[xpt.length]; yp=new double[xpt.length];
         int i=0;
@@ -48,6 +48,31 @@ public class MapSegmentEntry {
         }
     }
 
+    /** constructor of a map segment entry, allowing the use of a part of an array. length is shrunk to reflect xpt.length where necessary and where relevant xpt.length>ypt.length causes ypt to be padded with zeros.
+        @param xpt x-coordinates of the points
+        @param ypt y-coordinates of the points (padded with 0 if too short)
+		@param offset offset at which to start
+		@param length number of entries to use (will be reduced if offset+length is larger that the xpt array)
+        @param lake flag specifying whether this polygon is a lake
+        @param border border flag of this segment entry */
+	public MapSegmentEntry(final double[] xpt, final double[] ypt, int offset, int length, boolean lake, boolean border) {
+        isLake=lake; hasBorder=border;
+		if (xpt.length < offset + length) length = xpt.length - offset;
+		if (length<0) length=0;
+        xp = new double[length]; yp = new double[length];
+        int i = offset;
+        while(i < offset+length) {
+            xp[i - offset] = xpt[i];
+            yp[i - offset] = (i<ypt.length)?ypt[i]:0;
+            if (i==offset) { minX=maxX=xpt[i]; minY=maxY=ypt[i]; };
+            if (xpt[i]<minX) minX=xpt[i];
+            if (xpt[i]>maxX) maxX=xpt[i];
+            if (ypt[i]<minY) minY=ypt[i];
+            if (ypt[i]>maxY) maxY=ypt[i];
+            i++;
+        }
+    }
+	
     /** re-calculate bounding box. Call this method after modifying the {@link #xp} or {@link #yp} arrays. */
     public void fixBoundingBox() {
         int i=0;

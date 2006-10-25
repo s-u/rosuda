@@ -21,17 +21,22 @@ public class MapSegment {
         isFirst=true;
     }
 
-    public void add(double[] xpt, double[] ypt) {
+    public void add(final double[] xpt, final double[] ypt) {
         MapSegmentEntry mse=new MapSegmentEntry(xpt,ypt,false,true);
         add(mse);
     }
 
-    public void add(double[] xpt, double[] ypt,boolean isLake) {
+    public void add(final double[] xpt, final double[] ypt, final boolean isLake) {
         MapSegmentEntry mse=new MapSegmentEntry(xpt,ypt,isLake,true);
         add(mse);
     }
 
-    public void add(MapSegmentEntry mse) {
+	public void add(final double[] xpt, final double[] ypt, final int offset, final int length, final boolean isLake) {
+        MapSegmentEntry mse=new MapSegmentEntry(xpt,ypt,offset,length,isLake,true);
+        add(mse);
+    }
+	
+    public void add(final MapSegmentEntry mse) {
         ents.addElement(mse);
         if (mse!=null) {
             if (isFirst) {
@@ -50,7 +55,7 @@ public class MapSegment {
         return ents.size();
     }
 
-    public MapSegmentEntry at(int i) {
+    public MapSegmentEntry at(final int i) {
         return (MapSegmentEntry) ents.elementAt(i);
     }
 
