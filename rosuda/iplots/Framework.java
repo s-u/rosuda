@@ -228,6 +228,58 @@ public class Framework implements Dependent, ActionListener {
         return addVar(v);
     }
     
+	boolean mapsHaveEqualContents(final SVar v, final double[] x, final double[] y) {
+		/* we don't know how to compare them (yet) - FIXME: implement this */
+		return false;
+	}
+	
+	/* asserts: x,y!=null, x.length==y.length */
+	void loadMapSegments(SVar v, final double[] x, final double[] y) {
+		int i = 0, a = 0;
+		while (i<x.length) {
+			if (Double.isNaN(x[i])) {
+				if (i-a-1>0) {
+					MapSegment ms = new MapSegment();
+					ms.add(x, y, a, i-a-1, false);
+					v.add(ms);
+				} else v.add(null);
+				a=i+1;
+			}
+			i++;
+		}
+		if (a<i) {
+			MapSegment ms = new MapSegment();
+			ms.add(x, y, a, i-a-1, false);
+			v.add(ms);
+		}
+	}
+	
+	/** construct a new map variable - SVar consisting of MapSegment instances */
+	public int newVar(String name, final double[] x, final double[] y) {
+		if (x==null || y==null || x.length!=y.length) return -1;
+        if (Global.DEBUG>0)
+            System.out.println("newVar: polygons["+x.length+"]");
+        /* FIXME! we don't know the length of the variable yet, so we just carry on ... */
+		/*
+		if (cvs.count()>0 && cvs.at(0).size()!=x.length) {
+			if (noInteraction) return -3; // respond "Yes" if noInteraction is set
+            final int i=mmDlg(name,d.length);
+            if (i<0) return i;
+			name=getNewTmpVar(name);
+        } else */ {
+			SVar ci = cvs.byName(name);
+			if (ci!=null) {
+				if (ci.getContentsType() == SVar.CT_Map && mapsHaveEqualContents(ci, x, y)) return cvs.indexOf(name); // re-use
+																										  // not equal, thus we need to re-name it
+				name=getNewTmpVar(name);
+			}
+		}
+		SVar v=new SVarObj(name, false, false);
+		v.setContentsType(SVar.CT_Map);
+		loadMapSegments(v, x, y);
+        return addVar(v);
+	}
+	
     /** construct a new numerical variable from supplied array of integers. Unlike datasets variables cannot have
      * the same name within a dataset.
      * @param name variable name
@@ -464,8 +516,32 @@ public class Framework implements Dependent, ActionListener {
 
         addNewPlot(sc);
         return sc;
-    };
+    }
     
+	public MapCanvas newMap(final int v) { return newMap(cvs, v); }
+	public MapCanvas newMap(final SVarSet vs, final int v) {
+		updateMarker(vs, v);
+		final SVar segs = vs.at(v);
+		if (segs == null || segs.getContentsType()!=SVar.CT_Map) return null;
+		String title = "Map ("+segs.getName()+")";
+
+		FrameDevice frdev = newFrame(title,TFrame.clsMap);
+        frdev.initPlacement();
+        frdev.setVisible(true);
+        frdev.addWindowListener(Common.getDefaultWindowListener());
+        final MapCanvas bc=new MapCanvas(graphicsEngine, frdev.getFrame(), segs, vs.getMarker());
+        frdev.add(bc.getComponent());
+        if (vs.getMarker()!=null) vs.getMarker().addDepend(bc);
+        bc.setSize(new Dimension(400,300));
+		bc.setTitle(title);
+        frdev.setSize(new Dimension(bc.getWidth(),bc.getHeight()));
+        frdev.pack();
+        bc.repaint();
+		
+        addNewPlot(bc);
+        return bc;
+	}
+	
     public BarCanvas newBarchart(final int v) { return newBarchart(cvs,v,-1); }
     public BarCanvas newBarchart(final int v, final int wgt) { return newBarchart(cvs,v,wgt); }
     public BarCanvas newBarchart(final SVarSet vs, final int v, final int wgt) {
