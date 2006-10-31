@@ -105,17 +105,18 @@ public class MyText {
   public void draw(Graphics g, int align) {
 
     FontMetrics FM;
+    Graphics2D g2d = (Graphics2D)g;
       switch(align) {
         case 0:   																			// Left 
-          g.drawString(s, x, y);
+          g2d.drawString(s, x, y);
           break;
         case 1:   																			// Right 
           FM = g.getFontMetrics();
-          g.drawString(s, x - FM.stringWidth(s), y);
+          g2d.drawString(s, x - FM.stringWidth(s), y);
           break;
         case 2:   																			// Center 
           FM = g.getFontMetrics();
-          g.drawString(s, x - FM.stringWidth(s)/2, y);
+          g2d.drawString(s, x - FM.stringWidth(s)/2, y);
     }
   }
 }
