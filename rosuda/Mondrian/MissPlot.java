@@ -92,25 +92,23 @@ public class MissPlot extends DragBox implements ActionListener {
                         x2,
                         (double)(S.r.y + S.r.height - border)/(realHeight));
     
-    System.out.println("In: "+((floatRect)S.o).y1+" <-> "+((floatRect)S.o).y2+" ... "+realHeight);
+    boolean[] hits = new boolean[data.n];
+    for(int i=0; i< data.n; i++)
+      hits[i] = false;
     
-    S.condition = new Query();
-    
-    boolean hit=false;
     for( int j = 0; j < rects.size(); j++) {
       MyRect r = (MyRect)rects.elementAt(j);
       if ( r.intersects( sr )) {
-        hit=true;
         missings = data.getMissings(vars[permA[j/2]]);
         for( int i=0; i<data.n; i++ )
           if( (missings[i] && (j % 2) == 1) || (!missings[i] && (j % 2) == 0) )
-            data.setSelection(i, 1, S.mode);
-          else
-            data.setSelection(i, 0, S.mode);
+            hits[i] = true;
       } 
     }
-    if( !hit )
-      for( int i=0; i<data.n; i++ )
+    for( int i=0; i<data.n; i++ )
+      if( hits[i] )
+        data.setSelection(i, 1, S.mode);
+      else
         data.setSelection(i, 0, S.mode);
   }
     
@@ -193,7 +191,7 @@ public class MissPlot extends DragBox implements ActionListener {
       else {
         for( int i = 0;i < labels.size(); i++) {
           MyText t = (MyText)labels.elementAt(i);
-          t.draw(bg, 1);
+          t.draw(bg, 0);
         }
         start =  0;
         stop = k-1;
@@ -212,16 +210,16 @@ public class MissPlot extends DragBox implements ActionListener {
               sumM++;
             else
               sumO++;
-        if( miss[j] > 0 )
-          rM.setHilite( sumM/miss[j] );
-        else
-          rM.setHilite( 0 );
-        rM.draw(bg);
         if( miss[j] < data.n )
           rO.setHilite( sumO/(data.n-miss[j]) );
         else
           rO.setHilite( 0 );
         rO.draw(bg);
+        if( miss[j] > 0 )
+          rM.setHilite( sumM/miss[j] );
+        else
+          rM.setHilite( 0 );
+        rM.draw(bg);
       }
       if( moving ) {
         //        System.out.println("Moving in Barchart: paint");
@@ -549,9 +547,10 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     char dir = 'x';
     if( displayMode.equals("y") )
       dir = 'y';
-    rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, (int)((width-2*border)*(1.0F-(double)miss[i]/data.n)), (int)hi,
+    int ww = (int)((width-2*border)*(1.0F-(double)miss[i]/data.n));
+    rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, ww, (int)hi,
                                  data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", null, null));
-    rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, (int)((width-2*border)*((double)miss[i]/data.n)), (int)hi,
+    rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, width-2*border - ww, (int)hi,
                                  miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null, null));
     y += hi+15*pF;
   }
