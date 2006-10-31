@@ -657,7 +657,10 @@ public int create(int x1, int y1, int x2, int y2, String info) {
         shorty = shorty.substring(0,shorty.length() - 1);
         addOn = "...";
       }
-      labels.addElement(new MyText( shorty.trim()+addOn, x1 + x-8*pF, y1 + y+(int)(h/2) + fh/2));
+      String print = shorty.trim()+addOn;
+      if( FM.stringWidth( lnames[0][i] ) <= FM.stringWidth( print ) )
+        print = lnames[0][i];
+      labels.addElement(new MyText( print, x1 + x-8*pF, y1 + y+(int)(h/2) + fh/2));
     }
     hi = Math.max(12*pF, h);
     
