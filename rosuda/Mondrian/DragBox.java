@@ -195,8 +195,19 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     return aspectRatio;
   }
 
-//  public void print() {
-//  }
+  public void flipAxes() {
+    double tmp;
+    tmp = hllx; hllx = hlly; hlly = tmp;
+    tmp = hurx; hurx = hury; hury = tmp;
+    tmp = llx; llx = lly; lly = tmp;
+    tmp = urx; urx = ury; ury = tmp;
+    
+    aspectRatio = 1/aspectRatio;
+    
+    zooms.removeAllElements();
+    zooms.addElement( new double[]{hllx, hlly, hurx, hury});
+    reScale(llx, lly, urx, ury);
+  }
 
   public void reScale(double llx, double lly, double urx, double ury) {
 
@@ -1265,7 +1276,7 @@ System.out.println("Mouse Action to check: "+mouse);
         tfXMinI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1293,7 +1304,7 @@ System.out.println("Mouse Action to check: "+mouse);
         tfXMaxI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1372,7 +1383,7 @@ System.out.println("Mouse Action to check: "+mouse);
         tfYMinI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1400,7 +1411,7 @@ System.out.println("Mouse Action to check: "+mouse);
         tfYMaxI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
               getToolkit().beep();
               e.consume();
             }
