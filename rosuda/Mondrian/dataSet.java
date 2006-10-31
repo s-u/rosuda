@@ -136,16 +136,20 @@ public class dataSet {
     RGBs[12] = new int[]{  0,   0, 210};    
   }
   
-  public void addVariable(String name, boolean alpha, boolean categorical, double[] data) {
+  public void addVariable(String name, boolean alpha, boolean categorical, double[] data, boolean[] miss) {
     Variable Var = new Variable(this.n, alpha, name);
     System.arraycopy(data, 0, Var.data, 0, data.length);
+    System.arraycopy(miss, 0, Var.missing, 0, data.length);
+    for(int i=0; i<this.n; i++)
+      if( miss[i] ) {
+        Var.numMiss++;
+        System.out.println(" Here is a missing at: "+i);
+      }
     Var.forceCategorical = false;
     Var.isCategorical = categorical;
-    Var.missing = new boolean[data.length];
-    for( int i=0; i<data.length; i++)
-      Var.missing[i] = false;
     this.alpha = (boolean [])Util.resizeArray(this.alpha, ++this.k);
     this.NAcount = (int [])Util.resizeArray(this.NAcount, this.k);
+    NAcount[NAcount.length-1] = Var.numMiss;
     this.alpha[k-1] = alpha;
     if( Var.isCategorical ) {
       for( int l=0; l<Var.grpSize.length; l++ )
@@ -1169,6 +1173,7 @@ System.out.println(newQ.makeQuery());
         if( name.substring(0,2).equals("/P") )
           isCategorical = false;
       data = new double[n];
+      missing = new boolean[n];
     }
     
     Variable(BufferTokenizer BT, int col) {
@@ -1416,17 +1421,18 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double Mean() {
       double sum=0;
-      for ( int i=0; i<n-numMiss; i++ ) 
-        sum += data[sortI[i]];
+      for ( int i=0; i<n; i++ )
+        if( !missing[i] )
+          sum += data[i];
       return sum/(n-numMiss);
     }
 
     public double selMean() {
       double sum=0;
       int counter=0;
-      for ( int i=0; i<n-numMiss; i++ )
-        if( selectionArray[i] > 0 ) {
-          sum += data[sortI[i]];
+      for ( int i=0; i<n; i++ )
+        if( selectionArray[i] > 0 && !missing[i] ) {
+          sum += data[i];
           counter++;
         }
       return sum/counter;
@@ -1434,17 +1440,18 @@ System.out.println("query: "+query+" ---> "+this.max);
 
     public double SDev() {
       double sum2=0;
-      for ( int i=0; i<n-numMiss; i++ ) 
-        sum2 += data[sortI[i]] * data[sortI[i]];
+      for ( int i=0; i<n; i++ ) 
+        if( !missing[i] )
+          sum2 += data[i] * data[i];
       return Math.pow((sum2 - Math.pow(Mean(),2) * (n-numMiss)) / ((n-numMiss) - 1), 0.5);
     }
 
     public double selSDev() {
       double sum2=0;
       int counter=0;
-      for ( int i=0; i<n-numMiss; i++ )
-        if( selectionArray[i] > 0 ) {
-          sum2 += data[sortI[i]] * data[sortI[i]];
+      for ( int i=0; i<n; i++ )
+        if( selectionArray[i] > 0 && !missing[i] ) {
+          sum2 += data[i] * data[i];
           counter++;
         }
       return Math.pow((sum2 - Math.pow(selMean(),2) * counter) / (counter - 1), 0.5);
