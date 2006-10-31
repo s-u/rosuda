@@ -1056,10 +1056,18 @@ public class PC extends DragBox implements ActionListener {
 
         bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
         
+        Color[] cols = new Color[1];
+        if( data.colorBrush ) {
+          cols = new Color[data.getNumColors()];
+          for(int j=0; j<data.getNumColors(); j++)
+            cols[j] = data.getColorByID(j);
+        }
         if( paintMode.equals("Poly") && !hotSelection && !zoomToSel) {
           for( int i=0; i<data.n; i++ ) {
-            if( data.colorBrush )
-              bg.setColor(data.getColor(i));
+            if( data.colorArray[i] > 0 )
+              bg.setColor(cols[data.colorArray[i]]);
+            else
+              bg.setColor(MFrame.lineColor);
             if( !data.hasMissings )  
               bg.drawPolyline(poly[i].xpoints, poly[i].ypoints, k); 
             else
