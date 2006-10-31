@@ -340,7 +340,11 @@ public class BufferTokenizer {
 			if(hardReadError) {
               System.out.println(findRegion(buffer,errorposition));
 //              throw new ScanException(findRegion(buffer,errorposition).toString());
-              throw new ScanException(error[0]+"!        \nContext is \n ..."+findRegion(buffer,errorposition).toString()+"... ");
+              String printError="";
+              for(int i=0; i<error.length; i++)
+                if( error[i]!= null ) 
+                  printError = error[i];
+              throw new ScanException(printError+"!   ");//        \nContext is \n ..."+findRegion(buffer,errorposition).toString()+"... ");
 			}
 			
 			buffer.rewind();
