@@ -189,9 +189,10 @@ public class MyRect extends Rectangle implements ActionListener {
         plusY = 0;
       }	
       if( dir == 'x' ) {
-        int dw = (((int)((double)w*hilite) == 0) ? 1: (((int)((double)w*hilite) == w-1)&& hilite<1 ? w-2 : (int)Math.min(width, ((double)w*hilite)) ) );
+        int dw = (((int)((double)w*hilite) == 0) ? 1: (((int)((double)w*hilite) == w-1)&& hilite<1 && w>2 ? w-2 : (int)Math.min(width, ((double)w*hilite)) ) );
         int dh = 1+Math.min(h, height);
-        g.fillRect(flip ? x+plusX+w-dw : x+plusX, 
+
+        g.fillRect(flip ? x+w-dw : x+plusX, 
                    y+Math.max(0, h-height), 
                    dw,
                    dh);
