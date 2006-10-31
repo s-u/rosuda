@@ -607,8 +607,10 @@ public class Histogram extends DragBox implements ActionListener {
 
               Density.setActionCommand("Density");
               Density.addActionListener(this);
-              if( weight > -1 )
+              if( weight > -1 ) {
                 Density.setEnabled(false);
+                CDPlotM.setEnabled(false);
+              }
 
               if( densityMode ) {
                 JCheckBoxMenuItem scaleD = new JCheckBoxMenuItem("scale Density");
