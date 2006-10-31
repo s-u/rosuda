@@ -87,6 +87,13 @@ public class Scatter2D extends DragBox {
       alphap = 5;
     alpha = alphas[alphap];
     
+    xMin=data.getMin(Vars[0]); 
+    xMax=data.getMax(Vars[0]); 
+    yMin=data.getMin(Vars[1]); 
+    yMax=data.getMax(Vars[1]);
+    
+    setCoordinates(xMin, yMin, xMax, yMax, -1);    
+    
     create();
 
     roundX = (int)Math.max(0, 2 - Math.round((Math.log(xMax-xMin)/Math.log(10))));
@@ -521,7 +528,11 @@ public class Scatter2D extends DragBox {
         int tmp = Vars[1];
         Vars[1] = Vars[0];
         Vars[0] = tmp;
-	
+        
+        tmp = roundX;
+        roundX = roundY;
+        roundY = tmp;
+        
         for( int i=0; i<Selections.size(); i++) {
           Selection S = (Selection)Selections.elementAt(i);
           Rectangle sr = S.r;
@@ -533,6 +544,8 @@ public class Scatter2D extends DragBox {
           ((floatRect)S.o).y1 = tmp1;
         }
         rects.removeAllElements();
+        // swap axes ...
+        flipAxes();
       }
 
       scaleChanged = true;
@@ -1199,12 +1212,6 @@ public class Scatter2D extends DragBox {
   public void create() {
     
       if( rects.size() == 0 ) {
-          xMin=data.getMin(Vars[0]); 
-          xMax=data.getMax(Vars[0]); 
-          yMin=data.getMin(Vars[1]); 
-          yMax=data.getMax(Vars[1]);
-
-          setCoordinates(xMin, yMin, xMax, yMax, -1);
 
           xVal = data.getRawNumbers(Vars[0]);
           yVal = data.getRawNumbers(Vars[1]);
