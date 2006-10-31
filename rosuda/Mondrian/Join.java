@@ -62,7 +62,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   public JMenuBar menubar;
   public JMenu windows, help, dv, sam, trans;
   private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cc, cs, vm, rc, oh, mds, pca;
-  public  JMenuItem ca, fc, fs, transPlus, transMinus, transTimes, transDiv;
+  public  JMenuItem ca, fc, fs, transPlus, transMinus, transTimes, transDiv, transNeg, transInv, transLog, transExp;
   private JCheckBoxMenuItem se, ah, ih, os, as;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
@@ -74,6 +74,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private String justFile = "";
   private boolean load = false;
   private boolean killed = false;
+  private int[] selectBuffer;
   
   public Join(Vector Mondrians, Vector dataSets, boolean load, boolean loadDB, File loadFile) {
     
@@ -202,6 +203,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     trans.add(transMinus = new JMenuItem("x - y"));
     trans.add(transTimes = new JMenuItem("x * y"));
     trans.add(transDiv = new JMenuItem("x / y"));
+    trans.addSeparator();                     // Put a separator in the menu
+    trans.add(transNeg = new JMenuItem("- x"));
+    trans.add(transInv = new JMenuItem("1/x"));
+    trans.add(transLog = new JMenuItem("log(x)"));
+    trans.add(transExp = new JMenuItem("exp(x)"));
 
     menubar.add(calc);                         // Add to menubar.
 
@@ -406,6 +412,26 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         transform(4);
       }
     });
+    transNeg.addActionListener(new ActionListener() {     // - x
+      public void actionPerformed(ActionEvent e) {
+        transform(5);
+      }
+    });
+    transInv.addActionListener(new ActionListener() {     // 1/x
+      public void actionPerformed(ActionEvent e) {
+        transform(6);
+      }
+    });
+    transLog.addActionListener(new ActionListener() {     // log(x)
+      public void actionPerformed(ActionEvent e) {
+        transform(7);
+      }
+    });
+    transExp.addActionListener(new ActionListener() {     // exp(x)
+      public void actionPerformed(ActionEvent e) {
+        transform(8);
+      }
+    });
     se.addActionListener(new ActionListener() {     // Change the selection mode
       public void actionPerformed(ActionEvent e) {
         switchSelection();
@@ -506,7 +532,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("beta 2", 250, 285);
+    g.drawString("beta 3", 250, 285);
 
     mondrianRunning = true;
 
@@ -654,43 +680,87 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     String name = "";
     dataSet data = ((dataSet)dataSets.elementAt(thisDataSet));
     
-    double[] tData;
-    tData = new double[data.n];
+    double[]  tData = new double[data.n];
+    boolean[] tMiss = new boolean[data.n];
+    String name1 = data.getName(selectBuffer[1]);
+    String name2 = data.getName(selectBuffer[0]);
     switch(mode) {
       case 1:
-        name = data.getName((varNames.getSelectedIndices())[0])+" + "+data.getName((varNames.getSelectedIndices())[1]);
+        name = name1+" + "+name2;
         break;
       case 2:
-        name = data.getName((varNames.getSelectedIndices())[0])+" - "+data.getName((varNames.getSelectedIndices())[1]);
+        name = name1+" - "+name2;
         break;
       case 3:
-        name = data.getName((varNames.getSelectedIndices())[0])+" * "+data.getName((varNames.getSelectedIndices())[1]);
+        name = name1+" * "+name2;
         break;
       case 4:
-        name = data.getName((varNames.getSelectedIndices())[0])+" / "+data.getName((varNames.getSelectedIndices())[1]);
+        name = name1+" / "+name2;
+        break;
+      case 5:
+        name = "-"+name2;
+        break;
+      case 6:
+        name = "1/"+name2;
+        break;
+      case 7:
+        name = "log("+name2+")";
+        break;
+      case 8:
+        name = "exp("+name2+")";
         break;
     }
-    double[] var1 = data.getRawNumbers((varNames.getSelectedIndices())[0]);
-    double[] var2 = data.getRawNumbers((varNames.getSelectedIndices())[1]);
-    switch(mode) {
-      case 1:
-        for( int i=0; i<data.n; i++ )
+    double[] var1 = data.getRawNumbers(selectBuffer[1]);
+    double[] var2 = data.getRawNumbers(selectBuffer[0]);
+    boolean[] miss1 = data.getMissings(selectBuffer[1]);
+    boolean[] miss2 = data.getMissings(selectBuffer[0]);
+    for( int i=0; i<data.n; i++ ) {
+      if( miss2[i] || ((mode < 5) && (miss1[i] || miss2[i]) ) )
+        tMiss[i] = true;
+      else
+        tMiss[i] = false;
+      switch(mode) {
+        case 1:
           tData[i] = var1[i] + var2[i];
-        break;
-      case 2:
-        for( int i=0; i<data.n; i++ )
+          break;
+        case 2:
           tData[i] = var1[i] - var2[i];
-        break;
-      case 3:
-        for( int i=0; i<data.n; i++ )
+          break;
+        case 3:
           tData[i] = var1[i] * var2[i];
-        break;
-      case 4:
-        for( int i=0; i<data.n; i++ )
-          tData[i] = var1[i] / var2[i];
-        break;
-    } 
-    data.addVariable(name, false, data.categorical((varNames.getSelectedIndices())[0]) && data.categorical((varNames.getSelectedIndices())[1]), tData);
+          break;
+        case 4:
+          if( var2[i] != 0 )
+            tData[i] = var1[i] / var2[i];
+          else
+            tMiss[i] = true;
+          break;
+        case 5:
+          tData[i] = -var2[i];
+          break;
+        case 6:
+          if( var2[i] != 0 )
+            tData[i] = 1/var2[i];
+          else
+            tMiss[i] = true;
+          break;
+        case 7:
+          if( var2[i] > 0 )
+            tData[i] = Math.log(var2[i]);
+          else
+            tMiss[i] = true;
+          break;
+        case 8:
+          tData[i] = Math.exp(var2[i]);
+          break;
+      }
+    }
+    boolean what;
+    if( mode < 5 )
+      what = data.categorical(selectBuffer[0]) && data.categorical(selectBuffer[1]);
+    else    
+      what = data.categorical(selectBuffer[0]);
+    data.addVariable(name, false, what, tData, tMiss);
     varNames = null;
     setVarList();
   }
@@ -756,7 +826,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     } else {
       dData = data.getSelection();
     }
-    data.addVariable(name, false, true, dData);
+    data.addVariable(name, false, true, dData, new boolean[data.n]);
     varNames = null;
     setVarList();
   }
@@ -1071,10 +1141,6 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     
-    varNames.addListSelectionListener(new ListSelectionListener() {     
-      public void valueChanged(ListSelectionEvent e) { maintainPlotMenu(); }
-    });
-
     varNames.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -1089,11 +1155,38 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           }
         } else
         {
-          System.out.println("Item Selected: "+varNames.locationToIndex(e.getPoint()));
+          int index = varNames.locationToIndex(e.getPoint());
+          System.out.println("Shift "+e.isShiftDown());
+          System.out.print("Item Selected: "+index);
+          int diff=0;
+          if( e.isShiftDown() ) {
+            diff = selectBuffer[0] - index;
+            diff -= (diff<0?-1:1);
+            System.out.println("diff "+diff);
+          }
+          for(int j=Math.abs(diff); j>=0; j--) { 
+            if( varNames.isSelectedIndex( index ) && index != selectBuffer[0] ) {
+              for(int i=data.k-1; i>0; i--)
+                selectBuffer[i] = selectBuffer[i-1];
+              selectBuffer[0] = index + (j*(diff<0?-1:1));
+            }
+            if( !varNames.isSelectedIndex( index ) ) {              // Deselection, remove elements from Buffer
+              for(int i=0; i<data.k; i++)
+                if( selectBuffer[i] == index )
+                  for(int k=i; k<data.k-1; k++)
+                    selectBuffer[k] = selectBuffer[k+1];
+            }
+            System.out.println(" History: "+selectBuffer[0]+" "+selectBuffer[1]+" "+selectBuffer[2]+" "+selectBuffer[3]+" "+selectBuffer[4]);
+          }
+          maintainPlotMenu();
         }
       }
     });
 
+    varNames.addListSelectionListener(new ListSelectionListener() {     
+      public void valueChanged(ListSelectionEvent e) { maintainPlotMenu(); }
+    });
+    
     varNames.setCellRenderer(new MCellRenderer());
 
     RepaintManager currentManager = RepaintManager.currentManager(varNames);
@@ -1361,6 +1454,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         progBar.setValue(0);
         progBar.setMaximum(data.n);
         
+        selectBuffer = new int[data.k+15];
+        
         if( !mapFile.equals("") ) {                          // more lines detected -> read the polygon
           try {
             BufferedReader br = new BufferedReader( new FileReader(path + mapFile) );
@@ -1521,21 +1616,20 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
   public int[] getWeightVariable(int[] vars, dataSet data) {
 
-    if( numCategorical == (varNames.getSelectedIndices()).length - 1 ) {
-      int[] returner = new int[varNames.getSelectedIndices().length];
-      System.arraycopy(varNames.getSelectedIndices(),0,returner,0,returner.length);
+    if( numCategorical == (vars).length - 1 ) {
+      int[] returner = new int[vars.length];
+      System.arraycopy(vars,0,returner,0,returner.length);
       for( int i=0; i<returner.length-1; i++ ) {
-        System.out.println("checking ind = "+varNames.getSelectedIndices()[i]);
-        if( varNames.getSelectedIndices()[i] == weightIndex ) {
-          System.out.println("Swapping ...");
-          int swap = varNames.getSelectedIndices()[returner.length - 1];
-          returner[returner.length - 1] = weightIndex;
-          returner[i] = swap;
+        if( vars[i] == weightIndex ) {
+          for(int j=i; j<returner.length-1; j++)
+            returner[j] = vars[j+1];
+          returner[returner.length-1] = weightIndex;
+          i = returner.length;
         } else
-          returner[i] = varNames.getSelectedIndices()[i];
+          returner[i] = vars[i];
       }
       for( int i=0; i<returner.length; i++ ) {
-        System.out.println("ind old = "+varNames.getSelectedIndices()[i]+" ind new = "+returner[i]);
+        System.out.println("ind old = "+vars[i]+" ind new = "+returner[i]);
       }
       return returner ;
     } else {
@@ -1581,7 +1675,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       String[] selecteds = new String[(varNames.getSelectedValues()).length];
       for( int i=0; i < (varNames.getSelectedValues()).length; i++)
         selecteds[i] = (String)(varNames.getSelectedValues())[i];
-      int[] selected = varNames.getSelectedIndices();
+      int[] selected = vars;
       int[] returner = new int[selected.length];
       for( int i=0; i<selected.length; i++) {
         if( (selecteds[i].trim()).equals(getCount.getSelectedItem()) ) {
@@ -1657,7 +1751,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     pC.setSize(tmpWidth, 400);
     pC.setLocation(300, 0);
     
-    PC plotw = new PC(pC, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), mode);
+    int k=(varNames.getSelectedIndices()).length;
+    int[] passBuffer = new int[k];
+    for(int i=0; i<k; i++) 
+      passBuffer[i] = selectBuffer[k-i-1];
+    
+    PC plotw = new PC(pC, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, mode);
     plotw.addSelectionListener(this);
     plotw.addDataListener(this);
     Plots.addElement(plotw);
@@ -1679,7 +1778,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     if( k > 0 ) {
       int totHeight = (Toolkit.getDefaultToolkit().getScreenSize()).height;
-      int tmpHeight = 35 * (1 + k);
+      int tmpHeight = 35 * (1 + k)+15;
       if( tmpHeight > totHeight)
         if( 20 * (1 + k) < totHeight )
           tmpHeight = totHeight;
@@ -1705,7 +1804,13 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     dataSet data = (dataSet)dataSets.elementAt(thisDataSet);
     
-    int[] vars = getWeightVariable(varNames.getSelectedIndices(), data);
+    int k=(varNames.getSelectedIndices()).length;
+    int[] passBuffer = new int[k];
+    for(int i=0; i<k; i++) 
+      passBuffer[i] = selectBuffer[k-i-1];
+
+//    int[] vars = getWeightVariable(varNames.getSelectedIndices(), data);
+    int[] vars = getWeightVariable(passBuffer, data);
     int[] passed = new int[vars.length-1];
     System.arraycopy(vars,0,passed,0,vars.length-1);
     int weight = vars[vars.length-1];
@@ -1733,7 +1838,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     dataSet tempData = ((dataSet)dataSets.elementAt(thisDataSet));
     
-    Table breakdown = tempData.breakDown(tempData.setName, varNames.getSelectedIndices(), -1);
+    int k=(varNames.getSelectedIndices()).length;
+    int[] passBuffer = new int[k];
+    for(int i=0; i<k; i++) 
+      passBuffer[i] = selectBuffer[k-i-1];
+
+    Table breakdown = tempData.breakDown(tempData.setName, passBuffer, -1);
     for( int i=0; i<(varNames.getSelectedIndices()).length-1; i++ ) {
       breakdown.addInteraction( new int[] { i }, false );
     }
@@ -1935,7 +2045,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     final MFrame scatterf = new MFrame(this);
     scatterf.setSize(400,400);
     
-    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), varNames.getSelectedIndices(), varNames);
+    int[] passBuffer = new int[2];
+    passBuffer[0] = selectBuffer[1];
+    passBuffer[1] = selectBuffer[0];
+    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, varNames);
     scat.addSelectionListener(this);
     scat.addDataListener(this);
     Plots.addElement(scat);
@@ -1961,8 +2074,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
 
-      dataT.addVariable("mds1", false, false, x1);
-      dataT.addVariable("mds2", false, false, x2);
+      dataT.addVariable("mds1", false, false, x1, new boolean[dataT.n]);
+      dataT.addVariable("mds2", false, false, x2, new boolean[dataT.n]);
     
       final MFrame scatterf = new MFrame(this);
       scatterf.setSize(400,400);
@@ -2117,14 +2230,45 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     for( int i=0; i<varNames.getSelectedIndices().length; i++ )
       if( data.alpha(varNames.getSelectedIndices()[i]) )
         alphs++;
-    if( alphs == 0 && varNames.getSelectedIndices().length == 2) {
+    if( alphs == 0 && (varNames.getSelectedIndices().length == 2 || varNames.getSelectedIndices().length == 1) ) {
       trans.setEnabled(true);
-      transPlus.setText(data.getName((varNames.getSelectedIndices())[0])+" + "+data.getName((varNames.getSelectedIndices())[1]));
-      transMinus.setText(data.getName((varNames.getSelectedIndices())[0])+" - "+data.getName((varNames.getSelectedIndices())[1]));
-      transTimes.setText(data.getName((varNames.getSelectedIndices())[0])+" * "+data.getName((varNames.getSelectedIndices())[1]));
-      transDiv.setText(data.getName((varNames.getSelectedIndices())[0])+" / "+data.getName((varNames.getSelectedIndices())[1]));
+      if( alphs == 0 && varNames.getSelectedIndices().length == 2 ) {
+       transPlus.setText(data.getName(selectBuffer[1])+" + "+data.getName(selectBuffer[0]));
+      transMinus.setText(data.getName(selectBuffer[1])+" - "+data.getName(selectBuffer[0]));
+      transTimes.setText(data.getName(selectBuffer[1])+" * "+data.getName(selectBuffer[0]));
+        transDiv.setText(data.getName(selectBuffer[1])+" / "+data.getName(selectBuffer[0]));
+        transNeg.setText("-x");
+        transInv.setText("1/x");
+        transLog.setText("log(x)");
+        transExp.setText("exp(x)");
+        transPlus.setEnabled(true);
+        transMinus.setEnabled(true);
+        transTimes.setEnabled(true);
+        transDiv.setEnabled(true);
+        transNeg.setEnabled(false);
+        transInv.setEnabled(false);
+        transLog.setEnabled(false);
+        transExp.setEnabled(false);
+      } else { 
+        transNeg.setText("-"+data.getName(selectBuffer[0]));
+        transInv.setText("1/"+data.getName(selectBuffer[0]));
+        transLog.setText("log("+data.getName(selectBuffer[0])+")");
+        transExp.setText("exp("+data.getName(selectBuffer[0])+")");
+        transPlus.setText("x + y");
+        transMinus.setText("x - y");
+        transTimes.setText("x * y");
+        transDiv.setText("x / y");
+        transPlus.setEnabled(false);
+        transMinus.setEnabled(false);
+        transTimes.setEnabled(false);
+        transDiv.setEnabled(false);
+        transNeg.setEnabled(true);
+        transInv.setEnabled(true);
+        transLog.setEnabled(true);
+        transExp.setEnabled(true);
+      }
     } else 
-      trans.setEnabled(false);    
+      trans.setEnabled(false);
   }
 
   
