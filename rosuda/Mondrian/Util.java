@@ -14,7 +14,7 @@ public class Util {
     gbc.gridheight = h;
     f.getContentPane().add(c, gbc);
   }
-
+  
   public static String toPhoneNumber(double d) {
 
     DecimalFormat phoneN = new DecimalFormat("0000000000");
@@ -126,17 +126,6 @@ public class Util {
   
   public static boolean isNumber(String s)
   {
-/*    String validChars = "-.0123456789";
-    
-    for (int i = 0; i < s.length(); i++) 
-    { 
-      char c = s.charAt(i);
-      if (validChars.indexOf(c) == -1) 
-        return false;
-      if(c == '-' && i>0)
-        return false;
-    }
-    return true;*/
     try {
       Double dummy = Double.valueOf(s);
     }
