@@ -1,8 +1,10 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
-0.3-6	(under development)
-    o	Fixed double-inclusion of JFLAGS which throws off GIJ
+0.3-6	2006-11-29
+    o	adapted to API change in R-devel
+
+    o	fixed double-inclusion of JFLAGS which throws off GIJ
 
 0.3-5	2006-10-06
     o	remove variadic macros to be compatible with compilers
