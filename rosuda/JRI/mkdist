@@ -12,21 +12,21 @@ rm -f /tmp/${PNAME}/mkdist
 cd /tmp/${PNAME}
 
 echo "Running autoconf ..."
-rm -rf autom4te*
+rm -rf autom4te* acloc*
 autoreconf
 #autoheader
 #autoconf
-rm -rf autom4te*
+rm -rf autom4te* acloc*
 
 echo "Compiling getsp ..."
 if [ ! -e tools/getsp.class ]; then
     cd tools
-    javac getsp.java
+    javac -target 1.2 -source 1.2 getsp.java
     cd ..
 fi
 
-echo "Removing CVS and backup stuff ..."
-find . -name CVS | xargs rm -rf
+echo "Removing CVS/SVN and backup stuff ..."
+find . -name CVS -or -name .svn | xargs rm -rf
 find . -name \*~ | xargs rm -f
 
 echo "Updating version ..."
