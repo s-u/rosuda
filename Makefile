@@ -31,16 +31,7 @@ JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
 CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
 ICUSTOM_SRC:=$(wildcard rosuda/icustom/*.java)
-
-ifneq ($(shell uname),Darwin)
-# remove all references to Mac platform as those classes can be compiled on a Mac only
-IBASE_SRC:=$(filter-out %PlatformMac.java,$(IBASE_SRC))
-#IBASE_SRC_JGR:=$(filter-out %PlatformMac.java,$(IBASE_SRC_JGR))
-KLIMT_SRC:=$(filter-out %PlatformMac.java,$(KLIMT_SRC))
-IGLOBAL_SRC:=$(filter-out %PlatformMac.java,$(IGLOBAL_SRC))
-IPLOTS_SRC:=$(filter-out %PlatformMac.java,$(IPLOTS_SRC))
-JGR_SRC:=$(filter-out %PlatformMac.java,$(JGR_SRC))
-endif
+MRJSTUBS_SRC:=$(wildcard rosuda/util/MRJstubs/*.java)
 
 #ifneq ($(JOGL),yes)
 #IBASE_SRC:=$(filter-out %Jogl% %JOGL%,$(IBASE_SRC))
@@ -66,9 +57,9 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: javaGD.jar ibase.jar JRI.jar $(JGR_SRC)
+JGR.jar: javaGD.jar ibase.jar JRI.jar MRJstubs.jar $(JGR_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar:ibase.jar:JRI.jar $(JGR_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar:ibase.jar:JRI.jar:MRJstubs.jar $(JGR_SRC)
 	cp rosuda/projects/jgr/splash.jpg jgrsplash.jpg
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
@@ -80,15 +71,18 @@ jgr-docs: $(JGR_SRC)
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
 
 
-ibase.jar: $(IBASE_SRC)
-	$(can-with-jar)
+ibase.jar: MRJstubs.jar $(IBASE_SRC)
+	rm -rf org
+	$(JAVAC) -d . -classpath $^
+	jar fc $@ org
+	rm -rf org	
 
 JRclient.jar: $(JRCLIENT_SRC)
 	$(can-with-jar)
 
-klimt.jar: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC)
+klimt.jar: MRJstubs.jar $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC)
 	rm -rf org
-	$(JAVAC) -d . $^
+	$(JAVAC) -d . -classpath $^
 	cp rosuda/projects/klimt/splash.jpg .
 	jar fcm $@ rosuda/projects/klimt/Klimt.mft splash.jpg org
 	rm -rf org splash.jpg
@@ -101,8 +95,11 @@ klimt-docs: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC)
 REngine.jar: $(RENGINE_SRC)
 	$(can-with-jar)
 
-iplots.jar: $(IBASE_SRC) $(IPLOTS_SRC)
-	$(can-with-jar)
+iplots.jar: MRJstubs.jar $(IBASE_SRC) $(IPLOTS_SRC)
+	rm -rf org
+	$(JAVAC) -d . -classpath $^
+	jar fc $@ org
+	rm -rf org	
 
 javaGD.jar: $(JAVAGD_SRC)
 	$(can-with-jar)
@@ -125,6 +122,13 @@ iwidgets.jar: javaGD.jar JGR.jar ibase.jar JRI.jar $(IWIDGETS_SRC)
 JRI.jar: $(JRI_SRC)
 	$(can-with-jar)
 
+MRJstubs.jar: $(MRJSTUBS_SRC)
+# MRJ stubs go into com.apple.mrj. so we can't use can-with-jar
+	rm -rf com
+	$(JAVAC) -d . $^
+	jar fc $@ com
+	rm -rf com
+
 docs: doc
 
 doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(RENGINE_SRC) $(ICUSTOM_SRC)
@@ -134,7 +138,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 
 clean:
 	find . -name .DS_* | xargs rm -rf
-	rm -rf $(TARGETS) net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JRI*.tar.gz rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz rosuda/projects/klimt/build rosuda/projects/jgr/build rosuda/projects/iplots/build
+	rm -rf $(TARGETS) com net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JRI*.tar.gz rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz rosuda/projects/klimt/build rosuda/projects/jgr/build rosuda/projects/iplots/build
 	$(MAKE) -C rosuda/Mondrian clean
 
 .PHONY: clean all doc docs
