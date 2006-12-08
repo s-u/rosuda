@@ -60,6 +60,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
   public boolean changePop = false;												// True if the Sel Seq Popup was triggered
   
   public boolean scaleChanged = false;              // To indicate paint the new scale (without using events)
+  
+  public boolean printable = true;                      // Flag, if we can print this (for SPLOMs and other ensembles)
 
   public boolean printing;                               // flag to avoid double buffering while printing ...
   
@@ -308,8 +310,21 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 //      if( this instanceof PC )                     // Was thought to "unlive" the resize, but sync problems killed it!
 //        frame.initComponents(this);
 
+      if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
+        SYSTEM = MAC;
+      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 )
+        SYSTEM = WIN;
+      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("linux") > -1 )
+        SYSTEM = LNX;
+      else
+        SYSTEM = NN;
+
       ToolTipManager.sharedInstance().registerComponent(this);
-      ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
+      if( SYSTEM != MAC )
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
+      else
+        ToolTipManager.sharedInstance().setLightWeightPopupEnabled(true);
+        
       ToolTipManager.sharedInstance().setInitialDelay(0);
       ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
       ToolTipManager.sharedInstance().setReshowDelay(0);
@@ -329,15 +344,6 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
       this.requestFocus();
       
       frame.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);} });
-      
-      if( ((System.getProperty("os.name")).toLowerCase()).indexOf("mac") > -1 )
-        SYSTEM = MAC;
-      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 )
-        SYSTEM = WIN;
-      else if( ((System.getProperty("os.name")).toLowerCase()).indexOf("linux") > -1 )
-        SYSTEM = LNX;
-      else
-        SYSTEM = NN;
     }
     
     public void setScrollX() {
@@ -968,7 +974,8 @@ System.out.println("Mouse Action to check: "+mouse);
     
     public void processKeyEvent(KeyEvent e) {
       
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if (printable &&
+          (e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_P)   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         
