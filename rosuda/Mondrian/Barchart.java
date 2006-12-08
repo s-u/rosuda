@@ -325,7 +325,7 @@ public class Barchart extends DragBox implements ActionListener {
             MyRect r = (MyRect)rects.elementAt(i);
             if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
               info = true;
-              r.pop(this, e.getX(), e.getY());
+//              r.pop(this, e.getX(), e.getY());
             }
           }
           if( !info ) {
