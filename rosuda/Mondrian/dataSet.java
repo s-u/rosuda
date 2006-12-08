@@ -143,7 +143,7 @@ public class dataSet {
     for(int i=0; i<this.n; i++)
       if( miss[i] ) {
         Var.numMiss++;
-        System.out.println(" Here is a missing at: "+i);
+//        System.out.println(" Here is a missing at: "+i);
       }
     Var.forceCategorical = false;
     Var.isCategorical = categorical;
@@ -649,7 +649,7 @@ System.out.println(newQ.makeQuery());
     return (tmpTable);
   }
 
-  public double[] regress(int k, int l) {
+  public double[] regress(int k, int l, boolean excludeSel) {
 
     double Sxx, Sxy, a, b, r2;
     double sumx = 0;
@@ -663,16 +663,17 @@ System.out.println(newQ.makeQuery());
     double[] y = this.getRawNumbers(l);
 
     for( int i=0; i<this.n; i++ ) {
-      if(x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) {
-        count++;
-        sumx += x[i];
-        sumy += y[i];
-        sumxx += x[i]*x[i];
-        sumyy += y[i]*y[i];
-        sumxy += x[i]*y[i];
-      }
+      if(x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) 
+        if( !(selectionArray[i]>0 && excludeSel) ) {
+          count++;
+          sumx += x[i];
+          sumy += y[i];
+          sumxx += x[i]*x[i];
+          sumyy += y[i]*y[i];
+          sumxy += x[i]*y[i];
+        }
     }
-
+      
     Sxx = sumxx - sumx * sumx / count;
     Sxy = sumxy - sumx * sumy / count;
     b = Sxy/Sxx;
