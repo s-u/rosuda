@@ -241,9 +241,6 @@
 		289DF63C09F26AD800C34B0B /* Rengine.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63809F26AD800C34B0B /* Rengine.java */; };
 		289DF63D09F26AD800C34B0B /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63909F26AD800C34B0B /* REXP.java */; };
 		289DF63E09F26AD800C34B0B /* RMainLoopCallbacks.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63A09F26AD800C34B0B /* RMainLoopCallbacks.java */; };
-		289DF67C09F26AFE00C34B0B /* Entries in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64009F26AF700C34B0B /* Entries */; };
-		289DF67D09F26AFE00C34B0B /* Repository in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64109F26AF700C34B0B /* Repository */; };
-		289DF67E09F26AFE00C34B0B /* Root in Resources */ = {isa = PBXBuildFile; fileRef = 289DF64209F26AF700C34B0B /* Root */; };
 		289DF67F09F26AFE00C34B0B /* JGR.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64309F26AF700C34B0B /* JGR.java */; };
 		289DF68009F26AFE00C34B0B /* JGRConsole.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64409F26AF700C34B0B /* JGRConsole.java */; };
 		289DF68109F26AFE00C34B0B /* JGRDataFileDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */; };
@@ -493,9 +490,6 @@
 		289DF63809F26AD800C34B0B /* Rengine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rengine.java; path = ../../JRI/Rengine.java; sourceTree = SOURCE_ROOT; };
 		289DF63909F26AD800C34B0B /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../JRI/REXP.java; sourceTree = SOURCE_ROOT; };
 		289DF63A09F26AD800C34B0B /* RMainLoopCallbacks.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RMainLoopCallbacks.java; path = ../../JRI/RMainLoopCallbacks.java; sourceTree = SOURCE_ROOT; };
-		289DF64009F26AF700C34B0B /* Entries */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Entries; path = ../../JGR/CVS/Entries; sourceTree = SOURCE_ROOT; };
-		289DF64109F26AF700C34B0B /* Repository */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Repository; path = ../../JGR/CVS/Repository; sourceTree = SOURCE_ROOT; };
-		289DF64209F26AF700C34B0B /* Root */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = Root; path = ../../JGR/CVS/Root; sourceTree = SOURCE_ROOT; };
 		289DF64309F26AF700C34B0B /* JGR.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGR.java; path = ../../JGR/JGR.java; sourceTree = SOURCE_ROOT; };
 		289DF64409F26AF700C34B0B /* JGRConsole.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRConsole.java; path = ../../JGR/JGRConsole.java; sourceTree = SOURCE_ROOT; };
 		289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileDialog.java; path = ../../JGR/JGRDataFileDialog.java; sourceTree = SOURCE_ROOT; };
@@ -553,7 +547,7 @@
 		28F902980607540C005E782D /* sort-up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-up.gif"; sourceTree = "<group>"; };
 		28FB0CA909F231700088CD59 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = jogl.jar; path = ../klimt/jogl.jar; sourceTree = SOURCE_ROOT; };
 		28FB0CAA09F231700088CD59 /* libjogl.jnilib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjogl.jnilib; path = ../klimt/libjogl.jnilib; sourceTree = SOURCE_ROOT; };
-		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -779,9 +773,6 @@
 		289DF63F09F26AF700C34B0B /* CVS */ = {
 			isa = PBXGroup;
 			children = (
-				289DF64009F26AF700C34B0B /* Entries */,
-				289DF64109F26AF700C34B0B /* Repository */,
-				289DF64209F26AF700C34B0B /* Root */,
 			);
 			name = CVS;
 			path = ../../JGR/CVS;
@@ -1069,9 +1060,6 @@
 			files = (
 				28699F1006BC5894002BEFFC /* JGR.icns in Resources */,
 				28699F1106BC5894002BEFFC /* JGR.mft in Resources */,
-				289DF67C09F26AFE00C34B0B /* Entries in Resources */,
-				289DF67D09F26AFE00C34B0B /* Repository in Resources */,
-				289DF67E09F26AFE00C34B0B /* Root in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
