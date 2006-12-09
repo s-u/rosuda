@@ -229,6 +229,7 @@ public class Mosaic extends DragBox implements ActionListener {
       }
     }
 
+
     public void processWindowEvent(WindowEvent e) {
       if (e.getID() == WindowEvent.WINDOW_ACTIVATED) {
         ModelEvent me = new ModelEvent(this);
@@ -236,7 +237,7 @@ public class Mosaic extends DragBox implements ActionListener {
       }
     }
 
-      public String getToolTipText(MouseEvent e) {
+    public String getToolTipText(MouseEvent e) {
 
         if( e.isControlDown() ) {
 
@@ -269,16 +270,27 @@ public class Mosaic extends DragBox implements ActionListener {
             MyRect r = (MyRect)rects.elementAt(i);
             if ( r.contains( e.getX(), e.getY() )) {
               info = true;
-              r.pop(this, e.getX(), e.getY());
+//              r.pop(this, e.getX(), e.getY());
             }
           }
           if( !info ) {
-            PopupMenu mode = new PopupMenu();
-            MenuItem Observed = new MenuItem("Observed");
-            MenuItem Expected = new MenuItem("Expected");
-            MenuItem SameBinSize = new MenuItem("Same Bin Size");
-            MenuItem MultiBar = new MenuItem("Multiple Barcharts");
-            MenuItem Fluctuation = new MenuItem("Fluctuation");
+            JPopupMenu mm = new JPopupMenu();
+            JMenu mode = new JMenu("display as");
+            JCheckBoxMenuItem Observed = new JCheckBoxMenuItem("Observed");
+            if( displayMode.equals("Observed") )
+                Observed.setSelected(true);
+            JCheckBoxMenuItem Expected = new JCheckBoxMenuItem("Expected");
+            if( displayMode.equals("Expected") )
+              Expected.setSelected(true);
+            JCheckBoxMenuItem SameBinSize = new JCheckBoxMenuItem("Same Bin Size");
+            if( displayMode.equals("Same Bin Size") )
+              SameBinSize.setSelected(true);
+            JCheckBoxMenuItem MultiBar = new JCheckBoxMenuItem("Multiple Barcharts");
+            if( displayMode.equals("Multiple Barcharts") )
+              MultiBar.setSelected(true);
+            JCheckBoxMenuItem Fluctuation = new JCheckBoxMenuItem("Fluctuation Diagram");
+            if( displayMode.equals("Fluctuation") )
+              Fluctuation.setSelected(true);
             // infoText.addActionListener(this);
             mode.add(Observed);
             Observed.setActionCommand("Observed");
@@ -295,9 +307,86 @@ public class Mosaic extends DragBox implements ActionListener {
             mode.add(MultiBar);
             Fluctuation.setActionCommand("Fluctuation");
             Fluctuation.addActionListener(this);
+            mm.add(mode);
             
-            frame.add(mode);
-            mode.show(e.getComponent(), e.getX(), e.getY());
+            JMenuItem rotall = new JMenuItem("rotate plot");
+            rotall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            mm.add(rotall);
+            
+            JMenuItem rotlast = new JMenuItem("rotate last split");
+            rotlast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            mm.add(rotlast);
+            
+            JMenuItem exclude = new JMenuItem("exclude last variable");
+            exclude.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0));
+            if( maxLevel == 1 )
+              exclude.setEnabled(false);
+            exclude.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,0,KeyEvent.VK_UP));
+              };
+            });
+            mm.add(exclude);
+            
+            JMenuItem include = new JMenuItem("include next var.");
+            include.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0));
+            if( k == maxLevel)
+              include.setEnabled(false);
+            include.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,0,KeyEvent.VK_DOWN));
+              };
+            });
+            mm.add(include);
+            
+            JMenuItem changeRight = new JMenuItem("rotate last right");
+            changeRight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
+            if( k == maxLevel)
+              changeRight.setEnabled(false);
+            changeRight.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,0,KeyEvent.VK_RIGHT));
+              };
+            });
+            mm.add(changeRight);
+            
+            JMenuItem changeLeft = new JMenuItem("rotate last left");
+            changeLeft.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
+            if( k == maxLevel)
+              changeLeft.setEnabled(false);
+            changeLeft.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,0,KeyEvent.VK_LEFT));
+              };
+            });
+            mm.add(changeLeft);
+            
+            JMenuItem zoomIn = new JMenuItem("censored zoom in");
+            zoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.SHIFT_MASK ));
+            if( !(displayMode.equals("Multiple Barcharts") ||  displayMode.equals("Fluctuation")) ) 
+              zoomIn.setEnabled(false);
+            zoomIn.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,Event.SHIFT_MASK,KeyEvent.VK_UP));
+              };
+            });
+            mm.add(zoomIn);
+            
+            JMenuItem zoomOut = new JMenuItem("cens. zoom out");
+            zoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.SHIFT_MASK ));
+            if( !(displayMode.equals("Multiple Barcharts") ||  displayMode.equals("Fluctuation")) || censor == 0 ) 
+              zoomOut.setEnabled(false);
+            zoomOut.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,Event.SHIFT_MASK,KeyEvent.VK_DOWN));
+              };
+            });
+            mm.add(zoomOut);
+            
+            JMenuItem dismiss = new JMenuItem("dismiss");
+            mm.add(dismiss);
+            
+            mm.show(e.getComponent(), e.getX(), e.getY());
           }	
         }
         else
@@ -315,7 +404,7 @@ public class Mosaic extends DragBox implements ActionListener {
         create(border, border, width-border, height-border, "");
         Graphics g = this.getGraphics();
         paint(g);
-      }
+      } 
       else
         super.actionPerformed(e);
     }
