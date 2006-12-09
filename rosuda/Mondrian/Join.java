@@ -157,11 +157,6 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     plot.add(mv = new JMenuItem("Missing Value Plot"));
     mv.setEnabled(false);
     plot.addSeparator();        
-    plot.add(n = new JMenuItem("Mosaic Plot"));
-    n.setEnabled(false);
-    plot.add(nw = new JMenuItem("Weighted Mosaic Plot"));
-    nw.setEnabled(false);
-    plot.addSeparator();        
     plot.add(b = new JMenuItem("Barchart"));
     b.setEnabled(false);
     plot.add(bw = new JMenuItem("Weighted Barchart"));
@@ -172,15 +167,20 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     plot.add(hiw = new JMenuItem("Weighted Histogram"));
     hiw.setEnabled(false);
     plot.addSeparator();        
+    plot.add(sc2 = new JMenuItem("Scatterplot"));
+    sc2.setEnabled(false);
+    plot.addSeparator();        
+    plot.add(n = new JMenuItem("Mosaic Plot"));
+    n.setEnabled(false);
+    plot.add(nw = new JMenuItem("Weighted Mosaic Plot"));
+    nw.setEnabled(false);
+    plot.addSeparator();        
     plot.add(pc = new JMenuItem("Parallel Coordinates"));
     pc.setEnabled(false);
     plot.add(pb = new JMenuItem("Parallel Boxplot"));
     pb.setEnabled(false);
     plot.add(byx = new JMenuItem("Boxplot y by x"));
     byx.setEnabled(false);
-    plot.addSeparator();        
-    plot.add(sc2 = new JMenuItem("Scatterplot"));
-    sc2.setEnabled(false);
     plot.addSeparator();        
     plot.add(m = new JMenuItem("Map"));
     m.setEnabled(false);
@@ -387,9 +387,14 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         mapPlot();
       }
     });
-    mds.addActionListener(new ActionListener() {     // Open a new window to draw an interactive maps
+    mds.addActionListener(new ActionListener() {     // Open a new window for a 2-dim MDS
       public void actionPerformed(ActionEvent e) {
         mds();
+      }
+    });
+    pca.addActionListener(new ActionListener() {     // calculate PCA
+      public void actionPerformed(ActionEvent e) {
+        pca();
       }
     });
     transPlus.addActionListener(new ActionListener() {     // x + y
@@ -532,7 +537,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("beta 3", 250, 285);
+    g.drawString("beta 4", 250, 285);
 
     mondrianRunning = true;
 
@@ -755,6 +760,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           break;
       }
     }
+    for( int i=0; i<data.n; i++ )
+      if( tMiss[i] )
+        tData[i] = Double.MAX_VALUE;
     boolean what;
     if( mode < 5 )
       what = data.categorical(selectBuffer[0]) && data.categorical(selectBuffer[1]);
@@ -1707,26 +1715,22 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     final MFrame scatterMf = new MFrame(this);
     int dims = Math.min(200*p,(Toolkit.getDefaultToolkit().getScreenSize()).height);
     scatterMf.setSize(dims-20,dims);
-    scatterMf.getContentPane().setLayout(new GridLayout(p,p));
+    scatterMf.getContentPane().setLayout(new GridLayout(p-1,p-1));
 
-    int[] tmpVars = new int[2];
-    for(int i=0; i<p; i++)
-      for(int j=0; j<p; j++) {
-        if( i==j ) {
-          int k = varNames.getSelectedIndices()[i];
-          double start = tempData.getMin(k);
-          double width = (tempData.getMax(k) - tempData.getMin(k)) / 8.9;
-          Table discrete = tempData.discretize(tempData.setName, k, start, width, -1);
-
-          Histogram scat = new Histogram(scatterMf, 200, 200, discrete, start, width, -1);
-          scat.addSelectionListener(this);
-          Plots.addElement(scat);
+    for(int i=0; i<(p-1); i++)
+      for(int j=1; j<p; j++) {
+        if( i>=j ) {
+          JPanel Filler = new JPanel();
+          Filler.setBackground(scatterMf.backgroundColor);
+          scatterMf.getContentPane().add(Filler);
+//          (Filler.getGraphics()).drawString("text",10,10);
         }
         else {
+          int[] tmpVars = new int[2];
           tmpVars[0] = varNames.getSelectedIndices()[j];
           tmpVars[1] = varNames.getSelectedIndices()[i];
           //
-          Scatter2D scat = new Scatter2D(scatterMf, 200, 200, (dataSet)dataSets.elementAt(thisDataSet), tmpVars, varNames);
+          Scatter2D scat = new Scatter2D(scatterMf, 200, 200, (dataSet)dataSets.elementAt(thisDataSet), tmpVars, varNames, true);
           scat.addSelectionListener(this);
           scat.addDataListener(this);
           Plots.addElement(scat);
@@ -1822,7 +1826,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     plotw.addSelectionListener(this);
     plotw.addDataListener(this);
     Plots.addElement(plotw);
-    mondrian.getContentPane().add(plotw);                      // Add it
+//    mondrian.getContentPane().add(plotw);                      // Add it
     mondrian.setLocation(300, 0);
     mondrian.show();
     
@@ -1853,7 +1857,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     plotw.addSelectionListener(this);
     plotw.addDataListener(this);
     Plots.addElement(plotw);
-    mondrian.getContentPane().add(plotw);                      // Add it
+//    mondrian.getContentPane().add(plotw);                      // Add it
     mondrian.setLocation(300, 0);
     mondrian.show();
     
@@ -2048,7 +2052,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     int[] passBuffer = new int[2];
     passBuffer[0] = selectBuffer[1];
     passBuffer[1] = selectBuffer[0];
-    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, varNames);
+    Scatter2D scat = new Scatter2D(scatterf, 400, 400, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, varNames, false);
     scat.addSelectionListener(this);
     scat.addDataListener(this);
     Plots.addElement(scat);
@@ -2057,38 +2061,104 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   }
   
   public void mds() {
-
+    
     int[] varsT = varNames.getSelectedIndices();
     dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
     try {
       Rconnection c = new Rconnection();
       c.voidEval("library(MASS)");
-      c.assign("tempData",dataT.getRawNumbers(varsT[0]));
-      for( int i=1; i<varsT.length; i++ ) {
+      for( int i=0; i<varsT.length; i++ ) {
         c.assign("x",dataT.getRawNumbers(varsT[i]));
-        c.voidEval("tempData <- cbind(tempData, x)");
+        if( dataT.n > dataT.getN(varsT[i]) ) {                      // Check for missings in this variable
+          boolean[] missy = dataT.getMissings(varsT[i]);
+          int[] flag = new int[dataT.n];
+          for( int j=0; j<dataT.n; j++ )
+            if( missy[j] )
+              flag[j] = 1;
+            else
+              flag[j] = 0;
+          c.assign("xM",flag);
+          c.voidEval("is.na(x)[xM==1] <- T");
+        }
+        if( i==0 )
+          c.voidEval("tempData <- x");
+        else
+          c.voidEval("tempData <- cbind(tempData, x)");
       }
       c.voidEval("tempD <- dist(scale(tempData))");
       c.voidEval("is.na(tempD)[tempD==0] <- T");
       RList mdsL = c.eval("sMds <- sammon(tempD, y=cmdscale(dist(scale(tempData)), k=2), k=2)").asList();
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
-
+      
       dataT.addVariable("mds1", false, false, x1, new boolean[dataT.n]);
       dataT.addVariable("mds2", false, false, x2, new boolean[dataT.n]);
-    
+      
       final MFrame scatterf = new MFrame(this);
       scatterf.setSize(400,400);
       scatterf.setTitle("Scatterplot 2D");
       
-      Scatter2D scat = new Scatter2D(scatterf, 400, 400, dataT, new int[] {dataT.k-2,dataT.k-1}, varNames);
+      Scatter2D scat = new Scatter2D(scatterf, 400, 400, dataT, new int[] {dataT.k-2,dataT.k-1}, varNames, false);
       scat.addSelectionListener(this);
       Plots.addElement(scat);
       scatterf.setLocation(300, 333);
       scatterf.show();
     } catch(RSrvException rse) {JOptionPane.showMessageDialog(this, "Calculation of MDS failed");}
+  }
+  
+  public void pca() {
     
-    
+    int[] varsT = varNames.getSelectedIndices();
+    dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
+    try {
+      Rconnection c = new Rconnection();
+      String call=" ~ x1 ";
+      for( int i=0; i<varsT.length; i++ ) {
+        c.assign("x",dataT.getRawNumbers(varsT[i]));
+        if( dataT.n > dataT.getN(varsT[i]) ) {                      // Check for missings in this variable
+          boolean[] missy = dataT.getMissings(varsT[i]);
+          int[] flag = new int[dataT.n];
+          for( int j=0; j<dataT.n; j++ )
+            if( missy[j] )
+              flag[j] = 1;
+            else
+              flag[j] = 0;
+          c.assign("xM",flag);
+          c.voidEval("is.na(x)[xM==1] <- T");
+        }
+        if( i==0 ) 
+          c.voidEval("tempData <- x");
+        else {
+          c.voidEval("tempData <- cbind(tempData, x)");
+          call+=" + x"+(i+1)+"";
+        }
+      }
+      c.voidEval("tempData <- data.frame(tempData)");
+
+      for( int i=0; i<varsT.length; i++ )
+        c.voidEval("names(tempData)["+(i+1)+"] <- \"x"+(i+1)+"\"");
+ 
+      String opt = "TRUE";
+      int answer = JOptionPane.showConfirmDialog(this, "Calculate PCA for correlation matrix","Standardize Data?",JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE  );
+      if (answer == JOptionPane.NO_OPTION)
+        opt = "FALSE";
+      
+      c.voidEval("pca <- predict(princomp("+call+" , data = tempData, cor = "+opt+", na.action = na.exclude))");
+      for( int i=0; i<varsT.length; i++ ) {
+        double[] x = c.eval("pca[,"+(i+1)+"]").asDoubleArray();
+        boolean missy[] = new boolean[dataT.n];
+        for(int j=0; j<x.length; j++) {
+          if( Double.isNaN(x[j]) ) {
+            missy[j] = true;
+            x[j] = Double.MAX_VALUE;
+          } else
+            missy[j] = false;
+        }
+        dataT.addVariable("pca "+(i+1)+"", false, false, x, missy);
+      }
+      varNames = null;
+      setVarList();
+    } catch(RSrvException rse) {JOptionPane.showMessageDialog(this, "Calculation of PCA failed");System.out.println(rse);}
   }
   
   public void switchVariableMode(){
@@ -2135,6 +2205,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
         mds.setEnabled(false);
+        pca.setEnabled(false);
         mv.setEnabled(false);
         break;
       case 1:
@@ -2159,6 +2230,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         //              sc.setEnabled(false);
         sc2.setEnabled(false);
         mds.setEnabled(false);
+        pca.setEnabled(false);
         break;
       case 2: 
         pc.setEnabled(true);
@@ -2186,6 +2258,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         if( numCategorical == 0 ) {
           hi.setEnabled(true);
           hiw.setEnabled(true);
+          pca.setEnabled(true);   
         } else {
           hi.setEnabled(false);
           hiw.setEnabled(false);
@@ -2213,6 +2286,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
           hi.setEnabled(false);
           hiw.setEnabled(false);
         }
+        if( (varNames.getSelectedIndices()).length - numCategorical > 1 && hasR )
+          pca.setEnabled(true);   
         if( (varNames.getSelectedIndices()).length - numCategorical > 2 && hasR )
           mds.setEnabled(true);   
         pc.setEnabled(true);      
