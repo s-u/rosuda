@@ -174,9 +174,17 @@ public class Barchart extends DragBox implements ActionListener {
       else
         size = this.getSize();
       
+//      System.out.println("Breite: "+size.width+" Scrollbar: "+(sb.getSize()).width+" isVisible: "+sb.isVisible());
+      
+//      if( sb.isVisible() )
+//        size.width -= (sb.getSize()).width;
+      
       if( oldWidth != size.width || oldHeight != size.height || scaleChanged ) {
         this.width = size.width;
         this.height = size.height;
+        if( sb.isVisible() && oldWidth > 0 )
+          size.width -= (sb.getSize()).width;
+        
         realHeight = create(border, border, size.width-border, size.height-border, "");
         this.setSize( size.width, realHeight + 2 * border);
         size = this.getSize();
@@ -204,7 +212,7 @@ public class Barchart extends DragBox implements ActionListener {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
         }
         bg = bi.getGraphics();
-        bg.clearRect(0, 0, size.width, size.height);
+        bg.clearRect(0, 0, size.width-(sb.getSize()).width, size.height);
         bg.translate(0, -sb.getValue());
       }
       
@@ -255,6 +263,9 @@ public class Barchart extends DragBox implements ActionListener {
         g.drawImage(bi, 0, 0, null);
         bg.dispose();
       }
+      if( sb.isVisible() )
+        sb.show();
+      frame.show();
     }
     
     public void drawSelections(Graphics bg) {
@@ -564,8 +575,16 @@ public void actionPerformed(ActionEvent e) {
       int[] tperm = new int[perm.length];
       for( int i=0; i<perm.length; i++ )
         tperm[i] = v.permA[perm[i]];
-      for( int i=0; i<perm.length; i++ ) {
+      for( int i=0; i<perm.length; i++ ) {      // Store results, ...
         v.permA[i] = tperm[i];
+        v.IpermA[v.permA[i]] = i;
+      }
+      for( int i=0; i<v.permA.length/2; i++ ) {// ... and reverse the order!
+        int save = v.permA[i];
+        v.permA[i] = v.permA[v.permA.length-i-1];
+        v.permA[v.permA.length-i-1] = save;
+      }
+      for( int i=0; i<v.permA.length; i++ ) {
         v.IpermA[v.permA[i]] = i;
       }
       if( command.equals("lex") )
