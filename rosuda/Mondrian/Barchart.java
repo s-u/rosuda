@@ -49,7 +49,8 @@ public class Barchart extends DragBox implements ActionListener {
     
     setCoordinates(0,0,max,1,-1);
         
-    frame.getContentPane().add(this);
+    this.setScrollX();
+    frame.getContentPane().add(this, "Center");
     
     Font SF = new Font("SansSerif", Font.PLAIN, 11);
     frame.setFont(SF);
@@ -66,7 +67,7 @@ public class Barchart extends DragBox implements ActionListener {
         
     evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
 
-    sb.show();
+//    sb.show();
   }
   
   public void addDataListener(DataListener l) {
@@ -174,20 +175,19 @@ public class Barchart extends DragBox implements ActionListener {
       else
         size = this.getSize();
       
-//      System.out.println("Breite: "+size.width+" Scrollbar: "+(sb.getSize()).width+" isVisible: "+sb.isVisible());
-      
-//      if( sb.isVisible() )
-//        size.width -= (sb.getSize()).width;
+//      System.out.println("1 Breite: "+size.width+" Scrollbar: "+(sb.getSize()).width+" isVisible: "+sb.isVisible());
       
       if( oldWidth != size.width || oldHeight != size.height || scaleChanged ) {
         this.width = size.width;
         this.height = size.height;
+
         if( sb.isVisible() && oldWidth > 0 )
           size.width -= (sb.getSize()).width;
-        
+
         realHeight = create(border, border, size.width-border, size.height-border, "");
         this.setSize( size.width, realHeight + 2 * border);
         size = this.getSize();
+
         oldWidth = size.width;
         oldHeight = size.height;
         if( scaleChanged ) {
@@ -205,11 +205,14 @@ public class Barchart extends DragBox implements ActionListener {
             bi = null;
             System.gc();
             //System.out.println("New Image!");
-            bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
+            if( sb.isVisible() )
+              bi = createImage(size.width-(sb.getSize()).width, size.height);	// double buffering from CORE JAVA p212
+            else
+              bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           }
         }
         else {
-          bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
+          bi = createImage(size.width-(sb.getSize()).width, size.height);	// double buffering from CORE JAVA p212
         }
         bg = bi.getGraphics();
         bg.clearRect(0, 0, size.width-(sb.getSize()).width, size.height);
@@ -263,9 +266,6 @@ public class Barchart extends DragBox implements ActionListener {
         g.drawImage(bi, 0, 0, null);
         bg.dispose();
       }
-      if( sb.isVisible() )
-        sb.show();
-      frame.show();
     }
     
     public void drawSelections(Graphics bg) {
@@ -723,8 +723,7 @@ public int create(int x1, int y1, int x2, int y2, String info) {
                          ((floatRect)S.o).y1*(realHeight));
     
     //System.out.println("Out: "+S.r.y+" <-> "+S.r.height);
-  }
-  
+  }  
   return realHeight;
 }
 
