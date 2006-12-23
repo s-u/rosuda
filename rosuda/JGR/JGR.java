@@ -44,10 +44,10 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	//JGR_VERSION 1.4-12
+	//JGR_VERSION 1.4-14
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.4-12";
+	public static final String VERSION = "1.4-14";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";

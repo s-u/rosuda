@@ -342,6 +342,13 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				// if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
 			} else if (result != null && result.length > 0 && result[0] != null
 					&& !result[0].equals(fun)) {
+					
+					if (fun.indexOf(File.separator) > 0) 
+				fun = fun.substring(fun.lastIndexOf(File.separator)+1);
+				
+			if (fun.indexOf("$") > 0) 
+				fun = fun.substring(fun.lastIndexOf("$")+1);
+				
 				insertAt(pos, result[0].replaceFirst(fun, ""));
 				if (cmdHelp != null)
 					cmdHelp.hide();

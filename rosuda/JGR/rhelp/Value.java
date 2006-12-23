@@ -157,7 +157,7 @@ public class Value extends Object {
  * 
  * HISTORY:
  * 
- * $Log$
+ * $Log: Value.java,v $
  * Revision 1.3  2006/08/09 11:17:59  helbigm
  * fixed: objects exists
  * fixed: special copy commands

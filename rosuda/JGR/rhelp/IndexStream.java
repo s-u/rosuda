@@ -349,7 +349,7 @@ public class IndexStream extends Object {
  * 
  * HISTORY:
  * 
- * $Log$
+ * $Log: IndexStream.java,v $
  * Revision 1.4  2006/08/09 11:17:59  helbigm
  * fixed: objects exists
  * fixed: special copy commands
