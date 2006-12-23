@@ -547,7 +547,7 @@
 		28F902980607540C005E782D /* sort-up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-up.gif"; sourceTree = "<group>"; };
 		28FB0CA909F231700088CD59 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = jogl.jar; path = ../klimt/jogl.jar; sourceTree = SOURCE_ROOT; };
 		28FB0CAA09F231700088CD59 /* libjogl.jnilib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjogl.jnilib; path = ../klimt/libjogl.jnilib; sourceTree = SOURCE_ROOT; };
-		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A426002607780DC300DD0B12 /* JGR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = JGR.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
