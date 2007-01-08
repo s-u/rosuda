@@ -74,6 +74,16 @@ public class Rengine extends Thread {
      */
     native int rniSetupR(String[] args);
     
+    /** RNI: setup IPC with RJava. This method is used by rJava to pass the IPC information to the JRI engine for synchronization */
+    public native int rniSetupRJava(int _in, int _out);
+
+    /** RNI: lock rJava to allow callbacks - this interrupts R event loop until @link{rniRJavaUnlock} is called.
+	@return 0 = lock failed, 1 = locked via IPC (you must use rniRJavaUnlock subsequently), 2 = rJava is already locked */
+    public native int rniRJavaLock();
+
+    /** RNI: unlock rJava - resumes R event loop. Please note that unlocking without a previously successful lock may cause fatal errors, because it may release a lock issued by another thread which may not have finished yet. */
+    public native int rniRJavaUnlock();
+
     synchronized int setupR() {
         return setupR(null);
     }

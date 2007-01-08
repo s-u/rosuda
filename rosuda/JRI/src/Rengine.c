@@ -3,6 +3,7 @@
 
 #include "jri.h"
 #include "org_rosuda_JRI_Rengine.h"
+#include "rjava.h"
 #include <Rversion.h>
 #include <R_ext/Parse.h>
 
@@ -458,6 +459,22 @@ JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetEnv
 }
 
 #endif
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniSetupRJava
+(JNIEnv *env, jobject this, jint _in, jint _out) {
+  RJava_setup(_in, _out);
+  return 0;
+}
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniRJavaLock
+(JNIEnv *env, jobject this) {
+  return RJava_request_lock();
+}
+
+JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniRJavaUnlock
+(JNIEnv *env, jobject this) {
+  return RJava_clear_lock();
+}
 
 JNIEXPORT jint JNICALL Java_org_rosuda_JRI_Rengine_rniStop
 (JNIEnv *env, jobject this, jint flag) {
