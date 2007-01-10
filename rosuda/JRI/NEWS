@@ -1,6 +1,9 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
+0.3-7	(under development)
+    o	make sure rniJavaToXref creates a global reference
+
 0.3-6	2006-11-29
     o	adapted to API change in R-devel
 

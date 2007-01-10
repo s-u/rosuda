@@ -166,7 +166,8 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniJavaToXref
 (JNIEnv *env, jobject this, jobject o)
 {
   /* this is pretty much from Rglue.c of rJava */
-	return SEXP2L(R_MakeExternalPtr(o, R_NilValue, R_NilValue));
+  jobject *go = (*env)->NewGlobalRef(env, o);
+  return SEXP2L(R_MakeExternalPtr(go, R_NilValue, R_NilValue));
 }
 
 JNIEXPORT jstring JNICALL Java_org_rosuda_JRI_Rengine_rniGetString
