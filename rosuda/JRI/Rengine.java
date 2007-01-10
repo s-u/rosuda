@@ -193,11 +193,30 @@ public class Rengine extends Thread {
 		@return <code>true</code> if <code>cName</code> inherits from class <code>cName</code> (see <code>inherits</code> in R) */ 
 	public synchronized native boolean rniInherits(long exp, String cName);
 
+    /** RNI: create a dotted-pair list (LISTSXP or LANGSXP)
+	@param head CAR
+	@param tail CDR (must be a reference to LISTSXP or 0)
+	@param tag TAG
+	@param lang if <code>true</code> then LANGSXP is created, otherwise LISTSXP.
+	@return reference to the newly created LISTSXP/LANGSXP
+	@since API 1.7, JRI 0.3-7
+*/
+    public synchronized native long rniCons(long head, long tail, long tag, boolean lang);
+
     /** RNI: create a dotted-pair list (LISTSXP)
 	@param head CAR
 	@param tail CDR (must be a reference to LISTSXP or 0)
-	@return reference to the newly created LISTSXP */
-    public synchronized native long rniCons(long head, long tail);
+	@return reference to the newly created LISTSXP
+    */
+    public long rniCons(long head, long tail) { return rniCons(head, tail, 0, false); }
+    /** RNI: create a dotted-pair language list (LANGSXP)
+	@param head CAR
+	@param tail CDR (must be a reference to LANGSXP or 0)
+	@return reference to the newly created LANGSXP
+	@since API 1.7, JRI 0.3-7
+    */
+    public long rniLCons(long head, long tail) { return rniCons(head, tail, 0, true); }
+
     /** RNI: get CAR of a dotted-pair list (LISTSXP)
 	@param exp reference to the list
 	@return reference to CAR of the list (head) */
@@ -511,6 +530,10 @@ public class Rengine extends Thread {
 		@since JRI 0.3
         */
     public void assign(String sym, REXP r) {
+	if (r.Xt == REXP.XT_NONE) {
+	    rniAssign(sym, r.xp, 0);
+	    return;
+	}
     	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
@@ -574,5 +597,28 @@ public class Rengine extends Thread {
 		*/
 	public void assign(String sym, String[] val) {
         assign(sym,new REXP(val));
+    }
+
+    /** creates a <code>jobjRef</code> reference in R via rJava.<br><b>Important:</b> rJava must be loaded and intialized in R (e.g. via <code>eval("{library(rJava);.jinit()}",false)</code>, otherwise this will fail. Requires rJava 0.4-13 or higher!
+	@param o object to push
+	@return Pure REXP reference of the newly created <code>jobjRef</code> object or <code>null</code> upon failure. It will have the type <code>XT_NONE</code> such that it can be used in @link{assign(String, REXP)}.
+	@since JRI 0.3-7
+    */
+    public REXP createRJavaRef(Object o) {
+	if (o == null) return null;
+	String klass = o.getClass().getName();
+	long l = rniEval(
+			 rniLCons(
+				  rniInstallSymbol(".jmkref"),
+				  rniLCons(
+					   rniJavaToXref(o),
+					   rniLCons(
+						    rniPutString(klass), 0
+						    )
+					   )
+				  )
+			 , 0);
+	if (l == 0) return null;
+	return new REXP(this, l, false);	
     }
 }

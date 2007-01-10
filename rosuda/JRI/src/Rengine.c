@@ -166,7 +166,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniJavaToXref
 (JNIEnv *env, jobject this, jobject o)
 {
   /* this is pretty much from Rglue.c of rJava */
-  jobject *go = (*env)->NewGlobalRef(env, o);
+  jobject go = (*env)->NewGlobalRef(env, o);
   return SEXP2L(R_MakeExternalPtr(go, R_NilValue, R_NilValue));
 }
 
@@ -320,9 +320,16 @@ JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniInherits
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCons
-(JNIEnv *env, jobject this, jlong head, jlong tail)
+(JNIEnv *env, jobject this, jlong head, jlong tail, jlong tag, jboolean lang)
 {
-    return SEXP2L(CONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail)));
+  SEXP l;
+  if (lang)
+    l = LCONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail));
+  else
+    l = CONS((head==0)?R_NilValue:L2SEXP(head), (tail==0)?R_NilValue:L2SEXP(tail));
+  
+  if (tag) SET_TAG(l, L2SEXP(tag));
+  return SEXP2L(l);
 }
 
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniCAR
