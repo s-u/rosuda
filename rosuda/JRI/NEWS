@@ -1,7 +1,7 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
-0.3-7	(under development)
+0.3-7	2006-01-14
     o	make sure rniJavaToXref creates a global reference
 
     o	API 1.7: rniCons can accept two new arguments: tag and lang
