@@ -144,6 +144,7 @@ class GDFont extends GDObject {
         if (face==2) jFT=Font.BOLD;
         if (face==3) jFT=Font.ITALIC;
         if (face==4) jFT=Font.BOLD|Font.ITALIC;
+		if (face==5) family="Symbol";
         font=new Font(family.equals("")?null:family, jFT, (int)(cex*ps+0.5));
     }
 
