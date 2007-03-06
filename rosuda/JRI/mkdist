@@ -11,11 +11,15 @@ rm -f /tmp/${PNAME}/mkdist
 
 cd /tmp/${PNAME}
 
-echo "Running autoconf ..."
-rm -rf autom4te* acloc*
-autoreconf
+if [ -e configure ]; then
+    echo "*skipping* autoconf (configure already present)"
+else 
+    echo "Running autoconf ..."
+    rm -rf autom4te* acloc*
+    autoreconf
 #autoheader
 #autoconf
+fi
 rm -rf autom4te* acloc*
 
 echo "Compiling getsp ..."
