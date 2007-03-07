@@ -97,7 +97,7 @@ public class Rengine extends Thread {
 	alive=true;
 	runLoop=false;
 	loopRunning=true;
-	standAlone-=false;
+	standAlone=false;
 	args=new String[] { "--zero-init"};
 	callback=null;
 	mainEngine=this;
