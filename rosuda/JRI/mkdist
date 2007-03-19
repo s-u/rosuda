@@ -5,7 +5,8 @@ SWD=`pwd`
 echo "Removing previous dist ..."
 rm -rf /tmp/${PNAME}
 echo "Copying package base ..."
-cp -r ../${PNAME} /tmp
+mkdir /tmp/${PNAME}
+cp -r . /tmp/${PNAME}
 
 rm -f /tmp/${PNAME}/mkdist
 
