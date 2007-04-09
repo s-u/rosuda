@@ -2,6 +2,7 @@ package org.rosuda.ibase.plots;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 import org.rosuda.ibase.*;
@@ -167,6 +168,20 @@ public class ScatterCanvas extends BaseCanvas {
         MItransHighl=EzMenu.getItem(f,M_TRANSHIGHL);
         objectClipping=true;
         dontPaint=false;
+		
+		try {
+			Class c = Class.forName("org.rosuda.models.ScatterMenu");
+			if (c != null) {
+				Object o = c.newInstance();
+				Method m = c.getMethod("setCanvas",new Class[]{this.getClass()});
+				if (m != null) 
+					m.invoke(o,new Object[]{this});
+			
+				pop.addSeparator();
+				pop.add((Menu)o);
+			}
+		} catch (Exception e) {
+		}
     }
     
     public SVar getData(final int id) { return (id<0||id>1)?null:v[id]; }
@@ -293,12 +308,12 @@ public class ScatterCanvas extends BaseCanvas {
     public void keyPressed(final KeyEvent e) {
         if (Global.DEBUG>0)
             System.out.println("ScatterCanvas: "+e);
-        if (e.getKeyCode()==KeyEvent.VK_UP) {
+        if (e.getKeyCode()==KeyEvent.VK_UP && !e.isShiftDown()) {
             ptDiam+=changePtDiamBy; setUpdateRoot(0);
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             repaint();
         }
-        if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>=minimalDiam+changePtDiamBy) {
+        if (e.getKeyCode()==KeyEvent.VK_DOWN && ptDiam>=minimalDiam+changePtDiamBy && !e.isShiftDown()) {
             ptDiam-=changePtDiamBy; setUpdateRoot(0);
             for(int i=0; i<pp.length; i++) if(pp[i]!=null) ((PPrimCircle)pp[i]).diam = ptDiam;
             repaint();

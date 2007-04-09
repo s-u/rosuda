@@ -229,7 +229,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         xLabels.setLayer(0);
         yLabels.setLayer(0);
     }
-    
+	
     /** notification handler - rebuild objects if necessary (AxisDataChange/VarChange) and repaint */
     public void Notifying(final NotifyMsg msg, final Object o, final Vector path) {
         if (ignoreNotifications) {
@@ -250,6 +250,14 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     public Dimension getMinimumSize() { return new Dimension(mLeft+mRight+20,mTop+mBottom+20); };
     
+	public Axis getAxisX() {
+		return ax;
+	}
+	
+	public Axis getAxisY() {
+		return ay;
+	}
+	
     /** actual paint method - subclasses should NOT override this method! use paintInit/Back/Objects/Selected/Post instead. Splitting into pieces allows more effective layer caching and results in better performance */
     public void paintPoGraSS(final PoGraSS g) {
         if(dontPaint) return;

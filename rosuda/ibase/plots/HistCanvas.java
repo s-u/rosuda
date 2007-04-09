@@ -12,6 +12,8 @@ package org.rosuda.ibase.plots;
 import java.awt.*;
 import java.awt.event.*;
 
+import java.lang.reflect.*;
+
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
 import org.rosuda.pograss.*;
@@ -51,11 +53,11 @@ public class HistCanvas extends BaseCanvas {
     
     private int paintpp;
     
-    private double maxVal=Double.NEGATIVE_INFINITY;
+    public double maxVal=Double.NEGATIVE_INFINITY;
     
     private boolean isSpine;
     
-    private double minVal=Double.POSITIVE_INFINITY;
+    public double minVal=Double.POSITIVE_INFINITY;
     
     private boolean crosshairs = false;
     private int qx,qy;
@@ -100,16 +102,34 @@ public class HistCanvas extends BaseCanvas {
         allowDragZoom=false;
         
         dontPaint=false;
-    };
+		
+		
+		try {
+			Class c = Class.forName("org.rosuda.models.HistMenu");
+			if (c != null) {
+				Object o = c.newInstance();
+				Method m = c.getMethod("setCanvas",new Class[]{this.getClass()});
+				if (m != null) 
+					m.invoke(o,new Object[]{this});
+			
+				pop.addSeparator();
+				pop.add((Menu)o);
+			}
+		} catch (Exception e) {
+		}
+		
+	}
     
     private void setBoundValues() {
         if(pp==null) return;
-        double temp=0;
+        double temp=0, _maxVal= Double.NEGATIVE_INFINITY , _minVal = Double.POSITIVE_INFINITY;
         for(int i=0;i<pp.length;i++) {
             temp=pp[i].cases();
-            if(maxVal<temp) maxVal=temp;
-            if(minVal>temp) minVal=temp;
+            if(_maxVal<temp) _maxVal=temp;
+            if(_minVal>temp) _minVal=temp;
         }
+		maxVal = _maxVal;
+		minVal = _minVal;
     }
     
     public SVar getData(final int id) { return (id==0)?v:null; }
@@ -465,7 +485,7 @@ public class HistCanvas extends BaseCanvas {
             repaint();
         }
         if(M_BINDOWN.equals(cmd)){
-            final double newBinw=Math.min(binw/1.1, 1);
+            final double newBinw=Math.min(binw/1.1, binw);
             if(Math.abs(newBinw-binw)>0.00001){
                 binw=newBinw;
                 updateObjects();
