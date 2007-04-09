@@ -170,7 +170,7 @@ public class ScatterCanvas extends BaseCanvas {
         dontPaint=false;
 		
 		try {
-			Class c = Class.forName("org.rosuda.models.ScatterMenu");
+			Class c = Class.forName("org.rosuda.iModels.ScatterMenu");
 			if (c != null) {
 				Object o = c.newInstance();
 				Method m = c.getMethod("setCanvas",new Class[]{this.getClass()});

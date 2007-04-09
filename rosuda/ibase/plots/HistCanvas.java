@@ -105,7 +105,7 @@ public class HistCanvas extends BaseCanvas {
 		
 		
 		try {
-			Class c = Class.forName("org.rosuda.models.HistMenu");
+			Class c = Class.forName("org.rosuda.iModels.HistMenu");
 			if (c != null) {
 				Object o = c.newInstance();
 				Method m = c.getMethod("setCanvas",new Class[]{this.getClass()});
