@@ -240,10 +240,12 @@ public final class Data implements Cloneable {
     
     private void restrict(final int[] hiddenVariables){
         StringBuffer varsString=new StringBuffer();
-        for(int i=hiddenVariables.length-1; i>=0; i--){
+        for(int i=hiddenVariables.length-1; i>0; i--){
             varsString.append(hiddenVariables[i]+1).append(",");
             variables.remove(hiddenVariables[i]);
         }
+	varsString.append(hiddenVariables[0]+1);
+        variables.remove(hiddenVariables[0]);
         try{
             final String varsS = varsString.toString();
             if(!"".equals(varsS)) {
