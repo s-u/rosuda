@@ -47,7 +47,7 @@ public class Main {
         }
         
         final MainWindow mw = new MainWindow();
-        mw.show();
+        mw.setVisible(true);
         
         //WindowManager.newWindow();
     }

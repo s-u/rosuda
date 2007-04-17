@@ -18,7 +18,7 @@ import java.util.ListIterator;
  */
 public final class ExtFileFilter extends javax.swing.filechooser.FileFilter {
     private String description="";
-    private List extensions=new ArrayList();
+    private List<String> extensions=new ArrayList<String>();
     private String stdExtension=null;
     
     public String getDescription() {

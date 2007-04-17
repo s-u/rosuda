@@ -8,6 +8,7 @@ package org.rosuda.JClaR;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.Vector;
 import javax.swing.JSlider;
@@ -144,12 +145,12 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
             }
         }
         
-        final ArrayList variables = new ArrayList(data.getVariables());
+        final ArrayList<String> variables = new ArrayList<String>(data.getVariables());
         if(varPos>=0) variables.remove(varPos);
         
-        final ArrayList dataVector = new ArrayList(variables.size());
+        final Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>(variables.size());
         for(int i=0, size = variables.size(); i<size; i++){
-            final Vector row = new Vector(4);
+            final Vector<Object> row = new Vector<Object>(4);
             row.add(new Boolean(false));
             row.add(variables.get(i));
             row.add(new Double(values[i]));
@@ -206,7 +207,7 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         }
         
         
-        final ArrayList fixedVariablesVector = new ArrayList();
+        final ArrayList<Integer> fixedVariablesVector = new ArrayList<Integer>();
         final int formulaVariables[] = new int[2];
         
         final boolean fixed[]=tm.getFixed();
@@ -216,7 +217,7 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
         int j=0;
         for(int i=0, size = variables.size(); i<size && j<3; i++){
             if(fixed[i])  {
-                fixedVariablesVector.add(new Integer(i));
+                fixedVariablesVector.add(i);
             }
             
             else {

@@ -240,7 +240,8 @@ public final class RserveConnection {
         voidEval("write.table(" + data + ",file='" + path + "'" + options + ")");
     }
     
-    static List evalL(final String string) throws RSrvException {
+    @SuppressWarnings("unchecked")
+    static List<REXP> evalL(final String string) throws RSrvException {
         final REXP rex = eval(string);
         if(rex==null) return null;
         else return rex.asVector();

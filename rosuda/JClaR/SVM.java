@@ -44,7 +44,7 @@ public final class SVM extends DefaultClassifier {
     private int cross = 0;
     private double tolerance = 0.001;
     private boolean fitted = true;    //#T#O#D#O# class.weights, cashesize, epsilon, shrinking, probability, subset, na.action
-    private List classNames;
+    private List<String> classNames;
     
     private String CLASSIFICATIONRESULTNAME;
     
@@ -152,10 +152,10 @@ public final class SVM extends DefaultClassifier {
             
             if(!trained){
                 try{
-                    final List classNamesREXP = RserveConnection.evalL(Rname + "$levels");
-                    classNames = new ArrayList(classNamesREXP.size());
-                    for(final ListIterator en = classNamesREXP.listIterator(); en.hasNext();){
-                        classNames.add(((REXP)en.next()).asString());
+                    final List<REXP> classNamesREXP = RserveConnection.evalL(Rname + "$levels");
+                    classNames = new ArrayList<String>(classNamesREXP.size());
+                    for(final ListIterator<REXP> en = classNamesREXP.listIterator(); en.hasNext();){
+                        classNames.add(en.next().asString());
                     }
                 } catch (RSrvException rse) {
                     ErrorDialog.show(parent, rse, "SVM.train()");
@@ -355,7 +355,7 @@ public final class SVM extends DefaultClassifier {
             svmwindow = new SVMWindow(this);
         }
         
-        svmwindow.show();
+        svmwindow.setVisible(true);
     }
     
     private boolean getScale(){

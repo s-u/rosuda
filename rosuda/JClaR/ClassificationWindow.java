@@ -73,7 +73,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
      * confusuion matrix window). These windows will get disposed when
      * this.dispose() is called.
      */
-    private List subWindows = new ArrayList();
+    private List<JFrame> subWindows = new ArrayList<JFrame>();
     
     ClassifyingDialog cd;
     
@@ -209,7 +209,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
                 confMxDialog.setAccuracy(classifier.getAccuracy());
                 confMxDialog.setData(classifier.getConfusionMatrix());
             }
-            confMxDialog.show();
+            confMxDialog.setVisible(true);
         } else {
             ErrorDialog.show(this,ERM_NOTTRAINED);
         }
@@ -237,7 +237,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             m_FileSaveClassifiedData.setEnabled(true);
             
             cd = new ClassifyingDialog(this,false,classifier);
-            cd.show();
+            cd.setVisible(true);
         }
     }
     
@@ -532,7 +532,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
             return;
         }
         final ChooseDatasetDialog cdd = new ChooseDatasetDialog(this);
-        cdd.show();
+        cdd.setVisible(true);
         final Data dataset = cdd.getSelectedDataset();
         if (dataset!=null){
             classify(dataset);
@@ -543,7 +543,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         if(prefd==null){
             ErrorDialog.show(this,"No preferences available.");
         } else {
-            prefd.show();
+            prefd.setVisible(true);
         }
     }//GEN-LAST:event_m_FilePreferencesActionPerformed
     
@@ -558,7 +558,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
     }//GEN-LAST:event_m_FileExitActionPerformed
     
     private final void m_FileCloseActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_FileCloseActionPerformed
-        this.hide();
+        this.setVisible(false);
     }//GEN-LAST:event_m_FileCloseActionPerformed
     
     private final void m_DisplaySnapshotsActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_m_DisplaySnapshotsActionPerformed
@@ -595,7 +595,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
                 m_DisplayConfusionMatrix.setState(false);
             }
         } else if (confMxDialog!=null)  {
-            confMxDialog.hide();
+            confMxDialog.setVisible(false);
         }
         
     }//GEN-LAST:event_m_DisplayConfusionMatrixActionPerformed

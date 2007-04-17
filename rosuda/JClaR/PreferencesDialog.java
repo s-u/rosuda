@@ -87,7 +87,7 @@ public final class PreferencesDialog extends javax.swing.JDialog {
     private void butOkActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butOkActionPerformed
         //TODO: determine whether changes have been made and tell listener where
         if(listener!=null) listener.preferenceChange(null);
-        hide();
+        setVisible(false);
     }//GEN-LAST:event_butOkActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

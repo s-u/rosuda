@@ -17,20 +17,20 @@ import java.util.Vector;
  */
 public final class ClassifierManager {
     
-    private static ArrayList classifiers;
+    private static ArrayList<Classifier> classifiers;
     private static DataClassifierListenerIF listener;
     
     /** Creates a new instance of ClassifierManager */
     private ClassifierManager() {
     }
     
-    static List getClassifiers(){
-        if(classifiers==null) classifiers=new ArrayList();
+    static List<Classifier> getClassifiers(){
+        if(classifiers==null) classifiers=new ArrayList<Classifier>();
         return classifiers;
     }
     
     static void addClassifier(final Classifier newClassifier){
-        if(classifiers==null) classifiers=new ArrayList();
+        if(classifiers==null) classifiers=new ArrayList<Classifier>();
         classifiers.add(newClassifier);
         if(listener!=null) listener.classifiersChanged();
     }

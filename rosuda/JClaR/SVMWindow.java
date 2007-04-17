@@ -167,7 +167,7 @@ public final class SVMWindow extends ClassificationWindow {
                 case SVM.TYPE_C_CLASS:
                 case SVM.TYPE_NU_CLASS:
                     if (!fvd.isShowing() && svm.getData().getNumberOfVariables()-1>2 && !restoring){
-                        fvd.show();
+                        fvd.setVisible(true);
                         return;
                     }
                     if (plot==null) {
@@ -177,7 +177,7 @@ public final class SVMWindow extends ClassificationWindow {
                         newPlot.createPlotCall();
                     } else{
                         if (fvd.isShowing()) {
-                            fvd.show();
+                            fvd.setVisible(true);
                         }
                         
                         
@@ -210,7 +210,7 @@ public final class SVMWindow extends ClassificationWindow {
     void plotClassifiedModel(final boolean hardChange){
         if(svm.hasClassifiedData()){
             if (!fvd.isShowing() && svm.getData().getNumberOfVariables()-1>2 && !restoring){
-                fvd.show();
+                fvd.setVisible(true);
                 return;
             }
             final SVMClassificationPlot newPlot = new SVMClassificationPlot(svm, this, fvd, true);

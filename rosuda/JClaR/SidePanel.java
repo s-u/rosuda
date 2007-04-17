@@ -23,7 +23,7 @@ public abstract class SidePanel extends JPanel {
     boolean noRecalc;
     NumberFormat numberFormat;
     
-    private ArrayList listeners = new ArrayList();
+    private ArrayList<SimpleChangeListener> listeners = new ArrayList<SimpleChangeListener>();
     
     final void setParent(final JFrame parent){
         this.parent=parent;

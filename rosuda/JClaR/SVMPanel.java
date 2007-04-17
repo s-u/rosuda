@@ -529,7 +529,7 @@ public final class SVMPanel extends SidePanel {
         tuned.setFixGamma(getGamma());
         tuned.setFixNu(getNu());
         tuned.setDefaultRanges();
-        tuned.show();
+        tuned.setVisible(true);
         if (tuned.getSetvalues()){
             noRecalc=true;
             setSliderGamma(tuned.getTune().getBestGamma());

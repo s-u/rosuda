@@ -26,10 +26,10 @@ public final class Data implements Cloneable {
     
     // If new fields are added the clone method probably has to be changed!
     private File file;
-    private ArrayList variables = new ArrayList();
+    private ArrayList<String> variables = new ArrayList<String>();
     private String Rname;
     private int length;
-    private ArrayList svms = new ArrayList();
+    private ArrayList<Classifier> svms = new ArrayList<Classifier>();
     private String name;
     private boolean restricted=false;
     private int format;
@@ -102,7 +102,7 @@ public final class Data implements Cloneable {
         return length;
     }
     
-    List getVariables(){
+    List<String> getVariables(){
         return variables;
     }
     
@@ -208,9 +208,9 @@ public final class Data implements Cloneable {
     void update() throws NullPointerException {
         try{
             //get variables
-            List vars = RserveConnection.evalL("names(" + Rname + ")");
+            List<REXP> vars = RserveConnection.evalL("names(" + Rname + ")");
             if (vars==null){
-                vars = new ArrayList();
+                vars = new ArrayList<REXP>();
                 vars.add(RserveConnection.eval("names(" + Rname + ")"));
             }
             for (final ListIterator e = vars.listIterator() ; e.hasNext() ;){

@@ -25,7 +25,7 @@ public final class DatasetManager {
     /**
      * maps file names to data objects
      */
-    private static Hashtable datasets = new Hashtable(4);
+    private static Hashtable<String,Data> datasets = new Hashtable<String,Data>(4);
     
     /** Creates a new instance of DatasetManager */
     private DatasetManager() {
@@ -55,8 +55,8 @@ public final class DatasetManager {
         return datasets.elements();
     }
     
-    static List getDataVector(){
-        return new ArrayList(datasets.values());
+    static List<Data> getDataVector(){
+        return new ArrayList<Data>(datasets.values());
     }
 
     static void setListener(final DataClassifierListenerIF aListener) {

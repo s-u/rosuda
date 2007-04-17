@@ -35,12 +35,12 @@ public final class ChooseDatasetDialog extends TableDialog {
         
         tm = new TableModel();
         // create data vector
-        final ArrayList dataVector = new ArrayList(DatasetManager.getNumberOfDatasets());
+        final Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>(DatasetManager.getNumberOfDatasets());
         // each element is <file name>|<length>|<#variables>
         for(final Enumeration en = DatasetManager.getElements(); en.hasMoreElements();){
             final Data data = (Data)en.nextElement();
             if (data!=null){
-                final List row = new ArrayList(3);
+                final Vector<Object> row = new Vector<Object>(3);
                 row.add(data.getPath());
                 row.add(new Integer(data.getLength()));
                 row.add(new Integer(data.getNumberOfVariables()));

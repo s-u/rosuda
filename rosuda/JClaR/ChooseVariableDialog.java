@@ -38,10 +38,10 @@ public final class ChooseVariableDialog extends TableDialog implements Selection
         tm = new TableModel();
         // create data vector
         final int size = variables.size();
-        final ArrayList dataVector = new ArrayList(size);
+        final Vector<Vector<Object>> dataVector = new Vector<Vector<Object>>(size);
         // each element is <variable name>|false|true
         for(int i=0; i<size; i++){
-            final ArrayList row = new ArrayList(3);
+            final Vector<Object> row = new Vector<Object>(3);
             row.add(variables.get(i));
             row.add(Boolean.FALSE);
             row.add(Boolean.TRUE);
