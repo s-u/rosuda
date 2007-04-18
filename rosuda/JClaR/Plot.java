@@ -21,6 +21,7 @@ import org.rosuda.JRclient.RSrvException;
  */
 public abstract class Plot {
     private static final String PLOTFILE_PNG = "plot.png";
+    private static final String PLOTFILE_JPG = "plot.jpg";
     
     private Classifier classifier;
     private String plotCall;
@@ -139,7 +140,7 @@ public abstract class Plot {
                 plotFile = PLOTFILE_PNG;
                 break;
             case DEVICE_JPG:
-                plotFile = "plot.jpg";
+                plotFile = PLOTFILE_JPG;
                 break;
         }
     }
