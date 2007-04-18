@@ -41,6 +41,7 @@ public abstract class SidePanel extends JPanel {
     }
     
     abstract boolean getAutoRecalc();
+    abstract protected void update();
     
     static final int EVT_TRAIN = 0;
     static final int EVT_UPDATE_PLOT = 1;

@@ -189,7 +189,7 @@ public final class SVMPanel extends SidePanel {
         updateSVMInfo();
     }
     
-    private void update(){
+    protected void update(){
         noRecalc=true;
         updateSVMInfo();
         
