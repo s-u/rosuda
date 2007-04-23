@@ -108,8 +108,8 @@ public class Rconnection {
 				try {
 					rsrvVersion=Integer.parseInt(ids.substring(4,8));
 				} catch (Exception px) {}
-				// we support (knowingly) up to 102 - including long data support
-				if (rsrvVersion>102)
+				// we support (knowingly) up to 103
+				if (rsrvVersion>103)
 					throw new RSrvException(this,"Handshake failed: The server uses more recent protocol than this client.");
 				if (ids.substring(8,12).compareTo("QAP1")!=0)
 					throw new RSrvException(this,"Handshake failed: unupported transfer protocol ("+ids.substring(8,12)+"), I talk only QAP1.");

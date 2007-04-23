@@ -36,7 +36,11 @@ public class t {
 	    c.assign("x",dataX);
 	    c.assign("y",dataY);
 	    System.out.println("lowess: call lowess");
-	    RList l = c.eval("lowess(x,y)").asList();
+	    //RList l = c.eval("lowess(x,y)").asList();
+	    REXP xl = c.eval("lowess(x,y)");
+	    System.out.println("result = "+xl);
+	    RList l = xl.asList();
+	    System.out.println("list = "+l);
 	    System.out.println("lowess: retrieve points");
 	    double[] lx = (double[]) l.at("x").getContent();
 	    double[] ly = (double[]) l.at("y").getContent();

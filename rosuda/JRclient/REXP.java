@@ -25,12 +25,24 @@ public class REXP extends Object implements java.io.Serializable {
     public static final int XT_SYM=5;
     /** xpression type: RBool */    
     public static final int XT_BOOL=6;
+    /** xpression type: S4 object
+	@since Rserve 0.5 */
+    public static final int XT_S4=7;
     /** xpression type: Vector */
     public static final int XT_VECTOR=16;
     /** xpression type: RList */
     public static final int XT_LIST=17;
     /** xpression type: closure (there is no java class for that type (yet?). currently the body of the closure is stored in the content part of the REXP. Please note that this may change in the future!) */
     public static final int XT_CLOS=18;
+    /** xpression type: symbol name
+	@since Rserve 0.5 */
+    public static final int XT_SYMNAME=19;
+    /** xpression type: list (w/o tags)
+	@since Rserve 0.5 */
+    public static final int XT_LIST_NOTAG=20;
+    /** xpression type: list (w tags)
+	@since Rserve 0.5 */
+    public static final int XT_LIST_TAG=21;
     /** xpression type: int[] */
     public static final int XT_ARRAY_INT=32;
     /** xpression type: double[] */
@@ -41,12 +53,21 @@ public class REXP extends Object implements java.io.Serializable {
     public static final int XT_ARRAY_BOOL_UA=35;
     /** xpression type: RBool[] */
     public static final int XT_ARRAY_BOOL=36;
+    /** xpression type: raw (byte[])
+	@since Rserve 0.4-? */
+    public static final int XT_RAW=37;
+    /** xpression type: Complex[]
+	@since Rserve 0.5 */
+    public static final int XT_ARRAY_CPLX=38;
     /** xpression type: unknown; no assumptions can be made about the content */
     public static final int XT_UNKNOWN=48;
 
     /** xpression type: RFactor; this XT is internally generated (ergo is does not come from Rsrv.h) to support RFactor class which is built from XT_ARRAY_INT */
     public static final int XT_FACTOR=127; 
 
+	/** used for transport only - has attribute */
+	private static final int XT_HAS_ATTR=128;
+	
     /** xpression type */
     int Xt;
     /** attribute xpression or <code>null</code> if none */
@@ -93,20 +114,42 @@ public class REXP extends Object implements java.io.Serializable {
       this(XT_ARRAY_STR,val);
     }
     
-    /** get attribute of the REXP. In R every object can have attached attribute xpression. Some more complex structures such as classes are built that way.
+    /** get all attributes of the REXP in the form of a list or <code>null</code> if the object has no attributes.
         @return attribute xpression or <code>null</code> if there is none associated */
-    public REXP getAttribute() {
-        return attr;
+    public RList getAttributes() {
+        return (attr!=null)?attr.asList():null;
     }
 
+	/** get a certain attribute
+		@param name name of the attribute
+		@return <code>null</code> if the attribute doesn't exist or the attribute. */
+    public REXP getAttribute(String name) {
+		if (attr==null || attr.cont==null) return null;
+		return attr.asList().at(name);
+    }
+
+	/** set an attribute value. The attributes list is created if necessary.
+		@param name attribute name
+		@param value attribute value */		
+	public void setAttribute(String name, REXP value) {
+		if (attr==null || attr.asList() == null) attr=new REXP(XT_LIST_TAG, new RList());
+		RList l = attr.asList();
+		if (l == null) return;
+		l.put(name, value);
+	}
+	
     /** get raw content. Use as... methods to retrieve contents of known type.
-        @return content of the REXP */
+        @return content of the REXP
+		@deprecated please use corresponding <code>as...</code> accessor methods
+		*/
     public Object getContent() {
         return cont;
     }
 
     /** get xpression type (see XT_.. constants) of the content. It defines the type of the content object.
-        @return xpression type */
+        @return xpression type
+		@deprecated please use corresponding <code>is...</code> test methods
+		*/
     public int getType() {
         return Xt;
     }
@@ -121,7 +164,7 @@ public class REXP extends Object implements java.io.Serializable {
 	boolean hasAtt=((buf[o]&128)!=0);
         boolean isLong=((buf[o]&64)!=0);
 	int xt=(int)(buf[o]&63);
-        //System.out.println("parseREXP: type="+xt+", len="+xl+", hasAtt="+hasAtt+", isLong="+isLong);
+        System.out.println("parseREXP: type="+xt+", len="+xl+", hasAtt="+hasAtt+", isLong="+isLong);
         if (isLong) o+=4;
         o+=4;
 	int eox=o+xl;
@@ -213,23 +256,37 @@ public class REXP extends Object implements java.io.Serializable {
 	    };
 	    x.cont=d;
 	    // hack for lists - special lists attached to int are factors
-	    if (x.attr!=null && x.attr.Xt==XT_LIST && x.attr.cont!=null &&
-		((RList)x.attr.cont).head!=null &&
-		((RList)x.attr.cont).body!=null &&
-		((RList)x.attr.cont).head.cont!=null &&
-		((RList)x.attr.cont).body.cont!=null &&
-		((RList)x.attr.cont).head.Xt==XT_VECTOR &&
-		((RList)x.attr.cont).body.Xt==XT_LIST &&
-		((RList)((RList)x.attr.cont).body.cont).head!=null &&
-		((RList)((RList)x.attr.cont).body.cont).head.Xt==XT_STR &&
-		((String)((RList)((RList)x.attr.cont).body.cont).head.cont).compareTo("factor")==0) {
-		RFactor f=new RFactor(d,(Vector)((RList)x.attr.cont).head.cont);
-		x.cont=f;
-		x.Xt=XT_FACTOR;
-		x.attr=null;
-	    };
+	    if (x.attr!=null) {
+		REXP ca = x.attr.asList().at("class");
+		if (ca != null && ca.asString() == "factor") {
+		    //RFactor f=new RFactor(d,(Vector)((RList)x.attr.cont).head.cont);
+		    //x.cont=f;
+		    //x.Xt=XT_FACTOR;
+		    //x.attr=null;
+		}
+	    }
 	    return o;
-	};
+	}
+	if (xt==XT_LIST_NOTAG || xt==XT_LIST_TAG) {
+	    RList l = new RList();
+	    while (o<eox) {
+		REXP lc=new REXP();
+		String name = null;
+		o=parseREXP(lc, buf, o);
+		if (xt==XT_LIST_TAG) {
+		    REXP ns = new REXP();
+		    o=parseREXP(ns, buf, o);
+		    name=ns.asString();
+		}
+		if (name==null) l.add(lc); else l.put(name, lc);
+	    }
+	    x.cont = l;
+	    if (o!=eox) {
+		System.out.println("Warning: int list SEXP size mismatch\n");
+		o=eox;
+	    }
+	    return o;
+	}
 	if (xt==XT_VECTOR) {
 	    Vector v=new Vector();
 	    while(o<eox) {
@@ -243,8 +300,13 @@ public class REXP extends Object implements java.io.Serializable {
 	    };
 	    x.cont=v;
 	    // fixup for lists since they're stored as attributes of vectors
-	    if (x.attr!=null && x.attr.Xt==XT_LIST && x.attr.cont!=null) {
-		RList l=new RList();
+	    if (x.getAttribute("names")!=null) {
+		REXP nam=x.getAttribute("names");
+		RList l = new RList(v, nam.asStringArray());
+		x.cont=l;
+		x.Xt=XT_LIST;
+		/*
+		REXP nam = l.at("names");
 		l.head=((RList)x.attr.cont).head;
 		l.body=new REXP(XT_VECTOR,v);
 		x.cont=l;
@@ -256,11 +318,27 @@ public class REXP extends Object implements java.io.Serializable {
 		    sv.addElement(l.head);
 		    l.head=new REXP(XT_VECTOR,sv,l.head.attr);
 		    l.head.attr=null;
-		};
+		    }; */
 	    };
 	    return o;
 	};
-	if (xt==XT_STR) {
+	if (xt==XT_ARRAY_STR) {
+	    Vector v=new Vector();
+	    while(o<eox) {
+		REXP xx=new REXP();
+		o=parseREXP(xx,buf,o);
+		v.addElement(xx.asString());
+	    }
+	    if (o!=eox) {
+		System.out.println("Warning: int vector SEXP size mismatch\n");
+		o=eox;
+	    }
+	    String sa[] = new String[v.size()];
+	    int i = 0; while (i < sa.length) { sa[i]=(String)v.get(i); i++; }
+	    x.cont=sa;
+	    return o;
+	}
+	if (xt==XT_STR||xt==XT_SYMNAME) {
 	    int i=o;
 	    while (buf[i]!=0 && i<eox) i++;
 	    try {
@@ -272,6 +350,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    o=eox;
 	    return o;
 	};
+	/*
 	if (xt==XT_LIST || xt==XT_LANG) {
 	    RList rl=new RList();
 	    rl.head=new REXP();
@@ -290,7 +369,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    };
 	    x.cont=rl;
 	    return o;
-	};
+	    };*/
 
 	if (xt==XT_SYM) {
 	    REXP sym=new REXP();
@@ -322,6 +401,12 @@ public class REXP extends Object implements java.io.Serializable {
 	    return o;
 	}
 
+	if (xt==XT_S4) {
+	    x.cont=null;
+	    o=eox;
+	    return o;
+	}
+
 	x.cont=null;
 	o=eox;
 	System.out.println("unhandled type: "+xt);
@@ -332,41 +417,51 @@ public class REXP extends Object implements java.io.Serializable {
         <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_[ARRAY_]STR are supported! All other types will return 4 which is the size of the header.
         @return length of the REXP including headers (4 or 8 bytes)*/
     public int getBinaryLength() {
-	int l=0;
-	switch (Xt) {
-	case XT_INT: l=4; break;
-	case XT_DOUBLE: l=8; break;
-	case XT_STR: l=(cont==null)?1:((String)cont).length()+1; break;
-	case XT_ARRAY_INT: l=(cont==null)?0:((int[])cont).length*4; break;
-	case XT_ARRAY_DOUBLE: l=(cont==null)?0:((double[])cont).length*8; break;
-	case XT_ARRAY_STR:
-	  if (cachedBinaryLength<0) { // if there's no cache, we have to count..
-	    if (cont==null) cachedBinaryLength=4; else {
-	      String sa[]=(String[])cont;
-	      int i=0, io=0;
-	      while (i<sa.length) {
-		if (sa[i]!=null) {
-		  try {
-		    byte b[]=sa[i].getBytes(Rconnection.transferCharset);
-		    io+=b.length;
-		    b=null;
-		  } catch (java.io.UnsupportedEncodingException uex) {
-		    // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
-		  }
-		}
-		io++;
-		i++;
-	      }
-	      while ((io&3)!=0) io++;
-	      cachedBinaryLength=io+4;
-	      if (cachedBinaryLength>0xfffff0)
-		cachedBinaryLength+=4;
-	    }
-	  }
-	  return (int)cachedBinaryLength;
-	} // switch
+		int l=0;
+		boolean hasAttr = false;
+		RList al = null;
+		if (attr!=null) al = attr.asList();
+		if (al != null && al.size()>0) hasAttr=true;
+		if (hasAttr) l+=attr.getBinaryLength();
+		switch (Xt) {
+			case XT_INT: l+=4; break;
+			case XT_DOUBLE: l+=8; break;
+			case XT_STR:
+			case XT_SYMNAME:
+				l+=(cont==null)?1:((String)cont).length()+1;
+				if ((l&3)>0) l=l-(l&3)+4;
+					break;
+			case XT_ARRAY_INT: l+=(cont==null)?0:((int[])cont).length*4; break;
+			case XT_ARRAY_DOUBLE: l+=(cont==null)?0:((double[])cont).length*8; break;
+			case XT_ARRAY_CPLX: l+=(cont==null)?0:((double[])cont).length*8; break;
+			case XT_ARRAY_STR:
+				if (cachedBinaryLength<0) { // if there's no cache, we have to count..
+					if (cont==null) cachedBinaryLength=4; else {
+						String sa[]=(String[])cont;
+						int i=0, io=0;
+						while (i<sa.length) {
+							if (sa[i]!=null) {
+								try {
+									byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+									io+=b.length;
+									b=null;
+								} catch (java.io.UnsupportedEncodingException uex) {
+									// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+								}
+							}
+							io++;
+							i++;
+						}
+						while ((io&3)!=0) io++;
+						cachedBinaryLength=io+4;
+						if (cachedBinaryLength>0xfffff0)
+							cachedBinaryLength+=4;
+					}
+				}
+				return l+(int)cachedBinaryLength;
+		} // switch
         if (l>0xfffff0) l+=4; // large data need 4 more bytes
-	return l+4;
+		return l+4; // add the header
     }
 
     /** Stores the REXP in its binary (ready-to-send) representation including header into a buffer and returns the index of the byte behind the REXP.
@@ -375,54 +470,83 @@ public class REXP extends Object implements java.io.Serializable {
         @param off offset of the first byte where to store the REXP
         @return the offset of the first byte behind the stored REXP */
     public int getBinaryRepresentation(byte[] buf, int off) {
-	int myl=getBinaryLength();
+		int myl=getBinaryLength();
         boolean isLarge=(myl>0xfffff0);
-        Rtalk.setHdr(Xt,myl-(isLarge?8:4),buf,off);
+		boolean hasAttr = false;
+		RList al = null;
+		if (attr!=null) al = attr.asList();
+		if (al != null && al.size()>0) hasAttr=true;
+        Rtalk.setHdr(Xt|(hasAttr?XT_HAS_ATTR:0),myl-(isLarge?8:4),buf,off);
         off+=(isLarge?8:4);
-	switch (Xt) {
-	case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
-	case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
-	case XT_ARRAY_INT:
-	    if (cont!=null) {
-		int ia[]=(int[])cont;
-		int i=0, io=off;
-		while(i<ia.length) {
-		    Rtalk.setInt(ia[i++],buf,io); io+=4;
+		if (hasAttr) off=attr.getBinaryRepresentation(buf, off);
+		switch (Xt) {
+			case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
+			case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
+			case XT_ARRAY_INT:
+				if (cont!=null) {
+					int ia[]=(int[])cont;
+					int i=0, io=off;
+					while(i<ia.length) {
+						Rtalk.setInt(ia[i++],buf,io); io+=4;
+					}
+				}
+				break;
+			case XT_ARRAY_DOUBLE:
+				if (cont!=null) {
+					double da[]=(double[])cont;
+					int i=0, io=off;
+					while(i<da.length) {
+						Rtalk.setLong(Double.doubleToLongBits(da[i++]),buf,io); io+=8;
+					}
+				}
+				break;
+			case XT_ARRAY_STR:
+				if (cont!=null) {
+					String sa[]=(String[])cont;
+					int i=0, io=off;
+					while (i<sa.length) {
+						if (sa[i]!=null) {
+							try {
+								byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+								System.arraycopy(b,0,buf,io,b.length);
+								io+=b.length;
+								b=null;
+							} catch (java.io.UnsupportedEncodingException uex) {
+								// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+							}
+						}
+						buf[io++]=0;
+						i++;
+					}
+					i=io-off;
+					while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
+				}
+				break;
+			case XT_LIST:
+			case XT_LIST_NOTAG:
+			case XT_LIST_TAG:
+				// FIXME: implement me
+				break;
+			case XT_SYMNAME:
+			case XT_STR:
+				if (cont!=null) {
+					String s = (String)cont;
+					int io=off;
+					try {
+						byte b[]=s.getBytes(Rconnection.transferCharset);
+						System.arraycopy(b,0,buf,io,b.length);
+						io+=b.length;
+						b=null;
+					} catch (java.io.UnsupportedEncodingException uex) {
+						// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+					}
+					buf[io++]=0;
+					int i=io-off;
+					while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
+				}
+				break;
 		}
-	    }
-	    break;
-	case XT_ARRAY_DOUBLE:
-	    if (cont!=null) {
-		double da[]=(double[])cont;
-		int i=0, io=off;
-		while(i<da.length) {
-		    Rtalk.setLong(Double.doubleToLongBits(da[i++]),buf,io); io+=8;
-		}
-	    }
-	    break;
-	case XT_ARRAY_STR:
-	  if (cont!=null) {
-	    String sa[]=(String[])cont;
-	    int i=0, io=off;
-	    while (i<sa.length) {
-	      if (sa[i]!=null) {
-		try {
-		  byte b[]=sa[i].getBytes(Rconnection.transferCharset);
-		  System.arraycopy(b,0,buf,io,b.length);
-		  io+=b.length;
-		  b=null;
-		} catch (java.io.UnsupportedEncodingException uex) {
-		  // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
-		}
-	      }
-	      buf[io++]=0;
-	      i++;
-	    }
-	    i=io-off;
-	    while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
-	  }
-	}
-	return off+myl;
+		return off+myl;
     }
 
     /** returns human-readable name of the xpression type as string. Arrays are denoted by a trailing asterisk (*).
@@ -438,22 +562,91 @@ public class REXP extends Object implements java.io.Serializable {
 	if (xt==XT_ARRAY_STR) return "STRING*";
 	if (xt==XT_ARRAY_DOUBLE) return "REAL*";
 	if (xt==XT_ARRAY_BOOL) return "BOOL*";
+	if (xt==XT_ARRAY_CPLX) return "COMPLEX*";
 	if (xt==XT_SYM) return "SYMBOL";
+	if (xt==XT_SYMNAME) return "SYMNAME";
 	if (xt==XT_LANG) return "LANG";
 	if (xt==XT_LIST) return "LIST";
+	if (xt==XT_LIST_TAG) return "LIST+T";
+	if (xt==XT_LIST_NOTAG) return "LIST/T";
 	if (xt==XT_CLOS) return "CLOS";
+	if (xt==XT_RAW) return "CLOS";
+	if (xt==XT_S4) return "S4";
 	if (xt==XT_VECTOR) return "VECTOR";
 	if (xt==XT_FACTOR) return "FACTOR";
 	if (xt==XT_UNKNOWN) return "UNKNOWN";
 	return "<unknown "+xt+">";
     }	
 
-    /** get content of the REXP as string (if it is one)
-        @return string content or <code>null</code> if the REXP is no string */
+    /** get content of the REXP as string (if it is either a string or a symbol name). If the length of the character vector is more tahn one, the first element is returned.
+        @return string content or <code>null</code> if the REXP is no string or symbol name*/
     public String asString() {
-        return (Xt==XT_STR)?(String)cont:null;
+        return (Xt==XT_STR||Xt==XT_SYMNAME)?(String)cont:((Xt==XT_ARRAY_STR && cont!=null &&
+					   ((String[])cont).length>0)?((String[])cont)[0]:null);
     }
+    
+	/** tests whether this <code>REXP</code> is a character vector (aka string array)
+		@return <code>true</code> if this REXP is a character vector
+		@since Rserve 0.5
+		*/
+	public boolean isCharacter() {
+		return (Xt==XT_STR||Xt==XT_ARRAY_STR);
+	}
 
+	/** tests whether this <code>REXP</code> is a numeric vector (double or integer array or scalar)
+		@return <code>true</code> if this REXP is a numeric vector
+		@since Rserve 0.5
+		*/
+	public boolean isNumeric() {
+		return (Xt==XT_ARRAY_DOUBLE||Xt==XT_ARRAY_INT||Xt==XT_DOUBLE||Xt==XT_INT);
+	}
+	
+	/** tests whether this <code>REXP</code> is a symbol
+		@return <code>true</code> if this REXP is a symbol
+		@since Rserve 0.5
+		*/
+	public boolean isSymbol() {
+		return (Xt==XT_SYM||Xt==XT_SYMNAME);
+	}
+	
+	/** tests whether this <code>REXP</code> is NULL (either a literal nil object or the payload is <code>null</code>)
+		@return <code>true</code> if this REXP is NULL
+		@since Rserve 0.5
+		*/
+	public boolean isNull() {
+		return (Xt==XT_NULL || cont==null);
+	}
+	
+	/** tests whether this <code>REXP</code> is a logical vector (aka boolean array or scalar)
+		@return <code>true</code> if this REXP is a logical vector
+		@since Rserve 0.5
+		*/
+	public boolean isLogical() {
+		return (Xt==XT_BOOL || Xt==XT_ARRAY_BOOL);
+	}
+	
+	/** tests whether this <code>REXP</code> is a vector of complex numbers
+		@return <code>true</code> if this REXP is a vector of complex numbers
+		@since Rserve 0.5
+		*/
+	public boolean isComplex() {
+		return (Xt==XT_ARRAY_CPLX);
+	}
+	
+	/** tests whether this <code>REXP</code> is a raw vector
+		@return <code>true</code> if this REXP is a raw vector
+		@since Rserve 0.5
+		*/
+	public boolean isRaw() {
+		return (Xt==XT_RAW);
+	}
+	
+    /** get content of the REXP as an array of strings (if it is a character vector).
+        @return string content or <code>null</code> if the REXP is no string or symbol name*/
+    public String[] asStringArray() {
+		return (Xt==XT_STR)?(new String[] { (String) cont }):((Xt==XT_ARRAY_STR)?(String[])cont:null);
+    }
+    
     /** get content of the REXP as int (if it is one)
         @return int content or 0 if the REXP is no integer */
     public int asInt() {
@@ -461,24 +654,25 @@ public class REXP extends Object implements java.io.Serializable {
             int i[]=(int[])cont;
             if (i!=null && i.length>0) return i[0];
         }
+		if (Xt==XT_ARRAY_DOUBLE || Xt==XT_DOUBLE) return (int)asDouble();
         return (Xt==XT_INT)?((Integer)cont).intValue():0;
     }
 
     /** get content of the REXP as double (if it is one)
-        @return double content or 0.0 if the REXP is no double */
+        @return double content or NaN if the REXP is no double */
     public double asDouble() {
         if (Xt==XT_ARRAY_DOUBLE) {
             double d[]=(double[])cont;
             if (d!=null && d.length>0) return d[0];
         }
-        return (Xt==XT_DOUBLE)?((Double)cont).doubleValue():0.0;
+        return (Xt==XT_DOUBLE)?((Double)cont).doubleValue():Double.NaN;
     }
 
-    /** get content of the REXP as {@link Vector} (if it is one)
-        @return Vector content or <code>null</code> if the REXP is no Vector */
-    public Vector asVector() {
-        return (Xt==XT_VECTOR)?(Vector)cont:null;
-    }
+    /** synonym for {@link asList}
+        @return a list or <code>null</code>
+		@deprecated use {@link asList} instead
+		*/
+    public RList asVector() { return asList(); }
 
     /** get content of the REXP as {@link RFactor} (if it is one)
         @return {@link RFactor} content or <code>null</code> if the REXP is no factor */
@@ -486,10 +680,34 @@ public class REXP extends Object implements java.io.Serializable {
         return (Xt==XT_FACTOR)?(RFactor)cont:null;
     }
 
+	/** tests whether this <code>REXP</code> is a list (any type, i.e. dotted-pair list or generic vector)
+		@return <code>true</code> if this REXP is a list */
+	public boolean isList() {
+		return (Xt==XT_VECTOR||Xt==XT_LIST||Xt==XT_LIST_TAG||Xt==XT_LIST_NOTAG);
+	}
+
+	/** returns <code>true</code> if the value is boolean and true
+		@return <code>true</code> if the value is boolean and true */
+	public boolean isTrue() {
+		return (Xt==XT_BOOL && cont!=null)?((RBool)cont).isTRUE():false;
+	}
+
+	/** returns <code>true</code> if the value is boolean and false
+		@return <code>true</code> if the value is boolean and false */
+	public boolean isFalse() {
+		return (Xt==XT_BOOL && cont!=null)?((RBool)cont).isFALSE():false;
+	}
+	
+	/** tests whether this <code>REXP</code> is a factor
+		@return <code>true</code> if this <code>REXP</code> is a factor */
+	public boolean isFactor() {
+		return (Xt==XT_FACTOR);
+	}
+
     /** get content of the REXP as {@link RList} (if it is one)
         @return {@link RList} content or <code>null</code> if the REXP is no list */
     public RList asList() {
-        return (Xt==XT_LIST)?(RList)cont:null;
+        return (Xt==XT_VECTOR||Xt==XT_LIST||Xt==XT_LIST_TAG||Xt==XT_LIST_NOTAG)?(RList)cont:null;
     }
 
     /** get content of the REXP as {@link RBool} (if it is one)
@@ -536,7 +754,7 @@ public class REXP extends Object implements java.io.Serializable {
         @return 2D array of doubles in the form double[rows][cols] or <code>null</code> if the contents is no 2-dimensional matrix of doubles */
     public double[][] asDoubleMatrix() {
         if (Xt!=XT_ARRAY_DOUBLE || attr==null || attr.Xt!=XT_LIST) return null;
-        REXP dim=attr.asList().getHead();
+        REXP dim=getAttribute("dim");
         if (dim==null || dim.Xt!=XT_ARRAY_INT) return null; // we need dimension attr
         int[] ds=dim.asIntArray();
         if (ds==null || ds.length!=2) return null; // matrix must be 2-dimensional
@@ -620,14 +838,34 @@ public class REXP extends Object implements java.io.Serializable {
 	    sb.append("\"");
 	    sb.append((String)cont);
 	    sb.append("\"");
-	};
-	if (Xt==XT_SYM) {
+	}
+	if (Xt==XT_ARRAY_STR) {
+	    String []s=(String[])cont;
+	    if (s == null) sb.append("NULL"); else
+		for(int i=0; i<s.length; i++) {
+		    sb.append("\""+s[i]+"\"");
+		    if (i<s.length-1) sb.append(", ");
+		}
+	}
+	if (Xt==XT_SYM||Xt==XT_SYMNAME) {
 	    sb.append((String)cont);
 	};
-	if (Xt==XT_LIST || Xt==XT_LANG) {
+	if (Xt==XT_LIST || Xt==XT_LANG || Xt==XT_LIST_TAG||Xt==XT_LIST_NOTAG) {
 	    RList l=(RList)cont;
-	    sb.append(l.head); sb.append(" <-> ");
-	    sb.append(l.body);
+	    if (l==null) sb.append("NULL list"); else {
+		sb.append("{");
+		if (l.isNamed())
+		    for(int i=0; i<l.size(); i++) {
+			sb.append(l.keyAt(i)+"="+l.at(i).toString());
+			if (i<l.size()-1) sb.append(", ");
+		    }
+		else
+		    for(int i=0; i<l.size(); i++) {
+			sb.append(l.at(i).toString());
+			if (i<l.size()-1) sb.append(", ");
+		    }
+		sb.append("}");	    
+	    }
 	};
 	if (Xt==XT_UNKNOWN) sb.append((Integer)cont);
 	sb.append("]");
