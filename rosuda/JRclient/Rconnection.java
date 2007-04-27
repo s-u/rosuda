@@ -255,13 +255,14 @@ public class Rconnection {
         @return <code>true</code> on success, otherwise <code>false</code>
         */
     public void assign(String sym, REXP r) throws RSrvException {
-		if (!connected || rt==null)
-			throw new RSrvException(this,"Not connected");
-		int rl=r.getBinaryLength();
+	if (!connected || rt==null)
+	    throw new RSrvException(this,"Not connected");
+	int rl=r.getBinaryLength();
         byte[] symn=sym.getBytes();
         int sl=symn.length+1;
         if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the symbol length is divisible by 4
         byte[] rq=new byte[sl+rl+((rl>0xfffff0)?12:8)];
+	System.out.println(" expected length: "+rl+", total "+rq.length);
         int ic;
         for(ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
         while(ic<sl) { rq[ic+4]=0; ic++; }; // pad with 0

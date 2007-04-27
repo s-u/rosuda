@@ -28,21 +28,31 @@ public class REXP extends Object implements java.io.Serializable {
     /** xpression type: S4 object
 	@since Rserve 0.5 */
     public static final int XT_S4=7;
-    /** xpression type: Vector */
+    /** xpression type: generic vector (RList) */
     public static final int XT_VECTOR=16;
-    /** xpression type: RList */
+    /** xpression type: dotted-pair list (RList) */
     public static final int XT_LIST=17;
     /** xpression type: closure (there is no java class for that type (yet?). currently the body of the closure is stored in the content part of the REXP. Please note that this may change in the future!) */
     public static final int XT_CLOS=18;
     /** xpression type: symbol name
 	@since Rserve 0.5 */
     public static final int XT_SYMNAME=19;
-    /** xpression type: list (w/o tags)
+    /** xpression type: dotted-pair list (w/o tags)
 	@since Rserve 0.5 */
     public static final int XT_LIST_NOTAG=20;
-    /** xpression type: list (w tags)
+    /** xpression type: dotted-pair list (w tags)
 	@since Rserve 0.5 */
     public static final int XT_LIST_TAG=21;
+    /** xpression type: language list (w/o tags)
+	@since Rserve 0.5 */
+    public static final int XT_LANG_NOTAG=22;
+    /** xpression type: language list (w tags)
+	@since Rserve 0.5 */
+    public static final int XT_LANG_TAG=23;
+    /** xpression type: expression vector */
+    public static final int XT_VECTOR_EXP=26;
+    /** xpression type: string vector */
+    public static final int XT_VECTOR_STR=27;
     /** xpression type: int[] */
     public static final int XT_ARRAY_INT=32;
     /** xpression type: double[] */
@@ -152,6 +162,43 @@ public class REXP extends Object implements java.io.Serializable {
 		*/
     public int getType() {
         return Xt;
+    }
+
+    /** return the length on the REXP. If the REXP is scalar, the length is 1, for array and vector types the length is the number of elements. For all other types the length is zero.
+	@return length of the REXP */
+    public int length() {
+	switch (Xt) {
+	case XT_INT:
+	case XT_DOUBLE:
+	case XT_STR:
+	case XT_SYM:
+	case XT_SYMNAME:
+	    return 1;
+	case XT_VECTOR:
+	case XT_LIST:
+	case XT_LIST_TAG:
+	case XT_LIST_NOTAG:
+	case XT_LANG_TAG:
+	case XT_LANG_NOTAG:
+	case XT_VECTOR_EXP:
+	    return (asList()==null)?0:asList().size();
+	case XT_ARRAY_INT:
+	    return (cont==null)?0:((int[])cont).length;
+	case XT_ARRAY_DOUBLE:
+	    return (cont==null)?0:((double[])cont).length;
+	case XT_ARRAY_CPLX:
+	    return (cont==null)?0:((double[])cont).length/2;
+	case XT_ARRAY_BOOL:
+	    return (cont==null)?0:((RBool[])cont).length;
+	case XT_RAW:
+	    return (cont==null)?0:((byte[])cont).length;
+	case XT_ARRAY_STR:
+	case XT_VECTOR_STR:
+	    return (cont==null)?0:((String[])cont).length;
+	case XT_FACTOR:
+	    return (cont==null)?0:((RFactor)cont).size();
+	}
+	return 0;
     }
     
     /** parses byte buffer for binary representation of xpressions - read one xpression slot (descends recursively for aggregated xpressions such as lists, vectors etc.)
@@ -304,7 +351,7 @@ public class REXP extends Object implements java.io.Serializable {
 		REXP nam=x.getAttribute("names");
 		RList l = new RList(v, nam.asStringArray());
 		x.cont=l;
-		x.Xt=XT_LIST;
+		//x.Xt=XT_LIST;
 		/*
 		REXP nam = l.at("names");
 		l.head=((RList)x.attr.cont).head;
@@ -322,8 +369,8 @@ public class REXP extends Object implements java.io.Serializable {
 	    };
 	    return o;
 	};
-	if (xt==XT_ARRAY_STR) {
-	    Vector v=new Vector();
+	if (xt==XT_VECTOR_STR) {
+	    RList v=new RList();
 	    while(o<eox) {
 		REXP xx=new REXP();
 		o=parseREXP(xx,buf,o);
@@ -417,51 +464,103 @@ public class REXP extends Object implements java.io.Serializable {
         <p>Please note that currently only XT_[ARRAY_]INT, XT_[ARRAY_]DOUBLE and XT_[ARRAY_]STR are supported! All other types will return 4 which is the size of the header.
         @return length of the REXP including headers (4 or 8 bytes)*/
     public int getBinaryLength() {
-		int l=0;
-		boolean hasAttr = false;
-		RList al = null;
-		if (attr!=null) al = attr.asList();
-		if (al != null && al.size()>0) hasAttr=true;
-		if (hasAttr) l+=attr.getBinaryLength();
-		switch (Xt) {
-			case XT_INT: l+=4; break;
-			case XT_DOUBLE: l+=8; break;
-			case XT_STR:
-			case XT_SYMNAME:
-				l+=(cont==null)?1:((String)cont).length()+1;
+	int l=0;
+	int rxt=Xt;
+	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
+	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
+	System.out.print("len["+xtName(Xt)+"/"+xtName(rxt)+"] ");
+	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
+	// adjust "names" attribute for vectors
+	if (Xt==XT_VECTOR && asList()!=null && asList().isNamed())
+	    setAttribute("names",new REXP(asList().keys()));
+	boolean hasAttr = false;
+	RList al = null;
+	if (attr!=null) al = attr.asList();
+	if (al != null && al.size()>0) hasAttr=true;
+	if (hasAttr) {
+	    System.out.println(" - descent to attr\n");
+	    l+=attr.getBinaryLength();
+	}
+	switch (rxt) {
+		case XT_NULL:
+		case XT_S4:
+		    break;
+		case XT_INT: l+=4; break;
+		case XT_DOUBLE: l+=8; break;
+		case XT_STR:
+		case XT_SYMNAME:
+		    l+=(cont==null)?1:((String)cont).length()+1;
+		    if ((l&3)>0) l=l-(l&3)+4;
+		    break;
+		case XT_ARRAY_INT: l+=(cont==null)?0:((int[])cont).length*4; break;
+		case XT_ARRAY_DOUBLE: l+=(cont==null)?0:((double[])cont).length*8; break;
+		case XT_ARRAY_CPLX: l+=(cont==null)?0:((double[])cont).length*8; break;
+		case XT_LIST_TAG:
+		case XT_LIST_NOTAG:
+		case XT_LIST:
+		case XT_VECTOR:
+		    if (asList()!=null) {
+			RList lst = asList();
+			int i=0;
+			while (i<lst.size()) {
+			    REXP x = lst.at(i);
+			    l += (x==null)?4:x.getBinaryLength();
+			    if (rxt==XT_LIST_TAG) {
+				int pl=l;
+				String s = lst.keyAt(i);
+				l+=4; // header for a symbol
+				l+=(s==null)?1:(s.length()+1);
 				if ((l&3)>0) l=l-(l&3)+4;
-					break;
-			case XT_ARRAY_INT: l+=(cont==null)?0:((int[])cont).length*4; break;
-			case XT_ARRAY_DOUBLE: l+=(cont==null)?0:((double[])cont).length*8; break;
-			case XT_ARRAY_CPLX: l+=(cont==null)?0:((double[])cont).length*8; break;
-			case XT_ARRAY_STR:
-				if (cachedBinaryLength<0) { // if there's no cache, we have to count..
-					if (cont==null) cachedBinaryLength=4; else {
-						String sa[]=(String[])cont;
-						int i=0, io=0;
-						while (i<sa.length) {
-							if (sa[i]!=null) {
-								try {
-									byte b[]=sa[i].getBytes(Rconnection.transferCharset);
-									io+=b.length;
-									b=null;
-								} catch (java.io.UnsupportedEncodingException uex) {
-									// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
-								}
-							}
-							io++;
-							i++;
-						}
-						while ((io&3)!=0) io++;
-						cachedBinaryLength=io+4;
-						if (cachedBinaryLength>0xfffff0)
-							cachedBinaryLength+=4;
-					}
+				System.out.println("TAG length: "+(l-pl));
+			    }
+			    i++;
+			}
+			if ((l&3)>0) l=l-(l&3)+4;
+		    }
+		    break;
+
+		case XT_VECTOR_STR:
+		    if (cont!=null) {
+			String sa[] = (String[])cont;
+			int i = 0;
+			// FIXME: this is not quite true - encoding may break this
+			while (i<sa.length) {
+			    l+=4; // header
+			    l+=(sa[i]==null)?1:(sa[i].length()+1);
+			    if ((l&3)>0) l=l-(l&3)+4;
+			    i++;
+			}
+			break;
+		    }
+		case XT_ARRAY_STR:
+		    if (cachedBinaryLength<0) { // if there's no cache, we have to count..
+			if (cont==null) cachedBinaryLength=4; else {
+			    String sa[]=(String[])cont;
+			    int i=0, io=0;
+			    while (i<sa.length) {
+				if (sa[i]!=null) {
+				    try {
+					byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+					io+=b.length;
+					b=null;
+				    } catch (java.io.UnsupportedEncodingException uex) {
+					// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+				    }
 				}
-				return l+(int)cachedBinaryLength;
+				io++;
+				i++;
+			    }
+			    while ((io&3)!=0) io++;
+			    cachedBinaryLength=io+4;
+			    if (cachedBinaryLength>0xfffff0)
+				cachedBinaryLength+=4;
+			}
+		    }
+		    return l+(int)cachedBinaryLength;
 		} // switch
         if (l>0xfffff0) l+=4; // large data need 4 more bytes
-		return l+4; // add the header
+	System.out.println("len:"+(l+4)+" "+xtName(rxt)+"/"+xtName(Xt)+" "+cont);
+	return l+4; // add the header
     }
 
     /** Stores the REXP in its binary (ready-to-send) representation including header into a buffer and returns the index of the byte behind the REXP.
@@ -470,83 +569,120 @@ public class REXP extends Object implements java.io.Serializable {
         @param off offset of the first byte where to store the REXP
         @return the offset of the first byte behind the stored REXP */
     public int getBinaryRepresentation(byte[] buf, int off) {
-		int myl=getBinaryLength();
+	int myl=getBinaryLength();
         boolean isLarge=(myl>0xfffff0);
-		boolean hasAttr = false;
-		RList al = null;
-		if (attr!=null) al = attr.asList();
-		if (al != null && al.size()>0) hasAttr=true;
-        Rtalk.setHdr(Xt|(hasAttr?XT_HAS_ATTR:0),myl-(isLarge?8:4),buf,off);
+	boolean hasAttr = false;
+	RList al = null;
+	if (attr!=null) al = attr.asList();
+	if (al != null && al.size()>0) hasAttr=true;
+	int rxt=Xt, ooff=off;
+	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
+	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
+	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
+	System.out.println("@"+off+": "+xtName(rxt)+"/"+xtName(Xt)+" "+cont+" ("+myl+"/"+buf.length+") att="+hasAttr);
+        Rtalk.setHdr(rxt|(hasAttr?XT_HAS_ATTR:0),myl-(isLarge?8:4),buf,off);
         off+=(isLarge?8:4);
-		if (hasAttr) off=attr.getBinaryRepresentation(buf, off);
-		switch (Xt) {
-			case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
-			case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
-			case XT_ARRAY_INT:
-				if (cont!=null) {
-					int ia[]=(int[])cont;
-					int i=0, io=off;
-					while(i<ia.length) {
-						Rtalk.setInt(ia[i++],buf,io); io+=4;
-					}
-				}
-				break;
-			case XT_ARRAY_DOUBLE:
-				if (cont!=null) {
-					double da[]=(double[])cont;
-					int i=0, io=off;
-					while(i<da.length) {
-						Rtalk.setLong(Double.doubleToLongBits(da[i++]),buf,io); io+=8;
-					}
-				}
-				break;
-			case XT_ARRAY_STR:
-				if (cont!=null) {
-					String sa[]=(String[])cont;
-					int i=0, io=off;
-					while (i<sa.length) {
-						if (sa[i]!=null) {
-							try {
-								byte b[]=sa[i].getBytes(Rconnection.transferCharset);
-								System.arraycopy(b,0,buf,io,b.length);
-								io+=b.length;
-								b=null;
-							} catch (java.io.UnsupportedEncodingException uex) {
-								// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
-							}
-						}
-						buf[io++]=0;
-						i++;
-					}
-					i=io-off;
-					while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
-				}
-				break;
-			case XT_LIST:
-			case XT_LIST_NOTAG:
-			case XT_LIST_TAG:
-				// FIXME: implement me
-				break;
-			case XT_SYMNAME:
-			case XT_STR:
-				if (cont!=null) {
-					String s = (String)cont;
-					int io=off;
-					try {
-						byte b[]=s.getBytes(Rconnection.transferCharset);
-						System.arraycopy(b,0,buf,io,b.length);
-						io+=b.length;
-						b=null;
-					} catch (java.io.UnsupportedEncodingException uex) {
-						// FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
-					}
-					buf[io++]=0;
-					int i=io-off;
-					while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
-				}
-				break;
+	if (hasAttr) off=attr.getBinaryRepresentation(buf, off);
+	System.out.println("pre-switch@"+off);
+	switch (rxt) {
+	case XT_S4:
+	case XT_NULL:
+	    break;
+	case XT_INT: Rtalk.setInt(asInt(),buf,off); break;
+	case XT_DOUBLE: Rtalk.setLong(Double.doubleToLongBits(asDouble()),buf,off); break;
+	case XT_ARRAY_INT:
+	    if (cont!=null) {
+		int ia[]=(int[])cont;
+		int i=0, io=off;
+		while(i<ia.length) {
+		    Rtalk.setInt(ia[i++],buf,io); io+=4;
 		}
-		return off+myl;
+	    }
+	    break;
+	case XT_ARRAY_DOUBLE:
+	    if (cont!=null) {
+		double da[]=(double[])cont;
+		int i=0, io=off;
+		while(i<da.length) {
+		    Rtalk.setLong(Double.doubleToLongBits(da[i++]),buf,io); io+=8;
+		}
+	    }
+	    break;
+	case XT_ARRAY_STR:
+	    if (cont!=null) {
+		String sa[]=(String[])cont;
+		int i=0, io=off;
+		while (i<sa.length) {
+		    if (sa[i]!=null) {
+			try {
+			    byte b[]=sa[i].getBytes(Rconnection.transferCharset);
+			    System.arraycopy(b,0,buf,io,b.length);
+			    io+=b.length;
+			    b=null;
+			} catch (java.io.UnsupportedEncodingException uex) {
+			    // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+			}
+		    }
+		    buf[io++]=0;
+		    i++;
+		}
+		i=io-off;
+		while ((i&3)!=0) { buf[io++]=1; i++; } // padding if necessary..
+	    }
+	    break;
+	case XT_LIST_TAG:
+	case XT_LIST_NOTAG:
+	case XT_LIST:
+	case XT_VECTOR:
+	    {
+		int io = off;
+		if (asList()!=null) {
+		    RList lst = asList();
+		    int i=0;
+		    while (i<lst.size()) {
+			REXP x = lst.at(i);
+			if (x==null) x=new REXP(XT_NULL, null);
+			io = x.getBinaryRepresentation(buf, io);
+			if (rxt==XT_LIST_TAG)
+			    io = (new REXP(XT_SYMNAME, lst.keyAt(i))).getBinaryRepresentation(buf, io);
+			i++;
+		    }
+		}
+		System.out.println("io="+io+", expected: "+(ooff+myl));
+	    }
+	    break;
+	    
+	case XT_VECTOR_STR:
+	    if (cont!=null) {
+		String sa[]=(String[])cont;
+		int i=0, io=off;
+		while (i<sa.length)
+		    io = (new REXP(XT_STR, sa[i++])).getBinaryRepresentation(buf, io);
+	    }
+	    break;
+	case XT_SYMNAME:
+	case XT_STR:
+	    getStringBinaryRepresentation(buf, off, (String)cont);
+	    break;
+	}
+	return ooff+myl;
+    }
+
+    public static int getStringBinaryRepresentation(byte[] buf, int off, String s) {
+	if (s==null) s="";
+	int io=off;
+	try {
+	    byte b[]=s.getBytes(Rconnection.transferCharset);
+	    System.out.println("<str> @"+off+", len "+b.length+" (cont "+buf.length+") \""+s+"\"");
+	    System.arraycopy(b,0,buf,io,b.length);
+	    io+=b.length;
+	    b=null;
+	} catch (java.io.UnsupportedEncodingException uex) {
+	    // FIXME: we should so something ... so far we hope noone's gonna mess with the encoding
+	}
+	buf[io++]=0;
+	while ((io&3)!=0) buf[io++]=0; // padding if necessary..
+	return io;
     }
 
     /** returns human-readable name of the xpression type as string. Arrays are denoted by a trailing asterisk (*).
@@ -569,10 +705,14 @@ public class REXP extends Object implements java.io.Serializable {
 	if (xt==XT_LIST) return "LIST";
 	if (xt==XT_LIST_TAG) return "LIST+T";
 	if (xt==XT_LIST_NOTAG) return "LIST/T";
+	if (xt==XT_LANG_TAG) return "LANG+T";
+	if (xt==XT_LANG_NOTAG) return "LANG/T";
 	if (xt==XT_CLOS) return "CLOS";
-	if (xt==XT_RAW) return "CLOS";
+	if (xt==XT_RAW) return "RAW";
 	if (xt==XT_S4) return "S4";
 	if (xt==XT_VECTOR) return "VECTOR";
+	if (xt==XT_VECTOR_STR) return "STRING[]";
+	if (xt==XT_VECTOR_EXP) return "EXPR[]";
 	if (xt==XT_FACTOR) return "FACTOR";
 	if (xt==XT_UNKNOWN) return "UNKNOWN";
 	return "<unknown "+xt+">";
@@ -581,7 +721,7 @@ public class REXP extends Object implements java.io.Serializable {
     /** get content of the REXP as string (if it is either a string or a symbol name). If the length of the character vector is more tahn one, the first element is returned.
         @return string content or <code>null</code> if the REXP is no string or symbol name*/
     public String asString() {
-        return (Xt==XT_STR||Xt==XT_SYMNAME)?(String)cont:((Xt==XT_ARRAY_STR && cont!=null &&
+        return (Xt==XT_STR||Xt==XT_SYMNAME)?(String)cont:(((Xt==XT_ARRAY_STR||Xt==XT_VECTOR_STR) && cont!=null &&
 					   ((String[])cont).length>0)?((String[])cont)[0]:null);
     }
     
@@ -590,7 +730,7 @@ public class REXP extends Object implements java.io.Serializable {
 		@since Rserve 0.5
 		*/
 	public boolean isCharacter() {
-		return (Xt==XT_STR||Xt==XT_ARRAY_STR);
+		return (Xt==XT_STR||Xt==XT_ARRAY_STR||Xt==XT_VECTOR_STR);
 	}
 
 	/** tests whether this <code>REXP</code> is a numeric vector (double or integer array or scalar)
@@ -644,7 +784,7 @@ public class REXP extends Object implements java.io.Serializable {
     /** get content of the REXP as an array of strings (if it is a character vector).
         @return string content or <code>null</code> if the REXP is no string or symbol name*/
     public String[] asStringArray() {
-		return (Xt==XT_STR)?(new String[] { (String) cont }):((Xt==XT_ARRAY_STR)?(String[])cont:null);
+		return (Xt==XT_STR)?(new String[] { (String) cont }):((Xt==XT_ARRAY_STR||Xt==XT_VECTOR_STR)?(String[])cont:null);
     }
     
     /** get content of the REXP as int (if it is one)
@@ -790,6 +930,7 @@ public class REXP extends Object implements java.io.Serializable {
 	if (Xt==XT_INT) sb.append((Integer)cont);
 	if (Xt==XT_BOOL) sb.append((RBool)cont);
 	if (Xt==XT_FACTOR) sb.append((RFactor)cont);
+	if (Xt==XT_CLOS) sb.append((REXP)cont);
 	if (Xt==XT_ARRAY_DOUBLE) {
 	    double[] d=(double[])cont;
 	    sb.append("(");
@@ -839,7 +980,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    sb.append((String)cont);
 	    sb.append("\"");
 	}
-	if (Xt==XT_ARRAY_STR) {
+	if (Xt==XT_ARRAY_STR||Xt==XT_VECTOR_STR) {
 	    String []s=(String[])cont;
 	    if (s == null) sb.append("NULL"); else
 		for(int i=0; i<s.length; i++) {
@@ -850,7 +991,7 @@ public class REXP extends Object implements java.io.Serializable {
 	if (Xt==XT_SYM||Xt==XT_SYMNAME) {
 	    sb.append((String)cont);
 	};
-	if (Xt==XT_LIST || Xt==XT_LANG || Xt==XT_LIST_TAG||Xt==XT_LIST_NOTAG) {
+	if (Xt==XT_LIST || Xt==XT_LANG || Xt==XT_LIST_TAG||Xt==XT_LIST_NOTAG||Xt==XT_LANG_TAG||Xt==XT_LANG_NOTAG) {
 	    RList l=(RList)cont;
 	    if (l==null) sb.append("NULL list"); else {
 		sb.append("{");
@@ -880,4 +1021,13 @@ public class REXP extends Object implements java.io.Serializable {
 			s.replaceAll("\"", "\\\"");
         return "\""+s+"\"";
 	}
-}   
+
+    public static REXP createDataFrame(RList l) {
+	REXP x = new REXP(XT_VECTOR, l);
+	REXP fe = l.at(0);
+	x.setAttribute("class", new REXP(XT_VECTOR_STR, new String[] { "data.frame" }));
+	x.setAttribute("row.names", new REXP(XT_ARRAY_INT, new int[] { -2147483648, -fe.length() }));
+	x.setAttribute("names", new REXP(XT_VECTOR_STR, l.keys()));
+	return x;
+    }
+}

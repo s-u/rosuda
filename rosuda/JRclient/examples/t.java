@@ -14,6 +14,26 @@ public class t {
 	    System.out.println("ok, connected, press <enter> to continue\n");
 	    System.in.read();
 
+	    {
+		RList l = new RList();
+		l.put("a",new REXP(new int[] { 0,1,2,3}));
+		l.put("b",new REXP(new double[] { 0.5,1.2,2.3,3.0}));
+		REXP x = new REXP(REXP.XT_LIST_TAG, l);
+		c.assign("x", x);
+		c.assign("y",new REXP(REXP.XT_VECTOR, l));
+		c.assign("z",REXP.createDataFrame(l));
+		c.voidEval("print(summary(z))");
+		c.voidEval("str(x)");
+		x = c.eval("x");
+		System.out.println(x);
+		x = c.eval("y");
+		System.out.println(x);
+		x = c.eval("z");
+		System.out.println(x);
+		System.exit(0);
+	    }
+		
+
 	    /*	    {
 		REXP x=c.eval("c(\"bla\",\"blu\",\"ble\")");
 		System.out.println("x="+x);

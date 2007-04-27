@@ -100,7 +100,11 @@ public class RList extends Vector implements List {
     /** returns all keys of the list
 	@return array containing all keys or <code>null</code> if list is not standartized */
     public String[] keys() {
-	return (names!=null)?(String[])names.toArray():null;
+	if (names==null) return null;
+	int i = 0;
+	String k[] = new String[names.size()];
+	while (i < k.length) { k[i] = keyAt(i); i++; };
+	return k;
     }
 
     // --- overrides that sync names
