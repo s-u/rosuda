@@ -172,7 +172,12 @@ public class Framework implements Dependent, ActionListener {
         return cvs.add(v);
     }
     
+    /** shows a variable length mismatch dialog.
+	@param name variable causing the mismatch
+	@param size of the new variable
+	@return -3 for <code>Yex</code> (create a new VarSet), -2 for <code>Cance</code> (don't create the variable), 0 for <code>No</code> (create regardless) */
     int mmDlg(final String name, final int d) {
+	if (noInteraction) return -3; /* respond "Yes" if noInteraction is set */
         
         final Frame f=new Frame("dummy");
         f.toFront();
@@ -185,7 +190,21 @@ public class Framework implements Dependent, ActionListener {
         return res;
     }
     
+    /** shows a modal dialog and waits until it is dismissed.
+	@param caption window caption
+	@param msg message string
+	@param buttons buttons to show (see {@link MsgDialog} constants for default sets of buttons)
+	@return text of the button pressed */
     public static String msgDlg(final String caption, final String msg, final String[] buttons) {
+	if (noInteraction) { /* if noInteraction is set, try to answer positively */
+	    int i=0;
+	    while (i<buttons.length) {
+		if (buttons[i]!=null && (buttons[i].equals("OK") || buttons[i].equals("Yes")))
+		    return buttons[i];
+		i++;
+	    }
+	    return (buttons.length>0)?buttons[0]:"OK";
+	}
         final String res;
         final Frame f=new Frame("dummy");
         final MsgDialog md=new MsgDialog(f,caption,msg,buttons);
