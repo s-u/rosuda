@@ -16,3 +16,5 @@ clean:
 	rm -rf JRclient.jar org JavaDoc *~
 	make -C examples clean
 
+test:
+	make -C examples test

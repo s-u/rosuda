@@ -262,7 +262,6 @@ public class Rconnection {
         int sl=symn.length+1;
         if ((sl&3)>0) sl=(sl&0xfffffc)+4; // make sure the symbol length is divisible by 4
         byte[] rq=new byte[sl+rl+((rl>0xfffff0)?12:8)];
-	System.out.println(" expected length: "+rl+", total "+rq.length);
         int ic;
         for(ic=0;ic<symn.length;ic++) rq[ic+4]=symn[ic];
         while(ic<sl) { rq[ic+4]=0; ic++; }; // pad with 0

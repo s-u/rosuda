@@ -15,63 +15,46 @@ public class t {
 	    System.in.read();
 
 	    {
+		System.out.println("Test assigning of lists and vectors ...");
 		RList l = new RList();
 		l.put("a",new REXP(new int[] { 0,1,2,3}));
 		l.put("b",new REXP(new double[] { 0.5,1.2,2.3,3.0}));
-		REXP x = new REXP(REXP.XT_LIST_TAG, l);
-		c.assign("x", x);
-		c.assign("y",new REXP(REXP.XT_VECTOR, l));
-		c.assign("z",REXP.createDataFrame(l));
-		c.voidEval("print(summary(z))");
-		c.voidEval("str(x)");
-		x = c.eval("x");
-		System.out.println(x);
+		System.out.println("assign x=pairlist, y=vector, z=data.frame");
+		c.assign("x", new REXP(REXP.XT_LIST_TAG, l));
+		c.assign("y", new REXP(REXP.XT_VECTOR, l));
+		c.assign("z", REXP.createDataFrame(l));
+		System.out.println("pull all three back to Java");
+		REXP x = c.eval("x");
+		System.out.println("x = "+x);
 		x = c.eval("y");
-		System.out.println(x);
+		System.out.println("y = "+x);
 		x = c.eval("z");
-		System.out.println(x);
-		System.exit(0);
+		System.out.println("z = "+x);
 	    }
-		
-
-	    /*	    {
-		REXP x=c.eval("c(\"bla\",\"blu\",\"ble\")");
-		System.out.println("x="+x);
-		Vector v=(Vector)x.getContent();
-		System.out.println("v.size()="+v.size());
-		
-		int i=0;
-		while (i<v.size()) {
-		    System.out.println("v("+i+")="+((REXP)v.elementAt(i)).asString());
-		    i++;
-		}
-		System.exit(0);
-		} */
 
 	    // lowess example
 	    System.out.println("lowess: create points");
-	    double[] dataX = (double[]) c.eval("rnorm(100)").getContent();
-	    double[] dataY = (double[]) c.eval("rnorm(100)").getContent();
+	    double[] dataX = c.eval("rnorm(100)").asDoubleArray();
+	    double[] dataY = c.eval("rnorm(100)").asDoubleArray();
 	    System.out.println("lowess: assign points");
-	    c.assign("x",dataX);
-	    c.assign("y",dataY);
+	    c.assign("x", dataX);
+	    c.assign("y", dataY);
 	    System.out.println("lowess: call lowess");
-	    //RList l = c.eval("lowess(x,y)").asList();
 	    REXP xl = c.eval("lowess(x,y)");
-	    System.out.println("result = "+xl);
+	    // System.out.println("result = "+xl);
 	    RList l = xl.asList();
-	    System.out.println("list = "+l);
+	    // System.out.println("list = "+l);
 	    System.out.println("lowess: retrieve points");
-	    double[] lx = (double[]) l.at("x").getContent();
-	    double[] ly = (double[]) l.at("y").getContent();
+	    double[] lx = l.at("x").asDoubleArray();
+	    double[] ly = l.at("y").asDoubleArray();
 
 	    // matrix test
-	    System.out.println("matrix: create matrix");
+	    System.out.println("matrix: create a matrix");
 	    int m=100, n=100;
 	    double[] mat=new double[m*n];
 	    int i=0;
 	    while (i<m*n) mat[i++]=i/100;
-	    System.out.println("matrix: assign matrix");
+	    System.out.println("matrix: assign a matrix");
 	    c.assign("m",mat);
 	    c.voidEval("m<-matrix(m,"+m+","+n+")");
 	    System.out.println("matrix: cross-product");

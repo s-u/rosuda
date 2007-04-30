@@ -211,7 +211,7 @@ public class REXP extends Object implements java.io.Serializable {
 	boolean hasAtt=((buf[o]&128)!=0);
         boolean isLong=((buf[o]&64)!=0);
 	int xt=(int)(buf[o]&63);
-        System.out.println("parseREXP: type="+xt+", len="+xl+", hasAtt="+hasAtt+", isLong="+isLong);
+        //System.out.println("parseREXP: type="+xt+", len="+xl+", hasAtt="+hasAtt+", isLong="+isLong);
         if (isLong) o+=4;
         o+=4;
 	int eox=o+xl;
@@ -226,7 +226,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    x.cont=new Double(Double.longBitsToDouble(lr));
 	    o+=8;
 	    if (o!=eox) {
-		System.out.println("Warning: double SEXP size mismatch\n");
+		System.err.println("Warning: double SEXP size mismatch\n");
 		o=eox;
 	    };
 	    return o;
@@ -240,7 +240,7 @@ public class REXP extends Object implements java.io.Serializable {
 		i++;
 	    };
 	    if (o!=eox) {
-		System.out.println("Warning: double array SEXP size mismatch\n");
+		System.err.println("Warning: double array SEXP size mismatch\n");
 		o=eox;
 	    };
 	    x.cont=d;
@@ -250,7 +250,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    x.cont=new RBool(buf[o]); o++;
 	    if (o!=eox) {
                 if (eox!=o+3) // o+3 could happen if the result was aligned (1 byte data + 3 bytes padding)
-                    System.out.println("Warning: bool SEXP size mismatch\n");
+                    System.err.println("Warning: bool SEXP size mismatch\n");
 		o=eox;
 	    };
 	    return o;
@@ -284,7 +284,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    x.cont=new Integer(Rtalk.getInt(buf,o));
 	    o+=4;
 	    if (o!=eox) {
-		System.out.println("Warning: int SEXP size mismatch\n");
+		System.err.println("Warning: int SEXP size mismatch\n");
 		o=eox;
 	    };
 	    return o;
@@ -298,7 +298,7 @@ public class REXP extends Object implements java.io.Serializable {
 		i++;
 	    };
 	    if (o!=eox) {
-		System.out.println("Warning: int array SEXP size mismatch\n");
+		System.err.println("Warning: int array SEXP size mismatch\n");
 		o=eox;
 	    };
 	    x.cont=d;
@@ -329,7 +329,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    }
 	    x.cont = l;
 	    if (o!=eox) {
-		System.out.println("Warning: int list SEXP size mismatch\n");
+		System.err.println("Warning: int list SEXP size mismatch\n");
 		o=eox;
 	    }
 	    return o;
@@ -342,7 +342,7 @@ public class REXP extends Object implements java.io.Serializable {
 		v.addElement(xx);
 	    };
 	    if (o!=eox) {
-		System.out.println("Warning: int vector SEXP size mismatch\n");
+		System.err.println("Warning: int vector SEXP size mismatch\n");
 		o=eox;
 	    };
 	    x.cont=v;
@@ -377,7 +377,7 @@ public class REXP extends Object implements java.io.Serializable {
 		v.addElement(xx.asString());
 	    }
 	    if (o!=eox) {
-		System.out.println("Warning: int vector SEXP size mismatch\n");
+		System.err.println("Warning: int vector SEXP size mismatch\n");
 		o=eox;
 	    }
 	    String sa[] = new String[v.size()];
@@ -391,7 +391,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    try {
 		x.cont=new String(buf,o,i-o,Rconnection.transferCharset);
 	    } catch(Exception e) {
-		System.out.println("unable to convert string\n");
+		System.err.println("unable to convert string\n");
 		x.cont=null;
 	    };
 	    o=eox;
@@ -434,7 +434,7 @@ public class REXP extends Object implements java.io.Serializable {
 	    o=parseREXP(form,buf,o);
 	    o=parseREXP(body,buf,o);
 	    if (o!=eox) {
-		System.out.println("Warning: closure SEXP size mismatch\n");
+		System.err.println("Warning: closure SEXP size mismatch\n");
 		o=eox;
 	    }
             /* curently closures are not coded into their own objects, basically due to lack of demand. */
@@ -456,7 +456,7 @@ public class REXP extends Object implements java.io.Serializable {
 
 	x.cont=null;
 	o=eox;
-	System.out.println("unhandled type: "+xt);
+	System.err.println("unhandled type: "+xt);
 	return o;
     }
 
@@ -468,7 +468,7 @@ public class REXP extends Object implements java.io.Serializable {
 	int rxt=Xt;
 	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
 	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
-	System.out.print("len["+xtName(Xt)+"/"+xtName(rxt)+"] ");
+	//System.out.print("len["+xtName(Xt)+"/"+xtName(rxt)+"] ");
 	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
 	// adjust "names" attribute for vectors
 	if (Xt==XT_VECTOR && asList()!=null && asList().isNamed())
@@ -477,10 +477,8 @@ public class REXP extends Object implements java.io.Serializable {
 	RList al = null;
 	if (attr!=null) al = attr.asList();
 	if (al != null && al.size()>0) hasAttr=true;
-	if (hasAttr) {
-	    System.out.println(" - descent to attr\n");
+	if (hasAttr)
 	    l+=attr.getBinaryLength();
-	}
 	switch (rxt) {
 		case XT_NULL:
 		case XT_S4:
@@ -511,7 +509,7 @@ public class REXP extends Object implements java.io.Serializable {
 				l+=4; // header for a symbol
 				l+=(s==null)?1:(s.length()+1);
 				if ((l&3)>0) l=l-(l&3)+4;
-				System.out.println("TAG length: "+(l-pl));
+				// System.out.println("TAG length: "+(l-pl));
 			    }
 			    i++;
 			}
@@ -559,7 +557,7 @@ public class REXP extends Object implements java.io.Serializable {
 		    return l+(int)cachedBinaryLength;
 		} // switch
         if (l>0xfffff0) l+=4; // large data need 4 more bytes
-	System.out.println("len:"+(l+4)+" "+xtName(rxt)+"/"+xtName(Xt)+" "+cont);
+	// System.out.println("len:"+(l+4)+" "+xtName(rxt)+"/"+xtName(Xt)+" "+cont);
 	return l+4; // add the header
     }
 
@@ -579,11 +577,10 @@ public class REXP extends Object implements java.io.Serializable {
 	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
 	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
 	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
-	System.out.println("@"+off+": "+xtName(rxt)+"/"+xtName(Xt)+" "+cont+" ("+myl+"/"+buf.length+") att="+hasAttr);
+	// System.out.println("@"+off+": "+xtName(rxt)+"/"+xtName(Xt)+" "+cont+" ("+myl+"/"+buf.length+") att="+hasAttr);
         Rtalk.setHdr(rxt|(hasAttr?XT_HAS_ATTR:0),myl-(isLarge?8:4),buf,off);
         off+=(isLarge?8:4);
 	if (hasAttr) off=attr.getBinaryRepresentation(buf, off);
-	System.out.println("pre-switch@"+off);
 	switch (rxt) {
 	case XT_S4:
 	case XT_NULL:
@@ -648,7 +645,7 @@ public class REXP extends Object implements java.io.Serializable {
 			i++;
 		    }
 		}
-		System.out.println("io="+io+", expected: "+(ooff+myl));
+		// System.out.println("io="+io+", expected: "+(ooff+myl));
 	    }
 	    break;
 	    
@@ -673,7 +670,7 @@ public class REXP extends Object implements java.io.Serializable {
 	int io=off;
 	try {
 	    byte b[]=s.getBytes(Rconnection.transferCharset);
-	    System.out.println("<str> @"+off+", len "+b.length+" (cont "+buf.length+") \""+s+"\"");
+	    // System.out.println("<str> @"+off+", len "+b.length+" (cont "+buf.length+") \""+s+"\"");
 	    System.arraycopy(b,0,buf,io,b.length);
 	    io+=b.length;
 	    b=null;
