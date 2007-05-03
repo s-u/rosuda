@@ -1169,8 +1169,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
         MIsonlyselected = EzMenu.getItem(f,M_SONLYSELECTED);
         MIseperatealphas = EzMenu.getItem(f,M_SEPERATEALPHAS);
 	MIalphadown = EzMenu.getItem(f,M_ALPHADOWN);
-	if(MIalphadown!=null) MIalphadown.setEnabled(false);
 	MIalphaup = EzMenu.getItem(f,M_ALPHAUP);
+	if(MIalphaup!=null) MIalphaup.setEnabled(false);
         MIhalphadown = EzMenu.getItem(f,M_HALPHADOWN);
         if(MIhalphadown!=null) MIhalphadown.setEnabled(false);
         MIhalphaup = EzMenu.getItem(f,M_HALPHAUP);
