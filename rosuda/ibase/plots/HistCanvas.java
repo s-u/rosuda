@@ -87,8 +87,8 @@ public class HistCanvas extends BaseCanvas {
         ay=new Axis(var,Axis.O_Y,Axis.T_EqSize); ay.addDepend(this);
         createMenu(f,true,false,false,true,new String[]{
             "@MSpinogram",M_SPINE,
-            "Increase Bin Width (up)",M_BINUP,
-            "Decrease Bin Width (down)",M_BINDOWN,
+            "Increase binwidth (up)",M_BINUP,
+            "Decrease binwidth (down)",M_BINDOWN,
             "Move Anchor Left (left)",M_ANCHORLEFT,
             "Move Anchor Right (right)",M_ANCHORRIGHT
         });
@@ -564,7 +564,7 @@ public class HistCanvas extends BaseCanvas {
         Axis a=getMouseOverAxis(x,y);
         if(a==null) return null;
         return "axis name: " + a.getVariable().getName()+
-                "\nbin width: " + Tools.getDisplayableValue(binw,2)+
+                "\nbinwidth: " + Tools.getDisplayableValue(binw,2)+
                 "\nanchor: "  + Tools.getDisplayableValue(anchor,2)+
                 (v.hasMissing()?"\nmissings: "+v.getMissingCount():"");
     }
