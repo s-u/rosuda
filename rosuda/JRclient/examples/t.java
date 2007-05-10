@@ -6,6 +6,10 @@ import java.util.*;
 // accessing Rserve. it's not very useful in particular, but it may
 // contain some demo code
 
+class TestException extends Exception {
+    public TestException(String msg) { super(msg); }
+}
+
 public class t {
     public static void main(String args[]) {
 	try {
@@ -30,6 +34,32 @@ public class t {
 		System.out.println("y = "+x);
 		x = c.eval("z");
 		System.out.println("z = "+x);
+	    }
+
+	    { // error handling
+		System.out.println("Try to evaluave an invalid expression in try...");
+		String expr="foo.bar";
+		REXP x = c.eval("try({"+expr+"},silent=TRUE)");
+		if (x!=null) {
+		    REXP cl = x.getAttribute("class");
+		    if (cl != null && cl.asString().equals("try-error")) {
+			//throw new RErrorException(x.asString());
+			System.out.println("R reported an error: "+x.asString());
+		    } else {
+			System.out.println("Expression result: "+x);
+		    }
+		}
+	    }
+
+	    { // factors
+		System.out.println("test support of factors");
+		REXP f = c.eval("factor(paste('F',as.integer(runif(20)*5),sep=''))");
+		System.out.println("isFactor: "+f.isFactor()+"\nasFactor: "+f.asFactor());
+		if (!f.isFactor() || f.asFactor() == null) throw new TestException("factor test failed");
+		System.out.println("singe-level factor used to degenerate:");
+		f = c.eval("factor('foo')");
+		System.out.println("isFactor: "+f.isFactor()+"\nasFactor: "+f.asFactor());
+		if (!f.isFactor() || f.asFactor() == null) throw new TestException("single factor test failed");
 	    }
 
 	    // lowess example
@@ -91,6 +121,9 @@ public class t {
 	    c.close();
         } catch(RSrvException rse) {
             System.out.println("Rserve exception: "+rse.getMessage());
+	} catch(TestException te) {
+	    System.err.println("** Test failed: "+te.getMessage());
+	    te.printStackTrace();
         } catch(Exception e) {
             System.out.println("Something went wrong, but it's not the Rserve: "
 +e.getMessage());

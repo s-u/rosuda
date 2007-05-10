@@ -33,7 +33,7 @@ public class RFactor extends Object {
 		id.addElement(new Integer(i[j]));
 	if (v!=null && v.length>0)
 	    for(j=0;j<v.length;j++)
-		val.addElement(new Integer(v[j]));
+		val.addElement(v[j]);
     }
 
     /** special constructor used by REXP parser to save some re-indexing

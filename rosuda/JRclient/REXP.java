@@ -305,15 +305,39 @@ public class REXP extends Object implements java.io.Serializable {
 	    // hack for lists - special lists attached to int are factors
 	    if (x.attr!=null) {
 		REXP ca = x.attr.asList().at("class");
-		if (ca != null && ca.asString() == "factor") {
-		    //RFactor f=new RFactor(d,(Vector)((RList)x.attr.cont).head.cont);
-		    //x.cont=f;
-		    //x.Xt=XT_FACTOR;
+		REXP ls = x.attr.asList().at("levels");
+		if (ca != null && ls != null && ca.asString().equals("factor")) {
+		    RFactor f=new RFactor(d, ls.asStringArray());
+		    x.cont=f;
+		    x.Xt=XT_FACTOR;
 		    //x.attr=null;
 		}
 	    }
 	    return o;
 	}
+	if (xt==XT_ARRAY_STR) {
+	    int c = 0, i = o;
+	    while (i < eox) if (buf[i++]==0) c++;
+	    String s[] = new String[c];
+	    if (c > 0) {
+		c = 0; i = o;
+		while (o < eox) {
+		    if (buf[o]==0) {
+			try {
+			    s[c]=new String(buf, i, o-i, Rconnection.transferCharset);
+			} catch (java.io.UnsupportedEncodingException ex) {
+			    s[c]="";
+			}
+			c++;
+			i = o + 1;
+		    }
+		    o++;
+		}
+	    }
+	    x.cont = s;
+	    return o;
+	}
+
 	if (xt==XT_LIST_NOTAG || xt==XT_LIST_TAG) {
 	    RList l = new RList();
 	    while (o<eox) {
@@ -469,7 +493,7 @@ public class REXP extends Object implements java.io.Serializable {
 	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
 	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
 	//System.out.print("len["+xtName(Xt)+"/"+xtName(rxt)+"] ");
-	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
+	if (Xt==XT_VECTOR_STR) rxt=XT_ARRAY_STR; // VECTOR_STR is not really used
 	// adjust "names" attribute for vectors
 	if (Xt==XT_VECTOR && asList()!=null && asList().isNamed())
 	    setAttribute("names",new REXP(asList().keys()));
@@ -574,7 +598,7 @@ public class REXP extends Object implements java.io.Serializable {
 	if (attr!=null) al = attr.asList();
 	if (al != null && al.size()>0) hasAttr=true;
 	int rxt=Xt, ooff=off;
-	if (Xt==XT_ARRAY_STR) rxt=XT_VECTOR_STR; // ARRAY_STR is broken right now
+	if (Xt==XT_VECTOR_STR) rxt=XT_ARRAY_STR; // VECTOR_STR is not really used
 	if (Xt==XT_LIST || Xt==XT_LIST_TAG || Xt==XT_LIST_NOTAG)
 	    rxt=(asList()!=null && asList().isNamed())?XT_LIST_TAG:XT_LIST_NOTAG;
 	// System.out.println("@"+off+": "+xtName(rxt)+"/"+xtName(Xt)+" "+cont+" ("+myl+"/"+buf.length+") att="+hasAttr);
