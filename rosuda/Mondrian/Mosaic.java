@@ -311,10 +311,20 @@ public class Mosaic extends DragBox implements ActionListener {
             
             JMenuItem rotall = new JMenuItem("rotate plot");
             rotall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            rotall.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),KeyEvent.VK_R));
+              };
+            });
             mm.add(rotall);
             
             JMenuItem rotlast = new JMenuItem("rotate last split");
             rotlast.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            rotlast.addActionListener(new ActionListener() {  
+              public void actionPerformed(ActionEvent e) {
+                processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0,Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),KeyEvent.VK_R));
+              };
+            });
             mm.add(rotlast);
             
             JMenuItem exclude = new JMenuItem("exclude last variable");
