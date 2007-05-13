@@ -34,6 +34,10 @@ public class MyText {
     this.angle = angle;
     this.extend = extend;
   }
+  
+  public String getText() {
+    return(s);
+  }
 
   public void draw(Graphics g) {
     this.draw(g, align);
