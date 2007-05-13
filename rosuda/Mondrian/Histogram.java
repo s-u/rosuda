@@ -282,18 +282,35 @@ public class Histogram extends DragBox implements ActionListener {
         try {
           Rconnection c = new Rconnection();
           double[] xVal = data.getRawNumbers(tablep.initialVars[0]);
+          double[] weights = {1.0};
+          double[] copyW = {1.0};
+          boolean[] missW = {true};
+          if( weight > -1 ) {
+            weights = data.getNumbers(weight);
+            copyW = new double[data.getN(dvar)];
+            missW = data.getMissings(weight);
+          }  
           double[] copyVal = new double[data.getN(dvar)];
           boolean[] missing = data.getMissings(dvar);
-          if( data.n > data.getN(dvar) ) {
-            int k=0;
-            for( int i=0; i<data.n; i++ )
-              if( !missing[i] )
-                copyVal[k++] = xVal[i];
-            c.assign("x", copyVal);
-          } else
-            c.assign("x", xVal);            
-
-          RList l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+          int k=0;
+          for( int i=0; i<data.n; i++ )
+            if( !missing[i] ) {
+              copyVal[k++] = xVal[i];
+              if( weight > -1 )
+                if( !missW[i] )
+                  copyW[k-1] = weights[i];
+                else
+                  copyW[k-1] = 1;
+            }
+              c.assign("x", copyVal);
+          if( weight > -1 )
+            c.assign("w", copyW);
+          
+          RList l;
+          if( weight == -1 )
+            l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+          else
+            l = c.eval("density(x, bw="+bWidth+", weights=w/sum(w, na.rm=T), from="+xMin+", to="+xMax+")").asList();            
           double[] dx = (double[]) l.at("x").getContent();
           double[] dy = (double[]) l.at("y").getContent();
 
@@ -301,19 +318,38 @@ public class Histogram extends DragBox implements ActionListener {
             pD = new Polygon();
             for( int f=0; f<dx.length; f++ )
               pD.addPoint( (int)userToWorldX( dx[f] ),   (int)userToWorldY( dy[f] ));
+
             bg.drawPolyline(pD.xpoints, pD.ypoints, pD.npoints);
           }
           int nSel = data.countSelection(dvar);
+          double wSum = 0;
+          double wSSum = 0;
           if( nSel > 1 ) {
             double[] selX = new double[nSel];
+            double[] selW = new double[nSel];
             double[] selection = data.getSelection();
-            int k=0;
-            for( int i=0; i<data.n; i++ )
-              if( selection[i] > 0 && !missing[i]) 
+            k=0;
+            for( int i=0; i<data.n; i++ ) {
+              if( selection[i] > 0 && !missing[i]) {
                 selX[k++]   = xVal[i];
+                if( weight > -1 )
+                  if( !missW[i] ) {
+                    selW[k-1] = weights[i];
+                    wSSum += weights[i];
+                  } else
+                    selW[k-1] = 0;
+              }
+              if( weight > -1 && !missW[i] )
+                wSum += weights[i];              
+            }
             c.assign("x",selX);
+            if( weight > -1 )
+              c.assign("w", selW);
 
-            l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+            if( weight == -1 )
+              l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
+            else
+              l = c.eval("density(x, bw="+bWidth+", weights=w/sum(w, na.rm=T), from="+xMin+", to="+xMax+")").asList();
             double[] dsx = (double[]) l.at("x").getContent();
             double[] dsy = (double[]) l.at("y").getContent();
 
@@ -327,7 +363,10 @@ public class Histogram extends DragBox implements ActionListener {
             double sumY = 0;
             double fac = 1; 
             if( scaleSelD )
-              fac = (double)nSel/(double)data.getN(dvar);
+              if( weight == -1 )
+                fac = (double)nSel/(double)data.getN(dvar);
+              else
+                fac = wSSum / wSum;
             pD = new Polygon();
             if( displayMode.equals("Histogram") )
               if( !CDPlot )
@@ -344,8 +383,8 @@ public class Histogram extends DragBox implements ActionListener {
             bg.drawPolyline(pD.xpoints, pD.ypoints, pD.npoints);
             if( CDPlot ) {
               bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.5)));
-              bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax*nSel/data.getN(dvar) ) , 
-                           (int)userToWorldX( xMax ), (int)userToWorldY( yMax*nSel/data.getN(dvar) ) );
+              bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( yMax*fac ) , 
+                           (int)userToWorldX( xMax ), (int)userToWorldY( yMax*fac ) );
             }                  
           }
 
@@ -438,12 +477,12 @@ public class Histogram extends DragBox implements ActionListener {
           DataEvent de = new DataEvent(this);              // now the rest is informed ...
           evtq.postEvent(de);
         }
-        if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1 ) {
+        if( e.getKeyCode() == KeyEvent.VK_D && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
           if( densityMode )
             CDPlot = false;
           densityMode = !densityMode;
         }        
-        if( e.getKeyCode() == KeyEvent.VK_E && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && weight == -1) {
+        if( e.getKeyCode() == KeyEvent.VK_E && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
           CDPlot = !CDPlot;
           densityMode = true;
         }        
@@ -607,10 +646,6 @@ public class Histogram extends DragBox implements ActionListener {
 
               Density.setActionCommand("Density");
               Density.addActionListener(this);
-              if( weight > -1 ) {
-                Density.setEnabled(false);
-                CDPlotM.setEnabled(false);
-              }
 
               if( densityMode ) {
                 JCheckBoxMenuItem scaleD = new JCheckBoxMenuItem("scale Density");
@@ -850,10 +885,25 @@ public class Histogram extends DragBox implements ActionListener {
         }
       }
       else {				// Spinogram
+                
         int lastX = (int)userToWorldX(xMin);    //(int)userToWorldX(bStart);
 //        int fullRange = (int)userToWorldX((Math.floor(xMax/bWidth)+1)*bWidth ) - (int)userToWorldX(bStart);
         int fullRange = (int)userToWorldX(xMax) - (int)userToWorldX(xMin);
-        for(int i=0; i<k; i++ ) {
+//        int fullRange = (int)userToWorldX(getUrx()) - (int)userToWorldX(getLlx());
+        double probRange = getUrx() - getLlx();
+        int leftId = -1;
+        int rightId = -1;
+        for(int i=0; i<k; i++ ) 
+          if( bStart + i*bWidth >= getLlx() && leftId == -1 )
+            leftId = i;
+        for(int i=k-1; i>=0; i-- ) 
+          if( bStart + (i+1)*bWidth <= getUrx() && rightId == -1 )
+            rightId = i+1;
+        int  leftX = (int)userToWorldX(bStart +  leftId*bWidth);
+        int rightX = (int)userToWorldX(bStart + rightId*bWidth);
+        double[] breaksX = new double[k+1];
+        breaksX[0] = lastX;
+/*        for(int i=0; i<k; i++ ) {
           int currX = lastX + (int)Math.round(tablep.table[i]/totalSum * fullRange); 
           rects.addElement(new MyRect( true, 'y', "Observed",
                                        lastX,
@@ -862,7 +912,36 @@ public class Histogram extends DragBox implements ActionListener {
                                        (int)userToWorldY(yMin)-(int)userToWorldY(yMax),
                                        tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i], tablep));
           lastX = currX; 
-        }
+        }*/
+        for(int i=0; i<k; i++ )
+          breaksX[i+1] = breaksX[i] + (int)Math.round(tablep.table[i]/totalSum * fullRange); 
+        // we now transform the breaks such that the first and last break within the zoomed window won't move when switched between hist and spine!!
+        double shiftX = (int)userToWorldX(getLlx()) - breaksX[leftId];
+
+        System.out.println(" leftId: "+ leftId);
+
+        double oldRange = breaksX[rightId] - breaksX[leftId];
+        
+        double shift1 = breaksX[0];
+        for(int i=0; i<=k; i++ )
+          breaksX[i] = breaksX[i] - shift1;
+
+        double fac = (rightX - leftX) / oldRange;
+        System.out.println(" Factor: "+ fac);
+        for(int i=0; i<=k; i++ )
+          breaksX[i] = breaksX[i] * fac;
+        
+        double shift2 = leftX - breaksX[leftId];
+        for(int i=0; i<=k; i++ )
+          breaksX[i] = breaksX[i] + shift2;
+        
+        for(int i=0; i<k; i++ )
+          rects.addElement(new MyRect( true, 'y', "Observed",
+                                       (int)breaksX[i],
+                                       (int)userToWorldY(yMax),
+                                       (int)breaksX[i+1]-(int)breaksX[i],
+                                       (int)userToWorldY(yMin)-(int)userToWorldY(yMax),
+                                       tablep.table[i], tablep.table[i], 1, 0, lnames[0][i]+'\n', tileIds[i], tablep));        
       }
 
       for( int i=0; i<Selections.size(); i++) {
