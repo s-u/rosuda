@@ -673,14 +673,11 @@ System.out.println(newQ.makeQuery());
           sumxy += x[i]*y[i];
         }
     }
-      
     Sxx = sumxx - sumx * sumx / count;
     Sxy = sumxy - sumx * sumy / count;
     b = Sxy/Sxx;
     a = (sumy - b * sumx) / count;
     r2 = b * (count * sumxy - sumx * sumy) / (count * sumyy - sumy * sumy);
-
-    //System.out.println("f(x) = "+b+" * x + "+a);
 
     return new double[] {a, b, r2};
   }
@@ -696,12 +693,14 @@ System.out.println(newQ.makeQuery());
     double sumxx = 0;
     double sumxy = 0;
     double sumyy = 0;
+    int count = 0;
 
     double[] x = this.getRawNumbers(k);
     double[] y = this.getRawNumbers(l);
 
     for( int i=0; i<this.n; i++ ) {
       if(selectionArray[i] > 0 && x[i] < Double.MAX_VALUE && y[i] < Double.MAX_VALUE) {
+        count++;
         sumx += x[i];
         sumy += y[i];
         sumxx += x[i]*x[i];
@@ -710,11 +709,11 @@ System.out.println(newQ.makeQuery());
       }
     }
 
-    Sxx = sumxx - sumx * sumx / this.countSelection();
-    Sxy = sumxy - sumx * sumy / this.countSelection();
+    Sxx = sumxx - sumx * sumx / count;
+    Sxy = sumxy - sumx * sumy / count;
     b = Sxy/Sxx;
-    a = (sumy - b * sumx) / this.countSelection();
-    r2 = b * (this.countSelection() * sumxy - sumx * sumy) / (this.countSelection() * sumyy - sumy * sumy);
+    a = (sumy - b * sumx) / count;
+    r2 = b * (count * sumxy - sumx * sumy) / (count * sumyy - sumy * sumy);
 
     return new double[] {a, b, r2};
   }
@@ -807,7 +806,7 @@ System.out.println(newQ.makeQuery());
   public int getN(int i) {
     return this.n - NAcount[i];
   }    
-      
+
   public double getMin(int i) {
     return ((Variable)data.elementAt(i)).Min();
   }
@@ -971,7 +970,8 @@ System.out.println(newQ.makeQuery());
         
 //System.out.println(" filterVar: "+filterVar+" Grp: "+grp+ " <-- "+ filterGrp +" --> "+filterVal); 
     filterON = true;
-    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+//    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+    if( !alpha(filterVar) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(  Double.toString( Double.valueOf(grp).doubleValue() ) ));
     else
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
