@@ -20,7 +20,8 @@ public class MFrame extends JFrame implements WindowListener {
   private JMenuItem m;
   public String selString = "";
   private int counter = 0;
-
+  private boolean same = false, added = false;
+  
   private Timer resizePlotTimer    = new Timer();
   private TimerTask resizePlotTask;
   private boolean firstTime = true;
@@ -82,7 +83,6 @@ public class MFrame extends JFrame implements WindowListener {
   }
 
   public void show() {
-    boolean same = false, added = false;
 
     m = new JMenuItem(getTitle());
     J.ca.setEnabled(true);
@@ -97,8 +97,10 @@ public class MFrame extends JFrame implements WindowListener {
           same = false;
         }
 
-    if( !added )
+    if( !added ) {
       J.windows.add(m);
+      added = true;
+    }
     
     m.addActionListener(new ActionListener() {     
       public void actionPerformed(ActionEvent e) {
