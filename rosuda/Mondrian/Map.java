@@ -22,6 +22,7 @@ public class Map extends DragBox {
   private int borderAlpha = 5;
   private int[] alphas = {0, 10, 20, 40, 70, 100};
   
+  private JPanel p;
   private JComboBox Varlist, Collist, ColMap;
   private JList allVarList;
   private JTextField minField, maxField;
@@ -51,8 +52,6 @@ public class Map extends DragBox {
     this.width = width;
     this.height = height;
 
-    frame.getContentPane().add(this);
-
     border = 20;
     if( varList.getSelectedIndices().length > 0 )
       this.displayVar = varList.getSelectedIndices()[0];
@@ -79,7 +78,9 @@ public class Map extends DragBox {
     setCoordinates(xMin, yMin, xMax, yMax, 1);
 
     ratio = (double)(xMax-xMin) / (double)(yMax-yMin);
-
+    
+    p = new JPanel(new FlowLayout());
+  
     Varlist = new JComboBox();
     Varlist.addItem("- none -");
     for (int j=0; j<data.k; j++) {
@@ -87,13 +88,10 @@ public class Map extends DragBox {
     }
     Varlist.setSelectedIndex(this.displayVar+1);
     Varlist.setSize(200, (Varlist.getSize()).height);
-    JPanel p = new JPanel();
-    p.add("West", Varlist);
-    frame.getContentPane().add("North", p);
-    //  frame.getContentPane().add("Center", this);
     Varlist.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
+    p.add(Varlist);
 
     if( ((MFrame)frame).hasR() ) {
       try {
@@ -139,7 +137,7 @@ public class Map extends DragBox {
       Collist.addItem("topo");
     }
     Collist.setSize(200, (Varlist.getSize()).height);
-    p.add("West", Collist);
+    p.add(Collist);
     Collist.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
@@ -161,7 +159,7 @@ public class Map extends DragBox {
     ColMap.addItem("normal");
     ColMap.addItem("rank");
 //    Collist.setSize(200, (Varlist.getSize()).height);
-    p.add("West", ColMap);
+    p.add(ColMap);
     ColMap.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { updateMap(); }
     });
@@ -170,22 +168,39 @@ public class Map extends DragBox {
     cbInvert.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) { inverted = !inverted; updateMap(); }
     });
-    p.add("East", cbInvert);
+    p.add(cbInvert);
     
-    p.add("East", new JLabel(" Min:"));
+    p.add(new JLabel(" Min:"));
     
     minField = new JTextField(5);
     minField.addActionListener(this);
     minField.setActionCommand("text");
-    p.add("East", minField);
+    p.add(minField);
     
-    p.add("East", new JLabel(" Max:"));
+    p.add(new JLabel(" Max:"));
 
     maxField = new JTextField(5);
     maxField.addActionListener(this);
     maxField.setActionCommand("text");
-    p.add("East", maxField);
+    p.add(maxField);
     
+    p.setPreferredSize(new Dimension(frame.getWidth(), frame.getHeight()));
+    
+    frame.getContentPane().setLayout(new BorderLayout());
+    
+    frame.getContentPane().add(p, BorderLayout.NORTH);
+    
+    frame.getContentPane().add(this, BorderLayout.CENTER);
+
+    frame.pack();
+    
+    System.out.println(p.getMinimumSize()+" <-> "+p.getPreferredSize()+" <-> "+p.getSize()+" ... "+maxField.getY()+" "+maxField.getHeight());
+    
+    p.setPreferredSize(new Dimension(frame.getWidth(), 2+maxField.getY()+maxField.getHeight()));
+
+    frame.pack();
+    frame.setVisible(true);
+        
 //    if( ((System.getProperty("os.name")).toLowerCase()).indexOf("win") > -1 ) {
       // Since Java 1.4+ Widgets eat up their events, we need to register every single focussable object on the Panel ...
       Varlist.addKeyListener(new KeyAdapter() { public void keyPressed(KeyEvent e) {processKeyEvent(e);}});
@@ -450,6 +465,7 @@ public class Map extends DragBox {
       }
       if( oldWidth != size.width || oldHeight != size.height || scaleChanged || colorChanged || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
+        p.setPreferredSize(new Dimension(frame.getWidth(), 2+maxField.getY()+maxField.getHeight()));
         colorChanged = false;
         create();
         oldWidth = size.width;
@@ -480,6 +496,7 @@ public class Map extends DragBox {
           p.draw(bg);
         }
       }
+            
       Graphics tbg;
       if( !printing  )
         tbg = tbi.getGraphics();
@@ -556,6 +573,10 @@ public class Map extends DragBox {
         }
       }
 
+      boolean[] miss={true};
+      if( displayVar >= 0 )
+        miss = data.getMissings(displayVar);
+      
       for( int i=0; i<polys.size(); i++) {
         MyPoly P = (MyPoly)polys.elementAt(i);
         MyPoly p = (MyPoly)P.clone();
@@ -597,8 +618,10 @@ public class Map extends DragBox {
               
           }
 //System.out.println("Intensity: "+intensity);
-          if(p.Id == -1)
-              p.setColor(MFrame.backgroundColor);
+          if(p.Id == -1 )
+            p.setColor(MFrame.backgroundColor);
+          else if( miss[match[i]] ) 
+            p.setColor(Color.white);
           else if( scheme.equals("gray") )
             p.setColor(new Color(1-intensity, 1-intensity, 1-intensity));                // gray
           else if( scheme.equals("blue2red") )
