@@ -115,7 +115,7 @@ public class PC extends DragBox implements ActionListener {
 
     this.setBackground(frame.getBackground());
 
-    setCoordinates(0,1,0,1,-1);
+    setCoordinates(0,0,0,0,-1);  // initialize the Coordinate System
 
     if( paintMode.equals("XbyY") )
       frame.setTitle("PB("+data.getName(xVar)+"|"+data.getName(yVar)+")");
@@ -183,11 +183,19 @@ public class PC extends DragBox implements ActionListener {
                 }
               }
                 else {
-                  x = " "+data.getName(vars[permA[popXId]]);
-                  x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
+                  x = " "+((MyText)names.elementAt(popXId)).getText();
+                  if( !paintMode.equals("Poly") ) {
+//                    setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
+                    if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
+                        worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    )
+                      x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
+                    else
+                      x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
+                  } else
+                    x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
                 }
-          return Util.info2Html(x);
-        }
+                return Util.info2Html(x);
+      }
       return null;
     } else
       return null;
@@ -227,7 +235,7 @@ public class PC extends DragBox implements ActionListener {
 
     if ((e.getID() == MouseEvent.MOUSE_PRESSED ||
          e.getID() == MouseEvent.MOUSE_RELEASED) && !e.isShiftDown() ) {
-      if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN ) {
+      if ( e.isPopupTrigger() && e.getModifiers() != BUTTON1_DOWN + ALT_DOWN ) {/*
         super.processMouseEvent(e);
         int minXDist = 5000;
         int minYDist = 5000;
@@ -247,7 +255,7 @@ public class PC extends DragBox implements ActionListener {
             minYDist =  Math.abs(p.ypoints[popXId]-e.getY());
           }
         }
-        if( minXDist < slotWidth/4 ) {
+        if( false && minXDist < slotWidth/4 ) {
           JPopupMenu name = new JPopupMenu();
           JMenuItem colName = null;
           JMenuItem colVal  = null;
@@ -277,7 +285,8 @@ public class PC extends DragBox implements ActionListener {
                     name.show(e.getComponent(), e.getX(), e.getY());
                   }
         }
-          else {
+          else*/ 
+          {
             JPopupMenu scaleType = new JPopupMenu("Title");
               
             if( Scale.equals("Common") ) {
@@ -483,7 +492,7 @@ public class PC extends DragBox implements ActionListener {
             
             JMenuItem homeM = new JMenuItem("Home View");
             homeM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-            homeM.setActionCommand("Home");
+            homeM.setActionCommand("PCHome");
             homeM.addActionListener(this);
 
             scaleType.add(homeM);
@@ -597,7 +606,8 @@ public class PC extends DragBox implements ActionListener {
 //System.out.println("popXId: "+popXId+" e.getX: "+e.getX());
                   }
                 }
-                setCoordinates(0, Mins[permA[popXId]], 1, Maxs[permA[popXId]], -1);
+//System.out.println("Zoom into Axis: "+popXId);
+//                setCoordinates(0, Mins[permA[popXId]], 1, Maxs[permA[popXId]], -1);
                 super.processMouseEvent(e);                           // This performs the zoom !!
                 Mins[permA[popXId]] = getLly();
                 Maxs[permA[popXId]] = getUry();
@@ -789,7 +799,7 @@ public class PC extends DragBox implements ActionListener {
         actionPerformed(new ActionEvent(this, 325141, "Hot"));
       } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_NUMPAD0
                   || e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_0) {
-        actionPerformed(new ActionEvent(this, 325143, "Home"));
+        actionPerformed(new ActionEvent(this, 325143, "PCHome"));
       }      
       else
         super.processKeyEvent(e);
@@ -945,7 +955,7 @@ public class PC extends DragBox implements ActionListener {
         hotSelection = true;									// we need to set an initial hotSelector to rescale (is switched off in first paint)
         zoomToSel = true;
         this.dataChanged(0);
-      } else if ( command.equals("Home") ) {
+      } else if ( command.equals("PCHome") ) {
         for( int i=0; i<data.n; i++ )
           onlyHi[i] = true;
 
@@ -979,7 +989,7 @@ public class PC extends DragBox implements ActionListener {
       else
         slotMax = 40;
       
-      if( oldWidth != size.width || oldHeight != size.height || hotSelection || frame.getBackground() != MFrame.backgroundColor) {
+      if( scaleChanged || oldWidth != size.width || oldHeight != size.height || hotSelection || frame.getBackground() != MFrame.backgroundColor) {
         frame.setBackground(MFrame.backgroundColor);
 
         this.width = size.width;
@@ -1204,8 +1214,11 @@ public class PC extends DragBox implements ActionListener {
           mt.setAlign( 2 );
         else {
           if( j == 0 && !paintMode.equals("XbyY") )
-            mt.setAlign( 0 );
-          else if( j== k-1 )
+            if( !printing )
+              mt.setAlign( 0 );
+            else
+              mt.setAlign( 2 );
+          else if( j== k-1 && !printing )
             mt.setAlign( 1 );
           else
             mt.setAlign( 2 );
@@ -1521,6 +1534,15 @@ public class PC extends DragBox implements ActionListener {
       if( Scale.equals("Individual") )
         scaleCommon();
 
+      if( paintMode.equals("XbyY") )
+        if( getLly() == 0 && getUry() == 0 )
+          setCoordinates(0,Mins[0],1,Maxs[0],-1);
+        else
+          for( int j=0; j<k; j++ ) {
+            Mins[j] = getLly();
+            Maxs[j] = getUry();
+          }
+        
       if( k > 1 )
         if( paintMode.equals("XbyY") || ((paintMode.equals("Box") || paintMode.equals("Both")) && Scale.equals("Individual")) )
           if( k==2 )
@@ -1654,7 +1676,20 @@ public class PC extends DragBox implements ActionListener {
             Mins[j] = totMin;
             Maxs[j] = totMax;
           }
-        }        
+        }
+        
+        if( getLly() == 0 && getUry() == 0 ) {
+          setCoordinates(0,totMin,1,totMax,-1);
+          for( int j=0; j<k; j++ ) {
+            Mins[j] = totMin;
+            Maxs[j] = totMax;
+          } 
+        } else
+          for( int j=0; j<k; j++ ) {
+            Mins[j] = getLly();
+            Maxs[j] = getUry();
+          }
+
       } else {
         double maxRange = 0, range;
         for( int j=0; j<k; j++ )
@@ -1728,6 +1763,7 @@ public class PC extends DragBox implements ActionListener {
       double[] lsOutlier, usOutlier;
       int var, id;
       int mid, width, low, high;
+      boolean zeroSelect;
       int n;
 
       public boxPlot( int id, int var, int mid, int width, int low, int high) {
@@ -1757,6 +1793,30 @@ public class PC extends DragBox implements ActionListener {
         uOutlier = data.getAllGreater(var, uWhisker);
       }
 
+      public String get5num() {
+        String xS1 = "", xS2 = "", xS3 = "", xS4 = "", xS5 = "", xS6 = "", xS7 = "";
+        if( !zeroSelect ) {
+          xS1 = " ("+Stat.roundToString(sMax,roundY)+")";
+          xS2 = " ("+Stat.roundToString(uSWhisker,roundY)+")";
+          xS3 = " ("+Stat.roundToString(uSHinge,roundY)+")";
+          xS4 = " ("+Stat.roundToString(sMedian,roundY)+")";
+          xS5 = " ("+Stat.roundToString(lSHinge,roundY)+")";
+          xS6 = " ("+Stat.roundToString(lSWhisker,roundY)+")";
+          xS7 = " ("+Stat.roundToString(sMin,roundY)+")";
+        }
+        return("\n <font color=\"gray\">Maximum:<font color=\"gray\">"+Stat.roundToString(max,roundY)+xS1+
+               "\n <font color=\"#696969\">upper Whisker:<font color=\"#696969\">"+Stat.roundToString(uWhisker,roundY)+xS2+
+               "\n upper Hinge:"+Stat.roundToString(uHinge,roundY)+xS3+
+               "\n <b>Median:<b>"+Stat.roundToString(median,roundY)+xS4+
+               "\n lower Hinge:"+Stat.roundToString(lHinge,roundY)+xS5+
+               "\n <font color=\"#696969\">lower Whisker:<font color=\"#696969\">"+Stat.roundToString(lWhisker,roundY)+xS6+
+               "\n <font color=\"gray\">Minimum:<font color=\"gray\">"+Stat.roundToString(min,roundY)+xS7 );
+      }
+      
+      public double[] get5numVal() {
+        return new double[] {min, lWhisker, lHinge, median, uHinge, uWhisker, max};
+      }
+      
       void draw( Graphics g ) {
 
         if( this.n > 3 ) {
@@ -1827,10 +1887,13 @@ public class PC extends DragBox implements ActionListener {
 
       void drawHighlight( Graphics g ) {
 
+        zeroSelect = false;
+        
         if( data.filterVar != -1 ) {
           //System.out.println("***** Group Size: "+data.filterSelGrpSize[data.filterGrp]+" Level: "+data.filterGrp);
           if( data.filterSelGrpSize[data.filterGrp] == 0) {
             //System.out.println("Skipping: "+data.filterGrp);
+            zeroSelect = true;
             return;
           }
         }
