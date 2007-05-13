@@ -38,6 +38,7 @@ public class Scatter2D extends DragBox {
   private String displayMode = "Free";
   private String modeString = "bins";
   private String smoothF = "none";
+  private boolean compareToAll = true;
   private int smoother = 5;
   private boolean connectLines = false;
   private int lastPointId = -1;
@@ -49,19 +50,29 @@ public class Scatter2D extends DragBox {
   private int roundX;
   private int roundY;
   private Table binning;
+  private boolean matrix=false;
   private boolean force = false;
   private boolean invert = false;
   private boolean alphaChanged = false;
   private boolean smoothChanged = false;
   
   /** This constructor requires a Frame and a desired size */
-  public Scatter2D(MFrame frame, int width, int height, dataSet data, int[] Vars, JList varList) {
+  public Scatter2D(MFrame frame, int width, int height, dataSet data, int[] Vars, JList varList, boolean matrix) {
     super(frame);
+    this.matrix = matrix;
     this.data = data;
     this.width = width;
     this.height = height;
-    border = 30;
-    xShift = 15;
+    if( matrix ) {
+      super.printable = false;
+      border = 15;
+      xShift = 12;
+      yShift = -12;
+    } else {
+      border = 30;
+      xShift = 0;
+      yShift = 0;
+    }
     this.varList = varList;
     this.Vars = Vars;
 
@@ -104,7 +115,7 @@ public class Scatter2D extends DragBox {
     Font SF = new Font("SansSerif", Font.PLAIN, 11);
     frame.setFont(SF);
   }
-
+  
   public void maintainSelection(Selection S) {
 
     Rectangle sr = S.r;
@@ -187,7 +198,7 @@ public class Scatter2D extends DragBox {
         int minDist = 5000;
         int minId=0;
         int minCount=0;
-        int maxOverplot = 100;
+        int maxOverplot = data.n;
         int restPoints = 0;
         int minIds[] = new int[maxOverplot];
         for( int i=0; i<data.n; i++ ) {
@@ -396,7 +407,7 @@ public class Scatter2D extends DragBox {
                 splines.setEnabled(false);
               }
               JCheckBoxMenuItem locfit = new JCheckBoxMenuItem("locfit ("+Stat.round(3.5/smoother,2)+")");
-              smoothers.add(locfit);
+//              smoothers.add(locfit);
               locfit.setActionCommand("locfit");
               locfit.addActionListener(this);
               if( smoothF.equals("locfit") ) {
@@ -406,14 +417,27 @@ public class Scatter2D extends DragBox {
 
               smoothers.addSeparator();
 
+              JCheckBoxMenuItem compareAll = new JCheckBoxMenuItem("compare to all");
+              if( compareToAll )
+                compareAll.setSelected(true);
+              else
+                compareAll.setSelected(false);
+              if( smoothF.equals("none") ) 
+                compareAll.setEnabled(false);
+              compareAll.setActionCommand("compare");
+              compareAll.addActionListener(this);
+              smoothers.add(compareAll);
+
+              smoothers.addSeparator();
+
               JCheckBoxMenuItem rougher = new JCheckBoxMenuItem("rougher");
-              rougher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              rougher.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, Event.SHIFT_MASK ));
               smoothers.add(rougher);
               rougher.setActionCommand("rougher");
               rougher.addActionListener(this);
 
               JCheckBoxMenuItem smoother = new JCheckBoxMenuItem("smoother");
-              smoother.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              smoother.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, Event.SHIFT_MASK ));
               smoothers.add(smoother);
               smoother.setActionCommand("smoother");
               smoother.addActionListener(this);
@@ -554,7 +578,7 @@ public class Scatter2D extends DragBox {
       paint(g);
       g.dispose();
     }
-    else if( command.equals("rougher") || command.equals("smoother") ) {
+    else if( command.equals("rougher") || command.equals("smoother") || command.equals("compare") ) {
       if( command.equals("smoother") ) {
         if( smoother > 1 ) {
           smoother -= 1;
@@ -565,6 +589,9 @@ public class Scatter2D extends DragBox {
           smoother += 1;
           smoothChanged = true;
         }
+      } else if( command.equals("compare") ) {
+        compareToAll = !compareToAll;
+        smoothChanged = true;
       }
       paint(this.getGraphics());
     } 
@@ -669,7 +696,7 @@ public class Scatter2D extends DragBox {
               tttbg.rotate(-Math.PI/2);
               tttbg.drawString(Stat.roundToString(worldToUserY(egetY), roundY), 
                             (int)(-egetY - ratioY * fm.stringWidth(Stat.roundToString(worldToUserY(egetY), roundY))),
-                            (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick +1);          
+                            (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick +1  + (xShift-yShift) );          
               tttbg.rotate(Math.PI/2);
               g.drawImage(tttbi, 0, 0, Color.black, null);
               tttbg.dispose();
@@ -812,9 +839,7 @@ public class Scatter2D extends DragBox {
       }
       FontMetrics fm = bg.getFontMetrics();      
 
-      border = 30*pF;
-      xShift = 0;
-      yShift = 0;
+      border = border*pF;
 
       if( !alphaChanged )
         create();
@@ -918,10 +943,10 @@ public class Scatter2D extends DragBox {
       bg.rotate(-Math.PI/2);
       bg.drawString(Stat.roundToString(getLly(), roundY), 
                     -(int)userToWorldY( getLly() ), 
-                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF);
+                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF + (xShift-yShift)*pF );
       bg.drawString(Stat.roundToString(getUry(), roundY), 
                     -(int)userToWorldY( getUry() ) - fm.stringWidth(Stat.roundToString(getUry(), roundY) ),
-                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF);          
+                    (int)userToWorldY( getUry() ) - fm.getMaxAscent() - tick*pF +1*pF + (xShift-yShift)*pF );          
       bg.rotate(Math.PI/2);
     } // end, new background graphics	
 
@@ -996,7 +1021,12 @@ public class Scatter2D extends DragBox {
       ttbg.setColor(Color.black);
 
       if( smoothF.equals("ls-line" ) ) {
-        coeffs = data.regress(Vars[0], Vars[1]);
+        if( compareToAll )
+          coeffs = data.regress(Vars[0], Vars[1], false);
+        else
+          coeffs = data.regress(Vars[0], Vars[1], true);
+        xMin = data.getMin(Vars[0]);
+        xMax = data.getMax(Vars[0]);
         ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * coeffs[1] + coeffs[0]),
                      (int)userToWorldX( xMax ), (int)userToWorldY( xMax * coeffs[1] + coeffs[0]) );
       }
@@ -1013,13 +1043,22 @@ public class Scatter2D extends DragBox {
           c.assign("x",data.getRawNumbers(Vars[0]));
           c.assign("y",data.getRawNumbers(Vars[1]));
 
-          c.voidEval("ids <- x<1e300&y<1e300");
+          c.assign("sel",data.getSelection());               // exclude selected from the base smoother!!! This is a new paradigm!
+          
+          if( compareToAll )
+            c.voidEval("ids <- x<1e300&y<1e300");
+          else
+            c.voidEval("ids <- x<1e300&y<1e300&sel==0");
           c.voidEval("x<-x[ids]");
           c.voidEval("y<-y[ids]");
+          double[] range = new double[2];
+          range = c.eval("range(x)").asDoubleArray();
+          double xSMin = range[0];
+          double xSMax = range[1];
           double[] xForFit = new double[200+1];
-          double step = (xMax-xMin)/200;
+          double step = (xSMax-xSMin)/200;
           for( int f=0; f<200+1; f++ )
-            xForFit[f] = xMin + step*(double)f;
+            xForFit[f] = xSMin + step*(double)f;
           c.assign("xf",xForFit);
 
           double[] fitted = {0};
@@ -1049,10 +1088,10 @@ public class Scatter2D extends DragBox {
           if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
             Polygon CI = new Polygon();
             for( int f=0; f<200+1; f++ ) {
-              CI.addPoint( (int)userToWorldX( xMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
+              CI.addPoint( (int)userToWorldX( xSMin+step*(double)f ), (int)userToWorldY( CIl[f] ) );
             }
             for( int f=200; f>=0; f-- ) {
-              CI.addPoint( (int)userToWorldX( xMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
+              CI.addPoint( (int)userToWorldX( xSMin+step*(double)f ), (int)userToWorldY( CIu[f] ) );
             }
             ttbg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.25)));
             ttbg.fillPolygon(CI);
@@ -1060,8 +1099,9 @@ public class Scatter2D extends DragBox {
           }
 
           for( int f=0; f<200; f++ ) {
-            ttbg.drawLine( (int)userToWorldX( xMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
-                           (int)userToWorldX( xMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+            ttbg.drawLine( (int)userToWorldX( xSMin+step*(double)f ),     (int)userToWorldY( fitted[f] ),
+                           (int)userToWorldX( xSMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
+//            System.out.println(fitted[f]+" / "+fitted[f+1]);
           }
 
           c.close();
