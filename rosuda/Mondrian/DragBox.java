@@ -221,7 +221,7 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
     if( this instanceof Histogram )
       this.lly = 0;
     
-    zooms.addElement( new double[]{llx, lly, urx, ury});
+    zooms.addElement( new double[]{this.llx, this.lly, this.urx, this.ury});
     updateScale();
   }
 
@@ -239,11 +239,16 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
         if( (double)size.width/(double)size.height < (murx-mllx)/(mury-mlly) ) {
           this.ury = ((double)size.height / (double)size.width) * ((murx-mllx) / (mury-mlly)) * (mury-mlly) + mlly;
           this.urx = murx;
-        }
-          else {
+        } else {
             this.ury = mury;
             this.urx = ((double)size.width / (double)size.height) * ((mury-mlly) / (murx-mllx)) * (murx-mllx) + mllx;
-          }
+        }
+      else {
+        this.llx = mllx;
+        this.lly = mlly;
+        this.urx = murx;
+        this.ury = mury;
+      }    
           //System.out.println("Height: "+size.height+" Width: "+size.width+" llx: "+llx+" lly: "+lly+" urx: "+urx+" ury:"+ury+" #:"+zooms.size());  
   }
 
@@ -252,6 +257,9 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
       lly = this.hlly;
       urx = this.hurx;
       ury = this.hury;
+
+      zooms.removeAllElements();
+      zooms.addElement( new double[]{llx, lly, urx, ury});
     }
 
     public double userToWorldX(double x) {
@@ -1051,7 +1059,8 @@ System.out.println("Mouse Action to check: "+mouse);
       }
       
       // Fire up min-max dialog
-      if ((e.getID() == KeyEvent.KEY_PRESSED) && 
+      if ((printable &&
+           e.getID() == KeyEvent.KEY_PRESSED) && 
           (e.getKeyCode() == KeyEvent.VK_J )   &&
           (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
 
@@ -1152,20 +1161,38 @@ System.out.println("Mouse Action to check: "+mouse);
 
       if( command.equals("Apply") || command.equals("OK") || command.equals("Home") || command.equals("Cancel") ) {
         if( command.equals("Apply") || command.equals("OK") ) {
-          this.reScale(Util.atod(LD.tfXMinI.getText()), 
-                       Util.atod(LD.tfYMinI.getText()),
-                       Util.atod(LD.tfXMaxI.getText()),
-                       Util.atod(LD.tfYMaxI.getText()));
-          scaleChanged = true;
-          update(this.getGraphics());
+          double xMin = Util.atod(LD.tfXMinI.getText());
+          double yMin = Util.atod(LD.tfYMinI.getText());
+          double xMax = Util.atod(LD.tfXMaxI.getText());
+          double yMax = Util.atod(LD.tfYMaxI.getText());
+          if( xMax > xMin && yMax > yMin ) {
+            this.reScale(xMin, yMin, xMax, yMax);
+            scaleChanged = true;
+            update(this.getGraphics());
+            LD.dispose();
+          } else
+            Toolkit.getDefaultToolkit().beep();   
+          
         } else if( command.equals("Home") ) {
+
           this.home();
+          LD.tfXMinI.setText(""+getLlx());
+          LD.tfXMaxI.setText(""+getUrx());
+          LD.tfYMinI.setText(""+getLly());
+          LD.tfYMaxI.setText(""+getUry());
           scaleChanged = true;
           update(this.getGraphics());
         }
         
-        if( command.equals("OK") || command.equals("Cancel") )
+        if( command.equals("Cancel") ) {
+          if( command.equals("Cancel") ) {
+            while( LD.last < zooms.size() )
+              zooms.remove(LD.last);
+            scaleChanged = true;
+            update(this.getGraphics());
+          }
           LD.dispose();
+        }
                        
       } else {
         
@@ -1221,9 +1248,11 @@ System.out.println("Mouse Action to check: "+mouse);
       public JTextField tfXMaxI;
       public JTextField tfYMinI;
       public JTextField tfYMaxI;
-
+      
+      public int last = zooms.size();
+      
       public LimitDialog(DragBox DB) {
-                
+        
         JPanel pnAllPanel;
         
         JPanel pnXPanel;
@@ -1333,6 +1362,11 @@ System.out.println("Mouse Action to check: "+mouse);
         gbcXPanel.anchor = GridBagConstraints.NORTH;
         gbXPanel.setConstraints( tfXMaxI, gbcXPanel );
         pnXPanel.add( tfXMaxI );
+        
+        if( DB instanceof PC ) {
+          tfXMinI.setEnabled(false);
+          tfXMaxI.setEnabled(false);
+        }
 
         gbcAllPanel.gridx = 0;
         gbcAllPanel.gridy = 0;
