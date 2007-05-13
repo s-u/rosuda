@@ -19,9 +19,14 @@ class StreamHog extends Thread
 }
 
 public class Srs {
-  public static boolean launchRserve(String cmd) {
+    public static boolean launchRserve(String cmd) { return launchRserve(cmd, "--vanilla --slave","--no-save --slave"); }
+
+    public static boolean launchRserve(String cmd, String rargs, String rsrvargs) {
     try {
-      Process p = Runtime.getRuntime().exec(cmd);
+	Process p = Runtime.getRuntime().exec(new String[] {
+						  "/bin/sh", "-c",
+						  "echo 'library(Rserve);Rserve(args=\""+rsrvargs+"\")'|"+cmd+" "+rargs });
+
       System.out.println("waiting for Rserve to start ... ("+p+")");
       // we need to fetch the output - some platforms will die if you don't ...
       StreamHog errorHog = new StreamHog(p.getErrorStream());
@@ -52,21 +57,19 @@ public class Srs {
     } catch (Exception e) {
       System.out.println("First connect try failed with: "+e.getMessage());
     }
-    String opt=" CMD Rserve --no-save";
-    return (launchRserve("R"+opt) ||
-            ((new File("/usr/local/lib/R/bin/R")).exists() && launchRserve("/usr/local/lib/R/bin/R"+opt)) ||
-            ((new File("/usr/lib/R/bin/R")).exists() && launchRserve("/usr/lib/R/bin/R"+opt)) ||
-            ((new File("/usr/local/bin/R")).exists() && launchRserve("/usr/local/bin/R"+opt)) ||
-            ((new File("/sw/bin/R")).exists() && launchRserve("/sw/bin/R"+opt)) ||
-            ((new File("/Library/Frameworks/R.framework/Resources/bin/R")).exists() && launchRserve("/Library/Frameworks/R.framework/Resources/bin/R"+opt)));
+    return (launchRserve("R") ||
+            ((new File("/usr/local/lib/R/bin/R")).exists() && launchRserve("/usr/local/lib/R/bin/R")) ||
+            ((new File("/usr/lib/R/bin/R")).exists() && launchRserve("/usr/lib/R/bin/R")) ||
+            ((new File("/usr/local/bin/R")).exists() && launchRserve("/usr/local/bin/R")) ||
+            ((new File("/sw/bin/R")).exists() && launchRserve("/sw/bin/R")) ||
+            ((new File("/Library/Frameworks/R.framework/Resources/bin/R")).exists() && launchRserve("/Library/Frameworks/R.framework/Resources/bin/R")));
   }
 
-  /*	public static void main(String[] args) {
-		System.out.println("result="+checkLocalRserve());
-		try {
-      Rconnection c=new Rconnection();
-      c.shutdown();
-    } catch (Exception x) {};
-  }
-*/
+    public static void main(String[] args) {
+	System.out.println("result="+checkLocalRserve());
+	try {
+	    Rconnection c=new Rconnection();
+	    c.shutdown();
+	} catch (Exception x) {};
+    }
 }
