@@ -935,6 +935,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	    if(ppAlpha!=oppAlphaH){
 		setUpdateRoot(0); repaint();
 	    }
+	    displayCurrentAlpha();
 	}
 	if (M_HALPHAUP.equals(cmd)) {
 	    final float oppAlphaH = ppAlpha;
@@ -944,6 +945,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	    if(ppAlpha!=oppAlphaH){
 		setUpdateRoot(0); repaint();
 	    }
+	    displayCurrentAlpha();
 	}
 	if (M_ALPHADOWN.equals(cmd)) {
 	    final float oppAlpha = ppAlpha;
@@ -953,6 +955,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	    if(ppAlpha!=oppAlpha){
 		setUpdateRoot(0); repaint();
 	    }
+	    displayCurrentAlpha();
 	}
 	if (M_ALPHAUP.equals(cmd)) {
 	    final float oppAlpha = ppAlpha;
@@ -962,6 +965,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	    if(ppAlpha!=oppAlpha){
 		setUpdateRoot(0); repaint();
 	    }
+	    displayCurrentAlpha();
 	}
 	if(M_TRANSHIGHL.equals(cmd)) {
 	    alphaHighlighting=!alphaHighlighting;
@@ -1490,5 +1494,16 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	    ret[1] = 1-c*hcws/h;
 	}
 	return ret;
+    }
+    
+    private void displayCurrentAlpha() {
+	StringBuffer sb = new StringBuffer();
+	sb.append("Transparency: ").append(ppAlpha).append("\n")
+	.append("Transparency of hiliting: ").append(seperateAlphas?ppAlphaH:ppAlpha);
+	
+	setQueryText(sb.toString());
+	final Point cl=getFrame().getLocation();
+	qi.setLocation(cl.x+mouseX,cl.y+mouseY);
+	qi.show();
     }
 }
