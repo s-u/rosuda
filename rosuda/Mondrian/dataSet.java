@@ -970,8 +970,8 @@ System.out.println(newQ.makeQuery());
         
 //System.out.println(" filterVar: "+filterVar+" Grp: "+grp+ " <-- "+ filterGrp +" --> "+filterVal); 
     filterON = true;
-//    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
-    if( !alpha(filterVar) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+//    if( !alpha(filterVar) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(  Double.toString( Double.valueOf(grp).doubleValue() ) ));
     else
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
