@@ -2,12 +2,24 @@
 # $Id$
 #
 # Note that some projects may be better compiled using xcodebuild
+# Requires GNU make (or compatible)!
 
 JAPIURL:=http://java.sun.com/j2se/1.4.2/docs/api
 ifeq ($(JDKVER),)
 JDKVER:=1.4
 endif
 JFLAGS+=-encoding UTF-8 -target $(JDKVER) -source $(JDKVER)
+
+# determine host OS, we need a different path separator for Windows
+IS_WIN32=$(shell if echo "${OS}"|grep -i windows >/dev/null 2>&1; then echo yes; else echo no; fi)
+ifeq ($(IS_WIN32),yes)
+PATHSEP=\;
+else
+PATHSEP=:
+endif
+
+# set the default (direct) Java/R engine for all projects that need one
+JRENGINE=JRI.jar
 
 #----------- source definitions --------------
 
@@ -19,7 +31,6 @@ POGRASS_SRC_XTREME:=$(POGRASS_SRC) rosuda/pograss/PoGraSSjogl.java
 IBASE_SRC_RAW:= $(IGLOBAL_SRC) $(wildcard rosuda/ibase/*.java) $(wildcard rosuda/ibase/plots/*.java) $(wildcard rosuda/ibase/toolkit/*.java) $(POGRASS_SRC) rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java
 IBASE_SRC_XTREME:=rosuda/ibase/toolkit/PGSJoglCanvas.java
 IBASE_SRC:=$(filter-out $(IBASE_SRC_XTREME),$(IBASE_SRC_RAW))
-#IBASE_SRC_JGR:=rosuda/ibase/toolkit/FrameDevice.java rosuda/ibase/toolkit/TJFrame.java $(wildcard rosuda/ibase/toolkit/Win*.java) $(wildcard rosuda/ibase/toolkit/WTentry*.java) rosuda/ibase/SCatSequence.java rosuda/ibase/SMarker.java $(wildcard rosuda/ibase/SVar*.java) rosuda/ibase/Commander.java rosuda/ibase/Common.java rosuda/ibase/Dependent.java $(wildcard rosuda/ibase/Map*.java) $(wildcard rosuda/ibase/Notif*.java) rosuda/ibase/Loader.java rosuda/plugins/Plugin.java rosuda/plugins/PluginManager.java $(wildcard rosuda/util/Global*.java) rosuda/util/ImageSelection.java rosuda/util/JSpacingPanel.java rosuda/util/ProgressDlg.java $(wildcard rosuda/util/Platform*.java) rosuda/util/RecentList.java rosuda/util/Stopwatch.java rosuda/util/Tools.java
 KLIMT_SRC:=$(wildcard rosuda/klimt/*.java) $(wildcard rosuda/klimt/plots/*.java)
 PLUGINS_SRC:=$(wildcard rosuda/plugins/*.java)
 JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
@@ -29,6 +40,7 @@ JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
 JGR_SRC:=rosuda/JGR/editor/FindReplaceDialog.java $(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) 
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
+RENGINE_RSERVE_SRC:=$(wildcard rosuda/REngine/Rserve/*.java) $(wildcard rosuda/REngine/Rserve/protocol/*.java)
 CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
 ICUSTOM_SRC:=$(wildcard rosuda/icustom/*.java)
 MRJSTUBS_SRC:=$(wildcard rosuda/util/MRJstubs/*.java)
@@ -57,9 +69,9 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: javaGD.jar ibase.jar JRI.jar MRJstubs.jar $(JGR_SRC)
+JGR.jar: javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(JGR_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar:ibase.jar:JRI.jar:MRJstubs.jar $(JGR_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE)$(PATHSEP)MRJstubs.jar $(JGR_SRC)
 	cp rosuda/projects/jgr/splash.jpg jgrsplash.jpg
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
@@ -104,18 +116,15 @@ iplots.jar: MRJstubs.jar $(IBASE_SRC) $(IPLOTS_SRC)
 javaGD.jar: $(JAVAGD_SRC)
 	$(can-with-jar)
 
-#icustom.jar: iplots.jar REngine.jar $(ICUSTOM_SRC)
-icustom.jar: iplots.jar JRI.jar $(ICUSTOM_SRC)
+icustom.jar: iplots.jar $(JRENGINE) $(ICUSTOM_SRC)
 	rm -rf org
-#	$(JAVAC) -d . -classpath iplots.jar:REngine.jar $(ICUSTOM_SRC)
-	$(JAVAC) -d . -classpath iplots.jar:JRI.jar $(ICUSTOM_SRC)
+	$(JAVAC) -d . -classpath iplots.jar$(PATHSEP)$(JRENGINE) $(ICUSTOM_SRC)
 	jar fc $@ org
 	rm -rf org
 
-iwidgets.jar: javaGD.jar JGR.jar ibase.jar JRI.jar $(IWIDGETS_SRC)
+iwidgets.jar: javaGD.jar JGR.jar ibase.jar $(JRENGINE) $(IWIDGETS_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar:JGR.jar:ibase.jar:JRI.jar $(IWIDGETS_SRC)
-#	$(JAVAC) -d . -classpath iplots.jar:JGR.jar $(IWIDGETS_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar$(PATHSEP)JGR.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE) $(IWIDGETS_SRC)
 	jar fc $@ org
 	rm -rf org
 
@@ -131,7 +140,7 @@ MRJstubs.jar: $(MRJSTUBS_SRC)
 
 docs: doc
 
-doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(RENGINE_SRC) $(ICUSTOM_SRC)
+doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(RENGINE_SRC) $(RENGINE_RSERVE_SRC) $(ICUSTOM_SRC)
 	rm -rf JavaDoc
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
