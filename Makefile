@@ -137,7 +137,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
 
 clean:
-	find . -name .DS_* | xargs rm -rf
+	rm -rf `find . -name ".DS_*"`
 	rm -rf $(TARGETS) com net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JRI*.tar.gz rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz rosuda/projects/klimt/build rosuda/projects/jgr/build rosuda/projects/iplots/build
 	$(MAKE) -C rosuda/Mondrian clean
 
