@@ -31,11 +31,10 @@ if [ ! -e tools/getsp.class ]; then
 fi
 
 echo "Removing CVS/SVN and backup stuff ..."
-find . -name CVS -or -name .svn | xargs rm -rf
-find . -name \*~ | xargs rm -f
+rm -rf `find . -name CVS -or -name .svn -or -name \*~`
 
 echo "Updating version ..."
-VER=`awk -v ORS= '/JRI v/ { print substr($6,2) }' src/jri.h`
+VER=`sed -n -e 's/.*JRI v\([0-9.-]\{1,\}\).*/\1/p' src/jri.h`
 echo "$PNAME version ${VER}"
 # cat DESCRIPTION| sed "s/Version:.*/Version: ${VER}/" > d
 # mv d DESCRIPTION
