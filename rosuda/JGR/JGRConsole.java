@@ -426,14 +426,16 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 	// ======================================================= R callbacks ===
 
 	/**
-	 * Write output from R into console (R callback).
+	 * Write output from R into console (new R callback).
 	 * 
 	 * @param re
 	 *            used Rengine
 	 * @param text
 	 *            output
+	 * @param oType
+	 *            output type (0=regular, 1=warning/error)
 	 */
-	public void rWriteConsole(Rengine re, String text) {
+	public void rWriteConsole(Rengine re, String text, int oType) {
 		console.append(text);
 		if (console.length() > 100) {
 			output.append(console.toString(), JGRPrefs.RESULT);
@@ -443,6 +445,18 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 	}
 
 	/**
+	 * Write output from R into console (old R callback).
+	 * 
+	 * @param re
+	 *            used Rengine
+	 * @param text
+	 *            output
+	 */
+	public void rWriteConsole(Rengine re, String text) {
+		rWriteConsole(re, text, 0);
+	}
+			 
+	 /**
 	 * Invoke the busy cursor (R callback).
 	 * 
 	 * @param re
