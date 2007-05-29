@@ -1,3 +1,8 @@
+# Makefile for JRI bootstrap
+# Win/OSX should be ok, Linux will need some tweaking
+
+all: boot.jar
+
 OSKIND=$(shell if echo "${OS}"|grep -i windows >/dev/null 2>&1; then echo win32; else uname -s; fi)
 
 ifeq ($(OSKIND),win32)
@@ -14,6 +19,7 @@ KNOWNOS=yes
 OSNAME=Windows
 JAVA=$(JAVA_HOME)/bin/java
 JAVAC=$(JAVA_HOME)/bin/javac
+JAR=$(JAVA_HOME)/bin/jar
 endif
 ifeq ($(OSKIND),Darwin)
 JSO_PREFIX=lib
@@ -26,6 +32,7 @@ KNOWNOS=yes
 OSNAME=MacOSX
 JAVA=java
 JAVAC=javac
+JAR=jar
 endif
 ifneq ($(KNOWNOS),yes)
 JSO_PREFIX=lib
@@ -37,6 +44,7 @@ PATHSEP=:
 OSNAME="generic unix"
 JAVA=java
 JAVAC=javac
+JAR=jar
 endif
 
 $(JSO_PREFIX)boot$(JSO_SUFFIX): JRIBootstrap.o
@@ -52,4 +60,8 @@ run: $(JSO_PREFIX)boot$(JSO_SUFFIX)
 clean:
 	rm -f JRIBootstrap.o $(JSO_PREFIX)boot$(JSO_SUFFIX) *.class *~
 
-.PHONY: clean run
+boot.jar: $(JSO_PREFIX)boot$(JSO_SUFFIX)
+	$(JAVAC) -source 1.2 -target 1.2 *.java
+	$(JAR) fcm $@ mft *.class $^
+
+.PHONY: clean run all
