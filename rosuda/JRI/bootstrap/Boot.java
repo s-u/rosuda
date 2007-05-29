@@ -118,7 +118,7 @@ public class Boot {
 			Method m = stage2class.getMethod("bootstrap", new Class[] { String[].class });
 			m.invoke(null, new Object[] { args });
 		} catch (Exception rtx) {
-			System.err.println("ERROR: Unable to invoke bootstrap method in JRIBootstrap! ("+rtx.getMessage()+")");
+			System.err.println("ERROR: Unable to invoke bootstrap method in JRIBootstrap! ("+rtx+")");
 			rtx.printStackTrace();
 			System.exit(2);
 		}
