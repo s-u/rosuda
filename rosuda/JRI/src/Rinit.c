@@ -113,7 +113,12 @@ int initR(int argc, char **argv) {
     /* ptr_R_CleanUp = Re_CleanUp; */
     ptr_R_ShowMessage = Re_ShowMessage;
     ptr_R_ReadConsole = Re_ReadConsole;
+#if (R_VERSION >=R_Version(2,5,0))
+    ptr_R_WriteConsole = NULL;
+    ptr_R_WriteConsoleEx = Re_WriteConsoleEx;
+#else
     ptr_R_WriteConsole = Re_WriteConsole;
+#endif
     ptr_R_ResetConsole = Re_ResetConsole;
     ptr_R_FlushConsole = Re_FlushConsole;
     ptr_R_ClearerrConsole = Re_ClearerrConsole;
@@ -287,7 +292,12 @@ int initR(int argc, char **argv)
     if (*p == '/' || *p == '\\') *p = '\0';
     Rp->home = RUser;
     Rp->ReadConsole = Re_ReadConsole;
+#if R_VERSION >= R_Version(2,5,0)
+    Rp->WriteConsole = NULL;
+    Rp->WriteConsoleEx = Re_WriteConsoleEx;
+#else
     Rp->WriteConsole = Re_WriteConsole;
+#endif
 
 #if R_VERSION >= R_Version(2,1,0)
     Rp->Busy = Re_Busy;
