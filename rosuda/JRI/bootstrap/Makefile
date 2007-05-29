@@ -35,9 +35,12 @@ JAVAC=javac
 JAR=jar
 endif
 ifneq ($(KNOWNOS),yes)
+ifeq ($(JAVA_HOME),)
+JAVA_HOME=/usr/lib/java
+endif
 JSO_PREFIX=lib
 JSO_SUFFIX=.so
-JCPPFLAGS=-I$(JAVA_HOME)/include
+JCPPFLAGS=-I$(JAVA_HOME)/include -I$(shell dirname `find $(JAVA_HOME)/include -name jni_md.h|sed -n -e 1p`)
 JLDFLAGS=-shared
 JLIBS=-L$(JAVA_HOME)/lib -ljvm
 PATHSEP=:
@@ -53,9 +56,8 @@ $(JSO_PREFIX)boot$(JSO_SUFFIX): JRIBootstrap.o
 JRIBootstrap.o: JRIBootstrap.c JRIBootstrap.h
 	$(CC) -c -o $@ $< $(JCPPFLAGS)
 
-run: $(JSO_PREFIX)boot$(JSO_SUFFIX)
-	$(JAVAC) -source 1.2 -target 1.2 *.java
-	$(JAVA) -cp . Boot
+run: boot.jar
+	$(JAVA) -jar $<
 
 clean:
 	rm -f JRIBootstrap.o $(JSO_PREFIX)boot$(JSO_SUFFIX) *.class *~

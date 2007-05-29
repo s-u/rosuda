@@ -31,13 +31,14 @@ public class JRIBootstrap {
 		System.exit(1);
 	}
 
-        public static String findInPath(String path, String fn) {
+        public static String findInPath(String path, String fn, boolean mustBeFile) {
                 StringTokenizer st = new StringTokenizer(path, File.pathSeparator);
                 while (st.hasMoreTokens()) {
                         String dirname=st.nextToken();
                         try {
                                 File f = new File(dirname+File.separator+fn);
-                                if (f.isFile()) return f.getPath();
+				System.out.println(" * "+f+" ("+f.exists()+", "+f.isFile()+")");
+                                if (f.exists() && (!mustBeFile || f.isFile())) return f.getPath();
                         } catch (Exception fex) {}
                 }
                 return null;
@@ -45,70 +46,71 @@ public class JRIBootstrap {
 
     // set ONLY after findR was run
     public static boolean isWin32 = false;
+    public static boolean isMac = false;
 
     static String findR(boolean findAllSettings) {
 	String ip = null;
 	try {
-	if (hasreg()) {
-	    isWin32 = true;
-	    int rroot = HKLM;
-	    System.out.println("has registry, trying to find R");
-	    ip = regvalue(HKLM, "SOFTWARE\\R-core\\R","InstallPath");
-	    if (ip == null)
-		ip = regvalue(rroot=HKCU, "SOFTWARE\\R-core\\R","InstallPath");
-	    if (ip == null) {
-		System.out.println(" - InstallPath not present (possibly uninstalled R)");
-		String[] vers = regsubkeys(rroot=HKLM, "SOFTWARE\\R-core\\R");
-		if (vers == null)
-		    vers = regsubkeys(rroot=HKCU, "SOFTWARE\\R-core\\R");
-		if (vers!=null) {
-		    String lvn = ""; // FIXME: we compare versions lexicographically which may fail if we really reach R 2.10
-		    int i = 0; while (i<vers.length) {
-			if (vers[i] != null && lvn.compareTo(vers[i]) < 0)
-			    lvn = vers[i];
-			i++;
+	    if (hasreg()) {
+		isWin32 = true;
+		int rroot = HKLM;
+		System.out.println("has registry, trying to find R");
+		ip = regvalue(HKLM, "SOFTWARE\\R-core\\R","InstallPath");
+		if (ip == null)
+		    ip = regvalue(rroot=HKCU, "SOFTWARE\\R-core\\R","InstallPath");
+		if (ip == null) {
+		    System.out.println(" - InstallPath not present (possibly uninstalled R)");
+		    String[] vers = regsubkeys(rroot=HKLM, "SOFTWARE\\R-core\\R");
+		    if (vers == null)
+			vers = regsubkeys(rroot=HKCU, "SOFTWARE\\R-core\\R");
+		    if (vers!=null) {
+			String lvn = ""; // FIXME: we compare versions lexicographically which may fail if we really reach R 2.10
+			int i = 0; while (i<vers.length) {
+			    if (vers[i] != null && lvn.compareTo(vers[i]) < 0)
+				lvn = vers[i];
+			    i++;
+			}
+			if (!lvn.equals(""))
+			    ip = regvalue(rroot, "SOFTWARE\\R-core\\R\\"+lvn, "InstallPath");
 		    }
-		    if (!lvn.equals(""))
-			ip = regvalue(rroot, "SOFTWARE\\R-core\\R\\"+lvn, "InstallPath");
+		}
+		if (ip == null) {
+		    ip = getenv("R_HOME");
+		    if (ip==null || ip.length()<1) ip = getenv("RHOME");
+		    if (ip==null || ip.length()<1) ip=null;
+		}
+		if (ip != null) rs_home = ip;
+		return ip;
+	    }
+	    isMac = System.getProperty("os.name").startsWith("Mac");
+	    File f = null;
+	    ip = getenv("R_HOME");
+	    if (ip == null || ip.length()<1)
+		ip = getenv("RHOME");
+	    if (ip == null || ip.length()<1) {
+		if (isMac) {
+		    f=new File("/Library/Frameworks/R.framework/Resources/bin/R");
+		    if (!f.exists())
+			f=new File(getenv("HOME")+"/Library/Frameworks/R.framework/Resources/bin/R");
+		    if (!f.exists())
+			f=null;
+		}
+		if (f==null) {
+		    String fn = findInPath(getenv("PATH"), "R", true);
+		    if (fn == null)
+			fn = findInPath("/usr/bin:/usr/local/bin:/sw/bin:/opt/bin:/usr/lib/R/bin:/usr/local/lib/R/bin", "R", true);
+		    if (fn != null) f = new File(fn);
+		}
+		if (!findAllSettings) {
+		    String s = f.getAbsolutePath();
+		    if (s.length()>6) ip = s.substring(0, s.length()-6);
 		}
 	    }
-	    if (ip == null) {
-		ip = getenv("R_HOME");
-		if (ip==null || ip.length()<1) ip = getenv("RHOME");
-		if (ip==null || ip.length()<1) ip=null;
+	    if (findAllSettings) {
+		if (f==null && ip!=null) f=new File(u2w(ip+"/bin/R"));
+		if (f!=null) ip = getRSettings(f.getAbsolutePath());
 	    }
-	    if (ip != null) rs_home = ip;
-	    return ip;
-	}
-	boolean isMac = System.getProperty("os.name").startsWith("Mac");
-	File f = null;
-	ip = getenv("R_HOME");
-	if (ip == null || ip.length()<1)
-	    ip = getenv("RHOME");
-	if (findAllSettings) {
-	    f = new File(ip+"/bin/R");
-	}
-	if (ip == null || ip.length()<1) {
-	    if (isMac) {
-		f=new File("/Library/Frameworks/R.framework/Resources/bin/R");
-		if (!f.exists())
-		    f=new File(getenv("HOME")+"/Library/Frameworks/R.framework/Resources/bin/R");
-		if (!f.exists())
-		    f=null;
-	    }
-	    if (f==null) {
-		String fn = findInPath(getenv("PATH"), "R");
-		if (fn == null)
-		    fn = findInPath("/usr/bin:/usr/local/bin:/sw/bin:/opt/bin:/usr/lib/R/bin:/usr/local/lib/R/bin", "R");
-		if (fn != null) f = new File(fn);
-	    }
-	    if (!findAllSettings) {
-		String s = f.getAbsolutePath();
-		if (s.length()>6) ip = s.substring(0, s.length()-6);
-	    }
-	}
-	if (findAllSettings)
-	    ip = getRSettings(f.getAbsolutePath());
+
 	} catch (Exception e) {
 	}
 	return ip;
@@ -134,7 +136,7 @@ public class JRIBootstrap {
 	if (rs_incdir!=null && rs_incdir.length()>0) setenv("R_INCLUDE_DIR", rs_incdir);
 	if (rs_sharedir!=null && rs_sharedir.length()>0) setenv("R_SHARE_DIR", rs_sharedir);
 	if (rs_ldp!=null && rs_ldp.length()>0) setenv("LD_LIBRARY_PATH", rs_ldp);
-	if (rs_dyldp!=null && rs_dyldp.length()>0) setenv("LD_LIBRARY_PATH", rs_dyldp);
+	if (rs_dyldp!=null && rs_dyldp.length()>0) setenv("DYLD_LIBRARY_PATH", rs_dyldp);
 	if (rs_libs!=null && rs_libs.length()>0) setenv("R_LIBS", rs_libs);
     }
 
@@ -172,7 +174,7 @@ public class JRIBootstrap {
 	    File fout = File.createTempFile("rboot",".tmp");
 	    PrintStream p = new PrintStream(new FileOutputStream(fin));
 	    p.println("cat(unlist(lapply(c('R_HOME','R_ARCH','R_DOC_DIR','R_INCLUDE_DIR','R_SHARE_DIR','LD_LIBRARY_PATH','DYLD_LIBRARY_PATH','R_UNZIPCMD','R_LATEXCMD','R_PAPERSIZE','R_PRINTCMD'),Sys.getenv)),sep='\n')");
-	    p.println("cat(paste(.libPaths(),sep=.Platform$path.sep),'\n',sep='')");
+	    p.println("cat(paste(.libPaths(),collapse=.Platform$path.sep),'\n',sep='')");
 	    p.close();
 	    Process rp = Runtime.getRuntime().exec(new String[] {
 		    "/bin/sh","-c",binR+" --no-restore --no-save --slave < \""+fin.getAbsolutePath()+"\" > \""+fout.getAbsolutePath()+"\"" });
@@ -193,8 +195,8 @@ public class JRIBootstrap {
 	    rs_libs = r.readLine();
 	    r.close();
 	    if (!fin.delete()) fin.deleteOnExit();
-	    if (!fout.delete()) fout.deleteOnExit();
-	    System.out.println(" - retrieved R settings, home: "+rs_home+" (arch="+rs_arch+")");
+	    //if (!fout.delete()) fout.deleteOnExit();
+	    System.out.println(" - retrieved R settings, home: "+rs_home+" (arch="+rs_arch+", libs="+rs_libs+")");
 	} catch (Exception e) {
 	    System.err.println("Failed to get R settings: "+e);
 	}
@@ -227,7 +229,7 @@ public class JRIBootstrap {
     static String findPackage(String name) {
 	String pd = null;
 	if (rs_libs!=null && rs_libs.length()>0)
-	    pd = findInPath(rs_libs, name);
+	    pd = findInPath(rs_libs, name, false);
 	if (pd == null) {
 	    pd = u2w(rs_home+"/library/"+name);
 	    if (!(new File(pd)).exists()) pd = null;
@@ -238,7 +240,7 @@ public class JRIBootstrap {
     static Object createRJavaLoader(String rhome, String[] cp, boolean addJRI) {
 	String rJavaRoot = null;
 	if (rs_libs!=null && rs_libs.length()>0)
-	    rJavaRoot = findInPath(rs_libs, "rJava");
+	    rJavaRoot = findInPath(rs_libs, "rJava", false);
 	if (rJavaRoot == null)
 	    rJavaRoot = u2w(rhome+"/library/rJava");
 
@@ -318,8 +320,26 @@ public class JRIBootstrap {
 		    setenv("PATH",path);
 		}
 		setREnv();
-		
-		System.out.println("PATH="+getenv("PATH"));
+
+		System.out.println("PATH="+getenv("PATH")+"\nR_LIBS="+getenv("R_LIBS"));
+
+		if (!isMac && !isWin32) {
+		    String stage = System.getProperty("stage");
+		    if (stage==null || stage.length()<1) {
+			File jl = new File(u2w(System.getProperty("java.home")+"/bin/java"));
+			if (jl.exists()) {
+			    try {
+				System.out.println(jl.toString()+" -cp "+System.getProperty("java.class.path")+" -Xmx512m -Dstage=2 Boot");
+				Process p = Runtime.getRuntime().exec(new String[] {
+				    jl.toString(), "-cp", System.getProperty("java.class.path"),
+				    "-Xmx512m", "-Dstage=2", "Boot" });
+				System.out.println("Started stage 2 ("+p+"), waiting for it to finish...");
+				System.exit(p.waitFor());
+			    } catch (Exception re) {
+			    }
+			}
+		    }
+		}
 
 		String needPkg = null;
 		String rj = findPackage("rJava");
@@ -338,6 +358,10 @@ public class JRIBootstrap {
 		    if (needPkg==null) needPkg="'JGR'"; else needPkg+=",'JGR'";
 		}
 		if (needPkg != null) {
+		    if (!isWin32 && !isMac) {
+			System.err.println("*** Please run the following in R as root to install missing packages:\n install.packages(c("+needPkg+"),,'http://www.rforge.net/')");
+			System.exit(4);
+		    }
 		    if (execR("install.packages(c("+needPkg+"),,c('http://www.rforge.net/','http://cran.r-project.org'))")!=0) {
 			System.err.println("*** ERROR: failed to install necessary packages");
 			System.exit(4);
