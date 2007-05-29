@@ -1,6 +1,11 @@
 import java.io.File;
+import java.io.PrintStream;
+import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.StringTokenizer;
 
 public class JRIBootstrap {
 	//--- global constants ---
@@ -26,11 +31,24 @@ public class JRIBootstrap {
 		System.exit(1);
 	}
 
+        public static String findInPath(String path, String fn) {
+                StringTokenizer st = new StringTokenizer(path, File.pathSeparator);
+                while (st.hasMoreTokens()) {
+                        String dirname=st.nextToken();
+                        try {
+                                File f = new File(dirname+File.separator+fn);
+                                if (f.isFile()) return f.getPath();
+                        } catch (Exception fex) {}
+                }
+                return null;
+        }
+
     // set ONLY after findR was run
     public static boolean isWin32 = false;
 
-    static String findR() {
+    static String findR(boolean findAllSettings) {
 	String ip = null;
+	try {
 	if (hasreg()) {
 	    isWin32 = true;
 	    int rroot = HKLM;
@@ -59,15 +77,128 @@ public class JRIBootstrap {
 		if (ip==null || ip.length()<1) ip = getenv("RHOME");
 		if (ip==null || ip.length()<1) ip=null;
 	    }
+	    if (ip != null) rs_home = ip;
 	    return ip;
 	}
+	boolean isMac = System.getProperty("os.name").startsWith("Mac");
+	File f = null;
 	ip = getenv("R_HOME");
 	if (ip == null || ip.length()<1)
 	    ip = getenv("RHOME");
+	if (findAllSettings) {
+	    f = new File(ip+"/bin/R");
+	}
 	if (ip == null || ip.length()<1) {
-	    // find ...
+	    if (isMac) {
+		f=new File("/Library/Frameworks/R.framework/Resources/bin/R");
+		if (!f.exists())
+		    f=new File(getenv("HOME")+"/Library/Frameworks/R.framework/Resources/bin/R");
+		if (!f.exists())
+		    f=null;
+	    }
+	    if (f==null) {
+		String fn = findInPath(getenv("PATH"), "R");
+		if (fn == null)
+		    fn = findInPath("/usr/bin:/usr/local/bin:/sw/bin:/opt/bin:/usr/lib/R/bin:/usr/local/lib/R/bin", "R");
+		if (fn != null) f = new File(fn);
+	    }
+	    if (!findAllSettings) {
+		String s = f.getAbsolutePath();
+		if (s.length()>6) ip = s.substring(0, s.length()-6);
+	    }
+	}
+	if (findAllSettings)
+	    ip = getRSettings(f.getAbsolutePath());
+	} catch (Exception e) {
 	}
 	return ip;
+    }
+
+    public static String rs_home = "";
+    public static String rs_arch = "";
+    public static String rs_docdir = "";
+    public static String rs_incdir = "";
+    public static String rs_sharedir = "";
+    public static String rs_ldp = "";
+    public static String rs_dyldp = "";
+    public static String rs_unzip = "";
+    public static String rs_latex = "";
+    public static String rs_paper = "";
+    public static String rs_print = "";
+    public static String rs_libs = "";
+
+    public static void setREnv() {
+	if (rs_home!=null && rs_home.length()>0) setenv("R_HOME", rs_home);
+	if (rs_arch!=null && rs_arch.length()>0) setenv("R_ARCH", rs_arch);
+	if (rs_docdir!=null && rs_docdir.length()>0) setenv("R_DOC_DIR", rs_docdir);
+	if (rs_incdir!=null && rs_incdir.length()>0) setenv("R_INCLUDE_DIR", rs_incdir);
+	if (rs_sharedir!=null && rs_sharedir.length()>0) setenv("R_SHARE_DIR", rs_sharedir);
+	if (rs_ldp!=null && rs_ldp.length()>0) setenv("LD_LIBRARY_PATH", rs_ldp);
+	if (rs_dyldp!=null && rs_dyldp.length()>0) setenv("LD_LIBRARY_PATH", rs_dyldp);
+	if (rs_libs!=null && rs_libs.length()>0) setenv("R_LIBS", rs_libs);
+    }
+
+    public static int execR(String cmd) {
+	try {
+	    String binR = u2w(rs_home+"/bin/R");
+	    if (isWin32) {
+		binR+=".exe";
+		File fin = File.createTempFile("rboot",".R");
+		File fout = File.createTempFile("rboot",".tmp");
+		PrintStream p = new PrintStream(new FileOutputStream(fin));
+		p.println(cmd);
+		p.close();
+		Process rp = Runtime.getRuntime().exec(new String[] {
+			binR,"CMD","BATCH","--no-restore","--no-save","--slave",fin.getAbsolutePath(),
+			fout.getAbsolutePath()});
+		int i = rp.waitFor();
+		if (!fin.delete()) fin.deleteOnExit();
+		if (!fout.delete()) fout.deleteOnExit();
+		return i;
+	    } else {
+		Process rp = Runtime.getRuntime().exec(new String[] {
+			"/bin/sh","-c","echo \""+cmd+"\" |"+binR+" --no-restore --no-save --slave >/dev/null 2>&1" });
+		return rp.waitFor();
+	    }
+	} catch (Exception e) {
+	    lastError = e.toString();
+	    return -1;
+	}
+    }
+
+    public static String getRSettings(String binR) {
+	try {
+	    File fin = File.createTempFile("rboot",".R");
+	    File fout = File.createTempFile("rboot",".tmp");
+	    PrintStream p = new PrintStream(new FileOutputStream(fin));
+	    p.println("cat(unlist(lapply(c('R_HOME','R_ARCH','R_DOC_DIR','R_INCLUDE_DIR','R_SHARE_DIR','LD_LIBRARY_PATH','DYLD_LIBRARY_PATH','R_UNZIPCMD','R_LATEXCMD','R_PAPERSIZE','R_PRINTCMD'),Sys.getenv)),sep='\n')");
+	    p.println("cat(paste(.libPaths(),sep=.Platform$path.sep),'\n',sep='')");
+	    p.close();
+	    Process rp = Runtime.getRuntime().exec(new String[] {
+		    "/bin/sh","-c",binR+" --no-restore --no-save --slave < \""+fin.getAbsolutePath()+"\" > \""+fout.getAbsolutePath()+"\"" });
+	    int i = rp.waitFor();
+	    System.out.println("getRSettings, i="+i);
+	    BufferedReader r = new BufferedReader(new FileReader(fout));
+	    rs_home = r.readLine();
+	    rs_arch = r.readLine();
+	    rs_docdir = r.readLine();
+	    rs_incdir = r.readLine();
+	    rs_sharedir = r.readLine();
+	    rs_ldp = r.readLine();
+	    rs_dyldp = r.readLine();
+	    rs_unzip = r.readLine();
+	    rs_latex = r.readLine();
+	    rs_paper = r.readLine();
+	    rs_print = r.readLine();
+	    rs_libs = r.readLine();
+	    r.close();
+	    if (!fin.delete()) fin.deleteOnExit();
+	    if (!fout.delete()) fout.deleteOnExit();
+	    System.out.println(" - retrieved R settings, home: "+rs_home+" (arch="+rs_arch+")");
+	} catch (Exception e) {
+	    System.err.println("Failed to get R settings: "+e);
+	}
+	return rs_home;
     }
 
     public static String u2w(String fn) {
@@ -91,15 +222,41 @@ public class JRIBootstrap {
 	}
     }
 
+    static String lastError = "";
+
+    static String findPackage(String name) {
+	String pd = null;
+	if (rs_libs!=null && rs_libs.length()>0)
+	    pd = findInPath(rs_libs, name);
+	if (pd == null) {
+	    pd = u2w(rs_home+"/library/"+name);
+	    if (!(new File(pd)).exists()) pd = null;
+	}
+	return pd;	
+    }
+
     static Object createRJavaLoader(String rhome, String[] cp, boolean addJRI) {
-	String rJavaRoot = u2w(rhome+"/library/rJava");
+	String rJavaRoot = null;
+	if (rs_libs!=null && rs_libs.length()>0)
+	    rJavaRoot = findInPath(rs_libs, "rJava");
+	if (rJavaRoot == null)
+	    rJavaRoot = u2w(rhome+"/library/rJava");
+
+	if (!(new File(rJavaRoot)).exists()) {
+	    lastError="Unable to find rJava";
+	    return null;
+	}
+
 	File f = new File(u2w(rJavaRoot+"/java/boot"));
 	if (!f.exists()) {
 	    // try harder ...
+	    lastError = "rJava too old";
 	    return null;
 	}
 	String rJavaHome = u2w(rJavaRoot);
-	File lf = new File(u2w(rJavaRoot+"/libs/"+arch()));
+	File lf = null;
+	if (rs_arch!=null && rs_arch.length()>0) lf = new File(u2w(rJavaRoot+"/libs"+rs_arch));
+	if (lf == null || !lf.exists()) lf = new File(u2w(rJavaRoot+"/libs/"+arch()));
 	if (!lf.exists()) lf = new File(u2w(rJavaRoot+"/libs"));
 	String rJavaLibs = lf.toString();
 	JRIClassLoader mcl = JRIClassLoader.getMainLoader();
@@ -152,7 +309,7 @@ public class JRIBootstrap {
 		}
 		
 		// just testing from now on
-		String rhome = findR();
+		String rhome = findR(true);
 		if (rhome == null) fail("Unable to find R!");
 		if (isWin32) {
 		    String path = getenv("PATH");
@@ -160,12 +317,44 @@ public class JRIBootstrap {
 		    else path=rhome+"\\bin;"+path;
 		    setenv("PATH",path);
 		}
+		setREnv();
 		
 		System.out.println("PATH="+getenv("PATH"));
+
+		String needPkg = null;
+		String rj = findPackage("rJava");
+		if (rj == null) {
+		    System.err.println("**ERROR: rJava is not installed");
+		    if (needPkg==null) needPkg="'rJava'"; else needPkg+=",'rJava'";
+		}
+		String ipl = findPackage("iplots");
+		if (ipl == null) {
+		    System.err.println("**ERROR: iplots is not installed");
+		    if (needPkg==null) needPkg="'iplots'"; else needPkg+=",'iplots'";
+		}
+		String jgr = findPackage("JGR");
+		if (jgr == null) {
+		    System.err.println("**ERROR: JGR is not installed");
+		    if (needPkg==null) needPkg="'JGR'"; else needPkg+=",'JGR'";
+		}
+		if (needPkg != null) {
+		    if (execR("install.packages(c("+needPkg+"),,c('http://www.rforge.net/','http://cran.r-project.org'))")!=0) {
+			System.err.println("*** ERROR: failed to install necessary packages");
+			System.exit(4);
+		    }
+		    rj = findPackage("rJava");
+		    ipl = findPackage("iplots");
+		    jgr = findPackage("JGR");
+		    if (rj==null || ipl==null || jgr==null) {
+			System.err.println("*** ERROR: failed to find installed packages");
+			System.exit(5);
+		    }
+		}
+
 		Object o = bootRJavaLoader = createRJavaLoader(rhome, new String[] { "main" }, true);
 
-		addClassPath(u2w(rhome+"/library/JGR/cont/JGR.jar"));
-		addClassPath(u2w(rhome+"/library/iplots/cont/iplots.jar"));
+		addClassPath(u2w(jgr+"/cont/JGR.jar"));
+		addClassPath(u2w(ipl+"/cont/iplots.jar"));
 		String mainClass = "org.rosuda.JGR.JGR";
 
 		try {
