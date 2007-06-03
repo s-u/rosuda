@@ -153,6 +153,16 @@ public class EzMenu {
                 lastSep=true;
                 i++; isNext=true;
             };
+			if ("~About".equals(menuDef[i]) && !Common.isMac()) {
+                i++; isNext=true;
+                mb.add(m=new Menu("About"));
+                m.add(mi=new MenuItem("About")).setActionCommand("about"); mi.addActionListener(al);
+			};
+			if ("~Preferences".equals(menuDef[i]) && !Common.isMac()) {
+                i++; isNext=true;
+                mb.add(m=new Menu("Preferences"));
+                m.add(mi=new MenuItem("Preferences",new MenuShortcut(','))).setActionCommand("preferences"); mi.addActionListener(al);
+			};
             if (!isNext) {
                 String rac=menuDef[i+1];
                 if (AC_WTMCLOSE.equals(rac)) rac=AC_WTMCLOSE+we.id;
