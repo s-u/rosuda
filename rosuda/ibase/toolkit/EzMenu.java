@@ -136,15 +136,19 @@ public class EzMenu {
                 if (we!=null && we.getWindowMenu()!=null)
                     mb.add((Menu)we.getWindowMenu()); // add window menu
             };
-			if ("~About".equals(menuDef[i]) && !Common.isMac()) {
+			if ("~About".equals(menuDef[i])) {
                 i++; isNext=true;
-                mb.add(m=new Menu("About"));
-                m.add(mi=new MenuItem("About")).setActionCommand("about"); mi.addActionListener(al);
+				if (!Common.isMac()) {
+					mb.add(m=new Menu("About"));
+					m.add(mi=new MenuItem("About")).setActionCommand("about"); mi.addActionListener(al);
+				}
 			};
-			if ("~Preferences".equals(menuDef[i]) && !Common.isMac()) {
+			if ("~Preferences".equals(menuDef[i])) {
                 i++; isNext=true;
-                mb.add(m=new Menu("Preferences"));
-                m.add(mi=new MenuItem("Preferences",new MenuShortcut(','))).setActionCommand("preferences"); mi.addActionListener(al);
+				if (!Common.isMac()) {
+					mb.add(m=new Menu("Preferences"));
+					m.add(mi=new MenuItem("Preferences",new MenuShortcut(','))).setActionCommand("preferences"); mi.addActionListener(al);
+				}
 			};
             if ("~Help".equals(menuDef[i])) {
                 i++; isNext=true;
