@@ -256,8 +256,9 @@ public class EzMenu {
 	 */
 	public static void addMenu(Frame f, String name) {
 		MenuBar mb = f.getMenuBar();
-		mb.add(new Menu(name));
-		//, (mb.getMenuCount() - 2));
+		Menu m = getMenu(f,name);
+		if (m == null)
+			mb.add(new Menu(name));
 	}
 
 	/**
