@@ -231,4 +231,54 @@ public class EzMenu {
         };
         return null;
     };
+	
+		/**
+	 * Add menu to existing menubar.
+	 * 
+	 * @param f
+	 *            frame where to add menu.
+	 * @param name
+	 *            menuname
+	 */
+	public static void addMenu(Frame f, String name) {
+		MenuBar mb = f.getMenuBar();
+		mb.add(new Menu(name));
+		//, (mb.getMenuCount() - 2));
+	}
+
+	/**
+	 * Add menuitem to existing menu.
+	 * 
+	 * @param f
+	 *            frame which contains menu
+	 * @param menu
+	 *            menu where to add new item
+	 * @param name
+	 *            name of new item
+	 * @param command
+	 *            ActionCommand of this new item
+	 * @param al
+	 *            ActionListener which should be attached to this menuitem
+	 */
+	public static void addMenuItem(Frame f, String menu, String name,
+			String command, ActionListener al) {
+		Menu m = getMenu(f, menu);
+		MenuItem mi = new MenuItem(name);
+		mi.addActionListener(al);
+		mi.setActionCommand(command);
+		m.add(mi);
+	}
+
+	/**
+	 * Add a menuseparator to existing menu.
+	 * 
+	 * @param f
+	 *            frame which contains menu
+	 * @param menu
+	 *            menu where to ad separator
+	 */
+	public static void addMenuSeparator(Frame f, String menu) {
+		Menu m = getMenu(f, menu);
+		m.addSeparator();
+	}
 }

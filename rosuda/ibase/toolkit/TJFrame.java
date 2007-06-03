@@ -64,7 +64,32 @@ public class TJFrame extends JFrame implements FrameDevice
     public Component add(Component c) {
     	return getContentPane().add(c);
     }
-    
-    // other FrameDevice methods are redirected to superclass
-    
+	/**
+	 * @param work true if working, false if idle.
+	 */
+	public void setWorking(boolean work) {
+		if (work)
+			cursorWait();
+		else
+			cursorDefault();
+	}
+	
+	/**
+	 * Show waitcursor (speeningwheel or sandglass).
+	 */
+	private void cursorWait() {
+		Component gp = getRootPane().getGlassPane();
+		gp.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+		gp.setVisible(true);
+	}
+
+	/**
+	 * Show default cursor.
+	 * 
+	 */
+	private void cursorDefault() {
+		Component gp = getRootPane().getGlassPane();
+		gp.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		gp.setVisible(false);
+	}
 };
