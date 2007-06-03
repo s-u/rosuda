@@ -123,7 +123,7 @@ icustom.jar: iplots.jar $(JRENGINE) $(ICUSTOM_SRC)
 	jar fc $@ org
 	rm -rf org
 
-iwidgets.jar: javaGD.jar JGR.jar ibase.jar $(JRENGINE) $(IWIDGETS_SRC)
+iwidgets.jar: javaGD.jar ibase.jar $(JRENGINE) $(IWIDGETS_SRC)
 	rm -rf org
 	$(JAVAC) -d . -classpath javaGD.jar$(PATHSEP)JGR.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE) $(IWIDGETS_SRC)
 	jar fc $@ org
