@@ -53,7 +53,7 @@ IBASE_SRC:=$(filter-out %JOGLGraphicsDevice.java,$(IBASE_SRC))
 
 #--------- targets ---------
 
-TARGETS=REngine.jar JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JRI.jar Mondrian.jar javaGD.jar icustom.jar
+TARGETS=REngine.jar JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JRI.jar Mondrian.jar javaGD.jar icustom.jar MRJStubs.jar
 
 JAVAC=javac $(JFLAGS)
 
@@ -148,7 +148,7 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 
 clean:
 	rm -rf `find . -name ".DS_*"`
-	rm -rf $(TARGETS) com net org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JRI*.tar.gz rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz rosuda/projects/klimt/build rosuda/projects/jgr/build rosuda/projects/iplots/build
+	rm -rf $(TARGETS) com net jedit org JavaDoc *~ rtest.class TextConsole.class *.java rosuda/JRI*.tar.gz rosuda/JGRlinux*.tar.gz rosuda/JGRsrc*.tar.gz rosuda/projects/klimt/build rosuda/projects/jgr/build rosuda/projects/iplots/build
 	$(MAKE) -C rosuda/Mondrian clean
 
 .PHONY: clean all doc docs
