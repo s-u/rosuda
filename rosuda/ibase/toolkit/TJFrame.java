@@ -32,6 +32,13 @@ public class TJFrame extends JFrame implements FrameDevice
 	    System.out.println("Frame \""+getTitle()+"\" removed.");
 	WinTracker.current.rm(WTmyself);
     };
+	
+	public void dispose() {
+		if (Global.DEBUG>0)
+			System.out.println("Frame \""+getTitle()+"\" removed.");
+		WinTracker.current.rm(WTmyself);
+		super.dispose();
+	}
 
     static int lastClass=-1;
     static int lastPlaceX=0, lastPlaceY=0;
