@@ -112,7 +112,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		if (objmgr.summary != null)
 			objmgr.summary.hide();
 		if (e.isAltDown()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			JToolTip call = new JToolTip();
 			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
 					.rowAtPoint(e.getPoint())));
@@ -120,13 +120,13 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 				return null;
 			String tip = m.getToolTip();
 			if (tip != null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return tip;
 			}
 
 			return null;
 		}
-		objmgr.cursorDefault();
+		objmgr.setWorking(false);
 		return null;
 	}
 
@@ -210,7 +210,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		if (objmgr.summary != null)
 			objmgr.summary.hide();
 		if (e.isPopupTrigger()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			JToolTip call = new JToolTip();
 			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
 					.rowAtPoint(e.getPoint())));
@@ -218,7 +218,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 				return;
 			String tip = m.getToolTip();
 			if (tip == null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return;
 			}
 			call.setTipText(m.getToolTip());
@@ -227,7 +227,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
 					call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
-			objmgr.cursorDefault();
+			objmgr.setWorking(false);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 	 */
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			JToolTip call = new JToolTip();
 			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
 					.rowAtPoint(e.getPoint())));
@@ -244,7 +244,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 				return;
 			String tip = m.getToolTip();
 			if (tip == null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return;
 			}
 			call.setTipText(m.getToolTip());
@@ -253,7 +253,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
 					call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
-			objmgr.cursorDefault();
+			objmgr.setWorking(false);
 		}
 	}
 

@@ -51,10 +51,10 @@ import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.TextFinder;
-import org.rosuda.JGR.toolkit.iFrame;
-import org.rosuda.JGR.toolkit.iMenu;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.ibase.toolkit.WTentry;
 
 /**
@@ -66,13 +66,11 @@ import org.rosuda.ibase.toolkit.WTentry;
  * RoSuDa 2003 - 2005
  */
 
-public class JGRHelp extends iFrame implements ActionListener, KeyListener,
+public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 		MouseListener {
 
 	/** Current JGRHelp, because we only want to open one helpbrowser. */
 	public static JGRHelp current = null;
-
-	private static WTentry MyEntry = null;
 
 	private final String keyWord = null;
 
@@ -125,16 +123,15 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 	 *            path pointing to html-help
 	 */
 	public JGRHelp(String location) {
-		super("Help", iFrame.clsHelp);
-		MyEntry = this.getMYEntry();
-		while (!JGR.STARTED)
-			;
+		super("Help", false, TJFrame.clsHelp);
+		
+		while (!JGR.STARTED);
 
 		String[] Menu = { "+", "File", "@PPrint", "print", "+", "Edit",
 				"@CCopy", "copy", "-", "@RRun selection", "runselection",
 				"@FFind", "search", "@GFind Next", "searchnext",
-				"~Preferences", "~Window", "0" };
-		iMenu.getMenu(this, this, Menu);
+				"~Window", "~About", "0" };
+		EzMenu.getEzMenu(this, this, Menu);
 
 		if (System.getProperty("os.name").startsWith("Windows")) {
 			RHELPLOCATION = RController.getRHome();
@@ -476,7 +473,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 		}
 
 		private void updatePage(boolean href) {
-			rhelp.cursorWait();
+			rhelp.setWorking(true);
 			rhelp.back.setEnabled(currentURLIndex > 0);
 			rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
 			URL url = (URL) history.get(currentURLIndex);
@@ -518,7 +515,7 @@ public class JGRHelp extends iFrame implements ActionListener, KeyListener,
 					} catch (Exception ex2) {
 					}
 
-				rhelp.cursorDefault();
+				rhelp.setWorking(false);
 			}
 		}
 

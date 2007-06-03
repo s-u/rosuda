@@ -126,7 +126,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 		if (objmgr.summary != null)
 			objmgr.summary.hide();
 		if (e.isAltDown()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			Point p = e.getPoint();
 			JToolTip call = new JToolTip();
 			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
@@ -134,7 +134,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 					.getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip != null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return tip;
 			}
 			return null;
@@ -293,7 +293,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 		if (objmgr.summary != null)
 			objmgr.summary.hide();
 		if (e.isPopupTrigger()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			Point p = e.getPoint();
 			JToolTip call = new JToolTip();
 			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
@@ -301,7 +301,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 					.getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip == null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return;
 			}
 			call.setTipText(tip);
@@ -309,7 +309,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
 					call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
-			objmgr.cursorDefault();
+			objmgr.setWorking(false);
 		}
 	}
 
@@ -318,7 +318,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 	 */
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			Point p = e.getPoint();
 			JToolTip call = new JToolTip();
 			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
@@ -326,7 +326,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 					.getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip == null) {
-				objmgr.cursorDefault();
+				objmgr.setWorking(false);
 				return;
 			}
 			call.setTipText(tip);
@@ -334,7 +334,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
 					call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
-			objmgr.cursorDefault();
+			objmgr.setWorking(false);
 		}
 	}
 
@@ -348,9 +348,9 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			DefaultMutableTreeNode n = (DefaultMutableTreeNode) p
 					.getLastPathComponent();
 			n.removeAllChildren();
-			objmgr.cursorWait();
+			objmgr.setWorking(true);
 			this.addNodes(n);
-			objmgr.cursorDefault();
+			objmgr.setWorking(false);
 		}
 	}
 

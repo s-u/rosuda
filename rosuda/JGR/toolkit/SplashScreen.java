@@ -82,6 +82,7 @@ public class SplashScreen extends JWindow implements Runnable {
 
 	public Image loadSplash(String logo) {
 		URL location = getClass().getResource("/" + logo);
+		if (location == null) location = getClass().getResource("/splash.jpg");
 		Image img = Toolkit.getDefaultToolkit().getImage(location);
 		MediaTracker mt = new MediaTracker(this);
 		mt.addImage(img, 0);

@@ -33,6 +33,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
 
+
 import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.ConsoleOutput;
@@ -46,12 +47,12 @@ import org.rosuda.JGR.toolkit.SelectionPreservingCaret;
 import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
-import org.rosuda.JGR.toolkit.iFrame;
-import org.rosuda.JGR.toolkit.iMenu;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.TJFrame;
+import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.WTentry;
 import org.rosuda.ibase.toolkit.WinTracker;
 
@@ -63,7 +64,7 @@ import org.rosuda.ibase.toolkit.WinTracker;
  * RoSuDa 2003 - 2005
  */
 
-public class JGRConsole extends iFrame implements ActionListener, KeyListener,
+public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		FocusListener, RMainLoopCallbacks {
 
 	private final JSplitPane consolePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
@@ -108,25 +109,27 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 	 *            workspace which should be loaded when starting JGR
 	 */
 	public JGRConsole(File workSpace) {
-		super("Console", iFrame.clsMain);
+		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
 		String[] Menu = { "+", "File", "Load Datafile", "loaddata", "-",
 				"@NNew Document", "new", "@OOpen Document", "open",
 				"!OSource File...", "source", "@SSave", "save", "-",
-				"@DSet Working Directory", "setwd", "~File.Quit", "~EditC",
+				"@DSet Working Directory", "setwd", "~File.Quit", 
+				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
+				"Copy Output","copyoutput","Copy Commands","copycmds","Copy Result","copyresult",
+				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
+				"@FFind","search","@GFind Next","searchnext","-","@LClear Console","clearconsole",
+				// todo add edit menu
+				
 				"+", "Tools", "Editor", "editor", "@BObject Browser",
 				"objectmgr", "DataTable", "table", "-", "Increase Font Size",
 				"fontBigger", "Decrease Font Size", "fontSmaller", "+",
 				"Packages", "Package Manager", "packagemgr", "+", "Workspace",
 				"Load Workspace", "openwsp", "Save Workspace", "savewsp",
 				"Save Workspace as", "saveaswsp", "Clear Workspace",
-				"clearwsp", "~Window", "~Help",/*
-												 * "R Help","help",/*"Update
-												 * JGR","update",
-												 */
-				"~About", "0" };
-		iMenu.getMenu(this, this, Menu);
+				"clearwsp","~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
+		EzMenu.getEzMenu((java.awt.Frame)this, this, Menu);
 
 		// Add History if we didn't found one in the user's home directory
 		if (JGR.RHISTORY == null)
@@ -200,7 +203,7 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 		Enumeration e = WinTracker.current.elements();
 		while (e.hasMoreElements()) {
 			WTentry we = (WTentry) e.nextElement();
-			if (we.wclass == iFrame.clsEditor)
+			if (we.wclass == TJFrame.clsEditor)
 				if (!((Editor) we.w).exit())
 					return;
 		}
@@ -813,14 +816,14 @@ public class JGRConsole extends iFrame implements ActionListener, KeyListener,
 	public void focusGained(FocusEvent e) {
 		if (e.getSource().equals(output)) {
 			toolBar.cutButton.setEnabled(false);
-			iMenu.getItem(this, "cut").setEnabled(false);
+			EzMenu.getItem(this, "cut").setEnabled(false);
 			toolBar.pasteButton.setEnabled(false);
-			iMenu.getItem(this, "paste").setEnabled(false);
+			EzMenu.getItem(this, "paste").setEnabled(false);
 		} else if (e.getSource().equals(input)) {
 			toolBar.cutButton.setEnabled(true);
-			iMenu.getItem(this, "cut").setEnabled(true);
+			EzMenu.getItem(this, "cut").setEnabled(true);
 			toolBar.pasteButton.setEnabled(true);
-			iMenu.getItem(this, "paste").setEnabled(true);
+			EzMenu.getItem(this, "paste").setEnabled(true);
 		}
 	}
 

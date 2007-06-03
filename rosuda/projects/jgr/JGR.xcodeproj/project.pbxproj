@@ -95,10 +95,70 @@
 		2835E1BB0AAAC0C000012BE8 /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1B70AAAC0C000012BE8 /* RList.java */; };
 		2835E1BC0AAAC0C000012BE8 /* RVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1B80AAAC0C000012BE8 /* RVector.java */; };
 		2835E2270AAB354000012BE8 /* FindReplaceDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E2260AAB354000012BE8 /* FindReplaceDialog.java */; };
-		284DA11406105C86003B4450 /* close.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 284DA11306105C85003B4450 /* close.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		284DA11406105C86003B4450 /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 284DA11306105C85003B4450 /* close.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		2858B260064E5FAA00C9BFA7 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28699F1006BC5894002BEFFC /* JGR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0E06BC5894002BEFFC /* JGR.icns */; };
 		28699F1106BC5894002BEFFC /* JGR.mft in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0F06BC5894002BEFFC /* JGR.mft */; };
+		287A3E3C0C11B61E0094B032 /* MutableREXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E250C11B61D0094B032 /* MutableREXP.java */; };
+		287A3E3D0C11B61E0094B032 /* REXPDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E260C11B61D0094B032 /* REXPDouble.java */; };
+		287A3E3E0C11B61E0094B032 /* REXPEnvironment.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E270C11B61D0094B032 /* REXPEnvironment.java */; };
+		287A3E3F0C11B61E0094B032 /* REXPExpressionVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E280C11B61D0094B032 /* REXPExpressionVector.java */; };
+		287A3E400C11B61E0094B032 /* REXPFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E290C11B61D0094B032 /* REXPFactor.java */; };
+		287A3E410C11B61E0094B032 /* REXPGenericVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2A0C11B61D0094B032 /* REXPGenericVector.java */; };
+		287A3E420C11B61E0094B032 /* REXPInteger.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2B0C11B61D0094B032 /* REXPInteger.java */; };
+		287A3E430C11B61E0094B032 /* REXPLanguage.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2C0C11B61D0094B032 /* REXPLanguage.java */; };
+		287A3E440C11B61E0094B032 /* REXPList.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2D0C11B61D0094B032 /* REXPList.java */; };
+		287A3E450C11B61E0094B032 /* REXPLogical.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2E0C11B61D0094B032 /* REXPLogical.java */; };
+		287A3E460C11B61E0094B032 /* REXPMismatchException.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E2F0C11B61E0094B032 /* REXPMismatchException.java */; };
+		287A3E470C11B61E0094B032 /* REXPNull.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E300C11B61E0094B032 /* REXPNull.java */; };
+		287A3E480C11B61E0094B032 /* REXPRaw.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E310C11B61E0094B032 /* REXPRaw.java */; };
+		287A3E490C11B61E0094B032 /* REXPReference.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E320C11B61E0094B032 /* REXPReference.java */; };
+		287A3E4A0C11B61E0094B032 /* REXPS4.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E330C11B61E0094B032 /* REXPS4.java */; };
+		287A3E4B0C11B61E0094B032 /* REXPString.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E340C11B61E0094B032 /* REXPString.java */; };
+		287A3E4C0C11B61E0094B032 /* REXPSymbol.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E350C11B61E0094B032 /* REXPSymbol.java */; };
+		287A3E4D0C11B61E0094B032 /* REXPUnknown.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E360C11B61E0094B032 /* REXPUnknown.java */; };
+		287A3E4E0C11B61E0094B032 /* REXPVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E370C11B61E0094B032 /* REXPVector.java */; };
+		287A3E4F0C11B61E0094B032 /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E380C11B61E0094B032 /* RFactor.java */; };
+		287A3E500C11B61E0094B032 /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E390C11B61E0094B032 /* RList.java */; };
+		287A3EF20C11B7820094B032 /* CodeCompletion.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E7B0C11B77E0094B032 /* CodeCompletion.java */; };
+		287A3EF30C11B7820094B032 /* Editor.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E7C0C11B77E0094B032 /* Editor.java */; };
+		287A3EF40C11B7820094B032 /* EditToolbar.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E7D0C11B77E0094B032 /* EditToolbar.java */; };
+		287A3EF60C11B7820094B032 /* BatchFileTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E810C11B77E0094B032 /* BatchFileTokenMarker.java */; };
+		287A3EF80C11B7820094B032 /* CCTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E830C11B77E0094B032 /* CCTokenMarker.java */; };
+		287A3EFA0C11B7820094B032 /* CTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E850C11B77E0094B032 /* CTokenMarker.java */; };
+		287A3EFC0C11B7820094B032 /* DefaultInputHandler.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E870C11B77E0094B032 /* DefaultInputHandler.java */; };
+		287A3EFE0C11B7820094B032 /* EiffelTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E890C11B77E0094B032 /* EiffelTokenMarker.java */; };
+		287A3F000C11B7820094B032 /* FindReplaceDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E8B0C11B77E0094B032 /* FindReplaceDialog.java */; };
+		287A3F020C11B7820094B032 /* Highlight.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E8D0C11B77E0094B032 /* Highlight.java */; };
+		287A3F040C11B7820094B032 /* HTMLTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E8F0C11B77E0094B032 /* HTMLTokenMarker.java */; };
+		287A3F060C11B7820094B032 /* IDLTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E910C11B77E0094B032 /* IDLTokenMarker.java */; };
+		287A3F280C11B7820094B032 /* InputHandler.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EB30C11B77F0094B032 /* InputHandler.java */; };
+		287A3F2A0C11B7820094B032 /* JavaScriptTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EB50C11B77F0094B032 /* JavaScriptTokenMarker.java */; };
+		287A3F2C0C11B7820094B032 /* JavaTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EB70C11B77F0094B032 /* JavaTokenMarker.java */; };
+		287A3F3A0C11B7820094B032 /* JEditTextArea.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EC50C11B77F0094B032 /* JEditTextArea.java */; };
+		287A3F3D0C11B7820094B032 /* KeywordMap.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EC80C11B77F0094B032 /* KeywordMap.java */; };
+		287A3F3F0C11B7820094B032 /* MakefileTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ECA0C11B77F0094B032 /* MakefileTokenMarker.java */; };
+		287A3F410C11B7820094B032 /* PatchTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ECC0C11B77F0094B032 /* PatchTokenMarker.java */; };
+		287A3F430C11B7820094B032 /* PerlTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ECE0C11B77F0094B032 /* PerlTokenMarker.java */; };
+		287A3F450C11B7820094B032 /* PHPTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ED00C11B7800094B032 /* PHPTokenMarker.java */; };
+		287A3F470C11B7820094B032 /* PropsTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ED20C11B7800094B032 /* PropsTokenMarker.java */; };
+		287A3F490C11B7820094B032 /* PythonTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ED40C11B7800094B032 /* PythonTokenMarker.java */; };
+		287A3F4B0C11B7820094B032 /* RTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ED60C11B7800094B032 /* RTokenMarker.java */; };
+		287A3F4D0C11B7820094B032 /* ShellScriptTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3ED80C11B7800094B032 /* ShellScriptTokenMarker.java */; };
+		287A3F4F0C11B7820094B032 /* SQLTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EDA0C11B7800094B032 /* SQLTokenMarker.java */; };
+		287A3F510C11B7820094B032 /* SyntaxDocument.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EDC0C11B7800094B032 /* SyntaxDocument.java */; };
+		287A3F530C11B7820094B032 /* SyntaxStyle.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EDE0C11B7800094B032 /* SyntaxStyle.java */; };
+		287A3F550C11B7820094B032 /* SyntaxUtilities.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EE00C11B7800094B032 /* SyntaxUtilities.java */; };
+		287A3F570C11B7820094B032 /* TextAreaDefaults.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EE20C11B7800094B032 /* TextAreaDefaults.java */; };
+		287A3F590C11B7820094B032 /* TextAreaPainter.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EE40C11B7800094B032 /* TextAreaPainter.java */; };
+		287A3F5B0C11B7820094B032 /* TeXTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EE60C11B7800094B032 /* TeXTokenMarker.java */; };
+		287A3F5D0C11B7820094B032 /* TextUtilities.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EE80C11B7800094B032 /* TextUtilities.java */; };
+		287A3F5F0C11B7820094B032 /* Token.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EEA0C11B7800094B032 /* Token.java */; };
+		287A3F620C11B7820094B032 /* TokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EED0C11B7800094B032 /* TokenMarker.java */; };
+		287A3F640C11B7820094B032 /* TSQLTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EEF0C11B7800094B032 /* TSQLTokenMarker.java */; };
+		287A3F660C11B7820094B032 /* XMLTokenMarker.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3EF10C11B7800094B032 /* XMLTokenMarker.java */; };
+		287A3F930C11B8BA0094B032 /* RInputHandler.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3F920C11B8BA0094B032 /* RInputHandler.java */; };
+		287A43080C12DD350094B032 /* Editor.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A43070C12DD350094B032 /* Editor.java */; };
 		288DEBFC0AAC7AAB00EBA4E2 /* REngine.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBF90AAC7AAB00EBA4E2 /* REngine.java */; };
 		288DEBFD0AAC7AAB00EBA4E2 /* REngineException.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBFA0AAC7AAB00EBA4E2 /* REngineException.java */; };
 		288DEBFE0AAC7AAB00EBA4E2 /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 288DEBFB0AAC7AAB00EBA4E2 /* REXP.java */; };
@@ -263,13 +323,10 @@
 		289DF69209F26AFE00C34B0B /* ConsoleOutput.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65909F26AF800C34B0B /* ConsoleOutput.java */; };
 		289DF69309F26AFE00C34B0B /* ConsoleSync.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65A09F26AF900C34B0B /* ConsoleSync.java */; };
 		289DF69409F26AFE00C34B0B /* DataTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65B09F26AF900C34B0B /* DataTable.java */; };
-		289DF69509F26AFE00C34B0B /* Editor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65C09F26AF900C34B0B /* Editor.java */; };
 		289DF69609F26AFE00C34B0B /* FileSelector.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65D09F26AF900C34B0B /* FileSelector.java */; };
 		289DF69709F26AFE00C34B0B /* FontTracker.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65E09F26AF900C34B0B /* FontTracker.java */; };
 		289DF69809F26AFE00C34B0B /* FunctionList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF65F09F26AF900C34B0B /* FunctionList.java */; };
 		289DF69909F26AFE00C34B0B /* IconButton.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66009F26AF900C34B0B /* IconButton.java */; };
-		289DF69A09F26AFE00C34B0B /* iFrame.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66109F26AF900C34B0B /* iFrame.java */; };
-		289DF69B09F26AFE00C34B0B /* iMenu.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66209F26AF900C34B0B /* iMenu.java */; };
 		289DF69C09F26AFE00C34B0B /* InsertRemoveUndoManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */; };
 		289DF69D09F26AFE00C34B0B /* JavaGD.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66409F26AF900C34B0B /* JavaGD.java */; };
 		289DF69E09F26AFE00C34B0B /* JComboBoxExt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF66509F26AF900C34B0B /* JComboBoxExt.java */; };
@@ -294,24 +351,24 @@
 		289DF6B109F26AFE00C34B0B /* DocumentRenderer.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67909F26AFB00C34B0B /* DocumentRenderer.java */; };
 		289DF6B209F26AFE00C34B0B /* ErrorMsg.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67A09F26AFB00C34B0B /* ErrorMsg.java */; };
 		289DF6B309F26AFF00C34B0B /* TableSorter.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF67B09F26AFB00C34B0B /* TableSorter.java */; };
-		28D5F2E9060F29C3008CA291 /* splash.jpg in JavaArchive */ = {isa = PBXBuildFile; fileRef = 281185DE05E7D8E000C16F9F /* splash.jpg */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
-		28D5F2EB060F29C6008CA291 /* sort-up.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = 28F902980607540C005E782D /* sort-up.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2EC060F29C8008CA291 /* home.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 285E22AF05FB9A8400F09D05 /* home.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2ED060F29C9008CA291 /* sort-down.gif in JavaArchive */ = {isa = PBXBuildFile; fileRef = 28F902970607540C005E782D /* sort-down.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2EE060F29CA008CA291 /* undo.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565705EA8E0D00AF1045 /* undo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2EF060F29CB008CA291 /* save.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565605EA8E0D00AF1045 /* save.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F0060F29CB008CA291 /* redo.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565505EA8E0D00AF1045 /* redo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F1060F29CC008CA291 /* print.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565405EA8E0D00AF1045 /* print.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F2060F29CD008CA291 /* paste.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565305EA8E0D00AF1045 /* paste.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F3060F29CE008CA291 /* open.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565205EA8E0D00AF1045 /* open.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F4060F29CF008CA291 /* new.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565105EA8E0D00AF1045 /* new.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F5060F29D0008CA291 /* help.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F565005EA8E0D00AF1045 /* help.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F6060F29D2008CA291 /* forward.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564F05EA8E0D00AF1045 /* forward.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F7060F29D2008CA291 /* find.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564E05EA8E0D00AF1045 /* find.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F8060F29D3008CA291 /* delete.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564D05EA8E0D00AF1045 /* delete.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2F9060F29D5008CA291 /* cut.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564C05EA8E0D00AF1045 /* cut.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2FA060F29D5008CA291 /* copy.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564B05EA8E0D00AF1045 /* copy.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
-		28D5F2FB060F29D6008CA291 /* back.png in JavaArchive */ = {isa = PBXBuildFile; fileRef = 287F564A05EA8E0D00AF1045 /* back.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2E9060F29C3008CA291 /* splash.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 281185DE05E7D8E000C16F9F /* splash.jpg */; settings = {JAVA_ARCHIVE_SUBDIR = ""; }; };
+		28D5F2EB060F29C6008CA291 /* sort-up.gif in Resources */ = {isa = PBXBuildFile; fileRef = 28F902980607540C005E782D /* sort-up.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EC060F29C8008CA291 /* home.png in Resources */ = {isa = PBXBuildFile; fileRef = 285E22AF05FB9A8400F09D05 /* home.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2ED060F29C9008CA291 /* sort-down.gif in Resources */ = {isa = PBXBuildFile; fileRef = 28F902970607540C005E782D /* sort-down.gif */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EE060F29CA008CA291 /* undo.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565705EA8E0D00AF1045 /* undo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2EF060F29CB008CA291 /* save.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565605EA8E0D00AF1045 /* save.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F0060F29CB008CA291 /* redo.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565505EA8E0D00AF1045 /* redo.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F1060F29CC008CA291 /* print.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565405EA8E0D00AF1045 /* print.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F2060F29CD008CA291 /* paste.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565305EA8E0D00AF1045 /* paste.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F3060F29CE008CA291 /* open.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565205EA8E0D00AF1045 /* open.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F4060F29CF008CA291 /* new.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565105EA8E0D00AF1045 /* new.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F5060F29D0008CA291 /* help.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F565005EA8E0D00AF1045 /* help.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F6060F29D2008CA291 /* forward.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564F05EA8E0D00AF1045 /* forward.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F7060F29D2008CA291 /* find.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564E05EA8E0D00AF1045 /* find.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F8060F29D3008CA291 /* delete.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564D05EA8E0D00AF1045 /* delete.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2F9060F29D5008CA291 /* cut.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564C05EA8E0D00AF1045 /* cut.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2FA060F29D5008CA291 /* copy.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564B05EA8E0D00AF1045 /* copy.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28D5F2FB060F29D6008CA291 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564A05EA8E0D00AF1045 /* back.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28FB0CBF09F231BA0088CD59 /* jogl.jar in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FB0CA909F231700088CD59 /* jogl.jar */; settings = {ATTRIBUTES = (Merge, ); }; };
 /* End PBXBuildFile section */
 
@@ -334,6 +391,66 @@
 		285E22AF05FB9A8400F09D05 /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
 		28699F0E06BC5894002BEFFC /* JGR.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = JGR.icns; sourceTree = SOURCE_ROOT; };
 		28699F0F06BC5894002BEFFC /* JGR.mft */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = JGR.mft; sourceTree = SOURCE_ROOT; };
+		287A3E250C11B61D0094B032 /* MutableREXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MutableREXP.java; path = ../../REngine/MutableREXP.java; sourceTree = SOURCE_ROOT; };
+		287A3E260C11B61D0094B032 /* REXPDouble.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPDouble.java; path = ../../REngine/REXPDouble.java; sourceTree = SOURCE_ROOT; };
+		287A3E270C11B61D0094B032 /* REXPEnvironment.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPEnvironment.java; path = ../../REngine/REXPEnvironment.java; sourceTree = SOURCE_ROOT; };
+		287A3E280C11B61D0094B032 /* REXPExpressionVector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPExpressionVector.java; path = ../../REngine/REXPExpressionVector.java; sourceTree = SOURCE_ROOT; };
+		287A3E290C11B61D0094B032 /* REXPFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPFactor.java; path = ../../REngine/REXPFactor.java; sourceTree = SOURCE_ROOT; };
+		287A3E2A0C11B61D0094B032 /* REXPGenericVector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPGenericVector.java; path = ../../REngine/REXPGenericVector.java; sourceTree = SOURCE_ROOT; };
+		287A3E2B0C11B61D0094B032 /* REXPInteger.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPInteger.java; path = ../../REngine/REXPInteger.java; sourceTree = SOURCE_ROOT; };
+		287A3E2C0C11B61D0094B032 /* REXPLanguage.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPLanguage.java; path = ../../REngine/REXPLanguage.java; sourceTree = SOURCE_ROOT; };
+		287A3E2D0C11B61D0094B032 /* REXPList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPList.java; path = ../../REngine/REXPList.java; sourceTree = SOURCE_ROOT; };
+		287A3E2E0C11B61D0094B032 /* REXPLogical.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPLogical.java; path = ../../REngine/REXPLogical.java; sourceTree = SOURCE_ROOT; };
+		287A3E2F0C11B61E0094B032 /* REXPMismatchException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPMismatchException.java; path = ../../REngine/REXPMismatchException.java; sourceTree = SOURCE_ROOT; };
+		287A3E300C11B61E0094B032 /* REXPNull.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPNull.java; path = ../../REngine/REXPNull.java; sourceTree = SOURCE_ROOT; };
+		287A3E310C11B61E0094B032 /* REXPRaw.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPRaw.java; path = ../../REngine/REXPRaw.java; sourceTree = SOURCE_ROOT; };
+		287A3E320C11B61E0094B032 /* REXPReference.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPReference.java; path = ../../REngine/REXPReference.java; sourceTree = SOURCE_ROOT; };
+		287A3E330C11B61E0094B032 /* REXPS4.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPS4.java; path = ../../REngine/REXPS4.java; sourceTree = SOURCE_ROOT; };
+		287A3E340C11B61E0094B032 /* REXPString.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPString.java; path = ../../REngine/REXPString.java; sourceTree = SOURCE_ROOT; };
+		287A3E350C11B61E0094B032 /* REXPSymbol.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPSymbol.java; path = ../../REngine/REXPSymbol.java; sourceTree = SOURCE_ROOT; };
+		287A3E360C11B61E0094B032 /* REXPUnknown.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPUnknown.java; path = ../../REngine/REXPUnknown.java; sourceTree = SOURCE_ROOT; };
+		287A3E370C11B61E0094B032 /* REXPVector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXPVector.java; path = ../../REngine/REXPVector.java; sourceTree = SOURCE_ROOT; };
+		287A3E380C11B61E0094B032 /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFactor.java; path = ../../REngine/RFactor.java; sourceTree = SOURCE_ROOT; };
+		287A3E390C11B61E0094B032 /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RList.java; path = ../../REngine/RList.java; sourceTree = SOURCE_ROOT; };
+		287A3E7B0C11B77E0094B032 /* CodeCompletion.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = CodeCompletion.java; path = ../../JGR/editor/CodeCompletion.java; sourceTree = SOURCE_ROOT; };
+		287A3E7C0C11B77E0094B032 /* Editor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Editor.java; path = ../../JGR/editor/Editor.java; sourceTree = SOURCE_ROOT; };
+		287A3E7D0C11B77E0094B032 /* EditToolbar.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = EditToolbar.java; path = ../../JGR/editor/EditToolbar.java; sourceTree = SOURCE_ROOT; };
+		287A3E810C11B77E0094B032 /* BatchFileTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = BatchFileTokenMarker.java; path = ../../JGR/editor/jedit/syntax/BatchFileTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3E830C11B77E0094B032 /* CCTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = CCTokenMarker.java; path = ../../JGR/editor/jedit/syntax/CCTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3E850C11B77E0094B032 /* CTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = CTokenMarker.java; path = ../../JGR/editor/jedit/syntax/CTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3E870C11B77E0094B032 /* DefaultInputHandler.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DefaultInputHandler.java; path = ../../JGR/editor/jedit/syntax/DefaultInputHandler.java; sourceTree = SOURCE_ROOT; };
+		287A3E890C11B77E0094B032 /* EiffelTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = EiffelTokenMarker.java; path = ../../JGR/editor/jedit/syntax/EiffelTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3E8B0C11B77E0094B032 /* FindReplaceDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FindReplaceDialog.java; path = ../../JGR/editor/jedit/syntax/FindReplaceDialog.java; sourceTree = SOURCE_ROOT; };
+		287A3E8D0C11B77E0094B032 /* Highlight.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Highlight.java; path = ../../JGR/editor/jedit/syntax/Highlight.java; sourceTree = SOURCE_ROOT; };
+		287A3E8F0C11B77E0094B032 /* HTMLTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = HTMLTokenMarker.java; path = ../../JGR/editor/jedit/syntax/HTMLTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3E910C11B77E0094B032 /* IDLTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IDLTokenMarker.java; path = ../../JGR/editor/jedit/syntax/IDLTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EB30C11B77F0094B032 /* InputHandler.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = InputHandler.java; path = ../../JGR/editor/jedit/syntax/InputHandler.java; sourceTree = SOURCE_ROOT; };
+		287A3EB50C11B77F0094B032 /* JavaScriptTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JavaScriptTokenMarker.java; path = ../../JGR/editor/jedit/syntax/JavaScriptTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EB70C11B77F0094B032 /* JavaTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JavaTokenMarker.java; path = ../../JGR/editor/jedit/syntax/JavaTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EC50C11B77F0094B032 /* JEditTextArea.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JEditTextArea.java; path = ../../JGR/editor/jedit/syntax/JEditTextArea.java; sourceTree = SOURCE_ROOT; };
+		287A3EC80C11B77F0094B032 /* KeywordMap.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = KeywordMap.java; path = ../../JGR/editor/jedit/syntax/KeywordMap.java; sourceTree = SOURCE_ROOT; };
+		287A3ECA0C11B77F0094B032 /* MakefileTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MakefileTokenMarker.java; path = ../../JGR/editor/jedit/syntax/MakefileTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ECC0C11B77F0094B032 /* PatchTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PatchTokenMarker.java; path = ../../JGR/editor/jedit/syntax/PatchTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ECE0C11B77F0094B032 /* PerlTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PerlTokenMarker.java; path = ../../JGR/editor/jedit/syntax/PerlTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ED00C11B7800094B032 /* PHPTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PHPTokenMarker.java; path = ../../JGR/editor/jedit/syntax/PHPTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ED20C11B7800094B032 /* PropsTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PropsTokenMarker.java; path = ../../JGR/editor/jedit/syntax/PropsTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ED40C11B7800094B032 /* PythonTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = PythonTokenMarker.java; path = ../../JGR/editor/jedit/syntax/PythonTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ED60C11B7800094B032 /* RTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RTokenMarker.java; path = ../../JGR/editor/jedit/syntax/RTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3ED80C11B7800094B032 /* ShellScriptTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ShellScriptTokenMarker.java; path = ../../JGR/editor/jedit/syntax/ShellScriptTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EDA0C11B7800094B032 /* SQLTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SQLTokenMarker.java; path = ../../JGR/editor/jedit/syntax/SQLTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EDC0C11B7800094B032 /* SyntaxDocument.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxDocument.java; path = ../../JGR/editor/jedit/syntax/SyntaxDocument.java; sourceTree = SOURCE_ROOT; };
+		287A3EDE0C11B7800094B032 /* SyntaxStyle.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxStyle.java; path = ../../JGR/editor/jedit/syntax/SyntaxStyle.java; sourceTree = SOURCE_ROOT; };
+		287A3EE00C11B7800094B032 /* SyntaxUtilities.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = SyntaxUtilities.java; path = ../../JGR/editor/jedit/syntax/SyntaxUtilities.java; sourceTree = SOURCE_ROOT; };
+		287A3EE20C11B7800094B032 /* TextAreaDefaults.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextAreaDefaults.java; path = ../../JGR/editor/jedit/syntax/TextAreaDefaults.java; sourceTree = SOURCE_ROOT; };
+		287A3EE40C11B7800094B032 /* TextAreaPainter.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextAreaPainter.java; path = ../../JGR/editor/jedit/syntax/TextAreaPainter.java; sourceTree = SOURCE_ROOT; };
+		287A3EE60C11B7800094B032 /* TeXTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TeXTokenMarker.java; path = ../../JGR/editor/jedit/syntax/TeXTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EE80C11B7800094B032 /* TextUtilities.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TextUtilities.java; path = ../../JGR/editor/jedit/syntax/TextUtilities.java; sourceTree = SOURCE_ROOT; };
+		287A3EEA0C11B7800094B032 /* Token.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Token.java; path = ../../JGR/editor/jedit/syntax/Token.java; sourceTree = SOURCE_ROOT; };
+		287A3EED0C11B7800094B032 /* TokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TokenMarker.java; path = ../../JGR/editor/jedit/syntax/TokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EEF0C11B7800094B032 /* TSQLTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TSQLTokenMarker.java; path = ../../JGR/editor/jedit/syntax/TSQLTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3EF10C11B7800094B032 /* XMLTokenMarker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = XMLTokenMarker.java; path = ../../JGR/editor/jedit/syntax/XMLTokenMarker.java; sourceTree = SOURCE_ROOT; };
+		287A3F920C11B8BA0094B032 /* RInputHandler.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RInputHandler.java; path = ../../JGR/editor/RInputHandler.java; sourceTree = SOURCE_ROOT; };
+		287A43070C12DD350094B032 /* Editor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Editor.java; path = ../../JGR/toolkit/Editor.java; sourceTree = SOURCE_ROOT; };
 		287F564A05EA8E0D00AF1045 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		287F564B05EA8E0D00AF1045 /* copy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copy.png; sourceTree = "<group>"; };
 		287F564C05EA8E0D00AF1045 /* cut.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cut.png; sourceTree = "<group>"; };
@@ -512,13 +629,10 @@
 		289DF65909F26AF800C34B0B /* ConsoleOutput.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ConsoleOutput.java; path = ../../JGR/toolkit/ConsoleOutput.java; sourceTree = SOURCE_ROOT; };
 		289DF65A09F26AF900C34B0B /* ConsoleSync.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ConsoleSync.java; path = ../../JGR/toolkit/ConsoleSync.java; sourceTree = SOURCE_ROOT; };
 		289DF65B09F26AF900C34B0B /* DataTable.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DataTable.java; path = ../../JGR/toolkit/DataTable.java; sourceTree = SOURCE_ROOT; };
-		289DF65C09F26AF900C34B0B /* Editor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Editor.java; path = ../../JGR/toolkit/Editor.java; sourceTree = SOURCE_ROOT; };
 		289DF65D09F26AF900C34B0B /* FileSelector.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FileSelector.java; path = ../../JGR/toolkit/FileSelector.java; sourceTree = SOURCE_ROOT; };
 		289DF65E09F26AF900C34B0B /* FontTracker.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FontTracker.java; path = ../../JGR/toolkit/FontTracker.java; sourceTree = SOURCE_ROOT; };
 		289DF65F09F26AF900C34B0B /* FunctionList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FunctionList.java; path = ../../JGR/toolkit/FunctionList.java; sourceTree = SOURCE_ROOT; };
 		289DF66009F26AF900C34B0B /* IconButton.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = IconButton.java; path = ../../JGR/toolkit/IconButton.java; sourceTree = SOURCE_ROOT; };
-		289DF66109F26AF900C34B0B /* iFrame.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iFrame.java; path = ../../JGR/toolkit/iFrame.java; sourceTree = SOURCE_ROOT; };
-		289DF66209F26AF900C34B0B /* iMenu.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iMenu.java; path = ../../JGR/toolkit/iMenu.java; sourceTree = SOURCE_ROOT; };
 		289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = InsertRemoveUndoManager.java; path = ../../JGR/toolkit/InsertRemoveUndoManager.java; sourceTree = SOURCE_ROOT; };
 		289DF66409F26AF900C34B0B /* JavaGD.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JavaGD.java; path = ../../JGR/toolkit/JavaGD.java; sourceTree = SOURCE_ROOT; };
 		289DF66509F26AF900C34B0B /* JComboBoxExt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JComboBoxExt.java; path = ../../JGR/toolkit/JComboBoxExt.java; sourceTree = SOURCE_ROOT; };
@@ -619,6 +733,11 @@
 		2835E2150AAB352A00012BE8 /* editor */ = {
 			isa = PBXGroup;
 			children = (
+				287A3E7E0C11B77E0094B032 /* jedit */,
+				287A3F920C11B8BA0094B032 /* RInputHandler.java */,
+				287A3E7B0C11B77E0094B032 /* CodeCompletion.java */,
+				287A3E7C0C11B77E0094B032 /* Editor.java */,
+				287A3E7D0C11B77E0094B032 /* EditToolbar.java */,
 				2835E2260AAB354000012BE8 /* FindReplaceDialog.java */,
 			);
 			name = editor;
@@ -629,7 +748,6 @@
 			isa = PBXGroup;
 			children = (
 				2835E2150AAB352A00012BE8 /* editor */,
-				289DF63F09F26AF700C34B0B /* CVS */,
 				289DF64309F26AF700C34B0B /* JGR.java */,
 				289DF64409F26AF700C34B0B /* JGRConsole.java */,
 				289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */,
@@ -657,6 +775,57 @@
 			);
 			name = plugins;
 			path = ../../plugins;
+			sourceTree = SOURCE_ROOT;
+		};
+		287A3E7E0C11B77E0094B032 /* jedit */ = {
+			isa = PBXGroup;
+			children = (
+				287A3E7F0C11B77E0094B032 /* syntax */,
+			);
+			name = jedit;
+			path = ../../JGR/editor/jedit;
+			sourceTree = SOURCE_ROOT;
+		};
+		287A3E7F0C11B77E0094B032 /* syntax */ = {
+			isa = PBXGroup;
+			children = (
+				287A3E810C11B77E0094B032 /* BatchFileTokenMarker.java */,
+				287A3E830C11B77E0094B032 /* CCTokenMarker.java */,
+				287A3E850C11B77E0094B032 /* CTokenMarker.java */,
+				287A3E870C11B77E0094B032 /* DefaultInputHandler.java */,
+				287A3E890C11B77E0094B032 /* EiffelTokenMarker.java */,
+				287A3E8B0C11B77E0094B032 /* FindReplaceDialog.java */,
+				287A3E8D0C11B77E0094B032 /* Highlight.java */,
+				287A3E8F0C11B77E0094B032 /* HTMLTokenMarker.java */,
+				287A3E910C11B77E0094B032 /* IDLTokenMarker.java */,
+				287A3EB30C11B77F0094B032 /* InputHandler.java */,
+				287A3EB50C11B77F0094B032 /* JavaScriptTokenMarker.java */,
+				287A3EB70C11B77F0094B032 /* JavaTokenMarker.java */,
+				287A3EC50C11B77F0094B032 /* JEditTextArea.java */,
+				287A3EC80C11B77F0094B032 /* KeywordMap.java */,
+				287A3ECA0C11B77F0094B032 /* MakefileTokenMarker.java */,
+				287A3ECC0C11B77F0094B032 /* PatchTokenMarker.java */,
+				287A3ECE0C11B77F0094B032 /* PerlTokenMarker.java */,
+				287A3ED00C11B7800094B032 /* PHPTokenMarker.java */,
+				287A3ED20C11B7800094B032 /* PropsTokenMarker.java */,
+				287A3ED40C11B7800094B032 /* PythonTokenMarker.java */,
+				287A3ED60C11B7800094B032 /* RTokenMarker.java */,
+				287A3ED80C11B7800094B032 /* ShellScriptTokenMarker.java */,
+				287A3EDA0C11B7800094B032 /* SQLTokenMarker.java */,
+				287A3EDC0C11B7800094B032 /* SyntaxDocument.java */,
+				287A3EDE0C11B7800094B032 /* SyntaxStyle.java */,
+				287A3EE00C11B7800094B032 /* SyntaxUtilities.java */,
+				287A3EE20C11B7800094B032 /* TextAreaDefaults.java */,
+				287A3EE40C11B7800094B032 /* TextAreaPainter.java */,
+				287A3EE60C11B7800094B032 /* TeXTokenMarker.java */,
+				287A3EE80C11B7800094B032 /* TextUtilities.java */,
+				287A3EEA0C11B7800094B032 /* Token.java */,
+				287A3EED0C11B7800094B032 /* TokenMarker.java */,
+				287A3EEF0C11B7800094B032 /* TSQLTokenMarker.java */,
+				287A3EF10C11B7800094B032 /* XMLTokenMarker.java */,
+			);
+			name = syntax;
+			path = ../../JGR/editor/jedit/syntax;
 			sourceTree = SOURCE_ROOT;
 		};
 		287F564905EA8E0D00AF1045 /* icons */ = {
@@ -689,6 +858,27 @@
 			isa = PBXGroup;
 			children = (
 				288DEBF90AAC7AAB00EBA4E2 /* REngine.java */,
+				287A3E250C11B61D0094B032 /* MutableREXP.java */,
+				287A3E260C11B61D0094B032 /* REXPDouble.java */,
+				287A3E270C11B61D0094B032 /* REXPEnvironment.java */,
+				287A3E280C11B61D0094B032 /* REXPExpressionVector.java */,
+				287A3E290C11B61D0094B032 /* REXPFactor.java */,
+				287A3E2A0C11B61D0094B032 /* REXPGenericVector.java */,
+				287A3E2B0C11B61D0094B032 /* REXPInteger.java */,
+				287A3E2C0C11B61D0094B032 /* REXPLanguage.java */,
+				287A3E2D0C11B61D0094B032 /* REXPList.java */,
+				287A3E2E0C11B61D0094B032 /* REXPLogical.java */,
+				287A3E2F0C11B61E0094B032 /* REXPMismatchException.java */,
+				287A3E300C11B61E0094B032 /* REXPNull.java */,
+				287A3E310C11B61E0094B032 /* REXPRaw.java */,
+				287A3E320C11B61E0094B032 /* REXPReference.java */,
+				287A3E330C11B61E0094B032 /* REXPS4.java */,
+				287A3E340C11B61E0094B032 /* REXPString.java */,
+				287A3E350C11B61E0094B032 /* REXPSymbol.java */,
+				287A3E360C11B61E0094B032 /* REXPUnknown.java */,
+				287A3E370C11B61E0094B032 /* REXPVector.java */,
+				287A3E380C11B61E0094B032 /* RFactor.java */,
+				287A3E390C11B61E0094B032 /* RList.java */,
 				288DEBFA0AAC7AAB00EBA4E2 /* REngineException.java */,
 				288DEBFB0AAC7AAB00EBA4E2 /* REXP.java */,
 			);
@@ -770,14 +960,6 @@
 			path = toolkit;
 			sourceTree = "<group>";
 		};
-		289DF63F09F26AF700C34B0B /* CVS */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = CVS;
-			path = ../../JGR/CVS;
-			sourceTree = SOURCE_ROOT;
-		};
 		289DF64D09F26AF800C34B0B /* rhelp */ = {
 			isa = PBXGroup;
 			children = (
@@ -808,14 +990,12 @@
 				289DF65809F26AF800C34B0B /* AboutDialog.java */,
 				289DF65909F26AF800C34B0B /* ConsoleOutput.java */,
 				289DF65A09F26AF900C34B0B /* ConsoleSync.java */,
+				287A43070C12DD350094B032 /* Editor.java */,
 				289DF65B09F26AF900C34B0B /* DataTable.java */,
-				289DF65C09F26AF900C34B0B /* Editor.java */,
 				289DF65D09F26AF900C34B0B /* FileSelector.java */,
 				289DF65E09F26AF900C34B0B /* FontTracker.java */,
 				289DF65F09F26AF900C34B0B /* FunctionList.java */,
 				289DF66009F26AF900C34B0B /* IconButton.java */,
-				289DF66109F26AF900C34B0B /* iFrame.java */,
-				289DF66209F26AF900C34B0B /* iMenu.java */,
 				289DF66309F26AF900C34B0B /* InsertRemoveUndoManager.java */,
 				289DF66409F26AF900C34B0B /* JavaGD.java */,
 				289DF66509F26AF900C34B0B /* JComboBoxExt.java */,
@@ -1014,26 +1194,6 @@
 			isa = PBXJavaArchiveBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28D5F2E9060F29C3008CA291 /* splash.jpg in JavaArchive */,
-				28D5F2EB060F29C6008CA291 /* sort-up.gif in JavaArchive */,
-				28D5F2EC060F29C8008CA291 /* home.png in JavaArchive */,
-				28D5F2ED060F29C9008CA291 /* sort-down.gif in JavaArchive */,
-				28D5F2EE060F29CA008CA291 /* undo.png in JavaArchive */,
-				28D5F2EF060F29CB008CA291 /* save.png in JavaArchive */,
-				28D5F2F0060F29CB008CA291 /* redo.png in JavaArchive */,
-				28D5F2F1060F29CC008CA291 /* print.png in JavaArchive */,
-				28D5F2F2060F29CD008CA291 /* paste.png in JavaArchive */,
-				28D5F2F3060F29CE008CA291 /* open.png in JavaArchive */,
-				28D5F2F4060F29CF008CA291 /* new.png in JavaArchive */,
-				28D5F2F5060F29D0008CA291 /* help.png in JavaArchive */,
-				28D5F2F6060F29D2008CA291 /* forward.png in JavaArchive */,
-				28D5F2F7060F29D2008CA291 /* find.png in JavaArchive */,
-				28D5F2F8060F29D3008CA291 /* delete.png in JavaArchive */,
-				28D5F2F9060F29D5008CA291 /* cut.png in JavaArchive */,
-				28D5F2FA060F29D5008CA291 /* copy.png in JavaArchive */,
-				28D5F2FB060F29D6008CA291 /* back.png in JavaArchive */,
-				284DA11406105C86003B4450 /* close.png in JavaArchive */,
-				2858B260064E5FAA00C9BFA7 /* stop.png in JavaArchive */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1060,6 +1220,26 @@
 			files = (
 				28699F1006BC5894002BEFFC /* JGR.icns in Resources */,
 				28699F1106BC5894002BEFFC /* JGR.mft in Resources */,
+				28D5F2E9060F29C3008CA291 /* splash.jpg in Resources */,
+				28D5F2EB060F29C6008CA291 /* sort-up.gif in Resources */,
+				28D5F2EC060F29C8008CA291 /* home.png in Resources */,
+				28D5F2ED060F29C9008CA291 /* sort-down.gif in Resources */,
+				28D5F2EE060F29CA008CA291 /* undo.png in Resources */,
+				28D5F2EF060F29CB008CA291 /* save.png in Resources */,
+				28D5F2F0060F29CB008CA291 /* redo.png in Resources */,
+				28D5F2F1060F29CC008CA291 /* print.png in Resources */,
+				28D5F2F2060F29CD008CA291 /* paste.png in Resources */,
+				28D5F2F3060F29CE008CA291 /* open.png in Resources */,
+				28D5F2F4060F29CF008CA291 /* new.png in Resources */,
+				28D5F2F5060F29D0008CA291 /* help.png in Resources */,
+				28D5F2F6060F29D2008CA291 /* forward.png in Resources */,
+				28D5F2F7060F29D2008CA291 /* find.png in Resources */,
+				28D5F2F8060F29D3008CA291 /* delete.png in Resources */,
+				28D5F2F9060F29D5008CA291 /* cut.png in Resources */,
+				28D5F2FA060F29D5008CA291 /* copy.png in Resources */,
+				28D5F2FB060F29D6008CA291 /* back.png in Resources */,
+				284DA11406105C86003B4450 /* close.png in Resources */,
+				2858B260064E5FAA00C9BFA7 /* stop.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1231,13 +1411,10 @@
 				289DF69209F26AFE00C34B0B /* ConsoleOutput.java in Sources */,
 				289DF69309F26AFE00C34B0B /* ConsoleSync.java in Sources */,
 				289DF69409F26AFE00C34B0B /* DataTable.java in Sources */,
-				289DF69509F26AFE00C34B0B /* Editor.java in Sources */,
 				289DF69609F26AFE00C34B0B /* FileSelector.java in Sources */,
 				289DF69709F26AFE00C34B0B /* FontTracker.java in Sources */,
 				289DF69809F26AFE00C34B0B /* FunctionList.java in Sources */,
 				289DF69909F26AFE00C34B0B /* IconButton.java in Sources */,
-				289DF69A09F26AFE00C34B0B /* iFrame.java in Sources */,
-				289DF69B09F26AFE00C34B0B /* iMenu.java in Sources */,
 				289DF69C09F26AFE00C34B0B /* InsertRemoveUndoManager.java in Sources */,
 				289DF69D09F26AFE00C34B0B /* JavaGD.java in Sources */,
 				289DF69E09F26AFE00C34B0B /* JComboBoxExt.java in Sources */,
@@ -1277,6 +1454,66 @@
 				288DEBFC0AAC7AAB00EBA4E2 /* REngine.java in Sources */,
 				288DEBFD0AAC7AAB00EBA4E2 /* REngineException.java in Sources */,
 				288DEBFE0AAC7AAB00EBA4E2 /* REXP.java in Sources */,
+				287A3E3C0C11B61E0094B032 /* MutableREXP.java in Sources */,
+				287A3E3D0C11B61E0094B032 /* REXPDouble.java in Sources */,
+				287A3E3E0C11B61E0094B032 /* REXPEnvironment.java in Sources */,
+				287A3E3F0C11B61E0094B032 /* REXPExpressionVector.java in Sources */,
+				287A3E400C11B61E0094B032 /* REXPFactor.java in Sources */,
+				287A3E410C11B61E0094B032 /* REXPGenericVector.java in Sources */,
+				287A3E420C11B61E0094B032 /* REXPInteger.java in Sources */,
+				287A3E430C11B61E0094B032 /* REXPLanguage.java in Sources */,
+				287A3E440C11B61E0094B032 /* REXPList.java in Sources */,
+				287A3E450C11B61E0094B032 /* REXPLogical.java in Sources */,
+				287A3E460C11B61E0094B032 /* REXPMismatchException.java in Sources */,
+				287A3E470C11B61E0094B032 /* REXPNull.java in Sources */,
+				287A3E480C11B61E0094B032 /* REXPRaw.java in Sources */,
+				287A3E490C11B61E0094B032 /* REXPReference.java in Sources */,
+				287A3E4A0C11B61E0094B032 /* REXPS4.java in Sources */,
+				287A3E4B0C11B61E0094B032 /* REXPString.java in Sources */,
+				287A3E4C0C11B61E0094B032 /* REXPSymbol.java in Sources */,
+				287A3E4D0C11B61E0094B032 /* REXPUnknown.java in Sources */,
+				287A3E4E0C11B61E0094B032 /* REXPVector.java in Sources */,
+				287A3E4F0C11B61E0094B032 /* RFactor.java in Sources */,
+				287A3E500C11B61E0094B032 /* RList.java in Sources */,
+				287A3EF20C11B7820094B032 /* CodeCompletion.java in Sources */,
+				287A3EF30C11B7820094B032 /* Editor.java in Sources */,
+				287A3EF40C11B7820094B032 /* EditToolbar.java in Sources */,
+				287A3EF60C11B7820094B032 /* BatchFileTokenMarker.java in Sources */,
+				287A3EF80C11B7820094B032 /* CCTokenMarker.java in Sources */,
+				287A3EFA0C11B7820094B032 /* CTokenMarker.java in Sources */,
+				287A3EFC0C11B7820094B032 /* DefaultInputHandler.java in Sources */,
+				287A3EFE0C11B7820094B032 /* EiffelTokenMarker.java in Sources */,
+				287A3F000C11B7820094B032 /* FindReplaceDialog.java in Sources */,
+				287A3F020C11B7820094B032 /* Highlight.java in Sources */,
+				287A3F040C11B7820094B032 /* HTMLTokenMarker.java in Sources */,
+				287A3F060C11B7820094B032 /* IDLTokenMarker.java in Sources */,
+				287A3F280C11B7820094B032 /* InputHandler.java in Sources */,
+				287A3F2A0C11B7820094B032 /* JavaScriptTokenMarker.java in Sources */,
+				287A3F2C0C11B7820094B032 /* JavaTokenMarker.java in Sources */,
+				287A3F3A0C11B7820094B032 /* JEditTextArea.java in Sources */,
+				287A3F3D0C11B7820094B032 /* KeywordMap.java in Sources */,
+				287A3F3F0C11B7820094B032 /* MakefileTokenMarker.java in Sources */,
+				287A3F410C11B7820094B032 /* PatchTokenMarker.java in Sources */,
+				287A3F430C11B7820094B032 /* PerlTokenMarker.java in Sources */,
+				287A3F450C11B7820094B032 /* PHPTokenMarker.java in Sources */,
+				287A3F470C11B7820094B032 /* PropsTokenMarker.java in Sources */,
+				287A3F490C11B7820094B032 /* PythonTokenMarker.java in Sources */,
+				287A3F4B0C11B7820094B032 /* RTokenMarker.java in Sources */,
+				287A3F4D0C11B7820094B032 /* ShellScriptTokenMarker.java in Sources */,
+				287A3F4F0C11B7820094B032 /* SQLTokenMarker.java in Sources */,
+				287A3F510C11B7820094B032 /* SyntaxDocument.java in Sources */,
+				287A3F530C11B7820094B032 /* SyntaxStyle.java in Sources */,
+				287A3F550C11B7820094B032 /* SyntaxUtilities.java in Sources */,
+				287A3F570C11B7820094B032 /* TextAreaDefaults.java in Sources */,
+				287A3F590C11B7820094B032 /* TextAreaPainter.java in Sources */,
+				287A3F5B0C11B7820094B032 /* TeXTokenMarker.java in Sources */,
+				287A3F5D0C11B7820094B032 /* TextUtilities.java in Sources */,
+				287A3F5F0C11B7820094B032 /* Token.java in Sources */,
+				287A3F620C11B7820094B032 /* TokenMarker.java in Sources */,
+				287A3F640C11B7820094B032 /* TSQLTokenMarker.java in Sources */,
+				287A3F660C11B7820094B032 /* XMLTokenMarker.java in Sources */,
+				287A3F930C11B8BA0094B032 /* RInputHandler.java in Sources */,
+				287A43080C12DD350094B032 /* Editor.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

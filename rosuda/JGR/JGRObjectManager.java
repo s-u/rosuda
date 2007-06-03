@@ -26,8 +26,9 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.toolkit.FunctionList;
 import org.rosuda.JGR.toolkit.ModelBrowserTable;
 import org.rosuda.JGR.toolkit.ObjectBrowserTree;
-import org.rosuda.JGR.toolkit.iFrame;
-import org.rosuda.JGR.toolkit.iMenu;
+
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * JGRObjectManager (should better be named ObjectBrowser) - implemenation of a
@@ -39,7 +40,7 @@ import org.rosuda.JGR.toolkit.iMenu;
  * RoSuDa 2003 - 2005
  */
 
-public class JGRObjectManager extends iFrame implements ActionListener,
+public class JGRObjectManager extends TJFrame implements ActionListener,
 		MouseListener {
 
 	private final JButton close = new JButton("Close");
@@ -67,10 +68,10 @@ public class JGRObjectManager extends iFrame implements ActionListener,
 	public Popup summary = null;
 
 	public JGRObjectManager() {
-		super("Object Browser", iFrame.clsObjBrowser);
+		super("Object Browser", false, TJFrame.clsObjBrowser);
 
 		String[] Menu = { "~Window", "0" };
-		iMenu.getMenu(this, this, Menu);
+		EzMenu.getEzMenu(this, this, Menu);
 
 		while (!JGR.STARTED)
 			;

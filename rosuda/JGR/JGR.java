@@ -19,11 +19,11 @@ import javax.swing.JOptionPane;
 import org.rosuda.JGR.toolkit.ConsoleSync;
 import org.rosuda.JGR.toolkit.JGRListener;
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.toolkit.iMenu;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.SVar;
+import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.util.Global;
 
 /**
@@ -47,7 +47,7 @@ public class JGR {
 	//JGR_VERSION 1.4-16
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.4-16";
+	public static final String VERSION = "1.4-18";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -110,10 +110,10 @@ public class JGR {
 	public static Vector OBJECTS = new Vector();
 
 	/** Keywords for syntaxhighlighting */
-	public static HashMap KEYWORDS = new HashMap();
+	public static Vector KEYWORDS = new Vector();
 
 	/** Keywords (objects) for syntaxhighlighting */
-	public static HashMap KEYWORDS_OBJECTS = new HashMap();
+	public static Vector KEYWORDS_OBJECTS = new Vector();
 
 	/** Indicates wether the Rengine is up or not */
 	public static boolean STARTED = false;
@@ -253,7 +253,7 @@ public class JGR {
 	public static void addMenu(String name) {
 		if (MAINRCONSOLE == null)
 			return;
-		iMenu.addMenu(MAINRCONSOLE, name);
+		EzMenu.addMenu((java.awt.Frame)MAINRCONSOLE, name);
 	}
 
 	/**
@@ -271,7 +271,7 @@ public class JGR {
 			return;
 		if (jgrlistener == null)
 			jgrlistener = new JGRListener();
-		iMenu.addMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
+		EzMenu.addMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
 	}
 
 	/**
@@ -283,7 +283,7 @@ public class JGR {
 	public static void addMenuSeparator(String menu) {
 		if (MAINRCONSOLE == null)
 			return;
-		iMenu.addMenuSeparator(MAINRCONSOLE, menu);
+		EzMenu.addMenuSeparator(MAINRCONSOLE, menu);
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class JGR {
 		KEYWORDS.clear();
 		Object dummy = new Object();
 		for (int i = 0; i < words.length; i++)
-			KEYWORDS.put(words[i], dummy);
+			KEYWORDS.add(words[i]);
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class JGR {
 		KEYWORDS_OBJECTS.clear();
 		Object dummy = new Object();
 		for (int i = 0; i < objects.length; i++) {
-			KEYWORDS_OBJECTS.put(objects[i], dummy);
+			KEYWORDS_OBJECTS.add(objects[i]);
 			OBJECTS.add(objects[i]);
 		}
 	}
@@ -511,6 +511,7 @@ public class JGR {
 		try {
 			new JGR();
 		} catch (Exception e) {
+			e.printStackTrace();
 			new ErrorMsg(e);
 		}
 	}

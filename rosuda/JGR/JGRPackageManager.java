@@ -28,9 +28,10 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.toolkit.iFrame;
-import org.rosuda.JGR.toolkit.iMenu;
 import org.rosuda.JGR.util.TableSorter;
+
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * JGRPackageManager - manage packages for current session as well as default
@@ -41,7 +42,7 @@ import org.rosuda.JGR.util.TableSorter;
  * RoSuDa 2003 - 2005
  */
 
-public class JGRPackageManager extends iFrame implements ActionListener {
+public class JGRPackageManager extends TJFrame implements ActionListener {
 
 	private Object[][] Packages = null;
 
@@ -79,7 +80,7 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 	private final JTable pkgTable = new JTable();
 
 	public JGRPackageManager(Vector missingpkgs) {
-		super("Deleted Packages after last session:", iFrame.clsPackageUtil);
+		super("Deleted Packages after last session:", false, TJFrame.clsPackageUtil);
 		
 		String pkgs = "";
 		
@@ -171,12 +172,12 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 	}
 
 	public JGRPackageManager() {
-		super("Package Manager", iFrame.clsPackageUtil);
+		super("Package Manager", false, TJFrame.clsPackageUtil);
 		try {
 			String[] Menu = {
 			/* "+", "File", "~File.Basic.End", */
 			"~Window", "0" };
-			iMenu.getMenu(this, this, Menu);
+			EzMenu.getEzMenu(this, this, Menu);
 
 			close.setActionCommand("exit");
 			close.addActionListener(this);
@@ -248,22 +249,22 @@ public class JGRPackageManager extends iFrame implements ActionListener {
 	 * Refresh status of loaded and unloaded packages.
 	 */
 	public void refresh() {
-		this.cursorWait();
+		this.setWorking(true);
 		setDefaultPackages();
 		Packages = RController.refreshPackages();
 		sorter = new TableSorter(pkgModel = new PTableModel(this));
 		pkgTable.setModel(sorter);
 		sorter.setTableHeader(pkgTable.getTableHeader());
-		this.cursorDefault();
+		this.setWorking(false);
 	}
 
 	private void setPKGStatus(String pkg, String load) {
-		this.cursorWait();
+		this.setWorking(true);
 		if (load.equals("true"))
 			JGR.MAINRCONSOLE.execute("library(" + pkg + ")", true);
 		else
 			JGR.MAINRCONSOLE.execute("detach(\"package:" + pkg + "\")", true);
-		this.cursorDefault();
+		this.setWorking(false);
 	}
 
 	private void setDefaultPackages() {

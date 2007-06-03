@@ -27,8 +27,9 @@ import javax.swing.ListCellRenderer;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.toolkit.iFrame;
-import org.rosuda.JGR.toolkit.iMenu;
+
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * JGRPackageInstaller - implementation of a simple package installer widget.
@@ -38,7 +39,7 @@ import org.rosuda.JGR.toolkit.iMenu;
  * RoSuDa 2003 - 2005
  */
 
-public class JGRPackageInstaller extends iFrame implements ActionListener {
+public class JGRPackageInstaller extends TJFrame implements ActionListener {
 
 	private String[] packages = null;
 
@@ -61,7 +62,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 	 *            binary- or source-packages
 	 */
 	public JGRPackageInstaller(String[] pkgs, String type) {
-		super("Package Installer", iFrame.clsPackageUtil);
+		super("Package Installer", false, TJFrame.clsPackageUtil);
 
 		this.type = type;
 		packages = pkgs;
@@ -69,7 +70,7 @@ public class JGRPackageInstaller extends iFrame implements ActionListener {
 		String[] Menu = {
 		/* "+", "File", "~File.Basic.End", */
 		"~Window", "0" };
-		iMenu.getMenu(this, this, Menu);
+		EzMenu.getEzMenu(this, this, Menu);
 
 		close.setActionCommand("close");
 		close.addActionListener(this);

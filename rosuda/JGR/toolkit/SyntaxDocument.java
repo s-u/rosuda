@@ -265,8 +265,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	 * Is character a keyword.
 	 */
 	protected synchronized boolean isKeyword(String token) {
-		Object o = JGR.KEYWORDS.get(token);
-		return o == null ? false : true;
+		return JGR.KEYWORDS.contains(token);
 	}
 
 	/**
@@ -280,8 +279,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	 * Is character a object in current workspace.
 	 */
 	protected synchronized boolean isObject(String token) {
-		Object o = JGR.KEYWORDS_OBJECTS.get(token);
-		return o == null ? false : true;
+		return JGR.KEYWORDS_OBJECTS.contains(token);
 	}
 
 	/**

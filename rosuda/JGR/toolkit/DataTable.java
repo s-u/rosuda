@@ -67,6 +67,8 @@ import org.rosuda.ibase.SVarFact;
 import org.rosuda.ibase.SVarInt;
 import org.rosuda.ibase.SVarObj;
 import org.rosuda.ibase.SVarSet;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * DataTable - implementation of a simple spreadsheet for showing and editing
@@ -77,7 +79,7 @@ import org.rosuda.ibase.SVarSet;
  * RoSuDa 2003 - 2005
  */
 
-public class DataTable extends iFrame implements ActionListener, MouseListener,
+public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		KeyListener {
 
 	private final GridBagLayout layout = new GridBagLayout();
@@ -141,7 +143,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 	 *            if related {@see RObject} is editable or not
 	 */
 	public DataTable(SVarSet vs, String type, boolean editable) {
-		super("DataTable Editor", 153);
+		super("DataTable Editor", false, TJFrame.clsObjBrowser);
 		if (vs == null) {
 			vs = new SVarSet();
 			vs.setName("NewDataTable");
@@ -163,13 +165,18 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 
 		String myMenu[] = { "+", "File", "@OOpen", "loadData", "@SSave",
 				"saveData", "!SSave as", "saveDataAs", "Export to R", "export",
-				"~File.Basic.End", "~Edit", "+", "Tools", "Add Column",
+				"~File.Basic.End",
+				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
+				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
+				"@FFind","search","@GFind Next","searchnext",
+				 
+				"+", "Tools", "Add Column",
 				"addCol", "Remove Column", "rmCol", "Add Row", "addRow",
 				"Remove Row", "rmRow", "-", "-", "Goto Case", "gotoCase",
-				"~Window", "~Help", /* "R Help", "rhelp", */"~About", "0" };
-		iMenu.getMenu(this, this, myMenu);
-		iMenu.getItem(this, "undo").setEnabled(false);
-		iMenu.getItem(this, "redo").setEnabled(false);
+				"~Window", "+", "Help", "R Help", "rhelp", "~Preferences", "~About", "0" };
+		EzMenu.getEzMenu(this, this, myMenu);
+		EzMenu.getItem(this, "undo").setEnabled(false);
+		EzMenu.getItem(this, "redo").setEnabled(false);
 
 		if (FontTracker.current == null)
 			FontTracker.current = new FontTracker();
@@ -437,7 +444,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 				FileSelector.LOAD, JGRPrefs.workingDirectory);
 		fopen.setVisible(true);
 		if (fopen.getFile() != null) {
-			this.cursorWait();
+			this.setWorking(true);
 			fileName = (JGRPrefs.workingDirectory = fopen.getDirectory())
 					+ fopen.getFile();
 			try {
@@ -453,7 +460,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 			} catch (Exception e) {
 				new ErrorMsg(e);
 			}
-			this.cursorDefault();
+			this.setWorking(false);
 		}
 	}
 
@@ -559,7 +566,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 		if (fileName == null || fileName.equals(""))
 			return saveDataAs();
 		else {
-			this.cursorWait();
+			this.setWorking(true);
 			BufferedWriter out = null;
 			String s = "";
 			try {
@@ -592,7 +599,7 @@ public class DataTable extends iFrame implements ActionListener, MouseListener,
 			} catch (Exception e) {
 				new ErrorMsg(e);
 			} finally {
-				this.cursorDefault();
+				this.setWorking(false);
 				modified = false;
 			}
 			return true;

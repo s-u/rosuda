@@ -87,7 +87,7 @@ public class SearchEngine {
 		iSearchTerm = key;
 
 		if (help != null) {
-			help.cursorWait();
+			help.setWorking(true);
 			help.link.setText("Search for \"" + iSearchTerm);
 		}
 
@@ -169,7 +169,7 @@ public class SearchEngine {
 		}
 		if (help != null) {
 			help.link.setText(" ");
-			help.cursorDefault();
+			help.setWorking(false);
 		}
 		return helpRes;
 	}

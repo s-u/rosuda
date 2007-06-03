@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * Simple text pager that displays a specified file.
@@ -25,7 +27,7 @@ import org.rosuda.ibase.Common;
  * RoSuDa 2003 - 2005
  * 
  */
-public class TextPager extends iFrame implements ActionListener {
+public class TextPager extends TJFrame implements ActionListener {
 	JTextArea t = new JTextArea();;
 
 	TextFinder textFinder = new TextFinder(t);
@@ -36,7 +38,7 @@ public class TextPager extends iFrame implements ActionListener {
 
 		String myMenu[] = { "+", "Edit", "@CCopy", "copy", "-", "@FFind",
 				"search", "@GFind next", "searchnext", "~Window", "0" };
-		iMenu.getMenu(this, this, myMenu);
+		EzMenu.getEzMenu(this, this, myMenu);
 
 		getContentPane().add(new JScrollPane(t));
 		t.setEditable(false);
