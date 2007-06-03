@@ -13,8 +13,6 @@ import java.awt.*;
 import javax.swing.*;
 
 import org.rosuda.ibase.toolkit.TJFrame;
-import org.rosuda.util.*;
-import org.rosuda.JGR.toolkit.*;
 
 public class iWindow extends TJFrame {
     public static final int clsIWindow = clsUser+1;
