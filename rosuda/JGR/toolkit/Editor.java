@@ -100,7 +100,7 @@ public class Editor extends TJFrame implements ActionListener, KeyListener {
 				"findnext", 
 				
 				"+", "Tools", "Increase Font Size", "fontBigger", "Decrease Font Size", "fontSmaller", 
-				"~Window", "+","Help","R Help","rhelp", "~About", "0" };
+				"~Window", "+","Help","R Help","rhelp", "~Preferences", "~About", "0" };
 		EzMenu.getEzMenu(this, this, Menu);
 		Menu rm = recentMenu = (Menu) EzMenu.getItem(this,"Open Recent");
 		System.out.println(rm);
@@ -484,7 +484,7 @@ public class Editor extends TJFrame implements ActionListener, KeyListener {
 			}
 		} else if (cmd == "paste")
 			editArea.paste();
-		else if (cmd == "prefs")
+		else if (cmd == "preferences")
 			new PrefsDialog(this);
 		else if (cmd == "print")
 			print();

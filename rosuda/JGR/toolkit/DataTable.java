@@ -784,7 +784,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 				saveDataAs();
 			else if (cmd == "selAll")
 				dataTable.selectAll();
-			else if (cmd == "prefs")
+			else if (cmd == "preferences")
 				new PrefsDialog(this);
 
 		} catch (Exception ex) {

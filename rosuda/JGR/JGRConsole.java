@@ -662,7 +662,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			execute("package.manager()", false);
 		else if (cmd == "paste")
 			input.paste();
-		else if (cmd == "prefs")
+		else if (cmd == "preferences")
 			new PrefsDialog(this);
 		else if (cmd == "redo")
 			try {
