@@ -1369,6 +1369,7 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	final double s = Math.sin(rotRad);
 	final double c = Math.cos(rotRad);
 	for(i=0; i<valuePosA.length;i++){
+	    final int maxHe = abbreviate?(((Integer)maxH.get(i)).intValue()):(-1);
 	    double xAlign,yAlign;
 	    if(rotateYLabels){
 		final double[] ra = rotateAlignment(g.getWidthEstimate((String)text.get(i)),g.getHeightEstimate((String)text.get(i)),s,c);
@@ -1378,7 +1379,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 		xAlign = 1;
 		yAlign = 0.5;
 	    }
-	    yLabels.add(xPos,valuePosA[i],xAlign,yAlign,maxW,((Integer)maxH.get(i)).intValue(),(String)text.get(i),rotateYLabels?rotateYLabelsBy:0);
+	    
+	    yLabels.add(xPos,valuePosA[i],xAlign,yAlign,maxW,maxHe,(String)text.get(i),rotateYLabels?rotateYLabelsBy:0);
 	    if(ticks) g.drawLine(mLeft-2,valuePosA[i],mLeft,valuePosA[i]);
 	}
     }
