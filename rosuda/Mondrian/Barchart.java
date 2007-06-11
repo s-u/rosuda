@@ -21,7 +21,7 @@ public class Barchart extends DragBox implements ActionListener {
   private boolean moving = false;
   private MyRect movingRect;
   private MyText movingText;
-  private int    movingId;
+  private int    movingId=-1;
   private int oldY;
   private double max = 0;
   private boolean scaleFixed = false;
@@ -223,14 +223,20 @@ public class Barchart extends DragBox implements ActionListener {
       
       bg.setColor(MFrame.lineColor);
       if( !printing ) {
+        int sbVal = sb.getValue();
         for( int i = 0;i < labels.size(); i++) {
           MyText t = (MyText)labels.elementAt(i);
-          if( t.y >= sb.getValue() ) {
+          if( t.y >= sbVal ) {
+/*            if( moving && movingId == i ) {
+              ((Graphics2D)bg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75F));
+              t.draw(bg, 1);
+              ((Graphics2D)bg).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+            } else */
             t.draw(bg, 1);
             if( start == -1 )
               start = Math.max(0, i-1);
           }
-          if( t.y - sb.getValue() > size.height ) {
+          if( t.y - sbVal > size.height && i != movingId ) {
             stop = i-1;
             i = labels.size();
           }
@@ -246,7 +252,18 @@ public class Barchart extends DragBox implements ActionListener {
       }
       
       for( int i = start;i <= stop; i++) {
-        MyRect r = (MyRect)rects.elementAt(i);
+        int index;
+        if( moving )
+          if( i == stop )
+            index = movingId;
+          else if( i >= movingId )
+            index = i+1;
+          else
+            index = i;
+        else
+          index = i;
+          
+        MyRect r = (MyRect)rects.elementAt(index);
         double sum=0, sumh=0;
         for( int j=0; j<r.tileIds.size(); j++ ) {
           int id = ((Integer)(r.tileIds.elementAt(j))).intValue();
@@ -254,11 +271,9 @@ public class Barchart extends DragBox implements ActionListener {
           sum  += tablep.table[id];
         }
         r.setHilite( sumh/sum );
+        if( moving && index == movingId )
+          r.setAlpha(0.5);
         r.draw(bg);
-      }
-      if( moving ) {
-        //        System.out.println("Moving in Barchart: paint");
-        movingRect.draw(bg);
       }
       
       if( !printing ) {
@@ -297,7 +312,20 @@ public class Barchart extends DragBox implements ActionListener {
       boolean info = false;
       
       if( moving ) {
-        movingRect.moveTo(-1, e.getY()+sb.getValue());
+        movingRect.moveTo(-1, e.getY()+sb.getValue()-(movingRect.getRect()).height/2);
+        
+        FontMetrics FM;
+        FM = (this.getGraphics()).getFontMetrics();
+
+        movingText.moveYTo(   e.getY()+sb.getValue() + FM.getHeight()/2 -2);
+        
+        if( e.getY() <= 10 ) {
+          scrollTo( sb.getValue() - 22 );
+        }
+        if( e.getY() >= ((frame.getSize()).height - (frame.getInsets().top+frame.getInsets().bottom) - 10) ) {
+          scrollTo( sb.getValue() + 22 );
+        }	
+        
         paint(this.getGraphics());
       }/*
        else {
@@ -655,8 +683,8 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   
   x = Math.min(x*pF, 100*pF);
   
-  if( scaleFixed )
-    x = 100*pF;
+//  if( scaleFixed )
+//    x = 100*pF;
 
   startX= x1 + x;
   int y = 0;
