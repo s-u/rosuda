@@ -538,7 +538,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("beta 7", 250, 285);
+    g.drawString("beta 8", 250, 285);
 
     mondrianRunning = true;
 
@@ -1771,7 +1771,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     for(int i=0; i<k; i++) 
       passBuffer[i] = selectBuffer[k-i-1];
     
-    PC plotw = new PC(pC, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, mode);
+    PC plotw = new PC(pC, (dataSet)dataSets.elementAt(thisDataSet), passBuffer, mode, varNames);
     plotw.addSelectionListener(this);
     plotw.addDataListener(this);
     Plots.addElement(plotw);
