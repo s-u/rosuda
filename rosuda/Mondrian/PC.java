@@ -27,6 +27,7 @@ public class PC extends DragBox implements ActionListener {
   protected int selID = -1;
   protected int scaleFactor = 3;
   protected double centerAt = 0;
+  private JList varList;
   protected dataSet data;
   protected double[] dMins, dIQRs, dMedians, dMeans, dSDevs, dMaxs;
   protected double[] Mins, Maxs;
@@ -58,7 +59,7 @@ public class PC extends DragBox implements ActionListener {
   private DataListener listener;
   private static EventQueue evtq;
   
-  public PC(MFrame frame, dataSet data, int[] vars, String mode) {
+  public PC(MFrame frame, dataSet data, int[] vars, String mode, JList varList) {
     super(frame);
     Dimension size = frame.getSize();
     this.width = size.width;
@@ -69,6 +70,7 @@ public class PC extends DragBox implements ActionListener {
     this.data = data;
     this.k = vars.length;
     this.paintMode = mode;
+    this.varList = varList;
 
     border = 22;
 
@@ -191,8 +193,27 @@ public class PC extends DragBox implements ActionListener {
                       x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
                     else
                       x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
-                  } else
-                    x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
+                  } else {
+                    if( e.isShiftDown() ) { // extended query, does not have a var name header
+                      x = "";
+                      int[] selectedIds = varList.getSelectedIndices();
+                      for( int sel=0; sel<selectedIds.length; sel++ ) {
+                        x = x + "\n" + data.getName(selectedIds[sel])+": ";
+                        if( (data.getMissings(selectedIds[sel]))[popYId] )
+                          x = x + "NA";
+                        else {
+                          if( data.categorical(selectedIds[sel]) )
+                            if( data.alpha(selectedIds[sel]) )
+                              x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[popYId]);
+                            else
+                              x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[popYId]);
+                          else
+                            x = x + (data.getRawNumbers(selectedIds[sel]))[popYId];
+                        }
+                      }
+                    } else
+                      x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
+                  }
                 }
                 return Util.info2Html(x);
       }
@@ -1899,8 +1920,10 @@ public class PC extends DragBox implements ActionListener {
         }
 
         int count = data.countSelection(var);
-        if(count == 0)
+        if(count == 0) {
+          zeroSelect = true;
           return;
+        }
 
         sMin    = data.getSelQuantile(var, 0);
         lSHinge = data.getSelQuantile(var, 0.25);
