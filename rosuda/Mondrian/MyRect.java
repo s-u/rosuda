@@ -13,6 +13,7 @@ public class MyRect extends Rectangle implements ActionListener {
   private String info;
   private String mode;
   private Graphics g;
+  private double alpha = 1;
   private JMenuItem infoText;
   private JPopupMenu popup;
   private boolean full;
@@ -62,6 +63,10 @@ public class MyRect extends Rectangle implements ActionListener {
       this.dir = 'y';
   }
 
+  public void setAlpha(double alpha) {
+    this.alpha = alpha;
+  }
+  
   public void setHilite(double hilite) {
     this.hilite = hilite;
   }
@@ -154,10 +159,13 @@ public class MyRect extends Rectangle implements ActionListener {
               altp += hs[i];
             }
           }
-        } else
+        } else {
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
           g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
+        }
       } else {
         g.setColor(drawColor);
+        ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
         g.fillRect(x, y, Math.max(1, w), h);
       }
     }
@@ -207,6 +215,9 @@ public class MyRect extends Rectangle implements ActionListener {
       }
       g.setColor( c );
     }
+
+    ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+
     if( obs == 0 || censored )
        g.setColor(Color.red);
     else
