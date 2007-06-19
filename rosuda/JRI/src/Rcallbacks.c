@@ -19,9 +19,14 @@
    extern Rboolean R_Interactive; */
 #endif
 
+#if R_VERSION < R_Version(2,6,0)
 #ifndef checkArity
 #define checkArity               Rf_checkArity
 #endif
+#else
+#define checkArity(X,Y)
+#endif
+
 #ifndef errorcall
 #define errorcall                Rf_errorcall
 #endif
@@ -251,13 +256,13 @@ void Re_loadhistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char *p;
+		const char *p;
 
 		checkArity(op, args);
 		sfile = CAR(args);
 		if (!isString(sfile) || LENGTH(sfile) < 1)
 			errorcall(call, "invalid file argument");
-		p = R_ExpandFileName(CHAR(STRING_ELT(sfile, 0)));
+		p = R_ExpandFileName((char*)CHAR(STRING_ELT(sfile, 0)));
 		if(strlen(p) > PATH_MAX - 1)
 			errorcall(call, "file argument is too long");
 		s=(*lenv)->NewStringUTF(lenv, p);
@@ -285,7 +290,7 @@ void Re_savehistory(SEXP call, SEXP op, SEXP args, SEXP env)
 
 	{
 		SEXP sfile;
-		char *p;
+		const char *p;
 		
 		checkArity(op, args);
 		sfile = CAR(args);
