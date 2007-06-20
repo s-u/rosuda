@@ -1500,8 +1500,8 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
     
     private void displayCurrentAlpha() {
 	StringBuffer sb = new StringBuffer();
-	sb.append("Transparency: ").append(ppAlpha).append("\n")
-	.append("Transparency of hiliting: ").append(seperateAlphas?ppAlphaH:ppAlpha);
+	sb.append("Transparency: ").append(Tools.getDisplayableValue(ppAlpha)).append("\n")
+	.append("Transparency of hiliting: ").append(Tools.getDisplayableValue(seperateAlphas?ppAlphaH:ppAlpha));
 	
 	setQueryText(sb.toString());
 	final Point cl=getFrame().getLocation();
