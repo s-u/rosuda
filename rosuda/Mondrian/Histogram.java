@@ -114,15 +114,15 @@ public class Histogram extends DragBox implements ActionListener {
   }
   
   public void maintainSelection(Selection S) {
-
+    
     Rectangle sr = S.r;
     int mode = S.mode;
-
+    
     S.o = new floatRect(worldToUserX(S.r.x),
                         worldToUserY(S.r.y),
                         worldToUserX(S.r.x + S.r.width),
                         worldToUserY(S.r.y + S.r.height));
-
+    
     S.condition = new Query();
     for( int i = 0;i < rects.size(); i++) {
       StringTokenizer interval = new StringTokenizer(tablep.lnames[0][i].substring(1, tablep.lnames[0][i].length()-1), ",");
@@ -149,8 +149,11 @@ public class Histogram extends DragBox implements ActionListener {
             tablep.setSelection(id,0,mode);
           }
     }
+      for(int i=0; i<data.n; i++)  
+        if( (data.getMissings(dvar))[i] )
+          data.setSelection(i,0,mode);
   }
-
+      
     public void updateSelection() {
       paint(this.getGraphics());
     }
@@ -188,7 +191,6 @@ public class Histogram extends DragBox implements ActionListener {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
             bg.dispose();
             bi = null;
-            System.gc();
             bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
             tbi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           }
@@ -258,6 +260,8 @@ public class Histogram extends DragBox implements ActionListener {
         bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.3)));
       if( CDPlot )
         bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)0.1)));
+      
+//      System.out.println("Density: "+densityMode+" CDPlot: "+CDPlot);
 
       boolean stillEmpty = true;               // Flag to avoid heading empty bins
       for( int i = 0;i < levels[0]; i++) {
@@ -589,7 +593,7 @@ public class Histogram extends DragBox implements ActionListener {
     }
 
     public void processMouseEvent(MouseEvent e) {
-
+      
       if( e.isPopupTrigger() && !e.isShiftDown() )
         super.processMouseEvent(e);  // Pass other event types on.
       if( changePop ) {
@@ -610,89 +614,146 @@ public class Histogram extends DragBox implements ActionListener {
           }
           if( !info ) {
             JPopupMenu mode = new JPopupMenu();
+            JMenuItem Spineplot;
             if( displayMode.equals("Histogram") ) {
-              JMenuItem Spineplot = new JMenuItem("Spinogram");
-              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
-              mode.add(Spineplot);
-
+              Spineplot = new JMenuItem("Spinogram");
               Spineplot.setActionCommand("Spinogram");
-              Spineplot.addActionListener(this);
-              
-              JCheckBoxMenuItem CDPlotM = new JCheckBoxMenuItem("CDPlot");
-              CDPlotM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
-              if( CDPlot )
-                CDPlotM.setSelected(true);
+            }
+            else
+            {
+              Spineplot = new JMenuItem("Histogram");
+              Spineplot.setActionCommand("Histogram");
+            }
+            Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            
+            mode.add(Spineplot);
+            Spineplot.addActionListener(this);
+            
+            JCheckBoxMenuItem CDPlotM = new JCheckBoxMenuItem("CDPlot");
+            CDPlotM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            
+            if( CDPlot )
+              CDPlotM.setSelected(true);
+            else
+              CDPlotM.setSelected(false);
+            mode.add(CDPlotM);
+            
+            CDPlotM.setActionCommand("CDPlot");
+            CDPlotM.addActionListener(this);
+            
+            JCheckBoxMenuItem Density = new JCheckBoxMenuItem("Density");
+            Density.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+            if( densityMode )
+              Density.setSelected(true);
+            else
+              Density.setSelected(false);
+            mode.add(Density);
+            
+            if( !((MFrame)frame).hasR() ) {
+              CDPlotM.setEnabled(false);
+              Density.setEnabled(false);
+            }
+            
+            Density.setActionCommand("Density");
+            Density.addActionListener(this);
+            
+            if( densityMode ) {
+              JCheckBoxMenuItem scaleD = new JCheckBoxMenuItem("scale Density");
+              mode.add(scaleD);
+              if( scaleSelD )
+                scaleD.setSelected(true);
               else
-                CDPlotM.setSelected(false);
-              mode.add(CDPlotM);
-
-              CDPlotM.setActionCommand("CDPlot");
-              CDPlotM.addActionListener(this);
+                scaleD.setSelected(false);
               
-              JCheckBoxMenuItem Density = new JCheckBoxMenuItem("Density");
-              Density.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-              if( densityMode )
-                Density.setSelected(true);
+              scaleD.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                  scaleSelD = !scaleSelD;
+                  Update();
+                }
+              });
+            }                
+            
+            final Axis axisW = new Axis(xMin, xMax);
+            
+            JMenu menuWidth = new JMenu("Width");
+            
+            mode.add(menuWidth);
+            JCheckBoxMenuItem[][] wdt = new JCheckBoxMenuItem[3][4];
+            for(int i=2; i>=0; i--) {
+              if( bWidth == axisW.tickM*Math.pow(10,(double)i) )
+                wdt[i][0] = new JCheckBoxMenuItem(""+axisW.tickM*Math.pow(10,(double)i), true);
               else
-                Density.setSelected(false);
-              mode.add(Density);
-
-              if( !((MFrame)frame).hasR() ) {
-                CDPlotM.setEnabled(false);
-                Density.setEnabled(false);
+                wdt[i][0] = new JCheckBoxMenuItem(""+axisW.tickM*Math.pow(10,(double)i), false);
+              if( bWidth == axisW.tickMM*Math.pow(10,(double)i) )
+                wdt[i][1] = new JCheckBoxMenuItem(""+axisW.tickMM*Math.pow(10,(double)i), true);
+              else
+                wdt[i][1] = new JCheckBoxMenuItem(""+axisW.tickMM*Math.pow(10,(double)i), false);
+              if( bWidth == axisW.tickMMM*Math.pow(10,(double)i) )
+                wdt[i][2] = new JCheckBoxMenuItem(""+axisW.tickMMM*Math.pow(10,(double)i), true);
+              else
+                wdt[i][2] = new JCheckBoxMenuItem(""+axisW.tickMMM*Math.pow(10,(double)i), false);
+              if( bWidth == axisW.tickMMMM*Math.pow(10,(double)i) )
+                wdt[i][3] = new JCheckBoxMenuItem(""+axisW.tickMMMM*Math.pow(10,(double)i), true);
+              else
+                wdt[i][3] = new JCheckBoxMenuItem(""+axisW.tickMMMM*Math.pow(10,(double)i), false);
+              
+              for(int j=0; j<4; j++) {
+                if( xMax-xMin > Util.atod(wdt[i][j].getText())) {
+                  menuWidth.add(wdt[i][j]);
+                  wdt[i][j].addItemListener(new ItemListener() {
+                    public void itemStateChanged(ItemEvent e) {
+                      bWidth = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
+                      tablep.updateBins(bStart, bWidth);
+                      Update();
+                    }
+                  });
+                }
               }
-
-              Density.setActionCommand("Density");
-              Density.addActionListener(this);
-
-              if( densityMode ) {
-                JCheckBoxMenuItem scaleD = new JCheckBoxMenuItem("scale Density");
-                mode.add(scaleD);
-                if( scaleSelD )
-                  scaleD.setSelected(true);
-                else
-                  scaleD.setSelected(false);
-                
-                scaleD.addItemListener(new ItemListener() {
-                  public void itemStateChanged(ItemEvent e) {
-                    scaleSelD = !scaleSelD;
-                    Update();
+            }
+            JMenuItem wvalue = new JMenuItem("Value ...");
+            wvalue.setActionCommand("bwidth");
+            wvalue.addActionListener(this);
+            menuWidth.add(wvalue);
+            
+            JMenu menuStart = new JMenu("Anchorpoint");
+            
+            mode.add(menuStart);
+            JCheckBoxMenuItem[][] fst = new JCheckBoxMenuItem[3][4];
+            double lastEntry=-3.1415926;
+            double starter=0;
+            for(int i=2; i>=0; i--) {                
+              for(int j=0; j<4; j++) {
+                int k=0;
+                int insert = 0;
+                double ticker = Util.atod(wdt[i][j].getText());
+                if( xMax-xMin > ticker ) {
+                  starter = (Math.floor(xMin/ticker)) * ticker;
+                  while( k < menuStart.getItemCount() ) {
+                    if( starter > Util.atod(((JCheckBoxMenuItem)menuStart.getItem(k)).getText()) )
+                      insert = k+1;
+                    k++;
                   }
-                });
-              }                
-
-              final Axis axisW = new Axis(xMin, xMax);
-
-              JMenu menuWidth = new JMenu("Width");
-
-              mode.add(menuWidth);
-              JCheckBoxMenuItem[][] wdt = new JCheckBoxMenuItem[3][4];
-              for(int i=2; i>=0; i--) {
-                if( bWidth == axisW.tickM*Math.pow(10,(double)i) )
-                  wdt[i][0] = new JCheckBoxMenuItem(""+axisW.tickM*Math.pow(10,(double)i), true);
-                else
-                  wdt[i][0] = new JCheckBoxMenuItem(""+axisW.tickM*Math.pow(10,(double)i), false);
-                if( bWidth == axisW.tickMM*Math.pow(10,(double)i) )
-                  wdt[i][1] = new JCheckBoxMenuItem(""+axisW.tickMM*Math.pow(10,(double)i), true);
-                else
-                  wdt[i][1] = new JCheckBoxMenuItem(""+axisW.tickMM*Math.pow(10,(double)i), false);
-                if( bWidth == axisW.tickMMM*Math.pow(10,(double)i) )
-                  wdt[i][2] = new JCheckBoxMenuItem(""+axisW.tickMMM*Math.pow(10,(double)i), true);
-                else
-                  wdt[i][2] = new JCheckBoxMenuItem(""+axisW.tickMMM*Math.pow(10,(double)i), false);
-                if( bWidth == axisW.tickMMMM*Math.pow(10,(double)i) )
-                  wdt[i][3] = new JCheckBoxMenuItem(""+axisW.tickMMMM*Math.pow(10,(double)i), true);
-                else
-                  wdt[i][3] = new JCheckBoxMenuItem(""+axisW.tickMMMM*Math.pow(10,(double)i), false);
-
-                for(int j=0; j<4; j++) {
-                  if( xMax-xMin > Util.atod(wdt[i][j].getText())) {
-                    menuWidth.add(wdt[i][j]);
-                    wdt[i][j].addItemListener(new ItemListener() {
+                  
+                  if( insert == menuStart.getItemCount() && insert > 0 &&
+                      starter == Util.atod(((JCheckBoxMenuItem)menuStart.getItem(insert-1)).getText()) )
+                    insert = -1;
+                  else if( insert < menuStart.getItemCount() &&
+                           starter == Util.atod(((JCheckBoxMenuItem)menuStart.getItem(insert)).getText()) )
+                    insert = -1;
+                  
+                  if( insert != -1 ) {
+                    if( bStart == starter )
+                      fst[i][j] = new JCheckBoxMenuItem(""+ starter, true);	
+                    else
+                      fst[i][j] = new JCheckBoxMenuItem(""+ starter, false);
+                    lastEntry = starter;
+                    if( insert < menuStart.getItemCount() )
+                      menuStart.insert(fst[i][j], insert);
+                    else
+                      menuStart.add(fst[i][j]);
+                    fst[i][j].addItemListener(new ItemListener() {
                       public void itemStateChanged(ItemEvent e) {
-                        bWidth = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
+                        bStart = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
                         tablep.updateBins(bStart, bWidth);
                         Update();
                       }
@@ -700,86 +761,26 @@ public class Histogram extends DragBox implements ActionListener {
                   }
                 }
               }
-              JMenuItem wvalue = new JMenuItem("Value ...");
-              wvalue.setActionCommand("bwidth");
-              wvalue.addActionListener(this);
-              menuWidth.add(wvalue);
-                            
-              JMenu menuStart = new JMenu("Anchorpoint");
-              
-              mode.add(menuStart);
-              JCheckBoxMenuItem[][] fst = new JCheckBoxMenuItem[3][4];
-              double lastEntry=-3.1415926;
-              double starter=0;
-              for(int i=2; i>=0; i--) {                
-                for(int j=0; j<4; j++) {
-                  int k=0;
-                  int insert = 0;
-                  double ticker = Util.atod(wdt[i][j].getText());
-                  if( xMax-xMin > ticker ) {
-                    starter = (Math.floor(xMin/ticker)) * ticker;
-                    while( k < menuStart.getItemCount() ) {
-                      if( starter > Util.atod(((JCheckBoxMenuItem)menuStart.getItem(k)).getText()) )
-                        insert = k+1;
-                      k++;
-                    }
-
-                    if( insert == menuStart.getItemCount() && insert > 0 &&
-                        starter == Util.atod(((JCheckBoxMenuItem)menuStart.getItem(insert-1)).getText()) )
-                      insert = -1;
-                    else if( insert < menuStart.getItemCount() &&
-                             starter == Util.atod(((JCheckBoxMenuItem)menuStart.getItem(insert)).getText()) )
-                      insert = -1;
-                    
-                    if( insert != -1 ) {
-                      if( bStart == starter )
-                        fst[i][j] = new JCheckBoxMenuItem(""+ starter, true);	
-                      else
-                        fst[i][j] = new JCheckBoxMenuItem(""+ starter, false);
-                      lastEntry = starter;
-                      if( insert < menuStart.getItemCount() )
-                        menuStart.insert(fst[i][j], insert);
-                      else
-                        menuStart.add(fst[i][j]);
-                      fst[i][j].addItemListener(new ItemListener() {
-                        public void itemStateChanged(ItemEvent e) {
-                          bStart = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
-                          tablep.updateBins(bStart, bWidth);
-                          Update();
-                        }
-                      });
-                    }
-                  }
+            }
+            if( xMin != lastEntry ) {
+              JCheckBoxMenuItem tmp;
+              if( bStart == xMin )
+                tmp = new JCheckBoxMenuItem(""+ xMin, true);
+              else
+                tmp = new JCheckBoxMenuItem(""+ xMin, false);
+              menuStart.add(tmp);
+              tmp.addItemListener(new ItemListener() {
+                public void itemStateChanged(ItemEvent e) {
+                  bStart = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
+                  tablep.updateBins(bStart, bWidth);
+                  Update();
                 }
-              }
-              if( xMin != lastEntry ) {
-                  JCheckBoxMenuItem tmp;
-                if( bStart == xMin )
-                  tmp = new JCheckBoxMenuItem(""+ xMin, true);
-                else
-                  tmp = new JCheckBoxMenuItem(""+ xMin, false);
-                menuStart.add(tmp);
-                tmp.addItemListener(new ItemListener() {
-                  public void itemStateChanged(ItemEvent e) {
-                    bStart = Util.atod(((JCheckBoxMenuItem)e.getItem()).getText());
-                    tablep.updateBins(bStart, bWidth);
-                    Update();
-                  }
-                });
-              }
-              JMenuItem svalue = new JMenuItem("Value ...");
-              svalue.setActionCommand("bstart");
-              svalue.addActionListener(this);
-              menuStart.add(svalue);              
+              });
             }
-            else {
-              JMenuItem Barchart  = new JMenuItem("Histogram");
-              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-
-              mode.add(Barchart);
-              Barchart.setActionCommand("Histogram");
-              Barchart.addActionListener(this);
-            }
+            JMenuItem svalue = new JMenuItem("Value ...");
+            svalue.setActionCommand("bstart");
+            svalue.addActionListener(this);
+            menuStart.add(svalue);              
             JMenuItem homeView  = new JMenuItem("Home View");
             homeView.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             homeView.setActionCommand("home");
