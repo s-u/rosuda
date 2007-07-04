@@ -24,11 +24,16 @@ public class Barchart extends DragBox implements ActionListener {
   private int    movingId=-1;
   private int oldY;
   private double max = 0;
+  private double iniMax = 0;
+  private String searchText = "";
   private boolean scaleFixed = false;
+  private int scaler = 0;
   private Image bi;
   private Graphics bg;
   private int k;
   private int eventID;
+  private long startT = 0;
+  private int globalStart = -1;
   
   public Barchart(MFrame frame, int width, int height, Table tablep) {
     super(frame);
@@ -46,6 +51,7 @@ public class Barchart extends DragBox implements ActionListener {
     this.k = levels[0];
     for(int i=0; i<k; i++ ) 
       max = Math.max( max, tablep.table[i] );
+	iniMax = max;		
     
     setCoordinates(0,0,max,1,-1);
         
@@ -148,6 +154,7 @@ public class Barchart extends DragBox implements ActionListener {
       
       if( var == tablep.initialVars[0] || var == -1 ) {
         tablep.rebreak();
+		rects.removeAllElements();
         realHeight = create(border, border, width-border, height-border, "");
         paint(this.getGraphics());
       }
@@ -203,7 +210,7 @@ public class Barchart extends DragBox implements ActionListener {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
             bg.dispose();
             bi = null;
-            System.gc();
+//            System.gc();
             //System.out.println("New Image!");
             if( sb.isVisible() )
               bi = createImage(size.width-(sb.getSize()).width, size.height);	// double buffering from CORE JAVA p212
@@ -250,7 +257,7 @@ public class Barchart extends DragBox implements ActionListener {
         start =  0;
         stop = k-1;
       }
-      
+
       for( int i = start;i <= stop; i++) {
         int index;
         if( moving )
@@ -556,7 +563,37 @@ public void processKeyEvent(KeyEvent e) {
     
     DataEvent de = new DataEvent(this);              // now the rest is informed ...
     evtq.postEvent(de);
-  } 
+  } else if( e.getID() == KeyEvent.KEY_PRESSED && e.isShiftDown()
+			&& (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) {
+	if(e.getKeyCode() == KeyEvent.VK_DOWN && scaler > 0)
+		scaler--;
+	if(e.getKeyCode() == KeyEvent.VK_UP )
+		scaler++;
+	setCoordinates(0,0,iniMax / Math.pow(1.2, scaler)  ,1,-1);
+    rects.removeAllElements();
+    realHeight = create(border, border, width-border, height-border, "");
+    Graphics g = this.getGraphics();
+    paint(g);
+    g.dispose();
+  } else if ( Character.isSpaceChar(e.getKeyChar()) || Character.isJavaLetterOrDigit(e.getKeyChar()) || (e.getKeyChar() == KeyEvent.VK_PERIOD) || (e.getKeyChar() == KeyEvent.VK_MINUS) ) {
+	if( searchText.equals("") )
+		startT = new Date().getTime();
+	if( new Date().getTime() < startT + 1000 ) {
+		searchText += e.getKeyChar();
+	} else 
+		searchText = ""+e.getKeyChar();
+	startT = new Date().getTime();
+	System.out.println("Search Text: "+searchText);
+	if( !searchText.equals("") )
+		for( int i = 0;i < labels.size(); i++) {
+			String tmp = (((MyText)labels.elementAt(i)).getText()); 
+			if( (tmp.toUpperCase()).startsWith((searchText.toUpperCase())) ) {
+				scrollTo(((MyText)labels.elementAt(i)).y-20);
+				i = labels.size();
+//				System.out.println("Table Text: "+tmp.toUpperCase()+" test against "+ searchText );
+			}
+		}
+  }
   super.processKeyEvent(e);  // Pass other event types on.
 }
 
@@ -572,7 +609,7 @@ public void actionPerformed(ActionEvent e) {
   }
   else if( command.equals("abs") || command.equals("rel") || command.equals("lex") || command.equals("frq") || command.equals("rev") ) {
     if( command.equals("abs") || command.equals("rel") || command.equals("lex") || command.equals("frq") ) {
-      double[] sortA = new double[tablep.levels[0]];
+      double[] sortA = new double[this.k];
       dataSet.Variable v = (dataSet.Variable)(tablep.data.data.elementAt(tablep.initialVars[0]));
       //
       // first get all highlighting fixed
@@ -642,9 +679,13 @@ public void actionPerformed(ActionEvent e) {
 
 public int create(int x1, int y1, int x2, int y2, String info) {
   
-  //System.out.println(x1+" "+y1+" "+x2+" "+y2);
+//  System.out.println("Create: "+x1+" "+y1+" "+x2+" "+y2);
   
-  rects.removeAllElements();
+//  rects.removeAllElements();
+
+  if( !rects.isEmpty() )
+	return realHeight;
+
   labels.removeAllElements();
   
   this.name = tablep.name;
@@ -655,9 +696,10 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   double sum = 0;
   Vector[] tileIds = new Vector[k];
     
+  double tMax=0;
   for(int i=0; i<k; i++ ) {
     sum += tablep.table[i];
-    max = Math.max( max, tablep.table[i] );
+    tMax = Math.max( tMax, tablep.table[i] );
     tileIds[i] = new Vector(1,0);
     tileIds[i].addElement(new Integer(i));
   }
@@ -715,8 +757,10 @@ public int create(int x1, int y1, int x2, int y2, String info) {
       h = hi;
       w *= tablep.table[i] / max;
     }
-    else
-      h *= tablep.table[i] / max;
+    else {
+      h *= tablep.table[i] / tMax;
+	  w = (int)(w * tMax / max);
+	}
     // In Java 1.4 Boxes with "0" dimension in x or y are NOT drawn !!!!
     w = Math.max(w,1);
     h = Math.max(h,1);
