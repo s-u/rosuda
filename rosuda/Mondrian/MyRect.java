@@ -14,6 +14,7 @@ public class MyRect extends Rectangle implements ActionListener {
   private String mode;
   private Graphics g;
   private double alpha = 1;
+  private boolean alphaSet = false;
   private JMenuItem infoText;
   private JPopupMenu popup;
   private boolean full;
@@ -65,6 +66,7 @@ public class MyRect extends Rectangle implements ActionListener {
 
   public void setAlpha(double alpha) {
     this.alpha = alpha;
+    this.alphaSet = true;
   }
   
   public void setHilite(double hilite) {
@@ -120,6 +122,8 @@ public class MyRect extends Rectangle implements ActionListener {
   }
 
   public void draw(Graphics g) {
+    
+    float currAlpha = ((AlphaComposite)((Graphics2D)g).getComposite()).getAlpha();
 
     if( tablep!= null && tablep.data.colorBrush )
       colorBreakdown();
@@ -160,12 +164,14 @@ public class MyRect extends Rectangle implements ActionListener {
             }
           }
         } else {
-          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
+          if( alphaSet )
+            ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)alpha)));
           g.fillRect(x, y+Math.max(0, h-height), Math.min(w, width), Math.min(h, height) + 1);
         }
       } else {
         g.setColor(drawColor);
-        ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
+        if( alphaSet )
+          ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
         g.fillRect(x, y, Math.max(1, w), h);
       }
     }
@@ -216,7 +222,7 @@ public class MyRect extends Rectangle implements ActionListener {
       g.setColor( c );
     }
 
-    ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
+    ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, currAlpha));
 
     if( obs == 0 || censored )
        g.setColor(Color.red);
