@@ -227,16 +227,18 @@ public class Scatter2D extends DragBox {
             selectedIds = Vars;
           if( minCount == 1 ) {
             for( int sel=0; sel<selectedIds.length; sel++ ) {
-              if( data.categorical(selectedIds[sel]) )
-                if( data.alpha(selectedIds[sel]) )
-                  x = x + "\n" + data.getName(selectedIds[sel])+": "
-                    +data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[0]]);
+              x = x + "\n" + data.getName(selectedIds[sel])+": ";
+              if( (data.getMissings(selectedIds[sel]))[minIds[0]] )
+                x = x + "NA";
+              else {
+                if( data.categorical(selectedIds[sel]) )
+                  if( data.alpha(selectedIds[sel]) )
+                    x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[0]]);
+                  else
+                    x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
                 else
-                  x = x + "\n" + data.getName(selectedIds[sel])+": "
-                    +data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
-              else
-                x = x + "\n" + data.getName(selectedIds[sel])+": "
-                  +(data.getRawNumbers(selectedIds[sel]))[minIds[0]];
+                  x = x + (data.getRawNumbers(selectedIds[sel]))[minIds[0]];
+              }
             }
           } else {
             x = " Count: "+minCount+" ";
@@ -256,8 +258,10 @@ public class Scatter2D extends DragBox {
                   else
                     Levels[sel].add(data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[ids]]));
                 else {
-                  Mins[sel] = Math.min(Mins[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
-                  Maxs[sel] = Math.max(Maxs[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                  if( !(data.getMissings(selectedIds[sel]))[minIds[ids]] ) {
+                    Mins[sel] = Math.min(Mins[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                    Maxs[sel] = Math.max(Maxs[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                  }
                 }
               }
             }
@@ -276,7 +280,12 @@ public class Scatter2D extends DragBox {
                     x = x + Names[Names.length-1]+"} ";
                 }
               else
-                x = x + "\n" + data.getName(selectedIds[sel])+": " + " ["+Mins[sel]+", "+Maxs[sel]+"] ";
+                if( Mins[sel] == Maxs[sel] )
+                  x = x + "\n" + data.getName(selectedIds[sel])+": " +Mins[sel];
+                else if( Mins[sel] != Double.MAX_VALUE && Maxs[sel] != -Double.MAX_VALUE )
+                  x = x + "\n" + data.getName(selectedIds[sel])+": " + " ["+Mins[sel]+", "+Maxs[sel]+"] ";
+                else
+                  x = x + "\n" + data.getName(selectedIds[sel])+": NA";
             }
           }
           return Util.info2Html(x);
@@ -1066,7 +1075,7 @@ public class Scatter2D extends DragBox {
           double[] CIu = {0};
           if( smoothF.equals("loess") ) 
 //            fitted = c.eval("predict(lowess(x, y, f=1/"+smoother+"), data.frame(x=xf))").asDoubleArray();
-            fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
+            fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", degree = 1, family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
           if( smoothF.equals("locfit") ) {
             RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
             fitted = (double[]) sL.at("fit").getContent();
