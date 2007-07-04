@@ -24,6 +24,7 @@ import java.util.Vector;         //
 import java.util.Properties;     // To store printing preferences in.
 import java.util.jar.JarFile; 	 // To load logo
 import java.util.zip.ZipEntry;
+import java.util.prefs.*;		 // for preferences
 import java.lang.*;              // 
 import java.net.URL;
 import java.sql.*;
@@ -60,9 +61,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private JPanel progPanel;
   private JLabel progText;
   public JMenuBar menubar;
-  public JMenu windows, help, dv, sam, trans;
+  public JMenu windows, help, dv, sam, trans, lastOM;
   private JMenuItem n, nw, c, q, t, m, o, s, ss, sa, ts, p, od, mv, mn, pr, b, bw, pc, pb, byx, sc, sc2, hi, hiw, cc, cs, vm, rc, oh, mds, pca;
-  public  JMenuItem ca, fc, fs, transPlus, transMinus, transTimes, transDiv, transNeg, transInv, transLog, transExp;
+  public  JMenuItem ca, fc, fs, me, transPlus, transMinus, transTimes, transDiv, transNeg, transInv, transLog, transExp;
   private JCheckBoxMenuItem se, ah, ih, os, as;
   private ModelNavigator Mn;
   private PreferencesFrame Pr;
@@ -75,6 +76,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private boolean load = false;
   private boolean killed = false;
   private int[] selectBuffer;
+  private Preferences prefs;
+  private int lastOpenedNum = 6;
+  private String[] lastOpened = new String[lastOpenedNum];
+  private JMenuItem[] lastOpenedMenu= new JMenuItem[lastOpenedNum];
   
   public Join(Vector Mondrians, Vector dataSets, boolean load, boolean loadDB, File loadFile) {
     
@@ -90,6 +95,14 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     MRJApplicationUtils.registerQuitHandler(this);
     
+	// Read Preferences
+	prefs = Preferences.userNodeForPackage(this.getClass());
+	
+	for(int i=0; i<lastOpenedNum; i++) 
+		lastOpened[i] = prefs.get("lastOpened"+i, "");
+		
+	// Start Rserve
+	
     hasR = Srs.checkLocalRserve();
     
     System.out.println("Starting RServe ... "+hasR);
@@ -119,6 +132,21 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     //   JMenu file = new JMenu("File");            // Create a File menu.
     file.add(o = new JMenuItem("Open"));
     o.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+	file.add(lastOM = new JMenu("Open Recent"));
+	for(int i=0; i<lastOpenedNum; i++) {
+		lastOpenedMenu[i] = new JMenuItem(lastOpened[i]);
+		lastOpenedMenu[i].addActionListener(new ActionListener() {     // Open a new window with the selected data
+			public void actionPerformed(ActionEvent e) {
+				String tmp = e.getActionCommand();
+				int id = tmp.indexOf(" - ");
+				System.out.println(tmp.substring(id+3,tmp.length())+tmp.substring(0, id));
+				loadDataSet(false, new File(tmp.substring(id+3,tmp.length())+tmp.substring(0, id)));
+			}
+		});
+		if( !lastOpened[i].equals("") )
+			lastOM.add(lastOpenedMenu[i]);
+	}
+	
     file.add(od = new JMenuItem("Open Database"));
     od.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     if( user.indexOf("theus") > -1)
@@ -266,6 +294,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     ca.setEnabled(false);
 
     windows.addSeparator();
+    
+    windows.add(me = new JMenuItem(this.getTitle()));    
 
     help = (JMenu) menubar.add(new JMenu("Help"));
 
@@ -504,6 +534,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     });
     c.addActionListener(new ActionListener() {     // Close this window.
       public void actionPerformed(ActionEvent e) { close(); }
+    });
+    me.addActionListener(new ActionListener() {   // Show main window
+      public void actionPerformed(ActionEvent e) { toFront(); }
     });
     rc.addActionListener(new ActionListener() {     // Show reference card window.
       public void actionPerformed(ActionEvent e) { refCard(); }
@@ -1114,6 +1147,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       if( loadAsciiFile(file) ) {
         setVarList();
         this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
+        me.setText(this.getTitle());
         c.setEnabled(true);
         s.setEnabled(true);
         
@@ -1443,10 +1477,30 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     } else {
       filename = file.getAbsolutePath();
       justFile = file.getName();
+	  path = file.getParent()+File.separator;
     }
     
     if( !filename.equals("") ) {
       
+		boolean isInMenu = false;
+		for(int i=0; i<lastOpenedNum; i++)
+			if( lastOpenedMenu[i].getText().equals(justFile+" - "+path) )
+				isInMenu = true;
+		
+		if( !isInMenu )
+			for(int i=lastOpenedNum-1; i>=0; i--) {
+				if( i == 0 ) 
+					lastOpened[i] = justFile+" - "+path;
+				else
+					lastOpened[i] = lastOpened[i-1];
+				if( !lastOpened[i].equals("") )	{
+					prefs.put("lastOpened"+i, lastOpened[i]);
+					if( (lastOpenedMenu[i].getText()).equals("") )
+						lastOM.add(lastOpenedMenu[i]);
+					lastOpenedMenu[i].setText(lastOpened[i]);
+				}	
+			}
+				
       String line="";
       
       if( true ) {                                          // new reader
