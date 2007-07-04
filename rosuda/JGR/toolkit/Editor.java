@@ -103,7 +103,7 @@ public class Editor extends TJFrame implements ActionListener, KeyListener {
 				"~Window", "+","Help","R Help","rhelp", "~Preferences", "~About", "0" };
 		EzMenu.getEzMenu(this, this, Menu);
 		Menu rm = recentMenu = (Menu) EzMenu.getItem(this,"Open Recent");
-		System.out.println(rm);
+		//System.out.println(rm);
 		if (rm != null) {
 			rm.removeAll();
 			if (recentOpen == null)

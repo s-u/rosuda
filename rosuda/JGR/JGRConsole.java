@@ -7,6 +7,8 @@ package org.rosuda.JGR;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Menu;
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -117,7 +119,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"!OSource File...", "source", "@SSave", "save", "-",
 				"@DSet Working Directory", "setwd", "~File.Quit", 
 				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
-				"Copy Output","copyoutput","Copy Commands","copycmds","Copy Result","copyresult",
+				"#Copy Special","-", //"Copy Output","copyoutput","Copy Commands","copycmds","Copy Result","copyresult",
 				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
 				"@FFind","search","@GFind Next","searchnext","-","@LClear Console","clearconsole",
 				// todo add edit menu
@@ -135,6 +137,22 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		if (JGR.RHISTORY == null)
 			JGR.RHISTORY = new Vector();
 		currentHistPosition = JGR.RHISTORY.size();
+		
+		Menu rm = (Menu) EzMenu.getItem(this,"Copy Special");
+		if (rm != null) {
+			MenuItem item1 = new MenuItem("Copy Output");
+			item1.setActionCommand("copyoutput");
+			item1.addActionListener(this);
+			rm.add(item1);
+			MenuItem item2 = new MenuItem("Copy Commands");
+			item2.setActionCommand("copycmds");
+			item2.addActionListener(this);
+			rm.add(item2);
+			MenuItem item3 = new MenuItem("Copy Result");
+			item3.setActionCommand("copyresult");
+			item3.addActionListener(this);
+			rm.add(item3);
+		}
 
 		// Add default toolbar with stop button to interrupt R
 		toolBar = new ToolBar(this, true);
