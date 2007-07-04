@@ -1165,21 +1165,29 @@ System.out.println("Mouse Action to check: "+mouse);
           double yMin = Util.atod(LD.tfYMinI.getText());
           double xMax = Util.atod(LD.tfXMaxI.getText());
           double yMax = Util.atod(LD.tfYMaxI.getText());
+          double width = Math.max(150, Util.atod(LD.tfWidthI.getText()));
+          double height = Math.max(100, Util.atod(LD.tfHeightI.getText()));
+          
+          frame.setSize((int)width, (int)height);
           if( xMax > xMin && yMax > yMin ) {
             this.reScale(xMin, yMin, xMax, yMax);
             scaleChanged = true;
             update(this.getGraphics());
-            LD.dispose();
+            if( command.equals("OK") )
+              LD.dispose();
           } else
             Toolkit.getDefaultToolkit().beep();   
           
         } else if( command.equals("Home") ) {
 
           this.home();
-          LD.tfXMinI.setText(""+getLlx());
-          LD.tfXMaxI.setText(""+getUrx());
-          LD.tfYMinI.setText(""+getLly());
-          LD.tfYMaxI.setText(""+getUry());
+          LD.tfXMinI.setText(Stat.roundToString(getLlx(),5));
+          LD.tfXMaxI.setText(Stat.roundToString(getUrx(),5));
+          LD.tfYMinI.setText(Stat.roundToString(getLly(),5));
+          LD.tfYMaxI.setText(Stat.roundToString(getUry(),5));
+          
+          LD.tfWidthI.setText(""+frame.getWidth());
+          LD.tfHeightI.setText(""+frame.getHeight());
           scaleChanged = true;
           update(this.getGraphics());
         }
@@ -1248,6 +1256,8 @@ System.out.println("Mouse Action to check: "+mouse);
       public JTextField tfXMaxI;
       public JTextField tfYMinI;
       public JTextField tfYMaxI;
+      public JTextField tfWidthI;
+      public JTextField tfHeightI;
       
       public int last = zooms.size();
       
@@ -1262,6 +1272,10 @@ System.out.println("Mouse Action to check: "+mouse);
         JPanel pnYPanel;
         JLabel lbYLabelMin;
         JLabel lbYLabelMax;
+        
+        JPanel pnSPanel;
+        JLabel lbWidth;
+        JLabel lbHeight;
         
         JButton btCancel;
         JButton btOK;
@@ -1464,7 +1478,6 @@ System.out.println("Mouse Action to check: "+mouse);
             textField.selectAll();
           }
         });
-        tfYMaxI.setNextFocusableComponent(tfXMinI);
         gbcYPanel.gridx = 1;
         gbcYPanel.gridy = 1;
         gbcYPanel.gridwidth = 1;
@@ -1476,11 +1489,118 @@ System.out.println("Mouse Action to check: "+mouse);
         gbYPanel.setConstraints( tfYMaxI, gbcYPanel );
         pnYPanel.add( tfYMaxI );
 
+        if( DB instanceof Barchart ) {
+          tfXMinI.setEnabled(false);
+          tfYMinI.setEnabled(false);
+          tfYMaxI.setEnabled(false);
+        }
+
+        
+
+        pnSPanel = new JPanel();
+        pnSPanel.setBorder( BorderFactory.createTitledBorder( "window size" ) );
+        GridBagLayout gbSPanel = new GridBagLayout();
+        GridBagConstraints gbcSPanel = new GridBagConstraints();
+        pnSPanel.setLayout( gbSPanel );
+        gbcAllPanel.gridx = 0;
+        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridwidth = 5;
+        gbcAllPanel.gridheight = 1;
+        gbcAllPanel.fill = GridBagConstraints.BOTH;
+        gbcAllPanel.weightx = 1;
+        gbcAllPanel.weighty = 0;
+        gbcAllPanel.anchor = GridBagConstraints.NORTH;
+        gbAllPanel.setConstraints( pnSPanel, gbcAllPanel );
+        pnAllPanel.add( pnSPanel );
+        
+        lbWidth = new JLabel( "width"  );
+        gbcSPanel.gridx = 0;
+        gbcSPanel.gridy = 0;
+        gbcSPanel.gridwidth = 1;
+        gbcSPanel.gridheight = 1;
+        gbcSPanel.fill = GridBagConstraints.BOTH;
+        gbcSPanel.weightx = 1;
+        gbcSPanel.weighty = 1;
+        gbcSPanel.anchor = GridBagConstraints.NORTH;
+        gbSPanel.setConstraints( lbWidth, gbcSPanel );
+        pnSPanel.add( lbWidth );
+        
+        lbHeight = new JLabel( "  height"  );
+        gbcSPanel.gridx = 2;
+        gbcSPanel.gridy = 0;
+        gbcSPanel.gridwidth = 1;
+        gbcSPanel.gridheight = 1;
+        gbcSPanel.fill = GridBagConstraints.BOTH;
+        gbcSPanel.weightx = 1;
+        gbcSPanel.weighty = 1;
+        gbcSPanel.anchor = GridBagConstraints.NORTH;
+        gbSPanel.setConstraints( lbHeight, gbcSPanel );
+        pnSPanel.add( lbHeight );
+        
+        tfWidthI = new JTextField(10);
+        tfWidthI.setText(frame.getWidth()+"");
+        tfWidthI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) )) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfWidthI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
+        gbcSPanel.gridx = 1;
+        gbcSPanel.gridy = 0;
+        gbcSPanel.gridwidth = 1;
+        gbcSPanel.gridheight = 1;
+        gbcSPanel.fill = GridBagConstraints.BOTH;
+        gbcSPanel.weightx = 1;
+        gbcSPanel.weighty = 0;
+        gbcSPanel.anchor = GridBagConstraints.NORTH;
+        gbSPanel.setConstraints( tfWidthI, gbcSPanel );
+        pnSPanel.add( tfWidthI );
+        
+        tfHeightI = new JTextField(10);
+        tfHeightI.setText(frame.getHeight()+"");
+        tfHeightI.addKeyListener(new KeyAdapter() {
+          public void keyTyped(KeyEvent e) {
+            char c = e.getKeyChar();      
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) )) ) {
+              getToolkit().beep();
+              e.consume();
+            }
+          }
+        });
+        tfHeightI.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+            JTextField textField = (JTextField)e.getSource();
+            textField.selectAll();
+          }
+        });
+        gbcSPanel.gridx = 3;
+        gbcSPanel.gridy = 0;
+        gbcSPanel.gridwidth = 1;
+        gbcSPanel.gridheight = 1;
+        gbcSPanel.fill = GridBagConstraints.BOTH;
+        gbcSPanel.weightx = 1;
+        gbcSPanel.weighty = 0;
+        gbcSPanel.anchor = GridBagConstraints.NORTH;
+        gbSPanel.setConstraints( tfHeightI, gbcSPanel );
+        pnSPanel.add( tfHeightI );
+        tfHeightI.setNextFocusableComponent(tfXMinI);
+        
+        
+        
         btCancel = new JButton( "Cancel"  );
         btCancel.setActionCommand( "Cancel" );
         btCancel.addActionListener(DB);
         gbcAllPanel.gridx = 0;
-        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridy = 2;
         gbcAllPanel.gridwidth = 1;
         gbcAllPanel.gridheight = 1;
         gbcAllPanel.fill = GridBagConstraints.BOTH;
@@ -1494,7 +1614,7 @@ System.out.println("Mouse Action to check: "+mouse);
         btOK.setActionCommand( "OK" );
         btOK.addActionListener(DB);
         gbcAllPanel.gridx = 4;
-        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridy = 2;
         gbcAllPanel.gridwidth = 1;
         gbcAllPanel.gridheight = 1;
         gbcAllPanel.fill = GridBagConstraints.BOTH;
@@ -1509,7 +1629,7 @@ System.out.println("Mouse Action to check: "+mouse);
         btHome.setActionCommand( "Home" );
         btHome.addActionListener(DB);
         gbcAllPanel.gridx = 1;
-        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridy = 2;
         gbcAllPanel.gridwidth = 1;
         gbcAllPanel.gridheight = 1;
         gbcAllPanel.fill = GridBagConstraints.BOTH;
@@ -1518,13 +1638,12 @@ System.out.println("Mouse Action to check: "+mouse);
         gbcAllPanel.anchor = GridBagConstraints.NORTH;
         gbAllPanel.setConstraints( btHome, gbcAllPanel );
         pnAllPanel.add( btHome );
-
         
         btApply = new JButton( "Apply"  );
         btApply.setActionCommand( "Apply" );
         btApply.addActionListener(DB);
         gbcAllPanel.gridx = 3;
-        gbcAllPanel.gridy = 1;
+        gbcAllPanel.gridy = 2;
         gbcAllPanel.gridwidth = 1;
         gbcAllPanel.gridheight = 1;
         gbcAllPanel.fill = GridBagConstraints.BOTH;
@@ -1536,7 +1655,8 @@ System.out.println("Mouse Action to check: "+mouse);
                 
         JScrollPane scpAllPanel = new JScrollPane( pnAllPanel );
         setContentPane( scpAllPanel );
-        setSize(360, 155);
+//        setSize(360, 155);
+        setSize(360, 255);
         setResizable(false);
         pack();
         
