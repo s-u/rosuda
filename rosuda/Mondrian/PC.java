@@ -185,15 +185,20 @@ public class PC extends DragBox implements ActionListener {
                 }
               }
                 else {
+                  boolean hitBox = false;
                   x = " "+((MyText)names.elementAt(popXId)).getText();
                   if( !paintMode.equals("Poly") ) {
-//                    setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
+                    double saveMin = getLly();
+                    double saveMax = getUry();
+                    setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
                     if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
-                        worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    )
+                        worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    ) {
                       x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
-                    else
-                      x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
-                  } else {
+                      hitBox = true;
+                    }
+                    setCoordinates(0,saveMin,1,saveMax,-1);
+                  } 
+                  if( !hitBox ) {
                     if( e.isShiftDown() ) { // extended query, does not have a var name header
                       x = "";
                       int[] selectedIds = varList.getSelectedIndices();
@@ -1784,7 +1789,7 @@ public class PC extends DragBox implements ActionListener {
       double[] lsOutlier, usOutlier;
       int var, id;
       int mid, width, low, high;
-      boolean zeroSelect;
+      boolean zeroSelect = true;
       int n;
 
       public boxPlot( int id, int var, int mid, int width, int low, int high) {
