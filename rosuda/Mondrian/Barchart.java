@@ -191,6 +191,7 @@ public class Barchart extends DragBox implements ActionListener {
         if( sb.isVisible() && oldWidth > 0 )
           size.width -= (sb.getSize()).width;
 
+		rects.removeAllElements();
         realHeight = create(border, border, size.width-border, size.height-border, "");
         this.setSize( size.width, realHeight + 2 * border);
         size = this.getSize();
