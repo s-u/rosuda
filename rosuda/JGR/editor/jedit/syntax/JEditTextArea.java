@@ -65,6 +65,8 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 /**
  * jEdit's text area component. It is more suited for editing program source
  * code than JEditorPane, because it drops the unnecessary features (images,
@@ -841,10 +843,51 @@ public class JEditTextArea extends JComponent {
 		}
 	}
 	
+	/**
+	 * Indent/ Reindent selected lines
+	 * 
+	 * @param direction
+	 *            -1 for left and 1 for right indentation
+	 * @throws BadLocationException
+	 */
+	public void shiftSelection(int direction) throws BadLocationException {
+		int a = this.getLineOfOffset(this.getSelectionStart());
+		int b = this.getLineOfOffset(this.getSelectionEnd());
+		while (a <= b) {
+			int ls = this.getLineStartOffset(a);
+			int le = this.getLineEndOffset(a);
+			String tab = "\t";
+			/*for (int i = 0; i < JGRPrefs.tabWidth; i++)
+				tab += " ";*/
+				if (direction == -1
+					&& (this.getText(ls, le - ls).startsWith("\t") || this
+							.getText(ls, le - ls).startsWith(tab)))
+				this.getDocument().remove(
+						ls,
+						this.getText(ls, le - ls).startsWith("\t") ? 1
+								: JGRPrefs.tabWidth);
+			else if (direction == 1)
+				this.insertAt(ls, "\t");
+			a++;
+		}
+
+	}
+	
 	public void append(String text) {
 		try {
 			document.beginCompoundEdit();
 			document.insertString(document.getLength(), text, null);
+		} catch (BadLocationException bl) {
+			bl.printStackTrace();
+		} finally {
+			document.endCompoundEdit();
+		}		
+	}
+	
+		public void insertAt(int pos, String text) {
+		try {
+			document.beginCompoundEdit();
+			document.insertString(pos, text, null);
 		} catch (BadLocationException bl) {
 			bl.printStackTrace();
 		} finally {
@@ -1741,6 +1784,33 @@ public class JEditTextArea extends JComponent {
 		private Component bottom;
 
 		private Vector leftOfScrollBar = new Vector();
+	}
+	
+		/**
+	 * Comment/ Uncomment selected Code
+	 * 
+	 * @param comment
+	 *            remove comment string or add
+	 * @throws BadLocationException
+	 */
+	public void commentSelection(boolean comment) throws BadLocationException {
+		int a = this.getLineOfOffset(this.getSelectionStart());
+		int b = this.getLineOfOffset(this.getSelectionEnd());
+		while (a <= b) {
+			int ls = this.getLineStartOffset(a);
+			ls = this.getSelectionStart() > ls ? this.getSelectionStart() : ls;
+			int le = this.getLineEndOffset(a);
+			if (comment && this.getText(ls, le - ls) != null && !this.getText(ls, le - ls).trim().startsWith("#")
+					&& !this.getText(ls - 1, 1).equals("#"))
+				this.insertAt(ls, "#");
+			if (!comment) {
+				ls = this.getLineStartOffset(a);
+				int i = this.getText(ls, le - ls).indexOf("#");
+				if (i >= 0)
+					this.getDocument().remove(ls + i, 1);
+			}
+			a++;
+		}
 	}
 
 	static class CaretBlinker implements ActionListener {

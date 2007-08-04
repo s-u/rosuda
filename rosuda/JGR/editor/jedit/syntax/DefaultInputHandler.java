@@ -207,14 +207,8 @@ public class DefaultInputHandler extends InputHandler {
 	public void keyTyped(KeyEvent evt) {
 		int modifiers = evt.getModifiers();
 		
-		System.out.println("modifiers "+modifiers);
-		System.out.println(KeyEvent.ALT_MASK);
-		System.out.println(KeyEvent.META_MASK);
-		System.out.println(KeyEvent.SHIFT_MASK);
-		
 		char c = evt.getKeyChar();
-		if (c != KeyEvent.CHAR_UNDEFINED && (modifiers & KeyEvent.ALT_MASK) == 0) {
-			System.out.println("insert char "+c);
+		if (c != KeyEvent.CHAR_UNDEFINED && (modifiers & (System.getProperty("os.name").startsWith("Mac") ? KeyEvent.META_MASK : KeyEvent.ALT_MASK)) == 0) {
 			if (c >= 0x20 && c != 0x7f) {
 				KeyStroke keyStroke = KeyStroke.getKeyStroke(Character.toUpperCase(c));
 				Object o = currentBindings.get(keyStroke);

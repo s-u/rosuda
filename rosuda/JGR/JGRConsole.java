@@ -40,7 +40,7 @@ import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.ConsoleOutput;
 import org.rosuda.JGR.toolkit.DataTable;
-import org.rosuda.JGR.toolkit.Editor;
+import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;

@@ -230,8 +230,8 @@ public class RInputHandler extends DefaultInputHandler {
 	public void addKeyBindings() {
 		addDefaultKeyBindings();
 		addKeyBinding("TAB", R_INSERT_TAB);
-		addKeyBinding("M+R", R_RUN_LINES);
-		addKeyBinding("MS+R", R_RUN_ALL);
+		//addKeyBinding("M+R", R_RUN_LINES);
+		//addKeyBinding("MS+R", R_RUN_ALL);
 		addKeyBinding("M+7", R_COMMENT_LINES);
 		addKeyBinding("UP", R_PREV_LINE);
 		addKeyBinding("DOWN", R_NEXT_LINE);
