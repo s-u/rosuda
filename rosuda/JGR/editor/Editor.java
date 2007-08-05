@@ -70,7 +70,7 @@ public class Editor extends TJFrame implements ActionListener {
 		this.setLayout(new BorderLayout());
 
 		// Menu
-		String[] Menu = { "+", "File", "@NNew", "new", "@OOpen", "open", "#Open Recent","", "@SSave", "save", "!SSave as", "saveas", "-", /*"@PPrint", "print", "-",*/
+		String[] Menu = { "+", "File", "@NNew", "new", "@OOpen", "open", "#Open Recent","", "@SSave", "save", "!SSave as", "saveas", "-", "@PPrint", "print", "-",
 				"@QQuit", "quit", 
 				"+", "Edit", "@ZUndo","undo","!ZRedo","redo","-","@XCut", "cut", "@CCopy", "copy", "@VPaste", "paste", "-", 
 				"@/Toggle Comment","commentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","!RRun all","runall","-", "@FFind", "find", "@GFind next",
@@ -331,7 +331,7 @@ public class Editor extends TJFrame implements ActionListener {
 	
 	public void print() {
 		DocumentRenderer docrender = new DocumentRenderer();
-		//docrender.print(textArea);
+		docrender.print(textArea.getDocument());
 	}
 
 	public static void main(String[] args) {
