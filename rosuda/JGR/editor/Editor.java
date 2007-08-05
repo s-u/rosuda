@@ -231,6 +231,35 @@ public class Editor extends TJFrame implements ActionListener {
 			setWorking(true);
 			textArea.setText("");
 			textArea.loadFile(fileName);
+			
+			
+			recentOpen.addEntry(fileName);
+		Menu rm = recentMenu = (Menu) EzMenu.getItem(this, "Open Recent");
+		if (rm != null) {
+			rm.removeAll();
+			if (recentOpen == null)
+				recentOpen = new RecentList("JGR", "RecentOpenFiles", 8);
+			String[] shortNames = recentOpen.getShortEntries();
+			String[] longNames = recentOpen.getAllEntries();
+			int i = 0;
+			while (i < shortNames.length) {
+				MenuItem mi = new MenuItem(shortNames[i]);
+				mi.setActionCommand("recent:" + longNames[i]);
+				mi.addActionListener(this);
+				rm.add(mi);
+				i++;
+			}
+			if (i > 0)
+				rm.addSeparator();
+			MenuItem ca = new MenuItem("Clear list");
+			ca.setActionCommand("recent-clear");
+			ca.addActionListener(this);
+			rm.add(ca);
+			if (i == 0)
+				ca.setEnabled(false);
+		}
+
+			
 			setWorking(false);
 		}
 	}
