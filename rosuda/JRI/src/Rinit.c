@@ -173,8 +173,8 @@ void initRinside() {
 #if !defined(HAVE_UINTPTR_T) && !defined(uintptr_t) && !defined(_STDINT_H)
 typedef unsigned uintptr_t;
 #endif
-extern uintptr_t R_CStackLimit; /* C stack limit */
-extern uintptr_t R_CStackStart; /* Initial stack address */
+extern __declspec(dllimport) uintptr_t R_CStackLimit; /* C stack limit */
+extern __declspec(dllimport) uintptr_t R_CStackStart; /* Initial stack address */
 #endif
 
 /* for signal-handling code */
