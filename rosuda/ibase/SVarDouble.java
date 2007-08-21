@@ -262,7 +262,7 @@ public class SVarDouble extends SVar {
     public double atD(int i) { return (i<0||i>=insertPos)?double_NA:cont[i]; }
     public double atF(int i) { return (i<0||i>=insertPos)?0:cont[i]; }
     public int atI(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?int_NA:((int)(cont[i]+0.5)); }
-    public String asS(int i) { return (i<0||i>=insertPos||Double.isNaN(cont[i]))?null:Double.toString(cont[i]); }
+    public String asS(int i) { return (i<0||i>=insertPos||isNA(cont[i]))?null:Double.toString(cont[i]); }
     
     /** returns the ID of the category of the object
      * @param object

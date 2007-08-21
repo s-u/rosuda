@@ -249,9 +249,9 @@ public class SVarFixInt extends SVar
     }
 
     public Object at(int i) { return (i<0||i>=insertPos||cont[i]==SVar.int_NA)?null:new Integer(cont[i]); };
-    public double atD(int i) { return (i<0||i>=insertPos)?int_NA:cont[i]; }
+    public double atD(int i) { return (i<0||i>=insertPos||cont[i]==int_NA)?double_NA:cont[i]; }
     public int atI(int i) { return (i<0||i>=insertPos)?int_NA:((int)(cont[i]+0.5)); }
-    public String asS(int i) { return (i<0||i>=insertPos)?null:Integer.toString(cont[i]); }
+    public String asS(int i) { return (i<0||i>=insertPos||cont[i]==int_NA)?null:Integer.toString(cont[i]); }
 
     /** returns the ID of the category of the object
         @param object

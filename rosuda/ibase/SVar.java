@@ -36,10 +36,10 @@ public abstract class SVar extends Notifier
         basically to appear just before zero) */
     public static final int SM_num  = 1;
 
-    /** this value is returned by {@link #atI(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
+    /** this value is returned by {@link #atI(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. (Note: R uses -2147483648) */
     public static int int_NA = 0;
     /** this value is returned by {@link #atD(int)} if the value is missing (<code>null</code>) or if the variable is not numerical. This variable should not be changed except on startup. */
-    public static double double_NA = Double.NaN;
+    public static double double_NA = Double.longBitsToDouble(0x7ff00000000007a2L);
     /** string denoting class of the missings */
     public static final String missingCat = "NA";
 
@@ -201,6 +201,20 @@ public abstract class SVar extends Notifier
             cat=false;
         else
             categorize();
+    }
+
+    /** checks for a missing value. Note that for doubles <code>isNA</code> implies <code>isNaN</code> but NOT vice versa!
+	@param d value to check
+	@returns returns <code>true</code> if the value is exactly equal to double_NA (i.e. by comparing its long representation) */
+    public static boolean isNA(double d) {
+	return (Double.doubleToRawLongBits(d)==Double.doubleToRawLongBits(double_NA));
+    }
+
+    /** checks for a missing value.
+	@param i value to check
+	@returns returns <code>true</code> if the value is equal to <code>int_NA</code> */
+    public static boolean isNA(int i) {
+	return (i==int_NA);
     }
 
     /** returns the size (number of cases) of the variable */
