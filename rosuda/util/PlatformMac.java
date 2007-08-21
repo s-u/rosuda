@@ -37,12 +37,18 @@ public class PlatformMac extends Platform implements MRJAboutHandler, MRJPrefsHa
     
     String getPlatformName() { return "Apple Macintosh"; }
 
+    public static boolean isPropertyTrue(String name, boolean deft) {
+	String s = System.getProperty(name);
+	if (s==null||s.length()<1) return deft;
+	return (s.equalsIgnoreCase("yes")||s.equalsIgnoreCase("true")||s.equals("1"));
+    }
+
     // MRJ specific handlers
 
     public void registerHandlers() {
-        MRJApplicationUtils.registerAboutHandler(this);
-        MRJApplicationUtils.registerOpenDocumentHandler(this);
-        MRJApplicationUtils.registerPrefsHandler(this);
-        MRJApplicationUtils.registerQuitHandler(this);
-    }  
+        if (isPropertyTrue("register.about",true)) MRJApplicationUtils.registerAboutHandler(this);
+        if (isPropertyTrue("register.open", true)) MRJApplicationUtils.registerOpenDocumentHandler(this);
+        if (isPropertyTrue("register.preferences", true)) MRJApplicationUtils.registerPrefsHandler(this);
+        if (isPropertyTrue("register.quit", true)) MRJApplicationUtils.registerQuitHandler(this);
+    }
 }
