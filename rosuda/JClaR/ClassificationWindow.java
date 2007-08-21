@@ -281,7 +281,7 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_SnapshotsDoSnapshots = new javax.swing.JCheckBoxMenuItem();
         m_SnapshotsRemoveSelectedSnapshots = new javax.swing.JMenuItem();
 
-        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
+        getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.X_AXIS));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         panPlots.setLayout(new java.awt.BorderLayout());
@@ -357,7 +357,6 @@ public abstract class ClassificationWindow extends JFrame implements SimpleChang
         m_File.add(m_ClassifyData);
 
         m_FileSaveModel.setText("Save classification model...");
-        m_FileSaveModel.setEnabled(false);
         m_FileSaveModel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_FileSaveModelActionPerformed(evt);

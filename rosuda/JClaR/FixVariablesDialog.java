@@ -126,6 +126,11 @@ public final class FixVariablesDialog extends TableDialog implements SelectionMo
     }
     
     private void setData(final Data data, final int varPos){
+	if(data==null){
+	    //TODO: This should not happen!!
+	    return;
+	}
+	
         // estimating default values for FixVariablesDialog
         // uses median and 1/3*standard deviation
         final int numVars = data.getNumberOfVariables() - ((varPos>=0)?1:0);

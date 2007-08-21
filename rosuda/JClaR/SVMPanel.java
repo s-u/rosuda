@@ -26,215 +26,220 @@ public final class SVMPanel extends SidePanel {
     
     /** Creates new form SVMPanel */
     SVMPanel() {
-        initComponents();
-        setMaximumSize(new Dimension(getMinimumSize().width, Integer.MAX_VALUE));
-        setPreferredSize(getMinimumSize());
+	initComponents();
+	setMaximumSize(new Dimension(getMinimumSize().width, Integer.MAX_VALUE));
+	setPreferredSize(getMinimumSize());
     }
     
     void setSVM(final SVM newSVM){
-        this.svm=newSVM;
+	this.svm=newSVM;
     }
     
     void initFields(){
-        
-        numberFormat = NumberFormat.getNumberInstance();
-        numberFormat.setMaximumFractionDigits(5);
-        
-        setSliderCoef0(svm.getCoef0());
-        setSliderCost(svm.getCost());
-        setSliderNu(svm.getNu());
-        setSliderDegree(svm.getDegree());
-        setSliderGamma(svm.getGamma());
-        
-        //calculate NU_MULTIPLYER and NU_SHIFT
-        final int minGroupSize = svm.getMinGroupSize();
-        final int maxGroupSize = svm.getMaxGroupSize();
-        if (minGroupSize==-1 || maxGroupSize==-1){
-            NU_MULTIPLYER = 0.000001;
-            NU_SHIFT = -1;
-        } else{
-            final double minNu = 0.01; // change this to allow smaller values for nu to be chosen with the slider
-             
-            NU_SHIFT = Math.log(minNu)/Math.log(2);
-            final double maxNu = 0.99; // change this to allow bigger values for nu to be chosen with the slider (if feasible)
-            final double valueAtMax = Math.min(maxNu, 0.99 * 2*minGroupSize/(minGroupSize + maxGroupSize));
-            NU_MULTIPLYER = Math.log(valueAtMax/minNu)/Math.log(2)/100.0;
-        }
-        MIN_NU = Math.pow(2, NU_SHIFT);
-        MAX_NU = Math.pow(2, 100*NU_MULTIPLYER + NU_SHIFT);
-        
-        // test if default value for nu is feasible
-        if (svm.getNu() < MIN_NU || svm.getNu() > MAX_NU) {
-            svm.setNu((MAX_NU+MIN_NU)/2);
-        }
-        
-        
-        
-        ((SpinnerNumberModel)spinCross.getModel()).setMinimum(new Integer(0));
-        
-        //TODO: Regression?
-        if(svm.getType()==SVM.TYPE_NU_CLASS){
-            lblNu.setEnabled(true);
-            sldNu.setEnabled(true);
-            lblNuValue.setEnabled(true);
-        }
-        
+	
+	numberFormat = NumberFormat.getNumberInstance();
+	numberFormat.setMaximumFractionDigits(5);
+	
+	setSliderCoef0(svm.getCoef0());
+	setSliderCost(svm.getCost());
+	setSliderNu(svm.getNu());
+	setSliderDegree(svm.getDegree());
+	setSliderGamma(svm.getGamma());
+	
+	//calculate NU_MULTIPLYER and NU_SHIFT
+	final int minGroupSize = svm.getMinGroupSize();
+	final int maxGroupSize = svm.getMaxGroupSize();
+	if (minGroupSize==-1 || maxGroupSize==-1){
+	    NU_MULTIPLYER = 0.000001;
+	    NU_SHIFT = -1;
+	} else{
+	    final double minNu = 0.01; // change this to allow smaller values for nu to be chosen with the slider
+	    
+	    NU_SHIFT = Math.log(minNu)/Math.log(2);
+	    final double maxNu = 0.99; // change this to allow bigger values for nu to be chosen with the slider (if feasible)
+	    final double valueAtMax = Math.min(maxNu, 0.99 * 2*minGroupSize/(minGroupSize + maxGroupSize));
+	    NU_MULTIPLYER = Math.log(valueAtMax/minNu)/Math.log(2)/100.0;
+	}
+	MIN_NU = Math.pow(2, NU_SHIFT);
+	MAX_NU = Math.pow(2, 100*NU_MULTIPLYER + NU_SHIFT);
+	
+	// test if default value for nu is feasible
+	if (svm.getNu() < MIN_NU || svm.getNu() > MAX_NU) {
+	    svm.setNu((MAX_NU+MIN_NU)/2);
+	}
+	
+	
+	
+	((SpinnerNumberModel)spinCross.getModel()).setMinimum(new Integer(0));
+	
+	//TODO: Regression?
+	if(svm.getType()==SVM.TYPE_NU_CLASS){
+	    lblNu.setEnabled(true);
+	    sldNu.setEnabled(true);
+	    lblNuValue.setEnabled(true);
+	}
+	
 //        jtaSVMInfo.setLineWrap(true);
-        
-        updateSVMInfo();
+	
+	updateSVMInfo();
     }
     
     private double getCoef0(){
-        return ((double)sldCoef0.getValue()-50)/20;
+	return ((double)sldCoef0.getValue()-50)/20;
     }
     
     private double getCost(){
-        return java.lang.Math.pow(2,(double)sldCost.getValue()/25);
+	return java.lang.Math.pow(2,(double)sldCost.getValue()/25);
     }
     
     private double getNu(){
-        return java.lang.Math.pow(2,sldNu.getValue()*NU_MULTIPLYER+NU_SHIFT);
+	return java.lang.Math.pow(2,sldNu.getValue()*NU_MULTIPLYER+NU_SHIFT);
     }
     
     private double getGamma(){
-        return java.lang.Math.pow(2,-(double)(sldGamma.getMaximum()+sldGamma.getMinimum()-sldGamma.getValue())/10);
+	return java.lang.Math.pow(2,-(double)(sldGamma.getMaximum()+sldGamma.getMinimum()-sldGamma.getValue())/10);
     }
     
     private int getDegree(){
-        return sldDegree.getValue();
+	return sldDegree.getValue();
     }
     
     private void setSliderGamma(final double gamma){
-        sldGamma.setValue((int)Math.round(-10*Math.log(gamma)/Math.log(2))+sldGamma.getMaximum()+sldGamma.getMinimum());
-        setLabelGamma(gamma);
+	sldGamma.setValue((int)Math.round(-10*Math.log(gamma)/Math.log(2))+sldGamma.getMaximum()+sldGamma.getMinimum());
+	setLabelGamma(gamma);
     }
     
     private void setSliderCost(final double cost){
-        sldCost.setValue((int)Math.round(25*Math.log(cost)/Math.log(2)));
-        setLabelCost(cost);
+	sldCost.setValue((int)Math.round(25*Math.log(cost)/Math.log(2)));
+	setLabelCost(cost);
     }
     
     private void setSliderNu(final double nu){
-        sldNu.setValue((int)Math.round((Math.log(nu)/Math.log(2)-NU_SHIFT)/NU_MULTIPLYER));
-        setLabelNu(nu);
+	sldNu.setValue((int)Math.round((Math.log(nu)/Math.log(2)-NU_SHIFT)/NU_MULTIPLYER));
+	setLabelNu(nu);
     }
     
     private void setSliderCoef0(final double coef0){
-        sldCoef0.setValue((int)Math.round(20*coef0+50));
-        setLabelCoef0(coef0);
+	sldCoef0.setValue((int)Math.round(20*coef0+50));
+	setLabelCoef0(coef0);
     }
     
     private void setSliderDegree(final int degree){
-        sldDegree.setValue(degree);
-        setLabelDegree(degree);
+	sldDegree.setValue(degree);
+	setLabelDegree(degree);
     }
     
     private void setLabelGamma(final double gamma){
-        lblGammaValue.setText(numberFormat.format(gamma));
+	lblGammaValue.setText(numberFormat.format(gamma));
     }
     
     private void setLabelCost(final double cost){
-        lblCostValue.setText(numberFormat.format(cost));
+	lblCostValue.setText(numberFormat.format(cost));
     }
     
     private void setLabelNu(final double nu){
-        lblNuValue.setText(numberFormat.format(nu));
+	lblNuValue.setText(numberFormat.format(nu));
     }
     
     private void setLabelCoef0(final double coef0){
-        lblCoef0Value.setText(numberFormat.format(coef0));
+	lblCoef0Value.setText(numberFormat.format(coef0));
     }
     
     private void setLabelDegree(final int degree){
-        lblDegreeValue.setText(String.valueOf(degree));
+	lblDegreeValue.setText(String.valueOf(degree));
     }
     
     private void updateSVMInfo(){
-        StringBuffer info = new StringBuffer("<html>");
-        info.append("<b>Data</b>: ")
-        .append(svm.getData().getPath());
-        info.append("<br>length: ")
-        .append(svm.getData().getLength());
-        info.append("<br>#variables: ")
-        .append(svm.getData().getNumberOfVariables());
-        
-        if(svm.getTrained()){
-            info.append("<br>#Support vectors: ")
-            .append(svm.getNumberOfSupportVectors());
-            info.append("<br>Accuracy rate: ")
-            .append(numberFormat.format(svm.getAccuracy()));
-        } else {
-            info.append("<br>SVM not trained yet. Please adjust parameters and press train button.");
-        }
-        info.append("</html>");
-        
-        jepSVMInfo.setText(info.toString());
+	StringBuffer info = new StringBuffer("<html>");
+	info.append("<b>Data</b>: ");
+	final Data data = svm.getData();
+	if(data==null){
+	    info.append("n/a");
+	} else{
+	    info.append(data.getPath());
+	    info.append("<br>length: ");
+	    info.append(data.getLength());
+	    info.append("<br>#variables: ");
+	    info.append(data.getNumberOfVariables());
+	}
+	
+	if(svm.getTrained()){
+	    info.append("<br>#Support vectors: ")
+	    .append(svm.getNumberOfSupportVectors());
+	    info.append("<br>Accuracy rate: ")
+	    .append(numberFormat.format(svm.getAccuracy()));
+	} else {
+	    info.append("<br>SVM not trained yet. Please adjust parameters and press train button.");
+	}
+	info.append("</html>");
+	
+	jepSVMInfo.setText(info.toString());
     }
     
     private void changeType(final int type){
-        svm.setType(type);
-        if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
-            fire(EVT_TRAIN);
-            fire(EVT_UPDATE_PLOT);
-        }
-        updateSVMInfo();
+	svm.setType(type);
+	if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
+	    fire(EVT_TRAIN);
+	    fire(EVT_UPDATE_PLOT);
+	}
+	updateSVMInfo();
     }
     
     private void changeKernel(final int kernel){
-        svm.setKernel(kernel);
-        if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
-            fire(EVT_TRAIN);
-            fire(EVT_UPDATE_PLOT);
-        }
-        updateSVMInfo();
+	svm.setKernel(kernel);
+	if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
+	    fire(EVT_TRAIN);
+	    fire(EVT_UPDATE_PLOT);
+	}
+	updateSVMInfo();
     }
     
     protected void update(){
-        noRecalc=true;
-        updateSVMInfo();
-        
-        // set sliders to new values
-        setSliderCoef0(svm.getCoef0());
-        setSliderCost(svm.getCost());
-        setSliderDegree(svm.getDegree());
-        setSliderGamma(svm.getGamma());
-        setSliderNu(svm.getNu());
-        spinCross.setValue(new Integer(svm.getCross()));
-        setJRBKernel(svm.getKernel());
-        setJRBType(svm.getType());
-        noRecalc=false;
+	noRecalc=true;
+	updateSVMInfo();
+	
+	// set sliders to new values
+	setSliderCoef0(svm.getCoef0());
+	setSliderCost(svm.getCost());
+	setSliderDegree(svm.getDegree());
+	setSliderGamma(svm.getGamma());
+	setSliderNu(svm.getNu());
+	spinCross.setValue(new Integer(svm.getCross()));
+	setJRBKernel(svm.getKernel());
+	setJRBType(svm.getType());
+	noRecalc=false;
     }
     
     private void setJRBKernel(final int kernel){
-        switch(kernel){
-            case SVM.KERNEL_LINEAR:
-                jrbLinear.setSelected(true);
-                break;
-            case SVM.KERNEL_POLYNOMIAL:
-                jrbPolynomial.setSelected(true);
-                break;
-            case SVM.KERNEL_RADIAL:
-                jrbRadial.setSelected(true);
-                break;
-            default:
-                jrbSigmoid.setSelected(true);
-                break;
-        }
+	switch(kernel){
+	    case SVM.KERNEL_LINEAR:
+		jrbLinear.setSelected(true);
+		break;
+	    case SVM.KERNEL_POLYNOMIAL:
+		jrbPolynomial.setSelected(true);
+		break;
+	    case SVM.KERNEL_RADIAL:
+		jrbRadial.setSelected(true);
+		break;
+	    default:
+		jrbSigmoid.setSelected(true);
+		break;
+	}
     }
     
     private void setJRBType(final int type){
-        switch (type){
-            case SVM.TYPE_C_CLASS:
-                jrbCClass.setSelected(true);
-                break;
-            default:
-                jrbNuClass.setSelected(true);
-                break;
-        }
+	switch (type){
+	    case SVM.TYPE_C_CLASS:
+		jrbCClass.setSelected(true);
+		break;
+	    default:
+		jrbNuClass.setSelected(true);
+		break;
+	}
     }
     
     boolean getAutoRecalc() {
-        return jcbAutoRecalc.isSelected();
+	return jcbAutoRecalc.isSelected();
     }
     
     /** This method is called from within the constructor to
@@ -515,188 +520,188 @@ public final class SVMPanel extends SidePanel {
     // </editor-fold>//GEN-END:initComponents
     
     private void butTrainActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butTrainActionPerformed
-        fire(EVT_TRAIN);
-        updateSVMInfo();
+	fire(EVT_TRAIN);
+	updateSVMInfo();
     }//GEN-LAST:event_butTrainActionPerformed
     
     private void butTuneActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_butTuneActionPerformed
-        final TuningDialog tuned = new TuningDialog(parent,svm.getType(),svm.getKernel(),MIN_NU,MAX_NU);
-        tuned.setData(svm.getData());
-        tuned.setVariable(svm.getVariableName());
-        tuned.setFixCoef0(getCoef0());
-        tuned.setFixCost(getCost());
-        tuned.setFixDegree(getDegree());
-        tuned.setFixGamma(getGamma());
-        tuned.setFixNu(getNu());
-        tuned.setDefaultRanges();
-        tuned.setVisible(true);
-        if (tuned.getSetvalues()){
-            noRecalc=true;
-            setSliderGamma(tuned.getTune().getBestGamma());
-            setSliderCost(tuned.getTune().getBestCost());
-            setSliderNu(tuned.getTune().getBestNu());
-            setSliderCoef0(tuned.getTune().getBestCoef0());
-            setSliderDegree(tuned.getTune().getBestDegree());
-            noRecalc=false;
-            if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-            }
-        }
-        updateSVMInfo();
+	final TuningDialog tuned = new TuningDialog(parent,svm.getType(),svm.getKernel(),MIN_NU,MAX_NU);
+	tuned.setData(svm.getData());
+	tuned.setVariable(svm.getVariableName());
+	tuned.setFixCoef0(getCoef0());
+	tuned.setFixCost(getCost());
+	tuned.setFixDegree(getDegree());
+	tuned.setFixGamma(getGamma());
+	tuned.setFixNu(getNu());
+	tuned.setDefaultRanges();
+	tuned.setVisible(true);
+	if (tuned.getSetvalues()){
+	    noRecalc=true;
+	    setSliderGamma(tuned.getTune().getBestGamma());
+	    setSliderCost(tuned.getTune().getBestCost());
+	    setSliderNu(tuned.getTune().getBestNu());
+	    setSliderCoef0(tuned.getTune().getBestCoef0());
+	    setSliderDegree(tuned.getTune().getBestDegree());
+	    noRecalc=false;
+	    if(jcbAutoRecalc.isEnabled() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+	    }
+	}
+	updateSVMInfo();
     }//GEN-LAST:event_butTuneActionPerformed
     
     private void sldNuStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldNuStateChanged
-        //TODO: Grenzen?
-        final double value=java.lang.Math.pow(2,sldNu.getValue()*NU_MULTIPLYER+NU_SHIFT);
-        setLabelNu(value);
-        if(!sldNu.getValueIsAdjusting()){
-            svm.setNu(value);
-            if(getAutoRecalc() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-                updateSVMInfo();
-            }
-        }
+	//TODO: Grenzen?
+	final double value=java.lang.Math.pow(2,sldNu.getValue()*NU_MULTIPLYER+NU_SHIFT);
+	setLabelNu(value);
+	if(!sldNu.getValueIsAdjusting()){
+	    svm.setNu(value);
+	    if(getAutoRecalc() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+		updateSVMInfo();
+	    }
+	}
     }//GEN-LAST:event_sldNuStateChanged
     
     private void sldCostStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldCostStateChanged
-        final double value=java.lang.Math.pow(2,(double)sldCost.getValue()/25);
-        setLabelCost(value);
-        if(!sldCost.getValueIsAdjusting()){
-            svm.setCost(value);
-            if(getAutoRecalc() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-                updateSVMInfo();
-            }
-        }
+	final double value=java.lang.Math.pow(2,(double)sldCost.getValue()/25);
+	setLabelCost(value);
+	if(!sldCost.getValueIsAdjusting()){
+	    svm.setCost(value);
+	    if(getAutoRecalc() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+		updateSVMInfo();
+	    }
+	}
     }//GEN-LAST:event_sldCostStateChanged
     
     private void sldCoef0StateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldCoef0StateChanged
-        final double value=((double)sldCoef0.getValue()-50)/20;
-        setLabelCoef0(value);
-        if(!sldCoef0.getValueIsAdjusting()){
-            svm.setCoef0(value);
-            if(getAutoRecalc() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-                updateSVMInfo();
-            }
-        }
+	final double value=((double)sldCoef0.getValue()-50)/20;
+	setLabelCoef0(value);
+	if(!sldCoef0.getValueIsAdjusting()){
+	    svm.setCoef0(value);
+	    if(getAutoRecalc() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+		updateSVMInfo();
+	    }
+	}
     }//GEN-LAST:event_sldCoef0StateChanged
     
     private void sldDegreeStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldDegreeStateChanged
-        final int value=sldDegree.getValue();
-        setLabelDegree(value);
-        if(!sldDegree.getValueIsAdjusting()){
-            svm.setDegree(value);
-            if(getAutoRecalc() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-                updateSVMInfo();
-            }
-        }
+	final int value=sldDegree.getValue();
+	setLabelDegree(value);
+	if(!sldDegree.getValueIsAdjusting()){
+	    svm.setDegree(value);
+	    if(getAutoRecalc() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+		updateSVMInfo();
+	    }
+	}
     }//GEN-LAST:event_sldDegreeStateChanged
     
     private void sldGammaStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sldGammaStateChanged
-        final double value=java.lang.Math.pow(2,-(double)(sldGamma.getMaximum()+sldGamma.getMinimum()-sldGamma.getValue())/10);
-        setLabelGamma(value);
-        if(!sldGamma.getValueIsAdjusting()){
-            svm.setGamma(value);
-            if(getAutoRecalc() && !noRecalc && svm.getTrained()){
-                fire(EVT_TRAIN);
-                fire(EVT_UPDATE_PLOT);
-                updateSVMInfo();
-            }
-        }
+	final double value=java.lang.Math.pow(2,-(double)(sldGamma.getMaximum()+sldGamma.getMinimum()-sldGamma.getValue())/10);
+	setLabelGamma(value);
+	if(!sldGamma.getValueIsAdjusting()){
+	    svm.setGamma(value);
+	    if(getAutoRecalc() && !noRecalc && svm.getTrained()){
+		fire(EVT_TRAIN);
+		fire(EVT_UPDATE_PLOT);
+		updateSVMInfo();
+	    }
+	}
     }//GEN-LAST:event_sldGammaStateChanged
     
     private void spinCrossStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinCrossStateChanged
-        svm.setCross(((Integer)spinCross.getValue()).intValue());
-        if(jcbAutoRecalc.isSelected() && !noRecalc && svm.getTrained()){
-            fire(EVT_TRAIN);
-            fire(EVT_UPDATE_PLOT);
-        }
-        updateSVMInfo();
+	svm.setCross(((Integer)spinCross.getValue()).intValue());
+	if(jcbAutoRecalc.isSelected() && !noRecalc && svm.getTrained()){
+	    fire(EVT_TRAIN);
+	    fire(EVT_UPDATE_PLOT);
+	}
+	updateSVMInfo();
     }//GEN-LAST:event_spinCrossStateChanged
     
     private void jrbNuClassStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbNuClassStateChanged
-        if(jrbNuClass.isSelected() && svm.getType()!=SVM.TYPE_NU_CLASS){
-            lblNu.setEnabled(true);
-            sldNu.setEnabled(true);
-            lblNuValue.setEnabled(true);
-            changeType(SVM.TYPE_NU_CLASS);
-        }
+	if(jrbNuClass.isSelected() && svm.getType()!=SVM.TYPE_NU_CLASS){
+	    lblNu.setEnabled(true);
+	    sldNu.setEnabled(true);
+	    lblNuValue.setEnabled(true);
+	    changeType(SVM.TYPE_NU_CLASS);
+	}
     }//GEN-LAST:event_jrbNuClassStateChanged
     
     private void jrbCClassStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbCClassStateChanged
-        if(jrbCClass.isSelected() && svm.getType()!= SVM.TYPE_C_CLASS){
-            lblNu.setEnabled(false);
-            sldNu.setEnabled(false);
-            lblNuValue.setEnabled(false);
-            changeType(SVM.TYPE_C_CLASS);
-        }
+	if(jrbCClass.isSelected() && svm.getType()!= SVM.TYPE_C_CLASS){
+	    lblNu.setEnabled(false);
+	    sldNu.setEnabled(false);
+	    lblNuValue.setEnabled(false);
+	    changeType(SVM.TYPE_C_CLASS);
+	}
     }//GEN-LAST:event_jrbCClassStateChanged
     
     private void jrbSigmoidStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbSigmoidStateChanged
-        if(jrbSigmoid.isSelected() && svm.getKernel()!=SVM.KERNEL_SIGMOID) {
-            lblGamma.setEnabled(true);
-            sldGamma.setEnabled(true);
-            lblGammaValue.setEnabled(true);
-            lblCoef0.setEnabled(true);
-            sldCoef0.setEnabled(true);
-            lblCoef0Value.setEnabled(true);
-            lblDegree.setEnabled(false);
-            sldDegree.setEnabled(false);
-            lblDegreeValue.setEnabled(false);
-            changeKernel(SVM.KERNEL_SIGMOID);
-        }
+	if(jrbSigmoid.isSelected() && svm.getKernel()!=SVM.KERNEL_SIGMOID) {
+	    lblGamma.setEnabled(true);
+	    sldGamma.setEnabled(true);
+	    lblGammaValue.setEnabled(true);
+	    lblCoef0.setEnabled(true);
+	    sldCoef0.setEnabled(true);
+	    lblCoef0Value.setEnabled(true);
+	    lblDegree.setEnabled(false);
+	    sldDegree.setEnabled(false);
+	    lblDegreeValue.setEnabled(false);
+	    changeKernel(SVM.KERNEL_SIGMOID);
+	}
     }//GEN-LAST:event_jrbSigmoidStateChanged
     
     private void jrbRadialStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbRadialStateChanged
-        if(jrbRadial.isSelected() && svm.getKernel()!=SVM.KERNEL_RADIAL) {
-            lblGamma.setEnabled(true);
-            sldGamma.setEnabled(true);
-            lblGammaValue.setEnabled(true);
-            lblCoef0.setEnabled(false);
-            sldCoef0.setEnabled(false);
-            lblCoef0Value.setEnabled(false);
-            lblDegree.setEnabled(false);
-            sldDegree.setEnabled(false);
-            lblDegreeValue.setEnabled(false);
-            changeKernel(SVM.KERNEL_RADIAL);
-        }
+	if(jrbRadial.isSelected() && svm.getKernel()!=SVM.KERNEL_RADIAL) {
+	    lblGamma.setEnabled(true);
+	    sldGamma.setEnabled(true);
+	    lblGammaValue.setEnabled(true);
+	    lblCoef0.setEnabled(false);
+	    sldCoef0.setEnabled(false);
+	    lblCoef0Value.setEnabled(false);
+	    lblDegree.setEnabled(false);
+	    sldDegree.setEnabled(false);
+	    lblDegreeValue.setEnabled(false);
+	    changeKernel(SVM.KERNEL_RADIAL);
+	}
     }//GEN-LAST:event_jrbRadialStateChanged
     
     private void jrbPolynomialStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbPolynomialStateChanged
-        if(jrbPolynomial.isSelected() && svm.getKernel()!=SVM.KERNEL_POLYNOMIAL) {
-            lblGamma.setEnabled(true);
-            sldGamma.setEnabled(true);
-            lblGammaValue.setEnabled(true);
-            lblCoef0.setEnabled(true);
-            sldCoef0.setEnabled(true);
-            lblCoef0Value.setEnabled(true);
-            lblDegree.setEnabled(true);
-            sldDegree.setEnabled(true);
-            lblDegreeValue.setEnabled(true);
-            changeKernel(SVM.KERNEL_POLYNOMIAL);
-        }
+	if(jrbPolynomial.isSelected() && svm.getKernel()!=SVM.KERNEL_POLYNOMIAL) {
+	    lblGamma.setEnabled(true);
+	    sldGamma.setEnabled(true);
+	    lblGammaValue.setEnabled(true);
+	    lblCoef0.setEnabled(true);
+	    sldCoef0.setEnabled(true);
+	    lblCoef0Value.setEnabled(true);
+	    lblDegree.setEnabled(true);
+	    sldDegree.setEnabled(true);
+	    lblDegreeValue.setEnabled(true);
+	    changeKernel(SVM.KERNEL_POLYNOMIAL);
+	}
     }//GEN-LAST:event_jrbPolynomialStateChanged
     
     private void jrbLinearStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jrbLinearStateChanged
-        if(jrbLinear.isSelected() && svm.getKernel()!=SVM.KERNEL_LINEAR) {
-            lblGamma.setEnabled(false);
-            sldGamma.setEnabled(false);
-            lblGammaValue.setEnabled(false);
-            lblCoef0.setEnabled(false);
-            sldCoef0.setEnabled(false);
-            lblCoef0Value.setEnabled(false);
-            lblDegree.setEnabled(false);
-            sldDegree.setEnabled(false);
-            lblDegreeValue.setEnabled(false);
-            changeKernel(SVM.KERNEL_LINEAR);
-        }
+	if(jrbLinear.isSelected() && svm.getKernel()!=SVM.KERNEL_LINEAR) {
+	    lblGamma.setEnabled(false);
+	    sldGamma.setEnabled(false);
+	    lblGammaValue.setEnabled(false);
+	    lblCoef0.setEnabled(false);
+	    sldCoef0.setEnabled(false);
+	    lblCoef0Value.setEnabled(false);
+	    lblDegree.setEnabled(false);
+	    sldDegree.setEnabled(false);
+	    lblDegreeValue.setEnabled(false);
+	    changeKernel(SVM.KERNEL_LINEAR);
+	}
     }//GEN-LAST:event_jrbLinearStateChanged
     
     

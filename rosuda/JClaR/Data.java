@@ -7,14 +7,16 @@
 package org.rosuda.JClaR;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.ListIterator;
-import java.util.Vector;
-import java.util.Enumeration;
 import java.awt.Component;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import org.rosuda.JRclient.REXP;
+import org.rosuda.JRclient.RFileOutputStream;
 import org.rosuda.JRclient.RSrvException;
 
 
@@ -23,7 +25,8 @@ import org.rosuda.JRclient.RSrvException;
  *
  * @author tobias
  */
-public final class Data implements Cloneable {
+public final class Data implements Cloneable, Serializable {
+    static final long serialVersionUID = 200708211502L;
     
     // If new fields are added the clone method probably has to be changed!
     private File file;
@@ -316,5 +319,33 @@ public final class Data implements Cloneable {
     
     String getVariable(final String name) {
 	return Rname + "$" + name;
+    }
+    
+    private void writeObject(final ObjectOutputStream s) throws IOException {
+	s.defaultWriteObject();
+	
+	try{
+	    final String fileName = "data";
+	    RserveConnection.voidEval("save(" + Rname + ",file='" + fileName + "')");
+	    final byte[] b = RserveConnection.readFile(fileName);
+	    s.writeObject(b);
+	} catch (RSrvException rse){
+	    ErrorDialog.show(parent, rse, "writeObject(ObjectOutputStream)");
+	}
+    }
+    
+    private void readObject(final ObjectInputStream s) throws IOException, ClassNotFoundException  {
+	s.defaultReadObject();
+	
+	final byte[] b = (byte[])s.readObject();
+	final String fileName = "data";
+	final RFileOutputStream rfos = RserveConnection.createFile(fileName);
+	rfos.write(b);
+	rfos.close();
+	try{
+	    RserveConnection.voidEval("load('" + fileName + "')");
+	} catch (RSrvException rse){
+	    ErrorDialog.show(parent, rse, "readObject(ObjectOutputStream)");
+	}
     }
 }

@@ -45,8 +45,7 @@ public abstract class DefaultClassifier implements Classifier {
     
     String Rname;
     
-    
-    transient Data data;
+    Data data;
     
     
     public final Data getData(){

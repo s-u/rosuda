@@ -239,7 +239,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
 
         m_openClassificationWindow.setText("Item");
         m_openClassificationWindow.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_openClassificationWindowActionPerformed(evt);
             }
         });
@@ -260,7 +260,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         butTrain.setText("Train");
         butTrain.setEnabled(false);
         butTrain.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butTrainActionPerformed(evt);
             }
         });
@@ -271,7 +271,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         butClassify.setText("Classify");
         butClassify.setEnabled(false);
         butClassify.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 butClassifyActionPerformed(evt);
             }
         });
@@ -281,10 +281,10 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         getContentPane().add(jPanel1);
 
         tblClassifiers.addMouseListener(new java.awt.event.MouseAdapter() {
-            public final void mousePressed(final java.awt.event.MouseEvent evt) {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
                 tblClassifiersMousePressed(evt);
             }
-            public final void mouseReleased(final java.awt.event.MouseEvent evt) {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
                 tblClassifiersMouseReleased(evt);
             }
         });
@@ -299,7 +299,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         m_FileOpenDataset.setMnemonic('o');
         m_FileOpenDataset.setText("Open dataset");
         m_FileOpenDataset.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_FileOpenDatasetActionPerformed(evt);
             }
         });
@@ -307,9 +307,8 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         m_File.add(m_FileOpenDataset);
 
         m_FileOpenModel.setText("Open classification model...");
-        m_FileOpenModel.setEnabled(false);
         m_FileOpenModel.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_FileOpenModelActionPerformed(evt);
             }
         });
@@ -319,7 +318,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         m_FileExit.setMnemonic('x');
         m_FileExit.setText("Exit");
         m_FileExit.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_FileExitActionPerformed(evt);
             }
         });
@@ -333,7 +332,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
         m_HelpAbout.setMnemonic('A');
         m_HelpAbout.setText("About");
         m_HelpAbout.addActionListener(new java.awt.event.ActionListener() {
-            public final void actionPerformed(final java.awt.event.ActionEvent evt) {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
                 m_HelpAboutActionPerformed(evt);
             }
         });
