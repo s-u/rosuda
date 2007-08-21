@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ListIterator;
@@ -153,10 +154,8 @@ public final class SVM extends DefaultClassifier {
             if(!trained){
                 try{
                     final List<REXP> classNamesREXP = RserveConnection.evalL(Rname + "$levels");
-                    classNames = new ArrayList<String>(classNamesREXP.size());
-                    for(final ListIterator<REXP> en = classNamesREXP.listIterator(); en.hasNext();){
-                        classNames.add(en.next().asString());
-                    }
+		    final String[] classNamesSA = RserveConnection.evalSL(Rname + "$levels");
+                    classNames = Arrays.asList(classNamesSA);
                 } catch (RSrvException rse) {
                     ErrorDialog.show(parent, rse, "SVM.train()");
                 }
