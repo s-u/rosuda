@@ -153,7 +153,6 @@ public final class SVM extends DefaultClassifier {
             
             if(!trained){
                 try{
-                    final List<REXP> classNamesREXP = RserveConnection.evalL(Rname + "$levels");
 		    final String[] classNamesSA = RserveConnection.evalSL(Rname + "$levels");
                     classNames = Arrays.asList(classNamesSA);
                 } catch (RSrvException rse) {

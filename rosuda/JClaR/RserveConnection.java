@@ -241,13 +241,6 @@ public final class RserveConnection {
 	voidEval("write.table(" + data + ",file='" + path + "'" + options + ")");
     }
     
-    @SuppressWarnings("unchecked")
-    static List<REXP> evalL(final String string) throws RSrvException {
-	final REXP rex = eval(string);
-	if(rex==null) return null;
-	else return rex.asList();
-    }
-    
     static int evalI(final String string) throws RSrvException {
 	final REXP rex = eval(string);
 	if(rex==null) throw new RSrvException(rcon,"Eval returned null.");
