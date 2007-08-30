@@ -201,6 +201,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				Common.screenRes.height < 800 ? Common.screenRes.height - 50
 						: 700));
 		this.setVisible(true);
+		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
 	}
@@ -210,7 +211,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * opened Editors.
 	 */
 	public void exit() {
-		dispose();
+		Enumeration e = WinTracker.current.elements();
+		while (e.hasMoreElements()) {
+			WTentry we = (WTentry) e.nextElement();
+			if (we.wclass == TJFrame.clsEditor)
+				if (!((Editor) we.w).exit())
+					return;
+		}
+		execute("q()", false);
 	}
 
 	/**
