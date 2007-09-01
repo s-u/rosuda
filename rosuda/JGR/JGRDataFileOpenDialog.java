@@ -111,15 +111,29 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 		options.add(att);
 
 		if (System.getProperty("os.name").startsWith("Window")) {
-			JPanel fileview = (JPanel) ((JComponent) ((JComponent) this
+			try {
+				JPanel fileview = (JPanel) ((JComponent) ((JComponent) this
 					.getComponent(2)).getComponent(2)).getComponent(2);
-			fileview.add(command);
-			fileview.add(command2);
-			fileview.add(att);
-			JPanel pp = (JPanel) ((JComponent) ((JComponent) this
+					fileview.add(command);
+				fileview.add(command2);
+				fileview.add(att);
+				JPanel pp = (JPanel) ((JComponent) ((JComponent) this
 					.getComponent(2)).getComponent(2)).getComponent(0);
-			pp.add(new JPanel());
-			this.setPreferredSize(new Dimension(660, 450));
+				pp.add(new JPanel());
+				this.setPreferredSize(new Dimension(660, 450));
+			}
+			catch (Exception e) {
+						JPanel filename = (JPanel) this.getComponent(this
+					.getComponentCount() - 1);
+				JPanel buttons = (JPanel) filename.getComponent(filename
+					.getComponentCount() - 1);
+				this.setControlButtonsAreShown(false);
+				filename.add(command);
+				filename.add(command2);
+				filename.add(att);
+				filename.add(buttons);
+				this.setPreferredSize(new Dimension(550, 450));
+			}
 		} else {
 			JPanel filename = (JPanel) this.getComponent(this
 					.getComponentCount() - 1);
