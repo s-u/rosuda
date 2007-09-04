@@ -208,8 +208,9 @@ public class JGR {
 		}
 		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
 
-		if (System.getProperty("os.name").indexOf("Vista") == -1)
-			R.eval("try(setwd(\""+JGRPrefs.workingDirectory+"\"),silent=T)");
+		// to avoid quoting hell we use an assignment
+		R.assign(".$JGR",JGRPrefs.workingDirectory);
+		R.eval("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)");
 		
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
