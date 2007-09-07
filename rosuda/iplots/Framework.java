@@ -43,6 +43,7 @@ public class Framework implements Dependent, ActionListener {
         Common.supportsBREAK=true;
         Common.appName="iplots";
         SVar.int_NA=-2147483648;
+	SVar.double_NA=Double.longBitsToDouble(0x7ff00000000007a2L); // from src/main/arithmetic.c
         Global.useAquaBg=false; // use aqua look
         Common.backgroundColor=Common.aquaBgColor; // use aqua bg color
         org.rosuda.util.Platform.initPlatform("org.rosuda.iplots.");
@@ -70,6 +71,11 @@ public class Framework implements Dependent, ActionListener {
     
     /** get current dataset */
     public SVarSet getCurrentSet() { return cvs; };
+
+    /** verify whether a given dataset is current */
+    public boolean isSetCurrent(SVarSet s) {
+	return (s==null && cvs==null) || (cvs!=null && cvs.equals(s));
+    }
     
     /** select dataset by name. the initial dataset created during framework initialization is called "default".
      * @param name name of the dataset
@@ -95,6 +101,16 @@ public class Framework implements Dependent, ActionListener {
     
     public SVarSet getSet(final int i) {
         return (i<0||i>=dataset.size())?null:(SVarSet)dataset.get(i);
+    }
+
+    public int indexOfSet(final SVarSet s) {
+	int i=0;
+        while (i<dataset.size()) {
+            final SVarSet s2=(SVarSet)dataset.get(i);
+            if (s2!=null && s2.equals(s)) return i;
+	    i++;
+        }
+        return -1;
     }
 
     public int getSetIdByName(String name) {
@@ -126,7 +142,19 @@ public class Framework implements Dependent, ActionListener {
     public String getSetName() {
         return cvs.getName();
     }
+
+    public boolean removeSetById(final int i) {
+	try {
+	    dataset.remove(i);
+	    return true;
+	} catch (Exception e) {};
+	return false;
+    }
     
+    public boolean removeSet(SVarSet s) {
+	return dataset.remove(s);
+    }
+
     public void setNoInteractionFlag(boolean flag) {
 	noInteraction=flag;
     }
