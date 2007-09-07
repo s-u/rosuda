@@ -250,6 +250,12 @@ public class BaseCanvas extends PGSCanvas implements Dependent, MouseListener, M
 	setUpdateRoot((msg.getMessageID()==Common.NM_MarkerChange)?changingHilitingNeedsUpdateRoot:0);
 	repaint();
     };
+
+    public void dispose() {
+	super.dispose();
+	// FIXME: axes?
+	pp=null;
+    }
     
     /** rebuilds plot primitives - subclasses should override this method. It is not defined as abstract only for convenience, but minimal subclass simply overrides this method. */
     public void updateObjects() {

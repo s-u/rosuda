@@ -39,6 +39,13 @@ public class PlotObject {
 
     public PlotObject(final PlotManager p) { pm=p; p.add(this); }
 
+    public void dispose() {
+	pm.rm(this);
+	pm=null;
+	cold=null;
+	colf=null;
+    }
+
     /** all subclasses should override this method.<br>
         Some points to keep in mind when implementing new objects:<ul>
         <li>use {@link #getXPos} and {@link #getYPos} to map to screen coordinates whenever possible.</li>

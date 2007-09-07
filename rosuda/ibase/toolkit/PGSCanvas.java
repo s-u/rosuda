@@ -76,7 +76,7 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     }
     
     protected void finalize() {
-        globalNotifier.delDepend(this);
+        if (globalNotifier!=null) globalNotifier.delDepend(this);
     }
     
     public class IDlgCL implements ActionListener {
@@ -147,6 +147,20 @@ public class PGSCanvas extends PlotComponent implements Commander, Dependent, Pr
     /** get the PlotManager associated with this plot */
     public PlotManager getPlotManager() { return pm; }
     
+    public void dispose() {
+	if (myFrame != null) myFrame.dispose();
+	if (globalNotifier!=null)
+	    globalNotifier.delDepend(this);
+	myFrame = null;
+	// FIXME: possible leak: axes. The ownership of axes is not really established
+	ax = null;
+	ay = null;
+	if (pm!=null) pm.dispose();
+	pm = null;
+	pageFormat = null;
+	intDlg = null;
+    }
+
     public Axis getXAxis() { return ax; }
     public Axis getYAxis() { return ay; }
     

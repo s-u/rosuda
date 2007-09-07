@@ -38,6 +38,18 @@ public class PlotManager {
 	}
     }
 
+    public void dispose() {
+	ptr=-1;
+	while (obj.size()>0) {
+	    PlotObject po = (PlotObject)obj.elementAt(0);
+	    if (po != null) po.dispose(); // dispose should include a call to rm, but better safe than sorry ...
+	    try { obj.removeElement(po); } catch (Exception e) {};
+	}
+	obj.clear();
+	obj=null;
+	c=null;
+    }
+
     public void add(final PlotObject po) {
 	obj.addElement(po);
         ptr=obj.size()-1; // set current pointer to the newly created object
