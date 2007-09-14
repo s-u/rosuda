@@ -383,6 +383,7 @@ public final class MainWindow extends javax.swing.JFrame implements DataClassifi
 	    ErrorDialog.show(null, "An error occured with the file open dialog.");
 	} else if(status==JFileChooser.CANCEL_OPTION){
 	    // do nothing if canceled
+	    return;
 	} else {
 	    file = jfc.getSelectedFile();
 	}
