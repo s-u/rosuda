@@ -82,7 +82,7 @@ public class TextAreaDefaults {
 			
 			DEFAULTS.editable = true;
 
-			DEFAULTS.caretVisible = true;
+			DEFAULTS.caretVisible = false;
 			DEFAULTS.caretBlinks = true;
 			DEFAULTS.electricScroll = 3;
 
@@ -96,8 +96,8 @@ public class TextAreaDefaults {
 			DEFAULTS.bracketHighlightColor = Color.black;
 			DEFAULTS.bracketHighlight = true;
 			DEFAULTS.eolMarkerColor = new Color(0x009999);
-			DEFAULTS.eolMarkers = true;
-			DEFAULTS.paintInvalid = true;
+			DEFAULTS.eolMarkers = false;
+			DEFAULTS.paintInvalid = false;
 			DEFAULTS.lineNumbers = true;
 		//}
 		return DEFAULTS;

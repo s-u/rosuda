@@ -16,6 +16,8 @@ import jedit.syntax.JEditTextArea;
 import jedit.syntax.TextAreaPainter;
 import jedit.syntax.TextUtilities;
 
+import org.rosuda.JGR.JGR;
+
 public class RInputHandler extends DefaultInputHandler {
 
 	public static final ActionListener R_INSERT_TAB = new r_insert_tab();
@@ -109,7 +111,7 @@ public class RInputHandler extends DefaultInputHandler {
 				for (int line = startLine; line <= endLine; line++) {
 					String lineText = textArea.getLineText(line).trim();
 					if (lineText.length() > 0)
-						System.out.println("run cmd: " + lineText);
+						JGR.MAINRCONSOLE.execute(lineText.trim(), true);
 				}
 
 			}
@@ -225,12 +227,13 @@ public class RInputHandler extends DefaultInputHandler {
 		actions.put("next-line", R_NEXT_LINE);
 		actions.put("close-popups", R_CLOSE_POPUPS);
 		actions.put("insert-break", R_INSERT_BREAK);
+		
 	}
 
 	public void addKeyBindings() {
 		addDefaultKeyBindings();
 		addKeyBinding("TAB", R_INSERT_TAB);
-		//addKeyBinding("M+R", R_RUN_LINES);
+		addKeyBinding("M+ENTER", R_RUN_LINES);
 		//addKeyBinding("MS+R", R_RUN_ALL);
 		addKeyBinding("M+7", R_COMMENT_LINES);
 		addKeyBinding("UP", R_PREV_LINE);
