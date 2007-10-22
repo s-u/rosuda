@@ -152,7 +152,7 @@ public class JavaGD extends GDInterface implements ActionListener,
 				org.rosuda.JRI.Rengine.getMainEngine().eval(
 						".jgr.save.JavaGD.as(useDevice=postscript, "
 								+ (getDeviceNumber() + 1) + ", file=\"" + fn
-								+ "\",onefile=TRUE, paper=\"special\")");
+								+ "\",onefile=FALSE, paper=\"special\")");
 			}
 		}
 	}
