@@ -5,9 +5,12 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
+import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
@@ -17,6 +20,9 @@ import jedit.syntax.TextAreaPainter;
 import jedit.syntax.TextUtilities;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.RController;
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 
 public class RInputHandler extends DefaultInputHandler {
 
@@ -37,6 +43,10 @@ public class RInputHandler extends DefaultInputHandler {
 	public static final ActionListener R_INSERT_BREAK = new r_insert_break();
 	
 	public static Popup codeCompletion;
+		
+	private String funHelp = null;
+	private JToolTip Tip;
+	private Popup funHelpTip = null;
 
 	public static class r_insert_tab extends insert_tab {
 
@@ -55,17 +65,24 @@ public class RInputHandler extends DefaultInputHandler {
 				String lineStr = textArea.getLineText(line);
 				int start = 0, end = carPos;
 				try {
-					start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, null);
+					start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
 				}  catch (StringIndexOutOfBoundsException ex) {
 				}
 				try {
-					end = carPos;//TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, null);
+					end = TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
 				}  catch (StringIndexOutOfBoundsException ex) {
 				}
 				
 				boolean isfile = false;
 
-				String pattern = lineStr.substring(start, end).trim();
+
+				String pattern = "";
+				
+				try {
+					pattern = lineStr.substring(start, end).trim();
+				} catch (StringIndexOutOfBoundsException e)
+				{
+				}
 				
 				if (pattern.length() <= 0) {
 					super.actionPerformed(evt);
@@ -243,17 +260,87 @@ public class RInputHandler extends DefaultInputHandler {
 	}
 	
 	public void keyReleased(KeyEvent evt) {
-		if (codeCompletion != null && evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN) {
-			JEditTextArea textArea = getTextArea(evt);
-		
-			int carPos = textArea.getCaretPosition();
+		/*if (JGRPrefs.useHelpAgent) {
+			try {
+				
+				JEditTextArea textArea = getTextArea(evt);
+				int carPos = textArea.getCaretPosition();
 
-			if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
+				if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
+
 				int line = textArea.getCaretLine();
 				String lineStr = textArea.getLineText(line);
 				int start = 0, end = carPos;
 				try {
 					start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, null);
+				}  catch (StringIndexOutOfBoundsException ex) {
+					ex.printStackTrace();	
+				}
+				
+				try {
+					end = TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, null);
+				}  catch (StringIndexOutOfBoundsException ex) {
+					ex.printStackTrace();
+				}
+
+				String pattern = null;
+				
+				try {
+					pattern = lineStr.substring(start,end); 
+				}  catch (StringIndexOutOfBoundsException ex) {
+					ex.printStackTrace();
+				}
+				
+				if (pattern != null && pattern.endsWith("(")) {
+				
+				String fun = pattern;
+				
+				funHelp = RController.getFunHelpTip(fun);
+				if (fun != null && funHelp != null) {
+					Tip = new JToolTip();
+					Tip.setTipText(funHelp);
+					Tip.addMouseListener(new MouseAdapter() {
+										 public void mouseClicked(MouseEvent e) {
+										 if (funHelpTip != null) {
+										 funHelpTip.hide();
+										 funHelpTip = null;
+										 }
+										 }
+										 });
+					
+					int x = textArea._offsetToX(line, carPos);
+					int y = textArea.lineToY(line);
+					Point loc = new Point(x,y);
+					SwingUtilities.convertPointToScreen(loc, (Component)evt.getSource());
+					funHelpTip = PopupFactory.getSharedInstance().getPopup((Component)evt.getSource(), Tip, loc.x, loc.y + 20);
+					funHelpTip.show();
+					// commands.add(funHelp);
+					// commands.add(p);
+				}
+				}
+				}
+			} catch (Exception e) {
+			} finally {
+			}
+		}*/
+		
+	
+		if (codeCompletion != null && evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN) {
+			JEditTextArea textArea = getTextArea(evt);
+		
+			int carPos = textArea.getCaretPosition();
+
+			//if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
+				int line = textArea.getCaretLine();
+				String lineStr = textArea.getLineText(line);
+				int start = 0, end = carPos;
+				try {
+					start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
+				}  catch (StringIndexOutOfBoundsException ex) {
+				}
+				
+				try {
+					end = TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
 				}  catch (StringIndexOutOfBoundsException ex) {
 				}
 
@@ -265,12 +352,13 @@ public class RInputHandler extends DefaultInputHandler {
 				}
 
 				int posC = -1;
-				if (pattern == null || (posC = CodeCompletion.getInstance().updateList(pattern)) < 1) {
+				if (pattern == null || pattern.trim().length() == 0|| (posC = CodeCompletion.getInstance().updateList(pattern)) < 1) {
 					codeCompletion.hide();
 					codeCompletion = null;
 				}
-			}
+			//}
 		}
 		super.keyReleased(evt);
 	}
+		
 }

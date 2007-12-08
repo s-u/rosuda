@@ -113,7 +113,7 @@ public class RTokenMarker extends TokenMarker {
 					break;*/
 				default:
 					backslash = false;
-					if (!Character.isLetterOrDigit(c) && c != '_')
+					if (!Character.isLetterOrDigit(c) && c != '_' && ".".indexOf(c) == -1)
 						doKeyword(line, i, c);
 					break;
 				}
@@ -186,13 +186,14 @@ public class RTokenMarker extends TokenMarker {
 			cKeywords.add("if", Token.KEYWORD1);
 			cKeywords.add("while", Token.KEYWORD1);
 			cKeywords.add("function", Token.KEYWORD1);
+			cKeywords.add("read.table", Token.KEYWORD1);
 			
 			Vector _keywords = org.rosuda.JGR.JGR.KEYWORDS;
 			for (int i = 0; i < _keywords.size(); i++)
 				cKeywords.add(_keywords.get(i)+"",Token.KEYWORD1);
 			
 			// objects
-			cKeywords.add("test", Token.KEYWORD2);
+			//cKeywords.add("test", Token.KEYWORD2);
 			
 			_keywords = org.rosuda.JGR.JGR.OBJECTS;
 			for (int i = 0; i < _keywords.size(); i++)

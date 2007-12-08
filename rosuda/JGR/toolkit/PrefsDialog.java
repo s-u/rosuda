@@ -67,7 +67,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 			JGRPrefs.useHelpAgentConsole);
 
 	private final JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",
-			JGRPrefs.useHelpAgentEditor);
+			false/*JGRPrefs.useHelpAgentEditor*/);
 
 	private final JCheckBox useEmacsKeyBindings = new JCheckBox(
 			"Use Emacs Key Bindings", JGRPrefs.useEmacsKeyBindings);
@@ -144,7 +144,8 @@ public class PrefsDialog extends JDialog implements ActionListener,
 		tabPanel.add(tabWidth);
 
 		useHelpAgentConsole.setEnabled(useHelpAgent.isSelected());
-		useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
+		useHelpAgentEditor.setEnabled(false);
+//		useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
 
 		JPanel consoleAgentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		consoleAgentPanel.add(new JLabel("  "));
@@ -244,7 +245,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 		JGRPrefs.maxHelpTabs = ((Integer) helptabs.getValue()).intValue();
 		JGRPrefs.useHelpAgent = useHelpAgent.isSelected();
 		JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
-		JGRPrefs.useHelpAgentEditor = useHelpAgentEditor.isSelected();
+		JGRPrefs.useHelpAgentEditor = false; //useHelpAgentEditor.isSelected();
 		JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
 		JGRPrefs.showHiddenFiles = showHiddenFiles.isSelected();
 		JGRPrefs.workingDirectory = workinDirectory.getText().trim().length() == 0 ? System
