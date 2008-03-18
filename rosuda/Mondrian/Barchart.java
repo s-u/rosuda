@@ -391,12 +391,12 @@ public class Barchart extends DragBox implements ActionListener {
               Barchart.setActionCommand("Barchart");
               Barchart.addActionListener(this);
             }
-            JMenu sorts = new JMenu("Sort by");
-            JMenuItem frq = new JMenuItem("Frequency");
-            JMenuItem abs = new JMenuItem("absolute Hiliting");
-            JMenuItem rel = new JMenuItem("relative Hiliting");
-            JMenuItem lex = new JMenuItem("lexicographic");
-            JMenuItem rev = new JMenuItem("reverse");
+            JMenu sorts = new JMenu("Sort by ...");
+            JMenuItem frq = new JMenuItem("Count");
+            JMenuItem abs = new JMenuItem("Absolute selected");
+            JMenuItem rel = new JMenuItem("Relative selected");
+            JMenuItem lex = new JMenuItem("Lexicographic");
+            JMenuItem rev = new JMenuItem("Reverse");
             sorts.add(frq);
             sorts.add(abs);
             sorts.add(rel);
@@ -415,7 +415,7 @@ public class Barchart extends DragBox implements ActionListener {
             rev.addActionListener(this);
             mode.add(sorts);
             
-            JMenuItem diss = new JMenuItem("dismiss");
+            JMenuItem diss = new JMenuItem("Dismiss");
             mode.add(diss);
             
             mode.show(this, e.getX(), e.getY());
@@ -576,6 +576,17 @@ public void processKeyEvent(KeyEvent e) {
     Graphics g = this.getGraphics();
     paint(g);
     g.dispose();
+  } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+             && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
+  {
+    System.out.println("Apfel NULLLLLLLLLLLLLL");
+    scaler = 0;
+    setCoordinates(0,0,iniMax / Math.pow(1.2, scaler)  ,1,-1);
+    rects.removeAllElements();
+    realHeight = create(border, border, width-border, height-border, "");
+    Graphics g = this.getGraphics();
+    paint(g);
+    g.dispose();
   } else if ( Character.isSpaceChar(e.getKeyChar()) || Character.isJavaLetterOrDigit(e.getKeyChar()) || (e.getKeyChar() == KeyEvent.VK_PERIOD) || (e.getKeyChar() == KeyEvent.VK_MINUS) ) {
 	if( searchText.equals("") )
 		startT = new Date().getTime();
@@ -594,7 +605,7 @@ public void processKeyEvent(KeyEvent e) {
 //				System.out.println("Table Text: "+tmp.toUpperCase()+" test against "+ searchText );
 			}
 		}
-  }
+  } 
   super.processKeyEvent(e);  // Pass other event types on.
 }
 
