@@ -4,6 +4,8 @@ import java.awt.datatransfer.*;  // Clipboard, Transferable, DataFlavor, etc.
 import java.awt.event.*;         // New event model.
 import java.io.*;                // Object serialization streams.
 import java.util.*;              // For StingTokenizer.
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.*;          // Data compression/decompression streams.
 import java.util.Vector;         // To store the scribble in.
 import java.util.Properties;     // To store printing preferences in.
@@ -243,6 +245,18 @@ public class dataSet {
             Var.isCategorical = false;
           if( varName.substring(0,2).equals("/D") )
             Var.forceCategorical = true;
+          if( varName.substring(0,2).equals("/U") ) {
+            Matcher m = Pattern.compile("/U(.*)<([^>]+)>(.*)").matcher(varName);
+            if(m.matches()) {
+              Var.forceCategorical = true;
+              Var.name = m.group(2);
+              Util.registerHTMLTemplate(Var.name, m.group(1) + "$var" + m.group(3));
+            }else {
+              System.err.println("Unknown Url for column: " + varName);
+              Var.forceCategorical = true;
+            }
+          }   
+          
         }
         data.addElement(Var);
       }
@@ -314,6 +328,9 @@ public class dataSet {
       for(int j=0; j<k; j++) {
         NAcount[j] = BT.NACount[j];
         alpha[j] = !BT.numericalColumn[j];
+        
+        if(BT.isPhoneNum[j])
+          System.out.println("Var No: "+j+" is a phone number");            
         
         Variable Var = new Variable(BT, j);
         Var.numMiss = NAcount[j];
