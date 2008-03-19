@@ -106,7 +106,7 @@ public class Mosaic extends DragBox implements ActionListener {
         if( tablep.data.isDB ) {
           StringTokenizer info = new StringTokenizer(r.getLabel(), "\n");
           for( int j=0; j<tablep.k; j++) {
-            StringTokenizer line = new StringTokenizer(info.nextToken(), ":");
+            StringTokenizer line = new StringTokenizer(info.nextToken(), "\t");
             tmpQ.addCondition("AND", line.nextToken().trim()+" = '"+line.nextToken().trim()+"'");
           }
           S.condition.addCondition("OR", tmpQ.getConditions());
