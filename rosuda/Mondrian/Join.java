@@ -18,10 +18,9 @@ import java.awt.*;               // ScrollPane, PopupMenu, MenuShortcut, etc.
 import java.awt.image.*;         
 import java.awt.event.*;         // New event model.
 import java.io.*;                // Object serialization streams.
-import java.io.InputStream;      // Object serialization streams.
 import java.util.*;              // For StingTokenizer.
-import java.util.Vector;         // 
-import java.util.Properties;     // To store printing preferences in.
+//import java.util.Vector;         // 
+//import java.util.Properties;     // To store printing preferences in.
 import java.util.jar.JarFile; 	 // To load logo
 import java.util.zip.ZipEntry;
 import java.util.prefs.*;		 // for preferences
@@ -134,22 +133,31 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     o.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 	file.add(lastOM = new JMenu("Open Recent"));
 	for(int i=0; i<lastOpenedNum; i++) {
-		lastOpenedMenu[i] = new JMenuItem(lastOpened[i]);
-		lastOpenedMenu[i].addActionListener(new ActionListener() {     // Open a new window with the selected data
-			public void actionPerformed(ActionEvent e) {
-				String tmp = e.getActionCommand();
-				int id = tmp.indexOf(" - ");
-				System.out.println(tmp.substring(id+3,tmp.length())+tmp.substring(0, id));
-				loadDataSet(false, new File(tmp.substring(id+3,tmp.length())+tmp.substring(0, id)));
-			}
-		});
-		if( !lastOpened[i].equals("") )
-			lastOM.add(lastOpenedMenu[i]);
-	}
-	
+      lastOpenedMenu[i] = new JMenuItem(lastOpened[i]);
+      if( !lastOpened[i].equals("") ) {
+        lastOpenedMenu[i].addActionListener(new ActionListener() {     // Open a new window with the selected data
+          public void actionPerformed(ActionEvent e) {
+            String tmp = e.getActionCommand();
+            int id = tmp.indexOf(" - ");
+            File lof = new File(tmp.substring(id+3,tmp.length())+tmp.substring(0, id));
+            System.out.println(lof);
+            if( lof.exists() )  
+              loadDataSet(false, lof);
+            else
+              openFileError();
+          }
+        });
+        int id = lastOpened[i].indexOf(" - ");
+        File lof = new File(lastOpened[i].substring(id+3,lastOpened[i].length())+lastOpened[i].substring(0, id));
+        if( !lastOpened[i].equals("") && lof.exists() )
+          lastOM.add(lastOpenedMenu[i]);
+        
+      }
+    }
+
     file.add(od = new JMenuItem("Open Database"));
     od.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-    if( user.indexOf("theus") > -1)
+    if( user.indexOf("theus") > -1 || true )
       od.setEnabled(true);
     else
       od.setEnabled(false);
@@ -220,12 +228,6 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     menubar.add(plot);                         // Add to menubar.
     //
     JMenu calc = new JMenu("Calc");            // Create a Calc menu.
-    calc.add(mds = new JMenuItem("2-dim MDS"));
-    mds.setEnabled(false);
-                                               //
-    calc.add(pca = new JMenuItem("PCA"));
-    pca.setEnabled(false);
-                                               //
     calc.add(trans = new JMenu("transform"));
     trans.setEnabled(false);
     trans.add(transPlus = new JMenuItem("x + y"));
@@ -238,6 +240,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     trans.add(transLog = new JMenuItem("log(x)"));
     trans.add(transExp = new JMenuItem("exp(x)"));
 
+    calc.add(mds = new JMenuItem("2-dim MDS"));
+    mds.setEnabled(false);
+    //
+    calc.add(pca = new JMenuItem("PCA"));
+    pca.setEnabled(false);
+    //
     menubar.add(calc);                         // Add to menubar.
 
     JMenu options = new JMenu("Options");      // Create an Option menu.
@@ -571,7 +579,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("beta 8", 250, 285);
+    g.drawString("beta 11", 250, 285);
 
     mondrianRunning = true;
 
@@ -597,32 +605,45 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     System.exit(0);
   }
   
+  public void openFileError() {
+      JOptionPane.showMessageDialog(this, "Can't open File\nHas it been moved or deleted?  ");
+  }
+    
   void showIt() {
     paintAll(this.getGraphics());
   }
 
   byte[] readGif(String name) {
-
+    
     byte[] arrayLogo;
     try {
-      JarFile MJF;
-      try {
-        MJF = new JarFile("Mondrian.app/Contents/Resources/Java/Mondrian.jar");
-      } catch (Exception e) {
-        MJF = new JarFile(System.getProperty("java.class.path"));
-      }
-      ZipEntry LE = MJF.getEntry(name);
-      InputStream inputLogo = MJF.getInputStream(LE);
-      arrayLogo = new byte[(int)LE.getSize()];
-      for( int i=0; i<arrayLogo.length; i++ ) {
-        arrayLogo[i] = (byte)inputLogo.read();
-      }
-    } catch (Exception e) {
+      InputStream inputLogo = this.getClass().getResourceAsStream(name);
+      
+      arrayLogo = streamToBytes(inputLogo);
+      inputLogo.close();
+      
+    } catch (IOException e) {
       System.out.println("Logo Exception: "+e);
       arrayLogo = new byte[1];
     }
     return arrayLogo;
   }
+  
+  public static byte[] streamToBytes(InputStream strm) throws IOException {
+    byte[] tmpBuf = new byte[2048];
+    byte[] buf = new byte[0];
+    
+    int len;
+    while((len=strm.read(tmpBuf)) > -1)
+    {  byte[] newBuf = new byte[buf.length + len];
+      System.arraycopy(buf, 0, newBuf, 0, buf.length);
+      System.arraycopy(tmpBuf, 0, newBuf, buf.length, len);
+      buf = newBuf;
+    }
+    
+    return buf;
+  }
+  
   
   int setGraphicsPerformance() {
     
@@ -2504,8 +2525,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
 
     final ImageIcon alphaIcon = new ImageIcon(readGif("alpha.gif"));
+    final ImageIcon alphaMissIcon = new ImageIcon(readGif("alpha-miss.gif"));
     final Icon catIcon = new ImageIcon(readGif("cat.gif"));
+    final Icon catMissIcon = new ImageIcon(readGif("cat-miss.gif"));
     final Icon numIcon = new ImageIcon(readGif("num.gif"));
+    final Icon numMissIcon = new ImageIcon(readGif("num-miss.gif"));
     // This is the only method defined by ListCellRenderer.
     // We just reconfigure the JLabel each time we're called.
 
@@ -2514,16 +2538,24 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
                                                   int index,               // cell index
                                                   boolean isSelected,      // is the cell selected
                                                   boolean cellHasFocus)    // the list and the cell have the focus
-    {
+    { 
       String s = value.toString();
       setText(s);
       if( data.alpha(index) )
-        setIcon(alphaIcon);
+        if( data.getN(index) == data.n )
+          setIcon(alphaIcon);
+        else
+          setIcon(alphaMissIcon);
       else if( data.categorical(index) )
-        setIcon(catIcon);
+        if( data.getN(index) == data.n )
+          setIcon(catIcon);
+        else
+          setIcon(catMissIcon);
       else
-        setIcon(numIcon);
-    
+        if( data.getN(index) == data.n )
+          setIcon(numIcon);
+        else
+          setIcon(numMissIcon);
       if (isSelected) {
         setBackground(list.getSelectionBackground());
         setForeground(list.getSelectionForeground());
