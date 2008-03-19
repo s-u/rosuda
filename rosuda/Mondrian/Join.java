@@ -2158,7 +2158,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
     try {
       Rconnection c = new Rconnection();
-      c.voidEval("library(MASS)");
+      c.voidEval("library(MASS, pos=1)");
       for( int i=0; i<varsT.length; i++ ) {
         c.assign("x",dataT.getRawNumbers(varsT[i]));
         if( dataT.n > dataT.getN(varsT[i]) ) {                      // Check for missings in this variable
@@ -2171,7 +2171,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
               flag[j] = 0;
           c.assign("xM",flag);
           c.voidEval("is.na(x)[xM==1] <- T");
-        }
+        } 
         if( i==0 )
           c.voidEval("tempData <- x");
         else
@@ -2179,7 +2179,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       }
       c.voidEval("tempD <- dist(scale(tempData))");
       c.voidEval("is.na(tempD)[tempD==0] <- T");
-      RList mdsL = c.eval("sMds <- sammon(tempD, y=cmdscale(dist(scale(tempData)), k=2), k=2)").asList();
+      c.voidEval("startConf <- cmdscale(dist(scale(tempData)), k=2)");
+      c.voidEval("sMds <- sammon(tempD, y=startConf, k=2, trace=F)");
       double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
       double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
       
