@@ -170,57 +170,57 @@ public class PC extends DragBox implements ActionListener {
       if( minXDist < slotWidth/4 ) {
         String x="";
         if(  data.phoneNumber(vars[permA[popXId]]) ) {
-          x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number: "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
+          x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number\t "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
         }
         else if( data.categorical(vars[permA[popXId]]) )
           if( paintMode.equals("Poly") ) {
             x = " " + data.getName(vars[permA[popXId]]);
-            x = x + " \n Level: "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
+            x = x + " \n Level\t "+data.getLevelName(vars[permA[popXId]], dataCopy[permA[popXId]][popYId]);
           }
-            else
-              for( int i = 0;i < rects.size(); i++) {
-                MyRect r = (MyRect)rects.elementAt(i);
-                if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
-                  return Util.info2Html(r.getLabel());
-                }
+          else
+            for( int i = 0;i < rects.size(); i++) {
+              MyRect r = (MyRect)rects.elementAt(i);
+              if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+                return Util.info2Html(r.getLabel());
               }
-                else {
-                  boolean hitBox = false;
-                  x = " "+((MyText)names.elementAt(popXId)).getText();
-                  if( !paintMode.equals("Poly") ) {
-                    double saveMin = getLly();
-                    double saveMax = getUry();
-                    setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
-                    if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
-                        worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    ) {
-                      x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
-                      hitBox = true;
-                    }
-                    setCoordinates(0,saveMin,1,saveMax,-1);
-                  } 
-                  if( !hitBox ) {
-                    if( e.isShiftDown() ) { // extended query, does not have a var name header
-                      x = "";
-                      int[] selectedIds = varList.getSelectedIndices();
-                      for( int sel=0; sel<selectedIds.length; sel++ ) {
-                        x = x + "\n" + data.getName(selectedIds[sel])+": ";
-                        if( (data.getMissings(selectedIds[sel]))[popYId] )
-                          x = x + "NA";
-                        else {
-                          if( data.categorical(selectedIds[sel]) )
-                            if( data.alpha(selectedIds[sel]) )
-                              x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[popYId]);
-                            else
-                              x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[popYId]);
-                          else
-                            x = x + (data.getRawNumbers(selectedIds[sel]))[popYId];
-                        }
-                      }
-                    } else
-                      x = x + " \n Value: "+dataCopy[permA[popXId]][popYId];
+            }
+          else {
+            boolean hitBox = false;
+            x = " "+((MyText)names.elementAt(popXId)).getText();
+            if( !paintMode.equals("Poly") ) {
+              double saveMin = getLly();
+              double saveMax = getUry();
+              setCoordinates(0,Mins[permA[popXId]],1,Maxs[permA[popXId]],-1);
+              if( worldToUserY(e.getY()) > ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[1]  &&
+                 worldToUserY(e.getY()) < ((boxPlot)(bPlots.elementAt(popXId))).get5numVal()[5]    ) {
+                x = x + ((boxPlot)(bPlots.elementAt(popXId))).get5num();
+                hitBox = true;
+              }
+              setCoordinates(0,saveMin,1,saveMax,-1);
+            } 
+            if( !hitBox ) {
+              if( e.isShiftDown() ) { // extended query, does not have a var name header
+                x = "";
+                int[] selectedIds = varList.getSelectedIndices();
+                for( int sel=0; sel<selectedIds.length; sel++ ) {
+                  x = x + "\n" + data.getName(selectedIds[sel])+"\t ";
+                  if( (data.getMissings(selectedIds[sel]))[popYId] )
+                    x = x + "NA";
+                  else {
+                    if( data.categorical(selectedIds[sel]) )
+                      if( data.alpha(selectedIds[sel]) )
+                        x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[popYId]);
+                      else
+                        x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[popYId]);
+                      else
+                        x = x + (data.getRawNumbers(selectedIds[sel]))[popYId];
                   }
                 }
-                return Util.info2Html(x);
+              } else
+                x = x + " \n Value\t "+dataCopy[permA[popXId]][popYId];
+            }
+          }
+        return Util.info2Html(x);
       }
       return null;
     } else
