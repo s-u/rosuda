@@ -159,7 +159,6 @@ public class MissPlot extends DragBox implements ActionListener {
           if( bi.getWidth(null) != size.width || bi.getHeight(null) != size.height ) {
             bg.dispose();
             bi = null;
-            System.gc();
             //System.out.println("New Image!");
             bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
           }
@@ -308,27 +307,13 @@ public class MissPlot extends DragBox implements ActionListener {
           }
           if( !info ) {
             JPopupMenu mode = new JPopupMenu();
-            if( displayMode.equals("x") ) {
-              JMenuItem Spineplot = new JMenuItem("rotate hilite");
-              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-              mode.add(Spineplot);
-              Spineplot.setActionCommand("y");
-              Spineplot.addActionListener(this);
-            }
-            else {
-              JMenuItem Barchart  = new JMenuItem("rotate hilite");
-              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-              mode.add(Barchart);
-              Barchart.setActionCommand("x");
-              Barchart.addActionListener(this);
-            }
-            JMenu sorts = new JMenu("Sort by");
-            JMenuItem frq = new JMenuItem("Missings Count");
-            JMenuItem abs = new JMenuItem("absolute Missings Hiliting");
-            JMenuItem rel = new JMenuItem("relative Missings Hiliting");
-            JMenuItem lex = new JMenuItem("lexicographic");
-            JMenuItem ini = new JMenuItem("initial");
-            JMenuItem rev = new JMenuItem("reverse");
+            JMenu sorts = new JMenu("Sort by ...");
+            JMenuItem frq = new JMenuItem("Missings count");
+            JMenuItem abs = new JMenuItem("Absolute selected");
+            JMenuItem rel = new JMenuItem("Relative selected");
+            JMenuItem lex = new JMenuItem("Lexicographic");
+            JMenuItem ini = new JMenuItem("Initial");
+            JMenuItem rev = new JMenuItem("Reverse");
             sorts.add(frq);
             sorts.add(abs);
             sorts.add(rel);
@@ -350,7 +335,22 @@ public class MissPlot extends DragBox implements ActionListener {
             rev.addActionListener(this);
             mode.add(sorts);
             
-            JMenuItem diss = new JMenuItem("dismiss");
+            if( displayMode.equals("x") ) {
+              JMenuItem Spineplot = new JMenuItem("Rotate");
+              Spineplot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              mode.add(Spineplot);
+              Spineplot.setActionCommand("y");
+              Spineplot.addActionListener(this);
+            }
+            else {
+              JMenuItem Barchart  = new JMenuItem("Rotate");
+              Barchart.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+              mode.add(Barchart);
+              Barchart.setActionCommand("x");
+              Barchart.addActionListener(this);
+            }
+
+            JMenuItem diss = new JMenuItem("Dismiss");
             mode.add(diss);
             
             mode.show(this, e.getX(), e.getY());
