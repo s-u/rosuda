@@ -131,6 +131,7 @@ public class Map extends DragBox {
     Collist.addItem("green");
     Collist.addItem("blue");
     Collist.addItem("blue2red");
+    Collist.addItem("blueWred");
     if( ((MFrame)frame).hasR() ) {
       Collist.addItem("heat");
       Collist.addItem("terrain");
@@ -298,10 +299,11 @@ public class Map extends DragBox {
 
   public void processKeyEvent(KeyEvent e) {
 
-    if (e.getID() == KeyEvent.KEY_RELEASED && e.isControlDown()) {
+/*    if (e.getID() == KeyEvent.KEY_RELEASED && e.isControlDown() && false ) {
       this.setToolTipText("");
       ToolTipManager.sharedInstance().setEnabled(false);
     }
+*/    
     if (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_F) {
       Graphics g = this.getGraphics();
       double[] selection = data.getSelection();
@@ -400,7 +402,7 @@ public class Map extends DragBox {
     public String getToolTipText(MouseEvent e) {
 
       if( e.isControlDown() ) {
-
+        
         for( int i = 0;i < smallPolys.size(); i++) {
           MyPoly p = (MyPoly)smallPolys.elementAt(i);
           if ( p.contains( e.getX(), e.getY()+sb.getValue() ) ) {
@@ -626,6 +628,11 @@ public class Map extends DragBox {
             p.setColor(new Color(1-intensity, 1-intensity, 1-intensity));                // gray
           else if( scheme.equals("blue2red") )
             p.setColor(new Color(intensity, 0, 1-intensity));                            // blue2red
+          else if( scheme.equals("blueWred") )
+            if( intensity < 0.5 )
+              p.setColor(new Color(2*intensity, 2*intensity, 1));                        // blueWred
+            else
+              p.setColor(new Color(1, (float)(1-(intensity-0.5)*2), (float)(1-(intensity-0.5)*2)));        // blueWred
           else if( scheme.equals("heat") )
             p.setColor(heat[(int)((polys.size()-1)*intensity)]);															 // heat
           else if( scheme.equals("terrain") )
