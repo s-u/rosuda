@@ -7,6 +7,8 @@ import javax.swing.event.*;
 
 public class Util {
 
+  private static final HashMap LABELToURLTemplate = new HashMap();
+
   public static void add(JFrame f, Component c, GridBagConstraints gbc, int x, int y, int w, int h) {
     gbc.gridx = x;
     gbc.gridy = y;
@@ -135,6 +137,32 @@ public class Util {
     return true;
   }
 
+  /**
+   * Register a new mapping for tooltip images.
+   * @param label label of field which contains image id data
+   * @param template template for url of image any occurence of "$var" will be 
+   *                 replaced byt the field value.
+   */
+  public static void registerHTMLTemplate(String label, String template) {
+    LABELToURLTemplate.put(label, template);
+  }
+  
+  /**
+   * Convert the value to html for the tooltip.
+   * 
+   * If there is a template in the LABELToURLTemplate HashMap the template 
+   * will be used. If not the value will be used straight.
+   * 
+   * @param label name of the field for which the value is to be transformed.
+   */
+  public static String getHTMLValue(String label, String val) {
+    String urlTemplate = (String)LABELToURLTemplate.get(label);
+    if(urlTemplate != null) 
+      val = urlTemplate.replaceAll("\\$val", val);
+    return val;
+  }
+  
+  
   public static String info2Html(String infoText) {
     
     String infoTxt = "";
@@ -146,9 +174,9 @@ public class Util {
     String nextT;
     while( info.hasMoreTokens() ) {
       nextT = info.nextToken();
-      StringTokenizer line = new StringTokenizer(nextT, ":");
+      StringTokenizer line = new StringTokenizer(nextT, "\t");
 
-      if( nextT.indexOf(":") > -1  )
+      if( nextT.indexOf("\t") > -1  )
         infoTxt = infoTxt + para + line.nextToken() + sep + line.nextToken() + "</TR>";
       else
         infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=-1 face='verdana, helvetica'>"+nextT+"</TR>";
