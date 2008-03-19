@@ -579,7 +579,6 @@ public void processKeyEvent(KeyEvent e) {
   } else if ( e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
              && ( e.getKeyCode() == KeyEvent.VK_0 || e.getKeyCode() == KeyEvent.VK_NUMPAD0))
   {
-    System.out.println("Apfel NULLLLLLLLLLLLLL");
     scaler = 0;
     setCoordinates(0,0,iniMax / Math.pow(1.2, scaler)  ,1,-1);
     rects.removeAllElements();
