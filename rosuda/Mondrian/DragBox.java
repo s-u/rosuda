@@ -1181,10 +1181,14 @@ System.out.println("Mouse Action to check: "+mouse);
         } else if( command.equals("Home") ) {
 
           this.home();
-          LD.tfXMinI.setText(Stat.roundToString(getLlx(),5));
-          LD.tfXMaxI.setText(Stat.roundToString(getUrx(),5));
-          LD.tfYMinI.setText(Stat.roundToString(getLly(),5));
-          LD.tfYMaxI.setText(Stat.roundToString(getUry(),5));
+
+          int roundX = (int)Math.max(0, 2 - Math.round((Math.log(urx-llx)/Math.log(10))));
+          int roundY = (int)Math.max(0, 2 - Math.round((Math.log(ury-lly)/Math.log(10))));
+
+          LD.tfXMinI.setText(Stat.roundToString(getLlx(),roundX));
+          LD.tfXMaxI.setText(Stat.roundToString(getUrx(),roundX));
+          LD.tfYMinI.setText(Stat.roundToString(getLly(),roundY));
+          LD.tfYMaxI.setText(Stat.roundToString(getUry(),roundY));
           
           LD.tfWidthI.setText(""+frame.getWidth());
           LD.tfHeightI.setText(""+frame.getHeight());
@@ -1284,6 +1288,9 @@ System.out.println("Mouse Action to check: "+mouse);
         
         this.setTitle("Set Coordinates");
                 
+        int roundX = (int)Math.max(0, 2 - Math.round((Math.log(urx-llx)/Math.log(10))));
+        int roundY = (int)Math.max(0, 2 - Math.round((Math.log(ury-lly)/Math.log(10))));
+        
         pnAllPanel = new JPanel();
 //        pnAllPanel.setBorder( BorderFactory.createTitledBorder( "Set Coordinates" ) );
         GridBagLayout gbAllPanel = new GridBagLayout();
@@ -1321,12 +1328,12 @@ System.out.println("Mouse Action to check: "+mouse);
         pnXPanel.add( lbXLabelMax );
         
         tfXMinI = new JTextField(10);
-        tfXMinI.setText(Stat.roundToString(llx,5));
+        tfXMinI.setText(Stat.roundToString(llx,roundX));
         tfXMinI.selectAll();
         tfXMinI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS) || (c == KeyEvent.VK_E))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1350,11 +1357,11 @@ System.out.println("Mouse Action to check: "+mouse);
         pnXPanel.add( tfXMinI );
         
         tfXMaxI = new JTextField(10);
-        tfXMaxI.setText(Stat.roundToString(urx,5));
+        tfXMaxI.setText(Stat.roundToString(urx,roundX));
         tfXMaxI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS) || (c == KeyEvent.VK_E))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1434,11 +1441,11 @@ System.out.println("Mouse Action to check: "+mouse);
         pnYPanel.add( lbYLabelMax );
         
         tfYMinI = new JTextField(10);
-        tfYMinI.setText(Stat.roundToString(lly,5));
+        tfYMinI.setText(Stat.roundToString(lly,roundY));
         tfYMinI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS) || (c == KeyEvent.VK_E))) ) {
               getToolkit().beep();
               e.consume();
             }
@@ -1462,11 +1469,11 @@ System.out.println("Mouse Action to check: "+mouse);
         pnYPanel.add( tfYMinI );
         
         tfYMaxI = new JTextField(10);
-        tfYMaxI.setText(Stat.roundToString(ury,5));
+        tfYMaxI.setText(Stat.roundToString(ury,roundY));
         tfYMaxI.addKeyListener(new KeyAdapter() {
           public void keyTyped(KeyEvent e) {
             char c = e.getKeyChar();      
-            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS))) ) {
+            if (!((Character.isDigit(c) || (c == KeyEvent.VK_BACK_SPACE) || (c == KeyEvent.VK_DELETE) || (c == KeyEvent.VK_PERIOD) || (c == KeyEvent.VK_MINUS) || (c == KeyEvent.VK_E))) ) {
               getToolkit().beep();
               e.consume();
             }
