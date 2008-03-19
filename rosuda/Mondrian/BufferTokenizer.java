@@ -1,11 +1,10 @@
 //package org.rosuda.Mondrian;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -89,6 +88,8 @@ public class BufferTokenizer {
  	else: column is not numerical */
 	boolean[] numericalColumn;
 	
+    boolean[] isPhoneNum;  //MTh
+  
 /** isDiscret (j) = (column)
  	if true: column is discret
  	else: column is continuous
@@ -376,6 +377,8 @@ public class BufferTokenizer {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
+            isPhoneNum = new boolean[columns];  // MTh
+            for(int i=0; i<isPhoneNum.length; i++) isPhoneNum[i] = false;
 			item = new double[columns][lines];
 			NA = new boolean[columns][lines];
 			word = new byte[columns][this.discretLimit][];
@@ -433,6 +436,8 @@ public class BufferTokenizer {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
+            isPhoneNum = new boolean[columns];  // MTh
+            for(int i=0; i<isPhoneNum.length; i++) isPhoneNum[i] = false;
 			item = new double[columns][lines];
 			NA = new boolean[columns][lines];
 			word = new byte[columns][discretLimit][];
@@ -494,6 +499,8 @@ public class BufferTokenizer {
 			start = System.currentTimeMillis();
 			isDiscret = new boolean[columns];
 			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
+            isPhoneNum = new boolean[columns];  // MTh
+            for(int i=0; i<isPhoneNum.length; i++) isPhoneNum[i] = false;
 			item = new double[columns][lines];
 			NA = new boolean[columns][lines];
 			word = new byte[columns][discretLimit][];
@@ -548,8 +555,10 @@ public class BufferTokenizer {
 
 			// Daten initialisieren
 			start = System.currentTimeMillis();
-			isDiscret = new boolean[columns];
-			for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
+            isDiscret = new boolean[columns];
+            for(int i=0; i<isDiscret.length; i++) isDiscret[i] = true;
+            isPhoneNum = new boolean[columns];  // MTh
+            for(int i=0; i<isPhoneNum.length; i++) isPhoneNum[i] = false;
 			item = new double[columns][lines];
 			NA = new boolean[columns][lines];
 			word = new byte[columns][discretLimit][];
@@ -930,12 +939,20 @@ public class BufferTokenizer {
 						}
 						head[j] = temp;
 					} else if(head[j][1] == 'D') {
-						isDiscret[j] = true;
-						temp = new byte[head[j].length - 2];
-						for(k=0; k<head[j].length - 2; k++) {
-							temp[k] = head[j][k+2];
-						}
-						head[j] = temp;
+                      isDiscret[j] = true;
+                      temp = new byte[head[j].length - 2];
+                      for(k=0; k<head[j].length - 2; k++) {
+                        temp[k] = head[j][k+2];
+                      }
+                      head[j] = temp;
+					} else if(head[j][1] == 'T') {  //MTh
+                      isDiscret[j] = true;
+                      isPhoneNum[j] = true; 
+                      temp = new byte[head[j].length - 2];
+                      for(k=0; k<head[j].length - 2; k++) {
+                        temp[k] = head[j][k+2];
+                      }
+                      head[j] = temp;
 					} else if(head[j][1] == 'P') {
                       isDiscret[j] = true;
                       temp = new byte[head[j].length - 2];
@@ -944,7 +961,30 @@ public class BufferTokenizer {
                       }
                       head[j] = temp;
                       polygonID = j;
-					}
+					} else if(head[j][1] == 'U') {
+                      isDiscret[j] = true;
+                      temp = new byte[head[j].length - 2];
+                      for(k=0; k<head[j].length - 2; k++) {
+                        temp[k] = head[j][k+2];
+                      }
+                      String label;
+                      try {
+                        label = new String(temp, "UTF-8");
+                      } catch(UnsupportedEncodingException e) {
+                        throw new Error(e);
+                      }
+                      Matcher m = Pattern.compile("(.*)<([^>]+)>(.*)").matcher(label);
+                      if(m.matches()) {
+                        temp = m.group(2).getBytes();
+                        String template = "<image src='" 
+                        + m.group(1) + "$val" + m.group(3) + "'>";
+                        Util.registerHTMLTemplate(m.group(2), template);
+                      }else {
+                        System.err.println("Unknown Url for column: " + label);
+                      }
+                      
+                      head[j] = temp;
+                    }
 				}
 			}
 		}
