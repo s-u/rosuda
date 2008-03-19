@@ -187,11 +187,11 @@ public class Scatter2D extends DragBox {
     if( e.isControlDown() && !e.isAltDown() ) {
       if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * coeffs[1] + coeffs[0]) - e.getY() ) < 4 ) {
         String x = data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(coeffs[1], 4)+" + "+Stat.roundToString(coeffs[0], 4);
-        x = x + "\n"+"R^2: "+Stat.roundToString(100*coeffs[2], 1);
+        x = x + "\n"+"R<sup>2</sup>\t "+Stat.roundToString(100*coeffs[2], 1);
         return Util.info2Html(x);
       } else if( smoothF.equals("ls-line") && Math.abs( (int)userToWorldY( worldToUserX(e.getX()) * selCoeffs[1] + selCoeffs[0]) - e.getY() ) < 4 ) {
         String x = data.getName(Vars[1])+" = "+data.getName(Vars[0])+" * "+Stat.roundToString(selCoeffs[1], 4)+" + "+Stat.roundToString(selCoeffs[0], 4);
-        x = x + "\n"+"R^2: "+Stat.roundToString(100*selCoeffs[2], 1);
+        x = x + "\n"+"R<sup>2</sup>\t "+Stat.roundToString(100*selCoeffs[2], 1);
         return Util.info2Html(x);
       }
       if( modeString.equals("points") ) {
@@ -203,7 +203,7 @@ public class Scatter2D extends DragBox {
         int minIds[] = new int[maxOverplot];
         for( int i=0; i<data.n; i++ ) {
           int dist = (int)Math.pow( Math.pow(userToWorldX( xVal[i] )-e.getX(), 2)
-                                    + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
+                                   + Math.pow(userToWorldY( yVal[i] )-e.getY(), 2), 0.5 );
           if( dist < minDist ) {
             minDist = dist;
             minIds[minCount=0] = i;
@@ -225,23 +225,31 @@ public class Scatter2D extends DragBox {
             selectedIds = this.Vars;
           if( selectedIds.length == 0 )
             selectedIds = Vars;
-          if( minCount == 1 ) {
+          
+          
+          if( minCount == 1 ) {  // count == 1 no brackets
             for( int sel=0; sel<selectedIds.length; sel++ ) {
-              x = x + "\n" + data.getName(selectedIds[sel])+": ";
-              if( (data.getMissings(selectedIds[sel]))[minIds[0]] )
-                x = x + "NA";
-              else {
-                if( data.categorical(selectedIds[sel]) )
+              String label = data.getName(selectedIds[sel]);
+              String val = "NA";
+              
+              if(! (data.getMissings(selectedIds[sel]))[minIds[0]] ) {
+                if( data.categorical(selectedIds[sel]) ) {
                   if( data.alpha(selectedIds[sel]) )
-                    x = x + data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[0]]);
+                    val = data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[0]]);
                   else
-                    x = x + data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
+                    val = data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
+                }
                 else
-                  x = x + (data.getRawNumbers(selectedIds[sel]))[minIds[0]];
+                  val = Double.toString((data.getRawNumbers(selectedIds[sel]))[minIds[0]]);
               }
+              
+              // check to see if there is a template to modify values for this field
+              val = Util.getHTMLValue(label, val);
+              
+              x = x + "\n" + label +"\t " + val;
             }
-          } else {
-            x = " Count: "+minCount+" ";
+          } else {   // count > 1 add brackets
+            x = " Count\t "+minCount+" ";
             double Mins[] = new double[selectedIds.length];
             double Maxs[] = new double[selectedIds.length];
             HashSet Levels[] = new HashSet[selectedIds.length];
@@ -257,37 +265,45 @@ public class Scatter2D extends DragBox {
                     Levels[sel].add(data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[minIds[ids]]));
                   else
                     Levels[sel].add(data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[minIds[ids]]));
-                else {
-                  if( !(data.getMissings(selectedIds[sel]))[minIds[ids]] ) {
-                    Mins[sel] = Math.min(Mins[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
-                    Maxs[sel] = Math.max(Maxs[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                  else {
+                    if( !(data.getMissings(selectedIds[sel]))[minIds[ids]] ) {
+                      Mins[sel] = Math.min(Mins[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                      Maxs[sel] = Math.max(Maxs[sel] ,(data.getRawNumbers(selectedIds[sel]))[minIds[ids]]);
+                    }
                   }
-                }
               }
             }
-            //
+            
+            //Create info string with name "\t" values "\n"
             for( int sel=0; sel<selectedIds.length; sel++ ) {
               String[] Names = {""};
               Names = (String[])Levels[sel].toArray(Names);
               if( data.categorical(selectedIds[sel]) ) {
-                x = x + "\n"+ data.getName(selectedIds[sel])+": {";
+                String label = data.getName(selectedIds[sel]);
+                x = x + "\n"+ label +"\t {";
                 if( Names.length > 1 )
                   for(int i=0; i<Names.length-1; i++) {
-                    x = x + Names[i]+", ";
+                    x = x + Util.getHTMLValue(label, Names[i])+", ";
                     if( ((i+1) % 3) == 0 )
-                      x = x + "\n : ";
+                      x = x + "\n \t ";
                   }
-                    x = x + Names[Names.length-1]+"} ";
-                }
-              else
+                x = x + Util.getHTMLValue(label, Names[Names.length-1])+"} ";
+              }
+              else {
+                String label = data.getName(selectedIds[sel]);
                 if( Mins[sel] == Maxs[sel] )
-                  x = x + "\n" + data.getName(selectedIds[sel])+": " +Mins[sel];
+                  x = x + "\n" + label +"\t " + Util.getHTMLValue(label, Double.toString(Mins[sel]));
                 else if( Mins[sel] != Double.MAX_VALUE && Maxs[sel] != -Double.MAX_VALUE )
-                  x = x + "\n" + data.getName(selectedIds[sel])+": " + " ["+Mins[sel]+", "+Maxs[sel]+"] ";
+                  x = x + "\n" + label +"\t " 
+                  + " ["+ Util.getHTMLValue(label, Double.toString(Mins[sel])) 
+                  +", "+  Util.getHTMLValue(label, Double.toString(Maxs[sel]))+"] ";
                 else
-                  x = x + "\n" + data.getName(selectedIds[sel])+": NA";
+                  x = x + "\n" +  label +"\t NA";
+              }  
             }
           }
+System.out.println(Util.info2Html(x));          
+          
           return Util.info2Html(x);
         } else
           return null;
@@ -303,7 +319,7 @@ public class Scatter2D extends DragBox {
     }  else
       return null;
   }
-    
+  
 
     public void processMouseEvent(MouseEvent e) {
                 
