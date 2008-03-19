@@ -234,36 +234,37 @@ public class MyRect extends Rectangle implements ActionListener {
 
   public void pop(DragBox panel, int x, int y) {
     popup = new JPopupMenu();
-
-    String pinfo = getLabel();
-
+    
+    String pinfo = getLabel().replaceAll("\t", ":");
+    
     StringTokenizer info = new StringTokenizer(pinfo, "\n");
-
+    
     while( info.hasMoreTokens()) {
       infoText = new JMenuItem ( info.nextToken() );
       popup.add(infoText);
       infoText.addActionListener(this);
       //      infoText.setEnabled(false);
     }
-
+    
     popup.show(panel, x, y);
   }
-
+  
   public String getLabel() {
     String pinfo = info.toString();
     if( obs > 0 )
-      pinfo += "\n" + "Count: "+obs;
+      pinfo += "\n" + "Count\t "+obs;
     else
       pinfo += "\n" + "Empty Bin ";
     if( hilite > 0 )
-      pinfo += "\n" + "Hilited: "+Stat.round(hilite*obs,0)+" ("+Stat.round(100*hilite,2)+"%)";
+      pinfo += "\n" + "Hilited\t "+Stat.round(hilite*obs,0)+" ("+Stat.round(100*hilite,2)+"%)";
     if( mode.equals("Expected") ) {
-      pinfo += "\n" + "Expected: "+Stat.round(exp,2);
-      pinfo += "\n" + "Residual: "+Stat.round(obs-exp,3);
-      pinfo += "\n" + "Scaled Res.:"+Stat.round(Math.abs((obs-exp)/Math.sqrt(exp)*scale*100),1)+"%";
+      pinfo += "\n" + "Expected\t "+Stat.round(exp,2);
+      pinfo += "\n" + "Residual\t "+Stat.round(obs-exp,3);
+      pinfo += "\n" + "Scaled Res.\t"+Stat.round(Math.abs((obs-exp)/Math.sqrt(exp)*scale*100),1)+"%";
     }
-
+    
     return pinfo;
   }
 }
+
 
