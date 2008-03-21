@@ -65,6 +65,7 @@ import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
+import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 
 /**
@@ -167,6 +168,10 @@ public class JEditTextArea extends JComponent {
 		
 		// We don't seem to get the initial focus event?
 		focusedComponent = this;
+		
+        if (FontTracker.current == null)
+            FontTracker.current = new FontTracker();
+        FontTracker.current.add(this);
 	}
 
 	public void increaseFontSize() {
@@ -175,6 +180,11 @@ public class JEditTextArea extends JComponent {
 	
 	public void decreaseFontSize() {
 		painter.decreaseFontSize();
+	}
+	
+	public void setFont(Font f)
+	{
+		painter.setFont(f);
 	}
 	
 	/**
@@ -411,7 +421,7 @@ public class JEditTextArea extends JComponent {
 		int line = getCaretLine();
 		int lineStart = getLineStartOffset(line);
 		int offset = Math.max(0, Math.min(getLineLength(line) - 1, getCaretPosition() - lineStart));
-
+		
 		return scrollTo(line, offset);
 	}
 
@@ -434,7 +444,8 @@ public class JEditTextArea extends JComponent {
 			setFirstLine(Math.max(0, line - electricScroll));
 			return true;
 		}
-
+		
+		
 		int newFirstLine = firstLine;
 		int newHorizontalOffset = horizontalOffset;
 
@@ -450,11 +461,16 @@ public class JEditTextArea extends JComponent {
 
 		int x = _offsetToX(line, offset);
 		int width = painter.getFontMetrics().charWidth('w');
-
+		
 		if (x < 0) {
 			newHorizontalOffset = Math.min(0, horizontalOffset - x + width + 5);
 		} else if (x + width >= painter.getWidth()) {
 			newHorizontalOffset = horizontalOffset + (painter.getWidth() - x) - width - 5;
+		}
+		
+		if (offset == 0 && horizontalOffset < 0)
+		{
+			newHorizontalOffset = 0;
 		}
 
 		return setOrigin(newFirstLine, newHorizontalOffset);

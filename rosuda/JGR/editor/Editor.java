@@ -76,7 +76,7 @@ public class Editor extends TJFrame implements ActionListener {
 				"@/Toggle Comment","commentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
 				"findnext", 
 				
-				"+", "Tools", "Increase Font Size", "fontBigger", "Decrease Font Size", "fontSmaller", 
+				//"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 
 				"~Window", "+","Help","R Help","rhelp", "~Preferences", "~About", "0" };
 		EzMenu.getEzMenu(this, this, Menu);
 		Menu rm = recentMenu = (Menu) EzMenu.getItem(this,"Open Recent");
@@ -373,14 +373,14 @@ public class Editor extends TJFrame implements ActionListener {
 			textArea.decreaseFontSize();
 		
 			
-				 if (e.getActionCommand() == "commentcode") {
-			if (textArea.getSelectedText().trim().length() > 0)
+		if (e.getActionCommand() == "commentcode") {
+			if (textArea.getSelectedText() != null && textArea.getSelectedText().trim().length() > 0)
 				try {
 					textArea.commentSelection(true);
 				} catch (BadLocationException e1) {
 				}
 		} else if (e.getActionCommand() == "uncommentcode") {
-			if (textArea.getSelectedText().trim().length() > 0)
+			if (textArea.getSelectedText() != null && textArea.getSelectedText().trim().length() > 0)
 				try {
 					textArea.commentSelection(false);
 				} catch (BadLocationException e1) {

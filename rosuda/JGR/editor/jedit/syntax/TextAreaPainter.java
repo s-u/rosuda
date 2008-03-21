@@ -40,6 +40,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	private static final long serialVersionUID = 7841106461215257787L;
 
 	protected static int OFFSET = 0;
+	private static final int MINIMUM_OFFSET = 25;
 	
 	public static int FONTSIZE = 14;
 
@@ -368,8 +369,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	public void paint(Graphics gfx) {
 		
 		if (lineNumbers) {
-			int _OFFSET = (textArea.getLineCount()+"").length() * fm.charWidth('9') + 5;
-			OFFSET = _OFFSET < OFFSET ? OFFSET : _OFFSET;
+			OFFSET = (textArea.getVisibleLines()+"").length() * fm.charWidth('9') + 5;
 		}
 		
 		tabSize = fm.charWidth(' ') * ((Integer) textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
@@ -521,14 +521,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 		currentLineIndex = line;
 		int y = textArea.lineToY(line);
 
-		if (lineNumbers) {
-			gfx.setColor(Color.lightGray);
-			gfx.fillRect(0, y, OFFSET, fm.getHeight());
-			gfx.setColor(Color.black);
-			gfx.setFont(defaultFont);
-			gfx.drawString(line+"", 0, y);
-		}
-		
 		if (line < 0 || line >= textArea.getLineCount()) {
 			if (paintInvalid) {
 				paintHighlight(gfx, line, y);
@@ -539,6 +531,14 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 			paintPlainLine(gfx, line, defaultFont, defaultColor, x, y);
 		} else {
 			paintSyntaxLine(gfx, tokenMarker, line, defaultFont, defaultColor, x, y);
+		}
+		
+		if (lineNumbers) {
+			gfx.setColor(Color.lightGray);
+			gfx.fillRect(0, y, OFFSET, fm.getHeight());
+			gfx.setColor(Color.black);
+			gfx.setFont(defaultFont);
+			gfx.drawString(line+"", 0, y);
 		}
 	}
 
@@ -678,6 +678,10 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 	public void decreaseFontSize() {
 		FONTSIZE -= 1;
+		if (FONTSIZE < 2)
+		{
+			FONTSIZE = 2;
+		}
 		Font f = getFont();
 		this.setFont(new Font(f.getName(),f.getStyle(),FONTSIZE));
 	}

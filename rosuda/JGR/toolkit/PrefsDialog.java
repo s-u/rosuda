@@ -97,9 +97,9 @@ public class PrefsDialog extends JDialog implements ActionListener,
 	public PrefsDialog(JFrame f) {
 		super(f, "Preferences", false);
 
-		helptabs.setMinimumSize(new Dimension(40, 24));
-		helptabs.setPreferredSize(new Dimension(40, 24));
-		helptabs.setMaximumSize(new Dimension(40, 24));
+		helptabs.setMinimumSize(new Dimension(50, 24));
+		helptabs.setPreferredSize(new Dimension(50, 24));
+		helptabs.setMaximumSize(new Dimension(50, 24));
 		helptabs.setValue(new Integer(JGRPrefs.maxHelpTabs));
 
 		tabWidth.setMinimumSize(new Dimension(40, 24));
