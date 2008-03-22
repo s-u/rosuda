@@ -963,6 +963,7 @@ public class BufferTokenizer {
                       polygonID = j;
 					} else if(head[j][1] == 'U') {
                       isDiscret[j] = true;
+                      numericalColumn[j] = false;
                       temp = new byte[head[j].length - 2];
                       for(k=0; k<head[j].length - 2; k++) {
                         temp[k] = head[j][k+2];
