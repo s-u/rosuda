@@ -125,8 +125,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				// todo add edit menu
 				
 				"+", "Tools", "Editor", "editor", "@BObject Browser",
-				"objectmgr", "DataTable", "table", "-", "Increase Font Size",
-				"fontBigger", "Decrease Font Size", "fontSmaller", "+",
+				"objectmgr", "DataTable", "table", "-", "!IIncrease Font Size",
+				"fontBigger", "!DDecrease Font Size", "fontSmaller", "+",
 				"Packages", "Package Manager", "packagemgr", "+", "Workspace",
 				"Load Workspace", "openwsp", "Save Workspace", "savewsp",
 				"Save Workspace as", "saveaswsp", "Clear Workspace",

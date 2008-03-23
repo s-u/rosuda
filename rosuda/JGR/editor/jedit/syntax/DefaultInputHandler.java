@@ -86,8 +86,8 @@ public class DefaultInputHandler extends InputHandler {
 		addKeyBinding("MS+Z", REDO);
 		
 		if (System.getProperty("os.name").startsWith("Mac")) {
-			addKeyBinding("C+A", SELECT_HOME);
-			addKeyBinding("C+E", SELECT_END);
+			addKeyBinding("C+A", HOME);
+			addKeyBinding("C+E", END);
 		}
 	}
 

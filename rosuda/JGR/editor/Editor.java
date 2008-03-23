@@ -29,6 +29,7 @@ import jedit.syntax.RTokenMarker;
 import org.rosuda.JGR.JGR;
 
 import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefsDialog;
@@ -76,8 +77,8 @@ public class Editor extends TJFrame implements ActionListener {
 				"@/Toggle Comment","commentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
 				"findnext", 
 				
-				//"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 
-				"~Window", "+","Help","R Help","rhelp", "~Preferences", "~About", "0" };
+				"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 
+				"~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
 		EzMenu.getEzMenu(this, this, Menu);
 		Menu rm = recentMenu = (Menu) EzMenu.getItem(this,"Open Recent");
 		//System.out.println(rm);
@@ -340,7 +341,8 @@ public class Editor extends TJFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
+		if ("about".equalsIgnoreCase(e.getActionCommand()))
+			new AboutDialog(this);
 		if ("new".equalsIgnoreCase(e.getActionCommand()))
 			newEditor();
 		if ("open".equalsIgnoreCase(e.getActionCommand()))
