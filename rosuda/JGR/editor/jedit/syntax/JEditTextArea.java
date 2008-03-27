@@ -629,7 +629,7 @@ public class JEditTextArea extends JComponent {
 	 */
 	public int xToOffset(int line, int x) {
 		
-		x  -= (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
+//		x  -= (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
 		
 		TokenMarker tokenMarker = getTokenMarker();
 
