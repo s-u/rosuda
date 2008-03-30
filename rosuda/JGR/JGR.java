@@ -47,7 +47,7 @@ public class JGR {
 	//JGR_VERSION 1.4-16
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.5-11";
+	public static final String VERSION = "1.5-12";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";

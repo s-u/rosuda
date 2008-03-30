@@ -57,6 +57,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
 import javax.swing.text.Segment;
 import javax.swing.text.Utilities;
 import javax.swing.undo.AbstractUndoableEdit;
@@ -156,6 +157,7 @@ public class JEditTextArea extends JComponent {
 
 		// Load the defaults
 		setInputHandler(defaults.inputHandler);
+		defaults.document.putProperty(PlainDocument.tabSizeAttribute, new Integer(JGRPrefs.tabWidth));
 		setDocument(defaults.document);
 		editable = defaults.editable;
 		caretVisible = defaults.caretVisible;
@@ -629,7 +631,6 @@ public class JEditTextArea extends JComponent {
 	 */
 	public int xToOffset(int line, int x) {
 		
-//		x  -= (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
 		
 		TokenMarker tokenMarker = getTokenMarker();
 
@@ -640,6 +641,7 @@ public class JEditTextArea extends JComponent {
 
 		char[] segmentArray = lineSegment.array;
 		int segmentOffset = lineSegment.offset;
+				
 		int segmentCount = lineSegment.count;
 
 		int width = horizontalOffset;
@@ -651,7 +653,7 @@ public class JEditTextArea extends JComponent {
 				if (c == '\t')
 					charWidth = (int) painter.nextTabStop(width, i) - width;
 				else
-					charWidth = fm.charWidth(c);
+					charWidth = fm.charWidth(c) + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);;
 
 				if (painter.isBlockCaretEnabled()) {
 					if (x - charWidth <= width)
@@ -678,7 +680,7 @@ public class JEditTextArea extends JComponent {
 			// Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
 			SyntaxStyle[] styles = painter.getStyles();
-
+			
 			for (;;) {
 				byte id = tokens.id;
 				if (id == Token.END)
@@ -690,26 +692,29 @@ public class JEditTextArea extends JComponent {
 					fm = styles[id].getFontMetrics(defaultFont);
 
 				int length = tokens.length;
-
+				
 				for (int i = 0; i < length; i++) {
 					char c = segmentArray[segmentOffset + offset + i];
 					int charWidth;
-					if (c == '\t')
+					if (c == '\t') {
 						charWidth = (int) painter.nextTabStop(width, offset + i) - width;
+					}
 					else
-						charWidth = fm.charWidth(c);
+						charWidth = fm.charWidth(c) + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);
 
 					if (painter.isBlockCaretEnabled()) {
-						if (x - charWidth <= width)
+						if (x - charWidth <= width) {
 							return offset + i;
+						}
 					} else {
-						if (x - charWidth / 2 <= width)
+						if (x - charWidth / 2 <= width) {
 							return offset + i;
+						}
 					}
 
 					width += charWidth;
 				}
-
+				
 				offset += length;
 				tokens = tokens.next;
 			}

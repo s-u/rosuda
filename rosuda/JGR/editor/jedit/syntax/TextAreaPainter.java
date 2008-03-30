@@ -26,6 +26,8 @@ import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 import javax.swing.text.Utilities;
 
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 /**
  * The text area repaint manager. It performs double buffering and paints lines
  * of text.
@@ -448,7 +450,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	 * @return The next tab stop after <i>x</i>
 	 */
 	public float nextTabStop(float x, int tabOffset) {
-		int offset = textArea.getHorizontalOffset();
+		int offset = textArea.getHorizontalOffset() + (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET: 0);
 		int ntabs = ((int) x - offset) / tabSize;
 		return (ntabs + 1) * tabSize + offset;
 	}
