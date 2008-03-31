@@ -673,12 +673,23 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	}
 
 	public void increaseFontSize() {
+		FONTSIZE = fm.getFont().getSize();
 		FONTSIZE += 1;
 		Font f = getFont();
 		this.setFont(new Font(f.getName(),f.getStyle(),FONTSIZE));
 	}
+	
+	private void updateStyles()
+	{
+		SyntaxStyle[] styles = getStyles();
+		for (int i = 0;  i < styles.length; i++)
+		{
+//			styles[i].get
+		}
+	}
 
 	public void decreaseFontSize() {
+		FONTSIZE = fm.getFont().getSize();
 		FONTSIZE -= 1;
 		if (FONTSIZE < 2)
 		{

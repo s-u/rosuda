@@ -55,7 +55,7 @@ public class RTokenMarker extends TokenMarker {
 						if (doKeyword(line, i, c))
 							break;
 						addToken(i - lastOffset, token);
-						addToken(length - i, Token.COMMENT2);
+						addToken(length - i, Token.COMMENT1);
 						lastOffset = lastKeyword = length;
 						break loop;
 					}
