@@ -10,11 +10,12 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.rosuda.JGR.toolkit.ConsoleSync;
 import org.rosuda.JGR.toolkit.JGRListener;
@@ -47,7 +48,7 @@ public class JGR {
 	//JGR_VERSION 1.4-16
 	
 	/** Version number of JGR */
-	public static final String VERSION = "1.5-13";
+	public static final String VERSION = "1.5-14";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -510,6 +511,17 @@ public class JGR {
 			for (int i = 0; i < rargs.length; i++)
 				System.out.println(rargs[i]);
 
+		String nativeLF = UIManager.getSystemLookAndFeelClassName();
+	    
+	    // Install the look and feel
+	    try {
+	        UIManager.setLookAndFeel(nativeLF);
+	    } catch (InstantiationException e) {
+	    } catch (ClassNotFoundException e) {
+	    } catch (UnsupportedLookAndFeelException e) {
+	    } catch (IllegalAccessException e) {
+	    }
+		
 		try {
 			new JGR();
 		} catch (Exception e) {

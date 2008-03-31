@@ -176,13 +176,13 @@ public class JEditTextArea extends JComponent {
         FontTracker.current.add(this);
 	}
 
-	public void increaseFontSize() {
-		painter.increaseFontSize();
-	}
-	
-	public void decreaseFontSize() {
-		painter.decreaseFontSize();
-	}
+//	public void increaseFontSize() {
+//		painter.increaseFontSize();
+//	}
+//	
+//	public void decreaseFontSize() {
+//		painter.decreaseFontSize();
+//	}
 	
 	public void setFont(Font f)
 	{

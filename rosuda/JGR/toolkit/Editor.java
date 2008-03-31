@@ -463,10 +463,6 @@ public class Editor extends TJFrame implements ActionListener, KeyListener {
 			FontTracker.current.setFontBigger();
 		else if (cmd == "fontSmaller")
 			FontTracker.current.setFontSmaller();
-		else if (cmd == "fontBigger")
-			FontTracker.current.setFontBigger();
-		else if (cmd == "fontSmaller")
-			FontTracker.current.setFontSmaller();
 		else if (cmd == "help")
 			JGR.MAINRCONSOLE.execute("help.start()", false);
 		else if (cmd == "new")

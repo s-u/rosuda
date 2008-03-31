@@ -108,7 +108,7 @@ public class RInputHandler extends DefaultInputHandler {
 					posC = CodeCompletion.getInstance().updateList(pattern);
 				}
 				if (posC > 0) {
-					codeCompletion = PopupFactory.getSharedInstance().getPopup((Component)evt.getSource(), (Component)CodeCompletion.getInstance(), loc.x, loc.y + TextAreaPainter.FONTSIZE + 10);
+					codeCompletion = PopupFactory.getSharedInstance().getPopup((Component)evt.getSource(), (Component)CodeCompletion.getInstance(), loc.x, loc.y + ((Component)evt.getSource()).getFont().getSize() + 10);
 					codeCompletion.show();
 				}
 				

@@ -31,6 +31,7 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.FileSelector;
+import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 
@@ -370,9 +371,9 @@ public class Editor extends TJFrame implements ActionListener {
 			FindReplaceDialog.findNextExt(this, textArea);
 
 		if ("fontBigger".equalsIgnoreCase(e.getActionCommand()))
-			textArea.increaseFontSize();
+			FontTracker.current.setFontBigger();
 		if ("fontSmaller".equalsIgnoreCase(e.getActionCommand()))
-			textArea.decreaseFontSize();
+			FontTracker.current.setFontSmaller();
 		
 			
 		if (e.getActionCommand() == "commentcode") {

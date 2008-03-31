@@ -26,8 +26,6 @@ import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 import javax.swing.text.Utilities;
 
-import org.rosuda.JGR.toolkit.JGRPrefs;
-
 /**
  * The text area repaint manager. It performs double buffering and paints lines
  * of text.
@@ -44,7 +42,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	protected static int OFFSET = 0;
 	private static final int MINIMUM_OFFSET = 25;
 	
-	public static int FONTSIZE = 14;
+	//public static int FONTSIZE = 14;
 
 	/**
 	 * Creates a new repaint manager. This should be not be called directly.
@@ -63,7 +61,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
-		setFont(new Font("Monospaced", Font.PLAIN, FONTSIZE));
+//		setFont(new Font(JGRPrefs.FontName, Font.PLAIN, JGR));
 		setForeground(Color.black);
 		setBackground(Color.white);
 
@@ -82,6 +80,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 		eolMarkers = defaults.eolMarkers;
 		lineNumbers = defaults.lineNumbers;
 		if (lineNumbers) OFFSET = 25;
+	}
+	
+	public int getFontSize()
+	{
+		return getFont().getSize();
 	}
 
 	/**
@@ -670,32 +673,5 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 	public Highlight getHightlight() {
 		return highlights;
-	}
-
-	public void increaseFontSize() {
-		FONTSIZE = fm.getFont().getSize();
-		FONTSIZE += 1;
-		Font f = getFont();
-		this.setFont(new Font(f.getName(),f.getStyle(),FONTSIZE));
-	}
-	
-	private void updateStyles()
-	{
-		SyntaxStyle[] styles = getStyles();
-		for (int i = 0;  i < styles.length; i++)
-		{
-//			styles[i].get
-		}
-	}
-
-	public void decreaseFontSize() {
-		FONTSIZE = fm.getFont().getSize();
-		FONTSIZE -= 1;
-		if (FONTSIZE < 2)
-		{
-			FONTSIZE = 2;
-		}
-		Font f = getFont();
-		this.setFont(new Font(f.getName(),f.getStyle(),FONTSIZE));
 	}
 }

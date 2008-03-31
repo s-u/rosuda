@@ -56,7 +56,6 @@ public class FontTracker {
 	 * Increase fontsize, current step is 2.
 	 */
 	public void setFontBigger() {
-		Enumeration e = components.elements();
 		JGRPrefs.FontSize += 2;
 		JGRPrefs.refresh();
 		applyFont();
@@ -66,8 +65,9 @@ public class FontTracker {
 	 * Decrease fontsize, current step is 2.
 	 */
 	public void setFontSmaller() {
-		Enumeration e = components.elements();
 		JGRPrefs.FontSize -= 2;
+		if (JGRPrefs.FontSize <= 6)
+			JGRPrefs.FontSize = 6;
 		JGRPrefs.refresh();
 		applyFont();
 	}
@@ -83,6 +83,7 @@ public class FontTracker {
 			Component comp = (Component) e.nextElement();
 			try {
 				Class sc = comp.getClass().getSuperclass();
+
 				while (!sc.getName().startsWith("java"))
 					sc = sc.getSuperclass();
 				if (sc.getName().equals("javax.swing.JTable")) {
@@ -92,7 +93,9 @@ public class FontTracker {
 					((javax.swing.JTable) comp)
 							.setRowHeight((int) (f.getSize() * 1.6));
 				} else if (sc.getName().equals("javax.swing.JTextComponent")
-						|| sc.getName().equals("javax.swing.JTextPane")) {
+						|| sc.getName().equals("javax.swing.JTextPane")
+						|| comp.getClass().getName().equals("jedit.syntax.JEditTextArea")) {
+					f = JGRPrefs.DefaultFont;
 				} else if (f.getSize() > 18)
 					f = new Font(f.getName(), f.getStyle(),
 							JGRPrefs.MINFONTSIZE);

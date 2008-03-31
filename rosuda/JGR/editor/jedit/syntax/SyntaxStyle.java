@@ -74,7 +74,7 @@ public class SyntaxStyle {
 	public Font getStyledFont(Font font) {
 		if (font == null)
 			throw new NullPointerException("font param must not" + " be null");
-//		if (font.equals(lastFont) && font.getSize() == lastFont.getSize())
+//		if (font.equals(lastFont))
 //			return lastStyledFont;
 		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(), (bold ? Font.BOLD : 0) | (italic ? Font.ITALIC : 0), font.getSize());
@@ -87,7 +87,7 @@ public class SyntaxStyle {
 	public FontMetrics getFontMetrics(Font font) {
 		if (font == null)
 			throw new NullPointerException("font param must not" + " be null");
-//		if (font.equals(lastFont) && font.getSize() == lastFont.getSize() && fontMetrics != null) {
+//		if (font.equals(lastFont) && fontMetrics != null) {
 //			return fontMetrics;
 //		}
 		lastFont = font;
