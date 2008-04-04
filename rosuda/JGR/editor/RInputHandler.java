@@ -150,6 +150,10 @@ public class RInputHandler extends DefaultInputHandler {
 
 			int startLine = textArea.getSelectionStartLine();
 			int endLine = textArea.getSelectionEndLine();
+			int so = textArea.getLineStartOffset(endLine);
+			int ss = textArea.getSelectionEnd();
+			
+			if (so == ss) endLine--;
 
 			if (startLine < 0)
 				startLine = endLine = textArea.getCaretLine();

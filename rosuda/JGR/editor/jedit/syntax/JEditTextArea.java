@@ -874,6 +874,10 @@ public class JEditTextArea extends JComponent {
 	public void shiftSelection(int direction) throws BadLocationException {
 		int a = this.getLineOfOffset(this.getSelectionStart());
 		int b = this.getLineOfOffset(this.getSelectionEnd());
+		int so = this.getLineStartOffset(b);
+		int ss = this.getSelectionEnd();
+		
+		if (so == ss) b--;
 		while (a <= b) {
 			int ls = this.getLineStartOffset(a);
 			int le = this.getLineEndOffset(a);
