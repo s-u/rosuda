@@ -644,7 +644,7 @@ public class JEditTextArea extends JComponent {
 				
 		int segmentCount = lineSegment.count;
 
-		int width = horizontalOffset;
+		int width = horizontalOffset + (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
 
 		if (tokenMarker == null) {
 			for (int i = 0; i < segmentCount; i++) {
@@ -653,7 +653,7 @@ public class JEditTextArea extends JComponent {
 				if (c == '\t')
 					charWidth = (int) painter.nextTabStop(width, i) - width;
 				else
-					charWidth = fm.charWidth(c) + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);;
+					charWidth = fm.charWidth(c);// + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);;
 
 				if (painter.isBlockCaretEnabled()) {
 					if (x - charWidth <= width)
@@ -700,7 +700,7 @@ public class JEditTextArea extends JComponent {
 						charWidth = (int) painter.nextTabStop(width, offset + i) - width;
 					}
 					else
-						charWidth = fm.charWidth(c) + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);
+						charWidth = fm.charWidth(c);// + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);
 
 					if (painter.isBlockCaretEnabled()) {
 						if (x - charWidth <= width) {
@@ -1987,6 +1987,9 @@ public class JEditTextArea extends JComponent {
 
 			int line = yToLine(evt.getY());
 			int offset = xToOffset(line, evt.getX());
+			System.out.println("Offset: "+offset);
+			System.out.println("Linenumberoffset: "+TextAreaPainter.OFFSET);
+			System.out.println("LineOffset: " + getLineStartOffset(line));
 			int dot = getLineStartOffset(line) + offset;
 
 			switch (evt.getClickCount()) {

@@ -374,7 +374,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	public void paint(Graphics gfx) {
 		
 		if (lineNumbers) {
-			OFFSET = (textArea.getVisibleLines()+"").length() * fm.charWidth('9') + 5;
+			int lines = textArea.getVisibleLines();
+			if (textArea.getLineCount() > lines)
+			{
+				lines = textArea.getLineCount();
+			}
+			OFFSET = (lines+"").length() * fm.charWidth('9') + 5;
 		}
 		
 		tabSize = fm.charWidth(' ') * ((Integer) textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
