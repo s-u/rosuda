@@ -1987,9 +1987,6 @@ public class JEditTextArea extends JComponent {
 
 			int line = yToLine(evt.getY());
 			int offset = xToOffset(line, evt.getX());
-			System.out.println("Offset: "+offset);
-			System.out.println("Linenumberoffset: "+TextAreaPainter.OFFSET);
-			System.out.println("LineOffset: " + getLineStartOffset(line));
 			int dot = getLineStartOffset(line) + offset;
 
 			switch (evt.getClickCount()) {

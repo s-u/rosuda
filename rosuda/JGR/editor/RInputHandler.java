@@ -121,8 +121,14 @@ public class RInputHandler extends DefaultInputHandler {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 
-			int startLine = textArea.getSelectionStartLine();
+			String s = textArea.getSelectedText().trim();
+			if (s.length() > 0)
+				JGR.MAINRCONSOLE.execute(s.trim(), true);
+			
+			/*int startLine = textArea.getSelectionStartLine();
 			int endLine = textArea.getSelectionEndLine();
+			int so = textArea.getLineStartOffset(endLine);
+			int se = textArea.getSelectionEnd();
 
 			if (startLine >= 0 && endLine < textArea.getLineCount()) {
 				for (int line = startLine; line <= endLine; line++) {
@@ -131,7 +137,7 @@ public class RInputHandler extends DefaultInputHandler {
 						JGR.MAINRCONSOLE.execute(lineText.trim(), true);
 				}
 
-			}
+			}*/
 
 		}
 	}
