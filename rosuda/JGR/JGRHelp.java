@@ -54,6 +54,7 @@ import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.ibase.toolkit.WTentry;
 
@@ -131,7 +132,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 				"@CCopy", "copy", "-", "@RRun selection", "runselection",
 				"@FFind", "search", "@GFind Next", "searchnext",
 				"~Window", "~About", "0" };
-		EzMenu.getEzMenu(this, this, Menu);
+		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		if (System.getProperty("os.name").startsWith("Windows")) {
 			RHELPLOCATION = RController.getRHome();

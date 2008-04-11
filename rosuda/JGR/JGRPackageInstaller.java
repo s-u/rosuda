@@ -29,6 +29,7 @@ import javax.swing.WindowConstants;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 
 import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
@@ -70,7 +71,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		String[] Menu = {
 		/* "+", "File", "~File.Basic.End", */
 		"~Window", "0" };
-		EzMenu.getEzMenu(this, this, Menu);
+		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		close.setActionCommand("close");
 		close.addActionListener(this);

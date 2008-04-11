@@ -30,6 +30,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -100,7 +101,7 @@ import org.rosuda.JGR.toolkit.JGRPrefs;
  * @author Slava Pestov
  * @version $Id: JEditTextArea.java,v 1.36 1999/12/13 03:40:30 sp Exp $
  */
-public class JEditTextArea extends JComponent {
+public class JEditTextArea extends JComponent implements KeyListener {
 	
 	/**
 	 * 
@@ -128,7 +129,9 @@ public class JEditTextArea extends JComponent {
 	 */
 	public JEditTextArea(TextAreaDefaults defaults) {
 		// Enable the necessary events
-		enableEvents(AWTEvent.KEY_EVENT_MASK);
+		//enableEvents(AWTEvent.KEY_EVENT_MASK);
+		
+		addKeyListener(this);
 
 		// Initialize some misc. stuff
 		painter = new TextAreaPainter(this, defaults);
@@ -1575,7 +1578,7 @@ public class JEditTextArea extends JComponent {
 	 * Forwards key events directly to the input handler. This is slightly
 	 * faster than using a KeyListener because some Swing overhead is avoided.
 	 */
-	public void processKeyEvent(KeyEvent evt) {
+	/*public void processKeyEvent(KeyEvent evt) {
 		if (inputHandler == null)
 			return;
 		switch (evt.getID()) {
@@ -1589,7 +1592,7 @@ public class JEditTextArea extends JComponent {
 			inputHandler.keyReleased(evt);
 			break;
 		}
-	}
+	}*/
 
 	// protected members
 	protected static String CENTER = "center";
@@ -2150,6 +2153,27 @@ public class JEditTextArea extends JComponent {
 			document.replace(getSelectionStart(), getSelectionEnd() - getSelectionStart(), currentReplaceStr, null);
 		} catch (BadLocationException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if (inputHandler != null)
+		{
+			inputHandler.keyPressed(e);
+		}
+	}
+
+	public void keyReleased(KeyEvent e) {
+		if (inputHandler != null)
+		{
+			inputHandler.keyReleased(e);
+		}
+	}
+
+	public void keyTyped(KeyEvent e) {
+		if (inputHandler != null)
+		{
+			inputHandler.keyTyped(e);
 		}
 	}
 }

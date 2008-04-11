@@ -1,8 +1,12 @@
 package org.rosuda.ibase.toolkit;
-import java.awt.*;
-import javax.swing.*;
-import org.rosuda.ibase.*;
-import org.rosuda.util.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Frame;
+
+import javax.swing.JFrame;
+
+import org.rosuda.ibase.Common;
+import org.rosuda.util.Global;
 
 /** enhanced {@link JFrame} that uses {@link WinTracker} to keep track of
     open frames.
@@ -18,7 +22,7 @@ public class TJFrame extends JFrame implements FrameDevice
 	
 	// add myself to WinTracker
 	if (WinTracker.current==null) WinTracker.current=new WinTracker();
-	WTmyself=new WTentryAWT(WinTracker.current,this,tit,wclass);
+	WTmyself=new WTentrySwing(WinTracker.current,this,tit,wclass);
         if (Common.cur_arrow!=null) setCursor(Common.cur_arrow);
     };
 

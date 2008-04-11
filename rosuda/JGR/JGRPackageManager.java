@@ -31,6 +31,7 @@ import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.TableSorter;
 
 import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
@@ -177,7 +178,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 			String[] Menu = {
 			/* "+", "File", "~File.Basic.End", */
 			"~Window", "0" };
-			EzMenu.getEzMenu(this, this, Menu);
+			EzMenuSwing.getEzMenu(this, this, Menu);
 
 			close.setActionCommand("exit");
 			close.addActionListener(this);

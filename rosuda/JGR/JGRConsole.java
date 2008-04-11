@@ -7,8 +7,6 @@ package org.rosuda.JGR;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FileDialog;
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -28,6 +26,8 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -35,12 +35,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
 
-
+import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.ConsoleOutput;
 import org.rosuda.JGR.toolkit.DataTable;
-import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
@@ -53,8 +52,8 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
-import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.WTentry;
 import org.rosuda.ibase.toolkit.WinTracker;
 
@@ -131,24 +130,24 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"Load Workspace", "openwsp", "Save Workspace", "savewsp",
 				"Save Workspace as", "saveaswsp", "Clear Workspace",
 				"clearwsp","~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
-		EzMenu.getEzMenu((java.awt.Frame)this, this, Menu);
+		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		// Add History if we didn't found one in the user's home directory
 		if (JGR.RHISTORY == null)
 			JGR.RHISTORY = new Vector();
 		currentHistPosition = JGR.RHISTORY.size();
 		
-		Menu rm = (Menu) EzMenu.getItem(this,"Copy Special");
+		JMenu rm = (JMenu) EzMenuSwing.getItem(this,"Copy Special");
 		if (rm != null) {
-			MenuItem item1 = new MenuItem("Copy Output");
+			JMenuItem item1 = new JMenuItem("Copy Output");
 			item1.setActionCommand("copyoutput");
 			item1.addActionListener(this);
 			rm.add(item1);
-			MenuItem item2 = new MenuItem("Copy Commands");
+			JMenuItem item2 = new JMenuItem("Copy Commands");
 			item2.setActionCommand("copycmds");
 			item2.addActionListener(this);
 			rm.add(item2);
-			MenuItem item3 = new MenuItem("Copy Result");
+			JMenuItem item3 = new JMenuItem("Copy Result");
 			item3.setActionCommand("copyresult");
 			item3.addActionListener(this);
 			rm.add(item3);
@@ -842,14 +841,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public void focusGained(FocusEvent e) {
 		if (e.getSource().equals(output)) {
 			toolBar.cutButton.setEnabled(false);
-			EzMenu.getItem(this, "cut").setEnabled(false);
+			EzMenuSwing.getItem(this, "cut").setEnabled(false);
 			toolBar.pasteButton.setEnabled(false);
-			EzMenu.getItem(this, "paste").setEnabled(false);
+			EzMenuSwing.getItem(this, "paste").setEnabled(false);
 		} else if (e.getSource().equals(input)) {
 			toolBar.cutButton.setEnabled(true);
-			EzMenu.getItem(this, "cut").setEnabled(true);
+			EzMenuSwing.getItem(this, "cut").setEnabled(true);
 			toolBar.pasteButton.setEnabled(true);
-			EzMenu.getItem(this, "paste").setEnabled(true);
+			EzMenuSwing.getItem(this, "paste").setEnabled(true);
 		}
 	}
 

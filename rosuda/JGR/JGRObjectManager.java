@@ -28,6 +28,7 @@ import org.rosuda.JGR.toolkit.ModelBrowserTable;
 import org.rosuda.JGR.toolkit.ObjectBrowserTree;
 
 import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
@@ -71,7 +72,7 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 		super("Object Browser", false, TJFrame.clsObjBrowser);
 
 		String[] Menu = { "~Window", "0" };
-		EzMenu.getEzMenu(this, this, Menu);
+		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		while (!JGR.STARTED)
 			;

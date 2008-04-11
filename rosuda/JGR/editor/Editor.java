@@ -3,8 +3,6 @@ package org.rosuda.JGR.editor;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -14,12 +12,13 @@ import java.util.StringTokenizer;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-
 import javax.swing.text.BadLocationException;
 
 import jedit.syntax.FindReplaceDialog;
@@ -27,15 +26,13 @@ import jedit.syntax.JEditTextArea;
 import jedit.syntax.RTokenMarker;
 
 import org.rosuda.JGR.JGR;
-
-import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefsDialog;
-
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.util.RecentList;
 
@@ -58,7 +55,7 @@ public class Editor extends TJFrame implements ActionListener {
 	public static RecentList recentOpen;
 
 	/** Menuitem for the recent-list */
-	public Menu recentMenu;
+	public JMenu recentMenu;
 	
 	private String fileName;
 
@@ -80,8 +77,8 @@ public class Editor extends TJFrame implements ActionListener {
 				
 				"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 
 				"~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
-		EzMenu.getEzMenu(this, this, Menu);
-		Menu rm = recentMenu = (Menu) EzMenu.getItem(this,"Open Recent");
+		EzMenuSwing.getEzMenu(this, this, Menu);
+		JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this,"Open Recent");
 		//System.out.println(rm);
 		if (rm != null) {
 			rm.removeAll();
@@ -91,7 +88,7 @@ public class Editor extends TJFrame implements ActionListener {
 			String[] longNames = recentOpen.getAllEntries();
 			int i = 0;
 			while (i < shortNames.length) {
-				MenuItem mi = new MenuItem(shortNames[i]);
+				JMenuItem mi = new JMenuItem(shortNames[i]);
 				mi.setActionCommand("recent:" + longNames[i]);
 				mi.addActionListener(this);
 				rm.add(mi);
@@ -99,7 +96,7 @@ public class Editor extends TJFrame implements ActionListener {
 			}
 			if (i > 0)
 				rm.addSeparator();
-			MenuItem ca = new MenuItem("Clear list");
+			JMenuItem ca = new JMenuItem("Clear list");
 			ca.setActionCommand("recent-clear");
 			ca.addActionListener(this);
 			rm.add(ca);
@@ -236,7 +233,7 @@ public class Editor extends TJFrame implements ActionListener {
 			
 			
 			recentOpen.addEntry(fileName);
-		Menu rm = recentMenu = (Menu) EzMenu.getItem(this, "Open Recent");
+		JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this, "Open Recent");
 		if (rm != null) {
 			rm.removeAll();
 			if (recentOpen == null)
@@ -245,7 +242,7 @@ public class Editor extends TJFrame implements ActionListener {
 			String[] longNames = recentOpen.getAllEntries();
 			int i = 0;
 			while (i < shortNames.length) {
-				MenuItem mi = new MenuItem(shortNames[i]);
+				JMenuItem mi = new JMenuItem(shortNames[i]);
 				mi.setActionCommand("recent:" + longNames[i]);
 				mi.addActionListener(this);
 				rm.add(mi);
@@ -253,7 +250,7 @@ public class Editor extends TJFrame implements ActionListener {
 			}
 			if (i > 0)
 				rm.addSeparator();
-			MenuItem ca = new MenuItem("Clear list");
+			JMenuItem ca = new JMenuItem("Clear list");
 			ca.setActionCommand("recent-clear");
 			ca.addActionListener(this);
 			rm.add(ca);
@@ -406,7 +403,7 @@ public class Editor extends TJFrame implements ActionListener {
 			if (recentOpen != null && recentMenu != null) {
 				recentMenu.removeAll();
 				recentMenu.addSeparator();
-				MenuItem ca = new MenuItem("Clear list");
+				JMenuItem ca = new JMenuItem("Clear list");
 				ca.setActionCommand("recent-clear");
 				ca.addActionListener(this);
 				ca.setEnabled(false);
