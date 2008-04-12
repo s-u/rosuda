@@ -152,11 +152,6 @@ public class JGR {
 		JGRPackageManager.neededPackages.put("stats", dummy);
 		JGRPackageManager.neededPackages.put("datasets", dummy);
 
-		JGRPackageManager.neededPackages.put("JGR", dummy);
-		JGRPackageManager.neededPackages.put("rJava", dummy);
-		JGRPackageManager.neededPackages.put("iplots", dummy);
-		JGRPackageManager.neededPackages.put("JavaGD", dummy);
-
 		org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 		JGRPrefs.initialize();
 		splash = new org.rosuda.JGR.toolkit.SplashScreen();
@@ -220,9 +215,12 @@ public class JGR {
 			splash.stop();
 		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
 		if (JGR.R != null && JGR.STARTED)
+		{
 			JGR.R
 					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
 							+ ")");
+			JGR.MAINRCONSOLE.execute("library(JGR)",false);
+		}
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
 	}
