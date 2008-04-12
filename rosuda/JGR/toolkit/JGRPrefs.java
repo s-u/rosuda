@@ -288,7 +288,13 @@ public class JGRPrefs {
 			String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length - 1]
 					.toString();
 			for (int i = JGRPackageManager.defaultPackages.length - 2; i >= 0; i--)
-				packages += ", " + JGRPackageManager.defaultPackages[i];
+			{
+				String pkg = (String) JGRPackageManager.defaultPackages[i];
+				if (!"JGR".equals(pkg) && !"rJava".equals(pkg) && ! "JavaGD".equals(pkg) && !"iplots".equals(pkg))
+					packages += ", " + pkg;
+			}
+			packages += "rJava,JavaGD,iplots,JGR";
+			
 			prefs.put("DefaultPackages", packages);
 		}
 		if (JGR.RLIBS != null && JGR.RLIBS.length > 1) {
