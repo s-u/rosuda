@@ -154,6 +154,7 @@ public class JGR {
 
 		JGRPackageManager.neededPackages.put("JGR", dummy);
 		JGRPackageManager.neededPackages.put("rJava", dummy);
+		JGRPackageManager.neededPackages.put("iplots", dummy);
 		JGRPackageManager.neededPackages.put("JavaGD", dummy);
 
 		org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
