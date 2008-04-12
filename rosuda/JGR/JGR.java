@@ -219,7 +219,8 @@ public class JGR {
 			JGR.R
 					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
 							+ ")");
-			JGR.MAINRCONSOLE.execute("library(JGR)",false);
+			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
+//			JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
 		}
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
