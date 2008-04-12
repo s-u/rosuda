@@ -24,7 +24,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.SVar;
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.util.Global;
 
 /**
@@ -256,7 +256,7 @@ public class JGR {
 	public static void addMenu(String name) {
 		if (MAINRCONSOLE == null)
 			return;
-		EzMenu.addMenu((java.awt.Frame)MAINRCONSOLE, name);
+		EzMenuSwing.addMenu(MAINRCONSOLE, name);
 	}
 
 	/**
@@ -274,7 +274,7 @@ public class JGR {
 			return;
 		if (jgrlistener == null)
 			jgrlistener = new JGRListener();
-		EzMenu.addMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
+		EzMenuSwing.addJMenuItem(MAINRCONSOLE, menu, name, cmd, jgrlistener);
 	}
 
 	/**
@@ -286,7 +286,7 @@ public class JGR {
 	public static void addMenuSeparator(String menu) {
 		if (MAINRCONSOLE == null)
 			return;
-		EzMenu.addMenuSeparator(MAINRCONSOLE, menu);
+		EzMenuSwing.addMenuSeparator(MAINRCONSOLE, menu);
 	}
 
 	/**
