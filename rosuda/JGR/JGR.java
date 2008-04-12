@@ -146,6 +146,7 @@ public class JGR {
 		Object dummy = new Object();
 		JGRPackageManager.neededPackages.put("base", dummy);
 		JGRPackageManager.neededPackages.put("graphics", dummy);
+		JGRPackageManager.neededPackages.put("grDevices", dummy);
 		JGRPackageManager.neededPackages.put("utils", dummy);
 		JGRPackageManager.neededPackages.put("methods", dummy);
 		JGRPackageManager.neededPackages.put("stats", dummy);
