@@ -23,7 +23,7 @@
 			productName = RGui;
 			productReference = A426002607780DC300DD0B12 /* JGR.app */;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
@@ -55,7 +55,7 @@
 		<key>JVMVersion</key>
 		<string>1.4*</string>
 		<key>MainClass</key>
-		<string>org.rosuda.JGR.JGR</string>
+		<string>RJavaClassLoader</string>
 		<key>Properties</key>
 		<dict>
 			<key>com.apple.macos.useScreenMenuBar</key>
@@ -64,7 +64,7 @@
 			<string>JGR</string>
 		</dict>
 		<key>VMOptions</key>
-		<string>-Xmx512m</string>
+		<string>-Xmx512m -Drjava.path=/Library/Frameworks/R.framework/Resources/library/rJava -Dmain.class=org.rosuda.JGR.JGR -Drjava.classpath=/Volumes/Markus/Users/markus/Development/RoSuDa/Launcher/JGR/build/Development/JGR.app:/Library/Frameworks/R.framework/Resources/library/rJava/jri/JRI.jar:JavaClasses</string>
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
 	</dict>
@@ -83,6 +83,7 @@
 /* End PBXApplicationTarget section */
 
 /* Begin PBXBuildFile section */
+		280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 280E36670DB1014000B968C7 /* EzMenuSwing.java */; };
 		2835E1A90AAAC09300012BE8 /* AWTGraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */; };
 		2835E1AA0AAAC09300012BE8 /* FrameDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A30AAAC09300012BE8 /* FrameDevice.java */; };
 		2835E1AB0AAAC09300012BE8 /* GraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A40AAAC09300012BE8 /* GraphicsDevice.java */; };
@@ -285,18 +286,6 @@
 		289DF61C09F26A9F00C34B0B /* iRadio.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF60F09F26A9E00C34B0B /* iRadio.java */; };
 		289DF61D09F26A9F00C34B0B /* iSlider.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61009F26A9E00C34B0B /* iSlider.java */; };
 		289DF61E09F26A9F00C34B0B /* iWindow.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61109F26A9E00C34B0B /* iWindow.java */; };
-		289DF62B09F26ABD00C34B0B /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF61F09F26ABC00C34B0B /* jcrypt.java */; };
-		289DF62C09F26ABD00C34B0B /* RBool.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62009F26ABC00C34B0B /* RBool.java */; };
-		289DF62D09F26ABD00C34B0B /* Rconnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62109F26ABC00C34B0B /* Rconnection.java */; };
-		289DF62E09F26ABD00C34B0B /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62209F26ABC00C34B0B /* REXP.java */; };
-		289DF62F09F26ABD00C34B0B /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62309F26ABC00C34B0B /* RFactor.java */; };
-		289DF63009F26ABD00C34B0B /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62409F26ABC00C34B0B /* RFileInputStream.java */; };
-		289DF63109F26ABD00C34B0B /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62509F26ABC00C34B0B /* RFileOutputStream.java */; };
-		289DF63209F26ABE00C34B0B /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62609F26ABC00C34B0B /* RList.java */; };
-		289DF63309F26ABE00C34B0B /* Rpacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62709F26ABC00C34B0B /* Rpacket.java */; };
-		289DF63409F26ABE00C34B0B /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62809F26ABD00C34B0B /* RSession.java */; };
-		289DF63509F26ABE00C34B0B /* RSrvException.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62909F26ABD00C34B0B /* RSrvException.java */; };
-		289DF63609F26ABE00C34B0B /* Rtalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF62A09F26ABD00C34B0B /* Rtalk.java */; };
 		289DF63B09F26AD800C34B0B /* Mutex.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63709F26AD800C34B0B /* Mutex.java */; };
 		289DF63C09F26AD800C34B0B /* Rengine.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63809F26AD800C34B0B /* Rengine.java */; };
 		289DF63D09F26AD800C34B0B /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF63909F26AD800C34B0B /* REXP.java */; };
@@ -369,10 +358,25 @@
 		28D5F2F9060F29D5008CA291 /* cut.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564C05EA8E0D00AF1045 /* cut.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28D5F2FA060F29D5008CA291 /* copy.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564B05EA8E0D00AF1045 /* copy.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		28D5F2FB060F29D6008CA291 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 287F564A05EA8E0D00AF1045 /* back.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28EC0E440D96C08D00FE47D5 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E340D96C08D00FE47D5 /* Makefile */; };
+		28EC0E450D96C08D00FE47D5 /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E360D96C08D00FE47D5 /* jcrypt.java */; };
+		28EC0E460D96C08E00FE47D5 /* REXPFactory.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E370D96C08D00FE47D5 /* REXPFactory.java */; };
+		28EC0E470D96C08E00FE47D5 /* RPacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E380D96C08D00FE47D5 /* RPacket.java */; };
+		28EC0E480D96C08E00FE47D5 /* RTalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E390D96C08D00FE47D5 /* RTalk.java */; };
+		28EC0E490D96C08E00FE47D5 /* RConnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E3A0D96C08D00FE47D5 /* RConnection.java */; };
+		28EC0E4A0D96C08E00FE47D5 /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E3B0D96C08D00FE47D5 /* RFileInputStream.java */; };
+		28EC0E4B0D96C08E00FE47D5 /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E3C0D96C08D00FE47D5 /* RFileOutputStream.java */; };
+		28EC0E4C0D96C08E00FE47D5 /* RserveException.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E3D0D96C08D00FE47D5 /* RserveException.java */; };
+		28EC0E4D0D96C08E00FE47D5 /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E3E0D96C08D00FE47D5 /* RSession.java */; };
+		28EC0E4E0D96C08E00FE47D5 /* jt.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E400D96C08D00FE47D5 /* jt.java */; };
+		28EC0E4F0D96C08E00FE47D5 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E410D96C08D00FE47D5 /* Makefile */; };
+		28EC0E500D96C08E00FE47D5 /* PlotDemo.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E420D96C08D00FE47D5 /* PlotDemo.java */; };
+		28EC0E510D96C08E00FE47D5 /* test.java in Sources */ = {isa = PBXBuildFile; fileRef = 28EC0E430D96C08D00FE47D5 /* test.java */; };
 		28FB0CBF09F231BA0088CD59 /* jogl.jar in Frameworks */ = {isa = PBXBuildFile; fileRef = 28FB0CA909F231700088CD59 /* jogl.jar */; settings = {ATTRIBUTES = (Merge, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		280E36670DB1014000B968C7 /* EzMenuSwing.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = EzMenuSwing.java; path = ../../ibase/toolkit/EzMenuSwing.java; sourceTree = SOURCE_ROOT; };
 		281185DE05E7D8E000C16F9F /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
 		2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AWTGraphicsDevice.java; path = ../../ibase/toolkit/AWTGraphicsDevice.java; sourceTree = SOURCE_ROOT; };
 		2835E1A30AAAC09300012BE8 /* FrameDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FrameDevice.java; path = ../../ibase/toolkit/FrameDevice.java; sourceTree = SOURCE_ROOT; };
@@ -591,18 +595,6 @@
 		289DF60F09F26A9E00C34B0B /* iRadio.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iRadio.java; path = ../../iWidgets/iRadio.java; sourceTree = SOURCE_ROOT; };
 		289DF61009F26A9E00C34B0B /* iSlider.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iSlider.java; path = ../../iWidgets/iSlider.java; sourceTree = SOURCE_ROOT; };
 		289DF61109F26A9E00C34B0B /* iWindow.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = iWindow.java; path = ../../iWidgets/iWindow.java; sourceTree = SOURCE_ROOT; };
-		289DF61F09F26ABC00C34B0B /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = jcrypt.java; path = ../../JRclient/jcrypt.java; sourceTree = SOURCE_ROOT; };
-		289DF62009F26ABC00C34B0B /* RBool.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RBool.java; path = ../../JRclient/RBool.java; sourceTree = SOURCE_ROOT; };
-		289DF62109F26ABC00C34B0B /* Rconnection.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rconnection.java; path = ../../JRclient/Rconnection.java; sourceTree = SOURCE_ROOT; };
-		289DF62209F26ABC00C34B0B /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../JRclient/REXP.java; sourceTree = SOURCE_ROOT; };
-		289DF62309F26ABC00C34B0B /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFactor.java; path = ../../JRclient/RFactor.java; sourceTree = SOURCE_ROOT; };
-		289DF62409F26ABC00C34B0B /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFileInputStream.java; path = ../../JRclient/RFileInputStream.java; sourceTree = SOURCE_ROOT; };
-		289DF62509F26ABC00C34B0B /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RFileOutputStream.java; path = ../../JRclient/RFileOutputStream.java; sourceTree = SOURCE_ROOT; };
-		289DF62609F26ABC00C34B0B /* RList.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RList.java; path = ../../JRclient/RList.java; sourceTree = SOURCE_ROOT; };
-		289DF62709F26ABC00C34B0B /* Rpacket.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rpacket.java; path = ../../JRclient/Rpacket.java; sourceTree = SOURCE_ROOT; };
-		289DF62809F26ABD00C34B0B /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RSession.java; path = ../../JRclient/RSession.java; sourceTree = SOURCE_ROOT; };
-		289DF62909F26ABD00C34B0B /* RSrvException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = RSrvException.java; path = ../../JRclient/RSrvException.java; sourceTree = SOURCE_ROOT; };
-		289DF62A09F26ABD00C34B0B /* Rtalk.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rtalk.java; path = ../../JRclient/Rtalk.java; sourceTree = SOURCE_ROOT; };
 		289DF63709F26AD800C34B0B /* Mutex.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Mutex.java; path = ../../JRI/Mutex.java; sourceTree = SOURCE_ROOT; };
 		289DF63809F26AD800C34B0B /* Rengine.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = Rengine.java; path = ../../JRI/Rengine.java; sourceTree = SOURCE_ROOT; };
 		289DF63909F26AD800C34B0B /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../../JRI/REXP.java; sourceTree = SOURCE_ROOT; };
@@ -657,6 +649,20 @@
 		289DF67909F26AFB00C34B0B /* DocumentRenderer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = DocumentRenderer.java; path = ../../JGR/util/DocumentRenderer.java; sourceTree = SOURCE_ROOT; };
 		289DF67A09F26AFB00C34B0B /* ErrorMsg.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = ErrorMsg.java; path = ../../JGR/util/ErrorMsg.java; sourceTree = SOURCE_ROOT; };
 		289DF67B09F26AFB00C34B0B /* TableSorter.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = TableSorter.java; path = ../../JGR/util/TableSorter.java; sourceTree = SOURCE_ROOT; };
+		28EC0E340D96C08D00FE47D5 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../REngine/Rserve/Makefile; sourceTree = SOURCE_ROOT; };
+		28EC0E360D96C08D00FE47D5 /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = jcrypt.java; path = ../../REngine/Rserve/protocol/jcrypt.java; sourceTree = SOURCE_ROOT; };
+		28EC0E370D96C08D00FE47D5 /* REXPFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPFactory.java; path = ../../REngine/Rserve/protocol/REXPFactory.java; sourceTree = SOURCE_ROOT; };
+		28EC0E380D96C08D00FE47D5 /* RPacket.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RPacket.java; path = ../../REngine/Rserve/protocol/RPacket.java; sourceTree = SOURCE_ROOT; };
+		28EC0E390D96C08D00FE47D5 /* RTalk.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RTalk.java; path = ../../REngine/Rserve/protocol/RTalk.java; sourceTree = SOURCE_ROOT; };
+		28EC0E3A0D96C08D00FE47D5 /* RConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RConnection.java; path = ../../REngine/Rserve/RConnection.java; sourceTree = SOURCE_ROOT; };
+		28EC0E3B0D96C08D00FE47D5 /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RFileInputStream.java; path = ../../REngine/Rserve/RFileInputStream.java; sourceTree = SOURCE_ROOT; };
+		28EC0E3C0D96C08D00FE47D5 /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RFileOutputStream.java; path = ../../REngine/Rserve/RFileOutputStream.java; sourceTree = SOURCE_ROOT; };
+		28EC0E3D0D96C08D00FE47D5 /* RserveException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RserveException.java; path = ../../REngine/Rserve/RserveException.java; sourceTree = SOURCE_ROOT; };
+		28EC0E3E0D96C08D00FE47D5 /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RSession.java; path = ../../REngine/Rserve/RSession.java; sourceTree = SOURCE_ROOT; };
+		28EC0E400D96C08D00FE47D5 /* jt.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = jt.java; path = ../../REngine/Rserve/test/jt.java; sourceTree = SOURCE_ROOT; };
+		28EC0E410D96C08D00FE47D5 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../REngine/Rserve/test/Makefile; sourceTree = SOURCE_ROOT; };
+		28EC0E420D96C08D00FE47D5 /* PlotDemo.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = PlotDemo.java; path = ../../REngine/Rserve/test/PlotDemo.java; sourceTree = SOURCE_ROOT; };
+		28EC0E430D96C08D00FE47D5 /* test.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = test.java; path = ../../REngine/Rserve/test/test.java; sourceTree = SOURCE_ROOT; };
 		28F902970607540C005E782D /* sort-down.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-down.gif"; sourceTree = "<group>"; };
 		28F902980607540C005E782D /* sort-up.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = "sort-up.gif"; sourceTree = "<group>"; };
 		28FB0CA909F231700088CD59 /* jogl.jar */ = {isa = PBXFileReference; lastKnownFileType = archive.jar; name = jogl.jar; path = ../klimt/jogl.jar; sourceTree = SOURCE_ROOT; };
@@ -708,26 +714,6 @@
 			);
 			name = javaGD;
 			path = ../../javaGD;
-			sourceTree = SOURCE_ROOT;
-		};
-		282E9E7D064E848E0002BD94 /* JRclient */ = {
-			isa = PBXGroup;
-			children = (
-				289DF61F09F26ABC00C34B0B /* jcrypt.java */,
-				289DF62009F26ABC00C34B0B /* RBool.java */,
-				289DF62109F26ABC00C34B0B /* Rconnection.java */,
-				289DF62209F26ABC00C34B0B /* REXP.java */,
-				289DF62309F26ABC00C34B0B /* RFactor.java */,
-				289DF62409F26ABC00C34B0B /* RFileInputStream.java */,
-				289DF62509F26ABC00C34B0B /* RFileOutputStream.java */,
-				289DF62609F26ABC00C34B0B /* RList.java */,
-				289DF62709F26ABC00C34B0B /* Rpacket.java */,
-				289DF62809F26ABD00C34B0B /* RSession.java */,
-				289DF62909F26ABD00C34B0B /* RSrvException.java */,
-				289DF62A09F26ABD00C34B0B /* Rtalk.java */,
-			);
-			name = JRclient;
-			path = ../../JRclient;
 			sourceTree = SOURCE_ROOT;
 		};
 		2835E2150AAB352A00012BE8 /* editor */ = {
@@ -857,6 +843,7 @@
 		288DEBF80AAC7AAB00EBA4E2 /* REngine */ = {
 			isa = PBXGroup;
 			children = (
+				28EC0E330D96C08D00FE47D5 /* Rserve */,
 				288DEBF90AAC7AAB00EBA4E2 /* REngine.java */,
 				287A3E250C11B61D0094B032 /* MutableREXP.java */,
 				287A3E260C11B61D0094B032 /* REXPDouble.java */,
@@ -922,6 +909,7 @@
 				289DF58C09F26A6800C34B0B /* BaseCanvas.java */,
 				289DF58D09F26A6800C34B0B /* ColorBridge.java */,
 				289DF58E09F26A6800C34B0B /* EzMenu.java */,
+				280E36670DB1014000B968C7 /* EzMenuSwing.java */,
 				289DF58F09F26A6800C34B0B /* FrequencyTable.java */,
 				289DF59209F26A6800C34B0B /* MapSegmentTools.java */,
 				289DF59309F26A6800C34B0B /* Outlier.java */,
@@ -1069,7 +1057,6 @@
 				288DEBF80AAC7AAB00EBA4E2 /* REngine */,
 				284899CE063C1F3B00E88567 /* JGR */,
 				28D5F15F060F28CB008CA291 /* JRI */,
-				282E9E7D064E848E0002BD94 /* JRclient */,
 				28ABA9BB06301D0600125F2A /* iWidgets */,
 				28D5F0EE060F28CB008CA291 /* ibase */,
 				28F0CC860621F3AF0095E210 /* iplots */,
@@ -1163,6 +1150,46 @@
 			path = util;
 			sourceTree = "<group>";
 		};
+		28EC0E330D96C08D00FE47D5 /* Rserve */ = {
+			isa = PBXGroup;
+			children = (
+				28EC0E340D96C08D00FE47D5 /* Makefile */,
+				28EC0E350D96C08D00FE47D5 /* protocol */,
+				28EC0E3A0D96C08D00FE47D5 /* RConnection.java */,
+				28EC0E3B0D96C08D00FE47D5 /* RFileInputStream.java */,
+				28EC0E3C0D96C08D00FE47D5 /* RFileOutputStream.java */,
+				28EC0E3D0D96C08D00FE47D5 /* RserveException.java */,
+				28EC0E3E0D96C08D00FE47D5 /* RSession.java */,
+				28EC0E3F0D96C08D00FE47D5 /* test */,
+			);
+			name = Rserve;
+			path = ../../REngine/Rserve;
+			sourceTree = SOURCE_ROOT;
+		};
+		28EC0E350D96C08D00FE47D5 /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				28EC0E360D96C08D00FE47D5 /* jcrypt.java */,
+				28EC0E370D96C08D00FE47D5 /* REXPFactory.java */,
+				28EC0E380D96C08D00FE47D5 /* RPacket.java */,
+				28EC0E390D96C08D00FE47D5 /* RTalk.java */,
+			);
+			name = protocol;
+			path = ../../REngine/Rserve/protocol;
+			sourceTree = SOURCE_ROOT;
+		};
+		28EC0E3F0D96C08D00FE47D5 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				28EC0E400D96C08D00FE47D5 /* jt.java */,
+				28EC0E410D96C08D00FE47D5 /* Makefile */,
+				28EC0E420D96C08D00FE47D5 /* PlotDemo.java */,
+				28EC0E430D96C08D00FE47D5 /* test.java */,
+			);
+			name = test;
+			path = ../../REngine/Rserve/test;
+			sourceTree = SOURCE_ROOT;
+		};
 		28F0CC860621F3AF0095E210 /* iplots */ = {
 			isa = PBXGroup;
 			children = (
@@ -1203,10 +1230,12 @@
 		01F12F4CFEC8CE2211DB9C8B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 2837E04509AB397B00D841D5 /* Build configuration list for PBXProject "JGR" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 01F12F4DFEC8CE2211DB9C8B;
 			productRefGroup = 01F12F4FFEC8CEF111DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = ../../../..;
 			targets = (
 				28DBF1FD05E20005009B4706 /* JGR */,
 			);
@@ -1373,18 +1402,6 @@
 				289DF61C09F26A9F00C34B0B /* iRadio.java in Sources */,
 				289DF61D09F26A9F00C34B0B /* iSlider.java in Sources */,
 				289DF61E09F26A9F00C34B0B /* iWindow.java in Sources */,
-				289DF62B09F26ABD00C34B0B /* jcrypt.java in Sources */,
-				289DF62C09F26ABD00C34B0B /* RBool.java in Sources */,
-				289DF62D09F26ABD00C34B0B /* Rconnection.java in Sources */,
-				289DF62E09F26ABD00C34B0B /* REXP.java in Sources */,
-				289DF62F09F26ABD00C34B0B /* RFactor.java in Sources */,
-				289DF63009F26ABD00C34B0B /* RFileInputStream.java in Sources */,
-				289DF63109F26ABD00C34B0B /* RFileOutputStream.java in Sources */,
-				289DF63209F26ABE00C34B0B /* RList.java in Sources */,
-				289DF63309F26ABE00C34B0B /* Rpacket.java in Sources */,
-				289DF63409F26ABE00C34B0B /* RSession.java in Sources */,
-				289DF63509F26ABE00C34B0B /* RSrvException.java in Sources */,
-				289DF63609F26ABE00C34B0B /* Rtalk.java in Sources */,
 				289DF63B09F26AD800C34B0B /* Mutex.java in Sources */,
 				289DF63C09F26AD800C34B0B /* Rengine.java in Sources */,
 				289DF63D09F26AD800C34B0B /* REXP.java in Sources */,
@@ -1514,6 +1531,21 @@
 				287A3F660C11B7820094B032 /* XMLTokenMarker.java in Sources */,
 				287A3F930C11B8BA0094B032 /* RInputHandler.java in Sources */,
 				287A43080C12DD350094B032 /* Editor.java in Sources */,
+				28EC0E440D96C08D00FE47D5 /* Makefile in Sources */,
+				28EC0E450D96C08D00FE47D5 /* jcrypt.java in Sources */,
+				28EC0E460D96C08E00FE47D5 /* REXPFactory.java in Sources */,
+				28EC0E470D96C08E00FE47D5 /* RPacket.java in Sources */,
+				28EC0E480D96C08E00FE47D5 /* RTalk.java in Sources */,
+				28EC0E490D96C08E00FE47D5 /* RConnection.java in Sources */,
+				28EC0E4A0D96C08E00FE47D5 /* RFileInputStream.java in Sources */,
+				28EC0E4B0D96C08E00FE47D5 /* RFileOutputStream.java in Sources */,
+				28EC0E4C0D96C08E00FE47D5 /* RserveException.java in Sources */,
+				28EC0E4D0D96C08E00FE47D5 /* RSession.java in Sources */,
+				28EC0E4E0D96C08E00FE47D5 /* jt.java in Sources */,
+				28EC0E4F0D96C08E00FE47D5 /* Makefile in Sources */,
+				28EC0E500D96C08E00FE47D5 /* PlotDemo.java in Sources */,
+				28EC0E510D96C08E00FE47D5 /* test.java in Sources */,
+				280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
