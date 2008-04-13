@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -22,6 +23,7 @@ import org.rosuda.JGR.toolkit.JGRListener;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RConsoleOutputStream;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -45,8 +47,6 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	//JGR_VERSION 1.4-16
-	
 	/** Version number of JGR */
 	public static final String VERSION = "1.5-17";
 
@@ -216,11 +216,12 @@ public class JGR {
 		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
 		if (JGR.R != null && STARTED)
 		{
-			JGR.R
-					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
-							+ ")");
-			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
+			JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+//			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
 //			JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
+			
+			//System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
+			//System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
 		}
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();

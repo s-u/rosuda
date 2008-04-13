@@ -67,7 +67,7 @@ import org.rosuda.ibase.SVarFact;
 import org.rosuda.ibase.SVarInt;
 import org.rosuda.ibase.SVarObj;
 import org.rosuda.ibase.SVarSet;
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
@@ -166,7 +166,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		String myMenu[] = { "+", "File", "@OOpen", "loadData", "@SSave",
 				"saveData", "!SSave as", "saveDataAs", "Export to R", "export",
 				"~File.Basic.End",
-				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
+				"+","Edit","@XCut","cut","@CCopy","copy",
 				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
 				"@FFind","search","@GFind Next","searchnext",
 				 
@@ -174,9 +174,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 				"addCol", "Remove Column", "rmCol", "Add Row", "addRow",
 				"Remove Row", "rmRow", "-", "-", "Goto Case", "gotoCase",
 				"~Window", "+", "Help", "R Help", "rhelp", "~Preferences", "~About", "0" };
-		EzMenu.getEzMenu(this, this, myMenu);
-		EzMenu.getItem(this, "undo").setEnabled(false);
-		EzMenu.getItem(this, "redo").setEnabled(false);
+		EzMenuSwing.getEzMenu(this, this, myMenu);
 
 		if (FontTracker.current == null)
 			FontTracker.current = new FontTracker();
