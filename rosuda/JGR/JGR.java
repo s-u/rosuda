@@ -48,7 +48,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.5-17";
+	public static final String VERSION = "1.5-18";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -217,11 +217,11 @@ public class JGR {
 		if (JGR.R != null && STARTED)
 		{
 			JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
-//			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
+			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
 //			JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
 			
-			//System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
-			//System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
+			System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
+			System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
 		}
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();

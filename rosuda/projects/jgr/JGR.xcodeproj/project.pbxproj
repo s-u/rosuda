@@ -84,6 +84,7 @@
 
 /* Begin PBXBuildFile section */
 		280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 280E36670DB1014000B968C7 /* EzMenuSwing.java */; };
+		280E36AB0DB1053200B968C7 /* RConsoleOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 280E36AA0DB1053200B968C7 /* RConsoleOutputStream.java */; };
 		2835E1A90AAAC09300012BE8 /* AWTGraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */; };
 		2835E1AA0AAAC09300012BE8 /* FrameDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A30AAAC09300012BE8 /* FrameDevice.java */; };
 		2835E1AB0AAAC09300012BE8 /* GraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A40AAAC09300012BE8 /* GraphicsDevice.java */; };
@@ -377,6 +378,7 @@
 
 /* Begin PBXFileReference section */
 		280E36670DB1014000B968C7 /* EzMenuSwing.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = EzMenuSwing.java; path = ../../ibase/toolkit/EzMenuSwing.java; sourceTree = SOURCE_ROOT; };
+		280E36AA0DB1053200B968C7 /* RConsoleOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RConsoleOutputStream.java; path = ../../JRI/RConsoleOutputStream.java; sourceTree = SOURCE_ROOT; };
 		281185DE05E7D8E000C16F9F /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
 		2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AWTGraphicsDevice.java; path = ../../ibase/toolkit/AWTGraphicsDevice.java; sourceTree = SOURCE_ROOT; };
 		2835E1A30AAAC09300012BE8 /* FrameDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FrameDevice.java; path = ../../ibase/toolkit/FrameDevice.java; sourceTree = SOURCE_ROOT; };
@@ -1101,6 +1103,7 @@
 		28D5F15F060F28CB008CA291 /* JRI */ = {
 			isa = PBXGroup;
 			children = (
+				280E36AA0DB1053200B968C7 /* RConsoleOutputStream.java */,
 				2835E1B50AAAC0C000012BE8 /* RBool.java */,
 				2835E1B60AAAC0C000012BE8 /* RFactor.java */,
 				2835E1B70AAAC0C000012BE8 /* RList.java */,
@@ -1546,6 +1549,7 @@
 				28EC0E500D96C08E00FE47D5 /* PlotDemo.java in Sources */,
 				28EC0E510D96C08E00FE47D5 /* test.java in Sources */,
 				280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */,
+				280E36AB0DB1053200B968C7 /* RConsoleOutputStream.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
