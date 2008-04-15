@@ -16,9 +16,9 @@ import java.awt.event.WindowListener;
 
 import javax.swing.WindowConstants;
 
-import org.rosuda.javaGD.GDInterface;
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
+import org.rosuda.javaGD.GDInterface;
 
 /** Implementation of {@see JavaGD} which uses TJFrame instead of Frame */
 public class JavaGD extends GDInterface implements ActionListener,
@@ -47,7 +47,7 @@ public class JavaGD extends GDInterface implements ActionListener,
 		String[] Menu = { "+", "File", "Save as PDF...", "savePDF",
 				"Save as EPS...", "saveEPS", "+", "Edit", "@CCopy (as image)",
 				"copyImg", "~Window", "0" };
-		EzMenu.getEzMenu(jfr, this, Menu);
+		EzMenuSwing.getEzMenu(jfr, this, Menu);
 
 		jfr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		c = new org.rosuda.javaGD.JGDBufferedPanel(w, h);
