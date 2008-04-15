@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.rosuda.ibase.Common;
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
@@ -38,7 +38,7 @@ public class TextPager extends TJFrame implements ActionListener {
 
 		String myMenu[] = { "+", "Edit", "@CCopy", "copy", "-", "@FFind",
 				"search", "@GFind next", "searchnext", "~Window", "0" };
-		EzMenu.getEzMenu(this, this, myMenu);
+		EzMenuSwing.getEzMenu(this, this, myMenu);
 
 		getContentPane().add(new JScrollPane(t));
 		t.setEditable(false);

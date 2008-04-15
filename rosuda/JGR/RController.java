@@ -10,9 +10,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.robjects.RObject;
-import org.rosuda.JGR.toolkit.Editor;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JRI.REXP;
 import org.rosuda.ibase.SVar;
