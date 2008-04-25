@@ -1,12 +1,16 @@
 import java.awt.*;              
-import java.awt.image.*;       
+import java.awt.image.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import javax.imageio.ImageIO;
 import java.text.*;       
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
 public class Util {
-
+  
   private static final HashMap LABELToURLTemplate = new HashMap();
 
   public static void add(JFrame f, Component c, GridBagConstraints gbc, int x, int y, int w, int h) {
@@ -15,6 +19,51 @@ public class Util {
     gbc.gridwidth = w;
     gbc.gridheight = h;
     f.getContentPane().add(c, gbc);
+  }
+  
+/*  public static Image readGif(String name) {
+    
+    Image image=null;
+    try {
+      File sourceimage = new File(name);
+      image = ImageIO.read(sourceimage);
+      
+    } catch (IOException e) {
+      System.out.println("Read GIF Exception: "+e);
+    }
+    return image;
+  }
+  */
+
+  public static byte[] readGif(String name) {
+    
+    byte[] arrayLogo;
+    try {
+      InputStream inputLogo = Util.class.getResourceAsStream(name);
+      
+      arrayLogo = streamToBytes(inputLogo);
+      inputLogo.close();
+      
+    } catch (IOException e) {
+      System.out.println("Logo Exception: "+e);
+      arrayLogo = new byte[1];
+    }
+    return arrayLogo;
+  }
+  
+  public static byte[] streamToBytes(InputStream strm) throws IOException {
+    byte[] tmpBuf = new byte[2048];
+    byte[] buf = new byte[0];
+    
+    int len;
+    while((len=strm.read(tmpBuf)) > -1)
+    {  byte[] newBuf = new byte[buf.length + len];
+      System.arraycopy(buf, 0, newBuf, 0, buf.length);
+      System.arraycopy(tmpBuf, 0, newBuf, buf.length, len);
+      buf = newBuf;
+    }
+    
+    return buf;
   }
   
   public static String toPhoneNumber(double d) {
