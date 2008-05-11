@@ -386,7 +386,7 @@ public class JGR {
 	public static void readHistory() {
 		File hist = null;
 		try {
-			if ((hist = new File(JGRPrefs.workingDirectory
+			if ((hist = new File(System.getProperty("user.dir")
 					+ File.separator + ".JGRhistory")).exists()) {
 
 				BufferedReader reader = new BufferedReader(new FileReader(hist));
@@ -412,7 +412,7 @@ public class JGR {
 	public static void writeHistory() {
 		File hist = null;
 		try {
-			hist = new File(JGRPrefs.workingDirectory + File.separator
+			hist = new File(System.getProperty("user.dir") + File.separator
 					+ ".JGRhistory");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
 			Enumeration e = JGR.RHISTORY.elements();
