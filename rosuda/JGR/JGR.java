@@ -152,10 +152,10 @@ public class JGR {
 		JGRPackageManager.neededPackages.put("stats", dummy);
 		JGRPackageManager.neededPackages.put("datasets", dummy);
 		
-//		JGRPackageManager.neededPackages.put("JGR", dummy);
-//		JGRPackageManager.neededPackages.put("rJava", dummy);
-//		JGRPackageManager.neededPackages.put("JavaGD", dummy);
-//		JGRPackageManager.neededPackages.put("iplots", dummy);
+		JGRPackageManager.neededPackages.put("JGR", dummy);
+		JGRPackageManager.neededPackages.put("rJava", dummy);
+		JGRPackageManager.neededPackages.put("JavaGD", dummy);
+		JGRPackageManager.neededPackages.put("iplots", dummy);
 		
 		org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 		JGRPrefs.initialize();
@@ -221,9 +221,11 @@ public class JGR {
 		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
 		if (JGR.R != null && STARTED)
 		{
-			JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
-			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
-//			JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
+			//JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+			//JGR.MAINRCONSOLE.execute("cat(\"\\nReload JGR\n\")",false);
+			//JGR.MAINRCONSOLE.execute("try(detach(package:JGR),T)",false);
+			//JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
+			//JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
 			
 			System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
 			System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));

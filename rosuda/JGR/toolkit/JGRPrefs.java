@@ -293,7 +293,7 @@ public class JGRPrefs {
 				if (!"JGR".equals(pkg) && !"rJava".equals(pkg) && ! "JavaGD".equals(pkg) && !"iplots".equals(pkg))
 					packages += ", " + pkg;
 			}
-			//packages += ",rJava,JavaGD,iplots,JGR";
+			packages += ",rJava,JavaGD,iplots,JGR";
 			
 			prefs.put("DefaultPackages", packages);
 		}
