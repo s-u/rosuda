@@ -48,7 +48,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.5-19";
+	public static final String VERSION = "1.6";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -136,6 +136,8 @@ public class JGR {
 	 * <code>false</code> if the classes are loaded, but not run via main.
 	 */
 	private static boolean JGRmain = false;
+	
+	private static String tempWD;
 
 	/**
 	 * Starting the JGR Application (javaside)
@@ -224,11 +226,11 @@ public class JGR {
 			//JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
 			//JGR.MAINRCONSOLE.execute("cat(\"\\nReload JGR\n\")",false);
 			//JGR.MAINRCONSOLE.execute("try(detach(package:JGR),T)",false);
-			//JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
+			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
 			//JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
 			
-			System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
-			System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
+			//System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
+			//System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
 		}
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
@@ -388,7 +390,8 @@ public class JGR {
 	public static void readHistory() {
 		File hist = null;
 		try {
-			if ((hist = new File(System.getProperty("user.dir")
+			tempWD = JGRPrefs.workingDirectory;
+			if ((hist = new File(JGRPrefs.workingDirectory
 					+ File.separator + ".JGRhistory")).exists()) {
 
 				BufferedReader reader = new BufferedReader(new FileReader(hist));
@@ -414,7 +417,7 @@ public class JGR {
 	public static void writeHistory() {
 		File hist = null;
 		try {
-			hist = new File(System.getProperty("user.dir") + File.separator
+			hist = new File(tempWD + File.separator
 					+ ".JGRhistory");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
 			Enumeration e = JGR.RHISTORY.elements();
