@@ -405,10 +405,12 @@ public class RController {
 			y = JGR.R.eval("length(dim(" + (ro.getRName()) + "))");
 			if (y != null && y.asIntArray() != null)
 				ro.setInfo("dim: " + y.asIntArray()[0]);
-		} else if (type.equals("function"))
-			ro.setInfo("arguments: "
-					+ getFunHelp(ro.getRName()).replaceFirst(ro.getRName(), "")
-							.replaceAll("<br>", ""));
+		} else if (type.equals("function")) {
+			String fHelp = getFunHelp(ro.getRName());
+			if (fHelp != null) {
+				ro.setInfo("arguments: "+ fHelp.replaceFirst(ro.getRName(), "").replaceAll("<br>", ""));
+			}
+		}
 		else if (parent != null && parent.getType().equals("table")) {
 			y = JGR.R.eval("length(dimnames(" + parent.getRName() + ")[[\""
 					+ ro.getName() + "\"]])");
@@ -494,10 +496,12 @@ public class RController {
 			tip = "";
 			int l = -1;
 			for (int i = 0; i < (l = res.length); i++)
+			{
 				if ((l - 2) == i && !res[i].trim().equals("NULL"))
 					tip += res[i].replaceFirst("function", s);
 				else if (!res[i].trim().equals("NULL"))
 					tip += res[i].replaceFirst("function", s) + "<br>";
+			}
 			tip += "";
 		} else
 			return null;
