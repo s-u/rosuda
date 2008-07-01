@@ -54,7 +54,7 @@ public class CustomCanvas extends BaseCanvas {
 		try {
 		    //RE:re.voidEval(
 			re.eval(
-				    "{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];local(.ic.e$construct("
+				    "{.ic.e<-"+rcall+"$plots[[\""+rid+"\"]];if(!is.null(.ic.e$ready)&&.ic.e$ready) local(.ic.e$construct("
 						+getWidth()+","+getHeight()+"),.ic.e);rm(.ic.e)}"
 				    , false);
 			fixupPP();
