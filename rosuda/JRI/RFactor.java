@@ -60,8 +60,9 @@ public class RFactor extends Object {
 	@param i ID
 	@return name. may throw exception if out of range */
     public String at(int i) {
-	if (i<0||i>=id.size()) return null;
-	return (String)val.elementAt(((Integer)id.elementAt(i)).intValue());
+	if (i < 0 || i >= id.size()) return null;
+	int j = ((Integer)id.elementAt(i)).intValue();
+	return (j < 0) ? null : ((String)val.elementAt(j));
     }
 
     /** returns the number of caes */
