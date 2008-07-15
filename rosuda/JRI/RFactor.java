@@ -62,7 +62,8 @@ public class RFactor extends Object {
     public String at(int i) {
 	if (i < 0 || i >= id.size()) return null;
 	int j = ((Integer)id.elementAt(i)).intValue();
-	return (j < 0) ? null : ((String)val.elementAt(j));
+	/* due to the index shift NA (INT_MIN) will turn into INT_MAX if base is 1 */
+	return (j < 0 || j > 2147483640) ? null : ((String)val.elementAt(j));
     }
 
     /** returns the number of caes */
