@@ -48,7 +48,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.6-1";
+	public static final String VERSION = "1.6-2";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -211,27 +211,25 @@ public class JGR {
 			System.out.println("Cannot load R");
 			System.exit(1);
 		}
-		JGRPackageManager.defaultPackages = RController.getDefaultPackages();
 
 		// to avoid quoting hell we use an assignment
 		R.assign(".$JGR",JGRPrefs.workingDirectory);
 		R.eval("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)");
 		
+		// load packages requested by the user
+		// in theory we could have checked for jgr.load.pkgs property, but in practice it doesn't
+		// hurt if we load them despite the fact that R_DEFAULT_PACKAGES has been set.
+		if (JGRPrefs.defaultPackages != null)
+			RController.requirePackages(JGRPrefs.defaultPackages);
+		RController.requirePackages("JGR"); // ensure JGR is loaded
+		JGRPackageManager.defaultPackages = RController.getJgrDefaultPackages();
+
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
 		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
-		if (JGR.R != null && STARTED)
-		{
-			//JGR.R.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
-			//JGR.MAINRCONSOLE.execute("cat(\"\\nReload JGR\n\")",false);
-			//JGR.MAINRCONSOLE.execute("try(detach(package:JGR),T)",false);
-			JGR.MAINRCONSOLE.execute("library(JGR,warn.conflicts=FALSE)",false);
-			//JGR.R.eval("library(JGR,warn.conflicts=FALSE)");
-			
-			//System.setOut(new PrintStream(new RConsoleOutputStream(R, 0)));
-			//System.setErr(new PrintStream(new RConsoleOutputStream(R, 1)));
-		}
+		// make sure we get a clean prompt after all packages have been loaded
+		JGR.MAINRCONSOLE.execute("",false);
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
 	}

@@ -145,6 +145,9 @@ public class JGRPrefs {
 	/** Initial working directory */
 	public static String workingDirectory = System.getProperty("user.home");
 
+	/** Default packages (more precisely default package + those to load on startup) */
+	public static String defaultPackages = null;
+
 	/** Tab width */
 	public static int tabWidth = 4;
 
@@ -236,6 +239,7 @@ public class JGRPrefs {
 		Preferences prefs = Preferences
 				.userNodeForPackage(org.rosuda.JGR.JGR.class);
 		FontName = prefs.get("FontName", FontName);
+		defaultPackages = prefs.get("DefaultPackages", null);
 		FontSize = prefs.getInt("FontSize", FontSize);
 		maxHelpTabs = prefs.getInt("MaxHelpTabs", maxHelpTabs);
 		useHelpAgent = prefs.getBoolean("UseHelpAgent", true);
@@ -293,6 +297,7 @@ public class JGRPrefs {
 				if (!"JGR".equals(pkg) && !"rJava".equals(pkg) && ! "JavaGD".equals(pkg) && !"iplots".equals(pkg))
 					packages += ", " + pkg;
 			}
+			// JGR will always be appended at the end on start-up, se we don't need it here
 			//packages += ",rJava,JavaGD,iplots,JGR";
 			
 			prefs.put("DefaultPackages", packages);

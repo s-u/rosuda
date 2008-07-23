@@ -107,15 +107,35 @@ public class RController {
 	}
 
 	/**
-	 * Get current installed packages
+	 * Get default packages as defined by R
 	 * 
-	 * @return installed packages
+	 * @return R default packages
 	 */
 	public static String[] getDefaultPackages() {
 		REXP x = JGR.R.eval("getOption(\"defaultPackages\")");
 		if (x != null && x.asStringArray() != null)
 			return x.asStringArray();
 		return new String[] {};
+	}
+
+	/**
+	 * Get default packages as defined by JGR (i.e. R's default packages plus auto-loaded packages from JGR preferences)
+	 * 
+	 * @return JGR default packages
+	 */
+	public static String[] getJgrDefaultPackages() {
+		String jdp = JGRPrefs.defaultPackages;
+		if (jdp == null) jdp = "JGR";
+		REXP x = JGR.R.eval("as.character(unique(c(getOption(\"defaultPackages\"),strsplit(\""+jdp+"\",', ?')[[1]],'JGR')))");
+		if (x != null && x.asStringArray() != null)
+			return x.asStringArray();
+		return new String[] {};
+	}
+
+	/** load and attach packages defined by the string "pkg, pkg, ..." */
+	public static void requirePackages(String rlist) {
+		JGR.R.assign(".$JGR", rlist); // to be on the safe side ...
+		JGR.R.eval("{ for (pkg in strsplit(`.$JGR`,', ?')[[1]]) require(pkg, warn.conflicts=FALSE, character.only=TRUE); rm(`.$JGR`); TRUE }");
 	}
 
 	/**
