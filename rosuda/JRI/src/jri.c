@@ -2,7 +2,14 @@
 #include <jni.h>
 #include <R.h>
 #include <Rdefines.h>
+#include <Rversion.h>
 #include <R_ext/Parse.h>
+
+#if R_VERSION < R_Version(2,7,0)
+#define mkCharUTF8(X) mkChar(X)
+#else
+#define mkCharUTF8(X) mkCharCE(X, CE_UTF8)
+#endif
 
 #include <stdarg.h>
 
@@ -207,7 +214,7 @@ SEXP jri_getString(JNIEnv *env, jstring s) {
       return R_NilValue;
   }
   PROTECT(r=allocVector(STRSXP,1));
-  SET_STRING_ELT(r, 0, mkChar(c));
+  SET_STRING_ELT(r, 0, mkCharUTF8(c));
   UNPROTECT(1);
   (*env)->ReleaseStringUTFChars(env, s, c);
   _prof(profReport("jri_getString:"));
@@ -305,7 +312,7 @@ SEXP jri_getStringArray(JNIEnv *env, jarray o) {
     if (!c)
       SET_STRING_ELT(ar, i, R_NaString);
     else {
-      SET_STRING_ELT(ar, i, mkChar(c));
+      SET_STRING_ELT(ar, i, mkCharUTF8(c));
       (*env)->ReleaseStringUTFChars(env, sobj, c);
     }
     i++;
