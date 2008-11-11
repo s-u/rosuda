@@ -2,11 +2,8 @@
 --------------------------
 
 0.4-2	(under development)
-    o	declare string encoding as UTF-8 to facilitate automatic
-	conversion in non-UTF-8 locales. However, note that R does
-	not perform the inverse conversion automatically, so
-	native strings in non-UTF-8 locales still need to be converted
-	to UTF-8 before they are passed to Java.
+    o	declare string encoding as UTF-8 and convert incoming strings
+	to UTF-8 if possible (R >= 2.7.0 required).
 
 0.4-1	(part of rJava 0.5-1 and later)
     o	fixed configuration to work with multi-arch builds
