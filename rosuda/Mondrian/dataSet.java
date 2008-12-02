@@ -139,6 +139,14 @@ public class dataSet {
   }
   
   public void addVariable(String name, boolean alpha, boolean categorical, double[] data, boolean[] miss) {
+	  if (this.n == 0) { // this dataSet was never initialized - use data length to do that
+		  this.n = data.length;
+		  selectionArray = new double[n];
+		  colorArray = new byte[n];
+		  for(int i=0; i<n; i++)
+			  colorArray[i] = 0;
+		  filterA = new double[n];
+	  }
     Variable Var = new Variable(this.n, alpha, name);
     System.arraycopy(data, 0, Var.data, 0, data.length);
     System.arraycopy(miss, 0, Var.missing, 0, data.length);

@@ -79,7 +79,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private int lastOpenedNum = 6;
   private String[] lastOpened = new String[lastOpenedNum];
   private JMenuItem[] lastOpenedMenu= new JMenuItem[lastOpenedNum];
-  
+  	
   public Join(Vector Mondrians, Vector dataSets, boolean load, boolean loadDB, File loadFile) {
     
     Mondrians.addElement(this);
@@ -600,6 +600,37 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       }
   }
 
+	/** this constructor is useful to create a Mondrian instance with a pre-loaded dataset. It will initialize Mondrians and dataSets if necessary, otherwise the dataset will be added to the existing static list.
+	 @param data dataset to open
+	 */
+	public Join(dataSet data) {
+		this((Mondrians==null)?new Vector(5,5):Mondrians, (dataSets==null)?new Vector(5,5):dataSets, false, false, null);
+		initWithData(data);
+	}
+	
+	/** adds a dataset and makes is current.
+	 @param data dataset to use
+	 */
+	public void initWithData(dataSet data) {
+		dataSets.addElement(data);
+		thisDataSet = dataSets.size() - 1;
+		selectBuffer = new int[data.k+15];
+		setVarList();
+        this.setTitle("Mondrian("+((dataSet)dataSets.elementAt(thisDataSet)).setName+")");               // 
+        me.setText(this.getTitle());
+        c.setEnabled(true);
+        s.setEnabled(true);
+        
+        int nom   = ((dataSet)dataSets.elementAt(thisDataSet)).countSelection();
+        int denom = ((dataSet)dataSets.elementAt(thisDataSet)).n;
+        String Display = nom+"/"+denom+" ("+Stat.roundToString(100*nom/denom,2)+"%)";
+        progText.setText(Display);
+        progBar.setValue(nom);          
+        
+        load = false;
+        maintainOptionMenu();		
+	}
+	
   public void handleQuit()
   {	
     System.exit(0);
@@ -618,8 +649,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     byte[] arrayLogo;
     try {
       InputStream inputLogo = this.getClass().getResourceAsStream(name);
-      
-      arrayLogo = streamToBytes(inputLogo);
+		if (inputLogo == null) {
+			System.err.println("missing resource: '"+name+"'");
+			return new byte[1];
+		}
+		arrayLogo = streamToBytes(inputLogo);
       inputLogo.close();
       
     } catch (IOException e) {
@@ -2314,7 +2348,11 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   }
   
   public void maintainPlotMenu() {
-    
+	  if (thisDataSet == -1) {
+		  if (dataSets.size() > 0)
+			  thisDataSet = dataSets.size() - 1;
+		  else return; // invalid state, don't bother
+	  }
     getSelectedTypes();
     
 //    System.out.println("number categorical: "+numCategorical+", weight Index "+weightIndex);
