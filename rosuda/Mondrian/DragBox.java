@@ -564,11 +564,11 @@ System.out.println(" dragEnd! ");
               zooms.removeElementAt( zooms.size()-1 );
             }
           }
-          else
-            reScale( worldToUserX( Math.min(x0, x1) ),
-                     worldToUserY( Math.max(y0, y1) ),
-                     worldToUserX( Math.max(x0, x1) ),
-                     worldToUserY( Math.min(y0, y1) ));
+          else // Zoom in, and make sure a) not to invert the scale, b) not to leave the range
+            reScale( Math.max( hllx, worldToUserX( Math.min(x0, x1) ) ),
+                     Math.max( hlly, worldToUserY( Math.max(y0, y1) ) ),
+                     Math.min( hurx, worldToUserX( Math.max(x0, x1) ) ),
+                     Math.min( hury, worldToUserY( Math.min(y0, y1) ) ));
           scaleChanged = true;
           update(this.getGraphics());
         }
