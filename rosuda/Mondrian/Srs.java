@@ -1,4 +1,5 @@
-import org.rosuda.JRclient.*;
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 import java.io.*;
 import java.util.*;
 
@@ -38,7 +39,7 @@ public class Srs {
       return false;
     }
     try {
-      Rconnection c = new Rconnection();
+      RConnection c = new RConnection();
       System.out.println("Rserve is running.");
       c.close();
       return true;
@@ -50,7 +51,7 @@ public class Srs {
 
   public static boolean checkLocalRserve() {
     try {
-      Rconnection c = new Rconnection();
+      RConnection c = new RConnection();
       System.out.println("Rserve is running.");
       c.close();
       return true;
@@ -68,7 +69,7 @@ public class Srs {
     public static void main(String[] args) {
 	System.out.println("result="+checkLocalRserve());
 	try {
-	    Rconnection c=new Rconnection();
+	    RConnection c=new RConnection();
 	    c.shutdown();
 	} catch (Exception x) {};
     }
