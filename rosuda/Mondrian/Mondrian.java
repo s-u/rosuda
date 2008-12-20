@@ -11,17 +11,22 @@ public class Mondrian implements MRJOpenDocumentHandler
 
   /** A very simple main() method for our program. */
   public static void main(String[] args) {
-    new Mondrian();
+    new Mondrian(args);
   }
 
-  public Mondrian() {
+  public Mondrian(String[] args) {
 
     Join First = new Join(Mondrians, dataSets, false, false, null);
 
 //    System.out.println(" Join Created / Register Handler ...");
     
     MRJApplicationUtils.registerOpenDocumentHandler ( this );
-
+    
+    if(args.length == 1) {
+       File iFile = new File(args[0]);
+       if(iFile.canRead()) First.loadDataSet(false, iFile);
+    }
+    
     try { 
       // put it to sleep "forever" ... 
       Thread.sleep(Integer.MAX_VALUE); 
