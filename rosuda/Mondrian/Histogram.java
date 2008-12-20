@@ -10,7 +10,8 @@ import java.util.Properties;     // To store printing preferences in.
 import java.lang.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
-import org.rosuda.JRclient.*;
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 
 public class Histogram extends DragBox implements ActionListener {
   private Vector rects = new Vector(256,0);            	// Store the tiles.
@@ -284,7 +285,7 @@ public class Histogram extends DragBox implements ActionListener {
         bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, ((float)1.0)));
 
         try {
-          Rconnection c = new Rconnection();
+          RConnection c = new RConnection();
           double[] xVal = data.getRawNumbers(tablep.initialVars[0]);
           double[] weights = {1.0};
           double[] copyW = {1.0};
@@ -315,8 +316,8 @@ public class Histogram extends DragBox implements ActionListener {
             l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
           else
             l = c.eval("density(x, bw="+bWidth+", weights=w/sum(w, na.rm=T), from="+xMin+", to="+xMax+")").asList();            
-          double[] dx = (double[]) l.at("x").getContent();
-          double[] dy = (double[]) l.at("y").getContent();
+          double[] dx = l.at("x").asDoubles();
+          double[] dy = l.at("y").asDoubles();
 
           if( displayMode.equals("Histogram") && !CDPlot ) {
             pD = new Polygon();
@@ -354,8 +355,8 @@ public class Histogram extends DragBox implements ActionListener {
               l = c.eval("density(x, bw="+bWidth+", from="+xMin+", to="+xMax+")").asList();
             else
               l = c.eval("density(x, bw="+bWidth+", weights=w/sum(w, na.rm=T), from="+xMin+", to="+xMax+")").asList();
-            double[] dsx = (double[]) l.at("x").getContent();
-            double[] dsy = (double[]) l.at("y").getContent();
+            double[] dsx = l.at("x").asDoubles();
+            double[] dsy = l.at("y").asDoubles();
 
             bg.setColor(getHiliteColor());
 
@@ -393,7 +394,9 @@ public class Histogram extends DragBox implements ActionListener {
           }
 
           c.close();
-        } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+        } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+          catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+          catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
       }
       if( !printing ) {
         drawSelections(bg);
@@ -719,7 +722,7 @@ public class Histogram extends DragBox implements ActionListener {
             
             mode.add(menuStart);
             JCheckBoxMenuItem[][] fst = new JCheckBoxMenuItem[3][4];
-            double lastEntry=-3.1415926;
+            double maxEntry=-3.1415926e-100;
             double starter=0;
             for(int i=2; i>=0; i--) {                
               for(int j=0; j<4; j++) {
@@ -727,7 +730,8 @@ public class Histogram extends DragBox implements ActionListener {
                 int insert = 0;
                 double ticker = Util.atod(wdt[i][j].getText());
                 if( xMax-xMin > ticker ) {
-                  starter = (Math.floor(xMin/ticker)) * ticker;
+                  starter = Stat.round((Math.floor(xMin/ticker)) * ticker, 8);
+                  
                   while( k < menuStart.getItemCount() ) {
                     if( starter > Util.atod(((JCheckBoxMenuItem)menuStart.getItem(k)).getText()) )
                       insert = k+1;
@@ -746,7 +750,7 @@ public class Histogram extends DragBox implements ActionListener {
                       fst[i][j] = new JCheckBoxMenuItem(""+ starter, true);	
                     else
                       fst[i][j] = new JCheckBoxMenuItem(""+ starter, false);
-                    lastEntry = starter;
+                    maxEntry = Math.max(starter, maxEntry);
                     if( insert < menuStart.getItemCount() )
                       menuStart.insert(fst[i][j], insert);
                     else
@@ -762,7 +766,7 @@ public class Histogram extends DragBox implements ActionListener {
                 }
               }
             }
-            if( xMin != lastEntry ) {
+            if( xMin != maxEntry ) {
               JCheckBoxMenuItem tmp;
               if( bStart == xMin )
                 tmp = new JCheckBoxMenuItem(""+ xMin, true);
