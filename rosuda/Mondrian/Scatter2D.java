@@ -8,7 +8,8 @@ import java.lang.*;              //
 import java.io.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
-import org.rosuda.JRclient.*;	   // For Rserve
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
  
 public class Scatter2D extends DragBox {
   private Vector rects = new Vector(512,512);    // Store the tiles.
@@ -302,8 +303,6 @@ public class Scatter2D extends DragBox {
               }  
             }
           }
-System.out.println(Util.info2Html(x));          
-          
           return Util.info2Html(x);
         } else
           return null;
@@ -1059,7 +1058,7 @@ System.out.println(Util.info2Html(x));
       if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
 
         try {
-          Rconnection c = new Rconnection();
+          RConnection c = new RConnection();
           if( smoothF.equals("splines") )
             c.voidEval("library(splines)");
           if( smoothF.equals("locfit") )
@@ -1077,7 +1076,7 @@ System.out.println(Util.info2Html(x));
           c.voidEval("x<-x[ids]");
           c.voidEval("y<-y[ids]");
           double[] range = new double[2];
-          range = c.eval("range(x)").asDoubleArray();
+          range = c.eval("range(x)").asDoubles();
           double xSMin = range[0];
           double xSMax = range[1];
           double[] xForFit = new double[200+1];
@@ -1091,13 +1090,13 @@ System.out.println(Util.info2Html(x));
           double[] CIu = {0};
           if( smoothF.equals("loess") ) 
 //            fitted = c.eval("predict(lowess(x, y, f=1/"+smoother+"), data.frame(x=xf))").asDoubleArray();
-            fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", degree = 1, family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
+            fitted = c.eval("predict(loess(y ~ x, span=3.75/"+smoother+", degree = 1, family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubles();
           if( smoothF.equals("locfit") ) {
             RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
-            fitted = (double[]) sL.at("fit").getContent();
+            fitted = sL.at("fit").asDoubles();
             CIl    = new double[fitted.length];
             CIu    = new double[fitted.length];
-            double[] se = (double[]) sL.at("se.fit").getContent();
+            double[] se = sL.at("se.fit").asDoubles();
             for( int f=0; f<=200; f++ ) {
               CIl[f] = fitted[f] - se[f];
               CIu[f] = fitted[f] + se[f];
@@ -1106,9 +1105,9 @@ System.out.println(Util.info2Html(x));
 //            fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
           if( smoothF.equals("splines") ) {
             c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
-            fitted = c.eval("sP[,1]").asDoubleArray();
-            CIl = c.eval("sP[,2]").asDoubleArray();
-            CIu = c.eval("sP[,3]").asDoubleArray();
+            fitted = c.eval("sP[,1]").asDoubles();
+            CIl = c.eval("sP[,2]").asDoubles();
+            CIu = c.eval("sP[,3]").asDoubles();
           }
           if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
             Polygon CI = new Polygon();
@@ -1130,7 +1129,9 @@ System.out.println(Util.info2Html(x));
           }
 
           c.close();
-        } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+        } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+          catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+          catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
       }
       int nSel = data.countSelection();
       if( nSel > 1 ) {
@@ -1144,7 +1145,7 @@ System.out.println(Util.info2Html(x));
         }
         if( smoothF.equals("loess") || smoothF.equals("splines") || smoothF.equals("locfit") ) {
           try {
-            Rconnection c = new Rconnection();
+            RConnection c = new RConnection();
             if( smoothF.equals("splines") )
               c.voidEval("library(splines)");
             if( smoothF.equals("locfit") )
@@ -1190,13 +1191,13 @@ System.out.println(Util.info2Html(x));
               double[] CIl = {0};
               double[] CIu = {0};
               if( smoothF.equals("loess") ) 
-                fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubleArray();
+                fitted = c.eval("predict(loess(y~x, span=3.75/"+smoother+", family = \"symmetric\", control = loess.control(iterations=3)), data.frame(x=xf))").asDoubles();
               if( smoothF.equals("locfit") ) {
                 RList sL = c.eval("sL <- preplot(locfit.raw(x, y, alpha=3.5/"+smoother+"), xf, band=\"global\")").asList();
-                fitted = (double[]) sL.at("fit").getContent();
+                fitted = sL.at("fit").asDoubles();
                 CIl    = new double[fitted.length];
                 CIu    = new double[fitted.length];
-                double[] se = (double[]) sL.at("se.fit").getContent();
+                double[] se = sL.at("se.fit").asDoubles();
                 for( int f=0; f<=200; f++ ) {
                   CIl[f] = fitted[f] - se[f];
                   CIu[f] = fitted[f] + se[f];
@@ -1205,9 +1206,9 @@ System.out.println(Util.info2Html(x));
               //						fitted = c.eval("predict(locfit(y~x), data.frame(x=xf))").asDoubleArray();
               if( smoothF.equals("splines") ) {
                 c.voidEval("sP <- predict(lm(y~ns(x,"+smoother+")), interval=\"confidence\", data.frame(x=xf))");
-                fitted = c.eval("sP[,1]").asDoubleArray();
-                CIl = c.eval("sP[,2]").asDoubleArray();
-                CIu = c.eval("sP[,3]").asDoubleArray();
+                fitted = c.eval("sP[,1]").asDoubles();
+                CIl = c.eval("sP[,2]").asDoubles();
+                CIu = c.eval("sP[,3]").asDoubles();
               }
               if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
                 Polygon CI = new Polygon();
@@ -1227,7 +1228,9 @@ System.out.println(Util.info2Html(x));
                                (int)userToWorldX( xSelMin+step*(double)(f+1) ), (int)userToWorldY( fitted[f+1] ));
             }
                 c.close();
-          } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+          } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+            catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+            catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
         }
       }
     }
