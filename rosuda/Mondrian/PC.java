@@ -8,6 +8,7 @@ import java.lang.*;              //
 import java.io.*;              // 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.ImageIcon.*;
 
 public class PC extends DragBox implements ActionListener {
   protected int width, height;                   // The preferred size.
@@ -56,6 +57,8 @@ public class PC extends DragBox implements ActionListener {
   Vector rects = new Vector(30,10);
   Vector tabs = new Vector(10,10);
   
+  ImageIcon loadGif;
+  
   private DataListener listener;
   private static EventQueue evtq;
   
@@ -74,6 +77,8 @@ public class PC extends DragBox implements ActionListener {
 
     border = 22;
 
+    loadGif = new ImageIcon(Util.readGif("loading.gif"));
+    
     onlyHi = new boolean[data.n];
     for( int i=0; i<data.n; i++ )
       onlyHi[i] = true;
@@ -1031,6 +1036,7 @@ public class PC extends DragBox implements ActionListener {
         oldWidth = size.width;
         oldHeight = size.height;
       }
+
       if( bg == null || printing ) {
         if( !printing )  {
           bi = createImage(size.width, size.height);	// double buffering from CORE JAVA p212
@@ -1283,6 +1289,7 @@ public class PC extends DragBox implements ActionListener {
         ttbg.setColor(Color.black);
         drawSelections(ttbg);
         g.drawImage(ttbi, 0, 0, Color.black, null);
+//        g.drawImage(loadGif.getImage(), width/2-16,height/2-16,null);
         tbg.dispose();
         ttbg.dispose();
       }
@@ -1487,12 +1494,12 @@ public class PC extends DragBox implements ActionListener {
         }
         else if( data.countSelection() > 0 ) {
           for( int j=0; j<k; j++ ) {
-            dMins[j] = data.getSelQuantile(vars[j], 0);
+            dMins[j] = data.getSelMin(vars[j]);                 //data.getSelQuantile(vars[j], 0);
             dIQRs[j] = data.getSelQuantile(vars[j], 0.75) - data.getSelQuantile(vars[j], 0.25);
             dMedians[j] = data.getSelQuantile(vars[j], 0.5);
             dMeans[j] = data.getSelMean(vars[j]);
             dSDevs[j] = data.getSelSDev(vars[j]);
-            dMaxs[j] = data.getSelQuantile(vars[j], 1);
+            dMaxs[j] = data.getSelMax(vars[j]);                //data.getSelQuantile(vars[j], 1);
           }
         }
       }
@@ -1619,6 +1626,10 @@ public class PC extends DragBox implements ActionListener {
         for( int j=0; j<k; j++ ) {	
           int x = border+addBorder+(int)(0.5+slotWidth*j);
           int y;
+          if( Maxs[permA[j]] == Mins[permA[j]] ) {
+            Maxs[permA[j]] += 1;
+            Mins[permA[j]] -= 1;
+          }
           if( !inverted[permA[j]] || !paintMode.equals("Poly") )
             y = (int)(-border + height - (height-2*border) * ((dataCopy[permA[j]][i] - Mins[permA[j]])/(Maxs[permA[j]]-Mins[permA[j]])));
           else
