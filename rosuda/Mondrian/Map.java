@@ -7,7 +7,8 @@ import java.lang.*;              //
 import java.io.*;              //
 import javax.swing.*;
 import javax.swing.event.*;
-import org.rosuda.JRclient.*;
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 
 public class Map extends DragBox {
   private Vector polys = new Vector(256,256);  // Store the tiles.
@@ -95,34 +96,35 @@ public class Map extends DragBox {
 
     if( ((MFrame)frame).hasR() ) {
       try {
-        Rconnection c = new Rconnection();
+        RConnection c = new RConnection();
         
-        double[] reds   = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[1,]").asDoubleArray();
-        double[] greens = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[2,]").asDoubleArray();
-        double[] blues  = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        double[] reds   = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[1,]").asDoubles();
+        double[] greens = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[2,]").asDoubles();
+        double[] blues  = c.eval("col2rgb(terrain.colors("+(polys.size())+"))[3,]").asDoubles();
         
         terrain = new Color[polys.size()];
         for( int i=0; i<polys.size(); i++ )
           terrain[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
         
-        reds   = c.eval("col2rgb(heat.colors("+(polys.size())+"))[1,]").asDoubleArray();
-        greens = c.eval("col2rgb(heat.colors("+(polys.size())+"))[2,]").asDoubleArray();
-        blues  = c.eval("col2rgb(heat.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        reds   = c.eval("col2rgb(heat.colors("+(polys.size())+"))[1,]").asDoubles();
+        greens = c.eval("col2rgb(heat.colors("+(polys.size())+"))[2,]").asDoubles();
+        blues  = c.eval("col2rgb(heat.colors("+(polys.size())+"))[3,]").asDoubles();
         
         heat = new Color[polys.size()];
         for( int i=0; i<polys.size(); i++ )
           heat[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
         
-        reds   = c.eval("col2rgb(topo.colors("+(polys.size())+"))[1,]").asDoubleArray();
-        greens = c.eval("col2rgb(topo.colors("+(polys.size())+"))[2,]").asDoubleArray();
-        blues  = c.eval("col2rgb(topo.colors("+(polys.size())+"))[3,]").asDoubleArray();
+        reds   = c.eval("col2rgb(topo.colors("+(polys.size())+"))[1,]").asDoubles();
+        greens = c.eval("col2rgb(topo.colors("+(polys.size())+"))[2,]").asDoubles();
+        blues  = c.eval("col2rgb(topo.colors("+(polys.size())+"))[3,]").asDoubles();
         
         topo = new Color[polys.size()];
         for( int i=0; i<polys.size(); i++ )
           topo[i] = new Color((float)(reds[i]/255), (float)(greens[i]/255), (float)(blues[i]/255));
         
         c.close();
-      } catch(RSrvException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+      } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+        catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
     }
     
     Collist = new JComboBox();
@@ -412,21 +414,22 @@ public class Map extends DragBox {
               String para="";
               String sep =": <TD  align='left'> <font size=-1 face='verdana, helvetica'>";
               for( int sel=0; sel<selectedIds.length; sel++ ) {
+                String val = "NA";
                 if( sel > 0 )
                   para = " <TR height=5><TD align=right><font size=-1 face='verdana, helvetica'>";
-                if( data.categorical(selectedIds[sel]) ) {
-                  if( data.alpha(selectedIds[sel]) )
-                    infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
-                      +data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[match[i]]);
-                  else
-                    infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
-                      +data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[match[i]]);
-                } else
-                  if( match[i]> -1 )
-                    infoTxt = infoTxt + para +data.getName(selectedIds[sel])+sep
-                      +(data.getRawNumbers(selectedIds[sel]))[match[i]];
-                  else
-                    return null;
+                if( !(data.getMissings(selectedIds[sel]))[match[i]] ) {
+                  if( data.categorical(selectedIds[sel]) ) {
+                    if( data.alpha(selectedIds[sel]) )
+                      val = data.getLevelName(selectedIds[sel], (data.getNumbers(selectedIds[sel]))[match[i]]);
+                    else
+                      val = data.getLevelName(selectedIds[sel], (data.getRawNumbers(selectedIds[sel]))[match[i]]);
+                  } else
+                    if( match[i]> -1 )
+                      val = ""+(data.getRawNumbers(selectedIds[sel]))[match[i]];
+                    else
+                      return null;
+                }
+                infoTxt = infoTxt + para + data.getName(selectedIds[sel]) + sep + val;
               }
               // Tooltip Stuff
               if( !p.getLabel().equals("") )
