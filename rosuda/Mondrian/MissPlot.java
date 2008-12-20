@@ -14,6 +14,7 @@ import javax.swing.event.*;
 public class MissPlot extends DragBox implements ActionListener {
   private Vector rects = new Vector(256,0);            // Store the tiles.
   private Vector labels = new Vector(256,0);           // Store the labels.
+  private Vector tables = new Vector(256,0);           // Store the tables.
   private int width, height, realHeight, startX;       // The preferred size.
   protected int oldWidth, oldHeight;                   // The last size for constructing the bars.
   public String displayMode = "x";
@@ -59,13 +60,43 @@ public class MissPlot extends DragBox implements ActionListener {
     
     String titletext;
     titletext = "Missing Value Plot";
+        
+    for(int j=0; j<this.k; j++) {
+      boolean[] tmpMiss;
+      double[] values = new double[2];
+      int[][] Ids = new int[2][];
+      tmpMiss = data.getMissings(vars[j]);
+      values[0] = data.getN(vars[j]);
+      values[1] = data.n - values[0];
+      Ids[0] = new int[(int)values[0]];
+      Ids[1] = new int[(int)values[1]];
+      int obsPointer = 0;
+      int NAPointer = 0;
+      for(int i=0; i<data.n; i++) {
+        if( !tmpMiss[i] )
+          Ids[0][obsPointer++] = i;
+        else
+          Ids[1][NAPointer++] = i;
+//        System.out.println("Variable: "+data.getName(vars[j])+" obsPointer: "+obsPointer+" NAPointer: "+NAPointer);
+      }
+      tables.addElement(new Table("Missing Table", values, 1, new int[]{2}, new String[]{data.getName(vars[j])}, new String[][]{{"Observed", "Missing"}}, new int[]{vars[j]}, Ids, data, -1));
+    }  
     
     frame.setTitle(titletext);
-    sb.show();
+
+    evtq = Toolkit.getDefaultToolkit().getSystemEventQueue();
   }
   
   public void addDataListener(DataListener l) {
     listener = l;
+  }
+ 
+  public void processEvent(AWTEvent evt) {
+    if( evt instanceof DataEvent ) {
+      if( listener != null )
+        listener.dataChanged(0);
+    }
+    else super.processEvent(evt);
   }
   
   public void maintainSelection(Selection S) {
@@ -118,7 +149,7 @@ public class MissPlot extends DragBox implements ActionListener {
     
     public void dataChanged(int var) {
       
-      System.out.println("Changed: "+var);
+      paint(this.getGraphics());
       
     }
     
@@ -432,21 +463,21 @@ public class MissPlot extends DragBox implements ActionListener {
 
   public void processKeyEvent(KeyEvent e) {
   
-  if( e.getKeyCode() == KeyEvent.VK_R && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
-    if( displayMode.equals("x") )
-      displayMode = "y";
-    else
-      displayMode = "x";
-    for( int j = 0; j < rects.size(); j++) {
-      MyRect r = (MyRect)rects.elementAt(j);
-      r.setDirection(displayMode);
+    if( e.getKeyCode() == KeyEvent.VK_R && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() ) {
+      if( displayMode.equals("x") )
+        displayMode = "y";
+      else
+        displayMode = "x";
+      for( int j = 0; j < rects.size(); j++) {
+        MyRect r = (MyRect)rects.elementAt(j);
+        r.setDirection(displayMode);
+      }
+      Graphics g = this.getGraphics();
+      paint(g);
+      g.dispose();
     }
-    Graphics g = this.getGraphics();
-    paint(g);
-    g.dispose();
+    super.processKeyEvent(e);  // Pass other event types on.
   }
-  super.processKeyEvent(e);  // Pass other event types on.
-}
 
 public void actionPerformed(ActionEvent e) {
   String command = e.getActionCommand();
@@ -516,6 +547,7 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   
   rects.removeAllElements();
   labels.removeAllElements();
+  Vector[] tileIds = new Vector[k];
     
   miss = new int[k];
   double sum = 0;
@@ -523,6 +555,8 @@ public int create(int x1, int y1, int x2, int y2, String info) {
   
   for(int i=0; i<k; i++ ) {
     miss[i] = data.n - data.getN(vars[permA[i]]);
+    tileIds[i] = new Vector(1,0);
+    tileIds[i].addElement(new Integer(i));
   }
   
   int pF=1;
@@ -548,10 +582,17 @@ public int create(int x1, int y1, int x2, int y2, String info) {
     if( displayMode.equals("y") )
       dir = 'y';
     int ww = (int)((width-2*border)*(1.0F-(double)miss[i]/data.n));
-    rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, ww, (int)hi,
-                                 data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", null, null));
+/*    rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, ww, (int)hi,
+                                data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", null, null));
     rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, width-2*border - ww, (int)hi,
-                                 miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null, null));
+                                miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null, null));
+*/
+    Table tablep = (Table)(tables.elementAt(permA[i]));
+    System.out.println("Name: "+tablep.names[0]);
+    rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, ww, (int)hi,
+                                data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", tileIds[0], tablep));
+    rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, width-2*border - ww, (int)hi,
+                                miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", tileIds[1], tablep));
     y += hi+15*pF;
   }
   
