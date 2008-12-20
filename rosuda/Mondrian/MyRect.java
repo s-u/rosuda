@@ -30,7 +30,8 @@ public class MyRect extends Rectangle implements ActionListener {
   public Vector tileIds;
   public Table tablep;
   public Color rectColor = Color.lightGray;
-  private boolean flip = false;
+  private boolean flip = false;                 // flip the direction of hilite and color brush
+                                                // still needs fix for direction = 'y' (no application yet)
   private double[] Colors;
 
   public MyRect(boolean full, char dir, String mode, 
@@ -131,31 +132,49 @@ public class MyRect extends Rectangle implements ActionListener {
     //System.out.println(residual);
     if( obs > 0 ) {
       if( dir != 'f' ) {
+        boolean missCell = true;
         if( info.indexOf("¥") == -1 && info.indexOf(": NA\n") == -1 && !(info.length()>2?(info.substring(0, 3)).equals("NA\n"):false) )
+          missCell = false;
+        if( !missCell ) 
           g.setColor(MFrame.objectColor);
         else
           g.setColor(Color.white);
         if( tablep!= null && tablep.data.colorBrush )  {
           if( dir == 'x' ) {
             int[] ws = Util.roundProportions(Colors, obs, Math.min(w, width));
-            int altp=x;
+            int altp;
+            if( !flip )
+              altp=x;
+            else
+              altp=x+Math.min(w, width);              
             for(int i=0; i<Colors.length; i++) {
               if( i==Colors.length-1 )
-                g.setColor(MFrame.objectColor);
-              else if( i==0 )
+                if( !missCell ) 
+                  g.setColor(MFrame.objectColor);
+                else
+                  g.setColor(Color.white);
+                else if( i==0 )
                 g.setColor(DragBox.hiliteColor);
               else
                 g.setColor(tablep.data.getColorByID(i));
-              g.fillRect(altp, y+Math.max(0, h-height), ws[i], Math.min(h, height) + 1);
-              altp += ws[i];
+              if( !flip ) {
+                g.fillRect(altp, y+Math.max(0, h-height), ws[i], Math.min(h, height) + 1);
+                altp += ws[i];
+              } else {
+                g.fillRect(altp - ws[i], y+Math.max(0, h-height), ws[i], Math.min(h, height) + 1);
+                altp -= ws[i];
+              }
             } 
           } else if ( dir == 'y' ) {
             int[] hs = Util.roundProportions(Colors, obs, Math.min(h, height));
             int altp=0;
             for(int i=0; i<Colors.length; i++) {
               if( i==Colors.length-1 )
-                g.setColor(MFrame.objectColor);
-              else if( i==0 )
+                if( !missCell ) 
+                  g.setColor(MFrame.objectColor);
+                else
+                  g.setColor(Color.white);
+                else if( i==0 )
                 g.setColor(DragBox.hiliteColor);
               else
                 g.setColor(tablep.data.getColorByID(i));
