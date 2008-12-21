@@ -19,6 +19,7 @@ import java.awt.image.*;
 import java.awt.event.*;         // New event model.
 import java.io.*;                // Object serialization streams.
 import java.util.*;              // For StingTokenizer.
+import java.util.Date;              // For Timer
 //import java.util.Vector;         // 
 //import java.util.Properties;     // To store printing preferences in.
 import java.util.jar.JarFile; 	 // To load logo
@@ -31,7 +32,8 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
 import javax.swing.border.*;
-import org.rosuda.JRclient.*;
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 //import com.apple.eawt.*;
 import com.apple.mrj.*;
 import java.text.*;
@@ -79,7 +81,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   private int lastOpenedNum = 6;
   private String[] lastOpened = new String[lastOpenedNum];
   private JMenuItem[] lastOpenedMenu= new JMenuItem[lastOpenedNum];
-  	
+  private String searchText = "";
+  private long startT = 0;
+  private Vector setIndices = new Vector(10,0);
+
   public Join(Vector Mondrians, Vector dataSets, boolean load, boolean loadDB, File loadFile) {
     
     Mondrians.addElement(this);
@@ -102,7 +107,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 		
 	// Start Rserve
 	
-    hasR = Srs.checkLocalRserve();
+//    hasR = Srs.checkLocalRserve();
+    
+    hasR = StartRserve.checkLocalRserve();
     
     System.out.println("Starting RServe ... "+hasR);
     
@@ -180,9 +187,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       q.addActionListener(new ActionListener() {     // Quit the program.
         public void actionPerformed(ActionEvent e) {
           try {																				// Shut down RServe if running ...
-            Rconnection c=new Rconnection();
+            RConnection c=new RConnection();
             c.shutdown();
-          } catch (Exception x) {};
+          } catch (RserveException x) {};
           System.exit(0); 
         }
       });
@@ -321,7 +328,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
     this.setJMenuBar(menubar);                 // Add it to the frame.
     
-    Icon MondrianIcon = new ImageIcon(readGif("Logo.gif"));    
+    Icon MondrianIcon = new ImageIcon(Util.readGif("Logo.gif"));    
     
     JLabel MondrianLabel = new JLabel(MondrianIcon);
     scrollPane = new JScrollPane(MondrianLabel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -579,7 +586,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     
     Graphics g = this.getGraphics();
     g.setFont(new Font("SansSerif",0,11));
-    g.drawString("beta 11", 250, 285);
+    g.drawString("v1.0", 260, 285);
 
     mondrianRunning = true;
 
@@ -631,7 +638,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         maintainOptionMenu();		
 	}
 	
-  public void handleQuit()
+  public void handleQuit() 
   {	
     System.exit(0);
   }
@@ -644,25 +651,6 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     paintAll(this.getGraphics());
   }
 
-  byte[] readGif(String name) {
-    
-    byte[] arrayLogo;
-    try {
-      InputStream inputLogo = this.getClass().getResourceAsStream(name);
-		if (inputLogo == null) {
-			System.err.println("missing resource: '"+name+"'");
-			return new byte[1];
-		}
-		arrayLogo = streamToBytes(inputLogo);
-      inputLogo.close();
-      
-    } catch (IOException e) {
-      System.out.println("Logo Exception: "+e);
-      arrayLogo = new byte[1];
-    }
-    return arrayLogo;
-  }
-  
   public static byte[] streamToBytes(InputStream strm) throws IOException {
     byte[] tmpBuf = new byte[2048];
     byte[] buf = new byte[0];
@@ -734,7 +722,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
   public void refCard() {
     final MFrame refCardf = new MFrame(this);
 
-    Icon RefIcon = new ImageIcon(readGif("ReferenceCard.gif"));
+    Icon RefIcon = new ImageIcon(Util.readGif("ReferenceCard.gif"));
 
     JLabel RefLabel = new JLabel(RefIcon);
     JScrollPane refScrollPane = new JScrollPane(RefLabel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -1092,6 +1080,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
     maintainOptionMenu();
     
+    System.out.println("Key Event in Join");
+    
     // First check whether a color has been set individually
     for( int i=0; i<Plots.size(); i++ ) {
       int col = ((DragBox)Plots.elementAt(i)).colorSet;
@@ -1243,6 +1233,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     
+    scrollPane.setWheelScrollingEnabled(true);
+    
+    varNames.requestFocus();
+    
     varNames.addMouseListener(new MouseAdapter() {
       public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
@@ -1287,6 +1281,39 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
     varNames.addListSelectionListener(new ListSelectionListener() {     
       public void valueChanged(ListSelectionEvent e) { maintainPlotMenu(); }
+    });
+    
+    varNames.addKeyListener(new KeyAdapter() {
+      public void keyReleased(KeyEvent e) {
+                            
+      if (    e.getModifiers() != Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()
+           && (Character.isSpaceChar(e.getKeyChar()) || Character.isJavaLetterOrDigit(e.getKeyChar()) || (e.getKeyChar() == KeyEvent.VK_PERIOD) || (e.getKeyChar() == KeyEvent.VK_MINUS)) ) {
+         setIndices.removeAllElements();     
+         if( searchText.equals("") )
+           startT = new Date().getTime();
+         if( new Date().getTime() < startT + 1000 ) {
+           searchText += e.getKeyChar();
+         } else {
+           searchText = ""+e.getKeyChar();            
+         }
+         startT = new Date().getTime();
+//         System.out.println("Search Text: "+searchText+" Position: "+(scrollPane.getVerticalScrollBar()).getValue());
+         if( !searchText.equals("") )
+           for( int i = 0;i < data.k; i++) {
+             String tmp = data.getName(i); 
+             if( (tmp.toUpperCase()).startsWith((searchText.toUpperCase())) )
+                setIndices.addElement(new Integer(i));
+         }
+         if( setIndices.size() > 0 ) {                      
+           int[] setArray =  new int[setIndices.size()];                      
+           for(int i=0; i<setIndices.size(); i++)
+             setArray[i] = ((Integer)(setIndices.elementAt(i))).intValue();
+           varNames.setSelectedIndices(setArray);      
+           varNames.ensureIndexIsVisible(setArray[setIndices.size()-1]);                 
+           varNames.ensureIndexIsVisible(setArray[0]);    
+         }
+      }
+      }
     });
     
     varNames.setCellRenderer(new MCellRenderer());
@@ -1914,7 +1941,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       mV.setSize(300, Math.min(tmpHeight, (Toolkit.getDefaultToolkit().getScreenSize()).height-30));
       mV.setLocation(150, 150);
       
-      MissPlot plotw = new MissPlot(mV, (dataSet)dataSets.elementAt(thisDataSet), passVars);
+      final MissPlot plotw = new MissPlot(mV, (dataSet)dataSets.elementAt(thisDataSet), passVars);
       plotw.setScrollX();
       plotw.addSelectionListener(this);
       plotw.addDataListener(this);
@@ -2191,7 +2218,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     int[] varsT = varNames.getSelectedIndices();
     dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
     try {
-      Rconnection c = new Rconnection();
+      RConnection c = new RConnection();
       c.voidEval("library(MASS, pos=1)");
       for( int i=0; i<varsT.length; i++ ) {
         c.assign("x",dataT.getRawNumbers(varsT[i]));
@@ -2215,8 +2242,8 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       c.voidEval("is.na(tempD)[tempD==0] <- T");
       c.voidEval("startConf <- cmdscale(dist(scale(tempData)), k=2)");
       c.voidEval("sMds <- sammon(tempD, y=startConf, k=2, trace=F)");
-      double[] x1 = c.eval("sMds$points[,1]").asDoubleArray();
-      double[] x2 = c.eval("sMds$points[,2]").asDoubleArray();      
+      double[] x1 = c.eval("sMds$points[,1]").asDoubles();
+      double[] x2 = c.eval("sMds$points[,2]").asDoubles();      
       
       dataT.addVariable("mds1", false, false, x1, new boolean[dataT.n]);
       dataT.addVariable("mds2", false, false, x2, new boolean[dataT.n]);
@@ -2230,7 +2257,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       Plots.addElement(scat);
       scatterf.setLocation(300, 333);
       scatterf.show();
-    } catch(RSrvException rse) {JOptionPane.showMessageDialog(this, "Calculation of MDS failed");}
+    } catch(RserveException rse) {System.out.println("Rserve exception: "+rse.getMessage());}
+      catch(REXPMismatchException mme) {System.out.println("Mismatch exception : "+mme.getMessage());}
+      catch(REngineException ren) {System.out.println("REngine exception : "+ren.getMessage());}
   }
   
   public void pca() {
@@ -2238,7 +2267,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
     int[] varsT = varNames.getSelectedIndices();
     dataSet dataT = (dataSet)dataSets.elementAt(thisDataSet);
     try {
-      Rconnection c = new Rconnection();
+      RConnection c = new RConnection();
       String call=" ~ x1 ";
       for( int i=0; i<varsT.length; i++ ) {
         c.assign("x",dataT.getRawNumbers(varsT[i]));
@@ -2272,7 +2301,7 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       
       c.voidEval("pca <- predict(princomp("+call+" , data = tempData, cor = "+opt+", na.action = na.exclude))");
       for( int i=0; i<varsT.length; i++ ) {
-        double[] x = c.eval("pca[,"+(i+1)+"]").asDoubleArray();
+        double[] x = c.eval("pca[,"+(i+1)+"]").asDoubles();
         boolean missy[] = new boolean[dataT.n];
         for(int j=0; j<x.length; j++) {
           if( Double.isNaN(x[j]) ) {
@@ -2285,7 +2314,9 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
       }
       varNames = null;
       setVarList();
-    } catch(RSrvException rse) {JOptionPane.showMessageDialog(this, "Calculation of PCA failed");System.out.println(rse);}
+    } catch(RserveException rse) {JOptionPane.showMessageDialog(this, "Calculation of PCA failed");System.out.println(rse);}
+      catch(REXPMismatchException rse) {JOptionPane.showMessageDialog(this, "Calculation of PCA failed");System.out.println(rse);}
+      catch(REngineException rse) {JOptionPane.showMessageDialog(this, "Calculation of PCA failed");System.out.println(rse);}
   }
   
   public void switchVariableMode(){
@@ -2563,12 +2594,12 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
 
     final dataSet data = (dataSet)dataSets.elementAt(thisDataSet); 
 
-    final ImageIcon alphaIcon = new ImageIcon(readGif("alpha.gif"));
-    final ImageIcon alphaMissIcon = new ImageIcon(readGif("alpha-miss.gif"));
-    final Icon catIcon = new ImageIcon(readGif("cat.gif"));
-    final Icon catMissIcon = new ImageIcon(readGif("cat-miss.gif"));
-    final Icon numIcon = new ImageIcon(readGif("num.gif"));
-    final Icon numMissIcon = new ImageIcon(readGif("num-miss.gif"));
+    final ImageIcon alphaIcon = new ImageIcon(Util.readGif("alpha.gif"));
+    final ImageIcon alphaMissIcon = new ImageIcon(Util.readGif("alpha-miss.gif"));
+    final ImageIcon catIcon = new ImageIcon(Util.readGif("cat.gif"));
+    final ImageIcon catMissIcon = new ImageIcon(Util.readGif("cat-miss.gif"));
+    final ImageIcon numIcon = new ImageIcon(Util.readGif("num.gif"));
+    final ImageIcon numMissIcon = new ImageIcon(Util.readGif("num-miss.gif"));
     // This is the only method defined by ListCellRenderer.
     // We just reconfigure the JLabel each time we're called.
 
