@@ -139,14 +139,15 @@ public class dataSet {
   }
   
   public void addVariable(String name, boolean alpha, boolean categorical, double[] data, boolean[] miss) {
-	  if (this.n == 0) { // this dataSet was never initialized - use data length to do that
-		  this.n = data.length;
-		  selectionArray = new double[n];
-		  colorArray = new byte[n];
-		  for(int i=0; i<n; i++)
-			  colorArray[i] = 0;
-		  filterA = new double[n];
-	  }
+ 
+    if (this.n == 0) { // this dataSet was never initialized - use data length to do that
+      this.n = data.length;
+      selectionArray = new double[n];
+      colorArray = new byte[n];
+      for(int i=0; i<n; i++)
+        colorArray[i] = 0;
+      filterA = new double[n];
+    }
     Variable Var = new Variable(this.n, alpha, name);
     System.arraycopy(data, 0, Var.data, 0, data.length);
     System.arraycopy(miss, 0, Var.missing, 0, data.length);
@@ -393,7 +394,7 @@ public class dataSet {
   
   public Table discretize(String name, int dvar, double start, double width, int weight) {
 
-      int     tablelength = (int)((this.getMax(dvar) - start) / width) + 1;
+      int     tablelength = (int)Stat.round((this.getMax(dvar) - start) / width, 8) + 1;
       int[]          vars = new int[1];
                   vars[0] = dvar;
       double[]    bdtable = new double[tablelength];	// !
@@ -450,7 +451,7 @@ System.out.println(" i: "+i+" String:"+rs.getString(1).trim()+" Value: "+rs.getI
         if( weight == -1 )
           for( int i=0; i<getN(dvar); i++ ) {
             int index = (int)((float)((datacopy[sorts[i]]-start)/width));
-//            System.out.println("value: "+datacopy[sorts[i]]+"  index: "+(datacopy[sorts[i]]-start)/width+"  INDEX: "+index);
+//System.out.println("value: "+datacopy[sorts[i]]+"  index: "+(datacopy[sorts[i]]-start)/width+"  INDEX: "+index+" Maxindex: "+tablelength);
 
             bdtable[index]++;
             tableDim[index]++;
@@ -1191,7 +1192,7 @@ System.out.println(newQ.makeQuery());
       if( name.substring(0,2).equals("/P") )
         isCategorical = false;
     }
-
+ 
     Variable(int n, boolean alpha, String name) {
       this.alpha = alpha;
       this.name = name;
@@ -1200,7 +1201,7 @@ System.out.println(newQ.makeQuery());
           isCategorical = false;
       data = new double[n];
       missing = new boolean[n];
-    }
+    } 
     
     Variable(BufferTokenizer BT, int col) {
       this.alpha = !BT.numericalColumn[col];
@@ -1359,7 +1360,7 @@ System.out.println(newQ.makeQuery());
 
         String[] sA = new String[levelP];
         for( int i=0; i<levelP; i++ ) 
-          sA[i] = levelA[i];
+          sA[i] = levelA[i].toUpperCase();
         permA = Qsort.qsort(sA, 0, levelP-1);
       }
       IpermA = new int[levelP];
@@ -1537,33 +1538,37 @@ System.out.println("query: "+query+" ---> "+this.max);
       int count=0;
       int i=0;
       if( !filterON ) {
-        if( q==0 ) {
-          while( selectionArray[sortI[i++]] == 0 ) {}
-          return data[sortI[i-1]];
+        if( !isCategorical ) {
+          if( q==0 ) {
+            while( selectionArray[sortI[i++]] == 0 ) {}
+            return data[sortI[i-1]];
+          }
+          if( q==1 ) {
+            i=n-numMiss-1;
+            while( i>=0 && selectionArray[sortI[i]] == 0 ) {i--;}
+            return data[sortI[i]];
+          }
+          int stop = (int)(q * (countSelection(var)-1));
+          while( count <= stop && i<n ) {
+            if( selectionArray[sortI[i]] > 0 && !missing[sortI[i]] )
+              count++;
+            i++;
+          }
+          i--;
+          //System.out.println(" Sel: "+countSelection(var)+" q: "+q+" i: "+i+" Stop: "+stop+" Count: "+count);
+          if( count < countSelection(var) && stop+0.000001 < (q * (countSelection(var)-1)) ) {   // get next for linear combi of two values ...
+            int j=i+1;
+            while( selectionArray[sortI[j]] == 0 || missing[sortI[j]] ) {j++;}
+            if( j != i+1 )
+              j--;
+            double remainder = (q * (countSelection(var)-1)) - stop;
+            //          System.out.println(" GET NEXT :"+i+" <-> "+j);
+            return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
+          } else
+            return data[sortI[i]];
         }
-        if( q==1 ) {
-          i=n-numMiss-1;
-          while( i>=0 && selectionArray[sortI[i]] == 0 ) {i--;}
-          return data[sortI[i]];
-        }
-        int stop = (int)(q * (countSelection(var)-1));
-        while( count <= stop && i<n ) {
-          if( selectionArray[sortI[i]] > 0 && !missing[sortI[i]] )
-            count++;
-          i++;
-        }
-        i--;
-//System.out.println(" Sel: "+countSelection(var)+" q: "+q+" i: "+i+" Stop: "+stop+" Count: "+count);
-        if( count < countSelection(var) && stop+0.000001 < (q * (countSelection(var)-1)) ) {   // get next for linear combi of two values ...
-          int j=i+1;
-          while( selectionArray[sortI[j]] == 0 || missing[sortI[j]] ) {j++;}
-          if( j != i+1 )
-            j--;
-          double remainder = (q * (countSelection(var)-1)) - stop;
-//          System.out.println(" GET NEXT :"+i+" <-> "+j);
-          return data[sortI[i]] * (1-remainder) + data[sortI[j]] * remainder;
-        } else
-          return data[sortI[i]];
+        else
+          return 0;
       } else {
         if( q==0 ) {
           while( (selectionArray[sortI[i]] == 0) || (filterA[sortI[i]] != filterVal) || missing[sortI[i]] ) {i++;/*System.out.println("i: "+i+" "+selectionArray[sortI[i]]+" "+filterA[sortI[i]]+" "+filterVal);*/}
