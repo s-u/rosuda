@@ -48,6 +48,10 @@ public class Table implements Cloneable {
     this.Interactions = new InteractionSet(k);
     this.df = table.length - 1;
 
+    // initialize selection state
+    for(int i=0; i<table.length; i++)
+      hilite[i] = 0;
+      
     // Clean Numerical Labels 1.0 -> 1
     for(int j=0; j<k; j++) {
       boolean allDotNull = true;
@@ -438,29 +442,30 @@ public class Table implements Cloneable {
   }
   
       public double retrieve(int i) {
-        double sum=0, total=0;
-        if( count !=-1 ) {
-          double[] counts = data.getRawNumbers(count);
-          boolean[] miss = data.getMissings(count);
-          for( int j=0; j<Ids[i].length; j++ ) {
-            if( !miss[Ids[i][j]] ) {
-              sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
-              total += counts[Ids[i][j]];
+        
+        if( Ids[i].length > 0 ) {
+          double sum=0, total=0;
+          if( count !=-1 ) {
+            double[] counts = data.getRawNumbers(count);
+            boolean[] miss = data.getMissings(count);
+            for( int j=0; j<Ids[i].length; j++ ) {
+              if( !miss[Ids[i][j]] ) {
+                sum += data.getSelected(Ids[i][j]) * counts[Ids[i][j]];
+                total += counts[Ids[i][j]];
+              }
             }
+            if( total != 0 )
+              return sum/total;
+            else
+              return 0;
           }
-          if( Ids[i].length > 0 )
-            return sum/total;
-          else
-            return 0;
-        }
-        else {
-          for( int j=0; j<Ids[i].length; j++ ) 
-            sum += data.getSelected(Ids[i][j]);
-          if( Ids[i].length > 0 )
+          else {
+            for( int j=0; j<Ids[i].length; j++ ) 
+              sum += data.getSelected(Ids[i][j]);
             return sum/Ids[i].length;
-          else
-            return 0;
-        }
+          }
+        } else
+          return 0;
       }
       
   void print() {
