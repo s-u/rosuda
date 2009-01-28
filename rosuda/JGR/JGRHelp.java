@@ -544,12 +544,16 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 		}
 
 		private void back() {
-
+			if(currentURLIndex + 2 < viewportLocationHistory.size())
+				viewportLocationHistory.setElementAt(this.getViewport().getViewPosition(),currentURLIndex+1);
+			else
+				viewportLocationHistory.add(this.getViewport().getViewPosition());
 			currentURLIndex--;
 			updatePage(true);
 		}
 
 		private void forward() {
+			viewportLocationHistory.setElementAt(this.getViewport().getViewPosition(),currentURLIndex+1);
 			currentURLIndex++;
 			updatePage(true);			
 		}

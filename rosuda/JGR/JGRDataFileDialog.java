@@ -16,6 +16,7 @@ import java.awt.Frame;
  * 
  * @deprecated use JGRDataFileOpenDialog
  */
+
 public class JGRDataFileDialog {
 
 	/**
