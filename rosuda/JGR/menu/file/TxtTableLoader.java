@@ -323,14 +323,14 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	}
 	private void loadPreview(){
 		loadInR(previewName,true);
-		//JGR.refreshObjects();
 		JGR.R.eval(".refreshObjects()",false);
 		RObject obj=new RObject(previewName,"data.frame",null,false);
 		SVarSet vs = RController.newSet(obj);
 		DataTable rTable = new DataTable(vs,"data.frame",false,false) ;
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
-
+		JGR.R.eval("rm("+previewName+")", false);
+		
 	}
 	private void loadActionPerformed(ActionEvent evt) {
 		System.out.println("load.actionPerformed, event="+evt);
@@ -362,7 +362,6 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	}
 	public void dispose(){
 		super.dispose();
-		JGR.R.eval("rm("+previewName+")",false);
 	}
 
 }
