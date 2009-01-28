@@ -139,6 +139,22 @@ public class RController {
 	}
 
 	/**
+	 * loads a package. If it isn't installed, it is
+	 * loaded from CRAN
+	 * 
+	 * 
+	 * @param pack
+	 */
+	public static void loadPackage(String pack){
+		String packages = getCurrentPackages();
+		if(!packages.contains(pack)){
+			JGR.R.eval("cat('Package "+pack+" not found. Attempting to download...\n')");
+			JGR.MAINRCONSOLE.execute("install.packages('"+pack+"');library("+pack+")",true);	
+		}
+		else
+			JGR.R.eval("library("+pack+")",true);
+	}
+	/**
 	 * Show all posibilities to complete your given part of a command.
 	 * 
 	 * @param partOfCmd

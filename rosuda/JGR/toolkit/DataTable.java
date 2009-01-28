@@ -131,7 +131,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	public DataTable() {
 		this(null, null, true);
 	}
-
+	
+	public DataTable(SVarSet vs, String type, boolean editable){
+		this(vs,type,editable,true);
+	}
 	/**
 	 * Create a Table and show supplied {@see SVarSet}.
 	 * 
@@ -141,8 +144,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 *            type of {@see RObject} related to vs
 	 * @param editable
 	 *            if related {@see RObject} is editable or not
+	 *            
+	 * @param is Visible
 	 */
-	public DataTable(SVarSet vs, String type, boolean editable) {
+	public DataTable(SVarSet vs, String type, boolean editable,boolean visible) {
 		super("DataTable Editor", false, TJFrame.clsObjBrowser);
 		if (vs == null) {
 			vs = new SVarSet();
@@ -238,7 +243,8 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 						d.height > Common.screenRes.height ? Common.screenRes.height - 50
 								: d.height));
 		this.setLocation(this.getLocation().x + 100, 10);
-		this.setVisible(true);
+		if(visible)
+			this.setVisible(true);
 	}
 
 	/**
@@ -436,6 +442,11 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		hscroll.setValue(col * 75 - hscroll.getVisibleAmount() + 30 < 0 ? 0
 				: col * 75 - hscroll.getVisibleAmount() + 75 + 10);
 	}
+	
+	public JTable getJTable(){
+		return dataTable;
+	}
+	
 
 	private void loadData() {
 		FileSelector fopen = new FileSelector(this, "Open...",

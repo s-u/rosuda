@@ -31,7 +31,7 @@ public class ErrorMsg {
 	 */
 	public ErrorMsg(Exception e) {
 		String curDir = System.getProperty("user.dir");
-		String filename = curDir + "/JGRError.log";
+		String filename = "JGRError.log";
 		String[] months = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
 				"Aug", "Sep", "Oct", "Nov", "Dec" };
 		// e.printStackTrace();

@@ -34,6 +34,8 @@ public class FileSelector extends JFrame {
 
 	/** SAVE DIALOG */
 	public final static int SAVE = 1;
+	
+	public static String lastDirectory = JGRPrefs.workingDirectory;
 
 	private FileDialog awtDialog = null;
 
@@ -72,7 +74,25 @@ public class FileSelector extends JFrame {
 			swingChooser.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
 		}
 	}
-
+	
+	/**
+	 * Create a fileDialog using the last selected directory as
+	 * the staring place.
+	 * 
+	 */
+	public FileSelector(Frame f, String title, int type) {
+		this.type = type;
+		this.f = f;
+		if (Common.isMac()) {
+			awtDialog = new FileDialog(f, title, type);
+			awtDialog.setDirectory(lastDirectory);
+		} else {
+			swingChooser = new JFileChooser(lastDirectory);
+			swingChooser.setDialogTitle(title);
+			swingChooser.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
+		}
+	}
+	
 	public void addActionListener(ActionListener al) {
 		if (!Common.isMac())
 			swingChooser.addActionListener(al);
@@ -98,11 +118,18 @@ public class FileSelector extends JFrame {
 	 * @return filename
 	 */
 	public String getFile() {
+		String fileName = null;
 		try {
-			if (Common.isMac())
-				return awtDialog.getFile();
-			else
-				return swingChooser.getSelectedFile().getName();
+			if (Common.isMac()){
+				fileName = awtDialog.getFile();
+				FileSelector.lastDirectory = awtDialog.getDirectory();
+			}
+			else{
+				fileName = swingChooser.getSelectedFile().getName();
+				FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
+				+ File.separator;
+			}
+			return fileName;
 		} catch (Exception e) {
 			return null;
 		}
@@ -115,10 +142,14 @@ public class FileSelector extends JFrame {
 	 */
 	public String getDirectory() {
 		try {
-			if (Common.isMac())
-				return awtDialog.getDirectory();
-			return swingChooser.getCurrentDirectory().getAbsolutePath()
+			if (Common.isMac()){
+				
+				FileSelector.lastDirectory = awtDialog.getDirectory();
+				return FileSelector.lastDirectory;
+			}
+			FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
 					+ File.separator;
+			return FileSelector.lastDirectory;
 		} catch (Exception e) {
 			return null;
 		}
@@ -140,9 +171,21 @@ public class FileSelector extends JFrame {
 		}
 	}
 
+	public boolean isSwing()
+	{
+		return !Common.isMac();
+	}
+	
 	public Component getSelector() {
 		if (Common.isMac())
 			return awtDialog;
 		return swingChooser;
+	}
+	
+	public JFileChooser getJFileChooser(){
+		return swingChooser;
+	}
+	public FileDialog getAWTChooser(){
+		return awtDialog;
 	}
 }

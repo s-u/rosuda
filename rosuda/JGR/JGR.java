@@ -47,7 +47,6 @@ import org.rosuda.util.Global;
 
 public class JGR {
 
-	
 	/** Version number of JGR */
 	public static final String VERSION = "1.6-2";
 
@@ -540,7 +539,12 @@ public class JGR {
 			new ErrorMsg(e);
 		}
 	}
-
+	public static void refreshObjects(){
+		REXP x = R.idleEval("try(.refreshObjects(),silent=TRUE)");
+		String[] r = null;
+		if (x != null && (r = x.asStringArray()) != null)
+			JGR.setObjects(r);
+	}
 	/**
 	 * Refresher, which is looking for new keywords and objects in workspace and
 	 * refreshes highlight and autocompletion information.

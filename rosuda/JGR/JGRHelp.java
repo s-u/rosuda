@@ -44,6 +44,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.editor.FindReplaceDialog;
 import org.rosuda.JGR.rhelp.SearchEngine;
@@ -230,6 +231,12 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 
 	private void back() {
 		((HelpArea) tabArea.getSelectedComponent()).back();
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+
+					 helpArea.reposition();
+				}
+			});
 	}
 
 	private void home() {
@@ -238,6 +245,12 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 
 	private void forward() {
 		((HelpArea) tabArea.getSelectedComponent()).forward();
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				
+				 helpArea.reposition();
+			}
+		});
 	}
 
 	private void exit() {
@@ -429,10 +442,14 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 		private String keyword;
 
 		private final Vector history = new Vector();
+		
+		private final Vector viewportLocationHistory = new Vector();
 
 		private int currentURLIndex = -1;
 
 		private JTabbedPane tabArea = null;
+		
+		
 
 		public HelpArea(JTabbedPane parent, JGRHelp rhelp, String keyword) {
 			this.rhelp = rhelp;
@@ -478,12 +495,15 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			rhelp.back.setEnabled(currentURLIndex > 0);
 			rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
 			URL url = (URL) history.get(currentURLIndex);
+			
+			//setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex));
 			try {
 				helpPane.setPage(url);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 				try {
 					history.remove(currentURLIndex);
+					viewportLocationHistory.remove(currentURLIndex);
 					currentURLIndex--;
 					rhelp.back.setEnabled(currentURLIndex > 0);
 					rhelp.forward.setEnabled(currentURLIndex + 1 < history
@@ -513,21 +533,29 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 									|| title.startsWith("file"))
 								tabArea.setTitleAt(index, title);
 						}
+						this.getViewport().setViewPosition((java.awt.Point)viewportLocationHistory.get(currentURLIndex));
 					} catch (Exception ex2) {
 					}
 
 				rhelp.setWorking(false);
 			}
+
+			this.getViewport().setViewPosition((java.awt.Point)viewportLocationHistory.get(currentURLIndex));
 		}
 
 		private void back() {
+
 			currentURLIndex--;
 			updatePage(true);
 		}
 
 		private void forward() {
 			currentURLIndex++;
-			updatePage(true);
+			updatePage(true);			
+		}
+		public void reposition(){
+			try{Thread.sleep(100);}catch(Exception e){}
+			this.getViewport().setViewPosition((java.awt.Point)viewportLocationHistory.get(currentURLIndex+1));
 		}
 
 		public void goTo(URL url) {
@@ -539,6 +567,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 				currentURLIndex++;
 				history.setSize(currentURLIndex);
 				history.add(url);
+				viewportLocationHistory.setSize(currentURLIndex);
+				viewportLocationHistory.add(this.getViewport().getViewPosition());
 				updatePage(href);
 			}
 		}
@@ -568,6 +598,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 							rhelp.searchKeyWords.isSelected(),
 							rhelp.searchAliases.isSelected()));
 		}
+
 	}
 
 	/*

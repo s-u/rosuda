@@ -66,7 +66,11 @@ public class Editor extends TJFrame implements ActionListener {
 		this(null);
 	}
 
-	public Editor(String file) {
+	public Editor(String file){
+		this(file,true);
+	}
+	
+	public Editor(String file,boolean visible) {
 		super("Editor", false, TJFrame.clsEditor);
 		this.setLayout(new BorderLayout());
 
@@ -157,8 +161,8 @@ public class Editor extends TJFrame implements ActionListener {
 				setTitle(fileName);
 			}
 		});
-		
-		this.setVisible(true);
+		if(visible)
+			this.setVisible(true);
 		
 	}
 	
@@ -208,16 +212,7 @@ public class Editor extends TJFrame implements ActionListener {
 	}
 
 	private void openFile(String file) {
-	
-	
-		if (modified && textArea.getText().trim().length() > 0) {
-			int i = JOptionPane.showConfirmDialog(this, "Save current File?", "Open", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-			if (i == 0 && !saveFile()) {
-				return;
-			}
-			if (i == 2)
-				return;
-		}
+
 		String newFile = file;
 		
 		if (file == null)
@@ -235,40 +230,42 @@ public class Editor extends TJFrame implements ActionListener {
 				 newFile = file;
 		}
 
-		if (/*textArea.getText().length() == 0 && */newFile != null && newFile.trim().length() > 0) {
-			fileName = newFile;
+		if (newFile != null && newFile.trim().length() > 0) {
 			setWorking(true);
-			textArea.setText("");
-			textArea.loadFile(fileName);
+			Editor newEditor = new Editor(null,false);
+			newEditor.textArea.setText("");
+			newEditor.textArea.loadFile(newFile);
+			newEditor.fileName=newFile;
+			newEditor.modified=false;
+			newEditor.setModified(false);
 			
+			newEditor.setVisible(true);
 			
 			recentOpen.addEntry(fileName);
-		JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this, "Open Recent");
-		if (rm != null) {
-			rm.removeAll();
-			if (recentOpen == null)
-				recentOpen = new RecentList("JGR", "RecentOpenFiles", 8);
-			String[] shortNames = recentOpen.getShortEntries();
-			String[] longNames = recentOpen.getAllEntries();
-			int i = 0;
-			while (i < shortNames.length) {
-				JMenuItem mi = new JMenuItem(shortNames[i]);
-				mi.setActionCommand("recent:" + longNames[i]);
-				mi.addActionListener(this);
-				rm.add(mi);
-				i++;
+			JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this, "Open Recent");
+			if (rm != null) {
+				rm.removeAll();
+				if (recentOpen == null)
+					recentOpen = new RecentList("JGR", "RecentOpenFiles", 8);
+				String[] shortNames = recentOpen.getShortEntries();
+				String[] longNames = recentOpen.getAllEntries();
+				int i = 0;
+				while (i < shortNames.length) {
+					JMenuItem mi = new JMenuItem(shortNames[i]);
+					mi.setActionCommand("recent:" + longNames[i]);
+					mi.addActionListener(this);
+					rm.add(mi);
+					i++;
+				}
+				if (i > 0)
+					rm.addSeparator();
+				JMenuItem ca = new JMenuItem("Clear list");
+				ca.setActionCommand("recent-clear");
+				ca.addActionListener(this);
+				rm.add(ca);
+				if (i == 0)
+					ca.setEnabled(false);
 			}
-			if (i > 0)
-				rm.addSeparator();
-			JMenuItem ca = new JMenuItem("Clear list");
-			ca.setActionCommand("recent-clear");
-			ca.addActionListener(this);
-			rm.add(ca);
-			if (i == 0)
-				ca.setEnabled(false);
-		}
-
-			
 			setWorking(false);
 		}
 	}

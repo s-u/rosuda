@@ -49,6 +49,7 @@ import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.Common;
@@ -269,7 +270,27 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				JGR.rSync.triggerNotification(c.trim());
 		}
 	}
+	
 
+	
+	/**
+	 * Gets a unique name based on a starting string
+	 * 
+	 * @param var
+	 * @return the value of var concatinated with a number
+	 */
+	public String getUniqueName(String var){
+		JGR.refreshObjects();
+		var = var.replace(" ", "_");
+		if(!JGR.OBJECTS.contains(var))
+			return var;
+		int i = 1;
+		while(true){
+			if(!JGR.OBJECTS.contains(var+i))
+				return var+i;
+			i++;
+		}
+	}
 	/**
 	 * Parse command if it is a helpcommand.
 	 * 
@@ -400,7 +421,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public void loadWorkSpace() {
 		FileSelector fopen = new FileSelector(this, "Open Workspace",
-				FileSelector.LOAD, JGRPrefs.workingDirectory);
+				FileSelector.LOAD);
 		fopen.setVisible(true);
 		if (fopen.getFile() != null) {
 			wspace = (JGRPrefs.workingDirectory = fopen.getDirectory())
@@ -430,7 +451,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public void saveWorkSpaceAs() {
 		FileSelector fsave = new FileSelector(this, "Save Workspace as...",
-				FileSelector.SAVE, JGRPrefs.workingDirectory);
+				FileSelector.SAVE);
 		fsave.setVisible(true);
 		if (fsave.getFile() != null) {
 			String file = (JGRPrefs.workingDirectory = fsave.getDirectory())
@@ -562,8 +583,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public String rChooseFile(Rengine re, int newFile) {
 		FileSelector fd = new FileSelector(this,
 				(newFile == 0) ? "Select a file" : "Select a new file",
-				(newFile == 0) ? FileDialog.LOAD : FileDialog.SAVE,
-				JGRPrefs.workingDirectory);
+				(newFile == 0) ? FileDialog.LOAD : FileDialog.SAVE);
 		fd.setVisible(true);
 		String res = null;
 		if (fd.getDirectory() != null && fd.getFile() != null)
@@ -673,9 +693,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "fontSmaller")
 			FontTracker.current.setFontSmaller();
 		else if (cmd == "loaddata")
-			new JGRDataFileOpenDialog(this, JGRPrefs.workingDirectory);
+			new DataLoader();//new JGRDataFileOpenDialog(this, JGRPrefs.workingDirectory);
 		else if (cmd == "open")
-			new Editor().open();
+			new Editor(null,false).open();
 		else if (cmd == "openwsp")
 			loadWorkSpace();
 		else if (cmd == "new")
