@@ -77,8 +77,6 @@ JGR.jar: javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org jedit rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
 	rm -rf org jgrsplash.jpg icons jedit
-	#mv JGR.jar /Library/Frameworks/R.framework/Versions/2.8/Resources/library/JGR/java/
-	mv JGR.jar C:/"Program Files"/R/R-2.8.1/library/JGR/java/
 
 jgr-docs: $(JGR_SRC) 
 	rm -rf JavaDoc
