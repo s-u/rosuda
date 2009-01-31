@@ -545,14 +545,15 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		 * Complete current part.
 		 */
 		public void completeCommand() {
-			if (fun.indexOf(File.separator) > 0) 
+			if (fun.indexOf(File.separator) >= 0) {
 				fun = fun.substring(fun.lastIndexOf(File.separator)+1);
-				
-			if (fun.indexOf("$") > 0) 
-				fun = fun.substring(fun.lastIndexOf("$")+1);
+			}
 			
-			parent.insertAt(parent.getCaretPosition(), cmds.getSelectedValue()
-					.toString().replaceFirst(fun == null ? "" : fun, ""));
+			if (fun.indexOf("$") > 0) {
+				fun = fun.substring(fun.lastIndexOf("$")+1);
+			}
+			
+			parent.insertAt(parent.getCaretPosition(), cmds.getSelectedValue().toString().replaceFirst(fun == null ? "" : fun, ""));
 			this.setVisible(false);
 			if (cmdHelp != null)
 				cmdHelp.hide();
