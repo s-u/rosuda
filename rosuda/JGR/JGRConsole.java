@@ -66,6 +66,7 @@ import org.rosuda.ibase.toolkit.WinTracker;
  * RoSuDa 2003 - 2005
  */
 
+
 public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		FocusListener, RMainLoopCallbacks {
 
