@@ -137,6 +137,20 @@ class GDFont extends GDObject {
 
     Font font;
 
+    public static boolean useSymbolFont = true;
+
+    static { // this is to work around a bug in Java on Windows where the Symbol font is incorrectly mapped and requires us to force another font for the Symbol characters (yes, it's stupid but apparently for backward compatibility ... *sigh*)
+	// we let the user override this detection by setting javagd.usesymbolfont property to true/false (we also support yes/no and 1/0)
+	String sfp = System.getProperty("javagd.usesymbolfont");
+	if (sfp != null && sfp.length() > 0)
+	    useSymbolFont = (sfp.equals("true") || sfp.equals("yes") || sfp.equals("1"));
+	else { // ok - my tests show that Mac OS X is fine with Symbol, Windows is not, so we'll fix this for Windows only
+	    String os = System.getProperty("os.name");
+	    if (os.length() > 2 && os.substring(0, 3).equals("Win"))
+		useSymbolFont = false;
+	}
+    }
+
     public GDFont(double cex, double ps, double lineheight, int face, String family) {
         //System.out.println(">> FONT(cex="+cex+",ps="+ps+",lh="+lineheight+",face="+face+",\""+family+"\")");
         this.cex=cex; this.ps=ps; this.lineheight=lineheight; this.face=face; this.family=family;
@@ -144,7 +158,7 @@ class GDFont extends GDObject {
         if (face==2) jFT=Font.BOLD;
         if (face==3) jFT=Font.ITALIC;
         if (face==4) jFT=Font.BOLD|Font.ITALIC;
-		if (face==5) family="Symbol";
+	if (face==5 && useSymbolFont) family="Symbol";
         font=new Font(family.equals("")?null:family, jFT, (int)(cex*ps+0.5));
     }
 
