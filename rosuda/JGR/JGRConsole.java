@@ -49,6 +49,7 @@ import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
@@ -65,7 +66,6 @@ import org.rosuda.ibase.toolkit.WinTracker;
  * 
  * RoSuDa 2003 - 2005
  */
-
 
 public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		FocusListener, RMainLoopCallbacks {
@@ -694,7 +694,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "fontSmaller")
 			FontTracker.current.setFontSmaller();
 		else if (cmd == "loaddata")
-			new DataLoader();//new JGRDataFileOpenDialog(this, JGRPrefs.workingDirectory);
+			new DataLoader();
 		else if (cmd == "open")
 			new Editor(null,false).open();
 		else if (cmd == "openwsp")
@@ -719,7 +719,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "help")
 			execute("help.start()", false);
 		else if (cmd == "table")
-			new DataTable(null, null, true);
+		{DataFrameWindow inst = new DataFrameWindow();
+		inst.setLocationRelativeTo(null);
+		inst.setVisible(true);}//new DataTable(null, null, true);
 		else if (cmd == "save")
 			output.startExport();
 		else if (cmd == "savewsp")
