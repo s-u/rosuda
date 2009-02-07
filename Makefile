@@ -37,7 +37,7 @@ JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
-JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/layout/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JGR/editor/*.java) $(wildcard rosuda/JGR/menu/*.java) $(wildcard rosuda/JGR/menu/file/*.java)
+JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/data/*.java) $(wildcard rosuda/JGR/layout/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JGR/editor/*.java) $(wildcard rosuda/JGR/menu/*.java) $(wildcard rosuda/JGR/menu/file/*.java)
 JEDIT_SRC:= $(wildcard rosuda/JGR/editor/jedit/syntax/*.java)
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
@@ -77,6 +77,7 @@ JGR.jar: javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org jedit rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
 	rm -rf org jgrsplash.jpg icons jedit
+
 
 jgr-docs: $(JGR_SRC) 
 	rm -rf JavaDoc
