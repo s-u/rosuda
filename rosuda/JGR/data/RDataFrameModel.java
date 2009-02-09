@@ -8,7 +8,10 @@ import org.rosuda.JGR.JGR;
 
 
 class RDataFrameModel extends AbstractTableModel {
+	
 	String rDataName=null;
+	
+	RowNamesModel rowNamesModel = new RowNamesModel();
 	
 	public static final int numExtensionRows = 30;
 	public static final int numExtensionColumns = 1; 
@@ -70,17 +73,32 @@ class RDataFrameModel extends AbstractTableModel {
 		return "?";
 	}
 	public void setValueAt(Object value,int row, int col){	
-		//notify if outside dataframe range
-		if(row>=getRealRowCount() || col>=getRealColumnCount()){
-			this.fireTableStructureChanged();
-			this.fireTableDataChanged();
-		}	
+
 		REXP currentValue = JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]");	
 		int type =currentValue.getType();
-		JGR.R.eval("print('"+currentValue.toString()+"')");
+		
 		String valueString = value.toString().trim();
 		this.fireTableCellUpdated(row, col);
-		if(value.toString().equals("NA")){
+		if(type == REXP.XT_NULL){
+			try{
+				Double.parseDouble(valueString);
+			}catch(Exception e){
+				if(value.toString().equals("NA"))
+					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+				else
+					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+				//notify if outside dataframe range
+				if((row+1)>=getRealRowCount() || (col+1)>=getRealColumnCount()){
+					refresh();
+				}	
+				return;
+			}
+			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+			//notify if outside dataframe range
+			if((row+1)>=getRealRowCount() || (col+1)>=getRealColumnCount()){
+				refresh();
+			}
+		}else if(value.toString().equals("NA")){
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
 			return;
 		}else if(type ==REXP.XT_STR){
@@ -116,26 +134,7 @@ class RDataFrameModel extends AbstractTableModel {
 			}
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 			return;
-		}else if(type == REXP.XT_NULL){
-			try{
-				Double.parseDouble(valueString);
-			}catch(Exception e){
-				JGR.R.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				//notify if outside dataframe range
-				if(row>=getRealRowCount() || col>=getRealColumnCount()){
-					this.fireTableStructureChanged();
-					this.fireTableDataChanged();
-				}	
-				return;
-			}
-			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-			//notify if outside dataframe range
-			if(row>=getRealRowCount() || (col+1)>=getRealColumnCount()){
-				fireTableStructureChanged();
-				fireTableDataChanged();
-			}
-		}else{
+		}/*else{
 			//default case:
 			//if it looks like a number assign it, otherwise assign it in quotes
 			try{
@@ -148,11 +147,64 @@ class RDataFrameModel extends AbstractTableModel {
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 			
 
-		}
+		}*/
 		
 	}
+	
+	public void refresh(){
+		this.fireTableStructureChanged();
+		this.fireTableDataChanged();
+	}
+	
+	public String getColumnName(int col){
+		if(col<getRealColumnCount()){
+			REXP colName = JGR.R.eval("colnames("+rDataName+")["+(col+1)+"]");
+			if(colName.getType() ==REXP.XT_STR)
+				return colName.asString();
+			else
+				return "?";
+		}else{
+			return "";
+		}
+	}
+	
 	public boolean isCellEditable(int rowIndex, int columnIndex){
 		return true;
 	}
+	
+	class RowNamesModel extends RowNamesListModel{
+		
+		public int getSize() { 
+			return getRowCount(); 
+		}
+		
+		public Object getElementAt(int index) {
+			if(index<getRealRowCount()){
+				REXP rRowName =JGR.R.eval("rownames("+rDataName+")["+(index+1)+"]");
+				if(rRowName.getType() ==REXP.XT_STR)
+					return rRowName.asString();
+				else
+					return "?";
+			}else
+				return new Integer(index+1).toString();
+		}
+		
+		public void initHeaders(int n){}
+		
+		public int getMaxNumChar(){
+			String[] rowNames = JGR.R.eval("rownames("+rDataName+")").asStringArray();
+			int max = 0;
+			for(int i=0;i<rowNames.length;i++){
+				max = Math.max(max,rowNames[i].length());
+			}
+			return max;
+		}
+		
+	}
+	
+	public RowNamesListModel getRowNamesModel() { return rowNamesModel;}
+	public void setRowNamesModel(RowNamesModel model){rowNamesModel = model;}
+	
+	
 }
 

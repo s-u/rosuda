@@ -7,6 +7,12 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.ibase.Common;
+
+import org.rosuda.JRI.*;
+
+import java.util.Vector;
+import java.lang.Thread;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.FlowLayout;
@@ -14,11 +20,15 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BoxLayout;
+import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -144,8 +154,8 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					dataSelectorLabel.setHorizontalTextPosition(SwingConstants.CENTER);
 				}
 				{
-					DefaultComboBoxModel dataSelectorModel = //new DataFrameComboBoxModel();
-						new DefaultComboBoxModel(JGR.DATA);
+					DataFrameComboBoxModel dataSelectorModel = //new DataFrameComboBoxModel();
+						new DataFrameComboBoxModel(JGR.DATA);
 					dataSelector = new JComboBox();
 					dataSelectorPanel.add(dataSelector, new AnchorConstraint(432, 594, 906, 415, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					dataSelector.setModel(dataSelectorModel);
@@ -175,12 +185,23 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					if(t==null){
 						if(JGR.DATA.size()==0)
 							dataScrollPane = null;
-						else
-							dataScrollPane = new ExScrollableTable(table =new ExTable(new RDataFrameModel(((RObject)JGR.DATA.elementAt(0)).getName())));
-					}else
-						dataScrollPane = new ExScrollableTable(table = t);
+						else{
+							dataScrollPane = new ExScrollableTable(table =new ExTable(
+									new RDataFrameModel(((RObject)JGR.DATA.elementAt(0)).getName())));
+							dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+									getExTable().getModel()).getRowNamesModel());		
+						}
+					}else{
+						dataScrollPane = new ExScrollableTable(table = t);					
+						dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+								getExTable().getModel()).getRowNamesModel());
+					}
+
 				}
-				jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
+				if(dataScrollPane!=null)
+					jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
+				else
+					jTabbedPane1.addTab("Data View", null, new JPanel(), null);
 				jTabbedPane1.addTab("Variable View", null, null, null);
 			}
 			{
@@ -237,6 +258,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			}
 			pack();
 			this.setSize(839, 839);
+			
 			final JFrame theFrame = this;
 			theFrame.addComponentListener(new java.awt.event.ComponentAdapter() {
 				  public void componentResized(ComponentEvent event) {
@@ -244,7 +266,37 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				      Math.max(300, theFrame.getWidth()),
 				      theFrame.getHeight());
 				  }
-				});
+			});
+			
+			theFrame.addWindowFocusListener(new WindowAdapter() {
+			    public void windowGainedFocus(WindowEvent e) {
+
+					RController.refreshObjects();
+					if(JGR.DATA.size()==0){
+					
+						dataScrollPane = null;	
+						jTabbedPane1.setComponentAt(0, new JPanel());
+				        JGR.R.eval("print('focus gained')");
+					}
+
+					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+					
+					if(dataScrollPane==null && JGR.DATA.size()>0){
+						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
+						dataSelector.setSelectedItem(firstItem);
+						dataScrollPane = new ExScrollableTable(table =new ExTable(
+								new RDataFrameModel(firstItem.getName())));
+						dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+								getExTable().getModel()).getRowNamesModel());
+						jTabbedPane1.setComponentAt(0, dataScrollPane);
+					}
+			        if(dataScrollPane!=null)
+			        	((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
+			    }
+			});
+
+			
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -253,39 +305,69 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		if(dataSelector==((JComboBox)e.getSource())){
-			JGR.R.eval("print('"+e.getActionCommand()+"')");
 			if(e.getActionCommand()=="comboBoxChanged"){
 
 				dataScrollPane = new ExScrollableTable(new ExTable(new RDataFrameModel(
 						((RObject)dataSelector.getSelectedItem()).getName())));
+				dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+						getExTable().getModel()).getRowNamesModel());
 				jTabbedPane1.setComponentAt(0, dataScrollPane);
 			}
 
 		}
 	}
 	
+	
 	class DataFrameComboBoxModel extends DefaultComboBoxModel{
-		
-		
-		
-		public DataFrameComboBoxModel(){
-			super();
-			
-		}
 
-		public int getSize(){
-			//Keep current with environment
-			//TODO: This is not pretty
-			RController.refreshObjects();
-			dataSelector.setModel(this);
-			
-			return JGR.DATA.size();
-		}
+		private Vector items;
+		private int selectedIndex=0;
+		
 		public Object getElementAt(int index){
-			return ((RObject)JGR.DATA.elementAt(index)).getName();
+			return items.elementAt(index);
 		}
-		public int getIndexOf(Object item){
-			return JGR.DATA.indexOf(item);
+		public int getIndexOf(Object anObject){
+			for(int i = 0;i<items.size();i++)
+				if(items.elementAt(i)==anObject)
+					return i;
+			return -1;
+		}
+		public int 	getSize() {
+			return items.size();
+		}
+		
+		public Object getSelectedItem(){
+			if(items.size()>0)
+				return items.elementAt(selectedIndex);
+			else
+				return null;
+		}
+		
+		public void setSelectedItem(Object obj){
+			selectedIndex = getIndexOf(obj);
+		}
+		
+		public DataFrameComboBoxModel(Vector v){
+			items = new Vector(v);
+		}
+		public void refresh(Vector v){
+			String dataName = null;
+			this.removeAllElements();			
+			
+			int prevSize = items.size();
+			if(getSelectedItem()!=null)
+				dataName = ((RObject)getSelectedItem()).getName();			
+			items = new Vector(v);
+			selectedIndex=0;			
+			if(items.size()>0){
+				for(int i = 0;i<items.size();i++)
+					if(((RObject)items.elementAt(i)).getName().equals(dataName))
+						selectedIndex =i;
+				this.fireContentsChanged(this,0,items.size()-1);
+			}
+
 		}
 	}
+	
+	
 }

@@ -32,7 +32,8 @@ public class ExScrollableTable extends JScrollPane{
 	private ExTable table;
 	private RowNamesListModel rowNamesHeaderModel;
 	private JList rowHeader;
-	private int rowNamesWidth=50;
+	private static int widthMin=40;
+	private static int widthMult=8;
 	
 	public ExScrollableTable(ExTable t){
 		super();
@@ -42,7 +43,7 @@ public class ExScrollableTable extends JScrollPane{
 		rowNamesHeaderModel = new RowNamesListModel();
 		rowNamesHeaderModel.initHeaders(table.getRowCount());
 		rowHeader = new JList(rowNamesHeaderModel);
-		rowHeader.setFixedCellWidth(rowNamesWidth);
+		rowHeader.setFixedCellWidth(Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10));
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    new RowListener();
@@ -50,6 +51,16 @@ public class ExScrollableTable extends JScrollPane{
 	}
 	
 	public ExTable getExTable(){return table;}
+	
+	public RowNamesListModel getRowNamesModel(){return rowNamesHeaderModel;}
+	public void setRowNamesModel(RowNamesListModel model){
+		rowNamesHeaderModel=model;
+		rowHeader = new JList(rowNamesHeaderModel);
+		rowHeader.setFixedCellWidth(Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10));
+	    rowHeader.setFixedCellHeight(table.getRowHeight());
+	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+	    setRowHeaderView(rowHeader);
+	}
 	
 	public void insertNewRow(int index) {
 		int numRows = ((DefaultTableModel) table.getModel()).getRowCount();
@@ -99,28 +110,7 @@ public class ExScrollableTable extends JScrollPane{
 		}
 	}
 
-	/**
-	 * Row headers are implemented as a jlist nested within
-	 * a jscrollpane. Here we have defined them as numbers
-	 * 0-n where n is the number of rows.
-	 *
-	 */
-	class RowNamesListModel extends AbstractListModel{
-		List headers=new ArrayList();
-		public void initHeaders(int n){
-			for(int i=0;i<n;i++){
-				headers.add(new Integer(i).toString());
-				System.out.println(i);
-			}
-		}
-		public int getSize() { return headers.size(); }
-		public Object getElementAt(int index) {
-			return headers.get(index);
-		}
-		public void addNextHeaderNumber(){
-			headers.add(new Integer(getSize()+1).toString());
-		}
-	};
+
 	/**
 	 * This can be extended further. currently all
 	 * that is allowed is single row selection.
