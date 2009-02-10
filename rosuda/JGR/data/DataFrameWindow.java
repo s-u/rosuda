@@ -186,10 +186,13 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 						if(JGR.DATA.size()==0)
 							dataScrollPane = null;
 						else{
-							dataScrollPane = new ExScrollableTable(table =new ExTable(
-									new RDataFrameModel(((RObject)JGR.DATA.elementAt(0)).getName())));
+							RDataFrameModel dataModel = new RDataFrameModel(
+									((RObject)JGR.DATA.elementAt(0)).getName());
+							dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
 							dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-									getExTable().getModel()).getRowNamesModel());		
+									getExTable().getModel()).getRowNamesModel());
+							dataScrollPane.getExTable().setDefaultRenderer(Object.class,
+									dataModel.new RCellRenderer());
 						}
 					}else{
 						dataScrollPane = new ExScrollableTable(table = t);					
@@ -284,10 +287,12 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					if(dataScrollPane==null && JGR.DATA.size()>0){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
 						dataSelector.setSelectedItem(firstItem);
-						dataScrollPane = new ExScrollableTable(table =new ExTable(
-								new RDataFrameModel(firstItem.getName())));
+						RDataFrameModel dataModel = new RDataFrameModel(firstItem.getName());
+						dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
 						dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
 								getExTable().getModel()).getRowNamesModel());
+						dataScrollPane.getExTable().setDefaultRenderer(Object.class,
+								dataModel.new RCellRenderer());
 						jTabbedPane1.setComponentAt(0, dataScrollPane);
 					}
 			        if(dataScrollPane!=null)
@@ -306,11 +311,11 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if(dataSelector==((JComboBox)e.getSource())){
 			if(e.getActionCommand()=="comboBoxChanged"){
-
-				dataScrollPane = new ExScrollableTable(new ExTable(new RDataFrameModel(
-						((RObject)dataSelector.getSelectedItem()).getName())));
+				RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
+				dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
 				dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
 						getExTable().getModel()).getRowNamesModel());
+				dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
 				jTabbedPane1.setComponentAt(0, dataScrollPane);
 			}
 

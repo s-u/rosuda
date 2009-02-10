@@ -1,8 +1,13 @@
 package org.rosuda.JGR.data;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+
 import javax.swing.*;
 import javax.swing.table.*;
+
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
 
@@ -52,6 +57,13 @@ class RDataFrameModel extends AbstractTableModel {
 			return JGR.R.eval("nrow("+rDataName+")").asInt()+numExtensionRows;
 		else
 			return 0;
+	}
+	
+	public void removeColumn(int colNumber){
+		if(colNumber<getRealColumnCount()){
+			JGR.R.eval(rDataName+"<-"+rDataName+"[,-"+colNumber+"]");
+			refresh();
+		}
 	}
 
 	public Object getValueAt(int row, int col){
@@ -204,6 +216,46 @@ class RDataFrameModel extends AbstractTableModel {
 	
 	public RowNamesListModel getRowNamesModel() { return rowNamesModel;}
 	public void setRowNamesModel(RowNamesModel model){rowNamesModel = model;}
+	
+	public class RCellRenderer extends ExCellRenderer
+	{
+		public Component getTableCellRendererComponent(JTable table,
+						Object value, boolean selected, boolean focused,
+						int row, int column){
+			super.getTableCellRendererComponent(table, value,
+					selected, focused, row, column);
+
+
+			
+			
+			if(row<getRealRowCount() || column<getRealColumnCount()){
+				boolean isNA = value.toString().equals("NA");
+				if(isNA){
+					if(JGR.R.eval("is.na("+rDataName+"["+(row+1)+","+(column+1)+"])").asBool().isTRUE()){
+						setHorizontalAlignment(RIGHT);
+						setVerticalAlignment(BOTTOM);
+						Font f = new Font("Dialog", Font.PLAIN, 6);
+						setFont(f);
+					}else{
+						setHorizontalAlignment(LEFT);
+						setVerticalAlignment(CENTER);
+					}
+				}else{
+					REXP rValue = JGR.R.eval(rDataName+"["+(row+1)+","+(column+1)+"]");
+					int type = rValue.getType();
+					if( type==REXP.XT_STR || type == REXP.XT_FACTOR )
+						setHorizontalAlignment(LEFT);
+					else 
+						setHorizontalAlignment(RIGHT);
+					setVerticalAlignment(CENTER);
+				}
+			}
+			
+			return this;
+		}
+	}
+	
+	
 	
 	
 }
