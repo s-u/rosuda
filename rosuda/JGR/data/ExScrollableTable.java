@@ -18,13 +18,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import org.rosuda.ibase.Common;
-
+import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.data.ColumnHeaderListener.ColumnContextMenu;
+
 
 
 public class ExScrollableTable extends JScrollPane{
@@ -46,8 +48,8 @@ public class ExScrollableTable extends JScrollPane{
 		rowHeader.setFixedCellWidth(Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10));
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
-	    new RowListener();
 	    setRowHeaderView(rowHeader);
+	    new RowListener();	    
 	}
 	
 	public ExTable getExTable(){return table;}
@@ -60,14 +62,12 @@ public class ExScrollableTable extends JScrollPane{
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    setRowHeaderView(rowHeader);
+	    new RowListener();
 	}
 	
 	public void insertNewRow(int index) {
-		int numRows = ((DefaultTableModel) table.getModel()).getRowCount();
-		((DefaultTableModel) table.getModel()).addRow(new Vector());
-		((DefaultTableModel) table.getModel()).moveRow(numRows, numRows, index);
-		this.rowNamesHeaderModel.addNextHeaderNumber();
-		
+		table.insertNewRow(index);
+		getRowNamesModel().refresh();
 	}
 	
 	public void insertRow(int index){
@@ -117,25 +117,33 @@ public class ExScrollableTable extends JScrollPane{
 	 *
 	 */
 	class RowListener extends MouseAdapter {
+
 		public RowListener(){
 			rowHeader.addMouseListener(this);
 		}
 		
+		
 		public void mouseClicked(MouseEvent evt){
 			if(evt.getButton()==MouseEvent.BUTTON3 && !Common.isMac()){
-				new RowContextMenu(evt);
+				int selectedRow =rowHeader.locationToIndex(evt.getPoint());
+				//JGR.R.eval("print('"+selectedRow+"')");
+				table.requestFocus();
+				table.selectRow(selectedRow);
+				new RowContextMenu(evt,selectedRow);
+
 			}
 		}
 		
 		
 		public void mousePressed(MouseEvent evt){
-			int selectedRow =rowHeader.getSelectedIndex();
+			int selectedRow =rowHeader.locationToIndex(evt.getPoint());
+			//JGR.R.eval("print('"+selectedRow+"')");
+			table.requestFocus();			
 			table.selectRow(selectedRow);
-			table.requestFocus();
-			System.out.println("row clicked: "+selectedRow);
 			if(evt.isPopupTrigger() && Common.isMac()){
-				new RowContextMenu(evt);	
+				new RowContextMenu(evt,selectedRow);	
 			}
+			
 		}
 	}
 	
@@ -143,7 +151,8 @@ public class ExScrollableTable extends JScrollPane{
 		int index;
 		private JPopupMenu menu;;
 		
-		public RowContextMenu(MouseEvent evt){
+		public RowContextMenu(MouseEvent evt,int selectedRow){
+			index = selectedRow;
 			menu = new JPopupMenu();
 			table.getTableHeader().add(menu);
 			JMenuItem copyItem = new JMenuItem ("Copy");
@@ -169,13 +178,13 @@ public class ExScrollableTable extends JScrollPane{
 		}
 		
 		public void actionPerformed(ActionEvent e){
-			index =rowHeader.getSelectedIndex();
+			//index =rowHeader.get .getSelectedIndex();
 			JMenuItem source = (JMenuItem)(e.getSource());
 			System.out.println("row Contextual Menu selected: "+index);
 			if(source.getText()=="Copy"){
 				table.getCopyPasteAdapter().copy();
 			} else if(source.getText()=="Cut"){
-				table.cutColumn(index);
+				table.cutRow(index);
 			} else if(source.getText()=="Paste"){
 				table.getCopyPasteAdapter().paste();
 			} else if(source.getText()=="Insert"){
@@ -184,6 +193,7 @@ public class ExScrollableTable extends JScrollPane{
 				insertNewRow(index);
 			} else if(source.getText()=="Remove Row"){
 				table.removeRow(index);
+				getRowNamesModel().refresh();
 			}
 			menu.setVisible(false);
 		}

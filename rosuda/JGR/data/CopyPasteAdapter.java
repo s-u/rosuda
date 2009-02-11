@@ -102,11 +102,11 @@ public class CopyPasteAdapter implements ActionListener{
 		for (int i=0;i<numrows;i++){
 			for (int j=0;j<numcols;j++){
 				Object temp =jTable1.getValueAt(rowsselected[i],colsselected[j]);
+				sbf.append((temp==null) ? "" : temp.toString());
+				if (j<numcols-1) sbf.append("\t");				
 				if(isCut){
 					jTable1.setValueAt(null,rowsselected[i],colsselected[j]);
 				}
-				sbf.append((temp==null) ? "" : temp);
-				if (j<numcols-1) sbf.append("\t");
 			}
 			sbf.append("\n");
 		}

@@ -12,7 +12,7 @@ import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
 
 
-class RDataFrameModel extends AbstractTableModel {
+class RDataFrameModel extends ExDefaultTableModel {
 	
 	String rDataName=null;
 	
@@ -61,11 +61,35 @@ class RDataFrameModel extends AbstractTableModel {
 	
 	public void removeColumn(int colNumber){
 		if(colNumber<getRealColumnCount()){
-			JGR.R.eval(rDataName+"<-"+rDataName+"[,-"+colNumber+"]");
+			JGR.R.eval(rDataName+"<-"+rDataName+"[,-"+(colNumber+1)+"]");
 			refresh();
 		}
 	}
 
+	public void removeRow(int row){
+		if((row+1)<=getRealRowCount()){
+			JGR.R.eval(rDataName + "<- "+rDataName + "[-"+(row+1)+",]");
+			refresh();
+		}
+	}
+	
+	public void insertNewColumn(int col){
+		JGR.R.eval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+"],V=as.integer(NA),"+
+				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+"])");
+		refresh();
+	}
+	
+	public void insertNewRow(int row){
+		int rowCount =getRealRowCount();
+		setValueAt("NA",rowCount,0);
+		JGR.R.eval("attr("+rDataName+",'row.names')["+(rowCount+1)+"]<-'New'");
+		JGR.R.eval(rDataName+"<-rbind("+rDataName+"[1:"+row+",],"+rDataName+
+				"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",])");
+		JGR.R.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+		
+	}
+	
+	
 	public Object getValueAt(int row, int col){
 		if(row>=getRealRowCount() || col>=getRealColumnCount()){
 			return "";
@@ -85,56 +109,69 @@ class RDataFrameModel extends AbstractTableModel {
 		return "?";
 	}
 	public void setValueAt(Object value,int row, int col){	
-
 		REXP currentValue = JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]");	
 		int type =currentValue.getType();
-		
-		String valueString = value.toString().trim();
-		this.fireTableCellUpdated(row, col);
-		if(type == REXP.XT_NULL){
+		int numRealRows =getRealRowCount();
+		int numRealCols =getRealColumnCount();
+		//JGR.R.eval("print('"+type+"')");
+		this.fireTableCellUpdated(row, col);	
+		String valueString = null;
+		boolean isDouble = false;
+		boolean isInteger =false;
+		if(value!=null){
+			valueString = value.toString().trim();	
+			isDouble=true;
 			try{
 				Double.parseDouble(valueString);
 			}catch(Exception e){
+				isDouble=false;
+			}
+			isInteger=true;
+			try{
+				Integer.parseInt(valueString);
+			}catch(Exception ex){
+				isInteger=false;
+			}
+		}
+
+
+		if(value==null){
+			//JGR.R.eval("print('is null')");
+			if((row+1)<numRealRows && (col+1)<numRealCols)
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+		}else if(type == REXP.XT_NULL){
+			if(!isDouble){
 				if(value.toString().equals("NA"))
 					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
 				else
 					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				//notify if outside dataframe range
-				if((row+1)>=getRealRowCount() || (col+1)>=getRealColumnCount()){
-					refresh();
-				}	
-				return;
+			}else{
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+
 			}
-			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-			//notify if outside dataframe range
-			if((row+1)>=getRealRowCount() || (col+1)>=getRealColumnCount()){
-				refresh();
-			}
-		}else if(value.toString().equals("NA")){
+		}else if( value.toString().equals("NA")){
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
-			return;
 		}else if(type ==REXP.XT_STR){
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 		}else if(type == REXP.XT_ARRAY_DOUBLE){
-			try{
-				Double.parseDouble(valueString);
-			}catch(Exception e){
+			if(!isDouble){
 				JGR.R.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
 				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				return;
+			}else{
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 			}
-			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-			return;
 		}else if(type == REXP.XT_ARRAY_INT){
-			try{
-				Integer.parseInt(valueString);
-			}catch(Exception e){
-				JGR.R.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				return;
+			if(!isInteger){
+				if(!isDouble){
+					JGR.R.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
+					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+				}else{
+					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+					refresh();
+				}
+			}else{
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
 			}
-			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
-			return;
 		}else if(type == REXP.XT_FACTOR){
 			boolean isNewLevel=JGR.R.eval("'"+value.toString()+"' %in% " +
 					"levels(" +rDataName+"[,"+(col+1)+"])").asBool().isFALSE();
@@ -145,22 +182,13 @@ class RDataFrameModel extends AbstractTableModel {
 				JGR.R.eval(addLevel);
 			}
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-			return;
-		}/*else{
-			//default case:
-			//if it looks like a number assign it, otherwise assign it in quotes
-			try{
-				Double.parseDouble(valueString);
-			}catch(Exception e){
-				JGR.R.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				return;
-			}
-			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-			
-
-		}*/
+		}
 		
+		if((row+1)>numRealRows)
+			JGR.R.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+		if((row+1)>numRealRows || (col+1)>numRealCols){
+			refresh();
+		}
 	}
 	
 	public void refresh(){

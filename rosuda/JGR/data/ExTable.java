@@ -36,7 +36,7 @@ import javax.swing.table.*;
 import javax.swing.text.JTextComponent;
 
 import org.rosuda.ibase.Common;
-
+import org.rosuda.JGR.util.ErrorMsg;
 
 /**
  * All features except the row headers are implemented in
@@ -50,6 +50,7 @@ public class ExTable extends JTable{
 	private CopyPasteAdapter excelCopyPaste;
 
 	private ColumnHeaderListener columnListener;
+	
 	
 	public JScrollPane parentPane = null;
 	
@@ -69,7 +70,7 @@ public class ExTable extends JTable{
 
 	}
 
-	public ExTable(TableModel model){
+	public ExTable(ExDefaultTableModel model){
 		super(model);
 		// Enable cell selection
 		this.setColumnSelectionAllowed(true);
@@ -84,6 +85,7 @@ public class ExTable extends JTable{
 		this.getTableHeader().setResizingAllowed(true);
 
 	}
+	
 	
 	/**
 	 * Overrides the editCellAt function to allow one click editing
@@ -123,6 +125,7 @@ public class ExTable extends JTable{
 			changeSelection(0, colIndex, true, true);
 		if(parentPane!=null)
 			parentPane.getViewport().setViewPosition(currentPnt);
+		this.requestFocus();
 	}
 	
 	public void selectRow(int rowIndex){
@@ -153,15 +156,23 @@ public class ExTable extends JTable{
 	
 	public void cutColumn(int colNumber){
 		getCopyPasteAdapter().cut();
-
+		removeColumn(colNumber);
 	}
 	public void removeColumn(int colNumber){
-		getColumnModel().removeColumn(getColumnModel().getColumn(colNumber));		
+		try{
+			((ExDefaultTableModel) 	getModel()).removeColumn(colNumber);		
+		}catch(Exception e){
+			new ErrorMsg(e);
+		}	
 	}
 	
 	public void insertNewColumn(int colNumber){
-		getColumnModel().moveColumn(getColumnModel().getColumnCount()-1,colNumber );
-		getColumnModel().getColumn(colNumber).setHeaderValue("New Column");
+		try{
+			((ExDefaultTableModel) 	getModel()).insertNewColumn(colNumber);		
+		}catch(Exception e){
+			new ErrorMsg(e);
+		}
+
 	}
 	
 	public void insertColumn(int colNumber){
@@ -182,10 +193,27 @@ public class ExTable extends JTable{
 
 
 
-
+	public void cutRow(int rowIndex){
+		//requestFocus();
+		//selectRow(rowIndex);
+		getCopyPasteAdapter().cut();
+		removeRow(rowIndex);
+	}
+	
 	public void removeRow(int index) {
-		// TODO Auto-generated method stub
-		
+		try{
+		((ExDefaultTableModel) getModel()).removeRow(index);		
+		}catch(Exception e){
+			new ErrorMsg(e);
+		}
+	}
+	
+	public void insertNewRow(int index){
+		try{
+			((ExDefaultTableModel) getModel()).insertNewRow(index);		
+			}catch(Exception e){
+				new ErrorMsg(e);
+			}
 	}
 	
 	

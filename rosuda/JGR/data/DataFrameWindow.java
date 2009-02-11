@@ -205,7 +205,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
 				else
 					jTabbedPane1.addTab("Data View", null, new JPanel(), null);
-				jTabbedPane1.addTab("Variable View", null, null, null);
+				jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
 			}
 			{
 				dataFrameMenuBar = new JMenuBar();
@@ -273,18 +273,12 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			
 			theFrame.addWindowFocusListener(new WindowAdapter() {
 			    public void windowGainedFocus(WindowEvent e) {
-
 					RController.refreshObjects();
+					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);	
 					if(JGR.DATA.size()==0){
-					
 						dataScrollPane = null;	
 						jTabbedPane1.setComponentAt(0, new JPanel());
-				        JGR.R.eval("print('focus gained')");
-					}
-
-					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
-					
-					if(dataScrollPane==null && JGR.DATA.size()>0){
+					} else if(dataScrollPane==null){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
 						dataSelector.setSelectedItem(firstItem);
 						RDataFrameModel dataModel = new RDataFrameModel(firstItem.getName());
@@ -294,8 +288,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 						dataScrollPane.getExTable().setDefaultRenderer(Object.class,
 								dataModel.new RCellRenderer());
 						jTabbedPane1.setComponentAt(0, dataScrollPane);
-					}
-			        if(dataScrollPane!=null)
+					}else 
 			        	((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
 			    }
 			});
@@ -310,13 +303,24 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		if(dataSelector==((JComboBox)e.getSource())){
-			if(e.getActionCommand()=="comboBoxChanged"){
-				RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
-				dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
-				dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-						getExTable().getModel()).getRowNamesModel());
-				dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
-				jTabbedPane1.setComponentAt(0, dataScrollPane);
+
+			if(e.getActionCommand()=="comboBoxChanged" ){
+				if(dataScrollPane==null){
+					RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
+					dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
+					dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+							getExTable().getModel()).getRowNamesModel());
+					dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
+					jTabbedPane1.setComponentAt(0, dataScrollPane);
+				}else if(!((RObject)dataSelector.getSelectedItem()).getName().equals(
+						((RDataFrameModel) dataScrollPane.getExTable().getModel()).getDataName())){
+					RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
+					dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
+					dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+							getExTable().getModel()).getRowNamesModel());
+					dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
+					jTabbedPane1.setComponentAt(0, dataScrollPane);					
+				}
 			}
 
 		}

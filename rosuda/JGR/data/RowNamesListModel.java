@@ -30,4 +30,8 @@ public class RowNamesListModel extends AbstractListModel{
 	public void addNextHeaderNumber(){
 		headers.add(new Integer(getSize()+1).toString());
 	}
+	
+	public void refresh(){
+		this.fireContentsChanged(this, 0, getSize());
+	}
 };
