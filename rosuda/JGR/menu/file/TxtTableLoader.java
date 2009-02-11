@@ -329,7 +329,8 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		DataTable rTable = new DataTable(vs,"data.frame",false,false) ;
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
-		JGR.R.eval("rm("+previewName+")", false);
+		if(JGR.R.eval(previewName+" %in% ls()").asBool().isTRUE())
+			JGR.R.eval("rm("+previewName+")", false);
 		
 	}
 	private void loadActionPerformed(ActionEvent evt) {
