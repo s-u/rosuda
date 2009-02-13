@@ -51,6 +51,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
 
+import java.lang.Thread;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -68,6 +70,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	private JMenuBar dataFrameMenuBar;
 	private JMenu dataMenu;
 	private ExScrollableTable dataScrollPane;
+	private ExScrollableTable variableScrollPane;
 	private JMenuItem CopyItem;
 	private JMenuItem openData;
 	private IconButton jButton2;
@@ -180,19 +183,14 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				getContentPane().add(jTabbedPane1, BorderLayout.CENTER);
 				jTabbedPane1.setPreferredSize(new java.awt.Dimension(839, 395));
 				jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
-
 				{
 					if(t==null){
-						if(JGR.DATA.size()==0)
+						if(JGR.DATA.size()==0){
 							dataScrollPane = null;
-						else{
-							RDataFrameModel dataModel = new RDataFrameModel(
-									((RObject)JGR.DATA.elementAt(0)).getName());
-							dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
-							dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-									getExTable().getModel()).getRowNamesModel());
-							dataScrollPane.getExTable().setDefaultRenderer(Object.class,
-									dataModel.new RCellRenderer());
+							variableScrollPane=null;
+						}else{
+							setDataView(((RObject)JGR.DATA.elementAt(0)).getName());
+							setVariableView(((RObject)JGR.DATA.elementAt(0)).getName());
 						}
 					}else{
 						dataScrollPane = new ExScrollableTable(table = t);					
@@ -205,7 +203,10 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
 				else
 					jTabbedPane1.addTab("Data View", null, new JPanel(), null);
-				jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
+				if(variableScrollPane!=null)
+					jTabbedPane1.addTab("Variable View", null, variableScrollPane, null);
+				else
+					jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
 			}
 			{
 				dataFrameMenuBar = new JMenuBar();
@@ -281,13 +282,8 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					} else if(dataScrollPane==null){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
 						dataSelector.setSelectedItem(firstItem);
-						RDataFrameModel dataModel = new RDataFrameModel(firstItem.getName());
-						dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
-						dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-								getExTable().getModel()).getRowNamesModel());
-						dataScrollPane.getExTable().setDefaultRenderer(Object.class,
-								dataModel.new RCellRenderer());
-						jTabbedPane1.setComponentAt(0, dataScrollPane);
+						setDataView(firstItem.getName());
+						setVariableView(firstItem.getName());
 					}else 
 			        	((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
 			    }
@@ -301,25 +297,38 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		}
 	}
 	
+	public void setDataView(String dataName){
+		RDataFrameModel dataModel = new RDataFrameModel(dataName);
+		dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
+		dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+				getExTable().getModel()).getRowNamesModel());
+		dataScrollPane.getExTable().setDefaultRenderer(Object.class,
+				dataModel.new RCellRenderer());
+		if(jTabbedPane1.getTabCount()>0)
+			jTabbedPane1.setComponentAt(0, dataScrollPane);
+	}
+	
+	public void setVariableView(String dataName){
+		RDataFrameVariableModel varModel = new RDataFrameVariableModel(dataName);
+		variableScrollPane = new ExScrollableTable(new ExTable(varModel));
+		variableScrollPane.getExTable().getColumnModel().getColumn(0).setPreferredWidth(100);
+		variableScrollPane.getExTable().getColumnModel().getColumn(1).setPreferredWidth(50);
+		variableScrollPane.getExTable().getColumnModel().getColumn(2).setPreferredWidth(300);
+		if(jTabbedPane1.getTabCount()>1)
+			jTabbedPane1.setComponentAt(1, variableScrollPane);	
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		if(dataSelector==((JComboBox)e.getSource())){
 
 			if(e.getActionCommand()=="comboBoxChanged" ){
 				if(dataScrollPane==null){
-					RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
-					dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
-					dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-							getExTable().getModel()).getRowNamesModel());
-					dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
-					jTabbedPane1.setComponentAt(0, dataScrollPane);
+					setDataView(((RObject)dataSelector.getSelectedItem()).getName());
+					setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
 				}else if(!((RObject)dataSelector.getSelectedItem()).getName().equals(
 						((RDataFrameModel) dataScrollPane.getExTable().getModel()).getDataName())){
-					RDataFrameModel dataModel = new RDataFrameModel(((RObject)dataSelector.getSelectedItem()).getName());
-					dataScrollPane = new ExScrollableTable(new ExTable(dataModel));
-					dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-							getExTable().getModel()).getRowNamesModel());
-					dataScrollPane.getExTable().setDefaultRenderer(Object.class,dataModel.new RCellRenderer());
-					jTabbedPane1.setComponentAt(0, dataScrollPane);					
+					setDataView(((RObject)dataSelector.getSelectedItem()).getName());
+					setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
 				}
 			}
 

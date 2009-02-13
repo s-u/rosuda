@@ -67,7 +67,6 @@ public class ExTable extends JTable{
 		columnListener = new ColumnHeaderListener(this);
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.getTableHeader().setResizingAllowed(true);
-
 	}
 
 	public ExTable(ExDefaultTableModel model){

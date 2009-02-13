@@ -106,6 +106,9 @@ class RDataFrameModel extends ExDefaultTableModel {
 			return new Integer(value.asInt());
 		}else if(type == REXP.XT_FACTOR)
 			return value.asFactor().at(0);
+		else if( type == REXP.XT_ARRAY_BOOL || type == REXP.XT_ARRAY_BOOL_INT || type == REXP.XT_BOOL){
+			return value.asBool();
+		}
 		return "?";
 	}
 	public void setValueAt(Object value,int row, int col){	
@@ -182,6 +185,16 @@ class RDataFrameModel extends ExDefaultTableModel {
 				JGR.R.eval(addLevel);
 			}
 			JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+		}else if( type == REXP.XT_ARRAY_BOOL || type == REXP.XT_ARRAY_BOOL_INT 
+				|| type == REXP.XT_BOOL){
+			if(valueString.equals("1") || valueString.toLowerCase().equals("true")
+					|| valueString.toLowerCase().equals("t"))
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-TRUE");
+			else if(valueString.equals("0") || valueString.toLowerCase().equals("false")
+					|| valueString.toLowerCase().equals("f"))
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-FALSE");
+			else
+				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
 		}
 		
 		if((row+1)>numRealRows)
