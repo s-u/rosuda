@@ -82,9 +82,10 @@ public class ExTable extends JTable{
 		columnListener = new ColumnHeaderListener(this);
 		setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.getTableHeader().setResizingAllowed(true);
-
 	}
 	
+	public ColumnHeaderListener getColumnListener(){return columnListener;}
+	public void setColumnListener(ColumnHeaderListener lis){columnListener = lis;}
 	
 	/**
 	 * Overrides the editCellAt function to allow one click editing
@@ -92,7 +93,7 @@ public class ExTable extends JTable{
 	 * JTable
 	 */
 	public boolean editCellAt(int row, int column, EventObject e){
-		boolean result = super.editCellAt(row, column, e);;		
+		boolean result = super.editCellAt(row, column, e);	
 		final Component editor = getEditorComponent();
 		if (editor != null && editor instanceof JTextComponent){
 			if (e == null || e.getClass().toString().endsWith("KeyEvent")){

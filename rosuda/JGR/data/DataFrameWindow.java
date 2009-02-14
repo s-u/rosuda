@@ -4,6 +4,9 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.DataLoader;
+import org.rosuda.JGR.SaveData;
+import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.ibase.Common;
@@ -46,7 +49,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.DefaultCellEditor;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
+import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
@@ -129,6 +139,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 										AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 					button1.setFont(new java.awt.Font("Dialog",0,8));
 					button1.setPreferredSize(new java.awt.Dimension(32,32));
+					
 				
 				}
 				{
@@ -189,24 +200,26 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 							dataScrollPane = null;
 							variableScrollPane=null;
 						}else{
+							jTabbedPane1.addTab("Data View", null, new JPanel(), null);
+							jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
 							setDataView(((RObject)JGR.DATA.elementAt(0)).getName());
+
 							setVariableView(((RObject)JGR.DATA.elementAt(0)).getName());
+
 						}
 					}else{
 						dataScrollPane = new ExScrollableTable(table = t);					
-						dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-								getExTable().getModel()).getRowNamesModel());
 					}
 
 				}
-				if(dataScrollPane!=null)
+				/*if(dataScrollPane!=null)
 					jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
 				else
 					jTabbedPane1.addTab("Data View", null, new JPanel(), null);
-				if(variableScrollPane!=null)
+				if(variableScrollPane!=null){
 					jTabbedPane1.addTab("Variable View", null, variableScrollPane, null);
-				else
-					jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
+				}else
+					jTabbedPane1.addTab("Variable View", null, new JPanel(), null);*/
 			}
 			{
 				dataFrameMenuBar = new JMenuBar();
@@ -264,7 +277,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			this.setSize(839, 839);
 			
 			final JFrame theFrame = this;
-			theFrame.addComponentListener(new java.awt.event.ComponentAdapter() {
+			this.addComponentListener(new java.awt.event.ComponentAdapter() {
 				  public void componentResized(ComponentEvent event) {
 					  theFrame.setSize(
 				      Math.max(300, theFrame.getWidth()),
@@ -272,7 +285,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				  }
 			});
 			
-			theFrame.addWindowFocusListener(new WindowAdapter() {
+			this.addWindowFocusListener(new WindowAdapter() {
 			    public void windowGainedFocus(WindowEvent e) {
 					RController.refreshObjects();
 					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);	
@@ -284,12 +297,25 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 						dataSelector.setSelectedItem(firstItem);
 						setDataView(firstItem.getName());
 						setVariableView(firstItem.getName());
-					}else 
+					}else{
 			        	((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
+			        	((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
+					}
 			    }
 			});
 
-			
+			jTabbedPane1.addChangeListener(new ChangeListener(){
+				public void stateChanged(ChangeEvent changeEvent) {
+					int index = jTabbedPane1.getSelectedIndex();
+					if(index==1){
+						((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
+						variableScrollPane.getRowNamesModel().refresh();
+					}else if(index==0){
+						dataScrollPane.getRowNamesModel().refresh();
+						((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
+					}
+				}
+			});
 			
 
 		} catch (Exception e) {
@@ -309,29 +335,46 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	}
 	
 	public void setVariableView(String dataName){
+		JComboBox comboBox = new JComboBox();
+		comboBox.addItem("String");
+		comboBox.addItem("Factor");
+		comboBox.addItem("Double");
+		comboBox.addItem("Integer");
+		comboBox.addItem("Logical");
 		RDataFrameVariableModel varModel = new RDataFrameVariableModel(dataName);
-		variableScrollPane = new ExScrollableTable(new ExTable(varModel));
-		variableScrollPane.getExTable().getColumnModel().getColumn(0).setPreferredWidth(100);
-		variableScrollPane.getExTable().getColumnModel().getColumn(1).setPreferredWidth(50);
-		variableScrollPane.getExTable().getColumnModel().getColumn(2).setPreferredWidth(300);
-		if(jTabbedPane1.getTabCount()>1)
+		ExTable ex = new ExTable();	
+		ex.setModel(varModel);			
+		ex.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
+		ex.getColumnModel().getColumn(0).setPreferredWidth(200);
+		ex.getColumnModel().getColumn(1).setPreferredWidth(50);
+		ex.getColumnModel().getColumn(2).setPreferredWidth(300);
+		ex.setColumnSelectionAllowed(true);
+		ex.setRowSelectionAllowed(true);		
+		ex.getTableHeader().removeMouseListener(ex.getColumnListener());
+		variableScrollPane = new ExScrollableTable(ex);			
+		variableScrollPane.setRowNamesModel(varModel.new VariableNumberListModel());
+		variableScrollPane.displayContextualMenu(false);
+		if(jTabbedPane1.getTabCount()>0)
 			jTabbedPane1.setComponentAt(1, variableScrollPane);	
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if(dataSelector==((JComboBox)e.getSource())){
-
-			if(e.getActionCommand()=="comboBoxChanged" ){
-				if(dataScrollPane==null){
-					setDataView(((RObject)dataSelector.getSelectedItem()).getName());
-					setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
-				}else if(!((RObject)dataSelector.getSelectedItem()).getName().equals(
-						((RDataFrameModel) dataScrollPane.getExTable().getModel()).getDataName())){
-					setDataView(((RObject)dataSelector.getSelectedItem()).getName());
-					setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
-				}
+		JGR.R.eval("print('"+e.getActionCommand()+"')");
+			String cmd = e.getActionCommand();		
+		if(cmd=="comboBoxChanged" ){
+			if(dataScrollPane==null){
+				setDataView(((RObject)dataSelector.getSelectedItem()).getName());
+				setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
+			}else if(!((RObject)dataSelector.getSelectedItem()).getName().equals(
+					((RDataFrameModel) dataScrollPane.getExTable().getModel()).getDataName())){
+				setDataView(((RObject)dataSelector.getSelectedItem()).getName());
+				setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
 			}
-
+		}else if(cmd=="Open Data"){
+				JGR.R.eval("print('mark')");
+				new DataLoader();	
+		}else if(cmd=="Save Data"){
+			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
 		}
 	}
 	

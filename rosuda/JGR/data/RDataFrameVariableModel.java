@@ -16,6 +16,9 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	
 	String rDataName=null;
 	
+	private VariableNumberListModel rowNamesModel;
+	
+	private final int numExtraColumns = 1;
 	
 	
 	public RDataFrameVariableModel(){}
@@ -34,13 +37,15 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	
 	public int getRowCount(){
 		if(rDataName!=null)
-			return JGR.R.eval("ncol("+rDataName+")").asInt();
+			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
 		else
 			return 0;
 	}
 	
 	public Object getValueAt(int row, int col){
-		if(col==0){
+		if(row>=(getRowCount()-numExtraColumns)){
+			return null;
+		}else if(col==0){
 			return JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]").asString();
 		}else if(col==1){
 			int xt = JGR.R.eval(rDataName+"[,"+(row+1)+"]").getType();
@@ -57,7 +62,7 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			//JGR.R.eval("print('"+type+"')");
 			if(type == REXP.XT_FACTOR){
 				String[] levels = JGR.R.eval("levels("+rDataName+"[,"+(row+1)+"])").asStringArray();
-				JGR.R.eval("print('"+levels.length+"')");
+				//JGR.R.eval("print('"+levels.length+"')");
 				String lev = "";
 				for(int i=0;i<levels.length;i++){
 					lev=lev.concat("("+(i+1)+") ");
@@ -67,13 +72,20 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 				return lev;
 			}else 
 				return null;
-		}
-		else
+		}else
 			return null;
 	}
 	
 	public void setValueAt(Object value,int row, int col){
-		if(col==0){
+		if(row>=(getRowCount()-numExtraColumns)){
+			if(col==0){
+				JGR.R.eval(rDataName+"[,"+(row+1)+"]<-NA");	
+				JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+				refresh();
+				rowNamesModel.refresh();
+			}else
+				return;
+		}else if(col==0){
 			JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 		}else if(col==1){
 			String type = value.toString().toLowerCase().trim();
@@ -83,11 +95,14 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 					"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
 			if(type.equals("double")) JGR.R.eval(rDataName+"[,"+(row+1)+
 					"]<-as.double("+rDataName+"[,"+(row+1)+"])");
-		if(type.equals("logical")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("logical")) JGR.R.eval(rDataName+"[,"+(row+1)+
 					"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
+			if(type.equals("string")) JGR.R.eval(rDataName+"[,"+(row+1)+
+					"]<-as.character("+rDataName+"[,"+(row+1)+"])");
 			return;
 		}
 	}
+	
 	public String getColumnName(int col){
 		if(col==0){
 			return "Variable";
@@ -97,6 +112,27 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			return "Factor Levels";
 		}
 		return "";
+	}
+	
+	public void refresh(){
+		//this.fireTableStructureChanged();
+		this.fireTableDataChanged();
+	}
+	
+	
+	public class VariableNumberListModel extends RowNamesListModel{
+		
+		VariableNumberListModel(){
+			rowNamesModel = this;
+		}
+		
+		public Object getElementAt(int index) {
+			return new Integer(index+1);
+		}
+		
+		public int getSize() { 
+			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
+		}
 	}
 
 }

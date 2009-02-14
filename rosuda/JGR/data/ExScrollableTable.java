@@ -36,6 +36,7 @@ public class ExScrollableTable extends JScrollPane{
 	private JList rowHeader;
 	private static int widthMin=40;
 	private static int widthMult=8;
+	private boolean displayContextualMenu;
 	
 	public ExScrollableTable(ExTable t){
 		super();
@@ -49,10 +50,13 @@ public class ExScrollableTable extends JScrollPane{
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    setRowHeaderView(rowHeader);
-	    new RowListener();	    
+	    new RowListener();	
+	    displayContextualMenu=true;
 	}
 	
 	public ExTable getExTable(){return table;}
+	
+	public void displayContextualMenu(boolean display){displayContextualMenu=display;}
 	
 	public RowNamesListModel getRowNamesModel(){return rowNamesHeaderModel;}
 	public void setRowNamesModel(RowNamesListModel model){
@@ -129,7 +133,8 @@ public class ExScrollableTable extends JScrollPane{
 				//JGR.R.eval("print('"+selectedRow+"')");
 				table.requestFocus();
 				table.selectRow(selectedRow);
-				new RowContextMenu(evt,selectedRow);
+				if(displayContextualMenu)
+					new RowContextMenu(evt,selectedRow);
 
 			}
 		}
@@ -141,7 +146,8 @@ public class ExScrollableTable extends JScrollPane{
 			table.requestFocus();			
 			table.selectRow(selectedRow);
 			if(evt.isPopupTrigger() && Common.isMac()){
-				new RowContextMenu(evt,selectedRow);	
+				if(displayContextualMenu)
+					new RowContextMenu(evt,selectedRow);	
 			}
 			
 		}
