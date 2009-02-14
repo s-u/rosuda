@@ -55,6 +55,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import java.lang.Thread;
 
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
@@ -292,6 +293,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					if(JGR.DATA.size()==0){
 						dataScrollPane = null;	
 						jTabbedPane1.setComponentAt(0, new JPanel());
+						jTabbedPane1.setComponentAt(1, new JPanel());
 					} else if(dataScrollPane==null){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
 						dataSelector.setSelectedItem(firstItem);
@@ -375,6 +377,17 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				new DataLoader();	
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
+		}else if(cmd=="Clear Data"){
+			JGR.MAINRCONSOLE.execute("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")",true);
+			try{Thread.sleep(100);}catch(Exception ee){}
+			RController.refreshObjects();
+			if(JGR.DATA.size()>0)
+				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+			else{
+				jTabbedPane1.setComponentAt(0, new JPanel());
+				jTabbedPane1.setComponentAt(1, new JPanel());	
+			}
+			
 		}
 	}
 	
