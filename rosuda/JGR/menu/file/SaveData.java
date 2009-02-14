@@ -37,7 +37,7 @@ private static String extensionDescription[] = new String[]{	"R (*.rda *.rdata)"
 				chooser.addChoosableFileFilter(extFilter);
 			}
 			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
-		}			
+		}
 		fileDialog.setVisible(true);
 		String fileName = fileDialog.getDirectory()+fileDialog.getFile();
 		fileName=fileName.replace('\\', '/');
@@ -48,13 +48,7 @@ private static String extensionDescription[] = new String[]{	"R (*.rda *.rdata)"
 				fileName = fileName.concat(".robj");
 			JGR.MAINRCONSOLE.execute("dput("+dataName+",'"+fileName+"')",true);
 		}
-		
-		JGR.R.eval("print('"+fileName+"')");
-		
-		
-
-		
-		
+		//JGR.R.eval("print('"+fileName+"')");
 	}
 	
 
