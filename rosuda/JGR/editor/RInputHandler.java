@@ -22,6 +22,7 @@ import jedit.syntax.TextUtilities;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.util.ErrorMsg;
 
 
 public class RInputHandler extends DefaultInputHandler {
@@ -167,7 +168,7 @@ public class RInputHandler extends DefaultInputHandler {
 						textArea.getDocument().insertString(pos, COMMENT_CHAR, null);
 					}
 				} catch (BadLocationException e) {
-					e.printStackTrace();
+					new ErrorMsg(e);
 				}
 			}
 		}

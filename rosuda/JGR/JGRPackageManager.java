@@ -29,6 +29,7 @@ import javax.swing.table.TableColumn;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.TableSorter;
+import org.rosuda.JGR.util.ErrorMsg;
 
 import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -233,7 +234,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 			this.setSize(420, 450);
 			this.setResizable(false);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}// this.show(); //do it manually when you really want to see it
 	}
 

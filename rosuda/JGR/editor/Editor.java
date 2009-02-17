@@ -34,6 +34,7 @@ import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.util.RecentList;
@@ -477,7 +478,7 @@ if (e.getActionCommand() == "runall")
 						currentpos -= chars;
 						setText(currentline + ":" + (currentline == 1 ? currentpos + 1 : currentpos)+"   ");
 					} catch (Exception e) {
-						e.printStackTrace();
+						new ErrorMsg(e);
 					}
 				}
 			});

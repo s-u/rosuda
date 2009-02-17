@@ -14,6 +14,7 @@ import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.REXP;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.SVarDouble;
@@ -845,7 +846,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -865,7 +866,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -892,7 +893,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -912,7 +913,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -1024,7 +1025,7 @@ public class RController {
 				vs.insert(rnn, rn);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -1094,7 +1095,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", xp1, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}
@@ -1149,7 +1150,7 @@ public class RController {
 			JGR.R.rniAssign("jgrtemp", xp1, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 			return false;
 		}
 	}

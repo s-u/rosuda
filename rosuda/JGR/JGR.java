@@ -425,7 +425,6 @@ public class JGR {
 			}
 			writer.close();
 		} catch (Exception e) {
-			e.printStackTrace();
 			new ErrorMsg(e);
 		}
 	}
@@ -535,7 +534,6 @@ public class JGR {
 		try {
 			new JGR();
 		} catch (Exception e) {
-			e.printStackTrace();
 			new ErrorMsg(e);
 		}
 	}

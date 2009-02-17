@@ -26,6 +26,7 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.toolkit.FunctionList;
 import org.rosuda.JGR.toolkit.ModelBrowserTable;
 import org.rosuda.JGR.toolkit.ObjectBrowserTree;
+import org.rosuda.JGR.util.ErrorMsg;
 
 import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -223,7 +224,7 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 						.getSelectedComponent()).getViewport().getComponent(0))
 						.saveData();
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				new ErrorMsg(ex);
 			}
 	}
 }

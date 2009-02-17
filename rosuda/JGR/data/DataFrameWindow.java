@@ -1,5 +1,7 @@
 package org.rosuda.JGR.data;
 
+
+
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.toolkit.IconButton;
@@ -9,6 +11,7 @@ import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.Common;
 
 import org.rosuda.JRI.*;
@@ -65,18 +68,7 @@ import javax.swing.SwingUtilities;
 import java.lang.Thread;
 
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class DataFrameWindow extends JFrame implements ActionListener {
 	private JMenuBar dataFrameMenuBar;
 	private JMenu dataMenu;
@@ -200,11 +192,12 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 						if(JGR.DATA.size()==0){
 							dataScrollPane = null;
 							variableScrollPane=null;
+							jTabbedPane1.addTab("Data View", null, defaultPanel(), null);
+							jTabbedPane1.addTab("Variable View", null, defaultPanel(), null);							
 						}else{
-							jTabbedPane1.addTab("Data View", null, new JPanel(), null);
-							jTabbedPane1.addTab("Variable View", null, new JPanel(), null);
+							jTabbedPane1.addTab("Data View", null, defaultPanel(), null);
+							jTabbedPane1.addTab("Variable View", null, defaultPanel(), null);
 							setDataView(((RObject)JGR.DATA.elementAt(0)).getName());
-
 							setVariableView(((RObject)JGR.DATA.elementAt(0)).getName());
 
 						}
@@ -213,14 +206,6 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					}
 
 				}
-				/*if(dataScrollPane!=null)
-					jTabbedPane1.addTab("Data View", null, dataScrollPane, null);
-				else
-					jTabbedPane1.addTab("Data View", null, new JPanel(), null);
-				if(variableScrollPane!=null){
-					jTabbedPane1.addTab("Variable View", null, variableScrollPane, null);
-				}else
-					jTabbedPane1.addTab("Variable View", null, new JPanel(), null);*/
 			}
 			{
 				dataFrameMenuBar = new JMenuBar();
@@ -292,8 +277,8 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);	
 					if(JGR.DATA.size()==0){
 						dataScrollPane = null;	
-						jTabbedPane1.setComponentAt(0, new JPanel());
-						jTabbedPane1.setComponentAt(1, new JPanel());
+						jTabbedPane1.setComponentAt(0, defaultPanel()/*new JPanel()*/);
+						jTabbedPane1.setComponentAt(1, defaultPanel());
 					} else if(dataScrollPane==null){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
 						dataSelector.setSelectedItem(firstItem);
@@ -321,7 +306,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 	
@@ -378,19 +363,56 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
 		}else if(cmd=="Clear Data"){
+			int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
+					((RObject)dataSelector.getSelectedItem()).getName()+" from enviornment?\n" +
+							"Unsaved changes will be lost.",
+					"Clear Data Frame", JOptionPane.YES_NO_OPTION,
+					JOptionPane.QUESTION_MESSAGE);
+			if(confirm == JOptionPane.NO_OPTION)
+				return;
 			JGR.MAINRCONSOLE.execute("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")",true);
 			try{Thread.sleep(100);}catch(Exception ee){}
 			RController.refreshObjects();
 			if(JGR.DATA.size()>0)
 				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
 			else{
-				jTabbedPane1.setComponentAt(0, new JPanel());
-				jTabbedPane1.setComponentAt(1, new JPanel());	
+				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+				jTabbedPane1.setComponentAt(0, defaultPanel());
+				jTabbedPane1.setComponentAt(1, defaultPanel());	
 			}
-			
 		}
 	}
 	
+	private JPanel defaultPanel(){
+		JPanel panel = new JPanel();
+		GridBagLayout panelLayout = new GridBagLayout();
+		panelLayout.rowWeights = new double[] {0.1, 0.1, 0.1};
+		panel.setLayout(panelLayout);
+		ActionListener lis = new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				String cmd = e.getActionCommand();
+				JGR.R.eval("print('mark button')");
+				if(cmd=="Open Data"){
+					new DataLoader();
+				}else if(cmd=="New Data"){
+					String inputValue = JOptionPane.showInputDialog("Data Name: ");
+					if(inputValue!=null)
+						JGR.R.eval(inputValue.trim()+"<-data.frame()");
+				}
+			}
+		};
+		JButton newButton = new IconButton("/icons/newdata_128.png","New Data Frame",lis,"New Data");
+		newButton.setPreferredSize(new java.awt.Dimension(128,128));
+		panel.add(newButton, new GridBagConstraints(0, 0, 1,1,  0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		
+		IconButton openButton = new IconButton("/icons/opendata_128.png","Open Data Frame",lis,"Open Data");
+		openButton.setPreferredSize(new java.awt.Dimension(128,128));
+		panel.add(openButton, new GridBagConstraints(0, 1, 1,1,  0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.NONE, new Insets(0, 0, 0, 0), 0, 0));
+		
+		
+		return panel;
+		
+	}
 	
 	class DataFrameComboBoxModel extends DefaultComboBoxModel{
 
@@ -426,8 +448,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		}
 		public void refresh(Vector v){
 			String dataName = null;
-			this.removeAllElements();			
-			
+			this.removeAllElements();
 			int prevSize = items.size();
 			if(getSelectedItem()!=null)
 				dataName = ((RObject)getSelectedItem()).getName();			
@@ -437,11 +458,11 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				for(int i = 0;i<items.size();i++)
 					if(((RObject)items.elementAt(i)).getName().equals(dataName))
 						selectedIndex =i;
-				this.fireContentsChanged(this,0,items.size()-1);
+				this.fireContentsChanged(this,0,prevSize);
 			}
 
-		}
+		}	
+		
+		
 	}
-	
-	
 }

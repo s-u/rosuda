@@ -53,6 +53,7 @@ import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -326,7 +327,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			try {
 				home();
 			} catch (Exception ex) {
-				ex.printStackTrace();
+				new ErrorMsg(ex);
 			}
 		else if (cmd == "print")
 			print();
@@ -500,7 +501,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			try {
 				helpPane.setPage(url);
 			} catch (IOException ex) {
-				ex.printStackTrace();
+				new ErrorMsg(ex);
 				try {
 					history.remove(currentURLIndex);
 					viewportLocationHistory.remove(currentURLIndex);
