@@ -284,19 +284,21 @@ public class RController {
 	 * provided by R-command: ls(pos=1).
 	 */
 	public static void refreshObjects() {
-		JGR.DATA.clear();
-		JGR.OTHERS.clear();
-		JGR.MODELS.clear();
-		JGR.FUNCTIONS.clear();
+
 		String models[];
 		REXP x = JGR.R.idleEval(".getModels()");
-		if (x != null && (models = x.asStringArray()) != null)
+		if(x!=null)
+			JGR.MODELS.clear();				
+		if (x != null && (models = x.asStringArray()) != null){	
 			for (int i = 0; i < models.length; i++)
 				JGR.MODELS.add(createRModel(models[i], models[++i]));
+		}
 		x = JGR.R.idleEval(".getDataObjects()");
 		String[] data;
+		if(x!=null)
+			JGR.DATA.clear();			
 		if (x != null && (data = x.asStringArray()) != null) {
-			int a = 1;
+			int a = 1;	
 			for (int i = 0; i < data.length; i++) {
 				boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
 				String name = b ? a + "" : data[i];
@@ -306,8 +308,11 @@ public class RController {
 		}
 		x = JGR.R.idleEval(".getOtherObjects()");
 		String[] other;
+		if(x!=null)
+			JGR.OTHERS.clear();			
 		if (x != null && (other = x.asStringArray()) != null) {
 			int a = 1;
+	
 			for (int i = 0; i < other.length; i++) {
 				boolean b = (other[i].equals("null") || other[i].trim()
 						.length() == 0);
@@ -318,6 +323,8 @@ public class RController {
 		}
 		x = JGR.R.idleEval(".getFunctionsInWS()");
 		String[] functions;
+		if(x!=null)
+			JGR.FUNCTIONS.clear();			
 		if (x != null && (functions = x.asStringArray()) != null) {
 			int a = 1;
 			for (int i = 0; i < functions.length; i++) {

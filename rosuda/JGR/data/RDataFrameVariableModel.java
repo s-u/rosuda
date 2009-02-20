@@ -10,7 +10,12 @@ import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
 
 
-
+/**
+ * A table for viewing and editing variable information
+ * 
+ * @author ifellows
+ *
+ */
 class RDataFrameVariableModel extends ExDefaultTableModel {
 	
 	

@@ -12,24 +12,46 @@ import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
 
 
+/**
+ * Data Frame model
+ * 
+ * @author ifellows
+ *
+ */
 class RDataFrameModel extends ExDefaultTableModel {
 	
-	String rDataName=null;
+	private static String guiEnv = "gui.working.env";
+	
+	private String rDataName=null;
+	
+	private String tempDataName=null;
 	
 	RowNamesModel rowNamesModel = new RowNamesModel();
 	
-	public static final int numExtensionRows = 30;
-	public static final int numExtensionColumns = 1; 
+	public static final int numExtensionRows = 50;
+	public static final int numExtensionColumns = 10; 
 	
 	public RDataFrameModel(){}
 	
 	public RDataFrameModel(String name){
-		rDataName = name;
+		setDataName(name);	
 	}
 	
 	public String getDataName(){return rDataName;}
 	
-	public void setDataName(String name){rDataName = name;}
+	public void setDataName(String name){
+		boolean envDefined = JGR.R.eval("'"+guiEnv+"' %in% .getOtherObjects()").asBool().isTRUE();
+		if(!envDefined){
+			JGR.R.eval(guiEnv+"<-new.env(parent=emptyenv())");
+		}
+		if(tempDataName!=null)
+			JGR.R.eval("rm("+tempDataName+",envir="+guiEnv+")");
+		rDataName = name;
+		tempDataName = JGR.MAINRCONSOLE.getUniqueName(rDataName,guiEnv);
+		JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		this.fireTableStructureChanged();
+		this.fireTableDataChanged();
+	}
 	
 	public int getColumnCount( ){
 		if(rDataName!=null)
@@ -139,7 +161,6 @@ class RDataFrameModel extends ExDefaultTableModel {
 
 
 		if(value==null){
-			//JGR.R.eval("print('is null')");
 			if((row+1)<numRealRows && (col+1)<numRealCols)
 				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
 		}else if(type == REXP.XT_NULL){
@@ -170,7 +191,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 				}else{
 					JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-					refresh();
+					this.fireTableDataChanged();
 				}
 			}else{
 				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
@@ -197,16 +218,26 @@ class RDataFrameModel extends ExDefaultTableModel {
 				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
 		}
 		
-		if((row+1)>numRealRows)
+		if((row+1)>numRealRows){
 			JGR.R.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
-		if((row+1)>numRealRows || (col+1)>numRealCols){
-			refresh();
+			this.fireTableRowsUpdated(numRealRows,row);
 		}
+		if((col+1)>numRealCols){
+			this.fireTableDataChanged();
+			this.addColumn(JGR.R.eval("colnames("+rDataName+")["+(col+1)+"]").asString());
+		}
+		JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 	}
-	
+	/**
+	 * Notifies components about changes in the model
+	 */
 	public void refresh(){
-		this.fireTableStructureChanged();
-		this.fireTableDataChanged();
+		if(JGR.R.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")").asBool().isFALSE()){
+			if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
+				this.fireTableStructureChanged();	
+			this.fireTableDataChanged();			
+			JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		}
 	}
 	
 	public String getColumnName(int col){
@@ -222,7 +253,15 @@ class RDataFrameModel extends ExDefaultTableModel {
 	}
 	
 	public boolean isCellEditable(int rowIndex, int columnIndex){
-		return true;
+		if(columnIndex<=getRealColumnCount())
+			return true;
+		else
+			return false;
+	}
+	
+	protected void finalize() throws Throwable {
+		JGR.R.eval("rm("+tempDataName+",envir="+guiEnv+")");
+		super.finalize();
 	}
 	
 	class RowNamesModel extends RowNamesListModel{
@@ -258,6 +297,14 @@ class RDataFrameModel extends ExDefaultTableModel {
 	public RowNamesListModel getRowNamesModel() { return rowNamesModel;}
 	public void setRowNamesModel(RowNamesModel model){rowNamesModel = model;}
 	
+	
+	/**
+	 * 		Implements nice printing of NAs, as well as left alignment
+	 * 		for strings and right alignment for numbers.
+	 * 
+	 * @author ifellows
+	 *
+	 */
 	public class RCellRenderer extends ExCellRenderer
 	{
 		public Component getTableCellRendererComponent(JTable table,

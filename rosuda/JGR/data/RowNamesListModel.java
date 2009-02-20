@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 /**
+ * The default row name model for an ExTable
+ *  
  * Row headers are implemented as a jlist nested within
  * a jscrollpane. Here we have defined them as numbers
  * 1-n where n is the number of rows.

@@ -44,6 +44,8 @@ public class FileSelector extends JFrame {
 	private int type = 0;
 
 	private Frame f;
+	
+	private int result = JFileChooser.CANCEL_OPTION;
 
 	/**
 	 * Create a FileDialog, on Mac we use the AWT on others i'm currently using
@@ -105,11 +107,11 @@ public class FileSelector extends JFrame {
 		if (Common.isMac())
 			awtDialog.setVisible(true);
 		else if (type == OPEN)
-			swingChooser.showOpenDialog(f);
+			result = swingChooser.showOpenDialog(f);
 		else if (type == SAVE)
-			swingChooser.showSaveDialog(f);
+			result = swingChooser.showSaveDialog(f);
 		else
-			swingChooser.showDialog(f, "OK");
+			result = swingChooser.showDialog(f, "OK");
 	}
 
 	/**
@@ -125,6 +127,8 @@ public class FileSelector extends JFrame {
 				FileSelector.lastDirectory = awtDialog.getDirectory();
 			}
 			else{
+				if(result == JFileChooser.CANCEL_OPTION)
+					return null;
 				fileName = swingChooser.getSelectedFile().getName();
 				FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
 				+ File.separator;
@@ -147,6 +151,8 @@ public class FileSelector extends JFrame {
 				FileSelector.lastDirectory = awtDialog.getDirectory();
 				return FileSelector.lastDirectory;
 			}
+			/*if(result == JFileChooser.CANCEL_OPTION)
+				return null;*/
 			FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
 					+ File.separator;
 			return FileSelector.lastDirectory;

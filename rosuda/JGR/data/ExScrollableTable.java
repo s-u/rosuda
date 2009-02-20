@@ -28,7 +28,12 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.data.ColumnHeaderListener.ColumnContextMenu;
 
 
-
+/**
+ * 		A ScrollPane containing an Extable
+ * 
+ * @author ifellows
+ *
+ */
 public class ExScrollableTable extends JScrollPane{
 
 	private ExTable table;
@@ -56,9 +61,26 @@ public class ExScrollableTable extends JScrollPane{
 	
 	public ExTable getExTable(){return table;}
 	
+	/**
+	 * 		should the contextual menu be shown for rows on right click.
+	 * 
+	 * @param display
+	 * 					true (default) if table should be displayed
+	 * 
+	 */
 	public void displayContextualMenu(boolean display){displayContextualMenu=display;}
 	
+	/**
+	 *     returns the model for the row names
+	 * @return
+	 */
 	public RowNamesListModel getRowNamesModel(){return rowNamesHeaderModel;}
+	
+	/**
+	 * 		Sets row name model
+	 * 
+	 * @param model
+	 */
 	public void setRowNamesModel(RowNamesListModel model){
 		rowNamesHeaderModel=model;
 		rowHeader = new JList(rowNamesHeaderModel);
@@ -69,11 +91,21 @@ public class ExScrollableTable extends JScrollPane{
 	    new RowListener();
 	}
 	
+	/**
+	 * 		Inserts a new row into the ExTable
+	 * 
+	 * @param index
+	 */
 	public void insertNewRow(int index) {
 		table.insertNewRow(index);
 		getRowNamesModel().refresh();
 	}
 	
+	/**
+	 * 		Inserts clipboard contents into a row.
+	 * 
+	 * @param index
+	 */
 	public void insertRow(int index){
 		if(table.getCopyPasteAdapter().getClipBoard().indexOf("\n")<(table.getCopyPasteAdapter().getClipBoard().length()-2) && 
 				table.getCopyPasteAdapter().getClipBoard().length()>0){
@@ -91,7 +123,7 @@ public class ExScrollableTable extends JScrollPane{
 	
 	
 	/**
-	 * This Class Renders the Row Headers for the table.
+	 * 		This Class Renders the Row Headers for the table.
 	 * 
 	 *
 	 */
@@ -116,8 +148,10 @@ public class ExScrollableTable extends JScrollPane{
 
 
 	/**
-	 * This can be extended further. currently all
-	 * that is allowed is single row selection.
+	 * 		Handles mouse events on the row names
+	 * 		
+	 * 		This can be extended further. currently all
+	 * 		that is allowed is single row selection.
 	 *
 	 */
 	class RowListener extends MouseAdapter {
@@ -153,6 +187,12 @@ public class ExScrollableTable extends JScrollPane{
 		}
 	}
 	
+	/**
+	 * 	The pop-up menu to display for right clicks on row names
+	 * 
+	 * @author ifellows
+	 *
+	 */
 	class RowContextMenu implements ActionListener{
 		int index;
 		private JPopupMenu menu;;

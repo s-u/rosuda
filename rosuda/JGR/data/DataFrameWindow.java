@@ -68,7 +68,13 @@ import javax.swing.SwingUtilities;
 import java.lang.Thread;
 
 
-
+/**
+ * A window for displaying data frames. Contains two tabs, one to view the raw data, and
+ * another to view variable information
+ * 
+ * @author ifellows
+ *
+ */
 public class DataFrameWindow extends JFrame implements ActionListener {
 	private JMenuBar dataFrameMenuBar;
 	private JMenu dataMenu;
@@ -107,6 +113,12 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		initGUI(t);
 	}
 	
+	/**
+	 * initiates GUI
+	 * 
+	 * @param t
+	 * 				an ExTable to display
+	 */
 	private void initGUI(ExTable t) {
 		try {
 			
@@ -273,11 +285,24 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			
 			this.addWindowFocusListener(new WindowAdapter() {
 			    public void windowGainedFocus(WindowEvent e) {
-					RController.refreshObjects();
+
+			    	REXP isBusy = JGR.R.idleEval("2");
+			    	int cnt=1;
+			    	while(isBusy==null && cnt<=3){
+			    		try{Thread.sleep(300);}catch(Exception ee){}
+			    		isBusy = JGR.R.idleEval("2");
+			    		cnt++;
+			    		
+			    	}
+			    	if(cnt==4){
+			    		JGR.MAINRCONSOLE.requestFocus();
+			    		return;
+			    	}
+			    	RController.refreshObjects();
 					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);	
 					if(JGR.DATA.size()==0){
 						dataScrollPane = null;	
-						jTabbedPane1.setComponentAt(0, defaultPanel()/*new JPanel()*/);
+						jTabbedPane1.setComponentAt(0, defaultPanel());
 						jTabbedPane1.setComponentAt(1, defaultPanel());
 					} else if(dataScrollPane==null){
 						RObject firstItem = (RObject) JGR.DATA.elementAt(0);
@@ -310,17 +335,34 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		}
 	}
 	
+	
+	/**
+	 * Changes tab 0 (data view) to display a new data frame
+	 * @param dataName
+	 * 				the name of the data frame to be displayed
+	 */
 	public void setDataView(String dataName){
-		RDataFrameModel dataModel = new RDataFrameModel(dataName);
-		dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
-		dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
-				getExTable().getModel()).getRowNamesModel());
-		dataScrollPane.getExTable().setDefaultRenderer(Object.class,
-				dataModel.new RCellRenderer());
-		if(jTabbedPane1.getTabCount()>0)
-			jTabbedPane1.setComponentAt(0, dataScrollPane);
+		if(dataScrollPane==null){
+			RDataFrameModel dataModel = new RDataFrameModel(dataName);
+			dataScrollPane = new ExScrollableTable(table =new ExTable(dataModel));
+			dataScrollPane.setRowNamesModel(((RDataFrameModel) dataScrollPane.
+					getExTable().getModel()).getRowNamesModel());
+			dataScrollPane.getExTable().setDefaultRenderer(Object.class,
+					dataModel.new RCellRenderer());
+			if(jTabbedPane1.getTabCount()>0)
+				jTabbedPane1.setComponentAt(0, dataScrollPane);
+		}else{
+			((RDataFrameModel) dataScrollPane.getExTable().getModel()).setDataName(dataName);
+		}
 	}
 	
+	/**
+	 * Changes tab 1 (variable view) to display a new data frame's
+	 * variable information
+	 * 
+	 * @param dataName
+	 * 				the name of the data frame to be displayed
+	 */
 	public void setVariableView(String dataName){
 		JComboBox comboBox = new JComboBox();
 		comboBox.addItem("String");
@@ -345,8 +387,9 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 			jTabbedPane1.setComponentAt(1, variableScrollPane);	
 	}
 	
+	
 	public void actionPerformed(ActionEvent e) {
-		JGR.R.eval("print('"+e.getActionCommand()+"')");
+		//JGR.R.eval("print('"+e.getActionCommand()+"')");
 			String cmd = e.getActionCommand();		
 		if(cmd=="comboBoxChanged" ){
 			if(dataScrollPane==null){
@@ -358,8 +401,8 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
 			}
 		}else if(cmd=="Open Data"){
-				JGR.R.eval("print('mark')");
-				new DataLoader();	
+			JGR.MAINRCONSOLE.requestFocus();
+			new DataLoader();	
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
 		}else if(cmd=="Clear Data"){
@@ -383,6 +426,11 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		}
 	}
 	
+	/**
+	 * A panel to display when there are no data frames in the work space.
+	 * 
+	 * @return
+	 */
 	private JPanel defaultPanel(){
 		JPanel panel = new JPanel();
 		GridBagLayout panelLayout = new GridBagLayout();
@@ -391,9 +439,9 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		ActionListener lis = new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				String cmd = e.getActionCommand();
-				JGR.R.eval("print('mark button')");
-				if(cmd=="Open Data"){
+				if(cmd=="Open Data"){	
 					new DataLoader();
+					JGR.MAINRCONSOLE.requestFocus();					
 				}else if(cmd=="New Data"){
 					String inputValue = JOptionPane.showInputDialog("Data Name: ");
 					if(inputValue!=null)
@@ -414,6 +462,14 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 		
 	}
 	
+	/**
+	 * 
+	 * A model for the data selection combo box.
+	 * 
+	 * 
+	 * @author ifellows
+	 *
+	 */
 	class DataFrameComboBoxModel extends DefaultComboBoxModel{
 
 		private Vector items;

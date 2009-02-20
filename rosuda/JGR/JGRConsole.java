@@ -98,6 +98,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	/** Position where the R splash ends (need for clearing the console */
 	public int end = 0;
+	
+	public static String guiEnv = "gui.working.env";
 
 	private Integer clearpoint = null;
 
@@ -238,6 +240,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	}
 
 	/**
+	 * Execute a coomand and add it to history
+	 * 
+	 * @param cmd
+	 * 				command for execution
+	 */
+	public void execute(String cmd) {
+		execute(cmd,true);
+	}
+	
+	/**
 	 * Execute a command and add it into history.
 	 * 
 	 * @param cmd
@@ -283,6 +295,15 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public String getUniqueName(String var){
 		JGR.refreshObjects();
 		var = var.replace(" ", "_");
+		var = var.replace("-", "_");
+		var = var.replace("+", "_");
+		var = var.replace("=", "_");
+		var = var.replace("<", "_");
+		var = var.replace(">", "_");
+		var = var.replace("(", "_");
+		var = var.replace(")", "_");
+		var = var.replace("/", "_");
+		var = var.replace("\\", "_");
 		if(!JGR.OBJECTS.contains(var))
 			return var;
 		int i = 1;
@@ -290,6 +311,41 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if(!JGR.OBJECTS.contains(var+i))
 				return var+i;
 			i++;
+		}
+	}
+	
+	/**
+	 * Gets a unique name based on a starting string
+	 * 
+	 * @param var
+	 * @param envName
+	 * 				The name of the enviroment in which to look
+	 * @return the value of var concatinated with a number
+	 */
+	public String getUniqueName(String var,String envName){
+		var = var.replace(" ", "_");
+		var = var.replace("-", "_");
+		var = var.replace("+", "_");
+		var = var.replace("=", "_");
+		var = var.replace("<", "_");
+		var = var.replace(">", "_");
+		var = var.replace("(", "_");
+		var = var.replace(")", "_");
+		var = var.replace("/", "_");
+		var = var.replace("\\", "_");
+		boolean isEnv = JGR.R.eval("is.environment("+envName+")").asBool().isTRUE();
+		if(!isEnv)
+				return var;
+		boolean isUnique = JGR.R.eval("exists('"+var+"',where="+envName+",inherits=FALSE)").asBool().isFALSE();
+		if(isUnique)
+			return var;
+		int i = 1;
+		while(true){
+			isUnique = JGR.R.eval("exists('"+(var+i)+"',where="+envName+",inherits=FALSE)").asBool().isFALSE();
+			if(isUnique)
+				return var+i;
+			i++;
+	
 		}
 	}
 	/**

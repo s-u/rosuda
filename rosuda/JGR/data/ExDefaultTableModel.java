@@ -2,6 +2,12 @@ package org.rosuda.JGR.data;
 
 import javax.swing.table.*;
 
+/**
+ * A stub class
+ * 
+ * @author ifellows
+ *
+ */
 public class ExDefaultTableModel extends DefaultTableModel{
 	public void removeRow(int row){}
 	public void insertNewRow(int index){}

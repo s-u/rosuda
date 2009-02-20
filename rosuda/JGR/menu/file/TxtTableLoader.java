@@ -74,6 +74,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		file = new File(fileName);
 		initGUI();		
 		checkFile();
+		loadPreview();
 	}
 	
 	/**

@@ -78,7 +78,8 @@ public class DataLoader extends JFrame {
 			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 		}
 		fileDialog.setVisible(true);
-		
+		if(fileDialog.getFile()==null)
+			return;
 		String fileName = fileDialog.getDirectory()+fileDialog.getFile();
 		loadData(fileDialog.getFile(),fileDialog.getDirectory());
 		

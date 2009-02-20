@@ -1,22 +1,4 @@
-/**
- * ExTable is a Graphical table that extends JTable and provides
- * superior ease of data entry and manipulation. The goal is to mirror
- * Excel's behavior
- * Copyright (C) 2009  Ian Fellows
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+
 
 
 package org.rosuda.JGR.data;
@@ -30,20 +12,13 @@ import java.util.List;
 
 import org.rosuda.ibase.Common;
 /**
-* ExcelAdapter enables Copy-Paste Clipboard functionality on JTables.
-* The clipboard data format used by the adapter is compatible with
-* the clipboard format used by Excel. This provides for clipboard
-* interoperability between enabled JTables and Excel.
-* 
-* @author Ian Fellows (2008) adapted from the work of Walter Bogaardt (1999)
-* 
-* 1. Now handles empty cells correctly. 
-* 2. \r carriage returns are okay (Excel 2007)
-* 3. Now works with os x. 
-* 4. Added cut.
-* 
-* 
-*/
+ * 
+ * Adapter copies and pastes from the clipboard in tab delimited format.
+ * Compatible with Excel
+ * 
+ * @author ifellows
+ *
+ */
 public class CopyPasteAdapter implements ActionListener{
 	private String rowstring,value;
 	private Clipboard system;
@@ -51,11 +26,6 @@ public class CopyPasteAdapter implements ActionListener{
 	private JTable jTable1 ;
 	
 	
-	/**
-	 * The Excel Adapter is constructed with a
-	 * JTable on which it enables Copy-Paste and acts
-	 * as a Clipboard listener.
-	 */
 
 	public CopyPasteAdapter(JTable myJTable)
 	{
@@ -75,9 +45,8 @@ public class CopyPasteAdapter implements ActionListener{
 			jTable1.registerKeyboardAction(this,"Paste",paste,JComponent.WHEN_FOCUSED);
 			system = Toolkit.getDefaultToolkit().getSystemClipboard();
 	}
-	/**
-	 * Public Accessor methods for the Table on which this adapter acts.
-	 */
+	
+
 	public JTable getJTable() {return jTable1;}
 	public void setJTable(JTable jTable1) {this.jTable1=jTable1;}
 	
@@ -125,7 +94,6 @@ public class CopyPasteAdapter implements ActionListener{
 	}
 	
 	public void paste(){
-		System.out.println("Trying to Paste");
 		int startRow=(jTable1.getSelectedRows())[0];
 		int startCol=(jTable1.getSelectedColumns())[0];
 		try{
@@ -150,7 +118,6 @@ public class CopyPasteAdapter implements ActionListener{
 						if (startRow+row< jTable1.getRowCount()  &&
 								startCol+col< jTable1.getColumnCount())
 							jTable1.setValueAt(value,startRow+row,startCol+col);
-						System.out.println("Putting "+ value+"atrow="+(startRow+row)+"column="+(startCol+col));
 						col++;
 					}else if((lastValue.indexOf("\t")>=0) && (value.indexOf("\t")>=0)){
 						if (startRow+row< jTable1.getRowCount()  &&
