@@ -34,6 +34,7 @@ import javax.swing.JSplitPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
+import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.editor.FindReplaceDialog;
@@ -49,7 +50,10 @@ import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.JGR.util.DocumentRenderer;
+import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.data.DataFrameWindow;
+import org.rosuda.JGR.data.DataFrameSelector;
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
@@ -117,29 +121,24 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
-		String[] Menu = { "+", "File", "Load Datafile", "loaddata", "-",
-				"@NNew Document", "new", "@OOpen Document", "open",
-				"!OSource File...", "source", "@SSave", "save", "-",
-				"@DSet Working Directory", "setwd", "~File.Quit", 
+		String[] Menu = { 
+				"+", "File", "#New","-","#Open","-","@SSave", "save","@PPrint","print","-","-",
+					"!OSource File...", "source","~File.Quit", 
 				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
-				"#Copy Special","-", //"Copy Output","copyoutput","Copy Commands","copycmds","Copy Result","copyresult",
-				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
-				"@FFind","search","@GFind Next","searchnext","-","@LClear Console","clearconsole",
-				// todo add edit menu
-				
-				"+", "Tools", "Editor", "editor", "@BObject Browser",
-				"objectmgr", "DataTable", "table", "-", "!IIncrease Font Size",
-				"fontBigger", "!DDecrease Font Size", "fontSmaller", "+",
-				"Packages", "Package Manager", "packagemgr", "+", "Workspace",
-				"Load Workspace", "openwsp", "Save Workspace", "savewsp",
-				"Save Workspace as", "saveaswsp", "Clear Workspace",
-				"clearwsp","~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
+					"#Copy Special","-", "@VPaste","paste","@ASelect All","selAll",
+					"@LClear Console","clearconsole","-",
+					"@FFind","search","@GFind Next","searchnext","-","!IIncrease Font Size",
+					"fontBigger", "!DDecrease Font Size", "fontSmaller",
+				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
+					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
+					"Package Installer","packageinst","-", "-","Preferences","preferences",
+				"+","Data","transpose","transpose","TO DO: Data Manipulation ","-",
+				"+","Analysis","TO DO: Data Analysis ","-",
+				"+","Graphs","TO DO: Visualization ","-",
+				"~Window",
+				"+","Help","R Help","help", "About","about","0"  };
 		EzMenuSwing.getEzMenu(this, this, Menu);
 
-		// Add History if we didn't found one in the user's home directory
-		if (JGR.RHISTORY == null)
-			JGR.RHISTORY = new Vector();
-		currentHistPosition = JGR.RHISTORY.size();
 		
 		JMenu rm = (JMenu) EzMenuSwing.getItem(this,"Copy Special");
 		if (rm != null) {
@@ -156,7 +155,56 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item3.addActionListener(this);
 			rm.add(item3);
 		}
-
+		rm = (JMenu) EzMenuSwing.getItem(this,"New");
+		if (rm != null) {
+			JMenuItem item1 = new JMenuItem("Data");
+			item1.setActionCommand("newdata");
+			item1.addActionListener(this);
+			rm.add(item1);
+			JMenuItem item2 = new JMenuItem("Script");
+			item2.setActionCommand("new");
+			item2.addActionListener(this);
+			rm.add(item2);
+		}
+		rm = (JMenu) EzMenuSwing.getItem(this,"Open");
+		if (rm != null) {
+			JMenuItem item1 = new JMenuItem("Data");
+			item1.setActionCommand("loaddata");
+			item1.addActionListener(this);
+			rm.add(item1);
+			JMenuItem item2 = new JMenuItem("Script");
+			item2.setActionCommand("open");
+			item2.addActionListener(this);
+			rm.add(item2);
+			JMenuItem item3 = new JMenuItem("Work Space");
+			item3.setActionCommand("openwsp");
+			item3.addActionListener(this);
+			rm.add(item3);
+		}
+		rm = (JMenu) EzMenuSwing.getItem(this,"Workspace");
+		if (rm != null) {
+			JMenuItem item1 = new JMenuItem("Open");
+			item1.setActionCommand("openwsp");
+			item1.addActionListener(this);
+			rm.add(item1);
+			JMenuItem item2 = new JMenuItem("Save");
+			item2.setActionCommand("savewsp");
+			item2.addActionListener(this);
+			rm.add(item2);
+			JMenuItem item3 = new JMenuItem("Save as...");
+			item3.setActionCommand("saveaswsp");
+			item3.addActionListener(this);
+			rm.add(item3);
+			JMenuItem item4 = new JMenuItem("Clear");
+			item4.setActionCommand("clearwsp");
+			item4.addActionListener(this);
+			rm.add(item4);
+		}
+		
+		// Add History if we didn't found one in the user's home directory
+		if (JGR.RHISTORY == null)
+			JGR.RHISTORY = new Vector();
+		currentHistPosition = JGR.RHISTORY.size();
 		// Add default toolbar with stop button to interrupt R
 		toolBar = new ToolBar(this, true);
 
@@ -245,8 +293,23 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @param cmd
 	 * 				command for execution
 	 */
-	public void execute(String cmd) {
+	public synchronized void execute(String cmd) {
 		execute(cmd,true);
+	}
+	
+	/**
+	 * Execute a coomand and add it to history
+	 * 
+	 * @param cmd
+	 * 				command for execution
+	 */
+	public synchronized void executeLater(String cmd) {
+		final String cm = cmd;
+		Runnable doWorkRunnable = new Runnable() {
+		    public void run() { execute(cm,true); }
+		};
+		SwingUtilities.invokeLater(doWorkRunnable);
+		
 	}
 	
 	/**
@@ -257,7 +320,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @param addToHist
 	 *            indicates wether the command should be added to history or not
 	 */
-	public void execute(String cmd, boolean addToHist) {
+	public synchronized void execute(String cmd, boolean addToHist) {
 		if (!JGR.STARTED)
 			return;
 		if (addToHist && JGR.RHISTORY.size() == 0)
@@ -725,7 +788,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			output.copy();
 		} else if (cmd == "copyoutput")
 			output.copyOutput();
-		else if (cmd == "copycmds")
+		else if (cmd == "print"){
+			try{
+				output.print();
+			}catch(Exception exc){}
+		}else if (cmd == "copycmds")
 			output.copyCommands();
 		else if (cmd == "copyresult")
 			output.copyResults();
@@ -749,7 +816,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			FontTracker.current.setFontBigger();
 		else if (cmd == "fontSmaller")
 			FontTracker.current.setFontSmaller();
-		else if (cmd == "loaddata")
+		else if(cmd=="newdata"){
+			String inputValue = JOptionPane.showInputDialog("Data Name: ");
+			if(inputValue!=null)
+				execute(inputValue.trim()+"<-data.frame()");
+		}else if (cmd == "loaddata")
 			new DataLoader();
 		else if (cmd == "open")
 			new Editor(null,false).open();
@@ -762,6 +833,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			execute("object.browser()", false);
 		else if (cmd == "packagemgr")
 			execute("package.manager()", false);
+		else if (cmd == "packageinst")
+			execute("install.packages()", false);
 		else if (cmd == "paste")
 			input.paste();
 		else if (cmd == "preferences")
@@ -822,6 +895,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		} else if (cmd == "update")
 			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")",
 					false);
+		else if (cmd == "transpose"){
+			String name = null;
+			RObject data = null;
+			DataFrameSelector sel = new DataFrameSelector(this);
+			data = sel.getSelection();
+			if(data!=null){
+				name = data.getName();
+				executeLater(name+"<-as.data.frame(t("+name+"))");
+			}
+		}
 	}
 
 	/**

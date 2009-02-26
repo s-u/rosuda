@@ -134,6 +134,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 		return "?";
 	}
 	public void setValueAt(Object value,int row, int col){	
+		if(!this.isCellEditable(row, col))
+			return;
 		REXP currentValue = JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]");	
 		int type =currentValue.getType();
 		int numRealRows =getRealRowCount();
@@ -161,7 +163,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 
 
 		if(value==null){
-			if((row+1)<numRealRows && (col+1)<numRealCols)
+			if((row+1)<=numRealRows && (col+1)<=numRealCols)
 				JGR.R.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
 		}else if(type == REXP.XT_NULL){
 			if(!isDouble){
@@ -220,6 +222,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 		
 		if((row+1)>numRealRows){
 			JGR.R.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+			this.fireTableRowsInserted(numRealRows,row);			
 			this.fireTableRowsUpdated(numRealRows,row);
 		}
 		if((col+1)>numRealCols){

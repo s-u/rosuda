@@ -68,7 +68,7 @@ public class JGRPrefs {
 	public static Color CMDColor = Color.red;
 
 	/** DefaultResultColor */
-	public static Color RESULTColor = Color.blue;
+	public static Color RESULTColor = Color.black;
 
 	/** DefaultErrorColor */
 	public static Color ERRORColor = Color.red;
@@ -138,6 +138,11 @@ public class JGRPrefs {
 
 	/** ShowHiddenFiles */
 	public static boolean showHiddenFiles = false;
+	
+	/** Display Data Viewer at Start Up 
+	 * TODO: read and write to file 
+	 * */
+	public static boolean displayViewerAtStartUp = true;
 
 	/** Packages which were installed when JGR was running the last time */
 	public static String previousPackages = null;

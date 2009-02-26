@@ -4,7 +4,10 @@ package org.rosuda.JGR.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.JGR.toolkit.AboutDialog;
+import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.SaveData;
@@ -13,6 +16,8 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.Common;
+import org.rosuda.ibase.toolkit.EzMenuSwing;
+import org.rosuda.ibase.toolkit.TJFrame;
 
 import org.rosuda.JRI.*;
 
@@ -55,6 +60,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -62,6 +68,8 @@ import java.lang.Thread;
 
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.BadLocationException;
+import javax.swing.undo.CannotUndoException;
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
 
@@ -75,7 +83,7 @@ import java.lang.Thread;
  * @author ifellows
  *
  */
-public class DataFrameWindow extends JFrame implements ActionListener {
+public class DataFrameWindow extends TJFrame implements ActionListener {
 	private JMenuBar dataFrameMenuBar;
 	private JMenu dataMenu;
 	private ExScrollableTable dataScrollPane;
@@ -104,12 +112,12 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 
 	
 	public DataFrameWindow() {
-		super();
+		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(null);
 	}
 	
 	public DataFrameWindow(ExTable t) {
-		super();
+		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(t);
 	}
 	
@@ -121,7 +129,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	 */
 	private void initGUI(ExTable t) {
 		try {
-			
+			this.setName("Data Viewer");
 			RController.refreshObjects();
 			
 			
@@ -220,54 +228,66 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				}
 			}
 			{
-				dataFrameMenuBar = new JMenuBar();
-				setJMenuBar(dataFrameMenuBar);
-				{
-					fileMenu = new JMenu();
-					dataFrameMenuBar.add(fileMenu);
-					fileMenu.setText("  File");
-					fileMenu.setPreferredSize(new java.awt.Dimension(44, 23));
-					{
-						openData = new JMenuItem();
-						fileMenu.add(openData);
-						openData.setText("Open Data");
-					}
+				// Initialize JGRConsoleMenu
+				String[] Menu = { 
+						"+", "File", "#New","-","#Open","-","@SSave", "save","@PPrint","print","-",
+							"Close", "exit", 
+						"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste",
+							"-","Remove Data", "Clear Data",
+						"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
+							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
+							"Package Installer","packageinst","-", "-","Preferences","preferences",
+						"+","Data","Transpose","transpose","TO DO: Data Manipulation ","-",
+						"+","Analysis","TO DO: Data Analysis ","-",
+						"+","Graphs","TO DO: Visualization ","-",
+						"~Window",
+						"+","Help","R Help","help", "About","about","0"  };
+				EzMenuSwing.getEzMenu(this, this, Menu);
+				JMenu rm;
+				rm = (JMenu) EzMenuSwing.getItem(this,"New");
+				if (rm != null) {
+					JMenuItem item1 = new JMenuItem("Data");
+					item1.setActionCommand("newdata");
+					item1.addActionListener(this);
+					rm.add(item1);
+					JMenuItem item2 = new JMenuItem("Script");
+					item2.setActionCommand("new");
+					item2.addActionListener(this);
+					rm.add(item2);
 				}
-				{
-					editMenu = new JMenu();
-					dataFrameMenuBar.add(editMenu);
-					editMenu.setText("Edit");
-					editMenu.setPreferredSize(new java.awt.Dimension(40, 23));
-					{
-						CopyItem = new JMenuItem();
-						editMenu.add(CopyItem);
-						CopyItem.setText("Copy");
-					}
+				rm = (JMenu) EzMenuSwing.getItem(this,"Open");
+				if (rm != null) {
+					JMenuItem item1 = new JMenuItem("Data");
+					item1.setActionCommand("loaddata");
+					item1.addActionListener(this);
+					rm.add(item1);
+					JMenuItem item2 = new JMenuItem("Script");
+					item2.setActionCommand("open");
+					item2.addActionListener(this);
+					rm.add(item2);
+					JMenuItem item3 = new JMenuItem("Work Space");
+					item3.setActionCommand("openwsp");
+					item3.addActionListener(this);
+					rm.add(item3);
 				}
-				{
-					environmentMenu = new JMenu();
-					dataFrameMenuBar.add(environmentMenu);
-					environmentMenu.setText("Environment");
-					environmentMenu.setPreferredSize(new java.awt.Dimension(81, 23));
-					if(Common.isMac())
-						environmentMenu.setPreferredSize(new java.awt.Dimension(101, 23));
-				}				
-				{
-					dataMenu = new JMenu();
-					dataFrameMenuBar.add(dataMenu);
-					dataMenu.setText("Data");
-					dataMenu.setPreferredSize(new java.awt.Dimension(44, 23));
-				}
-				{
-					windowMenu = new JMenu();
-					dataFrameMenuBar.add(windowMenu);
-					windowMenu.setText("Window");
-					windowMenu.setPreferredSize(new java.awt.Dimension(62, 23));
-				}
-				{
-					helpMenu = new JMenu();
-					dataFrameMenuBar.add(helpMenu);
-					helpMenu.setText("Help");
+				rm = (JMenu) EzMenuSwing.getItem(this,"Workspace");
+				if (rm != null) {
+					JMenuItem item1 = new JMenuItem("Open");
+					item1.setActionCommand("openwsp");
+					item1.addActionListener(this);
+					rm.add(item1);
+					JMenuItem item2 = new JMenuItem("Save");
+					item2.setActionCommand("savewsp");
+					item2.addActionListener(this);
+					rm.add(item2);
+					JMenuItem item3 = new JMenuItem("Save as...");
+					item3.setActionCommand("saveaswsp");
+					item3.addActionListener(this);
+					rm.add(item3);
+					JMenuItem item4 = new JMenuItem("Clear");
+					item4.setActionCommand("clearwsp");
+					item4.addActionListener(this);
+					rm.add(item4);
 				}
 
 			}
@@ -413,7 +433,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 					JOptionPane.QUESTION_MESSAGE);
 			if(confirm == JOptionPane.NO_OPTION)
 				return;
-			JGR.MAINRCONSOLE.execute("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")",true);
+			JGR.MAINRCONSOLE.execute("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")");
 			try{Thread.sleep(100);}catch(Exception ee){}
 			RController.refreshObjects();
 			if(JGR.DATA.size()>0)
@@ -423,6 +443,76 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 				jTabbedPane1.setComponentAt(0, defaultPanel());
 				jTabbedPane1.setComponentAt(1, defaultPanel());	
 			}
+		}else if (cmd == "about")
+			new AboutDialog(this);
+		else if (cmd == "cut"){
+			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.JGR.data.ExScrollableTable){
+				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().cutSelection();
+			}
+		}else if (cmd == "clearwsp"){
+			JGR.MAINRCONSOLE.executeLater("rm(list=ls())");
+			JGR.MAINRCONSOLE.requestFocus();
+			jTabbedPane1.setComponentAt(0, defaultPanel());
+			jTabbedPane1.setComponentAt(1, defaultPanel());
+		}else if (cmd == "copy") {
+			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.JGR.data.ExScrollableTable){
+				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().copySelection();
+			}
+		} else if (cmd == "print"){
+			try{
+				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().print(JTable.PrintMode.NORMAL);
+			}catch(Exception exc){}
+		}else if (cmd == "editor")
+			new Editor();
+		else if (cmd == "exit")
+			dispose();
+		else if(cmd=="newdata"){
+			String inputValue = JOptionPane.showInputDialog("Data Name: ");
+			inputValue = JGR.MAINRCONSOLE.getUniqueName(inputValue);
+			if(inputValue!=null){
+				JGR.R.eval(inputValue.trim()+"<-data.frame()");
+				RController.refreshObjects();
+				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+				REXP exp = JGR.R.eval(inputValue.trim());
+				for(int i=0;i<dataSelector.getItemCount();i++)
+					if(((RObject)dataSelector.getItemAt(i)).getName().equals(inputValue.trim()))
+						dataSelector.setSelectedIndex(i);
+			}
+		}else if (cmd == "loaddata")
+			new DataLoader();
+		else if (cmd == "open")
+			new Editor(null,false).open();
+		else if (cmd == "openwsp")
+			JGR.MAINRCONSOLE.loadWorkSpace();
+		else if (cmd == "new")
+			new Editor();
+		else if (cmd == "objectmgr")
+			JGR.MAINRCONSOLE.executeLater("object.browser()");
+		else if (cmd == "packagemgr")
+			JGR.MAINRCONSOLE.executeLater("package.manager()");
+		else if (cmd == "packageinst")
+			JGR.MAINRCONSOLE.executeLater("install.packages()");
+		else if (cmd == "paste"){
+			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.JGR.data.ExScrollableTable){
+				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().pasteSelection();
+			}
+		}else if (cmd == "preferences")
+			new PrefsDialog(this);
+		else if (cmd == "help")
+			JGR.MAINRCONSOLE.executeLater("help.start()");
+		else if (cmd == "table"){
+			DataFrameWindow inst = new DataFrameWindow();
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+		}else if (cmd == "save")
+			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
+		else if (cmd == "savewsp")
+			JGR.MAINRCONSOLE.saveWorkSpace(null);
+		else if (cmd == "saveaswsp")
+			JGR.MAINRCONSOLE.saveWorkSpaceAs();
+		else if (cmd == "transpose"){
+			String name = ((RObject)dataSelector.getSelectedItem()).getName();
+			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");			
 		}
 	}
 	
@@ -470,7 +560,7 @@ public class DataFrameWindow extends JFrame implements ActionListener {
 	 * @author ifellows
 	 *
 	 */
-	class DataFrameComboBoxModel extends DefaultComboBoxModel{
+	public class DataFrameComboBoxModel extends DefaultComboBoxModel{
 
 		private Vector items;
 		private int selectedIndex=0;
