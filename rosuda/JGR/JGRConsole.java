@@ -293,7 +293,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @param cmd
 	 * 				command for execution
 	 */
-	public synchronized void execute(String cmd) {
+	public void execute(String cmd) {
 		execute(cmd,true);
 	}
 	
@@ -303,7 +303,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @param cmd
 	 * 				command for execution
 	 */
-	public synchronized void executeLater(String cmd) {
+	public void executeLater(String cmd) {
 		final String cm = cmd;
 		Runnable doWorkRunnable = new Runnable() {
 		    public void run() { execute(cm,true); }
@@ -320,7 +320,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @param addToHist
 	 *            indicates wether the command should be added to history or not
 	 */
-	public synchronized void execute(String cmd, boolean addToHist) {
+	public void execute(String cmd, boolean addToHist) {
 		if (!JGR.STARTED)
 			return;
 		if (addToHist && JGR.RHISTORY.size() == 0)

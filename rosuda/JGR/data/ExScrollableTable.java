@@ -40,6 +40,7 @@ public class ExScrollableTable extends JScrollPane{
 	private RowNamesListModel rowNamesHeaderModel;
 	private JList rowHeader;
 	private static int widthMin=40;
+	private static int widthMax=150;
 	private static int widthMult=8;
 	private boolean displayContextualMenu;
 	
@@ -51,7 +52,7 @@ public class ExScrollableTable extends JScrollPane{
 		rowNamesHeaderModel = new RowNamesListModel();
 		rowNamesHeaderModel.initHeaders(table.getRowCount());
 		rowHeader = new JList(rowNamesHeaderModel);
-		rowHeader.setFixedCellWidth(Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10));
+		rowHeader.setFixedCellWidth(Math.min(widthMax,Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10)));
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    setRowHeaderView(rowHeader);
@@ -84,11 +85,18 @@ public class ExScrollableTable extends JScrollPane{
 	public void setRowNamesModel(RowNamesListModel model){
 		rowNamesHeaderModel=model;
 		rowHeader = new JList(rowNamesHeaderModel);
-		rowHeader.setFixedCellWidth(Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10));
+		rowHeader.setFixedCellWidth(Math.min(widthMax,Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10)));
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    setRowHeaderView(rowHeader);
 	    new RowListener();
+	}
+	
+	/**
+	 * 		sets row name width to a reasonable size
+	 */
+	public void autoAdjustRowWidth(){
+		rowHeader.setFixedCellWidth(Math.min(widthMax,Math.max(widthMin, rowNamesHeaderModel.getMaxNumChar()*widthMult+10)));		
 	}
 	
 	/**

@@ -234,13 +234,17 @@ class RDataFrameModel extends ExDefaultTableModel {
 	/**
 	 * Notifies components about changes in the model
 	 */
-	public void refresh(){
-		if(JGR.R.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")").asBool().isFALSE()){
-			if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
-				this.fireTableStructureChanged();	
-			this.fireTableDataChanged();			
-			JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
-		}
+	public boolean refresh(){
+		boolean changed = false;
+		if(JGR.R.eval("exists('"+rDataName+"')").asBool().isTRUE())
+			if(JGR.R.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")").asBool().isFALSE()){
+				if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
+					this.fireTableStructureChanged();	
+				this.fireTableDataChanged();			
+				JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+				changed=true;
+			}
+		return changed;
 	}
 	
 	public String getColumnName(int col){
@@ -261,9 +265,17 @@ class RDataFrameModel extends ExDefaultTableModel {
 		else
 			return false;
 	}
+	/**
+	 * 		Deletes the cached data frame from the gui environment
+	 */
+	public void removeCachedData(){
+		boolean tempStillExists = JGR.R.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)").asBool().isTRUE();
+		if(tempStillExists)
+			JGR.R.eval("rm("+tempDataName+",envir="+guiEnv+")");		
+	}
 	
 	protected void finalize() throws Throwable {
-		JGR.R.eval("rm("+tempDataName+",envir="+guiEnv+")");
+		removeCachedData();
 		super.finalize();
 	}
 	

@@ -21,6 +21,7 @@ import org.rosuda.ibase.toolkit.TJFrame;
 
 import org.rosuda.JRI.*;
 
+
 import java.util.Vector;
 import java.lang.Thread;
 
@@ -114,11 +115,13 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	public DataFrameWindow() {
 		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(null);
+		new Thread(new Refresher()).start();
 	}
 	
 	public DataFrameWindow(ExTable t) {
 		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(t);
+		new Thread(new Refresher()).start();
 	}
 	
 	/**
@@ -315,7 +318,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			    		
 			    	}
 			    	if(cnt==4){
-			    		JGR.MAINRCONSOLE.requestFocus();
+			    		JGR.MAINRCONSOLE.toFront();
 			    		return;
 			    	}
 			    	RController.refreshObjects();
@@ -330,8 +333,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						setDataView(firstItem.getName());
 						setVariableView(firstItem.getName());
 					}else{
-			        	((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
-			        	((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
+						refresh();
 					}
 			    }
 			});
@@ -354,7 +356,23 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			new ErrorMsg(e);
 		}
 	}
-	
+	public void refresh(){
+		boolean changed=true;
+		if(dataScrollPane!=null){
+			changed=((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
+			if(changed){
+				dataScrollPane.getRowNamesModel().refresh();  
+				dataScrollPane.autoAdjustRowWidth();  
+			}
+		}
+		if(variableScrollPane!=null){
+			((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
+			if(changed){
+				variableScrollPane.getRowNamesModel().refresh();
+				variableScrollPane.autoAdjustRowWidth();
+			}
+		}
+	}
 	
 	/**
 	 * Changes tab 0 (data view) to display a new data frame
@@ -415,13 +433,15 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			if(dataScrollPane==null){
 				setDataView(((RObject)dataSelector.getSelectedItem()).getName());
 				setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
+				refresh();
 			}else if(!((RObject)dataSelector.getSelectedItem()).getName().equals(
 					((RDataFrameModel) dataScrollPane.getExTable().getModel()).getDataName())){
 				setDataView(((RObject)dataSelector.getSelectedItem()).getName());
 				setVariableView(((RObject)dataSelector.getSelectedItem()).getName());
+				refresh();
 			}
 		}else if(cmd=="Open Data"){
-			JGR.MAINRCONSOLE.requestFocus();
+			JGR.MAINRCONSOLE.toFront();
 			new DataLoader();	
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
@@ -451,7 +471,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			}
 		}else if (cmd == "clearwsp"){
 			JGR.MAINRCONSOLE.executeLater("rm(list=ls())");
-			JGR.MAINRCONSOLE.requestFocus();
+			JGR.MAINRCONSOLE.toFront();
 			jTabbedPane1.setComponentAt(0, defaultPanel());
 			jTabbedPane1.setComponentAt(1, defaultPanel());
 		}else if (cmd == "copy") {
@@ -512,7 +532,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			JGR.MAINRCONSOLE.saveWorkSpaceAs();
 		else if (cmd == "transpose"){
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
-			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");			
+			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");		
+			JGR.MAINRCONSOLE.toFront();
 		}
 	}
 	
@@ -531,7 +552,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				String cmd = e.getActionCommand();
 				if(cmd=="Open Data"){	
 					new DataLoader();
-					JGR.MAINRCONSOLE.requestFocus();					
+					JGR.MAINRCONSOLE.toFront();					
 				}else if(cmd=="New Data"){
 					String inputValue = JOptionPane.showInputDialog("Data Name: ");
 					if(inputValue!=null)
@@ -551,6 +572,13 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		return panel;
 		
 	}
+	
+	public void dispose(){
+		super.dispose();
+		if(dataScrollPane!=null)
+			((RDataFrameModel) dataScrollPane.getExTable().getModel()).removeCachedData();
+	}
+	
 	
 	/**
 	 * 
@@ -610,5 +638,23 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}	
 		
 		
+	}
+	
+	
+
+	class Refresher implements Runnable {
+
+		public Refresher() {
+		}
+
+		public void run() {
+			while (true)
+				try {
+					Thread.sleep(2000);
+					refresh();
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
+		}
 	}
 }
