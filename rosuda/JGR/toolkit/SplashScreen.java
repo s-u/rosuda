@@ -65,9 +65,10 @@ public class SplashScreen extends JWindow implements Runnable {
 			g.setFont(new Font("Dialog", Font.ITALIC, 13));
 			g.drawString("" + JGR.AUTHOR1, 163, 119);
 			g.drawString("" + JGR.AUTHOR2, 160, 135);
+			g.drawString("" + JGR.AUTHOR3, 160, 151);
 			g.setFont(new Font("Dialog", 0, 12));
 			g.setColor(Color.blue);
-			g.drawString(JGR.WEBSITE, 150, splashSize.height - 35);
+			g.drawString(JGR.WEBSITE, 150, splashSize.height - 30);
 			g.setColor(Color.black);
 			g.setFont(new Font("Dialog", 0, 12));
 			g.drawString("(c) " + JGR.DEVELTIME + ", " + JGR.INSTITUTION, 10,
