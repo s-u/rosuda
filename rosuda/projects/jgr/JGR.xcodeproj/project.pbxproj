@@ -85,6 +85,27 @@
 /* Begin PBXBuildFile section */
 		280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */ = {isa = PBXBuildFile; fileRef = 280E36670DB1014000B968C7 /* EzMenuSwing.java */; };
 		280E36AB0DB1053200B968C7 /* RConsoleOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 280E36AA0DB1053200B968C7 /* RConsoleOutputStream.java */; };
+		28208B730F57EF2100E3A0BA /* ColumnHeaderListener.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B5C0F57EF2000E3A0BA /* ColumnHeaderListener.java */; };
+		28208B740F57EF2100E3A0BA /* CopyPasteAdapter.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B5D0F57EF2000E3A0BA /* CopyPasteAdapter.java */; };
+		28208B750F57EF2100E3A0BA /* DataFrameList.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B5E0F57EF2000E3A0BA /* DataFrameList.java */; };
+		28208B760F57EF2100E3A0BA /* DataFrameSelector.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B5F0F57EF2000E3A0BA /* DataFrameSelector.java */; };
+		28208B770F57EF2100E3A0BA /* DataFrameWindow.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B600F57EF2000E3A0BA /* DataFrameWindow.java */; };
+		28208B780F57EF2100E3A0BA /* ExCellRenderer.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B610F57EF2000E3A0BA /* ExCellRenderer.java */; };
+		28208B790F57EF2100E3A0BA /* ExDefaultTableModel.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B620F57EF2000E3A0BA /* ExDefaultTableModel.java */; };
+		28208B7A0F57EF2100E3A0BA /* ExScrollableTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B630F57EF2000E3A0BA /* ExScrollableTable.java */; };
+		28208B7B0F57EF2100E3A0BA /* ExTable.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B640F57EF2000E3A0BA /* ExTable.java */; };
+		28208B7C0F57EF2100E3A0BA /* RDataFrameModel.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B650F57EF2000E3A0BA /* RDataFrameModel.java */; };
+		28208B7D0F57EF2100E3A0BA /* RDataFrameVariableModel.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B660F57EF2100E3A0BA /* RDataFrameVariableModel.java */; };
+		28208B7E0F57EF2100E3A0BA /* RowNamesListModel.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B670F57EF2100E3A0BA /* RowNamesListModel.java */; };
+		28208B7F0F57EF2100E3A0BA /* TableWindow.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B680F57EF2100E3A0BA /* TableWindow.java */; };
+		28208B800F57EF2100E3A0BA /* AnchorConstraint.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B6A0F57EF2100E3A0BA /* AnchorConstraint.java */; };
+		28208B810F57EF2100E3A0BA /* AnchorLayout.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B6B0F57EF2100E3A0BA /* AnchorLayout.java */; };
+		28208B820F57EF2100E3A0BA /* DataLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B6E0F57EF2100E3A0BA /* DataLoader.java */; };
+		28208B830F57EF2100E3A0BA /* JGRDataFileOpenDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B6F0F57EF2100E3A0BA /* JGRDataFileOpenDialog.java */; };
+		28208B840F57EF2100E3A0BA /* JGRDataFileSaveDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B700F57EF2100E3A0BA /* JGRDataFileSaveDialog.java */; };
+		28208B850F57EF2100E3A0BA /* SaveData.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B710F57EF2100E3A0BA /* SaveData.java */; };
+		28208B860F57EF2100E3A0BA /* TxtTableLoader.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B720F57EF2100E3A0BA /* TxtTableLoader.java */; };
+		28208B8A0F57EF6600E3A0BA /* ExtensionFileFilter.java in Sources */ = {isa = PBXBuildFile; fileRef = 28208B890F57EF6600E3A0BA /* ExtensionFileFilter.java */; };
 		2835E1A90AAAC09300012BE8 /* AWTGraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */; };
 		2835E1AA0AAAC09300012BE8 /* FrameDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A30AAAC09300012BE8 /* FrameDevice.java */; };
 		2835E1AB0AAAC09300012BE8 /* GraphicsDevice.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E1A40AAAC09300012BE8 /* GraphicsDevice.java */; };
@@ -293,8 +314,6 @@
 		289DF67F09F26AFE00C34B0B /* JGR.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64309F26AF700C34B0B /* JGR.java */; };
 		289DF68009F26AFE00C34B0B /* JGRConsole.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64409F26AF700C34B0B /* JGRConsole.java */; };
 		289DF68109F26AFE00C34B0B /* JGRDataFileDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */; };
-		289DF68209F26AFE00C34B0B /* JGRDataFileOpenDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */; };
-		289DF68309F26AFE00C34B0B /* JGRDataFileSaveDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */; };
 		289DF68409F26AFE00C34B0B /* JGRHelp.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64809F26AF700C34B0B /* JGRHelp.java */; };
 		289DF68509F26AFE00C34B0B /* JGRObjectManager.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64909F26AF700C34B0B /* JGRObjectManager.java */; };
 		289DF68609F26AFE00C34B0B /* JGRPackageInstaller.java in Sources */ = {isa = PBXBuildFile; fileRef = 289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */; };
@@ -379,6 +398,27 @@
 		280E36670DB1014000B968C7 /* EzMenuSwing.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = EzMenuSwing.java; path = ../../ibase/toolkit/EzMenuSwing.java; sourceTree = SOURCE_ROOT; };
 		280E36AA0DB1053200B968C7 /* RConsoleOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RConsoleOutputStream.java; path = ../../JRI/RConsoleOutputStream.java; sourceTree = SOURCE_ROOT; };
 		281185DE05E7D8E000C16F9F /* splash.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = splash.jpg; sourceTree = "<group>"; };
+		28208B5C0F57EF2000E3A0BA /* ColumnHeaderListener.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ColumnHeaderListener.java; path = ../../JGR/data/ColumnHeaderListener.java; sourceTree = SOURCE_ROOT; };
+		28208B5D0F57EF2000E3A0BA /* CopyPasteAdapter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = CopyPasteAdapter.java; path = ../../JGR/data/CopyPasteAdapter.java; sourceTree = SOURCE_ROOT; };
+		28208B5E0F57EF2000E3A0BA /* DataFrameList.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = DataFrameList.java; path = ../../JGR/data/DataFrameList.java; sourceTree = SOURCE_ROOT; };
+		28208B5F0F57EF2000E3A0BA /* DataFrameSelector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = DataFrameSelector.java; path = ../../JGR/data/DataFrameSelector.java; sourceTree = SOURCE_ROOT; };
+		28208B600F57EF2000E3A0BA /* DataFrameWindow.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = DataFrameWindow.java; path = ../../JGR/data/DataFrameWindow.java; sourceTree = SOURCE_ROOT; };
+		28208B610F57EF2000E3A0BA /* ExCellRenderer.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ExCellRenderer.java; path = ../../JGR/data/ExCellRenderer.java; sourceTree = SOURCE_ROOT; };
+		28208B620F57EF2000E3A0BA /* ExDefaultTableModel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ExDefaultTableModel.java; path = ../../JGR/data/ExDefaultTableModel.java; sourceTree = SOURCE_ROOT; };
+		28208B630F57EF2000E3A0BA /* ExScrollableTable.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ExScrollableTable.java; path = ../../JGR/data/ExScrollableTable.java; sourceTree = SOURCE_ROOT; };
+		28208B640F57EF2000E3A0BA /* ExTable.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ExTable.java; path = ../../JGR/data/ExTable.java; sourceTree = SOURCE_ROOT; };
+		28208B650F57EF2000E3A0BA /* RDataFrameModel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RDataFrameModel.java; path = ../../JGR/data/RDataFrameModel.java; sourceTree = SOURCE_ROOT; };
+		28208B660F57EF2100E3A0BA /* RDataFrameVariableModel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RDataFrameVariableModel.java; path = ../../JGR/data/RDataFrameVariableModel.java; sourceTree = SOURCE_ROOT; };
+		28208B670F57EF2100E3A0BA /* RowNamesListModel.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RowNamesListModel.java; path = ../../JGR/data/RowNamesListModel.java; sourceTree = SOURCE_ROOT; };
+		28208B680F57EF2100E3A0BA /* TableWindow.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = TableWindow.java; path = ../../JGR/data/TableWindow.java; sourceTree = SOURCE_ROOT; };
+		28208B6A0F57EF2100E3A0BA /* AnchorConstraint.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = AnchorConstraint.java; path = ../../JGR/layout/AnchorConstraint.java; sourceTree = SOURCE_ROOT; };
+		28208B6B0F57EF2100E3A0BA /* AnchorLayout.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = AnchorLayout.java; path = ../../JGR/layout/AnchorLayout.java; sourceTree = SOURCE_ROOT; };
+		28208B6E0F57EF2100E3A0BA /* DataLoader.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = DataLoader.java; path = ../../JGR/menu/file/DataLoader.java; sourceTree = SOURCE_ROOT; };
+		28208B6F0F57EF2100E3A0BA /* JGRDataFileOpenDialog.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = JGRDataFileOpenDialog.java; path = ../../JGR/menu/file/JGRDataFileOpenDialog.java; sourceTree = SOURCE_ROOT; };
+		28208B700F57EF2100E3A0BA /* JGRDataFileSaveDialog.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = JGRDataFileSaveDialog.java; path = ../../JGR/menu/file/JGRDataFileSaveDialog.java; sourceTree = SOURCE_ROOT; };
+		28208B710F57EF2100E3A0BA /* SaveData.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = SaveData.java; path = ../../JGR/menu/file/SaveData.java; sourceTree = SOURCE_ROOT; };
+		28208B720F57EF2100E3A0BA /* TxtTableLoader.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = TxtTableLoader.java; path = ../../JGR/menu/file/TxtTableLoader.java; sourceTree = SOURCE_ROOT; };
+		28208B890F57EF6600E3A0BA /* ExtensionFileFilter.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = ExtensionFileFilter.java; path = ../../JGR/toolkit/ExtensionFileFilter.java; sourceTree = SOURCE_ROOT; };
 		2835E1A20AAAC09300012BE8 /* AWTGraphicsDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = AWTGraphicsDevice.java; path = ../../ibase/toolkit/AWTGraphicsDevice.java; sourceTree = SOURCE_ROOT; };
 		2835E1A30AAAC09300012BE8 /* FrameDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = FrameDevice.java; path = ../../ibase/toolkit/FrameDevice.java; sourceTree = SOURCE_ROOT; };
 		2835E1A40AAAC09300012BE8 /* GraphicsDevice.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = GraphicsDevice.java; path = ../../ibase/toolkit/GraphicsDevice.java; sourceTree = SOURCE_ROOT; };
@@ -602,8 +642,6 @@
 		289DF64309F26AF700C34B0B /* JGR.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGR.java; path = ../../JGR/JGR.java; sourceTree = SOURCE_ROOT; };
 		289DF64409F26AF700C34B0B /* JGRConsole.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRConsole.java; path = ../../JGR/JGRConsole.java; sourceTree = SOURCE_ROOT; };
 		289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileDialog.java; path = ../../JGR/JGRDataFileDialog.java; sourceTree = SOURCE_ROOT; };
-		289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileOpenDialog.java; path = ../../JGR/JGRDataFileOpenDialog.java; sourceTree = SOURCE_ROOT; };
-		289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRDataFileSaveDialog.java; path = ../../JGR/JGRDataFileSaveDialog.java; sourceTree = SOURCE_ROOT; };
 		289DF64809F26AF700C34B0B /* JGRHelp.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRHelp.java; path = ../../JGR/JGRHelp.java; sourceTree = SOURCE_ROOT; };
 		289DF64909F26AF700C34B0B /* JGRObjectManager.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRObjectManager.java; path = ../../JGR/JGRObjectManager.java; sourceTree = SOURCE_ROOT; };
 		289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = JGRPackageInstaller.java; path = ../../JGR/JGRPackageInstaller.java; sourceTree = SOURCE_ROOT; };
@@ -716,6 +754,59 @@
 			path = ../../javaGD;
 			sourceTree = SOURCE_ROOT;
 		};
+		28208B5B0F57EF2000E3A0BA /* data */ = {
+			isa = PBXGroup;
+			children = (
+				28208B5C0F57EF2000E3A0BA /* ColumnHeaderListener.java */,
+				28208B5D0F57EF2000E3A0BA /* CopyPasteAdapter.java */,
+				28208B5E0F57EF2000E3A0BA /* DataFrameList.java */,
+				28208B5F0F57EF2000E3A0BA /* DataFrameSelector.java */,
+				28208B600F57EF2000E3A0BA /* DataFrameWindow.java */,
+				28208B610F57EF2000E3A0BA /* ExCellRenderer.java */,
+				28208B620F57EF2000E3A0BA /* ExDefaultTableModel.java */,
+				28208B630F57EF2000E3A0BA /* ExScrollableTable.java */,
+				28208B640F57EF2000E3A0BA /* ExTable.java */,
+				28208B650F57EF2000E3A0BA /* RDataFrameModel.java */,
+				28208B660F57EF2100E3A0BA /* RDataFrameVariableModel.java */,
+				28208B670F57EF2100E3A0BA /* RowNamesListModel.java */,
+				28208B680F57EF2100E3A0BA /* TableWindow.java */,
+			);
+			name = data;
+			path = ../../JGR/data;
+			sourceTree = SOURCE_ROOT;
+		};
+		28208B690F57EF2100E3A0BA /* layout */ = {
+			isa = PBXGroup;
+			children = (
+				28208B6A0F57EF2100E3A0BA /* AnchorConstraint.java */,
+				28208B6B0F57EF2100E3A0BA /* AnchorLayout.java */,
+			);
+			name = layout;
+			path = ../../JGR/layout;
+			sourceTree = SOURCE_ROOT;
+		};
+		28208B6C0F57EF2100E3A0BA /* menu */ = {
+			isa = PBXGroup;
+			children = (
+				28208B6D0F57EF2100E3A0BA /* file */,
+			);
+			name = menu;
+			path = ../../JGR/menu;
+			sourceTree = SOURCE_ROOT;
+		};
+		28208B6D0F57EF2100E3A0BA /* file */ = {
+			isa = PBXGroup;
+			children = (
+				28208B6E0F57EF2100E3A0BA /* DataLoader.java */,
+				28208B6F0F57EF2100E3A0BA /* JGRDataFileOpenDialog.java */,
+				28208B700F57EF2100E3A0BA /* JGRDataFileSaveDialog.java */,
+				28208B710F57EF2100E3A0BA /* SaveData.java */,
+				28208B720F57EF2100E3A0BA /* TxtTableLoader.java */,
+			);
+			name = file;
+			path = ../../JGR/menu/file;
+			sourceTree = SOURCE_ROOT;
+		};
 		2835E2150AAB352A00012BE8 /* editor */ = {
 			isa = PBXGroup;
 			children = (
@@ -733,12 +824,13 @@
 		284899CE063C1F3B00E88567 /* JGR */ = {
 			isa = PBXGroup;
 			children = (
+				28208B5B0F57EF2000E3A0BA /* data */,
+				28208B690F57EF2100E3A0BA /* layout */,
+				28208B6C0F57EF2100E3A0BA /* menu */,
 				2835E2150AAB352A00012BE8 /* editor */,
 				289DF64309F26AF700C34B0B /* JGR.java */,
 				289DF64409F26AF700C34B0B /* JGRConsole.java */,
 				289DF64509F26AF700C34B0B /* JGRDataFileDialog.java */,
-				289DF64609F26AF700C34B0B /* JGRDataFileOpenDialog.java */,
-				289DF64709F26AF700C34B0B /* JGRDataFileSaveDialog.java */,
 				289DF64809F26AF700C34B0B /* JGRHelp.java */,
 				289DF64909F26AF700C34B0B /* JGRObjectManager.java */,
 				289DF64A09F26AF700C34B0B /* JGRPackageInstaller.java */,
@@ -975,6 +1067,7 @@
 		289DF65709F26AF800C34B0B /* toolkit */ = {
 			isa = PBXGroup;
 			children = (
+				28208B890F57EF6600E3A0BA /* ExtensionFileFilter.java */,
 				289DF65809F26AF800C34B0B /* AboutDialog.java */,
 				289DF65909F26AF800C34B0B /* ConsoleOutput.java */,
 				289DF65A09F26AF900C34B0B /* ConsoleSync.java */,
@@ -1409,8 +1502,6 @@
 				289DF67F09F26AFE00C34B0B /* JGR.java in Sources */,
 				289DF68009F26AFE00C34B0B /* JGRConsole.java in Sources */,
 				289DF68109F26AFE00C34B0B /* JGRDataFileDialog.java in Sources */,
-				289DF68209F26AFE00C34B0B /* JGRDataFileOpenDialog.java in Sources */,
-				289DF68309F26AFE00C34B0B /* JGRDataFileSaveDialog.java in Sources */,
 				289DF68409F26AFE00C34B0B /* JGRHelp.java in Sources */,
 				289DF68509F26AFE00C34B0B /* JGRObjectManager.java in Sources */,
 				289DF68609F26AFE00C34B0B /* JGRPackageInstaller.java in Sources */,
@@ -1546,6 +1637,27 @@
 				28EC0E510D96C08E00FE47D5 /* test.java in Sources */,
 				280E36680DB1014000B968C7 /* EzMenuSwing.java in Sources */,
 				280E36AB0DB1053200B968C7 /* RConsoleOutputStream.java in Sources */,
+				28208B730F57EF2100E3A0BA /* ColumnHeaderListener.java in Sources */,
+				28208B740F57EF2100E3A0BA /* CopyPasteAdapter.java in Sources */,
+				28208B750F57EF2100E3A0BA /* DataFrameList.java in Sources */,
+				28208B760F57EF2100E3A0BA /* DataFrameSelector.java in Sources */,
+				28208B770F57EF2100E3A0BA /* DataFrameWindow.java in Sources */,
+				28208B780F57EF2100E3A0BA /* ExCellRenderer.java in Sources */,
+				28208B790F57EF2100E3A0BA /* ExDefaultTableModel.java in Sources */,
+				28208B7A0F57EF2100E3A0BA /* ExScrollableTable.java in Sources */,
+				28208B7B0F57EF2100E3A0BA /* ExTable.java in Sources */,
+				28208B7C0F57EF2100E3A0BA /* RDataFrameModel.java in Sources */,
+				28208B7D0F57EF2100E3A0BA /* RDataFrameVariableModel.java in Sources */,
+				28208B7E0F57EF2100E3A0BA /* RowNamesListModel.java in Sources */,
+				28208B7F0F57EF2100E3A0BA /* TableWindow.java in Sources */,
+				28208B800F57EF2100E3A0BA /* AnchorConstraint.java in Sources */,
+				28208B810F57EF2100E3A0BA /* AnchorLayout.java in Sources */,
+				28208B820F57EF2100E3A0BA /* DataLoader.java in Sources */,
+				28208B830F57EF2100E3A0BA /* JGRDataFileOpenDialog.java in Sources */,
+				28208B840F57EF2100E3A0BA /* JGRDataFileSaveDialog.java in Sources */,
+				28208B850F57EF2100E3A0BA /* SaveData.java in Sources */,
+				28208B860F57EF2100E3A0BA /* TxtTableLoader.java in Sources */,
+				28208B8A0F57EF6600E3A0BA /* ExtensionFileFilter.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
