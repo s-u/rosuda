@@ -122,7 +122,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 		// Initialize JGRConsoleMenu
 		String[] Menu = { 
-				"+", "File", "#New","-","#Open","-","@SSave", "save","@PPrint","print","-","-",
+				"+", "File", "#New","-","#Open","-","@SSave", "save",
+					//"@PPrint","print",
+					"-","-",
 					"!OSource File...", "source","~File.Quit", 
 				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
 					"#Copy Special","-", "@VPaste","paste","@ASelect All","selAll",
@@ -790,7 +792,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			output.copyOutput();
 		else if (cmd == "print"){
 			try{
-				output.print();
+				//output.print();
 			}catch(Exception exc){}
 		}else if (cmd == "copycmds")
 			output.copyCommands();
