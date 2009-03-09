@@ -67,7 +67,7 @@ public class DataLoader extends JFrame {
 	
 	public DataLoader(){
 		FileFilter extFilter;
-		FileSelector fileDialog = new FileSelector(this,"Load Data File",FileSelector.LOAD);
+		FileSelector fileDialog = new FileSelector(this,"Load Data",FileSelector.LOAD);
 		if(fileDialog.isSwing()){
 			JFileChooser chooser = fileDialog.getJFileChooser();
 			for(int i=0;i<extensionDescription.length;i++)

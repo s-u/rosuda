@@ -6,6 +6,7 @@ package org.rosuda.JGR;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,6 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
@@ -27,10 +29,12 @@ import java.util.Vector;
 
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.KeyStroke;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.undo.CannotUndoException;
@@ -133,14 +137,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"fontBigger", "!DDecrease Font Size", "fontSmaller",
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
-					"Package Installer","packageinst","-", "-","Preferences","preferences",
+					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
 				"+","Data","transpose","transpose","TO DO: Data Manipulation ","-",
 				"+","Analysis","TO DO: Data Analysis ","-",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
-				"+","Help","R Help","help", "About","about","0"  };
-		EzMenuSwing.getEzMenu(this, this, Menu);
-
+				"+","Help","R Help","help", "About","about","0"};
+		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
 		
 		JMenu rm = (JMenu) EzMenuSwing.getItem(this,"Copy Special");
 		if (rm != null) {
@@ -167,6 +170,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item2.setActionCommand("new");
 			item2.addActionListener(this);
 			rm.add(item2);
+			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+				     ActionEvent.CTRL_MASK));
 		}
 		rm = (JMenu) EzMenuSwing.getItem(this,"Open");
 		if (rm != null) {
@@ -174,10 +179,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item1.setActionCommand("loaddata");
 			item1.addActionListener(this);
 			rm.add(item1);
+			item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 
+				     ActionEvent.CTRL_MASK));
 			JMenuItem item2 = new JMenuItem("Script");
 			item2.setActionCommand("open");
 			item2.addActionListener(this);
 			rm.add(item2);
+			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
+				     ActionEvent.CTRL_MASK));
 			JMenuItem item3 = new JMenuItem("Work Space");
 			item3.setActionCommand("openwsp");
 			item3.addActionListener(this);
@@ -253,6 +262,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.setSize(new Dimension(600,
 				Common.screenRes.height < 800 ? Common.screenRes.height - 50
 						: 700));
+		Point center = new Point(Common.screenRes.width/2-this.getWidth()/2,40);
+		this.setLocation(center);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);

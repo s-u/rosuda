@@ -238,7 +238,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 		boolean changed = false;
 		if(JGR.R.eval("exists('"+rDataName+"')").asBool().isTRUE())
 			if(JGR.R.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")").asBool().isFALSE()){
-				if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
+				if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
+								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
 					this.fireTableStructureChanged();	
 				this.fireTableDataChanged();			
 				JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);

@@ -29,7 +29,7 @@ private static String extensionDescription[] = new String[]{	"R (*.rda *.rdata)"
 	public SaveData(String dataName){
 		JFileChooser chooser=null;
 		FileFilter extFilter=null;
-		FileSelector fileDialog = new FileSelector(this,"Load Data File",FileSelector.SAVE);
+		FileSelector fileDialog = new FileSelector(this,"Save Data",FileSelector.SAVE);
 		if(fileDialog.isSwing()){
 			chooser = fileDialog.getJFileChooser();
 			for(int i=0;i<extensionDescription.length;i++)

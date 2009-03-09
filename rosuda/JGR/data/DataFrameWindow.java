@@ -36,6 +36,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -57,6 +58,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -253,6 +255,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					item1.setActionCommand("newdata");
 					item1.addActionListener(this);
 					rm.add(item1);
+					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+						     ActionEvent.CTRL_MASK));
 					JMenuItem item2 = new JMenuItem("Script");
 					item2.setActionCommand("new");
 					item2.addActionListener(this);
@@ -264,6 +268,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					item1.setActionCommand("loaddata");
 					item1.addActionListener(this);
 					rm.add(item1);
+					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
+						     ActionEvent.CTRL_MASK));
 					JMenuItem item2 = new JMenuItem("Script");
 					item2.setActionCommand("open");
 					item2.addActionListener(this);
@@ -357,7 +363,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}
 	}
 	public void refresh(){
-		boolean changed=true;
+		boolean changed=false;
 		if(dataScrollPane!=null){
 			changed=((RDataFrameModel)dataScrollPane.getExTable().getModel()).refresh();
 			if(changed){
@@ -366,8 +372,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			}
 		}
 		if(variableScrollPane!=null){
-			((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
 			if(changed){
+				((RDataFrameVariableModel)variableScrollPane.getExTable().getModel()).refresh();
 				variableScrollPane.getRowNamesModel().refresh();
 				variableScrollPane.autoAdjustRowWidth();
 			}
@@ -391,6 +397,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				jTabbedPane1.setComponentAt(0, dataScrollPane);
 		}else{
 			((RDataFrameModel) dataScrollPane.getExTable().getModel()).setDataName(dataName);
+			dataScrollPane.getRowNamesModel().refresh();  
+			dataScrollPane.autoAdjustRowWidth();
 		}
 	}
 	
