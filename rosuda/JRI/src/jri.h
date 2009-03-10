@@ -9,8 +9,8 @@
 
 /* the viewpoint is from R, i.e. "get" means "Java->R" whereas "put" means "R->Java" */
 
-#define JRI_VERSION 0x0402 /* JRI v0.4-2 */
-#define JRI_API     0x0108 /* API-version 1.8 */
+#define JRI_VERSION 0x0403 /* JRI v0.4-3 */
+#define JRI_API     0x0109 /* API-version 1.9 */
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,4 +80,10 @@ const char *jri_char_utf8(SEXP);
        + rniCons(+2 args)
    1.8 JRI 0.4-0
        + rniPrint
+   1.9 JRI 0.4-3
+       + rniPreserve, rniRelease
+       + rniParentEnv, rniFindVar, rniListEnv
+       + rniSpecialObject(0-7)
+       + rniPrintValue
+       
 */

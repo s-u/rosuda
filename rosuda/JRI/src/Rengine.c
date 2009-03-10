@@ -160,6 +160,61 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniUnprotect
 	UNPROTECT(count);
 }
 
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniRelease
+(JNIEnv *env, jobject this, jlong exp)
+{
+	if (exp) R_ReleaseObject(L2SEXP(exp));
+}
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniPreserve
+(JNIEnv *env, jobject this, jlong exp)
+{
+	if (exp) R_PreserveObject(L2SEXP(exp));
+}
+
+JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniPrintValue
+(JNIEnv *env, jobject this, jlong exp)
+{
+	Rf_PrintValue(exp ? L2SEXP(exp) : R_NilValue);
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniParentEnv
+(JNIEnv *env, jobject this, jlong exp)
+{
+  return SEXP2L(ENCLOS(exp ? L2SEXP(exp) : R_GlobalEnv));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniFindVar
+(JNIEnv *env, jobject this, jstring symName, jlong rho)
+{
+	SEXP sym = jri_installString(env, symName);
+	if (!sym || sym == R_NilValue) return 0;
+
+	return SEXP2L(Rf_findVar(sym, rho ? L2SEXP(rho) : R_GlobalEnv));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniListEnv
+(JNIEnv *env, jobject this, jlong rho, jboolean all)
+{
+	return SEXP2L(R_lsInternal(rho ? L2SEXP(rho) : R_GlobalEnv, all));
+}
+
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniSpecialObject
+(JNIEnv *env, jobject this, jint which)
+{
+  switch (which) {
+  case 0: return SEXP2L(R_NilValue);
+  case 1: return SEXP2L(R_GlobalEnv);
+  case 2: return SEXP2L(R_EmptyEnv);
+  case 3: return SEXP2L(R_BaseEnv);
+  case 4: return SEXP2L(R_UnboundValue);
+  case 5: return SEXP2L(R_MissingArg);
+  case 6: return SEXP2L(R_NaString);
+  case 7: return SEXP2L(R_BlankString);
+  }
+  return 0;
+}
+
 JNIEXPORT jobject JNICALL Java_org_rosuda_JRI_Rengine_rniXrefToJava
 (JNIEnv *env, jobject this, jlong exp)
 {
@@ -293,7 +348,9 @@ JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
     if (!an || an==R_NilValue || exp==0 || L2SEXP(exp)==R_NilValue) return;
 
     setAttrib(L2SEXP(exp), an, (attr==0)?R_NilValue:L2SEXP(attr));
-    
+	
+	/* BTW: we don't need to adjust the object bit for "class", setAttrib does that already */
+
     /* this is not official API, but whoever uses this should know what he's doing
        it's ok for directly constructing attr lists, and that's what it should be used for
        SET_ATTRIB(L2SEXP(exp), (attr==0)?R_NilValue:L2SEXP(attr)); */
