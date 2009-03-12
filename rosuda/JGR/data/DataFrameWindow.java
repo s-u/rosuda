@@ -325,6 +325,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			    	}
 			    	if(cnt==4){
 			    		JGR.MAINRCONSOLE.toFront();
+			    		JGR.MAINRCONSOLE.requestFocus();
 			    		return;
 			    	}
 			    	RController.refreshObjects();
@@ -450,6 +451,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			}
 		}else if(cmd=="Open Data"){
 			JGR.MAINRCONSOLE.toFront();
+			JGR.MAINRCONSOLE.requestFocus();
 			new DataLoader();	
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
