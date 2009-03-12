@@ -79,6 +79,7 @@ import javax.swing.SwingUtilities;
 import java.lang.Thread;
 
 
+
 /**
  * A window for displaying data frames. Contains two tabs, one to view the raw data, and
  * another to view variable information
@@ -109,7 +110,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	private JMenu fileMenu;
 	
 	private ExTable table;
-	
+	private String showData = null;    //shows this data at next opportunity
 	
 
 
@@ -380,6 +381,19 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			}
 		}
 	}
+	public synchronized void  showData(String dataName){
+		showData = dataName;
+	}
+	
+	public void setVisibleDataFrame(String dataName){
+		String name;
+		for(int i=0;i<dataSelector.getModel().getSize();i++){
+			name = ((DataFrameComboBoxModel)dataSelector.getModel()).getNameAt(i);
+		if(name.equals(dataName))
+			dataSelector.setSelectedIndex(i);
+			dataSelector.repaint();
+		}
+	}
 	
 	/**
 	 * Changes tab 0 (data view) to display a new data frame
@@ -623,9 +637,14 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				return null;
 		}
 		
+		public String getNameAt(int index){
+			return ((RObject)items.elementAt(index)).getName();
+		}
+		
 		public void setSelectedItem(Object obj){
 			selectedIndex = getIndexOf(obj);
 		}
+		
 		
 		public DataFrameComboBoxModel(Vector v){
 			items = new Vector(v);
@@ -661,6 +680,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			while (true)
 				try {
 					Thread.sleep(2000);
+					if(showData!=null){
+						setVisibleDataFrame(showData);
+					}
 					refresh();
 				} catch (Exception e) {
 					new ErrorMsg(e);

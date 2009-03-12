@@ -21,10 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.*;
+import org.rosuda.JGR.data.*;
 import org.rosuda.JGR.util.*;
 
 /**
@@ -151,7 +153,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				mergeByPanel.setLayout(mergeByPanelLayout);
 				getContentPane().add(mergeByPanel, new AnchorConstraint(829, 675, 956, 335, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				mergeByPanel.setPreferredSize(new java.awt.Dimension(232, 83));
-				mergeByPanel.setBorder(BorderFactory.createTitledBorder("Merge By Identifier"));
+				mergeByPanel.setBorder(BorderFactory.createTitledBorder("Match Cases By"));
 				{
 					if(mergeByListModel==null || !sameData)
 						mergeByListModel = new DefaultListModel();
@@ -196,6 +198,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				key2.setText("Unique Identifiers");
 				key2.setPreferredSize(new java.awt.Dimension(180, 22));
 				key2.addActionListener(this);
+				key2.setVisible(false);
 			}
 			{
 				key1 = new JCheckBox();
@@ -203,6 +206,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				key1.setText("Unique Identifiers");
 				key1.setPreferredSize(new java.awt.Dimension(164, 22));
 				key1.addActionListener(this);
+				key1.setVisible(false);
 			}
 			{
 				includeCheckBox2 = new JCheckBox();
@@ -231,7 +235,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				getContentPane().add(varPanel1, new AnchorConstraint(12, 427, 374, 12, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
 				varPanel1.setPreferredSize(new java.awt.Dimension(279, 232));
 				varPanel1.setLayout(VarPanel1Layout);
-				varPanel1.setBorder(BorderFactory.createTitledBorder("Primary Data: "+dataName1));
+				varPanel1.setBorder(BorderFactory.createTitledBorder("Primary Data [1]: "+dataName1));
 				{
 					
 					if(dataList1Model==null || !sameData){
@@ -253,7 +257,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				getContentPane().add(varPanel2, new AnchorConstraint(12, 20, 374, 584, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				BorderLayout jPanel1Layout = new BorderLayout();
 				varPanel2.setPreferredSize(new java.awt.Dimension(264, 232));
-				varPanel2.setBorder(BorderFactory.createTitledBorder("Secondary Data: "+dataName2));
+				varPanel2.setBorder(BorderFactory.createTitledBorder("Secondary Data [2]: "+dataName2));
 				varPanel2.setLayout(jPanel1Layout);
 				{
 					if(dataList2Model==null || !sameData){
@@ -273,7 +277,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			if(findPairs)
 				findPairs();
 			pack();
-			this.setSize(682, 675);
+			this.setSize(720, 690);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
@@ -369,6 +373,18 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 		}else if(cmd == "Merge"){
 			merge();
 			this.dispose();
+			Runnable doWorkRunnable = new Runnable() {
+			    public void run() { 
+			    	DataFrameWindow dataView = new DataFrameWindow();
+			    	dataView.setLocationRelativeTo(null);
+			    	dataView.setVisible(true); 
+			    	dataView.showData(lastDataSetName);
+			    	// .setVisibleDataFrame(lastDataSetName);			
+			    }
+			};
+			SwingUtilities.invokeLater(doWorkRunnable);
+			
+			
 			
 		}
 		
