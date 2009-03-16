@@ -371,16 +371,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public String getUniqueName(String var){
 		JGR.refreshObjects();
-		var = var.replace(" ", "_");
-		var = var.replace("-", "_");
-		var = var.replace("+", "_");
-		var = var.replace("=", "_");
-		var = var.replace("<", "_");
-		var = var.replace(">", "_");
-		var = var.replace("(", "_");
-		var = var.replace(")", "_");
-		var = var.replace("/", "_");
-		var = var.replace("\\", "_");
+		var = RController.makeValidVariableName(var);
 		if(!JGR.OBJECTS.contains(var))
 			return var;
 		int i = 1;
@@ -400,16 +391,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * @return the value of var concatinated with a number
 	 */
 	public String getUniqueName(String var,String envName){
-		var = var.replace(" ", "_");
-		var = var.replace("-", "_");
-		var = var.replace("+", "_");
-		var = var.replace("=", "_");
-		var = var.replace("<", "_");
-		var = var.replace(">", "_");
-		var = var.replace("(", "_");
-		var = var.replace(")", "_");
-		var = var.replace("/", "_");
-		var = var.replace("\\", "_");
+		var = RController.makeValidVariableName(var);
 		boolean isEnv = JGR.R.eval("is.environment("+envName+")").asBool().isTRUE();
 		if(!isEnv)
 				return var;
@@ -422,7 +404,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if(isUnique)
 				return var+i;
 			i++;
-	
 		}
 	}
 	/**
@@ -572,11 +553,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public void saveWorkSpace(String file) {
 		if (file == null)
-			execute("save.image()", false);
+			executeLater("save.image()");
 		else
-			execute("save.image(\""
+			executeLater("save.image(\""
 					+ (file == null ? "" : file.replace('\\', '/'))
-					+ "\",compress=TRUE)", false);
+					+ "\",compress=TRUE)");
 		JGR.writeHistory();
 	}
 
@@ -860,7 +841,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			} catch (CannotUndoException ex) {
 			}
 		else if (cmd == "help")
-			execute("help.start()", false);
+			executeLater("help.start()");
 		else if (cmd == "table")
 		{DataFrameWindow inst = new DataFrameWindow();
 		inst.setLocationRelativeTo(null);
@@ -903,9 +884,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if (chooser.getSelectedFile() != null)
 				JGRPrefs.workingDirectory = chooser.getSelectedFile()
 						.toString();
-			execute("setwd(\""
+			executeLater("setwd(\""
 					+ chooser.getSelectedFile().toString().replace('\\', '/')
-					+ "\")", true);
+					+ "\")");
 		} else if (cmd == "update")
 			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")",
 					false);
@@ -1001,7 +982,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				input.setText("");
 				input.setCaretPosition(0);
 				input.requestFocus();
-				execute(cmd, true);
+				executeLater(cmd);
 			}
 		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V
 				&& (ke.isControlDown() || ke.isMetaDown())) {

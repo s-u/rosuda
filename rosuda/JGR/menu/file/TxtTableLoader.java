@@ -68,10 +68,12 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	private final String[] quotes = new String[] { "", "\\\"", "\\'" };
 	private final String[] seps = new String[] { "\\t", "", ",", ";", "|" };
 	private String previewName = JGR.MAINRCONSOLE.getUniqueName("temp_data");
+	private String dataName =null;
 	
-	public TxtTableLoader(String fileName){
+	public TxtTableLoader(String fileName,String rName){
 		super();
 		file = new File(fileName);
+		dataName = rName;
 		initGUI();		
 		checkFile();
 		loadPreview();
@@ -80,12 +82,13 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	/**
 	* Auto-generated main method to display this JFrame
 	*/
-	public static void run(String fileName) {
+	public static void run(String fileName,String rName) {
 		final String theFile = fileName;
+		final String theName = rName;
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				
-				TxtTableLoader inst = new TxtTableLoader(theFile);		
+				TxtTableLoader inst = new TxtTableLoader(theFile,theName);		
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 				
@@ -335,11 +338,8 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		
 	}
 	private void loadActionPerformed(ActionEvent evt) {
-		System.out.println("load.actionPerformed, event="+evt);
-		String name = file.getName();
-		name = (file.getName().indexOf(".")==-1 ?JGR.MAINRCONSOLE.getUniqueName(file.getName()):
-			JGR.MAINRCONSOLE.getUniqueName(file.getName().substring(0, file.getName().indexOf("."))) );
-		loadInR(JGR.MAINRCONSOLE.getUniqueName(name),false);
+
+		loadInR(dataName,false);
 		this.dispose();
 	}
 	

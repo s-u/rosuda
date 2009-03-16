@@ -189,7 +189,6 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
                             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);					
 					pairedPanel.add(sPane, BorderLayout.CENTER);
 					pairedList.setModel(pairedListModel);
-					pairedList.setPreferredSize(new java.awt.Dimension(222, 121));
 				}
 			}
 			{

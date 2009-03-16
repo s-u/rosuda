@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
@@ -29,6 +30,7 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.ibase.Common;
@@ -63,6 +65,7 @@ public class DataLoader extends JFrame {
 																	"Epiinfo (*.rec)",
 																	"Minitab (*.mtp)",
 																	"S data dump (*.s3)"};
+	private JTextField rDataNameField;
 	
 	
 	public DataLoader(){
@@ -77,18 +80,26 @@ public class DataLoader extends JFrame {
 			}
 			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 		}
+		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		namePanel.add(new JLabel("Set Name: "));
+		rDataNameField = new JTextField(20);
+		namePanel.add(rDataNameField);
+		fileDialog.addFooterPanel(namePanel);
 		fileDialog.setVisible(true);
 		if(fileDialog.getFile()==null)
 			return;
 		String fileName = fileDialog.getDirectory()+fileDialog.getFile();
-		loadData(fileDialog.getFile(),fileDialog.getDirectory());
-		
-		
+		String rName = rDataNameField.getText();
+		if(rName.length()==0)
+			rName = (fileDialog.getFile().indexOf(".")<=0 ?JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile()):
+				JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile().substring(0, fileDialog.getFile().indexOf("."))) );
+		rName = RController.makeValidVariableName(rName);
+		loadData(fileDialog.getFile(),fileDialog.getDirectory(),rName);
 	}
-	public void loadData(String fileName,String directory){
+	public void loadData(String fileName,String directory,String var){
 		
-		String var = (fileName.indexOf(".")<=0 ?JGR.MAINRCONSOLE.getUniqueName(fileName):
-			JGR.MAINRCONSOLE.getUniqueName(fileName.substring(0, fileName.indexOf("."))) );
+		//String var = (fileName.indexOf(".")<=0 ?JGR.MAINRCONSOLE.getUniqueName(fileName):
+		//	JGR.MAINRCONSOLE.getUniqueName(fileName.substring(0, fileName.indexOf("."))) );
 		
 
 		if(fileName.toLowerCase().endsWith(".rda")|| fileName.toLowerCase().endsWith(".rdata"))
@@ -100,7 +111,7 @@ public class DataLoader extends JFrame {
 			temp.dispose();
 		}
 		else if(fileName.toLowerCase().endsWith(".txt")|fileName.toLowerCase().endsWith(".csv"))
-			loadTxtFile(fileName,directory);
+			loadTxtFile(fileName,directory,var);
 		else {
 			RController.loadPackage("foreign");
 			if(fileName.toLowerCase().endsWith(".sav"))
@@ -120,7 +131,7 @@ public class DataLoader extends JFrame {
 			else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
 					JGR.MAINRCONSOLE.execute(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else
-				loadTxtFile(fileName,directory);				
+				loadTxtFile(fileName,directory,var);				
 		}
 
 
@@ -140,7 +151,7 @@ public class DataLoader extends JFrame {
 		JGR.MAINRCONSOLE.execute(var+" <- dget('"+(directory+fileName).replace('\\', '/')+"')",true);
 	}
 	
-	public void loadTxtFile(String fileName,String directory){
-		TxtTableLoader.run(directory+fileName);
+	public void loadTxtFile(String fileName,String directory, String rName){
+		TxtTableLoader.run(directory+fileName,rName);
 	}
 }

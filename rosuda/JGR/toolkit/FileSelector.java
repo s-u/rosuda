@@ -5,15 +5,20 @@ package org.rosuda.JGR.toolkit;
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.event.ActionListener;
 import java.io.File;
 
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.rosuda.ibase.Common;
+import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.*;
 
 /**
  * FileSelector - use AWT filedialog on a Mac because of look&feel, and SWING on
@@ -176,6 +181,37 @@ public class FileSelector extends JFrame {
 		} catch (Exception e) {
 		}
 	}
+	
+	/**
+	 * Adds a JPanel at the bottom of the dialog
+	 * 
+	 * 
+	 * @param panel
+	 * 				the panel to add
+	 */
+	public void addFooterPanel(JPanel panel){
+		JPanel fileView=null;
+		try{
+		if (!Common.isMac()) {
+			fileView = (JPanel) ((JComponent) ((JComponent) swingChooser
+					.getComponent(2)).getComponent(2)).getComponent(2);
+		}
+		
+		if(fileView!=null){
+			fileView.add(panel);
+			JPanel pp = (JPanel) ((JComponent) ((JComponent) swingChooser
+					.getComponent(2)).getComponent(2)).getComponent(0);
+			JPanel temp = new JPanel();
+			temp.setMaximumSize(new Dimension(0,panel.getPreferredSize().height));
+			pp.add(temp);
+		}
+		}catch(Exception e){
+			new ErrorMsg(e);
+		}
+		
+	}
+	
+	
 
 	public boolean isSwing()
 	{

@@ -251,6 +251,10 @@ public class RController {
 		}
 		return null;
 	}
+	
+	public static String makeValidVariableName(String var){
+		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");	
+	}
 
 	/**
 	 * Get all keywords for syntaxhighlighting.
