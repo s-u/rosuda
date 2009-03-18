@@ -325,7 +325,23 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		SwingUtilities.invokeLater(doWorkRunnable);
 		
 	}
-	
+	/**
+	 * Execute a coomand and add it to history
+	 * 
+	 * @param cmd
+	 * 				command for execution
+	 * @param addToHist
+	 *            indicates wether the command should be added to history or not
+	 */
+	public void executeLater(String cmd, boolean addToHist) {
+		final String cm = cmd;
+		final boolean add = addToHist;
+		Runnable doWorkRunnable = new Runnable() {
+		    public void run() { execute(cm,add); }
+		};
+		SwingUtilities.invokeLater(doWorkRunnable);
+		
+	}	
 	/**
 	 * Execute a command and add it into history.
 	 * 
@@ -982,7 +998,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				input.setText("");
 				input.setCaretPosition(0);
 				input.requestFocus();
-				executeLater(cmd);
+				execute(cmd);
 			}
 		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V
 				&& (ke.isControlDown() || ke.isMetaDown())) {

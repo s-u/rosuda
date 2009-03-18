@@ -2,6 +2,7 @@ package org.rosuda.JGR.menu;
 
 
 
+
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.toolkit.DJList;
@@ -10,6 +11,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -17,6 +19,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -28,6 +31,7 @@ import javax.swing.WindowConstants;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.data.*;
 import org.rosuda.JGR.util.*;
+
 
 /**
 * This code was edited or generated using CloudGarden's Jigloo
@@ -70,7 +74,9 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 	private static DefaultComboBoxModel  dataList1Model;
 	private static DefaultComboBoxModel  dataList2Model;
 	private static String lastDataName1;
+	private static Vector lastVarNames1;
 	private static String lastDataName2;
+	private static Vector lastVarNames2;
 	private static String lastDataSetName;
 
 	public MergeData(String newDataSetName,String dataName1,String dataName2) {
@@ -82,9 +88,21 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 		try {
 			boolean findPairs=false;
 			boolean sameData = dataName1.equals(lastDataName1) && dataName2.equals(lastDataName2);
+			Vector data1vars = new Vector();
+			data1vars.copyInto(JGR.R.eval("colnames("+dataName1+")").asStringArray());
+			Vector data2vars = new Vector();
+			data2vars.copyInto(JGR.R.eval("colnames("+dataName2+")").asStringArray());			
+			if(sameData){
+				if(!data1vars.equals(lastVarNames1))
+					sameData=false;
+				if(!data2vars.equals(lastVarNames2))
+					sameData=false;
+			}
 			lastDataName1=dataName1;
 			lastDataName2=dataName2;
 			lastDataSetName=newDataSetName;
+			lastVarNames1 = data1vars;
+			lastVarNames2 = data2vars;		
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -332,8 +350,10 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 		}else if(cmd == "Pair"){
 			String var1 = (String)dataList1.getSelectedValue();
 			String var2 = (String)dataList2.getSelectedValue();
-			if(var1==null || var2==null)
+			if(var1==null || var2==null){
+				JOptionPane.showMessageDialog(this,"Please select one variable from each data frame to create a variable pair");
 				return;
+			}
 			((DefaultComboBoxModel)dataList1.getModel()).removeElement(var1);
 			((DefaultComboBoxModel)dataList2.getModel()).removeElement(var2);
 			if(var1.equals(var2)){
@@ -370,97 +390,123 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			}
 			pairedList.setSelectedIndices(ind);
 		}else if(cmd == "Merge"){
-			merge();
-			this.dispose();
-			Runnable doWorkRunnable = new Runnable() {
-			    public void run() { 
-			    	DataFrameWindow dataView = new DataFrameWindow();
-			    	dataView.setLocationRelativeTo(null);
-			    	dataView.setVisible(true); 
-			    	dataView.showData(lastDataSetName);
-			    	// .setVisibleDataFrame(lastDataSetName);			
-			    }
-			};
-			SwingUtilities.invokeLater(doWorkRunnable);
-			
-			
-			
+			if(mergeByListModel.size()==0){
+				int choice =JOptionPane.showOptionDialog(this,"No variables have been selected to merge by.\n" +
+						"Would you like to merge by row names?","Match By Row Names?",JOptionPane.YES_NO_OPTION,
+						JOptionPane.QUESTION_MESSAGE,null,null,null);
+				if(choice==JOptionPane.NO_OPTION)
+					return;
+				
+			}
+			boolean merged = merge();
+			if(merged){
+				this.dispose();
+				Runnable doWorkRunnable = new Runnable() {
+					public void run() { 
+						DataFrameWindow dataView = new DataFrameWindow();
+						dataView.setLocationRelativeTo(null);
+						dataView.setVisible(true); 
+						dataView.showData(lastDataSetName);			
+					}
+				};
+				SwingUtilities.invokeLater(doWorkRunnable);	
+			}
 		}
-		
 	}
-	public void merge(){
+	
+	public boolean merge(){
 		String temp;
 		String byX="";
 		String byY="";
-		if(mergeByListModel.getSize()>0){
-			byX+="c(";
-			byY+="c(";
-			for(int i=0;i<mergeByListModel.getSize();i++){
-				temp = mergeByListModel.elementAt(i).toString();
+		try{
+			if(mergeByListModel.getSize()>0){
+				byX+="c(";
+				byY+="c(";
+				for(int i=0;i<mergeByListModel.getSize();i++){
+					temp = mergeByListModel.elementAt(i).toString();
+					if(temp.indexOf("<==>")==(-1)){
+						byX+="\""+temp+"\"";
+						byY+="\""+temp+"\"";
+
+					}else{
+						String[] t = temp.split("<==>");	
+						byX+="\""+t[0]+"\"";
+						byY+="\""+t[1]+"\"";
+					}
+					if(i<mergeByListModel.getSize()-1){
+						byX+=",";
+						byY+=",";
+					}				
+				}
+				byX+=")";
+				byY+=")";	
+				String[] data1Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+"))[duplicated(na.omit("+lastDataName1+"["+byX+"]))])").asStringArray();
+				String[] data2Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+"))[duplicated(na.omit("+lastDataName2+"["+byY+"]))])").asStringArray();
+				if(data1Unique.length>0 || data2Unique.length>0){
+					int choice =JOptionPane.showOptionDialog(this,"Niether data frame has unique case identifiers.\n" +
+							"Merging will create cases for every possible combination of duplicates.\n" +
+							"Would you like to continue?","Duplicate Idenifiers Detected",JOptionPane.YES_NO_OPTION,
+							JOptionPane.WARNING_MESSAGE,null,null,null);
+					if(choice==JOptionPane.NO_OPTION)
+						return false;
+					JGR.R.eval("cat('\\n')");
+					JGR.R.eval("cat('\\nDuplicate Identifiers in "+lastDataName1+": "+"\\n')");
+					String temp1="";
+					for(int i=0;i<data1Unique.length;i++)
+						temp1+=" "+data1Unique[i];
+					JGR.R.eval("cat('"+temp1+"\\n')");
+					JGR.R.eval("cat('\\nDuplicate Identifiers in "+lastDataName2+": "+"\\n')");
+					temp1="";
+					for(int i=0;i<data2Unique.length;i++)
+						temp1+=" "+data2Unique[i];
+					JGR.R.eval("cat('"+temp1+"\\n')");
+					JGR.MAINRCONSOLE.executeLater("",false);
+				}
+			}else{
+				byX="\"row.names\"";
+				byY="\"row.names\"";
+			}
+			ArrayList excludeX = new ArrayList();
+			ArrayList excludeY = new ArrayList();
+			String[] varNames = {"",""};
+			char code;
+			int pairedSize = pairedListModel.getSize();
+			for(int i=0;i<pairedSize;i++){
+				temp = (String) pairedListModel.getElementAt(i);
+				code = temp.charAt(1);
+				temp = temp.substring(4);
 				if(temp.indexOf("<==>")==(-1)){
-					byX+="\""+temp+"\"";
-					byY+="\""+temp+"\"";
+					varNames[0]=temp;
+					varNames[1]=temp;
 
 				}else{
-					String[] t = temp.split("<==>");	
-					byX+="\""+t[0]+"\"";
-					byY+="\""+t[1]+"\"";
+					varNames = temp.split("<==>");	
 				}
-				if(i<mergeByListModel.getSize()-1){
-					byX+=",";
-					byY+=",";
-				}				
-			}
-			byX+=")";
-			byY+=")";			
-		}else{
-			byX="\"row.names\"";
-			byY="\"row.names\"";
-		}
-		JGR.MAINRCONSOLE.executeLater(byX);
-		JGR.MAINRCONSOLE.executeLater(byY);
-		
-		ArrayList excludeX = new ArrayList();
-		ArrayList excludeY = new ArrayList();
-		String[] varNames = {"",""};
-		char code;
-		int pairedSize = pairedListModel.getSize();
-		for(int i=0;i<pairedSize;i++){
-			temp = (String) pairedListModel.getElementAt(i);
-			code = temp.charAt(1);
-			temp = temp.substring(4);
-			if(temp.indexOf("<==>")==(-1)){
-				varNames[0]=temp;
-				varNames[1]=temp;
-
-			}else{
-				varNames = temp.split("<==>");	
-			}
-			if(code=='1'){
+				if(code=='1'){
 				excludeY.add(varNames[1]);
-			}else if(code=='2'){
-				excludeX.add(varNames[0]);
+				}else if(code=='2'){
+					excludeX.add(varNames[0]);
+				}
 			}
-		}
-		String temp1 = JGR.MAINRCONSOLE.getUniqueName(lastDataName1+".temp");
-		String temp2 = JGR.MAINRCONSOLE.getUniqueName(lastDataName2+".temp");
-		JGR.MAINRCONSOLE.executeLater(
-				temp1+"<-"+lastDataName1+"[setdiff(colnames("+lastDataName1+"),"+
+			String temp1 = JGR.MAINRCONSOLE.getUniqueName(lastDataName1+".temp");
+			String temp2 = JGR.MAINRCONSOLE.getUniqueName(lastDataName2+".temp");
+			JGR.MAINRCONSOLE.executeLater(temp1+"<-"+lastDataName1+"[setdiff(colnames("+lastDataName1+"),"+
 								makeRStringVector(excludeX)+")]"	
-		);
-		JGR.MAINRCONSOLE.executeLater(
-				temp2+"<-"+lastDataName2+"[setdiff(colnames("+lastDataName2+"),"+
+			);
+			JGR.MAINRCONSOLE.executeLater(temp2+"<-"+lastDataName2+"[setdiff(colnames("+lastDataName2+"),"+
 								makeRStringVector(excludeY)+")]"	
-		);
-		JGR.MAINRCONSOLE.executeLater(
-				lastDataSetName+"<-merge("+temp1+","+temp2+",by.x="+byX+",by.y="+byY+",incomparables = NA"+
-						",all.x =" + (!includeCheckBox1.getModel().isSelected()?"T":"F")+
-						",all.y =" + (!includeCheckBox2.getModel().isSelected()?"T":"F")+
-						")"
-		);
-		JGR.MAINRCONSOLE.executeLater(
+			);
+			JGR.MAINRCONSOLE.executeLater(lastDataSetName+"<-merge("+
+							temp1+","+temp2+",by.x="+byX+",by.y="+byY+",incomparables = NA"+
+							",all.x =" + (!includeCheckBox1.getModel().isSelected()?"T":"F")+
+							",all.y =" + (!includeCheckBox2.getModel().isSelected()?"T":"F")+
+							")"
+			);
+			JGR.MAINRCONSOLE.executeLater(
 				"rm(list=c(\""+temp1+"\",\""+temp2+"\"))"
-		);
+			);
+			return true;
+		}catch(Exception e){new ErrorMsg(e);return false;}
 	}
 	
 	public String makeRStringVector(ArrayList lis){

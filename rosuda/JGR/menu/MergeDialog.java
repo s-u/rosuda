@@ -31,8 +31,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private JLabel data2;
 	private JButton cancelButton;
 	private JButton contButton;
-	private static RObject lastSelected1;
-	private static RObject lastSelected2;
+	private static String lastSelected1;
+	private static String lastSelected2;
 	private static String lastNewData;
 	/**
 	* Auto-generated main method to display this JFrame
@@ -96,8 +96,10 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			{
 				ListModel jList1Model = 
-					new DefaultComboBoxModel(
-							JGR.DATA);
+					new DefaultComboBoxModel();
+				for(int i=0;i<JGR.DATA.size();i++){
+					((DefaultComboBoxModel)jList1Model).addElement(((RObject)JGR.DATA.elementAt(i)).getName());
+				}
 				jList1 = new JList();
 				JScrollPane pane = new JScrollPane(jList1,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -115,8 +117,10 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			{
 				ListModel dataListModel = 
-					new DefaultComboBoxModel(
-							JGR.DATA);
+					new DefaultComboBoxModel();
+				for(int i=0;i<JGR.DATA.size();i++){
+					((DefaultComboBoxModel)dataListModel).addElement(((RObject)JGR.DATA.elementAt(i)).getName());
+				}
 				dataList = new JList();
 				JScrollPane spane = new JScrollPane(dataList,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
@@ -142,21 +146,19 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 		if(cmd=="mergedata"){
 			if(!newName.getText().startsWith("data.merged"))
 				lastNewData =newName.getText();
-			lastSelected1 = (RObject)dataList.getSelectedValue();
-			lastSelected2 = (RObject) jList1.getSelectedValue();
-			if(lastSelected1.getName()==null || lastSelected2.getName()==null || 
-					lastSelected1.getName().equals(lastSelected2.getName())){
+			lastSelected1 = (String)dataList.getSelectedValue();
+			lastSelected2 = (String)jList1.getSelectedValue();
+			if(lastSelected1==null || lastSelected2==null || 
+					lastSelected1.equals(lastSelected2)){
 				JOptionPane.showMessageDialog(this,"Please Select Two Unique Data Frames to Merge");
 				return;
 			}
-			MergeData inst = new MergeData(newName.getText(), lastSelected1.getName(),lastSelected2.getName());
+			MergeData inst = new MergeData(newName.getText(), lastSelected1,lastSelected2);
 			inst.setLocationRelativeTo(this);
 			inst.setVisible(true);
 			this.dispose();
 		}else if(cmd == "Cancel"){
 			this.dispose();
 		}
-		
 	}
-
 }

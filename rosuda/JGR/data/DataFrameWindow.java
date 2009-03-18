@@ -682,6 +682,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					Thread.sleep(2000);
 					if(showData!=null){
 						setVisibleDataFrame(showData);
+						showData=null;
 					}
 					refresh();
 				} catch (Exception e) {

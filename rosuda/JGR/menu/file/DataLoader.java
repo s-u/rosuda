@@ -115,21 +115,21 @@ public class DataLoader extends JFrame {
 		else {
 			RController.loadPackage("foreign");
 			if(fileName.toLowerCase().endsWith(".sav"))
-				JGR.MAINRCONSOLE.execute(var+" <- as.data.frame(read.spss('"+(directory+fileName).replace('\\', '/')+"'))",true);
+				JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.spss('"+(directory+fileName).replace('\\', '/')+"'))",true);
 			else if(fileName.toLowerCase().endsWith(".xpt") |fileName.toLowerCase().endsWith(".xport"))
-				JGR.MAINRCONSOLE.execute(var+" <- read.xport('"+(directory+fileName).replace('\\', '/')+"')",true);
+				JGR.MAINRCONSOLE.executeLater(var+" <- read.xport('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else if(fileName.toLowerCase().endsWith(".dta"))
-				JGR.MAINRCONSOLE.execute(var+" <- read.dta('"+(directory+fileName).replace('\\', '/')+"')",true);
+				JGR.MAINRCONSOLE.executeLater(var+" <- read.dta('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else if(fileName.toLowerCase().endsWith(".arff"))
-					JGR.MAINRCONSOLE.execute(var+" <- read.arff('"+(directory+fileName).replace('\\', '/')+"')",true);
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.arff('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else if(fileName.toLowerCase().endsWith(".rec"))
-					JGR.MAINRCONSOLE.execute(var+" <- read.epiinfo('"+(directory+fileName).replace('\\', '/')+"')",true);
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.epiinfo('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else if(fileName.toLowerCase().endsWith(".mtp"))
-					JGR.MAINRCONSOLE.execute(var+" <- as.data.frame(read.mtp('"+(directory+fileName).replace('\\', '/')+"'))",true);
+					JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.mtp('"+(directory+fileName).replace('\\', '/')+"'))",true);
 			else if(fileName.toLowerCase().endsWith(".s3"))
-					JGR.MAINRCONSOLE.execute("data.restore('"+(directory+fileName).replace('\\', '/')+"',print=TRUE)",true);
+					JGR.MAINRCONSOLE.executeLater("data.restore('"+(directory+fileName).replace('\\', '/')+"',print=TRUE)",true);
 			else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
-					JGR.MAINRCONSOLE.execute(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else
 				loadTxtFile(fileName,directory,var);				
 		}
@@ -139,16 +139,15 @@ public class DataLoader extends JFrame {
 	}
 	
 	public void loadRdaFile(String fileName,String directory){
-		String temp=JGR.MAINRCONSOLE.getUniqueName("temp");
 		String cmd = "print(load(\""+(directory+fileName).replace('\\', '/')+"\"))";
 		JGR.R.eval("cat('The following data objects have been loaded:\\\n')",false);		
-		JGR.MAINRCONSOLE.execute(cmd, true);		
+		JGR.MAINRCONSOLE.executeLater(cmd, true);		
 	}
 	
 	public void loadDputFile(String fileName,String directory){
 		String var = (fileName.indexOf(".")<=0 ?JGR.MAINRCONSOLE.getUniqueName(fileName):
 			JGR.MAINRCONSOLE.getUniqueName(fileName.substring(0, fileName.indexOf("."))) );
-		JGR.MAINRCONSOLE.execute(var+" <- dget('"+(directory+fileName).replace('\\', '/')+"')",true);
+		JGR.MAINRCONSOLE.executeLater(var+" <- dget('"+(directory+fileName).replace('\\', '/')+"')",true);
 	}
 	
 	public void loadTxtFile(String fileName,String directory, String rName){
