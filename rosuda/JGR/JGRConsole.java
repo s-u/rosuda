@@ -56,9 +56,12 @@ import org.rosuda.JGR.toolkit.ToolBar;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.robjects.*;
-import org.rosuda.JGR.menu.MergeDialog;
+
 import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.data.DataFrameSelector;
+import org.rosuda.JGR.menu.MergeDialog;
+import org.rosuda.JGR.menu.RecodeDialog;
+
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
@@ -139,7 +142,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"+","Data","Merge","Merge","transpose","transpose","TO DO: Data Manipulation ","-",
+				"+","Data","Recode Variables","Recode","-","Merge","Merge","transpose","transpose","TO DO: Data Manipulation ","-",
 				"+","Analysis","TO DO: Data Analysis ","-",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
@@ -919,6 +922,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			MergeDialog merge =new MergeDialog(); 
 			merge.setLocationRelativeTo(null);
 			merge.setVisible(true);
+		}else if(cmd == "Recode"){
+			RecodeDialog recode =new RecodeDialog(this); 
+			recode.setLocationRelativeTo(null);
+			recode.setVisible(true);
 		}
 	}
 

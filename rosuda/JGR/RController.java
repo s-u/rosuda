@@ -5,6 +5,7 @@ package org.rosuda.JGR;
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -255,7 +256,19 @@ public class RController {
 	public static String makeValidVariableName(String var){
 		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");	
 	}
-
+	
+	public static String makeRStringVector(ArrayList lis){
+		if(lis.size()==0)
+			return "c()";
+		String result = "c(";
+		for(int i=0;i<lis.size();i++){
+			result+="\""+lis.get(i).toString()+"\"";
+			if(i<lis.size()-1)
+				result+=",";
+		}
+		result+=")";
+		return result;
+	}
 	/**
 	 * Get all keywords for syntaxhighlighting.
 	 * 
