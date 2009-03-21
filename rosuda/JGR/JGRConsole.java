@@ -98,7 +98,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	private final TextFinder textFinder = new TextFinder(output);
 	
 	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
-	//private FindReplaceDialog findReplace = new FindReplaceDialog(this,output);
 
 	private ToolBar toolBar;
 
