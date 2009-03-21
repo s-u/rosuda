@@ -181,7 +181,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					into2Field = new JTextField();
-					doublePanel.add(into2Field, new AnchorConstraint(493, 613, 729, 375, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(into2Field, new AnchorConstraint(450, 613, 750, 375, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					into2Field.setPreferredSize(new java.awt.Dimension(60, 17));
 				}
 				{
@@ -193,7 +193,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					doubleField2 = new JTextField();
-					doublePanel.add(doubleField2, new AnchorConstraint(62, 958, 312, 732, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(doubleField2, new AnchorConstraint(40, 958, 340, 732, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					doubleField2.setPreferredSize(new java.awt.Dimension(60, 18));
 				}
 				{
@@ -205,7 +205,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					doubleField1 = new JTextField();
-					doublePanel.add(doubleField1, new AnchorConstraint(62, 259, 312, 41, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(doubleField1, new AnchorConstraint(40, 259, 340, 41, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					doubleField1.setPreferredSize(new java.awt.Dimension(60, 18));
 				}
 				{
@@ -231,7 +231,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					into1Field = new JTextField();
-					logicHolder.add(into1Field, new AnchorConstraint(273, 614, 376, 370, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(into1Field, new AnchorConstraint(273, 614, 383, 370, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					into1Field.setPreferredSize(new java.awt.Dimension(60, 21));
 				}
 				{
@@ -243,7 +243,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					singleField = new JTextField();
-					logicHolder.add(singleField, new AnchorConstraint(125, 606, 238, 378, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(singleField, new AnchorConstraint(125, 614, 235, 400, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					singleField.setPreferredSize(new java.awt.Dimension(60, 23));
 				}
 				{
@@ -251,9 +251,9 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 						new DefaultComboBoxModel(
 								new String[] { "=", "\u2264","\u2265" });
 					boolComboBox = new JComboBox();
-					logicHolder.add(boolComboBox, new AnchorConstraint(130, 355, 233, 192, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(boolComboBox, new AnchorConstraint(130, 400, 233, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					boolComboBox.setModel(boolComboBoxModel);
-					boolComboBox.setPreferredSize(new java.awt.Dimension(43, 21));
+					boolComboBox.setPreferredSize(new java.awt.Dimension(60, 21));
 				}
 				{
 					valueLabel1 = new JLabel();
@@ -315,7 +315,10 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			double val = Double.parseDouble(s.trim());
 			result = true;
 		}catch(Exception e){}
+		if(s.trim()=="NA")
+			result = true;
 		return result;
+		
 		
 	}
 	
