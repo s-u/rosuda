@@ -77,6 +77,9 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		initGUI();		
 		checkFile();
 		loadPreview();
+		//quoteBox.repaint();
+		//header.repaint();
+		//sepsBox.repaint();
 	}
 	
 	/**
@@ -119,6 +122,26 @@ public class TxtTableLoader extends javax.swing.JFrame {
 				jPanel1.setPreferredSize(new java.awt.Dimension(414, 333));
 				jPanel1.setLayout(jPanel1Layout);
 				{
+					tablePanel = new JPanel();
+					BorderLayout tablePanelLayout = new BorderLayout();
+					tablePanel.setLayout(tablePanelLayout);
+					jPanel1.add(tablePanel, new AnchorConstraint(328, 1001, 863, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					tablePanel.setPreferredSize(new java.awt.Dimension(356, 178));
+					{
+						TableModel dataTableModel = 
+							new DefaultTableModel(
+									new String[][] { { "Select File to load Data" }},
+									new String[] { "Column 1" });
+						dataTable = new JTable();
+						//tablePanel.add(dataTable, BorderLayout.CENTER);
+						dataTable.setModel(dataTableModel);
+						tablePane = new JScrollPane(dataTable);
+						tablePanel.add(tablePane);						
+						tablePane.setPreferredSize(new java.awt.Dimension(356, 167));
+						dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					}
+				}
+				{
 					header = new JCheckBox();
 					jPanel1.add(header, new AnchorConstraint(211, 1001, 265, 763, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					header.setText("Header");
@@ -160,34 +183,14 @@ public class TxtTableLoader extends javax.swing.JFrame {
 						new DefaultComboBoxModel(
 								new String[] { "Tab (\\t)","Space (\\w)", "Comma (,)", ";", "|"});
 					sepsBox = new JComboBox();
+					sepsBox.setPreferredSize(new java.awt.Dimension(84, 21));					
 					jPanel1.add(sepsBox, new AnchorConstraint(208, 223, 271, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					sepsBox.setModel(sepsBoxModel);
-					sepsBox.setPreferredSize(new java.awt.Dimension(79, 21));
 					sepsBox.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							sepsBoxActionPerformed(evt);
 						}
 					});
-				}
-				{
-					tablePanel = new JPanel();
-					BorderLayout tablePanelLayout = new BorderLayout();
-					tablePanel.setLayout(tablePanelLayout);
-					jPanel1.add(tablePanel, new AnchorConstraint(328, 1001, 863, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					tablePanel.setPreferredSize(new java.awt.Dimension(356, 178));
-					{
-						TableModel dataTableModel = 
-							new DefaultTableModel(
-									new String[][] { { "Select File to load Data" }},
-									new String[] { "Column 1" });
-						dataTable = new JTable();
-						//tablePanel.add(dataTable, BorderLayout.CENTER);
-						dataTable.setModel(dataTableModel);
-						tablePane = new JScrollPane(dataTable);
-						tablePanel.add(tablePane);						
-						tablePane.setPreferredSize(new java.awt.Dimension(356, 167));
-						dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					}
 				}
 				{
 					buttonPanel = new JPanel();
@@ -288,6 +291,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 					header.setSelected(false);
 			}
 
+			
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
@@ -330,12 +334,11 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		JGR.R.eval(".refreshObjects()",false);
 		RObject obj=new RObject(previewName,"data.frame",null,false);
 		SVarSet vs = RController.newSet(obj);
-		DataTable rTable = new DataTable(vs,"data.frame",false,false) ;
+		DataTable rTable = new DataTable(vs,"data.frame",false,false);
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
 		if(JGR.R.eval(previewName+" %in% ls()").asBool().isTRUE())
 			JGR.R.eval("rm("+previewName+")", false);
-		
 	}
 	private void loadActionPerformed(ActionEvent evt) {
 
