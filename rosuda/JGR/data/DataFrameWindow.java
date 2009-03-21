@@ -10,6 +10,7 @@ import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.DataLoader;
+import org.rosuda.JGR.JGRConsole;
 import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.RController;
@@ -256,12 +257,13 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					item1.setActionCommand("newdata");
 					item1.addActionListener(this);
 					rm.add(item1);
-					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
-						     ActionEvent.CTRL_MASK));
+
 					JMenuItem item2 = new JMenuItem("Script");
 					item2.setActionCommand("new");
 					item2.addActionListener(this);
 					rm.add(item2);
+					item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
+						     JGRConsole.MENUMODIFIER));					
 				}
 				rm = (JMenu) EzMenuSwing.getItem(this,"Open");
 				if (rm != null) {
@@ -269,12 +271,14 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					item1.setActionCommand("loaddata");
 					item1.addActionListener(this);
 					rm.add(item1);
-					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
-						     ActionEvent.CTRL_MASK));
+					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 
+							JGRConsole.MENUMODIFIER));
 					JMenuItem item2 = new JMenuItem("Script");
 					item2.setActionCommand("open");
 					item2.addActionListener(this);
 					rm.add(item2);
+					item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
+							JGRConsole.MENUMODIFIER));
 					JMenuItem item3 = new JMenuItem("Work Space");
 					item3.setActionCommand("openwsp");
 					item3.addActionListener(this);

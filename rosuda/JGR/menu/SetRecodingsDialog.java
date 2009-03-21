@@ -315,7 +315,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			double val = Double.parseDouble(s.trim());
 			result = true;
 		}catch(Exception e){}
-		if(s.trim()=="NA")
+		if(s.trim().equals("NA"))
 			result = true;
 		return result;
 		

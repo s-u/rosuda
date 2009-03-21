@@ -6,6 +6,7 @@ package org.rosuda.JGR;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.Point;
 import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
@@ -96,6 +97,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 
 	private final TextFinder textFinder = new TextFinder(output);
 	
+	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	//private FindReplaceDialog findReplace = new FindReplaceDialog(this,output);
 
 	private ToolBar toolBar;
@@ -136,7 +138,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"!OSource File...", "source","~File.Quit", 
 				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
 					"#Copy Special","-", "@VPaste","paste","@ASelect All","selAll",
-					"@LClear Console","clearconsole","-",
+					"@JClear Console","clearconsole","-",
 					"@FFind","search","@GFind Next","searchnext","-","!IIncrease Font Size",
 					"fontBigger", "!DDecrease Font Size", "fontSmaller",
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
@@ -175,7 +177,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item2.addActionListener(this);
 			rm.add(item2);
 			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
-				     ActionEvent.CTRL_MASK));
+					MENUMODIFIER));
 		}
 		rm = (JMenu) EzMenuSwing.getItem(this,"Open");
 		if (rm != null) {
@@ -184,13 +186,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item1.addActionListener(this);
 			rm.add(item1);
 			item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 
-				     ActionEvent.CTRL_MASK));
+					MENUMODIFIER));
 			JMenuItem item2 = new JMenuItem("Script");
 			item2.setActionCommand("open");
 			item2.addActionListener(this);
 			rm.add(item2);
 			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
-				     ActionEvent.CTRL_MASK));
+					MENUMODIFIER));
 			JMenuItem item3 = new JMenuItem("Work Space");
 			item3.setActionCommand("openwsp");
 			item3.addActionListener(this);
@@ -836,9 +838,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				execute(inputValue.trim()+"<-data.frame()");
 		}else if (cmd == "loaddata")
 			new DataLoader();
-		else if (cmd == "open")
-			new Editor(null,false).open();
-		else if (cmd == "openwsp")
+		else if (cmd == "open"){
+			Editor temp =new Editor(null,false);
+			temp.open();
+			temp.dispose();
+		}else if (cmd == "openwsp")
 			loadWorkSpace();
 		else if (cmd == "new")
 			new Editor();

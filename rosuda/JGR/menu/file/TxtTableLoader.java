@@ -154,7 +154,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 				}
 				{
 					quoteLabel = new JLabel();
-					jPanel1.add(quoteLabel, new AnchorConstraint(148, 894, 190, 426, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel1.add(quoteLabel, new AnchorConstraint(148, 894, 190, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					quoteLabel.setText("Quote");
 					quoteLabel.setPreferredSize(new java.awt.Dimension(179, 14));
 				}
@@ -169,9 +169,9 @@ public class TxtTableLoader extends javax.swing.JFrame {
 						new DefaultComboBoxModel(
 								new String[] {"None","Double Quote (\")", "Single Quote (\')"});
 					quoteBox = new JComboBox();
-					jPanel1.add(quoteBox, new AnchorConstraint(208, 646, 271, 426, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					jPanel1.add(quoteBox, new AnchorConstraint(208, 750, 271, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					quoteBox.setModel(quoteBoxModel);
-					quoteBox.setPreferredSize(new java.awt.Dimension(84, 21));
+					quoteBox.setPreferredSize(new java.awt.Dimension(120, 21));
 					quoteBox.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							quoteBoxActionPerformed(evt);
@@ -183,8 +183,8 @@ public class TxtTableLoader extends javax.swing.JFrame {
 						new DefaultComboBoxModel(
 								new String[] { "Tab (\\t)","Space (\\w)", "Comma (,)", ";", "|"});
 					sepsBox = new JComboBox();
-					sepsBox.setPreferredSize(new java.awt.Dimension(84, 21));					
-					jPanel1.add(sepsBox, new AnchorConstraint(208, 223, 271, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					sepsBox.setPreferredSize(new java.awt.Dimension(120, 21));					
+					jPanel1.add(sepsBox, new AnchorConstraint(208, 300, 271, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					sepsBox.setModel(sepsBoxModel);
 					sepsBox.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
@@ -337,6 +337,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		DataTable rTable = new DataTable(vs,"data.frame",false,false);
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
+		rTable.dispose();
 		if(JGR.R.eval(previewName+" %in% ls()").asBool().isTRUE())
 			JGR.R.eval("rm("+previewName+")", false);
 	}

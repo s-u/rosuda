@@ -19,6 +19,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -106,6 +107,9 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			JLabel sourceLabel = new JLabel();
+			sourceLabel.setText("Source:");
+			getContentPane().add(sourceLabel, new AnchorConstraint(525, 326, 554, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			{
 				useBoth = new JButton();
 				getContentPane().add(useBoth, new AnchorConstraint(599, 326, 633, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
@@ -132,7 +136,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			{
 				pairAllButton = new JButton();
 				getContentPane().add(pairAllButton, new AnchorConstraint(230, 566, 281, 436, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				pairAllButton.setText("Pair Match");
+				pairAllButton.setText("Auto-Pair");
 				pairAllButton.setPreferredSize(new java.awt.Dimension(89, 33));
 				pairAllButton.setFont(new java.awt.Font("Dialog",0,10));
 				pairAllButton.addActionListener(this);
@@ -360,7 +364,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				pairedListModel.addElement("[1] "+var1);
 			}else
 				pairedListModel.addElement("[1] "+var1+"<==>"+var2);
-		}else if(cmd == "Pair Match"){
+		}else if(cmd == "Auto-Pair"){
 			findPairs();
 		}else if(cmd == "[Both]"){
 			String temporary;
