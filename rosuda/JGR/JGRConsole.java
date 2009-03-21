@@ -99,6 +99,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	
 	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 
+	
 	private ToolBar toolBar;
 
 	private String wspace = null;
