@@ -1,6 +1,10 @@
 
 package org.rosuda.JGR.toolkit;
 
+
+import org.rosuda.JGR.layout.AnchorConstraint;
+import org.rosuda.JGR.layout.AnchorLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -10,7 +14,6 @@ import java.util.List;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
@@ -22,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
 import javax.swing.ListModel;
 
 import org.rosuda.JGR.*;
@@ -30,6 +32,19 @@ import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.*;
 
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class VariableSelector extends JPanel implements ActionListener, KeyListener {
 	private JComboBox dataComboBox;
 	private DefaultComboBoxModel dataComboBoxModel;
@@ -54,7 +69,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private void initGUI() {
 		try {
 			this.setName("Variable Selector");
-			GroupLayout thisLayout = new GroupLayout((JComponent)this);
+			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(164, 290));
 			dataComboBoxModel = 
@@ -68,6 +83,12 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			
 			
 			filter = new JTextField();
+			this.add(filter, new AnchorConstraint(98, 966, 170, 338, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			this.add(filterText, new AnchorConstraint(108, 338, 160, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			this.add(dataComboBox, new AnchorConstraint(1, 1003, 77, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			dataComboBox.setPreferredSize(new java.awt.Dimension(164, 22));
+			filterText.setPreferredSize(new java.awt.Dimension(55, 15));
+			filter.setPreferredSize(new java.awt.Dimension(103, 21));
 			filter.addKeyListener(this);
 
 			ListModel variableListModel = new FilteringModel(new String[] { "Item One", "Item Two","A","b","lalala la","the" });
@@ -76,22 +97,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			JScrollPane listScroller = new JScrollPane(variableList,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			
-			thisLayout.setVerticalGroup(thisLayout.createSequentialGroup()
-				.addComponent(dataComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addGroup(thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-				    .addComponent(filter, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-				    .addComponent(filterText, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(listScroller, 0, 236, Short.MAX_VALUE));
-			thisLayout.setHorizontalGroup(thisLayout.createParallelGroup()
-				.addComponent(dataComboBox, GroupLayout.Alignment.LEADING, 0, 164, Short.MAX_VALUE)
-				.addGroup(GroupLayout.Alignment.LEADING, thisLayout.createSequentialGroup()
-				    .addComponent(filterText, GroupLayout.PREFERRED_SIZE, 55, GroupLayout.PREFERRED_SIZE)
-				    .addComponent(filter, 0, 103, Short.MAX_VALUE)
-				    .addGap(6))
-				.addComponent(listScroller, GroupLayout.Alignment.LEADING, 0, 164, Short.MAX_VALUE));
+			this.add(listScroller, new AnchorConstraint(191, 1003, 1001, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			listScroller.setPreferredSize(new java.awt.Dimension(164, 235));
+
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
