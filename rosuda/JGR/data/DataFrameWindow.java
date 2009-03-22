@@ -246,7 +246,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
-						"+","Data","Recode Variables","Recode","-","Merge","Merge","transpose","transpose",
+						"+","Data","Recode Variables","Recode","-","Merge","Merge","Transpose","transpose",
 						"+","Analysis","TO DO: Data Analysis ","-",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
