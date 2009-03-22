@@ -238,6 +238,7 @@ public class JGR {
 			DataFrameWindow dataWin = new DataFrameWindow();
 			dataWin.setVisible(true);
 		}
+		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
 	}

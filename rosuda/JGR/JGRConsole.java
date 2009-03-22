@@ -143,7 +143,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"+","Data","Recode Variables","Recode","-","Merge","Merge","transpose","transpose","TO DO: Data Manipulation ","-",
+				"+","Data","Recode Variables","Recode","-","Merge","Merge","transpose","transpose",
 				"+","Analysis","TO DO: Data Analysis ","-",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
@@ -849,9 +849,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "objectmgr")
 			execute("object.browser()", false);
 		else if (cmd == "packagemgr")
-			execute("package.manager()", false);
+			execute("JGR::package.manager()", false);
 		else if (cmd == "packageinst")
-			execute("install.packages()", false);
+			execute("installPackages()", false);
 		else if (cmd == "paste")
 			input.paste();
 		else if (cmd == "preferences")
@@ -864,11 +864,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			}
 		else if (cmd == "help")
 			executeLater("help.start()");
-		else if (cmd == "table")
-		{DataFrameWindow inst = new DataFrameWindow();
-		inst.setLocationRelativeTo(null);
-		inst.setVisible(true);}//new DataTable(null, null, true);
-		else if (cmd == "save")
+		else if (cmd == "table"){
+			DataFrameWindow inst = new DataFrameWindow();
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+		}else if (cmd == "save")
 			output.startExport();
 		else if (cmd == "savewsp")
 			saveWorkSpace(wspace);
@@ -882,9 +882,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			//textFinder.showFind(true);
 		else if (cmd == "source")
 			execute("source(file.choose())", false);
-		else if (cmd == "stop")
-			JGR.R.rniStop(1);
-		else if (cmd == "selAll") {
+		else if (cmd == "stop"){
+			try{
+			JGR.R.rniStop(0);
+			}catch(Exception exe){new ErrorMsg(exe);}
+			}else if (cmd == "selAll") {
 			if (input.isFocusOwner())
 				input.selectAll();
 			else if (output.isFocusOwner())

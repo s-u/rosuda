@@ -175,6 +175,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			for(int i=0;i<recodeVariableList.getModel().getSize();i++)
 				recodes[i]=(String)recodeVariableList.getModel().getElementAt(i);
 			codes = new SetRecodingsDialog(this,recodes,(String)variableSelector.getJComboBox().getSelectedItem());
+			codes.setLocationRelativeTo(this);
 			codes.setVisible(true);
 		}else if(cmd == "comboBoxChanged"){
 			((DefaultComboBoxModel)recodeVariableList.getModel()).removeAllElements();

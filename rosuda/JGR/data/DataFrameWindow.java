@@ -4,6 +4,8 @@ package org.rosuda.JGR.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.menu.MergeDialog;
+import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -244,7 +246,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
-						"+","Data","Transpose","transpose","TO DO: Data Manipulation ","-",
+						"+","Data","Recode Variables","Recode","-","Merge","Merge","transpose","transpose",
 						"+","Analysis","TO DO: Data Analysis ","-",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
@@ -562,6 +564,14 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");		
 			JGR.MAINRCONSOLE.toFront();
+		}else if(cmd == "Merge"){
+			MergeDialog merge =new MergeDialog(); 
+			merge.setLocationRelativeTo(null);
+			merge.setVisible(true);
+		}else if(cmd == "Recode"){
+			RecodeDialog recode =new RecodeDialog(this); 
+			recode.setLocationRelativeTo(null);
+			recode.setVisible(true);
 		}
 	}
 	

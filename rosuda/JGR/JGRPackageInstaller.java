@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
@@ -151,12 +152,12 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				cmd += "\"" + instPkgs[i] + "\",";
 			cmd += "\"" + instPkgs[instPkgs.length - 1] + "\")";
 			if (type.equals("binaries") && JGRPrefs.isMac)
-				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\""
+				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\""
 						+ destDir
 						+ "\",type=\"mac.binary\");.refreshHelpFiles()", true);
 			// JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
 			else
-				JGR.MAINRCONSOLE.execute("install.packages(" + cmd + ",\""
+				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\""
 						+ destDir + "\");.refreshHelpFiles()", true);
 		}
 	}
@@ -184,6 +185,18 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 			dispose();
 		else if (cmd == "install")
 			installPkg();
+	}
+	
+	public static void instAndDisplay(String[] tpkgs, String ttype){
+		final String[] pkgs = tpkgs;
+		final String type = ttype;
+		Runnable doWork = new Runnable() {
+		    public void run() { 
+		    	JGRPackageInstaller inst = new JGRPackageInstaller(pkgs,type);
+		    	inst.setVisible(true);
+		    }
+		};
+		SwingUtilities.invokeLater(doWork);
 	}
 
 	class PkgCellRenderer extends JLabel implements ListCellRenderer {
