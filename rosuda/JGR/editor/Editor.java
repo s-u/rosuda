@@ -421,7 +421,7 @@ public class Editor extends TJFrame implements ActionListener {
 			}
 			
 			if (e.getActionCommand() == "help")
-			JGR.MAINRCONSOLE.execute("help.start()", false);
+			JGR.MAINRCONSOLE.executeLater("help.start()", false);
 
 if (e.getActionCommand() == "shiftleft")
 			try {
@@ -438,14 +438,14 @@ if (e.getActionCommand() == "runall")
 			try {
 				String s = textArea.getText();
 				if (s.length() > 0)
-					JGR.MAINRCONSOLE.execute(s.trim(), true);
+					JGR.MAINRCONSOLE.executeLater(s.trim(), true);
 			} catch (Exception ex) {
 			}
 		else if (e.getActionCommand() == "runselection")
 			try {
 				String s = textArea.getSelectedText().trim();
 				if (s.length() > 0)
-					JGR.MAINRCONSOLE.execute(s.trim(), true);
+					JGR.MAINRCONSOLE.executeLater(s.trim(), true);
 			} catch (Exception ex) {
 			}
 

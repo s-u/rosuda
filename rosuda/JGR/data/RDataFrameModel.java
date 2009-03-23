@@ -236,15 +236,20 @@ class RDataFrameModel extends ExDefaultTableModel {
 	 */
 	public boolean refresh(){
 		boolean changed = false;
-		if(JGR.R.eval("exists('"+rDataName+"')").asBool().isTRUE())
-			if(JGR.R.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")").asBool().isFALSE()){
-				if(JGR.R.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
-								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))").asBool().isFALSE())
-					this.fireTableStructureChanged();	
-				this.fireTableDataChanged();			
-				JGR.R.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		REXP exist = JGR.R.idleEval("exists('"+rDataName+"')");
+		if(exist!=null && exist.asBool().isTRUE()){
+			REXP ident =JGR.R.idleEval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
+			if(ident!=null && ident.asBool().isFALSE()){
+				REXP strChange = JGR.R.idleEval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
+								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))");
+				if(strChange!=null && strChange.asBool().isFALSE())
+					this.fireTableStructureChanged();
+				if(strChange!=null)
+					this.fireTableDataChanged();			
+				JGR.R.idleEval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 				changed=true;
 			}
+		}
 		return changed;
 	}
 	

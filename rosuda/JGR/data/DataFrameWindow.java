@@ -6,6 +6,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
+import org.rosuda.JGR.menu.FactorDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -40,6 +41,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -447,6 +450,27 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		ex.setColumnSelectionAllowed(true);
 		ex.setRowSelectionAllowed(true);		
 		ex.getTableHeader().removeMouseListener(ex.getColumnListener());
+		ex.addMouseListener(new MouseAdapter(){
+		     public void mouseClicked(MouseEvent e){
+		    	 ExTable extab = (ExTable)e.getSource();
+		    	 if(extab.getSelectedColumn()==2){
+		    		int row = extab.getSelectedRow();
+		    		String varName = (String)extab.getModel().getValueAt(row, 0);
+		    		String datName = ((RObject)dataSelector.getSelectedItem()).getName();
+		    		if(JGR.R.eval("is.factor("+datName+"$"+varName+")").asBool().isTRUE()){
+		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
+		    			fact.setLocation(e.getLocationOnScreen());
+		    			fact.setTitle("Factor Editor: "+varName);
+		    			fact.setVisible(true);
+		    		}
+		    	 }
+		    	 
+		      if (e.getClickCount() == 2){
+		         JGR.MAINRCONSOLE.execute("double click");
+		         }
+		      }
+		     } );
+
 		variableScrollPane = new ExScrollableTable(ex);			
 		variableScrollPane.setRowNamesModel(varModel.new VariableNumberListModel());
 		variableScrollPane.displayContextualMenu(false);
@@ -686,19 +710,25 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	
 
 	class Refresher implements Runnable {
-
 		public Refresher() {
 		}
 
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(2000);
+					Thread.sleep(5000);
 					if(showData!=null){
-						setVisibleDataFrame(showData);
-						showData=null;
-					}
-					refresh();
+
+						    	setVisibleDataFrame(showData);
+						    	showData=null; 
+						    }
+
+					
+					Runnable doWorkRunnable = new Runnable() {
+						public void run() { 
+							refresh();
+						}};
+					SwingUtilities.invokeLater(doWorkRunnable);
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}

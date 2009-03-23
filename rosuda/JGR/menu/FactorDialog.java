@@ -1,5 +1,6 @@
 package org.rosuda.JGR.menu;
 
+
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
@@ -17,6 +18,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -49,6 +51,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 	private IconButton remove;
 	private IconButton down;
 	private IconButton up;
+	private ContrastDialog cntr;
 	
 	private String variable;
 
@@ -96,22 +99,22 @@ public class FactorDialog extends JDialog implements ActionListener {
 				contrast.setText("Contrasts");
 				contrast.setPreferredSize(new java.awt.Dimension(92, 30));
 				contrast.addActionListener(this);
-				contrast.setVisible(false);
 			}
 			{
 				remove = new IconButton("/icons/button_cancel_32.png","Delete",this,"Delete");
 				getContentPane().add(remove, new AnchorConstraint(161, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-				remove.setPreferredSize(new java.awt.Dimension(47, 41));
+				remove.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
 				down = new IconButton("/icons/1downarrow_32.png","Down",this,"Down");
 				getContentPane().add(down, new AnchorConstraint(70, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-				down.setPreferredSize(new java.awt.Dimension(47, 41));
+				down.setPreferredSize(new java.awt.Dimension(40, 35));
+
 			}
 			{
 				up = new IconButton("/icons/1uparrow_32.png","Up",this,"Up");
 				getContentPane().add(up, new AnchorConstraint(39, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-				up.setPreferredSize(new java.awt.Dimension(47, 41));
+				up.setPreferredSize(new java.awt.Dimension(40, 35));
 			}
 			{
 				listPanel = new JPanel();
@@ -186,9 +189,148 @@ public class FactorDialog extends JDialog implements ActionListener {
 				order="FALSE";	
 			JGR.MAINRCONSOLE.executeLater(variable+"<-factor("+variable+
 					",levels="+rLevels+",ordered="+order+")");
+			if(cntr!=null)
+				cntr.executeSelection(variable);
 			this.dispose();
+		}else if(cmd =="Contrasts"){
+			cntr = new ContrastDialog(null);
+			cntr.setLocation(contrast.getLocationOnScreen());
+			cntr.setTitle("Set Contrast Codes");
+			cntr.setVisible(true);
+			
 		}
 		
 	}
 
+	
+	
+	
+	public class ContrastDialog extends javax.swing.JDialog implements ActionListener {
+		private ButtonGroup buttonGroup1;
+		private JPanel groupPanel;
+		private JCheckBox helmert;
+		private JButton okay;
+		private JButton cancel;
+		private JCheckBox custom;
+		private JCheckBox polynomial;
+		private JCheckBox sum;
+		private JCheckBox treatment;
+		private String contrast=null;
+
+
+		
+		public ContrastDialog(JFrame frame) {
+			super(frame,true);
+			initGUI();
+		}
+		
+		private void initGUI() {
+			try {
+				AnchorLayout thisLayout = new AnchorLayout();
+				getContentPane().setLayout(thisLayout);
+				{
+					okay = new JButton();
+					getContentPane().add(okay, new AnchorConstraint(833, 944, 957, 566, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					okay.setText("OK");
+					okay.setPreferredSize(new java.awt.Dimension(79, 31));
+				}
+				{
+					cancel = new JButton();
+					getContentPane().add(cancel, new AnchorConstraint(853, 471, 937, 59, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					cancel.setText("Cancel");
+					cancel.setPreferredSize(new java.awt.Dimension(86, 21));
+				}
+				{
+					groupPanel = new JPanel();
+					AnchorLayout groupPanelLayout = new AnchorLayout();
+					getContentPane().add(groupPanel, new AnchorConstraint(50, 944, 785, 59, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					groupPanel.setPreferredSize(new java.awt.Dimension(185, 183));
+					groupPanel.setLayout(groupPanelLayout);
+					groupPanel.setBorder(BorderFactory.createTitledBorder("Contrast Type"));
+					{
+						custom = new JCheckBox();
+						groupPanel.add(custom, new AnchorConstraint(751, 916, 849, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						custom.setText("Custom");
+						custom.setPreferredSize(new java.awt.Dimension(129, 18));
+					}
+					{
+						polynomial = new JCheckBox();
+						groupPanel.add(polynomial, new AnchorConstraint(614, 916, 713, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						polynomial.setText("Polynomial");
+						polynomial.setPreferredSize(new java.awt.Dimension(129, 18));
+					}
+					{
+						helmert = new JCheckBox();
+						groupPanel.add(helmert, new AnchorConstraint(483, 916, 576, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						helmert.setText("Helment");
+						helmert.setPreferredSize(new java.awt.Dimension(129, 17));
+					}
+					{
+						sum = new JCheckBox();
+						groupPanel.add(sum, new AnchorConstraint(346, 916, 445, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						sum.setText("Sum (Deviation)");
+						sum.setPreferredSize(new java.awt.Dimension(129, 18));
+					}
+					{
+						treatment = new JCheckBox();
+						groupPanel.add(treatment, new AnchorConstraint(210, 916, 308, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						treatment.setText("Treatment");
+						treatment.setPreferredSize(new java.awt.Dimension(129, 18));
+					}
+				}
+				buttonGroup1 = new ButtonGroup();
+				buttonGroup1.add(treatment);
+				buttonGroup1.add(helmert);
+				buttonGroup1.add(sum);
+				buttonGroup1.add(polynomial);
+				buttonGroup1.add(custom);
+				treatment.addActionListener(this);
+				helmert.addActionListener(this);
+				sum.addActionListener(this);
+				polynomial.addActionListener(this);
+				custom.addActionListener(this);
+				okay.addActionListener(this);
+				cancel.addActionListener(this);
+				//TODO: add custom logic
+				custom.setVisible(false);
+				this.setSize(217, 283);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		private ButtonGroup getButtonGroup1() {
+			if(buttonGroup1 == null) {
+				buttonGroup1 = new ButtonGroup();
+			}
+			return buttonGroup1;
+		}
+
+
+		public void actionPerformed(ActionEvent act) {
+			String cmd = act.getActionCommand();
+			System.out.println(cmd);
+			if(cmd=="Treatment"){
+				contrast = "\"contr.treatment\"";
+			}else if(cmd=="Sum (Deviation)"){
+				contrast = "\"contr.S=sum\"";
+			}else if(cmd=="Helmert"){
+				contrast = "\"contr.helmert\"";
+			}else if(cmd=="Polynomial"){
+				contrast = "\"contr.poly\"";
+			}else if(cmd=="custom")
+				contrast = "Error: undefined contrast";
+			else if(cmd=="Cancel"){
+				contrast=null;
+				this.dispose();
+			}else if(cmd=="OK")
+				this.dispose();
+		}
+		
+		public void executeSelection(String variable){
+			if(contrast!=null)
+				JGR.MAINRCONSOLE.executeLater("contrasts("+variable+") <-"+contrast);
+		}
+
+	}
 }
