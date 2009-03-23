@@ -1,10 +1,15 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
-0.4-3	(under development)
+0.5-0	(under development)
     o	API 1.9: added rniPreserve, rniRelease, rniParentEnv, rniFindVar,
-	         rniListEnv, rniSpecialObject, rniPrintValue methods
+	         rniListEnv, rniSpecialObject, rniPrintValue,
+		 rniGetRawArray, rniPutRawArray, rniGetAttrNames methods
 		 added jriLoaded field (boolean)
+
+    o	new REngine-based API (org.rosuda.REngine.JRI.JRIEngine)
+	has been created - this allows the same code to interface
+	JRI or Rserve without re-compilation
 
     o	proxy references are now preserved until finalized
 

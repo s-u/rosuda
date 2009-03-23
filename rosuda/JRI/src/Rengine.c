@@ -250,6 +250,12 @@ JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetIntArray
       return jri_putIntArray(env, L2SEXP(exp));
 }
 
+JNIEXPORT jbyteArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetRawArray
+  (JNIEnv *env, jobject this, jlong exp)
+{
+      return jri_putByteArray(env, L2SEXP(exp));
+}
+
 JNIEXPORT jintArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetBoolArrayI
   (JNIEnv *env, jobject this, jlong exp)
 {
@@ -306,6 +312,12 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutIntArray
     return SEXP2L(jri_getIntArray(env, a));
 }
 
+JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutRawArray
+(JNIEnv *env, jobject this, jbyteArray a)
+{
+    return SEXP2L(jri_getByteArray(env, a));
+}
+
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniPutBoolArrayI
 (JNIEnv *env, jobject this, jintArray a)
 {
@@ -339,6 +351,37 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniGetAttr
         SEXP a = getAttrib(L2SEXP(exp), an);
         return (a==R_NilValue)?0:SEXP2L(a);
     }
+}
+
+JNIEXPORT jobjectArray JNICALL Java_org_rosuda_JRI_Rengine_rniGetAttrNames
+(JNIEnv *env, jobject this, jlong exp)
+{
+    SEXP o = L2SEXP(exp);
+    SEXP att = ATTRIB(o), ah = att;
+    unsigned int ac = 0;
+    jobjectArray sa;
+    if (att == R_NilValue) return 0;
+    /* count the number of attributes */
+    while (ah != R_NilValue) {
+	ac++;
+	ah = CDR(ah);
+    }
+    /* allocate Java array */
+    sa = (*env)->NewObjectArray(env, ac, (*env)->FindClass(env, "java/lang/String"), 0);
+    if (!sa) return 0;
+    ac = 0;
+    ah = att;
+    /* iterate again and set create the strings */
+    while (ah != R_NilValue) {
+	SEXP t = TAG(ah);
+	if (t != R_NilValue) {
+	    jobject s = (*env)->NewStringUTF(env, CHAR_UTF8(PRINTNAME(t)));
+	    (*env)->SetObjectArrayElement(env, sa, ac, s);
+	}
+	ac++;
+	ah = CDR(ah);
+    }
+    return sa;
 }
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniSetAttr
