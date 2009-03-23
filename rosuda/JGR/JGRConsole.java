@@ -54,6 +54,7 @@ import org.rosuda.JGR.toolkit.SelectionPreservingCaret;
 import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
+import org.rosuda.JGR.toolkit.VariableSelectionDialog;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.robjects.*;
@@ -62,6 +63,8 @@ import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.data.DataFrameSelector;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
+import org.rosuda.JGR.menu.FactorDialog;
+
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -143,7 +146,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"+","Data","Recode Variables","Recode","-","Merge","Merge","Transpose","transpose",
+				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","-","Merge","Merge","Transpose","transpose",
 				"+","Analysis","TO DO: Data Analysis ","-",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
@@ -884,7 +887,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			execute("source(file.choose())", false);
 		else if (cmd == "stop"){
 			try{
-			JGR.R.rniStop(0);
+				new Thread(new Runnable() {
+					public void run() {
+						JGR.R.rniStop(1);
+					}
+				}).start();
 			}catch(Exception exe){new ErrorMsg(exe);}
 			}else if (cmd == "selAll") {
 			if (input.isFocusOwner())
@@ -931,6 +938,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			RecodeDialog recode =new RecodeDialog(this); 
 			recode.setLocationRelativeTo(null);
 			recode.setVisible(true);
+		}else if(cmd == "Edit Factor"){
+			VariableSelectionDialog inst =new VariableSelectionDialog(this);
+			inst.SetSingleSelection(true);
+			inst.setLocationRelativeTo(null);
+			inst.setRFilter("is.factor");
+			inst.setVisible(true);
+			String variable = inst.getSelecteditem();
+			if(variable==null)
+					return;
+			FactorDialog fact = new FactorDialog(this,variable);
+			fact.setLocationRelativeTo(null);
+			fact.setVisible(true);
 		}
 	}
 

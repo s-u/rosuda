@@ -51,6 +51,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private JList variableList;
 	private JTextField filter;
 	private JLabel filterText;
+	private String rFilter = "";
 	
 	public VariableSelector() {
 		super();
@@ -85,7 +86,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			filter = new JTextField();
 			this.add(filter, new AnchorConstraint(98, 966, 170, 338, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			this.add(filterText, new AnchorConstraint(108, 338, 160, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			this.add(dataComboBox, new AnchorConstraint(1, 1003, 77, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			this.add(dataComboBox, new AnchorConstraint(5, 1003, 77, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			dataComboBox.setPreferredSize(new java.awt.Dimension(164, 22));
 			filterText.setPreferredSize(new java.awt.Dimension(55, 15));
 			filter.setPreferredSize(new java.awt.Dimension(103, 21));
@@ -121,6 +122,21 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public JComboBox getJComboBox(){
 		return dataComboBox;
 	}
+	/**
+	 * Filter the variables using an R function
+	 * 
+	 * @param function
+	 * 			the name of the R function to use in filtering.
+	 * 			The function should take one argument, and return true if
+	 * 			the variable should be included in the list. 
+	 * 			ex: "is.factor" will list only factor variables.
+	 * 			Set function = "" to remove the filter
+	 * 
+	 */
+	public void setRFilter(String function){
+		rFilter = function;
+		((FilteringModel)variableList.getModel()).filter(filter.getText());
+	}
 	
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
@@ -128,6 +144,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		if(cmd=="comboBoxChanged"){
 			String dataName = (String)dataComboBox.getSelectedItem();
 			variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
+			((FilteringModel)variableList.getModel()).filter(filter.getText());
 		}
 		
 	}
@@ -137,7 +154,6 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		    public void run() { ((FilteringModel) variableList.getModel()).filter(filter.getText()); }
 		};
 		SwingUtilities.invokeLater(doWorkRunnable);
-		
 	}
 	private class FilteringModel extends AbstractListModel{
 		List list;
@@ -191,7 +207,13 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			for (int i=0;i<list.size();i++) {
 				element = list.get(i);
 				if (element.toString().toLowerCase().indexOf(search.toLowerCase(), 0) != -1) {
-					filteredList.add(element);
+					if(rFilter!=""){
+						if(JGR.R.eval(rFilter+"("+(String)dataComboBox.getSelectedItem()+
+								"$"+(String)element+")").asBool().isTRUE()){
+							filteredList.add(element);
+						}
+					}
+					
 				}
 			}
 			lastFilter=search;
