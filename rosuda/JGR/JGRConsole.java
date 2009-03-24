@@ -18,6 +18,8 @@ import java.awt.event.FocusListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
@@ -25,6 +27,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -146,13 +149,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","-","Merge","Merge","Transpose","transpose",
+				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
+					"-","Merge","Merge","Transpose","transpose",
 				"+","Analysis","TO DO: Data Analysis ","-",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
 				"+","Help","R Help","help", "About","about","0"};
 		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
-		
 		JMenu rm = (JMenu) EzMenuSwing.getItem(this,"Copy Special");
 		if (rm != null) {
 			JMenuItem item1 = new JMenuItem("Copy Output");
@@ -253,7 +256,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				if (JGR.R != null && JGR.STARTED)
 					JGR.R.eval("options(width=" + getFontWidth() + ")");
 				consolePanel
-						.setDividerLocation(((int) ((double) getHeight() * 0.65)));
+						.setDividerLocation(((int) ((double) getHeight() * 0.70)));
 			}
 		});
 		this.addWindowListener(new WindowAdapter() {
@@ -267,15 +270,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		this.getContentPane().add(consolePanel, BorderLayout.CENTER);
 		this.setMinimumSize(new Dimension(555, 650));
-		this.setSize(new Dimension(600,
-				Common.screenRes.height < 800 ? Common.screenRes.height - 50
-						: 700));
+		this.setSize(new Dimension(800,
+				Common.screenRes.height < 1000 ? Common.screenRes.height - 50
+						: 900));
 		Point center = new Point(Common.screenRes.width/2-this.getWidth()/2,40);
 		this.setLocation(center);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
+		new Thread(new Refresher()).start();
 	}
 
 	/**
@@ -539,6 +543,17 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			JGRHelp.current.requestFocus();
 		}
 	}
+	
+	public void setDataDependentMenusEnabled(boolean enabled){
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge","transpose"};
+		ArrayList dataRequiredMenuItems = new ArrayList();
+		JMenuItem temp;
+		for(int i=0;i<dataRequiredFor.length;i++){
+			temp = ((JMenuItem)EzMenuSwing.getItem(this,dataRequiredFor[i]));
+			if(temp!=null)
+				temp.setEnabled(enabled);
+		}
+	}
 
 	/**
 	 * Clear the console's content, if it's too full.
@@ -794,6 +809,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * actionPerformed: handle action event: menus.
 	 */
 	public void actionPerformed(ActionEvent e) {
+
 		String cmd = e.getActionCommand();
 		if (cmd == "about")
 			new AboutDialog(this);
@@ -929,6 +945,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if(data!=null){
 				name = data.getName();
 				executeLater(name+"<-as.data.frame(t("+name+"))");
+				DataFrameWindow.setTopDataWindow(name);
+				toFront();
 			}
 		}else if(cmd == "Merge"){
 			MergeDialog merge =new MergeDialog(); 
@@ -943,6 +961,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			inst.SetSingleSelection(true);
 			inst.setLocationRelativeTo(null);
 			inst.setRFilter("is.factor");
+			inst.setTitle("Select Factor to Edit");
 			inst.setVisible(true);
 			String variable = inst.getSelecteditem();
 			if(variable==null)
@@ -950,6 +969,17 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			FactorDialog fact = new FactorDialog(this,variable);
 			fact.setLocationRelativeTo(null);
 			fact.setVisible(true);
+		}else if (cmd == "rowReset"){
+			String name = null;
+			RObject data = null;
+			DataFrameSelector sel = new DataFrameSelector(this);
+			data = sel.getSelection();
+			if(data!=null){
+				name = data.getName();
+				executeLater("rownames("+name+") <-1:dim("+name+")[1]");
+				DataFrameWindow.setTopDataWindow(name);
+				toFront();
+			}
 		}
 	}
 
@@ -1063,6 +1093,28 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	/**
 	 * focusLost: handle focus event.
 	 */
-	public void focusLost(FocusEvent e) {
+	public void focusLost(FocusEvent e) {}
+	
+	
+	class Refresher implements Runnable {
+		public Refresher() {
+		}
+
+		public void run() {
+			while (true)
+				try {
+					Thread.sleep(5000);
+					Runnable doWorkRunnable = new Runnable() {
+						public void run() { 
+							if(JGR.DATA.size()==0)
+								setDataDependentMenusEnabled(false);
+							else
+								setDataDependentMenusEnabled(true);	
+						}};
+					SwingUtilities.invokeLater(doWorkRunnable);
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
+		}
 	}
 }

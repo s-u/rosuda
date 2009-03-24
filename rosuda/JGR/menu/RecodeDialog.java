@@ -1,6 +1,7 @@
 
 package org.rosuda.JGR.menu;
 
+import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 
@@ -29,6 +30,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.rosuda.JGR.toolkit.VariableSelector;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.JGR;
 
@@ -128,13 +130,12 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			}
 			this.setSize(640, 371);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 
 	
 	public void actionPerformed(ActionEvent e) {
-		System.out.println(e.toString());
 		String cmd=e.getActionCommand();
 		if(cmd=="Cancel")
 			this.dispose();
@@ -202,6 +203,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			JGR.MAINRCONSOLE.executeLater(data+"["+toVars+"] <- recode.variables("+data+
 						"["+fromVars+"] , "+codes.getCodes()+")");
 			this.dispose();
+			DataFrameWindow.setTopDataWindow(data);
 		}
 	}
 

@@ -30,10 +30,12 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.ibase.Common;
+import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.editor.Editor;
 
 
@@ -95,6 +97,10 @@ public class DataLoader extends JFrame {
 				JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile().substring(0, fileDialog.getFile().indexOf("."))) );
 		rName = RController.makeValidVariableName(rName);
 		loadData(fileDialog.getFile(),fileDialog.getDirectory(),rName);
+		DataFrameWindow.setTopDataWindow(rName);
+		((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
+		JGR.MAINRCONSOLE.toFront();
+		
 	}
 	public void loadData(String fileName,String directory,String var){
 		
@@ -131,7 +137,7 @@ public class DataLoader extends JFrame {
 			else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else
-				loadTxtFile(fileName,directory,var);				
+				loadTxtFile(fileName,directory,var);
 		}
 
 

@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Frame;
+import java.awt.Point;
 
 import javax.swing.WindowConstants;
 import javax.swing.SwingUtilities;
@@ -14,6 +15,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.*;
 import org.rosuda.JGR.robjects.*;
+import org.rosuda.ibase.Common;
 
 
 public class DataFrameSelector extends javax.swing.JDialog implements ActionListener {
@@ -53,7 +55,8 @@ public class DataFrameSelector extends javax.swing.JDialog implements ActionList
 
 			pack();
 			this.setSize(211, 334);
-			
+			Point center = new Point(Common.screenRes.width/2-this.getWidth()/2,40);
+			setLocation(center);
 			this.setVisible(true);
 		} catch (Exception e) {
 			new ErrorMsg(e);

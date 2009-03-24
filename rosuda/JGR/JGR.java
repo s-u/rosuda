@@ -565,7 +565,7 @@ public class JGR {
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(60000);
+					Thread.sleep(10000);
 					REXP x = R.idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
 					if (x != null && (r = x.asStringArray()) != null)
@@ -574,6 +574,7 @@ public class JGR {
 					r = null;
 					if (x != null && (r = x.asStringArray()) != null)
 						setObjects(r);
+					RController.refreshObjects();
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}

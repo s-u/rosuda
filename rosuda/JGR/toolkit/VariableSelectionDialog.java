@@ -70,7 +70,7 @@ public class VariableSelectionDialog extends JDialog implements ActionListener {
 				selector.setPreferredSize(new java.awt.Dimension(238, 233));
 				selector.setBorder(BorderFactory.createTitledBorder("Variables"));
 			}
-			this.setSize(238, 301);
+			this.setSize(300, 600);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
@@ -100,6 +100,10 @@ public class VariableSelectionDialog extends JDialog implements ActionListener {
 			selector.getJList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		else
 			selector.getJList().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	}
+	
+	public void setComboBox(String dataName){
+		selector.getJComboBox().setSelectedItem(dataName);
 	}
 	
 	public List getSelectedVariables(){

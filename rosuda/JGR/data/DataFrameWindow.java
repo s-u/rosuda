@@ -11,6 +11,7 @@ import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.PrefsDialog;
+import org.rosuda.JGR.toolkit.VariableSelectionDialog;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGRConsole;
@@ -26,6 +27,7 @@ import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.JRI.*;
 
 
+import java.util.ArrayList;
 import java.util.Vector;
 import java.lang.Thread;
 
@@ -116,7 +118,10 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	private JMenu fileMenu;
 	
 	private ExTable table;
+	private DataFrameWindow theWindow = this; //this
 	private String showData = null;    //shows this data at next opportunity
+	
+	public static ArrayList dataWindows;
 	
 
 
@@ -125,12 +130,18 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(null);
 		new Thread(new Refresher()).start();
+		if(dataWindows==null)
+			dataWindows = new ArrayList();
+		dataWindows.add(0, this);
 	}
 	
 	public DataFrameWindow(ExTable t) {
 		super("Data Viewer", false, TJFrame.clsPackageUtil);
 		initGUI(t);
 		new Thread(new Refresher()).start();
+		if(dataWindows==null)
+			dataWindows = new ArrayList();
+		dataWindows.add(0, this);
 	}
 	
 	/**
@@ -249,7 +260,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
 							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
-						"+","Data","Recode Variables","Recode","-","Merge","Merge","Transpose","transpose",
+						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
+							"Reset Row Names","rowReset","-","Merge","Merge","Transpose","transpose",
 						"+","Analysis","TO DO: Data Analysis ","-",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
@@ -324,7 +336,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			
 			this.addWindowFocusListener(new WindowAdapter() {
 			    public void windowGainedFocus(WindowEvent e) {
-
+			    	dataWindows.remove(theWindow);
+			    	dataWindows.add(0,theWindow);
 			    	REXP isBusy = JGR.R.idleEval("2");
 			    	int cnt=1;
 			    	while(isBusy==null && cnt<=3){
@@ -394,13 +407,28 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		showData = dataName;
 	}
 	
+	public static void setTopDataWindow(String dataName){
+		if(dataWindows.size()>0){
+			for(int i =0;i<dataWindows.size();i++){
+				if(((DataFrameWindow)dataWindows.get(i)).isVisible()){
+					((DataFrameWindow)dataWindows.get(i)).showData(dataName);
+					((DataFrameWindow)dataWindows.get(i)).toFront();
+					return;
+				}else
+					dataWindows.remove(i);
+			}
+			
+		}
+	}
+	
 	public void setVisibleDataFrame(String dataName){
 		String name;
 		for(int i=0;i<dataSelector.getModel().getSize();i++){
 			name = ((DataFrameComboBoxModel)dataSelector.getModel()).getNameAt(i);
-		if(name.equals(dataName))
-			dataSelector.setSelectedIndex(i);
-			dataSelector.repaint();
+			if(name.equals(dataName)){
+				dataSelector.setSelectedIndex(i);
+				dataSelector.repaint();
+			}
 		}
 	}
 	
@@ -459,7 +487,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		    		String datName = ((RObject)dataSelector.getSelectedItem()).getName();
 		    		if(JGR.R.eval("is.factor("+datName+"$"+varName+")").asBool().isTRUE()){
 		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
-		    			fact.setLocation(e.getLocationOnScreen());
+		    			fact.setLocation(e.getPoint());
 		    			fact.setTitle("Factor Editor: "+varName);
 		    			fact.setVisible(true);
 		    		}
@@ -477,6 +505,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		if(jTabbedPane1.getTabCount()>0)
 			jTabbedPane1.setComponentAt(1, variableScrollPane);	
 	}
+	
 	
 	
 	public void actionPerformed(ActionEvent e) {
@@ -596,6 +625,25 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			RecodeDialog recode =new RecodeDialog(this); 
 			recode.setLocationRelativeTo(null);
 			recode.setVisible(true);
+		}else if(cmd == "Edit Factor"){
+			VariableSelectionDialog inst =new VariableSelectionDialog(this);
+			inst.SetSingleSelection(true);
+			inst.setLocationRelativeTo(null);
+			inst.setRFilter("is.factor");
+			inst.setComboBox(((RObject)dataSelector.getSelectedItem()).getName());
+			inst.setTitle("Select Factor to Edit");
+			inst.setVisible(true);
+			String variable = inst.getSelecteditem();
+			if(variable==null)
+					return;
+			FactorDialog fact = new FactorDialog(this,variable);
+			fact.setLocationRelativeTo(null);
+			fact.setVisible(true);
+			
+		}else if (cmd == "rowReset"){
+			String name = ((RObject)dataSelector.getSelectedItem()).getName();
+			JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
+			JGR.MAINRCONSOLE.toFront();
 		}
 	}
 	
@@ -636,12 +684,22 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	}
 	
 	public void dispose(){
+		dataWindows.remove(this);
 		super.dispose();
 		if(dataScrollPane!=null)
 			((RDataFrameModel) dataScrollPane.getExTable().getModel()).removeCachedData();
 	}
 	
-	
+	public void setDataDependentMenusEnabled(boolean enabled){
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge","transpose"};
+		ArrayList dataRequiredMenuItems = new ArrayList();
+		JMenuItem temp;
+		for(int i=0;i<dataRequiredFor.length;i++){
+			temp = ((JMenuItem)EzMenuSwing.getItem(this,dataRequiredFor[i]));
+			if(temp!=null)
+				temp.setEnabled(enabled);
+		}
+	}
 	/**
 	 * 
 	 * A model for the data selection combo box.
@@ -717,18 +775,23 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			while (true)
 				try {
 					Thread.sleep(5000);
-					if(showData!=null){
-
-						    	setVisibleDataFrame(showData);
-						    	showData=null; 
-						    }
-
-					
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							refresh();
+							if(JGR.DATA.size()==0)
+								setDataDependentMenusEnabled(false);
+							else
+								setDataDependentMenusEnabled(true);	
 						}};
 					SwingUtilities.invokeLater(doWorkRunnable);
+					if(showData!=null){
+						setVisibleDataFrame(showData);
+					if(((RObject)dataSelector.getSelectedItem()).getName().equals(showData))
+						showData=null;
+					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+					}
+ 
+					
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}

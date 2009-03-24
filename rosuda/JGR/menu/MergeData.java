@@ -403,14 +403,16 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				
 			}
 			boolean merged = merge();
-			if(merged){
+			if(merged){	
 				this.dispose();
 				Runnable doWorkRunnable = new Runnable() {
 					public void run() { 
-						DataFrameWindow dataView = new DataFrameWindow();
-						dataView.setLocationRelativeTo(null);
-						dataView.setVisible(true); 
-						dataView.showData(lastDataSetName);			
+				if(DataFrameWindow.dataWindows!=null && 
+						DataFrameWindow.dataWindows.size()>0){
+				DataFrameWindow dataView =(DataFrameWindow)DataFrameWindow.dataWindows.get(0);
+				dataView.setVisible(true); 
+				dataView.showData(lastDataSetName);	
+						}
 					}
 				};
 				SwingUtilities.invokeLater(doWorkRunnable);	

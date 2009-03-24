@@ -1,7 +1,6 @@
 
 package org.rosuda.JGR.toolkit;
 
-
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 
@@ -18,9 +17,11 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import javax.swing.AbstractListModel;
+import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.BevelBorder;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -30,6 +31,7 @@ import javax.swing.ListModel;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.*;
+
 
 
 
@@ -63,7 +65,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		}
 
 		String dataName = (String)dataComboBox.getSelectedItem();
-		variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
+		if(dataName!=null)
+			variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
 
 	}
 	
@@ -73,6 +76,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(164, 290));
+			this.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 			dataComboBoxModel = 
 				new DefaultComboBoxModel();
 			dataComboBox = new JComboBox();
@@ -92,14 +96,15 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			filter.setPreferredSize(new java.awt.Dimension(103, 21));
 			filter.addKeyListener(this);
 
-			ListModel variableListModel = new FilteringModel(new String[] { "Item One", "Item Two","A","b","lalala la","the" });
+			ListModel variableListModel = new FilteringModel(new String[] {"Oh Snaps!","No Data." });
 			variableList = new JList();
 			variableList.setModel(variableListModel);
+			variableList.setPreferredSize(new java.awt.Dimension(146, 218));
 			JScrollPane listScroller = new JScrollPane(variableList,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			this.add(listScroller, new AnchorConstraint(191, 1003, 1001, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			listScroller.setPreferredSize(new java.awt.Dimension(164, 235));
+			listScroller.setPreferredSize(new java.awt.Dimension(164, 224));
 
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -144,6 +149,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		if(cmd=="comboBoxChanged"){
 			String dataName = (String)dataComboBox.getSelectedItem();
 			variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
+			filter.setText("");
 			((FilteringModel)variableList.getModel()).filter(filter.getText());
 		}
 		
@@ -212,7 +218,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 								"$"+(String)element+")").asBool().isTRUE()){
 							filteredList.add(element);
 						}
-					}
+					}else
+						filteredList.add(element);
 					
 				}
 			}
