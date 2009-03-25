@@ -109,12 +109,18 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 				variableSelector.getJComboBox().addActionListener(this);
 			}
+			this.setTitle("Run Frequencies");
 			this.setSize(524, 335);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData()))
+			variableSelector.setSelectedData(dataName);
+	}
+	
 	public void actionPerformed(ActionEvent event) {
 		
 		String cmd = event.getActionCommand();

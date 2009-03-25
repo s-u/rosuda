@@ -448,7 +448,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				byY+=")";	
 				String[] data1Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+"))[duplicated(na.omit("+lastDataName1+"["+byX+"]))])").asStringArray();
 				String[] data2Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+"))[duplicated(na.omit("+lastDataName2+"["+byY+"]))])").asStringArray();
-				if(data1Unique.length>0 || data2Unique.length>0){
+				if(data1Unique.length>0 && data2Unique.length>0){
 					int choice =JOptionPane.showOptionDialog(this,"Niether data frame has unique case identifiers.\n" +
 							"Merging will create cases for every possible combination of duplicates.\n" +
 							"Would you like to continue?","Duplicate Idenifiers Detected",JOptionPane.YES_NO_OPTION,

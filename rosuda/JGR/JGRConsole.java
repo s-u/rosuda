@@ -982,6 +982,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			}
 		}else if(cmd =="Frequencies"){
 			FrequencyDialog freq = new FrequencyDialog(this);
+			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
 		}
 	}

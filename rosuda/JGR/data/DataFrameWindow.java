@@ -625,6 +625,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}else if(cmd == "Recode"){
 			RecodeDialog recode =new RecodeDialog(this); 
 			recode.setLocationRelativeTo(null);
+			recode.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			recode.setVisible(true);
 		}else if(cmd == "Edit Factor"){
 			VariableSelectionDialog inst =new VariableSelectionDialog(this);
@@ -647,6 +648,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd =="Frequencies"){
 			FrequencyDialog freq = new FrequencyDialog(this);
+			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
 		}
 	}

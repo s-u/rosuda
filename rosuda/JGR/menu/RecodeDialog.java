@@ -158,7 +158,11 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			new ErrorMsg(e);
 		}
 	}
-
+	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData()))
+			variableSelector.setSelectedData(dataName);
+	}
 	
 	public void actionPerformed(ActionEvent e) {
 		String cmd=e.getActionCommand();
