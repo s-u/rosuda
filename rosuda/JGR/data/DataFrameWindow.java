@@ -4,6 +4,7 @@ package org.rosuda.JGR.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.menu.FactorDialog;
@@ -262,7 +263,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
 						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
 							"Reset Row Names","rowReset","-","Merge","Merge","Transpose","transpose",
-						"+","Analysis","TO DO: Data Analysis ","-",
+						"+","Analysis","Frequencies","Frequencies",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
 						"+","Help","R Help","help", "About","about","0"  };
@@ -644,6 +645,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
 			JGR.MAINRCONSOLE.toFront();
+		}else if(cmd =="Frequencies"){
+			FrequencyDialog freq = new FrequencyDialog(this);
+			freq.setVisible(true);
 		}
 	}
 	
@@ -691,7 +695,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	}
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
-		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge","transpose"};
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge",
+									"transpose","Frequencies"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
 		for(int i=0;i<dataRequiredFor.length;i++){

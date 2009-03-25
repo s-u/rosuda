@@ -136,6 +136,16 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public void setSelectedData(String dataName){
 		dataComboBox.setSelectedItem(dataName);
 	}
+	public String getSelectedData(){
+		return (String)dataComboBox.getSelectedItem();
+	}
+	public ArrayList getSelectedVariables(){
+		Object[] vars = variableList.getSelectedValues();
+		ArrayList lis = new ArrayList();
+		for(int i=0;i<vars.length;i++)
+			lis.add(vars[i]);
+		return lis;
+	}
 	/**
 	 * Filter the variables using an R function
 	 * 
