@@ -4,12 +4,14 @@ package org.rosuda.JGR.toolkit;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -18,6 +20,7 @@ import javax.swing.JComponent;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
+import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
@@ -31,6 +34,7 @@ import javax.swing.ListModel;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.*;
+import org.rosuda.JRI.REXP;
 
 
 
@@ -50,10 +54,12 @@ import org.rosuda.JGR.util.*;
 public class VariableSelector extends JPanel implements ActionListener, KeyListener {
 	private JComboBox dataComboBox;
 	private DefaultComboBoxModel dataComboBoxModel;
-	private JList variableList;
+	private DJList variableList;
 	private JTextField filter;
 	private JLabel filterText;
 	private String rFilter = "";
+	private String splitStr = null;
+	
 	
 	public VariableSelector() {
 		super();
@@ -97,7 +103,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			filter.addKeyListener(this);
 
 			ListModel variableListModel = new FilteringModel(new String[] {"Oh Snaps!","No Data." });
-			variableList = new JList();
+			variableList = new VarDJList();
 			variableList.setModel(variableListModel);
 			variableList.setPreferredSize(new java.awt.Dimension(146, 218));
 			JScrollPane listScroller = new JScrollPane(variableList,
@@ -117,8 +123,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		((FilteringModel) variableList.getModel()).addElement(variable);
 	}
 	
-	public void remove(Object variable){
-		((FilteringModel) variableList.getModel()).removeElement(variable);
+	public boolean remove(Object variable){
+		return ((FilteringModel) variableList.getModel()).removeElement(variable);
 	}
 	
 	public JList getJList(){
@@ -126,6 +132,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	}
 	public JComboBox getJComboBox(){
 		return dataComboBox;
+	}
+	public void setSelectedData(String dataName){
+		dataComboBox.setSelectedItem(dataName);
 	}
 	/**
 	 * Filter the variables using an R function
@@ -141,6 +150,17 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public void setRFilter(String function){
 		rFilter = function;
 		((FilteringModel)variableList.getModel()).filter(filter.getText());
+	}
+	
+	/**
+	 * 
+	 * Any string dropped to A VariableSelector will truncate all 
+	 * elements up to the string str
+	 * 
+	 * @param str
+	 */
+	public void setDropStringSplitter(String str){
+		splitStr=str;
 	}
 	
 	public void actionPerformed(ActionEvent arg0) {
@@ -161,7 +181,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		};
 		SwingUtilities.invokeLater(doWorkRunnable);
 	}
-	private class FilteringModel extends AbstractListModel{
+	public class FilteringModel extends DefaultListModel{
 		List list;
 		List filteredList;
 		String lastFilter = "";
@@ -178,23 +198,53 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				filteredList.add(items[i]);
 			}
 		}
-
+		public void add(int index,Object element) {
+			int ind;
+			if(index>filteredList.size()-1)
+				ind=list.size();
+			else
+				ind =list.indexOf(filteredList.get(index));
+			if(ind<0)
+				ind=0;
+			list.add(ind,element);
+			filter(lastFilter);
+		}
 		public void addElement(Object element) {
 			list.add(element);
 			filter(lastFilter);
 		}
-		public void removeElement(Object element) {
-			list.remove(element);
+		public boolean removeElement(Object element) {
+			boolean is =list.remove(element);
 			filter(lastFilter);
+			return is;
 		}
 		public Object remove(int index) {
-			Object obj =list.remove(index);
+			int objectCount=0;
+			for(int i=0;i<index;i++)
+				if(filteredList.get(index).equals(filteredList.get(i)))
+					objectCount++;
+			Object obj =filteredList.remove(index);			
+			if(objectCount==0){
+				list.remove(obj);
+				filter(lastFilter);
+				return obj;
+			}
+			int listCount = 0;
+			for(int i=0;i<list.size();i++)
+				if(list.get(i).equals(obj)){
+					if(listCount==objectCount)
+						list.remove(i);
+					listCount++;					
+				}
 			filter(lastFilter);
 			return obj;
 		}
 
 		public int getSize() {
 			return filteredList.size();
+		}
+		public int getUnfilteredSize() {
+			return list.size();
 		}
 
 		public Object getElementAt(int index) {
@@ -205,6 +255,20 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				returnValue = null;
 			}
 			return returnValue;
+		}
+		public Object getUnfilteredElementAt(int index) {
+			Object returnValue = list.get(index);
+			filter(lastFilter);
+			return returnValue;
+		}
+		public Object removeUnfilteredElementAt(int index) {
+			Object returnValue = list.remove(index);
+			filter(lastFilter);
+			return returnValue;
+		}
+		public void addUnfilteredElementAt(int index,Object obj) {
+			list.add(index, obj);
+			filter(lastFilter);
 		}
 
 		void filter(String search) {
@@ -230,6 +294,44 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
+	
+	private class VarDJList extends DJList{
+		public void drop(DropTargetDropEvent dtde) {
+			String dataName = (String)dataComboBox.getSelectedItem();
+			REXP rNames = JGR.R.eval("names("+dataName+")");
+			if(rNames==null){
+				dtde.rejectDrop();
+				return;
+			}
+			String[] names = rNames.asStringArray();
+			super.drop(dtde);
+			FilteringModel model =(FilteringModel) this.getModel();
+			int len = model.getUnfilteredSize();
+			String temporary;
+			String nameInData=null;
+			boolean exists;
+			for(int i=0;i<len;i++){
+				temporary =(String) model.getUnfilteredElementAt(i);
+				if(splitStr!=null && temporary.indexOf(splitStr)>0)
+					temporary = temporary.substring(0,temporary.indexOf(splitStr));
+				exists=false;
+				for(int j=0;j<names.length;j++){
+					if(temporary.equals(names[j])){
+							exists=true;
+							nameInData=names[j];
+					}	
+				}
+				if(exists){
+					model.removeUnfilteredElementAt(i);
+					model.addUnfilteredElementAt(i, nameInData);
+					nameInData=null;
+				}else{
+					((FilteringModel)this.getModel()).removeUnfilteredElementAt(i);
+				}
 
+			}
+		}
+		
+	}
 }
 

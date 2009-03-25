@@ -8,12 +8,13 @@ import org.rosuda.JGR.layout.AnchorLayout;
 import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.FlowLayout;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -29,7 +30,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
+import org.rosuda.JGR.toolkit.DJList;
 import org.rosuda.JGR.toolkit.VariableSelector;
+import org.rosuda.JGR.toolkit.VariableSelector.FilteringModel;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.JGR;
@@ -46,6 +49,8 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 	private JButton defineButton;
 	private JButton addButton;
 
+	private static DefaultListModel lastListModel;
+	private static String lastDataName;
 
 	
 	public RecodeDialog(JFrame frame) {
@@ -99,7 +104,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			{
 				intoButton = new JButton();
 				getContentPane().add(intoButton, new AnchorConstraint(218, 934, 295, 782, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				intoButton.setText("New Variable");
+				intoButton.setText("\u2192 Target");
 				intoButton.setPreferredSize(new java.awt.Dimension(96, 26));
 				intoButton.setFont(new java.awt.Font("Tahoma",0,10));
 				intoButton.addActionListener(this);
@@ -108,15 +113,13 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 				JPanel recodePanel = new JPanel();
 				BorderLayout recodePanelLayout = new BorderLayout();
 				recodePanel.setLayout(recodePanelLayout);
-				ListModel recodeVariableListModel = 
-					new DefaultComboBoxModel();
-				recodeVariableList = new JList();
+				recodeVariableList = new RecodeDJList();
 				JScrollPane recodeScroller = new JScrollPane(recodeVariableList,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 				recodePanel.add(recodeScroller);
 				getContentPane().add(recodePanel, new AnchorConstraint(123, 758, 835, 467, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				recodeVariableList.setModel(recodeVariableListModel);
+				recodeVariableList.setModel(new DefaultListModel());
 				recodePanel.setPreferredSize(new java.awt.Dimension(184, 240));
 				recodePanel.setBorder(BorderFactory.createTitledBorder("Variables to Recode"));
 			}
@@ -127,7 +130,29 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 				variableSelector.setPreferredSize(new java.awt.Dimension(192, 301));
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 				variableSelector.getJComboBox().addActionListener(this);
+				variableSelector.setDropStringSplitter("\u2192");
+				if(lastDataName!=null)
+					variableSelector.setSelectedData(lastDataName);
 			}
+			ListModel recodeVariableListModel ;
+			if(lastListModel!=null && lastDataName!=null){
+				recodeVariableList.setModel(lastListModel);
+				String temp;
+				boolean exists;
+				for(int i=0;i<lastListModel.getSize();i++){
+					temp = (String) lastListModel.get(i);
+					temp = temp.substring(0, temp.indexOf("\u2192"));
+					exists=variableSelector.remove(temp);
+					if(!exists){
+						recodeVariableList.setModel(new DefaultListModel());
+						variableSelector.getJList().setModel(variableSelector.new FilteringModel(
+								JGR.R.eval("names("+variableSelector.getJComboBox().getSelectedItem()
+										+")").asStringArray()));
+						break;
+					}
+				}
+			}
+			
 			this.setSize(640, 371);
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -146,7 +171,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			for(int i=0;i<elements.length;i++){
 				if(elements[i]!=null){
 					temp = (String) elements[i];
-					((DefaultComboBoxModel)recodeVariableList.getModel()).addElement(
+					((DefaultListModel)recodeVariableList.getModel()).addElement(
 							temp.concat("\u2192".concat(temp)));
 					variableSelector.remove(elements[i]);
 				}
@@ -157,11 +182,11 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			for(int i=0;i<elements.length;i++){
 				if(elements[i]!=null){
 					temp=(String) elements[i];
-					((DefaultComboBoxModel)recodeVariableList.getModel()).removeElement(elements[i]);
+					((DefaultListModel)recodeVariableList.getModel()).removeElement(elements[i]);
 					variableSelector.add(temp.substring(0,temp.indexOf("\u2192")));
 				}
 			}			
-		}else if(cmd=="New Variable"){
+		}else if(cmd=="\u2192 Target"){
 			int selectedIndex = recodeVariableList.getSelectedIndex();
 			if(selectedIndex==-1)
 				return;
@@ -169,8 +194,8 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			entry = entry.substring(0,entry.indexOf("\u2192"));
 			String newVar = (String) JOptionPane.showInputDialog(this,"Recode "+entry+" into:");
 			newVar = RController.makeValidVariableName(newVar);
-			((DefaultComboBoxModel) recodeVariableList.getModel()).removeElementAt(selectedIndex);
-			((DefaultComboBoxModel) recodeVariableList.getModel()).addElement(entry+"\u2192"+newVar);
+			((DefaultListModel) recodeVariableList.getModel()).removeElementAt(selectedIndex);
+			((DefaultListModel) recodeVariableList.getModel()).addElement(entry+"\u2192"+newVar);
 		}else if(cmd=="Define Recode"){
 			String[] recodes = new String[recodeVariableList.getModel().getSize()];
 			for(int i=0;i<recodeVariableList.getModel().getSize();i++)
@@ -179,7 +204,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			codes.setLocationRelativeTo(this);
 			codes.setVisible(true);
 		}else if(cmd == "comboBoxChanged"){
-			((DefaultComboBoxModel)recodeVariableList.getModel()).removeAllElements();
+			recodeVariableList.setModel(new DefaultListModel());
 		}else if(cmd=="OK"){
 			if(codes == null || codes.getCodes()==""){
 				JOptionPane.showMessageDialog(this, "No Recodings Have been defined.\nClick on the 'Define Recode' button to specify...");
@@ -190,7 +215,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			String toVars;
 			ArrayList fromList = new ArrayList();
 			ArrayList toList = new ArrayList();
-			DefaultComboBoxModel model = ((DefaultComboBoxModel) recodeVariableList.getModel());
+			DefaultListModel model = ((DefaultListModel) recodeVariableList.getModel());
 			String[]temp;
 			for(int i=0;i<model.getSize();i++){
 				temp = ((String)model.getElementAt(i)).split("\u2192");
@@ -202,9 +227,26 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			
 			JGR.MAINRCONSOLE.executeLater(data+"["+toVars+"] <- recode.variables("+data+
 						"["+fromVars+"] , "+codes.getCodes()+")");
+			lastListModel = ((DefaultListModel)recodeVariableList.getModel());
+			lastDataName = (String)variableSelector.getJComboBox().getSelectedItem();
 			this.dispose();
 			DataFrameWindow.setTopDataWindow(data);
 		}
 	}
-
+	
+	private class RecodeDJList extends DJList{
+		public void drop(DropTargetDropEvent dtde) {
+			super.drop(dtde);
+			int len = this.getModel().getSize();
+			String temporary;
+			for(int i=0;i<len;i++){
+				temporary = (String)this.getModel().getElementAt(i);
+				if(temporary.indexOf("\u2192")<0){
+					((DefaultListModel)this.getModel()).removeElementAt(i);
+					((DefaultListModel)this.getModel()).add(i, temporary+"\u2192"+temporary);
+				}
+			}
+		}
+		
+	}
 }
