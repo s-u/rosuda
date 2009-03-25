@@ -24,6 +24,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListModel;
@@ -37,6 +38,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 	private JButton cancel;
 	private JButton okay;
 	private JButton contrast;
+	private IconButton add;
 	private IconButton remove;
 	private IconButton down;
 	private IconButton up;
@@ -90,8 +92,13 @@ public class FactorDialog extends JDialog implements ActionListener {
 				contrast.addActionListener(this);
 			}
 			{
-				remove = new IconButton("/icons/button_cancel_32.png","Delete",this,"Delete");
-				getContentPane().add(remove, new AnchorConstraint(161, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				add = new IconButton("/icons/edit_add_32.png","Delete",this,"Add");
+				getContentPane().add(add, new AnchorConstraint(110, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				add.setPreferredSize(new java.awt.Dimension(40, 41));
+			}
+			{
+				remove = new IconButton("/icons/edit_remove_32.png","Delete",this,"Delete");
+				getContentPane().add(remove, new AnchorConstraint(152, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				remove.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
@@ -102,7 +109,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 			}
 			{
 				up = new IconButton("/icons/1uparrow_32.png","Up",this,"Up");
-				getContentPane().add(up, new AnchorConstraint(39, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(up, new AnchorConstraint(35, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				up.setPreferredSize(new java.awt.Dimension(40, 35));
 			}
 			{
@@ -154,6 +161,10 @@ public class FactorDialog extends JDialog implements ActionListener {
 				model.add(ind[0]+1, obj);
 				levelList.setSelectedIndex(ind[0]+1);
 			}
+		}else if(cmd=="Add"){
+			String result =JOptionPane.showInputDialog(this, "Please Enter the new factor Level", "New Factor Level", JOptionPane.INFORMATION_MESSAGE);
+			if(result!=null && result.length()>0)
+				((DefaultListModel)levelList.getModel()).add(0,result);
 		}else if(cmd == "Delete"){
 			int[] ind= levelList.getSelectedIndices();
 			if(ind.length>0){
