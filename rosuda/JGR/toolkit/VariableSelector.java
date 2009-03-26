@@ -127,6 +127,24 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		return ((FilteringModel) variableList.getModel()).removeElement(variable);
 	}
 	
+	public boolean removeAll(DefaultListModel model){
+		if(model==null)
+			return false;
+		String temp;
+		boolean exists=false;
+		for(int i=0;i<model.getSize();i++){
+			temp = (String) model.get(i);
+			exists=this.remove(temp);
+			if(!exists){
+				this.getJList().setModel(new FilteringModel(
+						JGR.R.eval("names("+this.getJComboBox().getSelectedItem()
+								+")").asStringArray()));
+				break;
+			}
+		}
+		return exists;
+	}
+	
 	public JList getJList(){
 		return variableList;
 	}

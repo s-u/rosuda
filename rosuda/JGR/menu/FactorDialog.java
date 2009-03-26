@@ -92,7 +92,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 				contrast.addActionListener(this);
 			}
 			{
-				add = new IconButton("/icons/edit_add_32.png","Delete",this,"Add");
+				add = new IconButton("/icons/edit_add_32.png","Add",this,"Add");
 				getContentPane().add(add, new AnchorConstraint(110, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				add.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
@@ -133,6 +133,8 @@ public class FactorDialog extends JDialog implements ActionListener {
 					}
 				}
 			}
+			
+			
 			this.setSize(280, 331);
 		} catch (Exception e) {
 			e.printStackTrace();

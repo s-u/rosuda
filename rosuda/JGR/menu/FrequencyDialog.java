@@ -24,19 +24,25 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.toolkit.DJList;
 import org.rosuda.JGR.toolkit.VariableSelector;
+import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.JGR.util.ErrorMsg;
 
 
 public class FrequencyDialog extends javax.swing.JDialog implements ActionListener{
 	private VariableSelector variableSelector;
-	private JButton options;
+	private IconButton options;
 	private JButton cancel;
 	private JButton okay;
-	private JButton remove;
-	private JButton Add;
+	private IconButton remove;
+	private IconButton Add;
 	private JList freqList;
 	private JScrollPane freqScroller;
 	private JPanel frequencyPanel;
 	private int digits=1;
+	
+	private static Integer lastDigits;
+	private static String lastDataName;
+	private static DefaultListModel lastListModel;
 
 	
 	public FrequencyDialog(JFrame frame) {
@@ -49,11 +55,9 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				options = new JButton();
-				getContentPane().add(options, new AnchorConstraint(829, 594, 966, 445, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				options.setText("Options");
-				options.setPreferredSize(new java.awt.Dimension(78, 43));
-				options.addActionListener(this);
+				options = new IconButton("/icons/advanced_32.png","Options",this,"Options");
+				getContentPane().add(options, new AnchorConstraint(829, 550, 966, 470, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				options.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
 				cancel = new JButton();
@@ -70,18 +74,14 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				okay.addActionListener(this);
 			}
 			{
-				remove = new JButton();
-				getContentPane().add(remove, new AnchorConstraint(397, 567, 535, 445, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				remove.setText("Remove");
-				remove.setPreferredSize(new java.awt.Dimension(64, 43));
-				remove.addActionListener(this);
+				remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
+				getContentPane().add(remove, new AnchorConstraint(397, 550, 535, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				remove.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
-				Add = new JButton();
-				getContentPane().add(Add, new AnchorConstraint(202, 567, 343, 449, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				Add.setText("Add");
-				Add.setPreferredSize(new java.awt.Dimension(62, 44));
-				Add.addActionListener(this);
+				Add = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
+				getContentPane().add(Add, new AnchorConstraint(250, 550, 390, 470, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				Add.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
 				frequencyPanel = new JPanel();
@@ -94,8 +94,7 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 					freqScroller = new JScrollPane();
 					frequencyPanel.add(freqScroller, BorderLayout.CENTER);
 					{
-						ListModel freqListModel = 
-							new DefaultListModel();
+						ListModel freqListModel= new DefaultListModel();
 						freqList = new DJList();
 						freqScroller.setViewportView(freqList);
 						freqList.setModel(freqListModel);
@@ -109,10 +108,20 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 				variableSelector.getJComboBox().addActionListener(this);
 			}
+			if(lastDataName!=null)
+				variableSelector.setSelectedData(lastDataName);
+			if(lastListModel!=null && lastDataName!=null){
+				freqList.setModel(lastListModel);
+			}
+			boolean allExist=variableSelector.removeAll((DefaultListModel) freqList.getModel());
+			if(!allExist)
+				freqList.setModel(new DefaultListModel());
+			if(lastDigits!=null && allExist)
+				digits=lastDigits.intValue();
 			this.setTitle("Run Frequencies");
 			this.setSize(524, 335);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 	
@@ -143,7 +152,11 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 		}else if(cmd == "Options"){
 			boolean valid = false;
 			while(!valid){
-				String result =JOptionPane.showInputDialog(this, "How many digits (Maximum: 7)\n should the percentages be rounded to?", "Option: Rounding", JOptionPane.INFORMATION_MESSAGE);
+				String result =JOptionPane.showInputDialog(this, "How many digits should the \npercentages be rounded to?", digits+"");
+				if(result.length()==0){
+					digits=1;
+					valid=true;
+				}
 				try{
 				digits =Integer.parseInt(result);
 				valid = true;
@@ -163,6 +176,9 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 			JGR.MAINRCONSOLE.toFront();			
 			JGR.MAINRCONSOLE.execute("frequencies("+dataName+
 					"["+RController.makeRStringVector(varList)+"] , r.digits = "+digits+")");
+			lastDataName=dataName;
+			lastListModel = (DefaultListModel) freqList.getModel();
+			lastDigits = new Integer(digits);
 
 		}
 		
