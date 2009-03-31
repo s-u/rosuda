@@ -128,7 +128,6 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 						varList = new JList();
 						varScrollPane.setViewportView(varList);
 						varList.setModel(varListModel);
-						varList.setPreferredSize(new java.awt.Dimension(170, 76));
 						varList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						varList.addListSelectionListener(this);
 					}
@@ -419,8 +418,9 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			var =dataName+"$"+var;
 			String[] output;
 			if(JGR.R.eval("is.numeric("+var+")").asBool().isTRUE()){
-				output = JGR.R.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1))))").asStringArray();
-			}else if(JGR.R.eval("is.character("+var+")").asBool().isTRUE()){
+				output = JGR.R.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStringArray();
+			}else if(JGR.R.eval("is.character("+var+")").asBool().isTRUE() || 
+					JGR.R.eval("is.factor("+var+")").asBool().isTRUE()){
 				output = JGR.R.eval("capture.output(data.frame(xtabs(~"+var+")))").asStringArray();
 			}else
 				output = JGR.R.eval("capture.output(summary("+var+"))").asStringArray();

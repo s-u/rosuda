@@ -565,7 +565,7 @@ public class JGR {
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(5000);
 					REXP x = R.idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
 					if (x != null && (r = x.asStringArray()) != null)

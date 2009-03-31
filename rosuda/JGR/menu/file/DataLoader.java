@@ -37,6 +37,7 @@ import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.ibase.Common;
 import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.editor.Editor;
+import org.rosuda.JGR.util.ErrorMsg;
 
 
 
@@ -119,6 +120,7 @@ public class DataLoader extends JFrame {
 		else if(fileName.toLowerCase().endsWith(".txt")|fileName.toLowerCase().endsWith(".csv"))
 			loadTxtFile(fileName,directory,var);
 		else {
+			try{
 			RController.loadPackage("foreign");
 			if(fileName.toLowerCase().endsWith(".sav"))
 				JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.spss('"+(directory+fileName).replace('\\', '/')+"'))",true);
@@ -138,6 +140,7 @@ public class DataLoader extends JFrame {
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
 			else
 				loadTxtFile(fileName,directory,var);
+			}catch(Exception e){new ErrorMsg(e);}
 		}
 
 

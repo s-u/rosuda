@@ -154,7 +154,7 @@ public class RController {
 			JGR.MAINRCONSOLE.execute("install.packages('"+pack+"');library("+pack+")",true);	
 		}
 		else
-			JGR.R.eval("library("+pack+")",true);
+			JGR.R.eval("library("+pack+")");
 	}
 	/**
 	 * Show all posibilities to complete your given part of a command.
@@ -265,6 +265,8 @@ public class RController {
 			result+="\""+lis.get(i).toString()+"\"";
 			if(i<lis.size()-1)
 				result+=",";
+			if(i%10==9)
+				result+="\n";
 		}
 		result+=")";
 		return result;

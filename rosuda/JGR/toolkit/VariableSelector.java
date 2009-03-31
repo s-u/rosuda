@@ -105,7 +105,6 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			ListModel variableListModel = new FilteringModel(new String[] {"Oh Snaps!","No Data." });
 			variableList = new VarDJList();
 			variableList.setModel(variableListModel);
-			variableList.setPreferredSize(new java.awt.Dimension(146, 218));
 			JScrollPane listScroller = new JScrollPane(variableList,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);

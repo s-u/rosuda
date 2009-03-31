@@ -706,7 +706,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			try {
 				outputDoc.insertString(outputDoc.getLength(), s + "\n",
 						JGRPrefs.CMD);
-			} catch (Exception e) {
+			} catch (Exception e) {new ErrorMsg(e);
 			}
 			return (s == null || s.length() == 0) ? "\n" : s + "\n";
 		}
