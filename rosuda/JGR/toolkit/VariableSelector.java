@@ -119,11 +119,17 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 
 
 	public void add(Object variable){
-		((FilteringModel) variableList.getModel()).addElement(variable);
+		String var = (String)variable;
+		if(splitStr!=null && var.indexOf(splitStr)>0)
+			var = var.substring(0,var.indexOf(splitStr));
+		((FilteringModel) variableList.getModel()).addElement(var);
 	}
 	
 	public boolean remove(Object variable){
-		return ((FilteringModel) variableList.getModel()).removeElement(variable);
+		String var = (String)variable;
+		if(splitStr!=null && var.indexOf(splitStr)>0)
+			var = var.substring(0,var.indexOf(splitStr));
+		return ((FilteringModel) variableList.getModel()).removeElement(var);
 	}
 	
 	public boolean removeAll(DefaultListModel model){

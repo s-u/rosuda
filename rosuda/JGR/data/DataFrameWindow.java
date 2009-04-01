@@ -8,6 +8,7 @@ import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.menu.FactorDialog;
+import org.rosuda.JGR.menu.SortDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -262,7 +263,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
 						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
-							"Reset Row Names","rowReset","-","Merge","Merge","Transpose","transpose",
+							"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge","Transpose","transpose",
 						"+","Analysis","Frequencies","Frequencies",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
@@ -651,6 +652,11 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
+		}else if(cmd =="Sort"){
+			SortDialog sort = new SortDialog(this);
+			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			sort.setLocationRelativeTo(null);
+			sort.setVisible(true);
 		}
 	}
 	

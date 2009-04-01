@@ -68,6 +68,7 @@ import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.menu.FactorDialog;
 import org.rosuda.JGR.menu.FrequencyDialog;
+import org.rosuda.JGR.menu.SortDialog;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -150,7 +151,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
 				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
-					"-","Merge","Merge","Transpose","transpose",
+					"-","Sort","Sort","Merge","Merge","Transpose","transpose",
 				"+","Analysis","Frequencies","Frequencies",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
@@ -545,7 +546,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	}
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
-		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge","transpose","Frequencies"};
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge","transpose","Frequencies"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
 		for(int i=0;i<dataRequiredFor.length;i++){
@@ -638,12 +639,20 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            output type (0=regular, 1=warning/error)
 	 */
 	public void rWriteConsole(Rengine re, String text, int oType) {
-		console.append(text);
-		if (console.length() > 100) {
-			output.append(console.toString(), JGRPrefs.RESULT);
-			console.delete(0, console.length());
-			output.setCaretPosition(outputDoc.getLength());
-		}
+		final String fText = text;
+		Runnable doWork = new Runnable() {
+		    public void run() {
+				try{
+					console.append(fText);
+					if (console.length() > 100) {
+						output.append(console.toString(), JGRPrefs.RESULT);
+						console.delete(0, console.length());
+						output.setCaretPosition(outputDoc.getLength());
+					}
+				}catch(Exception err){new ErrorMsg(err);}
+		    }
+		};
+		SwingUtilities.invokeLater(doWork);
 	}
 
 	/**
@@ -667,17 +676,24 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            busy (1) or not (0)
 	 */
 	public void rBusy(Rengine re, int which) {
-		if (which == 0) {
-			if (console != null) {
-				output.append(console.toString(), JGRPrefs.RESULT);
-				console.delete(0, console.length());
-			}
-			output.setCaretPosition(outputDoc.getLength());
-			setWorking(false);
-		} else {
-			toolBar.stopButton.setEnabled(true);
-			setWorking(true);
-		}
+		final int fWhich=which;
+		Runnable doWork = new Runnable() {
+		    public void run() {
+				if (fWhich == 0) {
+					if (console != null) {
+						output.append(console.toString(), JGRPrefs.RESULT);
+						console.delete(0, console.length());
+					}
+					output.setCaretPosition(outputDoc.getLength());
+					setWorking(false);
+				} else {
+					toolBar.stopButton.setEnabled(true);
+					setWorking(true);
+				}		    	
+		    }
+		};
+		SwingUtilities.invokeLater(doWork);
+
 	}
 
 	/**
@@ -691,7 +707,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            is it an command which to add to the history
 	 */
 	public String rReadConsole(Rengine re, String prompt, int addToHistory) {
-		toolBar.stopButton.setEnabled(false);
+		Runnable doWork = new Runnable() {
+		    public void run() {
+		    	toolBar.stopButton.setEnabled(false);	    	
+		    }
+		};
+		SwingUtilities.invokeLater(doWork);
 		if (prompt.indexOf("Save workspace") > -1) {
 			String retVal = JGR.exit();
 			if (wspace != null && retVal.indexOf('y') >= 0) {
@@ -700,16 +721,28 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			} else
 				return retVal;
 		} else {
-			output.append(prompt, JGRPrefs.CMD);
-			output.setCaretPosition(outputDoc.getLength());
-			String s = JGR.rSync.waitForNotification();
-			try {
-				outputDoc.insertString(outputDoc.getLength(), s + "\n",
-						JGRPrefs.CMD);
-			} catch (Exception e) {new ErrorMsg(e);
-			}
+				final String fPrompt = prompt;
+				Runnable doWork1 = new Runnable() {
+				    public void run() {
+						output.append(fPrompt, JGRPrefs.CMD);
+						output.setCaretPosition(outputDoc.getLength());	    	
+				    }
+				};
+				SwingUtilities.invokeLater(doWork1);
+			final String s = JGR.rSync.waitForNotification();
+				Runnable doWork2 = new Runnable() {
+				    public void run() {
+				    	try {
+				    		outputDoc.insertString(outputDoc.getLength(), s + "\n",
+				    				JGRPrefs.CMD);    	
+				    		} catch (Exception e) {new ErrorMsg(e);}
+				    }
+				};
+				SwingUtilities.invokeLater(doWork2);
+
 			return (s == null || s.length() == 0) ? "\n" : s + "\n";
 		}
+
 	}
 
 	/**
@@ -980,6 +1013,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				DataFrameWindow.setTopDataWindow(name);
 				toFront();
 			}
+		}else if(cmd=="Sort"){
+			SortDialog sort = new SortDialog(this);
+			sort.setLocationRelativeTo(null);
+			sort.setVisible(true);
 		}else if(cmd =="Frequencies"){
 			FrequencyDialog freq = new FrequencyDialog(this);
 			freq.setLocationRelativeTo(null);

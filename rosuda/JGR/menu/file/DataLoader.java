@@ -72,6 +72,7 @@ public class DataLoader extends JFrame {
 	
 	
 	public DataLoader(){
+		try{
 		FileFilter extFilter;
 		FileSelector fileDialog = new FileSelector(this,"Load Data",FileSelector.LOAD);
 		if(fileDialog.isSwing()){
@@ -101,6 +102,7 @@ public class DataLoader extends JFrame {
 		DataFrameWindow.setTopDataWindow(rName);
 		((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
 		JGR.MAINRCONSOLE.toFront();
+		}catch(Exception er){new ErrorMsg(er);}
 		
 	}
 	public void loadData(String fileName,String directory,String var){
@@ -121,25 +123,25 @@ public class DataLoader extends JFrame {
 			loadTxtFile(fileName,directory,var);
 		else {
 			try{
-			RController.loadPackage("foreign");
-			if(fileName.toLowerCase().endsWith(".sav"))
-				JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.spss('"+(directory+fileName).replace('\\', '/')+"'))",true);
-			else if(fileName.toLowerCase().endsWith(".xpt") |fileName.toLowerCase().endsWith(".xport"))
-				JGR.MAINRCONSOLE.executeLater(var+" <- read.xport('"+(directory+fileName).replace('\\', '/')+"')",true);
-			else if(fileName.toLowerCase().endsWith(".dta"))
-				JGR.MAINRCONSOLE.executeLater(var+" <- read.dta('"+(directory+fileName).replace('\\', '/')+"')",true);
-			else if(fileName.toLowerCase().endsWith(".arff"))
+				RController.loadPackage("foreign");
+				if(fileName.toLowerCase().endsWith(".sav"))
+					JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.spss('"+(directory+fileName).replace('\\', '/')+"'))",true);
+				else if(fileName.toLowerCase().endsWith(".xpt") |fileName.toLowerCase().endsWith(".xport"))
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.xport('"+(directory+fileName).replace('\\', '/')+"')",true);
+				else if(fileName.toLowerCase().endsWith(".dta"))
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.dta('"+(directory+fileName).replace('\\', '/')+"')",true);
+				else if(fileName.toLowerCase().endsWith(".arff"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.arff('"+(directory+fileName).replace('\\', '/')+"')",true);
-			else if(fileName.toLowerCase().endsWith(".rec"))
+				else if(fileName.toLowerCase().endsWith(".rec"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.epiinfo('"+(directory+fileName).replace('\\', '/')+"')",true);
-			else if(fileName.toLowerCase().endsWith(".mtp"))
+				else if(fileName.toLowerCase().endsWith(".mtp"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- as.data.frame(read.mtp('"+(directory+fileName).replace('\\', '/')+"'))",true);
-			else if(fileName.toLowerCase().endsWith(".s3"))
+				else if(fileName.toLowerCase().endsWith(".s3"))
 					JGR.MAINRCONSOLE.executeLater("data.restore('"+(directory+fileName).replace('\\', '/')+"',print=TRUE)",true);
-			else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
+				else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
-			else
-				loadTxtFile(fileName,directory,var);
+				else
+					loadTxtFile(fileName,directory,var);
 			}catch(Exception e){new ErrorMsg(e);}
 		}
 
