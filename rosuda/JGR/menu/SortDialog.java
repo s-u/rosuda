@@ -79,12 +79,12 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 				Add.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
-				increasing = new IconButton("/icons/down_32.png","Increasing: Descending",this,"Increasing");
+				increasing = new IconButton("/icons/sort_az_32.png","Increasing: Descending",this,"Increasing");
 				getContentPane().add(increasing, new AnchorConstraint(615, 865, 755, 785, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				increasing.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
-				decreasing = new IconButton("/icons/up_32.png","Decreasing: Ascending",this,"Decreasing");
+				decreasing = new IconButton("/icons/sort_za_32.png","Decreasing: Ascending",this,"Decreasing");
 				getContentPane().add(decreasing, new AnchorConstraint(615, 780, 755, 700, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				decreasing.setPreferredSize(new java.awt.Dimension(40, 41));
 			}

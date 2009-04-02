@@ -31,6 +31,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.TitledBorder;
 
 import org.rosuda.JGR.toolkit.DJList;
+import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.VariableSelector;
 import org.rosuda.JGR.toolkit.VariableSelector.FilteringModel;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -43,11 +44,11 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 	private VariableSelector variableSelector;
 	private JList recodeVariableList;
 	private JButton intoButton;
-	private JButton removeButton;
+	private IconButton removeButton;
 	private JButton cancelButton;
 	private JButton runButton;
 	private JButton defineButton;
-	private JButton addButton;
+	private IconButton addButton;
 
 	private static DefaultListModel lastListModel;
 	private static String lastDataName;
@@ -65,12 +66,9 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			getContentPane().setLayout(thisLayout);
 
 			{
-				removeButton = new JButton();
-				getContentPane().add(removeButton, new AnchorConstraint(502, 459, 583, 334, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				removeButton.setText("Remove");
-				removeButton.setPreferredSize(new java.awt.Dimension(79, 27));
-				removeButton.setFont(new java.awt.Font("Tahoma",0,10));
-				removeButton.addActionListener(this);
+				removeButton = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
+				getContentPane().add(removeButton, new AnchorConstraint(530, 425, 680, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				removeButton.setPreferredSize(new java.awt.Dimension(41, 40));
 			}
 			{
 				cancelButton = new JButton();
@@ -94,12 +92,9 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 				defineButton.addActionListener(this);
 			}
 			{
-				addButton = new JButton();
-				getContentPane().add(addButton, new AnchorConstraint(375, 459, 449, 334, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				addButton.setText("Add");
-				addButton.setPreferredSize(new java.awt.Dimension(79, 25));
-				addButton.setFont(new java.awt.Font("Tahoma",0,10));
-				addButton.addActionListener(this);
+				addButton = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
+				getContentPane().add(addButton, new AnchorConstraint(375, 425, 525, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				addButton.setPreferredSize(new java.awt.Dimension(41, 40));
 			}
 			{
 				intoButton = new JButton();
