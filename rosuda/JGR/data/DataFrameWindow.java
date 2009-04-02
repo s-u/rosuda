@@ -704,7 +704,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	}
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
-		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Merge",
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge",
 									"transpose","Frequencies"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
