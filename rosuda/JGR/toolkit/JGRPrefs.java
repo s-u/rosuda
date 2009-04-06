@@ -142,7 +142,7 @@ public class JGRPrefs {
 	/** Display Data Viewer at Start Up 
 	 * TODO: read and write to file 
 	 * */
-	public static boolean displayViewerAtStartUp = true;
+	public static boolean displayViewerAtStartUp = false;
 
 	/** Packages which were installed when JGR was running the last time */
 	public static String previousPackages = null;
