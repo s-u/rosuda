@@ -185,6 +185,13 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		((FilteringModel)variableList.getModel()).filter(filter.getText());
 	}
 	
+	public void reset(){
+		String dataName = (String)dataComboBox.getSelectedItem();
+		variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
+		filter.setText("");
+		((FilteringModel)variableList.getModel()).filter(filter.getText());		
+	}
+	
 	/**
 	 * 
 	 * Any string dropped to A VariableSelector will truncate all 
@@ -200,10 +207,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		String cmd = arg0.getActionCommand();
 		//JGR.R.eval("print('"+arg0.toString()+"')");
 		if(cmd=="comboBoxChanged"){
-			String dataName = (String)dataComboBox.getSelectedItem();
-			variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
-			filter.setText("");
-			((FilteringModel)variableList.getModel()).filter(filter.getText());
+			reset();
 		}
 		
 	}
