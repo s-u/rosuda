@@ -69,6 +69,7 @@ import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.menu.FactorDialog;
 import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.SortDialog;
+import org.rosuda.JGR.menu.DescriptivesDialog;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -152,7 +153,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
 				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
 					"-","Sort","Sort","Merge","Merge","Transpose","transpose",
-				"+","Analysis","Frequencies","Frequencies",
+				"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
 				"+","Help","R Help","help", "About","about","0"};
@@ -1021,6 +1022,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			FrequencyDialog freq = new FrequencyDialog(this);
 			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
+		}else if(cmd =="Descriptives"){
+			DescriptivesDialog desc = new DescriptivesDialog(this);
+			desc.setLocationRelativeTo(null);
+			desc.setVisible(true);
 		}
 	}
 
