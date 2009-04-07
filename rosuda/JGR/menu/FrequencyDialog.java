@@ -168,7 +168,6 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 				return;
 			}
 			String dataName = variableSelector.getSelectedData();
-			Object[] vars =freqList.getSelectedValues();
 			ArrayList varList = new ArrayList();
 			for(int i=0;i<freqList.getModel().getSize();i++)
 				varList.add(freqList.getModel().getElementAt(i));
