@@ -4,6 +4,7 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.util.ErrorMsg;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -227,7 +228,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			pack();
 			this.setSize(425, 368);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 	
@@ -327,10 +328,11 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			+ useQuote
 			+ "\")"
 			+ (preview ? ",silent=TRUE)":"");
+		
 		if(preview)
 			JGR.R.eval(cmd, false);
 		else
-			JGR.MAINRCONSOLE.execute(cmd, true);		
+			JGR.MAINRCONSOLE.execute(cmd, true);	
 	}
 	private void loadPreview(){
 		loadInR(previewName,true);

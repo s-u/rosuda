@@ -216,8 +216,10 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 			String temporary;
 			for(int i=0;i<len;i++){
 				temporary = (String)this.getModel().getElementAt(i);
-				((DefaultListModel)this.getModel()).removeElementAt(i);
-				((DefaultListModel)this.getModel()).add(i, temporary+" -- Increasing");
+				if(temporary.indexOf(" -- ")<0){
+					((DefaultListModel)this.getModel()).removeElementAt(i);
+					((DefaultListModel)this.getModel()).add(i, temporary+" -- Increasing");
+				}
 			}
 		}
 		

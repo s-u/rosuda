@@ -20,6 +20,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -49,6 +50,7 @@ public class DataLoader extends JFrame {
 															{"txt"},
 															{"sav"},
 															{"xpt"},
+															{"dbf"},
 															{"dta"},
 															{"syd","sys"},
 															{"arff"},
@@ -62,6 +64,7 @@ public class DataLoader extends JFrame {
 																	"Text file (*.txt)",
 																	"SPSS (*.sav)",
 																	"SAS export (*.xpt)",
+																	"DBase (*.dbf)",
 																	"Stata (*.dta)",
 																	"Systat (*.sys *.syd)",
 																	"ARFF (*.arff)",
@@ -140,8 +143,13 @@ public class DataLoader extends JFrame {
 					JGR.MAINRCONSOLE.executeLater("data.restore('"+(directory+fileName).replace('\\', '/')+"',print=TRUE)",true);
 				else if(fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
 					JGR.MAINRCONSOLE.executeLater(var+" <- read.systat('"+(directory+fileName).replace('\\', '/')+"')",true);
-				else
-					loadTxtFile(fileName,directory,var);
+				else if(fileName.toLowerCase().endsWith(".dbf"))
+					JGR.MAINRCONSOLE.executeLater(var+" <- read.dbf('"+(directory+fileName).replace('\\', '/')+"')",true);
+				else{
+					int opt =JOptionPane.showConfirmDialog(this, "Unknown File Type.\nWould you like to try to open it as a text data file?");
+					if(opt==JOptionPane.OK_OPTION)
+						loadTxtFile(fileName,directory,var);
+				}
 			}catch(Exception e){new ErrorMsg(e);}
 		}
 
