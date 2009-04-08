@@ -658,9 +658,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			sort.setLocationRelativeTo(null);
 			sort.setVisible(true);
-		}else if(cmd =="Sort"){
+		}else if(cmd =="Descriptives"){
 			DescriptivesDialog desc = new DescriptivesDialog(this);
-			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			desc.setLocationRelativeTo(null);
 			desc.setVisible(true);
 		}

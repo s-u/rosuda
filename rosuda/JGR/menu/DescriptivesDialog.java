@@ -131,7 +131,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			secondPanel.setVisible(false);
 			this.setSize(524, 443);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 	private void initFirstPanel(){
@@ -274,11 +274,32 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 		}
 	}
 	
-	public void setDataName(String dataName){
-		if(!dataName.equals(variableSelector.getSelectedData()))
+	public void setDataName(String dataName,boolean resetIfNotSame){
+		if(!dataName.equals(variableSelector.getSelectedData())){
 			variableSelector.setSelectedData(dataName);
+			if(resetIfNotSame)
+				reset();
+		}
 	}
 	
+	public void reset(){
+		DefaultListModel runFuncListModel = new DefaultListModel();
+		runFuncList.setModel(runFuncListModel);
+		runFuncListModel.addElement("Mean");
+		runFuncListModel.addElement("St. Deviation");
+		runFuncListModel.addElement("Valid N");
+		DefaultListModel functionListModel = 
+			new DefaultListModel();
+		functionList.setModel(functionListModel);
+		for(int i=3;i<functions.length;i++)
+			functionListModel.addElement(functions[i]);
+		((DefaultListModel)strataList.getModel()).removeAllElements();
+		((DefaultListModel)descrList.getModel()).removeAllElements();
+		variableSelector.reset();
+		secondPanel.setVisible(false);
+		cont.setText("Continue");
+		firstPanel.setVisible(true);
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
@@ -332,22 +353,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				((DefaultListModel)functionList.getModel()).addElement(objs[i]);
 			}			
 		}else if(cmd == "Reset"){
-			DefaultListModel runFuncListModel = new DefaultListModel();
-			runFuncList.setModel(runFuncListModel);
-			runFuncListModel.addElement("Mean");
-			runFuncListModel.addElement("St. Deviation");
-			runFuncListModel.addElement("Valid N");
-			DefaultListModel functionListModel = 
-				new DefaultListModel();
-			functionList.setModel(functionListModel);
-			for(int i=3;i<functions.length;i++)
-				functionListModel.addElement(functions[i]);
-			((DefaultListModel)strataList.getModel()).removeAllElements();
-			((DefaultListModel)descrList.getModel()).removeAllElements();
-			variableSelector.reset();
-			secondPanel.setVisible(false);
-			cont.setText("Continue");
-			firstPanel.setVisible(true);
+			reset();
 		}else if(cmd == "Run"){
 			if(runFuncList.getModel().getSize()==0){
 				JOptionPane.showMessageDialog(this, "Please choose at least one statistic");
@@ -385,9 +391,9 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			JGR.MAINRCONSOLE.toFront();			
 			JGR.MAINRCONSOLE.execute("descriptive.table("+dataName+
 					"["+RController.makeRStringVector(vars)+"] ,\n\tfunc.names ="+
-					RController.makeRStringVector(functions)+" ,\n\tstrata = "+
-					RController.makeRStringVector(strata)+
-					(addFuncs!=null ? ", func.additional= "+addFuncs+")" : ")")
+					RController.makeRStringVector(functions)+
+					(strata.size()<1 ? "" : (" ,\n\tstrata = "+RController.makeRStringVector(strata)))+
+					(addFuncs!=null ? (",\n\tfunc.additional= "+addFuncs+")") : ")")
 					);
 		}else if(cmd == "Custom"){
 			CustomPopUp pop = new CustomPopUp(this);
