@@ -547,7 +547,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	}
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
-		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge","transpose","Frequencies"};
+		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge",
+						"transpose","Frequencies","Descriptives"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
 		for(int i=0;i<dataRequiredFor.length;i++){

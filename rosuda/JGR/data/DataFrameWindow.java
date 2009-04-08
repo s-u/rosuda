@@ -4,6 +4,7 @@ package org.rosuda.JGR.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.menu.DescriptivesDialog;
 import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
@@ -264,7 +265,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
 						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
 							"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge","Transpose","transpose",
-						"+","Analysis","Frequencies","Frequencies",
+						"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
 						"+","Help","R Help","help", "About","about","0"  };
@@ -657,6 +658,11 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			sort.setLocationRelativeTo(null);
 			sort.setVisible(true);
+		}else if(cmd =="Sort"){
+			DescriptivesDialog desc = new DescriptivesDialog(this);
+			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			desc.setLocationRelativeTo(null);
+			desc.setVisible(true);
 		}
 	}
 	
@@ -705,7 +711,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
 		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge",
-									"transpose","Frequencies"};
+									"transpose","Frequencies","Descriptives"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
 		for(int i=0;i<dataRequiredFor.length;i++){

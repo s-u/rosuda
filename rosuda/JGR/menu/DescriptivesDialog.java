@@ -12,64 +12,66 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ListModel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
 import org.rosuda.JGR.toolkit.*;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.JRI.REXP;
+
 
 
 public class DescriptivesDialog extends javax.swing.JDialog implements ActionListener {
 	private JPanel firstPanel;
-	private JList strataList;
+	private DJList strataList;
 	private JButton cont;
-	private JButton addStrata;
+	private IconButton addStrata;
 	private JButton reset;
 	private JButton cancel;
-	private JButton removeStrata;
-	private JButton removeDesc;
-	private JButton addDesc;
+	private IconButton removeStrata;
+	private IconButton removeDesc;
+	private IconButton addDesc;
 	private JScrollPane strataScroller;
 	private JPanel strataPanel;
 	private JPanel descPanel;
-	private JList descrList;
+	private DJList descrList;
 	private JScrollPane descScroller;
 	private VariableSelector variableSelector;
 	
 	private JPanel secondPanel;
 	private JPanel functionPanel;
-	private JButton addFunc;
-	private JList runFuncList;
-	private JList functionList;
+	private IconButton addFunc;
+	private DJList runFuncList;
+	private DJList functionList;
 	private JScrollPane runFuncScroller;
 	private JButton custom;
 	private JPanel runFuncPanel;
-	private JButton removeFunc;
+	private IconButton removeFunc;
 	private JScrollPane functionScroller;
 	
-	private static String[] otherFunctions = new String[] {"Median","25th Percentile",
+	private static String[] functions = new String[] {"Mean","St. Deviation", "Valid N",
+													"Median","25th Percentile",
 													"75th Percentile","Minimum","Maximum","Skew",
 													"Kurtosis"};
-
-	/**
-	* Auto-generated main method to display this JDialog
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JFrame frame = new JFrame();
-				DescriptivesDialog inst = new DescriptivesDialog(frame);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
+	private static DefaultListModel lastDescrModel;
+	private static DefaultListModel lastStrataModel;
+	private static DefaultListModel lastFuncModel;
+	private static String lastDataName;
+	
 	
 	public DescriptivesDialog(JFrame frame) {
 		super(frame);
@@ -104,6 +106,28 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			}
 			initFirstPanel();
 			initSecondPanel();
+			boolean failed =false;
+			if(lastDataName!=null)
+				variableSelector.setSelectedData(lastDataName);
+			if(lastDescrModel!=null&& lastDescrModel.getSize()!=0){
+				descrList.setModel(lastDescrModel);
+				failed = !variableSelector.removeAll(lastDescrModel);
+			}
+			if(lastStrataModel!=null && lastStrataModel.getSize()!=0){
+				strataList.setModel(lastStrataModel);
+				failed = failed || !variableSelector.removeAll(lastStrataModel);
+			}
+			if(lastFuncModel!=null&& lastFuncModel.getSize()!=0){
+				runFuncList.setModel(lastFuncModel);
+				DefaultListModel model = (DefaultListModel) functionList.getModel();
+				for(int i=0;i<lastFuncModel.getSize();i++)
+					model.removeElement(lastFuncModel.get(i));
+			}
+			if(failed){
+				variableSelector.reset();
+				strataList.setModel(new DefaultListModel());
+				descrList.setModel(new DefaultListModel());
+			}
 			secondPanel.setVisible(false);
 			this.setSize(524, 443);
 		} catch (Exception e) {
@@ -118,11 +142,9 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			firstPanel.setLayout(firstPanelLayout);
 			firstPanel.setPreferredSize(new java.awt.Dimension(516, 333));
 			{
-				addDesc = new JButton();
-				firstPanel.add(addDesc, new AnchorConstraint(187, 543, 286, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				addDesc.setText("Add");
+				addDesc = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");;
+				firstPanel.add(addDesc, new AnchorConstraint(176, 543, 286, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addDesc.setPreferredSize(new java.awt.Dimension(42, 33));
-				addDesc.addActionListener(this);
 			}
 			{
 				strataPanel = new JPanel();
@@ -137,7 +159,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					{
 						ListModel strataListModel = 
 							new DefaultListModel();
-						strataList = new JList();
+						strataList = new DJList();
 						strataScroller.setViewportView(strataList);
 						strataList.setModel(strataListModel);
 					}
@@ -155,7 +177,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					descPanel.add(descScroller);
 					ListModel descrListModel = 
 						new DefaultListModel();
-					descrList = new JList();
+					descrList = new DJList();
 					descScroller.setViewportView(descrList);
 					descrList.setModel(descrListModel);
 				}
@@ -165,27 +187,22 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				firstPanel.add(variableSelector, new AnchorConstraint(37, 429, 920, 24, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				variableSelector.setPreferredSize(new java.awt.Dimension(209, 294));
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
+				variableSelector.getJComboBox().addActionListener(this);
 			}
 			{
-				removeDesc = new JButton();
-				firstPanel.add(removeDesc, new AnchorConstraint(301, 543, 400, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				removeDesc.setText("Remove");
-				removeDesc.setPreferredSize(new java.awt.Dimension(42, 33));
-				removeDesc.addActionListener(this);
+				removeDesc = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");;
+				firstPanel.add(removeDesc, new AnchorConstraint(301, 543, 411, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				removeDesc.setPreferredSize(new java.awt.Dimension(42, 42));
 			}
 			{
-				addStrata = new JButton();
-				firstPanel.add(addStrata, new AnchorConstraint(692, 543, 791, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				addStrata.setText("Add Strata");
-				addStrata.setPreferredSize(new java.awt.Dimension(42, 33));
-				addStrata.addActionListener(this);
+				addStrata = new IconButton("/icons/1rightarrow_32.png","Add Strata",this,"Add Strata");;
+				firstPanel.add(addStrata, new AnchorConstraint(681, 543, 791, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				addStrata.setPreferredSize(new java.awt.Dimension(42, 42));
 			}
 			{
-				removeStrata = new JButton();
-				firstPanel.add(removeStrata, new AnchorConstraint(806, 543, 905, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				removeStrata.setText("Remove Strata");
+				removeStrata = new IconButton("/icons/1leftarrow_32.png","Remove Strata",this,"Remove Strata");;
+				firstPanel.add(removeStrata, new AnchorConstraint(806, 543, 916, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeStrata.setPreferredSize(new java.awt.Dimension(42,33));
-				removeStrata.addActionListener(this);
 			}
 		}
 	}
@@ -218,25 +235,21 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					runFuncListModel.addElement("Mean");
 					runFuncListModel.addElement("St. Deviation");
 					runFuncListModel.addElement("Valid N");
-					runFuncList = new JList();
+					runFuncList = new DJList();
 					runFuncScroller.setViewportView(runFuncList);
 					runFuncList.setModel(runFuncListModel);
 				}
 			}
 		}
 		{
-			removeFunc = new JButton();
+			removeFunc = new IconButton("/icons/1leftarrow_32.png","Remove Function",this,"Remove Function");;
 			secondPanel.add(removeFunc, new AnchorConstraint(321, 574, 437, 478, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			removeFunc.setText("Remove Function");
 			removeFunc.setPreferredSize(new java.awt.Dimension(43, 32));
-			removeFunc.addActionListener(this);
 		}
 		{
-			addFunc = new JButton();
+			addFunc = new IconButton("/icons/1rightarrow_32.png","Add Function",this,"Add Function");;
 			secondPanel.add(addFunc, new AnchorConstraint(188, 574, 303, 478, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			addFunc.setText("Add Function");
 			addFunc.setPreferredSize(new java.awt.Dimension(43, 32));
-			addFunc.addActionListener(this);
 		}
 		{
 			functionPanel = new JPanel();
@@ -251,9 +264,9 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				{
 					DefaultListModel functionListModel = 
 						new DefaultListModel();
-					for(int i=0;i<otherFunctions.length;i++)
-						functionListModel.addElement(otherFunctions[i]);
-					functionList = new JList();
+					for(int i=3;i<functions.length;i++)
+						functionListModel.addElement(functions[i]);
+					functionList = new DJList();
 					functionScroller.setViewportView(functionList);
 					functionList.setModel(functionListModel);
 				}
@@ -261,11 +274,22 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 		}
 	}
 	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData()))
+			variableSelector.setSelectedData(dataName);
+	}
 	
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
-		if(cmd == "Continue"){
+		if(cmd == "comboBoxChanged"){
+			descrList.setModel(new DefaultListModel());
+			strataList.setModel(new DefaultListModel());
+		}else if(cmd == "Continue"){
+			if(descrList.getModel().getSize()==0){
+				JOptionPane.showMessageDialog(this, "Please choose a variable");
+				return;
+			}
 			firstPanel.setVisible(false);
 			secondPanel.setVisible(true);
 			cont.setText("Run");
@@ -316,8 +340,8 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			DefaultListModel functionListModel = 
 				new DefaultListModel();
 			functionList.setModel(functionListModel);
-			for(int i=0;i<otherFunctions.length;i++)
-				functionListModel.addElement(otherFunctions[i]);
+			for(int i=3;i<functions.length;i++)
+				functionListModel.addElement(functions[i]);
 			((DefaultListModel)strataList.getModel()).removeAllElements();
 			((DefaultListModel)descrList.getModel()).removeAllElements();
 			variableSelector.reset();
@@ -325,6 +349,10 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			cont.setText("Continue");
 			firstPanel.setVisible(true);
 		}else if(cmd == "Run"){
+			if(runFuncList.getModel().getSize()==0){
+				JOptionPane.showMessageDialog(this, "Please choose at least one statistic");
+				return;
+			}
 			String dataName = variableSelector.getSelectedData();
 			ArrayList vars = new ArrayList();
 			for(int i=0;i<descrList.getModel().getSize();i++)
@@ -333,16 +361,136 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			for(int i=0;i<strataList.getModel().getSize();i++)
 				strata.add(strataList.getModel().getElementAt(i));	
 			ArrayList functions = new ArrayList();
-			for(int i=0;i<runFuncList.getModel().getSize();i++)
-				functions.add(runFuncList.getModel().getElementAt(i));	
+			String addFuncs = "list(";
+			for(int i=0;i<runFuncList.getModel().getSize();i++){
+				String element = (String)runFuncList.getModel().getElementAt(i);
+				if(element.indexOf("=")<0)
+					functions.add(element);
+				else
+					addFuncs+=element+",";
+			}
+			if(addFuncs=="list(")
+				addFuncs=null;
+			else{
+				addFuncs = addFuncs.substring(0, addFuncs.length()-1)+")";
+			}
 			vars.addAll(strata);
 			this.dispose();
+			
+			lastDataName=dataName;
+			lastDescrModel = (DefaultListModel) descrList.getModel();
+			lastStrataModel = (DefaultListModel) strataList.getModel();
+			lastFuncModel = (DefaultListModel) runFuncList.getModel();
+			
 			JGR.MAINRCONSOLE.toFront();			
 			JGR.MAINRCONSOLE.execute("descriptive.table("+dataName+
 					"["+RController.makeRStringVector(vars)+"] ,\n\tfunc.names ="+
 					RController.makeRStringVector(functions)+" ,\n\tstrata = "+
-					RController.makeRStringVector(strata)+")");
+					RController.makeRStringVector(strata)+
+					(addFuncs!=null ? ", func.additional= "+addFuncs+")" : ")")
+					);
+		}else if(cmd == "Custom"){
+			CustomPopUp pop = new CustomPopUp(this);
+			pop.setLocationRelativeTo(null);
+			pop.setVisible(true);
 		}
 	}
+	
+	
+	class CustomPopUp extends JDialog implements ActionListener{
+		private JLabel nameLabel;
+		private JLabel functionLabel;
+		private JScrollPane scroller;
+		private JTextPane functionPane;
+		private JButton cancel;
+		private JButton okay;
+		private JTextArea functionText;
+		private JTextField name;
+
+		
+		public CustomPopUp(JDialog frame) {
+			super(frame);
+			initGUI();
+		}
+		
+		private void initGUI() {
+			try {
+				AnchorLayout thisLayout = new AnchorLayout();
+				getContentPane().setLayout(thisLayout);
+				{
+					cancel = new JButton();
+					getContentPane().add(cancel, new AnchorConstraint(883, 726, 959, 509, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					cancel.setText("Cancel");
+					cancel.setPreferredSize(new java.awt.Dimension(71, 22));
+					cancel.addActionListener(this);
+				}
+				{
+					okay = new JButton();
+					getContentPane().add(okay, new AnchorConstraint(883, 964, 959, 744, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					okay.setText("OK");
+					okay.setPreferredSize(new java.awt.Dimension(72, 22));
+					okay.addActionListener(this);
+				}
+				{
+					scroller = new JScrollPane();
+					getContentPane().add(scroller, new AnchorConstraint(318, 964, 817, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					scroller.setPreferredSize(new java.awt.Dimension(306, 143));
+					{
+						functionText = new JTextArea();
+						scroller.setViewportView(functionText);
+					}
+				}
+				{
+					functionLabel = new JLabel();
+					getContentPane().add(functionLabel, new AnchorConstraint(207, 964, 259, 38, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					functionLabel.setText("Enter Function - e.g. function(x) sum(x)");
+					functionLabel.setPreferredSize(new java.awt.Dimension(303, 15));
+					functionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+				}
+				{
+					name = new JTextField();
+					getContentPane().add(name, new AnchorConstraint(54, 964, 130, 368, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					name.setPreferredSize(new java.awt.Dimension(195, 22));
+				}
+				{
+					nameLabel = new JLabel();
+					getContentPane().add(nameLabel, new AnchorConstraint(67, 368, 120, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					nameLabel.setText("Function Name:");
+					nameLabel.setPreferredSize(new java.awt.Dimension(111, 15));
+				}
+				this.setSize(327, 309);
+			} catch (Exception e) {
+				new ErrorMsg(e);
+			}
+		}
+
+		public void actionPerformed(ActionEvent arg0) {
+			String cmd = arg0.getActionCommand();
+			
+			if(cmd == "Cancel"){
+				this.dispose();
+			}else if(cmd == "OK"){
+				if(name.getText().length()<1){
+					JOptionPane.showMessageDialog(this, "Please Enter a name for the function");
+					return;
+				}
+				REXP isFunc =JGR.R.eval("try(is.function("+functionText.getText()+"),silent=T)",true) ;
+				if(functionText.getText().length()<1 || isFunc.asBool() == null || !isFunc.asBool().isTRUE()){
+					JOptionPane.showMessageDialog(this, "Entered function not valid. " +
+								"Please try again.\n\nHere is an example that " +
+								"calculates the sum\nof a variable:\n                   " +
+								"function(x) sum(x)");
+					return;
+				}
+				((DefaultListModel)runFuncList.getModel()).addElement(name.getText()+"="+
+						functionText.getText());
+				this.dispose();
+			}
+		}
+
+	}
+	
+	
+	
 }
 
