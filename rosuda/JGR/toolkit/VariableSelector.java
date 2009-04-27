@@ -122,6 +122,8 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		if(model==null)
 			return false;
 		String temp;
+		if(model.getSize()==0)
+			return true;
 		boolean exists=false;
 		for(int i=0;i<model.getSize();i++){
 			temp = (String) model.get(i);

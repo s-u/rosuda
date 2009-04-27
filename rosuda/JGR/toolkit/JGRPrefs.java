@@ -140,9 +140,9 @@ public class JGRPrefs {
 	public static boolean showHiddenFiles = false;
 	
 	/** Display Data Viewer at Start Up 
-	 * TODO: read and write to file 
+	 * TODO: read and write to file
 	 * */
-	public static boolean displayViewerAtStartUp = false;
+	public static boolean displayViewerAtStartUp = true;
 
 	/** Packages which were installed when JGR was running the last time */
 	public static String previousPackages = null;

@@ -13,9 +13,9 @@ import java.util.List;
 import java.awt.image.*;
 
 public class DJList extends JList implements DragSourceListener, DropTargetListener, DragGestureListener{
-	static ArrayListTransferHandler arrayListHandler;
-    private int dragIndex=-1;
-    boolean isAtEnd=false;
+	protected static ArrayListTransferHandler arrayListHandler;
+    protected int dragIndex=-1;
+    protected boolean isAtEnd=false;
 	Object dropTargetCell;
 	
 	public DJList(){
@@ -37,7 +37,7 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
 	
 	
 	
-	class ArrayListTransferHandler extends TransferHandler {
+	protected class ArrayListTransferHandler extends TransferHandler {
 		  DataFlavor localArrayListFlavor, serialArrayListFlavor;
 
 		  String localArrayListType = DataFlavor.javaJVMLocalObjectMimeType

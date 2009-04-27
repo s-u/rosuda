@@ -142,7 +142,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			firstPanel.setLayout(firstPanelLayout);
 			firstPanel.setPreferredSize(new java.awt.Dimension(516, 333));
 			{
-				addDesc = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");;
+				addDesc = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
 				firstPanel.add(addDesc, new AnchorConstraint(176, 543, 286, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addDesc.setPreferredSize(new java.awt.Dimension(42, 33));
 			}
@@ -190,7 +190,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				variableSelector.getJComboBox().addActionListener(this);
 			}
 			{
-				removeDesc = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");;
+				removeDesc = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
 				firstPanel.add(removeDesc, new AnchorConstraint(301, 543, 411, 462, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeDesc.setPreferredSize(new java.awt.Dimension(42, 42));
 			}

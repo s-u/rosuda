@@ -70,6 +70,7 @@ import org.rosuda.JGR.menu.FactorDialog;
 import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.SortDialog;
 import org.rosuda.JGR.menu.DescriptivesDialog;
+import org.rosuda.JGR.menu.ContingencyDialog;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -153,7 +154,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
 				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
 					"-","Sort","Sort","Merge","Merge","Transpose","transpose",
-				"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
+				"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives","Contingency Tables","contin",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
 				"+","Help","R Help","help", "About","about","0"};
@@ -1027,6 +1028,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			DescriptivesDialog desc = new DescriptivesDialog(this);
 			desc.setLocationRelativeTo(null);
 			desc.setVisible(true);
+		}else if(cmd =="contin"){
+			ContingencyDialog cont = new ContingencyDialog(this);
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
 		}
 	}
 

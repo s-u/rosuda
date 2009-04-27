@@ -11,6 +11,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.JList;
+
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.robjects.RObject;
@@ -271,6 +273,14 @@ public class RController {
 		result+=")";
 		return result;
 	}
+	
+	public static String makeRStringVector(JList list){
+		ArrayList varList = new ArrayList();
+		for(int i=0;i<list.getModel().getSize();i++)
+			varList.add(list.getModel().getElementAt(i));
+		return makeRStringVector(varList);
+	}
+	
 	/**
 	 * Get all keywords for syntaxhighlighting.
 	 * 
