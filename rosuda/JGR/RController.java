@@ -281,6 +281,25 @@ public class RController {
 		return makeRStringVector(varList);
 	}
 	
+	public static boolean isValidSubsetExp(String subset,String dataName){
+		REXP valid =JGR.R.eval("(function(x,subset){"+
+									"result<-try(e <- substitute(subset),silent=TRUE)\n"+
+									"if(class(result)==\"try-error\")\n"+
+									"	return(FALSE)\n"+
+									"result<-try(r <- eval(e, x, parent.frame()),silent=TRUE)\n"+
+									"if(class(result)==\"try-error\")\n"+
+									"	return(FALSE)\n"+
+									"is.logical(r)\n"+
+									"})("+dataName+","+subset+")");
+		if(valid==null){
+			return false;
+		}
+		if(valid.asBool()==null){
+			return false;
+		}
+		return valid.asBool().isTRUE();
+	}
+	
 	/**
 	 * Get all keywords for syntaxhighlighting.
 	 * 

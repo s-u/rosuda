@@ -126,7 +126,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			reset(true);
 			return;
 		}
-		if(isValidSubset(lastSubset,lastDataName)){
+		if(RController.isValidSubsetExp(lastSubset,lastDataName)){
 			subset.setText(lastSubset);
 		}
 		cellOpt = lastCellOpt;
@@ -316,14 +316,12 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 
 			this.setTitle("Contingency Tables");
 			this.setSize(736, 539);
+			
+			//unimplemented
+			postHoc.setVisible(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
-	}
-	
-	public static boolean isValidSubset(String subset,String dataName){
-		//TODO: perform subset checks
-		return true;
 	}
 	
 	public void reset(boolean resetOptions){
@@ -339,15 +337,30 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		variableSelector.reset();
 	}
 	
-	public void executeTables(){
+	public boolean executeTables(){
 		String data = variableSelector.getSelectedData();
 		String result = resultOpt.name;
+		boolean runOnSubset=false;
 		if(result==""){
 			result="tables";
 			result=RController.makeValidVariableName(result);
 			result=JGR.MAINRCONSOLE.getUniqueName(result);
 		}else
 			result=JGR.MAINRCONSOLE.getUniqueName(result);
+		
+		if(subset.getText().length()>0){
+			String sub = subset.getText();
+			if(RController.isValidSubsetExp(sub,data)){
+				String tmp = JGR.MAINRCONSOLE.getUniqueName("tmp."+data);
+				JGR.MAINRCONSOLE.execute(tmp+"<-subset("+data+", "+sub+")");
+				data=tmp;
+				runOnSubset=true;
+			}else{
+				JOptionPane.showMessageDialog(this, "Invalid Subset. Please enter a logical expression");
+				return false;
+			}
+				
+		}
 		
 		JGR.MAINRCONSOLE.execute(result+"<-contingency.tables(\n\trow.vars="+RController.makeRStringVector(rowList)+
 					",\n\tcol.vars="+RController.makeRStringVector(columnList)+
@@ -365,8 +378,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				(cellOpt.adjResiduals ? ",adj.residuals=T" :"")+
 				(cellOpt.noTables ? ",no.tables=T" :"")+
 				")");
-		if(!resultOpt.keep)
-			JGR.MAINRCONSOLE.execute("remove("+result+")");
+		if(!resultOpt.keep){
+			if(!runOnSubset)
+				JGR.MAINRCONSOLE.execute("remove("+result+")");	
+			else
+				JGR.MAINRCONSOLE.execute("remove("+result+","+data+")");
+		}
+		return true;
 	}
 
 	public void actionPerformed(ActionEvent evnt) {
@@ -377,9 +395,10 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		}if(cmd == "Cancel"){
 			this.dispose();
 		}else if(cmd == "Run"){
-			executeTables();
-			saveToLast();
-			this.dispose();
+			if(executeTables()){
+				saveToLast();
+				this.dispose();
+			}
 		}else if(cmd == "Reset"){
 			reset(true);
 		}else if(cmd == "Add Row"){
@@ -823,20 +842,20 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump7 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump7);
 						lrgAssump7.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-						lrgAssump7.setBounds(32, 38, 25, 21);
+						lrgAssump7.setBounds(32, 38, 27, 27);
 					}
 					{
 						approxAssump = new IconButton("/icons/mcapprox_assump.png","Monte Carlo Approximation",
 								null,"Monte Carlo Approximation");
 						nomByNomPanel.add(approxAssump);
 						approxAssump.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-						approxAssump.setBounds(32, 38, 25, 21);
+						approxAssump.setBounds(32, 38, 27,27);
 					}
 					{
 						lrgAssump9 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump9);
 						lrgAssump9.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-						lrgAssump9.setBounds(32, 95, 25, 21);
+						lrgAssump9.setBounds(32, 95, 27,27);
 					}
 					{
 						liklihood = new JCheckBox();
@@ -859,7 +878,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					{
 						chisqOptions = new IconButton("/icons/advanced_21.png","Chi-Squared Options",this,"Chi-Squared Options");
 						nomByNomPanel.add(chisqOptions);
-						chisqOptions.setBounds(149, 27, 27, 21);
+						chisqOptions.setBounds(149, 27, 27,27);
 					}
 					{
 						chisq = new JCheckBox();
@@ -883,13 +902,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						liklihoodOptions =  new IconButton("/icons/advanced_21.png","Liklihood Ratio Options",
 								this,"Liklihood Ratio Options");
 						nomByNomPanel.add(liklihoodOptions);
-						liklihoodOptions.setBounds(149, 82, 27, 21);
+						liklihoodOptions.setBounds(149, 82, 27,27);
 					}
 					{
 						lrgAssump6 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump6);
 						lrgAssump6.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-						lrgAssump6.setBounds(32, 94, 25, 21);
+						lrgAssump6.setBounds(32, 94, 27,27);
 					}
 					{
 						jSeparator1 = new JSeparator();
@@ -901,13 +920,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump5 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump5);
 						lrgAssump5.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump5.setBounds(32, 215, 25, 21);
+						lrgAssump5.setBounds(32, 215, 27,27);
 					}
 					{
 						homoAssump = new IconButton("/icons/homo_assump.png","Homogeneity Across Strata",null,"Homogeneity Across Strata");
 						nomByNomPanel.add(homoAssump);
 						homoAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						homoAssump.setBounds(63, 215, 25, 21);
+						homoAssump.setBounds(63, 215, 27,27);
 					}
 				}
 				{
@@ -926,7 +945,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump4 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump4);
 						lrgAssump4.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump4.setBounds(33, 39, 25, 21);
+						lrgAssump4.setBounds(33, 39, 27,27);
 					}
 					{
 						kendallOptions = new JButton();
@@ -945,7 +964,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump3 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump3);
 						lrgAssump3.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump3.setBounds(33, 39, 25, 21);
+						lrgAssump3.setBounds(33, 39, 27,27);
 					}
 					{
 						jSeparator4 = new JSeparator();
@@ -956,13 +975,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump2 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump2);
 						lrgAssump2.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump2.setBounds(33, 39, 25, 21);
+						lrgAssump2.setBounds(33, 39, 27,27);
 					}
 					{
 						lrgAssump1 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump1);
 						lrgAssump1.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump1.setBounds(33, 103, 25, 21);
+						lrgAssump1.setBounds(33, 103, 27,27);
 					}
 					{
 						spearmanOptions = new JButton();
@@ -987,13 +1006,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						lrgAssump = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByOrdPanel.add(lrgAssump);
 						lrgAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						lrgAssump.setBounds(32, 39, 25, 21);
+						lrgAssump.setBounds(32, 39, 27,27);
 					}
 					{
 						exchAssump = new IconButton("/icons/eqvar_assump.png","Exchangability",null,"Exchangability");
 						nomByOrdPanel.add(exchAssump);
 						exchAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
-						exchAssump.setBounds(63, 39, 25, 21);
+						exchAssump.setBounds(63, 39, 27,27);
 					}
 					{
 						kruskalOptions = new JButton();

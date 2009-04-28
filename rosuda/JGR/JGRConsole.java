@@ -64,13 +64,7 @@ import org.rosuda.JGR.robjects.*;
 
 import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.data.DataFrameSelector;
-import org.rosuda.JGR.menu.MergeDialog;
-import org.rosuda.JGR.menu.RecodeDialog;
-import org.rosuda.JGR.menu.FactorDialog;
-import org.rosuda.JGR.menu.FrequencyDialog;
-import org.rosuda.JGR.menu.SortDialog;
-import org.rosuda.JGR.menu.DescriptivesDialog;
-import org.rosuda.JGR.menu.ContingencyDialog;
+import org.rosuda.JGR.menu.*;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -153,7 +147,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
 				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
-					"-","Sort","Sort","Merge","Merge","Transpose","transpose",
+					"-","Sort","Sort","Merge","Merge","Transpose","transpose","Subset","Subset",
 				"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives","Contingency Tables","contin",
 				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
@@ -1032,6 +1026,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			ContingencyDialog cont = new ContingencyDialog(this);
 			cont.setLocationRelativeTo(null);
 			cont.setVisible(true);
+		}else if(cmd == "Subset"){
+			SubsetDialog sub = new SubsetDialog(this);
+			sub.setLocationRelativeTo(null);
+			sub.setVisible(true);
 		}
 	}
 
