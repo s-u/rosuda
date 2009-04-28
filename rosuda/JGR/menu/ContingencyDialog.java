@@ -279,7 +279,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				removeRow = new IconButton("/icons/1leftarrow_32.png","Remove Row",this,"Remove Row");
 				getContentPane().add(removeRow, new AnchorConstraint(169, 442, 153, 371, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-				removeRow.setText("Remove Row");
 				removeRow.setPreferredSize(new java.awt.Dimension(42, 42));
 			}
 			{
@@ -292,7 +291,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				removeColumn = new IconButton("/icons/1leftarrow_32.png","Remove Column",this,"Remove Column");
 				getContentPane().add(removeColumn, new AnchorConstraint(498, 442, 153, 371, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-				removeColumn.setText("Remove Column");
 				removeColumn.setPreferredSize(new java.awt.Dimension(42,42));
 			}
 			{
@@ -695,28 +693,29 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		private JButton helpButton;
 		private JButton kruskalOptions;
 		private JButton exchAssump;
-		private JButton lrgAssump;
+		private IconButton lrgAssump;
 		private JCheckBox kruskal;
 		private JPanel nomByOrdPanel;
 		private JButton spearmanOptions;
-		private JButton lrgAssump1;
-		private JButton lrgAssump2;
+		private IconButton lrgAssump1;
+		private IconButton lrgAssump2;
 		private JSeparator jSeparator4;
-		private JButton lrgAssump3;
+		private IconButton lrgAssump3;
+		private IconButton lrgAssump9;
 		private JCheckBox spearmans;
 		private JButton kendallOptions;
-		private JButton lrgAssump4;
+		private IconButton lrgAssump4;
 		private JCheckBox kendall;
 		private JPanel ordByOrdPanel;
 		private JButton homoAssump;
-		private JButton lrgAssump5;
+		private IconButton lrgAssump5;
 		private JSeparator jSeparator3;
 		private JSeparator jSeparator2;
 		private JLabel strataLabel;
 		private JSeparator jSeparator1;
 		private JSeparator sep;
-		private JButton lrgAssump6;
-		private JButton lrgAssump7;
+		private IconButton lrgAssump6;
+		private IconButton lrgAssump7;
 		private JButton liklihoodOptions;
 		private JCheckBox liklihood;
 		private JButton mantelOptions;
@@ -726,6 +725,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		private JCheckBox chisq;
 		private JButton cancel;
 		private JButton okay;
+		private IconButton approxAssump;
+		
 		private ChiOptions chiSquared;
 		private LikeOptions lrTest;
 
@@ -735,6 +736,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			super(d);
 			initGUI();
 			setOptions(so);
+			if(statOpt.chiSquared.mc){
+				lrgAssump7.setVisible(false);
+				approxAssump.setVisible(true);
+			}else{
+				lrgAssump7.setVisible(true);
+				approxAssump.setVisible(false);					
+			}
 		}
 		
 		public void setOptions(StatisticsOptions so){
@@ -812,11 +820,23 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						sep.setBounds(75, 68, 79, 8);
 					}
 					{
-						lrgAssump7 = new JButton();
+						lrgAssump7 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump7);
-						lrgAssump7.setText("Large Sample Assumption");
 						lrgAssump7.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 						lrgAssump7.setBounds(32, 38, 25, 21);
+					}
+					{
+						approxAssump = new IconButton("/icons/mcapprox_assump.png","Monte Carlo Approximation",
+								null,"Monte Carlo Approximation");
+						nomByNomPanel.add(approxAssump);
+						approxAssump.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+						approxAssump.setBounds(32, 38, 25, 21);
+					}
+					{
+						lrgAssump9 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+						nomByNomPanel.add(lrgAssump9);
+						lrgAssump9.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+						lrgAssump9.setBounds(32, 95, 25, 21);
 					}
 					{
 						liklihood = new JCheckBox();
@@ -837,11 +857,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						fishers.setBounds(17, 131, 114, 19);
 					}
 					{
-						chisqOptions = new JButton();
+						chisqOptions = new IconButton("/icons/advanced_21.png","Chi-Squared Options",this,"Chi-Squared Options");
 						nomByNomPanel.add(chisqOptions);
-						chisqOptions.setText("Chi-Squared Options");
 						chisqOptions.setBounds(149, 27, 27, 21);
-						chisqOptions.addActionListener(this);
 					}
 					{
 						chisq = new JCheckBox();
@@ -862,16 +880,14 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						mantelOptions.addActionListener(this);
 					}
 					{
-						liklihoodOptions = new JButton();
+						liklihoodOptions =  new IconButton("/icons/advanced_21.png","Liklihood Ratio Options",
+								this,"Liklihood Ratio Options");
 						nomByNomPanel.add(liklihoodOptions);
-						liklihoodOptions.setText("Liklihood Ratio Options");
 						liklihoodOptions.setBounds(149, 82, 27, 21);
-						liklihoodOptions.addActionListener(this);
 					}
 					{
-						lrgAssump6 = new JButton();
+						lrgAssump6 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump6);
-						lrgAssump6.setText("Large Sample Assumption");
 						lrgAssump6.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 						lrgAssump6.setBounds(32, 94, 25, 21);
 					}
@@ -882,16 +898,14 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						jSeparator1.setBounds(75, 122, 79, 3);
 					}
 					{
-						lrgAssump5 = new JButton();
+						lrgAssump5 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByNomPanel.add(lrgAssump5);
-						lrgAssump5.setText("Large Sample Assumption");
 						lrgAssump5.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump5.setBounds(32, 215, 25, 21);
 					}
 					{
-						homoAssump = new JButton();
+						homoAssump = new IconButton("/icons/homo_assump.png","Homogeneity Across Strata",null,"Homogeneity Across Strata");
 						nomByNomPanel.add(homoAssump);
-						homoAssump.setText("Homogeneity Across Strata Assumption");
 						homoAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						homoAssump.setBounds(63, 215, 25, 21);
 					}
@@ -909,9 +923,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						kendall.setBounds(17, 20, 130, 19);
 					}
 					{
-						lrgAssump4 = new JButton();
+						lrgAssump4 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump4);
-						lrgAssump4.setText("Large Sample Assumption");
 						lrgAssump4.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump4.setBounds(33, 39, 25, 21);
 					}
@@ -929,9 +942,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						spearmans.setBounds(17, 78, 131, 19);
 					}
 					{
-						lrgAssump3 = new JButton();
+						lrgAssump3 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump3);
-						lrgAssump3.setText("Large Sample Assumption");
 						lrgAssump3.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump3.setBounds(33, 39, 25, 21);
 					}
@@ -941,16 +953,14 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						jSeparator4.setBounds(70, 70, 77, 7);
 					}
 					{
-						lrgAssump2 = new JButton();
+						lrgAssump2 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump2);
-						lrgAssump2.setText("Large Sample Assumption");
 						lrgAssump2.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump2.setBounds(33, 39, 25, 21);
 					}
 					{
-						lrgAssump1 = new JButton();
+						lrgAssump1 = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						ordByOrdPanel.add(lrgAssump1);
-						lrgAssump1.setText("Large Sample Assumption");
 						lrgAssump1.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump1.setBounds(33, 103, 25, 21);
 					}
@@ -974,16 +984,14 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						kruskal.setBounds(17, 20, 119, 19);
 					}
 					{
-						lrgAssump = new JButton();
+						lrgAssump = new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
 						nomByOrdPanel.add(lrgAssump);
-						lrgAssump.setText("Large Sample Assumption");
 						lrgAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						lrgAssump.setBounds(32, 39, 25, 21);
 					}
 					{
-						exchAssump = new JButton();
+						exchAssump = new IconButton("/icons/eqvar_assump.png","Exchangability",null,"Exchangability");
 						nomByOrdPanel.add(exchAssump);
-						exchAssump.setText("Exchangeability Assumption");
 						exchAssump.setBorder(BorderFactory.createEmptyBorder(0,0,0,0));
 						exchAssump.setBounds(63, 39, 25, 21);
 					}
@@ -1186,6 +1194,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						return;
 					}
 					chiSquared = tmp;
+					if(chiSquared.mc){
+						lrgAssump7.setVisible(false);
+						approxAssump.setVisible(true);
+					}else{
+						lrgAssump7.setVisible(true);
+						approxAssump.setVisible(false);					
+					}
 					this.dispose();
 				}
 				
