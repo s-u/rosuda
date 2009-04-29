@@ -1030,6 +1030,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			SubsetDialog sub = new SubsetDialog(this);
 			sub.setLocationRelativeTo(null);
 			sub.setVisible(true);
+			toFront();
 		}
 	}
 

@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;
@@ -26,10 +28,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+import org.rosuda.JGR.data.DataFrameWindow;
+import org.rosuda.JGR.toolkit.SyntaxArea;
 import org.rosuda.JGR.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.JGR.util.ErrorMsg;
 
 
 public class SubsetDialog extends JDialog implements ActionListener, MouseListener{
@@ -58,12 +63,36 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	private JPanel funcPanel;
 	private JPanel logPanel;
 	private JLabel jLabel1;
-	private JEditorPane subsetEditor;
+	private SyntaxArea subsetEditor;
 
+	private static HashMap historyMap;
+	private static String lastDataName;
 	
 	public SubsetDialog(JFrame frame) {
 		super(frame);
+		if(historyMap==null)
+			historyMap=new HashMap();
 		initGUI();
+		if(lastDataName!=null)
+			variableSelector.setSelectedData(lastDataName);
+		refreshRecent();
+		
+	}
+	
+	public void refreshRecent(){
+		ArrayList lis = (ArrayList) historyMap.get(variableSelector.getSelectedData());
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		recent.setModel(model);
+		if(lis!=null){
+			for(int i=0;i<lis.size();i++)
+				model.addElement(lis.get(i));
+		}
+	}
+	
+	public void setDataName(String dataName,boolean resetIfNotSame){
+		if(!dataName.equals(variableSelector.getSelectedData())){
+			variableSelector.setSelectedData(dataName);;
+		}
 	}
 	
 	private void initGUI() {
@@ -192,7 +221,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 					subsetPanel.add(subsetScroller, BorderLayout.CENTER);
 					subsetScroller.setPreferredSize(new java.awt.Dimension(262, 52));
 					{
-						subsetEditor = new JEditorPane();
+						subsetEditor = new SyntaxArea();
 						subsetScroller.setViewportView(subsetEditor);
 					}
 				}
@@ -202,6 +231,8 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				getContentPane().add(variableSelector);
 				variableSelector.setPreferredSize(new java.awt.Dimension(215, 194));
 				variableSelector.setBounds(12, 12, 215, 194);
+				variableSelector.getJComboBox().addActionListener(this);
+				variableSelector.getJList().addMouseListener(this);
 			}
 			{
 				okay = new JButton();
@@ -253,7 +284,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			this.setTitle("Data Subset");
 			this.setSize(525, 382);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 
@@ -320,8 +351,30 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				subn = JGR.MAINRCONSOLE.getUniqueName(data+".sub");
 			else
 				subn = JGR.MAINRCONSOLE.getUniqueName(subName.getText());
-			JGR.MAINRCONSOLE.execute(subn+"<-subset("+data+","+sub+")");
+			JGR.MAINRCONSOLE.executeLater(subn+"<-subset("+data+","+sub+")");
+			
+			if(historyMap.containsKey(variableSelector.getSelectedData()))
+				((ArrayList)historyMap.get(variableSelector.getSelectedData())).add(0, sub);
+			else{
+				ArrayList nl= new ArrayList();
+				nl.add(sub);
+				historyMap.put(variableSelector.getSelectedData(), nl);
+			}
+			lastDataName = variableSelector.getSelectedData();
+			
 			this.dispose();
+			final String subsetName = subn;
+			Runnable doWorkRunnable = new Runnable() {
+				public void run() { 
+			if(DataFrameWindow.dataWindows!=null && 
+					DataFrameWindow.dataWindows.size()>0){
+			DataFrameWindow dataView =(DataFrameWindow)DataFrameWindow.dataWindows.get(0);
+			dataView.setVisible(true); 
+			dataView.showData(subsetName);	
+					}
+				}
+			};
+			SwingUtilities.invokeLater(doWorkRunnable);	
 		}else if(cmd == "Reset"){
 			subsetEditor.setText("");
 			subName.setText("<auto>");
@@ -330,6 +383,9 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			if(act.getSource()==recent){
 				subsetEditor.setText((String)recent.getSelectedItem());
 				subsetEditor.requestFocus();
+			}else{
+				subsetEditor.setText("");
+				refreshRecent();
 			}
 		}else if(cmd=="Function Help"){
 			Object func = funcList.getSelectedValue();
@@ -340,15 +396,22 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 
 	public void mouseClicked(MouseEvent ms) {
 		if(ms.getClickCount()==2){
-			String item =(String)funcList.getSelectedValue();
-			try{
-				subsetEditor.getDocument().insertString(subsetEditor.getCaretPosition(), " "+item+"(?)", null);
-				subsetEditor.requestFocus();
-				subsetEditor.setSelectionEnd(subsetEditor.getCaretPosition()-2);
-				subsetEditor.setSelectionStart(subsetEditor.getCaretPosition()-3);
-			}catch(Exception e){}			
+			String item = "";
+			if(ms.getSource()==funcList){
+				item =(String)funcList.getSelectedValue();
+				try{
+					subsetEditor.getDocument().insertString(subsetEditor.getCaretPosition(), item+"() ", null);
+					subsetEditor.requestFocus();
+					subsetEditor.setCaretPosition(subsetEditor.getCaretPosition()-2);
+				}catch(Exception e){}	
+			}else{
+				item =(String)variableSelector.getJList().getSelectedValue();
+				try{
+					subsetEditor.getDocument().insertString(subsetEditor.getCaretPosition(),item, null);
+					subsetEditor.requestFocus();
+				}catch(Exception e){}					
+			}
 		}
-		
 	}
 
 	public void mouseEntered(MouseEvent arg0) {}

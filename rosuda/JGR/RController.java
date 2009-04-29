@@ -282,6 +282,9 @@ public class RController {
 	}
 	
 	public static boolean isValidSubsetExp(String subset,String dataName){
+		if(subset==null || subset.length()<1)
+			return false;
+		
 		REXP valid =JGR.R.eval("(function(x,subset){"+
 									"result<-try(e <- substitute(subset),silent=TRUE)\n"+
 									"if(class(result)==\"try-error\")\n"+

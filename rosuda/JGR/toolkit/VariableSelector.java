@@ -67,7 +67,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			this.setName("Variable Selector");
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
-			this.setPreferredSize(new java.awt.Dimension(164, 290));
+			this.setPreferredSize(new java.awt.Dimension(194, 294));
 			this.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 			dataComboBoxModel = 
 				new DefaultComboBoxModel();
@@ -80,9 +80,15 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			
 			
 			filter = new JTextField();
-			this.add(filter, new AnchorConstraint(98, 966, 170, 338, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			this.add(filterText, new AnchorConstraint(108, 338, 160, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-			this.add(dataComboBox, new AnchorConstraint(5, 1003, 77, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			this.add(filter, new AnchorConstraint(25, 970, 147, 62, 
+					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
+					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+			this.add(filterText, new AnchorConstraint(30, 260, 144, 30, 
+					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
+					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+			this.add(dataComboBox, new AnchorConstraint(1, 999, 79, 2,  
+					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 			dataComboBox.setPreferredSize(new java.awt.Dimension(164, 22));
 			filterText.setPreferredSize(new java.awt.Dimension(55, 15));
 			filter.setPreferredSize(new java.awt.Dimension(103, 21));
@@ -94,7 +100,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			JScrollPane listScroller = new JScrollPane(variableList,
                     ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                     ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-			this.add(listScroller, new AnchorConstraint(191, 1003, 1001, 3, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+			this.add(listScroller, new AnchorConstraint(50, 999, 1001, 3, 
+					AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
+					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 			listScroller.setPreferredSize(new java.awt.Dimension(164, 224));
 
 		} catch (Exception e) {

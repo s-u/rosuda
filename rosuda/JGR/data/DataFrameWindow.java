@@ -4,12 +4,14 @@ package org.rosuda.JGR.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.menu.ContingencyDialog;
 import org.rosuda.JGR.menu.DescriptivesDialog;
 import org.rosuda.JGR.menu.FrequencyDialog;
 import org.rosuda.JGR.menu.MergeDialog;
 import org.rosuda.JGR.menu.RecodeDialog;
 import org.rosuda.JGR.menu.FactorDialog;
 import org.rosuda.JGR.menu.SortDialog;
+import org.rosuda.JGR.menu.SubsetDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -264,8 +266,10 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
 							"Package Installer","packageinst","-", "-","Preferences","preferences",
 						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
-							"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge","Transpose","transpose",
+							"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
+							"Transpose","transpose","Subset","Subset",
 						"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
+							"Contingency Tables","contin",
 						"+","Graphs","TO DO: Visualization ","-",
 						"~Window",
 						"+","Help","R Help","help", "About","about","0"  };
@@ -619,7 +623,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		else if (cmd == "transpose"){
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");		
-			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd == "Merge"){
 			MergeDialog merge =new MergeDialog(); 
 			merge.setLocationRelativeTo(null);
@@ -647,12 +650,12 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}else if (cmd == "rowReset"){
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
-			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd =="Frequencies"){
 			FrequencyDialog freq = new FrequencyDialog(this);
 			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
+			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd =="Sort"){
 			SortDialog sort = new SortDialog(this);
 			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
@@ -663,6 +666,18 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			desc.setLocationRelativeTo(null);
 			desc.setVisible(true);
+			JGR.MAINRCONSOLE.toFront();
+		}else if(cmd =="contin"){
+			ContingencyDialog cont = new ContingencyDialog(this);
+			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
+			JGR.MAINRCONSOLE.toFront();
+		}else if(cmd == "Subset"){
+			SubsetDialog sub = new SubsetDialog(this);
+			sub.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
+			sub.setLocationRelativeTo(null);
+			sub.setVisible(true);
 		}
 	}
 	

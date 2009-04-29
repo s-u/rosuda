@@ -21,6 +21,7 @@ import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
+import org.rosuda.JGR.util.ErrorMsg;
 
 public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private JList dataList;
@@ -34,18 +35,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private static String lastSelected1;
 	private static String lastSelected2;
 	private static String lastNewData;
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				MergeDialog inst = new MergeDialog();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
+
 	
 	public MergeDialog() {
 		super();
@@ -137,7 +127,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			pack();
 			this.setSize(417, 268);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 

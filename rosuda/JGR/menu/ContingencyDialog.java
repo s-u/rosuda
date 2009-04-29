@@ -67,6 +67,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	private StatisticsOptions statOpt;
 	private ResultsOptions resultOpt;
 	
+	private String rCmd ="";
+	
 	private static CellOptions lastCellOpt;
 	private static StatisticsOptions lastStatOpt;
 	private static ResultsOptions lastResultOpt;
@@ -362,13 +364,13 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				
 		}
 		
-		JGR.MAINRCONSOLE.execute(result+"<-contingency.tables(\n\trow.vars="+RController.makeRStringVector(rowList)+
+		rCmd+=(result+"<-contingency.tables(\n\trow.vars="+RController.makeRStringVector(rowList)+
 					",\n\tcol.vars="+RController.makeRStringVector(columnList)+
 					(stratumList.getModel().getSize()>0 ? ",\n\tstratum.var="+RController.makeRStringVector(stratumList) : "") +
 					",data="+data+")");
-		statOpt.addStatistics(result);
+		rCmd+=statOpt.addStatistics(result);
 
-		JGR.MAINRCONSOLE.execute("print("+result+
+		rCmd+="\n"+ ("print("+result+
 				(cellOpt.row ? ",prop.r=T" :",prop.r=F")+
 				(cellOpt.col ? ",prop.c=T" :",prop.c=F")+
 				(cellOpt.total ? ",prop.t=T" :",prop.t=F")+
@@ -380,11 +382,17 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				")");
 		if(!resultOpt.keep){
 			if(!runOnSubset)
-				JGR.MAINRCONSOLE.execute("remove("+result+")");	
+				rCmd+="\n"+ ("remove("+result+")");	
 			else
-				JGR.MAINRCONSOLE.execute("remove("+result+","+data+")");
+				rCmd+="\n"+ ("remove("+result+","+data+")");
 		}
 		return true;
+	}
+	
+	public void setDataName(String dataName,boolean resetIfNotSame){
+		if(!dataName.equals(variableSelector.getSelectedData())){
+			variableSelector.setSelectedData(dataName);
+		}
 	}
 
 	public void actionPerformed(ActionEvent evnt) {
@@ -396,6 +404,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}else if(cmd == "Run"){
 			if(executeTables()){
+				JGR.MAINRCONSOLE.executeLater(rCmd);
 				saveToLast();
 				this.dispose();
 			}
@@ -527,24 +536,26 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		public ChiOptions chiSquared=new ChiOptions();
 		public LikeOptions lrTest=new LikeOptions();
 		
-		public void addStatistics(String result){
+		public String addStatistics(String result){
+			String cmd = "";
 			if(chisq==true)
-				JGR.MAINRCONSOLE.execute(result+"<-add.chi.squared("+result+
+				cmd+="\n"+ (result+"<-add.chi.squared("+result+
 						(chiSquared.conservative ? ",conservative=T": "")+
 						(chiSquared.mc ? (",simulate.p.value=T,B="+chiSquared.b) : "") + ")");
 			if(liklihood)
-				JGR.MAINRCONSOLE.execute(result+"<-add.likelihood.ratio("+result+
+				cmd+="\n"+ (result+"<-add.likelihood.ratio("+result+
 						(lrTest.conservative ? ",conservative=T": "")+ ")");
 			if(fishers)
-				JGR.MAINRCONSOLE.execute(result+"<-add.fishers.exact("+result+ ")");
+				cmd+="\n"+ (result+"<-add.fishers.exact("+result+ ")");
 			if(spearmans)
-				JGR.MAINRCONSOLE.execute(result+"<-add.correlation("+result+ ",method='spearman')");
+				rCmd+="\n"+ (result+"<-add.correlation("+result+ ",method='spearman')");
 			if(kendall)
-				JGR.MAINRCONSOLE.execute(result+"<-add.correlation("+result+ ",method='kendall')");
+				cmd+="\n"+ (result+"<-add.correlation("+result+ ",method='kendall')");
 			if(kruskal)
-				JGR.MAINRCONSOLE.execute(result+"<-add.kruskal("+result+ ")");
+				cmd+="\n"+ (result+"<-add.kruskal("+result+ ")");
 			if(mantelHaen)
-				JGR.MAINRCONSOLE.execute(result+"<-add.mantel.haenszel("+result+ ")");
+				cmd+="\n"+ (result+"<-add.mantel.haenszel("+result+ ")");
+			return cmd;
 		}
 	}
 	
