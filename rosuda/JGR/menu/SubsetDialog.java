@@ -60,18 +60,6 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	private JLabel jLabel1;
 	private JEditorPane subsetEditor;
 
-	/**
-	* Auto-generated main method to display this JDialog
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JFrame frame = new JFrame();
-				SubsetDialog inst = new SubsetDialog(frame);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
 	public SubsetDialog(JFrame frame) {
 		super(frame);
