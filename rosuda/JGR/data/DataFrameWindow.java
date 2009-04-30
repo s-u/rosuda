@@ -655,7 +655,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
-			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd =="Sort"){
 			SortDialog sort = new SortDialog(this);
 			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
@@ -666,13 +665,11 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			desc.setLocationRelativeTo(null);
 			desc.setVisible(true);
-			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd =="contin"){
 			ContingencyDialog cont = new ContingencyDialog(this);
 			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			cont.setLocationRelativeTo(null);
 			cont.setVisible(true);
-			JGR.MAINRCONSOLE.toFront();
 		}else if(cmd == "Subset"){
 			SubsetDialog sub = new SubsetDialog(this);
 			sub.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
