@@ -277,6 +277,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
 		new Thread(new Refresher()).start();
+		new Thread(new OutputBufferClearer()).start();
 	}
 
 	/**
@@ -636,20 +637,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            output type (0=regular, 1=warning/error)
 	 */
 	public void rWriteConsole(Rengine re, String text, int oType) {
-		final String fText = text;
-		Runnable doWork = new Runnable() {
-		    public void run() {
-				try{
-					console.append(fText);
-					if (console.length() > 100) {
-						output.append(console.toString(), JGRPrefs.RESULT);
-						console.delete(0, console.length());
-						output.setCaretPosition(outputDoc.getLength());
-					}
-				}catch(Exception err){new ErrorMsg(err);}
-		    }
-		};
-		SwingUtilities.invokeLater(doWork);
+		console.append(text);
 	}
 
 	/**
@@ -677,11 +665,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		Runnable doWork = new Runnable() {
 		    public void run() {
 				if (fWhich == 0) {
-					if (console != null) {
-						output.append(console.toString(), JGRPrefs.RESULT);
-						console.delete(0, console.length());
-					}
-					output.setCaretPosition(outputDoc.getLength());
 					setWorking(false);
 				} else {
 					toolBar.stopButton.setEnabled(true);
@@ -706,7 +689,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	public String rReadConsole(Rengine re, String prompt, int addToHistory) {
 		Runnable doWork = new Runnable() {
 		    public void run() {
-		    	toolBar.stopButton.setEnabled(false);	    	
+		    	toolBar.stopButton.setEnabled(false);
+				if (console.length()>0) {
+					output.append(console.toString(), JGRPrefs.RESULT);
+					console.delete(0, console.length());
+					output.setCaretPosition(outputDoc.getLength());
+				}
 		    }
 		};
 		SwingUtilities.invokeLater(doWork);
@@ -1154,13 +1142,36 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(500);
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							if(JGR.DATA.size()==0)
 								setDataDependentMenusEnabled(false);
 							else
 								setDataDependentMenusEnabled(true);	
+						}};
+					SwingUtilities.invokeLater(doWorkRunnable);
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
+		}
+	}
+	
+	class OutputBufferClearer implements Runnable {
+		public OutputBufferClearer() {
+		}
+
+		public void run() {
+			while (true)
+				try {
+					Thread.sleep(101);
+					Runnable doWorkRunnable = new Runnable() {
+						public void run() { 
+							if (console.length()>0) {
+								output.append(console.toString(), JGRPrefs.RESULT);
+								console.delete(0, console.length());
+								output.setCaretPosition(outputDoc.getLength());
+							}
 						}};
 					SwingUtilities.invokeLater(doWorkRunnable);
 				} catch (Exception e) {
