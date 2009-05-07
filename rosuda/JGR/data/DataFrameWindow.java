@@ -651,7 +651,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
 		}else if(cmd =="Frequencies"){
-			FrequencyDialog freq = new FrequencyDialog(this);
+			FrequencyDialog freq = new FrequencyDialog(JGR.MAINRCONSOLE);
 			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			freq.setLocationRelativeTo(null);
 			freq.setVisible(true);
@@ -661,12 +661,12 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			sort.setLocationRelativeTo(null);
 			sort.setVisible(true);
 		}else if(cmd =="Descriptives"){
-			DescriptivesDialog desc = new DescriptivesDialog(this);
+			DescriptivesDialog desc = new DescriptivesDialog(JGR.MAINRCONSOLE);
 			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			desc.setLocationRelativeTo(null);
 			desc.setVisible(true);
 		}else if(cmd =="contin"){
-			ContingencyDialog cont = new ContingencyDialog(this);
+			ContingencyDialog cont = new ContingencyDialog(JGR.MAINRCONSOLE);
 			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			cont.setLocationRelativeTo(null);
 			cont.setVisible(true);
