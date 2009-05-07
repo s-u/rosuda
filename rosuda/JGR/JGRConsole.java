@@ -277,7 +277,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
 		new Thread(new Refresher()).start();
-		new Thread(new OutputBufferClearer()).start();
 	}
 
 	/**
@@ -637,7 +636,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            output type (0=regular, 1=warning/error)
 	 */
 	public void rWriteConsole(Rengine re, String text, int oType) {
-		console.append(text);
+		final String t = text;
+		Runnable doWork = new Runnable() {
+		    public void run() {
+				console.append(t);    	
+		    }
+		};
+		SwingUtilities.invokeLater(doWork);
+
 	}
 
 	/**
@@ -690,11 +696,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		Runnable doWork = new Runnable() {
 		    public void run() {
 		    	toolBar.stopButton.setEnabled(false);
-				if (console.length()>0) {
-					output.append(console.toString(), JGRPrefs.RESULT);
-					console.delete(0, console.length());
-					output.setCaretPosition(outputDoc.getLength());
-				}
 		    }
 		};
 		SwingUtilities.invokeLater(doWork);
@@ -709,6 +710,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				final String fPrompt = prompt;
 				Runnable doWork1 = new Runnable() {
 				    public void run() {
+						if (console.length()>0) {
+							output.append(console.toString(), JGRPrefs.RESULT);
+							console.delete(0, console.length());
+							output.setCaretPosition(outputDoc.getLength());
+						}
 						output.append(fPrompt, JGRPrefs.CMD);
 						output.setCaretPosition(outputDoc.getLength());	    	
 				    }
@@ -719,7 +725,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				    public void run() {
 				    	try {
 				    		outputDoc.insertString(outputDoc.getLength(), s + "\n",
-				    				JGRPrefs.CMD);    	
+				    				JGRPrefs.CMD);   
+							if (console.length()>0) {
+								output.append(console.toString(), JGRPrefs.RESULT);
+								console.delete(0, console.length());
+								output.setCaretPosition(outputDoc.getLength());
+							}				    		
 				    		} catch (Exception e) {new ErrorMsg(e);}
 				    }
 				};
@@ -1142,13 +1153,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(500);
+					Thread.sleep(1000);
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							if(JGR.DATA.size()==0)
 								setDataDependentMenusEnabled(false);
 							else
 								setDataDependentMenusEnabled(true);	
+							if (console.length()>0) {
+								output.append(console.toString(), JGRPrefs.RESULT);
+								console.delete(0, console.length());
+								output.setCaretPosition(outputDoc.getLength());
+							}		
 						}};
 					SwingUtilities.invokeLater(doWorkRunnable);
 				} catch (Exception e) {
@@ -1157,26 +1173,4 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		}
 	}
 	
-	class OutputBufferClearer implements Runnable {
-		public OutputBufferClearer() {
-		}
-
-		public void run() {
-			while (true)
-				try {
-					Thread.sleep(101);
-					Runnable doWorkRunnable = new Runnable() {
-						public void run() { 
-							if (console.length()>0) {
-								output.append(console.toString(), JGRPrefs.RESULT);
-								console.delete(0, console.length());
-								output.setCaretPosition(outputDoc.getLength());
-							}
-						}};
-					SwingUtilities.invokeLater(doWorkRunnable);
-				} catch (Exception e) {
-					new ErrorMsg(e);
-				}
-		}
-	}
 }
