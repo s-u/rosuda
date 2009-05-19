@@ -9,7 +9,6 @@
 package org.rosuda.ibase.toolkit;
 
 import java.awt.Event;
-import java.awt.Menu;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
@@ -288,7 +287,7 @@ public class EzMenuSwing {
         return null;
     };
 	
-		/**
+	 /**
 	 * Add JMenu to existing menubar.
 	 * 
 	 * @param f
@@ -301,6 +300,32 @@ public class EzMenuSwing {
 		JMenu m = getMenu(f,name);
 		if (m == null)
 			mb.add(new JMenu(name));
+	}
+	
+	 /**
+	 * Add JMenu to existing menubar.
+	 * 
+	 * @param f
+	 *            JFrame where to add menu.
+	 * @param name
+	 *            menu name
+	 *@param index
+	 *            position
+	 */
+	public static void insertMenu(JFrame f, String name,int index) {
+		JMenuBar mb = f.getJMenuBar();
+		JMenu m = getMenu(f,name);
+		if (m == null && index<mb.getMenuCount()){
+			JMenuBar mb2 = new JMenuBar(); 
+			int cnt = mb.getMenuCount();
+			for(int i=0;i<cnt;i++){
+				if(i==index)
+					mb2.add(new JMenu(name));
+				mb2.add(mb.getMenu(0));
+			}
+			f.setJMenuBar(mb2);			
+		}else if(m==null && index==mb.getMenuCount())
+			addMenu(f,name);
 	}
 
 	/**
@@ -326,6 +351,32 @@ public class EzMenuSwing {
 		m.add(mi);
 	}
 
+	/**
+	 * Insert JMenuItem to existing menu.
+	 * 
+	 * @param f
+	 *            JFrame which contains menu
+	 * @param menu
+	 *            JMenu where to add new item
+	 * @param name
+	 *            name of new item
+	 * @param command
+	 *            ActionCommand of this new item
+	 * @param al
+	 *            ActionListener which should be attached to this JMenuItem
+	 * @param index
+	 * 			  Position of insertion
+	 */
+	public static void insertJMenuItem(JFrame f, String menu, String name,
+			String command, ActionListener al,int index) {
+		JMenu m = getMenu(f, menu);
+		JMenuItem mi = new JMenuItem(name);
+		mi.addActionListener(al);
+		mi.setActionCommand(command);
+		m.insert(mi,index);
+	}
+	
+	
 	/**
 	 * Add a menuseparator to existing menu.
 	 * 
