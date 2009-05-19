@@ -9,7 +9,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.StringTokenizer;
 import java.util.Vector;
@@ -22,9 +21,7 @@ import org.rosuda.JGR.toolkit.ConsoleSync;
 import org.rosuda.JGR.toolkit.JGRListener;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.RConsoleOutputStream;
 import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -234,10 +231,6 @@ public class JGR {
 		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
 		// make sure we get a clean prompt after all packages have been loaded
 		JGR.MAINRCONSOLE.execute("",false);
-		if(JGRPrefs.displayViewerAtStartUp==true){
-			DataFrameWindow dataWin = new DataFrameWindow();
-			dataWin.setVisible(true);
-		}
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();

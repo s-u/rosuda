@@ -57,14 +57,10 @@ import org.rosuda.JGR.toolkit.SelectionPreservingCaret;
 import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
 import org.rosuda.JGR.toolkit.ToolBar;
-import org.rosuda.JGR.toolkit.VariableSelectionDialog;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.robjects.*;
 
-import org.rosuda.JGR.data.DataFrameWindow;
-import org.rosuda.JGR.data.DataFrameSelector;
-import org.rosuda.JGR.menu.*;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
@@ -144,12 +140,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					"@FFind","search","@GFind Next","searchnext","-","!IIncrease Font Size",
 					"fontBigger", "!DDecrease Font Size", "fontSmaller",
 				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
-					"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
+					"-","Package Manager", "packagemgr", 
 					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode","Reset Row Names","rowReset",
-					"-","Sort","Sort","Merge","Merge","Transpose","transpose","Subset","Subset",
-				"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives","Contingency Tables","contin",
-				"+","Graphs","TO DO: Visualization ","-",
 				"~Window",
 				"+","Help","R Help","help", "About","about","0"};
 		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
@@ -912,11 +904,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			}
 		else if (cmd == "help")
 			executeLater("help.start()");
-		else if (cmd == "table"){
-			DataFrameWindow inst = new DataFrameWindow();
-			inst.setLocationRelativeTo(null);
-			inst.setVisible(true);
-		}else if (cmd == "save")
+		else if (cmd == "save")
 			output.startExport();
 		else if (cmd == "savewsp")
 			saveWorkSpace(wspace);
@@ -966,71 +954,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		} else if (cmd == "update")
 			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")",
 					false);
-		else if (cmd == "transpose"){
-			String name = null;
-			RObject data = null;
-			DataFrameSelector sel = new DataFrameSelector(this);
-			data = sel.getSelection();
-			if(data!=null){
-				name = data.getName();
-				executeLater(name+"<-as.data.frame(t("+name+"))");
-				DataFrameWindow.setTopDataWindow(name);
-				toFront();
-			}
-		}else if(cmd == "Merge"){
-			MergeDialog merge =new MergeDialog(); 
-			merge.setLocationRelativeTo(null);
-			merge.setVisible(true);
-		}else if(cmd == "Recode"){
-			RecodeDialog recode =new RecodeDialog(this); 
-			recode.setLocationRelativeTo(null);
-			recode.setVisible(true);
-		}else if(cmd == "Edit Factor"){
-			VariableSelectionDialog inst =new VariableSelectionDialog(this);
-			inst.SetSingleSelection(true);
-			inst.setLocationRelativeTo(null);
-			inst.setRFilter("is.factor");
-			inst.setTitle("Select Factor to Edit");
-			inst.setVisible(true);
-			String variable = inst.getSelecteditem();
-			if(variable==null)
-					return;
-			FactorDialog fact = new FactorDialog(this,variable);
-			fact.setLocationRelativeTo(null);
-			fact.setVisible(true);
-		}else if (cmd == "rowReset"){
-			String name = null;
-			RObject data = null;
-			DataFrameSelector sel = new DataFrameSelector(this);
-			data = sel.getSelection();
-			if(data!=null){
-				name = data.getName();
-				executeLater("rownames("+name+") <-1:dim("+name+")[1]");
-				DataFrameWindow.setTopDataWindow(name);
-				toFront();
-			}
-		}else if(cmd=="Sort"){
-			SortDialog sort = new SortDialog(this);
-			sort.setLocationRelativeTo(null);
-			sort.setVisible(true);
-		}else if(cmd =="Frequencies"){
-			FrequencyDialog freq = new FrequencyDialog(this);
-			freq.setLocationRelativeTo(null);
-			freq.setVisible(true);
-		}else if(cmd =="Descriptives"){
-			DescriptivesDialog desc = new DescriptivesDialog(this);
-			desc.setLocationRelativeTo(null);
-			desc.setVisible(true);
-		}else if(cmd =="contin"){
-			ContingencyDialog cont = new ContingencyDialog(this);
-			cont.setLocationRelativeTo(null);
-			cont.setVisible(true);
-		}else if(cmd == "Subset"){
-			SubsetDialog sub = new SubsetDialog(this);
-			sub.setLocationRelativeTo(null);
-			sub.setVisible(true);
-			toFront();
-		}
 	}
 
 	/**

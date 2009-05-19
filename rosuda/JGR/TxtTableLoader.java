@@ -1,7 +1,6 @@
 package org.rosuda.JGR;
 
 import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -43,18 +42,7 @@ import org.rosuda.ibase.SVarSet;
 
 import org.rosuda.JGR.util.*;
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class TxtTableLoader extends javax.swing.JFrame {
 	private File file;
 	private JPanel jPanel1;
@@ -350,7 +338,6 @@ public class TxtTableLoader extends javax.swing.JFrame {
 
 		loadInR(dataName,false);
 		this.dispose();
-		((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
 		JGR.MAINRCONSOLE.toFront();
 	}
 	

@@ -36,7 +36,6 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.ibase.Common;
-import org.rosuda.JGR.data.DataFrameWindow;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.util.ErrorMsg;
 
@@ -72,7 +71,7 @@ public class DataLoader extends JFrame {
 																	"Minitab (*.mtp)",
 																	"S data dump (*.s3)"};
 	private JTextField rDataNameField;
-	
+	private String rName;
 	
 	public DataLoader(){
 		try{
@@ -96,15 +95,12 @@ public class DataLoader extends JFrame {
 		if(fileDialog.getFile()==null)
 			return;
 		String fileName = fileDialog.getDirectory()+fileDialog.getFile();
-		String rName = rDataNameField.getText();
+		rName = rDataNameField.getText();
 		if(rName.length()==0)
 			rName = (fileDialog.getFile().indexOf(".")<=0 ?JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile()):
 				JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile().substring(0, fileDialog.getFile().indexOf("."))) );
 		rName = RController.makeValidVariableName(rName);
 		loadData(fileDialog.getFile(),fileDialog.getDirectory(),rName);
-		DataFrameWindow.setTopDataWindow(rName);
-		((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
-		JGR.MAINRCONSOLE.toFront();
 		}catch(Exception er){new ErrorMsg(er);}
 		
 	}
@@ -172,4 +168,7 @@ public class DataLoader extends JFrame {
 	public void loadTxtFile(String fileName,String directory, String rName){
 		TxtTableLoader.run(directory+fileName,rName);
 	}
+	
+	public String getDataName(){return rName;}
+	
 }
