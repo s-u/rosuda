@@ -11,6 +11,7 @@ import java.io.*;
 import java.awt.*;
 import org.rosuda.ibase.*;
 import org.rosuda.ibase.toolkit.*;
+import org.rosuda.ibase.toolkit.SplashScreen;
 import org.rosuda.util.*;
 
 public class PlatformMac extends org.rosuda.util.PlatformMac {
