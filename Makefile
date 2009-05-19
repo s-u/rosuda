@@ -37,9 +37,9 @@ JRCLIENT_SRC:=$(wildcard rosuda/JRclient/*.java)
 IPLOTS_SRC:=$(wildcard rosuda/iplots/*.java)
 IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
-JGR_SRC:=$(wildcard rosuda/JGR/*.java) $(wildcard rosuda/JGR/data/*.java) $(wildcard rosuda/JGR/layout/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JGR/editor/*.java) $(wildcard rosuda/JGR/menu/*.java) $(wildcard rosuda/JGR/menu/file/*.java)
+JGR_SRC:=$(wildcard rosuda/JGR/*.java)  $(wildcard rosuda/JGR/layout/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JGR/editor/*.java)
 JEDIT_SRC:= $(wildcard rosuda/JGR/editor/jedit/syntax/*.java)
-DEDUCER_SRC:= $(wildcard rosuda/deducer/*.java)
+DEDUCER_SRC:= $(wildcard rosuda/deducer/*.java) $(wildcard rosuda/deducer/menu/*.java)  $(wildcard rosuda/deducer/toolkit/*.java) $(wildcard rosuda/deducer/data/*.java)
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
 RENGINE_RSERVE_SRC:=$(wildcard rosuda/REngine/Rserve/*.java) $(wildcard rosuda/REngine/Rserve/protocol/*.java)
@@ -90,6 +90,7 @@ deducer.jar: JGR.jar javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(DEDUCER_SRC
 	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)javaGD.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE)$(PATHSEP)MRJstubs.jar $(DEDUCER_SRC)
 	jar fcm $@ rosuda/projects/deducer/deducer.mft org
 	rm -rf org
+
 
 ibase.jar: MRJstubs.jar $(IBASE_SRC)
 	rm -rf org
