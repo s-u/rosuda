@@ -331,7 +331,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
 		rTable.dispose();
-		if(JGR.R.eval(previewName+" %in% ls()").asBool().isTRUE())
+		if(JGR.R.eval("\""+previewName+"\" %in% ls()").asBool().isTRUE())
 			JGR.R.eval("rm("+previewName+")", false);
 	}
 	private void loadActionPerformed(ActionEvent evt) {
