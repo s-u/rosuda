@@ -759,6 +759,7 @@
 		2835E2150AAB352A00012BE8 /* editor */ = {
 			isa = PBXGroup;
 			children = (
+				287A3E7E0C11B77E0094B032 /* jedit */,
 				28B0B10C0FC4447E00BD46BC /* DefaultEditorWorker.java */,
 				28B0B10D0FC4447E00BD46BC /* EditorPreferences.java */,
 				28B0B10E0FC4447E00BD46BC /* EditorUndoManager.java */,
@@ -766,7 +767,6 @@
 				28B0B1100FC4447E00BD46BC /* LineNumbers.java */,
 				28B0B1110FC4447E00BD46BC /* SyntaxArea.java */,
 				28B0B1120FC4447E00BD46BC /* SyntaxDocument.java */,
-				287A3E7E0C11B77E0094B032 /* jedit */,
 				287A3F920C11B8BA0094B032 /* RInputHandler.java */,
 				287A3E7B0C11B77E0094B032 /* CodeCompletion.java */,
 				287A3E7C0C11B77E0094B032 /* Editor.java */,
