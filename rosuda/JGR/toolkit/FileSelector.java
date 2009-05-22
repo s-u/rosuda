@@ -51,6 +51,8 @@ public class FileSelector extends JFrame {
 	private Frame f;
 	
 	private int result = JFileChooser.CANCEL_OPTION;
+	
+	private boolean isSwing = false;
 
 	/**
 	 * Create a FileDialog, on Mac we use the AWT on others i'm currently using
@@ -66,12 +68,17 @@ public class FileSelector extends JFrame {
 	 *            should we start in a specified directory
 	 */
 	public FileSelector(Frame f, String title, int type, String directory) {
+		this(f,title,type,directory,false);
+	}
+	
+	public FileSelector(Frame f, String title, int type, String directory, boolean forceSwing) {
 		this.type = type;
 		this.f = f;
-		if (Common.isMac()) {
+		if (Common.isMac() && !forceSwing) {
 			awtDialog = new FileDialog(f, title, type);
 			if (directory != null)
 				awtDialog.setDirectory(directory);
+			isSwing = false;
 		} else {
 			if (directory != null)
 				swingChooser = new JFileChooser(directory);
@@ -79,6 +86,7 @@ public class FileSelector extends JFrame {
 				swingChooser = new JFileChooser();
 			swingChooser.setDialogTitle(title);
 			swingChooser.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
+			isSwing = true;
 		}
 	}
 	
@@ -88,20 +96,11 @@ public class FileSelector extends JFrame {
 	 * 
 	 */
 	public FileSelector(Frame f, String title, int type) {
-		this.type = type;
-		this.f = f;
-		if (Common.isMac()) {
-			awtDialog = new FileDialog(f, title, type);
-			awtDialog.setDirectory(lastDirectory);
-		} else {
-			swingChooser = new JFileChooser(lastDirectory);
-			swingChooser.setDialogTitle(title);
-			swingChooser.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
-		}
+		this(f,title,type,null,false);
 	}
 	
 	public void addActionListener(ActionListener al) {
-		if (!Common.isMac())
+		if (isSwing)
 			swingChooser.addActionListener(al);
 	}
 
@@ -109,7 +108,7 @@ public class FileSelector extends JFrame {
 	 * Show fileselector.
 	 */
 	public void setVisible(boolean b) {
-		if (Common.isMac())
+		if (!isSwing)
 			awtDialog.setVisible(true);
 		else if (type == OPEN)
 			result = swingChooser.showOpenDialog(f);
@@ -127,7 +126,7 @@ public class FileSelector extends JFrame {
 	public String getFile() {
 		String fileName = null;
 		try {
-			if (Common.isMac()){
+			if (!isSwing){
 				fileName = awtDialog.getFile();
 				FileSelector.lastDirectory = awtDialog.getDirectory();
 			}
@@ -143,6 +142,14 @@ public class FileSelector extends JFrame {
 			return null;
 		}
 	}
+	
+	public File getSelectedFile() {
+		if (isSwing) {
+			return swingChooser.getSelectedFile();
+		} else {
+			return new File(awtDialog.getFile());
+		}
+	}
 
 	/**
 	 * Get selected directoryname.
@@ -151,8 +158,7 @@ public class FileSelector extends JFrame {
 	 */
 	public String getDirectory() {
 		try {
-			if (Common.isMac()){
-				
+			if (!isSwing){
 				FileSelector.lastDirectory = awtDialog.getDirectory();
 				return FileSelector.lastDirectory;
 			}
@@ -174,7 +180,7 @@ public class FileSelector extends JFrame {
 	 */
 	public void setFile(String file) {
 		try {
-			if (Common.isMac())
+			if (!isSwing)
 				awtDialog.setFile(file);
 			else
 				swingChooser.setSelectedFile(new File(file));
@@ -192,18 +198,23 @@ public class FileSelector extends JFrame {
 	public void addFooterPanel(JPanel panel){
 		JPanel fileView=null;
 		try{
-		if (!Common.isMac()) {
-			fileView = (JPanel) ((JComponent) ((JComponent) swingChooser
+		if (isSwing) {
+			if (System.getProperty("os.name").startsWith("Window")) {
+				fileView = (JPanel) ((JComponent) ((JComponent) swingChooser
 					.getComponent(2)).getComponent(2)).getComponent(2);
+			} else {
+				fileView = (JPanel) swingChooser.getComponent(swingChooser.getComponentCount() - 1);
+			}
 		}
-		
 		if(fileView!=null){
 			fileView.add(panel);
-			JPanel pp = (JPanel) ((JComponent) ((JComponent) swingChooser
+			if (System.getProperty("os.name").startsWith("Window")) {
+				JPanel pp = (JPanel) ((JComponent) ((JComponent) swingChooser
 					.getComponent(2)).getComponent(2)).getComponent(0);
-			JPanel temp = new JPanel();
-			temp.setMaximumSize(new Dimension(0,panel.getPreferredSize().height));
-			pp.add(temp);
+				JPanel temp = new JPanel();
+				temp.setMaximumSize(new Dimension(0,panel.getPreferredSize().height));
+				pp.add(temp);
+			}
 		}
 		}catch(Exception e){
 			new ErrorMsg(e);
@@ -215,11 +226,11 @@ public class FileSelector extends JFrame {
 
 	public boolean isSwing()
 	{
-		return !Common.isMac();
+		return isSwing;
 	}
 	
 	public Component getSelector() {
-		if (Common.isMac())
+		if (!isSwing)
 			return awtDialog;
 		return swingChooser;
 	}

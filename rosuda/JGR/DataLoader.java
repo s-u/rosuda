@@ -7,6 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
@@ -38,10 +41,10 @@ import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.ibase.Common;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.JRI.REXP;
 
 
-
-public class DataLoader extends JFrame {
+public class DataLoader extends JFrame implements PropertyChangeListener {
 	
 	private static String extensions[][] = new String[][]{	{"rda","rdata"},
 															{"robj"},
@@ -72,11 +75,13 @@ public class DataLoader extends JFrame {
 																	"S data dump (*.s3)"};
 	private JTextField rDataNameField;
 	private String rName;
+	private FileSelector fileDialog;
+	private boolean nameAccepted = false;
 	
 	public DataLoader(){
 		try{
 		FileFilter extFilter;
-		FileSelector fileDialog = new FileSelector(this,"Load Data",FileSelector.LOAD);
+		fileDialog = new FileSelector(this,"Load Data",FileSelector.LOAD,null,true);
 		if(fileDialog.isSwing()){
 			JFileChooser chooser = fileDialog.getJFileChooser();
 			for(int i=0;i<extensionDescription.length;i++)
@@ -87,10 +92,11 @@ public class DataLoader extends JFrame {
 			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 		}
 		JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		namePanel.add(new JLabel("Set Name: "));
+		namePanel.add(new JLabel("Set name: "));
 		rDataNameField = new JTextField(20);
 		namePanel.add(rDataNameField);
 		fileDialog.addFooterPanel(namePanel);
+		fileDialog.getJFileChooser().addPropertyChangeListener(this);
 		fileDialog.setVisible(true);
 		if(fileDialog.getFile()==null)
 			return;
@@ -170,5 +176,35 @@ public class DataLoader extends JFrame {
 	}
 	
 	public String getDataName(){return rName;}
+	
+	// due to unknown reason propertyChange is called twice sometimes to avoid loop set a flag
+	private boolean checkingMode = false;
+	
+	/**
+	 * propertyChange: handle propertyChange, used for setting the name where
+	 * the set should be assigned to.
+	 */
+	public void propertyChange(PropertyChangeEvent e) {
+		File file = fileDialog.getSelectedFile();
+		if (file != null && !file.isDirectory() && !nameAccepted && !checkingMode) {
+			checkingMode = true;
+			String name = file.getName().replaceAll("\\..*", "");
+			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]", ".");
+			REXP x = JGR.R.idleEval("try(.refreshObjects(),silent=TRUE)");
+			String[] r = null;
+			if (x != null && (r = x.asStringArray()) != null)
+				JGR.setObjects(r);
+			while (JGR.OBJECTS.contains(name) && !nameAccepted) {
+				String val = (String) JOptionPane.showInputDialog(
+																  this, "Object name already used!",
+																  "Object " + name + " exists!",
+																  JOptionPane.PLAIN_MESSAGE, null, null, name);
+				if (val != null) name = val;
+			}
+			nameAccepted = true;
+			rDataNameField.setText(name);
+		}
+		checkingMode = false;
+	}
 	
 }
