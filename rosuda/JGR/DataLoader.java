@@ -180,12 +180,25 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	// due to unknown reason propertyChange is called twice sometimes to avoid loop set a flag
 	private boolean checkingMode = false;
 	
+	private File selectedFile = null;
 	/**
 	 * propertyChange: handle propertyChange, used for setting the name where
 	 * the set should be assigned to.
 	 */
 	public void propertyChange(PropertyChangeEvent e) {
 		File file = fileDialog.getSelectedFile();
+		if (file == null) {
+			rDataNameField.setText("");
+			checkingMode = false;
+			nameAccepted = false;
+			selectedFile = file;
+		} else {
+			if (file != null && selectedFile != null && !file.getName().equalsIgnoreCase(selectedFile.getName())) {
+				checkingMode = false;
+				nameAccepted = false;
+			}
+			selectedFile = file;
+		}
 		if (file != null && !file.isDirectory() && !nameAccepted && !checkingMode) {
 			checkingMode = true;
 			String name = file.getName().replaceAll("\\..*", "");
@@ -194,15 +207,22 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 			String[] r = null;
 			if (x != null && (r = x.asStringArray()) != null)
 				JGR.setObjects(r);
-			while (JGR.OBJECTS.contains(name) && !nameAccepted) {
+			while (JGR.OBJECTS.contains(name) && !nameAccepted && name != null) {
 				String val = (String) JOptionPane.showInputDialog(
 																  this, "Object name already used!",
 																  "Object " + name + " exists!",
 																  JOptionPane.PLAIN_MESSAGE, null, null, name);
-				if (val != null) name = val;
+				if (val != null) {
+					name = val;
+					nameAccepted = true;
+					rDataNameField.setText(name);
+				}
+				if (val == null) {
+					name = null;
+					nameAccepted = true;
+					break;
+				}
 			}
-			nameAccepted = true;
-			rDataNameField.setText(name);
 		}
 		checkingMode = false;
 	}
