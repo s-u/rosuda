@@ -68,7 +68,7 @@ public class JGRPrefs {
 	public static Color CMDColor = Color.red;
 
 	/** DefaultResultColor */
-	public static Color RESULTColor = Color.black;
+	public static Color RESULTColor = Color.blue;
 
 	/** DefaultErrorColor */
 	public static Color ERRORColor = Color.red;
