@@ -63,7 +63,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	private JLabel jLabel1;
 	private SyntaxArea subsetEditor;
 
-	private static HashMap historyMap;
+	public static HashMap historyMap;
 	private static String lastDataName;
 	
 	public SubsetDialog(JFrame frame) {
@@ -81,15 +81,39 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 		ArrayList lis = (ArrayList) historyMap.get(variableSelector.getSelectedData());
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		recent.setModel(model);
+		model.addElement("");
 		if(lis!=null){
 			for(int i=0;i<lis.size();i++)
 				model.addElement(lis.get(i));
 		}
 	}
 	
+	public static DefaultComboBoxModel getRecent(String data){
+		if(historyMap==null)
+			historyMap=new HashMap();
+		ArrayList lis = (ArrayList) historyMap.get(data);
+		DefaultComboBoxModel model = new DefaultComboBoxModel();
+		model.addElement("");
+		if(lis!=null){
+			for(int i=0;i<lis.size();i++)
+				model.addElement(lis.get(i));
+		}
+		return model;
+	}
+	
 	public void setDataName(String dataName,boolean resetIfNotSame){
 		if(!dataName.equals(variableSelector.getSelectedData())){
 			variableSelector.setSelectedData(dataName);;
+		}
+	}
+	
+	public static void addToHistory(String dataName,String sub){
+		if(historyMap.containsKey(dataName))
+			((ArrayList)historyMap.get(dataName)).add(0, sub);
+		else{
+			ArrayList nl= new ArrayList();
+			nl.add(sub);
+			historyMap.put(dataName, nl);
 		}
 	}
 	
@@ -351,13 +375,14 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				subn = JGR.MAINRCONSOLE.getUniqueName(subName.getText());
 			JGR.MAINRCONSOLE.executeLater(subn+"<-subset("+data+","+sub+")");
 			
-			if(historyMap.containsKey(variableSelector.getSelectedData()))
+			/*if(historyMap.containsKey(variableSelector.getSelectedData()))
 				((ArrayList)historyMap.get(variableSelector.getSelectedData())).add(0, sub);
 			else{
 				ArrayList nl= new ArrayList();
 				nl.add(sub);
 				historyMap.put(variableSelector.getSelectedData(), nl);
-			}
+			}*/
+			addToHistory(variableSelector.getSelectedData(),sub);
 			lastDataName = variableSelector.getSelectedData();
 			
 			this.dispose();

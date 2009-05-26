@@ -43,9 +43,8 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	private IconButton removeStratum;
 	private IconButton removeColumn;
 	private JButton help;
-	private JTextArea subset;
 	private JScrollPane subsetScroller;
-	private JPanel subsetPanel;
+	private SubsetPanel subsetPanel;
 	private DJList stratumList;
 	private DJList columnList;
 	private DJList rowList;
@@ -93,7 +92,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		lastRowModel = (DefaultListModel) rowList.getModel();
 		lastColumnModel = (DefaultListModel) columnList.getModel();
 		lastStratumModel = (DefaultListModel) stratumList.getModel();
-		lastSubset = subset.getText();
+		lastSubset = subsetPanel.getText();
 		lastCellOpt = cellOpt;
 		lastStatOpt = statOpt;
 		lastResultOpt = resultOpt;
@@ -129,7 +128,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			return;
 		}
 		if(RController.isValidSubsetExp(lastSubset,lastDataName)){
-			subset.setText(lastSubset);
+			subsetPanel.setText(lastSubset);
 		}
 		cellOpt = lastCellOpt;
 		statOpt = lastStatOpt;
@@ -149,24 +148,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				help.setText("Help");
 				help.setPreferredSize(new java.awt.Dimension(41, 35));
 				help.addActionListener(this);
-			}
-			{
-				subsetPanel = new JPanel();
-				BorderLayout subsetPanelLayout = new BorderLayout();
-				subsetPanel.setLayout(subsetPanelLayout);
-				subsetPanel.setBorder(BorderFactory.createTitledBorder("Subset"));
-				getContentPane().add(subsetPanel, new AnchorConstraint(772, 776, 875, 469, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				subsetPanel.setPreferredSize(new java.awt.Dimension(226, 53));
-				{
-					subsetScroller = new JScrollPane();
-					subsetPanel.add(subsetScroller, BorderLayout.CENTER);
-					{
-						subset = new JTextArea();
-						subsetScroller.setViewportView(subset);
-						subset.setText("");
-					}
-				}
 			}
 			{
 				postHoc = new JButton();
@@ -315,7 +296,34 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				results.setPreferredSize(new java.awt.Dimension(100, 27));
 				results.addActionListener(this);
 			}
-
+			{
+				JPanel tmpPanel =new JPanel();
+				tmpPanel.setLayout(new BorderLayout());
+				tmpPanel.setBorder(BorderFactory.createTitledBorder("Subset"));
+				subsetPanel = new SubsetPanel(variableSelector.getJComboBox());
+				tmpPanel.add(subsetPanel);
+				getContentPane().add(tmpPanel, new AnchorConstraint(750, 776, 893, 469, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				subsetPanel.setBorder(BorderFactory.createTitledBorder("Subset"));				
+				subsetPanel.setPreferredSize(new java.awt.Dimension(226, 53));
+	
+					/*new JPanel();
+				BorderLayout subsetPanelLayout = new BorderLayout();
+				subsetPanel.setLayout(subsetPanelLayout);
+				subsetPanel.setBorder(BorderFactory.createTitledBorder("Subset"));
+				getContentPane().add(subsetPanel, new AnchorConstraint(772, 776, 875, 469, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				subsetPanel.setPreferredSize(new java.awt.Dimension(226, 53));
+				{
+					subsetScroller = new JScrollPane();
+					subsetPanel.add(subsetScroller, BorderLayout.CENTER);
+					{
+						subset = new JTextArea();
+						subsetScroller.setViewportView(subset);
+						subset.setText("");
+					}
+				}*/
+			}
 			this.setTitle("Contingency Tables");
 			this.setSize(736, 539);
 			
@@ -330,7 +338,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		rowList.setModel(new DefaultListModel());
 		columnList.setModel(new DefaultListModel());
 		stratumList.setModel(new DefaultListModel());
-		subset.setText("");
+		subsetPanel.setText("");
 		if(resetOptions){
 			cellOpt = new CellOptions();
 			statOpt = new StatisticsOptions();
@@ -350,11 +358,12 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		}else
 			result=JGR.MAINRCONSOLE.getUniqueName(result);
 		
-		if(subset.getText().length()>0){
-			String sub = subset.getText();
-			if(RController.isValidSubsetExp(sub,data)){
+		if(subsetPanel.getText().length()>0){
+			String sub = subsetPanel.getText();
+			if(SubsetDialog.isValidSubsetExp(sub,data)){
 				String tmp = JGR.MAINRCONSOLE.getUniqueName("tmp."+data);
-				JGR.MAINRCONSOLE.execute(tmp+"<-subset("+data+", "+sub+")");
+				rCmd+=(tmp+"<-subset("+data+", "+sub+")")+"\n";
+				SubsetDialog.addToHistory(data, sub);				
 				data=tmp;
 				runOnSubset=true;
 			}else{
