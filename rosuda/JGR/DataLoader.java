@@ -212,7 +212,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 				if (val != null) {
 					name = val;
 					nameAccepted = true;
-					rDataNameField.setText(name);
+					
 				}
 				if (val == null) {
 					name = null;
@@ -220,6 +220,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 					break;
 				}
 			}
+			rDataNameField.setText(name);
 		}
 		checkingMode = false;
 	}
