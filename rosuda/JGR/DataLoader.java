@@ -2,45 +2,26 @@ package org.rosuda.JGR;
 
 
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+
 import java.awt.FlowLayout;
-import java.awt.Frame;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
-
-import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.FileSelector;
-import org.rosuda.ibase.Common;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.JRI.REXP;
 
 
 public class DataLoader extends JFrame implements PropertyChangeListener {
@@ -81,13 +62,12 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 		try{
 			FileFilter extFilter;
 			fileDialog = new FileSelector(this,"Load Data",FileSelector.LOAD,null,true);
-				JFileChooser chooser = fileDialog.getJFileChooser();
-				for(int i=0;i<extensionDescription.length;i++)
-				{
-					extFilter= new ExtensionFileFilter(extensionDescription[i], extensions[i]);
-					chooser.addChoosableFileFilter(extFilter);
-				}
-				chooser.setFileFilter(chooser.getAcceptAllFileFilter());
+			JFileChooser chooser = fileDialog.getJFileChooser();
+			for(int i=0;i<extensionDescription.length;i++){
+				extFilter= new ExtensionFileFilter(extensionDescription[i], extensions[i]);
+				chooser.addChoosableFileFilter(extFilter);
+			}
+			chooser.setFileFilter(chooser.getAcceptAllFileFilter());
 			JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			namePanel.add(new JLabel("Set name: "));
 			rDataNameField = new JTextField(20);
@@ -174,55 +154,20 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	
 	public String getDataName(){return rName;}
 	
-	// due to unknown reason propertyChange is called twice sometimes to avoid loop set a flag
-	private boolean checkingMode = false;
-	
-	private File selectedFile = null;
+
 	/**
 	 * propertyChange: handle propertyChange, used for setting the name where
 	 * the set should be assigned to.
 	 */
-	public void propertyChange(PropertyChangeEvent e) {
-		File file = fileDialog.getSelectedFile();
-		if (file == null) {
-			rDataNameField.setText("");
-			checkingMode = false;
-			nameAccepted = false;
-			selectedFile = file;
-		} else {
-			if (file != null && selectedFile != null && !file.getName().equalsIgnoreCase(selectedFile.getName())) {
-				checkingMode = false;
-				nameAccepted = false;
-			}
-			selectedFile = file;
+		public void propertyChange(PropertyChangeEvent e) {
+			File file = fileDialog.getSelectedFile();
+			if(file!=null && !file.isDirectory() && !(file.getName().toLowerCase().endsWith(".rdata")||
+					file.getName().toLowerCase().endsWith(".rda"))){
+				String name = file.getName().replaceAll("\\..*", "");
+				name =JGR.MAINRCONSOLE.getUniqueName(name);
+				rDataNameField.setText(name);
+			}else
+				rDataNameField.setText("");
 		}
-		if (file != null && !file.isDirectory() && !nameAccepted && !checkingMode) {
-			checkingMode = true;
-			String name = file.getName().replaceAll("\\..*", "");
-			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]", ".");
-			REXP x = JGR.R.idleEval("try(.refreshObjects(),silent=TRUE)");
-			String[] r = null;
-			if (x != null && (r = x.asStringArray()) != null)
-				JGR.setObjects(r);
-			while (JGR.OBJECTS.contains(name) && !nameAccepted && name != null) {
-				String val = (String) JOptionPane.showInputDialog(
-																  this, "Object name already used!",
-																  "Object " + name + " exists!",
-																  JOptionPane.PLAIN_MESSAGE, null, null, name);
-				if (val != null) {
-					name = val;
-					nameAccepted = true;
-					
-				}
-				if (val == null) {
-					name = null;
-					nameAccepted = true;
-					break;
-				}
-			}
-			rDataNameField.setText(name);
-		}
-		checkingMode = false;
-	}
 	
 }
