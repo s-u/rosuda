@@ -76,14 +76,20 @@ public class FileSelector extends JFrame {
 		this.f = f;
 		if (Common.isMac() && !forceSwing) {
 			awtDialog = new FileDialog(f, title, type);
-			if (directory != null)
+			if (directory != null) {
 				awtDialog.setDirectory(directory);
+			}
+			else if (lastDirectory != null) {
+				awtDialog.setDirectory(lastDirectory);
+			}
 			isSwing = false;
 		} else {
-			if (directory != null)
+			if (directory != null) {
 				swingChooser = new JFileChooser(directory);
-			else
-				swingChooser = new JFileChooser();
+			}
+			else if (lastDirectory  != null) {
+				swingChooser = new JFileChooser(lastDirectory);
+			}
 			swingChooser.setDialogTitle(title);
 			swingChooser.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
 			isSwing = true;
