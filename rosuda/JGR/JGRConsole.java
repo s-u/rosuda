@@ -129,7 +129,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
-		String[] Menu = { "+", "File", "New Datafile","newdata", "@LLoad Datafile", "loaddata", "-",
+		String[] Menu = { "+", "File", "New Data","newdata", "@LLoad Data", "loaddata", "-",
 			"@NNew Document", "new", "@OOpen Document", "open",
 			"!OSource File...", "source", "@SSave", "save", "-",
 			"@DSet Working Directory", "setwd", "~File.Quit", 
