@@ -129,7 +129,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
-		String[] Menu = { "+", "File", "@LLoad Datafile", "loaddata", "-",
+		String[] Menu = { "+", "File", "New Datafile","newdata", "@LLoad Datafile", "loaddata", "-",
 			"@NNew Document", "new", "@OOpen Document", "open",
 			"!OSource File...", "source", "@SSave", "save", "-",
 			"@DSet Working Directory", "setwd", "~File.Quit", 
@@ -208,8 +208,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		this.setSize(new Dimension(800,
 				Common.screenRes.height < 1000 ? Common.screenRes.height - 50
 						: 900));
-		Point center = new Point(Common.screenRes.width/2-this.getWidth()/2,40);
-		this.setLocation(center);
+		//Point center = new Point(Common.screenRes.width/2-this.getWidth()/2,40);
+		//this.setLocation(center);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
@@ -851,6 +851,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			}
 		else if (cmd == "help")
 			executeLater("help.start()");
+		else if (cmd == "table")
+			new DataTable(null, null, true);
 		else if (cmd == "save")
 			output.startExport();
 		else if (cmd == "savewsp")

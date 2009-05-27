@@ -173,7 +173,9 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		this.setVisible(true);
 	}
 
-	public JGRPackageManager() {
+	private static JGRPackageManager instance;
+	
+	private JGRPackageManager() {
 		super("Package Manager", false, TJFrame.clsPackageUtil);
 		try {
 			String[] Menu = {
@@ -237,6 +239,19 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 			new ErrorMsg(e);
 		}// this.show(); //do it manually when you really want to see it
 	}
+	
+	public void dispose() {
+		setVisible(false);
+	}
+	
+	public static void showInstance() {
+		if (instance == null) {
+			instance = new JGRPackageManager();
+		}
+		instance.refresh();
+		instance.setVisible(true);
+	}
+	
 
 	/**
 	 * Exit the package-manager but before save default-packages.

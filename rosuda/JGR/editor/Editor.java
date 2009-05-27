@@ -165,6 +165,8 @@ public class Editor extends TJFrame implements ActionListener {
 		if(visible)
 			this.setVisible(true);
 		
+		initPlacement();
+		
 	}
 	
 	public void dispose()

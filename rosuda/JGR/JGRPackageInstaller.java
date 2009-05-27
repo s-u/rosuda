@@ -54,6 +54,8 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 	private String type = "binaries";
 
 	private final String current = RController.getCurrentPackages();
+	
+	private static JGRPackageInstaller instance;
 
 	/**
 	 * Create a package-installer window.
@@ -63,7 +65,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 	 * @param type
 	 *            binary- or source-packages
 	 */
-	public JGRPackageInstaller(String[] pkgs, String type) {
+	private JGRPackageInstaller(String[] pkgs, String type) {
 		super("Package Installer", false, TJFrame.clsPackageUtil);
 
 		this.type = type;
@@ -109,7 +111,19 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		this.setSize(200, 400);
 		this.setResizable(false);
 	}
+	
+	public void refresh(String[] pkgs, String type) {
+		this.type = type;
+		packages = pkgs;
+		pkgList = new JList(packages);
+		pkgList.setCellRenderer(new PkgCellRenderer());
+	}
 
+	public void dispose() {
+		instance = null;
+		super.dispose();
+	}
+	
 	private void installPkg() {
 		String destDir = null;
 		for (int i = 0; i < JGR.RLIBS.length; i++)
@@ -192,8 +206,12 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		final String type = ttype;
 		Runnable doWork = new Runnable() {
 		    public void run() { 
-		    	JGRPackageInstaller inst = new JGRPackageInstaller(pkgs,type);
-		    	inst.setVisible(true);
+				if (instance == null) {
+					instance = new JGRPackageInstaller(pkgs,type);
+				} else {
+					instance.refresh(pkgs, type);
+				}
+		    	instance.setVisible(true);
 		    }
 		};
 		SwingUtilities.invokeLater(doWork);

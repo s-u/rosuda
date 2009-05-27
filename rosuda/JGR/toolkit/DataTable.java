@@ -243,6 +243,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 						d.height > Common.screenRes.height ? Common.screenRes.height - 50
 								: d.height));
 		this.setLocation(this.getLocation().x + 100, 10);
+		initPlacement();
 		if(visible)
 			this.setVisible(true);
 	}

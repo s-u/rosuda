@@ -65,11 +65,13 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 	private FunctionList fBrowser;
 
 	private final JTabbedPane browsers = new JTabbedPane();
+			
+			private static JGRObjectManager instance;
 
 	/** Tooltip showing the summary for selected object */
 	public Popup summary = null;
 
-	public JGRObjectManager() {
+	private JGRObjectManager() {
 		super("Object Browser", false, TJFrame.clsObjBrowser);
 
 		String[] Menu = { "~Window", "0" };
@@ -156,11 +158,19 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 			}
 
 			public void windowClosing(java.awt.event.WindowEvent evt) {
-				dispose();
+				setVisible(false);
 			}
 		});
 		this.setSize(new Dimension(400, 500));
 		this.setLocation(this.getLocation().x + 400, 10);
+	}
+			
+	public static void showInstance() {
+		if (instance == null) {
+			instance = new JGRObjectManager();
+		}
+		instance.refresh();
+		instance.setVisible(true);
 	}
 
 	/**
