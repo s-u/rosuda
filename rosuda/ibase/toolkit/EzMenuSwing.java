@@ -66,7 +66,7 @@ public class EzMenuSwing {
                 }
                 if (AC_WTMCLOSE.equals(popDef[i+1])) mi.addActionListener(wt);
                 lastSep=false;
-                i+=2;
+				i+=2;
             };
         };
         

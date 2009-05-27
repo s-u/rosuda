@@ -129,21 +129,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
-		String[] Menu = { 
-				"+", "File", "#New","-","#Open","-","@SSave", "save",
-					//"@PPrint","print",
-					"-","-",
-					"!OSource File...", "source","~File.Quit", 
-				"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
-					"#Copy Special","-", "@VPaste","paste","@ASelect All","selAll",
-					"@JClear Console","clearconsole","-",
-					"@FFind","search","@GFind Next","searchnext","-","!IIncrease Font Size",
-					"fontBigger", "!DDecrease Font Size", "fontSmaller",
-				"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
-					"-","Package Manager", "packagemgr", 
-					"Package Installer","packageinst","-", "-","@,Preferences","preferences",
-				"~Window",
-				"+","Help","R Help","help", "About","about","0"};
+		String[] Menu = { "+", "File", "@LLoad Datafile", "loaddata", "-",
+			"@NNew Document", "new", "@OOpen Document", "open",
+			"!OSource File...", "source", "@SSave", "save", "-",
+			"@DSet Working Directory", "setwd", "~File.Quit", 
+			"+","Edit","@ZUndo","undo","!ZRedo","redo","-","@XCut","cut","@CCopy","copy",
+			"#Copy Special","-",
+			"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
+			"@FFind","search","@GFind Next","searchnext","-","!LClear Console","clearconsole",
+			"-", "!IIncrease Font Size","fontBigger", "!DDecrease Font Size", "fontSmaller",
+			"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp",
+			"+", "Packages & Data", "@BObject Browser","objectmgr", "DataTable", "table", "-","Package Manager", "packagemgr", "Package Installer","packageinst",
+			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
 		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
 		JMenu rm = (JMenu) EzMenuSwing.getItem(this,"Copy Special");
 		if (rm != null) {
@@ -159,57 +156,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			item3.setActionCommand("copyresult");
 			item3.addActionListener(this);
 			rm.add(item3);
-		}
-		rm = (JMenu) EzMenuSwing.getItem(this,"New");
-		if (rm != null) {
-			JMenuItem item1 = new JMenuItem("Data");
-			item1.setActionCommand("newdata");
-			item1.addActionListener(this);
-			rm.add(item1);
-			JMenuItem item2 = new JMenuItem("Script");
-			item2.setActionCommand("new");
-			item2.addActionListener(this);
-			rm.add(item2);
-			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
-					MENUMODIFIER));
-		}
-		rm = (JMenu) EzMenuSwing.getItem(this,"Open");
-		if (rm != null) {
-			JMenuItem item1 = new JMenuItem("Data");
-			item1.setActionCommand("loaddata");
-			item1.addActionListener(this);
-			rm.add(item1);
-			item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 
-					MENUMODIFIER));
-			JMenuItem item2 = new JMenuItem("Script");
-			item2.setActionCommand("open");
-			item2.addActionListener(this);
-			rm.add(item2);
-			item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
-					MENUMODIFIER));
-			JMenuItem item3 = new JMenuItem("Work Space");
-			item3.setActionCommand("openwsp");
-			item3.addActionListener(this);
-			rm.add(item3);
-		}
-		rm = (JMenu) EzMenuSwing.getItem(this,"Workspace");
-		if (rm != null) {
-			JMenuItem item1 = new JMenuItem("Open");
-			item1.setActionCommand("openwsp");
-			item1.addActionListener(this);
-			rm.add(item1);
-			JMenuItem item2 = new JMenuItem("Save");
-			item2.setActionCommand("savewsp");
-			item2.addActionListener(this);
-			rm.add(item2);
-			JMenuItem item3 = new JMenuItem("Save as...");
-			item3.setActionCommand("saveaswsp");
-			item3.addActionListener(this);
-			rm.add(item3);
-			JMenuItem item4 = new JMenuItem("Clear");
-			item4.setActionCommand("clearwsp");
-			item4.addActionListener(this);
-			rm.add(item4);
 		}
 		
 		// Add History if we didn't found one in the user's home directory
@@ -318,12 +264,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 * 				command for execution
 	 */
 	public void executeLater(String cmd) {
-		final String cm = cmd;
-		Runnable doWorkRunnable = new Runnable() {
-		    public void run() { execute(cm,true); }
-		};
-		SwingUtilities.invokeLater(doWorkRunnable);
-		
+		execute(cmd, false);
 	}
 	/**
 	 * Execute a coomand and add it to history
@@ -628,6 +569,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            output type (0=regular, 1=warning/error)
 	 */
 	public void rWriteConsole(Rengine re, String text, int oType) {
+		if (readCount == 2) {
+			end = output.getText().length();
+			readCount = 3;
+		}
 		final String t = text;
 		Runnable doWork = new Runnable() {
 		    public void run() {
@@ -635,7 +580,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		    }
 		};
 		SwingUtilities.invokeLater(doWork);
-
 	}
 
 	/**
@@ -673,6 +617,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		SwingUtilities.invokeLater(doWork);
 
 	}
+			
+	private int readCount = 0;
 
 	/**
 	 * Read the commands from input area (R callback).
@@ -685,6 +631,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 *            is it an command which to add to the history
 	 */
 	public String rReadConsole(Rengine re, String prompt, int addToHistory) {
+		if (readCount < 2) readCount++;
 		Runnable doWork = new Runnable() {
 		    public void run() {
 		    	toolBar.stopButton.setEnabled(false);
@@ -880,8 +827,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		else if (cmd == "open"){
 			Editor temp =new Editor(null,false);
 			temp.open();
-			temp.dispose();
-		}else if (cmd == "openwsp")
+		}
+		else if (cmd == "openwsp")
 			loadWorkSpace();
 		else if (cmd == "new")
 			new Editor();

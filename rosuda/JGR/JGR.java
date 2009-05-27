@@ -66,9 +66,6 @@ public class JGR {
 	/** Author JRI, rJava and JavaGD (used for displaying the splashscreen) */
 	public static final String AUTHOR2 = "Simon Urbanek";
 	
-	/** Author JRI, rJava and JavaGD (used for displaying the splashscreen) */
-	public static final String AUTHOR3 = "Ian Fellows";
-
 	/** Website of organization (used for displaying the splashscreen) */
 	public static final String WEBSITE = "http://www.rosuda.org";
 
@@ -228,7 +225,6 @@ public class JGR {
 		STARTED = true;
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
-		MAINRCONSOLE.end = MAINRCONSOLE.output.getText().length();
 		// make sure we get a clean prompt after all packages have been loaded
 		JGR.MAINRCONSOLE.execute("",false);
 		MAINRCONSOLE.toFront();

@@ -338,7 +338,7 @@ public class DocumentRenderer implements Printable {
 	 */
 	public void setDocument(PlainDocument plainDocument) {
 		jeditorPane = new JEditorPane();
-		setDocument("text/plain", plainDocument);
+		setDocument("text/rtf", plainDocument);
 	}
 
 	/*
