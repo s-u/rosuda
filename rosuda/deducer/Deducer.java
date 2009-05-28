@@ -47,17 +47,7 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
-			JGR.MAINRCONSOLE.execute("2+2");
 			new Thread(new Runner()).start();
-			/*Runnable doWorkRunnable = new Runnable() {
-			    public void run() { 			
-			    	DataFrameWindow inst = new DataFrameWindow();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-				JGR.MAINRCONSOLE.toFront(); 
-				}
-			};
-			SwingUtilities.invokeLater(doWorkRunnable);*/
 			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
 		}catch(Exception e){JGR.MAINRCONSOLE.execute("'"+e.getMessage()+"'");}
 	}
