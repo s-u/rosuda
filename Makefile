@@ -90,9 +90,10 @@ deducer.jar: JGR.jar javaGD.jar iplots.jar $(JRENGINE) $(DEDUCER_SRC)
 	rm -rf org
 	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)iplots.jar$(PATHSEP)javaGD.jar$(PATHSEP)$(JRENGINE)  $(DEDUCER_SRC) $(IBASE_SRC)
 	cp -r rosuda/projects/deducer/icons .
-	jar fcm $@ rosuda/projects/deducer/deducer.mft org
-	rm -rf org
-
+	jar fcm $@ rosuda/projects/deducer/deducer.mft org icons
+	rm -rf org icons
+	#mv deducer.jar /Library/Frameworks/R.framework/Versions/Current/Resources/library/Deducer/java
+	#mv JGR.jar /Library/Frameworks/R.framework/Versions/Current/Resources/library/JGR/java
 
 
 ibase.jar: MRJstubs.jar $(IBASE_SRC)
