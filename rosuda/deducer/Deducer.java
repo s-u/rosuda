@@ -3,10 +3,17 @@ package org.rosuda.deducer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
+
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.deducer.data.DataFrameSelector;
 import org.rosuda.deducer.data.DataFrameWindow;
+
 import org.rosuda.deducer.menu.*;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -21,22 +28,37 @@ public class Deducer {
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
 		try{
-			EzMenuSwing.insertMenu(JGR.MAINRCONSOLE,dataMenu,3);
+			
+			insertMenu(JGR.MAINRCONSOLE,dataMenu,3);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Edit Factor", "factor", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Recode Variables", "recode", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Reset Row Names", "reset rows", cListener);
-			EzMenuSwing.addMenuSeparator(JGR.MAINRCONSOLE, dataMenu);
+			EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
+			//EzMenuSwing.addMenuSeparator(JGR.MAINRCONSOLE, dataMenu);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Subset", "subset", cListener);
 			
-			EzMenuSwing.insertMenu(JGR.MAINRCONSOLE,analysisMenu,4);
+			EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
+			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Data Viewer", "table", cListener);
+			
+			insertMenu(JGR.MAINRCONSOLE,analysisMenu,4);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
-
-			EzMenuSwing.insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
+			JGR.MAINRCONSOLE.execute("2+2");
+			new Thread(new Runner()).start();
+			/*Runnable doWorkRunnable = new Runnable() {
+			    public void run() { 			
+			    	DataFrameWindow inst = new DataFrameWindow();
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
+				JGR.MAINRCONSOLE.toFront(); 
+				}
+			};
+			SwingUtilities.invokeLater(doWorkRunnable);*/
+			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
 		}catch(Exception e){JGR.MAINRCONSOLE.execute("'"+e.getMessage()+"'");}
 	}
 
@@ -113,6 +135,59 @@ public class Deducer {
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 			}
+		}
+	}
+	
+	//temporary until new version of ibase
+	public static void insertMenu(JFrame f, String name,int index) {
+		JMenuBar mb = f.getJMenuBar();
+		JMenu m = EzMenuSwing.getMenu(f,name);
+		if (m == null && index<mb.getMenuCount()){
+			JMenuBar mb2 = new JMenuBar(); 
+			int cnt = mb.getMenuCount();
+			for(int i=0;i<cnt;i++){
+				if(i==index)
+					mb2.add(new JMenu(name));
+				mb2.add(mb.getMenu(0));
+			}
+			f.setJMenuBar(mb2);			
+		}else if(m==null && index==mb.getMenuCount())
+			EzMenuSwing.addMenu(f,name);
+	}
+	public static void insertJMenuItem(JFrame f, String menu, String name,
+			String command, ActionListener al,int index) {
+		JMenu m = EzMenuSwing.getMenu(f, menu);
+		JMenuItem mi = new JMenuItem(name);
+		mi.addActionListener(al);
+		mi.setActionCommand(command);
+		m.insert(mi,index);
+	}
+	
+	class Runner implements Runnable {
+		public Runner() {
+		}
+
+		public void run() {
+			boolean flag=true;
+			while (flag)
+				try {
+					Thread.sleep(50);
+						Runnable doWorkRunnable = new Runnable() {
+					    public void run() { 			
+					    	DataFrameWindow inst = new DataFrameWindow();
+					    	inst.setLocationRelativeTo(null);
+					    	inst.setVisible(true);
+					    	JGR.MAINRCONSOLE.toFront(); 
+					    }
+						};
+					    if(JGR.R.idleEval("TRUE").asBool().isTRUE()){
+					    		SwingUtilities.invokeLater(doWorkRunnable);
+					    		flag=false;
+					    }
+					
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
 		}
 	}
 }

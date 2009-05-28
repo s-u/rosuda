@@ -24,7 +24,7 @@ import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import org.rosuda.deducer.toolkit.DJList;
-import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.RController;

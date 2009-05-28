@@ -6,7 +6,7 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.toolkit.DJList;
-import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.util.ErrorMsg;
 
 import java.awt.BorderLayout;

@@ -24,7 +24,6 @@ import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
-import org.rosuda.JGR.toolkit.*;
 import org.rosuda.deducer.toolkit.*;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;

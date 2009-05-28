@@ -30,7 +30,7 @@ import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.JGR.toolkit.SyntaxArea;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JRI.REXP;
 

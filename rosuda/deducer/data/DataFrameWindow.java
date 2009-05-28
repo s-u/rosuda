@@ -6,7 +6,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.menu.*;
 import org.rosuda.JGR.editor.Editor;
-import org.rosuda.JGR.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
@@ -94,16 +94,11 @@ import java.lang.Thread;
  *
  */
 public class DataFrameWindow extends TJFrame implements ActionListener {
-	private JMenuBar dataFrameMenuBar;
-	private JMenu dataMenu;
+
 	private ExScrollableTable dataScrollPane;
 	private ExScrollableTable variableScrollPane;
-	private JMenuItem CopyItem;
-	private JMenuItem openData;
+
 	private IconButton jButton2;
-	private JMenu helpMenu;
-	private JMenu windowMenu;
-	private JMenu environmentMenu;
 	private JTabbedPane jTabbedPane1;
 	private IconButton jButton1;
 	private IconButton button1;
@@ -112,8 +107,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	private JLabel dataSelectorLabel;
 	private JComboBox dataSelector;
 	private JPanel dataSelectorPanel;
-	private JMenu editMenu;
-	private JMenu fileMenu;
+
 	
 	private ExTable table;
 	private DataFrameWindow theWindow = this; //this
@@ -230,7 +224,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
 				{
 					if(t==null){
-						if(JGR.DATA.size()==0){
+						if(JGR.DATA==null || JGR.DATA.size()==0){
 							dataScrollPane = null;
 							variableScrollPane=null;
 							jTabbedPane1.addTab("Data View", null, defaultPanel(), null);

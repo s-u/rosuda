@@ -10,10 +10,11 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
-import org.rosuda.deducer.toolkit.DJList;
-import org.rosuda.JGR.toolkit.IconButton;
-import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.VariableSelector;
+
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
