@@ -78,6 +78,7 @@ JGR.jar: javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org jedit rosuda/JGR/LICENSE rosuda/JGR/GPL.txt
 	rm -rf org jgrsplash.jpg icons jedit
+	##quaqua-filechooser-only.jar$(PATHSEP)
 
 
 jgr-docs: $(JGR_SRC) 
@@ -85,11 +86,13 @@ jgr-docs: $(JGR_SRC)
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
 
-deducer.jar: JGR.jar javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(DEDUCER_SRC)
+deducer.jar: JGR.jar javaGD.jar iplots.jar $(JRENGINE) $(DEDUCER_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)javaGD.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE)$(PATHSEP)MRJstubs.jar $(DEDUCER_SRC)
+	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)iplots.jar$(PATHSEP)javaGD.jar$(PATHSEP)$(JRENGINE)  $(DEDUCER_SRC) $(IBASE_SRC)
+	cp -r rosuda/projects/deducer/icons .
 	jar fcm $@ rosuda/projects/deducer/deducer.mft org
 	rm -rf org
+
 
 
 ibase.jar: MRJstubs.jar $(IBASE_SRC)
