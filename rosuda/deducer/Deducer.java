@@ -49,7 +49,7 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
 			new Thread(new Runner()).start();
 			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
-		}catch(Exception e){JGR.MAINRCONSOLE.execute("'"+e.getMessage()+"'");}
+		}catch(Exception e){new ErrorMsg(e);}
 	}
 
 	class ConsoleListener implements ActionListener{
