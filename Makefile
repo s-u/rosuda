@@ -85,9 +85,9 @@ jgr-docs: $(JGR_SRC)
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
 
-deducer.jar: JGR.jar javaGD.jar iplots.jar $(JRENGINE) $(DEDUCER_SRC)
+deducer.jar: JGR.jar javaGD.jar iplots.jar MRJstubs.jar $(JRENGINE) $(DEDUCER_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)iplots.jar$(PATHSEP)javaGD.jar$(PATHSEP)$(JRENGINE)  $(DEDUCER_SRC) $(IBASE_SRC)
+	$(JAVAC) -d . -classpath JGR.jar$(PATHSEP)MRJstubs.jar$(PATHSEP)iplots.jar$(PATHSEP)javaGD.jar$(PATHSEP)$(JRENGINE)  $(DEDUCER_SRC) $(IBASE_SRC)
 	cp -r rosuda/projects/deducer/icons .
 	jar fcm $@ rosuda/projects/deducer/deducer.mft org icons
 	rm -rf org icons
