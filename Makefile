@@ -54,7 +54,7 @@ IBASE_SRC:=$(filter-out %JOGLGraphicsDevice.java,$(IBASE_SRC))
 
 #--------- targets ---------
 
-TARGETS=REngine.jar JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JRI.jar Mondrian.jar javaGD.jar icustom.jar MRJStubs.jar
+TARGETS=REngine.jar JRclient.jar ibase.jar klimt.jar iplots.jar iwidgets.jar JGR.jar JRI.jar Mondrian.jar javaGD.jar icustom.jar MRJStubs.jar deducer.jar
 
 JAVAC=javac $(JFLAGS)
 
