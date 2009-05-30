@@ -491,7 +491,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 	 */
 	public void clearconsole() {
 		try {
-			if (clearpoint == null)
+			if (end > 0 && clearpoint == null)
 				clearpoint = new Integer(output.getLineEndOffset(output
 						.getLineOfOffset(end) - 1) + 2);
 			output.removeAllFrom(clearpoint.intValue());
