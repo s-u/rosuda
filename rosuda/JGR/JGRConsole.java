@@ -52,6 +52,7 @@ import org.rosuda.JGR.toolkit.DataTable;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.JGR.toolkit.SelectionPreservingCaret;
 import org.rosuda.JGR.toolkit.SyntaxInput;
@@ -842,9 +843,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				execute("installPackages()", false);
 			else if (cmd == "paste")
 				input.paste();
-			else if (cmd == "preferences")
-				new PrefsDialog(this);
-			else if (cmd == "redo")
+			else if (cmd == "preferences"){
+				PrefDialog inst = new PrefDialog(this);
+				inst.setVisible(true);
+			}else if (cmd == "redo")
 				try {
 					if (toolBar.undoMgr.canRedo())
 						toolBar.undoMgr.redo();

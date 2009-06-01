@@ -24,6 +24,7 @@ import javax.swing.text.StyleConstants;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.JGRPackageManager;
 import org.rosuda.JGR.RController;
+import org.rosuda.JGR.util.ErrorMsg;
 
 /**
  * JGRPrefs - preferences like fonts colors ....
@@ -36,7 +37,7 @@ import org.rosuda.JGR.RController;
 public class JGRPrefs {
 
 	/** Preference version */
-	public static final int prefsVersion = 0x0102; // version 1.2
+	public static final int prefsVersion = 0x0102; 
 
 	/** Debuglevel */
 	public static final int DEBUG = 0;
@@ -102,12 +103,21 @@ public class JGRPrefs {
 
 	/** DefaultKeyWordColor */
 	public static Color KEYWORDColor = new Color(0, 0, 140);
+	
+	/** Default Keyword bolding */
+	public static boolean KEYWORD_BOLD = true;
 
 	/** DefaultKEYWORDOBJECTSet */
 	public static MutableAttributeSet OBJECT = new SimpleAttributeSet();
 
 	/** DefaultKeyWordObjectColor */
 	public static Color OBJECTColor = new Color(50, 0, 140);
+	
+	/** Default Object italics */
+	public static boolean OBJECT_IT = true;
+	
+	/** Automatic tabs **/
+	public static boolean AUTOTAB =true;
 
 	/** DefaultCommentSet */
 	public static MutableAttributeSet COMMENT = new SimpleAttributeSet();
@@ -120,7 +130,16 @@ public class JGRPrefs {
 
 	/** DefaultQuoteColor */
 	public static Color QUOTEColor = Color.blue;
+	
+	/** Default Line Highlight */
+	public static boolean LINE_HIGHLIGHT = true;
 
+	/** Default line HIGHLIGHTColor */
+	public static Color HIGHLIGHTColor = new Color(0xe0e0e0);
+	
+	/** Default Line numbering */
+	public static boolean LINE_NUMBERS = true;
+	
 	/** MaximalHelpTabs */
 	public static int maxHelpTabs = 10;
 
@@ -176,9 +195,9 @@ public class JGRPrefs {
 		StyleConstants.setForeground(NUMBER, NUMBERColor);
 		StyleConstants.setForeground(COMMENT, COMMENTColor);
 		StyleConstants.setForeground(KEYWORD, KEYWORDColor);
-		StyleConstants.setBold(KEYWORD, true);
+		StyleConstants.setBold(KEYWORD, KEYWORD_BOLD);
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
-		StyleConstants.setItalic(OBJECT, true);
+		StyleConstants.setItalic(OBJECT, OBJECT_IT);
 		StyleConstants.setForeground(QUOTE, QUOTEColor);
 	}
 
@@ -197,9 +216,9 @@ public class JGRPrefs {
 		StyleConstants.setForeground(NUMBER, NUMBERColor);
 		StyleConstants.setForeground(COMMENT, COMMENTColor);
 		StyleConstants.setForeground(KEYWORD, KEYWORDColor);
-		StyleConstants.setBold(KEYWORD, true);
+		StyleConstants.setBold(KEYWORD, KEYWORD_BOLD);
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
-		StyleConstants.setItalic(OBJECT, true);
+		StyleConstants.setItalic(OBJECT, OBJECT_IT);
 		StyleConstants.setForeground(QUOTE, QUOTEColor);
 		if (JGR.R != null && JGR.STARTED)
 			JGR.R
@@ -236,7 +255,7 @@ public class JGRPrefs {
 
 		if (is == null)
 			return;
-
+	
 		Preferences prefs = Preferences
 				.userNodeForPackage(org.rosuda.JGR.JGR.class);
 		FontName = prefs.get("FontName", FontName);
@@ -258,6 +277,54 @@ public class JGRPrefs {
 		workingDirectory = prefs.get("WorkingDirectory", System
 				.getProperty("user.home"));
 		tabWidth = prefs.getInt("tabWidth", 4);
+		
+		
+		
+		
+		is = null;
+		try {
+			is = new BufferedInputStream(new FileInputStream(System
+					.getProperty("user.home")
+					+ File.separator + ".JGREditorprefsrc"));
+		} catch (FileNotFoundException e) {
+		}
+
+		try {
+			if (is != null) {
+				Preferences editPrefs = Preferences
+						.userNodeForPackage(org.rosuda.JGR.editor.Editor.class);
+				try {
+					editPrefs.clear();
+				} catch (Exception x) {
+				}
+				editPrefs = null;
+				Preferences.importPreferences(is);
+			}
+		} catch (InvalidPreferencesFormatException e) {
+			new ErrorMsg(e);
+		} catch (IOException e) {
+			new ErrorMsg(e);
+		}
+
+		if (is == null)
+			return;
+		Preferences editPrefs = Preferences
+		.userNodeForPackage(org.rosuda.JGR.editor.Editor.class);
+		CMDColor = Color.decode(editPrefs.get("CMDColor", "#ff0000"));
+		RESULTColor = Color.decode(editPrefs.get("RESULTColor", "#0000ff"));
+		ERRORColor = Color.decode(editPrefs.get("ERRORColor", "#ff0000"));
+		BRACKETHighLight = Color.decode(editPrefs.get("BRACKETHighLight", "#ffffff"));
+		NUMBERColor = Color.decode(editPrefs.get("NUMBERColor", "#ff0000"));
+		KEYWORDColor = Color.decode(editPrefs.get("KEYWORDColor", "#00008c"));
+		KEYWORD_BOLD = editPrefs.getBoolean("KEYWORD_BOLD", true);
+		OBJECTColor = Color.decode(editPrefs.get("OBJECTColor", "#32008c"));
+		OBJECT_IT = editPrefs.getBoolean("OBJECT_IT", true);
+		AUTOTAB = editPrefs.getBoolean("AUTOTAB", true);
+		COMMENTColor = Color.decode(editPrefs.get("COMMENTColor", "#000000"));//"#007800"));
+		QUOTEColor = Color.decode(editPrefs.get("QUOTEColor", "#0000ff"));
+		LINE_HIGHLIGHT = editPrefs.getBoolean("LINE_HIGHLIGHT", true);
+		HIGHLIGHTColor = Color.decode(editPrefs.get("HIGHLIGHTColor", "#e0e0e0"));
+		LINE_NUMBERS = editPrefs.getBoolean("LINE_NUMBERS", true);
 	}
 
 	/**
@@ -274,6 +341,7 @@ public class JGRPrefs {
 			prefs.clear();
 		} catch (Exception x) {
 		}
+	
 		prefs.putInt("PrefsVersion", prefsVersion);
 		prefs.put("FontName", FontName); // String
 		prefs.putInt("FontSize", FontSize); // int
@@ -288,6 +356,7 @@ public class JGRPrefs {
 						: ("," + JGRPackageManager.remindPackages)));
 		prefs.put("WorkingDirectory", workingDirectory);
 		prefs.putInt("tabWidth", tabWidth);
+		
 		if (JGRPackageManager.defaultPackages != null
 				&& JGRPackageManager.defaultPackages.length > 0) {
 			String packages = JGRPackageManager.defaultPackages[JGRPackageManager.defaultPackages.length - 1]
@@ -316,6 +385,40 @@ public class JGRPrefs {
 		} catch (IOException e) {
 		} catch (BackingStoreException e) {
 		}
+		
+		Preferences editPrefs = Preferences
+		.userNodeForPackage(org.rosuda.JGR.editor.Editor.class);
+		try {
+			editPrefs.clear();
+		} catch (Exception x) {
+		}
+		
+
+		editPrefs.putInt("PrefsVersion", prefsVersion);
+		editPrefs.put("CMDColor","#"+ Integer.toHexString(CMDColor.getRGB()).substring(2));
+		editPrefs.put("RESULTColor","#"+ Integer.toHexString(RESULTColor.getRGB()).substring(2));
+		editPrefs.put("ERRORColor","#"+ Integer.toHexString(ERRORColor.getRGB()).substring(2));
+		editPrefs.put("BRACKETHighLight","#"+ Integer.toHexString(BRACKETHighLight.getRGB()).substring(2));
+		editPrefs.put("NUMBERColor","#"+ Integer.toHexString(NUMBERColor.getRGB()).substring(2));
+		editPrefs.put("KEYWORDColor","#"+ Integer.toHexString(KEYWORDColor.getRGB()).substring(2));
+		editPrefs.putBoolean("KEYWORD_BOLD",KEYWORD_BOLD );
+		editPrefs.put("OBJECTColor","#"+ Integer.toHexString(OBJECTColor.getRGB()).substring(2));
+		editPrefs.putBoolean("OBJECT_IT", OBJECT_IT);
+		editPrefs.putBoolean("AUTOTAB", AUTOTAB);
+		editPrefs.put("COMMENTColor","#"+ Integer.toHexString(COMMENTColor.getRGB()).substring(2));
+		editPrefs.put("QUOTEColor","#"+ Integer.toHexString(QUOTEColor.getRGB()).substring(2));
+		editPrefs.putBoolean("LINE_HIGHLIGHT", LINE_HIGHLIGHT);
+		editPrefs.put("HIGHLIGHTColor","#"+ Integer.toHexString(HIGHLIGHTColor.getRGB()).substring(2));
+		editPrefs.putBoolean("LINE_NUMBERS", LINE_NUMBERS);
+		
+		try {
+			editPrefs.exportNode(new FileOutputStream(System
+					.getProperty("user.home")
+					+ File.separator + ".JGREditorprefsrc"));
+		} catch (IOException e) {
+		} catch (BackingStoreException e) {
+		}
+		
 	}
 
 	/**

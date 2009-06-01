@@ -17,6 +17,8 @@ import javax.swing.text.Segment;
 import javax.swing.text.TabExpander;
 import javax.swing.text.Utilities;
 
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 /**
  * Class with several utility functions used by jEdit's syntax colorizing
  * subsystem.
@@ -94,14 +96,14 @@ public class SyntaxUtilities {
 	public static SyntaxStyle[] getDefaultSyntaxStyles() {
 		SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
 
-		styles[Token.COMMENT1] = new SyntaxStyle(new Color(0, 120, 0), true, false);
-		styles[Token.COMMENT2] = new SyntaxStyle(new Color(0, 120, 0), true, false);
-		styles[Token.KEYWORD1] = new SyntaxStyle(new Color(0, 0, 140), false, true);
-		styles[Token.KEYWORD2] = new SyntaxStyle(new Color(50, 0, 140), true, false);
-		styles[Token.KEYWORD3] = new SyntaxStyle(Color.red, false, false);
-		styles[Token.LITERAL1] = new SyntaxStyle(Color.blue, false, false);
-		styles[Token.LITERAL2] = new SyntaxStyle(new Color(50,100,50), false, true);
-		styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033), false, true);
+		styles[Token.COMMENT1] = new SyntaxStyle(JGRPrefs.COMMENTColor, true, false);
+		styles[Token.COMMENT2] = new SyntaxStyle(JGRPrefs.COMMENTColor, true, false);
+		styles[Token.KEYWORD1] = new SyntaxStyle(JGRPrefs.KEYWORDColor, false, JGRPrefs.KEYWORD_BOLD);
+		styles[Token.KEYWORD2] = new SyntaxStyle(JGRPrefs.OBJECTColor, JGRPrefs.OBJECT_IT, false);
+		styles[Token.KEYWORD3] = new SyntaxStyle(Color.darkGray, false, false); //not used?
+		styles[Token.LITERAL1] = new SyntaxStyle(JGRPrefs.QUOTEColor, false, false);
+		styles[Token.LITERAL2] = new SyntaxStyle(JGRPrefs.KEYWORDColor, false, true);
+		styles[Token.LABEL] = new SyntaxStyle(new Color(0x990033), false, true);//not used?
 		styles[Token.OPERATOR] = new SyntaxStyle(Color.black, false, true);
 		styles[Token.INVALID] = new SyntaxStyle(Color.red, false, true);
 

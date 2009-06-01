@@ -14,6 +14,8 @@ import java.awt.Color;
 import javax.swing.JPopupMenu;
 import javax.swing.undo.UndoManager;
 
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 /**
  * Encapsulates default settings for a text area. This can be passed to the
  * constructor once the necessary fields have been filled out. The advantage of
@@ -91,14 +93,15 @@ public class TextAreaDefaults {
 			DEFAULTS.styles = SyntaxUtilities.getDefaultSyntaxStyles();
 			DEFAULTS.caretColor = Color.red;
 			DEFAULTS.selectionColor = new Color(0xccccff);
-			DEFAULTS.lineHighlightColor = new Color(0xe0e0e0);
-			DEFAULTS.lineHighlight = true;
-			DEFAULTS.bracketHighlightColor = Color.black;
+			DEFAULTS.lineHighlightColor = JGRPrefs.HIGHLIGHTColor;
+			DEFAULTS.lineHighlight = JGRPrefs.LINE_HIGHLIGHT;
+			DEFAULTS.bracketHighlightColor = JGRPrefs.BRACKETHighLight;
 			DEFAULTS.bracketHighlight = true;
 			DEFAULTS.eolMarkerColor = new Color(0x009999);
 			DEFAULTS.eolMarkers = false;
 			DEFAULTS.paintInvalid = false;
-			DEFAULTS.lineNumbers = true;
+			DEFAULTS.lineNumbers = JGRPrefs.LINE_NUMBERS;
+			
 		//}
 		return DEFAULTS;
 	}

@@ -200,14 +200,12 @@ public class RTokenMarker extends TokenMarker {
 				cKeywords.add(_keywords.get(i)+"",Token.KEYWORD2);
 			
 			// true, false, NULL, ...
-			cKeywords.add("true", Token.LITERAL2);
+
 			cKeywords.add("TRUE", Token.LITERAL2);
 			cKeywords.add("T", Token.LITERAL2);
-			cKeywords.add("false", Token.LITERAL2);
 			cKeywords.add("FALSE", Token.LITERAL2);
 			cKeywords.add("F", Token.LITERAL2);
 			cKeywords.add("NULL", Token.LITERAL2);
-			cKeywords.add("null", Token.LITERAL2);
 			
 			// comments
 			cKeywords.add("#", Token.COMMENT1);

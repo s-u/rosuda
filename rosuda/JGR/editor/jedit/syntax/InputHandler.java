@@ -21,6 +21,9 @@ import java.util.Hashtable;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 
+import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.toolkit.JGRPrefs;
+
 /**
  * An input handler converts the user's key strokes into concrete actions. It
  * also takes care of macro recording and action repetition.
@@ -681,6 +684,21 @@ public abstract class InputHandler extends KeyAdapter {
 			}
 
 			textArea.setSelectedText("\n");
+			
+			if(JGRPrefs.AUTOTAB){
+				int curLine = textArea.getCaretLine();
+				if(curLine==0) return;
+				String lastLine =textArea.getLineText(curLine-1);
+				for(int i=0;i<lastLine.length();i++){
+					if(lastLine.charAt(i)=='\t'){
+						textArea.overwriteSetSelectedText("\t");
+					}else
+						break;
+					
+				}
+				if(lastLine.charAt(lastLine.length()-1)=='{')
+					textArea.overwriteSetSelectedText("\t");
+			}
 		}
 	}
 
@@ -692,9 +710,66 @@ public abstract class InputHandler extends KeyAdapter {
 				textArea.getToolkit().beep();
 				return;
 			}
+			if(!JGRPrefs.AUTOTAB)
+				textArea.overwriteSetSelectedText("\t");
+			else{
+				int curLine = textArea.getSelectionStartLine();
+				int offset =textArea.getSelectionStart(curLine)-textArea.getLineStartOffset(curLine);
+				String curLineText = textArea.getLineText(curLine);
+				if(curLine==0){
+					textArea.overwriteSetSelectedText("\t");
+					return;
+					
+				}
+				
+				boolean isWhitespace=true;
+				for(int i=0;i<offset;i++){
+					if(curLineText.charAt(i)!='\t' && curLineText.charAt(i)!=' '){
+						isWhitespace=false;
+						break;
+					}
+				}
+				 
+				int numTabs = leadingTabs(curLine-1,textArea);
+				int tabsUpToCaret = 0;
+				for(int i=0;i<offset;i++)
+					if(curLineText.charAt(i)=='\t')
+						tabsUpToCaret++;
+				JGR.MAINRCONSOLE.execute(numTabs+" "+leadingTabs(curLine,textArea));				
+				if(!isWhitespace || numTabs==0 || numTabs<=tabsUpToCaret){
+					textArea.overwriteSetSelectedText("\t");
+					return;
+				}
+				textArea.overwriteSetSelectedText("");
+				curLineText = textArea.getLineText(curLine);
+				int lastWhite=0;
+				for(int i=0;i<curLineText.length();i++){
+					if(curLineText.charAt(i)!='\t' && curLineText.charAt(i)!=' ')
+						break;
+					else
+						lastWhite=i;
+				}
 
-			textArea.overwriteSetSelectedText("\t");
+				textArea.setCaretPosition(textArea.getLineStartOffset(curLine));
+				textArea.select(textArea.getLineStartOffset(curLine), 
+						textArea.getLineStartOffset(curLine)+lastWhite+1);
+				for(int i=0;i<numTabs;i++)
+					textArea.overwriteSetSelectedText("\t");
+			}
 		}
+		
+		public int leadingTabs(int line, JEditTextArea textArea){
+			int counter=0;
+			String lineText = textArea.getLineText(line);
+			for(int i=0;i<lineText.length();i++){
+				if(lineText.charAt(i)=='\t')
+					counter++;
+				else
+					break;
+			}
+			return counter;
+		}
+		
 	}
 	
 	public static class select_all implements ActionListener {
