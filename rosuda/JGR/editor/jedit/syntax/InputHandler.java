@@ -734,8 +734,7 @@ public abstract class InputHandler extends KeyAdapter {
 				int tabsUpToCaret = 0;
 				for(int i=0;i<offset;i++)
 					if(curLineText.charAt(i)=='\t')
-						tabsUpToCaret++;
-				JGR.MAINRCONSOLE.execute(numTabs+" "+leadingTabs(curLine,textArea));				
+						tabsUpToCaret++;			
 				if(!isWhitespace || numTabs==0 || numTabs<=tabsUpToCaret){
 					textArea.overwriteSetSelectedText("\t");
 					return;
