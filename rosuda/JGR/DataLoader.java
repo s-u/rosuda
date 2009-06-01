@@ -161,13 +161,15 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	 */
 		public void propertyChange(PropertyChangeEvent e) {
 			File file = fileDialog.getSelectedFile();
-			if(file!=null && !file.isDirectory() && !(file.getName().toLowerCase().endsWith(".rdata")||
+			if(e.getPropertyName()=="SelectedFileChangedProperty"){
+				if(file!=null && !file.isDirectory() && !(file.getName().toLowerCase().endsWith(".rdata")||
 					file.getName().toLowerCase().endsWith(".rda"))){
-				String name = file.getName().replaceAll("\\..*", "");
-				name =JGR.MAINRCONSOLE.getUniqueName(name);
-				rDataNameField.setText(name);
-			}else
-				rDataNameField.setText("");
+					String name = file.getName().replaceAll("\\..*", "");
+					name =JGR.MAINRCONSOLE.getUniqueName(name);
+					rDataNameField.setText(name);
+				}else
+					rDataNameField.setText("");
+			}
 		}
 	
 }
