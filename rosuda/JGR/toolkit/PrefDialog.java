@@ -370,7 +370,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 							{
 								helpPages = new JSpinner();
 								helpPanel.add(helpPages);
-								helpPages.setBounds(145, 39, 46, 21);
+								helpPages.setBounds(160, 39, 46, 21);
 							}
 						}
 						{
@@ -389,7 +389,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								workingLabel = new JLabel();
 								general.add(workingLabel);
 								workingLabel.setText("Default Working Directory");
-								workingLabel.setBounds(87, 58, 147, 14);
+								workingLabel.setBounds(57, 58, 180, 14);
 							}
 							{
 								working = new JTextField();
@@ -485,13 +485,13 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				maxHelpLabel = new JLabel();
 				helpPanel.add(maxHelpLabel);
 				maxHelpLabel.setText("Maximum Help Pages:");
-				maxHelpLabel.setBounds(17, 42, 128, 14);
+				maxHelpLabel.setBounds(10, 42, 140, 14);
 			}
 			{
 				helpAgent = new JCheckBox();
 				helpPanel.add(helpAgent);
 				helpAgent.setText("Help Agent");
-				helpAgent.setBounds(17, 79, 106, 18);
+				helpAgent.setBounds(10, 79, 106, 18);
 			}
 			lineNumbers.setEnabled(false);
 			this.setTitle("Preferences");
