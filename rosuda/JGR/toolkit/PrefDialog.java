@@ -30,6 +30,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import org.rosuda.JGR.JGR;
+
 
 public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JTabbedPane tabbedPrefs;
@@ -132,7 +134,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				{
 					tabbedPrefs = new JTabbedPane();
 					getContentPane().add(tabbedPrefs);
-					tabbedPrefs.setBounds(0, 12, 537, 380);
+					tabbedPrefs.setBounds(0, 12, 560, 400);
 					{
 						DocumentPrefs = new JPanel();
 						tabbedPrefs.addTab("Style", null, DocumentPrefs, null);
@@ -180,8 +182,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								results.setBounds(57, 40, 64, 32);
 								results.setToolTipText("Result Color");
 								results.addActionListener(this);
-								results.setContentAreaFilled(false);
-								results.setOpaque(true);
+
 							}
 							{
 								resultsLabel = new JLabel();
@@ -203,8 +204,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								outputPanel.add(commands);
 								commands.setBounds(158, 40, 64, 32);
 								commands.addActionListener(this);
-								commands.setContentAreaFilled(false);
-								commands.setOpaque(true);
+
 							}
 							{
 								errorLabel = new JLabel();
@@ -218,14 +218,13 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								outputPanel.add(errors);
 								errors.setBounds(257, 40, 64, 32);
 								errors.addActionListener(this);
-								errors.setContentAreaFilled(false);
-								errors.setOpaque(true);
+
 							}
 						}
 						{
 							documentPanel = new JPanel();
 							DocumentPrefs.add(documentPanel);
-							documentPanel.setBounds(12, 169, 508, 182);
+							documentPanel.setBounds(6, 169, 530, 182);
 							documentPanel.setBorder(BorderFactory.createTitledBorder("Documents"));
 							documentPanel.setLayout(null);
 							{
@@ -233,8 +232,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								documentPanel.add(comment);
 								comment.setBounds(17, 73, 64, 32);
 								comment.addActionListener(this);
-								comment.setContentAreaFilled(false);
-								comment.setOpaque(true);
+
 							}
 							{
 								commentLabel = new JLabel();
@@ -270,22 +268,19 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								documentPanel.add(numbers);
 								numbers.setBounds(200, 73, 64, 32);
 								numbers.addActionListener(this);
-								numbers.setContentAreaFilled(false);
-								numbers.setOpaque(true);
 							}
 							{
 								keyword = new JButton();
 								documentPanel.add(keyword);
 								keyword.setBounds(110, 73, 64, 32);
 								keyword.addActionListener(this);
-								keyword.setContentAreaFilled(false);
-								keyword.setOpaque(true);
+
 							}
 							{
 								keywordLabel = new JLabel();
 								documentPanel.add(keywordLabel);
 								keywordLabel.setText("Key Words");
-								keywordLabel.setBounds(110, 53, 64, 20);
+								keywordLabel.setBounds(108, 53, 70, 20);
 								keywordLabel.setHorizontalAlignment(SwingConstants.CENTER);
 							}
 							{
@@ -300,8 +295,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								documentPanel.add(objects);
 								objects.setBounds(110, 136, 64, 32);
 								objects.addActionListener(this);
-								objects.setContentAreaFilled(false);
-								objects.setOpaque(true);
+
 							}
 							{
 								stringsLabel = new JLabel();
@@ -315,21 +309,20 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								documentPanel.add(strings);
 								strings.setBounds(17, 136, 64, 32);
 								strings.addActionListener(this);
-								strings.setContentAreaFilled(false);
-								strings.setOpaque(true);
+
 							}
 							{
 								boldKeywords = new JCheckBox();
 								documentPanel.add(boldKeywords);
 								boldKeywords.setText("Bold Key Words");
-								boldKeywords.setBounds(192, 117, 116, 18);
+								boldKeywords.setBounds(180, 117, 122, 18);
 								boldKeywords.addActionListener(this);
 							}
 							{
 								italicObjects = new JCheckBox();
 								documentPanel.add(italicObjects);
 								italicObjects.setText("Italic Objects");
-								italicObjects.setBounds(192, 148, 116, 18);
+								italicObjects.setBounds(180, 148, 122, 18);
 								italicObjects.addActionListener(this);
 							}
 							{
@@ -390,7 +383,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								hidden = new JCheckBox();
 								general.add(hidden);
 								hidden.setText("Show Hidden Files");
-								hidden.setBounds(35, 118, 134, 18);
+								hidden.setBounds(35, 118, 170, 18);
 							}
 							{
 								workingLabel = new JLabel();
@@ -414,14 +407,14 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 						{
 							editorPanel = new JPanel();
 							generalPanel.add(editorPanel);
-							editorPanel.setBounds(267, 191, 223, 147);
+							editorPanel.setBounds(290, 191, 223, 147);
 							editorPanel.setBorder(BorderFactory.createTitledBorder("Editor"));
 							editorPanel.setLayout(null);
 							{
 								emacs = new JCheckBox();
 								editorPanel.add(emacs);
 								emacs.setText("Emacs Bindings");
-								emacs.setBounds(60, 64, 119, 18);
+								emacs.setBounds(40, 64, 150, 18);
 							}
 						}
 					}
@@ -430,21 +423,21 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 					okay = new JButton();
 					getContentPane().add(okay);
 					okay.setText("Save All");
-					okay.setBounds(426, 399, 100, 21);
+					okay.setBounds(426, 420, 100, 21);
 					okay.addActionListener(this);
 				}
 				{
 					cancel = new JButton();
 					getContentPane().add(cancel);
 					cancel.setText("Cancel");
-					cancel.setBounds(321, 399, 100, 21);
+					cancel.setBounds(321, 420, 100, 21);
 					cancel.addActionListener(this);
 				}
 				{
 					reset = new JButton();
 					getContentPane().add(reset);
 					reset.setText("Reset All");
-					reset.setBounds(216, 399, 100, 21);
+					reset.setBounds(216, 420, 100, 21);
 					reset.addActionListener(this);
 				}
 			}
@@ -452,21 +445,20 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				lineNumbers = new JCheckBox();
 				documentPanel.add(lineNumbers);
 				lineNumbers.setText("Display Line Numbers");
-				lineNumbers.setBounds(348, 41, 155, 18);
+				lineNumbers.setBounds(348, 41, 170, 18);
 			}
 			{
 				highlight = new JCheckBox();
 				documentPanel.add(highlight);
 				highlight.setText("Highlight Active Line");
-				highlight.setBounds(348, 89, 155, 18);
+				highlight.setBounds(348, 89, 170, 18);
 			}
 			{
 				highlightColor = new JButton();
 				documentPanel.add(highlightColor);
-				highlightColor.setBounds(365, 112, 17, 18);
+				highlightColor.setBounds(365, 112, 50, 21);
 				highlightColor.addActionListener(this);
-				highlightColor.setContentAreaFilled(false);
-				highlightColor.setOpaque(true);
+
 			}
 			{
 				autotab = new JCheckBox();
@@ -483,10 +475,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			{
 				brackets = new JButton();
 				documentPanel.add(brackets);
-				brackets.setBounds(365, 156, 17, 18);
+				brackets.setBounds(365, 156, 50, 21);
 				brackets.addActionListener(this);
-				brackets.setContentAreaFilled(false);
-				brackets.setOpaque(true);
+
 			}
 			helpPages.setValue(new Integer(10));
 			helpPages.getEditor().setPreferredSize(new java.awt.Dimension(32, 17));
@@ -504,7 +495,44 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			}
 			lineNumbers.setEnabled(false);
 			this.setTitle("Preferences");
-			this.setSize(545, 465);
+			this.setSize(560, 485);
+
+			
+			if(!PlatformMac.isMac){
+				commands.setContentAreaFilled(false);
+				commands.setOpaque(true);
+				results.setContentAreaFilled(false);
+				results.setOpaque(true);
+				errors.setContentAreaFilled(false);
+				errors.setOpaque(true);
+				comment.setContentAreaFilled(false);
+				comment.setOpaque(true);
+				numbers.setContentAreaFilled(false);
+				numbers.setOpaque(true);			
+				objects.setContentAreaFilled(false);
+				objects.setOpaque(true);			
+				strings.setContentAreaFilled(false);
+				strings.setOpaque(true);			
+				keyword.setContentAreaFilled(false);
+				keyword.setOpaque(true);			
+				highlightColor.setContentAreaFilled(false);
+				highlightColor.setOpaque(true);			
+				brackets.setContentAreaFilled(false);
+				brackets.setOpaque(true);
+			}else{
+				commands.setText("Color");
+				results.setText("Color");
+				errors.setText("Color");
+				comment.setText("Color");
+				numbers.setText("Color");
+				objects.setText("Color");
+				strings.setText("Color");
+				keyword.setText("Color");
+				highlightColor.setText("C");
+				brackets.setText("C");
+			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -531,7 +559,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		    int firstCharacterWidth = 0;
 		    boolean hasFirstCharacterWidth = false;
 		    for (int codePoint = 0; codePoint < 128; codePoint++) { 
-		        if (Character.isValidCodePoint(codePoint) && !Character.isWhitespace(codePoint)) {
+		        if (Character.isValidCodePoint(codePoint) && !Character.isWhitespace(codePoint) && (Character.isLetter(codePoint) || Character.isDigit(codePoint))) {
 		            char character = (char) codePoint;
 		            int characterWidth = fontMetrics.charWidth(character);
 		            if (hasFirstCharacterWidth) {
@@ -560,22 +588,36 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		// {comment,keywords,numbers,strings,
 		//		objects,bold keywords,italic objects}	
 		Object[] newStyle = styleDef[index];
-		comment.setBackground((Color)newStyle[0]);
-		keyword.setBackground((Color)newStyle[1]);
-		numbers.setBackground((Color)newStyle[2]);
-		strings.setBackground((Color)newStyle[3]);
-		objects.setBackground((Color)newStyle[4]);
+		setColor(comment,(Color)newStyle[0]);
+		setColor(keyword,(Color)newStyle[1]);
+		setColor(numbers,(Color)newStyle[2]);
+		setColor(strings,(Color)newStyle[3]);
+		setColor(objects,(Color)newStyle[4]);
 		boldKeywords.setSelected(((Boolean)newStyle[5]).booleanValue());
 		italicObjects.setSelected(((Boolean)newStyle[6]).booleanValue());
+	}
+	
+	public void setColor(JButton b,Color c){
+		if(!PlatformMac.isMac){
+			b.setBackground(c);
+		}else
+			b.setForeground(c);
+	}
+	
+	public Color getColor(JButton b){
+		if(!PlatformMac.isMac){
+			return b.getBackground();
+		}else
+			return b.getForeground();	
 	}
 	
 	
 	public void reset(){
 		setStyle(0);
-		highlightColor.setBackground(JGRPrefs.HIGHLIGHTColor);
-		results.setBackground(JGRPrefs.RESULTColor);
-		commands.setBackground(JGRPrefs.CMDColor);
-		errors.setBackground(JGRPrefs.ERRORColor);
+		setColor(highlightColor,JGRPrefs.HIGHLIGHTColor);
+		setColor(results,JGRPrefs.RESULTColor);
+		setColor(commands,JGRPrefs.CMDColor);
+		setColor(errors,JGRPrefs.ERRORColor);
 		monospaced.setSelected(true);
 		fontComboBox.setSelectedItem(JGRPrefs.FontName);
 		sizeComboBox.setSelectedItem(""+JGRPrefs.FontSize);
@@ -584,18 +626,18 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		lineNumbers.setSelected(JGRPrefs.LINE_NUMBERS);
 		highlight.setSelected(JGRPrefs.LINE_HIGHLIGHT);
 		autotab.setSelected(JGRPrefs.AUTOTAB);
-		brackets.setBackground(JGRPrefs.BRACKETHighLight);
+		setColor(brackets,JGRPrefs.BRACKETHighLight);
 		working.setText(JGRPrefs.workingDirectory);
 		hidden.setSelected(JGRPrefs.showHiddenFiles);
 		helpPages.setValue(new Integer(JGRPrefs.maxHelpTabs)); 
 		helpAgent.setSelected(JGRPrefs.useHelpAgent);
 		emacs.setSelected(JGRPrefs.useEmacsKeyBindings);
 		
-		comment.setBackground(JGRPrefs.COMMENTColor);
-		keyword.setBackground(JGRPrefs.KEYWORDColor);
-		numbers.setBackground(JGRPrefs.NUMBERColor);
-		strings.setBackground(JGRPrefs.QUOTEColor);
-		objects.setBackground(JGRPrefs.OBJECTColor);
+		setColor(comment,JGRPrefs.COMMENTColor);
+		setColor(keyword,JGRPrefs.KEYWORDColor);
+		setColor(numbers,JGRPrefs.NUMBERColor);
+		setColor(strings,JGRPrefs.QUOTEColor);
+		setColor(objects,JGRPrefs.OBJECTColor);
 		boldKeywords.setSelected(JGRPrefs.KEYWORD_BOLD);
 		italicObjects.setSelected(JGRPrefs.OBJECT_IT);
 	}
@@ -639,23 +681,23 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.workingDirectory=working.getText();		
 		
 		JGRPrefs.FontName=(String)fontComboBox.getSelectedItem();
-		JGRPrefs.HIGHLIGHTColor=highlightColor.getBackground();
-		JGRPrefs.RESULTColor=results.getBackground();
-		JGRPrefs.CMDColor=commands.getBackground();
-		JGRPrefs.ERRORColor=errors.getBackground();
+		JGRPrefs.HIGHLIGHTColor=getColor(highlightColor);
+		JGRPrefs.RESULTColor=getColor(results);
+		JGRPrefs.CMDColor=getColor(commands);
+		JGRPrefs.ERRORColor=getColor(errors);
 		JGRPrefs.LINE_NUMBERS=lineNumbers.isSelected();
 		JGRPrefs.LINE_HIGHLIGHT=highlight.isSelected();
 		JGRPrefs.AUTOTAB=autotab.isSelected();
-		JGRPrefs.BRACKETHighLight=brackets.getBackground();
+		JGRPrefs.BRACKETHighLight=getColor(brackets);
 		JGRPrefs.showHiddenFiles=hidden.isSelected();
 		JGRPrefs.useHelpAgent=helpAgent.isSelected();
 		JGRPrefs.useEmacsKeyBindings=emacs.isSelected();
 		
-		JGRPrefs.COMMENTColor=comment.getBackground();
-		JGRPrefs.KEYWORDColor=keyword.getBackground();
-		JGRPrefs.NUMBERColor=numbers.getBackground();
-		JGRPrefs.QUOTEColor=strings.getBackground();
-		JGRPrefs.OBJECTColor=objects.getBackground();
+		JGRPrefs.COMMENTColor=getColor(comment);
+		JGRPrefs.KEYWORDColor=getColor(keyword);
+		JGRPrefs.NUMBERColor=getColor(numbers);
+		JGRPrefs.QUOTEColor=getColor(strings);
+		JGRPrefs.OBJECTColor=getColor(objects);
 		JGRPrefs.KEYWORD_BOLD=boldKeywords.isSelected();
 		JGRPrefs.OBJECT_IT=italicObjects.isSelected();
 		
@@ -690,21 +732,21 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
                     "Choose Console Result Color",
                     results.getBackground());
 			if(newColor!=null)
-				results.setBackground(newColor);
+				setColor(results,newColor);
 		}else if(src==commands){
 			newColor = JColorChooser.showDialog(
                     this,
                     "Choose Console Command Color",
                     commands.getBackground());
 			if(newColor!=null)
-				commands.setBackground(newColor);
+				setColor(commands,newColor);
 		}else if(src==errors){
 			newColor = JColorChooser.showDialog(
                     this,
                     "Choose Console Error Color",
                     errors.getBackground());
 			if(newColor!=null)
-				errors.setBackground(newColor);
+				setColor(errors,newColor);
 		}else if(src == monospaced){
 			if(monospaced .isSelected()){
 				setFontComboBox();
@@ -717,7 +759,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
                     "Choose Color",
                     errors.getBackground());
 			if(newColor!=null){
-				((JButton) src).setBackground(newColor);		
+				setColor(((JButton) src),newColor);		
 				style.setSelectedItem(" ");
 			}
 		}else if(src==boldKeywords){

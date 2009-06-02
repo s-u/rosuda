@@ -53,7 +53,6 @@ import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.toolkit.PrefDialog;
-import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.JGR.toolkit.SelectionPreservingCaret;
 import org.rosuda.JGR.toolkit.SyntaxInput;
 import org.rosuda.JGR.toolkit.TextFinder;
@@ -265,7 +264,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * 				command for execution
 		 */
 		public void executeLater(String cmd) {
-			execute(cmd, false);
+			final String cm = cmd;
+			Runnable doWorkRunnable = new Runnable() {
+				public void run() { execute(cm,true); }
+			};
+			SwingUtilities.invokeLater(doWorkRunnable);
 		}
 		/**
 		 * Execute a coomand and add it to history
@@ -845,6 +848,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				input.paste();
 			else if (cmd == "preferences"){
 				PrefDialog inst = new PrefDialog(this);
+				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 			}else if (cmd == "redo")
 				try {
