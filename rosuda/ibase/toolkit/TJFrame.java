@@ -41,10 +41,59 @@ public class TJFrame extends JFrame implements FrameDevice
 		if (Global.DEBUG>0)
 			System.out.println("Frame \""+getTitle()+"\" removed.");
 		WinTracker.current.rm(WTmyself);
+		if (WTmyself!=null && lastClass==WTmyself.wclass)
+			resetPlacementOrder = true;
 		super.dispose();
 	}
 
+	static boolean resetPlacementOrder = true;
     static int lastClass=-1;
+    static int lastPlaceX=0, lastPlaceY=0;
+    static int lastOffset=0;
+    
+    public void initPlacement() { // initial frame placement
+    	int curX,curY;
+    	boolean moveX=true;
+    	boolean moveY=false;
+    	if (WTmyself==null) return;
+        Common.getScreenRes();
+        if (lastClass!=WTmyself.wclass || resetPlacementOrder) {
+            lastClass=WTmyself.wclass;
+            lastPlaceX=0; lastPlaceY=0; lastOffset=0;
+            resetPlacementOrder=false;
+        }else if(getHeight()+lastOffset+30>=Common.screenRes.height ||
+        			getWidth()+lastOffset+30>=Common.screenRes.width){
+        		 setLocation(0,0);
+        		 lastPlaceX=0; lastPlaceY=0; lastOffset=0;
+        }else {
+        	
+        	curX=lastPlaceX;
+        	curY=lastPlaceY;
+        	if(lastPlaceX+2*(getWidth()+10)>Common.screenRes.width){
+        		moveX=false;
+         		curX=lastOffset;       		
+        	}else
+        		moveX=true;
+        	if(lastPlaceY+2*(getHeight()+20)>Common.screenRes.width){
+        		moveY=false;
+        		curY=lastOffset;
+        	}else
+        		moveY=true;
+        	if(moveX)
+        		setLocation(curX+=getWidth()+10,curY);
+        	else if(moveY)
+        		setLocation(curX,curY+=getHeight()+20);
+        	else{
+         		lastOffset+=30;       		
+        		setLocation(curX=lastOffset,curY=lastOffset);
+        	}
+        	
+        	lastPlaceX=curX;
+        	lastPlaceY=curY;
+        }
+    }
+    
+    /*static int lastClass=-1;
     static int lastPlaceX=0, lastPlaceY=0;
     static int lastOffset=0;
     
@@ -66,7 +115,7 @@ public class TJFrame extends JFrame implements FrameDevice
                 }
             }
         }
-    };
+    }*/
     
     public Frame getFrame() {
     	return this;
