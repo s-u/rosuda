@@ -743,15 +743,15 @@ public abstract class InputHandler extends KeyAdapter {
 				curLineText = textArea.getLineText(curLine);
 				int lastWhite=0;
 				for(int i=0;i<curLineText.length();i++){
-					if(curLineText.charAt(i)!='\t' && curLineText.charAt(i)!=' ')
+					if(!Character.isWhitespace(curLineText.charAt(i)))
 						break;
 					else
-						lastWhite=i;
+						lastWhite++;
 				}
 
 				textArea.setCaretPosition(textArea.getLineStartOffset(curLine));
 				textArea.select(textArea.getLineStartOffset(curLine), 
-						textArea.getLineStartOffset(curLine)+lastWhite+1);
+						textArea.getLineStartOffset(curLine)+lastWhite);
 				for(int i=0;i<numTabs;i++)
 					textArea.overwriteSetSelectedText("\t");
 			}

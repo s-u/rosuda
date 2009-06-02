@@ -31,6 +31,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.ibase.Common;
 
 
 public class PrefDialog extends javax.swing.JDialog implements ActionListener {
@@ -498,7 +499,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			this.setSize(560, 485);
 
 			
-			if(!PlatformMac.isMac){
+			if(!Common.isMac()){
 				commands.setContentAreaFilled(false);
 				commands.setOpaque(true);
 				results.setContentAreaFilled(false);
@@ -598,14 +599,14 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	}
 	
 	public void setColor(JButton b,Color c){
-		if(!PlatformMac.isMac){
+		if(!Common.isMac()){
 			b.setBackground(c);
 		}else
 			b.setForeground(c);
 	}
 	
 	public Color getColor(JButton b){
-		if(!PlatformMac.isMac){
+		if(!Common.isMac()){
 			return b.getBackground();
 		}else
 			return b.getForeground();	
@@ -669,7 +670,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Invalid working directory");
 			return false;
 		}
-		if(emacs.isSelected() && !org.rosuda.util.Platform.isMac){
+		if(emacs.isSelected() && !Common.isMac()){
 			int tmp3 =JOptionPane.showConfirmDialog(this, "emacs key bindings are unsafe on non-mac systems. \n" +
 					"are you sure you want to use them?","emac warning", JOptionPane.YES_NO_OPTION);
 			if(tmp3==JOptionPane.NO_OPTION)
