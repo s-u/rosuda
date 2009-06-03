@@ -46,7 +46,7 @@ public class TJFrame extends JFrame implements FrameDevice
 		super.dispose();
 	}
 
-	static boolean resetPlacementOrder = true;
+    static boolean resetPlacementOrder = true;
     static int lastClass=-1;
     static int lastPlaceX=0, lastPlaceY=0;
     static int lastOffset=0;
@@ -92,30 +92,7 @@ public class TJFrame extends JFrame implements FrameDevice
         	lastPlaceY=curY;
         }
     }
-    
-    /*static int lastClass=-1;
-    static int lastPlaceX=0, lastPlaceY=0;
-    static int lastOffset=0;
-    
-    public void initPlacement() { // initial frame placement
-	if (WTmyself==null) return;
-        if (lastClass!=WTmyself.wclass) {
-            lastClass=WTmyself.wclass;
-            lastPlaceX=getWidth()+10; lastPlaceY=0; lastOffset=0;
-        } else {
-            setLocation(lastPlaceX,lastPlaceY);
-            lastPlaceX+=getWidth()+10;
-            Common.getScreenRes();
-            if (lastPlaceX+100>Common.screenRes.width) {
-                lastPlaceY+=getHeight()+20;
-                lastPlaceX=0;
-                if (lastPlaceY+100>Common.screenRes.height) {
-                    lastOffset+=30;
-                    lastPlaceY=lastOffset; lastPlaceX=lastOffset;
-                }
-            }
-        }
-    }*/
+   
     
     public Frame getFrame() {
     	return this;
