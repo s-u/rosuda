@@ -48,7 +48,8 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Independent Samples", "two sample", cListener);
+			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
+			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
 			new Thread(new Runner()).start();
 			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
 		}catch(Exception e){new ErrorMsg(e);}
@@ -125,6 +126,11 @@ public class Deducer {
 			}else if (cmd == "table"){
 				DataFrameWindow inst = new DataFrameWindow();
 				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
+			}else if(cmd=="onesample"){
+				
+				OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
+				inst.setLocationRelativeTo(JGR.MAINRCONSOLE);
 				inst.setVisible(true);
 			}else if(cmd=="two sample"){
 				TwoSampleDialog inst = new TwoSampleDialog(JGR.MAINRCONSOLE);

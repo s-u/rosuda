@@ -80,7 +80,7 @@ public class TwoSampleModel{
 		}
 		
 		boolean isSubset=false;
-		if(subset!="" ){
+		if(!subset.equals("") ){
 			if(!SubsetDialog.isValidSubsetExp(subset,dataName)){
 				JOptionPane.showMessageDialog(null, "Sorry, the subset expression seems to be invalid.");
 				return false;

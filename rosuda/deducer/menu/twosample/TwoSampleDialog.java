@@ -98,6 +98,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 		kmOptions.setVisible(false);
 		plots.setVisible(false);
 		other.setVisible(false);
+		help.setVisible(false);
 	}
 	
 	private void initGUI() {
@@ -112,36 +113,41 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 				bottomPanel.setPreferredSize(new java.awt.Dimension(547, 231));
 				{
 					Options = new JButton();
-					bottomPanel.add(Options, new AnchorConstraint(117, 910, 603, 756, AnchorConstraint.ANCHOR_ABS, 
-							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+					bottomPanel.add(Options, new AnchorConstraint(117, 910, 603, 756, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					Options.setText("Options");
 					Options.setPreferredSize(new java.awt.Dimension(94, 22));
 					Options.addActionListener(this);
 				}
 				{
 					other = new JButton();
-					bottomPanel.add(other, new AnchorConstraint(145, 794, 651, 756, AnchorConstraint.ANCHOR_ABS, 
-							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+					bottomPanel.add(other, new AnchorConstraint(145, 794, 651, 756, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					other.setText("Other Tests");
 					other.setPreferredSize(new java.awt.Dimension(94, 22));
 				}
 				{
 					help = new JButton();
-					bottomPanel.add(help, new AnchorConstraint(820, 83, 11, 14, AnchorConstraint.ANCHOR_NONE,
-							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
+					bottomPanel.add(help, new AnchorConstraint(820, 83, 11, 14, 
+							AnchorConstraint.ANCHOR_NONE,AnchorConstraint.ANCHOR_NONE, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
 					help.setText("Help");
 					help.setPreferredSize(new java.awt.Dimension(36, 31));
 				}
 				{
 					buttonPanel = new OkayCancelPanel(true,true,this);
-					bottomPanel.add(buttonPanel, new AnchorConstraint(172, 12, 950, 578, AnchorConstraint.ANCHOR_ABS, 
-							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
+					bottomPanel.add(buttonPanel, new AnchorConstraint(172, 12, 950, 578, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 					buttonPanel.setPreferredSize(new java.awt.Dimension(300, 59));
 				}
 				{
 					distributionPanel = new JPanel();
-					bottomPanel.add(distributionPanel, new AnchorConstraint(12, 981, 482, 666, AnchorConstraint.ANCHOR_ABS, 
-							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+					bottomPanel.add(distributionPanel, new AnchorConstraint(12, 981, 482, 666, 
+							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					distributionPanel.setPreferredSize(new java.awt.Dimension(192, 99));
 					distributionPanel.setBorder(BorderFactory.createTitledBorder("Distribution"));
 					distributionPanel.setLayout(null);
@@ -311,7 +317,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					factorPanel = new JPanel();
 					BorderLayout factorPanelLayout = new BorderLayout();
 					factorPanel.setLayout(factorPanelLayout);
-					topPanel.add(factorPanel, new AnchorConstraint(628, 979, 750, 582, AnchorConstraint.ANCHOR_REL, 
+					topPanel.add(factorPanel, new AnchorConstraint(620, 979, 750, 582, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					factorPanel.setPreferredSize(new java.awt.Dimension(242, 51));
 					factorPanel.setBorder(BorderFactory.createTitledBorder("Factor"));
@@ -360,7 +366,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					subset.setLayout(new BorderLayout());
 					subsetPanel = new SubsetPanel(variableSelector.getJComboBox());
 					subset.add(subsetPanel);
-					topPanel.add(subset, new AnchorConstraint(810, 979, 1003, 582, AnchorConstraint.ANCHOR_REL, 
+					topPanel.add(subset, new AnchorConstraint(800, 979, 1003, 582, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					subset.setBorder(BorderFactory.createTitledBorder("Subset"));
 				}
@@ -374,7 +380,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 			variableSelector.getJComboBox().addActionListener(this);
 			this.setTitle("Two Independent Sample Tests");
-			this.setSize(610, 615);
+			this.setSize(610, 630);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
