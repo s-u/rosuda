@@ -39,7 +39,7 @@ IWIDGETS_SRC:=$(wildcard rosuda/iWidgets/*.java)
 JAVAGD_SRC:=$(wildcard rosuda/javaGD/*.java)
 JGR_SRC:=$(wildcard rosuda/JGR/*.java)  $(wildcard rosuda/JGR/layout/*.java) $(wildcard rosuda/JGR/toolkit/*.java) $(wildcard rosuda/JGR/util/*.java) $(wildcard rosuda/JGR/rhelp/*.java) $(wildcard rosuda/JGR/robjects/*.java) $(wildcard rosuda/JGR/editor/*.java)
 JEDIT_SRC:= $(wildcard rosuda/JGR/editor/jedit/syntax/*.java)
-DEDUCER_SRC:= $(wildcard rosuda/deducer/*.java) $(wildcard rosuda/deducer/menu/*.java)  $(wildcard rosuda/deducer/toolkit/*.java) $(wildcard rosuda/deducer/data/*.java)
+DEDUCER_SRC:= $(wildcard rosuda/deducer/*.java) $(wildcard rosuda/deducer/menu/*.java) $(wildcard rosuda/deducer/menu/twosample/*.java)  $(wildcard rosuda/deducer/toolkit/*.java) $(wildcard rosuda/deducer/data/*.java)
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
 RENGINE_RSERVE_SRC:=$(wildcard rosuda/REngine/Rserve/*.java) $(wildcard rosuda/REngine/Rserve/protocol/*.java)
@@ -91,7 +91,6 @@ deducer.jar: JGR.jar javaGD.jar iplots.jar MRJstubs.jar $(JRENGINE) $(DEDUCER_SR
 	cp -r rosuda/projects/deducer/icons .
 	jar fcm $@ rosuda/projects/deducer/deducer.mft org icons
 	rm -rf org icons
-
 
 
 ibase.jar: MRJstubs.jar $(IBASE_SRC)
