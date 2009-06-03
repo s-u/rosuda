@@ -138,7 +138,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
 				"@FFind","search","@GFind Next","searchnext","-","!LClear Console","clearconsole",
 				"-", "!IIncrease Font Size","fontBigger", "!DDecrease Font Size", "fontSmaller",
-				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp",
+				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp","-","Clear All","clearwp",
 				"+", "Packages & Data", "@BObject Browser","objectmgr", "DataTable", "table", "-","Package Manager", "packagemgr", "Package Installer","packageinst",
 			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
 			JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
@@ -157,6 +157,28 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				item3.addActionListener(this);
 				rm.add(item3);
 			}
+			
+			//preference and about for non-mac systems
+			if(!Common.isMac()){
+				EzMenuSwing.addMenuSeparator(this, "Edit");
+				EzMenuSwing.addJMenuItem(this, "Edit", "Preferences", "preferences", this);
+				EzMenuSwing.addJMenuItem(this, "Help", "About", "about", this);	
+				
+				for(int i=0;i<mb.getMenuCount();i++){
+					if(mb.getMenu(i).getText().equals("Preferences") ||
+							mb.getMenu(i).getText().equals("About")){
+						mb.remove(i);
+						i--;
+					}
+					if(mb.getMenu(i).getText().equals("Edit")){
+						JMenuItem prefer = (JMenuItem)mb.getMenu(i).getMenuComponent(
+												mb.getMenu(i).getMenuComponentCount()-1);
+						prefer.setAccelerator(KeyStroke.getKeyStroke(',',MENUMODIFIER));
+					}
+				}
+			}
+
+			
 			
 			// Add History if we didn't found one in the user's home directory
 			if (JGR.RHISTORY == null)
@@ -866,7 +888,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				saveWorkSpace(wspace);
 			else if (cmd == "saveaswsp")
 				saveWorkSpaceAs();
-			else if (cmd == "search")
+			else if(cmd == "clearwp"){
+				int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear " +
+							"				your workspace?\n All unsaved objects will be deleted.",
+							"Clear Workspace",JOptionPane.YES_NO_OPTION);
+				if(doIt==JOptionPane.OK_OPTION)
+					execute("rm(list=ls())");
+			}else if (cmd == "search")
 				//textFinder.showFind(false);
 				FindReplaceDialog.findExt(this,output);
 			else if (cmd == "searchnext")
