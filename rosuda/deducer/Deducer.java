@@ -1,5 +1,6 @@
 package org.rosuda.deducer;
 
+import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -7,10 +8,15 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 
+import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.RController;
+import org.rosuda.JGR.SaveData;
 import org.rosuda.deducer.data.DataFrameSelector;
 import org.rosuda.deducer.data.DataFrameWindow;
 
@@ -20,11 +26,13 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.menu.RecodeDialog;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
+import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 
 public class Deducer {
 	ConsoleListener cListener =  new ConsoleListener();
-
+	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
+	
 	public Deducer(){
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
@@ -50,16 +58,59 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
-			new Thread(new Runner()).start();
-			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
+
+			//Replace DataTable with Data Viewer
+			JGR.MAINRCONSOLE.getJMenuBar().getMenu(5).remove(1);
+			insertJMenuItem(JGR.MAINRCONSOLE, "Packages & Data", "Data Viewer", "table", cListener, 1);
+
+			//Override New Data with Data Viewer enabled version
+			JGR.MAINRCONSOLE.getJMenuBar().getMenu(0).remove(0);
+			insertJMenuItem(JGR.MAINRCONSOLE, "File", "New Data", "New Data Set", cListener, 0);
+			
+			//Override Open Data with Data Viewer enabled version
+			JGR.MAINRCONSOLE.getJMenuBar().getMenu(0).remove(1);
+			insertJMenuItem(JGR.MAINRCONSOLE, "File", "Open Data", "Open Data Set", cListener, 1);
+			JMenuItem open = (JMenuItem)JGR.MAINRCONSOLE.getJMenuBar().getMenu(0).getMenuComponent(1);
+			open.setAccelerator(KeyStroke.getKeyStroke('L',MENUMODIFIER));
+			
+			//Save Data
+			insertJMenuItem(JGR.MAINRCONSOLE, "File", "Save Data", "Save Data Set", cListener, 2);
+			
+			new Thread(new Runner()).start();		
 		}catch(Exception e){new ErrorMsg(e);}
+	}
+	
+	public void detach(){
+		JMenuBar mb = JGR.MAINRCONSOLE.getJMenuBar();
+		for(int i=0;i<mb.getMenuCount();i++){
+			if(mb.getMenu(i).getText().equals("Data") ||
+					mb.getMenu(i).getText().equals("Analysis")){
+				mb.remove(i);
+				i--;
+			}
+		}
 	}
 
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
 		
-			if(cmd == "recode"){
+			if(cmd=="New Data Set"){
+				String inputValue = JOptionPane.showInputDialog("Data Name: ");
+				if(inputValue!=null){
+					String var = RController.makeValidVariableName(inputValue.trim());
+					JGR.MAINRCONSOLE.execute(var+"<-data.frame()");
+					DataFrameWindow.setTopDataWindow(var);
+				}
+			}else if (cmd == "Open Data Set"){
+				DataLoader inst = new DataLoader();
+				DataFrameWindow.setTopDataWindow(inst.getDataName());
+			}else if(cmd == "Save Data Set"){
+				RObject data = (new DataFrameSelector(JGR.MAINRCONSOLE)).getSelection();
+				if(data!=null){
+					new SaveData(data.getName());
+				}
+			}else if(cmd == "recode"){
 				RecodeDialog recode =new RecodeDialog(JGR.MAINRCONSOLE); 
 				recode.setLocationRelativeTo(null);
 				recode.setVisible(true);
@@ -128,7 +179,6 @@ public class Deducer {
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 			}else if(cmd=="onesample"){
-				
 				OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
 				inst.setLocationRelativeTo(JGR.MAINRCONSOLE);
 				inst.setVisible(true);

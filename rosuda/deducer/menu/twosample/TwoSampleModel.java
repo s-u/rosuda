@@ -58,11 +58,11 @@ public class TwoSampleModel{
 		if(dataName==null)
 			return false;
 		if(variables.size()==0){
-			JOptionPane.showInternalMessageDialog(null, "Please select some outcome variables.");
+			JOptionPane.showMessageDialog(null, "Please select one or more outcome variables.");
 			return false;
 		}
 		if(factorName.size()==0){
-			JOptionPane.showInternalMessageDialog(null, "Please select a factor.");
+			JOptionPane.showMessageDialog(null, "Please select a factor.");
 			return false;			
 		}
 		subset = subset.trim();
@@ -161,6 +161,7 @@ public class TwoSampleModel{
 		}
 		if(isSubset)
 			cmd+="rm("+subn+")\n";
+		
 		JGR.MAINRCONSOLE.execute(cmd);
 		return true;
 	}

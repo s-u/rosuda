@@ -224,6 +224,8 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		boolean allExist=variableSelector.removeAll(mod.vars);
 		if(allExist){
 			vars.setModel(mod.vars);
+			model.subset=mod.subset;
+			subsetPanel.setText(mod.subset);
 			model.vars=mod.vars;
 		}else{
 			variableSelector.reset();
@@ -249,6 +251,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			boolean valid = model.run();
 			if(valid){
 				lastModel=model;
+				SubsetDialog.addToHistory(model.data, model.subset);
 				this.dispose();
 			}
 		}else if(cmd=="Cancel"){
@@ -285,8 +288,12 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		
 		
 		public boolean run(){
-		String outcomes = RController.makeRStringVector(vars);
-		String variables = RController.makeRVector(vars);			
+			if(vars.getSize()==0){
+				JOptionPane.showMessageDialog(null, "Please select one or more variables.");
+				return false;
+			}
+			String outcomes = RController.makeRStringVector(vars);
+			String variables = RController.makeRVector(vars);			
 			String cmd="";
 			String subn="";
 			boolean isSubset=false;
