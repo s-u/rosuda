@@ -19,6 +19,7 @@ import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.menu.RecodeDialog;
+import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 
 public class Deducer {
@@ -47,6 +48,7 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
+			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Independent Samples", "two sample", cListener);
 			new Thread(new Runner()).start();
 			//insertJMenuItem(JGR.MAINRCONSOLE, "Environment", "Data Viewer", "table", cListener, 2);
 		}catch(Exception e){new ErrorMsg(e);}
@@ -124,6 +126,10 @@ public class Deducer {
 				DataFrameWindow inst = new DataFrameWindow();
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
+			}else if(cmd=="two sample"){
+				TwoSampleDialog inst = new TwoSampleDialog(JGR.MAINRCONSOLE);
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);				
 			}
 		}
 	}

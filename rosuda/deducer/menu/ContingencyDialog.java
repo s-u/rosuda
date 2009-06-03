@@ -13,6 +13,7 @@ import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
 
@@ -308,22 +309,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				subsetPanel.setBorder(BorderFactory.createTitledBorder("Subset"));				
 				subsetPanel.setPreferredSize(new java.awt.Dimension(226, 53));
 	
-					/*new JPanel();
-				BorderLayout subsetPanelLayout = new BorderLayout();
-				subsetPanel.setLayout(subsetPanelLayout);
-				subsetPanel.setBorder(BorderFactory.createTitledBorder("Subset"));
-				getContentPane().add(subsetPanel, new AnchorConstraint(772, 776, 875, 469, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				subsetPanel.setPreferredSize(new java.awt.Dimension(226, 53));
-				{
-					subsetScroller = new JScrollPane();
-					subsetPanel.add(subsetScroller, BorderLayout.CENTER);
-					{
-						subset = new JTextArea();
-						subsetScroller.setViewportView(subset);
-						subset.setText("");
-					}
-				}*/
 			}
 			this.setTitle("Contingency Tables");
 			this.setSize(736, 539);
@@ -1403,47 +1388,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			}
 			
 		}
-	}
-	
-	private class SingletonDJList extends DJList{
-		public void drop(DropTargetDropEvent dtde) {
-			try{	
-				dtde.acceptDrop(DnDConstants.ACTION_MOVE);
-				boolean dropped =false;
-				DefaultListModel curModel = (DefaultListModel) this.getModel();
-				if(curModel.getSize()>0)
-					dtde.rejectDrop();
-				else{
-					ArrayList ary = (ArrayList)dtde.getTransferable().getTransferData(new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType
-						      + ";class=java.util.ArrayList"));
-					if(ary.size()>1)
-						dtde.rejectDrop();
-					else{
-					dropped = arrayListHandler.importData(this,dtde.getTransferable());
-					DefaultListModel newModel = (DefaultListModel) this.getModel();
-					if(newModel.getSize()>1){
-						dtde.rejectDrop();
-						this.setModel(curModel);
-					}
-					}
-				}
-				
-				dtde.dropComplete(dropped);
-				dragIndex=-1;
-				isAtEnd=false;
-				repaint();
-				if(this.getModel().getSize()>0){
-					addStratum.setVisible(false);
-					removeStratum.setVisible(true);
-				}else{
-					addStratum.setVisible(true);
-					removeStratum.setVisible(false);
-				}
-	        }catch (Exception e){
-	        	new ErrorMsg(e);
-	        }
-		}
-		
 	}
 	
 	class Refresher implements Runnable {

@@ -37,6 +37,7 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
 	
 	
 	
+	
 	protected class ArrayListTransferHandler extends TransferHandler {
 		  DataFlavor localArrayListFlavor, serialArrayListFlavor;
 

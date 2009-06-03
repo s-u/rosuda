@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
 import org.rosuda.JGR.editor.Editor;
@@ -279,6 +280,38 @@ public class RController {
 		for(int i=0;i<list.getModel().getSize();i++)
 			varList.add(list.getModel().getElementAt(i));
 		return makeRStringVector(varList);
+	}
+	public static String makeRStringVector(DefaultListModel mod){
+		ArrayList varList = new ArrayList();
+		for(int i=0;i<mod.getSize();i++)
+			varList.add(mod.getElementAt(i));
+		return makeRStringVector(varList);
+	}
+	public static String makeRStringVector(Vector mod){
+		ArrayList varList = new ArrayList();
+		for(int i=0;i<mod.size();i++)
+			varList.add(mod.get(i));
+		return makeRStringVector(varList);
+	}
+	
+	public static String makeRVector(Vector vec){
+		String outcomes = "c(";
+		for(int i=0;i<vec.size();i++){
+			outcomes +=(String)vec.get(i);
+			if(i<(vec.size()-1))
+				outcomes+=",";
+			if(i%10==9)
+				outcomes+="\n";
+		}
+		outcomes+=")";
+		return outcomes;
+	}
+	
+	public static String makeRVector(DefaultListModel mod){
+		Vector tmp = new Vector();
+		for(int i=0;i<mod.getSize();i++)
+			tmp.add(mod.getElementAt(i));	
+		return makeRVector(tmp);
 	}
 	
 	public static boolean isValidSubsetExp(String subset,String dataName){
