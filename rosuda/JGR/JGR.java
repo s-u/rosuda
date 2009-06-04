@@ -66,6 +66,9 @@ public class JGR {
 	/** Author JRI, rJava and JavaGD (used for displaying the splashscreen) */
 	public static final String AUTHOR2 = "Simon Urbanek";
 	
+	/** Author JGR parts since 2009  */
+	public static final String AUTHOR3 = "Ian Fellows";
+	
 	/** Website of organization (used for displaying the splashscreen) */
 	public static final String WEBSITE = "http://www.rosuda.org";
 
