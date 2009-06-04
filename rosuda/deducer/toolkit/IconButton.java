@@ -53,6 +53,11 @@ public class IconButton extends JButton implements MouseListener {
 		this.addActionListener(al);
 		this.addMouseListener(this);
 	}
+	
+	public void setIcon(String iconUrl){
+		ImageIcon icon = new ImageIcon(getClass().getResource(iconUrl));
+		this.setIcon(icon);
+	}
 
 	/**
 	 * mouseClicked: handle mouse event.

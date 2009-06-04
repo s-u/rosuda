@@ -81,6 +81,8 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 	private VariableSelector variableSelector;
 	
 	private TwoSampleModel testModel = new TwoSampleModel();
+	private IconButton exchAssump2;
+	private IconButton approxAssump;
 	
 	private static TwoSampleModel lastModel;
 
@@ -251,7 +253,12 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					{
 						ttestOptions = new IconButton("/icons/advanced_21.png","t-test options",this,"t-test options");
 						meanPanel.add(ttestOptions);
-						ttestOptions.setBounds(135, 15, 27, 27);
+						ttestOptions.setBounds(140, 15, 27, 27);
+					}
+					{
+						exchAssump2 = new IconButton("/icons/eqvar_assump.png","Equal Variance",null,"Equal Variance");
+						meanPanel.add(exchAssump2);
+						exchAssump2.setBounds(108, 40, 27, 27);
 					}
 					{
 						sep1 = new JSeparator();
@@ -267,23 +274,28 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					{
 						lrgAssump2 = new IconButton("/icons/N_or_exch_assump.png","Large Sample or exchangable",null,"Large Sample or exchangable");
 						meanPanel.add(lrgAssump2);
-						lrgAssump2.setText("Large Sample or exchangable");
 						lrgAssump2.setBounds(34, 112, 47, 27);
 					}
 					{
 						bootOptions = new IconButton("/icons/advanced_21.png","Permutation Options",this,"Permutation Options");
 						meanPanel.add(bootOptions);
-						bootOptions.setBounds(135, 89, 27, 27);
+						bootOptions.setBounds(140, 89, 27, 27);
 					}
 					{
-						outlierAssum = new IconButton("/icons/outlier_21.png","No Outliers",this,"No Outliers");
+						outlierAssum = new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 						meanPanel.add(outlierAssum);
-						outlierAssum.setBounds(61, 40, 27, 27);
+						outlierAssum.setBounds(81, 40, 27, 27);
 					}
 					{
-						outlierAssump1 =  new IconButton("/icons/outlier_21.png","No Outliers",this,"No Outliers");
+						outlierAssump1 =  new IconButton("/icons/outlier_assump.png","No Outliers",this,"No Outliers");
 						meanPanel.add(outlierAssump1);
 						outlierAssump1.setBounds(81, 112, 27, 27);
+					}
+					{
+						approxAssump =  new IconButton("/icons/mcapprox_assump.png","Monte Carlo Approximation",
+								this,"Monte Carlo Approximation");
+						meanPanel.add(approxAssump);
+						approxAssump.setBounds(108, 112, 27, 27);
 					}
 				}
 			}
@@ -419,6 +431,26 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 		mannWhitney.setSelected(mod.doMW);
 		bmTest.setSelected(mod.doBM);
 		testModel=mod;
+		if(testModel.bootStat=="t"){
+			lrgAssump2.setIcon("/icons/N_or_exch_assump.png");
+			lrgAssump2.setToolTipText("Large sample or Exchangable");
+			lrgAssump2.setSize(47, 27);
+		}else{
+			lrgAssump2.setIcon("/icons/eqvar_assump.png");
+			lrgAssump2.setToolTipText("Exchangable");
+			lrgAssump2.setSize(27, 27);
+		}
+		if(testModel.tEqVar==false){
+			exchAssump2.setVisible(false);
+			lrgAssump.setIcon("/icons/N_assump.png");
+			lrgAssump.setToolTipText("Large Sample");
+			lrgAssump.setSize(27, 27);
+		}else{
+			exchAssump2.setVisible(true);
+			lrgAssump.setIcon("/icons/N_or_norm_assump.png");
+			lrgAssump.setToolTipText("Large sample or Normal");
+			lrgAssump.setSize(47, 27);
+		}
 	}
 	
 	public void reset(){
@@ -467,10 +499,19 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 									testModel.tEqVar ?  "Equal variance (Student)":"Unequal variance (Welsh) (Recommended)");
 			if(ttestType==null)
 				return;
-			if(ttestType=="Unequal Variance t-test")
+			if(ttestType.startsWith("Unequal")){
+				exchAssump2.setVisible(false);
+				lrgAssump.setIcon("/icons/N_assump.png");
+				lrgAssump.setToolTipText("Large Sample");
+				lrgAssump.setSize(27, 27);
 				testModel.tEqVar=false;
-			else
+			}else{
+				exchAssump2.setVisible(true);
+				lrgAssump.setIcon("/icons/N_or_norm_assump.png");
+				lrgAssump.setToolTipText("Large sample or Normal");
+				lrgAssump.setSize(47, 27);
 				testModel.tEqVar=true;
+			}
 		}else if(cmd=="Permutation Options"){
 			String permType=(String)JOptionPane.showInputDialog(this, "Permutation Statistic", "Permutation Options", 
 					JOptionPane.INFORMATION_MESSAGE, null, 
@@ -478,7 +519,17 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					testModel.bootStat=="t" ?  "t (Recommended)":"mean");		
 			if(permType==null)
 				return;
-			testModel.bootStat = permType=="t (Recommended)"?"t":"mean";
+			if(permType.startsWith("t")){
+				testModel.bootStat="t";
+				lrgAssump2.setIcon("/icons/N_or_exch_assump.png");
+				lrgAssump2.setToolTipText("Large sample or Exchangable");
+				lrgAssump2.setSize(47, 27);
+			}else{
+				testModel.bootStat="mean";
+				lrgAssump2.setIcon("/icons/eqvar_assump.png");
+				lrgAssump2.setToolTipText("Exchangable");
+				lrgAssump2.setSize(27, 27);
+			}
 		}else if(cmd=="Add"){
 			Object[] objs=variableSelector.getJList().getSelectedValues();
 			for(int i=0;i<objs.length;i++){

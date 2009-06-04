@@ -79,7 +79,7 @@ public class Editor extends TJFrame implements ActionListener {
 		String[] Menu = { "+", "File", "@NNew", "new", "@OOpen", "open", "#Open Recent","", "@SSave", "save", "!SSave as", "saveas", "-", "@PPrint", "print", "-",
 				"@QQuit", "quit", 
 				"+", "Edit", "@ZUndo","undo","!ZRedo","redo","-","@XCut", "cut", "@CCopy", "copy", "@VPaste", "paste", "-", 
-				"@/Toggle Comment","commentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
+				"@/Comment out","commentcode","@;Uncomment","uncommentcode","-","!LShift Left","shiftleft","!RShift Right","shiftright","-","@RRun Selection","runselection","Run all","runall","-", "@FFind", "find", "@GFind next",
 				"findnext", 
 				
 				"+", "Tools", "!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", 

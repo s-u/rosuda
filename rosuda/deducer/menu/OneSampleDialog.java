@@ -143,28 +143,28 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					testPanel.setBorder(BorderFactory.createTitledBorder(null, "Tests",
 							TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
 					testPanel.setLayout(null);
-					testPanel.setPreferredSize(new java.awt.Dimension(206, 137));
+					testPanel.setPreferredSize(new java.awt.Dimension(206, 140));
 					{
 						ttest = new JCheckBox();
 						testPanel.add(ttest);
 						ttest.setText("One-sample t-test");
-						ttest.setBounds(17, 19, 139, 18);
+						ttest.setBounds(17, 19, 170, 18);
 					}
 					{
 						ttestOptions = new IconButton("/icons/advanced_21.png","t-test Options",
 								this,"t-test Options");
 						testPanel.add(ttestOptions);
-						ttestOptions.setBounds(161, 17, 27, 27);
+						ttestOptions.setBounds(171, 17, 27, 27);
 					}
 					{
-						assumpNOrNorm = new IconButton("/icons/assumpNOrNorm.png",
+						assumpNOrNorm = new IconButton("/icons/N_or_norm_assump.png",
 								"Large Sample or Normality",this,
 								"Large Sample or Normality");
 						testPanel.add(assumpNOrNorm);
 						assumpNOrNorm.setBounds(40, 40, 47, 27);
 					}
 					{
-						assumpOutlier = new IconButton("/icons/assumpNOrNorm.png",
+						assumpOutlier = new IconButton("/icons/outlier_assump.png",
 								"No Outliers",this,
 								"No Outliers");
 						testPanel.add(assumpOutlier);
@@ -394,12 +394,12 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					muLabel = new JLabel();
 					muLabel.setText("Test mean:");
 					getContentPane().add(muLabel);				
-					muLabel.setBounds(44, 139, 68, 14);		
+					muLabel.setBounds(24, 139, 88, 14);		
 				}
 				{
 					okayCancelPanel = new OkayCancelPanel(false,false,this);
 					getContentPane().add(okayCancelPanel);	
-					okayCancelPanel.setBounds(0, 165, 226, 38);			
+					okayCancelPanel.setBounds(-20, 165, 246, 38);			
 				}
 				getAlternativeGroup();
 				this.setTitle("One-sample t-test options");
