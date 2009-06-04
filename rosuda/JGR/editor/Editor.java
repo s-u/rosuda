@@ -32,7 +32,7 @@ import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.toolkit.PrefsDialog;
+import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
@@ -414,8 +414,11 @@ public class Editor extends TJFrame implements ActionListener {
 				fileName = e.getActionCommand().replaceFirst("recent:", "");
 				openFile(fileName);
 			}
-		} else if (e.getActionCommand() == "preferences")
-			new PrefsDialog(this);
+		} else if (e.getActionCommand() == "preferences") {
+			PrefDialog inst = PrefDialog.showPreferences(this);
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+		}
 		else if (e.getActionCommand() == "print")
 			print();
 		else if (e.getActionCommand() == "recent-clear") {
