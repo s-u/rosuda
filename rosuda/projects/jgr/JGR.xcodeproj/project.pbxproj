@@ -102,6 +102,7 @@
 		2835E2270AAB354000012BE8 /* FindReplaceDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 2835E2260AAB354000012BE8 /* FindReplaceDialog.java */; };
 		284DA11406105C86003B4450 /* close.png in Resources */ = {isa = PBXBuildFile; fileRef = 284DA11306105C85003B4450 /* close.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
 		2858B260064E5FAA00C9BFA7 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 2858B25F064E5FAA00C9BFA7 /* stop.png */; settings = {JAVA_ARCHIVE_SUBDIR = icons; }; };
+		28664EBC0FD85BA8007BE247 /* PrefDialog.java in Sources */ = {isa = PBXBuildFile; fileRef = 28664EBB0FD85BA8007BE247 /* PrefDialog.java */; };
 		28699F1006BC5894002BEFFC /* JGR.icns in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0E06BC5894002BEFFC /* JGR.icns */; };
 		28699F1106BC5894002BEFFC /* JGR.mft in Resources */ = {isa = PBXBuildFile; fileRef = 28699F0F06BC5894002BEFFC /* JGR.mft */; };
 		287A3E3C0C11B61E0094B032 /* MutableREXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 287A3E250C11B61D0094B032 /* MutableREXP.java */; };
@@ -412,6 +413,7 @@
 		284DA11306105C85003B4450 /* close.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = close.png; path = icons/close.png; sourceTree = SOURCE_ROOT; };
 		2858B25F064E5FAA00C9BFA7 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = stop.png; path = icons/stop.png; sourceTree = SOURCE_ROOT; };
 		285E22AF05FB9A8400F09D05 /* home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = home.png; sourceTree = "<group>"; };
+		28664EBB0FD85BA8007BE247 /* PrefDialog.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; path = PrefDialog.java; sourceTree = "<group>"; };
 		28699F0E06BC5894002BEFFC /* JGR.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = JGR.icns; sourceTree = SOURCE_ROOT; };
 		28699F0F06BC5894002BEFFC /* JGR.mft */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = JGR.mft; sourceTree = SOURCE_ROOT; };
 		287A3E250C11B61D0094B032 /* MutableREXP.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; name = MutableREXP.java; path = ../../REngine/MutableREXP.java; sourceTree = SOURCE_ROOT; };
@@ -1027,6 +1029,7 @@
 		289DF65709F26AF800C34B0B /* toolkit */ = {
 			isa = PBXGroup;
 			children = (
+				28664EBB0FD85BA8007BE247 /* PrefDialog.java */,
 				28208B890F57EF6600E3A0BA /* ExtensionFileFilter.java */,
 				289DF65809F26AF800C34B0B /* AboutDialog.java */,
 				289DF65909F26AF800C34B0B /* ConsoleOutput.java */,
@@ -1622,6 +1625,7 @@
 				28B0B1170FC4447E00BD46BC /* LineNumbers.java in Sources */,
 				28B0B1180FC4447E00BD46BC /* SyntaxArea.java in Sources */,
 				28B0B1190FC4447E00BD46BC /* SyntaxDocument.java in Sources */,
+				28664EBC0FD85BA8007BE247 /* PrefDialog.java in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
