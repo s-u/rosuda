@@ -40,7 +40,7 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
     }
 
     public void handlePrefs() {
-        PrefDialog inst = new PrefDialog(null);
+        PrefDialog inst = PrefDialog.showPreferences(null);
         inst.setLocationRelativeTo(null);
         inst.setVisible(true);
     }

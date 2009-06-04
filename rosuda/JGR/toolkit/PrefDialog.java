@@ -121,12 +121,27 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	};
 	
 	
-	public PrefDialog(JFrame frame) {
+	private static PrefDialog instance;
+	
+	private PrefDialog(JFrame frame) {
 		super(frame);
 		initGUI();
 		setFontComboBox();
 		reset();
 	}
+	
+	public static PrefDialog showPreferences(JFrame frame) {
+		if (instance == null) {
+			instance = new PrefDialog(frame);
+		}
+		return instance;
+	}
+	
+	public void dispose() {
+		instance = null;
+		super.dispose();
+	}
+	
 	
 	private void initGUI() {
 		try {
@@ -491,7 +506,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			{
 				helpAgent = new JCheckBox();
 				helpPanel.add(helpAgent);
-				helpAgent.setText("Help Agent");
+				helpAgent.setText("Console Help Agent");
 				helpAgent.setBounds(10, 79, 106, 18);
 			}
 			lineNumbers.setEnabled(false);
