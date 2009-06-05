@@ -100,6 +100,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	
 	private final String[] styles = {" ","JGR","eclipse","emacs","MSVS 2008","vim","Xcode"};
 	
+	private static Vector plugInPanels;
+	private static Vector plugInActionListeners;
+	
 	
 	private final Object[][] styleDef = {
 		
@@ -126,6 +129,20 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private PrefDialog(JFrame frame) {
 		super(frame);
 		initGUI();
+		if(plugInPanels==null || plugInActionListeners==null){
+			plugInPanels = new Vector();
+			plugInActionListeners = new Vector();
+		}else{
+			PJPanel pan;
+			for(int i = 0 ; i<plugInPanels.size();i++){
+				pan = (PJPanel)plugInPanels.get(i);
+				tabbedPrefs.add(pan);
+				pan.reset();
+				okay.addActionListener((ActionListener)plugInActionListeners.get(i));
+				cancel.addActionListener((ActionListener)plugInActionListeners.get(i));
+				reset.addActionListener((ActionListener)plugInActionListeners.get(i));
+			}
+		}
 		setFontComboBox();
 		reset();
 	}
@@ -656,6 +673,42 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		setColor(objects,JGRPrefs.OBJECTColor);
 		boldKeywords.setSelected(JGRPrefs.KEYWORD_BOLD);
 		italicObjects.setSelected(JGRPrefs.OBJECT_IT);
+		for(int i=0;i<styleDef.length;i++){
+			// {comments,keywords,numbers,strings,
+			//		objects,bold keywords,italic objects}	
+			if(JGRPrefs.COMMENTColor.equals(styleDef[i][0]) &&
+					JGRPrefs.KEYWORDColor.equals(styleDef[i][1]) &&
+					JGRPrefs.NUMBERColor.equals(styleDef[i][2]) &&
+					JGRPrefs.QUOTEColor.equals(styleDef[i][3]) &&
+					JGRPrefs.OBJECTColor.equals(styleDef[i][4]) &&
+					(new Boolean(JGRPrefs.KEYWORD_BOLD)).equals(styleDef[i][5]) &&
+					(new Boolean(JGRPrefs.OBJECT_IT)).equals(styleDef[i][6]) 
+
+				)
+				style.setSelectedIndex(i+1);
+		}
+	}
+	
+	public void resetToFactory(){
+		style.setSelectedIndex(1);
+		setColor(highlightColor,new Color(0xe0e0e0));
+		setColor(results,Color.blue);
+		setColor(commands,Color.red);
+		setColor(errors,Color.red);
+		monospaced.setSelected(true);
+		fontComboBox.setSelectedItem("Monospaced");
+		sizeComboBox.setSelectedItem(""+12);
+		tabwidth.setValue(new Integer(4));
+		lineNumbers.setSelected(true);
+		highlight.setSelected(true);
+		autotab.setSelected(true);
+		setColor(brackets,new Color(200, 255, 255));
+		working.setText(System.getProperty("user.home"));
+		hidden.setSelected(false);
+		helpPages.setValue(new Integer(10)); 
+		helpAgent.setSelected(true);
+		emacs.setSelected(false);
+		
 	}
 	
 	public boolean saveAll(){
@@ -721,6 +774,22 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.writePrefs(false);
 		return true;
 	}
+	
+	public static void addPanel(PJPanel panel, ActionListener al){
+		if(plugInPanels==null || plugInActionListeners==null){
+			plugInPanels = new Vector();
+			plugInActionListeners = new Vector();
+		}
+		plugInPanels.add(panel);
+		plugInActionListeners.add(al);
+		if(instance!=null){
+			instance.tabbedPrefs.add(panel);
+			panel.reset();
+			instance.okay.addActionListener(al);
+			instance.cancel.addActionListener(al);
+			instance.reset.addActionListener(al);
+		}
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		Object src = arg0.getSource();
@@ -731,7 +800,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		}else if(src==cancel){
 			this.dispose();
 		}else if(src==reset){
-			reset();
+			resetToFactory();
 		}else if(src==workingButton){
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -785,6 +854,10 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		}else if(src == style && style.getSelectedIndex()!=0){
 			setStyle(style.getSelectedIndex()-1);
 		}
+	}
+	
+	public static abstract class PJPanel extends JPanel{
+		public abstract void reset();
 	}
 }
 

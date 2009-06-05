@@ -22,7 +22,10 @@ import org.rosuda.deducer.data.DataFrameWindow;
 
 import org.rosuda.deducer.menu.*;
 import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.toolkit.DeducerPrefs;
+import org.rosuda.deducer.toolkit.PrefPanel;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.menu.RecodeDialog;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
@@ -32,35 +35,41 @@ import org.rosuda.ibase.toolkit.EzMenuSwing;
 public class Deducer {
 	ConsoleListener cListener =  new ConsoleListener();
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
+	static int menuIndex=3;
 	
 	public Deducer(){
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
 		try{
-			
-			insertMenu(JGR.MAINRCONSOLE,dataMenu,3);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Edit Factor", "factor", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Recode Variables", "recode", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Reset Row Names", "reset rows", cListener);
-			EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
-			//EzMenuSwing.addMenuSeparator(JGR.MAINRCONSOLE, dataMenu);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Subset", "subset", cListener);
+			DeducerPrefs.initialize();
+			if(DeducerPrefs.SHOWDATA){
+				insertMenu(JGR.MAINRCONSOLE,dataMenu,menuIndex);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Edit Factor", "factor", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Recode Variables", "recode", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Reset Row Names", "reset rows", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
+				//EzMenuSwing.addMenuSeparator(JGR.MAINRCONSOLE, dataMenu);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Subset", "subset", cListener);
+				menuIndex++;
+			}
 			
 			//EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
 			//EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Data Viewer", "table", cListener);
+			if(DeducerPrefs.SHOWANALYSIS){
+				insertMenu(JGR.MAINRCONSOLE,analysisMenu,menuIndex);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
+				menuIndex++;
+			}
 			
-			insertMenu(JGR.MAINRCONSOLE,analysisMenu,4);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
-
 			//Replace DataTable with Data Viewer
-			JGR.MAINRCONSOLE.getJMenuBar().getMenu(5).remove(1);
+			JGR.MAINRCONSOLE.getJMenuBar().getMenu(menuIndex).remove(1);
 			insertJMenuItem(JGR.MAINRCONSOLE, "Packages & Data", "Data Viewer", "table", cListener, 1);
 
 			//Override New Data with Data Viewer enabled version
@@ -80,6 +89,7 @@ public class Deducer {
 		}catch(Exception e){new ErrorMsg(e);}
 	}
 	
+	
 	public void detach(){
 		JMenuBar mb = JGR.MAINRCONSOLE.getJMenuBar();
 		for(int i=0;i<mb.getMenuCount();i++){
@@ -94,7 +104,7 @@ public class Deducer {
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
-		
+			
 			if(cmd=="New Data Set"){
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				if(inputValue!=null){
@@ -225,11 +235,17 @@ public class Deducer {
 				try {
 					Thread.sleep(50);
 						Runnable doWorkRunnable = new Runnable() {
-					    public void run() { 			
-					    	DataFrameWindow inst = new DataFrameWindow();
-					    	inst.setLocationRelativeTo(null);
-					    	inst.setVisible(true);
-					    	JGR.MAINRCONSOLE.toFront(); 
+					    public void run() { 
+					    	PrefPanel pref = new PrefPanel();
+					    	PrefDialog.addPanel(pref, pref);					    	
+						    if(DeducerPrefs.VIEWERATSTARTUP){
+							   	DataFrameWindow inst = new DataFrameWindow();
+						    	inst.setLocationRelativeTo(null);
+						    	inst.setVisible(true);
+						    	JGR.MAINRCONSOLE.toFront(); 
+					    	}
+					    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
+					    		JGR.R.eval(".jChooserMacLAF()");
 					    }
 						};
 					    if(JGR.R.idleEval("TRUE").asBool().isTRUE()){
