@@ -179,14 +179,12 @@ public class RTokenMarker extends TokenMarker {
 			cKeywords = new KeywordMap(false);
 			
 			// standard keywords
-			cKeywords.add("continue", Token.KEYWORD1);
-			cKeywords.add("do", Token.KEYWORD1);
+			cKeywords.add("in", Token.KEYWORD1);
 			cKeywords.add("else", Token.KEYWORD1);
 			cKeywords.add("for", Token.KEYWORD1);
 			cKeywords.add("if", Token.KEYWORD1);
 			cKeywords.add("while", Token.KEYWORD1);
 			cKeywords.add("function", Token.KEYWORD1);
-			cKeywords.add("read.table", Token.KEYWORD1);
 			
 			Vector _keywords = org.rosuda.JGR.JGR.KEYWORDS;
 			for (int i = 0; i < _keywords.size(); i++)
