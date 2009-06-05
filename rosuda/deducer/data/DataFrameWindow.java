@@ -5,9 +5,11 @@ package org.rosuda.deducer.data;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.menu.*;
+import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
+import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.JGR.JGR;
@@ -31,6 +33,7 @@ import java.lang.Thread;
 
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Event;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -242,79 +245,38 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 
 				}
 			}
-			{
-				// Initialize JGRConsoleMenu
-				String[] Menu = { 
-						"+", "File", "#New","-","#Open","-","@SSave", "save","@PPrint","print","-",
-							"Close", "exit", 
-						"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste",
-							"-","Remove Data", "Clear Data",
-						"+","Environment","#Workspace","-", "@BObject Browser","objectmgr", 
-							"@DData Viewer", "table", "-","Package Manager", "packagemgr", 
-							"Package Installer","packageinst","-", "-","Preferences","preferences",
-						"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
-							"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
-							"Transpose","transpose","Subset","Subset",
-						"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
-							"Contingency Tables","contin",
-						"+","Graphs","TO DO: Visualization ","-",
-						"~Window",
-						"+","Help","R Help","help", "About","about","0"  };
-				EzMenuSwing.getEzMenu(this, this, Menu);
-				JMenu rm;
-				rm = (JMenu) EzMenuSwing.getItem(this,"New");
-				if (rm != null) {
-					JMenuItem item1 = new JMenuItem("Data");
-					item1.setActionCommand("newdata");
-					item1.addActionListener(this);
-					rm.add(item1);
-
-					JMenuItem item2 = new JMenuItem("Script");
-					item2.setActionCommand("new");
-					item2.addActionListener(this);
-					rm.add(item2);
-					item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, 
-						     JGRConsole.MENUMODIFIER));					
+			String[] Menu = { "+", "File", "@NNew Data","newdata", "@LOpen Data", "loaddata","@SSave Data", "Save Data", "-",
+				"New Document", "new", "@OOpen Document", "open",
+				"!OSource File...", "source", "-","@PPrint","print","~File.Quit", 
+				"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste","-","Remove Data", "Clear Data",
+				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp","-","Clear All","clearwp",
+				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
+				"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
+				"Transpose","transpose","Subset","Subset",
+			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
+				"Contingency Tables","contin","One Sample Test","One Sample","Two Sample Test","Two Sample",
+				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
+				"packagemgr", "Package Installer","packageinst",
+			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
+			JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
+			//preference and about for non-mac systems
+			if(!Common.isMac()){
+				EzMenuSwing.addMenuSeparator(this, "Edit");
+				EzMenuSwing.addJMenuItem(this, "Edit", "Preferences", "preferences", this);
+				EzMenuSwing.addJMenuItem(this, "Help", "About", "about", this);	
+				
+				for(int i=0;i<mb.getMenuCount();i++){
+					if(mb.getMenu(i).getText().equals("Preferences") ||
+							mb.getMenu(i).getText().equals("About")){
+						mb.remove(i);
+						i--;
+					}
+					if(mb.getMenu(i).getText().equals("Edit")){
+						JMenuItem prefer = (JMenuItem)mb.getMenu(i).getMenuComponent(
+												mb.getMenu(i).getMenuComponentCount()-1);
+						prefer.setAccelerator(KeyStroke.getKeyStroke(',',Event.CTRL_MASK));
+					}
 				}
-				rm = (JMenu) EzMenuSwing.getItem(this,"Open");
-				if (rm != null) {
-					JMenuItem item1 = new JMenuItem("Data");
-					item1.setActionCommand("loaddata");
-					item1.addActionListener(this);
-					rm.add(item1);
-					item1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, 
-							JGRConsole.MENUMODIFIER));
-					JMenuItem item2 = new JMenuItem("Script");
-					item2.setActionCommand("open");
-					item2.addActionListener(this);
-					rm.add(item2);
-					item2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, 
-							JGRConsole.MENUMODIFIER));
-					JMenuItem item3 = new JMenuItem("Work Space");
-					item3.setActionCommand("openwsp");
-					item3.addActionListener(this);
-					rm.add(item3);
-				}
-				rm = (JMenu) EzMenuSwing.getItem(this,"Workspace");
-				if (rm != null) {
-					JMenuItem item1 = new JMenuItem("Open");
-					item1.setActionCommand("openwsp");
-					item1.addActionListener(this);
-					rm.add(item1);
-					JMenuItem item2 = new JMenuItem("Save");
-					item2.setActionCommand("savewsp");
-					item2.addActionListener(this);
-					rm.add(item2);
-					JMenuItem item3 = new JMenuItem("Save as...");
-					item3.setActionCommand("saveaswsp");
-					item3.addActionListener(this);
-					rm.add(item3);
-					JMenuItem item4 = new JMenuItem("Clear");
-					item4.setActionCommand("clearwsp");
-					item4.addActionListener(this);
-					rm.add(item4);
-				}
-
 			}
 			pack();
 			this.setSize(839, 839);
@@ -530,7 +492,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					JOptionPane.QUESTION_MESSAGE);
 			if(confirm == JOptionPane.NO_OPTION)
 				return;
-			JGR.MAINRCONSOLE.execute("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")");
+			JGR.MAINRCONSOLE.executeLater("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")");
 			try{Thread.sleep(100);}catch(Exception ee){}
 			RController.refreshObjects();
 			if(JGR.DATA.size()>0)
@@ -581,8 +543,12 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
 		}else if (cmd == "open")
 			new Editor(null,false).open();
+		else if (cmd == "source")
+			JGR.MAINRCONSOLE.executeLater("source(file.choose())", false);
 		else if (cmd == "openwsp")
 			JGR.MAINRCONSOLE.loadWorkSpace();
+		else if (cmd == "clearwsp")
+			JGR.MAINRCONSOLE.executeLater("rm(list=ls())", false);
 		else if (cmd == "new")
 			new Editor();
 		else if (cmd == "objectmgr")
@@ -590,14 +556,16 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		else if (cmd == "packagemgr")
 			JGR.MAINRCONSOLE.executeLater("package.manager()");
 		else if (cmd == "packageinst")
-			JGR.MAINRCONSOLE.executeLater("install.packages()");
+			JGR.MAINRCONSOLE.executeLater("installPackages()");
 		else if (cmd == "paste"){
 			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
 				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().pasteSelection();
 			}
-		}else if (cmd == "preferences")
-			new PrefsDialog(this);
-		else if (cmd == "help")
+		}else if (cmd == "preferences"){
+			PrefDialog inst = PrefDialog.showPreferences(this);
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+		}else if (cmd == "help")
 			JGR.MAINRCONSOLE.executeLater("help.start()");
 		else if (cmd == "table"){
 			DataFrameWindow inst = new DataFrameWindow();
@@ -639,31 +607,41 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}else if (cmd == "rowReset"){
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
-		}else if(cmd =="Frequencies"){
-			FrequencyDialog freq = new FrequencyDialog(JGR.MAINRCONSOLE);
-			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-			freq.setLocationRelativeTo(null);
-			freq.setVisible(true);
 		}else if(cmd =="Sort"){
 			SortDialog sort = new SortDialog(this);
 			sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			sort.setLocationRelativeTo(null);
 			sort.setVisible(true);
-		}else if(cmd =="Descriptives"){
-			DescriptivesDialog desc = new DescriptivesDialog(JGR.MAINRCONSOLE);
-			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
-			desc.setLocationRelativeTo(null);
-			desc.setVisible(true);
-		}else if(cmd =="contin"){
-			ContingencyDialog cont = new ContingencyDialog(JGR.MAINRCONSOLE);
-			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
-			cont.setLocationRelativeTo(null);
-			cont.setVisible(true);
 		}else if(cmd == "Subset"){
 			SubsetDialog sub = new SubsetDialog(this);
 			sub.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
 			sub.setLocationRelativeTo(null);
 			sub.setVisible(true);
+		}else if(cmd =="Frequencies"){
+			FrequencyDialog freq = new FrequencyDialog(this);
+			freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			freq.setLocationRelativeTo(null);
+			freq.setVisible(true);
+		}else if(cmd =="Descriptives"){
+			DescriptivesDialog desc = new DescriptivesDialog(this);
+			desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
+			desc.setLocationRelativeTo(null);
+			desc.setVisible(true);
+		}else if(cmd =="contin"){
+			ContingencyDialog cont = new ContingencyDialog(this);
+			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
+		}else if(cmd =="One Sample"){
+			OneSampleDialog cont = new OneSampleDialog(this);
+			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
+		}else if(cmd =="Two Sample"){
+			TwoSampleDialog cont = new TwoSampleDialog(this);
+			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
 		}
 	}
 	

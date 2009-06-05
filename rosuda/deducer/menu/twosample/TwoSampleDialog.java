@@ -452,7 +452,11 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 			lrgAssump.setSize(47, 27);
 		}
 	}
-	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData())){
+			variableSelector.setSelectedData(dataName);
+		}
+	}
 	public void reset(){
 		
 		setModel(new TwoSampleModel());

@@ -233,7 +233,12 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		}
 
 	}
-
+	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData())){
+			variableSelector.setSelectedData(dataName);
+		}
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd =arg0.getActionCommand();

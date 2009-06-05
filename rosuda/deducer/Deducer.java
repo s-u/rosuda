@@ -49,8 +49,8 @@ public class Deducer {
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Subset", "subset", cListener);
 			
-			EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
-			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Data Viewer", "table", cListener);
+			//EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
+			//EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Data Viewer", "table", cListener);
 			
 			insertMenu(JGR.MAINRCONSOLE,analysisMenu,4);
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
