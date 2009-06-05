@@ -507,7 +507,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				helpAgent = new JCheckBox();
 				helpPanel.add(helpAgent);
 				helpAgent.setText("Console Help Agent");
-				helpAgent.setBounds(10, 79, 106, 18);
+				helpAgent.setBounds(10, 79, 180, 18);
 			}
 			lineNumbers.setEnabled(false);
 			this.setTitle("Preferences");
