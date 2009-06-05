@@ -74,7 +74,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 		if(lastDataName!=null)
 			variableSelector.setSelectedData(lastDataName);
 		refreshRecent();
-		
+		help.setVisible(false);
 	}
 	
 	public void refreshRecent(){

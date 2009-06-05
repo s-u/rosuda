@@ -6,6 +6,9 @@ package org.rosuda.deducer.menu;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
+
 import java.awt.BorderLayout;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
@@ -132,7 +135,8 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			}
 			{
 				removeButton1 = new JButton();
-				getContentPane().add(removeButton1, new AnchorConstraint(895, 326, 930, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(removeButton1, new AnchorConstraint(910, 326, 956, 200, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeButton1.setText("Remove");
 				removeButton1.setPreferredSize(new java.awt.Dimension(86, 23));
 				removeButton1.addActionListener(this);
@@ -140,23 +144,15 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			{
 				unpairButton = new JButton();
 				getContentPane().add(unpairButton, new AnchorConstraint(722, 326, 755, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				unpairButton.setText("Unpair");
+				unpairButton.setText(" Remove ");
 				unpairButton.setPreferredSize(new java.awt.Dimension(86, 22));
 				unpairButton.addActionListener(this);
 			}
 			{
-				cancelButton = new JButton();
-				getContentPane().add(cancelButton, new AnchorConstraint(904, 833, 956, 720, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancelButton.setText("Cancel");
-				cancelButton.setPreferredSize(new java.awt.Dimension(77, 34));
-				cancelButton.addActionListener(this);
-			}
-			{
-				jButton1 = new JButton();
-				getContentPane().add(jButton1, new AnchorConstraint(895, 971, 965, 861, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				jButton1.setText("Merge");
-				jButton1.setPreferredSize(new java.awt.Dimension(75, 46));
-				jButton1.addActionListener(this);
+				JPanel runCancelPanel = new OkayCancelPanel(false,true,this);
+				getContentPane().add(runCancelPanel, new AnchorConstraint(904, 990, 956, 690, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				runCancelPanel.setPreferredSize(new java.awt.Dimension(77, 34));
 			}
 			{
 				mergeByPanel = new JPanel();
@@ -178,11 +174,10 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				}
 			}
 			{
-				mergeButton = new JButton();
-				getContentPane().add(mergeButton, new AnchorConstraint(763, 598, 809, 408, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				mergeButton.setText("Case Identifier");
-				mergeButton.setPreferredSize(new java.awt.Dimension(130, 30));
-				mergeButton.addActionListener(this);
+				mergeButton = new IconButton("/icons/1downarrow_32.png","Case Identifier",this,"Case Identifier");
+				getContentPane().add(mergeButton, new AnchorConstraint(763, 598, 820, 408, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				mergeButton.setPreferredSize(new java.awt.Dimension(130, 32));
 			}
 			{
 				pairedPanel = new JPanel();
@@ -190,7 +185,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				pairedPanel.setLayout(pairedPanelLayout);
 				getContentPane().add(pairedPanel, new AnchorConstraint(383, 675, 763, 335, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				pairedPanel.setPreferredSize(new java.awt.Dimension(232, 248));
-				pairedPanel.setBorder(BorderFactory.createTitledBorder("Paired Variables"));
+				pairedPanel.setBorder(BorderFactory.createTitledBorder("Common Variables"));
 				{
 					if(pairedListModel==null || !sameData)
 						pairedListModel = new DefaultListModel();
@@ -233,11 +228,10 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				includeCheckBox1.addActionListener(this);
 			}
 			{
-				pairButton = new JButton();
-				getContentPane().add(pairButton, new AnchorConstraint(325, 566, 374, 436, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				pairButton.setText("Pair");
+				pairButton = new IconButton("/icons/1downarrow_32.png","Pair variables",this,"Pair");
+				getContentPane().add(pairButton, new AnchorConstraint(325, 566, 374, 436, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				pairButton.setPreferredSize(new java.awt.Dimension(89, 32));
-				pairButton.addActionListener(this);
 			}
 			{
 				varPanel1 = new JPanel();
@@ -311,7 +305,10 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 		if(cmd =="Cancel"){
 			this.dispose();
 		}else if(cmd == "Case Identifier"){
-			int[] ind = pairedList.getSelectedIndices();	
+			int[] ind = pairedList.getSelectedIndices();
+			if(ind.length==0){
+				JOptionPane.showMessageDialog(this,"Please select a variable from the common variables list to identify common cases.");
+			}
 			for(int i=0;i<ind.length;i++)
 				mergeByListModel.addElement(((String)
 						pairedListModel.getElementAt(ind[i])).substring(4));
@@ -325,7 +322,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 							mergeByListModel.getElementAt(ind[i]));					
 					mergeByListModel.removeElementAt(ind[i]);
 				}
-		}else if(cmd =="Unpair"){
+		}else if(cmd ==" Remove "){
 			int[] ind = pairedList.getSelectedIndices();
 			for(int i= (ind.length-1);i>=0;i--){
 				String temp = (String) pairedListModel.getElementAt(ind[i]);
@@ -356,7 +353,12 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			findPairs();
 		}else if(cmd == "[Both]"){
 			String temporary;
-			int[] ind = pairedList.getSelectedIndices();	
+			int[] ind = pairedList.getSelectedIndices();
+			if(ind.length==0){
+				JOptionPane.showMessageDialog(this,"Please select a variable from the common variables list.\n" +
+						"This will indicate that the merged dataset should contain \ntwo versions of this variable, " +
+						"one from the primary data and one from the secondary.");
+			}
 			for(int i=0;i<ind.length;i++){
 				temporary = (String)pairedList.getModel().getElementAt(ind[i]);
 				pairedListModel.removeElementAt(ind[i]);
@@ -365,7 +367,11 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			pairedList.setSelectedIndices(ind);
 		}else if(cmd == "[1]"){
 			String temporary;
-			int[] ind = pairedList.getSelectedIndices();	
+			int[] ind = pairedList.getSelectedIndices();
+			if(ind.length==0){
+				JOptionPane.showMessageDialog(this,"Please select a variable from the common variables list.\n" +
+						"This will indicate that the merged dataset should \nuse the primary data set for this variable");
+			}
 			for(int i=0;i<ind.length;i++){
 				temporary = (String)pairedList.getModel().getElementAt(ind[i]);
 				pairedListModel.removeElementAt(ind[i]);
@@ -375,13 +381,17 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 		}else if(cmd == "[2]"){
 			String temporary;
 			int[] ind = pairedList.getSelectedIndices();	
+			if(ind.length==0){
+				JOptionPane.showMessageDialog(this,"Please select a variable from the common variables list.\n" +
+						"This will indicate that the merged dataset should \nuse the secondary data set for this variable");
+			}
 			for(int i=0;i<ind.length;i++){
 				temporary = (String)pairedList.getModel().getElementAt(ind[i]);
 				pairedListModel.removeElementAt(ind[i]);
 				((DefaultListModel)pairedList.getModel()).add(ind[i], "[2] "+temporary.substring(4));
 			}
 			pairedList.setSelectedIndices(ind);
-		}else if(cmd == "Merge"){
+		}else if(cmd == "Run"){
 			if(mergeByListModel.size()==0){
 				int choice =JOptionPane.showOptionDialog(this,"No variables have been selected to merge by.\n" +
 						"Would you like to merge by row names?","Match By Row Names?",JOptionPane.YES_NO_OPTION,
@@ -393,17 +403,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			boolean merged = merge();
 			if(merged){	
 				this.dispose();
-				Runnable doWorkRunnable = new Runnable() {
-					public void run() { 
-				if(DataFrameWindow.dataWindows!=null && 
-						DataFrameWindow.dataWindows.size()>0){
-				DataFrameWindow dataView =(DataFrameWindow)DataFrameWindow.dataWindows.get(0);
-				dataView.setVisible(true); 
-				dataView.showData(lastDataSetName);	
-						}
-					}
-				};
-				SwingUtilities.invokeLater(doWorkRunnable);	
+				DataFrameWindow.setTopDataWindow(lastDataSetName);
 			}
 		}
 	}

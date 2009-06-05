@@ -148,7 +148,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 						ttest = new JCheckBox();
 						testPanel.add(ttest);
 						ttest.setText("One-sample t-test");
-						ttest.setBounds(17, 19, 170, 18);
+						ttest.setBounds(17, 19, 155, 18);
 					}
 					{
 						ttestOptions = new IconButton("/icons/advanced_21.png","t-test Options",
@@ -399,7 +399,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				{
 					okayCancelPanel = new OkayCancelPanel(false,false,this);
 					getContentPane().add(okayCancelPanel);	
-					okayCancelPanel.setBounds(-20, 165, 246, 38);			
+					okayCancelPanel.setBounds(10, 165, 250, 38);			
 				}
 				getAlternativeGroup();
 				this.setTitle("One-sample t-test options");

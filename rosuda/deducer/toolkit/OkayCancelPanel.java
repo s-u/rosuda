@@ -32,7 +32,7 @@ public class OkayCancelPanel extends JPanel {
 	
 	public OkayCancelPanel(boolean showReset,boolean isRun,ActionListener lis) {
 		super();
-		initGUI();
+		initGUI(showReset?0:1);
 		if(!showReset)
 			resetButton.setVisible(false);
 		if(isRun)
@@ -42,7 +42,7 @@ public class OkayCancelPanel extends JPanel {
 		cancelButton.addActionListener(lis);
 	}
 	
-	private void initGUI() {
+	private void initGUI(int reset) {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
@@ -55,14 +55,16 @@ public class OkayCancelPanel extends JPanel {
 			}
 			{
 				cancelButton = new JButton();
-				this.add(cancelButton, new AnchorConstraint(219, 658, 798, 360, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(cancelButton, new AnchorConstraint(219, 658-180*(reset), 798, 360-360*(reset), 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL));
 				cancelButton.setText("Cancel");
 				
 				cancelButton.setPreferredSize(new java.awt.Dimension(109, 33));
 			}
 			{
 				okayButton = new JButton();
-				this.add(okayButton, new AnchorConstraint(8, 1001, 1008, 702, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(okayButton, new AnchorConstraint(8, 1001, 1008, 702-180*reset, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				okayButton.setText("OK");
 				okayButton.setPreferredSize(new java.awt.Dimension(109, 57));
 			}

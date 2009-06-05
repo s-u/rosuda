@@ -165,7 +165,7 @@ public class SplitDialog extends JDialog implements ActionListener, FocusListene
 				{
 					okayCancel = new OkayCancelPanel(false,false,this);
 					getContentPane().add(okayCancel);
-					okayCancel.setBounds(101, 232, 295, 45);
+					okayCancel.setBounds(171, 232, 225, 45);
 				}
 			}
 			getButtonGroup();
