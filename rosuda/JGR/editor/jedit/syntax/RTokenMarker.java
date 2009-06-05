@@ -181,6 +181,8 @@ public class RTokenMarker extends TokenMarker {
 			// standard keywords
 			cKeywords.add("in", Token.KEYWORD1);
 			cKeywords.add("else", Token.KEYWORD1);
+			cKeywords.add("repeat", Token.KEYWORD1);
+			cKeywords.add("next", Token.KEYWORD1);
 			cKeywords.add("for", Token.KEYWORD1);
 			cKeywords.add("if", Token.KEYWORD1);
 			cKeywords.add("while", Token.KEYWORD1);
@@ -204,6 +206,13 @@ public class RTokenMarker extends TokenMarker {
 			cKeywords.add("FALSE", Token.LITERAL2);
 			cKeywords.add("F", Token.LITERAL2);
 			cKeywords.add("NULL", Token.LITERAL2);
+			cKeywords.add("NA", Token.LITERAL2);
+			cKeywords.add("NA_integer_", Token.LITERAL2);
+			cKeywords.add("NA_real_", Token.LITERAL2);
+			cKeywords.add("NA_complex_", Token.LITERAL2);
+			cKeywords.add("NA_character_", Token.LITERAL2);
+			cKeywords.add("Inf", Token.LITERAL2);
+			cKeywords.add("NaN", Token.LITERAL2);
 			
 			// comments
 			cKeywords.add("#", Token.COMMENT1);
