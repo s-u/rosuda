@@ -85,7 +85,8 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JTextField working;
 	private JLabel workingLabel;
 	private JCheckBox hidden;
-	private JCheckBox helpAgent;
+	private JCheckBox helpAgentConsole;
+	private JCheckBox helpAgentEditor;
 	private JPanel editorPanel;
 	private JPanel general;
 	private JCheckBox emacs;
@@ -397,7 +398,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 						{
 							helpPanel = new JPanel();
 							generalPanel.add(helpPanel);
-							helpPanel.setBounds(12, 191, 223, 147);
+							helpPanel.setBounds(10, 191, 520, 147);
 							helpPanel.setBorder(BorderFactory.createTitledBorder("Help"));
 							helpPanel.setLayout(null);
 							{
@@ -409,47 +410,48 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 						{
 							general = new JPanel();
 							generalPanel.add(general);
-							general.setBounds(92, 23, 310, 156);
+							general.setBounds(10, 23, 520, 156);
 							general.setBorder(BorderFactory.createTitledBorder("General"));
 							general.setLayout(null);
 							{
 								hidden = new JCheckBox();
 								general.add(hidden);
 								hidden.setText("Show Hidden Files");
-								hidden.setBounds(35, 118, 170, 18);
+								hidden.setBounds(10, 95, 170, 18);
 							}
 							{
 								workingLabel = new JLabel();
 								general.add(workingLabel);
 								workingLabel.setText("Default Working Directory");
-								workingLabel.setBounds(57, 58, 180, 14);
+								workingLabel.setBounds(12, 40, 180, 14);
 							}
 							{
 								working = new JTextField();
 								general.add(working);
-								working.setBounds(35, 76, 209, 21);
+								working.setBounds(10, 60, 235, 21);
 							}
 							{
 								workingButton = new JButton();
 								general.add(workingButton);
 								workingButton.setText("dir");
-								workingButton.setBounds(244, 76, 30, 21);
+								workingButton.setBounds(244, 60, 30, 21);
 								workingButton.addActionListener(this);
 							}
+							{
+								emacs = new JCheckBox();
+								general.add(emacs);
+								emacs.setText("Emacs Bindings (just Mac OS X)");
+								emacs.setBounds(10, 120, 250, 18);
+							}
 						}
-						{
+						/*{
 							editorPanel = new JPanel();
 							generalPanel.add(editorPanel);
 							editorPanel.setBounds(290, 191, 223, 147);
 							editorPanel.setBorder(BorderFactory.createTitledBorder("Editor"));
 							editorPanel.setLayout(null);
-							{
-								emacs = new JCheckBox();
-								editorPanel.add(emacs);
-								emacs.setText("Emacs Bindings");
-								emacs.setBounds(40, 64, 150, 18);
-							}
-						}
+
+						}*/
 					}
 				}
 				{
@@ -518,13 +520,18 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				maxHelpLabel = new JLabel();
 				helpPanel.add(maxHelpLabel);
 				maxHelpLabel.setText("Maximum Help Pages:");
-				maxHelpLabel.setBounds(10, 42, 140, 14);
+				maxHelpLabel.setBounds(12, 40, 140, 14);
 			}
 			{
-				helpAgent = new JCheckBox();
-				helpPanel.add(helpAgent);
-				helpAgent.setText("Console Help Agent");
-				helpAgent.setBounds(10, 79, 180, 18);
+				helpAgentConsole = new JCheckBox();
+				helpPanel.add(helpAgentConsole);
+				helpAgentConsole.setText("Console Help Agent");
+				helpAgentConsole.setBounds(10, 65, 180, 18);
+				
+				helpAgentEditor = new JCheckBox();
+				helpPanel.add(helpAgentEditor);
+				helpAgentEditor.setText("Editor Help Agent");
+				helpAgentEditor.setBounds(10, 90, 180, 18);
 			}
 			lineNumbers.setEnabled(false);
 			this.setTitle("Preferences");
@@ -663,7 +670,8 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		working.setText(JGRPrefs.workingDirectory);
 		hidden.setSelected(JGRPrefs.showHiddenFiles);
 		helpPages.setValue(new Integer(JGRPrefs.maxHelpTabs)); 
-		helpAgent.setSelected(JGRPrefs.useHelpAgent);
+		helpAgentConsole.setSelected(JGRPrefs.useHelpAgentConsole);
+		helpAgentEditor.setSelected(JGRPrefs.useHelpAgentEditor);
 		emacs.setSelected(JGRPrefs.useEmacsKeyBindings);
 		
 		setColor(comment,JGRPrefs.COMMENTColor);
@@ -706,7 +714,8 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		working.setText(System.getProperty("user.home"));
 		hidden.setSelected(false);
 		helpPages.setValue(new Integer(10)); 
-		helpAgent.setSelected(true);
+		helpAgentConsole.setSelected(true);
+		helpAgentEditor.setSelected(true);
 		emacs.setSelected(false);
 		
 	}
@@ -759,7 +768,8 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.AUTOTAB=autotab.isSelected();
 		JGRPrefs.BRACKETHighLight=getColor(brackets);
 		JGRPrefs.showHiddenFiles=hidden.isSelected();
-		JGRPrefs.useHelpAgent=helpAgent.isSelected();
+		JGRPrefs.useHelpAgentConsole=helpAgentConsole.isSelected();
+		JGRPrefs.useHelpAgentEditor=helpAgentEditor.isSelected();
 		JGRPrefs.useEmacsKeyBindings=emacs.isSelected();
 		
 		JGRPrefs.COMMENTColor=getColor(comment);

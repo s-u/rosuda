@@ -166,7 +166,9 @@ public class Editor extends TJFrame implements ActionListener {
 			this.setVisible(true);
 		
 		initPlacement();
-		
+		this.toFront();
+		this.requestFocus();
+		textArea.requestFocus();
 	}
 	
 	public void dispose()

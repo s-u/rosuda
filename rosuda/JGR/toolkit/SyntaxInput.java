@@ -430,7 +430,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			return JGRPrefs.useHelpAgentConsole;
 		if (comp.equals("editor"))
 			return JGRPrefs.useHelpAgentEditor;
-		return JGRPrefs.useHelpAgent;
+		return false;
 	}
 
 	private void showFunHelp(String fun) {
@@ -453,8 +453,6 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				funHelpTip = PopupFactory.getSharedInstance().getPopup(this,
 						Tip, ph.x, ph.y + 20);
 				funHelpTip.show();
-				// commands.add(funHelp);
-				// commands.add(p);
 			}
 		} catch (Exception e) {
 		} finally {

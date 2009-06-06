@@ -148,6 +148,7 @@ public class TextUtilities {
 	 *            The position
 	 */
 	public static int findWordStart(String line, int pos, String noWordSep) {
+		if (pos < 1) return 0;
 		char ch = line.charAt(pos - 1);
 
 		if (noWordSep == null)
