@@ -241,7 +241,8 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 	}
 	
 	public void dispose() {
-		setVisible(false);
+		instance = null;
+		super.dispose();
 	}
 	
 	public static void showInstance() {

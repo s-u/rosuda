@@ -158,7 +158,8 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 			}
 
 			public void windowClosing(java.awt.event.WindowEvent evt) {
-				setVisible(false);
+				instance = null;
+				dispose();
 			}
 		});
 		this.setSize(new Dimension(400, 500));
