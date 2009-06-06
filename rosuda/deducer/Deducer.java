@@ -63,8 +63,10 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Descriptives", "descriptives", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Contingency Tables", "contingency", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, analysisMenu).addSeparator();
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "K-Sample Test", "ksample", cListener);
 				menuIndex++;
 			}
 			
@@ -196,6 +198,10 @@ public class Deducer {
 				TwoSampleDialog inst = new TwoSampleDialog(JGR.MAINRCONSOLE);
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);				
+			}else if(cmd=="ksample"){
+				KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);
 			}
 		}
 	}

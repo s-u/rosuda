@@ -499,8 +499,8 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 		}else if(cmd == "t-test options"){
 			String ttestType=(String)JOptionPane.showInputDialog(this, "t-test Variant", "t-test Options", 
 									JOptionPane.INFORMATION_MESSAGE, null, 
-									new String[]{"Unequal variance (Welsh) (Recommended)","Equal variance (Student)"},
-									testModel.tEqVar ?  "Equal variance (Student)":"Unequal variance (Welsh) (Recommended)");
+									new String[]{"Unequal variance (Welch) (Recommended)","Equal variance (Student)"},
+									testModel.tEqVar ?  "Equal variance (Student)":"Unequal variance (Welch) (Recommended)");
 			if(ttestType==null)
 				return;
 			if(ttestType.startsWith("Unequal")){
