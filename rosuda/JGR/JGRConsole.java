@@ -890,7 +890,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				saveWorkSpaceAs();
 			else if(cmd == "clearwp"){
 				int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear " +
-							"				your workspace?\n All unsaved objects will be deleted.",
+							"your workspace?\nAll unsaved objects will be deleted.",
 							"Clear Workspace",JOptionPane.YES_NO_OPTION);
 				if(doIt==JOptionPane.OK_OPTION)
 					execute("rm(list=ls())");
