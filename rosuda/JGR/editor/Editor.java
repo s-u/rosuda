@@ -238,10 +238,10 @@ public class Editor extends TJFrame implements ActionListener {
 		if (newFile != null && newFile.trim().length() > 0) {
 			setWorking(true);
 			
-			fileName = newFile;
+			String tempfileName = newFile;
 			if (recentOpen == null)
 				recentOpen = new RecentList("JGR", "RecentOpenFiles", 8);
-			recentOpen.addEntry(fileName);
+			recentOpen.addEntry(tempfileName);
 			JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this, "Open Recent");
 			if (rm != null) {
 				rm.removeAll();
@@ -270,15 +270,18 @@ public class Editor extends TJFrame implements ActionListener {
 				Editor newEditor = new Editor(null,false);
 				newEditor.textArea.setText("");
 				newEditor.textArea.loadFile(newFile);
-				newEditor.fileName=newFile;
+				newEditor.fileName=tempfileName;
 				newEditor.modified=false;
 				newEditor.setModified(false);
 				newEditor.setVisible(true);
+				newEditor.setTitle(newFile);
 			} else {
 				setWorking(true);
 				textArea.setText("");
-				textArea.loadFile(fileName);
+				textArea.loadFile(tempfileName);
 				setVisible(true);
+				fileName = tempfileName;
+				setTitle(newFile);
 			}
 			setWorking(false);
 		}
