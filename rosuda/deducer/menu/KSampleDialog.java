@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
+import org.rosuda.deducer.menu.twosample.TwoSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -72,6 +73,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 	public KSampleDialog(JFrame frame) {
 		super(frame);
 		initGUI();
+		variableSelector.getJComboBox().addActionListener(this);
 		help.setVisible(false);
 		median.setEnabled(false);
 		largeAssump3.setEnabled(false);
@@ -296,6 +298,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				subset.setText(mod.subset);
 			}
 		}
+		
 		welch.setSelected(model.doWelch);
 		anova.setSelected(model.doAnova);
 		kwTest.setSelected(model.doKW);
@@ -329,6 +332,8 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				SubsetDialog.addToHistory(model.dataName, model.subset);
 				this.dispose();
 			}
+		}else if(cmd == "comboBoxChanged"){
+			setModel(new KSampleModel());
 		}
 		
 	}

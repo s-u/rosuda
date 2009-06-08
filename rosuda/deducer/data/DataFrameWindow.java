@@ -255,6 +255,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				"Transpose","transpose","Subset","Subset",
 			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
 				"Contingency Tables","contin","One Sample Test","One Sample","Two Sample Test","Two Sample",
+				"K-Sample Test", "ksample","Correlation", "corr", 
 				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
 				"packagemgr", "Package Installer","packageinst",
 			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
@@ -642,6 +643,18 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
 			cont.setLocationRelativeTo(null);
 			cont.setVisible(true);
+		}else if(cmd=="ksample"){
+			KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
+			inst.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+			inst.toFront();
+		}else if(cmd=="corr"){
+			CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
+			inst.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+			inst.toFront();
 		}
 	}
 	

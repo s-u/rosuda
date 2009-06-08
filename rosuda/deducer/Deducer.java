@@ -67,6 +67,7 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "One Sample Test", "onesample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "K-Sample Test", "ksample", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Correlation", "corr", cListener);
 				menuIndex++;
 			}
 			
@@ -202,6 +203,10 @@ public class Deducer {
 				KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
+			}else if(cmd=="corr"){
+				CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
+				inst.setLocationRelativeTo(null);
+				inst.setVisible(true);				
 			}
 		}
 	}
