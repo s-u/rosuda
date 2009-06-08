@@ -53,13 +53,26 @@ public class CorModel {
 		}else
 			subn=dataName;
 		
+		if(plots.matrix && withExists){
+			int contin =JOptionPane.showConfirmDialog(null, "The type of plot selected can only be used when\n" +
+												"no with variables are selected.\nWould you like to" +
+												"continue without the plot?","Invalid plot type", 
+												JOptionPane.YES_NO_OPTION);
+			if(contin==JOptionPane.CANCEL_OPTION)
+				return false;
+			else
+				plots.matrix=false;
+		}
+		
 		cmd+=name+"<-cor.matrix(variables="+outcomes+
 				(withExists ? ",\n\twith.variables="+withVec :",")+
 				",\n\t data="+subn+
 				",\n\t test=cor.test"+
 				",\n\t method='"+method+"'"+
 				(options.confLevel==.95 ? "" : ",\n\tconf.level="+options.confLevel)+
-				",\n\talternative=\""+options.alternative+"\""+")\n";
+				",\n\talternative=\""+options.alternative+"\""+
+				(method.equals("spearman") ? ",\n\texact=FALSE" : "")+
+				")\n";
 		if(options.showTable){
 			cmd+="print("+name+(options.digits.equals("<auto>")?"":",digits="+options.digits)+
 						(options.n?"":",N=FALSE")+(options.ci?"":",CI=FALSE")+(options.stat?"":",stat=FALSE")+
@@ -72,13 +85,31 @@ public class CorModel {
 				",\n\t"+(withExists ? withVec : outcomes)+
 				",\n\tdata="+subn+
 				(!plots.common ? ",common.scales=FALSE":"")+")";
+			
+				if(plots.saLines.equals("Linear")){
+					cmd+=" + geom_smooth(method=\"lm\")\n";
+				}else if(plots.saLines.equals("Loess")){
+					cmd+=" + geom_smooth()\n";
+				}else
+					cmd+="\n";
 			}
-			if(plots.saLines.equals("Linear")){
-				cmd+=" + geom_smooth(method=\"lm\")\n";
-			}else if(plots.saLines.equals("Smooth")){
-				cmd+=" + geom_smooth()\n";
-			}else
-				cmd+="\n";
+			if(plots.matrix){
+				cmd+="ggcorplot(cor.mat="+name+",data="+subn+
+				",\n\tcor_text_limits=c(5,"+plots.mSize+")"+
+				(plots.mAlpha!=.25 ? ",\n\talpha="+(new Double(plots.mAlpha)).toString() :"");
+				
+				if(plots.mLines.equals("Linear")){
+					cmd+=",\n\tline.method=\"lm\"";
+				}else if(plots.mLines.equals("Loess")){
+					cmd+=",\n\tline.method=\"loess\"";
+				}else
+					cmd+=",\n\tlines=FALSE";
+				cmd+=")\n";
+			}
+			if(plots.circles){
+				cmd+="plot("+name+
+				(plots.cRadius!=10 ? ",size="+plots.cRadius : "")+")\n";
+			}
 		}
 		
 		
@@ -110,8 +141,15 @@ public class CorModel {
 		public String saLines= "Linear";
 		
 		public boolean matrix =false;
+		public String mLines= "Linear";
+		public int mSize = 20;
+		public double mAlpha = .25;
+		
 		public boolean ellipse =false;
+		
 		public boolean circles =false;
+		public int cRadius = 10;
+		
 		public boolean none =true;
 		
 	}

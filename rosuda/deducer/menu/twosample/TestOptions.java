@@ -141,7 +141,7 @@ public class TestOptions extends JDialog implements ActionListener{
 	private JPanel getNavPanel() {
 		if(navPanel == null) {
 			navPanel = new OkayCancelPanel(false,false,this);
-			navPanel.setBounds(50, 224, 206, 55);
+			navPanel.setBounds(50, 224, 206, 50);
 		}
 		return navPanel;
 	}

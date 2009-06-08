@@ -343,7 +343,7 @@ public class CorDialog extends JDialog implements ActionListener{
 			opt.setLocationRelativeTo(this);
 			opt.setVisible(true);
 		}else if(cmd=="Plots"){
-			CorPlots cor = new CorPlots(this,model.plots);
+			CorPlots cor = new CorPlots(this,model.plots,with.getModel().getSize()>0);
 			cor.setLocationRelativeTo(this);
 			cor.setVisible(true);
 		}else if(cmd == "comboBoxChanged"){
