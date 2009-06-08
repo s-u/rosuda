@@ -18,17 +18,6 @@ public class OkayCancelPanel extends JPanel {
 	private JButton resetButton;
 	private JButton cancelButton;
 
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new OkayCancelPanel(true,true,null));
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
 	
 	public OkayCancelPanel(boolean showReset,boolean isRun,ActionListener lis) {
 		super();
@@ -37,9 +26,28 @@ public class OkayCancelPanel extends JPanel {
 			resetButton.setVisible(false);
 		if(isRun)
 			okayButton.setText("Run");
-		resetButton.addActionListener(lis);
-		okayButton.addActionListener(lis);
-		cancelButton.addActionListener(lis);
+		if(lis!=null){
+			resetButton.addActionListener(lis);
+			okayButton.addActionListener(lis);
+			cancelButton.addActionListener(lis);
+		}
+	}
+	
+	public OkayCancelPanel(boolean showReset,boolean isRun) {
+		super();
+		initGUI(showReset?0:1);
+		if(!showReset)
+			resetButton.setVisible(false);
+		if(isRun)
+			okayButton.setText("Run");
+	}
+	
+	public void addActionListener(ActionListener lis){
+		if(lis!=null){
+			resetButton.addActionListener(lis);
+			okayButton.addActionListener(lis);
+			cancelButton.addActionListener(lis);
+		}		
 	}
 	
 	private void initGUI(int reset) {

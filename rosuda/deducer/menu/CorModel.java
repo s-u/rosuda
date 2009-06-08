@@ -16,6 +16,7 @@ public class CorModel {
 	public String method = "pearson";
 	
 	public OptModel options= new OptModel();
+	public Plots plots= new Plots();
 	
 	public boolean run(){
 		boolean withExists = true;
@@ -65,6 +66,20 @@ public class CorModel {
 						(options.pValue?"":",p.value=FALSE")+")\n";
 		}
 		
+		if(!plots.none){
+			if(plots.scatterArray){
+				cmd+="qscatter_array("+outcomes+
+				",\n\t"+(withExists ? withVec : outcomes)+
+				",\n\tdata="+subn+
+				(!plots.common ? ",common.scales=FALSE":"")+")";
+			}
+			if(plots.saLines.equals("Linear")){
+				cmd+=" + geom_smooth(method=\"lm\")\n";
+			}else if(plots.saLines.equals("Smooth")){
+				cmd+=" + geom_smooth()\n";
+			}else
+				cmd+="\n";
+		}
 		
 		
 		if(isSubset)
@@ -86,6 +101,19 @@ public class CorModel {
 		public String digits = "<auto>";
 		public String alternative = "two.sided";
 		public double confLevel=.95;
+	}
+	
+	public class Plots{
+		public boolean scatterArray =false;
+		
+		public boolean common =true;
+		public String saLines= "Linear";
+		
+		public boolean matrix =false;
+		public boolean ellipse =false;
+		public boolean circles =false;
+		public boolean none =true;
+		
 	}
 
 	
