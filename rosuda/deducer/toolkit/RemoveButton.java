@@ -17,8 +17,10 @@ public class RemoveButton extends IconButton implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		Object[] objs=lis.getSelectedValues();
 		for(int i=0;i<objs.length;i++){
-			varSel.add(objs[i]);
-			((DefaultListModel)lis.getModel()).removeElement(objs[i]);
+			if(objs[i]!=null){
+				varSel.add(objs[i]);
+				((DefaultListModel)lis.getModel()).removeElement(objs[i]);
+			}
 		}
 		
 	}

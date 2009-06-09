@@ -52,30 +52,38 @@ class RDataFrameModel extends ExDefaultTableModel {
 	}
 	
 	public int getColumnCount( ){
-		if(rDataName!=null)
+		if(rDataName!=null){
+			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+				return 0;
 			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtensionColumns;
-		else
+		}else
 			return 0;
 	}
 	
 	public int getRealColumnCount( ){
-		if(rDataName!=null)
+		if(rDataName!=null){
+			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+				return 0;
 			return JGR.R.eval("ncol("+rDataName+")").asInt();
-		else
+		}else
 			return 0;
 	}
 
 	public int getRealRowCount(){
-		if(rDataName!=null)
+		if(rDataName!=null){
+			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+				return 0;
 			return JGR.R.eval("nrow("+rDataName+")").asInt();
-		else
+		}else
 			return 0;
 	}
 	
 	public int getRowCount(){
-		if(rDataName!=null)
+		if(rDataName!=null){
+			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+				return 0;
 			return JGR.R.eval("nrow("+rDataName+")").asInt()+numExtensionRows;
-		else
+		}else
 			return 0;
 	}
 	
@@ -111,6 +119,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	
 	public Object getValueAt(int row, int col){
+		if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+			return "?";
 		if(row>=getRealRowCount() || col>=getRealColumnCount()){
 			return "";
 		}

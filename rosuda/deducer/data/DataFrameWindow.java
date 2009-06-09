@@ -794,6 +794,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 								setDataDependentMenusEnabled(false);
 							else
 								setDataDependentMenusEnabled(true);	
+							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
 						}};
 					SwingUtilities.invokeLater(doWorkRunnable);
 					if(showData!=null){

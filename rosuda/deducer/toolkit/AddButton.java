@@ -18,7 +18,8 @@ public class AddButton extends IconButton implements ActionListener{
 		Object[] objs=varSel.getJList().getSelectedValues();
 		for(int i=0;i<objs.length;i++){
 			varSel.remove(objs[i]);
-			((DefaultListModel)lis.getModel()).addElement(objs[i]);
+			if(objs[i]!=null)
+				((DefaultListModel)lis.getModel()).addElement(objs[i]);
 		}
 		
 	}
