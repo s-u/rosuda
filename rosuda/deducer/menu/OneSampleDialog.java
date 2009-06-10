@@ -204,7 +204,6 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 			this.setSize(546, 536);
 			help.setVisible(false);
-			plots.setVisible(false);
 			this.setTitle("One Sample Test");
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -215,10 +214,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		if(mod.data!=null){
 			variableSelector.setSelectedData(mod.data);
 		}
-		model.doT=mod.doT;
-		model.doSW=mod.doSW;	
-		model.alternative=mod.alternative;
-		model.mu=mod.mu;
+		model=mod;
 		ttest.setSelected(mod.doT);
 		swTest.setSelected(mod.doSW);
 		boolean allExist=variableSelector.removeAll(mod.vars);
@@ -277,6 +273,10 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 		}else if(cmd == "comboBoxChanged"){
 			setModel(new OneSampleModel());
+		}else if(cmd=="Plots"){
+			OneSamplePlots plt= new OneSamplePlots(this,model.plots);
+			plt.setLocationRelativeTo(this);
+			plt.setVisible(true);
 		}
 	}
 	
@@ -291,6 +291,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		DefaultListModel vars = new DefaultListModel();
 		String subset = "";
 		
+		PlotModel plots = new PlotModel();
 		
 		public boolean run(){
 			if(vars.getSize()==0){
@@ -329,10 +330,25 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					",\n\ttest=shapiro.test"+
 					")\n";
 			}
+			if(plots.plot){
+				cmd+="onesample.plot(variables="+variables+",data="+subn+",test.value="+Double.toString(mu)+
+					(plots.scale?"":",scale=FALSE")+
+					(plots.box?",type='box'":",type='hist'")+
+					",alpha="+plots.alpha+")\n";
+			}
 			if(isSubset)
 				cmd+="rm("+subn+")\n";
 			JGR.MAINRCONSOLE.execute(cmd);
 			return true;
+		}
+		
+		public class PlotModel{
+			public boolean plot=false;
+			public boolean box=false;
+			public boolean scale=true;
+			public double alpha=.2;
+			
+			
 		}
 	}
 

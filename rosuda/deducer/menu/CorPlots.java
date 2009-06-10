@@ -19,6 +19,19 @@ import javax.swing.SwingConstants;
 
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
+
+/**
+* This code was edited or generated using CloudGarden's Jigloo
+* SWT/Swing GUI Builder, which is free for non-commercial
+* use. If Jigloo is being used commercially (ie, by a corporation,
+* company or business for any purpose whatever) then you
+* should purchase a license for each developer using Jigloo.
+* Please visit www.cloudgarden.com for details.
+* Use of Jigloo implies acceptance of these licensing terms.
+* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
+* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
+* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
+*/
 public class CorPlots extends JDialog implements ActionListener{
 	private JPanel optionPanel;
 	private JRadioButton scatterArray;
@@ -37,6 +50,8 @@ public class CorPlots extends JDialog implements ActionListener{
 	
 	private CorModel.Plots model;
 	private JSlider mAlpha;
+	private JLabel jLabel1;
+	private JSlider saAlpha;
 	private JLabel radiusLabel;
 	private JSlider radius;
 	private JSlider mSize;
@@ -78,7 +93,7 @@ public class CorPlots extends JDialog implements ActionListener{
 						scatterArrayCommon = new JCheckBox();
 						optionPanel.add(scatterArrayCommon);
 						scatterArrayCommon.setText("Common Axis");
-						scatterArrayCommon.setBounds(216, 51, 172, 19);
+						scatterArrayCommon.setBounds(218, 65, 172, 19);
 					}
 					{
 						ComboBoxModel scatterArrayLineModel = 
@@ -99,7 +114,7 @@ public class CorPlots extends JDialog implements ActionListener{
 					{
 						sep = new JSeparator();
 						optionPanel.add(sep);
-						sep.setBounds(34, 79, 288, 10);
+						sep.setBounds(35, 91, 288, 10);
 					}
 					{
 						ellipse = new JRadioButton();
@@ -108,8 +123,10 @@ public class CorPlots extends JDialog implements ActionListener{
 						optionPanel.add(getSep1());
 						optionPanel.add(getRadius());
 						optionPanel.add(getRadiusLabel());
+						optionPanel.add(getSaAlpha());
+						optionPanel.add(getJLabel1());
 						ellipse.setText("Ellipses");
-						ellipse.setBounds(17, 101, 120, 19);
+						ellipse.setBounds(17, 108, 120, 19);
 					}
 				}
 				{
@@ -153,6 +170,7 @@ public class CorPlots extends JDialog implements ActionListener{
 		mSize.setValue(mod.mSize);
 		mAlpha.setValue((int)(100.0*mod.mAlpha));
 		radius.setValue(mod.cRadius);
+		saAlpha.setValue((int)(100.0*mod.saAlpha));
 
 	}
 	
@@ -164,7 +182,7 @@ public class CorPlots extends JDialog implements ActionListener{
 		model.none=none.isSelected();
 		model.common=scatterArrayCommon.isSelected();
 		model.saLines=(String)scatterArrayLine.getSelectedItem();
-		
+		model.saAlpha=((double)saAlpha.getValue())/100.0;
 		model.mLines=(String)mLines.getSelectedItem();
 		model.mSize=mSize.getValue();
 		model.mAlpha=((double)mAlpha.getValue())/100.0;
@@ -312,6 +330,26 @@ public class CorPlots extends JDialog implements ActionListener{
 			radiusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 		return radiusLabel;
+	}
+	
+	private JSlider getSaAlpha() {
+		if(saAlpha == null) {
+			saAlpha = new JSlider();
+			saAlpha.setBounds(218, 45, 139, 16);
+			saAlpha.setMinimum(1);
+			saAlpha.setMaximum(100);
+		}
+		return saAlpha;
+	}
+	
+	private JLabel getJLabel1() {
+		if(jLabel1 == null) {
+			jLabel1 = new JLabel();
+			jLabel1.setText("Alpha:");
+			jLabel1.setBounds(156, 44, 50, 14);
+			jLabel1.setHorizontalAlignment(SwingConstants.RIGHT);
+		}
+		return jLabel1;
 	}
 
 }

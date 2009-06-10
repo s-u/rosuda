@@ -5,6 +5,7 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.menu.KSamplePlots;
 import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
 import org.rosuda.deducer.toolkit.DJList;
@@ -98,7 +99,6 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 		bmOptions.setVisible(false);
 		mwOptions.setVisible(false);
 		kmOptions.setVisible(false);
-		plots.setVisible(false);
 		other.setVisible(false);
 		help.setVisible(false);
 	}
@@ -387,6 +387,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 					topPanel.add(plots, new AnchorConstraint(893, 297, 968, 156, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					plots.setText("Plots");
+					plots.addActionListener(this);
 					plots.setPreferredSize(new java.awt.Dimension(86, 27));
 				}
 			}
@@ -561,6 +562,10 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 		}else if(cmd == "comboBoxChanged"){
 			setModel(new TwoSampleModel());
+		}else if(cmd=="Plots"){
+			KSamplePlots plt= new KSamplePlots(this,testModel.plots);
+			plt.setLocationRelativeTo(this);
+			plt.setVisible(true);
 		}
 	}
 }

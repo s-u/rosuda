@@ -84,7 +84,9 @@ public class CorModel {
 				cmd+="qscatter_array("+outcomes+
 				",\n\t"+(withExists ? withVec : outcomes)+
 				",\n\tdata="+subn+
-				(!plots.common ? ",common.scales=FALSE":"")+")";
+				(!plots.common ? ",common.scales=FALSE":"")+
+				(plots.saAlpha!=.25 ? ",alpha="+plots.saAlpha:"")+
+				")";
 			
 				if(plots.saLines.equals("Linear")){
 					cmd+=" + geom_smooth(method=\"lm\")\n";
@@ -139,6 +141,7 @@ public class CorModel {
 		
 		public boolean common =true;
 		public String saLines= "Linear";
+		public double saAlpha = .25;
 		
 		public boolean matrix =false;
 		public String mLines= "Linear";

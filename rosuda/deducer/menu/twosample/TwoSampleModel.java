@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.deducer.menu.OneWayPlotModel;
 import org.rosuda.deducer.menu.SubsetDialog;
 
 
@@ -27,6 +28,7 @@ public class TwoSampleModel{
 	
 	public OptionsModel optMod = new OptionsModel();
 	public SplitModel splitMod = new SplitModel();
+	public OneWayPlotModel plots = new OneWayPlotModel();
 	
 	public class OptionsModel{
 		public boolean descriptives = true;
@@ -158,6 +160,17 @@ public class TwoSampleModel{
 				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
 				")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
+		}
+		if(plots.plot){
+			String dataCall=subn;
+			if(splitMod.group1.size()>0 || splitMod.group2.size()>0 || splitMod.isCut){
+				dataCall= "define.groups("+factor+","+subn+
+				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
+					(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
+					(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
+					")\n";
+			}
+			cmd+=plots.getCmd(dataCall, outcomes, factor);
 		}
 		if(isSubset)
 			cmd+="rm("+subn+")\n";

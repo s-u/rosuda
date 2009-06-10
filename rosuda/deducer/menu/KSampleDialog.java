@@ -77,7 +77,6 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		help.setVisible(false);
 		median.setEnabled(false);
 		largeAssump3.setEnabled(false);
-		plots.setVisible(false);
 		reset();
 		if(lastModel!=null)
 			setModel(lastModel);
@@ -195,6 +194,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				plots = new JButton();
 				getContentPane().add(plots, new AnchorConstraint(565, 303, 737, 148, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				plots.setText("Plots");
+				plots.addActionListener(this);
 				plots.setPreferredSize(new java.awt.Dimension(84, 22));
 			}
 			{
@@ -332,6 +332,10 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				SubsetDialog.addToHistory(model.dataName, model.subset);
 				this.dispose();
 			}
+		}else if(cmd=="Plots"){
+			KSamplePlots plt= new KSamplePlots(this,model.plots);
+			plt.setLocationRelativeTo(this);
+			plt.setVisible(true);
 		}else if(cmd == "comboBoxChanged"){
 			setModel(new KSampleModel());
 		}
@@ -347,6 +351,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		public DefaultListModel factorName = new DefaultListModel();
 		public String subset="";
 		public String dataName="";
+		public OneWayPlotModel plots= new OneWayPlotModel();
 		
 		public boolean run(){
 			if(dataName==null)
@@ -390,7 +395,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				cmd += "k.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
 					",\n\ttest=kruskal.test)"+"\n";
 			}
-			
+			cmd+=model.plots.getCmd(subn, outcomes, factor);
 			if(isSubset)
 				cmd+="rm("+subn+")\n";
 			JGR.MAINRCONSOLE.executeLater(cmd);
