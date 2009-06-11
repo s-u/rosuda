@@ -5,6 +5,7 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.KSamplePlots;
 import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
@@ -491,6 +492,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 			if(valid){
 				lastModel=testModel;
 				SubsetDialog.addToHistory(testModel.dataName, testModel.subset);
+				Deducer.setRecentData(testModel.dataName);
 				this.dispose();
 			}
 		}else if(cmd=="Cancel"){

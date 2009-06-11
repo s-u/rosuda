@@ -25,6 +25,7 @@ import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -252,6 +253,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			boolean valid = model.run();
 			if(valid){
 				lastModel=model;
+				Deducer.setRecentData(model.data);
 				SubsetDialog.addToHistory(model.data, model.subset);
 				this.dispose();
 			}

@@ -27,6 +27,7 @@ import javax.swing.JSeparator;
 import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.KSampleDialog.KSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
@@ -79,6 +80,7 @@ public class CorDialog extends JDialog implements ActionListener{
 		else
 			setModel(lastModel);
 		variableSelector.getJComboBox().addActionListener(this);	
+		linearAssump.setVisible(false);
 		help.setVisible(false);
 	}
 	
@@ -331,6 +333,7 @@ public class CorDialog extends JDialog implements ActionListener{
 			valid=model.run();
 			if(valid){
 				SubsetDialog.addToHistory(model.dataName, model.subset);
+				Deducer.setRecentData(model.dataName);
 				lastModel=model;
 				this.dispose();
 			}

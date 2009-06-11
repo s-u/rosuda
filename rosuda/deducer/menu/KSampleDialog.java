@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.twosample.TwoSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
@@ -275,7 +276,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 	
 	public void setModel(KSampleModel mod){
 		boolean allExist;
-		model=mod;
+
 		factor.setModel(new DefaultListModel());
 		outcomes.setModel(new DefaultListModel());
 		if(mod.dataName!=null){
@@ -298,7 +299,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				subset.setText(mod.subset);
 			}
 		}
-		
+		model=mod;		
 		welch.setSelected(model.doWelch);
 		anova.setSelected(model.doAnova);
 		kwTest.setSelected(model.doKW);
@@ -330,6 +331,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 			if(valid){
 				lastModel=model;
 				SubsetDialog.addToHistory(model.dataName, model.subset);
+				Deducer.setRecentData(model.dataName);
 				this.dispose();
 			}
 		}else if(cmd=="Plots"){

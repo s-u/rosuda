@@ -11,13 +11,16 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -45,7 +48,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	private IconButton removeStratum;
 	private IconButton removeColumn;
 	private JButton help;
-	private JScrollPane subsetScroller;
 	private SubsetPanel subsetPanel;
 	private DJList stratumList;
 	private DJList columnList;
@@ -57,9 +59,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	private JButton results;
 	private IconButton removeRow;
 	private IconButton addRow;
-	private JButton resetButton;
-	private JButton cancelButton;
-	private JButton runButton;
+	private OkayCancelPanel okCancel;
 	private JPanel strataPanel;
 	private JPanel columnPanel;
 	private JPanel rowPanel;
@@ -172,38 +172,20 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 				getContentPane().add(cells, new AnchorConstraint(62, 954, 118, 818, AnchorConstraint.ANCHOR_REL,
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				cells.setText("Cells");
-				cells.setPreferredSize(new java.awt.Dimension(100, 29));
+				cells.setPreferredSize(new Dimension(100, 29));
 				cells.addActionListener(this);
 			}
 			{
 				addRow = new IconButton("/icons/1rightarrow_32.png","Add Row",this,"Add Row");
 				getContentPane().add(addRow, new AnchorConstraint(76, 442, 153, 371, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-				addRow.setPreferredSize(new java.awt.Dimension(42, 42));
+				addRow.setPreferredSize(new Dimension(42, 42));
 			}
 			{
-				resetButton = new JButton();
-				getContentPane().add(resetButton, new AnchorConstraint(898, 699, 960, 601, AnchorConstraint.ANCHOR_NONE, 
-						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				resetButton.setText("Reset");
-				resetButton.addActionListener(this);
-				resetButton.setPreferredSize(new java.awt.Dimension(72, 32));
-			}
-			{
-				cancelButton = new JButton();
-				getContentPane().add(cancelButton, new AnchorConstraint(898, 837, 960, 715, AnchorConstraint.ANCHOR_NONE, 
-						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancelButton.setText("Cancel");
-				cancelButton.setPreferredSize(new java.awt.Dimension(90, 32));
-				cancelButton.addActionListener(this);
-			}
-			{
-				runButton = new JButton();
-				getContentPane().add(runButton, new AnchorConstraint(884, 984, 977, 855, AnchorConstraint.ANCHOR_NONE,
-						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				runButton.setText("Run");
-				runButton.setPreferredSize(new java.awt.Dimension(95, 48));
-				runButton.addActionListener(this);
+				okCancel = new OkayCancelPanel(true,true,this);
+				getContentPane().add(okCancel, new AnchorConstraint(950, 900, 977, 550, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));	
+				okCancel.setPreferredSize(new Dimension(300,40));
 			}
 			{
 				strataPanel = new JPanel();
@@ -358,6 +340,10 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			}
 				
 		}
+		if(rowList.getModel().getSize()==0 || columnList.getModel().getSize()==0){
+			JOptionPane.showMessageDialog(this, "Please select both column and row variables.");
+			return false;
+		}
 		
 		rCmd+=(result+"<-contingency.tables(\n\trow.vars="+RController.makeRStringVector(rowList)+
 					",\n\tcol.vars="+RController.makeRStringVector(columnList)+
@@ -401,6 +387,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			if(executeTables()){
 				JGR.MAINRCONSOLE.executeLater(rCmd);
 				saveToLast();
+				Deducer.setRecentData(variableSelector.getSelectedData());
 				this.dispose();
 			}
 		}else if(cmd == "Reset"){
@@ -566,8 +553,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		private JPanel cellSumPanel;
 		private JCheckBox rowPerc;
 		private JCheckBox noTables;
-		private JButton cancel;
-		private JButton okay;
+		private OkayCancelPanel okcan;
+		//private JButton cancel;
+		//private JButton okay;
 		private JCheckBox adjResid;
 		private JCheckBox stdResid;
 		private JCheckBox resid;
@@ -670,19 +658,12 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					}
 				}
 				{
-					okay = new JButton();
-					getContentPane().add(okay);
-					okay.setText("OK");
-					okay.setBounds(308, 162, 80, 29);
-					okay.addActionListener(this);
+					okcan = new OkayCancelPanel(false,false, this);
+					getContentPane().add(okcan);
+					okcan.setBounds(170, 150, 200, 50);
+					
 				}
-				{
-					cancel = new JButton();
-					getContentPane().add(cancel);
-					cancel.setText("Cancel");
-					cancel.setBounds(220, 165, 76, 22);
-					cancel.addActionListener(this);
-				}
+
 				{
 					noTables = new JCheckBox();
 					getContentPane().add(noTables);
@@ -748,8 +729,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		private JCheckBox fishers;
 		private JButton chisqOptions;
 		private JCheckBox chisq;
-		private JButton cancel;
-		private JButton okay;
+		private OkayCancelPanel okcan;
 		private IconButton approxAssump;
 		
 		private ChiOptions chiSquared;
@@ -800,18 +780,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			try {
 				getContentPane().setLayout(null);
 				{
-					cancel = new JButton();
-					getContentPane().add(cancel);
-					cancel.setText("Cancel");
-					cancel.setBounds(253, 298, 71, 22);
-					cancel.addActionListener(this);
-				}
-				{
-					okay = new JButton();
-					getContentPane().add(okay);
-					okay.setText("OK");
-					okay.setBounds(330, 292, 72, 35);
-					okay.addActionListener(this);
+					okcan = new OkayCancelPanel(false,false,this);
+					getContentPane().add(okcan);
+					okcan.setBounds(200, 280, 200, 40);
 				}
 				{
 					nomByNomPanel = new JPanel();
@@ -1083,8 +1054,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			private JSeparator sep;
 			private JSeparator jSeparator3;
 			private JSeparator jSeparator2;
-			private JButton cancel;
-			private JButton okay;
+			private OkayCancelPanel okcan;
 			private JLabel simSizeLabel;
 			private JTextField simSize;
 			private JSeparator jSeparator1;
@@ -1128,70 +1098,71 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					getContentPane().setLayout(thisLayout);
 					{
 						jSeparator3 = new JSeparator();
-						getContentPane().add(jSeparator3, new AnchorConstraint(178, 237, 756, 205, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(jSeparator3, new AnchorConstraint(178, 237, 756, 205, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						jSeparator3.setPreferredSize(new java.awt.Dimension(10, 151));
 						jSeparator3.setOrientation(SwingConstants.VERTICAL);
 					}
 					{
-						cancel = new JButton();
-						getContentPane().add(cancel, new AnchorConstraint(860, 693, 944, 444, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						cancel.setText("Cancel");
-						cancel.setPreferredSize(new java.awt.Dimension(79, 22));
-						cancel.addActionListener(this);
-					}
-					{
-						okay = new JButton();
-						getContentPane().add(okay, new AnchorConstraint(825, 944, 975, 712, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						okay.setText("OK");
-						okay.setPreferredSize(new java.awt.Dimension(74, 39));
-						okay.addActionListener(this);
+						okcan = new OkayCancelPanel(false,false,this);
+						getContentPane().add(okcan, new AnchorConstraint(825, 944, 975, 444, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						
 					}
 					{
 						simSizeLabel = new JLabel();
-						getContentPane().add(simSizeLabel, new AnchorConstraint(545, 583, 603, 309, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(simSizeLabel, new AnchorConstraint(545, 583, 603, 309, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						simSizeLabel.setText("Sample Size: ");
 						simSizeLabel.setPreferredSize(new java.awt.Dimension(87, 15));
 					}
 					{
 						simSize = new JTextField();
-						getContentPane().add(simSize, new AnchorConstraint(530, 825, 614, 602, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(simSize, new AnchorConstraint(530, 825, 614, 602, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						simSize.setText("5000");
 						simSize.setPreferredSize(new java.awt.Dimension(71, 22));
 					}
 					{
 						monteCarlo = new JCheckBox();
-						getContentPane().add(monteCarlo, new AnchorConstraint(434, 825, 507, 256, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(monteCarlo, new AnchorConstraint(434, 825, 507, 256, AnchorConstraint.ANCHOR_REL,
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						monteCarlo.setText("Monte Carlo Simulation");
 						monteCarlo.setPreferredSize(new java.awt.Dimension(181, 19));
 						monteCarlo.addActionListener(this);
 					}
 					{
 						asymptTest = new JCheckBox();
-						getContentPane().add(asymptTest, new AnchorConstraint(239, 570, 312, 256, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(asymptTest, new AnchorConstraint(239, 570, 312, 256, AnchorConstraint.ANCHOR_REL,
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						asymptTest.setText("Asymptotic");
 						asymptTest.setPreferredSize(new java.awt.Dimension(100, 19));
 						asymptTest.addActionListener(this);
 					}
 					{
 						conservative = new JCheckBox();
-						getContentPane().add(conservative, new AnchorConstraint(82, 794, 155, 256, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(conservative, new AnchorConstraint(82, 794, 155, 256, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						conservative.setText("Conservative");
 						conservative.setPreferredSize(new java.awt.Dimension(171, 19));
 						conservative.addActionListener(this);
 					}
 					{
 						sep = new JSeparator();
-						getContentPane().add(sep, new AnchorConstraint(178, 825, 216, 205, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(sep, new AnchorConstraint(178, 825, 216, 205, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						sep.setPreferredSize(new java.awt.Dimension(197, 10));
 					}
 					{
 						jSeparator1 = new JSeparator();
-						getContentPane().add(jSeparator1, new AnchorConstraint(381, 693, 411, 290, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(jSeparator1, new AnchorConstraint(381, 693, 411, 290, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						jSeparator1.setPreferredSize(new java.awt.Dimension(128, 8));
 					}
 					{
 						jSeparator2 = new JSeparator();
-						getContentPane().add(jSeparator2, new AnchorConstraint(660, 693, 706, 290, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						getContentPane().add(jSeparator2, new AnchorConstraint(660, 693, 706, 290, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						jSeparator2.setPreferredSize(new java.awt.Dimension(128, 12));
 					}
 					this.setSize(318, 283);
@@ -1239,8 +1210,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 		
 		public class LikeOptionDialog extends JDialog implements ActionListener{
 			private JCheckBox conservative;
-			private JButton cancel;
-			private JButton okay;
+			OkayCancelPanel okcan;
 			
 			public LikeOptionDialog(JDialog d,LikeOptions lrt) {
 				super(d);
@@ -1269,18 +1239,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						conservative.setBounds(100, 18, 145, 27);
 					}
 					{
-						okay = new JButton();
-						getContentPane().add(okay);
-						okay.setText("OK");
-						okay.setBounds(198, 71, 87, 29);
-						okay.addActionListener(this);
-					}
-					{
-						cancel = new JButton();
-						getContentPane().add(cancel);
-						cancel.setText("Cancel");
-						cancel.setBounds(109, 74, 77, 22);
-						cancel.addActionListener(this);
+						okcan = new OkayCancelPanel(false,false,this);
+						getContentPane().add(okcan);
+						okcan.setBounds(80, 65, 170, 40);
 					}
 					this.setTitle("Liklihood Ratio Options");
 					this.setSize(305, 134);
@@ -1305,8 +1266,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	
 	public class ResultsDialog extends JDialog implements ActionListener{
 		private JCheckBox keep;
-		private JButton okay;
-		private JButton cancel;
+		private OkayCancelPanel okcan;
 		private JTextField resultName;
 		private JLabel name;
 		
@@ -1357,18 +1317,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						resultName.setBounds(140, 19, 98, 22);
 					}
 					{
-						okay = new JButton();
-						getContentPane().add(okay);
-						okay.setText("OK");
-						okay.setBounds(187, 96, 78, 35);
-						okay.addActionListener(this);
-					}
-					{
-						cancel = new JButton();
-						getContentPane().add(cancel);
-						cancel.setText("Cancel");
-						cancel.setBounds(97, 102, 74, 22);
-						cancel.addActionListener(this);
+						okcan = new OkayCancelPanel(false,false,this);
+						getContentPane().add(okcan);
+						okcan.setBounds(97, 95, 160, 40);
 					}
 				}
 				this.setTitle("Result Options");

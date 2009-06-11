@@ -7,6 +7,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.JGR.util.ErrorMsg;
 
 import java.awt.BorderLayout;
@@ -31,8 +32,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 	private JScrollPane levelScroller;
 	private DJList levelList;
 	private JCheckBox ordered;
-	private JButton cancel;
-	private JButton okay;
+	private OkayCancelPanel okcan;
 	private JButton contrast;
 	private IconButton add;
 	private IconButton remove;
@@ -57,24 +57,15 @@ public class FactorDialog extends JDialog implements ActionListener {
 			this.setPreferredSize(new java.awt.Dimension(280, 331));
 			this.setTitle("Edit Factor");
 			{
-				cancel = new JButton();
-				AnchorLayout cancelLayout = new AnchorLayout();
-				cancel.setLayout(cancelLayout);
-				getContentPane().add(cancel, new AnchorConstraint(836, 630, 920, 373, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancel.setText("Cancel");
-				cancel.setPreferredSize(new java.awt.Dimension(72, 26));
-				cancel.addActionListener(this);
-			}
-			{
-				okay = new JButton();
-				getContentPane().add(okay, new AnchorConstraint(810, 937, 946, 694, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				okay.setText("OK");
-				okay.setPreferredSize(new java.awt.Dimension(68, 42));
-				okay.addActionListener(this);
+				okcan = new OkayCancelPanel(false,false,this);
+				getContentPane().add(okcan, new AnchorConstraint(810, 937, 946, 300, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				
 			}
 			{
 				ordered = new JCheckBox();
-				getContentPane().add(ordered, new AnchorConstraint(690, 769, 752, 123, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+				getContentPane().add(ordered, new AnchorConstraint(690, 769, 752, 123, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				ordered.setText("Ordered");
 				ordered.setPreferredSize(new java.awt.Dimension(92, 19));
 				ordered.addActionListener(this);
@@ -82,35 +73,41 @@ public class FactorDialog extends JDialog implements ActionListener {
 			}
 			{
 				contrast = new JButton();
-				getContentPane().add(contrast, new AnchorConstraint(674, 373, 771, 12, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
+				getContentPane().add(contrast, new AnchorConstraint(674, 373, 771, 12, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				contrast.setText("Contrasts");
 				contrast.setPreferredSize(new java.awt.Dimension(92, 30));
 				contrast.addActionListener(this);
 			}
 			{
 				add = new IconButton("/icons/edit_add_32.png","Add",this,"Add");
-				getContentPane().add(add, new AnchorConstraint(110, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(add, new AnchorConstraint(110, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				add.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
 				remove = new IconButton("/icons/edit_remove_32.png","Delete",this,"Delete");
-				getContentPane().add(remove, new AnchorConstraint(152, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(remove, new AnchorConstraint(152, 937, 655, 769, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				remove.setPreferredSize(new java.awt.Dimension(40, 41));
 			}
 			{
 				down = new IconButton("/icons/1downarrow_32.png","Down",this,"Down");
-				getContentPane().add(down, new AnchorConstraint(70, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(down, new AnchorConstraint(70, 937, 412, 769, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				down.setPreferredSize(new java.awt.Dimension(40, 35));
 
 			}
 			{
 				up = new IconButton("/icons/1uparrow_32.png","Up",this,"Up");
-				getContentPane().add(up, new AnchorConstraint(35, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(up, new AnchorConstraint(35, 937, 260, 769, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				up.setPreferredSize(new java.awt.Dimension(40, 35));
 			}
 			{
 				listPanel = new JPanel();
-				getContentPane().add(listPanel, new AnchorConstraint(40, 748, 655, 12, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
+				getContentPane().add(listPanel, new AnchorConstraint(40, 748, 655, 12, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS));
 				BorderLayout listPanelLayout = new BorderLayout();
 				listPanel.setLayout(listPanelLayout);
 				listPanel.setBorder(BorderFactory.createTitledBorder("Levels"));
@@ -209,8 +206,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 		private ButtonGroup buttonGroup1;
 		private JPanel groupPanel;
 		private JCheckBox helmert;
-		private JButton okay;
-		private JButton cancel;
+		private OkayCancelPanel okcan;
 		private JCheckBox custom;
 		private JCheckBox polynomial;
 		private JCheckBox sum;
@@ -229,6 +225,12 @@ public class FactorDialog extends JDialog implements ActionListener {
 				AnchorLayout thisLayout = new AnchorLayout();
 				getContentPane().setLayout(thisLayout);
 				{
+					okcan = new OkayCancelPanel(false,false,this);
+					getContentPane().add(okcan, new AnchorConstraint(833, 944, 957, 59, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					
+				}
+				/*{
 					okay = new JButton();
 					getContentPane().add(okay, new AnchorConstraint(833, 944, 957, 566, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					okay.setText("OK");
@@ -239,41 +241,47 @@ public class FactorDialog extends JDialog implements ActionListener {
 					getContentPane().add(cancel, new AnchorConstraint(853, 471, 937, 59, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					cancel.setText("Cancel");
 					cancel.setPreferredSize(new java.awt.Dimension(86, 21));
-				}
+				}*/
 				{
 					groupPanel = new JPanel();
 					AnchorLayout groupPanelLayout = new AnchorLayout();
-					getContentPane().add(groupPanel, new AnchorConstraint(50, 944, 785, 59, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					getContentPane().add(groupPanel, new AnchorConstraint(50, 944, 785, 59, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					groupPanel.setPreferredSize(new java.awt.Dimension(185, 183));
 					groupPanel.setLayout(groupPanelLayout);
 					groupPanel.setBorder(BorderFactory.createTitledBorder("Contrast Type"));
 					{
 						custom = new JCheckBox();
-						groupPanel.add(custom, new AnchorConstraint(751, 916, 849, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						groupPanel.add(custom, new AnchorConstraint(751, 916, 849, 218, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						custom.setText("Custom");
 						custom.setPreferredSize(new java.awt.Dimension(129, 18));
 					}
 					{
 						polynomial = new JCheckBox();
-						groupPanel.add(polynomial, new AnchorConstraint(614, 916, 713, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						groupPanel.add(polynomial, new AnchorConstraint(614, 916, 713, 218, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						polynomial.setText("Polynomial");
 						polynomial.setPreferredSize(new java.awt.Dimension(129, 18));
 					}
 					{
 						helmert = new JCheckBox();
-						groupPanel.add(helmert, new AnchorConstraint(483, 916, 576, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						groupPanel.add(helmert, new AnchorConstraint(483, 916, 576, 218, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						helmert.setText("Helment");
 						helmert.setPreferredSize(new java.awt.Dimension(129, 17));
 					}
 					{
 						sum = new JCheckBox();
-						groupPanel.add(sum, new AnchorConstraint(346, 916, 445, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						groupPanel.add(sum, new AnchorConstraint(346, 916, 445, 218, AnchorConstraint.ANCHOR_REL,
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						sum.setText("Sum (Deviation)");
 						sum.setPreferredSize(new java.awt.Dimension(129, 18));
 					}
 					{
 						treatment = new JCheckBox();
-						groupPanel.add(treatment, new AnchorConstraint(210, 916, 308, 218, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+						groupPanel.add(treatment, new AnchorConstraint(210, 916, 308, 218, AnchorConstraint.ANCHOR_REL, 
+								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						treatment.setText("Treatment");
 						treatment.setPreferredSize(new java.awt.Dimension(129, 18));
 					}
@@ -289,8 +297,6 @@ public class FactorDialog extends JDialog implements ActionListener {
 				sum.addActionListener(this);
 				polynomial.addActionListener(this);
 				custom.addActionListener(this);
-				okay.addActionListener(this);
-				cancel.addActionListener(this);
 				//TODO: add custom logic
 				custom.setVisible(false);
 				this.setSize(217, 283);

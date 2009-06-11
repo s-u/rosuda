@@ -24,6 +24,7 @@ import javax.swing.ListModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.*;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;
@@ -37,8 +38,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 	private DJList strataList;
 	private JButton cont;
 	private IconButton addStrata;
-	private JButton reset;
-	private JButton cancel;
+	private OkayCancelPanel okCancel;
 	private IconButton removeStrata;
 	private IconButton removeDesc;
 	private IconButton addDesc;
@@ -81,25 +81,12 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			getContentPane().setLayout(thisLayout);
 			this.setTitle("Descriptives");
 			{
-				reset = new JButton();
-				getContentPane().add(reset, new AnchorConstraint(869, 559, 920, 419, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				reset.setText("Reset");
-				reset.setPreferredSize(new java.awt.Dimension(72, 21));
-				reset.addActionListener(this);
-			}
-			{
-				cancel = new JButton();
-				getContentPane().add(cancel, new AnchorConstraint(869, 750, 920, 568, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancel.setText("Cancel");
-				cancel.setPreferredSize(new java.awt.Dimension(94, 21));
-				cancel.addActionListener(this);
-			}
-			{
-				cont = new JButton();
-				getContentPane().add(cont, new AnchorConstraint(844, 942, 947, 760, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				okCancel = new OkayCancelPanel(true, false, this);
+				getContentPane().add(okCancel, new AnchorConstraint(869, 942, 947, 400, AnchorConstraint.ANCHOR_REL,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				cont=okCancel.getApproveButton();
 				cont.setText("Continue");
-				cont.setPreferredSize(new java.awt.Dimension(94, 42));
-				cont.addActionListener(this);
+				
 			}
 			initFirstPanel();
 			initSecondPanel();
@@ -392,6 +379,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					(strata.size()<1 ? "" : (" ,\n\tstrata = "+RController.makeRStringVector(strata)))+
 					(addFuncs!=null ? (",\n\tfunc.additional= "+addFuncs+")") : ")")
 					);
+			Deducer.setRecentData(dataName);
 		}else if(cmd == "Custom"){
 			CustomPopUp pop = new CustomPopUp(this);
 			pop.setLocationRelativeTo(null);

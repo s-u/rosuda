@@ -36,6 +36,7 @@ public class Deducer {
 	ConsoleListener cListener =  new ConsoleListener();
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
+	static String recentActiveData = "";
 	
 	public Deducer(){
 		String dataMenu = "Data";
@@ -234,6 +235,14 @@ public class Deducer {
 		mi.addActionListener(al);
 		mi.setActionCommand(command);
 		m.insert(mi,index);
+	}
+	
+	public static String getRecentData(){
+		return recentActiveData;
+	}
+	
+	public static void setRecentData(String data){
+		recentActiveData=data;
 	}
 	
 	class Runner implements Runnable {

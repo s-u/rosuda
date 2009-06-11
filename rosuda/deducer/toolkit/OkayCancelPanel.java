@@ -80,6 +80,10 @@ public class OkayCancelPanel extends JPanel {
 			e.printStackTrace();
 		}
 	}
+	
+	public JButton getApproveButton(){
+		return okayButton;
+	}
 
 }
 

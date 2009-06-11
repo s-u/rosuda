@@ -29,6 +29,7 @@ import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.*;
 import org.rosuda.JRI.REXP;
+import org.rosuda.deducer.Deducer;
 
 
 public class VariableSelector extends JPanel implements ActionListener, KeyListener {
@@ -49,7 +50,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		for(int i=0;i<JGR.DATA.size();i++){
 			dataComboBoxModel.addElement(((RObject) JGR.DATA.elementAt(i)).getName());
 		}
-
+		dataComboBox.setSelectedItem(Deducer.getRecentData());
 		String dataName = (String)dataComboBox.getSelectedItem();
 		if(dataName!=null)
 			variableList.setModel(new FilteringModel(JGR.R.eval("names("+dataName+")").asStringArray()));
