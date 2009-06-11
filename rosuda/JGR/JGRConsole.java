@@ -62,9 +62,11 @@ import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.robjects.*;
 
 
-import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.JRI.RMainLoopCallbacks;
-import org.rosuda.JRI.Rengine;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
@@ -166,18 +168,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				
 				for(int i=0;i<mb.getMenuCount();i++){
 					if(mb.getMenu(i).getText().equals("Preferences") ||
-							mb.getMenu(i).getText().equals("About")){
+					   mb.getMenu(i).getText().equals("About")){
 						mb.remove(i);
 						i--;
 					}
 					if(mb.getMenu(i).getText().equals("Edit")){
 						JMenuItem prefer = (JMenuItem)mb.getMenu(i).getMenuComponent(
-												mb.getMenu(i).getMenuComponentCount()-1);
+																					 mb.getMenu(i).getMenuComponentCount()-1);
 						prefer.setAccelerator(KeyStroke.getKeyStroke(',',MENUMODIFIER));
 					}
 				}
 			}
-
+			
 			
 			
 			// Add History if we didn't found one in the user's home directory
@@ -208,14 +210,18 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			.setDividerLocation(((int) ((double) this.getHeight() * 0.65)));
 			
 			this.addComponentListener(new ComponentAdapter() {
-									  public void componentResized(ComponentEvent evt) {
-									  super.componentResized(evt);
-									  if (JGR.R != null && JGR.STARTED)
-									  JGR.R.eval("options(width=" + getFontWidth() + ")");
-									  consolePanel
-									  .setDividerLocation(((int) ((double) getHeight() * 0.70)));
-									  }
-									  });
+				public void componentResized(ComponentEvent evt) {
+					  super.componentResized(evt);
+				      if (JGR.getREngine() != null && JGR.STARTED) {
+					      try {
+						      JGR.getREngine().eval(new REXPString("options(width=" + getFontWidth() + ")"),null,false);
+						  } catch (REngineException e) { new ErrorMsg(e); }
+						  catch (REXPMismatchException e) { new ErrorMsg(e); }
+					  }	
+					  consolePanel.setDividerLocation(((int) ((double) getHeight() * 0.70)));
+			    }	
+				
+			});
 			this.addWindowListener(new WindowAdapter() {
 								   public void windowClosing(WindowEvent evt) {
 								   dispose();
@@ -375,15 +381,40 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 */
 		public String getUniqueName(String var,String envName){
 			var = RController.makeValidVariableName(var);
-			boolean isEnv = JGR.R.eval("is.environment("+envName+")").asBool().isTRUE();
+			
+			try {
+			REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("is.environment("+envName+")"),null,true);
+			boolean isEnv = temp.isTRUE()[0];
 			if(!isEnv)
 				return var;
-			boolean isUnique = JGR.R.eval("exists('"+var+"',where="+envName+",inherits=FALSE)").asBool().isFALSE();
+			} catch (REngineException e) { new ErrorMsg(e); return var; }
+			 catch (REXPMismatchException e) { new ErrorMsg(e); return var; }
+			
+			boolean isUnique = false;
+			
+			try {
+			
+				
+			REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("exists('"+var+"',where="+envName+",inherits=FALSE)"),null,true);
+			isUnique = temp.isFALSE()[0];
 			if(isUnique)
 				return var;
+				
+			} catch (REngineException e) { new ErrorMsg(e); return var; }
+			catch (REXPMismatchException e) { new ErrorMsg(e); return var; }
+				
+				
 			int i = 1;
 			while(true){
-				isUnique = JGR.R.eval("exists('"+(var+i)+"',where="+envName+",inherits=FALSE)").asBool().isFALSE();
+				
+				try {
+				
+				REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("exists('"+(var+i)+"',where="+envName+",inherits=FALSE)"),null,true);
+				isUnique = temp.isFALSE()[0];
+					
+				} catch (REngineException e) { new ErrorMsg(e); }
+				catch (REXPMismatchException e) { new ErrorMsg(e); }
+					
 				if(isUnique)
 					return var+i;
 				i++;
@@ -595,7 +626,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param oType
 		 *            output type (0=regular, 1=warning/error)
 		 */
-		public void rWriteConsole(Rengine re, String text, int oType) {
+		public void rWriteConsole(org.rosuda.JRI.Rengine re, String text, int oType) {
 			if (readCount == 2) {
 				end = output.getText().length();
 				readCount = 3;
@@ -617,7 +648,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param text
 		 *            output
 		 */
-		public void rWriteConsole(Rengine re, String text) {
+		public void rWriteConsole(org.rosuda.JRI.Rengine re, String text) {
 			rWriteConsole(re, text, 0);
 		}
 		
@@ -629,7 +660,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param which
 		 *            busy (1) or not (0)
 		 */
-		public void rBusy(Rengine re, int which) {
+		public void rBusy(org.rosuda.JRI.Rengine re, int which) {
 			final int fWhich=which;
 			Runnable doWork = new Runnable() {
 				public void run() {
@@ -657,7 +688,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param addToHistory
 		 *            is it an command which to add to the history
 		 */
-		public String rReadConsole(Rengine re, String prompt, int addToHistory) {
+		public String rReadConsole(org.rosuda.JRI.Rengine re, String prompt, int addToHistory) {
 			if (readCount < 2) readCount++;
 			Runnable doWork = new Runnable() {
 				public void run() {
@@ -668,7 +699,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			if (prompt.indexOf("Save workspace") > -1) {
 				String retVal = JGR.exit();
 				if (wspace != null && retVal.indexOf('y') >= 0) {
-					JGR.R.eval("save.image(\"" + wspace.replace('\\', '/') + "\")");
+					try {
+						JGR.getREngine().eval(new REXPString("save.image(\"" + wspace.replace('\\', '/') + "\")"),null,false);
+					} catch (REngineException e) {
+						 new ErrorMsg(e);
+					} catch (REXPMismatchException e) {
+						 new ErrorMsg(e);
+					}
 					return "n\n";
 				} else
 					return retVal;
@@ -715,7 +752,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param message
 		 *            message from R
 		 */
-		public void rShowMessage(Rengine re, String message) {
+		public void rShowMessage(org.rosuda.JRI.Rengine re, String message) {
 			JOptionPane.showMessageDialog(this, message, "R Message",
 										  JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -728,7 +765,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param newFile
 		 *            if it's a new file
 		 */
-		public String rChooseFile(Rengine re, int newFile) {
+		public String rChooseFile(org.rosuda.JRI.Rengine re, int newFile) {
 			FileSelector fd = new FileSelector(this,
 											   (newFile == 0) ? "Select a file" : "Select a new file",
 											   (newFile == 0) ? FileDialog.LOAD : FileDialog.SAVE);
@@ -747,7 +784,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param re
 		 *            used Rengine
 		 */
-		public void rFlushConsole(Rengine re) {
+		public void rFlushConsole(org.rosuda.JRI.Rengine re) {
 		}
 		
 		/**
@@ -758,7 +795,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param filename
 		 *            history file
 		 */
-		public void rLoadHistory(Rengine re, String filename) {
+		public void rLoadHistory(org.rosuda.JRI.Rengine re, String filename) {
 			File hist = null;
 			try {
 				if ((hist = new File(filename)).exists()) {
@@ -782,7 +819,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		 * @param filename
 		 *            history file
 		 */
-		public void rSaveHistory(Rengine re, String filename) {
+		public void rSaveHistory(org.rosuda.JRI. Rengine re, String filename) {
 			try {
 				System.out.println("Save History");
 				File hist = new File(filename);
@@ -890,8 +927,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				saveWorkSpaceAs();
 			else if(cmd == "clearwp"){
 				int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear " +
-							"your workspace?\nAll unsaved objects will be deleted.",
-							"Clear Workspace",JOptionPane.YES_NO_OPTION);
+														 "your workspace?\nAll unsaved objects will be deleted.",
+														 "Clear Workspace",JOptionPane.YES_NO_OPTION);
 				if(doIt==JOptionPane.OK_OPTION)
 					execute("rm(list=ls())");
 			}else if (cmd == "search")
@@ -906,7 +943,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				try{
 					new Thread(new Runnable() {
 							   public void run() {
-							   JGR.R.rniStop(1);
+									((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniStop(1);
 							   }
 							   }).start();
 				}catch(Exception exe){new ErrorMsg(exe);}

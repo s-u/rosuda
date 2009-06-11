@@ -35,8 +35,8 @@ public class ConsoleSync {
 			try {
 				// wait();
 				wait(100);
-				if (JGR.R != null)
-					JGR.R.rniIdle();
+				if (JGR.getREngine() != null)
+					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniIdle();
 			} catch (InterruptedException e) {
 			}
 		String s = null;

@@ -330,7 +330,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]", ".");
 
-			REXP x = JGR.R.idleEval("try(.refreshObjects(),silent=TRUE)");
+			REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 			String[] r = null;
 			if (x != null && (r = x.asStringArray()) != null)
 				JGR.setObjects(r);

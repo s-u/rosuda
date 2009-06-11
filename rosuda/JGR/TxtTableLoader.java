@@ -318,21 +318,21 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			+ (preview ? ",silent=TRUE)":"");
 		
 		if(preview)
-			JGR.R.eval(cmd, false);
+			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd, false);
 		else
 			JGR.MAINRCONSOLE.execute(cmd, true);	
 	}
 	private void loadPreview(){
 		loadInR(previewName,true);
-		JGR.R.eval(".refreshObjects()",false);
+		((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(".refreshObjects()",false);
 		RObject obj=new RObject(previewName,"data.frame",null,false);
 		SVarSet vs = RController.newSet(obj);
 		DataTable rTable = new DataTable(vs,"data.frame",false,false);
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
 		rTable.dispose();
-		if(JGR.R.eval("\""+previewName+"\" %in% ls()").asBool().isTRUE())
-			JGR.R.eval("rm("+previewName+")", false);
+		if(((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("\""+previewName+"\" %in% ls()").asBool().isTRUE())
+			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm("+previewName+")", false);
 	}
 	private void loadActionPerformed(ActionEvent evt) {
 

@@ -43,6 +43,7 @@ DEDUCER_SRC:= $(wildcard rosuda/deducer/*.java) $(wildcard rosuda/deducer/menu/*
 JRI_SRC:=$(wildcard rosuda/JRI/*.java)
 RENGINE_SRC:=$(wildcard rosuda/REngine/*.java)
 RENGINE_RSERVE_SRC:=$(wildcard rosuda/REngine/Rserve/*.java) $(wildcard rosuda/REngine/Rserve/protocol/*.java)
+RENGINE_JRI_SRC:=$(wildcard rosuda/REngine/JRI/*.java)
 CLASSPATH_XTREME:=rosuda/projects/klimt/jogl.jar
 ICUSTOM_SRC:=$(wildcard rosuda/icustom/*.java)
 MRJSTUBS_SRC:=$(wildcard rosuda/util/MRJstubs/*.java)
@@ -71,9 +72,9 @@ Mondrian.jar:
 	$(MAKE) -C rosuda/Mondrian Mondrian.jar
 	cp rosuda/Mondrian/Mondrian.jar .
 
-JGR.jar: javaGD.jar ibase.jar $(JRENGINE) MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
+JGR.jar: javaGD.jar ibase.jar $(RENGINE_SRC) $(RENGINE_JRI_SRC) $(JRENGINE) MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
 	rm -rf org
-	$(JAVAC) -d . -classpath javaGD.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE)$(PATHSEP)MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC)
+	$(JAVAC) -d . -classpath javaGD.jar$(PATHSEP)ibase.jar$(PATHSEP)$(JRENGINE)$(PATHSEP)MRJstubs.jar $(JGR_SRC) $(JEDIT_SRC) $(RENGINE_SRC) $(RENGINE_JRI_SRC)
 	cp rosuda/projects/jgr/splash.jpg jgrsplash.jpg
 	cp -r rosuda/projects/jgr/icons .
 	jar fcm $@ rosuda/projects/jgr/JGR.mft jgrsplash.jpg icons org jedit rosuda/JGR/LICENSE rosuda/JGR/GPL.txt

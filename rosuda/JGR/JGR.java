@@ -21,8 +21,11 @@ import org.rosuda.JGR.toolkit.ConsoleSync;
 import org.rosuda.JGR.toolkit.JGRListener;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.JRI.REXP;
-import org.rosuda.JRI.Rengine;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.JRI.JRIEngine;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.util.Global;
@@ -46,7 +49,7 @@ import org.rosuda.util.Global;
 public class JGR {
 
 	/** Version number of JGR */
-	public static final String VERSION = "1.6-7";
+	public static final String VERSION = "1.7";
 
 	/** Title (used for displaying the splashscreen) */
 	public static final String TITLE = "JGR";
@@ -91,7 +94,7 @@ public class JGR {
 	public static String[] RLIBS = null;
 
 	/** Rengine {@link org.rosuda.JRI.Rengine}, needed for executing R-commands */
-	public static Rengine R = null;
+	private static REngine rEngine = null;
 
 	/** ConsoleSnyc {@link org.rosuda.JRG.toolkit.ConsoleSync} */
 	public static ConsoleSync rSync = new ConsoleSync();
@@ -197,7 +200,7 @@ public class JGR {
 			System.exit(1);
 		}
 
-		if (!Rengine.versionCheck()) {
+		if (!org.rosuda.JRI.Rengine.versionCheck()) {
 			JOptionPane
 					.showMessageDialog(
 							null,
@@ -205,17 +208,28 @@ public class JGR {
 							"Version Mismatch", JOptionPane.ERROR_MESSAGE);
 			System.exit(2);
 		}
-		R = new Rengine(rargs, true, MAINRCONSOLE);
+		try {
+			rEngine = new JRIEngine(rargs, MAINRCONSOLE);
+		} catch (REngineException e) {
+			System.err.println("Cannot start REngine " + e);
+			System.exit(1);
+		}
 		if (org.rosuda.util.Global.DEBUG > 0)
 			System.out.println("Rengine created, waiting for R");
-		if (!R.waitForR()) {
+		if (!((JRIEngine)rEngine).getRni().waitForR()) {
 			System.out.println("Cannot load R");
 			System.exit(1);
 		}
 
-		// to avoid quoting hell we use an assignment
-		R.assign(".$JGR",JGRPrefs.workingDirectory);
-		R.eval("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)");
+		try {
+			// to avoid quoting hell we use an assignment
+			rEngine.assign(".$JGR",new REXPString(JGRPrefs.workingDirectory));
+			rEngine.parse("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)",false);
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		
 		// load packages requested by the user
 		// in theory we could have checked for jgr.load.pkgs property, but in practice it doesn't
@@ -235,6 +249,11 @@ public class JGR {
 		new Refresher().run();
 	}
 
+	
+	public static REngine getREngine() {
+		return rEngine;
+	}
+	
 	/**
 	 * Exits JGR, but not before asked the user if he wants to save his
 	 * workspace.
@@ -539,7 +558,7 @@ public class JGR {
 		}
 	}
 	public static void refreshObjects(){
-		REXP x = R.idleEval("try(.refreshObjects(),silent=TRUE)");
+		org.rosuda.JRI.REXP x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 		String[] r = null;
 		if (x != null && (r = x.asStringArray()) != null)
 			JGR.setObjects(r);
@@ -558,11 +577,11 @@ public class JGR {
 			while (true)
 				try {
 					Thread.sleep(5000);
-					REXP x = R.idleEval("try(.refreshKeyWords(),silent=TRUE)");
+					org.rosuda.JRI.REXP x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
 					if (x != null && (r = x.asStringArray()) != null)
 						setKeyWords(r);
-					x = R.idleEval("try(.refreshObjects(),silent=TRUE)");
+					x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 					r = null;
 					if (x != null && (r = x.asStringArray()) != null)
 						setObjects(r);

@@ -103,10 +103,8 @@ public class FontTracker {
 			} catch (Exception ex) {
 			}
 		}
-		if (JGR.R != null && JGR.STARTED)
-			JGR.R
-					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
-							+ ")");
+		if (JGR.getREngine() != null && JGR.STARTED)
+			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
 	}
 
 }

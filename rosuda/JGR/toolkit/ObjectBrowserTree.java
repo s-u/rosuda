@@ -240,9 +240,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 							.getLevel() == 1) {
 						DefaultMutableTreeNode n = (DefaultMutableTreeNode) p
 								.getPathComponent(1);
-						JGR.R.eval("rm("
-								+ ((RObject) n.getUserObject()).getRName()
-								+ ")");
+						((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm(" + ((RObject) n.getUserObject()).getRName()	+ ")");
 						objModel.removeNodeFromParent(n);
 					}
 				} catch (Exception ex) {

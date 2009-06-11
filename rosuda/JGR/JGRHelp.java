@@ -141,7 +141,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
 			index = "file:/" + RHELPLOCATION.replace('\\', '/')
 					+ "/doc/html/packages.html";
 		} else {
-			RHELPLOCATION = JGR.R.eval("tempdir()").asString() + "/.R";
+			RHELPLOCATION = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("tempdir()").asString() + "/.R";
 			index = "file://" + RHELPLOCATION.replace('\\', '/')
 					+ "/doc/html/packages.html";
 		}

@@ -138,7 +138,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	
 	public void loadRdaFile(String fileName,String directory){
 		String cmd = "print(load(\""+(directory+fileName).replace('\\', '/')+"\"))";
-		JGR.R.eval("cat('The following data objects have been loaded:\\\n')",false);		
+		((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("cat('The following data objects have been loaded:\\\n')",false);		
 		JGR.MAINRCONSOLE.executeLater(cmd, true);		
 	}
 	

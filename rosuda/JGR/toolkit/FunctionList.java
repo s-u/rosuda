@@ -125,7 +125,7 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 				} catch (Exception ex) {
 				}
 				if (o != null) {
-					JGR.R.eval("rm(" + o.getRName() + ")");
+					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm(" + o.getRName() + ")");
 					fmodel.removeElement(sfunctions[i]);
 				}
 			}

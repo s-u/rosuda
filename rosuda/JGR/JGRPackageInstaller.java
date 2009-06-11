@@ -148,7 +148,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				System.arraycopy(JGR.RLIBS, 0, libs, 1, JGR.RLIBS.length);
 				JGR.RLIBS = libs;
 				JGRPrefs.writePrefs(true);
-				JGR.R.eval(".libPaths(\"" + destDir + "\")");
+				((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(".libPaths(\"" + destDir + "\")");
 			}
 		}
 		if (destDir == null) {

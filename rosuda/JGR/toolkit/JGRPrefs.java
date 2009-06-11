@@ -220,10 +220,8 @@ public class JGRPrefs {
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
 		StyleConstants.setItalic(OBJECT, OBJECT_IT);
 		StyleConstants.setForeground(QUOTE, QUOTEColor);
-		if (JGR.R != null && JGR.STARTED)
-			JGR.R
-					.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth()
-							+ ")");
+		if (JGR.getREngine() != null && JGR.STARTED)
+			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
 	}
 
 	/**
