@@ -21,7 +21,7 @@ public class OkayCancelPanel extends JPanel {
 	
 	public OkayCancelPanel(boolean showReset,boolean isRun,ActionListener lis) {
 		super();
-		initGUI(showReset?0:1);
+		initGUI(showReset?1:0,System.getProperty("os.name").startsWith("Window"));
 		if(!showReset)
 			resetButton.setVisible(false);
 		if(isRun)
@@ -35,7 +35,7 @@ public class OkayCancelPanel extends JPanel {
 	
 	public OkayCancelPanel(boolean showReset,boolean isRun) {
 		super();
-		initGUI(showReset?0:1);
+		initGUI(showReset?1:0,System.getProperty("os.name").startsWith("Window"));
 		if(!showReset)
 			resetButton.setVisible(false);
 		if(isRun)
@@ -50,31 +50,65 @@ public class OkayCancelPanel extends JPanel {
 		}		
 	}
 	
-	private void initGUI(int reset) {
+	private void initGUI(int reset,boolean windowsOrder) {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(365, 57));
+			AnchorConstraint resetConst;
+			AnchorConstraint okayConst;
+			AnchorConstraint cancelConst;
+			if(reset==1){
+				resetConst = new AnchorConstraint(8, 310, 798, 9,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+				okayConst = new AnchorConstraint(8, 1001, 1008, 700, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+				cancelConst = new AnchorConstraint(8, 660, 798, 360, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+			}else{
+				resetConst = new AnchorConstraint(8, 310, 798, 9,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+				okayConst = new AnchorConstraint(8, 1000, 1008, 550, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+				cancelConst = new AnchorConstraint(8, 450, 798, 0, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL);
+			}
+			if(windowsOrder){
+				AnchorConstraint tmp;
+				tmp =okayConst;
+				if(reset==0){
+					okayConst=cancelConst;
+					cancelConst=tmp;
+				}else{
+					okayConst=resetConst;
+					resetConst=cancelConst;
+					cancelConst=tmp;
+				}
+			}
 			{
 				resetButton = new JButton();
-				this.add(resetButton, new AnchorConstraint(219, 310, 798, 9, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(resetButton, resetConst);
 				resetButton.setText("Reset");
-				resetButton.setPreferredSize(new java.awt.Dimension(110, 33));
+				resetButton.setPreferredSize(new java.awt.Dimension(110, 32));
 			}
 			{
 				cancelButton = new JButton();
-				this.add(cancelButton, new AnchorConstraint(219, 658-180*(reset), 798, 360-360*(reset), 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL));
+				this.add(cancelButton, cancelConst);
 				cancelButton.setText("Cancel");
 				
-				cancelButton.setPreferredSize(new java.awt.Dimension(109, 33));
+				cancelButton.setPreferredSize(new java.awt.Dimension(109, 32));
 			}
 			{
 				okayButton = new JButton();
-				this.add(okayButton, new AnchorConstraint(8, 1001, 1008, 702-180*reset, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				this.add(okayButton, okayConst);
 				okayButton.setText("OK");
-				okayButton.setPreferredSize(new java.awt.Dimension(109, 57));
+				okayButton.setPreferredSize(new java.awt.Dimension(109, 32));
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

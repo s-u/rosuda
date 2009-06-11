@@ -422,7 +422,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				{
 					okayCancelPanel = new OkayCancelPanel(false,false,this);
 					getContentPane().add(okayCancelPanel);	
-					okayCancelPanel.setBounds(10, 165, 250, 38);			
+					okayCancelPanel.setBounds(10, 165, 200, 38);			
 				}
 				getAlternativeGroup();
 				this.setTitle("One-sample t-test options");
