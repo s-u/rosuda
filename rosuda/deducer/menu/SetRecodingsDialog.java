@@ -7,6 +7,7 @@ import org.rosuda.JGR.layout.ArrayFocusTraversalPolicy;
 import org.rosuda.JGR.JGR;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
 import java.awt.BorderLayout;
@@ -51,8 +52,6 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 	private JSeparator jSeparator_IL1;
 	private JButton clear;
 	private JPanel doublePanel;
-	private JButton cancelButton;
-	private JButton okButton;
 	private JTextPane infoTextArea;
 	private JScrollPane textScroller;
 	private JList varList;
@@ -71,6 +70,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 	private JLabel valueLabel1;
 	private JPanel logicHolder;
 	private String dataName;
+	private OkayCancelPanel okcan;
 	private static DefaultComboBoxModel model;
 	
 	public SetRecodingsDialog(JFrame frame) {
@@ -95,18 +95,11 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				clear.addActionListener(this);
 			}
 			{
-				cancelButton = new JButton();
-				getContentPane().add(cancelButton, new AnchorConstraint(910, 827, 959, 711, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancelButton.setText("Cancel");
-				cancelButton.setPreferredSize(new java.awt.Dimension(74, 21));
-				cancelButton.addActionListener(this);
-			}
-			{
-				okButton = new JButton();
-				getContentPane().add(okButton, new AnchorConstraint(896, 950, 975, 844, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				okButton.setText("OK");
-				okButton.setPreferredSize(new java.awt.Dimension(68, 34));
-				okButton.addActionListener(this);
+				okcan = new OkayCancelPanel(false,false,this);
+				getContentPane().add(okcan, new AnchorConstraint(896, 950, 975, 711, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				
 			}
 			{
 				VariablePanel = new JPanel();

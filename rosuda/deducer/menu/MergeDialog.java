@@ -22,6 +22,7 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private JList dataList;
@@ -30,8 +31,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private JTextField newName;
 	private JList jList1;
 	private JLabel data2;
-	private JButton cancelButton;
-	private JButton contButton;
+	private OkayCancelPanel okcan;
 	private static String lastSelected1;
 	private static String lastSelected2;
 	private static String lastNewData;
@@ -69,19 +69,13 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				newDataLabel.setPreferredSize(new java.awt.Dimension(166, 15));
 			}
 			{
-				cancelButton = new JButton();
-				getContentPane().add(cancelButton, new AnchorConstraint(863, 675, 953, 488, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancelButton.setText("Cancel");
-				cancelButton.setPreferredSize(new java.awt.Dimension(78, 22));
-				cancelButton.addActionListener(this);
-			}
-			{
-				contButton = new JButton();
-				getContentPane().add(contButton, new AnchorConstraint(827, 931, 977, 720, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				contButton.setText("Continue");
-				contButton.setPreferredSize(new java.awt.Dimension(88, 37));
-				contButton.setActionCommand("mergedata");
-				contButton.addActionListener(this);
+				okcan = new OkayCancelPanel(false,false,this);
+				getContentPane().add(okcan, new AnchorConstraint(827, 931, 977, 488, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				JButton cont = okcan.getApproveButton();
+				cont.setText("Continue");				
+				cont.setActionCommand("mergedata");				
 			}
 			{
 				data2 = new JLabel();

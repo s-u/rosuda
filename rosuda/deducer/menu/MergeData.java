@@ -5,6 +5,7 @@ package org.rosuda.deducer.menu;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -49,8 +50,6 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 	private JButton pairAllButton;
 	private JButton removeButton1;
 	private JButton unpairButton;
-	private JButton cancelButton;
-	private JButton jButton1;
 	private JList mergeByList;
 	private JButton useBoth;
 	private JPanel mergeByPanel;
@@ -501,6 +500,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				"rm(list=c(\""+temp1+"\",\""+temp2+"\"))"
 			);
 			JGR.MAINRCONSOLE.executeLater(call);
+			Deducer.setRecentData(lastDataSetName);
 			return true;
 		}catch(Exception e){new ErrorMsg(e);return false;}
 	}

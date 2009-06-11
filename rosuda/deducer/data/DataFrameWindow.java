@@ -249,7 +249,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				"New Document", "new", "@OOpen Document", "open",
 				"!OSource File...", "source", "-","@PPrint","print","~File.Quit", 
 				"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste","-","Remove Data", "Clear Data",
-				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp","-","Clear All","clearwp",
+				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp","-","Clear All","clearwsp",
 				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
 				"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
 				"Transpose","transpose","Subset","Subset",
@@ -509,11 +509,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
 				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().cutSelection();
 			}
-		}else if (cmd == "clearwsp"){
-			JGR.MAINRCONSOLE.executeLater("rm(list=ls())");
-			JGR.MAINRCONSOLE.toFront();
-			jTabbedPane1.setComponentAt(0, defaultPanel());
-			jTabbedPane1.setComponentAt(1, defaultPanel());
 		}else if (cmd == "copy") {
 			if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
 				((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().copySelection();
@@ -548,8 +543,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			JGR.MAINRCONSOLE.executeLater("source(file.choose())", false);
 		else if (cmd == "openwsp")
 			JGR.MAINRCONSOLE.loadWorkSpace();
-		else if (cmd == "clearwsp")
-			JGR.MAINRCONSOLE.executeLater("rm(list=ls())", false);
 		else if (cmd == "new")
 			new Editor();
 		else if (cmd == "objectmgr")
@@ -578,7 +571,16 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			JGR.MAINRCONSOLE.saveWorkSpace(null);
 		else if (cmd == "saveaswsp")
 			JGR.MAINRCONSOLE.saveWorkSpaceAs();
-		else if (cmd == "transpose"){
+		else if(cmd == "clearwsp"){
+			int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear " +
+						"your workspace?\nAll unsaved objects will be deleted.",
+						"Clear Workspace",JOptionPane.YES_NO_OPTION);
+			if(doIt==JOptionPane.OK_OPTION){
+				JGR.MAINRCONSOLE.executeLater("rm(list=ls())");
+				jTabbedPane1.setComponentAt(0, defaultPanel());
+				jTabbedPane1.setComponentAt(1, defaultPanel());
+			}
+		}else if (cmd == "transpose"){
 			String name = ((RObject)dataSelector.getSelectedItem()).getName();
 			JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");		
 		}else if(cmd == "Merge"){
@@ -790,9 +792,16 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							refresh();
-							if(JGR.DATA.size()==0)
+							if(JGR.DATA.size()==0){
 								setDataDependentMenusEnabled(false);
-							else
+								if(jTabbedPane1.getComponentAt(0) instanceof ExScrollableTable ||
+								   jTabbedPane1.getComponentAt(1) instanceof ExScrollableTable){
+									
+									jTabbedPane1.setComponentAt(0, defaultPanel());
+									jTabbedPane1.setComponentAt(1, defaultPanel());
+									
+								}
+							}else
 								setDataDependentMenusEnabled(true);	
 							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
 						}};

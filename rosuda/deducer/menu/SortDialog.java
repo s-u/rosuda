@@ -21,7 +21,9 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -29,8 +31,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 
 public class SortDialog extends javax.swing.JDialog implements ActionListener{
 	private VariableSelector variableSelector;
-	private JButton cancel;
-	private JButton okay;
+	private OkayCancelPanel okcan;
 	private IconButton remove;
 	private IconButton Add;
 	private IconButton increasing;
@@ -53,18 +54,11 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				cancel = new JButton();
-				getContentPane().add(cancel, new AnchorConstraint(867, 800, 937, 651, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancel.setText("Cancel");
-				cancel.setPreferredSize(new java.awt.Dimension(78, 22));
-				cancel.addActionListener(this);
-			}
-			{
-				okay = new JButton();
-				getContentPane().add(okay, new AnchorConstraint(829, 978, 963, 823, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				okay.setText("OK");
-				okay.setPreferredSize(new java.awt.Dimension(81, 42));
-				okay.addActionListener(this);
+				okcan = new OkayCancelPanel(false,false,this);
+				getContentPane().add(okcan, new AnchorConstraint(829, 978, 963, 651, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL,AnchorConstraint.ANCHOR_REL));
+				
 			}
 			{
 				remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
@@ -201,7 +195,7 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 					sortingDirections+")");
 			lastDataName=dataName;
 			lastListModel = (DefaultListModel) sortList.getModel();
-
+			Deducer.setRecentData(dataName);
 		}
 		
 	}

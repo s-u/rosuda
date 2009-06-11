@@ -26,8 +26,10 @@ import javax.swing.ListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.JGR.toolkit.SyntaxArea;
+import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -45,9 +47,6 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	private JComboBox recent;
 	private JButton help;
 	private JButton funcHelp;
-	private JButton reset;
-	private JButton cancel;
-	private JButton okay;
 	private JButton logicEQ;
 	private JButton logicNE;
 	private JButton logicNot;
@@ -62,7 +61,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	private JPanel logPanel;
 	private JLabel jLabel1;
 	private SyntaxArea subsetEditor;
-
+	private OkayCancelPanel okcan;
 	public static HashMap historyMap;
 	private static String lastDataName;
 	
@@ -108,6 +107,8 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 	}
 	
 	public static void addToHistory(String dataName,String sub){
+		if(sub.trim().length()==0)
+			return;
 		if(historyMap.containsKey(dataName))
 			((ArrayList)historyMap.get(dataName)).add(0, sub);
 		else{
@@ -257,25 +258,9 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				variableSelector.getJList().addMouseListener(this);
 			}
 			{
-				okay = new JButton();
-				getContentPane().add(okay);
-				okay.setText("OK");
-				okay.setBounds(431, 297, 74, 40);
-				okay.addActionListener(this);
-			}
-			{
-				cancel = new JButton();
-				getContentPane().add(cancel);
-				cancel.setText("Cancel");
-				cancel.setBounds(345, 306, 75, 21);
-				cancel.addActionListener(this);
-			}
-			{
-				reset = new JButton();
-				getContentPane().add(reset);
-				reset.setText("Reset");
-				reset.setBounds(261, 306, 73, 21);
-				reset.addActionListener(this);
+				okcan = new OkayCancelPanel(true,false,this);
+				getContentPane().add(okcan);
+				okcan.setBounds(230, 297, 270, 40);
 			}
 			{
 				funcHelp = new IconButton("/icons/help.png","Function Help",this,"Function Help");
@@ -375,16 +360,9 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				subn = JGR.MAINRCONSOLE.getUniqueName(subName.getText());
 			JGR.MAINRCONSOLE.executeLater(subn+"<-subset("+data+","+sub+")");
 			
-			/*if(historyMap.containsKey(variableSelector.getSelectedData()))
-				((ArrayList)historyMap.get(variableSelector.getSelectedData())).add(0, sub);
-			else{
-				ArrayList nl= new ArrayList();
-				nl.add(sub);
-				historyMap.put(variableSelector.getSelectedData(), nl);
-			}*/
 			addToHistory(variableSelector.getSelectedData(),sub);
 			lastDataName = variableSelector.getSelectedData();
-			
+			Deducer.setRecentData(subn);
 			this.dispose();
 			final String subsetName = subn;
 			Runnable doWorkRunnable = new Runnable() {

@@ -1,6 +1,7 @@
 
 package org.rosuda.deducer.menu;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
@@ -221,6 +222,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			lastListModel = ((DefaultListModel)recodeVariableList.getModel());
 			lastDataName = (String)variableSelector.getJComboBox().getSelectedItem();
 			this.dispose();
+			Deducer.setRecentData(data);
 			DataFrameWindow.setTopDataWindow(data);
 		}
 	}

@@ -19,8 +19,7 @@ import javax.swing.ListSelectionModel;
 
 public class VariableSelectionDialog extends JDialog implements ActionListener {
 	private VariableSelector selector;
-	private JButton select;
-	private JButton cancel;
+	private OkayCancelPanel okcan;
 	private ArrayList selectedVariables =new ArrayList();
 
 	public VariableSelectionDialog(JFrame frame) {
@@ -33,25 +32,23 @@ public class VariableSelectionDialog extends JDialog implements ActionListener {
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				select = new JButton();
-				getContentPane().add(select, new AnchorConstraint(858, 892, 983, 556, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				select.setText("Select");
-				select.setPreferredSize(new java.awt.Dimension(80, 35));
-				select.addActionListener(this);
+				okcan = new OkayCancelPanel(false,false,this);
+				getContentPane().add(okcan, new AnchorConstraint(858, 892, 983, 128,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				okcan.getApproveButton().setText("Select");
+				
 			}
-			{
-				cancel = new JButton();
-				getContentPane().add(cancel, new AnchorConstraint(879, 439, 958, 128, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				cancel.setText("Cancel");
-				cancel.setPreferredSize(new java.awt.Dimension(74, 22));
-				cancel.addActionListener(this);
-			}
+
 			{
 				selector = new VariableSelector();
-				getContentPane().add(selector, new AnchorConstraint(40, 1002, 836, 2, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(selector, new AnchorConstraint(40, 1002, 836, 2, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				selector.setPreferredSize(new java.awt.Dimension(238, 233));
 				selector.setBorder(BorderFactory.createTitledBorder("Variables"));
 			}
+			this.setTitle("Select a Variable");
 			this.setSize(300, 600);
 		} catch (Exception e) {
 			new ErrorMsg(e);
