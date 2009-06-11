@@ -26,6 +26,7 @@ import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.JRI.JRIEngine;
 import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.REXP;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.util.Global;
@@ -247,6 +248,24 @@ public class JGR {
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
 		new Refresher().run();
+	}
+	
+	
+	public static REXP idleEval(String cmd) throws REngineException, REXPMismatchException {
+		if (getREngine() == null) throw new REngineException(null, "REngine not available");
+		REXP x = null;
+		int lock =	getREngine().tryLock();
+		if (lock != 0) {
+			try { x = getREngine().parseAndEval(cmd); }
+			finally { getREngine().unlock(lock); }
+		}
+		return x;
+	}
+	
+	public static REXP eval(String cmd) throws REngineException, REXPMismatchException {
+		if (getREngine() == null) throw new REngineException(null, "REngine not available");
+		REXP x = getREngine().parseAndEval(cmd);
+		return x;
 	}
 
 	
