@@ -4,6 +4,8 @@ package org.rosuda.deducer.menu;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -124,6 +126,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				jList1.setSelectedValue(lastSelected2, true);
 			}
 			pack();
+			this.setMinimumSize(new Dimension(417,268));
 			this.setSize(417, 268);
 		} catch (Exception e) {
 			new ErrorMsg(e);

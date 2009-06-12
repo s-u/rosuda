@@ -7,6 +7,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -140,7 +141,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 					}
 				}
 			}
-			
+			this.setMinimumSize(new Dimension(450,250));
 			this.setSize(640, 371);
 		} catch (Exception e) {
 			new ErrorMsg(e);

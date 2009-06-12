@@ -1,6 +1,7 @@
 package org.rosuda.deducer.menu;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
@@ -203,6 +204,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					navPanel.setPreferredSize(new java.awt.Dimension(280, 46));
 				}
 			}
+			this.setMinimumSize(new Dimension(546,331));
 			this.setSize(546, 536);
 			help.setVisible(false);
 			this.setTitle("One Sample Test");
@@ -426,6 +428,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				}
 				getAlternativeGroup();
 				this.setTitle("One-sample t-test options");
+				this.setResizable(false);
 				this.setSize(246, 249);
 				this.setModal(true);
 			} catch (Exception e) {

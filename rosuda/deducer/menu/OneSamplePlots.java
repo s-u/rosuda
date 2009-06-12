@@ -92,6 +92,7 @@ public class OneSamplePlots extends javax.swing.JDialog implements ActionListene
 			bg.add(plot);
 			bg.add(noPlot);
 			this.setTitle("Plots");
+			this.setResizable(false);
 			this.setSize(275, 234);
 		} catch (Exception e) {
 			new ErrorMsg(e);

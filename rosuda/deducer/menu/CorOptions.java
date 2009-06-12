@@ -7,31 +7,17 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
 
-import org.rosuda.deducer.menu.twosample.TwoSampleModel;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class CorOptions extends javax.swing.JDialog implements ActionListener{
 	private JPanel alternativePanel;
 	private JRadioButton twoSided;
@@ -175,6 +161,7 @@ public class CorOptions extends javax.swing.JDialog implements ActionListener{
 			alternative.add(lessThan);
 			alternative.add(greater);
 			this.setTitle("Test Options");
+			this.setResizable(false);
 			this.setSize(301, 373);
 		} catch (Exception e) {
 			e.printStackTrace();

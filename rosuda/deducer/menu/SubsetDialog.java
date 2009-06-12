@@ -1,6 +1,7 @@
 package org.rosuda.deducer.menu;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -289,6 +290,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				recentLabel.setBounds(237, 90, 54, 14);
 			}
 			this.setTitle("Data Subset");
+			this.setResizable(false);
 			this.setSize(525, 382);
 		} catch (Exception e) {
 			new ErrorMsg(e);

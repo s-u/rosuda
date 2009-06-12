@@ -1,6 +1,7 @@
 package org.rosuda.deducer.menu;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -115,6 +116,7 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 			if(!allExist)
 				sortList.setModel(new DefaultListModel());
 			this.setTitle("Sort Data Frame");
+			this.setMinimumSize(new Dimension(450,300));
 			this.setSize(524, 335);
 		} catch (Exception e) {
 			new ErrorMsg(e);

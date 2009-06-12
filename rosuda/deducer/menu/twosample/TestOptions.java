@@ -118,6 +118,7 @@ public class TestOptions extends JDialog implements ActionListener{
 			}
 			getAlternative();
 			this.setTitle("Test Options");
+			this.setResizable(false);
 			this.setSize(268, 310);
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -41,6 +41,8 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public int getRowCount(){
+		if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+			return 0;
 		if(rDataName!=null)
 			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
 		else
@@ -136,6 +138,8 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		}
 		
 		public int getSize() { 
+			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+				return 0;
 			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
 		}
 	}

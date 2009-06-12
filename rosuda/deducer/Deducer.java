@@ -119,6 +119,7 @@ public class Deducer {
 			}else if (cmd == "Open Data Set"){
 				DataLoader inst = new DataLoader();
 				DataFrameWindow.setTopDataWindow(inst.getDataName());
+				Deducer.setRecentData(inst.getDataName());
 			}else if(cmd == "Save Data Set"){
 				RObject data = (new DataFrameSelector(JGR.MAINRCONSOLE)).getSelection();
 				if(data!=null){

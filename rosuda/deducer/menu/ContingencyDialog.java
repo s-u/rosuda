@@ -293,10 +293,12 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 	
 			}
 			this.setTitle("Contingency Tables");
+			this.setMinimumSize(new Dimension(700,500));
 			this.setSize(736, 539);
 			
 			//unimplemented
 			postHoc.setVisible(false);
+			help.setVisible(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
@@ -671,6 +673,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					noTables.setBounds(12, 162, 147, 19);
 				}
 				this.setTitle("Table Cell Contents");
+				this.setResizable(false);
 				this.setSize(400, 225);
 			} catch (Exception e) {
 				new ErrorMsg(e);
@@ -1012,6 +1015,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					custom.setBounds(171, 265, 82, 22);
 					custom.addActionListener(this);
 				}
+				this.setResizable(false);
 				this.setSize(421, 361);
 				this.setTitle("Table Statistics");
 				chiSquared = new ChiOptions();
@@ -1165,6 +1169,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						jSeparator2.setPreferredSize(new java.awt.Dimension(128, 12));
 					}
+					this.setResizable(false);
 					this.setSize(318, 283);
 					this.setTitle("Chi Squared Test Options");
 				} catch (Exception e) {
@@ -1244,6 +1249,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 						okcan.setBounds(80, 65, 170, 40);
 					}
 					this.setTitle("Liklihood Ratio Options");
+					this.setResizable(false);
 					this.setSize(305, 134);
 				} catch (Exception e) {
 					new ErrorMsg(e);
@@ -1323,6 +1329,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 					}
 				}
 				this.setTitle("Result Options");
+				this.setResizable(false);
 				this.setSize(288, 165);
 			} catch (Exception e) {
 				new ErrorMsg(e);

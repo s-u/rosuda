@@ -1,6 +1,7 @@
 package org.rosuda.deducer.menu;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -112,6 +113,7 @@ public class FrequencyDialog extends javax.swing.JDialog implements ActionListen
 			if(lastDigits!=null && allExist)
 				digits=lastDigits.intValue();
 			this.setTitle("Run Frequencies");
+			this.setMinimumSize(new Dimension(500,300));
 			this.setSize(524, 335);
 		} catch (Exception e) {
 			new ErrorMsg(e);

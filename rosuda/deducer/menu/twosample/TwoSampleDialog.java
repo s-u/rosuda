@@ -17,6 +17,7 @@ import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -394,6 +395,7 @@ public class TwoSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 			variableSelector.getJComboBox().addActionListener(this);
 			this.setTitle("Two Independent Sample Tests");
+			this.setMinimumSize(new Dimension(600,400));
 			this.setSize(610, 630);
 		} catch (Exception e) {
 			new ErrorMsg(e);

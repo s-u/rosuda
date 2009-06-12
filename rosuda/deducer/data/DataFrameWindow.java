@@ -254,18 +254,19 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
 				"Transpose","transpose","Subset","Subset",
 			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
-				"Contingency Tables","contin","One Sample Test","One Sample","Two Sample Test","Two Sample",
+				"Contingency Tables","contin","-","One Sample Test","One Sample","Two Sample Test","Two Sample",
 				"K-Sample Test", "ksample","Correlation", "corr", 
 				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
 				"packagemgr", "Package Installer","packageinst",
 			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
 			JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
+			
 			//preference and about for non-mac systems
 			if(!Common.isMac()){
 				EzMenuSwing.addMenuSeparator(this, "Edit");
 				EzMenuSwing.addJMenuItem(this, "Edit", "Preferences", "preferences", this);
 				EzMenuSwing.addJMenuItem(this, "Help", "About", "about", this);	
-				
+				jTabbedPane1.setTabPlacement(JTabbedPane.TOP);
 				for(int i=0;i<mb.getMenuCount();i++){
 					if(mb.getMenu(i).getText().equals("Preferences") ||
 							mb.getMenu(i).getText().equals("About")){
@@ -279,6 +280,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					}
 				}
 			}
+			
 			pack();
 			this.setSize(839, 839);
 			
@@ -449,10 +451,6 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		    			fact.setVisible(true);
 		    		}
 		    	 }
-		    	 
-		      if (e.getClickCount() == 2){
-		         JGR.MAINRCONSOLE.execute("double click");
-		         }
 		      }
 		     } );
 
@@ -486,23 +484,16 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}else if(cmd=="Save Data"){
 			new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
 		}else if(cmd=="Clear Data"){
+			String data = ((RObject)dataSelector.getSelectedItem()).getName();
 			int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
-					((RObject)dataSelector.getSelectedItem()).getName()+" from enviornment?\n" +
+					data+" from enviornment?\n" +
 							"Unsaved changes will be lost.",
 					"Clear Data Frame", JOptionPane.YES_NO_OPTION,
 					JOptionPane.QUESTION_MESSAGE);
 			if(confirm == JOptionPane.NO_OPTION)
 				return;
-			JGR.MAINRCONSOLE.executeLater("rm("+((RObject)dataSelector.getSelectedItem()).getName() + ")");
-			try{Thread.sleep(100);}catch(Exception ee){}
+			JGR.MAINRCONSOLE.executeLater("rm("+data + ")");
 			RController.refreshObjects();
-			if(JGR.DATA.size()>0)
-				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
-			else{
-				((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
-				jTabbedPane1.setComponentAt(0, defaultPanel());
-				jTabbedPane1.setComponentAt(1, defaultPanel());	
-			}
 		}else if (cmd == "about")
 			new AboutDialog(this);
 		else if (cmd == "cut"){
@@ -705,7 +696,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	
 	public void setDataDependentMenusEnabled(boolean enabled){
 		String[] dataRequiredFor = {"Edit Factor","Recode","rowReset","Sort","Merge",
-									"transpose","Frequencies","Descriptives"};
+									"transpose","Frequencies","Descriptives","Subset",
+									"contin", "One Sample", "Two Sample",
+									"ksample","corr"};
 		ArrayList dataRequiredMenuItems = new ArrayList();
 		JMenuItem temp;
 		for(int i=0;i<dataRequiredFor.length;i++){
@@ -788,29 +781,27 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		public void run() {
 			while (true)
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(2000);
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							refresh();
 							if(JGR.DATA.size()==0){
 								setDataDependentMenusEnabled(false);
-								if(jTabbedPane1.getComponentAt(0) instanceof ExScrollableTable ||
-								   jTabbedPane1.getComponentAt(1) instanceof ExScrollableTable){
-									
-									jTabbedPane1.setComponentAt(0, defaultPanel());
-									jTabbedPane1.setComponentAt(1, defaultPanel());
-									
-								}
 							}else
 								setDataDependentMenusEnabled(true);	
 							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+							if(dataSelector.getModel().getSize()==0 && dataScrollPane!=null){
+								jTabbedPane1.setComponentAt(0, defaultPanel());
+								jTabbedPane1.setComponentAt(1, defaultPanel());
+								dataScrollPane=null;
+								variableScrollPane=null;
+							}							
 						}};
 					SwingUtilities.invokeLater(doWorkRunnable);
 					if(showData!=null){
 						setVisibleDataFrame(showData);
 					if(((RObject)dataSelector.getSelectedItem()).getName().equals(showData))
 						showData=null;
-					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
 					}
  
 					

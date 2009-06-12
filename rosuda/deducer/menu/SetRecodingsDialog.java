@@ -11,6 +11,7 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -283,6 +284,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 					new java.awt.Component[] {doubleField1, 
 							 doubleField2, into2Field, addCode2Button}));
 			this.setTitle("Set Variable Codings");
+			this.setMinimumSize(new Dimension(600,400));
 			this.setSize(647, 462);
 		} catch (Exception e) {
 			e.printStackTrace();

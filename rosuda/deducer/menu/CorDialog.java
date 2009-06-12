@@ -1,34 +1,29 @@
 package org.rosuda.deducer.menu;
-//import com.cloudgarden.layout.AnchorConstraint;
-//import com.cloudgarden.layout.AnchorLayout;
+
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.menu.KSampleDialog.KSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -267,6 +262,7 @@ public class CorDialog extends JDialog implements ActionListener{
 			grp.add(spearman);
 			grp.add(kendall);
 			this.setTitle("Correlation");
+			this.setMinimumSize(new Dimension(500,527));
 			this.setSize(798, 529);
 		} catch (Exception e) {
 			new ErrorMsg(e);

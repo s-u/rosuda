@@ -2,6 +2,7 @@ package org.rosuda.deducer.menu;
 //import com.cloudgarden.layout.AnchorConstraint;
 //import com.cloudgarden.layout.AnchorLayout;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -265,6 +266,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				add.setPreferredSize(new java.awt.Dimension(34, 34));
 			}		
 			this.setTitle("Multiple Independent Samples");
+			this.setMinimumSize(new Dimension(359,300));
 			this.setSize(548, 610);
 		} catch (Exception e) {
 			new ErrorMsg(e);

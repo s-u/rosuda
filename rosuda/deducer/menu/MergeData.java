@@ -11,6 +11,7 @@ import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -280,6 +281,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			if(findPairs)
 				findPairs();
 			pack();
+			this.setMinimumSize(new Dimension(600,600));
 			this.setSize(720, 690);
 		} catch (Exception e) {
 			new ErrorMsg(e);

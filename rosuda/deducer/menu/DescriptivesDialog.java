@@ -3,6 +3,7 @@ package org.rosuda.deducer.menu;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -113,6 +114,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 				descrList.setModel(new DefaultListModel());
 			}
 			secondPanel.setVisible(false);
+			this.setMinimumSize(new Dimension(400,400));
 			this.setSize(524, 443);
 		} catch (Exception e) {
 			new ErrorMsg(e);

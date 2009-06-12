@@ -100,6 +100,7 @@ public class KSamplePlots extends JDialog implements ActionListener {
 			bg.add(plot);
 			bg.add(noPlot);
 			this.setTitle("Plots");
+			this.setResizable(false);
 			this.setSize(275, 269);
 		} catch (Exception e) {
 			e.printStackTrace();

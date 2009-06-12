@@ -11,6 +11,7 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.JGR.util.ErrorMsg;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -127,7 +128,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 				}
 			}
 			
-			
+			this.setMinimumSize(new Dimension(280,331));
 			this.setSize(280, 331);
 		} catch (Exception e) {
 			e.printStackTrace();
