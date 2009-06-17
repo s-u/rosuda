@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.menu.OneWayPlotModel;
 import org.rosuda.deducer.menu.SubsetDialog;
 
@@ -146,8 +147,10 @@ public class TwoSampleModel{
 		if(doBM){
 			String packages = RController.getCurrentPackages();
 			if(!packages.contains("lawstat")){
-				JGR.R.eval("cat('Package lawstat not found. Attempting to download...\n')");
+				try{
+				JGR.eval("cat('Package lawstat not found. Attempting to download...\n')");
 				JGR.MAINRCONSOLE.execute("installPackages('lawstat');library(lawstat)",true);	
+				}catch(Exception e){new ErrorMsg(e);}
 			}
 			else
 				cmd+=("library(lawstat)")+"\n";

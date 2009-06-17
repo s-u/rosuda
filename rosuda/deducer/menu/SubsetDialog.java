@@ -35,7 +35,10 @@ import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 
 public class SubsetDialog extends JDialog implements ActionListener, MouseListener{
@@ -430,21 +433,28 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 		if(subset==null || subset.length()<1)
 			return false;
 		
-		REXP valid =JGR.R.eval("(function(x,subset){"+
-									"result<-try(e <- substitute(subset),silent=TRUE)\n"+
-									"if(class(result)==\"try-error\")\n"+
-									"	return(FALSE)\n"+
-									"result<-try(r <- eval(e, x, parent.frame()),silent=TRUE)\n"+
-									"if(class(result)==\"try-error\")\n"+
-									"	return(FALSE)\n"+
-									"is.logical(r)\n"+
-									"})("+dataName+","+subset+")");
+		REXP valid=null;
+		try {
+			valid = JGR.eval("(function(x,subset){"+
+										"result<-try(e <- substitute(subset),silent=TRUE)\n"+
+										"if(class(result)==\"try-error\")\n"+
+										"	return(FALSE)\n"+
+										"result<-try(r <- eval(e, x, parent.frame()),silent=TRUE)\n"+
+										"if(class(result)==\"try-error\")\n"+
+										"	return(FALSE)\n"+
+										"is.logical(r)\n"+
+										"})("+dataName+","+subset+")");
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		if(valid==null){
 			return false;
 		}
-		if(valid.asBool()==null){
+		if(!valid.isLogical()){
 			return false;
 		}
-		return valid.asBool().isTRUE();
+		return ((REXPLogical)valid).isTRUE()[0];
 	}
 }

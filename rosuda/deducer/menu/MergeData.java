@@ -82,9 +82,9 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 			boolean findPairs=false;
 			boolean sameData = dataName1.equals(lastDataName1) && dataName2.equals(lastDataName2);
 			Vector data1vars = new Vector();
-			data1vars.copyInto(JGR.R.eval("colnames("+dataName1+")").asStringArray());
+			data1vars.copyInto(JGR.eval("colnames("+dataName1+")").asStrings());
 			Vector data2vars = new Vector();
-			data2vars.copyInto(JGR.R.eval("colnames("+dataName2+")").asStringArray());			
+			data2vars.copyInto(JGR.eval("colnames("+dataName2+")").asStrings());			
 			if(sameData){
 				if(!data1vars.equals(lastVarNames1))
 					sameData=false;
@@ -243,7 +243,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				{
 					
 					if(dataList1Model==null || !sameData){
-						String[] data1Names = JGR.R.eval("colnames("+dataName1+")").asStringArray();
+						String[] data1Names = JGR.eval("colnames("+dataName1+")").asStrings();
 						dataList1Model = new DefaultComboBoxModel(data1Names);
 						findPairs=true;
 					}
@@ -265,7 +265,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				varPanel2.setLayout(jPanel1Layout);
 				{
 					if(dataList2Model==null || !sameData){
-						String[] data2Names = JGR.R.eval("colnames("+dataName2+")").asStringArray();
+						String[] data2Names = JGR.eval("colnames("+dataName2+")").asStrings();
 						dataList2Model = new DefaultComboBoxModel(data2Names);
 						findPairs=true;
 					}
@@ -436,8 +436,10 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 				}
 				byX+=")";
 				byY+=")";	
-				String[] data1Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+"))[duplicated(na.omit("+lastDataName1+"["+byX+"]))])").asStringArray();
-				String[] data2Unique = JGR.R.eval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+"))[duplicated(na.omit("+lastDataName2+"["+byY+"]))])").asStringArray();
+				String[] data1Unique = JGR.eval("as.character(rownames(na.omit("+lastDataName1+"["+byX+"]"+
+											"))[duplicated(na.omit("+lastDataName1+"["+byX+"]))])").asStrings();
+				String[] data2Unique = JGR.eval("as.character(rownames(na.omit("+lastDataName2+"["+byY+"]"+
+											"))[duplicated(na.omit("+lastDataName2+"["+byY+"]))])").asStrings();
 				if(data1Unique.length>0 && data2Unique.length>0){
 					int choice =JOptionPane.showOptionDialog(this,"Niether data frame has unique case identifiers.\n" +
 							"Merging will create cases for every possible combination of duplicates.\n" +
@@ -445,17 +447,17 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 							JOptionPane.WARNING_MESSAGE,null,null,null);
 					if(choice==JOptionPane.NO_OPTION)
 						return false;
-					JGR.R.eval("cat('\\n')");
-					JGR.R.eval("cat('\\nDuplicate Identifiers in "+lastDataName1+": "+"\\n')");
+					JGR.eval("cat('\\n')");
+					JGR.eval("cat('\\nDuplicate Identifiers in "+lastDataName1+": "+"\\n')");
 					String temp1="";
 					for(int i=0;i<data1Unique.length;i++)
 						temp1+=" "+data1Unique[i];
-					JGR.R.eval("cat('"+temp1+"\\n')");
-					JGR.R.eval("cat('\\nDuplicate Identifiers in "+lastDataName2+": "+"\\n')");
+					JGR.eval("cat('"+temp1+"\\n')");
+					JGR.eval("cat('\\nDuplicate Identifiers in "+lastDataName2+": "+"\\n')");
 					temp1="";
 					for(int i=0;i<data2Unique.length;i++)
 						temp1+=" "+data2Unique[i];
-					JGR.R.eval("cat('"+temp1+"\\n')");
+					JGR.eval("cat('"+temp1+"\\n')");
 					JGR.MAINRCONSOLE.executeLater("",false);
 				}
 			}else{

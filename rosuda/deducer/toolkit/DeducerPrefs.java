@@ -13,6 +13,9 @@ import java.util.prefs.Preferences;
 
 import org.rosuda.ibase.Common;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 public class DeducerPrefs {
 
@@ -36,7 +39,7 @@ public class DeducerPrefs {
 					.getProperty("user.home")
 					+ File.separator + ".DeducerPrefs"));
 		} catch (FileNotFoundException e) {
-			JGR.R.eval("cat('\\nNote: Deducer prefernce file not found.\\nDon't worry about this if it is your first time loading Deducer.\\n')");
+			new ErrorMsg(e);
 		}
 
 		try {
@@ -46,6 +49,7 @@ public class DeducerPrefs {
 				try {
 					prefs.clear();
 				} catch (Exception x) {
+					new ErrorMsg(x);
 				}
 				prefs = null;
 				Preferences.importPreferences(is);
@@ -55,7 +59,6 @@ public class DeducerPrefs {
 		}
 
 		if (is == null){
-			JGR.R.eval("cat('unable to read prefs\\n')");
 			return;
 		}
 		Preferences prefs = Preferences.userNodeForPackage(org.rosuda.deducer.Deducer.class);
@@ -73,7 +76,6 @@ public class DeducerPrefs {
 		try {
 			prefs.clear();
 		} catch (Exception x) {
-			JGR.R.eval("cat('unable to clear prefs\\n')");
 		}
 		prefs.putBoolean("SHOWDATA", SHOWDATA);
 		prefs.putBoolean("SHOWANALYSIS", SHOWANALYSIS);
@@ -84,9 +86,7 @@ public class DeducerPrefs {
 					.getProperty("user.home")
 					+ File.separator + ".DeducerPrefs"));
 		} catch (IOException e) {
-			JGR.R.eval("cat('unable to write prefs\\n')");
 		} catch (BackingStoreException e) {
-			JGR.R.eval("cat('unable to write prefs\\n')");
 		}
 
 	}

@@ -126,8 +126,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				jList1.setSelectedValue(lastSelected2, true);
 			}
 			pack();
-			this.setMinimumSize(new Dimension(417,268));
-			this.setSize(417, 268);
+			this.setMinimumSize(new Dimension(430,268));
+			this.setSize(430, 268);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}

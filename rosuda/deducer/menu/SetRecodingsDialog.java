@@ -7,6 +7,11 @@ import org.rosuda.JGR.layout.ArrayFocusTraversalPolicy;
 import org.rosuda.JGR.JGR;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -410,24 +415,34 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			var = var.split("\u2192")[0];
 			var =dataName+"$"+var;
 			String[] output;
-			if(JGR.R.eval("is.numeric("+var+")").asBool().isTRUE()){
-				output = JGR.R.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStringArray();
-			}else if(JGR.R.eval("is.character("+var+")").asBool().isTRUE() || 
-					JGR.R.eval("is.factor("+var+")").asBool().isTRUE()){
-				output = JGR.R.eval("capture.output(data.frame(xtabs(~"+var+")))").asStringArray();
-			}else
-				output = JGR.R.eval("capture.output(summary("+var+"))").asStringArray();
-			if(output!=null){
-				String temp="";
-				
-				for(int i=0;i<output.length;i++){
-					temp+=output[i]+"\n";
-					if(i>500){
-						temp+="...Truncated...";
-						break;
+			REXP num;
+			try {
+				num = JGR.eval("is.numeric("+var+")");
+				REXP cha = JGR.eval("is.character("+var+")");
+				REXP fact = JGR.eval("is.factor("+var+")");
+				if(num.isLogical() && ((REXPLogical)num).isTRUE()[0]){
+					output = JGR.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStrings();
+				}else if((cha.isLogical() && ((REXPLogical)cha).isTRUE()[0]) || 
+						(fact.isLogical() && ((REXPLogical)fact).isTRUE()[0]) ){
+					output = JGR.eval("capture.output(data.frame(xtabs(~"+var+")))").asStrings();
+				}else
+					output = JGR.eval("capture.output(summary("+var+"))").asStrings();
+				if(output!=null){
+					String temp="";
+					
+					for(int i=0;i<output.length;i++){
+						temp+=output[i]+"\n";
+						if(i>500){
+							temp+="...Truncated...";
+							break;
+						}
 					}
+					infoTextArea.setText(temp);
 				}
-				infoTextArea.setText(temp);
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
 			}
 
 		}

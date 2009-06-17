@@ -8,6 +8,7 @@ import javax.swing.table.*;
 
 import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
+import org.rosuda.deducer.Deducer;
 
 
 /**
@@ -41,10 +42,10 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public int getRowCount(){
-		if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+		if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
 			return 0;
 		if(rDataName!=null)
-			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
+			return Deducer.rniEval("ncol("+rDataName+")").asInt()+numExtraColumns;
 		else
 			return 0;
 	}
@@ -53,9 +54,9 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		if(row>=(getRowCount()-numExtraColumns)){
 			return null;
 		}else if(col==0){
-			return JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]").asString();
+			return Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]").asString();
 		}else if(col==1){
-			int xt = JGR.R.eval(rDataName+"[,"+(row+1)+"]").getType();
+			int xt = Deducer.rniEval(rDataName+"[,"+(row+1)+"]").getType();
 			if (xt==REXP.XT_NULL) return "NULL";
 			if (xt==REXP.XT_ARRAY_INT) return "Integer";
 			if (xt==REXP.XT_ARRAY_STR) return "String";
@@ -65,11 +66,11 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			if (xt==REXP.XT_FACTOR) return "Factor";
 			return "?";
 		}else if(col==2){
-			int type = JGR.R.eval(rDataName+"[,"+(row+1)+"]").getType();
-			//JGR.R.eval("print('"+type+"')");
+			int type = Deducer.rniEval(rDataName+"[,"+(row+1)+"]").getType();
+			//Deducer.rniEval("print('"+type+"')");
 			if(type == REXP.XT_FACTOR){
-				String[] levels = JGR.R.eval("levels("+rDataName+"[,"+(row+1)+"])").asStringArray();
-				//JGR.R.eval("print('"+levels.length+"')");
+				String[] levels = Deducer.rniEval("levels("+rDataName+"[,"+(row+1)+"])").asStringArray();
+				//Deducer.rniEval("print('"+levels.length+"')");
 				String lev = "";
 				for(int i=0;i<levels.length;i++){
 					lev=lev.concat("("+(i+1)+") ");
@@ -86,25 +87,25 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	public void setValueAt(Object value,int row, int col){
 		if(row>=(getRowCount()-numExtraColumns)){
 			if(col==0){
-				JGR.R.eval(rDataName+"[,"+(row+1)+"]<-NA");	
-				JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+				Deducer.rniEval(rDataName+"[,"+(row+1)+"]<-NA");	
+				Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 				refresh();
 				rowNamesModel.refresh();
 			}else
 				return;
 		}else if(col==0){
-			JGR.R.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+			Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 		}else if(col==1){
 			String type = value.toString().toLowerCase().trim();
-			if(type.equals("integer")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("integer")) Deducer.rniEval(rDataName+"[,"+(row+1)+
 										"]<-as.integer("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("factor")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("factor")) Deducer.rniEval(rDataName+"[,"+(row+1)+
 					"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("double")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("double")) Deducer.rniEval(rDataName+"[,"+(row+1)+
 					"]<-as.double("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("logical")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("logical")) Deducer.rniEval(rDataName+"[,"+(row+1)+
 					"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("string")) JGR.R.eval(rDataName+"[,"+(row+1)+
+			if(type.equals("string")) Deducer.rniEval(rDataName+"[,"+(row+1)+
 					"]<-as.character("+rDataName+"[,"+(row+1)+"])");
 			return;
 		}
@@ -138,10 +139,11 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		}
 		
 		public int getSize() { 
-			if(JGR.R.eval("!exists('"+rDataName+"')").asBool().isTRUE())
+			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
 				return 0;
-			return JGR.R.eval("ncol("+rDataName+")").asInt()+numExtraColumns;
+			return Deducer.rniEval("ncol("+rDataName+")").asInt()+numExtraColumns;
 		}
 	}
+
 
 }

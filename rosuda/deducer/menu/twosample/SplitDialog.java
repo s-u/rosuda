@@ -22,6 +22,9 @@ import javax.swing.JTextField;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 
 public class SplitDialog extends JDialog implements ActionListener, FocusListener{
@@ -189,8 +192,15 @@ public class SplitDialog extends JDialog implements ActionListener, FocusListene
 	
 	public void reset(){
 		if(data!=null && factor!=null){
-			String[] levs = JGR.R.eval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStringArray();
-			if(levs.length<50){
+			String[] levs=null;
+			try {
+				levs = JGR.eval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStrings();
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			}
+			if(levs!=null && levs.length<50){
 				for(int i=0;i<levs.length;i++)
 					((DefaultListModel)levelsList.getModel()).addElement(levs[i]);
 				/*if(model.group1.size()==0 && model.group2.size()==0){

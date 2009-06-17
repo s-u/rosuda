@@ -24,6 +24,10 @@ import org.rosuda.deducer.menu.*;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.deducer.toolkit.DeducerPrefs;
 import org.rosuda.deducer.toolkit.PrefPanel;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
@@ -37,6 +41,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
+	static final String Version= "0.1";
 	
 	public Deducer(){
 		String dataMenu = "Data";
@@ -88,7 +93,6 @@ public class Deducer {
 			
 			//Save Data
 			insertJMenuItem(JGR.MAINRCONSOLE, "File", "Save Data", "Save Data Set", cListener, 2);
-			
 			new Thread(new Runner()).start();		
 		}catch(Exception e){new ErrorMsg(e);}
 	}
@@ -246,6 +250,14 @@ public class Deducer {
 		recentActiveData=data;
 	}
 	
+	public static org.rosuda.JRI.REXP rniEval(String cmd){
+		return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd);
+	}
+	
+	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
+		return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
+	}
+	
 	class Runner implements Runnable {
 		public Runner() {
 		}
@@ -266,10 +278,18 @@ public class Deducer {
 						    	JGR.MAINRCONSOLE.toFront(); 
 					    	}
 					    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
-					    		JGR.R.eval(".jChooserMacLAF()");
+								try {
+									JGR.eval(".jChooserMacLAF()");
+								} catch (REngineException e) {
+									new ErrorMsg(e);
+								} catch (REXPMismatchException e) {
+									new ErrorMsg(e);
+								}
 					    }
 						};
-					    if(JGR.R.idleEval("TRUE").asBool().isTRUE()){
+						REXP tmp=null;
+						boolean running = JGR.getREngine()!=null;
+					    if(running){
 					    		SwingUtilities.invokeLater(doWorkRunnable);
 					    		flag=false;
 					    }

@@ -383,10 +383,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			var = RController.makeValidVariableName(var);
 			
 			try {
-			REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("is.environment("+envName+")"),null,true);
-			boolean isEnv = temp.isTRUE()[0];
-			if(!isEnv)
-				return var;
+				REXPLogical temp = (REXPLogical) JGR.eval("is.environment("+envName+")");
+				boolean isEnv = temp.isTRUE()[0];
+				if(!isEnv)
+					return var;
 			} catch (REngineException e) { new ErrorMsg(e); return var; }
 			 catch (REXPMismatchException e) { new ErrorMsg(e); return var; }
 			
@@ -395,7 +395,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 			try {
 			
 				
-			REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("exists('"+var+"',where="+envName+",inherits=FALSE)"),null,true);
+			REXPLogical temp = (REXPLogical) JGR.eval("exists('"+var+"',where="+envName+",inherits=FALSE)");
 			isUnique = temp.isFALSE()[0];
 			if(isUnique)
 				return var;
@@ -409,7 +409,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 				
 				try {
 				
-				REXPLogical temp = (REXPLogical) JGR.getREngine().eval(new REXPString("exists('"+(var+i)+"',where="+envName+",inherits=FALSE)"),null,true);
+				REXPLogical temp = (REXPLogical) JGR.eval("exists('"+(var+i)+"',where="+envName+",inherits=FALSE)");
 				isUnique = temp.isFALSE()[0];
 					
 				} catch (REngineException e) { new ErrorMsg(e); }

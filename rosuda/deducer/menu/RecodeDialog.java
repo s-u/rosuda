@@ -135,8 +135,8 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 					if(!exists){
 						recodeVariableList.setModel(new DefaultListModel());
 						variableSelector.getJList().setModel(variableSelector.new FilteringModel(
-								JGR.R.eval("names("+variableSelector.getJComboBox().getSelectedItem()
-										+")").asStringArray()));
+								JGR.eval("names("+variableSelector.getJComboBox().getSelectedItem()
+										+")").asStrings()));
 						break;
 					}
 				}

@@ -30,7 +30,9 @@ import org.rosuda.deducer.toolkit.*;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
-import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 
 
@@ -467,8 +469,15 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					JOptionPane.showMessageDialog(this, "Please Enter a name for the function");
 					return;
 				}
-				REXP isFunc =JGR.R.eval("try(is.function("+functionText.getText()+"),silent=T)",true) ;
-				if(functionText.getText().length()<1 || isFunc.asBool() == null || !isFunc.asBool().isTRUE()){
+				org.rosuda.REngine.REXP isFunc = new org.rosuda.REngine.REXP();
+				try {
+					isFunc = JGR.eval("try(is.function("+functionText.getText()+"),silent=T)");
+				} catch (REngineException e) {
+					new ErrorMsg(e);
+				} catch (REXPMismatchException e) {
+					new ErrorMsg(e);
+				}
+				if(!(functionText.getText().length()<1 || !isFunc.isLogical() || ((REXPLogical)isFunc).isTRUE()[0])){
 					JOptionPane.showMessageDialog(this, "Entered function not valid. " +
 								"Please try again.\n\nHere is an example that " +
 								"calculates the sum\nof a variable:\n                   " +
