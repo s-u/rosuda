@@ -151,7 +151,7 @@ MRJstubs.jar: $(MRJSTUBS_SRC)
 
 docs: doc
 
-doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(RENGINE_SRC) $(RENGINE_RSERVE_SRC) $(ICUSTOM_SRC)
+doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOTS_SRC) $(IWIDGETS_SRC) $(JRI_SRC) $(JAVAGD_SRC) $(RENGINE_SRC) $(RENGINE_RSERVE_SRC) $(RENGINE_JRI_SRC) $(ICUSTOM_SRC)
 	rm -rf JavaDoc
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
