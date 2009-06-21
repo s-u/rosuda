@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -16,20 +17,22 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.Common;
-import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.util.*;
 
 /**
  * FileSelector - use AWT filedialog on a Mac because of look&feel, and SWING on
  * other machines because it provides more features.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class FileSelector extends JFrame {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7010137219452461372L;
 
 	/** @deprecated use LOAD */
 	public final static int OPEN = 0;
@@ -39,7 +42,7 @@ public class FileSelector extends JFrame {
 
 	/** SAVE DIALOG */
 	public final static int SAVE = 1;
-	
+
 	public static String lastDirectory = JGRPrefs.workingDirectory;
 
 	private FileDialog awtDialog = null;
@@ -49,9 +52,9 @@ public class FileSelector extends JFrame {
 	private int type = 0;
 
 	private Frame f;
-	
+
 	private int result = JFileChooser.CANCEL_OPTION;
-	
+
 	private boolean isSwing = false;
 
 	/**
@@ -68,9 +71,9 @@ public class FileSelector extends JFrame {
 	 *            should we start in a specified directory
 	 */
 	public FileSelector(Frame f, String title, int type, String directory) {
-		this(f,title,type,directory,false);
+		this(f, title, type, directory, false);
 	}
-	
+
 	public FileSelector(Frame f, String title, int type, String directory, boolean forceSwing) {
 		this.type = type;
 		this.f = f;
@@ -78,16 +81,14 @@ public class FileSelector extends JFrame {
 			awtDialog = new FileDialog(f, title, type);
 			if (directory != null) {
 				awtDialog.setDirectory(directory);
-			}
-			else if (lastDirectory != null) {
+			} else if (lastDirectory != null) {
 				awtDialog.setDirectory(lastDirectory);
 			}
 			isSwing = false;
 		} else {
 			if (directory != null) {
 				swingChooser = new JFileChooser(directory);
-			}
-			else if (lastDirectory  != null) {
+			} else if (lastDirectory != null) {
 				swingChooser = new JFileChooser(lastDirectory);
 			}
 			swingChooser.setDialogTitle(title);
@@ -95,16 +96,15 @@ public class FileSelector extends JFrame {
 			isSwing = true;
 		}
 	}
-	
+
 	/**
-	 * Create a fileDialog using the last selected directory as
-	 * the staring place.
-	 * 
+	 * Create a fileDialog using the last selected directory as the staring
+	 * place.
 	 */
 	public FileSelector(Frame f, String title, int type) {
-		this(f,title,type,null,false);
+		this(f, title, type, null, false);
 	}
-	
+
 	public void addActionListener(ActionListener al) {
 		if (isSwing)
 			swingChooser.addActionListener(al);
@@ -132,23 +132,21 @@ public class FileSelector extends JFrame {
 	public String getFile() {
 		String fileName = null;
 		try {
-			if (!isSwing){
+			if (!isSwing) {
 				fileName = awtDialog.getFile();
 				FileSelector.lastDirectory = awtDialog.getDirectory();
-			}
-			else{
-				if(result == JFileChooser.CANCEL_OPTION)
+			} else {
+				if (result == JFileChooser.CANCEL_OPTION)
 					return null;
 				fileName = swingChooser.getSelectedFile().getName();
-				FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
-				+ File.separator;
+				FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath() + File.separator;
 			}
 			return fileName;
 		} catch (Exception e) {
 			return null;
 		}
 	}
-	
+
 	public File getSelectedFile() {
 		if (isSwing) {
 			return swingChooser.getSelectedFile();
@@ -164,14 +162,14 @@ public class FileSelector extends JFrame {
 	 */
 	public String getDirectory() {
 		try {
-			if (!isSwing){
+			if (!isSwing) {
 				FileSelector.lastDirectory = awtDialog.getDirectory();
 				return FileSelector.lastDirectory;
 			}
-			/*if(result == JFileChooser.CANCEL_OPTION)
-				return null;*/
-			FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath()
-					+ File.separator;
+			/*
+			 * if(result == JFileChooser.CANCEL_OPTION) return null;
+			 */
+			FileSelector.lastDirectory = swingChooser.getCurrentDirectory().getAbsolutePath() + File.separator;
 			return FileSelector.lastDirectory;
 		} catch (Exception e) {
 			return null;
@@ -193,58 +191,53 @@ public class FileSelector extends JFrame {
 		} catch (Exception e) {
 		}
 	}
-	
+
 	/**
 	 * Adds a JPanel at the bottom of the dialog
 	 * 
-	 * 
 	 * @param panel
-	 * 				the panel to add
+	 *            the panel to add
 	 */
-	public void addFooterPanel(JPanel panel){
-		JPanel fileView=null;
-		try{
-		if (isSwing) {
-			if (System.getProperty("os.name").startsWith("Window")) {
-				fileView = (JPanel) ((JComponent) ((JComponent) swingChooser
-					.getComponent(2)).getComponent(2)).getComponent(2);
-			} else {
-				fileView = (JPanel) swingChooser.getComponent(swingChooser.getComponentCount() - 1);
+	public void addFooterPanel(JPanel panel) {
+		JPanel fileView = null;
+		try {
+			if (isSwing) {
+				if (System.getProperty("os.name").startsWith("Window")) {
+					fileView = (JPanel) ((JComponent) ((JComponent) swingChooser.getComponent(2)).getComponent(2)).getComponent(2);
+				} else {
+					fileView = (JPanel) swingChooser.getComponent(swingChooser.getComponentCount() - 1);
+				}
 			}
-		}
-		if(fileView!=null){
-			fileView.add(panel);
-			if (System.getProperty("os.name").startsWith("Window")) {
-				JPanel pp = (JPanel) ((JComponent) ((JComponent) swingChooser
-					.getComponent(2)).getComponent(2)).getComponent(0);
-				JPanel temp = new JPanel();
-				temp.setMaximumSize(new Dimension(0,panel.getPreferredSize().height));
-				pp.add(temp);
+			if (fileView != null) {
+				fileView.add(panel);
+				if (System.getProperty("os.name").startsWith("Window")) {
+					JPanel pp = (JPanel) ((JComponent) ((JComponent) swingChooser.getComponent(2)).getComponent(2)).getComponent(0);
+					JPanel temp = new JPanel();
+					temp.setMaximumSize(new Dimension(0, panel.getPreferredSize().height));
+					pp.add(temp);
+				}
 			}
-		}
-		}catch(Exception e){
+		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
-		
-	}
-	
-	
 
-	public boolean isSwing()
-	{
+	}
+
+	public boolean isSwing() {
 		return isSwing;
 	}
-	
+
 	public Component getSelector() {
 		if (!isSwing)
 			return awtDialog;
 		return swingChooser;
 	}
-	
-	public JFileChooser getJFileChooser(){
+
+	public JFileChooser getJFileChooser() {
 		return swingChooser;
 	}
-	public FileDialog getAWTChooser(){
+
+	public FileDialog getAWTChooser() {
 		return awtDialog;
 	}
 }

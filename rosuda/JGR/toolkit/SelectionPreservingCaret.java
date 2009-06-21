@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.event.FocusEvent;
 
@@ -13,6 +14,11 @@ import javax.swing.text.DefaultCaret;
  * Caret implementation that doesn't blow away the selection when we lose focus.
  */
 public class SelectionPreservingCaret extends DefaultCaret {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8656694832758871553L;
 
 	private static SelectionPreservingCaret last = null;
 

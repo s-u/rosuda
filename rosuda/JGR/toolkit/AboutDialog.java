@@ -4,14 +4,10 @@ package org.rosuda.JGR.toolkit;
 //Copyright (C) 2003 - 2005 Markus Helbig
 //--- for licensing information see LICENSE file in the original JGR distribution ---
 
-import java.awt.Dimension;
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
-
-import org.rosuda.ibase.Common;
 
 /**
  * AboutDialog - show splashscreen with authors and copyright information
@@ -23,8 +19,11 @@ import org.rosuda.ibase.Common;
 
 public class AboutDialog extends SplashScreen implements MouseListener {
 
-	private final Dimension screenSize = Common.getScreenRes();
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3367385857685434594L;
+	
 	public AboutDialog() {
 		this(null);
 	}

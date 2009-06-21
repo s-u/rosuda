@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -14,12 +15,15 @@ import java.awt.RenderingHints;
 /**
  * !! Currently not used !! ProgressLabel - similar to Cocoa ProgressIcon
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
 public class ProgressLabel extends Canvas implements Runnable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5665615547332756827L;
 
 	private Thread thread;
 
@@ -53,8 +57,7 @@ public class ProgressLabel extends Canvas implements Runnable {
 			g2 = img.getGraphics();
 		}
 		Graphics2D g2d = (Graphics2D) g;
-		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setColor(this.getBackground());
 		g2.fillRect(0, 0, this.getWidth(), this.getHeight());
 		drawProgress(g2);
@@ -64,11 +67,9 @@ public class ProgressLabel extends Canvas implements Runnable {
 	private void drawProgress(Graphics g) {
 		for (int i = 0; i < 360; i += 2 * gap) {
 			if (i >= angle * 6 && i <= angle * 6 + 90)
-				g.setColor(new Color(col.getRed(), col.getGreen(), col
-						.getBlue(), 200));
+				g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), 200));
 			else
-				g.setColor(new Color(0, 0, 0,
-						(360 - i + 100 - angle) / 10));
+				g.setColor(new Color(0, 0, 0, (360 - i + 100 - angle) / 10));
 			g.fillArc(x - length, x - length, 2 * length, 2 * length, -i, gap);
 		}
 		g.setColor(this.getBackground());
@@ -89,7 +90,6 @@ public class ProgressLabel extends Canvas implements Runnable {
 
 	/**
 	 * Stop progress-label to show JGR is ready.
-	 * 
 	 */
 	public void stop() {
 		this.setVisible(false);

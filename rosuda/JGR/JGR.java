@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,12 +22,12 @@ import org.rosuda.JGR.toolkit.ConsoleSync;
 import org.rosuda.JGR.toolkit.JGRListener;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngine;
 import org.rosuda.REngine.REngineException;
-import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.JRI.JRIEngine;
-import org.rosuda.REngine.REXPString;
-import org.rosuda.REngine.REXP;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.util.Global;
@@ -69,10 +70,10 @@ public class JGR {
 
 	/** Author JRI, rJava and JavaGD (used for displaying the splashscreen) */
 	public static final String AUTHOR2 = "Simon Urbanek";
-	
-	/** Author JGR parts since 2009  */
+
+	/** Author JGR parts since 2009 */
 	public static final String AUTHOR3 = "Ian Fellows";
-	
+
 	/** Website of organization (used for displaying the splashscreen) */
 	public static final String WEBSITE = "http://www.rosuda.org";
 
@@ -141,7 +142,7 @@ public class JGR {
 	 * <code>false</code> if the classes are loaded, but not run via main.
 	 */
 	private static boolean JGRmain = false;
-	
+
 	private static String tempWD;
 
 	/**
@@ -158,12 +159,12 @@ public class JGR {
 		JGRPackageManager.neededPackages.put("methods", dummy);
 		JGRPackageManager.neededPackages.put("stats", dummy);
 		JGRPackageManager.neededPackages.put("datasets", dummy);
-		
+
 		JGRPackageManager.neededPackages.put("JGR", dummy);
 		JGRPackageManager.neededPackages.put("rJava", dummy);
 		JGRPackageManager.neededPackages.put("JavaGD", dummy);
 		JGRPackageManager.neededPackages.put("iplots", dummy);
-		
+
 		org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 		JGRPrefs.initialize();
 		splash = new org.rosuda.JGR.toolkit.SplashScreen();
@@ -192,9 +193,7 @@ public class JGR {
 				errStr = "you start JGR by double-clicking the JGR application";
 				libName = "libjri.jnilib";
 			}
-			JOptionPane.showMessageDialog(null,
-					"Cannot find Java/R Interface (JRI) library (" + libName
-							+ ").\nPlease make sure " + errStr + ".",
+			JOptionPane.showMessageDialog(null, "Cannot find Java/R Interface (JRI) library (" + libName + ").\nPlease make sure " + errStr + ".",
 					"Cannot find JRI library", JOptionPane.ERROR_MESSAGE);
 			System.err.println("Cannot find JRI native library!\n");
 			e.printStackTrace();
@@ -202,11 +201,9 @@ public class JGR {
 		}
 
 		if (!org.rosuda.JRI.Rengine.versionCheck()) {
-			JOptionPane
-					.showMessageDialog(
-							null,
-							"Java/R Interface (JRI) library doesn't match this JGR version.\nPlease update JGR and JRI to the latest version.",
-							"Version Mismatch", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+					"Java/R Interface (JRI) library doesn't match this JGR version.\nPlease update JGR and JRI to the latest version.",
+					"Version Mismatch", JOptionPane.ERROR_MESSAGE);
 			System.exit(2);
 		}
 		try {
@@ -217,15 +214,15 @@ public class JGR {
 		}
 		if (org.rosuda.util.Global.DEBUG > 0)
 			System.out.println("Rengine created, waiting for R");
-		if (!((JRIEngine)rEngine).getRni().waitForR()) {
+		if (!((JRIEngine) rEngine).getRni().waitForR()) {
 			System.out.println("Cannot load R");
 			System.exit(1);
 		}
 
 		try {
 			// to avoid quoting hell we use an assignment
-			rEngine.assign(".$JGR",new REXPString(JGRPrefs.workingDirectory));
-			rEngine.parse("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)",false);
+			rEngine.assign(".$JGR", new REXPString(JGRPrefs.workingDirectory));
+			JGR.eval("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)");
 		} catch (REngineException e) {
 			new ErrorMsg(e);
 		} catch (REXPMismatchException e) {
@@ -233,8 +230,10 @@ public class JGR {
 		}
 		
 		// load packages requested by the user
-		// in theory we could have checked for jgr.load.pkgs property, but in practice it doesn't
-		// hurt if we load them despite the fact that R_DEFAULT_PACKAGES has been set.
+		// in theory we could have checked for jgr.load.pkgs property, but in
+		// practice it doesn't
+		// hurt if we load them despite the fact that R_DEFAULT_PACKAGES has
+		// been set.
 		if (JGRPrefs.defaultPackages != null)
 			RController.requirePackages(JGRPrefs.defaultPackages);
 		RController.requirePackages("JGR"); // ensure JGR is loaded
@@ -244,35 +243,50 @@ public class JGR {
 		if (!System.getProperty("os.name").startsWith("Win"))
 			splash.stop();
 		// make sure we get a clean prompt after all packages have been loaded
-		JGR.MAINRCONSOLE.execute("",false);
+		JGR.MAINRCONSOLE.execute("", false);
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
+
+		try {
+			String dataName = "";
+			new ErrorMsg(dataName = "iris");  //CST is a dataframe in my workspace
+			new ErrorMsg(((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("names("+dataName+")").asString() +"---");
+			new ErrorMsg(JGR.getREngine().parseAndEval("names("+dataName+")").asString() +"---");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		new Refresher().run();
+		
+
 	}
-	
-	
+
 	public static REXP idleEval(String cmd) throws REngineException, REXPMismatchException {
-		if (getREngine() == null) throw new REngineException(null, "REngine not available");
+		if (getREngine() == null)
+			throw new REngineException(null, "REngine not available");
 		REXP x = null;
-		int lock =	getREngine().tryLock();
+		int lock = getREngine().tryLock();
 		if (lock != 0) {
-			try { x = getREngine().parseAndEval(cmd); }
-			finally { getREngine().unlock(lock); }
+			try {
+				x = getREngine().parseAndEval(cmd,null,true);
+			} finally {
+				getREngine().unlock(lock);
+			}
 		}
 		return x;
 	}
-	
+
 	public static REXP eval(String cmd) throws REngineException, REXPMismatchException {
-		if (getREngine() == null) throw new REngineException(null, "REngine not available");
-		REXP x = getREngine().parseAndEval(cmd);
+		if (getREngine() == null)
+			throw new REngineException(null, "REngine not available");
+		REXP x = getREngine().parseAndEval(cmd,null,true);
 		return x;
 	}
 
-	
 	public static REngine getREngine() {
 		return rEngine;
 	}
-	
+
 	/**
 	 * Exits JGR, but not before asked the user if he wants to save his
 	 * workspace.
@@ -280,9 +294,8 @@ public class JGR {
 	 * @return users's answer (yes/no/cancel)
 	 */
 	public static String exit() {
-		int exit = JOptionPane.showConfirmDialog(null, "Save workspace?",
-				"Close JGR", JOptionPane.YES_NO_CANCEL_OPTION,
-				JOptionPane.QUESTION_MESSAGE);
+		int exit = JOptionPane
+				.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
 		if (exit == 0) {
 			writeHistory();
@@ -367,8 +380,7 @@ public class JGR {
 		RLIBS = libs;
 		for (int i = 0; i < RLIBS.length; i++)
 			if (RLIBS[i].startsWith("~"))
-				RLIBS[i] = RLIBS[i].replaceFirst("~", System
-						.getProperty("user.home"));
+				RLIBS[i] = RLIBS[i].replaceFirst("~", System.getProperty("user.home"));
 	}
 
 	/**
@@ -389,7 +401,6 @@ public class JGR {
 	 */
 	public static void setKeyWords(String[] words) {
 		KEYWORDS.clear();
-		Object dummy = new Object();
 		for (int i = 0; i < words.length; i++)
 			KEYWORDS.add(words[i]);
 	}
@@ -413,7 +424,6 @@ public class JGR {
 	public static void setObjects(String[] objects) {
 		OBJECTS.clear();
 		KEYWORDS_OBJECTS.clear();
-		Object dummy = new Object();
 		for (int i = 0; i < objects.length; i++) {
 			KEYWORDS_OBJECTS.add(objects[i]);
 			OBJECTS.add(objects[i]);
@@ -428,8 +438,7 @@ public class JGR {
 		File hist = null;
 		try {
 			tempWD = JGRPrefs.workingDirectory;
-			if ((hist = new File(JGRPrefs.workingDirectory
-					+ File.separator + ".JGRhistory")).exists()) {
+			if ((hist = new File(JGRPrefs.workingDirectory + File.separator + ".JGRhistory")).exists()) {
 
 				BufferedReader reader = new BufferedReader(new FileReader(hist));
 				RHISTORY = new Vector();
@@ -454,8 +463,7 @@ public class JGR {
 	public static void writeHistory() {
 		File hist = null;
 		try {
-			hist = new File(tempWD + File.separator
-					+ ".JGRhistory");
+			hist = new File(tempWD + File.separator + ".JGRhistory");
 			BufferedWriter writer = new BufferedWriter(new FileWriter(hist));
 			Enumeration e = JGR.RHISTORY.elements();
 			while (e.hasMoreElements()) {
@@ -476,34 +484,28 @@ public class JGR {
 	private void checkForMissingPkg() {
 		try {
 			String previous = JGRPrefs.previousPackages;
-			
-			//System.out.println("previous "+previous);
-			
+
 			if (previous == null)
 				return;
 			String current = RController.getCurrentPackages();
-			
-			//System.out.println("current: "+current);
-			
+
 			if (current == null)
 				return;
-				
-			Vector missing = new Vector();
-			
+
 			Vector currentPkg = new Vector();
 			Vector previousPkg = new Vector();
-			
-			StringTokenizer st = new StringTokenizer(current,",");
+
+			StringTokenizer st = new StringTokenizer(current, ",");
 			while (st.hasMoreTokens())
-				currentPkg.add(st.nextToken().toString().replaceFirst(",",""));
-				
-			st = new StringTokenizer(previous,",");
+				currentPkg.add(st.nextToken().toString().replaceFirst(",", ""));
+
+			st = new StringTokenizer(previous, ",");
 			while (st.hasMoreTokens())
-				previousPkg.add(st.nextToken().toString().replaceFirst(",",""));
-			
+				previousPkg.add(st.nextToken().toString().replaceFirst(",", ""));
+
 			for (int i = 0; i < currentPkg.size(); i++)
 				previousPkg.remove(currentPkg.elementAt(i));
-			
+
 			if (previousPkg.size() > 0)
 				new JGRPackageManager(previousPkg);
 		} catch (Exception e) {
@@ -536,13 +538,10 @@ public class JGR {
 				if (args[i].equals("--help") || args[i].equals("-h")) {
 					System.out.println("JGR version " + VERSION);
 					System.out.println("\nOptions:");
-					System.out
-							.println("\n\t-h, --help\t Print short helpmessage and exit");
+					System.out.println("\n\t-h, --help\t Print short helpmessage and exit");
 					System.out.println("\t--version\t Print version end exit");
-					System.out
-							.println("\t--debug\t Print more information about JGR's process");
-					System.out
-							.println("\nMost other R options are supported too");
+					System.out.println("\t--debug\t Print more information about JGR's process");
+					System.out.println("\nMost other R options are supported too");
 					System.exit(0);
 				}
 			}
@@ -560,28 +559,30 @@ public class JGR {
 				System.out.println(rargs[i]);
 
 		String nativeLF = UIManager.getSystemLookAndFeelClassName();
-	    
-	    // Install the look and feel
-	    try {
-	        UIManager.setLookAndFeel(nativeLF);
-	    } catch (InstantiationException e) {
-	    } catch (ClassNotFoundException e) {
-	    } catch (UnsupportedLookAndFeelException e) {
-	    } catch (IllegalAccessException e) {
-	    }
-		
+
+		// Install the look and feel
+		try {
+			UIManager.setLookAndFeel(nativeLF);
+		} catch (InstantiationException e) {
+		} catch (ClassNotFoundException e) {
+		} catch (UnsupportedLookAndFeelException e) {
+		} catch (IllegalAccessException e) {
+		}
+
 		try {
 			new JGR();
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
 	}
-	public static void refreshObjects(){
-		org.rosuda.JRI.REXP x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
+
+	public static void refreshObjects() {
+		org.rosuda.JRI.REXP x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 		String[] r = null;
 		if (x != null && (r = x.asStringArray()) != null)
 			JGR.setObjects(r);
 	}
+
 	/**
 	 * Refresher, which is looking for new keywords and objects in workspace and
 	 * refreshes highlight and autocompletion information.
@@ -596,11 +597,11 @@ public class JGR {
 			while (true)
 				try {
 					Thread.sleep(5000);
-					org.rosuda.JRI.REXP x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshKeyWords(),silent=TRUE)");
+					org.rosuda.JRI.REXP x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
 					if (x != null && (r = x.asStringArray()) != null)
 						setKeyWords(r);
-					x = ((JRIEngine)rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
+					x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 					r = null;
 					if (x != null && (r = x.asStringArray()) != null)
 						setObjects(r);

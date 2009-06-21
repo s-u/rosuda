@@ -19,6 +19,11 @@ import javax.swing.text.Element;
 import javax.swing.text.JTextComponent;
 
 public class LineNumbers extends JComponent implements AdjustmentListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2196475189826669853L;
+
 	private Dimension d = new Dimension();
 
 	private boolean showing = true;
@@ -100,30 +105,26 @@ public class LineNumbers extends JComponent implements AdjustmentListener {
 		return d;
 	}
 
-	private int getLineCount() {
+	public int getLineCount() {
 		Element map = src.getDocument().getDefaultRootElement();
 		return map.getElementCount();
 	}
 
 	private int getMyWidth() {
 		FontMetrics fm = src.getFontMetrics(src.getFont());
-		int cnt = src.getHeight() / fm.getHeight();
-		return showing ? fm.stringWidth(getVisibleEndLine() + "") + 4 + BAR
-				: BAR;
+		return showing ? fm.stringWidth(getVisibleEndLine() + "") + 4 + BAR : BAR;
 	}
 
-	private int getVisibleStartLine() {
+	public int getVisibleStartLine() {
 		scroller.getViewport().getView().getLocation(locCache);
-		int ascent = getFontMetrics(getFont()).getAscent();
 		int h = getFontMetrics(getFont()).getHeight();
 		int y = (int) (locCache.getY() / h) * h;
 		return (int) Math.floor(y / h) + 1;
 	}
 
-	private int getVisibleEndLine() {
+	public int getVisibleEndLine() {
 		scroller.getViewport().getView().getLocation(locCache);
 		scroller.getViewport().getSize(sizeCache);
-		int ascent = getFontMetrics(getFont()).getAscent();
 		int h = getFontMetrics(getFont()).getHeight();
 		return (int) Math.abs(-locCache.getY() + sizeCache.getHeight()) / h;
 	}

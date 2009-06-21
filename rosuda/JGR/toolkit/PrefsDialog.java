@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -33,18 +34,20 @@ import org.rosuda.ibase.Common;
 /**
  * PrefsDialog - dialog for setting preferences in JGR
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
-public class PrefsDialog extends JDialog implements ActionListener,
-		ItemListener {
+public class PrefsDialog extends JDialog implements ActionListener, ItemListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6600923339325549305L;
 
 	private final Dimension screenSize = Common.getScreenRes();
 
-	private final String[] sizes = { "2", "4", "6", "8", "9", "10", "11", "12", "14",
-			"16", "18", "20", "22", "24" }; // ,"30","36","48","72" };
+	private final String[] sizes = { "2", "4", "6", "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24" }; // ,"30","36","48","72"
+																														// };
 
 	private String[] fonts;
 
@@ -60,23 +63,20 @@ public class PrefsDialog extends JDialog implements ActionListener,
 
 	private final JSpinner tabWidth = new JSpinner();
 
-	private final JCheckBox useHelpAgent = new JCheckBox("Use Help Agent",
-			JGRPrefs.useHelpAgent);
+	private final JCheckBox useHelpAgent = new JCheckBox("Use Help Agent", JGRPrefs.useHelpAgent);
 
-	private final JCheckBox useHelpAgentConsole = new JCheckBox("in Console",
-			JGRPrefs.useHelpAgentConsole);
+	private final JCheckBox useHelpAgentConsole = new JCheckBox("in Console", JGRPrefs.useHelpAgentConsole);
 
-	private final JCheckBox useHelpAgentEditor = new JCheckBox("in Editor",
-			false/*JGRPrefs.useHelpAgentEditor*/);
+	private final JCheckBox useHelpAgentEditor = new JCheckBox("in Editor", false/*
+																				 * JGRPrefs.
+																				 * useHelpAgentEditor
+																				 */);
 
-	private final JCheckBox useEmacsKeyBindings = new JCheckBox(
-			"Use Emacs Key Bindings", JGRPrefs.useEmacsKeyBindings);
+	private final JCheckBox useEmacsKeyBindings = new JCheckBox("Use Emacs Key Bindings", JGRPrefs.useEmacsKeyBindings);
 
-	private final JCheckBox showHiddenFiles = new JCheckBox("Show hidden files",
-			JGRPrefs.showHiddenFiles);
+	private final JCheckBox showHiddenFiles = new JCheckBox("Show hidden files", JGRPrefs.showHiddenFiles);
 
-	private final JTextField workinDirectory = new JTextField(
-			JGRPrefs.workingDirectory);
+	private final JTextField workinDirectory = new JTextField(JGRPrefs.workingDirectory);
 
 	private final JButton cancel = new JButton("Cancel");
 
@@ -107,8 +107,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 		tabWidth.setMaximumSize(new Dimension(40, 24));
 		tabWidth.setValue(new Integer(JGRPrefs.tabWidth));
 
-		fonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getAvailableFontFamilyNames();
+		fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		font.setModel(mf = new DefaultComboBoxModel(fonts));
 		size.setModel(ms = new DefaultComboBoxModel(sizes));
 		mf.setSelectedItem(JGRPrefs.FontName);
@@ -145,7 +144,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 
 		useHelpAgentConsole.setEnabled(useHelpAgent.isSelected());
 		useHelpAgentEditor.setEnabled(false);
-//		useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
+		// useHelpAgentEditor.setEnabled(useHelpAgent.isSelected());
 
 		JPanel consoleAgentPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		consoleAgentPanel.add(new JLabel("  "));
@@ -172,8 +171,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 		gbc.gridy = 5;
 		prefs.add(useEmacsKeyBindings, gbc);
 		gbc.gridy = 6;
-		prefs.add(new JLabel(
-				"* Emacs Keybindings are only advisable for Mac OS X!"), gbc);
+		prefs.add(new JLabel("* Emacs Keybindings are only advisable for Mac OS X!"), gbc);
 
 		gbc.gridy = 7;
 		prefs.add(showHiddenFiles, gbc);
@@ -225,8 +223,7 @@ public class PrefsDialog extends JDialog implements ActionListener,
 		this.getRootPane().setDefaultButton(save);
 		this.setResizable(false);
 		this.setSize(new Dimension(420, 470));
-		this.setLocation((screenSize.width - this.getSize().width) / 2,
-				(screenSize.height - this.getSize().height) / 2);
+		this.setLocation((screenSize.width - this.getSize().width) / 2, (screenSize.height - this.getSize().height) / 2);
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent evt) {
 				dispose();
@@ -240,17 +237,15 @@ public class PrefsDialog extends JDialog implements ActionListener,
 	 */
 	public void applyChanges() {
 		JGRPrefs.FontName = font.getSelectedItem().toString();
-		JGRPrefs.FontSize = new Integer(size.getSelectedItem().toString())
-				.intValue();
+		JGRPrefs.FontSize = new Integer(size.getSelectedItem().toString()).intValue();
 		JGRPrefs.maxHelpTabs = ((Integer) helptabs.getValue()).intValue();
 		JGRPrefs.useHelpAgent = useHelpAgent.isSelected();
 		JGRPrefs.useHelpAgentConsole = useHelpAgentConsole.isSelected();
-		JGRPrefs.useHelpAgentEditor = false; //useHelpAgentEditor.isSelected();
+		JGRPrefs.useHelpAgentEditor = false; // useHelpAgentEditor.isSelected();
 		JGRPrefs.useEmacsKeyBindings = useEmacsKeyBindings.isSelected();
 		JGRPrefs.showHiddenFiles = showHiddenFiles.isSelected();
-		JGRPrefs.workingDirectory = workinDirectory.getText().trim().length() == 0 ? System
-				.getProperty("user.home")
-				: workinDirectory.getText().trim();
+		JGRPrefs.workingDirectory = workinDirectory.getText().trim().length() == 0 ? System.getProperty("user.home") : workinDirectory.getText()
+				.trim();
 		JGRPrefs.tabWidth = ((Integer) tabWidth.getValue()).intValue();
 		JGRPrefs.apply();
 	}

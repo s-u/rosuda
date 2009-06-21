@@ -1,10 +1,8 @@
 /*
- * TextAreaPainter.java - Paints the text area
- * Copyright (C) 1999 Slava Pestov
- *
+ * TextAreaPainter.java - Paints the text area Copyright (C) 1999 Slava Pestov
  * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
+ * permitted, in both source and binary form, provided that this notice remains
+ * intact in all source distributions of this package.
  */
 
 package jedit.syntax;
@@ -40,9 +38,6 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	private static final long serialVersionUID = 7841106461215257787L;
 
 	protected static int OFFSET = 0;
-	private static final int MINIMUM_OFFSET = 25;
-	
-	//public static int FONTSIZE = 14;
 
 	/**
 	 * Creates a new repaint manager. This should be not be called directly.
@@ -61,7 +56,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 		setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
 
-//		setFont(new Font(JGRPrefs.FontName, Font.PLAIN, JGR));
+		// setFont(new Font(JGRPrefs.FontName, Font.PLAIN, JGR));
 		setForeground(Color.black);
 		setBackground(Color.white);
 
@@ -79,11 +74,11 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 		eolMarkerColor = defaults.eolMarkerColor;
 		eolMarkers = defaults.eolMarkers;
 		lineNumbers = defaults.lineNumbers;
-		if (lineNumbers) OFFSET = 25;
+		if (lineNumbers)
+			OFFSET = 25;
 	}
-	
-	public int getFontSize()
-	{
+
+	public int getFontSize() {
 		return getFont().getSize();
 	}
 
@@ -294,12 +289,12 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	}
 
 	/**
-	 * 
 	 * @param eolMarkers
 	 */
 	public final void setLineNumbersPainted(boolean lineNumbers) {
 		this.lineNumbers = lineNumbers;
-		if (lineNumbers) OFFSET = 25;
+		if (lineNumbers)
+			OFFSET = 25;
 		repaint();
 	}
 
@@ -372,16 +367,15 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	 *            The graphics context
 	 */
 	public void paint(Graphics gfx) {
-		
+
 		if (lineNumbers) {
 			int lines = textArea.getVisibleLines();
-			if (textArea.getLineCount() > lines)
-			{
+			if (textArea.getLineCount() > lines) {
 				lines = textArea.getLineCount();
 			}
-			OFFSET = (lines+"").length() * fm.charWidth('9') + 5;
+			OFFSET = (lines + "").length() * fm.charWidth('9') + 5;
 		}
-		
+
 		tabSize = fm.charWidth(' ') * ((Integer) textArea.getDocument().getProperty(PlainDocument.tabSizeAttribute)).intValue();
 
 		Rectangle clipRect = gfx.getClipBounds();
@@ -416,7 +410,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Marks a line as needing a repaint.
 	 * 
@@ -436,7 +430,9 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	 *            The last line to invalidate
 	 */
 	public final void invalidateLineRange(int firstLine, int lastLine) {
-		//repaint(0, textArea.lineToY(firstLine) + fm.getMaxDescent() + fm.getLeading(), getWidth(), (lastLine - firstLine + 1) * fm.getHeight());
+		// repaint(0, textArea.lineToY(firstLine) + fm.getMaxDescent() +
+		// fm.getLeading(), getWidth(), (lastLine - firstLine + 1) *
+		// fm.getHeight());
 		repaint();
 	}
 
@@ -458,7 +454,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	 * @return The next tab stop after <i>x</i>
 	 */
 	public float nextTabStop(float x, int tabOffset) {
-		int offset = textArea.getHorizontalOffset() + (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET: 0);
+		int offset = textArea.getHorizontalOffset() + (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
 		int ntabs = ((int) x - offset) / tabSize;
 		return (ntabs + 1) * tabSize + offset;
 	}
@@ -511,7 +507,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 	protected boolean paintInvalid;
 
 	protected boolean eolMarkers;
-	
+
 	protected boolean lineNumbers;
 
 	protected int cols;
@@ -542,13 +538,13 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 		} else {
 			paintSyntaxLine(gfx, tokenMarker, line, defaultFont, defaultColor, x, y);
 		}
-		
+
 		if (lineNumbers) {
 			gfx.setColor(Color.lightGray);
 			gfx.fillRect(0, y, OFFSET, fm.getHeight());
 			gfx.setColor(Color.black);
 			gfx.setFont(defaultFont);
-			gfx.drawString(line+"", 0, y);
+			gfx.drawString(line + "", 0, y);
 		}
 	}
 
@@ -632,10 +628,10 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 				x1 = textArea._offsetToX(line, selectionStart - lineStart);
 				x2 = getWidth();
 			} else if (line == selectionEndLine) {
-				x1 = (lineNumbers?OFFSET:0) + 0;
+				x1 = (lineNumbers ? OFFSET : 0) + 0;
 				x2 = textArea._offsetToX(line, selectionEnd - lineStart);
 			} else {
-				x1 = (lineNumbers?OFFSET:0) + 0;
+				x1 = (lineNumbers ? OFFSET : 0) + 0;
 				x2 = getWidth();
 			}
 
@@ -660,7 +656,7 @@ public class TextAreaPainter extends JComponent implements TabExpander {
 
 	protected void paintCaret(Graphics gfx, int line, int y) {
 		if (textArea.isCaretVisible()) {
-			int offset = textArea.getCaretPosition() - textArea.getLineStartOffset(line); 
+			int offset = textArea.getCaretPosition() - textArea.getLineStartOffset(line);
 			int caretX = textArea._offsetToX(line, offset);
 			int caretWidth = ((blockCaret || textArea.isOverwriteEnabled()) ? fm.charWidth('w') : 1);
 			y += fm.getLeading() + fm.getMaxDescent();

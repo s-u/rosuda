@@ -33,6 +33,11 @@ import java.util.Vector;
 
 public class IndexTable extends Vector {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2934906198562776661L;
+
 	public Vector search(String key, boolean searchDesc,
 			boolean searchKeywords, boolean searchAliases) {
 		Vector returnValue = new Vector();

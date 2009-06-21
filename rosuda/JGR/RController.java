@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.io.File;
 import java.util.ArrayList;
@@ -19,7 +20,11 @@ import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngine;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.ibase.SVar;
 import org.rosuda.ibase.SVarDouble;
 import org.rosuda.ibase.SVarFact;
@@ -28,13 +33,13 @@ import org.rosuda.ibase.SVarObj;
 import org.rosuda.ibase.SVarSet;
 import org.rosuda.util.Global;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 /**
  * RController - implementations of an interface between JGR and Rengine,
  * providing all needed functions for working with R.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class RController {
@@ -50,9 +55,17 @@ public class RController {
 	 * @return R_HOME path
 	 */
 	public static String getRHome() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("R.home()");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray()[0];
+		REXP x;
+		try {
+			x =  JGR.eval("R.home()");
+			return x.asString();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "";
 	}
 
@@ -62,9 +75,16 @@ public class RController {
 	 * @return R_LIBS paths
 	 */
 	public static String[] getRLibs() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(".libPaths()");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray();
+		try {
+			REXP x = JGR.eval(".libPaths()");
+			return x.asStrings();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -74,9 +94,17 @@ public class RController {
 	 * @return prompt
 	 */
 	public static String getRPrompt() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("try(as.character(options('prompt')),silent=TRUE)");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray() == null ? "> " : x.asStringArray()[0];
+		try {
+			REXP x = JGR.eval("try(as.character(options('prompt')),silent=TRUE)");
+			return x.asString();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		return "> ";
 	}
 
@@ -86,10 +114,16 @@ public class RController {
 	 * @return continue
 	 */
 	public static String getRContinue() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni()
-				.eval("try(as.character(options('continue')),silent=TRUE)");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray() == null ? "> " : x.asStringArray()[0];
+		try {
+			REXP x = JGR.eval("try(as.character(options('continue')),silent=TRUE)");
+			return x.asString();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return "> ";
 	}
 
@@ -99,15 +133,23 @@ public class RController {
 	 * @return default packages
 	 */
 	public static String getCurrentPackages() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni()
-				.eval(".packages(TRUE)");//.allpkg <- (.packages(all=T));.p <- NULL;for (i in 1:length(.allpkg)) .p <- paste(.p,as.character(.allpkg[i]),sep=\",\");substring(.p,2)");
-		
-		if (x != null && x.asStringArray() != null) {
-			String p = "";
-			for (int i = 0; i < x.asStringArray().length - 1; i++)
-				p += x.asStringArray()[i] + ",";
-			return p += x.asStringArray()[x.asStringArray().length - 1];
-		}
+
+		REXP x;
+		try {
+			x = JGR.eval(".packages(TRUE)");
+			if (!x.isNull() && x.asStrings() != null) {
+				String p = "";
+				for (int i = 0; i < x.asStrings().length - 1; i++)
+					p += x.asStrings()[i] + ",";
+				return p += x.asStrings()[x.asStrings().length - 1];
+			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}// .allpkg
 		return null;
 	}
 
@@ -117,48 +159,88 @@ public class RController {
 	 * @return R default packages
 	 */
 	public static String[] getDefaultPackages() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("getOption(\"defaultPackages\")");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray();
+		try {
+			REXP x = JGR.eval("getOption(\"defaultPackages\")");
+			return x.asStrings();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new String[] {};
 	}
 
 	/**
-	 * Get default packages as defined by JGR (i.e. R's default packages plus auto-loaded packages from JGR preferences)
+	 * Get default packages as defined by JGR (i.e. R's default packages plus
+	 * auto-loaded packages from JGR preferences)
 	 * 
 	 * @return JGR default packages
 	 */
 	public static String[] getJgrDefaultPackages() {
 		String jdp = JGRPrefs.defaultPackages;
-		if (jdp == null) jdp = "JGR";
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("as.character(unique(c(getOption(\"defaultPackages\"),strsplit(\""+jdp+"\",', ?')[[1]],'JGR')))");
-		if (x != null && x.asStringArray() != null)
-			return x.asStringArray();
+		if (jdp == null)
+			jdp = "JGR";
+		try {
+			REXP x = JGR
+					.eval("as.character(unique(c(getOption(\"defaultPackages\"),strsplit(\"" + jdp + "\",', ?')[[1]],'JGR')))");
+			return x.asStrings();
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return new String[] {};
 	}
 
 	/** load and attach packages defined by the string "pkg, pkg, ..." */
 	public static void requirePackages(String rlist) {
-		((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().assign(".$JGR", rlist); // to be on the safe side ...
-		((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("{ for (pkg in strsplit(`.$JGR`,', ?')[[1]]) require(pkg, warn.conflicts=FALSE, character.only=TRUE); rm(`.$JGR`); TRUE }");
+		((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().assign(".$JGR", rlist); // to
+
+		try {
+			JGR.eval("{ for (pkg in strsplit(`.$JGR`,', ?')[[1]]) require(pkg, warn.conflicts=FALSE, character.only=TRUE); rm(`.$JGR`); TRUE }");
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
-	 * loads a package. If it isn't installed, it is
-	 * loaded from CRAN
-	 * 
+	 * loads a package. If it isn't installed, it is loaded from CRAN
 	 * 
 	 * @param pack
 	 */
-	public static void loadPackage(String pack){
+	public static void loadPackage(String pack) {
 		String packages = getCurrentPackages();
-		if(!packages.contains(pack)){
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("cat('Package "+pack+" not found. Attempting to download...\n')");
-			JGR.MAINRCONSOLE.execute("install.packages('"+pack+"');library("+pack+")",true);	
-		}
-		else
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("library("+pack+")");
+		if (!packages.contains(pack)) {
+			try {
+				JGR.eval("cat('Package " + pack + " not found. Attempting to download...\n')");
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			JGR.MAINRCONSOLE.execute("install.packages('" + pack + "');library(" + pack + ")", true);
+		} else
+			try {
+				JGR.eval("library(" + pack + ")");
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	}
+
 	/**
 	 * Show all posibilities to complete your given part of a command.
 	 * 
@@ -169,16 +251,24 @@ public class RController {
 	public static String[] completeCommand(String partOfCmd) {
 		if (!JGR.STARTED)
 			return null;
-		int s = partOfCmd.length() - 1;
 		if (partOfCmd.trim().length() == 0)
 			return null;
 		partOfCmd = partOfCmd.replaceAll("\\.", "\\\\\\\\."); // replace real .
-															// with their
-															// equivalent regex
-		REXP cmds = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval("try(.completeCommand(\"" + partOfCmd + "\"),silent=TRUE)");
-		String[] c = null;
-		if (cmds != null && (c = cmds.asStringArray()) != null)
-			return c;
+		// with their
+		// equivalent regex
+		REXP cmds;
+		try {
+			cmds = JGR.idleEval("try(.completeCommand(\"" + partOfCmd + "\"),silent=TRUE)");
+			String[] c = null;
+			if (cmds != null && (c = cmds.asStrings()) != null)
+				return c;
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
@@ -215,7 +305,7 @@ public class RController {
 			cont = directory.list();
 		if (cont == null)
 			return null;
-		int firstMatch = -1, matches = 0;
+		int matches = 0;
 
 		Vector matchedFiles = new Vector();
 
@@ -224,7 +314,6 @@ public class RController {
 			String sx = cont[i];
 			if (sx.startsWith(fn)) {
 				if (matches == 0) {
-					firstMatch = i;
 					common = sx;
 				} else
 					common = commonWithPrefix(common, sx);
@@ -239,11 +328,8 @@ public class RController {
 		if (common != null && matchedFiles.size() == 1) {
 			String fnp = common.replace('\\', '/');
 			File tfile = null;
-			boolean isDir = false;
-			fnp = ((dir == ".") ? fnp : ((dir == "/") ? ("/" + fnp)
-					: (dir + "/") + fnp));
-			if ((tfile = new File(fnp)).exists()
-					&& (isDir = tfile.isDirectory()))
+			fnp = ((dir == ".") ? fnp : ((dir == "/") ? ("/" + fnp) : (dir + "/") + fnp));
+			if ((tfile = new File(fnp)).exists() && tfile.isDirectory())
 				fnp = fnp + "/";
 			if (fnp.endsWith("//"))
 				fnp = "";
@@ -255,97 +341,112 @@ public class RController {
 		}
 		return null;
 	}
-	
-	public static String makeValidVariableName(String var){
-		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");	
+
+	public static String makeValidVariableName(String var) {
+		return var.replaceAll("[ -+*/\\()=!~`@#$%^&*<>,?;:\"\']", ".");
 	}
-	
-	public static String makeRStringVector(ArrayList lis){
-		if(lis.size()==0)
+
+	public static String makeRStringVector(ArrayList lis) {
+		if (lis.size() == 0)
 			return "c()";
 		String result = "c(";
-		for(int i=0;i<lis.size();i++){
-			result+="\""+lis.get(i).toString()+"\"";
-			if(i<lis.size()-1)
-				result+=",";
-			if(i%10==9)
-				result+="\n";
+		for (int i = 0; i < lis.size(); i++) {
+			result += "\"" + lis.get(i).toString() + "\"";
+			if (i < lis.size() - 1)
+				result += ",";
+			if (i % 10 == 9)
+				result += "\n";
 		}
-		result+=")";
+		result += ")";
 		return result;
 	}
-	
-	public static String makeRStringVector(JList list){
+
+	public static String makeRStringVector(JList list) {
 		ArrayList varList = new ArrayList();
-		for(int i=0;i<list.getModel().getSize();i++)
+		for (int i = 0; i < list.getModel().getSize(); i++)
 			varList.add(list.getModel().getElementAt(i));
 		return makeRStringVector(varList);
 	}
-	public static String makeRStringVector(DefaultListModel mod){
+
+	public static String makeRStringVector(DefaultListModel mod) {
 		ArrayList varList = new ArrayList();
-		for(int i=0;i<mod.getSize();i++)
+		for (int i = 0; i < mod.getSize(); i++)
 			varList.add(mod.getElementAt(i));
 		return makeRStringVector(varList);
 	}
-	public static String makeRStringVector(Vector mod){
+
+	public static String makeRStringVector(Vector mod) {
 		ArrayList varList = new ArrayList();
-		for(int i=0;i<mod.size();i++)
+		for (int i = 0; i < mod.size(); i++)
 			varList.add(mod.get(i));
 		return makeRStringVector(varList);
 	}
-	
-	public static String makeRVector(Vector vec){
+
+	public static String makeRVector(Vector vec) {
 		String outcomes = "c(";
-		for(int i=0;i<vec.size();i++){
-			outcomes +=(String)vec.get(i);
-			if(i<(vec.size()-1))
-				outcomes+=",";
-			if(i%10==9)
-				outcomes+="\n";
+		for (int i = 0; i < vec.size(); i++) {
+			outcomes += (String) vec.get(i);
+			if (i < (vec.size() - 1))
+				outcomes += ",";
+			if (i % 10 == 9)
+				outcomes += "\n";
 		}
-		outcomes+=")";
+		outcomes += ")";
 		return outcomes;
 	}
-	
-	public static String makeRVector(DefaultListModel mod){
+
+	public static String makeRVector(DefaultListModel mod) {
 		Vector tmp = new Vector();
-		for(int i=0;i<mod.getSize();i++)
-			tmp.add(mod.getElementAt(i));	
+		for (int i = 0; i < mod.getSize(); i++)
+			tmp.add(mod.getElementAt(i));
 		return makeRVector(tmp);
 	}
-	
-	public static boolean isValidSubsetExp(String subset,String dataName){
-		if(subset==null || subset.length()<1)
+
+	public static boolean isValidSubsetExp(String subset, String dataName) {
+		if (subset == null || subset.length() < 1)
 			return false;
-		
-		REXP valid =((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("(function(x,subset){"+
-									"result<-try(e <- substitute(subset),silent=TRUE)\n"+
-									"if(class(result)==\"try-error\")\n"+
-									"	return(FALSE)\n"+
-									"result<-try(r <- eval(e, x, parent.frame()),silent=TRUE)\n"+
-									"if(class(result)==\"try-error\")\n"+
-									"	return(FALSE)\n"+
-									"is.logical(r)\n"+
-									"})("+dataName+","+subset+")");
-		if(valid==null){
-			return false;
+
+		REXPLogical valid;
+		try {
+			valid = (REXPLogical) JGR.eval("(function(x,subset){" + "result<-try(e <- substitute(subset),silent=TRUE)\n"
+					+ "if(class(result)==\"try-error\")\n" + "	return(FALSE)\n" + "result<-try(r <- eval(e, x, parent.frame()),silent=TRUE)\n"
+					+ "if(class(result)==\"try-error\")\n" + "	return(FALSE)\n" + "is.logical(r)\n" + "})(" + dataName + "," + subset + ")");
+			if (valid == null) {
+				return false;
+			}
+			if (valid == null) {
+				return false;
+			}
+			return valid.isTRUE()[0];
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		if(valid.asBool()==null){
-			return false;
-		}
-		return valid.asBool().isTRUE();
+		return false;
 	}
-	
+
 	/**
 	 * Get all keywords for syntaxhighlighting.
 	 * 
 	 * @return keywords
 	 */
 	public static String[] getKeyWords() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".refreshKeyWords()");
+		REXP x;
 		String[] r = null;
-		if (x != null && (r = x.asStringArray()) != null)
-			return r;
+		try {
+			x = JGR.idleEval(".refreshKeyWords()");
+			if (!x.isNull() && (r = x.asStrings()) != null)
+				return r;
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return r;
 	}
 
@@ -355,10 +456,19 @@ public class RController {
 	 * @return objects
 	 */
 	public static String[] getObjects() {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".refreshObjects()");
+		REXP x;
 		String[] r = null;
-		if (x != null && (r = x.asStringArray()) != null)
-			return r;
+		try {
+			x = JGR.idleEval(".refreshObjects()");
+			if (!x.isNull() && (r = x.asStrings()) != null)
+				return r;
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return r;
 	}
 
@@ -370,52 +480,84 @@ public class RController {
 	public static void refreshObjects() {
 
 		String models[];
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".getModels()");
-		if(x!=null)
-			JGR.MODELS.clear();				
-		if (x != null && (models = x.asStringArray()) != null){	
-			for (int i = 0; i < models.length; i++)
-				JGR.MODELS.add(createRModel(models[i], models[++i]));
-		}
-		x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".getDataObjects()");
-		String[] data;
-		if(x!=null)
-			JGR.DATA.clear();			
-		if (x != null && (data = x.asStringArray()) != null) {
-			int a = 1;	
-			for (int i = 0; i < data.length; i++) {
-				boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
-				String name = b ? a + "" : data[i];
-				JGR.DATA.add(createRObject(name, data[++i], null, (!b)));
-				a++;
+		REXP x = null;
+
+		try {
+			x = JGR.idleEval(".getModels()");
+			if (!x.isNull())
+				JGR.MODELS.clear();
+			if (!x.isNull() && !x.isNull() && (models = x.asStrings()) != null) {
+				for (int i = 0; i < models.length; i++)
+					JGR.MODELS.add(createRModel(models[i], models[++i]));
 			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".getOtherObjects()");
-		String[] other;
-		if(x!=null)
-			JGR.OTHERS.clear();			
-		if (x != null && (other = x.asStringArray()) != null) {
-			int a = 1;
-	
-			for (int i = 0; i < other.length; i++) {
-				boolean b = (other[i].equals("null") || other[i].trim()
-						.length() == 0);
-				String name = b ? a + "" : other[i];
-				JGR.OTHERS.add(createRObject(name, other[++i], null, (!b)));
-				a++;
+		try {
+			x = JGR.idleEval(".getDataObjects()");
+			String[] data;
+			if (!x.isNull())
+				JGR.DATA.clear();
+			if (!x.isNull() && (data = x.asStrings()) != null) {
+				int a = 1;
+				for (int i = 0; i < data.length; i++) {
+					boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
+					String name = b ? a + "" : data[i];
+					JGR.DATA.add(createRObject(name, data[++i], null, (!b)));
+					a++;
+				}
 			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(".getFunctionsInWS()");
-		String[] functions;
-		if(x!=null)
-			JGR.FUNCTIONS.clear();			
-		if (x != null && (functions = x.asStringArray()) != null) {
-			int a = 1;
-			for (int i = 0; i < functions.length; i++) {
-				JGR.FUNCTIONS.add(createRObject(functions[i], "function", null,
-						true));
-				a++;
+		try {
+			x = JGR.idleEval(".getOtherObjects()");
+			String[] other;
+			if (!x.isNull())
+				JGR.OTHERS.clear();
+			if (!x.isNull() && (other = x.asStrings()) != null) {
+				int a = 1;
+
+				for (int i = 0; i < other.length; i++) {
+					boolean b = (other[i].equals("null") || other[i].trim().length() == 0);
+					String name = b ? a + "" : other[i];
+					JGR.OTHERS.add(createRObject(name, other[++i], null, (!b)));
+					a++;
+				}
 			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			x = JGR.idleEval(".getFunctionsInWS()");
+			String[] functions;
+			if (!x.isNull())
+				JGR.FUNCTIONS.clear();
+			if (!x.isNull() && (functions = x.asStrings()) != null) {
+				int a = 1;
+				for (int i = 0; i < functions.length; i++) {
+					JGR.FUNCTIONS.add(createRObject(functions[i], "function", null, true));
+					a++;
+				}
+			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -427,33 +569,37 @@ public class RController {
 	public static Object[][] refreshPackages() {
 		Object[][] pkg = null;
 		Hashtable loadedP = new Hashtable();
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("sort(.packages(all.available=T))");
-		String[] res;
-		if (x != null && x.asStringArray() != null) {
-			REXP y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("(.packages())");
-			if (y != null && (res = y.asStringArray()) != null)
-				for (int i = 0; i < res.length; i++)
-					loadedP.put(res[i], dummy);
-			res = x.asStringArray();
-			pkg = new Object[res.length][4];
-			for (int i = 0; i < res.length; i++) {
-				pkg[i][2] = new String(res[i]);
-				try {
-					pkg[i][3] = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(
-							"packageDescription(\"" + res[i]
-									+ "\",fields=\"Title\")").asString();
-				} catch (Exception e) {
-					pkg[i][1] = "";
+		REXP x;
+		try {
+			x = JGR.eval("sort(.packages(all.available=T))");
+			String[] res;
+			if (!x.isNull() && x.asStrings() != null) {
+				REXP y = JGR.eval("(.packages())");
+				if (!y.isNull() && (res = y.asStrings()) != null)
+					for (int i = 0; i < res.length; i++)
+						loadedP.put(res[i], dummy);
+				res = x.asStrings();
+				pkg = new Object[res.length][4];
+				for (int i = 0; i < res.length; i++) {
+					pkg[i][2] = new String(res[i]);
+					try {
+						pkg[i][3] = JGR.eval("packageDescription(\"" + res[i] + "\",fields=\"Title\")").asString();
+					} catch (Exception e) {
+						pkg[i][1] = "";
+					}
+					pkg[i][0] = loadedP.containsKey(res[i]) ? (new Boolean(true)) : (new Boolean(false));
+					pkg[i][1] = new Boolean(false);
+					for (int d = 0; d < JGRPackageManager.defaultPackages.length; d++)
+						if (res[i].equals(JGRPackageManager.defaultPackages[d]) || JGRPackageManager.neededPackages.containsKey(res[i]))
+							pkg[i][1] = new Boolean(true);
 				}
-				pkg[i][0] = loadedP.containsKey(res[i]) ? (new Boolean(true))
-						: (new Boolean(false));
-				pkg[i][1] = new Boolean(false);
-				for (int d = 0; d < JGRPackageManager.defaultPackages.length; d++)
-					if (res[i].equals(JGRPackageManager.defaultPackages[d])
-							|| JGRPackageManager.neededPackages
-									.containsKey(res[i]))
-						pkg[i][1] = new Boolean(true);
 			}
+		} catch (REngineException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (REXPMismatchException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		return pkg;
 	}
@@ -472,24 +618,30 @@ public class RController {
 		String p = "";
 		if (o.getParent() != null && o.getParent().getType().equals("table"))
 			p = "," + o.getParent().getRName();
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(.getContent("
-				+ (o.getRName()) + p + "),silent=TRUE))");
-		String[] res;
-		if (x != null && (res = x.asStringArray()) != null
-				&& !res[0].startsWith("Error")) {
-			int a = 1;
-			for (int i = 0; i < res.length; i++) {
-				boolean b = (res[i].equals("null") || res[i].trim().length() == 0);
-				String name = b ? a + "" : res[i];
-							
-				RObject ro = createRObject(name, res[++i], o, (!b));
-				
-			
-				// if (c != null) c.add(ro);
-				if (ro != null)
-					cont.add(ro);
-				a++;
+		REXP x;
+		try {
+			x = JGR.eval("suppressWarnings(try(.getContent(" + (o.getRName()) + p + "),silent=TRUE))");
+			String[] res;
+			if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+				int a = 1;
+				for (int i = 0; i < res.length; i++) {
+					boolean b = (res[i].equals("null") || res[i].trim().length() == 0);
+					String name = b ? a + "" : res[i];
+
+					RObject ro = createRObject(name, res[++i], o, (!b));
+
+					// if (c != null) c.add(ro);
+					if (ro != null)
+						cont.add(ro);
+					a++;
+				}
 			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return cont;
 	}
@@ -507,43 +659,86 @@ public class RController {
 	 *            names(..) provides real names or not
 	 * @return new RObject
 	 */
-	public static RObject createRObject(String sx, String type, RObject parent,
-			boolean b) {
+	public static RObject createRObject(String sx, String type, RObject parent, boolean b) {
 		RObject ro = new RObject(sx, type, parent, b);
 		REXP y;
 		if (type.equals("data.frame")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("dim(" + (ro.getRName()) + ")");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("dim(" + y.asIntArray()[0] + ":" + y.asIntArray()[1]
-						+ ")");
+			try {
+				y =  JGR.eval("dim(" + (ro.getRName()) + ")");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("dim(" + y.asIntegers()[0] + ":" + y.asIntegers()[1] + ")");
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (type.equals("matrix")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("dim(" + (ro.getRName()) + ")");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("dim(" + y.asIntArray()[0] + ":" + y.asIntArray()[1]
-						+ ")");
+			try {
+				y =  JGR.eval("dim(" + (ro.getRName()) + ")");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("dim(" + y.asIntegers()[0] + ":" + y.asIntegers()[1] + ")");
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (type.equals("factor")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("length(levels(" + (ro.getRName()) + "))");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("levels: " + y.asIntArray()[0]);
+			try {
+				y =  JGR.eval("length(levels(" + (ro.getRName()) + "))");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("levels: " + y.asIntegers()[0]);
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (type.equals("list")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("length(" + (ro.getRName()) + ")");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("length: " + y.asIntArray()[0]);
+			try {
+				y =  JGR.eval("length(" + (ro.getRName()) + ")");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("length: " + y.asIntegers()[0]);
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (type.equals("table")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("length(dim(" + (ro.getRName()) + "))");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("dim: " + y.asIntArray()[0]);
+			try {
+				y =  JGR.eval("length(dim(" + (ro.getRName()) + "))");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("dim: " + y.asIntegers()[0]);
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (type.equals("function")) {
 			String fHelp = getFunHelp(ro.getRName());
 			if (fHelp != null) {
-				ro.setInfo("arguments: "+ fHelp.replaceFirst(ro.getRName(), "").replaceAll("<br>", ""));
+				ro.setInfo("arguments: " + fHelp.replaceFirst(ro.getRName(), "").replaceAll("<br>", ""));
 			}
-		}
-		else if (parent != null && parent.getType().equals("table")) {
-			y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("length(dimnames(" + parent.getRName() + ")[[\""
-					+ ro.getName() + "\"]])");
-			if (y != null && y.asIntArray() != null)
-				ro.setInfo("cats: " + y.asIntArray()[0]);
+		} else if (parent != null && parent.getType().equals("table")) {
+			try {
+				y =  JGR.eval("length(dimnames(" + parent.getRName() + ")[[\"" + ro.getName() + "\"]])");
+				if (!y.isNull() && y.asIntegers() != null)
+					ro.setInfo("cats: " + y.asIntegers()[0]);
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return ro;
 	}
@@ -559,41 +754,98 @@ public class RController {
 	 */
 	public static RModel createRModel(String sx, String type) {
 		RModel m = new RModel(sx, type);
-		REXP y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("summary(" + sx + ")[[\"r.squared\"]]");
+		REXP y;
 		double[] res;
-		if (y != null && (res = y.asDoubleArray()) != null)
-			m.setRsquared(res[0]);
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("AIC(" + sx + ")");
-		if (y != null && (res = y.asDoubleArray()) != null)
-			m.setAic(res[0]);
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("deviance(" + sx + ")");
-		if (y != null && (res = y.asDoubleArray()) != null)
-			m.setDeviance(res[0]);
+		try {
+			y =  JGR.eval("summary(" + sx + ")[[\"r.squared\"]]");
+			if (!y.isNull() && (res = y.asDoubles()) != null)
+				m.setRsquared(res[0]);
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			y =  JGR.eval("AIC(" + sx + ")");
+			if (!y.isNull() && (res = y.asDoubles()) != null)
+				m.setAic(res[0]);
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			y =  JGR.eval("deviance(" + sx + ")");
+			if (!y.isNull() && (res = y.asDoubles()) != null)
+				m.setDeviance(res[0]);
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		int[] res1;
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("summary(" + sx + ")[[\"df\"]]");
-		if (y != null && (res1 = y.asIntArray()) != null)
-			m.setDf(res1[0]);
+		REXP x;
+		try {
+			x =  JGR.eval("summary(" + sx + ")[[\"df\"]]");
+			if (!x.isNull() && (res1 = x.asIntegers()) != null)
+				m.setDf(res1[0]);
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String[] res2;
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("family(" + sx + ")[[\"family\"]]");
-		if (y != null && (res2 = y.asStringArray()) != null)
-			m.setFamily(res2[0]);
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(capture.output(" + sx
-				+ "[[\"call\"]][[\"formula\"]])))"); // as.character((cm$call))
-		if (y != null && (res2 = y.asStringArray()) != null) {
-			String call = "";
-			for (int i = 0; i < res2.length; i++)
-				call += res2[i];
-			m.setCall(call);
+		REXP z;
+		try {
+			z = JGR.eval("family(" + sx + ")[[\"family\"]]");
+			if (!z.isNull() && (res2 = z.asStrings()) != null)
+				m.setFamily(res2[0]);
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(capture.output(" + sx
-				+ "[[\"call\"]][[\"data\"]])))"); // as.character((cm$call))
-		if (y != null && (res2 = y.asStringArray()) != null) {
-			String data = "";
-			for (int i = 0; i < res2.length; i++)
-				data += res2[i];
-			if (!data.trim().equals("NULL"))
-				m.setData(data);
-		}
+		try {
+			z = JGR.eval("suppressWarnings(try(capture.output(" + sx + "[[\"call\"]][[\"formula\"]])))");
+			if (!z.isNull() && (res2 = z.asStrings()) != null) {
+				String call = "";
+				for (int i = 0; i < res2.length; i++)
+					call += res2[i];
+				m.setCall(call);
+			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // as.character((cm$call))
+		try {
+			z = JGR.eval("suppressWarnings(try(capture.output(" + sx + "[[\"call\"]][[\"data\"]])))");
+			if (!z.isNull() && (res2 = z.asStrings()) != null) {
+				String data = "";
+				for (int i = 0; i < res2.length; i++)
+					data += res2[i];
+				if (!data.trim().equals("NULL"))
+					m.setData(data);
+			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // as.character((cm$call))
 		return m;
 	}
 
@@ -616,25 +868,24 @@ public class RController {
 		String res[] = null;
 		REXP x;
 		try {
-			x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval("try(deparse(args(" + s + ")),silent=T)");
+			x = JGR.idleEval("try(deparse(args(" + s + ")),silent=T)");
+			if (!x.isNull() && (res = x.asStrings()) != null) {
+				tip = "";
+				int l = -1;
+				for (int i = 0; i < (l = res.length); i++) {
+					if ((l - 2) == i && !res[i].trim().equals("NULL"))
+						tip += res[i].replaceFirst("function", s);
+					else if (!res[i].trim().equals("NULL"))
+						tip += res[i].replaceFirst("function", s) + "<br>";
+				}
+				tip += "";
+			} else
+				return null;
+			if (tip.trim().length() == 0)
+				return null;
 		} catch (Exception e) {
 			return null;
 		}
-		if (x != null && (res = x.asStringArray()) != null) {
-			tip = "";
-			int l = -1;
-			for (int i = 0; i < (l = res.length); i++)
-			{
-				if ((l - 2) == i && !res[i].trim().equals("NULL"))
-					tip += res[i].replaceFirst("function", s);
-				else if (!res[i].trim().equals("NULL"))
-					tip += res[i].replaceFirst("function", s) + "<br>";
-			}
-			tip += "";
-		} else
-			return null;
-		if (tip.trim().length() == 0)
-			return null;
 		return (tip.indexOf("Error") >= 0) ? null : tip;
 	}
 
@@ -652,39 +903,45 @@ public class RController {
 		String res[] = null;
 		REXP x;
 		try {
-			x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval("suppressWarnings(try(capture.output(summary("
-					+ (o.getRName()) + ")),silent=TRUE))");
+			x = JGR.idleEval("suppressWarnings(try(capture.output(summary(" + (o.getRName()) + ")),silent=TRUE))");
+			if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+				// tip = "<html><pre>";
+				int l = -1;
+				for (int i = ((l = res.length) > 10 ? 10 : l) - 1; i >= 0; i--)
+					if (i < l - 1)
+						tip = res[i] + "<br>" + tip;
+					else
+						tip = res[i] + "       ";
+				tip = "<html><pre>" + tip + (l > 10 ? "..." : "") + "</pre></html>";
+			} else
+				return null;
 		} catch (Exception e) {
 			return null;
 		}
-		if (x != null && (res = x.asStringArray()) != null
-				&& !res[0].startsWith("Error")) {
-			// tip = "<html><pre>";
-			int l = -1;
-			for (int i = ((l = res.length) > 10 ? 10 : l) - 1; i >= 0; i--)
-				if (i < l - 1)
-					tip = res[i] + "<br>" + tip;
-				else
-					tip = res[i] + "       ";
-			tip = "<html><pre>" + tip + (l > 10 ? "..." : "") + "</pre></html>";
-		} else
-			return null;
 		return tip.startsWith("<html><pre>Error") ? null : tip;
 	}
 
 	public static void newFunction(RObject o) {
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(capture.output("
-				+ o.getRName() + "),silent=TRUE))");
-		String[] res;
-		if (x != null && (res = x.asStringArray()) != null) {
-			StringBuffer sb = new StringBuffer();
-			for (int i = 0; i < res.length; i++)
-				if (i == 0)
-					sb.append(o.getRName() + " <- " + res[i] + "\n");
-				else
-					sb.append(res[i] + "\n");
-			if (sb.length() > 0)
-				new Editor().setText(sb);
+		REXP x;
+		try {
+			x = JGR.eval("suppressWarnings(try(capture.output(" + o.getRName() + "),silent=TRUE))");
+			String[] res;
+			if (!x.isNull() && (res = x.asStrings()) != null) {
+				StringBuffer sb = new StringBuffer();
+				for (int i = 0; i < res.length; i++)
+					if (i == 0)
+						sb.append(o.getRName() + " <- " + res[i] + "\n");
+					else
+						sb.append(res[i] + "\n");
+				if (sb.length() > 0)
+					new Editor().setText(sb);
+			}
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -700,38 +957,53 @@ public class RController {
 		cvs.setName(o.getRName());
 		if (o.getType().equals("function")) {
 			// thats not really the best way to do this but the easiest
-			REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(capture.output("
-					+ o.getRName() + "),silent=TRUE))");
-			String[] res;
-			if (x != null && (res = x.asStringArray()) != null) {
-				StringBuffer sb = new StringBuffer();
-				for (int i = 0; i < res.length; i++)
-					if (i == 0)
-						sb.append(o.getRName() + " <- " + res[i] + "\n");
-					else
-						sb.append(res[i] + "\n");
-				if (sb.length() > 0)
-					new Editor().setText(sb);
+			REXP x;
+			try {
+				x = JGR.eval("suppressWarnings(try(capture.output(" + o.getRName() + "),silent=TRUE))");
+				String[] res;
+				if (!x.isNull() && (res = x.asStrings()) != null) {
+					StringBuffer sb = new StringBuffer();
+					for (int i = 0; i < res.length; i++)
+						if (i == 0)
+							sb.append(o.getRName() + " <- " + res[i] + "\n");
+						else
+							sb.append(res[i] + "\n");
+					if (sb.length() > 0)
+						new Editor().setText(sb);
+				}
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			return null;
 		} else {
-			REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(attributes("
-					+ o.getRName() + ")[[\"row.names\"]],silent=TRUE))");
-			String[] res;
-			if (x != null && (res = x.asStringArray()) != null
-					&& !res[0].startsWith("Error")) {
-				SVar v = newVar(cvs, "row.names", x.asStringArray());
-				cvs.add(v);
-			}
-			Iterator i = createContent(o, null).iterator();
-			if (!i.hasNext())
-				cvs.add(createSVar(cvs, o));
-			while (i.hasNext()) {
-				RObject o2 = (RObject) i.next();
-				cvs.add(createSVar(cvs, o2));
+			REXP x;
+			try {
+				x = JGR.eval("suppressWarnings(try(attributes(" + o.getRName() + ")[[\"row.names\"]],silent=TRUE))");
+				String[] res;
+				if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+					SVar v = newVar(cvs, "row.names", x.asStrings());
+					cvs.add(v);
+				}
+				Iterator i = createContent(o, null).iterator();
+				if (!i.hasNext())
+					cvs.add(createSVar(cvs, o));
+				while (i.hasNext()) {
+					RObject o2 = (RObject) i.next();
+					cvs.add(createSVar(cvs, o2));
+				}
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (REXPMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		
+
 		return cvs;
 	}
 
@@ -746,36 +1018,40 @@ public class RController {
 	 */
 	private static SVar createSVar(SVarSet cvs, RObject o) {
 
-		REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(" + o.getRName()
-				+ ",silent=TRUE))");
-				
-								
-		if (x != null && x.asStringArray() != null
-				&& x.asStringArray().length > 0
-				&& x.asStringArray()[0].startsWith("Error"))
-			return null;
+		REXP x;
 		SVar v = null;
-		if (o.getType().equals("factor")) {
-			
-			REXP y = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(levels(" + o.getRName()+ "),silent=TRUE))");
-			
-			x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("suppressWarnings(try(as.integer(" + o.getRName()
-				+ "),silent=TRUE))");
-		
-			if (y != null && x != null && y.asStringArray() != null	&& x.asIntArray() != null) {
-					int id[] = new int[x.asIntArray().length];
+		try {
+			x = JGR.eval("suppressWarnings(try(" + o.getRName() + ",silent=TRUE))");
+
+			if (!x.isNull() && x.asStrings() != null && x.asStrings().length > 0 && x.asStrings()[0].startsWith("Error"))
+				return null;
+			if (o.getType().equals("factor")) {
+
+				REXP y = JGR.eval("suppressWarnings(try(levels(" + o.getRName() + "),silent=TRUE))");
+
+				REXP z = JGR.eval("suppressWarnings(try(as.integer(" + o.getRName() + "),silent=TRUE))");
+
+				if (!z.isNull() && !x.isNull() && y.asStrings() != null && z.asIntegers() != null) {
+					int id[] = new int[z.asIntegers().length];
 					for (int i = 0; i < id.length; i++)
-						id[i] = x.asIntArray()[i];
-					v = newVar(cvs, o.getName(), id , y.asStringArray());
-			}
-					
-		} else if (o.getType().equals("character")) {
-			if (x != null && x.asStringArray() != null)
-				v = newVar(cvs, o.getName(), x.asStringArray());
-		} else if (x != null && x.asIntArray() != null)
-			v = newVar(cvs, o.getName(), x.asIntArray());
-		else if (x != null && x.asDoubleArray() != null)
-			v = newVar(cvs, o.getName(), x.asDoubleArray());
+						id[i] = z.asIntegers()[i];
+					v = newVar(cvs, o.getName(), id, y.asStrings());
+				}
+
+			} else if (o.getType().equals("character")) {
+				if (!x.isNull() && x.asStrings() != null)
+					v = newVar(cvs, o.getName(), x.asStrings());
+			} else if (!x.isNull() && x.asIntegers() != null)
+				v = newVar(cvs, o.getName(), x.asIntegers());
+			else if (!x.isNull() && x.asDoubles() != null)
+				v = newVar(cvs, o.getName(), x.asDoubles());
+		} catch (REngineException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (REXPMismatchException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return v;
 	}
 
@@ -861,14 +1137,13 @@ public class RController {
 	 * @param d levels (d[0]=ID 1, d[1]=ID 2, ...) @return SVar
 	 */
 	public static SVar newVar(SVarSet cvs, String name, int[] ix, String[] d) {
-	
+
 		if (ix == null)
 			return null;
 		if (d == null)
 			return newVar(cvs, name, ix);
 		if (Global.DEBUG > 0)
-			System.out.println("newVar: int[" + ix.length + "] + levels["
-					+ d.length + "]");
+			System.out.println("newVar: int[" + ix.length + "] + levels[" + d.length + "]");
 		if (cvs.count() > 0 && cvs.at(0).size() != ix.length) {
 			int[] n = new int[cvs.at(0).size()];
 			for (int i = 0; i < d.length && i < n.length; i++)
@@ -913,8 +1188,8 @@ public class RController {
 
 	private static boolean setName(String name) {
 		try {
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(name + "<- jgrtemp");
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm(jgrtemp)");
+			JGR.eval(name + "<- jgrtemp");
+			JGR.eval("rm(jgrtemp)");
 			return true;
 		} catch (Exception e) {
 			new org.rosuda.JGR.util.ErrorMsg(e);
@@ -933,8 +1208,8 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
+			long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -953,8 +1228,8 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(0)).cont);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
+			long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(0)).cont);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -976,12 +1251,12 @@ public class RController {
 			int[] ids = new int[((SVarFact) vs.at(0)).cont.length];
 			for (int z = 0; z < ids.length; z++)
 				ids[z] = ((SVarFact) vs.at(0)).cont[z] + 1;
-			long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(ids);
-			long c = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutString("factor");
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
-			long levels = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(((SVarFact) vs.at(0)).cats);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
+			long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(ids);
+			long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("factor");
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
+			long levels = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(((SVarFact) vs.at(0)).cats);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1000,8 +1275,8 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(0)).getContent());
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
+			long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(0)).getContent());
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1033,10 +1308,10 @@ public class RController {
 							rownames[a] = o.toString();
 						else {
 							rownames[a] = (length - 1) + ""; // Just a
-																// workaround to
-																// avoid
-																// duplicate
-																// row.names
+							// workaround to
+							// avoid
+							// duplicate
+							// row.names
 							length++;
 						}
 					}
@@ -1047,22 +1322,17 @@ public class RController {
 					break;
 				}
 
-			
 			long contlist[] = new long[vs.count()];
 			String[] names = new String[vs.count()];
 			for (int i = 0; i < vs.count(); i++) {
 				names[i] = vs.at(i).getName();
-				if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarDouble")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni()
-							.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+				if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarInt")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(i)).cont);
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(i)).cont);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarFact")) {
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
 					int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
 					String[] cats = ((SVarFact) vs.at(i)).cats;
 					boolean NAS = false;
@@ -1082,35 +1352,33 @@ public class RController {
 						cats = newcats;
 						NAS = false;
 					}
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(ids);
-					long c = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutString("factor");
-					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
-					long levels = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(cats);
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(ids);
+					long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("factor");
+					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
+					long levels = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(cats);
 
-					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
+					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarObj")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(i))
-							.getContent());
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarObj")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(i)).getContent());
 					contlist[i] = v;
 				}
 			}
 
-			long xp1 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutVector(contlist);
-			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(names);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "names", xp2);
+			long xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutVector(contlist);
+			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(names);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "names", xp2);
 
 			if (!rnames)
 				for (int i = 1; i <= rownames.length; i++)
 					rownames[i - 1] = i + "";
-			long xp3 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(rownames);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "row.names", xp3);
+			long xp3 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(rownames);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "row.names", xp3);
 
-			long c = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutString("data.frame");
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "class", c);
+			long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("data.frame");
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "class", c);
 
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
 
 			if (rnames)
 				vs.insert(rnn, rn);
@@ -1134,11 +1402,9 @@ public class RController {
 			Object mcont;
 			int vlength = vs.at(0).size();
 			boolean isInt = false;
-			if (vs.at(0).getClass().getName().equals(
-					"org.rosuda.ibase.SVarDouble"))
+			if (vs.at(0).getClass().getName().equals("org.rosuda.ibase.SVarDouble"))
 				mcont = new double[vs.count() * vlength];
-			else if (vs.at(0).getClass().getName().equals(
-					"org.rosuda.ibase.SVarInt")) {
+			else if (vs.at(0).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
 				mcont = new int[vs.count() * vlength];
 				isInt = true;
 			} else
@@ -1147,43 +1413,41 @@ public class RController {
 			for (int i = 0; i < vs.count(); i++) {
 				names[i] = vs.at(i).getName();
 				if (isInt)
-					System.arraycopy(((SVarInt) vs.at(i)).cont, 0, mcont, i
-							* vlength, vlength);
+					System.arraycopy(((SVarInt) vs.at(i)).cont, 0, mcont, i * vlength, vlength);
 				else
-					System.arraycopy(((SVarDouble) vs.at(i)).cont, 0, mcont, i
-							* vlength, vlength);
+					System.arraycopy(((SVarDouble) vs.at(i)).cont, 0, mcont, i * vlength, vlength);
 			}
 
 			long xp1;
 			if (isInt)
-				xp1 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray((int[]) mcont);
+				xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray((int[]) mcont);
 			else
-				xp1 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutDoubleArray((double[]) mcont);
+				xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray((double[]) mcont);
 
 			long[] dimnames = new long[2];
 
-			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(names);
+			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(names);
 
 			String[] rownames = new String[vs.length()];
 			for (int i = 1; i <= rownames.length; i++)
 				rownames[i - 1] = i + "";
-			long xp3 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(rownames);
+			long xp3 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(rownames);
 
 			dimnames[0] = xp3;
 			dimnames[1] = xp2;
 
-			long xp4 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutVector(dimnames);
+			long xp4 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutVector(dimnames);
 
 			double[] dim = new double[] { vlength, vs.count() };
-			long xp5 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutDoubleArray(dim);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "dim", xp5);
+			long xp5 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(dim);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "dim", xp5);
 
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "dimnames", xp4);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "dimnames", xp4);
 
-			long c = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutString("matrix");
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "class", c);
+			long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("matrix");
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "class", c);
 
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1204,41 +1468,34 @@ public class RController {
 			String[] names = new String[vs.count()];
 			for (int i = 0; i < vs.count(); i++) {
 				names[i] = vs.at(i).getName();
-				if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarDouble")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni()
-							.rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
+				if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarDouble")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(i)).cont);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarInt")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(i)).cont);
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(((SVarInt) vs.at(i)).cont);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarFact")) {
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarFact")) {
 					int[] ids = new int[((SVarFact) vs.at(i)).cont.length];
 					for (int z = 0; z < ids.length; z++)
 						ids[z] = ((SVarFact) vs.at(i)).cont[z] + 1;
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutIntArray(ids);
-					long c = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutString("factor");
-					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
-					long levels = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni()
-							.rniPutStringArray(((SVarFact) vs.at(i)).cats);
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray(ids);
+					long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("factor");
+					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "class", c);
+					long levels = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(((SVarFact) vs.at(i)).cats);
 
-					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
+					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(v, "levels", levels);
 					contlist[i] = v;
-				} else if (vs.at(i).getClass().getName().equals(
-						"org.rosuda.ibase.SVarObj")) {
-					long v = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(i))
-							.getContent());
+				} else if (vs.at(i).getClass().getName().equals("org.rosuda.ibase.SVarObj")) {
+					long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(((SVarObj) vs.at(i)).getContent());
 					contlist[i] = v;
 				}
 			}
 
-			long xp1 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutVector(contlist);
-			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniPutStringArray(names);
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniSetAttr(xp1, "names", xp2);
+			long xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutVector(contlist);
+			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(names);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "names", xp2);
 
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
+			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
 			return setName(vs.getName());
 		} catch (Exception e) {
 			new ErrorMsg(e);

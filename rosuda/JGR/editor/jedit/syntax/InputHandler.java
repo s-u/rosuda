@@ -1,10 +1,8 @@
 /*
- * InputHandler.java - Manages key bindings and executes actions
- * Copyright (C) 1999 Slava Pestov
- *
- * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
+ * InputHandler.java - Manages key bindings and executes actions Copyright (C)
+ * 1999 Slava Pestov You may use and modify this package for any purpose.
+ * Redistribution is permitted, in both source and binary form, provided that
+ * this notice remains intact in all source distributions of this package.
  */
 
 package jedit.syntax;
@@ -21,14 +19,12 @@ import java.util.Hashtable;
 import javax.swing.JPopupMenu;
 import javax.swing.text.BadLocationException;
 
-import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 
 /**
  * An input handler converts the user's key strokes into concrete actions. It
  * also takes care of macro recording and action repetition.
  * <p>
- * 
  * This class provides all the necessary support code for an input handler, but
  * doesn't actually do any key binding logic. It is up to the implementations of
  * this class to do so.
@@ -111,17 +107,17 @@ public abstract class InputHandler extends KeyAdapter {
 	public static final ActionListener REPEAT = new repeat();
 
 	public static final ActionListener TOGGLE_RECT = new toggle_rect();
-	
+
 	public static final ActionListener SELECT_ALL = new select_all();
-	
+
 	public static final ActionListener CUT = new cut();
-	
+
 	public static final ActionListener COPY = new copy();
-	
+
 	public static final ActionListener PASTE = new paste();
-	
+
 	public static final ActionListener UNDO = new undo();
-	
+
 	public static final ActionListener REDO = new redo();
 
 	// Default action
@@ -684,19 +680,20 @@ public abstract class InputHandler extends KeyAdapter {
 			}
 
 			textArea.setSelectedText("\n");
-			
-			if(JGRPrefs.AUTOTAB){
+
+			if (JGRPrefs.AUTOTAB) {
 				int curLine = textArea.getCaretLine();
-				if(curLine==0) return;
-				String lastLine =textArea.getLineText(curLine-1);
-				for(int i=0;i<lastLine.length();i++){
-					if(lastLine.charAt(i)=='\t'){
+				if (curLine == 0)
+					return;
+				String lastLine = textArea.getLineText(curLine - 1);
+				for (int i = 0; i < lastLine.length(); i++) {
+					if (lastLine.charAt(i) == '\t') {
 						textArea.overwriteSetSelectedText("\t");
-					}else
+					} else
 						break;
-					
+
 				}
-				if(lastLine.charAt(lastLine.length()-1)=='{')
+				if (lastLine.charAt(lastLine.length() - 1) == '{')
 					textArea.overwriteSetSelectedText("\t");
 			}
 		}
@@ -710,67 +707,66 @@ public abstract class InputHandler extends KeyAdapter {
 				textArea.getToolkit().beep();
 				return;
 			}
-			if(!JGRPrefs.AUTOTAB)
+			if (!JGRPrefs.AUTOTAB)
 				textArea.overwriteSetSelectedText("\t");
-			else{
+			else {
 				int curLine = textArea.getSelectionStartLine();
-				int offset =textArea.getSelectionStart(curLine)-textArea.getLineStartOffset(curLine);
+				int offset = textArea.getSelectionStart(curLine) - textArea.getLineStartOffset(curLine);
 				String curLineText = textArea.getLineText(curLine);
-				if(curLine==0){
+				if (curLine == 0) {
 					textArea.overwriteSetSelectedText("\t");
 					return;
-					
+
 				}
-				
-				boolean isWhitespace=true;
-				for(int i=0;i<offset;i++){
-					if(curLineText.charAt(i)!='\t' && curLineText.charAt(i)!=' '){
-						isWhitespace=false;
+
+				boolean isWhitespace = true;
+				for (int i = 0; i < offset; i++) {
+					if (curLineText.charAt(i) != '\t' && curLineText.charAt(i) != ' ') {
+						isWhitespace = false;
 						break;
 					}
 				}
-				 
-				int numTabs = leadingTabs(curLine-1,textArea);
+
+				int numTabs = leadingTabs(curLine - 1, textArea);
 				int tabsUpToCaret = 0;
-				for(int i=0;i<offset;i++)
-					if(curLineText.charAt(i)=='\t')
-						tabsUpToCaret++;			
-				if(!isWhitespace || numTabs==0 || numTabs<=tabsUpToCaret){
+				for (int i = 0; i < offset; i++)
+					if (curLineText.charAt(i) == '\t')
+						tabsUpToCaret++;
+				if (!isWhitespace || numTabs == 0 || numTabs <= tabsUpToCaret) {
 					textArea.overwriteSetSelectedText("\t");
 					return;
 				}
 				textArea.overwriteSetSelectedText("");
 				curLineText = textArea.getLineText(curLine);
-				int lastWhite=0;
-				for(int i=0;i<curLineText.length();i++){
-					if(!Character.isWhitespace(curLineText.charAt(i)))
+				int lastWhite = 0;
+				for (int i = 0; i < curLineText.length(); i++) {
+					if (!Character.isWhitespace(curLineText.charAt(i)))
 						break;
 					else
 						lastWhite++;
 				}
 
 				textArea.setCaretPosition(textArea.getLineStartOffset(curLine));
-				textArea.select(textArea.getLineStartOffset(curLine), 
-						textArea.getLineStartOffset(curLine)+lastWhite);
-				for(int i=0;i<numTabs;i++)
+				textArea.select(textArea.getLineStartOffset(curLine), textArea.getLineStartOffset(curLine) + lastWhite);
+				for (int i = 0; i < numTabs; i++)
 					textArea.overwriteSetSelectedText("\t");
 			}
 		}
-		
-		public int leadingTabs(int line, JEditTextArea textArea){
-			int counter=0;
+
+		public int leadingTabs(int line, JEditTextArea textArea) {
+			int counter = 0;
 			String lineText = textArea.getLineText(line);
-			for(int i=0;i<lineText.length();i++){
-				if(lineText.charAt(i)=='\t')
+			for (int i = 0; i < lineText.length(); i++) {
+				if (lineText.charAt(i) == '\t')
 					counter++;
 				else
 					break;
 			}
 			return counter;
 		}
-		
+
 	}
-	
+
 	public static class select_all implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
@@ -900,35 +896,35 @@ public abstract class InputHandler extends KeyAdapter {
 			textArea.setOverwriteEnabled(!textArea.isOverwriteEnabled());
 		}
 	}
-	
+
 	public static class undo implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 			textArea.undo();
 		}
 	}
-	
+
 	public static class redo implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 			textArea.redo();
 		}
 	}
-	
+
 	public static class cut implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 			textArea.cut();
 		}
 	}
-	
+
 	public static class copy implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
 			textArea.copy();
 		}
 	}
-	
+
 	public static class paste implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);

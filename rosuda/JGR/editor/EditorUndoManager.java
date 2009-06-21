@@ -18,6 +18,10 @@ import org.rosuda.JGR.toolkit.IconButton;
 
 public  class EditorUndoManager extends UndoManager {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1713007948262571134L;
 	/** Undo button from toobar*/
     public IconButton undoButton;
     /** Redo button from toobar*/

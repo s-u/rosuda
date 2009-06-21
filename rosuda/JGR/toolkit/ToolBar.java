@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -14,12 +15,15 @@ import javax.swing.JPanel;
 /**
  * ToolBar - icon toolbar for console and editor
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class ToolBar extends JPanel {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1556706462420224300L;
 
 	/** New button */
 	public IconButton newButton;
@@ -76,8 +80,7 @@ public class ToolBar extends JPanel {
 	 *            show progresslabel or not (currently it is not recommended to
 	 *            use it
 	 */
-	public ToolBar(ActionListener al, boolean useStopButton,
-			ProgressLabel progress) {
+	public ToolBar(ActionListener al, boolean useStopButton, ProgressLabel progress) {
 		this.setLayout(new BorderLayout());
 
 		JPanel b = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -90,13 +93,10 @@ public class ToolBar extends JPanel {
 		redoButton = undoMgr.redoButton;
 		cutButton = new IconButton("/icons/cut.png", "Cut", al, "cut");
 		copyButton = new IconButton("/icons/copy.png", "Copy", al, "copy");
-		pasteButton = new IconButton("/icons/paste.png", "Paste", al,
-				"paste");
-		findButton = new IconButton("/icons/find.png", "Search", al,
-				"search");
+		pasteButton = new IconButton("/icons/paste.png", "Paste", al, "paste");
+		findButton = new IconButton("/icons/find.png", "Search", al, "search");
 		if (useStopButton)
-			stopButton = new IconButton("/icons/stop.png", "Stop", al,
-					"stop");
+			stopButton = new IconButton("/icons/stop.png", "Stop", al, "stop");
 		helpButton = new IconButton("/icons/help.png", "Help", al, "help");
 
 		b.add(newButton);
@@ -119,14 +119,17 @@ public class ToolBar extends JPanel {
 		this.add(b, BorderLayout.WEST);
 		if (progress != null) {
 			progress.setVisible(true);
-			this
-					.add(
-							/* new JPanel(new FlowLayout(FlowLayout.LEFT)).add( */progress/* ) */,
-							BorderLayout.EAST);
+			this.add(
+			/* new JPanel(new FlowLayout(FlowLayout.LEFT)).add( */progress/* ) */, BorderLayout.EAST);
 		}
 	}
 
 	class Spacer extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7967683127793545620L;
+
 		public Spacer(int width) {
 			this.setMinimumSize(new Dimension(width, 0));
 			this.setMaximumSize(new Dimension(width, 0));

@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.event.ActionListener;
 
@@ -14,12 +15,15 @@ import javax.swing.undo.UndoableEdit;
 /**
  * InsertRemoveUndoManager - undo only insertion and remove events.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
 public class InsertRemoveUndoManager extends UndoManager {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8704187599256596844L;
 
 	/** Undo button from toobar */
 	public IconButton undoButton;
@@ -45,8 +49,7 @@ public class InsertRemoveUndoManager extends UndoManager {
 	 * Undo an insertion or remove event.
 	 */
 	public void undo() {
-		while (this.editToBeUndone().getPresentationName().equals(
-				UIManager.getString("AbstractDocument.styleChangeText")))
+		while (this.editToBeUndone().getPresentationName().equals(UIManager.getString("AbstractDocument.styleChangeText")))
 			super.undo();
 		super.undo();
 		if (this.editToBeUndone() == null)
@@ -60,12 +63,7 @@ public class InsertRemoveUndoManager extends UndoManager {
 	public void redo() {
 		super.redo();
 		while (this.editToBeRedone() != null
-				&& this
-						.editToBeRedone()
-						.getPresentationName()
-						.equals(
-								UIManager
-										.getString("AbstractDocument.styleChangeText")))
+				&& this.editToBeRedone().getPresentationName().equals(UIManager.getString("AbstractDocument.styleChangeText")))
 			super.redo();
 		if (this.editToBeRedone() == null)
 			redoButton.setEnabled(false);

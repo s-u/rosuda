@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -27,8 +28,6 @@ import org.rosuda.JGR.toolkit.FunctionList;
 import org.rosuda.JGR.toolkit.ModelBrowserTable;
 import org.rosuda.JGR.toolkit.ObjectBrowserTree;
 import org.rosuda.JGR.util.ErrorMsg;
-
-import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
@@ -37,13 +36,15 @@ import org.rosuda.ibase.toolkit.TJFrame;
  * browser showing the R-workspace: Datasets, and other objects as a tree,
  * models in a table for sorting and comparing them, functions as a list.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
-public class JGRObjectManager extends TJFrame implements ActionListener,
-		MouseListener {
+public class JGRObjectManager extends TJFrame implements ActionListener, MouseListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6566452668105514588L;
 
 	private final JButton close = new JButton("Close");
 
@@ -65,8 +66,8 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 	private FunctionList fBrowser;
 
 	private final JTabbedPane browsers = new JTabbedPane();
-			
-			private static JGRObjectManager instance;
+
+	private static JGRObjectManager instance;
 
 	/** Tooltip showing the summary for selected object */
 	public Popup summary = null;
@@ -165,7 +166,7 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 		this.setSize(new Dimension(400, 500));
 		this.setLocation(this.getLocation().x + 400, 10);
 	}
-			
+
 	public static void showInstance() {
 		if (instance == null) {
 			instance = new JGRObjectManager();
@@ -231,9 +232,7 @@ public class JGRObjectManager extends TJFrame implements ActionListener,
 			refresh();
 		else if (cmd == "savedata")
 			try {
-				((ObjectBrowserTree) ((JScrollPane) browsers
-						.getSelectedComponent()).getViewport().getComponent(0))
-						.saveData();
+				((ObjectBrowserTree) ((JScrollPane) browsers.getSelectedComponent()).getViewport().getComponent(0)).saveData();
 			} catch (Exception ex) {
 				new ErrorMsg(ex);
 			}

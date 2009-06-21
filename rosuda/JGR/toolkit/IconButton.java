@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Dimension;
 import java.awt.event.ActionListener;
@@ -16,12 +17,15 @@ import javax.swing.JButton;
 /**
  * IconButton - special button with an icon for JGR toolbars.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class IconButton extends JButton implements MouseListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 999558047052505650L;
 
 	/**
 	 * Create a button whith icon on it.
@@ -35,8 +39,7 @@ public class IconButton extends JButton implements MouseListener {
 	 * @param cmd
 	 *            ActionCommand
 	 */
-	public IconButton(String iconUrl, String tooltip, ActionListener al,
-			String cmd) {
+	public IconButton(String iconUrl, String tooltip, ActionListener al, String cmd) {
 		ImageIcon icon = null;
 		try {
 			icon = new ImageIcon(getClass().getResource(iconUrl));

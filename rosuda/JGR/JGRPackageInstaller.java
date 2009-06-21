@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Color;
 import java.awt.Component;
@@ -17,7 +18,6 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -28,20 +28,21 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
-
-import org.rosuda.ibase.toolkit.EzMenu;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
 /**
  * JGRPackageInstaller - implementation of a simple package installer widget.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class JGRPackageInstaller extends TJFrame implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3654839767863743685L;
 
 	private String[] packages = null;
 
@@ -54,7 +55,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 	private String type = "binaries";
 
 	private final String current = RController.getCurrentPackages();
-	
+
 	private static JGRPackageInstaller instance;
 
 	/**
@@ -95,8 +96,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		gbc.insets = new Insets(2, 2, 2, 2);
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		this.getContentPane().add(
-				new JScrollPane(pkgList = new JList(packages)), gbc);
+		this.getContentPane().add(new JScrollPane(pkgList = new JList(packages)), gbc);
 		gbc.gridy = 1;
 		gbc.weightx = 0.0;
 		gbc.weighty = 0.0;
@@ -111,7 +111,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		this.setSize(200, 400);
 		this.setResizable(false);
 	}
-	
+
 	public void refresh(String[] pkgs, String type) {
 		this.type = type;
 		packages = pkgs;
@@ -123,7 +123,7 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		instance = null;
 		super.dispose();
 	}
-	
+
 	private void installPkg() {
 		String destDir = null;
 		for (int i = 0; i < JGR.RLIBS.length; i++)
@@ -148,15 +148,13 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				System.arraycopy(JGR.RLIBS, 0, libs, 1, JGR.RLIBS.length);
 				JGR.RLIBS = libs;
 				JGRPrefs.writePrefs(true);
-				((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(".libPaths(\"" + destDir + "\")");
+				((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval(".libPaths(\"" + destDir + "\")");
 			}
 		}
 		if (destDir == null) {
-			JOptionPane
-					.showMessageDialog(
-							this,
-							"JGR was unable to write to the library directory.\nPlease change your library path or get sufficient rights.",
-							"Permisson denied", JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog(this,
+					"JGR was unable to write to the library directory.\nPlease change your library path or get sufficient rights.",
+					"Permisson denied", JOptionPane.OK_OPTION);
 			return;
 		}
 		Object[] instPkgs = pkgList.getSelectedValues();
@@ -166,13 +164,10 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				cmd += "\"" + instPkgs[i] + "\",";
 			cmd += "\"" + instPkgs[instPkgs.length - 1] + "\")";
 			if (type.equals("binaries") && JGRPrefs.isMac)
-				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\""
-						+ destDir
-						+ "\",type=\"mac.binary\");.refreshHelpFiles()", true);
+				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + destDir + "\",type=\"mac.binary\");.refreshHelpFiles()", true);
 			// JGR.MAINRCONSOLE.execute("install.packages("+cmd+",\""+destDir+"\",contriburl=contrib.url(getOption(\"CRAN\"),type=\"mac.binary\"))");
 			else
-				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\""
-						+ destDir + "\");.refreshHelpFiles()", true);
+				JGR.MAINRCONSOLE.executeLater("install.packages(" + cmd + ",\"" + destDir + "\");.refreshHelpFiles()", true);
 		}
 	}
 
@@ -200,31 +195,35 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 		else if (cmd == "install")
 			installPkg();
 	}
-	
-	public static void instAndDisplay(String[] tpkgs, String ttype){
+
+	public static void instAndDisplay(String[] tpkgs, String ttype) {
 		final String[] pkgs = tpkgs;
 		final String type = ttype;
 		Runnable doWork = new Runnable() {
-		    public void run() { 
+			public void run() {
 				if (instance == null) {
-					instance = new JGRPackageInstaller(pkgs,type);
+					instance = new JGRPackageInstaller(pkgs, type);
 				} else {
 					instance.refresh(pkgs, type);
 				}
-		    	instance.setVisible(true);
-		    }
+				instance.setVisible(true);
+			}
 		};
 		SwingUtilities.invokeLater(doWork);
 	}
 
 	class PkgCellRenderer extends JLabel implements ListCellRenderer {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8274314191764454898L;
+
 		public PkgCellRenderer() {
 			setOpaque(true);
 		}
 
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
+		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			setText(value.toString());
 			if (current.equals(value.toString())) {
 				setBackground(isSelected ? Color.blue : Color.lightGray);

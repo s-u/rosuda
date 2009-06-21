@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -44,13 +45,15 @@ import org.rosuda.JGR.util.TableSorter;
 /**
  * ModelBrowserTable - show models, and provide possibility to compare them
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
-public class ModelBrowserTable extends JTable implements MouseListener,
-		DragGestureListener, DragSourceListener {
+public class ModelBrowserTable extends JTable implements MouseListener, DragGestureListener, DragSourceListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7841580144147512452L;
 
 	private Vector models;
 
@@ -88,8 +91,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		filter = new FilterPanel(this);
 
 		dragSource = new DragSource();
-		dragSource.createDefaultDragGestureRecognizer(this,
-				DnDConstants.ACTION_COPY, this);
+		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
 
 		this.addMouseListener(this);
 	}
@@ -113,9 +115,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			objmgr.summary.hide();
 		if (e.isAltDown()) {
 			objmgr.setWorking(true);
-			JToolTip call = new JToolTip();
-			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
-					.rowAtPoint(e.getPoint())));
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
 			if (m == null || m.getToolTip().trim().length() == 0)
 				return null;
 			String tip = m.getToolTip();
@@ -135,15 +135,12 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 	 * provide the R-call.
 	 */
 	public void dragGestureRecognized(DragGestureEvent evt) {
-		RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
-				.rowAtPoint(evt.getDragOrigin())));
+		RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(evt.getDragOrigin())));
 		if (m == null || m.getCall().trim().length() == 0)
 			return;
 
-		Transferable t = new java.awt.datatransfer.StringSelection(m.getName()
-				+ " <- " + m.getTypeName() + "(" + m.getCall()
-				+ (m.getFamily() != null ? (",family=" + m.getFamily()) : "")
-				+ (m.getData() != null ? (",data=" + m.getData()) : "") + ")");
+		Transferable t = new java.awt.datatransfer.StringSelection(m.getName() + " <- " + m.getTypeName() + "(" + m.getCall()
+				+ (m.getFamily() != null ? (",family=" + m.getFamily()) : "") + (m.getData() != null ? (",data=" + m.getData()) : "") + ")");
 		dragSource.startDrag(evt, DragSource.DefaultCopyDrop, t, this);
 	}
 
@@ -212,8 +209,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		if (e.isPopupTrigger()) {
 			objmgr.setWorking(true);
 			JToolTip call = new JToolTip();
-			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
-					.rowAtPoint(e.getPoint())));
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
 			if (m == null || m.getToolTip().trim().length() == 0)
 				return;
 			String tip = m.getToolTip();
@@ -224,8 +220,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			call.setTipText(m.getToolTip());
 			Point p = e.getPoint();
 			SwingUtilities.convertPointToScreen(p, this);
-			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
-					call, p.x + 20, p.y + 25);
+			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this, call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
 			objmgr.setWorking(false);
 		}
@@ -238,8 +233,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		if (e.isPopupTrigger()) {
 			objmgr.setWorking(true);
 			JToolTip call = new JToolTip();
-			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this
-					.rowAtPoint(e.getPoint())));
+			RModel m = (RModel) fmodels.elementAt(sorter.modelIndex(this.rowAtPoint(e.getPoint())));
 			if (m == null || m.getToolTip().trim().length() == 0)
 				return;
 			String tip = m.getToolTip();
@@ -250,17 +244,20 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			call.setTipText(m.getToolTip());
 			Point p = e.getPoint();
 			SwingUtilities.convertPointToScreen(p, this);
-			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
-					call, p.x + 20, p.y + 25);
+			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this, call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
 			objmgr.setWorking(false);
 		}
 	}
 
-	private final String[] colnames = { "Name", "Data", "Type", "family", "df",
-			"r.squared", "aic", "deviance" };
+	private final String[] colnames = { "Name", "Data", "Type", "family", "df", "r.squared", "aic", "deviance" };
 
 	class ModelTableModel extends AbstractTableModel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1098695966813872521L;
 
 		public int getColumnCount() {
 			return colnames.length;
@@ -275,23 +272,25 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		}
 
 		public Object getValueAt(int row, int col) {
-			return (((RModel) fmodels.elementAt(row)).getInfo())
-					.elementAt(col);
+			return (((RModel) fmodels.elementAt(row)).getInfo()).elementAt(col);
 		}
 
 		public Class getColumnClass(int col) {
 			int i = 0;
-			while ((((RModel) fmodels.elementAt(i)).getInfo())
-					.elementAt(col) == null)
+			while ((((RModel) fmodels.elementAt(i)).getInfo()).elementAt(col) == null)
 				i++;
 			if (i > getRowCount())
 				return null;
-			return (((RModel) fmodels.elementAt(i)).getInfo())
-					.elementAt(col).getClass();
+			return (((RModel) fmodels.elementAt(i)).getInfo()).elementAt(col).getClass();
 		}
 	}
 
 	class ModelTableColumnModel extends DefaultTableColumnModel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1243689917922294377L;
 
 		public ModelTableColumnModel() {
 		}
@@ -316,6 +315,11 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 
 	class FilterPanel extends JPanel implements KeyListener {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4159489679875254193L;
+
 		JTextField name = new JTextField();
 
 		JTextField data = new JTextField();
@@ -329,7 +333,6 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		ModelBrowserTable table;
 
 		public FilterPanel(ModelBrowserTable table) {
-			family.setNextFocusableComponent(name);
 			FlowLayout fl = new FlowLayout(FlowLayout.LEFT);
 			fl.setVgap(0);
 			fl.setHgap(0);
@@ -351,14 +354,10 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 		}
 
 		public void resizeFields() {
-			name.setPreferredSize(new Dimension(table.getColumn(colnames[0])
-					.getWidth(), 25));
-			data.setPreferredSize(new Dimension(table.getColumn(colnames[1])
-					.getWidth(), 25));
-			type.setPreferredSize(new Dimension(table.getColumn(colnames[2])
-					.getWidth(), 25));
-			family.setPreferredSize(new Dimension(table.getColumn(colnames[3])
-					.getWidth(), 25));
+			name.setPreferredSize(new Dimension(table.getColumn(colnames[0]).getWidth(), 25));
+			data.setPreferredSize(new Dimension(table.getColumn(colnames[1]).getWidth(), 25));
+			type.setPreferredSize(new Dimension(table.getColumn(colnames[2]).getWidth(), 25));
+			family.setPreferredSize(new Dimension(table.getColumn(colnames[3]).getWidth(), 25));
 		}
 
 		public void setSize(Dimension d) {
@@ -386,8 +385,7 @@ public class ModelBrowserTable extends JTable implements MouseListener,
 			for (int i = 0; i < filters.length; i++) {
 				String f = filters[i].getText();
 				String m = (String) v.elementAt(i);
-				if (f != null && f.trim().length() > 0
-						&& (m == null || m.trim().length() == 0))
+				if (f != null && f.trim().length() > 0 && (m == null || m.trim().length() == 0))
 					return false;
 				if (f != null && m != null && !compareF(m.trim(), f.trim()))
 					return false;

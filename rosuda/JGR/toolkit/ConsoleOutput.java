@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -14,7 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -34,12 +34,15 @@ import org.rosuda.JGR.JGR;
  * ConsoleOutput - implementation of a textpane providing different export
  * possibilities.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class ConsoleOutput extends JTextPane {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5957720607822410824L;
 
 	private boolean lastLineWasEmpty = false;
 
@@ -73,10 +76,9 @@ public class ConsoleOutput extends JTextPane {
 		try {
 			a = this.getLineOfOffset(this.getSelectionStart());
 			b = this.getLineOfOffset(this.getSelectionEnd());
-			if (/*a >= b ||*/ a == -1 || b == -1)
+			if (/* a >= b || */a == -1 || b == -1)
 				return;
-			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(
-					getCommands(a, b).toString());
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getCommands(a, b).toString());
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, s);
 		} catch (Exception e) {
 			return;
@@ -93,15 +95,13 @@ public class ConsoleOutput extends JTextPane {
 			try {
 				if (isCorrectLine(i) && isCommandLine(i)) {
 					String l = trimFront(getLine(i).replaceFirst(prompt, ""));
-					if (i < this.getLineCount() && isCorrectLine(i + 1)
-							&& !l.startsWith("#"))
+					if (i < this.getLineCount() && isCorrectLine(i + 1) && !l.startsWith("#"))
 						bf.append(l);
-					else if (i < this.getLineCount() && !isCorrectLine(i + 1)
-							&& l.startsWith(continueS))
+					else if (i < this.getLineCount() && !isCorrectLine(i + 1) && l.startsWith(continueS))
 						bf.append(l);
 					else if (i == this.getLineCount() && !l.startsWith("#"))
 						bf.append(l);
-					else if (i==b)
+					else if (i == b)
 						bf.append(l);
 				}
 			} catch (Exception e) {
@@ -122,10 +122,9 @@ public class ConsoleOutput extends JTextPane {
 		try {
 			a = this.getLineOfOffset(this.getSelectionStart());
 			b = this.getLineOfOffset(this.getSelectionEnd());
-			if (/*a >= b ||*/ a == -1 || b == -1)
+			if (/* a >= b || */a == -1 || b == -1)
 				return;
-			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(
-					getOutput(a, b).toString());
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getOutput(a, b).toString());
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, s);
 		} catch (Exception e) {
 			return;
@@ -160,10 +159,9 @@ public class ConsoleOutput extends JTextPane {
 		try {
 			a = this.getLineOfOffset(this.getSelectionStart());
 			b = this.getLineOfOffset(this.getSelectionEnd());
-			if (/*a >= b ||*/ a == -1 || b == -1)
+			if (/* a >= b || */a == -1 || b == -1)
 				return;
-			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(
-					getResult(a, b).toString());
+			java.awt.datatransfer.StringSelection s = new java.awt.datatransfer.StringSelection(getResult(a, b).toString());
 			Toolkit.getDefaultToolkit().getSystemClipboard().setContents(s, s);
 		} catch (Exception e) {
 			return;
@@ -203,8 +201,7 @@ public class ConsoleOutput extends JTextPane {
 		String line = getLine(i);
 		if (line.equals(prompt.trim()))
 			return false;
-		return (line.trim().startsWith(prompt.trim()) || line.trim()
-				.startsWith(continueS.trim()));
+		return (line.trim().startsWith(prompt.trim()) || line.trim().startsWith(continueS.trim()));
 	}
 
 	private boolean isResultLine(int i) throws BadLocationException {
@@ -213,8 +210,7 @@ public class ConsoleOutput extends JTextPane {
 		if (continueS == null)
 			continueS = org.rosuda.JGR.RController.getRContinue();
 		String line = getLine(i);
-		return (!line.trim().startsWith(prompt.trim()) && !line.trim()
-				.startsWith(continueS.trim()));
+		return (!line.trim().startsWith(prompt.trim()) && !line.trim().startsWith(continueS.trim()));
 	}
 
 	private boolean isCorrectLine(int i) {
@@ -222,9 +218,9 @@ public class ConsoleOutput extends JTextPane {
 			prompt = org.rosuda.JGR.RController.getRPrompt();
 		if (continueS == null)
 			continueS = org.rosuda.JGR.RController.getRContinue();
-		if (/*getLine(i).trim().length() == 0
-				||*/ getLine(i).trim().equals(prompt.trim())
-				|| getLine(i).trim().startsWith("Error"))
+		if (/*
+			 * getLine(i).trim().length() == 0 ||
+			 */getLine(i).trim().equals(prompt.trim()) || getLine(i).trim().startsWith("Error"))
 			return false;
 		return true;
 	}
@@ -253,8 +249,7 @@ public class ConsoleOutput extends JTextPane {
 			writer.flush();
 			writer.close();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(JGR.MAINRCONSOLE, "Permisson denied",
-					"File Error", JOptionPane.OK_OPTION);
+			JOptionPane.showMessageDialog(JGR.MAINRCONSOLE, "Permisson denied", "File Error", JOptionPane.OK_OPTION);
 		} finally {
 		}
 	}
@@ -323,8 +318,7 @@ public class ConsoleOutput extends JTextPane {
 		if (line < 0)
 			throw new BadLocationException("Negative line", -1);
 		else if (line >= lineCount)
-			throw new BadLocationException("No such line", getDocument()
-					.getLength() + 1);
+			throw new BadLocationException("No such line", getDocument().getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			Element lineElem = map.getElement(line);
@@ -345,8 +339,7 @@ public class ConsoleOutput extends JTextPane {
 		if (line < 0)
 			throw new BadLocationException("Negative line", -1);
 		else if (line >= lineCount)
-			throw new BadLocationException("No such line", getDocument()
-					.getLength() + 1);
+			throw new BadLocationException("No such line", getDocument().getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			Element lineElem = map.getElement(line);
@@ -369,8 +362,7 @@ public class ConsoleOutput extends JTextPane {
 		if (offset < 0)
 			throw new BadLocationException("Can't translate offset to line", -1);
 		else if (offset > doc.getLength())
-			throw new BadLocationException("Can't translate offset to line",
-					doc.getLength() + 1);
+			throw new BadLocationException("Can't translate offset to line", doc.getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			return map.getElementIndex(offset);
@@ -385,8 +377,7 @@ public class ConsoleOutput extends JTextPane {
 	 * @throws BadLocationException
 	 */
 	public void removeAllFrom(int index) throws BadLocationException {
-		this.getDocument()
-				.remove(index, this.getDocument().getLength() - index);
+		this.getDocument().remove(index, this.getDocument().getLength() - index);
 	}
 
 	/**
@@ -395,26 +386,25 @@ public class ConsoleOutput extends JTextPane {
 	public void setFont(Font f) {
 		super.setFont(f);
 		try {
-			((StyledDocument) this.getDocument()).setCharacterAttributes(0,
-					this.getText().length(), JGRPrefs.SIZE, false);
+			((StyledDocument) this.getDocument()).setCharacterAttributes(0, this.getText().length(), JGRPrefs.SIZE, false);
 		} catch (Exception e) {
 		}
 	}
 
 	class ExportOutput extends JFileChooser implements ActionListener {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5513930176299068347L;
+
 		private ConsoleOutput out;
 
-		private final JRadioButton wholeOutput = new JRadioButton("Complete Output",
-				true);
+		private final JRadioButton wholeOutput = new JRadioButton("Complete Output", true);
 
 		private final JRadioButton cmdsOutput = new JRadioButton("Commands", false);
 
 		private final JRadioButton resultOutput = new JRadioButton("Results", false);
-
-		private final JButton ok = new JButton("Save");
-
-		private final JButton cancel = new JButton("Cancel");
 
 		public ExportOutput(ConsoleOutput co) {
 			super(JGRPrefs.workingDirectory);
@@ -428,8 +418,7 @@ public class ConsoleOutput extends JTextPane {
 			this.addActionListener(this);
 
 			if (System.getProperty("os.name").startsWith("Window")) {
-				JPanel fileview = (JPanel) ((JComponent) ((JComponent) this
-						.getComponent(2)).getComponent(2)).getComponent(2);
+				JPanel fileview = (JPanel) ((JComponent) ((JComponent) this.getComponent(2)).getComponent(2)).getComponent(2);
 
 				JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
 				options.add(new JLabel("Options: "));
@@ -438,12 +427,10 @@ public class ConsoleOutput extends JTextPane {
 				options.add(resultOutput);
 
 				fileview.add(options);
-				JPanel pp = (JPanel) ((JComponent) ((JComponent) this
-						.getComponent(2)).getComponent(2)).getComponent(0);
+				JPanel pp = (JPanel) ((JComponent) ((JComponent) this.getComponent(2)).getComponent(2)).getComponent(0);
 				pp.add(new JPanel());
 			} else {
-				JPanel filename = (JPanel) this.getComponent(this
-						.getComponentCount() - 1);
+				JPanel filename = (JPanel) this.getComponent(this.getComponentCount() - 1);
 				JPanel options = new JPanel(new FlowLayout(FlowLayout.LEFT));
 				options.add(new JLabel("Options: "));
 				options.add(wholeOutput);

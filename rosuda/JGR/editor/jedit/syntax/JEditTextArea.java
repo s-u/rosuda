@@ -1,15 +1,12 @@
 /*
- * JEditTextArea.java - jEdit's text component
- * Copyright (C) 1999 Slava Pestov
- *
+ * JEditTextArea.java - jEdit's text component Copyright (C) 1999 Slava Pestov
  * You may use and modify this package for any purpose. Redistribution is
- * permitted, in both source and binary form, provided that this notice
- * remains intact in all source distributions of this package.
+ * permitted, in both source and binary form, provided that this notice remains
+ * intact in all source distributions of this package.
  */
 
 package jedit.syntax;
 
-import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -88,7 +85,6 @@ import org.rosuda.JGR.toolkit.JGRPrefs;
  * applications; the only other part of jEdit it depends on is the syntax
  * package.
  * <p>
- * 
  * To use it in your app, treat it like any other component, for example:
  * 
  * <pre>
@@ -102,7 +98,7 @@ import org.rosuda.JGR.toolkit.JGRPrefs;
  * @version $Id: JEditTextArea.java,v 1.36 1999/12/13 03:40:30 sp Exp $
  */
 public class JEditTextArea extends JComponent implements KeyListener {
-	
+
 	/**
 	 * 
 	 */
@@ -129,8 +125,8 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	 */
 	public JEditTextArea(TextAreaDefaults defaults) {
 		// Enable the necessary events
-		//enableEvents(AWTEvent.KEY_EVENT_MASK);
-		
+		// enableEvents(AWTEvent.KEY_EVENT_MASK);
+
 		addKeyListener(this);
 
 		// Initialize some misc. stuff
@@ -168,30 +164,29 @@ public class JEditTextArea extends JComponent implements KeyListener {
 		electricScroll = defaults.electricScroll;
 
 		popup = defaults.popup;
-		
+
 		undoMgr = defaults.undoMgr;
-		
+
 		// We don't seem to get the initial focus event?
 		focusedComponent = this;
-		
-        if (FontTracker.current == null)
-            FontTracker.current = new FontTracker();
-        FontTracker.current.add(this);
+
+		if (FontTracker.current == null)
+			FontTracker.current = new FontTracker();
+		FontTracker.current.add(this);
 	}
 
-//	public void increaseFontSize() {
-//		painter.increaseFontSize();
-//	}
-//	
-//	public void decreaseFontSize() {
-//		painter.decreaseFontSize();
-//	}
-	
-	public void setFont(Font f)
-	{
+	// public void increaseFontSize() {
+	// painter.increaseFontSize();
+	// }
+	//	
+	// public void decreaseFontSize() {
+	// painter.decreaseFontSize();
+	// }
+
+	public void setFont(Font f) {
 		painter.setFont(f);
 	}
-	
+
 	/**
 	 * Returns if this component can be traversed by pressing the Tab key. This
 	 * returns false.
@@ -213,7 +208,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	public final InputHandler getInputHandler() {
 		return inputHandler;
 	}
-	
+
 	public Highlight getHighlight() {
 		return painter.getHightlight();
 	}
@@ -426,7 +421,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 		int line = getCaretLine();
 		int lineStart = getLineStartOffset(line);
 		int offset = Math.max(0, Math.min(getLineLength(line) - 1, getCaretPosition() - lineStart));
-		
+
 		return scrollTo(line, offset);
 	}
 
@@ -449,8 +444,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			setFirstLine(Math.max(0, line - electricScroll));
 			return true;
 		}
-		
-		
+
 		int newFirstLine = firstLine;
 		int newHorizontalOffset = horizontalOffset;
 
@@ -466,21 +460,20 @@ public class JEditTextArea extends JComponent implements KeyListener {
 
 		int x = _offsetToX(line, offset);
 		int width = painter.getFontMetrics().charWidth('w');
-		
+
 		if (x < 0) {
 			newHorizontalOffset = Math.min(0, horizontalOffset - x + width + 5);
 		} else if (x + width >= painter.getWidth()) {
 			newHorizontalOffset = horizontalOffset + (painter.getWidth() - x) - width - 5;
 		}
-		
-		if (offset == 0 && horizontalOffset < 0)
-		{
+
+		if (offset == 0 && horizontalOffset < 0) {
 			newHorizontalOffset = 0;
 		}
 
 		return setOrigin(newFirstLine, newHorizontalOffset);
 	}
-	
+
 	public void loadFile(String fileName) {
 		if (fileName != null && fileName.length() > 0) {
 			File file = new File(fileName);
@@ -489,7 +482,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 				StringBuffer strBuf = new StringBuffer();
 				String curLine = null;
 				while ((curLine = reader.readLine()) != null)
-					strBuf.append(curLine+"\n");
+					strBuf.append(curLine + "\n");
 				this.setText(strBuf.toString());
 				this.select(0, 0);
 				reader.close();
@@ -500,7 +493,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			}
 		}
 	}
-	
+
 	public void saveFile(String fileName) {
 		if (fileName != null && fileName.length() > 0) {
 			File file = new File(fileName);
@@ -514,7 +507,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}		
+		}
 	}
 
 	/**
@@ -574,7 +567,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 		getLineText(line, lineSegment);
 
 		int segmentOffset = lineSegment.offset;
-		int x = horizontalOffset + (painter.getLineNumbersPainted()?TextAreaPainter.OFFSET:0);
+		int x = horizontalOffset + (painter.getLineNumbersPainted() ? TextAreaPainter.OFFSET : 0);
 
 		/* If syntax coloring is disabled, do simple translation */
 		if (tokenMarker == null) {
@@ -633,8 +626,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	 *            The x co-ordinate
 	 */
 	public int xToOffset(int line, int x) {
-		
-		
+
 		TokenMarker tokenMarker = getTokenMarker();
 
 		/* Use painter's cached info for speed */
@@ -644,7 +636,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 
 		char[] segmentArray = lineSegment.array;
 		int segmentOffset = lineSegment.offset;
-				
+
 		int segmentCount = lineSegment.count;
 
 		int width = horizontalOffset + (TextAreaDefaults.getDefaults().lineNumbers ? TextAreaPainter.OFFSET : 0);
@@ -656,7 +648,10 @@ public class JEditTextArea extends JComponent implements KeyListener {
 				if (c == '\t')
 					charWidth = (int) painter.nextTabStop(width, i) - width;
 				else
-					charWidth = fm.charWidth(c);// + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);;
+					charWidth = fm.charWidth(c);// +
+												// (TextAreaDefaults.getDefaults().lineNumbers
+												// && i == 0 ?
+												// TextAreaPainter.OFFSET : 0);;
 
 				if (painter.isBlockCaretEnabled()) {
 					if (x - charWidth <= width)
@@ -683,7 +678,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			// Toolkit toolkit = painter.getToolkit();
 			Font defaultFont = painter.getFont();
 			SyntaxStyle[] styles = painter.getStyles();
-			
+
 			for (;;) {
 				byte id = tokens.id;
 				if (id == Token.END)
@@ -695,15 +690,18 @@ public class JEditTextArea extends JComponent implements KeyListener {
 					fm = styles[id].getFontMetrics(defaultFont);
 
 				int length = tokens.length;
-				
+
 				for (int i = 0; i < length; i++) {
 					char c = segmentArray[segmentOffset + offset + i];
 					int charWidth;
 					if (c == '\t') {
 						charWidth = (int) painter.nextTabStop(width, offset + i) - width;
-					}
-					else
-						charWidth = fm.charWidth(c);// + (TextAreaDefaults.getDefaults().lineNumbers && i == 0 ? TextAreaPainter.OFFSET : 0);
+					} else
+						charWidth = fm.charWidth(c);// +
+													// (TextAreaDefaults.getDefaults().lineNumbers
+													// && i == 0 ?
+													// TextAreaPainter.OFFSET :
+													// 0);
 
 					if (painter.isBlockCaretEnabled()) {
 						if (x - charWidth <= width) {
@@ -717,7 +715,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 
 					width += charWidth;
 				}
-				
+
 				offset += length;
 				tokens = tokens.next;
 			}
@@ -866,7 +864,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Indent/ Reindent selected lines
 	 * 
@@ -879,28 +877,25 @@ public class JEditTextArea extends JComponent implements KeyListener {
 		int b = this.getLineOfOffset(this.getSelectionEnd());
 		int so = this.getLineStartOffset(b);
 		int ss = this.getSelectionEnd();
-		
-		if (so == ss) b--;
+
+		if (so == ss)
+			b--;
 		while (a <= b) {
 			int ls = this.getLineStartOffset(a);
 			int le = this.getLineEndOffset(a);
 			String tab = "\t";
-			/*for (int i = 0; i < JGRPrefs.tabWidth; i++)
-				tab += " ";*/
-				if (direction == -1
-					&& (this.getText(ls, le - ls).startsWith("\t") || this
-							.getText(ls, le - ls).startsWith(tab)))
-				this.getDocument().remove(
-						ls,
-						this.getText(ls, le - ls).startsWith("\t") ? 1
-								: JGRPrefs.tabWidth);
+			/*
+			 * for (int i = 0; i < JGRPrefs.tabWidth; i++) tab += " ";
+			 */
+			if (direction == -1 && (this.getText(ls, le - ls).startsWith("\t") || this.getText(ls, le - ls).startsWith(tab)))
+				this.getDocument().remove(ls, this.getText(ls, le - ls).startsWith("\t") ? 1 : JGRPrefs.tabWidth);
 			else if (direction == 1)
 				this.insertAt(ls, "\t");
 			a++;
 		}
 
 	}
-	
+
 	public void append(String text) {
 		try {
 			document.beginCompoundEdit();
@@ -909,10 +904,10 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			bl.printStackTrace();
 		} finally {
 			document.endCompoundEdit();
-		}		
+		}
 	}
-	
-		public void insertAt(int pos, String text) {
+
+	public void insertAt(int pos, String text) {
 		try {
 			document.beginCompoundEdit();
 			document.insertString(pos, text, null);
@@ -920,7 +915,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			bl.printStackTrace();
 		} finally {
 			document.endCompoundEdit();
-		}		
+		}
 	}
 
 	/**
@@ -1553,12 +1548,12 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			}
 		}
 	}
-	
+
 	public void undo() {
 		if (undoMgr != null && undoMgr.canUndo())
 			undoMgr.undo();
 	}
-	
+
 	public void redo() {
 		if (undoMgr != null && undoMgr.canRedo())
 			undoMgr.redo();
@@ -1578,21 +1573,13 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	 * Forwards key events directly to the input handler. This is slightly
 	 * faster than using a KeyListener because some Swing overhead is avoided.
 	 */
-	/*public void processKeyEvent(KeyEvent evt) {
-		if (inputHandler == null)
-			return;
-		switch (evt.getID()) {
-		case KeyEvent.KEY_TYPED:
-			inputHandler.keyTyped(evt);
-			break;
-		case KeyEvent.KEY_PRESSED:
-			inputHandler.keyPressed(evt);
-			break;
-		case KeyEvent.KEY_RELEASED:
-			inputHandler.keyReleased(evt);
-			break;
-		}
-	}*/
+	/*
+	 * public void processKeyEvent(KeyEvent evt) { if (inputHandler == null)
+	 * return; switch (evt.getID()) { case KeyEvent.KEY_TYPED:
+	 * inputHandler.keyTyped(evt); break; case KeyEvent.KEY_PRESSED:
+	 * inputHandler.keyPressed(evt); break; case KeyEvent.KEY_RELEASED:
+	 * inputHandler.keyReleased(evt); break; } }
+	 */
 
 	// protected members
 	protected static String CENTER = "center";
@@ -1638,7 +1625,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	protected InputHandler inputHandler;
 
 	protected SyntaxDocument document;
-	
+
 	protected UndoManager undoMgr;
 
 	protected DocumentHandler documentHandler;
@@ -1813,8 +1800,8 @@ public class JEditTextArea extends JComponent implements KeyListener {
 
 		private Vector leftOfScrollBar = new Vector();
 	}
-	
-		/**
+
+	/**
 	 * Comment/ Uncomment selected Code
 	 * 
 	 * @param comment
@@ -1885,10 +1872,10 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			});
 		}
 	}
-	
+
 	class MouseWheelHandler implements MouseWheelListener {
 		public void mouseWheelMoved(MouseWheelEvent e) {
-			vertical.setValue(vertical.getValue()+(e.getScrollAmount()* e.getWheelRotation()));
+			vertical.setValue(vertical.getValue() + (e.getScrollAmount() * e.getWheelRotation()));
 		}
 	}
 
@@ -2083,7 +2070,6 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			 * (String)document.getProperty("noWordSep"); int wordStart =
 			 * TextUtilities.findWordStart(lineText,offset,noWordSep); int
 			 * wordEnd = TextUtilities.findWordEnd(lineText,offset,noWordSep);
-			 * 
 			 * int lineStart = getLineStartOffset(line); select(lineStart +
 			 * wordStart,lineStart + wordEnd);
 			 */
@@ -2093,7 +2079,7 @@ public class JEditTextArea extends JComponent implements KeyListener {
 			select(getLineStartOffset(line), getLineEndOffset(line) - 1);
 		}
 	}
-	
+
 	class CaretUndo extends AbstractUndoableEdit {
 		/**
 		 * 
@@ -2157,22 +2143,19 @@ public class JEditTextArea extends JComponent implements KeyListener {
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if (inputHandler != null)
-		{
+		if (inputHandler != null) {
 			inputHandler.keyPressed(e);
 		}
 	}
 
 	public void keyReleased(KeyEvent e) {
-		if (inputHandler != null)
-		{
+		if (inputHandler != null) {
 			inputHandler.keyReleased(e);
 		}
 	}
 
 	public void keyTyped(KeyEvent e) {
-		if (inputHandler != null)
-		{
+		if (inputHandler != null) {
 			inputHandler.keyTyped(e);
 		}
 	}

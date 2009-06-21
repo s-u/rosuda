@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,7 +14,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -22,19 +22,20 @@ import javax.swing.JPanel;
 
 import org.rosuda.JGR.toolkit.JComboBoxExt;
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.ibase.Common;
 
 /**
  * JGRDataFileSaveDialog - implementation of a file-dialog which allows saving
  * datasets by choosing several options.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
-public class JGRDataFileSaveDialog extends JFileChooser implements
-		ActionListener, ItemListener {
+public class JGRDataFileSaveDialog extends JFileChooser implements ActionListener, ItemListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1217232299652353695L;
 
 	private final JCheckBox append = new JCheckBox("append", false);
 
@@ -42,18 +43,11 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 
 	private final JCheckBox rownames = new JCheckBox("row.names", false);
 
-	private final JButton ok = new JButton("Save");
-
-	private final JButton cancel = new JButton("Cancel");
-
-	private final JComboBoxExt sepsBox = new JComboBoxExt(new String[] { "\\t",
-			"blank", ",", ";", "|", "Others..." });
+	private final JComboBoxExt sepsBox = new JComboBoxExt(new String[] { "\\t", "blank", ",", ";", "|", "Others..." });
 
 	private final String[] seps = new String[] { "\\t", " ", ",", ";", "|" };
 
 	private String data;
-
-	private final Dimension screenSize = Common.getScreenRes();
 
 	/**
 	 * Create a new Save-filedialog.
@@ -79,8 +73,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 		sepsBox.addItemListener(this);
 
 		if (System.getProperty("os.name").startsWith("Window")) {
-			JPanel fileview = (JPanel) ((JComponent) ((JComponent) this
-					.getComponent(2)).getComponent(2)).getComponent(2);
+			JPanel fileview = (JPanel) ((JComponent) ((JComponent) this.getComponent(2)).getComponent(2)).getComponent(2);
 			JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
 			command.add(append);
 			command.add(new JLabel("seps="));
@@ -89,8 +82,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 			command.add(quote);
 
 			fileview.add(command);
-			JPanel pp = (JPanel) ((JComponent) ((JComponent) this
-					.getComponent(2)).getComponent(2)).getComponent(0);
+			JPanel pp = (JPanel) ((JComponent) ((JComponent) this.getComponent(2)).getComponent(2)).getComponent(0);
 			pp.add(new JPanel());
 			this.setPreferredSize(new Dimension(655, 450));
 		} else {
@@ -101,8 +93,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 			command.add(rownames);
 			command.add(quote);
 
-			JPanel filename = (JPanel) this.getComponent(this
-					.getComponentCount() - 1);
+			JPanel filename = (JPanel) this.getComponent(this.getComponentCount() - 1);
 			filename.add(command, filename.getComponentCount() - 1);
 			this.setPreferredSize(new Dimension(550, 450));
 		}
@@ -115,9 +106,7 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 	 */
 	public void saveFile() {
 		if (this.getSelectedFile() != null) {
-			JGRPrefs.workingDirectory = this.getCurrentDirectory()
-					.getAbsolutePath()
-					+ File.separator;
+			JGRPrefs.workingDirectory = this.getCurrentDirectory().getAbsolutePath() + File.separator;
 			String file = this.getSelectedFile().toString();
 
 			String useSep;
@@ -126,12 +115,8 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 			else
 				useSep = seps[sepsBox.getSelectedIndex()];
 
-			String cmd = "write.table(" + data + ",\""
-					+ file.replace('\\', '/') + "\",append="
-					+ (append.isSelected() ? "T" : "F") + ",quote="
-					+ (quote.isSelected() ? "T" : "F") + ",sep=\"" + useSep
-					+ "\"" + ",row.names="
-					+ (rownames.isSelected() ? "T" : "F") + ")";
+			String cmd = "write.table(" + data + ",\"" + file.replace('\\', '/') + "\",append=" + (append.isSelected() ? "T" : "F") + ",quote="
+					+ (quote.isSelected() ? "T" : "F") + ",sep=\"" + useSep + "\"" + ",row.names=" + (rownames.isSelected() ? "T" : "F") + ")";
 			JGR.MAINRCONSOLE.execute(cmd, true);
 		}
 	}
@@ -151,7 +136,6 @@ public class JGRDataFileSaveDialog extends JFileChooser implements
 	 */
 	public void itemStateChanged(ItemEvent e) {
 		if (e.getSource() == sepsBox)
-			sepsBox.setEditable((sepsBox.getSelectedIndex() == sepsBox
-					.getItemCount() - 1 ? true : false));
+			sepsBox.setEditable((sepsBox.getSelectedIndex() == sepsBox.getItemCount() - 1 ? true : false));
 	}
 }

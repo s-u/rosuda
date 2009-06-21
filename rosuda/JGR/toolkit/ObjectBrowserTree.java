@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
@@ -23,8 +24,6 @@ import java.awt.event.MouseListener;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.JToolTip;
 import javax.swing.JTree;
 import javax.swing.PopupFactory;
@@ -47,14 +46,16 @@ import org.rosuda.JGR.robjects.RObject;
  * ObjectBrowserTree - show {@see RObject}s and supports dynamically loading of
  * childs.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
-public class ObjectBrowserTree extends JTree implements ActionListener,
-		KeyListener, MouseListener, DragGestureListener, DragSourceListener,
+public class ObjectBrowserTree extends JTree implements ActionListener, KeyListener, MouseListener, DragGestureListener, DragSourceListener,
 		TreeWillExpandListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6767151436107674299L;
 
 	private Collection data;
 
@@ -86,8 +87,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 		this.setModel(objModel);
 
 		dragSource = new DragSource();
-		dragSource.createDefaultDragGestureRecognizer(this,
-				DnDConstants.ACTION_COPY, this);
+		dragSource.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_COPY, this);
 
 		this.setToggleClickCount(100);
 		this.addKeyListener(this);
@@ -128,10 +128,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 		if (e.isAltDown()) {
 			objmgr.setWorking(true);
 			Point p = e.getPoint();
-			JToolTip call = new JToolTip();
-			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
-					.getClosestPathForLocation(this, p.x, p.y)
-					.getLastPathComponent()).getUserObject();
+			RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this, p.x, p.y).getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip != null) {
 				objmgr.setWorking(false);
@@ -148,16 +145,14 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 	public void actionPerformed(ActionEvent evt) {
 		String cmd = evt.getActionCommand();
 		if (cmd.startsWith("saveData"))
-			new JGRDataFileSaveDialog(objmgr, cmd.substring(9),
-					JGRPrefs.workingDirectory);
+			new JGRDataFileSaveDialog(objmgr, cmd.substring(9), JGRPrefs.workingDirectory);
 	}
 
 	/**
 	 * Save selected object to a file.
 	 */
 	public void saveData() {
-		new JGRDataFileSaveDialog(objmgr, selectedObject.getRName(),
-				JGRPrefs.workingDirectory);
+		new JGRDataFileSaveDialog(objmgr, selectedObject.getRName(), JGRPrefs.workingDirectory);
 	}
 
 	/**
@@ -166,9 +161,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 	 */
 	public void dragGestureRecognized(DragGestureEvent evt) {
 		Point p = evt.getDragOrigin();
-		RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
-				.getClosestPathForLocation(this, p.x, p.y)
-				.getLastPathComponent()).getUserObject();
+		RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this, p.x, p.y).getLastPathComponent()).getUserObject();
 
 		Transferable t = new java.awt.datatransfer.StringSelection(o.getRName());
 		if (t == null)
@@ -230,17 +223,14 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 	 * keyReleased: handle key event.
 	 */
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_DELETE
-				|| e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+		if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 			TreePath[] sel = this.getSelectionPaths();
 			for (int i = 0; i < sel.length; i++) {
 				TreePath p = sel[i];
 				try {
-					if (((DefaultMutableTreeNode) p.getLastPathComponent())
-							.getLevel() == 1) {
-						DefaultMutableTreeNode n = (DefaultMutableTreeNode) p
-								.getPathComponent(1);
-						((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm(" + ((RObject) n.getUserObject()).getRName()	+ ")");
+					if (((DefaultMutableTreeNode) p.getLastPathComponent()).getLevel() == 1) {
+						DefaultMutableTreeNode n = (DefaultMutableTreeNode) p.getPathComponent(1);
+						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("rm(" + ((RObject) n.getUserObject()).getRName() + ")");
 						objModel.removeNodeFromParent(n);
 					}
 				} catch (Exception ex) {
@@ -256,9 +246,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 		Point p = e.getPoint();
 		RObject o = null;
 		try {
-			o = (RObject) ((DefaultMutableTreeNode) getUI()
-					.getClosestPathForLocation(this, p.x, p.y)
-					.getLastPathComponent()).getUserObject();
+			o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this, p.x, p.y).getLastPathComponent()).getUserObject();
 			objmgr.savedata.setEnabled(o.isEditable());
 			selectedObject = o;
 		} catch (Exception ex) {
@@ -294,9 +282,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			objmgr.setWorking(true);
 			Point p = e.getPoint();
 			JToolTip call = new JToolTip();
-			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
-					.getClosestPathForLocation(this, p.x, p.y)
-					.getLastPathComponent()).getUserObject();
+			RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this, p.x, p.y).getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip == null) {
 				objmgr.setWorking(false);
@@ -304,8 +290,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			}
 			call.setTipText(tip);
 			SwingUtilities.convertPointToScreen(p, this);
-			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
-					call, p.x + 20, p.y + 25);
+			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this, call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
 			objmgr.setWorking(false);
 		}
@@ -319,9 +304,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			objmgr.setWorking(true);
 			Point p = e.getPoint();
 			JToolTip call = new JToolTip();
-			RObject o = (RObject) ((DefaultMutableTreeNode) getUI()
-					.getClosestPathForLocation(this, p.x, p.y)
-					.getLastPathComponent()).getUserObject();
+			RObject o = (RObject) ((DefaultMutableTreeNode) getUI().getClosestPathForLocation(this, p.x, p.y).getLastPathComponent()).getUserObject();
 			String tip = RController.getSummary(o);
 			if (tip == null) {
 				objmgr.setWorking(false);
@@ -329,8 +312,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 			}
 			call.setTipText(tip);
 			SwingUtilities.convertPointToScreen(p, this);
-			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this,
-					call, p.x + 20, p.y + 25);
+			objmgr.summary = PopupFactory.getSharedInstance().getPopup(this, call, p.x + 20, p.y + 25);
 			objmgr.summary.show();
 			objmgr.setWorking(false);
 		}
@@ -343,8 +325,7 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 	public void treeWillExpand(TreeExpansionEvent e) {
 		TreePath p = e.getPath();
 		if (!this.hasBeenExpanded(p)) {
-			DefaultMutableTreeNode n = (DefaultMutableTreeNode) p
-					.getLastPathComponent();
+			DefaultMutableTreeNode n = (DefaultMutableTreeNode) p.getLastPathComponent();
 			n.removeAllChildren();
 			objmgr.setWorking(true);
 			this.addNodes(n);
@@ -360,6 +341,10 @@ public class ObjectBrowserTree extends JTree implements ActionListener,
 
 	class DataTreeModel extends DefaultTreeModel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7491143716491925921L;
 		TreeNode root;
 
 		public DataTreeModel(TreeNode node) {

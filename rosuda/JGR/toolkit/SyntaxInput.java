@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -34,12 +35,15 @@ import org.rosuda.JGR.RController;
 /**
  * SyntaxInput - is responsible for codecompletion and helpagent
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
 public class SyntaxInput extends SyntaxArea implements KeyListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -133939952728860682L;
 
 	private boolean disableEnter = false;
 
@@ -116,8 +120,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			return null;
 		while (offset > -1 && pos > -1) {
 			char c = text.charAt(pos);
-			if ((c >= '0' && c <= '9') || ((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_')
+			if ((c >= '0' && c <= '9') || ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_')
 				offset--;
 			else
 				break;
@@ -150,12 +153,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		pos--;
 		if (text == null)
 			return null;
-		int l = text.length();
 		while (offset > -1 && pos > -1) {
 			char c = text.charAt(pos);
-			if (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'z'))
-					|| ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_'
-					|| c == '\\' || c == '/' || c == '~' || c == '$')
+			if (((c >= '0') && (c <= '9')) || ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_' || c == '\\'
+					|| c == '/' || c == '~' || c == '$')
 				offset--;
 			else
 				break;
@@ -208,13 +209,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			String tab = "";
 			for (int i = 0; i < JGRPrefs.tabWidth; i++)
 				tab += " ";
-			if (direction == -1
-					&& (this.getText(ls, le - ls).startsWith("\t") || this
-							.getText(ls, le - ls).startsWith(tab)))
-				this.getDocument().remove(
-						ls,
-						this.getText(ls, le - ls).startsWith("\t") ? 1
-								: JGRPrefs.tabWidth);
+			if (direction == -1 && (this.getText(ls, le - ls).startsWith("\t") || this.getText(ls, le - ls).startsWith(tab)))
+				this.getDocument().remove(ls, this.getText(ls, le - ls).startsWith("\t") ? 1 : JGRPrefs.tabWidth);
 			else if (direction == 1)
 				this.insertAt(ls, "\t");
 			a++;
@@ -235,8 +231,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				cmdHelp.hide();
 			pc = getCaret().getMagicCaretPosition();
 			if (pc == null) {
-				processKeyEvent(new KeyEvent(this, KeyEvent.KEY_TYPED, 0,
-						KeyEvent.VK_TAB, KeyEvent.VK_TAB, '\t'));
+				processKeyEvent(new KeyEvent(this, KeyEvent.KEY_TYPED, 0, KeyEvent.VK_TAB, KeyEvent.VK_TAB, '\t'));
 				pc = getCaret().getMagicCaretPosition();
 			}
 			if (pco != null && pco.equals(pc))
@@ -245,8 +240,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				SwingUtilities.convertPointToScreen(pc, this);
 			mComplete.refresh(result);
 			mComplete.setVisible(true);
-			cmdHelp = PopupFactory.getSharedInstance().getPopup(this,
-					mComplete, pc.x, pc.y + 15);
+			cmdHelp = PopupFactory.getSharedInstance().getPopup(this, mComplete, pc.x, pc.y + 15);
 			cmdHelp.show();
 		} catch (Exception e) {
 		} finally {
@@ -270,8 +264,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				try {
 					int line = this.getLineOfOffset(this.getCaretPosition());
 					int lend = this.getLineEndOffset(line);
-					this.setCaretPosition((this.getLineCount() == 1 ? lend
-							: lend - 1));
+					this.setCaretPosition((this.getLineCount() == 1 ? lend : lend - 1));
 				} catch (Exception e) {
 					this.setCaretPosition(this.getText().length());
 				}
@@ -331,24 +324,21 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			if ((quotes + dquotes) > 0)
 				result = RController.completeFile(fun == null ? "" : fun);
 			else if (fun != null)
-				result = RController.completeCommand(fun.replaceAll("\\.",
-						"\\."));
+				result = RController.completeCommand(fun.replaceAll("\\.", "\\."));
 			if (result != null && result.length > 1) {
 				if (funHelpTip != null)
 					funHelpTip.hide();
-				if (pc == null
-						|| !pc.equals(getCaret().getMagicCaretPosition()))
+				if (pc == null || !pc.equals(getCaret().getMagicCaretPosition()))
 					showCompletions(result);
 				// if (JGRPrefs.isMac && cmdHelp != null) cmdHelp.show();
-			} else if (result != null && result.length > 0 && result[0] != null
-					&& !result[0].equals(fun)) {
-					
-					if (fun.indexOf(File.separator) > 0) 
-				fun = fun.substring(fun.lastIndexOf(File.separator)+1);
-				
-			if (fun.indexOf("$") > 0) 
-				fun = fun.substring(fun.lastIndexOf("$")+1);
-				
+			} else if (result != null && result.length > 0 && result[0] != null && !result[0].equals(fun)) {
+
+				if (fun.indexOf(File.separator) > 0)
+					fun = fun.substring(fun.lastIndexOf(File.separator) + 1);
+
+				if (fun.indexOf("$") > 0)
+					fun = fun.substring(fun.lastIndexOf("$") + 1);
+
 				insertAt(pos, result[0].replaceFirst(fun, ""));
 				if (cmdHelp != null)
 					cmdHelp.hide();
@@ -358,11 +348,8 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				Toolkit.getDefaultToolkit().beep();
 		} else if (mComplete != null && mComplete.isVisible()) {
 			int k = ke.getKeyCode();
-			if (k != KeyEvent.VK_ESCAPE && k != KeyEvent.VK_ENTER
-					&& k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP
-					&& k != KeyEvent.VK_LEFT && k != KeyEvent.VK_RIGHT
-					&& k != KeyEvent.VK_TAB && !ke.isShiftDown()
-					&& !ke.isMetaDown() && !ke.isControlDown()
+			if (k != KeyEvent.VK_ESCAPE && k != KeyEvent.VK_ENTER && k != KeyEvent.VK_DOWN && k != KeyEvent.VK_UP && k != KeyEvent.VK_LEFT
+					&& k != KeyEvent.VK_RIGHT && k != KeyEvent.VK_TAB && !ke.isShiftDown() && !ke.isMetaDown() && !ke.isControlDown()
 					&& !ke.isAltDown() && !ke.isAltGraphDown()) {
 				fun = getLastPart();
 				if (fun != null) {
@@ -394,14 +381,9 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				funHelpTip = null;
 			}
 		}
-		if (ke.getKeyCode() != KeyEvent.VK_TAB
-				&& ke.getKeyCode() != KeyEvent.VK_UP
-				&& ke.getKeyCode() != KeyEvent.VK_DOWN
-				&& ke.getKeyCode() != KeyEvent.VK_ESCAPE
-				&& ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown()
-				&& !ke.isControlDown() && !ke.isAltDown() && !ke.isShiftDown()
-				&& JGRPrefs.useHelpAgent && isHelpAgentWanted()
-				&& !ke.isShiftDown()) {
+		if (ke.getKeyCode() != KeyEvent.VK_TAB && ke.getKeyCode() != KeyEvent.VK_UP && ke.getKeyCode() != KeyEvent.VK_DOWN
+				&& ke.getKeyCode() != KeyEvent.VK_ESCAPE && ke.getKeyCode() != KeyEvent.VK_ENTER && !ke.isMetaDown() && !ke.isControlDown()
+				&& !ke.isAltDown() && !ke.isShiftDown() && JGRPrefs.useHelpAgent && isHelpAgentWanted() && !ke.isShiftDown()) {
 			if (funHelpTip != null) {
 				funHelpTip.hide();
 				funHelpTip = null;
@@ -418,9 +400,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				funHelpTip.hide();
 			pc = null;
 		}
-		if (mComplete.isVisible() || ke.getKeyCode() == KeyEvent.VK_UP
-				|| ke.getKeyCode() == KeyEvent.VK_DOWN
-				|| ke.getKeyCode() == KeyEvent.VK_TAB)
+		if (mComplete.isVisible() || ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN || ke.getKeyCode() == KeyEvent.VK_TAB)
 			if (funHelpTip != null)
 				funHelpTip.hide();
 	}
@@ -450,8 +430,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 				});
 				ph = getCaret().getMagicCaretPosition();
 				SwingUtilities.convertPointToScreen(ph, this);
-				funHelpTip = PopupFactory.getSharedInstance().getPopup(this,
-						Tip, ph.x, ph.y + 20);
+				funHelpTip = PopupFactory.getSharedInstance().getPopup(this, Tip, ph.x, ph.y + 20);
 				funHelpTip.show();
 			}
 		} catch (Exception e) {
@@ -460,12 +439,10 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		}
 	}
 
-	protected boolean processKeyBinding(KeyStroke ks, KeyEvent e,
-			int condition, boolean pressed) {
+	protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
 		if (disableEnter && e.getKeyCode() == KeyEvent.VK_ENTER)
 			return true;
-		if (mComplete.isVisible()
-				&& (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN))
+		if (mComplete.isVisible() && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN))
 			return true;
 		InputMap map = getInputMap(condition);
 		ActionMap am = getActionMap();
@@ -474,26 +451,31 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			Object binding = map.get(ks);
 			Action action = (binding == null) ? null : am.get(binding);
 			if (action != null)
-				return SwingUtilities.notifyAction(action, ks, e, this, e
-						.getModifiers());
+				return SwingUtilities.notifyAction(action, ks, e, this, e.getModifiers());
 		}
 		return false;
 	}
 
 	class SyntaxInputDocument extends SyntaxDocument {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -6657259742955478662L;
 	}
 
 	/**
-	 * 
 	 * CodeCompleteMultiple - implementation of a panel showing a list of
 	 * completion-possibilities.
 	 * 
-	 * @author Markus Helbig
-	 * 
-	 * RoSuDA 2003 - 2005
-	 * 
+	 * @author Markus Helbig RoSuDA 2003 - 2005
 	 */
 	public class CodeCompleteMultiple extends JPanel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -1282154753438092531L;
 
 		public JList cmds = new JList();
 
@@ -519,8 +501,7 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 			sp.setMinimumSize(new Dimension(200, 120));
 			sp.setPreferredSize(new Dimension(200, 120));
 			sp.setMaximumSize(new Dimension(200, 120));
-			sp
-					.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			sp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			sp.setAutoscrolls(true);
 			this.setLayout(new GridLayout(1, 1));
 			this.add(sp);
@@ -544,13 +525,13 @@ public class SyntaxInput extends SyntaxArea implements KeyListener {
 		 */
 		public void completeCommand() {
 			if (fun.indexOf(File.separator) >= 0) {
-				fun = fun.substring(fun.lastIndexOf(File.separator)+1);
+				fun = fun.substring(fun.lastIndexOf(File.separator) + 1);
 			}
-			
+
 			if (fun.indexOf("$") > 0) {
-				fun = fun.substring(fun.lastIndexOf("$")+1);
+				fun = fun.substring(fun.lastIndexOf("$") + 1);
 			}
-			
+
 			parent.insertAt(parent.getCaretPosition(), cmds.getSelectedValue().toString().replaceFirst(fun == null ? "" : fun, ""));
 			this.setVisible(false);
 			if (cmdHelp != null)

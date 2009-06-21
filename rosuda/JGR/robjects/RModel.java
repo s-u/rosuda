@@ -1,8 +1,9 @@
 package org.rosuda.JGR.robjects;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.text.DecimalFormat;
 import java.util.Vector;
@@ -11,14 +12,12 @@ import java.util.Vector;
  * RModel - This is a simple java-representation of a model in R (currently only
  * lm and glm are implemented) providing several information.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class RModel {
 
-	private Double rsquared, deviance, aic, fstatistics;
+	private Double rsquared, deviance, aic;
 
 	private Integer df = null;
 
@@ -126,16 +125,6 @@ public class RModel {
 	 */
 	public void setAic(double a) {
 		aic = new Double(dformat.format(a).replace(',', '.'));
-	}
-
-	/**
-	 * Set F-statistic value of model.
-	 * 
-	 * @param f
-	 *            F-statistic value
-	 */
-	public void setFstat(double f) {
-		fstatistics = new Double(dformat.format(f).replace(',', '.'));
 	}
 
 	/**

@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -22,15 +23,16 @@ import javax.swing.text.EditorKit;
 import javax.swing.text.JTextComponent;
 
 /**
- * 
  * TextTransferHandler - copied out of the Java sources, because i need it as
- * accessible class.
- * 
- * RoSuDa 2003 - 2005
- * 
+ * accessible class. RoSuDa 2003 - 2005
  */
 
 public class TextTransferHandler extends TransferHandler implements UIResource {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -734346163246553755L;
 
 	private JTextComponent exportComp;
 
@@ -47,8 +49,8 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 	 * <li>First, an attempt is made to find a flavor matching the content type
 	 * of the EditorKit for the component.
 	 * <li>Second, an attempt to find a text/plain flavor is made.
-	 * <li>Third, an attempt to find a flavor representing a String reference
-	 * in the same VM is made.
+	 * <li>Third, an attempt to find a flavor representing a String reference in
+	 * the same VM is made.
 	 * <li>Lastly, DataFlavor.stringFlavor is searched for.
 	 * </ol>
 	 */
@@ -60,18 +62,14 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		if (c instanceof JEditorPane) {
 			for (int i = 0; i < flavors.length; i++) {
 				String mime = flavors[i].getMimeType();
-				if (mime.startsWith(((JEditorPane) c).getEditorKit()
-						.getContentType()))
+				if (mime.startsWith(((JEditorPane) c).getEditorKit().getContentType()))
 					return flavors[i];
 				else if (plainFlavor == null && mime.startsWith("text/plain"))
 					plainFlavor = flavors[i];
-				else if (refFlavor == null
-						&& mime
-								.startsWith("application/x-java-jvm-local-objectref")
+				else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref")
 						&& flavors[i].getRepresentationClass() == java.lang.String.class)
 					refFlavor = flavors[i];
-				else if (stringFlavor == null
-						&& flavors[i].equals(DataFlavor.stringFlavor))
+				else if (stringFlavor == null && flavors[i].equals(DataFlavor.stringFlavor))
 					stringFlavor = flavors[i];
 			}
 			if (plainFlavor != null)
@@ -87,13 +85,10 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 			String mime = flavors[i].getMimeType();
 			if (mime.startsWith("text/plain"))
 				return flavors[i];
-			else if (refFlavor == null
-					&& mime
-							.startsWith("application/x-java-jvm-local-objectref")
+			else if (refFlavor == null && mime.startsWith("application/x-java-jvm-local-objectref")
 					&& flavors[i].getRepresentationClass() == java.lang.String.class)
 				refFlavor = flavors[i];
-			else if (stringFlavor == null
-					&& flavors[i].equals(DataFlavor.stringFlavor))
+			else if (stringFlavor == null && flavors[i].equals(DataFlavor.stringFlavor))
 				stringFlavor = flavors[i];
 		}
 		if (refFlavor != null)
@@ -106,8 +101,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 	/**
 	 * Import the given stream data into the text component.
 	 */
-	protected void handleReaderImport(Reader in, JTextComponent c,
-			boolean useRead) throws BadLocationException, IOException {
+	protected void handleReaderImport(Reader in, JTextComponent c, boolean useRead) throws BadLocationException, IOException {
 		if (useRead) {
 			int startPosition = c.getSelectionStart();
 			int endPosition = c.getSelectionEnd();
@@ -191,8 +185,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 	 *         returned, otherwise just COPY is allowed.
 	 */
 	public int getSourceActions(JComponent c) {
-		if (c instanceof JPasswordField
-				&& c.getClientProperty("JPasswordField.cutCopyAllowed") != Boolean.TRUE)
+		if (c instanceof JPasswordField && c.getClientProperty("JPasswordField.cutCopyAllowed") != Boolean.TRUE)
 			return NONE;
 
 		return ((JTextComponent) c).isEditable() ? COPY : COPY;
@@ -206,7 +199,6 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 	 *            is provided to enable sharing of TransferHandlers by multiple
 	 *            components.
 	 * @return The representation of the data to be transfered.
-	 * 
 	 */
 	protected Transferable createTransferable(JComponent comp) {
 		exportComp = (JTextComponent) comp;
@@ -219,9 +211,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		} catch (Exception e) {
 
 		}
-		return (p0 != p1 && selection != null) ? (new java.awt.datatransfer.StringSelection(
-				selection))
-				: null;
+		return (p0 != p1 && selection != null) ? (new java.awt.datatransfer.StringSelection(selection)) : null;
 	}
 
 	/**
@@ -268,8 +258,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 		// then don't actually do anything if the drop location is inside
 		// the drag location and set shouldRemove to false so that exportDone
 		// knows not to remove any data
-		if (c == exportComp && c.getCaretPosition() >= p0
-				&& c.getCaretPosition() <= p1) {
+		if (c == exportComp && c.getCaretPosition() >= p0 && c.getCaretPosition() <= p1) {
 			shouldRemove = false;
 			return true;
 		}
@@ -281,9 +270,7 @@ public class TextTransferHandler extends TransferHandler implements UIResource {
 				boolean useRead = false;
 				if (comp instanceof JEditorPane) {
 					JEditorPane ep = (JEditorPane) comp;
-					if (!ep.getContentType().startsWith("text/plain")
-							&& importFlavor.getMimeType().startsWith(
-									ep.getContentType()))
+					if (!ep.getContentType().startsWith("text/plain") && importFlavor.getMimeType().startsWith(ep.getContentType()))
 						useRead = true;
 				}
 				InputContext ic = c.getInputContext();

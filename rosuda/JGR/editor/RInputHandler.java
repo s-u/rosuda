@@ -8,15 +8,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JToolTip;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
-import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 
 import jedit.syntax.DefaultInputHandler;
 import jedit.syntax.JEditTextArea;
-import jedit.syntax.TextAreaPainter;
 import jedit.syntax.TextUtilities;
 
 import org.rosuda.JGR.JGR;
@@ -24,141 +23,137 @@ import org.rosuda.JGR.RController;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.ErrorMsg;
 
-
 public class RInputHandler extends DefaultInputHandler {
-	
+
 	public static final ActionListener R_INSERT_TAB = new r_insert_tab();
-	
+
 	public static final ActionListener R_RUN_LINES = new r_run_lines();
-	
+
 	public static final ActionListener R_RUN_ALL = new r_run_all();
-	
+
 	public static final ActionListener R_COMMENT_LINES = new r_comment_lines();
-	
+
 	public static final ActionListener R_PREV_LINE = new r_prev_line(false);
-	
+
 	public static final ActionListener R_NEXT_LINE = new r_next_line(false);
-	
+
 	public static final ActionListener R_CLOSE_POPUPS = new r_close_popups();
-	
+
 	public static final ActionListener R_INSERT_BREAK = new r_insert_break();
-	
+
 	public static Popup codeCompletion;
-	
+
 	private String funHelp = null;
 	private JToolTip Tip;
 	private static Popup funHelpTip = null;
-	
+
 	public static class r_insert_tab extends insert_tab {
-		
+
 		public void actionPerformed(ActionEvent evt) {
 			if (codeCompletion != null) {
 				codeCompletion.hide();
 				codeCompletion = null;
 			}
-			
+
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			int carPos = textArea.getCaretPosition();
-			
+
 			if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
 				int line = textArea.getCaretLine();
 				String lineStr = textArea.getLineText(line);
 				int start = 0, end = carPos;
 				try {
 					start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
-				}  catch (StringIndexOutOfBoundsException ex) {
+				} catch (StringIndexOutOfBoundsException ex) {
 				}
 				try {
 					end = TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
-				}  catch (StringIndexOutOfBoundsException ex) {
+				} catch (StringIndexOutOfBoundsException ex) {
 				}
-				
+
 				boolean isfile = false;
-				
-				
+
 				String pattern = "";
-				
+
 				try {
 					pattern = lineStr.substring(start, end).trim();
-				} catch (StringIndexOutOfBoundsException e)
-				{
+				} catch (StringIndexOutOfBoundsException e) {
 				}
-				
+
 				if (pattern.length() <= 0) {
 					super.actionPerformed(evt);
 					return;
 				}
-				
+
 				try {
 					isfile = lineStr.substring(start - 1, start).equalsIgnoreCase("\"");
 				} catch (StringIndexOutOfBoundsException ex) {
 				}
-				
+
 				int x = textArea._offsetToX(line, carPos);
 				int y = textArea.lineToY(line);
-				
-				Point loc = new Point(x,y);
-				SwingUtilities.convertPointToScreen(loc, (Component)evt.getSource());
-				
+
+				Point loc = new Point(x, y);
+				SwingUtilities.convertPointToScreen(loc, (Component) evt.getSource());
+
 				int posC = -1;
-				
+
 				if (isfile)
 					posC = CodeCompletion.getInstance().updateFileList(pattern);
 				else {
 					posC = CodeCompletion.getInstance().updateList(pattern);
 				}
 				if (posC > 0) {
-					codeCompletion = PopupFactory.getSharedInstance().getPopup((Component)evt.getSource(), (Component)CodeCompletion.getInstance(), loc.x, loc.y + ((Component)evt.getSource()).getFont().getSize() + 10);
+					codeCompletion = PopupFactory.getSharedInstance().getPopup((Component) evt.getSource(), (Component) CodeCompletion.getInstance(),
+							loc.x, loc.y + ((Component) evt.getSource()).getFont().getSize() + 10);
 					codeCompletion.show();
 				}
-				
+
 			} else
 				super.actionPerformed(evt);
 		}
 	}
-	
+
 	public static class r_run_lines extends insert_tab {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			String s = textArea.getSelectedText().trim();
 			if (s.length() > 0)
 				JGR.MAINRCONSOLE.execute(s.trim(), true);
-			
-			/*int startLine = textArea.getSelectionStartLine();
-			 int endLine = textArea.getSelectionEndLine();
-			 int so = textArea.getLineStartOffset(endLine);
-			 int se = textArea.getSelectionEnd();
-			 
-			 if (startLine >= 0 && endLine < textArea.getLineCount()) {
-			 for (int line = startLine; line <= endLine; line++) {
-			 String lineText = textArea.getLineText(line).trim();
-			 if (lineText.length() > 0)
-			 JGR.MAINRCONSOLE.execute(lineText.trim(), true);
-			 }
-			 
-			 }*/
-			
+
+			/*
+			 * int startLine = textArea.getSelectionStartLine(); int endLine =
+			 * textArea.getSelectionEndLine(); int so =
+			 * textArea.getLineStartOffset(endLine); int se =
+			 * textArea.getSelectionEnd(); if (startLine >= 0 && endLine <
+			 * textArea.getLineCount()) { for (int line = startLine; line <=
+			 * endLine; line++) { String lineText =
+			 * textArea.getLineText(line).trim(); if (lineText.length() > 0)
+			 * JGR.MAINRCONSOLE.execute(lineText.trim(), true); } }
+			 */
+
 		}
 	}
-	
+
 	public static class r_comment_lines extends insert_tab {
 		public static final String COMMENT_CHAR = "#";
-		
+
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			int startLine = textArea.getSelectionStartLine();
 			int endLine = textArea.getSelectionEndLine();
 			int so = textArea.getLineStartOffset(endLine);
 			int ss = textArea.getSelectionEnd();
-			
-			if (so == ss) endLine--;
-			
+
+			if (so == ss)
+				endLine--;
+
 			if (startLine < 0)
 				startLine = endLine = textArea.getCaretLine();
-			
+
 			for (int line = startLine; line <= endLine; line++) {
 				int pos = textArea.getLineStartOffset(line);
 				try {
@@ -173,23 +168,23 @@ public class RInputHandler extends DefaultInputHandler {
 			}
 		}
 	}
-	
+
 	public static class r_run_all extends insert_tab {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			int startLine = 0;
 			int endLine = textArea.getLineCount();
-			
+
 			for (int line = startLine; line < endLine; line++) {
 				String lineText = textArea.getLineText(line).trim();
 				if (lineText.length() > 0)
 					System.out.println("run cmd: " + lineText);
 			}
-			
+
 		}
 	}
-	
+
 	public static class r_close_popups implements ActionListener {
 		public void actionPerformed(ActionEvent evt) {
 			if (codeCompletion != null) {
@@ -202,66 +197,62 @@ public class RInputHandler extends DefaultInputHandler {
 			}
 		}
 	}
-	
+
 	public static class r_next_line extends next_line {
 		public r_next_line(boolean select) {
 			super(select);
 		}
-		
+
 		public void actionPerformed(ActionEvent evt) {
 			if (codeCompletion != null)
 				CodeCompletion.getInstance().next();
 			else if (funHelpTip != null) {
 				funHelpTip.hide();
 				funHelpTip = null;
-			}
-			else
+			} else
 				super.actionPerformed(evt);
-			
+
 		}
 	}
-	
+
 	public static class r_prev_line extends prev_line {
 		public r_prev_line(boolean select) {
 			super(select);
 		}
-		
+
 		public void actionPerformed(ActionEvent evt) {
 			if (codeCompletion != null)
 				CodeCompletion.getInstance().previous();
 			else if (funHelpTip != null) {
 				funHelpTip.hide();
 				funHelpTip = null;
-			}
-			else
+			} else
 				super.actionPerformed(evt);
 		}
 	}
-	
+
 	public static class r_insert_break extends insert_break {
 		public void actionPerformed(ActionEvent evt) {
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			if (!textArea.isEditable()) {
 				textArea.getToolkit().beep();
 				return;
 			}
-			
+
 			if (codeCompletion != null) {
 				String completion = CodeCompletion.getInstance().getCompletion();
 				textArea.setSelectedText(completion);
 				codeCompletion.hide();
 				codeCompletion = null;
-			}
-			else if (funHelpTip != null) {
+			} else if (funHelpTip != null) {
 				funHelpTip.hide();
 				funHelpTip = null;
-			}
-			else
+			} else
 				super.actionPerformed(evt);
 		}
 	}
-	
+
 	static {
 		actions.put("insert-tab", R_INSERT_TAB);
 		actions.put("run-lines", R_RUN_LINES);
@@ -271,36 +262,33 @@ public class RInputHandler extends DefaultInputHandler {
 		actions.put("next-line", R_NEXT_LINE);
 		actions.put("close-popups", R_CLOSE_POPUPS);
 		actions.put("insert-break", R_INSERT_BREAK);
-		
+
 	}
-	
+
 	public void addKeyBindings() {
 		addDefaultKeyBindings();
 		addKeyBinding("TAB", R_INSERT_TAB);
 		addKeyBinding("M+ENTER", R_RUN_LINES);
-		//addKeyBinding("MS+R", R_RUN_ALL);
+		// addKeyBinding("MS+R", R_RUN_ALL);
 		addKeyBinding("M+7", R_COMMENT_LINES);
 		addKeyBinding("UP", R_PREV_LINE);
 		addKeyBinding("DOWN", R_NEXT_LINE);
 		addKeyBinding("ESCAPE", R_CLOSE_POPUPS);
 		addKeyBinding("ENTER", R_INSERT_BREAK);
 	}
-	
-	
+
 	private String getLastCommand(KeyEvent evt) {
 		if (funHelpTip != null)
 			funHelpTip.hide();
-		
+
 		JEditTextArea textArea = getTextArea(evt);
-		int carPos = textArea.getCaretPosition();
-		
+
 		String text = textArea.getText();
 		int pos = textArea.getCaretPosition();
 		int lastb = textArea.getText(0, pos + 1).lastIndexOf('(');
 		int lasteb = textArea.getText(0, pos).lastIndexOf(')');
 		if (lasteb > lastb)
 			return null;
-		// if (lastb < 0) lastb = text.indexOf('(',pos);
 		if (lastb < 0)
 			return null;
 		if (pos < 0)
@@ -323,8 +311,7 @@ public class RInputHandler extends DefaultInputHandler {
 			return null;
 		while (offset > -1 && pos > -1) {
 			char c = text.charAt(pos);
-			if ((c >= '0' && c <= '9') || ((c >= 'a') && (c <= 'z'))
-				|| ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_')
+			if ((c >= '0' && c <= '9') || ((c >= 'a') && (c <= 'z')) || ((c >= 'A') && (c <= 'Z')) || c == '.' || c == '_')
 				offset--;
 			else
 				break;
@@ -345,8 +332,7 @@ public class RInputHandler extends DefaultInputHandler {
 		end = ++lastb;
 		return (offset != end) ? text.substring(offset, end).trim() : null;
 	}
-	
-	
+
 	public void keyReleased(KeyEvent evt) {
 		if (funHelpTip != null) {
 			funHelpTip.hide();
@@ -354,36 +340,36 @@ public class RInputHandler extends DefaultInputHandler {
 		}
 		if (JGRPrefs.useHelpAgentEditor) {
 			try {
-				
+
 				JEditTextArea textArea = getTextArea(evt);
 				int carPos = textArea.getCaretPosition();
 				int line = textArea.getLineOfOffset(textArea.getCaretPosition());
-				
+
 				if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
-					
+
 					String pattern = getLastCommand(evt);
-								
+
 					if (pattern != null) {
-						
-						String fun = pattern;		
+
+						String fun = pattern;
 						funHelp = RController.getFunHelpTip(fun);
 						if (fun != null && funHelp != null) {
 							Tip = new JToolTip();
 							Tip.setTipText(funHelp);
 							Tip.addMouseListener(new MouseAdapter() {
-												 public void mouseClicked(MouseEvent e) {
-												 if (funHelpTip != null) {
-												 funHelpTip.hide();
-												 funHelpTip = null;
-												 }
-												 }
-												 });
-							
+								public void mouseClicked(MouseEvent e) {
+									if (funHelpTip != null) {
+										funHelpTip.hide();
+										funHelpTip = null;
+									}
+								}
+							});
+
 							int x = textArea._offsetToX(line, carPos);
 							int y = textArea.lineToY(line);
-							Point loc = new Point(x,y);
-							SwingUtilities.convertPointToScreen(loc, (Component)evt.getSource());
-							funHelpTip = PopupFactory.getSharedInstance().getPopup((Component)evt.getSource(), Tip, loc.x, loc.y + 20);
+							Point loc = new Point(x, y);
+							SwingUtilities.convertPointToScreen(loc, (Component) evt.getSource());
+							funHelpTip = PopupFactory.getSharedInstance().getPopup((Component) evt.getSource(), Tip, loc.x, loc.y + 20);
 							funHelpTip.show();
 						}
 					}
@@ -392,42 +378,38 @@ public class RInputHandler extends DefaultInputHandler {
 				e.printStackTrace();
 			}
 		}
-		
-		
+
 		if (codeCompletion != null && evt.getKeyCode() != KeyEvent.VK_UP && evt.getKeyCode() != KeyEvent.VK_DOWN) {
 			JEditTextArea textArea = getTextArea(evt);
-			
+
 			int carPos = textArea.getCaretPosition();
-			
-			//if (carPos > 0 && textArea.getText(carPos - 1, 1).trim().length() != 0) {
+
 			int line = textArea.getCaretLine();
 			String lineStr = textArea.getLineText(line);
 			int start = 0, end = carPos;
 			try {
 				start = TextUtilities.findWordStart(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
-			}  catch (StringIndexOutOfBoundsException ex) {
+			} catch (StringIndexOutOfBoundsException ex) {
 			}
-			
+
 			try {
 				end = TextUtilities.findWordEnd(lineStr, carPos - textArea.getLineStartOffset(line) - 1, ".");
-			}  catch (StringIndexOutOfBoundsException ex) {
+			} catch (StringIndexOutOfBoundsException ex) {
 			}
-			
+
 			String pattern = null;
-			
+
 			try {
-				pattern = lineStr.substring(start,end); 
-			}  catch (StringIndexOutOfBoundsException ex) {
+				pattern = lineStr.substring(start, end);
+			} catch (StringIndexOutOfBoundsException ex) {
 			}
-			
-			int posC = -1;
-			if (pattern == null || pattern.trim().length() == 0|| (posC = CodeCompletion.getInstance().updateList(pattern)) < 1) {
+
+			if (pattern == null || pattern.trim().length() == 0 || CodeCompletion.getInstance().updateList(pattern) < 1) {
 				codeCompletion.hide();
 				codeCompletion = null;
 			}
-			//}
 		}
 		super.keyReleased(evt);
 	}
-	
+
 }

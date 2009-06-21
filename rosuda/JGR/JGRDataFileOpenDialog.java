@@ -1,11 +1,10 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,57 +17,45 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.StringTokenizer;
 
-import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
+import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.JComboBoxExt;
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JRI.REXP;
-
 
 /**
  * JGRDataFileOpenDialog - implementation of a file-dialog which allows loading
  * datasets into R by choosing several options.
  * 
  * @author Markus Helbig
- * 
- * @deprecated use Data Loader
- * RoSuDa 2003 - 2005
+ * @deprecated use Data Loader RoSuDa 2003 - 2005
  */
 
-public class JGRDataFileOpenDialog extends JFileChooser implements
-		ActionListener, ItemListener, PropertyChangeListener {
+public class JGRDataFileOpenDialog extends JFileChooser implements ActionListener, ItemListener, PropertyChangeListener {
 
-	public static String extensions[][] = new String[][]{	{"rda","rdata"},
-															{"csv"},
-															{"txt"}};
-	public static String extensionDescription[] = new String[]{	"R (*.rda *.rdata)",
-																"Comma seperated (*.csv)",
-																"Text file (*.txt)"};
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2438253324279973086L;
+	public static String extensions[][] = new String[][] { { "rda", "rdata" }, { "csv" }, { "txt" } };
+	public static String extensionDescription[] = new String[] { "R (*.rda *.rdata)", "Comma seperated (*.csv)", "Text file (*.txt)" };
+
 	private final JTextField dataName = new JTextField();
-
-	private final JTextField otherSeps = new JTextField();
 
 	private final JCheckBox header = new JCheckBox("Header", true);
 
 	private final JCheckBox attach = new JCheckBox("Attach", false);
 
-	private final JComboBoxExt sepsBox = new JComboBoxExt(new String[] { "\\t",
-			"\\w", ",", ";", "|", "Others..." });
+	private final JComboBoxExt sepsBox = new JComboBoxExt(new String[] { "\\t", "\\w", ",", ";", "|", "Others..." });
 
 	private final String[] seps = new String[] { "\\t", "", ",", ";", "|" };
 
-	private final JComboBoxExt quoteBox = new JComboBoxExt(new String[] { "None",
-			"\\\"", "\\'", "Others..." });
+	private final JComboBoxExt quoteBox = new JComboBoxExt(new String[] { "None", "\\\"", "\\'", "Others..." });
 
 	private final String[] quotes = new String[] { "", "\\\"", "\\'" };
 
@@ -88,91 +75,56 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 		this.addPropertyChangeListener(this);
 		if (directory != null && new File(directory).exists())
 			this.setCurrentDirectory(new File(directory));
-		for(int i=0;i<extensionDescription.length;i++)
-		{
-			extFilter= new ExtensionFileFilter(extensionDescription[i], extensions[i]);
+		for (int i = 0; i < extensionDescription.length; i++) {
+			extFilter = new ExtensionFileFilter(extensionDescription[i], extensions[i]);
 			this.addChoosableFileFilter(extFilter);
 		}
 		this.setFileFilter(this.getAcceptAllFileFilter());
-		this.showOpenDialog(f);				
-		/*dataName.setMinimumSize(new Dimension(180, 22));
-		dataName.setPreferredSize(new Dimension(180, 22));
-		dataName.setMaximumSize(new Dimension(180, 22));
-
-		quoteBox.setMinimumSize(new Dimension(90, 22));
-		quoteBox.setPreferredSize(new Dimension(90, 22));
-		quoteBox.setMaximumSize(new Dimension(90, 22));
-
-		sepsBox.setMinimumSize(new Dimension(90, 22));
-		sepsBox.setPreferredSize(new Dimension(90, 22));
-		sepsBox.setMaximumSize(new Dimension(90, 22));
-
-		quoteBox.addItemListener(this);
-		sepsBox.addItemListener(this);
-
-		this.addActionListener(this);
-		this.addPropertyChangeListener(this);
-		if (directory != null && new File(directory).exists())
-			this.setCurrentDirectory(new File(directory));
-
-		JPanel options = new JPanel();
-		JPanel command = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		command.add(new JLabel(" read.table(...) -> "));
-		command.add(dataName);
-
-		JPanel command2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		command2.add(header);
-		command2.add(new JLabel(", sep="));
-		command2.add(sepsBox);
-		command2.add(new JLabel(", quote="));
-		command2.add(quoteBox);
-
-		JPanel att = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		att.add(attach);
-
-		options.add(command);
-		options.add(command2);
-		options.add(att);
-
-		if (System.getProperty("os.name").startsWith("Window")) {
-			try {
-				JPanel fileview = (JPanel) ((JComponent) ((JComponent) this
-					.getComponent(2)).getComponent(2)).getComponent(2);
-					fileview.add(command);
-				fileview.add(command2);
-				fileview.add(att);
-				JPanel pp = (JPanel) ((JComponent) ((JComponent) this
-					.getComponent(2)).getComponent(2)).getComponent(0);
-				pp.add(new JPanel());
-				this.setPreferredSize(new Dimension(660, 450));
-			}
-			catch (Exception e) {
-						JPanel filename = (JPanel) this.getComponent(this
-					.getComponentCount() - 1);
-				JPanel buttons = (JPanel) filename.getComponent(filename
-					.getComponentCount() - 1);
-				this.setControlButtonsAreShown(false);
-				filename.add(command);
-				filename.add(command2);
-				filename.add(att);
-				filename.add(buttons);
-				this.setPreferredSize(new Dimension(550, 450));
-			}
-		} else {
-			JPanel filename = (JPanel) this.getComponent(this
-					.getComponentCount() - 1);
-			JPanel buttons = (JPanel) filename.getComponent(filename
-					.getComponentCount() - 1);
-			this.setControlButtonsAreShown(false);
-			filename.add(command);
-			filename.add(command2);
-			filename.add(att);
-			filename.add(buttons);
-			this.setPreferredSize(new Dimension(550, 450));
-		}
-
-		this.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
-		this.showOpenDialog(f);*/
+		this.showOpenDialog(f);
+		/*
+		 * dataName.setMinimumSize(new Dimension(180, 22));
+		 * dataName.setPreferredSize(new Dimension(180, 22));
+		 * dataName.setMaximumSize(new Dimension(180, 22));
+		 * quoteBox.setMinimumSize(new Dimension(90, 22));
+		 * quoteBox.setPreferredSize(new Dimension(90, 22));
+		 * quoteBox.setMaximumSize(new Dimension(90, 22));
+		 * sepsBox.setMinimumSize(new Dimension(90, 22));
+		 * sepsBox.setPreferredSize(new Dimension(90, 22));
+		 * sepsBox.setMaximumSize(new Dimension(90, 22));
+		 * quoteBox.addItemListener(this); sepsBox.addItemListener(this);
+		 * this.addActionListener(this); this.addPropertyChangeListener(this);
+		 * if (directory != null && new File(directory).exists())
+		 * this.setCurrentDirectory(new File(directory)); JPanel options = new
+		 * JPanel(); JPanel command = new JPanel(new
+		 * FlowLayout(FlowLayout.LEFT)); command.add(new
+		 * JLabel(" read.table(...) -> ")); command.add(dataName); JPanel
+		 * command2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		 * command2.add(header); command2.add(new JLabel(", sep="));
+		 * command2.add(sepsBox); command2.add(new JLabel(", quote="));
+		 * command2.add(quoteBox); JPanel att = new JPanel(new
+		 * FlowLayout(FlowLayout.LEFT)); att.add(attach); options.add(command);
+		 * options.add(command2); options.add(att); if
+		 * (System.getProperty("os.name").startsWith("Window")) { try { JPanel
+		 * fileview = (JPanel) ((JComponent) ((JComponent) this
+		 * .getComponent(2)).getComponent(2)).getComponent(2);
+		 * fileview.add(command); fileview.add(command2); fileview.add(att);
+		 * JPanel pp = (JPanel) ((JComponent) ((JComponent) this
+		 * .getComponent(2)).getComponent(2)).getComponent(0); pp.add(new
+		 * JPanel()); this.setPreferredSize(new Dimension(660, 450)); } catch
+		 * (Exception e) { JPanel filename = (JPanel) this.getComponent(this
+		 * .getComponentCount() - 1); JPanel buttons = (JPanel)
+		 * filename.getComponent(filename .getComponentCount() - 1);
+		 * this.setControlButtonsAreShown(false); filename.add(command);
+		 * filename.add(command2); filename.add(att); filename.add(buttons);
+		 * this.setPreferredSize(new Dimension(550, 450)); } } else { JPanel
+		 * filename = (JPanel) this.getComponent(this .getComponentCount() - 1);
+		 * JPanel buttons = (JPanel) filename.getComponent(filename
+		 * .getComponentCount() - 1); this.setControlButtonsAreShown(false);
+		 * filename.add(command); filename.add(command2); filename.add(att);
+		 * filename.add(buttons); this.setPreferredSize(new Dimension(550,
+		 * 450)); } this.setFileHidingEnabled(!JGRPrefs.showHiddenFiles);
+		 * this.showOpenDialog(f);
+		 */
 	}
 
 	/**
@@ -181,9 +133,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 	 */
 	public void loadFile() {
 		if (this.getSelectedFile() != null) {
-			JGRPrefs.workingDirectory = this.getCurrentDirectory()
-					.getAbsolutePath()
-					+ File.separator;
+			JGRPrefs.workingDirectory = this.getCurrentDirectory().getAbsolutePath() + File.separator;
 			String file = this.getSelectedFile().toString();
 
 			String useSep;
@@ -197,19 +147,9 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 			else
 				useQuote = quotes[quoteBox.getSelectedIndex()];
 
-			String cmd = dataName.getText().trim().replaceAll("\\s", "")
-					+ " <- read.table(\""
-					+ file.replace('\\', '/')
-					+ "\",header="
-					+ (header.isSelected() ? "T" : "F")
-					+ ",sep=\""
-					+ useSep
-					+ "\", quote=\""
-					+ useQuote
-					+ "\")"
-					+ (attach.isSelected() ? ";attach("
-							+ dataName.getText().trim().replaceAll("\\s", "")
-							+ ")" : "") + "";
+			String cmd = dataName.getText().trim().replaceAll("\\s", "") + " <- read.table(\"" + file.replace('\\', '/') + "\",header="
+					+ (header.isSelected() ? "T" : "F") + ",sep=\"" + useSep + "\", quote=\"" + useQuote + "\")"
+					+ (attach.isSelected() ? ";attach(" + dataName.getText().trim().replaceAll("\\s", "") + ")" : "") + "";
 			JGR.MAINRCONSOLE.execute(cmd, true);
 		}
 	}
@@ -221,19 +161,20 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 		String cmd = e.getActionCommand();
 		String fileName = this.getSelectedFile().toString();
 
-		if (cmd == "ApproveSelection")
-		{
-			if(fileName.endsWith(".rda")|| fileName.endsWith(".rdata"))
+		if (cmd == "ApproveSelection") {
+			if (fileName.endsWith(".rda") || fileName.endsWith(".rdata"))
 				loadRdaFile(fileName);
 		}
-			//loadFile();
+		// loadFile();
 		// else if (cmd == "CancelSelection") dispose();
 	}
-	public void loadRdaFile(String fileName){
-		String cmd = "dataset<-load(\""+fileName.replace('\\', '/')+"\")";
+
+	public void loadRdaFile(String fileName) {
+		String cmd = "dataset<-load(\"" + fileName.replace('\\', '/') + "\")";
 		JGR.MAINRCONSOLE.execute(cmd, true);
-		
+
 	}
+
 	/**
 	 * itemStateChanged: handle itemStateChanged event, et separator and quote
 	 * box enabled if "Others..." is choosen.
@@ -242,12 +183,10 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 		Object source = e.getItemSelectable();
 		boolean edit = false;
 		if (source == quoteBox) {
-			edit = quoteBox.getSelectedIndex() == quoteBox.getItemCount() - 1 ? true
-					: false;
+			edit = quoteBox.getSelectedIndex() == quoteBox.getItemCount() - 1 ? true : false;
 			quoteBox.setEditable(edit);
 		} else if (source == sepsBox) {
-			edit = sepsBox.getSelectedIndex() == sepsBox.getItemCount() - 1 ? true
-					: false;
+			edit = sepsBox.getSelectedIndex() == sepsBox.getItemCount() - 1 ? true : false;
 			sepsBox.setEditable(edit);
 		}
 	}
@@ -306,8 +245,7 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 					while ((i = line2.trim().indexOf(sep, i + 1)) > -1)
 						z2++;
 				}
-				if (z1 + 1 == z2
-						|| (z1 == z2 && line1.matches("^[a-zA-Z\"].*")))
+				if (z1 + 1 == z2 || (z1 == z2 && line1.matches("^[a-zA-Z\"].*")))
 					header.setSelected(true);
 				else
 					header.setSelected(false);
@@ -330,14 +268,12 @@ public class JGRDataFileOpenDialog extends JFileChooser implements
 			String name = file.getName().replaceAll("\\..*", "");
 			name = name.replaceAll("^[0-9]+|[^a-zA-Z|^0-9|^_]", ".");
 
-			REXP x = ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
+			REXP x = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
 			String[] r = null;
 			if (x != null && (r = x.asStringArray()) != null)
 				JGR.setObjects(r);
 			while (JGR.OBJECTS.contains(name) && !nameAccepted) {
-				String val = (String) JOptionPane.showInputDialog(
-						new JTextField(), "Object name already used!",
-						"Object " + name + " exists!",
+				String val = (String) JOptionPane.showInputDialog(new JTextField(), "Object name already used!", "Object " + name + " exists!",
 						JOptionPane.PLAIN_MESSAGE, null, null, name);
 				if (val != null)
 					name = val;

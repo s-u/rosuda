@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Color;
 import java.awt.Component;
@@ -34,19 +35,19 @@ import org.rosuda.JGR.util.ErrorMsg;
 /**
  * SyntaxArea - extends JTextPane and provides bracketmatching.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
-public class SyntaxArea extends JTextPane implements CaretListener,
-		DropTargetListener {
+public class SyntaxArea extends JTextPane implements CaretListener, DropTargetListener {
 
-	private final HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(
-			JGRPrefs.ERRORColor);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6597898199562829189L;
 
-	private final HighlightPainter ParanthesisHighlight = new HighlightPainter(
-			JGRPrefs.BRACKETHighLight);
+	private final HighlightPainter ParanthesisHighlightMissing = new HighlightPainter(JGRPrefs.ERRORColor);
+
+	private final HighlightPainter ParanthesisHighlight = new HighlightPainter(JGRPrefs.BRACKETHighLight);
 
 	private boolean wrap = true;
 
@@ -132,9 +133,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 	 */
 	public void cut() {
 		this.removeCaretListener(this);
-		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
-				new StringSelection(this.getSelectedText()),
-				null);
+		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(this.getSelectedText()), null);
 		this.replaceSelection("");
 		this.addCaretListener(this);
 	}
@@ -161,22 +160,14 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 
 				if (s != -1 && e != -1)
 					doc.remove(s, e - s);
-				doc
-						.insertStringWithoutWhiteSpace(
-								this.getCaretPosition(),
-								Toolkit
-										.getDefaultToolkit()
-										.getSystemClipboard()
-										.getContents(this)
-										.getTransferData(
-												java.awt.datatransfer.DataFlavor.stringFlavor)
-										.toString(), null);
+				doc.insertStringWithoutWhiteSpace(this.getCaretPosition(), Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this)
+						.getTransferData(java.awt.datatransfer.DataFlavor.stringFlavor).toString(), null);
 			}
 		} catch (Exception e) {
 		}
 		this.addCaretListener(this);
 	}
-	
+
 	/**
 	 * Get amount of lines.
 	 */
@@ -190,8 +181,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		if (line < 0)
 			throw new BadLocationException("Negative line", -1);
 		else if (line >= lineCount)
-			throw new BadLocationException("No such line", getDocument()
-					.getLength() + 1);
+			throw new BadLocationException("No such line", getDocument().getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			Element lineElem = map.getElement(line);
@@ -204,8 +194,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		if (line < 0)
 			throw new BadLocationException("Negative line", -1);
 		else if (line >= lineCount)
-			throw new BadLocationException("No such line", getDocument()
-					.getLength() + 1);
+			throw new BadLocationException("No such line", getDocument().getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			Element lineElem = map.getElement(line);
@@ -219,8 +208,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		if (offset < 0)
 			throw new BadLocationException("Can't translate offset to line", -1);
 		else if (offset > doc.getLength())
-			throw new BadLocationException("Can't translate offset to line",
-					doc.getLength() + 1);
+			throw new BadLocationException("Can't translate offset to line", doc.getLength() + 1);
 		else {
 			Element map = getDocument().getDefaultRootElement();
 			return map.getElementIndex(offset);
@@ -250,11 +238,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		if (!wrap) {
 			Component parent = this.getParent();
 			ComponentUI ui = this.getUI();
-			int uiWidth = ui.getPreferredSize(this).width;
-			int parentWidth = parent.getSize().width;
-			boolean bool = (parent != null) ? (ui.getPreferredSize(this).width < parent
-					.getSize().width)
-					: true;
+			boolean bool = (parent != null) ? (ui.getPreferredSize(this).width < parent.getSize().width) : true;
 
 			return bool;
 		} else
@@ -266,8 +250,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 			super.setBounds(x, y, width, height);
 		else {
 			Dimension size = this.getPreferredSize();
-			super.setBounds(x, y, Math.max(size.width, width), Math.max(
-					size.height, height));
+			super.setBounds(x, y, Math.max(size.width, width), Math.max(size.height, height));
 		}
 	}
 
@@ -301,8 +284,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 	public boolean lastChar(int pos, String cont) {
 		if (pos == 0)
 			return false;
-		if (this.getText(pos - 1, 1) != null
-				&& this.getText(pos - 1, 1).equals(cont))
+		if (this.getText(pos - 1, 1) != null && this.getText(pos - 1, 1).equals(cont))
 			return true;
 		else
 			return false;
@@ -316,8 +298,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 	 * @param pos
 	 *            int current position
 	 */
-	public void highlightParanthesisForward(String par, int pos)
-			throws BadLocationException {
+	public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
 		// System.out.println(par);
 		int open = pos;
 		int cend = this.getText().length();
@@ -341,7 +322,6 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		int pcount = 1;
 
 		int line = this.getLineOfOffset(open);
-		int lstart = this.getLineStartOffset(line);
 		int lend = this.getLineEndOffset(line);
 
 		while (++pos <= cend) {
@@ -388,8 +368,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 	 *            int current position
 	 */
 
-	public void highlightParanthesisBackward(String par, int pos)
-			throws BadLocationException {
+	public void highlightParanthesisBackward(String par, int pos) throws BadLocationException {
 
 		int end = pos;
 
@@ -411,7 +390,6 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 
 		int line = this.getLineOfOffset(end);
 		int lstart = this.getLineStartOffset(line);
-		int lend = this.getLineEndOffset(line);
 
 		while (--pos > 0) {
 			cchar = this.getText(pos - 1, 1);
@@ -459,8 +437,7 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 	 * @param hipainter
 	 *            highlightpainter
 	 */
-	public void highlight(JTextComponent textComp, String pattern, int pos,
-			HighlightPainter hipainter) {
+	public void highlight(JTextComponent textComp, String pattern, int pos, HighlightPainter hipainter) {
 		try {
 			Highlighter hilite = textComp.getHighlighter();
 			if (pos == 0)
@@ -492,8 +469,13 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 		try {
 			if (e.getDot() == 0)
 				return;
-			if (getText(e.getDot() - 1, 1).matches(
-					"[(]|[\\[]|[{]|[)]|[\\]]|[}]")) /* t.start(); */{
+			if (getText(e.getDot() - 1, 1).matches("[(]|[\\[]|[{]|[)]|[\\]]|[}]")) /*
+																					 * t.
+																					 * start
+																					 * (
+																					 * )
+																					 * ;
+																					 */{
 
 				removeCaretListener(sa);
 				String c;
@@ -568,7 +550,6 @@ public class SyntaxArea extends JTextPane implements CaretListener,
 
 			if (t.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				evt.acceptDrop(DnDConstants.ACTION_COPY_OR_MOVE);
-				String s = (String) t.getTransferData(DataFlavor.stringFlavor);
 				evt.getDropTargetContext().dropComplete(true);
 			} else
 				evt.rejectDrop();

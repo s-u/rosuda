@@ -10,24 +10,22 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 
 /**
- * Lays out components, using a combination of their "bounds" property
- * and their AnchorConstraints layout constraint objects. 
+ * Lays out components, using a combination of their "bounds" property and their
+ * AnchorConstraints layout constraint objects.
  * <P>
- * Sides of the components can be anchored either absolutely (eg, if the 
- * right side is anchored absolutely then it will always be a fixed number 
- * of pixels from the right side of it's parent container) or relatively (ie,
- * if any side is anchored relatively then it will always occur a fixed
- * fraction of the way along it's parent's side). Or they can be not anchored,
- * at all in which case they will occur at places determined by their 
- * component's "bounds" property and the anchoring of the component's
- * other sides.
+ * Sides of the components can be anchored either absolutely (eg, if the right
+ * side is anchored absolutely then it will always be a fixed number of pixels
+ * from the right side of it's parent container) or relatively (ie, if any side
+ * is anchored relatively then it will always occur a fixed fraction of the way
+ * along it's parent's side). Or they can be not anchored, at all in which case
+ * they will occur at places determined by their component's "bounds" property
+ * and the anchoring of the component's other sides.
  */
 public class AnchorLayout implements LayoutManager2 {
 
 	private int preferredWidth, preferredHeight, minHeight, minWidth;
 	private HashMap constraintMap = new HashMap();
 	private boolean sizesCalculated = false;
-	private Container container;
 
 	public AnchorLayout() {
 		super();
@@ -69,8 +67,7 @@ public class AnchorLayout implements LayoutManager2 {
 					if (acrt == AnchorConstraint.ANCHOR_REL)
 						acr = pb.width - acr * pb.width / 1000;
 
-					if (aclt != AnchorConstraint.ANCHOR_NONE
-						&& acrt != AnchorConstraint.ANCHOR_NONE)
+					if (aclt != AnchorConstraint.ANCHOR_NONE && acrt != AnchorConstraint.ANCHOR_NONE)
 						maxX = acl + pref.width + acr;
 					if (aclt == AnchorConstraint.ANCHOR_NONE)
 						acl = 0;
@@ -87,8 +84,7 @@ public class AnchorLayout implements LayoutManager2 {
 					if (acbt == AnchorConstraint.ANCHOR_REL)
 						acb = pb.height - acb * pb.height / 1000;
 
-					if (actt != AnchorConstraint.ANCHOR_NONE
-						&& acbt != AnchorConstraint.ANCHOR_NONE)
+					if (actt != AnchorConstraint.ANCHOR_NONE && acbt != AnchorConstraint.ANCHOR_NONE)
 						maxY = act + pref.height + acb;
 					if (actt == AnchorConstraint.ANCHOR_NONE)
 						act = 0;
@@ -109,11 +105,13 @@ public class AnchorLayout implements LayoutManager2 {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite, boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * org.eclipse.swt.widgets.Layout#layout(org.eclipse.swt.widgets.Composite,
+	 * boolean)
 	 */
 	public void layoutContainer(Container container) {
-	    this.container = container;
 		Component children[] = container.getComponents();
 		Rectangle rect = container.getBounds();
 		int width = rect.width;
@@ -189,19 +187,24 @@ public class AnchorLayout implements LayoutManager2 {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String, java.awt.Component)
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
+	 * java.awt.Component)
 	 */
-	public void addLayoutComponent(String name, Component comp) {}
+	public void addLayoutComponent(String name, Component comp) {
+	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
 	 */
 	public void removeLayoutComponent(Component comp) {
 		constraintMap.remove(comp);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
 	 */
 	public Dimension preferredLayoutSize(Container parent) {
@@ -209,7 +212,8 @@ public class AnchorLayout implements LayoutManager2 {
 		return new Dimension(preferredWidth, preferredHeight);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
 	 */
 	public Dimension minimumLayoutSize(Container parent) {
@@ -217,35 +221,41 @@ public class AnchorLayout implements LayoutManager2 {
 		return new Dimension(minWidth, minHeight);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component,
+	 * java.lang.Object)
 	 */
 	public void addLayoutComponent(Component comp, Object constraints) {
 		constraintMap.put(comp, constraints);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager2#maximumLayoutSize(java.awt.Container)
 	 */
 	public Dimension maximumLayoutSize(Container target) {
 		return preferredLayoutSize(target);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentX(java.awt.Container)
 	 */
 	public float getLayoutAlignmentX(Container target) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentY(java.awt.Container)
 	 */
 	public float getLayoutAlignmentY(Container target) {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.awt.LayoutManager2#invalidateLayout(java.awt.Container)
 	 */
 	public void invalidateLayout(Container target) {

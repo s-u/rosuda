@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -22,12 +23,15 @@ import org.rosuda.JGR.robjects.RObject;
 /**
  * FunctionList - implemenation of a JList with some JGR specific features.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class FunctionList extends JList implements KeyListener, MouseListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7968724540936325835L;
 
 	private JGRObjectManager objmgr;
 
@@ -115,8 +119,7 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 	 * keyReleased: handle key event: remove functions.
 	 */
 	public void keyReleased(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_DELETE
-				|| e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+		if (e.getKeyCode() == KeyEvent.VK_DELETE || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
 			Object[] sfunctions = this.getSelectedValues();
 			for (int i = 0; i < sfunctions.length; i++) {
 				RObject o = null;
@@ -125,7 +128,7 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 				} catch (Exception ex) {
 				}
 				if (o != null) {
-					((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("rm(" + o.getRName() + ")");
+					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("rm(" + o.getRName() + ")");
 					fmodel.removeElement(sfunctions[i]);
 				}
 			}

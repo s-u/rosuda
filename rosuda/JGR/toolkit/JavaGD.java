@@ -1,13 +1,13 @@
 package org.rosuda.JGR.toolkit;
 
 //
-//JavaGD.java
-//JRGui
+// JavaGD.java
+// JRGui
 //
-//Created by Simon Urbanek on Wed Apr 28 2004.
-//Copyright (c) 2004 Simon Urbanek. All rights reserved.
+// Created by Simon Urbanek on Wed Apr 28 2004.
+// Copyright (c) 2004 Simon Urbanek. All rights reserved.
 //
-//$Id$
+// $Id$
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,8 +21,7 @@ import org.rosuda.ibase.toolkit.TJFrame;
 import org.rosuda.javaGD.GDInterface;
 
 /** Implementation of {@see JavaGD} which uses TJFrame instead of Frame */
-public class JavaGD extends GDInterface implements ActionListener,
-		WindowListener {
+public class JavaGD extends GDInterface implements ActionListener, WindowListener {
 	TJFrame jfr;
 
 	static int count = 0;
@@ -36,6 +35,11 @@ public class JavaGD extends GDInterface implements ActionListener,
 			gdClose();
 
 		jfr = new TJFrame("JavaGD", TJFrame.clsJavaGD) {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 8263748858987338205L;
+
 			public void dispose() {
 				if (c != null)
 					executeDevOff();
@@ -44,9 +48,8 @@ public class JavaGD extends GDInterface implements ActionListener,
 		};
 		jfr.addWindowListener(this);
 
-		String[] Menu = { "+", "File", "Save as PDF...", "savePDF",
-				"Save as EPS...", "saveEPS", "+", "Edit", "@CCopy (as image)",
-				"copyImg", "~Window", "0" };
+		String[] Menu = { "+", "File", "Save as PDF...", "savePDF", "Save as EPS...", "saveEPS", "+", "Edit", "@CCopy (as image)", "copyImg",
+				"~Window", "0" };
 		EzMenuSwing.getEzMenu(jfr, this, Menu);
 
 		jfr.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -62,8 +65,7 @@ public class JavaGD extends GDInterface implements ActionListener,
 	 */
 	public void gdNewPage(int devNr) {
 		super.gdNewPage(devNr);
-		jfr.setTitle("JavaGD (" + (getDeviceNumber() + 1) + ")"
-				+ (active ? " *active*" : ""));
+		jfr.setTitle("JavaGD (" + (getDeviceNumber() + 1) + ")" + (active ? " *active*" : ""));
 	}
 
 	/**
@@ -72,11 +74,7 @@ public class JavaGD extends GDInterface implements ActionListener,
 	public void gdActivate() {
 		super.gdActivate();
 		jfr.toFront();
-		jfr
-				.setTitle("JavaGD "
-						+ ((getDeviceNumber() > 0) ? ("("
-								+ (getDeviceNumber() + 1) + ")") : "")
-						+ " *active*");
+		jfr.setTitle("JavaGD " + ((getDeviceNumber() > 0) ? ("(" + (getDeviceNumber() + 1) + ")") : "") + " *active*");
 	}
 
 	/**
@@ -101,10 +99,8 @@ public class JavaGD extends GDInterface implements ActionListener,
 	}
 
 	String getFileDlg(boolean newFile, String suffix) {
-		FileSelector fd = new FileSelector(jfr, (!newFile) ? "Select a file"
-				: "Select a new file", (!newFile) ? FileSelector.LOAD
-				: FileSelector.SAVE,
-				org.rosuda.JGR.toolkit.JGRPrefs.workingDirectory);
+		FileSelector fd = new FileSelector(jfr, (!newFile) ? "Select a file" : "Select a new file", (!newFile) ? FileSelector.LOAD
+				: FileSelector.SAVE, org.rosuda.JGR.toolkit.JGRPrefs.workingDirectory);
 		fd.setVisible(true);
 		String res = null;
 		if (fd.getDirectory() != null && fd.getFile() != null)
@@ -133,15 +129,13 @@ public class JavaGD extends GDInterface implements ActionListener,
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if (cmd.equals("copyImg"))
-			org.rosuda.util.ImageSelection.copyComponent(
-					(java.awt.Component) c, false, true);
+			org.rosuda.util.ImageSelection.copyComponent((java.awt.Component) c, false, true);
 		if (cmd.equals("savePDF")) {
 			String fn = getFileDlg(true, "pdf");
 			if (fn != null) {
 				fn = escapeStr(fn);
 				org.rosuda.JRI.Rengine.getMainEngine().eval(
-						".jgr.save.JavaGD.as(useDevice=pdf, source="
-								+ (getDeviceNumber() + 1) + ", file=\"" + fn
+						".jgr.save.JavaGD.as(useDevice=pdf, source=" + (getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=TRUE, paper=\"special\")");
 			}
 		}
@@ -150,8 +144,7 @@ public class JavaGD extends GDInterface implements ActionListener,
 			if (fn != null) {
 				fn = escapeStr(fn);
 				org.rosuda.JRI.Rengine.getMainEngine().eval(
-						".jgr.save.JavaGD.as(useDevice=postscript, "
-								+ (getDeviceNumber() + 1) + ", file=\"" + fn
+						".jgr.save.JavaGD.as(useDevice=postscript, " + (getDeviceNumber() + 1) + ", file=\"" + fn
 								+ "\",onefile=FALSE, paper=\"special\")");
 			}
 		}

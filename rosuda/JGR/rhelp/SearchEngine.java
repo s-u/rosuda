@@ -1,23 +1,21 @@
 package org.rosuda.JGR.rhelp;
 
-/*============================================================================
- Project: Simple JAVA Search Engine for Keyword Search
- JAVA Source file for the class SearchEngine
- COPYRIGHT (C), 1998-2000, Thomas Baier, R Core Development Team
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- ============================================================================*/
+/*
+ * ============================================================================
+ * Project: Simple JAVA Search Engine for Keyword Search JAVA Source file for
+ * the class SearchEngine COPYRIGHT (C), 1998-2000, Thomas Baier, R Core
+ * Development Team This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the License,
+ * or (at your option) any later version. This program is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY; without even the
+ * implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See
+ * the GNU General Public License for more details. You should have received a
+ * copy of the GNU General Public License along with this program; if not, write
+ * to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+ * 02111-1307 USA
+ * ============================================================================
+ */
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,9 +32,8 @@ import org.rosuda.JGR.JGRHelp;
 import org.rosuda.JGR.util.ErrorMsg;
 
 /**
- * SearchEngine.java from R-project
- * 
- * modified version for being able to use it with JGR
+ * SearchEngine.java from R-project modified version for being able to use it
+ * with JGR
  */
 
 public class SearchEngine {
@@ -59,16 +56,13 @@ public class SearchEngine {
 
 	public SearchEngine() {
 		try {
-			File tempfile = new File(JGRHelp.RHELPLOCATION
-					+ "/doc/html/search/");
+			File tempfile = new File(JGRHelp.RHELPLOCATION + "/doc/html/search/");
 			if (tempfile.exists()) {
 				IndexFile = tempfile.toURL();
 				readIndexFile(cIndexFile);
 				started = true;
 			} else
-				JOptionPane.showMessageDialog(null,
-						"Help will not be available", "Path not found",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Help will not be available", "Path not found", JOptionPane.ERROR_MESSAGE);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -80,8 +74,7 @@ public class SearchEngine {
 
 	/* perform the search and return result as string */
 
-	public URL search(String key, boolean exactMatch, boolean searchDesc,
-			boolean searchKeywords, boolean searchAliases) {
+	public URL search(String key, boolean exactMatch, boolean searchDesc, boolean searchKeywords, boolean searchAliases) {
 		if (!started)
 			return null;
 		iSearchTerm = key;
@@ -94,29 +87,25 @@ public class SearchEngine {
 		Vector foundItems = null;
 
 		if (iSearchTerm != null)
-			foundItems = iIndexTable.search(iSearchTerm, exactMatch ? true
-					: searchDesc, exactMatch ? false : searchKeywords,
-					exactMatch ? true : searchAliases);
+			foundItems = iIndexTable.search(iSearchTerm, exactMatch ? true : searchDesc, exactMatch ? false : searchKeywords, exactMatch ? true
+					: searchAliases);
 		else
 			foundItems = null;
 
 		String result = "";
-		File out = new File(System.getProperty("java.io.tmpdir")
-				+ File.separator + iSearchTerm + ".htm");
+		File out = new File(System.getProperty("java.io.tmpdir") + File.separator + iSearchTerm + ".htm");
 		URL helpRes = null;
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(out));
 
 			// if nothing found, return a special string
 			if (foundItems == null)
-				result += "No matches for <b>\"" + iSearchTerm
-						+ "\"</b> have been found!<hr>";
+				result += "No matches for <b>\"" + iSearchTerm + "\"</b> have been found!<hr>";
 			else {
 
 				Enumeration cursor = foundItems.elements();
 
-				result += "The search string was <b>\"" + iSearchTerm
-						+ "</b>\"" + "<hr>" + "<dl>";
+				result += "The search string was <b>\"" + iSearchTerm + "</b>\"" + "<hr>" + "<dl>";
 
 				while (cursor.hasMoreElements()) {
 					IndexEntry entry = (IndexEntry) cursor.nextElement();
@@ -124,37 +113,29 @@ public class SearchEngine {
 					if (exactMatch && entry.getEntry().equals(iSearchTerm)) {
 						if (help != null)
 							help.link.setText(" ");
-						File f = new File(JGR.RLIBS[0] + File.separator
-								+ entry.getURL());
+						File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
 						// System.out.println(f);
 						if (!f.exists())
 							for (int i = 1; i < JGR.RLIBS.length; i++) {
-								f = new File(JGR.RLIBS[i] + File.separator
-										+ entry.getURL());
+								f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
 								System.out.println(f);
 								if (f.exists())
 									break;
 							}
 						else
-							f = new File(JGRHelp.RHELPLOCATION + File.separator
-									+ "/library" + File.separator
-									+ entry.getURL());
+							f = new File(JGRHelp.RHELPLOCATION + File.separator + "/library" + File.separator + entry.getURL());
 						return f.toURL();
 					}
-					File f = new File(JGR.RLIBS[0] + File.separator
-							+ entry.getURL());
+					File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
 					if (!f.exists())
 						for (int i = 1; i < JGR.RLIBS.length; i++) {
-							f = new File(JGR.RLIBS[i] + File.separator
-									+ entry.getURL());
+							f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
 							if (f.exists())
 								break;
 						}
 					else
-						f = new File(JGRHelp.RHELPLOCATION + File.separator
-								+ "library" + File.separator + entry.getURL());
-					result += "<dt><a href=\"" + f.toURL() + "\">"
-							+ entry.getEntry() + "</a></dt>\n";
+						f = new File(JGRHelp.RHELPLOCATION + File.separator + "library" + File.separator + entry.getURL());
+					result += "<dt><a href=\"" + f.toURL() + "\">" + entry.getEntry() + "</a></dt>\n";
 					result += "<dd>" + entry.getDescription() + "</dd>\n";
 				}
 
@@ -192,11 +173,8 @@ public class SearchEngine {
 			/*
 			 * An entry consists of a title, keywords, aliases, an URL and a
 			 * description, everything else is ignored. Every entry starts with
-			 * the keyword "Entry" (case is ignored)
-			 * 
-			 * must-have entries are "Entry" and "Keywords"
-			 * 
-			 * 98-06-01: bugfix: don't null the variables
+			 * the keyword "Entry" (case is ignored) must-have entries are
+			 * "Entry" and "Keywords" 98-06-01: bugfix: don't null the variables
 			 */
 			String entry = "";
 			String keywords = "";
@@ -212,8 +190,7 @@ public class SearchEngine {
 				// parse the value now
 				if (value.getKey().equalsIgnoreCase("entry")) {
 					// if a new entry is about to start, add the current one
-					addEntry(entry, keywords, aliases, description, url,
-							prefix, suffix);
+					addEntry(entry, keywords, aliases, description, url, prefix, suffix);
 
 					entry = value.getValue();
 					aliases = entry;
@@ -248,8 +225,7 @@ public class SearchEngine {
 		return;
 	}
 
-	private void addEntry(String entry, String keywords, String aliases,
-			String description, String url, String prefix, String suffix) {
+	private void addEntry(String entry, String keywords, String aliases, String description, String url, String prefix, String suffix) {
 		// the entry must be set
 		if (entry.length() == 0)
 			return;
@@ -258,8 +234,7 @@ public class SearchEngine {
 		// URL = prefix + entry + suffix
 		if (url.length() == 0)
 			url = prefix + entry + suffix;
-		IndexEntry idxEntry = new IndexEntry(entry, keywords, aliases,
-				description, url);
+		IndexEntry idxEntry = new IndexEntry(entry, keywords, aliases, description, url);
 		iIndexTable.addElement(idxEntry);
 
 		return;

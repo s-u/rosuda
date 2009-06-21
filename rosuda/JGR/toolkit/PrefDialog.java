@@ -16,9 +16,8 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,11 +29,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import org.rosuda.JGR.JGR;
 import org.rosuda.ibase.Common;
 
-
 public class PrefDialog extends javax.swing.JDialog implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5324021223225690636L;
 	private JTabbedPane tabbedPrefs;
 	private JPanel DocumentPrefs;
 	private JLabel fontLabel;
@@ -64,14 +65,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JComboBox sizeComboBox;
 	private JComboBox fontComboBox;
 
-
-	
-	
-	private final String[] sizes = { "2", "4", "6", "8", "9", "10", "11", "12", "14",
-			"16", "18", "20", "22", "24" };
+	private final String[] sizes = { "2", "4", "6", "8", "9", "10", "11", "12", "14", "16", "18", "20", "22", "24" };
 	private JButton brackets;
 	private JLabel bracketLabel;
-	private JCheckBox jCheckBox1;
 	private JCheckBox autotab;
 	private JButton highlightColor;
 	private JCheckBox highlight;
@@ -87,7 +83,6 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JCheckBox hidden;
 	private JCheckBox helpAgentConsole;
 	private JCheckBox helpAgentEditor;
-	private JPanel editorPanel;
 	private JPanel general;
 	private JCheckBox emacs;
 	private JSpinner helpPages;
@@ -98,69 +93,64 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JSeparator sep1;
 	private JSeparator sep;
 
-	
-	private final String[] styles = {" ","JGR","eclipse","emacs","MSVS 2008","vim","Xcode"};
-	
+	private final String[] styles = { " ", "JGR", "eclipse", "emacs", "MSVS 2008", "vim", "Xcode" };
+
 	private static Vector plugInPanels;
 	private static Vector plugInActionListeners;
-	
-	
+
 	private final Object[][] styleDef = {
-		
-	// {comments,keywords,numbers,strings,
-	//		objects,bold keywords,italic objects}	
-/*JGR*/		{new Color(0, 120, 0),new Color(0, 0, 140),Color.red,Color.blue,
-				new Color(50, 0, 140),new Boolean(true),new Boolean(true)},
-/*eclipse*/	{new Color(0x2f9956),new Color(0x7f0055),new Color(0x000000),new Color(0x0000ff),
-				new Color(0x000000),new Boolean(true),new Boolean(false)},
-/*emacs*/	{new Color(0xac2020),new Color(0x9c20ee),new Color(0x000000),new Color(0xbd8d8b),
-					new Color(0x000000),new Boolean(true),new Boolean(false)},				
-/*msvs*/	{new Color(0x008000),new Color(0x0000ff),new Color(0x000000),new Color(0xa31515),
-				new Color(0x000000),new Boolean(false),new Boolean(false)},
-/*vim*/	{new Color(0x0000ff),new Color(0xB26818),new Color(0xff0000),new Color(0xff0000),
-				new Color(0x000000),new Boolean(false),new Boolean(false)},
-/*xcode*/	{new Color(0x007f1c),new Color(0x8f0055),new Color(0x2300ff),new Color(0xc00000),
-				new Color(0x000000),new Boolean(false),new Boolean(false)},
-		
+
+			// {comments,keywords,numbers,strings,
+			// objects,bold keywords,italic objects}
+			/* JGR */{ new Color(0, 120, 0), new Color(0, 0, 140), Color.red, Color.blue, new Color(50, 0, 140), new Boolean(true), new Boolean(true) },
+			/* eclipse */{ new Color(0x2f9956), new Color(0x7f0055), new Color(0x000000), new Color(0x0000ff), new Color(0x000000),
+					new Boolean(true), new Boolean(false) },
+			/* emacs */{ new Color(0xac2020), new Color(0x9c20ee), new Color(0x000000), new Color(0xbd8d8b), new Color(0x000000), new Boolean(true),
+					new Boolean(false) },
+			/* msvs */{ new Color(0x008000), new Color(0x0000ff), new Color(0x000000), new Color(0xa31515), new Color(0x000000), new Boolean(false),
+					new Boolean(false) },
+			/* vim */{ new Color(0x0000ff), new Color(0xB26818), new Color(0xff0000), new Color(0xff0000), new Color(0x000000), new Boolean(false),
+					new Boolean(false) },
+			/* xcode */{ new Color(0x007f1c), new Color(0x8f0055), new Color(0x2300ff), new Color(0xc00000), new Color(0x000000), new Boolean(false),
+					new Boolean(false) },
+
 	};
-	
-	
+
 	private static PrefDialog instance;
-	
+
 	private PrefDialog(JFrame frame) {
 		super(frame);
 		initGUI();
-		if(plugInPanels==null || plugInActionListeners==null){
+		if (plugInPanels == null || plugInActionListeners == null) {
 			plugInPanels = new Vector();
 			plugInActionListeners = new Vector();
-		}else{
+		} else {
 			PJPanel pan;
-			for(int i = 0 ; i<plugInPanels.size();i++){
-				pan = (PJPanel)plugInPanels.get(i);
+			for (int i = 0; i < plugInPanels.size(); i++) {
+				pan = (PJPanel) plugInPanels.get(i);
 				tabbedPrefs.add(pan);
 				pan.reset();
-				okay.addActionListener((ActionListener)plugInActionListeners.get(i));
-				cancel.addActionListener((ActionListener)plugInActionListeners.get(i));
-				reset.addActionListener((ActionListener)plugInActionListeners.get(i));
+				okay.addActionListener((ActionListener) plugInActionListeners.get(i));
+				cancel.addActionListener((ActionListener) plugInActionListeners.get(i));
+				reset.addActionListener((ActionListener) plugInActionListeners.get(i));
 			}
 		}
 		setFontComboBox();
 		reset();
 	}
-	
+
 	public static PrefDialog showPreferences(JFrame frame) {
 		if (instance == null) {
 			instance = new PrefDialog(frame);
 		}
 		return instance;
 	}
-	
+
 	public void dispose() {
 		instance = null;
 		super.dispose();
 	}
-	
-	
+
 	private void initGUI() {
 		try {
 			{
@@ -181,10 +171,9 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 							fontLabel.setBounds(90, 12, 41, 14);
 						}
 						{
-							ComboBoxModel fontComboBoxModel = 
-								new DefaultComboBoxModel();
+							ComboBoxModel fontComboBoxModel = new DefaultComboBoxModel();
 							fontComboBox = new JComboBox();
-							
+
 							DocumentPrefs.add(fontComboBox);
 							fontComboBox.setModel(fontComboBoxModel);
 							fontComboBox.setBounds(131, 9, 164, 21);
@@ -196,8 +185,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 							sizeLabel.setBounds(307, 12, 38, 14);
 						}
 						{
-							ComboBoxModel sizeComboBoxModel = 
-								new DefaultComboBoxModel(sizes);
+							ComboBoxModel sizeComboBoxModel = new DefaultComboBoxModel(sizes);
 							sizeComboBox = new JComboBox();
 							DocumentPrefs.add(sizeComboBox);
 							sizeComboBox.setModel(sizeComboBoxModel);
@@ -282,8 +270,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								styleLabel.setBounds(61, 19, 49, 14);
 							}
 							{
-								ComboBoxModel styleModel = 
-									new DefaultComboBoxModel(styles);
+								ComboBoxModel styleModel = new DefaultComboBoxModel(styles);
 								style = new JComboBox();
 								documentPanel.add(style);
 								style.setModel(styleModel);
@@ -444,14 +431,14 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								emacs.setBounds(10, 120, 250, 18);
 							}
 						}
-						/*{
-							editorPanel = new JPanel();
-							generalPanel.add(editorPanel);
-							editorPanel.setBounds(290, 191, 223, 147);
-							editorPanel.setBorder(BorderFactory.createTitledBorder("Editor"));
-							editorPanel.setLayout(null);
-
-						}*/
+						/*
+						 * { editorPanel = new JPanel();
+						 * generalPanel.add(editorPanel);
+						 * editorPanel.setBounds(290, 191, 223, 147);
+						 * editorPanel
+						 * .setBorder(BorderFactory.createTitledBorder
+						 * ("Editor")); editorPanel.setLayout(null); }
+						 */
 					}
 				}
 				{
@@ -527,7 +514,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				helpPanel.add(helpAgentConsole);
 				helpAgentConsole.setText("Console Help Agent");
 				helpAgentConsole.setBounds(10, 65, 180, 18);
-				
+
 				helpAgentEditor = new JCheckBox();
 				helpPanel.add(helpAgentEditor);
 				helpAgentEditor.setText("Editor Help Agent");
@@ -537,8 +524,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 			this.setTitle("Preferences");
 			this.setSize(560, 485);
 
-			
-			if(!Common.isMac()){
+			if (!Common.isMac()) {
 				commands.setContentAreaFilled(false);
 				commands.setOpaque(true);
 				results.setContentAreaFilled(false);
@@ -548,18 +534,18 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				comment.setContentAreaFilled(false);
 				comment.setOpaque(true);
 				numbers.setContentAreaFilled(false);
-				numbers.setOpaque(true);			
+				numbers.setOpaque(true);
 				objects.setContentAreaFilled(false);
-				objects.setOpaque(true);			
+				objects.setOpaque(true);
 				strings.setContentAreaFilled(false);
-				strings.setOpaque(true);			
+				strings.setOpaque(true);
 				keyword.setContentAreaFilled(false);
-				keyword.setOpaque(true);			
+				keyword.setOpaque(true);
 				highlightColor.setContentAreaFilled(false);
-				highlightColor.setOpaque(true);			
+				highlightColor.setOpaque(true);
 				brackets.setContentAreaFilled(false);
 				brackets.setOpaque(true);
-			}else{
+			} else {
 				commands.setText("Color");
 				results.setText("Color");
 				errors.setText("Color");
@@ -571,228 +557,225 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				highlightColor.setText("C");
 				brackets.setText("C");
 			}
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void setFontComboBox(){
+
+	public void setFontComboBox() {
 		Vector monospaceFontFamilyNames = new Vector();
-		String fontFamilyName="";
+		String fontFamilyName = "";
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		String[] fontFamilyNames = graphicsEnvironment.getAvailableFontFamilyNames();
 
 		BufferedImage bufferedImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		Graphics graphics = bufferedImage.createGraphics();
-		
-		for (int i=0;i< fontFamilyNames.length;i++) {
+
+		for (int i = 0; i < fontFamilyNames.length; i++) {
 			fontFamilyName = fontFamilyNames[i];
-		    boolean isMonospaced = true;
+			boolean isMonospaced = true;
 
-		    int fontStyle = Font.PLAIN;
-		    int fontSize = 12;
-		    Font font = new Font(fontFamilyName, fontStyle, fontSize);
-		    FontMetrics fontMetrics = graphics.getFontMetrics(font);
+			int fontStyle = Font.PLAIN;
+			int fontSize = 12;
+			Font font = new Font(fontFamilyName, fontStyle, fontSize);
+			FontMetrics fontMetrics = graphics.getFontMetrics(font);
 
-		    int firstCharacterWidth = 0;
-		    boolean hasFirstCharacterWidth = false;
-		    for (int codePoint = 0; codePoint < 128; codePoint++) { 
-		        if (Character.isValidCodePoint(codePoint) && !Character.isWhitespace(codePoint) && (Character.isLetter(codePoint) || Character.isDigit(codePoint))) {
-		            char character = (char) codePoint;
-		            int characterWidth = fontMetrics.charWidth(character);
-		            if (hasFirstCharacterWidth) {
-		                if (characterWidth != firstCharacterWidth) {
-		                    isMonospaced = false;
-		                    break;
-		                }
-		            } else {
-		                firstCharacterWidth = characterWidth;
-		                hasFirstCharacterWidth = true;
-		            }
-		        }
-		    }
+			int firstCharacterWidth = 0;
+			boolean hasFirstCharacterWidth = false;
+			for (int codePoint = 0; codePoint < 128; codePoint++) {
+				if (Character.isValidCodePoint(codePoint) && !Character.isWhitespace(codePoint)
+						&& (Character.isLetter(codePoint) || Character.isDigit(codePoint))) {
+					char character = (char) codePoint;
+					int characterWidth = fontMetrics.charWidth(character);
+					if (hasFirstCharacterWidth) {
+						if (characterWidth != firstCharacterWidth) {
+							isMonospaced = false;
+							break;
+						}
+					} else {
+						firstCharacterWidth = characterWidth;
+						hasFirstCharacterWidth = true;
+					}
+				}
+			}
 
-		    if (isMonospaced) {
-		        monospaceFontFamilyNames.add(fontFamilyName);
-		    }
+			if (isMonospaced) {
+				monospaceFontFamilyNames.add(fontFamilyName);
+			}
 		}
 
 		graphics.dispose();
 		fontComboBox.setModel(new DefaultComboBoxModel());
-		for(int i=0;i<monospaceFontFamilyNames.size();i++)
+		for (int i = 0; i < monospaceFontFamilyNames.size(); i++)
 			fontComboBox.addItem(monospaceFontFamilyNames.get(i));
 	}
-	public void setStyle(int index){
+
+	public void setStyle(int index) {
 		// {comment,keywords,numbers,strings,
-		//		objects,bold keywords,italic objects}	
+		// objects,bold keywords,italic objects}
 		Object[] newStyle = styleDef[index];
-		setColor(comment,(Color)newStyle[0]);
-		setColor(keyword,(Color)newStyle[1]);
-		setColor(numbers,(Color)newStyle[2]);
-		setColor(strings,(Color)newStyle[3]);
-		setColor(objects,(Color)newStyle[4]);
-		boldKeywords.setSelected(((Boolean)newStyle[5]).booleanValue());
-		italicObjects.setSelected(((Boolean)newStyle[6]).booleanValue());
+		setColor(comment, (Color) newStyle[0]);
+		setColor(keyword, (Color) newStyle[1]);
+		setColor(numbers, (Color) newStyle[2]);
+		setColor(strings, (Color) newStyle[3]);
+		setColor(objects, (Color) newStyle[4]);
+		boldKeywords.setSelected(((Boolean) newStyle[5]).booleanValue());
+		italicObjects.setSelected(((Boolean) newStyle[6]).booleanValue());
 	}
-	
-	public void setColor(JButton b,Color c){
-		if(!Common.isMac()){
+
+	public void setColor(JButton b, Color c) {
+		if (!Common.isMac()) {
 			b.setBackground(c);
-		}else
+		} else
 			b.setForeground(c);
 	}
-	
-	public Color getColor(JButton b){
-		if(!Common.isMac()){
+
+	public Color getColor(JButton b) {
+		if (!Common.isMac()) {
 			return b.getBackground();
-		}else
-			return b.getForeground();	
+		} else
+			return b.getForeground();
 	}
-	
-	
-	public void reset(){
+
+	public void reset() {
 		setStyle(0);
-		setColor(highlightColor,JGRPrefs.HIGHLIGHTColor);
-		setColor(results,JGRPrefs.RESULTColor);
-		setColor(commands,JGRPrefs.CMDColor);
-		setColor(errors,JGRPrefs.ERRORColor);
+		setColor(highlightColor, JGRPrefs.HIGHLIGHTColor);
+		setColor(results, JGRPrefs.RESULTColor);
+		setColor(commands, JGRPrefs.CMDColor);
+		setColor(errors, JGRPrefs.ERRORColor);
 		monospaced.setSelected(true);
 		fontComboBox.setSelectedItem(JGRPrefs.FontName);
-		sizeComboBox.setSelectedItem(""+JGRPrefs.FontSize);
+		sizeComboBox.setSelectedItem("" + JGRPrefs.FontSize);
 		style.setSelectedItem(" ");
 		tabwidth.setValue(new Integer(JGRPrefs.tabWidth));
 		lineNumbers.setSelected(JGRPrefs.LINE_NUMBERS);
 		highlight.setSelected(JGRPrefs.LINE_HIGHLIGHT);
 		autotab.setSelected(JGRPrefs.AUTOTAB);
-		setColor(brackets,JGRPrefs.BRACKETHighLight);
+		setColor(brackets, JGRPrefs.BRACKETHighLight);
 		working.setText(JGRPrefs.workingDirectory);
 		hidden.setSelected(JGRPrefs.showHiddenFiles);
-		helpPages.setValue(new Integer(JGRPrefs.maxHelpTabs)); 
+		helpPages.setValue(new Integer(JGRPrefs.maxHelpTabs));
 		helpAgentConsole.setSelected(JGRPrefs.useHelpAgentConsole);
 		helpAgentEditor.setSelected(JGRPrefs.useHelpAgentEditor);
 		emacs.setSelected(JGRPrefs.useEmacsKeyBindings);
-		
-		setColor(comment,JGRPrefs.COMMENTColor);
-		setColor(keyword,JGRPrefs.KEYWORDColor);
-		setColor(numbers,JGRPrefs.NUMBERColor);
-		setColor(strings,JGRPrefs.QUOTEColor);
-		setColor(objects,JGRPrefs.OBJECTColor);
+
+		setColor(comment, JGRPrefs.COMMENTColor);
+		setColor(keyword, JGRPrefs.KEYWORDColor);
+		setColor(numbers, JGRPrefs.NUMBERColor);
+		setColor(strings, JGRPrefs.QUOTEColor);
+		setColor(objects, JGRPrefs.OBJECTColor);
 		boldKeywords.setSelected(JGRPrefs.KEYWORD_BOLD);
 		italicObjects.setSelected(JGRPrefs.OBJECT_IT);
-		for(int i=0;i<styleDef.length;i++){
+		for (int i = 0; i < styleDef.length; i++) {
 			// {comments,keywords,numbers,strings,
-			//		objects,bold keywords,italic objects}	
-			if(JGRPrefs.COMMENTColor.equals(styleDef[i][0]) &&
-					JGRPrefs.KEYWORDColor.equals(styleDef[i][1]) &&
-					JGRPrefs.NUMBERColor.equals(styleDef[i][2]) &&
-					JGRPrefs.QUOTEColor.equals(styleDef[i][3]) &&
-					JGRPrefs.OBJECTColor.equals(styleDef[i][4]) &&
-					(new Boolean(JGRPrefs.KEYWORD_BOLD)).equals(styleDef[i][5]) &&
-					(new Boolean(JGRPrefs.OBJECT_IT)).equals(styleDef[i][6]) 
+			// objects,bold keywords,italic objects}
+			if (JGRPrefs.COMMENTColor.equals(styleDef[i][0]) && JGRPrefs.KEYWORDColor.equals(styleDef[i][1])
+					&& JGRPrefs.NUMBERColor.equals(styleDef[i][2]) && JGRPrefs.QUOTEColor.equals(styleDef[i][3])
+					&& JGRPrefs.OBJECTColor.equals(styleDef[i][4]) && (new Boolean(JGRPrefs.KEYWORD_BOLD)).equals(styleDef[i][5])
+					&& (new Boolean(JGRPrefs.OBJECT_IT)).equals(styleDef[i][6])
 
-				)
-				style.setSelectedIndex(i+1);
+			)
+				style.setSelectedIndex(i + 1);
 		}
 	}
-	
-	public void resetToFactory(){
+
+	public void resetToFactory() {
 		style.setSelectedIndex(1);
-		setColor(highlightColor,new Color(0xe0e0e0));
-		setColor(results,Color.blue);
-		setColor(commands,Color.red);
-		setColor(errors,Color.red);
+		setColor(highlightColor, new Color(0xe0e0e0));
+		setColor(results, Color.blue);
+		setColor(commands, Color.red);
+		setColor(errors, Color.red);
 		monospaced.setSelected(true);
 		fontComboBox.setSelectedItem("Monospaced");
-		sizeComboBox.setSelectedItem(""+12);
+		sizeComboBox.setSelectedItem("" + 12);
 		tabwidth.setValue(new Integer(4));
 		lineNumbers.setSelected(true);
 		highlight.setSelected(true);
 		autotab.setSelected(true);
-		setColor(brackets,new Color(200, 255, 255));
+		setColor(brackets, new Color(200, 255, 255));
 		working.setText(System.getProperty("user.home"));
 		hidden.setSelected(false);
-		helpPages.setValue(new Integer(10)); 
+		helpPages.setValue(new Integer(10));
 		helpAgentConsole.setSelected(true);
 		helpAgentEditor.setSelected(true);
 		emacs.setSelected(false);
-		
+
 	}
-	
-	public boolean saveAll(){
+
+	public boolean saveAll() {
 		int tmp1 = JGRPrefs.tabWidth;
-		int tmp2 =JGRPrefs.maxHelpTabs;
-		try{
-			JGRPrefs.FontSize=Integer.parseInt((String)sizeComboBox.getSelectedItem());
-		}catch(Exception e){
+		int tmp2 = JGRPrefs.maxHelpTabs;
+		try {
+			JGRPrefs.FontSize = Integer.parseInt((String) sizeComboBox.getSelectedItem());
+		} catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Invalid Font Size");
 			return false;
 		}
 
-		tmp1 =((Integer)tabwidth.getValue()).intValue();
-		if(tmp1<=0){
+		tmp1 = ((Integer) tabwidth.getValue()).intValue();
+		if (tmp1 <= 0) {
 			JOptionPane.showMessageDialog(this, "Invalid Tab Width");
-			return false;	
+			return false;
 		}
 
-		tmp2 =((Integer)helpPages.getValue()).intValue();
-		if(tmp2<=0){
+		tmp2 = ((Integer) helpPages.getValue()).intValue();
+		if (tmp2 <= 0) {
 			JOptionPane.showMessageDialog(this, "Invalid number of help pages");
-			return false;	
+			return false;
 		}
 
 		File tmpFile = new File(working.getText());
-		if(!tmpFile.exists() || !tmpFile.isDirectory()){
+		if (!tmpFile.exists() || !tmpFile.isDirectory()) {
 			JOptionPane.showMessageDialog(this, "Invalid working directory");
 			return false;
 		}
-		if(emacs.isSelected() && !Common.isMac()){
-			int tmp3 =JOptionPane.showConfirmDialog(this, "emacs key bindings are unsafe on non-mac systems. \n" +
-					"are you sure you want to use them?","emac warning", JOptionPane.YES_NO_OPTION);
-			if(tmp3==JOptionPane.NO_OPTION)
+		if (emacs.isSelected() && !Common.isMac()) {
+			int tmp3 = JOptionPane.showConfirmDialog(this, "emacs key bindings are unsafe on non-mac systems. \n"
+					+ "are you sure you want to use them?", "emac warning", JOptionPane.YES_NO_OPTION);
+			if (tmp3 == JOptionPane.NO_OPTION)
 				return false;
 		}
-		
-		JGRPrefs.tabWidth=tmp1;
-		JGRPrefs.maxHelpTabs=tmp2;
-		JGRPrefs.workingDirectory=working.getText();		
-		
-		JGRPrefs.FontName=(String)fontComboBox.getSelectedItem();
-		JGRPrefs.HIGHLIGHTColor=getColor(highlightColor);
-		JGRPrefs.RESULTColor=getColor(results);
-		JGRPrefs.CMDColor=getColor(commands);
-		JGRPrefs.ERRORColor=getColor(errors);
-		JGRPrefs.LINE_NUMBERS=lineNumbers.isSelected();
-		JGRPrefs.LINE_HIGHLIGHT=highlight.isSelected();
-		JGRPrefs.AUTOTAB=autotab.isSelected();
-		JGRPrefs.BRACKETHighLight=getColor(brackets);
-		JGRPrefs.showHiddenFiles=hidden.isSelected();
-		JGRPrefs.useHelpAgentConsole=helpAgentConsole.isSelected();
-		JGRPrefs.useHelpAgentEditor=helpAgentEditor.isSelected();
-		JGRPrefs.useEmacsKeyBindings=emacs.isSelected();
-		
-		JGRPrefs.COMMENTColor=getColor(comment);
-		JGRPrefs.KEYWORDColor=getColor(keyword);
-		JGRPrefs.NUMBERColor=getColor(numbers);
-		JGRPrefs.QUOTEColor=getColor(strings);
-		JGRPrefs.OBJECTColor=getColor(objects);
-		JGRPrefs.KEYWORD_BOLD=boldKeywords.isSelected();
-		JGRPrefs.OBJECT_IT=italicObjects.isSelected();
-		
+
+		JGRPrefs.tabWidth = tmp1;
+		JGRPrefs.maxHelpTabs = tmp2;
+		JGRPrefs.workingDirectory = working.getText();
+
+		JGRPrefs.FontName = (String) fontComboBox.getSelectedItem();
+		JGRPrefs.HIGHLIGHTColor = getColor(highlightColor);
+		JGRPrefs.RESULTColor = getColor(results);
+		JGRPrefs.CMDColor = getColor(commands);
+		JGRPrefs.ERRORColor = getColor(errors);
+		JGRPrefs.LINE_NUMBERS = lineNumbers.isSelected();
+		JGRPrefs.LINE_HIGHLIGHT = highlight.isSelected();
+		JGRPrefs.AUTOTAB = autotab.isSelected();
+		JGRPrefs.BRACKETHighLight = getColor(brackets);
+		JGRPrefs.showHiddenFiles = hidden.isSelected();
+		JGRPrefs.useHelpAgentConsole = helpAgentConsole.isSelected();
+		JGRPrefs.useHelpAgentEditor = helpAgentEditor.isSelected();
+		JGRPrefs.useEmacsKeyBindings = emacs.isSelected();
+
+		JGRPrefs.COMMENTColor = getColor(comment);
+		JGRPrefs.KEYWORDColor = getColor(keyword);
+		JGRPrefs.NUMBERColor = getColor(numbers);
+		JGRPrefs.QUOTEColor = getColor(strings);
+		JGRPrefs.OBJECTColor = getColor(objects);
+		JGRPrefs.KEYWORD_BOLD = boldKeywords.isSelected();
+		JGRPrefs.OBJECT_IT = italicObjects.isSelected();
+
 		JGRPrefs.apply();
 		JGRPrefs.writePrefs(false);
 		return true;
 	}
-	
-	public static void addPanel(PJPanel panel, ActionListener al){
-		if(plugInPanels==null || plugInActionListeners==null){
+
+	public static void addPanel(PJPanel panel, ActionListener al) {
+		if (plugInPanels == null || plugInActionListeners == null) {
 			plugInPanels = new Vector();
 			plugInActionListeners = new Vector();
 		}
 		plugInPanels.add(panel);
 		plugInActionListeners.add(al);
-		if(instance!=null){
+		if (instance != null) {
 			instance.tabbedPrefs.add(panel);
 			panel.reset();
 			instance.okay.addActionListener(al);
@@ -803,15 +786,15 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent arg0) {
 		Object src = arg0.getSource();
-		Color newColor ;
-		if(src==okay){
-			if(saveAll())
+		Color newColor;
+		if (src == okay) {
+			if (saveAll())
 				this.dispose();
-		}else if(src==cancel){
+		} else if (src == cancel) {
 			this.dispose();
-		}else if(src==reset){
+		} else if (src == reset) {
 			resetToFactory();
-		}else if(src==workingButton){
+		} else if (src == workingButton) {
 			JFileChooser chooser = new JFileChooser();
 			chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setDialogTitle("Choose Working Directory");
@@ -821,53 +804,44 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 				return;
 			if (chooser.getSelectedFile() != null)
 				working.setText(chooser.getSelectedFile().toString());
-		}else if(src==results){
-			newColor = JColorChooser.showDialog(
-                    this,
-                    "Choose Console Result Color",
-                    results.getBackground());
-			if(newColor!=null)
-				setColor(results,newColor);
-		}else if(src==commands){
-			newColor = JColorChooser.showDialog(
-                    this,
-                    "Choose Console Command Color",
-                    commands.getBackground());
-			if(newColor!=null)
-				setColor(commands,newColor);
-		}else if(src==errors){
-			newColor = JColorChooser.showDialog(
-                    this,
-                    "Choose Console Error Color",
-                    errors.getBackground());
-			if(newColor!=null)
-				setColor(errors,newColor);
-		}else if(src == monospaced){
-			if(monospaced .isSelected()){
+		} else if (src == results) {
+			newColor = JColorChooser.showDialog(this, "Choose Console Result Color", results.getBackground());
+			if (newColor != null)
+				setColor(results, newColor);
+		} else if (src == commands) {
+			newColor = JColorChooser.showDialog(this, "Choose Console Command Color", commands.getBackground());
+			if (newColor != null)
+				setColor(commands, newColor);
+		} else if (src == errors) {
+			newColor = JColorChooser.showDialog(this, "Choose Console Error Color", errors.getBackground());
+			if (newColor != null)
+				setColor(errors, newColor);
+		} else if (src == monospaced) {
+			if (monospaced.isSelected()) {
 				setFontComboBox();
-			}else
-				fontComboBox.setModel(new DefaultComboBoxModel(
-						GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
-		}else if(src instanceof javax.swing.JButton){
-			newColor = JColorChooser.showDialog(
-                    this,
-                    "Choose Color",
-                    errors.getBackground());
-			if(newColor!=null){
-				setColor(((JButton) src),newColor);		
+			} else
+				fontComboBox.setModel(new DefaultComboBoxModel(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()));
+		} else if (src instanceof javax.swing.JButton) {
+			newColor = JColorChooser.showDialog(this, "Choose Color", errors.getBackground());
+			if (newColor != null) {
+				setColor(((JButton) src), newColor);
 				style.setSelectedItem(" ");
 			}
-		}else if(src==boldKeywords){
+		} else if (src == boldKeywords) {
 			style.setSelectedItem(" ");
-		}else if(src == italicObjects){
+		} else if (src == italicObjects) {
 			style.setSelectedItem(" ");
-		}else if(src == style && style.getSelectedIndex()!=0){
-			setStyle(style.getSelectedIndex()-1);
+		} else if (src == style && style.getSelectedIndex() != 0) {
+			setStyle(style.getSelectedIndex() - 1);
 		}
 	}
-	
-	public static abstract class PJPanel extends JPanel{
+
+	public static abstract class PJPanel extends JPanel {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3811864725637425691L;
+
 		public abstract void reset();
 	}
 }
-

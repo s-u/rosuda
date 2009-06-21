@@ -74,9 +74,6 @@ public class SyntaxStyle {
 	public Font getStyledFont(Font font) {
 		if (font == null)
 			throw new NullPointerException("font param must not" + " be null");
-//		if (font.equals(lastFont))
-//			return lastStyledFont;
-		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(), (bold ? Font.BOLD : 0) | (italic ? Font.ITALIC : 0), font.getSize());
 		return lastStyledFont;
 	}
@@ -87,10 +84,6 @@ public class SyntaxStyle {
 	public FontMetrics getFontMetrics(Font font) {
 		if (font == null)
 			throw new NullPointerException("font param must not" + " be null");
-//		if (font.equals(lastFont) && fontMetrics != null) {
-//			return fontMetrics;
-//		}
-		lastFont = font;
 		lastStyledFont = new Font(font.getFamily(), (bold ? Font.BOLD : 0) | (italic ? Font.ITALIC : 0), font.getSize());
 		fontMetrics = Toolkit.getDefaultToolkit().getFontMetrics(lastStyledFont);
 		return fontMetrics;
@@ -124,8 +117,6 @@ public class SyntaxStyle {
 	private boolean italic;
 
 	private boolean bold;
-
-	private Font lastFont;
 
 	private Font lastStyledFont;
 

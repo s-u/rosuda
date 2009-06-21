@@ -25,9 +25,18 @@ import javax.swing.text.PlainDocument;
 
 public class JComboBoxExt extends JComboBox {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9186205724254147198L;
 	private JTextField tf;
 
 	public class CBDocument extends PlainDocument {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4680254299321335075L;
+
 		public void insertString(int offset, String str, AttributeSet a)
 				throws BadLocationException {
 			super.insertString(offset, str, a);

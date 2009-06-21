@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,22 +23,22 @@ import org.rosuda.ibase.toolkit.TJFrame;
 /**
  * Simple text pager that displays a specified file.
  * 
- * @author Simon Urbanek and Markus Helbig
- * 
- * RoSuDa 2003 - 2005
- * 
+ * @author Simon Urbanek and Markus Helbig RoSuDa 2003 - 2005
  */
 public class TextPager extends TJFrame implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2204127122909644542L;
+
 	JTextArea t = new JTextArea();;
 
 	TextFinder textFinder = new TextFinder(t);
 
-	public TextPager(String file, String header, String title,
-			boolean deleteFile) {
+	public TextPager(String file, String header, String title, boolean deleteFile) {
 		super(title, clsHelp);
 
-		String myMenu[] = { "+", "Edit", "@CCopy", "copy", "-", "@FFind",
-				"search", "@GFind next", "searchnext", "~Window", "0" };
+		String myMenu[] = { "+", "Edit", "@CCopy", "copy", "-", "@FFind", "search", "@GFind next", "searchnext", "~Window", "0" };
 		EzMenuSwing.getEzMenu(this, this, myMenu);
 
 		getContentPane().add(new JScrollPane(t));
@@ -90,8 +91,7 @@ public class TextPager extends TJFrame implements ActionListener {
 	 * @param deleteFile
 	 *            delete file after displaying it
 	 */
-	public static void launchPager(String file, String header, String title,
-			boolean deleteFile) {
+	public static void launchPager(String file, String header, String title, boolean deleteFile) {
 		new TextPager(file, header, title, deleteFile);
 	}
 }

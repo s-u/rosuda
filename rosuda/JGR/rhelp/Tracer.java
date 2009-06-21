@@ -1,28 +1,20 @@
 package org.rosuda.JGR.rhelp;
 
-/*============================================================================
-
- Project:
-
- JAVA Source file for the class Tracer
-
- COPYRIGHT (C), 1998-2000, Thomas Baier, R Core development Team
-
- *  This program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
- ============================================================================*/
+/*
+ * ============================================================================
+ * Project: JAVA Source file for the class Tracer COPYRIGHT (C), 1998-2000,
+ * Thomas Baier, R Core development Team This program is free software; you can
+ * redistribute it and/or modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details. You should have received
+ * a copy of the GNU General Public License along with this program; if not,
+ * write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ * Boston, MA 02111-1307 USA
+ * ============================================================================
+ */
 
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
@@ -34,12 +26,16 @@ import java.awt.TextArea;
  */
 
 public class Tracer extends Frame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8235708177355116679L;
+
 	public static void write(String string) {
 		// create a trace window
 		/*
-		 * if (cTracer == null) { cTracer = new Tracer (); }
-		 * 
-		 * cTracer._write (string);
+		 * if (cTracer == null) { cTracer = new Tracer (); } cTracer._write
+		 * (string);
 		 */
 		return;
 	}
@@ -77,7 +73,7 @@ public class Tracer extends Frame {
 		gridbag.setConstraints(iOutput, constraints);
 		add(iOutput);
 
-		show();
+		setVisible(true);
 		pack();
 
 		return;

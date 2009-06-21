@@ -1,8 +1,9 @@
 package org.rosuda.JGR;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -13,11 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 import java.util.StringTokenizer;
+import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,10 +28,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
-import org.rosuda.JGR.util.TableSorter;
 import org.rosuda.JGR.util.ErrorMsg;
-
-import org.rosuda.ibase.toolkit.EzMenu;
+import org.rosuda.JGR.util.TableSorter;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
@@ -39,17 +37,19 @@ import org.rosuda.ibase.toolkit.TJFrame;
  * JGRPackageManager - manage packages for current session as well as default
  * packages
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class JGRPackageManager extends TJFrame implements ActionListener {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7143083791080919475L;
+
 	private Object[][] Packages = null;
 
-	private final String[] columnNames = { "loaded", "default", "Package",
-			"Description" };
+	private final String[] columnNames = { "loaded", "default", "Package", "Description" };
 
 	/** Array of default-packages (loaded at startup). */
 	public static Object[] defaultPackages;
@@ -75,22 +75,20 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 
 	private TableSorter sorter;
 
-	private PMTableModel pkgMissingsModel;
-
 	private PTableModel pkgModel;
 
 	private final JTable pkgTable = new JTable();
 
 	public JGRPackageManager(Vector missingpkgs) {
 		super("Deleted Packages after last session:", false, TJFrame.clsPackageUtil);
-		
+
 		String pkgs = "";
-		
+
 		for (int i = 0; i < missingpkgs.size() - 1; i++)
 			pkgs += missingpkgs.elementAt(i) + ",";
-		pkgs = missingpkgs.elementAt(missingpkgs.size()-1) + "";
-		
-		remindPackages =pkgs;
+		pkgs = missingpkgs.elementAt(missingpkgs.size() - 1) + "";
+
+		remindPackages = pkgs;
 		System.out.println("missing packages: " + remindPackages);
 		StringTokenizer st = new StringTokenizer(remindPackages, ",");
 		MPackages = new Object[st.countTokens()][2];
@@ -108,7 +106,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		instnow.setActionCommand("instnow");
 		instnow.addActionListener(this);
 
-		sorter = new TableSorter(pkgMissingsModel = new PMTableModel(this));
+		sorter = new TableSorter(new PMTableModel(this));
 		scrollArea.setBackground(this.getBackground());
 		pkgTable.setBackground(this.getBackground());
 		pkgTable.setColumnModel(new PMTableColumnModel());
@@ -135,8 +133,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		buttons.add(instnow);
 
 		JPanel msg = new JPanel(new FlowLayout(FlowLayout.CENTER));
-		msg.add(new JLabel(
-				"Last time you had the following packages installed!"));
+		msg.add(new JLabel("Last time you had the following packages installed!"));
 
 		this.getContentPane().setLayout(new GridBagLayout());
 
@@ -163,18 +160,14 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		this.getRootPane().setDefaultButton(instnow);
-		this
-				.setLocation(
-						(JGR.MAINRCONSOLE.getSize().width - (JGRPrefs.isMac ? 450
-								: 350)) / 2,
-						(JGR.MAINRCONSOLE.getSize().height - 250) / 2);
+		this.setLocation((JGR.MAINRCONSOLE.getSize().width - (JGRPrefs.isMac ? 450 : 350)) / 2, (JGR.MAINRCONSOLE.getSize().height - 250) / 2);
 		this.setSize(450, 250);
-		this.setResizable(false);
+		//this.setResizable(false);
 		this.setVisible(true);
 	}
 
 	private static JGRPackageManager instance;
-	
+
 	private JGRPackageManager() {
 		super("Package Manager", false, TJFrame.clsPackageUtil);
 		try {
@@ -234,17 +227,17 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 			this.setMinimumSize(new Dimension(300, 350));
 			this.setLocation(200, 10);
 			this.setSize(420, 450);
-			this.setResizable(false);
+			//this.setResizable(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}// this.show(); //do it manually when you really want to see it
 	}
-	
+
 	public void dispose() {
 		instance = null;
 		super.dispose();
 	}
-	
+
 	public static void showInstance() {
 		if (instance == null) {
 			instance = new JGRPackageManager();
@@ -252,7 +245,6 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		instance.refresh();
 		instance.setVisible(true);
 	}
-	
 
 	/**
 	 * Exit the package-manager but before save default-packages.
@@ -298,8 +290,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		for (int i = 0; i < MPackages.length; i++)
 			if (new Boolean(MPackages[i][0].toString()).booleanValue())
 				pkg += "\"" + MPackages[i][1] + "\",";
-		return pkg.trim().length() > 0 ? pkg.substring(0, pkg.length() - 1)
-				: null;
+		return pkg.trim().length() > 0 ? pkg.substring(0, pkg.length() - 1) : null;
 	}
 
 	/**
@@ -320,8 +311,7 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		} else if (cmd == "instnow") {
 			dispose();
 			remindPackages = null;
-			JGR.MAINRCONSOLE.execute("install.packages(c("
-					+ getSelectedPackages() + "))", true);
+			JGR.MAINRCONSOLE.execute("install.packages(c(" + getSelectedPackages() + "))", true);
 		} else if (cmd == "refresh")
 			refresh();
 
@@ -329,6 +319,10 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 
 	class PMTableModel extends DefaultTableModel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 7291256867075798679L;
 		public int cols, rows;
 
 		public PMTableModel(JGRPackageManager pm) {
@@ -367,6 +361,11 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 
 	class PMTableColumnModel extends DefaultTableColumnModel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3303539682530550720L;
+
 		public void addColumn(TableColumn col) {
 			if (col.getModelIndex() == 0) {
 				col.setMinWidth(50);
@@ -379,6 +378,10 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 
 	class PTableModel extends DefaultTableModel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 4696543490603572692L;
 		public int cols, rows;
 
 		public PTableModel(JGRPackageManager pm) {
@@ -424,6 +427,11 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 	}
 
 	class PTableColumnModel extends DefaultTableColumnModel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3352499532040543693L;
 
 		public PTableColumnModel() {
 		}

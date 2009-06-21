@@ -1,14 +1,14 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,14 +28,15 @@ import org.rosuda.ibase.Common;
 /**
  * TextFinder - find specified pattern in attached textcomponent
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
 public class TextFinder extends JDialog implements ActionListener {
 
-	private final GridBagLayout layout = new GridBagLayout();
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4833068209028584303L;
 
 	private final Dimension screenSize = Common.screenRes;
 
@@ -49,8 +50,7 @@ public class TextFinder extends JDialog implements ActionListener {
 
 	private final JLabel status = new JLabel("                       ");
 
-	Highlighter.HighlightPainter highLighter = new FoundHighlighter(
-			SystemColor.textHighlight);
+	Highlighter.HighlightPainter highLighter = new FoundHighlighter(SystemColor.textHighlight);
 
 	private String keyWord = null;
 
@@ -130,15 +130,14 @@ public class TextFinder extends JDialog implements ActionListener {
 		if (searchArea == null)
 			return;
 		searchArea.requestFocus();
-		if (keyWord != null
-				&& !keyWord.equals(keyWordField.getText().toLowerCase().trim())) {
+		if (keyWord != null && !keyWord.equals(keyWordField.getText().toLowerCase().trim())) {
 			position = -1;
 			found = false;
 		}
 		keyWord = keyWordField.getText().toLowerCase().trim();
 		searchArea.selectAll();
 		String cleanDoc = searchArea.getSelectedText();
-		//System.out.println(cleanDoc);
+		// System.out.println(cleanDoc);
 		if (!keyWord.equals("")) {
 			position = cleanDoc.toLowerCase().indexOf(keyWord, position + 1);
 			if (position == -1) {
@@ -179,8 +178,7 @@ public class TextFinder extends JDialog implements ActionListener {
 
 	private void showFinder() {
 		keyWordField.requestFocus();
-		this.setLocation((screenSize.width - 400) / 2,
-				(screenSize.height - 100) / 2);
+		this.setLocation((screenSize.width - 400) / 2, (screenSize.height - 100) / 2);
 		super.setVisible(true);
 		super.toFront();
 	}

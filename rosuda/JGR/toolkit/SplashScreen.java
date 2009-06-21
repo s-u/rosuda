@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,12 +23,15 @@ import org.rosuda.ibase.Common;
 /**
  * SplashScreen
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig RoSuDa 2003 - 2004
  */
 
 public class SplashScreen extends JWindow implements Runnable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8996166449783183244L;
 
 	private Thread thread;
 
@@ -45,8 +49,7 @@ public class SplashScreen extends JWindow implements Runnable {
 				System.out.println("Missing Splashlogo: " + e.getMessage());
 		}
 		this.setSize(splashSize);
-		this.setLocation((screenSize.width - 300) / 2,
-				(screenSize.height - 200) / 2);
+		this.setLocation((screenSize.width - 300) / 2, (screenSize.height - 200) / 2);
 		this.setBackground(Color.white);
 		thread = new Thread(this);
 	}
@@ -54,8 +57,7 @@ public class SplashScreen extends JWindow implements Runnable {
 	public void paint(Graphics g) {
 		try {
 			if (splash != null)
-				g.drawImage(splash, 0, 0, splash.getWidth(this), splash
-						.getHeight(this), this);
+				g.drawImage(splash, 0, 0, splash.getWidth(this), splash.getHeight(this), this);
 			g.setFont(new Font("Dialog", Font.BOLD, 26));
 			g.drawString(JGR.TITLE, 175, 40);
 			g.setFont(new Font("Dialog", Font.BOLD, 16));
@@ -71,8 +73,7 @@ public class SplashScreen extends JWindow implements Runnable {
 			g.drawString(JGR.WEBSITE, 150, splashSize.height - 35);
 			g.setColor(Color.black);
 			g.setFont(new Font("Dialog", 0, 12));
-			g.drawString("(c) " + JGR.DEVELTIME + ", " + JGR.INSTITUTION, 10,
-					splashSize.height - 10);
+			g.drawString("(c) " + JGR.DEVELTIME + ", " + JGR.INSTITUTION, 10, splashSize.height - 10);
 			g.drawRect(0, 0, splashSize.width - 1, splashSize.height - 1);
 		} catch (Exception e) {
 			g.setFont(new Font("Dialog", 0, 12));
@@ -83,7 +84,8 @@ public class SplashScreen extends JWindow implements Runnable {
 
 	public Image loadSplash(String logo) {
 		URL location = getClass().getResource("/" + logo);
-		if (location == null) location = getClass().getResource("/splash.jpg");
+		if (location == null)
+			location = getClass().getResource("/splash.jpg");
 		Image img = Toolkit.getDefaultToolkit().getImage(location);
 		MediaTracker mt = new MediaTracker(this);
 		mt.addImage(img, 0);

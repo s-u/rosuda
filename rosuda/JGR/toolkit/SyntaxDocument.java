@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -18,12 +19,15 @@ import org.rosuda.JGR.JGR;
 /**
  * SytnaxDocument - provides R-Syntaxhighlighting.
  * 
- * @author Markus Helbig adapted from java-developer forum
- * 
- * RoSuDa 2003 - 2004
+ * @author Markus Helbig adapted from java-developer forum RoSuDa 2003 - 2004
  */
 
 public class SyntaxDocument extends JGRStyledDocument {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5625191609414857832L;
 
 	private DefaultStyledDocument doc;
 
@@ -43,8 +47,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	/**
 	 * Insert text and apply coloring.
 	 */
-	public void insertString(final int offset, String str, AttributeSet a)
-			throws BadLocationException {
+	public void insertString(final int offset, String str, AttributeSet a) throws BadLocationException {
 		boolean whitespace = false;
 		if (str.equals("\t")) {
 			try {
@@ -87,8 +90,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	/**
 	 * Insert text without whitespaces.
 	 */
-	public void insertStringWithoutWhiteSpace(final int offset, String str,
-			AttributeSet a) throws BadLocationException {
+	public void insertStringWithoutWhiteSpace(final int offset, String str, AttributeSet a) throws BadLocationException {
 		super.insertString(offset, str, a);
 		int len = str.length();
 		processChangedLines(offset, len);
@@ -107,8 +109,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	/**
 	 * Determine which lines have changed and apply highlighting to them.
 	 */
-	public synchronized void processChangedLines(int offset, int length)
-			throws BadLocationException {
+	public synchronized void processChangedLines(int offset, int length) throws BadLocationException {
 		String content = doc.getText(0, doc.getLength());
 		// The lines affected by the latest document update
 		int startLine = rootElement.getElementIndex(offset);
@@ -132,13 +133,11 @@ public class SyntaxDocument extends JGRStyledDocument {
 			endOffset = contentLength - 1;
 
 		// set normal attributes for the line
-		doc.setCharacterAttributes(startOffset, lineLength, JGRPrefs.NORMAL,
-				true);
+		doc.setCharacterAttributes(startOffset, lineLength, JGRPrefs.NORMAL, true);
 		// check for single line comment
 		int index = content.indexOf(getSingleLineDelimiter(), startOffset);
 		if ((index > -1) && (index < endOffset)) {
-			doc.setCharacterAttributes(index, endOffset - index + 1,
-					JGRPrefs.COMMENT, false);
+			doc.setCharacterAttributes(index, endOffset - index + 1, JGRPrefs.COMMENT, false);
 			endOffset = index - 1;
 		}
 		// check for tokens*/
@@ -148,8 +147,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	/**
 	 * Parse the line for tokens to highlight.
 	 */
-	private synchronized void checkForTokens(String content, int startOffset,
-			int endOffset) {
+	private synchronized void checkForTokens(String content, int startOffset, int endOffset) {
 		while (startOffset <= endOffset) {
 			// skip the delimiters to find the start of a new token
 			while (isDelimiter(content.substring(startOffset, startOffset + 1)))
@@ -158,8 +156,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 				else
 					return;
 			// Extract and process the entire token
-			if (isQuoteDelimiter(content
-					.substring(startOffset, startOffset + 1)))
+			if (isQuoteDelimiter(content.substring(startOffset, startOffset + 1)))
 				startOffset = getQuoteToken(content, startOffset, endOffset);
 			else
 				startOffset = getOtherToken(content, startOffset, endOffset);
@@ -169,8 +166,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	/**
 	 * Parse the line for quote-tokens.
 	 */
-	private synchronized int getQuoteToken(String content, int startOffset,
-			int endOffset) {
+	private synchronized int getQuoteToken(String content, int startOffset, int endOffset) {
 		String quoteDelimiter = content.substring(startOffset, startOffset + 1);
 		String escapeString = getEscapeString(quoteDelimiter);
 		int index;
@@ -187,13 +183,11 @@ public class SyntaxDocument extends JGRStyledDocument {
 			endOfQuote = endOffset;
 		else
 			endOfQuote = index;
-		doc.setCharacterAttributes(startOffset, endOfQuote - startOffset + 1,
-				JGRPrefs.QUOTE, false);
+		doc.setCharacterAttributes(startOffset, endOfQuote - startOffset + 1, JGRPrefs.QUOTE, false);
 		return endOfQuote + 1;
 	}
 
-	private synchronized int getOtherToken(String content, int startOffset,
-			int endOffset) {
+	private synchronized int getOtherToken(String content, int startOffset, int endOffset) {
 		int endOfToken = startOffset + 1;
 		while (endOfToken <= endOffset) {
 			if (isDelimiter(content.substring(endOfToken, endOfToken + 1)))
@@ -202,14 +196,11 @@ public class SyntaxDocument extends JGRStyledDocument {
 		}
 		String token = content.substring(startOffset, endOfToken);
 		if (isKeyword(token))
-			doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-					JGRPrefs.KEYWORD, false);
+			doc.setCharacterAttributes(startOffset, endOfToken - startOffset, JGRPrefs.KEYWORD, false);
 		if (isObject(token))
-			doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-					JGRPrefs.OBJECT, false);
+			doc.setCharacterAttributes(startOffset, endOfToken - startOffset, JGRPrefs.OBJECT, false);
 		else if (isNumber(token))
-			doc.setCharacterAttributes(startOffset, endOfToken - startOffset,
-					JGRPrefs.NUMBER, false);
+			doc.setCharacterAttributes(startOffset, endOfToken - startOffset, JGRPrefs.NUMBER, false);
 		return endOfToken + 1;
 	}
 
@@ -221,8 +212,8 @@ public class SyntaxDocument extends JGRStyledDocument {
 	 * offset) { int index; while ( (index = content.indexOf(needle, offset)) !=
 	 * -1) { String text = getLine(content, index).trim(); if
 	 * (text.startsWith(needle) || text.endsWith(needle)) break; else offset =
-	 * index + 1; } return index; }
-	 *  /* Assume the needle will the found at the start/end of the line
+	 * index + 1; } return index; } /* Assume the needle will the found at the
+	 * start/end of the line
 	 */
 	/*
 	 * private synchronized int lastIndexOf(String content, String needle, int
@@ -236,8 +227,8 @@ public class SyntaxDocument extends JGRStyledDocument {
 	 * private String getLine(String content, int offset) { int line =
 	 * rootElement.getElementIndex(offset); Element lineElement =
 	 * rootElement.getElement(line); int start = lineElement.getStartOffset();
-	 * int end = lineElement.getEndOffset(); return content.substring(start, end -
-	 * 1); }
+	 * int end = lineElement.getEndOffset(); return content.substring(start, end
+	 * - 1); }
 	 */
 
 	/**
@@ -245,8 +236,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 	 */
 	protected synchronized boolean isDelimiter(String character) {
 		String operands = ",;:{}()[]+-/%<=>!&|^~*$";
-		if (Character.isWhitespace(character.charAt(0))
-				|| operands.indexOf(character) != -1)
+		if (Character.isWhitespace(character.charAt(0)) || operands.indexOf(character) != -1)
 			return true;
 		return false;
 	}
@@ -300,8 +290,7 @@ public class SyntaxDocument extends JGRStyledDocument {
 		return "\\" + quoteDelimiter;
 	}
 
-	protected synchronized String addMatchingBrace(int offset)
-			throws BadLocationException {
+	protected synchronized String addMatchingBrace(int offset) throws BadLocationException {
 		StringBuffer whiteSpace = new StringBuffer();
 		int line = rootElement.getElementIndex(offset);
 		int i = rootElement.getElement(line).getStartOffset();
@@ -313,7 +302,6 @@ public class SyntaxDocument extends JGRStyledDocument {
 			} else
 				break;
 		}
-		return "{\n" + whiteSpace.toString() + whiteSpace.toString() + "\n"
-				+ whiteSpace.toString() + "}";
+		return "{\n" + whiteSpace.toString() + whiteSpace.toString() + "\n" + whiteSpace.toString() + "}";
 	}
 }

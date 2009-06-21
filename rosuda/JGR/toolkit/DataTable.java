@@ -1,8 +1,9 @@
 package org.rosuda.JGR.toolkit;
 
-//JGR - Java Gui for R, see http://www.rosuda.org/JGR/
-//Copyright (C) 2003 - 2005 Markus Helbig
-//--- for licensing information see LICENSE file in the original JGR distribution ---
+// JGR - Java Gui for R, see http://www.rosuda.org/JGR/
+// Copyright (C) 2003 - 2005 Markus Helbig
+// --- for licensing information see LICENSE file in the original JGR
+// distribution ---
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -74,13 +75,15 @@ import org.rosuda.ibase.toolkit.TJFrame;
  * DataTable - implementation of a simple spreadsheet for showing and editing
  * SVarSets.
  * 
- * @author Markus Helbig
- * 
- * RoSuDa 2003 - 2005
+ * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
-public class DataTable extends TJFrame implements ActionListener, MouseListener,
-		KeyListener {
+public class DataTable extends TJFrame implements ActionListener, MouseListener, KeyListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4257267810053816420L;
 
 	private final GridBagLayout layout = new GridBagLayout();
 
@@ -131,10 +134,11 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	public DataTable() {
 		this(null, null, true);
 	}
-	
-	public DataTable(SVarSet vs, String type, boolean editable){
-		this(vs,type,editable,true);
+
+	public DataTable(SVarSet vs, String type, boolean editable) {
+		this(vs, type, editable, true);
 	}
+
 	/**
 	 * Create a Table and show supplied {@see SVarSet}.
 	 * 
@@ -144,10 +148,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 *            type of {@see RObject} related to vs
 	 * @param editable
 	 *            if related {@see RObject} is editable or not
-	 *            
-	 * @param is Visible
+	 * @param is
+	 *            Visible
 	 */
-	public DataTable(SVarSet vs, String type, boolean editable,boolean visible) {
+	public DataTable(SVarSet vs, String type, boolean editable, boolean visible) {
 		super("DataTable Editor", false, TJFrame.clsObjBrowser);
 		if (vs == null) {
 			vs = new SVarSet();
@@ -159,8 +163,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			save.setText("Update");
 			save.setToolTipText("Update");
 			save.setActionCommand("export");
-			this.setTitle("DataTable - "
-					+ vs.getName().replaceFirst("jgr_temp", ""));
+			this.setTitle("DataTable - " + vs.getName().replaceFirst("jgr_temp", ""));
 			if (type != null)
 				this.type = type;
 		}
@@ -168,17 +171,12 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		this.editable = editable;
 		save.setEnabled(editable);
 
-		String myMenu[] = { "+", "File", "@OOpen", "loadData", "@SSave",
-				"saveData", "!SSave as", "saveDataAs", "Export to R", "export",
-				"~File.Basic.End",
-				"+","Edit","@XCut","cut","@CCopy","copy",
-				"@VPaste","paste","Delete","delete","@ASelect All","selAll","-",
-				"@FFind","search","@GFind Next","searchnext",
-				 
-				"+", "Tools", "Add Column",
-				"addCol", "Remove Column", "rmCol", "Add Row", "addRow",
-				"Remove Row", "rmRow", "-", "-", "Goto Case", "gotoCase",
-				"~Window", "+", "Help", "R Help", "rhelp", "~Preferences", "~About", "0" };
+		String myMenu[] = { "+", "File", "@OOpen", "loadData", "@SSave", "saveData", "!SSave as", "saveDataAs", "Export to R", "export",
+				"~File.Basic.End", "+", "Edit", "@XCut", "cut", "@CCopy", "copy", "@VPaste", "paste", "Delete", "delete", "@ASelect All", "selAll",
+				"-", "@FFind", "search", "@GFind Next", "searchnext",
+
+				"+", "Tools", "Add Column", "addCol", "Remove Column", "rmCol", "Add Row", "addRow", "Remove Row", "rmRow", "-", "-", "Goto Case",
+				"gotoCase", "~Window", "+", "Help", "R Help", "rhelp", "~Preferences", "~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, myMenu);
 
 		if (FontTracker.current == null)
@@ -210,16 +208,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		scrollArea.getViewport().add(dataTable);
 
 		this.getContentPane().setLayout(layout);
-		this.getContentPane().add(
-				new JScrollPane(dataTable),
-				new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0,
-						GridBagConstraints.WEST, GridBagConstraints.BOTH,
-						new Insets(5, 5, 2, 5), 0, 0));
-		this.getContentPane().add(
-				save,
-				new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-						GridBagConstraints.EAST, GridBagConstraints.NONE,
-						new Insets(2, 5, 5, 10), 0, 0));
+		this.getContentPane().add(new JScrollPane(dataTable),
+				new GridBagConstraints(0, 0, 2, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 2, 5), 0, 0));
+		this.getContentPane().add(save,
+				new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 5, 5, 10), 0, 0));
 
 		this.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -234,17 +226,12 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		int cc = dataTable.getColumnCount();
 		int width = cc * 75;
 		int height = (int) (rc * h * 1.6);
-		Dimension d = new Dimension((width < 400 && cc < 2) ? 400 : width,
-				(height < 400 && rc < 11) ? 300 : height);
-		this
-				.setSize(new Dimension(
-						d.width > Common.screenRes.width ? Common.screenRes.width - 50
-								: d.width,
-						d.height > Common.screenRes.height ? Common.screenRes.height - 50
-								: d.height));
+		Dimension d = new Dimension((width < 400 && cc < 2) ? 400 : width, (height < 400 && rc < 11) ? 300 : height);
+		this.setSize(new Dimension(d.width > Common.screenRes.width ? Common.screenRes.width - 50 : d.width,
+				d.height > Common.screenRes.height ? Common.screenRes.height - 50 : d.height));
 		this.setLocation(this.getLocation().x + 100, 10);
 		initPlacement();
-		if(visible)
+		if (visible)
 			this.setVisible(true);
 	}
 
@@ -255,8 +242,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	private void addColumn() {
 		modified = true;
 		String[] val = new NewColumnDialog(this).showInputDialog();
-		String[] varType = { "Numeric (double)", "Numeric (integer)", "Factor",
-				"Character" };
+		String[] varType = { "Numeric (double)", "Numeric (integer)", "Factor", "Character" };
 		if (val != null) {
 			SVar v;
 			if (val[1].equals(varType[0]))
@@ -269,11 +255,9 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			} else
 				v = new SVarFact(null, dataTable.getRowCount());
 			if (val[0].equals(""))
-				vs.insert(selectedColumn < 1 ? tabModel.cols - 1
-						: selectedColumn, v);
+				vs.insert(selectedColumn < 1 ? tabModel.cols - 1 : selectedColumn, v);
 			else
-				vs.insert(val[0], selectedColumn < 1 ? tabModel.cols - 1
-						: selectedColumn, v);
+				vs.insert(val[0], selectedColumn < 1 ? tabModel.cols - 1 : selectedColumn, v);
 			refresh();
 		}
 	}
@@ -304,8 +288,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	public int currentCol(MouseEvent e) {
 		if (e.getSource().equals(tableHeader))
 			return tableHeader.columnAtPoint(e.getPoint());
-		return dataTable.getSelectedColumn() == -1 ? tableHeader
-				.columnAtPoint(e.getPoint()) : dataTable.getSelectedColumn();
+		return dataTable.getSelectedColumn() == -1 ? tableHeader.columnAtPoint(e.getPoint()) : dataTable.getSelectedColumn();
 	}
 
 	/**
@@ -348,9 +331,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		if (modified && editable) {
 			int i;
 			if (save.getText() == "Save") {
-				i = JOptionPane.showConfirmDialog(this, "Save data?", "Exit",
-						JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE);
+				i = JOptionPane.showConfirmDialog(this, "Save data?", "Exit", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (i == 1)
 					super.dispose();
 				else if (i == 0 && saveData())
@@ -371,16 +352,12 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 */
 	private void find(int x, int y) {
 		if (searchString == "" || y == -1)
-			searchString = ((String) JOptionPane.showInputDialog(
-					new JTextField(), "Search:", "Search for:",
-					JOptionPane.PLAIN_MESSAGE));
+			searchString = ((String) JOptionPane.showInputDialog(new JTextField(), "Search:", "Search for:", JOptionPane.PLAIN_MESSAGE));
 		if (searchString != null) {
-			int[] f_index = vs.whereis(searchString, x == -1 ? 0 : x,
-					y == -1 ? 0 : y);
+			int[] f_index = vs.whereis(searchString, x == -1 ? 0 : x, y == -1 ? 0 : y);
 
 			if (f_index[0] == -1 && f_index[1] == -1)
-				JOptionPane.showMessageDialog(this, "Not found", "Result",
-						JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Not found", "Result", JOptionPane.WARNING_MESSAGE);
 			else {
 				f_index[1] = sorter.modelIndex(f_index[1]);
 				gotoCell(f_index[0] + 1, f_index[1]);
@@ -407,16 +384,14 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		JScrollBar vscroll = scrollArea.getVerticalScrollBar();
 		int rowHeight = dataTable.getRowHeight();
 		if (c == -1)
-			val = ((String) JOptionPane.showInputDialog(new JTextField(),
-					"Goto Case:", "Goto Case", JOptionPane.PLAIN_MESSAGE));
+			val = ((String) JOptionPane.showInputDialog(new JTextField(), "Goto Case:", "Goto Case", JOptionPane.PLAIN_MESSAGE));
 		if (val != null)
 			try {
 				int Case = c == -1 ? Integer.parseInt(val) - 1 : c;
 				dataTable.setRowSelectionInterval(Case, Case);
 				dataTable.setColumnSelectionInterval(0, tabModel.cols - 1);
-				vscroll.setValue(Case * rowHeight - vscroll.getVisibleAmount()
-						+ 10 < 0 ? 0 : Case * rowHeight
-						- vscroll.getVisibleAmount() + rowHeight + 10);
+				vscroll.setValue(Case * rowHeight - vscroll.getVisibleAmount() + 10 < 0 ? 0 : Case * rowHeight - vscroll.getVisibleAmount()
+						+ rowHeight + 10);
 			} catch (Exception e) {
 				return;
 			}
@@ -434,29 +409,22 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		int rowHeight = dataTable.getRowHeight();
 		dataTable.setRowSelectionInterval(row, row);
 		JScrollBar vscroll = scrollArea.getVerticalScrollBar();
-		vscroll
-				.setValue(row * rowHeight - vscroll.getVisibleAmount() + 10 < 0 ? 0
-						: row * rowHeight - vscroll.getVisibleAmount()
-								+ rowHeight + 10);
+		vscroll.setValue(row * rowHeight - vscroll.getVisibleAmount() + 10 < 0 ? 0 : row * rowHeight - vscroll.getVisibleAmount() + rowHeight + 10);
 		dataTable.setColumnSelectionInterval(col, col);
 		JScrollBar hscroll = scrollArea.getHorizontalScrollBar();
-		hscroll.setValue(col * 75 - hscroll.getVisibleAmount() + 30 < 0 ? 0
-				: col * 75 - hscroll.getVisibleAmount() + 75 + 10);
+		hscroll.setValue(col * 75 - hscroll.getVisibleAmount() + 30 < 0 ? 0 : col * 75 - hscroll.getVisibleAmount() + 75 + 10);
 	}
-	
-	public JTable getJTable(){
+
+	public JTable getJTable() {
 		return dataTable;
 	}
-	
 
 	private void loadData() {
-		FileSelector fopen = new FileSelector(this, "Open...",
-				FileSelector.LOAD, JGRPrefs.workingDirectory);
+		FileSelector fopen = new FileSelector(this, "Open...", FileSelector.LOAD, JGRPrefs.workingDirectory);
 		fopen.setVisible(true);
 		if (fopen.getFile() != null) {
 			this.setWorking(true);
-			fileName = (JGRPrefs.workingDirectory = fopen.getDirectory())
-					+ fopen.getFile();
+			fileName = (JGRPrefs.workingDirectory = fopen.getDirectory()) + fopen.getFile();
 			try {
 				vs = new SVarSet();
 				BufferedReader br = new BufferedReader(new FileReader(fileName));
@@ -504,9 +472,8 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 */
 	private void renameColumn(int index) {
 		String old_name = vs.at(index - 1).getName();
-		String val = (String) JOptionPane.showInputDialog(new JTextField(),
-				"Rename Column into:", "Rename Column",
-				JOptionPane.PLAIN_MESSAGE, null, null, old_name);
+		String val = (String) JOptionPane.showInputDialog(new JTextField(), "Rename Column into:", "Rename Column", JOptionPane.PLAIN_MESSAGE, null,
+				null, old_name);
 		if (val != null) {
 			vs.at(index - 1).setName(val);
 			refresh();
@@ -544,9 +511,8 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		JPanel ex = new JPanel(new BorderLayout());
 		ex.add(new JLabel("Export as: "), BorderLayout.CENTER);
 		ex.add(name, BorderLayout.SOUTH);
-		int op = JOptionPane.showOptionDialog(this, ex, "Export to R?",
-				JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-				null, null, vs.getName());
+		int op = JOptionPane.showOptionDialog(this, ex, "Export to R?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, null,
+				vs.getName());
 		String objname = name.getText();
 		if (op == 2)
 			return;
@@ -558,15 +524,11 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			if (quit) {
 				if (b)
 					super.dispose();
-				else if (JOptionPane.showConfirmDialog(this,
-						"Export to R is not supported\nExit Anyway?",
-						"Export Error", JOptionPane.OK_OPTION,
+				else if (JOptionPane.showConfirmDialog(this, "Export to R is not supported\nExit Anyway?", "Export Error", JOptionPane.OK_OPTION,
 						JOptionPane.ERROR_MESSAGE) == 0)
 					dispose();
 			} else if (!b)
-				JOptionPane.showMessageDialog(this,
-						"Export to R is not supported", "Export Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Export to R is not supported", "Export Error", JOptionPane.ERROR_MESSAGE);
 		}
 		modified = false;
 	}
@@ -587,19 +549,17 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 						out.write(" ");
 					else
 						out.write("" + vs.at(k).getName() + "\t");
-					// System.out.print(vs.at(k).getName() + "\t");
+				// System.out.print(vs.at(k).getName() + "\t");
 				out.write("" + vs.at(cols - 1).getName() + "\n");
 				// System.out.println(vs.at(cols - 1).getName());
 				out.flush();
 				for (int i = 0; i < vs.length(); i++) {
 					for (int z = 0; z < cols - 1; z++) {
-						s = vs.at(z).at(i) == null ? " " : vs.at(z).at(i)
-								.toString();
+						s = vs.at(z).at(i) == null ? " " : vs.at(z).at(i).toString();
 						out.write("" + s + "\t");
 						// System.out.print(s+"\t");
 					}
-					s = vs.at(cols - 1).at(i) == null ? " " : vs.at(cols - 1)
-							.at(i).toString();
+					s = vs.at(cols - 1).at(i) == null ? " " : vs.at(cols - 1).at(i).toString();
 					out.write("" + s + "\n");
 					// System.out.println(s);
 					out.flush();
@@ -618,12 +578,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 	/** save file as with a new filename */
 	private boolean saveDataAs() {
-		FileSelector fsave = new FileSelector(this, "Save as...",
-				FileSelector.SAVE, JGRPrefs.workingDirectory);
+		FileSelector fsave = new FileSelector(this, "Save as...", FileSelector.SAVE, JGRPrefs.workingDirectory);
 		fsave.setVisible(true);
 		if (fsave.getFile() != null) {
-			fileName = (JGRPrefs.workingDirectory = fsave.getDirectory())
-					+ fsave.getFile();
+			fileName = (JGRPrefs.workingDirectory = fsave.getDirectory()) + fsave.getFile();
 			return saveData();
 		}
 		return false;
@@ -670,20 +628,17 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		cutItem.setToolTipText("Cut");
 		cutItem.setActionCommand("cut");
 		cutItem.setText("Cut");
-		cutItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('X', Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		cutItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('X', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		cutItem.addActionListener(this);
 		copyItem.setToolTipText("Copy");
 		copyItem.setActionCommand("copy");
 		copyItem.setText("Copy");
-		copyItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('C', Toolkit
-				.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		copyItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('C', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		copyItem.addActionListener(this);
 		pasteItem.setToolTipText("Paste");
 		pasteItem.setActionCommand("paste");
 		pasteItem.setText("Paste");
-		pasteItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('V',
-				Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
+		pasteItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke('V', Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(), false));
 		pasteItem.addActionListener(this);
 		titleItem.setEnabled(false);
 
@@ -764,8 +719,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			else if (cmd == "copy")
 				((JTextComponent) cell.getComponent()).copy();
 			else if (cmd == "delete")
-				deleteContent(dataTable.getSelectedColumns(), dataTable
-						.getSelectedRows());
+				deleteContent(dataTable.getSelectedColumns(), dataTable.getSelectedRows());
 			else if (cmd == "exit")
 				exit();
 			else if (cmd == "export")
@@ -812,30 +766,20 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 * keyPressed: handle key event: delete (DEL), and search_again (F3).
 	 */
 	public void keyPressed(KeyEvent ke) {
-		if (ke.getKeyCode() == KeyEvent.VK_DELETE
-				&& (dataTable.getSelectedColumnCount() > 1 || dataTable
-						.getSelectedRowCount() > 1))
-			deleteContent(dataTable.getSelectedColumns(), dataTable
-					.getSelectedRows());
+		if (ke.getKeyCode() == KeyEvent.VK_DELETE && (dataTable.getSelectedColumnCount() > 1 || dataTable.getSelectedRowCount() > 1))
+			deleteContent(dataTable.getSelectedColumns(), dataTable.getSelectedRows());
 		else if (ke.getKeyCode() == KeyEvent.VK_F3)
 			find(searchIndex[0], searchIndex[1]);
-		else if (ke.getKeyCode() == KeyEvent.VK_ENTER
-				&& dataTable.getSelectedRow() == tabModel.rows - 1
+		else if (ke.getKeyCode() == KeyEvent.VK_ENTER && dataTable.getSelectedRow() == tabModel.rows - 1
 				&& dataTable.getSelectedColumn() == tabModel.cols - 1) {
 			if (editable && dataTable.isEditing())
-				tabModel.setValueAt(((JTextComponent) cell.getComponent())
-						.getText(), dataTable.getSelectedRow(), dataTable
-						.getSelectedColumn());
+				tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(), dataTable.getSelectedRow(), dataTable.getSelectedColumn());
 			addRow();
 			tabModel.fireTableStructureChanged();
-		} else if (editable && ke.getKeyCode() == KeyEvent.VK_TAB
-				&& dataTable.getSelectedRow() == 0
-				&& dataTable.getSelectedColumn() == tabModel.cols - 1
-				&& !ke.isShiftDown()) {
+		} else if (editable && ke.getKeyCode() == KeyEvent.VK_TAB && dataTable.getSelectedRow() == 0
+				&& dataTable.getSelectedColumn() == tabModel.cols - 1 && !ke.isShiftDown()) {
 			if (dataTable.isEditing())
-				tabModel.setValueAt(((JTextComponent) cell.getComponent())
-						.getText(), dataTable.getSelectedRow(), dataTable
-						.getSelectedColumn());
+				tabModel.setValueAt(((JTextComponent) cell.getComponent()).getText(), dataTable.getSelectedRow(), dataTable.getSelectedColumn());
 			selectedColumn = -1;
 			addColumn();
 			tabModel.fireTableStructureChanged();
@@ -864,15 +808,10 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		try {
 			selectedColumn = currentCol(e);
 			if (e.getSource().equals(tableHeader)) {
-				String rn = dataTable.getColumnName(dataTable.columnAtPoint(e
-						.getPoint()));
 				int i = dataTable.columnAtPoint(e.getPoint());
-				if (i != 0 /* && rn != "row.names" */&& e.isPopupTrigger())
+				if (i != 0 && e.isPopupTrigger())
 					popUpMenu(e);
-				else if (e.getClickCount() == 2
-						&& selectedColumn > 0
-						&& !dataTable.getColumnName(selectedColumn).equals(
-								"row.names"))
+				else if (e.getClickCount() == 2 && selectedColumn > 0 && !dataTable.getColumnName(selectedColumn).equals("row.names"))
 					renameColumn(selectedColumn);
 			} else if (e.isPopupTrigger())
 				popUpMenu(e);
@@ -889,19 +828,16 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	public void mouseReleased(MouseEvent e) {
 		try {
 			if (e.getSource().equals(tableHeader)) {
-				String rn = dataTable.getColumnName(dataTable.columnAtPoint(e
-						.getPoint()));
+				String rn = dataTable.getColumnName(dataTable.columnAtPoint(e.getPoint()));
 				int i = dataTable.columnAtPoint(e.getPoint());
 				if (i != 0 && rn != "row.names" && e.isPopupTrigger())
 					popUpMenu(e);
 			} else if (e.isPopupTrigger())
 				popUpMenu(e);
-			int from = dataTable.getColumn(
-					dataTable.getColumnName(selectedColumn)).getModelIndex();
+			int from = dataTable.getColumn(dataTable.getColumnName(selectedColumn)).getModelIndex();
 			int to = selectedColumn;
 			// System.out.println(from+" -> "+to);
-			if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1)))
-					&& from != to)
+			if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1))) && from != to)
 				moveColumnsSVar(from, to);
 		} catch (Exception ex) {
 			new ErrorMsg(ex);
@@ -923,6 +859,11 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 	class DataTableColumnModel extends DefaultTableColumnModel {
 
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3297048934317912993L;
+
 		public DataTableColumnModel(DataTable tab) {
 		}
 
@@ -937,10 +878,8 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 				rownames = true;
 				dataTable.getColumnModel().getColumn(0).setMaxWidth(0);
 				dataTable.getColumnModel().getColumn(0).setMinWidth(0);
-				dataTable.getTableHeader().getColumnModel().getColumn(0)
-						.setMaxWidth(0);
-				dataTable.getTableHeader().getColumnModel().getColumn(0)
-						.setMinWidth(0);
+				dataTable.getTableHeader().getColumnModel().getColumn(0).setMaxWidth(0);
+				dataTable.getTableHeader().getColumnModel().getColumn(0).setMinWidth(0);
 			}
 			col.setMinWidth(50);
 			super.addColumn(col);
@@ -951,17 +890,20 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public void moveColumn(int columnIndex, int newIndex) {
-			if ((columnIndex < 0) || (columnIndex >= getColumnCount())
-					|| (newIndex < 0) || (newIndex >= getColumnCount()))
+			if ((columnIndex < 0) || (columnIndex >= getColumnCount()) || (newIndex < 0) || (newIndex >= getColumnCount()))
 				return;
 			super.moveColumn(columnIndex, newIndex);
-			if (columnIndex == 0 || newIndex == 0
-					|| (rownames && (columnIndex == 1 || newIndex == 1)))
+			if (columnIndex == 0 || newIndex == 0 || (rownames && (columnIndex == 1 || newIndex == 1)))
 				super.moveColumn(newIndex, columnIndex);
 		}
 	}
 
 	class DataTableModel extends AbstractTableModel {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6682943116161132225L;
 
 		DataTable tab;
 
@@ -1000,29 +942,22 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 		public void setValueAt(Object value, int row, int col) {
 			try {
-				if (value.toString().equals("")
-						|| value.toString().equals("NA"))
+				if (value.toString().equals("") || value.toString().equals("NA"))
 					value = null;
 				if (vs.at(col - 1).isNum()) {
 					if (value != null) {
 						if (value.toString().indexOf(".") != -1)
-							tab.vs.at(col - 1).replace(row,
-									Double.parseDouble(value.toString()));
+							tab.vs.at(col - 1).replace(row, Double.parseDouble(value.toString()));
 						else
-							tab.vs.at(col - 1).replace(row,
-									Integer.parseInt(value.toString()));
-					} else if (tab.vs.at(col - 1).getClass().getName().equals(
-							"org.rosuda.ibase.SVarDouble"))
+							tab.vs.at(col - 1).replace(row, Integer.parseInt(value.toString()));
+					} else if (tab.vs.at(col - 1).getClass().getName().equals("org.rosuda.ibase.SVarDouble"))
 						tab.vs.at(col - 1).replace(row, SVar.double_NA);
-					else if (tab.vs.at(col - 1).getClass().getName()
-							.equals("org.rosuda.ibase.SVarInt"))
+					else if (tab.vs.at(col - 1).getClass().getName().equals("org.rosuda.ibase.SVarInt"))
 						tab.vs.at(col - 1).replace(row, SVar.int_NA);
 					else
 						tab.vs.at(col - 1).replace(row, Double.NaN);
-				} else if (tab.vs.at(col - 1).getClass().getName().equals(
-						"org.rosuda.ibase.SVarFact"))
-					tab.vs.at(col - 1).replace(row,
-							value == null ? SVar.missingCat : value);
+				} else if (tab.vs.at(col - 1).getClass().getName().equals("org.rosuda.ibase.SVarFact"))
+					tab.vs.at(col - 1).replace(row, value == null ? SVar.missingCat : value);
 				else
 					tab.vs.at(col - 1).replace(row, value);
 			} catch (Exception e) {
@@ -1050,18 +985,19 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 	}
 
-	class DataTableCellEditor extends AbstractCellEditor implements
-			TableCellEditor {
+	class DataTableCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-		JTextField component = new JTextField(new DataTableCellDocument(),
-				null, 1);
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -4264723305967926901L;
+		JTextField component = new JTextField(new DataTableCellDocument(), null, 1);
 
 		public Component getComponent() {
 			return component;
 		}
 
-		public Component getTableCellEditorComponent(JTable t, Object v,
-				boolean b, int r, int c) {
+		public Component getTableCellEditorComponent(JTable t, Object v, boolean b, int r, int c) {
 			dataTable.setColumnSelectionInterval(c, c);
 			component.setText(v.toString().equals("NA") ? "" : v.toString());
 			return component;
@@ -1075,11 +1011,14 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 	class DataTableCellDocument extends PlainDocument {
 
-		public void insertString(int offset, String str, AttributeSet a)
-				throws BadLocationException {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3679382895962869038L;
+
+		public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
 			try {
-				if (((SVar) vs.at(dataTable.getSelectedColumn() - 1)).isNum()
-						&& !str.matches("[+|-]*[[0-9]+.[0-9]+]*[0-9]*")) {
+				if (((SVar) vs.at(dataTable.getSelectedColumn() - 1)).isNum() && !str.matches("[+|-]*[[0-9]+.[0-9]+]*[0-9]*")) {
 					str = "";
 					Toolkit.getDefaultToolkit().beep();
 				}
@@ -1093,9 +1032,12 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 
 	class DataTableCellRenderer extends JLabel implements TableCellRenderer {
 
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus,
-				int rowIndex, int vColIndex) {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3439613828130597094L;
+
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
 
 			if (isSelected) {
 			}
@@ -1113,20 +1055,22 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		public void revalidate() {
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
 		}
 
-		public void firePropertyChange(String propertyName, boolean oldValue,
-				boolean newValue) {
+		public void firePropertyChange(String propertyName, boolean oldValue, boolean newValue) {
 		}
 	}
 
 	/* Dialog for adding a new column */
 	class NewColumnDialog extends JDialog implements ActionListener {
 
-		String[] varType = { "Numeric (double)", "Numeric (integer)", "Factor",
-				"Character" };
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 176433470901874606L;
+
+		String[] varType = { "Numeric (double)", "Numeric (integer)", "Factor", "Character" };
 
 		String[] result = null;
 
@@ -1147,34 +1091,20 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 			ok.addActionListener(this);
 
 			this.getContentPane().setLayout(new GridBagLayout());
-			this.getContentPane().add(
-					name,
-					new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0,
-							GridBagConstraints.WEST, GridBagConstraints.BOTH,
-							new Insets(5, 5, 2, 5), 0, 0));
-			this.getContentPane().add(
-					typeChooser,
-					new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0,
-							GridBagConstraints.WEST, GridBagConstraints.BOTH,
-							new Insets(2, 5, 2, 5), 0, 0));
-			this.getContentPane().add(
-					cancel,
-					new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0,
-							GridBagConstraints.EAST, GridBagConstraints.NONE,
-							new Insets(2, 50, 2, 5), 0, 0));
-			this.getContentPane().add(
-					ok,
-					new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0,
-							GridBagConstraints.WEST, GridBagConstraints.NONE,
-							new Insets(2, 5, 2, 5), 0, 0));
+			this.getContentPane().add(name,
+					new GridBagConstraints(0, 0, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 5, 2, 5), 0, 0));
+			this.getContentPane().add(typeChooser,
+					new GridBagConstraints(0, 1, 4, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(2, 5, 2, 5), 0, 0));
+			this.getContentPane().add(cancel,
+					new GridBagConstraints(2, 2, 1, 1, 0.0, 0.0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(2, 50, 2, 5), 0, 0));
+			this.getContentPane().add(ok,
+					new GridBagConstraints(3, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, new Insets(2, 5, 2, 5), 0, 0));
 
 			this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			this.getRootPane().setDefaultButton(ok);
 			this.setResizable(false);
 			this.setSize(250, 120);
-			this.setLocation(f.getLocation().x + (f.getWidth() / 2 - 125), f
-					.getLocation().y
-					+ (f.getHeight() / 2 - 60));
+			this.setLocation(f.getLocation().x + (f.getWidth() / 2 - 125), f.getLocation().y + (f.getHeight() / 2 - 60));
 		}
 
 		public String[] showInputDialog() {
@@ -1218,8 +1148,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		public void Notifying(NotifyMsg msg, Object src, Vector path) {
 			// System.out.println("MarkerSelectionModel.Notifying");
 			int i = 0;
-			ListSelectionEvent lse = new ListSelectionEvent(this, 0, m.size(),
-					false);
+			ListSelectionEvent lse = new ListSelectionEvent(this, 0, m.size(), false);
 			while (i < ls.size()) {
 				((ListSelectionListener) ls.elementAt(i)).valueChanged(lse);
 				i++;
