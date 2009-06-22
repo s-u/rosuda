@@ -15,6 +15,7 @@ import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 
+import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.robjects.RModel;
 import org.rosuda.JGR.robjects.RObject;

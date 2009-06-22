@@ -246,19 +246,7 @@ public class JGR {
 		JGR.MAINRCONSOLE.execute("", false);
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
-
-		try {
-			String dataName = "";
-			new ErrorMsg(dataName = "iris");  //CST is a dataframe in my workspace
-			new ErrorMsg(((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("names("+dataName+")").asString() +"---");
-			new ErrorMsg(JGR.getREngine().parseAndEval("names("+dataName+")").asString() +"---");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 		new Refresher().run();
-		
-
 	}
 
 	public static REXP idleEval(String cmd) throws REngineException, REXPMismatchException {

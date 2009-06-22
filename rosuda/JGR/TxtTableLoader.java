@@ -30,6 +30,10 @@ import org.rosuda.JGR.toolkit.DataTable;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.ibase.SVarSet;
 
+import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPLogical;
+
 public class TxtTableLoader extends javax.swing.JFrame {
 	/**
 	 * 
@@ -295,23 +299,43 @@ public class TxtTableLoader extends javax.swing.JFrame {
 				+ (header.isSelected() ? "T" : "F") + ",sep=\"" + useSep + "\"" + (preview ? ",nrows=10" : "") + ",quote=\"" + useQuote + "\")"
 				+ (preview ? ",silent=TRUE)" : "");
 
-		if (preview)
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval(cmd, false);
+		if (preview) {
+			try {
+				JGR.eval(cmd);
+			} catch(REngineException e) {
+				new ErrorMsg(e);
+			} catch(REXPMismatchException e) {
+				new ErrorMsg(e);
+			}
+		}
 		else
 			JGR.MAINRCONSOLE.execute(cmd, true);
 	}
 
 	private void loadPreview() {
 		loadInR(previewName, true);
-		((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval(".refreshObjects()", false);
+		try {
+			JGR.eval(".refreshObjects()");
+		} catch(REngineException e) {
+			new ErrorMsg(e);
+		} catch(REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		RObject obj = new RObject(previewName, "data.frame", null, false);
 		SVarSet vs = RController.newSet(obj);
 		DataTable rTable = new DataTable(vs, "data.frame", false, false);
 		dataTable.setModel(rTable.getJTable().getModel());
 		dataTable.setTableHeader(rTable.getJTable().getTableHeader());
 		rTable.dispose();
-		if (((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("\"" + previewName + "\" %in% ls()").asBool().isTRUE())
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("rm(" + previewName + ")", false);
+		try {
+			REXPLogical result = (REXPLogical) JGR.eval("\"" + previewName + "\" %in% ls()");
+			if (result.isTRUE()[0])
+				JGR.eval("rm(" + previewName + ")");
+		} catch(REngineException e) {
+			new ErrorMsg(e);
+		} catch(REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 	}
 
 	private void loadActionPerformed(ActionEvent evt) {
