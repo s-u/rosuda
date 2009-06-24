@@ -103,17 +103,29 @@ class RDataFrameModel extends ExDefaultTableModel {
 	}
 	
 	public void insertNewColumn(int col){
-		Deducer.rniEval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+"],V=as.integer(NA),"+
-				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+"])");
+		if(col>getRealColumnCount()+1)
+			return;
+		if(col<1)
+			Deducer.rniEval(rDataName+"<-data.frame(V=as.integer(NA),"+
+					rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
+		else if(col>=getRealColumnCount())
+			Deducer.rniEval(rDataName+"<-data.frame("+rDataName+",V=as.integer(NA))");
+		else
+			Deducer.rniEval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+",drop=FALSE],V=as.integer(NA),"+
+				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
 		refresh();
 	}
 	
 	public void insertNewRow(int row){
 		int rowCount =getRealRowCount();
-		setValueAt("NA",rowCount,0);
-		Deducer.rniEval("attr("+rDataName+",'row.names')["+(rowCount+1)+"]<-'New'");
-		Deducer.rniEval(rDataName+"<-rbind("+rDataName+"[1:"+row+",],"+rDataName+
-				"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",])");
+		setValueAt("NA",Math.max(rowCount,row),0);
+		Deducer.rniEval("attr("+rDataName+",'row.names')["+(Math.max(rowCount,row)+1)+"]<-'New'");
+		if(row<1)
+			Deducer.rniEval(rDataName+"<-rbind("+rDataName+
+					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
+		else if(row<rowCount)
+			Deducer.rniEval(rDataName+"<-rbind("+rDataName+"[1:"+row+",,drop=FALSE],"+rDataName+
+					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
 		Deducer.rniEval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
 		
 	}
