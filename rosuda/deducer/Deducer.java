@@ -4,6 +4,7 @@ import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -17,22 +18,26 @@ import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.SaveData;
-import org.rosuda.deducer.data.DataFrameSelector;
-import org.rosuda.deducer.data.DataFrameWindow;
-
-import org.rosuda.deducer.menu.*;
 import org.rosuda.JGR.robjects.RObject;
 import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.ErrorMsg;
-import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.REXPLogical;
-import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REngineException;
+
+
+import org.rosuda.deducer.menu.*;
+import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
+import org.rosuda.deducer.models.*;
 import org.rosuda.deducer.toolkit.DeducerPrefs;
 import org.rosuda.deducer.toolkit.PrefPanel;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
-import org.rosuda.deducer.menu.RecodeDialog;
-import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
+import org.rosuda.deducer.data.DataFrameSelector;
+import org.rosuda.deducer.data.DataFrameWindow;
+
+
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
+
+
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 
@@ -54,7 +59,6 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Recode Variables", "recode", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Reset Row Names", "reset rows", cListener);
 				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
-				//EzMenuSwing.addMenuSeparator(JGR.MAINRCONSOLE, dataMenu);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
@@ -62,8 +66,6 @@ public class Deducer {
 				menuIndex++;
 			}
 			
-			//EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
-			//EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Data Viewer", "table", cListener);
 			if(DeducerPrefs.SHOWANALYSIS){
 				insertMenu(JGR.MAINRCONSOLE,analysisMenu,menuIndex);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Frequencies", "frequency", cListener);
@@ -74,6 +76,8 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Two Sample Test", "two sample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "K-Sample Test", "ksample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Correlation", "corr", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, analysisMenu).addSeparator();
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "GLM", "glm", cListener);
 				menuIndex++;
 			}
 			
@@ -112,7 +116,6 @@ public class Deducer {
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
-			
 			if(cmd=="New Data Set"){
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				if(inputValue!=null){
@@ -213,6 +216,10 @@ public class Deducer {
 				CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);				
+			}else if(cmd=="glm"){
+				GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
 			}
 		}
 	}
@@ -256,6 +263,30 @@ public class Deducer {
 	
 	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
 		return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
+	}
+	
+	public static REXP eval(String cmd){
+		try {
+			return JGR.eval(cmd);
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+			return null;
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+			return null;
+		}
+	}
+	
+	public static REXP idleEval(String cmd){
+		try {
+			return JGR.idleEval(cmd);
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+			return null;
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+			return null;
+		}
 	}
 	
 	class Runner implements Runnable {

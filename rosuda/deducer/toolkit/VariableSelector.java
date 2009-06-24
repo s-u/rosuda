@@ -53,8 +53,6 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			RController.refreshObjects();
 			dataComboBoxModel.removeAllElements();
 			for(int i=0;i<JGR.DATA.size();i++){
-				new ErrorMsg(dataComboBox.getModel().toString());
-				new ErrorMsg(((RObject) JGR.DATA.elementAt(i)).getName());
 				dataComboBoxModel.addElement(((RObject) JGR.DATA.elementAt(i)).getName());
 			}
 			dataComboBox.setSelectedItem(Deducer.getRecentData());
