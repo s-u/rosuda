@@ -1,5 +1,8 @@
 package org.rosuda.deducer.models;
 
-public class GLMModel extends ModelModel {
+import javax.swing.DefaultListModel;
 
+public class GLMModel extends ModelModel {
+	public DefaultListModel weights = new DefaultListModel();
+	public String family = "gaussian()";
 }

@@ -1,5 +1,6 @@
 package org.rosuda.deducer.models;
-import org.rosuda.JGR.JGRConsole;
+
+
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
@@ -16,7 +17,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,7 +28,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -63,16 +62,25 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 	private JScrollPane modelScroller;
 	private DefaultListModel modelTermsModel;
 	private ModelModel model;
+	private ModelDialog mdialog;
 	
 	public ModelBuilder(JFrame frame) {
 		super(frame);
 		initGUI();
 	}
 	
-	public ModelBuilder(JDialog d,ModelModel mod) {
+	public ModelBuilder(JDialog d,ModelModel mod,ModelDialog md) {	
 		super(d);
 		initGUI();
 		setModel(mod);
+		mdialog=md;
+	}
+	
+	public ModelBuilder(ModelModel mod,ModelDialog md) {	
+		super();
+		initGUI();
+		setModel(mod);
+		mdialog=md;
 	}
 	
 	private void initGUI() {
@@ -93,7 +101,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 					getContentPane().add(okayCancelPanel, new AnchorConstraint(927, 12, 7, 547, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
-					okayCancelPanel.setPreferredSize(new java.awt.Dimension(270, 28));
+					okayCancelPanel.setPreferredSize(new java.awt.Dimension(350, 28));
 					okayCancelPanel.getApproveButton().setText("Continue");
 				}
 				{
@@ -261,6 +269,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 					more.setText("Specify");
 					more.setPreferredSize(new java.awt.Dimension(103, 22));
+					more.addActionListener(this);
 				}
 				{
 					poly = new JButton();
@@ -289,6 +298,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 	}
 	
 	public void setModel(ModelModel mod){
+		
 		DefaultListModel varModel = new DefaultListModel();
 		String tmp="";
 		for(int i=0;i<mod.numericVars.getSize();i++){
@@ -324,9 +334,16 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 		}
 		outcomes.setModel(varModel);
 		
+		modelTermsModel = mod.terms;
+		modelTerms.setModel(modelTermsModel);
 		
 		model=mod;
 	}
+	
+	public void updateModel(){
+		model.terms = modelTermsModel;
+	}
+	
 
 	
 	public void keyPressed(KeyEvent e) {}
@@ -463,11 +480,15 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 		}else if(cmd=="Cancel"){
 			this.dispose();
 		}else if(cmd=="Continue"){
-			ModelExplorer exp = new ModelExplorer();
+			GLMExplorer exp = new GLMExplorer(model);
 			exp.setVisible(true);
 			this.dispose();
 		}else if(cmd=="Reset"){
 			
+		}else if(cmd=="Specify"){
+			updateModel();
+			mdialog.callBack(this,model);
+			this.dispose();
 		}
 		
 	}

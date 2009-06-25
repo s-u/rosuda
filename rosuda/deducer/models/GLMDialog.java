@@ -24,6 +24,8 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
@@ -33,14 +35,14 @@ import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
-public class GLMDialog extends javax.swing.JDialog implements ActionListener {
+public class GLMDialog extends ModelDialog implements ActionListener {
 	private VariableSelector variableSelector;
 	private JPanel contPanel;
 	private JLabel typeLabel;
 	private JComboBox type;
 	private JButton addOutcome;
 	private JPanel weightPanel;
-	private JPanel subset;
+	private SubsetPanel subset;
 	private JPanel subsetPanel;
 	private SingletonDJList weights;
 	private JButton addWeight;
@@ -62,11 +64,24 @@ public class GLMDialog extends javax.swing.JDialog implements ActionListener {
 	private RemoveButton removeNumeric;
 	private AddButton addNumeric;
 	private GLMModel model= new GLMModel();
+	private GLMModel modelOnOpen = new GLMModel();
 	
-	public GLMDialog(JFrame frame) {
-		super(frame);
+	public GLMDialog(JDialog d,GLMModel mod) {
+		super(d);
+		mod.copyInto(modelOnOpen);
 		initGUI();
 		help.setVisible(false);
+		setModel(mod);
+	}
+	public GLMDialog(JFrame frame,GLMModel mod) {
+		super(frame);
+		mod.copyInto(modelOnOpen);
+		initGUI();
+		help.setVisible(false);
+		setModel(mod);
+	}
+	public GLMDialog(JFrame frame) {
+		this(frame,new GLMModel());
 	}
 	
 	private void initGUI() {
@@ -207,10 +222,10 @@ public class GLMDialog extends javax.swing.JDialog implements ActionListener {
 				}
 				{
 					okayCancelPanel = new OkayCancelPanel(true,true,this);
-					getContentPane().add(okayCancelPanel, new AnchorConstraint(904, 978, 980, 489, 
+					getContentPane().add(okayCancelPanel, new AnchorConstraint(904, 978, 980, 300, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
-					okayCancelPanel.setPreferredSize(new java.awt.Dimension(266, 46));
+					okayCancelPanel.setPreferredSize(new java.awt.Dimension(400, 46));
 					okayCancelPanel.getApproveButton().setText("Continue");
 					okayCancelPanel.getApproveButton().setActionCommand("Continue");
 				}
@@ -262,18 +277,85 @@ public class GLMDialog extends javax.swing.JDialog implements ActionListener {
 		}
 	}
 	
+	public void setModel(GLMModel mod){
+		variableSelector.setSelectedData(mod.data);
+		boolean valid = variableSelector.removeAll(mod.outcomes);
+		if(!valid){
+			setModel(new GLMModel());
+			return;
+		}
+		outcome.setModel(mod.outcomes);
+		
+		valid = variableSelector.removeAll(mod.numericVars);
+		if(!valid){
+			setModel(new GLMModel());
+			return;
+		}
+		numericVars.setModel(mod.numericVars);
+		
+		valid = variableSelector.removeAll(mod.factorVars);
+		if(!valid){
+			setModel(new GLMModel());
+			return;
+		}
+		factorVars.setModel(mod.factorVars);
+		
+		valid = variableSelector.removeAll(mod.weights);
+		if(!valid){
+			setModel(new GLMModel());
+			return;
+		}
+		weights.setModel(mod.weights);
+		if(SubsetDialog.isValidSubsetExp(mod.subset, mod.data))
+			subset.setText(mod.subset);
+		if(families.getIndexOf(mod.family)>=0)
+			families.setSelectedItem(mod.family);
+		else
+			families.insertElementAt(mod.family, families.getSize()-1);
+		model = mod;
+	}
+	
 	public void updateModel(){
 		model.factorVars=(DefaultListModel)factorVars.getModel();
 		model.numericVars=(DefaultListModel)numericVars.getModel();
 		model.outcomes = (DefaultListModel) outcome.getModel();
 		model.data = variableSelector.getSelectedData();
+		model.subset = subset.getText();
+		model.weights = (DefaultListModel) weights.getModel();
+		model.family =(String)families.getSelectedItem();
+		
+		boolean allIn=true;
+		for(int i=0;i<modelOnOpen.numericVars.size();i++){
+			if(!model.numericVars.contains(modelOnOpen.numericVars.get(i)))
+				allIn= false;
+		}
+		for(int i=0;i<modelOnOpen.factorVars.size();i++){
+			if(!model.factorVars.contains(modelOnOpen.factorVars.get(i)))
+				allIn= false;
+		}
+		if(!allIn)
+			model.terms=new DefaultListModel();
+	}
+	
+	public boolean valid(){
+		if(outcome.getModel().getSize()==0){
+			JOptionPane.showMessageDialog(this, "Please specify an outcome variable");
+			return false;
+		}
+		if(factorVars.getModel().getSize()==0 && numericVars.getModel().getSize()==0){
+			JOptionPane.showMessageDialog(this, "Please specify a predictor variable (numeric or factor).");
+			return false;
+		}
+		return true;
 	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
 		if(cmd == "Continue"){
+			if(!valid())
+				return;
 			updateModel();
-			ModelBuilder builder = new ModelBuilder(null,model);
+			ModelBuilder builder = new ModelBuilder(model,this);
 			builder.setLocationRelativeTo(this);
 			builder.setVisible(true);
 			this.dispose();
@@ -290,5 +372,18 @@ public class GLMDialog extends javax.swing.JDialog implements ActionListener {
 		}
 		
 	}
+	
+	public void callBack(JDialog d,ModelModel mod){
+		if(! (mod instanceof GLMModel)){
+			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
+			mod=new GLMModel();
+		}
+		GLMDialog dia = new GLMDialog(new JDialog(),(GLMModel)mod);
+		dia.setLocationRelativeTo(d);
+		dia.setVisible(true);
+	}
+
+	
+	
 
 }

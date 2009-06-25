@@ -1,4 +1,6 @@
 package org.rosuda.deducer.models;
+import org.rosuda.JGR.layout.AnchorConstraint;
+import org.rosuda.JGR.layout.AnchorLayout;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,26 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-
-import javax.swing.WindowConstants;
-import javax.swing.SwingUtilities;
 
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
 public class ModelExplorer extends JFrame {
 	protected JPanel topPanel;
 	protected JPanel bottomPanel;
@@ -60,20 +46,8 @@ public class ModelExplorer extends JFrame {
 	protected JPanel middlePanel;
 	protected ActionListener generalListener = new ModelListener();
 
-	/**
-	* Auto-generated main method to display this JFrame
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				ModelExplorer inst = new ModelExplorer();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
-	public ModelExplorer() {
+	public ModelExplorer(ModelModel mod) {
 		super();
 		initGUI();
 	}
@@ -81,12 +55,13 @@ public class ModelExplorer extends JFrame {
 	private void initGUI() {
 		try {
 			{
-				getContentPane().setLayout(null);
+				AnchorLayout thisLayout = new AnchorLayout();
+				getContentPane().setLayout(thisLayout);
 				{
 					topPanel = new JPanel();
-					getContentPane().add(topPanel);
-					topPanel.setBounds(0, 0, 700, 35);
+					getContentPane().add(topPanel, new AnchorConstraint(0, 989, 58, 0, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 					topPanel.setLayout(null);
+					topPanel.setPreferredSize(new java.awt.Dimension(700, 35));
 					{
 						model = new JLabel();
 						topPanel.add(model);
@@ -116,25 +91,26 @@ public class ModelExplorer extends JFrame {
 				{
 					middlePanel = new JPanel();
 					BorderLayout middlePanelLayout = new BorderLayout();
-					getContentPane().add(middlePanel);
-					middlePanel.setBounds(0, 35, 700, 506);
+					getContentPane().add(middlePanel, new AnchorConstraint(35, 989, 62, 0, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL));
 					middlePanel.setLayout(middlePanelLayout);
+					middlePanel.setPreferredSize(new java.awt.Dimension(700, 506));
 					{
 						tabs = new JTabbedPane();
 						middlePanel.add(tabs, BorderLayout.CENTER);
 						tabs.setPreferredSize(new java.awt.Dimension(700, 501));
 						{
 							generalTab = new JPanel();
+							AnchorLayout generalTabLayout = new AnchorLayout();
 							tabs.addTab("General", null, generalTab, null);
-							generalTab.setLayout(null);
+							generalTab.setLayout(generalTabLayout);
 							generalTab.setPreferredSize(new java.awt.Dimension(695, 475));
 							{
 								previewPanel = new JPanel();
-								generalTab.add(previewPanel);
+								generalTab.add(previewPanel, new AnchorConstraint(1, 731, 992, 12, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 								BorderLayout previewPanelLayout = new BorderLayout();
 								previewPanel.setLayout(previewPanelLayout);
 								previewPanel.setBorder(BorderFactory.createTitledBorder("Preview"));
-								previewPanel.setBounds(8, 0, 500, 475);
+								previewPanel.setPreferredSize(new java.awt.Dimension(500, 475));
 								{
 									previewScroller = new JScrollPane();
 									previewPanel.add(previewScroller, BorderLayout.CENTER);
@@ -147,51 +123,51 @@ public class ModelExplorer extends JFrame {
 							}
 							{
 								options = new JButton();
-								generalTab.add(options);
+								generalTab.add(options, new AnchorConstraint(12, 931, 80, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								options.setText("Options");
-								options.setBounds(556, 12, 91, 26);
+								options.setPreferredSize(new java.awt.Dimension(91, 26));
 								options.addActionListener(generalListener);
 							}
 							{
 								plots = new JButton();
-								generalTab.add(plots);
+								generalTab.add(plots, new AnchorConstraint(132, 931, 330, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								plots.setText("Plots");
-								plots.setBounds(556, 132, 91, 26);
+								plots.setPreferredSize(new java.awt.Dimension(91, 26));
 								plots.addActionListener(generalListener);
 							}
 							{
 								postHoc = new JButton();
-								generalTab.add(postHoc);
+								generalTab.add(postHoc, new AnchorConstraint(70, 931, 201, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								postHoc.setText("Post Hoc");
-								postHoc.setBounds(556, 70, 91, 26);
+								postHoc.setPreferredSize(new java.awt.Dimension(91, 26));
 								postHoc.addActionListener(generalListener);
 							}
 							{
 								tests = new JButton();
-								generalTab.add(tests);
+								generalTab.add(tests, new AnchorConstraint(101, 931, 266, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								tests.setText("Tests");
-								tests.setBounds(556, 101, 91, 26);
+								tests.setPreferredSize(new java.awt.Dimension(91, 26));
 								tests.addActionListener(generalListener);
 							}
 							{
 								means = new JButton();
-								generalTab.add(means);
+								generalTab.add(means, new AnchorConstraint(163, 931, 395, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								means.setText("Means");
-								means.setBounds(556, 163, 91, 26);
+								means.setPreferredSize(new java.awt.Dimension(91, 26));
 								means.addActionListener(generalListener);
 							}
 							{
 								export = new JButton();
-								generalTab.add(export);
+								generalTab.add(export, new AnchorConstraint(194, 931, 460, 800, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								export.setText("Export");
-								export.setBounds(556, 194, 91, 26);
+								export.setPreferredSize(new java.awt.Dimension(91, 26));
 								export.addActionListener(generalListener);
 							}
 							{
 								update = new JButton();
-								generalTab.add(update);
+								generalTab.add(update, new AnchorConstraint(393, 954, 915, 776, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 								update.setText("Update Model");
-								update.setBounds(539, 422, 124, 45);
+								update.setPreferredSize(new java.awt.Dimension(124, 45));
 								update.addActionListener(generalListener);
 							}
 						}
@@ -219,20 +195,21 @@ public class ModelExplorer extends JFrame {
 				}
 				{
 					bottomPanel = new JPanel();
-					getContentPane().add(bottomPanel);
-					bottomPanel.setBounds(0, 541, 700, 50);
-					bottomPanel.setLayout(null);
+					AnchorLayout bottomPanelLayout = new AnchorLayout();
+					getContentPane().add(bottomPanel, new AnchorConstraint(898, 989, 1000, 0, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					bottomPanel.setLayout(bottomPanelLayout);
+					bottomPanel.setPreferredSize(new java.awt.Dimension(700, 62));
 					{
 						help = new JButton();
-						bottomPanel.add(help);
+						bottomPanel.add(help, new AnchorConstraint(379, 66, 814, 17, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 						help.setText("Help");
-						help.setBounds(12, 12, 34, 27);
+						help.setPreferredSize(new java.awt.Dimension(34, 27));
 						help.addActionListener(generalListener);
 					}
 					{
 						okayCancelPanel = new OkayCancelPanel(true,true,generalListener);
-						bottomPanel.add(okayCancelPanel);
-						okayCancelPanel.setBounds(377, 7, 311, 32);
+						bottomPanel.add(okayCancelPanel, new AnchorConstraint(120, 983, 814, 539, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
+						okayCancelPanel.setPreferredSize(new java.awt.Dimension(311, 43));
 					}
 				}
 			}
