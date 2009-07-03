@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 
+import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -47,6 +48,7 @@ public class Deducer {
 	static int menuIndex=3;
 	static String recentActiveData = "";
 	static final String Version= "0.1";
+	public static String guiEnv = "gui.working.env";
 	
 	public Deducer(){
 		String dataMenu = "Data";
@@ -287,6 +289,27 @@ public class Deducer {
 			new ErrorMsg(e);
 			return null;
 		}
+	}
+	
+	public static String makeFormula(DefaultListModel outcomes,DefaultListModel terms){
+		String formula = "";
+		if(outcomes.getSize()==1){
+			formula+=outcomes.get(0)+" ~ ";
+		}else{
+			formula+="cbind(";
+			for(int i=0;i<outcomes.getSize();i++){
+				formula+=outcomes.get(i);
+				if(i<outcomes.getSize()-1)
+					formula+=",";
+			}
+			formula+=") ~ ";
+		}
+		for(int i=0;i<terms.getSize();i++){
+			formula+=terms.get(i);
+			if(i<terms.getSize()-1)
+				formula+=" + ";
+		}
+		return formula;
 	}
 	
 	class Runner implements Runnable {

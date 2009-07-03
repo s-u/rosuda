@@ -19,7 +19,7 @@ import org.rosuda.deducer.Deducer;
  */
 class RDataFrameModel extends ExDefaultTableModel {
 	
-	private static String guiEnv = "gui.working.env";
+	private static String guiEnv = Deducer.guiEnv;
 	
 	private String rDataName=null;
 	

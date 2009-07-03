@@ -36,52 +36,49 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
 public class ModelBuilder extends javax.swing.JDialog implements ActionListener, KeyListener, MouseListener {
-	private JPanel varPanel;
-	private JScrollPane varScroller;
-	private JList varList;
-	private JPanel modelPanel;
-	private JButton contrasts;
-	private JButton poly;
-	private JButton more;
-	private JList outcomes;
-	private JScrollPane outcomeScroller;
-	private JPanel outcomePanel;
-	private JButton threeWay;
-	private JButton twoWay;
-	private JSeparator sep1;
-	private JButton in;
-	private JSeparator sep;
-	private JButton minus;
-	private JButton factorial;
-	private JButton interaction;
-	private JButton addMain;
-	private JButton remove;
-	private JList modelTerms;
-	private JButton help;
-	private OkayCancelPanel okayCancelPanel;
-	private JScrollPane modelScroller;
-	private DefaultListModel modelTermsModel;
-	private ModelModel model;
-	private ModelDialog mdialog;
+	protected JPanel varPanel;
+	protected JScrollPane varScroller;
+	protected JList varList;
+	protected JPanel modelPanel;
+	protected JButton contrasts;
+	protected JButton poly;
+	protected JButton more;
+	protected JList outcomes;
+	protected JScrollPane outcomeScroller;
+	protected JPanel outcomePanel;
+	protected JButton threeWay;
+	protected JButton twoWay;
+	protected JSeparator sep1;
+	protected JButton in;
+	protected JSeparator sep;
+	protected JButton minus;
+	protected JButton factorial;
+	protected JButton interaction;
+	protected JButton addMain;
+	protected JButton remove;
+	protected JList modelTerms;
+	protected JButton help;
+	protected OkayCancelPanel okayCancelPanel;
+	protected JScrollPane modelScroller;
+	protected DefaultListModel modelTermsModel;
+	protected ModelModel model;
 	
 	public ModelBuilder(JFrame frame) {
 		super(frame);
 		initGUI();
 	}
 	
-	public ModelBuilder(JDialog d,ModelModel mod,ModelDialog md) {	
+	public ModelBuilder(JDialog d,ModelModel mod) {	
 		super(d);
 		initGUI();
 		setModel(mod);
-		mdialog=md;
 	}
-	
-	public ModelBuilder(ModelModel mod,ModelDialog md) {	
+	public ModelBuilder(ModelModel mod) {	
 		super();
 		initGUI();
 		setModel(mod);
-		mdialog=md;
 	}
+	
 	
 	private void initGUI() {
 		try {
@@ -480,17 +477,16 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 		}else if(cmd=="Cancel"){
 			this.dispose();
 		}else if(cmd=="Continue"){
-			GLMExplorer exp = new GLMExplorer(model);
-			exp.setVisible(true);
-			this.dispose();
+			done();
 		}else if(cmd=="Reset"){
-			
+			reset();
 		}else if(cmd=="Specify"){
-			updateModel();
-			mdialog.callBack(this,model);
-			this.dispose();
+			specify();
 		}
-		
 	}
+
+	public void specify() {}
+	public void done(){}
+	public void reset(){}
 
 }

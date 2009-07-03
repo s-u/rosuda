@@ -35,7 +35,7 @@ import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
-public class GLMDialog extends ModelDialog implements ActionListener {
+public class GLMDialog extends JDialog implements ActionListener {
 	private VariableSelector variableSelector;
 	private JPanel contPanel;
 	private JLabel typeLabel;
@@ -58,13 +58,14 @@ public class GLMDialog extends ModelDialog implements ActionListener {
 	private JPanel factPanel;
 	private static DefaultComboBoxModel families  = new DefaultComboBoxModel(
 				new String[] { "gaussian()", "binomial()","poisson()",
-						"Gamma()","inverse.guassian()","quasibinomial()",
+						"Gamma()","inverse.gaussian()","quasibinomial()",
 						"quasipoisson()","other..." });
 	private AddButton addFactor;
 	private RemoveButton removeNumeric;
 	private AddButton addNumeric;
 	private GLMModel model= new GLMModel();
 	private GLMModel modelOnOpen = new GLMModel();
+	private static GLMModel lastModel;
 	
 	public GLMDialog(JDialog d,GLMModel mod) {
 		super(d);
@@ -80,8 +81,15 @@ public class GLMDialog extends ModelDialog implements ActionListener {
 		help.setVisible(false);
 		setModel(mod);
 	}
+	public GLMDialog(GLMModel mod) {
+		super();
+		mod.copyInto(modelOnOpen);
+		initGUI();
+		help.setVisible(false);
+		setModel(mod);
+	}
 	public GLMDialog(JFrame frame) {
-		this(frame,new GLMModel());
+		this(frame,lastModel==null ? new GLMModel() : lastModel);
 	}
 	
 	private void initGUI() {
@@ -269,12 +277,17 @@ public class GLMDialog extends ModelDialog implements ActionListener {
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				variableSelector.setPreferredSize(new java.awt.Dimension(222, 479));
+				variableSelector.getJComboBox().addActionListener(this);
 			}
 			this.setSize(552, 634);
 			this.setTitle("Generalized Linear Model");
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
+	}
+	
+	public static void setLastModel(GLMModel lm){
+		lastModel = lm;
 	}
 	
 	public void setModel(GLMModel mod){
@@ -355,13 +368,13 @@ public class GLMDialog extends ModelDialog implements ActionListener {
 			if(!valid())
 				return;
 			updateModel();
-			ModelBuilder builder = new ModelBuilder(model,this);
+			GLMBuilder builder = new GLMBuilder(model);
 			builder.setLocationRelativeTo(this);
 			builder.setVisible(true);
 			this.dispose();
 		}else if(cmd == "Cancel"){
 			this.dispose();
-		}else if(cmd == "comboBoxChanged" && type.getSelectedItem().equals("other...")){
+		}else if(cmd == "comboBoxChanged" && arg0.getSource()==type && type.getSelectedItem().equals("other...")){
 			String tmp = JOptionPane.showInputDialog(this, "Custom GLM Family");
 			if(tmp==null || tmp == "")
 				type.setSelectedIndex(0);
@@ -369,19 +382,14 @@ public class GLMDialog extends ModelDialog implements ActionListener {
 				families.insertElementAt(tmp, families.getSize()-1);
 				type.setSelectedItem(tmp);
 			}
+		}else if(cmd == "comboBoxChanged" && arg0.getSource()==variableSelector.getJComboBox()){
+			setModel(new GLMModel());
+		}else if(cmd=="Reset"){
+			variableSelector.reset();
+			setModel(new GLMModel());
 		}
-		
 	}
 	
-	public void callBack(JDialog d,ModelModel mod){
-		if(! (mod instanceof GLMModel)){
-			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
-			mod=new GLMModel();
-		}
-		GLMDialog dia = new GLMDialog(new JDialog(),(GLMModel)mod);
-		dia.setLocationRelativeTo(d);
-		dia.setVisible(true);
-	}
 
 	
 	
