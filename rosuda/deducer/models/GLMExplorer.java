@@ -91,6 +91,13 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		exp.setLocationRelativeTo(this);
 		exp.setVisible(true);
 	}
+	
+	public void meansClicked(){
+		GLMExplorerMeans m = new GLMExplorerMeans(this,model,pre);
+		m.setLocationRelativeTo(this);
+		m.setVisible(true);
+		setModel(model);		
+	}
 
 	public void windowActivated(WindowEvent arg0) {}
 

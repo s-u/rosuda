@@ -1,6 +1,7 @@
 package org.rosuda.deducer.models;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 
@@ -14,6 +15,7 @@ public class GLMModel extends ModelModel {
 	public GLMOptions options = new GLMOptions();
 	public PostHoc posthoc = new PostHoc();
 	public Export export = new Export();
+	public Effects effects = new Effects();
 	
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
@@ -37,27 +39,30 @@ public class GLMModel extends ModelModel {
 		}
 		
 		String dataName;
-		if(preview)
+		if(preview){
 			if(prevModel==null){
 				dataName = Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(data,Deducer.guiEnv);
 			}else
 				dataName = prevModel.data;
-		else
+		}else
 			dataName = data;
 		
 		String formula=Deducer.makeFormula(outcomes, terms);
-		cmd+=modelName+" <- glm(formula="+formula+",family="+this.family+",data="+Deducer.guiEnv+"$"+data+
+		cmd+=modelName+" <- glm(formula="+formula+",family="+this.family+",data="+dataName+
 				(weights.getSize()==0 ? "" : ",weights="+weights.get(0))+
 				((subset==null || subset.length()==0) ? "" : ",subset = "+subset)+
 				",na.action=na.omit"+")";
+		
+		ArrayList tmp = new ArrayList();
+		String[] out = new String[]{};	
 		if(preview){
 			Deducer.rniEval(dataName+"<-"+data);
 			Deducer.rniEval(cmd);
+			tmp.add("\n>"+cmd);
 		}
 			
 		
-		ArrayList tmp = new ArrayList();
-		String[] out = new String[]{};
+
 		if(this.options.anova){
 			String anovaCall = "Anova("+modelName+",type='"+options.type+"',test.statistic='"+options.test+"')";
 			if(preview){
@@ -136,6 +141,48 @@ public class GLMModel extends ModelModel {
 					}
 				}
 			}
+		}
+		
+		if(effects.effects.size()>0){
+			String[] t = new String[1];
+			if(prevModel!=null){
+				Deducer.eval("cat('"+"attr(terms("+prevModel.modelName+
+									"),\"term.labels\")')");
+				t=Deducer.rniEval("attr(terms("+prevModel.modelName+
+									"),\"term.labels\")").asStringArray();
+			}
+			Vector ter = new Vector();
+			for(int i=0;i<t.length;i++)
+				ter.add(t[i]);
+			Vector terms = new Vector();
+			for(int i=0;i<effects.effects.size();i++){
+				if(prevModel==null || ter.contains(effects.effects.get(i)))
+					terms.add("\""+effects.effects.get(i)+"\"");
+			}
+			Vector effectCalls=new Vector();;
+			for(int i=0;i<terms.size();i++){
+				if(effects.confInt)
+					effectCalls.add("summary(effect(term="+terms.get(i)+",mod="+modelName+"))");
+				else
+					effectCalls.add("\neffect(term="+terms.get(i)+",mod="+modelName+")");
+			}
+			if(preview){
+				String effectCall;
+				for(int i=0;i<effectCalls.size();i++){
+					effectCall=(String)effectCalls.get(i);
+					out = Deducer.rniEval("capture.output("+effectCall+")").asStringArray();
+					tmp.add("\n>"+effectCall+"\n");
+					for(int j=0;j<out.length;j++)
+						tmp.add(out[j]);
+				}
+			}else{
+				String effectCall;
+				for(int i=0;i<effectCalls.size();i++){
+					effectCall=(String)effectCalls.get(i);
+					cmd+="\n"+effectCall;
+				}
+			}
+			
 		}
 		
 		if(!preview){
@@ -246,5 +293,10 @@ public class GLMModel extends ModelModel {
 		public boolean cooks = false;
 		public boolean keepModel = false;
 		public String modelName = "<auto>";
+	}
+	
+	class Effects{
+		public DefaultListModel effects = new DefaultListModel();
+		public boolean confInt = false;
 	}
 }

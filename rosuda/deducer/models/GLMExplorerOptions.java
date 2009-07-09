@@ -170,7 +170,7 @@ public class GLMExplorerOptions extends javax.swing.JDialog implements ActionLis
 		if(mod.options.test=="LR")
 			testLR.setSelected(true);
 		else if(mod.options.test=="F")
-			testF.setSelected(mod.options.type=="F");
+			testF.setSelected(true);
 		if(!mod.family.startsWith("gaussian()"))
 			testF.setEnabled(false);
 		summary.setSelected(mod.options.summary);
