@@ -2,6 +2,7 @@ package org.rosuda.deducer.models;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.Vector;
 
 import javax.swing.JPanel;
 
@@ -97,6 +98,26 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		m.setLocationRelativeTo(this);
 		m.setVisible(true);
 		setModel(model);		
+	}
+	
+	public void plotsClicked(){
+		GLMExplorerPlots p = new GLMExplorerPlots(this,model,pre);
+		p.setLocationRelativeTo(this);
+		p.setVisible(true);
+		setModel(model);	
+	}
+	
+	public void testsClicked(){
+		String[] s =Deducer.rniEval("attr(terms("+pre.modelName+
+				"),\"term.labels\"").asStringArray();
+		Vector trms = new Vector();
+		for(int i=0;i<s.length;i++)
+			trms.add(s[i]);
+		
+		GLMExplorerTests p = new GLMExplorerTests(this,trms);
+		p.setLocationRelativeTo(this);
+		p.setVisible(true);
+		setModel(model);			
 	}
 
 	public void windowActivated(WindowEvent arg0) {}

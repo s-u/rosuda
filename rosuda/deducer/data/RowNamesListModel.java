@@ -15,9 +15,9 @@ import javax.swing.AbstractListModel;
 public class RowNamesListModel extends AbstractListModel{
 	List headers=new ArrayList();
 	public void initHeaders(int n){
+		headers=new ArrayList();
 		for(int i=1;i<=n;i++){
 			headers.add(new Integer(i).toString());
-			System.out.println(i);
 		}
 	}
 	public int getSize() { return headers.size(); }

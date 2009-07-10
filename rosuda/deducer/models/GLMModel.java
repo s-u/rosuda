@@ -16,6 +16,7 @@ public class GLMModel extends ModelModel {
 	public PostHoc posthoc = new PostHoc();
 	public Export export = new Export();
 	public Effects effects = new Effects();
+	public Plots plots = new Plots();
 	
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
@@ -146,8 +147,6 @@ public class GLMModel extends ModelModel {
 		if(effects.effects.size()>0){
 			String[] t = new String[1];
 			if(prevModel!=null){
-				Deducer.eval("cat('"+"attr(terms("+prevModel.modelName+
-									"),\"term.labels\")')");
 				t=Deducer.rniEval("attr(terms("+prevModel.modelName+
 									"),\"term.labels\")").asStringArray();
 			}
@@ -182,7 +181,42 @@ public class GLMModel extends ModelModel {
 					cmd+="\n"+effectCall;
 				}
 			}
-			
+		}
+		
+		if(plots.effects.size()>0){
+			String[] t = new String[1];
+			if(prevModel!=null){
+				t=Deducer.rniEval("attr(terms("+prevModel.modelName+
+									"),\"term.labels\")").asStringArray();
+			}
+			Vector ter = new Vector();
+			for(int i=0;i<t.length;i++)
+				ter.add(t[i]);
+			Vector terms = new Vector();
+			for(int i=0;i<plots.effects.size();i++){
+				if(prevModel==null || ter.contains(plots.effects.get(i)))
+					terms.add("\""+plots.effects.get(i)+"\"");
+			}
+			Vector plotCalls=new Vector();;
+			for(int i=0;i<terms.size();i++){
+				plotCalls.add("dev.new()");
+				plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
+										(",default.levels="+plots.defaultLevels)+")"+
+								((plots.ylab!="" && !plots.ylab.equals("<auto>"))? ",ylab='"+
+																		plots.ylab+"'" : "")+
+								(plots.confInt?"":",confint=TRUE")+
+								(plots.scaled ? "":",rescaled.axis=FALSE")+
+								(plots.multi ? ",multiline=TRUE" : "")+
+								(plots.rug ? "" : ",rug=FALSE")+
+								")");
+			}
+			if(!preview){
+				String plotCall;
+				for(int i=0;i<plotCalls.size();i++){
+					plotCall=(String)plotCalls.get(i);
+					cmd+="\n"+plotCall;
+				}
+			}
 		}
 		
 		if(!preview){
@@ -298,5 +332,15 @@ public class GLMModel extends ModelModel {
 	class Effects{
 		public DefaultListModel effects = new DefaultListModel();
 		public boolean confInt = false;
+	}
+	
+	class Plots{
+		public DefaultListModel effects = new DefaultListModel();
+		public boolean confInt = true;		
+		public boolean scaled = false;
+		public boolean multi = false;
+		public boolean rug = true;
+		public String ylab = "<auto>";
+		public int defaultLevels = 20;
 	}
 }

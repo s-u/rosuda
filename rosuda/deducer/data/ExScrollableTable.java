@@ -35,6 +35,7 @@ public class ExScrollableTable extends JScrollPane{
 	private static int widthMax=150;
 	private static int widthMult=8;
 	private boolean displayContextualMenu;
+	private RowListener rLis;
 	
 	public ExScrollableTable(ExTable t){
 		super();
@@ -48,11 +49,12 @@ public class ExScrollableTable extends JScrollPane{
 	    rowHeader.setFixedCellHeight(table.getRowHeight());
 	    rowHeader.setCellRenderer(new RowHeaderRenderer(table));
 	    setRowHeaderView(rowHeader);
-	    new RowListener();	
+	    rLis=new RowListener();	
 	    displayContextualMenu=true;
 	}
 	
 	public ExTable getExTable(){return table;}
+	
 	
 	/**
 	 * 		should the contextual menu be shown for rows on right click.
@@ -120,6 +122,9 @@ public class ExScrollableTable extends JScrollPane{
 		table.getCopyPasteAdapter().paste();
 	}
 	
+	public void removeRowListener(){
+		rowHeader.removeMouseListener(rLis);
+	}
 	
 	
 	/**
