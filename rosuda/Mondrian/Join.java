@@ -2238,10 +2238,10 @@ class Join extends JFrame implements ProgressIndicator, SelectionListener, DataL
         else
           c.voidEval("tempData <- cbind(tempData, x)");
       }
-      c.voidEval("tempD <- dist(scale(tempData))");
-      c.voidEval("is.na(tempD)[tempD==0] <- T");
-      c.voidEval("startConf <- cmdscale(dist(scale(tempData)), k=2)");
-      c.voidEval("sMds <- sammon(tempD, y=startConf, k=2, trace=F)");
+		String err = c.eval("try({tempD <- dist(scale(tempData)); is.na(tempD)[tempD==0] <- T; startConf <- cmdscale(dist(scale(tempData)), k=2); sMds <- sammon(tempD, y=startConf, k=2, trace=F); ''})").asString();
+		if (err != "") { // ERROR!!!
+			
+		
       double[] x1 = c.eval("sMds$points[,1]").asDoubles();
       double[] x2 = c.eval("sMds$points[,2]").asDoubles();      
       

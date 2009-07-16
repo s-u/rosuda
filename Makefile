@@ -143,6 +143,18 @@ iwidgets.jar: javaGD.jar ibase.jar $(JRENGINE) $(IWIDGETS_SRC)
 JRI.jar: $(JRI_SRC)
 	$(can-with-jar)
 
+JRIEngine.jar: $(RENGINE_JRI_SRC) JRI.jar REngine.jar
+	rm -rf org
+	$(JAVAC) -d . -classpath JRI.jar$(PATHSEP)REngine.jar $(RENGINE_JRI_SRC)
+	jar fc $@ org
+	rm -rf org
+
+RserveEngine.jar: $(RENGINE_RSERVE_SRC) REngine.jar
+	rm -rf org
+	$(JAVAC) -d . -classpath REngine.jar $(RENGINE_RSERVE_SRC)
+	jar fc $@ org
+	rm -rf org
+
 MRJstubs.jar: $(MRJSTUBS_SRC)
 # MRJ stubs go into com.apple.mrj. so we can't use can-with-jar
 	rm -rf com
@@ -156,6 +168,9 @@ doc: $(IBASE_SRC) $(KLIMT_SRC) $(PLUGINS_SRC) $(JRCLIENT_SRC) $(JGR_SRC) $(IPLOT
 	rm -rf JavaDoc
 	mkdir JavaDoc
 	javadoc -d JavaDoc -author -version -breakiterator -link $(JAPIURL) $^
+
+publish: doc
+	rsync --delete -avz JavaDoc/ co:/www/rforge/projects/org/web/docs/
 
 clean:
 	rm -rf `find . -name ".DS_*"`

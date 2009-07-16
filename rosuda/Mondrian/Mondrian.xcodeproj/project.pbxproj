@@ -132,6 +132,43 @@
 		1601BCDDFEEE210811DB9C8B /* Mondrian.java in Sources */ = {isa = PBXBuildFile; fileRef = 01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */; settings = {ATTRIBUTES = (); }; };
 		1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */ = {isa = PBXBuildFile; fileRef = 10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */; };
 		2844EF9B0AA9F2C1003B1B97 /* Mondrian.cfg.xml in Resources */ = {isa = PBXBuildFile; fileRef = D0F331A40A37226E00DF87E5 /* Mondrian.cfg.xml */; };
+		68F17AFF0D91577300AEB367 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 68F17AD40D91577300AEB367 /* LICENSE */; };
+		68F17B000D91577300AEB367 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AD50D91577300AEB367 /* Makefile */; };
+		68F17B010D91577300AEB367 /* MutableREXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AD60D91577300AEB367 /* MutableREXP.java */; };
+		68F17B020D91577300AEB367 /* REngine.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AD70D91577300AEB367 /* REngine.java */; };
+		68F17B030D91577300AEB367 /* REngineException.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AD80D91577300AEB367 /* REngineException.java */; };
+		68F17B040D91577300AEB367 /* REXP.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AD90D91577300AEB367 /* REXP.java */; };
+		68F17B050D91577300AEB367 /* REXPDouble.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADA0D91577300AEB367 /* REXPDouble.java */; };
+		68F17B060D91577300AEB367 /* REXPEnvironment.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADB0D91577300AEB367 /* REXPEnvironment.java */; };
+		68F17B070D91577300AEB367 /* REXPExpressionVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADC0D91577300AEB367 /* REXPExpressionVector.java */; };
+		68F17B080D91577300AEB367 /* REXPFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADD0D91577300AEB367 /* REXPFactor.java */; };
+		68F17B090D91577300AEB367 /* REXPGenericVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADE0D91577300AEB367 /* REXPGenericVector.java */; };
+		68F17B0A0D91577300AEB367 /* REXPInteger.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17ADF0D91577300AEB367 /* REXPInteger.java */; };
+		68F17B0B0D91577300AEB367 /* REXPLanguage.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE00D91577300AEB367 /* REXPLanguage.java */; };
+		68F17B0C0D91577300AEB367 /* REXPList.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE10D91577300AEB367 /* REXPList.java */; };
+		68F17B0D0D91577300AEB367 /* REXPLogical.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE20D91577300AEB367 /* REXPLogical.java */; };
+		68F17B0E0D91577300AEB367 /* REXPMismatchException.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE30D91577300AEB367 /* REXPMismatchException.java */; };
+		68F17B0F0D91577300AEB367 /* REXPNull.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE40D91577300AEB367 /* REXPNull.java */; };
+		68F17B100D91577300AEB367 /* REXPRaw.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE50D91577300AEB367 /* REXPRaw.java */; };
+		68F17B110D91577300AEB367 /* REXPReference.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE60D91577300AEB367 /* REXPReference.java */; };
+		68F17B120D91577300AEB367 /* REXPS4.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE70D91577300AEB367 /* REXPS4.java */; };
+		68F17B130D91577300AEB367 /* REXPString.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE80D91577300AEB367 /* REXPString.java */; };
+		68F17B140D91577300AEB367 /* REXPSymbol.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AE90D91577300AEB367 /* REXPSymbol.java */; };
+		68F17B150D91577300AEB367 /* REXPUnknown.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AEA0D91577300AEB367 /* REXPUnknown.java */; };
+		68F17B160D91577300AEB367 /* REXPVector.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AEB0D91577300AEB367 /* REXPVector.java */; };
+		68F17B170D91577300AEB367 /* RFactor.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AEC0D91577300AEB367 /* RFactor.java */; };
+		68F17B180D91577300AEB367 /* RList.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AED0D91577300AEB367 /* RList.java */; };
+		68F17B190D91577300AEB367 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AEF0D91577300AEB367 /* Makefile */; };
+		68F17B1A0D91577300AEB367 /* jcrypt.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF10D91577300AEB367 /* jcrypt.java */; };
+		68F17B1B0D91577300AEB367 /* REXPFactory.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF20D91577300AEB367 /* REXPFactory.java */; };
+		68F17B1C0D91577300AEB367 /* RPacket.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF30D91577300AEB367 /* RPacket.java */; };
+		68F17B1D0D91577300AEB367 /* RTalk.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF40D91577300AEB367 /* RTalk.java */; };
+		68F17B1E0D91577300AEB367 /* RConnection.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF50D91577300AEB367 /* RConnection.java */; };
+		68F17B1F0D91577300AEB367 /* RFileInputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF60D91577300AEB367 /* RFileInputStream.java */; };
+		68F17B200D91577300AEB367 /* RFileOutputStream.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF70D91577300AEB367 /* RFileOutputStream.java */; };
+		68F17B210D91577300AEB367 /* RserveException.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF80D91577300AEB367 /* RserveException.java */; };
+		68F17B220D91577300AEB367 /* RSession.java in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AF90D91577300AEB367 /* RSession.java */; };
+		68F17B240D91577300AEB367 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = 68F17AFC0D91577300AEB367 /* Makefile */; };
 		D021F47909925F7A00EFF582 /* ScanException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47809925F7A00EFF582 /* ScanException.java */; };
 		D021F47B09925F8700EFF582 /* UnacceptableFormatException.java in Sources */ = {isa = PBXBuildFile; fileRef = D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */; };
 		D04E14C308BDD855001A39DA /* BufferTokenizer.java in Sources */ = {isa = PBXBuildFile; fileRef = D04E14C208BDD855001A39DA /* BufferTokenizer.java */; };
@@ -194,6 +231,46 @@
 		01F12F4EFEC8CE6A11DB9C8B /* Mondrian.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = Mondrian.java; sourceTree = "<group>"; tabWidth = 8; };
 		06D05853FF24F2DB11DB9C8B /* Mondrian.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = Mondrian.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		10F9BF62FEEDA25E11DB9C8B /* Mondrian.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Mondrian.icns; sourceTree = "<group>"; };
+		68F17AD40D91577300AEB367 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../REngine/LICENSE; sourceTree = SOURCE_ROOT; };
+		68F17AD50D91577300AEB367 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../REngine/Makefile; sourceTree = SOURCE_ROOT; };
+		68F17AD60D91577300AEB367 /* MutableREXP.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = MutableREXP.java; path = ../REngine/MutableREXP.java; sourceTree = SOURCE_ROOT; };
+		68F17AD70D91577300AEB367 /* REngine.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REngine.java; path = ../REngine/REngine.java; sourceTree = SOURCE_ROOT; };
+		68F17AD80D91577300AEB367 /* REngineException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REngineException.java; path = ../REngine/REngineException.java; sourceTree = SOURCE_ROOT; };
+		68F17AD90D91577300AEB367 /* REXP.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXP.java; path = ../REngine/REXP.java; sourceTree = SOURCE_ROOT; };
+		68F17ADA0D91577300AEB367 /* REXPDouble.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPDouble.java; path = ../REngine/REXPDouble.java; sourceTree = SOURCE_ROOT; };
+		68F17ADB0D91577300AEB367 /* REXPEnvironment.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPEnvironment.java; path = ../REngine/REXPEnvironment.java; sourceTree = SOURCE_ROOT; };
+		68F17ADC0D91577300AEB367 /* REXPExpressionVector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPExpressionVector.java; path = ../REngine/REXPExpressionVector.java; sourceTree = SOURCE_ROOT; };
+		68F17ADD0D91577300AEB367 /* REXPFactor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPFactor.java; path = ../REngine/REXPFactor.java; sourceTree = SOURCE_ROOT; };
+		68F17ADE0D91577300AEB367 /* REXPGenericVector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPGenericVector.java; path = ../REngine/REXPGenericVector.java; sourceTree = SOURCE_ROOT; };
+		68F17ADF0D91577300AEB367 /* REXPInteger.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPInteger.java; path = ../REngine/REXPInteger.java; sourceTree = SOURCE_ROOT; };
+		68F17AE00D91577300AEB367 /* REXPLanguage.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPLanguage.java; path = ../REngine/REXPLanguage.java; sourceTree = SOURCE_ROOT; };
+		68F17AE10D91577300AEB367 /* REXPList.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPList.java; path = ../REngine/REXPList.java; sourceTree = SOURCE_ROOT; };
+		68F17AE20D91577300AEB367 /* REXPLogical.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPLogical.java; path = ../REngine/REXPLogical.java; sourceTree = SOURCE_ROOT; };
+		68F17AE30D91577300AEB367 /* REXPMismatchException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPMismatchException.java; path = ../REngine/REXPMismatchException.java; sourceTree = SOURCE_ROOT; };
+		68F17AE40D91577300AEB367 /* REXPNull.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPNull.java; path = ../REngine/REXPNull.java; sourceTree = SOURCE_ROOT; };
+		68F17AE50D91577300AEB367 /* REXPRaw.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPRaw.java; path = ../REngine/REXPRaw.java; sourceTree = SOURCE_ROOT; };
+		68F17AE60D91577300AEB367 /* REXPReference.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPReference.java; path = ../REngine/REXPReference.java; sourceTree = SOURCE_ROOT; };
+		68F17AE70D91577300AEB367 /* REXPS4.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPS4.java; path = ../REngine/REXPS4.java; sourceTree = SOURCE_ROOT; };
+		68F17AE80D91577300AEB367 /* REXPString.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPString.java; path = ../REngine/REXPString.java; sourceTree = SOURCE_ROOT; };
+		68F17AE90D91577300AEB367 /* REXPSymbol.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPSymbol.java; path = ../REngine/REXPSymbol.java; sourceTree = SOURCE_ROOT; };
+		68F17AEA0D91577300AEB367 /* REXPUnknown.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPUnknown.java; path = ../REngine/REXPUnknown.java; sourceTree = SOURCE_ROOT; };
+		68F17AEB0D91577300AEB367 /* REXPVector.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPVector.java; path = ../REngine/REXPVector.java; sourceTree = SOURCE_ROOT; };
+		68F17AEC0D91577300AEB367 /* RFactor.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RFactor.java; path = ../REngine/RFactor.java; sourceTree = SOURCE_ROOT; };
+		68F17AED0D91577300AEB367 /* RList.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RList.java; path = ../REngine/RList.java; sourceTree = SOURCE_ROOT; };
+		68F17AEF0D91577300AEB367 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../REngine/Rserve/Makefile; sourceTree = SOURCE_ROOT; };
+		68F17AF10D91577300AEB367 /* jcrypt.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = jcrypt.java; path = ../REngine/Rserve/protocol/jcrypt.java; sourceTree = SOURCE_ROOT; };
+		68F17AF20D91577300AEB367 /* REXPFactory.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = REXPFactory.java; path = ../REngine/Rserve/protocol/REXPFactory.java; sourceTree = SOURCE_ROOT; };
+		68F17AF30D91577300AEB367 /* RPacket.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RPacket.java; path = ../REngine/Rserve/protocol/RPacket.java; sourceTree = SOURCE_ROOT; };
+		68F17AF40D91577300AEB367 /* RTalk.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RTalk.java; path = ../REngine/Rserve/protocol/RTalk.java; sourceTree = SOURCE_ROOT; };
+		68F17AF50D91577300AEB367 /* RConnection.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RConnection.java; path = ../REngine/Rserve/RConnection.java; sourceTree = SOURCE_ROOT; };
+		68F17AF60D91577300AEB367 /* RFileInputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RFileInputStream.java; path = ../REngine/Rserve/RFileInputStream.java; sourceTree = SOURCE_ROOT; };
+		68F17AF70D91577300AEB367 /* RFileOutputStream.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RFileOutputStream.java; path = ../REngine/Rserve/RFileOutputStream.java; sourceTree = SOURCE_ROOT; };
+		68F17AF80D91577300AEB367 /* RserveException.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RserveException.java; path = ../REngine/Rserve/RserveException.java; sourceTree = SOURCE_ROOT; };
+		68F17AF90D91577300AEB367 /* RSession.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = RSession.java; path = ../REngine/Rserve/RSession.java; sourceTree = SOURCE_ROOT; };
+		68F17AFB0D91577300AEB367 /* jt.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = jt.java; path = ../REngine/Rserve/test/jt.java; sourceTree = SOURCE_ROOT; };
+		68F17AFC0D91577300AEB367 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../REngine/Rserve/test/Makefile; sourceTree = SOURCE_ROOT; };
+		68F17AFD0D91577300AEB367 /* PlotDemo.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = PlotDemo.java; path = ../REngine/Rserve/test/PlotDemo.java; sourceTree = SOURCE_ROOT; };
+		68F17AFE0D91577300AEB367 /* test.java */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.java; name = test.java; path = ../REngine/Rserve/test/test.java; sourceTree = SOURCE_ROOT; };
 		D021F47809925F7A00EFF582 /* ScanException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = ScanException.java; sourceTree = "<group>"; };
 		D021F47A09925F8700EFF582 /* UnacceptableFormatException.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = UnacceptableFormatException.java; sourceTree = "<group>"; };
 		D04E14C208BDD855001A39DA /* BufferTokenizer.java */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.java; path = BufferTokenizer.java; sourceTree = "<group>"; };
@@ -266,6 +343,7 @@
 		01F12F4DFEC8CE2211DB9C8B = {
 			isa = PBXGroup;
 			children = (
+				68F17AD30D91577200AEB367 /* REngine */,
 				F5FCD7B4023CC352015B9A6A /* Axis.java */,
 				F539377301F5CC7401FA4797 /* Barchart.java */,
 				D04E14C208BDD855001A39DA /* BufferTokenizer.java */,
@@ -325,6 +403,81 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		68F17AD30D91577200AEB367 /* REngine */ = {
+			isa = PBXGroup;
+			children = (
+				68F17AD40D91577300AEB367 /* LICENSE */,
+				68F17AD50D91577300AEB367 /* Makefile */,
+				68F17AD60D91577300AEB367 /* MutableREXP.java */,
+				68F17AD70D91577300AEB367 /* REngine.java */,
+				68F17AD80D91577300AEB367 /* REngineException.java */,
+				68F17AD90D91577300AEB367 /* REXP.java */,
+				68F17ADA0D91577300AEB367 /* REXPDouble.java */,
+				68F17ADB0D91577300AEB367 /* REXPEnvironment.java */,
+				68F17ADC0D91577300AEB367 /* REXPExpressionVector.java */,
+				68F17ADD0D91577300AEB367 /* REXPFactor.java */,
+				68F17ADE0D91577300AEB367 /* REXPGenericVector.java */,
+				68F17ADF0D91577300AEB367 /* REXPInteger.java */,
+				68F17AE00D91577300AEB367 /* REXPLanguage.java */,
+				68F17AE10D91577300AEB367 /* REXPList.java */,
+				68F17AE20D91577300AEB367 /* REXPLogical.java */,
+				68F17AE30D91577300AEB367 /* REXPMismatchException.java */,
+				68F17AE40D91577300AEB367 /* REXPNull.java */,
+				68F17AE50D91577300AEB367 /* REXPRaw.java */,
+				68F17AE60D91577300AEB367 /* REXPReference.java */,
+				68F17AE70D91577300AEB367 /* REXPS4.java */,
+				68F17AE80D91577300AEB367 /* REXPString.java */,
+				68F17AE90D91577300AEB367 /* REXPSymbol.java */,
+				68F17AEA0D91577300AEB367 /* REXPUnknown.java */,
+				68F17AEB0D91577300AEB367 /* REXPVector.java */,
+				68F17AEC0D91577300AEB367 /* RFactor.java */,
+				68F17AED0D91577300AEB367 /* RList.java */,
+				68F17AEE0D91577300AEB367 /* Rserve */,
+			);
+			name = REngine;
+			path = ../REngine;
+			sourceTree = SOURCE_ROOT;
+		};
+		68F17AEE0D91577300AEB367 /* Rserve */ = {
+			isa = PBXGroup;
+			children = (
+				68F17AEF0D91577300AEB367 /* Makefile */,
+				68F17AF00D91577300AEB367 /* protocol */,
+				68F17AF50D91577300AEB367 /* RConnection.java */,
+				68F17AF60D91577300AEB367 /* RFileInputStream.java */,
+				68F17AF70D91577300AEB367 /* RFileOutputStream.java */,
+				68F17AF80D91577300AEB367 /* RserveException.java */,
+				68F17AF90D91577300AEB367 /* RSession.java */,
+				68F17AFA0D91577300AEB367 /* test */,
+			);
+			name = Rserve;
+			path = ../REngine/Rserve;
+			sourceTree = SOURCE_ROOT;
+		};
+		68F17AF00D91577300AEB367 /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				68F17AF10D91577300AEB367 /* jcrypt.java */,
+				68F17AF20D91577300AEB367 /* REXPFactory.java */,
+				68F17AF30D91577300AEB367 /* RPacket.java */,
+				68F17AF40D91577300AEB367 /* RTalk.java */,
+			);
+			name = protocol;
+			path = ../REngine/Rserve/protocol;
+			sourceTree = SOURCE_ROOT;
+		};
+		68F17AFA0D91577300AEB367 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				68F17AFB0D91577300AEB367 /* jt.java */,
+				68F17AFC0D91577300AEB367 /* Makefile */,
+				68F17AFD0D91577300AEB367 /* PlotDemo.java */,
+				68F17AFE0D91577300AEB367 /* test.java */,
+			);
+			name = test;
+			path = ../REngine/Rserve/test;
+			sourceTree = SOURCE_ROOT;
 		};
 		D0BF0A020792C180007E65A3 /* JRclient */ = {
 			isa = PBXGroup;
@@ -396,6 +549,7 @@
 			files = (
 				2844EF9B0AA9F2C1003B1B97 /* Mondrian.cfg.xml in Resources */,
 				1601BCE0FEEE210811DB9C8B /* Mondrian.icns in Resources */,
+				68F17AFF0D91577300AEB367 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +611,42 @@
 				D021F47909925F7A00EFF582 /* ScanException.java in Sources */,
 				D021F47B09925F8700EFF582 /* UnacceptableFormatException.java in Sources */,
 				D050126B09E55DB100A14315 /* ResizePlotTask.java in Sources */,
+				68F17B000D91577300AEB367 /* Makefile in Sources */,
+				68F17B010D91577300AEB367 /* MutableREXP.java in Sources */,
+				68F17B020D91577300AEB367 /* REngine.java in Sources */,
+				68F17B030D91577300AEB367 /* REngineException.java in Sources */,
+				68F17B040D91577300AEB367 /* REXP.java in Sources */,
+				68F17B050D91577300AEB367 /* REXPDouble.java in Sources */,
+				68F17B060D91577300AEB367 /* REXPEnvironment.java in Sources */,
+				68F17B070D91577300AEB367 /* REXPExpressionVector.java in Sources */,
+				68F17B080D91577300AEB367 /* REXPFactor.java in Sources */,
+				68F17B090D91577300AEB367 /* REXPGenericVector.java in Sources */,
+				68F17B0A0D91577300AEB367 /* REXPInteger.java in Sources */,
+				68F17B0B0D91577300AEB367 /* REXPLanguage.java in Sources */,
+				68F17B0C0D91577300AEB367 /* REXPList.java in Sources */,
+				68F17B0D0D91577300AEB367 /* REXPLogical.java in Sources */,
+				68F17B0E0D91577300AEB367 /* REXPMismatchException.java in Sources */,
+				68F17B0F0D91577300AEB367 /* REXPNull.java in Sources */,
+				68F17B100D91577300AEB367 /* REXPRaw.java in Sources */,
+				68F17B110D91577300AEB367 /* REXPReference.java in Sources */,
+				68F17B120D91577300AEB367 /* REXPS4.java in Sources */,
+				68F17B130D91577300AEB367 /* REXPString.java in Sources */,
+				68F17B140D91577300AEB367 /* REXPSymbol.java in Sources */,
+				68F17B150D91577300AEB367 /* REXPUnknown.java in Sources */,
+				68F17B160D91577300AEB367 /* REXPVector.java in Sources */,
+				68F17B170D91577300AEB367 /* RFactor.java in Sources */,
+				68F17B180D91577300AEB367 /* RList.java in Sources */,
+				68F17B190D91577300AEB367 /* Makefile in Sources */,
+				68F17B1A0D91577300AEB367 /* jcrypt.java in Sources */,
+				68F17B1B0D91577300AEB367 /* REXPFactory.java in Sources */,
+				68F17B1C0D91577300AEB367 /* RPacket.java in Sources */,
+				68F17B1D0D91577300AEB367 /* RTalk.java in Sources */,
+				68F17B1E0D91577300AEB367 /* RConnection.java in Sources */,
+				68F17B1F0D91577300AEB367 /* RFileInputStream.java in Sources */,
+				68F17B200D91577300AEB367 /* RFileOutputStream.java in Sources */,
+				68F17B210D91577300AEB367 /* RserveException.java in Sources */,
+				68F17B220D91577300AEB367 /* RSession.java in Sources */,
+				68F17B240D91577300AEB367 /* Makefile in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
