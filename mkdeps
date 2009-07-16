@@ -14,4 +14,4 @@ fi
 make doc >/dev/null && ( if [ -n "$PBASE" ]; then rsync --delete -az JavaDoc/ "$PBASE/org/web/docs/"; fi )
 
 # create downloadable JARs
-make JRIEngine.jar RserveEngine.jar >/dev/null && ( if [ -n "$PBASE" ]; then cp JRIEngine.jar REngine.jar RserveEngine.jar JRI.jar "$PBASE/org/files/"; fi )
+make JRIEngine.jar RserveEngine.jar >/dev/null && ( if [ -n "$PBASE" ]; then cp JRIEngine.jar REngine.jar RserveEngine.jar JRI.jar "$PBASE/org/files/"; cp JRIEngine.jar REngine.jar JRI.jar "$PBASE/JRI/files/"; cp RserveEngine.jar REngine.jar "$PBASE/Rserve/files/"; fi )
