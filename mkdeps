@@ -1,0 +1,17 @@
+#!/bin/sh
+
+ROOT="$1"
+
+if [ -z "$1" ]; then
+    echo 'ERROR: missing project directory parameter!'
+    exit 1
+fi
+
+# copy source tree
+(cd "$ROOT" && tar fc - *) | tar fx -
+
+# create docs
+make doc >/dev/null && ( if [ -n "$PBASE" ]; then rsync --delete -az JavaDoc/ "$PBASE/org/web/docs/"; fi )
+
+# create downloadable JARs
+make JRIEngine.jar RserveEngine.jar >/dev/null && ( if [ -n "$PBASE" ]; then cp JRIEngine.jar REngine.jar RserveEngine.jar JRI.jar "$PBASE/org/files/"; fi )
