@@ -79,6 +79,7 @@ public class Deducer {
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "K-Sample Test", "ksample", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Correlation", "corr", cListener);
 				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, analysisMenu).addSeparator();
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Logistic Model", "logistic", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "GLM", "glm", cListener);
 				menuIndex++;
 			}
@@ -220,6 +221,10 @@ public class Deducer {
 				inst.setVisible(true);				
 			}else if(cmd=="glm"){
 				GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+			}else if(cmd=="logistic"){
+				LogisticDialog d = new LogisticDialog(JGR.MAINRCONSOLE);
 				d.setLocationRelativeTo(null);
 				d.setVisible(true);
 			}

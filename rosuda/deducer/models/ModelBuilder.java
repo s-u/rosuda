@@ -256,6 +256,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 							outcomes = new JList();
 							outcomeScroller.setViewportView(outcomes);
 							outcomes.setModel(outcomesModel);
+							outcomes.addMouseListener(this);
 						}
 					}
 				}
@@ -322,10 +323,10 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 		
 		varModel=new DefaultListModel();
 		for(int i=0;i<mod.outcomes.getSize();i++){
-			if(!mod.outcomes.getElementAt(i).equals(
+			/*if(!mod.outcomes.getElementAt(i).equals(
 					RController.makeValidVariableName((String)mod.outcomes.getElementAt(i)))){
 				tmp="`"+mod.outcomes.getElementAt(i)+"`";
-			}else
+			}else*/
 				tmp=(String)mod.outcomes.getElementAt(i);
 			varModel.addElement(tmp);
 		}
@@ -339,8 +340,25 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 	
 	public void updateModel(){
 		model.terms = modelTermsModel;
+		model.outcomes = (DefaultListModel) outcomes.getModel();
+	}
+	public void editSelectedTerm(){
+		String term = JOptionPane.showInputDialog(modelTerms,"Edit term", modelTerms.getSelectedValue());
+		if(term!=null){
+			if(modelTerms.getSelectedIndex()>=0)
+				modelTermsModel.setElementAt(term, modelTerms.getSelectedIndex());
+			else
+				modelTermsModel.addElement(term);
+		}		
 	}
 	
+	public void editSelectedOutcome(){
+		if(outcomes.getSelectedIndex()>=0){
+			String term = JOptionPane.showInputDialog(outcomes,"Edit  outcome term", outcomes.getSelectedValue());
+			if(term!=null)
+				((DefaultListModel)outcomes.getModel()).setElementAt(term, outcomes.getSelectedIndex());			
+		}
+	}
 
 	
 	public void keyPressed(KeyEvent e) {}
@@ -352,22 +370,17 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 					modelTermsModel.remove(inds[i]);
 		}		
 	}
+	
 	public void keyTyped(KeyEvent e) {}
 
-	
 	public void mouseClicked(MouseEvent arg0) {
-		if(arg0.getClickCount()==2){
-			String term = JOptionPane.showInputDialog(modelTerms,"Edit term", modelTerms.getSelectedValue());
-			if(term!=null){
-				if(modelTerms.getSelectedIndex()>=0)
-					modelTermsModel.setElementAt(term, modelTerms.getSelectedIndex());
-				else
-					modelTermsModel.addElement(term);
-			}
-			
+		if(arg0.getClickCount()==2 && arg0.getSource()==modelTerms){
+			editSelectedTerm();
+		}else if(arg0.getClickCount()==2 && arg0.getSource()==outcomes){
+			editSelectedOutcome();
 		}
-		
 	}
+	
 	public void mouseEntered(MouseEvent arg0) {}
 	public void mouseExited(MouseEvent arg0) {}
 	public void mousePressed(MouseEvent arg0) {}

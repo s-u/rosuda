@@ -36,36 +36,36 @@ import org.rosuda.deducer.toolkit.SingletonDJList;
 import org.rosuda.deducer.toolkit.VariableSelector;
 
 public class GLMDialog extends JDialog implements ActionListener {
-	private VariableSelector variableSelector;
-	private JPanel contPanel;
-	private JLabel typeLabel;
-	private JComboBox type;
-	private JButton addOutcome;
-	private JPanel weightPanel;
-	private SubsetPanel subset;
-	private JPanel subsetPanel;
-	private SingletonDJList weights;
-	private JButton addWeight;
-	private SingletonDJList outcome;
-	private JPanel outcomePanel;
-	private JButton help;
-	private OkayCancelPanel okayCancelPanel;
-	private RemoveButton removeFactor;
-	private DJList factorVars;
-	private DJList numericVars;
-	private JScrollPane factScroller;
-	private JScrollPane numericScroller;
-	private JPanel factPanel;
-	private static DefaultComboBoxModel families  = new DefaultComboBoxModel(
+	protected VariableSelector variableSelector;
+	protected JPanel contPanel;
+	protected JLabel typeLabel;
+	protected JComboBox type;
+	protected JButton addOutcome;
+	protected JPanel weightPanel;
+	protected SubsetPanel subset;
+	protected JPanel subsetPanel;
+	protected SingletonDJList weights;
+	protected JButton addWeight;
+	protected SingletonDJList outcome;
+	protected JPanel outcomePanel;
+	protected JButton help;
+	protected OkayCancelPanel okayCancelPanel;
+	protected RemoveButton removeFactor;
+	protected DJList factorVars;
+	protected DJList numericVars;
+	protected JScrollPane factScroller;
+	protected JScrollPane numericScroller;
+	protected JPanel factPanel;
+	protected static DefaultComboBoxModel families  = new DefaultComboBoxModel(
 				new String[] { "gaussian()", "binomial()","poisson()",
 						"Gamma()","inverse.gaussian()","quasibinomial()",
 						"quasipoisson()","other..." });
-	private AddButton addFactor;
-	private RemoveButton removeNumeric;
-	private AddButton addNumeric;
-	private GLMModel model= new GLMModel();
-	private GLMModel modelOnOpen = new GLMModel();
-	private static GLMModel lastModel;
+	protected AddButton addFactor;
+	protected RemoveButton removeNumeric;
+	protected AddButton addNumeric;
+	protected GLMModel model= new GLMModel();
+	protected GLMModel modelOnOpen = new GLMModel();
+	protected static GLMModel lastModel;
 	
 	public GLMDialog(JDialog d,GLMModel mod) {
 		super(d);
@@ -92,7 +92,7 @@ public class GLMDialog extends JDialog implements ActionListener {
 		this(frame,lastModel==null ? new GLMModel() : lastModel);
 	}
 	
-	private void initGUI() {
+	protected void initGUI() {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
@@ -292,12 +292,12 @@ public class GLMDialog extends JDialog implements ActionListener {
 	
 	public void setModel(GLMModel mod){
 		variableSelector.setSelectedData(mod.data);
-		boolean valid = variableSelector.removeAll(mod.outcomes);
+		boolean valid = variableSelector.removeAll(mod.outcomeVars);
 		if(!valid){
 			setModel(new GLMModel());
 			return;
 		}
-		outcome.setModel(mod.outcomes);
+		outcome.setModel(mod.outcomeVars);
 		
 		valid = variableSelector.removeAll(mod.numericVars);
 		if(!valid){
@@ -331,7 +331,11 @@ public class GLMDialog extends JDialog implements ActionListener {
 	public void updateModel(){
 		model.factorVars=(DefaultListModel)factorVars.getModel();
 		model.numericVars=(DefaultListModel)numericVars.getModel();
-		model.outcomes = (DefaultListModel) outcome.getModel();
+		model.outcomeVars = (DefaultListModel) outcome.getModel();
+		if(model.outcomes.size()==0)
+			model.outcomes = (DefaultListModel) outcome.getModel();
+		else if(!model.outcomes.getElementAt(0).toString().contains((String)model.outcomeVars.get(0)))
+			model.outcomes = (DefaultListModel) outcome.getModel();
 		model.data = variableSelector.getSelectedData();
 		model.subset = subset.getText();
 		model.weights = (DefaultListModel) weights.getModel();
@@ -361,17 +365,21 @@ public class GLMDialog extends JDialog implements ActionListener {
 		}
 		return true;
 	}
+	
+	public void continueClicked(){
+		if(!valid())
+			return;
+		updateModel();
+		GLMBuilder builder = new GLMBuilder(model);
+		builder.setLocationRelativeTo(this);
+		builder.setVisible(true);
+		this.dispose();
+	}
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
 		if(cmd == "Continue"){
-			if(!valid())
-				return;
-			updateModel();
-			GLMBuilder builder = new GLMBuilder(model);
-			builder.setLocationRelativeTo(this);
-			builder.setVisible(true);
-			this.dispose();
+			continueClicked();
 		}else if(cmd == "Cancel"){
 			this.dispose();
 		}else if(cmd == "comboBoxChanged" && arg0.getSource()==type && type.getSelectedItem().equals("other...")){

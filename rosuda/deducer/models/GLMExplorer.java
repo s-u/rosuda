@@ -4,12 +4,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Vector;
 
-import javax.swing.JPanel;
-
-import org.rosuda.JGR.toolkit.JavaGD;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
-import org.rosuda.javaGD.JGDBufferedPanel;
 
 public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
@@ -48,7 +44,6 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		}catch(Exception e){
 			new ErrorMsg(e);
 		}
-		
 	}
 	
 	public void setModel(GLMModel mod){
@@ -61,7 +56,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
 	
 	public void run(){
-		model.run(false,null);
+		model.run(false,pre);
 		this.dispose();
 		GLMDialog.setLastModel(model);
 		Deducer.rniEval("rm('"+pre.data.split("$")[1]+"','"+pre.modelName.split("$")[1]+"',envir="+Deducer.guiEnv+")");
@@ -108,13 +103,13 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	}
 	
 	public void testsClicked(){
-		String[] s =Deducer.rniEval("attr(terms("+pre.modelName+
-				"),\"term.labels\"").asStringArray();
+		String[] s =Deducer.rniEval("names(coef("+pre.modelName+
+				"))").asStringArray();
 		Vector trms = new Vector();
 		for(int i=0;i<s.length;i++)
 			trms.add(s[i]);
 		
-		GLMExplorerTests p = new GLMExplorerTests(this,trms);
+		GLMExplorerTests p = new GLMExplorerTests(this,trms,model);
 		p.setLocationRelativeTo(this);
 		p.setVisible(true);
 		setModel(model);			

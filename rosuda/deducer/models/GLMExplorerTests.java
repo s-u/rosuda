@@ -58,31 +58,19 @@ public class GLMExplorerTests extends javax.swing.JDialog implements ListSelecti
 	private ExTable matrix;
 	private ExDefaultTableModel matrixModel;
 	private Vector terms;
+	private GLMModel model;
 
-	/**
-	* Auto-generated main method to display this JDialog
-	*/
-	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				Vector vec = new Vector();
-				vec.add("term1");
-				vec.add("term2");
-				vec.add("term1:term2");
-				JFrame frame = new JFrame();
-				GLMExplorerTests inst = new GLMExplorerTests(frame,vec);
-				inst.setVisible(true);
-			}
-		});
-	}
 	
-	public GLMExplorerTests(JFrame frame,Vector t) {
+	public GLMExplorerTests(JFrame frame,Vector t,GLMModel mod) {
 		super(frame);
 		terms = t;
 		this.setModal(true);
 		initGUI();
+		setModel(mod);
 	}
 	
+
+
 	private void initGUI() {
 		try {
 			{
@@ -171,7 +159,34 @@ public class GLMExplorerTests extends javax.swing.JDialog implements ListSelecti
 			e.printStackTrace();
 		}
 	}
-
+	public void setModel(GLMModel mod) {
+		model=mod;
+		direction.setSelectedItem(model.tests.direction);
+		ExDefaultTableModel tmod;
+		String[] colNames = new String[terms.size()+1];
+		for(int i=0;i<terms.size();i++)
+			colNames[i]=(String)terms.get(i);
+		colNames[terms.size()]="=";
+		for(int i=0;i<model.tests.size();i++){
+			tmod = model.tests.getDuplicateTableModel(i);
+			if(tmod.getColumnCount()==terms.size()+1){
+				tmod.setColumnIdentifiers(colNames);
+				LHTest test = new LHTest(model.tests.getName(i));
+				test.hm=tmod;
+				testModel.addElement(test);
+			}
+		}
+	}
+	
+	public void updateModel(){
+		model.tests.reset();
+		model.tests.direction=(String)direction.getSelectedItem();
+		for(int i=0;i<testModel.getSize();i++){
+			LHTest test = (LHTest) testModel.get(i);
+			model.tests.addTest(test.name,test.hm);
+		}
+	}
+	
 	public void valueChanged(ListSelectionEvent arg0) {
 		LHTest t = (LHTest) testList.getSelectedValue();
 		if(t!=null){
@@ -188,9 +203,20 @@ public class GLMExplorerTests extends javax.swing.JDialog implements ListSelecti
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd=arg0.getActionCommand();
 		if(cmd=="OK"){
+			for(int i=0;i<testModel.size();i++){
+				LHTest t = (LHTest)testModel.get(i);
+				if(!t.isValid()){
+					JOptionPane.showMessageDialog(this, "Hypothesis "+testModel.getElementAt(i).toString()+
+														" must contain only numbers, and at least one must be non-zero");
+					return;
+				}
+			}
+			updateModel();
 			this.dispose();
 		}else if(cmd=="Cancel"){
 			this.dispose();
+		}else if(cmd=="Reset"){
+			setModel(model);
 		}else if(cmd=="Add"){
 			String name = JOptionPane.showInputDialog(this, "Name of Hypothesis test:",
 													"hypothesis");
@@ -244,6 +270,18 @@ public class GLMExplorerTests extends javax.swing.JDialog implements ListSelecti
 		}
 		public String toString(){
 			return name;
+		}
+		
+		public boolean isValid(){
+			boolean allZero=true;
+			for(int i=0;i<hm.getRowCount();i++)
+				for(int j=0;j<hm.getColumnCount();j++){
+					if(!((String)hm.getValueAt(i, j)).trim().matches("^[-+]?[0-9]*\\.?[0-9]+$"))
+						return false;
+					if(!((String)hm.getValueAt(i, j)).trim().equals("0"))
+						allZero=false;
+				}
+			return !allZero;
 		}
 	}
 }

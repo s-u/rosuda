@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.DefaultListModel;
+import javax.swing.table.DefaultTableModel;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.JRI.REXP;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.data.ExDefaultTableModel;
 
 public class GLMModel extends ModelModel {
 	public DefaultListModel weights = new DefaultListModel();
@@ -17,6 +20,7 @@ public class GLMModel extends ModelModel {
 	public Export export = new Export();
 	public Effects effects = new Effects();
 	public Plots plots = new Plots();
+	public Tests tests = new Tests();
 	
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
@@ -61,9 +65,29 @@ public class GLMModel extends ModelModel {
 			Deducer.rniEval(cmd);
 			tmp.add("\n>"+cmd);
 		}
-			
 		
-
+		cmd=runOptions(cmd,modelName,preview,tmp);
+		cmd=runPostHoc(cmd,modelName,preview,tmp);
+		cmd=runEffects(cmd,modelName,preview,tmp,prevModel);
+		cmd=runPlots(cmd,modelName,preview,tmp,prevModel);
+		cmd=runTests(cmd,modelName,preview,tmp,prevModel);
+		cmd=runExport(cmd,modelName,preview,tmp,dataName);
+		
+		if(!preview)
+			JGR.MAINRCONSOLE.executeLater(cmd);
+		String prev = "";
+		for(int i =0;i<tmp.size();i++)
+			prev+=tmp.get(i)+"\n";
+		rModel.call=cmd;
+		rModel.data=dataName;
+		rModel.formula=formula;
+		rModel.modelName=modelName;
+		rModel.preview=prev;
+		return rModel;
+	}
+	
+	protected String runOptions(String cmd,String modelName,boolean preview,ArrayList tmp){
+		String[] out = new String[]{};
 		if(this.options.anova){
 			String anovaCall = "Anova("+modelName+",type='"+options.type+"',test.statistic='"+options.test+"')";
 			if(preview){
@@ -110,7 +134,11 @@ public class GLMModel extends ModelModel {
 				cmd+="\n"+infCall;
 			}
 		}
-		
+		return cmd;
+	}
+	
+	protected String runPostHoc(String cmd,String modelName,boolean preview,ArrayList tmp){
+		String[] out = new String[]{};
 		if(posthoc.posthoc.size()>0){
 			String postCall = "";
 			String cor = "univariate()";
@@ -143,7 +171,12 @@ public class GLMModel extends ModelModel {
 				}
 			}
 		}
-		
+		return cmd;
+	}
+	
+	protected String runEffects(String cmd,String modelName,boolean preview,ArrayList tmp,
+								RModel prevModel){
+		String[] out = new String[]{};
 		if(effects.effects.size()>0){
 			String[] t = new String[1];
 			if(prevModel!=null){
@@ -158,7 +191,7 @@ public class GLMModel extends ModelModel {
 				if(prevModel==null || ter.contains(effects.effects.get(i)))
 					terms.add("\""+effects.effects.get(i)+"\"");
 			}
-			Vector effectCalls=new Vector();;
+			Vector effectCalls=new Vector();
 			for(int i=0;i<terms.size();i++){
 				if(effects.confInt)
 					effectCalls.add("summary(effect(term="+terms.get(i)+",mod="+modelName+"))");
@@ -182,7 +215,12 @@ public class GLMModel extends ModelModel {
 				}
 			}
 		}
-		
+		return cmd;
+	}
+	
+	protected String runPlots(String cmd,String modelName,boolean preview,ArrayList tmp,
+								RModel prevModel){
+		String[] out = new String[]{};
 		if(plots.effects.size()>0){
 			String[] t = new String[1];
 			if(prevModel!=null){
@@ -197,7 +235,7 @@ public class GLMModel extends ModelModel {
 				if(prevModel==null || ter.contains(plots.effects.get(i)))
 					terms.add("\""+plots.effects.get(i)+"\"");
 			}
-			Vector plotCalls=new Vector();;
+			Vector plotCalls=new Vector();
 			for(int i=0;i<terms.size();i++){
 				plotCalls.add("dev.new()");
 				plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
@@ -205,7 +243,7 @@ public class GLMModel extends ModelModel {
 								((plots.ylab!="" && !plots.ylab.equals("<auto>"))? ",ylab='"+
 																		plots.ylab+"'" : "")+
 								(plots.confInt?"":",confint=TRUE")+
-								(plots.scaled ? "":",rescaled.axis=FALSE")+
+								(plots.scaled ? "":",rescale.axis=FALSE")+
 								(plots.multi ? ",multiline=TRUE" : "")+
 								(plots.rug ? "" : ",rug=FALSE")+
 								")");
@@ -219,6 +257,82 @@ public class GLMModel extends ModelModel {
 			}
 		}
 		
+		return cmd;
+	}
+	
+	protected String runTests(String cmd,String modelName,boolean preview,ArrayList tmp, 
+								RModel prevModel){
+		String[] out = new String[]{};
+		if(tests.size()>0){
+			String[] t = new String[1];
+			if(prevModel!=null){
+				t=Deducer.rniEval("names(coef("+prevModel.modelName+
+									"))").asStringArray();
+			}else if(preview){
+				t=Deducer.rniEval("names(coef("+modelName+
+									"))").asStringArray();
+			}
+			Vector testCalls = new Vector();
+			String matrixName;
+			if(preview)
+				matrixName =  Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(
+													"lh.mat",Deducer.guiEnv);
+			else
+				matrixName = JGR.MAINRCONSOLE.getUniqueName("lh.mat");
+			String call = "";
+			for(int i=0;i<tests.size();i++){
+				ExDefaultTableModel tmod = tests.getModel(i);
+				if((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
+						(prevModel==null && preview && tmod.getColumnCount()!=t.length+1))
+					continue;
+				
+				Vector row = new Vector();
+				Vector rhs = new Vector();
+				call = matrixName +"<-rbind(";
+				for(int j=0;j<tmod.getRowCount();j++){
+					row.clear();
+					for(int k=0;k<tmod.getColumnCount()-1;k++)
+						row.add(tmod.getValueAt(j, k));
+					call+= RController.makeRVector(row);
+					if(j<tmod.getRowCount()-1)
+						call+=",\n\t";
+					else
+						call+=")";
+					rhs.add(tmod.getValueAt(j, tmod.getColumnCount()-1));
+				}
+				testCalls.add(call);
+				call = "lht("+modelName +","+matrixName+","+RController.makeRVector(rhs)+")";
+				testCalls.add(call);
+			}
+			if(testCalls.size()>0)
+				testCalls.add("rm('"+matrixName+"')");
+			if(preview){
+				String testCall;
+				for(int i=0;i<testCalls.size();i++){
+					testCall=(String)testCalls.get(i);
+					REXP r =Deducer.rniEval("capture.output("+testCall.replace("\n", "").replace("\t", "")+")");
+					if(r!=null)
+						out = r.asStringArray();
+					else
+						out =new String[] {"Error"};
+					tmp.add("\n>"+testCall+"\n");
+					
+					for(int j=0;j<out.length;j++)
+						tmp.add(out[j]);
+				}
+			}else{
+				String testCall;
+				for(int i=0;i<testCalls.size();i++){
+					testCall=(String)testCalls.get(i);
+					cmd+="\n"+testCall;
+				}
+			}
+		}
+		return cmd;
+	}
+	
+	protected String runExport(String cmd,String modelName,boolean preview,ArrayList tmp,
+			String dataName){
 		if(!preview){
 			String temp = JGR.MAINRCONSOLE.getUniqueName("tmp");
 			boolean anyExport=false;
@@ -284,17 +398,8 @@ public class GLMModel extends ModelModel {
 				cmd+="\nrm('"+temp+"')";
 			if(!export.keepModel)
 				cmd+="\nrm('"+modelName+"')";
-			JGR.MAINRCONSOLE.executeLater(cmd);
 		}
-		String prev = "";
-		for(int i =0;i<tmp.size();i++)
-			prev+=tmp.get(i)+"\n";
-		rModel.call=cmd;
-		rModel.data=dataName;
-		rModel.formula=formula;
-		rModel.modelName=modelName;
-		rModel.preview=prev;
-		return rModel;
+		return cmd;
 	}
 	
 	class GLMOptions{
@@ -342,5 +447,44 @@ public class GLMModel extends ModelModel {
 		public boolean rug = true;
 		public String ylab = "<auto>";
 		public int defaultLevels = 20;
+	}
+	
+	class Tests{
+		public String direction = "two.sided";
+		private ArrayList tableModelList = new ArrayList();
+		private ArrayList testNames = new ArrayList();
+		
+		public void reset(){
+			direction = "two.sided";
+			tableModelList = new ArrayList();
+			testNames = new ArrayList();
+		}
+		public int size(){
+			return tableModelList.size();
+		}
+		public ExDefaultTableModel getModel(int i){
+			return (ExDefaultTableModel) tableModelList.get(i);
+		}
+		
+		public String getName(int i){
+			return (String) testNames.get(i);
+		}
+		
+		public ExDefaultTableModel getDuplicateTableModel(int i){
+			ExDefaultTableModel cur = (ExDefaultTableModel) tableModelList.get(i);
+			ExDefaultTableModel newModel = new ExDefaultTableModel();
+			newModel.setColumnCount(cur.getColumnCount());
+			newModel.setRowCount(cur.getRowCount());
+			for(int j=0;j<cur.getRowCount();j++)
+				for(int k=0;k<cur.getColumnCount();k++)
+					newModel.setValueAt(cur.getValueAt(j, k), j, k);
+			return (ExDefaultTableModel) newModel;
+		}
+		
+		public void addTest(String name,ExDefaultTableModel mod){
+			tableModelList.add(mod);
+			testNames.add(name);
+		}
+		
 	}
 }
