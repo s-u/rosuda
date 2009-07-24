@@ -4,6 +4,7 @@ package org.rosuda.deducer.data;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.*;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
 import org.rosuda.JGR.editor.Editor;
@@ -302,11 +303,11 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 			    	try{
 				    	dataWindows.remove(theWindow);
 				    	dataWindows.add(0,theWindow);
-				    	REXP isBusy = JGR.idleEval("2");
+				    	REXP isBusy = Deducer.idleEval("2");
 				    	int cnt=1;
 				    	while(isBusy==null && cnt<=3){
 				    		try{Thread.sleep(300);}catch(Exception ee){}
-				    		isBusy = JGR.idleEval("2");
+				    		isBusy = Deducer.idleEval("2");
 				    		cnt++;
 				    		
 				    	}
@@ -451,13 +452,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		    		String varName = (String)extab.getModel().getValueAt(row, 0);
 		    		String datName = ((RObject)dataSelector.getSelectedItem()).getName();
 		    		REXPLogical tmp;
-					try {
-						tmp = (REXPLogical) JGR.eval("is.factor("+datName+"$"+varName+")");
-					} catch (REngineException e1) {
-						tmp=null;
-					} catch (REXPMismatchException e1) {
-						tmp=null;
-					}
+					tmp = (REXPLogical) Deducer.eval("is.factor("+datName+"$"+varName+")");
 		    		if(tmp!=null && tmp.isTRUE()[0]){
 		    			FactorDialog fact = new FactorDialog(null,datName+"$"+varName);
 		    			fact.setLocation(e.getPoint());
@@ -531,10 +526,10 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				inputValue = JGR.MAINRCONSOLE.getUniqueName(inputValue);
 				if(inputValue!=null){
-					JGR.eval(inputValue.trim()+"<-data.frame()");
+					Deducer.eval(inputValue.trim()+"<-data.frame()");
 					RController.refreshObjects();
 					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
-					JGR.eval(inputValue.trim());
+					Deducer.eval(inputValue.trim());
 					for(int i=0;i<dataSelector.getItemCount();i++)
 						if(((RObject)dataSelector.getItemAt(i)).getName().equals(inputValue.trim()))
 							dataSelector.setSelectedIndex(i);
@@ -686,11 +681,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				}else if(cmd=="New Data"){
 					String inputValue = JOptionPane.showInputDialog("Data Name: ");
 					if(inputValue!=null)
-						try {
-							JGR.eval(inputValue.trim()+"<-data.frame()");
-						} catch (REngineException e1) {
-						} catch (REXPMismatchException e1) {
-						}
+						Deducer.eval(inputValue.trim()+"<-data.frame()");
 				}
 			}
 		};

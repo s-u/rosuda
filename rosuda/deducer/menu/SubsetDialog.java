@@ -434,8 +434,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			return false;
 		
 		REXP valid=null;
-		try {
-			valid = JGR.eval("(function(x,subset){"+
+		valid = Deducer.eval("(function(x,subset){"+
 										"result<-try(e <- substitute(subset),silent=TRUE)\n"+
 										"if(class(result)==\"try-error\")\n"+
 										"	return(FALSE)\n"+
@@ -444,11 +443,6 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 										"	return(FALSE)\n"+
 										"is.logical(r)\n"+
 										"})("+dataName+","+subset+")");
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
-		}
 		if(valid==null){
 			return false;
 		}

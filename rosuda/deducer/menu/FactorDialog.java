@@ -5,6 +5,7 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
@@ -72,7 +73,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 				ordered.setText("Ordered");
 				ordered.setPreferredSize(new java.awt.Dimension(92, 19));
 				ordered.addActionListener(this);
-				REXP tmp = JGR.eval("is.ordered("+variable+")");
+				REXP tmp = Deducer.eval("is.ordered("+variable+")");
 				ordered.setSelected(tmp.isLogical() && ((REXPLogical)tmp).isTRUE()[0]);
 			}
 			{
@@ -121,7 +122,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 					listPanel.add(levelScroller, BorderLayout.CENTER);
 					{
 						DefaultListModel levelListModel = new DefaultListModel();
-						String[] levels = JGR.eval("levels("+variable+")").asStrings();
+						String[] levels = Deducer.eval("levels("+variable+")").asStrings();
 						for(int i=0;i<levels.length;i++)
 							levelListModel.addElement(levels[i]);
 						levelList = new DJList();

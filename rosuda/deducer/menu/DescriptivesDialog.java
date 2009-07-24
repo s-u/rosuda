@@ -470,13 +470,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 					return;
 				}
 				org.rosuda.REngine.REXP isFunc = new org.rosuda.REngine.REXP();
-				try {
-					isFunc = JGR.eval("try(is.function("+functionText.getText()+"),silent=T)");
-				} catch (REngineException e) {
-					new ErrorMsg(e);
-				} catch (REXPMismatchException e) {
-					new ErrorMsg(e);
-				}
+				isFunc = Deducer.eval("try(is.function("+functionText.getText()+"),silent=T)");
 				if(!(functionText.getText().length()<1 || !isFunc.isLogical() || ((REXPLogical)isFunc).isTRUE()[0])){
 					JOptionPane.showMessageDialog(this, "Entered function not valid. " +
 								"Please try again.\n\nHere is an example that " +

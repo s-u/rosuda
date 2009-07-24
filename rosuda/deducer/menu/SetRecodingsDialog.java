@@ -12,6 +12,7 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -417,16 +418,16 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			String[] output;
 			REXP num;
 			try {
-				num = JGR.eval("is.numeric("+var+")");
-				REXP cha = JGR.eval("is.character("+var+")");
-				REXP fact = JGR.eval("is.factor("+var+")");
+				num = Deducer.eval("is.numeric("+var+")");
+				REXP cha = Deducer.eval("is.character("+var+")");
+				REXP fact = Deducer.eval("is.factor("+var+")");
 				if(num.isLogical() && ((REXPLogical)num).isTRUE()[0]){
-					output = JGR.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStrings();
+					output = Deducer.eval("capture.output(data.frame(percentiles=quantile("+var+",seq(0,1,.1),na.rm=T)))").asStrings();
 				}else if((cha.isLogical() && ((REXPLogical)cha).isTRUE()[0]) || 
 						(fact.isLogical() && ((REXPLogical)fact).isTRUE()[0]) ){
-					output = JGR.eval("capture.output(data.frame(xtabs(~"+var+")))").asStrings();
+					output = Deducer.eval("capture.output(data.frame(xtabs(~"+var+")))").asStrings();
 				}else
-					output = JGR.eval("capture.output(summary("+var+"))").asStrings();
+					output = Deducer.eval("capture.output(summary("+var+"))").asStrings();
 				if(output!=null){
 					String temp="";
 					
@@ -439,12 +440,9 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 					}
 					infoTextArea.setText(temp);
 				}
-			} catch (REngineException e) {
-				new ErrorMsg(e);
 			} catch (REXPMismatchException e) {
 				new ErrorMsg(e);
 			}
-
 		}
 		
 	}

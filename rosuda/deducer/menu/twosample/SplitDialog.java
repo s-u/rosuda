@@ -19,6 +19,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.JGR.JGR;
@@ -194,11 +195,10 @@ public class SplitDialog extends JDialog implements ActionListener, FocusListene
 		if(data!=null && factor!=null){
 			String[] levs=null;
 			try {
-				levs = JGR.eval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStrings();
+				levs = Deducer.eval("levels(as.factor("+data+"[[\""+factor+"\"]]))").asStrings();
 			} catch (REXPMismatchException e) {
-				new ErrorMsg(e);
-			} catch (REngineException e) {
-				new ErrorMsg(e);
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			if(levs!=null && levs.length<50){
 				for(int i=0;i<levs.length;i++)

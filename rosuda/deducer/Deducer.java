@@ -37,6 +37,7 @@ import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.JRI.JRIEngine;
 
 
 import org.rosuda.ibase.Common;
@@ -49,7 +50,7 @@ public class Deducer {
 	static String recentActiveData = "";
 	static final String Version= "0.1";
 	public static String guiEnv = "gui.working.env";
-	
+	public static JRIEngine engine; //temp until JGR 1.7
 	public Deducer(){
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
@@ -265,16 +266,26 @@ public class Deducer {
 	}
 	
 	public static org.rosuda.JRI.REXP rniEval(String cmd){
-		return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd);
+		return JGR.R.eval(cmd);
+		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd);
 	}
 	
 	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
-		return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
+		return JGR.R.idleEval(cmd);
+		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
 	}
 	
 	public static REXP eval(String cmd){
+		if(engine==null){
+			try {
+				engine = new JRIEngine(JGR.R);
+			} catch (REngineException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		try {
-			return JGR.eval(cmd);
+			return engine.parseAndEval(cmd);
 		} catch (REngineException e) {
 			new ErrorMsg(e);
 			return null;
@@ -285,8 +296,23 @@ public class Deducer {
 	}
 	
 	public static REXP idleEval(String cmd){
+		if(engine==null){
+			try {
+				engine = new JRIEngine(JGR.R);
+			} catch (REngineException e) {
+				e.printStackTrace();
+			}
+		}
 		try {
-			return JGR.idleEval(cmd);
+			int lock = engine.tryLock();
+			if(lock==0)
+				return null;
+			else{
+				REXP e = engine.parseAndEval(cmd);
+				engine.unlock(lock);
+				return e;
+			}
+				
 		} catch (REngineException e) {
 			new ErrorMsg(e);
 			return null;
@@ -337,17 +363,11 @@ public class Deducer {
 						    	JGR.MAINRCONSOLE.toFront(); 
 					    	}
 					    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
-								try {
-									JGR.eval(".jChooserMacLAF()");
-								} catch (REngineException e) {
-									new ErrorMsg(e);
-								} catch (REXPMismatchException e) {
-									new ErrorMsg(e);
-								}
+								Deducer.rniEval(".jChooserMacLAF()");
 					    }
 						};
 						REXP tmp=null;
-						boolean running = JGR.getREngine()!=null;
+						boolean running = JGR.R!=null;
 					    if(running){
 					    		SwingUtilities.invokeLater(doWorkRunnable);
 					    		flag=false;
