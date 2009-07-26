@@ -290,6 +290,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 			this.setTitle("Model Builder");
 			this.setSize(630, 507);
 			help.setVisible(false);
+			contrasts.setVisible(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}

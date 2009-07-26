@@ -47,7 +47,7 @@ public class LogisticExplorerRoc extends javax.swing.JDialog implements ActionLi
 					{
 						predProbs = new JCheckBox();
 						optionsPanel.add(predProbs);
-						predProbs.setText("Predictive probability labels");
+						predProbs.setText("Predictive probabilities");
 						predProbs.setBounds(52, 24, 187, 18);
 						predProbs.addFocusListener(this);
 					}

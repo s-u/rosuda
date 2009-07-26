@@ -53,7 +53,7 @@ public class LogisticDialog extends GLMDialog {
 		splitDef.setText("");
 		splitDef.setSize(100, 32);
 		splitDef.setVerticalTextPosition(SwingConstants.CENTER);
-		getContentPane().add(splitDef, new AnchorConstraint(115, 995, 352, 690, 
+		getContentPane().add(splitDef, new AnchorConstraint(115, 995, 352, 710, 
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 				AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 		type.setSelectedItem("binomial()");

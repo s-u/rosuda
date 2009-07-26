@@ -31,38 +31,27 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class GLMExplorerPlots extends javax.swing.JDialog implements ActionListener{
-	private JPanel termPanel;
-	private JTextField ylab;
-	private JCheckBox rug;
-	private JLabel ylabLabel;
-	private JSpinner levels;
-	private JLabel pointsLabel;
-	private JCheckBox multi;
-	private JList terms;
-	private JPanel meansPanel;
-	private JPanel okayCancel;
-	private JCheckBox confInt;
-	private JCheckBox scaled;
-	private JPanel optionsPanel;
-	private JScrollPane meansScroller;
-	private JButton remove;
-	private JButton add;
-	private JList effects;
-	private JScrollPane termScroller;
-	GLMModel  model;
+	protected JPanel termPanel;
+	protected JTextField ylab;
+	protected JCheckBox rug;
+	protected JLabel ylabLabel;
+	protected JSpinner levels;
+	protected JLabel pointsLabel;
+	protected JCheckBox multi;
+	protected JList terms;
+	protected JPanel meansPanel;
+	protected JPanel okayCancel;
+	protected JCheckBox confInt;
+	protected JCheckBox scaled;
+	protected JPanel optionsPanel;
+	protected JScrollPane meansScroller;
+	protected JButton remove;
+	protected JButton add;
+	protected JList effects;
+	protected JScrollPane termScroller;
+	protected GLMModel  model;
 
 	
 	public GLMExplorerPlots(JFrame frame,GLMModel mod,RModel rmod) {
@@ -72,7 +61,7 @@ public class GLMExplorerPlots extends javax.swing.JDialog implements ActionListe
 		this.setModal(true);
 	}
 	
-	private void initGUI() {
+	protected void initGUI() {
 		try {
 			{
 				getContentPane().setLayout(null);
@@ -150,7 +139,7 @@ public class GLMExplorerPlots extends javax.swing.JDialog implements ActionListe
 							multi = new JCheckBox();
 							optionsPanel.add(multi);
 							multi.setText("Multiple lines per panel");
-							multi.setBounds(17, 60, 172, 18);
+							multi.setBounds(17, 60, 200, 18);
 						}
 						{
 							pointsLabel = new JLabel();

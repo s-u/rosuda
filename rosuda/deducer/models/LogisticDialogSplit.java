@@ -75,12 +75,12 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 					cutDirection = new JComboBox();
 					getContentPane().add(cutDirection);
 					cutDirection.setModel(cutDirectionModel);
-					cutDirection.setBounds(100, 11, 38, 21);
+					cutDirection.setBounds(100, 11, 50, 21);
 				}
 				{
 					cutValue = new JTextField();
 					getContentPane().add(cutValue);
-					cutValue.setBounds(144, 11, 75, 21);
+					cutValue.setBounds(155, 11, 75, 21);
 					cutValue.addFocusListener(this);
 				}
 				{
@@ -91,14 +91,14 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 				{
 					defineLevels = new JRadioButton();
 					getContentPane().add(defineLevels);
-					defineLevels.setBounds(12, 113, 14, 17);
+					defineLevels.setBounds(12, 113, 21, 17);
 				}
 				{
 					levelsPanel = new JPanel();
 					BorderLayout levelsPanelLayout = new BorderLayout();
 					levelsPanel.setLayout(levelsPanelLayout);
 					getContentPane().add(levelsPanel);
-					levelsPanel.setBounds(44, 54, 127, 140);
+					levelsPanel.setBounds(49, 54, 127, 140);
 					levelsPanel.setBorder(BorderFactory.createTitledBorder("Levels"));
 					{
 						levelsScroller = new JScrollPane();
@@ -116,13 +116,13 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 				{
 					add = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
 					getContentPane().add(add);
-					add.setBounds(182, 87, 38, 38);
+					add.setBounds(191, 87, 38, 38);
 					add.addFocusListener(this);
 				}
 				{
 					remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
 					getContentPane().add(remove);
-					remove.setBounds(182, 130, 38, 38);
+					remove.setBounds(191, 130, 38, 38);
 					remove.addFocusListener(this);
 				}
 				{
@@ -130,7 +130,7 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 					BorderLayout sucPanelLayout = new BorderLayout();
 					sucPanel.setLayout(sucPanelLayout);
 					getContentPane().add(sucPanel);
-					sucPanel.setBounds(231, 54, 127, 140);
+					sucPanel.setBounds(240, 54, 127, 140);
 					sucPanel.setBorder(BorderFactory.createTitledBorder("Success:"));
 					sucPanel.addFocusListener(this);
 					{
@@ -150,12 +150,12 @@ public class LogisticDialogSplit extends JDialog implements ActionListener, Focu
 					expression = new JRadioButton();
 					getContentPane().add(expression);
 					expression.setText("Custom Expression:");
-					expression.setBounds(12, 219, 146, 18);
+					expression.setBounds(12, 219, 180, 18);
 				}
 				{
 					expr = new JTextField();
 					getContentPane().add(expr);
-					expr.setBounds(163, 218, 103, 21);
+					expr.setBounds(200, 218, 103, 21);
 					expr.addFocusListener(this);
 				}
 				{

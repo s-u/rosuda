@@ -104,7 +104,7 @@ public class GLMExplorerMeans extends javax.swing.JDialog implements ActionListe
 					confInt = new JCheckBox();
 					getContentPane().add(confInt);
 					confInt.setText("Estimate confidence intervals");
-					confInt.setBounds(132, 259, 194, 19);
+					confInt.setBounds(132, 259, 250, 19);
 				}
 				{
 					okayCancel = new OkayCancelPanel(false,false,this);
@@ -138,6 +138,10 @@ public class GLMExplorerMeans extends javax.swing.JDialog implements ActionListe
 				((DefaultListModel)effects.getModel()).addElement(model.effects.effects.elementAt(i));
 			}
 		confInt.setSelected(model.effects.confInt);
+	}
+	
+	public void disableConfInt(){
+		confInt.setEnabled(false);
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

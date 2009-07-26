@@ -1,35 +1,34 @@
 package org.rosuda.deducer.models;
 
-import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
-public class GLMBuilder extends ModelBuilder {
+public class LinearBuilder extends GLMBuilder {
 
-	public GLMBuilder(ModelModel mod) {
+	public LinearBuilder(ModelModel mod) {
 		super(mod);
-		if(! (mod instanceof GLMModel)){
+		if(! (mod instanceof LinearModel)){
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
-			mod=new GLMModel();
+			mod=new LinearModel();
 		}
 		setModel(mod);
+		this.setTitle("Linear Regression Model Builder");
 	}
 	
-
 	public void specify() {
-		if(! (model instanceof GLMModel)){
+		if(! (model instanceof LinearModel)){
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
-			setModel(new GLMModel());
+			setModel(new LinearModel());
 		}
-		GLMDialog dia = new GLMDialog((GLMModel)model);
+		LinearDialog dia = new LinearDialog((LinearModel)model);
 		dia.setLocationRelativeTo(this);
 		dia.setVisible(true);
 		this.dispose();
 	}
 	
 	public void done(){
-		if(! (model instanceof GLMModel)){
+		if(! (model instanceof LinearModel)){
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
-			setModel(new GLMModel());
+			setModel(new LinearModel());
 			return;
 		}
 		if(modelTerms.getModel().getSize()<1){
@@ -37,15 +36,11 @@ public class GLMBuilder extends ModelBuilder {
 			return;
 		}
 		updateModel();
-		GLMExplorer exp = new GLMExplorer((GLMModel)model);
+		LinearExplorer exp = new LinearExplorer((LinearModel)model);
 		exp.setLocationRelativeTo(this);
 		exp.setVisible(true);
 		this.dispose();
 	}
 	
-	public void reset(){
-		modelTermsModel.removeAllElements();
-	}
-
 
 }

@@ -71,7 +71,7 @@ public class GLMModel extends ModelModel {
 		cmd=runEffects(cmd,modelName,preview,tmp,prevModel);
 		cmd=runPlots(cmd,modelName,preview,tmp,prevModel);
 		cmd=runTests(cmd,modelName,preview,tmp,prevModel);
-		cmd=runExport(cmd,modelName,preview,tmp,dataName);
+		cmd=runExport(cmd,modelName,preview,tmp,dataName,false);
 		
 		if(!preview)
 			JGR.MAINRCONSOLE.executeLater(cmd);
@@ -239,10 +239,11 @@ public class GLMModel extends ModelModel {
 			for(int i=0;i<terms.size();i++){
 				plotCalls.add("dev.new()");
 				plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
-										(",default.levels="+plots.defaultLevels)+")"+
+										(",default.levels="+plots.defaultLevels)+
+										(plots.confInt?"":",se=FALSE")+
+										")"+
 								((plots.ylab!="" && !plots.ylab.equals("<auto>"))? ",ylab='"+
 																		plots.ylab+"'" : "")+
-								(plots.confInt?"":",confint=TRUE")+
 								(plots.scaled ? "":",rescale.axis=FALSE")+
 								(plots.multi ? ",multiline=TRUE" : "")+
 								(plots.rug ? "" : ",rug=FALSE")+
@@ -332,7 +333,7 @@ public class GLMModel extends ModelModel {
 	}
 	
 	protected String runExport(String cmd,String modelName,boolean preview,ArrayList tmp,
-			String dataName){
+			String dataName,boolean isLm){
 		if(!preview){
 			String temp = JGR.MAINRCONSOLE.getUniqueName("tmp");
 			boolean anyExport=false;
@@ -360,13 +361,18 @@ public class GLMModel extends ModelModel {
 				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
 						"),\"resid.studentized\")))[1]").asString()+"\"]<-"+temp;
 			}
-			if(export.pred){
+			if(export.pred && !isLm){
 				anyExport=true;
 				cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
 				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
 						"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
+			}else if(export.pred){
+				anyExport=true;
+				cmd+="\n"+temp+"<-predict("+modelName+")";
+				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
+						"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
 			}
-			if(export.linearPred){
+			if(export.linearPred && !isLm){
 				anyExport=true;
 				cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
 				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+

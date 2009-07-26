@@ -39,6 +39,10 @@ public class LogisticBuilder extends GLMBuilder {
 			setModel(new LogisticModel());
 			return;
 		}
+		if(modelTerms.getModel().getSize()<1){
+			JOptionPane.showMessageDialog(this, "Please enter some terms into the model.");
+			return;
+		}
 		updateModel();
 		LogisticExplorer exp = new LogisticExplorer((LogisticModel)model);
 		exp.setLocationRelativeTo(this);
