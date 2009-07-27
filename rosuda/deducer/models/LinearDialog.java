@@ -50,7 +50,9 @@ public class LinearDialog extends GLMDialog {
 		else
 			new ErrorMsg("Invalid cast in LogisticDialog.setLastModel");
 	}
-	
+	public void resetModel(){
+		setModel(new LinearModel());
+	}
 	public boolean valid(){
 		boolean result = super.valid();
 		if(!result)

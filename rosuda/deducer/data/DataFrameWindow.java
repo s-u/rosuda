@@ -7,6 +7,9 @@ import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.*;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
+import org.rosuda.deducer.models.GLMDialog;
+import org.rosuda.deducer.models.LinearDialog;
+import org.rosuda.deducer.models.LogisticDialog;
 import org.rosuda.JGR.editor.Editor;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
@@ -45,6 +48,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Component;
+import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ActionListener;
@@ -260,7 +264,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				"Transpose","transpose","Subset","Subset",
 			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
 				"Contingency Tables","contin","-","One Sample Test","One Sample","Two Sample Test","Two Sample",
-				"K-Sample Test", "ksample","Correlation", "corr", 
+				"K-Sample Test", "ksample","Correlation", "corr", "Linear Model", "linear",
+				"Logistic Model","logistic","Generalized Linear Model","glm",
 				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
 				"packagemgr", "Package Installer","packageinst",
 			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
@@ -284,6 +289,11 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						prefer.setAccelerator(KeyStroke.getKeyStroke(',',Event.CTRL_MASK));
 					}
 				}
+			}
+			
+			if(!Deducer.insideJGR){
+				mb=this.getJMenuBar();
+				mb.removeAll();
 			}
 			
 			pack();
@@ -658,6 +668,24 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 				inst.toFront();
+			}else if(cmd=="glm"){
+				GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
+				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+				d.toFront();
+			}else if(cmd=="logistic"){
+				LogisticDialog d = new LogisticDialog(JGR.MAINRCONSOLE);
+				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+				d.toFront();
+			}else if(cmd=="linear"){
+				LinearDialog d = new LinearDialog(JGR.MAINRCONSOLE);
+				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
+				d.setLocationRelativeTo(null);
+				d.setVisible(true);
+				d.toFront();
 			}
 		}catch(Exception e2){new ErrorMsg(e2);}
 	}

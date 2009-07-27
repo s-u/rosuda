@@ -75,7 +75,9 @@ public class LogisticDialog extends GLMDialog {
 		if(((LogisticModel)model).split!=null)
 			splitDef.setText(((LogisticModel)model).split.getLHS());
 	}
-	
+	public void resetModel(){
+		setModel(new LogisticModel());
+	}
 	public void setModel(GLMModel mod){
 		if(!(mod instanceof LogisticModel))
 			setModel(new LogisticModel());

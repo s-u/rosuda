@@ -287,32 +287,36 @@ public class GLMDialog extends JDialog implements ActionListener {
 		lastModel = lm;
 	}
 	
+	public void resetModel(){
+		setModel(new GLMModel());
+	}
+	
 	public void setModel(GLMModel mod){
 		variableSelector.setSelectedData(mod.data);
 		boolean valid = variableSelector.removeAll(mod.outcomeVars);
 		if(!valid){
-			setModel(new GLMModel());
+			resetModel();
 			return;
 		}
 		outcome.setModel(mod.outcomeVars);
 		
 		valid = variableSelector.removeAll(mod.numericVars);
 		if(!valid){
-			setModel(new GLMModel());
+			resetModel();
 			return;
 		}
 		numericVars.setModel(mod.numericVars);
 		
 		valid = variableSelector.removeAll(mod.factorVars);
 		if(!valid){
-			setModel(new GLMModel());
+			resetModel();
 			return;
 		}
 		factorVars.setModel(mod.factorVars);
 		
 		valid = variableSelector.removeAll(mod.weights);
 		if(!valid){
-			setModel(new GLMModel());
+			resetModel();
 			return;
 		}
 		weights.setModel(mod.weights);
@@ -350,7 +354,11 @@ public class GLMDialog extends JDialog implements ActionListener {
 		if(!allIn)
 			model.terms=new DefaultListModel();
 	}
-	
+	public void setDataName(String dataName){
+		if(!dataName.equals(variableSelector.getSelectedData())){
+			variableSelector.setSelectedData(dataName);
+		}
+	}
 	public boolean valid(){
 		if(outcome.getModel().getSize()==0){
 			JOptionPane.showMessageDialog(this, "Please specify an outcome variable");
@@ -388,10 +396,10 @@ public class GLMDialog extends JDialog implements ActionListener {
 				type.setSelectedItem(tmp);
 			}
 		}else if(cmd == "comboBoxChanged" && arg0.getSource()==variableSelector.getJComboBox()){
-			setModel(new GLMModel());
+			resetModel();
 		}else if(cmd=="Reset"){
 			variableSelector.reset();
-			setModel(new GLMModel());
+			resetModel();
 		}
 	}
 	

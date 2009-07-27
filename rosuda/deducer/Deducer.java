@@ -1,3 +1,4 @@
+
 package org.rosuda.deducer;
 
 import java.awt.Event;
@@ -13,10 +14,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 
 
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.JGRConsole;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.robjects.RObject;
@@ -51,8 +54,59 @@ public class Deducer {
 	static String recentActiveData = "";
 	static final String Version= "0.1";
 	public static String guiEnv = "gui.working.env";
+	public static boolean insideJGR;
 	public static JRIEngine engine; //temp until JGR 1.7
 	public Deducer(){
+		try{
+			if(JGR.R!=null)
+				startWithJGR();
+			else
+				startNoJGR();
+		}catch(Exception e){
+			startNoJGR();
+			new ErrorMsg(e);
+		}
+		
+		
+	}
+	
+	public void startNoJGR(){
+		try{
+			insideJGR=false;
+		    String nativeLF = UIManager.getSystemLookAndFeelClassName();
+		    try {
+		        UIManager.setLookAndFeel(nativeLF);
+		    } catch (InstantiationException e) {
+		    } catch (ClassNotFoundException e) {
+		    }  catch (IllegalAccessException e) {
+		    }
+			org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
+			
+			
+			JGR.R=org.rosuda.JRI.Rengine.getMainEngine();
+			try {
+				engine = new JRIEngine(JGR.R);
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			}
+			Common.getScreenRes();
+			JGR.MAINRCONSOLE=new JGRConsolePlaceholder(engine);
+			JGR.MAINRCONSOLE.setVisible(false);
+			JGR.STARTED=true;
+			
+			
+			DeducerPrefs.initialize();
+			
+		    /*if(DeducerPrefs.VIEWERATSTARTUP){
+			   	DataFrameWindow inst = new DataFrameWindow();
+		    	inst.setLocationRelativeTo(null);
+		    	inst.setVisible(true);
+	    	}*/
+		}catch(Exception e){new ErrorMsg(e);}
+	}
+	
+	public void startWithJGR(){
+		insideJGR=true;
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
 		try{
@@ -108,7 +162,7 @@ public class Deducer {
 			//help
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Help", "Deducer Help", "dhelp", cListener);
 			new Thread(new Runner()).start();		
-		}catch(Exception e){new ErrorMsg(e);}
+		}catch(Exception e){new ErrorMsg(e);}		
 	}
 	
 	
@@ -122,128 +176,198 @@ public class Deducer {
 			}
 		}
 	}
+	
+	public static void startViewerAndWait(){
+	   	DataFrameWindow inst = new DataFrameWindow();
+    	inst.setLocationRelativeTo(null);
+    	inst.setVisible(true);
+    	while(DataFrameWindow.dataWindows.size()>0){
+    		try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+    	}
+	}
+
+	public static String addSlashes(String str){
+		if(str==null) return "";
+
+		StringBuffer s = new StringBuffer(str);
+		for(int i = 0; i < s.length(); i++){
+			if(s.charAt (i) == '\\')
+				s.insert(i++, '\\');
+			else if(s.charAt (i) == '\"')
+				s.insert(i++, '\\');
+		}
+		
+		return s.toString();
+	}
 
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
-			if(cmd=="dhelp"){
-				HelpButton.showInBrowser(HelpButton.baseUrl+"pmwiki.php?n=Main.DeducerManual");
-			} else if(cmd=="New Data Set"){
-				String inputValue = JOptionPane.showInputDialog("Data Name: ");
-				if(inputValue!=null){
-					String var = RController.makeValidVariableName(inputValue.trim());
-					JGR.MAINRCONSOLE.execute(var+"<-data.frame()");
-					DataFrameWindow.setTopDataWindow(var);
-				}
-			}else if (cmd == "Open Data Set"){
-				DataLoader inst = new DataLoader();
-				DataFrameWindow.setTopDataWindow(inst.getDataName());
-				Deducer.setRecentData(inst.getDataName());
-			}else if(cmd == "Save Data Set"){
-				RObject data = (new DataFrameSelector(JGR.MAINRCONSOLE)).getSelection();
-				if(data!=null){
-					new SaveData(data.getName());
-				}
-			}else if(cmd == "recode"){
-				RecodeDialog recode =new RecodeDialog(JGR.MAINRCONSOLE); 
-				recode.setLocationRelativeTo(null);
-				recode.setVisible(true);
-			}else if(cmd=="factor"){
-				VariableSelectionDialog inst =new VariableSelectionDialog(JGR.MAINRCONSOLE);
-				inst.SetSingleSelection(true);
-				inst.setLocationRelativeTo(null);
-				inst.setRFilter("is.factor");
-				inst.setTitle("Select Factor to Edit");
-				inst.setVisible(true);
-				String variable = inst.getSelecteditem();
-				if(variable==null)
-					return;
-				FactorDialog fact = new FactorDialog(JGR.MAINRCONSOLE,variable);
-				fact.setLocationRelativeTo(null);
-				fact.setVisible(true);
-			}else if(cmd == "reset rows"){
-				String name = null;
-				RObject data = null;
-				DataFrameSelector sel = new DataFrameSelector(JGR.MAINRCONSOLE);
-				data = sel.getSelection();
-				if(data!=null){
-					name = data.getName();
-					JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");
-					DataFrameWindow.setTopDataWindow(name);
-				}
-				JGR.MAINRCONSOLE.toFront();
-			}else if(cmd=="sort"){
-				SortDialog sort = new SortDialog(JGR.MAINRCONSOLE);
-				sort.setLocationRelativeTo(null);
-				sort.setVisible(true);
-			}else if(cmd == "merge"){
-				MergeDialog merge =new MergeDialog(JGR.MAINRCONSOLE); 
-				merge.setLocationRelativeTo(null);
-				merge.setVisible(true);
-			}else if (cmd == "trans"){
-				String name = null;
-				RObject data = null;
-				DataFrameSelector sel = new DataFrameSelector(JGR.MAINRCONSOLE);
-				data = sel.getSelection();
-				if(data!=null){
-					name = data.getName();
-					JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");
-					DataFrameWindow.setTopDataWindow(name);
-					JGR.MAINRCONSOLE.toFront();
-				}
-			}else if(cmd == "subset"){
-				SubsetDialog sub = new SubsetDialog(JGR.MAINRCONSOLE);
-				sub.setLocationRelativeTo(null);
-				sub.setVisible(true);
-				JGR.MAINRCONSOLE.toFront();
-			}else if(cmd =="frequency"){
-				FrequencyDialog freq = new FrequencyDialog(JGR.MAINRCONSOLE);
-				freq.setLocationRelativeTo(null);
-				freq.setVisible(true);
-			}else if(cmd =="descriptives"){
-				DescriptivesDialog desc = new DescriptivesDialog(JGR.MAINRCONSOLE);
-				desc.setLocationRelativeTo(null);
-				desc.setVisible(true);
-			}else if(cmd =="contingency"){
-				ContingencyDialog cont = new ContingencyDialog(JGR.MAINRCONSOLE);
-				cont.setLocationRelativeTo(null);
-				cont.setVisible(true);
-			}else if (cmd == "table"){
-				DataFrameWindow inst = new DataFrameWindow();
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}else if(cmd=="onesample"){
-				OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
-				inst.setLocationRelativeTo(JGR.MAINRCONSOLE);
-				inst.setVisible(true);
-			}else if(cmd=="two sample"){
-				TwoSampleDialog inst = new TwoSampleDialog(JGR.MAINRCONSOLE);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);				
-			}else if(cmd=="ksample"){
-				KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-			}else if(cmd=="corr"){
-				CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);				
-			}else if(cmd=="glm"){
-				GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-			}else if(cmd=="logistic"){
-				LogisticDialog d = new LogisticDialog(JGR.MAINRCONSOLE);
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-			}else if(cmd=="linear"){
-				LinearDialog d = new LinearDialog(JGR.MAINRCONSOLE);
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-			}
+			runCmd(cmd,false);
 		}
 	}
-	
+		
+	public static void runCmd(String cmd,boolean fromConsole){
+		boolean needsRLocked=false;
+		if(cmd.equals("dhelp")){
+			HelpButton.showInBrowser(HelpButton.baseUrl+"pmwiki.php?n=Main.DeducerManual");
+		} else if(cmd.equals("New Data Set")){
+			String inputValue = JOptionPane.showInputDialog("Data Name: ");
+			if(inputValue!=null){
+				String var = RController.makeValidVariableName(inputValue.trim());
+				JGR.MAINRCONSOLE.execute(var+"<-data.frame()");
+				DataFrameWindow.setTopDataWindow(var);
+			}
+		}else if (cmd.equals("Open Data Set")){
+			needsRLocked=true;
+			DataLoader inst = new DataLoader();
+			WindowTracker.addWindow(inst);
+			DataFrameWindow.setTopDataWindow(inst.getDataName());
+			Deducer.setRecentData(inst.getDataName());
+		}else if(cmd.equals("Save Data Set")){
+			needsRLocked=true;
+			RObject data = (new DataFrameSelector(JGR.MAINRCONSOLE)).getSelection();
+			if(data!=null){
+				SaveData inst = new SaveData(data.getName());
+				WindowTracker.addWindow(inst);
+			}
+		}else if(cmd.equals("recode")){
+			needsRLocked=true;
+			RecodeDialog recode =new RecodeDialog(JGR.MAINRCONSOLE); 
+			recode.setLocationRelativeTo(null);
+			recode.setVisible(true);
+			WindowTracker.addWindow(recode);
+		}else if(cmd.equals("factor")){
+			needsRLocked=true;
+			VariableSelectionDialog inst =new VariableSelectionDialog(JGR.MAINRCONSOLE);
+			inst.SetSingleSelection(true);
+			inst.setLocationRelativeTo(null);
+			inst.setRFilter("is.factor");
+			inst.setTitle("Select Factor to Edit");
+			inst.setVisible(true);
+			String variable = inst.getSelecteditem();
+			if(variable==null)
+				return;
+			FactorDialog fact = new FactorDialog(JGR.MAINRCONSOLE,variable);
+			fact.setLocationRelativeTo(null);
+			fact.setVisible(true);
+			WindowTracker.addWindow(fact);
+		}else if(cmd.equals("reset rows")){
+			String name = null;
+			RObject data = null;
+			DataFrameSelector sel = new DataFrameSelector(JGR.MAINRCONSOLE);
+			data = sel.getSelection();
+			if(data!=null){
+				name = data.getName();
+				JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");
+				DataFrameWindow.setTopDataWindow(name);
+			}
+			JGR.MAINRCONSOLE.toFront();
+		}else if(cmd.equals("sort")){
+			needsRLocked=true;
+			SortDialog sort = new SortDialog(JGR.MAINRCONSOLE);
+			sort.setLocationRelativeTo(null);
+			sort.setVisible(true);
+			WindowTracker.addWindow(sort);
+		}else if(cmd.equals("merge")){
+			needsRLocked=true;
+			MergeDialog merge =new MergeDialog(JGR.MAINRCONSOLE); 
+			merge.setLocationRelativeTo(null);
+			merge.setVisible(true);
+			WindowTracker.addWindow(merge);
+		}else if (cmd.equals("trans")){
+			String name = null;
+			RObject data = null;
+			DataFrameSelector sel = new DataFrameSelector(JGR.MAINRCONSOLE);
+			data = sel.getSelection();
+			if(data!=null){
+				name = data.getName();
+				JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");
+				DataFrameWindow.setTopDataWindow(name);
+				JGR.MAINRCONSOLE.toFront();
+			}
+		}else if(cmd.equals("subset")){
+			needsRLocked=true;
+			SubsetDialog sub = new SubsetDialog(JGR.MAINRCONSOLE);
+			sub.setLocationRelativeTo(null);
+			sub.setVisible(true);
+			JGR.MAINRCONSOLE.toFront();
+			WindowTracker.addWindow(sub);
+		}else if(cmd.equals("frequency")){
+			needsRLocked=true;
+			FrequencyDialog freq = new FrequencyDialog(JGR.MAINRCONSOLE);
+			WindowTracker.addWindow(freq);
+			freq.setLocationRelativeTo(null);
+			freq.setVisible(true);
+		}else if(cmd.equals("descriptives")){
+			needsRLocked=true;
+			DescriptivesDialog desc = new DescriptivesDialog(JGR.MAINRCONSOLE);
+			desc.setLocationRelativeTo(null);
+			desc.setVisible(true);
+			WindowTracker.addWindow(desc);
+		}else if(cmd.equals("contingency")){
+			needsRLocked=true;
+			ContingencyDialog cont = new ContingencyDialog(JGR.MAINRCONSOLE);
+			cont.setLocationRelativeTo(null);
+			cont.setVisible(true);
+			WindowTracker.addWindow(cont);
+		}else if (cmd.equals("table")){
+			needsRLocked=true;
+			DataFrameWindow inst = new DataFrameWindow();
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+		}else if(cmd.equals("onesample")){
+			needsRLocked=true;
+			OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
+			inst.setLocationRelativeTo(JGR.MAINRCONSOLE);
+			inst.setVisible(true);
+			WindowTracker.addWindow(inst);
+		}else if(cmd.equals("two sample")){
+			needsRLocked=true;
+			TwoSampleDialog inst = new TwoSampleDialog(JGR.MAINRCONSOLE);
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);	
+			WindowTracker.addWindow(inst);
+		}else if(cmd.equals("ksample")){
+			needsRLocked=true;
+			KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);
+			WindowTracker.addWindow(inst);
+		}else if(cmd.equals("corr")){
+			needsRLocked=true;
+			CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
+			inst.setLocationRelativeTo(null);
+			inst.setVisible(true);			
+			WindowTracker.addWindow(inst);
+		}else if(cmd.equals("glm")){
+			needsRLocked=true;
+			GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
+			d.setLocationRelativeTo(null);
+			d.setVisible(true);
+			WindowTracker.addWindow(d);
+		}else if(cmd.equals("logistic")){
+			needsRLocked=true;
+			LogisticDialog d = new LogisticDialog(JGR.MAINRCONSOLE);
+			d.setLocationRelativeTo(null);
+			d.setVisible(true);
+			WindowTracker.addWindow(d);
+		}else if(cmd.equals("linear")){
+			needsRLocked=true;
+			LinearDialog d = new LinearDialog(JGR.MAINRCONSOLE);
+			d.setLocationRelativeTo(null);
+			d.setVisible(true);
+			WindowTracker.addWindow(d);
+		}
+		
+		if(needsRLocked && fromConsole){
+			WindowTracker.waitForAllClosed();
+		}
+		
+	}
 	//temporary until new version of ibase
 	public static void insertMenu(JFrame f, String name,int index) {
 		JMenuBar mb = f.getJMenuBar();

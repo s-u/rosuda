@@ -39,7 +39,6 @@ public class DeducerPrefs {
 					.getProperty("user.home")
 					+ File.separator + ".DeducerPrefs"));
 		} catch (FileNotFoundException e) {
-			new ErrorMsg(e);
 		}
 
 		try {
