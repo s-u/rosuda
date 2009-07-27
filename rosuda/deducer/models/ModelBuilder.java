@@ -30,6 +30,7 @@ import javax.swing.JSeparator;
 import javax.swing.ListModel;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -57,7 +58,7 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 	protected JButton addMain;
 	protected JButton remove;
 	protected JList modelTerms;
-	protected JButton help;
+	protected HelpButton help;
 	protected OkayCancelPanel okayCancelPanel;
 	protected JScrollPane modelScroller;
 	protected DefaultListModel modelTermsModel;
@@ -86,12 +87,11 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 				AnchorLayout thisLayout = new AnchorLayout();
 				getContentPane().setLayout(thisLayout);
 				{
-					help = new JButton();
-					getContentPane().add(help, new AnchorConstraint(916, 73, 11, 12, 
+					help = new HelpButton("");
+					getContentPane().add(help, new AnchorConstraint(916, 73, 7, 12, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
-					help.setText("Help");
-					help.setPreferredSize(new java.awt.Dimension(33, 29));
+					help.setPreferredSize(new java.awt.Dimension(32, 32));
 				}
 				{
 					okayCancelPanel = new OkayCancelPanel(true,true,this);
@@ -289,7 +289,6 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 			}
 			this.setTitle("Model Builder");
 			this.setSize(630, 507);
-			help.setVisible(false);
 			contrasts.setVisible(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);

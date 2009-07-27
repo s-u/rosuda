@@ -1,6 +1,8 @@
 package org.rosuda.deducer.models;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.util.ErrorMsg;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -32,7 +35,7 @@ public class ModelExplorer extends JFrame {
 	protected JButton assumpN;
 	protected JLabel modelFormula;
 	protected JPanel okayCancelPanel;
-	protected JButton help;
+	protected HelpButton help;
 	protected JButton tests;
 	protected JButton options;
 	protected JTabbedPane tabs;
@@ -194,12 +197,11 @@ public class ModelExplorer extends JFrame {
 					bottomPanel.setLayout(bottomPanelLayout);
 					bottomPanel.setPreferredSize(new java.awt.Dimension(700, 62));
 					{
-						help = new JButton();
-						bottomPanel.add(help, new AnchorConstraint(379, 66, 814, 17, 
+						help = new HelpButton("");
+						bottomPanel.add(help, new AnchorConstraint(379, 66, 600, 17, 
 								AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 								AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-						help.setText("Help");
-						help.setPreferredSize(new java.awt.Dimension(34, 27));
+						help.setPreferredSize(new java.awt.Dimension(32, 32));
 						help.addActionListener(generalListener);
 					}
 					{
@@ -213,7 +215,7 @@ public class ModelExplorer extends JFrame {
 			}
 			this.setSize(708, 625);
 		} catch (Exception e) {
-			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 	}
 	

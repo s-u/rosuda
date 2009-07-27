@@ -6,6 +6,7 @@ public class LinearExplorer extends GLMExplorer{
 
 	LinearExplorer(GLMModel mod) {
 		super(mod);
+		help.setUrl("pmwiki.php?n=Main.LinearModel");
 		this.setTitle("Linear Regression Model Explorer");
 	}
 

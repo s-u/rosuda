@@ -7,6 +7,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
@@ -40,6 +41,7 @@ import org.rosuda.JGR.util.*;
 
 
 
+
 public class MergeData extends javax.swing.JFrame implements ActionListener {
 	private JPanel varPanel1;
 	private JPanel varPanel2;
@@ -61,6 +63,7 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 	private JList dataList2;
 	private JList dataList1;
 	private JButton pairButton;
+	private JButton help;
 	
 	private static DefaultListModel mergeByListModel;
 	private static DefaultListModel pairedListModel;
@@ -277,6 +280,12 @@ public class MergeData extends javax.swing.JFrame implements ActionListener {
 					dataList2.setModel(dataList2Model);
 					dataList2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				}
+			}
+			{
+				help = new HelpButton("pmwiki.php?n=Main.MergeData");
+				getContentPane().add(help, new AnchorConstraint(904, 990, 956, 12, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
 			}
 			if(findPairs)
 				findPairs();

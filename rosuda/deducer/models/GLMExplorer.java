@@ -17,6 +17,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
 	GLMExplorer(GLMModel mod){
 		super();
+		help.setUrl("pmwiki.php?n=Main.GeneralizedLinearModel");		
 		setModel(mod);
 		initTabs();
 		this.addWindowListener(this);

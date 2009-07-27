@@ -29,6 +29,7 @@ import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.RemoveButton;
 import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
@@ -48,7 +49,7 @@ public class GLMDialog extends JDialog implements ActionListener {
 	protected JButton addWeight;
 	protected SingletonDJList outcome;
 	protected JPanel outcomePanel;
-	protected JButton help;
+	protected HelpButton help;
 	protected OkayCancelPanel okayCancelPanel;
 	protected RemoveButton removeFactor;
 	protected DJList factorVars;
@@ -71,21 +72,18 @@ public class GLMDialog extends JDialog implements ActionListener {
 		super(d);
 		mod.copyInto(modelOnOpen);
 		initGUI();
-		help.setVisible(false);
 		setModel(mod);
 	}
 	public GLMDialog(JFrame frame,GLMModel mod) {
 		super(frame);
 		mod.copyInto(modelOnOpen);
 		initGUI();
-		help.setVisible(false);
 		setModel(mod);
 	}
 	public GLMDialog(GLMModel mod) {
 		super();
 		mod.copyInto(modelOnOpen);
 		initGUI();
-		help.setVisible(false);
 		setModel(mod);
 	}
 	public GLMDialog(JFrame frame) {
@@ -238,12 +236,11 @@ public class GLMDialog extends JDialog implements ActionListener {
 					okayCancelPanel.getApproveButton().setActionCommand("Continue");
 				}
 				{
-					help = new JButton();
-					getContentPane().add(help, new AnchorConstraint(-15, 0, 0, -17, 
-							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+					help = new HelpButton("pmwiki.php?n=Main.GeneralizedLinearModel");
+					getContentPane().add(help, new AnchorConstraint(0, 0, 960, 11, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					help.setText("Help");
-					help.setPreferredSize(new java.awt.Dimension(10, 10));
+					help.setPreferredSize(new java.awt.Dimension(32, 32));
 				}
 				{
 					outcomePanel = new JPanel();

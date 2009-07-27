@@ -28,6 +28,7 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
@@ -73,12 +74,11 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				AnchorLayout thisLayout = new AnchorLayout();
 				getContentPane().setLayout(thisLayout);
 				{
-					help = new JButton();
+					help = new HelpButton("pmwiki.php?n=Main.OneSampleTest");
 					getContentPane().add(help, new AnchorConstraint(915, 86, 990, 23, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					help.setText("Help");
-					help.setPreferredSize(new java.awt.Dimension(34, 34));
+					help.setPreferredSize(new java.awt.Dimension(32, 32));
 				}
 				{
 					variableSelector = new VariableSelector();
@@ -206,7 +206,6 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 			}
 			this.setMinimumSize(new Dimension(546,331));
 			this.setSize(546, 536);
-			help.setVisible(false);
 			this.setTitle("One Sample Test");
 		} catch (Exception e) {
 			new ErrorMsg(e);

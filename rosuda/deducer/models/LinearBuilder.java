@@ -11,6 +11,7 @@ public class LinearBuilder extends GLMBuilder {
 			mod=new LinearModel();
 		}
 		setModel(mod);
+		help.setUrl("pmwiki.php?n=Main.LinearModel");
 		this.setTitle("Linear Regression Model Builder");
 	}
 	

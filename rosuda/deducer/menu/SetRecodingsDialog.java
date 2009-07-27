@@ -13,6 +13,7 @@ import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -78,6 +79,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 	private JPanel logicHolder;
 	private String dataName;
 	private OkayCancelPanel okcan;
+	private HelpButton help;
 	private static DefaultComboBoxModel model;
 	
 	public SetRecodingsDialog(JFrame frame) {
@@ -96,14 +98,22 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			getContentPane().setLayout(thisLayout);
 			{
 				clear = new JButton();
-				getContentPane().add(clear, new AnchorConstraint(846, 686, 896, 578, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(clear, new AnchorConstraint(846, 686, 896, 578, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				clear.setText("Clear");
 				clear.setPreferredSize(new java.awt.Dimension(69, 21));
 				clear.addActionListener(this);
 			}
 			{
+				help = new HelpButton("pmwiki.php?n=Main.RecodeVariables");
+				getContentPane().add(help, new AnchorConstraint(896, 950, 975, 19, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
+			}
+			{
 				okcan = new OkayCancelPanel(false,false,this);
-				getContentPane().add(okcan, new AnchorConstraint(896, 950, 975, 711, 
+				getContentPane().add(okcan, new AnchorConstraint(896, 950, 975, 670, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				
@@ -112,12 +122,15 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				VariablePanel = new JPanel();
 				AnchorLayout VariablePanelLayout = new AnchorLayout();
 				VariablePanel.setLayout(VariablePanelLayout);
-				getContentPane().add(VariablePanel, new AnchorConstraint(29, 512, 984, 19, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(VariablePanel, new AnchorConstraint(29, 512, 896, 19, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				VariablePanel.setPreferredSize(new java.awt.Dimension(315, 409));
-				VariablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED), "Variable Information", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
+				VariablePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED),
+						"Variable Information", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
 				{
 					varScrollPane = new JScrollPane();
-					VariablePanel.add(varScrollPane, new AnchorConstraint(59, 798, 253, 249, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					VariablePanel.add(varScrollPane, new AnchorConstraint(59, 798, 253, 249, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					varScrollPane.setPreferredSize(new java.awt.Dimension(173, 79));
 					{
 						ListModel varListModel = 
@@ -132,7 +145,8 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					textScroller = new JScrollPane();
-					VariablePanel.add(textScroller, new AnchorConstraint(338, 985, 988, 17, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					VariablePanel.add(textScroller, new AnchorConstraint(338, 985, 988, 17, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					textScroller.setPreferredSize(new java.awt.Dimension(305, 266));
 					{
 						infoTextArea = new JTextPane();
@@ -147,12 +161,15 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				logicHolder = new JPanel();
 				AnchorLayout logicHolderLayout = new AnchorLayout();
 				logicHolder.setLayout(logicHolderLayout);
-				getContentPane().add(logicHolder, new AnchorConstraint(31, 950, 505, 539, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(logicHolder, new AnchorConstraint(31, 950, 505, 539, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				logicHolder.setPreferredSize(new java.awt.Dimension(263, 203));
-				logicHolder.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED), "Code", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
+				logicHolder.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED),
+						"Code", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
 				{
 					addCode3Button = new JButton();
-					logicHolder.add(addCode3Button, new AnchorConstraint(830, 937, 933, 629, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(addCode3Button, new AnchorConstraint(830, 937, 933, 629, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					addCode3Button.setText("Add");
 					addCode3Button.setPreferredSize(new java.awt.Dimension(81, 21));
 					addCode3Button.addKeyListener(this);
@@ -160,12 +177,14 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					elseTextFiels = new JTextField();
-					logicHolder.add(elseTextFiels, new AnchorConstraint(830, 454, 938, 222, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(elseTextFiels, new AnchorConstraint(830, 454, 938, 222, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					elseTextFiels.setPreferredSize(new java.awt.Dimension(60, 22));
 				}
 				{
 					elseLabel = new JLabel();
-					logicHolder.add(elseLabel, new AnchorConstraint(844, 222, 913, 70, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(elseLabel, new AnchorConstraint(844, 222, 913, 70, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					elseLabel.setText("Else:");
 					elseLabel.setPreferredSize(new java.awt.Dimension(40, 14));
 				}
@@ -173,41 +192,48 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 					doublePanel = new JPanel();
 					AnchorLayout doublePanelLayout = new AnchorLayout();
 					doublePanel.setLayout(doublePanelLayout);
-					logicHolder.add(doublePanel, new AnchorConstraint(450, 979, 805, 20, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(doublePanel, new AnchorConstraint(450, 979, 805, 20, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					doublePanel.setPreferredSize(new java.awt.Dimension(252, 72));
 				}
 				{
 					into2Field = new JTextField();
-					doublePanel.add(into2Field, new AnchorConstraint(450, 613, 750, 375, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(into2Field, new AnchorConstraint(450, 613, 750, 375, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					into2Field.setPreferredSize(new java.awt.Dimension(60, 17));
 				}
 				{
 					into2Label = new JLabel();
-					doublePanel.add(into2Label, new AnchorConstraint(506, 327, 715, 168, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(into2Label, new AnchorConstraint(506, 327, 715, 168, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					into2Label.setText("into");
 					into2Label.setPreferredSize(new java.awt.Dimension(40, 15));
 					into2Label.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
 					doubleField2 = new JTextField();
-					doublePanel.add(doubleField2, new AnchorConstraint(40, 958, 340, 732, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(doubleField2, new AnchorConstraint(40, 958, 340, 732, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					doubleField2.setPreferredSize(new java.awt.Dimension(60, 18));
 				}
 				{
 					valueLabel = new JLabel();
-					doublePanel.add(valueLabel, new AnchorConstraint(76, 732, 298, 259, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(valueLabel, new AnchorConstraint(76, 732, 298, 259, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					valueLabel.setText("\u2264     Value     \u2264");
 					valueLabel.setPreferredSize(new java.awt.Dimension(119, 16));
 					valueLabel.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
 					doubleField1 = new JTextField();
-					doublePanel.add(doubleField1, new AnchorConstraint(40, 259, 340, 41, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(doubleField1, new AnchorConstraint(40, 259, 340, 41, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					doubleField1.setPreferredSize(new java.awt.Dimension(60, 18));
 				}
 				{
 					addCode2Button = new JButton();
-					doublePanel.add(addCode2Button, new AnchorConstraint(479, 958, 743, 636, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(addCode2Button, new AnchorConstraint(479, 958, 743, 636, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					addCode2Button.setText("Add");
 					addCode2Button.setPreferredSize(new java.awt.Dimension(81, 19));
 					addCode2Button.addKeyListener(this);
@@ -215,12 +241,14 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					jSeparator_IL1 = new JSeparator();
-					doublePanel.add(jSeparator_IL1, new AnchorConstraint(895, 998, 951, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					doublePanel.add(jSeparator_IL1, new AnchorConstraint(895, 998, 951, 1, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					jSeparator_IL1.setPreferredSize(new java.awt.Dimension(251, 4));
 				}
 				{
 					addCode1 = new JButton();
-					logicHolder.add(addCode1, new AnchorConstraint(273, 948, 376, 629, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(addCode1, new AnchorConstraint(273, 948, 376, 629, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					addCode1.setText("Add");
 					addCode1.setPreferredSize(new java.awt.Dimension(84, 21));
 					addCode1.addKeyListener(this);
@@ -228,19 +256,22 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				}
 				{
 					into1Field = new JTextField();
-					logicHolder.add(into1Field, new AnchorConstraint(273, 614, 383, 370, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(into1Field, new AnchorConstraint(273, 614, 383, 370, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					into1Field.setPreferredSize(new java.awt.Dimension(60, 21));
 				}
 				{
 					intoLabel = new JLabel();
-					logicHolder.add(intoLabel, new AnchorConstraint(288, 351, 357, 188, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(intoLabel, new AnchorConstraint(288, 351, 357, 188, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					intoLabel.setText("into");
 					intoLabel.setPreferredSize(new java.awt.Dimension(43, 14));
 					intoLabel.setHorizontalAlignment(SwingConstants.CENTER);
 				}
 				{
 					singleField = new JTextField();
-					logicHolder.add(singleField, new AnchorConstraint(125, 614, 235, 400, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(singleField, new AnchorConstraint(125, 614, 235, 400, AnchorConstraint.ANCHOR_REL,
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					singleField.setPreferredSize(new java.awt.Dimension(60, 23));
 				}
 				{
@@ -248,31 +279,37 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 						new DefaultComboBoxModel(
 								new String[] { "=", "\u2264","\u2265" });
 					boolComboBox = new JComboBox();
-					logicHolder.add(boolComboBox, new AnchorConstraint(130, 400, 233, 200, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(boolComboBox, new AnchorConstraint(130, 400, 233, 200, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					boolComboBox.setModel(boolComboBoxModel);
 					boolComboBox.setPreferredSize(new java.awt.Dimension(60, 21));
 				}
 				{
 					valueLabel1 = new JLabel();
-					logicHolder.add(valueLabel1, new AnchorConstraint(145, 245, 219, 51, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(valueLabel1, new AnchorConstraint(145, 245, 219, 51, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					valueLabel1.setText(" Value");
 					valueLabel1.setPreferredSize(new java.awt.Dimension(51, 15));
 				}
 				{
 					seperator = new JSeparator();
-					logicHolder.add(seperator, new AnchorConstraint(426, 979, 485, 24, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+					logicHolder.add(seperator, new AnchorConstraint(426, 979, 485, 24, AnchorConstraint.ANCHOR_REL, 
+							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 					seperator.setPreferredSize(new java.awt.Dimension(251, 12));
 				}
 				logicHolder.setFocusCycleRoot(true);
-				logicHolder.setFocusTraversalPolicy(new ArrayFocusTraversalPolicy(new java.awt.Component[] {singleField,into1Field, addCode1, boolComboBox}));
+				logicHolder.setFocusTraversalPolicy(new ArrayFocusTraversalPolicy(new java.awt.Component[] {singleField,
+						into1Field, addCode1, boolComboBox}));
 			}
 			{
 				lsitHolder = new JPanel();
 				BorderLayout lsitHolderLayout = new BorderLayout();
 				lsitHolder.setLayout(lsitHolderLayout);
-				getContentPane().add(lsitHolder, new AnchorConstraint(519, 889, 851, 578, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(lsitHolder, new AnchorConstraint(519, 889, 851, 578, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				lsitHolder.setPreferredSize(new java.awt.Dimension(199, 142));
-				lsitHolder.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED), "Recodings", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
+				lsitHolder.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED), 
+						"Recodings", TitledBorder.LEADING, TitledBorder.DEFAULT_POSITION));
 				{
 					DefaultComboBoxModel theModel=new DefaultComboBoxModel();
 					if(model!=null)

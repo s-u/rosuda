@@ -30,6 +30,7 @@ import javax.swing.SwingUtilities;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.DataFrameWindow;
 import org.rosuda.JGR.toolkit.SyntaxArea;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
@@ -77,7 +78,6 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 		if(lastDataName!=null)
 			variableSelector.setSelectedData(lastDataName);
 		refreshRecent();
-		help.setVisible(false);
 	}
 	
 	public void refreshRecent(){
@@ -272,10 +272,9 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 				funcHelp.setBounds(202, 254, 31, 31);
 			}
 			{
-				help = new JButton();
+				help = new HelpButton("pmwiki.php?n=Main.Subset");
 				getContentPane().add(help);
-				help.setText("Help");
-				help.setBounds(12, 306, 35, 31);
+				help.setBounds(12, 297, 35, 35);
 			}
 			{
 				ComboBoxModel recentModel = 
@@ -294,7 +293,7 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			}
 			this.setTitle("Data Subset");
 			this.setResizable(false);
-			this.setSize(525, 382);
+			this.setSize(525, 375);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}

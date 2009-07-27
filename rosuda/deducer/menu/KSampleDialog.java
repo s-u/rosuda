@@ -27,6 +27,7 @@ import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.menu.twosample.TwoSampleModel;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.RemoveButton;
@@ -76,7 +77,6 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 		super(frame);
 		initGUI();
 		variableSelector.getJComboBox().addActionListener(this);
-		help.setVisible(false);
 		median.setEnabled(false);
 		largeAssump3.setEnabled(false);
 		reset();
@@ -99,9 +99,9 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				okayCancelPanel.setPreferredSize(new java.awt.Dimension(279, 42));
 			}
 			{
-				help = new JButton();
-				getContentPane().add(help, new AnchorConstraint(943, 97, 980, 22, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				help.setText("Help");
+				help = new HelpButton("pmwiki.php?n=Main.K-SampleTest");
+				getContentPane().add(help, new AnchorConstraint(943, 97, 970, 22, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				help.setPreferredSize(new java.awt.Dimension(32, 32));
 			}
 			{

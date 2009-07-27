@@ -10,6 +10,7 @@ public class LogisticExplorer extends GLMExplorer {
 	LogisticExplorer(GLMModel mod) {
 		super(mod);
 		this.setTitle("Logistic Model Explorer");
+		help.setUrl("pmwiki.php?n=Main.LogisticModel");
 	}
 	public void initTabs(){
 		try{

@@ -11,6 +11,7 @@ public class LogisticBuilder extends GLMBuilder {
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
 			mod=new LogisticModel();
 		}
+		help.setUrl("pmwiki.php?n=Main.LogisticModel");
 		setModel(mod);
 		this.setTitle("Logistic Regression Model Builder");
 	}

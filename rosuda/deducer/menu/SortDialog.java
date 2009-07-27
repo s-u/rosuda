@@ -24,6 +24,7 @@ import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -40,6 +41,7 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 	private DJList sortList;
 	private JScrollPane sortScroller;
 	private JPanel sortPanel;
+	private HelpButton help;
 	
 	private static String lastDataName;
 	private static DefaultListModel lastListModel;
@@ -60,6 +62,13 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL,AnchorConstraint.ANCHOR_REL));
 				
+			}
+			{
+				help = new HelpButton("pmwiki.php?n=Main.Sort");
+				getContentPane().add(help, new AnchorConstraint(829, 978, 963, 23, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_REL,AnchorConstraint.ANCHOR_REL));	
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
 			}
 			{
 				remove = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
@@ -101,7 +110,7 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			{
 				variableSelector = new VariableSelector();
-				getContentPane().add(variableSelector, new AnchorConstraint(39, 434, 963, 23, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(variableSelector, new AnchorConstraint(39, 434, 829, 23, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				variableSelector.setPreferredSize(new java.awt.Dimension(215, 289));
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 				variableSelector.getJComboBox().addActionListener(this);

@@ -13,6 +13,7 @@ import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.SingletonDJList;
@@ -144,11 +145,10 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			getContentPane().setLayout(thisLayout);
 
 			{
-				help = new JButton();
-				getContentPane().add(help, new AnchorConstraint(910, 71, 977, 15, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				help.setText("Help");
-				help.setPreferredSize(new java.awt.Dimension(41, 35));
+				help = new HelpButton("pmwiki.php?n=Main.ContingencyTables");
+				getContentPane().add(help, new AnchorConstraint(910, 71, 977, 15, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
 				help.addActionListener(this);
 			}
 			{
@@ -298,7 +298,6 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			
 			//unimplemented
 			postHoc.setVisible(false);
-			help.setVisible(false);
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}

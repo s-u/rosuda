@@ -28,6 +28,7 @@ import org.rosuda.deducer.menu.*;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
 import org.rosuda.deducer.models.*;
 import org.rosuda.deducer.toolkit.DeducerPrefs;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.PrefPanel;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.deducer.data.DataFrameSelector;
@@ -83,7 +84,7 @@ public class Deducer {
 
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Linear Model", "linear", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Logistic Model", "logistic", cListener);
-				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "GLM", "glm", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, analysisMenu, "Generalized Linear Model", "glm", cListener);
 				menuIndex++;
 			}
 			
@@ -103,6 +104,9 @@ public class Deducer {
 			
 			//Save Data
 			insertJMenuItem(JGR.MAINRCONSOLE, "File", "Save Data", "Save Data Set", cListener, 2);
+			
+			//help
+			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Help", "Deducer Help", "dhelp", cListener);
 			new Thread(new Runner()).start();		
 		}catch(Exception e){new ErrorMsg(e);}
 	}
@@ -122,7 +126,9 @@ public class Deducer {
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
-			if(cmd=="New Data Set"){
+			if(cmd=="dhelp"){
+				HelpButton.showInBrowser(HelpButton.baseUrl+"pmwiki.php?n=Main.DeducerManual");
+			} else if(cmd=="New Data Set"){
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				if(inputValue!=null){
 					String var = RController.makeValidVariableName(inputValue.trim());

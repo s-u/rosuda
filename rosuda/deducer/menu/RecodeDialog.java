@@ -26,6 +26,7 @@ import javax.swing.ListModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.BevelBorder;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -43,6 +44,7 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 	private JButton runButton;
 	private JButton defineButton;
 	private IconButton addButton;
+	private HelpButton help;
 
 	private static DefaultListModel lastListModel;
 	private static String lastDataName;
@@ -58,41 +60,53 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
 			this.setTitle("Recode Variables");
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
+			{
+				help = new HelpButton("pmwiki.php?n=Main.RecodeVariables");
+				getContentPane().add(help, new AnchorConstraint(867, 934, 968, 21, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
+			}
 			{
 				removeButton = new IconButton("/icons/1leftarrow_32.png","Remove",this,"Remove");
-				getContentPane().add(removeButton, new AnchorConstraint(530, 425, 680, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(removeButton, new AnchorConstraint(530, 425, 680, 350, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				removeButton.setPreferredSize(new java.awt.Dimension(41, 40));
 			}
 			{
 				cancelButton = new JButton();
-				getContentPane().add(cancelButton, new AnchorConstraint(767, 934, 835, 801, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(cancelButton, new AnchorConstraint(767, 934, 835, 801, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				cancelButton.setText("Cancel");
 				cancelButton.setPreferredSize(new java.awt.Dimension(84, 23));
 				cancelButton.addActionListener(this);
 			}
 			{
 				runButton = new JButton();
-				getContentPane().add(runButton, new AnchorConstraint(867, 934, 968, 801, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(runButton, new AnchorConstraint(867, 934, 968, 801, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				runButton.setText("OK");
 				runButton.setPreferredSize(new java.awt.Dimension(84, 34));
 				runButton.addActionListener(this);
 			}
 			{
 				defineButton = new JButton();
-				getContentPane().add(defineButton, new AnchorConstraint(870, 728, 965, 496, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(defineButton, new AnchorConstraint(870, 728, 965, 496, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				defineButton.setText("Define Recode");
 				defineButton.setPreferredSize(new java.awt.Dimension(147, 32));
 				defineButton.addActionListener(this);
 			}
 			{
 				addButton = new IconButton("/icons/1rightarrow_32.png","Add",this,"Add");
-				getContentPane().add(addButton, new AnchorConstraint(375, 425, 525, 350, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(addButton, new AnchorConstraint(375, 425, 525, 350, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				addButton.setPreferredSize(new java.awt.Dimension(41, 40));
 			}
 			{
 				intoButton = new JButton();
-				getContentPane().add(intoButton, new AnchorConstraint(218, 934, 295, 782, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(intoButton, new AnchorConstraint(218, 934, 295, 782, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				intoButton.setText("\u2192 Target");
 				intoButton.setPreferredSize(new java.awt.Dimension(96, 26));
 				intoButton.setFont(new java.awt.Font("Tahoma",0,10));
@@ -107,15 +121,16 @@ public class RecodeDialog extends javax.swing.JDialog implements ActionListener 
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 				recodePanel.add(recodeScroller);
-				getContentPane().add(recodePanel, new AnchorConstraint(123, 758, 835, 467, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(recodePanel, new AnchorConstraint(123, 758, 835, 467, AnchorConstraint.ANCHOR_REL,
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				recodeVariableList.setModel(new DefaultListModel());
 				recodePanel.setPreferredSize(new java.awt.Dimension(184, 240));
 				recodePanel.setBorder(BorderFactory.createTitledBorder("Variables to Recode"));
 			}
 			{
 				variableSelector = new VariableSelector();
-				getContentPane().add(variableSelector, new AnchorConstraint(74, 331, 846, 28, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				getContentPane().add(variableSelector, new AnchorConstraint(72, 325, 965, 21, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(variableSelector, new AnchorConstraint(72, 325, 835, 21, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				variableSelector.setPreferredSize(new java.awt.Dimension(192, 301));
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
 				variableSelector.getJComboBox().addActionListener(this);

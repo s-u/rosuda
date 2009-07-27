@@ -26,6 +26,7 @@ import javax.swing.ListModel;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.AddButton;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.RemoveButton;
@@ -76,7 +77,6 @@ public class CorDialog extends JDialog implements ActionListener{
 			setModel(lastModel);
 		variableSelector.getJComboBox().addActionListener(this);	
 		linearAssump.setVisible(false);
-		help.setVisible(false);
 	}
 	
 	private void initGUI() {
@@ -84,12 +84,10 @@ public class CorDialog extends JDialog implements ActionListener{
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				help = new JButton();
-				getContentPane().add(help, new AnchorConstraint(906, 60, 977, 15, AnchorConstraint.ANCHOR_NONE, 
+				help = new HelpButton("pmwiki.php?n=Main.Correlation");
+				getContentPane().add(help, new AnchorConstraint(906, 60, 960, 15, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-				help.setText("Help");
 				help.setPreferredSize(new java.awt.Dimension(36, 36));
-				help.addActionListener(this);
 			}
 			{
 				plots = new JButton();

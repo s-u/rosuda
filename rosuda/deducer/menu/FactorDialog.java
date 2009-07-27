@@ -1,12 +1,12 @@
 package org.rosuda.deducer.menu;
 
-
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.JGR.util.ErrorMsg;
@@ -31,6 +31,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+
+
 public class FactorDialog extends JDialog implements ActionListener {
 	private JPanel listPanel;
 	private JScrollPane levelScroller;
@@ -42,6 +44,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 	private IconButton remove;
 	private IconButton down;
 	private IconButton up;
+	private JButton help;
 	private ContrastDialog cntr;
 	
 	private String variable;
@@ -65,6 +68,12 @@ public class FactorDialog extends JDialog implements ActionListener {
 				getContentPane().add(okcan, new AnchorConstraint(810, 937, 946, 300, AnchorConstraint.ANCHOR_REL, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				
+			}
+			{
+				help = new HelpButton("pmwiki.php?n=Main.EditFactor");
+				getContentPane().add(help, new AnchorConstraint(810, 937, 930, 40, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(36, 36));
 			}
 			{
 				ordered = new JCheckBox();
@@ -133,7 +142,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 			}
 			
 			this.setMinimumSize(new Dimension(280,331));
-			this.setSize(280, 331);
+			this.setSize(280, 325);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

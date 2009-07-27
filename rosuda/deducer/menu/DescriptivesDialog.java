@@ -62,6 +62,7 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 	private JPanel runFuncPanel;
 	private IconButton removeFunc;
 	private JScrollPane functionScroller;
+	private HelpButton help;
 	
 	private static String[] functions = new String[] {"Mean","St. Deviation", "Valid N",
 													"Median","25th Percentile",
@@ -89,6 +90,13 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				cont=okCancel.getApproveButton();
 				cont.setText("Continue");
+				
+			}
+			{
+				help = new HelpButton("pmwiki.php?n=Main.Descriptives");
+				getContentPane().add(help, new AnchorConstraint(869, 942, 947, 25, AnchorConstraint.ANCHOR_NONE,
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(32, 32));
 				
 			}
 			initFirstPanel();

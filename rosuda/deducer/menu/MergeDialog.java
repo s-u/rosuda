@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 public class MergeDialog extends javax.swing.JDialog implements ActionListener{
@@ -37,6 +38,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 	private static String lastSelected1;
 	private static String lastSelected2;
 	private static String lastNewData;
+	private HelpButton help;
 
 	
 	public MergeDialog() {
@@ -57,7 +59,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			this.setTitle("Merge Data");
 			{
 				newName = new JTextField();
-				getContentPane().add(newName, new AnchorConstraint(855, 428, 945, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(newName, new AnchorConstraint(855, 428, 945, 110, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				if(lastNewData==null)
 					newName.setText(JGR.MAINRCONSOLE.getUniqueName("data.merged"));
 				else
@@ -66,7 +69,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			{
 				newDataLabel = new JLabel();
-				getContentPane().add(newDataLabel, new AnchorConstraint(766, 428, 827, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(newDataLabel, new AnchorConstraint(766, 428, 827, 110, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				newDataLabel.setText("Merged Data Name:");
 				newDataLabel.setPreferredSize(new java.awt.Dimension(166, 15));
 			}
@@ -81,7 +85,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			{
 				data2 = new JLabel();
-				getContentPane().add(data2, new AnchorConstraint(136, 972, 176, 569, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
+				getContentPane().add(data2, new AnchorConstraint(136, 972, 176, 569, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 				data2.setText("Select Second Data Frame");
 				data2.setPreferredSize(new java.awt.Dimension(186, 15));
 			}
@@ -95,14 +100,16 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				JScrollPane pane = new JScrollPane(jList1,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);				
-				getContentPane().add(pane, new AnchorConstraint(197, 926, 72, 569, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
+				getContentPane().add(pane, new AnchorConstraint(197, 926, 72, 569, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
 				jList1.setModel(jList1Model);
 				jList1.setPreferredSize(new java.awt.Dimension(149, 126));
 				jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			}
 			{
 				data1 = new JLabel();
-				getContentPane().add(data1, new AnchorConstraint(135, 444, 176, 29, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(data1, new AnchorConstraint(135, 444, 176, 29, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
 				data1.setText("Select First Data Frame:");
 				data1.setPreferredSize(new java.awt.Dimension(173, 15));
 			}
@@ -116,7 +123,8 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				JScrollPane spane = new JScrollPane(dataList,
                         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);	
-				getContentPane().add(spane, new AnchorConstraint(197, 447, 72, 13, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
+				getContentPane().add(spane, new AnchorConstraint(197, 447, 72, 13, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
 				dataList.setModel(dataListModel);
 				dataList.setPreferredSize(new java.awt.Dimension(147, 126));
 				dataList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -125,8 +133,15 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 				dataList.setSelectedValue(lastSelected1, true);
 				jList1.setSelectedValue(lastSelected2, true);
 			}
+			{
+				help = new HelpButton("pmwiki.php?n=Main.MergeData");
+				getContentPane().add(help, new AnchorConstraint(135, 444, 965, 12, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
+				help.setPreferredSize(new java.awt.Dimension(32, 32));				
+			}
 			pack();
-			this.setMinimumSize(new Dimension(430,268));
+			//this.setMinimumSize(new Dimension(430,268));
+			this.setResizable(false);
 			this.setSize(430, 268);
 		} catch (Exception e) {
 			new ErrorMsg(e);

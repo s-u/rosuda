@@ -11,6 +11,7 @@ public class GLMBuilder extends ModelBuilder {
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
 			mod=new GLMModel();
 		}
+		help.setUrl("pmwiki.php?n=Main.GeneralizedLinearModel");
 		setModel(mod);
 	}
 	

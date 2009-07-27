@@ -22,14 +22,17 @@ public class LogisticDialog extends GLMDialog {
 	
 	public LogisticDialog(JDialog d,GLMModel mod) {
 		super(d,mod);
+		help.setUrl("pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(JFrame frame,GLMModel mod) {
 		super(frame,mod);
+		help.setUrl("pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(GLMModel mod) {
 		super(mod);
+		help.setUrl("pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(JFrame frame) {

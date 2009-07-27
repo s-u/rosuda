@@ -12,12 +12,15 @@ public class LinearDialog extends GLMDialog {
 	
 	public LinearDialog(JDialog d,GLMModel mod) {
 		super(d,mod);
+		help.setUrl("pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(JFrame frame,GLMModel mod) {
 		super(frame,mod);
+		help.setUrl("pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(GLMModel mod) {
 		super(mod);
+		help.setUrl("pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(JFrame frame) {
 		this(frame,lastLinearModel==null ? new LinearModel() : lastLinearModel);
