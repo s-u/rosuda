@@ -56,9 +56,9 @@ public class Deducer {
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static JRIEngine engine; //temp until JGR 1.7
-	public Deducer(){
+	public Deducer(boolean jgr){
 		try{
-			if(JGR.R!=null)
+			if(jgr || JGR.R!=null)
 				startWithJGR();
 			else
 				startNoJGR();
@@ -165,6 +165,10 @@ public class Deducer {
 		}catch(Exception e){new ErrorMsg(e);}		
 	}
 	
+	public static boolean isJGR(){
+		
+		return insideJGR;//?1:0;
+	}
 	
 	public void detach(){
 		JMenuBar mb = JGR.MAINRCONSOLE.getJMenuBar();

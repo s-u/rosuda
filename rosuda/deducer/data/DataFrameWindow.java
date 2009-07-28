@@ -264,7 +264,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				"Transpose","transpose","Subset","Subset",
 			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
 				"Contingency Tables","contin","-","One Sample Test","One Sample","Two Sample Test","Two Sample",
-				"K-Sample Test", "ksample","Correlation", "corr", "Linear Model", "linear",
+				"K-Sample Test", "ksample","Correlation", "corr","-", "Linear Model", "linear",
 				"Logistic Model","logistic","Generalized Linear Model","glm",
 				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
 				"packagemgr", "Package Installer","packageinst",
