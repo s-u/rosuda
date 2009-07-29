@@ -384,6 +384,8 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 	}
 	
 	public static void setTopDataWindow(String dataName){
+		if(dataWindows==null)
+			dataWindows=new ArrayList();
 		if(dataWindows.size()>0){
 			for(int i =0;i<dataWindows.size();i++){
 				if(((DataFrameWindow)dataWindows.get(i)).isVisible()){
@@ -818,7 +820,9 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 		}
 
 		public void run() {
-			while (true)
+			final DataFrameWindow win = theWindow;
+			boolean cont = true;
+			while (cont)
 				try {
 					Thread.sleep(2000);
 					Runnable doWorkRunnable = new Runnable() {
@@ -836,13 +840,18 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 								variableScrollPane=null;
 							}							
 						}};
-					SwingUtilities.invokeLater(doWorkRunnable);
-					if(showData!=null){
-						setVisibleDataFrame(showData);
-					if(((RObject)dataSelector.getSelectedItem()).getName().equals(showData))
-						showData=null;
+					if(win==null || !win.isDisplayable()){
+						cont=false;
+						if(dataScrollPane!=null)
+							((RDataFrameModel) dataScrollPane.getExTable().getModel()).removeCachedData();
+					}else{
+						SwingUtilities.invokeLater(doWorkRunnable);
+						if(showData!=null){
+							setVisibleDataFrame(showData);
+						if(((RObject)dataSelector.getSelectedItem()).getName().equals(showData))
+							showData=null;
+						}
 					}
- 
 					
 				} catch (Exception e) {
 					new ErrorMsg(e);

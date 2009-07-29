@@ -19,7 +19,7 @@ public class LinearExplorer extends GLMExplorer{
 		model.run(false,pre);
 		this.dispose();
 		LinearDialog.setLastModel(model);
-		Deducer.rniEval("rm('"+pre.data.split("$")[1]+"','"+pre.modelName.split("$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.rniEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
 	}
 	
 	public void optionsClicked(){
