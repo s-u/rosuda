@@ -24,6 +24,7 @@ import javax.swing.ScrollPaneConstants;
 import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
@@ -163,6 +164,7 @@ public class MergeDialog extends javax.swing.JDialog implements ActionListener{
 			MergeData inst = new MergeData(newName.getText(), lastSelected1,lastSelected2);
 			inst.setLocationRelativeTo(this);
 			inst.setVisible(true);
+			WindowTracker.addWindow(inst);
 			this.dispose();
 		}else if(cmd == "Cancel"){
 			this.dispose();

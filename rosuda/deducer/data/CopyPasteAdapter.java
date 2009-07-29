@@ -100,7 +100,7 @@ public class CopyPasteAdapter implements ActionListener{
 			String trstring= getClipBoard();
 			if(trstring.startsWith("\n")|trstring.startsWith("\r"))
 				trstring="\t".concat(trstring);
-			System.out.println("String is:"+trstring.indexOf("\r"));
+			//System.out.println("String is:"+trstring.indexOf("\r"));
 			if(trstring.indexOf("\n")<0)
 				st1=new StringTokenizer(trstring,"\r");
 			else

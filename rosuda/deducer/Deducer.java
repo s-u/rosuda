@@ -55,15 +55,15 @@ public class Deducer {
 	static final String Version= "0.1";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
+	public static boolean started;
 	public static JRIEngine engine; //temp until JGR 1.7
 	public Deducer(boolean jgr){
+		started=false;
 		try{
-			if(jgr || JGR.R!=null)
+			if(jgr || JGR.R!=null){
 				startWithJGR();
-			else
-				startNoJGR();
+			}
 		}catch(Exception e){
-			startNoJGR();
 			new ErrorMsg(e);
 		}
 		
@@ -102,6 +102,7 @@ public class Deducer {
 		    	inst.setLocationRelativeTo(null);
 		    	inst.setVisible(true);
 	    	}*/
+			started=true;
 		}catch(Exception e){new ErrorMsg(e);}
 	}
 	
@@ -162,6 +163,7 @@ public class Deducer {
 			//help
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Help", "Deducer Help", "dhelp", cListener);
 			new Thread(new Runner()).start();		
+			started=true;
 		}catch(Exception e){new ErrorMsg(e);}		
 	}
 	
@@ -228,15 +230,14 @@ public class Deducer {
 		}else if (cmd.equals("Open Data Set")){
 			needsRLocked=true;
 			DataLoader inst = new DataLoader();
-			WindowTracker.addWindow(inst);
 			DataFrameWindow.setTopDataWindow(inst.getDataName());
 			Deducer.setRecentData(inst.getDataName());
 		}else if(cmd.equals("Save Data Set")){
-			needsRLocked=true;
+			//needsRLocked=true;
 			RObject data = (new DataFrameSelector(JGR.MAINRCONSOLE)).getSelection();
 			if(data!=null){
 				SaveData inst = new SaveData(data.getName());
-				WindowTracker.addWindow(inst);
+				//WindowTracker.addWindow(inst);
 			}
 		}else if(cmd.equals("recode")){
 			needsRLocked=true;
@@ -323,6 +324,7 @@ public class Deducer {
 			DataFrameWindow inst = new DataFrameWindow();
 			inst.setLocationRelativeTo(null);
 			inst.setVisible(true);
+			WindowTracker.addWindow(inst);
 		}else if(cmd.equals("onesample")){
 			needsRLocked=true;
 			OneSampleDialog inst = new OneSampleDialog(JGR.MAINRCONSOLE);
@@ -367,7 +369,7 @@ public class Deducer {
 			WindowTracker.addWindow(d);
 		}
 		
-		if(needsRLocked && fromConsole){
+		if(needsRLocked && fromConsole && !isJGR()){
 			WindowTracker.waitForAllClosed();
 		}
 		

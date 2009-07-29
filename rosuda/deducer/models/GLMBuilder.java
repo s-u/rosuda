@@ -3,6 +3,8 @@ package org.rosuda.deducer.models;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import org.rosuda.deducer.WindowTracker;
+
 public class GLMBuilder extends ModelBuilder {
 
 	public GLMBuilder(ModelModel mod) {
@@ -24,6 +26,7 @@ public class GLMBuilder extends ModelBuilder {
 		GLMDialog dia = new GLMDialog((GLMModel)model);
 		dia.setLocationRelativeTo(this);
 		dia.setVisible(true);
+		WindowTracker.addWindow(dia);
 		this.dispose();
 	}
 	
@@ -41,6 +44,7 @@ public class GLMBuilder extends ModelBuilder {
 		GLMExplorer exp = new GLMExplorer((GLMModel)model);
 		exp.setLocationRelativeTo(this);
 		exp.setVisible(true);
+		WindowTracker.addWindow(exp);
 		this.dispose();
 	}
 	

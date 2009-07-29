@@ -329,7 +329,7 @@ public class FactorDialog extends JDialog implements ActionListener {
 
 		public void actionPerformed(ActionEvent act) {
 			String cmd = act.getActionCommand();
-			System.out.println(cmd);
+			//System.out.println(cmd);
 			if(cmd=="Treatment"){
 				contrast = "\"contr.treatment\"";
 			}else if(cmd=="Sum (Deviation)"){

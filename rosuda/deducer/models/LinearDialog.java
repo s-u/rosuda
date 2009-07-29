@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 
 public class LinearDialog extends GLMDialog {
 	public static LinearModel lastLinearModel;
@@ -40,6 +41,7 @@ public class LinearDialog extends GLMDialog {
 		LinearBuilder builder = new LinearBuilder(model);
 		builder.setLocationRelativeTo(this);
 		builder.setVisible(true);
+		WindowTracker.addWindow(builder);
 		this.dispose();
 	}
 	

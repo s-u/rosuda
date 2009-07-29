@@ -25,6 +25,7 @@ import javax.swing.border.TitledBorder;
 
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.menu.SubsetDialog;
 import org.rosuda.deducer.menu.SubsetPanel;
 import org.rosuda.deducer.toolkit.AddButton;
@@ -378,6 +379,7 @@ public class GLMDialog extends JDialog implements ActionListener {
 		GLMBuilder builder = new GLMBuilder(model);
 		builder.setLocationRelativeTo(this);
 		builder.setVisible(true);
+		WindowTracker.addWindow(builder);
 		this.dispose();
 	}
 

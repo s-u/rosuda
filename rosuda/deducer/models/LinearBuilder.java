@@ -2,6 +2,8 @@ package org.rosuda.deducer.models;
 
 import javax.swing.JOptionPane;
 
+import org.rosuda.deducer.WindowTracker;
+
 public class LinearBuilder extends GLMBuilder {
 
 	public LinearBuilder(ModelModel mod) {
@@ -23,6 +25,7 @@ public class LinearBuilder extends GLMBuilder {
 		LinearDialog dia = new LinearDialog((LinearModel)model);
 		dia.setLocationRelativeTo(this);
 		dia.setVisible(true);
+		WindowTracker.addWindow(dia);
 		this.dispose();
 	}
 	
@@ -40,6 +43,7 @@ public class LinearBuilder extends GLMBuilder {
 		LinearExplorer exp = new LinearExplorer((LinearModel)model);
 		exp.setLocationRelativeTo(this);
 		exp.setVisible(true);
+		WindowTracker.addWindow(exp);
 		this.dispose();
 	}
 	

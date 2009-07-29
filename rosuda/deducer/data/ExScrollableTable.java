@@ -231,7 +231,7 @@ public class ExScrollableTable extends JScrollPane{
 		public void actionPerformed(ActionEvent e){
 			//index =rowHeader.get .getSelectedIndex();
 			JMenuItem source = (JMenuItem)(e.getSource());
-			System.out.println("row Contextual Menu selected: "+index);
+			//System.out.println("row Contextual Menu selected: "+index);
 			if(source.getText()=="Copy"){
 				table.getCopyPasteAdapter().copy();
 			} else if(source.getText()=="Cut"){

@@ -3,6 +3,8 @@ package org.rosuda.deducer.models;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
+import org.rosuda.deducer.WindowTracker;
+
 public class LogisticBuilder extends GLMBuilder {
 
 	public LogisticBuilder(ModelModel mod) {
@@ -24,6 +26,7 @@ public class LogisticBuilder extends GLMBuilder {
 		LogisticDialog dia = new LogisticDialog((LogisticModel)model);
 		dia.setLocationRelativeTo(this);
 		dia.setVisible(true);
+		WindowTracker.addWindow(dia);
 		this.dispose();
 	}
 	
@@ -48,6 +51,7 @@ public class LogisticBuilder extends GLMBuilder {
 		LogisticExplorer exp = new LogisticExplorer((LogisticModel)model);
 		exp.setLocationRelativeTo(this);
 		exp.setVisible(true);
+		WindowTracker.addWindow(exp);
 		this.dispose();
 	}
 

@@ -57,8 +57,8 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
 		    try {
 		      localArrayListFlavor = new DataFlavor(localArrayListType);
 		    } catch (ClassNotFoundException e) {
-		      System.out
-		          .println("ArrayListTransferHandler: unable to create data flavor");
+		     // System.out
+		      //    .println("ArrayListTransferHandler: unable to create data flavor");
 		    }
 		    serialArrayListFlavor = new DataFlavor(ArrayList.class, "ArrayList");
 		  }
@@ -79,10 +79,10 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
 		        return false;
 		      }
 		    } catch (UnsupportedFlavorException ufe) {
-		      System.out.println("importData: unsupported data flavor");
+		     // System.out.println("importData: unsupported data flavor");
 		      return false;
 		    } catch (IOException ioe) {
-		      System.out.println("importData: I/O exception");
+		    //  System.out.println("importData: I/O exception");
 		      return false;
 		    }
 
@@ -91,7 +91,7 @@ public class DJList extends JList implements DragSourceListener, DropTargetListe
 
 		    //We'll drop at the current selected index.
 		    int index = target.getSelectedIndex();
-		    System.out.println(index);
+		    //System.out.println(index);
 		    DefaultListModel listModel = (DefaultListModel) target.getModel();
 		    int max = listModel.getSize();
 		    if (index < 0) {

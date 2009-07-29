@@ -4,6 +4,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 
 public class LogisticExplorer extends GLMExplorer {
 
@@ -39,8 +40,9 @@ public class LogisticExplorer extends GLMExplorer {
 	public void updateClicked(){
 		LogisticBuilder bld = new LogisticBuilder(model);
 		bld.setLocationRelativeTo(this);
+		bld.setVisible(true);		
+		WindowTracker.addWindow(bld);
 		this.dispose();
-		bld.setVisible(true);
 	}
 	public void plotsClicked(){
 		String type = (String) JOptionPane.showInputDialog(plots, "Please select the type of plot", 

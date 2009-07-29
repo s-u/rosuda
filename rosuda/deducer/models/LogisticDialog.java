@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.WindowTracker;
 
 public class LogisticDialog extends GLMDialog {
 	JButton split;
@@ -98,6 +99,7 @@ public class LogisticDialog extends GLMDialog {
 		LogisticBuilder builder = new LogisticBuilder(model);
 		builder.setLocationRelativeTo(this);
 		builder.setVisible(true);
+		WindowTracker.addWindow(builder);
 		this.dispose();
 	}
 	

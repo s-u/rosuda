@@ -1,6 +1,7 @@
 package org.rosuda.deducer.models;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 
 public class LinearExplorer extends GLMExplorer{
 
@@ -50,6 +51,14 @@ public class LinearExplorer extends GLMExplorer{
 		exp.setLocationRelativeTo(this);
 		exp.setSinglePredicted();
 		exp.setVisible(true);
+	}
+	
+	public void updateClicked(){
+		LinearBuilder bld = new LinearBuilder(model);
+		bld.setLocationRelativeTo(this);
+		bld.setVisible(true);
+		WindowTracker.addWindow(bld);
+		this.dispose();
 	}
 	
 }

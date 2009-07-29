@@ -1,57 +1,50 @@
 package org.rosuda.deducer;
 
+import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.rosuda.deducer.data.DataFrameWindow;
 
-public class WindowTracker implements WindowListener{
-
-	public static int numRDependentWindows;
+public class WindowTracker{
+	protected ArrayList activeWindows = new ArrayList();
 	static WindowTracker tracker;
-	public static synchronized void addWindow(JDialog d){
+	public synchronized static void addWindow(JDialog d){
 		if(tracker==null){
 			tracker = new WindowTracker();
-			numRDependentWindows=0;
+			tracker.activeWindows = new ArrayList();
 		}
-		numRDependentWindows++;
-		d.addWindowListener(tracker);
+		tracker.activeWindows.add(d);
 	}
 	
-	public static synchronized void addWindow(JFrame f){
+	public synchronized static void addWindow(JFrame f){
 		if(tracker==null){
 			tracker = new WindowTracker();
-			numRDependentWindows=0;
+			tracker.activeWindows = new ArrayList();
 		}
-		numRDependentWindows++;
-		f.addWindowListener(tracker);
+		tracker.activeWindows.add(f);
 	}
 	
 	public static void waitForAllClosed(){
-    	while(numRDependentWindows>0 ||DataFrameWindow.dataWindows.size()>0){
+    	while(tracker.activeWindows.size()>0){
     		try {
-				Thread.sleep(1000);
+    			for(int i=0;i<tracker.activeWindows.size();i++){
+    				Window win = (Window)tracker.activeWindows.get(i);
+    				if(win==null || win.isDisplayable()==false){
+    					tracker.activeWindows.remove(i);
+    				}
+    			}
+				Thread.sleep(500);
 			} catch (InterruptedException e) {
 			}
     	}
 	}
 
-	public void windowActivated(WindowEvent arg0) {}
-
-
-	public synchronized void windowClosed(WindowEvent e) {
-		if(numRDependentWindows>0)
-			numRDependentWindows--;
-	}
-
-	public void windowClosing(WindowEvent e) {}
-	public void windowDeactivated(WindowEvent e) {}
-	public void windowDeiconified(WindowEvent e) {}
-	public void windowIconified(WindowEvent e) {}
-	public void windowOpened(WindowEvent e) {}
 
 	
 }

@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.WindowTracker;
 
 public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
@@ -66,8 +67,10 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	public void updateClicked(){
 		GLMBuilder bld = new GLMBuilder(model);
 		bld.setLocationRelativeTo(this);
-		this.dispose();
 		bld.setVisible(true);
+		WindowTracker.addWindow(bld);
+		this.dispose();
+
 	}
 	
 	public void optionsClicked(){
