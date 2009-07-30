@@ -1,15 +1,10 @@
 package org.rosuda.deducer;
 
 import java.awt.Window;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import org.rosuda.deducer.data.DataFrameWindow;
 
 public class WindowTracker{
 	protected ArrayList activeWindows = new ArrayList();
@@ -31,11 +26,15 @@ public class WindowTracker{
 	}
 	
 	public static void waitForAllClosed(){
+		if(tracker==null){
+			tracker = new WindowTracker();
+			tracker.activeWindows = new ArrayList();			
+		}
     	while(tracker.activeWindows.size()>0){
     		try {
     			for(int i=0;i<tracker.activeWindows.size();i++){
     				Window win = (Window)tracker.activeWindows.get(i);
-    				if(win==null || win.isDisplayable()==false){
+    				if(win==null || !win.isDisplayable() || !win.isVisible()){
     					tracker.activeWindows.remove(i);
     				}
     			}
@@ -43,8 +42,5 @@ public class WindowTracker{
 			} catch (InterruptedException e) {
 			}
     	}
-	}
-
-
-	
+	}	
 }

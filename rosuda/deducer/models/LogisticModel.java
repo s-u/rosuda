@@ -13,7 +13,6 @@ public class LogisticModel extends GLMModel{
 	
 	protected String runPlots(String cmd,String modelName,boolean preview,ArrayList tmp,
 			RModel prevModel){
-		
 		cmd = super.runPlots(cmd, modelName, preview, tmp, prevModel);
 		
 		if(roc.roc & !preview){

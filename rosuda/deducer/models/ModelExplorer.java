@@ -213,6 +213,9 @@ public class ModelExplorer extends JFrame {
 					}
 				}
 			}
+			assumpHomo.setVisible(false);
+			assumpFunc.setVisible(false);
+			assumpN.setVisible(false);
 			this.setSize(708, 625);
 		} catch (Exception e) {
 			new ErrorMsg(e);

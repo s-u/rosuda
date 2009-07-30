@@ -103,6 +103,7 @@ public class Deducer {
 		    	inst.setVisible(true);
 	    	}*/
 			started=true;
+			eval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
 		}catch(Exception e){new ErrorMsg(e);}
 	}
 	
@@ -228,7 +229,7 @@ public class Deducer {
 				DataFrameWindow.setTopDataWindow(var);
 			}
 		}else if (cmd.equals("Open Data Set")){
-			needsRLocked=true;
+			//needsRLocked=true;
 			DataLoader inst = new DataLoader();
 			DataFrameWindow.setTopDataWindow(inst.getDataName());
 			Deducer.setRecentData(inst.getDataName());
