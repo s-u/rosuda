@@ -30,9 +30,6 @@ public class ModelExplorer extends JFrame {
 	protected JButton means;
 	protected JButton export;
 	protected JButton update;
-	protected JButton assumpHomo;
-	protected JButton assumpFunc;
-	protected JButton assumpN;
 	protected JLabel modelFormula;
 	protected JPanel okayCancelPanel;
 	protected HelpButton help;
@@ -49,7 +46,7 @@ public class ModelExplorer extends JFrame {
 		initGUI();
 	}
 	
-	private void initGUI() {
+	protected void initGUI() {
 		try {
 			{
 				AnchorLayout thisLayout = new AnchorLayout();
@@ -65,24 +62,6 @@ public class ModelExplorer extends JFrame {
 						topPanel.add(modelFormula);
 						modelFormula.setBounds(282, -1, 418, 36);
 						modelFormula.setFont(new java.awt.Font("Tahoma",0,10));
-					}
-					{
-						assumpN = new JButton();
-						topPanel.add(assumpN);
-						assumpN.setBounds(12, 8, 27, 27);
-						assumpN.setText("Large Sample");
-					}
-					{
-						assumpFunc = new JButton();
-						topPanel.add(assumpFunc);
-						assumpFunc.setBounds(44, 8, 27, 27);
-						assumpFunc.setText("Correct Functional Form");
-					}
-					{
-						assumpHomo = new JButton();
-						topPanel.add(assumpHomo);
-						assumpHomo.setText("Homoskedasticity");
-						assumpHomo.setBounds(76, 8, 27, 27);
 					}
 				}
 				{
@@ -213,9 +192,6 @@ public class ModelExplorer extends JFrame {
 					}
 				}
 			}
-			assumpHomo.setVisible(false);
-			assumpFunc.setVisible(false);
-			assumpN.setVisible(false);
 			this.setSize(708, 625);
 		} catch (Exception e) {
 			new ErrorMsg(e);

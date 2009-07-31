@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.swing.JOptionPane;
 
 public class HelpButton extends IconButton {
-	public static String baseUrl = "http://ifellows.ucsd.edu/pmwiki/";
+	public static String baseUrl = "http://www.deducer.org/pmwiki/";
 	public String url;
 	public HelpButton(String helpUrl) {
 		super("/icons/info_28.png", "help",null, "help");

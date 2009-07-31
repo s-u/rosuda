@@ -49,6 +49,8 @@ public class CorDialog extends JDialog implements ActionListener{
 	private JButton addVar;
 	private JButton linearAssump;
 	private JButton largeSampeAssump2;
+	private JButton monoAssump;
+	private JButton monoAssump1;
 	private JRadioButton spearman;
 	private JSeparator sep1;
 	private JButton largeSampleAssump1;
@@ -76,7 +78,6 @@ public class CorDialog extends JDialog implements ActionListener{
 		else
 			setModel(lastModel);
 		variableSelector.getJComboBox().addActionListener(this);	
-		linearAssump.setVisible(false);
 	}
 	
 	private void initGUI() {
@@ -145,6 +146,11 @@ public class CorDialog extends JDialog implements ActionListener{
 					largeSampleAssump1.setBounds(34, 121, 27, 27);
 				}
 				{
+					monoAssump1 = new IconButton("/icons/func_assump.png","Monotonic",null,"Monotonic");
+					typePanel.add(monoAssump1);
+					monoAssump1.setBounds(65, 121, 27, 27);
+				}
+				{
 					sep1 = new JSeparator();
 					typePanel.add(sep1);
 					sep1.setBounds(48, 160, 129, 5);
@@ -161,9 +167,14 @@ public class CorDialog extends JDialog implements ActionListener{
 					largeSampeAssump2.setBounds(34, 190, 27, 27);
 				}
 				{
-					linearAssump = new JButton();
+					monoAssump = new IconButton("/icons/func_assump.png","Monotonic",null,"Monotonic");
+					typePanel.add(monoAssump);
+					monoAssump.setBounds(65, 190, 27, 27);
+				}
+				{
+					linearAssump = new IconButton("/icons/func_assump.png","Linear Relationship",
+													null,"Linear Relationship");
 					typePanel.add(linearAssump);
-					linearAssump.setText("Linear Relationship");
 					linearAssump.setBounds(87, 51, 27, 27);
 				}
 			}

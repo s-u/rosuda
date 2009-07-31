@@ -4,9 +4,12 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.Vector;
 
+import javax.swing.JButton;
+
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.IconButton;
 
 public class GLMExplorer extends ModelExplorer implements WindowListener{
 	
@@ -15,12 +18,17 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	protected ModelPlotPanel diagnosticTab;
 	protected ModelPlotPanel termTab;
 	protected ModelPlotPanel addedTab;
+	protected IconButton assumpHomo;
+	protected IconButton assumpFunc;
+	protected IconButton assumpN;
 	
 	GLMExplorer(GLMModel mod){
 		super();
+		this.setTitle("Generalized Linear Model Explorer");
 		help.setUrl("pmwiki.php?n=Main.GeneralizedLinearModel");		
 		setModel(mod);
 		initTabs();
+		initAssumptions();
 		this.addWindowListener(this);
 	}
 	
@@ -45,6 +53,25 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 			tabs.addTab("Added Variable", addedTab);
 		}catch(Exception e){
 			new ErrorMsg(e);
+		}
+	}
+	
+	protected void initAssumptions(){
+		{
+			assumpN =  new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+			topPanel.add(assumpN);
+			assumpN.setBounds(12, 8, 27, 27);
+		}
+		{
+			assumpFunc = new IconButton("/icons/func_assump.png","Correct Functional Form",
+					null,"Correct Functional Form");
+			topPanel.add(assumpFunc);
+			assumpFunc.setBounds(44, 8, 27, 27);
+		}
+		{
+			assumpHomo = new IconButton("/icons/outlier_assump.png","No Outliers",null,"No Outliers");
+			topPanel.add(assumpHomo);
+			assumpHomo.setBounds(76, 8, 27, 27);
 		}
 	}
 	

@@ -1,16 +1,49 @@
 package org.rosuda.deducer.models;
 
+import javax.swing.JButton;
+
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.IconButton;
 
 public class LinearExplorer extends GLMExplorer{
-
+	protected IconButton assumpOutlier;
 	LinearExplorer(GLMModel mod) {
 		super(mod);
 		help.setUrl("pmwiki.php?n=Main.LinearModel");
 		this.setTitle("Linear Regression Model Explorer");
 	}
-
+	
+	protected void initAssumptions(){
+		try{
+		{
+			assumpN =  new IconButton("/icons/N_assump.png","Large Sample",null,"Large Sample");
+			topPanel.add(assumpN);
+			assumpN.setBounds(108, 8, 27, 27);
+		}
+		{
+			assumpFunc = new IconButton("/icons/func_assump.png","Correct Functional Form",
+					null,"Correct Functional Form");
+			topPanel.add(assumpFunc);
+			assumpFunc.setBounds(44, 8, 27, 27);
+		}
+		{
+			assumpHomo = new IconButton("/icons/eqvar_assump.png","Equal Variance",null,"Equal Variance");
+			topPanel.add(assumpHomo);
+			assumpHomo.setBounds(76, 8, 27, 27);
+		}
+		{
+			assumpOutlier = new IconButton("/icons/outlier_assump.png","No Outliers",null,"No Outliers");
+			topPanel.add(assumpOutlier);
+			assumpOutlier.setBounds(12, 8, 27, 27);
+		}
+		refreshAssumptions();
+		}catch(Exception e){
+			new ErrorMsg(e);
+		}
+	}
+	
 	public void run(){
 		if(((LinearModel)model).hccm){
 			model.plots.confInt=false;
@@ -59,6 +92,27 @@ public class LinearExplorer extends GLMExplorer{
 		bld.setVisible(true);
 		WindowTracker.addWindow(bld);
 		this.dispose();
+	}
+	
+	public void setModel(GLMModel mod){
+		super.setModel(mod);
+		refreshAssumptions();
+	}
+	
+	private void refreshAssumptions(){
+		if(model!=null && model instanceof LinearModel && assumpHomo!=null){
+			if(((LinearModel)model).hccm){
+				assumpHomo.setVisible(false);	
+				assumpN.setSize(27, 27);
+				assumpN.setIcon("/icons/N_assump.png");
+				assumpN.setToolTipText("Large sample");				
+			}else{
+				assumpN.setIcon("/icons/N_or_norm_assump.png");
+				assumpN.setToolTipText("Large sample or normal residuals");
+				assumpN.setSize(47, 27);
+				assumpHomo.setVisible(true);
+			}
+		}
 	}
 	
 }
