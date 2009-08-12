@@ -105,7 +105,7 @@ public class XGDserver extends Thread {
                     int len = getInt(hdr,0);
                     int cmd = len&0xff;
                     len = len >> 8;
-                    System.out.println("CMD: "+hdr[3]+", length: "+len);
+                    System.out.println("CMD: "+ cmd +", length: "+len);
 
                     byte[] par=new byte[len];
 
