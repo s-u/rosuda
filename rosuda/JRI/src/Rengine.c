@@ -134,18 +134,28 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
       return SEXP2L(es);
 }
 
-JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniAssign
+struct safeAssign_s {
+    SEXP sym, val, rho;
+};
+
+static void safeAssign(void *data) {
+    struct safeAssign_s *s = (struct safeAssign_s*) data;
+    defineVar(s->sym, s->val, s->rho);
+}
+
+JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniAssign
 (JNIEnv *env, jobject this, jstring symName, jlong valL, jlong rhoL)
 {
-    SEXP sym, val, rho;
-    
-    sym = jri_installString(env, symName);
-    if (!sym || sym==R_NilValue) return;
+    struct safeAssign_s s;
+  
+    s.sym = jri_installString(env, symName);
+    if (!s.sym || s.sym == R_NilValue) return;
 
-    rho=(rhoL==0)?R_GlobalEnv:L2SEXP(rhoL);
-    val=(valL==0)?R_NilValue:L2SEXP(valL);
+    s.rho = rhoL ? L2SEXP(rhoL) : R_GlobalEnv;
+    s.val = valL ? L2SEXP(valL) : R_NilValue;
    
-    defineVar(sym, val, rho);
+    /* we have to use R_ToplevelExec because defineVar may fail on locked bindings */
+    return R_ToplevelExec(safeAssign, (void*) &s) ? JNI_FALSE : JNI_TRUE;
 }
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniProtect

@@ -50,7 +50,7 @@ public class Rengine extends Thread {
 	/**	API version of the Rengine itself; see also rniGetVersion() for binary version. It's a good idea for the calling program to check the versions of both and abort if they don't match. This should be done using {@link #versionCheck}
 		@return version number as <code>long</code> in the form <code>0xMMmm</code> */
     public static long getVersion() {
-        return 0x0109;
+        return 0x010a;
     }
 
     /** check API version of this class and the native binary. This is usually a good idea to ensure consistency.
@@ -410,8 +410,10 @@ public class Rengine extends Thread {
     /** RNI: assign a value to an environment
 	@param name name
 	@param exp value
-	@param rho environment (use 0 for the global environment) */
-    public synchronized native void rniAssign(String name, long exp, long rho);
+	@param rho environment (use 0 for the global environment)
+	@return <code>true</code> if successful, <code>false</code> on failure (usually this means that the binding is locked)
+    */
+    public synchronized native boolean rniAssign(String name, long exp, long rho);
     
     /** RNI: get the SEXP type
 	@param exp reference to a SEXP
@@ -646,88 +648,90 @@ public class Rengine extends Thread {
     }
 	
 	/** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
-        @param sym symbol name.  The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
-		@param ct contents
-		@since JRI 0.3
-        */
-    public void assign(String sym, String ct) {
+         *  @param sym symbol name.  The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
+	 *  @param ct contents
+	 *  @return <code>true</code> if successful, <code>false</code> otherwise
+	 *  @since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
+	 */
+    public boolean assign(String sym, String ct) {
        	long x1 = rniPutString(ct);
-       	rniAssign(sym,x1,0);
+       	return rniAssign(sym,x1,0);
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
         @param sym symbol name. The symbol name is used as-is, i.e. as if it was quoted in R code (for example assigning to "foo$bar" has the same effect as `foo$bar`&lt;- and NOT foo$bar&lt;-).
         @param r contents as <code>REXP</code>. currently only raw references and basic types (int, double, int[], double[], boolean[]) are supported.
-		@since JRI 0.3
+	@return <code>true</code> if successful, <code>false</code> otherwise (usually locked binding or unsupported REXP)
+	@since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
         */
-    public void assign(String sym, REXP r) {
+    public boolean assign(String sym, REXP r) {
 	if (r.Xt == REXP.XT_NONE) {
-	    rniAssign(sym, r.xp, 0);
-	    return;
+	    return rniAssign(sym, r.xp, 0);
 	}
     	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
-    		rniAssign(sym,x1,0);
-		return;
+    		return rniAssign(sym,x1,0);
     	}
     	if (r.Xt == REXP.XT_DOUBLE || r.Xt == REXP.XT_ARRAY_DOUBLE) {
     		double[] cont = r.rtype == REXP.XT_DOUBLE?new double[]{((Double)r.cont).intValue()}:(double[])r.cont;
     		long x1 = rniPutDoubleArray(cont);
-    		rniAssign(sym,x1,0);
-		return;
+    		return rniAssign(sym,x1,0);
     	}
 	if (r.Xt == REXP.XT_ARRAY_BOOL_INT) {
 	    long x1 = rniPutBoolArrayI((int[])r.cont);
-	    rniAssign(sym,x1,0);
-	    return;
+	    return rniAssign(sym,x1,0);
 	}
-		if (r.Xt == REXP.XT_STR || r.Xt == REXP.XT_ARRAY_STR) {
-			String[] cont = r.rtype == REXP.XT_STR?new String[]{(String)r.cont}:(String[])r.cont;
-			long x1 = rniPutStringArray(cont);
-			rniAssign(sym,x1,0);
-			return;
-		}
+	if (r.Xt == REXP.XT_STR || r.Xt == REXP.XT_ARRAY_STR) {
+		String[] cont = r.rtype == REXP.XT_STR?new String[]{(String)r.cont}:(String[])r.cont;
+		long x1 = rniPutStringArray(cont);
+		return rniAssign(sym,x1,0);
+	}
+	return false;
     }
 
     /** assign values of an array of doubles to a symbol in R (creating an integer vector).<br>
         equals to calling {@link #assign(String, REXP)}.
 		@param sym symbol name
 		@param val double array to assign
-		@since JRI 0.3
+		@return <code>true</code> if successful, <code>false</code> otherwise
+		@since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
 	*/
-    public void assign(String sym, double[] val)  {
-        assign(sym,new REXP(val));
+    public boolean assign(String sym, double[] val)  {
+        return assign(sym,new REXP(val));
     }
 
     /** assign values of an array of integers to a symbol in R (creating a numeric vector).<br>
         equals to calling {@link #assign(String, REXP)}.
 		@param sym symbol name
 		@param val integer array to assign
-		@since JRI 0.3
+		@return <code>true</code> if successful, <code>false</code> otherwise
+		@since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
 		*/
-	public void assign(String sym, int[] val) {
-        assign(sym,new REXP(val));
+    public boolean assign(String sym, int[] val) {
+        return assign(sym,new REXP(val));
     }
 
     /** assign values of an array of booleans to a symbol in R (creating a logical vector).<br>
         equals to calling {@link #assign(String, REXP)}.
 		@param sym symbol name
 		@param val boolean array to assign
-		@since JRI 0.3-2
+		@return <code>true</code> if successful, <code>false</code> otherwise
+		@since JRI 0.3-2 (return value changed to boolean in JRI 0.5-1)
 		*/
-    public void assign(String sym, boolean[] val) {
-        assign(sym,new REXP(val));
+    public boolean assign(String sym, boolean[] val) {
+        return assign(sym,new REXP(val));
     }
 
     /** assign values of an array of strings to a symbol in R (creating a character vector).<br>
         equals to calling {@link #assign(String, REXP)}.
 		@param sym symbol name
 		@param val string array to assign
-		@since JRI 0.3
+		@return <code>true</code> if successful, <code>false</code> otherwise
+		@since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
 		*/
-	public void assign(String sym, String[] val) {
-        assign(sym,new REXP(val));
+    public boolean assign(String sym, String[] val) {
+        return assign(sym,new REXP(val));
     }
 
     /** creates a <code>jobjRef</code> reference in R via rJava.<br><b>Important:</b> rJava must be loaded and intialized in R (e.g. via <code>eval("{library(rJava);.jinit()}",false)</code>, otherwise this will fail. Requires rJava 0.4-13 or higher!
