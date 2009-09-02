@@ -30,6 +30,47 @@ import org.rosuda.javaGD.*;
 
 /** XGDserver is a sample implementation of a server understanding the XGD1 protocol using {@link GDCanvas} for drawing. It is meant rather as a template for projects that wish to use R graphics device remotely via the <a href=http://rforge.net/xGD>xGD package</a>. The main customization for other projects can be done for Open (1) and Close (2) commands. */ 
 public class XGDserver extends Thread {
+    /** default TCP port used by XGD */
+    public static final int XGD_Port = 1427;
+
+    public static final byte CMD_Open       = 0x01;
+    public static final byte CMD_Close      = 0x02;
+    public static final byte CMD_Activate   = 0x03;
+    public static final byte CMD_Deactivate = 0x04;
+    public static final byte CMD_Circle     = 0x05;
+    public static final byte CMD_Clip       = 0x06;
+    public static final byte CMD_Hold       = 0x07;
+    public static final byte CMD_Locator    = 0x48;
+    public static final byte CMD_Line       = 0x09;
+    public static final byte CMD_MetricInfo = 0x4a;
+    public static final byte CMD_Mode       = 0x0b;
+    public static final byte CMD_NewPage    = 0x0c;
+    public static final byte CMD_Polygon    = 0x0d;
+    public static final byte CMD_Polyline   = 0x0e;
+    public static final byte CMD_Rect       = 0x0f;
+    public static final byte CMD_GetSize    = 0x50;
+    public static final byte CMD_StrWidth   = 0x51;
+    public static final byte CMD_Text       = 0x12;
+
+    public static final byte CMD_SetColor   = 0x13;
+    public static final byte CMD_SetFill    = 0x14;
+    public static final byte CMD_SetFont    = 0x15;
+    public static final byte CMD_SetLinePar = 0x16;
+
+    /** TCP port to listen on */
+    int port;
+    
+    /** start a new XGD server on a specific port
+     *  @param port TCP port to listen on */
+    public XGDserver(int port) {
+	this.port = port;
+    }
+
+    /** start a new XGD server on the default port */
+    public XGDserver() {
+	this.port = XGD_Port;
+    }
+    
     /** worker class serving one client connection */
     class XGDworker extends Thread {
 	/** socket for communication with the client */
@@ -176,7 +217,7 @@ public class XGDserver extends Thread {
 
                     //dump("Got pars: ",par);
                     
-                    if (cmd == 1) {
+                    if (cmd == CMD_Open) {
                         double w=getDouble(par, 0);
                         double h=getDouble(par, 8);
                         System.out.println("Open("+w+",+"+h+")");
@@ -194,7 +235,7 @@ public class XGDserver extends Thread {
                         f.setVisible(true);
                     }
 
-                    if (cmd == 2) {
+                    if (cmd == CMD_Close) {
                         if (f!=null) {
                             f.removeAll();
                             f.dispose();
@@ -205,27 +246,27 @@ public class XGDserver extends Thread {
                         return;
                     }
 
-                    if (cmd == 9 && c!=null) {
+                    if (cmd == CMD_Line && c!=null) {
                         c.add(new GDLine(getDouble(par,0), getDouble(par,8), getDouble(par,16), getDouble(par,24)));
                     }
 
-                    if (cmd == 15 && c!=null) {
+                    if (cmd == CMD_Rect && c!=null) {
                         c.add(new GDRect(getDouble(par,0), getDouble(par,8), getDouble(par,16), getDouble(par,24)));
                     }
 
-                    if (cmd == 5 && c!=null) {
+                    if (cmd == CMD_Circle && c!=null) {
                         c.add(new GDCircle(getDouble(par,0), getDouble(par,8), getDouble(par,16)));
                     }
 
-                    if (cmd == 11 && c!=null) {
+                    if (cmd == CMD_Mode && c!=null) {
                         if (getInt(par, 0)==0) c.repaint();
                     }
 
-                    if (cmd == 12 && c!=null) {
+                    if (cmd == CMD_NewPage && c!=null) {
                         c.reset();
                     }
 
-                    if ((cmd == 13 || cmd == 14) && c!=null) {
+                    if ((cmd == CMD_Polygon || cmd == CMD_Polyline) && c!=null) {
                         int pn=getInt(par,0);
                         int i=0;
                         double x[], y[];
@@ -236,33 +277,33 @@ public class XGDserver extends Thread {
                             y[i]=getDouble(par, 4 + i*8 + pn*8);
                             i++;
                         }
-                        c.add(new GDPolygon(pn, x, y, cmd==14));
+                        c.add(new GDPolygon(pn, x, y, cmd == CMD_Polyline));
                     }
                     
-                    if (cmd == 18 && c!=null) {
+                    if (cmd == CMD_Text && c!=null) {
                         c.add(new GDText(getDouble(par,0), getDouble(par,8), getDouble(par,16), getDouble(par,24), new String(par,32,par.length-33)));
                     }
 
-                    if (cmd == 0x13 && c!=null) {
+                    if (cmd == CMD_SetColor && c!=null) {
                         c.add(new GDColor(getInt(par,0)));
                     }
 
-                    if (cmd == 0x14 && c!=null) {
+                    if (cmd == CMD_SetFill && c!=null) {
                         c.add(new GDFill(getInt(par,0)));
                     }
 
-                    if (cmd == 0x15 && c!=null) {
+                    if (cmd == CMD_SetFont && c!=null) {
                         GDFont xf=new GDFont(getDouble(par,0), getDouble(par,8), getDouble(par,16), getInt(par,24), new String(par,32,par.length-33));
                         c.add(xf);
                         // we need to set Canvas' internal font to this new font for further metrics calculations
                         c.gs.f=xf.font;
                     }
 
-                    if (cmd == 0x16 && c!=null) {
+                    if (cmd == CMD_SetLinePar && c!=null) {
                         c.add(new GDLinePar(getDouble(par,0), getInt(par,8)));
                     }
                     
-                    if (cmd == 0x50) {
+                    if (cmd == CMD_GetSize) {
                         byte[] b = new byte[4*8 + 4];
                         setInt((0x50 | 0x80) | ((4*8)<<8), b, 0);
                         double width=0d, height=0d;
@@ -279,7 +320,7 @@ public class XGDserver extends Thread {
                         sos.flush();
                     }
                     
-                    if (cmd == 0x51) { // StrWidth
+                    if (cmd == CMD_StrWidth) { // StrWidth
                         String s=new String(par, 0, par.length-1);
                         System.out.println("Request: get string width of \""+s+"\"");
                         byte[] b= new byte[12];
@@ -299,7 +340,7 @@ public class XGDserver extends Thread {
                         sos.flush();
                     }
 
-                    if (cmd == 0x4a) { // MetricInfo
+                    if (cmd == CMD_MetricInfo) { // MetricInfo
                         int ch=getInt(par, 0);
                         System.out.println("Request: metric info for char "+ch);
                         byte[] b= new byte[4 + 3*8];
@@ -336,7 +377,7 @@ public class XGDserver extends Thread {
     /** main server method listening on port 1427 and serving clients. It dispatches new worker threads for each accepted connection. */
     public void run() {
         try {
-            ServerSocket s=new ServerSocket(1427);
+            ServerSocket s=new ServerSocket(port);
             while(true) {
                 Socket cs=s.accept();
                 System.out.println("Accepted connection, spawning new worker thread.");
