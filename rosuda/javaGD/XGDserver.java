@@ -1,3 +1,26 @@
+//
+//  XGDserver.java
+//  A sample implementation of the XGD1 protocol using GDCanvas for drawing
+//  
+//  Created by Simon Urbanek on Sun Apr 05 2004.
+//  Copyright (c) 2004-2009 Simon Urbanek. All rights reserved.
+//
+//  This library is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU Lesser General Public
+//  License as published by the Free Software Foundation;
+//  version 2.1 of the License.
+//  
+//  This library is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//  Lesser General Public License for more details.
+//  
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with this library; if not, write to the Free Software
+//  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+//
+//  $Id$
+
 package org.rosuda.javaGD;
 
 import java.net.*;
@@ -5,13 +28,23 @@ import java.io.*;
 import java.awt.*;
 import org.rosuda.javaGD.*;
 
+/** XGDserver is a sample implementation of a server understanding the XGD1 protocol using {@link GDCanvas} for drawing. It is meant rather as a template for projects that wish to use R graphics device remotely via the <a href=http://rforge.net/xGD>xGD package</a>. The main customization for other projects can be done for Open (1) and Close (2) commands. */ 
 public class XGDserver extends Thread {
+    /** worker class serving one client connection */
     class XGDworker extends Thread {
+	/** socket for communication with the client */
         public Socket s;
+	/** flag determining whether the client is big-endian such that the transmission byte order is maintianed accordingly */
         boolean isBE;
+	/** canvas used for drawing */
         GDCanvas c;
+	/** window (frame) containing the canvas */
         Frame f;
 
+	/** converts an integer (32-bit) from the packet stream
+	 *  @param b packet byte stream
+	 *  @param o offset in the stream
+	 *  @return integer represented in the packet and the given offset */
         int getInt(byte[] b, int o) {
             return  (isBE)?
             ((b[o+3]&255)|((b[o+2]&255)<<8)|((b[o+1]&255)<<16)|((b[o]&255)<<24))
@@ -19,6 +52,10 @@ public class XGDserver extends Thread {
             ((b[o]&255)|((b[o+1]&255)<<8)|((b[o+2]&255)<<16)|((b[o+3]&255)<<24));
         }
 
+	/** converts a long integer (64-bit) from the packet stream
+	 *  @param b packet byte stream
+	 *  @param o offset in the stream
+	 *  @return long integer represented in the packet and the given offset */
         long getLong(byte[] b, int offset) {
             long l1, l2;
             if (isBE) {
@@ -31,10 +68,18 @@ public class XGDserver extends Thread {
             return l1|(l2<<32);
         }
 
+	/** converts a double from the packet stream
+	 *  @param b packet byte stream
+	 *  @param o offset in the stream
+	 *  @return double represented in the packet and the given offset */
         double getDouble(byte[] b, int offset) {
             return Double.longBitsToDouble(getLong(b, offset));
         }
 
+	/** stores an integer (32-bit) into the packet stream
+	 *  @param v integer value to store
+	 *  @param buf packet byte stream
+	 *  @param o offset in the stream to store to (takes 4 bytes) */
         void setInt(int v, byte[] buf, int o) {
             if (!isBE) {
                 buf[o]=(byte)(v&255); o++;
@@ -49,15 +94,26 @@ public class XGDserver extends Thread {
             }
         }
 
+	/** stores a long integer (64-bit) into the packet stream
+	 *  @param l long integer value to store
+	 *  @param buf packet byte stream
+	 *  @param o offset in the stream to store to (takes 8 bytes) */
         void setLong(long l, byte[] buf, int o) {
             setInt((int)(l&0xffffffffL),buf,isBE?o+4:o);
             setInt((int)(l>>32),buf,isBE?o:o+4);
         }
 
+	/** stores a double into the packet stream
+	 *  @param d double value to store
+	 *  @param buf packet byte stream
+	 *  @param o offset in the stream to store to (takes 8 bytes) */
         void setDouble(double d, byte[] buf, int o) {
             setLong(Double.doubleToLongBits(d),buf,o);
         }
         
+	/** dumps a byte stream in hex form to {@link System.out} (with a prefix and trailing new line)
+	 *  @param s prefix string to print before the dump
+	 *  @param b byte array to print in hex */
         void dump(String s, byte[] b) {
             System.out.print(s);
             int i=0;
@@ -68,6 +124,7 @@ public class XGDserver extends Thread {
             System.out.println("");
         }
         
+	/** main thread method servicing the client */
         public void run() {
             try {
                 s.setTcpNoDelay(true); // send packets immediately (important, because R is waiting for the response)
@@ -276,6 +333,7 @@ public class XGDserver extends Thread {
         }
     }
 
+    /** main server method listening on port 1427 and serving clients. It dispatches new worker threads for each accepted connection. */
     public void run() {
         try {
             ServerSocket s=new ServerSocket(1427);
@@ -293,12 +351,16 @@ public class XGDserver extends Thread {
         }
     }
 
+    /** starts a new XGD server. Note that there can only be one active server at the time unless the TCP port number is changed.
+     *  @return new XGD server instance */
     public static XGDserver startServer() {
         XGDserver s=new XGDserver();
         s.start();
         return s;
     }
 
+    /** main method - calls {@link #startServer()}
+     *  @param args command line arguments (currently ignored) */
     public static void main(String[] args) {
         System.out.println("Starting XGDserver.");
         startServer();
