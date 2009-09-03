@@ -155,7 +155,7 @@ JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniAssign
     s.val = valL ? L2SEXP(valL) : R_NilValue;
    
     /* we have to use R_ToplevelExec because defineVar may fail on locked bindings */
-    return R_ToplevelExec(safeAssign, (void*) &s) ? JNI_FALSE : JNI_TRUE;
+    return R_ToplevelExec(safeAssign, (void*) &s) ? JNI_TRUE : JNI_FALSE;
 }
 
 JNIEXPORT void JNICALL Java_org_rosuda_JRI_Rengine_rniProtect
