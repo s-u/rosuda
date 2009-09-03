@@ -149,7 +149,7 @@ JNIEXPORT jboolean JNICALL Java_org_rosuda_JRI_Rengine_rniAssign
     struct safeAssign_s s;
   
     s.sym = jri_installString(env, symName);
-    if (!s.sym || s.sym == R_NilValue) return;
+    if (!s.sym || s.sym == R_NilValue) return JNI_FALSE;
 
     s.rho = rhoL ? L2SEXP(rhoL) : R_GlobalEnv;
     s.val = valL ? L2SEXP(valL) : R_NilValue;
