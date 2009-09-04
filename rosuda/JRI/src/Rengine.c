@@ -116,7 +116,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniParse
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
   (JNIEnv *env, jobject this, jlong exp, jlong rho)
 {
-      SEXP es, exps=L2SEXP(exp);
+      SEXP es = R_NilValue, exps=L2SEXP(exp);
       int er=0;
       int i=0,l;
 
