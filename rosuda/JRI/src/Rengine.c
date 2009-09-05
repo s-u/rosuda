@@ -117,6 +117,7 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
   (JNIEnv *env, jobject this, jlong exp, jlong rho)
 {
       SEXP es = R_NilValue, exps=L2SEXP(exp);
+      SEXP eval_env = L2SEXP(rho);
       int er=0;
       int i=0,l;
 
@@ -125,11 +126,12 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
       if (TYPEOF(exps)==EXPRSXP) { /* if the object is a list of exps, eval them one by one */
           l=LENGTH(exps);
           while (i<l) {
-              es=R_tryEval(VECTOR_ELT(exps,i), R_GlobalEnv, &er);
+              es=R_tryEval(VECTOR_ELT(exps,i), eval_env, &er);
+              /* TODO: deal with er here: it indicates if an error occured */
               i++;
           }
       } else
-          es=R_tryEval(exps, R_GlobalEnv, &er);
+          es=R_tryEval(exps, eval_env, &er);
 
       return SEXP2L(es);
 }
