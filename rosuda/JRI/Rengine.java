@@ -753,7 +753,7 @@ public class Rengine extends Thread {
 					   )
 				  )
 			 , 0);
-	if (l == 0) return null;
+	if (l <= 0) return null;
 	return new REXP(this, l, false);	
     }
 }

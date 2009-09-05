@@ -113,6 +113,16 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniParse
       return SEXP2L(pstr);
 }
 
+/** 
+ * Evaluates one expression or a list of expressions
+ *
+ * @param exp long reflection of the expression to evaluate
+ * @param rho long reflection of the environment where to evaluate
+ * 
+ * @return -1 if exp is not valid (<1), -2 if an error occurs during
+ *         evaluation, or the long reflection of the result 
+ *         if the eval is successful
+ */
 JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
   (JNIEnv *env, jobject this, jlong exp, jlong rho)
 {
@@ -121,18 +131,28 @@ JNIEXPORT jlong JNICALL Java_org_rosuda_JRI_Rengine_rniEval
       int er=0;
       int i=0,l;
 
+      /* invalid expression (parse error, ... ) */
       if (exp<1) return -1;
 
-      if (TYPEOF(exps)==EXPRSXP) { /* if the object is a list of exps, eval them one by one */
+      if (TYPEOF(exps)==EXPRSXP) { 
+      	  /* if the object is a list of exps, eval them one by one */
           l=LENGTH(exps);
           while (i<l) {
               es=R_tryEval(VECTOR_ELT(exps,i), eval_env, &er);
-              /* TODO: deal with er here: it indicates if an error occured */
+              
+              /* an error occured, no need to continue */
+              if( er > 0 ) break ; 
               i++;
           }
       } else
           es=R_tryEval(exps, eval_env, &er);
-
+      
+      /* 
+       * -2 indicates that an error occured: not using -1 here to  
+       * disambiguate from the return -1 above
+       */
+      if( er > 0 ) return -2 ;
+      
       return SEXP2L(es);
 }
 
