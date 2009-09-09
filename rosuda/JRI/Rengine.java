@@ -12,6 +12,8 @@ public class Rengine extends Thread {
 	 */
 	public static boolean jriLoaded;
 
+    boolean loopHasLock = false;
+    
     static {
         try {
             System.loadLibrary("jri");
@@ -60,7 +62,7 @@ public class Rengine extends Thread {
 	}
 	
     /** debug flag. Set to value &gt;0 to enable debugging messages. The verbosity increases with increasing number */
-    public static int DEBUG=0;
+    public static int DEBUG = 0;
 	
 	/** this value specifies the time (in ms) to spend sleeping between checks for R shutdown requests if R event loop is not used. The default is 200ms. Higher values lower the CPU usage but may make R less responsive to shutdown attempts (in theory it should not matter because {@link #stop()} uses interrupt to awake from the idle sleep immediately, but some implementation may not honor that).
 	@since JRI 0.3
@@ -459,17 +461,21 @@ public class Rengine extends Thread {
 	@return content entered by the user. Returning <code>null</code> corresponds to an EOF and usually causes R to exit (as in <code>q()</doce>). */
     public String jriReadConsole(String prompt, int addToHistory)
     {
-		if (DEBUG>1)
-			System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
-        Rsync.unlock();
-        String s=(callback==null)?null:callback.rReadConsole(this, prompt, addToHistory);
-        if (!Rsync.safeLock()) {
-            String es="\n>>JRI Warning: jriReadConsole detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
+	if (DEBUG>1)
+	    System.out.println("Rengine.jreReadConsole BEGIN "+Thread.currentThread());
+        if (loopHasLock) {
+	    Rsync.unlock();
+	    loopHasLock = false;
+	}
+        String s = (callback == null) ? null : callback.rReadConsole(this, prompt, addToHistory);
+        loopHasLock = Rsync.safeLock();
+	if (!loopHasLock) {
+            String es = "\n>>JRI Warning: jriReadConsole detected a possible deadlock ["+Rsync+"]["+Thread.currentThread()+"]. Proceeding without lock, but this is inherently unsafe.\n";
             jriWriteConsole(es, 1);
             System.err.print(es);
         }
-		if (DEBUG>1)
-			System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
+	if (DEBUG>1)
+	    System.out.println("Rengine.jreReadConsole END "+Thread.currentThread());
         return s;
     }
 
@@ -526,8 +532,8 @@ public class Rengine extends Thread {
 		@param convert if set to <code>true</code> the resulting REXP will contain native representation of the contents, otherwise an empty REXP will be returned. Depending on the back-end an empty REXP may or may not be used to convert the result at a later point.
 		@return resulting expression or <code>null</code> if something wnet wrong */
     public synchronized REXP eval(String s, boolean convert) {
-		if (DEBUG>0)
-			System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
+	if (DEBUG>0)
+	    System.out.println("Rengine.eval("+s+"): BEGIN "+Thread.currentThread());
         boolean obtainedLock=Rsync.safeLock();
         try {
             /* --- so far, we ignore this, because it can happen when a callback needs an eval which is ok ...
@@ -537,11 +543,11 @@ public class Rengine extends Thread {
                 System.err.print(es);
             }
              */
-            long pr=rniParse(s, 1);
-            if (pr>0) {
-                long er=rniEval(pr, 0);
-                if (er>0) {
-                    REXP x=new REXP(this, er, convert);
+            long pr = rniParse(s, 1);
+            if (pr > 0) {
+                long er = rniEval(pr, 0);
+                if (er > 0) {
+                    REXP x = new REXP(this, er, convert);
                     if (DEBUG>0) System.out.println("Rengine.eval("+s+"): END (OK)"+Thread.currentThread());
                     return x;
                 }
@@ -609,42 +615,51 @@ public class Rengine extends Thread {
 
     /** attempt to shut down R. This method is asynchronous. */
     public void end() {
-        alive=false;
+        alive = false;
         interrupt();
     }
     
     /** The implementation of the R thread. This method should not be called directly. */	
     public void run() {
+	if (DEBUG > 0)
+	    System.out.println("Starting R...");
+	loopHasLock = Rsync.safeLock(); // force all code to wait until R is ready
+	try {
+	    if (setupR(args) == 0) {
+		if (!runLoop && loopHasLock) { // without event loop we can unlock now since we woin't do anything
+		    Rsync.unlock();
+		    loopHasLock = false;
+		}
+		while (alive) {
+		    try {
+			if (runLoop) {                        
+			    if (DEBUG > 0)
+				System.out.println("***> launching main loop:");
+			    loopRunning = true;
+			    rniRunMainLoop();
+			    // actually R never returns from runMainLoop ...
+			    loopRunning = false;
+			    if (DEBUG > 0)
+				System.out.println("***> main loop finished:");
+			    runLoop = false;
+			    died = true;
+			    return;
+			}
+			sleep(idleDelay);
+			if (runLoop) rniIdle();
+		    } catch (InterruptedException ie) {
+			interrupted();
+		    }
+		}
+		died=true;
 		if (DEBUG>0)
-			System.out.println("Starting R...");
-        if (setupR(args)==0) {
-            while (alive) {
-                try {
-                    if (runLoop) {                        
-						if (DEBUG>0)
-							System.out.println("***> launching main loop:");
-                        loopRunning=true;
-                        rniRunMainLoop();
-						// actually R never returns from runMainLoop ...
-                        loopRunning=false;
-						if (DEBUG>0)
-							System.out.println("***> main loop finished:");
-                        runLoop=false;
-						died=true;
-						return;
-                    }
-                    sleep(idleDelay);
-                    if (runLoop) rniIdle();
-                } catch (InterruptedException ie) {
-                    interrupted();
-                }
-            }
-            died=true;
-			if (DEBUG>0)
-				System.out.println("Terminating R thread.");
-        } else {
-			System.err.println("Unable to start R");
-        }
+		    System.out.println("Terminating R thread.");
+	    } else {
+		System.err.println("Unable to start R");
+	    }
+	} finally {
+	    if (loopHasLock) Rsync.unlock();
+	}
     }
 	
 	/** assign a string value to a symbol in R. The symbol is created if it doesn't exist already.
@@ -654,8 +669,13 @@ public class Rengine extends Thread {
 	 *  @since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
 	 */
     public boolean assign(String sym, String ct) {
-       	long x1 = rniPutString(ct);
-       	return rniAssign(sym,x1,0);
+	boolean obtainedLock = Rsync.safeLock();
+	try {
+	    long x1 = rniPutString(ct);
+	    return rniAssign(sym,x1,0);
+	} finally {
+	    if (obtainedLock) Rsync.unlock();
+	}
     }
 
     /** assign a content of a REXP to a symbol in R. The symbol is created if it doesn't exist already.
@@ -665,27 +685,32 @@ public class Rengine extends Thread {
 	@since JRI 0.3 (return value changed to boolean in JRI 0.5-1)
         */
     public boolean assign(String sym, REXP r) {
-	if (r.Xt == REXP.XT_NONE) {
-	    return rniAssign(sym, r.xp, 0);
-	}
-    	if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
+	boolean obtainedLock = Rsync.safeLock();
+	try {
+	    if (r.Xt == REXP.XT_NONE) {
+		return rniAssign(sym, r.xp, 0);
+	    }
+	    if (r.Xt == REXP.XT_INT || r.Xt == REXP.XT_ARRAY_INT) {
     		int[] cont = r.rtype == REXP.XT_INT?new int[]{((Integer)r.cont).intValue()}:(int[])r.cont;
     		long x1 = rniPutIntArray(cont);
     		return rniAssign(sym,x1,0);
-    	}
-    	if (r.Xt == REXP.XT_DOUBLE || r.Xt == REXP.XT_ARRAY_DOUBLE) {
+	    }
+	    if (r.Xt == REXP.XT_DOUBLE || r.Xt == REXP.XT_ARRAY_DOUBLE) {
     		double[] cont = r.rtype == REXP.XT_DOUBLE?new double[]{((Double)r.cont).intValue()}:(double[])r.cont;
     		long x1 = rniPutDoubleArray(cont);
     		return rniAssign(sym,x1,0);
-    	}
-	if (r.Xt == REXP.XT_ARRAY_BOOL_INT) {
-	    long x1 = rniPutBoolArrayI((int[])r.cont);
-	    return rniAssign(sym,x1,0);
-	}
-	if (r.Xt == REXP.XT_STR || r.Xt == REXP.XT_ARRAY_STR) {
+	    }
+	    if (r.Xt == REXP.XT_ARRAY_BOOL_INT) {
+		long x1 = rniPutBoolArrayI((int[])r.cont);
+		return rniAssign(sym,x1,0);
+	    }
+	    if (r.Xt == REXP.XT_STR || r.Xt == REXP.XT_ARRAY_STR) {
 		String[] cont = r.rtype == REXP.XT_STR?new String[]{(String)r.cont}:(String[])r.cont;
 		long x1 = rniPutStringArray(cont);
 		return rniAssign(sym,x1,0);
+	    }
+	} finally {
+	    if (obtainedLock) Rsync.unlock();
 	}
 	return false;
     }
@@ -740,20 +765,25 @@ public class Rengine extends Thread {
 	@since JRI 0.3-7
     */
     public REXP createRJavaRef(Object o) {
-	if (o == null) return null;
-	String klass = o.getClass().getName();
-	long l = rniEval(
-			 rniLCons(
-				  rniInstallSymbol(".jmkref"),
-				  rniLCons(
-					   rniJavaToXref(o),
-					   rniLCons(
-						    rniPutString(klass), 0
-						    )
-					   )
-				  )
-			 , 0);
-	if (l <= 0) return null;
-	return new REXP(this, l, false);	
+	    if (o == null) return null;
+	    String klass = o.getClass().getName();
+	    boolean obtainedLock = Rsync.safeLock();
+	    try {
+		    long l = rniEval(
+				     rniLCons(
+					      rniInstallSymbol(".jmkref"),
+					      rniLCons(
+						       rniJavaToXref(o),
+						       rniLCons(
+								rniPutString(klass), 0
+								)
+						       )
+					      )
+				     , 0);
+		    if (l <= 0 && l > -4) return null; /* for safety failure codes are only -3 .. 0 to not clash with 64-bit pointers */
+		    return new REXP(this, l, false);
+	    } finally {
+		    if (obtainedLock) Rsync.unlock();
+	    }
     }
 }
