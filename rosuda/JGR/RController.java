@@ -138,7 +138,7 @@ public class RController {
 		REXP x;
 		try {
 			x = JGR.eval(".packages(TRUE)");
-			if (!x.isNull() && x.asStrings() != null) {
+			if (x!= null && !x.isNull() && x.asStrings() != null) {
 				String p = "";
 				for (int i = 0; i < x.asStrings().length - 1; i++)
 					p += x.asStrings()[i] + ",";
@@ -439,7 +439,7 @@ public class RController {
 		String[] r = null;
 		try {
 			x = JGR.idleEval(".refreshKeyWords()");
-			if (!x.isNull() && (r = x.asStrings()) != null)
+			if (x!= null && !x.isNull() && (r = x.asStrings()) != null)
 				return r;
 		} catch (REngineException e) {
 			// TODO Auto-generated catch block
@@ -461,7 +461,7 @@ public class RController {
 		String[] r = null;
 		try {
 			x = JGR.idleEval(".refreshObjects()");
-			if (!x.isNull() && (r = x.asStrings()) != null)
+			if (x!= null && !x.isNull() && (r = x.asStrings()) != null)
 				return r;
 		} catch (REngineException e) {
 			// TODO Auto-generated catch block
@@ -485,9 +485,9 @@ public class RController {
 
 		try {
 			x = JGR.idleEval(".getModels()");
-			if (!x.isNull())
+			if (x!= null && x!= null && !x.isNull())
 				JGR.MODELS.clear();
-			if (!x.isNull() && !x.isNull() && (models = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && x!= null && !x.isNull() && (models = x.asStrings()) != null) {
 				for (int i = 0; i < models.length; i++)
 					JGR.MODELS.add(createRModel(models[i], models[++i]));
 			}
@@ -501,9 +501,9 @@ public class RController {
 		try {
 			x = JGR.idleEval(".getDataObjects()");
 			String[] data;
-			if (!x.isNull())
+			if (x!= null && !x.isNull())
 				JGR.DATA.clear();
-			if (!x.isNull() && (data = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && (data = x.asStrings()) != null) {
 				int a = 1;
 				for (int i = 0; i < data.length; i++) {
 					boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
@@ -522,9 +522,9 @@ public class RController {
 		try {
 			x = JGR.idleEval(".getOtherObjects()");
 			String[] other;
-			if (!x.isNull())
+			if (x!= null && !x.isNull())
 				JGR.OTHERS.clear();
-			if (!x.isNull() && (other = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && (other = x.asStrings()) != null) {
 				int a = 1;
 
 				for (int i = 0; i < other.length; i++) {
@@ -544,9 +544,9 @@ public class RController {
 		try {
 			x = JGR.idleEval(".getFunctionsInWS()");
 			String[] functions;
-			if (!x.isNull())
+			if (x!= null && !x.isNull())
 				JGR.FUNCTIONS.clear();
-			if (!x.isNull() && (functions = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && (functions = x.asStrings()) != null) {
 				int a = 1;
 				for (int i = 0; i < functions.length; i++) {
 					JGR.FUNCTIONS.add(createRObject(functions[i], "function", null, true));
@@ -574,9 +574,9 @@ public class RController {
 		try {
 			x = JGR.eval("sort(.packages(all.available=T))");
 			String[] res;
-			if (!x.isNull() && x.asStrings() != null) {
+			if (x!= null && !x.isNull() && x.asStrings() != null) {
 				REXP y = JGR.eval("(.packages())");
-				if (!y.isNull() && (res = y.asStrings()) != null)
+				if (y!= null && !y.isNull() && (res = y.asStrings()) != null)
 					for (int i = 0; i < res.length; i++)
 						loadedP.put(res[i], dummy);
 				res = x.asStrings();
@@ -623,7 +623,7 @@ public class RController {
 		try {
 			x = JGR.eval("suppressWarnings(try(.getContent(" + (o.getRName()) + p + "),silent=TRUE))");
 			String[] res;
-			if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+			if (x!= null && !x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
 				int a = 1;
 				for (int i = 0; i < res.length; i++) {
 					boolean b = (res[i].equals("null") || res[i].trim().length() == 0);
@@ -794,7 +794,7 @@ public class RController {
 		REXP x;
 		try {
 			x =  JGR.eval("summary(" + sx + ")[[\"df\"]]");
-			if (!x.isNull() && (res1 = x.asIntegers()) != null)
+			if (x!= null && !x.isNull() && (res1 = x.asIntegers()) != null)
 				m.setDf(res1[0]);
 		} catch (REngineException e) {
 			// TODO Auto-generated catch block
@@ -807,7 +807,7 @@ public class RController {
 		REXP z;
 		try {
 			z = JGR.eval("family(" + sx + ")[[\"family\"]]");
-			if (!z.isNull() && (res2 = z.asStrings()) != null)
+			if ((z!= null && !z.isNull()) && (res2 = z.asStrings()) != null)
 				m.setFamily(res2[0]);
 		} catch (REngineException e) {
 			// TODO Auto-generated catch block
@@ -818,7 +818,7 @@ public class RController {
 		}
 		try {
 			z = JGR.eval("suppressWarnings(try(capture.output(" + sx + "[[\"call\"]][[\"formula\"]])))");
-			if (!z.isNull() && (res2 = z.asStrings()) != null) {
+			if ((z!= null && !z.isNull()) && (res2 = z.asStrings()) != null) {
 				String call = "";
 				for (int i = 0; i < res2.length; i++)
 					call += res2[i];
@@ -833,7 +833,7 @@ public class RController {
 		} // as.character((cm$call))
 		try {
 			z = JGR.eval("suppressWarnings(try(capture.output(" + sx + "[[\"call\"]][[\"data\"]])))");
-			if (!z.isNull() && (res2 = z.asStrings()) != null) {
+			if ((z!= null && !z.isNull()) && (res2 = z.asStrings()) != null) {
 				String data = "";
 				for (int i = 0; i < res2.length; i++)
 					data += res2[i];
@@ -870,7 +870,7 @@ public class RController {
 		REXP x;
 		try {
 			x = JGR.idleEval("try(deparse(args(" + s + ")),silent=T)");
-			if (!x.isNull() && (res = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && (res = x.asStrings()) != null) {
 				tip = "";
 				int l = -1;
 				for (int i = 0; i < (l = res.length); i++) {
@@ -905,7 +905,7 @@ public class RController {
 		REXP x;
 		try {
 			x = JGR.idleEval("suppressWarnings(try(capture.output(summary(" + (o.getRName()) + ")),silent=TRUE))");
-			if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+			if (x!= null && !x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
 				// tip = "<html><pre>";
 				int l = -1;
 				for (int i = ((l = res.length) > 10 ? 10 : l) - 1; i >= 0; i--)
@@ -927,7 +927,7 @@ public class RController {
 		try {
 			x = JGR.eval("suppressWarnings(try(capture.output(" + o.getRName() + "),silent=TRUE))");
 			String[] res;
-			if (!x.isNull() && (res = x.asStrings()) != null) {
+			if (x!= null && !x.isNull() && (res = x.asStrings()) != null) {
 				StringBuffer sb = new StringBuffer();
 				for (int i = 0; i < res.length; i++)
 					if (i == 0)
@@ -962,7 +962,7 @@ public class RController {
 			try {
 				x = JGR.eval("suppressWarnings(try(capture.output(" + o.getRName() + "),silent=TRUE))");
 				String[] res;
-				if (!x.isNull() && (res = x.asStrings()) != null) {
+				if (x!= null && !x.isNull() && (res = x.asStrings()) != null) {
 					StringBuffer sb = new StringBuffer();
 					for (int i = 0; i < res.length; i++)
 						if (i == 0)
@@ -985,7 +985,7 @@ public class RController {
 			try {
 				x = JGR.eval("suppressWarnings(try(attributes(" + o.getRName() + ")[[\"row.names\"]],silent=TRUE))");
 				String[] res;
-				if (!x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
+				if (x!= null && !x.isNull() && (res = x.asStrings()) != null && !res[0].startsWith("Error")) {
 					SVar v = newVar(cvs, "row.names", x.asStrings());
 					cvs.add(v);
 				}
@@ -1024,7 +1024,7 @@ public class RController {
 		try {
 			x = JGR.eval("suppressWarnings(try(" + o.getRName() + ",silent=TRUE))");
 
-			if (!x.isNull() && x.asStrings() != null && x.asStrings().length > 0 && x.asStrings()[0].startsWith("Error"))
+			if (x!= null && !x.isNull() && x.asStrings() != null && x.asStrings().length > 0 && x.asStrings()[0].startsWith("Error"))
 				return null;
 			if (o.getType().equals("factor")) {
 
@@ -1032,7 +1032,7 @@ public class RController {
 
 				REXP z = JGR.eval("suppressWarnings(try(as.integer(" + o.getRName() + "),silent=TRUE))");
 
-				if (!z.isNull() && !x.isNull() && y.asStrings() != null && z.asIntegers() != null) {
+				if ((z!= null && !z.isNull()) && x!= null && !x.isNull() && y.asStrings() != null && z.asIntegers() != null) {
 					int id[] = new int[z.asIntegers().length];
 					for (int i = 0; i < id.length; i++)
 						id[i] = z.asIntegers()[i];
@@ -1040,11 +1040,11 @@ public class RController {
 				}
 
 			} else if (o.getType().equals("character")) {
-				if (!x.isNull() && x.asStrings() != null)
+				if (x!= null && !x.isNull() && x.asStrings() != null)
 					v = newVar(cvs, o.getName(), x.asStrings());
-			} else if (!x.isNull() && x.asIntegers() != null)
+			} else if (x!= null && !x.isNull() && x.asIntegers() != null)
 				v = newVar(cvs, o.getName(), x.asIntegers());
-			else if (!x.isNull() && x.asDoubles() != null)
+			else if (x!= null && !x.isNull() && x.asDoubles() != null)
 				v = newVar(cvs, o.getName(), x.asDoubles());
 		} catch (REngineException e) {
 			// TODO Auto-generated catch block
@@ -1209,9 +1209,14 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
-			return setName(vs.getName());
+			if (vs.at(0) instanceof SVarInt) {
+				return exportInteger(vs);
+			}
+			else {
+				long v = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(((SVarDouble) vs.at(0)).cont);
+				((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", v, 0);
+				return setName(vs.getName());
+			}
 		} catch (Exception e) {
 			new ErrorMsg(e);
 			return false;

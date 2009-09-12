@@ -549,19 +549,15 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 						out.write(" ");
 					else
 						out.write("" + vs.at(k).getName() + "\t");
-				// System.out.print(vs.at(k).getName() + "\t");
 				out.write("" + vs.at(cols - 1).getName() + "\n");
-				// System.out.println(vs.at(cols - 1).getName());
 				out.flush();
 				for (int i = 0; i < vs.length(); i++) {
 					for (int z = 0; z < cols - 1; z++) {
 						s = vs.at(z).at(i) == null ? " " : vs.at(z).at(i).toString();
 						out.write("" + s + "\t");
-						// System.out.print(s+"\t");
 					}
 					s = vs.at(cols - 1).at(i) == null ? " " : vs.at(cols - 1).at(i).toString();
 					out.write("" + s + "\n");
-					// System.out.println(s);
 					out.flush();
 				}
 				out.flush();
@@ -802,9 +798,7 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 	 * mousePressed: handle mouse pressed: popup-menu.
 	 */
 	public void mousePressed(MouseEvent e) {
-		// System.out.println(dataTable.getSelectedColumn());
 		modified = dataTable.getSelectedColumn() > 0 ? true : false;
-		// System.out.println(modified);
 		try {
 			selectedColumn = currentCol(e);
 			if (e.getSource().equals(tableHeader)) {
@@ -836,7 +830,6 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 				popUpMenu(e);
 			int from = dataTable.getColumn(dataTable.getColumnName(selectedColumn)).getModelIndex();
 			int to = selectedColumn;
-			// System.out.println(from+" -> "+to);
 			if (!(from == 0 || to == 0 || (rownames && (from == 1 || to == 1))) && from != to)
 				moveColumnsSVar(from, to);
 		} catch (Exception ex) {
@@ -1146,7 +1139,6 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public void Notifying(NotifyMsg msg, Object src, Vector path) {
-			// System.out.println("MarkerSelectionModel.Notifying");
 			int i = 0;
 			ListSelectionEvent lse = new ListSelectionEvent(this, 0, m.size(), false);
 			while (i < ls.size()) {
@@ -1158,13 +1150,11 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		int anchor, lead;
 
 		public void setSelectionInterval(int index0, int index1) {
-			// System.out.println("MarkerSelectionModel.setSelectionInterval("+index0+","+index1+")");
 			m.selectNone();
 			addSelectionInterval(index0, index1);
 		}
 
 		public void addSelectionInterval(int index0, int index1) {
-			// System.out.println("MarkerSelectionModel.addSelectionInterval("+index0+","+index1+")");
 			anchor = index0;
 			lead = index1;
 			int i = (index0 < index1) ? index0 : index1;
@@ -1175,7 +1165,6 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public void removeSelectionInterval(int index0, int index1) {
-			// System.out.println("MarkerSelectionModel.removeSelectionInterval("+index0+","+index1+")");
 			int i = (index0 < index1) ? index0 : index1;
 			int j = (index0 < index1) ? index1 : index0;
 			while (i <= j)
@@ -1212,23 +1201,18 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public int getAnchorSelectionIndex() {
-			// System.out.println("MarkerSelectionModel.getAnchorSelectionIndex()="+anchor);
 			return anchor;
 		}
 
 		public void setAnchorSelectionIndex(int index) {
-			// g.println("MarkerSelectionModel.setAnchorSelectionIndex("+index+")");
 			anchor = index;
 		}
 
 		public int getLeadSelectionIndex() {
-			// System.out.println("MarkerSelectionModel.getLeadSelectionIndex()="+lead);
 			return lead;
 		}
 
 		public void setLeadSelectionIndex(int index) {
-			// System.out.println("MarkerSelectionModel.setLeadSelectionIndex("+index+")
-			// [anchor="+anchor+",lead="+lead+"]");
 			if (index == lead)
 				return;
 			if (index >= anchor) {
@@ -1251,7 +1235,6 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public void clearSelection() {
-			// System.out.println("MarkerSelectionModel.clearSelection()");
 			m.selectNone();
 			m.NotifyAll(new NotifyMsg(m, Common.NM_MarkerChange));
 		}
@@ -1261,31 +1244,22 @@ public class DataTable extends TJFrame implements ActionListener, MouseListener,
 		}
 
 		public void insertIndexInterval(int index, int length, boolean before) {
-			// System.out.println("insertIndexInterval: I don't really know what
-			// to do here ("+index+","+length+","+before+")");
 		}
 
 		public void removeIndexInterval(int index0, int index1) {
-			// System.out.println("removeIndexInterval("+index0+","+index1+")
-			// unsupported");
 		}
 
 		boolean isadj = false;
 
 		public void setValueIsAdjusting(boolean valueIsAdjusting) {
-			// System.out.println("MarkerSelectionModel.setValueIsAdjusting("+valueIsAdjusting+")");
 			isadj = valueIsAdjusting;
 		}
 
 		public boolean getValueIsAdjusting() {
-			// System.out.println("MarkerSelectionModel.getValueIsAdjusting()="+isadj);
 			return isadj;
 		}
 
 		public void setSelectionMode(int selectionMode) {
-			// System.out.println("setSelectionMode("+selectionMode+")
-			// [supported only
-			// "+ListSelectionModel.MULTIPLE_INTERVAL_SELECTION+"]");
 		}
 
 		public int getSelectionMode() {
