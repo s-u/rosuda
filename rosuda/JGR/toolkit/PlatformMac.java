@@ -28,7 +28,6 @@ public class PlatformMac extends org.rosuda.util.PlatformMac {
 	}
 
 	public void handleOpenFile(File fileName) {
-		System.out.println(fileName);
 	}
 
 	public void handlePrefs() {

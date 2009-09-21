@@ -41,6 +41,7 @@ import org.rosuda.JGR.JGRDataFileSaveDialog;
 import org.rosuda.JGR.JGRObjectManager;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.JGR.util.ErrorMsg;
 
 /**
  * ObjectBrowserTree - show {@see RObject}s and supports dynamically loading of
@@ -230,10 +231,11 @@ public class ObjectBrowserTree extends JTree implements ActionListener, KeyListe
 				try {
 					if (((DefaultMutableTreeNode) p.getLastPathComponent()).getLevel() == 1) {
 						DefaultMutableTreeNode n = (DefaultMutableTreeNode) p.getPathComponent(1);
-						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("rm(" + ((RObject) n.getUserObject()).getRName() + ")");
+						JGR.eval("rm(" + ((RObject) n.getUserObject()).getRName() + ")");
 						objModel.removeNodeFromParent(n);
 					}
 				} catch (Exception ex) {
+					new ErrorMsg(ex);
 				}
 			}
 		}

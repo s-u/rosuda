@@ -28,6 +28,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.rosuda.JGR.toolkit.JGRPrefs;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
 
@@ -148,7 +151,13 @@ public class JGRPackageInstaller extends TJFrame implements ActionListener {
 				System.arraycopy(JGR.RLIBS, 0, libs, 1, JGR.RLIBS.length);
 				JGR.RLIBS = libs;
 				JGRPrefs.writePrefs(true);
-				((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval(".libPaths(\"" + destDir + "\")");
+				try {
+					JGR.eval(".libPaths(\"" + destDir + "\")");
+				} catch (REngineException e) {
+					new ErrorMsg(e);
+				} catch (REXPMismatchException e) {
+					new ErrorMsg(e);
+				}
 			}
 		}
 		if (destDir == null) {

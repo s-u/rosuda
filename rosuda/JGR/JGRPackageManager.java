@@ -89,7 +89,6 @@ public class JGRPackageManager extends TJFrame implements ActionListener {
 		pkgs = missingpkgs.elementAt(missingpkgs.size() - 1) + "";
 
 		remindPackages = pkgs;
-		System.out.println("missing packages: " + remindPackages);
 		StringTokenizer st = new StringTokenizer(remindPackages, ",");
 		MPackages = new Object[st.countTokens()][2];
 		int i = 0;

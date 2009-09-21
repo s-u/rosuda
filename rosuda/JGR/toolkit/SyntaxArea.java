@@ -299,11 +299,8 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 	 *            int current position
 	 */
 	public void highlightParanthesisForward(String par, int pos) throws BadLocationException {
-		// System.out.println(par);
 		int open = pos;
 		int cend = this.getText().length();
-		// try { System.out.println(pos+" "+getText(pos-1,1)); } catch(Exception
-		// e) {}
 
 		String end = null;
 
@@ -332,7 +329,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 				while (++i <= lend) {
 					found = false;
 					String schar = this.getText(i - 1, 1);
-					// System.out.print(schar);
 					if (schar.equals("\"") && !isEscaped(i)) {
 						pos = i;
 						found = true;
@@ -511,32 +507,24 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 	 * dragEnter: handle drag event.
 	 */
 	public void dragEnter(DropTargetDragEvent evt) {
-		// System.out.println("dragEnter");
-		// Called when the user is dragging and enters this drop target.
 	}
 
 	/**
 	 * dragOver: handle drag event.
 	 */
 	public void dragOver(DropTargetDragEvent evt) {
-		// System.out.println("dragOver");
-		// Called when the user is dragging and moves over this drop target.
 	}
 
 	/**
 	 * dragExit: handle drag event.
 	 */
 	public void dragExit(DropTargetEvent evt) {
-		// System.out.println("dragExit");
-		// Called when the user is dragging and leaves this drop target.
 	}
 
 	/**
 	 * dropActionChanged: handle drop event.
 	 */
 	public void dropActionChanged(DropTargetDragEvent evt) {
-		// System.out.println("dropActionChanged");
-		// Called when the user changes the drag action between copy or move.
 	}
 
 	/**
@@ -544,7 +532,6 @@ public class SyntaxArea extends JTextPane implements CaretListener, DropTargetLi
 	 * object.
 	 */
 	public void drop(DropTargetDropEvent evt) {
-		// System.out.println("drop");
 		try {
 			Transferable t = evt.getTransferable();
 

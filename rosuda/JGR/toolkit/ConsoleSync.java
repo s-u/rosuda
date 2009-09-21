@@ -56,7 +56,6 @@ public class ConsoleSync {
 	 * calling {@link notifyAll()}.
 	 */
 	public synchronized void triggerNotification(String msg) {
-		// System.out.println("lastmsg "+lastNotificationMessage);
 		notificationArrived = true;
 		msgs.addElement(msg);
 		notifyAll();

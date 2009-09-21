@@ -19,6 +19,9 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.JGRObjectManager;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.robjects.RObject;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 /**
  * FunctionList - implemenation of a JList with some JGR specific features.
@@ -128,8 +131,14 @@ public class FunctionList extends JList implements KeyListener, MouseListener {
 				} catch (Exception ex) {
 				}
 				if (o != null) {
-					((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("rm(" + o.getRName() + ")");
-					fmodel.removeElement(sfunctions[i]);
+					try {
+						JGR.eval("rm(" + o.getRName() + ")");
+						fmodel.removeElement(sfunctions[i]);
+					} catch (REngineException e1) {
+						new ErrorMsg(e1);
+					} catch (REXPMismatchException e1) {
+						new ErrorMsg(e1);
+					}
 				}
 			}
 		}

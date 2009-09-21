@@ -45,8 +45,7 @@ public class SplashScreen extends JWindow implements Runnable {
 		try {
 			splash = loadSplash(JGR.SPLASH);
 		} catch (Exception e) {
-			if (JGRPrefs.DEBUG > 0)
-				System.out.println("Missing Splashlogo: " + e.getMessage());
+			new ErrorMsg(e);
 		}
 		this.setSize(splashSize);
 		this.setLocation((screenSize.width - 300) / 2, (screenSize.height - 200) / 2);

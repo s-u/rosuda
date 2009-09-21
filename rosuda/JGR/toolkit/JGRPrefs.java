@@ -25,6 +25,8 @@ import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.JGRPackageManager;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 /**
  * JGRPrefs - preferences like fonts colors ....
@@ -167,6 +169,10 @@ public class JGRPrefs {
 
 	/** Default packages (more precisely default package + those to load on startup) */
 	public static String defaultPackages = null;
+	
+	/** ask for saving workspace */
+	public static boolean askForSavingWorkspace = true;
+	
 
 	/** Tab width */
 	public static int tabWidth = 4;
@@ -220,8 +226,15 @@ public class JGRPrefs {
 		StyleConstants.setForeground(OBJECT, OBJECTColor);
 		StyleConstants.setItalic(OBJECT, OBJECT_IT);
 		StyleConstants.setForeground(QUOTE, QUOTEColor);
-		if (JGR.getREngine() != null && JGR.STARTED)
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+		if (JGR.getREngine() != null && JGR.STARTED) {
+			try {
+				JGR.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
+			}
+		}
 	}
 
 	/**
@@ -275,9 +288,7 @@ public class JGRPrefs {
 		workingDirectory = prefs.get("WorkingDirectory", System
 				.getProperty("user.home"));
 		tabWidth = prefs.getInt("tabWidth", 4);
-		
-		
-		
+		askForSavingWorkspace = prefs.getBoolean("AskForSavingWorkspace", true);
 		
 		is = null;
 		try {
@@ -340,6 +351,7 @@ public class JGRPrefs {
 		} catch (Exception x) {
 		}
 	
+		prefs.putBoolean("AskForSavingWorkspace",askForSavingWorkspace);
 		prefs.putInt("PrefsVersion", prefsVersion);
 		prefs.put("FontName", FontName); // String
 		prefs.putInt("FontSize", FontSize); // int

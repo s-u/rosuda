@@ -228,7 +228,7 @@ public class JGR {
 		} catch (REXPMismatchException e) {
 			new ErrorMsg(e);
 		}
-		
+
 		// load packages requested by the user
 		// in theory we could have checked for jgr.load.pkgs property, but in
 		// practice it doesn't
@@ -256,7 +256,7 @@ public class JGR {
 		int lock = getREngine().tryLock();
 		if (lock != 0) {
 			try {
-				x = getREngine().parseAndEval(cmd,null,true);
+				x = getREngine().parseAndEval(cmd, null, true);
 			} finally {
 				getREngine().unlock(lock);
 			}
@@ -267,7 +267,7 @@ public class JGR {
 	public static REXP eval(String cmd) throws REngineException, REXPMismatchException {
 		if (getREngine() == null)
 			throw new REngineException(null, "REngine not available");
-		REXP x = getREngine().parseAndEval(cmd,null,true);
+		REXP x = getREngine().parseAndEval(cmd, null, true);
 		return x;
 	}
 
@@ -282,8 +282,11 @@ public class JGR {
 	 * @return users's answer (yes/no/cancel)
 	 */
 	public static String exit() {
-		int exit = JOptionPane
-				.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int exit = 1;
+
+		if (JGRPrefs.askForSavingWorkspace) {
+			JOptionPane.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		}
 
 		if (exit == 0) {
 			writeHistory();
@@ -565,10 +568,17 @@ public class JGR {
 	}
 
 	public static void refreshObjects() {
-		org.rosuda.JRI.REXP x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
-		String[] r = null;
-		if (x != null && (r = x.asStringArray()) != null)
-			JGR.setObjects(r);
+		REXP x;
+		try {
+			x = idleEval("try(.refreshObjects(),silent=TRUE)");
+			String[] r = null;
+			if (x != null && (r = x.asStrings()) != null)
+				JGR.setObjects(r);
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 	}
 
 	/**
@@ -585,13 +595,13 @@ public class JGR {
 			while (true)
 				try {
 					Thread.sleep(5000);
-					org.rosuda.JRI.REXP x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshKeyWords(),silent=TRUE)");
+					REXP x = idleEval("try(.refreshKeyWords(),silent=TRUE)");
 					String[] r = null;
-					if (x != null && (r = x.asStringArray()) != null)
+					if (x != null && (r = x.asStrings()) != null)
 						setKeyWords(r);
-					x = ((JRIEngine) rEngine).getRni().idleEval("try(.refreshObjects(),silent=TRUE)");
+					x = idleEval("try(.refreshObjects(),silent=TRUE)");
 					r = null;
-					if (x != null && (r = x.asStringArray()) != null)
+					if (x != null && (r = x.asStrings()) != null)
 						setObjects(r);
 					RController.refreshObjects();
 				} catch (Exception e) {

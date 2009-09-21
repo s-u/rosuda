@@ -58,7 +58,7 @@ public class SearchEngine {
 		try {
 			File tempfile = new File(JGRHelp.RHELPLOCATION + "/doc/html/search/");
 			if (tempfile.exists()) {
-				IndexFile = tempfile.toURL();
+				IndexFile = tempfile.toURI().toURL();
 				readIndexFile(cIndexFile);
 				started = true;
 			} else
@@ -114,17 +114,15 @@ public class SearchEngine {
 						if (help != null)
 							help.link.setText(" ");
 						File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
-						// System.out.println(f);
 						if (!f.exists())
 							for (int i = 1; i < JGR.RLIBS.length; i++) {
 								f = new File(JGR.RLIBS[i] + File.separator + entry.getURL());
-								System.out.println(f);
 								if (f.exists())
 									break;
 							}
 						else
 							f = new File(JGRHelp.RHELPLOCATION + File.separator + "/library" + File.separator + entry.getURL());
-						return f.toURL();
+						return f.toURI().toURL();
 					}
 					File f = new File(JGR.RLIBS[0] + File.separator + entry.getURL());
 					if (!f.exists())
@@ -135,7 +133,7 @@ public class SearchEngine {
 						}
 					else
 						f = new File(JGRHelp.RHELPLOCATION + File.separator + "library" + File.separator + entry.getURL());
-					result += "<dt><a href=\"" + f.toURL() + "\">" + entry.getEntry() + "</a></dt>\n";
+					result += "<dt><a href=\"" + f.toURI().toURL() + "\">" + entry.getEntry() + "</a></dt>\n";
 					result += "<dd>" + entry.getDescription() + "</dd>\n";
 				}
 
@@ -144,7 +142,7 @@ public class SearchEngine {
 			writer.write(result);
 			writer.flush();
 			writer.close();
-			helpRes = out.toURL();
+			helpRes = out.toURI().toURL();
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}

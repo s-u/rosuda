@@ -50,6 +50,8 @@ import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 import org.rosuda.ibase.Common;
 import org.rosuda.ibase.toolkit.EzMenuSwing;
 import org.rosuda.ibase.toolkit.TJFrame;
@@ -131,7 +133,13 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			RHELPLOCATION = RController.getRHome();
 			index = "file:/" + RHELPLOCATION.replace('\\', '/') + "/doc/html/packages.html";
 		} else {
-			RHELPLOCATION = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("tempdir()").asString() + "/.R";
+			try {
+				RHELPLOCATION = JGR.eval("tempdir()").asString() + "/.R";
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			}
 			index = "file://" + RHELPLOCATION.replace('\\', '/') + "/doc/html/packages.html";
 		}
 
@@ -484,7 +492,6 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 					rhelp.back.setEnabled(currentURLIndex > 0);
 					rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
 					url = (URL) history.get(currentURLIndex);
-					// System.out.println(url.toString());
 				} catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(this, ex.getMessage(), "URL Error", JOptionPane.ERROR_MESSAGE);

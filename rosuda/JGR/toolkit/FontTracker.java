@@ -12,6 +12,9 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 /**
  * FontTracker - collect all componentes and apply prefs-font to them
@@ -103,8 +106,15 @@ public class FontTracker {
 			} catch (Exception ex) {
 			}
 		}
-		if (JGR.getREngine() != null && JGR.STARTED)
-			((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+		if (JGR.getREngine() != null && JGR.STARTED) {
+			try {
+				JGR.eval("options(width=" + JGR.MAINRCONSOLE.getFontWidth() + ")");
+			} catch (REngineException e1) {
+				new ErrorMsg(e1);
+			} catch (REXPMismatchException e1) {
+				new ErrorMsg(e1);
+			}
+		}
 	}
 
 }

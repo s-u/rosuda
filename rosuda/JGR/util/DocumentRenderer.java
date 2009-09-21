@@ -222,7 +222,6 @@ public class DocumentRenderer implements Printable {
 				pageStartY = 0;
 				pageEndY = 0;
 				currentPage = -1;
-				System.out.println("Error Printing Document");
 			}
 		}
 	}

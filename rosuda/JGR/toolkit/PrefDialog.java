@@ -92,6 +92,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 	private JSpinner tabwidth;
 	private JSeparator sep1;
 	private JSeparator sep;
+	private JCheckBox savingWorkspace;
 
 	private final String[] styles = { " ", "JGR", "eclipse", "emacs", "MSVS 2008", "vim", "Xcode" };
 
@@ -385,7 +386,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 						{
 							helpPanel = new JPanel();
 							generalPanel.add(helpPanel);
-							helpPanel.setBounds(10, 191, 520, 147);
+							helpPanel.setBounds(10, 195, 520, 147);
 							helpPanel.setBorder(BorderFactory.createTitledBorder("Help"));
 							helpPanel.setLayout(null);
 							{
@@ -397,7 +398,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 						{
 							general = new JPanel();
 							generalPanel.add(general);
-							general.setBounds(10, 23, 520, 156);
+							general.setBounds(10, 15, 520, 180);
 							general.setBorder(BorderFactory.createTitledBorder("General"));
 							general.setLayout(null);
 							{
@@ -430,15 +431,13 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 								emacs.setText("Emacs Bindings (just Mac OS X)");
 								emacs.setBounds(10, 120, 250, 18);
 							}
+							{
+								savingWorkspace = new JCheckBox();
+								general.add(savingWorkspace);
+								savingWorkspace.setText("Ask \"Saving Workspace\" (if disabled it will not be saved)");
+								savingWorkspace.setBounds(10, 145, 400, 18);
+							}
 						}
-						/*
-						 * { editorPanel = new JPanel();
-						 * generalPanel.add(editorPanel);
-						 * editorPanel.setBounds(290, 191, 223, 147);
-						 * editorPanel
-						 * .setBorder(BorderFactory.createTitledBorder
-						 * ("Editor")); editorPanel.setLayout(null); }
-						 */
 					}
 				}
 				{
@@ -659,6 +658,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		helpAgentConsole.setSelected(JGRPrefs.useHelpAgentConsole);
 		helpAgentEditor.setSelected(JGRPrefs.useHelpAgentEditor);
 		emacs.setSelected(JGRPrefs.useEmacsKeyBindings);
+		savingWorkspace.setSelected(JGRPrefs.askForSavingWorkspace);
 
 		setColor(comment, JGRPrefs.COMMENTColor);
 		setColor(keyword, JGRPrefs.KEYWORDColor);
@@ -700,6 +700,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		helpAgentConsole.setSelected(true);
 		helpAgentEditor.setSelected(true);
 		emacs.setSelected(false);
+		savingWorkspace.setSelected(true);
 
 	}
 
@@ -754,6 +755,7 @@ public class PrefDialog extends javax.swing.JDialog implements ActionListener {
 		JGRPrefs.useHelpAgentConsole = helpAgentConsole.isSelected();
 		JGRPrefs.useHelpAgentEditor = helpAgentEditor.isSelected();
 		JGRPrefs.useEmacsKeyBindings = emacs.isSelected();
+		JGRPrefs.askForSavingWorkspace = savingWorkspace.isSelected();
 
 		JGRPrefs.COMMENTColor = getColor(comment);
 		JGRPrefs.KEYWORDColor = getColor(keyword);

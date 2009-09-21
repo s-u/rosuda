@@ -17,6 +17,8 @@ import org.rosuda.JGR.editor.Editor;
 import org.rosuda.JGR.toolkit.ExtensionFileFilter;
 import org.rosuda.JGR.toolkit.FileSelector;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REngineException;
 
 public class DataLoader extends JFrame implements PropertyChangeListener {
 
@@ -109,7 +111,13 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 
 	public void loadRdaFile(String fileName, String directory) {
 		String cmd = "print(load(\"" + (directory + fileName).replace('\\', '/') + "\"))";
-		((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().eval("cat('The following data objects have been loaded:\\\n')", false);
+		try {
+			JGR.eval("cat('The following data objects have been loaded:\\\n')");
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		JGR.MAINRCONSOLE.executeLater(cmd, true);
 	}
 

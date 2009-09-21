@@ -122,18 +122,6 @@ public class RInputHandler extends DefaultInputHandler {
 			String s = textArea.getSelectedText().trim();
 			if (s.length() > 0)
 				JGR.MAINRCONSOLE.execute(s.trim(), true);
-
-			/*
-			 * int startLine = textArea.getSelectionStartLine(); int endLine =
-			 * textArea.getSelectionEndLine(); int so =
-			 * textArea.getLineStartOffset(endLine); int se =
-			 * textArea.getSelectionEnd(); if (startLine >= 0 && endLine <
-			 * textArea.getLineCount()) { for (int line = startLine; line <=
-			 * endLine; line++) { String lineText =
-			 * textArea.getLineText(line).trim(); if (lineText.length() > 0)
-			 * JGR.MAINRCONSOLE.execute(lineText.trim(), true); } }
-			 */
-
 		}
 	}
 
@@ -179,7 +167,7 @@ public class RInputHandler extends DefaultInputHandler {
 			for (int line = startLine; line < endLine; line++) {
 				String lineText = textArea.getLineText(line).trim();
 				if (lineText.length() > 0)
-					System.out.println("run cmd: " + lineText);
+					JGR.MAINRCONSOLE.execute(lineText,true);
 			}
 
 		}

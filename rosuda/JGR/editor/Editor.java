@@ -86,7 +86,6 @@ public class Editor extends TJFrame implements ActionListener {
 				"~Window", "+","Help","R Help","help", "~Preferences", "~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, Menu);
 		JMenu rm = recentMenu = (JMenu) EzMenuSwing.getItem(this,"Open Recent");
-		//System.out.println(rm);
 		if (rm != null) {
 			rm.removeAll();
 			if (recentOpen == null)
@@ -249,7 +248,6 @@ public class Editor extends TJFrame implements ActionListener {
 				String[] longNames = recentOpen.getAllEntries();
 				int i = 0;
 				while (i < shortNames.length) {
-					System.out.println(shortNames[i]);
 					JMenuItem mi = new JMenuItem(shortNames[i]);
 					mi.setActionCommand("recent:" + longNames[i]);
 					mi.addActionListener(this);
@@ -412,7 +410,6 @@ public class Editor extends TJFrame implements ActionListener {
 		}	
 			
 			if (e.getActionCommand().startsWith("recent:")) {
-			//System.out.println(e.getActionCommand().replaceFirst("recent:", ""));
 			if (modified)
 				new Editor(e.getActionCommand().replaceFirst("recent:", ""));
 			else {
