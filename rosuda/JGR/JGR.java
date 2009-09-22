@@ -285,7 +285,7 @@ public class JGR {
 		int exit = 1;
 
 		if (JGRPrefs.askForSavingWorkspace) {
-			JOptionPane.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			exit = JOptionPane.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		}
 
 		if (exit == 0) {
