@@ -6,8 +6,15 @@ import java.awt.Font;
 
 import javax.swing.*;
 
-import org.rosuda.JRI.*;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPFactor;
+import org.rosuda.REngine.REXPList;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.RFactor;
+import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
 
 
@@ -39,65 +46,84 @@ class RDataFrameModel extends ExDefaultTableModel {
 	public String getDataName(){return rDataName;}
 	
 	public void setDataName(String name){
-		boolean envDefined = Deducer.rniEval("'"+guiEnv+"' %in% .getOtherObjects()").asBool().isTRUE();
+		
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
+		
 		if(!envDefined){
 			Deducer.rniEval(guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		if(tempDataName!=null)
-			Deducer.rniEval("rm("+tempDataName+",envir="+guiEnv+")");
+			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");
 		rDataName = name;
 		tempDataName = JGR.MAINRCONSOLE.getUniqueName(rDataName,guiEnv);
-		Deducer.rniEval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 		this.fireTableStructureChanged();
 		this.fireTableDataChanged();
 	}
 	
 	public int getColumnCount( ){
 		if(rDataName!=null){
-			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			boolean nExists = ((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0];
+			if(nExists)
 				return 0;
-			return Deducer.rniEval("ncol("+rDataName+")").asInt()+numExtensionColumns;
+			try {
+				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtensionColumns;
+			} catch (REXPMismatchException e) {
+				return 0;
+			}
 		}else
 			return 0;
 	}
 	
 	public int getRealColumnCount( ){
 		if(rDataName!=null){
-			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
 				return 0;
-			return Deducer.rniEval("ncol("+rDataName+")").asInt();
+			try {
+				return Deducer.eval("ncol("+rDataName+")").asInteger();
+			} catch (REXPMismatchException e) {
+				return 0;
+			}
 		}else
 			return 0;
 	}
 
 	public int getRealRowCount(){
 		if(rDataName!=null){
-			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
 				return 0;
-			return Deducer.rniEval("nrow("+rDataName+")").asInt();
+			try {
+				return Deducer.eval("nrow("+rDataName+")").asInteger();
+			} catch (REXPMismatchException e) {
+				return 0;
+			}
 		}else
 			return 0;
 	}
 	
 	public int getRowCount(){
 		if(rDataName!=null){
-			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
 				return 0;
-			return Deducer.rniEval("nrow("+rDataName+")").asInt()+numExtensionRows;
+			try {
+				return Deducer.eval("nrow("+rDataName+")").asInteger()+numExtensionRows;
+			} catch (REXPMismatchException e) {
+				return 0;
+			}
 		}else
 			return 0;
 	}
 	
 	public void removeColumn(int colNumber){
 		if(colNumber<getRealColumnCount()){
-			Deducer.rniEval(rDataName+"<-"+rDataName+"[,-"+(colNumber+1)+"]");
+			Deducer.eval(rDataName+"<-"+rDataName+"[,-"+(colNumber+1)+"]");
 			refresh();
 		}
 	}
 
 	public void removeRow(int row){
 		if((row+1)<=getRealRowCount()){
-			Deducer.rniEval(rDataName + "<- "+rDataName + "[-"+(row+1)+",]");
+			Deducer.eval(rDataName + "<- "+rDataName + "[-"+(row+1)+",]");
 			refresh();
 		}
 	}
@@ -106,12 +132,12 @@ class RDataFrameModel extends ExDefaultTableModel {
 		if(col>getRealColumnCount()+1)
 			return;
 		if(col<1)
-			Deducer.rniEval(rDataName+"<-data.frame(V=as.integer(NA),"+
+			Deducer.eval(rDataName+"<-data.frame(V=as.integer(NA),"+
 					rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
 		else if(col>=getRealColumnCount())
-			Deducer.rniEval(rDataName+"<-data.frame("+rDataName+",V=as.integer(NA))");
+			Deducer.eval(rDataName+"<-data.frame("+rDataName+",V=as.integer(NA))");
 		else
-			Deducer.rniEval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+",drop=FALSE],V=as.integer(NA),"+
+			Deducer.eval(rDataName+"<-data.frame("+rDataName+"[,1:"+col+",drop=FALSE],V=as.integer(NA),"+
 				rDataName+"[,"+(col+1)+":"+getRealColumnCount()+",drop=FALSE])");
 		refresh();
 	}
@@ -119,50 +145,90 @@ class RDataFrameModel extends ExDefaultTableModel {
 	public void insertNewRow(int row){
 		int rowCount =getRealRowCount();
 		setValueAt("NA",Math.max(rowCount,row),0);
-		Deducer.rniEval("attr("+rDataName+",'row.names')["+(Math.max(rowCount,row)+1)+"]<-'New'");
+		Deducer.eval("attr("+rDataName+",'row.names')["+(Math.max(rowCount,row)+1)+"]<-'New'");
 		if(row<1)
-			Deducer.rniEval(rDataName+"<-rbind("+rDataName+
+			Deducer.eval(rDataName+"<-rbind("+rDataName+
 					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
 		else if(row<rowCount)
-			Deducer.rniEval(rDataName+"<-rbind("+rDataName+"[1:"+row+",,drop=FALSE],"+rDataName+
+			Deducer.eval(rDataName+"<-rbind("+rDataName+"[1:"+row+",,drop=FALSE],"+rDataName+
 					"["+(rowCount+1)+",],"+rDataName+"["+(row+1)+":"+rowCount+",,drop=FALSE])");
-		Deducer.rniEval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+		Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
 		
 	}
 	
 	
 	public Object getValueAt(int row, int col){
-		if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
-			return "?";
-		if(row>=getRealRowCount() || col>=getRealColumnCount()){
-			return "";
+		Object value = "?";
+		try {
+			//if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			//	value= "?";
+			//else 
+			if(row>=getRealRowCount() || col>=getRealColumnCount()){
+				value= "";
+			}else{
+				REXP val = Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]");
+				if(val.isNA()[0])
+					value = new NAHolder();
+				else if(val.isFactor()){
+					value = val.asFactor().asStrings()[0];
+				}else if(val.isInteger())
+					value = new Integer(val.asInteger());
+				else if( val.isLogical())
+					value = new Boolean(((REXPLogical)val).isTRUE()[0]);				
+				else if(val.isNumeric())
+					value = (new Double(val.asDouble()));
+				else if(val.isString()){
+					if(((REXPLogical)Deducer.eval("is.na("+rDataName+"["+(row+1)+","+(col+1)+"])")).isTRUE()[0])
+						value = new NAHolder();
+					else
+						value= val.asString();
+				}
+			}
+		} catch (REXPMismatchException e) {
+			value = "?";
 		}
-		REXP value = Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]");
-		int type =value.getType();
-		if(Deducer.rniEval("is.na("+rDataName+"["+(row+1)+","+(col+1)+"])").asBool().isTRUE())
-			return "NA";
-		if(type == REXP.XT_ARRAY_DOUBLE)
-			return (new Double(value.asDouble()));
-		else if(type ==REXP.XT_STR)
-			return value.asString();
-		else if(type == REXP.XT_ARRAY_INT){
-			return new Integer(value.asInt());
-		}else if(type == REXP.XT_FACTOR)
-			return value.asFactor().at(0);
-		else if( type == REXP.XT_ARRAY_BOOL || type == REXP.XT_ARRAY_BOOL_INT || type == REXP.XT_BOOL){
-			return value.asBool();
-		}
-		return "?";
+		return value;
 	}
+	/*public Object getValueAt(int row, int col){
+		Object value = "?";
+		try {
+			//if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			//	value= "?";
+			//else 
+			if(row>=getRealRowCount() || col>=getRealColumnCount()){
+				value= "";
+			}else{
+				REXP var = data.at(col);
+				if(var.isNA()[row])
+					value = new NAHolder();
+				else if(var.isFactor()){
+					value = var.asFactor().asStrings()[row];
+				}else if(var.isInteger())
+					value = new Integer(var.asIntegers()[row]);
+				else if( var.isLogical())
+					value = new Boolean(((REXPLogical)var).isTRUE()[row]);				
+				else if(var.isNumeric())
+					value = (new Double(var.asDoubles()[row]));
+				else if(var.isString()){
+					if(((REXPLogical)Deducer.eval("is.na("+rDataName+"["+(row+1)+","+(col+1)+"])")).isTRUE()[0])
+						value = new NAHolder();
+					else
+						value= var.asStrings()[row];
+				}
+			}
+		} catch (REXPMismatchException e) {
+			value = "?";
+		}
+		return value;
+	}*/
+	
+	
 	public void setValueAt(Object value,int row, int col){	
 		if(!this.isCellEditable(row, col))
 			return;
-		REXP currentValue = Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]");	
-		int type =currentValue.getType();
+		REXP currentValue = Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]");	
 		int numRealRows =getRealRowCount();
-		int numRealCols =getRealColumnCount();
-		//Deducer.rniEval("print('"+type+"')");
-		this.fireTableCellUpdated(row, col);	
+		int numRealCols =getRealColumnCount();	
 		String valueString = null;
 		boolean isDouble = false;
 		boolean isInteger =false;
@@ -185,89 +251,94 @@ class RDataFrameModel extends ExDefaultTableModel {
 
 		if(value==null){
 			if((row+1)<=numRealRows && (col+1)<=numRealCols)
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
-		}else if(type == REXP.XT_NULL){
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+		}else if(currentValue.isNull()){
 			if(!isDouble){
 				if(value.toString().equals("NA"))
-					Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+				else if(value.toString().toLowerCase().equals("true"))
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-TRUE");
+				else if(value.toString().toLowerCase().equals("false"))
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-FALSE");
 				else
-					Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 			}else{
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 
 			}
 		}else if( value.toString().equals("NA")){
-			Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
-		}else if(type ==REXP.XT_STR){
-			Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-		}else if(type == REXP.XT_ARRAY_DOUBLE){
-			if(!isDouble){
-				Deducer.rniEval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-			}else{
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-			}
-		}else if(type == REXP.XT_ARRAY_INT){
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
+		}else if(currentValue.isString()){
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+		}else if(currentValue.isInteger()){
 			if(!isInteger){
 				if(!isDouble){
-					Deducer.rniEval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-					Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+					Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 				}else{
-					Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 					this.fireTableDataChanged();
 				}
 			}else{
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
 			}
-		}else if(type == REXP.XT_FACTOR){
-			boolean isNewLevel=Deducer.rniEval("'"+value.toString()+"' %in% " +
-					"levels(" +rDataName+"[,"+(col+1)+"])").asBool().isFALSE();
+		}else if(currentValue.isFactor()){
+			boolean isNewLevel=((REXPLogical)Deducer.eval("'"+value.toString()+"' %in% " +
+					"levels(" +rDataName+"[,"+(col+1)+"])")).isFALSE()[0];
 
 			if(isNewLevel){
 				String addLevel = "levels(" +rDataName+"[,"+(col+1)+"])<-c("+
 						"levels(" +rDataName+"[,"+(col+1)+"]),'"+value.toString()+"')";
-				Deducer.rniEval(addLevel);
+				Deducer.eval(addLevel);
 			}
-			Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-		}else if( type == REXP.XT_ARRAY_BOOL || type == REXP.XT_ARRAY_BOOL_INT 
-				|| type == REXP.XT_BOOL){
+			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+		}else if( currentValue.isLogical()){
 			if(valueString.equals("1") || valueString.toLowerCase().equals("true")
 					|| valueString.toLowerCase().equals("t"))
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-TRUE");
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-TRUE");
 			else if(valueString.equals("0") || valueString.toLowerCase().equals("false")
 					|| valueString.toLowerCase().equals("f"))
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-FALSE");
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-FALSE");
 			else
-				Deducer.rniEval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
+		}else if(currentValue.isNumeric()){
+			if(!isDouble){
+				Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+			}else{
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+			}
 		}
-		
+		this.fireTableCellUpdated(row, col);
 		if((row+1)>numRealRows){
-			Deducer.rniEval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
+			Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
 			this.fireTableRowsInserted(numRealRows,row);			
 			this.fireTableRowsUpdated(numRealRows,row);
 		}
 		if((col+1)>numRealCols){
 			this.fireTableDataChanged();
-			this.addColumn(Deducer.rniEval("colnames("+rDataName+")["+(col+1)+"]").asString());
+			try {
+				this.addColumn(Deducer.eval("colnames("+rDataName+")["+(col+1)+"]").asString());
+			} catch (REXPMismatchException e) {}
 		}
-		Deducer.rniEval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 	}
 	/**
 	 * Notifies components about changes in the model
 	 */
 	public boolean refresh(){
 		boolean changed = false;
-		REXP exist = Deducer.rniIdleEval("exists('"+rDataName+"')");
-		if(exist!=null && exist.asBool().isTRUE()){
-			REXP ident =Deducer.rniIdleEval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
-			if(ident!=null && ident.asBool().isFALSE()){
-				REXP strChange = Deducer.rniIdleEval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
+		REXP exist = Deducer.idleEval("exists('"+rDataName+"')");
+		if(exist!=null && ((REXPLogical)exist).isTRUE()[0]){
+			REXP ident =Deducer.idleEval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
+			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
+				REXP strChange = Deducer.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
 								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))");
-				if(strChange!=null && strChange.asBool().isFALSE())
+				if(strChange!=null && ((REXPLogical)strChange).isTRUE()[0])
 					this.fireTableStructureChanged();
 				if(strChange!=null)
 					this.fireTableDataChanged();			
-				Deducer.rniIdleEval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 				changed=true;
 			}
 		}
@@ -276,9 +347,13 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	public String getColumnName(int col){
 		if(col<getRealColumnCount()){
-			REXP colName = Deducer.rniEval("colnames("+rDataName+")["+(col+1)+"]");
-			if(colName.getType() ==REXP.XT_STR)
-				return colName.asString();
+			REXP colName = Deducer.eval("colnames("+rDataName+")["+(col+1)+"]");
+			if(colName.isString())
+				try {
+					return colName.asString();
+				} catch (REXPMismatchException e) {
+					return "?";
+				}
 			else
 				return "?";
 		}else{
@@ -296,9 +371,9 @@ class RDataFrameModel extends ExDefaultTableModel {
 	 * 		Deletes the cached data frame from the gui environment
 	 */
 	public void removeCachedData(){
-		boolean tempStillExists = Deducer.rniEval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)").asBool().isTRUE();
+		boolean tempStillExists = ((REXPLogical)Deducer.eval("exists('"+tempDataName+"',where="+guiEnv+",inherits=FALSE)")).isTRUE()[0];
 		if(tempStillExists)
-			Deducer.rniEval("rm("+tempDataName+",envir="+guiEnv+")");		
+			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");		
 	}
 	
 	protected void finalize() throws Throwable {
@@ -314,9 +389,13 @@ class RDataFrameModel extends ExDefaultTableModel {
 		
 		public Object getElementAt(int index) {
 			if(index<getRealRowCount()){
-				REXP rRowName =Deducer.rniEval("rownames("+rDataName+")["+(index+1)+"]");
-				if(rRowName.getType() ==REXP.XT_STR)
-					return rRowName.asString();
+				REXP rRowName =Deducer.eval("rownames("+rDataName+")["+(index+1)+"]");
+				if(rRowName.isString())
+					try {
+						return rRowName.asString();
+					} catch (REXPMismatchException e) {
+						return "?";
+					}
 				else
 					return "?";
 			}else
@@ -326,7 +405,10 @@ class RDataFrameModel extends ExDefaultTableModel {
 		public void initHeaders(int n){}
 		
 		public int getMaxNumChar(){
-			String[] rowNames = Deducer.rniEval("rownames("+rDataName+")").asStringArray();
+			String[] rowNames={""};
+			try {
+				rowNames = Deducer.eval("rownames("+rDataName+")").asStrings();
+			} catch (REXPMismatchException e) {}
 			int max = 0;
 			for(int i=0;i<rowNames.length;i++){
 				max = Math.max(max,rowNames[i].length());
@@ -339,6 +421,11 @@ class RDataFrameModel extends ExDefaultTableModel {
 	public RowNamesListModel getRowNamesModel() { return rowNamesModel;}
 	public void setRowNamesModel(RowNamesModel model){rowNamesModel = model;}
 	
+	public class NAHolder{
+		public String toString(){
+			return "NA";
+		}
+	}
 	
 	/**
 	 * 		Implements nice printing of NAs, as well as left alignment
@@ -355,29 +442,18 @@ class RDataFrameModel extends ExDefaultTableModel {
 			super.getTableCellRendererComponent(table, value,
 					selected, focused, row, column);
 
-
-			
-			
 			if(row<getRealRowCount() || column<getRealColumnCount()){
-				boolean isNA = value.toString().equals("NA");
-				if(isNA){
-					if(Deducer.rniEval("is.na("+rDataName+"["+(row+1)+","+(column+1)+"])").asBool().isTRUE()){
-						setHorizontalAlignment(RIGHT);
-						setVerticalAlignment(BOTTOM);
-						Font f = new Font("Dialog", Font.PLAIN, 6);
-						setFont(f);
-					}else{
-						setHorizontalAlignment(LEFT);
-						setVerticalAlignment(CENTER);
-					}
-				}else{
-					REXP rValue = Deducer.rniEval(rDataName+"["+(row+1)+","+(column+1)+"]");
-					int type = rValue.getType();
-					if( type==REXP.XT_STR || type == REXP.XT_FACTOR )
-						setHorizontalAlignment(LEFT);
-					else 
-						setHorizontalAlignment(RIGHT);
+				if(value instanceof NAHolder){
+					setHorizontalAlignment(RIGHT);
+					setVerticalAlignment(BOTTOM);
+					Font f = new Font("Dialog", Font.PLAIN, 6);
+					setFont(f);					
+				}else if(value instanceof String){
+					setHorizontalAlignment(LEFT);	
 					setVerticalAlignment(CENTER);
+				}else{
+					setHorizontalAlignment(RIGHT);
+					setVerticalAlignment(CENTER);					
 				}
 			}
 			

@@ -60,7 +60,7 @@ public class Deducer {
 	public Deducer(boolean jgr){
 		started=false;
 		try{
-			if(jgr || JGR.R!=null){
+			if(jgr || ((JRIEngine)JGR.getREngine()).getRni()!=null){
 				startWithJGR();
 			}
 		}catch(Exception e){
@@ -82,10 +82,8 @@ public class Deducer {
 		    }
 			org.rosuda.util.Platform.initPlatform("org.rosuda.JGR.toolkit.");
 			
-			
-			JGR.R=org.rosuda.JRI.Rengine.getMainEngine();
 			try {
-				engine = new JRIEngine(JGR.R);
+				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
 			} catch (REngineException e) {
 				new ErrorMsg(e);
 			}
@@ -109,6 +107,7 @@ public class Deducer {
 	
 	public void startWithJGR(){
 		insideJGR=true;
+		engine = (JRIEngine)JGR.getREngine();
 		String dataMenu = "Data";
 		String analysisMenu = "Analysis";
 		try{
@@ -409,21 +408,28 @@ public class Deducer {
 	}
 	
 	public static org.rosuda.JRI.REXP rniEval(String cmd){
-		return JGR.R.eval(cmd);
+		org.rosuda.JRI.REXP result;
+		boolean obtainedLock = engine.getRni().getRsync().safeLock();
+		try {
+			result = engine.getRni().eval(cmd);
+		}finally {
+				if (obtainedLock) 
+					engine.getRni().getRsync().unlock();
+		}
+		return result;
 		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd);
 	}
 	
 	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
-		return JGR.R.idleEval(cmd);
+		return engine.getRni().idleEval(cmd);
 		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
 	}
 	
 	public static REXP eval(String cmd){
 		if(engine==null){
 			try {
-				engine = new JRIEngine(JGR.R);
+				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
 			} catch (REngineException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -441,7 +447,7 @@ public class Deducer {
 	public static REXP idleEval(String cmd){
 		if(engine==null){
 			try {
-				engine = new JRIEngine(JGR.R);
+				engine = new JRIEngine(org.rosuda.JRI.Rengine.getMainEngine());
 			} catch (REngineException e) {
 				e.printStackTrace();
 			}
@@ -499,18 +505,18 @@ public class Deducer {
 					    public void run() { 
 					    	PrefPanel pref = new PrefPanel();
 					    	PrefDialog.addPanel(pref, pref);					    	
-						    if(DeducerPrefs.VIEWERATSTARTUP){
+						    /*if(DeducerPrefs.VIEWERATSTARTUP){
 							   	DataFrameWindow inst = new DataFrameWindow();
 						    	inst.setLocationRelativeTo(null);
 						    	inst.setVisible(true);
 						    	JGR.MAINRCONSOLE.toFront(); 
-					    	}
+					    	}*/
 					    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
 								Deducer.rniEval(".jChooserMacLAF()");
 					    }
 						};
 						REXP tmp=null;
-						boolean running = JGR.R!=null;
+						boolean running = engine!=null;
 					    if(running){
 					    		SwingUtilities.invokeLater(doWorkRunnable);
 					    		flag=false;

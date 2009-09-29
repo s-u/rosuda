@@ -14,7 +14,6 @@ import org.rosuda.JGR.editor.Editor;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.AboutDialog;
 import org.rosuda.JGR.toolkit.PrefDialog;
-import org.rosuda.JGR.toolkit.PrefsDialog;
 import org.rosuda.deducer.toolkit.VariableSelectionDialog;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.DataLoader;
