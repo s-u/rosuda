@@ -49,6 +49,9 @@ import org.rosuda.util.Global;
 
 public class RController {
 
+	public static final String TEMP_MATRIX_DIM_NAMES_JGR = "tempMatrixDimNamesJGR";
+	public static final String TEMP_MATRIX_CONTENT_JGR = "tempMatrixContentJGR";
+	public static final String TEMP_VARIABLE_NAME = "jgrtemp";
 	/**
 	 * dummy object.
 	 */
@@ -1197,7 +1200,8 @@ public class RController {
 			if (vs.at(0) instanceof SVarInt) {
 				return exportInteger(vs);
 			} else {
-				JGR.getREngine().assign(vs.getName(), ((SVarDouble) vs.at(0)).cont);
+				JGR.getREngine().assign(TEMP_VARIABLE_NAME, ((SVarDouble) vs.at(0)).cont);
+				setVariableName(vs.getName());
 				return true;
 			}
 		} catch (Exception e) {
@@ -1217,7 +1221,8 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			JGR.getREngine().assign(vs.getName(), ((SVarInt) vs.at(0)).cont);
+			JGR.getREngine().assign(TEMP_VARIABLE_NAME, ((SVarInt) vs.at(0)).cont);
+			setVariableName(vs.getName());
 			return true;
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1241,7 +1246,8 @@ public class RController {
 				ids[z] = ((SVarFact) vs.at(0)).cont[z] + 1;
 
 			REXPFactor factor = new REXPFactor(ids, ((SVarFact) vs.at(0)).cats);
-			JGR.getREngine().assign(vs.getName(), factor);
+			JGR.getREngine().assign(TEMP_VARIABLE_NAME, factor);
+			setVariableName(vs.getName());
 			return true;
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1260,12 +1266,18 @@ public class RController {
 		try {
 			if (vs.count() > 1)
 				return false;
-			JGR.getREngine().assign(vs.getName(), ((SVarObj) vs.at(0)).getContent());
+			JGR.getREngine().assign(TEMP_VARIABLE_NAME, ((SVarObj) vs.at(0)).getContent());
+			setVariableName(vs.getName());
 			return true;
 		} catch (Exception e) {
 			new ErrorMsg(e);
 			return false;
 		}
+	}
+	
+	private static boolean setVariableName(String name) throws REngineException, REXPMismatchException {
+		JGR.eval(name + " <- "+TEMP_VARIABLE_NAME+"; rm("+TEMP_VARIABLE_NAME+")");
+		return true;
 	}
 
 	/**
@@ -1350,7 +1362,8 @@ public class RController {
 
 			REXPString rexpRowNames = new REXPString(rownames);
 
-			JGR.getREngine().assign(vs.getName(), createDataFrame(content, rexpRowNames));
+			JGR.getREngine().assign(TEMP_VARIABLE_NAME, createDataFrame(content, rexpRowNames));
+			setVariableName(vs.getName());
 			return true;
 		} catch (Exception e) {
 			new ErrorMsg(e);
@@ -1374,7 +1387,7 @@ public class RController {
 	 *            dataset
 	 * @return true if successful, false if not
 	 */
-	private static boolean exportMatrixNew(SVarSet vs) {
+	private static boolean exportMatrix(SVarSet vs) {
 		try {
 			String[] names = new String[vs.count()];
 			Object mcont;
@@ -1410,6 +1423,10 @@ public class RController {
 				content = new REXPDouble((double[]) mcont);
 			else
 				content = new REXPString((String[]) mcont);
+			
+			
+			JGR.getREngine().assign(TEMP_MATRIX_CONTENT_JGR, content);
+			
 
 			String[] rownames = new String[vs.length()];
 			for (int i = 1; i <= rownames.length; i++)
@@ -1417,11 +1434,10 @@ public class RController {
 
 			REXPList dimnames = new REXPList(new RList(new REXP[] { new REXPString(rownames), new REXPString(names) }));
 
-			REXPDouble dim = new REXPDouble(new double[] { vlength, vs.count() });
+			JGR.getREngine().assign(TEMP_MATRIX_DIM_NAMES_JGR,dimnames);
 
-			REXPGenericVector rgv = new REXPGenericVector(new RList(new REXP[] { content }), new REXPList(new RList(new REXP[] {
-					new REXPString("matrix"), dim, dimnames }, new String[] { "class", "dim", "dimnames" })));
-			JGR.getREngine().assign(vs.getName(), rgv);
+			JGR.eval(vs.getName() + " <- matrix(tempMatrixContentJGR,dimnames=tempMatrixDimNamesJGR,nrow="+rownames.length+",ncol="+names.length+")");
+			JGR.eval("rm("+TEMP_MATRIX_CONTENT_JGR+");rm("+TEMP_MATRIX_DIM_NAMES_JGR+")");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1430,67 +1446,6 @@ public class RController {
 		}
 	}
 	
-	private static boolean exportMatrix(SVarSet vs) {
-		try {
-			String[] names = new String[vs.count()];
-			Object mcont;
-			int vlength = vs.at(0).size();
-			boolean isInt = false;
-			if (vs.at(0).getClass().getName().equals("org.rosuda.ibase.SVarDouble"))
-				mcont = new double[vs.count() * vlength];
-			else if (vs.at(0).getClass().getName().equals("org.rosuda.ibase.SVarInt")) {
-				mcont = new int[vs.count() * vlength];
-				isInt = true;
-			} else
-				return false;
-
-			for (int i = 0; i < vs.count(); i++) {
-				names[i] = vs.at(i).getName();
-				if (isInt)
-					System.arraycopy(((SVarInt) vs.at(i)).cont, 0, mcont, i * vlength, vlength);
-				else
-					System.arraycopy(((SVarDouble) vs.at(i)).cont, 0, mcont, i * vlength, vlength);
-			}
-
-			long xp1;
-			if (isInt)
-				xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutIntArray((int[]) mcont);
-			else
-				xp1 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray((double[]) mcont);
-
-			long[] dimnames = new long[2];
-
-			long xp2 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(names);
-
-			String[] rownames = new String[vs.length()];
-			for (int i = 1; i <= rownames.length; i++)
-				rownames[i - 1] = i + "";
-			long xp3 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutStringArray(rownames);
-
-			dimnames[0] = xp3;
-			dimnames[1] = xp2;
-
-			long xp4 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutVector(dimnames);
-
-			double[] dim = new double[] { vlength, vs.count() };
-			long xp5 = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutDoubleArray(dim);
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "dim", xp5);
-
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "dimnames", xp4);
-
-			long c = ((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniPutString("matrix");
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniSetAttr(xp1, "class", c);
-
-			((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniAssign("jgrtemp", xp1, 0);
-			JGR.eval(vs.getName() + "<- jgrtemp");
-			JGR.eval("rm(jgrtemp)");
-			return true;
-		} catch (Exception e) {
-			new ErrorMsg(e);
-			return false;
-		}
-	}
-
 	/**
 	 * Export r-list.
 	 * 
@@ -1521,8 +1476,8 @@ public class RController {
 			}
 
 			REXPList rl = new REXPList(content);
-			JGR.getREngine().assign(vs.getName(), rl);
-
+			JGR.getREngine().assign(TEMP_VARIABLE_NAME, rl);
+			setVariableName(vs.getName());
 			return true;
 		} catch (Exception e) {
 			new ErrorMsg(e);

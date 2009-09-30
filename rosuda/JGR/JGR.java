@@ -285,7 +285,8 @@ public class JGR {
 		int exit = 1;
 
 		if (JGRPrefs.askForSavingWorkspace) {
-			exit = JOptionPane.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			exit = JOptionPane
+					.showConfirmDialog(null, "Save workspace?", "Close JGR", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		}
 
 		if (exit == 0) {
@@ -416,8 +417,12 @@ public class JGR {
 		OBJECTS.clear();
 		KEYWORDS_OBJECTS.clear();
 		for (int i = 0; i < objects.length; i++) {
-			KEYWORDS_OBJECTS.add(objects[i]);
-			OBJECTS.add(objects[i]);
+			String object = objects[i];
+			if (!(RController.TEMP_MATRIX_CONTENT_JGR.equals(object) || RController.TEMP_MATRIX_DIM_NAMES_JGR.equals(object) || RController.TEMP_VARIABLE_NAME
+					.equals(object))) {
+				KEYWORDS_OBJECTS.add(object);
+				OBJECTS.add(object);
+			}
 		}
 	}
 
