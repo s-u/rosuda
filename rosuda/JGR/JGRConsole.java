@@ -324,12 +324,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		String c = null;
 		for (int i = 0; i < cmdArray.length; i++) {
 			c = cmdArray[i];
-			if (isHelpCMD(c))
+			/*if (isHelpCMD(c))
 				try {
 					outputDoc.insertString(outputDoc.getLength(), c + "\n" + RController.getRPrompt(), JGRPrefs.CMD);
 				} catch (Exception e) {
 				}
-			else if (isSupported(c))
+			else */if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
 		}
 	}

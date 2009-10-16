@@ -44,7 +44,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 
 import org.rosuda.JGR.editor.FindReplaceDialog;
-import org.rosuda.JGR.rhelp.SearchEngine;
 import org.rosuda.JGR.toolkit.FontTracker;
 import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.JGRPrefs;
@@ -102,7 +101,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 	private IconButton forward;
 
-	private SearchEngine searchRHelp;
+//	private SearchEngine searchRHelp;
 
 	private static String index;
 
@@ -111,6 +110,32 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 	public JGRHelp() {
 		this(null);
+	}
+
+	public static void showURL(String url) {
+		if (current == null) {
+			current = new JGRHelp(url);
+		} else {
+			current.showURLInternal(url);
+		}
+	}
+
+	public void showURLInternal(String location) {
+
+		if (location != null && !location.equals("")) {
+			try {
+				if (((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
+					tabArea.remove(0);
+			} catch (Exception e) {
+			}
+			if (tabArea.getTabCount() == JGRPrefs.maxHelpTabs)
+				tabArea.remove(JGRPrefs.maxHelpTabs - 1);
+			tabArea.add(new HelpArea(tabArea, this, location), 0);
+			tabArea.setSelectedIndex(0);
+			tabArea.setIconAt(0, new CloseIcon(current.getClass().getResource("/icons/close.png")));
+			tabArea.setTitleAt(0, location);
+		}
+
 	}
 
 	/**
@@ -143,8 +168,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			index = "file://" + RHELPLOCATION.replace('\\', '/') + "/doc/html/packages.html";
 		}
 
-		searchRHelp = new SearchEngine();
-		searchRHelp.setRHelp(this);
+//		searchRHelp = new SearchEngine();
+//		searchRHelp.setRHelp(this);
 
 		search.setActionCommand("searchHelp");
 		search.addActionListener(this);
@@ -425,8 +450,6 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 		private JGRHelp rhelp;
 
-		private String keyword;
-
 		private final Vector history = new Vector();
 
 		private final Vector viewportLocationHistory = new Vector();
@@ -437,7 +460,6 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 		public HelpArea(JTabbedPane parent, JGRHelp rhelp, String keyword) {
 			this.rhelp = rhelp;
-			this.keyword = keyword;
 			tabArea = parent;
 			FontTracker.current.add(helpPane);
 			this.getViewport().add(helpPane);
@@ -465,7 +487,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			if (keyword == null)
 				goTo(JGRHelp.index);
 			else
-				search();
+				goTo(keyword);
 		}
 
 		private void setButtons() {
@@ -575,12 +597,12 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			}
 		}
 
-		public void search() {
-			if (keyword != null && !keyword.equals(""))
-				if (rhelp.searchRHelp != null)
-					goTo(rhelp.searchRHelp.search(keyword, rhelp.exactMatch.isSelected(), rhelp.searchDesc.isSelected(), rhelp.searchKeyWords
-							.isSelected(), rhelp.searchAliases.isSelected()));
-		}
+//		public void search() {
+//			if (keyword != null && !keyword.equals(""))
+//				if (rhelp.searchRHelp != null)
+//					goTo(rhelp.searchRHelp.search(keyword, rhelp.exactMatch.isSelected(), rhelp.searchDesc.isSelected(), rhelp.searchKeyWords
+//							.isSelected(), rhelp.searchAliases.isSelected()));
+//		}
 
 	}
 
