@@ -7,6 +7,7 @@ package org.rosuda.JGR;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -24,6 +25,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -101,18 +103,28 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 	private IconButton forward;
 
-//	private SearchEngine searchRHelp;
-
 	private static String index;
-
-	/** Path to html help of R */
-	public static String RHELPLOCATION;
 
 	public JGRHelp() {
 		this(null);
 	}
 
 	public static void showURL(String url) {
+		/*if (Desktop.isDesktopSupported()) {
+			try {
+				Desktop.getDesktop().browse(new URL(url).toURI());
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return;
+		}*/
 		if (current == null) {
 			current = new JGRHelp(url);
 		} else {
@@ -127,6 +139,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				if (((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
 					tabArea.remove(0);
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			if (tabArea.getTabCount() == JGRPrefs.maxHelpTabs)
 				tabArea.remove(JGRPrefs.maxHelpTabs - 1);
@@ -154,23 +167,17 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				"@GFind Next", "searchnext", "~Window", "~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, Menu);
 
-		if (System.getProperty("os.name").startsWith("Windows")) {
-			RHELPLOCATION = RController.getRHome();
-			index = "file:/" + RHELPLOCATION.replace('\\', '/') + "/doc/html/packages.html";
-		} else {
-			try {
-				RHELPLOCATION = JGR.eval("tempdir()").asString() + "/.R";
-			} catch (REXPMismatchException e) {
-				new ErrorMsg(e);
-			} catch (REngineException e) {
-				new ErrorMsg(e);
+		
+		index = "http://localhost";
+		
+		if (location != null) {
+			int index1 = location.indexOf("127.0.0.1");
+			if (index1 > 0) {
+				int index2 = location.indexOf("/", index1+("127.0.0.1".length()));
+				index = location.substring(0,index2) + "/doc/html/packages.html";
 			}
-			index = "file://" + RHELPLOCATION.replace('\\', '/') + "/doc/html/packages.html";
 		}
-
-//		searchRHelp = new SearchEngine();
-//		searchRHelp.setRHelp(this);
-
+		
 		search.setActionCommand("searchHelp");
 		search.addActionListener(this);
 
@@ -232,6 +239,11 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		super.setVisible(true);
 		inputKeyWord.requestFocus();
 		current = this;
+		
+		if (location != null) {
+			showURLInternal(location);
+		}
+		
 	}
 
 	/**
@@ -295,7 +307,13 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			searchKeyWords.setSelected(true);
 			searchAliases.setSelected(true);
 		}
-		search(keyword);
+		try {
+			JGR.eval("help(\""+keyword+"\");");
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 	}
 
 	/**
@@ -305,18 +323,12 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 *            keyword
 	 */
 	public void search(String keyword) {
-		if (keyword != null && !keyword.equals("")) {
-			try {
-				if (((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
-					tabArea.remove(0);
-			} catch (Exception e) {
-			}
-			if (tabArea.getTabCount() == JGRPrefs.maxHelpTabs)
-				tabArea.remove(JGRPrefs.maxHelpTabs - 1);
-			tabArea.add(new HelpArea(tabArea, this, keyword), 0);
-			tabArea.setSelectedIndex(0);
-			tabArea.setIconAt(0, new CloseIcon(getClass().getResource("/icons/close.png")));
-			tabArea.setTitleAt(0, keyword);
+		try {
+			JGR.eval("help.search(\""+keyword+"\");");
+		} catch (REngineException e) {
+			new ErrorMsg(e);
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
 		}
 	}
 
@@ -354,16 +366,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			search();
 		else if (cmd == "search") {
 			FindReplaceDialog.findExt(this, ((HelpArea) tabArea.getSelectedComponent()).helpPane);
-			// textFinder
-			// .setSearchArea(((HelpArea)
-			// tabArea.getSelectedComponent()).helpPane);
-			// textFinder.showFind(false);
 		} else if (cmd == "searchnext") {
 			FindReplaceDialog.findNextExt(this, ((HelpArea) tabArea.getSelectedComponent()).helpPane);
-			// textFinder
-			// .setSearchArea(((HelpArea)
-			// tabArea.getSelectedComponent()).helpPane);
-			// textFinder.showFind(true);
 		} else if (cmd == "tab_close")
 			tabArea.remove(tabArea.getSelectedIndex());
 	}
@@ -458,7 +462,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 		private JTabbedPane tabArea = null;
 
-		public HelpArea(JTabbedPane parent, JGRHelp rhelp, String keyword) {
+		public HelpArea(JTabbedPane parent, JGRHelp rhelp, String location) {
 			this.rhelp = rhelp;
 			tabArea = parent;
 			FontTracker.current.add(helpPane);
@@ -484,10 +488,10 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 					setButtons();
 				}
 			});
-			if (keyword == null)
+			if (location == null)
 				goTo(JGRHelp.index);
 			else
-				goTo(keyword);
+				goTo(location);
 		}
 
 		private void setButtons() {
