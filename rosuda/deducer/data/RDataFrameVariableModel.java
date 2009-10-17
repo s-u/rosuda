@@ -3,11 +3,10 @@
 
 package org.rosuda.deducer.data;
 
-import javax.swing.*;
-import javax.swing.table.*;
 
-import org.rosuda.JRI.*;
-import org.rosuda.JGR.JGR;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 
 
@@ -42,70 +41,72 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public int getRowCount(){
-		if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
-			return 0;
-		if(rDataName!=null)
-			return Deducer.rniEval("ncol("+rDataName+")").asInt()+numExtraColumns;
-		else
-			return 0;
+		try{
+			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
+				return 0;
+			if(rDataName!=null)
+				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
+			else
+				return 0;
+		}catch(Exception e){return 0;}
 	}
 	
 	public Object getValueAt(int row, int col){
-		if(row>=(getRowCount()-numExtraColumns)){
-			return null;
-		}else if(col==0){
-			return Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]").asString();
-		}else if(col==1){
-			int xt = Deducer.rniEval(rDataName+"[,"+(row+1)+"]").getType();
-			if (xt==REXP.XT_NULL) return "NULL";
-			if (xt==REXP.XT_ARRAY_INT) return "Integer";
-			if (xt==REXP.XT_ARRAY_STR) return "String";
-			if (xt==REXP.XT_ARRAY_DOUBLE) return "Double";
-			if (xt==REXP.XT_ARRAY_BOOL) return "Logical";
-			if (xt==REXP.XT_ARRAY_BOOL_INT) return "Logical";
-			if (xt==REXP.XT_FACTOR) return "Factor";
-			return "?";
-		}else if(col==2){
-			int type = Deducer.rniEval(rDataName+"[,"+(row+1)+"]").getType();
-			//Deducer.rniEval("print('"+type+"')");
-			if(type == REXP.XT_FACTOR){
-				String[] levels = Deducer.rniEval("levels("+rDataName+"[,"+(row+1)+"])").asStringArray();
-				//Deducer.rniEval("print('"+levels.length+"')");
-				String lev = "";
-				for(int i=0;i<levels.length;i++){
-					lev=lev.concat("("+(i+1)+") ");
-					lev=lev.concat(levels[i]);	
-					lev=lev.concat("; ");
-				}
-				return lev;
-			}else 
+		try{
+			if(row>=(getRowCount()-numExtraColumns)){
 				return null;
-		}else
-			return null;
+			}else if(col==0){
+				return Deducer.eval("colnames("+rDataName+")["+(row+1)+"]").asString();
+			}else if(col==1){
+				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");	
+				if (var.isNull()) return "NULL";
+				else if (var.isInteger()) return "Integer";
+				else if (var.isString()) return "String";
+				else if (var.isLogical()) return "Logical";
+				else if (var.isLogical()) return "Logical";
+				else if (var.isFactor()) return "Factor";
+				else if (var.isNumeric()) return "Double";
+				else return "?";
+			}else if(col==2){
+				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");
+				if(var.isFactor()){
+					String[] levels = Deducer.eval("levels("+rDataName+"[,"+(row+1)+"])").asStrings();
+					String lev = "";
+					for(int i=0;i<Math.min(levels.length,50);i++){
+						lev=lev.concat("("+(i+1)+") ");
+						lev=lev.concat(levels[i]);	
+						lev=lev.concat("; ");
+					}
+					return lev;
+				}else 
+					return "";
+			}else
+				return "";
+		}catch(Exception e){return "?";}
 	}
 	
 	public void setValueAt(Object value,int row, int col){
 		if(row>=(getRowCount()-numExtraColumns)){
 			if(col==0){
-				Deducer.rniEval(rDataName+"[,"+(row+1)+"]<-NA");	
-				Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+				Deducer.eval(rDataName+"[,"+(row+1)+"]<-NA");	
+				Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 				refresh();
 				rowNamesModel.refresh();
 			}else
 				return;
 		}else if(col==0){
-			Deducer.rniEval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
+			Deducer.eval("colnames("+rDataName+")["+(row+1)+"]<-'"+value.toString().trim()+"'");
 		}else if(col==1){
 			String type = value.toString().toLowerCase().trim();
-			if(type.equals("integer")) Deducer.rniEval(rDataName+"[,"+(row+1)+
+			if(type.equals("integer")) Deducer.eval(rDataName+"[,"+(row+1)+
 										"]<-as.integer("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("factor")) Deducer.rniEval(rDataName+"[,"+(row+1)+
+			if(type.equals("factor")) Deducer.eval(rDataName+"[,"+(row+1)+
 					"]<-as.factor("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("double")) Deducer.rniEval(rDataName+"[,"+(row+1)+
+			if(type.equals("double")) Deducer.eval(rDataName+"[,"+(row+1)+
 					"]<-as.double("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("logical")) Deducer.rniEval(rDataName+"[,"+(row+1)+
+			if(type.equals("logical")) Deducer.eval(rDataName+"[,"+(row+1)+
 					"]<-as.logical("+rDataName+"[,"+(row+1)+"])");
-			if(type.equals("string")) Deducer.rniEval(rDataName+"[,"+(row+1)+
+			if(type.equals("string")) Deducer.eval(rDataName+"[,"+(row+1)+
 					"]<-as.character("+rDataName+"[,"+(row+1)+"])");
 			return;
 		}
@@ -139,9 +140,13 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 		}
 		
 		public int getSize() { 
-			if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
+			try {			
+				if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
+					return 0;
+				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtraColumns;
+			} catch (REXPMismatchException e) {
 				return 0;
-			return Deducer.rniEval("ncol("+rDataName+")").asInt()+numExtraColumns;
+			}
 		}
 	}
 

@@ -6,15 +6,9 @@ import java.awt.Font;
 
 import javax.swing.*;
 
-import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
-import org.rosuda.REngine.REXPFactor;
-import org.rosuda.REngine.REXPList;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.RFactor;
-import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
 
 
@@ -50,12 +44,12 @@ class RDataFrameModel extends ExDefaultTableModel {
 		boolean envDefined = ((REXPLogical)Deducer.eval("'"+guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		
 		if(!envDefined){
-			Deducer.rniEval(guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.eval(guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		if(tempDataName!=null)
 			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");
 		rDataName = name;
-		tempDataName = JGR.MAINRCONSOLE.getUniqueName(rDataName,guiEnv);
+		tempDataName = Deducer.getUniqueName(rDataName,guiEnv);
 		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
 		this.fireTableStructureChanged();
 		this.fireTableDataChanged();

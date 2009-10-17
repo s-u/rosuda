@@ -6,10 +6,13 @@ package org.rosuda.JGR.toolkit;
 // distribution ---
 
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -42,7 +45,9 @@ public class IconButton extends JButton implements MouseListener {
 	public IconButton(String iconUrl, String tooltip, ActionListener al, String cmd) {
 		ImageIcon icon = null;
 		try {
-			icon = new ImageIcon(getClass().getResource(iconUrl));
+			URL url = getClass().getResource(iconUrl);
+			Image img = ImageIO.read(url);
+			icon = new ImageIcon(img);
 			this.setIcon(icon);
 			this.setMinimumSize(new Dimension(26, 26));
 			this.setPreferredSize(new Dimension(26, 26));

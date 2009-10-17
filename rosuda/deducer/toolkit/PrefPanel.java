@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.toolkit.PrefDialog;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.deducer.Deducer;
 import org.rosuda.ibase.Common;
 
 public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
@@ -93,7 +94,7 @@ public class PrefPanel extends PrefDialog.PJPanel implements ActionListener{
 		DeducerPrefs.SHOWDATA= data.isSelected();
 		DeducerPrefs.USEQUAQUACHOOSER = macChooser.isSelected();
 		if(DeducerPrefs.USEQUAQUACHOOSER)
-			JGR.MAINRCONSOLE.execute(".jChooserMacLAF()");
+			Deducer.eval(".jChooserMacLAF()");
 		DeducerPrefs.VIEWERATSTARTUP = dataViewerStartUp.isSelected();
 		DeducerPrefs.writePrefs();
 	}

@@ -56,7 +56,7 @@ public class Deducer {
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
-	public static JRIEngine engine; //temp until JGR 1.7
+	public static JRIEngine engine; 
 	public Deducer(boolean jgr){
 		started=false;
 		try{
@@ -95,11 +95,6 @@ public class Deducer {
 			
 			DeducerPrefs.initialize();
 			
-		    /*if(DeducerPrefs.VIEWERATSTARTUP){
-			   	DataFrameWindow inst = new DataFrameWindow();
-		    	inst.setLocationRelativeTo(null);
-		    	inst.setVisible(true);
-	    	}*/
 			started=true;
 			eval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
 		}catch(Exception e){new ErrorMsg(e);}
@@ -143,6 +138,16 @@ public class Deducer {
 				menuIndex++;
 			}
 			
+		    if(DeducerPrefs.VIEWERATSTARTUP){
+			   	DataFrameWindow inst = new DataFrameWindow();
+		    	inst.setLocationRelativeTo(null);
+		    	inst.setVisible(true);
+		    	JGR.MAINRCONSOLE.toFront(); 
+	    	}
+			
+	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
+				Deducer.rniEval(".jChooserMacLAF()");
+	    	
 			//Replace DataTable with Data Viewer
 			JGR.MAINRCONSOLE.getJMenuBar().getMenu(menuIndex).remove(1);
 			insertJMenuItem(JGR.MAINRCONSOLE, "Packages & Data", "Data Viewer", "table", cListener, 1);
@@ -162,7 +167,11 @@ public class Deducer {
 			
 			//help
 			EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Help", "Deducer Help", "dhelp", cListener);
-			new Thread(new Runner()).start();		
+			
+			//preferences
+			PrefPanel prefs = new PrefPanel();
+			PrefDialog.addPanel(prefs, prefs);
+				
 			started=true;
 		}catch(Exception e){new ErrorMsg(e);}		
 	}
@@ -417,12 +426,10 @@ public class Deducer {
 					engine.getRni().getRsync().unlock();
 		}
 		return result;
-		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().eval(cmd);
 	}
 	
 	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
 		return engine.getRni().idleEval(cmd);
-		//return ((org.rosuda.REngine.JRI.JRIEngine)JGR.getREngine()).getRni().idleEval(cmd);
 	}
 	
 	public static REXP eval(String cmd){
@@ -492,39 +499,26 @@ public class Deducer {
 		return formula;
 	}
 	
-	class Runner implements Runnable {
-		public Runner() {
-		}
-
-		public void run() {
-			boolean flag=true;
-			while (flag)
-				try {
-					Thread.sleep(50);
-						Runnable doWorkRunnable = new Runnable() {
-					    public void run() { 
-					    	PrefPanel pref = new PrefPanel();
-					    	PrefDialog.addPanel(pref, pref);					    	
-						    /*if(DeducerPrefs.VIEWERATSTARTUP){
-							   	DataFrameWindow inst = new DataFrameWindow();
-						    	inst.setLocationRelativeTo(null);
-						    	inst.setVisible(true);
-						    	JGR.MAINRCONSOLE.toFront(); 
-					    	}*/
-					    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
-								Deducer.rniEval(".jChooserMacLAF()");
-					    }
-						};
-						REXP tmp=null;
-						boolean running = engine!=null;
-					    if(running){
-					    		SwingUtilities.invokeLater(doWorkRunnable);
-					    		flag=false;
-					    }
-					
-				} catch (Exception e) {
-					new ErrorMsg(e);
-				}
-		}
+	/**
+	 * Gets a unique name based on a starting string
+	 * 
+	 * @param var
+	 * @param envName
+	 *            The name of the enviroment in which to look
+	 * @return the value of var concatinated with a number
+	 */
+	public static String getUniqueName(String var, String envName) {
+		return JGR.MAINRCONSOLE.getUniqueName(var, envName);
 	}
+	
+	/**
+	 * Gets a unique name based on a starting string
+	 * 
+	 * @param var
+	 * @return the value of var concatinated with a number
+	 */
+	public static String getUniqueName(String var) {
+		return JGR.MAINRCONSOLE.getUniqueName(var);
+	}
+
 }

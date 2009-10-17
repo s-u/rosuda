@@ -235,7 +235,7 @@ public class CorPlots extends JDialog implements ActionListener{
 	private JRadioButton getMatrix() {
 		if(matrix == null) {
 			matrix = new JRadioButton();
-			matrix.setText("Correlation Matrix");
+			matrix.setText("Matrix");
 			matrix.setBounds(17, 37, 131, 19);
 		}
 		return matrix;
