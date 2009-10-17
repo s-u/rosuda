@@ -324,9 +324,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		String c = null;
 		for (int i = 0; i < cmdArray.length; i++) {
 			c = cmdArray[i];
-			/*if (c != null && c.trim().startsWith("help.search")) {
-				//doc/html/Search?name=ls&title=1&keyword=1&alias=1
-			} else*/ if (isSupported(c))
+			if (c != null && c.trim().startsWith("help.search")) {
+				String keyword = c.trim().substring(c.trim().indexOf("(")+1,c.trim().indexOf(")"));
+				keyword = keyword.replaceAll("\"","");
+				JGRHelp.searchHelp(keyword);
+			} else if (c != null && c.trim().startsWith("??")) {
+				String keyword = c.trim().replaceAll("\\?", "");
+				JGRHelp.searchHelp(keyword);
+			} else if (c != null && c.trim().startsWith("help.start")) {
+				JGRHelp.showURL(null);
+			} else if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
 		}
 	}
@@ -411,23 +418,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		}
 	}
 
-	/**
-	 * Parse command if it is a helpcommand.
-	 * 
-	 * @param cmd
-	 *            command which should be executed
-	 * @return true if help should be started, false if not
-	 */
-	// later i hope it will be possible let R do this
-	public boolean isHelpCMD(String cmd) {
-		cmd = cmd.trim();
-		if (cmd.startsWith("help(") || cmd.startsWith("?") || cmd.startsWith("help.start(") || cmd.startsWith("help.search(")) {
-			help(cmd);
-			return true;
-		}
-		return false;
-	}
-
 	private boolean isSupported(String cmd) {
 		cmd = cmd.trim();
 		if (cmd.startsWith("fix(") || cmd.startsWith("edit(") || cmd.startsWith("edit.data.frame(")) {
@@ -447,73 +437,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		}
 
 		return true;
-	}
-
-	/**
-	 * Start the help-browser, first parse for the keyword.
-	 * 
-	 * @param help
-	 *            help-command
-	 */
-	public void help(String help) {
-		boolean exact = false;
-		if (help != null) {
-			help = help.replaceAll("[\"|(|)]", "");
-			if (help.startsWith("help.search"))
-				help = help.replaceFirst("help.search", "");
-			else if (help.startsWith("help.start"))
-				help = null;
-			else {
-				if (help.trim().startsWith("?"))
-					help = help.replaceFirst("\\?", "");
-				else
-					help = help.replaceFirst("help", "");
-				exact = true;
-			}
-		}
-		final boolean e = exact;
-		if (JGRHelp.current == null) {
-			final String h;
-			if (help != null)
-				h = help.trim();
-			else
-				h = null;
-			Thread t = new Thread() {
-				public void run() {
-					setWorking(true);
-					try {
-						new JGRHelp();
-						if (h != null)
-							JGRHelp.current.search(h, e);
-					} catch (Exception e1) {
-						new ErrorMsg(e1);
-					}
-					setWorking(false);
-				}
-			};
-			t.start();
-		} else if (help != null && help.trim().length() > 0) {
-			final String h = help.trim();
-			Thread t = new Thread() {
-				public void run() {
-					setWorking(true);
-					JGRHelp.current.setVisible(true);
-					JGRHelp.current.toFront();
-					JGRHelp.current.requestFocus();
-					try {
-						JGRHelp.current.search(h, e);
-					} catch (Exception e1) {
-						new ErrorMsg(e1);
-					}
-					setWorking(false);
-				}
-			};
-			t.start();
-		} else {
-			JGRHelp.current.setVisible(true);
-			JGRHelp.current.toFront();
-			JGRHelp.current.requestFocus();
-		}
 	}
 
 	public void setDataDependentMenusEnabled(boolean enabled) {

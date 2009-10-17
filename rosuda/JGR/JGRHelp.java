@@ -7,7 +7,6 @@ package org.rosuda.JGR;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -25,7 +24,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Vector;
 
@@ -51,6 +49,7 @@ import org.rosuda.JGR.toolkit.IconButton;
 import org.rosuda.JGR.toolkit.JGRPrefs;
 import org.rosuda.JGR.util.DocumentRenderer;
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.ibase.Common;
@@ -99,55 +98,59 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 	private final JCheckBox searchAliases = new JCheckBox("Object Names", false);
 
+	private final JCheckBox searchConcepts = new JCheckBox("Concepts", false);
+
 	private IconButton back;
 
 	private IconButton forward;
 
 	private static String index;
 
+	private static String server;
+
 	public JGRHelp() {
 		this(null);
 	}
 
-	public static void showURL(String url) {
-		/*if (Desktop.isDesktopSupported()) {
-			try {
-				Desktop.getDesktop().browse(new URL(url).toURI());
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+	public static void showURL(final String url) {
+		Thread t = new Thread() {
+			public void run() {
+				if (current == null) {
+					current = new JGRHelp(url);
+				} else {
+					current.showURLInternal(url);
+				}
 			}
-			return;
-		}*/
-		System.out.println("Help result: " + url);
-		if (current == null) {
-			current = new JGRHelp(url);
-		} else {
-			current.showURLInternal(url);
-		}
+		};
+		t.start();
 	}
 
 	public void showURLInternal(String location) {
 
 		if (location != null && !location.equals("")) {
 			try {
-				if (((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
+				if (tabArea.getComponents().length > 0 && ((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
 					tabArea.remove(0);
 			} catch (Exception e) {
-				e.printStackTrace();
+				new ErrorMsg(e);
+			}
+			String title = "Help";
+			if (location.indexOf("/doc/html/Search?") > 0) {
+				title = "Seach Result";
+			} else {
+				try {
+					location.toString().substring(location.toString().lastIndexOf("/") + 1);
+					title = title.substring(0, title.lastIndexOf('.'));
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
 			}
 			if (tabArea.getTabCount() == JGRPrefs.maxHelpTabs)
 				tabArea.remove(JGRPrefs.maxHelpTabs - 1);
 			tabArea.add(new HelpArea(tabArea, this, location), 0);
 			tabArea.setSelectedIndex(0);
 			tabArea.setIconAt(0, new CloseIcon(current.getClass().getResource("/icons/close.png")));
-			tabArea.setTitleAt(0, location);
+			tabArea.setTitleAt(0, title);
 		}
 
 	}
@@ -168,16 +171,24 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				"@GFind Next", "searchnext", "~Window", "~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, Menu);
 
-		
 		if (location != null) {
 			int index1 = location.indexOf("127.0.0.1");
 			if (index1 > 0) {
-				int index2 = location.indexOf("/", index1+("127.0.0.1".length()));
-				index = location.substring(0,index2) + "/doc/html/packages.html";
+				int index2 = location.indexOf("/", index1 + ("127.0.0.1".length()));
+				server = location.substring(0, index2);
+			}
+		} else {
+			try {
+				REXP port = JGR.eval(".jgr.help.httpd.port");
+				server = "http://127.0.0.1:" + port.asString();
+			} catch (REngineException e) {
+				new ErrorMsg(e);
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
 			}
 		}
-		System.out.println("Home site: "+index);
-		
+		index = server + "/doc/html/packages.html";
+
 		search.setActionCommand("searchHelp");
 		search.addActionListener(this);
 
@@ -193,6 +204,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		options.add(searchDesc);
 		options.add(searchKeyWords);
 		options.add(searchAliases);
+		options.add(searchConcepts);
 
 		JPanel top1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		top1.add(inputKeyWord);
@@ -239,11 +251,11 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		super.setVisible(true);
 		inputKeyWord.requestFocus();
 		current = this;
-		
+
 		if (location != null) {
 			showURLInternal(location);
 		}
-		
+
 	}
 
 	/**
@@ -289,31 +301,9 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 */
 	public void search() {
 		String keyword = inputKeyWord.getText().trim();
+		if (keyword == null)
+			return;
 		search(keyword);
-	}
-
-	/**
-	 * Search for the keyword, you can choosed it it should match exactly or not
-	 * 
-	 * @param keyword
-	 *            keyword
-	 * @param exact
-	 *            match exactly or not
-	 */
-	public void search(String keyword, boolean exact) {
-		exactMatch.setSelected(exact);
-		if (!exact) {
-			searchDesc.setSelected(true);
-			searchKeyWords.setSelected(true);
-			searchAliases.setSelected(true);
-		}
-		try {
-			JGR.eval("help(\""+keyword+"\");");
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
-		}
 	}
 
 	/**
@@ -323,12 +313,27 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 *            keyword
 	 */
 	public void search(String keyword) {
-		try {
-			JGR.eval("help.search(\""+keyword+"\");");
-		} catch (REngineException e) {
-			new ErrorMsg(e);
-		} catch (REXPMismatchException e) {
-			new ErrorMsg(e);
+		if (keyword == null)
+			return;
+		String url = server + "/doc/html/Search?name=" + keyword.trim();
+
+		if (exactMatch.isSelected())
+			url += "&exact=1";
+		if (searchDesc.isSelected())
+			url += "&title=1";
+		if (searchKeyWords.isSelected())
+			url += "keyword=1";
+		if (searchAliases.isSelected())
+			url += "alias=1";
+		if (searchConcepts.isSelected())
+			url += "concept=1";
+		showURLInternal(url);
+	}
+	
+	public static void searchHelp(String keyword) {
+		if (current == null) {
+			current = new JGRHelp();
+			current.search(keyword);
 		}
 	}
 
@@ -522,24 +527,25 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
-				if (href)
+				if (href) {
 					try {
 						String title = url.toString().substring(url.toString().lastIndexOf("/") + 1);
 						title = title.substring(0, title.lastIndexOf('.'));
 						int index = tabArea.getSelectedIndex();
-						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("file"))
+						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("http"))
 							tabArea.setTitleAt(index, title);
 						else {
-							int i = url.toString().indexOf("html");
+							int i = url.toString().indexOf("htm");
 							title = url.toString().substring(0, i - 1);
 							title = title.substring(title.lastIndexOf("/") + 1);
-							if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("file"))
+							if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("http"))
 								tabArea.setTitleAt(index, title);
 						}
 						this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex));
 					} catch (Exception ex2) {
+						ex2.printStackTrace();
 					}
-
+				}
 				rhelp.setWorking(false);
 			}
 
@@ -600,12 +606,13 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			}
 		}
 
-//		public void search() {
-//			if (keyword != null && !keyword.equals(""))
-//				if (rhelp.searchRHelp != null)
-//					goTo(rhelp.searchRHelp.search(keyword, rhelp.exactMatch.isSelected(), rhelp.searchDesc.isSelected(), rhelp.searchKeyWords
-//							.isSelected(), rhelp.searchAliases.isSelected()));
-//		}
+		// public void search() {
+		// if (keyword != null && !keyword.equals(""))
+		// if (rhelp.searchRHelp != null)
+		// goTo(rhelp.searchRHelp.search(keyword, rhelp.exactMatch.isSelected(),
+		// rhelp.searchDesc.isSelected(), rhelp.searchKeyWords
+		// .isSelected(), rhelp.searchAliases.isSelected()));
+		// }
 
 	}
 
