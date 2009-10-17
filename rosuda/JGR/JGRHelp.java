@@ -139,7 +139,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				title = "Seach Result";
 			} else {
 				try {
-					location.toString().substring(location.toString().lastIndexOf("/") + 1);
+					title = location.toString().substring(location.toString().lastIndexOf("/") + 1);
 					title = title.substring(0, title.lastIndexOf('.'));
 				} catch (Exception e) {
 					new ErrorMsg(e);
