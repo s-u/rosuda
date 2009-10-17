@@ -193,7 +193,7 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 				super.componentResized(evt);
 				if (JGR.getREngine() != null && JGR.STARTED) {
 					try {
-						JGR.getREngine().eval(new REXPString("options(width=" + getFontWidth() + ")"), null, false);
+						JGR.eval("options(width=" + getFontWidth() + ")");
 					} catch (REngineException e) {
 						new ErrorMsg(e);
 					} catch (REXPMismatchException e) {
@@ -324,12 +324,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		String c = null;
 		for (int i = 0; i < cmdArray.length; i++) {
 			c = cmdArray[i];
-			/*if (isHelpCMD(c))
-				try {
-					outputDoc.insertString(outputDoc.getLength(), c + "\n" + RController.getRPrompt(), JGRPrefs.CMD);
-				} catch (Exception e) {
-				}
-			else */if (isSupported(c))
+			/*if (c != null && c.trim().startsWith("help.search")) {
+				//doc/html/Search?name=ls&title=1&keyword=1&alias=1
+			} else*/ if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
 		}
 	}

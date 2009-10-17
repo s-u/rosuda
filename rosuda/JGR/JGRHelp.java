@@ -125,6 +125,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			}
 			return;
 		}*/
+		System.out.println("Help result: " + url);
 		if (current == null) {
 			current = new JGRHelp(url);
 		} else {
@@ -168,8 +169,6 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		
-		index = "http://localhost";
-		
 		if (location != null) {
 			int index1 = location.indexOf("127.0.0.1");
 			if (index1 > 0) {
@@ -177,6 +176,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				index = location.substring(0,index2) + "/doc/html/packages.html";
 			}
 		}
+		System.out.println("Home site: "+index);
 		
 		search.setActionCommand("searchHelp");
 		search.addActionListener(this);
@@ -504,9 +504,6 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			rhelp.back.setEnabled(currentURLIndex > 0);
 			rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
 			URL url = (URL) history.get(currentURLIndex);
-
-			// setViewPosition((java.awt.Point)
-			// viewportLocationHistory.get(currentURLIndex));
 			try {
 				helpPane.setPage(url);
 			} catch (IOException ex) {
@@ -522,6 +519,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(this, ex.getMessage(), "URL Error", JOptionPane.ERROR_MESSAGE);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			} finally {
 				if (href)
 					try {
