@@ -324,14 +324,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		String c = null;
 		for (int i = 0; i < cmdArray.length; i++) {
 			c = cmdArray[i];
-			if (c != null && c.trim().startsWith("help.search")) {
+			if (c != null && c.trim().startsWith("help.search(")) {
 				String keyword = c.trim().substring(c.trim().indexOf("(")+1,c.trim().indexOf(")"));
 				keyword = keyword.replaceAll("\"","");
 				JGRHelp.searchHelp(keyword);
 			} else if (c != null && c.trim().startsWith("??")) {
 				String keyword = c.trim().replaceAll("\\?", "");
 				JGRHelp.searchHelp(keyword);
-			} else if (c != null && c.trim().startsWith("help.start")) {
+			} else if (c != null && c.trim().startsWith("help.start(")) {
 				JGRHelp.showURL(null);
 			} else if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
