@@ -181,7 +181,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			}
 		} else {
 			try {
-				REXP port = JGR.eval(".jgr.help.httpd.port");
+				REXP port = JGR.eval("tools:::httpdPort");
 				server = "http://127.0.0.1:" + port.asString();
 			} catch (REngineException e) {
 				new ErrorMsg(e);
