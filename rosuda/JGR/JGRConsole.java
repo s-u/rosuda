@@ -328,11 +328,11 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 				String keyword = c.trim().substring(c.trim().indexOf("(")+1,c.trim().indexOf(")"));
 				keyword = keyword.replaceAll("\"","");
 				JGRHelp.searchHelp(keyword);
+				JGR.RHISTORY.add(c);
 			} else if (c != null && c.trim().startsWith("??")) {
 				String keyword = c.trim().replaceAll("\\?", "");
 				JGRHelp.searchHelp(keyword);
-			} else if (c != null && c.trim().startsWith("help.start(")) {
-				JGRHelp.showURL(null);
+				JGR.RHISTORY.add(c);
 			} else if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
 		}

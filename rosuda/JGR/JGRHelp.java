@@ -113,7 +113,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	}
 
 	public static void showURL(final String url) {
-		Thread t = new Thread() {
+		Runnable r = new Runnable() {
 			public void run() {
 				if (current == null) {
 					current = new JGRHelp(url);
@@ -122,7 +122,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				}
 			}
 		};
-		t.start();
+		SwingUtilities.invokeLater(r);
 	}
 
 	public void showURLInternal(String location) {
@@ -521,11 +521,11 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 					rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
 					url = (URL) history.get(currentURLIndex);
 				} catch (Exception e) {
-					e.printStackTrace();
+					new ErrorMsg(e);
 					JOptionPane.showMessageDialog(this, ex.getMessage(), "URL Error", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				new ErrorMsg(e);
 			} finally {
 				if (href) {
 					try {
@@ -543,7 +543,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 						}
 						this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex));
 					} catch (Exception ex2) {
-						ex2.printStackTrace();
+						new ErrorMsg(ex2);
 					}
 				}
 				rhelp.setWorking(false);
@@ -570,9 +570,10 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		public void reposition() {
 			try {
 				Thread.sleep(100);
+				this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex + 1));
 			} catch (Exception e) {
+				// nobody is interested ....
 			}
-			this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex + 1));
 		}
 
 		public void goTo(URL url) {
