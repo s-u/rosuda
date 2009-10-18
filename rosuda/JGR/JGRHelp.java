@@ -118,14 +118,14 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				if (current == null) {
 					current = new JGRHelp(url);
 				} else {
-					current.showURLInternal(url);
+					current.showURLInternal(url,null);
 				}
 			}
 		};
 		SwingUtilities.invokeLater(r);
 	}
 
-	public void showURLInternal(String location) {
+	public void showURLInternal(String location,String titleSearch) {
 
 		if (location != null && !location.equals("")) {
 			try {
@@ -135,8 +135,10 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				new ErrorMsg(e);
 			}
 			String title = "Help";
-			if (location.indexOf("/doc/html/Search?") > 0) {
-				title = "Seach Result";
+			if (titleSearch != null) {
+				title = "Result: " + titleSearch;
+			} else if (location.indexOf("/doc/html/Search?") > 0) {
+				title = "Seach Result ";
 			} else {
 				try {
 					title = location.toString().substring(location.toString().lastIndexOf("/") + 1);
@@ -253,7 +255,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		current = this;
 
 		if (location != null) {
-			showURLInternal(location);
+			showURLInternal(location,null);
 		}
 
 	}
@@ -327,12 +329,14 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			url += "alias=1";
 		if (searchConcepts.isSelected())
 			url += "concept=1";
-		showURLInternal(url);
+		showURLInternal(url,keyword.trim());
 	}
 	
 	public static void searchHelp(String keyword) {
 		if (current == null) {
 			current = new JGRHelp();
+			current.search(keyword);
+		} else {
 			current.search(keyword);
 		}
 	}
@@ -416,8 +420,9 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		if (tabNumber < 0)
 			return;
 		Rectangle rect = ((CloseIcon) tabArea.getIconAt(tabNumber)).getBounds();
-		if (rect.contains(e.getX(), e.getY()))
+		if (rect.contains(e.getX(), e.getY())) {
 			tabArea.remove(tabNumber);
+		}
 	}
 
 	/**

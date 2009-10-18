@@ -329,10 +329,16 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 				keyword = keyword.replaceAll("\"","");
 				JGRHelp.searchHelp(keyword);
 				JGR.RHISTORY.add(c);
+				output.append(c,JGRPrefs.CMD);
+				execute("");
+				output.setCaretPosition(outputDoc.getLength());
 			} else if (c != null && c.trim().startsWith("??")) {
 				String keyword = c.trim().replaceAll("\\?", "");
 				JGRHelp.searchHelp(keyword);
 				JGR.RHISTORY.add(c);
+				output.append(c,JGRPrefs.CMD);
+				execute("");
+				output.setCaretPosition(outputDoc.getLength());
 			} else if (isSupported(c))
 				JGR.rSync.triggerNotification(c.trim());
 		}
@@ -895,20 +901,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 				input.mComplete.selectPrevious();
 			else if (currentHistPosition > 0)
 				if (input.getCaretPosition() == 0 || input.getCaretPosition() == input.getText().length()) {
-					// if (input.getText().trim().length() > 0) {
-					// if (currentHistPosition==JGR.RHISTORY.size()-1 &&
-					// !input.getText().trim().equals(JGR.RHISTORY.elementAt(currentHistPosition-1)))
-					// {
-					// if (System.getProperty("user.name").indexOf("markus") >
-					// -1)
-					// JGR.RHISTORY.insertElementAt(input.getText().trim(),currentHistPosition);
-					// else
-					// JGR.RHISTORY.add(input.getText().trim());
-					// }
-					// else if
-					// (System.getProperty("user.name").indexOf("markus") > -1)
-					// JGR.RHISTORY.add(input.getText().trim());
-					// }
 					input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
 					input.setCaretPosition(input.getText().length());
 					wasHistEvent = true;
