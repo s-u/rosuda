@@ -25,13 +25,11 @@ import javax.swing.JList;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 
-import org.rosuda.JGR.*;
 import org.rosuda.JGR.robjects.*;
 import org.rosuda.JGR.util.*;
 import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
-import org.rosuda.REngine.REngineException;
 import org.rosuda.deducer.Deducer;
 
 
@@ -50,10 +48,10 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		initGUI();
 		try{
 			
-			RController.refreshObjects();
+			Deducer.refreshData();
 			dataComboBoxModel.removeAllElements();
-			for(int i=0;i<JGR.DATA.size();i++){
-				dataComboBoxModel.addElement(((RObject) JGR.DATA.elementAt(i)).getName());
+			for(int i=0;i<Deducer.getData().size();i++){
+				dataComboBoxModel.addElement(((RObject) Deducer.getData().elementAt(i)).getName());
 			}
 			dataComboBox.setSelectedItem(Deducer.getRecentData());
 			String dataName = (String)dataComboBox.getSelectedItem();
@@ -215,7 +213,6 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
-		//JGR.R.eval("print('"+arg0.toString()+"')");
 		if(cmd=="comboBoxChanged"){
 			reset();
 		}

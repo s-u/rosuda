@@ -59,7 +59,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 				rName = (fileDialog.getFile().indexOf(".") <= 0 ? JGR.MAINRCONSOLE.getUniqueName(fileDialog.getFile()) : JGR.MAINRCONSOLE
 						.getUniqueName(fileDialog.getFile().substring(0, fileDialog.getFile().indexOf("."))));
 			rName = RController.makeValidVariableName(rName);
-			loadData(fileDialog.getFile(), fileDialog.getDirectory(), rName);
+			loadData(addSlashes(fileDialog.getFile()), fileDialog.getDirectory(), rName);
 		} catch (Exception er) {
 			new ErrorMsg(er);
 		}
@@ -82,21 +82,21 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 				if (fileName.toLowerCase().endsWith(".sav"))
 					JGR.MAINRCONSOLE.executeLater(var + " <- as.data.frame(read.spss('" + (directory + fileName).replace('\\', '/') + "'))", true);
 				else if (fileName.toLowerCase().endsWith(".xpt") | fileName.toLowerCase().endsWith(".xport"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.xport('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.xport('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".dta"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.dta('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.dta('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".arff"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.arff('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.arff('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".rec"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.epiinfo('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.epiinfo('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".mtp"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- as.data.frame(read.mtp('" + (directory + fileName).replace('\\', '/') + "'))", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- as.data.frame(read.mtp('" + (directory ).replace('\\', '/')+ fileName + "'))", true);
 				else if (fileName.toLowerCase().endsWith(".s3"))
-					JGR.MAINRCONSOLE.executeLater("data.restore('" + (directory + fileName).replace('\\', '/') + "',print=TRUE)", true);
+					JGR.MAINRCONSOLE.executeLater("data.restore('" + (directory ).replace('\\', '/')+ fileName + "',print=TRUE)", true);
 				else if (fileName.toLowerCase().endsWith(".syd") || fileName.toLowerCase().endsWith(".sys"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.systat('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.systat('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else if (fileName.toLowerCase().endsWith(".dbf"))
-					JGR.MAINRCONSOLE.executeLater(var + " <- read.dbf('" + (directory + fileName).replace('\\', '/') + "')", true);
+					JGR.MAINRCONSOLE.executeLater(var + " <- read.dbf('" + (directory ).replace('\\', '/')+ fileName + "')", true);
 				else {
 					int opt = JOptionPane.showConfirmDialog(this, "Unknown File Type.\nWould you like to try to open it as a text data file?");
 					if (opt == JOptionPane.OK_OPTION)
@@ -110,7 +110,7 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	}
 
 	public void loadRdaFile(String fileName, String directory) {
-		String cmd = "print(load(\"" + (directory + fileName).replace('\\', '/') + "\"))";
+		String cmd = "print(load(\"" + (directory.replace('\\', '/') + fileName) + "\"))";
 		try {
 			JGR.eval("cat('The following data objects have been loaded:\\\n')");
 		} catch (REngineException e) {
@@ -128,7 +128,8 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	}
 
 	public void loadTxtFile(String fileName, String directory, String rName) {
-		TxtTableLoader.run(directory + fileName, rName);
+		JGR.MAINRCONSOLE.execute(directory.replace('\\','/') + fileName);
+		TxtTableLoader.run(directory.replace('\\','/') + fileName, rName);
 	}
 
 	public String getDataName() {
@@ -151,5 +152,17 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 				rDataNameField.setText("");
 		}
 	}
+	private static String addSlashes(String str){
+		if(str==null) return "";
 
+		StringBuffer s = new StringBuffer(str);
+		for(int i = 0; i < s.length(); i++){
+			if(s.charAt (i) == '\"')
+				s.insert(i++, '\\');
+			else if(s.charAt (i) == '\'')
+				s.insert(i++, '\\');
+		}
+		
+		return s.toString();
+	}
 }

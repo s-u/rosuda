@@ -275,6 +275,9 @@ public class JGR {
 		return rEngine;
 	}
 
+	public static void setREngine(REngine e){
+		rEngine=e;
+	}
 	/**
 	 * Exits JGR, but not before asked the user if he wants to save his
 	 * workspace.

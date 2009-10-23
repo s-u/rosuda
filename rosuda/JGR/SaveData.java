@@ -41,33 +41,40 @@ public class SaveData extends JFrame {
 				fileName = fileName.concat(".robj");
 			JGR.MAINRCONSOLE.execute("dput(" + dataName + ",'" + fileName + "')", true);
 		} else {
-			if (chooser.getFileFilter().getDescription().equals(extensionDescription[0])) {
+			if (fileName.toLowerCase().endsWith(".rda") || fileName.toLowerCase().endsWith(".rdata") ||
+					chooser.getFileFilter().getDescription().equals(extensionDescription[0])) {
 				if (!fileName.toLowerCase().endsWith(".rda") && !fileName.toLowerCase().endsWith(".rdata"))
 					fileName = fileName.concat(".rda");
 				JGR.MAINRCONSOLE.execute("save(" + dataName + ",file='" + fileName + "')", true);
-			} else if (chooser.getFileFilter().getDescription().equals(extensionDescription[1])) {
+			} else if (fileName.toLowerCase().endsWith(".robj") ||
+						chooser.getFileFilter().getDescription().equals(extensionDescription[1])) {
 				if (!fileName.toLowerCase().endsWith(".robj"))
 					fileName = fileName.concat(".robj");
 				JGR.MAINRCONSOLE.execute("dput(" + dataName + ",'" + fileName + "')", true);
-			} else if (chooser.getFileFilter().getDescription().equals(extensionDescription[2])) {
+			} else if (fileName.toLowerCase().endsWith(".csv") || 
+						chooser.getFileFilter().getDescription().equals(extensionDescription[2])) {
 				if (!fileName.toLowerCase().endsWith(".csv"))
 					fileName = fileName.concat(".csv");
 				JGR.MAINRCONSOLE.execute("write.csv(" + dataName + ",'" + fileName + "')", true);
-			} else if (chooser.getFileFilter().getDescription().equals(extensionDescription[3])) {
+			} else if (fileName.toLowerCase().endsWith(".txt") || 
+						chooser.getFileFilter().getDescription().equals(extensionDescription[3])) {
 				if (!fileName.toLowerCase().endsWith(".txt"))
 					fileName = fileName.concat(".txt");
 				JGR.MAINRCONSOLE.execute("write.table(" + dataName + ",'" + fileName + "',sep='\\t')", true);
 			} else {
 				RController.loadPackage("foreign");
-				if (chooser.getFileFilter().getDescription().equals(extensionDescription[4])) {
+				if (fileName.toLowerCase().endsWith(".dbf") || 
+						chooser.getFileFilter().getDescription().equals(extensionDescription[4])) {
 					if (!fileName.toLowerCase().endsWith(".dbf"))
 						fileName = fileName.concat(".dbf");
 					JGR.MAINRCONSOLE.execute("write.dbf(" + dataName + ",'" + fileName + "')", true);
-				} else if (chooser.getFileFilter().getDescription().equals(extensionDescription[5])) {
+				} else if (fileName.toLowerCase().endsWith(".dta") ||
+						chooser.getFileFilter().getDescription().equals(extensionDescription[5])) {
 					if (!fileName.toLowerCase().endsWith(".dta"))
 						fileName = fileName.concat(".dta");
 					JGR.MAINRCONSOLE.execute("write.dta(" + dataName + ",'" + fileName + "')", true);
-				} else if (chooser.getFileFilter().getDescription().equals(extensionDescription[6])) {
+				} else if (fileName.toLowerCase().endsWith(".arff") ||
+						chooser.getFileFilter().getDescription().equals(extensionDescription[6])) {
 					if (!fileName.toLowerCase().endsWith(".arff"))
 						fileName = fileName.concat(".arff");
 					JGR.MAINRCONSOLE.execute("write.arff(" + dataName + ",'" + fileName + "')", true);

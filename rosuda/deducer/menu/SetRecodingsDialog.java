@@ -395,9 +395,9 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				if(value.length()==0 || into.length()==0)
 					return;
 				if(!isNumeric(into))
-					into="'"+into+"'";	
+					into="'"+addSlashes(into)+"'";	
 				if(!isNumeric(value))
-					value="'"+value+"'";				
+					value="'"+addSlashes(value)+"'";				
 				if(boolComboBox.getSelectedIndex() == 0){
 					rcode = value+" -> "+into;
 					addCode(rcode);
@@ -418,11 +418,12 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				if(value1.length()==0 || value2.length()==0 || into.length()==0)
 					return;		
 				if(!isNumeric(into))
-					into="'"+into+"'";	
+					into="'"+addSlashes(into)+"'";
 				if(!isNumeric(value2))
-					value2="'"+value2+"'";		
+					value2="'"+addSlashes(value2)+"'";	
 				if(!isNumeric(value1))
-					value1="'"+value1+"'";			
+					value1="'"+addSlashes(value1)+"'";
+				
 				rcode = value1+":"+value2+" -> "+into;
 				addCode(rcode);
 				doubleField1.setText("");
@@ -434,7 +435,7 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 				if(into.length()==0)
 					return;
 				if(!isNumeric(into))
-					into="'"+into+"'";
+					into="'"+addSlashes(into)+"'";
 				rcode = "else -> "+into;
 				addCode(rcode);
 				elseTextFiels.setText("");
@@ -482,6 +483,29 @@ public class SetRecodingsDialog extends javax.swing.JDialog implements KeyListen
 			}
 		}
 		
+	}
+	
+	public static String addSlashes(String str){
+		if(str==null) return "";
+
+		StringBuffer s = new StringBuffer(str);
+		for(int i = 0; i < s.length(); i++){
+			if(s.charAt (i) == '\\'){
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+			}else if(s.charAt (i) == '\"'){
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+			}else if(s.charAt (i) == '\''){
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+				s.insert(i++, '\\');
+			}
+		}
+		
+		return s.toString();
 	}
 	
 	public void keyPressed(KeyEvent arg0) {	}

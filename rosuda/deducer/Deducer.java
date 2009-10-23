@@ -4,6 +4,7 @@ package org.rosuda.deducer;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 
 
 import javax.swing.DefaultListModel;
@@ -13,13 +14,11 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 
 import org.rosuda.JGR.DataLoader;
 import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.JGRConsole;
 import org.rosuda.JGR.RController;
 import org.rosuda.JGR.SaveData;
 import org.rosuda.JGR.robjects.RObject;
@@ -52,7 +51,7 @@ public class Deducer {
 	static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
 	static int menuIndex=3;
 	static String recentActiveData = "";
-	static final String Version= "0.1";
+	static final String Version= "0.2";
 	public static String guiEnv = "gui.working.env";
 	public static boolean insideJGR;
 	public static boolean started;
@@ -61,13 +60,13 @@ public class Deducer {
 		started=false;
 		try{
 			if(jgr || ((JRIEngine)JGR.getREngine()).getRni()!=null){
-				startWithJGR();
+				(new Thread() {
+					public void run() {startWithJGR();						}
+				}).start();
 			}
 		}catch(Exception e){
 			new ErrorMsg(e);
-		}
-		
-		
+		}	
 	}
 	
 	public void startNoJGR(){
@@ -88,6 +87,7 @@ public class Deducer {
 				new ErrorMsg(e);
 			}
 			Common.getScreenRes();
+			JGR.setREngine(engine);
 			JGR.MAINRCONSOLE=new JGRConsolePlaceholder(engine);
 			JGR.MAINRCONSOLE.setVisible(false);
 			JGR.STARTED=true;
@@ -97,6 +97,7 @@ public class Deducer {
 			
 			started=true;
 			eval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
+			///new Thread(new NoJGRRefresher()).start();
 		}catch(Exception e){new ErrorMsg(e);}
 	}
 	
@@ -212,6 +213,8 @@ public class Deducer {
 			if(s.charAt (i) == '\\')
 				s.insert(i++, '\\');
 			else if(s.charAt (i) == '\"')
+				s.insert(i++, '\\');
+			else if(s.charAt (i) == '\'')
 				s.insert(i++, '\\');
 		}
 		
@@ -521,4 +524,44 @@ public class Deducer {
 		return JGR.MAINRCONSOLE.getUniqueName(var);
 	}
 
+	public static void refreshData(){
+		REXP x = Deducer.eval(".getDataObjects()");
+		String[] data;
+		if (x != null && !x.isNull())
+			JGR.DATA.clear();
+		try {
+			if (x != null && !x.isNull() && (data = x.asStrings()) != null) {	
+				int a = 1;
+				for (int i = 0; i < data.length; i++) {
+					boolean b = (data[i].equals("null") || data[i].trim().length() == 0);
+					String name = b ? a + "" : data[i];
+					JGR.DATA.add(RController.createRObject(name, data[++i], null, (!b)));
+					a++;
+				}
+
+			}
+		} catch (REXPMismatchException e) {}
+	}
+	
+	public static Vector getData(){
+		return JGR.DATA;
+	}
+	
+	/**
+	 * Refreshes objects and keywords if JGR is not doing so.
+	 */
+	class NoJGRRefresher implements Runnable {
+
+		public NoJGRRefresher() {}
+
+		public void run() {
+			while (true)
+				try {
+					Thread.sleep(5000);
+					refreshData();
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
+		}
+	}
 }

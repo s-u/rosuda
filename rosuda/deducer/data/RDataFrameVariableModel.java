@@ -60,11 +60,10 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 			}else if(col==1){
 				REXP var = Deducer.eval(rDataName+"[,"+(row+1)+"]");	
 				if (var.isNull()) return "NULL";
+				else if (var.isFactor()) return "Factor";				
 				else if (var.isInteger()) return "Integer";
 				else if (var.isString()) return "String";
 				else if (var.isLogical()) return "Logical";
-				else if (var.isLogical()) return "Logical";
-				else if (var.isFactor()) return "Factor";
 				else if (var.isNumeric()) return "Double";
 				else return "?";
 			}else if(col==2){
@@ -124,7 +123,6 @@ class RDataFrameVariableModel extends ExDefaultTableModel {
 	}
 	
 	public void refresh(){
-		//this.fireTableStructureChanged();
 		this.fireTableDataChanged();
 	}
 	

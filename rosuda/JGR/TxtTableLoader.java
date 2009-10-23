@@ -39,7 +39,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -1441684043207305950L;
-	private File file;
+	private String file;
 	private JPanel jPanel1;
 	private JLabel quoteLabel;
 	private JCheckBox header;
@@ -59,7 +59,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 
 	public TxtTableLoader(String fileName, String rName) {
 		super();
-		file = new File(fileName);
+		file = fileName;
 		dataName = rName;
 		initGUI();
 		checkFile();
@@ -87,7 +87,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 	}
 
 	public void setFile(String fileName) {
-		file = new File(fileName);
+		file = fileName;
 	}
 
 	public TxtTableLoader() {
@@ -295,7 +295,7 @@ public class TxtTableLoader extends javax.swing.JFrame {
 			useQuote = quoteBox.getSelectedItem().toString();
 		else
 			useQuote = quotes[quoteBox.getSelectedIndex()];
-		String cmd = (preview ? "try(" : "") + name + " <- read.table(\"" + fileName.replace('\\', '/') + "\",header="
+		String cmd = (preview ? "try(" : "") + name + " <- read.table(\"" + fileName + "\",header="
 				+ (header.isSelected() ? "T" : "F") + ",sep=\"" + useSep + "\"" + (preview ? ",nrows=10" : "") + ",quote=\"" + useQuote + "\")"
 				+ (preview ? ",silent=TRUE)" : "");
 
