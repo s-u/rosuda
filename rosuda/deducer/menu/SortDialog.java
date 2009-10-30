@@ -5,10 +5,8 @@ import java.awt.Dimension;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
@@ -18,8 +16,6 @@ import javax.swing.JScrollPane;
 import javax.swing.ListModel;
 import javax.swing.border.BevelBorder;
 
-import org.rosuda.JGR.JGR;
-import org.rosuda.JGR.RController;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
@@ -184,26 +180,18 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 				return;
 			}
 			String dataName = variableSelector.getSelectedData();
-			Object[] vars =sortList.getSelectedValues();
-			ArrayList varList = new ArrayList();
 			String[] temp;
-			String sortingDirections = "c(";
+			String by = "";
 			for(int i=0;i<sortList.getModel().getSize();i++){
 				temp = ((String)sortList.getModel().getElementAt(i)).split(" -- ");
-				varList.add(temp[0]);
 				if(temp[1].startsWith("I"))
-					sortingDirections+="TRUE";
+					by+=(i==0?" ":" -")+temp[0];
 				else
-					sortingDirections+="FALSE";
-				if(i<sortList.getModel().getSize()-1)
-					sortingDirections+=",";
+					by+=" +"+temp[0];
 			}
-			sortingDirections+=")";
-			this.dispose();
-			JGR.MAINRCONSOLE.toFront();			
-			JGR.MAINRCONSOLE.executeLater(dataName+"<- sortData("+dataName+
-					","+RController.makeRStringVector(varList)+",increasing= "+
-					sortingDirections+")");
+			this.dispose();		
+			Deducer.execute(dataName+"<- sort("+dataName+
+					", by="+by+")");
 			lastDataName=dataName;
 			lastListModel = (DefaultListModel) sortList.getModel();
 			Deducer.setRecentData(dataName);

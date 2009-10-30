@@ -481,6 +481,14 @@ public class Deducer {
 		}
 	}
 	
+	public static void execute(String cmd){
+		JGR.MAINRCONSOLE.execute(cmd);
+	}
+	
+	public static void execute(String cmd, boolean hist){
+		JGR.MAINRCONSOLE.execute(cmd,hist);
+	}
+	
 	public static String makeFormula(DefaultListModel outcomes,DefaultListModel terms){
 		String formula = "";
 		if(outcomes.getSize()==1){
