@@ -34,6 +34,7 @@ import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.VariableSelector;
 import org.rosuda.JGR.JGR;
+import org.rosuda.JGR.RController;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
@@ -361,8 +362,8 @@ public class SubsetDialog extends JDialog implements ActionListener, MouseListen
 			if(subName.getText().startsWith("<auto>"))
 				subn = JGR.MAINRCONSOLE.getUniqueName(data+".sub");
 			else
-				subn = JGR.MAINRCONSOLE.getUniqueName(subName.getText());
-			JGR.MAINRCONSOLE.executeLater(subn+"<-subset("+data+","+sub+")");
+				subn = RController.makeValidVariableName(subName.getText());
+			Deducer.execute(subn+"<-subset("+data+","+sub+")");
 			
 			addToHistory(variableSelector.getSelectedData(),sub);
 			lastDataName = variableSelector.getSelectedData();

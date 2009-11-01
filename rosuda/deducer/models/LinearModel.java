@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
 
@@ -154,7 +155,13 @@ public class LinearModel extends GLMModel {
 							(hccm ? ",vcov=function(model) hccm(model)":"")+
 							"),test="+cor+")";
 				if(preview){
-					out = Deducer.rniEval("capture.output("+postCall+")").asStringArray();
+					try {
+						out = Deducer.eval("capture.output("+postCall+")").asStrings();
+					} catch (Exception e) {
+						out = new String[]{""};
+						posthoc = new PostHoc();
+						return cmd;
+					}
 					tmp.add("\n>"+postCall+"\n");
 					for(int j=0;j<out.length;j++)
 						tmp.add(out[j]);
@@ -167,7 +174,11 @@ public class LinearModel extends GLMModel {
 					(hccm ? ",vcov=function(model) hccm(model)":"")+					
 					"))";
 					if(preview){
-						out = Deducer.rniEval("capture.output("+postCall+")").asStringArray();
+						try {
+							out = Deducer.eval("capture.output("+postCall+")").asStrings();
+						} catch (Exception e) {
+							out = new String[]{""};
+						}
 						tmp.add("\n>"+postCall+"\n");
 						for(int j=0;j<out.length;j++)
 							tmp.add(out[j]);

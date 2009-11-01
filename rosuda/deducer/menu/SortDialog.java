@@ -181,13 +181,13 @@ public class SortDialog extends javax.swing.JDialog implements ActionListener{
 			}
 			String dataName = variableSelector.getSelectedData();
 			String[] temp;
-			String by = "";
+			String by = "~";
 			for(int i=0;i<sortList.getModel().getSize();i++){
 				temp = ((String)sortList.getModel().getElementAt(i)).split(" -- ");
 				if(temp[1].startsWith("I"))
-					by+=(i==0?" ":" -")+temp[0];
+					by+=(i==0?" ":" +")+temp[0];
 				else
-					by+=" +"+temp[0];
+					by+=" -"+temp[0];
 			}
 			this.dispose();		
 			Deducer.execute(dataName+"<- sort("+dataName+

@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
 import org.rosuda.JRI.REXP;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
 
@@ -146,11 +147,16 @@ public class GLMModel extends ModelModel {
 				cor = "adjusted(\""+posthoc.correction+"\")";
 			}
 			for(int i=0;i<posthoc.posthoc.getSize();i++){
-
 				postCall = "summary(glht("+modelName+",linfct=mcp('"+posthoc.posthoc.get(i)+
 							"'=\""+posthoc.type+"\")),test="+cor+")";
 				if(preview){
-					out = Deducer.rniEval("capture.output("+postCall+")").asStringArray();
+					try {
+						out = Deducer.eval("capture.output("+postCall+")").asStrings();
+					} catch (Exception e) {
+						out = new String[]{""};
+						posthoc = new PostHoc();
+						return cmd;
+					}
 					tmp.add("\n>"+postCall+"\n");
 					for(int j=0;j<out.length;j++)
 						tmp.add(out[j]);
@@ -161,7 +167,11 @@ public class GLMModel extends ModelModel {
 					postCall = "confint(glht("+modelName+",linfct=mcp('"+posthoc.posthoc.get(i)+
 					"'=\""+posthoc.type+"\")))";
 					if(preview){
-						out = Deducer.rniEval("capture.output("+postCall+")").asStringArray();
+						try {
+							out = Deducer.eval("capture.output("+postCall+")").asStrings();
+						} catch (Exception e) {
+							out = new String[]{""};
+						}
 						tmp.add("\n>"+postCall+"\n");
 						for(int j=0;j<out.length;j++)
 							tmp.add(out[j]);
