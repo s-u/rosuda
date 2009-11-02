@@ -128,7 +128,6 @@ public class DataLoader extends JFrame implements PropertyChangeListener {
 	}
 
 	public void loadTxtFile(String fileName, String directory, String rName) {
-		JGR.MAINRCONSOLE.execute(directory.replace('\\','/') + fileName);
 		TxtTableLoader.run(directory.replace('\\','/') + fileName, rName);
 	}
 
