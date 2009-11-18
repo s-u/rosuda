@@ -346,9 +346,9 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			return false;
 		}
 		
-		rCmd+=(result+"<-contingency.tables(\n\trow.vars="+RController.makeRStringVector(rowList)+
-					",\n\tcol.vars="+RController.makeRStringVector(columnList)+
-					(stratumList.getModel().getSize()>0 ? ",\n\tstratum.var="+RController.makeRStringVector(stratumList) : "") +
+		rCmd+=(result+"<-contingency.tables(\n\trow.vars="+Deducer.makeRCollection(rowList.getModel(), "d", false)+
+					",\n\tcol.vars="+Deducer.makeRCollection(columnList.getModel(), "d", false)+
+					(stratumList.getModel().getSize()>0 ? ",\n\tstratum.var="+((DefaultListModel)stratumList.getModel()).get(0).toString(): "") +
 					",data="+data+")");
 		rCmd+=statOpt.addStatistics(result);
 
@@ -531,7 +531,7 @@ public class ContingencyDialog extends JDialog implements ActionListener {
 			if(fishers)
 				cmd+="\n"+ (result+"<-add.fishers.exact("+result+ ")");
 			if(spearmans)
-				rCmd+="\n"+ (result+"<-add.correlation("+result+ ",method='spearman')");
+				cmd+="\n"+ (result+"<-add.correlation("+result+ ",method='spearman')");
 			if(kendall)
 				cmd+="\n"+ (result+"<-add.correlation("+result+ ",method='kendall')");
 			if(kruskal)

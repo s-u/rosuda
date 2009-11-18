@@ -827,11 +827,12 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() { 
 							refresh();
-							if(JGR.DATA.size()==0){
+							if(Deducer.getData().size()==0){
 								setDataDependentMenusEnabled(false);
 							}else
 								setDataDependentMenusEnabled(true);	
-							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
+							
+							((DataFrameComboBoxModel) dataSelector.getModel()).refresh(Deducer.getData());
 							if(dataSelector.getModel().getSize()==0 && dataScrollPane!=null){
 								jTabbedPane1.setComponentAt(0, defaultPanel());
 								jTabbedPane1.setComponentAt(1, defaultPanel());
@@ -839,6 +840,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 								variableScrollPane=null;
 							}							
 						}};
+						
 					if(win==null || !win.isDisplayable()){
 						cont=false;
 						if(dataScrollPane!=null)

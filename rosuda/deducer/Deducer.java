@@ -4,6 +4,9 @@ package org.rosuda.deducer;
 import java.awt.Event;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -14,6 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.ListModel;
 import javax.swing.UIManager;
 
 
@@ -97,7 +101,7 @@ public class Deducer {
 			
 			started=true;
 			eval(".javaGD.set.class.path(\"org/rosuda/JGR/JavaGD\")");
-			///new Thread(new NoJGRRefresher()).start();
+			new Thread(new DataRefresher()).start();
 		}catch(Exception e){new ErrorMsg(e);}
 	}
 	
@@ -172,7 +176,7 @@ public class Deducer {
 			//preferences
 			PrefPanel prefs = new PrefPanel();
 			PrefDialog.addPanel(prefs, prefs);
-				
+			new Thread(new DataRefresher()).start();
 			started=true;
 		}catch(Exception e){new ErrorMsg(e);}		
 	}
@@ -510,6 +514,35 @@ public class Deducer {
 		return formula;
 	}
 	
+	public static String makeRCollection(Collection lis,String func, boolean quotes) {
+		String q = "";
+		if(quotes){
+			q = "\"";
+		}
+		if (lis.size() == 0)
+			return func+"()";
+		String result = func+"(";
+		Iterator it = lis.iterator();
+		int ins = 1;
+		while(it.hasNext()){
+			String s = it.next().toString();
+			result+= q + s + q;
+			if(it.hasNext())
+				result += ",";
+			if (ins % 10 == 9)
+				result += "\n";	
+			ins++;
+		}
+		return result+")";
+	}
+	
+	public static String makeRCollection(ListModel lis,String func, boolean quotes) {
+		ArrayList a = new ArrayList();
+		for(int i=0;i<lis.getSize();i++)
+			a.add(lis.getElementAt(i));
+		return makeRCollection(a,func,quotes);
+	}
+	
 	/**
 	 * Gets a unique name based on a starting string
 	 * 
@@ -535,7 +568,7 @@ public class Deducer {
 	public static void refreshData(){
 		REXP x = Deducer.eval(".getDataObjects()");
 		String[] data;
-		if (x != null && !x.isNull())
+		if (x != null)
 			JGR.DATA.clear();
 		try {
 			if (x != null && !x.isNull() && (data = x.asStrings()) != null) {	
@@ -558,9 +591,9 @@ public class Deducer {
 	/**
 	 * Refreshes objects and keywords if JGR is not doing so.
 	 */
-	class NoJGRRefresher implements Runnable {
+	class DataRefresher implements Runnable {
 
-		public NoJGRRefresher() {}
+		public DataRefresher() {}
 
 		public void run() {
 			while (true)

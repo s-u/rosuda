@@ -301,8 +301,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				JOptionPane.showMessageDialog(null, "Please select one or more variables.");
 				return false;
 			}
-			String outcomes = RController.makeRStringVector(vars);
-			String variables = RController.makeRVector(vars);			
+			String variables = Deducer.makeRCollection(vars, "d", false);//RController.makeRVector(vars);			
 			String cmd="";
 			String subn="";
 			boolean isSubset=false;
@@ -316,8 +315,9 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 				isSubset=true;
 			}else
 				subn=data;
-			cmd+="descriptive.table("+subn+"["+outcomes+"],"+
-							"func.names =c(\"Mean\",\"St. Deviation\",\"Valid N\"))\n";
+			cmd+="descriptive.table(vars="+variables+
+							",data="+subn+
+							",func.names =c(\"Mean\",\"St. Deviation\",\"Valid N\"))\n";
 			
 			if(doT){
 				cmd += "one.sample.test(variables="+variables+
@@ -334,8 +334,9 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 					")\n";
 			}
 			if(plots.plot){
-				cmd+="onesample.plot(variables="+variables+",data="+subn+",test.value="+Double.toString(mu)+
-					(plots.scale?"":",scale=FALSE")+
+				cmd+="onesample.plot(variables="+variables+",data="+subn+
+					(doT ? (",test.value="+Double.toString(mu)) : "")+
+					(!plots.scale?"":",scale=TRUE")+
 					(plots.box?",type='box'":",type='hist'")+
 					",alpha="+plots.alpha+")\n";
 			}
@@ -348,7 +349,7 @@ public class OneSampleDialog extends javax.swing.JDialog implements ActionListen
 		public class PlotModel{
 			public boolean plot=false;
 			public boolean box=false;
-			public boolean scale=true;
+			public boolean scale=false;
 			public double alpha=.2;
 			
 			

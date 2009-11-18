@@ -376,7 +376,6 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			else{
 				addFuncs = addFuncs.substring(0, addFuncs.length()-1)+")";
 			}
-			vars.addAll(strata);
 			this.dispose();
 			
 			lastDataName=dataName;
@@ -385,12 +384,14 @@ public class DescriptivesDialog extends javax.swing.JDialog implements ActionLis
 			lastFuncModel = (DefaultListModel) runFuncList.getModel();
 			
 			JGR.MAINRCONSOLE.toFront();			
-			JGR.MAINRCONSOLE.execute("descriptive.table("+dataName+
-					"["+RController.makeRStringVector(vars)+"] ,\n\tfunc.names ="+
-					RController.makeRStringVector(functions)+
-					(strata.size()<1 ? "" : (" ,\n\tstrata = "+RController.makeRStringVector(strata)))+
-					(addFuncs!=null ? (",\n\tfunc.additional= "+addFuncs+")") : ")")
-					);
+			JGR.MAINRCONSOLE.execute("descriptive.table(vars = " +
+										Deducer.makeRCollection(vars, "d", false)+
+										(strata.size()<1 ? "" : (" ,\n\tstrata = " + Deducer.makeRCollection(strata,"d",false))) +
+										",data= "+dataName +
+										",\n\tfunc.names ="+Deducer.makeRCollection(functions,"c",true)+
+										(addFuncs!=null ? (",\n\tfunc.additional= "+addFuncs+")") : ")")
+							);
+					
 			Deducer.setRecentData(dataName);
 		}else if(cmd == "Custom"){
 			CustomPopUp pop = new CustomPopUp(this);
