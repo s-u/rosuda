@@ -371,7 +371,7 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 			subset = subset.trim();
 			String cmd="";
 			String subn;
-			String outcomes = RController.makeRVector(variables);
+			String outcomes = Deducer.makeRCollection(variables, "d", false);
 			String factor = (String) factorName.get(0);
 			if(dataName=="")
 				return false;
@@ -388,15 +388,15 @@ public class KSampleDialog extends javax.swing.JDialog implements ActionListener
 				subn=dataName;
 			
 			if(doWelch){
-				cmd += "k.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+				cmd += "k.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 					",\n\ttest=oneway.test)"+"\n";
 			}
 			if(doAnova){
-				cmd += "k.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+				cmd += "k.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 					",\n\ttest=oneway.test,var.equal=TRUE)"+"\n";
 			}
 			if(doKW){
-				cmd += "k.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+				cmd += "k.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 					",\n\ttest=kruskal.test)"+"\n";
 			}
 			cmd+=model.plots.getCmd(subn, outcomes, factor);

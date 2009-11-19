@@ -54,6 +54,25 @@ public class TwoSampleModel{
 		public String getDataName(){
 			return dataName;
 		}
+		public String dich(String factorName){
+			if(isCut){
+				String cut;
+				try{
+					Double.parseDouble(splitMod.cutPoint);
+					cut=splitMod.cutPoint;
+				}catch(Exception e){
+					cut="\""+splitMod.cutPoint+"\"";
+				}
+				return "dich("+factorName+",cut="+cut+")";
+			}
+			if(group1.size()!=0 || group2.size()!=0){
+				
+				return "dich("+factorName+
+				(group1.size()>0 ? (",group1="+Deducer.makeRCollection(group1, "c", true)) : "")+
+				(group2.size()>0 ? (",group2="+Deducer.makeRCollection(group2, "c", true)) : "")+")";
+			}
+			return factorName;
+		}
 		
 	}
 	
@@ -72,16 +91,10 @@ public class TwoSampleModel{
 		subset = subset.trim();
 		String cmd="";
 		String subn;
-		String outcomes = RController.makeRVector(variables);
-		String factor = (String) factorName.get(0);
+		String outcomes = Deducer.makeRCollection(variables, "d", false);
+		String factor = splitMod.dich((String) factorName.get(0));
 		
-		if(splitMod.isCut){
-			try{
-				Double.parseDouble(splitMod.cutPoint);
-			}catch(Exception e){
-				splitMod.cutPoint="\""+splitMod.cutPoint+"\"";
-			}
-		}
+		
 		
 		boolean isSubset=false;
 		if(!subset.equals("") ){
@@ -95,53 +108,41 @@ public class TwoSampleModel{
 		}else
 			subn=dataName;
 		if(optMod.descriptives){
-			cmd+="descriptive.table("+subn+"["+RController.makeRStringVector(variables)+"],"+
-							"func.names =c(\"Mean\",\"St. Deviation\",\"Valid N\"))\n";
+			cmd+="descriptive.table("+outcomes + ","+factor+","+subn+
+							",func.names =c(\"Mean\",\"St. Deviation\",\"Valid N\"))\n";
 		}
 		if(doT){
-			cmd += "print(two.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=t.test"+
 				(tEqVar?",\n\t\tvar.equal=TRUE":"")+
 				(optMod.confLevel==.95 ? "" : ",\n\t\tconf.level="+optMod.confLevel)+	
 				",\n\t\talternative=\""+optMod.alternative+"\""+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-				(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\t\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
 				")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
 		if(doMW){
-			cmd += "print(two.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=wilcox.test"+
 				(optMod.confLevel==.95 ? "" : ",\n\t\tconf.level="+optMod.confLevel)+	
 				",\n\t\talternative=\""+optMod.alternative+"\""+
 				(",\n\t\t correct=FALSE")+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-				(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\t\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
 				")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
 		if(doBoot){
-			cmd += "print(two.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=perm.t.test"+
 				(optMod.confLevel==.95 ? "" : ",\n\t\tconf.level="+optMod.confLevel)+	
 				",\n\t\talternative=\""+optMod.alternative+"\""+
 				(",\n\t\tstatistic='"+bootStat+"'")+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-				(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\t\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
 				")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
 		if(doKS){
-			cmd += "print(two.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=ks.test"+
 				(optMod.confLevel==.95 ? "" : ",\n\t\tconf.level="+optMod.confLevel)+	
 				",\n\t\talternative=\""+optMod.alternative+"\""+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-				(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\t\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
 				")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
@@ -155,24 +156,17 @@ public class TwoSampleModel{
 			}
 			else
 				cmd+=("library(lawstat)")+"\n";
-			cmd += "print(two.sample.test(variables="+outcomes+",\n\t\tfactor.var="+factor+",\n\t\tdata="+subn+
+			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=brunner.munzel.test"+
 				(optMod.confLevel==.95 ? "" : ",\n\t\tconf.level="+optMod.confLevel)+	
 				",\n\t\talternative=\""+optMod.alternative+"\""+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-				(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\t\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-				(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\t\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
-				")"+
+			")"+
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
 		if(plots.plot){
 			String dataCall=subn;
 			if(splitMod.group1.size()>0 || splitMod.group2.size()>0 || splitMod.isCut){
-				dataCall= "define.groups("+factor+","+subn+
-				(splitMod.isCut ?",\n\t\tcut="+splitMod.cutPoint:"")+
-					(!splitMod.isCut && splitMod.group1.size()>0 ? ",\n\tgroup1="+ RController.makeRStringVector(splitMod.group1): "")+
-					(!splitMod.isCut && splitMod.group2.size()>0 ? ",\n\tgroup2="+ RController.makeRStringVector(splitMod.group2): "")+
-					")\n";
+				dataCall= subn;
 			}
 			cmd+=plots.getCmd(dataCall, outcomes, factor);
 		}
