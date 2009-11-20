@@ -5,6 +5,7 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
+import org.rosuda.deducer.Deducer;
 
 public class CorModel {
 	
@@ -32,10 +33,10 @@ public class CorModel {
 		subset = subset.trim();
 		String cmd="";
 		String subn;
-		String outcomes = RController.makeRVector(variables);
+		String outcomes = Deducer.makeRCollection(variables, "d", false);
 		String withVec;
 		if(withExists)
-			withVec = RController.makeRVector(with);
+			withVec = Deducer.makeRCollection(with, "d", false);
 		else
 			withVec ="";
 		String name = JGR.MAINRCONSOLE.getUniqueName("corr.mat");
