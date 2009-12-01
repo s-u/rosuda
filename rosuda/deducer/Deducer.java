@@ -231,6 +231,13 @@ public class Deducer {
 			runCmd(cmd,false);
 		}
 	}
+	
+	public static void runCmdThreaded(String cmd){
+		final String c = cmd;
+		(new Thread() {
+			public void run() {runCmd(c,false);					}
+		}).start();
+	}
 		
 	public static void runCmd(String cmd,boolean fromConsole){
 		boolean needsRLocked=false;
