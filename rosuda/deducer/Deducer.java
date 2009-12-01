@@ -228,7 +228,7 @@ public class Deducer {
 	class ConsoleListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
 			String cmd = arg0.getActionCommand();
-			runCmd(cmd,false);
+			runCmdThreaded(cmd);
 		}
 	}
 	
