@@ -315,9 +315,10 @@ public class GLMModel extends ModelModel {
 				call = "lht("+modelName +","+matrixName+","+RController.makeRVector(rhs)+")";
 				testCalls.add(call);
 			}
-			if(testCalls.size()>0)
-				testCalls.add("rm('"+matrixName+"')");
+
 			if(preview){
+				if(testCalls.size()>0)
+					testCalls.add("rm('"+matrixName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
 				String testCall;
 				for(int i=0;i<testCalls.size();i++){
 					testCall=(String)testCalls.get(i);
@@ -332,6 +333,8 @@ public class GLMModel extends ModelModel {
 						tmp.add(out[j]);
 				}
 			}else{
+				if(testCalls.size()>0)
+					testCalls.add("rm('"+matrixName+"')");
 				String testCall;
 				for(int i=0;i<testCalls.size();i++){
 					testCall=(String)testCalls.get(i);
