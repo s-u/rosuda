@@ -181,8 +181,7 @@ int initR(int argc, char **argv)
     Rstart Rp = &rp;
     char *p;
     char rhb[MAX_PATH+10];
-    LONG h;
-    DWORD t,s=MAX_PATH;
+    DWORD t, s = MAX_PATH;
     HKEY k;
     int cvl;
 
@@ -200,8 +199,10 @@ int initR(int argc, char **argv)
     if(getenv("R_HOME")) {
 	strcpy(RHome, getenv("R_HOME"));
     } else { /* fetch R_HOME from the registry */
-	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
-	    RegQueryValueEx(k,"InstallPath",0,&t,RHome,&s)!=ERROR_SUCCESS) {
+      if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+	   RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS) &&
+	  (RegOpenKeyEx(HKEY_CURRENT_USER,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+           RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS)) {
 	    fprintf(stderr, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n");
 	    MessageBox(0, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n", "Can't find R home", MB_OK|MB_ICONERROR);
 	    return -2;
