@@ -415,6 +415,26 @@ public class Barchart extends DragBox implements ActionListener {
             rev.addActionListener(this);
             mode.add(sorts);
             
+			JMenuItem brush;
+			if( !tablep.data.colorBrush ) {
+				brush = new JMenuItem("Color Brush");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+                      processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),KeyEvent.VK_B));
+                   };
+                });
+			} else {
+				brush = new JMenuItem("Clear all Colors");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+					  frame.J.clearColors();
+                   };
+                });
+			}
+            mode.add(brush);
+			
             JMenuItem diss = new JMenuItem("Dismiss");
             mode.add(diss);
             
@@ -425,7 +445,8 @@ public class Barchart extends DragBox implements ActionListener {
           if( e.getID() == MouseEvent.MOUSE_PRESSED && e.getModifiers() ==  BUTTON1_DOWN + ALT_DOWN ) {
             for( int i = 0;i < rects.size(); i++) {
               MyRect r = (MyRect)rects.elementAt(i);
-              if ( r.contains( e.getX(), e.getY()+sb.getValue() )) {
+              MyText t = (MyText)labels.elementAt(i);
+			  if ( r.contains( e.getX(), e.getY()+sb.getValue() ) || t.contains( e.getX(), e.getY()+sb.getValue(), (Graphics2D)this.getGraphics() )) {
                 movingId   = i;
                 System.out.println("Moooving ....................");
                 movingRect = r;
