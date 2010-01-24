@@ -203,7 +203,9 @@ public class MissPlot extends DragBox implements ActionListener {
       }
       
       int start = -1, stop = k-1;
-      
+
+      bg.setColor(MFrame.lineColor);
+
       if( !printing ) {
         for( int i = 0;i < labels.size(); i++) {
           MyText t = (MyText)labels.elementAt(i);
@@ -588,11 +590,11 @@ public int create(int x1, int y1, int x2, int y2, String info) {
                                 miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", null, null));
 */
     Table tablep = (Table)(tables.elementAt(permA[i]));
-    System.out.println("Name: "+tablep.names[0]);
+    System.out.println("Name: "+tablep.names[0]+" i: "+i);
     rects.addElement(new MyRect( true, dir, "Observed", border, y1 + y, ww, (int)hi,
                                 data.n-miss[i], data.n-miss[i], 1, 0, data.getName(vars[permA[i]])+": observed\n", tileIds[0], tablep));
     rects.addElement(new MyRect( true, dir, "Observed", border+((MyRect)rects.lastElement()).w, y1 + y, width-2*border - ww, (int)hi,
-                                miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", tileIds[1], tablep));
+                                miss[i], miss[i], 1, 0, data.getName(vars[permA[i]])+": NA\n", tileIds[0], tablep));
     y += hi+15*pF;
   }
   
