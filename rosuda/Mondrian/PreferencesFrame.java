@@ -10,16 +10,19 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.JColorChooser;
 import javax.swing.JFrame;
+import java.util.prefs.*;		 // for preferences
 
 public class PreferencesFrame extends Frame implements WindowListener, MouseListener, ActionListener, ItemListener {
   PrefCanvas pc;
   Join frame;
   Choice cs;
+  Preferences prefs;
   static String[] schemes = {
     "RoSuDa classic","#ffff99","#c0c0c0","#000000","#00ff00",  
     "Terra di Siena","#dfb860","#c0c0c0", "#000000","#b46087", 
     "Xtra red","#ffff99","#c0c0c0","#000000","#ff0000", 
-    "DataDesk","#000000","#000000","#ffffff","#ffffff", 
+    "DataDesk","#000000","#000000","#ffffff","#ff0000", 
+    "Daltonian","#009999","#c0c0c0","#000000","#ff7400", 
     null
   };
 
@@ -62,7 +65,6 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
     p.setLayout(new FlowLayout());
     Button b=null;
     p.add(b=new Button("Save")); b.addActionListener(this);
-    b.setEnabled(false);
     p.add(b=new Button("Apply")); b.addActionListener(this);
     p.add(b=new Button("Close")); b.addActionListener(this);
     add(pp,BorderLayout.SOUTH);
@@ -186,13 +188,13 @@ public class PreferencesFrame extends Frame implements WindowListener, MouseList
       DragBox.hiliteColor=pc.c[3];
       frame.updateSelection();
     }
-    /*        if (cmd=="Save") {
-      PluginManager pm=PluginManager.getManager();
-    pm.setParS("Common","color.background",Util.color2hrgb(Common.backgroundColor));
-    pm.setParS("Common","color.objects",Util.color2hrgb(Common.objectsColor));
-    pm.setParS("Common","color.select",Util.color2hrgb(Common.selectColor));
-    pm.saveSettings();
-    setVisible(false);
-    }*/
+    if (cmd=="Save") {
+      prefs = Preferences.userNodeForPackage(this.getClass());
+      prefs.put("color.background",Util.color2hrgb(MFrame.backgroundColor));
+      prefs.put("color.objects",Util.color2hrgb(MFrame.objectColor));
+      prefs.put("color.line",Util.color2hrgb(MFrame.lineColor));
+      prefs.put("color.select",Util.color2hrgb(DragBox.hiliteColor));
+      setVisible(false);
+    }
   }
 }
