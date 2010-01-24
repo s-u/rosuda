@@ -410,13 +410,13 @@ public class Map extends DragBox {
           if ( p.contains( e.getX(), e.getY()+sb.getValue() ) ) {
             if( e.isShiftDown() && (allVarList.getSelectedIndices()).length != 0  ) {
               int[] selectedIds = allVarList.getSelectedIndices();
-              String infoTxt = "<TR'><TD align=right><font size=-1 face='verdana, helvetica'>";
+              String infoTxt = "<TR'><TD align=right><font size=4 face='courier'>";
               String para="";
-              String sep =": <TD  align='left'> <font size=-1 face='verdana, helvetica'>";
+              String sep =": <TD  align='left'> <font size=4 face='courier'>";
               for( int sel=0; sel<selectedIds.length; sel++ ) {
                 String val = "NA";
                 if( sel > 0 )
-                  para = " <TR height=5><TD align=right><font size=-1 face='verdana, helvetica'>";
+                  para = " <TR height=5><TD align=right><font size=4 face='courier'>";
                 if( !(data.getMissings(selectedIds[sel]))[match[i]] ) {
                   if( data.categorical(selectedIds[sel]) ) {
                     if( data.alpha(selectedIds[sel]) )
@@ -433,11 +433,11 @@ public class Map extends DragBox {
               }
               // Tooltip Stuff
               if( !p.getLabel().equals("") )
-                return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'><TR align='center' colspan=2><font size=-1 face='verdana, helvetica'> "+p.getLabel()+" "+infoTxt+" </TABLE></html>";
+                return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'><TR align='center' colspan=2><font size=4 face='courier'> "+p.getLabel()+" "+infoTxt+" </TABLE></html>";
               else
                 return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>";
             } else {
-              return "<html><font face='verdana, helvetica'> "+p.getLabel()+" </html>";
+              return "<html><font size=4 face='courier'> "+p.getLabel()+" </html>";
             }
           }      // end IF contains
         }        // end FOR
