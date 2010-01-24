@@ -16,7 +16,7 @@ import javax.swing.event.*;
 
 public class MFrame extends JFrame implements WindowListener {
   
-  private Join J;
+  public Join J;
   private JMenuItem m;
   public String selString = "";
   private int counter = 0;
@@ -26,7 +26,8 @@ public class MFrame extends JFrame implements WindowListener {
   private TimerTask resizePlotTask;
   private boolean firstTime = true;
   
-  static Color backgroundColor = new Color(223, 184, 96);
+//  static Color backgroundColor = new Color(223, 184, 96);
+  static Color backgroundColor = new Color(255, 255, 179);
   static Color objectColor     = Color.lightGray;
   static Color lineColor       = Color.black;
   
