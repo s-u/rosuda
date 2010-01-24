@@ -96,10 +96,18 @@ public class Stat {
     public static String roundToString( double x, int n ) {
         String tmp;
         tmp = ""+Stat.round(x, n);
-        if( tmp.endsWith(".0") )
+        if( tmp.endsWith(".0") && n == 0 )
             return tmp.substring(0, tmp.length() - 2);
-        else
-            return tmp;
+        else {
+			String filler = ".00000000";
+			if( tmp.lastIndexOf('.') == -1 && n > 0 ) {
+				return tmp + filler.substring(0,n);
+			}
+			if( tmp.length() - (tmp.lastIndexOf('.')+1) < n )
+				return tmp + "0";
+			else
+				return tmp;
+		}
     }
 
     public static String roundToSpaceString( double x, int n ) {
