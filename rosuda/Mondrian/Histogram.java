@@ -213,6 +213,8 @@ public class Histogram extends DragBox implements ActionListener {
       }
       tick = outside;
 
+      bg.setColor(MFrame.lineColor);
+      
       // x-axis
       bg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( 0 ) + outside, 
                    (int)userToWorldX( xMax ), (int)userToWorldY( 0 ) + outside );  
@@ -551,7 +553,7 @@ public class Histogram extends DragBox implements ActionListener {
             tbg.fillRect( (int)userToWorldX( xMax ) - maxWidth -4, (int)userToWorldY( getLly() ) + outside + tick + 1,
                             maxWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
           
-          tbg.setColor(Color.black);
+          tbg.setColor(MFrame.lineColor);
           tbg.drawLine( egetX , (int)userToWorldY( getLly() ) + outside, 
                           egetX , (int)userToWorldY( getLly() ) + outside + tick );  
           tbg.drawString(print,
@@ -791,6 +793,26 @@ public class Histogram extends DragBox implements ActionListener {
             homeView.addActionListener(this);
             mode.add(homeView);
             
+			JMenuItem brush; 
+			if( !tablep.data.colorBrush ) {
+				brush = new JMenuItem("Color Brush");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+                      processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),KeyEvent.VK_B));
+                   };
+                });
+			} else {
+				brush = new JMenuItem("Clear all Colors");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+					  frame.J.clearColors();
+                   };
+                });
+			}
+            mode.add(brush);
+
             mode.add(new JMenuItem("Dismiss"));
             mode.show(this, e.getX(), e.getY());
           }	
