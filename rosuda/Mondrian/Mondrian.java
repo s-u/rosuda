@@ -24,7 +24,7 @@ public class Mondrian implements MRJOpenDocumentHandler
     
     if(args.length == 1) {
        File iFile = new File(args[0]);
-       if(iFile.canRead()) First.loadDataSet(false, iFile);
+       if(iFile.canRead()) First.loadDataSet(false, iFile, "");
     }
     
     try { 
@@ -39,7 +39,7 @@ public class Mondrian implements MRJOpenDocumentHandler
     Join theJoin = ((Join)Mondrians.lastElement());
 //    while( !theJoin.mondrianRunning ) {System.out.println(" wait for Mondrian to initialize ...");}   // Wait until Mondrian initialized
 //    System.out.println(".......... CALL loadDataSet("+inFile+") FROM handleOpenFile .........");
-    theJoin.loadDataSet( false, inFile );
+    theJoin.loadDataSet( false, inFile, "");
   }
   
 }
