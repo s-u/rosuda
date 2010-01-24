@@ -18,6 +18,7 @@ public class Util {
     gbc.gridy = y;
     gbc.gridwidth = w;
     gbc.gridheight = h;
+
     f.getContentPane().add(c, gbc);
   }
   
@@ -215,8 +216,8 @@ public class Util {
   public static String info2Html(String infoText) {
     
     String infoTxt = "";
-    String     sep =":<TD  align='left'> <font size=-1 face='verdana, helvetica'>";
-    String    para = "<TR height=5><TD align=right><font size=-1 face='verdana, helvetica'> ";
+    String     sep =": </TD><TD  align='left'> <font size=4 face='courier'>";
+    String    para = "</TD><TR height=5><TD align=right><font size=4 face='courier'> ";
     
     StringTokenizer info = new StringTokenizer(infoText, "\n");
 
@@ -228,7 +229,7 @@ public class Util {
       if( nextT.indexOf("\t") > -1  )
         infoTxt = infoTxt + para + line.nextToken() + sep + line.nextToken() + "</TR>";
       else
-        infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=-1 face='verdana, helvetica'>"+nextT+"</TR>";
+        infoTxt = infoTxt + "<TR height=5><TD align=center colspan=2><font size=4 face='courier'>"+nextT+"</TR>";
     }
     //System.out.println("<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>");
     return "<HTML><TABLE border='0' cellpadding='0' cellspacing='0'>"+infoTxt+" </TABLE></html>";
