@@ -678,7 +678,8 @@ public class Scatter2D extends DragBox {
                   tttbg.fillRect( (int)userToWorldX(getUrx()) - maxWidth -4, (int)userToWorldY( getLly() ) + outside + tick + 1,
                                  maxWidth +4,  fm.getMaxAscent() + fm.getMaxDescent());
               
-              tttbg.setColor(Color.black);
+              tttbg.setColor(MFrame.lineColor);
+
               tttbg.drawLine( egetX , (int)userToWorldY( getLly() ) + outside, 
                              egetX , (int)userToWorldY( getLly() ) + outside + tick );  
               tttbg.drawString(Stat.roundToString(worldToUserX(egetX), roundX),
@@ -714,7 +715,7 @@ public class Scatter2D extends DragBox {
               tttbg.drawLine( egetX, egetY + outside,
                              egetX, (int)userToWorldY( getLly() ) );
               
-              tttbg.setColor(Color.black);
+              tttbg.setColor(MFrame.lineColor);
               tttbg.drawLine( (int)userToWorldX( getLlx() ) - outside, egetY,
                              (int)userToWorldX( getLlx() ) - outside - tick, egetY );  
               tttbg.rotate(-Math.PI/2);
@@ -934,7 +935,7 @@ public class Scatter2D extends DragBox {
         }
       }
       bg.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-      bg.setColor(Color.black);
+      bg.setColor(MFrame.lineColor);
       
       // x axis
       bg.drawLine( (int)userToWorldX( getLlx() ), (int)userToWorldY( getLly() ) + outside*pF, 
@@ -1051,6 +1052,7 @@ public class Scatter2D extends DragBox {
           coeffs = data.regress(Vars[0], Vars[1], true);
         xMin = data.getMin(Vars[0]);
         xMax = data.getMax(Vars[0]);
+        ttbg.setColor(MFrame.lineColor);
         ttbg.drawLine( (int)userToWorldX( xMin ), (int)userToWorldY( xMin * coeffs[1] + coeffs[0]),
                      (int)userToWorldX( xMax ), (int)userToWorldY( xMax * coeffs[1] + coeffs[0]) );
       }
@@ -1109,6 +1111,7 @@ public class Scatter2D extends DragBox {
             CIl = c.eval("sP[,2]").asDoubles();
             CIu = c.eval("sP[,3]").asDoubles();
           }
+          ttbg.setColor(MFrame.lineColor);
           if( smoothF.equals("splines") || smoothF.equals("locfit") ) {
             Polygon CI = new Polygon();
             for( int f=0; f<200+1; f++ ) {
