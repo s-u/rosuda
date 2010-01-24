@@ -13,9 +13,12 @@ public class Mosaic extends DragBox implements ActionListener {
   private int width, height;                   // The preferred size.
   private Table tablep;                        // The datatable to deal with.
   public String displayMode = "Observed";
+  public char multBarDir = 'y';
+  public boolean multBarSpine = false;
   private double residSum, residMax;
   private int censor = 0;
   private int border = 20;
+  private boolean showLabels = false;
   private Image bi;
   private Graphics2D bg;
   private int eventID;
@@ -208,7 +211,10 @@ public class Mosaic extends DragBox implements ActionListener {
 
         bg.setColor(Color.black);
       }
-      if( displayMode.equals("Same Bin Size") || displayMode.equals("Multiple Barcharts") || displayMode.equals("Fluctuation") || printing )
+
+      bg.setColor(MFrame.lineColor);
+
+      if( displayMode.equals("Same Bin Size") || displayMode.equals("Multiple Barcharts") || displayMode.equals("Fluctuation") || printing || showLabels )
         for( int i = 0;i < Labels.size(); i++) {
           MyText t = (MyText)Labels.elementAt(i);
           t.draw(bg);
@@ -309,6 +315,37 @@ public class Mosaic extends DragBox implements ActionListener {
             Fluctuation.addActionListener(this);
             mm.add(mode);
             
+			JMenuItem brush;
+			if( !tablep.data.colorBrush ) {
+				brush = new JMenuItem("Color Brush");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+                      processKeyEvent(new KeyEvent(frame,KeyEvent.KEY_PRESSED,0, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask(),KeyEvent.VK_B));
+                   };
+                });
+			} else {
+				brush = new JMenuItem("Clear all Colors");
+			    brush.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+				brush.addActionListener(new ActionListener() {  
+				   public void actionPerformed(ActionEvent e) {
+					  frame.J.clearColors();
+                   };
+                });
+			}
+            mm.add(brush);
+			
+            JMenuItem labels;
+            if( !(displayMode.equals("Same Bin Size") || displayMode.equals("Multiple Barcharts") || displayMode.equals("Fluctuation")) ) {
+              if( showLabels ) 
+                labels = new JMenuItem("hide labels");
+              else
+                labels = new JMenuItem("show labels");
+              labels.setActionCommand("Labels");
+              labels.addActionListener(this);
+              mm.add(labels);
+            }
+            
             JMenuItem rotall = new JMenuItem("rotate plot");
             rotall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
             rotall.addActionListener(new ActionListener() {  
@@ -349,7 +386,7 @@ public class Mosaic extends DragBox implements ActionListener {
             });
             mm.add(include);
             
-            JMenuItem changeRight = new JMenuItem("rotate last right");
+            JMenuItem changeRight = new JMenuItem("cycle last right");
             changeRight.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0));
             if( k == maxLevel)
               changeRight.setEnabled(false);
@@ -360,7 +397,7 @@ public class Mosaic extends DragBox implements ActionListener {
             });
             mm.add(changeRight);
             
-            JMenuItem changeLeft = new JMenuItem("rotate last left");
+            JMenuItem changeLeft = new JMenuItem("cycle last left");
             changeLeft.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0));
             if( k == maxLevel)
               changeLeft.setEnabled(false);
@@ -415,6 +452,11 @@ public class Mosaic extends DragBox implements ActionListener {
         Graphics g = this.getGraphics();
         paint(g);
       } 
+      else if ( command.equals("Labels") ) {
+        showLabels = !showLabels;
+        Graphics g = this.getGraphics();
+        paint(g);
+      }
       else
         super.actionPerformed(e);
     }
@@ -430,6 +472,8 @@ public class Mosaic extends DragBox implements ActionListener {
                                                 ||  e.getKeyCode() == KeyEvent.VK_DOWN && e.isShiftDown()    
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_R
                                                 ||  e.getModifiers() == (Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R
+                                                ||  e.getModifiers() == (Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R
+                                                ||  e.getModifiers() == (Event.ALT_MASK | Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_B
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_ADD
                                                 ||  e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && e.getKeyCode() == KeyEvent.VK_SUBTRACT)) {
@@ -488,6 +532,17 @@ public class Mosaic extends DragBox implements ActionListener {
               Dirs[i] = 'y';
             else
               Dirs[i] = 'x';
+        }
+        if( e.getModifiers() == (Event.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R )
+        {
+          if( multBarDir == 'x')
+            multBarDir = 'y';
+          else
+            multBarDir = 'x';
+        }
+        if( e.getModifiers() == (Event.ALT_MASK | Event.SHIFT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) && e.getKeyCode() == KeyEvent.VK_R )
+        {
+          multBarSpine = !multBarSpine;
         }
         if( e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() && !e.isShiftDown() ) {
           // Set colors for color brushing
@@ -806,14 +861,27 @@ public class Mosaic extends DragBox implements ActionListener {
         
         if( displayMode.equals("Multiple Barcharts") ||  displayMode.equals("Fluctuation") ) {
           double maxCount=0;
+
+          System.out.println(" Dir: "+multBarDir+" Spine: "+multBarSpine); 
+          
           for (int i=0; i<rects.size(); i++) 
             maxCount = Math.max(maxCount, ((MyRect)(rects.elementAt(i))).obs);
           for (int i=0; i<rects.size(); i++) {
             MyRect r = (MyRect)(rects.elementAt(i));
             int newH = 0;
             if( displayMode.equals("Multiple Barcharts") ) {
-              r.dir = 'y';
-              r.h = (int)((double)r.height * (1.0+(double)censor/5.0) * r.obs/maxCount);
+              r.dir = multBarDir;
+              if( multBarDir == 'y')  {
+                if( !multBarSpine )
+                  r.h = (int)((double)r.height * (1.0+(double)censor/5.0) * r.obs/maxCount);
+                else
+                  r.w = (int)((double)r.width * (1.0+(double)censor/5.0) * r.obs/maxCount);
+              } else {
+                if( !multBarSpine )
+                  r.w = (int)((double)r.width * (1.0+(double)censor/5.0) * r.obs/maxCount);
+                else
+                  r.h = (int)((double)r.height * (1.0+(double)censor/5.0) * r.obs/maxCount);
+              }
             } else {
               r.w = (int)((double)r.width * ((1.0+(double)censor/5.0) * Math.sqrt(r.obs/maxCount)));
               r.h = (int)((double)r.height * ((1.0+(double)censor/5.0) * Math.sqrt(r.obs/maxCount)));
