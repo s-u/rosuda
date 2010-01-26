@@ -49,6 +49,8 @@ implements MouseListener, MouseMotionListener, AdjustmentListener, ActionListene
 
   public boolean selectAll = false;                          // True if the user pressed META-A
   
+  public boolean unSelect = false;                          // True if election needs to be removed
+  
   public boolean toggleSelection = false;                    // True if the user pressed META-K
   
   public boolean deleteAll = false;                          // True if the user pressed META-BACKSPACE
@@ -1026,30 +1028,39 @@ System.out.println("Mouse Action to check: "+mouse);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_1) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 1; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_2) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 2; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_3) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 3; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_4) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 4; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_5) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
-        colorSet = 10; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        colorSet = 5; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_6) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
-        colorSet = 11; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        colorSet = 6; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_7) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
-        colorSet = 12; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        colorSet = 7; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_8) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 8; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if ((e.getID() == KeyEvent.KEY_PRESSED) && (e.getKeyCode() == KeyEvent.VK_9) && (e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
         colorSet = 9; DataEvent de = new DataEvent(this); evtq.postEvent(de);
+        unSelect = true; SelectionEvent se = new SelectionEvent(this); evtq.postEvent(se);
       }
       if(SYSTEM != MAC &&
          (e.getID() == KeyEvent.KEY_PRESSED) && e.getKeyCode() == KeyEvent.VK_B && e.getModifiers() == (InputEvent.ALT_MASK | Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) ) {
