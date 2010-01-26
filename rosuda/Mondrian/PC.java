@@ -77,8 +77,6 @@ public class PC extends DragBox implements ActionListener {
 
     border = 22;
 
-    loadGif = new ImageIcon(Util.readGif("loading.gif"));
-    
     onlyHi = new boolean[data.n];
     for( int i=0; i<data.n; i++ )
       onlyHi[i] = true;
@@ -158,6 +156,8 @@ public class PC extends DragBox implements ActionListener {
       int minYDist = Integer.MAX_VALUE;
       int popXId = 0;
       int popYId = 0;
+	  int numSel = data.countSelection();
+	  
       Polygon p = poly[0];
       for( int j=0; j<k; j++ ) {
         if( Math.abs(p.xpoints[j]-e.getX()) < minXDist ) {
@@ -174,7 +174,7 @@ public class PC extends DragBox implements ActionListener {
       }
       if( minXDist < slotWidth/4 ) {
         String x="";
-        if(  data.phoneNumber(vars[permA[popXId]]) ) {
+        if( data.phoneNumber(vars[permA[popXId]]) ) {
           x = " " + data.getName(vars[permA[popXId]])+'\n'+" Number\t "+ Util.toPhoneNumber(dataCopy[permA[popXId]][popYId]);
         }
         else if( data.categorical(vars[permA[popXId]]) )
@@ -192,6 +192,11 @@ public class PC extends DragBox implements ActionListener {
           else {
             boolean hitBox = false;
             x = " "+((MyText)names.elementAt(popXId)).getText();
+			if( numSel == 0 || ((boxPlot)(bPlots.elementAt(popXId))).selN == 0 )
+				x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).n + " cases in class";
+			else
+				x = x + "\n" + ((boxPlot)(bPlots.elementAt(popXId))).selN + "/" + ((boxPlot)(bPlots.elementAt(popXId))).n 
+				             + "(" + Stat.round(100.0 * ((boxPlot)(bPlots.elementAt(popXId))).selN/((boxPlot)(bPlots.elementAt(popXId))).n, 1) + "%)";
             if( !paintMode.equals("Poly") ) {
               double saveMin = getLly();
               double saveMax = getUry();
@@ -1234,7 +1239,7 @@ public class PC extends DragBox implements ActionListener {
       if( !printing )  {
         ttbi = createImage(size.width, size.height);
         ttbg = ttbi.getGraphics();
-        ttbg.drawImage(tbi, 0, 0, Color.black, null);
+        ttbg.drawImage(tbi, 0, 0, null);
       }
       else
         ttbg = g;
@@ -1264,7 +1269,7 @@ public class PC extends DragBox implements ActionListener {
           ttbg.setFont(SF);
           ttbg.setColor(DragBox.hiliteColor);
         } else
-          ttbg.setColor(Color.black);
+          ttbg.setColor(MFrame.lineColor);
         // Set Y position of Text AFTER we set the font size
         if( (j % 2) == 1 )
           mt.moveYTo(border - 6);
@@ -1272,7 +1277,7 @@ public class PC extends DragBox implements ActionListener {
           mt.moveYTo(height - border + 3 + (ttbg.getFont()).getSize());
         mt.moveXTo(x);
 
-        mt.draw(ttbg);
+        mt.draw(ttbg); 
       }
       
       if( !(printing) ) {
@@ -1288,7 +1293,8 @@ public class PC extends DragBox implements ActionListener {
 
         ttbg.setColor(Color.black);
         drawSelections(ttbg);
-        g.drawImage(ttbi, 0, 0, Color.black, null);
+//        g.drawImage(ttbi, 0, 0, Color.black, null);
+        g.drawImage(ttbi, 0, 0, null);
 //        g.drawImage(loadGif.getImage(), width/2-16,height/2-16,null);
         tbg.dispose();
         ttbg.dispose();
@@ -1801,7 +1807,8 @@ public class PC extends DragBox implements ActionListener {
       int var, id;
       int mid, width, low, high;
       boolean zeroSelect = true;
-      int n;
+      int n, selN, count;
+	  public int roundBY;
 
       public boxPlot( int id, int var, int mid, int width, int low, int high) {
         this.id = permA[id];
@@ -1828,26 +1835,29 @@ public class PC extends DragBox implements ActionListener {
         uWhisker = empty?Double.MAX_VALUE:data.getFirstSmaller(var, uHinge+(uHinge-lHinge)*1.5);
         lOutlier = data.getAllSmaller(var, lWhisker);
         uOutlier = data.getAllGreater(var, uWhisker);
+        roundBY = (int)Math.max(0, 2 - Math.round((Math.log(max-min)/Math.log(10))));
       }
 
-      public String get5num() {
+      public String get5num() { 
+		
         String xS1 = "", xS2 = "", xS3 = "", xS4 = "", xS5 = "", xS6 = "", xS7 = "";
-        if( !zeroSelect ) {
-          xS1 = " ("+Stat.roundToString(sMax,roundY)+")";
-          xS2 = " ("+Stat.roundToString(uSWhisker,roundY)+")";
-          xS3 = " ("+Stat.roundToString(uSHinge,roundY)+")";
-          xS4 = " ("+Stat.roundToString(sMedian,roundY)+")";
-          xS5 = " ("+Stat.roundToString(lSHinge,roundY)+")";
-          xS6 = " ("+Stat.roundToString(lSWhisker,roundY)+")";
-          xS7 = " ("+Stat.roundToString(sMin,roundY)+")";
+        if( !zeroSelect && data.countSelection() > 0 ) {
+          xS1 = " ("+Stat.roundToString(sMax,roundBY)+")";
+          xS2 = " ("+Stat.roundToString(uSWhisker,roundBY)+")";
+          xS3 = " ("+Stat.roundToString(uSHinge,roundBY)+")";
+          xS4 = " ("+Stat.roundToString(sMedian,roundBY)+")";
+          xS5 = " ("+Stat.roundToString(lSHinge,roundBY)+")";
+          xS6 = " ("+Stat.roundToString(lSWhisker,roundBY)+")";
+          xS7 = " ("+Stat.roundToString(sMin,roundBY)+")";
         }
-        return("\n <font color=\"gray\">Maximum:<font color=\"gray\">"+Stat.roundToString(max,roundY)+xS1+
-               "\n <font color=\"#696969\">upper Whisker:<font color=\"#696969\">"+Stat.roundToString(uWhisker,roundY)+xS2+
-               "\n upper Hinge:"+Stat.roundToString(uHinge,roundY)+xS3+
-               "\n <b>Median:<b>"+Stat.roundToString(median,roundY)+xS4+
-               "\n lower Hinge:"+Stat.roundToString(lHinge,roundY)+xS5+
-               "\n <font color=\"#696969\">lower Whisker:<font color=\"#696969\">"+Stat.roundToString(lWhisker,roundY)+xS6+
-               "\n <font color=\"gray\">Minimum:<font color=\"gray\">"+Stat.roundToString(min,roundY)+xS7 );
+		
+        return("\n <font color=\"gray\">Maximum\t <font color=\"gray\">"+Stat.roundToString(max,roundBY)+xS1+
+               "\n <font color=\"#696969\">upper Whisker\t <font color=\"#696969\">"+Stat.roundToString(uWhisker,roundBY)+xS2+
+               "\n upper Hinge\t "+Stat.roundToString(uHinge,roundBY)+xS3+
+               "\n <b>Median\t <b>"+Stat.roundToString(median,roundBY)+xS4+
+               "\n lower Hinge\t "+Stat.roundToString(lHinge,roundBY)+xS5+
+               "\n <font color=\"#696969\">lower Whisker\t <font color=\"#696969\">"+Stat.roundToString(lWhisker,roundBY)+xS6+
+               "\n <font color=\"gray\">Minimum\t <font color=\"gray\">"+Stat.roundToString(min,roundBY)+xS7 );
       }
       
       public double[] get5numVal() {
@@ -1855,7 +1865,7 @@ public class PC extends DragBox implements ActionListener {
       }
       
       void draw( Graphics g ) {
-
+	  
         if( this.n > 3 ) {
 
           int  lWP  = low+(int)((Maxs[id]-lWhisker)/(Maxs[id]-Mins[id])*(high-low));
@@ -1879,25 +1889,27 @@ public class PC extends DragBox implements ActionListener {
           // Base Boxes
           g.setColor(Color.lightGray);
           g.fillRect(mid-width/2, uWP, width, uHP-uWP);
-          g.setColor(Color.black);
+          g.setColor(MFrame.lineColor); 
           g.drawRect(mid-width/2, uWP, width, uHP-uWP);
           g.setColor(Color.gray);
           g.fillRect(mid-width/2, uHP, width, medP-uHP);
-          g.setColor(Color.black);
+          g.setColor(MFrame.lineColor); 
           g.drawRect(mid-width/2, uHP, width, medP-uHP);
           g.setColor(Color.gray);
           g.fillRect(mid-width/2, medP, width, lHP-medP);
-          g.setColor(Color.black);
+          g.setColor(MFrame.lineColor); 
           g.drawRect(mid-width/2, medP, width, lHP-medP);
           g.setColor(Color.lightGray);
-          g.fillRect(mid-width/2, lHP, width, lWP-lHP);
-          g.setColor(Color.black);
+          g.fillRect(mid-width/2, lHP, width, lWP-lHP); 
+          g.setColor(MFrame.lineColor); 
           g.drawRect(mid-width/2, lHP, width, lWP-lHP);
           // bold median line
           ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5F));
           g.drawRect(mid-width/2-1, medP-1, width+2, 2);
           ((Graphics2D)g).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
 
+          g.setColor(MFrame.lineColor);    
+          
           int dia = 3;
           if( printing )
             dia *= printFactor;
@@ -1925,8 +1937,12 @@ public class PC extends DragBox implements ActionListener {
       void drawHighlight( Graphics g ) {
 
         zeroSelect = false;
+		
         
         if( data.filterVar != -1 ) {
+		
+		  selN = data.filterSelGrpSize[data.filterGrp];
+
           //System.out.println("***** Group Size: "+data.filterSelGrpSize[data.filterGrp]+" Level: "+data.filterGrp);
           if( data.filterSelGrpSize[data.filterGrp] == 0) {
             //System.out.println("Skipping: "+data.filterGrp);
@@ -1935,7 +1951,7 @@ public class PC extends DragBox implements ActionListener {
           }
         }
 
-        int count = data.countSelection(var);
+        count = data.countSelection(var);
         if(count == 0) {
           zeroSelect = true;
           return;
