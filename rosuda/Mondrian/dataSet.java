@@ -123,8 +123,8 @@ public class dataSet {
   }
   
   public void defineColors() {
-    RGBs = new int[13][];
-    RGBs[1]  = new int[]{ 50, 106, 157};
+    RGBs = new int[11][];
+/*    RGBs[1]  = new int[]{ 50, 106, 157};
     RGBs[2]  = new int[]{199, 106, 149};
     RGBs[3]  = new int[]{102, 154, 103};
     RGBs[4]  = new int[]{255, 122,   0};
@@ -135,7 +135,19 @@ public class dataSet {
     RGBs[9]  = new int[]{  0, 255, 255};
     RGBs[10] = new int[]{210,   0,   0};
     RGBs[11] = new int[]{  0, 255,   0};
-    RGBs[12] = new int[]{  0,   0, 210};    
+    RGBs[12] = new int[]{  0,   0, 210};    */
+	
+// Color Brewer: 12, qualitative, Set3
+    RGBs[1]  = new int[]{128, 177, 211};
+    RGBs[2]  = new int[]{188, 128, 189};
+    RGBs[3]  = new int[]{179, 222, 105};
+    RGBs[4]  = new int[]{253, 180, 98};
+    RGBs[5]  = new int[]{252, 205, 229};
+    RGBs[6]  = new int[]{141, 211, 199};
+    RGBs[7]  = new int[]{251, 128, 114};
+    RGBs[8]  = new int[]{204, 235, 197};
+    RGBs[9]  = new int[]{255, 237, 111};
+    RGBs[10] = new int[]{190, 186, 218};
   }
   
   public void addVariable(String name, boolean alpha, boolean categorical, double[] data, boolean[] miss) {
@@ -811,6 +823,10 @@ System.out.println(newQ.makeQuery());
     Variable v = (Variable)data.elementAt(i);
     return v.missing;
   }
+
+  public int getNumMissings(int i) {
+    return NAcount[i];
+  }
       
   public int[] getSort(int i) {
     Variable v = (Variable)data.elementAt(i);
@@ -894,7 +910,7 @@ System.out.println(newQ.makeQuery());
       case 0:
         // Linear Colors
         for(int i=1; i<=k; i++) {
-          brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.75F, 1.0F);
+          brushColors[i] = Color.getHSBColor((float)i/(float)k*1.0F, 0.5F, 1.0F);
 //          System.out.println("Color: "+brushColors[i]);
         }
           break;
@@ -909,7 +925,7 @@ System.out.println(newQ.makeQuery());
           for(int s=0; s<Math.pow(2,r); s++) {
 //            System.out.println("Power: "+ r + " - "+ s + " Position: "+(offset+s*step));
             if( j<k )
-              brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.75F, 1.0F);
+              brushColors[j++] = Color.getHSBColor((float)(offset+s*step), 0.5F, 1.0F);
             else
               return;
           }
@@ -917,8 +933,9 @@ System.out.println(newQ.makeQuery());
           break;
       case 2:
         // Static Colors
+		int nCol = RGBs.length - 1;
         for(int i=0; i<k; i++)
-          brushColors[i+1] = new Color(RGBs[(i % 12)+1][0], RGBs[(i % 12)+1][1], RGBs[(i % 12)+1][2]);
+          brushColors[i+1] = new Color(RGBs[(i % nCol)+1][0], RGBs[(i % nCol)+1][1], RGBs[(i % nCol)+1][2]);
           break;
     }
   }
@@ -996,8 +1013,8 @@ System.out.println(newQ.makeQuery());
         
 //System.out.println(" filterVar: "+filterVar+" Grp: "+grp+ " <-- "+ filterGrp +" --> "+filterVal); 
     filterON = true;
-    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
-//    if( !alpha(filterVar) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+//    if( Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
+    if( !alpha(filterVar) && Util.isNumber(grp) )           // Make sure that numeric values get the representation of a Java numeric (123 -> 123.0)!!
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(  Double.toString( Double.valueOf(grp).doubleValue() ) ));
     else
       filterGrp = (int)(((Variable)data.elementAt(filterVar)).Level(grp));
