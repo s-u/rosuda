@@ -65,7 +65,9 @@ public class Deducer {
 		try{
 			if(jgr && ((JRIEngine)JGR.getREngine()).getRni()!=null){
 				(new Thread() {
-					public void run() {startWithJGR();						}
+					public void run() {
+						startWithJGR();
+					}
 				}).start();
 			}
 		}catch(Exception e){
@@ -499,6 +501,17 @@ public class Deducer {
 	public static void execute(String cmd, boolean hist){
 		JGR.MAINRCONSOLE.execute(cmd,hist);
 	}
+	
+	public static void executeAndContinue(String cmd){
+		final String c = cmd;
+		(new Thread() {
+			public void run() {
+		JGR.MAINRCONSOLE.execute(c);
+			}
+			}).start();
+	}
+				
+
 	
 	public static String makeFormula(DefaultListModel outcomes,DefaultListModel terms){
 		String formula = "";

@@ -48,11 +48,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		initGUI();
 		try{
 			
-			Deducer.refreshData();
-			dataComboBoxModel.removeAllElements();
-			for(int i=0;i<Deducer.getData().size();i++){
-				dataComboBoxModel.addElement(((RObject) Deducer.getData().elementAt(i)).getName());
-			}
+			refreshDataNames();
 			dataComboBox.setSelectedItem(Deducer.getRecentData());
 			String dataName = (String)dataComboBox.getSelectedItem();
 			if(dataName!=null)
@@ -61,7 +57,10 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				} catch (Exception e) {
 					new ErrorMsg(e);
 				}
-		}catch(Exception e1){new ErrorMsg(e1);}
+		}catch(Exception e1){
+			variableList.setModel( new DefaultListModel());
+			dataComboBox.setModel(new DefaultComboBoxModel());
+			new ErrorMsg(e1);}
 
 	}
 	
@@ -113,6 +112,19 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		}
 	}
 	
+	public void refreshDataNames(){
+		Deducer.refreshData();
+		String dat = this.getSelectedData();
+		dataComboBox.removeActionListener(this);
+		dataComboBoxModel.removeAllElements();
+		for(int i=0;i<Deducer.getData().size();i++){
+			dataComboBoxModel.addElement(((RObject) Deducer.getData().elementAt(i)).getName());
+		}		
+		if(dat !=null)
+			this.setSelectedData(dat);
+		dataComboBox.addActionListener(this);
+		reset();
+	}
 
 
 	public void add(Object variable){
@@ -141,11 +153,11 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			exists=this.remove(temp);
 			if(!exists){
 					try {
-						this.getJList().setModel(new FilteringModel(
+						if(this.getJComboBox().getSelectedItem() != null)
+							this.getJList().setModel(new FilteringModel(
 								Deducer.eval("names("+this.getJComboBox().getSelectedItem()
 										+")").asStrings()));
 					} catch (REXPMismatchException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				break;
@@ -214,7 +226,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
 		if(cmd=="comboBoxChanged"){
-			reset();
+			this.reset();
 		}
 		
 	}
