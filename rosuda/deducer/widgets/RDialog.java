@@ -283,6 +283,16 @@ public class RDialog extends JDialog {
 		return Deducer.eval(getWidgetStatesAsString());
 	}
 	
+	public void add(Component comp,int top,int right, int bottom, int left, String topType,
+			String rightType, String bottomType, String leftType){
+			int topTyp = topType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (topType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
+			int rightTyp = rightType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (rightType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
+			int bottomTyp = bottomType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (bottomType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
+			int leftTyp = leftType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (leftType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
+			AnchorConstraint constr = new AnchorConstraint(top, right, bottom, left, 
+					topTyp, rightTyp, bottomTyp, leftTyp);
+			this.add(comp,constr);
+	}
 	
 	/**
 	 * run the dialog

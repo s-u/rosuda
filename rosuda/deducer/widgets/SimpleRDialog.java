@@ -16,18 +16,17 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 	
 	private String rCheckFunc;
 	private String rRunFunc;
-	private REXP env;
 
 	public SimpleRDialog(){
 		super();
 		setOkayCancel(true,true,this);
+		this.setLocationRelativeTo(null);
 	}
 	
 	public SimpleRDialog(String rCheckFunction, String rRunFunction, REXP environment){
 		super();
 		rCheckFunc = rCheckFunction;
 		rRunFunc = rRunFunction;
-		env = environment;
 		setOkayCancel(true,true,this);
 		this.setLocationRelativeTo(null);
 	}
@@ -44,13 +43,6 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 		rRunFunc = func;
 	}
 	
-	public REXP getEnv(){
-		return env;
-	}
-	
-	public void setEnv(REXP envir){
-		env = envir;
-	}
 
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
@@ -71,7 +63,7 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 			if(check.length()<1){
 				this.setVisible(false);
 				try {
-					Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")", env, false);
+					Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")");
 				} catch (REngineException e1) {
 					e1.printStackTrace();
 				} catch (REXPMismatchException e1) {
@@ -86,19 +78,6 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 			this.setVisible(false);
 		else if(cmd=="Reset")
 			reset();
-	}
-	
-	
-	public void add(Component comp,int top,int right, int bottom, int left, String topType,
-					String rightType, String bottomType, String leftType){
-		int topTyp = topType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (topType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
-		int rightTyp = rightType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (rightType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
-		int bottomTyp = bottomType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (bottomType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
-		int leftTyp = leftType.equals("REL") ? AnchorConstraint.ANCHOR_REL : (leftType.equals("ABS") ? AnchorConstraint.ANCHOR_ABS : AnchorConstraint.ANCHOR_NONE );
-		
-		AnchorConstraint constr = new AnchorConstraint(top, right, bottom, left, 
-				topTyp, rightTyp, bottomTyp, leftTyp);
-		this.add(comp,constr);
 	}
 	
 	
