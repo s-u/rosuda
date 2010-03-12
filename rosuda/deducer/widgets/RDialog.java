@@ -300,7 +300,10 @@ public class RDialog extends JDialog {
 	public void run(){
 		this.setToLast();
 		this.setVisible(true);
-		WindowTracker.addWindow(this);
+		if(!Deducer.isJGR()){
+			WindowTracker.addWindow(this);
+			WindowTracker.waitForAllClosed();
+		}
 	}
 	
 }

@@ -61,14 +61,16 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 													"'' if there the check passes.");
 			}
 			if(check.length()<1){
-				this.setVisible(false);
+				
 				try {
+					
 					Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")");
 				} catch (REngineException e1) {
 					e1.printStackTrace();
 				} catch (REXPMismatchException e1) {
 					e1.printStackTrace();
 				}
+				this.setVisible(false);
 				completed();
 			}else{
 				JOptionPane.showMessageDialog(this, check);

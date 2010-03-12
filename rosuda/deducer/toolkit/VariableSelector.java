@@ -204,7 +204,9 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	public void reset(){
 		String dataName = (String)dataComboBox.getSelectedItem();
 		try {
-			variableList.setModel(new FilteringModel(Deducer.eval("names("+dataName+")").asStrings()));
+			if(dataName != null)
+				variableList.setModel(new FilteringModel(
+						Deducer.eval("names("+dataName+")").asStrings()));
 		} catch (Exception e) {
 			new ErrorMsg(e);
 		}
