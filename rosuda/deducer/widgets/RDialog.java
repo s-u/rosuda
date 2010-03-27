@@ -17,7 +17,11 @@ import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
-
+/**
+ * A JDialog that keeps track of any widgets put into it
+ * @author Ian
+ *
+ */
 public class RDialog extends JDialog {
 
 	protected Vector widgets;

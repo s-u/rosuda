@@ -28,7 +28,6 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 	private Vector radioBoxes;
 	private Vector names;
 	private String initialModel;
-	private String currentModel;
 	private String lastModel;
 	
 	/**
@@ -152,6 +151,18 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 	}
 	
 	/**
+	 * Adds a button to the group
+	 * @param buttonText
+	 */
+	public void addButton(String buttonText){
+		JRadioButton button = new JRadioButton(buttonText);
+		group.add(button);
+		this.add(button);
+		radioBoxes.add(button);
+		names.add(button.getText());
+	}
+	
+	/**
 	 * remove a button
 	 * 
 	 * @param i the index of the button to remove
@@ -162,6 +173,20 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 		this.remove(but);
 	}
 
+	/**
+	 * adds either an action or mouse listener to each box
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		JRadioButton tmp;
+		for(int i=0;i<radioBoxes.size();i++){
+			tmp = (JRadioButton) radioBoxes.get(i);
+			if(lis instanceof ActionListener)
+				tmp.addActionListener((ActionListener) lis);
+			if(lis instanceof MouseListener)
+				tmp.addMouseListener((MouseListener) lis);
+		}
+	}
 	
 	/*
 	 * Start DeducerWidget methods
@@ -218,7 +243,6 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 			tmp = (JRadioButton) radioBoxes.get(i);
 			if(tmp.getText().equals(newModel)){
 				tmp.setSelected(true);
-				currentModel = newModel;
 			}	
 		}
 		
@@ -249,15 +273,5 @@ public class ButtonGroupWidget extends JPanel implements DeducerWidget {
 	 * End DeducerWidget methods
 	 */
 	
-	public void addListener(EventListener lis) {
-		JRadioButton tmp;
-		for(int i=0;i<radioBoxes.size();i++){
-			tmp = (JRadioButton) radioBoxes.get(i);
-			if(lis instanceof ActionListener)
-				tmp.addActionListener((ActionListener) lis);
-			if(lis instanceof MouseListener)
-				tmp.addMouseListener((MouseListener) lis);
-		}
-	}
 
 }

@@ -2,8 +2,11 @@ package org.rosuda.deducer.widgets;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 
 import java.io.InvalidClassException;
+import java.util.EventListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -201,6 +204,17 @@ public class CheckBoxesWidget extends javax.swing.JPanel implements DeducerWidge
 	}
 	
 	/**
+	 * Adds a button to the group
+	 * @param buttonText
+	 */
+	public void addButton(String buttonText){
+		JCheckBox button = new JCheckBox(buttonText);
+		TitledPanel.add(button);
+		checkboxes.add(button);
+		names.add(button.getText());
+	}
+	
+	/**
 	 * remove a button
 	 * 
 	 * @param i the index of the button to remove
@@ -213,6 +227,21 @@ public class CheckBoxesWidget extends javax.swing.JPanel implements DeducerWidge
 		}
 	}
 	
+	
+	/**
+	 * adds either an action or mouse listener to each box
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		JCheckBox tmp;
+		for(int i=0;i<checkboxes.size();i++){
+			tmp = (JCheckBox) checkboxes.get(i);
+			if(lis instanceof ActionListener)
+				tmp.addActionListener((ActionListener) lis);
+			if(lis instanceof MouseListener)
+				tmp.addMouseListener((MouseListener) lis);
+		}
+	}
 	
 	/*
 	 * Start DeducerWidget methods

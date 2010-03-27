@@ -1,12 +1,16 @@
 package org.rosuda.deducer.widgets;
 
 import java.awt.BorderLayout;
-import java.io.InvalidClassException;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentListener;
 
 import org.rosuda.deducer.Deducer;
 
@@ -77,6 +81,20 @@ public class TextAreaWidget extends javax.swing.JPanel implements DeducerWidget{
 	 */
 	public void setText(String t){
 		setModel(t);
+	}
+	
+	
+	/**
+	 * adds either an caret, document or mouse listener 
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		if(lis instanceof CaretListener)
+			text.addCaretListener((CaretListener) lis);
+		if(lis instanceof MouseListener)
+			text.addMouseListener((MouseListener) lis);
+		if(lis instanceof DocumentListener)
+			text.getDocument().addDocumentListener((DocumentListener) lis);
 	}
 	
 	/*

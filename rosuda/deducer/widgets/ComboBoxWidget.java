@@ -1,14 +1,23 @@
 package org.rosuda.deducer.widgets;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 import java.io.InvalidClassException;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 
 
-
+/**
+ * A drop-down combo-box
+ * @author Ian
+ *
+ */
 public class ComboBoxWidget extends javax.swing.JPanel implements DeducerWidget {
 	private JComboBox comboBox;
 	private String title;
@@ -44,9 +53,27 @@ public class ComboBoxWidget extends javax.swing.JPanel implements DeducerWidget 
 		}
 	}
 	
+	/**
+	 * 
+	 * @return The JComboBox
+	 */
 	JComboBox getComboBox(){
 		return comboBox;
 	}
+	
+	/**
+	 * adds either an action, item or mouse listener 
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		if(lis instanceof ActionListener)
+			comboBox.addActionListener((ActionListener) lis);
+		if(lis instanceof MouseListener)
+			comboBox.addMouseListener((MouseListener) lis);
+		if(lis instanceof ItemListener)
+			comboBox.addItemListener((ItemListener) lis);
+	}
+
 	
 	/*
 	 * Start DeducerWidget methods

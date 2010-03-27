@@ -3,7 +3,6 @@ package org.rosuda.deducer.widgets;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
 
@@ -11,13 +10,16 @@ import java.awt.BorderLayout;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.InvalidClassException;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 
 import javax.swing.DefaultListModel;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * Creates a widget for selecting a single variable from a VariableSelector
@@ -124,6 +126,18 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 			return mod.get(0).toString();
 	}
 	
+	/**
+	 * adds either an action, mouse or list selection listener 
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		if(lis instanceof ActionListener)
+			addRemoveButton.addActionListener((ActionListener) lis);
+		if(lis instanceof ListSelectionListener)
+			singleList.addListSelectionListener((ListSelectionListener) lis);
+		if(lis instanceof MouseListener)
+			singleList.addMouseListener((MouseListener) lis);
+	}
 	
 	/*
 	 * Start DeducerWidget methods

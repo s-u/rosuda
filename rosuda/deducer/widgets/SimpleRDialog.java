@@ -1,55 +1,147 @@
 package org.rosuda.deducer.widgets;
 
-import java.awt.Component;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JOptionPane;
 
-import org.rosuda.JGR.layout.AnchorConstraint;
+
 import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLanguage;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPReference;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngineException;
+import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
 
+/**
+ * An easy dialog designed to be called from R
+ * @author Ian
+ *
+ */
 public class SimpleRDialog extends RDialog implements ActionListener{
 	
 	private String rCheckFunc;
 	private String rRunFunc;
 
+	private REXPReference checkRef;
+	private REXPReference runRef;
+	
+	/**
+	 * new simple dialog
+	 */
 	public SimpleRDialog(){
 		super();
 		setOkayCancel(true,true,this);
 		this.setLocationRelativeTo(null);
 	}
 	
-	public SimpleRDialog(String rCheckFunction, String rRunFunction, REXP environment){
+	/**
+	 * create new dialog with callbacks
+	 * @param rCheckFunction name of R function called to check dialog validity
+	 * @param rRunFunction name of R function called to run analysis
+	 */
+	public SimpleRDialog(String rCheckFunction, String rRunFunction){
 		super();
 		rCheckFunc = rCheckFunction;
 		rRunFunc = rRunFunction;
+		checkRef = null;
+		runRef = null;
+		setOkayCancel(true,true,this);
+		this.setLocationRelativeTo(null);
+	}
+	
+	/**
+	 * create new dialog with callbacks
+	 * @param rCheckFunction R function called to check dialog validity (e.g. toJava(function(state) '') )
+	 * @param rRunFunction R function called to run analysis
+	 */
+	public SimpleRDialog(REXPReference rCheckFunction, REXPReference rRunFunction){
+		super();
+		rCheckFunc = null;
+		rRunFunc = null;
+		checkRef = rCheckFunction;
+		runRef = rRunFunction;
 		setOkayCancel(true,true,this);
 		this.setLocationRelativeTo(null);
 	}
 
+	/**
+	 * Set validity check callback
+	 * @param func
+	 */
 	public void setCheckFunction(String func){
 		rCheckFunc = func;
+		checkRef=null;
+	}
+
+	/**
+	 * Set validity check callback
+	 * @param func
+	 */
+	public void setCheckFunction(REXPReference func){
+		checkRef=func;
+		rCheckFunc=null;
 	}
 	
-	public String getCheckFunction(){
-		return rCheckFunc;
+	/**
+	 * get validity check callback
+	 * @return either a string or an REXPReference to a function
+	 */
+	public Object getCheckFunction(){
+		if(rCheckFunc!=null)
+			return rCheckFunc;
+		return checkRef;
 	}
 	
+	/**
+	 * set run callback
+	 * @param func
+	 */
 	public void setRunFunction(String func){
 		rRunFunc = func;
+		runRef = null;
 	}
 	
+	/**
+	 * set run callback
+	 * @param func
+	 */
+	public void setRunFunction(REXPReference func){
+		rRunFunc = null;
+		runRef = func;
+	}
+	
+	/**
+	 * get run callback
+	 * @return either a string or an REXPReference to a function
+	 */
+	public Object getRunFunction(){
+		if(rRunFunc!=null)
+			return rRunFunc;
+		return runRef;		
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		String cmd = e.getActionCommand();
 		if(cmd=="Run"){
 			String state = getWidgetStatesAsString();
 			REXP rCheck = null;
-			rCheck = Deducer.eval(rCheckFunc + "(" + state + ")");
+			if(rCheckFunc!=null)
+				rCheck = Deducer.eval(rCheckFunc + "(" + state + ")");
+			else if(checkRef!=null){
+				REXP st = Deducer.eval(state);
+				try {
+					rCheck = checkRef.getEngine().eval(new REXPLanguage(new RList(new REXP[] { checkRef , st
+					})), null, false);
+				} catch (REngineException e1) {
+					e1.printStackTrace();
+				} catch (REXPMismatchException e1) {
+					e1.printStackTrace();
+				}
+			}
 
 			
 			String check = "";
@@ -63,8 +155,13 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 			if(check.length()<1){
 				
 				try {
-					
-					Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")");
+					if(rRunFunc!=null)
+						Deducer.engine.parseAndEval(rRunFunc + "(" + state + ")");
+					else if(runRef!=null){
+						REXP st = Deducer.eval(state);
+						runRef.getEngine().eval(new REXPLanguage(new RList(new REXP[] { runRef , st
+						})), null, false);
+					}
 				} catch (REngineException e1) {
 					e1.printStackTrace();
 				} catch (REXPMismatchException e1) {

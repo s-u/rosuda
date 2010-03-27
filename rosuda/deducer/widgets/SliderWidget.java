@@ -1,14 +1,22 @@
 package org.rosuda.deducer.widgets;
 import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseListener;
 
-import java.io.InvalidClassException;
+
+import java.util.EventListener;
 import java.util.Hashtable;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
 
+/**
+ * A slider with values ranging from 0-100
+ * @author Ian
+ *
+ */
 public class SliderWidget extends javax.swing.JPanel implements DeducerWidget{
 	private JSlider slider;
 	private String title;
@@ -67,6 +75,15 @@ public class SliderWidget extends javax.swing.JPanel implements DeducerWidget{
 
 	public JSlider getSlider(){
 		return slider;
+	}
+	
+	/**
+	 * adds either a mouse listener to the slider
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		if(lis instanceof MouseListener)
+			slider.addMouseListener((MouseListener) lis);
 	}
 	
 	public Object getModel() {

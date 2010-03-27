@@ -10,13 +10,16 @@ import org.rosuda.deducer.toolkit.RemoveButton;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.io.InvalidClassException;
+import java.util.EventListener;
 
 import javax.swing.BorderFactory;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * A widget for selecting a number of variables from a data frame
@@ -157,6 +160,22 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 			}
 			varList.setModel(newModel);
 		}
+	}
+	
+	
+	/**
+	 * adds either an action, mouse or list selection listener 
+	 * @param lis
+	 */
+	public void addListener(EventListener lis) {
+		if(lis instanceof ActionListener){
+			removeButton.addActionListener((ActionListener) lis);
+			addButton.addActionListener((ActionListener) lis);
+		}
+		if(lis instanceof ListSelectionListener)
+			varList.addListSelectionListener((ListSelectionListener) lis);
+		if(lis instanceof MouseListener)
+			varList.addMouseListener((MouseListener) lis);
 	}
 
 	/*
