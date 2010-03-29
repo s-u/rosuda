@@ -1,7 +1,7 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
-0.5-1	(under development)
+0.5-2	(under development)
     o	fixed handling of NAs in strings - they are now correctly
 	converted to <null>s on the Java side.
 
@@ -14,6 +14,10 @@
 
 	(Thanks to Stephan Wahlbrink for pointing out the inconsistency)
 
+0.5-1	2010-03-16
+   o	API 1.10: rniAssign now returns boolean to denote success/failure
+
+   o	numerous bug fixes and additions
 
 0.5-0	2009-08-22
     o	API 1.9: added rniPreserve, rniRelease, rniParentEnv, rniFindVar,
@@ -35,6 +39,7 @@
 	failing to load the JRI library (UnsatisfiedLinkException).
 	This can be used by GUIs to display a more meaningful message
 	instead of abort. The jriLoaded flag is false in that case.
+
 
 0.4-2
     o	declare string encoding as UTF-8 and convert incoming strings
