@@ -2,6 +2,18 @@
 --------------------------
 
 0.5-1	(under development)
+    o	fixed handling of NAs in strings - they are now correctly
+	converted to <null>s on the Java side.
+
+	IMPORTANT: previously NAs would come as the string "NA"
+	from R which is incorrect since it is not distinguishable from
+	a literal "NA" string. Code that deals with NAs must be prepared
+	to receive nulls in string arrays (note that nulls where
+	correctly converted to NA string, it's just that incoming
+	string were not converted).
+
+	(Thanks to Stephan Wahlbrink for pointing out the inconsistency)
+
 
 0.5-0	2009-08-22
     o	API 1.9: added rniPreserve, rniRelease, rniParentEnv, rniFindVar,
