@@ -6,9 +6,16 @@ import java.awt.Font;
 
 import javax.swing.*;
 
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPDouble;
+import org.rosuda.REngine.REXPFactor;
+import org.rosuda.REngine.REXPInteger;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPString;
+import org.rosuda.REngine.REXPVector;
+import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
 
 
@@ -25,6 +32,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 	private String rDataName=null;
 	
 	private String tempDataName=null;
+	
+	private RList data = null;
 	
 	RowNamesModel rowNamesModel = new RowNamesModel();
 	
@@ -50,19 +59,21 @@ class RDataFrameModel extends ExDefaultTableModel {
 			Deducer.eval("rm("+tempDataName+",envir="+guiEnv+")");
 		rDataName = name;
 		tempDataName = Deducer.getUniqueName(rDataName,guiEnv);
-		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+		try {
+			data = Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName).asList();
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
+		
 		this.fireTableStructureChanged();
 		this.fireTableDataChanged();
 	}
 	
 	public int getColumnCount( ){
 		if(rDataName!=null){
-			boolean nExists = ((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0];
-			if(nExists)
-				return 0;
 			try {
-				return Deducer.eval("ncol("+rDataName+")").asInteger()+numExtensionColumns;
-			} catch (REXPMismatchException e) {
+				return data.size()+numExtensionColumns;
+			} catch (Exception e) {
 				return 0;
 			}
 		}else
@@ -71,11 +82,10 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	public int getRealColumnCount( ){
 		if(rDataName!=null){
-			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
-				return 0;
+
 			try {
-				return Deducer.eval("ncol("+rDataName+")").asInteger();
-			} catch (REXPMismatchException e) {
+				return data.size();
+			} catch (Exception e) {
 				return 0;
 			}
 		}else
@@ -84,11 +94,9 @@ class RDataFrameModel extends ExDefaultTableModel {
 
 	public int getRealRowCount(){
 		if(rDataName!=null){
-			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
-				return 0;
 			try {
-				return Deducer.eval("nrow("+rDataName+")").asInteger();
-			} catch (REXPMismatchException e) {
+				return ((REXPVector)data.at(0)).length();
+			} catch (Exception e) {
 				return 0;
 			}
 		}else
@@ -97,11 +105,9 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	public int getRowCount(){
 		if(rDataName!=null){
-			if(((REXPLogical)Deducer.eval("!exists('"+rDataName+"')")).isTRUE()[0])
-				return 0;
 			try {
-				return Deducer.eval("nrow("+rDataName+")").asInteger()+numExtensionRows;
-			} catch (REXPMismatchException e) {
+				return ((REXPVector)data.at(0)).length() + numExtensionRows;
+			} catch (Exception e) {
 				return 0;
 			}
 		}else
@@ -153,68 +159,31 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	public Object getValueAt(int row, int col){
 		Object value = "?";
-		try {
-			//if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
-			//	value= "?";
-			//else 
-			if(row>=getRealRowCount() || col>=getRealColumnCount()){
-				value= "";
-			}else{
-				REXP val = Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]");
-				if(val.isNA()[0])
-					value = new NAHolder();
-				else if(val.isFactor()){
-					value = val.asFactor().asStrings()[0];
-				}else if(val.isInteger())
-					value = new Integer(val.asInteger());
-				else if( val.isLogical())
-					value = new Boolean(((REXPLogical)val).isTRUE()[0]);				
-				else if(val.isNumeric())
-					value = (new Double(val.asDouble()));
-				else if(val.isString()){
-					if(((REXPLogical)Deducer.eval("is.na("+rDataName+"["+(row+1)+","+(col+1)+"])")).isTRUE()[0])
-						value = new NAHolder();
-					else
-						value= val.asString();
-				}
-			}
-		} catch (REXPMismatchException e) {
-			value = "?";
+		if(row>=getRealRowCount() || col>=getRealColumnCount()){
+			value= "";
+		}else{
+		try{
+			REXPVector column = (REXPVector)data.at(col);
+			if(column.isNA()[row])
+				value = new NAHolder();
+			else if(column.isFactor())
+				value = ((REXPFactor)column).asFactor().at(row);
+			else if( column.isLogical())
+				value = new Boolean(((REXPLogical)column).asIntegers()[row]==1);					
+			else if(column.isInteger())
+				value = new Integer(((REXPInteger)column).asIntegers()[row]);	
+			else if(column.isNumeric())
+				value = new Double(((REXPDouble)column).asDoubles()[row]);
+			else if(column.isString())
+				value = ((REXPString)column).asStrings()[row];
+		}catch(Exception e){
+			new ErrorMsg(e);
 		}
+		}
+		if(value==null)
+			new ErrorMsg("Null value at " + row + " " +col);
 		return value;
 	}
-	/*public Object getValueAt(int row, int col){
-		Object value = "?";
-		try {
-			//if(Deducer.rniEval("!exists('"+rDataName+"')").asBool().isTRUE())
-			//	value= "?";
-			//else 
-			if(row>=getRealRowCount() || col>=getRealColumnCount()){
-				value= "";
-			}else{
-				REXP var = data.at(col);
-				if(var.isNA()[row])
-					value = new NAHolder();
-				else if(var.isFactor()){
-					value = var.asFactor().asStrings()[row];
-				}else if(var.isInteger())
-					value = new Integer(var.asIntegers()[row]);
-				else if( var.isLogical())
-					value = new Boolean(((REXPLogical)var).isTRUE()[row]);				
-				else if(var.isNumeric())
-					value = (new Double(var.asDoubles()[row]));
-				else if(var.isString()){
-					if(((REXPLogical)Deducer.eval("is.na("+rDataName+"["+(row+1)+","+(col+1)+"])")).isTRUE()[0])
-						value = new NAHolder();
-					else
-						value= var.asStrings()[row];
-				}
-			}
-		} catch (REXPMismatchException e) {
-			value = "?";
-		}
-		return value;
-	}*/
 	
 	
 	public void setValueAt(Object value,int row, int col){	
@@ -271,8 +240,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
 				}else{
 					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-					this.fireTableDataChanged();
 				}
+				this.fireTableDataChanged();
 			}else{
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
 			}
@@ -293,8 +262,10 @@ class RDataFrameModel extends ExDefaultTableModel {
 			else if(valueString.equals("0") || valueString.toLowerCase().equals("false")
 					|| valueString.toLowerCase().equals("f"))
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-FALSE");
-			else
+			else{
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
+				this.fireTableDataChanged();
+			}
 		}else if(currentValue.isNumeric()){
 			if(!isDouble){
 				Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
@@ -302,37 +273,47 @@ class RDataFrameModel extends ExDefaultTableModel {
 			}else{
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
 			}
+			this.fireTableDataChanged();
 		}
 		this.fireTableCellUpdated(row, col);
 		if((row+1)>numRealRows){
 			Deducer.eval("rownames("+rDataName+")<-make.unique(rownames("+rDataName+"))");
 			this.fireTableRowsInserted(numRealRows,row);			
 			this.fireTableRowsUpdated(numRealRows,row);
+			rowNamesModel.refresh();
 		}
 		if((col+1)>numRealCols){
 			this.fireTableDataChanged();
-			try {
-				this.addColumn(Deducer.eval("colnames("+rDataName+")["+(col+1)+"]").asString());
-			} catch (REXPMismatchException e) {}
+			refresh();
 		}
-		Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+
+		try {
+			data = Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName).asList();
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 	}
 	/**
 	 * Notifies components about changes in the model
 	 */
 	public boolean refresh(){
 		boolean changed = false;
-		REXP exist = Deducer.idleEval("exists('"+rDataName+"')");
+		REXP exist = Deducer.eval("exists('"+rDataName+"')");
 		if(exist!=null && ((REXPLogical)exist).isTRUE()[0]){
-			REXP ident =Deducer.idleEval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
+			REXP ident =Deducer.eval("identical("+rDataName+","+guiEnv+"$"+tempDataName+")"); 
 			if(ident!=null && ((REXPLogical)ident).isFALSE()[0]){
-				REXP strChange = Deducer.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
+				REXP strSame = Deducer.eval("all(dim("+rDataName+")==dim("+guiEnv+"$"+tempDataName+")) && " +
 								"identical(colnames("+rDataName+"),colnames("+guiEnv+"$"+tempDataName+"))");
-				if(strChange!=null && ((REXPLogical)strChange).isTRUE()[0])
+				try {
+					data = Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName).asList();
+				} catch (REXPMismatchException e) {
+					new ErrorMsg(e);
+				}				
+				if(strSame!=null && !((REXPLogical)strSame).isTRUE()[0])
 					this.fireTableStructureChanged();
-				if(strChange!=null)
+				if(strSame!=null)
 					this.fireTableDataChanged();			
-				Deducer.eval(guiEnv+"$"+tempDataName+"<-"+rDataName);
+
 				changed=true;
 			}
 		}
@@ -377,21 +358,23 @@ class RDataFrameModel extends ExDefaultTableModel {
 	
 	class RowNamesModel extends RowNamesListModel{
 		
+		private String[] rowNames = null;
+		private int maxChar = 0;
+		
 		public int getSize() { 
 			return getRowCount(); 
 		}
 		
 		public Object getElementAt(int index) {
+			if(rowNames == null){
+				refresh();
+			}
 			if(index<getRealRowCount()){
-				REXP rRowName =Deducer.eval("rownames("+rDataName+")["+(index+1)+"]");
-				if(rRowName.isString())
-					try {
-						return rRowName.asString();
-					} catch (REXPMismatchException e) {
-						return "?";
-					}
-				else
+				if(rowNames.length>index)
+					return rowNames[index];
+				else{
 					return "?";
+				}
 			}else
 				return new Integer(index+1).toString();
 		}
@@ -399,15 +382,19 @@ class RDataFrameModel extends ExDefaultTableModel {
 		public void initHeaders(int n){}
 		
 		public int getMaxNumChar(){
-			String[] rowNames={""};
+			return maxChar;
+		}
+		public void refresh(){
 			try {
 				rowNames = Deducer.eval("rownames("+rDataName+")").asStrings();
-			} catch (REXPMismatchException e) {}
-			int max = 0;
-			for(int i=0;i<rowNames.length;i++){
-				max = Math.max(max,rowNames[i].length());
+			} catch (REXPMismatchException e) {
+				new ErrorMsg(e);
 			}
-			return max;
+			int max = 0;
+			for(int i=0;i<rowNames.length;i++)
+				max = Math.max(max,rowNames[i].length());
+			maxChar = max;
+			super.refresh();
 		}
 		
 	}
