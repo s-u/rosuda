@@ -5,6 +5,7 @@ import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -24,10 +25,15 @@ import org.rosuda.deducer.toolkit.OkayCancelPanel;
  */
 public class RDialog extends JDialog {
 
-	protected Vector widgets;
-	private Vector components;
-	private OkayCancelPanel okayCancelPanel;
-	private HelpButton helpButton;
+	protected Vector widgets = new Vector();
+	protected Vector components = new Vector();
+	
+	protected HashMap models;
+	protected RDialog parent;
+	protected Vector children = new Vector();
+	
+	protected OkayCancelPanel okayCancelPanel;
+	protected HelpButton helpButton;
 	
 	protected static RDialog theDialog;
 
@@ -38,129 +44,103 @@ public class RDialog extends JDialog {
 	
 	public RDialog(){
 		super();
+		init(null);
 		initGUI();
 	}
 	public RDialog(Dialog owner){
 		super(owner);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Dialog owner, boolean modal){
 		super(owner, modal);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Dialog owner, String title){
 		super(owner, title);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Dialog owner, String title, boolean modal){
 		super(owner, title, modal);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc){
 		super(owner, title, modal,gc);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Frame owner){
 		super(owner);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Frame owner, boolean modal){
 		super(owner, modal);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Frame owner, String title){
 		super(owner, title);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Frame owner, String title, boolean modal){
 		super(owner, title, modal);
+		init(owner);
 		initGUI();
 	}
 	public RDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc){
 		super(owner, title, modal,gc);
+		init(owner);
 		initGUI();
 	}
 	
 	/*
 	 * Component overrides
-	 */
+	*/
 	
 	 public Component 	add(Component comp){
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 if(comp instanceof DeducerWidget)
-			 widgets.add(comp);
-		 else
-			 components.add(comp);
+		 track(comp);
 		 return super.add(comp);
 	 }
 	 public Component 	add(Component comp, int index){
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 if(comp instanceof DeducerWidget)
-			 widgets.add(comp);
-		 else
-			 components.add(comp);
+		 track(comp);
+		 if(parent!=null)
+			 parent.track(comp);
 		 return super.add(comp,index);
 	 }
 	 public void 	add(Component comp, Object constraints){
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 if(comp instanceof DeducerWidget)
-			 widgets.add(comp);
-		 else
-			 components.add(comp);
+		 track(comp);
+		 if(parent!=null)
+			 parent.track(comp);
 		 super.add(comp,constraints);
 	 }
 	 public void 	add(Component comp, Object constraints, int index){
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 if(comp instanceof DeducerWidget)
-			 widgets.add(comp);
-		 else
-			 components.add(comp);
+		 track(comp);
+		 if(parent!=null)
+			 parent.track(comp);
 		 super.add(comp,constraints,index);
 	 }
 	 public Component 	add(String name, Component comp){
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 if(comp instanceof DeducerWidget)
-			 widgets.add(comp);
-		 else
-			 components.add(comp);
+		 track(comp);
+		 if(parent!=null)
+			 parent.track(comp);
 		 return super.add(name,comp);
 	 }
 	 public void 	remove(Component comp){
 		 super.remove(comp);
-		 for(int i=0;i<components.size();i++){
-			 if(comp==components.get(i))
-				 components.remove(i);
-		 }
-		 for(int i=0;i<widgets.size();i++){
-			 if(comp==widgets.get(i))
-				 widgets.remove(i);
-		 }
+		 untrack(comp);
+		 if(parent!=null)
+			 parent.untrack(comp);
 	 }
 	 public void 	remove(int index){
 		 Component comp = this.getComponent(index);
-		 for(int i=0;i<components.size();i++){
-			 if(comp==components.get(i))
-				 components.remove(i);
-		 }
-		 for(int i=0;i<widgets.size();i++){
-			 if(comp==widgets.get(i))
-				 widgets.remove(i);
-		 }		 
+		 untrack(comp); 
+		 if(parent!=null)
+			 parent.untrack(comp);
 		 super.remove(index);
 	 }
 	 public void 	removeAll(){
@@ -168,18 +148,28 @@ public class RDialog extends JDialog {
 		 components.removeAllElements();
 		 widgets.removeAllElements();
 	 }
+	 
+	 /*
+	  * end Component overrides
+	*/
 	
+	protected void init(Component owner){
+		if(widgets == null)
+			widgets = new Vector();
+		if(components == null)
+			components = new Vector();
+		if(models == null)
+			models = new HashMap();
+		if(owner instanceof RDialog){
+			parent = (RDialog) owner;
+			parent.addSubDialog(this);
+		}else
+			parent=null;
+	}
 	
-	public void initGUI(){
-		
-		 if(widgets == null)
-			 widgets = new Vector();
-		 if(components == null)
-			 components = new Vector();
-		 
+	 public void initGUI(){
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
-		
 		this.setSize(555, 645);
 	}
 	
@@ -208,7 +198,7 @@ public class RDialog extends JDialog {
 		if(okayCancelPanel!=null){
 			this.remove(okayCancelPanel);
 		}
-		OkayCancelPanel okayCancelPanel = new OkayCancelPanel(showReset, isRun, lis);
+		okayCancelPanel = new OkayCancelPanel(showReset, isRun, lis);
 		this.add(okayCancelPanel, new AnchorConstraint(926, 978, 980, 402, 
 				AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL, 
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
@@ -229,6 +219,9 @@ public class RDialog extends JDialog {
 	public void reset(){
 		for(int i=0;i<widgets.size();i++)
 			((DeducerWidget)widgets.get(i)).reset();
+		for(int i=0;i<children.size();i++)
+			((RDialog)children.get(i)).reset();
+		models = new HashMap();
 	}
 	
 	/**
@@ -237,7 +230,10 @@ public class RDialog extends JDialog {
 	public void completed(){
 		for(int i=0;i<widgets.size();i++){
 			DeducerWidget wid = (DeducerWidget)widgets.get(i);
-			wid.setLastModel(wid.getModel());
+			if(parent==null)
+				wid.setLastModel(wid.getModel());
+			else
+				models.put(wid, wid.getModel());
 		}
 	}
 	/**
@@ -298,15 +294,99 @@ public class RDialog extends JDialog {
 			this.add(comp,constr);
 	}
 	
+	
+	/**
+	 * Sets this RDialog and all ancestors to track component
+	 * @param comp
+	 */
+	public void track(Component comp){
+		 if(widgets == null)
+			 widgets = new Vector();
+		 if(components == null)
+			 components = new Vector();
+		 if(comp instanceof DeducerWidget)
+			 trackWidget((DeducerWidget) comp);
+		 else if(!components.contains(comp))
+			 components.add(comp);
+		 if(parent!=null)
+			 parent.track(comp);
+	}
+	
+	/**
+	 * Stop tracking a component
+	 * @param comp
+	 * @return was the component being tracked by this RDialog
+	 */
+	public boolean untrack(Component comp){
+		 if(widgets == null)
+			 widgets = new Vector();
+		 if(components == null)
+			 components = new Vector();
+		boolean isInWidgets =  widgets.remove(comp);
+		boolean isTracked = isInWidgets;
+		if(!isInWidgets)
+			isTracked = components.remove(comp);
+		 if(isTracked && parent!=null)
+			 parent.untrack(comp);
+		return isTracked;
+	}
+	
+	/**
+	 * Notifies RDialog that a widget should be tracked. useful when adding widgets to non-widget aware containers (e.g. a JPanel)
+	 * @param wid the widget to track
+	 */
+	public void trackWidget(DeducerWidget wid){
+		if(!widgets.contains(wid))
+			widgets.add(wid);
+	}
+	
+	/**
+	 * Stop tracking a widget
+	 * @param wid the widget to remove
+	 * @return a boolean indicating if the widget was being tracked.
+	 */
+	public boolean untrackWidget(DeducerWidget wid){
+		return widgets.remove(wid);
+	}
+	
+	/**
+	 * link a child dialog
+	 * @param d
+	 */
+	public void addSubDialog(RDialog d){
+		if(!children.contains(d))
+			children.add(d);
+	}
+	
+	/**
+	 * unlink a child dialog
+	 * @param d
+	 * @return was tracked
+	 */
+	public boolean removeSubDialog(RDialog d){
+		return children.remove(d);
+	}
+	
 	/**
 	 * run the dialog
 	 */
 	public void run(){
 		this.setToLast();
+		if(parent!=null){
+			DeducerWidget wid;
+			Object widModel;
+			for(int i=0;i < widgets.size();i++){
+				wid = (DeducerWidget) widgets.get(i);
+				widModel = models.get(wid);
+				if(widModel!=null)
+					wid.setModel(widModel);
+			}
+		}
 		this.setVisible(true);
 		if(!Deducer.isJGR()){
 			WindowTracker.addWindow(this);
-			WindowTracker.waitForAllClosed();
+			if(parent==null)
+				WindowTracker.waitForAllClosed();
 		}
 	}
 	

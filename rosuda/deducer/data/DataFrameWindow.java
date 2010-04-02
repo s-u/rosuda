@@ -503,8 +503,13 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				JGR.MAINRCONSOLE.requestFocus();
 				new DataLoader();	
 			}else if(cmd=="Save Data"){
+
 				new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
 			}else if(cmd=="Clear Data"){
+				if(dataSelector.getSelectedItem()==null){
+					JOptionPane.showMessageDialog(this, "Invalid selection: There is no data loaded.");
+					return;
+				}
 				String data = ((RObject)dataSelector.getSelectedItem()).getName();
 				int confirm = JOptionPane.showConfirmDialog(null, "Remove Data Frame "+
 						data+" from enviornment?\n" +
