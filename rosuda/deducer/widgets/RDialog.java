@@ -188,6 +188,8 @@ public class RDialog extends JDialog {
 		helpButton.setPreferredSize(new java.awt.Dimension(32, 32));		
 	}
 	
+	public HelpButton getHelpButton(){return helpButton;}
+	
 	/**
 	 * adds the okay, cancel and run buttons
 	 * @param showReset show the reset button?
@@ -204,6 +206,8 @@ public class RDialog extends JDialog {
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE));
 		okayCancelPanel.setPreferredSize(new java.awt.Dimension(307, 32));
 	}
+	
+	public OkayCancelPanel getOkayCancel(){return okayCancelPanel;}
 	
 	/**
 	 * Sets all of the widgets to their last state

@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.io.InvalidClassException;
 import java.util.EventListener;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 
@@ -121,7 +122,12 @@ public class VariableListWidget extends javax.swing.JPanel implements DeducerWid
 	 */
 	public String[] getItems(){
 		DefaultListModel model = (DefaultListModel) getModel();
-		return (String[]) model.toArray();
+		Object[] tmp = model.toArray();
+		String[] items = new String[tmp.length];
+		for(int i =0;i<tmp.length;i++)
+			if(tmp[i] instanceof String)
+				items[i] = (String) tmp[i];
+		return items;
 	}
 
 	/**
