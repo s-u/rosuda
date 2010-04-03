@@ -19,23 +19,23 @@ import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 /**
- * A JDialog that keeps track of any widgets put into it
+ * A JDialog that keeps track of any widgets put into it or widgets
+ * put into an RDialog of which it is owner.
  * @author Ian
  *
  */
 public class RDialog extends JDialog {
 
-	protected Vector widgets = new Vector();
-	protected Vector components = new Vector();
+	protected Vector widgets = new Vector();		//Widgets in this dialog
+	protected Vector components = new Vector();		//Components in this dialog
 	
-	protected HashMap models;
-	protected RDialog parent;
-	protected Vector children = new Vector();
+	protected HashMap models;						//Working models
+	protected RDialog parent;						//Parent of this dialog
+	protected Vector children = new Vector();		//Any RDialogs belonging to this one
 	
-	protected OkayCancelPanel okayCancelPanel;
-	protected HelpButton helpButton;
+	protected OkayCancelPanel okayCancelPanel;		//Control buttons
+	protected HelpButton helpButton;				//Online help
 	
-	protected static RDialog theDialog;
 
 
 	/*
@@ -236,6 +236,7 @@ public class RDialog extends JDialog {
 				models.put(wid, wid.getModel());
 		}
 	}
+	
 	/**
 	 * sets the help page for the help button
 	 * @param page
@@ -358,6 +359,12 @@ public class RDialog extends JDialog {
 			children.add(d);
 	}
 	
+	protected void clearWorkingModels(){
+		this.models = new HashMap();
+		for(int i=0;i<children.size();i++)
+			((RDialog)children.get(i)).clearWorkingModels();
+	}
+	
 	/**
 	 * unlink a child dialog
 	 * @param d
@@ -371,8 +378,9 @@ public class RDialog extends JDialog {
 	 * run the dialog
 	 */
 	public void run(){
-		this.setToLast();
-		if(parent!=null){
+		if(parent==null)
+			this.setToLast();
+		else{
 			DeducerWidget wid;
 			Object widModel;
 			for(int i=0;i < widgets.size();i++){

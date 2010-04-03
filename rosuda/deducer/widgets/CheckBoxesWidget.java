@@ -5,14 +5,12 @@ import java.awt.GridLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
-import java.io.InvalidClassException;
 import java.util.EventListener;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import org.rosuda.deducer.Deducer;
 

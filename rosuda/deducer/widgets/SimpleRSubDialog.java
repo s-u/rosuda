@@ -7,6 +7,11 @@ import java.awt.GraphicsConfiguration;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A simple dialog designed to be used with an RDialog (or SimpleRDialog) owner.
+ * @author Ian
+ *
+ */
 public class SimpleRSubDialog extends RDialog implements ActionListener{
 
 	/*
@@ -61,6 +66,8 @@ public class SimpleRSubDialog extends RDialog implements ActionListener{
 			this.completed();
 			this.setVisible(false);
 		}else if(cmd=="Cancel"){
+			if(parent==null)
+				clearWorkingModels();
 			this.setVisible(false);
 		}
 	}

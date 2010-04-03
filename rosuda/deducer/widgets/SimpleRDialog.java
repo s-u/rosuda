@@ -11,7 +11,6 @@ import org.rosuda.REngine.REXP;
 import org.rosuda.REngine.REXPLanguage;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.REXPReference;
-import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.RList;
 import org.rosuda.deducer.Deducer;
@@ -173,9 +172,10 @@ public class SimpleRDialog extends RDialog implements ActionListener{
 				JOptionPane.showMessageDialog(this, check);
 				return;
 			}
-		}else if(cmd=="Cancel")
+		}else if(cmd=="Cancel"){
+			clearWorkingModels();
 			this.setVisible(false);
-		else if(cmd=="Reset")
+		}else if(cmd=="Reset")
 			reset();
 	}
 	
