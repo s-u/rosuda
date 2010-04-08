@@ -118,11 +118,13 @@ public class Deducer {
 				insertMenu(JGR.MAINRCONSOLE,dataMenu,menuIndex);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Edit Factor", "factor", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Recode Variables", "recode", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transform", "transform", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();				
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Reset Row Names", "reset rows", cListener);
-				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();
-				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);
-				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Sort", "sort", cListener);				
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Transpose", "trans", cListener);
+				EzMenuSwing.getMenu(JGR.MAINRCONSOLE, dataMenu).addSeparator();						
+				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Merge Data", "merge", cListener);
 				EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, dataMenu, "Subset", "subset", cListener);
 				menuIndex++;
 			}
@@ -270,6 +272,12 @@ public class Deducer {
 			recode.setLocationRelativeTo(null);
 			recode.setVisible(true);
 			WindowTracker.addWindow(recode);
+		}else if(cmd.equals("transform")){
+			needsRLocked=true;
+			TransformDialog trans =new TransformDialog(JGR.MAINRCONSOLE); 
+			trans.setLocationRelativeTo(null);
+			trans.setVisible(true);
+			WindowTracker.addWindow(trans);
 		}else if(cmd.equals("factor")){
 			needsRLocked=true;
 			VariableSelectionDialog inst =new VariableSelectionDialog(JGR.MAINRCONSOLE);
