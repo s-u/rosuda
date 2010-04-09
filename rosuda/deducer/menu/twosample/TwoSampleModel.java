@@ -147,14 +147,11 @@ public class TwoSampleModel{
 				(optMod.digits.trim().equals("<auto>") ? "\n)" : ",\n\tdigits="+optMod.digits+")")+"\n";
 		}
 		if(doBM){
-			String packages = RController.getCurrentPackages();
-			if(!packages.contains("lawstat")){
-				try{
-				Deducer.eval("cat('Package lawstat not found. Attempting to download...\n')");
-				JGR.MAINRCONSOLE.execute("installPackages('lawstat');library(lawstat)",true);	
-				}catch(Exception e){new ErrorMsg(e);}
-			}
-			else
+			String packStatus = Deducer.requirePackage("lawstat");
+			if(packStatus=="not-installed"){
+				JOptionPane.showMessageDialog(null, "Package lawstat must be installed in order to do the Brunner-Munszel test");
+				return false;
+			}else if(packStatus=="installed")
 				cmd+=("library(lawstat)")+"\n";
 			cmd += "print(two.sample.test(formula="+outcomes+" ~ "+factor+",\n\t\tdata="+subn+
 				",\n\t\ttest=brunner.munzel.test"+

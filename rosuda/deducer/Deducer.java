@@ -42,7 +42,9 @@ import org.rosuda.deducer.data.DataFrameWindow;
 
 
 import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.REXPString;
 import org.rosuda.REngine.REngineException;
 import org.rosuda.REngine.JRI.JRIEngine;
 
@@ -581,6 +583,53 @@ public class Deducer {
 	 */
 	public static String getUniqueName(String var, String envName) {
 		return JGR.MAINRCONSOLE.getUniqueName(var, envName);
+	}
+	
+	/**
+	 * is package installed
+	 * @param packageName
+	 * @return
+	 */
+	public static boolean isInstalled(String packageName){
+		REXP installed = Deducer.eval("'" + packageName +"' %in% installed.packages()[,1]");
+		if(installed!=null && installed instanceof REXPLogical){
+			return ((REXPLogical) installed).isTRUE()[0];
+		}
+		return false;
+	}
+	
+	/**
+	 * is package loaded
+	 * @param packageName
+	 * @return
+	 */
+	public static boolean isLoaded(String packageName){
+		REXP loaded = Deducer.eval("'" + packageName +"' %in% c(names(sessionInfo()$otherPkgs), sessionInfo()$base)");
+		if(loaded!=null && loaded instanceof REXPLogical){
+			return ((REXPLogical) loaded).isTRUE()[0];
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if package is installed, and asks to install if not.
+	 * @param packageName 
+	 * @return "loaded", "installed" or "not-installed"
+	 */
+	public static String requirePackage(String packageName){
+		if(isLoaded(packageName))
+			return "loaded";
+		if(isInstalled(packageName))
+			return "installed";
+		int inst = JOptionPane.showOptionDialog(null, "Package " + packageName + " not installed. \nWould you like to install it now?",
+												"Install", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,null,
+												new String[]{"Yes","No"}, "Yes");
+		if(inst==JOptionPane.OK_OPTION){
+			Deducer.eval("install.packages('" + packageName + "')");
+			if(isInstalled(packageName))
+				return "installed";
+		}
+		return "not-installed";
 	}
 	
 	/**
