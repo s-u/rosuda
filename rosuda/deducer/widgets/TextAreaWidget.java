@@ -26,6 +26,12 @@ public class TextAreaWidget extends javax.swing.JPanel implements DeducerWidget{
 	private String initialModel;
 	private String lastModel;
 	
+	
+	public TextAreaWidget(){
+		super();		
+		initGUI();
+	}
+	
 	/**
 	 * 
 	 * @param panelTitle title

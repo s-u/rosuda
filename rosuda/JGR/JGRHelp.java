@@ -535,7 +535,7 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				if (href) {
 					try {
 						String title = url.toString().substring(url.toString().lastIndexOf("/") + 1);
-						title = title.substring(0, title.lastIndexOf('.'));
+						title = title.substring(0, Math.max(0,title.lastIndexOf('.')));
 						int index = tabArea.getSelectedIndex();
 						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("http"))
 							tabArea.setTitleAt(index, title);

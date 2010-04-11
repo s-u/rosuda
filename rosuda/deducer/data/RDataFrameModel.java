@@ -359,7 +359,7 @@ class RDataFrameModel extends ExDefaultTableModel {
 	class RowNamesModel extends RowNamesListModel{
 		
 		private String[] rowNames = null;
-		private int maxChar = 0;
+		private int maxChar = -1;
 		
 		public int getSize() { 
 			return getRowCount(); 
@@ -382,6 +382,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 		public void initHeaders(int n){}
 		
 		public int getMaxNumChar(){
+			if(maxChar<0)
+				refresh();
 			return maxChar;
 		}
 		public void refresh(){

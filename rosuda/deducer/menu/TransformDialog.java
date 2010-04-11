@@ -292,7 +292,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 	private String getSingleCall(String variable,String into, String type, String lambda, String functionName){
 		String call = null;
 		if(type==types[2]){				//center
-			call = into + " <- " + variable + " - mean(" + variable + ", na.rm=FALSE)\n";
+			call = into + " <- " + variable + " - mean(" + variable + ", na.rm=TRUE)\n";
 		}else if(type == types[3]){		//std
 			call = into + " <- rescaler(" + variable + ")\n";
 		}else if(type == types[4]){		//robust std
@@ -322,8 +322,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 			call = into + " <- asin(sqrt(" + variable + "))\n";
 		}else if(type == types[17]){		//quantile
 			int val = ((Integer) binSpinner.getValue()).intValue();
-			call = into + " <- cut(" + variable + ",quantile(" + variable + 
-					",probs=(0:" + val + ")/" + val + "),include.lowest=TRUE)\n";
+			call = into + " <- cut2(" + variable + ", g=" + val + ")\n" ;
 		}else if(type == types[18]){		//equal
 			call = into + " <- cut(" + variable + "," + binSpinner.getValue().toString() +
 					", include.lowest=TRUE)\n";
@@ -374,6 +373,46 @@ public class TransformDialog extends JDialog implements ActionListener{
 		String tmpVar=null;
 		String tmpInto=null;
 	
+		if(isBoxCox || typeComboBox.getSelectedIndex()==8){
+			for(int i=0;i<vars.size();i++){
+				REXP ev;
+				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">0)");
+				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
+					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
+							" Has values <=0, which is not valid for this tranformation.\n" +
+							"Would you like to coninue anyway?", "Warning", JOptionPane.YES_NO_OPTION, 
+							JOptionPane.WARNING_MESSAGE, 
+							null, new String[]{"Continue","Cancel"}, "Cancel");
+					if(opt!=JOptionPane.OK_OPTION)
+						return null;				
+				}	
+			}		
+		}
+		
+		if(isBoxCox || typeComboBox.getSelectedIndex()==15){
+			for(int i=0;i<vars.size();i++){
+				REXP ev;
+				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">=-1) && all(" + data+"$"+ (String) vars.get(i)+"<=1)");
+				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
+					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
+							" Has values outside of (-1 1), which is not valid for this tranformation.\n" +
+							"Would you like to coninue anyway?", "Warning", JOptionPane.YES_NO_OPTION, 
+							JOptionPane.WARNING_MESSAGE, 
+							null, new String[]{"Continue","Cancel"}, "Cancel");
+					if(opt!=JOptionPane.OK_OPTION)
+						return null;				
+				}	
+			}		
+		}
+		
+		if(typeComboBox.getSelectedIndex()==17){
+				String res = Deducer.requirePackage("Hmisc");
+				if(res == "installed")
+					RCmd += "library(Hmisc)\n";
+				else if(res == "not-installed")
+					return null;
+		}
+		
 		if(isCustom){
 			func = "function(x) " + typeComboBox.getSelectedItem().toString();
 			REXP tmp = Deducer.eval("is.function(try(" + func + ",silent=TRUE))");
@@ -495,16 +534,13 @@ public class TransformDialog extends JDialog implements ActionListener{
 					typeComboBox.setSelectedIndex(0);
 			}
 		}else if(cmd=="Run"){
-
-
 			lastModel = getModel();
 			String call = getCall();
 			if(call!=null){
+				Deducer.setRecentData(variableSelector.getSelectedData());
 				Deducer.execute(call);			
 				this.dispose();
 			}
-			//Deducer.setRecentData(data);
-			//DataFrameWindow.setTopDataWindow(data);
 		}else if(cmd == "Reset"){
 			setModel(new TransformDialogModel());
 		}else if(cmd=="Plot"){

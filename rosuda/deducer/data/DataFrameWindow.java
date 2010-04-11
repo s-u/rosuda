@@ -254,46 +254,24 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				}
 			}
 			String[] Menu = { "+", "File", "@NNew Data","newdata", "@LOpen Data", "loaddata","@SSave Data", "Save Data", "-",
-				"New Document", "new", "@OOpen Document", "open",
-				"!OSource File...", "source", "-","@PPrint","print","~File.Quit", 
+				 "-","@PPrint","print","~File.Quit", 
 				"+","Edit","@CCopy","copy","@XCut","cut", "@VPaste","paste","-","Remove Data", "Clear Data",
-				"+", "Workspace", "Open","openwsp","Save","savewsp","Save as...","saveaswsp","-","Clear All","clearwsp",
-				"+","Data","Edit Factor","Edit Factor","Recode Variables","Recode",
-				"Reset Row Names","rowReset","-","Sort","Sort","Merge","Merge",
-				"Transpose","transpose","Subset","Subset",
-			"+","Analysis","Frequencies","Frequencies","Descriptives","Descriptives",
-				"Contingency Tables","contin","-","One Sample Test","One Sample","Two Sample Test","Two Sample",
-				"K-Sample Test", "ksample","Correlation", "corr","-", "Linear Model", "linear",
-				"Logistic Model","logistic","Generalized Linear Model","glm",
-				"+", "Packages & Data", "@BObject Browser","objectmgr", "@DData Viewer", "table", "-","Package Manager", 
-				"packagemgr", "Package Installer","packageinst",
-			"~Window", "+","Help","R Help","help", "~Preferences", "~About","0" };
+				"~Window", "+","Help","R Help","help", "~About","0" };
 			JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
 			
 			//preference and about for non-mac systems
 			if(!Common.isMac()){
 				EzMenuSwing.addMenuSeparator(this, "Edit");
-				EzMenuSwing.addJMenuItem(this, "Edit", "Preferences", "preferences", this);
 				EzMenuSwing.addJMenuItem(this, "Help", "About", "about", this);	
 				jTabbedPane1.setTabPlacement(JTabbedPane.TOP);
 				for(int i=0;i<mb.getMenuCount();i++){
-					if(mb.getMenu(i).getText().equals("Preferences") ||
-							mb.getMenu(i).getText().equals("About")){
+					if(mb.getMenu(i).getText().equals("About")){
 						mb.remove(i);
 						i--;
-					}
-					if(mb.getMenu(i).getText().equals("Edit")){
-						JMenuItem prefer = (JMenuItem)mb.getMenu(i).getMenuComponent(
-												mb.getMenu(i).getMenuComponentCount()-1);
-						prefer.setAccelerator(KeyStroke.getKeyStroke(',',Event.CTRL_MASK));
 					}
 				}
 			}
 			
-			if(!Deducer.insideJGR){
-				mb=this.getJMenuBar();
-				mb.removeAll();
-			}
 			
 			pack();
 			this.setSize(839, 839);
@@ -542,7 +520,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				String inputValue = JOptionPane.showInputDialog("Data Name: ");
 				inputValue = JGR.MAINRCONSOLE.getUniqueName(inputValue);
 				if(inputValue!=null){
-					Deducer.eval(inputValue.trim()+"<-data.frame()");
+					Deducer.eval(inputValue.trim()+"<-data.frame(Var1=NA)");
 					RController.refreshObjects();
 					((DataFrameComboBoxModel) dataSelector.getModel()).refresh(JGR.DATA);
 					Deducer.eval(inputValue.trim());
@@ -554,145 +532,15 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				DataLoader dld= new DataLoader();
 				DataFrameWindow.setTopDataWindow(dld.getDataName());
 				((JFrame)DataFrameWindow.dataWindows.get(0)).toFront();
-			}else if (cmd == "open")
-				new Editor(null,false).open();
-			else if (cmd == "source")
-				JGR.MAINRCONSOLE.executeLater("source(file.choose())", false);
-			else if (cmd == "openwsp")
-				JGR.MAINRCONSOLE.loadWorkSpace();
-			else if (cmd == "new")
-				new Editor();
-			else if (cmd == "objectmgr")
-				JGR.MAINRCONSOLE.executeLater("object.browser()");
-			else if (cmd == "packagemgr")
-				JGR.MAINRCONSOLE.executeLater("package.manager()");
-			else if (cmd == "packageinst")
-				JGR.MAINRCONSOLE.executeLater("installPackages()");
-			else if (cmd == "paste"){
-				if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
-					((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().pasteSelection();
-				}
-			}else if (cmd == "preferences"){
-				PrefDialog inst = PrefDialog.showPreferences(this);
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
 			}else if (cmd == "help")
-				JGR.MAINRCONSOLE.executeLater("help.start()");
+				Deducer.execute("help.start()");
 			else if (cmd == "table"){
 				DataFrameWindow inst = new DataFrameWindow();
 				inst.setLocationRelativeTo(null);
 				inst.setVisible(true);
 			}else if (cmd == "save")
 				new SaveData(((RObject)dataSelector.getSelectedItem()).getName());
-			else if (cmd == "savewsp")
-				JGR.MAINRCONSOLE.saveWorkSpace(null);
-			else if (cmd == "saveaswsp")
-				JGR.MAINRCONSOLE.saveWorkSpaceAs();
-			else if(cmd == "clearwsp"){
-				int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear " +
-							"your workspace?\nAll unsaved objects will be deleted.",
-							"Clear Workspace",JOptionPane.YES_NO_OPTION);
-				if(doIt==JOptionPane.OK_OPTION){
-					JGR.MAINRCONSOLE.executeLater("rm(list=ls())");
-					jTabbedPane1.setComponentAt(0, defaultPanel());
-					jTabbedPane1.setComponentAt(1, defaultPanel());
-				}
-			}else if (cmd == "transpose"){
-				String name = ((RObject)dataSelector.getSelectedItem()).getName();
-				JGR.MAINRCONSOLE.executeLater(name+"<-as.data.frame(t("+name+"))");		
-			}else if(cmd == "Merge"){
-				MergeDialog merge =new MergeDialog(); 
-				merge.setLocationRelativeTo(null);
-				merge.setVisible(true);
-			}else if(cmd == "Recode"){
-				RecodeDialog recode =new RecodeDialog(this); 
-				recode.setLocationRelativeTo(null);
-				recode.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				recode.setVisible(true);
-			}else if(cmd == "Edit Factor"){
-				VariableSelectionDialog inst =new VariableSelectionDialog(this);
-				inst.SetSingleSelection(true);
-				inst.setLocationRelativeTo(null);
-				inst.setRFilter("is.factor");
-				inst.setComboBox(((RObject)dataSelector.getSelectedItem()).getName());
-				inst.setTitle("Select Factor to Edit");
-				inst.setVisible(true);
-				String variable = inst.getSelecteditem();
-				if(variable==null)
-						return;
-				FactorDialog fact = new FactorDialog(this,variable);
-				fact.setLocationRelativeTo(null);
-				fact.setVisible(true);
-				
-			}else if (cmd == "rowReset"){
-				String name = ((RObject)dataSelector.getSelectedItem()).getName();
-				JGR.MAINRCONSOLE.executeLater("rownames("+name+") <-1:dim("+name+")[1]");		
-			}else if(cmd =="Sort"){
-				SortDialog sort = new SortDialog(this);
-				sort.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				sort.setLocationRelativeTo(null);
-				sort.setVisible(true);
-			}else if(cmd == "Subset"){
-				SubsetDialog sub = new SubsetDialog(this);
-				sub.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
-				sub.setLocationRelativeTo(null);
-				sub.setVisible(true);
-			}else if(cmd =="Frequencies"){
-				FrequencyDialog freq = new FrequencyDialog(this);
-				freq.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				freq.setLocationRelativeTo(null);
-				freq.setVisible(true);
-			}else if(cmd =="Descriptives"){
-				DescriptivesDialog desc = new DescriptivesDialog(this);
-				desc.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
-				desc.setLocationRelativeTo(null);
-				desc.setVisible(true);
-			}else if(cmd =="contin"){
-				ContingencyDialog cont = new ContingencyDialog(this);
-				cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName(),true);
-				cont.setLocationRelativeTo(null);
-				cont.setVisible(true);
-			}else if(cmd =="One Sample"){
-				OneSampleDialog cont = new OneSampleDialog(this);
-				cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				cont.setLocationRelativeTo(null);
-				cont.setVisible(true);
-			}else if(cmd =="Two Sample"){
-				TwoSampleDialog cont = new TwoSampleDialog(this);
-				cont.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				cont.setLocationRelativeTo(null);
-				cont.setVisible(true);
-			}else if(cmd=="ksample"){
-				KSampleDialog inst = new KSampleDialog(JGR.MAINRCONSOLE);
-				inst.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-				inst.toFront();
-			}else if(cmd=="corr"){
-				CorDialog inst = new CorDialog(JGR.MAINRCONSOLE);
-				inst.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				inst.setLocationRelativeTo(null);
-				inst.setVisible(true);
-				inst.toFront();
-			}else if(cmd=="glm"){
-				GLMDialog d = new GLMDialog(JGR.MAINRCONSOLE);
-				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-				d.toFront();
-			}else if(cmd=="logistic"){
-				LogisticDialog d = new LogisticDialog(JGR.MAINRCONSOLE);
-				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-				d.toFront();
-			}else if(cmd=="linear"){
-				LinearDialog d = new LinearDialog(JGR.MAINRCONSOLE);
-				d.setDataName(((RObject)dataSelector.getSelectedItem()).getName());
-				d.setLocationRelativeTo(null);
-				d.setVisible(true);
-				d.toFront();
-			}
+			
 		}catch(Exception e2){new ErrorMsg(e2);}
 	}
 	

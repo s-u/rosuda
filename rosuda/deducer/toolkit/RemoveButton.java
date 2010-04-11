@@ -4,22 +4,32 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 
 public class RemoveButton extends IconButton implements ActionListener{
-	VariableSelector varSel;
-	DJList lis;
-	public RemoveButton(String name,VariableSelector var,DJList list){
+	JList rightList;
+	JList leftList;
+	
+	public RemoveButton(String name,VariableSelector var,JList list){
 		super("/icons/1leftarrow_32.png", name, null,name);
 		this.addActionListener(this);
-		varSel=var;
-		lis=list;
+		leftList = var.getJList();
+		rightList=list;
 	}
+	
+	public RemoveButton(String name,JList left,JList right){
+		super("/icons/1leftarrow_32.png", name, null,name);
+		this.addActionListener(this);
+		leftList = left;
+		rightList=right;
+	}
+	
 	public void actionPerformed(ActionEvent arg0) {
-		Object[] objs=lis.getSelectedValues();
+		Object[] objs=rightList.getSelectedValues();
 		for(int i=0;i<objs.length;i++){
 			if(objs[i]!=null){
-				varSel.add(objs[i]);
-				((DefaultListModel)lis.getModel()).removeElement(objs[i]);
+				((DefaultListModel)leftList.getModel()).addElement(objs[i]);
+				((DefaultListModel)rightList.getModel()).removeElement(objs[i]);
 			}
 		}
 		
