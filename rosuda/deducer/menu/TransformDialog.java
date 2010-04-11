@@ -389,7 +389,7 @@ public class TransformDialog extends JDialog implements ActionListener{
 			}		
 		}
 		
-		if(isBoxCox || typeComboBox.getSelectedIndex()==15){
+		if(typeComboBox.getSelectedIndex()==15){
 			for(int i=0;i<vars.size();i++){
 				REXP ev;
 				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">=-1) && all(" + data+"$"+ (String) vars.get(i)+"<=1)");
