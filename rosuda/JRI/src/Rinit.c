@@ -198,17 +198,26 @@ int initR(int argc, char **argv)
     R_DefParams(Rp);
     if(getenv("R_HOME")) {
 	strcpy(RHome, getenv("R_HOME"));
-    } else { /* fetch R_HOME from the registry */
-      if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+    } else { /* fetch R_HOME from the registry - try preferred architecture first */
+#ifdef WIN64
+      const char pref_path = "SOFTWARE\\R-core\\R64";
+#else
+      const char pref_path = "SOFTWARE\\R-core\\R32";
+#endif
+      if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE, pref_path, 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS ||
 	   RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS) &&
-	  (RegOpenKeyEx(HKEY_CURRENT_USER,"SOFTWARE\\R-core\\R",0,KEY_QUERY_VALUE,&k)!=ERROR_SUCCESS ||
+	  (RegOpenKeyEx(HKEY_CURRENT_USER, pref_path, 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS ||
+           RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS) &&
+	  (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\R-core\\R", 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS ||
+	   RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS) &&
+	  (RegOpenKeyEx(HKEY_CURRENT_USER, "SOFTWARE\\R-core\\R", 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS ||
            RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS)) {
-	    fprintf(stderr, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n");
-	    MessageBox(0, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n", "Can't find R home", MB_OK|MB_ICONERROR);
-	    return -2;
-	};
-	sprintf(rhb,"R_HOME=%s",RHome);
-	putenv(rhb);
+	fprintf(stderr, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n");
+	MessageBox(0, "R_HOME must be set or R properly installed (\\Software\\R-core\\R\\InstallPath registry entry must exist).\n", "Can't find R home", MB_OK|MB_ICONERROR);
+	return -2;
+      }
+      sprintf(rhb,"R_HOME=%s",RHome);
+      putenv(rhb);
     }
     /* on Win32 this should set R_Home (in R_SetParams) as well */
     Rp->rhome = RHome;
