@@ -200,9 +200,9 @@ int initR(int argc, char **argv)
 	strcpy(RHome, getenv("R_HOME"));
     } else { /* fetch R_HOME from the registry - try preferred architecture first */
 #ifdef WIN64
-      const char pref_path = "SOFTWARE\\R-core\\R64";
+      const char *pref_path = "SOFTWARE\\R-core\\R64";
 #else
-      const char pref_path = "SOFTWARE\\R-core\\R32";
+      const char *pref_path = "SOFTWARE\\R-core\\R32";
 #endif
       if ((RegOpenKeyEx(HKEY_LOCAL_MACHINE, pref_path, 0, KEY_QUERY_VALUE, &k) != ERROR_SUCCESS ||
 	   RegQueryValueEx(k, "InstallPath", 0, &t, (LPBYTE) RHome, &s) != ERROR_SUCCESS) &&
