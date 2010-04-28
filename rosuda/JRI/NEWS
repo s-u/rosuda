@@ -1,7 +1,7 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
-0.5-2	(under development)
+0.5-2	2010-04-28
     o	fixed handling of NAs in strings - they are now correctly
 	converted to <null>s on the Java side.
 
