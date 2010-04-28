@@ -101,6 +101,15 @@ void initRinside() {
 #include <winreg.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+/* before we include RStatup.h we need to work around a bug in it for Win64:
+   it defines wrong R_size_t if R_SIZE_T_DEFINED is not set */
+#if defined(WIN64) && ! defined(R_SIZE_T_DEFINED)
+#include <stdint.h>
+#define R_size_t uintptr_t
+#define R_SIZE_T_DEFINED 1
+#endif
+
 #include "R_ext/RStartup.h"
 
 #ifndef WIN64
@@ -250,10 +259,11 @@ int initR(int argc, char **argv)
     Rp->R_Interactive = TRUE;
     Rp->RestoreAction = SA_RESTORE;
     Rp->SaveAction = SA_SAVEASK;
+    /* process common command line options */
+    R_common_command_line(&argc, argv);
+    /* what is left should be assigned to args */
     R_set_command_line_arguments(argc, argv);
 
-    /* Rp->nsize = 300000;
-    Rp->vsize = 6e6; */
     R_SetParams(Rp); /* so R_ShowMessage is set */
     R_SizeFromEnv(Rp);
     R_SetParams(Rp);
