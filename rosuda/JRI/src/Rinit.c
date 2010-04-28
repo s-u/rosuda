@@ -260,7 +260,7 @@ int initR(int argc, char **argv)
     Rp->RestoreAction = SA_RESTORE;
     Rp->SaveAction = SA_SAVEASK;
     /* process common command line options */
-    R_common_command_line(&argc, argv);
+    R_common_command_line(&argc, argv, Rp);
     /* what is left should be assigned to args */
     R_set_command_line_arguments(argc, argv);
 
