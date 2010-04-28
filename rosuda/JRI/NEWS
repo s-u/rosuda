@@ -14,6 +14,10 @@
 
 	(Thanks to Stephan Wahlbrink for pointing out the inconsistency)
 
+    o	multiple fixes to Windows support: common command line
+	arguments are now correctly processed, sub-architectures are
+	supported, Win64 is now also supported
+
 0.5-1	2010-03-16
    o	API 1.10: rniAssign now returns boolean to denote success/failure
 
