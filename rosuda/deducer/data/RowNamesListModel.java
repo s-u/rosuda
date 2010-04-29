@@ -24,6 +24,10 @@ public class RowNamesListModel extends AbstractListModel{
 	public Object getElementAt(int index) {
 		return headers.get(index);
 	}
+	public void setElementAt(int index,Object value){
+		headers.set(index, value);
+		refresh();
+	}
 	
 	public int getMaxNumChar(){
 		return (new Integer(getSize())).toString().length();
@@ -36,4 +40,5 @@ public class RowNamesListModel extends AbstractListModel{
 	public void refresh(){
 		this.fireContentsChanged(this, 0, getSize());
 	}
+	
 };

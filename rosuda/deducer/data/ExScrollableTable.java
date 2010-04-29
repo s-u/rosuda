@@ -111,8 +111,8 @@ public class ExScrollableTable extends JScrollPane{
 	public void insertRow(int index){
 		if(table.getCopyPasteAdapter().getClipBoard().indexOf("\n")<(table.getCopyPasteAdapter().getClipBoard().length()-2) && 
 				table.getCopyPasteAdapter().getClipBoard().length()>0){
-			JOptionPane.showMessageDialog(null, "Invalid Row Insertion",
-					"Invalid Insertion Selection",
+			JOptionPane.showMessageDialog(null,"The values in the clipboard do not seem to be a row.\nTry copying the desired data again.",
+					"Invalid Row Insertion",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -169,7 +169,6 @@ public class ExScrollableTable extends JScrollPane{
 		public void mouseClicked(MouseEvent evt){
 			if(evt.getButton()==MouseEvent.BUTTON3 && !Common.isMac()){
 				int selectedRow =rowHeader.locationToIndex(evt.getPoint());
-				//JGR.R.eval("print('"+selectedRow+"')");
 				table.requestFocus();
 				table.selectRow(selectedRow);
 				if(displayContextualMenu)
@@ -181,7 +180,6 @@ public class ExScrollableTable extends JScrollPane{
 		
 		public void mousePressed(MouseEvent evt){
 			int selectedRow =rowHeader.locationToIndex(evt.getPoint());
-			//JGR.R.eval("print('"+selectedRow+"')");
 			table.requestFocus();			
 			table.selectRow(selectedRow);
 			if(evt.isPopupTrigger() && Common.isMac()){
@@ -225,13 +223,15 @@ public class ExScrollableTable extends JScrollPane{
 			JMenuItem removeItem = new JMenuItem ("Remove Row");
 			removeItem.addActionListener(this);
 			menu.add( removeItem );
+			menu.addSeparator();
+			JMenuItem editItem = new JMenuItem ("Edit Row Name");
+			editItem.addActionListener(this);
+			menu.add( editItem );
 			menu.show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 		
 		public void actionPerformed(ActionEvent e){
-			//index =rowHeader.get .getSelectedIndex();
 			JMenuItem source = (JMenuItem)(e.getSource());
-			//System.out.println("row Contextual Menu selected: "+index);
 			if(source.getText()=="Copy"){
 				table.getCopyPasteAdapter().copy();
 			} else if(source.getText()=="Cut"){
@@ -245,6 +245,12 @@ public class ExScrollableTable extends JScrollPane{
 			} else if(source.getText()=="Remove Row"){
 				table.removeRow(index);
 				getRowNamesModel().refresh();
+			}else if(source.getText()=="Edit Row Name"){
+				String curValue = getRowNamesModel().getElementAt(index).toString();
+				String selection = JOptionPane.showInputDialog((JMenuItem)(e.getSource()), "Edit row name:", curValue);
+				if(selection!=null && selection.length()>0){
+					getRowNamesModel().setElementAt(index, selection);
+				}
 			}
 			menu.setVisible(false);
 		}

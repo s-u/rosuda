@@ -233,18 +233,6 @@ class RDataFrameModel extends ExDefaultTableModel {
 			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-NA");
 		}else if(currentValue.isString()){
 			Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-		}else if(currentValue.isInteger()){
-			if(!isInteger){
-				if(!isDouble){
-					Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
-					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
-				}else{
-					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
-				}
-				this.fireTableDataChanged();
-			}else{
-				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
-			}
 		}else if(currentValue.isFactor()){
 			boolean isNewLevel=((REXPLogical)Deducer.eval("'"+value.toString()+"' %in% " +
 					"levels(" +rDataName+"[,"+(col+1)+"])")).isFALSE()[0];
@@ -265,6 +253,18 @@ class RDataFrameModel extends ExDefaultTableModel {
 			else{
 				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+valueString+"'");
 				this.fireTableDataChanged();
+			}
+		}else if(currentValue.isInteger()){
+			if(!isInteger){
+				if(!isDouble){
+					Deducer.eval(rDataName+"[,"+(col+1)+"]<-as.character("+rDataName+"[,"+(col+1)+"])");
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-'"+value.toString()+"'");
+				}else{
+					Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString);
+				}
+				this.fireTableDataChanged();
+			}else{
+				Deducer.eval(rDataName+"["+(row+1)+","+(col+1)+"]<-"+valueString+"L");
 			}
 		}else if(currentValue.isNumeric()){
 			if(!isDouble){
@@ -399,6 +399,32 @@ class RDataFrameModel extends ExDefaultTableModel {
 			super.refresh();
 		}
 		
+		public void setElementAt(int index,Object value){
+			String valueString = null;
+			boolean isDouble = false;
+			boolean isInteger =false;
+			if(value==null)
+				return;
+			valueString = value.toString().trim();	
+			isDouble=true;
+			try{
+				Double.parseDouble(valueString);
+			}catch(Exception e){
+				isDouble=false;
+			}
+			isInteger=true;
+			try{
+				Integer.parseInt(valueString);
+			}catch(Exception ex){
+				isInteger=false;
+			}
+
+			if(isInteger || isDouble)
+				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- " + valueString);
+			else
+				Deducer.eval("rownames("+rDataName+")["+ (index+1) +"] <- '" + valueString +"'");
+			refresh();
+		}
 	}
 	
 	public RowNamesListModel getRowNamesModel() { return rowNamesModel;}

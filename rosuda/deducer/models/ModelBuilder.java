@@ -31,6 +31,7 @@ import javax.swing.ListModel;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.HelpButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 
@@ -157,13 +158,12 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 					remove.addActionListener(this);
 				}
 				{
-					addMain = new JButton();
+					addMain = new IconButton("/icons/edit_add_24.png","Add main effect",null,"+");
 					getContentPane().add(addMain, new AnchorConstraint(383, 457, 459, 399, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 					addMain.addActionListener(this);
-					addMain.setText("+");
-					addMain.setFont(new Font("Dialog",Font.PLAIN,7));
+
 					addMain.setPreferredSize(new java.awt.Dimension(36, 36));
 				}
 				{
@@ -173,41 +173,36 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
 					sep.setPreferredSize(new java.awt.Dimension(63, 6));
 				}
+				
 				{
-					interaction = new JButton();
+					interaction = new IconButton("/icons/colon_24.png","Add interaction effect",null,":");
 					getContentPane().add(interaction, new AnchorConstraint(485, 457, 561, 399, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-					interaction.setText(":");
 					interaction.setPreferredSize(new java.awt.Dimension(36, 36));
 					interaction.addActionListener(this);
 				}
 				{
-					factorial = new JButton();
+					factorial = new IconButton("/icons/interaction_24.png","Add factorial interaction",null,"*");
 					getContentPane().add(factorial, new AnchorConstraint(561, 457, 637, 399, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-					factorial.setText("*");
-					factorial.setFont(new Font("Dialog",Font.PLAIN,8));
 					factorial.setPreferredSize(new java.awt.Dimension(36, 36));
 					factorial.addActionListener(this);
 				}
 				{
-					minus = new JButton();
+					minus = new IconButton("/icons/edit_minus_24.png","Add minus effect",null,"-");
 					getContentPane().add(minus, new AnchorConstraint(637, 457, 713, 399, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-					minus.setText("-");
 					minus.setPreferredSize(new java.awt.Dimension(36, 36));
 					minus.addActionListener(this);
 				}
 				{
-					in = new JButton();
+					in = new IconButton("/icons/in_24.png","Add Nested term",null,"in");
 					getContentPane().add(in, new AnchorConstraint(713, 457, 789, 399, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL,
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-					in.setText("in");
-					in.setFont(new Font("Dialog",Font.PLAIN,6));
 					in.setPreferredSize(new java.awt.Dimension(36, 36));
 					in.addActionListener(this);
 				}
@@ -321,20 +316,22 @@ public class ModelBuilder extends javax.swing.JDialog implements ActionListener,
 		}
 		varList.setModel(varModel);
 		
-		varModel=new DefaultListModel();
+		DefaultListModel outModel = new DefaultListModel();
 		for(int i=0;i<mod.outcomes.getSize();i++){
-			/*if(!mod.outcomes.getElementAt(i).equals(
-					RController.makeValidVariableName((String)mod.outcomes.getElementAt(i)))){
-				tmp="`"+mod.outcomes.getElementAt(i)+"`";
-			}else*/
-				tmp=(String)mod.outcomes.getElementAt(i);
-			varModel.addElement(tmp);
+			tmp=(String)mod.outcomes.getElementAt(i);
+			outModel.addElement(tmp);
 		}
-		outcomes.setModel(varModel);
-		
-		modelTermsModel = mod.terms;
-		modelTerms.setModel(modelTermsModel);
-		
+		outcomes.setModel(outModel);
+		if(mod.terms.size()>0){
+			modelTermsModel = mod.terms;
+			modelTerms.setModel(modelTermsModel);
+		}else{
+			DefaultListModel terms = new DefaultListModel();
+			for(int i=0;i<varModel.size();i++)
+				terms.addElement(varModel.elementAt(i));
+			modelTermsModel = terms;
+			modelTerms.setModel(modelTermsModel);
+		}
 		model=mod;
 	}
 	
