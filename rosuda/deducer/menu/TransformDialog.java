@@ -388,7 +388,21 @@ public class TransformDialog extends JDialog implements ActionListener{
 				}	
 			}		
 		}
-		
+		if(typeComboBox.getSelectedIndex()==9){
+			for(int i=0;i<vars.size();i++){
+				REXP ev;
+				ev = Deducer.eval("all(" + data+"$"+ (String) vars.get(i)+">(-1))");
+				if(ev==null || !ev.isLogical() || ((REXPLogical)ev).isFALSE()[0]){
+					int opt = JOptionPane.showOptionDialog(this, vars.get(i).toString() + 
+							" Has values <= -1, which is not valid for this tranformation.\n" +
+							"Would you like to coninue anyway?", "Warning", JOptionPane.YES_NO_OPTION, 
+							JOptionPane.WARNING_MESSAGE, 
+							null, new String[]{"Continue","Cancel"}, "Cancel");
+					if(opt!=JOptionPane.OK_OPTION)
+						return null;				
+				}	
+			}		
+		}
 		if(typeComboBox.getSelectedIndex()==15){
 			for(int i=0;i<vars.size();i++){
 				REXP ev;
