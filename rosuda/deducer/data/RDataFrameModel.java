@@ -400,6 +400,8 @@ class RDataFrameModel extends ExDefaultTableModel {
 		}
 		
 		public void setElementAt(int index,Object value){
+			if(index >= getRealRowCount())
+				return;
 			String valueString = null;
 			boolean isDouble = false;
 			boolean isInteger =false;
