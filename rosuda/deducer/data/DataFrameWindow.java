@@ -699,7 +699,7 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 						if(dataScrollPane!=null)
 							((RDataFrameModel) dataScrollPane.getExTable().getModel()).removeCachedData();
 					}else{
-						SwingUtilities.invokeLater(doWorkRunnable);
+						doWorkRunnable.run();
 						if(showData!=null){
 							setVisibleDataFrame(showData);
 						if(((RObject)dataSelector.getSelectedItem()).getName().equals(showData))

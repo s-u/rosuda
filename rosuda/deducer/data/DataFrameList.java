@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 
+import javax.swing.DefaultListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
@@ -33,11 +34,12 @@ public class DataFrameList extends javax.swing.JPanel {
 			BorderLayout thisLayout = new BorderLayout();
 			this.setLayout(thisLayout);
 			this.setBorder(BorderFactory.createTitledBorder("Data Frames"));
-			ListModel dataListModel = 
-					new DefaultComboBoxModel(JGR.DATA);
+			DefaultListModel data = new DefaultListModel();
+			for(int i=0;i<JGR.DATA.size();i++)
+				data.addElement(JGR.DATA.elementAt(i));
 			dataList = new JList();
 			this.add(dataList, BorderLayout.CENTER);
-			dataList.setModel(dataListModel);
+			dataList.setModel(data);
 
 		} catch (Exception e) {
 			new ErrorMsg(e);
