@@ -276,6 +276,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			filter(lastFilter);
 			return is;
 		}
+		
 		public Object remove(int index) {
 			int objectCount=0;
 			for(int i=0;i<index;i++)
@@ -292,11 +293,13 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				if(list.get(i).equals(obj)){
 					if(listCount==objectCount)
 						list.remove(i);
-					listCount++;					
+					listCount++;
 				}
 			filter(lastFilter);
 			return obj;
 		}
+		
+		public boolean contains(Object element){return list.contains(element);}
 
 		public int getSize() {
 			return filteredList.size();

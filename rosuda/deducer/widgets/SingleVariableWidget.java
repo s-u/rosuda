@@ -2,6 +2,7 @@ package org.rosuda.deducer.widgets;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.SingletonAddRemoveButton;
 import org.rosuda.deducer.toolkit.SingletonDJList;
@@ -12,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.EventListener;
+import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -96,9 +98,11 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 	 */
 	public void actionPerformed(ActionEvent act) {
 		String cmd = act.getActionCommand();
+		if(initialModel == null)
+			setModel(new DefaultListModel());
+		else
+			setModel(initialModel);
 		
-		if(cmd == "comboBoxChanged")
-			singleList.setModel(new DefaultListModel());
 	}
 	
 	/**
@@ -125,6 +129,20 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 			return mod.get(0).toString();
 	}
 	
+	public void setSelectedVariable(String var){
+		DefaultListModel mod = new DefaultListModel();
+		if(var!=null)
+			mod.addElement(var);
+		setModel(var);
+
+	}
+	
+	public void setDefaultVariable(String var){
+		initialModel = new DefaultListModel();
+		if(var!=null)
+			initialModel.addElement(var);
+	}
+	
 	/**
 	 * adds either an action, mouse or list selection listener 
 	 * @param lis
@@ -149,6 +167,23 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 		if(removeFromVariableSelector && selector==null)
 			setModel(mod,false);
 		else{
+			if(selector!=null && selector.getSelectedData()!=null)
+				try {
+					Vector rNames = new Vector();
+					String[] names = Deducer.eval("names("+selector.getSelectedData()+")").asStrings();
+					for(int i=0;i<names.length;i++)
+						rNames.add(names[i]);
+					DefaultListModel selLis = (DefaultListModel) selector.getJList().getModel();
+					DefaultListModel curModel = (DefaultListModel) singleList.getModel();
+					for(int i=0; i<curModel.size(); i++){
+						Object var = curModel.get(i);
+						if(rNames.contains(var) && !selLis.contains(var))
+							selLis.addElement(var);
+					}
+				} catch (Exception e) {
+					new ErrorMsg(e);
+				}
+			
 			if(mod==null)
 				mod = new DefaultListModel();
 			DefaultListModel newModel = new DefaultListModel();
@@ -179,6 +214,9 @@ public class SingleVariableWidget extends JPanel implements DeducerWidget, Actio
 	}
 
 	public void reset() {
+		String var = getSelectedVariable();
+		if(var!=null)
+			selector.add(var);
 		setModel(initialModel);
 	}
 
