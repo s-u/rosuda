@@ -1,6 +1,10 @@
  NEWS/ChangeLog for JRI
 --------------------------
 
+0.5-3	(under development)
+    o	fixed changed by the Win64 support which broke some other OSes by
+	using sign extension when converting to long storage.
+
 0.5-2	2010-04-28
     o	fixed handling of NAs in strings - they are now correctly
 	converted to <null>s on the Java side.
