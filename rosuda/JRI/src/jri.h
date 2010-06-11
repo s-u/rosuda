@@ -22,7 +22,7 @@ extern "C" {
 #ifdef WIN64
 #define L2SEXP(s) ((SEXP)((jlong)(s)))
 #else
-#define L2SEXP(s) ((SEXP)((jlong)((unsigned long)(s)))
+#define L2SEXP(s) ((SEXP)((jlong)((unsigned long)(s))))
 #endif
 
 jstring jri_callToString(JNIEnv *env, jobject o);
