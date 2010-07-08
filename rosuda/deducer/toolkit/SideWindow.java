@@ -13,8 +13,8 @@ import javax.swing.SwingUtilities;
 
 public class SideWindow extends JFrame implements WindowListener, ComponentListener{
 
-	private Window parent;
-	private int offset = 20;
+	protected Window parent;
+	protected int offset = 20;
 	
 	
 	public SideWindow(Window theParent) {

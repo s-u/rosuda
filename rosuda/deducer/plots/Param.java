@@ -119,12 +119,21 @@ public class Param {
 				val = "'" + Deducer.addSlashes(value.toString()) + "'";
 			}else if(dataType == Param.DATA_LOGICAL){
 				val = ((Boolean) value).booleanValue() ? "TRUE" : "FALSE";
-			}else if(dataType == Param.DATA_NUMERIC_VECTOR){
+			}else if(dataType == Param.DATA_NUMERIC_VECTOR || dataType == Param.DATA_CHARACTER_VECTOR){
 				String[] vecVals = (String[]) value;
-				val = Deducer.makeRCollection(new DefaultComboBoxModel(vecVals), "c", false);
-			}else if(dataType == Param.DATA_CHARACTER_VECTOR){
-				String[] vecVals = (String[]) value;
-				val = Deducer.makeRCollection(new DefaultComboBoxModel(vecVals), "c", true);
+				String[] dvecVals = (String[]) defaultValue;
+				boolean identical = true;
+				if(vecVals.length!=dvecVals.length)
+					identical=false;
+				else
+					for(int i=0;i<vecVals.length;i++)
+						if(!vecVals[i].equals(dvecVals[i]))
+							identical=false;
+				if(!identical)
+					val = Deducer.makeRCollection(new DefaultComboBoxModel(vecVals), "c", 
+							dataType == Param.DATA_CHARACTER_VECTOR);
+				else
+					val="";
 			}else
 				val = value.toString();
 			if(val.length()>0)
@@ -239,9 +248,8 @@ public class Param {
 			p.dataType = Param.DATA_CHARACTER;
 			p.view = Param.VIEW_COMBO;
 		}
-		
-		
-		p.value = p.defaultValue;
+		if(p.value==null)
+			p.value = p.defaultValue;
 		return p;
 	}
 	

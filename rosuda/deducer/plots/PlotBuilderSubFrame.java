@@ -86,6 +86,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 				this.setVisible(false);
 			}
 			}catch(Exception e){e.printStackTrace();}
+			((PlotBuilder)parent).updatePlot();
 		}else{
 			setToInitialModel();
 			this.setVisible(false);			

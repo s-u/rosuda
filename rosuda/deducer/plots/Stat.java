@@ -406,6 +406,8 @@ public class Stat {
 		Param p;
 		
 		p= Param.makeParam("quantiles");
+		p.value = new String[] {};
+		p.defaultValue = new String[]{};
 		s.params.add(p);
 		
 		p= Param.makeParam("distribution");
@@ -481,7 +483,6 @@ public class Stat {
 		p= Param.makeParam("na.rm");
 		s.params.add(p);
 		
-		s.generated.add("y");
 		s.generated.add("ymin");
 		s.generated.add("ymax");
 		s.generated.add("se");

@@ -87,7 +87,13 @@ public class ParamWidget extends javax.swing.JPanel{
 		if(model.view == Param.VIEW_CHECK_BOX){
 			model.value = new Boolean(checkBox.isSelected());
 		}else if(model.view == Param.VIEW_COMBO || model.view == Param.VIEW_EDITABLE_COMBO){
-			model.value = comboBox.getSelectedItem();
+			String val = (String) comboBox.getSelectedItem();
+			int ind = comboBox.getSelectedIndex();
+			if(ind>0){
+				val = model.options[ind-1];
+			}
+			if(val!=null && val.length()>0)
+				model.value = val;
 		}else if(model.view == Param.VIEW_ENTER){
 			model.value = textField.getText();
 		}else if(model.view == Param.VIEW_VECTOR_BUILDER){

@@ -11,11 +11,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.GDPreviewJPanel;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
+import org.rosuda.javaGD.GDCanvas;
+import org.rosuda.javaGD.JGDBufferedPanel;
+import org.rosuda.javaGD.JGDPanel;
 
 import java.awt.BorderLayout;
 import java.util.HashMap;
@@ -46,12 +52,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 
-public class PlotBuilder extends JFrame implements ActionListener {
+public class PlotBuilder extends JFrame implements ActionListener, WindowListener{
 	private JLayeredPane pane;
 	private JPanel bottomPanel;
 	private JPanel rightPanel;
 	private JPanel topPanel;
-	private JPanel plotPanel;
+	private JPanel defaultPlotPanel;
 	private JPanel okayCancel;
 	private JTabbedPane addTabs;
 	private JTabbedPane templateTabs;
@@ -66,6 +72,10 @@ public class PlotBuilder extends JFrame implements ActionListener {
 	private PlotBuilderSubFrame layerSheet;
 	private JPanel shadow;
 	private JPanel background;
+	
+
+	private PlotPanel device;
+	private JPanel plotHolder;
 	
 	private Vector addElementTabNames;
 	private HashMap addElementListModels;
@@ -140,6 +150,7 @@ public class PlotBuilder extends JFrame implements ActionListener {
 		for(int i=0;i<items.length;i++)
 			lm.addElement( items[i]);
 		addElementListModels.put(names[6], lm);
+		
 	}
 
 	
@@ -250,20 +261,24 @@ public class PlotBuilder extends JFrame implements ActionListener {
 				}
 			}
 			{
-				plotPanel = new DefaultPlotPanel();
-				pane.add(plotPanel, new AnchorConstraint(137, 158, 52, 22, 
+				plotHolder = new JPanel();
+				plotHolder.setLayout(new BorderLayout());
+				plotHolder.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				defaultPlotPanel = new DefaultPlotPanel();
+				plotHolder.add(defaultPlotPanel);
+				pane.add(plotHolder, new AnchorConstraint(137, 158, 52, 22, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL),2);
-				plotPanel.setPreferredSize(new java.awt.Dimension(515, 391));
-				plotPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+				plotHolder.setPreferredSize(new java.awt.Dimension(515, 391));
 			}
+
 			{
 				rightPanel = new JPanel();
 				AnchorLayout rightPanelLayout = new AnchorLayout();
 				rightPanel.setLayout(rightPanelLayout);
 				pane.add(rightPanel, new AnchorConstraint(135, 1000, 52, 731, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
-						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE),3);
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE),4);
 				rightPanel.setPreferredSize(new java.awt.Dimension(160, 389));
 				{
 					removeButton = new JButton();
@@ -382,6 +397,8 @@ public class PlotBuilder extends JFrame implements ActionListener {
 		model = m;
 		elementsList.setModel(m.getListModel());
 	}
+	
+	public PlotBuilderModel getModel(){return model;}
 
 	public void openLayerSheet(PlottingElement element){
 		closeLayerSheet();
@@ -422,7 +439,25 @@ public class PlotBuilder extends JFrame implements ActionListener {
 		background.repaint();
 	}
 	
+	public void plot(String cmd){
+		try{
+			if(device==null){
+				plotHolder.removeAll();
+				device = new PlotPanel(plotHolder.getWidth(), plotHolder.getHeight());
+				plotHolder.add(device);
+			}
+			DeviceInterface.plot(cmd,device);
+			device.initRefresh();
+			//pane.validate();
+			//pane.repaint();
+		}catch(Exception e){e.printStackTrace();}
+	}
 	
+	public void updatePlot(){
+		String c = model.getCall();
+		if( c!=null && c!="ggplot()")
+			plot(c);
+	}
 
 
 	
@@ -544,6 +579,7 @@ public class PlotBuilder extends JFrame implements ActionListener {
 				mod.insertElementAt(p, 0);
 			else
 				mod.insertElementAt(p, ind+1);
+			updatePlot();
 			return true;
 		}
         
@@ -641,6 +677,7 @@ public class PlotBuilder extends JFrame implements ActionListener {
 					public void actionPerformed(ActionEvent e) {
 						element.setActive(!element.isActive());
 						elList.validate();
+						plot.updatePlot();
 					}
 					
 				});
@@ -661,6 +698,7 @@ public class PlotBuilder extends JFrame implements ActionListener {
 
 					public void actionPerformed(ActionEvent e) {
 						((DefaultListModel)elList.getModel()).removeElement(element);
+						plot.updatePlot();
 					}
 			    	
 			    });
@@ -742,6 +780,30 @@ public class PlotBuilder extends JFrame implements ActionListener {
 			this.dispose();
 	}
 	
+	public class PlotPanel extends JGDPanel{
+		public PlotPanel(double w, double h) {
+			super(w, h);
+		}
+		public PlotPanel(int w, int h) {
+			super(w, h);
+		}
+		
+		public void devOff(){
+			Deducer.eval("dev.off("+this.devNr+")");
+		}
+		
+	}
+
+	public void windowActivated(WindowEvent arg0) {}
+	public void windowClosed(WindowEvent arg0) {
+		if(device!=null)
+			device.devOff();
+	}
+	public void windowClosing(WindowEvent arg0) {}
+	public void windowDeactivated(WindowEvent arg0) {}
+	public void windowDeiconified(WindowEvent arg0) {}
+	public void windowIconified(WindowEvent arg0) {}
+	public void windowOpened(WindowEvent arg0) {}
 	
 }
 

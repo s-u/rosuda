@@ -209,11 +209,12 @@ public class LayerPanel extends ElementView implements ActionListener{
 		paramPanel.removeAll();
 		BoxLayout thisLayout = new BoxLayout(paramPanel, javax.swing.BoxLayout.Y_AXIS);
 		paramPanel.setLayout(thisLayout);	
-		
+		Vector paramNames = new Vector();
 		for(int i=0;i<model.stat.params.size();i++){
 			ParamWidget a = new ParamWidget();
 			a.setAlignmentX(CENTER_ALIGNMENT);
 			a.setModel(model.stat.params.get(i));
+			paramNames.add(a.getModel().title);			
 			widgets.add(a);
 			paramPanel.add(a);
 		}
@@ -221,8 +222,10 @@ public class LayerPanel extends ElementView implements ActionListener{
 			ParamWidget a = new ParamWidget();
 			a.setAlignmentX(CENTER_ALIGNMENT);
 			a.setModel(model.geom.params.get(i));
-			widgets.add(a);
-			paramPanel.add(a);
+			if(!paramNames.contains(a.getModel().title)){
+				widgets.add(a);
+				paramPanel.add(a);
+			}
 		}
 		paramPanel.validate();
 		paramPanel.repaint();
