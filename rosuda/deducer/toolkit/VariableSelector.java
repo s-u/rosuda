@@ -95,6 +95,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			filterText.setPreferredSize(new java.awt.Dimension(55, 15));
 			filter.setPreferredSize(new java.awt.Dimension(103, 21));
 			filter.addKeyListener(this);
+			filter.setToolTipText("Find variables matching a pattern");
 
 			ListModel variableListModel = new FilteringModel(new String[] {"No Data."});
 			variableList = new VarDJList();

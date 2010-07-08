@@ -50,6 +50,19 @@ public class OkayCancelPanel extends JPanel {
 		}		
 	}
 	
+	public void removeAllActionListeners(){
+		ActionListener[] ls = resetButton.getActionListeners();
+		for(int i=0;i<ls.length;i++)
+			resetButton.removeActionListener(ls[i]);
+		 ls = okayButton.getActionListeners();
+		for(int i=0;i<ls.length;i++)
+			okayButton.removeActionListener(ls[i]);
+		ls = cancelButton.getActionListeners();
+		for(int i=0;i<ls.length;i++)
+			cancelButton.removeActionListener(ls[i]);
+		
+	}
+	
 	private void initGUI(int reset,boolean windowsOrder) {
 		try {
 			AnchorLayout thisLayout = new AnchorLayout();

@@ -33,6 +33,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.menu.*;
 import org.rosuda.deducer.menu.twosample.TwoSampleDialog;
 import org.rosuda.deducer.models.*;
+import org.rosuda.deducer.plots.*;
 import org.rosuda.deducer.toolkit.DeducerPrefs;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.PrefPanel;
@@ -155,6 +156,9 @@ public class Deducer {
 		    	inst.setVisible(true);
 		    	JGR.MAINRCONSOLE.toFront(); 
 	    	}
+		    
+		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
+		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
 			
 	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
 				Deducer.rniEval(".jChooserMacLAF()");
@@ -402,6 +406,11 @@ public class Deducer {
 			d.setLocationRelativeTo(null);
 			d.setVisible(true);
 			WindowTracker.addWindow(d);
+		}else if(cmd.equals("plotbuilder")){
+			PlotBuilder d = new PlotBuilder();
+			d.setLocationRelativeTo(null);
+			d.setVisible(true);
+			WindowTracker.addWindow(d);			
 		}
 		
 		if(needsRLocked && fromConsole && !isJGR()){
