@@ -24,6 +24,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -38,6 +41,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.MutableAttributeSet;
 import javax.swing.undo.CannotUndoException;
 
 import org.rosuda.JGR.editor.Editor;
@@ -70,11 +74,13 @@ import org.rosuda.ibase.toolkit.WinTracker;
  * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
-public class JGRConsole extends TJFrame implements ActionListener, KeyListener, FocusListener, RMainLoopCallbacks {
+public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
+		FocusListener, RMainLoopCallbacks {
 
 	private static final long serialVersionUID = 7379785188574795119L;
 
-	private final JSplitPane consolePanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+	private final JSplitPane consolePanel = new JSplitPane(
+			JSplitPane.VERTICAL_SPLIT);
 
 	/** Console output text panel */
 	public ConsoleOutput output = new ConsoleOutput();
@@ -86,7 +92,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 
 	private final Document outputDoc = output.getDocument();
 
-	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK : Event.CTRL_MASK;
+	public static final int MENUMODIFIER = Common.isMac() ? Event.META_MASK
+			: Event.CTRL_MASK;
 
 	private ToolBar toolBar;
 
@@ -119,14 +126,22 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		super("Console", false, TJFrame.clsMain);
 
 		// Initialize JGRConsoleMenu
-		String[] Menu = { "+", "File", "New Data", "newdata", "@LLoad Data", "loaddata", "-", "@NNew Document", "new", "@OOpen Document", "open",
-				"!OSource File...", "source", "@SSave", "save", "-", "@DSet Working Directory", "setwd", "~File.Quit", "+", "Edit", "@ZUndo", "undo",
-				"!ZRedo", "redo", "-", "@XCut", "cut", "@CCopy", "copy", "#Copy Special", "-", "@VPaste", "paste", "Delete", "delete",
-				"@ASelect All", "selAll", "-", "@FFind", "search", "@GFind Next", "searchnext", "-", "!LClear Console", "clearconsole", "-",
-				"!IIncrease Font Size", "fontBigger", "!DDecrease Font Size", "fontSmaller", "+", "Workspace", "Open", "openwsp", "Save", "savewsp",
-				"Save as...", "saveaswsp", "-", "Clear All", "clearwp", "+", "Packages & Data", "@BObject Browser", "objectmgr", "DataTable",
-				"table", "-", "Package Manager", "packagemgr", "Package Installer", "packageinst", "~Window", "+", "Help", "R Help", "help",
-				"~Preferences", "~About", "0" };
+		String[] Menu = { "+", "File", "New Data", "newdata", "@LLoad Data",
+				"loaddata", "-", "@NNew Document", "new", "@OOpen Document",
+				"open", "!OSource File...", "source", "@SSave", "save", "-",
+				"@DSet Working Directory", "setwd", "~File.Quit", "+", "Edit",
+				"@ZUndo", "undo", "!ZRedo", "redo", "-", "@XCut", "cut",
+				"@CCopy", "copy", "#Copy Special", "-", "@VPaste", "paste",
+				"Delete", "delete", "@ASelect All", "selAll", "-", "@FFind",
+				"search", "@GFind Next", "searchnext", "-", "!LClear Console",
+				"clearconsole", "-", "!IIncrease Font Size", "fontBigger",
+				"!DDecrease Font Size", "fontSmaller", "+", "Workspace",
+				"Open", "openwsp", "Save", "savewsp", "Save as...",
+				"saveaswsp", "-", "Clear All", "clearwp", "+",
+				"Packages & Data", "@BObject Browser", "objectmgr",
+				"DataTable", "table", "-", "Package Manager", "packagemgr",
+				"Package Installer", "packageinst", "~Window", "+", "Help",
+				"R Help", "help", "~Preferences", "~About", "0" };
 		JMenuBar mb = EzMenuSwing.getEzMenu(this, this, Menu);
 		JMenu rm = (JMenu) EzMenuSwing.getItem(this, "Copy Special");
 		if (rm != null) {
@@ -147,17 +162,22 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		// preference and about for non-mac systems
 		if (!Common.isMac()) {
 			EzMenuSwing.addMenuSeparator(this, "Edit");
-			EzMenuSwing.addJMenuItem(this, "Edit", "Preferences", "preferences", this);
+			EzMenuSwing.addJMenuItem(this, "Edit", "Preferences",
+					"preferences", this);
 			EzMenuSwing.addJMenuItem(this, "Help", "About", "about", this);
 
 			for (int i = 0; i < mb.getMenuCount(); i++) {
-				if (mb.getMenu(i).getText().equals("Preferences") || mb.getMenu(i).getText().equals("About")) {
+				if (mb.getMenu(i).getText().equals("Preferences")
+						|| mb.getMenu(i).getText().equals("About")) {
 					mb.remove(i);
 					i--;
 				}
 				if (mb.getMenu(i).getText().equals("Edit")) {
-					JMenuItem prefer = (JMenuItem) mb.getMenu(i).getMenuComponent(mb.getMenu(i).getMenuComponentCount() - 1);
-					prefer.setAccelerator(KeyStroke.getKeyStroke(',', MENUMODIFIER));
+					JMenuItem prefer = (JMenuItem) mb.getMenu(i)
+							.getMenuComponent(
+									mb.getMenu(i).getMenuComponentCount() - 1);
+					prefer.setAccelerator(KeyStroke.getKeyStroke(',',
+							MENUMODIFIER));
 				}
 			}
 		}
@@ -186,7 +206,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		JScrollPane sp2 = new JScrollPane(input);
 		sp2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		consolePanel.setBottomComponent(sp2);
-		consolePanel.setDividerLocation(((int) ((double) this.getHeight() * 0.65)));
+		consolePanel
+				.setDividerLocation(((int) ((double) this.getHeight() * 0.65)));
 
 		this.addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent evt) {
@@ -200,7 +221,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 						new ErrorMsg(e);
 					}
 				}
-				consolePanel.setDividerLocation(((int) ((double) getHeight() * 0.70)));
+				consolePanel
+						.setDividerLocation(((int) ((double) getHeight() * 0.70)));
 			}
 
 		});
@@ -215,12 +237,15 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		this.getContentPane().add(toolBar, BorderLayout.NORTH);
 		this.getContentPane().add(consolePanel, BorderLayout.CENTER);
 		this.setMinimumSize(new Dimension(555, 650));
-		this.setSize(new Dimension(800, Common.screenRes.height < 1000 ? Common.screenRes.height - 50 : 900));
+		this.setSize(new Dimension(800,
+				Common.screenRes.height < 1000 ? Common.screenRes.height - 50
+						: 900));
 		// Point center = new
 		// Point(Common.screenRes.width/2-this.getWidth()/2,40);
 		// this.setLocation(center);
 		this.setVisible(true);
-		this.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+		this
+				.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 		// progress.setVisible(false);
 		input.mComplete.setVisible(false);
 		new Thread(new Refresher()).start();
@@ -315,7 +340,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 			return;
 		if (addToHist && JGR.RHISTORY.size() == 0)
 			JGR.RHISTORY.add(cmd);
-		else if (addToHist && cmd.trim().length() > 0 && JGR.RHISTORY.size() > 0 && !JGR.RHISTORY.lastElement().equals(cmd.trim()))
+		else if (addToHist && cmd.trim().length() > 0
+				&& JGR.RHISTORY.size() > 0
+				&& !JGR.RHISTORY.lastElement().equals(cmd.trim()))
 			JGR.RHISTORY.add(cmd);
 		currentHistPosition = JGR.RHISTORY.size();
 
@@ -360,7 +387,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		var = RController.makeValidVariableName(var);
 
 		try {
-			REXPLogical temp = (REXPLogical) JGR.eval("is.environment(" + envName + ")");
+			REXPLogical temp = (REXPLogical) JGR.eval("is.environment("
+					+ envName + ")");
 			boolean isEnv = temp.isTRUE()[0];
 			if (!isEnv)
 				return var;
@@ -376,7 +404,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 
 		try {
 
-			REXPLogical temp = (REXPLogical) JGR.eval("exists('" + var + "',where=" + envName + ",inherits=FALSE)");
+			REXPLogical temp = (REXPLogical) JGR.eval("exists('" + var
+					+ "',where=" + envName + ",inherits=FALSE)");
 			isUnique = temp.isFALSE()[0];
 			if (isUnique)
 				return var;
@@ -394,7 +423,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 
 			try {
 
-				REXPLogical temp = (REXPLogical) JGR.eval("exists('" + (var + i) + "',where=" + envName + ",inherits=FALSE)");
+				REXPLogical temp = (REXPLogical) JGR
+						.eval("exists('" + (var + i) + "',where=" + envName
+								+ ",inherits=FALSE)");
 				isUnique = temp.isFALSE()[0];
 
 			} catch (REngineException e) {
@@ -411,17 +442,21 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 
 	private boolean isSupported(String cmd) {
 		cmd = cmd.trim();
-		if (cmd.startsWith("fix(") || cmd.startsWith("edit(") || cmd.startsWith("edit.data.frame(")) {
+		if (cmd.startsWith("fix(") || cmd.startsWith("edit(")
+				|| cmd.startsWith("edit.data.frame(")) {
 			try {
-				outputDoc.insertString(outputDoc.getLength(), cmd + "\n", JGRPrefs.CMD);
+				outputDoc.insertString(outputDoc.getLength(), cmd + "\n",
+						JGRPrefs.CMD);
 			} catch (Exception e) {
 			}
 			try {
-				outputDoc.insertString(outputDoc.getLength(), "Editing is not supported yet!", JGRPrefs.RESULT);
+				outputDoc.insertString(outputDoc.getLength(),
+						"Editing is not supported yet!", JGRPrefs.RESULT);
 			} catch (Exception e) {
 			}
 			try {
-				outputDoc.insertString(outputDoc.getLength(), "\n" + RController.getRPrompt(), JGRPrefs.CMD);
+				outputDoc.insertString(outputDoc.getLength(), "\n"
+						+ RController.getRPrompt(), JGRPrefs.CMD);
 			} catch (Exception e) {
 			}
 			return false;
@@ -431,7 +466,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	}
 
 	public void setDataDependentMenusEnabled(boolean enabled) {
-		String[] dataRequiredFor = { "Edit Factor", "Recode", "rowReset", "Sort", "Merge", "transpose", "Frequencies", "Descriptives" };
+		String[] dataRequiredFor = { "Edit Factor", "Recode", "rowReset",
+				"Sort", "Merge", "transpose", "Frequencies", "Descriptives" };
 		JMenuItem temp;
 		for (int i = 0; i < dataRequiredFor.length; i++) {
 			temp = ((JMenuItem) EzMenuSwing.getItem(this, dataRequiredFor[i]));
@@ -446,7 +482,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	public void clearconsole() {
 		try {
 			if (end > 0 && clearpoint == null)
-				clearpoint = new Integer(output.getLineEndOffset(output.getLineOfOffset(end) - 1) + 2);
+				clearpoint = new Integer(output.getLineEndOffset(output
+						.getLineOfOffset(end) - 1) + 2);
 			if (clearpoint != null)
 				output.removeAllFrom(clearpoint.intValue());
 		} catch (Exception e) {
@@ -458,14 +495,17 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 * Load a workspace, R-command: load(...).
 	 */
 	public void loadWorkSpace() {
-		FileSelector fopen = new FileSelector(this, "Open Workspace", FileSelector.LOAD);
+		FileSelector fopen = new FileSelector(this, "Open Workspace",
+				FileSelector.LOAD);
 		fopen.setVisible(true);
 		if (fopen.getFile() != null) {
-			wspace = (JGRPrefs.workingDirectory = fopen.getDirectory()) + fopen.getFile();
+			wspace = (JGRPrefs.workingDirectory = fopen.getDirectory())
+					+ fopen.getFile();
 			execute("load(\"" + wspace.replace('\\', '/') + "\")", false);
 			try {
 				// to avoid quoting hell we use an assignment
-				JGR.getREngine().assign(".$JGR", new REXPString(JGRPrefs.workingDirectory));
+				JGR.getREngine().assign(".$JGR",
+						new REXPString(JGRPrefs.workingDirectory));
 				JGR.eval("try({setwd(`.$JGR`); rm(`.$JGR`)},silent=T)");
 			} catch (REngineException e) {
 				new ErrorMsg(e);
@@ -485,7 +525,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		if (file == null)
 			executeLater("save.image()");
 		else
-			executeLater("save.image(\"" + (file == null ? "" : file.replace('\\', '/')) + "\",compress=TRUE)");
+			executeLater("save.image(\""
+					+ (file == null ? "" : file.replace('\\', '/'))
+					+ "\",compress=TRUE)");
 		JGR.writeHistory();
 	}
 
@@ -493,10 +535,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 * Save workspace to a different file then .RData.
 	 */
 	public void saveWorkSpaceAs() {
-		FileSelector fsave = new FileSelector(this, "Save Workspace as...", FileSelector.SAVE);
+		FileSelector fsave = new FileSelector(this, "Save Workspace as...",
+				FileSelector.SAVE);
 		fsave.setVisible(true);
 		if (fsave.getFile() != null) {
-			String file = (JGRPrefs.workingDirectory = fsave.getDirectory()) + fsave.getFile();
+			String file = (JGRPrefs.workingDirectory = fsave.getDirectory())
+					+ fsave.getFile();
 			saveWorkSpace(file);
 			JGR.writeHistory();
 		}
@@ -587,7 +631,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 * @param addToHistory
 	 *            is it an command which to add to the history
 	 */
-	public String rReadConsole(org.rosuda.JRI.Rengine re, String prompt, int addToHistory) {
+	public String rReadConsole(org.rosuda.JRI.Rengine re, String prompt,
+			int addToHistory) {
 		if (readCount < 2)
 			readCount++;
 		Runnable doWork = new Runnable() {
@@ -600,7 +645,10 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 			String retVal = JGR.exit();
 			if (wspace != null && retVal.indexOf('y') >= 0) {
 				try {
-					JGR.getREngine().eval(new REXPString("save.image(\"" + wspace.replace('\\', '/') + "\")"), null, false);
+					JGR.getREngine().eval(
+							new REXPString("save.image(\""
+									+ wspace.replace('\\', '/') + "\")"), null,
+							false);
 				} catch (REngineException e) {
 					new ErrorMsg(e);
 				} catch (REXPMismatchException e) {
@@ -627,7 +675,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 			Runnable doWork2 = new Runnable() {
 				public void run() {
 					try {
-						outputDoc.insertString(outputDoc.getLength(), s + "\n", JGRPrefs.CMD);
+						outputDoc.insertString(outputDoc.getLength(), s + "\n",
+								JGRPrefs.CMD);
 						if (console.length() > 0) {
 							output.append(console.toString(), JGRPrefs.RESULT);
 							console.delete(0, console.length());
@@ -654,7 +703,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 *            message from R
 	 */
 	public void rShowMessage(org.rosuda.JRI.Rengine re, String message) {
-		JOptionPane.showMessageDialog(this, message, "R Message", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(this, message, "R Message",
+				JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**
@@ -666,8 +716,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 *            if it's a new file
 	 */
 	public String rChooseFile(org.rosuda.JRI.Rengine re, int newFile) {
-		FileSelector fd = new FileSelector(this, (newFile == 0) ? "Select a file" : "Select a new file", (newFile == 0) ? FileDialog.LOAD
-				: FileDialog.SAVE);
+		FileSelector fd = new FileSelector(this,
+				(newFile == 0) ? "Select a file" : "Select a new file",
+				(newFile == 0) ? FileDialog.LOAD : FileDialog.SAVE);
 		fd.setVisible(true);
 		String res = null;
 		if (fd.getDirectory() != null && fd.getFile() != null)
@@ -765,7 +816,9 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		else if (cmd == "delete")
 			try {
 				int i = 0;
-				inputDoc.remove((i = input.getSelectionStart()), input.getSelectionEnd() - i);
+				inputDoc.remove((i = input.getSelectionStart()), input
+						.getSelectionEnd()
+						- i);
 			} catch (BadLocationException ex) {
 			}
 		else if (cmd == "editor")
@@ -821,8 +874,12 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 		else if (cmd == "saveaswsp")
 			saveWorkSpaceAs();
 		else if (cmd == "clearwp") {
-			int doIt = JOptionPane.showConfirmDialog(this, "Are you sure you wish to clear "
-					+ "your workspace?\nAll unsaved objects will be deleted.", "Clear Workspace", JOptionPane.YES_NO_OPTION);
+			int doIt = JOptionPane
+					.showConfirmDialog(
+							this,
+							"Are you sure you wish to clear "
+									+ "your workspace?\nAll unsaved objects will be deleted.",
+							"Clear Workspace", JOptionPane.YES_NO_OPTION);
 			if (doIt == JOptionPane.OK_OPTION)
 				execute("rm(list=ls())");
 		} else if (cmd == "search")
@@ -837,7 +894,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 			try {
 				new Thread(new Runnable() {
 					public void run() {
-						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine()).getRni().rniStop(1);
+						((org.rosuda.REngine.JRI.JRIEngine) JGR.getREngine())
+								.getRni().rniStop(1);
 					}
 				}).start();
 			} catch (Exception exe) {
@@ -863,10 +921,14 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 			if (r == JFileChooser.CANCEL_OPTION)
 				return;
 			if (chooser.getSelectedFile() != null)
-				JGRPrefs.workingDirectory = chooser.getSelectedFile().toString();
-			executeLater("setwd(\"" + chooser.getSelectedFile().toString().replace('\\', '/') + "\")");
+				JGRPrefs.workingDirectory = chooser.getSelectedFile()
+						.toString();
+			executeLater("setwd(\""
+					+ chooser.getSelectedFile().toString().replace('\\', '/')
+					+ "\")");
 		} else if (cmd == "update")
-			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")", false);
+			execute("update.JGR(contriburl=\"http://rosuda.org/R/nightly\")",
+					false);
 	}
 
 	/**
@@ -879,25 +941,31 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 * keyPressed: handle key event, like: adding a new line, history ....
 	 */
 	public void keyPressed(KeyEvent ke) {
-		if (ke.getSource().equals(output) && !ke.isMetaDown() && !ke.isControlDown() && !ke.isAltDown())
+		if (ke.getSource().equals(output) && !ke.isMetaDown()
+				&& !ke.isControlDown() && !ke.isAltDown())
 			input.requestFocus();
 		if (ke.getKeyCode() == KeyEvent.VK_UP) {
 			if (input.mComplete != null && input.mComplete.isVisible())
 				input.mComplete.selectPrevious();
 			else if (currentHistPosition > 0)
-				if (input.getCaretPosition() == 0 || input.getCaretPosition() == input.getText().length()) {
-					input.setText(JGR.RHISTORY.get(--currentHistPosition).toString());
+				if (input.getCaretPosition() == 0
+						|| input.getCaretPosition() == input.getText().length()) {
+					input.setText(JGR.RHISTORY.get(--currentHistPosition)
+							.toString());
 					input.setCaretPosition(input.getText().length());
 					wasHistEvent = true;
 				}
 		} else if (ke.getKeyCode() == KeyEvent.VK_DOWN)
 			if (input.mComplete != null && input.mComplete.isVisible())
 				input.mComplete.selectNext();
-			else if (input.getCaretPosition() == 0 || input.getCaretPosition() == input.getText().length()) {
+			else if (input.getCaretPosition() == 0
+					|| input.getCaretPosition() == input.getText().length()) {
 				if (currentHistPosition < JGR.RHISTORY.size() - 1) {
-					input.setText(JGR.RHISTORY.get(++currentHistPosition).toString());
+					input.setText(JGR.RHISTORY.get(++currentHistPosition)
+							.toString());
 					input.setCaretPosition(input.getText().length());
-				} else if (JGR.RHISTORY.size() > 0 && currentHistPosition < JGR.RHISTORY.size()) {
+				} else if (JGR.RHISTORY.size() > 0
+						&& currentHistPosition < JGR.RHISTORY.size()) {
 					input.setText("");
 					currentHistPosition++;
 				}
@@ -910,7 +978,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 	 */
 	public void keyReleased(KeyEvent ke) {
 		if (ke.getKeyCode() == KeyEvent.VK_ENTER)
-			if (input.mComplete != null && input.mComplete.isVisible() && !(ke.isControlDown() || ke.isMetaDown()))
+			if (input.mComplete != null && input.mComplete.isVisible()
+					&& !(ke.isControlDown() || ke.isMetaDown()))
 				input.mComplete.completeCommand();
 			else if (ke.isControlDown() || ke.isMetaDown())
 				try {
@@ -925,11 +994,13 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 				input.requestFocus();
 				execute(cmd);
 			}
-		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V && (ke.isControlDown() || ke.isMetaDown())) {
+		if (ke.getSource().equals(output) && ke.getKeyCode() == KeyEvent.VK_V
+				&& (ke.isControlDown() || ke.isMetaDown())) {
 			input.requestFocus();
 			input.paste();
 			input.setCaretPosition(input.getText().length());
-		} else if ((ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN) && wasHistEvent) {
+		} else if ((ke.getKeyCode() == KeyEvent.VK_UP || ke.getKeyCode() == KeyEvent.VK_DOWN)
+				&& wasHistEvent) {
 			wasHistEvent = false;
 			input.setCaretPosition(input.getText().length());
 		}
@@ -973,7 +1044,8 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 							else
 								setDataDependentMenusEnabled(true);
 							if (console.length() > 0) {
-								output.append(console.toString(), JGRPrefs.RESULT);
+								output.append(console.toString(),
+										JGRPrefs.RESULT);
 								console.delete(0, console.length());
 								output.setCaretPosition(outputDoc.getLength());
 							}
@@ -984,6 +1056,26 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener, 
 					new ErrorMsg(e);
 				}
 		}
+	}
+
+	public PrintStream getStdOutPrintStream() {
+		final MutableAttributeSet coloring = JGRPrefs.RESULT;
+		return getPrintStream(coloring);
+	}
+
+	private PrintStream getPrintStream(final MutableAttributeSet coloring) {
+		OutputStream out = new OutputStream() {
+			public void write(int b) throws IOException {
+				output.append(String.valueOf((char) b), coloring);
+			}
+		};
+		PrintStream p = new PrintStream(out);
+		return p;
+	}
+	
+	public PrintStream getStdErrPrintStream() {
+		final MutableAttributeSet coloring = JGRPrefs.RESULT;
+		return getPrintStream(coloring);
 	}
 
 }

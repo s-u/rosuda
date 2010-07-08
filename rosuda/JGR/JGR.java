@@ -212,12 +212,6 @@ public class JGR {
 			System.err.println("Cannot start REngine " + e);
 			System.exit(1);
 		}
-		if (org.rosuda.util.Global.DEBUG > 0)
-			System.out.println("Rengine created, waiting for R");
-		if (!((JRIEngine) rEngine).getRni().waitForR()) {
-			System.out.println("Cannot load R");
-			System.exit(1);
-		}
 
 		try {
 			// to avoid quoting hell we use an assignment
@@ -246,7 +240,11 @@ public class JGR {
 		JGR.MAINRCONSOLE.execute("", false);
 		MAINRCONSOLE.toFront();
 		MAINRCONSOLE.input.requestFocus();
+		// redefine Java Output streams to be written to JGR console
+		System.setOut(MAINRCONSOLE.getStdOutPrintStream());
+		System.setErr(MAINRCONSOLE.getStdErrPrintStream());
 		new Refresher().run();
+		
 	}
 
 	public static REXP idleEval(String cmd) throws REngineException, REXPMismatchException {

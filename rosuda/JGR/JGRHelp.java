@@ -63,7 +63,8 @@ import org.rosuda.ibase.toolkit.TJFrame;
  * @author Markus Helbig RoSuDa 2003 - 2005
  */
 
-public class JGRHelp extends TJFrame implements ActionListener, KeyListener, MouseListener {
+public class JGRHelp extends TJFrame implements ActionListener, KeyListener,
+		MouseListener {
 
 	/**
 	 * 
@@ -118,18 +119,20 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				if (current == null) {
 					current = new JGRHelp(url);
 				} else {
-					current.showURLInternal(url,null);
+					current.showURLInternal(url, null);
 				}
 			}
 		};
 		SwingUtilities.invokeLater(r);
 	}
 
-	public void showURLInternal(String location,String titleSearch) {
+	public void showURLInternal(String location, String titleSearch) {
 
 		if (location != null && !location.equals("")) {
 			try {
-				if (tabArea.getComponents().length > 0 && ((HelpArea) tabArea.getComponentAt(0)).helpPane.getText().indexOf("No matches for") >= 0)
+				if (tabArea.getComponents().length > 0
+						&& ((HelpArea) tabArea.getComponentAt(0)).helpPane
+								.getText().indexOf("No matches for") >= 0)
 					tabArea.remove(0);
 			} catch (Exception e) {
 				new ErrorMsg(e);
@@ -141,7 +144,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				title = "Seach Result ";
 			} else {
 				try {
-					title = location.toString().substring(location.toString().lastIndexOf("/") + 1);
+					title = location.toString().substring(
+							location.toString().lastIndexOf("/") + 1);
 					title = title.substring(0, title.lastIndexOf('.'));
 				} catch (Exception e) {
 					new ErrorMsg(e);
@@ -151,7 +155,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				tabArea.remove(JGRPrefs.maxHelpTabs - 1);
 			tabArea.add(new HelpArea(tabArea, this, location), 0);
 			tabArea.setSelectedIndex(0);
-			tabArea.setIconAt(0, new CloseIcon(current.getClass().getResource("/icons/close.png")));
+			tabArea.setIconAt(0, new CloseIcon(current.getClass().getResource(
+					"/icons/close.png")));
 			tabArea.setTitleAt(0, title);
 		}
 
@@ -169,14 +174,17 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		while (!JGR.STARTED)
 			;
 
-		String[] Menu = { "+", "File", "@PPrint", "print", "+", "Edit", "@CCopy", "copy", "-", "@RRun selection", "runselection", "@FFind", "search",
-				"@GFind Next", "searchnext", "~Window", "~About", "0" };
+		String[] Menu = { "+", "File", "@PPrint", "print", "+", "Edit",
+				"@CCopy", "copy", "-", "@RRun selection", "runselection",
+				"@FFind", "search", "@GFind Next", "searchnext", "~Window",
+				"~About", "0" };
 		EzMenuSwing.getEzMenu(this, this, Menu);
 
 		if (location != null) {
 			int index1 = location.indexOf("127.0.0.1");
 			if (index1 > 0) {
-				int index2 = location.indexOf("/", index1 + ("127.0.0.1".length()));
+				int index2 = location.indexOf("/", index1
+						+ ("127.0.0.1".length()));
 				server = location.substring(0, index2);
 			}
 		} else {
@@ -212,9 +220,12 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		top1.add(inputKeyWord);
 		top1.add(search);
 		top1.add(new Spacer(30));
-		top1.add(back = new IconButton("/icons/back.png", "Back", this, "back"));
+		top1
+				.add(back = new IconButton("/icons/back.png", "Back", this,
+						"back"));
 		top1.add(new IconButton("/icons/home.png", "Home", this, "home"));
-		top1.add(forward = new IconButton("/icons/forward.png", "Forward", this, "forward"));
+		top1.add(forward = new IconButton("/icons/forward.png", "Forward",
+				this, "forward"));
 
 		topPanel.setLayout(new GridBagLayout());
 
@@ -234,7 +245,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 
 		helpArea = new HelpArea(tabArea, this, null);
 		helpArea.addKeyListener(this);
-		tabArea.addTab(keyWord == null ? "packages" : keyWord, new CloseIcon(getClass().getResource("/icons/close.png")), helpArea);
+		tabArea.addTab(keyWord == null ? "packages" : keyWord, new CloseIcon(
+				getClass().getResource("/icons/close.png")), helpArea);
 		tabArea.addMouseListener(this);
 
 		this.getContentPane().setLayout(new BorderLayout());
@@ -248,14 +260,18 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			}
 		});
 		this.setMinimumSize(new Dimension(570, 600));
-		this.setSize(new Dimension(600, Common.screenRes.height < 800 ? Common.screenRes.height - 50 : 700));
-		this.setLocation(Common.screenRes.width - this.getSize().width - 50, 10);
+		this.setSize(new Dimension(600,
+				Common.screenRes.height < 800 ? Common.screenRes.height - 50
+						: 700));
+		this
+				.setLocation(
+						Common.screenRes.width - this.getSize().width - 50, 10);
 		super.setVisible(true);
 		inputKeyWord.requestFocus();
 		current = this;
 
 		if (location != null) {
-			showURLInternal(location,null);
+			showURLInternal(location, null);
 		}
 
 	}
@@ -329,9 +345,9 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			url += "alias=1";
 		if (searchConcepts.isSelected())
 			url += "concept=1";
-		showURLInternal(url,keyword.trim());
+		showURLInternal(url, keyword.trim());
 	}
-	
+
 	public static void searchHelp(String keyword) {
 		if (current == null) {
 			current = new JGRHelp();
@@ -364,7 +380,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			print();
 		else if (cmd == "runselection")
 			try {
-				String s = ((HelpArea) tabArea.getSelectedComponent()).helpPane.getSelectedText().trim();
+				String s = ((HelpArea) tabArea.getSelectedComponent()).helpPane
+						.getSelectedText().trim();
 				if (s.length() > 0)
 					JGR.MAINRCONSOLE.execute(s.trim(), true);
 			} catch (Exception ex) {
@@ -374,9 +391,11 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		else if (cmd == "searchHelp")
 			search();
 		else if (cmd == "search") {
-			FindReplaceDialog.findExt(this, ((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			FindReplaceDialog.findExt(this, ((HelpArea) tabArea
+					.getSelectedComponent()).helpPane);
 		} else if (cmd == "searchnext") {
-			FindReplaceDialog.findNextExt(this, ((HelpArea) tabArea.getSelectedComponent()).helpPane);
+			FindReplaceDialog.findNextExt(this, ((HelpArea) tabArea
+					.getSelectedComponent()).helpPane);
 		} else if (cmd == "tab_close")
 			tabArea.remove(tabArea.getSelectedIndex());
 	}
@@ -393,9 +412,11 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 * keyPressed: handle key event.
 	 */
 	public void keyPressed(KeyEvent ke) {
-		if (ke.getKeyCode() == KeyEvent.VK_ENTER && ke.isControlDown() && System.getProperty("os.name").indexOf("Mac") == -1)
+		if (ke.getKeyCode() == KeyEvent.VK_ENTER && ke.isControlDown()
+				&& System.getProperty("os.name").indexOf("Mac") == -1)
 			try {
-				if (((JTextComponent) ke.getComponent()).getSelectedText().trim().length() > 0)
+				if (((JTextComponent) ke.getComponent()).getSelectedText()
+						.trim().length() > 0)
 					this.getRootPane().setDefaultButton(null);
 			} catch (Exception e) {
 			}
@@ -405,8 +426,10 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 * keyReleased: handle key event: transfer selected commands to console.
 	 */
 	public void keyReleased(KeyEvent ke) {
-		if ((ke.isMetaDown() || ke.isControlDown()) && ke.getKeyCode() == KeyEvent.VK_ENTER) {
-			String cmd = ((JTextComponent) ke.getComponent()).getSelectedText().trim();
+		if ((ke.isMetaDown() || ke.isControlDown())
+				&& ke.getKeyCode() == KeyEvent.VK_ENTER) {
+			String cmd = ((JTextComponent) ke.getComponent()).getSelectedText()
+					.trim();
 			if (cmd.length() > 0)
 				JGR.MAINRCONSOLE.execute(cmd, true);
 		}
@@ -416,7 +439,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 	 * mouseClicked: handle mouse event: close tab.
 	 */
 	public void mouseClicked(MouseEvent e) {
-		int tabNumber = tabArea.getUI().tabForCoordinate(tabArea, e.getX(), e.getY());
+		int tabNumber = tabArea.getUI().tabForCoordinate(tabArea, e.getX(),
+				e.getY());
 		if (tabNumber < 0)
 			return;
 		Rectangle rect = ((CloseIcon) tabArea.getIconAt(tabNumber)).getBounds();
@@ -477,7 +501,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 			tabArea = parent;
 			FontTracker.current.add(helpPane);
 			this.getViewport().add(helpPane);
-			this.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+			this
+					.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 			helpPane.setEditable(false);
 			helpPane.setContentType("text/html");
 			helpPane.addKeyListener(rhelp);
@@ -523,30 +548,38 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 					viewportLocationHistory.remove(currentURLIndex);
 					currentURLIndex--;
 					rhelp.back.setEnabled(currentURLIndex > 0);
-					rhelp.forward.setEnabled(currentURLIndex + 1 < history.size());
+					rhelp.forward.setEnabled(currentURLIndex + 1 < history
+							.size());
 					url = (URL) history.get(currentURLIndex);
 				} catch (Exception e) {
 					new ErrorMsg(e);
-					JOptionPane.showMessageDialog(this, ex.getMessage(), "URL Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(this, ex.getMessage(),
+							"URL Error", JOptionPane.ERROR_MESSAGE);
 				}
 			} catch (Exception e) {
 				new ErrorMsg(e);
 			} finally {
 				if (href) {
 					try {
-						String title = url.toString().substring(url.toString().lastIndexOf("/") + 1);
-						title = title.substring(0, Math.max(0,title.lastIndexOf('.')));
+						String title = url.toString().substring(
+								url.toString().lastIndexOf("/") + 1);
+						title = title.substring(0, Math.max(0, title
+								.lastIndexOf('.')));
 						int index = tabArea.getSelectedIndex();
-						if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("http"))
+						if (index >= 0 && !title.matches("^[0-9][0-9].*")
+								|| title.startsWith("http"))
 							tabArea.setTitleAt(index, title);
 						else {
 							int i = url.toString().indexOf("htm");
 							title = url.toString().substring(0, i - 1);
 							title = title.substring(title.lastIndexOf("/") + 1);
-							if (index >= 0 && !title.matches("^[0-9][0-9].*") || title.startsWith("http"))
+							if (index >= 0 && !title.matches("^[0-9][0-9].*")
+									|| title.startsWith("http"))
 								tabArea.setTitleAt(index, title);
 						}
-						this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex));
+						this.getViewport().setViewPosition(
+								(java.awt.Point) viewportLocationHistory
+										.get(currentURLIndex));
 					} catch (Exception ex2) {
 						new ErrorMsg(ex2);
 					}
@@ -554,20 +587,25 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				rhelp.setWorking(false);
 			}
 
-			this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex));
+			this.getViewport().setViewPosition(
+					(java.awt.Point) viewportLocationHistory
+							.get(currentURLIndex));
 		}
 
 		private void back() {
 			if (currentURLIndex + 2 < viewportLocationHistory.size())
-				viewportLocationHistory.setElementAt(this.getViewport().getViewPosition(), currentURLIndex + 1);
+				viewportLocationHistory.setElementAt(this.getViewport()
+						.getViewPosition(), currentURLIndex + 1);
 			else
-				viewportLocationHistory.add(this.getViewport().getViewPosition());
+				viewportLocationHistory.add(this.getViewport()
+						.getViewPosition());
 			currentURLIndex--;
 			updatePage(true);
 		}
 
 		private void forward() {
-			viewportLocationHistory.setElementAt(this.getViewport().getViewPosition(), currentURLIndex + 1);
+			viewportLocationHistory.setElementAt(this.getViewport()
+					.getViewPosition(), currentURLIndex + 1);
 			currentURLIndex++;
 			updatePage(true);
 		}
@@ -575,7 +613,9 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 		public void reposition() {
 			try {
 				Thread.sleep(100);
-				this.getViewport().setViewPosition((java.awt.Point) viewportLocationHistory.get(currentURLIndex + 1));
+				this.getViewport().setViewPosition(
+						(java.awt.Point) viewportLocationHistory
+								.get(currentURLIndex + 1));
 			} catch (Exception e) {
 				// nobody is interested ....
 			}
@@ -591,7 +631,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				history.setSize(currentURLIndex);
 				history.add(url);
 				viewportLocationHistory.setSize(currentURLIndex);
-				viewportLocationHistory.add(this.getViewport().getViewPosition());
+				viewportLocationHistory.add(this.getViewport()
+						.getViewPosition());
 				updatePage(href);
 			}
 		}
@@ -607,7 +648,8 @@ public class JGRHelp extends TJFrame implements ActionListener, KeyListener, Mou
 				goTo(url, href);
 			} catch (MalformedURLException e) {
 				new org.rosuda.JGR.util.ErrorMsg(e);
-				JOptionPane.showMessageDialog(null, e.getMessage(), "URL Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, e.getMessage(),
+						"URL Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
