@@ -73,8 +73,6 @@ public class Stat {
 		s.params.add(p);
 		
 		p= Param.makeParam("breaks");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
 		s.params.add(p);
 		
 		p= Param.makeParam("width");

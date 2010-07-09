@@ -1252,7 +1252,7 @@ public class Geom {
 	public static Geom makeText(){
 		Geom g = new Geom();
 		
-		g.name = "step";
+		g.name = "text";
 		g.defaultStat = "identity";
 		g.defaultPosition = "identity";
 			
@@ -1265,6 +1265,8 @@ public class Geom {
 		
 		aes = Aes.makeAes("label");
 		aes.required = true;
+		aes.defaultUseVariable = true;
+		aes.useVariable = true;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("colour",Color.black,null);

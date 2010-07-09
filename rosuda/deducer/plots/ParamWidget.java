@@ -94,7 +94,7 @@ public class ParamWidget extends javax.swing.JPanel{
 			}
 			if(val!=null && val.length()>0)
 				model.value = val;
-		}else if(model.view == Param.VIEW_ENTER){
+		}else if(model.view == Param.VIEW_ENTER || model.view == Param.VIEW_ENTER_LONG){
 			model.value = textField.getText();
 		}else if(model.view == Param.VIEW_VECTOR_BUILDER){
 			DefaultListModel lm = vectorBuilder.getListModel();
@@ -135,7 +135,7 @@ public class ParamWidget extends javax.swing.JPanel{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
-		int labelWidth = leftPos-10; 
+		int labelWidth = leftPos-22; 
 		{
 			label = new JLabel();
 			this.add(label, new AnchorConstraint(202, 234, 689, 12, 
@@ -149,7 +149,7 @@ public class ParamWidget extends javax.swing.JPanel{
 			}
 		}			
 		{
-			int textPos = Math.max(labelWidth+10, leftPos);
+			int textPos = Math.max(labelWidth+22, leftPos);
 			textField = new JTextField();
 			this.add(textField, new AnchorConstraint(148, 529, 743, textPos, 
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE,
@@ -165,7 +165,7 @@ public class ParamWidget extends javax.swing.JPanel{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
-		int labelWidth = leftPos-10; 
+		int labelWidth = leftPos-22; 
 		{
 			label = new JLabel();
 			this.add(label, new AnchorConstraint(202, 234, 689, 12, 
@@ -180,7 +180,7 @@ public class ParamWidget extends javax.swing.JPanel{
 
 		}		
 		{
-			int textPos = Math.max(labelWidth+10, leftPos);
+			int textPos = Math.max(labelWidth+22, leftPos);
 			textField = new JTextField();
 			this.add(textField, new AnchorConstraint(148, 12, 743, textPos, 
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, 
@@ -200,7 +200,7 @@ public class ParamWidget extends javax.swing.JPanel{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
-		int labelWidth = leftPos-10; 
+		int labelWidth = leftPos-22; 
 		{
 			label = new JLabel();
 			this.add(label, new AnchorConstraint(202, 234, 689, 12, 
@@ -215,7 +215,7 @@ public class ParamWidget extends javax.swing.JPanel{
 
 		}	
 		{
-			int textPos = Math.max(labelWidth+10, leftPos);
+			int textPos = Math.max(labelWidth+22, leftPos);
 			DefaultComboBoxModel comboBoxModel = 
 				new DefaultComboBoxModel();
 			comboBoxModel.addElement(null);
@@ -245,7 +245,7 @@ public class ParamWidget extends javax.swing.JPanel{
 			AnchorLayout thisLayout = new AnchorLayout();
 			this.setLayout(thisLayout);
 			this.setPreferredSize(new java.awt.Dimension(291, 166));
-			int labelWidth = leftPos-10; 
+			int labelWidth = leftPos-22; 
 			{
 				label = new JLabel();
 				this.add(label, new AnchorConstraint(202, 234, 689, 12, 
@@ -260,7 +260,7 @@ public class ParamWidget extends javax.swing.JPanel{
 
 			}	
 			{
-				int textPos = Math.max(labelWidth+10, leftPos);
+				int textPos = Math.max(labelWidth+22, leftPos);
 				vectorBuilder = new VectorBuilderWidget();
 				this.add(vectorBuilder, new AnchorConstraint(3, 750, 1003, textPos, 
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 

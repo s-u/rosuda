@@ -387,6 +387,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			}
 			setContentPane(pane);
 			pack();
+			this.addWindowListener(this);
 			this.setSize(705, 620);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -771,9 +772,13 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		String cmd = arg0.getActionCommand();
 		if(cmd == "Run"){
 			String call = model.getCall();
+			if(call==null || call == "ggplot()"){
+				JOptionPane.showMessageDialog(this, "Plot contains no components.");
+				return;
+			}
 			lastModel = (PlotBuilderModel) model.clone();
-			Deducer.execute(call);
-			this.dispose();
+			this.dispose();			
+			Deducer.execute("dev.new()\n"+call);
 		}else if(cmd == "Reset"){
 			this.setModel(initialModel);
 		}else if(cmd == "Cancel")
@@ -789,7 +794,8 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
 		
 		public void devOff(){
-			Deducer.eval("dev.off("+this.devNr+")");
+			Deducer.eval("dev.off("+(this.devNr+1)+")");
+			//System.out.println("turning off: "+(this.devNr+1));
 		}
 		
 	}

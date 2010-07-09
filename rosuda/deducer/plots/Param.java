@@ -105,7 +105,7 @@ public class Param {
 	public String[] getParamCalls(){
 		String[] calls;
 		if(value!=null && !value.equals(defaultValue)){
-			String val;
+			String val = "";
 			if(value instanceof Color)
 				val = "'#"+ Integer.toHexString(((Color)value).getRGB()).substring(2)+"'";
 			else if(dataType == Param.DATA_ANY && value.toString().length()>0){
@@ -119,7 +119,8 @@ public class Param {
 				val = "'" + Deducer.addSlashes(value.toString()) + "'";
 			}else if(dataType == Param.DATA_LOGICAL){
 				val = ((Boolean) value).booleanValue() ? "TRUE" : "FALSE";
-			}else if(dataType == Param.DATA_NUMERIC_VECTOR || dataType == Param.DATA_CHARACTER_VECTOR){
+			}else if(dataType == Param.DATA_NUMERIC_VECTOR || 
+					dataType == Param.DATA_CHARACTER_VECTOR){
 				String[] vecVals = (String[]) value;
 				String[] dvecVals = (String[]) defaultValue;
 				boolean identical = true;
@@ -129,10 +130,10 @@ public class Param {
 					for(int i=0;i<vecVals.length;i++)
 						if(!vecVals[i].equals(dvecVals[i]))
 							identical=false;
-				if(!identical)
+				if(!identical){			
 					val = Deducer.makeRCollection(new DefaultComboBoxModel(vecVals), "c", 
 							dataType == Param.DATA_CHARACTER_VECTOR);
-				else
+				}else
 					val="";
 			}else
 				val = value.toString();
@@ -179,6 +180,8 @@ public class Param {
 		}else if(name == "breaks"){
 			p.dataType = Param.DATA_NUMERIC_VECTOR;
 			p.view = Param.VIEW_VECTOR_BUILDER;
+			p.defaultValue = new String[] {};
+			p.value = new String[] {};
 		}else if(name =="binwidth"){
 			p.dataType = Param.DATA_NUMERIC;
 			p.view = Param.VIEW_ENTER;
@@ -227,7 +230,7 @@ public class Param {
 		}else if(name =="se"){
 			p.dataType = Param.DATA_LOGICAL;
 			p.view = Param.VIEW_CHECK_BOX;
-			p.defaultValue = new Boolean(false);	
+			p.defaultValue = new Boolean(true);	
 			p.title = "Show confidence";
 		}else if(name=="fullrange"){
 			p.dataType = Param.DATA_LOGICAL;

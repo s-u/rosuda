@@ -273,7 +273,7 @@ public class LayerPanel extends ElementView implements ActionListener{
 			updateModel();
 			String geomName = geomBox.getSelectedItem().toString();
 			Geom g = Geom.makeGeom(geomName);
-			model.geom = g;
+			model.setGeom(g);
 			setModel(model);
 		}
 	}

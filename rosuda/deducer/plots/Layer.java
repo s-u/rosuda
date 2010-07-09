@@ -96,7 +96,7 @@ public class Layer implements ElementModel{
 				paramCalls.add("geom = '"+geom.name+"'");
 		}
 		if(!(pos.name == geom.defaultPosition && pos.height==null && pos.width==null)){
-			String posCall = "position = " + pos.name + "(" +
+			String posCall = "position = position_" + pos.name + "(" +
 				(pos.height==null ? "" : "hieght = " + pos.height.toString()) +
 				(pos.height!=null && pos.width!=null ? "," : "") +
 				(pos.width==null ? "" : "width = " + pos.width.toString()) +")" ;
