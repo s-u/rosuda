@@ -1,6 +1,5 @@
 package org.rosuda.deducer.plots;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
@@ -47,6 +46,14 @@ public class PlottingElement implements Transferable{
 		}else if(type == "stat"){
 			l = Layer.makeStatLayer(name);
 			model = l;
+		}else if(type == "scale"){
+			String[] s = name.split("_");
+			if(s.length>1){
+				//System.out.println(s[0]+" "+s[1]);
+				model = Scale.makeScale(s[0], s[1]);
+			}else {
+				model = Scale.makeScale(null, s[0]);
+			}
 		}
 	}
 	
@@ -60,7 +67,11 @@ public class PlottingElement implements Transferable{
 	}
 	
 	public static PlottingElement createElement(String type,String name){
-		PlottingElement el = new PlottingElement("/icons/ggplot_icons/"+type+"_"+name+".png",type,name);
+		String nm = name;
+		String[] s = nm.split("_");
+		if(s.length>1)
+			nm = s[s.length-1];
+		PlottingElement el = new PlottingElement("/icons/ggplot_icons/"+type+"_"+nm+".png",type,name);
 		return el;
 	}
 	

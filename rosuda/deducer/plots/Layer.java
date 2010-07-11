@@ -214,4 +214,13 @@ public class Layer implements ElementModel{
 		return l;
 	}
 	
+	public Vector getParams() {
+		Vector params = new Vector();
+		for(int i=0;i<stat.params.size();i++)
+			params.add(stat.params.get(i));
+		for(int i=0;i<geom.params.size();i++)
+			params.add(geom.params.get(i));
+		return params;
+	}
+	
 }

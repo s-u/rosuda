@@ -10,14 +10,10 @@ import org.rosuda.deducer.toolkit.VariableSelector;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
@@ -25,12 +21,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.swing.BorderFactory;
 import javax.swing.ComboBoxEditor;
-import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
@@ -41,27 +33,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import javax.swing.WindowConstants;
-import javax.swing.border.TitledBorder;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class AesWidget extends javax.swing.JPanel implements ActionListener, MouseListener{
 	private IconButton addRemoveButton;
 	private JTextField value;
@@ -333,7 +310,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				
 		}else if(newModel.dataType == Aes.DATA_COLOUR){
 			valueComponent = colour;
-			if(newModel.value instanceof Color){
+			if(newModel.value!=null && newModel.value instanceof Color){
 				colour.setForeground((Color) newModel.value);
 				colourValue = (Color) newModel.value;
 			}else if(newModel.value!=null)

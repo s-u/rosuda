@@ -17,10 +17,7 @@ import java.awt.event.WindowListener;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.GDPreviewJPanel;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
-import org.rosuda.javaGD.GDCanvas;
-import org.rosuda.javaGD.JGDBufferedPanel;
 import org.rosuda.javaGD.JGDPanel;
 
 import java.awt.BorderLayout;

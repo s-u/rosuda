@@ -41,17 +41,6 @@ public class LayerPanel extends ElementView implements ActionListener{
 	
 	private Layer model;
 
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new LayerPanel(Layer.makeGeomLayer("quantile")));
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
 	
 	public LayerPanel(Layer layer) {
 		super();

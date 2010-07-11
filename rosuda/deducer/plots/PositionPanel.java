@@ -1,6 +1,5 @@
 package org.rosuda.deducer.plots;
 
-import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.ComboBoxModel;

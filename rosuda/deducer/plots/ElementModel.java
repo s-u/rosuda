@@ -1,6 +1,7 @@
 package org.rosuda.deducer.plots;
 
-import javax.swing.JPanel;
+import java.util.Vector;
+
 
 public interface ElementModel {
 
@@ -8,5 +9,6 @@ public interface ElementModel {
 	public abstract String checkValid();
 	public abstract String getType();
 	public abstract ElementView getView();
+	public abstract Vector getParams();
 	public abstract Object clone();
 }

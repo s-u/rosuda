@@ -91,7 +91,7 @@ public class Geom {
 		
 		aes = Aes.makeAes("fill");
 		aes.defaultValue = new Color(51,51,51);
-		aes.value = aes.defaultValue;
+		aes.value = new Color(51,51,51);
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
@@ -132,6 +132,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
+		aes.value = new Color(51,51,51);
 		aes.defaultValue = new Color(51,51,51);
 		g.aess.add(aes);
 		
@@ -188,6 +189,7 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
+		aes.value = new Color(153,153,153);
 		aes.defaultValue = new Color(153,153,153);
 		g.aess.add(aes);
 		
@@ -262,7 +264,8 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("fill");
-		aes.defaultValue = new Color(153,153,153);
+		aes.value = Color.white;
+		aes.defaultValue = Color.white;
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
@@ -312,6 +315,7 @@ public class Geom {
 		
 		aes = Aes.makeAes("colour");
 		aes.required = false;
+		aes.value = Color.decode("#3366FF");
 		aes.defaultValue = Color.decode("#3366FF");
 		g.aess.add(aes);
 		
@@ -366,6 +370,7 @@ public class Geom {
 		g.aess.add(aes);	
 		
 		aes = Aes.makeAes("colour");
+		aes.value = Color.black;
 		aes.defaultValue = Color.black;
 		g.aess.add(aes);
 		
@@ -412,6 +417,7 @@ public class Geom {
 		point.aess.add(aes);		
 		
 		aes = Aes.makeAes("colour");
+		aes.value = Color.black;
 		aes.defaultValue = Color.black;
 		point.aess.add(aes);
 		
@@ -458,6 +464,7 @@ public class Geom {
 		point.aess.add(aes);		
 		
 		aes = Aes.makeAes("colour");
+		aes.value = Color.decode("#3366FF");
 		aes.defaultValue = Color.decode("#3366FF");
 		point.aess.add(aes);
 		
@@ -505,6 +512,7 @@ public class Geom {
 		g.aess.add(aes);	
 		
 		aes = Aes.makeAes("colour");
+		aes.value = Color.black;
 		aes.defaultValue = Color.black;
 		g.aess.add(aes);
 		
@@ -549,6 +557,7 @@ public class Geom {
 		g.aess.add(aes);	
 		
 		aes = Aes.makeAes("colour");
+		aes.value = Color.black;
 		aes.defaultValue = Color.black;
 		g.aess.add(aes);
 		
@@ -582,6 +591,7 @@ public class Geom {
 			
 		
 		Aes aes = Aes.makeAes("colour");
+		aes.value = Color.black;
 		aes.defaultValue = Color.black;
 		point.aess.add(aes);
 		

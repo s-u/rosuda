@@ -1,7 +1,6 @@
 package org.rosuda.deducer.plots;
 
 import java.util.HashMap;
-import java.util.Vector;
 
 public class PlotController {
 
@@ -20,8 +19,11 @@ public class PlotController {
 			"tile","vline"};
 	protected static String[] statNames = {"abline","bin","bin2d","binhex","boxplot","contour","density","density2d","function",
 			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","vline"};
-	protected static String[] scaleNames = {"brewer","continuous","date","datetime","discrete","gradient","gradient2","gradientn","grey",
-			"hue","identity","linetype","manual","shape","size"};
+	protected static String[] scaleNames = {"colour_brewer","fill_brewer","x_continuous","y_continuous","x_date","y_date",
+		"x_datetime","y_datetime","x_discrete","y_discrete","z_discrete","colour_gradient","fill_gradient","colour_gradient2",
+		"fill_gradient2","colour_gradientn","fill_gradientn","colour_grey","fill_grey", "colour_hue","fill_hue",
+		"colour_identity","fill_identity","linetype_identity","shape_identity","size_identity","linetype","colour_manual",
+		"fill_manual","linetype_manual","shape_manual","size_manual","shape","size","alpha"};
 	protected static String[] facetNames = {"grid","wrap"};
 	protected static String[] coordNames = {"cartesian","equal","flip","map","polar","trans"};
 	protected static String[] posNames = {"dodge","identity","jitter","stack"};
@@ -30,7 +32,6 @@ public class PlotController {
 	
 	public static void init(){
 		if(initialized==false){
-			
 			geoms = new HashMap();
 			for(int j=0;j<geomNames.length;j++)
 				geoms.put(geomNames[j], PlottingElement.createElement("geom",geomNames[j]));
@@ -43,9 +44,6 @@ public class PlotController {
 			facets = new HashMap();
 			for(int j=0;j<facetNames.length;j++)
 				facets.put(facetNames[j], PlottingElement.createElement("facet",facetNames[j]));
-			themes = new HashMap();
-			for(int j=0;j<themeNames.length;j++)
-				themes.put(themeNames[j], PlottingElement.createElement("theme",themeNames[j]));
 			coords = new HashMap();
 			for(int j=0;j<coordNames.length;j++)
 				coords.put(coordNames[j], PlottingElement.createElement("coord",coordNames[j]));

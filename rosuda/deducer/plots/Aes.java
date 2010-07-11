@@ -72,7 +72,7 @@ public class Aes {
 			}
 			if(defaultValue!=null){
 				Color c = (Color) defaultValue;
-				a.value = new Color(c.getRGB());
+				a.defaultValue = new Color(c.getRGB());
 			}
 		}else{
 			a.value = this.value;
@@ -96,9 +96,9 @@ public class Aes {
 		boolean useVar = useVariable && variable!=null && variable.length()>0;
 		if(value!=null && !value.equals(defaultValue) && !useVar){
 			String val;
-			if(value instanceof Color)
+			if(value instanceof Color){
 				val = "'#"+ Integer.toHexString(((Color)value).getRGB()).substring(2)+"'";
-			else if(dataType == Aes.DATA_ANY && value.toString().length()>0){
+			}else if(dataType == Aes.DATA_ANY && value.toString().length()>0){
 				try{
 					Double.parseDouble(value.toString());
 					val = value.toString();
