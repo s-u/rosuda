@@ -7,6 +7,8 @@ import java.util.Vector;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.toolkit.VariableSelector;
+import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamWidget;
 
 
 import javax.swing.BorderFactory;
@@ -200,17 +202,17 @@ public class LayerPanel extends ElementView implements ActionListener{
 		paramPanel.setLayout(thisLayout);	
 		Vector paramNames = new Vector();
 		for(int i=0;i<model.stat.params.size();i++){
-			ParamWidget a = new ParamWidget();
+			Param p = (Param) model.stat.params.get(i);
+			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setModel(model.stat.params.get(i));
-			paramNames.add(a.getModel().title);			
+			paramNames.add(p.title);			
 			widgets.add(a);
 			paramPanel.add(a);
 		}
 		for(int i=0;i<model.geom.params.size();i++){
-			ParamWidget a = new ParamWidget();
+			Param p = (Param) model.geom.params.get(i);
+			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setModel(model.geom.params.get(i));
 			if(!paramNames.contains(a.getModel().title)){
 				widgets.add(a);
 				paramPanel.add(a);

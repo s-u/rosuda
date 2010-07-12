@@ -3,6 +3,8 @@ package org.rosuda.deducer.plots;
 import java.awt.Color;
 import java.util.Vector;
 
+import org.rosuda.deducer.widgets.param.Param;
+
 public class Stat {
 	
 	public String name;

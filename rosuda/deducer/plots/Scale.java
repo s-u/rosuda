@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.Vector;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.widgets.param.Param;
 
 
 public class Scale implements ElementModel{
@@ -20,11 +21,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "Legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_NUMERIC;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -69,11 +70,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		
@@ -113,11 +114,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "ticks";
 		p.title = "Ticks";
-		p.dataType = Param.DATA_SCALE_NUMERIC;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -270,11 +271,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "ticks";
 		p.title = "ticks";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -326,11 +327,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -390,11 +391,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -468,11 +469,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -523,11 +524,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -581,11 +582,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "Legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -669,11 +670,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "Legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 
 		p = new Param();
@@ -698,11 +699,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -745,11 +746,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "Legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 
 		p = new Param();
@@ -786,11 +787,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();
@@ -832,11 +833,11 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
+		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = Param.DATA_SCALE_CHARACTER;
-		p.view = Param.VIEW_SCALE;
+		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
 		p = new Param();

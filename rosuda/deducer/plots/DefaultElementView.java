@@ -10,6 +10,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
+import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamWidget;
+
 public class DefaultElementView extends ElementView{
 	protected JScrollPane scroller;
 	protected JPanel paramPanel;
@@ -43,13 +46,13 @@ public class DefaultElementView extends ElementView{
 		paramPanel.removeAll();
 		BoxLayout thisLayout = new BoxLayout(paramPanel, javax.swing.BoxLayout.Y_AXIS);
 		paramPanel.setLayout(thisLayout);	
-		Vector paramNames = new Vector();
+		//Vector paramNames = new Vector();
 		for(int i=0;i<model.getParams().size();i++){
-			ParamWidget a = new ParamWidget();
+			Param p = (Param) model.getParams().get(i);
+			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			a.setModel(model.getParams().get(i));
 			a.setMaximumSize(new Dimension(365,a.getMaximumSize().height));
-			paramNames.add(a.getModel().title);			
+			//paramNames.add(a.getModel().title);			
 			widgets.add(a);
 			paramPanel.add(a);
 			paramPanel.add(Box.createRigidArea(new Dimension(0,10)));

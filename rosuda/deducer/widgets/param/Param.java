@@ -1,4 +1,4 @@
-package org.rosuda.deducer.plots;
+package org.rosuda.deducer.widgets.param;
 
 import java.awt.Color;
 import java.util.Vector;
@@ -7,6 +7,7 @@ import javax.swing.DefaultComboBoxModel;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
+
 
 public class Param {
 
@@ -17,8 +18,6 @@ public class Param {
 	final public static String DATA_LOGICAL = "logical";
 	final public static String DATA_NUMERIC_VECTOR = "numeric vector";
 	final public static String DATA_CHARACTER_VECTOR = "character vector";
-	final public static String DATA_SCALE_NUMERIC = "scale numeric";
-	final public static String DATA_SCALE_CHARACTER = "scale char";
 	
 	
 	final public static String VIEW_ENTER = "enter";
@@ -29,7 +28,6 @@ public class Param {
 	final public static String VIEW_VECTOR_BUILDER = "vector";
 	final public static String VIEW_TWO_VALUE_ENTER = "two value";
 	final public static String VIEW_COLOUR = "colour";
-	final public static String VIEW_SCALE = "scale";
 	
 	
 	public String name;					//name of paramter
@@ -47,11 +45,28 @@ public class Param {
 	
 	public String view = VIEW_ENTER_LONG;
 	
+	
 	public Param(){}
 	
 	public Param(String nm){
 		name=nm;
 		title =nm;
+	}
+	
+	public ParamWidget getView(){
+		if(view == Param.VIEW_ENTER || view == Param.VIEW_ENTER_LONG)
+			return new ParamTextFieldWidget(this);
+		else if(view == Param.VIEW_CHECK_BOX)
+			return new ParamCheckBoxWidget(this);
+		else if(view == Param.VIEW_COLOUR)
+			return new ParamColorWidget(this);
+		else if(view == Param.VIEW_COMBO || view == Param.VIEW_EDITABLE_COMBO)
+			return new ParamComboBoxWidget(this);
+		else if(view == Param.VIEW_TWO_VALUE_ENTER)
+			return new ParamTwoValueWidget(this);
+		else if(view == Param.VIEW_VECTOR_BUILDER)
+			return new ParamVectorBuilderWidget(this);
+		return null;
 	}
 	
 	public Object clone(){
@@ -108,25 +123,6 @@ public class Param {
 				Color c = (Color) defaultValue;
 				p.defaultValue = new Color(c.getRGB());
 			}
-		}else if(dataType == Param.DATA_SCALE_NUMERIC || dataType == Param.DATA_SCALE_CHARACTER){
-			if(this.value!=null){
-				Vector newValue = new Vector();
-				Vector curValue = (Vector) this.value;
-				newValue.add(curValue.get(0));
-				newValue.add(new Boolean(((Boolean)curValue.get(1)).booleanValue()));
-				ExDefaultTableModel curTm = (ExDefaultTableModel) curValue.get(2);
-				ExDefaultTableModel tm = new ExDefaultTableModel();
-				tm.setRowCount(curTm.getRowCount());
-				tm.setColumnCount(curTm.getColumnCount());
-				for(int i=0;i<curTm.getRowCount();i++){
-					for(int j=0;j<curTm.getColumnCount();j++){
-						tm.setValueAt(curTm.getValueAt(i, j), i, j);
-					}
-				}
-				newValue.add(tm);
-				p.value = newValue;
-			}else
-				p.value=null;
 		}else{
 			p.value = this.value;
 			p.defaultValue = this.defaultValue;
@@ -178,77 +174,6 @@ public class Param {
 				calls = new String[]{name + " = "+val};
 			else
 				calls = new String[]{};
-			
-			if(dataType == Param.DATA_SCALE_CHARACTER || dataType == Param.DATA_SCALE_NUMERIC){
-				Vector dBreaks = new Vector();
-				Vector dLabels = new Vector();		
-				String dNm = null;
-				Boolean dShow = null;
-				if(defaultValue!=null){
-					Vector v = (Vector) defaultValue;
-					dNm = (String) v.get(0);
-					dShow = ((Boolean)v.get(1));
-					ExDefaultTableModel dTm = (ExDefaultTableModel) v.get(2);
-					for(int i=0;i<dTm.getRowCount();i++){
-						String br = (String) dTm.getValueAt(i, 0);
-						String lab = (String) dTm.getValueAt(i, 1);
-						if(br!=null && br.length()>0){
-							dBreaks.add(br);
-							if(lab!=null)
-								dLabels.add(lab);
-							else
-								dLabels.add("");
-						}
-					}
-				}				
-				if(value!=null){
-					Vector v = (Vector) value;
-					String nm = (String) v.get(0);
-					Boolean show = ((Boolean)v.get(1));
-					ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
-					Vector breaks = new Vector();
-					Vector labels = new Vector();
-					for(int i=0;i<tm.getRowCount();i++){
-						String br = (String) tm.getValueAt(i, 0);
-						String lab = (String) tm.getValueAt(i, 1);
-						if(br!=null && br.length()>0){
-							breaks.add(br);
-							if(lab!=null)
-								labels.add(lab);
-							else
-								labels.add("");
-						}
-					}
-					
-					String nameCall = null;
-					if(nm!=null && nm!=dNm && !(dNm==null && nm.length()==0)){
-						nameCall = "name = '" +nm+"'";
-					}
-					String showCall = null;
-					if(show!=null && !show.equals(dShow) && !(dShow==null && show.booleanValue()))
-						showCall = "legend = " + (show.booleanValue() ? "TRUE" : "FALSE");
-					String breakCall = null;
-					String labelCall = null;
-					if(breaks.size()>0 && !(breaks.equals(dBreaks) && labels.equals(dLabels))){
-						breakCall = "breaks = " + Deducer.makeRCollection(breaks, "c", 
-								dataType == Param.DATA_SCALE_CHARACTER);
-						labelCall = "labels = " + Deducer.makeRCollection(labels, "c",true);
-					}
-					Vector callVector = new Vector();
-					if(nameCall!=null)
-						callVector.add(nameCall);
-					if(showCall != null)
-						callVector.add(showCall);
-					if(breakCall!=null)
-						callVector.add(breakCall);
-					if(labelCall!=null)
-						callVector.add(labelCall);
-					calls = new String[callVector.size()];
-					for(int i=0;i<callVector.size();i++)
-						calls[i] = (String) callVector.get(i);
-					
-				}
-			}
 			
 		}else
 			calls = new String[]{};

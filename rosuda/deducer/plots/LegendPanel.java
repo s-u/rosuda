@@ -31,17 +31,6 @@ public class LegendPanel extends JPanel implements ActionListener {
 	private JButton addButton;
 
 	private boolean numeric = true;
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(new LegendPanel());
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
 	
 	public LegendPanel() {
 		super();

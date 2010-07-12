@@ -77,7 +77,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		if(shapeOptions==null)
 			initShapeOptions();
 		initGUI();
-		(new Thread((new ButtonRefresher()))).start();
+		//(new Thread((new ButtonRefresher()))).start();
 	}
 	
 	public AesWidget(Aes aes,VariableSelector var){
@@ -364,6 +364,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		}
 		toggleVariable(newModel.useVariable);
 		model=newModel;
+		refreshAddRemoveButton();
 	}
 	
 	public void updateModel(){
@@ -474,6 +475,24 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			c = new Color(0,150,0);
 		nameLab.setForeground(c);
 	}
+	
+	public void refreshAddRemoveButton(){
+		if(variable.getSelectedItem()== null || 
+				variable.getSelectedItem().toString().length()<=0){
+			
+			addRemoveButton.setToolTipText("add");
+			addRemoveButton.setActionCommand("add");
+			ImageIcon icon = 
+				new ImageIcon(getClass().getResource("/icons/1rightarrow_32.png"));
+			addRemoveButton.setIcon(icon);
+		}else{
+			addRemoveButton.setToolTipText("remove");
+			addRemoveButton.setActionCommand("remove");
+			ImageIcon icon =
+				new ImageIcon(getClass().getResource("/icons/1leftarrow_32.png"));
+			addRemoveButton.setIcon(icon);
+		}
+	}
 
 	public void actionPerformed(ActionEvent ev) {
 		boolean switchToVariable = false;
@@ -517,7 +536,11 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				boolean exists = ((REXPLogical)Deducer.eval("'" +o.toString()+"' %in% names("+data+")")).isTRUE()[0];
 				if(!exists)
 					variable.setSelectedItem(null);
+				refreshAddRemoveButton();
 			}
+		}
+		if(ev.getSource() == variable){
+			refreshAddRemoveButton();
 		}
 		if(model!=null){
 			updateModel();

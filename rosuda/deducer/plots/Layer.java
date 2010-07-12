@@ -5,6 +5,7 @@ import java.util.Vector;
 import javax.swing.JOptionPane;
 
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.widgets.param.Param;
 
 public class Layer implements ElementModel{
 
@@ -97,7 +98,7 @@ public class Layer implements ElementModel{
 		}
 		if(!(pos.name == geom.defaultPosition && pos.height==null && pos.width==null)){
 			String posCall = "position = position_" + pos.name + "(" +
-				(pos.height==null ? "" : "hieght = " + pos.height.toString()) +
+				(pos.height==null ? "" : "height = " + pos.height.toString()) +
 				(pos.height!=null && pos.width!=null ? "," : "") +
 				(pos.width==null ? "" : "width = " + pos.width.toString()) +")" ;
 			paramCalls.add(posCall);
