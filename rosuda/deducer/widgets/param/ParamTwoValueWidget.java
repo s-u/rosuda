@@ -66,6 +66,7 @@ public class ParamTwoValueWidget extends ParamWidget implements FocusListener{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
+		this.setMaximumSize(new java.awt.Dimension(1000, 37));
 		int labelWidth = leftPos-22; 
 		{
 			label = new JLabel();

@@ -741,7 +741,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeManual(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_identity";
+		s.name = "scale_"+aes+"_manual";
 		s.aesName = aes;
 		
 		Param p;

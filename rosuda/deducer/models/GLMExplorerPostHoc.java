@@ -174,30 +174,34 @@ public class GLMExplorerPostHoc extends javax.swing.JDialog implements ActionLis
 	public void setModel(GLMModel mod,RModel rmod){
 		model = mod;
 		rmodel = rmod;
-		String[] mainEffects = Deducer.rniEval("labels(terms("+rmod.modelName+"))[!grepl(\":\",labels(terms("+
-				rmod.modelName+")))]").asStringArray();
-		
-		if(mainEffects.length>0){
-			String tmpForm = "~"+mainEffects[0];
-			for(int i=1;i<(mainEffects.length);i++)
-				tmpForm+="+"+mainEffects[i];
-			int[] isFactor = Deducer.rniEval("as.integer(sapply(model.frame("+tmpForm+
-									",data="+rmod.data+",na.action=na.omit),is.factor))").asIntArray();
-			for(int i=0;i<mainEffects.length;i++){
-				if(isFactor[i]==1)
-					((DefaultListModel)factors.getModel()).addElement(mainEffects[i]);
+		try{
+			String[] mainEffects = Deducer.eval("labels(terms("+rmod.modelName+"))[!grepl(\":\",labels(terms("+
+					rmod.modelName+")))]").asStrings();
+			
+			if(mainEffects.length>0){
+				String tmpForm = "~"+mainEffects[0];
+				for(int i=1;i<(mainEffects.length);i++)
+					tmpForm+="+"+mainEffects[i];
+				int[] isFactor = Deducer.eval("as.integer(sapply(model.frame("+tmpForm+
+										",data="+rmod.data+",na.action=na.omit),is.factor))").asIntegers();
+				for(int i=0;i<mainEffects.length;i++){
+					if(isFactor[i]==1)
+						((DefaultListModel)factors.getModel()).addElement(mainEffects[i]);
+				}
 			}
+			DefaultListModel factModel = ((DefaultListModel)factors.getModel());
+			for(int i=0;i<model.posthoc.posthoc.getSize();i++)
+				if(factModel.contains(model.posthoc.posthoc.elementAt(i))){
+					factModel.removeElement(model.posthoc.posthoc.elementAt(i));
+					((DefaultListModel)postHoc.getModel()).addElement(model.posthoc.posthoc.elementAt(i));
+				}
+			confInt.setSelected(model.posthoc.confInt);
+			type.setSelectedItem(model.posthoc.type);
+			correction.setSelectedItem(model.posthoc.correction);
+		}catch (Exception e) {
+			e.printStackTrace();
+			new ErrorMsg(e);
 		}
-		DefaultListModel factModel = ((DefaultListModel)factors.getModel());
-		for(int i=0;i<model.posthoc.posthoc.getSize();i++)
-			if(factModel.contains(model.posthoc.posthoc.elementAt(i))){
-				factModel.removeElement(model.posthoc.posthoc.elementAt(i));
-				((DefaultListModel)postHoc.getModel()).addElement(model.posthoc.posthoc.elementAt(i));
-			}
-		confInt.setSelected(model.posthoc.confInt);
-		type.setSelectedItem(model.posthoc.type);
-		correction.setSelectedItem(model.posthoc.correction);
-		
 	}
 
 	public void actionPerformed(ActionEvent arg0) {

@@ -5,6 +5,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
 
@@ -61,7 +62,13 @@ public class LinearDialog extends GLMDialog {
 			return false;
 		String out = (String) outcome.getModel().getElementAt(0);
 		String dat = variableSelector.getSelectedData();
-		boolean isNumeric = Deducer.rniEval("is.numeric("+dat+"$"+out+")").asBool().isTRUE();
+		boolean isNumeric = true;
+		try{
+			isNumeric = ((REXPLogical)Deducer.eval("is.numeric("+dat+"$"+out+")")).isTRUE()[0];
+		}catch (Exception e) {
+			e.printStackTrace();
+			new ErrorMsg(e);
+		}
 		if(!isNumeric){
 			JOptionPane.showMessageDialog(this, "Outcome variable is not numeric. Please select a numeric variable");
 		}

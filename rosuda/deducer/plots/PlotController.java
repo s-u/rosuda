@@ -19,7 +19,7 @@ public class PlotController {
 			"tile","vline"};
 	protected static String[] statNames = {"abline","bin","bin2d","binhex","boxplot","contour","density","density2d","function",
 			"hline","identity","qq","quantile","smooth","spoke","sum","summary","unique","vline"};
-	protected static String[] scaleNames = {"colour_brewer","fill_brewer","x_continuous","y_continuous","x_date","y_date",
+	protected static String[] scaleNames = {"area","colour_brewer","fill_brewer","x_continuous","y_continuous","x_date","y_date",
 		"x_datetime","y_datetime","x_discrete","y_discrete","z_discrete","colour_gradient","fill_gradient","colour_gradient2",
 		"fill_gradient2","colour_gradientn","fill_gradientn","colour_grey","fill_grey", "colour_hue","fill_hue",
 		"colour_identity","fill_identity","linetype_identity","shape_identity","size_identity","linetype","colour_manual",

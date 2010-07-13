@@ -267,6 +267,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL),2);
 				plotHolder.setPreferredSize(new java.awt.Dimension(515, 391));
+				plotHolder.setTransferHandler(new PanelTransferHandler());
 			}
 
 			{
@@ -438,16 +439,17 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	}
 	
 	public void plot(String cmd){
+		if(cmd ==null || cmd == "")
+			return;
 		try{
 			if(device==null){
 				plotHolder.removeAll();
 				device = new PlotPanel(plotHolder.getWidth(), plotHolder.getHeight());
+				device.setTransferHandler(new PanelTransferHandler());
 				plotHolder.add(device);
 			}
 			DeviceInterface.plot(cmd,device);
 			device.initRefresh();
-			//pane.validate();
-			//pane.repaint();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
@@ -537,6 +539,49 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			}
         }
     }
+	
+	class PanelTransferHandler extends TransferHandler{
+		
+		public boolean canImport(JComponent comp,DataFlavor[] d) {
+			return true;
+		}
+		
+		public int getSourceActions(JComponent c) {
+			return COPY;
+		}
+		
+		public boolean importData(JComponent comp, Transferable t) {
+			System.out.println("importing");
+			JList l = elementsList;
+			DefaultListModel mod = (DefaultListModel) l.getModel();
+			PlottingElement p;
+			try {
+				p = (PlottingElement) t.getTransferData(
+						new DataFlavor(PlottingElement.class,"Plotting element"));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			} 
+			if(p.getModel() instanceof Layer){
+				Layer layer = (Layer) p.getModel();
+				model.tryToFillRequiredAess(layer);
+				String s = layer.checkValid();
+				if(s!=null){
+					PlottingElementDialog d = 
+						new PlottingElementDialog(PlotBuilder.this,p);
+					d.setModal(true);
+					d.setLocationRelativeTo(PlotBuilder.this);
+					d.setVisible(true);
+					s = layer.checkValid();
+					if(s!=null)
+						return false;
+				}
+			}
+			mod.addElement(p);
+			updatePlot();
+			return true;
+		}
+	}
 	
 	class ElementTransferHandler extends TransferHandler{
 		public int lastIndex = -1;
@@ -799,6 +844,10 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		public void devOff(){
 			Deducer.eval("dev.off("+(this.devNr+1)+")");
 			//System.out.println("turning off: "+(this.devNr+1));
+		}
+		
+		public void initRefresh() {
+			Deducer.eval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
 		}
 		
 	}

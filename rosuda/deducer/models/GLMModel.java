@@ -8,7 +8,9 @@ import javax.swing.table.DefaultTableModel;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
-import org.rosuda.JRI.REXP;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
@@ -26,9 +28,9 @@ public class GLMModel extends ModelModel {
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
 		String cmd = "";
-		boolean envDefined = Deducer.rniEval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()").asBool().isTRUE();
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		if(!envDefined){
-			Deducer.rniEval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.eval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		
 		String modelName ;
@@ -62,8 +64,8 @@ public class GLMModel extends ModelModel {
 		ArrayList tmp = new ArrayList();
 		String[] out = new String[]{};	
 		if(preview){
-			Deducer.rniEval(dataName+"<-"+data);
-			Deducer.rniEval(cmd);
+			Deducer.eval(dataName+"<-"+data);
+			Deducer.eval(cmd);
 			tmp.add("\n>"+cmd);
 		}
 		
@@ -88,52 +90,57 @@ public class GLMModel extends ModelModel {
 	}
 	
 	protected String runOptions(String cmd,String modelName,boolean preview,ArrayList tmp){
-		String[] out = new String[]{};
-		if(this.options.anova){
-			String anovaCall = "Anova("+modelName+",type='"+options.type+"',test.statistic='"+options.test+"')";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+anovaCall+")").asStringArray();
-				tmp.add("\n>"+anovaCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+anovaCall;
+		try{
+			String[] out = new String[]{};
+			if(this.options.anova){
+				String anovaCall = "Anova("+modelName+",type='"+options.type+"',test.statistic='"+options.test+"')";
+				if(preview){
+					out = Deducer.eval("capture.output("+anovaCall+")").asStrings();
+					tmp.add("\n>"+anovaCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+anovaCall;
+				}
 			}
-		}
-		if(this.options.summary){
-			String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+")";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+summaryCall+")").asStringArray();
-				tmp.add("\n>"+summaryCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+summaryCall;
+			if(this.options.summary){
+				String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+")";
+				if(preview){
+					out = Deducer.eval("capture.output("+summaryCall+")").asStrings();
+					tmp.add("\n>"+summaryCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+summaryCall;
+				}
 			}
-		}
-		
-		if(this.options.vif){
-			String vifCall = "vif("+modelName+")";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+vifCall+")").asStringArray();
-				tmp.add("\n>"+vifCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+vifCall;
+			
+			if(this.options.vif){
+				String vifCall = "vif("+modelName+")";
+				if(preview){
+					out = Deducer.eval("capture.output("+vifCall+")").asStrings();
+					tmp.add("\n>"+vifCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+vifCall;
+				}
 			}
-		}
-		
-		if(this.options.influence){
-			String infCall = "summary(influence.measures("+modelName+"))";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+infCall+")").asStringArray();
-				tmp.add("\n>"+infCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+infCall;
+			
+			if(this.options.influence){
+				String infCall = "summary(influence.measures("+modelName+"))";
+				if(preview){
+					out = Deducer.eval("capture.output("+infCall+")").asStrings();
+					tmp.add("\n>"+infCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+infCall;
+				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 		return cmd;
 	}
@@ -186,237 +193,256 @@ public class GLMModel extends ModelModel {
 	
 	protected String runEffects(String cmd,String modelName,boolean preview,ArrayList tmp,
 								RModel prevModel){
-		String[] out = new String[]{};
-		if(effects.effects.size()>0){
-			String[] t = new String[1];
-			if(prevModel!=null){
-				t=Deducer.rniEval("attr(terms("+prevModel.modelName+
-									"),\"term.labels\")").asStringArray();
-			}
-			Vector ter = new Vector();
-			for(int i=0;i<t.length;i++)
-				ter.add(t[i]);
-			Vector terms = new Vector();
-			for(int i=0;i<effects.effects.size();i++){
-				if(prevModel==null || ter.contains(effects.effects.get(i)))
-					terms.add("\""+effects.effects.get(i)+"\"");
-			}
-			Vector effectCalls=new Vector();
-			for(int i=0;i<terms.size();i++){
-				if(effects.confInt)
-					effectCalls.add("summary(effect(term="+terms.get(i)+",mod="+modelName+"))");
-				else
-					effectCalls.add("\neffect(term="+terms.get(i)+",mod="+modelName+")");
-			}
-			if(preview){
-				String effectCall;
-				for(int i=0;i<effectCalls.size();i++){
-					effectCall=(String)effectCalls.get(i);
-					out = Deducer.rniEval("capture.output("+effectCall+")").asStringArray();
-					tmp.add("\n>"+effectCall+"\n");
-					for(int j=0;j<out.length;j++)
-						tmp.add(out[j]);
+		try{
+			String[] out = new String[]{};
+			if(effects.effects.size()>0){
+				String[] t = new String[1];
+				if(prevModel!=null){
+					t=Deducer.eval("attr(terms("+prevModel.modelName+
+										"),\"term.labels\")").asStrings();
 				}
-			}else{
-				String effectCall;
-				for(int i=0;i<effectCalls.size();i++){
-					effectCall=(String)effectCalls.get(i);
-					cmd+="\n"+effectCall;
+				Vector ter = new Vector();
+				for(int i=0;i<t.length;i++)
+					ter.add(t[i]);
+				Vector terms = new Vector();
+				for(int i=0;i<effects.effects.size();i++){
+					if(prevModel==null || ter.contains(effects.effects.get(i)))
+						terms.add("\""+effects.effects.get(i)+"\"");
+				}
+				Vector effectCalls=new Vector();
+				for(int i=0;i<terms.size();i++){
+					if(effects.confInt)
+						effectCalls.add("summary(effect(term="+terms.get(i)+",mod="+modelName+"))");
+					else
+						effectCalls.add("\neffect(term="+terms.get(i)+",mod="+modelName+")");
+				}
+				if(preview){
+					String effectCall;
+					for(int i=0;i<effectCalls.size();i++){
+						effectCall=(String)effectCalls.get(i);
+						out = Deducer.eval("capture.output("+effectCall+")").asStrings();
+						tmp.add("\n>"+effectCall+"\n");
+						for(int j=0;j<out.length;j++)
+							tmp.add(out[j]);
+					}
+				}else{
+					String effectCall;
+					for(int i=0;i<effectCalls.size();i++){
+						effectCall=(String)effectCalls.get(i);
+						cmd+="\n"+effectCall;
+					}
 				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 		return cmd;
 	}
 	
 	protected String runPlots(String cmd,String modelName,boolean preview,ArrayList tmp,
 								RModel prevModel){
-		String[] out = new String[]{};
-		if(plots.effects.size()>0){
-			String[] t = new String[1];
-			if(prevModel!=null){
-				t=Deducer.rniEval("attr(terms("+prevModel.modelName+
-									"),\"term.labels\")").asStringArray();
-			}
-			Vector ter = new Vector();
-			for(int i=0;i<t.length;i++)
-				ter.add(t[i]);
-			Vector terms = new Vector();
-			for(int i=0;i<plots.effects.size();i++){
-				if(prevModel==null || ter.contains(plots.effects.get(i)))
-					terms.add("\""+plots.effects.get(i)+"\"");
-			}
-			Vector plotCalls=new Vector();
-			for(int i=0;i<terms.size();i++){
-				plotCalls.add("dev.new()");
-				plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
-										(",default.levels="+plots.defaultLevels)+
-										(plots.confInt?"":",se=FALSE")+
-										")"+
-								((plots.ylab!="" && !plots.ylab.equals("<auto>"))? ",ylab='"+
-																		plots.ylab+"'" : "")+
-								(plots.scaled ? "":",rescale.axis=FALSE")+
-								(plots.multi ? ",multiline=TRUE" : "")+
-								(plots.rug ? "" : ",rug=FALSE")+
-								")");
-			}
-			if(!preview){
-				String plotCall;
-				for(int i=0;i<plotCalls.size();i++){
-					plotCall=(String)plotCalls.get(i);
-					cmd+="\n"+plotCall;
+		try{
+			String[] out = new String[]{};
+			if(plots.effects.size()>0){
+				String[] t = new String[1];
+				if(prevModel!=null){
+					t=Deducer.eval("attr(terms("+prevModel.modelName+
+										"),\"term.labels\")").asStrings();
+				}
+				Vector ter = new Vector();
+				for(int i=0;i<t.length;i++)
+					ter.add(t[i]);
+				Vector terms = new Vector();
+				for(int i=0;i<plots.effects.size();i++){
+					if(prevModel==null || ter.contains(plots.effects.get(i)))
+						terms.add("\""+plots.effects.get(i)+"\"");
+				}
+				Vector plotCalls=new Vector();
+				for(int i=0;i<terms.size();i++){
+					plotCalls.add("dev.new()");
+					plotCalls.add("plot(effect(term="+terms.get(i)+",mod="+modelName+
+											(",default.levels="+plots.defaultLevels)+
+											(plots.confInt?"":",se=FALSE")+
+											")"+
+									((plots.ylab!="" && !plots.ylab.equals("<auto>"))? ",ylab='"+
+																			plots.ylab+"'" : "")+
+									(plots.scaled ? "":",rescale.axis=FALSE")+
+									(plots.multi ? ",multiline=TRUE" : "")+
+									(plots.rug ? "" : ",rug=FALSE")+
+									")");
+				}
+				if(!preview){
+					String plotCall;
+					for(int i=0;i<plotCalls.size();i++){
+						plotCall=(String)plotCalls.get(i);
+						cmd+="\n"+plotCall;
+					}
 				}
 			}
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
 		}
-		
 		return cmd;
 	}
 	
 	protected String runTests(String cmd,String modelName,boolean preview,ArrayList tmp, 
 								RModel prevModel){
-		String[] out = new String[]{};
-		if(tests.size()>0){
-			String[] t = new String[1];
-			if(prevModel!=null){
-				t=Deducer.rniEval("names(coef("+prevModel.modelName+
-									"))").asStringArray();
-			}else if(preview){
-				t=Deducer.rniEval("names(coef("+modelName+
-									"))").asStringArray();
-			}
-			Vector testCalls = new Vector();
-			String matrixName;
-			if(preview)
-				matrixName =  Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(
-													"lh.mat",Deducer.guiEnv);
-			else
-				matrixName = JGR.MAINRCONSOLE.getUniqueName("lh.mat");
-			String call = "";
-			for(int i=0;i<tests.size();i++){
-				ExDefaultTableModel tmod = tests.getModel(i);
-				if((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
-						(prevModel==null && preview && tmod.getColumnCount()!=t.length+1))
-					continue;
-				
-				Vector row = new Vector();
-				Vector rhs = new Vector();
-				call = matrixName +"<-rbind(";
-				for(int j=0;j<tmod.getRowCount();j++){
-					row.clear();
-					for(int k=0;k<tmod.getColumnCount()-1;k++)
-						row.add(tmod.getValueAt(j, k));
-					call+= RController.makeRVector(row);
-					if(j<tmod.getRowCount()-1)
-						call+=",\n\t";
-					else
-						call+=")";
-					rhs.add(tmod.getValueAt(j, tmod.getColumnCount()-1));
+		try{
+			String[] out = new String[]{};
+			if(tests.size()>0){
+				String[] t = new String[1];
+				if(prevModel!=null){
+					t=Deducer.eval("names(coef("+prevModel.modelName+
+										"))").asStrings();
+				}else if(preview){
+					t=Deducer.eval("names(coef("+modelName+
+										"))").asStrings();
 				}
-				testCalls.add(call);
-				call = "lht("+modelName +","+matrixName+","+RController.makeRVector(rhs)+")";
-				testCalls.add(call);
-			}
-
-			if(preview){
-				if(testCalls.size()>0)
-					testCalls.add("rm('"+matrixName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
-				String testCall;
-				for(int i=0;i<testCalls.size();i++){
-					testCall=(String)testCalls.get(i);
-					REXP r =Deducer.rniEval("capture.output("+testCall.replace("\n", "").replace("\t", "")+")");
-					if(r!=null)
-						out = r.asStringArray();
-					else
-						out =new String[] {"Error"};
-					tmp.add("\n>"+testCall+"\n");
+				Vector testCalls = new Vector();
+				String matrixName;
+				if(preview)
+					matrixName =  Deducer.guiEnv+"$"+JGR.MAINRCONSOLE.getUniqueName(
+														"lh.mat",Deducer.guiEnv);
+				else
+					matrixName = JGR.MAINRCONSOLE.getUniqueName("lh.mat");
+				String call = "";
+				for(int i=0;i<tests.size();i++){
+					ExDefaultTableModel tmod = tests.getModel(i);
+					if((prevModel!=null && tmod.getColumnCount()!=t.length+1) ||
+							(prevModel==null && preview && tmod.getColumnCount()!=t.length+1))
+						continue;
 					
-					for(int j=0;j<out.length;j++)
-						tmp.add(out[j]);
+					Vector row = new Vector();
+					Vector rhs = new Vector();
+					call = matrixName +"<-rbind(";
+					for(int j=0;j<tmod.getRowCount();j++){
+						row.clear();
+						for(int k=0;k<tmod.getColumnCount()-1;k++)
+							row.add(tmod.getValueAt(j, k));
+						call+= RController.makeRVector(row);
+						if(j<tmod.getRowCount()-1)
+							call+=",\n\t";
+						else
+							call+=")";
+						rhs.add(tmod.getValueAt(j, tmod.getColumnCount()-1));
+					}
+					testCalls.add(call);
+					call = "lht("+modelName +","+matrixName+","+RController.makeRVector(rhs)+")";
+					testCalls.add(call);
 				}
-			}else{
-				if(testCalls.size()>0)
-					testCalls.add("rm('"+matrixName+"')");
-				String testCall;
-				for(int i=0;i<testCalls.size();i++){
-					testCall=(String)testCalls.get(i);
-					cmd+="\n"+testCall;
+	
+				if(preview){
+					if(testCalls.size()>0)
+						testCalls.add("rm('"+matrixName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+					String testCall;
+					for(int i=0;i<testCalls.size();i++){
+						testCall=(String)testCalls.get(i);
+						REXP r =Deducer.eval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
+						if(r!=null)
+							out = r.asStrings();
+						else
+							out =new String[] {"Error"};
+						tmp.add("\n>"+testCall+"\n");
+						
+						for(int j=0;j<out.length;j++)
+							tmp.add(out[j]);
+					}
+				}else{
+					if(testCalls.size()>0)
+						testCalls.add("rm('"+matrixName+"')");
+					String testCall;
+					for(int i=0;i<testCalls.size();i++){
+						testCall=(String)testCalls.get(i);
+						cmd+="\n"+testCall;
+					}
 				}
 			}
-		}
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
+	}
 		return cmd;
 	}
 	
 	protected String runExport(String cmd,String modelName,boolean preview,ArrayList tmp,
 			String dataName,boolean isLm){
-		if(!preview){
-			String temp = JGR.MAINRCONSOLE.getUniqueName("tmp");
-			boolean anyExport=false;
-			if(export.cooks){
-				anyExport=true;
-				cmd+="\n"+temp+"<-cooks.distance("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"cooks\")))[1]").asString()+"\"]<-"+temp;
+		try{
+			if(!preview){
+				String temp = JGR.MAINRCONSOLE.getUniqueName("tmp");
+				boolean anyExport=false;
+				if(export.cooks){
+					anyExport=true;
+					cmd+="\n"+temp+"<-cooks.distance("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"cooks\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.resid){
+					anyExport=true;
+					cmd+="\n"+temp+"<-residuals("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"Residuals\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.sdresid){
+					anyExport=true;
+					cmd+="\n"+temp+"<-rstandard("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"resid.standardized\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.stresid){
+					anyExport=true;
+					cmd+="\n"+temp+"<-rstudent("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"resid.studentized\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.pred && !isLm){
+					anyExport=true;
+					cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
+				}else if(export.pred){
+					anyExport=true;
+					cmd+="\n"+temp+"<-predict("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
+				}
+				if(export.linearPred && !isLm){
+					anyExport=true;
+					cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"linear.pred\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.dfbeta){
+					anyExport=true;
+					cmd+="\n"+JGR.MAINRCONSOLE.getUniqueName(modelName+".dfbeta")+"<-dfbeta("+modelName+")";
+				}
+				if(export.dffits){
+					anyExport=true;
+					cmd+="\n"+temp+"<-dffits("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"dffits\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.hats){
+					anyExport=true;
+					cmd+="\n"+temp+"<-hatvalues("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"hats\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(export.covratio){
+					anyExport=true;
+					cmd+="\n"+temp+"<-covratio("+modelName+")";
+					cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.eval("rev(make.unique(c(names("+dataName+
+							"),\"cov.ratio\")))[1]").asString()+"\"]<-"+temp;
+				}
+				if(anyExport)
+					cmd+="\nrm('"+temp+"')";
+				if(!export.keepModel)
+					cmd+="\nrm('"+modelName+"')";
 			}
-			if(export.resid){
-				anyExport=true;
-				cmd+="\n"+temp+"<-residuals("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"Residuals\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.sdresid){
-				anyExport=true;
-				cmd+="\n"+temp+"<-rstandard("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"resid.standardized\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.stresid){
-				anyExport=true;
-				cmd+="\n"+temp+"<-rstudent("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"resid.studentized\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.pred && !isLm){
-				anyExport=true;
-				cmd+="\n"+temp+"<-predict("+modelName+",type='response')";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"predicted\")))[1]").asString()+"\"]<-"+temp;
-			}else if(export.pred){
-				anyExport=true;
-				cmd+="\n"+temp+"<-predict("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"predicted\")))[1]").asString()+"\"]<-"+temp;				
-			}
-			if(export.linearPred && !isLm){
-				anyExport=true;
-				cmd+="\n"+temp+"<-predict("+modelName+",type='link')";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"linear.pred\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.dfbeta){
-				anyExport=true;
-				cmd+="\n"+JGR.MAINRCONSOLE.getUniqueName(modelName+".dfbeta")+"<-dfbeta("+modelName+")";
-			}
-			if(export.dffits){
-				anyExport=true;
-				cmd+="\n"+temp+"<-dffits("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"dffits\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.hats){
-				anyExport=true;
-				cmd+="\n"+temp+"<-hatvalues("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"hats\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(export.covratio){
-				anyExport=true;
-				cmd+="\n"+temp+"<-covratio("+modelName+")";
-				cmd+="\n"+dataName+"[names("+temp+"),\""+Deducer.rniEval("rev(make.unique(c(names("+dataName+
-						"),\"cov.ratio\")))[1]").asString()+"\"]<-"+temp;
-			}
-			if(anyExport)
-				cmd+="\nrm('"+temp+"')";
-			if(!export.keepModel)
-				cmd+="\nrm('"+modelName+"')";
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
 		}
 		return cmd;
 	}

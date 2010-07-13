@@ -161,7 +161,7 @@ public class Deducer {
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
 			
 	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
-				Deducer.rniEval(".jChooserMacLAF()");
+				Deducer.eval(".jChooserMacLAF()");
 	    	
 			//Replace DataTable with Data Viewer
 			JGR.MAINRCONSOLE.getJMenuBar().getMenu(menuIndex).remove(1);
@@ -451,6 +451,9 @@ public class Deducer {
 		recentActiveData=data;
 	}
 	
+	/**
+	 * DEPRICATED: Do not use
+	 */
 	public static org.rosuda.JRI.REXP rniEval(String cmd){
 		org.rosuda.JRI.REXP result;
 		boolean obtainedLock = engine.getRni().getRsync().safeLock();
@@ -463,6 +466,11 @@ public class Deducer {
 		return result;
 	}
 	
+	/**
+	 * DEPRICATED: Do not use
+	 * @param cmd
+	 * @return
+	 */
 	public static org.rosuda.JRI.REXP rniIdleEval(String cmd){
 		return engine.getRni().idleEval(cmd);
 	}

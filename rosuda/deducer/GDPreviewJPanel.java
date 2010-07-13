@@ -1,11 +1,9 @@
 package org.rosuda.deducer;
 
-
-import java.util.Vector;
-
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.javaGD.GDContainer;
 import org.rosuda.javaGD.GDInterface;
 import org.rosuda.javaGD.JGDBufferedPanel;
@@ -35,14 +33,18 @@ public class GDPreviewJPanel extends GDInterface{
     }
 	
 	public static void plot(String call){
-		Deducer.rniEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/GDPreviewJPanel\")");
-		Deducer.rniEval("JavaGD()");
-		mostRecentDevNumber = new Integer(Deducer.rniEval("as.integer(dev.cur())").asInt());
+		Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/deducer/GDPreviewJPanel\")");
+		Deducer.eval("JavaGD()");
+		try {
+			mostRecentDevNumber = new Integer(Deducer.eval("as.integer(dev.cur())").asInteger());
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		
 		String[] lines = call.split("\n");
 		for(int i=0;i<lines.length;i++)
-			Deducer.rniEval(lines[i]);
-		Deducer.rniEval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
+			Deducer.eval(lines[i]);
+		Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
 		
 	}
 	

@@ -24,6 +24,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.DJList;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -202,8 +203,13 @@ public class GLMExplorerPlots extends javax.swing.JDialog implements ActionListe
 	public void setModel(GLMModel mod,RModel rmod){
 		model = mod;
 		DefaultListModel termModel = new DefaultListModel();
-		String[] t = Deducer.rniEval("attr(terms("+rmod.modelName+
-									"),\"term.labels\")").asStringArray();
+		String[] t = new String[]{};
+		try {
+			t = Deducer.eval("attr(terms("+rmod.modelName+
+										"),\"term.labels\")").asStrings();
+		} catch (REXPMismatchException e) {
+			new ErrorMsg(e);
+		}
 		for(int j=0;j<t.length;j++)
 			termModel.addElement(t[j]);
 		terms.setModel(termModel);

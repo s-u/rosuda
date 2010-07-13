@@ -38,6 +38,7 @@ public class ParamCheckBoxWidget extends ParamWidget{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
+		this.setMaximumSize(new java.awt.Dimension(1000, 37));
 		{
 			checkBox = new JCheckBox();
 			this.add(checkBox, new AnchorConstraint(175, 1002, 689, leftPos, 

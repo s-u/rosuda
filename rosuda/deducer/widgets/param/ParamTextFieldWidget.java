@@ -57,6 +57,7 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 		AnchorLayout thisLayout = new AnchorLayout();
 		this.setLayout(thisLayout);
 		this.setPreferredSize(new java.awt.Dimension(241, 37));
+		this.setMaximumSize(new java.awt.Dimension(2000, 37));
 		int labelWidth = leftPos-22; 
 		{
 			label = new JLabel();
@@ -110,8 +111,8 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 			textField.setPreferredSize(new java.awt.Dimension(161, 22));
 			textField.setHorizontalAlignment(SwingConstants.CENTER);
 		}
-		this.setPreferredSize(new Dimension(200,30));
-		this.setMaximumSize(new Dimension(2000,30));
+		this.setPreferredSize(new Dimension(200,37));
+		this.setMaximumSize(new Dimension(2000,37));
 	
 	}
 	

@@ -432,6 +432,9 @@ public class Stat {
 		aes = Aes.makeAes("x");
 		s.aess.add(aes);
 		
+		aes = Aes.makeAes("y");
+		s.aess.add(aes);
+		
 		
 		aes = Aes.makeAes("group",null,"..quantile..");
 		s.aess.add(aes);
@@ -447,7 +450,6 @@ public class Stat {
 		p= Param.makeParam("na.rm");
 		s.params.add(p);
 		
-		s.generated.add("y");
 		s.generated.add("quantile");
 		
 		return s;

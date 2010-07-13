@@ -32,6 +32,14 @@ public class PlotBuilderModel {
 	public String getCall(){
 		String cmd ="";
 		cmd+="ggplot()";
+		boolean hasLayer = false;
+		for(int i=0;i<listModel.getSize();i++){
+			PlottingElement e = (PlottingElement) listModel.get(i);
+			if(e.getModel().getType().equals("layer"))
+				hasLayer=true;
+		}
+		if(!hasLayer)
+			return null;
 		for(int i=0;i<listModel.getSize();i++){
 			PlottingElement e = (PlottingElement) listModel.get(i);
 			if(e.isActive())

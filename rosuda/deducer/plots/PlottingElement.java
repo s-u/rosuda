@@ -49,11 +49,13 @@ public class PlottingElement implements Transferable{
 		}else if(type == "scale"){
 			String[] s = name.split("_");
 			if(s.length>1){
-				//System.out.println(s[0]+" "+s[1]);
 				model = Scale.makeScale(s[0], s[1]);
 			}else {
 				model = Scale.makeScale(null, s[0]);
 			}
+		}else if(type == "coord"){
+			Coord c = Coord.makeCoord(name);
+			model = c;
 		}
 	}
 	

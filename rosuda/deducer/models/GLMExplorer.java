@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 
 import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
 import org.rosuda.deducer.toolkit.IconButton;
@@ -44,7 +45,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 			call="par(mar=c(5,4,2,2))\n"+
 				"try(cr.plots("+pre.modelName+",one.page=T,ask=F,identify.points=F,col=1),silent=TRUE)";
 			termTab = new ModelPlotPanel(call);
-			if(Deducer.rniEval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0").asBool().isTRUE())
+			if(((REXPLogical)Deducer.eval("length(grep(\":\",c(attr(terms("+pre.modelName+"),\"term.labels\"))))==0")).isTRUE()[0])
 				tabs.addTab("Terms", termTab);
 			
 			call="par(mar=c(5,4,2,2))\n"+
@@ -88,7 +89,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 		model.run(false,pre);
 		this.dispose();
 		GLMDialog.setLastModel(model);
-		Deducer.rniEval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
+		Deducer.eval("rm('"+pre.data.split("\\$")[1]+"','"+pre.modelName.split("\\$")[1]+"',envir="+Deducer.guiEnv+")");
 	}
 	
 	public void updateClicked(){
@@ -134,8 +135,15 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	}
 	
 	public void testsClicked(){
-		String[] s =Deducer.rniEval("names(coef("+pre.modelName+
-				"))").asStringArray();
+		
+		String[] s = new String[]{};
+		try{
+			s =Deducer.eval("names(coef("+pre.modelName+
+					"))").asStrings();
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);
+		}
 		Vector trms = new Vector();
 		for(int i=0;i<s.length;i++)
 			trms.add(s[i]);

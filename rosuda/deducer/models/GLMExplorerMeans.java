@@ -125,19 +125,24 @@ public class GLMExplorerMeans extends javax.swing.JDialog implements ActionListe
 		
 	}
 	public void setModel(GLMModel mod,RModel rmod){
-		model = mod;
-		DefaultListModel termModel = new DefaultListModel();
-		String[] t = Deducer.rniEval("attr(terms("+rmod.modelName+
-									"),\"term.labels\")").asStringArray();
-		for(int j=0;j<t.length;j++)
-			termModel.addElement(t[j]);
-		terms.setModel(termModel);
-		for(int i=0;i<model.effects.effects.getSize();i++)
-			if(termModel.contains(model.effects.effects.elementAt(i))){
-				termModel.removeElement(model.effects.effects.elementAt(i));
-				((DefaultListModel)effects.getModel()).addElement(model.effects.effects.elementAt(i));
-			}
-		confInt.setSelected(model.effects.confInt);
+		try{
+			model = mod;
+			DefaultListModel termModel = new DefaultListModel();
+			String[] t = Deducer.eval("attr(terms("+rmod.modelName+
+										"),\"term.labels\")").asStrings();
+			for(int j=0;j<t.length;j++)
+				termModel.addElement(t[j]);
+			terms.setModel(termModel);
+			for(int i=0;i<model.effects.effects.getSize();i++)
+				if(termModel.contains(model.effects.effects.elementAt(i))){
+					termModel.removeElement(model.effects.effects.elementAt(i));
+					((DefaultListModel)effects.getModel()).addElement(model.effects.effects.elementAt(i));
+				}
+			confInt.setSelected(model.effects.confInt);
+		}catch (Exception e) {
+			e.printStackTrace();
+			new ErrorMsg(e);
+		}
 	}
 	
 	public void disableConfInt(){

@@ -7,7 +7,9 @@ import javax.swing.JOptionPane;
 
 import org.rosuda.JGR.JGR;
 import org.rosuda.JGR.RController;
-import org.rosuda.JRI.REXP;
+import org.rosuda.JGR.util.ErrorMsg;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.REXPLogical;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.data.ExDefaultTableModel;
@@ -25,9 +27,9 @@ public class LinearModel extends GLMModel {
 	public RModel run(boolean preview,RModel prevModel){
 		RModel rModel = new RModel();
 		String cmd = "";
-		boolean envDefined = Deducer.rniEval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()").asBool().isTRUE();
+		boolean envDefined = ((REXPLogical)Deducer.eval("'"+Deducer.guiEnv+"' %in% .getOtherObjects()")).isTRUE()[0];
 		if(!envDefined){
-			Deducer.rniEval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
+			Deducer.eval(Deducer.guiEnv+"<-new.env(parent=emptyenv())");
 		}
 		
 		String modelName ;
@@ -61,8 +63,8 @@ public class LinearModel extends GLMModel {
 		ArrayList tmp = new ArrayList();
 		String[] out = new String[]{};	
 		if(preview){
-			Deducer.rniEval(dataName+"<-"+data);
-			Deducer.rniEval(cmd);
+			Deducer.eval(dataName+"<-"+data);
+			Deducer.eval(cmd);
 			tmp.add("\n>"+cmd);
 		}
 		
@@ -87,55 +89,61 @@ public class LinearModel extends GLMModel {
 	}
 	
 	protected String runOptions(String cmd,String modelName,boolean preview,ArrayList tmp){
-		String[] out = new String[]{};
-		if(this.options.anova){
-			String anovaCall = "Anova("+modelName+",type='"+options.type+"'"+
-				(hccm? ",white.adjust='hc3')" : ")");
-			if(preview){
-				out = Deducer.rniEval("capture.output(try("+anovaCall+"))").asStringArray();
-				tmp.add("\n>"+anovaCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+anovaCall;
+		try{
+			String[] out = new String[]{};
+			if(this.options.anova){
+				String anovaCall = "Anova("+modelName+",type='"+options.type+"'"+
+					(hccm? ",white.adjust='hc3')" : ")");
+				if(preview){
+					out = Deducer.eval("capture.output(try("+anovaCall+"))").asStrings();
+					tmp.add("\n>"+anovaCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+anovaCall;
+				}
 			}
-		}
-		if(this.options.summary){
-			String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+
-										(hccm? ",white.adjust='hc3'":"")+")";
-			if(preview){
-				out = Deducer.rniEval("capture.output(print(try("+summaryCall+")))").asStringArray();
-				tmp.add("\n>"+summaryCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+summaryCall;
+			if(this.options.summary){
+				String summaryCall = "summary("+modelName+(options.paramCor ?",correlation=TRUE":"")+
+											(hccm? ",white.adjust='hc3'":"")+")";
+				if(preview){
+					out = Deducer.eval("capture.output(print(try("+summaryCall+")))").asStrings();
+					tmp.add("\n>"+summaryCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+summaryCall;
+				}
 			}
-		}
-		
-		if(this.options.vif){
-			String vifCall = "vif("+modelName+")";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+vifCall+")").asStringArray();
-				tmp.add("\n>"+vifCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+vifCall;
+			
+			if(this.options.vif){
+				String vifCall = "vif("+modelName+")";
+				if(preview){
+					out = Deducer.eval("capture.output("+vifCall+")").asStrings();
+					tmp.add("\n>"+vifCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+vifCall;
+				}
 			}
-		}
-		
-		if(this.options.influence){
-			String infCall = "summary(influence.measures("+modelName+"))";
-			if(preview){
-				out = Deducer.rniEval("capture.output("+infCall+")").asStringArray();
-				tmp.add("\n>"+infCall+"\n");
-				for(int i=0;i<out.length;i++)
-					tmp.add(out[i]);
-			}else{
-				cmd+="\n"+infCall;
+			
+			if(this.options.influence){
+				String infCall = "summary(influence.measures("+modelName+"))";
+				if(preview){
+					out = Deducer.eval("capture.output("+infCall+")").asStrings();
+					tmp.add("\n>"+infCall+"\n");
+					for(int i=0;i<out.length;i++)
+						tmp.add(out[i]);
+				}else{
+					cmd+="\n"+infCall;
+				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+			new ErrorMsg(e);			
 		}
+
 		return cmd;
 	}
 	
@@ -197,12 +205,17 @@ public class LinearModel extends GLMModel {
 		String[] out = new String[]{};
 		if(tests.size()>0){
 			String[] t = new String[1];
-			if(prevModel!=null){
-				t=Deducer.rniEval("names(coef("+prevModel.modelName+
-									"))").asStringArray();
-			}else if(preview){
-				t=Deducer.rniEval("names(coef("+modelName+
-									"))").asStringArray();
+			try{
+				if(prevModel!=null){
+					t=Deducer.eval("names(coef("+prevModel.modelName+
+										"))").asStrings();
+				}else if(preview){
+					t=Deducer.eval("names(coef("+modelName+
+										"))").asStrings();
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+				new ErrorMsg(e);			
 			}
 			Vector testCalls = new Vector();
 			String matrixName;
@@ -243,9 +256,13 @@ public class LinearModel extends GLMModel {
 				String testCall;
 				for(int i=0;i<testCalls.size();i++){
 					testCall=(String)testCalls.get(i);
-					REXP r =Deducer.rniEval("capture.output("+testCall.replace("\n", "").replace("\t", "")+")");
+					REXP r =Deducer.eval("capture.output("+testCall.replaceAll("\n", "").replaceAll("\t", "")+")");
 					if(r!=null)
-						out = r.asStringArray();
+						try {
+							out = r.asStrings();
+						} catch (REXPMismatchException e) {
+							e.printStackTrace();
+						}
 					else
 						out =new String[] {"Error"};
 					tmp.add("\n>"+testCall+"\n");
