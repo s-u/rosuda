@@ -568,7 +568,12 @@ public class Stat {
 		aes = Aes.makeAes("group");
 		s.aess.add(aes);
 
-		//todo: give implementation
+		Param p = new ParamStatSummary("Summary");
+		s.params.add(p);
+		
+		s.generated.add("ymin");
+		s.generated.add("ymax");		
+		
 		return s;
 	}
 	

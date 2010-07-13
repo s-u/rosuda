@@ -524,12 +524,17 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
         
 		protected Transferable createTransferable(JComponent c) {
-            JList list = (JList)c;
-            PlottingElement value = (PlottingElement) list.getSelectedValue();
-            if(value==null)
-            	System.out.println("failed");
-			retractTopPanel(); //probably not the best place for this
-            return (PlottingElement)value.clone();
+			try{
+	            JList list = (JList)c;
+	            PlottingElement value = (PlottingElement) list.getSelectedValue();
+	            if(value==null)
+	            	System.out.println("failed");
+				retractTopPanel(); //probably not the best place for this
+	            return (PlottingElement)value.clone();
+			}catch(Exception e){
+				e.printStackTrace();
+				return null;
+			}
         }
     }
 	
@@ -675,6 +680,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 					public void actionPerformed(ActionEvent e) {
 						element.setActive(!element.isActive());
 						elList.validate();
+						elList.repaint();
 						plot.updatePlot();
 					}
 					

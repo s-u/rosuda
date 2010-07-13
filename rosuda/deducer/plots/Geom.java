@@ -749,6 +749,8 @@ public class Geom {
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("size");
+		aes.value = new Double(5);
+		aes.defaultValue = new Double(5);
 		g.aess.add(aes);
 		
 		aes = Aes.makeAes("alpha");
