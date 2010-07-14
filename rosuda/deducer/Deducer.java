@@ -159,6 +159,7 @@ public class Deducer {
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
+		    menuIndex++;
 			
 	    	if(DeducerPrefs.USEQUAQUACHOOSER && Common.isMac())
 				Deducer.eval(".jChooserMacLAF()");
@@ -188,12 +189,14 @@ public class Deducer {
 			PrefDialog.addPanel(prefs, prefs);
 			new Thread(new DataRefresher()).start();
 			started=true;
-		}catch(Exception e){new ErrorMsg(e);}		
+		}catch(Exception e){
+			e.printStackTrace();
+			new ErrorMsg(e);}		
 	}
 	
 	public static boolean isJGR(){
 		
-		return insideJGR;//?1:0;
+		return insideJGR;
 	}
 	
 	public void detach(){

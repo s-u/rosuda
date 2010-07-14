@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.TransferHandler;
 
 public class AddButton extends IconButton implements ActionListener{
 
@@ -26,9 +27,11 @@ public class AddButton extends IconButton implements ActionListener{
 	public void actionPerformed(ActionEvent arg0) {
 		Object[] objs=leftList.getSelectedValues();
 		for(int i=0;i<objs.length;i++){
-			((DefaultListModel)leftList.getModel()).removeElement(objs[i]);
-			if(objs[i]!=null)
-				((DefaultListModel)rightList.getModel()).addElement(objs[i]);
+			if(!(leftList instanceof DJList && ((DJList)leftList).getTransferMode()==TransferHandler.COPY))
+				((DefaultListModel)leftList.getModel()).removeElement(objs[i]);
+			if(!(rightList instanceof DJList && ((DJList)rightList).getTransferMode()==TransferHandler.COPY))
+				if(objs[i]!=null)
+					((DefaultListModel)rightList.getModel()).addElement(objs[i]);
 		}
 		
 	}

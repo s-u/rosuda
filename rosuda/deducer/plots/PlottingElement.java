@@ -56,6 +56,9 @@ public class PlottingElement implements Transferable{
 		}else if(type == "coord"){
 			Coord c = Coord.makeCoord(name);
 			model = c;
+		}else if(type == "facet"){
+			Facet f = Facet.makeFacet(name);
+			model = f;
 		}
 	}
 	

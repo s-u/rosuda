@@ -18,6 +18,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.border.BevelBorder;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -41,7 +42,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 	private JLabel filterText;
 	private String rFilter = "";
 	private String splitStr = null;
-	
+	private boolean copyMode = false;
 	
 	public VariableSelector() {
 		super();
@@ -133,6 +134,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		if(splitStr!=null && var.indexOf(splitStr)>0)
 			var = var.substring(0,var.indexOf(splitStr));
 		((FilteringModel) variableList.getModel()).addElement(var);
+		makeVariablesUnique();
 	}
 	
 	public boolean remove(Object variable){
@@ -167,6 +169,22 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 		return exists;
 	}
 	
+	public void makeVariablesUnique(){
+		FilteringModel model =(FilteringModel) variableList.getModel();
+		int len = model.getUnfilteredSize();
+		for(int i=0;i<len;i++){
+			String temporary =(String) model.getUnfilteredElementAt(i);
+			for(int j=i+1;j<len;j++){
+				String temporary1 =(String) model.getUnfilteredElementAt(j);
+				if(temporary.equals(temporary1)){
+					model.removeUnfilteredElementAt(j);
+					j--;
+					len = model.getUnfilteredSize();
+				}
+			}
+		}
+	}
+	
 	public JList getJList(){
 		return variableList;
 	}
@@ -186,6 +204,20 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 			lis.add(vars[i]);
 		return lis;
 	}
+	
+	/**
+	 * Should variables be moved from selector or copied.
+	 * @param copy
+	 */
+	public void setCopyMode(boolean copy){
+		copyMode = true;
+		variableList.setTransferMode(copy ? TransferHandler.COPY : TransferHandler.COPY_OR_MOVE);
+	}
+	
+	public boolean isCopyMode(){
+		return copyMode;
+	}
+	
 	/**
 	 * Filter the variables using an R function
 	 * 
@@ -400,6 +432,7 @@ public class VariableSelector extends JPanel implements ActionListener, KeyListe
 				}
 
 			}
+			makeVariablesUnique();
 		}
 		
 	}
