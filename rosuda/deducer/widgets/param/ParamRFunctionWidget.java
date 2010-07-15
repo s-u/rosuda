@@ -20,130 +20,13 @@ import javax.swing.WindowConstants;
 import javax.swing.JFrame;
 
 
-/**
-* This code was edited or generated using CloudGarden's Jigloo
-* SWT/Swing GUI Builder, which is free for non-commercial
-* use. If Jigloo is being used commercially (ie, by a corporation,
-* company or business for any purpose whatever) then you
-* should purchase a license for each developer using Jigloo.
-* Please visit www.cloudgarden.com for details.
-* Use of Jigloo implies acceptance of these licensing terms.
-* A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR
-* THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED
-* LEGALLY FOR ANY CORPORATE OR COMMERCIAL PURPOSE.
-*/
+
 public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 	private JLabel label;
 	private Param model;
 	private JComboBox comboBox;
 	private JButton options;
 	
-	private HashMap childDialogs;
-	
-	/**
-	* Auto-generated main method to display this 
-	* JPanel inside a new JFrame.
-	*/
-	public static void main(String[] args) {
-		JFrame frame = new JFrame();
-		Param p = new Param();
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_text","theme_blank"};
-		p.name = "axis.line";
-		p.title = "axis.line";
-		HashMap hm = new HashMap();
-		RFunction rf = new RFunction();
-		rf.setName("theme_text");
-		
-		Param rfp = new Param("family");
-		rfp.title = "font family";
-		rfp.dataType = Param.DATA_CHARACTER;
-		rfp.view = Param.VIEW_EDITABLE_COMBO;
-		rfp.options = new String[] {"times","monoco","helvenica"};
-		rf.add(rfp);
-		
-		rfp = new Param("face");
-		rfp.dataType = Param.DATA_CHARACTER;
-		rfp.view = Param.VIEW_COMBO;
-		rfp.options = new String[] {"plain","italic","bold"};
-		rfp.value = "plain";
-		rfp.defaultValue = "plain";
-		rf.add(rfp);
-		
-		rfp = new Param("colour");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
-		rfp.value = Color.black;
-		rfp.defaultValue = Color.black;
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "size";
-		rfp.title = "size";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1);
-		rfp.defaultValue = new Double(1);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "vjust";
-		rfp.title = "vjust";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rfp.upperBound = new Double(1);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "hjust";
-		rfp.title = "hjust";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rfp.upperBound = new Double(1);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "angle";
-		rfp.title = "angle";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(0);
-		rfp.defaultValue = new Double(0);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "linehieght";
-		rfp.title = "linehieght";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1.1);
-		rfp.defaultValue = new Double(1.1);
-		rf.add(rfp);
-		
-		hm.put("theme_text", rf);
-		
-		rf = new RFunction();
-		rf.setName("theme_blank");
-		hm.put("theme_blank", rf);
-		
-		Vector v = new Vector();
-		v.add("theme_text");
-		v.add(hm);
-		p.value = v;
-		
-		frame.getContentPane().add(new ParamRFunctionWidget(p));
-		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		frame.pack();
-		frame.setVisible(true);
-	}
 	
 	public ParamRFunctionWidget() {
 		super();
