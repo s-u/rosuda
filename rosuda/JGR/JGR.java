@@ -242,7 +242,7 @@ public class JGR {
 		MAINRCONSOLE.input.requestFocus();
 		// redefine Java Output streams to be written to JGR console
 		System.setOut(MAINRCONSOLE.getStdOutPrintStream());
-		System.setErr(MAINRCONSOLE.getStdErrPrintStream());
+		//System.setErr(MAINRCONSOLE.getStdErrPrintStream());
 		new Refresher().run();
 		
 	}
