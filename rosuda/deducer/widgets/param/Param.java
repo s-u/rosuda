@@ -8,7 +8,6 @@ import javax.swing.DefaultComboBoxModel;
 
 import org.rosuda.deducer.Deducer;
 
-import sun.tools.tree.Vset;
 
 
 public class Param implements Cloneable{
