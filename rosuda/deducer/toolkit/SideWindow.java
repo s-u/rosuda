@@ -77,6 +77,7 @@ public class SideWindow extends JFrame implements WindowListener, ComponentListe
 
 	public void componentResized(ComponentEvent e) {
 		updateSize();
+		updateLocation();
 	}
 
 	public void componentShown(ComponentEvent e) {}

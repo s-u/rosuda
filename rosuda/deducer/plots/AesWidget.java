@@ -100,6 +100,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					scale.setPreferredSize(new java.awt.Dimension(22, 22));
 					scale.addActionListener(this);
 					scale.setToolTipText("Edit scale");
+					scale.setVisible(false);
 				}
 
 				{
@@ -145,6 +146,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				}
 				{
 					statVarModel = new DefaultComboBoxModel();
+					AesComboBoxEditor editor = new AesComboBoxEditor();
 					variable = new JComboBox();
 					this.add(variable, new AnchorConstraint(32, 860, 472, 56, 
 							AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL, 
@@ -152,8 +154,9 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					variable.setModel(statVarModel);
 					variable.setPreferredSize(new java.awt.Dimension(196, 22));
 					variable.setEditable(true);
-					variable.setEditor(new AesComboBoxEditor());
+					variable.setEditor(editor);
 					variable.addMouseListener(this);
+					editor.addMouseListener(this);
 					variable.addActionListener(this);
 				}
 				{
@@ -179,10 +182,10 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			}
 			{
 				addRemoveButton = new IconButton("/icons/1rightarrow_32.png", "add", null, "add");
-				this.add(addRemoveButton, new AnchorConstraint(26, 128, 483, 0, 
+				this.add(addRemoveButton, new AnchorConstraint(20, 128, 483, 0, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
-				addRemoveButton.setPreferredSize(new java.awt.Dimension(32, 32));
+				addRemoveButton.setPreferredSize(new java.awt.Dimension(36, 36));
 				addRemoveButton.addActionListener(this);
 			}
 			if(variableSelector!=null)
@@ -551,10 +554,20 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	public void mouseClicked(MouseEvent arg0) {}
 	public void mouseEntered(MouseEvent arg0) {}
 	public void mouseExited(MouseEvent arg0) {}
-	public void mousePressed(MouseEvent arg0) {}
+	public void mousePressed(MouseEvent arg0) {
+		if(arg0.isPopupTrigger()){
+			Object cur = variable.getSelectedItem();
+			String a = JOptionPane.showInputDialog(variable, 
+					"Edit variable by hand.\nUse with care (Advanced)",
+					cur==null ? null : cur.toString());
+			if(a!=null){
+				variable.setSelectedItem(a);
+			}
+		}		
+	}
 
 	public void mouseReleased(MouseEvent arg0) {
-		if(arg0.getButton()==MouseEvent.BUTTON3 || arg0.isMetaDown()){
+		if(arg0.isPopupTrigger()){
 			Object cur = variable.getSelectedItem();
 			String a = JOptionPane.showInputDialog(variable, 
 					"Edit variable by hand.\nUse with care (Advanced)",

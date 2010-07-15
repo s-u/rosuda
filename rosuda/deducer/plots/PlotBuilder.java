@@ -551,34 +551,33 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
 		
 		public boolean importData(JComponent comp, Transferable t) {
-			System.out.println("importing");
 			JList l = elementsList;
 			DefaultListModel mod = (DefaultListModel) l.getModel();
 			PlottingElement p;
 			try {
 				p = (PlottingElement) t.getTransferData(
 						new DataFlavor(PlottingElement.class,"Plotting element"));
+				if(p.getModel() instanceof Layer){
+					Layer layer = (Layer) p.getModel();
+					model.tryToFillRequiredAess(layer);
+					String s = layer.checkValid();
+					if(s!=null){
+						PlottingElementDialog d = 
+							new PlottingElementDialog(PlotBuilder.this,p);
+						d.setModal(true);
+						d.setLocationRelativeTo(PlotBuilder.this);
+						d.setVisible(true);
+						s = layer.checkValid();
+						if(s!=null)
+							return false;
+					}
+				}
+				mod.addElement(p);
+				updatePlot();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
-			} 
-			if(p.getModel() instanceof Layer){
-				Layer layer = (Layer) p.getModel();
-				model.tryToFillRequiredAess(layer);
-				String s = layer.checkValid();
-				if(s!=null){
-					PlottingElementDialog d = 
-						new PlottingElementDialog(PlotBuilder.this,p);
-					d.setModal(true);
-					d.setLocationRelativeTo(PlotBuilder.this);
-					d.setVisible(true);
-					s = layer.checkValid();
-					if(s!=null)
-						return false;
-				}
-			}
-			mod.addElement(p);
-			updatePlot();
+			} 			
 			return true;
 		}
 	}
@@ -593,41 +592,43 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
 
 		public boolean importData(JComponent comp, Transferable t) {
+			try {		
 			JList l = (JList) comp;
 			
 			DefaultListModel mod = (DefaultListModel) l.getModel();
 			PlottingElement p;
-			try {
+	
 				p = (PlottingElement) t.getTransferData(
 						new DataFlavor(PlottingElement.class,"Plotting element"));
+	
+				if(p.getModel() instanceof Layer){
+					Layer layer = (Layer) p.getModel();
+					model.tryToFillRequiredAess(layer);
+					String s = layer.checkValid();
+					if(s!=null){
+						PlottingElementDialog d = 
+							new PlottingElementDialog(PlotBuilder.this,p);
+						d.setModal(true);
+						d.setLocationRelativeTo(PlotBuilder.this);
+						d.setVisible(true);
+						s = layer.checkValid();
+						if(s!=null)
+							return false;
+					}
+				}
+				
+				int ind = l.getSelectedIndex();
+				if(ind+1 < lastIndex)
+					lastIndex++;
+				if(ind<0)
+					mod.insertElementAt(p, 0);
+				else
+					mod.insertElementAt(p, ind+1);
+				updatePlot();
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
-			} 
-			if(p.getModel() instanceof Layer){
-				Layer layer = (Layer) p.getModel();
-				model.tryToFillRequiredAess(layer);
-				String s = layer.checkValid();
-				if(s!=null){
-					PlottingElementDialog d = 
-						new PlottingElementDialog(PlotBuilder.this,p);
-					d.setModal(true);
-					d.setLocationRelativeTo(PlotBuilder.this);
-					d.setVisible(true);
-					s = layer.checkValid();
-					if(s!=null)
-						return false;
-				}
-			}
-			
-			int ind = l.getSelectedIndex();
-			if(ind+1 < lastIndex)
-				lastIndex++;
-			if(ind<0)
-				mod.insertElementAt(p, 0);
-			else
-				mod.insertElementAt(p, ind+1);
-			updatePlot();
+			} 			
 			return true;
 		}
         
@@ -644,18 +645,20 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 
 		   
 		public void exportDone(JComponent c, Transferable t, int action){
-			if(action != TransferHandler.MOVE)
-				return;
-			PlottingElement p;
-			try {
+			try {			
+				if(action != TransferHandler.MOVE)
+					return;
+				PlottingElement p;
+
 				p = (PlottingElement) t.getTransferData(
 						new DataFlavor(PlottingElement.class,"Plotting element"));
+	
+				JList list = (JList)c;
+				((DefaultListModel)list.getModel()).remove(lastIndex);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return;
-			} 		
-			JList list = (JList)c;
-			((DefaultListModel)list.getModel()).remove(lastIndex);
+			} 					
 		}
 		
 		public Icon getVisualRepresentation(Transferable t){

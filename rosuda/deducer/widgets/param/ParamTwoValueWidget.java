@@ -28,7 +28,7 @@ public class ParamTwoValueWidget extends ParamWidget implements FocusListener{
 		model = p;
 		initAsTwoTextFields();
 		String[] val = (String[]) p.value;
-		if(val.length>1){
+		if(val!=null && val.length>1){
 			textField.setText(val[0]);
 			textField1.setText(val[1]);
 		}

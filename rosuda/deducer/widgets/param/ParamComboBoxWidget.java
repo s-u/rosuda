@@ -43,6 +43,8 @@ public class ParamComboBoxWidget extends ParamWidget{
 		}
 		if(val!=null && val.length()>0)
 			model.value = val;
+		else
+			model.value=null;
 	}
 	
 	public Param getModel(){

@@ -1,15 +1,17 @@
 package org.rosuda.deducer.widgets.param;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.DefaultComboBoxModel;
 
 import org.rosuda.deducer.Deducer;
-import org.rosuda.deducer.data.ExDefaultTableModel;
+
+import sun.tools.tree.Vset;
 
 
-public class Param {
+public class Param implements Cloneable{
 
 	final public static String DATA_ANY = "any";
 	final public static String DATA_NUMERIC = "numeric";
@@ -18,6 +20,7 @@ public class Param {
 	final public static String DATA_LOGICAL = "logical";
 	final public static String DATA_NUMERIC_VECTOR = "numeric vector";
 	final public static String DATA_CHARACTER_VECTOR = "character vector";
+	final public static String DATA_RFUNCTION = "r function parameter";
 	
 	
 	final public static String VIEW_ENTER = "enter";
@@ -28,6 +31,7 @@ public class Param {
 	final public static String VIEW_VECTOR_BUILDER = "vector";
 	final public static String VIEW_TWO_VALUE_ENTER = "two value";
 	final public static String VIEW_COLOUR = "colour";
+	final public static String VIEW_RFUNCTION = "r function view";
 	
 	
 	public String name;					//name of paramter
@@ -66,6 +70,8 @@ public class Param {
 			return new ParamTwoValueWidget(this);
 		else if(view == Param.VIEW_VECTOR_BUILDER)
 			return new ParamVectorBuilderWidget(this);
+		else if(view == Param.VIEW_RFUNCTION)
+			return new ParamRFunctionWidget(this);
 		return null;
 	}
 	
@@ -123,6 +129,29 @@ public class Param {
 				Color c = (Color) defaultValue;
 				p.defaultValue = new Color(c.getRGB());
 			}
+		}else if(dataType == Param.DATA_RFUNCTION){
+			if(value!=null){
+				Vector v = (Vector) value;
+				Vector vNew = new Vector();
+				vNew.add(v.get(0));
+				HashMap hm = (HashMap) v.get(1);
+				HashMap newHm = new HashMap();
+				for(int i=0;i<options.length;i++)
+					newHm.put(options[i], ((RFunction)hm.get(options[i])).clone());
+				vNew.add(newHm);
+				p.value = vNew;
+			}
+			if(defaultValue!=null){
+				Vector v = (Vector) defaultValue;
+				Vector vNew = new Vector();
+				vNew.add(v.get(0));
+				HashMap hm = (HashMap) v.get(1);
+				HashMap newHm = new HashMap();
+				for(int i=0;i<options.length;i++)
+					newHm.put(options[i], ((RFunction)hm.get(options[i])).clone());
+				vNew.add(newHm);
+				p.defaultValue = vNew;				
+			}
 		}else{
 			p.value = this.value;
 			p.defaultValue = this.defaultValue;
@@ -143,7 +172,10 @@ public class Param {
 			else if(dataType == Param.DATA_ANY && value.toString().length()>0){
 				try{
 					Double.parseDouble(value.toString());
-					val = value.toString();
+					if(!defaultValue.toString().equals(value.toString()))
+						val = value.toString();
+					else
+						val = "";
 				}catch(Exception e){
 					val = "'" + Deducer.addSlashes(value.toString()) + "'";
 				}
@@ -156,20 +188,36 @@ public class Param {
 				String[] vecVals = (String[]) value;
 				String[] dvecVals = (String[]) defaultValue;
 				boolean identical = true;
-				if(vecVals.length!=dvecVals.length)
+				if(vecVals==null)
+					identical = true;
+				else if(dvecVals==null)
+					identical=false;
+				else if(vecVals.length!=dvecVals.length)
 					identical=false;
 				else
 					for(int i=0;i<vecVals.length;i++)
 						if(!vecVals[i].equals(dvecVals[i]))
 							identical=false;
-				if(!identical){			
+				if(!identical && vecVals!=null){			
 					val = Deducer.makeRCollection(new DefaultComboBoxModel(vecVals), "c",false);
 				}else
 					val="";
 			}else if(dataType == Param.DATA_COLOUR){
 				val = "'#"+ Integer.toHexString(((Color)value).getRGB()).substring(2)+"'";
-			}else
-				val = value.toString();
+			}else if(dataType == Param.DATA_RFUNCTION){
+				Vector v = (Vector) value;
+				String fName = (String) v.get(0);
+				RFunction rf = (RFunction) ((HashMap)v.get(1)).get(fName);
+				if(rf != null)
+					val = rf.getCall();
+				else
+					val = "";
+			}else{
+				if(defaultValue==null || (value!=null && !defaultValue.toString().equals(value.toString())))
+					val = value.toString();
+				else
+					val ="";
+			}
 			if(val.length()>0)
 				calls = new String[]{name + " = "+val};
 			else

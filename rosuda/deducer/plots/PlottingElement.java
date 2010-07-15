@@ -59,6 +59,9 @@ public class PlottingElement implements Transferable{
 		}else if(type == "facet"){
 			Facet f = Facet.makeFacet(name);
 			model = f;
+		}else if(type == "theme"){
+			Theme t = Theme.makeTheme(name);
+			model = t;
 		}
 	}
 	
