@@ -465,17 +465,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 		return true;
 	}
 
-	public void setDataDependentMenusEnabled(boolean enabled) {
-		String[] dataRequiredFor = { "Edit Factor", "Recode", "rowReset",
-				"Sort", "Merge", "transpose", "Frequencies", "Descriptives" };
-		JMenuItem temp;
-		for (int i = 0; i < dataRequiredFor.length; i++) {
-			temp = ((JMenuItem) EzMenuSwing.getItem(this, dataRequiredFor[i]));
-			if (temp != null)
-				temp.setEnabled(enabled);
-		}
-	}
-
 	/**
 	 * Clear the console's content, if it's too full.
 	 */
@@ -1039,10 +1028,6 @@ public class JGRConsole extends TJFrame implements ActionListener, KeyListener,
 					Thread.sleep(1000);
 					Runnable doWorkRunnable = new Runnable() {
 						public void run() {
-							if (JGR.DATA.size() == 0)
-								setDataDependentMenusEnabled(false);
-							else
-								setDataDependentMenusEnabled(true);
 							if (console.length() > 0) {
 								output.append(console.toString(),
 										JGRPrefs.RESULT);
