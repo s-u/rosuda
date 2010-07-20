@@ -14,6 +14,7 @@ import javax.swing.SwingUtilities;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 
 public class LogisticDialog extends GLMDialog {
 	JButton split;
@@ -23,17 +24,17 @@ public class LogisticDialog extends GLMDialog {
 	
 	public LogisticDialog(JDialog d,GLMModel mod) {
 		super(d,mod);
-		help.setUrl("pmwiki.php?n=Main.LogisticModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(JFrame frame,GLMModel mod) {
 		super(frame,mod);
-		help.setUrl("pmwiki.php?n=Main.LogisticModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(GLMModel mod) {
 		super(mod);
-		help.setUrl("pmwiki.php?n=Main.LogisticModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 		startRefresher();
 	}
 	public LogisticDialog(JFrame frame) {

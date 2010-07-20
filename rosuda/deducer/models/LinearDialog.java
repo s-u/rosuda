@@ -8,21 +8,22 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 
 public class LinearDialog extends GLMDialog {
 	public static LinearModel lastLinearModel;
 	
 	public LinearDialog(JDialog d,GLMModel mod) {
 		super(d,mod);
-		help.setUrl("pmwiki.php?n=Main.LinearModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(JFrame frame,GLMModel mod) {
 		super(frame,mod);
-		help.setUrl("pmwiki.php?n=Main.LinearModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(GLMModel mod) {
 		super(mod);
-		help.setUrl("pmwiki.php?n=Main.LinearModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LinearModel");
 	}
 	public LinearDialog(JFrame frame) {
 		this(frame,lastLinearModel==null ? new LinearModel() : lastLinearModel);

@@ -17,6 +17,8 @@ import java.awt.event.WindowListener;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
 import org.rosuda.deducer.Deducer;
+import org.rosuda.deducer.toolkit.HelpButton;
+import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.javaGD.JGDPanel;
 
@@ -45,6 +47,8 @@ import javax.swing.TransferHandler;
 
 import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -65,7 +69,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	private JList elementsList;
 	private JScrollPane elementsScroller;
 	private JPanel elementsPanel;
-	private JButton helpButton;
+	private HelpButton helpButton;
 	private PlotBuilderSubFrame layerSheet;
 	private JPanel shadow;
 	private JPanel background;
@@ -80,6 +84,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	private PlotBuilderModel model;
 	private PlotBuilderModel initialModel;
 	private static PlotBuilderModel lastModel;
+	
 	
 	private static Vector elementPopupMenuItems;
 
@@ -200,10 +205,16 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 						addPanel.add(addTabs, BorderLayout.CENTER);
 						addTabs.setPreferredSize(new java.awt.Dimension(659, 130));
 						addTabs.addMouseListener(ml);
-						//addTabs.addMouseListener(ml);
+						addTabs.addChangeListener(new ChangeListener(){
+
+							public void stateChanged(ChangeEvent arg0) {
+								int ind = addTabs.getSelectedIndex();
+								if(ind>=4)
+									retractTopPanel();
+							}
+							
+						});
 						{
-							//JPanel templatePanel = new JPanel();
-							//templatePanel.setLayout(new BorderLayout());
 							templateTabs = new JTabbedPane();
 							templateTabs.setTabPlacement(JTabbedPane.LEFT);
 							templateTabs.addMouseListener(ml);
@@ -279,28 +290,25 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE),4);
 				rightPanel.setPreferredSize(new java.awt.Dimension(160, 389));
 				{
-					removeButton = new JButton();
+					removeButton = new IconButton("/icons/stop_16.png","Remove component",this,"remove");
 					rightPanel.add(removeButton, new AnchorConstraint(872, 921, 925, 540, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE));
-					removeButton.setText("remove");
-					removeButton.setPreferredSize(new java.awt.Dimension(18, 18));
+					removeButton.setPreferredSize(new java.awt.Dimension(21, 21));
 				}
 				{
-					disableButton = new JButton();
-					rightPanel.add(disableButton, new AnchorConstraint(872, 578, 913, 228, 
+					disableButton = new IconButton("/icons/reload_16.png","Toggle active",this,"active");
+					rightPanel.add(disableButton, new AnchorConstraint(872, 578, 913, 240, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-					disableButton.setText("disable");
-					disableButton.setPreferredSize(new java.awt.Dimension(18, 18));
+					disableButton.setPreferredSize(new java.awt.Dimension(21, 21));
 				}
 				{
-					editButton = new JButton();
-					rightPanel.add(editButton, new AnchorConstraint(872, 190, 904, 84, 
+					editButton = new IconButton("/icons/edit_16.png","Edit component",this,"edit");
+					rightPanel.add(editButton, new AnchorConstraint(872, 190, 904, 100, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_REL));
-					editButton.setText("edit");
-					editButton.setPreferredSize(new java.awt.Dimension(18, 18));
+					editButton.setPreferredSize(new java.awt.Dimension(21, 21));
 				}
 				{
 					elementsPanel = new JPanel();
@@ -368,11 +376,11 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				bottomPanel.setPreferredSize(new java.awt.Dimension(688, 59));
 				{
-					helpButton = new JButton();
-					bottomPanel.add(helpButton, new AnchorConstraint(364, 51, 703, 19, 
-							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+					helpButton = new HelpButton("pmwiki.php?n=Main.PlotBuilder");
+					bottomPanel.add(helpButton, new AnchorConstraint(364, 51, 872, 19, 
+							AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 							AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
-					helpButton.setPreferredSize(new java.awt.Dimension(22, 20));
+					helpButton.setPreferredSize(new java.awt.Dimension(36, 36));
 				}
 				{
 					okayCancel = new OkayCancelPanel(true,true,this);
@@ -387,6 +395,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			pack();
 			this.addWindowListener(this);
 			this.setSize(705, 620);
+			this.setTitle("Plot Builder");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -450,6 +459,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			}
 			DeviceInterface.plot(cmd,device);
 			device.initRefresh();
+			retractTopPanel();
 		}catch(Exception e){e.printStackTrace();}
 	}
 	
@@ -472,7 +482,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 
 				public void run() {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(500);
 						if(overComponent==true && ind<4)
 							expandTopPanel();						
 					} catch (Exception e) {
@@ -491,7 +501,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 
 				public void run() {
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(500);
 						if(overComponent==false)
 							retractTopPanel();						
 					} catch (Exception e) {
@@ -781,6 +791,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 					return;
 				AddElementPopupMenu.element = (PlottingElement) 
 											list.getModel().getElementAt(i);
+				AddElementPopupMenu.pBuilder = PlotBuilder.this;
 				AddElementPopupMenu.getPopup().show(e.getComponent(),
 						e.getX(),e.getY());
 			}								
@@ -791,7 +802,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	static class AddElementPopupMenu{
 		private static JPopupMenu popup;
 		private static PlottingElement element;
-		
+		private static PlotBuilder pBuilder;
 		private static JPopupMenu getPopup(){
 			if(popup==null){
 				popup = new JPopupMenu();
@@ -800,7 +811,24 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 				menuItem.addActionListener(new ActionListener(){
 					
 					public void actionPerformed(ActionEvent e) {
-						JOptionPane.showMessageDialog(null, "Add:" + element.getName());
+						PlottingElement p = (PlottingElement) element.clone();
+						if(p.getModel() instanceof Layer){
+							Layer layer = (Layer) p.getModel();
+							pBuilder.model.tryToFillRequiredAess(layer);
+							String s = layer.checkValid();
+							if(s!=null){
+								PlottingElementDialog d = 
+									new PlottingElementDialog(pBuilder,p);
+								d.setModal(true);
+								d.setLocationRelativeTo(pBuilder);
+								d.setVisible(true);
+								s = layer.checkValid();
+								if(s!=null)
+									return;
+							}
+						}
+						pBuilder.model.getListModel().addElement(p);
+						pBuilder.updatePlot();
 					}
 					
 				});
@@ -810,6 +838,9 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 					
 					public void actionPerformed(ActionEvent e) {
 						JOptionPane.showMessageDialog(null, "get info:" + element.getName());
+						String url = element.getUrl();
+						if(url!=null && url.length()>0)
+							HelpButton.showInBrowser(url);
 					}
 					
 				});
@@ -834,6 +865,25 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			this.setModel(initialModel);
 		}else if(cmd == "Cancel")
 			this.dispose();
+		else if(cmd == "remove"){
+			PlottingElement element = (PlottingElement) elementsList.getSelectedValue();
+			if(element!=null){
+				((DefaultListModel)elementsList.getModel()).removeElement(element);
+				updatePlot();			
+			}
+		}else if(cmd == "edit"){
+			PlottingElement element = (PlottingElement) elementsList.getSelectedValue();
+			if(element!=null)
+				this.openLayerSheet(element);
+		}else if(cmd == "active"){
+			PlottingElement element = (PlottingElement) elementsList.getSelectedValue();
+			if(element!=null){
+				element.setActive(!element.isActive());
+				elementsList.validate();
+				elementsList.repaint();
+				updatePlot();
+			}
+		}
 	}
 	
 	public class PlotPanel extends JGDPanel{

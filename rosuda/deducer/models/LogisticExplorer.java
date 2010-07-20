@@ -6,13 +6,14 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 
 public class LogisticExplorer extends GLMExplorer {
 
 	LogisticExplorer(GLMModel mod) {
 		super(mod);
 		this.setTitle("Logistic Model Explorer");
-		help.setUrl("pmwiki.php?n=Main.LogisticModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 	}
 	public void initTabs(){
 		try{

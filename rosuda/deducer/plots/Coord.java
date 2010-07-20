@@ -151,8 +151,6 @@ public class Coord implements ElementModel{
 				};
 		c.params.add(p);
 		
-		System.out.println(p.labels.length + " " + p.options.length);
-		
 		p = new Param();
 		p.name = "lat0";
 		p.title = "lat0";
@@ -284,7 +282,6 @@ public class Coord implements ElementModel{
 	
 	
 	public static Coord makeCoord(String coord){
-		System.out.println(coord);
 		if(coord.equals("cartesian"))
 			return makeCartesian();
 		else if(coord.equals("equal"))

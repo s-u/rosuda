@@ -131,6 +131,14 @@ public class OkayCancelPanel extends JPanel {
 	public JButton getApproveButton(){
 		return okayButton;
 	}
+	
+	public JButton getResetButton(){
+		return resetButton;
+	}
+	
+	public JButton getCancelButton(){
+		return cancelButton;
+	}
 
 }
 

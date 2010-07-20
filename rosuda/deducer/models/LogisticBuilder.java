@@ -4,6 +4,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 
 public class LogisticBuilder extends GLMBuilder {
 
@@ -13,7 +14,7 @@ public class LogisticBuilder extends GLMBuilder {
 			JOptionPane.showMessageDialog(this, "Internal Error: Invalid ModelModel");
 			mod=new LogisticModel();
 		}
-		help.setUrl("pmwiki.php?n=Main.LogisticModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LogisticModel");
 		setModel(mod);
 		this.setTitle("Logistic Regression Model Builder");
 	}

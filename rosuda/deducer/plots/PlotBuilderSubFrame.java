@@ -1,6 +1,7 @@
 package org.rosuda.deducer.plots;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 import org.rosuda.deducer.toolkit.SideWindow;
 
@@ -21,6 +22,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 	private JPanel elementView;
 	private PlottingElement element;
 	private ElementModel initialModel;
+	private HelpButton help;
 
 	
 	public PlotBuilderSubFrame(Window theParent) {
@@ -36,11 +38,21 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				okayCancel = new OkayCancelPanel(false,false,this);
+				help = new HelpButton("");
+				getContentPane().add(help, new AnchorConstraint(923, 92, 6, 12, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
+				help.setPreferredSize(new java.awt.Dimension(36, 36));
+			}
+			{
+				okayCancel = new OkayCancelPanel(true,false,this);
 				getContentPane().add(okayCancel, new AnchorConstraint(929, 17, 6, 504, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
-				okayCancel.setPreferredSize(new java.awt.Dimension(200, 38));
+				okayCancel.setPreferredSize(new java.awt.Dimension(300, 38));
+				okayCancel.getCancelButton().setText("Apply");
+				okayCancel.getResetButton().setText("Cancel");
+				
 			}
 			pack();
 			this.setSize(455, 554);
@@ -66,6 +78,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 		getContentPane().add(elementView, new AnchorConstraint(0, 1001, 44, 1, 
 				AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
 				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL));
+		help.setUrl(element.getUrl());
 	}
 	
 	public void setToInitialModel(){
@@ -74,7 +87,7 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
-		if(cmd == "OK"){
+		if(cmd == "OK" || cmd == "Apply"){
 			try{
 			ElementView ev = (ElementView) elementView;
 			ElementModel em = ev.getModel();
@@ -83,7 +96,9 @@ public class PlotBuilderSubFrame extends SideWindow implements ActionListener{
 				JOptionPane.showMessageDialog(this, s);
 				return;
 			}else{
-				this.setVisible(false);
+				if(cmd=="OK")
+					this.setVisible(false);
+				initialModel = (ElementModel) element.getModel().clone();
 			}
 			}catch(Exception e){e.printStackTrace();}
 			((PlotBuilder)parent).updatePlot();

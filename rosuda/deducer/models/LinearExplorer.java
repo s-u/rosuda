@@ -5,13 +5,14 @@ import javax.swing.JButton;
 import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 
 public class LinearExplorer extends GLMExplorer{
 	protected IconButton assumpOutlier;
 	LinearExplorer(GLMModel mod) {
 		super(mod);
-		help.setUrl("pmwiki.php?n=Main.LinearModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LinearModel");
 		this.setTitle("Linear Regression Model Explorer");
 	}
 	

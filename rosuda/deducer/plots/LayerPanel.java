@@ -136,6 +136,7 @@ public class LayerPanel extends ElementView implements ActionListener{
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL));
 				variableSelector.setPreferredSize(new java.awt.Dimension(153, 479));
 				variableSelector.setBorder(BorderFactory.createEtchedBorder(BevelBorder.LOWERED));
+				variableSelector.setCopyMode(true);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -252,7 +253,7 @@ public class LayerPanel extends ElementView implements ActionListener{
 
 	public void actionPerformed(ActionEvent arg0) {
 		String cmd = arg0.getActionCommand();
-		System.out.println(cmd);
+		//System.out.println(cmd);
 		if(arg0.getSource() == statBox){
 			updateModel();
 			String statName = statBox.getSelectedItem().toString();

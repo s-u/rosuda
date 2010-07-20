@@ -3,6 +3,7 @@ package org.rosuda.deducer.models;
 import javax.swing.JOptionPane;
 
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 
 public class LinearBuilder extends GLMBuilder {
 
@@ -13,7 +14,7 @@ public class LinearBuilder extends GLMBuilder {
 			mod=new LinearModel();
 		}
 		setModel(mod);
-		help.setUrl("pmwiki.php?n=Main.LinearModel");
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.LinearModel");
 		this.setTitle("Linear Regression Model Builder");
 	}
 	

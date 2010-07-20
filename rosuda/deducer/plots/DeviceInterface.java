@@ -24,7 +24,7 @@ public class DeviceInterface extends GDInterface{
             c.reset();
             c.setDeviceNumber(devNr);
         }
-        System.out.println("new page called : " + devNr + " = dev number");
+        //System.out.println("new page called : " + devNr + " = dev number");
     }
 	
 	public static void plot(String call,PlotBuilder.PlotPanel pl){
@@ -40,7 +40,7 @@ public class DeviceInterface extends GDInterface{
 			String cmd = "";
 			cmd = call.replace('\n', ' ');
 			cmd = cmd.replace('\t', ' ');
-			System.out.println(cmd);
+			//System.out.println(cmd);
 			Deducer.eval("print(" + cmd +")");
 			Deducer.eval("Sys.setenv(\"JAVAGD_CLASS_NAME\"=\"org/rosuda/JGR/toolkit/JavaGD\")");
 		}catch(Exception e){e.printStackTrace();}

@@ -246,7 +246,7 @@ public class RDialog extends JDialog {
 	 * @param page
 	 */
 	public void setHelpWikiPage(String page){
-		helpButton.setUrl(page);
+		helpButton.setUrl(HelpButton.baseUrl + page);
 	}
 	
 	/**

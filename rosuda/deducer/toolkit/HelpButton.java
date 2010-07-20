@@ -11,7 +11,7 @@ public class HelpButton extends IconButton {
 	public String url;
 	public HelpButton(String helpUrl) {
 		super("/icons/info_28.png", "help",null, "help");
-		url = helpUrl;
+		url = baseUrl + helpUrl;
 		this.addActionListener(new actLis());
 	}
 
@@ -71,7 +71,8 @@ public class HelpButton extends IconButton {
 	class actLis implements ActionListener{
 
 		public void actionPerformed(ActionEvent arg0) {
-			showInBrowser(baseUrl+url);
+			if(url!=null && url.length()>0)
+				showInBrowser(url);
 		}
 		
 	}

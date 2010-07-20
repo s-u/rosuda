@@ -330,7 +330,7 @@ public class Scale implements ElementModel{
 		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
 		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
@@ -394,7 +394,7 @@ public class Scale implements ElementModel{
 		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
 		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
@@ -472,7 +472,7 @@ public class Scale implements ElementModel{
 		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
 		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
@@ -836,7 +836,7 @@ public class Scale implements ElementModel{
 		p = new ParamScaleLegend();
 		p.name = "legend";
 		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
+		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
 		p.view = ParamScaleLegend.VIEW_SCALE;
 		s.params.add(p);		
 		
@@ -879,7 +879,6 @@ public class Scale implements ElementModel{
 	}
 	
 	public static Scale makeScale(String aes,String scale){
-		System.out.println(scale);
 		if(scale.equals("linetype"))
 			return makeLineType();
 		else if(scale.equals("discrete"))

@@ -508,6 +508,10 @@ public class DataFrameWindow extends TJFrame implements ActionListener {
 				if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
 					((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().copySelection();
 				}
+			}else if (cmd == "paste") {
+				if(jTabbedPane1.getSelectedComponent() instanceof org.rosuda.deducer.data.ExScrollableTable){
+					((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().pasteSelection();
+				}
 			} else if (cmd == "print"){
 				try{
 					((ExScrollableTable) jTabbedPane1.getSelectedComponent()).getExTable().print(JTable.PrintMode.NORMAL);

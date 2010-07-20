@@ -47,11 +47,11 @@ public class ParamScaleWidget extends ParamWidget{
 		ExDefaultTableModel tm = legendPanel.getTableModel();
 		if(model.dataType == ParamScaleLegend.DATA_SCALE_NUMERIC)
 			for(int j=0;j<tm.getColumnCount();j++){
-				String val = (String) tm.getValueAt(0, j);
+				String val = (String) tm.getValueAt(j, 0);
 				try{
 					Double.parseDouble(val);
 				}catch(Exception e){
-					tm.setValueAt("", 0, j);
+					tm.setValueAt("", j, 0);
 				}
 			}
 		legendPanel.setTableModel(tm);

@@ -10,12 +10,27 @@ import org.rosuda.deducer.toolkit.VariableSelector;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -27,6 +42,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -34,6 +50,7 @@ import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -69,6 +86,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	
 	private FocusListener valueValidator = new ValueValidator();
 
+	private static AesTransferHandler transferHandler;
 	
 	public AesWidget() {
 		super();
@@ -77,7 +95,6 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		if(shapeOptions==null)
 			initShapeOptions();
 		initGUI();
-		//(new Thread((new ButtonRefresher()))).start();
 	}
 	
 	public AesWidget(Aes aes,VariableSelector var){
@@ -158,6 +175,51 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					variable.addMouseListener(this);
 					editor.addMouseListener(this);
 					variable.addActionListener(this);
+					if(transferHandler == null)
+						transferHandler = new AesTransferHandler();
+					editor.setTransferHandler(transferHandler);
+					MouseListener listener = new MouseListener() {
+						public void mousePressed(MouseEvent me) {
+							System.out.println("mouse pressed");
+							JComponent comp = (JComponent) me.getSource();
+							TransferHandler handler = comp.getTransferHandler();
+					        handler.exportAsDrag(comp, me, TransferHandler.MOVE);
+						}
+
+						public void mouseClicked(MouseEvent arg0) {
+							System.out.println("mouse cl");
+						}
+
+						public void mouseEntered(MouseEvent arg0) {
+							System.out.println("mouse en");
+						}
+
+						public void mouseExited(MouseEvent arg0) {
+							System.out.println("mouse ex");
+						}
+
+						public void mouseReleased(MouseEvent arg0) {
+							System.out.println("mouse re");
+						}
+					};
+					DragGestureListener dgl = new DragGestureListener(){
+
+						public void dragGestureRecognized(DragGestureEvent dge) {
+							System.out.println(dge.toString());
+							try{
+								dge.startDrag(null, transferHandler.createTransferable(
+										(AesComboBoxEditor) variable.getEditor()));
+							}catch(Exception e){
+								
+							}
+						}
+						
+					};
+					DragSource dragSource = DragSource.getDefaultDragSource();
+					dragSource.createDefaultDragGestureRecognizer(editor,
+					        DnDConstants.ACTION_COPY_OR_MOVE, dgl);
+					editor.addMouseListener(listener);
+					
 				}
 				{
 					slider = new JSlider(0,10000);
@@ -460,7 +522,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			variable.setVisible(true);
 			addRemoveButton.setVisible(true);
-			scale.setVisible(true);
+			scale.setVisible(false);
 			toggleVariable.setSelected(true);
 			toggleValue.setSelected(false);
 			valueComponent.setVisible(false);
@@ -480,6 +542,8 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 	}
 	
 	public void refreshAddRemoveButton(){
+		if(addRemoveButton==null || variable ==null)
+			return;
 		if(variable.getSelectedItem()== null || 
 				variable.getSelectedItem().toString().length()<=0){
 			
@@ -594,11 +658,15 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			return this.getText();
 		}
 
-		public void setItem(Object arg0) {
-			if(arg0!=null)
-				this.setText(arg0.toString());
-			else
+		public void setItem(Object o) {
+			if(o!=null){
+				this.setText(o.toString());
+				variable.setSelectedItem(o.toString());
+			}else{
 				this.setText("");
+				variable.setSelectedItem("");
+			}
+			refreshAddRemoveButton();
 		}
 
 		public void addActionListener(ActionListener l) {}
@@ -650,41 +718,89 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			}
 		}
 	}
-	
-	class ButtonRefresher implements Runnable {
-		public ButtonRefresher() {
-		}
 
-		public void run() {
-			while (true)
-				try {
-					Thread.sleep(1000);
-					if(AesWidget.this.isShowing()){
-						Runnable doWorkRunnable = new Runnable() {
-							public void run() { 
-								if(variable.getSelectedItem()== null || 
-										variable.getSelectedItem().toString().length()<=0){
-									
-									addRemoveButton.setToolTipText("add");
-									addRemoveButton.setActionCommand("add");
-									ImageIcon icon = 
-										new ImageIcon(getClass().getResource("/icons/1rightarrow_32.png"));
-									addRemoveButton.setIcon(icon);
-								}else{
-									addRemoveButton.setToolTipText("remove");
-									addRemoveButton.setActionCommand("remove");
-									ImageIcon icon =
-										new ImageIcon(getClass().getResource("/icons/1leftarrow_32.png"));
-									addRemoveButton.setIcon(icon);
-								}
-							}};
-						SwingUtilities.invokeLater(doWorkRunnable);
-					}
-				} catch (Exception e) {
-					new ErrorMsg(e);
+	class AesTransferHandler extends TransferHandler{
+		
+
+		DataFlavor arrayListFlavor = new DataFlavor(ArrayList.class, "ArrayList");
+		
+		ArrayList lastData = new ArrayList();
+		
+		public boolean canImport(JComponent c, DataFlavor[] flavors) {
+			System.out.println("can import?");
+			return true;
+		}
+		
+		public int getSourceActions(JComponent c) {
+			System.out.println("get source action");
+			return COPY_OR_MOVE;
+		}
+		public boolean importData(JComponent c, Transferable t) {
+			System.out.println("importing");
+			try{
+				if(t.isDataFlavorSupported(arrayListFlavor)){
+					ArrayList al = (ArrayList) t.getTransferData(arrayListFlavor);
+					if(al.size()>1)
+						return false;
+					String val = al.get(0).toString();
+					AesComboBoxEditor editor = (AesComboBoxEditor) c;
+					editor.setItem(val);
+					return true;
 				}
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			return false;
+		}
+		
+		public void exportAsDrag(JComponent comp, InputEvent e, int action){
+			System.out.println("export as drag");
+		}
+		
+		protected void exportDone(JComponent c, Transferable data, int action) {
+			System.out.println("export done");
+			AesComboBoxEditor editor = (AesComboBoxEditor) c;
+			//if(action == DnDConstants.ACTION_MOVE)
+				editor.setItem("");
+		}
+		
+		public Transferable createTransferable(JComponent c){
+			System.out.println("create transferable");
+			ArrayList l = new ArrayList();
+			AesComboBoxEditor editor = (AesComboBoxEditor) c;
+			l.add(editor.getText());
+			editor.setItem("");
+			return new ArrayListTransferable(l);
 		}
 	}
+	
+	public class ArrayListTransferable implements Transferable {
+		DataFlavor arrayListFlavor = new DataFlavor(ArrayList.class, "ArrayList");
+	    ArrayList data;
+
+	    public ArrayListTransferable(ArrayList alist) {
+	      data = alist;
+	    }
+
+	    public Object getTransferData(DataFlavor flavor)
+	        throws UnsupportedFlavorException {
+	      if (!isDataFlavorSupported(flavor)) {
+	        throw new UnsupportedFlavorException(flavor);
+	      }
+	      return data;
+	    }
+
+	    public DataFlavor[] getTransferDataFlavors() {
+	      return new DataFlavor[] { arrayListFlavor};
+	    }
+
+	    public boolean isDataFlavorSupported(DataFlavor flavor) {
+	      if (arrayListFlavor.equals(flavor)) {
+	        return true;
+	      }
+	      return false;
+	    }
+	  }
 
 
 }

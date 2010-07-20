@@ -1,6 +1,7 @@
 package org.rosuda.deducer.plots;
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 import java.awt.BorderLayout;
@@ -17,7 +18,7 @@ import javax.swing.JPanel;
 public class PlottingElementDialog extends javax.swing.JDialog implements ActionListener {
 	private JPanel panel;
 	private JPanel okayCancel;
-	private JButton help;
+	private HelpButton help;
 	private ElementView view;
 	private ElementModel initialModel;
 	private PlottingElement element;
@@ -33,20 +34,26 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				help = new JButton();
-				getContentPane().add(help, new AnchorConstraint(923, 92, 12, 12, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
-				help.setPreferredSize(new java.awt.Dimension(29, 26));
+				help = new HelpButton("");
+				getContentPane().add(help, new AnchorConstraint(923, 92, 12, 12, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
+				help.setPreferredSize(new java.awt.Dimension(36, 36));
 			}
 			{
 				okayCancel = new OkayCancelPanel(false,false,this);
-				getContentPane().add(okayCancel, new AnchorConstraint(923, 21, 0, 521, AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
+				getContentPane().add(okayCancel, new AnchorConstraint(923, 21, 0, 521, 
+						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_NONE));
 				okayCancel.setPreferredSize(new java.awt.Dimension(195, 38));
 			}
 			{
 				panel = new JPanel();
 				BorderLayout panelLayout = new BorderLayout();
 				panel.setLayout(panelLayout);
-				getContentPane().add(panel, new AnchorConstraint(1, 994, 44, 1, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL));
+				getContentPane().add(panel, new AnchorConstraint(1, 994, 44, 1, 
+						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_REL, 
+						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL));
 				panel.setPreferredSize(new java.awt.Dimension(447, 449));
 			}
 			this.setSize(450, 515);
@@ -60,6 +67,7 @@ public class PlottingElementDialog extends javax.swing.JDialog implements Action
 		view = (ElementView) el.getPanel();
 		panel.add(view);
 		initialModel = (ElementModel) el.getModel().clone();
+		help.setUrl(el.getUrl());
 		element = el;
 	}
 	public void setToInitialModel(){

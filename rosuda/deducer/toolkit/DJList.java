@@ -217,7 +217,7 @@ class ArrayListTransferHandler extends TransferHandler {
 	    //be problematic when removing the original items.
 	    //This is interpreted as dropping the same data on itself
 	    //and has no effect.
-	    if (source.equals(target)) {
+	    if (source!=null && source.equals(target)) {
 	      if (indices != null && index >= indices[0] - 1
 	          && index <= indices[indices.length - 1]) {
 	        indices = null;
@@ -242,7 +242,7 @@ class ArrayListTransferHandler extends TransferHandler {
 	      //If we are moving items around in the same list, we
 	      //need to adjust the indices accordingly since those
 	      //after the insertion point have moved.
-	      if(source.equals(target))
+	      if(source!=null && source.equals(target))
 	    	  if (addCount > 0) {
 	    		  for (int i = 0; i < indices.length; i++) {
 	    			  if (indices[i] > addIndex) {
@@ -255,6 +255,7 @@ class ArrayListTransferHandler extends TransferHandler {
 	    }
 	    indices = null;
 	    target=null;
+	    source=null;
 	    addIndex = -1;
 	    addCount = 0;
 	  }

@@ -514,6 +514,8 @@ public class TransformDialog extends JDialog implements ActionListener{
 			String entry = (String) transformVariableList.getSelectedValue();
 			entry = entry.substring(0,entry.indexOf("\u2192"));
 			String newVar = (String) JOptionPane.showInputDialog(this,"Recode "+entry+" into:");
+			if(newVar==null || newVar.length()==0)
+				return;
 			newVar = RController.makeValidVariableName(newVar);
 			((DefaultListModel) transformVariableList.getModel()).removeElementAt(selectedIndex);
 			((DefaultListModel) transformVariableList.getModel()).addElement(entry+"\u2192"+newVar);

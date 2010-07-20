@@ -21,10 +21,10 @@ public class PlottingElement implements Transferable{
 	
 	
 	private ImageIcon icon;
-	private JPanel panel;
 	
 	private String name;
 	private String type;
+	private String helpUrl = "";
 	
 	private boolean active = true;
 	private boolean compound = false; //can break out into other elements
@@ -43,22 +43,29 @@ public class PlottingElement implements Transferable{
 		if(type=="geom"){
 			l = Layer.makeGeomLayer(name);
 			model = l;			
+			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
 		}else if(type == "stat"){
 			l = Layer.makeStatLayer(name);
 			model = l;
+			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
 		}else if(type == "scale"){
 			String[] s = name.split("_");
 			if(s.length>1){
 				model = Scale.makeScale(s[0], s[1]);
+				helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+s[1]+".html";
 			}else {
 				model = Scale.makeScale(null, s[0]);
+				helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+s[0]+".html";
 			}
+			
 		}else if(type == "coord"){
 			Coord c = Coord.makeCoord(name);
 			model = c;
+			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
 		}else if(type == "facet"){
 			Facet f = Facet.makeFacet(name);
 			model = f;
+			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
 		}else if(type == "theme"){
 			Theme t = Theme.makeTheme(name);
 			model = t;
@@ -71,6 +78,7 @@ public class PlottingElement implements Transferable{
 		p.icon = this.icon;
 		p.name = this.name;
 		p.type = this.type;
+		p.helpUrl = this.helpUrl;
 		return p;
 	}
 	
@@ -138,6 +146,14 @@ public class PlottingElement implements Transferable{
 	
 	public void setModel(ElementModel m){
 		model = m;
+	}
+	
+	public String getUrl(){
+		return helpUrl;
+	}
+	
+	public void setUrl(String url){
+		helpUrl = url;
 	}
 	
 	public boolean isActive(){return active;}

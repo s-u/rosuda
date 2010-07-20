@@ -10,6 +10,7 @@ import org.rosuda.JGR.util.ErrorMsg;
 import org.rosuda.REngine.REXPLogical;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.WindowTracker;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 
 public class GLMExplorer extends ModelExplorer implements WindowListener{
@@ -26,7 +27,7 @@ public class GLMExplorer extends ModelExplorer implements WindowListener{
 	GLMExplorer(GLMModel mod){
 		super();
 		this.setTitle("Generalized Linear Model Explorer");
-		help.setUrl("pmwiki.php?n=Main.GeneralizedLinearModel");		
+		help.setUrl(HelpButton.baseUrl + "pmwiki.php?n=Main.GeneralizedLinearModel");		
 		setModel(mod);
 		initTabs();
 		initAssumptions();
