@@ -67,11 +67,19 @@ public class Deducer {
 		started=false;
 		try{
 			if(jgr && ((JRIEngine)JGR.getREngine()).getRni()!=null){
+				startWithJGR();
 				(new Thread() {
 					public void run() {
-						startWithJGR();
+					    if(DeducerPrefs.VIEWERATSTARTUP){
+						   	DataFrameWindow inst = new DataFrameWindow();
+					    	inst.setLocationRelativeTo(null);
+					    	inst.setVisible(true);
+					    	JGR.MAINRCONSOLE.toFront(); 
+				    	}
+						new Thread(new DataRefresher()).start();
 					}
 				}).start();
+
 			}
 		}catch(Exception e){
 			new ErrorMsg(e);
@@ -150,12 +158,7 @@ public class Deducer {
 				menuIndex++;
 			}
 			
-		    if(DeducerPrefs.VIEWERATSTARTUP){
-			   	DataFrameWindow inst = new DataFrameWindow();
-		    	inst.setLocationRelativeTo(null);
-		    	inst.setVisible(true);
-		    	JGR.MAINRCONSOLE.toFront(); 
-	    	}
+
 		    
 		    insertMenu(JGR.MAINRCONSOLE,"Plots",menuIndex);
 		    EzMenuSwing.addJMenuItem(JGR.MAINRCONSOLE, "Plots", "Plot Builder", "plotbuilder", cListener);
@@ -187,7 +190,6 @@ public class Deducer {
 			//preferences
 			PrefPanel prefs = new PrefPanel();
 			PrefDialog.addPanel(prefs, prefs);
-			new Thread(new DataRefresher()).start();
 			started=true;
 		}catch(Exception e){
 			e.printStackTrace();
