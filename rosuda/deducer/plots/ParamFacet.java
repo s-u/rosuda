@@ -29,8 +29,8 @@ public class ParamFacet extends Param{
 		asTableWrap = new Boolean(true);
 		drop = new Boolean(true);
 		margins = new Boolean(false);
-		name = "facet";
-		title = "facet";
+		setName("facet");
+		setTitle("facet");
 		ncol = null;
 		nrow = null;
 		scaleGrid = "fixed";
@@ -132,5 +132,25 @@ public class ParamFacet extends Param{
 			calls[i] = v.get(i).toString();
 			
 		return calls;
+	}
+
+	public Object getDefaultValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setDefaultValue(Object defaultValue) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setValue(Object value) {
+		// TODO Auto-generated method stub
+		
 	}
 }

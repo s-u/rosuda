@@ -6,6 +6,11 @@ import java.util.Vector;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamCharacter;
+import org.rosuda.deducer.widgets.param.ParamColor;
+import org.rosuda.deducer.widgets.param.ParamNumeric;
+import org.rosuda.deducer.widgets.param.ParamRFunction;
+import org.rosuda.deducer.widgets.param.ParamVector;
 import org.rosuda.deducer.widgets.param.RFunction;
 
 public class Theme implements ElementModel{
@@ -18,16 +23,15 @@ public class Theme implements ElementModel{
 		Theme t = new Theme();
 		t.name = "theme_bw";
 		
-		Param p;
+		ParamNumeric p;
 		
-		p = new Param();
-		p.name = "base_size";
-		p.title = "base text size";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(12);
-		p.defaultValue = new Double(12);
-		p.lowerBound = new Double(0);
+		p = new ParamNumeric();
+		p.setName("base_size");
+		p.setTitle("base text size");
+		p.setViewType(Param.VIEW_ENTER);
+		p.setValue(new Double(12));
+		p.setDefaultValue(new Double(12));
+		p.setLowerBound(new Double(0));
 		t.params.add(p);
 		
 		return t;
@@ -38,16 +42,15 @@ public class Theme implements ElementModel{
 		Theme t = new Theme();
 		t.name = "theme_grey";
 		
-		Param p;
+		ParamNumeric p;
 		
-		p = new Param();
-		p.name = "base_size";
-		p.title = "base text size";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(12);
-		p.defaultValue = new Double(12);
-		p.lowerBound = new Double(0);
+		p = new ParamNumeric();
+		p.setName("base_size");
+		p.setTitle("base text size");
+		p.setViewType(Param.VIEW_ENTER);
+		p.setValue(new Double(12));
+		p.setDefaultValue(new Double(12));
+		p.setLowerBound(new Double(0));
 		t.params.add(p);
 		
 		return t;
@@ -57,385 +60,189 @@ public class Theme implements ElementModel{
 		Theme t = new Theme();
 		t.name = "opts";
 		Param p;
-		HashMap hm;
-		Vector v ;
+		ParamRFunction pf;
 		
-		p = new Param();
-		p.name = "title";
-		p.title = "title";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_ENTER_LONG;
-		p.value = null;
-		p.defaultValue = null;
+		p = new ParamCharacter();
+		p.setName("title");
+		p.setTitle("title");
+		p.setViewType(Param.VIEW_ENTER_LONG);
+		p.setValue(null);
+		p.setDefaultValue(null);
 		t.params.add(p);		
 		
-		p = new Param();
-		p.name = "axis.line";
-		p.title = "axis.line";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_segment"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_segment", makeThemeSegment());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
+		pf = new ParamRFunction();
+		pf.setName("axis.line");
+		pf.setTitle("axis.line");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_segment", makeThemeSegment());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.text.x");
+		pf.setTitle("axis.text.x");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.text.y");
+		pf.setTitle("axis.text.y");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.ticks");
+		pf.setTitle("axis.ticks");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_segment", makeThemeSegment());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.title.x");
+		pf.setTitle("axis.title.x");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.title.y");
+		pf.setTitle("axis.title.y");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.ticks.length");
+		pf.setTitle("axis.ticks.length");
+		pf.addRFunction("unit", makeUnit());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("axis.ticks.margin");
+		pf.setTitle("axis.ticks.margin");
+		pf.addRFunction("unit", makeUnit());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("legend.background");
+		pf.setTitle("legend.background");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_rect", makeThemeRect());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("legend.key");
+		pf.setTitle("legend.key");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_rect", makeThemeRect());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("legend.key.size");
+		pf.setTitle("legend.key.size");
+		pf.addRFunction("unit", makeUnit());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("legend.text");
+		pf.setTitle("legend.text");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		pf = new ParamRFunction();
+		pf.setName("legend.title");
+		pf.setTitle("legend.title");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
+		
+		p = new ParamCharacter("legend.position");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setOptions(new String[] {"right","left"});
 		t.params.add(p);
 		
-		p = new Param();
-		p.name = "axis.text.x";
-		p.title = "axis.text.x";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
+		p = new ParamVector("legend.position");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		p.setLowerBound(new Double(0));
+		p.setUpperBound(new Double(1));
 		t.params.add(p);
 		
-		p = new Param();
-		p.name = "axis.text.y";
-		p.title = "axis.text.y";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("panel.background");
+		pf.setTitle("panel.background");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_rect", makeThemeRect());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "axis.ticks";
-		p.title = "axis.ticks";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_segment"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_segment", makeThemeSegment());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("panel.border");
+		pf.setTitle("panel.border");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_segment", makeThemeSegment());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "axis.title.x";
-		p.title = "axis.title.x";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("panel.grid.major");
+		pf.setTitle("panel.grid.major");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_line", makeThemeLine());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "axis.title.y";
-		p.title = "axis.title.y";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("panel.grid.minor");
+		pf.setTitle("panel.grid.minor");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_line", makeThemeLine());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "axis.ticks.length";
-		p.title = "axis.ticks.length";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"unit"};
-		hm = new HashMap();
-		hm.put("unit", makeUnit());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("panel.margin");
+		pf.setTitle("panel.margin");
+		pf.addRFunction("unit", makeUnit());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "axis.ticks.margin";
-		p.title = "axis.ticks.margin";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"unit"};
-		hm = new HashMap();
-		hm.put("unit", makeUnit());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("strip.background");
+		pf.setTitle("strip.background");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_rect", makeThemeRect());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "legend.background";
-		p.title = "legend.background";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_rect"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_rect", makeThemeRect());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("strip.text.x");
+		pf.setTitle("strip.text.x");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "legend.key";
-		p.title = "legend.key";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_rect"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_rect", makeThemeRect());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("strip.text.y");
+		pf.setTitle("strip.text.y");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "legend.key.size";
-		p.title = "legend.key.size";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"unit"};
-		hm = new HashMap();
-		hm.put("unit", makeUnit());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("plot.background");
+		pf.setTitle("plot.background");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_rect", makeThemeRect());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "legend.text";
-		p.title = "legend.text";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("plot.title");
+		pf.setTitle("plot.title");
+		pf.addRFunction("theme_blank", makeThemeBlank());
+		pf.addRFunction("theme_text", makeThemeText());
+		t.params.add(pf);
 		
-		p = new Param();
-		p.name = "legend.title";
-		p.title = "legend.title";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param("legend.position");
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.options = new String[] {"right","left"};
-		t.params.add(p);
-		
-		p = new Param("legend.position");
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "panel.background";
-		p.title = "panel.background";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_rect"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_rect", makeThemeRect());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "panel.border";
-		p.title = "panel.border";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_segment"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_segment", makeThemeSegment());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "panel.grid.major";
-		p.title = "panel.grid.major";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_line"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_line", makeThemeLine());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "panel.grid.minor";
-		p.title = "panel.grid.minor";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_line"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_line", makeThemeLine());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "panel.margin";
-		p.title = "panel.margin";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"unit"};
-		hm = new HashMap();
-		hm.put("unit", makeUnit());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "strip.background";
-		p.title = "strip.background";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_rect"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_rect", makeThemeRect());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "strip.text.x";
-		p.title = "strip.text.x";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "strip.text.y";
-		p.title = "strip.text.y";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "plot.background";
-		p.title = "plot.background";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_rect"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_rect", makeThemeRect());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "plot.title";
-		p.title = "plot.title";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"theme_blank","theme_text"};
-		hm = new HashMap();
-		hm.put("theme_blank", makeThemeBlank());
-		hm.put("theme_text", makeThemeText());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
-		
-		p = new Param();
-		p.name = "plot.margin";
-		p.title = "plot.margin";
-		p.dataType = Param.DATA_RFUNCTION;
-		p.view = Param.VIEW_RFUNCTION;
-		p.options = new String[]{"unit"};
-		hm = new HashMap();
-		hm.put("unit", makeUnit());
-		v = new Vector();
-		v.add("");
-		v.add(hm);
-		p.value = v;
-		t.params.add(p);
+		pf = new ParamRFunction();
+		pf.setName("plot.margin");
+		pf.setTitle("plot.margin");
+		pf.addRFunction("unit", makeUnit());
+		t.params.add(pf);
 		
 		return t;
 	}
@@ -450,80 +257,76 @@ public class Theme implements ElementModel{
 		RFunction rf = new RFunction();
 		rf.setName("theme_text");
 		
-		Param rfp = new Param("family");
-		rfp.title = "font family";
-		rfp.dataType = Param.DATA_CHARACTER;
-		rfp.view = Param.VIEW_EDITABLE_COMBO;
-		rfp.options = new String[] {"AvantGarde", "Bookman", "Courier", "Helvetica",
+		Param rfp;
+		ParamNumeric rfpn;
+		ParamCharacter rfpc;
+		
+		rfpc = new ParamCharacter("family");
+		rfpc.setTitle("font family");
+		rfpc.setViewType(Param.VIEW_EDITABLE_COMBO);
+		rfpc.setOptions(new String[] {"AvantGarde", "Bookman", "Courier", "Helvetica",
 				"Helvetica-Narrow", "NewCenturySchoolbook", "Palatino" ,"Times", "URWGothic", 
 				"URWBookman", "NimbusMon", "NimbusSan", "NimbusSanCond", "CenturySch", 
-				"URWPalladio" ,"NimbusRom"};
+				"URWPalladio" ,"NimbusRom"});
+		rf.add(rfpc);
+		
+		rfpc = new ParamCharacter("face");
+		rfpc.setViewType(Param.VIEW_COMBO);
+		rfpc.setOptions(new String[] {"plain","italic","bold"});
+		rfpc.setValue("plain");
+		rfpc.setDefaultValue("plain");
+		rf.add(rfpc);
+		
+		rfp = new ParamColor("colour");
+		rfp.setViewType(Param.VIEW_COLOR);
+		rfp.setValue(Color.black);
+		rfp.setDefaultValue(Color.black);
 		rf.add(rfp);
 		
-		rfp = new Param("face");
-		rfp.dataType = Param.DATA_CHARACTER;
-		rfp.view = Param.VIEW_COMBO;
-		rfp.options = new String[] {"plain","italic","bold"};
-		rfp.value = "plain";
-		rfp.defaultValue = "plain";
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("size");
+		rfpn.setTitle("size");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(10));
+		rfpn.setDefaultValue(new Double(10));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		
-		rfp = new Param("colour");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
-		rfp.value = Color.black;
-		rfp.defaultValue = Color.black;
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("vjust");
+		rfpn.setTitle("vjust");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(.5));
+		rfpn.setDefaultValue(new Double(.5));
+		rfpn.setLowerBound(new Double(0));
+		rfpn.setUpperBound(new Double(1));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "size";
-		rfp.title = "size";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(10);
-		rfp.defaultValue = new Double(10);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("hjust");
+		rfpn.setTitle("hjust");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(.5));
+		rfpn.setDefaultValue(new Double(.5));
+		rfpn.setLowerBound(new Double(0));
+		rfpn.setUpperBound(new Double(1));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "vjust";
-		rfp.title = "vjust";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rfp.upperBound = new Double(1);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("angle");
+		rfpn.setTitle("angle");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(0));
+		rfpn.setDefaultValue(new Double(0));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "hjust";
-		rfp.title = "hjust";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rfp.upperBound = new Double(1);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "angle";
-		rfp.title = "angle";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(0);
-		rfp.defaultValue = new Double(0);
-		rf.add(rfp);
-		
-		rfp = new Param();
-		rfp.name = "lineheight";
-		rfp.title = "lineheight";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1.1);
-		rfp.defaultValue = new Double(1.1);
-		rf.add(rfp);
+		rfp = new ParamNumeric();
+		rfpn.setName("lineheight");
+		rfpn.setTitle("lineheight");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(1.1));
+		rfpn.setDefaultValue(new Double(1.1));
+		rf.add(rfpn);
 		return rf;
 	}
 	
@@ -531,32 +334,32 @@ public class Theme implements ElementModel{
 		RFunction rf = new RFunction();
 		rf.setName("theme_segment");
 		
-		Param rfp = new Param("colour");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
-		rfp.value = Color.black;
-		rfp.defaultValue = Color.black;
+		Param rfp;
+		ParamNumeric rfpn;
+		
+		rfp = new ParamColor("colour");
+		rfp.setViewType(Param.VIEW_COLOR);
+		rfp.setValue(Color.black);
+		rfp.setDefaultValue(Color.black);
 		rf.add(rfp);
 		
-		rfp = new Param();
-		rfp.name = "size";
-		rfp.title = "size";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("size");
+		rfpn.setTitle("size");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(.5));
+		rfpn.setDefaultValue(new Double(.5));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "linetype";
-		rfp.title = "linetype";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1);
-		rfp.defaultValue = new Double(1);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("linetype");
+		rfpn.setTitle("linetype");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(1));
+		rfpn.setDefaultValue(new Double(1));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		return rf;
 	}
 	
@@ -564,32 +367,33 @@ public class Theme implements ElementModel{
 		RFunction rf = new RFunction();
 		rf.setName("theme_line");
 		
-		Param rfp = new Param("colour");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
-		rfp.value = Color.black;
-		rfp.defaultValue = Color.black;
+		Param rfp;
+		ParamNumeric rfpn;
+		
+		
+		rfp = new ParamColor("colour");
+		rfp.setViewType(Param.VIEW_COLOR);
+		rfp.setValue(Color.black);
+		rfp.setDefaultValue(Color.black);
 		rf.add(rfp);
 		
-		rfp = new Param();
-		rfp.name = "size";
-		rfp.title = "size";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("size");
+		rfpn.setTitle("size");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(.5));
+		rfpn.setDefaultValue(new Double(.5));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "linetype";
-		rfp.title = "linetype";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1);
-		rfp.defaultValue = new Double(1);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("linetype");
+		rfpn.setTitle("linetype");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(1));
+		rfpn.setDefaultValue(new Double(1));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		return rf;
 	}
 	
@@ -597,37 +401,36 @@ public class Theme implements ElementModel{
 		RFunction rf = new RFunction();
 		rf.setName("theme_rect");
 		
-		Param rfp = new Param("fill");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
+		Param rfp;
+		ParamNumeric rfpn;
+		
+		rfp = new ParamColor("fill");
+		rfp.setViewType(Param.VIEW_COLOR);
 		rf.add(rfp);
 		
-		rfp = new Param("colour");
-		rfp.dataType = Param.DATA_COLOUR;
-		rfp.view = Param.VIEW_COLOUR;
-		rfp.value = Color.black;
-		rfp.defaultValue = Color.black;
+		rfp = new ParamColor("colour");
+		rfp.setViewType(Param.VIEW_COLOR);
+		rfp.setValue(Color.black);
+		rfp.setDefaultValue(Color.black);
 		rf.add(rfp);
 		
-		rfp = new Param();
-		rfp.name = "size";
-		rfp.title = "size";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(.5);
-		rfp.defaultValue = new Double(.5);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("size");
+		rfpn.setTitle("size");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(.5));
+		rfpn.setDefaultValue(new Double(.5));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		
-		rfp = new Param();
-		rfp.name = "linetype";
-		rfp.title = "linetype";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.value = new Double(1);
-		rfp.defaultValue = new Double(1);
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);
+		rfpn = new ParamNumeric();
+		rfpn.setName("linetype");
+		rfpn.setTitle("linetype");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setValue(new Double(1));
+		rfpn.setDefaultValue(new Double(1));
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);
 		return rf;
 	}
 	
@@ -635,22 +438,22 @@ public class Theme implements ElementModel{
 		RFunction rf = new RFunction();
 		rf.setName("theme_text");
 		Param rfp;
-		rfp = new Param();
-		rfp.name = "x";
-		rfp.title = "x";
-		rfp.dataType = Param.DATA_NUMERIC;
-		rfp.view = Param.VIEW_ENTER;
-		rfp.lowerBound = new Double(0);
-		rf.add(rfp);		
+		ParamNumeric rfpn;
 		
-		rfp = new Param("units");
-		rfp.title = "units";
-		rfp.dataType = Param.DATA_CHARACTER;
-		rfp.view = Param.VIEW_EDITABLE_COMBO;
-		rfp.options = new String[] {"npc", "cm", "inches", "mm",
+		rfpn = new ParamNumeric();
+		rfpn.setName("x");
+		rfpn.setTitle("x");
+		rfpn.setViewType(Param.VIEW_ENTER);
+		rfpn.setLowerBound(new Double(0));
+		rf.add(rfpn);		
+		
+		rfp = new ParamCharacter("units");
+		rfp.setTitle("units");
+		rfp.setViewType(Param.VIEW_EDITABLE_COMBO);
+		rfp.setOptions(new String[] {"npc", "cm", "inches", "mm",
 				"points", "picas", "bigpts" ,"dida", "cicero", 
 				"scaledpts", "lines", "char", "native", "snpc", 
-				"strwidth" ,"strheight","grobwidth","grobheight"};
+				"strwidth" ,"strheight","grobwidth","grobheight"});
 		rf.add(rfp);
 		
 

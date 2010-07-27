@@ -180,32 +180,26 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 					editor.setTransferHandler(transferHandler);
 					MouseListener listener = new MouseListener() {
 						public void mousePressed(MouseEvent me) {
-							System.out.println("mouse pressed");
 							JComponent comp = (JComponent) me.getSource();
 							TransferHandler handler = comp.getTransferHandler();
 					        handler.exportAsDrag(comp, me, TransferHandler.MOVE);
 						}
 
 						public void mouseClicked(MouseEvent arg0) {
-							System.out.println("mouse cl");
 						}
 
 						public void mouseEntered(MouseEvent arg0) {
-							System.out.println("mouse en");
 						}
 
 						public void mouseExited(MouseEvent arg0) {
-							System.out.println("mouse ex");
 						}
 
 						public void mouseReleased(MouseEvent arg0) {
-							System.out.println("mouse re");
 						}
 					};
 					DragGestureListener dgl = new DragGestureListener(){
 
 						public void dragGestureRecognized(DragGestureEvent dge) {
-							System.out.println(dge.toString());
 							try{
 								dge.startDrag(null, transferHandler.createTransferable(
 										(AesComboBoxEditor) variable.getEditor()));
@@ -727,16 +721,13 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		ArrayList lastData = new ArrayList();
 		
 		public boolean canImport(JComponent c, DataFlavor[] flavors) {
-			System.out.println("can import?");
 			return true;
 		}
 		
 		public int getSourceActions(JComponent c) {
-			System.out.println("get source action");
 			return COPY_OR_MOVE;
 		}
 		public boolean importData(JComponent c, Transferable t) {
-			System.out.println("importing");
 			try{
 				if(t.isDataFlavorSupported(arrayListFlavor)){
 					ArrayList al = (ArrayList) t.getTransferData(arrayListFlavor);
@@ -754,18 +745,15 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		}
 		
 		public void exportAsDrag(JComponent comp, InputEvent e, int action){
-			System.out.println("export as drag");
 		}
 		
 		protected void exportDone(JComponent c, Transferable data, int action) {
-			System.out.println("export done");
 			AesComboBoxEditor editor = (AesComboBoxEditor) c;
 			//if(action == DnDConstants.ACTION_MOVE)
 				editor.setItem("");
 		}
 		
 		public Transferable createTransferable(JComponent c){
-			System.out.println("create transferable");
 			ArrayList l = new ArrayList();
 			AesComboBoxEditor editor = (AesComboBoxEditor) c;
 			l.add(editor.getText());

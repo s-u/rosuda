@@ -1,5 +1,10 @@
 package org.rosuda.deducer.plots;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -16,10 +21,12 @@ import java.awt.event.WindowListener;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.REngine.REXP;
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.IconButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
+import org.rosuda.javaGD.JGDBufferedPanel;
 import org.rosuda.javaGD.JGDPanel;
 
 import java.awt.BorderLayout;
@@ -33,6 +40,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
@@ -43,6 +51,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 
 import javax.swing.WindowConstants;
@@ -59,7 +68,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	private JPanel rightPanel;
 	private JPanel topPanel;
 	private JPanel defaultPlotPanel;
-	private JPanel okayCancel;
+	private OkayCancelPanel okayCancel;
 	private JTabbedPane addTabs;
 	private JTabbedPane templateTabs;
 	private JButton removeButton;
@@ -90,7 +99,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 
 	
 	public PlotBuilder() {
-		this(lastModel==null ? new PlotBuilderModel() : lastModel);
+		this(lastModel==null ? new PlotBuilderModel() : (PlotBuilderModel)lastModel.clone());
 	}
 	
 	public PlotBuilder(PlotBuilderModel pbm) {
@@ -101,6 +110,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			initGUI();
 			setModel(pbm);
 			initialModel = (PlotBuilderModel) pbm.clone();
+			updatePlot();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -450,17 +460,45 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 	public void plot(String cmd){
 		if(cmd ==null || cmd == "")
 			return;
-		try{
-			if(device==null){
-				plotHolder.removeAll();
-				device = new PlotPanel(plotHolder.getWidth(), plotHolder.getHeight());
-				device.setTransferHandler(new PanelTransferHandler());
-				plotHolder.add(device);
+		final boolean wasNull = device==null;
+		if(wasNull){
+			plotHolder.removeAll();
+			device = new PlotPanel(plotHolder.getWidth(), plotHolder.getHeight());
+			device.setTransferHandler(new PanelTransferHandler());
+			plotHolder.add(device);
+		}	
+		
+		okayCancel.getApproveButton().setEnabled(false);
+		final JLabel lab = new JLabel("plotting...");
+		lab.setHorizontalAlignment(JLabel.CENTER);
+		lab.setFont(Font.decode("Arial-BOLD-30"));
+		lab.setForeground(Color.green);
+		final String command = cmd;
+		final PlotBuilder pb = this;
+		pane.add(lab, new AnchorConstraint(137, 158, 52, 22, 
+				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS, 
+				AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_REL),100);
+		pane.setLayer(lab, 100);
+		pane.validate();
+		pane.repaint();
+		new Thread(new Runnable(){
+			public void run() {
+				try{
+					DeviceInterface.plot(command,device);
+				}catch(Exception e){e.printStackTrace();}
+				SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                    	pane.remove(lab);
+        				okayCancel.getApproveButton().setEnabled(true);
+        				device.repaint();
+        				pane.validate();
+                    }
+                });
+				
 			}
-			DeviceInterface.plot(cmd,device);
-			device.initRefresh();
-			retractTopPanel();
-		}catch(Exception e){e.printStackTrace();}
+			
+		}).start();
+
 	}
 	
 	public void updatePlot(){
@@ -862,10 +900,10 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 			this.dispose();			
 			Deducer.execute("dev.new()\n"+call);
 		}else if(cmd == "Reset"){
-			this.setModel(initialModel);
-		}else if(cmd == "Cancel")
+			this.setModel(new PlotBuilderModel());
+		}else if(cmd == "Cancel"){
 			this.dispose();
-		else if(cmd == "remove"){
+		}else if(cmd == "remove"){
 			PlottingElement element = (PlottingElement) elementsList.getSelectedValue();
 			if(element!=null){
 				((DefaultListModel)elementsList.getModel()).removeElement(element);
@@ -886,12 +924,15 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
 	}
 	
-	public class PlotPanel extends JGDPanel{
+	public class PlotPanel extends JGDBufferedPanel{
+		Dimension lastSize;
 		public PlotPanel(double w, double h) {
 			super(w, h);
+			lastSize=getSize();
 		}
 		public PlotPanel(int w, int h) {
 			super(w, h);
+			lastSize = getSize();
 		}
 		
 		public void devOff(){
@@ -900,9 +941,20 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 		}
 		
 		public void initRefresh() {
-			Deducer.eval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+			Deducer.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
 		}
 		
+		public synchronized void paintComponent(Graphics g) {
+			Dimension d=getSize();
+	        if (!d.equals(lastSize)) {
+	            REXP exp = Deducer.idleEval("try(.C(\"javaGDresize\",as.integer("+devNr+")),silent=TRUE)");
+	            if(exp!=null)
+	            	lastSize=d;
+	            return;
+	        }
+			super.paintComponent(g);
+		}
+	       
 	}
 
 	public void windowActivated(WindowEvent arg0) {}

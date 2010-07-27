@@ -4,6 +4,10 @@ import java.awt.Color;
 import java.util.Vector;
 
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamNumeric;
+import org.rosuda.deducer.widgets.param.ParamRFunction;
+import org.rosuda.deducer.widgets.param.ParamVector;
+import org.rosuda.deducer.widgets.param.RFunction;
 
 public class Stat {
 	
@@ -65,24 +69,21 @@ public class Stat {
 		s.aess.add(aes);
 		
 		Param p ;
-		p= Param.makeParam("binwidth");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
+		ParamNumeric pn;
+		
+		p= ParamFactory.makeParam("binwidth");
 		s.params.add(p);
 		
-		p= Param.makeParam("origin");
-		p.dataType = Param.DATA_NUMERIC;
+		p= ParamFactory.makeParam("origin");
 		s.params.add(p);
 		
-		p= Param.makeParam("breaks");
+		p= ParamFactory.makeParam("breaks");
 		s.params.add(p);
 		
-		p= Param.makeParam("width");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
+		p= ParamFactory.makeParam("width");
 		s.params.add(p);
 		
-		p= Param.makeParam("drop");
+		p= ParamFactory.makeParam("drop");
 		s.params.add(p);
 		
 		s.generated.add("count");
@@ -114,22 +115,29 @@ public class Stat {
 		s.aess.add(aes);
 		
 		Param p ;
-		p= Param.makeParam("binwidth");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
-		s.params.add(p);
+		ParamVector pv;
 		
-		p= Param.makeParam("origin");
-		p.dataType = Param.DATA_NUMERIC;
-		s.params.add(p);
-		
-		p= Param.makeParam("breaks");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
-		s.params.add(p);
+		pv = new ParamVector("binwidth");
+		pv.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		s.params.add(pv);
 		
 		
-		p= Param.makeParam("drop");
+		pv = new ParamVector("origin");
+		pv.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		s.params.add(pv);
+		
+		ParamRFunction prf;
+		RFunction rf;
+		prf = new ParamRFunction("breaks");
+		rf = new RFunction();
+		rf.setName("list");
+		rf.add(new ParamVector("x"));
+		rf.add(new ParamVector("y"));
+		prf.addRFunction("breaks", rf);
+		s.params.add(prf);
+		
+		
+		p= ParamFactory.makeParam("drop");
 		s.params.add(p);
 		
 		s.generated.add("count");
@@ -161,15 +169,13 @@ public class Stat {
 		
 
 		Param p ;
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
-		p= Param.makeParam("width");
+		p= ParamFactory.makeParam("width");
 		s.params.add(p);
 		
-		p= Param.makeParam("coef");
-		p.dataType = Param.DATA_NUMERIC;
-		p.lowerBound=new Double(0.0);
+		p= ParamFactory.makeParam("coef");
 		s.params.add(p);
 		
 		s.generated.add("width");
@@ -210,17 +216,17 @@ public class Stat {
 
 		Param p;
 		
-		p= Param.makeParam("bins");
+		p= ParamFactory.makeParam("bins");
 		s.params.add(p);
 		
 		
-		p= Param.makeParam("binwidth");
+		p= ParamFactory.makeParam("binwidth");
 		s.params.add(p);
 		
-		p= Param.makeParam("breaks");
+		p= ParamFactory.makeParam("breaks");
 		s.params.add(p);
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		s.generated.add("level");
@@ -254,17 +260,17 @@ public class Stat {
 
 		Param p;
 		
-		p= Param.makeParam("adjust");
+		p= ParamFactory.makeParam("adjust");
 		s.params.add(p);
 		
 		
-		p= Param.makeParam("kernel");
+		p= ParamFactory.makeParam("kernel");
 		s.params.add(p);
 		
-		p= Param.makeParam("trim");
+		p= ParamFactory.makeParam("trim");
 		s.params.add(p);
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		s.generated.add("density");
@@ -301,11 +307,11 @@ public class Stat {
 
 		Param p;
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		
-		p= Param.makeParam("contour");
+		p= ParamFactory.makeParam("contour");
 		s.params.add(p);
 		
 		s.generated.add("level");
@@ -320,10 +326,10 @@ public class Stat {
 		
 		Param p;
 		
-		p= Param.makeParam("fun");
+		p= ParamFactory.makeParam("fun");
 		s.params.add(p);
 		
-		p= Param.makeParam("args");
+		p= ParamFactory.makeParam("args");
 		s.params.add(p);
 		
 		s.generated.add("y");
@@ -354,15 +360,17 @@ public class Stat {
 		s.aess.add(aes);
 
 		Param p;
+		ParamVector pv;
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		
-		p= Param.makeParam("binwidth");
-		s.params.add(p);
+		pv = new ParamVector("binwidth");
+		pv.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		s.params.add(pv);
 		
-		p= Param.makeParam("bins");
+		p= ParamFactory.makeParam("bins");
 		s.params.add(p);
 		
 		s.generated.add("level");
@@ -405,15 +413,15 @@ public class Stat {
 		
 		Param p;
 		
-		p= Param.makeParam("quantiles");
-		p.value = new String[] {};
-		p.defaultValue = new String[]{};
+		p= ParamFactory.makeParam("quantiles");
+		p.setValue(new String[] {});
+		p.setDefaultValue(new String[]{});
 		s.params.add(p);
 		
-		p= Param.makeParam("distribution");
+		p= ParamFactory.makeParam("distribution");
 		s.params.add(p);
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		s.generated.add("theoretical");
@@ -441,13 +449,13 @@ public class Stat {
 		
 		Param p;
 		
-		p= Param.makeParam("quantiles");
+		p= ParamFactory.makeParam("quantiles");
 		s.params.add(p);
 		
-		p= Param.makeParam("formula");
+		p= ParamFactory.makeParam("formula");
 		s.params.add(p);
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		s.generated.add("quantile");
@@ -470,19 +478,19 @@ public class Stat {
 		
 		Param p;
 		
-		p= Param.makeParam("method");
+		p= ParamFactory.makeParam("method");
 		s.params.add(p);
 		
-		p= Param.makeParam("formula");
+		p= ParamFactory.makeParam("formula");
 		s.params.add(p);
 		
-		p= Param.makeParam("se");
+		p= ParamFactory.makeParam("se");
 		s.params.add(p);
 		
-		p= Param.makeParam("fullrange");
+		p= ParamFactory.makeParam("fullrange");
 		s.params.add(p);
 		
-		p= Param.makeParam("na.rm");
+		p= ParamFactory.makeParam("na.rm");
 		s.params.add(p);
 		
 		s.generated.add("ymin");

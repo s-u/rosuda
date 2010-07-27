@@ -19,13 +19,13 @@ public class ParamCheckBoxWidget extends ParamWidget{
 	public void setModel(Param p){
 		model = p;
 		initAsCheckBox();
-		checkBox.setText(p.title);
-		if(p.value !=null)
-			checkBox.setSelected(((Boolean) p.value).booleanValue());
+		checkBox.setText(p.getTitle());
+		if(p.getValue() !=null)
+			checkBox.setSelected(((Boolean) p.getValue()).booleanValue());
 	}
 	
 	public void updateModel(){
-		model.value = new Boolean(checkBox.isSelected());
+		model.setValue(new Boolean(checkBox.isSelected()));
 	}
 	
 	public Param getModel(){

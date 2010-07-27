@@ -27,33 +27,33 @@ public class ParamTwoValueWidget extends ParamWidget implements FocusListener{
 	public void setModel(Param p){
 		model = p;
 		initAsTwoTextFields();
-		String[] val = (String[]) p.value;
+		String[] val = (String[]) p.getValue();
 		if(val!=null && val.length>1){
 			textField.setText(val[0]);
 			textField1.setText(val[1]);
 		}
 		textField.removeFocusListener(this);
 		textField1.removeFocusListener(this);
-		if(p.dataType == Param.DATA_NUMERIC_VECTOR)
+		if(((ParamVector)p).isNumeric())
 			textField.addFocusListener(this);
-		if(p.dataType == Param.DATA_NUMERIC_VECTOR)
+		if(((ParamVector)p).isNumeric())
 			textField1.addFocusListener(this);
 	}
 	
 	public void updateModel(){
 		String a = textField.getText();
 		String b = textField1.getText();
-		if(model.dataType == Param.DATA_CHARACTER_VECTOR){
+		if(!((ParamVector)model).isNumeric()){
 			if(a.length()>0 && b.length()>0)
-				model.value = new String[]{"'"+Deducer.addSlashes(a)+"'","'"+Deducer.addSlashes(b)+"'"};
+				model.setValue(new String[]{"'"+Deducer.addSlashes(a)+"'","'"+Deducer.addSlashes(b)+"'"});
 			else
-				model.value = new String[]{};
+				model.setValue(new String[]{});
 		}
-		if(model.dataType == Param.DATA_NUMERIC_VECTOR){
+		if(((ParamVector)model).isNumeric()){
 			if(a.length()>0 && b.length()>0)
-				model.value = new String[]{a,b};
+				model.setValue(new String[]{a,b});
 			else
-				model.value = new String[]{};
+				model.setValue(new String[]{});
 		}		
 	}
 	
@@ -74,10 +74,10 @@ public class ParamTwoValueWidget extends ParamWidget implements FocusListener{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 		}			
 		{
@@ -108,10 +108,10 @@ public class ParamTwoValueWidget extends ParamWidget implements FocusListener{
 		String s = field.getText();
 		try{
 			double d = Double.parseDouble(s);
-			if(model.lowerBound!=null && d<model.lowerBound.doubleValue())
-				field.setText(model.lowerBound.toString());
-			if(model.upperBound!=null && d>model.upperBound.doubleValue())
-				field.setText(model.upperBound.toString());
+			if(model.getLowerBound()!=null && d<model.getLowerBound().doubleValue())
+				field.setText(model.getLowerBound().toString());
+			if(model.getUpperBound()!=null && d>model.getUpperBound().doubleValue())
+				field.setText(model.getUpperBound().toString());
 		}catch(Exception e){
 			field.setText("");
 		}

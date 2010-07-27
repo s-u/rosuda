@@ -24,13 +24,13 @@ public class ParamComboBoxWidget extends ParamWidget{
 	
 	public void setModel(Param p){
 		model = p;
-		initAsComboBox(p.view == Param.VIEW_EDITABLE_COMBO);
-		label.setText(p.title);
-		if(p.value !=null && (p.labels==null || p.view == Param.VIEW_EDITABLE_COMBO))
-			comboBox.setSelectedItem(p.value.toString());
-		else if(p.value !=null && p.labels!=null){
-			for(int i=0;i<p.options.length;i++)
-				if(p.value.toString() == p.options[i])
+		initAsComboBox(p.getViewType() == Param.VIEW_EDITABLE_COMBO);
+		label.setText(p.getTitle());
+		if(p.getValue() !=null && (p.getLabels()==null || p.getViewType() == Param.VIEW_EDITABLE_COMBO))
+			comboBox.setSelectedItem(p.getValue().toString());
+		else if(p.getValue() !=null && p.getLabels()!=null){
+			for(int i=0;i<p.getOptions().length;i++)
+				if(p.getValue().toString().equals(p.getOptions()[i]))
 					comboBox.setSelectedIndex(i+1);
 		}
 	}
@@ -39,12 +39,12 @@ public class ParamComboBoxWidget extends ParamWidget{
 		String val = (String) comboBox.getSelectedItem();
 		int ind = comboBox.getSelectedIndex();
 		if(ind>0){
-			val = model.options[ind-1];
+			val = model.getOptions()[ind-1];
 		}
 		if(val!=null && val.length()>0)
-			model.value = val;
+			model.setValue(val);
 		else
-			model.value=null;
+			model.setValue(null);
 	}
 	
 	public Param getModel(){
@@ -64,10 +64,10 @@ public class ParamComboBoxWidget extends ParamWidget{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 
 		}	
@@ -77,12 +77,12 @@ public class ParamComboBoxWidget extends ParamWidget{
 				new DefaultComboBoxModel();
 			comboBoxModel.addElement(null);
 			if(model!=null){
-				if(model.options!=null & model.labels!=null)
-					for(int i=0;i<model.options.length;i++)
-						comboBoxModel.addElement(model.options[i] + "  :  "+model.labels[i]);
-				if(model.options!=null & model.labels==null)
-					for(int i=0;i<model.options.length;i++)
-						comboBoxModel.addElement(model.options[i]);
+				if(model.getOptions()!=null && model.getLabels()!=null)
+					for(int i=0;i<model.getOptions().length;i++)
+						comboBoxModel.addElement(model.getOptions()[i] + "  :  "+model.getLabels()[i]);
+				if(model.getOptions()!=null && model.getLabels()==null)
+					for(int i=0;i<model.getOptions().length;i++)
+						comboBoxModel.addElement(model.getOptions()[i]);
 			}
 			comboBox = new JComboBox();
 			this.add(comboBox, new AnchorConstraint(148, 12, 743, textPos, 

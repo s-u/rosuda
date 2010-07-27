@@ -14,35 +14,39 @@ public class ParamScaleLegend extends Param{
 	
 	final public static String VIEW_SCALE = "scale";
 	
+	protected Vector value;
+	protected Vector defaultValue;
+	protected boolean numeric =true;
+	
 	public ParamScaleLegend(){
-		view = VIEW_SCALE;
+		setViewType(VIEW_SCALE);
 	}
 	
 	public ParamScaleLegend(String nm){
-		name=nm;
-		title =nm;
-		view = VIEW_SCALE;
+		setName(nm);
+		setTitle(nm);
+		setViewType(VIEW_SCALE);
 	}
 	
 	public ParamWidget getView(){
-		if(view.equals(ParamScaleLegend.VIEW_SCALE))
+		if(getViewType().equals(ParamScaleLegend.VIEW_SCALE))
 			return new ParamScaleWidget(this);
 		return null;
 	}
 	
 	public Object clone(){
-		Param p = new ParamScaleLegend();
-		p.name = this.name;
-		p.title = this.title;
-		p.dataType = this.dataType;
-		p.value = this.view;
-		if(this.lowerBound!=null)
-			p.lowerBound = new Double(this.lowerBound.doubleValue());
-		if(this.upperBound!=null)
-			p.upperBound = new Double(this.upperBound.doubleValue());
-		if(this.value!=null){
+		ParamScaleLegend p = new ParamScaleLegend();
+		p.setName(this.getName());
+		p.setTitle(this.getTitle());
+		p.setViewType(this.getViewType());
+		p.setNumeric(this.isNumeric());
+		if(this.getLowerBound()!=null)
+			p.setLowerBound(new Double(this.getLowerBound().doubleValue()));
+		if(this.getUpperBound()!=null)
+			p.setUpperBound(new Double(this.getUpperBound().doubleValue()));
+		if(this.getValue()!=null){
 			Vector newValue = new Vector();
-			Vector curValue = (Vector) this.value;
+			Vector curValue = (Vector) this.getValue();
 			newValue.add(curValue.get(0));
 			newValue.add(new Boolean(((Boolean)curValue.get(1)).booleanValue()));
 			ExDefaultTableModel curTm = (ExDefaultTableModel) curValue.get(2);
@@ -55,9 +59,9 @@ public class ParamScaleLegend extends Param{
 				}
 			}
 			newValue.add(tm);
-			p.value = newValue;
+			p.setValue(newValue);
 		}else
-			p.value=null;
+			p.setValue(null);
 		return p;
 	}
 	
@@ -67,13 +71,13 @@ public class ParamScaleLegend extends Param{
 	
 	public String[] getParamCalls(){
 		String[] calls = new String[]{};
-		if(value!=null && !value.equals(defaultValue)){
+		if(getValue()!=null && !getValue().equals(getDefaultValue())){
 			Vector dBreaks = new Vector();
 			Vector dLabels = new Vector();		
 			String dNm = null;
 			Boolean dShow = null;
-			if(defaultValue!=null){
-				Vector v = (Vector) defaultValue;
+			if(getDefaultValue()!=null){
+				Vector v = (Vector) getDefaultValue();
 				dNm = (String) v.get(0);
 				dShow = ((Boolean)v.get(1));
 				ExDefaultTableModel dTm = (ExDefaultTableModel) v.get(2);
@@ -89,8 +93,8 @@ public class ParamScaleLegend extends Param{
 					}
 				}
 			}				
-			if(value!=null){
-				Vector v = (Vector) value;
+			if(getValue()!=null){
+				Vector v = (Vector) getValue();
 				String nm = (String) v.get(0);
 				Boolean show = ((Boolean)v.get(1));
 				ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
@@ -119,7 +123,7 @@ public class ParamScaleLegend extends Param{
 				String labelCall = null;
 				if(breaks.size()>0 && !(breaks.equals(dBreaks) && labels.equals(dLabels))){
 					breakCall = "breaks = " + Deducer.makeRCollection(breaks, "c", 
-							dataType == DATA_SCALE_CHARACTER);
+							!numeric);
 					labelCall = "labels = " + Deducer.makeRCollection(labels, "c",true);
 				}
 				Vector callVector = new Vector();
@@ -137,6 +141,39 @@ public class ParamScaleLegend extends Param{
 			}
 		}
 		return calls;
+	}
+
+	public void setDefaultValue(Object defaultValue) {
+		if(defaultValue instanceof Vector || defaultValue ==null)
+			this.defaultValue = (Vector) defaultValue;
+		else
+			System.out.println("ParamScaleLegend: invalid setDefaultValue");
+	}
+	
+	public Object getDefaultValue() {
+		return defaultValue;
+	}
+	
+	public void setValue(Object value) {
+		if(value instanceof Vector || value==null)
+			this.value = (Vector) value;
+		else{
+			System.out.println("ParamScaleLegend: invalid setValue");
+			Exception e = new Exception();
+			e.printStackTrace();
+		}
+	}
+	
+	public Object getValue() {
+		return value;
+	}
+
+	public void setNumeric(boolean numeric) {
+		this.numeric = numeric;
+	}
+
+	public boolean isNumeric() {
+		return numeric;
 	}
 	
 }

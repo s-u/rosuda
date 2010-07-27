@@ -5,6 +5,12 @@ import java.util.Vector;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamAny;
+import org.rosuda.deducer.widgets.param.ParamCharacter;
+import org.rosuda.deducer.widgets.param.ParamColor;
+import org.rosuda.deducer.widgets.param.ParamLogical;
+import org.rosuda.deducer.widgets.param.ParamNumeric;
+import org.rosuda.deducer.widgets.param.ParamVector;
 
 
 public class Scale implements ElementModel{
@@ -20,43 +26,39 @@ public class Scale implements ElementModel{
 		s.aesName = "alpha";
 		
 		Param p;
+		ParamNumeric pn;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "Legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("Legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
 
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "to";
-		p.title = "Alpha range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{"0","1"};
-		p.defaultValue = new String[]{"0","1"};
-		p.lowerBound = new Double(0);
-		p.upperBound = new Double(1);
-		s.params.add(p);		
+		pv = new ParamVector();
+		pv.setName("to");
+		pv.setTitle("Alpha range");
+		pv.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		pv.setValue(new String[]{"0","1"});
+		pv.setDefaultValue(new String[]{"0","1"});
+		pv.setLowerBound(new Double(0));
+		pv.setUpperBound(new Double(1));
+		s.params.add(pv);		
 
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
 		
@@ -71,34 +73,29 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Included levels";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Included levels");
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "palette";
-		p.title = "Colour palette";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "Set3";
-		p.defaultValue = "Set3";
-		p.options = new String[]{"YlOrRd","YlOrBr","YlGnBu","YlGn","Reds","RdPu",
+		p = new ParamCharacter();
+		p.setName("palette");
+		p.setTitle("Colour palette");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("Set3");
+		p.setDefaultValue("Set3");
+		p.setOptions(new String[]{"YlOrRd","YlOrBr","YlGnBu","YlGn","Reds","RdPu",
 				"Pruples","PuRd","PuBuGn","PuBu","OrRd","Oranges","Greys","Greens",
 				"GnBu","BuPu","BuGn","Blues","","Set3","Set2","Set1","Pastel2","Pastel1",
 				"Paired","Dark2","Accent","","Spectral","RdYlGn","RdYlBu","RdGy",
-				"RdBu","PuOr","PRGn","PiYG","BrBG"};
+				"RdBu","PuOr","PRGn","PiYG","BrBG"});
 		s.params.add(p);
 		
 
@@ -115,48 +112,42 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "ticks";
-		p.title = "Ticks";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("ticks");
+		p.setTitle("Ticks");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "expand";
-		p.title = "Expansion factors (*,+)";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{"0.05","0.55"};
-		p.defaultValue = new String[]{"0.05","0.55"};
+		p = new ParamVector();
+		p.setName("expand");
+		p.setTitle("Expansion factors (*,+)");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		p.setValue(new String[]{"0.05","0.55"});
+		p.setDefaultValue(new String[]{"0.05","0.55"});
 		s.params.add(p);		
 
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "scientific";
-		p.defaultValue = "scientific";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("scientific");
+		p.setDefaultValue("scientific");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		return s;		
@@ -169,45 +160,38 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
-		p.name = "name";
-		p.title = "Name";
-		p.dataType = Param.DATA_ANY;
-		p.view = Param.VIEW_ENTER_LONG;
+		p = new ParamAny();
+		p.setName("name");
+		p.setTitle("Name");
+		p.setViewType(Param.VIEW_ENTER_LONG);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 			
 
-		p = new Param();
-		p.name = "major";
-		p.title = "Major ticks";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"days","weeks","months","years"};
+		p = new ParamCharacter();
+		p.setName("major");
+		p.setTitle("Major ticks");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"days","weeks","months","years"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "minor";
-		p.title = "Minor ticks";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"days","weeks","months","years"};
+		p = new ParamCharacter();
+		p.setName("minor");
+		p.setTitle("Minor ticks");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"days","weeks","months","years"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "format";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"%m/%d/%y","%d/%m/%y","%m/%d","%d/%m","%b","%b-%Y"};
+		p = new ParamCharacter();
+		p.setName("format");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"%m/%d/%y","%d/%m/%y","%m/%d","%d/%m","%b","%b-%Y"});
 		s.params.add(p);
 		
 		return s;		
@@ -220,45 +204,38 @@ public class Scale implements ElementModel{
 		
 		Param p;
 		
-		p = new Param();
-		p.name = "name";
-		p.title = "Name";
-		p.dataType = Param.DATA_ANY;
-		p.view = Param.VIEW_ENTER_LONG;
-		s.params.add(p);		
+		p = new ParamAny();
+		p.setName("name");
+		p.setTitle("Name");
+		p.setViewType(Param.VIEW_ENTER_LONG);
+		s.params.add(p);
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 			
 
-		p = new Param();
-		p.name = "major";
-		p.title = "Major ticks";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"days","weeks","months","years"};
+		p = new ParamCharacter();
+		p.setName("major");
+		p.setTitle("Major ticks");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"days","weeks","months","years"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "minor";
-		p.title = "Minor ticks";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"days","weeks","months","years"};
+		p = new ParamCharacter();
+		p.setName("minor");
+		p.setTitle("Minor ticks");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"days","weeks","months","years"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "format";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_EDITABLE_COMBO;
-		p.options = new String[] {"%m/%d/%y","%d/%m/%y","%m/%d","%d/%m","%b","%b-%Y"};
+		p = new ParamCharacter();
+		p.setName("format");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_EDITABLE_COMBO);
+		p.setOptions(new String[] {"%m/%d/%y","%d/%m/%y","%m/%d","%d/%m","%b","%b-%Y"});
 		s.params.add(p);
 		
 		return s;		
@@ -272,48 +249,40 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "ticks";
-		p.title = "ticks";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("ticks");
+		p.setTitle("ticks");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "expand";
-		p.title = "expand";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{"0.05","0.55"};
-		p.defaultValue = new String[]{"0.05","0.55"};
+		p = new ParamVector();
+		p.setName("expand");
+		p.setTitle("expand");
+		p.setValue(new String[]{"0.05","0.55"});
+		p.setDefaultValue(new String[]{"0.05","0.55"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Included levels";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Included levels");
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "drop";
-		p.title = "Drop unused levels";
-		p.dataType = Param.DATA_LOGICAL;
-		p.view = Param.VIEW_CHECK_BOX;
-		p.value = new Boolean(false);
-		p.defaultValue = new Boolean(false);
+		p = new ParamLogical();
+		p.setName("drop");
+		p.setTitle("Drop unused levels");
+		p.setViewType(Param.VIEW_CHECK_BOX);
+		p.setValue(new Boolean(false));
+		p.setDefaultValue(new Boolean(false));
 		s.params.add(p);
 		
 		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -328,57 +297,50 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "low";
-		p.title = "Low colour";
-		p.dataType = Param.DATA_COLOUR;
-		p.view = Param.VIEW_COLOUR;
-		p.value = Color.decode("#3B4FB8");
-		p.defaultValue = Color.decode("#3B4FB8");
+		p = new ParamColor();
+		p.setName("low");
+		p.setTitle("Low colour");
+		p.setViewType(Param.VIEW_COLOR);
+		p.setValue(Color.decode("#3B4FB8"));
+		p.setDefaultValue(Color.decode("#3B4FB8"));
 		s.params.add(p);
 
-		p = new Param();
-		p.name = "high";
-		p.title = "High colour";
-		p.dataType = Param.DATA_COLOUR;
-		p.view = Param.VIEW_COLOUR;
-		p.value = Color.decode("#B71B1A");
-		p.defaultValue = Color.decode("#B71B1A");
+		p = new ParamColor();
+		p.setName("high");
+		p.setTitle("High colour");
+		p.setViewType(Param.VIEW_COLOR);
+		p.setValue(Color.decode("#B71B1A"));
+		p.setDefaultValue(Color.decode("#B71B1A"));
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "space";
-		p.title = "Colour space";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "rgb";
-		p.defaultValue = "rgb";
-		p.options = new String[] {"rgb","Lab"};
+		p = new ParamCharacter();
+		p.setName("space");
+		p.setTitle("Colour space");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("rgb");
+		p.setDefaultValue("rgb");
+		p.setOptions(new String[] {"rgb","Lab"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
 		return s;		
@@ -390,73 +352,65 @@ public class Scale implements ElementModel{
 		s.aesName = aes;
 		
 		Param p;
+		ParamNumeric pn;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "low";
-		p.title = "Low colour";
-		p.dataType = Param.DATA_COLOUR;
-		p.view = Param.VIEW_COLOUR;
-		p.value = Color.decode("#3B4FB8");
-		p.defaultValue = Color.decode("#3B4FB8");
+		p = new ParamColor();
+		p.setName("low");
+		p.setTitle("Low colour");
+		p.setViewType(Param.VIEW_COLOR);
+		p.setValue(Color.decode("#3B4FB8"));
+		p.setDefaultValue(Color.decode("#3B4FB8"));
 		s.params.add(p);
 
-		p = new Param();
-		p.name = "mid";
-		p.title = "Mid-point colour";
-		p.dataType = Param.DATA_COLOUR;
-		p.view = Param.VIEW_COLOUR;	
+		p = new ParamColor();
+		p.setName("mid");
+		p.setTitle("Mid-point colour");
+		p.setViewType(Param.VIEW_COLOR);	
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "midpoint";
-		p.title = "Mid-point value";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
+		pn = new ParamNumeric();
+		pn.setName("midpoint");
+		pn.setTitle("Mid-point value");
+		pn.setViewType(Param.VIEW_ENTER);
+		s.params.add(pn);
+		
+		p = new ParamColor();
+		p.setName("high");
+		p.setTitle("High colour");
+		p.setViewType(Param.VIEW_COLOR);
+		p.setValue(Color.decode("#B71B1A"));
+		p.setDefaultValue(Color.decode("#B71B1A"));
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "high";
-		p.title = "High colour";
-		p.dataType = Param.DATA_COLOUR;
-		p.view = Param.VIEW_COLOUR;
-		p.value = Color.decode("#B71B1A");
-		p.defaultValue = Color.decode("#B71B1A");
+		p = new ParamCharacter();
+		p.setName("space");
+		p.setTitle("Colour space");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("rgb");
+		p.setDefaultValue("rgb");
+		p.setOptions(new String[] {"rgb","Lab"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "space";
-		p.title = "Colour space";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "rgb";
-		p.defaultValue = "rgb";
-		p.options = new String[] {"rgb","Lab"};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		s.params.add(p);
-		
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
 		return s;		
@@ -468,50 +422,43 @@ public class Scale implements ElementModel{
 		s.aesName = aes;
 		
 		Param p;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "colours";
-		p.title = "Colours";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		pv = new ParamVector();
+		pv.setName("colours");
+		pv.setTitle("Colours");
+		pv.setNumeric(false);
+		s.params.add(pv);
+		
+		p = new ParamCharacter();
+		p.setName("space");
+		p.setTitle("Colour space");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("rgb");
+		p.setDefaultValue("rgb");
+		p.setOptions(new String[] {"rgb","Lab"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "space";
-		p.title = "Colour space";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "rgb";
-		p.defaultValue = "rgb";
-		p.options = new String[] {"rgb","Lab"};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		s.params.add(p);
-		
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
 		return s;		
@@ -523,53 +470,49 @@ public class Scale implements ElementModel{
 		s.aesName = aes;
 		
 		Param p;
+		ParamNumeric pn;
+		
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "start";
-		p.title = "Low grey";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(.2);
-		p.defaultValue = new Double(.2);
-		p.lowerBound = new Double(0);
-		p.upperBound = new Double(1);
+		pn = new ParamNumeric();
+		pn.setName("start");
+		pn.setTitle("Low grey");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(.2));
+		pn.setDefaultValue(new Double(.2));
+		pn.setLowerBound(new Double(0));
+		pn.setUpperBound(new Double(1));
+		s.params.add(pn);
+		
+		pn = new ParamNumeric();
+		pn.setName("end");
+		pn.setTitle("high grey");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(.2));
+		pn.setDefaultValue(new Double(.2));
+		pn.setLowerBound(new Double(0));
+		pn.setUpperBound(new Double(1));
+		s.params.add(pn);
+		
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "end";
-		p.title = "high grey";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(.2);
-		p.defaultValue = new Double(.2);
-		p.lowerBound = new Double(0);
-		p.upperBound = new Double(1);
-		s.params.add(p);
-		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		s.params.add(p);
-		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		return s;
@@ -581,82 +524,75 @@ public class Scale implements ElementModel{
 		s.aesName = aes;
 		
 		Param p;
+		ParamNumeric pn;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "Legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("Legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Included levels";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		s.params.add(p);
+		pv = new ParamVector();
+		pv.setName("limits");
+		pv.setTitle("Included levels");
+		pv.setNumeric(false);
+		s.params.add(pv);
 		
-		p = new Param();
-		p.name = "h";
-		p.title = "Hue range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{"15","375"};
-		p.defaultValue = new String[]{"15","375"};
+		p = new ParamVector();
+		p.setName("h");
+		p.setTitle("Hue range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		p.setValue(new String[]{"15","375"});
+		p.setDefaultValue(new String[]{"15","375"});
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "l";
-		p.title = "Luminance [0, 100]";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(65);
-		p.defaultValue = new Double(65);
-		p.lowerBound = new Double(0);
-		p.upperBound = new Double(100);
-		s.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("l");
+		pn.setTitle("Luminance [0, 100]");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(65));
+		pn.setDefaultValue(new Double(65));
+		pn.setLowerBound(new Double(0));
+		pn.setUpperBound(new Double(100));
+		s.params.add(pn);
 		
-		p = new Param();
-		p.name = "c";
-		p.title = "Chroma";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(100);
-		p.defaultValue = new Double(100);
-		p.lowerBound = new Double(0);
-		s.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("c");
+		pn.setTitle("Chroma");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(100));
+		pn.setDefaultValue(new Double(100));
+		pn.setLowerBound(new Double(0));
+		s.params.add(pn);
 		
-		p = new Param();
-		p.name = "h.start";
-		p.title = "Hue start";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(0);
-		p.defaultValue = new Double(0);
-		p.lowerBound = new Double(0);
-		s.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("h.start");
+		pn.setTitle("Hue start");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(0));
+		pn.setDefaultValue(new Double(0));
+		pn.setLowerBound(new Double(0));
+		s.params.add(pn);
 
-		p = new Param();
-		p.name = "direction";
-		p.title = "Colour wheel direction";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_COMBO;
-		p.value = "1";
-		p.defaultValue = "1";
-		p.options = new String[] {"1","-1"};
-		p.labels = new String[] {"clockwise","counter clockwise"};
-		s.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("direction");
+		pn.setTitle("Colour wheel direction");
+		pn.setViewType(Param.VIEW_COMBO);
+		pn.setValue(new Double(1.0));
+		pn.setDefaultValue(new Double(1.0));
+		pn.setOptions(new String[] {"1.0","-1.0"});
+		pn.setLabels(new String[] {"clockwise","counter clockwise"});
+		s.params.add(pn);
 
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -671,20 +607,19 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "Legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("Legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -698,41 +633,36 @@ public class Scale implements ElementModel{
 		s.aesName = "linetype";
 		
 		Param p;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Included levels";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		pv = new ParamVector();
+		pv.setName("limits");
+		pv.setTitle("Included levels");
+		pv.setNumeric(false);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "drop";
-		p.title = "Drop unused levels";
-		p.dataType = Param.DATA_LOGICAL;
-		p.view = Param.VIEW_CHECK_BOX;
-		p.value = new Boolean(false);
-		p.defaultValue = new Boolean(false);
+		p = new ParamLogical();
+		p.setName("drop");
+		p.setTitle("Drop unused levels");
+		p.setValue(new Boolean(false));
+		p.setDefaultValue(new Boolean(false));
 		s.params.add(p);
 		
 		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -745,35 +675,29 @@ public class Scale implements ElementModel{
 		s.aesName = aes;
 		
 		Param p;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "Legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("Legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 
-		p = new Param();
-		p.name = "values";
-		p.title = "Values";
-		if(aes.equals("colour") || aes.equals("fill"))
-			p.dataType = Param.DATA_CHARACTER_VECTOR;
-		else
-			p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
-		s.params.add(p);
+		pv = new ParamVector();
+		pv.setName("values");
+		pv.setTitle("Values");
+		pv.setNumeric(!(aes.equals("colour") || aes.equals("fill")));
+		s.params.add(pv);
 		
 		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -786,40 +710,35 @@ public class Scale implements ElementModel{
 		s.aesName = "shape";
 		
 		Param p;
+		ParamVector pv;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_CHARACTER;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(false);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Included levels";
-		p.dataType = Param.DATA_CHARACTER_VECTOR;
-		p.view = Param.VIEW_VECTOR_BUILDER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		pv = new ParamVector();
+		pv.setName("limits");
+		pv.setTitle("Included levels");
+		pv.setNumeric(false);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "solid";
-		p.title = "Use solid points";
-		p.dataType = Param.DATA_LOGICAL;
-		p.view = Param.VIEW_CHECK_BOX;
-		p.value = new Boolean(true);
-		p.defaultValue = new Boolean(true);
+		p = new ParamLogical();
+		p.setName("solid");
+		p.setTitle("Use solid points");
+		p.setValue(new Boolean(true));
+		p.setDefaultValue(new Boolean(true));
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "formatter";
-		p.title = "Format";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"identity","comma","dollar","percent","scientific","precision"};
+		p = new ParamCharacter();
+		p.setName("formatter");
+		p.setTitle("Format");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"identity","comma","dollar","percent","scientific","precision"});
 		s.params.add(p);
 		
 		
@@ -834,38 +753,33 @@ public class Scale implements ElementModel{
 		Param p;
 		
 		p = new ParamScaleLegend();
-		p.name = "legend";
-		p.title = "Legend";
-		p.dataType = ParamScaleLegend.DATA_SCALE_NUMERIC;
-		p.view = ParamScaleLegend.VIEW_SCALE;
+		p.setName("legend");
+		p.setTitle("Legend");
+		((ParamScaleLegend)p).setNumeric(true);
+		p.setViewType(ParamScaleLegend.VIEW_SCALE);
 		s.params.add(p);		
 		
-		p = new Param();
-		p.name = "limits";
-		p.title = "Data range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("limits");
+		p.setTitle("Data range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "to";
-		p.title = "size range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{"1","6"};
-		p.defaultValue = new String[]{"1","6"};
+		p = new ParamVector();
+		p.setName("to");
+		p.setTitle("size range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
+		p.setValue(new String[]{"1","6"});
+		p.setDefaultValue(new String[]{"1","6"});
 		s.params.add(p);
 		
-		p = new Param();
-		p.name = "trans";
-		p.title = "Transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
+		p = new ParamCharacter();
+		p.setName("trans");
+		p.setTitle("Transformation");
+		p.setViewType(Param.VIEW_COMBO);
+		p.setValue("identity");
+		p.setDefaultValue("identity");
+		p.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
 		s.params.add(p);
 		
 		

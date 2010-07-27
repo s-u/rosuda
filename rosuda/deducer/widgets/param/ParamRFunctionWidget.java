@@ -55,10 +55,10 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 
 		}	
@@ -68,12 +68,9 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 				new DefaultComboBoxModel();
 			comboBoxModel.addElement(null);
 			if(model!=null){
-				if(model.options!=null & model.labels!=null)
-					for(int i=0;i<model.options.length;i++)
-						comboBoxModel.addElement(model.options[i] + "  :  "+model.labels[i]);
-				if(model.options!=null & model.labels==null)
-					for(int i=0;i<model.options.length;i++)
-						comboBoxModel.addElement(model.options[i]);
+				if(model.getOptions()!=null)
+					for(int i=0;i<model.getOptions().length;i++)
+						comboBoxModel.addElement(model.getOptions()[i]);
 			}
 			comboBox = new JComboBox();
 			this.add(comboBox, new AnchorConstraint(150, 39, 743, textPos, 
@@ -90,16 +87,16 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 	public void setModel(Param p) {
 		model = p;
 		initGUI();
-		label.setText(p.title);
-		if(p.value !=null){
-			String val = (String) ((Vector)model.value).get(0);
+		label.setText(p.getTitle());
+		if(p.getValue() !=null){
+			String val = (String) ((Vector)model.getValue()).get(0);
 			comboBox.setSelectedItem(val);
 		}
 
 	}
 
 	public void updateModel() {
-		Vector v = (Vector) model.value;
+		Vector v = (Vector) model.getValue();
 		v.set(0, comboBox.getSelectedItem());
 	}
 
@@ -107,7 +104,7 @@ public class ParamRFunctionWidget extends ParamWidget implements ActionListener{
 		Object f = comboBox.getSelectedItem();
 		if(f!=null && f.toString().length()>0){
 			String fun = f.toString();
-			HashMap hm = (HashMap) ((Vector)model.value).get(1);
+			HashMap hm = (HashMap) ((Vector)model.getValue()).get(1);
 			RFunction rf = (RFunction) hm.get(fun);
 			RFunctionDialog d = new RFunctionDialog(rf);
 			d.setModal(true);

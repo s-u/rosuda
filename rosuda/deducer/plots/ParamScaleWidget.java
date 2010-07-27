@@ -28,14 +28,14 @@ public class ParamScaleWidget extends ParamWidget{
 	public void setModel(Param p){
 		model = p;		
 		initAsScale();
-		if(model.value!=null){
-			Vector v = (Vector) model.value;
+		if(model.getValue()!=null){
+			Vector v = (Vector) model.getValue();
 			String text = (String) v.get(0);
 			Boolean show = (Boolean) v.get(1);
 			ExDefaultTableModel tm = (ExDefaultTableModel) v.get(2);
 			legendPanel.setName(text);
 			legendPanel.setShowLegend(show.booleanValue());
-			legendPanel.setNumeric(p.dataType == ParamScaleLegend.DATA_SCALE_NUMERIC);
+			legendPanel.setNumeric(((ParamScaleLegend)p).isNumeric());
 			legendPanel.setTableModel(tm);
 		}
 	}
@@ -45,8 +45,8 @@ public class ParamScaleWidget extends ParamWidget{
 		newValue.add(legendPanel.getName());
 		newValue.add(new Boolean(legendPanel.getShowLegend()));
 		ExDefaultTableModel tm = legendPanel.getTableModel();
-		if(model.dataType == ParamScaleLegend.DATA_SCALE_NUMERIC)
-			for(int j=0;j<tm.getColumnCount();j++){
+		if(((ParamScaleLegend)model).isNumeric())
+			for(int j=0;j<tm.getRowCount();j++){
 				String val = (String) tm.getValueAt(j, 0);
 				try{
 					Double.parseDouble(val);
@@ -56,7 +56,7 @@ public class ParamScaleWidget extends ParamWidget{
 			}
 		legendPanel.setTableModel(tm);
 		newValue.add(tm);
-		model.value = newValue;
+		model.setValue(newValue);
 	}
 	
 	public Param getModel(){
@@ -76,10 +76,10 @@ public class ParamScaleWidget extends ParamWidget{
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				if(model!=null){
-					label.setText(model.title);
+					label.setText(model.getTitle());
 					labelWidth = SwingUtilities.computeStringWidth(
 							label.getFontMetrics(label.getFont()),
-							model.title);
+							model.getTitle());
 				}
 
 			}	

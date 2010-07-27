@@ -259,8 +259,8 @@ public class ParamStatSummaryWidget extends ParamWidget implements ActionListene
 
 	public void setModel(Param p) {
 		model = p;
-		if(p.value!=null){
-			Vector val = (Vector) p.value;
+		if(p.getValue()!=null){
+			Vector val = (Vector) p.getValue();
 			methodCombo.setSelectedIndex(((Integer)val.get(0)).intValue());
 			confidenceField.setText(val.get(1).toString());
 			multField.setText(val.get(2).toString());
@@ -282,7 +282,7 @@ public class ParamStatSummaryWidget extends ParamWidget implements ActionListene
 		newValue.add(yminText.getText());
 		newValue.add(ymaxText.getText());
 		newValue.add(dataText.getText());
-		model.value = newValue;
+		model.setValue(newValue);
 	}
 
 }

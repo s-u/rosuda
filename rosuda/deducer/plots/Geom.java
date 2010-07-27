@@ -109,7 +109,7 @@ public class Geom {
 		aes.required = false;
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("na.rm");
+		Param p = ParamFactory.makeParam("na.rm");
 		g.params.add(p);
 		
 		return g;
@@ -286,13 +286,13 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("outlier.colour");
+		Param p = ParamFactory.makeParam("outlier.colour");
 		g.params.add(p);
 		
-		p = Param.makeParam("outlier.shape");
+		p = ParamFactory.makeParam("outlier.shape");
 		g.params.add(p);
 		
-		p = Param.makeParam("outlier.size");
+		p = ParamFactory.makeParam("outlier.size");
 		g.params.add(p);
 		
 		return g;
@@ -341,7 +341,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("arrow");
+		Param p = ParamFactory.makeParam("arrow");
 		g.params.add(p);
 		
 		return g;
@@ -391,11 +391,11 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("fatten");
+		Param p = ParamFactory.makeParam("fatten");
 		g.params.add(p);
 		
-		p = Param.makeParam("width");
-		p.title = "Middle bar width";
+		p = ParamFactory.makeParam("width");
+		p.setTitle("Middle bar width");
 		g.params.add(p);
 		
 		return g;
@@ -442,7 +442,7 @@ public class Geom {
 		aes.required = false;
 		point.aess.add(aes);
 		
-		Param p = Param.makeParam("na.rm");
+		Param p = ParamFactory.makeParam("na.rm");
 		point.params.add(p);
 		
 		return point;
@@ -486,7 +486,7 @@ public class Geom {
 		aes.required = false;
 		point.aess.add(aes);
 		
-		Param p = Param.makeParam("na.rm");
+		Param p = ParamFactory.makeParam("na.rm");
 		point.params.add(p);
 		
 		return point;
@@ -759,7 +759,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("na.rm");
+		Param p = ParamFactory.makeParam("na.rm");
 		g.params.add(p);
 		
 		return g;
@@ -798,7 +798,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("arrow");
+		Param p = ParamFactory.makeParam("arrow");
 		g.params.add(p);
 		
 		return g;
@@ -874,7 +874,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("arrow");
+		Param p = ParamFactory.makeParam("arrow");
 		g.params.add(p);
 		
 		return g;
@@ -913,7 +913,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		point.aess.add(aes);
 		
-		Param p = Param.makeParam("na.rm");
+		Param p = ParamFactory.makeParam("na.rm");
 		point.params.add(p);
 		
 		return point;
@@ -1029,7 +1029,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("arrow");
+		Param p = ParamFactory.makeParam("arrow");
 		g.params.add(p);
 		
 		return g;
@@ -1182,7 +1182,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("arrow");
+		Param p = ParamFactory.makeParam("arrow");
 		g.params.add(p);
 		
 		return g;
@@ -1257,7 +1257,7 @@ public class Geom {
 		aes = Aes.makeAes("group");
 		g.aess.add(aes);
 		
-		Param p = Param.makeParam("direction");
+		Param p = ParamFactory.makeParam("direction");
 		g.params.add(p);
 		
 		return g;

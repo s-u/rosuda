@@ -25,25 +25,28 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 	
 	public void setModel(Param p){
 		model = p;
-		if(p.view == Param.VIEW_ENTER){
+		if(p.getViewType() == Param.VIEW_ENTER){
 			initAsShortTextField();
-			label.setText(p.title);
-			if(p.value !=null)
-				textField.setText(p.value.toString());
-			if(p.dataType == Param.DATA_NUMERIC)
+			label.setText(p.getTitle());
+			if(p.getValue() !=null)
+				textField.setText(p.getValue().toString());
+			if(p instanceof ParamNumeric)
 				textField.addFocusListener(this);
 		}else{
 			initAsLongTextField();
-			label.setText(p.title);
-			if(p.value !=null)
-				textField.setText(p.value.toString());
-			if(p.dataType == Param.DATA_NUMERIC)
+			label.setText(p.getTitle());
+			if(p.getValue() !=null)
+				textField.setText(p.getValue().toString());
+			if(p instanceof ParamNumeric)
 				textField.addFocusListener(this);
 		}
 	}
 	
 	public void updateModel(){
-		model.value = textField.getText();
+		if(textField.getText().length()>0)
+			model.setValue(textField.getText());
+		else
+			model.setValue(null);
 	}
 	
 	public Param getModel(){
@@ -65,10 +68,10 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 		}			
 		{
@@ -95,10 +98,10 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 
 		}		
@@ -123,10 +126,11 @@ public class ParamTextFieldWidget extends ParamWidget implements FocusListener{
 		String s = field.getText();
 		try{
 			double d = Double.parseDouble(s);
-			if(model.lowerBound!=null && d<model.lowerBound.doubleValue())
-				field.setText(model.lowerBound.toString());
-			if(model.upperBound!=null && d>model.upperBound.doubleValue())
-				field.setText(model.upperBound.toString());
+			ParamNumeric p = (ParamNumeric) model;
+			if(p.getLowerBound()!=null && d<p.getLowerBound().doubleValue())
+				field.setText(p.getLowerBound().toString());
+			if(p.getUpperBound()!=null && d>p.getUpperBound().doubleValue())
+				field.setText(p.getUpperBound().toString());
 		}catch(Exception e){
 			field.setText("");
 		}

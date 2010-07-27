@@ -27,19 +27,19 @@ public class ParamVectorBuilderWidget extends ParamWidget{
 		model = p;
 		initAsVectorBuilder();
 		vectorBuilder.removeAllItems();
-		vectorBuilder.addItems((String[]) (model.value!=null ? model.value : new String[]{}));
-		vectorBuilder.setNumeric(p.dataType == Param.DATA_NUMERIC_VECTOR);
+		vectorBuilder.addItems((String[]) (model.getValue()!=null ? model.getValue() : new String[]{}));
+		vectorBuilder.setNumeric(((ParamVector)p).isNumeric());
 	}
 	
 	public void updateModel(){
 		DefaultListModel lm = vectorBuilder.getListModel();
 		if(lm.size()==0)
-			model.value =null;
+			model.setValue(null);
 		else{
 			String[] s = new String[lm.size()];
 			for(int i=0;i<s.length;i++)
 				s[i] = lm.get(i).toString();
-			model.value = s;
+			model.setValue(s);
 		}
 	}
 	
@@ -60,10 +60,10 @@ public class ParamVectorBuilderWidget extends ParamWidget{
 						AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 				if(model!=null){
-					label.setText(model.title);
+					label.setText(model.getTitle());
 					labelWidth = SwingUtilities.computeStringWidth(
 							label.getFontMetrics(label.getFont()),
-							model.title);
+							model.getTitle());
 				}
 
 			}	

@@ -2,6 +2,7 @@ package org.rosuda.deducer.widgets.param;
 
 import org.rosuda.JGR.layout.AnchorConstraint;
 import org.rosuda.JGR.layout.AnchorLayout;
+import org.rosuda.deducer.toolkit.HelpButton;
 import org.rosuda.deducer.toolkit.OkayCancelPanel;
 
 import java.awt.BorderLayout;
@@ -18,7 +19,7 @@ import javax.swing.JPanel;
 public class RFunctionDialog extends javax.swing.JDialog implements ActionListener {
 	private JPanel panel;
 	private JPanel okayCancel;
-	private JButton help;
+	private HelpButton help;
 	private RFunctionView view;
 	private RFunction initialModel;
 	private RFunction model;
@@ -39,11 +40,12 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 			AnchorLayout thisLayout = new AnchorLayout();
 			getContentPane().setLayout(thisLayout);
 			{
-				help = new JButton();
+				help = new HelpButton("");
 				getContentPane().add(help, new AnchorConstraint(923, 92, 12, 12, 
 						AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_NONE, 
 						AnchorConstraint.ANCHOR_ABS, AnchorConstraint.ANCHOR_ABS));
 				help.setPreferredSize(new java.awt.Dimension(29, 26));
+				help.setVisible(false);
 			}
 			{
 				okayCancel = new OkayCancelPanel(false,false,this);
@@ -72,6 +74,7 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 		view = el.getView();
 		panel.add(view);
 		initialModel = (RFunction) el.clone();
+		model = el;
 	}
 	public void setToInitialModel(){
 		RFunction newModel = (RFunction) initialModel.clone();
@@ -94,6 +97,10 @@ public class RFunctionDialog extends javax.swing.JDialog implements ActionListen
 			setToInitialModel();
 			this.dispose();
 		}
+	}
+
+	private HelpButton getHelpButton() {
+		return help;
 	}
 	
 }

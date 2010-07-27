@@ -206,7 +206,7 @@ public class LayerPanel extends ElementView implements ActionListener{
 			Param p = (Param) model.stat.params.get(i);
 			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			paramNames.add(p.title);			
+			paramNames.add(p.getTitle());			
 			widgets.add(a);
 			paramPanel.add(a);
 		}
@@ -214,7 +214,7 @@ public class LayerPanel extends ElementView implements ActionListener{
 			Param p = (Param) model.geom.params.get(i);
 			ParamWidget a = p.getView();
 			a.setAlignmentX(CENTER_ALIGNMENT);
-			if(!paramNames.contains(a.getModel().title)){
+			if(!paramNames.contains(a.getModel().getTitle())){
 				widgets.add(a);
 				paramPanel.add(a);
 			}

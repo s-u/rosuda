@@ -4,6 +4,10 @@ import java.util.Vector;
 
 import org.rosuda.deducer.Deducer;
 import org.rosuda.deducer.widgets.param.Param;
+import org.rosuda.deducer.widgets.param.ParamCharacter;
+import org.rosuda.deducer.widgets.param.ParamLogical;
+import org.rosuda.deducer.widgets.param.ParamNumeric;
+import org.rosuda.deducer.widgets.param.ParamVector;
 
 public class Coord implements ElementModel{
 	
@@ -18,22 +22,16 @@ public class Coord implements ElementModel{
 		Param p;
 		
 		
-		p = new Param();
-		p.name = "xlim";
-		p.title = "x axis range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("xlim");
+		p.setTitle("x axis range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		c.params.add(p);
 		
-		p = new Param();
-		p.name = "ylim";
-		p.title = "y axis range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("ylim");
+		p.setTitle("y axis range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		c.params.add(p);
 		
 		
@@ -43,17 +41,15 @@ public class Coord implements ElementModel{
 	public static Coord makeEqual(){
 		Coord c = new Coord();
 		c.name = "coord_equal";
-		Param p;
+		ParamNumeric pn;
 		
-		
-		p = new Param();
-		p.name = "ratio";
-		p.title = "x to y ratio";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(1);
-		p.defaultValue = new Double(1);
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("ratio");
+		pn.setTitle("x to y ratio");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(1));
+		pn.setDefaultValue(new Double(1));
+		c.params.add(pn);
 		
 		return c;
 	}
@@ -64,22 +60,16 @@ public class Coord implements ElementModel{
 		Param p;
 		
 		
-		p = new Param();
-		p.name = "xlim";
-		p.title = "x axis range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("xlim");
+		p.setTitle("x axis range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		c.params.add(p);
 		
-		p = new Param();
-		p.name = "ylim";
-		p.title = "y axis range";
-		p.dataType = Param.DATA_NUMERIC_VECTOR;
-		p.view = Param.VIEW_TWO_VALUE_ENTER;
-		p.value = new String[]{};
-		p.defaultValue = new String[]{};
+		p = new ParamVector();
+		p.setName("ylim");
+		p.setTitle("y axis range");
+		p.setViewType(Param.VIEW_TWO_VALUE_ENTER);
 		c.params.add(p);
 		
 		return c;
@@ -89,21 +79,21 @@ public class Coord implements ElementModel{
 		Coord c = new Coord();
 		c.name = "coord_map";
 		Param p;
+		ParamNumeric pn;
+		ParamCharacter pc;
 		
-		
-		p = new Param();
-		p.name = "projection";
-		p.title = "Projection";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = null;
-		p.defaultValue = null;		
-		p.options = new String[]{ "mercator","sinusoidal","cylequalarea","cylindrical","rectangular",
+		pc = new ParamCharacter();
+		pc.setName("projection");
+		pc.setTitle("Projection");
+		pc.setViewType(Param.VIEW_COMBO);
+		pc.setValue(null);
+		pc.setDefaultValue(null);		
+		pc.setOptions(new String[]{ "mercator","sinusoidal","cylequalarea","cylindrical","rectangular",
 				"gall","mollweide","gilbert","","azequidistant","azequalarea","gnomonic","perspective","orthographic",
 				"stereographic","laue","fisheye","newyorker","","conic","simpleconic","lambert","albers","bonne",
 				"","polyconic","aitoff","lagrange","bicentric","elliptic","globular","vandergrinten","eisenlohr","",
-				"guyou","square","tetra","hex","","harrison","trapezoidal","lune","","mecca","homing"};
-		p.labels = new String[]{ "equally spaced straight meridians, conformal, straight compass courses",
+				"guyou","square","tetra","hex","","harrison","trapezoidal","lune","","mecca","homing"});
+		pc.setLabels(new String[]{ "equally spaced straight meridians, conformal, straight compass courses",
 				"equally spaced parallels, equal-area",
 				"equally spaced straight meridians, equal-area, true scale on lat0",
 				"central projection on tangent cylinder",
@@ -148,57 +138,50 @@ public class Coord implements ElementModel{
 				"",
 				"equally spaced vertical meridians",
 				"distances to Mecca are true"
-				};
-		c.params.add(p);
+				});
+		c.params.add(pc);
 		
-		p = new Param();
-		p.name = "lat0";
-		p.title = "lat0";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("lat0");
+		pn.setTitle("lat0");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "lat1";
-		p.title = "lat2";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("lat1");
+		pn.setTitle("lat2");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "dist";
-		p.title = "dist";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("dist");
+		pn.setTitle("dist");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "n";
-		p.title = "n";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("n");
+		pn.setTitle("n");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "r";
-		p.title = "r";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("r");
+		pn.setTitle("r");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "angle";
-		p.title = "angle";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("angle");
+		pn.setTitle("angle");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "lat";
-		p.title = "lat";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("lat");
+		pn.setTitle("lat");
+		pn.setViewType(Param.VIEW_ENTER);
+		c.params.add(pn);
 		return c;
 	}
 	
@@ -206,45 +189,41 @@ public class Coord implements ElementModel{
 		Coord c = new Coord();
 		c.name = "coord_polar";
 		Param p;
+		ParamNumeric pn;
+		ParamCharacter pc;
 		
+		pc = new ParamCharacter();
+		pc.setName("theta");
+		pc.setTitle("Angle is");
+		pc.setViewType(Param.VIEW_COMBO);
+		pc.setValue("x");
+		pc.setDefaultValue("x");
+		pc.setOptions(new String[]{"x","y"});
+		c.params.add(pc);
 		
-		p = new Param();
-		p.name = "theta";
-		p.title = "Angle is";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "x";
-		p.defaultValue = "x";
-		p.options = new String[]{"x","y"};
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("start");
+		pn.setTitle("Offset from 12 o'clock in radians");
+		pn.setViewType(Param.VIEW_ENTER);
+		pn.setValue(new Double(0));
+		pn.setDefaultValue(new Double(0));
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "start";
-		p.title = "Offset from 12 o'clock in radians";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_ENTER;
-		p.value = new Double(0);
-		p.defaultValue = new Double(0);
-		c.params.add(p);
+		pn = new ParamNumeric();
+		pn.setName("direction");
+		pn.setTitle("Direction");
+		pn.setViewType(Param.VIEW_COMBO);
+		pn.setValue(new Double(1));
+		pn.setDefaultValue(new Double(1));
+		pn.setOptions(new String[] {"1","-1"});
+		pn.setLabels(new String[] {"clockwise","counter clockwise"});
+		c.params.add(pn);
 		
-		p = new Param();
-		p.name = "direction";
-		p.title = "Direction";
-		p.dataType = Param.DATA_NUMERIC;
-		p.view = Param.VIEW_COMBO;
-		p.value = "1";
-		p.defaultValue = "1";
-		p.options = new String[] {"1","-1"};
-		p.labels = new String[] {"clockwise","counter clockwise"};
-		c.params.add(p);
-		
-		p = new Param();
-		p.name = "expand";
-		p.title = "Expand axis";
-		p.dataType = Param.DATA_LOGICAL;
-		p.view = Param.VIEW_CHECK_BOX;
-		p.value = new Boolean(false);
-		p.defaultValue = new Boolean(false);
+		p = new ParamLogical();
+		p.setName("expand");
+		p.setTitle("Expand axis");
+		p.setValue(new Boolean(false));
+		p.setDefaultValue(new Boolean(false));
 		c.params.add(p);
 		
 		
@@ -254,28 +233,25 @@ public class Coord implements ElementModel{
 	public static Coord makeTrans(){
 		Coord c = new Coord();
 		c.name = "coord_trans";
-		Param p;
+		ParamCharacter pc;
 		
+		pc = new ParamCharacter();
+		pc.setName("xtrans");
+		pc.setTitle("x-axis transformation");
+		pc.setViewType(Param.VIEW_COMBO);
+		pc.setValue("identity");
+		pc.setDefaultValue("identity");
+		pc.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
+		c.params.add(pc);
 		
-		p = new Param();
-		p.name = "xtrans";
-		p.title = "x-axis transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
-		c.params.add(p);
-		
-		p = new Param();
-		p.name = "ytrans";
-		p.title = "y-axis transformation";
-		p.dataType = Param.DATA_CHARACTER;
-		p.view = Param.VIEW_COMBO;
-		p.value = "identity";
-		p.defaultValue = "identity";
-		p.options = new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"};
-		c.params.add(p);
+		pc = new ParamCharacter();
+		pc.setName("ytrans");
+		pc.setTitle("y-axis transformation");
+		pc.setViewType(Param.VIEW_COMBO);
+		pc.setValue("identity");
+		pc.setDefaultValue("identity");
+		pc.setOptions(new String[] {"asn","exp","identity","log","log10","probit","recip","reverse","sqrt"});
+		c.params.add(pc);
 		
 		return c;
 	}

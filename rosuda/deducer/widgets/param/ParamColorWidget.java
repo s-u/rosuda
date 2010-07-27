@@ -29,15 +29,15 @@ public class ParamColorWidget extends ParamWidget implements ActionListener{
 	public void setModel(Param p){
 		model = p;
 		initAsColour();
-		if(model.value!=null){
-			colourButton.setForeground((Color) model.value);
-			colourValue = (Color) model.value;
+		if(model.getValue()!=null){
+			colourButton.setForeground((Color) model.getValue());
+			colourValue = (Color) model.getValue();
 		}
 	}
 	
 	public void updateModel(){
 		if(colourValue!=null){
-			model.value = colourValue;
+			model.setValue(colourValue);
 		}
 	}
 	
@@ -58,10 +58,10 @@ public class ParamColorWidget extends ParamWidget implements ActionListener{
 					AnchorConstraint.ANCHOR_REL, AnchorConstraint.ANCHOR_NONE, 
 					AnchorConstraint.ANCHOR_NONE, AnchorConstraint.ANCHOR_ABS));
 			if(model!=null){
-				label.setText(model.title);
+				label.setText(model.getTitle());
 				labelWidth = SwingUtilities.computeStringWidth(
 						label.getFontMetrics(label.getFont()),
-						model.title);
+						model.getTitle());
 			}
 
 		}	
