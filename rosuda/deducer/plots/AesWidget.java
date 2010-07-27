@@ -359,15 +359,15 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 		if(newModel.variable!=null)
 			variable.setSelectedItem(newModel.variable);
 		
-		if(newModel.dataType == Aes.DATA_ANY ||
-				newModel.dataType == Aes.DATA_NUMERIC ||
-				(newModel.dataType == Aes.DATA_NUMERIC_BOUNDED && 
+		if(newModel.dataType.equals(Aes.DATA_ANY) ||
+				newModel.dataType.equals(Aes.DATA_NUMERIC) ||
+				(newModel.dataType.equals(Aes.DATA_NUMERIC_BOUNDED) && 
 						(newModel.lowerBound==null || newModel.upperBound==null))){
 			valueComponent = value;
 			if(newModel.value!=null)
 				value.setText(newModel.value.toString());
 				
-		}else if(newModel.dataType == Aes.DATA_COLOUR){
+		}else if(newModel.dataType.equals(Aes.DATA_COLOUR)){
 			valueComponent = colour;
 			if(newModel.value!=null && newModel.value instanceof Color){
 				colour.setForeground((Color) newModel.value);
@@ -375,7 +375,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			}else if(newModel.value!=null)
 				JOptionPane.showMessageDialog(this, "invalid colour value:"+ 
 						newModel.value.toString());
-		}else if(newModel.dataType == Aes.DATA_NUMERIC_BOUNDED){
+		}else if(newModel.dataType.equals(Aes.DATA_NUMERIC_BOUNDED)){
 			Double d = new Double(0.0);
 			int ind;
 			if(newModel.value!=null){
@@ -402,9 +402,9 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			slider.setLabelTable( labelTable );
 			slider.setPaintLabels(true);
 			this.setMinimumSize(new Dimension(0,64));
-		}else if(newModel.dataType == Aes.DATA_NONE ){
+		}else if(newModel.dataType.equals(Aes.DATA_NONE) ){
 			valueComponent = new JPanel();
-		}else if(newModel.dataType == Aes.DATA_LINE){
+		}else if(newModel.dataType.equals(Aes.DATA_LINE)){
 			DefaultComboBoxModel cm = new DefaultComboBoxModel();
 			for(int i=0;i<lineOptions.size();i++)
 				cm.addElement(lineOptions.get(i));
@@ -412,7 +412,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 			if(newModel.value!= null && newModel.value instanceof Integer)
 				options.setSelectedIndex(((Integer)newModel.value).intValue());
 			valueComponent = options;
-		}else if(newModel.dataType == Aes.DATA_SHAPE){
+		}else if(newModel.dataType.equals(Aes.DATA_SHAPE)){
 			DefaultComboBoxModel cm = new DefaultComboBoxModel();
 			for(int i=0;i<shapeOptions.size();i++)
 				cm.addElement(shapeOptions.get(i));
@@ -438,7 +438,7 @@ public class AesWidget extends javax.swing.JPanel implements ActionListener, Mou
 				val = value.getText();
 				if(val.toString().length()<=0)
 					model.value = null;
-				else if(model.dataType == Aes.DATA_NUMERIC || model.dataType == Aes.DATA_NUMERIC_BOUNDED){
+				else if(model.dataType.equals(Aes.DATA_NUMERIC) || model.dataType.equals(Aes.DATA_NUMERIC_BOUNDED)){
 					try{
 						Double d = new Double(Double.parseDouble((String) val));
 						if(model.lowerBound!=null && d.doubleValue()<model.lowerBound.doubleValue()){

@@ -264,7 +264,7 @@ public class PlotBuilder extends JFrame implements ActionListener, WindowListene
 								JList list = new JList();
 								list.addMouseListener(ml);
 								list.setCellRenderer(new ElementListRenderer());
-								list.setVisibleRowCount(mod.getSize()/8+1);
+								list.setVisibleRowCount(mod.getSize()/7);
 								list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 								list.setModel(mod);
 								list.setDragEnabled(true);

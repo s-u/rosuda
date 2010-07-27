@@ -9,7 +9,7 @@ import org.rosuda.deducer.widgets.param.Param;
 
 public class Layer implements ElementModel{
 
-	String name;
+	private String name;
 	
 	public boolean isGeom = false;
 	public boolean isStat = false;
@@ -89,14 +89,14 @@ public class Layer implements ElementModel{
 		String func = "";
 		if(isGeom){
 			func = "geom_"+geom.name;
-			if(geom.defaultStat != stat.name)
+			if(!geom.defaultStat.equals(stat.name))
 				paramCalls.add("stat = '"+stat.name+"'");
 		}else if(isStat){
 			func = "stat_"+stat.name;
 			if(stat.defaultGeom != geom.name)
 				paramCalls.add("geom = '"+geom.name+"'");
 		}
-		if(!(pos.name == geom.defaultPosition && pos.height==null && pos.width==null)){
+		if(!(pos.name.equals(geom.defaultPosition) && pos.height==null && pos.width==null)){
 			String posCall = "position = position_" + pos.name + "(" +
 				(pos.height==null ? "" : "height = " + pos.height.toString()) +
 				(pos.height!=null && pos.width!=null ? "," : "") +
@@ -176,7 +176,8 @@ public class Layer implements ElementModel{
 	public static Layer makeGeomLayer(String geomName){
 		Geom g = Geom.makeGeom(geomName);
 		if(g==null || g.defaultStat ==null || g.defaultPosition==null){
-			JOptionPane.showMessageDialog(null, geomName+" is not a valid geom.");
+			//JOptionPane.showMessageDialog(null, geomName+" is not a valid geom.");
+			return null;
 		}
 		Stat s = Stat.makeStat(g.defaultStat);
 		if(s==null){
@@ -186,7 +187,7 @@ public class Layer implements ElementModel{
 		
 		Position p = Position.makePosition(g.defaultPosition);
 		Layer l = new Layer();
-		l.name = "geom_"+geomName;
+		l.setName("geom_"+geomName);
 		l.isGeom = true;
 		l.geom = g;
 		l.stat = s;
@@ -198,7 +199,8 @@ public class Layer implements ElementModel{
 	public static Layer makeStatLayer(String statName){
 		Stat s = Stat.makeStat(statName);
 		if(s==null || s.defaultGeom==null){
-			JOptionPane.showMessageDialog(null, statName+" is not valid");
+			//JOptionPane.showMessageDialog(null, statName+" is not valid");
+			return null;
 		}		
 		Geom g = Geom.makeGeom(s.defaultGeom);		
 		if(g==null || s ==null || g.defaultPosition==null){
@@ -206,7 +208,7 @@ public class Layer implements ElementModel{
 		}
 		Position p = Position.makePosition(g.defaultPosition);
 		Layer l = new Layer();
-		l.name = "stat_"+statName;
+		l.setName("stat_"+statName);
 		l.isStat = true;
 		l.geom = g;
 		l.stat = s;
@@ -222,6 +224,12 @@ public class Layer implements ElementModel{
 		for(int i=0;i<geom.params.size();i++)
 			params.add(geom.params.get(i));
 		return params;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getName() {
+		return name;
 	}
 	
 }

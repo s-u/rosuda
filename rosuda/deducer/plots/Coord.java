@@ -11,14 +11,14 @@ import org.rosuda.deducer.widgets.param.ParamVector;
 
 public class Coord implements ElementModel{
 	
-	String name;
+	private String name;
 	
 	public Vector params = new Vector();
 	
 	
 	public static Coord makeCartesian(){
 		Coord c = new Coord();
-		c.name = "coord_cartesian";
+		c.setName("coord_cartesian");
 		Param p;
 		
 		
@@ -40,7 +40,7 @@ public class Coord implements ElementModel{
 	
 	public static Coord makeEqual(){
 		Coord c = new Coord();
-		c.name = "coord_equal";
+		c.setName("coord_equal");
 		ParamNumeric pn;
 		
 		pn = new ParamNumeric();
@@ -56,7 +56,7 @@ public class Coord implements ElementModel{
 	
 	public static Coord makeFlip(){
 		Coord c = new Coord();
-		c.name = "coord_flip";
+		c.setName("coord_flip");
 		Param p;
 		
 		
@@ -77,7 +77,7 @@ public class Coord implements ElementModel{
 	
 	public static Coord makeMap(){
 		Coord c = new Coord();
-		c.name = "coord_map";
+		c.setName("coord_map");
 		Param p;
 		ParamNumeric pn;
 		ParamCharacter pc;
@@ -187,7 +187,7 @@ public class Coord implements ElementModel{
 	
 	public static Coord makePolar(){
 		Coord c = new Coord();
-		c.name = "coord_polar";
+		c.setName("coord_polar");
 		Param p;
 		ParamNumeric pn;
 		ParamCharacter pc;
@@ -232,7 +232,7 @@ public class Coord implements ElementModel{
 	
 	public static Coord makeTrans(){
 		Coord c = new Coord();
-		c.name = "coord_trans";
+		c.setName("coord_trans");
 		ParamCharacter pc;
 		
 		pc = new ParamCharacter();
@@ -278,7 +278,7 @@ public class Coord implements ElementModel{
 		Coord c = new Coord();
 		for(int i=0;i<params.size();i++)
 			c.params.add(((Param)params.get(i)).clone());
-		c.name = name;
+		c.setName(name);
 		return c;
 	}
 
@@ -295,7 +295,7 @@ public class Coord implements ElementModel{
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
 		}
-		String call = Deducer.makeRCollection(paramCalls, name, false);
+		String call = Deducer.makeRCollection(paramCalls, getName(), false);
 		return call;
 	}
 
@@ -310,6 +310,14 @@ public class Coord implements ElementModel{
 
 	public Vector getParams() {
 		return params;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	

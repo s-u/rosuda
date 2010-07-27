@@ -36,19 +36,24 @@ public class PlottingElement implements Transferable{
 	public PlottingElement(String filename,String elementType,String elementName){
 		super();
 		URL url = getClass().getResource(filename);
-		icon = new ImageIcon(url);
 		name=elementName;
 		type = elementType;
 		Layer l;
-		if(type=="geom"){
+		if(type.equals("geom")){
 			l = Layer.makeGeomLayer(name);
 			model = l;			
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-		}else if(type == "stat"){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/layer_default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("stat")){
 			l = Layer.makeStatLayer(name);
 			model = l;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-		}else if(type == "scale"){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/layer_default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("scale")){
 			String[] s = name.split("_");
 			if(s.length>1){
 				model = Scale.makeScale(s[0], s[1]);
@@ -57,18 +62,33 @@ public class PlottingElement implements Transferable{
 				model = Scale.makeScale(null, s[0]);
 				helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+s[0]+".html";
 			}
-			
-		}else if(type == "coord"){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/scale_default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("coord")){
 			Coord c = Coord.makeCoord(name);
 			model = c;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-		}else if(type == "facet"){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("facet")){
 			Facet f = Facet.makeFacet(name);
 			model = f;
 			helpUrl = "http://had.co.nz/ggplot2/"+type+"_"+name+".html";
-		}else if(type == "theme"){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("theme")){
 			Theme t = Theme.makeTheme(name);
 			model = t;
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/default.png");
+			icon = new ImageIcon(url);
+		}else if(type.equals("template")){
+			if(url==null)
+				url = getClass().getResource("/icons/ggplot_icons/template_default.png");
+			icon = new ImageIcon(url);			
 		}
 	}
 	

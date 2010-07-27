@@ -74,6 +74,10 @@ public class ParamLogical extends Param{
 			System.out.println("ParamBoolean: invalid setDefaultValue");
 	}
 	
+	public void setDefaultValue(boolean value){
+		this.defaultValue = new Boolean(value);
+	}
+	
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
@@ -86,6 +90,10 @@ public class ParamLogical extends Param{
 			Exception e = new Exception();
 			e.printStackTrace();
 		}
+	}
+	
+	public void setValue(boolean value){
+		this.value = new Boolean(value);
 	}
 	
 	public Object getValue() {

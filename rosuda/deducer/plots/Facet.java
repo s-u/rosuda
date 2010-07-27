@@ -5,7 +5,7 @@ import java.util.Vector;
 
 public class Facet implements ElementModel{
 
-	public String name;
+	private String name;
 	
 	public ParamFacet param;
 	
@@ -16,7 +16,7 @@ public class Facet implements ElementModel{
 	
 	public static Facet makeFacet(String n){
 		Facet f = new Facet();
-		f.name = "facet_" + n;
+		f.setName("facet_" + n);
 		f.facetType = n;
 		
 		ParamFacet p = new ParamFacet();
@@ -28,7 +28,7 @@ public class Facet implements ElementModel{
 	
 	public Object clone(){
 		Facet f = new Facet();
-		f.name = name;
+		f.setName(name);
 		f.data = data;
 		f.param = (ParamFacet) param.clone();
 		f.facetType = facetType;
@@ -64,5 +64,15 @@ public class Facet implements ElementModel{
 		Vector v = new Vector();
 		v.add(param);
 		return v;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getName() {
+		return name;
 	}
 }

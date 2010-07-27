@@ -6,9 +6,6 @@ public class ParamNumeric extends Param{
 	protected Double value;
 	protected Double defaultValue;			//default	
 	
-	protected Double lowerBound ;			//If bounded, the lower bound
-	protected Double upperBound ;			//if bounded, the upper bound
-	
 	public ParamNumeric(){
 		name = "";
 		title = "";
@@ -95,6 +92,10 @@ public class ParamNumeric extends Param{
 			System.out.println("ParamNumeric: invalid setDefaultValue");
 	}
 	
+	public void setDefaultValue(double value){
+		this.defaultValue = new Double(value);
+	}
+	
 	public Object getDefaultValue() {
 		return defaultValue;
 	}
@@ -111,23 +112,13 @@ public class ParamNumeric extends Param{
 		}
 	}
 	
+	public void setValue(double value){
+		this.value = new Double(value);
+	}
+	
 	public Object getValue() {
 		return value;
 	}
-	public void setLowerBound(Double lowerBound) {
-		this.lowerBound = lowerBound;
-	}
 
-	public Double getLowerBound() {
-		return lowerBound;
-	}
-
-	public void setUpperBound(Double upperBound) {
-		this.upperBound = upperBound;
-	}
-
-	public Double getUpperBound() {
-		return upperBound;
-	}
 	
 }

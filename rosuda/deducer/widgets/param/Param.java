@@ -92,6 +92,10 @@ public abstract class Param implements Cloneable{
 	public void setLowerBound(Double lowerBound) {
 		this.lowerBound = lowerBound;
 	}
+	
+	public void setLowerBound(double lowerBound) {
+		this.lowerBound = new Double(lowerBound);
+	}
 
 	public Double getLowerBound() {
 		return lowerBound;
@@ -99,6 +103,10 @@ public abstract class Param implements Cloneable{
 
 	public void setUpperBound(Double upperBound) {
 		this.upperBound = upperBound;
+	}
+	
+	public void setUpperBound(double upperBound) {
+		this.upperBound = new Double(upperBound);
 	}
 
 	public Double getUpperBound() {

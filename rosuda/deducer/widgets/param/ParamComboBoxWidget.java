@@ -24,9 +24,9 @@ public class ParamComboBoxWidget extends ParamWidget{
 	
 	public void setModel(Param p){
 		model = p;
-		initAsComboBox(p.getViewType() == Param.VIEW_EDITABLE_COMBO);
+		initAsComboBox(p.getViewType().equals(Param.VIEW_EDITABLE_COMBO));
 		label.setText(p.getTitle());
-		if(p.getValue() !=null && (p.getLabels()==null || p.getViewType() == Param.VIEW_EDITABLE_COMBO))
+		if(p.getValue() !=null && (p.getLabels()==null || p.getViewType().equals(Param.VIEW_EDITABLE_COMBO)))
 			comboBox.setSelectedItem(p.getValue().toString());
 		else if(p.getValue() !=null && p.getLabels()!=null){
 			for(int i=0;i<p.getOptions().length;i++)

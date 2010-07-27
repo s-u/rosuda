@@ -15,14 +15,14 @@ import org.rosuda.deducer.widgets.param.ParamVector;
 
 public class Scale implements ElementModel{
 
-	String name;
+	private String name;
 	public String aesName;
 	
 	public Vector params = new Vector();
 	
 	public static Scale makeAlpha(){
 		Scale s = new Scale();
-		s.name = "scale_alpha";
+		s.setName("scale_alpha");
 		s.aesName = "alpha";
 		
 		Param p;
@@ -67,7 +67,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeBrewer(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_brewer";
+		s.setName("scale_"+aes+"_brewer");
 		s.aesName = aes;
 		
 		Param p;
@@ -106,7 +106,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeContinuous(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_continuous";
+		s.setName("scale_"+aes+"_continuous");
 		s.aesName = aes;
 		
 		Param p;
@@ -155,7 +155,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeDate(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_date";
+		s.setName("scale_"+aes+"_date");
 		s.aesName = aes;
 		
 		Param p;
@@ -199,7 +199,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeDatetime(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_datetime";
+		s.setName("scale_"+aes+"_datetime");
 		s.aesName = aes;
 		
 		Param p;
@@ -243,7 +243,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeDiscrete(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_discrete";
+		s.setName("scale_"+aes+"_discrete");
 		s.aesName = aes;
 		
 		Param p;
@@ -291,7 +291,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeGradient(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_gradient";
+		s.setName("scale_"+aes+"_gradient");
 		s.aesName = aes;
 		
 		Param p;
@@ -348,7 +348,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeGradient2(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_gradient2";
+		s.setName("scale_"+aes+"_gradient2");
 		s.aesName = aes;
 		
 		Param p;
@@ -418,7 +418,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeGradientn(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_gradientn";
+		s.setName("scale_"+aes+"_gradientn");
 		s.aesName = aes;
 		
 		Param p;
@@ -466,7 +466,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeGrey(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_grey";
+		s.setName("scale_"+aes+"_grey");
 		s.aesName = aes;
 		
 		Param p;
@@ -520,7 +520,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeHue(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_hue";
+		s.setName("scale_"+aes+"_hue");
 		s.aesName = aes;
 		
 		Param p;
@@ -601,7 +601,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeIdentity(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_identity";
+		s.setName("scale_"+aes+"_identity");
 		s.aesName = aes;
 		
 		Param p;
@@ -629,7 +629,7 @@ public class Scale implements ElementModel{
 	public static Scale makeLineType(){
 		Scale s = new Scale();
 		
-		s.name = "scale_linetype";
+		s.setName("scale_linetype");
 		s.aesName = "linetype";
 		
 		Param p;
@@ -671,7 +671,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeManual(String aes){
 		Scale s = new Scale();
-		s.name = "scale_"+aes+"_manual";
+		s.setName("scale_"+aes+"_manual");
 		s.aesName = aes;
 		
 		Param p;
@@ -706,7 +706,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeShape(){
 		Scale s = new Scale();
-		s.name = "scale_shape";
+		s.setName("scale_shape");
 		s.aesName = "shape";
 		
 		Param p;
@@ -747,7 +747,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeSize(){
 		Scale s = new Scale();
-		s.name = "scale_size";
+		s.setName("scale_size");
 		s.aesName = "size";
 		
 		Param p;
@@ -788,7 +788,7 @@ public class Scale implements ElementModel{
 	
 	public static Scale makeArea(){
 		Scale s = Scale.makeSize();
-		s.name = "scale_area";
+		s.setName("scale_area");
 		return s;
 	}
 	
@@ -832,7 +832,7 @@ public class Scale implements ElementModel{
 		Scale s = new Scale();
 		for(int i=0;i<params.size();i++)
 			s.params.add(((Param)params.get(i)).clone());
-		s.name = name;
+		s.setName(name);
 		s.aesName = aesName;
 		return s;
 	}
@@ -850,7 +850,7 @@ public class Scale implements ElementModel{
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
 		}
-		String call = Deducer.makeRCollection(paramCalls, name, false);
+		String call = Deducer.makeRCollection(paramCalls, getName(), false);
 		return call;
 	}
 
@@ -859,7 +859,7 @@ public class Scale implements ElementModel{
 	}
 
 	public ElementView getView() {
-		if(!this.name.endsWith("brewer"))
+		if(!this.getName().endsWith("brewer"))
 			return new DefaultElementView(this);
 		else
 			return new ScaleBrewerPanel(this);
@@ -868,6 +868,14 @@ public class Scale implements ElementModel{
 
 	public Vector getParams() {
 		return params;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

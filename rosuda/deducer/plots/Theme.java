@@ -1,7 +1,6 @@
 package org.rosuda.deducer.plots;
 
 import java.awt.Color;
-import java.util.HashMap;
 import java.util.Vector;
 
 import org.rosuda.deducer.Deducer;
@@ -15,13 +14,13 @@ import org.rosuda.deducer.widgets.param.RFunction;
 
 public class Theme implements ElementModel{
 
-	String name;
+	private String name;
 	
 	public Vector params = new Vector();
 	
 	public static Theme makeBw(){
 		Theme t = new Theme();
-		t.name = "theme_bw";
+		t.setName("theme_bw");
 		
 		ParamNumeric p;
 		
@@ -40,7 +39,7 @@ public class Theme implements ElementModel{
 	
 	public static Theme makeGrey(){
 		Theme t = new Theme();
-		t.name = "theme_grey";
+		t.setName("theme_grey");
 		
 		ParamNumeric p;
 		
@@ -58,7 +57,7 @@ public class Theme implements ElementModel{
 	
 	public static Theme makeOpts(){
 		Theme t = new Theme();
-		t.name = "opts";
+		t.setName("opts");
 		Param p;
 		ParamRFunction pf;
 		
@@ -476,7 +475,7 @@ public class Theme implements ElementModel{
 		try{	
 			for(int i=0;i<params.size();i++)
 				s.params.add(((Param)params.get(i)).clone());
-			s.name = name;
+			s.setName(name);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -496,7 +495,7 @@ public class Theme implements ElementModel{
 			for(int j=0;j<p.length;j++)
 				paramCalls.add(p[j]);				
 		}
-		String call = Deducer.makeRCollection(paramCalls, name, false);
+		String call = Deducer.makeRCollection(paramCalls, getName(), false);
 		return call;
 	}
 
@@ -511,6 +510,14 @@ public class Theme implements ElementModel{
 
 	public Vector getParams() {
 		return params;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 	
 	

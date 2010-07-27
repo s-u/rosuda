@@ -36,11 +36,11 @@ public class ParamCharacter extends Param{
 	}
 	
 	public ParamWidget getView(){
-		if(getViewType() == Param.VIEW_ENTER || 
-				getViewType() == Param.VIEW_ENTER_LONG)
+		if(getViewType().equals(Param.VIEW_ENTER) || 
+				getViewType().equals(Param.VIEW_ENTER_LONG))
 			return new ParamTextFieldWidget(this);
-		else if(getViewType() == Param.VIEW_COMBO || 
-				getViewType() == Param.VIEW_EDITABLE_COMBO)
+		else if(getViewType().equals(Param.VIEW_COMBO) || 
+				getViewType().equals(Param.VIEW_EDITABLE_COMBO))
 			return new ParamComboBoxWidget(this);
 		
 		return null;

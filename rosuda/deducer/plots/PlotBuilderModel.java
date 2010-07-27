@@ -65,11 +65,11 @@ public class PlotBuilderModel {
 				ElementModel em = e.getModel();
 				if(em instanceof Layer){
 					Vector laess = ((Layer)em).aess;
-					if(l.data != null && l.data != ((Layer)em).data)
+					if(l.data != null && !l.data.equals(((Layer)em).data))
 						continue;
 					for(int k=0;k<laess.size();k++){
 						Aes laes = (Aes) laess.get(k);
-						if(laes.name == aes.name && laes.variable!=null && laes.variable.length()>0
+						if(laes.name.equals(aes.name) && laes.variable!=null && laes.variable.length()>0
 								&& !laes.variable.startsWith("..")){
 							aes.variable = laes.variable;
 							l.data = ((Layer)em).data;

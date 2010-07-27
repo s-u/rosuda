@@ -121,119 +121,119 @@ public class Aes {
 		a.name=type;
 		String e = type.substring(1);
 		a.title = type.substring(0, 1).toUpperCase().concat(e);
-		if(type=="x"){
+		if(type.equals("x")){
 			a.dataType = DATA_ANY;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="y"){
+		}else if(type.equals("y")){
 			a.dataType = DATA_ANY;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="z"){
+		}else if(type.equals("z")){
 			a.dataType = DATA_ANY;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="colour"){
+		}else if(type.equals("colour")){
 			a.dataType = DATA_COLOUR;
-		}else if(type=="fill"){
+		}else if(type.equals("fill")){
 			a.dataType = DATA_COLOUR;
-		}else if(type=="label"){
+		}else if(type.equals("label")){
 			a.dataType = DATA_ANY;
-		}else if(type=="size"){
+		}else if(type.equals("size")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.defaultValue = new Double(0.5);
 			a.lowerBound=new Double(0.0);
-		}else if(type=="alpha"){
+		}else if(type.equals("alpha")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.defaultValue = new Double(1.0);
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(1.0);
 			a.defaultUseVariable = false;
 			a.title = "Alpha level";
-		}else if(type=="angle"){
+		}else if(type.equals("angle")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.defaultValue = new Double(0.0);
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(360.0);
-		}else if(type=="radius"){
+		}else if(type.equals("radius")){
 			a.required = true;
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
-		}else if(type=="hjust"){
+		}else if(type.equals("hjust")){
 			a.name = "hjust";
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(1.0);
 			a.defaultValue = new Double(.5);
 			a.defaultUseVariable = false;
-		}else if(type=="vjust"){
+		}else if(type.equals("vjust")){
 			a.name = "hjust";
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
 			a.upperBound = new Double(1.0);
 			a.defaultValue = new Double(.5);
 			a.defaultUseVariable = false;
-		}else if(type=="intercept"){
+		}else if(type.equals("intercept")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="xintercept"){
+		}else if(type.equals("xintercept")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="yintercept"){
+		}else if(type.equals("yintercept")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="slope"){
+		}else if(type.equals("slope")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="linetype"){
+		}else if(type.equals("linetype")){
 			a.dataType = DATA_LINE;
 			a.defaultValue = new Integer(1);
 			a.title = "Line type";
-		}else if(type=="size"){
+		}else if(type.equals("size")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
-		}else if(type=="xmin"){
+		}else if(type.equals("xmin")){
 			a.dataType = DATA_NUMERIC;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="xmax"){
+		}else if(type.equals("xmax")){
 			a.dataType = DATA_NUMERIC;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="ymin"){
+		}else if(type.equals("ymin")){
 			a.dataType = DATA_NUMERIC;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="ymax"){
+		}else if(type.equals("ymax")){
 			a.dataType = DATA_NUMERIC;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="xend"){
+		}else if(type.equals("xend")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="yend"){
+		}else if(type.equals("yend")){
 			a.dataType = DATA_NUMERIC;
-		}else if(type=="weight"){
+		}else if(type.equals("weight")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound = new Double(0.0);
 			a.defaultValue =  new Double(1.0);
-		}else if(type=="lower"){
+		}else if(type.equals("lower")){
 			a.dataType = DATA_NONE;
-		}else if(type=="upper"){
+		}else if(type.equals("upper")){
 			a.dataType = DATA_NONE;
-		}else if(type=="middle"){
+		}else if(type.equals("middle")){
 			a.dataType = DATA_NONE;
-		}else if(type=="width"){
+		}else if(type.equals("width")){
 			a.dataType = DATA_NUMERIC_BOUNDED;
 			a.lowerBound=new Double(0.0);
 			a.defaultValue = new Double(0.5);
-		}else if(type=="sample"){
+		}else if(type.equals("sample")){
 			a.dataType = DATA_NONE;
 			a.required = true;
 			a.defaultUseVariable = true;
-		}else if(type=="shape"){
+		}else if(type.equals("shape")){
 			a.dataType = DATA_SHAPE;
 			a.defaultValue = new Integer(16);
-		}else if(type=="xend"){
+		}else if(type.equals("xend")){
 			a.dataType = DATA_ANY;
-		}else if(type=="yend"){
+		}else if(type.equals("yend")){
 			a.dataType = DATA_ANY;
-		}else if(type=="group"){
+		}else if(type.equals("group")){
 			a.dataType = DATA_NONE;
 		}else
 			a.dataType = DATA_NONE;
